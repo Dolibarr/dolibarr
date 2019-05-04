@@ -26,347 +26,347 @@
 
 
 /**
- *	Class to manage standing orders rejects
+ *    Class to manage standing orders rejects
  */
 class RejetPrelevement
 {
-	/**
-	 * @var int ID
-	 */
-	public $id;
+    /**
+     * @var int ID
+     */
+    public $id;
 
-	/**
+    /**
      * @var DoliDB Database handler.
      */
     public $db;
 
 
-	/**
-	 *  Constructor
-	 *
-	 *  @param	DoliDb	$db			Database handler
-	 *  @param 	User	$user       Objet user
-	 */
-	public function __construct($db, $user)
-	{
-		global $langs;
+    /**
+     *  Constructor
+     *
+     *  @param    DoliDb    $db            Database handler
+     *  @param     User    $user       Objet user
+     */
+    public function __construct($db, $user)
+    {
+        global $langs;
 
-		$this->db = $db;
-		$this->user = $user;
+        $this->db = $db;
+        $this->user = $user;
 
-		$this->motifs = array();
-		$this->facturer = array();
+        $this->motifs = array();
+        $this->facturer = array();
 
-		$this->motifs[0] = ""; //$langs->trans("StatusMotif0");
-    	$this->motifs[1] = $langs->trans("StatusMotif1");
-    	$this->motifs[2] = $langs->trans("StatusMotif2");
-    	$this->motifs[3] = $langs->trans("StatusMotif3");
-    	$this->motifs[4] = $langs->trans("StatusMotif4");
-    	$this->motifs[5] = $langs->trans("StatusMotif5");
-    	$this->motifs[6] = $langs->trans("StatusMotif6");
-    	$this->motifs[7] = $langs->trans("StatusMotif7");
-    	$this->motifs[8] = $langs->trans("StatusMotif8");
+        $this->motifs[0] = ""; //$langs->trans("StatusMotif0");
+        $this->motifs[1] = $langs->trans("StatusMotif1");
+        $this->motifs[2] = $langs->trans("StatusMotif2");
+        $this->motifs[3] = $langs->trans("StatusMotif3");
+        $this->motifs[4] = $langs->trans("StatusMotif4");
+        $this->motifs[5] = $langs->trans("StatusMotif5");
+        $this->motifs[6] = $langs->trans("StatusMotif6");
+        $this->motifs[7] = $langs->trans("StatusMotif7");
+        $this->motifs[8] = $langs->trans("StatusMotif8");
 
-    	$this->facturer[0]=$langs->trans("NoInvoiceRefused");
-		$this->facturer[1]=$langs->trans("InvoiceRefused");
-	}
+        $this->facturer[0]=$langs->trans("NoInvoiceRefused");
+        $this->facturer[1]=$langs->trans("InvoiceRefused");
+    }
 
-	/**
-	 * Create
-	 *
-	 * @param 	User		$user				User object
-	 * @param 	int			$id					Id
-	 * @param 	string		$motif				Motif
-	 * @param 	int	$date_rejet			Date rejet
-	 * @param 	int			$bonid				Bon id
-	 * @param 	int			$facturation		Facturation
-	 * @return	void
-	 */
-	public function create($user, $id, $motif, $date_rejet, $bonid, $facturation = 0)
-	{
-		global $langs,$conf;
+    /**
+     * Create
+     *
+     * @param     User        $user                User object
+     * @param     int            $id                    Id
+     * @param     string        $motif                Motif
+     * @param     int    $date_rejet            Date rejet
+     * @param     int            $bonid                Bon id
+     * @param     int            $facturation        Facturation
+     * @return    void
+     */
+    public function create($user, $id, $motif, $date_rejet, $bonid, $facturation = 0)
+    {
+        global $langs,$conf;
 
-		$error = 0;
-		$this->id = $id;
-		$this->bon_id = $bonid;
-		$now=dol_now();
+        $error = 0;
+        $this->id = $id;
+        $this->bon_id = $bonid;
+        $now=dol_now();
 
-		dol_syslog("RejetPrelevement::Create id $id");
-		$bankaccount = $conf->global->PRELEVEMENT_ID_BANKACCOUNT;
-		$facs = $this->getListInvoices(1);
+        dol_syslog("RejetPrelevement::Create id $id");
+        $bankaccount = $conf->global->PRELEVEMENT_ID_BANKACCOUNT;
+        $facs = $this->getListInvoices(1);
 
-		$this->db->begin();
+        $this->db->begin();
 
-		// Insert refused line into database
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."prelevement_rejet (";
-		$sql.= "fk_prelevement_lignes";
-		$sql.= ", date_rejet";
-		$sql.= ", motif";
-		$sql.= ", fk_user_creation";
-		$sql.= ", date_creation";
-		$sql.= ", afacturer";
-		$sql.= ") VALUES (";
-		$sql.= $id;
-		$sql.= ", '".$this->db->idate($date_rejet)."'";
-		$sql.= ", ".$motif;
-		$sql.= ", ".$user->id;
-		$sql.= ", '".$this->db->idate($now)."'";
-		$sql.= ", ".$facturation;
-		$sql.= ")";
+        // Insert refused line into database
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."prelevement_rejet (";
+        $sql.= "fk_prelevement_lignes";
+        $sql.= ", date_rejet";
+        $sql.= ", motif";
+        $sql.= ", fk_user_creation";
+        $sql.= ", date_creation";
+        $sql.= ", afacturer";
+        $sql.= ") VALUES (";
+        $sql.= $id;
+        $sql.= ", '".$this->db->idate($date_rejet)."'";
+        $sql.= ", ".$motif;
+        $sql.= ", ".$user->id;
+        $sql.= ", '".$this->db->idate($now)."'";
+        $sql.= ", ".$facturation;
+        $sql.= ")";
 
-		$result=$this->db->query($sql);
+        $result=$this->db->query($sql);
 
-		if (!$result)
-		{
-			dol_syslog("RejetPrelevement::create Erreur 4");
-			dol_syslog("RejetPrelevement::create Erreur 4 $sql");
-			$error++;
-		}
+        if (!$result)
+        {
+            dol_syslog("RejetPrelevement::create Erreur 4");
+            dol_syslog("RejetPrelevement::create Erreur 4 $sql");
+            $error++;
+        }
 
-		// Tag the line to refused
-		$sql = " UPDATE ".MAIN_DB_PREFIX."prelevement_lignes ";
-		$sql.= " SET statut = 3";
-		$sql.= " WHERE rowid = ".$id;
+        // Tag the line to refused
+        $sql = " UPDATE ".MAIN_DB_PREFIX."prelevement_lignes ";
+        $sql.= " SET statut = 3";
+        $sql.= " WHERE rowid = ".$id;
 
-		if (! $this->db->query($sql))
-		{
-			dol_syslog("RejetPrelevement::create Erreur 5");
-			$error++;
-		}
+        if (! $this->db->query($sql))
+        {
+            dol_syslog("RejetPrelevement::create Erreur 5");
+            $error++;
+        }
 
-		$num=count($facs);
-		for ($i = 0; $i < $num; $i++)
-		{
-			$fac = new Facture($this->db);
-			$fac->fetch($facs[$i][0]);
+        $num=count($facs);
+        for ($i = 0; $i < $num; $i++)
+        {
+            $fac = new Facture($this->db);
+            $fac->fetch($facs[$i][0]);
 
-			// Make a negative payment
-			$pai = new Paiement($this->db);
+            // Make a negative payment
+            $pai = new Paiement($this->db);
 
-			$pai->amounts = array();
+            $pai->amounts = array();
 
-			/*
-			 * We replace the comma with a point otherwise some
-			 * PHP installs sends only the part integer negative
-			*/
+            /*
+             * We replace the comma with a point otherwise some
+             * PHP installs sends only the part integer negative
+            */
 
-			$pai->amounts[$facs[$i][0]] = price2num($facs[$i][1] * -1);
-			$pai->datepaye = $date_rejet;
-			$pai->paiementid = 3; // type of payment: withdrawal
-			$pai->num_paiement = $fac->ref;
+            $pai->amounts[$facs[$i][0]] = price2num($facs[$i][1] * -1);
+            $pai->datepaye = $date_rejet;
+            $pai->paiementid = 3; // type of payment: withdrawal
+            $pai->num_paiement = $fac->ref;
 
-			if ($pai->create($this->user) < 0)  // we call with no_commit
-			{
-				$error++;
-				dol_syslog("RejetPrelevement::Create Error creation payment invoice ".$facs[$i][0]);
-			}
-			else
-			{
-				$result=$pai->addPaymentToBank($user, 'payment', '(InvoiceRefused)', $bankaccount, '', '');
-				if ($result < 0)
-				{
-					dol_syslog("RejetPrelevement::Create AddPaymentToBan Error");
-					$error++;
-				}
+            if ($pai->create($this->user) < 0)  // we call with no_commit
+            {
+                $error++;
+                dol_syslog("RejetPrelevement::Create Error creation payment invoice ".$facs[$i][0]);
+            }
+            else
+            {
+                $result=$pai->addPaymentToBank($user, 'payment', '(InvoiceRefused)', $bankaccount, '', '');
+                if ($result < 0)
+                {
+                    dol_syslog("RejetPrelevement::Create AddPaymentToBan Error");
+                    $error++;
+                }
 
-				// Payment validation
-				if ($pai->valide() < 0)
-				{
-					$error++;
-					dol_syslog("RejetPrelevement::Create Error payment validation");
-				}
-			}
-			//Tag invoice as unpaid
-			dol_syslog("RejetPrelevement::Create set_unpaid fac ".$fac->ref);
+                // Payment validation
+                if ($pai->valide() < 0)
+                {
+                    $error++;
+                    dol_syslog("RejetPrelevement::Create Error payment validation");
+                }
+            }
+            //Tag invoice as unpaid
+            dol_syslog("RejetPrelevement::Create set_unpaid fac ".$fac->ref);
 
-			$fac->set_unpaid($user);
+            $fac->set_unpaid($user);
 
-			//TODO: Must be managed by notifications module
-			// Send email to sender of the standing order request
-			$this->_send_email($fac);
-		}
+            //TODO: Must be managed by notifications module
+            // Send email to sender of the standing order request
+            $this->_send_email($fac);
+        }
 
-		if ($error == 0)
-		{
-			dol_syslog("RejetPrelevement::Create Commit");
-			$this->db->commit();
-		}
-		else
-		{
-			dol_syslog("RejetPrelevement::Create Rollback");
-			$this->db->rollback();
-		}
-	}
+        if ($error == 0)
+        {
+            dol_syslog("RejetPrelevement::Create Commit");
+            $this->db->commit();
+        }
+        else
+        {
+            dol_syslog("RejetPrelevement::Create Rollback");
+            $this->db->rollback();
+        }
+    }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *  Send email to all users that has asked the withdraw request
-	 *
-	 * 	@param	Facture		$fac			Invoice object
-	 * 	@return	void
-	 */
-	private function _send_email($fac)
-	{
+    /**
+     *  Send email to all users that has asked the withdraw request
+     *
+     *     @param    Facture        $fac            Invoice object
+     *     @return    void
+     */
+    private function _send_email($fac)
+    {
         // phpcs:enable
-		global $langs;
+        global $langs;
 
-		$userid = 0;
+        $userid = 0;
 
-		$sql = "SELECT fk_user_demande";
-		$sql.= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
-		$sql.= " WHERE pfd.fk_prelevement_bons = ".$this->bon_id;
-		$sql.= " AND pfd.fk_facture = ".$fac->id;
+        $sql = "SELECT fk_user_demande";
+        $sql.= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
+        $sql.= " WHERE pfd.fk_prelevement_bons = ".$this->bon_id;
+        $sql.= " AND pfd.fk_facture = ".$fac->id;
 
-		$resql=$this->db->query($sql);
-		if ($resql)
-		{
-			$num = $this->db->num_rows($resql);
-			if ($num > 0)
-			{
-				$row = $this->db->fetch_row($resql);
-				$userid = $row[0];
-			}
-		}
-		else
-		{
-			dol_syslog("RejetPrelevement::_send_email Erreur lecture user");
-		}
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            $num = $this->db->num_rows($resql);
+            if ($num > 0)
+            {
+                $row = $this->db->fetch_row($resql);
+                $userid = $row[0];
+            }
+        }
+        else
+        {
+            dol_syslog("RejetPrelevement::_send_email Erreur lecture user");
+        }
 
-		if ($userid > 0)
-		{
-			$emuser = new User($this->db);
-			$emuser->fetch($userid);
+        if ($userid > 0)
+        {
+            $emuser = new User($this->db);
+            $emuser->fetch($userid);
 
-			$soc = new Societe($this->db);
-			$soc->fetch($fac->socid);
+            $soc = new Societe($this->db);
+            $soc->fetch($fac->socid);
 
-			require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+            require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 
-			$subject = $langs->transnoentities("InfoRejectSubject");
-			$sendto = $emuser->getFullName($langs)." <".$emuser->email.">";
-			$from = $this->user->getFullName($langs)." <".$this->user->email.">";
-			$msgishtml=1;
+            $subject = $langs->transnoentities("InfoRejectSubject");
+            $sendto = $emuser->getFullName($langs)." <".$emuser->email.">";
+            $from = $this->user->getFullName($langs)." <".$this->user->email.">";
+            $msgishtml=1;
 
-			$arr_file = array();
-			$arr_mime = array();
-			$arr_name = array();
-			$facref = $fac->ref;
-			$socname = $soc->name;
-			$amount = price($fac->total_ttc);
-			$userinfo = $this->user->getFullName($langs);
+            $arr_file = array();
+            $arr_mime = array();
+            $arr_name = array();
+            $facref = $fac->ref;
+            $socname = $soc->name;
+            $amount = price($fac->total_ttc);
+            $userinfo = $this->user->getFullName($langs);
 
-			$message = $langs->trans("InfoRejectMessage", $facref, $socname, $amount, $userinfo);
+            $message = $langs->trans("InfoRejectMessage", $facref, $socname, $amount, $userinfo);
 
-			$mailfile = new CMailFile($subject, $sendto, $from, $message, $arr_file, $arr_mime, $arr_name, '', '', 0, $msgishtml, $this->user->email);
+            $mailfile = new CMailFile($subject, $sendto, $from, $message, $arr_file, $arr_mime, $arr_name, '', '', 0, $msgishtml, $this->user->email);
 
-			$result=$mailfile->sendfile();
-			if ($result)
-			{
-				dol_syslog("RejetPrelevement::_send_email email envoye");
-			}
-			else
-			{
-				dol_syslog("RejetPrelevement::_send_email Erreur envoi email");
-			}
-		}
-		else
-		{
-			dol_syslog("RejetPrelevement::_send_email Userid invalide");
-		}
-	}
+            $result=$mailfile->sendfile();
+            if ($result)
+            {
+                dol_syslog("RejetPrelevement::_send_email email envoye");
+            }
+            else
+            {
+                dol_syslog("RejetPrelevement::_send_email Erreur envoi email");
+            }
+        }
+        else
+        {
+            dol_syslog("RejetPrelevement::_send_email Userid invalide");
+        }
+    }
 
-	/**
-	 * Retrieve the list of invoices
-	 *
-	 * @param 	int		$amounts 	If you want to get the amount of the order for each invoice
-	 * @return	array				Array List of invoices related to the withdrawal line
-	 * @TODO	A withdrawal line is today linked to one and only one invoice. So the function should return only one object ?
-	 */
-	private function getListInvoices($amounts = 0)
-	{
-		global $conf;
+    /**
+     * Retrieve the list of invoices
+     *
+     * @param     int        $amounts     If you want to get the amount of the order for each invoice
+     * @return    array                Array List of invoices related to the withdrawal line
+     * @TODO    A withdrawal line is today linked to one and only one invoice. So the function should return only one object ?
+     */
+    private function getListInvoices($amounts = 0)
+    {
+        global $conf;
 
-		$arr = array();
+        $arr = array();
 
-		 //Returns all invoices of a withdrawal
-		$sql = "SELECT f.rowid as facid, pl.amount";
-		$sql.= " FROM ".MAIN_DB_PREFIX."prelevement_facture as pf";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON (pf.fk_facture = f.rowid)";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."prelevement_lignes as pl ON (pf.fk_prelevement_lignes = pl.rowid)";
-		$sql.= " WHERE pf.fk_prelevement_lignes = ".$this->id;
-		$sql.= " AND f.entity IN  (".getEntity('invoice').")";
+         //Returns all invoices of a withdrawal
+        $sql = "SELECT f.rowid as facid, pl.amount";
+        $sql.= " FROM ".MAIN_DB_PREFIX."prelevement_facture as pf";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON (pf.fk_facture = f.rowid)";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."prelevement_lignes as pl ON (pf.fk_prelevement_lignes = pl.rowid)";
+        $sql.= " WHERE pf.fk_prelevement_lignes = ".$this->id;
+        $sql.= " AND f.entity IN  (".getEntity('invoice').")";
 
-		$resql=$this->db->query($sql);
-		if ($resql)
-		{
-			$num = $this->db->num_rows($resql);
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            $num = $this->db->num_rows($resql);
 
-			if ($num)
-			{
-				$i = 0;
-				while ($i < $num)
-				{
-					$row = $this->db->fetch_row($resql);
-					if (!$amounts) $arr[$i] = $row[0];
-					else
-					{
-						$arr[$i] = array(
-							$row[0],
-							$row[1]
-						);
-					}
-					$i++;
-				}
-			}
-			$this->db->free($resql);
-		}
-		else
-		{
-			dol_syslog("getListInvoices", LOG_ERR);
-		}
+            if ($num)
+            {
+                $i = 0;
+                while ($i < $num)
+                {
+                    $row = $this->db->fetch_row($resql);
+                    if (!$amounts) $arr[$i] = $row[0];
+                    else
+                    {
+                        $arr[$i] = array(
+                            $row[0],
+                            $row[1]
+                        );
+                    }
+                    $i++;
+                }
+            }
+            $this->db->free($resql);
+        }
+        else
+        {
+            dol_syslog("getListInvoices", LOG_ERR);
+        }
 
-		return $arr;
-	}
+        return $arr;
+    }
 
-	/**
-	 *    Retrieve withdrawal object
-	 *
-	 *    @param    int		$rowid       id of invoice to retrieve
-	 *    @return	int
-	 */
-	public function fetch($rowid)
-	{
+    /**
+     *    Retrieve withdrawal object
+     *
+     *    @param    int        $rowid       id of invoice to retrieve
+     *    @return    int
+     */
+    public function fetch($rowid)
+    {
 
-		$sql = "SELECT pr.date_rejet as dr, motif, afacturer";
-		$sql.= " FROM ".MAIN_DB_PREFIX."prelevement_rejet as pr";
-		$sql.= " WHERE pr.fk_prelevement_lignes =".$rowid;
+        $sql = "SELECT pr.date_rejet as dr, motif, afacturer";
+        $sql.= " FROM ".MAIN_DB_PREFIX."prelevement_rejet as pr";
+        $sql.= " WHERE pr.fk_prelevement_lignes =".$rowid;
 
-		$resql=$this->db->query($sql);
-		if ($resql)
-		{
-			if ($this->db->num_rows($resql))
-			{
-				$obj = $this->db->fetch_object($resql);
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            if ($this->db->num_rows($resql))
+            {
+                $obj = $this->db->fetch_object($resql);
 
-				$this->id             = $rowid;
-				$this->date_rejet     = $this->db->jdate($obj->dr);
-				$this->motif          = $this->motifs[$obj->motif];
-				$this->invoicing	  =	$this->facturer[$obj->afacturer];
+                $this->id             = $rowid;
+                $this->date_rejet     = $this->db->jdate($obj->dr);
+                $this->motif          = $this->motifs[$obj->motif];
+                $this->invoicing      =    $this->facturer[$obj->afacturer];
 
-				$this->db->free($resql);
+                $this->db->free($resql);
 
-				return 0;
-			}
-			else
-			{
-				dol_syslog("RejetPrelevement::Fetch Erreur rowid=$rowid numrows=0");
-				return -1;
-			}
-		}
-		else
-		{
-			dol_syslog("RejetPrelevement::Fetch Erreur rowid=$rowid");
-			return -2;
-		}
-	}
+                return 0;
+            }
+            else
+            {
+                dol_syslog("RejetPrelevement::Fetch Erreur rowid=$rowid numrows=0");
+                return -1;
+            }
+        }
+        else
+        {
+            dol_syslog("RejetPrelevement::Fetch Erreur rowid=$rowid");
+            return -2;
+        }
+    }
 }

@@ -33,18 +33,18 @@ $path=dirname(__FILE__).'/';
 $sapi_type = php_sapi_name();
 if (substr($sapi_type, 0, 3) == 'cgi') {
     echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-	exit(-1);
+    exit(-1);
 }
 
 if (! isset($argv[1]) || ! $argv[1] || ! in_array($argv[1], array('test','confirm')) || ! in_array($argv[2], array('thirdparties','contacts')))
 {
-	print "Usage: $script_file (test|confirm) (thirdparties|contacts) [delay] [after]\n";
-	print "\n";
-	print "Send an email to customers to remind all contracts services to expire or expired.\n";
-	print "If you choose 'test' mode, no emails are sent.\n";
-	print "If you add param delay (nb of days), only services with expired date < today + delay are included.\n";
-	print "If you add param after (nb of days), only services with expired date >= today + delay are included.\n";
-	exit(-1);
+    print "Usage: $script_file (test|confirm) (thirdparties|contacts) [delay] [after]\n";
+    print "\n";
+    print "Send an email to customers to remind all contracts services to expire or expired.\n";
+    print "If you choose 'test' mode, no emails are sent.\n";
+    print "If you add param delay (nb of days), only services with expired date < today + delay are included.\n";
+    print "If you add param after (nb of days), only services with expired date >= today + delay are included.\n";
+    exit(-1);
 }
 $mode=$argv[1];
 $targettype=$argv[2];
@@ -91,7 +91,7 @@ if (is_numeric($duration_value)) $sql.= " AND cd.date_fin_validite < '".$db->ida
 if ($targettype == 'contacts') $sql.= " AND s.rowid = sp.fk_soc";
 $sql.= " ORDER BY";
 if ($targettype == 'contacts') $sql.= " sp.email, sp.rowid,";
-$sql.= " s.email ASC, s.rowid ASC, cd.date_fin_validite ASC";	// Order by email to allow one message per email
+$sql.= " s.email ASC, s.rowid ASC, cd.date_fin_validite ASC";    // Order by email to allow one message per email
 
 //print $sql;
 $resql=$db->query($sql);
@@ -105,7 +105,7 @@ if ($resql)
 
     print "We found ".$num." couples (services to expire-".$targettype.") qualified\n";
     dol_syslog("We found ".$num." couples (services to expire-".$targettype.") qualified");
-	$message='';
+    $message='';
 
     if ($num)
     {
@@ -117,25 +117,25 @@ if ($resql)
 
             // Check if this record is a break after previous one
             $startbreak=false;
-			if ($newemail <> $oldemail || $oldemail == 'none') $startbreak=true;
-			if ($obj->sid && $obj->sid <> $oldsid) $startbreak=true;
-			if ($obj->cid && $obj->cid <> $oldcid) $startbreak=true;
+            if ($newemail <> $oldemail || $oldemail == 'none') $startbreak=true;
+            if ($obj->sid && $obj->sid <> $oldsid) $startbreak=true;
+            if ($obj->cid && $obj->cid <> $oldcid) $startbreak=true;
 
             if ($startbreak)
             {
                 // Break onto sales representative (new email or cid)
                 if (dol_strlen($oldemail) && $oldemail != 'none' && empty($trackthirdpartiessent[$oldsid.'|'.$oldemail]))
                 {
-                   	envoi_mail($mode, $oldemail, $message, $total, $oldlang, $oldtarget, $duration_value);
-                   	$trackthirdpartiessent[$oldsid.'|'.$oldemail]='contact id '.$oldcid;
+                       envoi_mail($mode, $oldemail, $message, $total, $oldlang, $oldtarget, $duration_value);
+                       $trackthirdpartiessent[$oldsid.'|'.$oldemail]='contact id '.$oldcid;
                 }
                 else
-				{
-                	if ($oldemail != 'none')
-                	{
-                		if (empty($trackthirdpartiessent[$oldsid.'|'.$oldemail])) print "- No email sent for '".$oldtarget."', total: ".$total."\n";
-                		else print "- No email sent for '".$oldtarget."', total: ".$total." (already sent to ".$trackthirdpartiessent[$oldsid.'|'.$oldemail].")\n";
-                	}
+                {
+                    if ($oldemail != 'none')
+                    {
+                        if (empty($trackthirdpartiessent[$oldsid.'|'.$oldemail])) print "- No email sent for '".$oldtarget."', total: ".$total."\n";
+                        else print "- No email sent for '".$oldtarget."', total: ".$total." (already sent to ".$trackthirdpartiessent[$oldsid.'|'.$oldemail].")\n";
+                    }
                 }
                 $oldemail = $newemail;
                 $oldsid  = $obj->sid;
@@ -151,21 +151,21 @@ if ($resql)
 
             // Define line content
             $outputlangs=new Translate('', $conf);
-            $outputlangs->setDefaultLang(empty($obj->default_lang)?$langs->defaultlang:$obj->default_lang);	// By default language of customer
+            $outputlangs->setDefaultLang(empty($obj->default_lang)?$langs->defaultlang:$obj->default_lang);    // By default language of customer
 
             // Load translation files required by the page
             $outputlangs->loadLangs(array("main", "contracts", "bills", "products"));
 
             if (dol_strlen($newemail))
             {
-            	$message .= $outputlangs->trans("Contract")." ".$obj->ref.": ".$outputlangs->trans("Service")." ".dol_concatdesc($obj->plabel, $obj->description)." (".price($obj->total_ttc, 0, $outputlangs, 0, 0, -1, $conf->currency)."), ".$outputlangs->trans("DateEndPlannedShort")." ".dol_print_date($db->jdate($obj->date_fin_validite), 'day')."\n\n";
-            	dol_syslog("email_expire_services_to_customers.php: ".$newemail." ".$message);
-            	$foundtoprocess++;
+                $message .= $outputlangs->trans("Contract")." ".$obj->ref.": ".$outputlangs->trans("Service")." ".dol_concatdesc($obj->plabel, $obj->description)." (".price($obj->total_ttc, 0, $outputlangs, 0, 0, -1, $conf->currency)."), ".$outputlangs->trans("DateEndPlannedShort")." ".dol_print_date($db->jdate($obj->date_fin_validite), 'day')."\n\n";
+                dol_syslog("email_expire_services_to_customers.php: ".$newemail." ".$message);
+                $foundtoprocess++;
             }
             print "Service to expire ".$obj->ref.", label ".dol_concatdesc($obj->plabel, $obj->description).", due date ".dol_print_date($db->jdate($obj->date_fin_validite), 'day').", customer id ".$obj->sid." ".$obj->name.", ".($obj->cid?"contact id ".$obj->cid." ".$obj->clastname." ".$obj->cfirstname.", ":"")."email ".$newemail.", lang ".$outputlangs->defaultlang.": ";
             if (dol_strlen($newemail)) print "qualified.";
             else print "disqualified (no email).";
-			print "\n";
+            print "\n";
 
             unset($outputlangs);
 
@@ -177,23 +177,23 @@ if ($resql)
         // Si il reste des envois en buffer
         if ($foundtoprocess)
         {
-            if (dol_strlen($oldemail) && $oldemail != 'none' && empty($trackthirdpartiessent[$oldsid.'|'.$oldemail]))	// Break onto email (new email)
+            if (dol_strlen($oldemail) && $oldemail != 'none' && empty($trackthirdpartiessent[$oldsid.'|'.$oldemail]))    // Break onto email (new email)
             {
-       			envoi_mail($mode, $oldemail, $message, $total, $oldlang, $oldtarget, $duration_value);
-       			$trackthirdpartiessent[$oldsid.'|'.$oldemail]='contact id '.$oldcid;
+                   envoi_mail($mode, $oldemail, $message, $total, $oldlang, $oldtarget, $duration_value);
+                   $trackthirdpartiessent[$oldsid.'|'.$oldemail]='contact id '.$oldcid;
             }
             else
-			{
-            	if ($oldemail != 'none')
-            	{
-            		if (empty($trackthirdpartiessent[$oldsid.'|'.$oldemail])) print "- No email sent for '".$oldtarget."', total: ".$total."\n";
-            		else print "- No email sent for '".$oldtarget."', total: ".$total." (already sent to ".$trackthirdpartiessent[$oldsid.'|'.$oldemail].")\n";
-            	}
+            {
+                if ($oldemail != 'none')
+                {
+                    if (empty($trackthirdpartiessent[$oldsid.'|'.$oldemail])) print "- No email sent for '".$oldtarget."', total: ".$total."\n";
+                    else print "- No email sent for '".$oldtarget."', total: ".$total." (already sent to ".$trackthirdpartiessent[$oldsid.'|'.$oldemail].")\n";
+                }
             }
         }
     }
     else
-	{
+    {
         print "No services to expire found\n";
     }
 
@@ -209,16 +209,16 @@ else
 
 
 /**
- * 	Send email
+ *     Send email
  *
- * 	@param	string	$mode			Mode (test | confirm)
- *  @param	string	$oldemail		Target email
- * 	@param	string	$message		Message to send
- * 	@param	string	$total			Total amount of unpayed invoices
- *  @param	string	$userlang		Code lang to use for email output.
- *  @param	string	$oldtarget		Target name
- *  @param  int		$duration_value	duration value
- * 	@return	int						<0 if KO, >0 if OK
+ *     @param    string    $mode            Mode (test | confirm)
+ *  @param    string    $oldemail        Target email
+ *     @param    string    $message        Message to send
+ *     @param    string    $total            Total amount of unpayed invoices
+ *  @param    string    $userlang        Code lang to use for email output.
+ *  @param    string    $oldtarget        Target name
+ *  @param  int        $duration_value    duration value
+ *     @return    int                        <0 if KO, >0 if OK
  */
 function envoi_mail($mode, $oldemail, $message, $total, $userlang, $oldtarget, $duration_value)
 {
@@ -233,17 +233,17 @@ function envoi_mail($mode, $oldemail, $message, $total, $userlang, $oldtarget, $
 
     if ($duration_value)
     {
-    	if ($duration_value > 0) $title=$newlangs->transnoentities("ListOfServicesToExpireWithDuration", $duration_value);
-    	else $title=$newlangs->transnoentities("ListOfServicesToExpireWithDurationNeg", $duration_value);
+        if ($duration_value > 0) $title=$newlangs->transnoentities("ListOfServicesToExpireWithDuration", $duration_value);
+        else $title=$newlangs->transnoentities("ListOfServicesToExpireWithDurationNeg", $duration_value);
     }
     else
-    	$title= $newlangs->transnoentities("ListOfServicesToExpire");
+        $title= $newlangs->transnoentities("ListOfServicesToExpire");
 
     $subject = (empty($conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_CUSTOMERS_SUBJECT)?$title:$conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_CUSTOMERS_SUBJECT);
     $sendto = $oldemail;
     $from = $conf->global->MAIN_MAIL_EMAIL_FROM;
     $errorsto = $conf->global->MAIN_MAIL_ERRORS_TO;
-	$msgishtml = -1;
+    $msgishtml = -1;
 
     print "- Send email to '".$oldtarget."' (".$oldemail."), total: ".$total."\n";
     dol_syslog("email_expire_services_to_customers.php: send mail to ".$oldemail);
@@ -255,19 +255,19 @@ function envoi_mail($mode, $oldemail, $message, $total, $userlang, $oldtarget, $
     $allmessage='';
     if (! empty($conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_CUSTOMERS_HEADER))
     {
-    	$allmessage.=$conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_CUSTOMERS_HEADER;
+        $allmessage.=$conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_CUSTOMERS_HEADER;
     }
     else
-	{
-    	$allmessage.= "Dear customer".($usehtml?"<br>\n":"\n").($usehtml?"<br>\n":"\n");
-    	$allmessage.= "Please, find a summary of the services contracted by you that are about to expire.".($usehtml?"<br>\n":"\n").($usehtml?"<br>\n":"\n");
+    {
+        $allmessage.= "Dear customer".($usehtml?"<br>\n":"\n").($usehtml?"<br>\n":"\n");
+        $allmessage.= "Please, find a summary of the services contracted by you that are about to expire.".($usehtml?"<br>\n":"\n").($usehtml?"<br>\n":"\n");
     }
     $allmessage.= $message.($usehtml?"<br>\n":"\n");
     //$allmessage.= $langs->trans("Total")." = ".price($total,0,$userlang,0,0,-1,$conf->currency).($usehtml?"<br>\n":"\n");
     if (! empty($conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_CUSTOMERS_FOOTER))
     {
-    	$allmessage.=$conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_CUSTOMERS_FOOTER;
-    	if (dol_textishtml($conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_CUSTOMERS_FOOTER)) $usehtml+=1;
+        $allmessage.=$conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_CUSTOMERS_FOOTER;
+        if (dol_textishtml($conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_CUSTOMERS_FOOTER)) $usehtml+=1;
     }
 
     $mail = new CMailFile(
@@ -289,19 +289,19 @@ function envoi_mail($mode, $oldemail, $message, $total, $userlang, $oldtarget, $
     // Send or not email
     if ($mode == 'confirm')
     {
-    	$result=$mail->sendfile();
-    	if (! $result)
-    	{
-    		print "Error sending email ".$mail->error."\n";
-    		dol_syslog("Error sending email ".$mail->error."\n");
-    	}
+        $result=$mail->sendfile();
+        if (! $result)
+        {
+            print "Error sending email ".$mail->error."\n";
+            dol_syslog("Error sending email ".$mail->error."\n");
+        }
     }
     else
     {
-    	print "No email sent (test mode)\n";
-    	dol_syslog("No email sent (test mode)");
-    	$mail->dump_mail();
-    	$result=1;
+        print "No email sent (test mode)\n";
+        dol_syslog("No email sent (test mode)");
+        $mail->dump_mail();
+        $result=1;
     }
 
     unset($newlangs);

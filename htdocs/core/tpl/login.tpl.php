@@ -17,7 +17,7 @@
  */
 
 // Need global variable $title to be defined by caller (like dol_loginfunction)
-// Caller can also set 	$morelogincontent = array(['options']=>array('js'=>..., 'table'=>...);
+// Caller can also set     $morelogincontent = array(['options']=>array('js'=>..., 'table'=>...);
 
 
 // Protection to avoid direct call of template
@@ -47,10 +47,10 @@ if (! preg_match('/mainmenu=/', $php_self)) $php_self.=(preg_match('/\?/', $php_
 
 // Javascript code on logon page only to detect user tz, dst_observed, dst_first, dst_second
 $arrayofjs=array(
-	'/includes/jstz/jstz.min.js'.(empty($conf->dol_use_jmobile)?'':'?version='.urlencode(DOL_VERSION)),
-	'/core/js/dst.js'.(empty($conf->dol_use_jmobile)?'':'?version='.urlencode(DOL_VERSION))
+    '/includes/jstz/jstz.min.js'.(empty($conf->dol_use_jmobile)?'':'?version='.urlencode(DOL_VERSION)),
+    '/core/js/dst.js'.(empty($conf->dol_use_jmobile)?'':'?version='.urlencode(DOL_VERSION))
 );
-$titleofloginpage=$langs->trans('Login').' @ '.$titletruedolibarrversion;	// $titletruedolibarrversion is defined by dol_loginfunction in security2.lib.php. We must keep the @, some tools use it to know it is login page and find true dolibarr version.
+$titleofloginpage=$langs->trans('Login').' @ '.$titletruedolibarrversion;    // $titletruedolibarrversion is defined by dol_loginfunction in security2.lib.php. We must keep the @, some tools use it to know it is login page and find true dolibarr version.
 
 $disablenofollow=1;
 if (! preg_match('/'.constant('DOL_APPLICATION_TITLE').'/', $title)) $disablenofollow=0;
@@ -68,13 +68,13 @@ $colorbackhmenu1 = join(',', colorStringToArray($colorbackhmenu1));    // Normal
 
 <?php
 if (!empty($conf->global->ADD_UNSPLASH_LOGIN_BACKGROUND)) {
-	// For example $conf->global->ADD_UNSPLASH_LOGIN_BACKGROUND = 'https://source.unsplash.com/random'
+    // For example $conf->global->ADD_UNSPLASH_LOGIN_BACKGROUND = 'https://source.unsplash.com/random'
 ?>
-	<body class="body bodylogin" style="background-image: url('<?php echo $conf->global->ADD_UNSPLASH_LOGIN_BACKGROUND; ?>'); background-repeat: no-repeat; background-position: center center; background-attachment: fixed; background-size: cover; background-color: #ffffff;">
+    <body class="body bodylogin" style="background-image: url('<?php echo $conf->global->ADD_UNSPLASH_LOGIN_BACKGROUND; ?>'); background-repeat: no-repeat; background-position: center center; background-attachment: fixed; background-size: cover; background-color: #ffffff;">
 <?php
 } else {
 ?>
-	<body class="body bodylogin"<?php print empty($conf->global->MAIN_LOGIN_BACKGROUND)?'':' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; background-image: url(\''.DOL_URL_ROOT.'/viewimage.php?cache=1&noalt=1&modulepart=mycompany&file=logos/'.urlencode($conf->global->MAIN_LOGIN_BACKGROUND).'\')"'; ?>>
+    <body class="body bodylogin"<?php print empty($conf->global->MAIN_LOGIN_BACKGROUND)?'':' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; background-image: url(\''.DOL_URL_ROOT.'/viewimage.php?cache=1&noalt=1&modulepart=mycompany&file=logos/'.urlencode($conf->global->MAIN_LOGIN_BACKGROUND).'\')"'; ?>>
 <?php
 }
 ?>
@@ -82,8 +82,8 @@ if (!empty($conf->global->ADD_UNSPLASH_LOGIN_BACKGROUND)) {
 <?php if (empty($conf->dol_use_jmobile)) { ?>
 <script type="text/javascript">
 $(document).ready(function () {
-	/* Set focus on correct field */
-	<?php if ($focus_element) { ?>$('#<?php echo $focus_element; ?>').focus(); <?php } ?>		// Warning to use this only on visible element
+    /* Set focus on correct field */
+    <?php if ($focus_element) { ?>$('#<?php echo $focus_element; ?>').focus(); <?php } ?>        // Warning to use this only on visible element
 });
 </script>
 <?php } ?>
@@ -158,45 +158,45 @@ if ($disablenofollow) echo '</a>';
 
 <?php
 if (! empty($morelogincontent)) {
-	if (is_array($morelogincontent)) {
-		foreach ($morelogincontent as $format => $option)
-		{
-			if ($format == 'table') {
-				echo '<!-- Option by hook -->';
-				echo $option;
-			}
-		}
-	}
-	else {
-		echo '<!-- Option by hook -->';
-		echo $morelogincontent;
-	}
+    if (is_array($morelogincontent)) {
+        foreach ($morelogincontent as $format => $option)
+        {
+            if ($format == 'table') {
+                echo '<!-- Option by hook -->';
+                echo $option;
+            }
+        }
+    }
+    else {
+        echo '<!-- Option by hook -->';
+        echo $morelogincontent;
+    }
 }
 
 if ($captcha) {
-	// Add a variable param to force not using cache (jmobile)
-	$php_self = preg_replace('/[&\?]time=(\d+)/', '', $php_self);	// Remove param time
-	if (preg_match('/\?/', $php_self)) $php_self.='&time='.dol_print_date(dol_now(), 'dayhourlog');
-	else $php_self.='?time='.dol_print_date(dol_now(), 'dayhourlog');
-	// TODO: provide accessible captcha variants
+    // Add a variable param to force not using cache (jmobile)
+    $php_self = preg_replace('/[&\?]time=(\d+)/', '', $php_self);    // Remove param time
+    if (preg_match('/\?/', $php_self)) $php_self.='&time='.dol_print_date(dol_now(), 'dayhourlog');
+    else $php_self.='?time='.dol_print_date(dol_now(), 'dayhourlog');
+    // TODO: provide accessible captcha variants
 ?>
-	<!-- Captcha -->
-	<div class="trinputlogin">
-	<div class="tagtd nowraponall none center valignmiddle tdinputlogin">
+    <!-- Captcha -->
+    <div class="trinputlogin">
+    <div class="tagtd nowraponall none center valignmiddle tdinputlogin">
 
-	<table class="login_table_securitycode centpercent">
-	<tr class="valignmiddle">
-	<td>
-	<span class="span-icon-security">
-	<input id="securitycode" placeholder="<?php echo $langs->trans("SecurityCode"); ?>" class="flat input-icon-security width100" type="text" maxlength="5" name="code" tabindex="3" />
-	</span>
-	</td>
-	<td><img src="<?php echo DOL_URL_ROOT ?>/core/antispamimage.php" border="0" width="80" height="32" id="img_securitycode" /></td>
-	<td><a href="<?php echo $php_self; ?>" tabindex="4" data-role="button"><?php echo $captcha_refresh; ?></a></td>
-	</tr>
-	</table>
+    <table class="login_table_securitycode centpercent">
+    <tr class="valignmiddle">
+    <td>
+    <span class="span-icon-security">
+    <input id="securitycode" placeholder="<?php echo $langs->trans("SecurityCode"); ?>" class="flat input-icon-security width100" type="text" maxlength="5" name="code" tabindex="3" />
+    </span>
+    </td>
+    <td><img src="<?php echo DOL_URL_ROOT ?>/core/antispamimage.php" border="0" width="80" height="32" id="img_securitycode" /></td>
+    <td><a href="<?php echo $php_self; ?>" tabindex="4" data-role="button"><?php echo $captcha_refresh; ?></a></td>
+    </tr>
+    </table>
 
-	</div></div>
+    </div></div>
 <?php } ?>
 
 </div>
@@ -214,51 +214,51 @@ if ($captcha) {
 <?php
 if ($forgetpasslink || $helpcenterlink)
 {
-	$moreparam='';
-	if ($dol_hide_topmenu)   $moreparam.=(strpos($moreparam, '?')===false?'?':'&').'dol_hide_topmenu='.$dol_hide_topmenu;
-	if ($dol_hide_leftmenu)  $moreparam.=(strpos($moreparam, '?')===false?'?':'&').'dol_hide_leftmenu='.$dol_hide_leftmenu;
-	if ($dol_no_mouse_hover) $moreparam.=(strpos($moreparam, '?')===false?'?':'&').'dol_no_mouse_hover='.$dol_no_mouse_hover;
-	if ($dol_use_jmobile)    $moreparam.=(strpos($moreparam, '?')===false?'?':'&').'dol_use_jmobile='.$dol_use_jmobile;
+    $moreparam='';
+    if ($dol_hide_topmenu)   $moreparam.=(strpos($moreparam, '?')===false?'?':'&').'dol_hide_topmenu='.$dol_hide_topmenu;
+    if ($dol_hide_leftmenu)  $moreparam.=(strpos($moreparam, '?')===false?'?':'&').'dol_hide_leftmenu='.$dol_hide_leftmenu;
+    if ($dol_no_mouse_hover) $moreparam.=(strpos($moreparam, '?')===false?'?':'&').'dol_no_mouse_hover='.$dol_no_mouse_hover;
+    if ($dol_use_jmobile)    $moreparam.=(strpos($moreparam, '?')===false?'?':'&').'dol_use_jmobile='.$dol_use_jmobile;
 
-	echo '<br>';
-	echo '<div class="center" style="margin-top: 15px;">';
-	if ($forgetpasslink) {
-		$url=DOL_URL_ROOT.'/user/passwordforgotten.php'.$moreparam;
-		if (! empty($conf->global->MAIN_PASSWORD_FORGOTLINK)) $url=$conf->global->MAIN_PASSWORD_FORGOTLINK;
-		echo '<a class="alogin" href="'.dol_escape_htmltag($url).'">';
-		echo $langs->trans('PasswordForgotten');
-		echo '</a>';
-	}
+    echo '<br>';
+    echo '<div class="center" style="margin-top: 15px;">';
+    if ($forgetpasslink) {
+        $url=DOL_URL_ROOT.'/user/passwordforgotten.php'.$moreparam;
+        if (! empty($conf->global->MAIN_PASSWORD_FORGOTLINK)) $url=$conf->global->MAIN_PASSWORD_FORGOTLINK;
+        echo '<a class="alogin" href="'.dol_escape_htmltag($url).'">';
+        echo $langs->trans('PasswordForgotten');
+        echo '</a>';
+    }
 
-	if ($forgetpasslink && $helpcenterlink) echo '&nbsp;-&nbsp;';
+    if ($forgetpasslink && $helpcenterlink) echo '&nbsp;-&nbsp;';
 
-	if ($helpcenterlink) {
-		$url=DOL_URL_ROOT.'/support/index.php'.$moreparam;
-		if (! empty($conf->global->MAIN_HELPCENTER_LINKTOUSE)) $url=$conf->global->MAIN_HELPCENTER_LINKTOUSE;
-		echo '<a class="alogin" href="'.dol_escape_htmltag($url).'" target="_blank">';
-		echo $langs->trans('NeedHelpCenter');
-		echo '</a>';
-	}
-	echo '</div>';
+    if ($helpcenterlink) {
+        $url=DOL_URL_ROOT.'/support/index.php'.$moreparam;
+        if (! empty($conf->global->MAIN_HELPCENTER_LINKTOUSE)) $url=$conf->global->MAIN_HELPCENTER_LINKTOUSE;
+        echo '<a class="alogin" href="'.dol_escape_htmltag($url).'" target="_blank">';
+        echo $langs->trans('NeedHelpCenter');
+        echo '</a>';
+    }
+    echo '</div>';
 }
 
 if (isset($conf->file->main_authentication) && preg_match('/openid/', $conf->file->main_authentication))
 {
-	$langs->load("users");
+    $langs->load("users");
 
-	//if (! empty($conf->global->MAIN_OPENIDURL_PERUSER)) $url=
-	echo '<br>';
-	echo '<div class="center" style="margin-top: 4px;">';
+    //if (! empty($conf->global->MAIN_OPENIDURL_PERUSER)) $url=
+    echo '<br>';
+    echo '<div class="center" style="margin-top: 4px;">';
 
-	$url=$conf->global->MAIN_AUTHENTICATION_OPENID_URL;
-	if (! empty($url)) print '<a class="alogin" href="'.$url.'">'.$langs->trans("LoginUsingOpenID").'</a>';
-	else
-	{
-		$langs->load("errors");
-		print '<font class="warning">'.$langs->trans("ErrorOpenIDSetupNotComplete", 'MAIN_AUTHENTICATION_OPENID_URL').'</font>';
-	}
+    $url=$conf->global->MAIN_AUTHENTICATION_OPENID_URL;
+    if (! empty($url)) print '<a class="alogin" href="'.$url.'">'.$langs->trans("LoginUsingOpenID").'</a>';
+    else
+    {
+        $langs->load("errors");
+        print '<font class="warning">'.$langs->trans("ErrorOpenIDSetupNotComplete", 'MAIN_AUTHENTICATION_OPENID_URL').'</font>';
+    }
 
-	echo '</div>';
+    echo '</div>';
 }
 
 
@@ -277,20 +277,20 @@ if (isset($conf->file->main_authentication) && preg_match('/openid/', $conf->fil
 if (! empty($_SESSION['dol_loginmesg']))
 {
 ?>
-	<div class="center login_main_message"><div class="error">
-	<?php echo $_SESSION['dol_loginmesg']; ?>
-	</div></div>
+    <div class="center login_main_message"><div class="error">
+    <?php echo $_SESSION['dol_loginmesg']; ?>
+    </div></div>
 <?php
 }
 
 // Add commit strip
 if (!empty($conf->global->MAIN_EASTER_EGG_COMMITSTRIP)) {
     include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
-	if (substr($langs->defaultlang, 0, 2)=='fr') {
-		$resgetcommitstrip = getURLContent("http://www.commitstrip.com/fr/feed/");
-	} else {
-		$resgetcommitstrip = getURLContent("http://www.commitstrip.com/en/feed/");
-	}
+    if (substr($langs->defaultlang, 0, 2)=='fr') {
+        $resgetcommitstrip = getURLContent("http://www.commitstrip.com/fr/feed/");
+    } else {
+        $resgetcommitstrip = getURLContent("http://www.commitstrip.com/en/feed/");
+    }
     if ($resgetcommitstrip && $resgetcommitstrip['http_code'] == '200')
     {
         $xml = simplexml_load_string($resgetcommitstrip['content']);
@@ -304,9 +304,9 @@ if (!empty($conf->global->MAIN_EASTER_EGG_COMMITSTRIP)) {
 <?php if ($main_home)
 {
 ?>
-	<div class="center login_main_home paddingtopbottom <?php echo empty($conf->global->MAIN_LOGIN_BACKGROUND)?'':' backgroundsemitransparent'; ?>" style="max-width: 70%">
-	<?php echo $main_home; ?>
-	</div><br>
+    <div class="center login_main_home paddingtopbottom <?php echo empty($conf->global->MAIN_LOGIN_BACKGROUND)?'':' backgroundsemitransparent'; ?>" style="max-width: 70%">
+    <?php echo $main_home; ?>
+    </div><br>
 <?php
 }
 ?>
@@ -321,65 +321,65 @@ if (!empty($conf->global->MAIN_EASTER_EGG_COMMITSTRIP)) {
 if (! empty($conf->global->MAIN_HTML_FOOTER)) print $conf->global->MAIN_HTML_FOOTER;
 
 if (! empty($morelogincontent) && is_array($morelogincontent)) {
-	foreach ($morelogincontent as $format => $option)
-	{
-		if ($format == 'js') {
-			echo "\n".'<!-- Javascript by hook -->';
-			echo $option."\n";
-		}
-	}
+    foreach ($morelogincontent as $format => $option)
+    {
+        if ($format == 'js') {
+            echo "\n".'<!-- Javascript by hook -->';
+            echo $option."\n";
+        }
+    }
 }
 elseif (! empty($moreloginextracontent)) {
-	echo '<!-- Javascript by hook -->';
-	echo $moreloginextracontent;
+    echo '<!-- Javascript by hook -->';
+    echo $moreloginextracontent;
 }
 
 // Google Analytics (need Google module)
 if (! empty($conf->google->enabled) && ! empty($conf->global->MAIN_GOOGLE_AN_ID))
 {
-	if (empty($conf->dol_use_jmobile))
-	{
-		print "\n";
-		print '<script type="text/javascript">'."\n";
-		print '  var _gaq = _gaq || [];'."\n";
-		print '  _gaq.push([\'_setAccount\', \''.$conf->global->MAIN_GOOGLE_AN_ID.'\']);'."\n";
-		print '  _gaq.push([\'_trackPageview\']);'."\n";
-		print ''."\n";
-		print '  (function() {'."\n";
-		print '    var ga = document.createElement(\'script\'); ga.type = \'text/javascript\'; ga.async = true;'."\n";
-		print '    ga.src = (\'https:\' == document.location.protocol ? \'https://ssl\' : \'http://www\') + \'.google-analytics.com/ga.js\';'."\n";
-		print '    var s = document.getElementsByTagName(\'script\')[0]; s.parentNode.insertBefore(ga, s);'."\n";
-		print '  })();'."\n";
-		print '</script>'."\n";
-	}
+    if (empty($conf->dol_use_jmobile))
+    {
+        print "\n";
+        print '<script type="text/javascript">'."\n";
+        print '  var _gaq = _gaq || [];'."\n";
+        print '  _gaq.push([\'_setAccount\', \''.$conf->global->MAIN_GOOGLE_AN_ID.'\']);'."\n";
+        print '  _gaq.push([\'_trackPageview\']);'."\n";
+        print ''."\n";
+        print '  (function() {'."\n";
+        print '    var ga = document.createElement(\'script\'); ga.type = \'text/javascript\'; ga.async = true;'."\n";
+        print '    ga.src = (\'https:\' == document.location.protocol ? \'https://ssl\' : \'http://www\') + \'.google-analytics.com/ga.js\';'."\n";
+        print '    var s = document.getElementsByTagName(\'script\')[0]; s.parentNode.insertBefore(ga, s);'."\n";
+        print '  })();'."\n";
+        print '</script>'."\n";
+    }
 }
 
 // Google Adsense
 if (! empty($conf->google->enabled) && ! empty($conf->global->MAIN_GOOGLE_AD_CLIENT) && ! empty($conf->global->MAIN_GOOGLE_AD_SLOT))
 {
-	if (empty($conf->dol_use_jmobile))
-	{
+    if (empty($conf->dol_use_jmobile))
+    {
 ?>
-	<div class="center"><br>
-		<script type="text/javascript"><!--
-			google_ad_client = "<?php echo $conf->global->MAIN_GOOGLE_AD_CLIENT ?>";
-			google_ad_slot = "<?php echo $conf->global->MAIN_GOOGLE_AD_SLOT ?>";
-			google_ad_width = <?php echo $conf->global->MAIN_GOOGLE_AD_WIDTH ?>;
-			google_ad_height = <?php echo $conf->global->MAIN_GOOGLE_AD_HEIGHT ?>;
-			//-->
-		</script>
-		<script type="text/javascript"
-			src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
-		</script>
-	</div>
+    <div class="center"><br>
+        <script type="text/javascript"><!--
+            google_ad_client = "<?php echo $conf->global->MAIN_GOOGLE_AD_CLIENT ?>";
+            google_ad_slot = "<?php echo $conf->global->MAIN_GOOGLE_AD_SLOT ?>";
+            google_ad_width = <?php echo $conf->global->MAIN_GOOGLE_AD_WIDTH ?>;
+            google_ad_height = <?php echo $conf->global->MAIN_GOOGLE_AD_HEIGHT ?>;
+            //-->
+        </script>
+        <script type="text/javascript"
+            src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+        </script>
+    </div>
 <?php
-	}
+    }
 }
 ?>
 
 
 </div>
-</div>	<!-- end of center -->
+</div>    <!-- end of center -->
 
 
 </body>

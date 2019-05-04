@@ -68,17 +68,17 @@ print '</tr>';
 
 foreach ($triggers as $trigger)
 {
-	print '<tr class="oddeven">';
-	print '<td valign="top" width="14" align="center">'.$trigger['picto'].'</td>';
-	print '<td class="tdtop">'.$trigger['file'].'</td>';
-	print '<td valign="top" align="center">'.$trigger['status'].'</td>';
-	print '<td class="tdtop">';
-	$text=$trigger['info'];
-	$text.="<br>\n<strong>".$langs->trans("File")."</strong>:<br>\n".$trigger['relpath'];
-	//$text.="\n".$langs->trans("ExternalModule",$trigger['isocreorexternal']);
-	print $form->textwithpicto('', $text);
-	print '</td>';
-	print '</tr>';
+    print '<tr class="oddeven">';
+    print '<td valign="top" width="14" align="center">'.$trigger['picto'].'</td>';
+    print '<td class="tdtop">'.$trigger['file'].'</td>';
+    print '<td valign="top" align="center">'.$trigger['status'].'</td>';
+    print '<td class="tdtop">';
+    $text=$trigger['info'];
+    $text.="<br>\n<strong>".$langs->trans("File")."</strong>:<br>\n".$trigger['relpath'];
+    //$text.="\n".$langs->trans("ExternalModule",$trigger['isocreorexternal']);
+    print $form->textwithpicto('', $text);
+    print '</td>';
+    print '</tr>';
 }
 
 print '</table>';

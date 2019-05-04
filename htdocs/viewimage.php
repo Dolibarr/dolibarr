@@ -19,44 +19,44 @@
  */
 
 /**
- *		\file       htdocs/viewimage.php
- *		\brief      Wrapper to show images into Dolibarr screens.
- *		\remarks    Call to wrapper is :
- *					DOL_URL_ROOT.'/viewimage.php?modulepart=diroffile&file=relativepathofofile&cache=0
- *					DOL_URL_ROOT.'/viewimage.php?hashp=sharekey
+ *        \file       htdocs/viewimage.php
+ *        \brief      Wrapper to show images into Dolibarr screens.
+ *        \remarks    Call to wrapper is :
+ *                    DOL_URL_ROOT.'/viewimage.php?modulepart=diroffile&file=relativepathofofile&cache=0
+ *                    DOL_URL_ROOT.'/viewimage.php?hashp=sharekey
  */
 
-//if (! defined('NOREQUIREUSER'))	define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
-//if (! defined('NOREQUIREDB'))		define('NOREQUIREDB','1');		// Not disabled cause need to load personalized language
-if (! defined('NOREQUIRESOC'))		define('NOREQUIRESOC', '1');
-if (! defined('NOREQUIRETRAN'))		define('NOREQUIRETRAN', '1');
-if (! defined('NOCSRFCHECK'))		define('NOCSRFCHECK', '1');
-if (! defined('NOTOKENRENEWAL'))	define('NOTOKENRENEWAL', '1');
-if (! defined('NOREQUIREMENU'))		define('NOREQUIREMENU', '1');
-if (! defined('NOREQUIREHTML'))		define('NOREQUIREHTML', '1');
-if (! defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX', '1');
+//if (! defined('NOREQUIREUSER'))    define('NOREQUIREUSER','1');    // Not disabled cause need to load personalized language
+//if (! defined('NOREQUIREDB'))        define('NOREQUIREDB','1');        // Not disabled cause need to load personalized language
+if (! defined('NOREQUIRESOC'))        define('NOREQUIRESOC', '1');
+if (! defined('NOREQUIRETRAN'))        define('NOREQUIRETRAN', '1');
+if (! defined('NOCSRFCHECK'))        define('NOCSRFCHECK', '1');
+if (! defined('NOTOKENRENEWAL'))    define('NOTOKENRENEWAL', '1');
+if (! defined('NOREQUIREMENU'))        define('NOREQUIREMENU', '1');
+if (! defined('NOREQUIREHTML'))        define('NOREQUIREHTML', '1');
+if (! defined('NOREQUIREAJAX'))        define('NOREQUIREAJAX', '1');
 
 // Some value of modulepart can be used to get resources that are public so no login are required.
 // Note that only directory logo is free to access without login.
 if (isset($_GET["modulepart"]) && $_GET["modulepart"] == 'mycompany' && preg_match('/^\/?logos\//', $_GET['file']))
 {
-	if (! defined("NOLOGIN"))		define("NOLOGIN", 1);
-	if (! defined("NOCSRFCHECK"))	define("NOCSRFCHECK", 1);	// We accept to go on this page from external web site.
-	if (! defined("NOIPCHECK"))		define("NOIPCHECK", 1);		// Do not check IP defined into conf $dolibarr_main_restrict_ip
+    if (! defined("NOLOGIN"))        define("NOLOGIN", 1);
+    if (! defined("NOCSRFCHECK"))    define("NOCSRFCHECK", 1);    // We accept to go on this page from external web site.
+    if (! defined("NOIPCHECK"))        define("NOIPCHECK", 1);        // Do not check IP defined into conf $dolibarr_main_restrict_ip
 }
 // For direct external download link, we don't need to load/check we are into a login session
 if (isset($_GET["hashp"]) && ! defined("NOLOGIN"))
 {
-	if (! defined("NOLOGIN"))		define("NOLOGIN", 1);
-	if (! defined("NOCSRFCHECK"))	define("NOCSRFCHECK", 1);	// We accept to go on this page from external web site.
-	if (! defined("NOIPCHECK"))		define("NOIPCHECK", 1);		// Do not check IP defined into conf $dolibarr_main_restrict_ip
+    if (! defined("NOLOGIN"))        define("NOLOGIN", 1);
+    if (! defined("NOCSRFCHECK"))    define("NOCSRFCHECK", 1);    // We accept to go on this page from external web site.
+    if (! defined("NOIPCHECK"))        define("NOIPCHECK", 1);        // Do not check IP defined into conf $dolibarr_main_restrict_ip
 }
 // Some value of modulepart can be used to get resources that are public so no login are required.
 if ((isset($_GET["modulepart"]) && $_GET["modulepart"] == 'medias'))
 {
-	if (! defined("NOLOGIN"))		define("NOLOGIN", 1);
-	if (! defined("NOCSRFCHECK"))	define("NOCSRFCHECK", 1);	// We accept to go on this page from external web site.
-	if (! defined("NOIPCHECK"))		define("NOIPCHECK", 1);		// Do not check IP defined into conf $dolibarr_main_restrict_ip
+    if (! defined("NOLOGIN"))        define("NOLOGIN", 1);
+    if (! defined("NOCSRFCHECK"))    define("NOCSRFCHECK", 1);    // We accept to go on this page from external web site.
+    if (! defined("NOIPCHECK"))        define("NOIPCHECK", 1);        // Do not check IP defined into conf $dolibarr_main_restrict_ip
 }
 
 // For multicompany
@@ -66,7 +66,7 @@ if (is_numeric($entity)) define("DOLENTITY", $entity);
 /**
  * Header empty
  *
- * @return	void
+ * @return    void
  */
 function llxHeader()
 {
@@ -74,13 +74,13 @@ function llxHeader()
 /**
  * Footer empty
  *
- * @return	void
+ * @return    void
  */
 function llxFooter()
 {
 }
 
-require 'main.inc.php';	// Load $user and permissions
+require 'main.inc.php';    // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 $action=GETPOST('action', 'alpha');
@@ -125,43 +125,43 @@ if (GETPOST("cache", 'alpha'))
 // If we have a hash public (hashp), we guess the original_file.
 if (! empty($hashp))
 {
-	include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
-	$ecmfile=new EcmFiles($db);
-	$result = $ecmfile->fetch(0, '', '', '', $hashp);
-	if ($result > 0)
-	{
-		$tmp = explode('/', $ecmfile->filepath, 2);		// $ecmfile->filepath is relative to document directory
-		// filepath can be 'users/X' or 'X/propale/PR11111'
-		if (is_numeric($tmp[0])) // If first tmp is numeric, it is subdir of company for multicompany, we take next part.
-		{
-			$tmp = explode('/', $tmp[1], 2);
-		}
-		$moduleparttocheck = $tmp[0];	// moduleparttocheck is first part of path
+    include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
+    $ecmfile=new EcmFiles($db);
+    $result = $ecmfile->fetch(0, '', '', '', $hashp);
+    if ($result > 0)
+    {
+        $tmp = explode('/', $ecmfile->filepath, 2);        // $ecmfile->filepath is relative to document directory
+        // filepath can be 'users/X' or 'X/propale/PR11111'
+        if (is_numeric($tmp[0])) // If first tmp is numeric, it is subdir of company for multicompany, we take next part.
+        {
+            $tmp = explode('/', $tmp[1], 2);
+        }
+        $moduleparttocheck = $tmp[0];    // moduleparttocheck is first part of path
 
-		if ($modulepart)	// Not required, so often not defined, for link using public hashp parameter.
-		{
-			if ($moduleparttocheck == $modulepart)
-			{
-				// We remove first level of directory
-				$original_file = (($tmp[1]?$tmp[1].'/':'').$ecmfile->filename);		// this is relative to module dir
-				//var_dump($original_file); exit;
-			}
-			else
-			{
-				accessforbidden('Bad link. File is from another module part.', 0, 0, 1);
-			}
-		}
-		else
-		{
-			$modulepart = $moduleparttocheck;
-			$original_file = (($tmp[1]?$tmp[1].'/':'').$ecmfile->filename);		// this is relative to module dir
-		}
-	}
-	else
-	{
-		$langs->load("errors");
-		accessforbidden($langs->trans("ErrorFileNotFoundWithSharedLink"), 0, 0, 1);
-	}
+        if ($modulepart)    // Not required, so often not defined, for link using public hashp parameter.
+        {
+            if ($moduleparttocheck == $modulepart)
+            {
+                // We remove first level of directory
+                $original_file = (($tmp[1]?$tmp[1].'/':'').$ecmfile->filename);        // this is relative to module dir
+                //var_dump($original_file); exit;
+            }
+            else
+            {
+                accessforbidden('Bad link. File is from another module part.', 0, 0, 1);
+            }
+        }
+        else
+        {
+            $modulepart = $moduleparttocheck;
+            $original_file = (($tmp[1]?$tmp[1].'/':'').$ecmfile->filename);        // this is relative to module dir
+        }
+    }
+    else
+    {
+        $langs->load("errors");
+        accessforbidden($langs->trans("ErrorFileNotFoundWithSharedLink"), 0, 0, 1);
+    }
 }
 
 // Define mime type
@@ -188,50 +188,50 @@ $fullpath_original_file     = $check_access['original_file'];               // $
 
 if (! empty($hashp))
 {
-	$accessallowed = 1;					// When using hashp, link is public so we force $accessallowed
-	$sqlprotectagainstexternals = '';
+    $accessallowed = 1;                    // When using hashp, link is public so we force $accessallowed
+    $sqlprotectagainstexternals = '';
 }
 else
 {
-	// Basic protection (against external users only)
-	if ($user->societe_id > 0)
-	{
-		if ($sqlprotectagainstexternals)
-		{
-			$resql = $db->query($sqlprotectagainstexternals);
-			if ($resql)
-			{
-				$num=$db->num_rows($resql);
-				$i=0;
-				while ($i < $num)
-				{
-					$obj = $db->fetch_object($resql);
-					if ($user->societe_id != $obj->fk_soc)
-					{
-						$accessallowed=0;
-						break;
-					}
-					$i++;
-				}
-			}
-		}
-	}
+    // Basic protection (against external users only)
+    if ($user->societe_id > 0)
+    {
+        if ($sqlprotectagainstexternals)
+        {
+            $resql = $db->query($sqlprotectagainstexternals);
+            if ($resql)
+            {
+                $num=$db->num_rows($resql);
+                $i=0;
+                while ($i < $num)
+                {
+                    $obj = $db->fetch_object($resql);
+                    if ($user->societe_id != $obj->fk_soc)
+                    {
+                        $accessallowed=0;
+                        break;
+                    }
+                    $i++;
+                }
+            }
+        }
+    }
 }
 
 // Security:
 // Limit access if permissions are wrong
 if (! $accessallowed)
 {
-	accessforbidden();
+    accessforbidden();
 }
 
 // Security:
 // On interdit les remontees de repertoire ainsi que les pipe dans les noms de fichiers.
 if (preg_match('/\.\./', $fullpath_original_file) || preg_match('/[<>|]/', $fullpath_original_file))
 {
-	dol_syslog("Refused to deliver file ".$fullpath_original_file);
-	print "ErrorFileNameInvalid: ".$original_file;
-	exit;
+    dol_syslog("Refused to deliver file ".$fullpath_original_file);
+    print "ErrorFileNameInvalid: ".$original_file;
+    exit;
 }
 
 
@@ -239,7 +239,7 @@ if (preg_match('/\.\./', $fullpath_original_file) || preg_match('/[<>|]/', $full
 if ($modulepart == 'barcode')
 {
     $generator=GETPOST("generator", "alpha");
-    $code=GETPOST("code", 'none');							// This can be rich content (qrcode, datamatrix, ...)
+    $code=GETPOST("code", 'none');                            // This can be rich content (qrcode, datamatrix, ...)
     $encoding=GETPOST("encoding", "alpha");
     $readable=GETPOST("readable", 'alpha')?GETPOST("readable", "alpha"):"Y";
 
@@ -273,7 +273,7 @@ if ($modulepart == 'barcode')
         $result=$module->buildBarCode($code, $encoding, $readable);
     }
 }
-else					// Open and return file
+else                    // Open and return file
 {
     clearstatcache();
 

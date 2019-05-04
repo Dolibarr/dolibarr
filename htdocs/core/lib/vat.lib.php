@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2016	Alexandre Spangaro	<aspangaro@open-dsi.fr>
+/* Copyright (C) 2016    Alexandre Spangaro    <aspangaro@open-dsi.fr>
  * Copyright (C) 2018   Philippe Grand      <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -26,8 +26,8 @@
 /**
  * Prepare array with list of tabs
  *
- * @param   Object	$object		Object related to tabs
- * @return  array				Array of tabs to show
+ * @param   Object    $object        Object related to tabs
+ * @return  array                Array of tabs to show
  */
 function vat_prepare_head($object)
 {
@@ -36,27 +36,27 @@ function vat_prepare_head($object)
     $tab = 0;
     $head = array();
 
-	$head[$tab][0] = DOL_URL_ROOT.'/compta/tva/card.php?id='.$object->id;
-	$head[$tab][1] = $langs->trans('Card');
-	$head[$tab][2] = 'card';
-	$tab++;
+    $head[$tab][0] = DOL_URL_ROOT.'/compta/tva/card.php?id='.$object->id;
+    $head[$tab][1] = $langs->trans('Card');
+    $head[$tab][2] = 'card';
+    $tab++;
 
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
-    // $this->tabs = array('entity:-tabname);   												to remove a tab
+    // $this->tabs = array('entity:-tabname);                                                   to remove a tab
     complete_head_from_modules($conf, $langs, $object, $head, $tab, 'vat');
-	
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+    
+    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
     require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-	$upload_dir = $conf->tax->dir_output . "/" . dol_sanitizeFileName($object->ref);
-	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
+    $upload_dir = $conf->tax->dir_output . "/" . dol_sanitizeFileName($object->ref);
+    $nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
     $nbLinks=Link::count($db, $object->element, $object->id);
-	$head[$tab][0] = DOL_URL_ROOT.'/compta/tva/document.php?id='.$object->id;
-	$head[$tab][1] = $langs->trans("Documents");
-	if (($nbFiles+$nbLinks) > 0) $head[$tab][1].= ' <span class="badge">'.($nbFiles+$nbLinks).'</span>';
-	$head[$tab][2] = 'documents';
-	$tab++;
+    $head[$tab][0] = DOL_URL_ROOT.'/compta/tva/document.php?id='.$object->id;
+    $head[$tab][1] = $langs->trans("Documents");
+    if (($nbFiles+$nbLinks) > 0) $head[$tab][1].= ' <span class="badge">'.($nbFiles+$nbLinks).'</span>';
+    $head[$tab][2] = 'documents';
+    $tab++;
 
     $head[$tab][0] = DOL_URL_ROOT.'/compta/tva/info.php?id='.$object->id;
     $head[$tab][1] = $langs->trans("Info");

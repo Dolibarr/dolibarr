@@ -19,9 +19,9 @@
  */
 
 /**
- *	    \file       htdocs/societe/notify/card.php
+ *        \file       htdocs/societe/notify/card.php
  *      \ingroup    societe notification
- *		\brief      Tab for notifications of third party
+ *        \brief      Tab for notifications of third party
  */
 
 require '../../main.inc.php';
@@ -78,12 +78,12 @@ if (empty($reshook))
     {
         if (empty($contactid))
         {
-    	    setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Contact")), null, 'errors');
+            setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Contact")), null, 'errors');
             $error++;
         }
         if ($actionid <= 0)
         {
-    	    setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Action")), null, 'errors');
+            setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Action")), null, 'errors');
             $error++;
         }
 
@@ -212,7 +212,7 @@ if ($result > 0)
     print '<br>'.$langs->trans("NotificationsDescUser");
     print '<br>'.$langs->trans("NotificationsDescContact");
     print '<br>'.$langs->trans("NotificationsDescGlobal");
-	print '</div>';
+    print '</div>';
 
     print '<br><br>'."\n";
 
@@ -233,7 +233,7 @@ if ($result > 0)
     print_liste_field_titre("Action", $_SERVER["PHP_SELF"], "", '', $param, '"width="35%"', $sortfield, $sortorder);
     print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "n.type", '', $param, '"width="10%"', $sortfield, $sortorder);
     print_liste_field_titre('');
-	print "</tr>\n";
+    print "</tr>\n";
 
     $var=false;
     $listofemails=$object->thirdparty_and_contact_email_array();
@@ -247,7 +247,7 @@ if ($result > 0)
 
         foreach($listofmanagedeventfornotification as $managedeventfornotification)
         {
- 			$label=($langs->trans("Notify_".$managedeventfornotification['code'])!="Notify_".$managedeventfornotification['code']?$langs->trans("Notify_".$managedeventfornotification['code']):$managedeventfornotification['label']);
+             $label=($langs->trans("Notify_".$managedeventfornotification['code'])!="Notify_".$managedeventfornotification['code']?$langs->trans("Notify_".$managedeventfornotification['code']):$managedeventfornotification['label']);
             $actions[$managedeventfornotification['rowid']]=$label;
         }
         print '<tr class="oddeven"><td class="maxwidthonsmartphone">';
@@ -310,8 +310,8 @@ if ($result > 0)
     print_liste_field_titre('', '', '');
     print '</tr>';
 
-	$langs->load("errors");
-	$langs->load("other");
+    $langs->load("errors");
+    $langs->load("other");
 
     if ($num)
     {
@@ -359,51 +359,51 @@ if ($result > 0)
     /*
     foreach($conf->global as $key => $val)
     {
-    	if (! preg_match('/^NOTIFICATION_FIXEDEMAIL_(.*)/', $key, $reg)) continue;
-    	$var = ! $var;
-		print '<tr class="oddeven"><td>';
-		$listtmp=explode(',',$val);
-		$first=1;
-		foreach($listtmp as $keyemail => $valemail)
-		{
-			if (! $first) print ', ';
-			$first=0;
-			$valemail=trim($valemail);
-    		//print $keyemail.' - '.$valemail.' - '.$reg[1].'<br>';
-			if (isValidEmail($valemail, 1))
-			{
-				if ($valemail == '__SUPERVISOREMAIL__') print $valemail;
-				else print ' &lt;'.$valemail.'&gt;';
-			}
-			else
-			{
-				print ' '.img_warning().' '.$langs->trans("ErrorBadEMail",$valemail);
-			}
-		}
-		print '</td>';
-		print '<td>';
-		$notifcode=preg_replace('/_THRESHOLD_.*$/','',$reg[1]);
-		$notifcodecond=preg_replace('/^.*_(THRESHOLD_)/','$1',$reg[1]);
-		$label=($langs->trans("Notify_".$notifcode)!="Notify_".$notifcode?$langs->trans("Notify_".$notifcode):$notifcode);
-		print $label;
-		if (preg_match('/^THRESHOLD_HIGHER_(.*)$/',$notifcodecond,$regcond) && ($regcond[1] > 0))
-		{
-			print ' - '.$langs->trans("IfAmountHigherThan",$regcond[1]);
-		}
-		print '</td>';
-		print '<td>';
-		print $langs->trans("Email");
-		print '</td>';
-		print '<td class="right">'.$langs->trans("SeeModuleSetup", $langs->transnoentitiesnoconv("Module600Name")).'</td>';
-		print '</tr>';
+        if (! preg_match('/^NOTIFICATION_FIXEDEMAIL_(.*)/', $key, $reg)) continue;
+        $var = ! $var;
+        print '<tr class="oddeven"><td>';
+        $listtmp=explode(',',$val);
+        $first=1;
+        foreach($listtmp as $keyemail => $valemail)
+        {
+            if (! $first) print ', ';
+            $first=0;
+            $valemail=trim($valemail);
+            //print $keyemail.' - '.$valemail.' - '.$reg[1].'<br>';
+            if (isValidEmail($valemail, 1))
+            {
+                if ($valemail == '__SUPERVISOREMAIL__') print $valemail;
+                else print ' &lt;'.$valemail.'&gt;';
+            }
+            else
+            {
+                print ' '.img_warning().' '.$langs->trans("ErrorBadEMail",$valemail);
+            }
+        }
+        print '</td>';
+        print '<td>';
+        $notifcode=preg_replace('/_THRESHOLD_.*$/','',$reg[1]);
+        $notifcodecond=preg_replace('/^.*_(THRESHOLD_)/','$1',$reg[1]);
+        $label=($langs->trans("Notify_".$notifcode)!="Notify_".$notifcode?$langs->trans("Notify_".$notifcode):$notifcode);
+        print $label;
+        if (preg_match('/^THRESHOLD_HIGHER_(.*)$/',$notifcodecond,$regcond) && ($regcond[1] > 0))
+        {
+            print ' - '.$langs->trans("IfAmountHigherThan",$regcond[1]);
+        }
+        print '</td>';
+        print '<td>';
+        print $langs->trans("Email");
+        print '</td>';
+        print '<td class="right">'.$langs->trans("SeeModuleSetup", $langs->transnoentitiesnoconv("Module600Name")).'</td>';
+        print '</tr>';
     }*/
 
     /*if ($user->admin)
     {
-	    $var = ! $var;
-		print '<tr class="oddeven"><td colspan="4">';
-		print '+ <a href="'.DOL_URL_ROOT.'/admin/notification.php">'.$langs->trans("SeeModuleSetup", $langs->transnoentitiesnoconv("Module600Name")).'</a>';
-		print '</td></tr>';
+        $var = ! $var;
+        print '<tr class="oddeven"><td colspan="4">';
+        print '+ <a href="'.DOL_URL_ROOT.'/admin/notification.php">'.$langs->trans("SeeModuleSetup", $langs->transnoentitiesnoconv("Module600Name")).'</a>';
+        print '</td></tr>';
     }*/
 
     print '</table>';
@@ -429,10 +429,10 @@ if ($result > 0)
     {
         $result = $db->query($sql);
         $nbtotalofrecords = $db->num_rows($result);
-        if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+        if (($page * $limit) > $nbtotalofrecords)    // if total resultset is smaller then paging size (filtering), goto and load page 0
         {
-        	$page = 0;
-        	$offset = 0;
+            $page = 0;
+            $offset = 0;
         }
     }
 
@@ -487,15 +487,15 @@ if ($result > 0)
             print '<tr class="oddeven"><td>';
             if ($obj->id > 0)
             {
-	            $contactstatic->id=$obj->id;
-	            $contactstatic->lastname=$obj->lastname;
-	            $contactstatic->firstname=$obj->firstname;
-	            print $contactstatic->getNomUrl(1);
-	            print $obj->email?' &lt;'.$obj->email.'&gt;':$langs->trans("NoMail");
+                $contactstatic->id=$obj->id;
+                $contactstatic->lastname=$obj->lastname;
+                $contactstatic->firstname=$obj->firstname;
+                print $contactstatic->getNomUrl(1);
+                print $obj->email?' &lt;'.$obj->email.'&gt;':$langs->trans("NoMail");
             }
             else
-			{
-				print $obj->email;
+            {
+                print $obj->email;
             }
             print '</td>';
             print '<td>';
@@ -510,11 +510,11 @@ if ($result > 0)
             /*print '<td>';
             if ($obj->object_type == 'order')
             {
-				$orderstatic->id=$obj->object_id;
-				$orderstatic->ref=...
-				print $orderstatic->getNomUrl(1);
+                $orderstatic->id=$obj->object_id;
+                $orderstatic->ref=...
+                print $orderstatic->getNomUrl(1);
             }
-           	print '</td>';*/
+               print '</td>';*/
             // print
             print'<td class="right">'.dol_print_date($db->jdate($obj->daten), 'dayhour').'</td>';
             print '</tr>';

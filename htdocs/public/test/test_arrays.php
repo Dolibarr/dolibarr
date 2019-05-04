@@ -1,14 +1,14 @@
 <?php
-//define("NOLOGIN",1);		// This means this output page does not require to be logged.
-define("NOCSRFCHECK", 1);	// We accept to go on this page from external web site.
+//define("NOLOGIN",1);        // This means this output page does not require to be logged.
+define("NOCSRFCHECK", 1);    // We accept to go on this page from external web site.
 
 require '../../main.inc.php';
 
 if ($dolibarr_main_prod) {
-	accessforbidden();
+    accessforbidden();
 }
 
-$usedolheader=1;	// 1 = Test inside a dolibarr page, 0 = Use hard coded header
+$usedolheader=1;    // 1 = Test inside a dolibarr page, 0 = Use hard coded header
 
 $form=new Form($db);
 
@@ -20,56 +20,56 @@ $form=new Form($db);
 
 if (empty($usedolheader))
 {
-	header("Content-type: text/html; charset=UTF8");
-	?>
-	<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-	<html>
-	<head>
-	<meta name="robots" content="noindex,nofollow" />
-	<meta name="author" content="Dolibarr Development Team">
-	<link rel="shortcut icon" type="image/x-icon" href="<?php echo DOL_URL_ROOT ?>/theme/eldy/img/favicon.ico"/>
-	<title>Test page</title>
-	<!-- Includes for JQuery (Ajax library) -->
-	<link rel="stylesheet" type="text/css" href="<?php echo DOL_URL_ROOT ?>/includes/jquery/css/base/jquery-ui.css" />
-	<!-- <link rel="stylesheet" type="text/css" href="<?php echo DOL_URL_ROOT ?>/includes/jquery/plugins/datatables/media/css/jquery.dataTables.css" /> -->
-	<link rel="stylesheet" type="text/css" title="default" href="<?php echo DOL_URL_ROOT ?>/theme/eldy/style.css.php<?php echo ($_GET["dol_use_jmobile"] == 1)?'?dol_use_jmobile=1&dol_optimize_smallscreen=1':''; ?>" />
-	<!-- Includes JS for JQuery -->
-	<script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/includes/jquery/js/jquery.min.js"></script>
-	<!-- migration fixes for removed Jquery functions -->
-	<script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/includes/jquery/js/jquery-migrate.min.js"></script>
-	<script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/includes/jquery/plugins/tablednd/jquery.tablednd.0.6.min.js"></script>
-	<!-- <script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/includes/jquery/plugins/datatables/media/js/jquery.dataTables.js"></script> -->
-	<script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/includes/jquery/plugins/select2/select2.min.js?version=4.0.0-beta"></script>
-	</head>
+    header("Content-type: text/html; charset=UTF8");
+    ?>
+    <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+    <html>
+    <head>
+    <meta name="robots" content="noindex,nofollow" />
+    <meta name="author" content="Dolibarr Development Team">
+    <link rel="shortcut icon" type="image/x-icon" href="<?php echo DOL_URL_ROOT ?>/theme/eldy/img/favicon.ico"/>
+    <title>Test page</title>
+    <!-- Includes for JQuery (Ajax library) -->
+    <link rel="stylesheet" type="text/css" href="<?php echo DOL_URL_ROOT ?>/includes/jquery/css/base/jquery-ui.css" />
+    <!-- <link rel="stylesheet" type="text/css" href="<?php echo DOL_URL_ROOT ?>/includes/jquery/plugins/datatables/media/css/jquery.dataTables.css" /> -->
+    <link rel="stylesheet" type="text/css" title="default" href="<?php echo DOL_URL_ROOT ?>/theme/eldy/style.css.php<?php echo ($_GET["dol_use_jmobile"] == 1)?'?dol_use_jmobile=1&dol_optimize_smallscreen=1':''; ?>" />
+    <!-- Includes JS for JQuery -->
+    <script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/includes/jquery/js/jquery.min.js"></script>
+    <!-- migration fixes for removed Jquery functions -->
+    <script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/includes/jquery/js/jquery-migrate.min.js"></script>
+    <script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/includes/jquery/plugins/tablednd/jquery.tablednd.0.6.min.js"></script>
+    <!-- <script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/includes/jquery/plugins/datatables/media/js/jquery.dataTables.js"></script> -->
+    <script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/includes/jquery/plugins/select2/select2.min.js?version=4.0.0-beta"></script>
+    </head>
 
-	<body style="padding: 10px;">
+    <body style="padding: 10px;">
 
 
-	<?php
+    <?php
 }
 else
 {
     $arraycss=array();
     $arrayjs=array();
     /*
-	$arraycss=array('/includes/jquery/plugins/datatables/media/css/jquery.dataTables.css',
-			'/includes/jquery/plugins/datatables/extensions/Buttons/css/buttons.dataTables.min.css',
-			'/includes/jquery/plugins/datatables/extensions/ColReorder/css/colReorder.dataTables.min.css'
-	);
-	$arrayjs=array('/includes/jquery/plugins/datatables/media/js/jquery.dataTables.js',
-			'/includes/jquery/plugins/datatables/extensions/Buttons/js/dataTables.buttons.js',
-			'/includes/jquery/plugins/datatables/extensions/Buttons/js/buttons.colVis.min.js',
-			'/includes/jquery/plugins/datatables/extensions/Buttons/js/buttons.html5.min.js',
-			'/includes/jquery/plugins/datatables/extensions/Buttons/js/buttons.flash.min.js',
-			'/includes/jquery/plugins/datatables/extensions/Buttons/js/buttons.print.min.js',
-			'/includes/jquery/plugins/datatables/extensions/ColReorder/js/dataTables.colReorder.min.js',
-			'/includes/jszip/jszip.min.js',
-			'/includes/pdfmake/pdfmake.min.js',
-			'/includes/pdfmake/vfs_fonts.js'
-	);
+    $arraycss=array('/includes/jquery/plugins/datatables/media/css/jquery.dataTables.css',
+            '/includes/jquery/plugins/datatables/extensions/Buttons/css/buttons.dataTables.min.css',
+            '/includes/jquery/plugins/datatables/extensions/ColReorder/css/colReorder.dataTables.min.css'
+    );
+    $arrayjs=array('/includes/jquery/plugins/datatables/media/js/jquery.dataTables.js',
+            '/includes/jquery/plugins/datatables/extensions/Buttons/js/dataTables.buttons.js',
+            '/includes/jquery/plugins/datatables/extensions/Buttons/js/buttons.colVis.min.js',
+            '/includes/jquery/plugins/datatables/extensions/Buttons/js/buttons.html5.min.js',
+            '/includes/jquery/plugins/datatables/extensions/Buttons/js/buttons.flash.min.js',
+            '/includes/jquery/plugins/datatables/extensions/Buttons/js/buttons.print.min.js',
+            '/includes/jquery/plugins/datatables/extensions/ColReorder/js/dataTables.colReorder.min.js',
+            '/includes/jszip/jszip.min.js',
+            '/includes/pdfmake/pdfmake.min.js',
+            '/includes/pdfmake/vfs_fonts.js'
+    );
     */
 
-	llxHeader('', '', '', '', 0, 0, $arrayjs, $arraycss);
+    llxHeader('', '', '', '', 0, 0, $arrayjs, $arraycss);
 }
 
 
@@ -91,27 +91,27 @@ This page is a sample of page using tables. It is designed to make test with<br>
 <br><hr><br>Example 0a : Table with div+div+div containg a select that should be overflowed and truncated => Use this to align text or form<br>
 
 <div class="tagtable centpercent">
-	<div class="tagtr">
-	<div class="tagtd maxwidthonsmartphone" style="overflow: hidden; white-space: nowrap;"> <!-- If you remove max-width, the jmobile overflow does not work -->
-	<select name="hidedetails" class="centpercentonsmartphone"><option>aaaaaaaaaaaaaaafd sf sf gfd gfds fsd  gfd fhfg hf dhfg hg fhfgdhfgdh gh gfdhdgf h gfdh dfhg dfgh dfgh fdgh gfd hfd hfd gs fgdf gaaaa</option><option>gdfs gdf g sdfg dfg fdsg dsfg dfs gdfs gds fgs  gdfdf gd</option></select>
-	</div>
-	<div class="tagtd maxwidthonsmartphone" style="overflow: hidden; white-space: nowrap;"> <!-- If you remove max-width, the jmobile overflow does not work -->
-	<select name="hidedetails" class="centpercentonsmartphone"><option>aaaaaaaaaaaaaaafd sf sf gfd gfds fsd  gfd fhfg hf dhfg hg fhfgdhfgdh gh gfdhdgf h gfdh dfhg dfgh dfgh fdgh gfd hfd hfd gs fgdf gaaaa</option><option>gdfs gdf g sdfg dfg fdsg dsfg dfs gdfs gds fgs  gdfdf gd</option></select>
-	</div>
-	</div>
+    <div class="tagtr">
+    <div class="tagtd maxwidthonsmartphone" style="overflow: hidden; white-space: nowrap;"> <!-- If you remove max-width, the jmobile overflow does not work -->
+    <select name="hidedetails" class="centpercentonsmartphone"><option>aaaaaaaaaaaaaaafd sf sf gfd gfds fsd  gfd fhfg hf dhfg hg fhfgdhfgdh gh gfdhdgf h gfdh dfhg dfgh dfgh fdgh gfd hfd hfd gs fgdf gaaaa</option><option>gdfs gdf g sdfg dfg fdsg dsfg dfs gdfs gds fgs  gdfdf gd</option></select>
+    </div>
+    <div class="tagtd maxwidthonsmartphone" style="overflow: hidden; white-space: nowrap;"> <!-- If you remove max-width, the jmobile overflow does not work -->
+    <select name="hidedetails" class="centpercentonsmartphone"><option>aaaaaaaaaaaaaaafd sf sf gfd gfds fsd  gfd fhfg hf dhfg hg fhfgdhfgdh gh gfdhdgf h gfdh dfhg dfgh dfgh fdgh gfd hfd hfd gs fgdf gaaaa</option><option>gdfs gdf g sdfg dfg fdsg dsfg dfs gdfs gds fgs  gdfdf gd</option></select>
+    </div>
+    </div>
 </div>
 
 <br><hr><br>Example 0b: Table with div+form+div containg a select that should be overflowed and truncated => Use this to align text or form<br>
 
 <div class="tagtable centpercent">
-	<form action="xxx" method="POST" class="tagtr">
-	<div class="tagtd maxwidthonsmartphone" style="overflow: hidden; white-space: nowrap;"> <!-- If you remove max-width, the jmobile overflow does not work -->
-	<select name="hidedetails" class="centpercentonsmartphone"><option>aaaaaaaaaaaaaaafd sf sf gfd gfds fsd  gfd fhfg hf dhfg hg fhfgdhfgdh gh gfdhdgf h gfdh dfhg dfgh dfgh fdgh gfd hfd hfd gs fgdf gaaaa</option><option>gdfs gdf g sdfg dfg fdsg dsfg dfs gdfs gds fgs  gdfdf gd</option></select>
-	</div>
-	<div class="tagtd maxwidthonsmartphone" style="overflow: hidden; white-space: nowrap;"> <!-- If you remove max-width, the jmobile overflow does not work -->
-	<select name="hidedetails" class="centpercentonsmartphone"><option>aaaaaaaaaaaaaaafd sf sf gfd gfds fsd  gfd fhfg hf dhfg hg fhfgdhfgdh gh gfdhdgf h gfdh dfhg dfgh dfgh fdgh gfd hfd hfd gs fgdf gaaaa</option><option>gdfs gdf g sdfg dfg fdsg dsfg dfs gdfs gds fgs  gdfdf gd</option></select>
-	</div>
-	</form>
+    <form action="xxx" method="POST" class="tagtr">
+    <div class="tagtd maxwidthonsmartphone" style="overflow: hidden; white-space: nowrap;"> <!-- If you remove max-width, the jmobile overflow does not work -->
+    <select name="hidedetails" class="centpercentonsmartphone"><option>aaaaaaaaaaaaaaafd sf sf gfd gfds fsd  gfd fhfg hf dhfg hg fhfgdhfgdh gh gfdhdgf h gfdh dfhg dfgh dfgh fdgh gfd hfd hfd gs fgdf gaaaa</option><option>gdfs gdf g sdfg dfg fdsg dsfg dfs gdfs gds fgs  gdfdf gd</option></select>
+    </div>
+    <div class="tagtd maxwidthonsmartphone" style="overflow: hidden; white-space: nowrap;"> <!-- If you remove max-width, the jmobile overflow does not work -->
+    <select name="hidedetails" class="centpercentonsmartphone"><option>aaaaaaaaaaaaaaafd sf sf gfd gfds fsd  gfd fhfg hf dhfg hg fhfgdhfgdh gh gfdhdgf h gfdh dfhg dfgh dfgh fdgh gfd hfd hfd gs fgdf gaaaa</option><option>gdfs gdf g sdfg dfg fdsg dsfg dfs gdfs gds fgs  gdfdf gd</option></select>
+    </div>
+    </form>
 </div>
 
 <br><hr><br>Example 0c: Table with table+tr+td containg a select that should be overflowed and truncated => Use this to align text or form<br>
@@ -119,10 +119,10 @@ This page is a sample of page using tables. It is designed to make test with<br>
 <table class="centpercent">
     <tr>
     <td class="tagtd maxwidthonsmartphone" style="overflow: hidden; white-space: nowrap;"> <!-- If you remove max-width, the jmobile overflow does not work -->
-	<select name="hidedetails" class="centpercentonsmartphone"><option>aaaaaaaaaaaaaaafd sf sf gfd gfds fsd  gfd fhfg hf dhfg hg fhfgdhfgdh gh gfdhdgf h gfdh dfhg dfgh dfgh fdgh gfd hfd hfd gs fgdf gaaaa</option><option>gdfs gdf g sdfg dfg fdsg dsfg dfs gdfs gds fgs  gdfdf gd</option></select>
+    <select name="hidedetails" class="centpercentonsmartphone"><option>aaaaaaaaaaaaaaafd sf sf gfd gfds fsd  gfd fhfg hf dhfg hg fhfgdhfgdh gh gfdhdgf h gfdh dfhg dfgh dfgh fdgh gfd hfd hfd gs fgdf gaaaa</option><option>gdfs gdf g sdfg dfg fdsg dsfg dfs gdfs gds fgs  gdfdf gd</option></select>
     </td>
     <td class="tagtd maxwidthonsmartphone" style="overflow: hidden; white-space: nowrap;"> <!-- If you remove max-width, the jmobile overflow does not work -->
-	<select name="hidedetails" class="centpercentonsmartphone"><option>aaaaaaaaaaaaaaafd sf sf gfd gfds fsd  gfd fhfg hf dhfg hg fhfgdhfgdh gh gfdhdgf h gfdh dfhg dfgh dfgh fdgh gfd hfd hfd gs fgdf gaaaa</option><option>gdfs gdf g sdfg dfg fdsg dsfg dfs gdfs gds fgs  gdfdf gd</option></select>
+    <select name="hidedetails" class="centpercentonsmartphone"><option>aaaaaaaaaaaaaaafd sf sf gfd gfds fsd  gfd fhfg hf dhfg hg fhfgdhfgdh gh gfdhdgf h gfdh dfhg dfgh dfgh fdgh gfd hfd hfd gs fgdf gaaaa</option><option>gdfs gdf g sdfg dfg fdsg dsfg dfs gdfs gds fgs  gdfdf gd</option></select>
     </td>
     </tr>
 </table>
@@ -159,7 +159,7 @@ $productspecimen->initAsSpecimen();
 
 $sortfield='aaa';
 $sortorder='ASC';
-$tasksarray=array(1,2,3);	// To force having several lines
+$tasksarray=array(1,2,3);    // To force having several lines
 $tagidfortablednd='tablelines3';
 if (! empty($conf->use_javascript_ajax)) include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
 
@@ -185,25 +185,25 @@ print_barre_liste('Title of my list', 12, $_SERVER["PHP_SELF"], '', '', '', 'Tex
 $moreforfilter.='<div class="divsearchfield">';
 $moreforfilter.=$langs->trans('This is a select list for a filter A'). ': ';
 $cate_arbo = array('field1'=>'value1a into the select list A','field2'=>'value2a');
-$moreforfilter.=$form->selectarray('search_aaa', $cate_arbo, '', 1);		// List without js combo
+$moreforfilter.=$form->selectarray('search_aaa', $cate_arbo, '', 1);        // List without js combo
 $moreforfilter.='</div>';
 
 $moreforfilter.='<div class="divsearchfield">';
 $moreforfilter.=$langs->trans('This is a select list for a filter B'). ': ';
 $cate_arbo = array('field1'=>'value1b into the select list B','field2'=>'value2b');
-$moreforfilter.=$form->selectarray('search_bbb', $cate_arbo, '', 1, 0, 0, '', 0, 0, 0, 0, '', 1);		// List with js combo
+$moreforfilter.=$form->selectarray('search_bbb', $cate_arbo, '', 1, 0, 0, '', 0, 0, 0, 0, '', 1);        // List with js combo
 $moreforfilter.='</div>';
 
 $moreforfilter.='<div class="divsearchfield">';
 $moreforfilter.=$langs->trans('This is a select list for a filter C'). ': ';
 $cate_arbo = array('field1'=>'value1c into the select list C','field2'=>'value2c');
-$moreforfilter.=$form->selectarray('search_ccc', $cate_arbo, '', 1, 0, 0, '', 0, 0, 0, 0, '', 1);		// List with js combo
+$moreforfilter.=$form->selectarray('search_ccc', $cate_arbo, '', 1, 0, 0, '', 0, 0, 0, 0, '', 1);        // List with js combo
 $moreforfilter.='</div>';
 
 $moreforfilter.='<div class="divsearchfield">';
 $moreforfilter.=$langs->trans('This is a select list for a filter D'). ': ';
 $cate_arbo = array('field1'=>'value1d into the select list D','field2'=>'value2d');
-$moreforfilter.=$form->selectarray('search_ddd', $cate_arbo, '', 1, 0, 0, '', 0, 0, 0, 0, '', 1);		// List with js combo
+$moreforfilter.=$form->selectarray('search_ddd', $cate_arbo, '', 1, 0, 0, '', 0, 0, 0, 0, '', 1);        // List with js combo
 $moreforfilter.='</div>';
 
 if (! empty($moreforfilter))
@@ -245,42 +245,42 @@ if (! empty($moreforfilter))
 <script type="text/javascript">
 $(document).ready(function(){
     $('#idtableexample2').dataTable( {
-    	<?php
-    	if ($optioncss=='print') {
-    	 	print '\'dom\': \'lfrtip\',';
-    	} else {
-    		print '\'dom\': \'Blfrtip\',';
-    	}
-    	?>
-    	"colReorder": true,
-		'buttons': [
-		          'colvis','copy', 'csv', 'excel', 'pdf', 'print'
-		      ],
-		"sPaginationType": "full_numbers",
-		"lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "<?php echo $langs->trans('All'); ?>"]],
-		"oLanguage": {
-			"sLengthMenu": "<?php echo $langs->trans('Show'); ?> _MENU_ <?php echo $langs->trans('Entries'); ?>",
-			"sSearch": "<?php echo $langs->trans('Search'); ?>:",
-			"sZeroRecords": "<?php echo $langs->trans('NoRecordsToDisplay'); ?>",
-			"sInfoEmpty": "<?php echo $langs->trans('NoEntriesToShow'); ?>",
-			"sInfoFiltered": "(<?php echo $langs->trans('FilteredFrom'); ?> _MAX_ <?php echo $langs->trans('TotalEntries'); ?>)",
-			"sInfo": "<?php echo $langs->trans('Showing'); ?> _START_ <?php echo $langs->trans('To'); ?> _END_ <?php echo $langs->trans('WTOf'); ?> _TOTAL_ <?php echo $langs->trans('Entries'); ?>",
-			"oPaginate": {
-				"sFirst": "<?php echo $langs->transnoentities('First'); ?>",
-				"sLast": "<?php echo $langs->transnoentities('Last'); ?>",
-				"sPrevious": "<?php echo $langs->transnoentities('Previous'); ?>",
-				"sNext": "<?php echo $langs->transnoentities('Next'); ?>"
-			}
-		},
-		"aaSorting": [[0,'desc']],
+        <?php
+        if ($optioncss=='print') {
+             print '\'dom\': \'lfrtip\',';
+        } else {
+            print '\'dom\': \'Blfrtip\',';
+        }
+        ?>
+        "colReorder": true,
+        'buttons': [
+                  'colvis','copy', 'csv', 'excel', 'pdf', 'print'
+              ],
+        "sPaginationType": "full_numbers",
+        "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "<?php echo $langs->trans('All'); ?>"]],
+        "oLanguage": {
+            "sLengthMenu": "<?php echo $langs->trans('Show'); ?> _MENU_ <?php echo $langs->trans('Entries'); ?>",
+            "sSearch": "<?php echo $langs->trans('Search'); ?>:",
+            "sZeroRecords": "<?php echo $langs->trans('NoRecordsToDisplay'); ?>",
+            "sInfoEmpty": "<?php echo $langs->trans('NoEntriesToShow'); ?>",
+            "sInfoFiltered": "(<?php echo $langs->trans('FilteredFrom'); ?> _MAX_ <?php echo $langs->trans('TotalEntries'); ?>)",
+            "sInfo": "<?php echo $langs->trans('Showing'); ?> _START_ <?php echo $langs->trans('To'); ?> _END_ <?php echo $langs->trans('WTOf'); ?> _TOTAL_ <?php echo $langs->trans('Entries'); ?>",
+            "oPaginate": {
+                "sFirst": "<?php echo $langs->transnoentities('First'); ?>",
+                "sLast": "<?php echo $langs->transnoentities('Last'); ?>",
+                "sPrevious": "<?php echo $langs->transnoentities('Previous'); ?>",
+                "sNext": "<?php echo $langs->transnoentities('Next'); ?>"
+            }
+        },
+        "aaSorting": [[0,'desc']],
 /* To use in ajax mode
-			"bProcessing": true,
-		"stateSave": true,
-		"bServerSide": true,
-		"sAjaxSource": "../ajax.php",
-		"aoColumnDefs": [
-		                 { "bSortable": false, "aTargets": [ 2,3,4 ] }
-		               ],
+            "bProcessing": true,
+        "stateSave": true,
+        "bServerSide": true,
+        "sAjaxSource": "../ajax.php",
+        "aoColumnDefs": [
+                         { "bSortable": false, "aTargets": [ 2,3,4 ] }
+                       ],
 */
     })
 });
@@ -293,9 +293,9 @@ $(document).ready(function(){
 
 
 <?php
-	$tasksarray=array(1,2,3);	// To force having several lines
-	$tagidfortablednd='tablelines';
-	if (! empty($conf->use_javascript_ajax)) include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
+    $tasksarray=array(1,2,3);    // To force having several lines
+    $tagidfortablednd='tablelines';
+    if (! empty($conf->use_javascript_ajax)) include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
 ?>
 <div class="tagtable centpercent liste_titre_bydiv" id="tablelines">
     <div class="tagtr liste_titre">
@@ -323,7 +323,7 @@ $(document).ready(function(){
         <div class="tagtd tdlineupdown">lll</div>
     </div>
 <!-- Using form into div make Firefox crazy (page loading does not end) -->
-<!--	<form class="liste_titre" method="POST" action="1.php">
+<!--    <form class="liste_titre" method="POST" action="1.php">
         <div>line1<input type="hidden" name="cartitem" value="1"></div>
         <div><label><input type="checkbox" name="hidedetails" value="2"> A checkbox inside a cell</label></div>
         <div><input name="count" value="4"></div>
@@ -343,7 +343,7 @@ $(document).ready(function(){
 <?php
 if (! empty($usedolheader))
 {
-	llxFooter();
+    llxFooter();
 } else { ?>
 
 </body>

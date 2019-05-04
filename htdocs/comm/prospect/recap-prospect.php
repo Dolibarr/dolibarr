@@ -17,9 +17,9 @@
  */
 
 /**
- *   	\file       htdocs/comm/prospect/recap-prospect.php
- *		\ingroup    societe
- *		\brief      Page with prospect summary
+ *       \file       htdocs/comm/prospect/recap-prospect.php
+ *        \ingroup    societe
+ *        \brief      Page with prospect summary
  */
 
 require '../../main.inc.php';
@@ -54,7 +54,7 @@ if ($socid > 0)
     /*
      * Affichage onglets
      */
-	$head = societe_prepare_head($societe);
+    $head = societe_prepare_head($societe);
 
     dol_fiche_head($head, 'prospect', $langs->trans("ThirdParty"), 0, 'company');
 
@@ -67,7 +67,7 @@ if ($socid > 0)
     // Name
     print '<tr><td width="20%">'.$langs->trans("Thirdpary").'</td><td width="80%" colspan="3">'.$societe->getNomUrl(1).'</td></tr>';
 
-	// Prefix
+    // Prefix
     if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
     {
         print '<tr><td>'.$langs->trans("Prefix").'</td><td colspan="3">';
@@ -82,11 +82,11 @@ if ($socid > 0)
     print '</div>';
 
 
-	print $langs->trans("FeatureNotYetAvailable");
+    print $langs->trans("FeatureNotYetAvailable");
 }
 else
 {
-  	dol_print_error($db);
+      dol_print_error($db);
 }
 
 // End of page

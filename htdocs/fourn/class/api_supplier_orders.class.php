@@ -56,10 +56,10 @@ class SupplierOrders extends DolibarrApi
      *
      * Return an array with supplier order information
      *
-     * @param 	int 	$id ID of supplier order
-     * @return 	array|mixed data without useless information
+     * @param     int     $id ID of supplier order
+     * @return     array|mixed data without useless information
      *
-     * @throws 	RestException
+     * @throws     RestException
      */
     public function get($id)
     {
@@ -85,12 +85,12 @@ class SupplierOrders extends DolibarrApi
      *
      * Get a list of supplier orders
      *
-     * @param string	$sortfield	      Sort field
-     * @param string	$sortorder	      Sort order
-     * @param int		$limit		      Limit for list
-     * @param int		$page		      Page number
-     * @param string   	$thirdparty_ids	  Thirdparty ids to filter orders of. {@example '1' or '1,2,3'} {@pattern /^[0-9,]*$/i}
-     * @param string	$status		      Filter by order status : draft | validated | approved | running | received_start | received_end | cancelled | refused
+     * @param string    $sortfield          Sort field
+     * @param string    $sortorder          Sort order
+     * @param int        $limit              Limit for list
+     * @param int        $page              Page number
+     * @param string       $thirdparty_ids      Thirdparty ids to filter orders of. {@example '1' or '1,2,3'} {@pattern /^[0-9,]*$/i}
+     * @param string    $status              Filter by order status : draft | validated | approved | running | received_start | received_end | cancelled | refused
      * @param string    $sqlfilters       Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.datec:<:'20160101')"
      * @return array                      Array of order objects
      *
@@ -118,7 +118,7 @@ class SupplierOrders extends DolibarrApi
         $sql.= ' WHERE t.entity IN ('.getEntity('supplier_order').')';
         if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql.= " AND t.fk_soc = sc.fk_soc";
         if ($socids) $sql.= " AND t.fk_soc IN (".$socids.")";
-        if ($search_sale > 0) $sql.= " AND t.rowid = sc.fk_soc";		// Join for the needed table to filter by sale
+        if ($search_sale > 0) $sql.= " AND t.rowid = sc.fk_soc";        // Join for the needed table to filter by sale
 
         // Filter by status
         if ($status == 'draft')     $sql.= " AND t.fk_statut IN (0)";
@@ -146,7 +146,7 @@ class SupplierOrders extends DolibarrApi
         }
 
         $sql.= $db->order($sortfield, $sortorder);
-        if ($limit)	{
+        if ($limit)    {
             if ($page < 0)
             {
                 $page = 0;

@@ -66,7 +66,7 @@ class CActionComm
     /**
      *  Constructor
      *
-     *  @param	DoliDB		$db		Database handler
+     *  @param    DoliDB        $db        Database handler
      */
     public function __construct($db)
     {
@@ -106,7 +106,7 @@ class CActionComm
                 return 1;
             }
             else
-			{
+            {
                 $this->db->free($resql);
                 return 0;
             }
@@ -162,44 +162,44 @@ class CActionComm
                     $qualified=1;
 
                     // $obj->type can be system, systemauto, module, moduleauto, xxx, xxxauto
-                    if ($qualified && $onlyautoornot > 0 && preg_match('/^system/', $obj->type) && ! preg_match('/^AC_OTH/', $obj->code)) $qualified=0;	// We discard detailed system events. We keep only the 2 generic lines (AC_OTH and AC_OTH_AUTO)
+                    if ($qualified && $onlyautoornot > 0 && preg_match('/^system/', $obj->type) && ! preg_match('/^AC_OTH/', $obj->code)) $qualified=0;    // We discard detailed system events. We keep only the 2 generic lines (AC_OTH and AC_OTH_AUTO)
 
                     if ($qualified && $obj->module)
                     {
-                        if ($obj->module == 'invoice' && ! $conf->facture->enabled)	 $qualified=0;
+                        if ($obj->module == 'invoice' && ! $conf->facture->enabled)     $qualified=0;
                         if ($obj->module == 'order'   && ! $conf->commande->enabled) $qualified=0;
-                        if ($obj->module == 'propal'  && ! $conf->propal->enabled)	 $qualified=0;
+                        if ($obj->module == 'propal'  && ! $conf->propal->enabled)     $qualified=0;
                         if ($obj->module == 'invoice_supplier' && ! $conf->fournisseur->enabled)   $qualified=0;
                         if ($obj->module == 'order_supplier'   && ! $conf->fournisseur->enabled)   $qualified=0;
-                        if ($obj->module == 'shipping'  && ! $conf->expedition->enabled)	 $qualified=0;
+                        if ($obj->module == 'shipping'  && ! $conf->expedition->enabled)     $qualified=0;
                     }
 
                     if ($qualified)
                     {
                         $keyfortrans='';
-                    	$transcode='';
-                    	$code=$obj->code;
-                    	if ($onlyautoornot > 0 && $code == 'AC_OTH') $code='AC_MANUAL';
-                    	if ($onlyautoornot > 0 && $code == 'AC_OTH_AUTO') $code='AC_AUTO';
-                    	if ($shortlabel)
-                    	{
-                    		$keyfortrans="Action".$code.'Short';
-                    		$transcode=$langs->trans($keyfortrans);
-                    	}
-                    	if (empty($keyfortrans) || $keyfortrans == $transcode)
-                    	{
-                    		$keyfortrans="Action".$code;
-                    		$transcode=$langs->trans($keyfortrans);
-                    	}
-                    	$label = (($transcode!=$keyfortrans) ? $transcode : $langs->trans($obj->label));
+                        $transcode='';
+                        $code=$obj->code;
+                        if ($onlyautoornot > 0 && $code == 'AC_OTH') $code='AC_MANUAL';
+                        if ($onlyautoornot > 0 && $code == 'AC_OTH_AUTO') $code='AC_AUTO';
+                        if ($shortlabel)
+                        {
+                            $keyfortrans="Action".$code.'Short';
+                            $transcode=$langs->trans($keyfortrans);
+                        }
+                        if (empty($keyfortrans) || $keyfortrans == $transcode)
+                        {
+                            $keyfortrans="Action".$code;
+                            $transcode=$langs->trans($keyfortrans);
+                        }
+                        $label = (($transcode!=$keyfortrans) ? $transcode : $langs->trans($obj->label));
                         if ($onlyautoornot == -1 && ! empty($conf->global->AGENDA_USE_EVENT_TYPE) && ! preg_match('/auto/i', $code))
                         {
                             $label='&nbsp; '.$label;
                             $repid[-99]=$langs->trans("ActionAC_MANUAL");
                             $repcode['AC_NON_AUTO']=$langs->trans("ActionAC_MANUAL");
                         }
-                    	$repid[$obj->id] = $label;
-                    	$repcode[$obj->code] = $label;
+                        $repid[$obj->id] = $label;
+                        $repcode[$obj->code] = $label;
                         if ($onlyautoornot > 0 && preg_match('/^module/', $obj->type) && $obj->module) $repcode[$obj->code].=' ('.$langs->trans("Module").': '.$obj->module.')';
                     }
                     $i++;
@@ -220,8 +220,8 @@ class CActionComm
     /**
      *  Return name of action type as a label translated
      *
-     *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Picto only
-     *  @return string			      	Label of action type
+     *    @param    int        $withpicto        0=No picto, 1=Include picto into link, 2=Picto only
+     *  @return string                      Label of action type
      */
     public function getNomUrl($withpicto = 0)
     {

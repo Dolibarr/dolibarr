@@ -34,7 +34,7 @@ class mod_ticket_simple extends ModeleNumRefTicket
      * Dolibarr version of the loaded document
      * @var string
      */
-	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
+    public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
     public $prefix = 'TS';
 
@@ -44,16 +44,16 @@ class mod_ticket_simple extends ModeleNumRefTicket
     public $error = '';
 
     /**
-	 * @var string Nom du modele
-	 * @deprecated
-	 * @see name
-	 */
-	public $nom='Simple';
+     * @var string Nom du modele
+     * @deprecated
+     * @see name
+     */
+    public $nom='Simple';
 
-	/**
-	 * @var string model name
-	 */
-	public $name='Simple';
+    /**
+     * @var string model name
+     */
+    public $name='Simple';
 
     /**
      *  Return description of numbering module

@@ -19,7 +19,7 @@
 /**
  *      \file       htdocs/comm/action/info.php
  *      \ingroup    agenda
- *		\brief      Page des informations d'une action
+ *        \brief      Page des informations d'une action
  */
 
 require '../../main.inc.php';

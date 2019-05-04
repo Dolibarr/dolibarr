@@ -21,8 +21,8 @@
 
 
 /**
- *	    \class      ModeleProductCode
- *		\brief  	Parent class for product code generators
+ *        \class      ModeleProductCode
+ *        \brief      Parent class for product code generators
  */
 
 /**
@@ -34,7 +34,7 @@
  require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
 
 /**
- *	Parent class to manage intervention document templates
+ *    Parent class to manage intervention document templates
  */
 abstract class ModelePDFUserGroup extends CommonDocGenerator
 {
@@ -46,11 +46,11 @@ abstract class ModelePDFUserGroup extends CommonDocGenerator
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
-     *	Return list of active generation modules
+     *    Return list of active generation modules
      *
-     *  @param	DoliDB	$db     			Database handler
-     *  @param  integer	$maxfilenamelength  Max length of value to show
-     *  @return	array						List of templates
+     *  @param    DoliDB    $db                 Database handler
+     *  @param  integer    $maxfilenamelength  Max length of value to show
+     *  @return    array                        List of templates
      */
     public static function liste_modeles($db, $maxfilenamelength = 0)
     {

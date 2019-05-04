@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2003		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+/* Copyright (C) 2003        Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2003		Jean-Louis Bergamo		<jlb@j1b.org>
  * Copyright (C) 2004-2009	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Sebastien Di Cintio		<sdicintio@ressource-toi.org>
@@ -22,9 +22,9 @@
  */
 
 /**
- *   	\file       htdocs/admin/usergroup.php
- *		\ingroup    core
- *		\brief      Page to setup usergroup module
+ *       \file       htdocs/admin/usergroup.php
+ *        \ingroup    core
+ *        \brief      Page to setup usergroup module
  */
 
 require '../main.inc.php';
@@ -51,37 +51,37 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'set_default')
 {
-	$ret = addDocumentModel($value, $type, $label, $scandir);
-	$res = true;
+    $ret = addDocumentModel($value, $type, $label, $scandir);
+    $res = true;
 }
 
 elseif ($action == 'del_default')
 {
-	$ret = delDocumentModel($value, $type);
-	if ($ret > 0)
-	{
+    $ret = delDocumentModel($value, $type);
+    if ($ret > 0)
+    {
         if ($conf->global->USERGROUP_ADDON_PDF_ODT == "$value") dolibarr_del_const($db, 'USERGROUP_ADDON_PDF_ODT', $conf->entity);
-	}
-	$res = true;
+    }
+    $res = true;
 }
 
 // Set default model
 elseif ($action == 'setdoc')
 {
-	if (dolibarr_set_const($db, "USERGROUP_ADDON_PDF_ODT", $value, 'chaine', 0, '', $conf->entity))
-	{
-		// La constante qui a ete lue en avant du nouveau set
-		// on passe donc par une variable pour avoir un affichage coherent
-		$conf->global->USERGROUP_ADDON_PDF_ODT = $value;
-	}
+    if (dolibarr_set_const($db, "USERGROUP_ADDON_PDF_ODT", $value, 'chaine', 0, '', $conf->entity))
+    {
+        // La constante qui a ete lue en avant du nouveau set
+        // on passe donc par une variable pour avoir un affichage coherent
+        $conf->global->USERGROUP_ADDON_PDF_ODT = $value;
+    }
 
-	// On active le modele
-	$ret = delDocumentModel($value, $type);
-	if ($ret > 0)
-	{
-		$ret = addDocumentModel($value, $type, $label, $scandir);
-	}
-	$res = true;
+    // On active le modele
+    $ret = delDocumentModel($value, $type);
+    if ($ret > 0)
+    {
+        $ret = addDocumentModel($value, $type, $label, $scandir);
+    }
+    $res = true;
 }
 elseif (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
 {
@@ -139,18 +139,18 @@ $sql.= " AND entity = ".$conf->entity;
 $resql=$db->query($sql);
 if ($resql)
 {
-	$i = 0;
-	$num_rows=$db->num_rows($resql);
-	while ($i < $num_rows)
-	{
-		$array = $db->fetch_array($resql);
-		array_push($def, $array[0]);
-		$i++;
-	}
+    $i = 0;
+    $num_rows=$db->num_rows($resql);
+    while ($i < $num_rows)
+    {
+        $array = $db->fetch_array($resql);
+        array_push($def, $array[0]);
+        $i++;
+    }
 }
 else
 {
-	dol_print_error($db);
+    dol_print_error($db);
 }
 
 print '<table class="noborder" width="100%">';
@@ -169,7 +169,7 @@ foreach ($dirmodels as $reldir)
 {
     foreach (array('','/doc') as $valdir)
     {
-    	$dir = dol_buildpath($reldir."core/modules/usergroup".$valdir);
+        $dir = dol_buildpath($reldir."core/modules/usergroup".$valdir);
         if (is_dir($dir))
         {
             $handle=opendir($dir);
@@ -187,89 +187,89 @@ foreach ($dirmodels as $reldir)
                     if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file))
                     {
 
-                    	if (file_exists($dir.'/'.$file))
-                    	{
-                    		$name = substr($file, 4, dol_strlen($file) -16);
-	                        $classname = substr($file, 0, dol_strlen($file) -12);
+                        if (file_exists($dir.'/'.$file))
+                        {
+                            $name = substr($file, 4, dol_strlen($file) -16);
+                            $classname = substr($file, 0, dol_strlen($file) -12);
 
-	                        require_once $dir.'/'.$file;
-	                        $module = new $classname($db);
+                            require_once $dir.'/'.$file;
+                            $module = new $classname($db);
 
-	                        $modulequalified=1;
-	                        if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) $modulequalified=0;
-	                        if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) $modulequalified=0;
+                            $modulequalified=1;
+                            if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) $modulequalified=0;
+                            if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) $modulequalified=0;
 
-	                        if ($modulequalified)
-	                        {
-	                            print '<tr class="oddeven"><td width="100">';
-	                            print (empty($module->name)?$name:$module->name);
-	                            print "</td><td>\n";
-	                            if (method_exists($module, 'info')) print $module->info($langs);
-	                            else print $module->description;
-	                            print '</td>';
+                            if ($modulequalified)
+                            {
+                                print '<tr class="oddeven"><td width="100">';
+                                print (empty($module->name)?$name:$module->name);
+                                print "</td><td>\n";
+                                if (method_exists($module, 'info')) print $module->info($langs);
+                                else print $module->description;
+                                print '</td>';
 
-	                            // Active
-	                            if (in_array($name, $def))
-	                            {
-	                            	print '<td align="center">'."\n";
-	                            	print '<a href="'.$_SERVER["PHP_SELF"].'?action=del_default&value='.$name.'">';
-	                            	print img_picto($langs->trans("Enabled"), 'switch_on');
-	                            	print '</a>';
-	                            	print '</td>';
-	                            }
-	                            else
-	                            {
-	                                print '<td align="center">'."\n";
-	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=set_default&value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
-	                                print "</td>";
-	                            }
+                                // Active
+                                if (in_array($name, $def))
+                                {
+                                    print '<td align="center">'."\n";
+                                    print '<a href="'.$_SERVER["PHP_SELF"].'?action=del_default&value='.$name.'">';
+                                    print img_picto($langs->trans("Enabled"), 'switch_on');
+                                    print '</a>';
+                                    print '</td>';
+                                }
+                                else
+                                {
+                                    print '<td align="center">'."\n";
+                                    print '<a href="'.$_SERVER["PHP_SELF"].'?action=set_default&value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+                                    print "</td>";
+                                }
 
-	                            // Defaut
-	                            print '<td align="center">';
-	                            if ($conf->global->USERGROUP_ADDON_PDF == $name)
-	                            {
-	                                print img_picto($langs->trans("Default"), 'on');
-	                            }
-	                            else
-	                            {
-	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
-	                            }
-	                            print '</td>';
+                                // Defaut
+                                print '<td align="center">';
+                                if ($conf->global->USERGROUP_ADDON_PDF == $name)
+                                {
+                                    print img_picto($langs->trans("Default"), 'on');
+                                }
+                                else
+                                {
+                                    print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+                                }
+                                print '</td>';
 
-	                           // Info
-		    					$htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
-					    		$htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
-			                    if ($module->type == 'pdf')
-			                    {
-			                        $htmltooltip.='<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
-			                    }
-					    		$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
-					    		$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo, 1, 1);
-					    		$htmltooltip.='<br>'.$langs->trans("PaymentMode").': '.yn($module->option_modereg, 1, 1);
-					    		$htmltooltip.='<br>'.$langs->trans("PaymentConditions").': '.yn($module->option_condreg, 1, 1);
-					    		$htmltooltip.='<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang, 1, 1);
-					    		$htmltooltip.='<br>'.$langs->trans("WatermarkOnDraftOrders").': '.yn($module->option_draft_watermark, 1, 1);
+                               // Info
+                                $htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
+                                $htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
+                                if ($module->type == 'pdf')
+                                {
+                                    $htmltooltip.='<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
+                                }
+                                $htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
+                                $htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo, 1, 1);
+                                $htmltooltip.='<br>'.$langs->trans("PaymentMode").': '.yn($module->option_modereg, 1, 1);
+                                $htmltooltip.='<br>'.$langs->trans("PaymentConditions").': '.yn($module->option_condreg, 1, 1);
+                                $htmltooltip.='<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang, 1, 1);
+                                $htmltooltip.='<br>'.$langs->trans("WatermarkOnDraftOrders").': '.yn($module->option_draft_watermark, 1, 1);
 
 
-	                            print '<td align="center">';
-	                            print $form->textwithpicto('', $htmltooltip, 1, 0);
-	                            print '</td>';
+                                print '<td align="center">';
+                                print $form->textwithpicto('', $htmltooltip, 1, 0);
+                                print '</td>';
 
-	                            // Preview
-	                            print '<td align="center">';
-	                            if ($module->type == 'pdf')
-	                            {
-	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'contract').'</a>';
-	                            }
-	                            else
-	                            {
-	                                print img_object($langs->trans("PreviewNotAvailable"), 'generic');
-	                            }
-	                            print '</td>';
+                                // Preview
+                                print '<td align="center">';
+                                if ($module->type == 'pdf')
+                                {
+                                    print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'contract').'</a>';
+                                }
+                                else
+                                {
+                                    print img_object($langs->trans("PreviewNotAvailable"), 'generic');
+                                }
+                                print '</td>';
 
-	                            print "</tr>\n";
-	                        }
-                    	}
+                                print "</tr>\n";
+                            }
+                        }
                     }
                 }
             }

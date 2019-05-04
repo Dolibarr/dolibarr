@@ -23,53 +23,53 @@
  */
 
 /**
- *   	\file       htdocs/don/class/don.class.php
- *		\ingroup    Donation
- *		\brief      File of class to manage donations
+ *       \file       htdocs/don/class/don.class.php
+ *        \ingroup    Donation
+ *        \brief      File of class to manage donations
  */
 
 require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
 
 
 /**
- *		Class to manage donations
+ *        Class to manage donations
  */
 class Don extends CommonObject
 {
     /**
-	 * @var string ID to identify managed object
-	 */
-	public $element='don';
+     * @var string ID to identify managed object
+     */
+    public $element='don';
 
     /**
-	 * @var string Name of table without prefix where object is stored
-	 */
-	public $table_element='don';
-
-	/**
-	 * @var int Field with ID of parent key if this field has a parent
-	 */
-	public $fk_element = 'fk_donation';
-
-	/**
-	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	 * @var int
-	 */
-	public $ismultientitymanaged = 1;
+     * @var string Name of table without prefix where object is stored
+     */
+    public $table_element='don';
 
     /**
-	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
-	 */
-	public $picto = 'generic';
+     * @var int Field with ID of parent key if this field has a parent
+     */
+    public $fk_element = 'fk_donation';
+
+    /**
+     * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+     * @var int
+     */
+    public $ismultientitymanaged = 1;
+
+    /**
+     * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+     */
+    public $picto = 'generic';
 
     public $date;
     public $amount;
     public $societe;
 
     /**
-	 * @var string Address
-	 */
-	public $address;
+     * @var string Address
+     */
+    public $address;
 
     public $zip;
     public $town;
@@ -86,23 +86,23 @@ class Don extends CommonObject
      */
     public $fk_typepayment;
 
-	public $num_payment;
-	public $date_valid;
-	public $modepaymentid = 0;
+    public $num_payment;
+    public $date_valid;
+    public $modepaymentid = 0;
 
-	public $labelstatut;
-	public $labelstatutshort;
+    public $labelstatut;
+    public $labelstatutshort;
 
-	/**
-	 * Draft
-	 */
-	const STATUS_DRAFT = 0;
+    /**
+     * Draft
+     */
+    const STATUS_DRAFT = 0;
 
 
     /**
      *  Constructor
      *
-     *  @param	DoliDB	$db 	Database handler
+     *  @param    DoliDB    $db     Database handler
      */
     public function __construct($db)
     {
@@ -111,10 +111,10 @@ class Don extends CommonObject
 
 
     /**
-     * 	Retourne le libelle du statut d'un don (brouillon, validee, abandonnee, payee)
+     *     Retourne le libelle du statut d'un don (brouillon, validee, abandonnee, payee)
      *
-     *  @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
-     *  @return string        		Libelle
+     *  @param    int        $mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
+     *  @return string                Libelle
      */
     public function getLibStatut($mode = 0)
     {
@@ -125,26 +125,26 @@ class Don extends CommonObject
     /**
      *  Renvoi le libelle d'un statut donne
      *
-     *  @param	int		$statut        	Id statut
-     *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-     *  @return string 			       	Libelle du statut
+     *  @param    int        $statut            Id statut
+     *  @param  int        $mode              0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+     *  @return string                        Libelle du statut
      */
     public function LibStatut($statut, $mode = 0)
     {
         // phpcs:enable
-    	if (empty($this->labelstatut) || empty($this->labelstatutshort))
-    	{
-	    	global $langs;
-	    	$langs->load("donations");
-	    	$this->labelstatut[-1]=$langs->trans("Canceled");
-	    	$this->labelstatut[0]=$langs->trans("DonationStatusPromiseNotValidated");
-	    	$this->labelstatut[1]=$langs->trans("DonationStatusPromiseValidated");
-	    	$this->labelstatut[2]=$langs->trans("DonationStatusPaid");
-	    	$this->labelstatutshort[-1]=$langs->trans("Canceled");
-	    	$this->labelstatutshort[0]=$langs->trans("DonationStatusPromiseNotValidatedShort");
-	    	$this->labelstatutshort[1]=$langs->trans("DonationStatusPromiseValidatedShort");
-	    	$this->labelstatutshort[2]=$langs->trans("DonationStatusPaidShort");
-    	}
+        if (empty($this->labelstatut) || empty($this->labelstatutshort))
+        {
+            global $langs;
+            $langs->load("donations");
+            $this->labelstatut[-1]=$langs->trans("Canceled");
+            $this->labelstatut[0]=$langs->trans("DonationStatusPromiseNotValidated");
+            $this->labelstatut[1]=$langs->trans("DonationStatusPromiseValidated");
+            $this->labelstatut[2]=$langs->trans("DonationStatusPaid");
+            $this->labelstatutshort[-1]=$langs->trans("Canceled");
+            $this->labelstatutshort[0]=$langs->trans("DonationStatusPromiseNotValidatedShort");
+            $this->labelstatutshort[1]=$langs->trans("DonationStatusPromiseValidatedShort");
+            $this->labelstatutshort[2]=$langs->trans("DonationStatusPaidShort");
+        }
 
         if ($mode == 0)
         {
@@ -195,9 +195,9 @@ class Don extends CommonObject
     /**
      *  Initialise an instance with random values.
      *  Used to build previews or test instances.
-     *	id must be 0 if object instance is a specimen.
+     *    id must be 0 if object instance is a specimen.
      *
-     *  @return	void
+     *  @return    void
      */
     public function initAsSpecimen()
     {
@@ -252,19 +252,19 @@ class Don extends CommonObject
 
 
     /**
-     *	Check params and init ->errors array.
+     *    Check params and init ->errors array.
      *  TODO This function seems to not be used by core code.
      *
-     *	@param	int	$minimum	Minimum
-     *	@return	int				0 if KO, >0 if OK
+     *    @param    int    $minimum    Minimum
+     *    @return    int                0 if KO, >0 if OK
      */
     public function check($minimum = 0)
     {
-    	global $langs;
-    	$langs->load('main');
-    	$langs->load('companies');
+        global $langs;
+        $langs->load('main');
+        $langs->load('companies');
 
-    	$error_string = array();
+        $error_string = array();
         $err = 0;
 
         if (dol_strlen(trim($this->societe)) == 0)
@@ -338,7 +338,7 @@ class Don extends CommonObject
             return 0;
         }
         else
-		{
+        {
             return 1;
         }
     }
@@ -346,17 +346,17 @@ class Don extends CommonObject
     /**
      * Create donation record into database
      *
-     * @param	User	$user		User who created the donation
-     * @param	int		$notrigger	Disable triggers
-     * @return  int  		        <0 if KO, id of created donation if OK
+     * @param    User    $user        User who created the donation
+     * @param    int        $notrigger    Disable triggers
+     * @return  int                  <0 if KO, id of created donation if OK
      * TODO    add numbering module for Ref
      */
     public function create($user, $notrigger = 0)
     {
         global $conf, $langs;
 
-		$error = 0;
-		$ret = 0;
+        $error = 0;
+        $ret = 0;
         $now=dol_now();
 
         // Clean parameters
@@ -406,8 +406,8 @@ class Don extends CommonObject
         $sql.= ", ".($this->country_id > 0 ? $this->country_id : '0');
         $sql.= ", ".((int) $this->public);
         $sql.= ", ".($this->fk_project > 0?$this->fk_project:"null");
-       	$sql.= ", ".(!empty($this->note_private)?("'".$this->db->escape($this->note_private)."'"):"NULL");
-		$sql.= ", ".(!empty($this->note_public)?("'".$this->db->escape($this->note_public)."'"):"NULL");
+           $sql.= ", ".(!empty($this->note_private)?("'".$this->db->escape($this->note_private)."'"):"NULL");
+        $sql.= ", ".(!empty($this->note_public)?("'".$this->db->escape($this->note_public)."'"):"NULL");
         $sql.= ", ".$user->id;
         $sql.= ", null";
         $sql.= ", '".$this->db->idate($this->date)."'";
@@ -419,8 +419,8 @@ class Don extends CommonObject
         $resql = $this->db->query($sql);
         if ($resql)
         {
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."don");
-			$ret = $this->id;
+            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."don");
+            $ret = $this->id;
 
             if (!$notrigger)
             {
@@ -437,19 +437,19 @@ class Don extends CommonObject
             $error++;
         }
 
-		// Update extrafield
+        // Update extrafield
         if (! $error) {
-        	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-        	{
-        		$result=$this->insertExtraFields();
-        		if ($result < 0)
-        		{
-        			$error++;
-        		}
-        	}
+            if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+            {
+                $result=$this->insertExtraFields();
+                if ($result < 0)
+                {
+                    $error++;
+                }
+            }
         }
 
-		if (!$error && !empty($conf->global->MAIN_DISABLEDRAFTSTATUS))
+        if (!$error && !empty($conf->global->MAIN_DISABLEDRAFTSTATUS))
         {
             //$res = $this->setValid($user);
             //if ($res < 0) $error++;
@@ -470,15 +470,15 @@ class Don extends CommonObject
     /**
      *  Update a donation record
      *
-     *  @param 		User	$user   Objet utilisateur qui met a jour le don
-     *  @param      int		$notrigger	Disable triggers
-     *  @return     int      		>0 if OK, <0 if KO
+     *  @param         User    $user   Objet utilisateur qui met a jour le don
+     *  @param      int        $notrigger    Disable triggers
+     *  @return     int              >0 if OK, <0 if KO
      */
     public function update($user, $notrigger = 0)
     {
         global $langs, $conf;
 
-		$error=0;
+        $error=0;
 
         // Clean parameters
         $this->address=($this->address>0?$this->address:$this->address);
@@ -517,7 +517,7 @@ class Don extends CommonObject
         {
             if (!$notrigger)
             {
-				// Call trigger
+                // Call trigger
                 $result=$this->call_trigger('DON_MODIFY', $user);
                 if ($result < 0) { $error++; }
                 // End call triggers
@@ -525,18 +525,18 @@ class Don extends CommonObject
 
             // Update extrafield
             if (! $error)
-			{
-              	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-               	{
-               		$result=$this->insertExtraFields();
-               		if ($result < 0)
-               		{
-               			$error++;
-               		}
-               	}
+            {
+                  if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+                   {
+                       $result=$this->insertExtraFields();
+                       if ($result < 0)
+                       {
+                           $error++;
+                       }
+                  }
             }
 
-			if (! $error )
+            if (! $error )
             {
                 $this->db->commit();
                 $result = 1;
@@ -548,33 +548,33 @@ class Don extends CommonObject
             }
         }
         else
-		{
+        {
             $this->error = $this->db->lasterror();
             $this->errors[] = $this->error;
             $this->db->rollback();
             dol_syslog(get_class($this)."::Update error -2 " . $this->error, LOG_ERR);
             $result = -2;
         }
-		return $result;
-	}
+        return $result;
+    }
 
     /**
      *    Delete a donation from database
      *
-     *    @param       User		$user            User
-     *    @param       int		$notrigger       Disable triggers
-     *    @return      int       			      <0 if KO, 0 if not possible, >0 if OK
+     *    @param       User        $user            User
+     *    @param       int        $notrigger       Disable triggers
+     *    @return      int                         <0 if KO, 0 if not possible, >0 if OK
      */
     public function delete($user, $notrigger = 0)
     {
-		global $user, $conf, $langs;
-		require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
+        global $user, $conf, $langs;
+        require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 
-		$error = 0;
+        $error = 0;
 
-		$this->db->begin();
+        $this->db->begin();
 
-   		if (! $error)
+           if (! $error)
         {
             if (!$notrigger)
             {
@@ -586,47 +586,47 @@ class Don extends CommonObject
                 }
                 // End call triggers
             }
-        }
+           }
 
         // Delete donation
         if (! $error)
         {
-	        $sql = "DELETE FROM " . MAIN_DB_PREFIX . "don_extrafields";
-	        $sql.= " WHERE fk_object=" . $this->id;
+            $sql = "DELETE FROM " . MAIN_DB_PREFIX . "don_extrafields";
+            $sql.= " WHERE fk_object=" . $this->id;
 
-	        $resql = $this->db->query($sql);
-	        if (! $resql)
-	        {
-	        	$this->errors[] = $this->db->lasterror();
-	        	$error++;
-	        }
+            $resql = $this->db->query($sql);
+            if (! $resql)
+            {
+                $this->errors[] = $this->db->lasterror();
+                $error++;
+            }
         }
 
-		if (! $error)
+        if (! $error)
         {
-	        $sql = "DELETE FROM " . MAIN_DB_PREFIX . "don";
-	        $sql.= " WHERE rowid=" . $this->id;
+            $sql = "DELETE FROM " . MAIN_DB_PREFIX . "don";
+            $sql.= " WHERE rowid=" . $this->id;
 
-	        $resql = $this->db->query($sql);
-	        if (!$resql)
-	        {
-	        	$this->errors[] = $this->db->lasterror();
-	        	$error++;
-	        }
+            $resql = $this->db->query($sql);
+            if (!$resql)
+            {
+                $this->errors[] = $this->db->lasterror();
+                $error++;
+            }
         }
 
-    	if (! $error)
-    	{
+        if (! $error)
+        {
             $this->db->commit();
             return 1;
         }
         else
        {
-        	foreach($this->errors as $errmsg)
-        	{
-				dol_syslog(get_class($this) . "::delete " . $errmsg, LOG_ERR);
-				$this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
-			}
+            foreach($this->errors as $errmsg)
+            {
+                dol_syslog(get_class($this) . "::delete " . $errmsg, LOG_ERR);
+                $this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
+            }
             dol_syslog(get_class($this) . "::delete " . $this->error, LOG_ERR);
             $this->db->rollback();
             return -1;
@@ -636,9 +636,9 @@ class Don extends CommonObject
     /**
      *      Load donation from database
      *
-     *      @param      int		$id      Id of donation to load
-     *      @param      string	$ref        Ref of donation to load
-     *      @return     int      			<0 if KO, >0 if OK
+     *      @param      int        $id      Id of donation to load
+     *      @param      string    $ref        Ref of donation to load
+     *      @return     int                  <0 if KO, >0 if OK
      */
     public function fetch($id, $ref = '')
     {
@@ -658,11 +658,11 @@ class Don extends CommonObject
         $sql.= " WHERE d.entity IN (".getEntity('donation').")";
         if (! empty($id))
         {
-        	$sql.= " AND d.rowid=".$id;
+            $sql.= " AND d.rowid=".$id;
         }
         elseif (! empty($ref))
         {
-        	$sql.= " AND d.ref='".$this->db->escape($ref)."'";
+            $sql.= " AND d.ref='".$this->db->escape($ref)."'";
         }
 
         dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
@@ -678,7 +678,7 @@ class Don extends CommonObject
                 $this->date_creation      = $this->db->jdate($obj->datec);
                 $this->datec              = $this->db->jdate($obj->datec);
                 $this->date_validation    = $this->db->jdate($obj->date_valid);
-                $this->date_valid     	  = $this->db->jdate($obj->date_valid);
+                $this->date_valid           = $this->db->jdate($obj->date_valid);
                 $this->date_modification  = $this->db->jdate($obj->datem);
                 $this->datem              = $this->db->jdate($obj->datem);
                 $this->date               = $this->db->jdate($obj->datedon);
@@ -693,7 +693,7 @@ class Don extends CommonObject
                 $this->country_id         = $obj->fk_country;
                 $this->country_code       = $obj->country_code;
                 $this->country            = $obj->country;
-                $this->country_olddata    = $obj->country_olddata;	// deprecated
+                $this->country_olddata    = $obj->country_olddata;    // deprecated
                 $this->email              = $obj->email;
                 $this->phone              = $obj->phone;
                 $this->phone_mobile       = $obj->phone_mobile;
@@ -704,10 +704,10 @@ class Don extends CommonObject
                 $this->mode_reglement_id  = $obj->fk_payment;
                 $this->mode_reglement_code= $obj->payment_code;
                 $this->mode_reglement     = $obj->payment_label;
-                $this->paid			      = $obj->paid;
+                $this->paid                  = $obj->paid;
                 $this->amount             = $obj->amount;
-                $this->note_private	      = $obj->note_private;
-                $this->note_public	      = $obj->note_public;
+                $this->note_private          = $obj->note_private;
+                $this->note_public          = $obj->note_public;
                 $this->modelpdf           = $obj->model_pdf;
 
                 // Retreive all extrafield
@@ -723,35 +723,35 @@ class Don extends CommonObject
         }
     }
 
-	/**
-	 *	Validate a intervention
+    /**
+     *    Validate a intervention
      *
-     *	@param		User		$user		User that validate
-     *  @param		int			$notrigger	1=Does not execute triggers, 0= execute triggers
-     *	@return		int						<0 if KO, >0 if OK
+     *    @param        User        $user        User that validate
+     *  @param        int            $notrigger    1=Does not execute triggers, 0= execute triggers
+     *    @return        int                        <0 if KO, >0 if OK
      */
-	public function setValid($user, $notrigger = 0)
-	{
-		return $this->valid_promesse($this->id, $user->id, $notrigger);
-	}
+    public function setValid($user, $notrigger = 0)
+    {
+        return $this->valid_promesse($this->id, $user->id, $notrigger);
+    }
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
+    /**
      *    Validate a promise of donation
      *
-     *    @param	int		$id   		id of donation
-     *    @param  	int		$userid  	User who validate the donation/promise
-     *    @param	int		$notrigger	Disable triggers
-     *    @return   int     			<0 if KO, >0 if OK
+     *    @param    int        $id           id of donation
+     *    @param      int        $userid      User who validate the donation/promise
+     *    @param    int        $notrigger    Disable triggers
+     *    @return   int                 <0 if KO, >0 if OK
      */
     public function valid_promesse($id, $userid, $notrigger = 0)
-	{
+    {
 		// phpcs:enable
-		global $langs, $user;
+        global $langs, $user;
 
-		$error=0;
+        $error=0;
 
-		$this->db->begin();
+        $this->db->begin();
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = 1, fk_user_valid = ".$userid." WHERE rowid = ".$id." AND fk_statut = 0";
 
@@ -760,13 +760,13 @@ class Don extends CommonObject
         {
             if ($this->db->affected_rows($resql))
             {
-            	if (!$notrigger)
-            	{
-            		// Call trigger
-            		$result=$this->call_trigger('DON_VALIDATE', $user);
-            		if ($result < 0) { $error++; }
-            		// End call triggers
-            	}
+                if (!$notrigger)
+                {
+                    // Call trigger
+                    $result=$this->call_trigger('DON_VALIDATE', $user);
+                    if ($result < 0) { $error++; }
+                    // End call triggers
+                }
             }
         }
         else
@@ -777,13 +777,13 @@ class Don extends CommonObject
 
         if (!$error)
         {
-        	$this->db->commit();
-        	return 1;
+            $this->db->commit();
+            return 1;
         }
         else
         {
-        	$this->db->rollback();
-        	return -1;
+            $this->db->rollback();
+            return -1;
         }
     }
 
@@ -791,9 +791,9 @@ class Don extends CommonObject
     /**
      *    Classify the donation as paid, the donation was received
      *
-     *    @param	int		$id           	    id of donation
-     *    @param    int		$modepayment   	    mode of payment
-     *    @return   int      					<0 if KO, >0 if OK
+     *    @param    int        $id                   id of donation
+     *    @param    int        $modepayment           mode of payment
+     *    @return   int                          <0 if KO, >0 if OK
      */
     public function set_paid($id, $modepayment = 0)
     {
@@ -828,8 +828,8 @@ class Don extends CommonObject
     /**
      *    Set donation to status cancelled
      *
-     *    @param	int		$id   	    id of donation
-     *    @return   int     			<0 if KO, >0 if OK
+     *    @param    int        $id           id of donation
+     *    @return   int                 <0 if KO, >0 if OK
      */
     public function set_cancel($id)
     {
@@ -859,8 +859,8 @@ class Don extends CommonObject
     /**
      *  Sum of donations
      *
-     *	@param	string	$param	1=promesses de dons validees , 2=xxx, 3=encaisses
-     *	@return	int				Summ of donations
+     *    @param    string    $param    1=promesses de dons validees , 2=xxx, 3=encaisses
+     *    @return    int                Summ of donations
      */
     public function sum_donations($param)
     {
@@ -886,9 +886,9 @@ class Don extends CommonObject
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
-     *	Charge indicateurs this->nb pour le tableau de bord
+     *    Charge indicateurs this->nb pour le tableau de bord
      *
-     *	@return     int         <0 if KO, >0 if OK
+     *    @return     int         <0 if KO, >0 if OK
      */
     public function load_state_board()
     {
@@ -921,11 +921,11 @@ class Don extends CommonObject
     }
 
     /**
-     *	Return clicable name (with picto eventually)
+     *    Return clicable name (with picto eventually)
      *
-     *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
-     *	@param	int  	$notooltip		1=Disable tooltip
-     *	@return	string					Chaine avec URL
+     *    @param    int        $withpicto        0=No picto, 1=Include picto into link, 2=Only picto
+     *    @param    int      $notooltip        1=Disable tooltip
+     *    @return    string                    Chaine avec URL
      */
     public function getNomUrl($withpicto = 0, $notooltip = 0)
     {
@@ -945,156 +945,156 @@ class Don extends CommonObject
         return $result;
     }
 
-	/**
-	 * Information on record
-	 *
-	 * @param	int		$id      Id of record
-	 * @return	void
-	 */
-	public function info($id)
-	{
-		$sql = 'SELECT d.rowid, d.datec, d.fk_user_author, d.fk_user_valid,';
-		$sql.= ' d.tms';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.'don as d';
-		$sql.= ' WHERE d.rowid = '.$id;
+    /**
+     * Information on record
+     *
+     * @param    int        $id      Id of record
+     * @return    void
+     */
+    public function info($id)
+    {
+        $sql = 'SELECT d.rowid, d.datec, d.fk_user_author, d.fk_user_valid,';
+        $sql.= ' d.tms';
+        $sql.= ' FROM '.MAIN_DB_PREFIX.'don as d';
+        $sql.= ' WHERE d.rowid = '.$id;
 
-		dol_syslog(get_class($this).'::info', LOG_DEBUG);
-		$result = $this->db->query($sql);
+        dol_syslog(get_class($this).'::info', LOG_DEBUG);
+        $result = $this->db->query($sql);
 
-		if ($result)
-		{
-			if ($this->db->num_rows($result))
-			{
-				$obj = $this->db->fetch_object($result);
-				$this->id = $obj->rowid;
-				if ($obj->fk_user_author)
-				{
-					$cuser = new User($this->db);
-					$cuser->fetch($obj->fk_user_author);
-					$this->user_creation = $cuser;
-				}
-				if ($obj->fk_user_valid)
-				{
-					$vuser = new User($this->db);
-					$vuser->fetch($obj->fk_user_valid);
-					$this->user_modification = $vuser;
-				}
-				$this->date_creation     = $this->db->jdate($obj->datec);
-				$this->date_modification = $this->db->jdate($obj->tms);
-			}
-			$this->db->free($result);
-		}
-		else
-		{
-			dol_print_error($this->db);
-		}
-	}
+        if ($result)
+        {
+            if ($this->db->num_rows($result))
+            {
+                $obj = $this->db->fetch_object($result);
+                $this->id = $obj->rowid;
+                if ($obj->fk_user_author)
+                {
+                    $cuser = new User($this->db);
+                    $cuser->fetch($obj->fk_user_author);
+                    $this->user_creation = $cuser;
+                }
+                if ($obj->fk_user_valid)
+                {
+                    $vuser = new User($this->db);
+                    $vuser->fetch($obj->fk_user_valid);
+                    $this->user_modification = $vuser;
+                }
+                $this->date_creation     = $this->db->jdate($obj->datec);
+                $this->date_modification = $this->db->jdate($obj->tms);
+            }
+            $this->db->free($result);
+        }
+        else
+        {
+            dol_print_error($this->db);
+        }
+    }
 
 
-	/**
-	 *  Create a document onto disk according to template module.
-	 *
-	 *  @param	    string		$modele			Force template to use ('' to not force)
-	 *  @param		Translate	$outputlangs	objet lang a utiliser pour traduction
-	 *  @param      int			$hidedetails    Hide details of lines
-	 *  @param      int			$hidedesc       Hide description
-	 *  @param      int			$hideref        Hide ref
-	 *  @return     int         				0 if KO, 1 if OK
-	 */
-	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
-	{
-		global $conf,$langs;
+    /**
+     *  Create a document onto disk according to template module.
+     *
+     *  @param        string        $modele            Force template to use ('' to not force)
+     *  @param        Translate    $outputlangs    objet lang a utiliser pour traduction
+     *  @param      int            $hidedetails    Hide details of lines
+     *  @param      int            $hidedesc       Hide description
+     *  @param      int            $hideref        Hide ref
+     *  @return     int                         0 if KO, 1 if OK
+     */
+    public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
+    {
+        global $conf,$langs;
 
-		$langs->load("bills");
+        $langs->load("bills");
 
-		if (! dol_strlen($modele)) {
+        if (! dol_strlen($modele)) {
 
-			$modele = 'html_cerfafr';
+            $modele = 'html_cerfafr';
 
-			if ($this->modelpdf) {
-				$modele = $this->modelpdf;
-			} elseif (! empty($conf->global->DON_ADDON_MODEL)) {
-				$modele = $conf->global->DON_ADDON_MODEL;
-			}
-		}
+            if ($this->modelpdf) {
+                $modele = $this->modelpdf;
+            } elseif (! empty($conf->global->DON_ADDON_MODEL)) {
+                $modele = $conf->global->DON_ADDON_MODEL;
+            }
+        }
 
-		$modelpath = "core/modules/dons/";
+        $modelpath = "core/modules/dons/";
 
-		// TODO Restore use of commonGenerateDocument instead of dedicated code here
-		//return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+        // TODO Restore use of commonGenerateDocument instead of dedicated code here
+        //return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
 
-		// Increase limit for PDF build
-		$err=error_reporting();
-		error_reporting(0);
-		@set_time_limit(120);
-		error_reporting($err);
+        // Increase limit for PDF build
+        $err=error_reporting();
+        error_reporting(0);
+        @set_time_limit(120);
+        error_reporting($err);
 
-		$srctemplatepath='';
+        $srctemplatepath='';
 
-		// If selected modele is a filename template (then $modele="modelname:filename")
-		$tmp=explode(':', $modele, 2);
-		if (! empty($tmp[1]))
-		{
-			$modele=$tmp[0];
-			$srctemplatepath=$tmp[1];
-		}
+        // If selected modele is a filename template (then $modele="modelname:filename")
+        $tmp=explode(':', $modele, 2);
+        if (! empty($tmp[1]))
+        {
+            $modele=$tmp[0];
+            $srctemplatepath=$tmp[1];
+        }
 
-		// Search template files
-		$file=''; $classname=''; $filefound=0;
-		$dirmodels=array('/');
-		if (is_array($conf->modules_parts['models'])) $dirmodels=array_merge($dirmodels, $conf->modules_parts['models']);
-		foreach($dirmodels as $reldir)
-		{
-			foreach(array('html','doc','pdf') as $prefix)
-			{
-				$file = $prefix."_".preg_replace('/^html_/', '', $modele).".modules.php";
+        // Search template files
+        $file=''; $classname=''; $filefound=0;
+        $dirmodels=array('/');
+        if (is_array($conf->modules_parts['models'])) $dirmodels=array_merge($dirmodels, $conf->modules_parts['models']);
+        foreach($dirmodels as $reldir)
+        {
+            foreach(array('html','doc','pdf') as $prefix)
+            {
+                $file = $prefix."_".preg_replace('/^html_/', '', $modele).".modules.php";
 
-				// On verifie l'emplacement du modele
-				$file=dol_buildpath($reldir."core/modules/dons/".$file, 0);
-				if (file_exists($file))
-				{
-					$filefound=1;
-					$classname=$prefix.'_'.$modele;
-					break;
-				}
-			}
-			if ($filefound) break;
-		}
+                // On verifie l'emplacement du modele
+                $file=dol_buildpath($reldir."core/modules/dons/".$file, 0);
+                if (file_exists($file))
+                {
+                    $filefound=1;
+                    $classname=$prefix.'_'.$modele;
+                    break;
+                }
+            }
+            if ($filefound) break;
+        }
 
-		// Charge le modele
-		if ($filefound)
-		{
-			require_once $file;
+        // Charge le modele
+        if ($filefound)
+        {
+            require_once $file;
 
-			$object=$this;
+            $object=$this;
 
-			$classname = $modele;
-			$obj = new $classname($this->db);
+            $classname = $modele;
+            $obj = new $classname($this->db);
 
-			// We save charset_output to restore it because write_file can change it if needed for
-			// output format that does not support UTF8.
-			$sav_charset_output=$outputlangs->charset_output;
-			if ($obj->write_file($object, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref) > 0)
-			{
-				$outputlangs->charset_output=$sav_charset_output;
+            // We save charset_output to restore it because write_file can change it if needed for
+            // output format that does not support UTF8.
+            $sav_charset_output=$outputlangs->charset_output;
+            if ($obj->write_file($object, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref) > 0)
+            {
+                $outputlangs->charset_output=$sav_charset_output;
 
-				// we delete preview files
-				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-				dol_delete_preview($object);
-				return 1;
-			}
-			else
-			{
-				$outputlangs->charset_output=$sav_charset_output;
-				dol_syslog("Erreur dans don_create");
-				dol_print_error($this->db, $obj->error);
-				return 0;
-			}
-		}
-		else
-		{
-			print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists", $file);
-			return 0;
-		}
-	}
+                // we delete preview files
+                require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+                dol_delete_preview($object);
+                return 1;
+            }
+            else
+            {
+                $outputlangs->charset_output=$sav_charset_output;
+                dol_syslog("Erreur dans don_create");
+                dol_print_error($this->db, $obj->error);
+                return 0;
+            }
+        }
+        else
+        {
+            print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists", $file);
+            return 0;
+        }
+    }
 }

@@ -18,9 +18,9 @@
  */
 
 /**
- *   	\file       htdocs/fourn/paiement/info.php
- *		\ingroup    facture
- *		\brief      Onglet info d'un paiement fournisseur
+ *       \file       htdocs/fourn/paiement/info.php
+ *        \ingroup    facture
+ *        \brief      Onglet info d'un paiement fournisseur
  */
 
 require '../../main.inc.php';
@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 
 $langs->loadLangs(array("bills", "suppliers", "companies"));
 
-$id			= GETPOST('id', 'int');
+$id            = GETPOST('id', 'int');
 
 $object = new PaiementFourn($db);
 $object->fetch($id);

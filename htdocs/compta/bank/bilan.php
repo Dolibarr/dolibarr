@@ -17,9 +17,9 @@
  */
 
 /**
- *	    \file       htdocs/compta/bank/bilan.php
+ *        \file       htdocs/compta/bank/bilan.php
  *      \ingroup    banque
- *		\brief      Page de bilan
+ *        \brief      Page de bilan
  */
 
 require '../../main.inc.php';
@@ -33,25 +33,25 @@ if (!$user->rights->banque->lire)
 
 
 /**
- * 	Get result of sql for field amount
+ *     Get result of sql for field amount
  *
- * 	@param	string	$sql	SQL string
- * 	@return	int				Amount
+ *     @param    string    $sql    SQL string
+ *     @return    int                Amount
  */
 function valeur($sql)
 {
-	global $db;
+    global $db;
 
-	$valeur = 0;
+    $valeur = 0;
 
-	$resql=$db->query($sql);
-	if ($resql)
-	{
-		$obj=$db->fetch_object($resql);
-		$valeur = $obj->amount;
-		$db->free($resql);
-	}
-	return $valeur;
+    $resql=$db->query($sql);
+    if ($resql)
+    {
+        $obj=$db->fetch_object($resql);
+        $valeur = $obj->amount;
+        $db->free($resql);
+    }
+    return $valeur;
 }
 
 

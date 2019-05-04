@@ -16,8 +16,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-define("NOLOGIN", 1);		// This means this output page does not require to be logged.
-define("NOCSRFCHECK", 1);	// We accept to go on this page from external web site.
+define("NOLOGIN", 1);        // This means this output page does not require to be logged.
+define("NOCSRFCHECK", 1);    // We accept to go on this page from external web site.
 
 $entity=(! empty($_GET['entity']) ? (int) $_GET['entity'] : (! empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
 if (is_numeric($entity)) define("DOLENTITY", $entity);
@@ -43,32 +43,32 @@ if (empty($conf->stripe->enabled)) accessforbidden('', 0, 0, 1);
 // You can find your endpoint's secret in your webhook settings
 if (isset($_GET['connect']))
 {
-	if (isset($_GET['test']))
-	{
-		$endpoint_secret =  $conf->global->STRIPE_TEST_WEBHOOK_CONNECT_KEY;
-		$service = 'StripeTest';
-		$servicestatus = 0;
-	}
-	else
-	{
-		$endpoint_secret =  $conf->global->STRIPE_LIVE_WEBHOOK_CONNECT_KEY;
-		$service = 'StripeLive';
+    if (isset($_GET['test']))
+    {
+        $endpoint_secret =  $conf->global->STRIPE_TEST_WEBHOOK_CONNECT_KEY;
+        $service = 'StripeTest';
+        $servicestatus = 0;
+    }
+    else
+    {
+        $endpoint_secret =  $conf->global->STRIPE_LIVE_WEBHOOK_CONNECT_KEY;
+        $service = 'StripeLive';
         $servicestatus = 1;
-	}
+    }
 }
 else {
-	if (isset($_GET['test']))
-	{
-		$endpoint_secret =  $conf->global->STRIPE_TEST_WEBHOOK_KEY;
-		$service = 'StripeTest';
-		$servicestatus = 0;
-	}
-	else
-	{
-		$endpoint_secret =  $conf->global->STRIPE_LIVE_WEBHOOK_KEY;
-		$service = 'StripeLive';
-		$servicestatus = 1;
-	}
+    if (isset($_GET['test']))
+    {
+        $endpoint_secret =  $conf->global->STRIPE_TEST_WEBHOOK_KEY;
+        $service = 'StripeTest';
+        $servicestatus = 0;
+    }
+    else
+    {
+        $endpoint_secret =  $conf->global->STRIPE_LIVE_WEBHOOK_KEY;
+        $service = 'StripeLive';
+        $servicestatus = 1;
+    }
 }
 
 if (empty($endpoint_secret))
@@ -90,16 +90,16 @@ $event = null;
 $error = 0;
 
 try {
-	$event = \Stripe\Webhook::constructEvent($payload, $sig_header, $endpoint_secret);
+    $event = \Stripe\Webhook::constructEvent($payload, $sig_header, $endpoint_secret);
 }
 catch(\UnexpectedValueException $e) {
-	// Invalid payload
-	http_response_code(400); // PHP 5.4 or greater
-	exit();
+    // Invalid payload
+    http_response_code(400); // PHP 5.4 or greater
+    exit();
 } catch(\Stripe\Error\SignatureVerification $e) {
-	// Invalid signature
-	http_response_code(400); // PHP 5.4 or greater
-	exit();
+    // Invalid signature
+    http_response_code(400); // PHP 5.4 or greater
+    exit();
 }
 
 // Do something with $event
@@ -113,29 +113,29 @@ $user->getrights();
 
 if (! empty($conf->multicompany->enabled) && ! empty($conf->stripeconnect->enabled) && is_object($mc))
 {
-	$sql = "SELECT entity";
-	$sql.= " FROM ".MAIN_DB_PREFIX."oauth_token";
-	$sql.= " WHERE service = '".$db->escape($service)."' and tokenstring = '%".$db->escape($event->account)."%'";
+    $sql = "SELECT entity";
+    $sql.= " FROM ".MAIN_DB_PREFIX."oauth_token";
+    $sql.= " WHERE service = '".$db->escape($service)."' and tokenstring = '%".$db->escape($event->account)."%'";
 
-	dol_syslog(get_class($db) . "::fetch", LOG_DEBUG);
-	$result = $db->query($sql);
-	if ($result)
-	{
-		if ($db->num_rows($result))
-		{
-			$obj = $db->fetch_object($result);
-			$key=$obj->entity;
-		}
-		else {
-			$key=1;
-		}
-	}
-	else {
-		$key=1;
-	}
-	$ret=$mc->switchEntity($key);
-	if (! $res && file_exists("../../main.inc.php")) $res=@include "../../main.inc.php";
-	if (! $res) die("Include of main fails");
+    dol_syslog(get_class($db) . "::fetch", LOG_DEBUG);
+    $result = $db->query($sql);
+    if ($result)
+    {
+        if ($db->num_rows($result))
+        {
+            $obj = $db->fetch_object($result);
+            $key=$obj->entity;
+        }
+        else {
+            $key=1;
+        }
+    }
+    else {
+        $key=1;
+    }
+    $ret=$mc->switchEntity($key);
+    if (! $res && file_exists("../../main.inc.php")) $res=@include "../../main.inc.php";
+    if (! $res) die("Include of main fails");
 }
 
 // list of  action
@@ -150,14 +150,14 @@ dol_syslog("Stripe IPN was called with event->type = ".$event->type);
 
 
 if ($event->type == 'payout.created') {
-	$error=0;
+    $error=0;
 
-	$result=dolibarr_set_const($db, $service."_NEXTPAYOUT", date('Y-m-d H:i:s', $event->data->object->arrival_date), 'chaine', 0, '', $conf->entity);
+    $result=dolibarr_set_const($db, $service."_NEXTPAYOUT", date('Y-m-d H:i:s', $event->data->object->arrival_date), 'chaine', 0, '', $conf->entity);
 
-	if ($result > 0)
-	{
+    if ($result > 0)
+    {
 
-	    $subject = $societeName.' - [NOTIFICATION] Stripe payout scheduled';
+        $subject = $societeName.' - [NOTIFICATION] Stripe payout scheduled';
         if (!empty($user->email)) {
             $sendto = dolGetFirstLastname($user->firstname, $user->lastname) . " <".$user->email.">";
         } else {
@@ -189,106 +189,106 @@ if ($event->type == 'payout.created') {
 
         http_response_code(200); // PHP 5.4 or greater
         return 1;
-	}
-	else
-	{
-		$error++;
-		http_response_code(500); // PHP 5.4 or greater
-		return -1;
-	}
+    }
+    else
+    {
+        $error++;
+        http_response_code(500); // PHP 5.4 or greater
+        return -1;
+    }
 }
 elseif ($event->type == 'payout.paid') {
-	global $conf;
-	$error=0;
-	$result=dolibarr_set_const($db, $service."_NEXTPAYOUT", null, 'chaine', 0, '', $conf->entity);
-	if ($result)
-	{
-		$langs->load("errors");
+    global $conf;
+    $error=0;
+    $result=dolibarr_set_const($db, $service."_NEXTPAYOUT", null, 'chaine', 0, '', $conf->entity);
+    if ($result)
+    {
+        $langs->load("errors");
 
-		$dateo = dol_now();
-		$label = $event->data->object->description;
-		$amount= $event->data->object->amount/100;
-		$amount_to= $event->data->object->amount/100;
-		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+        $dateo = dol_now();
+        $label = $event->data->object->description;
+        $amount= $event->data->object->amount/100;
+        $amount_to= $event->data->object->amount/100;
+        require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-		$accountfrom=new Account($db);
-		$accountfrom->fetch($conf->global->STRIPE_BANK_ACCOUNT_FOR_PAYMENTS);
+        $accountfrom=new Account($db);
+        $accountfrom->fetch($conf->global->STRIPE_BANK_ACCOUNT_FOR_PAYMENTS);
 
-		$accountto=new Account($db);
-		$accountto->fetch($conf->global->STRIPE_BANK_ACCOUNT_FOR_BANKTRANSFERS);
+        $accountto=new Account($db);
+        $accountto->fetch($conf->global->STRIPE_BANK_ACCOUNT_FOR_BANKTRANSFERS);
 
-		if (($accountto->id != $accountfrom->id) && empty($error))
-		{
-			$bank_line_id_from=0;
-			$bank_line_id_to=0;
-			$result=0;
+        if (($accountto->id != $accountfrom->id) && empty($error))
+        {
+            $bank_line_id_from=0;
+            $bank_line_id_to=0;
+            $result=0;
 
-			// By default, electronic transfert from bank to bank
-			$typefrom='PRE';
-			$typeto='VIR';
+            // By default, electronic transfert from bank to bank
+            $typefrom='PRE';
+            $typeto='VIR';
 
-			if (! $error) $bank_line_id_from = $accountfrom->addline($dateo, $typefrom, $label, -1*price2num($amount), '', '', $user);
-			if (! ($bank_line_id_from > 0)) $error++;
-			if (! $error) $bank_line_id_to = $accountto->addline($dateo, $typeto, $label, price2num($amount), '', '', $user);
-			if (! ($bank_line_id_to > 0)) $error++;
+            if (! $error) $bank_line_id_from = $accountfrom->addline($dateo, $typefrom, $label, -1*price2num($amount), '', '', $user);
+            if (! ($bank_line_id_from > 0)) $error++;
+            if (! $error) $bank_line_id_to = $accountto->addline($dateo, $typeto, $label, price2num($amount), '', '', $user);
+            if (! ($bank_line_id_to > 0)) $error++;
 
-			if (! $error) $result=$accountfrom->add_url_line($bank_line_id_from, $bank_line_id_to, DOL_URL_ROOT.'/compta/bank/ligne.php?rowid=', '(banktransfert)', 'banktransfert');
-			if (! ($result > 0)) $error++;
-			if (! $error) $result=$accountto->add_url_line($bank_line_id_to, $bank_line_id_from, DOL_URL_ROOT.'/compta/bank/ligne.php?rowid=', '(banktransfert)', 'banktransfert');
-			if (! ($result > 0)) $error++;
-		}
+            if (! $error) $result=$accountfrom->add_url_line($bank_line_id_from, $bank_line_id_to, DOL_URL_ROOT.'/compta/bank/ligne.php?rowid=', '(banktransfert)', 'banktransfert');
+            if (! ($result > 0)) $error++;
+            if (! $error) $result=$accountto->add_url_line($bank_line_id_to, $bank_line_id_from, DOL_URL_ROOT.'/compta/bank/ligne.php?rowid=', '(banktransfert)', 'banktransfert');
+            if (! ($result > 0)) $error++;
+        }
 
-		$subject = $societeName.' - [NOTIFICATION] Stripe payout done';
-		if (!empty($user->email)) {
-			$sendto = dolGetFirstLastname($user->firstname, $user->lastname) . " <".$user->email.">";
-		} else {
-			$sendto = $conf->global->MAIN_INFO_SOCIETE_MAIL.'" <'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'>';
-		}
-		$replyto = $sendto;
-		$sendtocc = '';
-		if (!empty($conf->global->ONLINE_PAYMENT_SENDEMAIL)) {
-			$sendtocc = $conf->global->ONLINE_PAYMENT_SENDEMAIL.'" <'.$conf->global->ONLINE_PAYMENT_SENDEMAIL.'>';
-		}
+        $subject = $societeName.' - [NOTIFICATION] Stripe payout done';
+        if (!empty($user->email)) {
+            $sendto = dolGetFirstLastname($user->firstname, $user->lastname) . " <".$user->email.">";
+        } else {
+            $sendto = $conf->global->MAIN_INFO_SOCIETE_MAIL.'" <'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'>';
+        }
+        $replyto = $sendto;
+        $sendtocc = '';
+        if (!empty($conf->global->ONLINE_PAYMENT_SENDEMAIL)) {
+            $sendtocc = $conf->global->ONLINE_PAYMENT_SENDEMAIL.'" <'.$conf->global->ONLINE_PAYMENT_SENDEMAIL.'>';
+        }
 
-		$message = "A bank transfer of ".price2num($event->data->object->amount/100)." ".$event->data->object->currency." has been done to your account the ".dol_print_date($event->data->object->arrival_date, 'dayhour');
+        $message = "A bank transfer of ".price2num($event->data->object->amount/100)." ".$event->data->object->currency." has been done to your account the ".dol_print_date($event->data->object->arrival_date, 'dayhour');
 
         $mailfile = new CMailFile(
-			$subject,
-			$sendto,
-			$replyto,
-			$message,
-			array(),
-			array(),
-			array(),
-			$sendtocc,
-			'',
-			0,
-			-1
-			);
+            $subject,
+            $sendto,
+            $replyto,
+            $message,
+            array(),
+            array(),
+            array(),
+            $sendtocc,
+            '',
+            0,
+            -1
+            );
 
-		$ret = $mailfile->sendfile();
+        $ret = $mailfile->sendfile();
 
-		http_response_code(200); // PHP 5.4 or greater
-		return 1;
-	}
-	else
-	{
-		$error++;
-		http_response_code(500); // PHP 5.4 or greater
-		return -1;
-	}
+        http_response_code(200); // PHP 5.4 or greater
+        return 1;
+    }
+    else
+    {
+        $error++;
+        http_response_code(500); // PHP 5.4 or greater
+        return -1;
+    }
 }
 elseif ($event->type == 'customer.source.created') {
 
-	//TODO: save customer's source
+    //TODO: save customer's source
 }
 elseif ($event->type == 'customer.source.updated') {
 
-	//TODO: update customer's source
+    //TODO: update customer's source
 }
 elseif ($event->type == 'customer.source.delete') {
 
-	//TODO: delete customer's source
+    //TODO: delete customer's source
 }
 elseif ($event->type == 'customer.deleted') {
     $db->begin();
@@ -315,13 +315,13 @@ elseif (($event->type == 'source.chargeable') && ($event->data->object->type == 
     $fulltag=$event->data->object->metadata->FULLTAG;
     dol_syslog("fulltag=".$fulltag);
     // Save into $tmptag all metadata
-	$tmptag=dolExplodeIntoArray($fulltag, '.', '=');
+    $tmptag=dolExplodeIntoArray($fulltag, '.', '=');
 
     $stripe=new Stripe($db);
     /*
-    $stripeacc = $stripe->getStripeAccount($service);								// Stripe OAuth connect account of dolibarr user (no network access here)
-    $stripecu = $stripe->getStripeCustomerAccount($tmptag['CUS'], $servicestatus);		// Get thirdparty cu_...
-	$charge=$stripe->createPaymentStripe($event->data->object->amount/100, $event->data->object->currency, $origin, $item, $event->data->object->id, $stripecu, $stripeacc, $servicestatus);
+    $stripeacc = $stripe->getStripeAccount($service);                                // Stripe OAuth connect account of dolibarr user (no network access here)
+    $stripecu = $stripe->getStripeCustomerAccount($tmptag['CUS'], $servicestatus);        // Get thirdparty cu_...
+    $charge=$stripe->createPaymentStripe($event->data->object->amount/100, $event->data->object->currency, $origin, $item, $event->data->object->id, $stripecu, $stripeacc, $servicestatus);
     */
 }
 

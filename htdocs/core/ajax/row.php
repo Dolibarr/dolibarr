@@ -43,33 +43,33 @@ print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"])
 
 // Registering the location of boxes
 if ((! empty($_POST['roworder'])) && (! empty($_POST['table_element_line']))
-	&& (! empty($_POST['fk_element'])) && (! empty($_POST['element_id'])))
+    && (! empty($_POST['fk_element'])) && (! empty($_POST['element_id'])))
 {
-	$roworder=GETPOST('roworder', 'alpha', 2);
-	$table_element_line=GETPOST('table_element_line', 'alpha', 2);
-	$fk_element=GETPOST('fk_element', 'alpha', 2);
-	$element_id=GETPOST('element_id', 'int', 2);
+    $roworder=GETPOST('roworder', 'alpha', 2);
+    $table_element_line=GETPOST('table_element_line', 'alpha', 2);
+    $fk_element=GETPOST('fk_element', 'alpha', 2);
+    $element_id=GETPOST('element_id', 'int', 2);
 
-	dol_syslog("AjaxRow roworder=".$roworder." table_element_line=".$table_element_line." fk_element=".$fk_element." element_id=".$element_id, LOG_DEBUG);
+    dol_syslog("AjaxRow roworder=".$roworder." table_element_line=".$table_element_line." fk_element=".$fk_element." element_id=".$element_id, LOG_DEBUG);
 
-	$rowordertab = explode(',', $roworder);
-	$newrowordertab = array();
-	foreach($rowordertab as $value)
-	{
-		if (! empty($value)) $newrowordertab[] = $value;
-	}
+    $rowordertab = explode(',', $roworder);
+    $newrowordertab = array();
+    foreach($rowordertab as $value)
+    {
+        if (! empty($value)) $newrowordertab[] = $value;
+    }
 
-	$row=new GenericObject($db);
-	$row->table_element_line = $table_element_line;
-	$row->fk_element = $fk_element;
-	$row->id = $element_id;
+    $row=new GenericObject($db);
+    $row->table_element_line = $table_element_line;
+    $row->fk_element = $fk_element;
+    $row->id = $element_id;
 
-	$row->line_ajaxorder($newrowordertab);		// This update field rank or position in table row->table_element_line
+    $row->line_ajaxorder($newrowordertab);        // This update field rank or position in table row->table_element_line
 
-	// Reorder line to have position of children lines sharing same counter than parent lines
-	// This should be useless because there is no need to have children sharing same counter than parent, but well, it's cleaner into database.
-	if (in_array($fk_element, array('fk_facture','fk_propal','fk_commande')))
-	{
-		$result=$row->line_order(true);
-	}
+    // Reorder line to have position of children lines sharing same counter than parent lines
+    // This should be useless because there is no need to have children sharing same counter than parent, but well, it's cleaner into database.
+    if (in_array($fk_element, array('fk_facture','fk_propal','fk_commande')))
+    {
+        $result=$row->line_order(true);
+    }
 }

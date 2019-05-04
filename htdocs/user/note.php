@@ -61,17 +61,17 @@ $reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook)) {
-	if ($action == 'update' && $user->rights->user->user->creer && !$_POST["cancel"]) {
-		$db->begin();
+    if ($action == 'update' && $user->rights->user->user->creer && !$_POST["cancel"]) {
+        $db->begin();
 
-		$res = $object->update_note(dol_html_entity_decode(GETPOST('note_private', 'none'), ENT_QUOTES));
-		if ($res < 0) {
-			$mesg = '<div class="error">'.$adh->error.'</div>';
-			$db->rollback();
-		} else {
-			$db->commit();
-		}
-	}
+        $res = $object->update_note(dol_html_entity_decode(GETPOST('note_private', 'none'), ENT_QUOTES));
+        if ($res < 0) {
+            $mesg = '<div class="error">'.$adh->error.'</div>';
+            $db->rollback();
+        } else {
+            $db->commit();
+        }
+    }
 }
 
 
@@ -85,64 +85,64 @@ $form = new Form($db);
 
 if ($id)
 {
-	$head = user_prepare_head($object);
+    $head = user_prepare_head($object);
 
-	$title = $langs->trans("User");
-	dol_fiche_head($head, 'note', $title, -1, 'user');
+    $title = $langs->trans("User");
+    dol_fiche_head($head, 'note', $title, -1, 'user');
 
-	$linkback = '';
+    $linkback = '';
 
-	if ($user->rights->user->user->lire || $user->admin) {
-		$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
-	}
+    if ($user->rights->user->user->lire || $user->admin) {
+        $linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+    }
 
     dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
 
     print '<div class="underbanner clearboth"></div>';
 
     print "<form method=\"post\" action=\"".$_SERVER['PHP_SELF']."\">";
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
-	print '<div class="fichecenter">';
+    print '<div class="fichecenter">';
     print '<table class="border" width="100%">';
 
     // Login
     print '<tr><td class="titlefield">'.$langs->trans("Login").'</td><td class="valeur">'.$object->login.'&nbsp;</td></tr>';
 
-	// Note
+    // Note
     print '<tr><td class="tdtop">'.$langs->trans("Note").'</td>';
-	print '<td>';
-	if ($action == 'edit' && $user->rights->user->user->creer)
-	{
-		print "<input type=\"hidden\" name=\"action\" value=\"update\">";
-		print "<input type=\"hidden\" name=\"id\" value=\"".$object->id."\">";
-	    // Editeur wysiwyg
-		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$doleditor=new DolEditor('note_private', $object->note, '', 280, 'dolibarr_notes', 'In', true, false, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_8, '90%');
-		$doleditor->Create();
-	}
-	else
-	{
-		print dol_htmlentitiesbr($object->note);
-	}
-	print "</td></tr>";
+    print '<td>';
+    if ($action == 'edit' && $user->rights->user->user->creer)
+    {
+        print "<input type=\"hidden\" name=\"action\" value=\"update\">";
+        print "<input type=\"hidden\" name=\"id\" value=\"".$object->id."\">";
+        // Editeur wysiwyg
+        require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+        $doleditor=new DolEditor('note_private', $object->note, '', 280, 'dolibarr_notes', 'In', true, false, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_8, '90%');
+        $doleditor->Create();
+    }
+    else
+    {
+        print dol_htmlentitiesbr($object->note);
+    }
+    print "</td></tr>";
 
     print "</table>";
     print '</div>';
 
-	dol_fiche_end();
+    dol_fiche_end();
 
-	if ($action == 'edit')
-	{
-		print '<div class="center">';
-		print '<input type="submit" class="button" name="update" value="'.$langs->trans("Save").'">';
-		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-		print '</div>';
-	}
+    if ($action == 'edit')
+    {
+        print '<div class="center">';
+        print '<input type="submit" class="button" name="update" value="'.$langs->trans("Save").'">';
+        print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+        print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+        print '</div>';
+    }
 
 
-	/*
+    /*
      * Actions
      */
 
@@ -155,7 +155,7 @@ if ($id)
 
     print "</div>";
 
-	print "</form>\n";
+    print "</form>\n";
 }
 
 // End of page

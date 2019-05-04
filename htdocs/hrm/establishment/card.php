@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2015      Alexandre Spangaro	<aspangaro@open-dsi.fr>
+/* Copyright (C) 2015      Alexandre Spangaro    <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
  */
 
 /**
- *  \file       	htdocs/hrm/establishment/card.php
- *  \brief      	Page to show an establishment
+ *  \file           htdocs/hrm/establishment/card.php
+ *  \brief          Page to show an establishment
  */
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/hrm.lib.php';
@@ -40,7 +40,7 @@ $id = GETPOST('id', 'int');
 
 // List of status
 static $tmpstatus2label=array(
-		'0'=>'CloseEtablishment',
+        '0'=>'CloseEtablishment',
         '1'=>'OpenEtablishment'
 );
 $status2label=array('');
@@ -76,35 +76,35 @@ elseif ($action == 'add')
     {
         $error=0;
 
-		$object->name = GETPOST('name', 'alpha');
+        $object->name = GETPOST('name', 'alpha');
         if (empty($object->name))
         {
-	        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Name")), null, 'errors');
+            setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Name")), null, 'errors');
             $error++;
         }
 
         if (empty($error))
         {
-			$object->address 		= GETPOST('address', 'alpha');
-			$object->zip 			= GETPOST('zipcode', 'alpha');
-			$object->town			= GETPOST('town', 'alpha');
-			$object->country_id     = $_POST["country_id"];
-			$object->status     	= GETPOST('status', 'int');
-			$object->fk_user_author	= $user->id;
-			$object->datec			= dol_now();
-			$object->entity			= GETPOST('entity', 'int')>0?GETPOST('entity', 'int'):$conf->entity;
+            $object->address         = GETPOST('address', 'alpha');
+            $object->zip             = GETPOST('zipcode', 'alpha');
+            $object->town            = GETPOST('town', 'alpha');
+            $object->country_id     = $_POST["country_id"];
+            $object->status         = GETPOST('status', 'int');
+            $object->fk_user_author    = $user->id;
+            $object->datec            = dol_now();
+            $object->entity            = GETPOST('entity', 'int')>0?GETPOST('entity', 'int'):$conf->entity;
 
-			$id = $object->create($user);
+            $id = $object->create($user);
 
             if ($id > 0)
             {
                 header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
                 exit;
-			}
-			else
-			{
-				setEventMessages($object->error, $object->errors, 'errors');
-			}
+            }
+            else
+            {
+                setEventMessages($object->error, $object->errors, 'errors');
+            }
         }
         else
         {
@@ -121,43 +121,43 @@ elseif ($action == 'add')
 // Update record
 elseif ($action == 'update')
 {
-	$error = 0;
+    $error = 0;
 
-	if (! $cancel) {
+    if (! $cancel) {
 
-		$name = GETPOST('name', 'alpha');
-		if (empty($name)) {
-			setEventMessages($langs->trans('ErrorFieldRequired', $langs->trans('Name')), null, 'errors');
-			$error ++;
-		}
+        $name = GETPOST('name', 'alpha');
+        if (empty($name)) {
+            setEventMessages($langs->trans('ErrorFieldRequired', $langs->trans('Name')), null, 'errors');
+            $error ++;
+        }
 
-		if (empty($error))
-		{
-			$object->name 			= GETPOST('name', 'alpha');
-			$object->address 		= GETPOST('address', 'alpha');
-			$object->zip 			= GETPOST('zipcode', 'alpha');
-			$object->town			= GETPOST('town', 'alpha');
-			$object->country_id     = GETPOST('country_id', 'int');
-			$object->fk_user_mod	= $user->id;
-			$object->status         = GETPOST('status', 'int');
-			$object->entity         = GETPOST('entity', 'int')>0?GETPOST('entity', 'int'):$conf->entity;
+        if (empty($error))
+        {
+            $object->name             = GETPOST('name', 'alpha');
+            $object->address         = GETPOST('address', 'alpha');
+            $object->zip             = GETPOST('zipcode', 'alpha');
+            $object->town            = GETPOST('town', 'alpha');
+            $object->country_id     = GETPOST('country_id', 'int');
+            $object->fk_user_mod    = $user->id;
+            $object->status         = GETPOST('status', 'int');
+            $object->entity         = GETPOST('entity', 'int')>0?GETPOST('entity', 'int'):$conf->entity;
 
-			$result = $object->update($user);
+            $result = $object->update($user);
 
             if ($result > 0)
             {
                 header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $_POST['id']);
                 exit;
             }
-			else
-			{
-				setEventMessages($object->error, $object->errors, 'errors');
-			}
-		}
-	} else {
+            else
+            {
+                setEventMessages($object->error, $object->errors, 'errors');
+            }
+        }
+    } else {
         header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $_POST['id']);
         exit;
-	}
+    }
 }
 
 /*
@@ -180,84 +180,84 @@ if ($action == 'create')
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="add">';
 
-	dol_fiche_head();
+    dol_fiche_head();
 
     print '<table class="border" width="100%">';
 
-	// Name
-	print '<tr>';
-	print '<td>'. $form->editfieldkey('Name', 'name', '', $object, 0, 'string', '', 1).'</td>';
-	print '<td><input name="name" id="name" size="32" value="' . GETPOST("name", "alpha") . '"></td>';
-	print '</tr>';
+    // Name
+    print '<tr>';
+    print '<td>'. $form->editfieldkey('Name', 'name', '', $object, 0, 'string', '', 1).'</td>';
+    print '<td><input name="name" id="name" size="32" value="' . GETPOST("name", "alpha") . '"></td>';
+    print '</tr>';
 
-	// Parent
-	print '<tr>';
-	print '<td>'.$form->editfieldkey('Parent', 'entity', '', $object, 0, 'string', '', 1).'</td>';
-	print '<td class="maxwidthonsmartphone">';
-	print $form->selectEstablishments(GETPOST('entity', 'int')>0?GETPOST('entity', 'int'):$conf->entity, 'entity', 1);
-	print '</td>';
-	print '</tr>';
+    // Parent
+    print '<tr>';
+    print '<td>'.$form->editfieldkey('Parent', 'entity', '', $object, 0, 'string', '', 1).'</td>';
+    print '<td class="maxwidthonsmartphone">';
+    print $form->selectEstablishments(GETPOST('entity', 'int')>0?GETPOST('entity', 'int'):$conf->entity, 'entity', 1);
+    print '</td>';
+    print '</tr>';
 
-	// Address
-	print '<tr>';
-	print '<td>'.$form->editfieldkey('Address', 'address', '', $object, 0).'</td>';
-	print '<td>';
-	print '<input name="address" id="address" class="qutrevingtpercent" value="' . GETPOST('address', 'alpha') . '">';
-	print '</td>';
-	print '</tr>';
+    // Address
+    print '<tr>';
+    print '<td>'.$form->editfieldkey('Address', 'address', '', $object, 0).'</td>';
+    print '<td>';
+    print '<input name="address" id="address" class="qutrevingtpercent" value="' . GETPOST('address', 'alpha') . '">';
+    print '</td>';
+    print '</tr>';
 
-	// Zipcode
-	print '<tr>';
-	print '<td>'.$form->editfieldkey('Zip', 'zipcode', '', $object, 0).'</td>';
-	print '<td>';
-	print $formcompany->select_ziptown(
-		GETPOST('zipcode', 'alpha'),
-		'zipcode',
-		array (
-			'town',
-			'selectcountry_id'
-		),
-		6
-	);
-	print '</td>';
-	print '</tr>';
+    // Zipcode
+    print '<tr>';
+    print '<td>'.$form->editfieldkey('Zip', 'zipcode', '', $object, 0).'</td>';
+    print '<td>';
+    print $formcompany->select_ziptown(
+        GETPOST('zipcode', 'alpha'),
+        'zipcode',
+        array (
+            'town',
+            'selectcountry_id'
+        ),
+        6
+    );
+    print '</td>';
+    print '</tr>';
 
-	// Town
-	print '<tr>';
-	print '<td>'.$form->editfieldkey('Town', 'town', '', $object, 0).'</td>';
-	print '<td>';
-	print $formcompany->select_ziptown(GETPOST('town', 'alpha'), 'town', array (
-			'zipcode',
-			'selectcountry_id'
-	));
-	print '</td>';
-	print '</tr>';
+    // Town
+    print '<tr>';
+    print '<td>'.$form->editfieldkey('Town', 'town', '', $object, 0).'</td>';
+    print '<td>';
+    print $formcompany->select_ziptown(GETPOST('town', 'alpha'), 'town', array (
+            'zipcode',
+            'selectcountry_id'
+    ));
+    print '</td>';
+    print '</tr>';
 
-	// Country
-	print '<tr>';
-	print '<td>'.$form->editfieldkey('Country', 'selectcountry_id', '', $object, 0).'</td>';
-	print '<td class="maxwidthonsmartphone">';
-	print $form->select_country(GETPOST('country_id', 'int')>0?GETPOST('country_id', 'int'):$mysoc->country_id, 'country_id');
-		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
-	print '</td>';
-	print '</tr>';
+    // Country
+    print '<tr>';
+    print '<td>'.$form->editfieldkey('Country', 'selectcountry_id', '', $object, 0).'</td>';
+    print '<td class="maxwidthonsmartphone">';
+    print $form->select_country(GETPOST('country_id', 'int')>0?GETPOST('country_id', 'int'):$mysoc->country_id, 'country_id');
+        if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+    print '</td>';
+    print '</tr>';
 
-	// Status
+    // Status
     print '<tr>';
     print '<td>'.$form->editfieldkey('Status', 'status', '', $object, 0, 'string', '', 1).'</td>';
-	print '<td>';
-	print $form->selectarray('status', $status2label, GETPOST('status', 'alpha'));
+    print '<td>';
+    print $form->selectarray('status', $status2label, GETPOST('status', 'alpha'));
     print '</td></tr>';
 
     print '</table>';
 
-	dol_fiche_end();
+    dol_fiche_end();
 
     print '<div class="center">';
-	print '<input class="button" type="submit" value="'.$langs->trans("Save").'">';
-	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+    print '<input class="button" type="submit" value="'.$langs->trans("Save").'">';
+    print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
     print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
-	print '</div>';
+    print '</div>';
 
     print '</form>';
 }
@@ -272,9 +272,9 @@ if (($id || $ref) && $action == 'edit')
 
         if ($action == 'edit')
         {
-        	dol_fiche_head($head, 'card', $langs->trans("Establishment"), 0, 'building');
+            dol_fiche_head($head, 'card', $langs->trans("Establishment"), 0, 'building');
 
-        	print '<form name="update" action="' . $_SERVER["PHP_SELF"] . '" method="POST">' . "\n";
+            print '<form name="update" action="' . $_SERVER["PHP_SELF"] . '" method="POST">' . "\n";
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<input type="hidden" name="action" value="update">';
             print '<input type="hidden" name="id" value="'.$id.'">';
@@ -291,51 +291,51 @@ if (($id || $ref) && $action == 'edit')
             print '<tr><td>'.$form->editfieldkey('Name', 'name', '', $object, 0, 'string', '', 1).'</td><td>';
             print '<input name="name" id="name" class="flat" size="32" value="'.$object->name.'">';
             print '</td></tr>';
-			
-			// Parent
+            
+            // Parent
             print '<tr><td>'.$form->editfieldkey('Parent', 'entity', '', $object, 0, 'string', '', 1).'</td>';
-			print '<td class="maxwidthonsmartphone">';
-			print $form->selectEstablishments($object->entity>0?$object->entity:$conf->entity, 'entity', 1);
+            print '<td class="maxwidthonsmartphone">';
+            print $form->selectEstablishments($object->entity>0?$object->entity:$conf->entity, 'entity', 1);
             print '</td></tr>';
 
-			// Address
-			print '<tr><td>'.$form->editfieldkey('Address', 'address', '', $object, 0).'</td>';
-			print '<td>';
-			print '<input name="address" id="address" size="32" value="' . $object->address . '">';
-			print '</td></tr>';
+            // Address
+            print '<tr><td>'.$form->editfieldkey('Address', 'address', '', $object, 0).'</td>';
+            print '<td>';
+            print '<input name="address" id="address" size="32" value="' . $object->address . '">';
+            print '</td></tr>';
 
-			// Zipcode / Town
-			print '<tr><td>'.$form->editfieldkey('Zip', 'zipcode', '', $object, 0).'</td><td>';
-			print $formcompany->select_ziptown($object->zip, 'zipcode', array (
-					'town',
-					'selectcountry_id'
-			), 6) . '</tr>';
-			print '<tr><td>'.$form->editfieldkey('Town', 'town', '', $object, 0).'</td><td>';
-			print $formcompany->select_ziptown($object->town, 'town', array (
-					'zipcode',
-					'selectcountry_id'
-			)) . '</td></tr>';
+            // Zipcode / Town
+            print '<tr><td>'.$form->editfieldkey('Zip', 'zipcode', '', $object, 0).'</td><td>';
+            print $formcompany->select_ziptown($object->zip, 'zipcode', array (
+                    'town',
+                    'selectcountry_id'
+            ), 6) . '</tr>';
+            print '<tr><td>'.$form->editfieldkey('Town', 'town', '', $object, 0).'</td><td>';
+            print $formcompany->select_ziptown($object->town, 'town', array (
+                    'zipcode',
+                    'selectcountry_id'
+            )) . '</td></tr>';
 
-			// Country
-			print '<tr><td>'.$form->editfieldkey('Country', 'selectcountry_id', '', $object, 0).'</td>';
-			print '<td class="maxwidthonsmartphone">';
-			print $form->select_country($object->fk_country, 'country_id');
-				if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
-			print '</td>';
-			print '</tr>';
+            // Country
+            print '<tr><td>'.$form->editfieldkey('Country', 'selectcountry_id', '', $object, 0).'</td>';
+            print '<td class="maxwidthonsmartphone">';
+            print $form->select_country($object->fk_country, 'country_id');
+                if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+            print '</td>';
+            print '</tr>';
 
-			// Status
-			print '<tr><td>'.$form->editfieldkey('Status', 'status', '', $object, 0, 'string', '', 1).'</td><td>';
-			print $form->selectarray('status', $status2label, $object->status);
-			print '</td></tr>';
+            // Status
+            print '<tr><td>'.$form->editfieldkey('Status', 'status', '', $object, 0, 'string', '', 1).'</td><td>';
+            print $form->selectarray('status', $status2label, $object->status);
+            print '</td></tr>';
 
             print '</table>';
 
-			dol_fiche_end();
+            dol_fiche_end();
 
             print '<div class="center">';
-			print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
-			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+            print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+            print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
             print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
             print '</div>';
 
@@ -359,12 +359,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     }
 
 
-	// Object card
-	// ------------------------------------------------------------
+    // Object card
+    // ------------------------------------------------------------
 
-	$linkback = '<a href="' . DOL_URL_ROOT . '/hrm/admin/admin_establishment.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+    $linkback = '<a href="' . DOL_URL_ROOT . '/hrm/admin/admin_establishment.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
-	$morehtmlref='<div class="refidno">';
+    $morehtmlref='<div class="refidno">';
     $morehtmlref.='</div>';
 
     dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'id', $morehtmlref);
@@ -375,48 +375,48 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     print '<div class="underbanner clearboth"></div>';
     print '<table class="border centpercent">'."\n";
 
-	// Name
-	print '<tr>';
-	print '<td class="titlefield">'.$langs->trans("Name").'</td>';
-	print '<td>'.$object->name.'</td>';
-	print '</tr>';
-	
-	// Parent
-	print '<tr>';
-	print '<td class="titlefield">'.$langs->trans("Parent").'</td>';
-	print '<td>'.$object->getNomUrlParent($object->entity).'</td>';
-	print '</tr>';
+    // Name
+    print '<tr>';
+    print '<td class="titlefield">'.$langs->trans("Name").'</td>';
+    print '<td>'.$object->name.'</td>';
+    print '</tr>';
+    
+    // Parent
+    print '<tr>';
+    print '<td class="titlefield">'.$langs->trans("Parent").'</td>';
+    print '<td>'.$object->getNomUrlParent($object->entity).'</td>';
+    print '</tr>';
 
-	// Address
-	print '<tr>';
-	print '<td>'.$langs->trans("Address").'</td>';
-	print '<td>'.$object->address.'</td>';
-	print '</tr>';
+    // Address
+    print '<tr>';
+    print '<td>'.$langs->trans("Address").'</td>';
+    print '<td>'.$object->address.'</td>';
+    print '</tr>';
 
-	// Zipcode
-	print '<tr>';
-	print '<td>'.$langs->trans("Zipcode").'</td>';
-	print '<td>'.$object->zip.'</td>';
-	print '</tr>';
+    // Zipcode
+    print '<tr>';
+    print '<td>'.$langs->trans("Zipcode").'</td>';
+    print '<td>'.$object->zip.'</td>';
+    print '</tr>';
 
-	// Town
-	print '<tr>';
-	print '<td>'.$langs->trans("Town").'</td>';
-	print '<td>'.$object->town.'</td>';
-	print '</tr>';
+    // Town
+    print '<tr>';
+    print '<td>'.$langs->trans("Town").'</td>';
+    print '<td>'.$object->town.'</td>';
+    print '</tr>';
 
-	// Country
-	print '<tr>';
-	print '<td>'.$langs->trans("Country").'</td>';
-	print '<td>';
-	if ($object->country_id > 0)
-	{
-		$img=picto_from_langcode($object->country_code);
-		print $img?$img.' ':'';
-		print getCountry($object->getCountryCode(), 0, $db);
-	}
-	print '</td>';
-	print '</tr>';
+    // Country
+    print '<tr>';
+    print '<td>'.$langs->trans("Country").'</td>';
+    print '<td>';
+    if ($object->country_id > 0)
+    {
+        $img=picto_from_langcode($object->country_code);
+        print $img?$img.' ':'';
+        print getCountry($object->getCountryCode(), 0, $db);
+    }
+    print '</td>';
+    print '</tr>';
 
     print '</table>';
     print '</div>';
@@ -431,7 +431,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
     print '<div class="tabsAction">';
     print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&id='.$id.'">'.$langs->trans('Modify').'</a>';
-	print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&id='.$id.'">'.$langs->trans('Delete').'</a>';
+    print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&id='.$id.'">'.$langs->trans('Delete').'</a>';
     print '</div>';
 }
 

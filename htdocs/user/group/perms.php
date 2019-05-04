@@ -73,25 +73,25 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
-	if ($action == 'addrights' && $caneditperms)
-	{
-		$editgroup = new Usergroup($db);
-		$result=$editgroup->fetch($id);
-		if ($result > 0)
-		{
-			$editgroup->addrights($rights, $module, '', $entity);
-		}
-	}
+    if ($action == 'addrights' && $caneditperms)
+    {
+        $editgroup = new Usergroup($db);
+        $result=$editgroup->fetch($id);
+        if ($result > 0)
+        {
+            $editgroup->addrights($rights, $module, '', $entity);
+        }
+    }
 
-	if ($action == 'delrights' && $caneditperms)
-	{
-		$editgroup = new Usergroup($db);
-		$result=$editgroup->fetch($id);
-		if ($result > 0)
-		{
-			$editgroup->delrights($rights, $module, '', $entity);
-		}
-	}
+    if ($action == 'delrights' && $caneditperms)
+    {
+        $editgroup = new Usergroup($db);
+        $result=$editgroup->fetch($id);
+        if ($result > 0)
+        {
+            $editgroup->delrights($rights, $module, '', $entity);
+        }
+    }
 }
 
 
@@ -105,10 +105,10 @@ llxHeader('', $langs->trans("Permissions"));
 
 if ($object->id > 0)
 {
-	/*
+    /*
      * Affichage onglets
      */
-	$object->getrights();	// Reload permission
+    $object->getrights();    // Reload permission
 
     $head = group_prepare_head($object);
     $title = $langs->trans("Group");
@@ -173,21 +173,21 @@ if ($object->id > 0)
     $result=$db->query($sql);
     if ($result)
     {
-    	$num = $db->num_rows($result);
-    	$i = 0;
-    	while ($i < $num)
-    	{
-    		$obj = $db->fetch_object($result);
-    		if (! isset($permsgroupbyentity[$obj->entity]))
-    			$permsgroupbyentity[$obj->entity] = array();
-    			array_push($permsgroupbyentity[$obj->entity], $obj->id);
-    			$i++;
-    	}
-    	$db->free($result);
+        $num = $db->num_rows($result);
+        $i = 0;
+        while ($i < $num)
+        {
+            $obj = $db->fetch_object($result);
+            if (! isset($permsgroupbyentity[$obj->entity]))
+                $permsgroupbyentity[$obj->entity] = array();
+                array_push($permsgroupbyentity[$obj->entity], $obj->id);
+                $i++;
+        }
+        $db->free($result);
     }
     else
     {
-    	dol_print_error($db);
+        dol_print_error($db);
     }
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/user/group/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
@@ -233,11 +233,11 @@ if ($object->id > 0)
     print '<td>'.$langs->trans("Module").'</td>';
     if ($caneditperms)
     {
-    	print '<td class="center nowrap">';
-    	print '<a class="reposition" title="'.dol_escape_htmltag($langs->trans("All")).'" alt="'.dol_escape_htmltag($langs->trans("All")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;module=allmodules">'.$langs->trans("All")."</a>";
-    	print '/';
-    	print '<a class="reposition" title="'.dol_escape_htmltag($langs->trans("None")).'" alt="'.dol_escape_htmltag($langs->trans("None")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delrights&amp;entity='.$entity.'&amp;module=allmodules">'.$langs->trans("None")."</a>";
-    	print '</td>';
+        print '<td class="center nowrap">';
+        print '<a class="reposition" title="'.dol_escape_htmltag($langs->trans("All")).'" alt="'.dol_escape_htmltag($langs->trans("All")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;module=allmodules">'.$langs->trans("All")."</a>";
+        print '/';
+        print '<a class="reposition" title="'.dol_escape_htmltag($langs->trans("None")).'" alt="'.dol_escape_htmltag($langs->trans("None")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delrights&amp;entity='.$entity.'&amp;module=allmodules">'.$langs->trans("None")."</a>";
+        print '</td>';
     }
     print '<td class="center" width="24">&nbsp;</td>';
     print '<td>'.$langs->trans("Permissions").'</td>';
@@ -283,7 +283,7 @@ if ($object->id > 0)
                 print '<td class="center nowrap">';
                 if ($caneditperms)
                 {
-                	print '<a title='.$langs->trans("All").' alt='.$langs->trans("All").' href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;module='.$obj->module.'#'.$objMod->getName().'">'.$langs->trans("All")."</a>";
+                    print '<a title='.$langs->trans("All").' alt='.$langs->trans("All").' href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;module='.$obj->module.'#'.$objMod->getName().'">'.$langs->trans("All")."</a>";
                     print '/';
                     print '<a title='.$langs->trans("None").' alt='.$langs->trans("None").' href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delrights&amp;entity='.$entity.'&amp;module='.$obj->module.'#'.$objMod->getName().'">'.$langs->trans("None")."</a>";
                 }
@@ -299,35 +299,35 @@ if ($object->id > 0)
 
             if (is_array($permsgroupbyentity[$entity]))
             {
-            	if (in_array($obj->id, $permsgroupbyentity[$entity]))
-            	{
-            		// Own permission by group
-            		if ($caneditperms)
-            		{
-            			print '<td class="center"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delrights&amp;entity='.$entity.'&amp;rights='.$obj->id.'">'.img_edit_remove($langs->trans("Remove")).'</a></td>';
-            		}
-            		print '<td class="center">';
-            		print img_picto($langs->trans("Active"), 'tick');
-            		print '</td>';
-            	}
-            	else
-            	{
-            		// Do not own permission
-            		if ($caneditperms)
-            		{
-            			print '<td class="center"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;rights='.$obj->id.'">'.img_edit_add($langs->trans("Add")).'</a></td>';
-            		}
-            		print '<td>&nbsp</td>';
-            	}
+                if (in_array($obj->id, $permsgroupbyentity[$entity]))
+                {
+                    // Own permission by group
+                    if ($caneditperms)
+                    {
+                        print '<td class="center"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delrights&amp;entity='.$entity.'&amp;rights='.$obj->id.'">'.img_edit_remove($langs->trans("Remove")).'</a></td>';
+                    }
+                    print '<td class="center">';
+                    print img_picto($langs->trans("Active"), 'tick');
+                    print '</td>';
+                }
+                else
+                {
+                    // Do not own permission
+                    if ($caneditperms)
+                    {
+                        print '<td class="center"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;rights='.$obj->id.'">'.img_edit_add($langs->trans("Add")).'</a></td>';
+                    }
+                    print '<td>&nbsp</td>';
+                }
             }
             else
             {
-            	// Do not own permission
-            	if ($caneditperms)
-            	{
-            		print '<td class="center"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;rights='.$obj->id.'">'.img_edit_add($langs->trans("Add")).'</a></td>';
-            	}
-            	print '<td>&nbsp</td>';
+                // Do not own permission
+                if ($caneditperms)
+                {
+                    print '<td class="center"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;rights='.$obj->id.'">'.img_edit_add($langs->trans("Add")).'</a></td>';
+                }
+                print '<td>&nbsp</td>';
             }
 
             $perm_libelle=($conf->global->MAIN_USE_ADVANCED_PERMS && ($langs->trans("PermissionAdvanced".$obj->id)!=("PermissionAdvanced".$obj->id))?$langs->trans("PermissionAdvanced".$obj->id):(($langs->trans("Permission".$obj->id)!=("Permission".$obj->id))?$langs->trans("Permission".$obj->id):$langs->trans($obj->libelle)));

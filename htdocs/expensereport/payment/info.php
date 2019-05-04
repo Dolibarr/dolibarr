@@ -19,9 +19,9 @@
  */
 
 /**
- *		\file       htdocs/expensereport/payment/info.php
- *		\ingroup    Expense report
- *		\brief      Tab payment info
+ *        \file       htdocs/expensereport/payment/info.php
+ *        \ingroup    Expense report
+ *        \brief      Tab payment info
  */
 
 require '../../main.inc.php';

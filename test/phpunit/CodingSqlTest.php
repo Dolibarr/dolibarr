@@ -24,7 +24,7 @@
  */
 
 global $conf,$user,$langs,$db;
-//define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
+//define('TEST_DB_FORCE_TYPE','mysql');    // This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/security.lib.php';
@@ -55,7 +55,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
- * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
+ * @remarks    backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
 class CodingSqlTest extends PHPUnit\Framework\TestCase
 {
@@ -72,9 +72,9 @@ class CodingSqlTest extends PHPUnit\Framework\TestCase
      */
     public function __construct()
     {
-    	parent::__construct();
+        parent::__construct();
 
-    	//$this->sharedFixture
+        //$this->sharedFixture
         global $conf,$user,$langs,$db;
         $this->savconf=$conf;
         $this->savuser=$user;
@@ -165,7 +165,7 @@ class CodingSqlTest extends PHPUnit\Framework\TestCase
                 $result=strpos($filecontent, '"');
                 if ($result)
                 {
-                	$result=(! strpos($filecontent, '["') && ! strpos($filecontent, '{"'));
+                    $result=(! strpos($filecontent, '["') && ! strpos($filecontent, '{"'));
                 }
                 print __METHOD__." Result for checking we don't have double quote = ".$result."\n";
                 $this->assertTrue($result===false, 'Found double quote that is not [" neither {" (used for json content) into '.$file.'. Bad.');

@@ -18,7 +18,7 @@
 
 /**
  *      \file       htdocs/admin/system/os.php
- *		\brief      Page des infos systeme de l'OS
+ *        \brief      Page des infos systeme de l'OS
  */
 
 require '../../main.inc.php';

@@ -22,7 +22,7 @@
  */
 
 /**
- * 	Class to parse RSS files
+ *     Class to parse RSS files
  */
 class RssParser
 {
@@ -55,9 +55,9 @@ class RssParser
 
 
     /**
-     *	Constructor
+     *    Constructor
      *
-     *  @param		DoliDB		$db      Database handler
+     *  @param        DoliDB        $db      Database handler
      */
     public function __construct($db)
     {
@@ -176,13 +176,13 @@ class RssParser
 
 
     /**
-     * 	Parse rss URL
+     *     Parse rss URL
      *
-     * 	@param	string	$urlRSS		Url to parse
-     * 	@param	int		$maxNb		Max nb of records to get (0 for no limit)
-     * 	@param	int		$cachedelay	0=No cache, nb of seconds we accept cache files (cachedir must also be defined)
-     * 	@param	string	$cachedir	Directory where to save cache file
-     *	@return	int					<0 if KO, >0 if OK
+     *     @param    string    $urlRSS        Url to parse
+     *     @param    int        $maxNb        Max nb of records to get (0 for no limit)
+     *     @param    int        $cachedelay    0=No cache, nb of seconds we accept cache files (cachedir must also be defined)
+     *     @param    string    $cachedir    Directory where to save cache file
+     *    @return    int                    <0 if KO, >0 if OK
      */
     public function parser($urlRSS, $maxNb = 0, $cachedelay = 60, $cachedir = '')
     {
@@ -201,7 +201,7 @@ class RssParser
         }
 
         $this->_urlRSS = $urlRSS;
-        $newpathofdestfile=$cachedir.'/'.dol_hash($this->_urlRSS, 3);	// Force md5 hash (does not contains special chars)
+        $newpathofdestfile=$cachedir.'/'.dol_hash($this->_urlRSS, 3);    // Force md5 hash (does not contains special chars)
         $newmask='0644';
 
         //dol_syslog("RssPArser::parser parse url=".$urlRSS." => cache file=".$newpathofdestfile);
@@ -321,9 +321,9 @@ class RssParser
                     if (!empty($rss->channel->copyright))     $this->_copyright = (string) $rss->channel->copyright;
                     if (!empty($rss->channel->lastbuilddate)) $this->_lastbuilddate = (string) $rss->channel->lastbuilddate;
                     if (!empty($rss->channel->image->url[0])) $this->_imageurl = (string) $rss->channel->image->url[0];
-                    if (!empty($rss->channel->link))		  $this->_link = (string) $rss->channel->link;
+                    if (!empty($rss->channel->link))          $this->_link = (string) $rss->channel->link;
                     if (!empty($rss->channel->title))         $this->_title = (string) $rss->channel->title;
-                    if (!empty($rss->channel->description))	  $this->_description = (string) $rss->channel->description;
+                    if (!empty($rss->channel->description))      $this->_description = (string) $rss->channel->description;
                 }
                 else
                 {
@@ -333,7 +333,7 @@ class RssParser
                     if (!empty($rss->channel['copyright']))     $this->_copyright = (string) $rss->channel['copyright'];
                     if (!empty($rss->channel['lastbuilddate'])) $this->_lastbuilddate = (string) $rss->channel['lastbuilddate'];
                     if (!empty($rss->image['url']))             $this->_imageurl = (string) $rss->image['url'];
-                    if (!empty($rss->channel['link']))		    $this->_link = (string) $rss->channel['link'];
+                    if (!empty($rss->channel['link']))            $this->_link = (string) $rss->channel['link'];
                     if (!empty($rss->channel['title']))         $this->_title = (string) $rss->channel['title'];
                     if (!empty($rss->channel['description']))   $this->_description = (string) $rss->channel['description'];
                 }
@@ -351,7 +351,7 @@ class RssParser
                     if (!empty($rss->lastbuilddate)) $this->_lastbuilddate = (string) $rss->modified;
                     if (!empty($rss->link->href))    $this->_link = (string) $rss->link->href;
                     if (!empty($rss->title))         $this->_title = (string) $rss->title;
-                    if (!empty($rss->description))	 $this->_description = (string) $rss->description;
+                    if (!empty($rss->description))     $this->_description = (string) $rss->description;
                 }
                 else
                 {
@@ -360,7 +360,7 @@ class RssParser
                     //if (!empty($rss->channel['rss_copyright']))     $this->_copyright = (string) $rss->channel['rss_copyright'];
                     if (!empty($rss->channel['modified'])) $this->_lastbuilddate = (string) $rss->channel['modified'];
                     //if (!empty($rss->image['rss_url']))             $this->_imageurl = (string) $rss->image['rss_url'];
-                    if (!empty($rss->channel['link']))		    $this->_link = (string) $rss->channel['link'];
+                    if (!empty($rss->channel['link']))            $this->_link = (string) $rss->channel['link'];
                     if (!empty($rss->channel['title']))         $this->_title = (string) $rss->channel['title'];
                     //if (!empty($rss->channel['rss_description']))   $this->_description = (string) $rss->channel['rss_description'];
                 }
@@ -463,12 +463,12 @@ class RssParser
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
-     * 	Triggered when opened tag is found
+     *     Triggered when opened tag is found
      *
-     * 	@param	string		$p			Start
-     *  @param	string		$element	Tag
-     *  @param	array		$attrs		Attributes of tags
-     *  @return	void
+     *     @param    string        $p            Start
+     *  @param    string        $element    Tag
+     *  @param    array        $attrs        Attributes of tags
+     *  @return    void
      */
     public function feed_start_element($p, $element, &$attrs)
     {
@@ -583,11 +583,11 @@ class RssParser
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
-     * 	Triggered when CDATA is found
+     *     Triggered when CDATA is found
      *
-     * 	@param	string	$p		P
-     *  @param	string	$text	Tag
-     *  @return	void
+     *     @param    string    $p        P
+     *  @param    string    $text    Tag
+     *  @return    void
      */
     public function feed_cdata($p, $text)
     {
@@ -605,11 +605,11 @@ class RssParser
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
-     * 	Triggered when closed tag is found
+     *     Triggered when closed tag is found
      *
-     * 	@param	string		$p		P
-     *  @param	string		$el		Tag
-     *  @return	void
+     *     @param    string        $p        P
+     *  @param    string        $el        Tag
+     *  @return    void
      */
     public function feed_end_element($p, $el)
     {
@@ -660,11 +660,11 @@ class RssParser
 
 
     /**
-     * 	To concat 2 string with no warning if an operand is not defined
+     *     To concat 2 string with no warning if an operand is not defined
      *
-     * 	@param	string	$str1		Str1
-     *  @param	string	$str2		Str2
-     *  @return	string				String cancatenated
+     *     @param    string    $str1        Str1
+     *  @param    string    $str2        Str2
+     *  @return    string                String cancatenated
      */
     public function concat(&$str1, $str2 = "")
     {
@@ -678,8 +678,8 @@ class RssParser
     /**
      * Enter description here ...
      *
-     * @param	string	$text		Text
-     * @return	void
+     * @param    string    $text        Text
+     * @return    void
      */
     public function append_content($text)
     {
@@ -693,11 +693,11 @@ class RssParser
     }
 
     /**
-     * 	smart append - field and namespace aware
+     *     smart append - field and namespace aware
      *
-     * 	@param	string	$el		El
-     * 	@param	string	$text	Text
-     * 	@return	void
+     *     @param    string    $el        El
+     *     @param    string    $text    Text
+     *     @return    void
      */
     public function append($el, $text)
     {
@@ -740,8 +740,8 @@ class RssParser
 /**
  * Function to convert an XML object into an array
  *
- * @param	SimpleXMLElement	$xml		Xml
- * @return	void
+ * @param    SimpleXMLElement    $xml        Xml
+ * @return    void
  */
 function xml2php($xml)
 {

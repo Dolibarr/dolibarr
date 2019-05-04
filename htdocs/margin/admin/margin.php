@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2012	Christophe Battarel	<christophe.battarel@altairis.fr>
+/* Copyright (C) 2012    Christophe Battarel    <christophe.battarel@altairis.fr>
  * Copyright (C) 2016	Laurent Destailleur	<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -18,8 +18,8 @@
 
 /**
  *      \file       /htdocs/margin/admin/margin.php
- *		\ingroup    margin
- *		\brief      Page to setup margin module
+ *        \ingroup    margin
+ *        \brief      Page to setup margin module
  */
 
 include '../../main.inc.php';
@@ -137,7 +137,7 @@ print '<td>'.$langs->trans("MARGIN_TYPE").'</td>';
 print '<td>';
 print ' <input type="radio" name="MARGIN_TYPE" value="1" ';
 if (isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == '1')
-	print 'checked ';
+    print 'checked ';
 print '/> ';
 print $langs->trans('MargeType1');
 print '<br>';
@@ -165,18 +165,18 @@ print '<td>'.$langs->trans("DisplayMarginRates").'</td>';
 print '<td colspan="2" class="center">';
 if (! empty($conf->use_javascript_ajax))
 {
-	print ajax_constantonoff('DISPLAY_MARGIN_RATES');
+    print ajax_constantonoff('DISPLAY_MARGIN_RATES');
 }
 else
 {
-	if (empty($conf->global->DISPLAY_MARGIN_RATES))
-	{
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_DISPLAY_MARGIN_RATES">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
-	}
-	else
-	{
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_DISPLAY_MARGIN_RATES">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
-	}
+    if (empty($conf->global->DISPLAY_MARGIN_RATES))
+    {
+        print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_DISPLAY_MARGIN_RATES">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+    }
+    else
+    {
+        print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_DISPLAY_MARGIN_RATES">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+    }
 }
 print '</td>';
 print '<td>'.$langs->trans('MarginRate').' = '.$langs->trans('Margin').' / '.$langs->trans('BuyingPrice').'</td>';
@@ -188,18 +188,18 @@ print '<td>'.$langs->trans("DisplayMarkRates").'</td>';
 print '<td colspan="2" class="center">';
 if (! empty($conf->use_javascript_ajax))
 {
-	print ajax_constantonoff('DISPLAY_MARK_RATES');
+    print ajax_constantonoff('DISPLAY_MARK_RATES');
 }
 else
 {
-	if (empty($conf->global->DISPLAY_MARK_RATES))
-	{
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_DISPLAY_MARK_RATES">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
-	}
-	else
-	{
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_DISPLAY_MARK_RATES">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
-	}
+    if (empty($conf->global->DISPLAY_MARK_RATES))
+    {
+        print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_DISPLAY_MARK_RATES">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+    }
+    else
+    {
+        print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_DISPLAY_MARK_RATES">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+    }
 }
 print '</td>';
 print '<td>'.$langs->trans('MarkRate').' = '.$langs->trans('Margin').' / '.$langs->trans('SellingPrice').'</td>';
@@ -211,18 +211,18 @@ print '<td>'.$langs->trans("ForceBuyingPriceIfNull").'</td>';
 print '<td colspan="2" class="center">';
 if (! empty($conf->use_javascript_ajax))
 {
-	print ajax_constantonoff('ForceBuyingPriceIfNull');
+    print ajax_constantonoff('ForceBuyingPriceIfNull');
 }
 else
 {
-	if (empty($conf->global->ForceBuyingPriceIfNull))
-	{
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_ForceBuyingPriceIfNull">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
-	}
-	else
-	{
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_ForceBuyingPriceIfNull">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
-	}
+    if (empty($conf->global->ForceBuyingPriceIfNull))
+    {
+        print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_ForceBuyingPriceIfNull">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+    }
+    else
+    {
+        print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_ForceBuyingPriceIfNull">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+    }
 }
 print '</td>';
 print '<td>'.$langs->trans('ForceBuyingPriceIfNullDetails').'</td>';
@@ -230,9 +230,9 @@ print '</tr>';
 
 // GLOBAL DISCOUNT MANAGEMENT
 $methods = array(
-	1 => $langs->trans('UseDiscountAsProduct'),
-	2 => $langs->trans('UseDiscountAsService'),
-	3 => $langs->trans('UseDiscountOnTotal')
+    1 => $langs->trans('UseDiscountAsProduct'),
+    2 => $langs->trans('UseDiscountAsService'),
+    3 => $langs->trans('UseDiscountOnTotal')
 );
 
 

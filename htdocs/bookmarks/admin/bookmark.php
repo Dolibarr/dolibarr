@@ -17,9 +17,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**	    \file       htdocs/bookmarks/admin/bookmark.php
- *		\ingroup    bookmark
- *		\brief      Page to setup bookmark module
+/**        \file       htdocs/bookmarks/admin/bookmark.php
+ *        \ingroup    bookmark
+ *        \brief      Page to setup bookmark module
  */
 
 require '../../main.inc.php';
@@ -35,21 +35,21 @@ $action=GETPOST('action', 'alpha');
 
 if ($action == 'setvalue')
 {
-	$showmenu = GETPOST('BOOKMARKS_SHOW_IN_MENU', 'alpha');
-	$res = dolibarr_set_const($db, "BOOKMARKS_SHOW_IN_MENU", $showmenu, 'chaine', 0, '', $conf->entity);
+    $showmenu = GETPOST('BOOKMARKS_SHOW_IN_MENU', 'alpha');
+    $res = dolibarr_set_const($db, "BOOKMARKS_SHOW_IN_MENU", $showmenu, 'chaine', 0, '', $conf->entity);
 
-	if (! $res > 0) $error++;
+    if (! $res > 0) $error++;
 
-	if (! $error)
-	{
-		$db->commit();
-		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	}
-	else
-	{
-		$db->rollback();
-		setEventMessages($langs->trans("Error"), null, 'errors');
-	}
+    if (! $error)
+    {
+        $db->commit();
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    }
+    else
+    {
+        $db->rollback();
+        setEventMessages($langs->trans("Error"), null, 'errors');
+    }
 }
 
 

@@ -20,9 +20,9 @@
  */
 
 /**
- *	    \file       htdocs/comm/propal/stats/index.php
+ *        \file       htdocs/comm/propal/stats/index.php
  *      \ingroup    propale
- *		\brief      Page des stats propositions commerciales
+ *        \brief      Page des stats propositions commerciales
  */
 
 require '../../../main.inc.php';
@@ -221,9 +221,9 @@ if (! $mesg)
 $data = $stats->getAllByYear();
 $arrayyears=array();
 foreach($data as $val) {
-	if (! empty($val['year'])) {
-		$arrayyears[$val['year']]=$val['year'];
-	}
+    if (! empty($val['year'])) {
+        $arrayyears[$val['year']]=$val['year'];
+    }
 }
 if (! count($arrayyears)) $arrayyears[$nowyear]=$nowyear;
 
@@ -245,35 +245,35 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 //if (empty($socid))
 //{
-	// Show filter box
-	print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="mode" value="'.$mode.'">';
-	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
-	// Company
-	print '<tr><td class="left">'.$langs->trans("ThirdParty").'</td><td class="left">';
-	$filter='s.client in (1,2,3)';
-	print $form->select_company($socid, 'socid', $filter, 1, 0, 0, array(), 0, '', 'style="width: 95%"');
-	print '</td></tr>';
-	// User
-	print '<tr><td class="left">'.$langs->trans("CreatedBy").'</td><td class="left">';
-	print $form->select_dolusers($userid, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
-	print '</td></tr>';
-	// Status
-	print '<tr><td class="left">'.$langs->trans("Status").'</td><td class="left">';
+    // Show filter box
+    print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+    print '<input type="hidden" name="mode" value="'.$mode.'">';
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
+    // Company
+    print '<tr><td class="left">'.$langs->trans("ThirdParty").'</td><td class="left">';
+    $filter='s.client in (1,2,3)';
+    print $form->select_company($socid, 'socid', $filter, 1, 0, 0, array(), 0, '', 'style="width: 95%"');
+    print '</td></tr>';
+    // User
+    print '<tr><td class="left">'.$langs->trans("CreatedBy").'</td><td class="left">';
+    print $form->select_dolusers($userid, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+    print '</td></tr>';
+    // Status
+    print '<tr><td class="left">'.$langs->trans("Status").'</td><td class="left">';
     $formpropal->selectProposalStatus(($object_status!=''?$object_status:-1), 0, 0, 1, $mode, 'object_status');
-	print '</td></tr>';
-	// Year
-	print '<tr><td class="left">'.$langs->trans("Year").'</td><td class="left">';
-	if (! in_array($year, $arrayyears)) $arrayyears[$year]=$year;
-	if (! in_array($nowyear, $arrayyears)) $arrayyears[$nowyear]=$nowyear;
-	arsort($arrayyears);
-	print $form->selectarray('year', $arrayyears, $year, 0);
-	print '</td></tr>';
-	print '<tr><td align="center" colspan="2"><input type="submit" name="submit" class="button" value="'.$langs->trans("Refresh").'"></td></tr>';
-	print '</table>';
-	print '</form>';
-	print '<br><br>';
+    print '</td></tr>';
+    // Year
+    print '<tr><td class="left">'.$langs->trans("Year").'</td><td class="left">';
+    if (! in_array($year, $arrayyears)) $arrayyears[$year]=$year;
+    if (! in_array($nowyear, $arrayyears)) $arrayyears[$nowyear]=$nowyear;
+    arsort($arrayyears);
+    print $form->selectarray('year', $arrayyears, $year, 0);
+    print '</td></tr>';
+    print '<tr><td align="center" colspan="2"><input type="submit" name="submit" class="button" value="'.$langs->trans("Refresh").'"></td></tr>';
+    print '</table>';
+    print '</form>';
+    print '<br><br>';
 //}
 
 print '<div class="div-table-responsive-no-min">';
@@ -293,7 +293,7 @@ foreach ($data as $val)
 {
     $year = $val['year'];
     while (! empty($year) && $oldyear > $year+1)
-    {	// If we have empty year
+    {    // If we have empty year
         $oldyear--;
 
         print '<tr class="oddeven" height="24">';
@@ -309,11 +309,11 @@ foreach ($data as $val)
     print '<tr class="oddeven" height="24">';
     print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$year.'</a></td>';
     print '<td class="right">'.$val['nb'].'</td>';
-	print '<td class="right" style="'.(($val['nb_diff'] >= 0) ? 'color: green;':'color: red;').'">'.round($val['nb_diff']).'</td>';
+    print '<td class="right" style="'.(($val['nb_diff'] >= 0) ? 'color: green;':'color: red;').'">'.round($val['nb_diff']).'</td>';
     print '<td class="right">'.price(price2num($val['total'], 'MT'), 1).'</td>';
-	print '<td class="right" style="'.(($val['total_diff'] >= 0) ? 'color: green;':'color: red;').'">'.round($val['total_diff']).'</td>';
+    print '<td class="right" style="'.(($val['total_diff'] >= 0) ? 'color: green;':'color: red;').'">'.round($val['total_diff']).'</td>';
     print '<td class="right">'.price(price2num($val['avg'], 'MT'), 1).'</td>';
-	print '<td class="right" style="'.(($val['avg_diff'] >= 0) ? 'color: green;':'color: red;').'">'.round($val['avg_diff']).'</td>';
+    print '<td class="right" style="'.(($val['avg_diff'] >= 0) ? 'color: green;':'color: red;').'">'.round($val['avg_diff']).'</td>';
     print '</tr>';
     $oldyear=$year;
 }

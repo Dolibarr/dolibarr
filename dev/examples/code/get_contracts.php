@@ -19,8 +19,8 @@
 /**
  *      \file       dev/examples/get_contracts.php
  *      \brief      This file is an example for a command line script
- *		\author		Put author's name here
- *		\remarks	Put here some comments
+ *        \author        Put author's name here
+ *        \remarks    Put here some comments
  */
 
 $sapi_type = php_sapi_name();
@@ -43,18 +43,18 @@ $error=0;
 require_once $path."../../htdocs/master.inc.php";
 // After this $db, $mysoc, $langs and $conf->entity are defined. Opened handler to database will be closed at end of file.
 
-//$langs->setDefaultLang('en_US'); 	// To change default language of $langs
-$langs->load("main");				// To load language file for default language
+//$langs->setDefaultLang('en_US');     // To change default language of $langs
+$langs->load("main");                // To load language file for default language
 @set_time_limit(0);
 
 // Load user and its permissions
-$result=$user->fetch('', 'admin');	// Load user for login 'admin'. Comment line to run as anonymous user.
+$result=$user->fetch('', 'admin');    // Load user for login 'admin'. Comment line to run as anonymous user.
 if (! $result > 0) { dol_print_error('', $user->error); exit; }
 $user->getrights();
 
 
 print "***** ".$script_file." (".$version.") *****\n";
-if (! isset($argv[1])) {	// Check parameters
+if (! isset($argv[1])) {    // Check parameters
     print "Usage: ".$script_file." id_thirdparty ...\n";
     exit;
 }

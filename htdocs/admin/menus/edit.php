@@ -19,9 +19,9 @@
  */
 
 /**
- *		\file       htdocs/admin/menus/edit.php
- *		\ingroup    core
- *		\brief      Tool to edit menus
+ *        \file       htdocs/admin/menus/edit.php
+ *        \ingroup    core
+ *        \brief      Tool to edit menus
  */
 
 require '../../main.inc.php';
@@ -99,29 +99,29 @@ if ($action == 'update')
             $menu->mainmenu=GETPOST('propertymainmenu', 'alpha');
             if (is_numeric(GETPOST('menuIdParent', 'alpha')))
             {
-            	$menu->fk_menu=GETPOST('menuIdParent', 'alpha');
+                $menu->fk_menu=GETPOST('menuIdParent', 'alpha');
             }
             else
             {
-    	       	if (GETPOST('type', 'alpha') == 'top') $menu->fk_menu=0;
-    	       	else $menu->fk_menu=-1;
-            	$menu->fk_mainmenu=$mainmenu;
-            	$menu->fk_leftmenu=$leftmenu;
+                   if (GETPOST('type', 'alpha') == 'top') $menu->fk_menu=0;
+                   else $menu->fk_menu=-1;
+                $menu->fk_mainmenu=$mainmenu;
+                $menu->fk_leftmenu=$leftmenu;
             }
 
             $result=$menu->update($user);
             if ($result > 0)
             {
-	            setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
+                setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
             }
             else
             {
-	            setEventMessages($menu->error, $menu->errors, 'errors');
+                setEventMessages($menu->error, $menu->errors, 'errors');
             }
         }
         else
         {
-	        setEventMessages($menu->error, $menu->errors, 'errors');
+            setEventMessages($menu->error, $menu->errors, 'errors');
         }
         $action = "edit";
 
@@ -146,18 +146,18 @@ if ($action == 'add')
     $leftmenu=''; $mainmenu='';
     if (GETPOST('menuId', 'alpha', 3) && ! is_numeric(GETPOST('menuId', 'alpha', 3)))
     {
-	    $tmp=explode('&', GETPOST('menuId', 'alpha', 3));
-	    foreach($tmp as $s)
-	    {
-	    	if (preg_match('/fk_mainmenu=/', $s))
-	    	{
-				$mainmenu=preg_replace('/fk_mainmenu=/', '', $s);
-	    	}
-	    	if (preg_match('/fk_leftmenu=/', $s))
-	    	{
-	    		$leftmenu=preg_replace('/fk_leftmenu=/', '', $s);
-	    	}
-	    }
+        $tmp=explode('&', GETPOST('menuId', 'alpha', 3));
+        foreach($tmp as $s)
+        {
+            if (preg_match('/fk_mainmenu=/', $s))
+            {
+                $mainmenu=preg_replace('/fk_mainmenu=/', '', $s);
+            }
+            if (preg_match('/fk_leftmenu=/', $s))
+            {
+                $leftmenu=preg_replace('/fk_leftmenu=/', '', $s);
+            }
+        }
     }
 
     $langs->load("errors");
@@ -165,37 +165,37 @@ if ($action == 'add')
     $error=0;
     if (! $error && ! $_POST['menu_handler'])
     {
-	    setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("MenuHandler")), null, 'errors');
+        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("MenuHandler")), null, 'errors');
         $action = 'create';
         $error++;
     }
     if (! $error && ! $_POST['type'])
     {
-	    setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Type")), null, 'errors');
+        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Type")), null, 'errors');
         $action = 'create';
         $error++;
     }
     if (! $error && ! $_POST['url'])
     {
-	    setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("URL")), null, 'errors');
+        setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("URL")), null, 'errors');
         $action = 'create';
         $error++;
     }
     if (! $error && ! $_POST['titre'])
     {
-	    setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("Title")), null, 'errors');
+        setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("Title")), null, 'errors');
         $action = 'create';
         $error++;
     }
     if (! $error && $_POST['menuId'] && $_POST['type'] == 'top')
     {
-	    setEventMessages($langs->trans("ErrorTopMenuMustHaveAParentWithId0"), null, 'errors');
+        setEventMessages($langs->trans("ErrorTopMenuMustHaveAParentWithId0"), null, 'errors');
         $action = 'create';
         $error++;
     }
     if (! $error && ! $_POST['menuId'] && $_POST['type'] == 'left')
     {
-	    setEventMessages($langs->trans("ErrorLeftMenuMustHaveAParentId"), null, 'errors');
+        setEventMessages($langs->trans("ErrorLeftMenuMustHaveAParentId"), null, 'errors');
         $action = 'create';
         $error++;
     }
@@ -216,7 +216,7 @@ if ($action == 'add')
         $menu->mainmenu=GETPOST('propertymainmenu', 'alpha');
         if (is_numeric(GETPOST('menuId', 'alpha', 3)))
         {
-        	$menu->fk_menu=GETPOST('menuId', 'alpha', 3);
+            $menu->fk_menu=GETPOST('menuId', 'alpha', 3);
         }
         else
         {
@@ -235,7 +235,7 @@ if ($action == 'add')
         else
         {
             $action = 'create';
-	        setEventMessages($menu->error, $menu->errors, 'errors');
+            setEventMessages($menu->error, $menu->errors, 'errors');
         }
     }
 }
@@ -253,7 +253,7 @@ if ($action == 'confirm_delete' && $_POST["confirm"] == 'yes')
         $this->db->commit();
 
         llxHeader();
-	    setEventMessages($langs->trans("MenuDeleted"), null, 'mesgs');
+        setEventMessages($langs->trans("MenuDeleted"), null, 'mesgs');
         llxFooter();
         exit ;
     }
@@ -368,7 +368,7 @@ if ($action == 'create')
 
     // Mainmenu code
     print '<tr><td class="fieldrequired">'.$langs->trans('MainMenuCode').'</td>';
-   	print '<td><input type="text" class="minwidth300" id="propertymainmenu" name="propertymainmenu" value="'.(GETPOST("propertymainmenu", 'alpha')?GETPOST("propertymainmenu", 'alpha'):'').'"></td>';
+       print '<td><input type="text" class="minwidth300" id="propertymainmenu" name="propertymainmenu" value="'.(GETPOST("propertymainmenu", 'alpha')?GETPOST("propertymainmenu", 'alpha'):'').'"></td>';
     print '<td>';
     print $langs->trans("Example").': mytopmenukey';
     print '</td></tr>';
@@ -417,10 +417,10 @@ if ($action == 'create')
 
     // Boutons
     print '<div class="center">';
-	print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+    print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
     print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
     print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-	print '</div>';
+    print '</div>';
 
     print '</form>';
 }
@@ -466,18 +466,18 @@ elseif ($action == 'edit')
     // Mainmenu code
     if ($menu->type == 'top')
     {
-	    print '<tr><td class="fieldrequired">'.$langs->trans('MainMenuCode').'</td>';
-	    /*if ($parent_rowid)
-	     {
-	     print '<td>'.$parent_rowid.'<input type="hidden" name="propertyleftmenu" value="'.$parent_rowid.'"></td>';
-	     }
-	     else
-	     {*/
-	    print '<td><input type="text" class="minwidth300" id="propertymainmenu" name="propertymainmenu" value="'.(GETPOST("propertymainmenu", 'alpha')?GETPOST("propertymainmenu", 'alpha'):$menu->mainmenu).'"></td>';
-	    //}
-	    print '<td>';
-	    print $langs->trans("Example").': mytopmenukey';
-	    print '</td></tr>';
+        print '<tr><td class="fieldrequired">'.$langs->trans('MainMenuCode').'</td>';
+        /*if ($parent_rowid)
+         {
+         print '<td>'.$parent_rowid.'<input type="hidden" name="propertyleftmenu" value="'.$parent_rowid.'"></td>';
+         }
+         else
+         {*/
+        print '<td><input type="text" class="minwidth300" id="propertymainmenu" name="propertymainmenu" value="'.(GETPOST("propertymainmenu", 'alpha')?GETPOST("propertymainmenu", 'alpha'):$menu->mainmenu).'"></td>';
+        //}
+        print '<td>';
+        print $langs->trans("Example").': mytopmenukey';
+        print '</td></tr>';
     }
 
     // MenuId Parent
@@ -528,10 +528,10 @@ elseif ($action == 'edit')
 
     // Bouton
     print '<div class="center">';
-	print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+    print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
     print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
     print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-	print '</div>';
+    print '</div>';
 
     print '</form>';
 

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2016-2017  Alexandre Spangaro	<aspangaro@open-dsi.fr>
+/* Copyright (C) 2016-2017  Alexandre Spangaro    <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,9 +16,9 @@
  */
 
 /**
- *	\file       htdocs/compta/tva/info.php
- *	\ingroup    tax
- *	\brief      Page with info about vat
+ *    \file       htdocs/compta/tva/info.php
+ *    \ingroup    tax
+ *    \brief      Page with info about vat
  */
 
 require '../../main.inc.php';
@@ -47,10 +47,10 @@ $object = new Tva($db);
 
 if ($action == 'setlib' && $user->rights->tax->charges->creer)
 {
-	$object->fetch($id);
-	$result = $object->setValueFrom('label', GETPOST('lib', 'alpha'), '', '', 'text', '', $user, 'TAX_MODIFY');
-	if ($result < 0)
-		setEventMessages($object->error, $object->errors, 'errors');
+    $object->fetch($id);
+    $result = $object->setValueFrom('label', GETPOST('lib', 'alpha'), '', '', 'text', '', $user, 'TAX_MODIFY');
+    if ($result < 0)
+        setEventMessages($object->error, $object->errors, 'errors');
 }
 
 

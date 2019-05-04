@@ -45,8 +45,8 @@ class Boms extends DolibarrApi
      */
     public function __construct()
     {
-		global $db, $conf;
-		$this->db = $db;
+        global $db, $conf;
+        $this->db = $db;
         $this->bom = new BOM($this->db);
     }
 
@@ -55,17 +55,17 @@ class Boms extends DolibarrApi
      *
      * Return an array with bom informations
      *
-     * @param 	int 	$id ID of bom
-     * @return 	array|mixed data without useless information
-	 *
-     * @url	GET {id}
-     * @throws 	RestException
+     * @param     int     $id ID of bom
+     * @return     array|mixed data without useless information
+     *
+     * @url    GET {id}
+     * @throws     RestException
      */
     public function get($id)
     {
-		if (! DolibarrApiAccess::$user->rights->bom->read) {
-			throw new RestException(401);
-		}
+        if (! DolibarrApiAccess::$user->rights->bom->read) {
+            throw new RestException(401);
+        }
 
         $result = $this->bom->fetch($id);
         if (! $result) {
@@ -73,10 +73,10 @@ class Boms extends DolibarrApi
         }
 
         if (! DolibarrApi::_checkAccessToResource('bom', $this->bom->id, 'bom_bom')) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-		}
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
 
-		return $this->_cleanObjectDatas($this->bom);
+        return $this->_cleanObjectDatas($this->bom);
     }
 
 
@@ -85,10 +85,10 @@ class Boms extends DolibarrApi
      *
      * Get a list of boms
      *
-     * @param string	       $sortfield	        Sort field
-     * @param string	       $sortorder	        Sort order
-     * @param int		       $limit		        Limit for list
-     * @param int		       $page		        Page number
+     * @param string           $sortfield            Sort field
+     * @param string           $sortorder            Sort order
+     * @param int               $limit                Limit for list
+     * @param int               $page                Page number
      * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
      * @return  array                               Array of order objects
      *
@@ -103,7 +103,7 @@ class Boms extends DolibarrApi
         
         $socid = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : '';
 
-        $restrictonsocid = 0;	// Set to 1 if there is a field socid in table of object
+        $restrictonsocid = 0;    // Set to 1 if there is a field socid in table of object
 
         // If the internal user must only see his customers, force searching by him
         $search_sale = 0;
@@ -123,7 +123,7 @@ class Boms extends DolibarrApi
         if ($tmpobject->ismultientitymanaged) $sql.= ' AND t.entity IN ('.getEntity('bom').')';
         if ($restrictonsocid && (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql.= " AND t.fk_soc = sc.fk_soc";
         if ($restrictonsocid && $socid) $sql.= " AND t.fk_soc = ".$socid;
-        if ($restrictonsocid && $search_sale > 0) $sql.= " AND t.rowid = sc.fk_soc";		// Join for the needed table to filter by sale
+        if ($restrictonsocid && $search_sale > 0) $sql.= " AND t.rowid = sc.fk_soc";        // Join for the needed table to filter by sale
         // Insert sale filter
         if ($restrictonsocid && $search_sale > 0)
         {
@@ -135,12 +135,12 @@ class Boms extends DolibarrApi
             {
                 throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
             }
-	        $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
             $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
 
         $sql.= $db->order($sortfield, $sortorder);
-        if ($limit)	{
+        if ($limit)    {
             if ($page < 0)
             {
                 $page = 0;
@@ -171,7 +171,7 @@ class Boms extends DolibarrApi
         if( ! count($obj_ret)) {
             throw new RestException(404, 'No bom found');
         }
-		return $obj_ret;
+        return $obj_ret;
     }
 
     /**
@@ -217,8 +217,8 @@ class Boms extends DolibarrApi
         }
 
         if( ! DolibarrApi::_checkAccessToResource('bom', $this->bom->id, 'bom_bom')) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-		}
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
 
         foreach($request_data as $field => $value) {
             if ($field == 'id') continue;
@@ -243,9 +243,9 @@ class Boms extends DolibarrApi
      */
     public function delete($id)
     {
-    	if (! DolibarrApiAccess::$user->rights->bom->delete) {
-			throw new RestException(401);
-		}
+        if (! DolibarrApiAccess::$user->rights->bom->delete) {
+            throw new RestException(401);
+        }
         $result = $this->bom->fetch($id);
         if (! $result) {
             throw new RestException(404, 'BOM not found');
@@ -255,7 +255,7 @@ class Boms extends DolibarrApi
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
-		if (! $this->bom->delete(DolibarrApiAccess::$user))
+        if (! $this->bom->delete(DolibarrApiAccess::$user))
         {
             throw new RestException(500, 'Error when deleting BOM : '.$this->bom->error);
         }
@@ -279,25 +279,25 @@ class Boms extends DolibarrApi
     protected function _cleanObjectDatas($object)
     {
         // phpcs:enable
-    	$object = parent::_cleanObjectDatas($object);
+        $object = parent::_cleanObjectDatas($object);
 
-    	/*unset($object->note);
-    	unset($object->address);
-    	unset($object->barcode_type);
-    	unset($object->barcode_type_code);
-    	unset($object->barcode_type_label);
-    	unset($object->barcode_type_coder);*/
+        /*unset($object->note);
+        unset($object->address);
+        unset($object->barcode_type);
+        unset($object->barcode_type_code);
+        unset($object->barcode_type_label);
+        unset($object->barcode_type_coder);*/
 
-    	return $object;
+        return $object;
     }
 
     /**
      * Validate fields before create or update object
      *
-     * @param	array		$data   Array of data to validate
-     * @return	array
+     * @param    array        $data   Array of data to validate
+     * @return    array
      *
-     * @throws	RestException
+     * @throws    RestException
      */
     private function _validate($data)
     {

@@ -19,9 +19,9 @@
  */
 
 /**
- *		\file       htdocs/core/boxes/box_commandes.php
- *		\ingroup    commande
- *		\brief      Module de generation de l'affichage de la box commandes
+ *        \file       htdocs/core/boxes/box_commandes.php
+ *        \ingroup    commande
+ *        \brief      Module de generation de l'affichage de la box commandes
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
@@ -37,7 +37,7 @@ class box_commandes extends ModeleBoxes
     public $boxlabel="BoxLastCustomerOrders";
     public $depends = array("commande");
 
-	/**
+    /**
      * @var DoliDB Database handler.
      */
     public $db;
@@ -66,8 +66,8 @@ class box_commandes extends ModeleBoxes
     /**
      *  Load data for box to show them later
      *
-     *  @param	int		$max        Maximum number of records to load
-     *  @return	void
+     *  @param    int        $max        Maximum number of records to load
+     *  @return    void
      */
     public function loadBox($max = 5)
     {
@@ -190,14 +190,14 @@ class box_commandes extends ModeleBoxes
         }
     }
 
-	/**
-	 *	Method to show box
-	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
-	 *	@return	string
-	 */
+    /**
+     *    Method to show box
+     *
+     *    @param    array    $head       Array with properties of box title
+     *    @param  array    $contents   Array with properties of box lines
+     *  @param    int        $nooutput    No print, only return string
+     *    @return    string
+     */
     public function showBox($head = null, $contents = null, $nooutput = 0)
     {
         return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);

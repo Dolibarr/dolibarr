@@ -84,44 +84,44 @@ llxHeader('', $langs->trans("Resource"));
 
 if ($object->id)
 {
-	$object->fetch_thirdparty();
+    $object->fetch_thirdparty();
 
-	$head=resource_prepare_head($object);
+    $head=resource_prepare_head($object);
 
-	dol_fiche_head($head, 'documents', $langs->trans("ResourceSingular"), -1, 'resource');
-
-
-	// Build file list
-	$filearray=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);
-	$totalsize=0;
-	foreach($filearray as $key => $file)
-	{
-		$totalsize+=$file['size'];
-	}
+    dol_fiche_head($head, 'documents', $langs->trans("ResourceSingular"), -1, 'resource');
 
 
-	$linkback = '<a href="' . DOL_URL_ROOT . '/resource/list.php' . (! empty($socid) ? '?id=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+    // Build file list
+    $filearray=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);
+    $totalsize=0;
+    foreach($filearray as $key => $file)
+    {
+        $totalsize+=$file['size'];
+    }
 
 
-	$morehtmlref='<div class="refidno">';
-	$morehtmlref.='</div>';
+    $linkback = '<a href="' . DOL_URL_ROOT . '/resource/list.php' . (! empty($socid) ? '?id=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
 
-	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+    $morehtmlref='<div class="refidno">';
+    $morehtmlref.='</div>';
 
 
-	print '<div class="fichecenter">';
-	print '<div class="underbanner clearboth"></div>';
+    dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+
+
+    print '<div class="fichecenter">';
+    print '<div class="underbanner clearboth"></div>';
 
     print '<table class="border tableforfield centpercent">';
 
-	// Resource type
-	print '<tr>';
-	print '<td class="titlefield">' . $langs->trans("ResourceType") . '</td>';
-	print '<td>';
-	print $object->type_label;
-	print '</td>';
-	print '</tr>';
+    // Resource type
+    print '<tr>';
+    print '<td class="titlefield">' . $langs->trans("ResourceType") . '</td>';
+    print '<td>';
+    print $object->type_label;
+    print '</td>';
+    print '</tr>';
 
     print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
     print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize, 1, 1).'</td></tr>';
@@ -138,7 +138,7 @@ if ($object->id)
 }
 else
 {
-	print $langs->trans("ErrorUnknown");
+    print $langs->trans("ErrorUnknown");
 }
 
 // End of page

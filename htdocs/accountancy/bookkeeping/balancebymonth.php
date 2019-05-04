@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2013-2014 Olivier Geffroy		<jeff@jeffinfo.com>
+/* Copyright (C) 2013-2014 Olivier Geffroy        <jeff@jeffinfo.com>
  * Copyright (C) 2013-2014 Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2014      Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
@@ -20,9 +20,9 @@
  */
 
 /**
- * \file		htdocs/accountancy/bookkeeping/balancebymonth.php
- * \ingroup		Advanced accountancy
- * \brief		Balance by month
+ * \file        htdocs/accountancy/bookkeeping/balancebymonth.php
+ * \ingroup        Advanced accountancy
+ * \brief        Balance by month
  */
 require '../../main.inc.php';
 
@@ -35,11 +35,11 @@ $langs->loadLangs(array("bills","compta","accountancy","other"));
 // Filter
 $year = GETPOST("year", 'int');
 if ($year == 0) {
-	$year_current = strftime("%Y", time());
-	$year_start = $year_current;
+    $year_current = strftime("%Y", time());
+    $year_start = $year_current;
 } else {
-	$year_current = $year;
-	$year_start = $year;
+    $year_current = $year;
+    $year_start = $year;
 }
 
 
@@ -62,10 +62,10 @@ $sql .= " AND f.rowid = fd.fk_facture AND f.fk_statut = 1;";
 dol_syslog('accountancy/bookkeeping/balancebymonth.php:: $sql=' . $sql);
 $result = $db->query($sql);
 if ($result) {
-	$row = $db->fetch_row($result);
-	$nbfac = $row[0];
+    $row = $db->fetch_row($result);
+    $nbfac = $row[0];
 
-	$db->free($result);
+    $db->free($result);
 }
 
 $y = $year_current;
@@ -109,34 +109,34 @@ $sql .= " GROUP BY bk.numero_compte";
 
 $resql = $db->query($sql);
 if ($resql) {
-	$i = 0;
-	$num = $db->num_rows($resql);
+    $i = 0;
+    $num = $db->num_rows($resql);
 
-	while ( $i < $num ) {
+    while ( $i < $num ) {
 
-		$row = $db->fetch_row($resql);
+        $row = $db->fetch_row($resql);
 
-		print '<tr class="oddeven"><td width="14%">' . length_accountg($row[0]) . '</td>';
-		print '<td class="right" width="6.5%">' . price($row[1]) . '</td>';
-		print '<td class="right" width="6.5%">' . price($row[2]) . '</td>';
-		print '<td class="right" width="6.5%">' . price($row[3]) . '</td>';
-		print '<td class="right" width="6.5%">' . price($row[4]) . '</td>';
-		print '<td class="right" width="6.5%">' . price($row[5]) . '</td>';
-		print '<td class="right" width="6.5%">' . price($row[6]) . '</td>';
-		print '<td class="right" width="6.5%">' . price($row[7]) . '</td>';
-		print '<td class="right" width="6.5%">' . price($row[8]) . '</td>';
-		print '<td class="right" width="6.5%">' . price($row[9]) . '</td>';
-		print '<td class="right" width="6.5%">' . price($row[10]) . '</td>';
-		print '<td class="right" width="6.5%">' . price($row[11]) . '</td>';
-		print '<td class="right" width="6.5%">' . price($row[12]) . '</td>';
-		print '<td class="right" width="8%"><strong>' . price($row[13]) . '</strong></td>';
-		print '</tr>';
+        print '<tr class="oddeven"><td width="14%">' . length_accountg($row[0]) . '</td>';
+        print '<td class="right" width="6.5%">' . price($row[1]) . '</td>';
+        print '<td class="right" width="6.5%">' . price($row[2]) . '</td>';
+        print '<td class="right" width="6.5%">' . price($row[3]) . '</td>';
+        print '<td class="right" width="6.5%">' . price($row[4]) . '</td>';
+        print '<td class="right" width="6.5%">' . price($row[5]) . '</td>';
+        print '<td class="right" width="6.5%">' . price($row[6]) . '</td>';
+        print '<td class="right" width="6.5%">' . price($row[7]) . '</td>';
+        print '<td class="right" width="6.5%">' . price($row[8]) . '</td>';
+        print '<td class="right" width="6.5%">' . price($row[9]) . '</td>';
+        print '<td class="right" width="6.5%">' . price($row[10]) . '</td>';
+        print '<td class="right" width="6.5%">' . price($row[11]) . '</td>';
+        print '<td class="right" width="6.5%">' . price($row[12]) . '</td>';
+        print '<td class="right" width="8%"><strong>' . price($row[13]) . '</strong></td>';
+        print '</tr>';
 
-		$i ++;
-	}
-	$db->free($resql);
+        $i ++;
+    }
+    $db->free($resql);
 } else {
-	print $db->lasterror();
+    print $db->lasterror();
 }
 print "</table>\n";
 

@@ -58,9 +58,9 @@ class ExpenseReports extends DolibarrApi
      * Return an array with Expense Report informations
      *
      * @param       int         $id         ID of Expense Report
-     * @return 	    array|mixed             Data without useless information
+     * @return         array|mixed             Data without useless information
      *
-     * @throws 	RestException
+     * @throws     RestException
      */
     public function get($id)
     {
@@ -86,11 +86,11 @@ class ExpenseReports extends DolibarrApi
      *
      * Get a list of Expense Reports
      *
-     * @param string	$sortfield	Sort field
-     * @param string	$sortorder	Sort order
-     * @param int		$limit		Limit for list
-     * @param int		$page		Page number
-     * @param string   	$user_ids   User ids filter field. Example: '1' or '1,2,3'          {@pattern /^[0-9,]*$/i}
+     * @param string    $sortfield    Sort field
+     * @param string    $sortorder    Sort order
+     * @param int        $limit        Limit for list
+     * @param int        $page        Page number
+     * @param string       $user_ids   User ids filter field. Example: '1' or '1,2,3'          {@pattern /^[0-9,]*$/i}
      * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
      * @return  array               Array of Expense Report objects
      */
@@ -120,7 +120,7 @@ class ExpenseReports extends DolibarrApi
         }
 
         $sql.= $db->order($sortfield, $sortorder);
-        if ($limit)	{
+        if ($limit)    {
             if ($page < 0)
             {
                 $page = 0;
@@ -191,7 +191,7 @@ class ExpenseReports extends DolibarrApi
      *
      * @param int   $id             Id of Expense Report
      *
-     * @url	GET {id}/lines
+     * @url    GET {id}/lines
      *
      * @return int
      */
@@ -225,7 +225,7 @@ class ExpenseReports extends DolibarrApi
      * @param int   $id             Id of Expense Report to update
      * @param array $request_data   Expense Report data
      *
-     * @url	POST {id}/lines
+     * @url    POST {id}/lines
      *
      * @return int
      */
@@ -288,7 +288,7 @@ class ExpenseReports extends DolibarrApi
      * @param int   $lineid         Id of line to update
      * @param array $request_data   Expense Report data
      *
-     * @url	PUT {id}/lines/{lineid}
+     * @url    PUT {id}/lines/{lineid}
      *
      * @return object
      */
@@ -347,7 +347,7 @@ class ExpenseReports extends DolibarrApi
      * @param int   $id             Id of Expense Report to update
      * @param int   $lineid         Id of line to delete
      *
-     * @url	DELETE {id}/lines/{lineid}
+     * @url    DELETE {id}/lines/{lineid}
      *
      * @return int
      */

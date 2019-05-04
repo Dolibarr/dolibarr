@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2015       Juanjo Menent	        <jmenent@2byte.es>
+/* Copyright (C) 2015       Juanjo Menent            <jmenent@2byte.es>
  * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -27,22 +27,22 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/cheque/modules_chequereceipts.php
 
 
 /**
- *	Class to manage cheque receipts numbering rules Thyme
+ *    Class to manage cheque receipts numbering rules Thyme
  */
 class mod_chequereceipt_thyme extends ModeleNumRefChequeReceipts
 {
-	/**
+    /**
      * Dolibarr version of the loaded document
      * @var string
      */
-	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+    public $version = 'dolibarr';        // 'development', 'experimental', 'dolibarr'
 
-	/**
-	 * @var string Error message
-	 */
-	public $error = '';
+    /**
+     * @var string Error message
+     */
+    public $error = '';
 
-	public $name = 'Thyme';
+    public $name = 'Thyme';
 
 
     /**
@@ -50,39 +50,39 @@ class mod_chequereceipt_thyme extends ModeleNumRefChequeReceipts
      *
      *  @return     string      Texte descripif
      */
-	public function info()
+    public function info()
     {
-    	global $conf, $langs, $db;
+        global $conf, $langs, $db;
 
-		$langs->load("bills");
+        $langs->load("bills");
 
-		$form = new Form($db);
+        $form = new Form($db);
 
-		$texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
-		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-		$texte.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-		$texte.= '<input type="hidden" name="action" value="updateMask">';
-		$texte.= '<input type="hidden" name="maskconstchequereceipts" value="CHEQUERECEIPTS_THYME_MASK">';
-		$texte.= '<table class="nobordernopadding" width="100%">';
+        $texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
+        $texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+        $texte.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        $texte.= '<input type="hidden" name="action" value="updateMask">';
+        $texte.= '<input type="hidden" name="maskconstchequereceipts" value="CHEQUERECEIPTS_THYME_MASK">';
+        $texte.= '<table class="nobordernopadding" width="100%">';
 
-		$tooltip=$langs->trans("GenericMaskCodes", $langs->transnoentities("CheckReceiptShort"), $langs->transnoentities("CheckReceiptShort"));
-		$tooltip.=$langs->trans("GenericMaskCodes2");
-		$tooltip.=$langs->trans("GenericMaskCodes3");
-		$tooltip.=$langs->trans("GenericMaskCodes4a", $langs->transnoentities("CheckReceiptShort"), $langs->transnoentities("CheckReceiptShort"));
-		$tooltip.=$langs->trans("GenericMaskCodes5");
+        $tooltip=$langs->trans("GenericMaskCodes", $langs->transnoentities("CheckReceiptShort"), $langs->transnoentities("CheckReceiptShort"));
+        $tooltip.=$langs->trans("GenericMaskCodes2");
+        $tooltip.=$langs->trans("GenericMaskCodes3");
+        $tooltip.=$langs->trans("GenericMaskCodes4a", $langs->transnoentities("CheckReceiptShort"), $langs->transnoentities("CheckReceiptShort"));
+        $tooltip.=$langs->trans("GenericMaskCodes5");
 
-		// Parametrage du prefix
-		$texte.= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte.= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskchequereceipts" value="'.$conf->global->CHEQUERECEIPTS_THYME_MASK.'">', $tooltip, 1, 1).'</td>';
+        // Parametrage du prefix
+        $texte.= '<tr><td>'.$langs->trans("Mask").':</td>';
+        $texte.= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskchequereceipts" value="'.$conf->global->CHEQUERECEIPTS_THYME_MASK.'">', $tooltip, 1, 1).'</td>';
 
-		$texte.= '<td class="left" rowspan="2">&nbsp;<input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
+        $texte.= '<td class="left" rowspan="2">&nbsp;<input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
 
-		$texte.= '</tr>';
+        $texte.= '</tr>';
 
-		$texte.= '</table>';
-		$texte.= '</form>';
+        $texte.= '</table>';
+        $texte.= '</form>';
 
-		return $texte;
+        return $texte;
     }
 
     /**
@@ -94,53 +94,53 @@ class mod_chequereceipt_thyme extends ModeleNumRefChequeReceipts
     {
         global $conf,$langs,$mysoc;
 
-    	$old_code_client=$mysoc->code_client;
-    	$mysoc->code_client='CCCCCCCCCC';
-     	$numExample = $this->getNextValue($mysoc, '');
-		$mysoc->code_client=$old_code_client;
+        $old_code_client=$mysoc->code_client;
+        $mysoc->code_client='CCCCCCCCCC';
+         $numExample = $this->getNextValue($mysoc, '');
+        $mysoc->code_client=$old_code_client;
 
-		if (! $numExample)
-		{
-			$numExample = $langs->trans('NotConfigured');
-		}
-		return $numExample;
+        if (! $numExample)
+        {
+            $numExample = $langs->trans('NotConfigured');
+        }
+        return $numExample;
     }
 
-	/**
-	 * 	Return next free value
-	 *
-	 *  @param	Societe		$objsoc     Object thirdparty
-	 *  @param  Object		$object		Object we need next value for
-	 *  @return string      			Value if KO, <0 if KO
-	 */
+    /**
+     *     Return next free value
+     *
+     *  @param    Societe        $objsoc     Object thirdparty
+     *  @param  Object        $object        Object we need next value for
+     *  @return string                  Value if KO, <0 if KO
+     */
     public function getNextValue($objsoc, $object)
     {
-		global $db,$conf;
+        global $db,$conf;
 
-		require_once DOL_DOCUMENT_ROOT .'/core/lib/functions2.lib.php';
+        require_once DOL_DOCUMENT_ROOT .'/core/lib/functions2.lib.php';
 
-		// We get cursor rule
-		$mask=$conf->global->CHEQUERECEIPTS_THYME_MASK;
+        // We get cursor rule
+        $mask=$conf->global->CHEQUERECEIPTS_THYME_MASK;
 
-		if (! $mask)
-		{
-			$this->error='NotConfigured';
-			return 0;
-		}
+        if (! $mask)
+        {
+            $this->error='NotConfigured';
+            return 0;
+        }
 
-		$numFinal=get_next_value($db, $mask, 'bordereau_cheque', 'ref', '', $objsoc, $object->date_bordereau);
+        $numFinal=get_next_value($db, $mask, 'bordereau_cheque', 'ref', '', $objsoc, $object->date_bordereau);
 
-		return  $numFinal;
-	}
+        return  $numFinal;
+    }
 
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *  Return next free value
-	 *
-	 *  @param	Societe		$objsoc     Object third party
-	 * 	@param	string		$objforref	Object for number to search
-	 *  @return string      			Next free value
+    /**
+     *  Return next free value
+     *
+     *  @param    Societe        $objsoc     Object third party
+     *     @param    string        $objforref    Object for number to search
+     *  @return string                  Next free value
      */
     public function chequereceipt_get_num($objsoc, $objforref)
     {

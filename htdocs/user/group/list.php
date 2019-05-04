@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2002-2003	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+/* Copyright (C) 2002-2003    Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2018  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2011       Herve Prot              <herve.prot@symeos.com>
@@ -21,7 +21,7 @@
 
 /**
  *      \file       htdocs/user/group/list.php
- * 		\ingroup	core
+ *         \ingroup    core
  *      \brief      Page of user groups
  */
 
@@ -30,14 +30,14 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 
 if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 {
-	if (! $user->rights->user->group_advance->read && ! $user->admin)
-		accessforbidden();
+    if (! $user->rights->user->group_advance->read && ! $user->admin)
+        accessforbidden();
 }
 
 // Users/Groups management only in master entity if transverse mode
 if (! empty($conf->multicompany->enabled) && $conf->entity > 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE)
 {
-	accessforbidden();
+    accessforbidden();
 }
 
 // Load translation files required by page
@@ -52,7 +52,7 @@ $caneditperms=($user->admin || $user->rights->user->user->creer);
 // Advanced permissions
 if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 {
-	$caneditperms=($user->admin || $user->rights->user->group_advance->write);
+    $caneditperms=($user->admin || $user->rights->user->group_advance->write);
 }
 
 // Load variable for pagination
@@ -115,11 +115,11 @@ $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ugu ON ugu.fk_usergroup =
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_rights as ugr ON ugr.fk_usergroup = g.rowid";
 if (! empty($conf->multicompany->enabled) && $conf->entity == 1 && ($conf->global->MULTICOMPANY_TRANSVERSE_MODE || ($user->admin && ! $user->entity)))
 {
-	$sql.= " WHERE g.entity IS NOT NULL";
+    $sql.= " WHERE g.entity IS NOT NULL";
 }
 else
 {
-	$sql.= " WHERE g.entity IN (0,".$conf->entity.")";
+    $sql.= " WHERE g.entity IN (0,".$conf->entity.")";
 }
 if (! empty($search_group)) natural_search(array("g.nom", "g.note"), $search_group);
 if ($sall) $sql.= natural_search(array("g.nom", "g.note"), $sall);
@@ -143,9 +143,9 @@ if ($resql)
     $newcardbutton='';
     if ($caneditperms)
     {
-    	$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/user/group/card.php?action=create&leftmenu="><span class="valignmiddle text-plus-circle">'.$langs->trans('NewGroup').'</span>';
-    	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-    	$newcardbutton.= '</a>';
+        $newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/user/group/card.php?action=create&leftmenu="><span class="valignmiddle text-plus-circle">'.$langs->trans('NewGroup').'</span>';
+        $newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+        $newcardbutton.= '</a>';
     }
 
     print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
@@ -168,8 +168,8 @@ if ($resql)
 
     $moreforfilter='';
 
-	//$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
-	//$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
+    //$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
+    //$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);    // This also change content of $arrayfields
 
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
@@ -179,7 +179,7 @@ if ($resql)
     //multicompany
     if(! empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1)
     {
-    	print_liste_field_titre("Entity", $_SERVER["PHP_SELF"], "g.entity", $param, "", '', $sortfield, $sortorder, 'center ');
+        print_liste_field_titre("Entity", $_SERVER["PHP_SELF"], "g.entity", $param, "", '', $sortfield, $sortorder, 'center ');
     }
     print_liste_field_titre("NbOfUsers", $_SERVER["PHP_SELF"], "nb", $param, "", '', $sortfield, $sortorder, 'center ');
     print_liste_field_titre("NbOfPermissions", $_SERVER["PHP_SELF"], "nbpermissions", $param, "", '', $sortfield, $sortorder, 'center ');
@@ -202,7 +202,7 @@ if ($resql)
         print $grouptemp->getNomUrl(1);
         if (! $obj->entity)
         {
-        	print img_picto($langs->trans("GlobalGroup"), 'redstar');
+            print img_picto($langs->trans("GlobalGroup"), 'redstar');
         }
         print "</td>";
         //multicompany

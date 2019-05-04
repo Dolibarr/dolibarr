@@ -17,9 +17,9 @@
  */
 
 /**
- *		\file       htdocs/core/modules/security/generate/modules_genpassword.php
- *		\ingroup    core
- *		\brief      File with parent class for password generating classes
+ *        \file       htdocs/core/modules/security/generate/modules_genpassword.php
+ *        \ingroup    core
+ *        \brief      File with parent class for password generating classes
  */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 
@@ -31,14 +31,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 abstract class ModeleGenPassword
 {
     /**
-	 * @var string Error code (or message)
-	 */
-	public $error='';
+     * @var string Error code (or message)
+     */
+    public $error='';
 
     /**
-     * 		Return if a module can be used or not
+     *         Return if a module can be used or not
      *
-     *      @return		boolean     true if module can be used
+     *      @return        boolean     true if module can be used
      */
     public function isEnabled()
     {
@@ -46,7 +46,7 @@ abstract class ModeleGenPassword
     }
 
     /**
-     *		Return description of module
+     *        Return description of module
      *
      *      @return     string      Description of text
      */
@@ -68,23 +68,23 @@ abstract class ModeleGenPassword
         return $langs->trans("NoExample");
     }
 
-	/**
-	 *  Build new password
-	 *
- 	 *  @return     string      Return a new generated password
-	 */
+    /**
+     *  Build new password
+     *
+      *  @return     string      Return a new generated password
+     */
     public function getNewGeneratedPassword()
     {
         global $langs;
         return $langs->trans("NotAvailable");
     }
 
-	/**
-	 * 		Validate a password
-	 *
-	 *		@param		string	$password	Password to check
- 	 *      @return     int					0 if KO, >0 if OK
-	 */
+    /**
+     *         Validate a password
+     *
+     *        @param        string    $password    Password to check
+      *      @return     int                    0 if KO, >0 if OK
+     */
     public function validatePassword($password)
     {
         return 1;

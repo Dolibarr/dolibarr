@@ -24,7 +24,7 @@
  */
 
 global $conf,$user,$langs,$db;
-//define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
+//define('TEST_DB_FORCE_TYPE','mysql');    // This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/categories/class/categorie.class.php';
@@ -43,7 +43,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
- * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
+ * @remarks    backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
 class CategorieTest extends PHPUnit_Framework_TestCase
 {
@@ -60,9 +60,9 @@ class CategorieTest extends PHPUnit_Framework_TestCase
      */
     public function __construct()
     {
-    	parent::__construct();
+        parent::__construct();
 
-    	//$this->sharedFixture
+        //$this->sharedFixture
         global $conf,$user,$langs,$db;
         $this->savconf=$conf;
         $this->savuser=$user;
@@ -295,7 +295,7 @@ class CategorieTest extends PHPUnit_Framework_TestCase
      * @param   int $id     Id of category
      * @return  int
      *
-     * @depends	testCategorieOther
+     * @depends    testCategorieOther
      * The depends says test is run only if previous is ok
      */
     public function testCategorieDelete($id)

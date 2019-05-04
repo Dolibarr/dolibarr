@@ -23,9 +23,9 @@
  */
 
 /**
- * \file		htdocs/accountancy/admin/defaultaccounts.php
- * \ingroup		Advanced accountancy
- * \brief		Setup page to configure accounting expert module
+ * \file        htdocs/accountancy/admin/defaultaccounts.php
+ * \ingroup        Advanced accountancy
+ * \brief        Setup page to configure accounting expert module
  */
 require '../../main.inc.php';
 
@@ -40,7 +40,7 @@ $langs->loadLangs(array("compta","bills","admin","accountancy","salaries","loan"
 // Security check
 if (empty($user->rights->accounting->chartofaccount))
 {
-	accessforbidden();
+    accessforbidden();
 }
 
 $action = GETPOST('action', 'aZ09');
@@ -94,29 +94,29 @@ if (GETPOST('change_chart', 'alpha'))
 }
 
 if ($action == 'update') {
-	$error = 0;
+    $error = 0;
 
-	foreach ($list_account_main as $constname) {
-		$constvalue = GETPOST($constname, 'alpha');
+    foreach ($list_account_main as $constname) {
+        $constvalue = GETPOST($constname, 'alpha');
 
-		if (! dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
-			$error ++;
-		}
-	}
+        if (! dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
+            $error ++;
+        }
+    }
 
-	foreach ($list_account as $constname) {
-	    $constvalue = GETPOST($constname, 'alpha');
+    foreach ($list_account as $constname) {
+        $constvalue = GETPOST($constname, 'alpha');
 
-	    if (! dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
-	        $error ++;
-	    }
-	}
+        if (! dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
+            $error ++;
+        }
+    }
 
-	if (! $error) {
-		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	} else {
-		setEventMessages($langs->trans("Error"), null, 'errors');
-	}
+    if (! $error) {
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    } else {
+        setEventMessages($langs->trans("Error"), null, 'errors');
+    }
 }
 
 
@@ -174,15 +174,15 @@ print '<table class="noborder" width="100%">';
 
 foreach ($list_account as $key) {
 
-	print '<tr class="oddeven value">';
-	// Param
-	$label = $langs->trans($key);
-	print '<td width="50%">' . $label . '</td>';
-	// Value
-	print '<td>';  // Do not force class=right, or it align also the content of the select box
-	print $formaccounting->select_account($conf->global->$key, $key, 1, '', 1, 1);
-	print '</td>';
-	print '</tr>';
+    print '<tr class="oddeven value">';
+    // Param
+    $label = $langs->trans($key);
+    print '<td width="50%">' . $label . '</td>';
+    // Value
+    print '<td>';  // Do not force class=right, or it align also the content of the select box
+    print $formaccounting->select_account($conf->global->$key, $key, 1, '', 1, 1);
+    print '</td>';
+    print '</tr>';
 }
 
 

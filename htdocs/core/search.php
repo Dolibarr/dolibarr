@@ -40,88 +40,88 @@ require_once '../main.inc.php';
 
 if (GETPOST('search_proposal') != '')
 {
-	header("Location: ".DOL_URL_ROOT.'/comm/propal/list.php?sall='.urlencode(GETPOST('search_proposal')));
-	exit;
+    header("Location: ".DOL_URL_ROOT.'/comm/propal/list.php?sall='.urlencode(GETPOST('search_proposal')));
+    exit;
 }
 if (GETPOST('search_customer_order') != '')
 {
-	header("Location: ".DOL_URL_ROOT.'/commande/list.php?sall='.urlencode(GETPOST('search_customer_order')));
-	exit;
+    header("Location: ".DOL_URL_ROOT.'/commande/list.php?sall='.urlencode(GETPOST('search_customer_order')));
+    exit;
 }
 if (GETPOST('search_supplier_order') != '')
 {
-	header("Location: ".DOL_URL_ROOT.'/fourn/commande/list.php?search_all='.urlencode(GETPOST('search_supplier_order')));
-	exit;
+    header("Location: ".DOL_URL_ROOT.'/fourn/commande/list.php?search_all='.urlencode(GETPOST('search_supplier_order')));
+    exit;
 }
 if (GETPOST('search_intervention') != '')
 {
-	header("Location: ".DOL_URL_ROOT.'/fichinter/list.php?sall='.urlencode(GETPOST('search_intervention')));
-	exit;
+    header("Location: ".DOL_URL_ROOT.'/fichinter/list.php?sall='.urlencode(GETPOST('search_intervention')));
+    exit;
 }
 if (GETPOST('search_contract') != '')
 {
-	header("Location: ".DOL_URL_ROOT.'/contrat/list.php?sall='.urlencode(GETPOST('search_contract')));
-	exit;
+    header("Location: ".DOL_URL_ROOT.'/contrat/list.php?sall='.urlencode(GETPOST('search_contract')));
+    exit;
 }
 if (GETPOST('search_invoice') != '')
 {
-	header("Location: ".DOL_URL_ROOT.'/compta/facture/list.php?sall='.urlencode(GETPOST('search_invoice')));
-	exit;
+    header("Location: ".DOL_URL_ROOT.'/compta/facture/list.php?sall='.urlencode(GETPOST('search_invoice')));
+    exit;
 }
 if (GETPOST('search_supplier_invoice') != '')
 {
-	header("Location: ".DOL_URL_ROOT.'/fourn/facture/list.php?sall='.urlencode(GETPOST('search_supplier_invoice')));
-	exit;
+    header("Location: ".DOL_URL_ROOT.'/fourn/facture/list.php?sall='.urlencode(GETPOST('search_supplier_invoice')));
+    exit;
 }
 if (GETPOST('search_supplier_proposal') != '')
 {
-	header("Location: ".DOL_URL_ROOT.'/supplier_proposal/list.php?sall='.urlencode(GETPOST('search_supplier_proposal')));
-	exit;
+    header("Location: ".DOL_URL_ROOT.'/supplier_proposal/list.php?sall='.urlencode(GETPOST('search_supplier_proposal')));
+    exit;
 }
 if (GETPOST('search_donation') != '')
 {
-	header("Location: ".DOL_URL_ROOT.'/don/list.php?sall='.urlencode(GETPOST('search_donation')));
-	exit;
+    header("Location: ".DOL_URL_ROOT.'/don/list.php?sall='.urlencode(GETPOST('search_donation')));
+    exit;
 }
 if (GETPOST('search_product') != '')
 {
-	header("Location: ".DOL_URL_ROOT.'/product/list.php?sall='.urlencode(GETPOST('search_product')));
-	exit;
+    header("Location: ".DOL_URL_ROOT.'/product/list.php?sall='.urlencode(GETPOST('search_product')));
+    exit;
 }
 if (GETPOST('search_thirdparty') != '')
 {
-	header("Location: ".DOL_URL_ROOT.'/societe/list.php?mode=search&sall='.urlencode(GETPOST('search_thirdparty')));
-	exit;
+    header("Location: ".DOL_URL_ROOT.'/societe/list.php?mode=search&sall='.urlencode(GETPOST('search_thirdparty')));
+    exit;
 }
 if (GETPOST('search_contact') != '')
 {
-	header("Location: ".DOL_URL_ROOT.'/contact/list.php?mode=search&sall='.urlencode(GETPOST('search_contact')));
-	exit;
+    header("Location: ".DOL_URL_ROOT.'/contact/list.php?mode=search&sall='.urlencode(GETPOST('search_contact')));
+    exit;
 }
 if (GETPOST('search_deplacement') != '')
 {
-	header("Location: ".DOL_URL_ROOT.'/compta/deplacement/list.php?mode=search&sall='.urlencode(GETPOST('search_deplacement')));
-	exit;
+    header("Location: ".DOL_URL_ROOT.'/compta/deplacement/list.php?mode=search&sall='.urlencode(GETPOST('search_deplacement')));
+    exit;
 }
 if (GETPOST('search_expensereport') != '')
 {
-	header("Location: ".DOL_URL_ROOT.'/expensereport/list.php?mode=search&sall='.urlencode(GETPOST('search_expensereport')));
-	exit;
+    header("Location: ".DOL_URL_ROOT.'/expensereport/list.php?mode=search&sall='.urlencode(GETPOST('search_expensereport')));
+    exit;
 }
 if (GETPOST('search_holiday') != '')
 {
-	header("Location: ".DOL_URL_ROOT.'/holiday/list.php?mode=search&sall='.urlencode(GETPOST('search_holiday')));
-	exit;
+    header("Location: ".DOL_URL_ROOT.'/holiday/list.php?mode=search&sall='.urlencode(GETPOST('search_holiday')));
+    exit;
 }
 if (GETPOST('search_member') != '')
 {
-	header("Location: ".DOL_URL_ROOT.'/adherents/list.php?mode=search&sall='.urlencode(GETPOST('search_member')));
-	exit;
+    header("Location: ".DOL_URL_ROOT.'/adherents/list.php?mode=search&sall='.urlencode(GETPOST('search_member')));
+    exit;
 }
 if (GETPOST('search_project') != '')
 {
-	header("Location: ".DOL_URL_ROOT.'/projet/list.php?mode=search&search_all='.urlencode(GETPOST('search_project')));
-	exit;
+    header("Location: ".DOL_URL_ROOT.'/projet/list.php?mode=search&search_all='.urlencode(GETPOST('search_project')));
+    exit;
 }
 if (GETPOST('search_task') != '')
 {
@@ -145,10 +145,10 @@ if (GETPOST('search_group') != '')
 // If we are here, search was called with no supported criteria
 if (! empty($_SERVER['HTTP_REFERER']))
 {
-	header("Location: ".$_SERVER['HTTP_REFERER']);
-	exit;
+    header("Location: ".$_SERVER['HTTP_REFERER']);
+    exit;
 }
 else
 {
-	print 'The wrapper search.php was called without any search criteria';
+    print 'The wrapper search.php was called without any search criteria';
 }

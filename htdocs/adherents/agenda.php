@@ -51,12 +51,12 @@ if (! $sortorder) $sortorder='DESC';
 
 if (GETPOST('actioncode', 'array'))
 {
-	$actioncode=GETPOST('actioncode', 'array', 3);
-	if (! count($actioncode)) $actioncode='0';
+    $actioncode=GETPOST('actioncode', 'array', 3);
+    if (! count($actioncode)) $actioncode='0';
 }
 else
 {
-	$actioncode=GETPOST("actioncode", "alpha", 3)?GETPOST("actioncode", "alpha", 3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
+    $actioncode=GETPOST("actioncode", "alpha", 3)?GETPOST("actioncode", "alpha", 3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
 }
 $search_agenda_label=GETPOST('search_agenda_label');
 
@@ -67,7 +67,7 @@ $object = new Adherent($db);
 $result=$object->fetch($id);
 if ($result > 0)
 {
-	$object->fetch_thirdparty();
+    $object->fetch_thirdparty();
 
     $adht = new AdherentType($db);
     $result=$adht->fetch($object->typeid);
@@ -114,64 +114,64 @@ $form = new Form($db);
  */
 if ($object->id > 0)
 {
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-	require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+    require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+    require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
-	$langs->load("companies");
+    $langs->load("companies");
 
-	$title=$langs->trans("Member") . " - " . $langs->trans("Agenda");
-	$helpurl="EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros";
-	llxHeader("", $title, $helpurl);
+    $title=$langs->trans("Member") . " - " . $langs->trans("Agenda");
+    $helpurl="EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros";
+    llxHeader("", $title, $helpurl);
 
-	if (! empty($conf->notification->enabled)) $langs->load("mails");
-	$head = member_prepare_head($object);
+    if (! empty($conf->notification->enabled)) $langs->load("mails");
+    $head = member_prepare_head($object);
 
-	dol_fiche_head($head, 'agenda', $langs->trans("Member"), -1, 'user');
+    dol_fiche_head($head, 'agenda', $langs->trans("Member"), -1, 'user');
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+    $linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-	dol_banner_tab($object, 'rowid', $linkback);
+    dol_banner_tab($object, 'rowid', $linkback);
 
-	print '<div class="fichecenter">';
+    print '<div class="fichecenter">';
 
-	print '<div class="underbanner clearboth"></div>';
+    print '<div class="underbanner clearboth"></div>';
 
-	$object->info($id);
-	print dol_print_object_info($object, 1);
+    $object->info($id);
+    print dol_print_object_info($object, 1);
 
-	print '</div>';
+    print '</div>';
 
-	dol_fiche_end();
+    dol_fiche_end();
 
 
     //print '<div class="tabsAction">';
     //print '</div>';
 
 
-	$newcardbutton = '';
+    $newcardbutton = '';
     if (! empty($conf->agenda->enabled))
     {
-    	$newcardbutton.='<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&backtopage=1&origin=member&originid='.$id.'"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddAction").'</span>';
-    	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-    	$newcardbutton.= '</a>';
+        $newcardbutton.='<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&backtopage=1&origin=member&originid='.$id.'"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddAction").'</span>';
+        $newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+        $newcardbutton.= '</a>';
     }
 
     if (! empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read) ))
     {
-    	print '<br>';
+        print '<br>';
 
-    	$param='&id='.$id;
-    	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-    	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+        $param='&id='.$id;
+        if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
+        if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 
-    	print_barre_liste($langs->trans("ActionsOnMember"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', '', $newcardbutton, '', 0, 1, 1);
+        print_barre_liste($langs->trans("ActionsOnMember"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', '', $newcardbutton, '', 0, 1, 1);
 
-    	// List of all actions
-    	$filters=array();
-    	$filters['search_agenda_label']=$search_agenda_label;
+        // List of all actions
+        $filters=array();
+        $filters['search_agenda_label']=$search_agenda_label;
 
-    	// TODO Replace this with same code than into list.php
-    	show_actions_done($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder);
+        // TODO Replace this with same code than into list.php
+        show_actions_done($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder);
     }
 }
 

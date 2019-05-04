@@ -19,77 +19,77 @@
 /**
  *  \defgroup   import      Module import
  *  \brief      Module to make generic import of data into dolibarr database
- *	\file       htdocs/core/modules/modImport.class.php
- *	\ingroup    import
- *	\brief      Fichier de description et activation du module Import
+ *    \file       htdocs/core/modules/modImport.class.php
+ *    \ingroup    import
+ *    \brief      Fichier de description et activation du module Import
  */
 
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *	Class to describe and enable module Import
+ *    Class to describe and enable module Import
  */
 class modImport extends DolibarrModules
 {
 
-	/**
-	 *   Constructor. Define names, constants, directories, boxes, permissions
-	 *
-	 *   @param      DoliDB		$db      Database handler
-	 */
-	public function __construct($db)
-	{
-		$this->db = $db;
-		$this->numero = 250;
+    /**
+     *   Constructor. Define names, constants, directories, boxes, permissions
+     *
+     *   @param      DoliDB        $db      Database handler
+     */
+    public function __construct($db)
+    {
+        $this->db = $db;
+        $this->numero = 250;
 
-		$this->family = "technic";
+        $this->family = "technic";
         $this->module_position = '70';
         // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = preg_replace('/^mod/i', '', get_class($this));
-		$this->description = "Outils d'imports de donnees Dolibarr (via un assistant)";
-		// Possible values for version are: 'development', 'experimental', 'dolibarr' or 'dolibarr_deprecated' or version
-		$this->version = 'dolibarr';
-		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->picto = 'technic';
+        $this->name = preg_replace('/^mod/i', '', get_class($this));
+        $this->description = "Outils d'imports de donnees Dolibarr (via un assistant)";
+        // Possible values for version are: 'development', 'experimental', 'dolibarr' or 'dolibarr_deprecated' or version
+        $this->version = 'dolibarr';
+        $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
+        $this->picto = 'technic';
 
-		// Data directories to create when module is enabled
-		$this->dirs = array("/import/temp");
+        // Data directories to create when module is enabled
+        $this->dirs = array("/import/temp");
 
-		// Config pages
-		$this->config_page_url = array();
+        // Config pages
+        $this->config_page_url = array();
 
-		// Dependencies
-		$this->hidden = false;			// A condition to hide module
-		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
-		$this->requiredby = array();	// List of module ids to disable if this one is disabled
-		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
-		$this->phpmin = array(5,4);		// Minimum version of PHP required by module - Need auto_detect_line_endings php option to solve MAC pbs.
-		$this->phpmax = array();
-		$this->need_dolibarr_version = array(2,7,-1);	// Minimum version of Dolibarr required by module
-		$this->need_javascript_ajax = 1;
+        // Dependencies
+        $this->hidden = false;            // A condition to hide module
+        $this->depends = array();        // List of module class names as string that must be enabled if this module is enabled
+        $this->requiredby = array();    // List of module ids to disable if this one is disabled
+        $this->conflictwith = array();    // List of module class names as string this module is in conflict with
+        $this->phpmin = array(5,4);        // Minimum version of PHP required by module - Need auto_detect_line_endings php option to solve MAC pbs.
+        $this->phpmax = array();
+        $this->need_dolibarr_version = array(2,7,-1);    // Minimum version of Dolibarr required by module
+        $this->need_javascript_ajax = 1;
 
-		// Constants
-		$this->const = array();
+        // Constants
+        $this->const = array();
 
-		// Boxes
-		$this->boxes = array();
+        // Boxes
+        $this->boxes = array();
 
-		// Permissions
-		$this->rights = array();
-		$this->rights_class = 'import';
-		$r=0;
+        // Permissions
+        $this->rights = array();
+        $this->rights_class = 'import';
+        $r=0;
 
-		$r++;
-		$this->rights[$r][0] = 1251;
-		$this->rights[$r][1] = 'Run mass imports of external data (data load)';
-		$this->rights[$r][2] = 'r';
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'run';
+        $r++;
+        $this->rights[$r][0] = 1251;
+        $this->rights[$r][1] = 'Run mass imports of external data (data load)';
+        $this->rights[$r][2] = 'r';
+        $this->rights[$r][3] = 0;
+        $this->rights[$r][4] = 'run';
 
 
-		// Menus
-		//-------
-		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
-	}
+        // Menus
+        //-------
+        $this->menu = 1;        // This module add menu entries. They are coded into menu manager.
+    }
 }

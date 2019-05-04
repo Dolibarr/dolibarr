@@ -42,137 +42,137 @@ use \Luracast\Restler\RestException;
  */
 class DolibarrApiAccess implements iAuthenticate
 {
-	const REALM = 'Restricted Dolibarr API';
+    const REALM = 'Restricted Dolibarr API';
 
-	/**
-	 * @var array $requires	role required by API method		user / external / admin
-	 */
-	public static $requires = array('user','external','admin');
+    /**
+     * @var array $requires    role required by API method        user / external / admin
+     */
+    public static $requires = array('user','external','admin');
 
-	/**
-	 * @var string $role		user role
-	 */
+    /**
+     * @var string $role        user role
+     */
     public static $role = 'user';
 
-	/**
-	 * @var User		$user	Loggued user
-	 */
-	public static $user = '';
+    /**
+     * @var User        $user    Loggued user
+     */
+    public static $user = '';
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName
-	/**
-	 * Check access
-	 *
-	 * @return bool
-	 * @throws RestException
-	 */
-	public function __isAllowed()
-	{
+    /**
+     * Check access
+     *
+     * @return bool
+     * @throws RestException
+     */
+    public function __isAllowed()
+    {
         // phpcs:enable
-		global $conf, $db;
+        global $conf, $db;
 
-		$login = '';
-		$stored_key = '';
+        $login = '';
+        $stored_key = '';
 
-		$userClass = Defaults::$userIdentifierClass;
+        $userClass = Defaults::$userIdentifierClass;
 
-		/*foreach ($_SERVER as $key => $val)
-		{
-		    dol_syslog($key.' - '.$val);
-		}*/
+        /*foreach ($_SERVER as $key => $val)
+        {
+            dol_syslog($key.' - '.$val);
+        }*/
 
-		// api key can be provided in url with parameter api_key=xxx or ni header with header DOLAPIKEY:xxx
-		$api_key = '';
-		if (isset($_GET['api_key']))	// For backward compatibility
-		{
-		    // TODO Add option to disable use of api key on url. Return errors if used.
-		    $api_key = $_GET['api_key'];
-		}
-		if (isset($_GET['DOLAPIKEY']))
-		{
-		    // TODO Add option to disable use of api key on url. Return errors if used.
-		    $api_key = $_GET['DOLAPIKEY'];                     // With GET method
-		}
-		if (isset($_SERVER['HTTP_DOLAPIKEY']))         // Param DOLAPIKEY in header can be read with HTTP_DOLAPIKEY
-		{
-		    $api_key = $_SERVER['HTTP_DOLAPIKEY'];     // With header method (recommanded)
-		}
-
-		if ($api_key)
-		{
-			$userentity = 0;
-
-			$sql = "SELECT u.login, u.datec, u.api_key, ";
-			$sql.= " u.tms as date_modification, u.entity";
-			$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-			$sql.= " WHERE u.api_key = '".$db->escape($api_key)."'";
-			// TODO Check if 2 users has same API key.
-
-			$result = $db->query($sql);
-			if ($result)
-			{
-				if ($db->num_rows($result))
-				{
-					$obj = $db->fetch_object($result);
-					$login = $obj->login;
-					$stored_key = $obj->api_key;
-					$userentity = $obj->entity;
-
-					if (! defined("DOLENTITY") && $conf->entity != ($obj->entity?$obj->entity:1))		// If API was not forced with HTTP_DOLENTITY, and user is on another entity, so we reset entity to entity of user
-					{
-						$conf->entity = ($obj->entity?$obj->entity:1);
-						// We must also reload global conf to get params from the entity
-						dol_syslog("Entity was not set on http header with HTTP_DOLAPIENTITY (recommanded for performance purpose), so we switch now on entity of user (".$conf->entity .") and we have to reload configuration.", LOG_WARNING);
-						$conf->setValues($db);
-					}
-				}
-			}
-			else {
-				throw new RestException(503, 'Error when fetching user api_key :'.$db->error_msg);
-			}
-
-			if ($stored_key != $api_key) {		// This should not happen since we did a search on api_key
-				$userClass::setCacheIdentifier($api_key);
-				return false;
-			}
-
-			if (! $login)
-			{
-			    throw new RestException(503, 'Error when searching login user from api key');
-			}
-			$fuser = new User($db);
-			$result = $fuser->fetch('', $login, '', 0, (empty($userentity) ? -1 : $conf->entity));	// If user is not entity 0, we search in working entity $conf->entity  (that may have been forced to a different value than user entity)
-			if ($result <= 0) {
-				throw new RestException(503, 'Error when fetching user :'.$fuser->error.' (conf->entity='.$conf->entity.')');
-			}
-			$fuser->getrights();
-			static::$user = $fuser;
-
-			if($fuser->societe_id)
-				static::$role = 'external';
-
-			if($fuser->admin)
-				static::$role = 'admin';
+        // api key can be provided in url with parameter api_key=xxx or ni header with header DOLAPIKEY:xxx
+        $api_key = '';
+        if (isset($_GET['api_key']))    // For backward compatibility
+        {
+            // TODO Add option to disable use of api key on url. Return errors if used.
+            $api_key = $_GET['api_key'];
         }
-		else
-		{
-		    throw new RestException(401, "Failed to login to API. No parameter 'HTTP_DOLAPIKEY' on HTTP header (and no parameter DOLAPIKEY in URL).");
-		}
+        if (isset($_GET['DOLAPIKEY']))
+        {
+            // TODO Add option to disable use of api key on url. Return errors if used.
+            $api_key = $_GET['DOLAPIKEY'];                     // With GET method
+        }
+        if (isset($_SERVER['HTTP_DOLAPIKEY']))         // Param DOLAPIKEY in header can be read with HTTP_DOLAPIKEY
+        {
+            $api_key = $_SERVER['HTTP_DOLAPIKEY'];     // With header method (recommanded)
+        }
 
-	    $userClass::setCacheIdentifier(static::$role);
-	    Resources::$accessControlFunction = 'DolibarrApiAccess::verifyAccess';
-	    $requirefortest = static::$requires;
-	    if (! is_array($requirefortest)) $requirefortest=explode(',', $requirefortest);
-	    return in_array(static::$role, (array) $requirefortest) || static::$role == 'admin';
-	}
+        if ($api_key)
+        {
+            $userentity = 0;
+
+            $sql = "SELECT u.login, u.datec, u.api_key, ";
+            $sql.= " u.tms as date_modification, u.entity";
+            $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
+            $sql.= " WHERE u.api_key = '".$db->escape($api_key)."'";
+            // TODO Check if 2 users has same API key.
+
+            $result = $db->query($sql);
+            if ($result)
+            {
+                if ($db->num_rows($result))
+                {
+                    $obj = $db->fetch_object($result);
+                    $login = $obj->login;
+                    $stored_key = $obj->api_key;
+                    $userentity = $obj->entity;
+
+                    if (! defined("DOLENTITY") && $conf->entity != ($obj->entity?$obj->entity:1))        // If API was not forced with HTTP_DOLENTITY, and user is on another entity, so we reset entity to entity of user
+                    {
+                        $conf->entity = ($obj->entity?$obj->entity:1);
+                        // We must also reload global conf to get params from the entity
+                        dol_syslog("Entity was not set on http header with HTTP_DOLAPIENTITY (recommanded for performance purpose), so we switch now on entity of user (".$conf->entity .") and we have to reload configuration.", LOG_WARNING);
+                        $conf->setValues($db);
+                    }
+                }
+            }
+            else {
+                throw new RestException(503, 'Error when fetching user api_key :'.$db->error_msg);
+            }
+
+            if ($stored_key != $api_key) {        // This should not happen since we did a search on api_key
+                $userClass::setCacheIdentifier($api_key);
+                return false;
+            }
+
+            if (! $login)
+            {
+                throw new RestException(503, 'Error when searching login user from api key');
+            }
+            $fuser = new User($db);
+            $result = $fuser->fetch('', $login, '', 0, (empty($userentity) ? -1 : $conf->entity));    // If user is not entity 0, we search in working entity $conf->entity  (that may have been forced to a different value than user entity)
+            if ($result <= 0) {
+                throw new RestException(503, 'Error when fetching user :'.$fuser->error.' (conf->entity='.$conf->entity.')');
+            }
+            $fuser->getrights();
+            static::$user = $fuser;
+
+            if($fuser->societe_id)
+                static::$role = 'external';
+
+            if($fuser->admin)
+                static::$role = 'admin';
+        }
+        else
+        {
+            throw new RestException(401, "Failed to login to API. No parameter 'HTTP_DOLAPIKEY' on HTTP header (and no parameter DOLAPIKEY in URL).");
+        }
+
+        $userClass::setCacheIdentifier(static::$role);
+        Resources::$accessControlFunction = 'DolibarrApiAccess::verifyAccess';
+        $requirefortest = static::$requires;
+        if (! is_array($requirefortest)) $requirefortest=explode(',', $requirefortest);
+        return in_array(static::$role, (array) $requirefortest) || static::$role == 'admin';
+    }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName
-	/**
-	 * @return string string to be used with WWW-Authenticate header
-	 * @example Basic
-	 * @example Digest
-	 * @example OAuth
-	 */
+    /**
+     * @return string string to be used with WWW-Authenticate header
+     * @example Basic
+     * @example Digest
+     * @example OAuth
+     */
     public function __getWWWAuthenticateString()
     {
         // phpcs:enable

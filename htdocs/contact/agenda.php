@@ -49,11 +49,11 @@ $langs->loadLangs(array('companies', 'users', 'other', 'commercial'));
 
 $mesg=''; $error=0; $errors=array();
 
-$action		= (GETPOST('action', 'alpha') ? GETPOST('action', 'alpha') : 'view');
-$confirm	= GETPOST('confirm', 'alpha');
+$action        = (GETPOST('action', 'alpha') ? GETPOST('action', 'alpha') : 'view');
+$confirm    = GETPOST('confirm', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
-$id			= GETPOST('id', 'int');
-$socid		= GETPOST('socid', 'int');
+$id            = GETPOST('id', 'int');
+$socid        = GETPOST('socid', 'int');
 
 $object = new Contact($db);
 $extrafields = new ExtraFields($db);
@@ -152,13 +152,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
     // When used with CANVAS
     // -----------------------------------------
     if (empty($object->error) && $id)
- 	{
- 		$object = new Contact($db);
- 		$result=$object->fetch($id);
-		if ($result <= 0) dol_print_error('', $object->error);
- 	}
-   	$objcanvas->assign_values($action, $object->id, $object->ref);	// Set value for templates
-    $objcanvas->display_canvas($action);							// Show template
+     {
+         $object = new Contact($db);
+         $result=$object->fetch($id);
+        if ($result <= 0) dol_print_error('', $object->error);
+    }
+       $objcanvas->assign_values($action, $object->id, $object->ref);    // Set value for templates
+    $objcanvas->display_canvas($action);                            // Show template
 }
 else
 {
@@ -234,7 +234,7 @@ else
         print dol_fiche_end();
 
 
-    	// Actions buttons
+        // Actions buttons
 
         $objcon=$object;
         $object->fetch_thirdparty();
@@ -247,29 +247,29 @@ else
             //$out.='<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create';
             if (is_object($objthirdparty) && get_class($objthirdparty) == 'Societe') $out.='&amp;socid='.$objthirdparty->id;
             $out.=(! empty($objcon->id)?'&amp;contactid='.$objcon->id:'').'&amp;backtopage=1&amp;percentage=-1';
-        	//$out.=$langs->trans("AddAnAction").' ';
-        	//$out.=img_picto($langs->trans("AddAnAction"),'filenew');
-        	//$out.="</a>";
-    	}
+            //$out.=$langs->trans("AddAnAction").' ';
+            //$out.=img_picto($langs->trans("AddAnAction"),'filenew');
+            //$out.="</a>";
+        }
 
 
-    	//print '<div class="tabsAction">';
+        //print '<div class="tabsAction">';
         //print '</div>';
 
-    	$newcardbutton='';
-    	if (! empty($conf->agenda->enabled))
-    	{
-    		if (! empty($user->rights->agenda->myactions->create) || ! empty($user->rights->agenda->allactions->create))
-    		{
-    			$newcardbutton.='<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddAction").'</span>';
-    			$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-    			$newcardbutton.= '</a>';
-    		}
-    	}
+        $newcardbutton='';
+        if (! empty($conf->agenda->enabled))
+        {
+            if (! empty($user->rights->agenda->myactions->create) || ! empty($user->rights->agenda->allactions->create))
+            {
+                $newcardbutton.='<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddAction").'</span>';
+                $newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+                $newcardbutton.= '</a>';
+            }
+        }
 
         if (! empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read) ))
-       	{
-       		print '<br>';
+           {
+               print '<br>';
 
             $param='&id='.$id;
             if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
@@ -279,8 +279,8 @@ else
             //print_barre_liste($langs->trans("ActionsOnCompany"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $morehtmlcenter, 0, -1, '', '', '', '', 0, 1, 1);
 
             // List of all actions
-    		$filters=array();
-        	$filters['search_agenda_label']=$search_agenda_label;
+            $filters=array();
+            $filters['search_agenda_label']=$search_agenda_label;
 
             show_actions_done($conf, $langs, $db, $objthirdparty, $object, 0, $actioncode, '', $filters, $sortfield, $sortorder);
         }

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2016	Marcos García	<marcosgdf@gmail.com>
+/* Copyright (C) 2016    Marcos García    <marcosgdf@gmail.com>
  * Copyright (C) 2018   Frédéric France <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -32,8 +32,8 @@ $object = new ProductAttribute($db);
 $objectval = new ProductAttributeValue($db);
 
 if ($object->fetch($id) < 1) {
-	dol_print_error($db, $langs->trans('ErrorRecordNotFound'));
-	exit();
+    dol_print_error($db, $langs->trans('ErrorRecordNotFound'));
+    exit();
 }
 
 
@@ -58,22 +58,22 @@ if ($cancel)
 
 if ($action == 'add')
 {
-	if (empty($ref) || empty($value)) {
-		setEventMessages($langs->trans('ErrorFieldsRequired'), null, 'errors');
-	} else {
+    if (empty($ref) || empty($value)) {
+        setEventMessages($langs->trans('ErrorFieldsRequired'), null, 'errors');
+    } else {
 
-		$objectval->fk_product_attribute = $object->id;
-		$objectval->ref = $ref;
-		$objectval->value = $value;
+        $objectval->fk_product_attribute = $object->id;
+        $objectval->ref = $ref;
+        $objectval->value = $value;
 
-		if ($objectval->create($user) > 0) {
-			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
-			header('Location: '.DOL_URL_ROOT.'/variants/card.php?id='.$object->id);
-			exit();
-		} else {
-			setEventMessages($langs->trans('ErrorCreatingProductAttributeValue'), $objectval->errors, 'errors');
-		}
-	}
+        if ($objectval->create($user) > 0) {
+            setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+            header('Location: '.DOL_URL_ROOT.'/variants/card.php?id='.$object->id);
+            exit();
+        } else {
+            setEventMessages($langs->trans('ErrorCreatingProductAttributeValue'), $objectval->errors, 'errors');
+        }
+    }
 }
 
 $langs->load('products');
@@ -94,14 +94,14 @@ print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';
 ?>
 <table class="border" style="width: 100%">
-	<tr>
-		<td class="titlefield fieldrequired"><?php echo $langs->trans('Ref') ?></td>
-		<td><?php echo dol_htmlentities($object->ref) ?>
-	</tr>
-	<tr>
-		<td class="fieldrequired"><?php echo $langs->trans('Label') ?></td>
-		<td><?php echo dol_htmlentities($object->label) ?></td>
-	</tr>
+    <tr>
+        <td class="titlefield fieldrequired"><?php echo $langs->trans('Ref') ?></td>
+        <td><?php echo dol_htmlentities($object->ref) ?>
+    </tr>
+    <tr>
+        <td class="fieldrequired"><?php echo $langs->trans('Label') ?></td>
+        <td><?php echo dol_htmlentities($object->label) ?></td>
+    </tr>
 </table>
 
 <?php
@@ -123,16 +123,16 @@ print load_fiche_titre($langs->trans('NewProductAttributeValue'));
 dol_fiche_head();
 
 ?>
-	<table class="border" style="width: 100%">
-		<tr>
-			<td class="titlefield fieldrequired"><label for="ref"><?php echo $langs->trans('Ref') ?></label></td>
-			<td><input id="ref" type="text" name="ref" value="<?php echo $ref ?>"></td>
-		</tr>
-		<tr>
-			<td class="fieldrequired"><label for="value"><?php echo $langs->trans('Label') ?></label></td>
-			<td><input id="value" type="text" name="value" value="<?php echo $value ?>"></td>
-		</tr>
-	</table>
+    <table class="border" style="width: 100%">
+        <tr>
+            <td class="titlefield fieldrequired"><label for="ref"><?php echo $langs->trans('Ref') ?></label></td>
+            <td><input id="ref" type="text" name="ref" value="<?php echo $ref ?>"></td>
+        </tr>
+        <tr>
+            <td class="fieldrequired"><label for="value"><?php echo $langs->trans('Label') ?></label></td>
+            <td><input id="value" type="text" name="value" value="<?php echo $value ?>"></td>
+        </tr>
+    </table>
 <?php
 
 dol_fiche_end();

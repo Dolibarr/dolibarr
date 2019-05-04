@@ -16,9 +16,9 @@
  */
 
 /**
- *	    \file       htdocs/admin/website.php
- *		\ingroup    setup
- *		\brief      Page to administer web sites
+ *        \file       htdocs/admin/website.php
+ *        \ingroup    setup
+ *        \brief      Page to administer web sites
  */
 
 require '../main.inc.php';
@@ -132,26 +132,26 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha'))
     $ok=1;
     foreach ($listfield as $f => $value)
     {
-    	if ($value == 'ref' && (! isset($_POST[$value]) || $_POST[$value]==''))
-	    {
-    	    $ok=0;
-        	$fieldnamekey=$listfield[$f];
-	        setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->transnoentities($fieldnamekey)), null, 'errors');
-	        break;
-    	}
-		elseif ($value == 'ref' && ! preg_match('/^[a-z0-9_\-\.]+$/i', $_POST[$value]))
-	    {
-			$ok=0;
-    	    $fieldnamekey=$listfield[$f];
-			setEventMessages($langs->transnoentities("ErrorFieldCanNotContainSpecialCharacters", $langs->transnoentities($fieldnamekey)), null, 'errors');
-			break;
-	    }
+        if ($value == 'ref' && (! isset($_POST[$value]) || $_POST[$value]==''))
+        {
+            $ok=0;
+            $fieldnamekey=$listfield[$f];
+            setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->transnoentities($fieldnamekey)), null, 'errors');
+            break;
+        }
+        elseif ($value == 'ref' && ! preg_match('/^[a-z0-9_\-\.]+$/i', $_POST[$value]))
+        {
+            $ok=0;
+            $fieldnamekey=$listfield[$f];
+            setEventMessages($langs->transnoentities("ErrorFieldCanNotContainSpecialCharacters", $langs->transnoentities($fieldnamekey)), null, 'errors');
+            break;
+        }
     }
 
     // Clean parameters
     if (! empty($_POST['ref']))
     {
-    	$websitekey=strtolower($_POST['ref']);
+        $websitekey=strtolower($_POST['ref']);
     }
 
     // Si verif ok et action add, on ajoute la ligne
@@ -182,22 +182,22 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha'))
         $sql = "INSERT INTO ".$tabname[$id]." (";
         // List of fields
         if ($tabrowid[$id] && ! in_array($tabrowid[$id], $listfieldinsert))
-        	$sql.= $tabrowid[$id].",";
+            $sql.= $tabrowid[$id].",";
         $sql.= $tabfieldinsert[$id];
         $sql.=",status)";
         $sql.= " VALUES(";
 
         // List of values
         if ($tabrowid[$id] && ! in_array($tabrowid[$id], $listfieldinsert))
-        	$sql.= $newid.",";
+            $sql.= $newid.",";
         $i=0;
         foreach ($listfieldinsert as $f => $value)
         {
             if ($value == 'entity') {
-            	$_POST[$listfieldvalue[$i]] = $conf->entity;
+                $_POST[$listfieldvalue[$i]] = $conf->entity;
             }
             if ($value == 'ref') {
-            	$_POST[$listfieldvalue[$i]] = strtolower($_POST[$listfieldvalue[$i]]);
+                $_POST[$listfieldvalue[$i]] = strtolower($_POST[$listfieldvalue[$i]]);
             }
             if ($i) $sql.=",";
             if ($_POST[$listfieldvalue[$i]] == '') $sql.="null";
@@ -208,10 +208,10 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha'))
 
         dol_syslog("actionadd", LOG_DEBUG);
         $result = $db->query($sql);
-        if ($result)	// Add is ok
+        if ($result)    // Add is ok
         {
             setEventMessages($langs->transnoentities("RecordSaved"), null, 'mesgs');
-        	unset($_POST);	// Clean $_POST array, we keep only
+            unset($_POST);    // Clean $_POST array, we keep only
         }
         else
         {
@@ -248,7 +248,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha'))
         foreach ($listfieldmodify as $field)
         {
             if ($field == 'entity') {
-            	$_POST[$listfieldvalue[$i]] = $conf->entity;
+                $_POST[$listfieldvalue[$i]] = $conf->entity;
             }
             if ($i) $sql.=",";
             $sql.= $field."=";
@@ -266,41 +266,41 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha'))
             $newname = dol_sanitizeFileName(GETPOST('ref', 'aZ09'));
             if ($newname != $website->ref)
             {
-	            $srcfile=DOL_DATA_ROOT.'/website/'.$website->ref;
-	            $destfile=DOL_DATA_ROOT.'/website/'.$newname;
+                $srcfile=DOL_DATA_ROOT.'/website/'.$website->ref;
+                $destfile=DOL_DATA_ROOT.'/website/'.$newname;
 
-            	if (dol_is_dir($destfile))
-            	{
-            		$error++;
-            		setEventMessages($langs->trans('ErrorDirAlreadyExists', $destfile), null, 'errors');
-            	}
-            	else
-            	{
-	                @rename($srcfile, $destfile);
+                if (dol_is_dir($destfile))
+                {
+                    $error++;
+                    setEventMessages($langs->trans('ErrorDirAlreadyExists', $destfile), null, 'errors');
+                }
+                else
+                {
+                    @rename($srcfile, $destfile);
 
-		            // We must now rename $website->ref into $newname inside files
-		            $arrayreplacement = array($website->ref.'/htmlheader.html' => $newname.'/htmlheader.html');
-		            $listofilestochange = dol_dir_list($destfile, 'files', 0, '\.php$');
-					foreach ($listofilestochange as $key => $value)
-		            {
-		            	dolReplaceInFile($value['fullname'], $arrayreplacement);
-		            }
-            	}
+                    // We must now rename $website->ref into $newname inside files
+                    $arrayreplacement = array($website->ref.'/htmlheader.html' => $newname.'/htmlheader.html');
+                    $listofilestochange = dol_dir_list($destfile, 'files', 0, '\.php$');
+                    foreach ($listofilestochange as $key => $value)
+                    {
+                        dolReplaceInFile($value['fullname'], $arrayreplacement);
+                    }
+                }
             }
         }
         else
         {
-        	$error++;
+            $error++;
             setEventMessages($db->lasterror(), null, 'errors');
         }
 
         if (! $error)
         {
-        	$db->commit();
+            $db->commit();
         }
         else
         {
-        	$db->rollback();
+            $db->rollback();
         }
     }
     //$_GET["id"]=GETPOST('id', 'int');       // Force affichage dictionnaire en cours d'edition
@@ -321,37 +321,37 @@ if ($action == 'confirm_delete' && $confirm == 'yes')       // delete
 
     if ($website->id > 0)
     {
-    	$sql = "DELETE from ".MAIN_DB_PREFIX."website_account WHERE fk_website ='".$rowid."'";
-    	$result = $db->query($sql);
+        $sql = "DELETE from ".MAIN_DB_PREFIX."website_account WHERE fk_website ='".$rowid."'";
+        $result = $db->query($sql);
 
-    	$sql = "DELETE from ".MAIN_DB_PREFIX."website_page WHERE fk_website ='".$rowid."'";
-    	$result = $db->query($sql);
+        $sql = "DELETE from ".MAIN_DB_PREFIX."website_page WHERE fk_website ='".$rowid."'";
+        $result = $db->query($sql);
 
-    	$sql = "DELETE from ".MAIN_DB_PREFIX."website_extrafields WHERE fk_object ='".$rowid."'";
-    	$result = $db->query($sql);
+        $sql = "DELETE from ".MAIN_DB_PREFIX."website_extrafields WHERE fk_object ='".$rowid."'";
+        $result = $db->query($sql);
 
-    	$sql = "DELETE from ".MAIN_DB_PREFIX."website WHERE rowid ='".$rowid."'";
-	    $result = $db->query($sql);
-	    if (! $result)
-	    {
-	        if ($db->errno() == 'DB_ERROR_CHILD_EXISTS')
-	        {
-	            setEventMessages($langs->transnoentities("ErrorRecordIsUsedByChild"), null, 'errors');
-	        }
-	        else
-	        {
-	            dol_print_error($db);
-	        }
-	    }
+        $sql = "DELETE from ".MAIN_DB_PREFIX."website WHERE rowid ='".$rowid."'";
+        $result = $db->query($sql);
+        if (! $result)
+        {
+            if ($db->errno() == 'DB_ERROR_CHILD_EXISTS')
+            {
+                setEventMessages($langs->transnoentities("ErrorRecordIsUsedByChild"), null, 'errors');
+            }
+            else
+            {
+                dol_print_error($db);
+            }
+        }
 
-	    if ($website->ref)
-	    {
-	    	dol_delete_dir_recursive($conf->website->dir_output.'/'.$website->ref);
-	    }
+        if ($website->ref)
+        {
+            dol_delete_dir_recursive($conf->website->dir_output.'/'.$website->ref);
+        }
     }
     else
     {
-    	dol_print_error($db, 'Failed to load website with id '.$rowid);
+        dol_print_error($db, 'Failed to load website with id '.$rowid);
     }
 }
 
@@ -470,13 +470,13 @@ if ($id)
             if ($valuetoshow != '')
             {
                 print '<td class="'.$align.'">';
-            	if (! empty($tabhelp[$id][$value]) && preg_match('/^http(s*):/i', $tabhelp[$id][$value])) print '<a href="'.$tabhelp[$id][$value].'" target="_blank">'.$valuetoshow.' '.img_help(1, $valuetoshow).'</a>';
-            	elseif (! empty($tabhelp[$id][$value]))
-           		{
-           			if ($value == 'virtualhost') print $form->textwithpicto($valuetoshow, $tabhelp[$id][$value], 1, 'help', '', 0, 2, 'tooltipvirtual');
-           			else print $form->textwithpicto($valuetoshow, $tabhelp[$id][$value]);
-           		}
-            	else print $valuetoshow;
+                if (! empty($tabhelp[$id][$value]) && preg_match('/^http(s*):/i', $tabhelp[$id][$value])) print '<a href="'.$tabhelp[$id][$value].'" target="_blank">'.$valuetoshow.' '.img_help(1, $valuetoshow).'</a>';
+                elseif (! empty($tabhelp[$id][$value]))
+                   {
+                       if ($value == 'virtualhost') print $form->textwithpicto($valuetoshow, $tabhelp[$id][$value], 1, 'help', '', 0, 2, 'tooltipvirtual');
+                       else print $form->textwithpicto($valuetoshow, $tabhelp[$id][$value]);
+                }
+                else print $valuetoshow;
                 print '</td>';
             }
             if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label') $alabelisused=1;
@@ -496,7 +496,7 @@ if ($id)
             foreach ($fieldlist as $key=>$val)
             {
                 if (GETPOST($val, 'alpha'))
-                	$obj->$val=GETPOST($val);
+                    $obj->$val=GETPOST($val);
             }
         }
 
@@ -505,7 +505,7 @@ if ($id)
         print '<td colspan="3" class="right">';
         if ($action != 'edit')
         {
-        	print '<input type="submit" class="button" name="actionadd" value="'.$langs->trans("Add").'">';
+            print '<input type="submit" class="button" name="actionadd" value="'.$langs->trans("Add").'">';
         }
         print '</td>';
         print "</tr>";
@@ -540,7 +540,7 @@ if ($id)
             {
                 // Determine le nom du champ par rapport aux noms possibles
                 // dans les dictionnaires de donnees
-                $showfield=1;							  	// Par defaut
+                $showfield=1;                                  // Par defaut
                 $align="left";
                 $sortable=1;
                 $valuetoshow='';
@@ -550,7 +550,7 @@ if ($id)
                 $valuetoshow=$tmp['valuetoshow'];
                 $align=$tmp['align'];
                 $sortable=$tmp['sortable'];
-				*/
+                */
                 $valuetoshow=ucfirst($fieldlist[$field]);   // Par defaut
                 $valuetoshow=$langs->trans($valuetoshow);   // try to translate
                 if ($fieldlist[$field]=='lang')            { $valuetoshow=$langs->trans("Language"); }
@@ -564,7 +564,7 @@ if ($id)
                 }
             }
 
-			print getTitleFieldOfList($langs->trans("Status"), 0, $_SERVER["PHP_SELF"], "status", ($page?'page='.$page.'&':''), "", 'align="center"', $sortfield, $sortorder);
+            print getTitleFieldOfList($langs->trans("Status"), 0, $_SERVER["PHP_SELF"], "status", ($page?'page='.$page.'&':''), "", 'align="center"', $sortfield, $sortorder);
             print getTitleFieldOfList('');
             print getTitleFieldOfList('');
             print '</tr>';
@@ -590,7 +590,7 @@ if ($id)
                 }
                 else
                 {
-	              	$tmpaction = 'view';
+                      $tmpaction = 'view';
                     $parameters=array('var'=>$var, 'fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
                     $reshook=$hookmanager->executeHooks('viewWebsiteFieldlist', $parameters, $obj, $tmpaction);    // Note that $action and $object may have been modified by some hooks
 
@@ -601,18 +601,18 @@ if ($id)
                         foreach ($fieldlist as $field => $value)
                         {
                             $showfield=1;
-                        	$align="left";
-                        	$fieldname=$fieldlist[$field];
+                            $align="left";
+                            $fieldname=$fieldlist[$field];
                             $valuetoshow=$obj->$fieldname;
 
-							// Show value for field
-							if ($showfield) print '<td align="'.$align.'">'.$valuetoshow.'</td>';
+                            // Show value for field
+                            if ($showfield) print '<td align="'.$align.'">'.$valuetoshow.'</td>';
                         }
                     }
 
                     // Can an entry be erased or disabled ?
-                    $iserasable=1; $isdisable=1;		// true by default
-                    if ($obj->status) $iserasable=0;	// We can't delete a website on. Disable it first.
+                    $iserasable=1; $isdisable=1;        // true by default
+                    if ($obj->status) $iserasable=0;    // We can't delete a website on. Disable it first.
 
                     $url = $_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.(! empty($obj->rowid)?$obj->rowid:(! empty($obj->code)?$obj->code:'')).'&amp;code='.(! empty($obj->code)?urlencode($obj->code):'').'&amp;';
 
@@ -651,47 +651,47 @@ $db->close();
 
 
 /**
- *	Show fields in insert/edit mode
+ *    Show fields in insert/edit mode
  *
- * 	@param		array	$fieldlist		Array of fields
- * 	@param		Object	$obj			If we show a particular record, obj is filled with record fields
- *  @param		string	$tabname		Name of SQL table
- *  @param		string	$context		'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we dont want it to be rendered
- *	@return		void
+ *     @param        array    $fieldlist        Array of fields
+ *     @param        Object    $obj            If we show a particular record, obj is filled with record fields
+ *  @param        string    $tabname        Name of SQL table
+ *  @param        string    $context        'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we dont want it to be rendered
+ *    @return        void
  */
 function fieldListWebsites($fieldlist, $obj = '', $tabname = '', $context = '')
 {
-	global $conf,$langs,$db;
-	global $form;
-	global $region_id;
-	global $elementList,$sourceList,$localtax_typeList;
-	global $bc;
+    global $conf,$langs,$db;
+    global $form;
+    global $region_id;
+    global $elementList,$sourceList,$localtax_typeList;
+    global $bc;
 
-	$formadmin = new FormAdmin($db);
+    $formadmin = new FormAdmin($db);
 
-	foreach ($fieldlist as $field => $value)
-	{
-	    $fieldname = $fieldlist[$field];
-		if ($fieldlist[$field] == 'lang')
-		{
-			print '<td>';
-			print $formadmin->select_language($conf->global->MAIN_LANG_DEFAULT, 'lang');
-			print '</td>';
-		}
-		elseif ($fieldlist[$field] == 'code' && isset($obj->$fieldname)) {
-			print '<td><input type="text" class="flat" value="'.(! empty($obj->$fieldname)?$obj->$fieldname:'').'" size="10" name="'.$fieldlist[$field].'"></td>';
-		}
-		else
-		{
-			print '<td>';
-			$size='';
-			if ($fieldlist[$field]=='code') $size='size="8" ';
-			if ($fieldlist[$field]=='position') $size='size="4" ';
-			if ($fieldlist[$field]=='libelle') $size='size="32" ';
-			if ($fieldlist[$field]=='tracking') $size='size="92" ';
-			if ($fieldlist[$field]=='sortorder') $size='size="2" ';
-			print '<input type="text" '.$size.' class="flat" value="'.(isset($obj->$fieldname)?$obj->$fieldname:'').'" name="'.$fieldlist[$field].'">';
-			print '</td>';
-		}
-	}
+    foreach ($fieldlist as $field => $value)
+    {
+        $fieldname = $fieldlist[$field];
+        if ($fieldlist[$field] == 'lang')
+        {
+            print '<td>';
+            print $formadmin->select_language($conf->global->MAIN_LANG_DEFAULT, 'lang');
+            print '</td>';
+        }
+        elseif ($fieldlist[$field] == 'code' && isset($obj->$fieldname)) {
+            print '<td><input type="text" class="flat" value="'.(! empty($obj->$fieldname)?$obj->$fieldname:'').'" size="10" name="'.$fieldlist[$field].'"></td>';
+        }
+        else
+        {
+            print '<td>';
+            $size='';
+            if ($fieldlist[$field]=='code') $size='size="8" ';
+            if ($fieldlist[$field]=='position') $size='size="4" ';
+            if ($fieldlist[$field]=='libelle') $size='size="32" ';
+            if ($fieldlist[$field]=='tracking') $size='size="92" ';
+            if ($fieldlist[$field]=='sortorder') $size='size="2" ';
+            print '<input type="text" '.$size.' class="flat" value="'.(isset($obj->$fieldname)?$obj->$fieldname:'').'" name="'.$fieldlist[$field].'">';
+            print '</td>';
+        }
+    }
 }

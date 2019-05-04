@@ -25,7 +25,7 @@ include_once DOL_DOCUMENT_ROOT . '/core/class/stats.class.php';
 include_once DOL_DOCUMENT_ROOT . '/compta/salaries/class/paymentsalary.class.php';
 
 /**
- *	Classe permettant la gestion des stats des salaires
+ *    Classe permettant la gestion des stats des salaires
  */
 class SalariesStats extends Stats
 {
@@ -73,7 +73,7 @@ class SalariesStats extends Stats
     /**
      *  Return the number of salary by year
      *
-     *	@return		array	Array of values
+     *    @return        array    Array of values
      */
     public function getNbByYear()
     {
@@ -89,9 +89,9 @@ class SalariesStats extends Stats
     /**
      *  Return the number of salary by month, for a given year
      *
-     *	@param	string	$year		Year to scan
-     *	@param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
-     *	@return	array				Array of values
+     *    @param    string    $year        Year to scan
+     *    @param    int        $format        0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
+     *    @return    array                Array of values
      */
     public function getNbByMonth($year, $format = 0)
     {
@@ -109,11 +109,11 @@ class SalariesStats extends Stats
 
 
     /**
-     * 	Return amount of salaries by month for a given year
+     *     Return amount of salaries by month for a given year
      *
-     *	@param	int		$year		Year to scan
-    *	@param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
-     *	@return	array				Array of values
+     *    @param    int        $year        Year to scan
+    *    @param    int        $format        0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
+     *    @return    array                Array of values
      */
     public function getAmountByMonth($year, $format = 0)
     {
@@ -130,10 +130,10 @@ class SalariesStats extends Stats
     }
 
     /**
-     *	Return average amount
+     *    Return average amount
      *
-     *	@param	int		$year		Year to scan
-     *	@return	array				Array of values
+     *    @param    int        $year        Year to scan
+     *    @return    array                Array of values
      */
     public function getAverageByMonth($year)
     {
@@ -148,9 +148,9 @@ class SalariesStats extends Stats
     }
 
     /**
-     *	Return nb, total and average
+     *    Return nb, total and average
      *
-     *	@return	array				Array of values
+     *    @return    array                Array of values
      */
     public function getAllByYear()
     {

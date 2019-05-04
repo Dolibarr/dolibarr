@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2018	Andreu Bisquerra	<jove@bisquerra.com>
+/* Copyright (C) 2018    Andreu Bisquerra    <jove@bisquerra.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,22 +16,22 @@
  */
 
 /**
- *	\file       htdocs/takepos/pay.php
- *	\ingroup	takepos
- *	\brief      Page with the content of the popup to enter payments
+ *    \file       htdocs/takepos/pay.php
+ *    \ingroup    takepos
+ *    \brief      Page with the content of the popup to enter payments
  */
 
-//if (! defined('NOREQUIREUSER'))	define('NOREQUIREUSER', '1');	// Not disabled cause need to load personalized language
-//if (! defined('NOREQUIREDB'))		define('NOREQUIREDB', '1');		// Not disabled cause need to load personalized language
-//if (! defined('NOREQUIRESOC'))		define('NOREQUIRESOC', '1');
-//if (! defined('NOREQUIRETRAN'))		define('NOREQUIRETRAN', '1');
-if (! defined('NOCSRFCHECK'))		define('NOCSRFCHECK', '1');
-if (! defined('NOTOKENRENEWAL'))	define('NOTOKENRENEWAL', '1');
-if (! defined('NOREQUIREMENU'))		define('NOREQUIREMENU', '1');
-if (! defined('NOREQUIREHTML'))		define('NOREQUIREHTML', '1');
-if (! defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX', '1');
+//if (! defined('NOREQUIREUSER'))    define('NOREQUIREUSER', '1');    // Not disabled cause need to load personalized language
+//if (! defined('NOREQUIREDB'))        define('NOREQUIREDB', '1');        // Not disabled cause need to load personalized language
+//if (! defined('NOREQUIRESOC'))        define('NOREQUIRESOC', '1');
+//if (! defined('NOREQUIRETRAN'))        define('NOREQUIRETRAN', '1');
+if (! defined('NOCSRFCHECK'))        define('NOCSRFCHECK', '1');
+if (! defined('NOTOKENRENEWAL'))    define('NOTOKENRENEWAL', '1');
+if (! defined('NOREQUIREMENU'))        define('NOREQUIREMENU', '1');
+if (! defined('NOREQUIREHTML'))        define('NOREQUIREHTML', '1');
+if (! defined('NOREQUIREAJAX'))        define('NOREQUIREAJAX', '1');
 
-require '../main.inc.php';	// Load $user and permissions
+require '../main.inc.php';    // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 
 $place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0);   // $place is id of table for Ba or Restaurant
@@ -79,15 +79,15 @@ $sql.= " ORDER BY libelle";
 $resql = $db->query($sql);
 $paiements = array();
 if ($resql) {
-	while ($obj = $db->fetch_object($resql)) {
+    while ($obj = $db->fetch_object($resql)) {
         $paycode = $obj->code;
         if ($paycode == 'LIQ') $paycode = 'CASH';
         if ($paycode == 'CB')  $paycode = 'CB';
         if ($paycode == 'CHQ') $paycode = 'CHEQUE';
 
         $accountname="CASHDESK_ID_BANKACCOUNT_".$paycode;
-		if (! empty($conf->global->$accountname) && $conf->global->$accountname > 0) array_push($paiements, $obj);
-	}
+        if (! empty($conf->global->$accountname) && $conf->global->$accountname > 0) array_push($paiements, $obj);
+    }
 }
 ?>
 <link rel="stylesheet" href="css/pos.css">
@@ -107,77 +107,77 @@ if ($conf->global->TAKEPOS_NUMPAD==0) print "var received='';";
 else print "var received=0;";
 
 ?>
-	var alreadypayed = <?php echo $alreadypayed ?>;
+    var alreadypayed = <?php echo $alreadypayed ?>;
 
-	function addreceived(price)
-	{
-    	<?php
-    	if (empty($conf->global->TAKEPOS_NUMPAD)) print 'received+=String(price);'."\n";
-    	else print 'received+=parseFloat(price);'."\n";
-    	?>
-    	$('.change1').html(pricejs(parseFloat(received), 'MT'));
-    	$('.change1').val(parseFloat(received));
-		alreadypaydplusreceived=price2numjs(alreadypayed + parseFloat(received));
-    	//console.log("already+received = "+alreadypaydplusreceived);
-    	//console.log("total_ttc = "+<?php echo $invoice->total_ttc;?>);
-    	if (alreadypaydplusreceived > <?php echo $invoice->total_ttc;?>)
-   		{
-			var change=parseFloat(alreadypayed + parseFloat(received) - <?php echo $invoice->total_ttc;?>);
-			$('.change2').html(pricejs(change, 'MT'));
-	    	$('.change2').val(change);
-	    	$('.change1').removeClass('colorred');
-	    	$('.change1').addClass('colorgreen');
-	    	$('.change2').removeClass('colorwhite');
-	    	$('.change2').addClass('colorred');
-		}
-    	else
-    	{
-			$('.change2').html(pricejs(0, 'MT'));
-	    	$('.change2').val(0);
-	    	if (alreadypaydplusreceived == <?php echo $invoice->total_ttc;?>)
-	    	{
-		    	$('.change1').removeClass('colorred');
-		    	$('.change1').addClass('colorgreen');
-	    		$('.change2').removeClass('colorred');
-	    		$('.change2').addClass('colorwhite');
-	    	}
-	    	else
-	    	{
-		    	$('.change1').removeClass('colorgreen');
-		    	$('.change1').addClass('colorred');
-	    		$('.change2').removeClass('colorred');
-	    		$('.change2').addClass('colorwhite');
-	    	}
-    	}
-	}
+    function addreceived(price)
+    {
+        <?php
+        if (empty($conf->global->TAKEPOS_NUMPAD)) print 'received+=String(price);'."\n";
+        else print 'received+=parseFloat(price);'."\n";
+        ?>
+        $('.change1').html(pricejs(parseFloat(received), 'MT'));
+        $('.change1').val(parseFloat(received));
+        alreadypaydplusreceived=price2numjs(alreadypayed + parseFloat(received));
+        //console.log("already+received = "+alreadypaydplusreceived);
+        //console.log("total_ttc = "+<?php echo $invoice->total_ttc;?>);
+        if (alreadypaydplusreceived > <?php echo $invoice->total_ttc;?>)
+           {
+            var change=parseFloat(alreadypayed + parseFloat(received) - <?php echo $invoice->total_ttc;?>);
+            $('.change2').html(pricejs(change, 'MT'));
+            $('.change2').val(change);
+            $('.change1').removeClass('colorred');
+            $('.change1').addClass('colorgreen');
+            $('.change2').removeClass('colorwhite');
+            $('.change2').addClass('colorred');
+        }
+        else
+        {
+            $('.change2').html(pricejs(0, 'MT'));
+            $('.change2').val(0);
+            if (alreadypaydplusreceived == <?php echo $invoice->total_ttc;?>)
+            {
+                $('.change1').removeClass('colorred');
+                $('.change1').addClass('colorgreen');
+                $('.change2').removeClass('colorred');
+                $('.change2').addClass('colorwhite');
+            }
+            else
+            {
+                $('.change1').removeClass('colorgreen');
+                $('.change1').addClass('colorred');
+                $('.change2').removeClass('colorred');
+                $('.change2').addClass('colorwhite');
+            }
+        }
+    }
 
-	function reset()
-	{
-		received=0;
-		$('.change1').html(pricejs(received, 'MT'));
-		$('.change1').val(price2numjs(received));
-		$('.change2').html(pricejs(received, 'MT'));
-		$('.change2').val(price2numjs(received));
-    	$('.change1').removeClass('colorgreen');
-    	$('.change1').addClass('colorred');
-    	$('.change2').removeClass('colorred');
-    	$('.change2').addClass('colorwhite');
-	}
+    function reset()
+    {
+        received=0;
+        $('.change1').html(pricejs(received, 'MT'));
+        $('.change1').val(price2numjs(received));
+        $('.change2').html(pricejs(received, 'MT'));
+        $('.change2').val(price2numjs(received));
+        $('.change1').removeClass('colorgreen');
+        $('.change1').addClass('colorred');
+        $('.change2').removeClass('colorred');
+        $('.change2').addClass('colorwhite');
+    }
 
-	function Validate(payment)
-	{
-		var invoiceid = <?php echo ($invoiceid > 0 ? $invoiceid : 0); ?>;
-		var amountpayed = $("#change1").val();
-		if (amountpayed > <?php echo $invoice->total_ttc; ?>) {
-			amountpayed = <?php echo $invoice->total_ttc; ?>;
-		}
-		console.log("We click on the payment mode to pay amount = "+amountpayed);
-		parent.$("#poslines").load("invoice.php?place=<?php echo $place;?>&action=valid&pay="+payment+"&amount="+amountpayed+"&invoiceid="+invoiceid, function() {
-			//parent.$("#poslines").scrollTop(parent.$("#poslines")[0].scrollHeight);
-			parent.$.colorbox.close();
-			//parent.setFocusOnSearchField();	// This does not have effect
-		});
-	}
+    function Validate(payment)
+    {
+        var invoiceid = <?php echo ($invoiceid > 0 ? $invoiceid : 0); ?>;
+        var amountpayed = $("#change1").val();
+        if (amountpayed > <?php echo $invoice->total_ttc; ?>) {
+            amountpayed = <?php echo $invoice->total_ttc; ?>;
+        }
+        console.log("We click on the payment mode to pay amount = "+amountpayed);
+        parent.$("#poslines").load("invoice.php?place=<?php echo $place;?>&action=valid&pay="+payment+"&amount="+amountpayed+"&invoiceid="+invoiceid, function() {
+            //parent.$("#poslines").scrollTop(parent.$("#poslines")[0].scrollHeight);
+            parent.$.colorbox.close();
+            //parent.setFocusOnSearchField();    // This does not have effect
+        });
+    }
 </script>
 
 <div style="position:absolute; top:2%; left:5%; height:30%; width:91%;">
@@ -202,18 +202,18 @@ else print "var received=0;";
 <div style="position:absolute; top:33%; left:5%; height:55%; width:91%;">
 <?php
 $action_buttons = array(
-	array(
-		"function" =>"reset()",
-		"span" => "style='font-size: 150%;'",
-		"text" => "C",
-	    "class" => "poscolorblue"
-	),
-	array(
-		"function" => "parent.$.colorbox.close();",
-		"span" => "id='printtext'",
-		"text" => $langs->trans("Cancel"),
-	    "class" => "poscolordelete"
-	),
+    array(
+        "function" =>"reset()",
+        "span" => "style='font-size: 150%;'",
+        "text" => "C",
+        "class" => "poscolorblue"
+    ),
+    array(
+        "function" => "parent.$.colorbox.close();",
+        "span" => "id='printtext'",
+        "text" => $langs->trans("Cancel"),
+        "class" => "poscolordelete"
+    ),
 );
 $numpad=$conf->global->TAKEPOS_NUMPAD;
 ?>
@@ -243,7 +243,7 @@ $numpad=$conf->global->TAKEPOS_NUMPAD;
 <?php } else {
 $button = array_pop($action_buttons);
 ?>
-	<button type="button" class="calcbutton2" onclick="<?php echo $button["function"];?>"><span <?php echo $button["span"];?>><?php echo $button["text"];?></span></button>
+    <button type="button" class="calcbutton2" onclick="<?php echo $button["function"];?>"><span <?php echo $button["span"];?>><?php echo $button["text"];?></span></button>
 <?php } ?>
 <button type="button" class="calcbutton" onclick="addreceived(<?php if ($numpad==0) print "1"; else print "0.10";?>);"><?php if ($numpad==0) print "1"; else print "0.10";?></button>
 <button type="button" class="calcbutton" onclick="addreceived(<?php if ($numpad==0) print "2"; else print "0.20";?>);"><?php if ($numpad==0) print "2"; else print "0.20";?></button>
@@ -259,7 +259,7 @@ $button = array_pop($action_buttons);
 <?php
 $button = array_pop($action_buttons);
 ?>
-	<button type="button" class="calcbutton2" onclick="<?php echo $button["function"];?>"><span <?php echo $button["span"];?>><?php echo $button["text"];?></span></button>
+    <button type="button" class="calcbutton2" onclick="<?php echo $button["function"];?>"><span <?php echo $button["span"];?>><?php echo $button["text"];?></span></button>
 <?php } ?>
 <button type="button" class="calcbutton" onclick="addreceived(<?php if ($numpad==0) print "0"; else print "0.01";?>);"><?php if ($numpad==0) print "0"; else print "0.01";?></button>
 <button type="button" class="calcbutton" onclick="addreceived(<?php if ($numpad==0) print "'000'"; else print "0.02";?>);"><?php if ($numpad==0) print "000"; else print "0.02";?></button>
@@ -270,13 +270,13 @@ while($i < count($paiements)){
 ?>
 <button type="button" class="calcbutton2" onclick="Validate('<?php echo $langs->trans($paiements[$i]->code); ?>');"><?php echo $langs->trans($paiements[$i]->label); ?></button>
 <?php
-	$i=$i+1;
+    $i=$i+1;
 }
 $class=($i==3)?"calcbutton3":"calcbutton2";
 foreach($action_buttons as $button){
     $newclass = $class.($button["class"]?" ".$button["class"]:"");
 ?>
-	<button type="button" class="<?php echo $newclass;?>" onclick="<?php echo $button["function"];?>"><span <?php echo $button["span"];?>><?php echo $button["text"];?></span></button>
+    <button type="button" class="<?php echo $newclass;?>" onclick="<?php echo $button["function"];?>"><span <?php echo $button["span"];?>><?php echo $button["text"];?></span></button>
 <?php
 }
 ?>

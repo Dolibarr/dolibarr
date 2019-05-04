@@ -26,30 +26,30 @@
  */
 
 /**
- *	\file       htdocs/core/class/html.formother.class.php
+ *    \file       htdocs/core/class/html.formother.class.php
  *  \ingroup    core
- *	\brief      Fichier de la classe des fonctions predefinie de composants html autre
+ *    \brief      Fichier de la classe des fonctions predefinie de composants html autre
  */
 
 
 /**
- *	Classe permettant la generation de composants html autre
- *	Only common components are here.
+ *    Classe permettant la generation de composants html autre
+ *    Only common components are here.
  */
 class FormOther
 {
     private $db;
 
     /**
-	 * @var string Error code (or message)
-	 */
-	public $error;
+     * @var string Error code (or message)
+     */
+    public $error;
 
 
     /**
-     *	Constructor
+     *    Constructor
      *
-     *	@param	DoliDB		$db      Database handler
+     *    @param    DoliDB        $db      Database handler
      */
     public function __construct($db)
     {
@@ -61,12 +61,12 @@ class FormOther
     /**
      *    Return HTML select list of export models
      *
-     *    @param    string	$selected          Id modele pre-selectionne
-     *    @param    string	$htmlname          Nom de la zone select
-     *    @param    string	$type              Type des modeles recherches
-     *    @param    int		$useempty          Show an empty value in list
-     *    @param    int		$fk_user           User that has created the template (this is set to null to get all export model when EXPORTS_SHARE_MODELS is on)
-     *    @return	void
+     *    @param    string    $selected          Id modele pre-selectionne
+     *    @param    string    $htmlname          Nom de la zone select
+     *    @param    string    $type              Type des modeles recherches
+     *    @param    int        $useempty          Show an empty value in list
+     *    @param    int        $fk_user           User that has created the template (this is set to null to get all export model when EXPORTS_SHARE_MODELS is on)
+     *    @return    void
      */
     public function select_export_model($selected = '', $htmlname = 'exportmodelid', $type = '', $useempty = 0, $fk_user = null)
     {
@@ -74,7 +74,7 @@ class FormOther
         $sql = "SELECT rowid, label";
         $sql.= " FROM ".MAIN_DB_PREFIX."export_model";
         $sql.= " WHERE type = '".$type."'";
-		if (!empty($fk_user)) $sql.=" AND fk_user IN (0, ".$fk_user.")";  // An export model
+        if (!empty($fk_user)) $sql.=" AND fk_user IN (0, ".$fk_user.")";  // An export model
         $sql.= " ORDER BY rowid";
         $result = $this->db->query($sql);
         if ($result)
@@ -114,11 +114,11 @@ class FormOther
     /**
      *    Return list of export models
      *
-     *    @param    string	$selected          Id modele pre-selectionne
-     *    @param    string	$htmlname          Nom de la zone select
-     *    @param    string	$type              Type des modeles recherches
-     *    @param    int		$useempty          Affiche valeur vide dans liste
-     *    @return	void
+     *    @param    string    $selected          Id modele pre-selectionne
+     *    @param    string    $htmlname          Nom de la zone select
+     *    @param    string    $type              Type des modeles recherches
+     *    @param    int        $useempty          Affiche valeur vide dans liste
+     *    @return    void
      */
     public function select_import_model($selected = '', $htmlname = 'importmodelid', $type = '', $useempty = 0)
     {
@@ -165,9 +165,9 @@ class FormOther
     /**
      *    Return list of ecotaxes with label
      *
-     *    @param	string	$selected   Preselected ecotaxes
-     *    @param    string	$htmlname	Name of combo list
-     *    @return	integer
+     *    @param    string    $selected   Preselected ecotaxes
+     *    @param    string    $htmlname    Name of combo list
+     *    @return    integer
      */
     public function select_ecotaxes($selected = '', $htmlname = 'ecotaxe_id')
     {
@@ -180,7 +180,7 @@ class FormOther
         $sql.= " WHERE e.active = 1 AND e.fk_pays = c.rowid";
         $sql.= " ORDER BY country, e.organization ASC, e.code ASC";
 
-    	dol_syslog(get_class($this).'::select_ecotaxes', LOG_DEBUG);
+        dol_syslog(get_class($this).'::select_ecotaxes', LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -223,58 +223,58 @@ class FormOther
     /**
      *    Return list of revenue stamp for country
      *
-     *    @param	string	$selected   	Value of preselected revenue stamp
-     *    @param    string	$htmlname   	Name of combo list
-     *    @param    string	$country_code   Country Code
-     *    @return	string					HTML select list
+     *    @param    string    $selected       Value of preselected revenue stamp
+     *    @param    string    $htmlname       Name of combo list
+     *    @param    string    $country_code   Country Code
+     *    @return    string                    HTML select list
      */
     public function select_revenue_stamp($selected = '', $htmlname = 'revenuestamp', $country_code = '')
     {
         // phpcs:enable
-    	global $langs;
+        global $langs;
 
-    	$out='';
+        $out='';
 
-    	$sql = "SELECT r.taux, r.revenuestamp_type";
-    	$sql.= " FROM ".MAIN_DB_PREFIX."c_revenuestamp as r,".MAIN_DB_PREFIX."c_country as c";
-    	$sql.= " WHERE r.active = 1 AND r.fk_pays = c.rowid";
-    	$sql.= " AND c.code = '".$country_code."'";
+        $sql = "SELECT r.taux, r.revenuestamp_type";
+        $sql.= " FROM ".MAIN_DB_PREFIX."c_revenuestamp as r,".MAIN_DB_PREFIX."c_country as c";
+        $sql.= " WHERE r.active = 1 AND r.fk_pays = c.rowid";
+        $sql.= " AND c.code = '".$country_code."'";
 
-    	dol_syslog(get_class($this).'::select_revenue_stamp', LOG_DEBUG);
-    	$resql=$this->db->query($sql);
-    	if ($resql)
-    	{
-    		$out.='<select class="flat" name="'.$htmlname.'">';
-    		$num = $this->db->num_rows($resql);
-    		$i = 0;
-    		$out.='<option value="0">&nbsp;</option>'."\n";
-    		if ($num)
-    		{
-    			while ($i < $num)
-    			{
-    				$obj = $this->db->fetch_object($resql);
-    				if (($selected && $selected == $obj->taux) || $num == 1)
-    				{
-    					$out.='<option value="'.$obj->taux.($obj->revenuestamp_type == 'percent' ? '%' : '').'"'.($obj->revenuestamp_type == 'percent' ? ' data-type="percent"' : '').' selected>';
-    				}
-    				else
-    				{
-    					$out.='<option value="'.$obj->taux.($obj->revenuestamp_type == 'percent' ? '%' : '').'"'.($obj->revenuestamp_type == 'percent' ? ' data-type="percent"' : '').'>';
-    					//print '<option onmouseover="showtip(\''.$obj->libelle.'\')" onMouseout="hidetip()" value="'.$obj->rowid.'">';
-    				}
-    				$out.=$obj->taux.($obj->revenuestamp_type == 'percent' ? '%' : '');
-    				$out.='</option>';
-    				$i++;
-    			}
-    		}
-    		$out.='</select>';
-    		return $out;
-    	}
-    	else
-    	{
-    		dol_print_error($this->db);
-    		return '';
-    	}
+        dol_syslog(get_class($this).'::select_revenue_stamp', LOG_DEBUG);
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            $out.='<select class="flat" name="'.$htmlname.'">';
+            $num = $this->db->num_rows($resql);
+            $i = 0;
+            $out.='<option value="0">&nbsp;</option>'."\n";
+            if ($num)
+            {
+                while ($i < $num)
+                {
+                    $obj = $this->db->fetch_object($resql);
+                    if (($selected && $selected == $obj->taux) || $num == 1)
+                    {
+                        $out.='<option value="'.$obj->taux.($obj->revenuestamp_type == 'percent' ? '%' : '').'"'.($obj->revenuestamp_type == 'percent' ? ' data-type="percent"' : '').' selected>';
+                    }
+                    else
+                    {
+                        $out.='<option value="'.$obj->taux.($obj->revenuestamp_type == 'percent' ? '%' : '').'"'.($obj->revenuestamp_type == 'percent' ? ' data-type="percent"' : '').'>';
+                        //print '<option onmouseover="showtip(\''.$obj->libelle.'\')" onMouseout="hidetip()" value="'.$obj->rowid.'">';
+                    }
+                    $out.=$obj->taux.($obj->revenuestamp_type == 'percent' ? '%' : '');
+                    $out.='</option>';
+                    $i++;
+                }
+            }
+            $out.='</select>';
+            return $out;
+        }
+        else
+        {
+            dol_print_error($this->db);
+            return '';
+        }
     }
 
 
@@ -282,14 +282,14 @@ class FormOther
     /**
      *    Return a HTML select list to select a percent
      *
-     *    @param	integer	$selected      	pourcentage pre-selectionne
-     *    @param    string	$htmlname      	nom de la liste deroulante
-     *    @param	int		$disabled		Disabled or not
-     *    @param    int		$increment     	increment value
-     *    @param    int		$start         	start value
-     *    @param    int		$end           	end value
+     *    @param    integer    $selected          pourcentage pre-selectionne
+     *    @param    string    $htmlname          nom de la liste deroulante
+     *    @param    int        $disabled        Disabled or not
+     *    @param    int        $increment         increment value
+     *    @param    int        $start             start value
+     *    @param    int        $end               end value
      *    @param    int     $showempty      Add also an empty line
-     *    @return   string					HTML select string
+     *    @return   string                    HTML select string
      */
     public function select_percent($selected = 0, $htmlname = 'percent', $disabled = 0, $increment = 5, $start = 0, $end = 100, $showempty = 0)
     {
@@ -320,14 +320,14 @@ class FormOther
     /**
      * Return select list for categories (to use in form search selectors)
      *
-     * @param	int		$type			Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) is deprecated.
-     * @param   integer	$selected     	Preselected value
-     * @param   string	$htmlname      	Name of combo list
-     * @param	int		$nocateg		Show also an entry "Not categorized"
+     * @param    int        $type            Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) is deprecated.
+     * @param   integer    $selected         Preselected value
+     * @param   string    $htmlname          Name of combo list
+     * @param    int        $nocateg        Show also an entry "Not categorized"
      * @param   int     $showempty      Add also an empty line
      * @param   string  $morecss        More CSS
-     * @return  string		        	Html combo list code
-     * @see	select_all_categories()
+     * @return  string                    Html combo list code
+     * @see    select_all_categories()
      */
     public function select_categories($type, $selected = 0, $htmlname = 'search_categ', $nocateg = 0, $showempty = 1, $morecss = '')
     {
@@ -356,7 +356,7 @@ class FormOther
 
         // Print a select with each of them
         $moreforfilter.='<select class="flat minwidth100'.($morecss?' '.$morecss:'').'" id="select_categ_'.$htmlname.'" name="'.$htmlname.'">';
-        if ($showempty) $moreforfilter.='<option value="0">&nbsp;</option>';	// Should use -1 to say nothing
+        if ($showempty) $moreforfilter.='<option value="0">&nbsp;</option>';    // Should use -1 to say nothing
 
         if (is_array($tab_categs))
         {
@@ -369,8 +369,8 @@ class FormOther
         }
         if ($nocateg)
         {
-        	$langs->load("categories");
-        	$moreforfilter.='<option value="-2"'.($selected == -2 ? ' selected':'').'>- '.$langs->trans("NotCategorized").' -</option>';
+            $langs->load("categories");
+            $moreforfilter.='<option value="-2"'.($selected == -2 ? ' selected':'').'>- '.$langs->trans("NotCategorized").' -</option>';
         }
         $moreforfilter.='</select>';
 
@@ -382,13 +382,13 @@ class FormOther
     /**
      *  Return select list for categories (to use in form search selectors)
      *
-     *  @param	string	$selected     	Preselected value
-     *  @param  string	$htmlname      	Name of combo list (example: 'search_sale')
-     *  @param  User	$user           Object user
-     *  @param	int		$showstatus		0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
-     *  @param	int		$showempty		1=show also an empty value
-     *  @param	string	$morecss		More CSS
-     *  @return string					Html combo list code
+     *  @param    string    $selected         Preselected value
+     *  @param  string    $htmlname          Name of combo list (example: 'search_sale')
+     *  @param  User    $user           Object user
+     *  @param    int        $showstatus        0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
+     *  @param    int        $showempty        1=show also an empty value
+     *  @param    string    $morecss        More CSS
+     *  @return string                    Html combo list code
      */
     public function select_salesrepresentatives($selected, $htmlname, $user, $showstatus = 0, $showempty = 1, $morecss = '')
     {
@@ -405,7 +405,7 @@ class FormOther
             $comboenhancement = ajax_combobox($htmlname);
             if ($comboenhancement)
             {
-            	$out.=$comboenhancement;
+                $out.=$comboenhancement;
             }
         }
         // Select each sales and print them in a select input
@@ -427,7 +427,7 @@ class FormOther
             $sql_usr.= " WHERE u2.entity IN (0,".$conf->entity.")";
             $sql_usr.= " AND u2.rowid = sc.fk_user AND sc.fk_soc=".$user->societe_id;
         }
-	    $sql_usr.= " ORDER BY statut DESC, lastname ASC";  // Do not use 'ORDER BY u.statut' here, not compatible with the UNION.
+        $sql_usr.= " ORDER BY statut DESC, lastname ASC";  // Do not use 'ORDER BY u.statut' here, not compatible with the UNION.
         //print $sql_usr;exit;
 
         $resql_usr = $this->db->query($sql_usr);
@@ -451,18 +451,18 @@ class FormOther
                 }
                 if ($showstatus >= 0)
                 {
-					if ($obj_usr->statut == 1 && $showstatus == 1)
-					{
-						$out.=($moreinfo?' - ':' (').$langs->trans('Enabled');
-	                	$moreinfo++;
-					}
-					if ($obj_usr->statut == 0)
-					{
-						$out.=($moreinfo?' - ':' (').$langs->trans('Disabled');
-                		$moreinfo++;
-					}
-				}
-				$out.=($moreinfo?')':'');
+                    if ($obj_usr->statut == 1 && $showstatus == 1)
+                    {
+                        $out.=($moreinfo?' - ':' (').$langs->trans('Enabled');
+                        $moreinfo++;
+                    }
+                    if ($obj_usr->statut == 0)
+                    {
+                        $out.=($moreinfo?' - ':' (').$langs->trans('Disabled');
+                        $moreinfo++;
+                    }
+                }
+                $out.=($moreinfo?')':'');
                 $out.='</option>';
             }
             $this->db->free($resql_usr);
@@ -477,19 +477,19 @@ class FormOther
     }
 
     /**
-     *	Return list of project and tasks
+     *    Return list of project and tasks
      *
-     *	@param  int		$selectedtask   		Pre-selected task
-     *  @param  int		$projectid				Project id
-     * 	@param  string	$htmlname    			Name of html select
-     * 	@param	int		$modeproject			1 to restrict on projects owned by user
-     * 	@param	int		$modetask				1 to restrict on tasks associated to user
-     * 	@param	int		$mode					0=Return list of tasks and their projects, 1=Return projects and tasks if exists
-     *  @param  int		$useempty       		0=Allow empty values
-     *  @param	int		$disablechildoftaskid	1=Disable task that are child of the provided task id
-	 *  @param	string	$filteronprojstatus		Filter on project status ('-1'=no filter, '0,1'=Draft+Validated status)
-     *  @param	string	$morecss				More css
-     *  @return	void
+     *    @param  int        $selectedtask           Pre-selected task
+     *  @param  int        $projectid                Project id
+     *     @param  string    $htmlname                Name of html select
+     *     @param    int        $modeproject            1 to restrict on projects owned by user
+     *     @param    int        $modetask                1 to restrict on tasks associated to user
+     *     @param    int        $mode                    0=Return list of tasks and their projects, 1=Return projects and tasks if exists
+     *  @param  int        $useempty               0=Allow empty values
+     *  @param    int        $disablechildoftaskid    1=Disable task that are child of the provided task id
+     *  @param    string    $filteronprojstatus        Filter on project status ('-1'=no filter, '0,1'=Draft+Validated status)
+     *  @param    string    $morecss                More css
+     *  @return    void
      */
     public function selectProjectTasks($selectedtask = '', $projectid = 0, $htmlname = 'task_parent', $modeproject = 0, $modetask = 0, $mode = 0, $useempty = 0, $disablechildoftaskid = 0, $filteronprojstatus = '', $morecss = '')
     {
@@ -502,7 +502,7 @@ class FormOther
         $tasksarray=$task->getTasksArray($modetask?$user:0, $modeproject?$user:0, $projectid, 0, $mode, '', $filteronprojstatus);
         if ($tasksarray)
         {
-        	print '<select class="flat'.($morecss?' '.$morecss:'').'" name="'.$htmlname.'" id="'.$htmlname.'">';
+            print '<select class="flat'.($morecss?' '.$morecss:'').'" name="'.$htmlname.'" id="'.$htmlname.'">';
             if ($useempty) print '<option value="0">&nbsp;</option>';
             $j=0;
             $level=0;
@@ -520,14 +520,14 @@ class FormOther
     /**
      * Write lines of a project (all lines of a project if parent = 0)
      *
-     * @param 	int		$inc					Cursor counter
-     * @param 	int		$parent					Id of parent task we want to see
-     * @param 	array	$lines					Array of task lines
-     * @param 	int		$level					Level
-     * @param 	int		$selectedtask			Id selected task
-     * @param 	int		$selectedproject		Id selected project
-     * @param	int		$disablechildoftaskid	1=Disable task that are child of the provided task id
-     * @return	void
+     * @param     int        $inc                    Cursor counter
+     * @param     int        $parent                    Id of parent task we want to see
+     * @param     array    $lines                    Array of task lines
+     * @param     int        $level                    Level
+     * @param     int        $selectedtask            Id selected task
+     * @param     int        $selectedproject        Id selected project
+     * @param    int        $disablechildoftaskid    1=Disable task that are child of the provided task id
+     * @return    void
      */
     private function _pLineSelect(&$inc, $parent, $lines, $level = 0, $selectedtask = 0, $selectedproject = 0, $disablechildoftaskid = 0)
     {
@@ -540,17 +540,17 @@ class FormOther
             if ($lines[$i]->fk_parent == $parent) {
                 $var = !$var;
 
-                //var_dump($selectedproject."--".$selectedtask."--".$lines[$i]->fk_project."_".$lines[$i]->id);		// $lines[$i]->id may be empty if project has no lines
+                //var_dump($selectedproject."--".$selectedtask."--".$lines[$i]->fk_project."_".$lines[$i]->id);        // $lines[$i]->id may be empty if project has no lines
 
                 // Break on a new project
-                if ($parent == 0)	// We are on a task at first level
+                if ($parent == 0)    // We are on a task at first level
                 {
-                    if ($lines[$i]->fk_project != $lastprojectid)	// Break found on project
+                    if ($lines[$i]->fk_project != $lastprojectid)    // Break found on project
                     {
                         if ($i > 0) print '<option value="0" disabled>----------</option>';
                         print '<option value="'.$lines[$i]->fk_project.'_0"';
                         if ($selectedproject == $lines[$i]->fk_project) print ' selected';
-                        print '>';	// Project -> Task
+                        print '>';    // Project -> Task
                         print $langs->trans("Project").' '.$lines[$i]->projectref;
                         if (empty($lines[$i]->public))
                         {
@@ -571,15 +571,15 @@ class FormOther
                 $newdisablechildoftaskid=$disablechildoftaskid;
 
                 // Print task
-                if (isset($lines[$i]->id))		// We use isset because $lines[$i]->id may be null if project has no task and are on root project (tasks may be caught by a left join). We enter here only if '0' or >0
+                if (isset($lines[$i]->id))        // We use isset because $lines[$i]->id may be null if project has no task and are on root project (tasks may be caught by a left join). We enter here only if '0' or >0
                 {
-                	// Check if we must disable entry
-                	$disabled=0;
-                	if ($disablechildoftaskid && (($lines[$i]->id == $disablechildoftaskid || $lines[$i]->fk_parent == $disablechildoftaskid)))
-                	{
-               			$disabled++;
-               			if ($lines[$i]->fk_parent == $disablechildoftaskid) $newdisablechildoftaskid=$lines[$i]->id;	// If task is child of a disabled parent, we will propagate id to disable next child too
-                	}
+                    // Check if we must disable entry
+                    $disabled=0;
+                    if ($disablechildoftaskid && (($lines[$i]->id == $disablechildoftaskid || $lines[$i]->fk_parent == $disablechildoftaskid)))
+                    {
+                           $disabled++;
+                           if ($lines[$i]->fk_parent == $disablechildoftaskid) $newdisablechildoftaskid=$lines[$i]->id;    // If task is child of a disabled parent, we will propagate id to disable next child too
+                    }
 
                     print '<option value="'.$lines[$i]->fk_project.'_'.$lines[$i]->id.'"';
                     if (($lines[$i]->id == $selectedtask) || ($lines[$i]->fk_project.'_'.$lines[$i]->id == $selectedtask)) print ' selected';
@@ -615,52 +615,52 @@ class FormOther
     /**
      *  Output a HTML thumb of color or a text if not defined.
      *
-     *  @param	string		$color				String with hex (FFFFFF) or comma RGB ('255,255,255')
-     *  @param	string		$textifnotdefined	Text to show if color not defined
-     *  @return	string							HTML code for color thumb
+     *  @param    string        $color                String with hex (FFFFFF) or comma RGB ('255,255,255')
+     *  @param    string        $textifnotdefined    Text to show if color not defined
+     *  @return    string                            HTML code for color thumb
      *  @see selectColor()
      */
     public static function showColor($color, $textifnotdefined = '')
     {
-    	$textcolor='FFF';
-    	include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-    	if(colorIsLight($color)) $textcolor='000';
+        $textcolor='FFF';
+        include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+        if(colorIsLight($color)) $textcolor='000';
 
-    	$color = colorArrayToHex(colorStringToArray($color, array()), '');
+        $color = colorArrayToHex(colorStringToArray($color, array()), '');
 
-		if ($color) print '<input type="text" class="colorthumb" disabled style="padding: 1px; margin-top: 0; margin-bottom: 0; color: #'.$textcolor.'; background-color: #'.$color.'" value="'.$color.'">';
-		else print $textifnotdefined;
+        if ($color) print '<input type="text" class="colorthumb" disabled style="padding: 1px; margin-top: 0; margin-bottom: 0; color: #'.$textcolor.'; background-color: #'.$color.'" value="'.$color.'">';
+        else print $textifnotdefined;
     }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Output a HTML code to select a color
      *
-     *  @param	string		$set_color		Pre-selected color
-     *  @param	string		$prefix			Name of HTML field
-     *  @param	string		$form_name		Deprecated. Not used.
-     *  @param	int			$showcolorbox	1=Show color code and color box, 0=Show only color code
-     *  @param 	array		$arrayofcolors	Array of colors. Example: array('29527A','5229A3','A32929','7A367A','B1365F','0D7813')
-     *  @return	void
+     *  @param    string        $set_color        Pre-selected color
+     *  @param    string        $prefix            Name of HTML field
+     *  @param    string        $form_name        Deprecated. Not used.
+     *  @param    int            $showcolorbox    1=Show color code and color box, 0=Show only color code
+     *  @param     array        $arrayofcolors    Array of colors. Example: array('29527A','5229A3','A32929','7A367A','B1365F','0D7813')
+     *  @return    void
      *  @deprecated Use instead selectColor
      *  @see selectColor()
      */
     public function select_color($set_color = '', $prefix = 'f_color', $form_name = '', $showcolorbox = 1, $arrayofcolors = '')
     {
         // phpcs:enable
-    	print $this->selectColor($set_color, $prefix, $form_name, $showcolorbox, $arrayofcolors);
+        print $this->selectColor($set_color, $prefix, $form_name, $showcolorbox, $arrayofcolors);
     }
 
     /**
      *  Output a HTML code to select a color. Field will return an hexa color like '334455'.
      *
-     *  @param	string		$set_color		Pre-selected color
-     *  @param	string		$prefix			Name of HTML field
-     *  @param	string		$form_name		Deprecated. Not used.
-     *  @param	int			$showcolorbox	1=Show color code and color box, 0=Show only color code
-     *  @param 	array		$arrayofcolors	Array of colors. Example: array('29527A','5229A3','A32929','7A367A','B1365F','0D7813')
-     *  @param	string		$morecss		Add css style into input field
-     *  @return	string
+     *  @param    string        $set_color        Pre-selected color
+     *  @param    string        $prefix            Name of HTML field
+     *  @param    string        $form_name        Deprecated. Not used.
+     *  @param    int            $showcolorbox    1=Show color code and color box, 0=Show only color code
+     *  @param     array        $arrayofcolors    Array of colors. Example: array('29527A','5229A3','A32929','7A367A','B1365F','0D7813')
+     *  @param    string        $morecss        Add css style into input field
+     *  @return    string
      *  @see showColor()
      */
     public static function selectColor($set_color = '', $prefix = 'f_color', $form_name = '', $showcolorbox = 1, $arrayofcolors = '', $morecss = '')
@@ -679,9 +679,9 @@ class FormOther
             $langs->load("other");
             if (empty($conf->dol_use_jmobile))
             {
-	            $out.= '<link rel="stylesheet" media="screen" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/jpicker/css/jPicker-1.1.6.css" />';
-	            $out.= '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jpicker/jpicker-1.1.6.js"></script>';
-	            $out.= '<script type="text/javascript">
+                $out.= '<link rel="stylesheet" media="screen" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/jpicker/css/jPicker-1.1.6.css" />';
+                $out.= '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jpicker/jpicker-1.1.6.js"></script>';
+                $out.= '<script type="text/javascript">
 	             jQuery(document).ready(function(){
 	                $(\'#colorpicker'.$prefix.'\').jPicker( {
 	                window: {
@@ -725,9 +725,9 @@ class FormOther
         {
             if (empty($conf->dol_use_jmobile))
             {
-	        	$out.= '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/colorpicker/jquery.colorpicker.css" type="text/css" media="screen" />';
-	            $out.= '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/colorpicker/jquery.colorpicker.js" type="text/javascript"></script>';
-	            $out.= '<script type="text/javascript">
+                $out.= '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/colorpicker/jquery.colorpicker.css" type="text/css" media="screen" />';
+                $out.= '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/colorpicker/jquery.colorpicker.js" type="text/javascript"></script>';
+                $out.= '<script type="text/javascript">
 	             jQuery(document).ready(function(){
 	                 jQuery(\'#colorpicker'.$prefix.'\').colorpicker({
 	                     size: 14,
@@ -753,14 +753,14 @@ class FormOther
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
-     *	Creation d'un icone de couleur
+     *    Creation d'un icone de couleur
      *
-     *	@param	string	$color		Couleur de l'image
-     *	@param	string	$module 	Nom du module
-     *	@param	string	$name		Nom de l'image
-     *	@param	int		$x 			Largeur de l'image en pixels
-     *	@param	int		$y      	Hauteur de l'image en pixels
-     *	@return	void
+     *    @param    string    $color        Couleur de l'image
+     *    @param    string    $module     Nom du module
+     *    @param    string    $name        Nom de l'image
+     *    @param    int        $x             Largeur de l'image en pixels
+     *    @param    int        $y          Hauteur de l'image en pixels
+     *    @return    void
      */
     public function CreateColorIcon($color, $module, $name, $x = '12', $y = '12')
     {
@@ -794,12 +794,12 @@ class FormOther
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
-     *    	Return HTML combo list of week
+     *        Return HTML combo list of week
      *
-     *    	@param	string		$selected          Preselected value
-     *    	@param  string		$htmlname          Nom de la zone select
-     *    	@param  int			$useempty          Affiche valeur vide dans liste
-     *    	@return	string
+     *        @param    string        $selected          Preselected value
+     *        @param  string        $htmlname          Nom de la zone select
+     *        @param  int            $useempty          Affiche valeur vide dans liste
+     *        @return    string
      */
     public function select_dayofweek($selected = '', $htmlname = 'weekid', $useempty = 0)
     {
@@ -842,11 +842,11 @@ class FormOther
     /**
      *      Return HTML combo list of month
      *
-     *      @param  string      $selected          	Preselected value
-     *      @param  string      $htmlname          	Name of HTML select object
-     *      @param  int         $useempty          	Show empty in list
-     *      @param  int         $longlabel         	Show long label
-     *      @param	string		$morecss			More Css
+     *      @param  string      $selected              Preselected value
+     *      @param  string      $htmlname              Name of HTML select object
+     *      @param  int         $useempty              Show empty in list
+     *      @param  int         $longlabel             Show long label
+     *      @param    string        $morecss            More Css
      *      @return string
      */
     public function select_month($selected = '', $htmlname = 'monthid', $useempty = 0, $longlabel = 0, $morecss = 'maxwidth50imp valignmiddle')
@@ -856,7 +856,7 @@ class FormOther
 
         require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-        if ($longlabel) $montharray = monthArray($langs, 0);	// Get array
+        if ($longlabel) $montharray = monthArray($langs, 0);    // Get array
         else $montharray = monthArray($langs, 1);
 
         $select_month = '<select class="flat'.($morecss?' '.$morecss:'').'" name="'.$htmlname.'" id="'.$htmlname.'">';
@@ -883,18 +883,18 @@ class FormOther
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
-     *	Return HTML combo list of years
+     *    Return HTML combo list of years
      *
-     *  @param  string		$selected       Preselected value (''=current year, -1=none, year otherwise)
-     *  @param  string		$htmlname       Name of HTML select object
-     *  @param  int			$useempty       Affiche valeur vide dans liste
-     *  @param  int			$min_year       Offset of minimum year into list (by default current year -10)
-     *  @param  int		    $max_year		Offset of maximum year into list (by default current year + 5)
-     *  @param	int			$offset			Offset
-     *  @param	int			$invert			Invert
-     *  @param	string		$option			Option
-     *  @param	string		$morecss		More CSS
-     *  @return	string
+     *  @param  string        $selected       Preselected value (''=current year, -1=none, year otherwise)
+     *  @param  string        $htmlname       Name of HTML select object
+     *  @param  int            $useempty       Affiche valeur vide dans liste
+     *  @param  int            $min_year       Offset of minimum year into list (by default current year -10)
+     *  @param  int            $max_year        Offset of maximum year into list (by default current year + 5)
+     *  @param    int            $offset            Offset
+     *  @param    int            $invert            Invert
+     *  @param    string        $option            Option
+     *  @param    string        $morecss        More CSS
+     *  @return    string
      */
     public function select_year($selected = '', $htmlname = 'yearid', $useempty = 0, $min_year = 10, $max_year = 5, $offset = 0, $invert = 0, $option = '', $morecss = 'valignmiddle maxwidth75imp')
     {
@@ -903,18 +903,18 @@ class FormOther
     }
 
     /**
-     *	Return HTML combo list of years
+     *    Return HTML combo list of years
      *
-     *  @param  string	$selected       Preselected value (''=current year, -1=none, year otherwise)
-     *  @param  string	$htmlname       Name of HTML select object
-     *  @param  int	    $useempty       Affiche valeur vide dans liste
-     *  @param  int	    $min_year		Offset of minimum year into list (by default current year -10)
-     *  @param  int	    $max_year       Offset of maximum year into list (by default current year + 5)
-     *  @param	int		$offset			Offset
-     *  @param	int		$invert			Invert
-     *  @param	string	$option			Option
-     *  @param	string	$morecss		More css
-     *  @return	string
+     *  @param  string    $selected       Preselected value (''=current year, -1=none, year otherwise)
+     *  @param  string    $htmlname       Name of HTML select object
+     *  @param  int        $useempty       Affiche valeur vide dans liste
+     *  @param  int        $min_year        Offset of minimum year into list (by default current year -10)
+     *  @param  int        $max_year       Offset of maximum year into list (by default current year + 5)
+     *  @param    int        $offset            Offset
+     *  @param    int        $invert            Invert
+     *  @param    string    $option            Option
+     *  @param    string    $morecss        More css
+     *  @return    string
      */
     public function selectyear($selected = '', $htmlname = 'yearid', $useempty = 0, $min_year = 10, $max_year = 5, $offset = 0, $invert = 0, $option = '', $morecss = 'valignmiddle maxwidth75imp')
     {
@@ -928,7 +928,7 @@ class FormOther
         $out.= '<select class="flat'.($morecss?' '.$morecss:'').'" id="' . $htmlname . '" name="' . $htmlname . '"'.$option.' >';
         if($useempty)
         {
-        	$selected_html='';
+            $selected_html='';
             if ($selected == '') $selected_html = ' selected';
             $out.= '<option value=""' . $selected_html . '>&nbsp;</option>';
         }
@@ -957,12 +957,12 @@ class FormOther
 
 
     /**
-     * 	Get array with HTML tabs with boxes of a particular area including personalized choices of user.
+     *     Get array with HTML tabs with boxes of a particular area including personalized choices of user.
      *  Class 'Form' must be known.
      *
-     * 	@param	   User         $user		 Object User
-     * 	@param	   String       $areacode    Code of area for pages ('0'=value for Home page)
-     * 	@return    array                     array('selectboxlist'=>, 'boxactivated'=>, 'boxlista'=>, 'boxlistb'=>)
+     *     @param       User         $user         Object User
+     *     @param       String       $areacode    Code of area for pages ('0'=value for Home page)
+     *     @return    array                     array('selectboxlist'=>, 'boxactivated'=>, 'boxlista'=>, 'boxlistb'=>)
      */
     public static function getBoxesArea($user, $areacode)
     {
@@ -976,60 +976,60 @@ class FormOther
         // $boxidactivatedforuser will be array of boxes choosed by user
 
         $selectboxlist='';
-        $boxactivated=InfoBox::listBoxes($db, 'activated', $areacode, (empty($user->conf->$confuserzone)?null:$user), array(), 0);	// Search boxes of common+user (or common only if user has no specific setup)
+        $boxactivated=InfoBox::listBoxes($db, 'activated', $areacode, (empty($user->conf->$confuserzone)?null:$user), array(), 0);    // Search boxes of common+user (or common only if user has no specific setup)
 
         $boxidactivatedforuser=array();
         foreach($boxactivated as $box)
         {
-        	if (empty($user->conf->$confuserzone) || $box->fk_user == $user->id) $boxidactivatedforuser[$box->id]=$box->id;	// We keep only boxes to show for user
+            if (empty($user->conf->$confuserzone) || $box->fk_user == $user->id) $boxidactivatedforuser[$box->id]=$box->id;    // We keep only boxes to show for user
         }
 
         // Define selectboxlist
         $arrayboxtoactivatelabel=array();
         if (! empty($user->conf->$confuserzone))
         {
-        	$boxorder='';
-        	$langs->load("boxes");	// Load label of boxes
-        	foreach($boxactivated as $box)
-        	{
-        		if (! empty($boxidactivatedforuser[$box->id])) continue;	// Already visible for user
-        		$label=$langs->transnoentitiesnoconv($box->boxlabel);
-        		//if (preg_match('/graph/',$box->class)) $label.=' ('.$langs->trans("Graph").')';
-        		if (preg_match('/graph/', $box->class) && $conf->browser->layout != 'phone')
-        		{
-        			$label=$label.' <span class="fa fa-bar-chart"></span>';
-        		}
-        		$arrayboxtoactivatelabel[$box->id]=$label;			// We keep only boxes not shown for user, to show into combo list
-        	}
+            $boxorder='';
+            $langs->load("boxes");    // Load label of boxes
+            foreach($boxactivated as $box)
+            {
+                if (! empty($boxidactivatedforuser[$box->id])) continue;    // Already visible for user
+                $label=$langs->transnoentitiesnoconv($box->boxlabel);
+                //if (preg_match('/graph/',$box->class)) $label.=' ('.$langs->trans("Graph").')';
+                if (preg_match('/graph/', $box->class) && $conf->browser->layout != 'phone')
+                {
+                    $label=$label.' <span class="fa fa-bar-chart"></span>';
+                }
+                $arrayboxtoactivatelabel[$box->id]=$label;            // We keep only boxes not shown for user, to show into combo list
+            }
             foreach($boxidactivatedforuser as $boxid)
-        	{
-       			if (empty($boxorder)) $boxorder.='A:';
-  				$boxorder.=$boxid.',';
-        	}
+            {
+                   if (empty($boxorder)) $boxorder.='A:';
+                  $boxorder.=$boxid.',';
+            }
 
-        	//var_dump($boxidactivatedforuser);
+            //var_dump($boxidactivatedforuser);
 
-        	// Class Form must have been already loaded
-        	$selectboxlist.='<!-- Form with select box list -->'."\n";
-			$selectboxlist.='<form id="addbox" name="addbox" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-			$selectboxlist.='<input type="hidden" name="addbox" value="addbox">';
-			$selectboxlist.='<input type="hidden" name="userid" value="'.$user->id.'">';
-			$selectboxlist.='<input type="hidden" name="areacode" value="'.$areacode.'">';
-			$selectboxlist.='<input type="hidden" name="boxorder" value="'.$boxorder.'">';
-			$selectboxlist.=Form::selectarray('boxcombo', $arrayboxtoactivatelabel, -1, $langs->trans("ChooseBoxToAdd").'...', 0, 0, '', 0, 0, 0, 'ASC', 'maxwidth150onsmartphone', 0, 'hidden selected', 0, 1);
+            // Class Form must have been already loaded
+            $selectboxlist.='<!-- Form with select box list -->'."\n";
+            $selectboxlist.='<form id="addbox" name="addbox" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+            $selectboxlist.='<input type="hidden" name="addbox" value="addbox">';
+            $selectboxlist.='<input type="hidden" name="userid" value="'.$user->id.'">';
+            $selectboxlist.='<input type="hidden" name="areacode" value="'.$areacode.'">';
+            $selectboxlist.='<input type="hidden" name="boxorder" value="'.$boxorder.'">';
+            $selectboxlist.=Form::selectarray('boxcombo', $arrayboxtoactivatelabel, -1, $langs->trans("ChooseBoxToAdd").'...', 0, 0, '', 0, 0, 0, 'ASC', 'maxwidth150onsmartphone', 0, 'hidden selected', 0, 1);
             if (empty($conf->use_javascript_ajax)) $selectboxlist.=' <input type="submit" class="button" value="'.$langs->trans("AddBox").'">';
             $selectboxlist.='</form>';
             if (! empty($conf->use_javascript_ajax))
             {
-            	include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-            	$selectboxlist.=ajax_combobox("boxcombo");
+                include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+                $selectboxlist.=ajax_combobox("boxcombo");
             }
         }
 
         // Javascript code for dynamic actions
         if (! empty($conf->use_javascript_ajax))
         {
-	        $selectboxlist.='<script type="text/javascript" language="javascript">
+            $selectboxlist.='<script type="text/javascript" language="javascript">
 
 	        // To update list of activated boxes
 	        function updateBoxOrder(closing) {
@@ -1068,8 +1068,8 @@ class FormOther
 	        			window.location.search=\'mainmenu='.GETPOST("mainmenu", "aZ09").'&leftmenu='.GETPOST('leftmenu', "aZ09").'&action=addbox&boxid=\'+boxid;
 	                }
 	        	});';
-	        	if (! count($arrayboxtoactivatelabel)) $selectboxlist.='jQuery("#boxcombo").hide();';
-	        	$selectboxlist.='
+                if (! count($arrayboxtoactivatelabel)) $selectboxlist.='jQuery("#boxcombo").hide();';
+                $selectboxlist.='
 
 	        	jQuery("#boxhalfleft, #boxhalfright").sortable({
 	    	    	handle: \'.boxhandle\',
@@ -1094,7 +1094,7 @@ class FormOther
 
         	});'."\n";
 
-	        $selectboxlist.='</script>'."\n";
+            $selectboxlist.='</script>'."\n";
         }
 
         // Define boxlista and boxlistb
@@ -1102,10 +1102,10 @@ class FormOther
 
         if ($nbboxactivated)
         {
-        	// Load translation files required by the page
+            // Load translation files required by the page
             $langs->loadLangs(array("boxes","projects"));
 
-        	$emptybox=new ModeleBoxes($db);
+            $emptybox=new ModeleBoxes($db);
 
             $boxlista.="\n<!-- Box left container -->\n";
 
@@ -1116,9 +1116,9 @@ class FormOther
             $ii=0;
             foreach ($boxactivated as $key => $box)
             {
-            	if ((! empty($user->conf->$confuserzone) && $box->fk_user == 0) || (empty($user->conf->$confuserzone) && $box->fk_user != 0)) continue;
-				if (empty($box->box_order) && $ii < ($nbboxactivated / 2)) $box->box_order='A'.sprintf("%02d", ($ii+1));	// When box_order was not yet set to Axx or Bxx and is still 0
-            	if (preg_match('/^A/i', $box->box_order)) // column A
+                if ((! empty($user->conf->$confuserzone) && $box->fk_user == 0) || (empty($user->conf->$confuserzone) && $box->fk_user != 0)) continue;
+                if (empty($box->box_order) && $ii < ($nbboxactivated / 2)) $box->box_order='A'.sprintf("%02d", ($ii+1));    // When box_order was not yet set to Axx or Bxx and is still 0
+                if (preg_match('/^A/i', $box->box_order)) // column A
                 {
                     $ii++;
                     //print 'box_id '.$boxactivated[$ii]->box_id.' ';
@@ -1131,10 +1131,10 @@ class FormOther
 
             if ($conf->browser->layout != 'phone')
             {
-            	$emptybox->box_id='A';
-            	$emptybox->info_box_head=array();
-            	$emptybox->info_box_contents=array();
-            	$boxlista.= $emptybox->outputBox(array(), array());
+                $emptybox->box_id='A';
+                $emptybox->info_box_head=array();
+                $emptybox->info_box_contents=array();
+                $boxlista.= $emptybox->outputBox(array(), array());
             }
             $boxlista.= "<!-- End box left container -->\n";
 
@@ -1143,9 +1143,9 @@ class FormOther
             $ii=0;
             foreach ($boxactivated as $key => $box)
             {
-            	if ((! empty($user->conf->$confuserzone) && $box->fk_user == 0) || (empty($user->conf->$confuserzone) && $box->fk_user != 0)) continue;
-            	if (empty($box->box_order) && $ii < ($nbboxactivated / 2)) $box->box_order='B'.sprintf("%02d", ($ii+1));	// When box_order was not yet set to Axx or Bxx and is still 0
-            	if (preg_match('/^B/i', $box->box_order)) // colonne B
+                if ((! empty($user->conf->$confuserzone) && $box->fk_user == 0) || (empty($user->conf->$confuserzone) && $box->fk_user != 0)) continue;
+                if (empty($box->box_order) && $ii < ($nbboxactivated / 2)) $box->box_order='B'.sprintf("%02d", ($ii+1));    // When box_order was not yet set to Axx or Bxx and is still 0
+                if (preg_match('/^B/i', $box->box_order)) // colonne B
                 {
                     $ii++;
                     //print 'box_id '.$boxactivated[$ii]->box_id.' ';
@@ -1158,10 +1158,10 @@ class FormOther
 
             if ($conf->browser->layout != 'phone')
             {
-            	$emptybox->box_id='B';
-            	$emptybox->info_box_head=array();
-            	$emptybox->info_box_contents=array();
-            	$boxlistb.= $emptybox->outputBox(array(), array());
+                $emptybox->box_id='B';
+                $emptybox->info_box_head=array();
+                $emptybox->info_box_contents=array();
+                $boxlistb.= $emptybox->outputBox(array(), array());
             }
 
             $boxlistb.= "<!-- End box right container -->\n";
@@ -1175,14 +1175,14 @@ class FormOther
     /**
      *  Return a HTML select list of a dictionary
      *
-     *  @param  string	$htmlname          	Name of select zone
-     *  @param	string	$dictionarytable	Dictionary table
-     *  @param	string	$keyfield			Field for key
-     *  @param	string	$labelfield			Label field
-     *  @param	string	$selected			Selected value
-     *  @param  int		$useempty          	1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
+     *  @param  string    $htmlname              Name of select zone
+     *  @param    string    $dictionarytable    Dictionary table
+     *  @param    string    $keyfield            Field for key
+     *  @param    string    $labelfield            Label field
+     *  @param    string    $selected            Selected value
+     *  @param  int        $useempty              1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
      *  @param  string  $moreattrib         More attributes on HTML select tag
-     * 	@return	void
+     *     @return    void
      */
     public function select_dictionary($htmlname, $dictionarytable, $keyfield = 'code', $labelfield = 'label', $selected = '', $useempty = 0, $moreattrib = '')
     {
@@ -1235,42 +1235,42 @@ class FormOther
     }
 
     /**
-	 *	Return an html string with a select combo box to choose yes or no
-	 *
-	 *	@param	string		$htmlname		Name of html select field
-	 *	@param	string		$value			Pre-selected value
-	 *	@param	int			$option			0 return automatic/manual, 1 return 1/0
-	 *	@param	bool		$disabled		true or false
-	 *  @param	int      	$useempty		1=Add empty line
-	 *	@return	string						See option
-	 */
+     *    Return an html string with a select combo box to choose yes or no
+     *
+     *    @param    string        $htmlname        Name of html select field
+     *    @param    string        $value            Pre-selected value
+     *    @param    int            $option            0 return automatic/manual, 1 return 1/0
+     *    @param    bool        $disabled        true or false
+     *  @param    int          $useempty        1=Add empty line
+     *    @return    string                        See option
+     */
     public function selectAutoManual($htmlname, $value = '', $option = 0, $disabled = false, $useempty = 0)
-	{
-		global $langs;
+    {
+        global $langs;
 
-		$automatic="automatic"; $manual="manual";
-		if ($option)
-		{
-			$automatic="1";
-			$manual="0";
-		}
+        $automatic="automatic"; $manual="manual";
+        if ($option)
+        {
+            $automatic="1";
+            $manual="0";
+        }
 
-		$disabled = ($disabled ? ' disabled' : '');
+        $disabled = ($disabled ? ' disabled' : '');
 
-		$resultautomanual = '<select class="flat width100" id="'.$htmlname.'" name="'.$htmlname.'"'.$disabled.'>'."\n";
-		if ($useempty) $resultautomanual .= '<option value="-1"'.(($value < 0)?' selected':'').'>&nbsp;</option>'."\n";
-		if (("$value" == 'automatic') || ($value == 1))
-		{
-			$resultautomanual .= '<option value="'.$automatic.'" selected>'.$langs->trans("Automatic").'</option>'."\n";
-			$resultautomanual .= '<option value="'.$manual.'">'.$langs->trans("Manual").'</option>'."\n";
-		}
-		else
-	   {
-	   		$selected=(($useempty && $value != '0' && $value != 'manual')?'':' selected');
-			$resultautomanual .= '<option value="'.$automatic.'">'.$langs->trans("Automatic").'</option>'."\n";
-			$resultautomanual .= '<option value="'.$manual.'"'.$selected.'>'.$langs->trans("Manual").'</option>'."\n";
-		}
-		$resultautomanual .= '</select>'."\n";
-		return $resultautomanual;
-	}
+        $resultautomanual = '<select class="flat width100" id="'.$htmlname.'" name="'.$htmlname.'"'.$disabled.'>'."\n";
+        if ($useempty) $resultautomanual .= '<option value="-1"'.(($value < 0)?' selected':'').'>&nbsp;</option>'."\n";
+        if (("$value" == 'automatic') || ($value == 1))
+        {
+            $resultautomanual .= '<option value="'.$automatic.'" selected>'.$langs->trans("Automatic").'</option>'."\n";
+            $resultautomanual .= '<option value="'.$manual.'">'.$langs->trans("Manual").'</option>'."\n";
+        }
+        else
+       {
+               $selected=(($useempty && $value != '0' && $value != 'manual')?'':' selected');
+            $resultautomanual .= '<option value="'.$automatic.'">'.$langs->trans("Automatic").'</option>'."\n";
+            $resultautomanual .= '<option value="'.$manual.'"'.$selected.'>'.$langs->trans("Manual").'</option>'."\n";
+        }
+        $resultautomanual .= '</select>'."\n";
+        return $resultautomanual;
+    }
 }

@@ -52,7 +52,7 @@ class modReceiptPrinter extends DolibarrModules
         $this->name = preg_replace('/^mod/i', '', get_class($this));
         // Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
         $this->description = "ReceiptPrinterDesc";
-		// Possible values for version are: 'development', 'experimental', 'dolibarr' or 'dolibarr_deprecated' or version
+        // Possible values for version are: 'development', 'experimental', 'dolibarr' or 'dolibarr_deprecated' or version
         $this->version = 'development';
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
         // Name of image file used for this module.
@@ -67,11 +67,11 @@ class modReceiptPrinter extends DolibarrModules
         $this->config_page_url = array("receiptprinter.php");
 
         // Dependencies
-        $this->hidden = false;			// A condition to hide module
-		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
-		$this->requiredby = array();	// List of module ids to disable if this one is disabled
-		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
-		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
+        $this->hidden = false;            // A condition to hide module
+        $this->depends = array();        // List of module class names as string that must be enabled if this module is enabled
+        $this->requiredby = array();    // List of module ids to disable if this one is disabled
+        $this->conflictwith = array();    // List of module class names as string this module is in conflict with
+        $this->phpmin = array(5,4);        // Minimum version of PHP required by module
         $this->need_dolibarr_version = array(3,9,-2);   // Minimum version of Dolibarr required by module
         $this->conflictwith = array();
         $this->langfiles = array("receiptprinter");

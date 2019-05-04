@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2002    Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2003		Jean-Louis Bergamo		<jlb@j1b.org>
  * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
@@ -21,8 +21,8 @@
 
 /**
  *      \file       htdocs/adherents/admin/adherent_extrafields.php
- *		\ingroup    member
- *		\brief      Page to setup extra fields of members
+ *        \ingroup    member
+ *        \brief      Page to setup extra fields of members
  */
 
 require '../../main.inc.php';
@@ -81,22 +81,22 @@ dol_fiche_end();
 // Buttons
 if ($action != 'create' && $action != 'edit')
 {
-	print '<div class="tabsAction">';
-	print "<a class=\"butAction\" href=\"".$_SERVER["PHP_SELF"]."?action=create#newattrib\">".$langs->trans("NewAttribute")."</a>";
-	print "</div>";
+    print '<div class="tabsAction">';
+    print "<a class=\"butAction\" href=\"".$_SERVER["PHP_SELF"]."?action=create#newattrib\">".$langs->trans("NewAttribute")."</a>";
+    print "</div>";
 }
 
 
 /* ************************************************************************** */
 /*                                                                            */
-/* Creation of an optional field											  */
+/* Creation of an optional field                                              */
 /*                                                                            */
 /* ************************************************************************** */
 
 if ($action == 'create')
 {
-	print '<br><div id="newattrib"></div>';
-	print load_fiche_titre($langs->trans('NewAttribute'));
+    print '<br><div id="newattrib"></div>';
+    print load_fiche_titre($langs->trans('NewAttribute'));
 
     require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_add.tpl.php';
 }
@@ -108,8 +108,8 @@ if ($action == 'create')
 /* ************************************************************************** */
 if ($action == 'edit' && ! empty($attrname))
 {
-	print "<br>";
-	print load_fiche_titre($langs->trans("FieldEdition", $attrname));
+    print "<br>";
+    print load_fiche_titre($langs->trans("FieldEdition", $attrname));
 
     require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_edit.tpl.php';
 }

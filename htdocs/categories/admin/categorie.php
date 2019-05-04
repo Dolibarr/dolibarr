@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008-2011	Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2011    Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2013 		Florian Henry  		<florian.henry@open-concept.pro>
  * Copyright (C) 2015 		Juanjo Menent		<jmenent@2byte.es>
  *
@@ -18,7 +18,7 @@
  */
 
 /**
- *	    \file       htdocs/categories/admin/categorie.php
+ *        \file       htdocs/categories/admin/categorie.php
  *      \ingroup    categories
  *      \brief      Categorie admin pages
  */
@@ -105,18 +105,18 @@ print '<td align="center" width="20">'. $form->textwithpicto('', $langs->trans("
 print '<td align="center" width="100">';
 if ($conf->use_javascript_ajax)
 {
-	print ajax_constantonoff('CATEGORIE_RECURSIV_ADD');
+    print ajax_constantonoff('CATEGORIE_RECURSIV_ADD');
 }
 else
 {
-	if (empty($conf->global->CATEGORIE_RECURSIV_ADD))
-	{
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_CATEGORIE_RECURSIV_ADD">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
-	}
-	else
-	{
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_CATEGORIE_RECURSIV_ADD">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
-	}
+    if (empty($conf->global->CATEGORIE_RECURSIV_ADD))
+    {
+        print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_CATEGORIE_RECURSIV_ADD">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+    }
+    else
+    {
+        print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_CATEGORIE_RECURSIV_ADD">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+    }
 }
 print '</td></tr>';
 

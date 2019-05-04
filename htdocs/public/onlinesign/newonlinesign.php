@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2002    Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@inodbox.com>
  *
@@ -21,13 +21,13 @@
  */
 
 /**
- *     	\file       htdocs/public/onlinesign/newsign.php
- *		\ingroup    core
- *		\brief      File to offer a way to make an online signature for a particular Dolibarr entity
+ *         \file       htdocs/public/onlinesign/newsign.php
+ *        \ingroup    core
+ *        \brief      File to offer a way to make an online signature for a particular Dolibarr entity
  */
 
-define("NOLOGIN", 1);		// This means this output page does not require to be logged.
-define("NOCSRFCHECK", 1);	// We accept to go on this page from external web site.
+define("NOLOGIN", 1);        // This means this output page does not require to be logged.
+define("NOCSRFCHECK", 1);    // We accept to go on this page from external web site.
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
@@ -65,8 +65,8 @@ if (! $action)
 {
     if ($source && ! $ref)
     {
-    	print $langs->trans('ErrorBadParameters')." - ref missing";
-    	exit;
+        print $langs->trans('ErrorBadParameters')." - ref missing";
+        exit;
     }
 }
 
@@ -79,12 +79,12 @@ $validpaymentmethod=array();
 
 // Define $urlwithroot
 //$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
-//$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
-$urlwithroot=DOL_MAIN_URL_ROOT;						// This is to use same domain name than current. For Paypal payment, we can use internal URL like localhost.
+//$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;        // This is to use external domain name found into config file
+$urlwithroot=DOL_MAIN_URL_ROOT;                        // This is to use same domain name than current. For Paypal payment, we can use internal URL like localhost.
 
 
 // Complete urls for post treatment
-$SECUREKEY=GETPOST("securekey");	        // Secure key
+$SECUREKEY=GETPOST("securekey");            // Secure key
 
 if (! empty($source))
 {
@@ -103,8 +103,8 @@ if (! empty($SECUREKEY))
 }
 if (! empty($entity))
 {
-	$urlok.='entity='.urlencode($entity).'&';
-	$urlko.='entity='.urlencode($entity).'&';
+    $urlok.='entity='.urlencode($entity).'&';
+    $urlko.='entity='.urlencode($entity).'&';
 }
 $urlok=preg_replace('/&$/', '', $urlok);  // Remove last &
 $urlko=preg_replace('/&$/', '', $urlko);  // Remove last &
@@ -173,21 +173,21 @@ elseif (! empty($conf->global->ONLINE_SIGN_LOGO)) $logosmall=$conf->global->ONLI
 $urllogo='';
 if (! empty($logosmall) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$logosmall))
 {
-	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/thumbs/'.$logosmall);
+    $urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/thumbs/'.$logosmall);
 }
 elseif (! empty($logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$logo))
 {
-	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/'.$logo);
-	$width=96;
+    $urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/'.$logo);
+    $width=96;
 }
 // Output html code for logo
 if ($urllogo)
 {
-	print '<tr>';
-	print '<td align="center"><img id="dolpaymentlogo" title="'.$title.'" src="'.$urllogo.'"';
-	if ($width) print ' width="'.$width.'"';
-	print '></td>';
-	print '</tr>'."\n";
+    print '<tr>';
+    print '<td align="center"><img id="dolpaymentlogo" title="'.$title.'" src="'.$urllogo.'"';
+    if ($width) print ' width="'.$width.'"';
+    print '></td>';
+    print '</tr>'."\n";
 }
 
 // Output introduction text
@@ -218,43 +218,43 @@ $var=false;
 // Payment on customer order
 if ($source == 'proposal')
 {
-	$found=true;
-	$langs->load("proposal");
+    $found=true;
+    $langs->load("proposal");
 
-	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+    require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 
-	$proposal=new Propal($db);
-	$result=$proposal->fetch('', $ref);
-	if ($result <= 0)
-	{
-		$mesg=$proposal->error;
-		$error++;
-	}
-	else
-	{
-		$result=$proposal->fetch_thirdparty($proposal->socid);
-	}
+    $proposal=new Propal($db);
+    $result=$proposal->fetch('', $ref);
+    if ($result <= 0)
+    {
+        $mesg=$proposal->error;
+        $error++;
+    }
+    else
+    {
+        $result=$proposal->fetch_thirdparty($proposal->socid);
+    }
 
-	// Creditor
+    // Creditor
 
-	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Creditor");
+    print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Creditor");
     print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$creditor.'</b>';
     print '<input type="hidden" name="creditor" value="'.$creditor.'">';
     print '</td></tr>'."\n";
 
-	// Debitor
+    // Debitor
 
-	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("ThirdParty");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$proposal->thirdparty->name.'</b>';
+    print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("ThirdParty");
+    print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$proposal->thirdparty->name.'</b>';
 
-	// Object
+    // Object
 
-	$text='<b>'.$langs->trans("SignatureProposalRef", $proposal->ref).'</b>';
-	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");
-	print '</td><td class="CTableRow'.($var?'1':'2').'">'.$text;
-	print '<input type="hidden" name="source" value="'.GETPOST("source", 'alpha').'">';
-	print '<input type="hidden" name="ref" value="'.$proposal->ref.'">';
-	print '</td></tr>'."\n";
+    $text='<b>'.$langs->trans("SignatureProposalRef", $proposal->ref).'</b>';
+    print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");
+    print '</td><td class="CTableRow'.($var?'1':'2').'">'.$text;
+    print '<input type="hidden" name="source" value="'.GETPOST("source", 'alpha').'">';
+    print '<input type="hidden" name="ref" value="'.$proposal->ref.'">';
+    print '</td></tr>'."\n";
 }
 
 
@@ -268,14 +268,14 @@ print "\n";
 
 if ($action != 'dosign')
 {
-    if ($found && ! $error)	// We are in a management option and no error
+    if ($found && ! $error)    // We are in a management option and no error
     {
 
 
     }
     else
     {
-    	dol_print_error_email('ERRORNEWONLINESIGN');
+        dol_print_error_email('ERRORNEWONLINESIGN');
     }
 }
 else

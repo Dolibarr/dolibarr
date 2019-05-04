@@ -16,7 +16,7 @@
  */
 
 /**
- * 	\defgroup   collab     Module collab
+ *     \defgroup   collab     Module collab
  *  \brief      Collab module descriptor.
  *  \file       htdocs/core/modules/modCollab.class.php
  *  \ingroup    collab
@@ -26,7 +26,7 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *	Class to describe Websites module
+ *    Class to describe Websites module
  */
 class modCollab extends DolibarrModules
 {
@@ -34,7 +34,7 @@ class modCollab extends DolibarrModules
     /**
      *   Constructor. Define names, constants, directories, boxes, permissions
      *
-     *   @param      DoliDB		$db      Database handler
+     *   @param      DoliDB        $db      Database handler
      */
     public function __construct($db)
     {
@@ -66,10 +66,10 @@ class modCollab extends DolibarrModules
 
         // Dependancies
         //-------------
-        $this->hidden = ! empty($conf->global->MODULE_COLLAB_DISABLED);	// A condition to disable module
-        $this->depends = array();		// List of modules id that must be enabled if this module is enabled
-        $this->requiredby = array();	// List of modules id to disable if this one is disabled
-        $this->conflictwith = array();	// List of modules id this module is in conflict with
+        $this->hidden = ! empty($conf->global->MODULE_COLLAB_DISABLED);    // A condition to disable module
+        $this->depends = array();        // List of modules id that must be enabled if this module is enabled
+        $this->requiredby = array();    // List of modules id to disable if this one is disabled
+        $this->conflictwith = array();    // List of modules id this module is in conflict with
         $this->langfiles = array("collab");
 
         // Constants
@@ -85,7 +85,7 @@ class modCollab extends DolibarrModules
         $this->boxes = array();
 
         // Permissions
-        $this->rights = array();		// Permission array used by this module
+        $this->rights = array();        // Permission array used by this module
         $this->rights_class = 'collab';
         $r=0;
 
@@ -109,17 +109,17 @@ class modCollab extends DolibarrModules
 
         // Main menu entries
         $r=0;
-        $this->menu[$r]=array(	'fk_menu'=>'0',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-                                'type'=>'top',			                // This is a Left menu entry
+        $this->menu[$r]=array(    'fk_menu'=>'0',            // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+                                'type'=>'top',                            // This is a Left menu entry
                                 'titre'=>'Collab',
                                 'mainmenu'=>'collab',
                                 'url'=>'/collab/index.php',
-                                'langs'=>'collab',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+                                'langs'=>'collab',            // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
                                 'position'=>100,
-                                'enabled'=>'$conf->collab->enabled',  		// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-                                'perms'=>'1',	// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+                                'enabled'=>'$conf->collab->enabled',          // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+                                'perms'=>'1',    // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
                                 'target'=>'',
-                                'user'=>2);				                // 0=Menu for internal users, 1=external users, 2=both
+                                'user'=>2);                                // 0=Menu for internal users, 1=external users, 2=both
         $r++;
     }
 }

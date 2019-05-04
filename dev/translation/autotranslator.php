@@ -18,8 +18,8 @@
 
 /**
  *      \file       dev/translation/autotranslator.php
- *		\ingroup    dev
- * 		\brief      This script uses google language ajax api as the translator engine
+ *        \ingroup    dev
+ *         \brief      This script uses google language ajax api as the translator engine
  *                  The main translator function can be found at:
  *                  http://code.google.com/intl/fr/apis/language/translate/overview.html
  *                  http://translate.google.com/translate_tools
@@ -69,23 +69,23 @@ print 'Argument 3='.$argv[3]."\n";
 $file='';
 if (isset($argv[4]))
 {
-	$file=$argv[4];
-	print 'Argument 4='.$argv[4]."\n";
+    $file=$argv[4];
+    print 'Argument 4='.$argv[4]."\n";
 }
 print 'Files will be generated/updated in directory '.$dir."\n";
 
 if ($argv[2] != 'all')
 {
-	if (! is_dir($dir.'/'.$argv[2]))
-	{
-		print 'Create directory '.$dir.'/'.$argv[2]."\n";
-		$result=mkdir($dir.'/'.$argv[2]);
-		if (! $result)
-		{
-			$db->close();
-			return -1;
-		}
-	}
+    if (! is_dir($dir.'/'.$argv[2]))
+    {
+        print 'Create directory '.$dir.'/'.$argv[2]."\n";
+        $result=mkdir($dir.'/'.$argv[2]);
+        if (! $result)
+        {
+            $db->close();
+            return -1;
+        }
+    }
 }
 
 require_once DOL_DOCUMENT_ROOT."/../dev/translation/autotranslator.class.php";

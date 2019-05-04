@@ -19,8 +19,8 @@
  */
 
 /**
- *	\file			htdocs/core/actions_comments.inc.php
- *  \brief			Code for actions on comments pages
+ *    \file            htdocs/core/actions_comments.inc.php
+ *  \brief            Code for actions on comments pages
  */
 
 
@@ -35,42 +35,42 @@ $comment = new Comment($db);
 
 if ($action == 'addcomment')
 {
-	$description = GETPOST('comment_description', 'none');
-	if (!empty($description))
-	{
-		$comment->description = $description;
-		$comment->datec = time();
-		$comment->fk_element = GETPOST('id', 'int');
-		$comment->element_type = GETPOST('comment_element_type', 'alpha');
-		$comment->fk_user_author = $user->id;
-		$comment->entity = $conf->entity;
-		if ($comment->create($user) > 0)
-		{
-			setEventMessages($langs->trans("CommentAdded"), null, 'mesgs');
-			header('Location: '.$varpage.'?id='.$id.($withproject?'&withproject=1':''));
-			exit;
-		}
-		else
-		{
-			setEventMessages($comment->error, $comment->errors, 'errors');
-			$action='';
-		}
-	}
+    $description = GETPOST('comment_description', 'none');
+    if (!empty($description))
+    {
+        $comment->description = $description;
+        $comment->datec = time();
+        $comment->fk_element = GETPOST('id', 'int');
+        $comment->element_type = GETPOST('comment_element_type', 'alpha');
+        $comment->fk_user_author = $user->id;
+        $comment->entity = $conf->entity;
+        if ($comment->create($user) > 0)
+        {
+            setEventMessages($langs->trans("CommentAdded"), null, 'mesgs');
+            header('Location: '.$varpage.'?id='.$id.($withproject?'&withproject=1':''));
+            exit;
+        }
+        else
+        {
+            setEventMessages($comment->error, $comment->errors, 'errors');
+            $action='';
+        }
+    }
 }
 if ($action == 'deletecomment')
 {
-	if ($comment->fetch($idcomment) >= 0)
-	{
-		if ($comment->delete($user) > 0)
-		{
-			setEventMessages($langs->trans("CommentDeleted"), null, 'mesgs');
-			header('Location: '.$varpage.'?id='.$id.($withproject?'&withproject=1':''));
-			exit;
-		}
-		else
-		{
-			setEventMessages($comment->error, $comment->errors, 'errors');
-			$action='';
-		}
-	}
+    if ($comment->fetch($idcomment) >= 0)
+    {
+        if ($comment->delete($user) > 0)
+        {
+            setEventMessages($langs->trans("CommentDeleted"), null, 'mesgs');
+            header('Location: '.$varpage.'?id='.$id.($withproject?'&withproject=1':''));
+            exit;
+        }
+        else
+        {
+            setEventMessages($comment->error, $comment->errors, 'errors');
+            $action='';
+        }
+    }
 }

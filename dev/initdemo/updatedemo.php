@@ -1,6 +1,6 @@
 #!/usr/bin/env php
 <?php
-/* Copyright (C) 2016 Laurent Destailleur	<eldy@users.sourceforge.net>
+/* Copyright (C) 2016 Laurent Destailleur    <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,8 +25,8 @@ $path=dirname(__FILE__).'/';
 
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
-	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-	exit;
+    echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
+    exit;
 }
 
 // Global variables
@@ -53,9 +53,9 @@ include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 if (empty($confirm))
 {
-	print "Usage: $script_file confirm\n";
-	print "Return code: 0 if success, <>0 if error\n";
-	exit(-1);
+    print "Usage: $script_file confirm\n";
+    print "Return code: 0 if success, <>0 if error\n";
+    exit(-1);
 }
 
 

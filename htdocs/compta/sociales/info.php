@@ -16,9 +16,9 @@
  */
 
 /**
- *	\file       htdocs/compta/sociales/info.php
- *	\ingroup    tax
- *	\brief      Page with info about social contribution
+ *    \file       htdocs/compta/sociales/info.php
+ *    \ingroup    tax
+ *    \brief      Page with info about social contribution
  */
 
 require '../../main.inc.php';

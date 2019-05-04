@@ -16,50 +16,50 @@
  */
 
 /**
- *	\file       htdocs/core/class/html.formsocialcontrib.class.php
+ *    \file       htdocs/core/class/html.formsocialcontrib.class.php
  *  \ingroup    core
- *	\brief      File of class with all html predefined components
+ *    \brief      File of class with all html predefined components
  */
 
 
 /**
- *	Class to manage generation of HTML components for social contributions management
+ *    Class to manage generation of HTML components for social contributions management
  */
 class FormSocialContrib
 {
-	/**
+    /**
      * @var DoliDB Database handler.
      */
     public $db;
 
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error='';
+    /**
+     * @var string Error code (or message)
+     */
+    public $error='';
 
 
-	/**
-	* Constructor
-	*
-	* @param		DoliDB		$db      Database handler
-	*/
-	public function __construct($db)
-	{
-	    $this->db = $db;
-	}
+    /**
+    * Constructor
+    *
+    * @param        DoliDB        $db      Database handler
+    */
+    public function __construct($db)
+    {
+        $this->db = $db;
+    }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Return list of social contributions.
      *  Use mysoc->country_id or mysoc->country_code so they must be defined.
      *
-     *	@param	string	$selected       Preselected type
-     *	@param  string	$htmlname       Name of field in form
-     * 	@param	int		$useempty		Set to 1 if we want an empty value
-     * 	@param	int		$maxlen			Max length of text in combo box
-     * 	@param	int		$help			Add or not the admin help picto
-     *  @param	string	$morecss		Add more CSS on select
-     * 	@return	void
+     *    @param    string    $selected       Preselected type
+     *    @param  string    $htmlname       Name of field in form
+     *     @param    int        $useempty        Set to 1 if we want an empty value
+     *     @param    int        $maxlen            Max length of text in combo box
+     *     @param    int        $help            Add or not the admin help picto
+     *  @param    string    $morecss        Add more CSS on select
+     *     @return    void
      */
     public function select_type_socialcontrib($selected = '', $htmlname = 'actioncode', $useempty = 0, $maxlen = 40, $help = 1, $morecss = 'minwidth300')
     {
@@ -96,7 +96,7 @@ class FormSocialContrib
             $num = $db->num_rows($resql);
             if ($num)
             {
-            	print '<select class="'.($morecss?$morecss:'').'" id="'.$htmlname.'" name="'.$htmlname.'">';
+                print '<select class="'.($morecss?$morecss:'').'" id="'.$htmlname.'" name="'.$htmlname.'">';
                 $i = 0;
 
                 if ($useempty) print '<option value="0">&nbsp;</option>';

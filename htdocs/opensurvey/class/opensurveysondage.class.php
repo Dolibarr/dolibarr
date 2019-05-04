@@ -20,7 +20,7 @@
  *  \file       htdocs/opensurvey/class/opensurveysondage.class.php
  *  \ingroup    opensurvey
  *  \brief      This file is an example for a CRUD class file (Create/Read/Update/Delete)
- *				Initialy built by build_class_from_table on 2013-03-10 00:32
+ *                Initialy built by build_class_from_table on 2013-03-10 00:32
  */
 
 // Put here all includes required by your class file
@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php";
 
 
 /**
- *	Put here description of your class
+ *    Put here description of your class
  */
 class Opensurveysondage extends CommonObject
 {
@@ -106,7 +106,7 @@ class Opensurveysondage extends CommonObject
     /**
      *  Constructor
      *
-     *  @param	DoliDb		$db      Database handler
+     *  @param    DoliDb        $db      Database handler
      */
     public function __construct($db)
     {
@@ -117,7 +117,7 @@ class Opensurveysondage extends CommonObject
     /**
      *  Create object into database
      *
-     *  @param	User    $user        User that creates
+     *  @param    User    $user        User that creates
      *  @param  int     $notrigger   0=launch triggers after, 1=disable triggers
      *  @return int                  <0 if KO, Id of created object if OK
      */
@@ -204,9 +204,9 @@ class Opensurveysondage extends CommonObject
     /**
      *  Load object in memory from the database
      *
-     *  @param	int		$id    				Id object
-     *  @param	string	$numsurvey			Ref of survey (admin or not)
-     *  @return int          				<0 if KO, >0 if OK
+     *  @param    int        $id                    Id object
+     *  @param    string    $numsurvey            Ref of survey (admin or not)
+     *  @return int                          <0 if KO, >0 if OK
      */
     public function fetch($id, $numsurvey = '')
     {
@@ -239,7 +239,7 @@ class Opensurveysondage extends CommonObject
                 $this->id_sondage = $obj->id_sondage;
                 $this->ref = $this->id_sondage;             //For compatibility
 
-                $this->commentaires = $obj->description;	// deprecated
+                $this->commentaires = $obj->description;    // deprecated
                 $this->description = $obj->description;
                 $this->mail_admin = $obj->mail_admin;
                 $this->nom_admin = $obj->nom_admin;
@@ -279,9 +279,9 @@ class Opensurveysondage extends CommonObject
     /**
      *  Update object into database
      *
-     *  @param	User    $user        User that modifies
-     *  @param  int     $notrigger	 0=launch triggers after, 1=disable triggers
-     *  @return int     		   	 <0 if KO, >0 if OK
+     *  @param    User    $user        User that modifies
+     *  @param  int     $notrigger     0=launch triggers after, 1=disable triggers
+     *  @return int                     <0 if KO, >0 if OK
      */
     public function update(User $user, $notrigger = 0)
     {
@@ -351,10 +351,10 @@ class Opensurveysondage extends CommonObject
     /**
      *  Delete object in database
      *
-     *	@param  User	$user        		User that deletes
-     *  @param  int		$notrigger	 		0=launch triggers after, 1=disable triggers
-     *  @param	string	$numsondage			Num sondage admin to delete
-     *  @return	int					 		<0 if KO, >0 if OK
+     *    @param  User    $user                User that deletes
+     *  @param  int        $notrigger             0=launch triggers after, 1=disable triggers
+     *  @param    string    $numsondage            Num sondage admin to delete
+     *  @return    int                             <0 if KO, >0 if OK
      */
     public function delete(User $user, $notrigger = 0, $numsondage = '')
     {
@@ -418,11 +418,11 @@ class Opensurveysondage extends CommonObject
     /**
      *  Return a link to the object card (with optionaly the picto)
      *
-     *	@param	int		$withpicto					Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
-     *  @param	int  	$notooltip					1=Disable tooltip
-     *  @param  string  $morecss            		Add more css on link
-     *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-     *	@return	string								String with URL
+     *    @param    int        $withpicto                    Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
+     *  @param    int      $notooltip                    1=Disable tooltip
+     *  @param  string  $morecss                    Add more css on link
+     *  @param  int     $save_lastsearch_value        -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+     *    @return    string                                String with URL
      */
     public function getNomUrl($withpicto = 0, $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
     {
@@ -476,7 +476,7 @@ class Opensurveysondage extends CommonObject
     /**
      * Return array of lines
      *
-     * @return 	int		<0 if KO, >0 if OK
+     * @return     int        <0 if KO, >0 if OK
      */
     public function fetch_lines()
     {
@@ -508,10 +508,10 @@ class Opensurveysondage extends CommonObject
     }
 
     /**
-     *	Initialise object with example values
-     *	Id must be 0 if object instance is a specimen
+     *    Initialise object with example values
+     *    Id must be 0 if object instance is a specimen
      *
-     *	@return	void
+     *    @return    void
      */
     public function initAsSpecimen()
     {
@@ -621,10 +621,10 @@ class Opensurveysondage extends CommonObject
 
 
     /**
-     *	Return status label of Order
+     *    Return status label of Order
      *
-     *	@param      int     $mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-     *	@return     string              Libelle
+     *    @param      int     $mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+     *    @return     string              Libelle
      */
     public function getLibStatut($mode)
     {
@@ -635,9 +635,9 @@ class Opensurveysondage extends CommonObject
     /**
      *  Return label of status
      *
-     *  @param		int		$status      	  Id statut
-     *  @param      int		$mode        	  0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-     *  @return     string					  Label of status
+     *  @param        int        $status            Id statut
+     *  @param      int        $mode              0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+     *  @return     string                      Label of status
      */
     public function LibStatut($status, $mode)
     {

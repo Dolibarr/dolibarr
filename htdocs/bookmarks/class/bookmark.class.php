@@ -24,14 +24,14 @@
 
 
 /**
- *		Class to manage bookmarks
+ *        Class to manage bookmarks
  */
 class Bookmark extends CommonObject
 {
     /**
-	 * @var string ID to identify managed object
-	 */
-	public $element='bookmark';
+     * @var string ID to identify managed object
+     */
+    public $element='bookmark';
 
     /**
      * @var string Name of table without prefix where object is stored
@@ -39,15 +39,15 @@ class Bookmark extends CommonObject
     public $table_element='bookmark';
 
     /**
-	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	 * @var int
-	 */
+     * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+     * @var int
+     */
     public $ismultientitymanaged = 1;
 
     /**
-	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
-	 */
-	public $picto = 'bookmark';
+     * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+     */
+    public $picto = 'bookmark';
 
     /**
      * @var DoliDB Database handler.
@@ -60,9 +60,9 @@ class Bookmark extends CommonObject
     public $id;
 
     /**
-	 * @var int User ID
-	 */
-	public $fk_user;
+     * @var int User ID
+     */
+    public $fk_user;
 
     /**
      * Date creation record (datec)
@@ -73,7 +73,7 @@ class Bookmark extends CommonObject
 
     public $url;
 
-    public $target;	// 0=replace, 1=new window
+    public $target;    // 0=replace, 1=new window
 
     public $title;
 
@@ -83,9 +83,9 @@ class Bookmark extends CommonObject
 
 
     /**
-	 *	Constructor
-	 *
-	 *  @param		DoliDB		$db      Database handler
+     *    Constructor
+     *
+     *  @param        DoliDB        $db      Database handler
      */
     public function __construct($db)
     {
@@ -95,8 +95,8 @@ class Bookmark extends CommonObject
     /**
      *    Directs the bookmark
      *
-     *    @param    int		$id		Bookmark Id Loader
-     *    @return	int				<0 if KO, >0 if OK
+     *    @param    int        $id        Bookmark Id Loader
+     *    @return    int                <0 if KO, >0 if OK
      */
     public function fetch($id)
     {
@@ -108,14 +108,14 @@ class Bookmark extends CommonObject
         $sql.= " WHERE rowid = ".$id;
         $sql.= " AND entity = ".$conf->entity;
 
-		dol_syslog("Bookmark::fetch", LOG_DEBUG);
+        dol_syslog("Bookmark::fetch", LOG_DEBUG);
         $resql  = $this->db->query($sql);
         if ($resql)
         {
             $obj = $this->db->fetch_object($resql);
 
-            $this->id	   = $obj->rowid;
-            $this->ref	   = $obj->rowid;
+            $this->id       = $obj->rowid;
+            $this->ref       = $obj->rowid;
 
             $this->fk_user = $obj->fk_user;
             $this->datec   = $this->db->jdate($obj->datec);
@@ -144,14 +144,14 @@ class Bookmark extends CommonObject
     {
         global $conf;
 
-    	// Clean parameters
-    	$this->url=trim($this->url);
-    	$this->title=trim($this->title);
-		if (empty($this->position)) $this->position=0;
+        // Clean parameters
+        $this->url=trim($this->url);
+        $this->title=trim($this->title);
+        if (empty($this->position)) $this->position=0;
 
-		$now=dol_now();
+        $now=dol_now();
 
-    	$this->db->begin();
+        $this->db->begin();
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."bookmark (fk_user,dateb,url,target";
         $sql.= ",title,favicon,position";
@@ -199,12 +199,12 @@ class Bookmark extends CommonObject
      */
     public function update()
     {
-    	// Clean parameters
-    	$this->url=trim($this->url);
-    	$this->title=trim($this->title);
-		if (empty($this->position)) $this->position=0;
+        // Clean parameters
+        $this->url=trim($this->url);
+        $this->title=trim($this->title);
+        if (empty($this->position)) $this->position=0;
 
-    	$sql = "UPDATE ".MAIN_DB_PREFIX."bookmark";
+        $sql = "UPDATE ".MAIN_DB_PREFIX."bookmark";
         $sql.= " SET fk_user = ".($this->fk_user > 0 ? $this->fk_user :"0");
         $sql.= " ,dateb = '".$this->db->idate($this->datec)."'";
         $sql.= " ,url = '".$this->db->escape($this->url)."'";
@@ -229,8 +229,8 @@ class Bookmark extends CommonObject
     /**
      *      Removes the bookmark
      *
-     *      @param      int		$id     Id removed bookmark
-     *      @return     int         	<0 si ko, >0 si ok
+     *      @param      int        $id     Id removed bookmark
+     *      @return     int             <0 si ko, >0 si ok
      */
     public function remove($id)
     {
@@ -250,31 +250,31 @@ class Bookmark extends CommonObject
         }
     }
 
-	/**
-	 * Function used to replace a thirdparty id with another one.
-	 *
-	 * @param DoliDB $db Database handler
-	 * @param int $origin_id Old thirdparty id
-	 * @param int $dest_id New thirdparty id
-	 * @return bool
-	 */
-	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
-	{
-		$tables = array(
-			'bookmark'
-		);
+    /**
+     * Function used to replace a thirdparty id with another one.
+     *
+     * @param DoliDB $db Database handler
+     * @param int $origin_id Old thirdparty id
+     * @param int $dest_id New thirdparty id
+     * @return bool
+     */
+    public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+    {
+        $tables = array(
+            'bookmark'
+        );
 
-		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
-	}
+        return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+    }
 
-	/**
-	 *	Return label of contact status
-	 *
-	 *	@param      int			$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 * 	@return 	string					Label of contact status
-	 */
-	public function getLibStatut($mode)
-	{
-	    return '';
-	}
+    /**
+     *    Return label of contact status
+     *
+     *    @param      int            $mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+     *     @return     string                    Label of contact status
+     */
+    public function getLibStatut($mode)
+    {
+        return '';
+    }
 }

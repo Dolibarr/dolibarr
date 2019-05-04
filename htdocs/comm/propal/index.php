@@ -18,9 +18,9 @@
  */
 
 /**
- *	\file       htdocs/comm/propal/index.php
- *	\ingroup    propal
- *	\brief      Home page of proposal area
+ *    \file       htdocs/comm/propal/index.php
+ *    \ingroup    propal
+ *    \brief      Home page of proposal area
  */
 
 require '../../main.inc.php';
@@ -34,8 +34,8 @@ $langs->loadLangs(array('propal', 'companies'));
 $socid=GETPOST('socid', 'int');
 if (isset($user->societe_id) && $user->societe_id  > 0)
 {
-	$action = '';
-	$socid = $user->societe_id;
+    $action = '';
+    $socid = $user->societe_id;
 }
 $result = restrictedArea($user, 'propal');
 
@@ -117,7 +117,7 @@ if ($resql)
     $listofstatus=array(0,1,2,3,4);
     foreach ($listofstatus as $status)
     {
-    	$dataseries[]=array($propalstatic->LibStatut($status, 1), (isset($vals[$status])?(int) $vals[$status]:0));
+        $dataseries[]=array($propalstatic->LibStatut($status, 1), (isset($vals[$status])?(int) $vals[$status]:0));
         if (! $conf->use_javascript_ajax)
         {
 
@@ -159,60 +159,60 @@ else
  */
 if (! empty($conf->propal->enabled))
 {
-	$sql = "SELECT c.rowid, c.ref, s.nom as socname, s.rowid as socid, s.canvas, s.client";
-	$sql.= " FROM ".MAIN_DB_PREFIX."propal as c";
-	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
-	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql.= " WHERE c.fk_soc = s.rowid";
-	$sql.= " AND c.entity IN (".getEntity('propal').")";
-	$sql.= " AND c.fk_statut = 0";
-	if ($socid) $sql.= " AND c.fk_soc = ".$socid;
-	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+    $sql = "SELECT c.rowid, c.ref, s.nom as socname, s.rowid as socid, s.canvas, s.client";
+    $sql.= " FROM ".MAIN_DB_PREFIX."propal as c";
+    $sql.= ", ".MAIN_DB_PREFIX."societe as s";
+    if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+    $sql.= " WHERE c.fk_soc = s.rowid";
+    $sql.= " AND c.entity IN (".getEntity('propal').")";
+    $sql.= " AND c.fk_statut = 0";
+    if ($socid) $sql.= " AND c.fk_soc = ".$socid;
+    if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 
-	$resql=$db->query($sql);
-	if ($resql)
-	{
-		$num = $db->num_rows($resql);
-		if ($num)
-		{
-			print '<div class="div-table-responsive-no-min">';
-			print '<table class="noborder" width="100%">';
-			print '<tr class="liste_titre">';
-			$langs->load("propal");
-			print '<td colspan="2">'.$langs->trans("DraftPropals").' <a href="'.DOL_URL_ROOT.'/comm/propal/list.php?viewstatut=0"><span class="badge">'.$num.'</span></a></td></tr>';
+    $resql=$db->query($sql);
+    if ($resql)
+    {
+        $num = $db->num_rows($resql);
+        if ($num)
+        {
+            print '<div class="div-table-responsive-no-min">';
+            print '<table class="noborder" width="100%">';
+            print '<tr class="liste_titre">';
+            $langs->load("propal");
+            print '<td colspan="2">'.$langs->trans("DraftPropals").' <a href="'.DOL_URL_ROOT.'/comm/propal/list.php?viewstatut=0"><span class="badge">'.$num.'</span></a></td></tr>';
 
-			$i = 0;
-			$nbofloop=min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD)?500:$conf->global->MAIN_MAXLIST_OVERLOAD));
-			while ($i < $nbofloop)
-			{
-				$obj = $db->fetch_object($resql);
-				print '<tr class="oddeven">';
+            $i = 0;
+            $nbofloop=min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD)?500:$conf->global->MAIN_MAXLIST_OVERLOAD));
+            while ($i < $nbofloop)
+            {
+                $obj = $db->fetch_object($resql);
+                print '<tr class="oddeven">';
 
-				$propalstatic->id=$obj->rowid;
-				$propalstatic->ref=$obj->ref;
-				print '<td class="nowrap">'.$propalstatic->getNomUrl(1).'</td>';
+                $propalstatic->id=$obj->rowid;
+                $propalstatic->ref=$obj->ref;
+                print '<td class="nowrap">'.$propalstatic->getNomUrl(1).'</td>';
 
-				$companystatic->id=$obj->socid;
-				$companystatic->name=$obj->socname;
-				$companystatic->client=$obj->client;
-				$companystatic->canvas=$obj->canvas;
-				print '<td>'.$companystatic->getNomUrl(1, 'customer', 24).'</td>';
+                $companystatic->id=$obj->socid;
+                $companystatic->name=$obj->socname;
+                $companystatic->client=$obj->client;
+                $companystatic->canvas=$obj->canvas;
+                print '<td>'.$companystatic->getNomUrl(1, 'customer', 24).'</td>';
 
-				print '</tr>';
-				$i++;
-			}
-			if ($num > $nbofloop)
-			{
-				print '<tr class="liste_total"><td colspan="2" class="right">'.$langs->trans("XMoreLines", ($num - $nbofloop))."</td></tr>";
-			}
-			elseif ($total>0)
-			{
-				print '<tr class="liste_total"><td class="right">'.$langs->trans("Total").'</td><td class="right">'.price($total)."</td></tr>";
-			}
-			print "</table>";
-			print "</div><br>";
-		}
-	}
+                print '</tr>';
+                $i++;
+            }
+            if ($num > $nbofloop)
+            {
+                print '<tr class="liste_total"><td colspan="2" class="right">'.$langs->trans("XMoreLines", ($num - $nbofloop))."</td></tr>";
+            }
+            elseif ($total>0)
+            {
+                print '<tr class="liste_total"><td class="right">'.$langs->trans("Total").'</td><td class="right">'.price($total)."</td></tr>";
+            }
+            print "</table>";
+            print "</div><br>";
+        }
+    }
 }
 
 
@@ -242,57 +242,57 @@ $sql.= $db->plimit($max, 0);
 $resql=$db->query($sql);
 if ($resql)
 {
-	print '<div class="div-table-responsive-no-min">';
-	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre">';
-	print '<td colspan="4">'.$langs->trans("LastModifiedProposals", $max).'</td></tr>';
+    print '<div class="div-table-responsive-no-min">';
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre">';
+    print '<td colspan="4">'.$langs->trans("LastModifiedProposals", $max).'</td></tr>';
 
-	$num = $db->num_rows($resql);
-	if ($num)
-	{
-		$i = 0;
-		while ($i < $num)
-		{
-			$obj = $db->fetch_object($resql);
+    $num = $db->num_rows($resql);
+    if ($num)
+    {
+        $i = 0;
+        while ($i < $num)
+        {
+            $obj = $db->fetch_object($resql);
 
-			print '<tr class="oddeven">';
-			print '<td width="20%" class="nowrap">';
+            print '<tr class="oddeven">';
+            print '<td width="20%" class="nowrap">';
 
-			$propalstatic->id=$obj->rowid;
-			$propalstatic->ref=$obj->ref;
+            $propalstatic->id=$obj->rowid;
+            $propalstatic->ref=$obj->ref;
 
-			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-			print '<td width="96" class="nobordernopadding nowrap">';
-			print $propalstatic->getNomUrl(1);
-			print '</td>';
+            print '<table class="nobordernopadding"><tr class="nocellnopadd">';
+            print '<td width="96" class="nobordernopadding nowrap">';
+            print $propalstatic->getNomUrl(1);
+            print '</td>';
 
-			print '<td width="16" class="nobordernopadding nowrap">';
-			print '&nbsp;';
-			print '</td>';
+            print '<td width="16" class="nobordernopadding nowrap">';
+            print '&nbsp;';
+            print '</td>';
 
-			print '<td width="16" class="nobordernopadding right">';
-			$filename=dol_sanitizeFileName($obj->ref);
-			$filedir=$conf->propal->multidir_output[$obj->entity] . '/' . dol_sanitizeFileName($obj->ref);
-			$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
-			print $formfile->getDocumentsLink($propalstatic->element, $filename, $filedir);
-			print '</td></tr></table>';
+            print '<td width="16" class="nobordernopadding right">';
+            $filename=dol_sanitizeFileName($obj->ref);
+            $filedir=$conf->propal->multidir_output[$obj->entity] . '/' . dol_sanitizeFileName($obj->ref);
+            $urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
+            print $formfile->getDocumentsLink($propalstatic->element, $filename, $filedir);
+            print '</td></tr></table>';
 
-			print '</td>';
+            print '</td>';
 
-			$companystatic->id=$obj->socid;
-			$companystatic->name=$obj->socname;
-			$companystatic->client=$obj->client;
-			$companystatic->canvas=$obj->canvas;
-			print '<td>'.$companystatic->getNomUrl(1, 'customer').'</td>';
+            $companystatic->id=$obj->socid;
+            $companystatic->name=$obj->socname;
+            $companystatic->client=$obj->client;
+            $companystatic->canvas=$obj->canvas;
+            print '<td>'.$companystatic->getNomUrl(1, 'customer').'</td>';
 
-			print '<td>'.dol_print_date($db->jdate($obj->datec), 'day').'</td>';
-			print '<td class="right">'.$propalstatic->LibStatut($obj->fk_statut, 5).'</td>';
-			print '</tr>';
-			$i++;
-		}
-	}
-	print "</table>";
-	print "</div><br>";
+            print '<td>'.dol_print_date($db->jdate($obj->datec), 'day').'</td>';
+            print '<td class="right">'.$propalstatic->LibStatut($obj->fk_statut, 5).'</td>';
+            print '</tr>';
+            $i++;
+        }
+    }
+    print "</table>";
+    print "</div><br>";
 }
 else dol_print_error($db);
 
@@ -302,93 +302,93 @@ else dol_print_error($db);
  */
 if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 {
-	$langs->load("propal");
+    $langs->load("propal");
 
-	$now=dol_now();
+    $now=dol_now();
 
-	$sql = "SELECT s.nom as socname, s.rowid as socid, s.canvas, s.client";
-	$sql.= ", p.rowid as propalid, p.entity, p.total as total_ttc, p.total_ht, p.ref, p.fk_statut, p.datep as dp, p.fin_validite as dfv";
-	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-	$sql.= ", ".MAIN_DB_PREFIX."propal as p";
-	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql.= " WHERE p.fk_soc = s.rowid";
-	$sql.= " AND p.entity IN (".getEntity('propal').")";
-	$sql.= " AND p.fk_statut = 1";
-	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-	if ($socid) $sql.= " AND s.rowid = ".$socid;
-	$sql.= " ORDER BY p.rowid DESC";
+    $sql = "SELECT s.nom as socname, s.rowid as socid, s.canvas, s.client";
+    $sql.= ", p.rowid as propalid, p.entity, p.total as total_ttc, p.total_ht, p.ref, p.fk_statut, p.datep as dp, p.fin_validite as dfv";
+    $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+    $sql.= ", ".MAIN_DB_PREFIX."propal as p";
+    if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+    $sql.= " WHERE p.fk_soc = s.rowid";
+    $sql.= " AND p.entity IN (".getEntity('propal').")";
+    $sql.= " AND p.fk_statut = 1";
+    if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+    if ($socid) $sql.= " AND s.rowid = ".$socid;
+    $sql.= " ORDER BY p.rowid DESC";
 
-	$result=$db->query($sql);
-	if ($result)
-	{
-		$total = 0;
-		$num = $db->num_rows($result);
-		$i = 0;
-		if ($num > 0)
-		{
-			print '<div class="div-table-responsive-no-min">';
-			print '<table class="noborder" width="100%">';
-			print '<tr class="liste_titre"><td colspan="5">'.$langs->trans("ProposalsOpened").' <a href="'.DOL_URL_ROOT.'/comm/propal/list.php?viewstatut=1"><span class="badge">'.$num.'</span></a></td></tr>';
+    $result=$db->query($sql);
+    if ($result)
+    {
+        $total = 0;
+        $num = $db->num_rows($result);
+        $i = 0;
+        if ($num > 0)
+        {
+            print '<div class="div-table-responsive-no-min">';
+            print '<table class="noborder" width="100%">';
+            print '<tr class="liste_titre"><td colspan="5">'.$langs->trans("ProposalsOpened").' <a href="'.DOL_URL_ROOT.'/comm/propal/list.php?viewstatut=1"><span class="badge">'.$num.'</span></a></td></tr>';
 
-			$nbofloop=min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD)?500:$conf->global->MAIN_MAXLIST_OVERLOAD));
-			while ($i < $nbofloop)
-			{
-				$obj = $db->fetch_object($result);
+            $nbofloop=min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD)?500:$conf->global->MAIN_MAXLIST_OVERLOAD));
+            while ($i < $nbofloop)
+            {
+                $obj = $db->fetch_object($result);
 
-				print '<tr class="oddeven">';
+                print '<tr class="oddeven">';
 
-				// Ref
-				print '<td class="nowrap" width="140">';
+                // Ref
+                print '<td class="nowrap" width="140">';
 
-				$propalstatic->id=$obj->propalid;
-				$propalstatic->ref=$obj->ref;
+                $propalstatic->id=$obj->propalid;
+                $propalstatic->ref=$obj->ref;
 
-				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-				print '<td class="nobordernopadding nowrap">';
-				print $propalstatic->getNomUrl(1);
-				print '</td>';
-				print '<td width="18" class="nobordernopadding nowrap">';
-				if ($db->jdate($obj->dfv) < ($now - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
-				print '</td>';
-				print '<td width="16" align="center" class="nobordernopadding">';
-				$filename=dol_sanitizeFileName($obj->ref);
-				$filedir=$conf->propal->multidir_output[$obj->entity] . '/' . dol_sanitizeFileName($obj->ref);
-				$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->propalid;
-				print $formfile->getDocumentsLink($propalstatic->element, $filename, $filedir);
-				print '</td></tr></table>';
+                print '<table class="nobordernopadding"><tr class="nocellnopadd">';
+                print '<td class="nobordernopadding nowrap">';
+                print $propalstatic->getNomUrl(1);
+                print '</td>';
+                print '<td width="18" class="nobordernopadding nowrap">';
+                if ($db->jdate($obj->dfv) < ($now - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
+                print '</td>';
+                print '<td width="16" align="center" class="nobordernopadding">';
+                $filename=dol_sanitizeFileName($obj->ref);
+                $filedir=$conf->propal->multidir_output[$obj->entity] . '/' . dol_sanitizeFileName($obj->ref);
+                $urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->propalid;
+                print $formfile->getDocumentsLink($propalstatic->element, $filename, $filedir);
+                print '</td></tr></table>';
 
-				print "</td>";
+                print "</td>";
 
-				$companystatic->id=$obj->socid;
-				$companystatic->name=$obj->socname;
-				$companystatic->client=$obj->client;
-				$companystatic->canvas=$obj->canvas;
-				print '<td class="left">'.$companystatic->getNomUrl(1, 'customer', 44).'</td>'."\n";
+                $companystatic->id=$obj->socid;
+                $companystatic->name=$obj->socname;
+                $companystatic->client=$obj->client;
+                $companystatic->canvas=$obj->canvas;
+                print '<td class="left">'.$companystatic->getNomUrl(1, 'customer', 44).'</td>'."\n";
 
-				print '<td class="right">';
-				print dol_print_date($db->jdate($obj->dp), 'day').'</td>'."\n";
-				print '<td class="right">'.price($obj->total_ttc).'</td>';
-				print '<td align="center" width="14">'.$propalstatic->LibStatut($obj->fk_statut, 3).'</td>'."\n";
-				print '</tr>'."\n";
-				$i++;
-				$total += $obj->total_ttc;
-			}
-			if ($num > $nbofloop)
-			{
-				print '<tr class="liste_total"><td colspan="5" class="right">'.$langs->trans("XMoreLines", ($num - $nbofloop))."</td></tr>";
-			}
-			elseif ($total>0)
-			{
-				print '<tr class="liste_total"><td colspan="3" class="right">'.$langs->trans("Total")."</td><td align=\"right\">".price($total)."</td><td>&nbsp;</td></tr>";
-			}
-			print "</table>";
-			print "</div><br>";
-		}
-	}
-	else
-	{
-		dol_print_error($db);
-	}
+                print '<td class="right">';
+                print dol_print_date($db->jdate($obj->dp), 'day').'</td>'."\n";
+                print '<td class="right">'.price($obj->total_ttc).'</td>';
+                print '<td align="center" width="14">'.$propalstatic->LibStatut($obj->fk_statut, 3).'</td>'."\n";
+                print '</tr>'."\n";
+                $i++;
+                $total += $obj->total_ttc;
+            }
+            if ($num > $nbofloop)
+            {
+                print '<tr class="liste_total"><td colspan="5" class="right">'.$langs->trans("XMoreLines", ($num - $nbofloop))."</td></tr>";
+            }
+            elseif ($total>0)
+            {
+                print '<tr class="liste_total"><td colspan="3" class="right">'.$langs->trans("Total")."</td><td align=\"right\">".price($total)."</td><td>&nbsp;</td></tr>";
+            }
+            print "</table>";
+            print "</div><br>";
+        }
+    }
+    else
+    {
+        dol_print_error($db);
+    }
 }
 
 /*
@@ -397,71 +397,71 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 /*
 if (! empty($conf->propal->enabled))
 {
-	$sql = "SELECT c.rowid, c.ref, c.fk_statut, s.nom as name, s.rowid as socid";
-	$sql.=" FROM ".MAIN_DB_PREFIX."propal as c";
-	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
-	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql.= " WHERE c.fk_soc = s.rowid";
-	$sql.= " AND c.entity = ".$conf->entity;
-	$sql.= " AND c.fk_statut = 1";
-	if ($socid) $sql.= " AND c.fk_soc = ".$socid;
-	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-	$sql.= " ORDER BY c.rowid DESC";
+    $sql = "SELECT c.rowid, c.ref, c.fk_statut, s.nom as name, s.rowid as socid";
+    $sql.=" FROM ".MAIN_DB_PREFIX."propal as c";
+    $sql.= ", ".MAIN_DB_PREFIX."societe as s";
+    if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+    $sql.= " WHERE c.fk_soc = s.rowid";
+    $sql.= " AND c.entity = ".$conf->entity;
+    $sql.= " AND c.fk_statut = 1";
+    if ($socid) $sql.= " AND c.fk_soc = ".$socid;
+    if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+    $sql.= " ORDER BY c.rowid DESC";
 
-	$resql=$db->query($sql);
-	if ($resql)
-	{
-		$num = $db->num_rows($resql);
+    $resql=$db->query($sql);
+    if ($resql)
+    {
+        $num = $db->num_rows($resql);
 
-		print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre">';
-		print '<td colspan="3">'.$langs->trans("ProposalsToProcess").' <a href="'.DOL_URL_ROOT.'/commande/list.php?viewstatut=1"><span class="badge">'.$num.'</span></a></td></tr>';
+        print '<div class="div-table-responsive-no-min">';
+        print '<table class="noborder" width="100%">';
+        print '<tr class="liste_titre">';
+        print '<td colspan="3">'.$langs->trans("ProposalsToProcess").' <a href="'.DOL_URL_ROOT.'/commande/list.php?viewstatut=1"><span class="badge">'.$num.'</span></a></td></tr>';
 
-		if ($num)
-		{
-			$i = 0;
-			while ($i < $num)
-			{
+        if ($num)
+        {
+            $i = 0;
+            while ($i < $num)
+            {
 
-				$obj = $db->fetch_object($resql);
-				print '<tr class="oddeven">';
-				print '<td class="nowrap">';
+                $obj = $db->fetch_object($resql);
+                print '<tr class="oddeven">';
+                print '<td class="nowrap">';
 
-				$propalstatic->id=$obj->rowid;
-				$propalstatic->ref=$obj->ref;
+                $propalstatic->id=$obj->rowid;
+                $propalstatic->ref=$obj->ref;
 
-				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-				print '<td width="96" class="nobordernopadding nowrap">';
-				print $propalstatic->getNomUrl(1);
-				print '</td>';
+                print '<table class="nobordernopadding"><tr class="nocellnopadd">';
+                print '<td width="96" class="nobordernopadding nowrap">';
+                print $propalstatic->getNomUrl(1);
+                print '</td>';
 
-				print '<td width="16" class="nobordernopadding nowrap">';
-				print '&nbsp;';
-				print '</td>';
+                print '<td width="16" class="nobordernopadding nowrap">';
+                print '&nbsp;';
+                print '</td>';
 
-				print '<td width="16" class="nobordernopadding right">';
-				$filename=dol_sanitizeFileName($obj->ref);
-				$filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($obj->ref);
-				$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
-				print $formfile->getDocumentsLink($propalstatic->element, $filename, $filedir);
-				print '</td></tr></table>';
+                print '<td width="16" class="nobordernopadding right">';
+                $filename=dol_sanitizeFileName($obj->ref);
+                $filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($obj->ref);
+                $urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
+                print $formfile->getDocumentsLink($propalstatic->element, $filename, $filedir);
+                print '</td></tr></table>';
 
-				print '</td>';
+                print '</td>';
 
-				print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($obj->name,24).'</a></td>';
+                print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($obj->name,24).'</a></td>';
 
-				print '<td class="right">'.$propalstatic->LibStatut($obj->fk_statut,$obj->facture,5).'</td>';
+                print '<td class="right">'.$propalstatic->LibStatut($obj->fk_statut,$obj->facture,5).'</td>';
 
-				print '</tr>';
-				$i++;
-			}
-		}
+                print '</tr>';
+                $i++;
+            }
+        }
 
-		print "</table>";
-		print "</div><br>";
-	}
-	else dol_print_error($db);
+        print "</table>";
+        print "</div><br>";
+    }
+    else dol_print_error($db);
 }
 */
 
@@ -470,70 +470,70 @@ if (! empty($conf->propal->enabled))
  */
 /*if (! empty($conf->propal->enabled))
 {
-	$sql = "SELECT c.rowid, c.ref, c.fk_statut, c.facture, s.nom as name, s.rowid as socid";
-	$sql.= " FROM ".MAIN_DB_PREFIX."commande as c";
-	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
-	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql.= " WHERE c.fk_soc = s.rowid";
-	$sql.= " AND c.entity = ".$conf->entity;
-	$sql.= " AND c.fk_statut = 2 ";
-	if ($socid) $sql.= " AND c.fk_soc = ".$socid;
-	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-	$sql.= " ORDER BY c.rowid DESC";
+    $sql = "SELECT c.rowid, c.ref, c.fk_statut, c.facture, s.nom as name, s.rowid as socid";
+    $sql.= " FROM ".MAIN_DB_PREFIX."commande as c";
+    $sql.= ", ".MAIN_DB_PREFIX."societe as s";
+    if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+    $sql.= " WHERE c.fk_soc = s.rowid";
+    $sql.= " AND c.entity = ".$conf->entity;
+    $sql.= " AND c.fk_statut = 2 ";
+    if ($socid) $sql.= " AND c.fk_soc = ".$socid;
+    if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+    $sql.= " ORDER BY c.rowid DESC";
 
-	$resql=$db->query($sql);
-	if ($resql)
-	{
-		$num = $db->num_rows($resql);
+    $resql=$db->query($sql);
+    if ($resql)
+    {
+        $num = $db->num_rows($resql);
 
-		print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre">';
-		print '<td colspan="3">'.$langs->trans("OnProcessOrders").' <a href="'.DOL_URL_ROOT.'/commande/list.php?viewstatut=2"><span class="badge">'.$num.'</span></a></td></tr>';
+        print '<div class="div-table-responsive-no-min">';
+        print '<table class="noborder" width="100%">';
+        print '<tr class="liste_titre">';
+        print '<td colspan="3">'.$langs->trans("OnProcessOrders").' <a href="'.DOL_URL_ROOT.'/commande/list.php?viewstatut=2"><span class="badge">'.$num.'</span></a></td></tr>';
 
-		if ($num)
-		{
-			$i = 0;
-			while ($i < $num)
-			{
+        if ($num)
+        {
+            $i = 0;
+            while ($i < $num)
+            {
 
-				$obj = $db->fetch_object($resql);
-				print '<tr class="oddeven">';
-				print '<td width="20%" class="nowrap">';
+                $obj = $db->fetch_object($resql);
+                print '<tr class="oddeven">';
+                print '<td width="20%" class="nowrap">';
 
-				$propalstatic->id=$obj->rowid;
-				$propalstatic->ref=$obj->ref;
+                $propalstatic->id=$obj->rowid;
+                $propalstatic->ref=$obj->ref;
 
-				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-				print '<td width="96" class="nobordernopadding nowrap">';
-				print $propalstatic->getNomUrl(1);
-				print '</td>';
+                print '<table class="nobordernopadding"><tr class="nocellnopadd">';
+                print '<td width="96" class="nobordernopadding nowrap">';
+                print $propalstatic->getNomUrl(1);
+                print '</td>';
 
-				print '<td width="16" class="nobordernopadding nowrap">';
-				print '&nbsp;';
-				print '</td>';
+                print '<td width="16" class="nobordernopadding nowrap">';
+                print '&nbsp;';
+                print '</td>';
 
-				print '<td width="16" class="nobordernopadding right">';
-				$filename=dol_sanitizeFileName($obj->ref);
-				$filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($obj->ref);
-				$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
-				print $formfile->getDocumentsLink($propalstatic->element, $filename, $filedir);
-				print '</td></tr></table>';
+                print '<td width="16" class="nobordernopadding right">';
+                $filename=dol_sanitizeFileName($obj->ref);
+                $filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($obj->ref);
+                $urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
+                print $formfile->getDocumentsLink($propalstatic->element, $filename, $filedir);
+                print '</td></tr></table>';
 
-				print '</td>';
+                print '</td>';
 
-				print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->name.'</a></td>';
+                print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->name.'</a></td>';
 
-				print '<td class="right">'.$propalstatic->LibStatut($obj->fk_statut,$obj->facture,5).'</td>';
+                print '<td class="right">'.$propalstatic->LibStatut($obj->fk_statut,$obj->facture,5).'</td>';
 
-				print '</tr>';
-				$i++;
-			}
-		}
-		print "</table>";
-		print "</div><br>";
-	}
-	else dol_print_error($db);
+                print '</tr>';
+                $i++;
+            }
+        }
+        print "</table>";
+        print "</div><br>";
+    }
+    else dol_print_error($db);
 }
 */
 

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008-2019 	Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2019     Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  */
 
 /**
- *	    \file       htdocs/admin/dav.php
+ *        \file       htdocs/admin/dav.php
  *      \ingroup    dav
  *      \brief      Page to setup DAV server
  */
@@ -38,7 +38,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 $arrayofparameters=array(
     'DAV_ALLOW_PRIVATE_DIR'=>array('css'=>'minwidth200', 'enabled'=>2),
     'DAV_ALLOW_PUBLIC_DIR'=>array('css'=>'minwidth200', 'enabled'=>1),
-	'DAV_ALLOW_ECM_DIR'=>array('css'=>'minwidth200', 'enabled'=>$conf->ecm->enabled)
+    'DAV_ALLOW_ECM_DIR'=>array('css'=>'minwidth200', 'enabled'=>$conf->ecm->enabled)
 );
 
 
@@ -71,74 +71,74 @@ dol_fiche_head($head, 'webdav', '', -1, 'action');
 
 if ($action == 'edit')
 {
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<input type="hidden" name="action" value="update">';
+    print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="action" value="update">';
 
-	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
-	foreach($arrayofparameters as $key => $val)
-	{
-		if (isset($val['enabled']) && empty($val['enabled'])) continue;
+    foreach($arrayofparameters as $key => $val)
+    {
+        if (isset($val['enabled']) && empty($val['enabled'])) continue;
 
-		print '<tr class="oddeven"><td>';
-		print $form->textwithpicto($langs->trans($key), $langs->trans($key.'Tooltip'));
-		print '</td><td>';
-		if ($key == 'DAV_ALLOW_PRIVATE_DIR')
-		{
-		    print $langs->trans("AlwaysActive");
-		}
-		elseif ($key == 'DAV_ALLOW_PUBLIC_DIR' || $key == 'DAV_ALLOW_ECM_DIR')
-		{
-			print $form->selectyesno($key, $conf->global->$key, 1);
-		}
-		else
-		{
-			print '<input name="'.$key.'"  class="flat '.(empty($val['css'])?'minwidth200':$val['css']).'" value="' . $conf->global->$key . '">';
-		}
-		print '</td></tr>';
-	}
+        print '<tr class="oddeven"><td>';
+        print $form->textwithpicto($langs->trans($key), $langs->trans($key.'Tooltip'));
+        print '</td><td>';
+        if ($key == 'DAV_ALLOW_PRIVATE_DIR')
+        {
+            print $langs->trans("AlwaysActive");
+        }
+        elseif ($key == 'DAV_ALLOW_PUBLIC_DIR' || $key == 'DAV_ALLOW_ECM_DIR')
+        {
+            print $form->selectyesno($key, $conf->global->$key, 1);
+        }
+        else
+        {
+            print '<input name="'.$key.'"  class="flat '.(empty($val['css'])?'minwidth200':$val['css']).'" value="' . $conf->global->$key . '">';
+        }
+        print '</td></tr>';
+    }
 
-	print '</table>';
+    print '</table>';
 
-	print '<br><div class="center">';
-	print '<input class="button" type="submit" value="'.$langs->trans("Save").'">';
-	print '</div>';
+    print '<br><div class="center">';
+    print '<input class="button" type="submit" value="'.$langs->trans("Save").'">';
+    print '</div>';
 
-	print '</form>';
-	print '<br>';
+    print '</form>';
+    print '<br>';
 }
 else
 {
-	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
-	foreach($arrayofparameters as $key => $val)
-	{
-		print '<tr class="oddeven"><td>';
-		print $form->textwithpicto($langs->trans($key), $langs->trans($key.'Tooltip'));
-		print '</td><td>';
-		if ($key == 'DAV_ALLOW_PRIVATE_DIR')
-		{
-		    print $langs->trans("AlwaysActive");
-		}
-		elseif ($key == 'DAV_ALLOW_PUBLIC_DIR' || $key == 'DAV_ALLOW_ECM_DIR')
-		{
-			print yn($conf->global->$key);
-		}
-		else
-		{
-			print $conf->global->$key;
-		}
-		print '</td></tr>';
-	}
+    foreach($arrayofparameters as $key => $val)
+    {
+        print '<tr class="oddeven"><td>';
+        print $form->textwithpicto($langs->trans($key), $langs->trans($key.'Tooltip'));
+        print '</td><td>';
+        if ($key == 'DAV_ALLOW_PRIVATE_DIR')
+        {
+            print $langs->trans("AlwaysActive");
+        }
+        elseif ($key == 'DAV_ALLOW_PUBLIC_DIR' || $key == 'DAV_ALLOW_ECM_DIR')
+        {
+            print yn($conf->global->$key);
+        }
+        else
+        {
+            print $conf->global->$key;
+        }
+        print '</td></tr>';
+    }
 
-	print '</table>';
+    print '</table>';
 
-	print '<div class="tabsAction">';
-	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
-	print '</div>';
+    print '<div class="tabsAction">';
+    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
+    print '</div>';
 }
 
 
@@ -159,8 +159,8 @@ print "<br>";
 
 // Define $urlwithroot
 $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
-$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
-//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;        // This is to use external domain name found into config file
+//$urlwithroot=DOL_MAIN_URL_ROOT;                    // This is to use same domain name than current
 
 
 // Show message
@@ -170,10 +170,10 @@ $message.=img_picto('', 'object_globe.png').' '.$langs->trans("WebDavServer", 'W
 $message.='<br>';
 if (! empty($conf->global->DAV_ALLOW_PUBLIC_DIR))
 {
-	$urlEntity = (! empty($conf->multicompany->enabled)?'?entity='.$conf->entity:'');
-	$url='<a href="'.$urlwithroot.'/dav/fileserver.php/public/'.$urlEntity.'" target="_blank">'.$urlwithroot.'/dav/fileserver.php/public/'.$urlEntity.'</a>';
-	$message.=img_picto('', 'object_globe.png').' '.$langs->trans("WebDavServer", 'WebDAV public', $url);
-	$message.='<br>';
+    $urlEntity = (! empty($conf->multicompany->enabled)?'?entity='.$conf->entity:'');
+    $url='<a href="'.$urlwithroot.'/dav/fileserver.php/public/'.$urlEntity.'" target="_blank">'.$urlwithroot.'/dav/fileserver.php/public/'.$urlEntity.'</a>';
+    $message.=img_picto('', 'object_globe.png').' '.$langs->trans("WebDavServer", 'WebDAV public', $url);
+    $message.='<br>';
 }
 print $message;
 

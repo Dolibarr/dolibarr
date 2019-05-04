@@ -18,69 +18,69 @@
  */
 
 /**
- *    	\file       htdocs/core/modules/supplier_order/mod_commande_fournisseur_muguet.php
- *		\ingroup    commande
- *		\brief      Fichier contenant la classe du modele de numerotation de reference de commande fournisseur Muguet
+ *        \file       htdocs/core/modules/supplier_order/mod_commande_fournisseur_muguet.php
+ *        \ingroup    commande
+ *        \brief      Fichier contenant la classe du modele de numerotation de reference de commande fournisseur Muguet
  */
 
 require_once DOL_DOCUMENT_ROOT .'/core/modules/supplier_order/modules_commandefournisseur.php';
 
 
 /**
- *	Classe du modele de numerotation de reference de commande fournisseur Muguet
+ *    Classe du modele de numerotation de reference de commande fournisseur Muguet
  */
 class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
 {
-	/**
+    /**
      * Dolibarr version of the loaded document
      * @var string
      */
-	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+    public $version = 'dolibarr';        // 'development', 'experimental', 'dolibarr'
 
-	/**
+    /**
      * @var string Error code (or message)
      */
     public $error = '';
 
-	/**
-	 * @var string Nom du modele
-	 * @deprecated
-	 * @see name
-	 */
-	public $nom='Muguet';
-
-	/**
-	 * @var string model name
-	 */
-	public $name='Muguet';
-
-	public $prefix='CF';
-
-
-	/**
-	 * Constructor
-	 */
-	public function __construct()
-	{
-	    global $conf;
-
-	    if ((float) $conf->global->MAIN_VERSION_LAST_INSTALL >= 5.0) $this->prefix = 'PO';   // We use correct standard code "PO = Purchase Order"
-	}
+    /**
+     * @var string Nom du modele
+     * @deprecated
+     * @see name
+     */
+    public $nom='Muguet';
 
     /**
-     * 	Return description of numbering module
+     * @var string model name
+     */
+    public $name='Muguet';
+
+    public $prefix='CF';
+
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        global $conf;
+
+        if ((float) $conf->global->MAIN_VERSION_LAST_INSTALL >= 5.0) $this->prefix = 'PO';   // We use correct standard code "PO = Purchase Order"
+    }
+
+    /**
+     *     Return description of numbering module
      *
      *  @return     string      Text with description
      */
     public function info()
     {
-    	global $langs;
-      	return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
+        global $langs;
+          return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
     }
 
 
     /**
-     * 	Renvoi un exemple de numerotation
+     *     Renvoi un exemple de numerotation
      *
      *  @return     string      Example
      */
@@ -91,21 +91,21 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
 
 
     /**
-     * 	Test si les numeros deja en vigueur dans la base ne provoquent pas de
+     *     Test si les numeros deja en vigueur dans la base ne provoquent pas de
      *  de conflits qui empechera cette numerotation de fonctionner.
      *
      *  @return     boolean     false si conflit, true si ok
      */
     public function canBeActivated()
     {
-    	global $conf,$langs,$db;
+        global $conf,$langs,$db;
 
         $coyymm=''; $max='';
 
-		$posindice=8;
-		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
+        $posindice=8;
+        $sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
         $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur";
-		$sql.= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
+        $sql.= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
         $sql.= " AND entity = ".$conf->entity;
         $resql=$db->query($sql);
         if ($resql)
@@ -119,18 +119,18 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
         }
         else
         {
-			$langs->load("errors");
-			$this->error=$langs->trans('ErrorNumRefModel', $max);
+            $langs->load("errors");
+            $this->error=$langs->trans('ErrorNumRefModel', $max);
             return false;
         }
     }
 
     /**
-     * 	Return next value
-	 *
-	 *  @param	Societe		$objsoc     Object third party
-	 *  @param  Object		$object		Object
-	 *  @return string      			Value if OK, 0 if KO
+     *     Return next value
+     *
+     *  @param    Societe        $objsoc     Object third party
+     *  @param  Object        $object        Object
+     *  @return string                  Value if OK, 0 if KO
      */
     public function getNextValue($objsoc = 0, $object = '')
     {
@@ -140,7 +140,7 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
         $posindice=8;
         $sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
         $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur";
-		$sql.= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
+        $sql.= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
         $sql.= " AND entity = ".$conf->entity;
 
         $resql=$db->query($sql);
@@ -151,12 +151,12 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
             else $max=0;
         }
 
-		//$date=time();
+        //$date=time();
         $date=$object->date_commande;   // Not always defined
         if (empty($date)) $date=$object->date;  // Creation date is order date for suppliers orders
         $yymm = strftime("%y%m", $date);
 
-        if ($max >= (pow(10, 4) - 1)) $num=$max+1;	// If counter > 9999, we do not format on 4 chars, we take number as it is
+        if ($max >= (pow(10, 4) - 1)) $num=$max+1;    // If counter > 9999, we do not format on 4 chars, we take number as it is
         else $num = sprintf("%04s", $max+1);
 
         return $this->prefix.$yymm."-".$num;
@@ -165,11 +165,11 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
-     * 	Renvoie la reference de commande suivante non utilisee
+     *     Renvoie la reference de commande suivante non utilisee
      *
-	 *  @param	Societe		$objsoc     Object third party
-	 *  @param  Object	    $object		Object
-     *  @return string      			Texte descripif
+     *  @param    Societe        $objsoc     Object third party
+     *  @param  Object        $object        Object
+     *  @return string                  Texte descripif
      */
     public function commande_get_num($objsoc = 0, $object = '')
     {

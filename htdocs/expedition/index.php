@@ -72,9 +72,9 @@ $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."commande as c ON el.fk_source = c.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = e.fk_soc";
 if (!$user->rights->societe->client->voir && !$socid)
 {
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON e.fk_soc = sc.fk_soc";
-	$sql.= $clause." sc.fk_user = " .$user->id;
-	$clause = " AND ";
+    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON e.fk_soc = sc.fk_soc";
+    $sql.= $clause." sc.fk_user = " .$user->id;
+    $clause = " AND ";
 }
 $sql.= $clause." e.fk_statut = 0";
 $sql.= " AND e.entity IN (".getEntity('expedition').")";
@@ -83,34 +83,34 @@ if ($socid) $sql.= " AND c.fk_soc = ".$socid;
 $resql=$db->query($sql);
 if ($resql)
 {
-	$num = $db->num_rows($resql);
-	if ($num)
-	{
-		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre">';
-		print '<th colspan="3">'.$langs->trans("SendingsToValidate").'</th></tr>';
-		$i = 0;
-		while ($i < $num)
-		{
-			$obj = $db->fetch_object($resql);
+    $num = $db->num_rows($resql);
+    if ($num)
+    {
+        print '<table class="noborder" width="100%">';
+        print '<tr class="liste_titre">';
+        print '<th colspan="3">'.$langs->trans("SendingsToValidate").'</th></tr>';
+        $i = 0;
+        while ($i < $num)
+        {
+            $obj = $db->fetch_object($resql);
 
-			$shipment->id=$obj->rowid;
-			$shipment->ref=$obj->ref;
-			$shipment->ref_customer=$obj->ref_customer;
+            $shipment->id=$obj->rowid;
+            $shipment->ref=$obj->ref;
+            $shipment->ref_customer=$obj->ref_customer;
 
-			print '<tr class="oddeven"><td class="nowrap">';
-			print $shipment->getNomUrl(1);
-			print "</td>";
-			print '<td>';
-			print '<a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.$obj->name.'</a>';
-			print '</td>';
-			print '<td>';
-			if ($obj->commande_id) print '<a href="'.DOL_URL_ROOT.'/commande/card.php?id='.$obj->commande_id.'">'.$obj->commande_ref.'</a>';
-			print '</td></tr>';
-			$i++;
-		}
-		print "</table><br>";
-	}
+            print '<tr class="oddeven"><td class="nowrap">';
+            print $shipment->getNomUrl(1);
+            print "</td>";
+            print '<td>';
+            print '<a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.$obj->name.'</a>';
+            print '</td>';
+            print '<td>';
+            if ($obj->commande_id) print '<a href="'.DOL_URL_ROOT.'/commande/card.php?id='.$obj->commande_id.'">'.$obj->commande_ref.'</a>';
+            print '</td></tr>';
+            $i++;
+        }
+        print "</table><br>";
+    }
 }
 
 
@@ -131,43 +131,43 @@ $sql.= " ORDER BY c.rowid ASC";
 $resql=$db->query($sql);
 if ($resql)
 {
-	$num = $db->num_rows($resql);
-	if ($num)
-	{
-		$langs->load("orders");
+    $num = $db->num_rows($resql);
+    if ($num)
+    {
+        $langs->load("orders");
 
-		$i = 0;
-		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre">';
-		print '<th colspan="3">'.$langs->trans("OrdersToProcess").'</th></tr>';
-		while ($i < $num)
-		{
-			$obj = $db->fetch_object($resql);
+        $i = 0;
+        print '<table class="noborder" width="100%">';
+        print '<tr class="liste_titre">';
+        print '<th colspan="3">'.$langs->trans("OrdersToProcess").'</th></tr>';
+        while ($i < $num)
+        {
+            $obj = $db->fetch_object($resql);
 
-			$orderstatic->id=$obj->rowid;
-			$orderstatic->ref=$obj->ref;
-			$orderstatic->ref_customer=$obj->ref_customer;
-			$orderstatic->statut=$obj->fk_statut;
-			$orderstatic->billed=0;
+            $orderstatic->id=$obj->rowid;
+            $orderstatic->ref=$obj->ref;
+            $orderstatic->ref_customer=$obj->ref_customer;
+            $orderstatic->statut=$obj->fk_statut;
+            $orderstatic->billed=0;
 
-			$companystatic->name=$obj->name;
-			$companystatic->id=$obj->socid;
+            $companystatic->name=$obj->name;
+            $companystatic->id=$obj->socid;
 
-			print '<tr class="oddeven">';
-			print '<td class="nowrap">';
-			print $orderstatic->getNomUrl(1);
-			print '</td>';
-			print '<td>';
-			print $companystatic->getNomUrl(1, 'customer', 32);
-			print '</td>';
-			print '<td class="right">';
-			print $orderstatic->getLibStatut(3);
-			print '</td>';
-			print '</tr>';
-			$i++;
-		}
-		print "</table><br>";
-	}
+            print '<tr class="oddeven">';
+            print '<td class="nowrap">';
+            print $orderstatic->getNomUrl(1);
+            print '</td>';
+            print '<td>';
+            print $companystatic->getNomUrl(1, 'customer', 32);
+            print '</td>';
+            print '<td class="right">';
+            print $orderstatic->getLibStatut(3);
+            print '</td>';
+            print '</tr>';
+            $i++;
+        }
+        print "</table><br>";
+    }
 }
 
 
@@ -191,42 +191,42 @@ if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.
 $resql = $db->query($sql);
 if ( $resql )
 {
-	$langs->load("orders");
+    $langs->load("orders");
 
-	$num = $db->num_rows($resql);
-	if ($num)
-	{
-		$i = 0;
-		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre">';
-		print '<th colspan="3">'.$langs->trans("OrdersInProcess").'</th></tr>';
-		while ($i < $num)
-		{
-			$obj = $db->fetch_object($resql);
+    $num = $db->num_rows($resql);
+    if ($num)
+    {
+        $i = 0;
+        print '<table class="noborder" width="100%">';
+        print '<tr class="liste_titre">';
+        print '<th colspan="3">'.$langs->trans("OrdersInProcess").'</th></tr>';
+        while ($i < $num)
+        {
+            $obj = $db->fetch_object($resql);
 
-		    $orderstatic->id=$obj->rowid;
-			$orderstatic->ref=$obj->ref;
-			$orderstatic->ref_customer=$obj->ref_customer;
-			$orderstatic->statut=$obj->status;
+            $orderstatic->id=$obj->rowid;
+            $orderstatic->ref=$obj->ref;
+            $orderstatic->ref_customer=$obj->ref_customer;
+            $orderstatic->statut=$obj->status;
             $orderstatic->billed=$obj->billed;
 
             $companystatic->name=$obj->name;
-			$companystatic->id=$obj->socid;
+            $companystatic->id=$obj->socid;
 
-			print '<tr class="oddeven"><td>';
-			print $orderstatic->getNomUrl(1);
-			print '</td>';
-			print '<td>';
-			print $companystatic->getNomUrl(1, 'customer');
-			print '</td>';
+            print '<tr class="oddeven"><td>';
+            print $orderstatic->getNomUrl(1);
+            print '</td>';
+            print '<td>';
+            print $companystatic->getNomUrl(1, 'customer');
+            print '</td>';
             print '<td class="right">';
             print $orderstatic->getLibStatut(3);
             print '</td>';
             print '</tr>';
-			$i++;
-		}
-		print "</table><br>";
-	}
+            $i++;
+        }
+        print "</table><br>";
+    }
 }
 else dol_print_error($db);
 
@@ -252,39 +252,39 @@ $sql.= $db->plimit(5, 0);
 $resql = $db->query($sql);
 if ($resql)
 {
-	$num = $db->num_rows($resql);
-	if ($num)
-	{
-		$i = 0;
-		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre">';
-		print '<th colspan="3">'.$langs->trans("LastSendings", $num).'</th></tr>';
-		while ($i < $num)
-		{
-			$obj = $db->fetch_object($resql);
+    $num = $db->num_rows($resql);
+    if ($num)
+    {
+        $i = 0;
+        print '<table class="noborder" width="100%">';
+        print '<tr class="liste_titre">';
+        print '<th colspan="3">'.$langs->trans("LastSendings", $num).'</th></tr>';
+        while ($i < $num)
+        {
+            $obj = $db->fetch_object($resql);
 
-			$shipment->id=$obj->rowid;
-			$shipment->ref=$obj->ref;
-			$shipment->ref_customer=$obj->ref_customer;
+            $shipment->id=$obj->rowid;
+            $shipment->ref=$obj->ref;
+            $shipment->ref_customer=$obj->ref_customer;
 
-			print '<tr class="oddeven"><td>';
-			print $shipment->getNomUrl(1);
-			print '</td>';
-			print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"), "company").' '.$obj->name.'</a></td>';
-			print '<td>';
-			if ($obj->commande_id > 0)
-			{
-				$orderstatic->id=$obj->commande_id;
-				$orderstatic->ref=$obj->commande_ref;
-				print $orderstatic->getNomUrl(1);
-			}
-			else print '&nbsp;';
-			print '</td></tr>';
-			$i++;
-		}
-		print "</table><br>";
-	}
-	$db->free($resql);
+            print '<tr class="oddeven"><td>';
+            print $shipment->getNomUrl(1);
+            print '</td>';
+            print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"), "company").' '.$obj->name.'</a></td>';
+            print '<td>';
+            if ($obj->commande_id > 0)
+            {
+                $orderstatic->id=$obj->commande_id;
+                $orderstatic->ref=$obj->commande_ref;
+                print $orderstatic->getNomUrl(1);
+            }
+            else print '&nbsp;';
+            print '</td></tr>';
+            $i++;
+        }
+        print "</table><br>";
+    }
+    $db->free($resql);
 }
 else dol_print_error($db);
 

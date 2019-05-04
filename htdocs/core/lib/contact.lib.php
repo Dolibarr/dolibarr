@@ -20,45 +20,45 @@
  */
 
 /**
- *	    \file       htdocs/core/lib/contact.lib.php
- *		\brief      Ensemble de fonctions de base pour les contacts
+ *        \file       htdocs/core/lib/contact.lib.php
+ *        \brief      Ensemble de fonctions de base pour les contacts
  */
 
 /**
  * Prepare array with list of tabs
  *
- * @param   Contact	$object		Object related to tabs
- * @return  array				Array of tabs to show
+ * @param   Contact    $object        Object related to tabs
+ * @return  array                Array of tabs to show
  */
 function contact_prepare_head(Contact $object)
 {
-	global $db, $langs, $conf, $user;
+    global $db, $langs, $conf, $user;
 
-	$tab = 0;
-	$head = array();
+    $tab = 0;
+    $head = array();
 
-	$head[$tab][0] = DOL_URL_ROOT.'/contact/card.php?id='.$object->id;
-	$head[$tab][1] = $langs->trans("Card");
-	$head[$tab][2] = 'card';
-	$tab++;
+    $head[$tab][0] = DOL_URL_ROOT.'/contact/card.php?id='.$object->id;
+    $head[$tab][1] = $langs->trans("Card");
+    $head[$tab][2] = 'card';
+    $tab++;
 
-	if ((! empty($conf->ldap->enabled) && ! empty($conf->global->LDAP_CONTACT_ACTIVE))
-		&& (empty($conf->global->MAIN_DISABLE_LDAP_TAB) || ! empty($user->admin)))
-	{
-		$langs->load("ldap");
+    if ((! empty($conf->ldap->enabled) && ! empty($conf->global->LDAP_CONTACT_ACTIVE))
+        && (empty($conf->global->MAIN_DISABLE_LDAP_TAB) || ! empty($user->admin)))
+    {
+        $langs->load("ldap");
 
-		$head[$tab][0] = DOL_URL_ROOT.'/contact/ldap.php?id='.$object->id;
-		$head[$tab][1] = $langs->trans("LDAPCard");
-		$head[$tab][2] = 'ldap';
-		$tab++;
-	}
+        $head[$tab][0] = DOL_URL_ROOT.'/contact/ldap.php?id='.$object->id;
+        $head[$tab][1] = $langs->trans("LDAPCard");
+        $head[$tab][2] = 'ldap';
+        $tab++;
+    }
 
-	$head[$tab][0] = DOL_URL_ROOT.'/contact/perso.php?id='.$object->id;
-	$head[$tab][1] = $langs->trans("PersonalInformations");
-	$head[$tab][2] = 'perso';
-	$tab++;
+    $head[$tab][0] = DOL_URL_ROOT.'/contact/perso.php?id='.$object->id;
+    $head[$tab][1] = $langs->trans("PersonalInformations");
+    $head[$tab][2] = 'perso';
+    $tab++;
 
-	// Related items
+    // Related items
     if (! empty($conf->commande->enabled) || ! empty($conf->propal->enabled) || ! empty($conf->facture->enabled) || ! empty($conf->ficheinter->enabled) || ! empty($conf->fournisseur->enabled))
     {
         $head[$tab][0] = DOL_URL_ROOT.'/contact/consumption.php?id='.$object->id;
@@ -70,7 +70,7 @@ function contact_prepare_head(Contact $object)
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
-    // $this->tabs = array('entity:-tabname);   												to remove a tab
+    // $this->tabs = array('entity:-tabname);                                                   to remove a tab
     complete_head_from_modules($conf, $langs, $object, $head, $tab, 'contact');
 
     // Notes
@@ -108,11 +108,11 @@ function contact_prepare_head(Contact $object)
     // Log
     /*
     $head[$tab][0] = DOL_URL_ROOT.'/contact/info.php?id='.$object->id;
-	$head[$tab][1] = $langs->trans("Info");
-	$head[$tab][2] = 'info';
-	$tab++;*/
+    $head[$tab][1] = $langs->trans("Info");
+    $head[$tab][2] = 'info';
+    $tab++;*/
 
-	complete_head_from_modules($conf, $langs, $object, $head, $tab, 'contact', 'remove');
+    complete_head_from_modules($conf, $langs, $object, $head, $tab, 'contact', 'remove');
 
-	return $head;
+    return $head;
 }

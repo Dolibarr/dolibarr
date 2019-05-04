@@ -19,8 +19,8 @@
 /**
  *      \file       dev/examples/create_product.php
  *      \brief      This file is an example for a command line script
- *		\author		Put author's name here
- *		\remarks	Put here some comments
+ *        \author        Put author's name here
+ *        \remarks    Put here some comments
  */
 
 $sapi_type = php_sapi_name();
@@ -43,12 +43,12 @@ $error=0;
 require_once $path."../../htdocs/master.inc.php";
 // After this $db, $mysoc, $langs and $conf->entity are defined. Opened handler to database will be closed at end of file.
 
-//$langs->setDefaultLang('en_US'); 	// To change default language of $langs
-$langs->load("main");				// To load language file for default language
+//$langs->setDefaultLang('en_US');     // To change default language of $langs
+$langs->load("main");                // To load language file for default language
 @set_time_limit(0);
 
 // Load user and its permissions
-$result=$user->fetch('', 'admin');	// Load user for login 'admin'. Comment line to run as anonymous user.
+$result=$user->fetch('', 'admin');    // Load user for login 'admin'. Comment line to run as anonymous user.
 if (! $result > 0) { dol_print_error('', $user->error); exit; }
 $user->getrights();
 
@@ -81,25 +81,25 @@ $myproduct->weight_units       = 0;
 $idobject = $myproduct->create($user);
 if ($idobject > 0)
 {
-	print "OK Object created with id ".$idobject."\n";
+    print "OK Object created with id ".$idobject."\n";
 }
 else
 {
-	$error++;
-	dol_print_error($db, $myproduct->error);
+    $error++;
+    dol_print_error($db, $myproduct->error);
 }
 
 // -------------------- END OF YOUR CODE --------------------
 
 if (! $error)
 {
-	$db->commit();
-	print '--- end ok'."\n";
+    $db->commit();
+    print '--- end ok'."\n";
 }
 else
 {
-	print '--- end error code='.$error."\n";
-	$db->rollback();
+    print '--- end error code='.$error."\n";
+    $db->rollback();
 }
 
 $db->close();

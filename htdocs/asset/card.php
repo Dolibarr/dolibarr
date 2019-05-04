@@ -52,7 +52,7 @@ $search_all=trim(GETPOST("search_all", 'alpha'));
 $search=array();
 foreach($object->fields as $key => $val)
 {
-	if (GETPOST('search_'.$key, 'alpha')) $search[$key]=GETPOST('search_'.$key, 'alpha');
+    if (GETPOST('search_'.$key, 'alpha')) $search[$key]=GETPOST('search_'.$key, 'alpha');
 }
 
 if (empty($action) && empty($id) && empty($ref)) $action='view';
@@ -68,8 +68,8 @@ $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once.
 
-$permissionnote=$user->rights->asset->write;	// Used by the include of actions_setnotes.inc.php
-$permissiondellink=$user->rights->asset->write;	// Used by the include of actions_dellink.inc.php
+$permissionnote=$user->rights->asset->write;    // Used by the include of actions_setnotes.inc.php
+$permissiondellink=$user->rights->asset->write;    // Used by the include of actions_dellink.inc.php
 $permissionedit=$user->rights->asset->write; // Used by the include of actions_lineupdown.inc.php
 $permissiontoadd=$user->rights->asset->write; // Used by the include of actions_addupdatedelete.inc.php
 
@@ -86,23 +86,23 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
-	$error=0;
+    $error=0;
 
-	$permissiontoadd = $user->rights->asset->create;
-	$permissiontodelete = $user->rights->asset->delete;
-	$backurlforlist = dol_buildpath('/asset/list.php', 1);
+    $permissiontoadd = $user->rights->asset->create;
+    $permissiontodelete = $user->rights->asset->delete;
+    $backurlforlist = dol_buildpath('/asset/list.php', 1);
 
-	// Actions cancel, add, update or delete
-	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
+    // Actions cancel, add, update or delete
+    include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
 
-	// Actions when printing a doc from card
-	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
+    // Actions when printing a doc from card
+    include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
-	// Actions to send emails
-	$trigger_name='ASSET_SENTBYMAIL';
-	$autocopy='MAIN_MAIL_AUTOCOPY_ASSET_TO';
-	$trackid='asset'.$object->id;
-	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
+    // Actions to send emails
+    $trigger_name='ASSET_SENTBYMAIL';
+    $autocopy='MAIN_MAIL_AUTOCOPY_ASSET_TO';
+    $trackid='asset'.$object->id;
+    include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 }
 
 
@@ -140,226 +140,226 @@ jQuery(document).ready(function() {
 // Part to create
 if ($action == 'create')
 {
-	print load_fiche_titre($langs->trans("NewAsset"));
+    print load_fiche_titre($langs->trans("NewAsset"));
 
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<input type="hidden" name="action" value="add">';
-	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+    print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="action" value="add">';
+    print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
-	dol_fiche_head(array(), '');
+    dol_fiche_head(array(), '');
 
-	print '<table class="border centpercent">'."\n";
+    print '<table class="border centpercent">'."\n";
 
-	// Common attributes
-	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_add.tpl.php';
+    // Common attributes
+    include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_add.tpl.php';
 
-	// Other attributes
-	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_add.tpl.php';
+    // Other attributes
+    include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_add.tpl.php';
 
-	print '</table>'."\n";
+    print '</table>'."\n";
 
-	dol_fiche_end();
+    dol_fiche_end();
 
-	print '<div class="center">';
-	print '<input type="submit" class="button" name="add" value="'.dol_escape_htmltag($langs->trans("Create")).'">';
-	print '&nbsp; ';
-	print '<input type="'.($backtopage?"submit":"button").'" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'"'.($backtopage?'':' onclick="javascript:history.go(-1)"').'>';	// Cancel for create does not post form if we don't know the backtopage
-	print '</div>';
+    print '<div class="center">';
+    print '<input type="submit" class="button" name="add" value="'.dol_escape_htmltag($langs->trans("Create")).'">';
+    print '&nbsp; ';
+    print '<input type="'.($backtopage?"submit":"button").'" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'"'.($backtopage?'':' onclick="javascript:history.go(-1)"').'>';    // Cancel for create does not post form if we don't know the backtopage
+    print '</div>';
 
-	print '</form>';
+    print '</form>';
 }
 
 // Part to edit record
 if (($id || $ref) && $action == 'edit')
 {
-	print load_fiche_titre($langs->trans("Assets"));
+    print load_fiche_titre($langs->trans("Assets"));
 
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<input type="hidden" name="action" value="update">';
-	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-	print '<input type="hidden" name="id" value="'.$object->id.'">';
+    print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="action" value="update">';
+    print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+    print '<input type="hidden" name="id" value="'.$object->id.'">';
 
-	dol_fiche_head();
+    dol_fiche_head();
 
-	print '<table class="border centpercent">'."\n";
+    print '<table class="border centpercent">'."\n";
 
-	// Common attributes
-	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_edit.tpl.php';
+    // Common attributes
+    include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_edit.tpl.php';
 
-	// Other attributes
-	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_edit.tpl.php';
+    // Other attributes
+    include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_edit.tpl.php';
 
-	print '</table>';
+    print '</table>';
 
-	dol_fiche_end();
+    dol_fiche_end();
 
-	print '<div class="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
-	print ' &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-	print '</div>';
+    print '<div class="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+    print ' &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+    print '</div>';
 
-	print '</form>';
+    print '</form>';
 }
 
 // Part to show record
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create')))
 {
-	$res = $object->fetch_optionals($object->id, $extralabels);
+    $res = $object->fetch_optionals($object->id, $extralabels);
 
-	$head = asset_prepare_head($object);
-	dol_fiche_head($head, 'card', $langs->trans("Asset"), -1, 'generic');
+    $head = asset_prepare_head($object);
+    dol_fiche_head($head, 'card', $langs->trans("Asset"), -1, 'generic');
 
-	$formconfirm = '';
+    $formconfirm = '';
 
-	// Confirmation to delete
-	if ($action == 'delete')
-	{
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('DeleteAssets'), $langs->trans('ConfirmDeleteAssets'), 'confirm_delete', '', 0, 1);
-	}
+    // Confirmation to delete
+    if ($action == 'delete')
+    {
+        $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('DeleteAssets'), $langs->trans('ConfirmDeleteAssets'), 'confirm_delete', '', 0, 1);
+    }
 
-	// Confirmation of action xxxx
-	if ($action == 'xxx')
-	{
-		$formquestion=array();
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('XXX'), $text, 'confirm_xxx', $formquestion, 0, 1, 220);
-	}
+    // Confirmation of action xxxx
+    if ($action == 'xxx')
+    {
+        $formquestion=array();
+        $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('XXX'), $text, 'confirm_xxx', $formquestion, 0, 1, 220);
+    }
 
-	// Call Hook formConfirm
-	$parameters = array('lineid' => $lineid);
-	$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-	if (empty($reshook)) $formconfirm.=$hookmanager->resPrint;
-	elseif ($reshook > 0) $formconfirm=$hookmanager->resPrint;
+    // Call Hook formConfirm
+    $parameters = array('lineid' => $lineid);
+    $reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+    if (empty($reshook)) $formconfirm.=$hookmanager->resPrint;
+    elseif ($reshook > 0) $formconfirm=$hookmanager->resPrint;
 
-	// Print form confirm
-	print $formconfirm;
-
-
-	// Object card
-	// ------------------------------------------------------------
-	$linkback = '<a href="' .dol_buildpath('/asset/list.php', 1) . '?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
-
-	$morehtmlref='<div class="refidno">';
-	/*
-	// Ref bis
-	$morehtmlref.=$form->editfieldkey("RefBis", 'ref_client', $object->ref_client, $object, $user->rights->asset->creer, 'string', '', 0, 1);
-	$morehtmlref.=$form->editfieldval("RefBis", 'ref_client', $object->ref_client, $object, $user->rights->asset->creer, 'string', '', null, null, '', 1);
-	// Thirdparty
-	$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $soc->getNomUrl(1);
-	*/
-	$morehtmlref.='</div>';
-
-	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
-
-	print '<div class="fichecenter">';
-	print '<div class="fichehalfleft">';
-	print '<div class="underbanner clearboth"></div>';
-	print '<table class="border centpercent">'."\n";
-
-	// Common attributes
-	//$keyforbreak='fieldkeytoswithonsecondcolumn';
-	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_view.tpl.php';
-
-	// Other attributes
-	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
-
-	print '</table>';
-	print '</div>';
-	print '</div>';
-	print '</div>';
-
-	print '<div class="clearboth"></div><br>';
-
-	dol_fiche_end();
+    // Print form confirm
+    print $formconfirm;
 
 
-	// Buttons for actions
-	if ($action != 'presend' && $action != 'editline') {
-		print '<div class="tabsAction">'."\n";
-		$parameters=array();
-		$reshook=$hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
-		if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+    // Object card
+    // ------------------------------------------------------------
+    $linkback = '<a href="' .dol_buildpath('/asset/list.php', 1) . '?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
-		if (empty($reshook))
-		{
-			// Send
-			print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendMail') . '</a>'."\n";
+    $morehtmlref='<div class="refidno">';
+    /*
+    // Ref bis
+    $morehtmlref.=$form->editfieldkey("RefBis", 'ref_client', $object->ref_client, $object, $user->rights->asset->creer, 'string', '', 0, 1);
+    $morehtmlref.=$form->editfieldval("RefBis", 'ref_client', $object->ref_client, $object, $user->rights->asset->creer, 'string', '', null, null, '', 1);
+    // Thirdparty
+    $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $soc->getNomUrl(1);
+    */
+    $morehtmlref.='</div>';
 
-			if ($user->rights->asset->write)
-			{
-				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>'."\n";
-			}
-			else
-			{
-				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Modify').'</a>'."\n";
-			}
+    dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
-			if ($user->rights->asset->delete)
-			{
-				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>'."\n";
-			}
-			else
-			{
-				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Delete').'</a>'."\n";
-			}
-		}
-		print '</div>'."\n";
-	}
+    print '<div class="fichecenter">';
+    print '<div class="fichehalfleft">';
+    print '<div class="underbanner clearboth"></div>';
+    print '<table class="border centpercent">'."\n";
 
+    // Common attributes
+    //$keyforbreak='fieldkeytoswithonsecondcolumn';
+    include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_view.tpl.php';
 
-	// Select mail models is same action as presend
-	if (GETPOST('modelselected')) {
-		$action = 'presend';
-	}
+    // Other attributes
+    include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
-	if ($action != 'presend')
-	{
-		print '<div class="fichecenter"><div class="fichehalfleft">';
-		print '<a name="builddoc"></a>'; // ancre
+    print '</table>';
+    print '</div>';
+    print '</div>';
+    print '</div>';
 
-		// Documents
-		/*$objref = dol_sanitizeFileName($object->ref);
-		$relativepath = $comref . '/' . $comref . '.pdf';
-		$filedir = $conf->asset->dir_output . '/' . $objref;
-		$urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
-		$genallowed = $user->rights->asset->read;	// If you can read, you can build the PDF to read content
-		$delallowed = $user->rights->asset->create;	// If you can create/edit, you can remove a file on card
-		print $formfile->showdocuments('asset', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
-		*/
+    print '<div class="clearboth"></div><br>';
 
-		// Show links to link elements
-		$linktoelem = $form->showLinkToObjectBlock($object, null, array('asset'));
-		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
+    dol_fiche_end();
 
 
-		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+    // Buttons for actions
+    if ($action != 'presend' && $action != 'editline') {
+        print '<div class="tabsAction">'."\n";
+        $parameters=array();
+        $reshook=$hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
+        if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-		$MAXEVENT = 10;
+        if (empty($reshook))
+        {
+            // Send
+            print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendMail') . '</a>'."\n";
 
-		$morehtmlright = '<a href="'.dol_buildpath('/asset/asset_info.php', 1).'?id='.$object->id.'">';
-		$morehtmlright.= $langs->trans("SeeAll");
-		$morehtmlright.= '</a>';
+            if ($user->rights->asset->write)
+            {
+                print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>'."\n";
+            }
+            else
+            {
+                print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Modify').'</a>'."\n";
+            }
 
-		// List of actions on element
-		include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
-		$formactions = new FormActions($db);
-		$somethingshown = $formactions->showactions($object, 'asset', $socid, 1, '', $MAXEVENT, '', $morehtmlright);
+            if ($user->rights->asset->delete)
+            {
+                print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>'."\n";
+            }
+            else
+            {
+                print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Delete').'</a>'."\n";
+            }
+        }
+        print '</div>'."\n";
+    }
 
-		print '</div></div></div>';
-	}
 
-	//Select mail models is same action as presend
-	/*
-	 if (GETPOST('modelselected')) $action = 'presend';
+    // Select mail models is same action as presend
+    if (GETPOST('modelselected')) {
+        $action = 'presend';
+    }
 
-	 // Presend form
-	 $modelmail='inventory';
-	 $defaulttopic='InformationMessage';
-	 $diroutput = $conf->product->dir_output.'/inventory';
-	 $trackid = 'stockinv'.$object->id;
+    if ($action != 'presend')
+    {
+        print '<div class="fichecenter"><div class="fichehalfleft">';
+        print '<a name="builddoc"></a>'; // ancre
 
-	 include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
-	 */
+        // Documents
+        /*$objref = dol_sanitizeFileName($object->ref);
+        $relativepath = $comref . '/' . $comref . '.pdf';
+        $filedir = $conf->asset->dir_output . '/' . $objref;
+        $urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
+        $genallowed = $user->rights->asset->read;    // If you can read, you can build the PDF to read content
+        $delallowed = $user->rights->asset->create;    // If you can create/edit, you can remove a file on card
+        print $formfile->showdocuments('asset', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
+        */
+
+        // Show links to link elements
+        $linktoelem = $form->showLinkToObjectBlock($object, null, array('asset'));
+        $somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
+
+
+        print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+
+        $MAXEVENT = 10;
+
+        $morehtmlright = '<a href="'.dol_buildpath('/asset/asset_info.php', 1).'?id='.$object->id.'">';
+        $morehtmlright.= $langs->trans("SeeAll");
+        $morehtmlright.= '</a>';
+
+        // List of actions on element
+        include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
+        $formactions = new FormActions($db);
+        $somethingshown = $formactions->showactions($object, 'asset', $socid, 1, '', $MAXEVENT, '', $morehtmlright);
+
+        print '</div></div></div>';
+    }
+
+    //Select mail models is same action as presend
+    /*
+     if (GETPOST('modelselected')) $action = 'presend';
+
+     // Presend form
+     $modelmail='inventory';
+     $defaulttopic='InformationMessage';
+     $diroutput = $conf->product->dir_output.'/inventory';
+     $trackid = 'stockinv'.$object->id;
+
+     include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
+     */
 }
 
 

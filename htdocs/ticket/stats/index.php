@@ -16,9 +16,9 @@
  */
 
 /**
- *	    \file       htdocs/ticket/stats/index.php
+ *        \file       htdocs/ticket/stats/index.php
  *      \ingroup    ticket
- *		\brief      Page with tickets statistics
+ *        \brief      Page with tickets statistics
  */
 
 require '../../main.inc.php';
@@ -206,9 +206,9 @@ if (! $mesg)
 $data = $stats->getAllByYear();
 $arrayyears=array();
 foreach($data as $val) {
-	if (! empty($val['year'])) {
-		$arrayyears[$val['year']]=$val['year'];
-	}
+    if (! empty($val['year'])) {
+        $arrayyears[$val['year']]=$val['year'];
+    }
 }
 if (! count($arrayyears)) $arrayyears[$nowyear]=$nowyear;
 
@@ -274,33 +274,33 @@ print '</tr>';
 $oldyear=0;
 foreach ($data as $val)
 {
-	$year = $val['year'];
-	while (! empty($year) && $oldyear > $year+1)
-	{ // If we have empty year
-		$oldyear--;
+    $year = $val['year'];
+    while (! empty($year) && $oldyear > $year+1)
+    { // If we have empty year
+        $oldyear--;
 
-		print '<tr class="oddeven" height="24">';
-		print '<td class="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$oldyear.'</a></td>';
-		print '<td class="right">0</td>';
-		print '<td class="right"></td>';
-		//print '<td class="right">0</td>';
-		//print '<td class="right"></td>';
-		//print '<td class="right">0</td>';
-		//print '<td class="right"></td>';
-		print '</tr>';
-	}
+        print '<tr class="oddeven" height="24">';
+        print '<td class="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$oldyear.'</a></td>';
+        print '<td class="right">0</td>';
+        print '<td class="right"></td>';
+        //print '<td class="right">0</td>';
+        //print '<td class="right"></td>';
+        //print '<td class="right">0</td>';
+        //print '<td class="right"></td>';
+        print '</tr>';
+    }
 
 
-	print '<tr class="oddeven" height="24">';
-	print '<td class="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$year.'</a></td>';
-	print '<td class="right">'.$val['nb'].'</td>';
-	print '<td class="right" style="'.(($val['nb_diff'] >= 0) ? 'color: green;':'color: red;').'">'.round($val['nb_diff']).'</td>';
-	//print '<td class="right">'.price(price2num($val['total'], 'MT'), 1).'</td>';
-	//print '<td class="right" style="'.(($val['total_diff'] >= 0) ? 'color: green;':'color: red;').'">'.round($val['total_diff']).'</td>';
-	//print '<td class="right">'.price(price2num($val['avg'], 'MT'), 1).'</td>';
-	//print '<td class="right" style="'.(($val['avg_diff'] >= 0) ? 'color: green;':'color: red;').'">'.round($val['avg_diff']).'</td>';
-	print '</tr>';
-	$oldyear=$year;
+    print '<tr class="oddeven" height="24">';
+    print '<td class="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$year.'</a></td>';
+    print '<td class="right">'.$val['nb'].'</td>';
+    print '<td class="right" style="'.(($val['nb_diff'] >= 0) ? 'color: green;':'color: red;').'">'.round($val['nb_diff']).'</td>';
+    //print '<td class="right">'.price(price2num($val['total'], 'MT'), 1).'</td>';
+    //print '<td class="right" style="'.(($val['total_diff'] >= 0) ? 'color: green;':'color: red;').'">'.round($val['total_diff']).'</td>';
+    //print '<td class="right">'.price(price2num($val['avg'], 'MT'), 1).'</td>';
+    //print '<td class="right" style="'.(($val['avg_diff'] >= 0) ? 'color: green;':'color: red;').'">'.round($val['avg_diff']).'</td>';
+    print '</tr>';
+    $oldyear=$year;
 }
 
 print '</table>';

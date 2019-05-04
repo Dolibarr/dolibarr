@@ -105,10 +105,10 @@ class ActionsTicket
     /**
      * Fetch object
      *
-     * @param	int		$id				ID of ticket
-     * @param	string	$ref			Reference of ticket
-     * @param	string	$track_id		Track ID of ticket (for public area)
-     * @return 	void
+     * @param    int        $id                ID of ticket
+     * @param    string    $ref            Reference of ticket
+     * @param    string    $track_id        Track ID of ticket (for public area)
+     * @return     void
      */
     public function fetch($id = 0, $ref = '', $track_id = '')
     {
@@ -119,8 +119,8 @@ class ActionsTicket
     /**
      * Print statut
      *
-     * @param		int		$mode		Display mode
-     * @return 		string				Label of status
+     * @param        int        $mode        Display mode
+     * @return         string                Label of status
      */
     public function getLibStatut($mode = 0)
     {
@@ -147,8 +147,8 @@ class ActionsTicket
     /**
      * Get action title
      *
-     * @param string 	$action    	Type of action
-     * @return string			Title of action
+     * @param string     $action        Type of action
+     * @return string            Title of action
      */
     public function getTitle($action = '')
     {
@@ -230,10 +230,10 @@ class ActionsTicket
     /**
      * Show ticket original message
      *
-     * @param 	User		$user		User wich display
-     * @param 	string 		$action    	Action mode
-     * @param	Ticket	$object		Object ticket
-     * @return	void
+     * @param     User        $user        User wich display
+     * @param     string         $action        Action mode
+     * @param    Ticket    $object        Object ticket
+     * @return    void
      */
     public function viewTicketOriginalMessage($user, $action, $object)
     {
@@ -251,7 +251,7 @@ class ActionsTicket
 
         // Initial message
         print '<div class="underbanner clearboth"></div>';
-        print '<div class="div-table-responsive-no-min">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
+        print '<div class="div-table-responsive-no-min">';        // You can use div-table-responsive-no-min if you dont need reserved height for your table
         print '<table class="border centpercent margintable">';
         print '<tr class="liste_titre"><td class="nowrap titlefield">';
         print $langs->trans("InitialMessage");
@@ -364,9 +364,9 @@ class ActionsTicket
     /**
      * View list of message for ticket with timeline display
      *
-     * @param 	boolean 	$show_private Show private messages
-     * @param 	boolean 	$show_user    Show user who make action
-     * @param	Ticket	$object		 Object ticket
+     * @param     boolean     $show_private Show private messages
+     * @param     boolean     $show_user    Show user who make action
+     * @param    Ticket    $object         Object ticket
      * @return void
      */
     public function viewTicketTimelineMessages($show_private, $show_user, Ticket $object)
@@ -422,8 +422,8 @@ class ActionsTicket
     /**
      * Print html navbar with link to set ticket status
      *
-     * @param	Ticket	$object		Ticket sup
-     * @return	void
+     * @param    Ticket    $object        Ticket sup
+     * @return    void
      */
     public function viewStatusActions(Ticket $object)
     {
@@ -449,7 +449,7 @@ class ActionsTicket
 
                 if ($status == 1)
                 {
-                    $urlforbutton = $_SERVER['PHP_SELF'] . '?track_id=' . $object->track_id . '&action=mark_ticket_read';	// To set as read, we use a dedicated action
+                    $urlforbutton = $_SERVER['PHP_SELF'] . '?track_id=' . $object->track_id . '&action=mark_ticket_read';    // To set as read, we use a dedicated action
                 }
                 else
                 {
@@ -468,10 +468,10 @@ class ActionsTicket
     /**
      * Hook to add email element template
      *
-     * @param array 		$parameters   Parameters
-     * @param Ticket		$object       Object for action
-     * @param string 		$action       Action string
-     * @param HookManager 	$hookmanager  Hookmanager object
+     * @param array         $parameters   Parameters
+     * @param Ticket        $object       Object for action
+     * @param string         $action       Action string
+     * @param HookManager     $hookmanager  Hookmanager object
      * @return int
      */
     public function emailElementlist($parameters, &$object, &$action, $hookmanager)

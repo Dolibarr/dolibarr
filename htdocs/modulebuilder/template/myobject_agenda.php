@@ -48,9 +48,9 @@ dol_include_once('/mymodule/lib/mymodule_myobject.lib.php');
 $langs->loadLangs(array("mymodule@mymodule","other"));
 
 // Get parameters
-$id			= GETPOST('id', 'int');
+$id            = GETPOST('id', 'int');
 $ref        = GETPOST('ref', 'alpha');
-$action		= GETPOST('action', 'alpha');
+$action        = GETPOST('action', 'alpha');
 $cancel     = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
@@ -132,79 +132,79 @@ $form = new Form($db);
 
 if ($object->id > 0)
 {
-	$title=$langs->trans("Agenda");
-	//if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name." - ".$title;
-	$help_url = '';
-	llxHeader('', $title, $help_url);
+    $title=$langs->trans("Agenda");
+    //if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name." - ".$title;
+    $help_url = '';
+    llxHeader('', $title, $help_url);
 
-	if (! empty($conf->notification->enabled)) $langs->load("mails");
-	$head = myobjectPrepareHead($object);
-
-
-	dol_fiche_head($head, 'agenda', $langs->trans("MyObject"), -1, 'myobject@mymodule');
-
-	// Object card
-	// ------------------------------------------------------------
-	$linkback = '<a href="' .dol_buildpath('/mymodule/myobject_list.php', 1) . '?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
-
-	$morehtmlref='<div class="refidno">';
-	/*
-	 // Ref customer
-	 $morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', 0, 1);
-	 $morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', null, null, '', 1);
-	 // Thirdparty
-	 $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
-	 // Project
-	 if (! empty($conf->projet->enabled))
-	 {
-	 $langs->load("projects");
-	 $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
-	 if ($user->rights->mymodule->creer)
-	 {
-	 if ($action != 'classify')
-	 	//$morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
-	 	$morehtmlref.=' : ';
-	 	if ($action == 'classify') {
-	 	//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
-	 	$morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-	 	$morehtmlref.='<input type="hidden" name="action" value="classin">';
-	 	$morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	 	$morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-	 	$morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-	 	$morehtmlref.='</form>';
-	 	} else {
-	 	$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
-	 	}
-	 	} else {
-	 	if (! empty($object->fk_project)) {
-	 	$proj = new Project($db);
-	 	$proj->fetch($object->fk_project);
-	 	$morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
-	 	$morehtmlref.=$proj->ref;
-	 	$morehtmlref.='</a>';
-	 	} else {
-	 	$morehtmlref.='';
-	 	}
-	 	}
-	 	}*/
-	$morehtmlref.='</div>';
+    if (! empty($conf->notification->enabled)) $langs->load("mails");
+    $head = myobjectPrepareHead($object);
 
 
-	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+    dol_fiche_head($head, 'agenda', $langs->trans("MyObject"), -1, 'myobject@mymodule');
+
+    // Object card
+    // ------------------------------------------------------------
+    $linkback = '<a href="' .dol_buildpath('/mymodule/myobject_list.php', 1) . '?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+
+    $morehtmlref='<div class="refidno">';
+    /*
+     // Ref customer
+     $morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', 0, 1);
+     $morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', null, null, '', 1);
+     // Thirdparty
+     $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
+     // Project
+     if (! empty($conf->projet->enabled))
+     {
+     $langs->load("projects");
+     $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
+     if ($user->rights->mymodule->creer)
+     {
+     if ($action != 'classify')
+         //$morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+         $morehtmlref.=' : ';
+         if ($action == 'classify') {
+         //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+         $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+         $morehtmlref.='<input type="hidden" name="action" value="classin">';
+         $morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+         $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+         $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+         $morehtmlref.='</form>';
+         } else {
+         $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+         }
+         } else {
+         if (! empty($object->fk_project)) {
+         $proj = new Project($db);
+         $proj->fetch($object->fk_project);
+         $morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
+         $morehtmlref.=$proj->ref;
+         $morehtmlref.='</a>';
+         } else {
+         $morehtmlref.='';
+         }
+         }
+         }*/
+    $morehtmlref.='</div>';
+
+
+    dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
     print '<div class="fichecenter">';
     print '<div class="underbanner clearboth"></div>';
 
     $object->info($object->id);
-	print dol_print_object_info($object, 1);
+    print dol_print_object_info($object, 1);
 
-	print '</div>';
+    print '</div>';
 
-	dol_fiche_end();
+    dol_fiche_end();
 
 
 
-	// Actions buttons
+    // Actions buttons
 
     $objthirdparty=$object;
     $objcon=new stdClass();
@@ -216,24 +216,24 @@ if ($object->id > 0)
         //$out.='<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create';
         if (get_class($objthirdparty) == 'Societe') $out.='&amp;socid='.$objthirdparty->id;
         $out.=(! empty($objcon->id)?'&amp;contactid='.$objcon->id:'').'&amp;backtopage=1&amp;percentage=-1';
-    	//$out.=$langs->trans("AddAnAction").' ';
-    	//$out.=img_picto($langs->trans("AddAnAction"),'filenew');
-    	//$out.="</a>";
-	}
+        //$out.=$langs->trans("AddAnAction").' ';
+        //$out.=img_picto($langs->trans("AddAnAction"),'filenew');
+        //$out.="</a>";
+    }
 
 
-	print '<div class="tabsAction">';
+    print '<div class="tabsAction">';
 
     if (! empty($conf->agenda->enabled))
     {
-    	if (! empty($user->rights->agenda->myactions->create) || ! empty($user->rights->agenda->allactions->create))
-    	{
-        	print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'">'.$langs->trans("AddAction").'</a>';
-    	}
-    	else
-    	{
-        	print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("AddAction").'</a>';
-    	}
+        if (! empty($user->rights->agenda->myactions->create) || ! empty($user->rights->agenda->allactions->create))
+        {
+            print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'">'.$langs->trans("AddAction").'</a>';
+        }
+        else
+        {
+            print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("AddAction").'</a>';
+        }
     }
 
     print '</div>';
@@ -245,10 +245,10 @@ if ($object->id > 0)
         if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 
 
-		print load_fiche_titre($langs->trans("ActionsOnMyObject"), '', '');
+        print load_fiche_titre($langs->trans("ActionsOnMyObject"), '', '');
 
         // List of all actions
-		$filters=array();
+        $filters=array();
         $filters['search_agenda_label']=$search_agenda_label;
 
         // TODO Replace this with same code than into list.php

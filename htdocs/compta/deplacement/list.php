@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2003		Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003        Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012	Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004		Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2011	Regis Houssin        <regis.houssin@inodbox.com>
@@ -60,13 +60,13 @@ $day=GETPOST("day");
 
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // Both test are required to be compatible with all browsers
 {
-	$search_ref="";
-	$search_name="";
-	$search_company="";
-	// $search_amount="";
-	$year="";
-	$month="";
-	$day="";
+    $search_ref="";
+    $search_name="";
+    $search_company="";
+    // $search_amount="";
+    $year="";
+    $month="";
+    $day="";
 }
 
 /*
@@ -82,10 +82,10 @@ $childids[]=$user->id;
 
 llxHeader();
 
-$sql = "SELECT s.nom, d.fk_user, s.rowid as socid,";				// Ou
-$sql.= " d.rowid, d.type, d.dated as dd, d.km,";		// Comment
+$sql = "SELECT s.nom, d.fk_user, s.rowid as socid,";                // Ou
+$sql.= " d.rowid, d.type, d.dated as dd, d.km,";        // Comment
 $sql.= " d.fk_statut,";
-$sql.= " u.lastname, u.firstname";							// Qui
+$sql.= " u.lastname, u.firstname";                            // Qui
 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 $sql.= ", ".MAIN_DB_PREFIX."deplacement as d";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON d.fk_soc = s.rowid";
@@ -96,7 +96,7 @@ if (empty($user->rights->deplacement->readall) && empty($user->rights->deplaceme
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND (sc.fk_user = " .$user->id." OR d.fk_soc IS NULL) ";
 if ($socid) $sql.= " AND s.rowid = ".$socid;
 
-if ($search_ref)		$sql.=" AND d.rowid=".$search_ref;
+if ($search_ref)        $sql.=" AND d.rowid=".$search_ref;
 if ($search_name)
 {
     $sql .= natural_search('u.lastname', $search_name);

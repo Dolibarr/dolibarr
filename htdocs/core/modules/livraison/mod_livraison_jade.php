@@ -34,46 +34,46 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/livraison/modules_livraison.php';
 
 class mod_livraison_jade extends ModeleNumRefDeliveryOrder
 {
-	/**
+    /**
      * Dolibarr version of the loaded document
      * @var string
      */
-	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+    public $version = 'dolibarr';        // 'development', 'experimental', 'dolibarr'
 
-	/**
-	 * @var string Error message
-	 */
-	public $error = '';
+    /**
+     * @var string Error message
+     */
+    public $error = '';
 
-	/**
-	 * @var string Nom du modele
-	 * @deprecated
-	 * @see $name
-	 */
-	public $nom='Jade';
+    /**
+     * @var string Nom du modele
+     * @deprecated
+     * @see $name
+     */
+    public $nom='Jade';
 
-	/**
-	 * @var string model name
-	 */
-	public $name='Jade';
+    /**
+     * @var string model name
+     */
+    public $name='Jade';
 
     public $prefix='BL';
 
 
-	/**
-	 *   Renvoi la description du modele de numerotation
-	 *
-	 *   @return     string      Texte descripif
-	 */
-	public function info()
-	{
-		global $langs;
-		return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
-	}
+    /**
+     *   Renvoi la description du modele de numerotation
+     *
+     *   @return     string      Texte descripif
+     */
+    public function info()
+    {
+        global $langs;
+        return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
+    }
 
-	/**
-	 *  Renvoi un exemple de numerotation
-	 *
+    /**
+     *  Renvoi un exemple de numerotation
+     *
      *  @return     string      Example
      */
     public function getExample()
@@ -119,12 +119,12 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
     }
 
     /**
-	 * 	Return next free value
-	 *
-	 *  @param	Societe		$objsoc     Object thirdparty
-	 *  @param  Object		$object		Object we need next value for
-	 *  @return string      			Value if KO, <0 if KO
-	 */
+     *     Return next free value
+     *
+     *  @param    Societe        $objsoc     Object thirdparty
+     *  @param  Object        $object        Object we need next value for
+     *  @return string                  Value if KO, <0 if KO
+     */
     public function getNextValue($objsoc, $object)
     {
         global $db,$conf;
@@ -152,7 +152,7 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
         if (empty($date)) $date=dol_now();
         $yymm = strftime("%y%m", $date);
 
-        if ($max >= (pow(10, 4) - 1)) $num=$max+1;	// If counter > 9999, we do not format on 4 chars, we take number as it is
+        if ($max >= (pow(10, 4) - 1)) $num=$max+1;    // If counter > 9999, we do not format on 4 chars, we take number as it is
         else $num = sprintf("%04s", $max+1);
 
         dol_syslog("mod_livraison_jade::getNextValue return ".$this->prefix.$yymm."-".$num);

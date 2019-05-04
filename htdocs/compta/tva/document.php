@@ -101,26 +101,26 @@ llxHeader("", $title, $help_url);
 
 if ($object->id)
 {
-	$alreadypayed=$object->getSommePaiement();
+    $alreadypayed=$object->getSommePaiement();
 
     $head=vat_prepare_head($object);
 
     dol_fiche_head($head, 'documents', $langs->trans("VATPayment"), -1, 'bill');
 
-	$morehtmlref='<div class="refidno">';
-	// Label of social contribution
-	$morehtmlref.=$form->editfieldkey("Label", 'lib', $object->label, $object, $user->rights->tax->charges->creer, 'string', '', 0, 1);
-	$morehtmlref.=$form->editfieldval("Label", 'lib', $object->label, $object, $user->rights->tax->charges->creer, 'string', '', null, null, '', 1);
-	$morehtmlref.='</div>';
+    $morehtmlref='<div class="refidno">';
+    // Label of social contribution
+    $morehtmlref.=$form->editfieldkey("Label", 'lib', $object->label, $object, $user->rights->tax->charges->creer, 'string', '', 0, 1);
+    $morehtmlref.=$form->editfieldval("Label", 'lib', $object->label, $object, $user->rights->tax->charges->creer, 'string', '', null, null, '', 1);
+    $morehtmlref.='</div>';
 
-	$linkback = '<a href="' . DOL_URL_ROOT . '/compta/tva/index.php?restore_lastsearch_values=1">' . $langs->trans("BackToList") . '</a>';
+    $linkback = '<a href="' . DOL_URL_ROOT . '/compta/tva/index.php?restore_lastsearch_values=1">' . $langs->trans("BackToList") . '</a>';
 
-	$object->totalpaye = $totalpaye;   // To give a chance to dol_banner_tab to use already paid amount to show correct status
+    $object->totalpaye = $totalpaye;   // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
-	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
+    dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
 
-	print '<div class="fichecenter">';
-	print '<div class="underbanner clearboth"></div>';
+    print '<div class="fichecenter">';
+    print '<div class="underbanner clearboth"></div>';
 
     // Build file list
     $filearray=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);

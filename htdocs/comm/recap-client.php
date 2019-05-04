@@ -17,9 +17,9 @@
  */
 
 /**
- *   	\file       htdocs/comm/recap-client.php
- *		\ingroup    societe
- *		\brief      Page de fiche recap client
+ *       \file       htdocs/comm/recap-client.php
+ *        \ingroup    societe
+ *        \brief      Page de fiche recap client
  */
 
 require '../main.inc.php';
@@ -54,7 +54,7 @@ if ($socid > 0)
     /*
      * Affichage onglets
      */
-	$head = societe_prepare_head($societe);
+    $head = societe_prepare_head($societe);
 
     dol_fiche_head($head, 'customer', $langs->trans("ThirdParty"), 0, 'company');
 
@@ -82,11 +82,11 @@ if ($socid > 0)
     print '</div>';
 
 
-	print $langs->trans("FeatureNotYetAvailable");
+    print $langs->trans("FeatureNotYetAvailable");
 }
 else
 {
-  	dol_print_error($db);
+      dol_print_error($db);
 }
 
 // End of page

@@ -17,9 +17,9 @@
  */
 
 /**
- * 	\file       htdocs/compta/paiement/tovalidate.php
- * 	\ingroup    compta
- * 	\brief      Page list payment to validate. Visible in menu when option BILL_ADD_PAYMENT_VALIDATION is on.
+ *     \file       htdocs/compta/paiement/tovalidate.php
+ *     \ingroup    compta
+ *     \brief      Page list payment to validate. Visible in menu when option BILL_ADD_PAYMENT_VALIDATION is on.
  */
 
 require '../../main.inc.php';
@@ -86,10 +86,10 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
     $result = $db->query($sql);
     $nbtotalofrecords = $db->num_rows($result);
-    if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+    if (($page * $limit) > $nbtotalofrecords)    // if total resultset is smaller then paging size (filtering), goto and load page 0
     {
-    	$page = 0;
-    	$offset = 0;
+        $page = 0;
+        $offset = 0;
     }
 }
 

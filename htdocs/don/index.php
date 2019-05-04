@@ -62,7 +62,7 @@ $sql.= " ORDER BY d.fk_statut";
 $result = $db->query($sql);
 if ($result)
 {
-	$i = 0;
+    $i = 0;
     $num = $db->num_rows($result);
     while ($i < $num)
     {
@@ -88,27 +88,27 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
 {
     if (! empty($conf->don->enabled) && $user->rights->don->lire)
     {
-    	$listofsearchfields['search_donation']=array('text'=>'Donation');
+        $listofsearchfields['search_donation']=array('text'=>'Donation');
     }
 
     if (count($listofsearchfields))
     {
-    	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
-    	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    	print '<table class="noborder nohover centpercent">';
-    	$i=0;
-    	foreach($listofsearchfields as $key => $value)
-    	{
-    		if ($i == 0) print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
-    		print '<tr '.$bc[false].'>';
-    		print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label></td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'"></td>';
-    		if ($i == 0) print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
-    		print '</tr>';
-    		$i++;
-    	}
-    	print '</table>';
-    	print '</form>';
-    	print '<br>';
+        print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
+        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        print '<table class="noborder nohover centpercent">';
+        $i=0;
+        foreach($listofsearchfields as $key => $value)
+        {
+            if ($i == 0) print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
+            print '<tr '.$bc[false].'>';
+            print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label></td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'"></td>';
+            if ($i == 0) print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
+            print '</tr>';
+            $i++;
+        }
+        print '</table>';
+        print '</form>';
+        print '<br>';
     }
 }
 

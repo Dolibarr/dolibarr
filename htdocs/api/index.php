@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2015	Jean-François Ferry		<jfefe@aternatik.fr>
+/* Copyright (C) 2015    Jean-François Ferry        <jfefe@aternatik.fr>
  * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2017	Regis Houssin			<regis.houssin@inodbox.com>
  *
@@ -18,18 +18,18 @@
  */
 
 /**
- * 	\defgroup   api     Module DolibarrApi
+ *     \defgroup   api     Module DolibarrApi
  *  \brief      API loader
- *				Search files htdocs/<module>/class/api_<module>.class.php
+ *                Search files htdocs/<module>/class/api_<module>.class.php
  *  \file       htdocs/api/index.php
  */
 
-if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');			// Do not check anti CSRF attack test
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');		// Do not check anti POST attack test
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');		// If there is no need to load and show top and left menu
-if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');		// If we don't need to load the html.form.class.php
+if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');            // Do not check anti CSRF attack test
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');        // Do not check anti POST attack test
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');        // If there is no need to load and show top and left menu
+if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');        // If we don't need to load the html.form.class.php
 if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');       // Do not load ajax.lib.php library
-if (! defined("NOLOGIN"))        define("NOLOGIN", '1');				// If this page is public (can be called outside logged session)
+if (! defined("NOLOGIN"))        define("NOLOGIN", '1');                // If this page is public (can be called outside logged session)
 
 
 // Force entity if a value is provided into HTTP header. Otherwise, will use the entity of user of token used.
@@ -107,7 +107,7 @@ $api = new DolibarrApi($db, '', $refreshcache);
 // See https://github.com/Luracast/Restler-API-Explorer for more info.
 $api->r->addAPIClass('Luracast\\Restler\\Explorer');
 
-$api->r->setSupportedFormats('JsonFormat', 'XmlFormat', 'UploadFormat');	// 'YamlFormat'
+$api->r->setSupportedFormats('JsonFormat', 'XmlFormat', 'UploadFormat');    // 'YamlFormat'
 $api->r->addAuthenticationClass('DolibarrApiAccess', '');
 
 // Define accepted mime types
@@ -215,39 +215,39 @@ if (! empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/swagger.json' &&
     // Load a dedicated API file
     dol_syslog("Load a dedicated API file module=".$module." moduledirforclass=".$moduledirforclass);
 
-	$tmpmodule = $module;
-	if ($tmpmodule != 'api')
-		$tmpmodule = preg_replace('/api$/i', '', $tmpmodule);
-	$classfile = str_replace('_', '', $tmpmodule);
-	if ($module == 'supplierproposals')
-		$classfile = 'supplier_proposals';
-	if ($module == 'supplierorders')
-		$classfile = 'supplier_orders';
-	if ($module == 'supplierinvoices')
-		$classfile = 'supplier_invoices';
-	if ($module == 'ficheinter')
-		$classfile = 'interventions';
-	if ($module == 'interventions')
-		$classfile = 'interventions';
+    $tmpmodule = $module;
+    if ($tmpmodule != 'api')
+        $tmpmodule = preg_replace('/api$/i', '', $tmpmodule);
+    $classfile = str_replace('_', '', $tmpmodule);
+    if ($module == 'supplierproposals')
+        $classfile = 'supplier_proposals';
+    if ($module == 'supplierorders')
+        $classfile = 'supplier_orders';
+    if ($module == 'supplierinvoices')
+        $classfile = 'supplier_invoices';
+    if ($module == 'ficheinter')
+        $classfile = 'interventions';
+    if ($module == 'interventions')
+        $classfile = 'interventions';
 
-	$dir_part_file = dol_buildpath('/' . $moduledirforclass . '/class/api_' . $classfile . '.class.php', 0, 2);
+    $dir_part_file = dol_buildpath('/' . $moduledirforclass . '/class/api_' . $classfile . '.class.php', 0, 2);
 
-	$classname = ucwords($module);
+    $classname = ucwords($module);
 
-	dol_syslog('Search api file /' . $moduledirforclass . '/class/api_' . $classfile . '.class.php => dir_part_file=' . $dir_part_file . ' classname=' . $classname);
+    dol_syslog('Search api file /' . $moduledirforclass . '/class/api_' . $classfile . '.class.php => dir_part_file=' . $dir_part_file . ' classname=' . $classname);
 
-	$res = false;
-	if ($dir_part_file)
-		$res = include_once $dir_part_file;
-	if (! $res) {
-	    dol_syslog('Failed to make include_once '.$dir_part_file, LOG_WARNING);
-		print 'API not found (failed to include API file)';
-		header('HTTP/1.1 501 API not found (failed to include API file)');
-		exit(0);
-	}
+    $res = false;
+    if ($dir_part_file)
+        $res = include_once $dir_part_file;
+    if (! $res) {
+        dol_syslog('Failed to make include_once '.$dir_part_file, LOG_WARNING);
+        print 'API not found (failed to include API file)';
+        header('HTTP/1.1 501 API not found (failed to include API file)');
+        exit(0);
+    }
 
-	if (class_exists($classname))
-		$api->r->addAPIClass($classname);
+    if (class_exists($classname))
+        $api->r->addAPIClass($classname);
 }
 
 // TODO If not found, redirect to explorer

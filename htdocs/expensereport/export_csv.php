@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2011	Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2011    Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -112,82 +112,82 @@ print '</form>'."\n";
 // Si c'est une action
 if (isset($_POST['action']))
 {
-	if($_POST['action'] == 'export')
-	{
-		$dateselected = $_POST['annee'].'-'.$_POST['mois'];
+    if($_POST['action'] == 'export')
+    {
+        $dateselected = $_POST['annee'].'-'.$_POST['mois'];
 
-		//var_dump($conf->expensereport->dir_output.'/export/');
-		if (!file_exists($conf->expensereport->dir_output.'/export/'))
-		{
-			dol_mkdir($conf->expensereport->dir_output.'/export/');
-		}
+        //var_dump($conf->expensereport->dir_output.'/export/');
+        if (!file_exists($conf->expensereport->dir_output.'/export/'))
+        {
+            dol_mkdir($conf->expensereport->dir_output.'/export/');
+        }
 
-		$dir = $conf->expensereport->dir_output.'/export/expensereport-'.$dateselected.'.csv';
-		$outputlangs = $langs;
-		$outputlangs->charset_output = 'UTF-8';
+        $dir = $conf->expensereport->dir_output.'/export/expensereport-'.$dateselected.'.csv';
+        $outputlangs = $langs;
+        $outputlangs->charset_output = 'UTF-8';
 
-		$sql = "SELECT d.rowid, d.ref, d.total_ht, d.total_tva, d.total_ttc";
-		$sql.= " FROM ".MAIN_DB_PREFIX."expensereport as d";
+        $sql = "SELECT d.rowid, d.ref, d.total_ht, d.total_tva, d.total_ttc";
+        $sql.= " FROM ".MAIN_DB_PREFIX."expensereport as d";
         $sql.= ' AND d.entity IN ('.getEntity('expensereport').')';
-		$sql.= " ORDER BY d.rowid";
+        $sql.= " ORDER BY d.rowid";
 
-		$result = $db->query($sql);
-		$num = $db->num_rows($result);
-		if ($num)
-		{
-			$open = fopen($dir, "w+");
+        $result = $db->query($sql);
+        $num = $db->num_rows($result);
+        if ($num)
+        {
+            $open = fopen($dir, "w+");
 
-			$ligne = "ID, Référence, ----, Date paiement, Montant HT, TVA, Montant TTC\n";
-			for ($i = 0; $i < $num; $i++)
-			{
-				$ligne.= "----, ----, ----, ----, ----, ----, ----\n";
-				$objet = $db->fetch_object($result);
-				$objet->total_ht = number_format($objet->total_ht, 2);
-				$objet->total_tva = number_format($objet->total_tva, 2);
-				$objet->total_ttc = number_format($objet->total_ttc, 2);
-				$objet->ref = trim($objet->ref);
-				$ligne.= "{$objet->rowid}, {$objet->ref}, ----, {$objet->total_ht}, {$objet->total_tva}, {$objet->total_ttc}\n";
+            $ligne = "ID, Référence, ----, Date paiement, Montant HT, TVA, Montant TTC\n";
+            for ($i = 0; $i < $num; $i++)
+            {
+                $ligne.= "----, ----, ----, ----, ----, ----, ----\n";
+                $objet = $db->fetch_object($result);
+                $objet->total_ht = number_format($objet->total_ht, 2);
+                $objet->total_tva = number_format($objet->total_tva, 2);
+                $objet->total_ttc = number_format($objet->total_ttc, 2);
+                $objet->ref = trim($objet->ref);
+                $ligne.= "{$objet->rowid}, {$objet->ref}, ----, {$objet->total_ht}, {$objet->total_tva}, {$objet->total_ttc}\n";
 
-				$ligne.= "--->, Ligne, Type, Description, ----, ----, ----\n";
+                $ligne.= "--->, Ligne, Type, Description, ----, ----, ----\n";
 
 
-				$sql2 = "SELECT de.rowid, t.label as libelle, de.comments, de.total_ht, de.total_tva, de.total_ttc";
-				$sql2.= " FROM ".MAIN_DB_PREFIX."expensereport_det as de,";
-				$sql2.= " ".MAIN_DB_PREFIX."c_type_fees as t";
-				$sql2.= " WHERE de.fk_c_type_fees = t.id";
-				$sql2.= " AND de.fk_expensereport = '".$objet->rowid."'";
-				$sql2.= " ORDER BY de.date";
+                $sql2 = "SELECT de.rowid, t.label as libelle, de.comments, de.total_ht, de.total_tva, de.total_ttc";
+                $sql2.= " FROM ".MAIN_DB_PREFIX."expensereport_det as de,";
+                $sql2.= " ".MAIN_DB_PREFIX."c_type_fees as t";
+                $sql2.= " WHERE de.fk_c_type_fees = t.id";
+                $sql2.= " AND de.fk_expensereport = '".$objet->rowid."'";
+                $sql2.= " ORDER BY de.date";
 
-				$result2 = $db->query($sql2);
-				$num2 = $db->num_rows($result2);
+                $result2 = $db->query($sql2);
+                $num2 = $db->num_rows($result2);
 
-				if($num2) {
-					for ($a = 0; $a < $num2; $a++)
-					{
-						$objet2 = $db->fetch_object($result2);
-						$objet2->total_ht = number_format($objet2->total_ht, 2);
-						$objet2->total_tva = number_format($objet2->total_tva, 2);
-						$objet2->total_ttc = number_format($objet2->total_ttc, 2);
-						$objet2->comments = str_replace(',', ';', $objet2->comments);
-						$objet2->comments = str_replace("\r\n", ' ', $objet2->comments);
-						$objet2->comments = str_replace("\n", ' ', $objet2->comments);
+                if($num2) {
+                    for ($a = 0; $a < $num2; $a++)
+                    {
+                        $objet2 = $db->fetch_object($result2);
+                        $objet2->total_ht = number_format($objet2->total_ht, 2);
+                        $objet2->total_tva = number_format($objet2->total_tva, 2);
+                        $objet2->total_ttc = number_format($objet2->total_ttc, 2);
+                        $objet2->comments = str_replace(',', ';', $objet2->comments);
+                        $objet2->comments = str_replace("\r\n", ' ', $objet2->comments);
+                        $objet2->comments = str_replace("\n", ' ', $objet2->comments);
 
-						$ligne.= "--->, {$objet2->rowid}, {$objet2->libelle}, {$objet2->comments}, {$objet2->total_ht}, {$objet2->total_tva}, {$objet2->total_ttc}\n";
-					}
-				}
-			}
+                        $ligne.= "--->, {$objet2->rowid}, {$objet2->libelle}, {$objet2->comments}, {$objet2->total_ht}, {$objet2->total_tva}, {$objet2->total_ttc}\n";
+                    }
+                }
+            }
 
-			$ligne = $outputlangs->convToOutputCharset($ligne);
+            $ligne = $outputlangs->convToOutputCharset($ligne);
 
-			fwrite($open, $ligne);
-			fclose($open);
+            fwrite($open, $ligne);
+            fclose($open);
 
-			print '<a href="'.DOL_URL_ROOT.'/document.php?modulepart=expensereport&file=export%2Fexpensereport-'.$dateselected.'.csv" target="_blank">Télécharger le fichier expensereport-'.$dateselected.'.csv</a>';
-		} else {
+            print '<a href="'.DOL_URL_ROOT.'/document.php?modulepart=expensereport&file=export%2Fexpensereport-'.$dateselected.'.csv" target="_blank">Télécharger le fichier expensereport-'.$dateselected.'.csv</a>';
+        } else {
 
-			print '<b>'.$langs->trans('NoTripsToExportCSV').'</b>';
-		}
-	}
+            print '<b>'.$langs->trans('NoTripsToExportCSV').'</b>';
+        }
+    }
 }
 
 print '</div>';

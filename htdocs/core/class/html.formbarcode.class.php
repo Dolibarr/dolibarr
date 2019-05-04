@@ -43,7 +43,7 @@ class FormBarCode
     /**
      *  Constructor
      *
-     *  @param  DoliDB		$db		Database handler
+     *  @param  DoliDB        $db        Database handler
      */
     public function __construct($db)
     {
@@ -52,13 +52,13 @@ class FormBarCode
 
 
     /**
-     *	Return HTML select with list of bar code generators
+     *    Return HTML select with list of bar code generators
      *
-     *  @param	int		$selected       Id code pre-selected
-     *  @param 	array	$barcodelist	Array of barcodes generators
-     *  @param  int		$code_id        Id du code barre
-     *  @param  int		$idForm			Id du formulaire
-     * 	@return	string					HTML select string
+     *  @param    int        $selected       Id code pre-selected
+     *  @param     array    $barcodelist    Array of barcodes generators
+     *  @param  int        $code_id        Id du code barre
+     *  @param  int        $idForm            Id du formulaire
+     *     @return    string                    HTML select string
      */
     public function setBarcodeEncoder($selected, $barcodelist, $code_id, $idForm = 'formbarcode')
     {
@@ -187,10 +187,10 @@ class FormBarCode
     /**
      *  Show form to select type of barcode
      *
-     *  @param  string		$page        	Page
-     *  @param  int			$selected    	Id condition preselected
-     *  @param  string		$htmlname    	Nom du formulaire select
-     *  @return	void
+     *  @param  string        $page            Page
+     *  @param  int            $selected        Id condition preselected
+     *  @param  string        $htmlname        Nom du formulaire select
+     *  @return    void
      *  @deprecated
      */
     public function form_barcode_type($page, $selected = '', $htmlname = 'barcodetype_id')

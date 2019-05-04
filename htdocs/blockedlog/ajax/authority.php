@@ -45,27 +45,27 @@ $newblock = GETPOST('b');
 $hash = GETPOST('h');
 
 if($auth->fetch(0, $signature)<=0) {
-	$auth->signature = $signature;
-	$auth->create($user);
+    $auth->signature = $signature;
+    $auth->create($user);
 }
 
 
 if(!empty($hash)) {
 
-	echo $auth->checkBlockchain($hash) ? 'hashisok' : 'hashisjunk';
+    echo $auth->checkBlockchain($hash) ? 'hashisok' : 'hashisjunk';
 }
 elseif(!empty($newblock)){
-	if($auth->checkBlock($newblock)) {
-		$auth->addBlock($newblock);
-		$auth->update($user);
+    if($auth->checkBlock($newblock)) {
+        $auth->addBlock($newblock);
+        $auth->update($user);
 
-		echo 'blockadded';
-	}
-	else{
+        echo 'blockadded';
+    }
+    else{
 
-		echo 'blockalreadyadded';
-	}
+        echo 'blockalreadyadded';
+    }
 }
 else{
-	echo 'idontunderstandwhatihavetodo';
+    echo 'idontunderstandwhatihavetodo';
 }

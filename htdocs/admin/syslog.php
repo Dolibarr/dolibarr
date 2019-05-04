@@ -19,9 +19,9 @@
  */
 
 /**
- *	\file       htdocs/admin/syslog.php
- *	\ingroup    syslog
- *	\brief      Setup page for logs module
+ *    \file       htdocs/admin/syslog.php
+ *    \ingroup    syslog
+ *    \brief      Setup page for logs module
  */
 
 require '../main.inc.php';
@@ -44,35 +44,35 @@ if (! empty($conf->global->SYSLOG_HANDLERS)) $activeModules = json_decode($conf-
 
 $dirsyslogs = array_merge(array('/core/modules/syslog/'), $conf->modules_parts['syslog']);
 foreach ($dirsyslogs as $reldir) {
-	$dir = dol_buildpath($reldir, 0);
-	$newdir = dol_osencode($dir);
-	if (is_dir($newdir)) {
-		$handle = opendir($newdir);
+    $dir = dol_buildpath($reldir, 0);
+    $newdir = dol_osencode($dir);
+    if (is_dir($newdir)) {
+        $handle = opendir($newdir);
 
-		if (is_resource($handle)) {
+        if (is_resource($handle)) {
 
-			while (($file = readdir($handle)) !== false) {
-				if (substr($file, 0, 11) == 'mod_syslog_' && substr($file, dol_strlen($file) - 3, 3) == 'php') {
-					$file = substr($file, 0, dol_strlen($file) - 4);
+            while (($file = readdir($handle)) !== false) {
+                if (substr($file, 0, 11) == 'mod_syslog_' && substr($file, dol_strlen($file) - 3, 3) == 'php') {
+                    $file = substr($file, 0, dol_strlen($file) - 4);
 
-					require_once $newdir . $file . '.php';
+                    require_once $newdir . $file . '.php';
 
-					$module = new $file;
+                    $module = new $file;
 
-					// Show modules according to features level
-					if ($module->getVersion() == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
-						continue;
-					}
-					if ($module->getVersion() == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
-						continue;
-					}
+                    // Show modules according to features level
+                    if ($module->getVersion() == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+                        continue;
+                    }
+                    if ($module->getVersion() == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+                        continue;
+                    }
 
-					$syslogModules[] = $file;
-				}
-			}
-			closedir($handle);
-		}
-	}
+                    $syslogModules[] = $file;
+                }
+            }
+            closedir($handle);
+        }
+    }
 }
 
 
@@ -83,84 +83,84 @@ foreach ($dirsyslogs as $reldir) {
 // Set modes
 if ($action == 'set')
 {
-	$db->begin();
+    $db->begin();
 
-	$newActiveModules = array();
-	$selectedModules = (isset($_POST['SYSLOG_HANDLERS']) ? $_POST['SYSLOG_HANDLERS'] : array());
+    $newActiveModules = array();
+    $selectedModules = (isset($_POST['SYSLOG_HANDLERS']) ? $_POST['SYSLOG_HANDLERS'] : array());
 
-	// Save options of handler
-	foreach ($syslogModules as $syslogHandler)
-	{
-		if (in_array($syslogHandler, $syslogModules))
-		{
-			$module = new $syslogHandler;
+    // Save options of handler
+    foreach ($syslogModules as $syslogHandler)
+    {
+        if (in_array($syslogHandler, $syslogModules))
+        {
+            $module = new $syslogHandler;
 
-			if (in_array($syslogHandler, $selectedModules)) $newActiveModules[] = $syslogHandler;
-			foreach ($module->configure() as $option)
-			{
-				if (isset($_POST[$option['constant']]))
-				{
-					$_POST[$option['constant']] = trim($_POST[$option['constant']]);
-					dolibarr_del_const($db, $option['constant'], -1);
-					dolibarr_set_const($db, $option['constant'], $_POST[$option['constant']], 'chaine', 0, '', 0);
-				}
-			}
-		}
-	}
+            if (in_array($syslogHandler, $selectedModules)) $newActiveModules[] = $syslogHandler;
+            foreach ($module->configure() as $option)
+            {
+                if (isset($_POST[$option['constant']]))
+                {
+                    $_POST[$option['constant']] = trim($_POST[$option['constant']]);
+                    dolibarr_del_const($db, $option['constant'], -1);
+                    dolibarr_set_const($db, $option['constant'], $_POST[$option['constant']], 'chaine', 0, '', 0);
+                }
+            }
+        }
+    }
 
-	$activeModules = $newActiveModules;
+    $activeModules = $newActiveModules;
 
     dolibarr_del_const($db, 'SYSLOG_HANDLERS', -1);  // To be sure ther is not a setup into another entity
     dolibarr_set_const($db, 'SYSLOG_HANDLERS', json_encode($activeModules), 'chaine', 0, '', 0);
 
-	// Check configuration
-	foreach ($activeModules as $modulename) {
-		/**
-		 * @var LogHandler
-		 */
-		$module = new $modulename;
-		$error = $module->checkConfiguration();
-	}
+    // Check configuration
+    foreach ($activeModules as $modulename) {
+        /**
+         * @var LogHandler
+         */
+        $module = new $modulename;
+        $error = $module->checkConfiguration();
+    }
 
 
-	if (! $error)
-	{
-		$db->commit();
-		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	}
-	else
-	{
-		$db->rollback();
-		setEventMessages($error, $errors, 'errors');
-	}
+    if (! $error)
+    {
+        $db->commit();
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    }
+    else
+    {
+        $db->rollback();
+        setEventMessages($error, $errors, 'errors');
+    }
 }
 
 // Set level
 if ($action == 'setlevel')
 {
-	$level = GETPOST("level");
-	$res = dolibarr_set_const($db, "SYSLOG_LEVEL", $level, 'chaine', 0, '', 0);
-	dol_syslog("admin/syslog: level ".$level);
+    $level = GETPOST("level");
+    $res = dolibarr_set_const($db, "SYSLOG_LEVEL", $level, 'chaine', 0, '', 0);
+    dol_syslog("admin/syslog: level ".$level);
 
-	if (! $res > 0) $error++;
+    if (! $res > 0) $error++;
 
-	if (! $error)
-	{
-		$file_saves = GETPOST("file_saves");
-		$res = dolibarr_set_const($db, "SYSLOG_FILE_SAVES", $file_saves, 'chaine', 0, '', 0);
-		dol_syslog("admin/syslog: file saves  ".$file_saves);
+    if (! $error)
+    {
+        $file_saves = GETPOST("file_saves");
+        $res = dolibarr_set_const($db, "SYSLOG_FILE_SAVES", $file_saves, 'chaine', 0, '', 0);
+        dol_syslog("admin/syslog: file saves  ".$file_saves);
 
-		if (! $res > 0) $error++;
-	}
+        if (! $res > 0) $error++;
+    }
 
-	if (! $error)
-	{
-		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	}
-	else
-	{
-		setEventMessages($langs->trans("Error"), null, 'errors');
-	}
+    if (! $error)
+    {
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    }
+    else
+    {
+        setEventMessages($langs->trans("Error"), null, 'errors');
+    }
 }
 
 /*
@@ -185,8 +185,8 @@ if (! $defaultsyslogfile) $defaultsyslogfile='dolibarr.log';
 
 if ($conf->global->MAIN_MODULE_MULTICOMPANY && $user->entity)
 {
-	print '<div class="error">'.$langs->trans("ContactSuperAdminForChange").'</div>';
-	$option = 'disabled';
+    print '<div class="error">'.$langs->trans("ContactSuperAdminForChange").'</div>';
+    $option = 'disabled';
 }
 
 
@@ -207,58 +207,58 @@ print "</tr>\n";
 
 foreach ($syslogModules as $moduleName)
 {
-	$module = new $moduleName;
+    $module = new $moduleName;
 
-	$moduleactive=(int) $module->isActive();
-	//print $moduleName." = ".$moduleactive." - ".$module->getName()." ".($moduleactive == -1)."<br>\n";
-	if (($moduleactive == -1) && empty($conf->global->MAIN_FEATURES_LEVEL)) continue;		// Some modules are hidden if not activable and not into debug mode (end user must not see them)
+    $moduleactive=(int) $module->isActive();
+    //print $moduleName." = ".$moduleactive." - ".$module->getName()." ".($moduleactive == -1)."<br>\n";
+    if (($moduleactive == -1) && empty($conf->global->MAIN_FEATURES_LEVEL)) continue;        // Some modules are hidden if not activable and not into debug mode (end user must not see them)
 
 
-	print '<tr class="oddeven">';
-	print '<td width="140">';
-	print '<input class="oddeven" type="checkbox" name="SYSLOG_HANDLERS[]" value="'.$moduleName.'" '.(in_array($moduleName, $activeModules) ? 'checked' : '').($moduleactive <= 0 ? 'disabled' : '').'> ';
-	print $module->getName();
-	print '</td>';
+    print '<tr class="oddeven">';
+    print '<td width="140">';
+    print '<input class="oddeven" type="checkbox" name="SYSLOG_HANDLERS[]" value="'.$moduleName.'" '.(in_array($moduleName, $activeModules) ? 'checked' : '').($moduleactive <= 0 ? 'disabled' : '').'> ';
+    print $module->getName();
+    print '</td>';
 
-	print '<td class="nowrap">';
-	$setuparray=$module->configure();
-	if ($setuparray)
-	{
-		foreach ($setuparray as $option)
-		{
-		    $tmpoption=$option['constant'];
-		    if (! empty($tmpoption))
-		    {
-    			if (isset($_POST[$tmpoption])) $value=$_POST[$tmpoption];
-    			elseif (! empty($conf->global->$tmpoption)) $value = $conf->global->$tmpoption;
-		    }
-			else $value = (isset($option['default']) ? $option['default'] : '');
+    print '<td class="nowrap">';
+    $setuparray=$module->configure();
+    if ($setuparray)
+    {
+        foreach ($setuparray as $option)
+        {
+            $tmpoption=$option['constant'];
+            if (! empty($tmpoption))
+            {
+                if (isset($_POST[$tmpoption])) $value=$_POST[$tmpoption];
+                elseif (! empty($conf->global->$tmpoption)) $value = $conf->global->$tmpoption;
+            }
+            else $value = (isset($option['default']) ? $option['default'] : '');
 
-			print $option['name'].': <input type="text" class="flat" name="'.$option['constant'].'" value="'.$value.'"'.(isset($option['attr']) ? ' '.$option['attr'] : '').'>';
-			if (! empty($option['example'])) print '<br>'.$langs->trans("Example").': '.$option['example'];
+            print $option['name'].': <input type="text" class="flat" name="'.$option['constant'].'" value="'.$value.'"'.(isset($option['attr']) ? ' '.$option['attr'] : '').'>';
+            if (! empty($option['example'])) print '<br>'.$langs->trans("Example").': '.$option['example'];
 
-			if ($option['constant'] == 'SYSLOG_FILE' && preg_match('/^DOL_DATA_ROOT\/[^\/]*$/', $value))
-			{
-    			$filelogparam =' (<a href="'.DOL_URL_ROOT.'/document.php?modulepart=logs&file='.basename($value).'">';
-    			$filelogparam.=$langs->trans('Download');
-    			$filelogparam.=$filelog.'</a>)';
-    			print $filelogparam;
-			}
-		}
-	}
-	print '</td>';
+            if ($option['constant'] == 'SYSLOG_FILE' && preg_match('/^DOL_DATA_ROOT\/[^\/]*$/', $value))
+            {
+                $filelogparam =' (<a href="'.DOL_URL_ROOT.'/document.php?modulepart=logs&file='.basename($value).'">';
+                $filelogparam.=$langs->trans('Download');
+                $filelogparam.=$filelog.'</a>)';
+                print $filelogparam;
+            }
+        }
+    }
+    print '</td>';
 
-	print '<td class="left">';
-	if ($module->getInfo())
-	{
-		print $form->textwithpicto('', $module->getInfo(), 1, 'help');
-	}
-	if ($module->getWarning())
-	{
-		print $form->textwithpicto('', $module->getWarning(), 1, 'warning');
-	}
-	print '</td>';
-	print "</tr>\n";
+    print '<td class="left">';
+    if ($module->getInfo())
+    {
+        print $form->textwithpicto('', $module->getInfo(), 1, 'help');
+    }
+    if ($module->getWarning())
+    {
+        print $form->textwithpicto('', $module->getWarning(), 1, 'warning');
+    }
+    print '</td>';
+    print "</tr>\n";
 }
 
 print "</table>\n";
@@ -292,9 +292,9 @@ print '</select>';
 print '</td></tr>';
 
 if(! empty($conf->loghandlers['mod_syslog_file']) && ! empty($conf->cron->enabled)) {
-	print '<tr class="oddeven"><td width="140">'.$langs->trans("SyslogFileNumberOfSaves").'</td>';
-	print '<td colspan="2"><input type="number" name="file_saves" placeholder="14" min="0" step="1" value="'.$conf->global->SYSLOG_FILE_SAVES.'" />';
-	print ' (<a href="'.dol_buildpath('/cron/list.php', 1).'?search_label=CompressSyslogs&status=-1">'.$langs->trans('ConfigureCleaningCronjobToSetFrequencyOfSaves').'</a>)</td></tr>';
+    print '<tr class="oddeven"><td width="140">'.$langs->trans("SyslogFileNumberOfSaves").'</td>';
+    print '<td colspan="2"><input type="number" name="file_saves" placeholder="14" min="0" step="1" value="'.$conf->global->SYSLOG_FILE_SAVES.'" />';
+    print ' (<a href="'.dol_buildpath('/cron/list.php', 1).'?search_label=CompressSyslogs&status=-1">'.$langs->trans('ConfigureCleaningCronjobToSetFrequencyOfSaves').'</a>)</td></tr>';
 }
 
 print '</table>';

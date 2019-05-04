@@ -9,9 +9,9 @@
     font-variant: normal;
     text-rendering: auto;
     line-height: 26px;
-	font-size: <?php echo $topMenuFontSize; ?>;
+    font-size: <?php echo $topMenuFontSize; ?>;
     -webkit-font-smoothing: antialiased;
     text-align:center;
-	text-decoration:none;
-	color: #<?php echo $colortextbackhmenu; ?>;
+    text-decoration:none;
+    color: #<?php echo $colortextbackhmenu; ?>;
 }

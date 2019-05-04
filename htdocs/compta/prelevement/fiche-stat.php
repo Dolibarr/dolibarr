@@ -18,9 +18,9 @@
  */
 
 /**
- *	\file       htdocs/compta/prelevement/fiche-stat.php
+ *    \file       htdocs/compta/prelevement/fiche-stat.php
  *  \ingroup    prelevement
- *	\brief      Prelevement statistics
+ *    \brief      Prelevement statistics
  */
 
 require '../../main.inc.php';
@@ -61,135 +61,135 @@ llxHeader('', $langs->trans("WithdrawalsReceipts"));
 
 if ($prev_id > 0 || $ref)
 {
-	if ($object->fetch($prev_id, $ref) >= 0)
-	{
-		$head = prelevement_prepare_head($object);
-		dol_fiche_head($head, 'statistics', $langs->trans("WithdrawalsReceipts"), -1, 'payment');
+    if ($object->fetch($prev_id, $ref) >= 0)
+    {
+        $head = prelevement_prepare_head($object);
+        dol_fiche_head($head, 'statistics', $langs->trans("WithdrawalsReceipts"), -1, 'payment');
 
-		$linkback = '<a href="'.DOL_URL_ROOT.'/compta/prelevement/bons.php">'.$langs->trans("BackToList").'</a>';
+        $linkback = '<a href="'.DOL_URL_ROOT.'/compta/prelevement/bons.php">'.$langs->trans("BackToList").'</a>';
 
-		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref');
+        dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref');
 
-		print '<div class="fichecenter">';
-		print '<div class="underbanner clearboth"></div>';
-		print '<table class="border centpercent">'."\n";
+        print '<div class="fichecenter">';
+        print '<div class="underbanner clearboth"></div>';
+        print '<table class="border centpercent">'."\n";
 
-		//print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>'.$object->getNomUrl(1).'</td></tr>';
-		print '<tr><td class="titlefield">'.$langs->trans("Date").'</td><td>'.dol_print_date($object->datec, 'day').'</td></tr>';
-		print '<tr><td>'.$langs->trans("Amount").'</td><td>'.price($object->amount).'</td></tr>';
+        //print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>'.$object->getNomUrl(1).'</td></tr>';
+        print '<tr><td class="titlefield">'.$langs->trans("Date").'</td><td>'.dol_print_date($object->datec, 'day').'</td></tr>';
+        print '<tr><td>'.$langs->trans("Amount").'</td><td>'.price($object->amount).'</td></tr>';
 
-		// Status
-		/*
-		print '<tr><td>'.$langs->trans('Status').'</td>';
-		print '<td>'.$object->getLibStatut(1).'</td>';
-		print '</tr>';
-		*/
+        // Status
+        /*
+        print '<tr><td>'.$langs->trans('Status').'</td>';
+        print '<td>'.$object->getLibStatut(1).'</td>';
+        print '</tr>';
+        */
 
-		if($object->date_trans <> 0)
-		{
-			$muser = new User($db);
-			$muser->fetch($object->user_trans);
+        if($object->date_trans <> 0)
+        {
+            $muser = new User($db);
+            $muser->fetch($object->user_trans);
 
-			print '<tr><td>'.$langs->trans("TransData").'</td><td>';
-			print dol_print_date($object->date_trans, 'day');
-			print ' '.$langs->trans("By").' '.$muser->getFullName($langs).'</td></tr>';
-			print '<tr><td>'.$langs->trans("TransMetod").'</td><td>';
-			print $object->methodes_trans[$object->method_trans];
-			print '</td></tr>';
-		}
-		if($object->date_credit <> 0)
-		{
-			print '<tr><td>'.$langs->trans('CreditDate').'</td><td>';
-			print dol_print_date($object->date_credit, 'day');
-			print '</td></tr>';
-		}
+            print '<tr><td>'.$langs->trans("TransData").'</td><td>';
+            print dol_print_date($object->date_trans, 'day');
+            print ' '.$langs->trans("By").' '.$muser->getFullName($langs).'</td></tr>';
+            print '<tr><td>'.$langs->trans("TransMetod").'</td><td>';
+            print $object->methodes_trans[$object->method_trans];
+            print '</td></tr>';
+        }
+        if($object->date_credit <> 0)
+        {
+            print '<tr><td>'.$langs->trans('CreditDate').'</td><td>';
+            print dol_print_date($object->date_credit, 'day');
+            print '</td></tr>';
+        }
 
-		print '</table>';
+        print '</table>';
 
-		print '<br>';
+        print '<br>';
 
-		print '<div class="underbanner clearboth"></div>';
-		print '<table class="border" width="100%">';
+        print '<div class="underbanner clearboth"></div>';
+        print '<table class="border" width="100%">';
 
-		$acc = new Account($db);
-		$result=$acc->fetch($conf->global->PRELEVEMENT_ID_BANKACCOUNT);
+        $acc = new Account($db);
+        $result=$acc->fetch($conf->global->PRELEVEMENT_ID_BANKACCOUNT);
 
-		print '<tr><td class="titlefield">';
-		print $langs->trans("BankToReceiveWithdraw");
-		print '</td>';
-		print '<td>';
-		if ($acc->id > 0)
-			print $acc->getNomUrl(1);
-		print '</td>';
-		print '</tr>';
+        print '<tr><td class="titlefield">';
+        print $langs->trans("BankToReceiveWithdraw");
+        print '</td>';
+        print '<td>';
+        if ($acc->id > 0)
+            print $acc->getNomUrl(1);
+        print '</td>';
+        print '</tr>';
 
-		print '<tr><td class="titlefield">';
-		print $langs->trans("WithdrawalFile").'</td><td>';
-		$relativepath = 'receipts/'.$object->ref.'.xml';
-		print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?type=text/plain&amp;modulepart=prelevement&amp;file='.urlencode($relativepath).'">'.$relativepath.'</a>';
-		print '</td></tr></table>';
+        print '<tr><td class="titlefield">';
+        print $langs->trans("WithdrawalFile").'</td><td>';
+        $relativepath = 'receipts/'.$object->ref.'.xml';
+        print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?type=text/plain&amp;modulepart=prelevement&amp;file='.urlencode($relativepath).'">'.$relativepath.'</a>';
+        print '</td></tr></table>';
 
-		print '</div>';
+        print '</div>';
 
-		dol_fiche_end();
-	}
-	else
-	{
-		$langs->load("errors");
-		print $langs->trans("Error");
-	}
+        dol_fiche_end();
+    }
+    else
+    {
+        $langs->load("errors");
+        print $langs->trans("Error");
+    }
 
-	/*
-	 * Stats
-	 */
-	$ligne=new LignePrelevement($db, $user);
+    /*
+     * Stats
+     */
+    $ligne=new LignePrelevement($db, $user);
 
-	$sql = "SELECT sum(pl.amount), pl.statut";
-	$sql.= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
-	$sql.= " WHERE pl.fk_prelevement_bons = ".$object->id;
-	$sql.= " GROUP BY pl.statut";
+    $sql = "SELECT sum(pl.amount), pl.statut";
+    $sql.= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
+    $sql.= " WHERE pl.fk_prelevement_bons = ".$object->id;
+    $sql.= " GROUP BY pl.statut";
 
-	$resql=$db->query($sql);
-	if ($resql)
-	{
-		$num = $db->num_rows($resql);
-		$i = 0;
+    $resql=$db->query($sql);
+    if ($resql)
+    {
+        $num = $db->num_rows($resql);
+        $i = 0;
 
-		print load_fiche_titre($langs->trans("StatisticsByLineStatus"), '', '');
+        print load_fiche_titre($langs->trans("StatisticsByLineStatus"), '', '');
 
-		print"\n<!-- debut table -->\n";
-		print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
-		print '<tr class="liste_titre">';
-		print '<td>'.$langs->trans("Status").'</td><td class="right">'.$langs->trans("Amount").'</td><td class="right">%</td></tr>';
+        print"\n<!-- debut table -->\n";
+        print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+        print '<tr class="liste_titre">';
+        print '<td>'.$langs->trans("Status").'</td><td class="right">'.$langs->trans("Amount").'</td><td class="right">%</td></tr>';
 
-		while ($i < $num)
-		{
-			$row = $db->fetch_row($resql);
+        while ($i < $num)
+        {
+            $row = $db->fetch_row($resql);
 
-			print '<tr class="oddeven"><td>';
+            print '<tr class="oddeven"><td>';
 
-			print $ligne->LibStatut($row[1], 1);
+            print $ligne->LibStatut($row[1], 1);
 
-			print '</td><td class="right">';
-			print price($row[0]);
+            print '</td><td class="right">';
+            print price($row[0]);
 
-			print '</td><td class="right">';
-			if ($object->amount) print round($row[0]/$object->amount*100, 2)." %";
-			print '</td>';
+            print '</td><td class="right">';
+            if ($object->amount) print round($row[0]/$object->amount*100, 2)." %";
+            print '</td>';
 
-			print "</tr>\n";
+            print "</tr>\n";
 
 
-			$i++;
-		}
+            $i++;
+        }
 
-		print "</table>";
-		$db->free($resql);
-	}
-	else
-	{
-		print $db->error() . ' ' . $sql;
-	}
+        print "</table>";
+        $db->free($resql);
+    }
+    else
+    {
+        print $db->error() . ' ' . $sql;
+    }
 }
 
 // End of page

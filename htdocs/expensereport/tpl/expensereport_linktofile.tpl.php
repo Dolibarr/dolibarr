@@ -63,7 +63,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
                         // Conversion du PDF en image png si fichier png non existant
                         if (! file_exists($fileimage) || (filemtime($fileimage) < filemtime($filepdf)))
                         {
-                            if (empty($conf->global->MAIN_DISABLE_PDF_THUMBS))		// If you experience trouble with pdf thumb generation and imagick, you can disable here.
+                            if (empty($conf->global->MAIN_DISABLE_PDF_THUMBS))        // If you experience trouble with pdf thumb generation and imagick, you can disable here.
                             {
                                 include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
                                 $ret = dol_convert_file($filepdf, 'png', $fileimage, '0');     // Convert first page of PDF into a file _preview.png

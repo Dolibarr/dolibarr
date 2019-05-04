@@ -20,15 +20,15 @@
  */
 
 /**
- *	    \file       dev/initdata/generate-proposal.php
- *		\brief      Script example to inject random proposals (for load tests)
+ *        \file       dev/initdata/generate-proposal.php
+ *        \brief      Script example to inject random proposals (for load tests)
  */
 
 // Test si mode batch
 $sapi_type = php_sapi_name();
 if (substr($sapi_type, 0, 3) == 'cgi') {
-	echo "Erreur: Vous utilisez l'interpreteur PHP pour le mode CGI. Pour executer mailing-send.php en ligne de commande, vous devez utiliser l'interpreteur PHP pour le mode CLI.\n";
-	exit;
+    echo "Erreur: Vous utilisez l'interpreteur PHP pour le mode CGI. Pour executer mailing-send.php en ligne de commande, vous devez utiliser l'interpreteur PHP pour le mode CLI.\n";
+    exit;
 }
 
 // Recupere root dolibarr
@@ -100,8 +100,8 @@ $dates = array (mktime(12, 0, 0, 1, 3, $year),
 $ret=$user->fetch('', 'admin');
 if (! $ret > 0)
 {
-	print 'A user with login "admin" and all permissions must be created to use this script.'."\n";
-	exit;
+    print 'A user with login "admin" and all permissions must be created to use this script.'."\n";
+    exit;
 }
 $user->getrights();
 
@@ -111,14 +111,14 @@ $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe WHERE client in (1,3)";
 $resql = $db->query($sql);
 if ($resql)
 {
-	$num_thirdparties = $db->num_rows($resql);
-	$i = 0;
-	while ($i < $num_thirdparties)
-	{
-		$i++;
-		$row = $db->fetch_row($resql);
-		$socids[$i] = $row[0];
-	}
+    $num_thirdparties = $db->num_rows($resql);
+    $i = 0;
+    while ($i < $num_thirdparties)
+    {
+        $i++;
+        $row = $db->fetch_row($resql);
+        $socids[$i] = $row[0];
+    }
 }
 
 $contids = array();
@@ -126,14 +126,14 @@ $sql = "SELECT rowid, fk_soc FROM ".MAIN_DB_PREFIX."socpeople";
 $resql = $db->query($sql);
 if ($resql)
 {
-	$num_conts = $db->num_rows($resql);
-	$i = 0;
-	while ($i < $num_conts)
-	{
-		$i++;
-		$row = $db->fetch_row($resql);
-		$contids[$row[1]][0] = $row[0]; // A ameliorer
-	}
+    $num_conts = $db->num_rows($resql);
+    $i = 0;
+    while ($i < $num_conts)
+    {
+        $i++;
+        $row = $db->fetch_row($resql);
+        $contids[$row[1]][0] = $row[0]; // A ameliorer
+    }
 }
 
 $prodids = array();
@@ -141,14 +141,14 @@ $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product WHERE tosell=1";
 $resql = $db->query($sql);
 if ($resql)
 {
-	$num_prods = $db->num_rows($resql);
-	$i = 0;
-	while ($i < $num_prods)
-	{
-		$i++;
-		$row = $db->fetch_row($resql);
-		$prodids[$i] = $row[0];
-	}
+    $num_prods = $db->num_rows($resql);
+    $i = 0;
+    while ($i < $num_prods)
+    {
+        $i++;
+        $row = $db->fetch_row($resql);
+        $prodids[$i] = $row[0];
+    }
 }
 
 $user->rights->propal->creer=1;
@@ -157,65 +157,65 @@ $user->rights->propal->propal_advance->validate=1;
 
 if (! empty($conf->global->PROPALE_ADDON) && is_readable(DOL_DOCUMENT_ROOT ."/core/modules/propale/".$conf->global->PROPALE_ADDON.".php"))
 {
-	require_once DOL_DOCUMENT_ROOT ."/core/modules/propale/".$conf->global->PROPALE_ADDON.".php";
+    require_once DOL_DOCUMENT_ROOT ."/core/modules/propale/".$conf->global->PROPALE_ADDON.".php";
 }
 
 $i=0;
 $result=0;
 while ($i < GEN_NUMBER_PROPAL && $result >= 0)
 {
-	$i++;
-	$socid = mt_rand(1, $num_thirdparties);
-	print "Proposal ".$i." for socid ".$socid;
+    $i++;
+    $socid = mt_rand(1, $num_thirdparties);
+    print "Proposal ".$i." for socid ".$socid;
 
-	$soc = new Societe($db);
+    $soc = new Societe($db);
 
 
-	$object = new Propal($db);
+    $object = new Propal($db);
 
     $fuser = new User($db);
     $fuser->fetch(mt_rand(1, 2));
     $fuser->getRights();
     
-	$object->contactid = $contids[$socids[$socid]][0];
-	$object->socid = $socids[$socid];
-	$object->datep = $dates[mt_rand(1, count($dates)-1)];
-	$object->cond_reglement_id = 3;
-	$object->mode_reglement_id = 3;
+    $object->contactid = $contids[$socids[$socid]][0];
+    $object->socid = $socids[$socid];
+    $object->datep = $dates[mt_rand(1, count($dates)-1)];
+    $object->cond_reglement_id = 3;
+    $object->mode_reglement_id = 3;
 
-	$result=$object->create($fuser);
-	if ($result >= 0)
-	{
-		$nbp = mt_rand(2, 5);
-		$xnbp = 0;
-		while ($xnbp < $nbp)
-		{
-			$prodid = mt_rand(1, $num_prods);
-			$product=new Product($db);
-			$result=$product->fetch($prodids[$prodid]);
-			$result=$object->addline($product->description, $product->price, mt_rand(1, 5), 0, 0, 0, $prodids[$prodid], 0);
-			if ($result < 0)
-			{
-				dol_print_error($db, $object->error);
-			}
-			$xnbp++;
-		}
-		
-		$result=$object->valid($fuser);
-		if ($result > 0)
-		{
-		    $db->commit();
-		    print " OK with ref ".$object->ref."\n";
-		}
-		else
-		{
-		    print " KO\n";
-		    $db->rollback();
-		    dol_print_error($db, $object->error);
-		}
-	}
-	else
-	{
-		dol_print_error($db, $object->error);
-	}
+    $result=$object->create($fuser);
+    if ($result >= 0)
+    {
+        $nbp = mt_rand(2, 5);
+        $xnbp = 0;
+        while ($xnbp < $nbp)
+        {
+            $prodid = mt_rand(1, $num_prods);
+            $product=new Product($db);
+            $result=$product->fetch($prodids[$prodid]);
+            $result=$object->addline($product->description, $product->price, mt_rand(1, 5), 0, 0, 0, $prodids[$prodid], 0);
+            if ($result < 0)
+            {
+                dol_print_error($db, $object->error);
+            }
+            $xnbp++;
+        }
+        
+        $result=$object->valid($fuser);
+        if ($result > 0)
+        {
+            $db->commit();
+            print " OK with ref ".$object->ref."\n";
+        }
+        else
+        {
+            print " KO\n";
+            $db->rollback();
+            dol_print_error($db, $object->error);
+        }
+    }
+    else
+    {
+        dol_print_error($db, $object->error);
+    }
 }

@@ -64,8 +64,8 @@ class box_supplier_orders extends ModeleBoxes
     /**
      *  Load data into info_box_contents array to show array later.
      *
-     *  @param	int		$max        Maximum number of records to load
-     *  @return	void
+     *  @param    int        $max        Maximum number of records to load
+     *  @return    void
      */
     public function loadBox($max = 5)
     {
@@ -111,12 +111,12 @@ class box_supplier_orders extends ModeleBoxes
                 while ($line < $num) {
                     $objp = $db->fetch_object($result);
                     $date=$db->jdate($objp->date_commande);
-					$datem=$db->jdate($objp->tms);
+                    $datem=$db->jdate($objp->tms);
 
-					$supplierorderstatic->id = $objp->rowid;
-					$supplierorderstatic->ref = $objp->ref;
+                    $supplierorderstatic->id = $objp->rowid;
+                    $supplierorderstatic->ref = $objp->ref;
 
-					$thirdpartytmp->id = $objp->socid;
+                    $thirdpartytmp->id = $objp->socid;
                     $thirdpartytmp->name = $objp->name;
                     $thirdpartytmp->fournisseur = 1;
                     $thirdpartytmp->code_fournisseur = $objp->code_fournisseur;
@@ -125,7 +125,7 @@ class box_supplier_orders extends ModeleBoxes
                     $this->info_box_contents[$line][] = array(
                         'td' => '',
                         'text' => $supplierorderstatic->getNomUrl(1),
-                    	'asis' => 1
+                        'asis' => 1
                     );
 
                     $this->info_box_contents[$line][] = array(
@@ -139,7 +139,7 @@ class box_supplier_orders extends ModeleBoxes
                         'text' => price($objp->total_ht, 0, $langs, 0, -1, -1, $conf->currency),
                     );
 
-					$this->info_box_contents[$line][] = array(
+                    $this->info_box_contents[$line][] = array(
                         'td' => 'class="right"',
                         'text' => dol_print_date($date, 'day'),
                     );

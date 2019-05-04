@@ -230,9 +230,9 @@ class EmailCollector extends CommonObject
     /**
      * Clone and object into another one
      *
-     * @param  	User 	$user      	User that creates
-     * @param  	int 	$fromid     Id of object to clone
-     * @return 	mixed 				New object created, <0 if KO
+     * @param      User     $user          User that creates
+     * @param      int     $fromid     Id of object to clone
+     * @return     mixed                 New object created, <0 if KO
      */
     public function createFromClone(User $user, $fromid)
     {
@@ -407,12 +407,12 @@ class EmailCollector extends CommonObject
     /**
      *  Return a link to the object card (with optionaly the picto)
      *
-     *	@param	int		$withpicto					Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
-     *	@param	string	$option						On what the link point to ('nolink', ...)
-     *  @param	int  	$notooltip					1=Disable tooltip
-     *  @param  string  $morecss            		Add more css on link
-     *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-     *	@return	string								String with URL
+     *    @param    int        $withpicto                    Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
+     *    @param    string    $option                        On what the link point to ('nolink', ...)
+     *  @param    int      $notooltip                    1=Disable tooltip
+     *  @param  string  $morecss                    Add more css on link
+     *  @param  int     $save_lastsearch_value        -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+     *    @return    string                                String with URL
      */
     public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
     {
@@ -483,8 +483,8 @@ class EmailCollector extends CommonObject
     /**
      *  Return label of the status
      *
-     *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
-     *  @return	string 			       Label of status
+     *  @param  int        $mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+     *  @return    string                    Label of status
      */
     public function getLibStatut($mode = 0)
     {
@@ -495,9 +495,9 @@ class EmailCollector extends CommonObject
     /**
      *  Return the status
      *
-     *  @param	int		$status        Id status
-     *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
-     *  @return string 			       Label of status
+     *  @param    int        $status        Id status
+     *  @param  int        $mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+     *  @return string                    Label of status
      */
     public function LibStatut($status, $mode = 0)
     {
@@ -546,10 +546,10 @@ class EmailCollector extends CommonObject
     }
 
     /**
-     *	Charge les informations d'ordre info dans l'objet commande
+     *    Charge les informations d'ordre info dans l'objet commande
      *
-     *	@param  int		$id       Id of order
-     *	@return	void
+     *    @param  int        $id       Id of order
+     *    @return    void
      */
     public function info($id)
     {
@@ -612,7 +612,7 @@ class EmailCollector extends CommonObject
     /**
      * Fetch filters
      *
-     * @return 	int		<0 if KO, >0 if OK
+     * @return     int        <0 if KO, >0 if OK
      */
     public function fetchFilters()
     {
@@ -644,7 +644,7 @@ class EmailCollector extends CommonObject
     /**
      * Fetch actions
      *
-     * @return 	int		<0 if KO, >0 if OK
+     * @return     int        <0 if KO, >0 if OK
      */
     public function fetchActions()
     {
@@ -680,8 +680,8 @@ class EmailCollector extends CommonObject
     public function getConnectStringIMAP()
     {
         // Connect to IMAP
-        $flags ='/service=imap';		// IMAP
-        $flags.='/ssl';					// '/tls'
+        $flags ='/service=imap';        // IMAP
+        $flags.='/ssl';                    // '/tls'
         $flags.='/novalidate-cert';
         //$flags.='/readonly';
         //$flags.='/debug';
@@ -695,7 +695,7 @@ class EmailCollector extends CommonObject
      * Action executed by scheduler
      * CAN BE A CRON TASK. In such a case, paramerts come from the schedule job setup field 'Parameters'
      *
-     * @return	int			0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
+     * @return    int            0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
      */
     public function doCollect()
     {
@@ -722,12 +722,12 @@ class EmailCollector extends CommonObject
     /**
      * overwitePropertiesOfObject
      *
-     * @param	object	$object			Current object
-     * @param	string	$actionparam	Action parameters
-     * @param	string	$messagetext	Body
-     * @param	string	$subject		Subject
+     * @param    object    $object            Current object
+     * @param    string    $actionparam    Action parameters
+     * @param    string    $messagetext    Body
+     * @param    string    $subject        Subject
      * @param   string  $header         Header
-     * @return	int						0=OK, Nb of error if error
+     * @return    int                        0=OK, Nb of error if error
      */
     private function overwritePropertiesOfObject(&$object, $actionparam, $messagetext, $subject, $header)
     {
@@ -749,7 +749,7 @@ class EmailCollector extends CommonObject
             {
                 $tmpproperty=$tmparray[0];
             }
-            if ($tmpclass && ($tmpclass != $object->element)) continue;	// Property is for another type of object
+            if ($tmpclass && ($tmpclass != $object->element)) continue;    // Property is for another type of object
 
             //if (property_exists($object, $tmpproperty) || preg_match('/^options_/', $tmpproperty))
             if ($tmpproperty)
@@ -850,7 +850,7 @@ class EmailCollector extends CommonObject
     /**
      * Execute collect for current collector loaded previously with fetch.
      *
-     * @return	int			<0 if KO, >0 if OK
+     * @return    int            <0 if KO, >0 if OK
      */
     public function doCollectOneCollector()
     {
@@ -895,7 +895,7 @@ class EmailCollector extends CommonObject
         $this->fetchActions();
 
         $sourcedir = $this->source_directory;
-        $targetdir = ($this->target_directory ? $this->target_directory : '');			// Can be '[Gmail]/Trash' or 'mytag'
+        $targetdir = ($this->target_directory ? $this->target_directory : '');            // Can be '[Gmail]/Trash' or 'mytag'
 
         $connectstringserver = $this->getConnectStringIMAP();
         $connectstringsource = $connectstringserver.imap_utf7_encode($sourcedir);
@@ -946,7 +946,7 @@ class EmailCollector extends CommonObject
             if ($rule['type'] == 'withouttrackingid') { $searchfilternodoltrackid++; $searchhead.='! /References.*@'.preg_quote($host, '/').'/';}
         }
 
-        if (empty($targetdir))	// Use last date as filter if there is no targetdir defined.
+        if (empty($targetdir))    // Use last date as filter if there is no targetdir defined.
         {
             $fromdate=0;
             if ($this->datelastok) $fromdate = $this->datelastok;
@@ -996,9 +996,9 @@ class EmailCollector extends CommonObject
             /**
              * create_part_array
              *
-             * @param 	Object $structure	Structure
-             * @param 	string $prefix		prefix
-             * @return 	array				Array with number and object
+             * @param     Object $structure    Structure
+             * @param     string $prefix        prefix
+             * @return     array                Array with number and object
              */
             /*function createPartArray($structure, $prefix = "")
             {
@@ -1017,10 +1017,10 @@ class EmailCollector extends CommonObject
             /**
              * Sub function for createPartArray(). Only called by createPartArray() and itself.
              *
-             * @param 	Object		$obj			Structure
-             * @param 	string		$partno			Part no
-             * @param 	array		$part_array		array
-             * @return	void
+             * @param     Object        $obj            Structure
+             * @param     string        $partno            Part no
+             * @param     array        $part_array        array
+             * @return    void
              */
             /*function addPartToArray($obj, $partno, &$part_array)
             {
@@ -1056,7 +1056,7 @@ class EmailCollector extends CommonObject
             {
                 if ($nbemailprocessed > 1000)
                 {
-                    break;			// Do not process more than 1000 email per launch (this is a different protection than maxnbcollectedpercollect
+                    break;            // Do not process more than 1000 email per launch (this is a different protection than maxnbcollectedpercollect
                 }
 
                 $header = imap_fetchheader($connection, $imapemail, 0);
@@ -1284,7 +1284,7 @@ class EmailCollector extends CommonObject
                     }
                 }
 
-                if (empty($contactid))		// Try to find contact using email
+                if (empty($contactid))        // Try to find contact using email
                 {
                     $result = $contactstatic->fetch(0, null, '', $from);
                     if ($result > 0)
@@ -1303,7 +1303,7 @@ class EmailCollector extends CommonObject
                     }
                 }
 
-                if (empty($thirdpartyid))		// Try to find thirdparty using email
+                if (empty($thirdpartyid))        // Try to find thirdparty using email
                 {
                     $result = $thirdpartystatic->fetch(0, '', '', '', '', '', '', '', '', '', $from);
                     if ($result > 0) $thirdpartyfoundby = 'email ('.$from.')';
@@ -1493,7 +1493,7 @@ class EmailCollector extends CommonObject
                         // Insert record of emails sent
                         $actioncomm = new ActionComm($this->db);
 
-                        $actioncomm->type_code   = 'AC_OTH_AUTO';		// Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
+                        $actioncomm->type_code   = 'AC_OTH_AUTO';        // Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
                         $actioncomm->code        = 'AC_'.$actioncode;
                         $actioncomm->label       = $langs->trans("ActionAC_".$actioncode).' - '.$langs->trans("MailFrom").' '.$from;
                         $actioncomm->note        = $descriptionfull;
@@ -1504,7 +1504,7 @@ class EmailCollector extends CommonObject
                         $actioncomm->socid       = $thirdpartystatic->id;
                         $actioncomm->contactid   = $contactstatic->id;
                         $actioncomm->authorid    = $user->id;   // User saving action
-                        $actioncomm->userownerid = $user->id;	// Owner of action
+                        $actioncomm->userownerid = $user->id;    // Owner of action
                         // Fields when action is an email (content should be added into note)
                         $actioncomm->email_msgid = $msgid;
                         $actioncomm->email_from  = $fromstring;
@@ -1836,7 +1836,7 @@ class EmailCollector extends CommonObject
             $output=$langs->trans('NoNewEmailToProcess');
         }
 
-        imap_expunge($connection);	// To validate any move
+        imap_expunge($connection);    // To validate any move
 
         imap_close($connection);
 
@@ -1863,9 +1863,9 @@ class EmailCollector extends CommonObject
     /**
      * getmsg
      *
-     * @param 	Object $mbox     	Structure
-     * @param 	string $mid		    prefix
-     * @return 	array				Array with number and object
+     * @param     Object $mbox         Structure
+     * @param     string $mid            prefix
+     * @return     array                Array with number and object
      */
     private function getmsg($mbox, $mid)
     {
@@ -1910,11 +1910,11 @@ class EmailCollector extends CommonObject
     /**
      * Sub function for getpart(). Only called by createPartArray() and itself.
      *
-     * @param 	Object		$mbox			Structure
-     * @param 	string		$mid			Part no
-     * @param 	Object		$p              Object p
+     * @param     Object        $mbox            Structure
+     * @param     string        $mid            Part no
+     * @param     Object        $p              Object p
      * @param   string      $partno         Partno
-     * @return	void
+     * @return    void
      */
     private function getpart($mbox, $mid, $p, $partno)
     {

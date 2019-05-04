@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2003		Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003        Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012	Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012		Juanjo Menent        <jmenent@2byte.es>
@@ -51,14 +51,14 @@ $object = new Deplacement($db);
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('tripsandexpensescard','globalcard'));
 
-$permissionnote=$user->rights->deplacement->creer;	// Used by the include of actions_setnotes.inc.php
+$permissionnote=$user->rights->deplacement->creer;    // Used by the include of actions_setnotes.inc.php
 
 
 /*
  * Actions
  */
 
-include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, not includ_once
+include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';    // Must be include, not includ_once
 
 if ($action == 'validate' && $user->rights->deplacement->creer)
 {
@@ -73,7 +73,7 @@ if ($action == 'validate' && $user->rights->deplacement->creer)
         }
         else
         {
-	        setEventMessages($object->error, $object->errors, 'errors');
+            setEventMessages($object->error, $object->errors, 'errors');
         }
     }
 }
@@ -91,7 +91,7 @@ elseif ($action == 'classifyrefunded' && $user->rights->deplacement->creer)
         }
         else
         {
-	        setEventMessages($object->error, $object->errors, 'errors');
+            setEventMessages($object->error, $object->errors, 'errors');
         }
     }
 }
@@ -106,7 +106,7 @@ elseif ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->depla
     }
     else
     {
-	    setEventMessages($object->error, $object->errors, 'errors');
+        setEventMessages($object->error, $object->errors, 'errors');
     }
 }
 
@@ -116,28 +116,28 @@ elseif ($action == 'add' && $user->rights->deplacement->creer)
     {
         $error=0;
 
-        $object->date			= dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
-        $object->km				= price2num(GETPOST('km', 'alpha'), 'MU'); // Not 'int', it may be a formated amount
-        $object->type			= GETPOST('type', 'alpha');
-        $object->socid			= GETPOST('socid', 'int');
-        $object->fk_user		= GETPOST('fk_user', 'int');
-        $object->note_private	= GETPOST('note_private', 'alpha');
-        $object->note_public	= GETPOST('note_public', 'alpha');
-        $object->statut     	= 0;
+        $object->date            = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
+        $object->km                = price2num(GETPOST('km', 'alpha'), 'MU'); // Not 'int', it may be a formated amount
+        $object->type            = GETPOST('type', 'alpha');
+        $object->socid            = GETPOST('socid', 'int');
+        $object->fk_user        = GETPOST('fk_user', 'int');
+        $object->note_private    = GETPOST('note_private', 'alpha');
+        $object->note_public    = GETPOST('note_public', 'alpha');
+        $object->statut         = 0;
 
         if (! $object->date)
         {
-	        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
+            setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
             $error++;
         }
         if ($object->type == '-1')
         {
-	        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
+            setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
             $error++;
         }
         if (! ($object->fk_user > 0))
         {
-	        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Person")), null, 'errors');
+            setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Person")), null, 'errors');
             $error++;
         }
 
@@ -152,7 +152,7 @@ elseif ($action == 'add' && $user->rights->deplacement->creer)
             }
             else
             {
-	            setEventMessages($object->error, $object->errors, 'errors');
+                setEventMessages($object->error, $object->errors, 'errors');
                 $action='create';
             }
         }
@@ -175,13 +175,13 @@ elseif ($action == 'update' && $user->rights->deplacement->creer)
     {
         $result = $object->fetch($id);
 
-        $object->date			= dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
-        $object->km				= price2num(GETPOST('km', 'alpha'), 'MU'); // Not 'int', it may be a formated amount
-        $object->type			= GETPOST('type', 'alpha');
-        $object->socid			= GETPOST('socid', 'int');
-        $object->fk_user		= GETPOST('fk_user', 'int');
-        $object->note_private	= GETPOST('note_private', 'alpha');
-        $object->note_public	= GETPOST('note_public', 'alpha');
+        $object->date            = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
+        $object->km                = price2num(GETPOST('km', 'alpha'), 'MU'); // Not 'int', it may be a formated amount
+        $object->type            = GETPOST('type', 'alpha');
+        $object->socid            = GETPOST('socid', 'int');
+        $object->fk_user        = GETPOST('fk_user', 'int');
+        $object->note_private    = GETPOST('note_private', 'alpha');
+        $object->note_public    = GETPOST('note_public', 'alpha');
 
         $result = $object->update($user);
 
@@ -192,7 +192,7 @@ elseif ($action == 'update' && $user->rights->deplacement->creer)
         }
         else
         {
-	        setEventMessages($object->error, $object->errors, 'errors');
+            setEventMessages($object->error, $object->errors, 'errors');
         }
     }
     else
@@ -307,10 +307,10 @@ if ($action == 'create')
     print '</table>';
 
     print '<br><div class="center">';
-	print '<input class="button" type="submit" value="'.$langs->trans("Save").'">';
-	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+    print '<input class="button" type="submit" value="'.$langs->trans("Save").'">';
+    print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
     print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
-	print '</div>';
+    print '</div>';
 
     print '</form>';
 }
@@ -404,8 +404,8 @@ elseif ($id)
             print '</table>';
 
             print '<br><div class="center">';
-			print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
-			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+            print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+            print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
             print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
             print '</div>';
 
@@ -435,9 +435,9 @@ elseif ($id)
             print $form->showrefnav($object, 'id', $linkback, 1, 'rowid', 'ref', '');
             print '</td></tr>';
 
-	        $form->load_cache_types_fees();
+            $form->load_cache_types_fees();
 
-	        // Type
+            // Type
             print '<tr><td>';
             print $form->editfieldkey("Type", 'type', $langs->trans($object->type), $object, $conf->global->MAIN_EDIT_ALSO_INLINE && $user->rights->deplacement->creer, 'select:types_fees');
             print '</td><td>';
@@ -504,9 +504,9 @@ elseif ($id)
             // Statut
             print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
 
-        	// Other attributes
-        	$parameters=array('socid'=>$object->id);
-        	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
+            // Other attributes
+            $parameters=array('socid'=>$object->id);
+            include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
             print "</table><br>";
 
@@ -523,19 +523,19 @@ elseif ($id)
 
             print '<div class="tabsAction">';
 
-            if ($object->statut < 2) 	// if not refunded
+            if ($object->statut < 2)     // if not refunded
             {
-	            if ($user->rights->deplacement->creer)
-	            {
-	                print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&id='.$id.'">'.$langs->trans('Modify').'</a>';
-	            }
-	            else
-	            {
-	                print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans('Modify').'</a>';
-	            }
+                if ($user->rights->deplacement->creer)
+                {
+                    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&id='.$id.'">'.$langs->trans('Modify').'</a>';
+                }
+                else
+                {
+                    print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans('Modify').'</a>';
+                }
             }
 
-            if ($object->statut == 0) 	// if draft
+            if ($object->statut == 0)     // if draft
             {
                 if ($user->rights->deplacement->creer)
                 {
@@ -547,7 +547,7 @@ elseif ($id)
                 }
             }
 
-            if ($object->statut == 1) 	// if validated
+            if ($object->statut == 1)     // if validated
             {
                 if ($user->rights->deplacement->creer)
                 {

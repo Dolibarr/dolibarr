@@ -139,8 +139,8 @@ class DataPolicy
     /**
      * sendMailDataPolicyContact
      *
-     * @param 	mixed		$contact		Contact
-     * @return	void
+     * @param     mixed        $contact        Contact
+     * @return    void
      */
     public function sendMailDataPolicyContact($contact)
     {
@@ -214,8 +214,8 @@ class DataPolicy
     /**
      * sendMailDataPolicyCompany
      *
-     * @param Societe	$societe	Object societe
-     * @return	void
+     * @param Societe    $societe    Object societe
+     * @return    void
      */
     public function sendMailDataPolicyCompany($societe)
     {
@@ -288,7 +288,7 @@ class DataPolicy
     /**
      * sendMailDataPolicyAdherent
      *
-     * @param Adherent	$adherent		Member
+     * @param Adherent    $adherent        Member
      * @return void
      */
     public function sendMailDataPolicyAdherent($adherent)

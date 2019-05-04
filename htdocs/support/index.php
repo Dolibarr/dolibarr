@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008-2015	Laurent Destailleur	<eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2015    Laurent Destailleur    <eldy@users.sourceforge.net>
  * Copyright (C) 2008-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
  *
@@ -32,7 +32,7 @@ $uri=preg_replace('/^http(s?):\/\//i', '', $dolibarr_main_url_root);
 $pos = strstr($uri, '/');      // $pos contient alors url sans nom domaine
 if ($pos == '/') $pos = '';     // si $pos vaut /, on le met a ''
 if (! defined('DOL_URL_ROOT'))
-	define('DOL_URL_ROOT', $pos);	// URL racine relative
+    define('DOL_URL_ROOT', $pos);    // URL racine relative
 
 $langs->loadLangs(array("other", $langs->load("help")));
 

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2002    Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2003		Jean-Louis Bergamo		<jlb@j1b.org>
  * Copyright (C) 2004-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
@@ -54,8 +54,8 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 if ($conf->use_javascript_ajax)
 {
-	print '<div class="div-table-responsive-no-min">';
-	print '<table class="noborder nohover" width="100%">';
+    print '<div class="div-table-responsive-no-min">';
+    print '<table class="noborder nohover" width="100%">';
     print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</th></tr>';
     print '<tr><td class="center" colspan="2">';
 
@@ -85,37 +85,37 @@ $sql.= $db->plimit($max, 0);
 $resql=$db->query($sql);
 if ($resql)
 {
-	print '<div class="div-table-responsive-no-min">';
-	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre">';
-	print '<th colspan="4">'.$langs->trans("LatestBOMModified", $max).'</th></tr>';
+    print '<div class="div-table-responsive-no-min">';
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre">';
+    print '<th colspan="4">'.$langs->trans("LatestBOMModified", $max).'</th></tr>';
 
-	$num = $db->num_rows($resql);
-	if ($num)
-	{
-		$i = 0;
-		while ($i < $num)
-		{
-			$obj = $db->fetch_object($resql);
+    $num = $db->num_rows($resql);
+    if ($num)
+    {
+        $i = 0;
+        while ($i < $num)
+        {
+            $obj = $db->fetch_object($resql);
 
-			$staticbom->id=$obj->rowid;
-			$staticbom->ref=$obj->ref;
-			$staticbom->date_modification=$obj->datem;
+            $staticbom->id=$obj->rowid;
+            $staticbom->ref=$obj->ref;
+            $staticbom->date_modification=$obj->datem;
 
-			print '<tr class="oddeven">';
-			print '<td>'.$staticbom->getNomUrl(1, 32).'</td>';
-			print '<td>'.dol_print_date($db->jdate($obj->datem), 'dayhour').'</td>';
-			print '<td class="right">'.$staticbom->getLibStatut(5).'</td>';
-			print '</tr>';
-			$i++;
-		}
-	}
-	print "</table></div>";
-	print "<br>";
+            print '<tr class="oddeven">';
+            print '<td>'.$staticbom->getNomUrl(1, 32).'</td>';
+            print '<td>'.dol_print_date($db->jdate($obj->datem), 'dayhour').'</td>';
+            print '<td class="right">'.$staticbom->getLibStatut(5).'</td>';
+            print '</tr>';
+            $i++;
+        }
+    }
+    print "</table></div>";
+    print "<br>";
 }
 else
 {
-	dol_print_error($db);
+    dol_print_error($db);
 }
 
 

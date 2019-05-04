@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2011	Regis Houssin <regis.houssin@inodbox.com>
+/* Copyright (C) 2010-2011    Regis Houssin <regis.houssin@inodbox.com>
  * Copyright (C) 2013		Juanjo Menent <jmenent@2byte.es>
  * Copyright (C) 2014       Marcos García <marcosgdf@gmail.com>
  *
@@ -20,8 +20,8 @@
 // Protection to avoid direct call of template
 if (empty($conf) || ! is_object($conf))
 {
-	print "Error, template page can't be called as URL";
-	exit;
+    print "Error, template page can't be called as URL";
+    exit;
 }
 
 ?>
@@ -42,17 +42,17 @@ foreach($linkedObjectBlock as $key => $objectlink)
 
 ?>
 <tr <?php echo $GLOBALS['bc'][$var]; ?> >
-	<td><?php echo $langs->trans("ExpenseReport"); ?></td>
+    <td><?php echo $langs->trans("ExpenseReport"); ?></td>
     <td><?php echo $objectlink->getNomUrl(1); ?></td>
     <td></td>
-	<td class="center"><?php echo dol_print_date($objectlink->date_debut, 'day'); ?></td>
-	<td class="right"><?php
-		if ($user->rights->expensereport->lire) {
-			$total = $total + $objectlink->total_ht;
-			echo price($objectlink->total_ht);
-		} ?></td>
-	<td class="right"><?php echo $objectlink->getLibStatut(3); ?></td>
-	<td class="right"><a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a></td>
+    <td class="center"><?php echo dol_print_date($objectlink->date_debut, 'day'); ?></td>
+    <td class="right"><?php
+        if ($user->rights->expensereport->lire) {
+            $total = $total + $objectlink->total_ht;
+            echo price($objectlink->total_ht);
+        } ?></td>
+    <td class="right"><?php echo $objectlink->getLibStatut(3); ?></td>
+    <td class="right"><a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a></td>
 </tr>
 <?php
 }

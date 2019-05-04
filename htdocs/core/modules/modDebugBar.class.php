@@ -16,7 +16,7 @@
  */
 
 /**
- * 	\defgroup   debugbar     Debug bar
+ *     \defgroup   debugbar     Debug bar
  *  \brief      debugbar module descriptor.
  *
  *  \file       htdocs/core/modules/modDebugBar.class.php
@@ -27,7 +27,7 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *	Class to describe and enable module
+ *    Class to describe and enable module
  */
 class modDebugBar extends DolibarrModules
 {
@@ -35,7 +35,7 @@ class modDebugBar extends DolibarrModules
     /**
      *   Constructor. Define names, constants, directories, boxes, permissions
      *
-     *   @param      DoliDB		$db      Database handler
+     *   @param      DoliDB        $db      Database handler
      */
     public function __construct($db)
     {
@@ -70,7 +70,7 @@ class modDebugBar extends DolibarrModules
 
         // Constants
         // Example: $this->const=array(0=>array('MYMODULE_MYNEWCONST1','chaine','myvalue','This is a constant to add',0),
-        //							  1=>array('MYMODULE_MYNEWCONST2','chaine','myvalue','This is another constant to add',0) );
+        //                              1=>array('MYMODULE_MYNEWCONST2','chaine','myvalue','This is another constant to add',0) );
         $this->const = array();
 
         // Boxes
@@ -92,8 +92,8 @@ class modDebugBar extends DolibarrModules
      *      The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
      *      It also creates data directories.
      *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
-     *      @return     int             	1 if OK, 0 if KO
+     *      @param      string    $options    Options when enabling module ('', 'noboxes')
+     *      @return     int                 1 if OK, 0 if KO
      */
     public function init($options = '')
     {

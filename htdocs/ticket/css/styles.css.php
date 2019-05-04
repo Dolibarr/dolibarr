@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2018	Laurent Destailleur		<eldy@users.sourceforge.net>
+/* Copyright (C) 2018    Laurent Destailleur        <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,14 +16,14 @@
  */
 
 /**
- *		\file       htdocs/ticket/css/styles.css.php
- *		\brief      File for CSS style sheet for ticket module
+ *        \file       htdocs/ticket/css/styles.css.php
+ *        \brief      File for CSS style sheet for ticket module
  */
 
-//if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled because need to load personalized language
-//if (! defined('NOREQUIREDB'))   define('NOREQUIREDB','1');	// Not disabled to increase speed. Language code is found on url.
+//if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');    // Not disabled because need to load personalized language
+//if (! defined('NOREQUIREDB'))   define('NOREQUIREDB','1');    // Not disabled to increase speed. Language code is found on url.
 if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC', '1');
-//if (! defined('NOREQUIRETRAN')) define('NOREQUIRETRAN','1');	// Not disabled because need to do translations
+//if (! defined('NOREQUIRETRAN')) define('NOREQUIRETRAN','1');    // Not disabled because need to do translations
 if (! defined('NOCSRFCHECK'))     define('NOCSRFCHECK', 1);
 if (! defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL', 1);
 if (! defined('NOLOGIN'))         define('NOLOGIN', 1);          // File must be accessed by logon page so without login
@@ -68,11 +68,11 @@ div.ticketform {
     border-radius: 10px 10px 10px 10px;
     margin: 1.5em;
     background : #ffffff;
-	text-align: center;
+    text-align: center;
 }
 
 div.ticketform .index_create, .index_display {
-	display: inline-block;
+    display: inline-block;
     width: 200px;
     height: 58px;
     text-align: center;

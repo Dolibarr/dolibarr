@@ -17,9 +17,9 @@
  */
 
 /**
- * \file		htdocs/accountancy/admin/closure.php
- * \ingroup		Advanced accountancy
- * \brief		Setup page to configure accounting expert module
+ * \file        htdocs/accountancy/admin/closure.php
+ * \ingroup        Advanced accountancy
+ * \brief        Setup page to configure accounting expert module
  */
 require '../../main.inc.php';
 
@@ -33,7 +33,7 @@ $langs->loadLangs(array("compta","admin","accountancy"));
 
 // Security check
 if (empty($user->rights->accounting->chartofaccount)) {
-	accessforbidden();
+    accessforbidden();
 }
 
 $action = GETPOST('action', 'aZ09');
@@ -61,19 +61,19 @@ if ($action == 'update') {
         $error ++;
     }
 
-	foreach ($list_account_main as $constname) {
-		$constvalue = GETPOST($constname, 'alpha');
+    foreach ($list_account_main as $constname) {
+        $constvalue = GETPOST($constname, 'alpha');
 
-		if (! dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
-			$error ++;
-		}
-	}
+        if (! dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
+            $error ++;
+        }
+    }
 
-	if (! $error) {
-		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	} else {
-		setEventMessages($langs->trans("Error"), null, 'errors');
-	}
+    if (! $error) {
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    } else {
+        setEventMessages($langs->trans("Error"), null, 'errors');
+    }
 }
 
 

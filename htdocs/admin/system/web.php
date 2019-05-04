@@ -16,8 +16,8 @@
  */
 
 /**
- *	    \file       htdocs/admin/system/web.php
- *		\brief      Page with web server system information
+ *        \file       htdocs/admin/system/web.php
+ *        \brief      Page with web server system information
  */
 
 require '../../main.inc.php';
@@ -58,14 +58,14 @@ $labeluser=dol_getwebuser('user');
 $labelgroup=dol_getwebuser('group');
 if ($labeluser && $labelgroup)
 {
-	print '<tr><td>'.$langs->trans("WebUserGroup")." (env vars)</td><td>".$labeluser.'/'.$labelgroup."</td></tr>\n";
+    print '<tr><td>'.$langs->trans("WebUserGroup")." (env vars)</td><td>".$labeluser.'/'.$labelgroup."</td></tr>\n";
 }
 // Web user group real (detected by 'id' external command)
 $arrayout=array(); $varout=0;
 exec('id', $arrayout, $varout);
-if (empty($varout))	// Test command is ok. Work only on Linux OS.
+if (empty($varout))    // Test command is ok. Work only on Linux OS.
 {
-	print '<tr><td>'.$langs->trans("WebUserGroup")." (real, 'id' command)</td><td>".join(',', $arrayout)."</td></tr>\n";
+    print '<tr><td>'.$langs->trans("WebUserGroup")." (real, 'id' command)</td><td>".join(',', $arrayout)."</td></tr>\n";
 }
 print '</table>';
 print '</div>';

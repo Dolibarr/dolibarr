@@ -29,7 +29,7 @@
  require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
 
 /**
- *	Parent class to manage intervention document templates
+ *    Parent class to manage intervention document templates
  */
 abstract class ModelePDFProduct extends CommonDocGenerator
 {
@@ -43,9 +43,9 @@ abstract class ModelePDFProduct extends CommonDocGenerator
     /**
      *  Return list of active generation modules
      *
-     *  @param	DoliDB	$db     			Database handler
-     *  @param  integer	$maxfilenamelength  Max length of value to show
-     *  @return	array						List of templates
+     *  @param    DoliDB    $db                 Database handler
+     *  @param  integer    $maxfilenamelength  Max length of value to show
+     *  @return    array                        List of templates
      */
     public static function liste_modeles($db, $maxfilenamelength = 0)
     {
@@ -70,8 +70,8 @@ abstract class ModeleProductCode
 
     /**     Renvoi la description par defaut du modele de numerotation
      *
-     *		@param	Translate	$langs		Object langs
-     *      @return string      			Texte descripif
+     *        @param    Translate    $langs        Object langs
+     *      @return string                  Texte descripif
      */
     public function info($langs)
     {
@@ -81,8 +81,8 @@ abstract class ModeleProductCode
 
     /**     Renvoi nom module
      *
-     *		@param	Translate	$langs		Object langs
-     *      @return string      			Nom du module
+     *        @param    Translate    $langs        Object langs
+     *      @return string                  Nom du module
      */
     public function getNom($langs)
     {
@@ -92,8 +92,8 @@ abstract class ModeleProductCode
 
     /**     Renvoi un exemple de numerotation
      *
-     *		@param	Translate	$langs		Object langs
-     *      @return string      			Example
+     *        @param    Translate    $langs        Object langs
+     *      @return string                  Example
      */
     public function getExample($langs)
     {
@@ -114,9 +114,9 @@ abstract class ModeleProductCode
     /**
      *  Return next value available
      *
-     *	@param	Product		$objproduct		Object product
-     *	@param	int			$type		Type
-     *  @return string      			Value
+     *    @param    Product        $objproduct        Object product
+     *    @param    int            $type        Type
+     *  @return string                  Value
      */
     public function getNextValue($objproduct = 0, $type = -1)
     {
@@ -145,9 +145,9 @@ abstract class ModeleProductCode
     /**
      *  Renvoi la liste des modeles de numérotation
      *
-     *  @param	DoliDB	$db     			Database handler
-     *  @param  integer	$maxfilenamelength  Max length of value to show
-     *  @return	array						List of numbers
+     *  @param    DoliDB    $db                 Database handler
+     *  @param  integer    $maxfilenamelength  Max length of value to show
+     *  @return    array                        List of numbers
      */
     public static function liste_modeles($db, $maxfilenamelength = 0)
     {
@@ -177,10 +177,10 @@ abstract class ModeleProductCode
     /**
      *  Return description of module parameters
      *
-     *  @param	Translate	$langs      Output language
-     *  @param	Product		$product	Product object
-     *  @param	int			$type		-1=Nothing, 0=Customer, 1=Supplier
-     *  @return	string					HTML translated description
+     *  @param    Translate    $langs      Output language
+     *  @param    Product        $product    Product object
+     *  @param    int            $type        -1=Nothing, 0=Customer, 1=Supplier
+     *  @return    string                    HTML translated description
      */
     public function getToolTip($langs, $product, $type)
     {
@@ -247,7 +247,7 @@ abstract class ModeleProductCode
     /**
      *   Check if mask/numbering use prefix
      *
-     *   @return	int		0=no, 1=yes
+     *   @return    int        0=no, 1=yes
      */
     public function verif_prefixIsUsed()
     {

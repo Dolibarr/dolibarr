@@ -17,7 +17,7 @@
 
 /**
  *    \file     htdocs/ticket/agenda.php
- *    \ingroup	ticket
+ *    \ingroup    ticket
  */
 
 require '../main.inc.php';

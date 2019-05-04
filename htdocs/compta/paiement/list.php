@@ -24,7 +24,7 @@
  */
 
 /**
- *	\file       htdocs/compta/paiement/list.php
+ *    \file       htdocs/compta/paiement/list.php
  *  \ingroup    compta
  *  \brief      Payment page for customer invoices
  */
@@ -39,16 +39,16 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'banks', 'compta', 'companies'));
 
-$action		= GETPOST('action', 'alpha');
-$confirm	= GETPOST('confirm', 'alpha');
+$action        = GETPOST('action', 'alpha');
+$confirm    = GETPOST('confirm', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
 
-$facid	= GETPOST('facid', 'int');
-$socid	= GETPOST('socid', 'int');
-$userid	= GETPOST('userid', 'int');
-$day	= GETPOST('day', 'int');
-$month	= GETPOST('month', 'int');
-$year	= GETPOST('year', 'int');
+$facid    = GETPOST('facid', 'int');
+$socid    = GETPOST('socid', 'int');
+$userid    = GETPOST('userid', 'int');
+$day    = GETPOST('day', 'int');
+$month    = GETPOST('month', 'int');
+$year    = GETPOST('year', 'int');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -89,12 +89,12 @@ $arrayfields=array();
 
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
 {
-	$search_ref="";
-	$search_account="";
-	$search_amount="";
+    $search_ref="";
+    $search_account="";
+    $search_amount="";
     $search_paymenttype="";
     $search_payment_num="";
-	$search_company="";
+    $search_company="";
     $day='';
     $year='';
     $month='';
@@ -117,20 +117,20 @@ if (GETPOST("orphelins", "alpha"))
     $sql = "SELECT p.rowid, p.ref, p.datep as dp, p.amount,";
     $sql.= " p.statut, p.num_paiement,";
     $sql.= " c.code as paiement_code";
-	// Add fields for extrafields
-	foreach ($extrafields->attribute_list as $key => $val) $sql.=",ef.".$key.' as options_'.$key;
-	// Add fields from hooks
-	$parameters=array();
-	$reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
-	$sql.=$hookmanager->resPrint;
+    // Add fields for extrafields
+    foreach ($extrafields->attribute_list as $key => $val) $sql.=",ef.".$key.' as options_'.$key;
+    // Add fields from hooks
+    $parameters=array();
+    $reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
+    $sql.=$hookmanager->resPrint;
     $sql.= " FROM ".MAIN_DB_PREFIX."paiement as p LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_paiement = c.id";
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON p.rowid = pf.fk_paiement";
     $sql.= " WHERE p.entity IN (" . getEntity('invoice').")";
     $sql.= " AND pf.fk_facture IS NULL";
-	// Add where from hooks
-	$parameters=array();
-	$reshook=$hookmanager->executeHooks('printFieldListWhere', $parameters);    // Note that $action and $object may have been modified by hook
-	$sql.=$hookmanager->resPrint;
+    // Add where from hooks
+    $parameters=array();
+    $reshook=$hookmanager->executeHooks('printFieldListWhere', $parameters);    // Note that $action and $object may have been modified by hook
+    $sql.=$hookmanager->resPrint;
 }
 else
 {
@@ -139,12 +139,12 @@ else
     $sql.= " c.code as paiement_code,";
     $sql.= " ba.rowid as bid, ba.ref as bref, ba.label as blabel, ba.number, ba.account_number as account_number, ba.fk_accountancy_journal as accountancy_journal,";
     $sql.= " s.rowid as socid, s.nom as name, s.email";
-	// Add fields for extrafields
-	foreach ($extrafields->attribute_list as $key => $val) $sql.=",ef.".$key.' as options_'.$key;
-	// Add fields from hooks
-	$parameters=array();
-	$reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
-	$sql.=$hookmanager->resPrint;
+    // Add fields for extrafields
+    foreach ($extrafields->attribute_list as $key => $val) $sql.=",ef.".$key.' as options_'.$key;
+    // Add fields from hooks
+    $parameters=array();
+    $reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
+    $sql.=$hookmanager->resPrint;
     $sql.= " FROM ".MAIN_DB_PREFIX."paiement as p";
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_paiement = c.id";
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON p.fk_bank = b.rowid";
@@ -169,29 +169,29 @@ else
     }
     // Search criteria
     $sql.= dolSqlDateFilter("p.datep", $day, $month, $year);
-    if ($search_ref)       		    $sql .= natural_search('p.ref', $search_ref);
-    if ($search_account > 0)      	$sql .=" AND b.fk_account=".$search_account;
+    if ($search_ref)                   $sql .= natural_search('p.ref', $search_ref);
+    if ($search_account > 0)          $sql .=" AND b.fk_account=".$search_account;
     if ($search_paymenttype != "")  $sql .=" AND c.code='".$db->escape($search_paymenttype)."'";
     if ($search_payment_num != '')  $sql .= natural_search('p.num_paiement', $search_payment_num);
-    if ($search_amount)      		$sql .= natural_search('p.amount', $search_amount, 1);
-    if ($search_company)     		$sql .= natural_search('s.nom', $search_company);
-	// Add where from hooks
-	$parameters=array();
-	$reshook=$hookmanager->executeHooks('printFieldListWhere', $parameters);    // Note that $action and $object may have been modified by hook
-	$sql.=$hookmanager->resPrint;
+    if ($search_amount)              $sql .= natural_search('p.amount', $search_amount, 1);
+    if ($search_company)             $sql .= natural_search('s.nom', $search_company);
+    // Add where from hooks
+    $parameters=array();
+    $reshook=$hookmanager->executeHooks('printFieldListWhere', $parameters);    // Note that $action and $object may have been modified by hook
+    $sql.=$hookmanager->resPrint;
 }
 $sql.= $db->order($sortfield, $sortorder);
 
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
-	$result = $db->query($sql);
-	$nbtotalofrecords = $db->num_rows($result);
-	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
-	{
-		$page = 0;
-		$offset = 0;
-	}
+    $result = $db->query($sql);
+    $nbtotalofrecords = $db->num_rows($result);
+    if (($page * $limit) > $nbtotalofrecords)    // if total resultset is smaller then paging size (filtering), goto and load page 0
+    {
+        $page = 0;
+        $offset = 0;
+    }
 }
 
 $sql.= $db->plimit($limit+1, $offset);
@@ -248,13 +248,13 @@ if ($resql)
     print '</td>';
     if (! empty($conf->banque->enabled))
     {
-	    print '<td class="liste_titre">';
-	    $form->select_comptes($search_account, 'search_account', 0, '', 1);
-	    print '</td>';
+        print '<td class="liste_titre">';
+        $form->select_comptes($search_account, 'search_account', 0, '', 1);
+        print '</td>';
     }
     print '<td class="liste_titre right">';
     print '<input class="flat" type="text" size="4" name="search_amount" value="'.dol_escape_htmltag($search_amount).'">';
-	print '</td>';
+    print '</td>';
     print '<td class="liste_titre right">';
     $searchpicto=$form->showFilterAndCheckAddButtons(0);
     print $searchpicto;
@@ -279,7 +279,7 @@ if ($resql)
     print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "p.amount", "", $param, 'class="right"', $sortfield, $sortorder);
     //print_liste_field_titre("Invoices"),"","","",$param,'class="left"',$sortfield,$sortorder);
 
-	$parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
+    $parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
     $reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters);    // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
 
@@ -331,28 +331,28 @@ if ($resql)
         if (! $i) $totalarray['nbfield']++;
 
         // Account
-	    if (! empty($conf->banque->enabled))
-	    {
-	        print '<td>';
-	        if ($objp->bid > 0)
-	        {
-	            $accountstatic->id=$objp->bid;
-	            $accountstatic->ref=$objp->bref;
-	            $accountstatic->label=$objp->blabel;
-	            $accountstatic->number=$objp->number;
-	            $accountstatic->account_number=$objp->account_number;
+        if (! empty($conf->banque->enabled))
+        {
+            print '<td>';
+            if ($objp->bid > 0)
+            {
+                $accountstatic->id=$objp->bid;
+                $accountstatic->ref=$objp->bref;
+                $accountstatic->label=$objp->blabel;
+                $accountstatic->number=$objp->number;
+                $accountstatic->account_number=$objp->account_number;
 
-				$accountingjournal = new AccountingJournal($db);
-				$accountingjournal->fetch($objp->accountancy_journal);
-				$accountstatic->accountancy_journal = $accountingjournal->code;
+                $accountingjournal = new AccountingJournal($db);
+                $accountingjournal->fetch($objp->accountancy_journal);
+                $accountstatic->accountancy_journal = $accountingjournal->code;
 
-	            print $accountstatic->getNomUrl(1);
-	        }
-	        print '</td>';
-	        if (! $i) $totalarray['nbfield']++;
-	    }
+                print $accountstatic->getNomUrl(1);
+            }
+            print '</td>';
+            if (! $i) $totalarray['nbfield']++;
+        }
 
-	    // Amount
+        // Amount
         print '<td class="right">'.price($objp->amount).'</td>';
         if (! $i) $totalarray['nbfield']++;
         $totalarray['pos'][7]='amount';
@@ -368,10 +368,10 @@ if ($resql)
             if (! $i) $totalarray['nbfield']++;
         }
 
-		print '<td></td>';
-		if (! $i) $totalarray['nbfield']++;
+        print '<td></td>';
+        if (! $i) $totalarray['nbfield']++;
 
-		print '</tr>';
+        print '</tr>';
 
         $i++;
     }

@@ -17,9 +17,9 @@
  */
 
 /**
- *	\file       htdocs/ecm/search.php
- *	\ingroup    ecm
- *	\brief      Page to make advanced search into ECM
+ *    \file       htdocs/ecm/search.php
+ *    \ingroup    ecm
+ *    \brief      Page to make advanced search into ECM
  */
 
 require '../main.inc.php';
@@ -65,12 +65,12 @@ if (! $sortfield) $sortfield="label";
 $ecmdir = new EcmDirectory($db);
 if (! empty($section))
 {
-	$result=$ecmdir->fetch($section);
-	if (! $result > 0)
-	{
-		dol_print_error($db, $ecmdir->error);
-		exit;
-	}
+    $result=$ecmdir->fetch($section);
+    if (! $result > 0)
+    {
+        dol_print_error($db, $ecmdir->error);
+        exit;
+    }
 }
 
 
@@ -156,22 +156,22 @@ $buthtml='<td rowspan="'.$rowspan.'"><input type="submit" value="'.$langs->trans
 $butshown=0;
 foreach($sectionauto as $sectioncur)
 {
-	if (! $sectioncur['test']) continue;
-	//if ($butshown % 2 == 0)
-		print '<tr '. $bc[false].'>';
-	print "<td>".$sectioncur['label'].':</td>';
-	print '<td';
-	//if ($butshown % 2 == 1)
-		print ' class="right"';
-	print '>';
-	print '<input type="text" name="search_'.$sectioncur['module'].'" class="flat" size="14">';
-	print '</td>';
-	//if ($butshown % 2 == 1)
-		print '</tr>';
-	$butshown++;
+    if (! $sectioncur['test']) continue;
+    //if ($butshown % 2 == 0)
+        print '<tr '. $bc[false].'>';
+    print "<td>".$sectioncur['label'].':</td>';
+    print '<td';
+    //if ($butshown % 2 == 1)
+        print ' class="right"';
+    print '>';
+    print '<input type="text" name="search_'.$sectioncur['module'].'" class="flat" size="14">';
+    print '</td>';
+    //if ($butshown % 2 == 1)
+        print '</tr>';
+    $butshown++;
 }
 //if ($butshown % 2 == 1)
-//	print '<td>&nbsp;</td><td>&nbsp;</td></tr>';
+//    print '<td>&nbsp;</td><td>&nbsp;</td></tr>';
 
 print '<tr '. $bc[false].'><td colspan="4" class="center"><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
 print "</table></form>";
@@ -191,9 +191,9 @@ $param='&amp;section='.$section;
 $textifempty=($section?$langs->trans("NoFileFound"):$langs->trans("ECMSelectASection"));
 $formfile->list_of_documents($filearray, '', 'ecm', $param, 1, $relativepath, $user->rights->ecm->upload, 1, $textifempty);
 
-//	print '<table width="100%" class="border">';
+//    print '<table width="100%" class="border">';
 
-//	print '<tr><td> </td></tr></table>';
+//    print '<tr><td> </td></tr></table>';
 
 
 

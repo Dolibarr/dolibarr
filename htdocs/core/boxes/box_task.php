@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2012-2018 Charlene BENKE 	<charlie@patas-monkey.com>
+/* Copyright (C) 2012-2018 Charlene BENKE     <charlie@patas-monkey.com>
  * Copyright (C) 2015-2019  Frederic France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -42,7 +42,7 @@ class box_task extends ModeleBoxes
     public $db;
 
     public $param;
-    public $enabled = 0;		// Disabled because bugged.
+    public $enabled = 0;        // Disabled because bugged.
 
     public $info_box_head = array();
     public $info_box_contents = array();
@@ -67,46 +67,46 @@ class box_task extends ModeleBoxes
         $this->hidden = ! ($user->rights->projet->lire);
     }
 
-	/**
-	 *  Load data for box to show them later
-	 *
-	 *  @param  int     $max        Maximum number of records to load
-	 *  @return void
-	 */
-	public function loadBox($max = 5)
-	{
-		global $conf, $user, $langs, $db;
+    /**
+     *  Load data for box to show them later
+     *
+     *  @param  int     $max        Maximum number of records to load
+     *  @return void
+     */
+    public function loadBox($max = 5)
+    {
+        global $conf, $user, $langs, $db;
 
-		$this->max=$max;
+        $this->max=$max;
 
-		$totalMnt = 0;
-		$totalnb = 0;
-		$totalDuree=0;
-		$totalplannedtot=0;
-		$totaldurationtot=0;
+        $totalMnt = 0;
+        $totalnb = 0;
+        $totalDuree=0;
+        $totalplannedtot=0;
+        $totaldurationtot=0;
 
-		include_once DOL_DOCUMENT_ROOT."/projet/class/task.class.php";
-		$taskstatic=new Task($db);
+        include_once DOL_DOCUMENT_ROOT."/projet/class/task.class.php";
+        $taskstatic=new Task($db);
 
 
-		$textHead = $langs->trans("Tasks")."&nbsp;".date("Y");
-		$this->info_box_head = array('text' => $textHead, 'limit'=> dol_strlen($textHead));
+        $textHead = $langs->trans("Tasks")."&nbsp;".date("Y");
+        $this->info_box_head = array('text' => $textHead, 'limit'=> dol_strlen($textHead));
 
-		// list the summary of the orders
-		if ($user->rights->projet->lire) {
-			// FIXME fk_statut on a task is not be used. We use the percent. This means this box is useless.
-			$sql = "SELECT pt.fk_statut, count(DISTINCT pt.rowid) as nb, sum(ptt.task_duration) as durationtot, sum(pt.planned_workload) as plannedtot";
-			$sql.= " FROM ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."projet_task_time as ptt";
-			$sql.= " WHERE pt.datec BETWEEN '".$this->db->idate(dol_get_first_day(date("Y"), 1))."' AND '".$this->db->idate(dol_get_last_day(date("Y"), 12))."'";
-			$sql.= " AND pt.rowid = ptt.fk_task";
-			$sql.= " GROUP BY pt.fk_statut ";
-			$sql.= " ORDER BY pt.fk_statut DESC";
-			$sql.= $db->plimit($max, 0);
+        // list the summary of the orders
+        if ($user->rights->projet->lire) {
+            // FIXME fk_statut on a task is not be used. We use the percent. This means this box is useless.
+            $sql = "SELECT pt.fk_statut, count(DISTINCT pt.rowid) as nb, sum(ptt.task_duration) as durationtot, sum(pt.planned_workload) as plannedtot";
+            $sql.= " FROM ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."projet_task_time as ptt";
+            $sql.= " WHERE pt.datec BETWEEN '".$this->db->idate(dol_get_first_day(date("Y"), 1))."' AND '".$this->db->idate(dol_get_last_day(date("Y"), 12))."'";
+            $sql.= " AND pt.rowid = ptt.fk_task";
+            $sql.= " GROUP BY pt.fk_statut ";
+            $sql.= " ORDER BY pt.fk_statut DESC";
+            $sql.= $db->plimit($max, 0);
 
-			$result = $db->query($sql);
-			$i = 0;
-			if ($result) {
-				$num = $db->num_rows($result);
+            $result = $db->query($sql);
+            $i = 0;
+            if ($result) {
+                $num = $db->num_rows($result);
                 while ($i < $num) {
                     $objp = $db->fetch_object($result);
                     $this->info_box_contents[$i][] = array(
@@ -119,39 +119,39 @@ class box_task extends ModeleBoxes
                         'text' => $objp->nb."&nbsp;".$langs->trans("Tasks"),
                         'url' => DOL_URL_ROOT."/projet/tasks/list.php?leftmenu=projects&viewstatut=".$objp->fk_statut,
                     );
-					$totalnb += $objp->nb;
-					$this->info_box_contents[$i][] = array('td' => 'class="right"', 'text' => ConvertSecondToTime($objp->plannedtot, 'all', 25200, 5));
-					$totalplannedtot += $objp->plannedtot;
-					$this->info_box_contents[$i][] = array('td' => 'class="right"', 'text' => ConvertSecondToTime($objp->durationtot, 'all', 25200, 5));
-					$totaldurationtot += $objp->durationtot;
+                    $totalnb += $objp->nb;
+                    $this->info_box_contents[$i][] = array('td' => 'class="right"', 'text' => ConvertSecondToTime($objp->plannedtot, 'all', 25200, 5));
+                    $totalplannedtot += $objp->plannedtot;
+                    $this->info_box_contents[$i][] = array('td' => 'class="right"', 'text' => ConvertSecondToTime($objp->durationtot, 'all', 25200, 5));
+                    $totaldurationtot += $objp->durationtot;
 
-					$this->info_box_contents[$i][] = array('td' => 'class="right" width="18"', 'text' => $taskstatic->LibStatut($objp->fk_statut, 3));
+                    $this->info_box_contents[$i][] = array('td' => 'class="right" width="18"', 'text' => $taskstatic->LibStatut($objp->fk_statut, 3));
 
-					$i++;
-				}
-			} else {
+                    $i++;
+                }
+            } else {
                 dol_print_error($this->db);
             }
-		}
+        }
 
-		// Add the sum at the bottom of the boxes
-		$this->info_box_contents[$i][] = array('tr' => 'class="liste_total"', 'td' => '', 'text' => $langs->trans("Total")."&nbsp;".$textHead);
-		$this->info_box_contents[$i][] = array('td' => 'class="right" ', 'text' => number_format($totalnb, 0, ',', ' ')."&nbsp;".$langs->trans("Tasks"));
-		$this->info_box_contents[$i][] = array('td' => 'class="right" ', 'text' => ConvertSecondToTime($totalplannedtot, 'all', 25200, 5));
-		$this->info_box_contents[$i][] = array('td' => 'class="right" ', 'text' => ConvertSecondToTime($totaldurationtot, 'all', 25200, 5));
-		$this->info_box_contents[$i][] = array('td' => '', 'text' => "");
-	}
+        // Add the sum at the bottom of the boxes
+        $this->info_box_contents[$i][] = array('tr' => 'class="liste_total"', 'td' => '', 'text' => $langs->trans("Total")."&nbsp;".$textHead);
+        $this->info_box_contents[$i][] = array('td' => 'class="right" ', 'text' => number_format($totalnb, 0, ',', ' ')."&nbsp;".$langs->trans("Tasks"));
+        $this->info_box_contents[$i][] = array('td' => 'class="right" ', 'text' => ConvertSecondToTime($totalplannedtot, 'all', 25200, 5));
+        $this->info_box_contents[$i][] = array('td' => 'class="right" ', 'text' => ConvertSecondToTime($totaldurationtot, 'all', 25200, 5));
+        $this->info_box_contents[$i][] = array('td' => '', 'text' => "");
+    }
 
-	/**
-	 *	Method to show box
-	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
-	 *	@return	string
-	 */
-	public function showBox($head = null, $contents = null, $nooutput = 0)
-	{
-		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
-	}
+    /**
+     *    Method to show box
+     *
+     *    @param    array    $head       Array with properties of box title
+     *    @param  array    $contents   Array with properties of box lines
+     *  @param    int        $nooutput    No print, only return string
+     *    @return    string
+     */
+    public function showBox($head = null, $contents = null, $nooutput = 0)
+    {
+        return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
+    }
 }

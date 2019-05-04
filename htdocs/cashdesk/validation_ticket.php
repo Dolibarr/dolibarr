@@ -16,9 +16,9 @@
  */
 
 /**
- *	\file       htdocs/cashdesk/validation_ticket.php
- *	\ingroup    cashdesk
- *	\brief      validation_ticket.php
+ *    \file       htdocs/cashdesk/validation_ticket.php
+ *    \ingroup    cashdesk
+ *    \brief      validation_ticket.php
  */
 
 require '../main.inc.php';

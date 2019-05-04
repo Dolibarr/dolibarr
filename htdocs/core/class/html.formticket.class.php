@@ -90,9 +90,9 @@ class FormTicket
     public $param = array();
 
     /**
-	 * @var string Error code (or message)
-	 */
-	public $error;
+     * @var string Error code (or message)
+     */
+    public $error;
 
 
     /**
@@ -123,7 +123,7 @@ class FormTicket
     /**
      * Show the form to input ticket
      *
-     * @param  int	 $withdolfichehead			With dol_fiche_head
+     * @param  int     $withdolfichehead            With dol_fiche_head
      * @return void
      */
     public function showForm($withdolfichehead = 0)
@@ -155,7 +155,7 @@ class FormTicket
         print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
         print '<input type="hidden" name="action" value="' . $this->action . '">';
         foreach ($this->param as $key => $value) {
-        	print '<input type="hidden" name="' . $key . '" value="' . $value . '">';
+            print '<input type="hidden" name="' . $key . '" value="' . $value . '">';
         }
         print '<input type="hidden" name="fk_user_create" value="' . $this->fk_user_create . '">';
 
@@ -442,7 +442,7 @@ class FormTicket
      *      @param  int    $empty       1=peut etre vide, 0 sinon
      *      @param  int    $noadmininfo 0=Add admin info, 1=Disable admin info
      *      @param  int    $maxlength   Max length of label
-     *      @param	string	$morecss	More CSS
+     *      @param    string    $morecss    More CSS
      *      @return void
      */
     public function selectTypesTickets($selected = '', $htmlname = 'tickettype', $filtertype = '', $format = 0, $empty = 0, $noadmininfo = 0, $maxlength = 0, $morecss = '')
@@ -542,7 +542,7 @@ class FormTicket
      *      @param  int    $empty       1=peut etre vide, 0 sinon
      *      @param  int    $noadmininfo 0=Add admin info, 1=Disable admin info
      *      @param  int    $maxlength   Max length of label
-     *      @param	string	$morecss	More CSS
+     *      @param    string    $morecss    More CSS
      *      @return void
      */
     public function selectGroupTickets($selected = '', $htmlname = 'ticketcategory', $filtertype = '', $format = 0, $empty = 0, $noadmininfo = 0, $maxlength = 0, $morecss = '')
@@ -643,7 +643,7 @@ class FormTicket
      *      @param  int    $empty       1=peut etre vide, 0 sinon
      *      @param  int    $noadmininfo 0=Add admin info, 1=Disable admin info
      *      @param  int    $maxlength   Max length of label
-     *      @param	string	$morecss	More CSS
+     *      @param    string    $morecss    More CSS
      *      @return void
      */
     public function selectSeveritiesTickets($selected = '', $htmlname = 'ticketseverity', $filtertype = '', $format = 0, $empty = 0, $noadmininfo = 0, $maxlength = 0, $morecss = '')

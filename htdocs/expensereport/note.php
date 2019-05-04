@@ -46,17 +46,17 @@ $result=restrictedArea($user, 'expensereport', $id, 'expensereport');
 $object = new ExpenseReport($db);
 if (! $object->fetch($id, $ref) > 0)
 {
-	dol_print_error($db);
+    dol_print_error($db);
 }
 
-$permissionnote=$user->rights->expensereport->creer;	// Used by the include of actions_setnotes.inc.php
+$permissionnote=$user->rights->expensereport->creer;    // Used by the include of actions_setnotes.inc.php
 
 
 /*
  * Actions
  */
 
-include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, not include_once
+include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';    // Must be include, not include_once
 
 
 /*
@@ -70,31 +70,31 @@ $form = new Form($db);
 
 if ($id > 0 || ! empty($ref))
 {
-	$object = new ExpenseReport($db);
-	$object->fetch($id, $ref);
-	$object->info($object->id);
+    $object = new ExpenseReport($db);
+    $object->fetch($id, $ref);
+    $object->info($object->id);
 
-	$head = expensereport_prepare_head($object);
+    $head = expensereport_prepare_head($object);
 
-	dol_fiche_head($head, 'note', $langs->trans("ExpenseReport"), -1, 'trip');
+    dol_fiche_head($head, 'note', $langs->trans("ExpenseReport"), -1, 'trip');
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/expensereport/list.php?restore_lastsearch_values=1'.(! empty($socid)?'&socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+    $linkback = '<a href="'.DOL_URL_ROOT.'/expensereport/list.php?restore_lastsearch_values=1'.(! empty($socid)?'&socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
-	$morehtmlref='<div class="refidno">';
+    $morehtmlref='<div class="refidno">';
     $morehtmlref.='</div>';
 
 
-	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+    dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
     print '<div class="fichecenter">';
     print '<div class="underbanner clearboth"></div>';
 
-	$cssclass="titlefield";
-	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
+    $cssclass="titlefield";
+    include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
-	print '</div>';
+    print '</div>';
 
-	dol_fiche_end();
+    dol_fiche_end();
 }
 
 // End of page

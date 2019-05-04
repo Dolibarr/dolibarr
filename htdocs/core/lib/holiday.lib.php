@@ -17,22 +17,22 @@
  */
 
 /**
- *	    \file       htdocs/core/lib/holiday.lib.php
- *		\brief      Ensemble de fonctions de base pour les adherents
+ *        \file       htdocs/core/lib/holiday.lib.php
+ *        \brief      Ensemble de fonctions de base pour les adherents
  */
 
 /**
  *  Return array head with list of tabs to view object informations
  *
- *  @param	Object	$object         Holiday
- *  @return array           		head
+ *  @param    Object    $object         Holiday
+ *  @return array                   head
  */
 function holiday_prepare_head($object)
 {
-	global $db, $langs, $conf, $user;
+    global $db, $langs, $conf, $user;
 
-	$h = 0;
-	$head = array();
+    $h = 0;
+    $head = array();
 
     $head[$h][0] = DOL_URL_ROOT.'/holiday/card.php?id='.$object->id;
     $head[$h][1] = $langs->trans("Card");
@@ -54,26 +54,26 @@ function holiday_prepare_head($object)
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
-    // $this->tabs = array('entity:-tabname);   												to remove a tab
+    // $this->tabs = array('entity:-tabname);                                                   to remove a tab
     complete_head_from_modules($conf, $langs, $object, $head, $h, 'holiday');
 
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'holiday', 'remove');
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'holiday', 'remove');
 
-	return $head;
+    return $head;
 }
 
 
 /**
  *  Return array head with list of tabs to view object informations
  *
-  *  @return array           		head
+  *  @return array                   head
  */
 function holiday_admin_prepare_head()
 {
-	global $db, $langs, $conf, $user;
+    global $db, $langs, $conf, $user;
 
-	$h = 0;
-	$head = array();
+    $h = 0;
+    $head = array();
 
     $head[$h][0] = DOL_URL_ROOT.'/admin/holiday.php';
     $head[$h][1] = $langs->trans("Setup");
@@ -83,10 +83,10 @@ function holiday_admin_prepare_head()
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
-    // $this->tabs = array('entity:-tabname);   												to remove a tab
+    // $this->tabs = array('entity:-tabname);                                                   to remove a tab
     complete_head_from_modules($conf, $langs, null, $head, $h, 'holiday_admin');
 
-	complete_head_from_modules($conf, $langs, null, $head, $h, 'holiday_admin', 'remove');
+    complete_head_from_modules($conf, $langs, null, $head, $h, 'holiday_admin', 'remove');
 
-	return $head;
+    return $head;
 }

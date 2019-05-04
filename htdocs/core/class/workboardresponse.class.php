@@ -18,58 +18,58 @@
  */
 
 /**
- *	\file       htdocs/core/class/WorkboardResponse.class.php
- *	\brief      Class that represents response of load_board functions
+ *    \file       htdocs/core/class/WorkboardResponse.class.php
+ *    \brief      Class that represents response of load_board functions
  */
 
 class WorkboardResponse
 {
 
-	/**
-	 * Image URL to represent the board item
-	 * @var string
-	 */
-	public $img;
+    /**
+     * Image URL to represent the board item
+     * @var string
+     */
+    public $img;
 
-	/**
-	 * Label of the warning
-	 * @var string
-	 */
-	public $label;
+    /**
+     * Label of the warning
+     * @var string
+     */
+    public $label;
 
-	/**
-	 * URL to list to do items
-	 * @var string
-	 */
-	public $url;
+    /**
+     * URL to list to do items
+     * @var string
+     */
+    public $url;
 
-	/**
-	 * (optional) If set, to do late items will link to this url
-	 * @var string
-	 */
-	public $url_late;
+    /**
+     * (optional) If set, to do late items will link to this url
+     * @var string
+     */
+    public $url_late;
 
-	/**
-	 * Delay time to mark an item as late. In number of days.
-	 * @var double
-	 */
-	public $warning_delay;
+    /**
+     * Delay time to mark an item as late. In number of days.
+     * @var double
+     */
+    public $warning_delay;
 
-	/**
-	 * Number of items to do
-	 * @var int
-	 */
-	public $nbtodo = 0;
+    /**
+     * Number of items to do
+     * @var int
+     */
+    public $nbtodo = 0;
 
-	/**
-	 * Number of to do items which are late
-	 * @var int
-	 */
-	public $nbtodolate = 0;
+    /**
+     * Number of to do items which are late
+     * @var int
+     */
+    public $nbtodolate = 0;
 
-	/**
-	 * total price of items
-	 * @var int
-	 */
-	public $total = 0;
+    /**
+     * total price of items
+     * @var int
+     */
+    public $total = 0;
 }

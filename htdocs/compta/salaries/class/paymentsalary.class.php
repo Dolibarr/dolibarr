@@ -90,9 +90,9 @@ class PaymentSalary extends CommonObject
 
 
     /**
-     *	Constructor
+     *    Constructor
      *
-     *  @param		DoliDB		$db      Database handler
+     *  @param        DoliDB        $db      Database handler
      */
     public function __construct($db)
     {
@@ -104,9 +104,9 @@ class PaymentSalary extends CommonObject
     /**
      * Update database
      *
-     * @param   User	$user        	User that modify
-     * @param	int		$notrigger	    0=no, 1=yes (no update trigger)
-     * @return  int         			<0 if KO, >0 if OK
+     * @param   User    $user            User that modify
+     * @param    int        $notrigger        0=no, 1=yes (no update trigger)
+     * @return  int                     <0 if KO, >0 if OK
      */
     public function update($user = null, $notrigger = 0)
     {
@@ -181,9 +181,9 @@ class PaymentSalary extends CommonObject
     /**
      *  Load object in memory from database
      *
-     *  @param	int		$id         id object
-     *  @param  User	$user       User that load
-     *  @return int         		<0 if KO, >0 if OK
+     *  @param    int        $id         id object
+     *  @param  User    $user       User that load
+     *  @return int                 <0 if KO, >0 if OK
      */
     public function fetch($id, $user = null)
     {
@@ -222,26 +222,26 @@ class PaymentSalary extends CommonObject
             {
                 $obj = $this->db->fetch_object($resql);
 
-                $this->id				= $obj->rowid;
-                $this->ref				= $obj->rowid;
-                $this->tms				= $this->db->jdate($obj->tms);
-                $this->fk_user			= $obj->fk_user;
-                $this->datep			= $this->db->jdate($obj->datep);
-                $this->datev			= $this->db->jdate($obj->datev);
-                $this->amount			= $obj->amount;
-                $this->fk_project		= $obj->fk_project;
-                $this->type_payement	= $obj->fk_typepayment;
-                $this->num_payment		= $obj->num_payment;
-                $this->label			= $obj->label;
-                $this->datesp			= $this->db->jdate($obj->datesp);
-                $this->dateep			= $this->db->jdate($obj->dateep);
-                $this->note				= $obj->note;
-                $this->fk_bank			= $obj->fk_bank;
-                $this->fk_user_author	= $obj->fk_user_author;
-                $this->fk_user_modif	= $obj->fk_user_modif;
-                $this->fk_account		= $obj->fk_account;
-                $this->fk_type			= $obj->fk_type;
-                $this->rappro			= $obj->rappro;
+                $this->id                = $obj->rowid;
+                $this->ref                = $obj->rowid;
+                $this->tms                = $this->db->jdate($obj->tms);
+                $this->fk_user            = $obj->fk_user;
+                $this->datep            = $this->db->jdate($obj->datep);
+                $this->datev            = $this->db->jdate($obj->datev);
+                $this->amount            = $obj->amount;
+                $this->fk_project        = $obj->fk_project;
+                $this->type_payement    = $obj->fk_typepayment;
+                $this->num_payment        = $obj->num_payment;
+                $this->label            = $obj->label;
+                $this->datesp            = $this->db->jdate($obj->datesp);
+                $this->dateep            = $this->db->jdate($obj->dateep);
+                $this->note                = $obj->note;
+                $this->fk_bank            = $obj->fk_bank;
+                $this->fk_user_author    = $obj->fk_user_author;
+                $this->fk_user_modif    = $obj->fk_user_modif;
+                $this->fk_account        = $obj->fk_account;
+                $this->fk_type            = $obj->fk_type;
+                $this->rappro            = $obj->rappro;
             }
             $this->db->free($resql);
 
@@ -258,8 +258,8 @@ class PaymentSalary extends CommonObject
     /**
      *  Delete object in database
      *
-     *	@param	User	$user       User that delete
-     *	@return	int					<0 if KO, >0 if OK
+     *    @param    User    $user       User that delete
+     *    @return    int                    <0 if KO, >0 if OK
      */
     public function delete($user)
     {
@@ -291,9 +291,9 @@ class PaymentSalary extends CommonObject
     /**
      *  Initialise an instance with random values.
      *  Used to build previews or test instances.
-     *	id must be 0 if object instance is a specimen.
+     *    id must be 0 if object instance is a specimen.
      *
-     *  @return	void
+     *  @return    void
      */
     public function initAsSpecimen()
     {
@@ -316,8 +316,8 @@ class PaymentSalary extends CommonObject
     /**
      *  Create in database
      *
-     *  @param      User	$user       User that create
-     *  @return     int      			<0 if KO, >0 if OK
+     *  @param      User    $user       User that create
+     *  @return     int                  <0 if KO, >0 if OK
      */
     public function create($user)
     {
@@ -509,8 +509,8 @@ class PaymentSalary extends CommonObject
     /**
      *  Update link between payment salary and line generate into llx_bank
      *
-     *  @param	int		$id_bank    Id bank account
-     *	@return	int					<0 if KO, >0 if OK
+     *  @param    int        $id_bank    Id bank account
+     *    @return    int                    <0 if KO, >0 if OK
      */
     public function update_fk_bank($id_bank)
     {
@@ -531,14 +531,14 @@ class PaymentSalary extends CommonObject
 
 
     /**
-     *	Send name clicable (with possibly the picto)
+     *    Send name clicable (with possibly the picto)
      *
-     *	@param	int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
-     *	@param	string	$option						link option
-     *  @param	int  	$notooltip					1=Disable tooltip
-     *  @param  string  $morecss            		Add more css on link
-     *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-     *	@return	string								Chaine with URL
+     *    @param    int        $withpicto                    0=No picto, 1=Include picto into link, 2=Only picto
+     *    @param    string    $option                        link option
+     *  @param    int      $notooltip                    1=Disable tooltip
+     *  @param  string  $morecss                    Add more css on link
+     *  @param  int     $save_lastsearch_value        -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+     *    @return    string                                Chaine with URL
      */
     public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
     {
@@ -607,8 +607,8 @@ class PaymentSalary extends CommonObject
     /**
      * Information on record
      *
-     * @param	int		$id      Id of record
-     * @return	void
+     * @param    int        $id      Id of record
+     * @return    void
      */
     public function info($id)
     {
@@ -645,8 +645,8 @@ class PaymentSalary extends CommonObject
     /**
      * Retourne le libelle du statut d'une facture (brouillon, validee, abandonnee, payee)
      *
-     * @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-     * @return  string				Libelle
+     * @param    int        $mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+     * @return  string                Libelle
      */
     public function getLibStatut($mode = 0)
     {
@@ -657,14 +657,14 @@ class PaymentSalary extends CommonObject
     /**
      * Renvoi le libelle d'un statut donne
      *
-     * @param   int		$status     Statut
-     * @param   int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-     * @return	string  		    Libelle du statut
+     * @param   int        $status     Statut
+     * @param   int        $mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+     * @return    string              Libelle du statut
      */
     public function LibStatut($status, $mode = 0)
     {
         // phpcs:enable
-        global $langs;	// TODO Renvoyer le libelle anglais et faire traduction a affichage
+        global $langs;    // TODO Renvoyer le libelle anglais et faire traduction a affichage
 
         $langs->load('compta');
         /*if ($mode == 0)

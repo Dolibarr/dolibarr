@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004		Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+/* Copyright (C) 2004        Rodolphe Quiedeville        <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2016	Laurent Destailleur		<eldy@users.sourceforge.org>
  * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2012-2018	Regis Houssin			<regis.houssin@inodbox.com>
@@ -21,8 +21,8 @@
 
 /**
  *      \file       htdocs/api/admin/index.php
- *		\ingroup    api
- *		\brief      Page to setup Webservices REST module
+ *        \ingroup    api
+ *        \brief      Page to setup Webservices REST module
  */
 
 require '../../main.inc.php';
@@ -33,52 +33,52 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 $langs->load("admin");
 
 if (! $user->admin)
-	accessforbidden();
+    accessforbidden();
 
 $action=GETPOST('action', 'aZ09');
 
 //Activate ProfId
 if ($action == 'setproductionmode')
 {
-	$status = GETPOST('status', 'alpha');
+    $status = GETPOST('status', 'alpha');
 
-	if (dolibarr_set_const($db, 'API_PRODUCTION_MODE', $status, 'chaine', 0, '', 0) > 0)
-	{
-		$error=0;
+    if (dolibarr_set_const($db, 'API_PRODUCTION_MODE', $status, 'chaine', 0, '', 0) > 0)
+    {
+        $error=0;
 
-		if ($status == 1)
-		{
-			$result = dol_mkdir($conf->api->dir_temp);
-			if ($result < 0)
-			{
-				setEventMessages($langs->trans("ErrorFailedToCreateDir", $conf->api->dir_temp), null, 'errors');
-				$error++;
-			}
-		}
-		else
-		{
-			// Delete the cache file otherwise it does not update
-			$result = dol_delete_file($conf->api->dir_temp.'/routes.php');
-			if ($result < 0)
-			{
-				setEventMessages($langs->trans("ErrorFailedToDeleteFile", $conf->api->dir_temp.'/routes.php'), null, 'errors');
-				$error++;
-			}
-		}
+        if ($status == 1)
+        {
+            $result = dol_mkdir($conf->api->dir_temp);
+            if ($result < 0)
+            {
+                setEventMessages($langs->trans("ErrorFailedToCreateDir", $conf->api->dir_temp), null, 'errors');
+                $error++;
+            }
+        }
+        else
+        {
+            // Delete the cache file otherwise it does not update
+            $result = dol_delete_file($conf->api->dir_temp.'/routes.php');
+            if ($result < 0)
+            {
+                setEventMessages($langs->trans("ErrorFailedToDeleteFile", $conf->api->dir_temp.'/routes.php'), null, 'errors');
+                $error++;
+            }
+        }
 
-	    if (!$error)
-	    {
-    		header("Location: ".$_SERVER["PHP_SELF"]);
-	   	    exit;
-	    }
-	}
-	else
-	{
-		dol_print_error($db);
-	}
+        if (!$error)
+        {
+            header("Location: ".$_SERVER["PHP_SELF"]);
+               exit;
+        }
+    }
+    else
+    {
+        dol_print_error($db);
+    }
 }
 
-dol_mkdir(DOL_DATA_ROOT.'/api/temp');		// May have been deleted by a purge
+dol_mkdir(DOL_DATA_ROOT.'/api/temp');        // May have been deleted by a purge
 
 
 /*
@@ -126,8 +126,8 @@ print '<br><br>';
 
 // Define $urlwithroot
 $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
-$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
-//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;        // This is to use external domain name found into config file
+//$urlwithroot=DOL_MAIN_URL_ROOT;                    // This is to use same domain name than current
 
 // Show message
 $message='';

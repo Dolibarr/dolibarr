@@ -100,23 +100,23 @@ $form = new Form($db);
 
 if ($socid > 0)
 {
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-	require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+    require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+    require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
-	$langs->load("companies");
+    $langs->load("companies");
 
 
-	$object = new Societe($db);
-	$result = $object->fetch($socid);
+    $object = new Societe($db);
+    $result = $object->fetch($socid);
 
-	$title=$langs->trans("Agenda");
-	if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name." - ".$title;
-	llxHeader('', $title);
+    $title=$langs->trans("Agenda");
+    if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name." - ".$title;
+    llxHeader('', $title);
 
-	if (! empty($conf->notification->enabled)) $langs->load("mails");
-	$head = societe_prepare_head($object);
+    if (! empty($conf->notification->enabled)) $langs->load("mails");
+    $head = societe_prepare_head($object);
 
-	dol_fiche_head($head, 'agenda', $langs->trans("ThirdParty"), -1, 'company');
+    dol_fiche_head($head, 'agenda', $langs->trans("ThirdParty"), -1, 'company');
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -127,15 +127,15 @@ if ($socid > 0)
     print '<div class="underbanner clearboth"></div>';
 
     $object->info($socid);
-	print dol_print_object_info($object, 1);
+    print dol_print_object_info($object, 1);
 
-	print '</div>';
+    print '</div>';
 
-	dol_fiche_end();
+    dol_fiche_end();
 
 
 
-	// Actions buttons
+    // Actions buttons
 
     $objthirdparty=$object;
     $objcon=new stdClass();
@@ -147,40 +147,40 @@ if ($socid > 0)
         //$out.='<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create';
         if (get_class($objthirdparty) == 'Societe') $out.='&amp;socid='.$objthirdparty->id;
         $out.=(! empty($objcon->id)?'&amp;contactid='.$objcon->id:'').'&amp;backtopage=1&amp;percentage=-1';
-    	//$out.=$langs->trans("AddAnAction").' ';
-    	//$out.=img_picto($langs->trans("AddAnAction"),'filenew');
-    	//$out.="</a>";
-	}
+        //$out.=$langs->trans("AddAnAction").' ';
+        //$out.=img_picto($langs->trans("AddAnAction"),'filenew');
+        //$out.="</a>";
+    }
 
 
-	//print '<div class="tabsAction">';
-	//print '</div>';
+    //print '<div class="tabsAction">';
+    //print '</div>';
 
 
-	$newcardbutton='';
+    $newcardbutton='';
     if (! empty($conf->agenda->enabled))
     {
-    	if (! empty($user->rights->agenda->myactions->create) || ! empty($user->rights->agenda->allactions->create))
-    	{
-        	$newcardbutton.='<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddAction").'</span>';
-        	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-        	$newcardbutton.= '</a>';
-    	}
+        if (! empty($user->rights->agenda->myactions->create) || ! empty($user->rights->agenda->allactions->create))
+        {
+            $newcardbutton.='<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddAction").'</span>';
+            $newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+            $newcardbutton.= '</a>';
+        }
     }
 
     if (! empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read) ))
     {
-    	print '<br>';
+        print '<br>';
 
         $param='&socid='.$socid;
         if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
         if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 
-		print load_fiche_titre($langs->trans("ActionsOnCompany"), $newcardbutton, '');
+        print load_fiche_titre($langs->trans("ActionsOnCompany"), $newcardbutton, '');
         //print_barre_liste($langs->trans("ActionsOnCompany"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $newcardbutton, '', 0, 1, 1);
 
         // List of all actions
-		$filters=array();
+        $filters=array();
         $filters['search_agenda_label']=$search_agenda_label;
 
         // TODO Replace this with same code than into list.php

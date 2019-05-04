@@ -16,14 +16,14 @@
  */
 
 /**
- *	\file       htdocs/core/class/html.formpropal.class.php
+ *    \file       htdocs/core/class/html.formpropal.class.php
  *  \ingroup    core
- *	\brief      File of class with all html predefined components
+ *    \brief      File of class with all html predefined components
  */
 
 
 /**
- *	Class to manage generation of HTML components for proposal management
+ *    Class to manage generation of HTML components for proposal management
  */
 class FormPropal
 {
@@ -41,7 +41,7 @@ class FormPropal
     /**
      * Constructor
      *
-     * @param		DoliDB		$db      Database handler
+     * @param        DoliDB        $db      Database handler
      */
     public function __construct($db)
     {
@@ -52,13 +52,13 @@ class FormPropal
      *    Return combo list of differents status of a proposal
      *    Values are id of table c_propalst
      *
-     *    @param	string	$selected   	Preselected value
-     *    @param	int		$short			Use short labels
-     *    @param	int		$excludedraft	0=All status, 1=Exclude draft status
-     *    @param	int 	$showempty		1=Add empty line
+     *    @param    string    $selected       Preselected value
+     *    @param    int        $short            Use short labels
+     *    @param    int        $excludedraft    0=All status, 1=Exclude draft status
+     *    @param    int     $showempty        1=Add empty line
      *    @param    string  $mode           'customer', 'supplier'
      *    @param    string  $htmlname       Name of select field
-     *    @return	void
+     *    @return    void
      */
     public function selectProposalStatus($selected = '', $short = 0, $excludedraft = 0, $showempty = 1, $mode = 'customer', $htmlname = 'propal_statut')
     {

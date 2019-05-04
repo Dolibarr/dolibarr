@@ -17,7 +17,7 @@
  */
 
 /**
- *	    \file       htdocs/admin/events.php
+ *        \file       htdocs/admin/events.php
  *      \ingroup    core
  *      \brief      Log event setup page
  */
@@ -46,20 +46,20 @@ $eventstolog=$securityevent->eventstolog;
  */
 if ($action == "save")
 {
-	$i=0;
+    $i=0;
 
-	$db->begin();
+    $db->begin();
 
-	foreach ($eventstolog as $key => $arr)
-	{
-		$param='MAIN_LOGEVENTS_'.$arr['id'];
-		//print "param=".$param." - ".$_POST[$param];
-		if (! empty($_POST[$param])) dolibarr_set_const($db, $param, $_POST[$param], 'chaine', 0, '', $conf->entity);
-		else dolibarr_del_const($db, $param, $conf->entity);
-	}
+    foreach ($eventstolog as $key => $arr)
+    {
+        $param='MAIN_LOGEVENTS_'.$arr['id'];
+        //print "param=".$param." - ".$_POST[$param];
+        if (! empty($_POST[$param])) dolibarr_set_const($db, $param, $_POST[$param], 'chaine', 0, '', $conf->entity);
+        else dolibarr_del_const($db, $param, $conf->entity);
+    }
 
-	$db->commit();
-	setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    $db->commit();
+    setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 }
 
 
@@ -93,16 +93,16 @@ print "</tr>\n";
 // Loop on each event type
 foreach ($eventstolog as $key => $arr)
 {
-	if ($arr['id'])
-	{
-		print '<tr class="oddeven">';
-		print '<td>'.$arr['id'].'</td>';
-		print '<td>';
-		$key='MAIN_LOGEVENTS_'.$arr['id'];
-		$value=$conf->global->$key;
-		print '<input class="oddeven" type="checkbox" name="'.$key.'" value="1"'.($value?' checked':'').'>';
-		print '</td></tr>'."\n";
-	}
+    if ($arr['id'])
+    {
+        print '<tr class="oddeven">';
+        print '<td>'.$arr['id'].'</td>';
+        print '<td>';
+        $key='MAIN_LOGEVENTS_'.$arr['id'];
+        $value=$conf->global->$key;
+        print '<input class="oddeven" type="checkbox" name="'.$key.'" value="1"'.($value?' checked':'').'>';
+        print '</td></tr>'."\n";
+    }
 }
 print '</table>';
 

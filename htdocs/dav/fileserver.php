@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2018	Destailleur Laurent	<eldy@users.sourceforge.net>
+/* Copyright (C) 2018    Destailleur Laurent    <eldy@users.sourceforge.net>
  * Copyright (C) 2019	Regis Houssin		<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -26,8 +26,8 @@ if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');
 if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1'); // If there is no menu to show
 if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1'); // If we don't need to load the html.form.class.php
 if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
-if (! defined('NOLOGIN'))  		 define("NOLOGIN", 1);		// This means this output page does not require to be logged.
-if (! defined('NOCSRFCHECK'))  	 define("NOCSRFCHECK", 1);	// We accept to go on this page from external web site.
+if (! defined('NOLOGIN'))           define("NOLOGIN", 1);        // This means this output page does not require to be logged.
+if (! defined('NOCSRFCHECK'))       define("NOCSRFCHECK", 1);    // We accept to go on this page from external web site.
 
 require "../main.inc.php";
 require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
@@ -40,8 +40,8 @@ require_once DOL_DOCUMENT_ROOT.'/includes/sabre/autoload.php';
 $user = new User($db);
 if (isset($_SERVER['PHP_AUTH_USER']) && $_SERVER['PHP_AUTH_USER']!='')
 {
-	$user->fetch('', $_SERVER['PHP_AUTH_USER']);
-	$user->getrights();
+    $user->fetch('', $_SERVER['PHP_AUTH_USER']);
+    $user->getrights();
 }
 
 // Load translation files required by the page
@@ -49,7 +49,7 @@ $langs->loadLangs(array("main","other"));
 
 
 if (empty($conf->dav->enabled))
-	accessforbidden();
+    accessforbidden();
 
 
 $entity = (GETPOST('entity', 'int') ? GETPOST('entity', 'int') : (!empty($conf->entity) ? $conf->entity : 1));
@@ -63,27 +63,27 @@ $tmpDir = $conf->dav->multidir_temp[$entity];
 
 // Authentication callback function
 $authBackend = new \Sabre\DAV\Auth\Backend\BasicCallBack(function ($username, $password) {
-	global $user;
-	global $conf;
-	global $dolibarr_main_authentication;
+    global $user;
+    global $conf;
+    global $dolibarr_main_authentication;
 
-	if (empty($user->login))
-		return false;
-	if ($user->socid > 0)
-		return false;
-	if ($user->login != $username)
-		return false;
+    if (empty($user->login))
+        return false;
+    if ($user->socid > 0)
+        return false;
+    if ($user->login != $username)
+        return false;
 
-	// Authentication mode
-	if (empty($dolibarr_main_authentication))
-		$dolibarr_main_authentication='http,dolibarr';
-	$authmode = explode(',', $dolibarr_main_authentication);
-	$entity = (GETPOST('entity', 'int') ? GETPOST('entity', 'int') : (!empty($conf->entity) ? $conf->entity : 1));
+    // Authentication mode
+    if (empty($dolibarr_main_authentication))
+        $dolibarr_main_authentication='http,dolibarr';
+    $authmode = explode(',', $dolibarr_main_authentication);
+    $entity = (GETPOST('entity', 'int') ? GETPOST('entity', 'int') : (!empty($conf->entity) ? $conf->entity : 1));
 
-	if (checkLoginPassEntity($username, $password, $entity, $authmode) != $username)
-		return false;
+    if (checkLoginPassEntity($username, $password, $entity, $authmode) != $username)
+        return false;
 
-	return true;
+    return true;
 });
 
 $authBackend->setRealm(constant('DOL_APPLICATION_TITLE'));
@@ -104,14 +104,14 @@ $nodes = array();
 // Public dir
 if (!empty($conf->global->DAV_ALLOW_PUBLIC_DIR))
 {
-	$nodes[] = new \Sabre\DAV\FS\Directory($publicDir);
+    $nodes[] = new \Sabre\DAV\FS\Directory($publicDir);
 }
 // Private dir
 $nodes[] = new \Sabre\DAV\FS\Directory($privateDir);
 // ECM dir
 if (! empty($conf->ecm->enabled) && ! empty($conf->global->DAV_ALLOW_ECM_DIR))
 {
-	$nodes[] = new \Sabre\DAV\FS\Directory($ecmDir);
+    $nodes[] = new \Sabre\DAV\FS\Directory($ecmDir);
 }
 
 
@@ -139,12 +139,12 @@ if (isset($baseUri)) $server->setBaseUri($baseUri);
 
 // Add authentication function
 if ((empty($conf->global->DAV_ALLOW_PUBLIC_DIR)
-	|| ! preg_match('/'.preg_quote(DOL_URL_ROOT.'/dav/fileserver.php/public', '/').'/', $_SERVER["PHP_SELF"]))
-	&& ! preg_match('/^sabreAction=asset&assetName=[a-zA-Z0-9%\-\/]+\.(png|css|woff|ico|ttf)$/', $_SERVER["QUERY_STRING"])	// URL for Sabre browser resources
-	)
+    || ! preg_match('/'.preg_quote(DOL_URL_ROOT.'/dav/fileserver.php/public', '/').'/', $_SERVER["PHP_SELF"]))
+    && ! preg_match('/^sabreAction=asset&assetName=[a-zA-Z0-9%\-\/]+\.(png|css|woff|ico|ttf)$/', $_SERVER["QUERY_STRING"])    // URL for Sabre browser resources
+    )
 {
-	//var_dump($_SERVER["QUERY_STRING"]);exit;
-	$server->addPlugin(new \Sabre\DAV\Auth\Plugin($authBackend));
+    //var_dump($_SERVER["QUERY_STRING"]);exit;
+    $server->addPlugin(new \Sabre\DAV\Auth\Plugin($authBackend));
 }
 // Support for LOCK and UNLOCK
 $lockBackend = new \Sabre\DAV\Locks\Backend\File($tmpDir . '/.locksdb');

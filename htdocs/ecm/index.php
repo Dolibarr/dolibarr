@@ -19,9 +19,9 @@
  */
 
 /**
- *	\file       htdocs/ecm/index.php
- *	\ingroup    ecm
- *	\brief      Main page for ECM section area
+ *    \file       htdocs/ecm/index.php
+ *    \ingroup    ecm
+ *    \brief      Main page for ECM section area
  */
 
 require '../main.inc.php';
@@ -58,12 +58,12 @@ if (! $sortfield) $sortfield="fullname";
 $ecmdir = new EcmDirectory($db);
 if ($section)
 {
-	$result=$ecmdir->fetch($section);
-	if (! $result > 0)
-	{
-		dol_print_error($db, $ecmdir->error);
-		exit;
-	}
+    $result=$ecmdir->fetch($section);
+    if (! $result > 0)
+    {
+        dol_print_error($db, $ecmdir->error);
+        exit;
+    }
 }
 
 $form=new Form($db);
@@ -78,100 +78,100 @@ $error=0;
  */
 
 // TODO Replace sendit and confirm_deletefile with
-//$backtopage=$_SERVER["PHP_SELF"].'?file_manager=1&website='.$websitekey.'&pageid='.$pageid;	// used after a confirm_deletefile into actions_linkedfiles.inc.php
+//$backtopage=$_SERVER["PHP_SELF"].'?file_manager=1&website='.$websitekey.'&pageid='.$pageid;    // used after a confirm_deletefile into actions_linkedfiles.inc.php
 //include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 // Upload file (code similar but different than actions_linkedfiles.inc.php)
 if (GETPOST("sendit", 'none') && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
-	// Define relativepath and upload_dir
+    // Define relativepath and upload_dir
     $relativepath='';
-	if ($ecmdir->id) $relativepath=$ecmdir->getRelativePath();
-	else $relativepath=$section_dir;
-	$upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
+    if ($ecmdir->id) $relativepath=$ecmdir->getRelativePath();
+    else $relativepath=$section_dir;
+    $upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
 
-	if (is_array($_FILES['userfile']['tmp_name'])) $userfiles=$_FILES['userfile']['tmp_name'];
-	else $userfiles=array($_FILES['userfile']['tmp_name']);
+    if (is_array($_FILES['userfile']['tmp_name'])) $userfiles=$_FILES['userfile']['tmp_name'];
+    else $userfiles=array($_FILES['userfile']['tmp_name']);
 
-	foreach($userfiles as $key => $userfile)
-	{
-		if (empty($_FILES['userfile']['tmp_name'][$key]))
-		{
-			$error++;
-			if ($_FILES['userfile']['error'][$key] == 1 || $_FILES['userfile']['error'][$key] == 2){
-				setEventMessages($langs->trans('ErrorFileSizeTooLarge'), null, 'errors');
-			}
-			else {
-				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("File")), null, 'errors');
-			}
-		}
-	}
+    foreach($userfiles as $key => $userfile)
+    {
+        if (empty($_FILES['userfile']['tmp_name'][$key]))
+        {
+            $error++;
+            if ($_FILES['userfile']['error'][$key] == 1 || $_FILES['userfile']['error'][$key] == 2){
+                setEventMessages($langs->trans('ErrorFileSizeTooLarge'), null, 'errors');
+            }
+            else {
+                setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("File")), null, 'errors');
+            }
+        }
+    }
 
-	if (! $error)
-	{
-		$generatethumbs = 0;
-		$res = dol_add_file_process($upload_dir, 0, 1, 'userfile', '', null, '', $generatethumbs);
-	    if ($res > 0)
-	    {
-	       $result=$ecmdir->changeNbOfFiles('+');
-	    }
-	}
+    if (! $error)
+    {
+        $generatethumbs = 0;
+        $res = dol_add_file_process($upload_dir, 0, 1, 'userfile', '', null, '', $generatethumbs);
+        if ($res > 0)
+        {
+           $result=$ecmdir->changeNbOfFiles('+');
+        }
+    }
 }
 
 // Remove file (code similar but different than actions_linkedfiles.inc.php)
 if ($action == 'confirm_deletefile')
 {
-	if (GETPOST('confirm') == 'yes')
-	{
-		// GETPOST('urlfile','alpha') is full relative URL from ecm root dir. Contains path of all sections.
-		//var_dump(GETPOST('urlfile'));exit;
+    if (GETPOST('confirm') == 'yes')
+    {
+        // GETPOST('urlfile','alpha') is full relative URL from ecm root dir. Contains path of all sections.
+        //var_dump(GETPOST('urlfile'));exit;
 
-		$upload_dir = $conf->ecm->dir_output.($relativepath?'/'.$relativepath:'');
-		$file = $upload_dir . "/" . GETPOST('urlfile', 'alpha');
+        $upload_dir = $conf->ecm->dir_output.($relativepath?'/'.$relativepath:'');
+        $file = $upload_dir . "/" . GETPOST('urlfile', 'alpha');
 
-		$ret=dol_delete_file($file);	// This include also the delete from file index in database.
-		if ($ret)
-		{
-			setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile', 'alpha')), null, 'mesgs');
-			$result=$ecmdir->changeNbOfFiles('-');
-		}
-		else
-		{
-			setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile', 'alpha')), null, 'errors');
-		}
+        $ret=dol_delete_file($file);    // This include also the delete from file index in database.
+        if ($ret)
+        {
+            setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile', 'alpha')), null, 'mesgs');
+            $result=$ecmdir->changeNbOfFiles('-');
+        }
+        else
+        {
+            setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile', 'alpha')), null, 'errors');
+        }
 
-		clearstatcache();
-	}
-	$action='file_manager';
+        clearstatcache();
+    }
+    $action='file_manager';
 }
 
 // Add directory
 if ($action == 'add' && $user->rights->ecm->setup)
 {
-	$ecmdir->ref                = 'NOTUSEDYET';
-	$ecmdir->label              = GETPOST("label");
-	$ecmdir->description        = GETPOST("desc");
+    $ecmdir->ref                = 'NOTUSEDYET';
+    $ecmdir->label              = GETPOST("label");
+    $ecmdir->description        = GETPOST("desc");
 
-	$id = $ecmdir->create($user);
-	if ($id > 0)
-	{
-		header("Location: ".$_SERVER["PHP_SELF"]);
-		exit;
-	}
-	else
-	{
-		setEventMessages('Error '.$langs->trans($ecmdir->error), null, 'errors');
-		$action = "create";
-	}
+    $id = $ecmdir->create($user);
+    if ($id > 0)
+    {
+        header("Location: ".$_SERVER["PHP_SELF"]);
+        exit;
+    }
+    else
+    {
+        setEventMessages('Error '.$langs->trans($ecmdir->error), null, 'errors');
+        $action = "create";
+    }
 
-	clearstatcache();
+    clearstatcache();
 }
 
 // Remove directory
 if ($action == 'confirm_deletesection' && GETPOST('confirm') == 'yes')
 {
-	$result=$ecmdir->delete($user);
-	setEventMessages($langs->trans("ECMSectionWasRemoved", $ecmdir->label), null, 'mesgs');
+    $result=$ecmdir->delete($user);
+    setEventMessages($langs->trans("ECMSectionWasRemoved", $ecmdir->label), null, 'mesgs');
 
     clearstatcache();
 }
@@ -183,8 +183,8 @@ if ($action == 'refreshmanual')
 {
     $ecmdirtmp = new EcmDirectory($db);
 
-	// This part of code is same than into file ecm/ajax/ecmdatabase.php TODO Remove duplicate
-	clearstatcache();
+    // This part of code is same than into file ecm/ajax/ecmdatabase.php TODO Remove duplicate
+    clearstatcache();
 
     $diroutputslash=str_replace('\\', '/', $conf->ecm->dir_output);
     $diroutputslash.='/';
@@ -247,7 +247,7 @@ if ($action == 'refreshmanual')
                     //break;  // We found parent, we can stop the while loop
                 }
                 else
-				{
+                {
                     dol_syslog("No");
                     //print "No<br>\n";
                 }
@@ -296,16 +296,16 @@ if ($action == 'refreshmanual')
     // Loop now on each sql tree to check if dir exists
     foreach($sqltree as $dirdesc)    // Loop on each sqltree to check dir is on disk
     {
-    	$dirtotest=$conf->ecm->dir_output.'/'.$dirdesc['fullrelativename'];
-		if (! dol_is_dir($dirtotest))
-		{
-			$ecmdirtmp->id=$dirdesc['id'];
-			$ecmdirtmp->delete($user, 'databaseonly');
-			//exit;
-		}
+        $dirtotest=$conf->ecm->dir_output.'/'.$dirdesc['fullrelativename'];
+        if (! dol_is_dir($dirtotest))
+        {
+            $ecmdirtmp->id=$dirdesc['id'];
+            $ecmdirtmp->delete($user, 'databaseonly');
+            //exit;
+        }
     }
 
-    $sql="UPDATE ".MAIN_DB_PREFIX."ecm_directories set cachenbofdoc = -1 WHERE cachenbofdoc < 0";	// If pb into cahce counting, we set to value -1 = "unknown"
+    $sql="UPDATE ".MAIN_DB_PREFIX."ecm_directories set cachenbofdoc = -1 WHERE cachenbofdoc < 0";    // If pb into cahce counting, we set to value -1 = "unknown"
     dol_syslog("sql = ".$sql);
     $db->query($sql);
 
@@ -322,13 +322,13 @@ if ($action == 'refreshmanual')
 
 // Define height of file area (depends on $_SESSION["dol_screenheight"])
 //print $_SESSION["dol_screenheight"];
-$maxheightwin=(isset($_SESSION["dol_screenheight"]) && $_SESSION["dol_screenheight"] > 466)?($_SESSION["dol_screenheight"]-136):660;	// Also into index_auto.php file
+$maxheightwin=(isset($_SESSION["dol_screenheight"]) && $_SESSION["dol_screenheight"] > 466)?($_SESSION["dol_screenheight"]-136):660;    // Also into index_auto.php file
 
 $moreheadcss='';
 $moreheadjs='';
 
 //$morejs=array();
-$morejs=array('includes/jquery/plugins/blockUI/jquery.blockUI.js','core/js/blockUI.js');	// Used by ecm/tpl/enabledfiletreeajax.tpl.pgp
+$morejs=array('includes/jquery/plugins/blockUI/jquery.blockUI.js','core/js/blockUI.js');    // Used by ecm/tpl/enabledfiletreeajax.tpl.pgp
 if (empty($conf->global->MAIN_ECM_DISABLE_JS)) $morejs[]="includes/jquery/plugins/jqueryFileTree/jqueryFileTree.js";
 
 $moreheadjs.='<script type="text/javascript">'."\n";

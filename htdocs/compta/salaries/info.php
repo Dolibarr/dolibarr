@@ -18,9 +18,9 @@
  */
 
 /**
- *	\file       htdocs/compta/salaries/info.php
- *	\ingroup    salaries
- *	\brief      Page with info about salaries contribution
+ *    \file       htdocs/compta/salaries/info.php
+ *    \ingroup    salaries
+ *    \brief      Page with info about salaries contribution
  */
 
 require '../../main.inc.php';

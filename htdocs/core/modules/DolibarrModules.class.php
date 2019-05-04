@@ -956,9 +956,9 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
         $err = 0;
 
-		$sql = "SELECT tms, note FROM ".MAIN_DB_PREFIX."const";
-		$sql.= " WHERE ".$this->db->decrypt('name')." = '".$this->db->escape($this->const_name)."'";
-		$sql.= " AND entity IN (0, ".$conf->entity.")";
+        $sql = "SELECT tms, note FROM ".MAIN_DB_PREFIX."const";
+        $sql.= " WHERE ".$this->db->decrypt('name')." = '".$this->db->escape($this->const_name)."'";
+        $sql.= " AND entity IN (0, ".$conf->entity.")";
 
         dol_syslog(get_class($this)."::getLastActiveDate", LOG_DEBUG);
         $resql=$this->db->query($sql);

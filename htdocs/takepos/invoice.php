@@ -17,9 +17,9 @@
  */
 
 /**
- *	\file       htdocs/takepos/invoice.php
- *	\ingroup    takepos
- *	\brief      Page to generate section with list of lines
+ *    \file       htdocs/takepos/invoice.php
+ *    \ingroup    takepos
+ *    \brief      Page to generate section with list of lines
  */
 
 // if (! defined('NOREQUIREUSER'))    define('NOREQUIREUSER', '1');    // Not disabled cause need to load personalized language
@@ -49,17 +49,17 @@ $posnb = (GETPOST('posnb', 'int') > 0 ? GETPOST('posnb', 'int') : 0);   // $posn
  * Abort invoice creationg with a given error message
  *
  * @param   string  $message        Message explaining the error to the user
- * @return	void
+ * @return    void
  */
 function fail($message)
 {
-	header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
-	die($message);
+    header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
+    die($message);
 }
 
 
 
-$placeid = 0;	// $placeid is id of invoice
+$placeid = 0;    // $placeid is id of invoice
 
 $number = GETPOST('number', 'alpha');
 $idline = GETPOST('idline', 'int');
@@ -110,65 +110,65 @@ if ($action == 'valid' && $user->rights->facture->creer)
     else
     {
         $accountname="CASHDESK_ID_BANKACCOUNT_".$pay;
-    	$bankaccount=$conf->global->$accountname;
+        $bankaccount=$conf->global->$accountname;
     }
-	$now=dol_now();
+    $now=dol_now();
 
-	$invoice = new Facture($db);
-	$invoice->fetch($placeid);
-	if($invoice->total_ttc<0){
-		$invoice->type= $invoice::TYPE_CREDIT_NOTE;
-		$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."facture WHERE ";
-		$sql.="fk_soc = '".$invoice->socid."' ";
-		$sql.="AND type <> ".Facture::TYPE_CREDIT_NOTE." ";
-		$sql.="AND fk_statut >= ".$invoice::STATUS_VALIDATED." ";
-		$sql.="ORDER BY rowid DESC";
-		$resql = $db->query($sql);
-		if($resql){
-			$obj = $db->fetch_object($resql);
-			$fk_source=$obj->rowid;
-			if($fk_source == null){
-				fail($langs->transnoentitiesnoconv("NoPreviousBillForCustomer"));
-			}
-		}else{
-			fail($langs->transnoentitiesnoconv("NoPreviousBillForCustomer"));
-		}
-		$invoice->fk_facture_source=$fk_source;
-		$invoice->update($user);
-	}
+    $invoice = new Facture($db);
+    $invoice->fetch($placeid);
+    if($invoice->total_ttc<0){
+        $invoice->type= $invoice::TYPE_CREDIT_NOTE;
+        $sql="SELECT rowid FROM ".MAIN_DB_PREFIX."facture WHERE ";
+        $sql.="fk_soc = '".$invoice->socid."' ";
+        $sql.="AND type <> ".Facture::TYPE_CREDIT_NOTE." ";
+        $sql.="AND fk_statut >= ".$invoice::STATUS_VALIDATED." ";
+        $sql.="ORDER BY rowid DESC";
+        $resql = $db->query($sql);
+        if($resql){
+            $obj = $db->fetch_object($resql);
+            $fk_source=$obj->rowid;
+            if($fk_source == null){
+                fail($langs->transnoentitiesnoconv("NoPreviousBillForCustomer"));
+            }
+        }else{
+            fail($langs->transnoentitiesnoconv("NoPreviousBillForCustomer"));
+        }
+        $invoice->fk_facture_source=$fk_source;
+        $invoice->update($user);
+    }
 
-	if (! empty($conf->stock->enabled) && $conf->global->CASHDESK_NO_DECREASE_STOCK != "1")
-	{
-	    $invoice->validate($user, '', $conf->global->CASHDESK_ID_WAREHOUSE);
-	}
-	else
-	{
-	    $invoice->validate($user);
-	}
+    if (! empty($conf->stock->enabled) && $conf->global->CASHDESK_NO_DECREASE_STOCK != "1")
+    {
+        $invoice->validate($user, '', $conf->global->CASHDESK_ID_WAREHOUSE);
+    }
+    else
+    {
+        $invoice->validate($user);
+    }
 
-	// Add the payment
-	$payment=new Paiement($db);
-	$payment->datepaye = $now;
-	$payment->fk_account = $bankaccount;
-	$payment->amounts[$invoice->id] = $amountofpayment;
+    // Add the payment
+    $payment=new Paiement($db);
+    $payment->datepaye = $now;
+    $payment->fk_account = $bankaccount;
+    $payment->amounts[$invoice->id] = $amountofpayment;
 
-	$payment->paiementid=$paiementid;
-	$payment->num_payment=$invoice->ref;
+    $payment->paiementid=$paiementid;
+    $payment->num_payment=$invoice->ref;
 
     $payment->create($user);
-	$payment->addPaymentToBank($user, 'payment', '(CustomerInvoicePayment)', $bankaccount, '', '');
+    $payment->addPaymentToBank($user, 'payment', '(CustomerInvoicePayment)', $bankaccount, '', '');
 
-	$remaintopay = $invoice->getRemainToPay();
-	if ($remaintopay == 0)
-	{
-	    dol_syslog("Invoice is paid, so we set it to pay");
-	    $result = $invoice->set_paid($user);
-	    if ($result > 0) $invoice->paye = 1;
-	}
-	else
-	{
-	    dol_syslog("Invoice is not paid, remain to pay = ".$remaintopay);
-	}
+    $remaintopay = $invoice->getRemainToPay();
+    if ($remaintopay == 0)
+    {
+        dol_syslog("Invoice is paid, so we set it to pay");
+        $result = $invoice->set_paid($user);
+        if ($result > 0) $invoice->paye = 1;
+    }
+    else
+    {
+        dol_syslog("Invoice is not paid, remain to pay = ".$remaintopay);
+    }
 }
 
 if ($action == 'history')
@@ -180,19 +180,19 @@ if ($action == 'history')
 
 if (($action=="addline" || $action=="freezone") && $placeid == 0)
 {
-	$invoice->socid = $conf->global->CASHDESK_ID_THIRDPARTY;
-	$invoice->date = dol_now();
-	$invoice->module_source = 'takepos';
-	$invoice->pos_source = (string) $posnb;
+    $invoice->socid = $conf->global->CASHDESK_ID_THIRDPARTY;
+    $invoice->date = dol_now();
+    $invoice->module_source = 'takepos';
+    $invoice->pos_source = (string) $posnb;
 
-	$placeid = $invoice->create($user);
-	$sql="UPDATE ".MAIN_DB_PREFIX."facture set ref='(PROV-POS-".$place.")' where rowid=".$placeid;
-	$db->query($sql);
+    $placeid = $invoice->create($user);
+    $sql="UPDATE ".MAIN_DB_PREFIX."facture set ref='(PROV-POS-".$place.")' where rowid=".$placeid;
+    $db->query($sql);
 }
 
 if ($action == "addline")
 {
-	$prod = new Product($db);
+    $prod = new Product($db);
     $prod->fetch($idproduct);
 
     $price = $prod->price;
@@ -202,13 +202,13 @@ if ($action == "addline")
 
     if (! empty($conf->global->PRODUIT_MULTIPRICES))
     {
-    	$customer = new Societe($db);
-    	$customer->fetch($invoice->socid);
+        $customer = new Societe($db);
+        $customer->fetch($invoice->socid);
 
-    	$price = $prod->multiprices[$customer->price_level];
-    	$tva_tx = $prod->multiprices_tva_tx[$customer->price_level];
-    	$price_ttc = $prod->multiprices_ttc[$customer->price_level];
-    	$price_base_type = $prod->multiprices_base_type[$customer->price_level];
+        $price = $prod->multiprices[$customer->price_level];
+        $tva_tx = $prod->multiprices_tva_tx[$customer->price_level];
+        $price_ttc = $prod->multiprices_ttc[$customer->price_level];
+        $price_base_type = $prod->multiprices_base_type[$customer->price_level];
     }
 
     $idoflineadded = $invoice->addline($prod->description, $price, 1, $tva_tx, $prod->localtax1_tx, $prod->localtax2_tx, $idproduct, $prod->remise_percent, '', 0, 0, 0, '', $price_base_type, $price_ttc, $prod->type, -1, 0, '', 0, 0, null, 0, '', 0, 100, '', null, 0);
@@ -224,9 +224,9 @@ if ($action == "addnote") {
     foreach($invoice->lines as $line)
     {
         if ($line->id == $number)
-		{
-			$line->array_options['order_notes'] = $desc;
-			$result = $invoice->updateline($line->id, $line->desc, $line->subprice, $line->qty, $line->remise_percent, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
+        {
+            $line->array_options['order_notes'] = $desc;
+            $result = $invoice->updateline($line->id, $line->desc, $line->subprice, $line->qty, $line->remise_percent, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
         }
     }
     $invoice->fetch($placeid);
@@ -317,8 +317,8 @@ if ($action == "order" and $placeid != 0)
             $sql = "UPDATE " . MAIN_DB_PREFIX . "facturedet set special_code='3' where rowid=$line->rowid";
             $db->query($sql);
             $order_receipt_printer1.= '<tr>' . $line->product_label . '<td class="right">' . $line->qty;
-			if (!empty($line->array_options['options_order_notes'])) $order_receipt_printer1.="<br>(".$line->array_options['options_order_notes'].")";
-			$order_receipt_printer1.='</td></tr>';
+            if (!empty($line->array_options['options_order_notes'])) $order_receipt_printer1.="<br>(".$line->array_options['options_order_notes'].")";
+            $order_receipt_printer1.='</td></tr>';
         }
     }
 
@@ -334,8 +334,8 @@ if ($action == "order" and $placeid != 0)
             $sql = "UPDATE " . MAIN_DB_PREFIX . "facturedet set special_code='3' where rowid=$line->rowid";
             $db->query($sql);
             $order_receipt_printer2.= '<tr>' . $line->product_label . '<td class="right">' . $line->qty;
-			if (!empty($line->array_options['options_order_notes'])) $order_receipt_printer2.="<br>(".$line->array_options['options_order_notes'].")";
-			$order_receipt_printer2.='</td></tr>';
+            if (!empty($line->array_options['options_order_notes'])) $order_receipt_printer2.="<br>(".$line->array_options['options_order_notes'].")";
+            $order_receipt_printer2.='</td></tr>';
         }
     }
 
@@ -378,10 +378,10 @@ var selectedline=0;
 var selectedtext="";
 var placeid=<?php echo ($placeid > 0 ? $placeid : 0);?>;
 $(document).ready(function() {
-	var idoflineadded = <?php echo ($idoflineadded?$idoflineadded:0); ?>;
+    var idoflineadded = <?php echo ($idoflineadded?$idoflineadded:0); ?>;
 
     $('.posinvoiceline').click(function(){
-    	console.log("Click done on "+this.id);
+        console.log("Click done on "+this.id);
         $('.posinvoiceline').removeClass("selected");
         $(this).addClass("selected");
         if (selectedline==this.id) return; // If is already selected
@@ -422,7 +422,7 @@ if ($action == "order" and $order_receipt_printer2 != "") {
 // Set focus to search field
 if ($action == "search" || $action == "valid") {
     ?>
-	parent.setFocusOnSearchField();
+    parent.setFocusOnSearchField();
     <?php
 }
 

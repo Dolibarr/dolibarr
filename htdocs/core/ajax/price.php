@@ -27,9 +27,9 @@ if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
 
 require '../../main.inc.php';
 
-$output		= GETPOST('output', 'alpha');
-$amount		= price2num(GETPOST('amount', 'alpha'));
-$tva_tx		= str_replace('*', '', GETPOST('tva_tx', 'alpha'));
+$output        = GETPOST('output', 'alpha');
+$amount        = price2num(GETPOST('amount', 'alpha'));
+$tva_tx        = str_replace('*', '', GETPOST('tva_tx', 'alpha'));
 
 /*
  * View
@@ -42,24 +42,24 @@ top_httphead();
 // Load original field value
 if (! empty($output) && isset($amount) && isset($tva_tx))
 {
-	$return=array();
-	$price='';
+    $return=array();
+    $price='';
 
-	if (is_numeric($amount) && $amount != '')
-	{
-		if ($output == 'price_ttc') {
+    if (is_numeric($amount) && $amount != '')
+    {
+        if ($output == 'price_ttc') {
 
-			$price = price2num($amount * (1 + ($tva_tx/100)), 'MU');
-			$return['price_ht'] = $amount;
-			$return['price_ttc'] = (isset($price) && $price != '' ? price($price) : '');
-		}
-		elseif ($output == 'price_ht') {
+            $price = price2num($amount * (1 + ($tva_tx/100)), 'MU');
+            $return['price_ht'] = $amount;
+            $return['price_ttc'] = (isset($price) && $price != '' ? price($price) : '');
+        }
+        elseif ($output == 'price_ht') {
 
-			$price = price2num($amount / (1 + ($tva_tx/100)), 'MU');
-			$return['price_ht'] = (isset($price) && $price != '' ? price($price) : '');
-			$return['price_ttc'] = ($tva_tx == 0 ? $price : $amount);
-		}
-	}
+            $price = price2num($amount / (1 + ($tva_tx/100)), 'MU');
+            $return['price_ht'] = (isset($price) && $price != '' ? price($price) : '');
+            $return['price_ttc'] = ($tva_tx == 0 ? $price : $amount);
+        }
+    }
 
-	echo json_encode($return);
+    echo json_encode($return);
 }

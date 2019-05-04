@@ -1565,108 +1565,108 @@ class Product extends CommonObject
     /**
      * Return price of sell of a product for a seller/buyer/product.
      *
-     * @param	Societe		$thirdparty_seller		Seller
-     * @param	Societe		$thirdparty_buyer		Buyer
-     * @param	int			$pqp					Id of product per price if a selection was done of such a price
-     * @return	array								Array of price information
+     * @param    Societe        $thirdparty_seller        Seller
+     * @param    Societe        $thirdparty_buyer        Buyer
+     * @param    int            $pqp                    Id of product per price if a selection was done of such a price
+     * @return    array                                Array of price information
      * @see get_buyprice(), find_min_price_product_fournisseur()
      */
     public function getSellPrice($thirdparty_seller, $thirdparty_buyer, $pqp = 0)
     {
-    	global $conf, $db;
+        global $conf, $db;
 
-    			// Update if prices fields are defined
-				$tva_tx = get_default_tva($thirdparty_seller, $thirdparty_buyer, $this->id);
-				$tva_npr = get_default_npr($thirdparty_seller, $thirdparty_buyer, $this->id);
-				if (empty($tva_tx)) $tva_npr=0;
+                // Update if prices fields are defined
+                $tva_tx = get_default_tva($thirdparty_seller, $thirdparty_buyer, $this->id);
+                $tva_npr = get_default_npr($thirdparty_seller, $thirdparty_buyer, $this->id);
+                if (empty($tva_tx)) $tva_npr=0;
 
-				$pu_ht = $this->price;
-				$pu_ttc = $this->price_ttc;
-				$price_min = $this->price_min;
-				$price_base_type = $this->price_base_type;
+                $pu_ht = $this->price;
+                $pu_ttc = $this->price_ttc;
+                $price_min = $this->price_min;
+                $price_base_type = $this->price_base_type;
 
-				// If price per segment
-				if (! empty($conf->global->PRODUIT_MULTIPRICES) && ! empty($thirdparty_buyer->price_level))
-				{
-					$pu_ht = $this->multiprices[$thirdparty_buyer->price_level];
-					$pu_ttc = $this->multiprices_ttc[$thirdparty_buyer->price_level];
-					$price_min = $this->multiprices_min[$thirdparty_buyer->price_level];
-					$price_base_type = $this->multiprices_base_type[$thirdparty_buyer->price_level];
-					if (! empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL))  // using this option is a bug. kept for backward compatibility
-					{
-						if (isset($this->multiprices_tva_tx[$thirdparty_buyer->price_level])) $tva_tx=$this->multiprices_tva_tx[$thirdparty_buyer->price_level];
-						if (isset($this->multiprices_recuperableonly[$thirdparty_buyer->price_level])) $tva_npr=$this->multiprices_recuperableonly[$thirdparty_buyer->price_level];
-						if (empty($tva_tx)) $tva_npr=0;
-					}
-				}
-				// If price per customer
-				elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
-				{
-					require_once DOL_DOCUMENT_ROOT . '/product/class/productcustomerprice.class.php';
+                // If price per segment
+                if (! empty($conf->global->PRODUIT_MULTIPRICES) && ! empty($thirdparty_buyer->price_level))
+                {
+                    $pu_ht = $this->multiprices[$thirdparty_buyer->price_level];
+                    $pu_ttc = $this->multiprices_ttc[$thirdparty_buyer->price_level];
+                    $price_min = $this->multiprices_min[$thirdparty_buyer->price_level];
+                    $price_base_type = $this->multiprices_base_type[$thirdparty_buyer->price_level];
+                    if (! empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL))  // using this option is a bug. kept for backward compatibility
+                    {
+                        if (isset($this->multiprices_tva_tx[$thirdparty_buyer->price_level])) $tva_tx=$this->multiprices_tva_tx[$thirdparty_buyer->price_level];
+                        if (isset($this->multiprices_recuperableonly[$thirdparty_buyer->price_level])) $tva_npr=$this->multiprices_recuperableonly[$thirdparty_buyer->price_level];
+                        if (empty($tva_tx)) $tva_npr=0;
+                    }
+                }
+                // If price per customer
+                elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
+                {
+                    require_once DOL_DOCUMENT_ROOT . '/product/class/productcustomerprice.class.php';
 
-					$prodcustprice = new Productcustomerprice($db);
+                    $prodcustprice = new Productcustomerprice($db);
 
-					$filter = array('t.fk_product' => $this->id,'t.fk_soc' => $thirdparty_buyer->id);
+                    $filter = array('t.fk_product' => $this->id,'t.fk_soc' => $thirdparty_buyer->id);
 
-					$result = $prodcustprice->fetch_all('', '', 0, 0, $filter);
-					if ($result) {
-						if (count($prodcustprice->lines) > 0) {
-							$pu_ht = price($prodcustprice->lines[0]->price);
-							$pu_ttc = price($prodcustprice->lines[0]->price_ttc);
-							$price_base_type = $prodcustprice->lines[0]->price_base_type;
-							$tva_tx = $prodcustprice->lines[0]->tva_tx;
-							if ($prodcustprice->lines[0]->default_vat_code && ! preg_match('/\(.*\)/', $tva_tx)) $tva_tx.= ' ('.$prodcustprice->lines[0]->default_vat_code.')';
-							$tva_npr = $prodcustprice->lines[0]->recuperableonly;
-							if (empty($tva_tx)) $tva_npr=0;
-						}
-					}
-				}
-				// If price per quantity
-				elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY))
-				{
-					if ($this->prices_by_qty[0])	// yes, this product has some prices per quantity
-					{
-						// Search price into product_price_by_qty from $this->id
-						foreach($this->prices_by_qty_list[0] as $priceforthequantityarray)
-						{
-							if ($priceforthequantityarray['rowid'] != $pqp) continue;
-							// We found the price
-							if ($priceforthequantityarray['price_base_type'] == 'HT')
-							{
-								$pu_ht = $priceforthequantityarray['unitprice'];
-							}
-							else
-							{
-								$pu_ttc = $priceforthequantityarray['unitprice'];
-							}
-							break;
-						}
-					}
-				}
-				// If price per quantity and customer
-				elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES))
-				{
-					if ($this->prices_by_qty[$thirdparty_buyer->price_level]) // yes, this product has some prices per quantity
-					{
-						// Search price into product_price_by_qty from $this->id
-						foreach($this->prices_by_qty_list[$thirdparty_buyer->price_level] as $priceforthequantityarray)
-						{
-							if ($priceforthequantityarray['rowid'] != $pqp) continue;
-							// We found the price
-							if ($priceforthequantityarray['price_base_type'] == 'HT')
-							{
-								$pu_ht = $priceforthequantityarray['unitprice'];
-							}
-							else
-							{
-								$pu_ttc = $priceforthequantityarray['unitprice'];
-							}
-							break;
-						}
-					}
-				}
+                    $result = $prodcustprice->fetch_all('', '', 0, 0, $filter);
+                    if ($result) {
+                        if (count($prodcustprice->lines) > 0) {
+                            $pu_ht = price($prodcustprice->lines[0]->price);
+                            $pu_ttc = price($prodcustprice->lines[0]->price_ttc);
+                            $price_base_type = $prodcustprice->lines[0]->price_base_type;
+                            $tva_tx = $prodcustprice->lines[0]->tva_tx;
+                            if ($prodcustprice->lines[0]->default_vat_code && ! preg_match('/\(.*\)/', $tva_tx)) $tva_tx.= ' ('.$prodcustprice->lines[0]->default_vat_code.')';
+                            $tva_npr = $prodcustprice->lines[0]->recuperableonly;
+                            if (empty($tva_tx)) $tva_npr=0;
+                        }
+                    }
+                }
+                // If price per quantity
+                elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY))
+                {
+                    if ($this->prices_by_qty[0])    // yes, this product has some prices per quantity
+                    {
+                        // Search price into product_price_by_qty from $this->id
+                        foreach($this->prices_by_qty_list[0] as $priceforthequantityarray)
+                        {
+                            if ($priceforthequantityarray['rowid'] != $pqp) continue;
+                            // We found the price
+                            if ($priceforthequantityarray['price_base_type'] == 'HT')
+                            {
+                                $pu_ht = $priceforthequantityarray['unitprice'];
+                            }
+                            else
+                            {
+                                $pu_ttc = $priceforthequantityarray['unitprice'];
+                            }
+                            break;
+                        }
+                    }
+                }
+                // If price per quantity and customer
+                elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES))
+                {
+                    if ($this->prices_by_qty[$thirdparty_buyer->price_level]) // yes, this product has some prices per quantity
+                    {
+                        // Search price into product_price_by_qty from $this->id
+                        foreach($this->prices_by_qty_list[$thirdparty_buyer->price_level] as $priceforthequantityarray)
+                        {
+                            if ($priceforthequantityarray['rowid'] != $pqp) continue;
+                            // We found the price
+                            if ($priceforthequantityarray['price_base_type'] == 'HT')
+                            {
+                                $pu_ht = $priceforthequantityarray['unitprice'];
+                            }
+                            else
+                            {
+                                $pu_ttc = $priceforthequantityarray['unitprice'];
+                            }
+                            break;
+                        }
+                    }
+                }
 
-    	return array('pu_ht'=>$pu_ht, 'pu_ttc'=>$pu_ttc, 'price_min'=>$price_min, 'price_base_type'=>$price_base_type, 'tva_tx'=>$tva_tx, 'tva_npr'=>$tva_npr);
+        return array('pu_ht'=>$pu_ht, 'pu_ttc'=>$pu_ttc, 'price_min'=>$price_min, 'price_base_type'=>$price_base_type, 'tva_tx'=>$tva_tx, 'tva_npr'=>$tva_npr);
     }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -3948,7 +3948,7 @@ class Product extends CommonObject
      * @param  string $option                Where point the link ('stock', 'composition', 'category', 'supplier', '')
      * @param  int    $maxlength             Maxlength of ref
      * @param  int    $save_lastsearch_value -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-     * @param  int    $notooltip			 No tooltip
+     * @param  int    $notooltip             No tooltip
      * @return string                                String with URL
      */
     public function getNomUrl($withpicto = 0, $option = '', $maxlength = 0, $save_lastsearch_value = -1, $notooltip = 0)
@@ -4410,82 +4410,82 @@ class Product extends CommonObject
 
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *    Load value ->stock_theorique of a product. Property this->id must be defined.
-	 *    This function need a lot of load. If you use it on list, use a cache to execute it one for each product id.
-	 *
-	 *    @return   int             < 0 if KO, > 0 if OK
-	 *    @see		load_stock(), loadBatchInfo()
-	 */
-	public function load_virtual_stock()
-	{
+    /**
+     *    Load value ->stock_theorique of a product. Property this->id must be defined.
+     *    This function need a lot of load. If you use it on list, use a cache to execute it one for each product id.
+     *
+     *    @return   int             < 0 if KO, > 0 if OK
+     *    @see        load_stock(), loadBatchInfo()
+     */
+    public function load_virtual_stock()
+    {
 		// phpcs:enable
-		global $conf, $hookmanager, $action;
+        global $conf, $hookmanager, $action;
 
-		$stock_commande_client=0;
-		$stock_commande_fournisseur=0;
-		$stock_sending_client=0;
-		$stock_reception_fournisseur=0;
+        $stock_commande_client=0;
+        $stock_commande_fournisseur=0;
+        $stock_sending_client=0;
+        $stock_reception_fournisseur=0;
 
-		if (! empty($conf->commande->enabled))
-		{
-			$result=$this->load_stats_commande(0, '1,2', 1);
-			if ($result < 0) dol_print_error($this->db, $this->error);
-			$stock_commande_client=$this->stats_commande['qty'];
-		}
-		if (! empty($conf->expedition->enabled))
-		{
-			$result=$this->load_stats_sending(0, '1,2', 1);
-			if ($result < 0) dol_print_error($this->db, $this->error);
-			$stock_sending_client=$this->stats_expedition['qty'];
-		}
-		if (! empty($conf->fournisseur->enabled))
-		{
-			$result=$this->load_stats_commande_fournisseur(0, '1,2,3,4', 1);
-			if ($result < 0) dol_print_error($this->db, $this->error);
-			$stock_commande_fournisseur=$this->stats_commande_fournisseur['qty'];
+        if (! empty($conf->commande->enabled))
+        {
+            $result=$this->load_stats_commande(0, '1,2', 1);
+            if ($result < 0) dol_print_error($this->db, $this->error);
+            $stock_commande_client=$this->stats_commande['qty'];
+        }
+        if (! empty($conf->expedition->enabled))
+        {
+            $result=$this->load_stats_sending(0, '1,2', 1);
+            if ($result < 0) dol_print_error($this->db, $this->error);
+            $stock_sending_client=$this->stats_expedition['qty'];
+        }
+        if (! empty($conf->fournisseur->enabled))
+        {
+            $result=$this->load_stats_commande_fournisseur(0, '1,2,3,4', 1);
+            if ($result < 0) dol_print_error($this->db, $this->error);
+            $stock_commande_fournisseur=$this->stats_commande_fournisseur['qty'];
 
-			$result=$this->load_stats_reception(0, '4', 1);
-			if ($result < 0) dol_print_error($this->db, $this->error);
-			$stock_reception_fournisseur=$this->stats_reception['qty'];
-		}
+            $result=$this->load_stats_reception(0, '4', 1);
+            if ($result < 0) dol_print_error($this->db, $this->error);
+            $stock_reception_fournisseur=$this->stats_reception['qty'];
+        }
 
-		// Stock decrease mode
-		if (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT) || ! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)) {
-			$this->stock_theorique=$this->stock_reel-$stock_commande_client+$stock_sending_client;
-		}
-		if (! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER)) {
-			$this->stock_theorique=$this->stock_reel;
-		}
-		if (! empty($conf->global->STOCK_CALCULATE_ON_BILL)) {
-			$this->stock_theorique=$this->stock_reel-$stock_commande_client;
-		}
-		// Stock Increase mode
+        // Stock decrease mode
+        if (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT) || ! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)) {
+            $this->stock_theorique=$this->stock_reel-$stock_commande_client+$stock_sending_client;
+        }
+        if (! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER)) {
+            $this->stock_theorique=$this->stock_reel;
+        }
+        if (! empty($conf->global->STOCK_CALCULATE_ON_BILL)) {
+            $this->stock_theorique=$this->stock_reel-$stock_commande_client;
+        }
+        // Stock Increase mode
         if (! empty($conf->global->STOCK_CALCULATE_ON_RECEPTION) || ! empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)) {
             $this->stock_theorique+=$stock_commande_fournisseur-$stock_reception_fournisseur;
         }
-		if (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)) {
-			$this->stock_theorique+=$stock_commande_fournisseur-$stock_reception_fournisseur;
-		}
-		if (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER)) {
-			$this->stock_theorique-=$stock_reception_fournisseur;
-		}
-		if (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL)) {
-			$this->stock_theorique+=$stock_commande_fournisseur-$stock_reception_fournisseur;
-		}
+        if (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)) {
+            $this->stock_theorique+=$stock_commande_fournisseur-$stock_reception_fournisseur;
+        }
+        if (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER)) {
+            $this->stock_theorique-=$stock_reception_fournisseur;
+        }
+        if (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL)) {
+            $this->stock_theorique+=$stock_commande_fournisseur-$stock_reception_fournisseur;
+        }
 
-		if (! is_object($hookmanager)) {
-			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-			$hookmanager=new HookManager($this->db);
-		}
-		$hookmanager->initHooks(array('productdao'));
-		$parameters=array('id'=>$this->id);
-		// Note that $action and $object may have been modified by some hooks
-		$reshook=$hookmanager->executeHooks('loadvirtualstock', $parameters, $this, $action);
-		if ($reshook > 0) $this->stock_theorique = $hookmanager->resArray['stock_theorique'];
+        if (! is_object($hookmanager)) {
+            include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+            $hookmanager=new HookManager($this->db);
+        }
+        $hookmanager->initHooks(array('productdao'));
+        $parameters=array('id'=>$this->id);
+        // Note that $action and $object may have been modified by some hooks
+        $reshook=$hookmanager->executeHooks('loadvirtualstock', $parameters, $this, $action);
+        if ($reshook > 0) $this->stock_theorique = $hookmanager->resArray['stock_theorique'];
 
-		return 1;
-	}
+        return 1;
+    }
 
 
     /**

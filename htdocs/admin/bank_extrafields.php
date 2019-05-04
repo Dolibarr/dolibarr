@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2002    Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2003		Jean-Louis Bergamo		<jlb@j1b.org>
  * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
@@ -22,8 +22,8 @@
 
 /**
  *      \file       htdocs/admin/bank_extrafields.php
- *		\ingroup    bank
- *		\brief      Page to setup extra fields of bank
+ *        \ingroup    bank
+ *        \brief      Page to setup extra fields of bank
  */
 
 require '../main.inc.php';
@@ -95,7 +95,7 @@ if ($action != 'create' && $action != 'edit')
 
 if ($action == 'create')
 {
-	print '<br><div id="newattrib"></div>';
+    print '<br><div id="newattrib"></div>';
     print load_fiche_titre($langs->trans('NewAttribute'));
 
     require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_add.tpl.php';

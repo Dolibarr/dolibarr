@@ -55,12 +55,12 @@ if ($user->societe_id) $id=$user->societe_id;
 // Protection if external user
 if ($user->socid > 0)
 {
-	accessforbidden();
+    accessforbidden();
 }
 
 if( ! $user->rights->resource->read)
 {
-	accessforbidden();
+    accessforbidden();
 }
 
 $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
@@ -115,26 +115,26 @@ $form = new Form($db);
 
 if ($id > 0 || $ref)
 {
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+    require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+    require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
-	$langs->load("companies");
-	$picto = 'resource';
+    $langs->load("companies");
+    $picto = 'resource';
 
-	$object = new Dolresource($db);
-	$result = $object->fetch($id);
+    $object = new Dolresource($db);
+    $result = $object->fetch($id);
 
-	$title=$langs->trans("Agenda");
-	if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/productnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->ref." - ".$title;
-	llxHeader('', $title);
+    $title=$langs->trans("Agenda");
+    if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/productnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->ref." - ".$title;
+    llxHeader('', $title);
 
-	if (! empty($conf->notification->enabled)) $langs->load("mails");
-	$type = $langs->trans('ResourceSingular');
+    if (! empty($conf->notification->enabled)) $langs->load("mails");
+    $type = $langs->trans('ResourceSingular');
 
-	$head = resource_prepare_head($object);
+    $head = resource_prepare_head($object);
 
-	$titre=$langs->trans("ResourceSingular");
-	dol_fiche_head($head, 'agenda', $titre, -1, $picto);
+    $titre=$langs->trans("ResourceSingular");
+    dol_fiche_head($head, 'agenda', $titre, -1, $picto);
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/resource/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -147,22 +147,22 @@ if ($id > 0 || $ref)
 
     print '<div class="underbanner clearboth"></div>';
 
-	print '</div>';
+    print '</div>';
 
-	dol_fiche_end();
+    dol_fiche_end();
 
     if (! empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read) ))
     {
-    	print '<br>';
+        print '<br>';
 
         $param='&id='.$id;
         if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
         if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 
-		print_barre_liste($langs->trans("ActionsOnResource"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlcenter, '', 0, 1, 1);
+        print_barre_liste($langs->trans("ActionsOnResource"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlcenter, '', 0, 1, 1);
 
         // List of all actions
-		$filters=array();
+        $filters=array();
         $filters['search_agenda_label']=$search_agenda_label;
 
         // TODO Replace this with same code than into list.php

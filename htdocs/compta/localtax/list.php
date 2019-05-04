@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2011-2014		Juanjo Menent <jmenent@2byte.es>
+/* Copyright (C) 2011-2014        Juanjo Menent <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,9 +16,9 @@
  */
 
 /**
- *	    \file       htdocs/compta/localtax/list.php
+ *        \file       htdocs/compta/localtax/list.php
  *      \ingroup    tax
- *		\brief      List of IRPF payments
+ *        \brief      List of IRPF payments
  */
 
 require '../../main.inc.php';
@@ -45,9 +45,9 @@ $localtax_static = new Localtax($db);
 $newcardbutton='';
 if ($user->rights->tax->charges->creer)
 {
-	$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/compta/localtax/card.php?action=create&localTaxType='.$ltt.'"><span class="valignmiddle text-plus-circle">'.$langs->trans('NewLocalTaxPayment', ($ltt+1)).'</span>';
-	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-	$newcardbutton.= '</a>';
+    $newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/compta/localtax/card.php?action=create&localTaxType='.$ltt.'"><span class="valignmiddle text-plus-circle">'.$langs->trans('NewLocalTaxPayment', ($ltt+1)).'</span>';
+    $newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+    $newcardbutton.= '</a>';
 }
 
 print load_fiche_titre($langs->transcountry($ltt==2?"LT2Payments":"LT1Payments", $mysoc->country_code), $newcardbutton);
@@ -79,9 +79,9 @@ if ($result)
 
         print '<tr class="oddeven">';
 
-		$localtax_static->id=$obj->rowid;
-		$localtax_static->ref=$obj->rowid;
-		print "<td>".$localtax_static->getNomUrl(1)."</td>\n";
+        $localtax_static->id=$obj->rowid;
+        $localtax_static->ref=$obj->rowid;
+        print "<td>".$localtax_static->getNomUrl(1)."</td>\n";
         print "<td>".dol_trunc($obj->label, 40)."</td>\n";
         print '<td class="left">'.dol_print_date($db->jdate($obj->datev), 'day')."</td>\n";
         print '<td class="left">'.dol_print_date($db->jdate($obj->datep), 'day')."</td>\n";

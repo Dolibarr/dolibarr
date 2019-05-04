@@ -16,9 +16,9 @@
  */
 
 /**
- *	    \file       htdocs/admin/website.php
- *		\ingroup    setup
- *		\brief      Page to administer web sites
+ *        \file       htdocs/admin/website.php
+ *        \ingroup    setup
+ *        \brief      Page to administer web sites
  */
 
 require '../main.inc.php';
@@ -99,46 +99,46 @@ dol_fiche_head($head, 'options', '', -1);
 
 if ($action == 'edit')
 {
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<input type="hidden" name="action" value="update">';
+    print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="action" value="update">';
 
-	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
-	foreach($arrayofparameters as $key => $val)
-	{
-		print '<tr class="oddeven"><td>';
-		print $form->textwithpicto($langs->trans($key), $langs->trans($key.'Tooltip'));
-		print '</td><td><input name="'.$key.'"  class="flat '.(empty($val['css'])?'minwidth200':$val['css']).'" value="' . $conf->global->$key . '"></td></tr>';
-	}
+    foreach($arrayofparameters as $key => $val)
+    {
+        print '<tr class="oddeven"><td>';
+        print $form->textwithpicto($langs->trans($key), $langs->trans($key.'Tooltip'));
+        print '</td><td><input name="'.$key.'"  class="flat '.(empty($val['css'])?'minwidth200':$val['css']).'" value="' . $conf->global->$key . '"></td></tr>';
+    }
 
-	print '</table>';
+    print '</table>';
 
-	print '<br><div class="center">';
-	print '<input class="button" type="submit" value="'.$langs->trans("Save").'">';
-	print '</div>';
+    print '<br><div class="center">';
+    print '<input class="button" type="submit" value="'.$langs->trans("Save").'">';
+    print '</div>';
 
-	print '</form>';
-	print '<br>';
+    print '</form>';
+    print '<br>';
 }
 else
 {
-	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
-	foreach($arrayofparameters as $key => $val)
-	{
-		print '<tr class="oddeven"><td>';
-		print $form->textwithpicto($langs->trans($key), $langs->trans($key.'Tooltip'));
-		print '</td><td>' . $conf->global->$key . '</td></tr>';
-	}
+    foreach($arrayofparameters as $key => $val)
+    {
+        print '<tr class="oddeven"><td>';
+        print $form->textwithpicto($langs->trans($key), $langs->trans($key.'Tooltip'));
+        print '</td><td>' . $conf->global->$key . '</td></tr>';
+    }
 
-	print '</table>';
+    print '</table>';
 
-	print '<div class="tabsAction">';
-	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
-	print '</div>';
+    print '<div class="tabsAction">';
+    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
+    print '</div>';
 }
 
 

@@ -50,54 +50,54 @@ class box_comptes extends ModeleBoxes
     public $info_box_contents = array();
 
 
-	/**
-	 *  Constructor
-	 *
-	 *  @param  DoliDB	$db      	Database handler
-     *  @param	string	$param		More parameters
-	 */
-	public function __construct($db, $param = '')
-	{
-		global $conf, $user;
+    /**
+     *  Constructor
+     *
+     *  @param  DoliDB    $db          Database handler
+     *  @param    string    $param        More parameters
+     */
+    public function __construct($db, $param = '')
+    {
+        global $conf, $user;
 
-		$this->db = $db;
+        $this->db = $db;
 
-		// disable module for such cases
-		$listofmodulesforexternal=explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);
-		if (! in_array('banque', $listofmodulesforexternal) && ! empty($user->societe_id)) $this->enabled=0;	// disabled for external users
+        // disable module for such cases
+        $listofmodulesforexternal=explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);
+        if (! in_array('banque', $listofmodulesforexternal) && ! empty($user->societe_id)) $this->enabled=0;    // disabled for external users
 
-		$this->hidden = ! ($user->rights->banque->lire);
-	}
+        $this->hidden = ! ($user->rights->banque->lire);
+    }
 
-	/**
-	 *  Load data into info_box_contents array to show array later.
-	 *
-	 *  @param	int		$max        Maximum number of records to load
-     *  @return	void
-	 */
-	public function loadBox($max = 5)
-	{
-		global $user, $langs, $db, $conf;
+    /**
+     *  Load data into info_box_contents array to show array later.
+     *
+     *  @param    int        $max        Maximum number of records to load
+     *  @return    void
+     */
+    public function loadBox($max = 5)
+    {
+        global $user, $langs, $db, $conf;
 
-		$this->max=$max;
+        $this->max=$max;
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleCurrentAccounts"));
+        $this->info_box_head = array('text' => $langs->trans("BoxTitleCurrentAccounts"));
 
         if ($user->rights->banque->lire) {
-			$sql = "SELECT b.rowid, b.ref, b.label, b.bank,b.number, b.courant, b.clos, b.rappro, b.url";
-			$sql.= ", b.code_banque, b.code_guichet, b.cle_rib, b.bic, b.iban_prefix as iban";
-			$sql.= ", b.domiciliation, b.proprio, b.owner_address";
-			$sql.= ", b.account_number, b.currency_code";
-			$sql.= ", b.min_allowed, b.min_desired, comment";
+            $sql = "SELECT b.rowid, b.ref, b.label, b.bank,b.number, b.courant, b.clos, b.rappro, b.url";
+            $sql.= ", b.code_banque, b.code_guichet, b.cle_rib, b.bic, b.iban_prefix as iban";
+            $sql.= ", b.domiciliation, b.proprio, b.owner_address";
+            $sql.= ", b.account_number, b.currency_code";
+            $sql.= ", b.min_allowed, b.min_desired, comment";
             $sql.= ', b.fk_accountancy_journal';
             $sql.= ', aj.code as accountancy_journal';
             $sql.= " FROM ".MAIN_DB_PREFIX."bank_account as b";
             $sql.= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'accounting_journal as aj ON aj.rowid=b.fk_accountancy_journal';
             $sql.= " WHERE b.entity = ".$conf->entity;
-			$sql.= " AND clos = 0";
-			//$sql.= " AND courant = 1";
-			$sql.= " ORDER BY label";
-			$sql.= $db->plimit($max, 0);
+            $sql.= " AND clos = 0";
+            //$sql.= " AND courant = 1";
+            $sql.= " ORDER BY label";
+            $sql.= $db->plimit($max, 0);
 
             dol_syslog(get_class($this)."::loadBox", LOG_DEBUG);
             $result = $db->query($sql);
@@ -112,7 +112,7 @@ class box_comptes extends ModeleBoxes
                     $objp = $db->fetch_object($result);
 
                     $account_static->id = $objp->rowid;
-					$account_static->ref = $objp->ref;
+                    $account_static->ref = $objp->ref;
                     $account_static->label = $objp->label;
                     $account_static->number = $objp->number;
                     $account_static->account_number = $objp->account_number;
@@ -174,7 +174,7 @@ class box_comptes extends ModeleBoxes
                 'text' => $langs->trans("ReadPermissionNotAllowed")
             );
         }
-	}
+    }
 
     /**
      *  Method to show box

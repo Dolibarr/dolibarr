@@ -24,7 +24,7 @@
  */
 
 global $conf,$user,$langs,$db;
-//define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
+//define('TEST_DB_FORCE_TYPE','mysql');    // This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/commande/class/commande.class.php';
@@ -42,7 +42,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
- * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
+ * @remarks    backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
 class CommandeTest extends PHPUnit_Framework_TestCase
 {
@@ -59,9 +59,9 @@ class CommandeTest extends PHPUnit_Framework_TestCase
      */
     public function __construct()
     {
-    	parent::__construct();
+        parent::__construct();
 
-    	//$this->sharedFixture
+        //$this->sharedFixture
         global $conf,$user,$langs,$db;
         $this->savconf=$conf;
         $this->savuser=$user;
@@ -148,7 +148,7 @@ class CommandeTest extends PHPUnit_Framework_TestCase
      * @param   int $id     Id order
      * @return  Commande
      *
-     * @depends	testCommandeCreate
+     * @depends    testCommandeCreate
      * The depends says test is run only if previous is ok
      */
     public function testCommandeFetch($id)
@@ -170,26 +170,26 @@ class CommandeTest extends PHPUnit_Framework_TestCase
     /**
      * testCommandeUpdate
      *
-     * @param	Object		$localobject	Commande
-     * @return	Commande
+     * @param    Object        $localobject    Commande
+     * @return    Commande
      *
-     * @depends	testCommandeFetch
+     * @depends    testCommandeFetch
      * The depends says test is run only if previous is ok
      */
     public function testCommandeUpdate($localobject)
     {
-    	global $conf,$user,$langs,$db;
-    	$conf=$this->savconf;
-    	$user=$this->savuser;
-    	$langs=$this->savlangs;
-    	$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-    	$localobject->note_private='New note private after update';
-    	$result=$localobject->update($user);
+        $localobject->note_private='New note private after update';
+        $result=$localobject->update($user);
 
-    	$this->assertLessThan($result, 0);
-    	print __METHOD__." id=".$id." result=".$result."\n";
-    	return $localobject;
+        $this->assertLessThan($result, 0);
+        print __METHOD__." id=".$id." result=".$result."\n";
+        return $localobject;
     }
 
     /**
@@ -198,7 +198,7 @@ class CommandeTest extends PHPUnit_Framework_TestCase
      * @param   Object  $localobject    Order
      * @return  Commande
      *
-     * @depends	testCommandeUpdate
+     * @depends    testCommandeUpdate
      * The depends says test is run only if previous is ok
      */
     public function testCommandeValid($localobject)
@@ -244,7 +244,7 @@ class CommandeTest extends PHPUnit_Framework_TestCase
      * testCommandeOther
      *
      * @param   Object  $localobject    Order
-     * @return  int						Order id
+     * @return  int                        Order id
      *
      * @depends testCommandeCancel
      * The depends says test is run only if previous is ok

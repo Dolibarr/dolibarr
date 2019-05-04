@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2012	Regis Houssin	  <regis.houssin@inodbox.com>
+/* Copyright (C) 2005-2012    Regis Houssin      <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2012	Juanjo Menent	  <jmenent@2byte.es>
  * Copyright (C) 2016       Laurent Destailleur <aldy@users.sourceforge.net>
  * Copyright (C) 2013       Florian Henry   <florian.henry@open-concept.pro>
@@ -20,9 +20,9 @@
  */
 
 /**
- *	\file       htdocs/resource/note.php
- *	\ingroup    fichinter
- *	\brief      Fiche d'information sur une resource
+ *    \file       htdocs/resource/note.php
+ *    \ingroup    fichinter
+ *    \brief      Fiche d'information sur une resource
  */
 
 require '../main.inc.php';
@@ -43,14 +43,14 @@ $result = restrictedArea($user, 'resource', $id, 'resource');
 $object = new DolResource($db);
 $object->fetch($id, $ref);
 
-$permissionnote=$user->rights->resource->write;	// Used by the include of actions_setnotes.inc.php
+$permissionnote=$user->rights->resource->write;    // Used by the include of actions_setnotes.inc.php
 
 
 /*
  * Actions
  */
 
-include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, not includ_once
+include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';    // Must be include, not includ_once
 
 
 /*
@@ -63,41 +63,41 @@ $form = new Form($db);
 
 if ($id > 0 || ! empty($ref))
 {
-	$head = resource_prepare_head($object);
-	dol_fiche_head($head, 'note', $langs->trans('ResourceSingular'), -1, 'resource');
+    $head = resource_prepare_head($object);
+    dol_fiche_head($head, 'note', $langs->trans('ResourceSingular'), -1, 'resource');
 
-	$linkback = '<a href="' . DOL_URL_ROOT . '/resource/list.php' . (! empty($socid) ? '?id=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
-
-
-	$morehtmlref='<div class="refidno">';
-	$morehtmlref.='</div>';
+    $linkback = '<a href="' . DOL_URL_ROOT . '/resource/list.php' . (! empty($socid) ? '?id=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
 
-	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+    $morehtmlref='<div class="refidno">';
+    $morehtmlref.='</div>';
 
 
-	print '<div class="fichecenter">';
-	print '<div class="underbanner clearboth"></div>';
+    dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
-	print '<table class="border" width="100%">';
 
-	// Resource type
-	print '<tr>';
-	print '<td class="titlefield">' . $langs->trans("ResourceType") . '</td>';
-	print '<td>';
-	print $object->type_label;
-	print '</td>';
-	print '</tr>';
+    print '<div class="fichecenter">';
+    print '<div class="underbanner clearboth"></div>';
 
-	print "</table>";
+    print '<table class="border" width="100%">';
 
-	print '</div>';
+    // Resource type
+    print '<tr>';
+    print '<td class="titlefield">' . $langs->trans("ResourceType") . '</td>';
+    print '<td>';
+    print $object->type_label;
+    print '</td>';
+    print '</tr>';
 
-	$permission=$user->rights->resource->write;
-	$cssclass='titlefield';
-	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
+    print "</table>";
 
-	dol_fiche_end();
+    print '</div>';
+
+    $permission=$user->rights->resource->write;
+    $cssclass='titlefield';
+    include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
+
+    dol_fiche_end();
 }
 
 // End of page

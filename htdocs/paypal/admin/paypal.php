@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+/* Copyright (C) 2004        Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2013	Laurent Destailleur		<eldy@users.sourceforge.org>
  * Copyright (C) 2011-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011-2012  Juanjo Menent			<jmenent@2byte.es>
@@ -41,7 +41,7 @@ $action = GETPOST('action', 'alpha');
 
 if ($action == 'setvalue' && $user->admin)
 {
-	$db->begin();
+    $db->begin();
 
     $result=dolibarr_set_const($db, "PAYPAL_API_USER", GETPOST('PAYPAL_API_USER', 'alpha'), 'chaine', 0, '', $conf->entity);
     if (! $result > 0) $error++;
@@ -66,25 +66,25 @@ if ($action == 'setvalue' && $user->admin)
     $result=dolibarr_set_const($db, "ONLINE_PAYMENT_MESSAGE_OK", GETPOST('ONLINE_PAYMENT_MESSAGE_OK'), 'chaine', 0, '', $conf->entity);
     if (! $result > 0) $error++;
     $result=dolibarr_set_const($db, "ONLINE_PAYMENT_MESSAGE_KO", GETPOST('ONLINE_PAYMENT_MESSAGE_KO'), 'chaine', 0, '', $conf->entity);
-	if (! $result > 0) $error++;
-	$result=dolibarr_set_const($db, "ONLINE_PAYMENT_SENDEMAIL", GETPOST('ONLINE_PAYMENT_SENDEMAIL'), 'chaine', 0, '', $conf->entity);
-	if (! $result > 0) $error++;
-	// Payment token for URL
-	$result=dolibarr_set_const($db, "PAYMENT_SECURITY_TOKEN", GETPOST('PAYMENT_SECURITY_TOKEN', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (! $result > 0) $error++;
-	$result=dolibarr_set_const($db, "PAYMENT_SECURITY_TOKEN_UNIQUE", GETPOST('PAYMENT_SECURITY_TOKEN_UNIQUE', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (! $result > 0) $error++;
+    if (! $result > 0) $error++;
+    $result=dolibarr_set_const($db, "ONLINE_PAYMENT_SENDEMAIL", GETPOST('ONLINE_PAYMENT_SENDEMAIL'), 'chaine', 0, '', $conf->entity);
+    if (! $result > 0) $error++;
+    // Payment token for URL
+    $result=dolibarr_set_const($db, "PAYMENT_SECURITY_TOKEN", GETPOST('PAYMENT_SECURITY_TOKEN', 'alpha'), 'chaine', 0, '', $conf->entity);
+    if (! $result > 0) $error++;
+    $result=dolibarr_set_const($db, "PAYMENT_SECURITY_TOKEN_UNIQUE", GETPOST('PAYMENT_SECURITY_TOKEN_UNIQUE', 'alpha'), 'chaine', 0, '', $conf->entity);
+    if (! $result > 0) $error++;
 
-	if (! $error)
-  	{
-  		$db->commit();
-  		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-  	}
-  	else
-  	{
-  		$db->rollback();
-		dol_print_error($db);
+    if (! $error)
+      {
+          $db->commit();
+          setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
+      else
+      {
+          $db->rollback();
+        dol_print_error($db);
+      }
 }
 
 if ($action=="setlive")
@@ -129,8 +129,8 @@ print $langs->trans("PaypalDesc")."<br>\n";
 // Test if php curl exist
 if (! function_exists('curl_version'))
 {
-	$langs->load("errors");
-	setEventMessages($langs->trans("ErrorPhpCurlNotInstalled"), null, 'errors');
+    $langs->load("errors");
+    setEventMessages($langs->trans("ErrorPhpCurlNotInstalled"), null, 'errors');
 }
 
 
@@ -212,10 +212,10 @@ print '</td></tr>';
 
 if (! empty($conf->banque->enabled))
 {
-	print '<tr class="oddeven"><td>';
-	print $langs->trans("BankAccount").'</td><td>';
-	print $form->select_comptes($conf->global->PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS, 'PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS', 0, '', 1);
-	print '</td></tr>';
+    print '<tr class="oddeven"><td>';
+    print $langs->trans("BankAccount").'</td><td>';
+    print $form->select_comptes($conf->global->PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS, 'PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS', 0, '', 1);
+    print '</td></tr>';
 }
 
 print '<tr class="oddeven"><td>';
@@ -268,13 +268,13 @@ print '<tr class="oddeven"><td>';
 print $langs->trans("SecurityToken").'</td><td>';
 print '<input size="48" type="text" id="PAYMENT_SECURITY_TOKEN" name="PAYMENT_SECURITY_TOKEN" value="'.$conf->global->PAYMENT_SECURITY_TOKEN.'">';
 if (! empty($conf->use_javascript_ajax))
-	print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
-	print '</td></tr>';
+    print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
+    print '</td></tr>';
 
-	print '<tr class="oddeven"><td>';
-	print $langs->trans("SecurityTokenIsUnique").'</td><td>';
-	print $form->selectyesno("PAYMENT_SECURITY_TOKEN_UNIQUE", (empty($conf->global->PAYMENT_SECURITY_TOKEN)?0:$conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE), 1);
-	print '</td></tr>';
+    print '<tr class="oddeven"><td>';
+    print $langs->trans("SecurityTokenIsUnique").'</td><td>';
+    print $form->selectyesno("PAYMENT_SECURITY_TOKEN_UNIQUE", (empty($conf->global->PAYMENT_SECURITY_TOKEN)?0:$conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE), 1);
+    print '</td></tr>';
 
 print '</table>';
 
@@ -289,7 +289,7 @@ print '<br><br>';
 // Help doc
 print '<u>'.$langs->trans("InformationToFindParameters", "Paypal").'</u>:<br>';
 if (! empty($conf->use_javascript_ajax))
-	print '<a href="#" class="reposition" id="apidoca">'.$langs->trans("ClickHere").'...</a>';
+    print '<a href="#" class="reposition" id="apidoca">'.$langs->trans("ClickHere").'...</a>';
 
 $realpaypalurl='www.paypal.com';
 $sandboxpaypalurl='developer.paypal.com';
@@ -309,15 +309,15 @@ print '</div>';
 
 if (! empty($conf->use_javascript_ajax))
 {
-	print "\n".'<script type="text/javascript">';
-	print '$(document).ready(function () {
+    print "\n".'<script type="text/javascript">';
+    print '$(document).ready(function () {
             $("#apidoc").hide();
             $("#apidoca").click(function() {
                 $("#apidoc").show();
             	$("#apidoca").hide();
             })
 			});';
-	print '</script>';
+    print '</script>';
 }
 
 print '<br><br>';

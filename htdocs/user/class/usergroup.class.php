@@ -22,8 +22,8 @@
  */
 
 /**
- *	 \file       htdocs/user/class/usergroup.class.php
- *	 \brief      File of class to manage user groups
+ *     \file       htdocs/user/class/usergroup.class.php
+ *     \brief      File of class to manage user groups
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
@@ -31,73 +31,73 @@ if (! empty($conf->ldap->enabled)) require_once DOL_DOCUMENT_ROOT."/core/class/l
 
 
 /**
- *	Class to manage user groups
+ *    Class to manage user groups
  */
 class UserGroup extends CommonObject
 {
-	/**
-	 * @var string ID to identify managed object
-	 */
-	public $element='usergroup';
+    /**
+     * @var string ID to identify managed object
+     */
+    public $element='usergroup';
 
-	/**
-	 * @var string Name of table without prefix where object is stored
-	 */
-	public $table_element='usergroup';
+    /**
+     * @var string Name of table without prefix where object is stored
+     */
+    public $table_element='usergroup';
 
-	/**
-	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	 * @var int
-	 */
-	public $ismultientitymanaged = 1;
+    /**
+     * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+     * @var int
+     */
+    public $ismultientitymanaged = 1;
 
     public $picto='group';
 
-	/**
-	 * @var int Entity of group
-	 */
-	public $entity;
+    /**
+     * @var int Entity of group
+     */
+    public $entity;
 
-	/**
-	 * @var string
-	 * @deprecated
-	 * @see $name
-	 */
-	public $nom;
+    /**
+     * @var string
+     * @deprecated
+     * @see $name
+     */
+    public $nom;
 
-	/**
-	 * @var string name
-	 */
-	public $name;			// Name of group
+    /**
+     * @var string name
+     */
+    public $name;            // Name of group
 
-	public $globalgroup;	// Global group
+    public $globalgroup;    // Global group
 
-	/**
+    /**
      * Date creation record (datec)
      *
      * @var integer
      */
     public $datec;
 
-	/**
+    /**
      * Date modification record (tms)
      *
      * @var integer
      */
     public $datem;
 
-	public $note;			// Description
+    public $note;            // Description
 
-	public $members=array();	// Array of users
+    public $members=array();    // Array of users
 
-	public $nb_rights;					// Number of rights granted to the user
+    public $nb_rights;                    // Number of rights granted to the user
 
-	private $_tab_loaded=array();		// Array of cache of already loaded permissions
+    private $_tab_loaded=array();        // Array of cache of already loaded permissions
 
-	public $oldcopy;		// To contains a clone of this when we need to save old properties of object
+    public $oldcopy;        // To contains a clone of this when we need to save old properties of object
 
 
-	/**
+    /**
      *    Constructor de la classe
      *
      *    @param   DoliDb  $db     Database handler
@@ -109,543 +109,543 @@ class UserGroup extends CommonObject
     }
 
 
-	/**
-	 *  Charge un objet group avec toutes ses caracteristiques (except ->members array)
-	 *
-	 *	@param      int		$id				Id of group to load
-	 *	@param      string	$groupname		Name of group to load
-	 *  @param		boolean	$load_members	Load all members of the group
-	 *	@return		int						<0 if KO, >0 if OK
-	 */
-	public function fetch($id = '', $groupname = '', $load_members = true)
-	{
-		global $conf;
+    /**
+     *  Charge un objet group avec toutes ses caracteristiques (except ->members array)
+     *
+     *    @param      int        $id                Id of group to load
+     *    @param      string    $groupname        Name of group to load
+     *  @param        boolean    $load_members    Load all members of the group
+     *    @return        int                        <0 if KO, >0 if OK
+     */
+    public function fetch($id = '', $groupname = '', $load_members = true)
+    {
+        global $conf;
 
-		$sql = "SELECT g.rowid, g.entity, g.nom as name, g.note, g.datec, g.tms as datem";
-		$sql.= " FROM ".MAIN_DB_PREFIX."usergroup as g";
-		if ($groupname)
-		{
-			$sql.= " WHERE g.nom = '".$this->db->escape($groupname)."'";
-		}
-		else
-		{
-			$sql.= " WHERE g.rowid = ".$id;
-		}
+        $sql = "SELECT g.rowid, g.entity, g.nom as name, g.note, g.datec, g.tms as datem";
+        $sql.= " FROM ".MAIN_DB_PREFIX."usergroup as g";
+        if ($groupname)
+        {
+            $sql.= " WHERE g.nom = '".$this->db->escape($groupname)."'";
+        }
+        else
+        {
+            $sql.= " WHERE g.rowid = ".$id;
+        }
 
-		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
-		$result = $this->db->query($sql);
-		if ($result)
-		{
-			if ($this->db->num_rows($result))
-			{
-				$obj = $this->db->fetch_object($result);
+        dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
+        $result = $this->db->query($sql);
+        if ($result)
+        {
+            if ($this->db->num_rows($result))
+            {
+                $obj = $this->db->fetch_object($result);
 
-				$this->id = $obj->rowid;
-				$this->ref = $obj->rowid;
-				$this->entity = $obj->entity;
-				$this->name = $obj->name;
-				$this->nom = $obj->name; // Deprecated
-				$this->note = $obj->note;
-				$this->datec = $obj->datec;
-				$this->datem = $obj->datem;
+                $this->id = $obj->rowid;
+                $this->ref = $obj->rowid;
+                $this->entity = $obj->entity;
+                $this->name = $obj->name;
+                $this->nom = $obj->name; // Deprecated
+                $this->note = $obj->note;
+                $this->datec = $obj->datec;
+                $this->datem = $obj->datem;
 
-				if($load_members)
-					$this->members=$this->listUsersForGroup();
-
-
-				// Retreive all extrafield
-				// fetch optionals attributes and labels
-				$this->fetch_optionals();
+                if($load_members)
+                    $this->members=$this->listUsersForGroup();
 
 
-				// Sav current LDAP Current DN
-				//$this->ldap_dn = $this->_load_ldap_dn($this->_load_ldap_info(),0);
-			}
-			$this->db->free($result);
-			return 1;
-		}
-		else
-		{
-			$this->error=$this->db->lasterror();
-			return -1;
-		}
-	}
+                // Retreive all extrafield
+                // fetch optionals attributes and labels
+                $this->fetch_optionals();
 
 
-	/**
-	 *  Return array of groups objects for a particular user
-	 *
-	 *  @param		int		$userid 		User id to search
-	 *  @param		boolean	$load_members	Load all members of the group
-	 *  @return		array     				Array of groups objects
-	 */
-	public function listGroupsForUser($userid, $load_members = true)
-	{
-		global $conf, $user;
-
-		$ret=array();
-
-		$sql = "SELECT g.rowid, ug.entity as usergroup_entity";
-		$sql.= " FROM ".MAIN_DB_PREFIX."usergroup as g,";
-		$sql.= " ".MAIN_DB_PREFIX."usergroup_user as ug";
-		$sql.= " WHERE ug.fk_usergroup = g.rowid";
-		$sql.= " AND ug.fk_user = ".$userid;
-		if(! empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && ! $user->entity)
-		{
-			$sql.= " AND g.entity IS NOT NULL";
-		}
-		else
-		{
-			$sql.= " AND g.entity IN (0,".$conf->entity.")";
-		}
-		$sql.= " ORDER BY g.nom";
-
-		dol_syslog(get_class($this)."::listGroupsForUser", LOG_DEBUG);
-		$result = $this->db->query($sql);
-		if ($result)
-		{
-			while ($obj = $this->db->fetch_object($result))
-			{
-				if (! array_key_exists($obj->rowid, $ret))
-				{
-					$newgroup=new UserGroup($this->db);
-					$newgroup->fetch($obj->rowid, '', $load_members);
-					$ret[$obj->rowid]=$newgroup;
-				}
-
-				$ret[$obj->rowid]->usergroup_entity[]=$obj->usergroup_entity;
-			}
-
-			$this->db->free($result);
-
-			return $ret;
-		}
-		else
-		{
-			$this->error=$this->db->lasterror();
-			return -1;
-		}
-	}
-
-	/**
-	 * 	Return array of User objects for group this->id (or all if this->id not defined)
-	 *
-	 * 	@param	string	$excludefilter		Filter to exclude
-	 *  @param	int		$mode				0=Return array of user instance, 1=Return array of users id only
-	 * 	@return	mixed						Array of users or -1 on error
-	 */
-	public function listUsersForGroup($excludefilter = '', $mode = 0)
-	{
-		global $conf, $user;
-
-		$ret=array();
-
-		$sql = "SELECT u.rowid";
-		if (! empty($this->id)) $sql.= ", ug.entity as usergroup_entity";
-		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-		if (! empty($this->id)) $sql.= ", ".MAIN_DB_PREFIX."usergroup_user as ug";
-		$sql.= " WHERE 1 = 1";
-		if (! empty($this->id)) $sql.= " AND ug.fk_user = u.rowid";
-		if (! empty($this->id)) $sql.= " AND ug.fk_usergroup = ".$this->id;
-		if (! empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && ! $user->entity)
-		{
-			$sql.= " AND u.entity IS NOT NULL";
-		}
-		else
-		{
-			$sql.= " AND u.entity IN (0,".$conf->entity.")";
-		}
-		if (! empty($excludefilter)) $sql.=' AND ('.$excludefilter.')';
-
-		dol_syslog(get_class($this)."::listUsersForGroup", LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			while ($obj = $this->db->fetch_object($resql))
-			{
-				if (! array_key_exists($obj->rowid, $ret))
-				{
-					if ($mode != 1)
-					{
-						$newuser=new User($this->db);
-						$newuser->fetch($obj->rowid);
-						$ret[$obj->rowid]=$newuser;
-					}
-					else $ret[$obj->rowid]=$obj->rowid;
-				}
-				if ($mode != 1 && ! empty($obj->usergroup_entity))
-				{
-					$ret[$obj->rowid]->usergroup_entity[]=$obj->usergroup_entity;
-				}
-			}
-
-			$this->db->free($resql);
-
-			return $ret;
-		}
-		else
-		{
-			$this->error=$this->db->lasterror();
-			return -1;
-		}
-	}
-
-	/**
-	 *    Add a permission to a group
-	 *
-	 *    @param	int		$rid		id du droit a ajouter
-	 *    @param	string	$allmodule	Ajouter tous les droits du module allmodule
-	 *    @param	string	$allperms	Ajouter tous les droits du module allmodule, perms allperms
-	 *    @param	int		$entity		Entity to use
-	 *    @return	int					> 0 if OK, < 0 if KO
-	 */
-	public function addrights($rid, $allmodule = '', $allperms = '', $entity = 0)
-	{
-		global $conf, $user, $langs;
-
-		$entity = (! empty($entity)?$entity:$conf->entity);
-
-		dol_syslog(get_class($this)."::addrights $rid, $allmodule, $allperms, $entity");
-		$error=0;
-		$whereforadd='';
-
-		$this->db->begin();
-
-		if (! empty($rid))
-		{
-			// Si on a demande ajout d'un droit en particulier, on recupere
-			// les caracteristiques (module, perms et subperms) de ce droit.
-			$sql = "SELECT module, perms, subperms";
-			$sql.= " FROM ".MAIN_DB_PREFIX."rights_def";
-			$sql.= " WHERE id = '".$this->db->escape($rid)."'";
-			$sql.= " AND entity = ".$entity;
-
-			$result=$this->db->query($sql);
-			if ($result) {
-				$obj = $this->db->fetch_object($result);
-				$module=$obj->module;
-				$perms=$obj->perms;
-				$subperms=$obj->subperms;
-			}
-			else {
-				$error++;
-				dol_print_error($this->db);
-			}
-
-			// Where pour la liste des droits a ajouter
-			$whereforadd="id=".$this->db->escape($rid);
-			// Ajout des droits induits
-			if ($subperms)   $whereforadd.=" OR (module='$module' AND perms='$perms' AND (subperms='lire' OR subperms='read'))";
-			elseif ($perms) $whereforadd.=" OR (module='$module' AND (perms='lire' OR perms='read') AND subperms IS NULL)";
-
-			// Pour compatibilite, si lowid = 0, on est en mode ajout de tout
-			// TODO A virer quand sera gere par l'appelant
-			//if (substr($rid,-1,1) == 0) $whereforadd="module='$module'";
-		}
-		else {
-			// Where pour la liste des droits a ajouter
-			if (! empty($allmodule))
-			{
-				if ($allmodule == 'allmodules')
-				{
-					$whereforadd='allmodules';
-				}
-				else
-				{
-					$whereforadd="module='".$this->db->escape($allmodule)."'";
-					if (! empty($allperms))  $whereforadd.=" AND perms='".$this->db->escape($allperms)."'";
-				}
-			}
-		}
-
-		// Ajout des droits de la liste whereforadd
-		if (! empty($whereforadd))
-		{
-			//print "$module-$perms-$subperms";
-			$sql = "SELECT id";
-			$sql.= " FROM ".MAIN_DB_PREFIX."rights_def";
-			$sql.= " WHERE entity = ".$entity;
-			if (! empty($whereforadd) && $whereforadd != 'allmodules') {
-				$sql.= " AND ".$whereforadd;
-			}
-
-			$result=$this->db->query($sql);
-			if ($result)
-			{
-				$num = $this->db->num_rows($result);
-				$i = 0;
-				while ($i < $num)
-				{
-					$obj = $this->db->fetch_object($result);
-					$nid = $obj->id;
-
-					$sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_rights WHERE fk_usergroup = $this->id AND fk_id=".$nid." AND entity = ".$entity;
-					if (! $this->db->query($sql)) $error++;
-					$sql = "INSERT INTO ".MAIN_DB_PREFIX."usergroup_rights (entity, fk_usergroup, fk_id) VALUES (".$entity.", ".$this->id.", ".$nid.")";
-					if (! $this->db->query($sql)) $error++;
-
-					$i++;
-				}
-			}
-			else
-			{
-				$error++;
-				dol_print_error($this->db);
-			}
-
-			if (! $error)
-			{
-				$langs->load("other");
-				$this->context = array('audit'=>$langs->trans("PermissionsAdd").($rid?' (id='.$rid.')':''));
-
-			    // Call trigger
-			    $result=$this->call_trigger('GROUP_MODIFY', $user);
-			    if ($result < 0) { $error++; }
-			    // End call triggers
-			}
-		}
-
-		if ($error) {
-			$this->db->rollback();
-			return -$error;
-		}
-		else {
-			$this->db->commit();
-			return 1;
-		}
-	}
+                // Sav current LDAP Current DN
+                //$this->ldap_dn = $this->_load_ldap_dn($this->_load_ldap_info(),0);
+            }
+            $this->db->free($result);
+            return 1;
+        }
+        else
+        {
+            $this->error=$this->db->lasterror();
+            return -1;
+        }
+    }
 
 
-	/**
-	 *    Remove a permission from group
-	 *
-	 *    @param	int		$rid		id du droit a retirer
-	 *    @param	string	$allmodule	Retirer tous les droits du module allmodule
-	 *    @param	string	$allperms	Retirer tous les droits du module allmodule, perms allperms
-	 *    @param	int		$entity		Entity to use
-	 *    @return	int					> 0 if OK, < 0 if OK
-	 */
-	public function delrights($rid, $allmodule = '', $allperms = '', $entity = 0)
-	{
-		global $conf, $user, $langs;
+    /**
+     *  Return array of groups objects for a particular user
+     *
+     *  @param        int        $userid         User id to search
+     *  @param        boolean    $load_members    Load all members of the group
+     *  @return        array                     Array of groups objects
+     */
+    public function listGroupsForUser($userid, $load_members = true)
+    {
+        global $conf, $user;
 
-		$error=0;
-		$wherefordel='';
+        $ret=array();
 
-		$entity = (! empty($entity)?$entity:$conf->entity);
+        $sql = "SELECT g.rowid, ug.entity as usergroup_entity";
+        $sql.= " FROM ".MAIN_DB_PREFIX."usergroup as g,";
+        $sql.= " ".MAIN_DB_PREFIX."usergroup_user as ug";
+        $sql.= " WHERE ug.fk_usergroup = g.rowid";
+        $sql.= " AND ug.fk_user = ".$userid;
+        if(! empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && ! $user->entity)
+        {
+            $sql.= " AND g.entity IS NOT NULL";
+        }
+        else
+        {
+            $sql.= " AND g.entity IN (0,".$conf->entity.")";
+        }
+        $sql.= " ORDER BY g.nom";
 
-		$this->db->begin();
+        dol_syslog(get_class($this)."::listGroupsForUser", LOG_DEBUG);
+        $result = $this->db->query($sql);
+        if ($result)
+        {
+            while ($obj = $this->db->fetch_object($result))
+            {
+                if (! array_key_exists($obj->rowid, $ret))
+                {
+                    $newgroup=new UserGroup($this->db);
+                    $newgroup->fetch($obj->rowid, '', $load_members);
+                    $ret[$obj->rowid]=$newgroup;
+                }
 
-		if (! empty($rid))
-		{
-			// Si on a demande supression d'un droit en particulier, on recupere
-			// les caracteristiques module, perms et subperms de ce droit.
-			$sql = "SELECT module, perms, subperms";
-			$sql.= " FROM ".MAIN_DB_PREFIX."rights_def";
-			$sql.= " WHERE id = '".$this->db->escape($rid)."'";
-			$sql.= " AND entity = ".$entity;
+                $ret[$obj->rowid]->usergroup_entity[]=$obj->usergroup_entity;
+            }
 
-			$result=$this->db->query($sql);
-			if ($result) {
-				$obj = $this->db->fetch_object($result);
-				$module=$obj->module;
-				$perms=$obj->perms;
-				$subperms=$obj->subperms;
-			}
-			else {
-				$error++;
-				dol_print_error($this->db);
-			}
+            $this->db->free($result);
 
-			// Where pour la liste des droits a supprimer
-			$wherefordel="id=".$this->db->escape($rid);
-			// Suppression des droits induits
-			if ($subperms=='lire' || $subperms=='read') $wherefordel.=" OR (module='$module' AND perms='$perms' AND subperms IS NOT NULL)";
-			if ($perms=='lire' || $perms=='read')    $wherefordel.=" OR (module='$module')";
+            return $ret;
+        }
+        else
+        {
+            $this->error=$this->db->lasterror();
+            return -1;
+        }
+    }
 
-			// Pour compatibilite, si lowid = 0, on est en mode suppression de tout
-			// TODO A virer quand sera gere par l'appelant
-			//if (substr($rid,-1,1) == 0) $wherefordel="module='$module'";
-		} else {
-			// Where pour la liste des droits a supprimer
-			if (! empty($allmodule))
-			{
-				if ($allmodule == 'allmodules')
-				{
-					$wherefordel='allmodules';
-				}
-				else
-				{
-					$wherefordel="module='".$this->db->escape($allmodule)."'";
-					if (! empty($allperms))  $whereforadd.=" AND perms='".$this->db->escape($allperms)."'";
-				}
-			}
-		}
+    /**
+     *     Return array of User objects for group this->id (or all if this->id not defined)
+     *
+     *     @param    string    $excludefilter        Filter to exclude
+     *  @param    int        $mode                0=Return array of user instance, 1=Return array of users id only
+     *     @return    mixed                        Array of users or -1 on error
+     */
+    public function listUsersForGroup($excludefilter = '', $mode = 0)
+    {
+        global $conf, $user;
 
-		// Suppression des droits de la liste wherefordel
-		if (! empty($wherefordel))
-		{
-			//print "$module-$perms-$subperms";
-			$sql = "SELECT id";
-			$sql.= " FROM ".MAIN_DB_PREFIX."rights_def";
-			$sql.= " WHERE entity = ".$entity;
-			if (! empty($wherefordel) && $wherefordel != 'allmodules') {
-				$sql.= " AND ".$wherefordel;
-			}
+        $ret=array();
 
-			$result=$this->db->query($sql);
-			if ($result)
-			{
-				$num = $this->db->num_rows($result);
-				$i = 0;
-				while ($i < $num)
-				{
-					$obj = $this->db->fetch_object($result);
-					$nid = $obj->id;
+        $sql = "SELECT u.rowid";
+        if (! empty($this->id)) $sql.= ", ug.entity as usergroup_entity";
+        $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
+        if (! empty($this->id)) $sql.= ", ".MAIN_DB_PREFIX."usergroup_user as ug";
+        $sql.= " WHERE 1 = 1";
+        if (! empty($this->id)) $sql.= " AND ug.fk_user = u.rowid";
+        if (! empty($this->id)) $sql.= " AND ug.fk_usergroup = ".$this->id;
+        if (! empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && ! $user->entity)
+        {
+            $sql.= " AND u.entity IS NOT NULL";
+        }
+        else
+        {
+            $sql.= " AND u.entity IN (0,".$conf->entity.")";
+        }
+        if (! empty($excludefilter)) $sql.=' AND ('.$excludefilter.')';
 
-					$sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_rights";
-					$sql.= " WHERE fk_usergroup = $this->id AND fk_id=".$nid;
-					$sql.= " AND entity = ".$entity;
-					if (! $this->db->query($sql)) $error++;
+        dol_syslog(get_class($this)."::listUsersForGroup", LOG_DEBUG);
+        $resql = $this->db->query($sql);
+        if ($resql)
+        {
+            while ($obj = $this->db->fetch_object($resql))
+            {
+                if (! array_key_exists($obj->rowid, $ret))
+                {
+                    if ($mode != 1)
+                    {
+                        $newuser=new User($this->db);
+                        $newuser->fetch($obj->rowid);
+                        $ret[$obj->rowid]=$newuser;
+                    }
+                    else $ret[$obj->rowid]=$obj->rowid;
+                }
+                if ($mode != 1 && ! empty($obj->usergroup_entity))
+                {
+                    $ret[$obj->rowid]->usergroup_entity[]=$obj->usergroup_entity;
+                }
+            }
 
-					$i++;
-				}
-			}
-			else
-			{
-				$error++;
-				dol_print_error($this->db);
-			}
+            $this->db->free($resql);
 
-			if (! $error)
-			{
-				$langs->load("other");
-				$this->context = array('audit'=>$langs->trans("PermissionsDelete").($rid?' (id='.$rid.')':''));
+            return $ret;
+        }
+        else
+        {
+            $this->error=$this->db->lasterror();
+            return -1;
+        }
+    }
 
-			    // Call trigger
-			    $result=$this->call_trigger('GROUP_MODIFY', $user);
-			    if ($result < 0) { $error++; }
-			    // End call triggers
-			}
-		}
+    /**
+     *    Add a permission to a group
+     *
+     *    @param    int        $rid        id du droit a ajouter
+     *    @param    string    $allmodule    Ajouter tous les droits du module allmodule
+     *    @param    string    $allperms    Ajouter tous les droits du module allmodule, perms allperms
+     *    @param    int        $entity        Entity to use
+     *    @return    int                    > 0 if OK, < 0 if KO
+     */
+    public function addrights($rid, $allmodule = '', $allperms = '', $entity = 0)
+    {
+        global $conf, $user, $langs;
 
-		if ($error) {
-			$this->db->rollback();
-			return -$error;
-		}
-		else {
-			$this->db->commit();
-			return 1;
-		}
-	}
+        $entity = (! empty($entity)?$entity:$conf->entity);
+
+        dol_syslog(get_class($this)."::addrights $rid, $allmodule, $allperms, $entity");
+        $error=0;
+        $whereforadd='';
+
+        $this->db->begin();
+
+        if (! empty($rid))
+        {
+            // Si on a demande ajout d'un droit en particulier, on recupere
+            // les caracteristiques (module, perms et subperms) de ce droit.
+            $sql = "SELECT module, perms, subperms";
+            $sql.= " FROM ".MAIN_DB_PREFIX."rights_def";
+            $sql.= " WHERE id = '".$this->db->escape($rid)."'";
+            $sql.= " AND entity = ".$entity;
+
+            $result=$this->db->query($sql);
+            if ($result) {
+                $obj = $this->db->fetch_object($result);
+                $module=$obj->module;
+                $perms=$obj->perms;
+                $subperms=$obj->subperms;
+            }
+            else {
+                $error++;
+                dol_print_error($this->db);
+            }
+
+            // Where pour la liste des droits a ajouter
+            $whereforadd="id=".$this->db->escape($rid);
+            // Ajout des droits induits
+            if ($subperms)   $whereforadd.=" OR (module='$module' AND perms='$perms' AND (subperms='lire' OR subperms='read'))";
+            elseif ($perms) $whereforadd.=" OR (module='$module' AND (perms='lire' OR perms='read') AND subperms IS NULL)";
+
+            // Pour compatibilite, si lowid = 0, on est en mode ajout de tout
+            // TODO A virer quand sera gere par l'appelant
+            //if (substr($rid,-1,1) == 0) $whereforadd="module='$module'";
+        }
+        else {
+            // Where pour la liste des droits a ajouter
+            if (! empty($allmodule))
+            {
+                if ($allmodule == 'allmodules')
+                {
+                    $whereforadd='allmodules';
+                }
+                else
+                {
+                    $whereforadd="module='".$this->db->escape($allmodule)."'";
+                    if (! empty($allperms))  $whereforadd.=" AND perms='".$this->db->escape($allperms)."'";
+                }
+            }
+        }
+
+        // Ajout des droits de la liste whereforadd
+        if (! empty($whereforadd))
+        {
+            //print "$module-$perms-$subperms";
+            $sql = "SELECT id";
+            $sql.= " FROM ".MAIN_DB_PREFIX."rights_def";
+            $sql.= " WHERE entity = ".$entity;
+            if (! empty($whereforadd) && $whereforadd != 'allmodules') {
+                $sql.= " AND ".$whereforadd;
+            }
+
+            $result=$this->db->query($sql);
+            if ($result)
+            {
+                $num = $this->db->num_rows($result);
+                $i = 0;
+                while ($i < $num)
+                {
+                    $obj = $this->db->fetch_object($result);
+                    $nid = $obj->id;
+
+                    $sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_rights WHERE fk_usergroup = $this->id AND fk_id=".$nid." AND entity = ".$entity;
+                    if (! $this->db->query($sql)) $error++;
+                    $sql = "INSERT INTO ".MAIN_DB_PREFIX."usergroup_rights (entity, fk_usergroup, fk_id) VALUES (".$entity.", ".$this->id.", ".$nid.")";
+                    if (! $this->db->query($sql)) $error++;
+
+                    $i++;
+                }
+            }
+            else
+            {
+                $error++;
+                dol_print_error($this->db);
+            }
+
+            if (! $error)
+            {
+                $langs->load("other");
+                $this->context = array('audit'=>$langs->trans("PermissionsAdd").($rid?' (id='.$rid.')':''));
+
+                // Call trigger
+                $result=$this->call_trigger('GROUP_MODIFY', $user);
+                if ($result < 0) { $error++; }
+                // End call triggers
+            }
+        }
+
+        if ($error) {
+            $this->db->rollback();
+            return -$error;
+        }
+        else {
+            $this->db->commit();
+            return 1;
+        }
+    }
 
 
-	/**
-	 *  Charge dans l'objet group, la liste des permissions auquels le groupe a droit
-	 *
-	 *  @param      string	$moduletag	 	Name of module we want permissions ('' means all)
-	 *	@return     int						<0 if KO, >0 if OK
-	 */
-	public function getrights($moduletag = '')
-	{
-		global $conf;
+    /**
+     *    Remove a permission from group
+     *
+     *    @param    int        $rid        id du droit a retirer
+     *    @param    string    $allmodule    Retirer tous les droits du module allmodule
+     *    @param    string    $allperms    Retirer tous les droits du module allmodule, perms allperms
+     *    @param    int        $entity        Entity to use
+     *    @return    int                    > 0 if OK, < 0 if OK
+     */
+    public function delrights($rid, $allmodule = '', $allperms = '', $entity = 0)
+    {
+        global $conf, $user, $langs;
 
-		if ($moduletag && isset($this->_tab_loaded[$moduletag]) && $this->_tab_loaded[$moduletag])
-		{
-			// Le fichier de ce module est deja charge
-			return;
-		}
+        $error=0;
+        $wherefordel='';
 
-		if (! empty($this->all_permissions_are_loaded))
-		{
-			// Si les permissions ont deja ete chargees, on quitte
-			return;
-		}
+        $entity = (! empty($entity)?$entity:$conf->entity);
 
-		/*
-		 * Recuperation des droits
-		 */
-		$sql = "SELECT r.module, r.perms, r.subperms ";
-		$sql.= " FROM ".MAIN_DB_PREFIX."usergroup_rights as u, ".MAIN_DB_PREFIX."rights_def as r";
-		$sql.= " WHERE r.id = u.fk_id";
-		$sql.= " AND r.entity = ".$conf->entity;
-		$sql.= " AND u.entity = ".$conf->entity;
-		$sql.= " AND u.fk_usergroup = ".$this->id;
-		$sql.= " AND r.perms IS NOT NULL";
-		if ($moduletag) $sql.= " AND r.module = '".$this->db->escape($moduletag)."'";
+        $this->db->begin();
 
-		dol_syslog(get_class($this).'::getrights', LOG_DEBUG);
-		$resql=$this->db->query($sql);
-		if ($resql)
-		{
-			$num = $this->db->num_rows($resql);
-			$i = 0;
-			while ($i < $num)
-			{
-				$obj = $this->db->fetch_object($resql);
+        if (! empty($rid))
+        {
+            // Si on a demande supression d'un droit en particulier, on recupere
+            // les caracteristiques module, perms et subperms de ce droit.
+            $sql = "SELECT module, perms, subperms";
+            $sql.= " FROM ".MAIN_DB_PREFIX."rights_def";
+            $sql.= " WHERE id = '".$this->db->escape($rid)."'";
+            $sql.= " AND entity = ".$entity;
 
-				$module=$obj->module;
-				$perms=$obj->perms;
-				$subperms=$obj->subperms;
+            $result=$this->db->query($sql);
+            if ($result) {
+                $obj = $this->db->fetch_object($result);
+                $module=$obj->module;
+                $perms=$obj->perms;
+                $subperms=$obj->subperms;
+            }
+            else {
+                $error++;
+                dol_print_error($this->db);
+            }
 
-				if ($perms)
-				{
-					if (! isset($this->rights)) $this->rights = new stdClass(); // For avoid error
-					if (! isset($this->rights->$module) || ! is_object($this->rights->$module)) $this->rights->$module = new stdClass();
-					if ($subperms)
-					{
-						if (! isset($this->rights->$module->$perms) || ! is_object($this->rights->$module->$perms)) $this->rights->$module->$perms = new stdClass();
-						if(empty($this->rights->$module->$perms->$subperms)) $this->nb_rights++;
-						$this->rights->$module->$perms->$subperms = 1;
-					}
-					else
-					{
-						if(empty($this->rights->$module->$perms)) $this->nb_rights++;
-						$this->rights->$module->$perms = 1;
-					}
-				}
+            // Where pour la liste des droits a supprimer
+            $wherefordel="id=".$this->db->escape($rid);
+            // Suppression des droits induits
+            if ($subperms=='lire' || $subperms=='read') $wherefordel.=" OR (module='$module' AND perms='$perms' AND subperms IS NOT NULL)";
+            if ($perms=='lire' || $perms=='read')    $wherefordel.=" OR (module='$module')";
 
-				$i++;
-			}
-			$this->db->free($resql);
-		}
+            // Pour compatibilite, si lowid = 0, on est en mode suppression de tout
+            // TODO A virer quand sera gere par l'appelant
+            //if (substr($rid,-1,1) == 0) $wherefordel="module='$module'";
+        } else {
+            // Where pour la liste des droits a supprimer
+            if (! empty($allmodule))
+            {
+                if ($allmodule == 'allmodules')
+                {
+                    $wherefordel='allmodules';
+                }
+                else
+                {
+                    $wherefordel="module='".$this->db->escape($allmodule)."'";
+                    if (! empty($allperms))  $whereforadd.=" AND perms='".$this->db->escape($allperms)."'";
+                }
+            }
+        }
 
-		if ($moduletag == '')
-		{
-			// Si module etait non defini, alors on a tout charge, on peut donc considerer
-			// que les droits sont en cache (car tous charges) pour cet instance de group
-			$this->all_permissions_are_loaded=1;
-		}
-		else
-		{
-		    // Si module defini, on le marque comme charge en cache
-		    $this->_tab_loaded[$moduletag]=1;
-		}
+        // Suppression des droits de la liste wherefordel
+        if (! empty($wherefordel))
+        {
+            //print "$module-$perms-$subperms";
+            $sql = "SELECT id";
+            $sql.= " FROM ".MAIN_DB_PREFIX."rights_def";
+            $sql.= " WHERE entity = ".$entity;
+            if (! empty($wherefordel) && $wherefordel != 'allmodules') {
+                $sql.= " AND ".$wherefordel;
+            }
+
+            $result=$this->db->query($sql);
+            if ($result)
+            {
+                $num = $this->db->num_rows($result);
+                $i = 0;
+                while ($i < $num)
+                {
+                    $obj = $this->db->fetch_object($result);
+                    $nid = $obj->id;
+
+                    $sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_rights";
+                    $sql.= " WHERE fk_usergroup = $this->id AND fk_id=".$nid;
+                    $sql.= " AND entity = ".$entity;
+                    if (! $this->db->query($sql)) $error++;
+
+                    $i++;
+                }
+            }
+            else
+            {
+                $error++;
+                dol_print_error($this->db);
+            }
+
+            if (! $error)
+            {
+                $langs->load("other");
+                $this->context = array('audit'=>$langs->trans("PermissionsDelete").($rid?' (id='.$rid.')':''));
+
+                // Call trigger
+                $result=$this->call_trigger('GROUP_MODIFY', $user);
+                if ($result < 0) { $error++; }
+                // End call triggers
+            }
+        }
+
+        if ($error) {
+            $this->db->rollback();
+            return -$error;
+        }
+        else {
+            $this->db->commit();
+            return 1;
+        }
+    }
+
+
+    /**
+     *  Charge dans l'objet group, la liste des permissions auquels le groupe a droit
+     *
+     *  @param      string    $moduletag         Name of module we want permissions ('' means all)
+     *    @return     int                        <0 if KO, >0 if OK
+     */
+    public function getrights($moduletag = '')
+    {
+        global $conf;
+
+        if ($moduletag && isset($this->_tab_loaded[$moduletag]) && $this->_tab_loaded[$moduletag])
+        {
+            // Le fichier de ce module est deja charge
+            return;
+        }
+
+        if (! empty($this->all_permissions_are_loaded))
+        {
+            // Si les permissions ont deja ete chargees, on quitte
+            return;
+        }
+
+        /*
+         * Recuperation des droits
+         */
+        $sql = "SELECT r.module, r.perms, r.subperms ";
+        $sql.= " FROM ".MAIN_DB_PREFIX."usergroup_rights as u, ".MAIN_DB_PREFIX."rights_def as r";
+        $sql.= " WHERE r.id = u.fk_id";
+        $sql.= " AND r.entity = ".$conf->entity;
+        $sql.= " AND u.entity = ".$conf->entity;
+        $sql.= " AND u.fk_usergroup = ".$this->id;
+        $sql.= " AND r.perms IS NOT NULL";
+        if ($moduletag) $sql.= " AND r.module = '".$this->db->escape($moduletag)."'";
+
+        dol_syslog(get_class($this).'::getrights', LOG_DEBUG);
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            $num = $this->db->num_rows($resql);
+            $i = 0;
+            while ($i < $num)
+            {
+                $obj = $this->db->fetch_object($resql);
+
+                $module=$obj->module;
+                $perms=$obj->perms;
+                $subperms=$obj->subperms;
+
+                if ($perms)
+                {
+                    if (! isset($this->rights)) $this->rights = new stdClass(); // For avoid error
+                    if (! isset($this->rights->$module) || ! is_object($this->rights->$module)) $this->rights->$module = new stdClass();
+                    if ($subperms)
+                    {
+                        if (! isset($this->rights->$module->$perms) || ! is_object($this->rights->$module->$perms)) $this->rights->$module->$perms = new stdClass();
+                        if(empty($this->rights->$module->$perms->$subperms)) $this->nb_rights++;
+                        $this->rights->$module->$perms->$subperms = 1;
+                    }
+                    else
+                    {
+                        if(empty($this->rights->$module->$perms)) $this->nb_rights++;
+                        $this->rights->$module->$perms = 1;
+                    }
+                }
+
+                $i++;
+            }
+            $this->db->free($resql);
+        }
+
+        if ($moduletag == '')
+        {
+            // Si module etait non defini, alors on a tout charge, on peut donc considerer
+            // que les droits sont en cache (car tous charges) pour cet instance de group
+            $this->all_permissions_are_loaded=1;
+        }
+        else
+        {
+            // Si module defini, on le marque comme charge en cache
+            $this->_tab_loaded[$moduletag]=1;
+        }
 
         return 1;
-	}
+    }
 
-	/**
-	 *	Delete a group
-	 *
-	 *	@param	User	$user		User that delete
-	 *	@return     				<0 if KO, > 0 if OK
-	 */
-	public function delete(User $user)
-	{
-		global $conf,$langs;
+    /**
+     *    Delete a group
+     *
+     *    @param    User    $user        User that delete
+     *    @return                     <0 if KO, > 0 if OK
+     */
+    public function delete(User $user)
+    {
+        global $conf,$langs;
 
-		$error=0;
+        $error=0;
 
-		$this->db->begin();
+        $this->db->begin();
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_rights";
-		$sql .= " WHERE fk_usergroup = ".$this->id;
-		$this->db->query($sql);
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_rights";
+        $sql .= " WHERE fk_usergroup = ".$this->id;
+        $this->db->query($sql);
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_user";
-		$sql .= " WHERE fk_usergroup = ".$this->id;
-		$this->db->query($sql);
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_user";
+        $sql .= " WHERE fk_usergroup = ".$this->id;
+        $this->db->query($sql);
 
         // Remove extrafields
         if ((! $error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
@@ -658,350 +658,350 @@ class UserGroup extends CommonObject
             }
         }
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup";
-		$sql .= " WHERE rowid = ".$this->id;
-		$result=$this->db->query($sql);
-		if ($result)
-		{
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup";
+        $sql .= " WHERE rowid = ".$this->id;
+        $result=$this->db->query($sql);
+        if ($result)
+        {
             // Call trigger
             $result=$this->call_trigger('GROUP_DELETE', $user);
             if ($result < 0) { $error++; $this->db->rollback(); return -1; }
             // End call triggers
 
-			$this->db->commit();
-			return 1;
-		}
-		else
-		{
-			$this->db->rollback();
-			dol_print_error($this->db);
-			return -1;
-		}
-	}
+            $this->db->commit();
+            return 1;
+        }
+        else
+        {
+            $this->db->rollback();
+            dol_print_error($this->db);
+            return -1;
+        }
+    }
 
-	/**
-	 *	Create group into database
-	 *
-	 *	@param		int		$notrigger	0=triggers enabled, 1=triggers disabled
-	 *	@return     int					<0 if KO, >=0 if OK
-	 */
-	public function create($notrigger = 0)
-	{
-		global $user, $conf, $langs, $hookmanager;
+    /**
+     *    Create group into database
+     *
+     *    @param        int        $notrigger    0=triggers enabled, 1=triggers disabled
+     *    @return     int                    <0 if KO, >=0 if OK
+     */
+    public function create($notrigger = 0)
+    {
+        global $user, $conf, $langs, $hookmanager;
 
-		$error=0;
-		$now=dol_now();
+        $error=0;
+        $now=dol_now();
 
-		if (! isset($this->entity)) $this->entity=$conf->entity;	// If not defined, we use default value
+        if (! isset($this->entity)) $this->entity=$conf->entity;    // If not defined, we use default value
 
-		$entity=$this->entity;
-		if (! empty($conf->multicompany->enabled) && $conf->entity == 1) $entity=$this->entity;
+        $entity=$this->entity;
+        if (! empty($conf->multicompany->enabled) && $conf->entity == 1) $entity=$this->entity;
 
-		$this->db->begin();
+        $this->db->begin();
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."usergroup (";
-		$sql.= "datec";
-		$sql.= ", nom";
-		$sql.= ", entity";
-		$sql.= ") VALUES (";
-		$sql.= "'".$this->db->idate($now)."'";
-		$sql.= ",'".$this->db->escape($this->nom)."'";
-		$sql.= ",".$this->db->escape($entity);
-		$sql.= ")";
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."usergroup (";
+        $sql.= "datec";
+        $sql.= ", nom";
+        $sql.= ", entity";
+        $sql.= ") VALUES (";
+        $sql.= "'".$this->db->idate($now)."'";
+        $sql.= ",'".$this->db->escape($this->nom)."'";
+        $sql.= ",".$this->db->escape($entity);
+        $sql.= ")";
 
-		dol_syslog(get_class($this)."::create", LOG_DEBUG);
-		$result=$this->db->query($sql);
-		if ($result)
-		{
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."usergroup");
+        dol_syslog(get_class($this)."::create", LOG_DEBUG);
+        $result=$this->db->query($sql);
+        if ($result)
+        {
+            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."usergroup");
 
-			if ($this->update(1) < 0) return -2;
+            if ($this->update(1) < 0) return -2;
 
-			$action='create';
+            $action='create';
 
-			// Actions on extra fields (by external module or standard code)
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-			{
-				$result=$this->insertExtraFields();
-				if ($result < 0)
-				{
-					$error++;
-				}
-			}
+            // Actions on extra fields (by external module or standard code)
+            if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+            {
+                $result=$this->insertExtraFields();
+                if ($result < 0)
+                {
+                    $error++;
+                }
+            }
 
-			if (! $error && ! $notrigger)
-			{
+            if (! $error && ! $notrigger)
+            {
                 // Call trigger
                 $result=$this->call_trigger('GROUP_CREATE', $user);
                 if ($result < 0) { $error++; $this->db->rollback(); return -1; }
                 // End call triggers
-			}
+            }
 
-			if ($error > 0) { $error++; $this->db->rollback(); return -1; }
-			else $this->db->commit();
+            if ($error > 0) { $error++; $this->db->rollback(); return -1; }
+            else $this->db->commit();
 
-			return $this->id;
-		}
-		else
-		{
-		    $this->db->rollback();
-			$this->error=$this->db->lasterror();
-			return -1;
-		}
-	}
+            return $this->id;
+        }
+        else
+        {
+            $this->db->rollback();
+            $this->error=$this->db->lasterror();
+            return -1;
+        }
+    }
 
-	/**
-	 *		Update group into database
-	 *
-	 *      @param      int		$notrigger	    0=triggers enabled, 1=triggers disabled
-	 *    	@return     int						<0 if KO, >=0 if OK
-	 */
-	public function update($notrigger = 0)
-	{
-		global $user, $conf, $langs, $hookmanager;
+    /**
+     *        Update group into database
+     *
+     *      @param      int        $notrigger        0=triggers enabled, 1=triggers disabled
+     *        @return     int                        <0 if KO, >=0 if OK
+     */
+    public function update($notrigger = 0)
+    {
+        global $user, $conf, $langs, $hookmanager;
 
-		$error=0;
+        $error=0;
 
-		$entity=$conf->entity;
-		if(! empty($conf->multicompany->enabled) && $conf->entity == 1)
-		{
-			$entity=$this->entity;
-		}
+        $entity=$conf->entity;
+        if(! empty($conf->multicompany->enabled) && $conf->entity == 1)
+        {
+            $entity=$this->entity;
+        }
 
-		$this->db->begin();
+        $this->db->begin();
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."usergroup SET ";
-		$sql.= " nom = '" . $this->db->escape($this->name) . "'";
-		$sql.= ", entity = " . $this->db->escape($entity);
-		$sql.= ", note = '" . $this->db->escape($this->note) . "'";
-		$sql.= " WHERE rowid = " . $this->id;
+        $sql = "UPDATE ".MAIN_DB_PREFIX."usergroup SET ";
+        $sql.= " nom = '" . $this->db->escape($this->name) . "'";
+        $sql.= ", entity = " . $this->db->escape($entity);
+        $sql.= ", note = '" . $this->db->escape($this->note) . "'";
+        $sql.= " WHERE rowid = " . $this->id;
 
-		dol_syslog(get_class($this)."::update", LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			$action='update';
+        dol_syslog(get_class($this)."::update", LOG_DEBUG);
+        $resql = $this->db->query($sql);
+        if ($resql)
+        {
+            $action='update';
 
-			// Actions on extra fields (by external module or standard code)
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-			{
-				$result=$this->insertExtraFields();
-				if ($result < 0)
-				{
-					$error++;
-				}
-			}
+            // Actions on extra fields (by external module or standard code)
+            if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+            {
+                $result=$this->insertExtraFields();
+                if ($result < 0)
+                {
+                    $error++;
+                }
+            }
 
-			if (! $error && ! $notrigger)
-			{
+            if (! $error && ! $notrigger)
+            {
                 // Call trigger
                 $result=$this->call_trigger('GROUP_MODIFY', $user);
                 if ($result < 0) { $error++; }
                 // End call triggers
-			}
+            }
 
-			if (! $error)
-			{
-			    $this->db->commit();
-			    return 1;
-			}
-			else
-			{
-			    $this->db->rollback();
-			    return -$error;
-			}
-		}
-		else
-		{
-		    $this->db->rollback();
-			dol_print_error($this->db);
-			return -1;
-		}
-	}
+            if (! $error)
+            {
+                $this->db->commit();
+                return 1;
+            }
+            else
+            {
+                $this->db->rollback();
+                return -$error;
+            }
+        }
+        else
+        {
+            $this->db->rollback();
+            dol_print_error($this->db);
+            return -1;
+        }
+    }
 
 
-	/**
-	 *  Return label of status of user (active, inactive)
-	 *
-	 *  @param	int		$mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *  @return	string 			       Label of status
-	 */
-	public function getLibStatut($mode = 0)
-	{
-	    return $this->LibStatut(0, $mode);
-	}
+    /**
+     *  Return label of status of user (active, inactive)
+     *
+     *  @param    int        $mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+     *  @return    string                    Label of status
+     */
+    public function getLibStatut($mode = 0)
+    {
+        return $this->LibStatut(0, $mode);
+    }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *  Renvoi le libelle d'un statut donne
-	 *
-	 *  @param	int		$statut        	Id statut
-	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *  @return string 			       	Label of status
-	 */
-	public function LibStatut($statut, $mode = 0)
-	{
+    /**
+     *  Renvoi le libelle d'un statut donne
+     *
+     *  @param    int        $statut            Id statut
+     *  @param  int        $mode              0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+     *  @return string                        Label of status
+     */
+    public function LibStatut($statut, $mode = 0)
+    {
         // phpcs:enable
-	    global $langs;
-	    $langs->load('users');
-	    return '';
-	}
+        global $langs;
+        $langs->load('users');
+        return '';
+    }
 
-	/**
-	 *  Return a link to the user card (with optionaly the picto)
-	 *  Use this->id,this->lastname, this->firstname
-	 *
-	 *  @param  int		$withpicto					Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto, -1=Include photo into link, -2=Only picto photo, -3=Only photo very small)
-	 *	@param  string	$option						On what the link point to ('nolink', )
-	 *  @param	integer	$notooltip					1=Disable tooltip on picto and name
-	 *  @param  string  $morecss            		Add more css on link
-	 *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-	 *	@return	string								String with URL
-	 */
-	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
-	{
-		global $langs, $conf, $db, $hookmanager;
-		global $dolibarr_main_authentication, $dolibarr_main_demo;
-		global $menumanager;
+    /**
+     *  Return a link to the user card (with optionaly the picto)
+     *  Use this->id,this->lastname, this->firstname
+     *
+     *  @param  int        $withpicto                    Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto, -1=Include photo into link, -2=Only picto photo, -3=Only photo very small)
+     *    @param  string    $option                        On what the link point to ('nolink', )
+     *  @param    integer    $notooltip                    1=Disable tooltip on picto and name
+     *  @param  string  $morecss                    Add more css on link
+     *  @param  int     $save_lastsearch_value        -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+     *    @return    string                                String with URL
+     */
+    public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
+    {
+        global $langs, $conf, $db, $hookmanager;
+        global $dolibarr_main_authentication, $dolibarr_main_demo;
+        global $menumanager;
 
-		if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && $withpicto) $withpicto=0;
+        if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && $withpicto) $withpicto=0;
 
-		$result=''; $label='';
-		$link=''; $linkstart=''; $linkend='';
+        $result=''; $label='';
+        $link=''; $linkstart=''; $linkend='';
 
-		$label.= '<div class="centpercent">';
-		$label.= '<u>' . $langs->trans("Group") . '</u><br>';
-		$label.= '<b>' . $langs->trans('Name') . ':</b> ' . $this->name;
-		$label.= '<br><b>' . $langs->trans("Description").':</b> '.$this->note;
-		$label.='</div>';
+        $label.= '<div class="centpercent">';
+        $label.= '<u>' . $langs->trans("Group") . '</u><br>';
+        $label.= '<b>' . $langs->trans('Name') . ':</b> ' . $this->name;
+        $label.= '<br><b>' . $langs->trans("Description").':</b> '.$this->note;
+        $label.='</div>';
 
-		$url = DOL_URL_ROOT.'/user/group/card.php?id='.$this->id;
+        $url = DOL_URL_ROOT.'/user/group/card.php?id='.$this->id;
 
-		if ($option != 'nolink')
-		{
-			// Add param to save lastsearch_values or not
-			$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
-			if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
-		}
+        if ($option != 'nolink')
+        {
+            // Add param to save lastsearch_values or not
+            $add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
+            if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+            if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
+        }
 
-		$linkclose="";
-		if (empty($notooltip))
-		{
-			if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
-			{
-				$langs->load("users");
-				$label=$langs->trans("ShowGroup");
-				$linkclose.=' alt="'.dol_escape_htmltag($label, 1, 1).'"';
-			}
-			$linkclose.= ' title="'.dol_escape_htmltag($label, 1, 1).'"';
-			$linkclose.= ' class="classfortooltip'.($morecss?' '.$morecss:'').'"';
+        $linkclose="";
+        if (empty($notooltip))
+        {
+            if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+            {
+                $langs->load("users");
+                $label=$langs->trans("ShowGroup");
+                $linkclose.=' alt="'.dol_escape_htmltag($label, 1, 1).'"';
+            }
+            $linkclose.= ' title="'.dol_escape_htmltag($label, 1, 1).'"';
+            $linkclose.= ' class="classfortooltip'.($morecss?' '.$morecss:'').'"';
 
-			/*
-			 $hookmanager->initHooks(array('groupdao'));
-			 $parameters=array('id'=>$this->id);
-			 $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-			 if ($reshook > 0) $linkclose = $hookmanager->resPrint;
-			 */
-		}
+            /*
+             $hookmanager->initHooks(array('groupdao'));
+             $parameters=array('id'=>$this->id);
+             $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+             if ($reshook > 0) $linkclose = $hookmanager->resPrint;
+             */
+        }
 
-		$linkstart = '<a href="'.$url.'"';
-		$linkstart.=$linkclose.'>';
-		$linkend='</a>';
+        $linkstart = '<a href="'.$url.'"';
+        $linkstart.=$linkclose.'>';
+        $linkend='</a>';
 
-		$result = $linkstart;
-		if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
-		if ($withpicto != 2) $result.= $this->name;
-		$result .= $linkend;
+        $result = $linkstart;
+        if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
+        if ($withpicto != 2) $result.= $this->name;
+        $result .= $linkend;
 
-		global $action;
-		$hookmanager->initHooks(array('groupdao'));
-		$parameters=array('id'=>$this->id, 'getnomurl'=>$result);
-		$reshook=$hookmanager->executeHooks('getNomUrl', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
-		if ($reshook > 0) $result = $hookmanager->resPrint;
-		else $result .= $hookmanager->resPrint;
+        global $action;
+        $hookmanager->initHooks(array('groupdao'));
+        $parameters=array('id'=>$this->id, 'getnomurl'=>$result);
+        $reshook=$hookmanager->executeHooks('getNomUrl', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
+        if ($reshook > 0) $result = $hookmanager->resPrint;
+        else $result .= $hookmanager->resPrint;
 
-		return $result;
-	}
+        return $result;
+    }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *	Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
-	 *
-	 *	@param		array	$info		Info array loaded by _load_ldap_info
-	 *	@param		int		$mode		0=Return full DN (uid=qqq,ou=xxx,dc=aaa,dc=bbb)
-	 *									1=Return DN without key inside (ou=xxx,dc=aaa,dc=bbb)
-	 *									2=Return key only (uid=qqq)
-	 *	@return		string				DN
-	 */
+    /**
+     *    Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
+     *
+     *    @param        array    $info        Info array loaded by _load_ldap_info
+     *    @param        int        $mode        0=Return full DN (uid=qqq,ou=xxx,dc=aaa,dc=bbb)
+     *                                          1=Return DN without key inside (ou=xxx,dc=aaa,dc=bbb)
+     *                                          2=Return key only (uid=qqq)
+     *    @return        string                DN
+     */
     private function _load_ldap_dn($info, $mode = 0)
-	{
+    {
         // phpcs:enable
-		global $conf;
-		$dn='';
-		if ($mode==0) $dn=$conf->global->LDAP_KEY_GROUPS."=".$info[$conf->global->LDAP_KEY_GROUPS].",".$conf->global->LDAP_GROUP_DN;
-		if ($mode==1) $dn=$conf->global->LDAP_GROUP_DN;
-		if ($mode==2) $dn=$conf->global->LDAP_KEY_GROUPS."=".$info[$conf->global->LDAP_KEY_GROUPS];
-		return $dn;
-	}
+        global $conf;
+        $dn='';
+        if ($mode==0) $dn=$conf->global->LDAP_KEY_GROUPS."=".$info[$conf->global->LDAP_KEY_GROUPS].",".$conf->global->LDAP_GROUP_DN;
+        if ($mode==1) $dn=$conf->global->LDAP_GROUP_DN;
+        if ($mode==2) $dn=$conf->global->LDAP_KEY_GROUPS."=".$info[$conf->global->LDAP_KEY_GROUPS];
+        return $dn;
+    }
 
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *	Initialize the info array (array of LDAP values) that will be used to call LDAP functions
-	 *
-	 *	@return		array		Tableau info des attributs
-	 */
+    /**
+     *    Initialize the info array (array of LDAP values) that will be used to call LDAP functions
+     *
+     *    @return        array        Tableau info des attributs
+     */
     private function _load_ldap_info()
-	{
+    {
         // phpcs:enable
-		global $conf,$langs;
+        global $conf,$langs;
 
-		$info=array();
+        $info=array();
 
-		// Object classes
-		$info["objectclass"]=explode(',', $conf->global->LDAP_GROUP_OBJECT_CLASS);
+        // Object classes
+        $info["objectclass"]=explode(',', $conf->global->LDAP_GROUP_OBJECT_CLASS);
 
-		// Champs
-		if ($this->name && ! empty($conf->global->LDAP_GROUP_FIELD_FULLNAME)) $info[$conf->global->LDAP_GROUP_FIELD_FULLNAME] = $this->name;
-		//if ($this->name && ! empty($conf->global->LDAP_GROUP_FIELD_NAME)) $info[$conf->global->LDAP_GROUP_FIELD_NAME] = $this->name;
-		if ($this->note && ! empty($conf->global->LDAP_GROUP_FIELD_DESCRIPTION)) $info[$conf->global->LDAP_GROUP_FIELD_DESCRIPTION] = dol_string_nohtmltag($this->note, 2);
-		if (! empty($conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS))
-		{
-			$valueofldapfield=array();
-			foreach($this->members as $key=>$val)    // This is array of users for group into dolibarr database.
-			{
-				$muser=new User($this->db);
-				$muser->fetch($val->id);
-				$info2 = $muser->_load_ldap_info();
-				$valueofldapfield[] = $muser->_load_ldap_dn($info2);
-			}
-			$info[$conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS] = (!empty($valueofldapfield)?$valueofldapfield:'');
-		}
-		return $info;
-	}
+        // Champs
+        if ($this->name && ! empty($conf->global->LDAP_GROUP_FIELD_FULLNAME)) $info[$conf->global->LDAP_GROUP_FIELD_FULLNAME] = $this->name;
+        //if ($this->name && ! empty($conf->global->LDAP_GROUP_FIELD_NAME)) $info[$conf->global->LDAP_GROUP_FIELD_NAME] = $this->name;
+        if ($this->note && ! empty($conf->global->LDAP_GROUP_FIELD_DESCRIPTION)) $info[$conf->global->LDAP_GROUP_FIELD_DESCRIPTION] = dol_string_nohtmltag($this->note, 2);
+        if (! empty($conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS))
+        {
+            $valueofldapfield=array();
+            foreach($this->members as $key=>$val)    // This is array of users for group into dolibarr database.
+            {
+                $muser=new User($this->db);
+                $muser->fetch($val->id);
+                $info2 = $muser->_load_ldap_info();
+                $valueofldapfield[] = $muser->_load_ldap_dn($info2);
+            }
+            $info[$conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS] = (!empty($valueofldapfield)?$valueofldapfield:'');
+        }
+        return $info;
+    }
 
 
-	/**
+    /**
      *  Initialise an instance with random values.
      *  Used to build previews or test instances.
-     *	id must be 0 if object instance is a specimen.
+     *    id must be 0 if object instance is a specimen.
      *
-     *  @return	void
+     *  @return    void
      */
     public function initAsSpecimen()
-	{
-		global $conf, $user, $langs;
+    {
+        global $conf, $user, $langs;
 
-		// Initialise parametres
-		$this->id=0;
-		$this->ref = 'SPECIMEN';
-		$this->specimen=1;
+        // Initialise parametres
+        $this->id=0;
+        $this->ref = 'SPECIMEN';
+        $this->specimen=1;
 
-		$this->name='DOLIBARR GROUP SPECIMEN';
-		$this->note='This is a note';
-		$this->datec=time();
-		$this->datem=time();
+        $this->name='DOLIBARR GROUP SPECIMEN';
+        $this->note='This is a note';
+        $this->datec=time();
+        $this->datem=time();
 
         // Members of this group is just me
         $this->members=array(
@@ -1009,38 +1009,38 @@ class UserGroup extends CommonObject
         );
     }
 
-	/**
-	 *  Create a document onto disk according to template module.
-	 *
-	 * 	@param	    string		$modele			Force model to use ('' to not force)
-	 * 	@param		Translate	$outputlangs	Object langs to use for output
-	 *  @param      int			$hidedetails    Hide details of lines
-	 *  @param      int			$hidedesc       Hide description
-	 *  @param      int			$hideref        Hide ref
+    /**
+     *  Create a document onto disk according to template module.
+     *
+     *     @param        string        $modele            Force model to use ('' to not force)
+     *     @param        Translate    $outputlangs    Object langs to use for output
+     *  @param      int            $hidedetails    Hide details of lines
+     *  @param      int            $hidedesc       Hide description
+     *  @param      int            $hideref        Hide ref
      *  @param      null|array  $moreparams     Array to provide more information
-	 * 	@return     int         				0 if KO, 1 if OK
-	 */
-	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
-	{
-		global $conf,$user,$langs;
+     *     @return     int                         0 if KO, 1 if OK
+     */
+    public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
+    {
+        global $conf,$user,$langs;
 
-		$langs->load("user");
+        $langs->load("user");
 
-		// Positionne le modele sur le nom du modele a utiliser
-		if (! dol_strlen($modele))
-		{
-			if (! empty($conf->global->USERGROUP_ADDON_PDF))
-			{
-				$modele = $conf->global->USERGROUP_ADDON_PDF;
-			}
-			else
-			{
-				$modele = 'grass';
-			}
-		}
+        // Positionne le modele sur le nom du modele a utiliser
+        if (! dol_strlen($modele))
+        {
+            if (! empty($conf->global->USERGROUP_ADDON_PDF))
+            {
+                $modele = $conf->global->USERGROUP_ADDON_PDF;
+            }
+            else
+            {
+                $modele = 'grass';
+            }
+        }
 
-		$modelpath = "core/modules/usergroup/doc/";
+        $modelpath = "core/modules/usergroup/doc/";
 
-		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
-	}
+        return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
+    }
 }

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2004	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2004    Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  *
@@ -18,8 +18,8 @@
  */
 
 /**
- *    	\file       htdocs/admin/tools/index.php
- * 		\brief      Page d'accueil de l'espace outils admin
+ *        \file       htdocs/admin/tools/index.php
+ *         \brief      Page d'accueil de l'espace outils admin
  */
 
 require '../../main.inc.php';
@@ -28,7 +28,7 @@ require '../../main.inc.php';
 $langs->loadLangs(array("companies","admin"));
 
 if (! $user->admin)
-	accessforbidden();
+    accessforbidden();
 
 
 /*
@@ -54,7 +54,7 @@ print '<br><br>';
 
 // Show logo
 //print '<div class="center"><div class="logo_setup"></div></div>';
-print '<center><div class="logo_setup"></div></center>';				// For a reason I don't know, the div class="center does not works, we must keep the <center>
+print '<center><div class="logo_setup"></div></center>';                // For a reason I don't know, the div class="center does not works, we must keep the <center>
 
 // End of page
 llxFooter();

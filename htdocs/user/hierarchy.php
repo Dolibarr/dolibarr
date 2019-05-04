@@ -29,7 +29,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
 
 if (! $user->rights->user->user->lire && ! $user->admin)
-	accessforbidden();
+    accessforbidden();
 
 // Load translation files required by page
 $langs->loadLangs(array('users', 'companies'));
@@ -37,7 +37,7 @@ $langs->loadLangs(array('users', 'companies'));
 // Security check (for external users)
 $socid=0;
 if ($user->societe_id > 0)
-	$socid = $user->societe_id;
+    $socid = $user->societe_id;
 
 $sall=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
 $search_user=GETPOST('search_user', 'alpha');
@@ -49,7 +49,7 @@ if ($search_statut == '') $search_statut='1';
 
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // Both test are required to be compatible with all browsers
 {
-	$search_statut="";
+    $search_statut="";
 }
 
 // Define value to know what current user can do on users
@@ -89,53 +89,53 @@ $data=array();
 $data[] = array('rowid'=>0,'fk_menu'=>-1,'title'=>"racine",'mainmenu'=>'','leftmenu'=>'','fk_mainmenu'=>'','fk_leftmenu'=>'');
 foreach($fulltree as $key => $val)
 {
-	$userstatic->id=$val['id'];
-	$userstatic->ref=$val['label'];
-	$userstatic->login=$val['login'];
-	$userstatic->firstname=$val['firstname'];
-	$userstatic->lastname=$val['lastname'];
-	$userstatic->statut=$val['statut'];
+    $userstatic->id=$val['id'];
+    $userstatic->ref=$val['label'];
+    $userstatic->login=$val['login'];
+    $userstatic->firstname=$val['firstname'];
+    $userstatic->lastname=$val['lastname'];
+    $userstatic->statut=$val['statut'];
     $userstatic->email=$val['email'];
     $userstatic->gender=$val['gender'];
-	$userstatic->societe_id=$val['fk_soc'];
-	$userstatic->admin=$val['admin'];
-	$userstatic->entity=$val['entity'];
-	$userstatic->photo=$val['photo'];
+    $userstatic->societe_id=$val['fk_soc'];
+    $userstatic->admin=$val['admin'];
+    $userstatic->entity=$val['entity'];
+    $userstatic->photo=$val['photo'];
 
-	$entity=$val['entity'];
-	$entitystring='';
+    $entity=$val['entity'];
+    $entitystring='';
 
-	// TODO Set of entitystring should be done with a hook
-	if (! empty($conf->multicompany->enabled) && is_object($mc))
-	{
-		if (empty($entity))
-		{
-			$entitystring=$langs->trans("AllEntities");
-		}
-		else
-		{
-			$mc->getInfo($entity);
-			$entitystring=$mc->label;
-		}
-	}
+    // TODO Set of entitystring should be done with a hook
+    if (! empty($conf->multicompany->enabled) && is_object($mc))
+    {
+        if (empty($entity))
+        {
+            $entitystring=$langs->trans("AllEntities");
+        }
+        else
+        {
+            $mc->getInfo($entity);
+            $entitystring=$mc->label;
+        }
+    }
 
-	$li=$userstatic->getNomUrl(-1, '', 0, 1);
-	if (! empty($conf->multicompany->enabled) && $userstatic->admin && ! $userstatic->entity)
-	{
-		$li.=img_picto($langs->trans("SuperAdministrator"), 'redstar');
-	}
-	elseif ($userstatic->admin)
-	{
-		$li.=img_picto($langs->trans("Administrator"), 'star');
-	}
-	$li.=' ('.$val['login'].($entitystring?' - '.$entitystring:'').')';
+    $li=$userstatic->getNomUrl(-1, '', 0, 1);
+    if (! empty($conf->multicompany->enabled) && $userstatic->admin && ! $userstatic->entity)
+    {
+        $li.=img_picto($langs->trans("SuperAdministrator"), 'redstar');
+    }
+    elseif ($userstatic->admin)
+    {
+        $li.=img_picto($langs->trans("Administrator"), 'star');
+    }
+    $li.=' ('.$val['login'].($entitystring?' - '.$entitystring:'').')';
 
-	$data[] = array(
-		'rowid'=>$val['rowid'],
-		'fk_menu'=>$val['fk_user'],
-		'statut'=>$val['statut'],
-		'entry'=>'<table class="nobordernopadding centpercent"><tr><td class="'.($val['statut']?'usertdenabled':'usertddisabled').'">'.$li.'</td><td align="right" class="'.($val['statut']?'usertdenabled':'usertddisabled').'">'.$userstatic->getLibStatut(3).'</td></tr></table>'
-	);
+    $data[] = array(
+        'rowid'=>$val['rowid'],
+        'fk_menu'=>$val['fk_user'],
+        'statut'=>$val['statut'],
+        'entry'=>'<table class="nobordernopadding centpercent"><tr><td class="'.($val['statut']?'usertdenabled':'usertddisabled').'">'.$li.'</td><td align="right" class="'.($val['statut']?'usertdenabled':'usertddisabled').'">'.$userstatic->getLibStatut(3).'</td></tr></table>'
+    );
 }
 
 //var_dump($data);
@@ -147,9 +147,9 @@ $param="search_statut=".urlencode($search_statut);
 $newcardbutton='';
 if ($canadduser)
 {
-	$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/user/card.php?action=create'.($mode == 'employee' ? '&employee=1': '').'&leftmenu="><span class="valignmiddle text-plus-circle">'.$langs->trans('NewUser').'</span>';
-	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-	$newcardbutton.= '</a>';
+    $newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/user/card.php?action=create'.($mode == 'employee' ? '&employee=1': '').'&leftmenu="><span class="valignmiddle text-plus-circle">'.$langs->trans('NewUser').'</span>';
+    $newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+    $newcardbutton.= '</a>';
 }
 
 $morehtmlright = '<a class="nohover" href="'.DOL_URL_ROOT.'/user/list.php'.(($search_statut != '' && $search_statut >= 0) ?'?search_statut='.$search_statut:'').'">'.$langs->trans("ViewList").'</a>';
@@ -192,25 +192,25 @@ $nbofentries=(count($data) - 1);
 
 if ($nbofentries > 0)
 {
-	print '<tr '.$bc[false].'><td colspan="3">';
-	tree_recur($data, $data[0], 0);
-	print '</td>';
-	print '<td></td>';
-	print '</tr>';
+    print '<tr '.$bc[false].'><td colspan="3">';
+    tree_recur($data, $data[0], 0);
+    print '</td>';
+    print '<td></td>';
+    print '</tr>';
 }
 else
 {
-	print '<tr '.$bc[true].'>';
-	print '<td colspan="3">';
-	print '<table class="nobordernopadding"><tr class="nobordernopadding"><td>'.img_picto_common('', 'treemenu/branchbottom.gif').'</td>';
-	print '<td valign="middle">';
-	print $langs->trans("NoCategoryYet");
-	print '</td>';
-	print '<td>&nbsp;</td>';
-	print '</table>';
-	print '</td>';
-	print '<td></td>';
-	print '</tr>';
+    print '<tr '.$bc[true].'>';
+    print '<td colspan="3">';
+    print '<table class="nobordernopadding"><tr class="nobordernopadding"><td>'.img_picto_common('', 'treemenu/branchbottom.gif').'</td>';
+    print '<td valign="middle">';
+    print $langs->trans("NoCategoryYet");
+    print '</td>';
+    print '<td>&nbsp;</td>';
+    print '</table>';
+    print '</td>';
+    print '<td></td>';
+    print '</tr>';
 }
 
 print "</table>";
@@ -220,11 +220,11 @@ print "</form>\n";
 //
 /*print '<script type="text/javascript" language="javascript">
 jQuery(document).ready(function() {
-	function init_myfunc()
-	{
-		jQuery(".usertddisabled").hide();
-	}
-	init_myfunc();
+    function init_myfunc()
+    {
+        jQuery(".usertddisabled").hide();
+    }
+    init_myfunc();
 });
 </script>';
 */

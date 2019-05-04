@@ -84,80 +84,80 @@ $reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook)) {
-	if ($action == 'update' && ($caneditfield || !empty($user->admin))) {
-		if (!$_POST["cancel"]) {
-			$tabparam = array();
+    if ($action == 'update' && ($caneditfield || !empty($user->admin))) {
+        if (!$_POST["cancel"]) {
+            $tabparam = array();
 
-			if (GETPOST("check_MAIN_LANDING_PAGE") == "on") {
-				$tabparam["MAIN_LANDING_PAGE"] = $_POST["MAIN_LANDING_PAGE"];
-			} else {
-				$tabparam["MAIN_LANDING_PAGE"] = '';
-			}
+            if (GETPOST("check_MAIN_LANDING_PAGE") == "on") {
+                $tabparam["MAIN_LANDING_PAGE"] = $_POST["MAIN_LANDING_PAGE"];
+            } else {
+                $tabparam["MAIN_LANDING_PAGE"] = '';
+            }
 
-			if (GETPOST("check_MAIN_LANG_DEFAULT") == "on") {
-				$tabparam["MAIN_LANG_DEFAULT"] = $_POST["main_lang_default"];
-			} else {
-				$tabparam["MAIN_LANG_DEFAULT"] = '';
-			}
+            if (GETPOST("check_MAIN_LANG_DEFAULT") == "on") {
+                $tabparam["MAIN_LANG_DEFAULT"] = $_POST["main_lang_default"];
+            } else {
+                $tabparam["MAIN_LANG_DEFAULT"] = '';
+            }
 
-			if (GETPOST("check_SIZE_LISTE_LIMIT") == "on") {
-				$tabparam["MAIN_SIZE_LISTE_LIMIT"] = $_POST["main_size_liste_limit"];
-			} else {
-				$tabparam["MAIN_SIZE_LISTE_LIMIT"] = '';
-			}
+            if (GETPOST("check_SIZE_LISTE_LIMIT") == "on") {
+                $tabparam["MAIN_SIZE_LISTE_LIMIT"] = $_POST["main_size_liste_limit"];
+            } else {
+                $tabparam["MAIN_SIZE_LISTE_LIMIT"] = '';
+            }
 
-			if (GETPOST("check_AGENDA_DEFAULT_VIEW") == "on") {
-				$tabparam["AGENDA_DEFAULT_VIEW"] = $_POST["AGENDA_DEFAULT_VIEW"];
-			} else {
-				$tabparam["AGENDA_DEFAULT_VIEW"] = '';
-			}
+            if (GETPOST("check_AGENDA_DEFAULT_VIEW") == "on") {
+                $tabparam["AGENDA_DEFAULT_VIEW"] = $_POST["AGENDA_DEFAULT_VIEW"];
+            } else {
+                $tabparam["AGENDA_DEFAULT_VIEW"] = '';
+            }
 
-			if (GETPOST("check_MAIN_THEME") == "on") {
-				$tabparam["MAIN_THEME"] = $_POST["main_theme"];
-			} else {
-				$tabparam["MAIN_THEME"] = '';
-			}
+            if (GETPOST("check_MAIN_THEME") == "on") {
+                $tabparam["MAIN_THEME"] = $_POST["main_theme"];
+            } else {
+                $tabparam["MAIN_THEME"] = '';
+            }
 
-			$val = (implode(',', (colorStringToArray(GETPOST('THEME_ELDY_TOPMENU_BACK1'), array()))));
-			if ($val == '') {
-				$tabparam['THEME_ELDY_TOPMENU_BACK1'] = '';
-			} else {
-				$tabparam['THEME_ELDY_TOPMENU_BACK1'] = join(',',
-					colorStringToArray(GETPOST('THEME_ELDY_TOPMENU_BACK1'), array()));
-			}
+            $val = (implode(',', (colorStringToArray(GETPOST('THEME_ELDY_TOPMENU_BACK1'), array()))));
+            if ($val == '') {
+                $tabparam['THEME_ELDY_TOPMENU_BACK1'] = '';
+            } else {
+                $tabparam['THEME_ELDY_TOPMENU_BACK1'] = join(',',
+                    colorStringToArray(GETPOST('THEME_ELDY_TOPMENU_BACK1'), array()));
+            }
 
-			$val = (implode(',', (colorStringToArray(GETPOST('THEME_ELDY_BACKTITLE1'), array()))));
-			if ($val == '') {
-				$tabparam['THEME_ELDY_BACKTITLE1'] = '';
-			} else {
-				$tabparam['THEME_ELDY_BACKTITLE1'] = join(',',
-					colorStringToArray(GETPOST('THEME_ELDY_BACKTITLE1'), array()));
-			}
+            $val = (implode(',', (colorStringToArray(GETPOST('THEME_ELDY_BACKTITLE1'), array()))));
+            if ($val == '') {
+                $tabparam['THEME_ELDY_BACKTITLE1'] = '';
+            } else {
+                $tabparam['THEME_ELDY_BACKTITLE1'] = join(',',
+                    colorStringToArray(GETPOST('THEME_ELDY_BACKTITLE1'), array()));
+            }
 
-			if (GETPOST('check_THEME_ELDY_USE_HOVER') == 'on') {
-				$tabparam["THEME_ELDY_USE_HOVER"] = 1;
-			} else {
-				$tabparam["THEME_ELDY_USE_HOVER"] = 0;
-			}
+            if (GETPOST('check_THEME_ELDY_USE_HOVER') == 'on') {
+                $tabparam["THEME_ELDY_USE_HOVER"] = 1;
+            } else {
+                $tabparam["THEME_ELDY_USE_HOVER"] = 0;
+            }
 
-			if (GETPOST('check_THEME_ELDY_USE_CHECKED') == 'on') {
-				$tabparam["THEME_ELDY_USE_CHECKED"] = 1;
-			} else {
-				$tabparam["THEME_ELDY_USE_CHECKED"] = 0;
-			}
+            if (GETPOST('check_THEME_ELDY_USE_CHECKED') == 'on') {
+                $tabparam["THEME_ELDY_USE_CHECKED"] = 1;
+            } else {
+                $tabparam["THEME_ELDY_USE_CHECKED"] = 0;
+            }
 
-			if (GETPOST('MAIN_OPTIMIZEFORTEXTBROWSER')) {
-			    $tabparam["MAIN_OPTIMIZEFORTEXTBROWSER"] = 1;
-			} else {
-			    $tabparam["MAIN_OPTIMIZEFORTEXTBROWSER"] = 0;
-			}
+            if (GETPOST('MAIN_OPTIMIZEFORTEXTBROWSER')) {
+                $tabparam["MAIN_OPTIMIZEFORTEXTBROWSER"] = 1;
+            } else {
+                $tabparam["MAIN_OPTIMIZEFORTEXTBROWSER"] = 0;
+            }
 
-			$result = dol_set_user_param($db, $conf, $object, $tabparam);
+            $result = dol_set_user_param($db, $conf, $object, $tabparam);
 
-			header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $id);
-			exit;
-		}
-	}
+            header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $id);
+            exit;
+        }
+    }
 }
 
 /*
@@ -183,10 +183,10 @@ $title = $langs->trans("User");
 
 if ($action == 'edit')
 {
-	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<input type="hidden" name="action" value="update">';
-	print '<input type="hidden" name="id" value="'.$id.'">';
+    print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="action" value="update">';
+    print '<input type="hidden" name="id" value="'.$id.'">';
 }
 
 
@@ -194,27 +194,27 @@ if ($action == 'edit')
 {
     dol_fiche_head($head, 'guisetup', $title, -1, 'user');
 
-	$linkback = '';
+    $linkback = '';
 
-	if ($user->rights->user->user->lire || $user->admin) {
-		$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
-	}
+    if ($user->rights->user->user->lire || $user->admin) {
+        $linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+    }
 
     dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
 
     if (! empty($conf->use_javascript_ajax))
     {/*
         print '<script type="text/javascript" language="javascript">
-    	jQuery(document).ready(function() {
-    		$("#main_lang_default").change(function() {
-    			$("#check_MAIN_LANG_DEFAULT").prop("checked", true);
-    		});
-    		$("#main_size_liste_limit").keyup(function() {
-    			if ($(this).val().length) $("#check_SIZE_LISTE_LIMIT").prop("checked", true);
-    			else $("#check_SIZE_LISTE_LIMIT").prop("checked", false);
-    		});
-    	});
-    	</script>';*/
+        jQuery(document).ready(function() {
+            $("#main_lang_default").change(function() {
+                $("#check_MAIN_LANG_DEFAULT").prop("checked", true);
+            });
+            $("#main_size_liste_limit").keyup(function() {
+                if ($(this).val().length) $("#check_SIZE_LISTE_LIMIT").prop("checked", true);
+                else $("#check_SIZE_LISTE_LIMIT").prop("checked", false);
+            });
+        });
+        </script>';*/
     }
     if (! empty($conf->use_javascript_ajax))
     {
@@ -264,7 +264,7 @@ if ($action == 'edit')
     print (empty($conf->global->MAIN_LANDING_PAGE)?'':$conf->global->MAIN_LANDING_PAGE);
     print '</td>';
     print '<td class="nowrap" width="20%"><input class="oddeven" name="check_MAIN_LANDING_PAGE" id="check_MAIN_LANDING_PAGE" type="checkbox" '.(! empty($object->conf->MAIN_LANDING_PAGE)?" checked":"");
-    print empty($dolibarr_main_demo)?'':' disabled="disabled"';	// Disabled for demo
+    print empty($dolibarr_main_demo)?'':' disabled="disabled"';    // Disabled for demo
     print '> '.$langs->trans("UsePersonalValue").'</td>';
     print '<td>';
     print $form->selectarray('MAIN_LANDING_PAGE', $tmparray, (! empty($object->conf->MAIN_LANDING_PAGE)?$object->conf->MAIN_LANDING_PAGE:''), 0, 0, 0, '', 1);
@@ -279,7 +279,7 @@ if ($action == 'edit')
     print ($conf->global->MAIN_LANG_DEFAULT=='auto'?$langs->trans("AutoDetectLang"):$langs->trans("Language_".$conf->global->MAIN_LANG_DEFAULT));
     print '</td>';
     print '<td class="nowrap" width="20%"><input class="oddeven" name="check_MAIN_LANG_DEFAULT" id="check_MAIN_LANG_DEFAULT" type="checkbox" '.(! empty($object->conf->MAIN_LANG_DEFAULT)?" checked":"");
-    print empty($dolibarr_main_demo)?'':' disabled="disabled"';	// Disabled for demo
+    print empty($dolibarr_main_demo)?'':' disabled="disabled"';    // Disabled for demo
     print '> '.$langs->trans("UsePersonalValue").'</td>';
     print '<td>';
     print $formadmin->select_language((! empty($object->conf->MAIN_LANG_DEFAULT)?$object->conf->MAIN_LANG_DEFAULT:''), 'main_lang_default', 1, null, 0, 0, (! empty($dolibarr_main_demo)));
@@ -289,7 +289,7 @@ if ($action == 'edit')
     print '<tr class="oddeven"><td>'.$langs->trans("MaxSizeList").'</td>';
     print '<td>'.$conf->global->MAIN_SIZE_LISTE_LIMIT.'</td>';
     print '<td class="nowrap" width="20%"><input class="oddeven" name="check_SIZE_LISTE_LIMIT" id="check_SIZE_LISTE_LIMIT" type="checkbox" '.(! empty($object->conf->MAIN_SIZE_LISTE_LIMIT)?" checked":"");
-    print empty($dolibarr_main_demo)?'':' disabled="disabled"';	// Disabled for demo
+    print empty($dolibarr_main_demo)?'':' disabled="disabled"';    // Disabled for demo
     print '> '.$langs->trans("UsePersonalValue").'</td>';
     print '<td><input class="flat" name="main_size_liste_limit" id="main_size_liste_limit" size="4" value="' . (! empty($object->conf->MAIN_SIZE_LISTE_LIMIT)?$object->conf->MAIN_SIZE_LISTE_LIMIT:'') . '"></td></tr>';
 
@@ -298,7 +298,7 @@ if ($action == 'edit')
     print '<td>'.$langs->trans("AGENDA_DEFAULT_VIEW").'</td>'."\n";
     print '<td class="center">&nbsp;</td>'."\n";
     print '<td class="nowrap" width="20%"><input class="oddeven" name="check_AGENDA_DEFAULT_VIEW" id="check_AGENDA_DEFAULT_VIEW" type="checkbox" '.(! empty($object->conf->AGENDA_DEFAULT_VIEW)?" checked":"");
-    print empty($dolibarr_main_demo)?'':' disabled="disabled"';	// Disabled for demo
+    print empty($dolibarr_main_demo)?'':' disabled="disabled"';    // Disabled for demo
     print '> '.$langs->trans("UsePersonalValue").'</td>';
     print '<td>'."\n";
     $tmplist=array(''=>'&nbsp;', 'show_list'=>$langs->trans("ViewList"), 'show_month'=>$langs->trans("ViewCal"), 'show_week'=>$langs->trans("ViewWeek"), 'show_day'=>$langs->trans("ViewDay"), 'show_peruser'=>$langs->trans("ViewPerUser"));
@@ -336,7 +336,7 @@ else
     print (empty($conf->global->MAIN_LANDING_PAGE)?'':$conf->global->MAIN_LANDING_PAGE);
     print '</td>';
     print '<td class="nowrap"><input class="oddeven" name="check_MAIN_LANDING_PAGE" disabled id="check_MAIN_LANDING_PAGE" type="checkbox" '.(! empty($object->conf->MAIN_LANDING_PAGE)?" checked":"");
-    print empty($dolibarr_main_demo)?'':' disabled="disabled"';	// Disabled for demo
+    print empty($dolibarr_main_demo)?'':' disabled="disabled"';    // Disabled for demo
     print '> '.$langs->trans("UsePersonalValue").'</td>';
     print '<td>';
     if (! empty($tmparray[$object->conf->MAIN_LANDING_PAGE]))
@@ -361,7 +361,7 @@ else
     print (isset($object->conf->MAIN_LANG_DEFAULT) && $object->conf->MAIN_LANG_DEFAULT=='auto'?$langs->trans("AutoDetectLang"):(! empty($object->conf->MAIN_LANG_DEFAULT)?$langs->trans("Language_".$object->conf->MAIN_LANG_DEFAULT):''));
     print '</td></tr>';
 
-	// Max size for lists
+    // Max size for lists
     print '<tr class="oddeven"><td>'.$langs->trans("MaxSizeList").'</td>';
     print '<td>'.(! empty($conf->global->MAIN_SIZE_LISTE_LIMIT)?$conf->global->MAIN_SIZE_LISTE_LIMIT:'&nbsp;').'</td>';
     print '<td class="nowrap" width="20%"><input class="oddeven" type="checkbox" disabled '.(! empty($object->conf->MAIN_SIZE_LISTE_LIMIT)?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';

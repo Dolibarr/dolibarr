@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2012-2013	Christophe Battarel	<christophe.battarel@altairis.fr>
+/* Copyright (C) 2012-2013    Christophe Battarel    <christophe.battarel@altairis.fr>
  * Copyright (C) 2014		Ferran Marcet		<fmarcet@2byte.es>
  * Copyright (C) 2015       Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2016       Florian Henry       <florian.henry@open-concept.pro>
@@ -202,115 +202,115 @@ $sql .= $db->order($sortfield, $sortorder);
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 
-	dol_syslog(__FILE__, LOG_DEBUG);
-	$result = $db->query($sql);
-	$nbtotalofrecords = $db->num_rows($result);
-	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
-	{
-		$page = 0;
-		$offset = 0;
-	}
+    dol_syslog(__FILE__, LOG_DEBUG);
+    $result = $db->query($sql);
+    $nbtotalofrecords = $db->num_rows($result);
+    if (($page * $limit) > $nbtotalofrecords)    // if total resultset is smaller then paging size (filtering), goto and load page 0
+    {
+        $page = 0;
+        $offset = 0;
+    }
 }
 
 $sql .= $db->plimit($limit+1, $offset);
 
 $result = $db->query($sql);
 if ($result) {
-	$num = $db->num_rows($result);
+    $num = $db->num_rows($result);
 
-	print '<br>';
-	print_barre_liste($langs->trans("MarginDetails"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '', 0, '', '', $limit);
+    print '<br>';
+    print_barre_liste($langs->trans("MarginDetails"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '', 0, '', '', $limit);
 
-	if ($conf->global->MARGIN_TYPE == "1")
-	    $labelcostprice='BuyingPrice';
-	else   // value is 'costprice' or 'pmp'
-	    $labelcostprice='CostPrice';
+    if ($conf->global->MARGIN_TYPE == "1")
+        $labelcostprice='BuyingPrice';
+    else   // value is 'costprice' or 'pmp'
+        $labelcostprice='CostPrice';
 
-	$moreforfilter='';
+    $moreforfilter='';
 
-	$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
-	//$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
-	//if ($massactionbutton) $selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
-	$selectedfields='';
+    $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
+    //$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);    // This also change content of $arrayfields
+    //if ($massactionbutton) $selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
+    $selectedfields='';
 
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
-	print '<tr class="liste_titre liste_titre_search">';
-	print '<td><input type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'"></td>';
-	print '<td></td>';
-	print '<td></td>';
-	print '<td></td>';
-	print '<td></td>';
-	print '<td></td>';
+    print '<tr class="liste_titre liste_titre_search">';
+    print '<td><input type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'"></td>';
+    print '<td></td>';
+    print '<td></td>';
+    print '<td></td>';
+    print '<td></td>';
+    print '<td></td>';
     print '<td class="liste_titre" align="middle">';
     $searchpitco=$form->showFilterButtons();
     print $searchpitco;
     print '</td>';
-	print "</tr>\n";
+    print "</tr>\n";
 
-	print '<tr class="liste_titre">';
-	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "f.ref", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre("Description", $_SERVER["PHP_SELF"], "", "", $param, 'width=20%', $sortfield, $sortorder);
-	print_liste_field_titre("UnitPriceHT", $_SERVER["PHP_SELF"], "d.subprice", "", $param, 'align="right"', $sortfield, $sortorder);
-	print_liste_field_titre($labelcostprice, $_SERVER["PHP_SELF"], "d.buy_price_ht", "", $param, 'align="right"', $sortfield, $sortorder);
-	print_liste_field_titre("Qty", $_SERVER["PHP_SELF"], "d.qty", "", $param, 'align="right"', $sortfield, $sortorder);
-	print_liste_field_titre("AmountTTC", $_SERVER["PHP_SELF"], "d.total_ht", "", $param, 'align="right"', $sortfield, $sortorder);
-	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
-	print "</tr>\n";
+    print '<tr class="liste_titre">';
+    print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "f.ref", "", $param, '', $sortfield, $sortorder);
+    print_liste_field_titre("Description", $_SERVER["PHP_SELF"], "", "", $param, 'width=20%', $sortfield, $sortorder);
+    print_liste_field_titre("UnitPriceHT", $_SERVER["PHP_SELF"], "d.subprice", "", $param, 'align="right"', $sortfield, $sortorder);
+    print_liste_field_titre($labelcostprice, $_SERVER["PHP_SELF"], "d.buy_price_ht", "", $param, 'align="right"', $sortfield, $sortorder);
+    print_liste_field_titre("Qty", $_SERVER["PHP_SELF"], "d.qty", "", $param, 'align="right"', $sortfield, $sortorder);
+    print_liste_field_titre("AmountTTC", $_SERVER["PHP_SELF"], "d.total_ht", "", $param, 'align="right"', $sortfield, $sortorder);
+    print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
+    print "</tr>\n";
 
     $i=0;
-	while ($i < min($num, $limit))
-	{
-	    $objp = $db->fetch_object($result);
+    while ($i < min($num, $limit))
+    {
+        $objp = $db->fetch_object($result);
 
-		print '<tr class="oddeven">';
-		print '<td>';
-		$result_inner = $invoicestatic->fetch($objp->invoiceid);
-		if ($result_inner < 0) {
-			setEventMessages($invoicestatic->error, null, 'errors');
-		} else {
-			print $invoicestatic->getNomUrl(1);
-		}
-		print '</td>';
-		print '<td>';
-		if (! empty($objp->fk_product)) {
-			$result_inner = $productstatic->fetch($objp->fk_product);
-			if ($result_inner < 0) {
-				setEventMessages($productstatic->error, null, 'errors');
-			} else {
-				print $productstatic->getNomUrl(1);
-			}
-		} else {
-			print $objp->label;
-			print '&nbsp;';
-			print $objp->description;
-		}
-		print '</td>';
-		print '<td class="right">';
-		print price($objp->subprice);
-		print '</td>';
-		print '<td class="right">';
-		print '<input type="text" name="buyingprice_' . $objp->invoicedetid . '" id="buyingprice_' . $objp->invoicedetid . '" size="6" value="' . price($objp->buy_price_ht) . '" class="right flat">';
-		print '</td>';
-		print '<td class="right">';
-		print $objp->qty;
-		print '</td>';
-		print '<td class="right">';
-		print price($objp->total_ht);
-		print '</td>';
-		print '<td></td>';
+        print '<tr class="oddeven">';
+        print '<td>';
+        $result_inner = $invoicestatic->fetch($objp->invoiceid);
+        if ($result_inner < 0) {
+            setEventMessages($invoicestatic->error, null, 'errors');
+        } else {
+            print $invoicestatic->getNomUrl(1);
+        }
+        print '</td>';
+        print '<td>';
+        if (! empty($objp->fk_product)) {
+            $result_inner = $productstatic->fetch($objp->fk_product);
+            if ($result_inner < 0) {
+                setEventMessages($productstatic->error, null, 'errors');
+            } else {
+                print $productstatic->getNomUrl(1);
+            }
+        } else {
+            print $objp->label;
+            print '&nbsp;';
+            print $objp->description;
+        }
+        print '</td>';
+        print '<td class="right">';
+        print price($objp->subprice);
+        print '</td>';
+        print '<td class="right">';
+        print '<input type="text" name="buyingprice_' . $objp->invoicedetid . '" id="buyingprice_' . $objp->invoicedetid . '" size="6" value="' . price($objp->buy_price_ht) . '" class="right flat">';
+        print '</td>';
+        print '<td class="right">';
+        print $objp->qty;
+        print '</td>';
+        print '<td class="right">';
+        print price($objp->total_ht);
+        print '</td>';
+        print '<td></td>';
 
-		print "</tr>\n";
+        print "</tr>\n";
 
-		$i ++;
-	}
+        $i ++;
+    }
 
-	print "</table>";
+    print "</table>";
 
-	print "</div>";
+    print "</div>";
 } else {
-	dol_print_error($db);
+    dol_print_error($db);
 }
 
 

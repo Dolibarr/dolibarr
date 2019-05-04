@@ -18,9 +18,9 @@
  */
 
 /**
- *  	\file       htdocs/fourn/recap-fourn.php
- *		\ingroup    fournisseur
- *		\brief      Page de fiche recap supplier
+ *      \file       htdocs/fourn/recap-fourn.php
+ *        \ingroup    fournisseur
+ *        \brief      Page de fiche recap supplier
  */
 
 require '../main.inc.php';
@@ -62,8 +62,8 @@ if ($socid > 0)
     $head = societe_prepare_head($societe);
 
     dol_fiche_head($head, 'supplier', $langs->trans("ThirdParty"), 0, 'company');
-	dol_banner_tab($societe, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
-	dol_fiche_end();
+    dol_banner_tab($societe, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
+    dol_fiche_end();
 
     if (! empty($conf->fournisseur->enabled) && $user->rights->facture->lire)
     {
@@ -77,7 +77,7 @@ if ($socid > 0)
         $sql.= " u.login, u.rowid as userid";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_fourn as f,".MAIN_DB_PREFIX."user as u";
         $sql.= " WHERE f.fk_soc = s.rowid AND s.rowid = ".$societe->id;
-	$sql.= " AND f.entity IN (".getEntity("facture_fourn").")"; // Reconaissance de l'entité attribuée à cette facture pour Multicompany
+    $sql.= " AND f.entity IN (".getEntity("facture_fourn").")"; // Reconaissance de l'entité attribuée à cette facture pour Multicompany
         $sql.= " AND f.fk_user_valid = u.rowid";
         $sql.= " ORDER BY f.datef DESC";
 

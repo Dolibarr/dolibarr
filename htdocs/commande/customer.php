@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2003-2005 Rodolphe Quiedeville 	<rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2005 Rodolphe Quiedeville     <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur  	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin       		<regis.houssin@inodbox.com>
  * Copyright (C) 2012	   Andreu Bisquerra Gaya	<jove@bisquerra.com>
@@ -21,9 +21,9 @@
  */
 
 /**
- *	\file       htdocs/commande/customer.php
- *	\ingroup    compta
- *	\brief      Show list of customers to add an new invoice from orders
+ *    \file       htdocs/commande/customer.php
+ *    \ingroup    compta
+ *    \brief      Show list of customers to add an new invoice from orders
  */
 
 require '../main.inc.php';
@@ -35,8 +35,8 @@ $action=GETPOST('action', 'aZ09');
 // Secrutiy check
 if ($user->societe_id > 0)
 {
-	$action = '';
-	$socid = $user->societe_id;
+    $action = '';
+    $socid = $user->societe_id;
 }
 
 if (! $user->rights->facture->creer)
@@ -79,18 +79,18 @@ $sql.= " AND s.entity IN (".getEntity('societe').")";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if (dol_strlen($stcomm))
 {
-	$sql.= " AND s.fk_stcomm=".$stcomm;
+    $sql.= " AND s.fk_stcomm=".$stcomm;
 }
 if (GETPOST("search_nom"))  $sql.= natural_search("s.nom", GETPOST("search_nom"));
 if (GETPOST("search_compta")) $sql.= natural_search("s.code_compta", GETPOST("search_compta"));
 if (GETPOST("search_code_client")) $sql.= natural_search("s.code_client", GETPOST("search_code_client"));
 if (dol_strlen($begin))
 {
-	$sql.= " AND s.nom like '".$db->escape($begin)."'";
+    $sql.= " AND s.nom like '".$db->escape($begin)."'";
 }
 if ($socid > 0)
 {
-	$sql.= " AND s.rowid = ".$socid;
+    $sql.= " AND s.rowid = ".$socid;
 }
 $sql.= " AND c.fk_statut in (1, 2) AND c.facture = 0";
 $sql.= " GROUP BY s.nom";
@@ -100,14 +100,14 @@ $sql.= $db->order($sortfield, $sortorder);
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
-	$result = $db->query($sql);
-	$nbtotalofrecords = $db->num_rows($result);
+    $result = $db->query($sql);
+    $nbtotalofrecords = $db->num_rows($result);
 
-	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
-	{
-		$page = 0;
-		$offset = 0;
-	}
+    if (($page * $limit) > $nbtotalofrecords)    // if total resultset is smaller then paging size (filtering), goto and load page 0
+    {
+        $page = 0;
+        $offset = 0;
+    }
 }
 
 $sql.= $db->plimit($limit + 1, $offset);
@@ -116,51 +116,51 @@ $sql.= $db->plimit($limit + 1, $offset);
 $resql = $db->query($sql);
 if ($resql)
 {
-	$num = $db->num_rows($resql);
-	$i = 0;
+    $num = $db->num_rows($resql);
+    $i = 0;
 
-	print_barre_liste($langs->trans("MenuOrdersToBill"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num);
+    print_barre_liste($langs->trans("MenuOrdersToBill"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num);
 
-	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
+    print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
 
-	print '<table class="liste" width="100%">';
-	print '<tr class="liste_titre">';
+    print '<table class="liste" width="100%">';
+    print '<tr class="liste_titre">';
 
-	print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "s.nom", "", "", 'valign="center"', $sortfield, $sortorder);
-	print_liste_field_titre("Town", $_SERVER["PHP_SELF"], "s.town", "", "", 'valign="center"', $sortfield, $sortorder);
-	print_liste_field_titre("CustomerCode", $_SERVER["PHP_SELF"], "s.code_client", "", "", 'align="left"', $sortfield, $sortorder);
-	print_liste_field_titre("AccountancyCode", $_SERVER["PHP_SELF"], "s.code_compta", "", "", 'align="left"', $sortfield, $sortorder);
-	print_liste_field_titre("DateCreation", $_SERVER["PHP_SELF"], "datec", $addu, "", 'class="right"', $sortfield, $sortorder);
-	print "</tr>\n";
+    print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "s.nom", "", "", 'valign="center"', $sortfield, $sortorder);
+    print_liste_field_titre("Town", $_SERVER["PHP_SELF"], "s.town", "", "", 'valign="center"', $sortfield, $sortorder);
+    print_liste_field_titre("CustomerCode", $_SERVER["PHP_SELF"], "s.code_client", "", "", 'align="left"', $sortfield, $sortorder);
+    print_liste_field_titre("AccountancyCode", $_SERVER["PHP_SELF"], "s.code_compta", "", "", 'align="left"', $sortfield, $sortorder);
+    print_liste_field_titre("DateCreation", $_SERVER["PHP_SELF"], "datec", $addu, "", 'class="right"', $sortfield, $sortorder);
+    print "</tr>\n";
 
-	// Lignes des champs de filtre
-	print '<tr class="liste_titre">';
+    // Lignes des champs de filtre
+    print '<tr class="liste_titre">';
 
-	print '<td align="left" class="liste_titre">';
-	print '<input class="flat" type="text" name="search_nom" value="'.dol_escape_htmltag(GETPOST("search_nom")).'"></td>';
+    print '<td align="left" class="liste_titre">';
+    print '<input class="flat" type="text" name="search_nom" value="'.dol_escape_htmltag(GETPOST("search_nom")).'"></td>';
 
-	print '<td class="liste_titre">&nbsp;</td>';
+    print '<td class="liste_titre">&nbsp;</td>';
 
-	print '<td align="left" class="liste_titre">';
-	print '<input class="flat" type="text" size="10" name="search_code_client" value="'.dol_escape_htmltag(GETPOST("search_code_client")).'">';
-	print '</td>';
+    print '<td align="left" class="liste_titre">';
+    print '<input class="flat" type="text" size="10" name="search_code_client" value="'.dol_escape_htmltag(GETPOST("search_code_client")).'">';
+    print '</td>';
 
-	print '<td align="left" class="liste_titre">';
-	print '<input class="flat" type="text" size="10" name="search_compta" value="'.dol_escape_htmltag(GETPOST("search_compta")).'">';
-	print '</td>';
+    print '<td align="left" class="liste_titre">';
+    print '<input class="flat" type="text" size="10" name="search_compta" value="'.dol_escape_htmltag(GETPOST("search_compta")).'">';
+    print '</td>';
 
-	print '<td colspan="2" class="liste_titre right">';
-	print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"), 'search.png', '', '', 1).'" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-	print '</td>';
+    print '<td colspan="2" class="liste_titre right">';
+    print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"), 'search.png', '', '', 1).'" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+    print '</td>';
 
-	print "</tr>\n";
+    print "</tr>\n";
 
-	while ($i < min($num, $limit))
-	{
-		$obj = $db->fetch_object($resql);
+    while ($i < min($num, $limit))
+    {
+        $obj = $db->fetch_object($resql);
 
-		print '<tr class="oddeven">';
-		print '<td>';
+        print '<tr class="oddeven">';
+        print '<td>';
 
         $result='';
         $link=$linkend='';
@@ -170,24 +170,24 @@ if ($resql)
         $result.=($link.img_object($langs->trans("ShowCompany").': '.$name, 'company').$linkend);
         $result.=$link.(dol_trunc($name, $maxlen)).$linkend;
 
-		print $result;
-		print '</td>';
-		print '<td>'.$obj->town.'&nbsp;</td>';
-		print '<td class="left">'.$obj->code_client.'&nbsp;</td>';
-		print '<td class="left">'.$obj->code_compta.'&nbsp;</td>';
-		print '<td class="right">'.dol_print_date($db->jdate($obj->datec)).'</td>';
-		print "</tr>\n";
-		$i++;
-	}
-	print "</table>";
+        print $result;
+        print '</td>';
+        print '<td>'.$obj->town.'&nbsp;</td>';
+        print '<td class="left">'.$obj->code_client.'&nbsp;</td>';
+        print '<td class="left">'.$obj->code_compta.'&nbsp;</td>';
+        print '<td class="right">'.dol_print_date($db->jdate($obj->datec)).'</td>';
+        print "</tr>\n";
+        $i++;
+    }
+    print "</table>";
 
-	print '</form>';
+    print '</form>';
 
-	$db->free($resql);
+    $db->free($resql);
 }
 else
 {
-	dol_print_error($db);
+    dol_print_error($db);
 }
 
 // End of page

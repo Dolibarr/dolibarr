@@ -27,8 +27,8 @@ require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.commande.class.php';
 /**
  * Check if there is still some dispatching of stock to do.
  *
- * @param 	int		$order_id		Id of order to check
- * @return	boolean					True = There is some dispatching to do, False = All dispatching is done (may be we receive more) or is not required
+ * @param     int        $order_id        Id of order to check
+ * @return    boolean                    True = There is some dispatching to do, False = All dispatching is done (may be we receive more) or is not required
  */
 function dolDispatchToDo($order_id)
 {
@@ -66,7 +66,7 @@ function dolDispatchToDo($order_id)
     $todispatch=0;
     foreach ($ordered as $key => $val)
     {
-		if ($ordered[$key] > $dispatched[$key]) $todispatch++;
+        if ($ordered[$key] > $dispatched[$key]) $todispatch++;
     }
 
     return ($todispatch ? true : false);
@@ -76,7 +76,7 @@ function dolDispatchToDo($order_id)
 /**
  * dispatchedOrders
  *
- * @return string		Array of id of orders wit all dispathing already done or not required
+ * @return string        Array of id of orders wit all dispathing already done or not required
  */
 function dispatchedOrders()
 {
@@ -109,53 +109,53 @@ function dispatchedOrders()
 /**
  * ordered
  *
- * @param 	int		$product_id		Product id
- * @return	void
+ * @param     int        $product_id        Product id
+ * @return    void
  */
 function ordered($product_id)
 {
-	global $db, $langs, $conf;
+    global $db, $langs, $conf;
 
-	$sql = 'SELECT DISTINCT cfd.fk_product, SUM(cfd.qty) as qty FROM';
-	$sql .= ' ' . MAIN_DB_PREFIX . 'commande_fournisseurdet as cfd ';
-	$sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'commande_fournisseur as cf';
-	$sql .= ' ON cfd.fk_commande = cf.rowid WHERE';
-	if ($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER) {
-		$sql .= ' cf.fk_statut < 3';
-	} elseif ($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER) {
-		$sql .= ' cf.fk_statut < 6 AND cf.rowid NOT IN ' . dispatchedOrders();
-	} else {
-		$sql .= ' cf.fk_statut < 5';
-	}
-	$sql .= ' AND cfd.fk_product = ' . $product_id;
-	$sql .= ' GROUP BY cfd.fk_product';
+    $sql = 'SELECT DISTINCT cfd.fk_product, SUM(cfd.qty) as qty FROM';
+    $sql .= ' ' . MAIN_DB_PREFIX . 'commande_fournisseurdet as cfd ';
+    $sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'commande_fournisseur as cf';
+    $sql .= ' ON cfd.fk_commande = cf.rowid WHERE';
+    if ($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER) {
+        $sql .= ' cf.fk_statut < 3';
+    } elseif ($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER) {
+        $sql .= ' cf.fk_statut < 6 AND cf.rowid NOT IN ' . dispatchedOrders();
+    } else {
+        $sql .= ' cf.fk_statut < 5';
+    }
+    $sql .= ' AND cfd.fk_product = ' . $product_id;
+    $sql .= ' GROUP BY cfd.fk_product';
 
-	$resql = $db->query($sql);
-	if ($resql)
-	{
-		$exists = $db->num_rows($resql);
-		if ($exists)
-		{
-			$obj = $db->fetch_array($resql);
-			return $obj['qty']; //. ' ' . img_picto('','tick');
-		} else {
-			return null; //img_picto('', 'stcomm-1');
-		}
-	}
-	else
-	{
-		$error = $db->lasterror();
-		dol_print_error($db);
+    $resql = $db->query($sql);
+    if ($resql)
+    {
+        $exists = $db->num_rows($resql);
+        if ($exists)
+        {
+            $obj = $db->fetch_array($resql);
+            return $obj['qty']; //. ' ' . img_picto('','tick');
+        } else {
+            return null; //img_picto('', 'stcomm-1');
+        }
+    }
+    else
+    {
+        $error = $db->lasterror();
+        dol_print_error($db);
 
-		return $langs->trans('error');
-	}
+        return $langs->trans('error');
+    }
 }
 
 /**
  * getProducts
  *
- * @param 	int		$order_id		Order id
- * @return	void
+ * @param     int        $order_id        Order id
+ * @return    void
  */
 function getProducts($order_id)
 {

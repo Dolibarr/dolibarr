@@ -18,9 +18,9 @@
  */
 
 /**
- *	\file       htdocs/comm/propal/index.php
- *	\ingroup    propal
- *	\brief      Home page of proposal area
+ *    \file       htdocs/comm/propal/index.php
+ *    \ingroup    propal
+ *    \brief      Home page of proposal area
  */
 
 require '../main.inc.php';
@@ -34,8 +34,8 @@ $langs->loadLangs(array('supplier_proposal', 'companies'));
 $socid=GETPOST('socid', 'int');
 if (isset($user->societe_id) && $user->societe_id  > 0)
 {
-	$action = '';
-	$socid = $user->societe_id;
+    $action = '';
+    $socid = $user->societe_id;
 }
 $result = restrictedArea($user, 'supplier_proposal');
 
@@ -160,48 +160,48 @@ else
  */
 if (! empty($conf->supplier_proposal->enabled))
 {
-	$sql = "SELECT c.rowid, c.ref, s.nom as socname, s.rowid as socid, s.canvas, s.client";
-	$sql.= " FROM ".MAIN_DB_PREFIX."supplier_proposal as c";
-	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
-	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql.= " WHERE c.fk_soc = s.rowid";
-	$sql.= " AND c.entity = ".$conf->entity;
-	$sql.= " AND c.fk_statut = 0";
-	if ($socid) $sql.= " AND c.fk_soc = ".$socid;
-	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+    $sql = "SELECT c.rowid, c.ref, s.nom as socname, s.rowid as socid, s.canvas, s.client";
+    $sql.= " FROM ".MAIN_DB_PREFIX."supplier_proposal as c";
+    $sql.= ", ".MAIN_DB_PREFIX."societe as s";
+    if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+    $sql.= " WHERE c.fk_soc = s.rowid";
+    $sql.= " AND c.entity = ".$conf->entity;
+    $sql.= " AND c.fk_statut = 0";
+    if ($socid) $sql.= " AND c.fk_soc = ".$socid;
+    if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 
-	$resql=$db->query($sql);
-	if ($resql)
-	{
-		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre">';
-		print '<th colspan="2">'.$langs->trans("DraftRequests").'</th></tr>';
-		$langs->load("supplier_proposal");
-		$num = $db->num_rows($resql);
-		if ($num)
-		{
-			$i = 0;
-			while ($i < $num)
-			{
-				$obj = $db->fetch_object($resql);
+    $resql=$db->query($sql);
+    if ($resql)
+    {
+        print '<table class="noborder" width="100%">';
+        print '<tr class="liste_titre">';
+        print '<th colspan="2">'.$langs->trans("DraftRequests").'</th></tr>';
+        $langs->load("supplier_proposal");
+        $num = $db->num_rows($resql);
+        if ($num)
+        {
+            $i = 0;
+            while ($i < $num)
+            {
+                $obj = $db->fetch_object($resql);
 
-				print '<tr class="oddeven">';
-				$supplier_proposalstatic->id=$obj->rowid;
-				$supplier_proposalstatic->ref=$obj->ref;
-				print '<td class="nowrap">'.$supplier_proposalstatic->getNomUrl(1).'</td>';
+                print '<tr class="oddeven">';
+                $supplier_proposalstatic->id=$obj->rowid;
+                $supplier_proposalstatic->ref=$obj->ref;
+                print '<td class="nowrap">'.$supplier_proposalstatic->getNomUrl(1).'</td>';
 
-				$companystatic->id=$obj->socid;
-				$companystatic->name=$obj->socname;
-				$companystatic->client=$obj->client;
-				$companystatic->canvas=$obj->canvas;
-				print '<td>'.$companystatic->getNomUrl(1, 'customer', 24).'</td>';
+                $companystatic->id=$obj->socid;
+                $companystatic->name=$obj->socname;
+                $companystatic->client=$obj->client;
+                $companystatic->canvas=$obj->canvas;
+                print '<td>'.$companystatic->getNomUrl(1, 'customer', 24).'</td>';
 
-				print '</tr>';
-				$i++;
-			}
-		}
-		print "</table><br>";
-	}
+                print '</tr>';
+                $i++;
+            }
+        }
+        print "</table><br>";
+    }
 }
 
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
@@ -229,55 +229,55 @@ $sql.= $db->plimit($max, 0);
 $resql=$db->query($sql);
 if ($resql)
 {
-	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre">';
-	print '<th colspan="4">'.$langs->trans("LastModifiedRequests", $max).'</th></tr>';
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre">';
+    print '<th colspan="4">'.$langs->trans("LastModifiedRequests", $max).'</th></tr>';
 
-	$num = $db->num_rows($resql);
-	if ($num)
-	{
-		$i = 0;
-		while ($i < $num)
-		{
-			$obj = $db->fetch_object($resql);
+    $num = $db->num_rows($resql);
+    if ($num)
+    {
+        $i = 0;
+        while ($i < $num)
+        {
+            $obj = $db->fetch_object($resql);
 
-			print '<tr class="oddeven">';
-			print '<td width="20%" class="nowrap">';
+            print '<tr class="oddeven">';
+            print '<td width="20%" class="nowrap">';
 
-			$supplier_proposalstatic->id=$obj->rowid;
-			$supplier_proposalstatic->ref=$obj->ref;
+            $supplier_proposalstatic->id=$obj->rowid;
+            $supplier_proposalstatic->ref=$obj->ref;
 
-			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-			print '<td width="96" class="nobordernopadding nowrap">';
-			print $supplier_proposalstatic->getNomUrl(1);
-			print '</td>';
+            print '<table class="nobordernopadding"><tr class="nocellnopadd">';
+            print '<td width="96" class="nobordernopadding nowrap">';
+            print $supplier_proposalstatic->getNomUrl(1);
+            print '</td>';
 
-			print '<td width="16" class="nobordernopadding nowrap">';
-			print '&nbsp;';
-			print '</td>';
+            print '<td width="16" class="nobordernopadding nowrap">';
+            print '&nbsp;';
+            print '</td>';
 
-			print '<td width="16" class="right nobordernopadding">';
-			$filename=dol_sanitizeFileName($obj->ref);
-			$filedir=$conf->supplier_proposal->dir_output . '/' . dol_sanitizeFileName($obj->ref);
-			$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
-			print $formfile->getDocumentsLink($supplier_proposalstatic->element, $filename, $filedir);
-			print '</td></tr></table>';
+            print '<td width="16" class="right nobordernopadding">';
+            $filename=dol_sanitizeFileName($obj->ref);
+            $filedir=$conf->supplier_proposal->dir_output . '/' . dol_sanitizeFileName($obj->ref);
+            $urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
+            print $formfile->getDocumentsLink($supplier_proposalstatic->element, $filename, $filedir);
+            print '</td></tr></table>';
 
-			print '</td>';
+            print '</td>';
 
-			$companystatic->id=$obj->socid;
-			$companystatic->name=$obj->socname;
-			$companystatic->client=$obj->client;
-			$companystatic->canvas=$obj->canvas;
-			print '<td>'.$companystatic->getNomUrl(1, 'customer').'</td>';
+            $companystatic->id=$obj->socid;
+            $companystatic->name=$obj->socname;
+            $companystatic->client=$obj->client;
+            $companystatic->canvas=$obj->canvas;
+            print '<td>'.$companystatic->getNomUrl(1, 'customer').'</td>';
 
-			print '<td>'.dol_print_date($db->jdate($obj->datec), 'day').'</td>';
-			print '<td class="right">'.$supplier_proposalstatic->LibStatut($obj->fk_statut, 5).'</td>';
-			print '</tr>';
-			$i++;
-		}
-	}
-	print "</table><br>";
+            print '<td>'.dol_print_date($db->jdate($obj->datec), 'day').'</td>';
+            print '<td class="right">'.$supplier_proposalstatic->LibStatut($obj->fk_statut, 5).'</td>';
+            print '</tr>';
+            $i++;
+        }
+    }
+    print "</table><br>";
 }
 else dol_print_error($db);
 
@@ -287,90 +287,90 @@ else dol_print_error($db);
  */
 if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->lire)
 {
-	$langs->load("supplier_proposal");
+    $langs->load("supplier_proposal");
 
-	$now=dol_now();
+    $now=dol_now();
 
-	$sql = "SELECT s.nom as socname, s.rowid as socid, s.canvas, s.client, p.rowid as supplier_proposalid, p.total as total_ttc, p.total_ht, p.ref, p.fk_statut, p.datec as dp";
-	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-	$sql.= ", ".MAIN_DB_PREFIX."supplier_proposal as p";
-	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql.= " WHERE p.fk_soc = s.rowid";
-	$sql.= " AND p.entity IN (".getEntity('supplier_proposal').")";
-	$sql.= " AND p.fk_statut = 1";
-	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-	if ($socid) $sql.= " AND s.rowid = ".$socid;
-	$sql.= " ORDER BY p.rowid DESC";
+    $sql = "SELECT s.nom as socname, s.rowid as socid, s.canvas, s.client, p.rowid as supplier_proposalid, p.total as total_ttc, p.total_ht, p.ref, p.fk_statut, p.datec as dp";
+    $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+    $sql.= ", ".MAIN_DB_PREFIX."supplier_proposal as p";
+    if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+    $sql.= " WHERE p.fk_soc = s.rowid";
+    $sql.= " AND p.entity IN (".getEntity('supplier_proposal').")";
+    $sql.= " AND p.fk_statut = 1";
+    if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+    if ($socid) $sql.= " AND s.rowid = ".$socid;
+    $sql.= " ORDER BY p.rowid DESC";
 
-	$result=$db->query($sql);
-	if ($result)
-	{
-		$total = 0;
-		$num = $db->num_rows($result);
-		$i = 0;
-		if ($num > 0)
-		{
-			print '<table class="noborder" width="100%">';
-			print '<tr class="liste_titre"><th colspan="5">'.$langs->trans("RequestsOpened").' <a href="'.DOL_URL_ROOT.'/supplier_proposal/list.php?viewstatut=1"><span class="badge">'.$num.'</span></a></th></tr>';
+    $result=$db->query($sql);
+    if ($result)
+    {
+        $total = 0;
+        $num = $db->num_rows($result);
+        $i = 0;
+        if ($num > 0)
+        {
+            print '<table class="noborder" width="100%">';
+            print '<tr class="liste_titre"><th colspan="5">'.$langs->trans("RequestsOpened").' <a href="'.DOL_URL_ROOT.'/supplier_proposal/list.php?viewstatut=1"><span class="badge">'.$num.'</span></a></th></tr>';
 
-			$nbofloop=min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD)?500:$conf->global->MAIN_MAXLIST_OVERLOAD));
-			while ($i < $nbofloop)
-			{
-				$obj = $db->fetch_object($result);
+            $nbofloop=min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD)?500:$conf->global->MAIN_MAXLIST_OVERLOAD));
+            while ($i < $nbofloop)
+            {
+                $obj = $db->fetch_object($result);
 
-				print '<tr class="oddeven">';
+                print '<tr class="oddeven">';
 
-				// Ref
-				print '<td class="nowrap" width="140">';
+                // Ref
+                print '<td class="nowrap" width="140">';
 
-				$supplier_proposalstatic->id=$obj->supplier_proposalid;
-				$supplier_proposalstatic->ref=$obj->ref;
+                $supplier_proposalstatic->id=$obj->supplier_proposalid;
+                $supplier_proposalstatic->ref=$obj->ref;
 
-				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-				print '<td class="nobordernopadding nowrap">';
-				print $supplier_proposalstatic->getNomUrl(1);
-				print '</td>';
-				print '<td width="18" class="nobordernopadding nowrap">';
-				if ($db->jdate($obj->dfv) < ($now - $conf->supplier_proposal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
-				print '</td>';
-				print '<td width="16" class="center nobordernopadding">';
-				$filename=dol_sanitizeFileName($obj->ref);
-				$filedir=$conf->supplier_proposal->dir_output . '/' . dol_sanitizeFileName($obj->ref);
-				$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->supplier_proposalid;
-				print $formfile->getDocumentsLink($supplier_proposalstatic->element, $filename, $filedir);
-				print '</td></tr></table>';
+                print '<table class="nobordernopadding"><tr class="nocellnopadd">';
+                print '<td class="nobordernopadding nowrap">';
+                print $supplier_proposalstatic->getNomUrl(1);
+                print '</td>';
+                print '<td width="18" class="nobordernopadding nowrap">';
+                if ($db->jdate($obj->dfv) < ($now - $conf->supplier_proposal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
+                print '</td>';
+                print '<td width="16" class="center nobordernopadding">';
+                $filename=dol_sanitizeFileName($obj->ref);
+                $filedir=$conf->supplier_proposal->dir_output . '/' . dol_sanitizeFileName($obj->ref);
+                $urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->supplier_proposalid;
+                print $formfile->getDocumentsLink($supplier_proposalstatic->element, $filename, $filedir);
+                print '</td></tr></table>';
 
-				print "</td>";
+                print "</td>";
 
-				$companystatic->id=$obj->socid;
-				$companystatic->name=$obj->socname;
-				$companystatic->client=$obj->client;
-				$companystatic->canvas=$obj->canvas;
-				print '<td class="left">'.$companystatic->getNomUrl(1, 'customer', 44).'</td>'."\n";
+                $companystatic->id=$obj->socid;
+                $companystatic->name=$obj->socname;
+                $companystatic->client=$obj->client;
+                $companystatic->canvas=$obj->canvas;
+                print '<td class="left">'.$companystatic->getNomUrl(1, 'customer', 44).'</td>'."\n";
 
-				print '<td class="right">';
-				print dol_print_date($db->jdate($obj->dp), 'day').'</td>'."\n";
-				print '<td class="right">'.price($obj->total_ttc).'</td>';
-				print '<td class="center" width="14">'.$supplier_proposalstatic->LibStatut($obj->fk_statut, 3).'</td>'."\n";
-				print '</tr>'."\n";
-				$i++;
-				$total += $obj->total_ttc;
-			}
-			if ($num > $nbofloop)
-			{
-				print '<tr class="liste_total"><td colspan="5">'.$langs->trans("XMoreLines", ($num - $nbofloop))."</td></tr>";
-			}
-			elseif ($total>0)
-			{
-				print '<tr class="liste_total"><td colspan="3">'.$langs->trans("Total").'</td><td class="right">'.price($total)."</td><td>&nbsp;</td></tr>";
-			}
-			print "</table><br>";
-		}
-	}
-	else
-	{
-		dol_print_error($db);
-	}
+                print '<td class="right">';
+                print dol_print_date($db->jdate($obj->dp), 'day').'</td>'."\n";
+                print '<td class="right">'.price($obj->total_ttc).'</td>';
+                print '<td class="center" width="14">'.$supplier_proposalstatic->LibStatut($obj->fk_statut, 3).'</td>'."\n";
+                print '</tr>'."\n";
+                $i++;
+                $total += $obj->total_ttc;
+            }
+            if ($num > $nbofloop)
+            {
+                print '<tr class="liste_total"><td colspan="5">'.$langs->trans("XMoreLines", ($num - $nbofloop))."</td></tr>";
+            }
+            elseif ($total>0)
+            {
+                print '<tr class="liste_total"><td colspan="3">'.$langs->trans("Total").'</td><td class="right">'.price($total)."</td><td>&nbsp;</td></tr>";
+            }
+            print "</table><br>";
+        }
+    }
+    else
+    {
+        dol_print_error($db);
+    }
 }
 
 print '</div></div></div>';

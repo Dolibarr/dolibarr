@@ -18,9 +18,9 @@
  */
 
 /**
- *  \file		htdocs/comm/propal/tpl/linkedobjectblock.tpl.php
- *  \ingroup	propal
- *  \brief		Template to show objects linked to proposals
+ *  \file        htdocs/comm/propal/tpl/linkedobjectblock.tpl.php
+ *  \ingroup    propal
+ *  \brief        Template to show objects linked to proposals
  */
 
 // Protection to avoid direct call of template
@@ -62,15 +62,15 @@ foreach($linkedObjectBlock as $key => $objectlink)
     ?>
         </td>
         <td class="linkedcol-name" ><?php echo $objectlink->getNomUrl(1); ?></td>
-    	<td class="linkedcol-ref" ><?php echo $objectlink->ref_client; ?></td>
-    	<td class="linkedcol-date" align="center"><?php echo dol_print_date($objectlink->date, 'day'); ?></td>
-    	<td class="linkedcol-amount right"><?php
-    		if ($user->rights->propale->lire) {
-    			$total = $total + $objectlink->total_ht;
-    			echo price($objectlink->total_ht);
-    		} ?></td>
-    	<td class="linkedcol-statut right"><?php echo $objectlink->getLibStatut(3); ?></td>
-    	<td class="linkedcol-action right"><a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a></td>
+        <td class="linkedcol-ref" ><?php echo $objectlink->ref_client; ?></td>
+        <td class="linkedcol-date" align="center"><?php echo dol_print_date($objectlink->date, 'day'); ?></td>
+        <td class="linkedcol-amount right"><?php
+            if ($user->rights->propale->lire) {
+                $total = $total + $objectlink->total_ht;
+                echo price($objectlink->total_ht);
+            } ?></td>
+        <td class="linkedcol-statut right"><?php echo $objectlink->getLibStatut(3); ?></td>
+        <td class="linkedcol-action right"><a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a></td>
     </tr>
 <?php
 }
@@ -80,11 +80,11 @@ if (count($linkedObjectBlock) > 1)
     <tr class="liste_total <?php echo (empty($noMoreLinkedObjectBlockAfter)?'liste_sub_total':''); ?>">
         <td><?php echo $langs->trans("Total"); ?></td>
         <td></td>
-    	<td align="center"></td>
-    	<td align="center"></td>
-    	<td class="right"><?php echo price($total); ?></td>
-    	<td class="right"></td>
-    	<td class="right"></td>
+        <td align="center"></td>
+        <td align="center"></td>
+        <td class="right"><?php echo price($total); ?></td>
+        <td class="right"></td>
+        <td class="right"></td>
     </tr>
 <?php
 }

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017		Alexandre Spangaro		<aspangaro@open-dsi.fr>
+/* Copyright (C) 2017        Alexandre Spangaro        <aspangaro@open-dsi.fr>
  * Copyright (C) 2017		Saasprov				<saasprov@gmail.com>
  * Copyright (C) 2017       Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2017       Ferran Marcet   		<fmarcet@2byte.es>
@@ -26,8 +26,8 @@
  *  \brief      Page to do payment with Stripe
  */
 
-define("NOLOGIN", 1);		// This means this output page does not require to be logged.
-define("NOCSRFCHECK", 1);	// We accept to go on this page from external web site.
+define("NOLOGIN", 1);        // This means this output page does not require to be logged.
+define("NOCSRFCHECK", 1);    // We accept to go on this page from external web site.
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php

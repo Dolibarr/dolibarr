@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+/* Copyright (C) 2004        Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2010	Laurent Destailleur		<eldy@users.sourceforge.org>
  * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
@@ -20,8 +20,8 @@
 
 /**
  *      \file       htdocs/webservices/admin/index.php
- *		\ingroup    webservices
- *		\brief      Page to setup webservices module
+ *        \ingroup    webservices
+ *        \brief      Page to setup webservices module
  */
 
 require '../../main.inc.php';
@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 $langs->load("admin");
 
 if (! $user->admin)
-	accessforbidden();
+    accessforbidden();
 
 $actionsave=GETPOST("save");
 
@@ -83,7 +83,7 @@ print '<tr class="impair">';
 print '<td class="fieldrequired">'.$langs->trans("KeyForWebServicesAccess").'</td>';
 print '<td><input type="text" class="flat" id="WEBSERVICES_KEY" name="WEBSERVICES_KEY" value="'. (GETPOST('WEBSERVICES_KEY')?GETPOST('WEBSERVICES_KEY'):(! empty($conf->global->WEBSERVICES_KEY)?$conf->global->WEBSERVICES_KEY:'')) . '" size="40">';
 if (! empty($conf->use_javascript_ajax))
-	print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
+    print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
 print '</td>';
 print '<td>&nbsp;</td>';
 print '</tr>';
@@ -100,17 +100,17 @@ print '<br><br>';
 
 // Webservices list
 $webservices = array(
-		'user'				=> '',
-		'thirdparty'		=> '!empty($conf->societe->enabled)',
-		'contact'			=> '!empty($conf->societe->enabled)',
-		'productorservice'	=> '(!empty($conf->product->enabled) || !empty($conf->service->enabled))',
-		'order'				=> '!empty($conf->commande->enabled)',
-		'invoice'			=> '!empty($conf->facture->enabled)',
-		'supplier_invoice'	=> '!empty($conf->fournisseur->enabled)',
-		'actioncomm'		=> '!empty($conf->agenda->enabled)',
-		'category'			=> '!empty($conf->categorie->enabled)',
-		'project'			=> '!empty($conf->projet->enabled)',
-        'other'				=> ''
+        'user'                => '',
+        'thirdparty'        => '!empty($conf->societe->enabled)',
+        'contact'            => '!empty($conf->societe->enabled)',
+        'productorservice'    => '(!empty($conf->product->enabled) || !empty($conf->service->enabled))',
+        'order'                => '!empty($conf->commande->enabled)',
+        'invoice'            => '!empty($conf->facture->enabled)',
+        'supplier_invoice'    => '!empty($conf->fournisseur->enabled)',
+        'actioncomm'        => '!empty($conf->agenda->enabled)',
+        'category'            => '!empty($conf->categorie->enabled)',
+        'project'            => '!empty($conf->projet->enabled)',
+        'other'                => ''
 );
 
 
@@ -118,9 +118,9 @@ $webservices = array(
 print '<u>'.$langs->trans("WSDLCanBeDownloadedHere").':</u><br>';
 foreach($webservices as $name => $right)
 {
-	if (!empty($right) && !verifCond($right)) continue;
-	$url=DOL_MAIN_URL_ROOT.'/webservices/server_'.$name.'.php?wsdl';
-	print img_picto('', 'object_globe.png').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
+    if (!empty($right) && !verifCond($right)) continue;
+    $url=DOL_MAIN_URL_ROOT.'/webservices/server_'.$name.'.php?wsdl';
+    print img_picto('', 'object_globe.png').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
 }
 print '<br>';
 
@@ -129,9 +129,9 @@ print '<br>';
 print '<u>'.$langs->trans("EndPointIs").':</u><br>';
 foreach($webservices as $name => $right)
 {
-	if (!empty($right) && !verifCond($right)) continue;
-	$url=DOL_MAIN_URL_ROOT.'/webservices/server_'.$name.'.php';
-	print img_picto('', 'object_globe.png').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
+    if (!empty($right) && !verifCond($right)) continue;
+    $url=DOL_MAIN_URL_ROOT.'/webservices/server_'.$name.'.php';
+    print img_picto('', 'object_globe.png').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
 }
 print '<br>';
 
@@ -141,8 +141,8 @@ print $langs->trans("OnlyActiveElementsAreShown", DOL_URL_ROOT.'/admin/modules.p
 
 if (! empty($conf->use_javascript_ajax))
 {
-	print "\n".'<script type="text/javascript">';
-	print '$(document).ready(function () {
+    print "\n".'<script type="text/javascript">';
+    print '$(document).ready(function () {
             $("#generate_token").click(function() {
             	$.get( "'.DOL_URL_ROOT.'/core/ajax/security.php", {
             		action: \'getrandompassword\',
@@ -153,7 +153,7 @@ if (! empty($conf->use_javascript_ajax))
 				});
             });
     });';
-	print '</script>';
+    print '</script>';
 }
 
 // End of page

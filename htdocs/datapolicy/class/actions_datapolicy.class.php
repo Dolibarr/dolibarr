@@ -65,12 +65,12 @@ class ActionsDatapolicy
     /**
      * Execute action
      *
-     * @param   array           $parameters		Array of parameters
+     * @param   array           $parameters        Array of parameters
      * @param   CommonObject    $object         The object to process (an invoice if you are in invoice module, a propale in propale's module, etc...)
-     * @param   string          $action      	'add', 'update', 'view'
-     * @return  int         					<0 if KO,
-     *                           				=0 if OK but we want to process standard actions too,
-     *                            				>0 if OK and we want to replace standard actions.
+     * @param   string          $action          'add', 'update', 'view'
+     * @return  int                             <0 if KO,
+     *                                           =0 if OK but we want to process standard actions too,
+     *                                            >0 if OK and we want to replace standard actions.
      */
     public function getNomUrl($parameters, &$object, &$action)
     {
@@ -265,7 +265,7 @@ class ActionsDatapolicy
     /**
      * Overloading the addMoreMassActions function : replacing the parent's function with the one below
      *
-     * @param   array           $parameters		Hook metadatas (context, etc...)
+     * @param   array           $parameters        Hook metadatas (context, etc...)
      * @param   CommonObject    $object         The object to process (an invoice if you are in invoice module, a propale in propale's module, etc...)
      * @param   string          $action         Current action (if set). Generally create or edit or null
      * @param   HookManager     $hookmanager    Hook manager propagated to allow calling another hook
@@ -323,10 +323,10 @@ class ActionsDatapolicy
     /**
      * addMoreActionsButtons
      *
-     * @param array 		$parameters		array of parameters
-     * @param Object	 	$object			Object
-     * @param string		$action			Actions
-     * @param HookManager	$hookmanager	Hook manager
+     * @param array         $parameters        array of parameters
+     * @param Object         $object            Object
+     * @param string        $action            Actions
+     * @param HookManager    $hookmanager    Hook manager
      * @return void
      */
     public function addMoreActionsButtons($parameters, &$object, &$action, $hookmanager)
@@ -382,10 +382,10 @@ class ActionsDatapolicy
     /**
      * printCommonFooter
      *
-     * @param array 		$parameters		array of parameters
-     * @param Object	 	$object			Object
-     * @param string		$action			Actions
-     * @param HookManager	$hookmanager	Hook manager
+     * @param array         $parameters        array of parameters
+     * @param Object         $object            Object
+     * @param string        $action            Actions
+     * @param HookManager    $hookmanager    Hook manager
      * @return void
      */
     public function printCommonFooter($parameters, &$object, &$action, $hookmanager)

@@ -1,5 +1,5 @@
 <?php
-/*  Copyright (C) - 2013-2016	Jean-François FERRY    <hello@librethic.io>
+/*  Copyright (C) - 2013-2016    Jean-François FERRY    <hello@librethic.io>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
 
 if (!defined('NOCSRFCHECK'))   define('NOCSRFCHECK', '1');
 if (!defined('NOREQUIREMENU')) define('NOREQUIREMENU', '1');
-if (!defined("NOLOGIN"))       define("NOLOGIN", '1');				// If this page is public (can be called outside logged session)
+if (!defined("NOLOGIN"))       define("NOLOGIN", '1');                // If this page is public (can be called outside logged session)
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php

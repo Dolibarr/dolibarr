@@ -17,9 +17,9 @@
 */
 
 /**
- *	\file       htdocs/opensurvey/fonctions.php
- *	\ingroup    opensurvey
- *	\brief      Functions for module
+ *    \file       htdocs/opensurvey/fonctions.php
+ *    \ingroup    opensurvey
+ *    \brief      Functions for module
  */
 
 /**
@@ -32,106 +32,106 @@
 function opensurvey_prepare_head(Opensurveysondage $object)
 {
 
-	global $langs, $conf;
+    global $langs, $conf;
 
-	$h = 0;
-	$head = array();
+    $h = 0;
+    $head = array();
 
-	$head[0][0] = 'card.php?id='.$object->id_sondage;
-	$head[0][1] = $langs->trans("Card");
-	$head[0][2] = 'general';
-	$h++;
+    $head[0][0] = 'card.php?id='.$object->id_sondage;
+    $head[0][1] = $langs->trans("Card");
+    $head[0][2] = 'general';
+    $h++;
 
-	$head[1][0] = 'results.php?id='.$object->id_sondage;
-	$head[1][1] = $langs->trans("SurveyResults");
-	$head[1][2] = 'preview';
-	$h++;
+    $head[1][0] = 'results.php?id='.$object->id_sondage;
+    $head[1][1] = $langs->trans("SurveyResults");
+    $head[1][2] = 'preview';
+    $h++;
 
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
-    // $this->tabs = array('entity:-tabname);   												to remove a tab
+    // $this->tabs = array('entity:-tabname);                                                   to remove a tab
     complete_head_from_modules($conf, $langs, $object, $head, $h, 'opensurveypoll');
 
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'opensurveypoll', 'remove');
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'opensurveypoll', 'remove');
 
-	return $head;
+    return $head;
 }
 
 /**
  * Show header for new member
  *
- * @param 	string		$title				Title
- * @param 	string		$head				Head array
- * @param 	int    		$disablejs			More content into html header
- * @param 	int    		$disablehead		More content into html header
- * @param 	array  		$arrayofjs			Array of complementary js files
- * @param 	array  		$arrayofcss			Array of complementary css files
- * @return	void
+ * @param     string        $title                Title
+ * @param     string        $head                Head array
+ * @param     int            $disablejs            More content into html header
+ * @param     int            $disablehead        More content into html header
+ * @param     array          $arrayofjs            Array of complementary js files
+ * @param     array          $arrayofcss            Array of complementary css files
+ * @return    void
  */
 function llxHeaderSurvey($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '')
 {
-	global $conf, $mysoc;
+    global $conf, $mysoc;
 
-	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss); // Show html headers
-	print '<body id="mainbody" class="publicnewmemberform" style="margin-top: 10px;">';
+    top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss); // Show html headers
+    print '<body id="mainbody" class="publicnewmemberform" style="margin-top: 10px;">';
 
-	// Print logo
-	if ($mysoc->logo) {
-		if (file_exists($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small)) {
-			$urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_small);
-		}
-	}
+    // Print logo
+    if ($mysoc->logo) {
+        if (file_exists($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small)) {
+            $urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_small);
+        }
+    }
 
-	if (!$urllogo && (is_readable(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo.png')))
-	{
-		$urllogo=DOL_URL_ROOT.'/theme/dolibarr_logo.png';
-	}
+    if (!$urllogo && (is_readable(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo.png')))
+    {
+        $urllogo=DOL_URL_ROOT.'/theme/dolibarr_logo.png';
+    }
 
-	print '<div style="text-align:center"><img alt="Logo" id="logosubscribe" title="" src="'.$urllogo.'"/></div>';
-	print '<br>';
+    print '<div style="text-align:center"><img alt="Logo" id="logosubscribe" title="" src="'.$urllogo.'"/></div>';
+    print '<br>';
 
-	print '<div style="margin-left: 50px; margin-right: 50px;">';
+    print '<div style="margin-left: 50px; margin-right: 50px;">';
 }
 
 /**
  * Show footer for new member
  *
- * @return	void
+ * @return    void
  */
 function llxFooterSurvey()
 {
-	print '</div>';
+    print '</div>';
 
-	printCommonFooter('public');
+    printCommonFooter('public');
 
-	dol_htmloutput_events();
+    dol_htmloutput_events();
 
-	print "</body>\n";
-	print "</html>\n";
+    print "</body>\n";
+    print "</html>\n";
 }
 
 
 /**
  * get_server_name
  *
- * @return	string		URL to use
+ * @return    string        URL to use
  */
 function get_server_name()
 {
-	global $dolibarr_main_url_root;
+    global $dolibarr_main_url_root;
 
-	$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
-	$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
-	//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+    $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+    $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;        // This is to use external domain name found into config file
+    //$urlwithroot=DOL_MAIN_URL_ROOT;                    // This is to use same domain name than current
 
-	$url=$urlwithouturlroot.dol_buildpath('/opensurvey/', 1);
+    $url=$urlwithouturlroot.dol_buildpath('/opensurvey/', 1);
 
-	if (!preg_match("|/$|", $url)) {
-		$url = $url."/";
-	}
+    if (!preg_match("|/$|", $url)) {
+        $url = $url."/";
+    }
 
-	return $url;
+    return $url;
 }
 
 /**
@@ -143,11 +143,11 @@ function get_server_name()
  */
 function issetAndNoEmpty($name, $tableau = null)
 {
-	if ($tableau === null) {
-		$tableau = $_POST;
-	}
+    if ($tableau === null) {
+        $tableau = $_POST;
+    }
 
-	return (isset($tableau[$name]) === true && empty($tableau[$name]) === false);
+    return (isset($tableau[$name]) === true && empty($tableau[$name]) === false);
 }
 
 
@@ -160,83 +160,83 @@ function issetAndNoEmpty($name, $tableau = null)
  */
 function getUrlSondage($id, $admin = false)
 {
-	if ($admin === true) {
-		$url = get_server_name().'results.php?id='.$id;
-	} else {
-		$url = get_server_name().'/public/studs.php?sondage='.$id;
-	}
+    if ($admin === true) {
+        $url = get_server_name().'results.php?id='.$id;
+    } else {
+        $url = get_server_name().'/public/studs.php?sondage='.$id;
+    }
 
-	return $url;
+    return $url;
 }
 
 
 /**
- * 	Generate a random id
+ *     Generate a random id
  *
- *	@param	string	$car	Char to generate key
- * 	@return	string
+ *    @param    string    $car    Char to generate key
+ *     @return    string
  */
 function dol_survey_random($car)
 {
-	$string = "";
-	$chaine = "abcdefghijklmnopqrstuvwxyz123456789";
-	mt_srand((double) microtime()*1000000);
-	for($i=0; $i<$car; $i++) {
-		$string .= $chaine[mt_rand() % strlen($chaine)];
-	}
-	return $string;
+    $string = "";
+    $chaine = "abcdefghijklmnopqrstuvwxyz123456789";
+    mt_srand((double) microtime()*1000000);
+    for($i=0; $i<$car; $i++) {
+        $string .= $chaine[mt_rand() % strlen($chaine)];
+    }
+    return $string;
 }
 
 /**
  * Add a poll
  *
- * @return	void
+ * @return    void
  */
 function ajouter_sondage()
 {
-	global $db, $user;
+    global $db, $user;
 
-	require_once DOL_DOCUMENT_ROOT.'/opensurvey/class/opensurveysondage.class.php';
+    require_once DOL_DOCUMENT_ROOT.'/opensurvey/class/opensurveysondage.class.php';
 
-	$sondage=dol_survey_random(16);
+    $sondage=dol_survey_random(16);
 
-	$allow_comments = empty($_SESSION['allow_comments']) ? 0 : 1;
-	$allow_spy = empty($_SESSION['allow_spy']) ? 0 : 1;
+    $allow_comments = empty($_SESSION['allow_comments']) ? 0 : 1;
+    $allow_spy = empty($_SESSION['allow_spy']) ? 0 : 1;
 
-	// Insert survey
-	$opensurveysondage = new Opensurveysondage($db);
-	$opensurveysondage->id_sondage = $sondage;
-	$opensurveysondage->commentaires = $_SESSION['commentaires'];
-	$opensurveysondage->description = $_SESSION['commentaires'];
-	$opensurveysondage->mail_admin = $_SESSION['adresse'];
-	$opensurveysondage->nom_admin = $_SESSION['nom'];
-	$opensurveysondage->titre = $_SESSION['titre'];
-	$opensurveysondage->date_fin = $_SESSION['champdatefin'];
-	$opensurveysondage->format = $_SESSION['formatsondage'];
-	$opensurveysondage->mailsonde = $_SESSION['mailsonde'];
-	$opensurveysondage->allow_comments = $allow_comments;
-	$opensurveysondage->allow_spy = $allow_spy;
-	$opensurveysondage->sujet = $_SESSION['toutchoix'];
+    // Insert survey
+    $opensurveysondage = new Opensurveysondage($db);
+    $opensurveysondage->id_sondage = $sondage;
+    $opensurveysondage->commentaires = $_SESSION['commentaires'];
+    $opensurveysondage->description = $_SESSION['commentaires'];
+    $opensurveysondage->mail_admin = $_SESSION['adresse'];
+    $opensurveysondage->nom_admin = $_SESSION['nom'];
+    $opensurveysondage->titre = $_SESSION['titre'];
+    $opensurveysondage->date_fin = $_SESSION['champdatefin'];
+    $opensurveysondage->format = $_SESSION['formatsondage'];
+    $opensurveysondage->mailsonde = $_SESSION['mailsonde'];
+    $opensurveysondage->allow_comments = $allow_comments;
+    $opensurveysondage->allow_spy = $allow_spy;
+    $opensurveysondage->sujet = $_SESSION['toutchoix'];
 
-	$res = $opensurveysondage->create($user);
+    $res = $opensurveysondage->create($user);
 
-	if ($res < 0) {
-		dol_print_error($db);
-	}
+    if ($res < 0) {
+        dol_print_error($db);
+    }
 
-	unset($_SESSION["titre"]);
-	unset($_SESSION["nom"]);
-	unset($_SESSION["adresse"]);
-	unset($_SESSION["commentaires"]);
-	unset($_SESSION["mailsonde"]);
-	unset($_SESSION['allow_comments']);
-	unset($_SESSION['allow_spy']);
-	unset($_SESSION['toutchoix']);
-	unset($_SESSION['totalchoixjour']);
-	unset($_SESSION['champdatefin']);
+    unset($_SESSION["titre"]);
+    unset($_SESSION["nom"]);
+    unset($_SESSION["adresse"]);
+    unset($_SESSION["commentaires"]);
+    unset($_SESSION["mailsonde"]);
+    unset($_SESSION['allow_comments']);
+    unset($_SESSION['allow_spy']);
+    unset($_SESSION['toutchoix']);
+    unset($_SESSION['totalchoixjour']);
+    unset($_SESSION['champdatefin']);
 
-	$urlback=dol_buildpath('/opensurvey/card.php', 1).'?id='.$sondage;
+    $urlback=dol_buildpath('/opensurvey/card.php', 1).'?id='.$sondage;
 
-	header("Location: ".$urlback);
-	exit();
+    header("Location: ".$urlback);
+    exit();
 }

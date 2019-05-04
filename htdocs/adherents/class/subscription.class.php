@@ -17,9 +17,9 @@
  */
 
 /**
- *		\file 		htdocs/adherents/class/subscription.class.php
- *		\ingroup	member
- *		\brief		File of class to manage subscriptions of foundation members
+ *        \file         htdocs/adherents/class/subscription.class.php
+ *        \ingroup    member
+ *        \brief        File of class to manage subscriptions of foundation members
  */
 
 //namespace DolibarrMember;
@@ -28,7 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 
 
 /**
- *	Class to manage subscriptions of foundation members
+ *    Class to manage subscriptions of foundation members
  */
 class Subscription extends CommonObject
 {
@@ -90,9 +90,9 @@ class Subscription extends CommonObject
 
 
     /**
-     *	Constructor
+     *    Constructor
      *
-     *	@param 		DoliDB		$db		Database handler
+     *    @param         DoliDB        $db        Database handler
      */
     public function __construct($db)
     {
@@ -101,11 +101,11 @@ class Subscription extends CommonObject
 
 
     /**
-     *	Function who permitted cretaion of the subscription
+     *    Function who permitted cretaion of the subscription
      *
-     *	@param	User	$user			User that create
-     *	@param  bool 	$notrigger 		false=launch triggers after, true=disable triggers
-     *	@return	int						<0 if KO, Id subscription created if OK
+     *    @param    User    $user            User that create
+     *    @param  bool     $notrigger         false=launch triggers after, true=disable triggers
+     *    @return    int                        <0 if KO, Id subscription created if OK
      */
     public function create($user, $notrigger = false)
     {
@@ -175,8 +175,8 @@ class Subscription extends CommonObject
     /**
      *  Method to load a subscription
      *
-     *  @param	int		$rowid		Id subscription
-     *  @return	int					<0 if KO, =0 if not found, >0 if OK
+     *  @param    int        $rowid        Id subscription
+     *  @return    int                    <0 if KO, =0 if not found, >0 if OK
      */
     public function fetch($rowid)
     {
@@ -224,11 +224,11 @@ class Subscription extends CommonObject
 
 
     /**
-     *	Update subscription
+     *    Update subscription
      *
-     *	@param	User	$user			User who updated
-     *	@param 	int		$notrigger		0=Disable triggers
-     *	@return	int						<0 if KO, >0 if OK
+     *    @param    User    $user            User who updated
+     *    @param     int        $notrigger        0=Disable triggers
+     *    @return    int                        <0 if KO, >0 if OK
      */
     public function update($user, $notrigger = 0)
     {
@@ -280,11 +280,11 @@ class Subscription extends CommonObject
     }
 
     /**
-     *	Delete a subscription
+     *    Delete a subscription
      *
-     *	@param	User	$user		User that delete
-     *	@param 	bool 	$notrigger  false=launch triggers after, true=disable triggers
-     *	@return	int					<0 if KO, 0 if not found, >0 if OK
+     *    @param    User    $user        User that delete
+     *    @param     bool     $notrigger  false=launch triggers after, true=disable triggers
+     *    @return    int                    <0 if KO, 0 if not found, >0 if OK
      */
     public function delete($user, $notrigger = false)
     {
@@ -324,9 +324,9 @@ class Subscription extends CommonObject
                     $result=$member->fetch($this->fk_adherent);
                     $result=$member->update_end_date($user);
 
-                    if ($this->fk_bank > 0 && is_object($accountline) && $accountline->id > 0)	// If we found bank account line (this means this->fk_bank defined)
+                    if ($this->fk_bank > 0 && is_object($accountline) && $accountline->id > 0)    // If we found bank account line (this means this->fk_bank defined)
                     {
-                        $result=$accountline->delete($user);		// Return false if refused because line is conciliated
+                        $result=$accountline->delete($user);        // Return false if refused because line is conciliated
                         if ($result > 0)
                         {
                             $this->db->commit();
@@ -372,12 +372,12 @@ class Subscription extends CommonObject
     /**
      *  Return clicable name (with picto eventually)
      *
-     *	@param	int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
-     *  @param	int  	$notooltip					1=Disable tooltip
-     *	@param	string	$option						Page for link ('', 'nolink', ...)
-     *  @param  string  $morecss        			Add more css on link
-     *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-     *	@return	string								Chaine avec URL
+     *    @param    int        $withpicto                    0=No picto, 1=Include picto into link, 2=Only picto
+     *  @param    int      $notooltip                    1=Disable tooltip
+     *    @param    string    $option                        Page for link ('', 'nolink', ...)
+     *  @param  string  $morecss                    Add more css on link
+     *  @param  int     $save_lastsearch_value        -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+     *    @return    string                                Chaine avec URL
      */
     public function getNomUrl($withpicto = 0, $notooltip = 0, $option = '', $morecss = '', $save_lastsearch_value = -1)
     {
@@ -415,8 +415,8 @@ class Subscription extends CommonObject
     /**
      *  Retourne le libelle du statut d'une adhesion
      *
-     *  @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-     *  @return string				Label
+     *  @param    int        $mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+     *  @return string                Label
      */
     public function getLibStatut($mode = 0)
     {
@@ -427,8 +427,8 @@ class Subscription extends CommonObject
     /**
      *  Renvoi le libelle d'un statut donne
      *
-     *  @param	int			$statut      			Id statut
-     *  @return string      						Label
+     *  @param    int            $statut                  Id statut
+     *  @return string                              Label
      */
     public function LibStatut($statut)
     {
@@ -441,8 +441,8 @@ class Subscription extends CommonObject
     /**
      *  Load information of the subscription object
      *
-     *  @param	int		$id       Id subscription
-     *  @return	void
+     *  @param    int        $id       Id subscription
+     *  @return    void
      */
     public function info($id)
     {

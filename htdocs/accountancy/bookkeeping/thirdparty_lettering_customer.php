@@ -48,15 +48,15 @@ $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOST("page", 'int');
 if (empty($page) || $page == - 1) {
-	$page = 0;
+    $page = 0;
 } // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if ($sortorder == "")
-	$sortorder = "ASC";
+    $sortorder = "ASC";
 if ($sortfield == "")
-	$sortfield = "bk.doc_date";
+    $sortfield = "bk.doc_date";
 
 /*
 $search_date_start = dol_mktime(0, 0, 0, GETPOST('date_startmonth', 'int'), GETPOST('date_startday', 'int'), GETPOST('date_startyear', 'int'));
@@ -67,7 +67,7 @@ $search_doc_ref = GETPOST("search_doc_ref", 'alpha');
 
 $lettering = GETPOST('lettering', 'alpha');
 if (! empty($lettering)) {
-	$action = $lettering;
+    $action = $lettering;
 }
 
 /*
@@ -75,8 +75,8 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 {
     $search_date_start = '';
     $search_date_end = '';
-	//$search_doc_type = '';
-	$search_doc_ref = '';
+    //$search_doc_type = '';
+    $search_doc_ref = '';
 }
 */
 
@@ -90,7 +90,7 @@ $object->id = $socid;
 $result = $object->fetch($socid);
 if ($result < 0)
 {
-	setEventMessages($object->error, $object->errors, 'errors');
+    setEventMessages($object->error, $object->errors, 'errors');
 }
 
 
@@ -100,23 +100,23 @@ if ($result < 0)
 
 if ($action == 'lettering') {
 
-	$result = $lettering->updateLettering($toselect);
+    $result = $lettering->updateLettering($toselect);
 
-	if ($result < 0) {
-		setEventMessages('', $lettering->errors, 'errors');
-		$error++;
-	}
+    if ($result < 0) {
+        setEventMessages('', $lettering->errors, 'errors');
+        $error++;
+    }
 }
 
 /*
 if ($action == 'autolettrage') {
 
-	$result = $lettering->letteringThirdparty($socid);
+    $result = $lettering->letteringThirdparty($socid);
 
-	if ($result < 0) {
-		setEventMessages('', $lettering->errors, 'errors');
-		$error++;
-	}
+    if ($result < 0) {
+        setEventMessages('', $lettering->errors, 'errors');
+        $error++;
+    }
 }
 */
 
@@ -151,7 +151,7 @@ $sql .= " WHERE (bk.subledger_account =  '" . $object->code_compta . "' AND bk.n
 
 /*
 if (dol_strlen($search_date_start) || dol_strlen($search_date_end)) {
-	$sql .= " AND ( bk.doc_date BETWEEN  '" . $db->idate($search_date_start) . "' AND  '" . $db->idate($search_date_end) . "' )";
+    $sql .= " AND ( bk.doc_date BETWEEN  '" . $db->idate($search_date_start) . "' AND  '" . $db->idate($search_date_end) . "' )";
 }
 */
 
@@ -165,16 +165,16 @@ $solde = 0;
 $nbtotalofrecords = '';
 $resql = $db->query($sql);
 if (! $resql) {
-	dol_print_error($db);
-	exit();
+    dol_print_error($db);
+    exit();
 }
 $nbtotalofrecords = $db->num_rows($resql);
 
 while ( $obj = $db->fetch_object($resql) ) {
-	$debit += $obj->debit;
-	$credit += $obj->credit;
+    $debit += $obj->debit;
+    $credit += $obj->credit;
 
-	$solde += ($obj->credit - $obj->debit);
+    $solde += ($obj->credit - $obj->debit);
 }
 
 $sql .= $db->plimit($limit + 1, $offset);
@@ -182,27 +182,27 @@ $sql .= $db->plimit($limit + 1, $offset);
 dol_syslog("/accountancy/bookkeeping/thirdparty_lettering_customer.php", LOG_DEBUG);
 $resql = $db->query($sql);
 if (! $resql) {
-	dol_print_error($db);
-	exit();
+    dol_print_error($db);
+    exit();
 }
 
 $num = $db->num_rows($resql);
 
 dol_syslog("/accountancy/bookkeeping/thirdparty_lettering_customer.php", LOG_DEBUG);
 if ($resql) {
-	$i = 0;
+    $i = 0;
 
-	print '<form name="add" action="' . $_SERVER["PHP_SELF"] . '?socid=' . $object->id . '" method="POST">';
-	print '<input type="hidden" name="socid" value="' . $object->id . '">';
+    print '<form name="add" action="' . $_SERVER["PHP_SELF"] . '?socid=' . $object->id . '" method="POST">';
+    print '<input type="hidden" name="socid" value="' . $object->id . '">';
 
     $letteringbutton = '<a class="divButAction"><span class="valignmiddle"><input class="butAction" type="submit" value="lettering" name="lettering" id="lettering"></span></a>';
     //$letteringbutton = '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=lettering" value="lettering" name="lettering" id="lettering"><span class="valignmiddle">' . $langs->trans("Lettering") . '</span></a>';
 
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_companies', 0, $letteringbutton, '', $limit);
+    print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_companies', 0, $letteringbutton, '', $limit);
 
-	print "<table class=\"noborder\" width=\"100%\">";
+    print "<table class=\"noborder\" width=\"100%\">";
 
-	/*
+    /*
     print '<tr class="liste_titre">';
     //print '<td><input type="text" name="search_doc_type" value="' . $search_doc_type . '"></td>';
 
@@ -227,43 +227,43 @@ if ($resql) {
     print $searchpicto;
     print '</td>';
     print '</tr>';
-	*/
+    */
 
-	print '<tr class="liste_titre">';
-	//print_liste_field_titre("Doctype", $_SERVER["PHP_SELF"], "bk.doc_type", "", $param, "", $sortfield, $sortorder);
-	print_liste_field_titre("Docdate", $_SERVER["PHP_SELF"], "bk.doc_date", "", $param, "", $sortfield, $sortorder, 'center ');
-	print_liste_field_titre("Piece", $_SERVER["PHP_SELF"], "bk.doc_ref", "", $param, "", $sortfield, $sortorder);
-	print_liste_field_titre("LabelAccount", $_SERVER["PHP_SELF"], "bk.label_compte", "", $param, "", $sortfield, $sortorder);
-	print_liste_field_titre("Debit", $_SERVER["PHP_SELF"], "bk.debit", "", $param, "", $sortfield, $sortorder);
-	print_liste_field_titre("Credit", $_SERVER["PHP_SELF"], "bk.credit", "", $param, "", $sortfield, $sortorder);
-	print_liste_field_titre("Balancing", $_SERVER["PHP_SELF"], "", "", $param, "", $sortfield, $sortorder);
-	print_liste_field_titre("Codejournal", $_SERVER["PHP_SELF"], "bk.code_journal", "", $param, "", $sortfield, $sortorder, 'center ');
-	print_liste_field_titre("LetteringCode", $_SERVER["PHP_SELF"], "bk.lettering_code", "", $param, "", $sortfield, $sortorder, 'center ');
-    print_liste_field_titre("", "","",'','',"",$sortfield,$sortorder,'maxwidthsearch center ');
-	print "</tr>\n";
+    print '<tr class="liste_titre">';
+    //print_liste_field_titre("Doctype", $_SERVER["PHP_SELF"], "bk.doc_type", "", $param, "", $sortfield, $sortorder);
+    print_liste_field_titre("Docdate", $_SERVER["PHP_SELF"], "bk.doc_date", "", $param, "", $sortfield, $sortorder, 'center ');
+    print_liste_field_titre("Piece", $_SERVER["PHP_SELF"], "bk.doc_ref", "", $param, "", $sortfield, $sortorder);
+    print_liste_field_titre("LabelAccount", $_SERVER["PHP_SELF"], "bk.label_compte", "", $param, "", $sortfield, $sortorder);
+    print_liste_field_titre("Debit", $_SERVER["PHP_SELF"], "bk.debit", "", $param, "", $sortfield, $sortorder);
+    print_liste_field_titre("Credit", $_SERVER["PHP_SELF"], "bk.credit", "", $param, "", $sortfield, $sortorder);
+    print_liste_field_titre("Balancing", $_SERVER["PHP_SELF"], "", "", $param, "", $sortfield, $sortorder);
+    print_liste_field_titre("Codejournal", $_SERVER["PHP_SELF"], "bk.code_journal", "", $param, "", $sortfield, $sortorder, 'center ');
+    print_liste_field_titre("LetteringCode", $_SERVER["PHP_SELF"], "bk.lettering_code", "", $param, "", $sortfield, $sortorder, 'center ');
+    print_liste_field_titre("", "", "", '', '', "", $sortfield, $sortorder, 'maxwidthsearch center ');
+    print "</tr>\n";
 
-	$solde = 0;
-	$tmp = '';
+    $solde = 0;
+    $tmp = '';
 
     while ( $obj = $db->fetch_object($resql) ) {
 
-		if ($tmp != $obj->lettering_code || empty($tmp))						$tmp = $obj->lettering_code;
-		/*if ($tmp != $obj->lettering_code || empty($obj->lettering_code))*/	$solde += ($obj->credit - $obj->debit);
+        if ($tmp != $obj->lettering_code || empty($tmp))                        $tmp = $obj->lettering_code;
+        /*if ($tmp != $obj->lettering_code || empty($obj->lettering_code))*/    $solde += ($obj->credit - $obj->debit);
 
-		print '<tr class="oddeven">';
+        print '<tr class="oddeven">';
 
-		//print '<td>' . $obj->doc_type . '</td>' . "\n";
-		print '<td class="center">' . dol_print_date($db->jdate($obj->doc_date), 'day') . '</td>';
-		print '<td>' . $obj->doc_ref . '</td>';
-		print '<td>' . $obj->label_compte . '</td>';
-		print '<td class="right">' . price($obj->debit) . '</td>';
-		print '<td class="right">' . price($obj->credit) . '</td>';
-		print '<td class="right">' . price(round($solde, 2)) . '</td>';
+        //print '<td>' . $obj->doc_type . '</td>' . "\n";
+        print '<td class="center">' . dol_print_date($db->jdate($obj->doc_date), 'day') . '</td>';
+        print '<td>' . $obj->doc_ref . '</td>';
+        print '<td>' . $obj->label_compte . '</td>';
+        print '<td class="right">' . price($obj->debit) . '</td>';
+        print '<td class="right">' . price($obj->credit) . '</td>';
+        print '<td class="right">' . price(round($solde, 2)) . '</td>';
 
-		// Journal
+        // Journal
         $accountingjournal = new AccountingJournal($db);
-        $result = $accountingjournal->fetch('',$obj->code_journal);
-        $journaltoshow = (($result > 0)?$accountingjournal->getNomUrl(0,0,0,'',0) : $obj->code_journal);
+        $result = $accountingjournal->fetch('', $obj->code_journal);
+        $journaltoshow = (($result > 0)?$accountingjournal->getNomUrl(0, 0, 0, '', 0) : $obj->code_journal);
         print '<td class="center">' . $journaltoshow . '</td>';
 
         if (empty($obj->lettering_code)) {
@@ -276,33 +276,33 @@ if ($resql) {
             print '<td></td>';
         }
 
-		print "</tr>\n";
-	}
+        print "</tr>\n";
+    }
 
-	print '<tr class="oddeven">';
-	print '<td class="right" colspan="3">'.$langs->trans("Total").':</td>' . "\n";
-	print '<td class="right"><strong>' . price($debit) . '</strong></td>';
-	print '<td class="right"><strong>' . price($credit) . '</strong></td>';
-	print '<td colspan="4"></td>';
-	print "</tr>\n";
+    print '<tr class="oddeven">';
+    print '<td class="right" colspan="3">'.$langs->trans("Total").':</td>' . "\n";
+    print '<td class="right"><strong>' . price($debit) . '</strong></td>';
+    print '<td class="right"><strong>' . price($credit) . '</strong></td>';
+    print '<td colspan="4"></td>';
+    print "</tr>\n";
 
-	print '<tr class="oddeven">';
-	print '<td class="right" colspan="3">'.$langs->trans("Balancing").':</td>' . "\n";
-	print '<td colspan="2">&nbsp;</td>';
-	print '<td class="right"><strong>' . price($credit - $debit) . '</strong></td>';
-	print '<td colspan="6"></td>';
-	print "</tr>\n";
+    print '<tr class="oddeven">';
+    print '<td class="right" colspan="3">'.$langs->trans("Balancing").':</td>' . "\n";
+    print '<td colspan="2">&nbsp;</td>';
+    print '<td class="right"><strong>' . price($credit - $debit) . '</strong></td>';
+    print '<td colspan="6"></td>';
+    print "</tr>\n";
 
-	print "</table>";
+    print "</table>";
 
     print '<div class="tabsAction tabsActionNoBottom">'."\n";
     print $letteringbutton;
     print '</div>';
 
-	print "</form>";
-	$db->free($resql);
+    print "</form>";
+    $db->free($resql);
 } else {
-	dol_print_error($db);
+    dol_print_error($db);
 }
 
 // End of page

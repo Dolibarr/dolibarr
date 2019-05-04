@@ -82,10 +82,10 @@ print load_fiche_titre($title, $mesg, 'title_products.png');
 $param = '';
 $title = $langs->trans("ListProductServiceByPopularity");
 if ((string) $type == '1') {
-	$title = $langs->trans("ListServiceByPopularity");
+    $title = $langs->trans("ListServiceByPopularity");
 }
 if ((string) $type == '0') {
-	$title = $langs->trans("ListProductByPopularity");
+    $title = $langs->trans("ListProductByPopularity");
 }
 
 if ($type != '') $param .= '&type='.$type;
@@ -118,7 +118,7 @@ $sql.= ", ".MAIN_DB_PREFIX."product as p";
 $sql.= ' WHERE p.entity IN ('.getEntity('product').')';
 $sql.= " AND p.rowid = pd.fk_product";
 if ($type !== '') {
-	$sql.= " AND fk_product_type = ".$type;
+    $sql.= " AND fk_product_type = ".$type;
 }
 $sql.= " GROUP BY p.rowid, p.label, p.ref, p.fk_product_type";
 
@@ -168,37 +168,37 @@ print "</tr>\n";
 
 foreach($infoprod as $prodid => $vals)
 {
-	// Multilangs
-	if (! empty($conf->global->MAIN_MULTILANGS)) // si l'option est active
-	{
-		$sql = "SELECT label";
-		$sql.= " FROM ".MAIN_DB_PREFIX."product_lang";
-		$sql.= " WHERE fk_product=".$prodid;
-		$sql.= " AND lang='". $langs->getDefaultLang() ."'";
-		$sql.= " LIMIT 1";
+    // Multilangs
+    if (! empty($conf->global->MAIN_MULTILANGS)) // si l'option est active
+    {
+        $sql = "SELECT label";
+        $sql.= " FROM ".MAIN_DB_PREFIX."product_lang";
+        $sql.= " WHERE fk_product=".$prodid;
+        $sql.= " AND lang='". $langs->getDefaultLang() ."'";
+        $sql.= " LIMIT 1";
 
-		$resultp = $db->query($sql);
-		if ($resultp)
-		{
-			$objtp = $db->fetch_object($resultp);
-			if (! empty($objtp->label)) $vals['label'] = $objtp->label;
-		}
-	}
+        $resultp = $db->query($sql);
+        if ($resultp)
+        {
+            $objtp = $db->fetch_object($resultp);
+            if (! empty($objtp->label)) $vals['label'] = $objtp->label;
+        }
+    }
 
-	print "<tr>";
-	print '<td><a href="'.DOL_URL_ROOT.'/product/stats/card.php?id='.$prodid.'">';
-	if ($vals['type'] == 1) print img_object($langs->trans("ShowService"), "service");
-	else print img_object($langs->trans("ShowProduct"), "product");
-	print " ";
-	print $vals['ref'].'</a></td>';
-	print '<td>';
-	if ($vals['type'] == 1) print $langs->trans("Service");
-	else print $langs->trans("Product");
-	print '</td>';
-	print '<td>'.$vals['label'].'</td>';
-	print '<td class="right">'.$vals['nblineproposal'].'</td>';
-	print "</tr>\n";
-	$i++;
+    print "<tr>";
+    print '<td><a href="'.DOL_URL_ROOT.'/product/stats/card.php?id='.$prodid.'">';
+    if ($vals['type'] == 1) print img_object($langs->trans("ShowService"), "service");
+    else print img_object($langs->trans("ShowProduct"), "product");
+    print " ";
+    print $vals['ref'].'</a></td>';
+    print '<td>';
+    if ($vals['type'] == 1) print $langs->trans("Service");
+    else print $langs->trans("Product");
+    print '</td>';
+    print '<td>'.$vals['label'].'</td>';
+    print '<td class="right">'.$vals['nblineproposal'].'</td>';
+    print "</tr>\n";
+    $i++;
 }
 
 print "</table>";

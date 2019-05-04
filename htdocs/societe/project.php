@@ -62,23 +62,23 @@ $form = new Form($db);
 
 if ($socid)
 {
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-	require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+    require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+    require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
-	$langs->load("companies");
+    $langs->load("companies");
 
 
-	$object = new Societe($db);
-	$result = $object->fetch($socid);
+    $object = new Societe($db);
+    $result = $object->fetch($socid);
 
-	$title=$langs->trans("Projects");
-	if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name." - ".$title;
-	llxHeader('', $title);
+    $title=$langs->trans("Projects");
+    if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name." - ".$title;
+    llxHeader('', $title);
 
-	if (! empty($conf->notification->enabled)) $langs->load("mails");
-	$head = societe_prepare_head($object);
+    if (! empty($conf->notification->enabled)) $langs->load("mails");
+    $head = societe_prepare_head($object);
 
-	dol_fiche_head($head, 'project', $langs->trans("ThirdParty"), -1, 'company');
+    dol_fiche_head($head, 'project', $langs->trans("ThirdParty"), -1, 'company');
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -87,36 +87,36 @@ if ($socid)
     print '<div class="fichecenter">';
 
     print '<div class="underbanner clearboth"></div>';
-	print '<table class="border centpercent">';
+    print '<table class="border centpercent">';
 
     if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
     {
         print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
     }
 
-	if ($object->client)
-	{
-		print '<tr><td class="titlefield">';
-		print $langs->trans('CustomerCode').'</td><td colspan="3">';
-		print $object->code_client;
-		if ($object->check_codeclient() <> 0) print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
-		print '</td></tr>';
-	}
+    if ($object->client)
+    {
+        print '<tr><td class="titlefield">';
+        print $langs->trans('CustomerCode').'</td><td colspan="3">';
+        print $object->code_client;
+        if ($object->check_codeclient() <> 0) print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
+        print '</td></tr>';
+    }
 
-	if ($object->fournisseur)
-	{
-		print '<tr><td class="titlefield">';
-		print $langs->trans('SupplierCode').'</td><td colspan="3">';
-		print $object->code_fournisseur;
-		if ($object->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
-		print '</td></tr>';
-	}
+    if ($object->fournisseur)
+    {
+        print '<tr><td class="titlefield">';
+        print $langs->trans('SupplierCode').'</td><td colspan="3">';
+        print $object->code_fournisseur;
+        if ($object->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
+        print '</td></tr>';
+    }
 
-	print '</table>';
+    print '</table>';
 
-	print '</div>';
+    print '</div>';
 
-	dol_fiche_end();
+    dol_fiche_end();
 
 
     /*
@@ -127,14 +127,14 @@ if ($socid)
 
     if (! empty($conf->projet->enabled))
     {
-    	if (! empty($conf->projet->enabled) && ! empty($user->rights->projet->creer))
-    	{*/
-        	$addbutton = '<a href="'.DOL_URL_ROOT.'/projet/card.php?action=create&socid='.$object->id.'&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddProject").'</a>';
-    /*	}
-    	else
-    	{
-        	print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("AddProject").'</a>';
-    	}
+        if (! empty($conf->projet->enabled) && ! empty($user->rights->projet->creer))
+        {*/
+            $addbutton = '<a href="'.DOL_URL_ROOT.'/projet/card.php?action=create&socid='.$object->id.'&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddProject").'</a>';
+    /*    }
+        else
+        {
+            print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("AddProject").'</a>';
+        }
     }
 
     print '</div>'; */
@@ -142,8 +142,8 @@ if ($socid)
     print '<br>';
 
 
-	// Projects list
-	$result=show_projects($conf, $langs, $db, $object, $_SERVER["PHP_SELF"].'?socid='.$object->id, 1, $addbutton);
+    // Projects list
+    $result=show_projects($conf, $langs, $db, $object, $_SERVER["PHP_SELF"].'?socid='.$object->id, 1, $addbutton);
 }
 
 // End of page

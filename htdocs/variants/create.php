@@ -29,30 +29,30 @@ $backtopage = GETPOST('backtopage', 'alpha');
  */
 
 if ($_POST) {
-	if (empty($ref) || empty($label)) {
-		setEventMessages($langs->trans('ErrorFieldsRequired'), null, 'errors');
-	} else {
+    if (empty($ref) || empty($label)) {
+        setEventMessages($langs->trans('ErrorFieldsRequired'), null, 'errors');
+    } else {
 
-		$prodattr = new ProductAttribute($db);
-		$prodattr->label = $label;
-		$prodattr->ref = $ref;
+        $prodattr = new ProductAttribute($db);
+        $prodattr->label = $label;
+        $prodattr->ref = $ref;
 
-		$resid = $prodattr->create($user);
-		if ($resid > 0) {
-			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
-			if ($backtopage)
-			{
-				header('Location: '.$backtopage);
-			}
-			else
-			{
-				header('Location: '.DOL_URL_ROOT.'/variants/card.php?id='.$resid.'&backtopage='.urlencode($backtopage));
-			}
-			exit;
-		} else {
-			setEventMessages($langs->trans('ErrorRecordAlreadyExists'), $prodattr->errors, 'errors');
-		}
-	}
+        $resid = $prodattr->create($user);
+        if ($resid > 0) {
+            setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+            if ($backtopage)
+            {
+                header('Location: '.$backtopage);
+            }
+            else
+            {
+                header('Location: '.DOL_URL_ROOT.'/variants/card.php?id='.$resid.'&backtopage='.urlencode($backtopage));
+            }
+            exit;
+        } else {
+            setEventMessages($langs->trans('ErrorRecordAlreadyExists'), $prodattr->errors, 'errors');
+        }
+    }
 }
 
 $langs->load('products');
@@ -77,19 +77,19 @@ print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
 ?>
 
-	<table class="border centpercent">
-		<tr>
-			<td class="titlefield fieldrequired"><label for="ref"><?php echo $langs->trans('Ref') ?></label></td>
-			<td><input type="text" id="ref" name="ref" value="<?php echo $ref ?>"></td>
-			<td><?php echo $langs->trans("VariantRefExample"); ?>
-		</tr>
-		<tr>
-			<td class="fieldrequired"><label for="label"><?php echo $langs->trans('Label') ?></label></td>
-			<td><input type="text" id="label" name="label" value="<?php echo $label ?>"></td>
-			<td><?php echo $langs->trans("VariantLabelExample"); ?>
-		</tr>
+    <table class="border centpercent">
+        <tr>
+            <td class="titlefield fieldrequired"><label for="ref"><?php echo $langs->trans('Ref') ?></label></td>
+            <td><input type="text" id="ref" name="ref" value="<?php echo $ref ?>"></td>
+            <td><?php echo $langs->trans("VariantRefExample"); ?>
+        </tr>
+        <tr>
+            <td class="fieldrequired"><label for="label"><?php echo $langs->trans('Label') ?></label></td>
+            <td><input type="text" id="label" name="label" value="<?php echo $label ?>"></td>
+            <td><?php echo $langs->trans("VariantLabelExample"); ?>
+        </tr>
 
-	</table>
+    </table>
 
 <?php
 dol_fiche_end();

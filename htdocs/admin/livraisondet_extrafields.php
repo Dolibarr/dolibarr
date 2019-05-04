@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2002    Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2003		Jean-Louis Bergamo		<jlb@j1b.org>
  * Copyright (C) 2004-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
@@ -25,8 +25,8 @@
 
 /**
  *      \file       htdocs/admin/livraisondet_extrafields.php
- *		\ingroup    livraison
- *		\brief      Page to setup extra fields of livraison
+ *        \ingroup    livraison
+ *        \brief      Page to setup extra fields of livraison
  */
 
 require '../main.inc.php';
@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 
 if (!$user->admin)
-	accessforbidden();
+    accessforbidden();
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'other', 'sendings'));
@@ -95,13 +95,13 @@ if ($action != 'create' && $action != 'edit')
 
 /* ************************************************************************** */
 /*                                                                            */
-/* Creation of an optional field											  */
+/* Creation of an optional field                                              */
 /*                                                                            */
 /* ************************************************************************** */
 
 if ($action == 'create')
 {
-	print '<br><div id="newattrib"></div>';
+    print '<br><div id="newattrib"></div>';
     print load_fiche_titre($langs->trans('NewAttribute'));
 
     require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_add.tpl.php';

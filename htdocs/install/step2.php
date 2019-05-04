@@ -37,9 +37,9 @@ $ok = 0;
 // Cette page peut etre longue. On augmente le delai autorise.
 // Ne fonctionne que si on est pas en safe_mode.
 $err=error_reporting();
-error_reporting(0);		// Disable all errors
+error_reporting(0);        // Disable all errors
 //error_reporting(E_ALL);
-@set_time_limit(900);	// Need 900 on some OS like Windows 7/64
+@set_time_limit(900);    // Need 900 on some OS like Windows 7/64
 error_reporting($err);
 
 $action=GETPOST('action', 'aZ09')?GETPOST('action', 'aZ09'):(empty($argv[1])?'':$argv[1]);
@@ -62,8 +62,8 @@ $useforcedwizard=false;
 $forcedfile="./install.forced.php";
 if ($conffile == "/etc/dolibarr/conf.php") $forcedfile="/etc/dolibarr/install.forced.php";
 if (@file_exists($forcedfile)) {
-	$useforcedwizard = true;
-	include_once $forcedfile;
+    $useforcedwizard = true;
+    include_once $forcedfile;
 }
 
 dolibarr_install_syslog("- step2: entering step2.php page");
@@ -196,7 +196,7 @@ if ($action == "set")
                 fclose($fp);
 
                 $buffer=trim($buffer);
-                if ($conf->db->type == 'mysql' || $conf->db->type == 'mysqli')	// For Mysql 5.5+, we must replace type=innodb with ENGINE=innodb
+                if ($conf->db->type == 'mysql' || $conf->db->type == 'mysqli')    // For Mysql 5.5+, we must replace type=innodb with ENGINE=innodb
                 {
                     $buffer=preg_replace('/type=innodb/i', 'ENGINE=innodb', $buffer);
                 }
@@ -211,7 +211,7 @@ if ($action == "set")
                 // Replace the prefix tables
                 if ($dolibarr_main_db_prefix != 'llx_')
                 {
-                	$buffer=preg_replace('/llx_/i', $dolibarr_main_db_prefix, $buffer);
+                    $buffer=preg_replace('/llx_/i', $dolibarr_main_db_prefix, $buffer);
                 }
 
                 //print "<tr><td>Creation de la table $name/td>";
@@ -351,11 +351,11 @@ if ($action == "set")
                     $buffer=trim($req);
                     if ($buffer)
                     {
-                    	// Replace the prefix tables
-                    	if ($dolibarr_main_db_prefix != 'llx_')
-                    	{
-                    		$buffer=preg_replace('/llx_/i', $dolibarr_main_db_prefix, $buffer);
-                    	}
+                        // Replace the prefix tables
+                        if ($dolibarr_main_db_prefix != 'llx_')
+                        {
+                            $buffer=preg_replace('/llx_/i', $dolibarr_main_db_prefix, $buffer);
+                        }
 
                         //print "<tr><td>Creation des cles et index de la table $name: '$buffer'</td>";
                         $requestnb++;
@@ -420,7 +420,7 @@ if ($action == "set")
         if ($choix==1) $dir = "mysql/functions/";
         elseif ($choix==2) $dir = "pgsql/functions/";
         elseif ($choix==3) $dir = "mssql/functions/";
-		elseif ($choix==4) { $dir = "sqlite3/functions/"; }
+        elseif ($choix==4) { $dir = "sqlite3/functions/"; }
 
         // Creation donnees
         $file = "functions.sql";
@@ -514,7 +514,7 @@ if ($action == "set")
             {
                 if (preg_match('/\.sql$/i', $file) && preg_match('/^llx_/i', $file))
                 {
-                	if (preg_match('/^llx_accounting_account_/', $file)) continue;	// We discard data file of chart of account. Will be loaded when a chart is selected.
+                    if (preg_match('/^llx_accounting_account_/', $file)) continue;    // We discard data file of chart of account. Will be loaded when a chart is selected.
 
                     //print 'x'.$file.'-'.$createdata.'<br>';
                     if (is_numeric($createdata) || preg_match('/'.preg_quote($createdata).'/i', $file))
@@ -570,11 +570,11 @@ if ($action == "set")
                 // We loop on each requests of file
                 foreach($arrayofrequests as $buffer)
                 {
-                	// Replace the prefix tables
-                	if ($dolibarr_main_db_prefix != 'llx_')
-                	{
-                		$buffer=preg_replace('/llx_/i', $dolibarr_main_db_prefix, $buffer);
-                	}
+                    // Replace the prefix tables
+                    if ($dolibarr_main_db_prefix != 'llx_')
+                    {
+                        $buffer=preg_replace('/llx_/i', $dolibarr_main_db_prefix, $buffer);
+                    }
 
                     //dolibarr_install_syslog("step2: request: " . $buffer);
                     $resql=$db->query($buffer, 1);

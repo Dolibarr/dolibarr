@@ -16,9 +16,9 @@
  */
 
 /**
- *	\file       htdocs/cashdesk/validation.php
- *	\ingroup    cashdesk
- *	\brief      validation.php
+ *    \file       htdocs/cashdesk/validation.php
+ *    \ingroup    cashdesk
+ *    \brief      validation.php
  */
 
 $form=new Form($db);

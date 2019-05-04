@@ -17,96 +17,96 @@
  */
 
 /**
- *	\defgroup   label         Module labels
- *	\brief      Module pour gerer les formats d'impression des etiquettes
- *	\file       htdocs/core/modules/modLabel.class.php
- *	\ingroup    other
- *	\brief      Fichier de description et activation du module Label
+ *    \defgroup   label         Module labels
+ *    \brief      Module pour gerer les formats d'impression des etiquettes
+ *    \file       htdocs/core/modules/modLabel.class.php
+ *    \ingroup    other
+ *    \brief      Fichier de description et activation du module Label
  */
 
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *	Class to describe and enable module Label
+ *    Class to describe and enable module Label
  */
 class modLabel extends DolibarrModules
 {
 
-	/**
-	 *   Constructor. Define names, constants, directories, boxes, permissions
-	 *
-	 *   @param      DoliDB		$db      Database handler
-	 */
-	public function __construct($db)
-	{
-		$this->db = $db;
-		$this->numero = 60;
+    /**
+     *   Constructor. Define names, constants, directories, boxes, permissions
+     *
+     *   @param      DoliDB        $db      Database handler
+     */
+    public function __construct($db)
+    {
+        $this->db = $db;
+        $this->numero = 60;
 
-		$this->family = "technic";
-		$this->module_position = '75';
-		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = preg_replace('/^mod/i', '', get_class($this));
-		$this->description = "Gestion des etiquettes";
-		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-		$this->version = 'development';
-		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->picto='label';
+        $this->family = "technic";
+        $this->module_position = '75';
+        // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+        $this->name = preg_replace('/^mod/i', '', get_class($this));
+        $this->description = "Gestion des etiquettes";
+        // Possible values for version are: 'development', 'experimental', 'dolibarr' or version
+        $this->version = 'development';
+        $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
+        $this->picto='label';
 
-		// Data directories to create when module is enabled
-		$this->dirs = array("/label/temp");
+        // Data directories to create when module is enabled
+        $this->dirs = array("/label/temp");
 
-		// Dependencies
-		$this->hidden = false;			// A condition to hide module
-		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
-		$this->requiredby = array();	// List of module ids to disable if this one is disabled
-		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
-		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
+        // Dependencies
+        $this->hidden = false;            // A condition to hide module
+        $this->depends = array();        // List of module class names as string that must be enabled if this module is enabled
+        $this->requiredby = array();    // List of module ids to disable if this one is disabled
+        $this->conflictwith = array();    // List of module class names as string this module is in conflict with
+        $this->phpmin = array(5,4);        // Minimum version of PHP required by module
 
-		// Config pages
-		// $this->config_page_url = array("label.php");
+        // Config pages
+        // $this->config_page_url = array("label.php");
 
-		// Constants
-		$this->const = array();
+        // Constants
+        $this->const = array();
 
-		// Boxes
-		$this->boxes = array();
+        // Boxes
+        $this->boxes = array();
 
-		// Permissions
-		$this->rights = array();
-		$this->rights_class = 'label';
+        // Permissions
+        $this->rights = array();
+        $this->rights_class = 'label';
 
-		$this->rights[1][0] = 601; // id de la permission
-		$this->rights[1][1] = 'Lire les etiquettes'; // libelle de la permission
-		$this->rights[1][3] = 1; // La permission est-elle une permission par defaut
-		$this->rights[1][4] = 'lire';
+        $this->rights[1][0] = 601; // id de la permission
+        $this->rights[1][1] = 'Lire les etiquettes'; // libelle de la permission
+        $this->rights[1][3] = 1; // La permission est-elle une permission par defaut
+        $this->rights[1][4] = 'lire';
 
-		$this->rights[2][0] = 602; // id de la permission
-		$this->rights[2][1] = 'Creer/modifier les etiquettes'; // libelle de la permission
-		$this->rights[2][3] = 0; // La permission est-elle une permission par defaut
-		$this->rights[2][4] = 'creer';
+        $this->rights[2][0] = 602; // id de la permission
+        $this->rights[2][1] = 'Creer/modifier les etiquettes'; // libelle de la permission
+        $this->rights[2][3] = 0; // La permission est-elle une permission par defaut
+        $this->rights[2][4] = 'creer';
 
-		$this->rights[4][0] = 609; // id de la permission
-		$this->rights[4][1] = 'Supprimer les etiquettes'; // libelle de la permission
-		$this->rights[4][3] = 0; // La permission est-elle une permission par defaut
-		$this->rights[4][4] = 'supprimer';
-	}
+        $this->rights[4][0] = 609; // id de la permission
+        $this->rights[4][1] = 'Supprimer les etiquettes'; // libelle de la permission
+        $this->rights[4][3] = 0; // La permission est-elle une permission par defaut
+        $this->rights[4][4] = 'supprimer';
+    }
 
-	/**
-	 *		Function called when module is enabled.
-	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
-	 *		It also creates data directories
-	 *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
-	 *      @return     int             	1 if OK, 0 if KO
-	 */
+    /**
+     *        Function called when module is enabled.
+     *        The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+     *        It also creates data directories
+     *
+     *      @param      string    $options    Options when enabling module ('', 'noboxes')
+     *      @return     int                 1 if OK, 0 if KO
+     */
     public function init($options = '')
     {
-		// Permissions
-		$this->remove($options);
+        // Permissions
+        $this->remove($options);
 
-		$sql = array();
+        $sql = array();
 
-		return $this->_init($sql, $options);
+        return $this->_init($sql, $options);
     }
 }

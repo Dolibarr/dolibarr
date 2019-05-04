@@ -17,13 +17,13 @@
  */
 
 /**
- *     	\file       htdocs/public/paybox/paymentok.php
- *		\ingroup    paybox
- *		\brief      File to show page after a successful payment
+ *         \file       htdocs/public/paybox/paymentok.php
+ *        \ingroup    paybox
+ *        \brief      File to show page after a successful payment
  */
 
-define("NOLOGIN", 1);		// This means this output page does not require to be logged.
-define("NOCSRFCHECK", 1);	// We accept to go on this page from external web site.
+define("NOLOGIN", 1);        // This means this output page does not require to be logged.
+define("NOCSRFCHECK", 1);    // We accept to go on this page from external web site.
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
@@ -124,62 +124,62 @@ $tmptag=dolExplodeIntoArray($fulltag, '.', '=');
 // Send an email
 if (! empty($conf->global->ONLINE_PAYMENT_SENDEMAIL))
 {
-	$sendto=$conf->global->ONLINE_PAYMENT_SENDEMAIL;
-	$from=$conf->global->MAILING_EMAIL_FROM;
-	// Define $urlwithroot
-	$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
-	$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
-	//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+    $sendto=$conf->global->ONLINE_PAYMENT_SENDEMAIL;
+    $from=$conf->global->MAILING_EMAIL_FROM;
+    // Define $urlwithroot
+    $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+    $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;        // This is to use external domain name found into config file
+    //$urlwithroot=DOL_MAIN_URL_ROOT;                    // This is to use same domain name than current
 
-	// Define link to login card
-	$appli=constant('DOL_APPLICATION_TITLE');
-	if (! empty($conf->global->MAIN_APPLICATION_TITLE))
-	{
-	    $appli=$conf->global->MAIN_APPLICATION_TITLE;
-	    if (preg_match('/\d\.\d/', $appli))
-	    {
-	        if (! preg_match('/'.preg_quote(DOL_VERSION).'/', $appli)) $appli.=" (".DOL_VERSION.")";	// If new title contains a version that is different than core
-	    }
-	    else $appli.=" ".DOL_VERSION;
-	}
-	else $appli.=" ".DOL_VERSION;
+    // Define link to login card
+    $appli=constant('DOL_APPLICATION_TITLE');
+    if (! empty($conf->global->MAIN_APPLICATION_TITLE))
+    {
+        $appli=$conf->global->MAIN_APPLICATION_TITLE;
+        if (preg_match('/\d\.\d/', $appli))
+        {
+            if (! preg_match('/'.preg_quote(DOL_VERSION).'/', $appli)) $appli.=" (".DOL_VERSION.")";    // If new title contains a version that is different than core
+        }
+        else $appli.=" ".DOL_VERSION;
+    }
+    else $appli.=" ".DOL_VERSION;
 
-	$urlback=$_SERVER["REQUEST_URI"];
-	$topic='['.$appli.'] '.$langs->transnoentitiesnoconv("NewOnlinePaymentReceived");
-	$content="";
-	if (! empty($tmptag['MEM']))
-	{
-		$langs->load("members");
-		$url=$urlwithroot."/adherents/subscription.php?rowid=".$tmptag['MEM'];
-		$content.=$langs->trans("PaymentSubscription")."<br>\n";
-		$content.=$langs->trans("MemberId").': '.$tmptag['MEM']."<br>\n";
-		$content.=$langs->trans("Link").': <a href="'.$url.'">'.$url.'</a>'."<br>\n";
-	}
-	else
-	{
-		$content.=$langs->transnoentitiesnoconv("NewOnlinePaymentReceived")."<br>\n";
-	}
-	$content.="<br>\n";
-	$content.=$langs->transnoentitiesnoconv("TechnicalInformation").":<br>\n";
+    $urlback=$_SERVER["REQUEST_URI"];
+    $topic='['.$appli.'] '.$langs->transnoentitiesnoconv("NewOnlinePaymentReceived");
+    $content="";
+    if (! empty($tmptag['MEM']))
+    {
+        $langs->load("members");
+        $url=$urlwithroot."/adherents/subscription.php?rowid=".$tmptag['MEM'];
+        $content.=$langs->trans("PaymentSubscription")."<br>\n";
+        $content.=$langs->trans("MemberId").': '.$tmptag['MEM']."<br>\n";
+        $content.=$langs->trans("Link").': <a href="'.$url.'">'.$url.'</a>'."<br>\n";
+    }
+    else
+    {
+        $content.=$langs->transnoentitiesnoconv("NewOnlinePaymentReceived")."<br>\n";
+    }
+    $content.="<br>\n";
+    $content.=$langs->transnoentitiesnoconv("TechnicalInformation").":<br>\n";
     $content.=$langs->transnoentitiesnoconv("OnlinePaymentSystem").': '.$paymentmethod."<br>\n";
-	$content.=$langs->transnoentitiesnoconv("ReturnURLAfterPayment").': '.$urlback."<br>\n";
-	$content.="tag=".$fulltag."<br>\n";
+    $content.=$langs->transnoentitiesnoconv("ReturnURLAfterPayment").': '.$urlback."<br>\n";
+    $content.="tag=".$fulltag."<br>\n";
 
-	$ishtml=dol_textishtml($content);	// May contain urls
+    $ishtml=dol_textishtml($content);    // May contain urls
 
-	require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-	$mailfile = new CMailFile($topic, $sendto, $from, $content, array(), array(), array(), '', '', 0, $ishtml);
+    require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+    $mailfile = new CMailFile($topic, $sendto, $from, $content, array(), array(), array(), '', '', 0, $ishtml);
 
-	// Send an email
-	$result=$mailfile->sendfile();
-	if ($result)
-	{
-		dol_syslog("EMail sent to ".$sendto, LOG_DEBUG, 0, '_paybox');
-	}
-	else
-	{
-		dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0, '_paybox');
-	}
+    // Send an email
+    $result=$mailfile->sendfile();
+    if ($result)
+    {
+        dol_syslog("EMail sent to ".$sendto, LOG_DEBUG, 0, '_paybox');
+    }
+    else
+    {
+        dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0, '_paybox');
+    }
 }
 
 

@@ -21,15 +21,15 @@
  */
 
 /**
- *	\file       htdocs/core/modules/facture/mod_facture_mercure.php
- *	\ingroup    facture
- *	\brief      File containing class for numbering module Mercure
+ *    \file       htdocs/core/modules/facture/mod_facture_mercure.php
+ *    \ingroup    facture
+ *    \brief      File containing class for numbering module Mercure
  */
 require_once DOL_DOCUMENT_ROOT .'/core/modules/facture/modules_facture.php';
 
 
 /**
- *	Class of numbering module Mercure for invoices
+ *    Class of numbering module Mercure for invoices
  */
 class mod_facture_mercure extends ModeleNumRefFactures
 {
@@ -37,12 +37,12 @@ class mod_facture_mercure extends ModeleNumRefFactures
      * Dolibarr version of the loaded document
      * @var string
      */
-	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+    public $version = 'dolibarr';        // 'development', 'experimental', 'dolibarr'
 
     /**
-	 * @var string Error message
-	 */
-	public $error = '';
+     * @var string Error message
+     */
+    public $error = '';
 
 
     /**
@@ -65,7 +65,7 @@ class mod_facture_mercure extends ModeleNumRefFactures
         $texte.= '<input type="hidden" name="maskconstinvoice" value="FACTURE_MERCURE_MASK_INVOICE">';
         $texte.= '<input type="hidden" name="maskconstreplacement" value="FACTURE_MERCURE_MASK_REPLACEMENT">';
         $texte.= '<input type="hidden" name="maskconstcredit" value="FACTURE_MERCURE_MASK_CREDIT">';
-		$texte.= '<input type="hidden" name="maskconstdeposit" value="FACTURE_MERCURE_MASK_DEPOSIT">';
+        $texte.= '<input type="hidden" name="maskconstdeposit" value="FACTURE_MERCURE_MASK_DEPOSIT">';
         $texte.= '<table class="nobordernopadding" width="100%">';
 
         $tooltip=$langs->trans("GenericMaskCodes", $langs->transnoentities("Invoice"), $langs->transnoentities("Invoice"));
@@ -130,26 +130,26 @@ class mod_facture_mercure extends ModeleNumRefFactures
     /**
      * Return next value
      *
-     * @param	Societe		$objsoc     Object third party
-     * @param   Facture		$invoice	Object invoice
-     * @param   string		$mode       'next' for next value or 'last' for last value
-     * @return  string      			Value if OK, 0 if KO
+     * @param    Societe        $objsoc     Object third party
+     * @param   Facture        $invoice    Object invoice
+     * @param   string        $mode       'next' for next value or 'last' for last value
+     * @return  string                  Value if OK, 0 if KO
      */
     public function getNextValue($objsoc, $invoice, $mode = 'next')
     {
-    	global $db,$conf;
+        global $db,$conf;
 
-    	require_once DOL_DOCUMENT_ROOT .'/core/lib/functions2.lib.php';
+        require_once DOL_DOCUMENT_ROOT .'/core/lib/functions2.lib.php';
 
         // Get Mask value
         $mask = '';
         if (is_object($invoice) && $invoice->type == 1)
         {
-        	$mask=$conf->global->FACTURE_MERCURE_MASK_REPLACEMENT;
-        	if (! $mask)
-        	{
-        		$mask=$conf->global->FACTURE_MERCURE_MASK_INVOICE;
-        	}
+            $mask=$conf->global->FACTURE_MERCURE_MASK_REPLACEMENT;
+            if (! $mask)
+            {
+                $mask=$conf->global->FACTURE_MERCURE_MASK_INVOICE;
+            }
         }
         elseif (is_object($invoice) && $invoice->type == 2) $mask=$conf->global->FACTURE_MERCURE_MASK_CREDIT;
         elseif (is_object($invoice) && $invoice->type == 3) $mask=$conf->global->FACTURE_MERCURE_MASK_DEPOSIT;
@@ -160,27 +160,27 @@ class mod_facture_mercure extends ModeleNumRefFactures
             return 0;
         }
 
-    	$where='';
-    	//if ($facture->type == 2) $where.= " AND type = 2";
-    	//else $where.=" AND type != 2";
+        $where='';
+        //if ($facture->type == 2) $where.= " AND type = 2";
+        //else $where.=" AND type != 2";
 
-    	// Get entities
-    	$entity = getEntity('invoicenumber', 1, $invoice);
+        // Get entities
+        $entity = getEntity('invoicenumber', 1, $invoice);
 
-    	$numFinal=get_next_value($db, $mask, 'facture', 'ref', $where, $objsoc, $invoice->date, $mode, false, null, $entity);
-    	if (! preg_match('/([0-9])+/', $numFinal)) $this->error = $numFinal;
+        $numFinal=get_next_value($db, $mask, 'facture', 'ref', $where, $objsoc, $invoice->date, $mode, false, null, $entity);
+        if (! preg_match('/([0-9])+/', $numFinal)) $this->error = $numFinal;
 
-    	return  $numFinal;
+        return  $numFinal;
     }
 
 
     /**
      * Return next free value
      *
-     * @param	Societe		$objsoc     	Object third party
-     * @param	string		$objforref		Object for number to search
-     * @param   string		$mode       	'next' for next value or 'last' for last value
-     * @return  string      				Next free value
+     * @param    Societe        $objsoc         Object third party
+     * @param    string        $objforref        Object for number to search
+     * @param   string        $mode           'next' for next value or 'last' for last value
+     * @return  string                      Next free value
      */
     public function getNumRef($objsoc, $objforref, $mode = 'next')
     {

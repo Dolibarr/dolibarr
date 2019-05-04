@@ -18,13 +18,13 @@
 
 /**
  *      \file       test/phpunit/ContratTest.php
- *		\ingroup    test
+ *        \ingroup    test
  *      \brief      PHPUnit test
- *		\remarks	To run this script as CLI:  phpunit filename.php
+ *        \remarks    To run this script as CLI:  phpunit filename.php
  */
 
 global $conf,$user,$langs,$db;
-//define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
+//define('TEST_DB_FORCE_TYPE','mysql');    // This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/contrat/class/contrat.class.php';
@@ -43,7 +43,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
- * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
+ * @remarks    backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
 class ContratTest extends PHPUnit_Framework_TestCase
 {
@@ -78,7 +78,7 @@ class ContratTest extends PHPUnit_Framework_TestCase
     public static function setUpBeforeClass()
     {
         global $conf,$user,$langs,$db;
-        $db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
+        $db->begin();    // This is to have all actions inside a transaction even if test launched without suite.
 
         print __METHOD__."\n";
     }
@@ -95,7 +95,7 @@ class ContratTest extends PHPUnit_Framework_TestCase
     /**
      * Init phpunit tests
      *
-     * @return	void
+     * @return    void
      */
     protected function setUp()
     {
@@ -110,7 +110,7 @@ class ContratTest extends PHPUnit_Framework_TestCase
     /**
      * End phpunit tests
      *
-     * @return	void
+     * @return    void
      */
     protected function tearDown()
     {
@@ -120,7 +120,7 @@ class ContratTest extends PHPUnit_Framework_TestCase
     /**
      * testContratCreate
      *
-     * @return	int
+     * @return    int
      */
     public function testContratCreate()
     {
@@ -143,10 +143,10 @@ class ContratTest extends PHPUnit_Framework_TestCase
     /**
      * testContratFetch
      *
-     * @param	int		$id		Id of contract
-     * @return	int
+     * @param    int        $id        Id of contract
+     * @return    int
      *
-     * @depends	testContratCreate
+     * @depends    testContratCreate
      * The depends says test is run only if previous is ok
      */
     public function testContratFetch($id)
@@ -169,8 +169,8 @@ class ContratTest extends PHPUnit_Framework_TestCase
    /**
      * testContratOther
      *
-     * @param	Object	$localobject	Object contract
-     * @return	int
+     * @param    Object    $localobject    Object contract
+     * @return    int
      *
      * @depends testContratFetch
      * The depends says test is run only if previous is ok
@@ -198,10 +198,10 @@ class ContratTest extends PHPUnit_Framework_TestCase
     /**
      * testContratDelete
      *
-     * @param	int		$id		Id of contract
-     * @return	int
+     * @param    int        $id        Id of contract
+     * @return    int
      *
-     * @depends	testContratOther
+     * @depends    testContratOther
      * The depends says test is run only if previous is ok
      */
     public function testContratDelete($id)

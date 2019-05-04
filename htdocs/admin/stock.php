@@ -21,9 +21,9 @@
  */
 
 /**
- *	\file       htdocs/admin/stock.php
- *	\ingroup    stock
- *	\brief      Page d'administration/configuration du module gestion de stock
+ *    \file       htdocs/admin/stock.php
+ *    \ingroup    stock
+ *    \brief      Page d'administration/configuration du module gestion de stock
  */
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
@@ -83,9 +83,9 @@ $form=new Form($db);
 $disabled='';
 if (! empty($conf->productbatch->enabled))
 {
-	$langs->load("productbatch");
-	$disabled=' disabled';
-	print info_admin($langs->trans("WhenProductBatchModuleOnOptionAreForced"));
+    $langs->load("productbatch");
+    $disabled=' disabled';
+    print info_admin($langs->trans("WhenProductBatchModuleOnOptionAreForced"));
 }
 
 //if (! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) || ! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT))
@@ -187,9 +187,9 @@ $found++;
 /*if (! $found)
 {
 
-	print '<tr class="oddeven">';
-	print '<td colspan="2">'.$langs->trans("NoModuleToManageStockDecrease").'</td>';
-	print "</tr>\n";
+    print '<tr class="oddeven">';
+    print '<td colspan="2">'.$langs->trans("NoModuleToManageStockDecrease").'</td>';
+    print "</tr>\n";
 }*/
 
 print '</table>';
@@ -247,8 +247,8 @@ $found++;
 
 if (!empty($conf->reception->enabled))
 {
-	print '<tr class="oddeven">';
-	print '<td width="60%">'.$langs->trans("StockOnReception").'</td>';
+    print '<tr class="oddeven">';
+    print '<td width="60%">'.$langs->trans("StockOnReception").'</td>';
   print '<td align="center">';
 
 if ($conf->use_javascript_ajax) {
@@ -258,12 +258,12 @@ if ($conf->use_javascript_ajax) {
     print $form->selectarray("STOCK_CALCULATE_ON_RECEPTION", $arrval, $conf->global->STOCK_CALCULATE_ON_RECEPTION);
 }
 
-	print "</td>\n</tr>\n";
-	$found++;
+    print "</td>\n</tr>\n";
+    $found++;
 
 
 print '<tr class="oddeven">';
-	print '<td width="60%">'.$langs->trans("StockOnReceptionOnClosing").'</td>';
+    print '<td width="60%">'.$langs->trans("StockOnReceptionOnClosing").'</td>';
   print '<td align="center">';
 
 if ($conf->use_javascript_ajax) {
@@ -272,37 +272,37 @@ if ($conf->use_javascript_ajax) {
     $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
     print $form->selectarray("STOCK_CALCULATE_ON_RECEPTION_CLOSE", $arrval, $conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE);
 }
-	print "</td>\n</tr>\n";
-	$found++;
+    print "</td>\n</tr>\n";
+    $found++;
 }
 else
 {
-	print '<tr class="oddeven">';
-	print '<td>'.$langs->trans("ReStockOnDispatchOrder").'</td>';
+    print '<tr class="oddeven">';
+    print '<td>'.$langs->trans("ReStockOnDispatchOrder").'</td>';
   print '<td align="center">';
-	if (! empty($conf->fournisseur->enabled))
-	{
+    if (! empty($conf->fournisseur->enabled))
+    {
 if ($conf->use_javascript_ajax) {
     print ajax_constantonoff('STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER');
 } else {
     $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
     print $form->selectarray("STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER", $arrval, $conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER);
 }
-	}
-	else
-	{
-		print $langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module40Name"));
-	}
-	print "</td>\n</tr>\n";
-	$found++;
+    }
+    else
+    {
+        print $langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module40Name"));
+    }
+    print "</td>\n</tr>\n";
+    $found++;
 }
 
 /*if (! $found)
 {
 
-	print '<tr class="oddeven">';
-	print '<td colspan="2">'.$langs->trans("NoModuleToManageStockIncrease").'</td>';
-	print "</tr>\n";
+    print '<tr class="oddeven">';
+    print '<td colspan="2">'.$langs->trans("NoModuleToManageStockIncrease").'</td>';
+    print "</tr>\n";
 }*/
 
 print '</table>';
@@ -330,8 +330,8 @@ print "</tr>\n";
 // Option to force stock to be enough before adding a line into document
 if($conf->invoice->enabled)
 {
-	print '<tr class="oddeven">';
-	print '<td>'.$langs->trans("StockMustBeEnoughForInvoice").'</td>';
+    print '<tr class="oddeven">';
+    print '<td>'.$langs->trans("StockMustBeEnoughForInvoice").'</td>';
   print '<td align="center">';
 if ($conf->use_javascript_ajax) {
     print ajax_constantonoff('STOCK_MUST_BE_ENOUGH_FOR_INVOICE');
@@ -339,14 +339,14 @@ if ($conf->use_javascript_ajax) {
     $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
     print $form->selectarray("STOCK_MUST_BE_ENOUGH_FOR_INVOICE", $arrval, $conf->global->STOCK_MUST_BE_ENOUGH_FOR_INVOICE);
 }
-	print "</td>\n";
-	print "</tr>\n";
+    print "</td>\n";
+    print "</tr>\n";
 }
 
 if($conf->order->enabled)
 {
-	print '<tr class="oddeven">';
-	print '<td>'.$langs->trans("StockMustBeEnoughForOrder").'</td>';
+    print '<tr class="oddeven">';
+    print '<td>'.$langs->trans("StockMustBeEnoughForOrder").'</td>';
   print '<td align="center">';
 if ($conf->use_javascript_ajax) {
     print ajax_constantonoff('STOCK_MUST_BE_ENOUGH_FOR_ORDER');
@@ -354,14 +354,14 @@ if ($conf->use_javascript_ajax) {
     $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
     print $form->selectarray("STOCK_MUST_BE_ENOUGH_FOR_ORDER", $arrval, $conf->global->STOCK_MUST_BE_ENOUGH_FOR_ORDER);
 }
-	print "</td>\n";
-	print "</tr>\n";
+    print "</td>\n";
+    print "</tr>\n";
 }
 
 if($conf->expedition->enabled)
 {
-	print '<tr class="oddeven">';
-	print '<td>'.$langs->trans("StockMustBeEnoughForShipment").'</td>';
+    print '<tr class="oddeven">';
+    print '<td>'.$langs->trans("StockMustBeEnoughForShipment").'</td>';
   print '<td align="center">';
 if ($conf->use_javascript_ajax) {
     print ajax_constantonoff('STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT');
@@ -369,8 +369,8 @@ if ($conf->use_javascript_ajax) {
     $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
     print $form->selectarray("STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT", $arrval, $conf->global->STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT);
 }
-	print "</td>\n";
-	print "</tr>\n";
+    print "</td>\n";
+    print "</tr>\n";
 }
 print '</table>';
 
@@ -378,19 +378,19 @@ print '<br>';
 
 $virtualdiffersfromphysical=0;
 if (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)
-	|| ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)
-	) $virtualdiffersfromphysical=1;		// According to increase/decrease stock options, virtual and physical stock may differs.
+    || ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)
+    ) $virtualdiffersfromphysical=1;        // According to increase/decrease stock options, virtual and physical stock may differs.
 
 if ($virtualdiffersfromphysical)
 {
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-	print "<td>".$langs->trans("RuleForStockReplenishment")." ".img_help('help', $langs->trans("VirtualDiffersFromPhysical"))."</td>\n";
+    print "<td>".$langs->trans("RuleForStockReplenishment")." ".img_help('help', $langs->trans("VirtualDiffersFromPhysical"))."</td>\n";
   print '<td align="center">'.$langs->trans("Status").'</td>'."\n";
-	print '</tr>'."\n";
+    print '</tr>'."\n";
 
-	print '<tr class="oddeven">';
-	print '<td>'.$langs->trans("UseVirtualStockByDefault").'</td>';
+    print '<tr class="oddeven">';
+    print '<td>'.$langs->trans("UseVirtualStockByDefault").'</td>';
   print '<td align="center">';
 if ($conf->use_javascript_ajax) {
     print ajax_constantonoff('STOCK_USE_VIRTUAL_STOCK');
@@ -398,10 +398,10 @@ if ($conf->use_javascript_ajax) {
     $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
     print $form->selectarray("STOCK_USE_VIRTUAL_STOCK", $arrval, $conf->global->STOCK_USE_VIRTUAL_STOCK);
 }
-	print "</td>\n";
-	print "</tr>\n";
-	print '</table>';
-	print '<br>';
+    print "</td>\n";
+    print "</tr>\n";
+    print '</table>';
+    print '<br>';
 }
 
 
@@ -468,15 +468,15 @@ print '</table>';
 print '<br>';
 if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 {
-	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("Inventory").'</td>'."\n";
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre">';
+    print '<td>'.$langs->trans("Inventory").'</td>'."\n";
   print '<td align="center">'.$langs->trans("Status").'</td>'."\n";
   print '</tr>'."\n";
 
-	// Example with a yes / no select
-	print '<tr class="oddeven">';
-	print '<td>'.$langs->trans("INVENTORY_DISABLE_VIRTUAL").'</td>';
+    // Example with a yes / no select
+    print '<tr class="oddeven">';
+    print '<td>'.$langs->trans("INVENTORY_DISABLE_VIRTUAL").'</td>';
   print '<td align="center">';
 if ($conf->use_javascript_ajax) {
     print ajax_constantonoff('INVENTORY_DISABLE_VIRTUAL');
@@ -484,11 +484,11 @@ if ($conf->use_javascript_ajax) {
     $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
     print $form->selectarray("INVENTORY_DISABLE_VIRTUAL", $arrval, $conf->global->INVENTORY_DISABLE_VIRTUAL);
 }
-	print '</td></tr>';
+    print '</td></tr>';
 
-	// Example with a yes / no select
-	print '<tr class="oddeven">';
-	print '<td>'.$langs->trans("INVENTORY_USE_MIN_PA_IF_NO_LAST_PA").'</td>';
+    // Example with a yes / no select
+    print '<tr class="oddeven">';
+    print '<td>'.$langs->trans("INVENTORY_USE_MIN_PA_IF_NO_LAST_PA").'</td>';
   print '<td align="center">';
 if ($conf->use_javascript_ajax) {
     print ajax_constantonoff('INVENTORY_USE_MIN_PA_IF_NO_LAST_PA');
@@ -496,11 +496,11 @@ if ($conf->use_javascript_ajax) {
     $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
     print $form->selectarray("INVENTORY_USE_MIN_PA_IF_NO_LAST_PA", $arrval, $conf->global->INVENTORY_USE_MIN_PA_IF_NO_LAST_PA);
 }
-	print '</td></tr>';
+    print '</td></tr>';
 
-	// Example with a yes / no select
-	print '<tr class="oddeven">';
-	print '<td>'.$langs->trans("INVENTORY_USE_INVENTORY_DATE_FROM_DATEMVT").'</td>';
+    // Example with a yes / no select
+    print '<tr class="oddeven">';
+    print '<td>'.$langs->trans("INVENTORY_USE_INVENTORY_DATE_FROM_DATEMVT").'</td>';
   print '<td align="center">';
 if ($conf->use_javascript_ajax) {
     print ajax_constantonoff('INVENTORY_USE_INVENTORY_DATE_FROM_DATEMVT');
@@ -508,9 +508,9 @@ if ($conf->use_javascript_ajax) {
     $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
     print $form->selectarray("INVENTORY_USE_INVENTORY_DATE_FROM_DATEMVT", $arrval, $conf->global->INVENTORY_USE_INVENTORY_DATE_FROM_DATEMVT);
 }
-	print '</td></tr>';
+    print '</td></tr>';
 
-	print '</table>';
+    print '</table>';
 }
 
 /* I keep the option/feature, but hidden to end users for the moment. If feature is used by module, no need to have users see it.
@@ -519,17 +519,17 @@ if ($conf->global->PRODUIT_SOUSPRODUITS)
 {
 
 
-	print '<tr class="oddeven">';
-	print '<td>'.$langs->trans("IndependantSubProductStock").'</td>';
-	print '<td class="right">';
-	print "<form method=\"post\" action=\"stock.php\">";
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print "<input type=\"hidden\" name=\"action\" value=\"INDEPENDANT_SUBPRODUCT_STOCK\">";
-	print $form->selectyesno("INDEPENDANT_SUBPRODUCT_STOCK",$conf->global->INDEPENDANT_SUBPRODUCT_STOCK,1);
-	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-	print '</form>';
-	print "</td>\n";
-	print "</tr>\n";
+    print '<tr class="oddeven">';
+    print '<td>'.$langs->trans("IndependantSubProductStock").'</td>';
+    print '<td class="right">';
+    print "<form method=\"post\" action=\"stock.php\">";
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print "<input type=\"hidden\" name=\"action\" value=\"INDEPENDANT_SUBPRODUCT_STOCK\">";
+    print $form->selectyesno("INDEPENDANT_SUBPRODUCT_STOCK",$conf->global->INDEPENDANT_SUBPRODUCT_STOCK,1);
+    print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+    print '</form>';
+    print "</td>\n";
+    print "</tr>\n";
 }
 */
 

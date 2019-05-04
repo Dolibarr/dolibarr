@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014	  Ion Agorria		  <ion@agorria.com>
+/* Copyright (C) 2014      Ion Agorria          <ion@agorria.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,9 +16,9 @@
  */
 
 /**
- *  \file	    htdocs/product/dynamic_price/editor.php
- *  \ingroup	product
- *  \brief	    Page for editing expression
+ *  \file        htdocs/product/dynamic_price/editor.php
+ *  \ingroup    product
+ *  \brief        Page for editing expression
  */
 
 require '../../main.inc.php';
@@ -53,11 +53,11 @@ $price_globals = new PriceGlobalVariable($db);
 //Fetch expression data
 if (empty($eid)) //This also disables fetch when eid == 0
 {
-	$eid = 0;
+    $eid = 0;
 }
 elseif ($action != 'delete')
 {
-	$price_expression->fetch($eid);
+    $price_expression->fetch($eid);
 }
 
 
@@ -67,96 +67,96 @@ elseif ($action != 'delete')
 
 if ($action == 'add')
 {
-	if ($eid == 0)
-	{
-		$result = $price_expression->find_title($title);
-		if ($result == 0) //No existing entry found with title, ok
-		{
-			//Check the expression validity by parsing it
+    if ($eid == 0)
+    {
+        $result = $price_expression->find_title($title);
+        if ($result == 0) //No existing entry found with title, ok
+        {
+            //Check the expression validity by parsing it
             $priceparser = new PriceParser($db);
             $price_result = $priceparser->testExpression($id, $expression);
             if ($price_result < 0) { //Expression is not valid
-				setEventMessages($priceparser->translatedError(), null, 'errors');
-			}
-			else
-			{
-				$price_expression->title = $title;
-				$price_expression->expression = $expression;
-				$result = $price_expression->create($user);
-				if ($result > 0) //created successfully, set the eid to newly created entry
-				{
-					$eid = $price_expression->id;
-					setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
-				}
-				else
-				{
-					setEventMessages("add: ".$price_expression->error, $price_expression->errors, 'errors');
-				}
-			}
-		}
-		elseif ($result < 0)
-		{
-			setEventMessages("add find: ".$price_expression->error, $price_expression->errors, 'errors');
-		}
-		else
-		{
-			setEventMessages($langs->trans("ErrorRecordAlreadyExists"), null, 'errors');
-		}
-	}
+                setEventMessages($priceparser->translatedError(), null, 'errors');
+            }
+            else
+            {
+                $price_expression->title = $title;
+                $price_expression->expression = $expression;
+                $result = $price_expression->create($user);
+                if ($result > 0) //created successfully, set the eid to newly created entry
+                {
+                    $eid = $price_expression->id;
+                    setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
+                }
+                else
+                {
+                    setEventMessages("add: ".$price_expression->error, $price_expression->errors, 'errors');
+                }
+            }
+        }
+        elseif ($result < 0)
+        {
+            setEventMessages("add find: ".$price_expression->error, $price_expression->errors, 'errors');
+        }
+        else
+        {
+            setEventMessages($langs->trans("ErrorRecordAlreadyExists"), null, 'errors');
+        }
+    }
 }
 
 if ($action == 'update')
 {
-	if ($eid != 0)
-	{
-		$result = $price_expression->find_title($title);
-		if ($result == 0 || $result == $eid) //No existing entry found with title or existing one is the current one, ok
-		{
-			//Check the expression validity by parsing it
+    if ($eid != 0)
+    {
+        $result = $price_expression->find_title($title);
+        if ($result == 0 || $result == $eid) //No existing entry found with title or existing one is the current one, ok
+        {
+            //Check the expression validity by parsing it
             $priceparser = new PriceParser($db);
             $price_result = $priceparser->testExpression($id, $expression);
             if ($price_result < 0) { //Expression is not valid
-				setEventMessages($priceparser->translatedError(), null, 'errors');
-			}
-			else
-			{
-				$price_expression->id = $eid;
-				$price_expression->title = $title;
-				$price_expression->expression = $expression;
-				$result = $price_expression->update($user);
-				if ($result < 0)
-				{
-					setEventMessages("update: ".$price_expression->error, $price_expression->errors, 'errors');
-				}
-				else
-				{
-					setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
-				}
-			}
-		}
-		elseif ($result < 0)
-		{
-			setEventMessages("update find: ".$price_expression->error, $price_expression->errors, 'errors');
-		}
-		else
-		{
-			setEventMessages($langs->trans("ErrorRecordAlreadyExists"), null, 'errors');
-		}
-	}
+                setEventMessages($priceparser->translatedError(), null, 'errors');
+            }
+            else
+            {
+                $price_expression->id = $eid;
+                $price_expression->title = $title;
+                $price_expression->expression = $expression;
+                $result = $price_expression->update($user);
+                if ($result < 0)
+                {
+                    setEventMessages("update: ".$price_expression->error, $price_expression->errors, 'errors');
+                }
+                else
+                {
+                    setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
+                }
+            }
+        }
+        elseif ($result < 0)
+        {
+            setEventMessages("update find: ".$price_expression->error, $price_expression->errors, 'errors');
+        }
+        else
+        {
+            setEventMessages($langs->trans("ErrorRecordAlreadyExists"), null, 'errors');
+        }
+    }
 }
 
 if ($action == 'delete')
 {
-	if ($eid != 0)
-	{
-	    $price_expression->fetch($eid);
-		$result = $price_expression->delete($user);
-		if ($result < 0)
-		{
-			setEventMessages("delete: ".$price_expression->error, $price_expression->errors, 'errors');
-		}
-		$eid = 0;
-	}
+    if ($eid != 0)
+    {
+        $price_expression->fetch($eid);
+        $result = $price_expression->delete($user);
+        if ($result < 0)
+        {
+            setEventMessages("delete: ".$price_expression->error, $price_expression->errors, 'errors');
+        }
+        $eid = 0;
+    }
 }
 
 
@@ -183,7 +183,7 @@ print '<table class="border" width="100%">';
 print '<tr><td class="titlefield fieldrequired">'.$langs->trans("PriceExpressionSelected").'</td><td>';
 $price_expression_list = array(0 => $langs->trans("New")); //Put the new as first option
 foreach ($price_expression->list_price_expression() as $entry) {
-	$price_expression_list[$entry->id] = $entry->title;
+    $price_expression_list[$entry->id] = $entry->title;
 }
 print $form->selectarray('expression_selection', $price_expression_list, $eid);
 print '</td></tr>';
@@ -219,11 +219,11 @@ print '<input type="submit" class="butAction" value="'.$langs->trans("Save").'">
 print '<span id="back" class="butAction">'.$langs->trans("Back").'</span>';
 if ($eid == 0)
 {
-	print '<div class="inline-block divButAction"><span id="action-delete" class="butActionRefused classfortooltip">'.$langs->trans('Delete').'</span></div>'."\n";
+    print '<div class="inline-block divButAction"><span id="action-delete" class="butActionRefused classfortooltip">'.$langs->trans('Delete').'</span></div>'."\n";
 }
 else
 {
-	print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&amp;tab='.$tab.'&amp;eid='.$eid.'&amp;action=delete">'.$langs->trans("Delete").'</a></div>';
+    print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&amp;tab='.$tab.'&amp;eid='.$eid.'&amp;action=delete">'.$langs->trans("Delete").'</a></div>';
 }
 print '</div>';
 

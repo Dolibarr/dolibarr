@@ -22,77 +22,77 @@
  */
 class Auth
 {
-	protected $db;
+    protected $db;
 
-	private $login;
-	private $passwd;
+    private $login;
+    private $passwd;
 
-	private $reponse;
+    private $reponse;
 
-	public $sqlQuery;
+    public $sqlQuery;
 
-	/**
-	 * Enter description here ...
-	 *
-	 * @param	DoliDB	$db			Database handler
-	 * @return	void
-	 */
-	public function __construct($db)
-	{
-		$this->db = $db;
-		$this->reponse(null);
-	}
+    /**
+     * Enter description here ...
+     *
+     * @param    DoliDB    $db            Database handler
+     * @return    void
+     */
+    public function __construct($db)
+    {
+        $this->db = $db;
+        $this->reponse(null);
+    }
 
-	/**
-	 * Enter description here ...
-	 *
-	 * @param 	string	$aLogin		Login
-	 * @return	void
-	 */
-	public function login($aLogin)
-	{
-		$this->login = $aLogin;
-	}
+    /**
+     * Enter description here ...
+     *
+     * @param     string    $aLogin        Login
+     * @return    void
+     */
+    public function login($aLogin)
+    {
+        $this->login = $aLogin;
+    }
 
-	/**
-	 * Enter description here ...
-	 *
-	 * @param 	string	$aPasswd	Password
-	 * @return	void
-	 */
-	public function passwd($aPasswd)
-	{
-		$this->passwd = $aPasswd;
-	}
+    /**
+     * Enter description here ...
+     *
+     * @param     string    $aPasswd    Password
+     * @return    void
+     */
+    public function passwd($aPasswd)
+    {
+        $this->passwd = $aPasswd;
+    }
 
-	/**
-	 * Enter description here ...
-	 *
-	 * @param 	string 	$aReponse	Response
-	 * @return	void
-	 */
-	public function reponse($aReponse)
-	{
-		$this->reponse = $aReponse;
-	}
+    /**
+     * Enter description here ...
+     *
+     * @param     string     $aReponse    Response
+     * @return    void
+     */
+    public function reponse($aReponse)
+    {
+        $this->reponse = $aReponse;
+    }
 
-	/**
-	 * Validate login/pass
-	 *
-	 * @param	string	$aLogin		Login
-	 * @param	string	$aPasswd	Password
-	 * @return	int					0 or 1
-	 */
-	public function verif($aLogin, $aPasswd)
-	{
-		global $conf,$langs;
-		global $dolibarr_main_authentication,$dolibarr_auto_user;
+    /**
+     * Validate login/pass
+     *
+     * @param    string    $aLogin        Login
+     * @param    string    $aPasswd    Password
+     * @return    int                    0 or 1
+     */
+    public function verif($aLogin, $aPasswd)
+    {
+        global $conf,$langs;
+        global $dolibarr_main_authentication,$dolibarr_auto_user;
 
-		$ret=-1;
+        $ret=-1;
 
-		$login='';
+        $login='';
 
-		$test=true;
+        $test=true;
 
         // Authentication mode
         if (empty($dolibarr_main_authentication)) $dolibarr_main_authentication='http,dolibarr';
@@ -109,9 +109,9 @@ class Auth
             exit;
         }
 
-		$usertotest=$aLogin;
-		$passwordtotest=$aPasswd;
-		$entitytotest=$conf->entity;
+        $usertotest=$aLogin;
+        $passwordtotest=$aPasswd;
+        $entitytotest=$conf->entity;
 
         // Validation tests user / password
         // If ok, the variable will be initialized login
@@ -123,7 +123,7 @@ class Auth
         if ($test && $goontestloop)
         {
             include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-			$login = checkLoginPassEntity($usertotest, $passwordtotest, $entitytotest, $authmode);
+            $login = checkLoginPassEntity($usertotest, $passwordtotest, $entitytotest, $authmode);
             if ($login)
             {
                 $this->login($aLogin);
@@ -136,6 +136,6 @@ class Auth
             }
         }
 
-		return $ret;
-	}
+        return $ret;
+    }
 }

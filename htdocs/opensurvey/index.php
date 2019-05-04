@@ -16,9 +16,9 @@
  */
 
 /**
- *	\file       htdocs/opensurvey/index.php
- *	\ingroup    opensurvey
- *	\brief      Home page of opensurvey area
+ *    \file       htdocs/opensurvey/index.php
+ *    \ingroup    opensurvey
+ *    \brief      Home page of opensurvey area
  */
 
 require '../main.inc.php';
@@ -42,8 +42,8 @@ $sql='SELECT COUNT(*) as nb FROM '.MAIN_DB_PREFIX.'opensurvey_sondage';
 $resql=$db->query($sql);
 if ($resql)
 {
-	$obj=$db->fetch_object($resql);
-	$nbsondages=$obj->nb;
+    $obj=$db->fetch_object($resql);
+    $nbsondages=$obj->nb;
 }
 else dol_print_error($db, '');
 
@@ -60,8 +60,8 @@ $sql='SELECT COUNT(*) as nb FROM '.MAIN_DB_PREFIX.'opensurvey_sondage';
 $resql=$db->query($sql);
 if ($resql)
 {
-	$obj=$db->fetch_object($resql);
-	$nbsondages=$obj->nb;
+    $obj=$db->fetch_object($resql);
+    $nbsondages=$obj->nb;
 }
 else dol_print_error($db, '');
 

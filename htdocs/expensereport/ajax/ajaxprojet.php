@@ -54,33 +54,33 @@ dol_syslog(join(',', $_GET));
 // Generation liste des projets
 if (GETPOST('fk_projet') != '')
 {
-	$return_arr = array();
+    $return_arr = array();
 
-	$sql = "SELECT p.rowid, p.ref, p.title, s.nom";
-	$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON p.fk_soc = s.rowid";
-	if (! empty($_GET["fk_projet"])) $sql.= " WHERE p.ref LIKE '%".$db->escape($_GET["fk_projet"])."%' OR p.title LIKE '%".$db->escape($_GET["fk_projet"])."%' OR s.nom LIKE '%".$db->escape($_GET["fk_projet"])."%'"; // Add other filters
-	$sql.= " ORDER BY p.ref ASC";
+    $sql = "SELECT p.rowid, p.ref, p.title, s.nom";
+    $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
+    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON p.fk_soc = s.rowid";
+    if (! empty($_GET["fk_projet"])) $sql.= " WHERE p.ref LIKE '%".$db->escape($_GET["fk_projet"])."%' OR p.title LIKE '%".$db->escape($_GET["fk_projet"])."%' OR s.nom LIKE '%".$db->escape($_GET["fk_projet"])."%'"; // Add other filters
+    $sql.= " ORDER BY p.ref ASC";
 
-	$resql=$db->query($sql);
-	if ($resql)
-	{
-		while ($row = $db->fetch_array($resql))
-		{
-		    $label=$row['ref'].' - '.$row['title'];
-		    $row_array['label'] = $label;
-			 $row_array['value'] = $label;
-	       $row_array['key'] = $row['rowid'];
+    $resql=$db->query($sql);
+    if ($resql)
+    {
+        while ($row = $db->fetch_array($resql))
+        {
+            $label=$row['ref'].' - '.$row['title'];
+            $row_array['label'] = $label;
+             $row_array['value'] = $label;
+           $row_array['key'] = $row['rowid'];
 
-	        array_push($return_arr, $row_array);
-	    }
+            array_push($return_arr, $row_array);
+        }
 
-	    echo json_encode($return_arr);
-	}
-	else
-	{
-	    echo json_encode(array('nom'=>'Error','label'=>'Error','key'=>'Error','value'=>'Error'));
-	}
+        echo json_encode($return_arr);
+    }
+    else
+    {
+        echo json_encode(array('nom'=>'Error','label'=>'Error','key'=>'Error','value'=>'Error'));
+    }
 }
 else
 {

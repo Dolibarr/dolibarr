@@ -19,8 +19,8 @@
 // Protection to avoid direct call of template
 if (empty($conf) || ! is_object($conf))
 {
-	print "Error, template page can't be called as URL";
-	exit;
+    print "Error, template page can't be called as URL";
+    exit;
 }
 
 
@@ -41,82 +41,82 @@ dol_htmloutput_errors($this->control->tpl['error'], $this->control->tpl['errors'
 <table class="border allwidth">
 
 <tr>
-	<td width="20%"><?php echo $langs->trans("Ref"); ?></td>
-	<td colspan="3"><?php echo $this->control->tpl['showrefnav']; ?></td>
+    <td width="20%"><?php echo $langs->trans("Ref"); ?></td>
+    <td colspan="3"><?php echo $this->control->tpl['showrefnav']; ?></td>
 </tr>
 
 <tr>
-	<td width="20%"><?php echo $langs->trans("Lastname"); ?></td>
-	<td width="30%"><?php echo $this->control->tpl['name']; ?></td>
-	<td width="25%"><?php echo $langs->trans("Firstname"); ?></td>
-	<td width="25%"><?php echo $this->control->tpl['firstname']; ?></td>
+    <td width="20%"><?php echo $langs->trans("Lastname"); ?></td>
+    <td width="30%"><?php echo $this->control->tpl['name']; ?></td>
+    <td width="25%"><?php echo $langs->trans("Firstname"); ?></td>
+    <td width="25%"><?php echo $this->control->tpl['firstname']; ?></td>
 </tr>
 
 <tr>
-	<td><?php echo $langs->trans("Company"); ?></td>
-	<td colspan="3"><?php echo $this->control->tpl['company']; ?></td>
+    <td><?php echo $langs->trans("Company"); ?></td>
+    <td colspan="3"><?php echo $this->control->tpl['company']; ?></td>
 </tr>
 
 <tr>
-	<td width="15%"><?php echo $langs->trans("UserTitle"); ?></td>
-	<td colspan="3"><?php echo $this->control->tpl['civility']; ?></td>
+    <td width="15%"><?php echo $langs->trans("UserTitle"); ?></td>
+    <td colspan="3"><?php echo $this->control->tpl['civility']; ?></td>
 </tr>
 
 <tr>
-	<td><?php echo $langs->trans("Morphy"); ?></td>
-	<td colspan="3"><?php echo $this->control->tpl['select_morphy']; ?></td>
+    <td><?php echo $langs->trans("Morphy"); ?></td>
+    <td colspan="3"><?php echo $this->control->tpl['select_morphy']; ?></td>
 </tr>
 
 <tr>
-	<td><?php echo $langs->trans("Address"); ?></td>
-	<td colspan="3"><?php echo $this->control->tpl['address']; ?></td>
+    <td><?php echo $langs->trans("Address"); ?></td>
+    <td colspan="3"><?php echo $this->control->tpl['address']; ?></td>
 </tr>
 
 <tr>
-	<td><?php echo $langs->trans("Zip").' / '.$langs->trans("Town"); ?></td>
-	<td colspan="3"><?php echo $this->control->tpl['zip'].$this->control->tpl['town']; ?></td>
+    <td><?php echo $langs->trans("Zip").' / '.$langs->trans("Town"); ?></td>
+    <td colspan="3"><?php echo $this->control->tpl['zip'].$this->control->tpl['town']; ?></td>
 </tr>
 
 <tr>
-	<td><?php echo $langs->trans("Country"); ?></td>
-	<td colspan="3"><?php echo $this->control->tpl['country']; ?></td>
+    <td><?php echo $langs->trans("Country"); ?></td>
+    <td colspan="3"><?php echo $this->control->tpl['country']; ?></td>
 </tr>
 
 <tr>
-	<td><?php echo $langs->trans('State'); ?></td>
-	<td colspan="3"><?php echo $this->control->tpl['state']; ?></td>
+    <td><?php echo $langs->trans('State'); ?></td>
+    <td colspan="3"><?php echo $this->control->tpl['state']; ?></td>
 </tr>
 
 <tr>
-	<td><?php echo $langs->trans("PhonePro"); ?></td>
-	<td><?php echo $this->control->tpl['phone_pro']; ?></td>
-	<td><?php echo $langs->trans("PhonePerso"); ?></td>
-	<td><?php echo $this->control->tpl['phone_perso']; ?></td>
+    <td><?php echo $langs->trans("PhonePro"); ?></td>
+    <td><?php echo $this->control->tpl['phone_pro']; ?></td>
+    <td><?php echo $langs->trans("PhonePerso"); ?></td>
+    <td><?php echo $this->control->tpl['phone_perso']; ?></td>
 </tr>
 
 <tr>
-	<td><?php echo $langs->trans("PhoneMobile"); ?></td>
-	<td><?php echo $this->control->tpl['phone_mobile']; ?></td>
+    <td><?php echo $langs->trans("PhoneMobile"); ?></td>
+    <td><?php echo $this->control->tpl['phone_mobile']; ?></td>
 </tr>
 
 <tr>
-	<td><?php echo $langs->trans("EMail"); ?></td>
-	<td><?php echo $this->control->tpl['email']; ?></td>
+    <td><?php echo $langs->trans("EMail"); ?></td>
+    <td><?php echo $this->control->tpl['email']; ?></td>
 </tr>
 
 <tr>
-	<td><?php echo $langs->trans("ContactVisibility"); ?></td>
-	<td colspan="3"><?php echo $this->control->tpl['visibility']; ?></td>
+    <td><?php echo $langs->trans("ContactVisibility"); ?></td>
+    <td colspan="3"><?php echo $this->control->tpl['visibility']; ?></td>
 </tr>
 
 <tr>
-	<td class="tdtop"><?php echo $langs->trans("Note"); ?></td>
-	<td colspan="3"><?php echo $this->control->tpl['note']; ?></td>
+    <td class="tdtop"><?php echo $langs->trans("Note"); ?></td>
+    <td colspan="3"><?php echo $this->control->tpl['note']; ?></td>
 </tr>
 
 <tr>
-	<td><?php echo $langs->trans("DolibarrLogin"); ?></td>
-	<td colspan="3"><?php echo $this->control->tpl['dolibarr_user']; ?></td>
+    <td><?php echo $langs->trans("DolibarrLogin"); ?></td>
+    <td colspan="3"><?php echo $this->control->tpl['dolibarr_user']; ?></td>
 </tr>
 
 </table>

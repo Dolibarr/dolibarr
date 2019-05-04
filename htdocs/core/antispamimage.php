@@ -17,8 +17,8 @@
  */
 
 /**
- *		\file       htdocs/core/antispamimage.php
- *		\brief      Return antispam image
+ *        \file       htdocs/core/antispamimage.php
+ *        \brief      Return antispam image
  */
 
 define('NOLOGIN', 1);

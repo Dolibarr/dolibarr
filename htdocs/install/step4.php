@@ -20,9 +20,9 @@
  */
 
 /**
- *	\file       htdocs/install/step4.php
- *	\ingroup	install
- *	\brief      Ask login and password of Dolibarr admin user
+ *    \file       htdocs/install/step4.php
+ *    \ingroup    install
+ *    \brief      Ask login and password of Dolibarr admin user
  */
 
 
@@ -42,8 +42,8 @@ $useforcedwizard=false;
 $forcedfile="./install.forced.php";
 if ($conffile == "/etc/dolibarr/conf.php") $forcedfile="/etc/dolibarr/install.forced.php";
 if (@file_exists($forcedfile)) {
-	$useforcedwizard = true;
-	include_once $forcedfile;
+    $useforcedwizard = true;
+    include_once $forcedfile;
 }
 
 dolibarr_install_syslog("- step4: entering step4.php page");
@@ -80,7 +80,7 @@ $db=getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->
 if ($db->ok)
 {
     print '<tr><td><label for="login">'.$langs->trans("Login").' :</label></td><td>';
-	print '<input id="login" name="login" type="text" value="' . (!empty($_GET["login"]) ? GETPOST("login") : (isset($force_install_dolibarrlogin) ? $force_install_dolibarrlogin : '')) . '"' . (@$force_install_noedit == 2 && $force_install_dolibarrlogin !== null ? ' disabled' : '') . '></td></tr>';
+    print '<input id="login" name="login" type="text" value="' . (!empty($_GET["login"]) ? GETPOST("login") : (isset($force_install_dolibarrlogin) ? $force_install_dolibarrlogin : '')) . '"' . (@$force_install_noedit == 2 && $force_install_dolibarrlogin !== null ? ' disabled' : '') . '></td></tr>';
     print '<tr><td><label for="pass">'.$langs->trans("Password").' :</label></td><td>';
     print '<input type="password" id="pass" name="pass"></td></tr>';
     print '<tr><td><label for="pass_verif">'.$langs->trans("PasswordAgain").' :</label></td><td>';
@@ -91,7 +91,7 @@ if ($db->ok)
     {
         print '<br>';
         print '<div class="error">'.$langs->trans("PasswordsMismatch").'</div>';
-        $error=0;	// We show button
+        $error=0;    // We show button
     }
 
     if (isset($_GET["error"]) && $_GET["error"] == 2)
@@ -100,14 +100,14 @@ if ($db->ok)
         print '<div class="error">';
         print $langs->trans("PleaseTypePassword");
         print '</div>';
-        $error=0;	// We show button
+        $error=0;    // We show button
     }
 
     if (isset($_GET["error"]) && $_GET["error"] == 3)
     {
         print '<br>';
         print '<div class="error">'.$langs->trans("PleaseTypeALogin").'</div>';
-        $error=0;	// We show button
+        $error=0;    // We show button
     }
 }
 

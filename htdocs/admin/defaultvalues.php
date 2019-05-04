@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017-2018	Laurent Destailleur	<eldy@users.sourceforge.net>
+/* Copyright (C) 2017-2018    Laurent Destailleur    <eldy@users.sourceforge.net>
  * Copyright (C) 2017-2018	Regis Houssin		<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,11 +19,11 @@
 /**
  *       \file      htdocs/admin/defaultvalues.php
  *       \brief     Page to set default values used used in a create form
- *       			Default values are stored into $user->default_values[url]['createform']['querystring'|'_noquery_'][paramkey]=paramvalue
- *       			Default filters are stored into $user->default_values[url]['filters']['querystring'|'_noquery_'][paramkey]=paramvalue
- *       			Default sort order are stored into $user->default_values[url]['sortorder']['querystring'|'_noquery_'][paramkey]=paramvalue
- *       			Default focus are stored into $user->default_values[url]['focus']['querystring'|'_noquery_'][paramkey]=paramvalue
- *       			Mandatory fields are stored into $user->default_values[url]['mandatory']['querystring'|'_noquery_'][paramkey]=paramvalue
+ *                   Default values are stored into $user->default_values[url]['createform']['querystring'|'_noquery_'][paramkey]=paramvalue
+ *                   Default filters are stored into $user->default_values[url]['filters']['querystring'|'_noquery_'][paramkey]=paramvalue
+ *                   Default sort order are stored into $user->default_values[url]['sortorder']['querystring'|'_noquery_'][paramkey]=paramvalue
+ *                   Default focus are stored into $user->default_values[url]['focus']['querystring'|'_noquery_'][paramkey]=paramvalue
+ *                   Mandatory fields are stored into $user->default_values[url]['mandatory']['querystring'|'_noquery_'][paramkey]=paramvalue
  */
 
 require '../main.inc.php';
@@ -97,82 +97,82 @@ if ($action == 'setMAIN_ENABLE_DEFAULT_VALUES')
 
 if (($action == 'add' || (GETPOST('add') && $action != 'update')) || GETPOST('actionmodify'))
 {
-	$error=0;
+    $error=0;
 
-	if (($action == 'add' || (GETPOST('add') && $action != 'update')))
-	{
-    	if (empty($defaulturl))
-    	{
-    		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Url")), null, 'errors');
-    		$error++;
-    	}
-    	if (empty($defaultkey))
-    	{
-    		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Field")), null, 'errors');
-    		$error++;
-    	}
-	}
-	if (GETPOST('actionmodify'))
-	{
-	    if (empty($urlpage))
-	    {
-	        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Url")), null, 'errors');
-	        $error++;
-	    }
-	    if (empty($key))
-	    {
-	        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Field")), null, 'errors');
-	        $error++;
-	    }
-	}
+    if (($action == 'add' || (GETPOST('add') && $action != 'update')))
+    {
+        if (empty($defaulturl))
+        {
+            setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Url")), null, 'errors');
+            $error++;
+        }
+        if (empty($defaultkey))
+        {
+            setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Field")), null, 'errors');
+            $error++;
+        }
+    }
+    if (GETPOST('actionmodify'))
+    {
+        if (empty($urlpage))
+        {
+            setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Url")), null, 'errors');
+            $error++;
+        }
+        if (empty($key))
+        {
+            setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Field")), null, 'errors');
+            $error++;
+        }
+    }
 
-	if (! $error)
-	{
-	    $db->begin();
+    if (! $error)
+    {
+        $db->begin();
 
-	    if ($action == 'add' || (GETPOST('add') && $action != 'update'))
-	    {
+        if ($action == 'add' || (GETPOST('add') && $action != 'update'))
+        {
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."default_values(type, user_id, page, param, value, entity) VALUES ('".$db->escape($mode)."', 0, '".$db->escape($defaulturl)."','".$db->escape($defaultkey)."','".$db->escape($defaultvalue)."', ".$db->escape($conf->entity).")";
-	    }
-	    if (GETPOST('actionmodify'))
-	    {
-		    $sql = "UPDATE ".MAIN_DB_PREFIX."default_values SET page = '".$db->escape($urlpage)."', param = '".$db->escape($key)."', value = '".$db->escape($value)."'";
-		    $sql.= " WHERE rowid = ".$id;
-	    }
+        }
+        if (GETPOST('actionmodify'))
+        {
+            $sql = "UPDATE ".MAIN_DB_PREFIX."default_values SET page = '".$db->escape($urlpage)."', param = '".$db->escape($key)."', value = '".$db->escape($value)."'";
+            $sql.= " WHERE rowid = ".$id;
+        }
 
-		$result = $db->query($sql);
-		if ($result > 0)
-		{
-		    $db->commit();
-			setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
-			$action="";
-			$defaulturl='';
-			$defaultkey='';
-			$defaultvalue='';
-		}
-		else
-		{
-	        $db->rollback();
-		    setEventMessages($db->lasterror(), null, 'errors');
-			$action='';
-		}
-	}
+        $result = $db->query($sql);
+        if ($result > 0)
+        {
+            $db->commit();
+            setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
+            $action="";
+            $defaulturl='';
+            $defaultkey='';
+            $defaultvalue='';
+        }
+        else
+        {
+            $db->rollback();
+            setEventMessages($db->lasterror(), null, 'errors');
+            $action='';
+        }
+    }
 }
 
 // Delete line from delete picto
 if ($action == 'delete')
 {
-	$sql = "DELETE FROM ".MAIN_DB_PREFIX."default_values WHERE rowid = ".$db->escape($id);
-	// Delete const
-	$result = $db->query($sql);
-	if ($result >= 0)
-	{
-		setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
-	}
-	else
-	{
-		dol_print_error($db);
-	}
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."default_values WHERE rowid = ".$db->escape($id);
+    // Delete const
+    $result = $db->query($sql);
+    if ($result >= 0)
+    {
+        setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
+    }
+    else
+    {
+        dol_print_error($db);
+    }
 }
 
 
@@ -237,7 +237,7 @@ if ($mode == 'sortorder')
 }
 if ($mode == 'mandatory')
 {
-	print info_admin($langs->trans("FeatureSupportedOnTextFieldsOnly")).'<br>';
+    print info_admin($langs->trans("FeatureSupportedOnTextFieldsOnly")).'<br>';
 }
 
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -272,7 +272,7 @@ if ($mode != 'focus' && $mode != 'mandatory')
     if ($mode != 'sortorder')
     {
         $substitutionarray=getCommonSubstitutionArray($langs, 2, array('object','objectamount')); // Must match list into GETPOST
-		unset($substitutionarray['__USER_SIGNATURE__']);
+        unset($substitutionarray['__USER_SIGNATURE__']);
         $texthelp=$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
         foreach($substitutionarray as $key => $val)
         {
@@ -317,15 +317,15 @@ if ($mode != 'focus' && $mode != 'mandatory')
 // Limit to superadmin
 if (! empty($conf->multicompany->enabled) && !$user->entity)
 {
-	print '<td>';
-	print '<input type="text" class="flat" size="1" disabled name="entity" value="'.$conf->entity.'">';	// We see environment, but to change it we must switch on other entity
-	print '</td>';
+    print '<td>';
+    print '<input type="text" class="flat" size="1" disabled name="entity" value="'.$conf->entity.'">';    // We see environment, but to change it we must switch on other entity
+    print '</td>';
 }
 else
 {
-	print '<td class="center">';
-	print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
-	print '</td>';
+    print '<td class="center">';
+    print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
+    print '</td>';
 }
 print '<td class="center">';
 $disabled='';
@@ -346,67 +346,67 @@ dol_syslog("translation::select from table", LOG_DEBUG);
 $result = $db->query($sql);
 if ($result)
 {
-	$num = $db->num_rows($result);
-	$i = 0;
+    $num = $db->num_rows($result);
+    $i = 0;
 
-	while ($i < $num)
-	{
-		$obj = $db->fetch_object($result);
+    while ($i < $num)
+    {
+        $obj = $db->fetch_object($result);
 
-		print "\n";
+        print "\n";
 
-		print '<tr class="oddeven">';
+        print '<tr class="oddeven">';
 
-		// Page
-		print '<td>';
-		if ($action != 'edit' || GETPOST('rowid') != $obj->rowid) print $obj->page;
-		else print '<input type="text" name="urlpage" value="'.dol_escape_htmltag($obj->page).'">';
-		print '</td>'."\n";
+        // Page
+        print '<td>';
+        if ($action != 'edit' || GETPOST('rowid') != $obj->rowid) print $obj->page;
+        else print '<input type="text" name="urlpage" value="'.dol_escape_htmltag($obj->page).'">';
+        print '</td>'."\n";
 
-		// Field
-		print '<td>';
-		if ($action != 'edit' || GETPOST('rowid') != $obj->rowid) print $obj->param;
-		else print '<input type="text" name="key" value="'.dol_escape_htmltag($obj->param).'">';
-		print '</td>'."\n";
+        // Field
+        print '<td>';
+        if ($action != 'edit' || GETPOST('rowid') != $obj->rowid) print $obj->param;
+        else print '<input type="text" name="key" value="'.dol_escape_htmltag($obj->param).'">';
+        print '</td>'."\n";
 
-		// Value
-		if ($mode != 'focus' && $mode != 'mandatory')
-		{
-    		print '<td>';
-    		/*print '<input type="hidden" name="const['.$i.'][rowid]" value="'.$obj->rowid.'">';
-    		print '<input type="hidden" name="const['.$i.'][lang]" value="'.$obj->lang.'">';
-    		print '<input type="hidden" name="const['.$i.'][name]" value="'.$obj->transkey.'">';
-    		print '<input type="text" id="value_'.$i.'" class="flat inputforupdate" size="30" name="const['.$i.'][value]" value="'.dol_escape_htmltag($obj->transvalue).'">';
-    		*/
-    		if ($action != 'edit' || GETPOST('rowid') != $obj->rowid) print $obj->value;
-    		else print '<input type="text" name="value" value="'.dol_escape_htmltag($obj->value).'">';
-    		print '</td>';
-		}
+        // Value
+        if ($mode != 'focus' && $mode != 'mandatory')
+        {
+            print '<td>';
+            /*print '<input type="hidden" name="const['.$i.'][rowid]" value="'.$obj->rowid.'">';
+            print '<input type="hidden" name="const['.$i.'][lang]" value="'.$obj->lang.'">';
+            print '<input type="hidden" name="const['.$i.'][name]" value="'.$obj->transkey.'">';
+            print '<input type="text" id="value_'.$i.'" class="flat inputforupdate" size="30" name="const['.$i.'][value]" value="'.dol_escape_htmltag($obj->transvalue).'">';
+            */
+            if ($action != 'edit' || GETPOST('rowid') != $obj->rowid) print $obj->value;
+            else print '<input type="text" name="value" value="'.dol_escape_htmltag($obj->value).'">';
+            print '</td>';
+        }
 
-	    print '<td></td>';
+        print '<td></td>';
 
-		// Actions
-		print '<td class="center">';
-		if ($action != 'edit' || GETPOST('rowid') != $obj->rowid)
-		{
-    		print '<a href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$obj->entity.'&mode='.$mode.'&action=edit'.((empty($user->entity) && $debug)?'&debug=1':'').'">'.img_edit().'</a>';
-    		print ' &nbsp; ';
-    		print '<a href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$obj->entity.'&mode='.$mode.'&action=delete'.((empty($user->entity) && $debug)?'&debug=1':'').'">'.img_delete().'</a>';
-		}
-		else
-		{
-		    print '<input type="hidden" name="page" value="'.$page.'">';
-		    print '<input type="hidden" name="rowid" value="'.$id.'">';
-		    print '<div name="'.(! empty($obj->rowid)?$obj->rowid:'none').'"></div>';
-		    print '<input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
-		    print '<input type="submit" class="button" name="actioncancel" value="'.$langs->trans("Cancel").'">';
-		}
-		print '</td>';
+        // Actions
+        print '<td class="center">';
+        if ($action != 'edit' || GETPOST('rowid') != $obj->rowid)
+        {
+            print '<a href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$obj->entity.'&mode='.$mode.'&action=edit'.((empty($user->entity) && $debug)?'&debug=1':'').'">'.img_edit().'</a>';
+            print ' &nbsp; ';
+            print '<a href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$obj->entity.'&mode='.$mode.'&action=delete'.((empty($user->entity) && $debug)?'&debug=1':'').'">'.img_delete().'</a>';
+        }
+        else
+        {
+            print '<input type="hidden" name="page" value="'.$page.'">';
+            print '<input type="hidden" name="rowid" value="'.$id.'">';
+            print '<div name="'.(! empty($obj->rowid)?$obj->rowid:'none').'"></div>';
+            print '<input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
+            print '<input type="submit" class="button" name="actioncancel" value="'.$langs->trans("Cancel").'">';
+        }
+        print '</td>';
 
-		print "</tr>\n";
-		print "\n";
-		$i++;
-	}
+        print "</tr>\n";
+        print "\n";
+        $i++;
+    }
 }
 else
 {

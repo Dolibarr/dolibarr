@@ -24,9 +24,9 @@
  */
 
 /**
- *   	\file       htdocs/adherents/admin/adherent.php
- *		\ingroup    member
- *		\brief      Page to setup the module Foundation
+ *       \file       htdocs/adherents/admin/adherent.php
+ *        \ingroup    member
+ *        \brief      Page to setup the module Foundation
  */
 
 require '../../main.inc.php';
@@ -39,7 +39,7 @@ $langs->loadLangs(array("admin","members"));
 if (! $user->admin) accessforbidden();
 
 
-$oldtypetonewone=array('texte'=>'text','chaine'=>'string');	// old type to new ones
+$oldtypetonewone=array('texte'=>'text','chaine'=>'string');    // old type to new ones
 
 $action = GETPOST('action', 'alpha');
 
@@ -49,10 +49,10 @@ $error = 0;
 $constantes=array(
     'MEMBER_REMINDER_EMAIL'=>array('type'=>'yesno', 'label'=>$langs->trans('MEMBER_REMINDER_EMAIL', $langs->transnoentities("Module2300Name"))),
     'ADHERENT_EMAIL_TEMPLATE_REMIND_EXPIRATION' =>'emailtemplate:member',
-    'ADHERENT_EMAIL_TEMPLATE_AUTOREGISTER'		=>'emailtemplate:member',		/* old was ADHERENT_AUTOREGISTER_MAIL */
-    'ADHERENT_EMAIL_TEMPLATE_MEMBER_VALIDATION'	=>'emailtemplate:member',		/* old was ADHERENT_MAIL_VALID */
-    'ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION'		=>'emailtemplate:member',		/* old was ADHERENT_MAIL_COTIS */
-    'ADHERENT_EMAIL_TEMPLATE_CANCELATION'		=>'emailtemplate:member',		/* old was ADHERENT_MAIL_RESIL */
+    'ADHERENT_EMAIL_TEMPLATE_AUTOREGISTER'        =>'emailtemplate:member',        /* old was ADHERENT_AUTOREGISTER_MAIL */
+    'ADHERENT_EMAIL_TEMPLATE_MEMBER_VALIDATION'    =>'emailtemplate:member',        /* old was ADHERENT_MAIL_VALID */
+    'ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION'        =>'emailtemplate:member',        /* old was ADHERENT_MAIL_COTIS */
+    'ADHERENT_EMAIL_TEMPLATE_CANCELATION'        =>'emailtemplate:member',        /* old was ADHERENT_MAIL_RESIL */
     'ADHERENT_MAIL_FROM'=>'string',
     'ADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT'=>'string',
     'ADHERENT_AUTOREGISTER_NOTIF_MAIL'=>'html',
@@ -85,27 +85,27 @@ if ($action == 'updateall')
 // Action mise a jour ou ajout d'une constante
 if ($action == 'update' || $action == 'add')
 {
-	$constlineid = GETPOST('rowid', 'int');
-	$constname=GETPOST('constname', 'alpha');
+    $constlineid = GETPOST('rowid', 'int');
+    $constname=GETPOST('constname', 'alpha');
 
-	$constvalue=(GETPOSTISSET('constvalue_'.$constname) ? GETPOST('constvalue_'.$constname, 'alpha') : GETPOST('constvalue'));
-	$consttype=(GETPOSTISSET('consttype_'.$constname) ? GETPOST('consttype_'.$constname, 'alphanohtml') : GETPOST('consttype'));
-	$constnote=(GETPOSTISSET('constnote_'.$constname) ? GETPOST('constnote_'.$constname, 'none') : GETPOST('constnote'));
+    $constvalue=(GETPOSTISSET('constvalue_'.$constname) ? GETPOST('constvalue_'.$constname, 'alpha') : GETPOST('constvalue'));
+    $consttype=(GETPOSTISSET('consttype_'.$constname) ? GETPOST('consttype_'.$constname, 'alphanohtml') : GETPOST('consttype'));
+    $constnote=(GETPOSTISSET('constnote_'.$constname) ? GETPOST('constnote_'.$constname, 'none') : GETPOST('constnote'));
 
-	$typetouse = empty($oldtypetonewone[$consttype]) ? $consttype : $oldtypetonewone[$consttype];
+    $typetouse = empty($oldtypetonewone[$consttype]) ? $consttype : $oldtypetonewone[$consttype];
 
-	$res=dolibarr_set_const($db, $constname, $constvalue, $typetouse, 0, $constnote, $conf->entity);
+    $res=dolibarr_set_const($db, $constname, $constvalue, $typetouse, 0, $constnote, $conf->entity);
 
-	if (! $res > 0) $error++;
+    if (! $res > 0) $error++;
 
-	if (! $error)
-	{
-		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	}
-	else
-	{
-		setEventMessages($langs->trans("Error"), null, 'errors');
-	}
+    if (! $error)
+    {
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    }
+    else
+    {
+        setEventMessages($langs->trans("Error"), null, 'errors');
+    }
 }
 
 // Action activation d'un sous module du module adherent
@@ -157,7 +157,7 @@ dol_fiche_head($head, 'emails', $langs->trans("Members"), -1, 'user');
 $helptext='*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
 $helptext.='__DOL_MAIN_URL_ROOT__, __ID__, __FIRSTNAME__, __LASTNAME__, __FULLNAME__, __LOGIN__, __PASSWORD__, ';
 $helptext.='__COMPANY__, __ADDRESS__, __ZIP__, __TOWN__, __COUNTRY__, __EMAIL__, __BIRTH__, __PHOTO__, __TYPE__, ';
-//$helptext.='__YEAR__, __MONTH__, __DAY__';	// Not supported
+//$helptext.='__YEAR__, __MONTH__, __DAY__';    // Not supported
 
 form_constantes($constantes, 0, $helptext);
 

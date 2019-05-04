@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2002    Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
  *
@@ -18,15 +18,15 @@
  */
 
 /**
- *     	\file       htdocs/public/paypal/paymentko.php
- *		\ingroup    paypal
- *		\brief      File to show page after a failed payment.
+ *         \file       htdocs/public/paypal/paymentko.php
+ *        \ingroup    paypal
+ *        \brief      File to show page after a failed payment.
  *                  This page is called by paypal with url provided to payal competed with parameter TOKEN=xxx
  *                  This token can be used to get more informations.
  */
 
-define("NOLOGIN", 1);		// This means this output page does not require to be logged.
-define("NOCSRFCHECK", 1);	// We accept to go on this page from external web site.
+define("NOLOGIN", 1);        // This means this output page does not require to be logged.
+define("NOCSRFCHECK", 1);    // We accept to go on this page from external web site.
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
@@ -101,44 +101,44 @@ if (! empty($_SESSION['ipaddress']))      // To avoid to make action twice
 
     if ($sendemail)
     {
-    	$sendto=$sendemail;
-    	$from=$conf->global->MAILING_EMAIL_FROM;
+        $sendto=$sendemail;
+        $from=$conf->global->MAILING_EMAIL_FROM;
 
-    	// Define link to login card
-    	$appli=constant('DOL_APPLICATION_TITLE');
-    	if (! empty($conf->global->MAIN_APPLICATION_TITLE))
-    	{
-    	    $appli=$conf->global->MAIN_APPLICATION_TITLE;
-    	    if (preg_match('/\d\.\d/', $appli))
-    	    {
-    	        if (! preg_match('/'.preg_quote(DOL_VERSION).'/', $appli)) $appli.=" (".DOL_VERSION.")";	// If new title contains a version that is different than core
-    	    }
-    	    else $appli.=" ".DOL_VERSION;
-    	}
-    	else $appli.=" ".DOL_VERSION;
+        // Define link to login card
+        $appli=constant('DOL_APPLICATION_TITLE');
+        if (! empty($conf->global->MAIN_APPLICATION_TITLE))
+        {
+            $appli=$conf->global->MAIN_APPLICATION_TITLE;
+            if (preg_match('/\d\.\d/', $appli))
+            {
+                if (! preg_match('/'.preg_quote(DOL_VERSION).'/', $appli)) $appli.=" (".DOL_VERSION.")";    // If new title contains a version that is different than core
+            }
+            else $appli.=" ".DOL_VERSION;
+        }
+        else $appli.=" ".DOL_VERSION;
 
-    	$urlback=$_SERVER["REQUEST_URI"];
-    	$topic='['.$appli.'] '.$langs->transnoentitiesnoconv("NewOnlinePaymentFailed");
-    	$content="";
-    	$content.=$langs->transnoentitiesnoconv("ValidationOfOnlinePaymentFailed")."\n";
-    	$content.="\n";
-    	$content.=$langs->transnoentitiesnoconv("TechnicalInformation").":\n";
-    	$content.=$langs->transnoentitiesnoconv("OnlinePaymentSystem").': '.$paymentmethod."<br>\n";
-    	$content.=$langs->transnoentitiesnoconv("ReturnURLAfterPayment").': '.$urlback."\n";
-    	$content.="tag=".$fulltag."\ntoken=".$onlinetoken." paymentType=".$paymentType." currencycodeType=".$currencyCodeType." payerId=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt;
+        $urlback=$_SERVER["REQUEST_URI"];
+        $topic='['.$appli.'] '.$langs->transnoentitiesnoconv("NewOnlinePaymentFailed");
+        $content="";
+        $content.=$langs->transnoentitiesnoconv("ValidationOfOnlinePaymentFailed")."\n";
+        $content.="\n";
+        $content.=$langs->transnoentitiesnoconv("TechnicalInformation").":\n";
+        $content.=$langs->transnoentitiesnoconv("OnlinePaymentSystem").': '.$paymentmethod."<br>\n";
+        $content.=$langs->transnoentitiesnoconv("ReturnURLAfterPayment").': '.$urlback."\n";
+        $content.="tag=".$fulltag."\ntoken=".$onlinetoken." paymentType=".$paymentType." currencycodeType=".$currencyCodeType." payerId=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt;
 
-    	require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-    	$mailfile = new CMailFile($topic, $sendto, $from, $content);
+        require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+        $mailfile = new CMailFile($topic, $sendto, $from, $content);
 
-    	$result=$mailfile->sendfile();
-    	if ($result)
-    	{
-    		dol_syslog("EMail sent to ".$sendto, LOG_DEBUG, 0, '_paypal');
-    	}
-    	else
-    	{
-    		dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0, '_paypal');
-    	}
+        $result=$mailfile->sendfile();
+        if ($result)
+        {
+            dol_syslog("EMail sent to ".$sendto, LOG_DEBUG, 0, '_paypal');
+        }
+        else
+        {
+            dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0, '_paypal');
+        }
     }
 
     unset($_SESSION['ipaddress']);

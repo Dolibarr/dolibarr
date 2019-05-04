@@ -105,60 +105,60 @@ llxHeader('', $title, $help_url);
 
 if ($object->id)
 {
-	/*
-	 * Show tabs
-	 */
-	$head = myobjectPrepareHead($object);
+    /*
+     * Show tabs
+     */
+    $head = myobjectPrepareHead($object);
 
-	dol_fiche_head($head, 'document', $langs->trans("MyObject"), -1, 'myobject@mymodule');
+    dol_fiche_head($head, 'document', $langs->trans("MyObject"), -1, 'myobject@mymodule');
 
 
-	// Build file list
-	$filearray=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);
-	$totalsize=0;
-	foreach($filearray as $key => $file)
-	{
-		$totalsize+=$file['size'];
-	}
+    // Build file list
+    $filearray=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);
+    $totalsize=0;
+    foreach($filearray as $key => $file)
+    {
+        $totalsize+=$file['size'];
+    }
 
-	// Object card
-	// ------------------------------------------------------------
-	$linkback = '<a href="' .dol_buildpath('/mymodule/myobject_list.php', 1) . '?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+    // Object card
+    // ------------------------------------------------------------
+    $linkback = '<a href="' .dol_buildpath('/mymodule/myobject_list.php', 1) . '?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
-	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+    dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
     print '<div class="fichecenter">';
 
     print '<div class="underbanner clearboth"></div>';
-	print '<table class="border centpercent">';
+    print '<table class="border centpercent">';
 
-	// Number of files
-	print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
+    // Number of files
+    print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
 
-	// Total size
-	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
+    // Total size
+    print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
 
-	print '</table>';
+    print '</table>';
 
-	print '</div>';
+    print '</div>';
 
-	dol_fiche_end();
+    dol_fiche_end();
 
-	$modulepart = 'mymodule';
-	//$permission = $user->rights->mymodule->create;
-	$permission = 1;
-	//$permtoedit = $user->rights->mymodule->create;
-	$permtoedit = 1;
-	$param = '&id=' . $object->id;
+    $modulepart = 'mymodule';
+    //$permission = $user->rights->mymodule->create;
+    $permission = 1;
+    //$permtoedit = $user->rights->mymodule->create;
+    $permtoedit = 1;
+    $param = '&id=' . $object->id;
 
-	//$relativepathwithnofile='myobject/' . dol_sanitizeFileName($object->id).'/';
-	$relativepathwithnofile='myobject/' . dol_sanitizeFileName($object->ref).'/';
+    //$relativepathwithnofile='myobject/' . dol_sanitizeFileName($object->id).'/';
+    $relativepathwithnofile='myobject/' . dol_sanitizeFileName($object->ref).'/';
 
-	include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
+    include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 }
 else
 {
-	accessforbidden('', 0, 0);
+    accessforbidden('', 0, 0);
 }
 
 // End of page

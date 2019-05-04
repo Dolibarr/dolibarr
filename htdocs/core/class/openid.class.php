@@ -22,7 +22,7 @@
  */
 
 /**
- * 	Class to manage OpenID
+ *     Class to manage OpenID
  */
 class SimpleOpenID
 {
@@ -49,8 +49,8 @@ class SimpleOpenID
     /**
      * SetOpenIDServer
      *
-     * @param	string	$a		Server
-     * @return	void
+     * @param    string    $a        Server
+     * @return    void
      */
     public function SetOpenIDServer($a)
     {
@@ -62,8 +62,8 @@ class SimpleOpenID
     /**
      * SetOpenIDServer
      *
-     * @param	string	$a		Server
-     * @return	void
+     * @param    string    $a        Server
+     * @return    void
      */
     public function SetTrustRoot($a)
     {
@@ -75,8 +75,8 @@ class SimpleOpenID
     /**
      * SetOpenIDServer
      *
-     * @param	string	$a		Server
-     * @return	void
+     * @param    string    $a        Server
+     * @return    void
      */
     public function SetCancelURL($a)
     {
@@ -88,8 +88,8 @@ class SimpleOpenID
     /**
      * SetApprovedURL
      *
-     * @param	string	$a		Server
-     * @return	void
+     * @param    string    $a        Server
+     * @return    void
      */
     public function SetApprovedURL($a)
     {
@@ -101,8 +101,8 @@ class SimpleOpenID
     /**
      * SetRequiredFields
      *
-     * @param	string	$a		Server
-     * @return	void
+     * @param    string    $a        Server
+     * @return    void
      */
     public function SetRequiredFields($a)
     {
@@ -118,8 +118,8 @@ class SimpleOpenID
     /**
      * SetOptionalFields
      *
-     * @param	string	$a		Server
-     * @return	void
+     * @param    string    $a        Server
+     * @return    void
      */
     public function SetOptionalFields($a)
     {
@@ -135,8 +135,8 @@ class SimpleOpenID
     /**
      * SetIdentity
      *
-     * @param	string  $a		Server
-     * @return	void
+     * @param    string  $a        Server
+     * @return    void
      */
     public function SetIdentity($a)
     {
@@ -166,7 +166,7 @@ class SimpleOpenID
     /**
      * GetIdentity
      *
-     * @return	string
+     * @return    string
      */
     public function GetIdentity()
     {
@@ -179,7 +179,7 @@ class SimpleOpenID
     /**
      * SetOpenIDServer
      *
-     * @return	void
+     * @return    void
      */
     public function GetError()
     {
@@ -192,9 +192,9 @@ class SimpleOpenID
     /**
      * ErrorStore
      *
-     * @param	string	$code		Code
-     * @param	string	$desc		Description
-     * @return	void
+     * @param    string    $code        Code
+     * @param    string    $desc        Description
+     * @return    void
      */
     public function ErrorStore($code, $desc = null)
     {
@@ -210,7 +210,7 @@ class SimpleOpenID
     /**
      * IsError
      *
-     * @return	boolean
+     * @return    boolean
      */
     public function IsError()
     {
@@ -228,8 +228,8 @@ class SimpleOpenID
     /**
      * splitResponse
      *
-     * @param	string	$response		Server
-     * @return	void
+     * @param    string    $response        Server
+     * @return    void
      */
     public function splitResponse($response)
     {
@@ -249,8 +249,8 @@ class SimpleOpenID
     /**
      * OpenID_Standarize
      *
-     * @param	string	$openid_identity		Server
-     * @return	string
+     * @param    string    $openid_identity        Server
+     * @return    string
      */
     public function OpenID_Standarize($openid_identity = null)
     {
@@ -276,8 +276,8 @@ class SimpleOpenID
     /**
      * array2url
      *
-     * @param 	array	$arr		An array
-     * @return false|string		false if KO, string of url if OK
+     * @param     array    $arr        An array
+     * @return false|string        false if KO, string of url if OK
      */
     public function array2url($arr)
     {
@@ -296,9 +296,9 @@ class SimpleOpenID
     /**
      * FSOCK_Request
      *
-     * @param string 	$url		URL
-     * @param string	$method		Method
-     * @param string	$params		Params
+     * @param string     $url        URL
+     * @param string    $method        Method
+     * @param string    $params        Params
      * @return boolean|unknown
      */
     public function FSOCK_Request($url, $method = "GET", $params = "")
@@ -330,9 +330,9 @@ class SimpleOpenID
     /**
      * CURL_Request
      *
-     * @param 	string	$url		URL
-     * @param 	string	$method		Method
-     * @param 	string	$params		Params
+     * @param     string    $url        URL
+     * @param     string    $method        Method
+     * @param     string    $params        Params
      * @return string
      */
     public function CURL_Request($url, $method = "GET", $params = "")
@@ -363,8 +363,8 @@ class SimpleOpenID
     /**
      * HTML2OpenIDServer
      *
-     * @param string	$content	Content
-     * @return array				Array of servers
+     * @param string    $content    Content
+     * @return array                Array of servers
      */
     public function HTML2OpenIDServer($content)
     {
@@ -391,8 +391,8 @@ class SimpleOpenID
     /**
      * Get openid server
      *
-     * @param	string	$url	Url to found endpoint
-     * @return 	string			Endpoint
+     * @param    string    $url    Url to found endpoint
+     * @return     string            Endpoint
      */
     public function GetOpenIDServer($url = '')
     {
@@ -421,7 +421,7 @@ class SimpleOpenID
     /**
      * GetRedirectURL
      *
-     * @return	string
+     * @return    string
      */
     public function GetRedirectURL()
     {
@@ -447,7 +447,7 @@ class SimpleOpenID
     /**
      * Redirect
      *
-     * @return	void
+     * @return    void
      */
     public function Redirect()
     {
@@ -460,7 +460,7 @@ class SimpleOpenID
             echo '\';</script>';
         }
         else
-        {	// Default Header Redirect
+        {    // Default Header Redirect
             header('Location: ' . $redirect_to);
         }
     }
@@ -469,7 +469,7 @@ class SimpleOpenID
     /**
      * ValidateWithServer
      *
-     * @return	boolean
+     * @return    boolean
      */
     public function ValidateWithServer()
     {
@@ -515,8 +515,8 @@ class SimpleOpenID
     /**
      * Get XRDS response and set possible servers.
      *
-     * @param	string	$url	Url of endpoint to request
-     * @return 	string			First endpoint OpenID server found. False if it failed to found.
+     * @param    string    $url    Url of endpoint to request
+     * @return     string            First endpoint OpenID server found. False if it failed to found.
      */
     public function sendDiscoveryRequestToGetXRDS($url = '')
     {

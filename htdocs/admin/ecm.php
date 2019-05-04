@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2013	Florian Henry	<florian.henry@open-concept.pro>
+/* Copyright (C) 2013    Florian Henry    <florian.henry@open-concept.pro>
  * Copyright (C) 2015	Juanjo Menent	<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -17,9 +17,9 @@
  */
 
 /**
- *   	\file       htdocs/admin/ecm.php
- *		\ingroup    core
- *		\brief      Page to setup ECM (GED) module
+ *       \file       htdocs/admin/ecm.php
+ *        \ingroup    core
+ *        \brief      Page to setup ECM (GED) module
  */
 
 require '../main.inc.php';
@@ -92,18 +92,18 @@ print '<td class="center" width="20">&nbsp;</td>';
 print '<td class="center" width="100">';
 if ($conf->use_javascript_ajax)
 {
-	print ajax_constantonoff('ECM_AUTO_TREE_ENABLED');
+    print ajax_constantonoff('ECM_AUTO_TREE_ENABLED');
 }
 else
 {
-	if (empty($conf->global->ECM_AUTO_TREE_ENABLED))
-	{
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_ECM_AUTO_TREE_ENABLED">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
-	}
-	elseif(! empty($conf->global->USER_MAIL_REQUIRED))
-	{
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_ECM_AUTO_TREE_ENABLED">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
-	}
+    if (empty($conf->global->ECM_AUTO_TREE_ENABLED))
+    {
+        print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_ECM_AUTO_TREE_ENABLED">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+    }
+    elseif(! empty($conf->global->USER_MAIL_REQUIRED))
+    {
+        print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_ECM_AUTO_TREE_ENABLED">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+    }
 }
 print '</td></tr>';
 

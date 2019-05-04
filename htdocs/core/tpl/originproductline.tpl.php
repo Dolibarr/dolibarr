@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2010-2012	Regis Houssin	<regis.houssin@inodbox.com>
-/* Copyright (C) 2017		Charlie Benke	<charlie@patas-monkey.com>
+/* Copyright (C) 2010-2012    Regis Houssin    <regis.houssin@inodbox.com>
+/* Copyright (C) 2017        Charlie Benke    <charlie@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,8 +19,8 @@
 // Protection to avoid direct call of template
 if (empty($conf) || ! is_object($conf))
 {
-	print "Error, template page can't be called as URL";
-	exit;
+    print "Error, template page can't be called as URL";
+    exit;
 }
 
 ?>
@@ -33,11 +33,11 @@ print '<td>'.$this->tpl['description'].'</td>';
 print '<td class="right">'.$this->tpl['vat_rate'].'</td>';
 print '<td class="right">'.$this->tpl['price'].'</td>';
 if (!empty($conf->multicurrency->enabled))
-	print '<td class="right">'.$this->tpl['multicurrency_price'].'</td>';
+    print '<td class="right">'.$this->tpl['multicurrency_price'].'</td>';
 
 print '<td class="right">'.$this->tpl['qty'].'</td>';
 if($conf->global->PRODUCT_USE_UNITS)
-	print '<td class="left">'.$langs->trans($this->tpl['unit']).'</td>';
+    print '<td class="left">'.$langs->trans($this->tpl['unit']).'</td>';
 
 print '<td class="right">'.$this->tpl['remise_percent'].'</td>';
 print '</tr>'."\n";

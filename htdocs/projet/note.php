@@ -17,9 +17,9 @@
  */
 
 /**
- *	\file       htdocs/projet/note.php
- *	\ingroup    project
- *	\brief      Fiche d'information sur un projet
+ *    \file       htdocs/projet/note.php
+ *    \ingroup    project
+ *    \brief      Fiche d'information sur un projet
  */
 
 require '../main.inc.php';
@@ -34,7 +34,7 @@ $id = GETPOST('id', 'int');
 $ref= GETPOST('ref', 'alpha');
 
 $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
-//if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
+//if (! $user->rights->projet->all->lire) $mine=1;    // Special for projects
 
 $object = new Project($db);
 
@@ -46,14 +46,14 @@ $socid=0;
 //if ($user->societe_id > 0) $socid = $user->societe_id;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
 $result = restrictedArea($user, 'projet', $id, 'projet&project');
 
-$permissionnote=$user->rights->projet->creer;	// Used by the include of actions_setnotes.inc.php
+$permissionnote=$user->rights->projet->creer;    // Used by the include of actions_setnotes.inc.php
 
 
 /*
  * Actions
  */
 
-include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, not includ_once
+include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';    // Must be include, not includ_once
 
 
 /*
@@ -72,51 +72,51 @@ $now=dol_now();
 
 if ($id > 0 || ! empty($ref))
 {
-	// To verify role of users
-	//$userAccess = $object->restrictedProjectArea($user,'read');
-	$userWrite  = $object->restrictedProjectArea($user, 'write');
-	//$userDelete = $object->restrictedProjectArea($user,'delete');
-	//print "userAccess=".$userAccess." userWrite=".$userWrite." userDelete=".$userDelete;
+    // To verify role of users
+    //$userAccess = $object->restrictedProjectArea($user,'read');
+    $userWrite  = $object->restrictedProjectArea($user, 'write');
+    //$userDelete = $object->restrictedProjectArea($user,'delete');
+    //print "userAccess=".$userAccess." userWrite=".$userWrite." userDelete=".$userDelete;
 
-	$head = project_prepare_head($object);
-	dol_fiche_head($head, 'notes', $langs->trans('Project'), -1, ($object->public?'projectpub':'project'));
+    $head = project_prepare_head($object);
+    dol_fiche_head($head, 'notes', $langs->trans('Project'), -1, ($object->public?'projectpub':'project'));
 
-	
-	// Project card
-	
-	$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
-	
-	$morehtmlref='<div class="refidno">';
-	// Title
-	$morehtmlref.=$object->title;
-	// Thirdparty
-	if ($object->thirdparty->id > 0)
-	{
-	    $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1, 'project');
-	}
-	$morehtmlref.='</div>';
-	
-	// Define a complementary filter for search of next/prev ref.
-	if (! $user->rights->projet->all->lire)
-	{
-	    $objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
-	    $object->next_prev_filter=" rowid in (".(count($objectsListId)?join(',', array_keys($objectsListId)):'0').")";
-	}
-	
-	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
-	
-	
-	print '<div class="fichecenter">';
-	print '<div class="underbanner clearboth"></div>';
-	
-	$cssclass="titlefield";
-	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
-	
-	print '</div>';
-	
-	print '<div class="clearboth"></div>';
-	
-	dol_fiche_end();
+    
+    // Project card
+    
+    $linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+    
+    $morehtmlref='<div class="refidno">';
+    // Title
+    $morehtmlref.=$object->title;
+    // Thirdparty
+    if ($object->thirdparty->id > 0)
+    {
+        $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1, 'project');
+    }
+    $morehtmlref.='</div>';
+    
+    // Define a complementary filter for search of next/prev ref.
+    if (! $user->rights->projet->all->lire)
+    {
+        $objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
+        $object->next_prev_filter=" rowid in (".(count($objectsListId)?join(',', array_keys($objectsListId)):'0').")";
+    }
+    
+    dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+    
+    
+    print '<div class="fichecenter">';
+    print '<div class="underbanner clearboth"></div>';
+    
+    $cssclass="titlefield";
+    include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
+    
+    print '</div>';
+    
+    print '<div class="clearboth"></div>';
+    
+    dol_fiche_end();
 }
 
 // End of page

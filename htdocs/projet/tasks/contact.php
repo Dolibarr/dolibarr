@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+/* Copyright (C) 2005        Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@inodbox.com>
  *
@@ -18,9 +18,9 @@
  */
 
 /**
- *	\file       htdocs/projet/tasks/contact.php
- *	\ingroup    project
- *	\brief      Actors of a task
+ *    \file       htdocs/projet/tasks/contact.php
+ *    \ingroup    project
+ *    \brief      Actors of a task
  */
 
 require "../../main.inc.php";
@@ -57,98 +57,98 @@ $projectstatic = new Project($db);
 // Add new contact
 if ($action == 'addcontact' && $user->rights->projet->creer)
 {
-	$result = $object->fetch($id, $ref);
+    $result = $object->fetch($id, $ref);
 
     if ($result > 0 && $id > 0)
     {
-    	$idfortaskuser=(GETPOST("contactid")!=0)?GETPOST("contactid"):GETPOST("userid");	// GETPOST('contactid') may val -1 to mean empty or -2 to means "everybody"
-    	if ($idfortaskuser == -2)
-    	{
-    		$result=$projectstatic->fetch($object->fk_project);
-    		if ($result <= 0)
-    		{
-    			dol_print_error($db, $projectstatic->error, $projectstatic->errors);
-    		}
-    		else
-    		{
-    			$contactsofproject=$projectstatic->getListContactId('internal');
-    			foreach($contactsofproject as $key => $val)
-    			{
-    				$result = $object->add_contact($val, GETPOST("type"), GETPOST("source"));
-    			}
-    		}
-    	}
-    	else
-    	{
-  			$result = $object->add_contact($idfortaskuser, GETPOST("type"), GETPOST("source"));
-    	}
+        $idfortaskuser=(GETPOST("contactid")!=0)?GETPOST("contactid"):GETPOST("userid");    // GETPOST('contactid') may val -1 to mean empty or -2 to means "everybody"
+        if ($idfortaskuser == -2)
+        {
+            $result=$projectstatic->fetch($object->fk_project);
+            if ($result <= 0)
+            {
+                dol_print_error($db, $projectstatic->error, $projectstatic->errors);
+            }
+            else
+            {
+                $contactsofproject=$projectstatic->getListContactId('internal');
+                foreach($contactsofproject as $key => $val)
+                {
+                    $result = $object->add_contact($val, GETPOST("type"), GETPOST("source"));
+                }
+            }
+        }
+        else
+        {
+              $result = $object->add_contact($idfortaskuser, GETPOST("type"), GETPOST("source"));
+        }
     }
 
-	if ($result >= 0)
-	{
-		header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id.($withproject?'&withproject=1':''));
-		exit;
-	}
-	else
-	{
-		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
-		{
-			$langs->load("errors");
-			setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
-		}
-		else
-		{
-			setEventMessages($object->error, $object->errors, 'errors');
-		}
-	}
+    if ($result >= 0)
+    {
+        header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id.($withproject?'&withproject=1':''));
+        exit;
+    }
+    else
+    {
+        if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+        {
+            $langs->load("errors");
+            setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
+        }
+        else
+        {
+            setEventMessages($object->error, $object->errors, 'errors');
+        }
+    }
 }
 
 // bascule du statut d'un contact
 if ($action == 'swapstatut' && $user->rights->projet->creer)
 {
-	if ($object->fetch($id, $ref))
-	{
-	    $result=$object->swapContactStatus(GETPOST('ligne'));
-	}
-	else
-	{
-		dol_print_error($db);
-	}
+    if ($object->fetch($id, $ref))
+    {
+        $result=$object->swapContactStatus(GETPOST('ligne'));
+    }
+    else
+    {
+        dol_print_error($db);
+    }
 }
 
 // Efface un contact
 if ($action == 'deleteline' && $user->rights->projet->creer)
 {
-	$object->fetch($id, $ref);
-	$result = $object->delete_contact($_GET["lineid"]);
+    $object->fetch($id, $ref);
+    $result = $object->delete_contact($_GET["lineid"]);
 
-	if ($result >= 0)
-	{
-		header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id.($withproject?'&withproject=1':''));
-		exit;
-	}
-	else
-	{
-		dol_print_error($db);
-	}
+    if ($result >= 0)
+    {
+        header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id.($withproject?'&withproject=1':''));
+        exit;
+    }
+    else
+    {
+        dol_print_error($db);
+    }
 }
 
 // Retreive First Task ID of Project if withprojet is on to allow project prev next to work
 if (! empty($project_ref) && ! empty($withproject))
 {
-	if ($projectstatic->fetch(0, $project_ref) > 0)
-	{
-		$tasksarray=$object->getTasksArray(0, 0, $projectstatic->id, $socid, 0);
-		if (count($tasksarray) > 0)
-		{
-			$id=$tasksarray[0]->id;
-		}
-		else
-		{
-			header("Location: ".DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.($withproject?'&withproject=1':'').(empty($mode)?'':'&mode='.$mode));
-			exit;
-		}
-	}
+    if ($projectstatic->fetch(0, $project_ref) > 0)
+    {
+        $tasksarray=$object->getTasksArray(0, 0, $projectstatic->id, $socid, 0);
+        if (count($tasksarray) > 0)
+        {
+            $id=$tasksarray[0]->id;
+        }
+        else
+        {
+            header("Location: ".DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.($withproject?'&withproject=1':'').(empty($mode)?'':'&mode='.$mode));
+            exit;
+        }
+    }
 }
 
 /*
@@ -171,29 +171,29 @@ $userstatic = new User($db);
 
 if ($id > 0 || ! empty($ref))
 {
-	if ($object->fetch($id, $ref) > 0)
-	{
-		if(! empty($conf->global->PROJECT_ALLOW_COMMENT_ON_TASK) && method_exists($object, 'fetchComments') && empty($object->comments)) $object->fetchComments();
-	    $id = $object->id;     // So when doing a search from ref, id is also set correctly.
+    if ($object->fetch($id, $ref) > 0)
+    {
+        if(! empty($conf->global->PROJECT_ALLOW_COMMENT_ON_TASK) && method_exists($object, 'fetchComments') && empty($object->comments)) $object->fetchComments();
+        $id = $object->id;     // So when doing a search from ref, id is also set correctly.
 
-		$result=$projectstatic->fetch($object->fk_project);
-		if(! empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($projectstatic, 'fetchComments') && empty($projectstatic->comments)) $projectstatic->fetchComments();
-		if (! empty($projectstatic->socid)) $projectstatic->fetch_thirdparty();
+        $result=$projectstatic->fetch($object->fk_project);
+        if(! empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($projectstatic, 'fetchComments') && empty($projectstatic->comments)) $projectstatic->fetchComments();
+        if (! empty($projectstatic->socid)) $projectstatic->fetch_thirdparty();
 
-		$object->project = clone $projectstatic;
+        $object->project = clone $projectstatic;
 
-		$userWrite  = $projectstatic->restrictedProjectArea($user, 'write');
+        $userWrite  = $projectstatic->restrictedProjectArea($user, 'write');
 
-		if ($withproject)
-		{
-    		// Tabs for project
-    		$tab='tasks';
-    		$head=project_prepare_head($projectstatic);
-    		dol_fiche_head($head, $tab, $langs->trans("Project"), -1, ($projectstatic->public?'projectpub':'project'));
+        if ($withproject)
+        {
+            // Tabs for project
+            $tab='tasks';
+            $head=project_prepare_head($projectstatic);
+            dol_fiche_head($head, $tab, $langs->trans("Project"), -1, ($projectstatic->public?'projectpub':'project'));
 
-    		$param=($mode=='mine'?'&mode=mine':'');
+            $param=($mode=='mine'?'&mode=mine':'');
 
-			// Project card
+            // Project card
 
             $linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -276,208 +276,208 @@ if ($id > 0 || ! empty($ref))
 
             print '<div class="clearboth"></div>';
 
-    		dol_fiche_end();
+            dol_fiche_end();
 
-    		print '<br>';
-		}
-
-
-		// To verify role of users
-		//$userAccess = $projectstatic->restrictedProjectArea($user); // We allow task affected to user even if a not allowed project
-		//$arrayofuseridoftask=$object->getListContactId('internal');
-
-		$head = task_prepare_head($object);
-		dol_fiche_head($head, 'task_contact', $langs->trans("Task"), -1, 'projecttask', 0, '', 'reposition');
+            print '<br>';
+        }
 
 
-		$param=(GETPOST('withproject')?'&withproject=1':'');
-		$linkback=GETPOST('withproject')?'<a href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.'">'.$langs->trans("BackToList").'</a>':'';
+        // To verify role of users
+        //$userAccess = $projectstatic->restrictedProjectArea($user); // We allow task affected to user even if a not allowed project
+        //$arrayofuseridoftask=$object->getListContactId('internal');
 
-		if (! GETPOST('withproject') || empty($projectstatic->id))
-		{
-		    $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1);
-		    $object->next_prev_filter=" fk_projet in (".$projectsListId.")";
-		}
-		else $object->next_prev_filter=" fk_projet = ".$projectstatic->id;
+        $head = task_prepare_head($object);
+        dol_fiche_head($head, 'task_contact', $langs->trans("Task"), -1, 'projecttask', 0, '', 'reposition');
 
-		$morehtmlref='';
 
-		// Project
-		if (empty($withproject))
-		{
-		    $result=$projectstatic->fetch($object->fk_project);
-		    $morehtmlref.='<div class="refidno">';
-		    $morehtmlref.=$langs->trans("Project").': ';
-		    $morehtmlref.=$projectstatic->getNomUrl(1);
-		    $morehtmlref.='<br>';
+        $param=(GETPOST('withproject')?'&withproject=1':'');
+        $linkback=GETPOST('withproject')?'<a href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.'">'.$langs->trans("BackToList").'</a>':'';
 
-		    // Third party
-		    $morehtmlref.=$langs->trans("ThirdParty").': ';
-		    if($projectstatic->socid>0) {
-		        $projectstatic->fetch_thirdparty();
-		        $morehtmlref.=$projectstatic->thirdparty->getNomUrl(1);
-		    }
+        if (! GETPOST('withproject') || empty($projectstatic->id))
+        {
+            $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1);
+            $object->next_prev_filter=" fk_projet in (".$projectsListId.")";
+        }
+        else $object->next_prev_filter=" fk_projet = ".$projectstatic->id;
 
-		    $morehtmlref.='</div>';
-		}
+        $morehtmlref='';
 
-		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, $param, 0, '', '', 1);
+        // Project
+        if (empty($withproject))
+        {
+            $result=$projectstatic->fetch($object->fk_project);
+            $morehtmlref.='<div class="refidno">';
+            $morehtmlref.=$langs->trans("Project").': ';
+            $morehtmlref.=$projectstatic->getNomUrl(1);
+            $morehtmlref.='<br>';
 
-		dol_fiche_end();
+            // Third party
+            $morehtmlref.=$langs->trans("ThirdParty").': ';
+            if($projectstatic->socid>0) {
+                $projectstatic->fetch_thirdparty();
+                $morehtmlref.=$projectstatic->thirdparty->getNomUrl(1);
+            }
 
-		/*
-		 * Lines of contacts
-		 */
+            $morehtmlref.='</div>';
+        }
+
+        dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, $param, 0, '', '', 1);
+
+        dol_fiche_end();
+
+        /*
+         * Lines of contacts
+         */
 /*
-		// Contacts lines (modules that overwrite templates must declare this into descriptor)
-		$dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl'));
-		foreach($dirtpls as $reldir)
-		{
-		    $res=@include dol_buildpath($reldir.'/contacts.tpl.php');
-		    if ($res) break;
-		}
+        // Contacts lines (modules that overwrite templates must declare this into descriptor)
+        $dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl'));
+        foreach($dirtpls as $reldir)
+        {
+            $res=@include dol_buildpath($reldir.'/contacts.tpl.php');
+            if ($res) break;
+        }
 */
 
-		/*
-		 * Add a new contact line
-		 */
-		print '<table class="noborder" width="100%">';
+        /*
+         * Add a new contact line
+         */
+        print '<table class="noborder" width="100%">';
 
-		if ($action != 'editline' && $user->rights->projet->creer)
-		{
-			print '<tr class="liste_titre">';
-			print '<td>'.$langs->trans("Nature").'</td>';
-			print '<td>'.$langs->trans("ThirdParty").'</td>';
-			print '<td>'.$langs->trans("Users").'</td>';
-			print '<td>'.$langs->trans("ContactType").'</td>';
-			print '<td colspan="3">&nbsp;</td>';
-			print "</tr>\n";
+        if ($action != 'editline' && $user->rights->projet->creer)
+        {
+            print '<tr class="liste_titre">';
+            print '<td>'.$langs->trans("Nature").'</td>';
+            print '<td>'.$langs->trans("ThirdParty").'</td>';
+            print '<td>'.$langs->trans("Users").'</td>';
+            print '<td>'.$langs->trans("ContactType").'</td>';
+            print '<td colspan="3">&nbsp;</td>';
+            print "</tr>\n";
 
-			print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="POST">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			print '<input type="hidden" name="action" value="addcontact">';
-			print '<input type="hidden" name="source" value="internal">';
-			print '<input type="hidden" name="id" value="'.$id.'">';
-			if ($withproject) print '<input type="hidden" name="withproject" value="'.$withproject.'">';
+            print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="POST">';
+            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            print '<input type="hidden" name="action" value="addcontact">';
+            print '<input type="hidden" name="source" value="internal">';
+            print '<input type="hidden" name="id" value="'.$id.'">';
+            if ($withproject) print '<input type="hidden" name="withproject" value="'.$withproject.'">';
 
-			// Ligne ajout pour contact interne
-			print '<tr class="oddeven">';
+            // Ligne ajout pour contact interne
+            print '<tr class="oddeven">';
 
-			print '<td class="nowrap">';
-			print img_object('', 'user').' '.$langs->trans("Users");
-			print '</td>';
+            print '<td class="nowrap">';
+            print img_object('', 'user').' '.$langs->trans("Users");
+            print '</td>';
 
-			print '<td colspan="1">';
-			print $conf->global->MAIN_INFO_SOCIETE_NOM;
-			print '</td>';
+            print '<td colspan="1">';
+            print $conf->global->MAIN_INFO_SOCIETE_NOM;
+            print '</td>';
 
-			print '<td colspan="1">';
-			// On recupere les id des users deja selectionnes
-			if ($object->project->public) $contactsofproject='';	// Everybody
-			else $contactsofproject=$projectstatic->getListContactId('internal');
-			print $form->select_dolusers((GETPOST('contactid')?GETPOST('contactid'):$user->id), 'contactid', 0, '', 0, '', $contactsofproject, 0, 0, 0, '', 1, $langs->trans("ResourceNotAssignedToProject"));
-			print '</td>';
-			print '<td>';
-			$formcompany->selectTypeContact($object, '', 'type', 'internal', 'rowid');
-			print '</td>';
-			print '<td class="right" colspan="3" ><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
-			print '</tr>';
+            print '<td colspan="1">';
+            // On recupere les id des users deja selectionnes
+            if ($object->project->public) $contactsofproject='';    // Everybody
+            else $contactsofproject=$projectstatic->getListContactId('internal');
+            print $form->select_dolusers((GETPOST('contactid')?GETPOST('contactid'):$user->id), 'contactid', 0, '', 0, '', $contactsofproject, 0, 0, 0, '', 1, $langs->trans("ResourceNotAssignedToProject"));
+            print '</td>';
+            print '<td>';
+            $formcompany->selectTypeContact($object, '', 'type', 'internal', 'rowid');
+            print '</td>';
+            print '<td class="right" colspan="3" ><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
+            print '</tr>';
 
-			print '</form>';
+            print '</form>';
 
-			// Line to add an external contact. Only if project linked to a third party.
-			if ($projectstatic->socid)
-			{
-				print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST">';
-				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-				print '<input type="hidden" name="action" value="addcontact">';
-				print '<input type="hidden" name="source" value="external">';
-				print '<input type="hidden" name="id" value="'.$object->id.'">';
-				if ($withproject) print '<input type="hidden" name="withproject" value="'.$withproject.'">';
+            // Line to add an external contact. Only if project linked to a third party.
+            if ($projectstatic->socid)
+            {
+                print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST">';
+                print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+                print '<input type="hidden" name="action" value="addcontact">';
+                print '<input type="hidden" name="source" value="external">';
+                print '<input type="hidden" name="id" value="'.$object->id.'">';
+                if ($withproject) print '<input type="hidden" name="withproject" value="'.$withproject.'">';
 
 
-				print '<tr class="oddeven">';
+                print '<tr class="oddeven">';
 
-				print '<td class="nowrap">';
-				print img_object('', 'contact').' '.$langs->trans("ThirdPartyContacts");
-				print '</td>';
+                print '<td class="nowrap">';
+                print img_object('', 'contact').' '.$langs->trans("ThirdPartyContacts");
+                print '</td>';
 
-				print '<td colspan="1">';
-				$thirdpartyofproject=$projectstatic->getListContactId('thirdparty');
-				$selectedCompany = isset($_GET["newcompany"])?$_GET["newcompany"]:$projectstatic->socid;
-				$selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany', $thirdpartyofproject, 0, '&withproject='.$withproject);
-				print '</td>';
+                print '<td colspan="1">';
+                $thirdpartyofproject=$projectstatic->getListContactId('thirdparty');
+                $selectedCompany = isset($_GET["newcompany"])?$_GET["newcompany"]:$projectstatic->socid;
+                $selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany', $thirdpartyofproject, 0, '&withproject='.$withproject);
+                print '</td>';
 
-				print '<td colspan="1">';
-				$contactofproject=$projectstatic->getListContactId('external');
-				$nbofcontacts=$form->select_contacts($selectedCompany, '', 'contactid', 0, '', $contactofproject);
-				print '</td>';
-				print '<td>';
-				$formcompany->selectTypeContact($object, '', 'type', 'external', 'rowid');
-				print '</td>';
-				print '<td class="right" colspan="3" ><input type="submit" class="button" id="add-customer-contact" value="'.$langs->trans("Add").'"';
-				if (! $nbofcontacts) print ' disabled';
-				print '></td>';
-				print '</tr>';
+                print '<td colspan="1">';
+                $contactofproject=$projectstatic->getListContactId('external');
+                $nbofcontacts=$form->select_contacts($selectedCompany, '', 'contactid', 0, '', $contactofproject);
+                print '</td>';
+                print '<td>';
+                $formcompany->selectTypeContact($object, '', 'type', 'external', 'rowid');
+                print '</td>';
+                print '<td class="right" colspan="3" ><input type="submit" class="button" id="add-customer-contact" value="'.$langs->trans("Add").'"';
+                if (! $nbofcontacts) print ' disabled';
+                print '></td>';
+                print '</tr>';
 
-				print "</form>";
-			}
-		}
+                print "</form>";
+            }
+        }
 
-		// Liste des contacts lies
-		print '<tr class="liste_titre">';
-		print '<td>'.$langs->trans("Source").'</td>';
-		print '<td>'.$langs->trans("ThirdParty").'</td>';
-		print '<td>'.$langs->trans("TaskContact").'</td>';
-		print '<td>'.$langs->trans("ContactType").'</td>';
-		print '<td class="center">'.$langs->trans("Status").'</td>';
-		print '<td colspan="2">&nbsp;</td>';
-		print "</tr>\n";
+        // Liste des contacts lies
+        print '<tr class="liste_titre">';
+        print '<td>'.$langs->trans("Source").'</td>';
+        print '<td>'.$langs->trans("ThirdParty").'</td>';
+        print '<td>'.$langs->trans("TaskContact").'</td>';
+        print '<td>'.$langs->trans("ContactType").'</td>';
+        print '<td class="center">'.$langs->trans("Status").'</td>';
+        print '<td colspan="2">&nbsp;</td>';
+        print "</tr>\n";
 
-		$companystatic = new Societe($db);
+        $companystatic = new Societe($db);
 
-		foreach(array('internal','external') as $source)
-		{
-			$tab = $object->liste_contact(-1, $source);
-			$num=count($tab);
+        foreach(array('internal','external') as $source)
+        {
+            $tab = $object->liste_contact(-1, $source);
+            $num=count($tab);
 
-			$i = 0;
-			while ($i < $num)
-			{
-				print '<tr class="oddeven" valign="top">';
+            $i = 0;
+            while ($i < $num)
+            {
+                print '<tr class="oddeven" valign="top">';
 
-				// Source
-				print '<td class="left">';
-				if ($tab[$i]['source']=='internal') print $langs->trans("User");
-				if ($tab[$i]['source']=='external') print $langs->trans("ThirdPartyContact");
-				print '</td>';
+                // Source
+                print '<td class="left">';
+                if ($tab[$i]['source']=='internal') print $langs->trans("User");
+                if ($tab[$i]['source']=='external') print $langs->trans("ThirdPartyContact");
+                print '</td>';
 
-				// Societe
-				print '<td class="left">';
-				if ($tab[$i]['socid'] > 0)
-				{
-					$companystatic->fetch($tab[$i]['socid']);
-					print $companystatic->getNomUrl(1);
-				}
-				if ($tab[$i]['socid'] < 0)
-				{
-					print $conf->global->MAIN_INFO_SOCIETE_NOM;
-				}
-				if (! $tab[$i]['socid'])
-				{
-					print '&nbsp;';
-				}
-				print '</td>';
+                // Societe
+                print '<td class="left">';
+                if ($tab[$i]['socid'] > 0)
+                {
+                    $companystatic->fetch($tab[$i]['socid']);
+                    print $companystatic->getNomUrl(1);
+                }
+                if ($tab[$i]['socid'] < 0)
+                {
+                    print $conf->global->MAIN_INFO_SOCIETE_NOM;
+                }
+                if (! $tab[$i]['socid'])
+                {
+                    print '&nbsp;';
+                }
+                print '</td>';
 
-				// Contact
-				print '<td>';
+                // Contact
+                print '<td>';
                 if ($tab[$i]['source']=='internal')
                 {
                     $userstatic->id=$tab[$i]['id'];
                     $userstatic->lastname=$tab[$i]['lastname'];
                     $userstatic->firstname=$tab[$i]['firstname'];
-    				$userstatic->photo=$tab[$i]['photo'];
-    				$userstatic->login=$tab[$i]['login'];
+                    $userstatic->photo=$tab[$i]['photo'];
+                    $userstatic->login=$tab[$i]['login'];
                     print $userstatic->getNomUrl(-1);
                 }
                 if ($tab[$i]['source']=='external')
@@ -487,48 +487,48 @@ if ($id > 0 || ! empty($ref))
                     $contactstatic->firstname=$tab[$i]['firstname'];
                     print $contactstatic->getNomUrl(1);
                 }
-				print '</td>';
+                print '</td>';
 
-				// Type de contact
-				print '<td>'.$tab[$i]['libelle'].'</td>';
+                // Type de contact
+                print '<td>'.$tab[$i]['libelle'].'</td>';
 
-				// Statut
-				print '<td class="center">';
-				// Activation desativation du contact
-				if ($object->statut >= 0) print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=swapstatut&ligne='.$tab[$i]['rowid'].($withproject?'&withproject=1':'').'">';
-				print $contactstatic->LibStatut($tab[$i]['status'], 3);
-				if ($object->statut >= 0) print '</a>';
-				print '</td>';
+                // Statut
+                print '<td class="center">';
+                // Activation desativation du contact
+                if ($object->statut >= 0) print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=swapstatut&ligne='.$tab[$i]['rowid'].($withproject?'&withproject=1':'').'">';
+                print $contactstatic->LibStatut($tab[$i]['status'], 3);
+                if ($object->statut >= 0) print '</a>';
+                print '</td>';
 
-				// Icon update et delete
-				print '<td class="center nowrap">';
-				if ($user->rights->projet->creer)
-				{
-					print '&nbsp;';
-					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deleteline&lineid='.$tab[$i]['rowid'].($withproject?'&withproject=1':'').'">';
-					print img_picto($langs->trans('Unlink'), 'unlink');
-					print '</a>';
-				}
-				print '</td>';
+                // Icon update et delete
+                print '<td class="center nowrap">';
+                if ($user->rights->projet->creer)
+                {
+                    print '&nbsp;';
+                    print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deleteline&lineid='.$tab[$i]['rowid'].($withproject?'&withproject=1':'').'">';
+                    print img_picto($langs->trans('Unlink'), 'unlink');
+                    print '</a>';
+                }
+                print '</td>';
 
-				print "</tr>\n";
+                print "</tr>\n";
 
-				$i ++;
-			}
-		}
-		print "</table>";
-	}
-	else
-	{
-		print "ErrorRecordNotFound";
-	}
+                $i ++;
+            }
+        }
+        print "</table>";
+    }
+    else
+    {
+        print "ErrorRecordNotFound";
+    }
 }
 
 if (is_object($hookmanager))
 {
-	$hookmanager->initHooks(array('contacttpl'));
-	$parameters=array();
-	$reshook=$hookmanager->executeHooks('formContactTpl', $parameters, $object, $action);
+    $hookmanager->initHooks(array('contacttpl'));
+    $parameters=array();
+    $reshook=$hookmanager->executeHooks('formContactTpl', $parameters, $object, $action);
 }
 
 // End of page

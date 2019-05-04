@@ -24,7 +24,7 @@
  */
 
 global $conf,$user,$langs,$db;
-//define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
+//define('TEST_DB_FORCE_TYPE','mysql');    // This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/comm/action/class/actioncomm.class.php';
@@ -42,7 +42,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
- * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
+ * @remarks    backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
 class ActionCommTest extends PHPUnit_Framework_TestCase
 {
@@ -59,9 +59,9 @@ class ActionCommTest extends PHPUnit_Framework_TestCase
      */
     public function __construct()
     {
-    	parent::__construct();
+        parent::__construct();
 
-    	//$this->sharedFixture
+        //$this->sharedFixture
         global $conf,$user,$langs,$db;
         $this->savconf=$conf;
         $this->savuser=$user;
@@ -123,7 +123,7 @@ class ActionCommTest extends PHPUnit_Framework_TestCase
     /**
      * testActionCommCreate
      *
-     * @return  int		Id of created object
+     * @return  int        Id of created object
      */
     public function testActionCommCreate()
     {
@@ -137,7 +137,7 @@ class ActionCommTest extends PHPUnit_Framework_TestCase
 
         $localobject=new ActionComm($this->savdb);
 
-        $localobject->type_code   = 'AC_OTH_AUTO';		// Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
+        $localobject->type_code   = 'AC_OTH_AUTO';        // Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
         $localobject->code        = 'AC_PHPUNITTEST';
         $localobject->label       = 'This is a description';
         $localobject->note        = 'This is note';
@@ -148,7 +148,7 @@ class ActionCommTest extends PHPUnit_Framework_TestCase
         $localobject->socid       = 0;
         $localobject->contactid   = 0;
         $localobject->authorid    = $user->id;   // User saving action
-        $localobject->userownerid = $user->id;	// Owner of action
+        $localobject->userownerid = $user->id;    // Owner of action
         // Fields when action is en email (content should be added into note)
         /*$localobject->email_msgid = $object->email_msgid;
          $localobject->email_from  = $object->email_from;
@@ -175,7 +175,7 @@ class ActionCommTest extends PHPUnit_Framework_TestCase
      * @param   int $id     Id action comm
      * @return  ActionComm
      *
-     * @depends	testActionCommCreate
+     * @depends    testActionCommCreate
      * The depends says test is run only if previous is ok
      */
     public function testActionCommFetch($id)
@@ -197,33 +197,33 @@ class ActionCommTest extends PHPUnit_Framework_TestCase
     /**
      * testActionCommUpdate
      *
-     * @param	Object		$localobject	ActionComm
-     * @return	int							Id action comm updated
+     * @param    Object        $localobject    ActionComm
+     * @return    int                            Id action comm updated
      *
-     * @depends	testActionCommFetch
+     * @depends    testActionCommFetch
      * The depends says test is run only if previous is ok
      */
     public function testActionCommUpdate($localobject)
     {
-    	global $conf,$user,$langs,$db;
-    	$conf=$this->savconf;
-    	$user=$this->savuser;
-    	$langs=$this->savlangs;
-    	$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-    	$localobject->label='New label';
-    	$result=$localobject->update($user);
+        $localobject->label='New label';
+        $result=$localobject->update($user);
 
-    	$this->assertLessThan($result, 0);
-    	print __METHOD__." id=".$id." result=".$result."\n";
-    	return $localobject->id;
+        $this->assertLessThan($result, 0);
+        print __METHOD__." id=".$id." result=".$result."\n";
+        return $localobject->id;
     }
 
     /**
      * testActionCommDelete
      *
      * @param   int $id         Id of action comm
-     * @return  int				Result of delete
+     * @return  int                Result of delete
      *
      * @depends testActionCommUpdate
      * The depends says test is run only if previous is ok

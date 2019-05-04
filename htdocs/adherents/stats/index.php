@@ -18,9 +18,9 @@
  */
 
 /**
- *	    \file       htdocs/adherents/stats/index.php
+ *        \file       htdocs/adherents/stats/index.php
  *      \ingroup    member
- *		\brief      Page of subscription members statistics
+ *        \brief      Page of subscription members statistics
  */
 
 require '../../main.inc.php';
@@ -181,7 +181,7 @@ foreach ($data as $val)
 {
     $year = $val['year'];
     while ($oldyear > $year+1)
-    {	// If we have empty year
+    {    // If we have empty year
         $oldyear--;
         print '<tr class="oddeven" height="24">';
         print '<td class="center">';

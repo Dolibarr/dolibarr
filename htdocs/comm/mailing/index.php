@@ -82,7 +82,7 @@ if (is_resource($handle))
             if (preg_match("/(.*)\.(.*)\.(.*)/i", $file, $reg))
             {
                 $modulename=$reg[1];
-       			if ($modulename == 'example') continue;
+                   if ($modulename == 'example') continue;
 
                 // Loading Class
                 $file = $dir."/".$modulename.".modules.php";
@@ -167,19 +167,19 @@ if ($result) {
         $i = 0;
 
         while ($i < $num )
-	    {
-	        $obj = $db->fetch_object($result);
+        {
+            $obj = $db->fetch_object($result);
 
-	        print '<tr class="oddeven">';
-	        print '<td class="nowrap"><a href="card.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowEMail"), "email").' '.$obj->rowid.'</a></td>';
-	        print '<td>'.dol_trunc($obj->titre, 38).'</td>';
-	        print '<td align="center">'.dol_print_date($db->jdate($obj->date_creat), 'day').'</td>';
-	        print '<td align="center">'.($obj->nbemail?$obj->nbemail:"0").'</td>';
-	        $mailstatic=new Mailing($db);
-	        print '<td class="right">'.$mailstatic->LibStatut($obj->statut, 5).'</td>';
+            print '<tr class="oddeven">';
+            print '<td class="nowrap"><a href="card.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowEMail"), "email").' '.$obj->rowid.'</a></td>';
+            print '<td>'.dol_trunc($obj->titre, 38).'</td>';
+            print '<td align="center">'.dol_print_date($db->jdate($obj->date_creat), 'day').'</td>';
+            print '<td align="center">'.($obj->nbemail?$obj->nbemail:"0").'</td>';
+            $mailstatic=new Mailing($db);
+            print '<td class="right">'.$mailstatic->LibStatut($obj->statut, 5).'</td>';
             print '</tr>';
-	        $i++;
-	    }
+            $i++;
+        }
     }
     else
     {

@@ -9,7 +9,7 @@ use \DebugBar\DataCollector\MemoryCollector;
 class DolMemoryCollector extends MemoryCollector
 {
     /**
-     *	Return value of indicator
+     *    Return value of indicator
      *
      *  @return void
      */
@@ -25,24 +25,24 @@ class DolMemoryCollector extends MemoryCollector
         );
     }
 
-	/**
-	 *	Return widget settings
-	 *
-	 *  @return void
-	 */
-	public function getWidgets()
-	{
-		global $langs;
+    /**
+     *    Return widget settings
+     *
+     *  @return void
+     */
+    public function getWidgets()
+    {
+        global $langs;
 
-		$langs->load("other");
+        $langs->load("other");
 
-		return array(
-			"memory" => array(
-				"icon" => "cogs",
-				"tooltip" => $langs->transnoentities('MemoryUsage'),
-				"map" => "memory.peak_usage_str",
-				"default" => "'0B'"
-			)
-		);
-	}
+        return array(
+            "memory" => array(
+                "icon" => "cogs",
+                "tooltip" => $langs->transnoentities('MemoryUsage'),
+                "map" => "memory.peak_usage_str",
+                "default" => "'0B'"
+            )
+        );
+    }
 }

@@ -24,9 +24,9 @@
  */
 
 /**
- *   	\file       htdocs/adherents/admin/adherent.php
- *		\ingroup    member
- *		\brief      Page to setup the module Foundation
+ *       \file       htdocs/adherents/admin/adherent.php
+ *        \ingroup    member
+ *        \brief      Page to setup the module Foundation
  */
 
 require '../../main.inc.php';
@@ -82,30 +82,30 @@ if ($action == 'updateall')
 // Action mise a jour ou ajout d'une constante
 if ($action == 'update' || $action == 'add')
 {
-	$constname=GETPOST('constname', 'alpha');
-	$constvalue=(GETPOST('constvalue_'.$constname) ? GETPOST('constvalue_'.$constname) : GETPOST('constvalue'));
+    $constname=GETPOST('constname', 'alpha');
+    $constvalue=(GETPOST('constvalue_'.$constname) ? GETPOST('constvalue_'.$constname) : GETPOST('constvalue'));
 
-	if (($constname=='ADHERENT_CARD_TYPE' || $constname=='ADHERENT_ETIQUETTE_TYPE' || $constname=='ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS') && $constvalue == -1) $constvalue='';
-	if ($constname=='ADHERENT_LOGIN_NOT_REQUIRED') // Invert choice
-	{
-		if ($constvalue) $constvalue=0;
-		else $constvalue=1;
-	}
+    if (($constname=='ADHERENT_CARD_TYPE' || $constname=='ADHERENT_ETIQUETTE_TYPE' || $constname=='ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS') && $constvalue == -1) $constvalue='';
+    if ($constname=='ADHERENT_LOGIN_NOT_REQUIRED') // Invert choice
+    {
+        if ($constvalue) $constvalue=0;
+        else $constvalue=1;
+    }
 
-	$consttype=GETPOST('consttype', 'alpha');
-	$constnote=GETPOST('constnote');
-	$res=dolibarr_set_const($db, $constname, $constvalue, $type[$consttype], 0, $constnote, $conf->entity);
+    $consttype=GETPOST('consttype', 'alpha');
+    $constnote=GETPOST('constnote');
+    $res=dolibarr_set_const($db, $constname, $constvalue, $type[$consttype], 0, $constnote, $conf->entity);
 
-	if (! $res > 0) $error++;
+    if (! $res > 0) $error++;
 
-	if (! $error)
-	{
-		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	}
-	else
-	{
-		setEventMessages($langs->trans("Error"), null, 'errors');
-	}
+    if (! $error)
+    {
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    }
+    else
+    {
+        setEventMessages($langs->trans("Error"), null, 'errors');
+    }
 }
 
 // Action activation d'un sous module du module adherent
@@ -193,29 +193,29 @@ print "</tr>\n";
 // Use vat for invoice creation
 if ($conf->facture->enabled)
 {
-	print '<tr class="oddeven"><td>'.$langs->trans("VATToUseForSubscriptions").'</td>';
-	if (! empty($conf->banque->enabled))
-	{
-		print '<td>';
-		print $form->selectarray('ADHERENT_VAT_FOR_SUBSCRIPTIONS', array('0'=>$langs->trans("NoVatOnSubscription"),'defaultforfoundationcountry'=>$langs->trans("Default")), (empty($conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS)?'0':$conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS), 0);
-		print '</td>';
-	}
-	else
-	{
-		print '<td class="right">';
-		print $langs->trans("WarningModuleNotActive", $langs->transnoentities("Module85Name"));
-		print '</td>';
-	}
-	print "</tr>\n";
+    print '<tr class="oddeven"><td>'.$langs->trans("VATToUseForSubscriptions").'</td>';
+    if (! empty($conf->banque->enabled))
+    {
+        print '<td>';
+        print $form->selectarray('ADHERENT_VAT_FOR_SUBSCRIPTIONS', array('0'=>$langs->trans("NoVatOnSubscription"),'defaultforfoundationcountry'=>$langs->trans("Default")), (empty($conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS)?'0':$conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS), 0);
+        print '</td>';
+    }
+    else
+    {
+        print '<td class="right">';
+        print $langs->trans("WarningModuleNotActive", $langs->transnoentities("Module85Name"));
+        print '</td>';
+    }
+    print "</tr>\n";
 
-	if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))
-	{
-		print '<tr class="oddeven"><td>'.$langs->trans("ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS").'</td>';
-		print '<td>';
-		$form->select_produits($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS, 'ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS');
-		print '</td>';
-	}
-	print "</tr>\n";
+    if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))
+    {
+        print '<tr class="oddeven"><td>'.$langs->trans("ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS").'</td>';
+        print '<td>';
+        $form->select_produits($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS, 'ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS');
+        print '</td>';
+    }
+    print "</tr>\n";
 }
 
 print '</table>';
@@ -233,13 +233,13 @@ print '<br>';
  * Edition info modele document
  */
 $constantes=array(
-		'ADHERENT_CARD_TYPE',
-//		'ADHERENT_CARD_BACKGROUND',
-		'ADHERENT_CARD_HEADER_TEXT',
-		'ADHERENT_CARD_TEXT',
-		'ADHERENT_CARD_TEXT_RIGHT',
-		'ADHERENT_CARD_FOOTER_TEXT'
-		);
+        'ADHERENT_CARD_TYPE',
+//        'ADHERENT_CARD_BACKGROUND',
+        'ADHERENT_CARD_HEADER_TEXT',
+        'ADHERENT_CARD_TEXT',
+        'ADHERENT_CARD_TEXT_RIGHT',
+        'ADHERENT_CARD_FOOTER_TEXT'
+        );
 
 print load_fiche_titre($langs->trans("MembersCards"), '', '');
 

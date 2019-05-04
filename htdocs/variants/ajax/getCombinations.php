@@ -1,6 +1,6 @@
 <?php
 
-/* Copyright (C) 2016	Marcos García	<marcosgdf@gmail.com>
+/* Copyright (C) 2016    Marcos García    <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,17 +32,17 @@ $id = GETPOST('id', 'int');
 
 if (!$id) {
 print json_encode(array(
-		'error' => 'ID not set'
-	));
-	exit();
+        'error' => 'ID not set'
+    ));
+    exit();
 }
 
 $product = new Product($db);
 
 if ($product->fetch($id) < 0) {
 print json_encode(array(
-		'error' => 'Product not found'
-	));
+        'error' => 'Product not found'
+    ));
 }
 
 $prodcomb = new ProductCombination($db);

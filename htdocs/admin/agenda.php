@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008-2015	Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2015    Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2011		Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2011-2012  Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2015		Jean-François Ferry <jfefe@aternatik.fr>
@@ -19,7 +19,7 @@
  */
 
 /**
- *	    \file       htdocs/admin/agenda.php
+ *        \file       htdocs/admin/agenda.php
  *      \ingroup    agenda
  *      \brief      Autocreate actions for agenda module setup page
  */
@@ -46,23 +46,23 @@ $sql.= " ORDER BY a.rang ASC";
 $resql=$db->query($sql);
 if ($resql)
 {
-	$num = $db->num_rows($resql);
-	$i = 0;
-	while ($i < $num)
-	{
-		$obj = $db->fetch_object($resql);
-		$triggers[$i]['rowid'] 		= $obj->rowid;
-		$triggers[$i]['code'] 		= $obj->code;
-		$triggers[$i]['element'] 	= $obj->elementtype;
-		$triggers[$i]['label']		= ($langs->trans("Notify_".$obj->code)!="Notify_".$obj->code?$langs->trans("Notify_".$obj->code):$obj->label);
+    $num = $db->num_rows($resql);
+    $i = 0;
+    while ($i < $num)
+    {
+        $obj = $db->fetch_object($resql);
+        $triggers[$i]['rowid']         = $obj->rowid;
+        $triggers[$i]['code']         = $obj->code;
+        $triggers[$i]['element']     = $obj->elementtype;
+        $triggers[$i]['label']        = ($langs->trans("Notify_".$obj->code)!="Notify_".$obj->code?$langs->trans("Notify_".$obj->code):$obj->label);
 
-		$i++;
-	}
-	$db->free($resql);
+        $i++;
+    }
+    $db->free($resql);
 }
 else
 {
-	dol_print_error($db);
+    dol_print_error($db);
 }
 
 
@@ -73,13 +73,13 @@ else
 // Purge search criteria
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') ||GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
 {
-	$search_event = '';
-	$action = '';
+    $search_event = '';
+    $action = '';
 }
 
-if (GETPOST('button_search_x', 'alpha') || GETPOST('button_search.x', 'alpha') ||GETPOST('button_search', 'alpha'))	// To avoid the save when we click on search
+if (GETPOST('button_search_x', 'alpha') || GETPOST('button_search.x', 'alpha') ||GETPOST('button_search', 'alpha'))    // To avoid the save when we click on search
 {
-	$action = '';
+    $action = '';
 }
 
 if ($action == "save" && empty($cancel))
@@ -88,22 +88,22 @@ if ($action == "save" && empty($cancel))
 
     $db->begin();
 
-	foreach ($triggers as $trigger)
-	{
-		$keyparam='MAIN_AGENDA_ACTIONAUTO_'.$trigger['code'];
-		//print "param=".$param." - ".$_POST[$param];
-		if ($search_event === '' || preg_match('/'.preg_quote($search_event, '/').'/i', $keyparam))
-		{
-			$res = dolibarr_set_const($db, $keyparam, (GETPOST($keyparam, 'alpha')?GETPOST($keyparam, 'alpha'):''), 'chaine', 0, '', $conf->entity);
-			if (! $res > 0) $error++;
-		}
-	}
+    foreach ($triggers as $trigger)
+    {
+        $keyparam='MAIN_AGENDA_ACTIONAUTO_'.$trigger['code'];
+        //print "param=".$param." - ".$_POST[$param];
+        if ($search_event === '' || preg_match('/'.preg_quote($search_event, '/').'/i', $keyparam))
+        {
+            $res = dolibarr_set_const($db, $keyparam, (GETPOST($keyparam, 'alpha')?GETPOST($keyparam, 'alpha'):''), 'chaine', 0, '', $conf->entity);
+            if (! $res > 0) $error++;
+        }
+    }
 
- 	if (! $error)
+     if (! $error)
     {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
         $db->commit();
-    }
+     }
     else
     {
         setEventMessages($langs->trans("Error"), null, 'errors');
@@ -137,7 +137,7 @@ dol_fiche_head($head, 'autoactions', $langs->trans("Agenda"), -1, 'action');
 print '<span class="opacitymedium">'.$langs->trans("AgendaAutoActionDesc")." ".$langs->trans("OnlyActiveElementsAreShown", 'modules.php').'</span><br>';
 print "<br>\n";
 
-print '<div class="div-table-responsive">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
+print '<div class="div-table-responsive">';        // You can use div-table-responsive-no-min if you dont need reserved height for your table
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td class="liste_titre"><input type="text" name="search_event" value="'.dol_escape_htmltag($search_event).'"></td>';
@@ -157,35 +157,35 @@ print '</tr>'."\n";
 // Show each trigger (list is in c_action_trigger)
 if (! empty($triggers))
 {
-	foreach ($triggers as $trigger)
-	{
-		$module = $trigger['element'];
-		if ($module == 'order_supplier' || $module == 'invoice_supplier') $module = 'fournisseur';
-		if ($module == 'shipping') $module = 'expedition_bon';
-		if ($module == 'member') $module = 'adherent';
-		if ($module == 'project') $module = 'projet';
-		if ($module == 'proposal_supplier') $module = 'supplier_proposal';
+    foreach ($triggers as $trigger)
+    {
+        $module = $trigger['element'];
+        if ($module == 'order_supplier' || $module == 'invoice_supplier') $module = 'fournisseur';
+        if ($module == 'shipping') $module = 'expedition_bon';
+        if ($module == 'member') $module = 'adherent';
+        if ($module == 'project') $module = 'projet';
+        if ($module == 'proposal_supplier') $module = 'supplier_proposal';
 
-		//print 'module='.$module.'<br>';
-		if (! empty($conf->$module->enabled))
-		{
-			// Discard special case: If option FICHINTER_CLASSIFY_BILLED is not set, we discard both trigger FICHINTER_CLASSIFY_BILLED and FICHINTER_CLASSIFY_UNBILLED
-			if ($trigger['code'] == 'FICHINTER_CLASSIFY_BILLED' && empty($conf->global->FICHINTER_CLASSIFY_BILLED)) continue;
-			if ($trigger['code'] == 'FICHINTER_CLASSIFY_UNBILLED' && empty($conf->global->FICHINTER_CLASSIFY_BILLED)) continue;
+        //print 'module='.$module.'<br>';
+        if (! empty($conf->$module->enabled))
+        {
+            // Discard special case: If option FICHINTER_CLASSIFY_BILLED is not set, we discard both trigger FICHINTER_CLASSIFY_BILLED and FICHINTER_CLASSIFY_UNBILLED
+            if ($trigger['code'] == 'FICHINTER_CLASSIFY_BILLED' && empty($conf->global->FICHINTER_CLASSIFY_BILLED)) continue;
+            if ($trigger['code'] == 'FICHINTER_CLASSIFY_UNBILLED' && empty($conf->global->FICHINTER_CLASSIFY_BILLED)) continue;
 
-			if ($search_event === '' || preg_match('/'.preg_quote($search_event, '/').'/i', $trigger['code']))
-			{
-				print '<tr class="oddeven">';
-				print '<td>'.$trigger['code'].'</td>';
-				print '<td>'.$trigger['label'].'</td>';
-				print '<td class="right" width="40">';
-				$key='MAIN_AGENDA_ACTIONAUTO_'.$trigger['code'];
-				$value=$conf->global->$key;
-				print '<input class="oddeven" type="checkbox" name="'.$key.'" value="1"'.((($action=='selectall'||$value) && $action!="selectnone")?' checked':'').'>';
-				print '</td></tr>'."\n";
-			}
-		}
-	}
+            if ($search_event === '' || preg_match('/'.preg_quote($search_event, '/').'/i', $trigger['code']))
+            {
+                print '<tr class="oddeven">';
+                print '<td>'.$trigger['code'].'</td>';
+                print '<td>'.$trigger['label'].'</td>';
+                print '<td class="right" width="40">';
+                $key='MAIN_AGENDA_ACTIONAUTO_'.$trigger['code'];
+                $value=$conf->global->$key;
+                print '<input class="oddeven" type="checkbox" name="'.$key.'" value="1"'.((($action=='selectall'||$value) && $action!="selectnone")?' checked':'').'>';
+                print '</td></tr>'."\n";
+            }
+        }
+    }
 }
 print '</table>';
 print '</div>';

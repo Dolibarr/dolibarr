@@ -120,7 +120,7 @@ $sql.= ' AND cf.entity = ' . $conf->entity;
 if ($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER) {
     $sql .= ' AND cf.fk_statut < 3';
 } elseif ($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER|| !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)) {
-    $sql .= ' AND cf.fk_statut < 6';	// We want also status 5, we will keep them visible if dispatching is not yet finished (tested with function dolDispatchToDo).
+    $sql .= ' AND cf.fk_statut < 6';    // We want also status 5, we will keep them visible if dispatching is not yet finished (tested with function dolDispatchToDo).
 } else {
     $sql .= ' AND cf.fk_statut < 5';
 }
@@ -134,16 +134,16 @@ if ($sttc) $sql .= natural_search('cf.total_ttc', $sttc, 1);
 
 if ($search_datemonth > 0)
 {
-	if ($search_dateyear > 0 && empty($search_dateday))
-		$sql.= " AND cf.date_creation BETWEEN '".$db->idate(dol_get_first_day($search_dateyear, $search_datemonth, false))."' AND '".$db->idate(dol_get_last_day($search_dateyear, $search_datemonth, false))."'";
-		elseif ($search_dateyear > 0 && ! empty($search_dateday))
-			$sql.= " AND cf.date_creation BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_datemonth, $search_dateday, $search_dateyear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_datemonth, $search_dateday, $search_dateyear))."'";
-			else
-				$sql.= " AND date_format(cf.date_creation, '%m') = '".$search_datemonth."'";
+    if ($search_dateyear > 0 && empty($search_dateday))
+        $sql.= " AND cf.date_creation BETWEEN '".$db->idate(dol_get_first_day($search_dateyear, $search_datemonth, false))."' AND '".$db->idate(dol_get_last_day($search_dateyear, $search_datemonth, false))."'";
+        elseif ($search_dateyear > 0 && ! empty($search_dateday))
+            $sql.= " AND cf.date_creation BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_datemonth, $search_dateday, $search_dateyear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_datemonth, $search_dateday, $search_dateyear))."'";
+            else
+                $sql.= " AND date_format(cf.date_creation, '%m') = '".$search_datemonth."'";
 }
 elseif ($search_dateyear > 0)
 {
-	$sql.= " AND cf.date_creation BETWEEN '".$db->idate(dol_get_first_day($search_dateyear, 1, false))."' AND '".$db->idate(dol_get_last_day($search_dateyear, 12, false))."'";
+    $sql.= " AND cf.date_creation BETWEEN '".$db->idate(dol_get_first_day($search_dateyear, 1, false))."' AND '".$db->idate(dol_get_last_day($search_dateyear, 12, false))."'";
 }
 if ($sall) $sql .= natural_search(array('cf.ref','cf.note'), $sall);
 if (!empty($socid)) $sql .= ' AND s.rowid = ' . $socid;
@@ -161,7 +161,7 @@ if ($resql)
     $num = $db->num_rows($resql);
     $i = 0;
 
-	print $langs->trans("ReplenishmentOrdersDesc").'<br><br>';
+    print $langs->trans("ReplenishmentOrdersDesc").'<br><br>';
 
     print_barre_liste('', $page, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', $num, 0, '');
 

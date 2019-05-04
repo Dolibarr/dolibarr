@@ -18,7 +18,7 @@
 
 /**
  *       \file      htdocs/core/ajax/ziptown.php
- *       \ingroup	core
+ *       \ingroup    core
  *       \brief     File to return Ajax response on zipcode or town request
  */
 
@@ -53,31 +53,31 @@ dol_syslog("GET is ".join(',', $_GET).', MAIN_USE_ZIPTOWN_DICTIONNARY='.(empty($
 // Generation of list of zip-town
 if (! empty($_GET['zipcode']) || ! empty($_GET['town']))
 {
-	$return_arr = array();
-	$formcompany = new FormCompany($db);
+    $return_arr = array();
+    $formcompany = new FormCompany($db);
 
-	// Define filter on text typed
-	$zipcode = $_GET['zipcode']?$_GET['zipcode']:'';
-	$town = $_GET['town']?$_GET['town']:'';
+    // Define filter on text typed
+    $zipcode = $_GET['zipcode']?$_GET['zipcode']:'';
+    $town = $_GET['town']?$_GET['town']:'';
 
-	if (! empty($conf->global->MAIN_USE_ZIPTOWN_DICTIONNARY))   // Use zip-town table
-	{
-    	$sql = "SELECT z.rowid, z.zip, z.town, z.fk_county, z.fk_pays as fk_country";
-    	$sql.= ", c.rowid as fk_country, c.code as country_code, c.label as country";
-    	$sql.= ", d.rowid as fk_county, d.code_departement as county_code, d.nom as county";
-    	$sql.= " FROM ".MAIN_DB_PREFIX."c_ziptown as z";
-    	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX ."c_departements as d ON z.fk_county = d.rowid";
-    	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_regions as r ON d.fk_region = r.code_region,";
-    	$sql.= " ".MAIN_DB_PREFIX."c_country as c";
-    	$sql.= " WHERE z.fk_pays = c.rowid";
-    	$sql.= " AND z.active = 1 AND c.active = 1";
-    	if ($zipcode) $sql.=" AND z.zip LIKE '" . $db->escape($zipcode) . "%'";
-    	if ($town)    $sql.=" AND z.town LIKE '%" . $db->escape($town) . "%'";
-    	$sql.= " ORDER BY z.zip, z.town";
+    if (! empty($conf->global->MAIN_USE_ZIPTOWN_DICTIONNARY))   // Use zip-town table
+    {
+        $sql = "SELECT z.rowid, z.zip, z.town, z.fk_county, z.fk_pays as fk_country";
+        $sql.= ", c.rowid as fk_country, c.code as country_code, c.label as country";
+        $sql.= ", d.rowid as fk_county, d.code_departement as county_code, d.nom as county";
+        $sql.= " FROM ".MAIN_DB_PREFIX."c_ziptown as z";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX ."c_departements as d ON z.fk_county = d.rowid";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_regions as r ON d.fk_region = r.code_region,";
+        $sql.= " ".MAIN_DB_PREFIX."c_country as c";
+        $sql.= " WHERE z.fk_pays = c.rowid";
+        $sql.= " AND z.active = 1 AND c.active = 1";
+        if ($zipcode) $sql.=" AND z.zip LIKE '" . $db->escape($zipcode) . "%'";
+        if ($town)    $sql.=" AND z.town LIKE '%" . $db->escape($town) . "%'";
+        $sql.= " ORDER BY z.zip, z.town";
         $sql.= $db->plimit(100); // Avoid pb with bad criteria
-	}
-	else                                               // Use table of third parties
-	{
+    }
+    else                                               // Use table of third parties
+    {
         $sql = "SELECT DISTINCT s.zip, s.town, s.fk_departement as fk_county, s.fk_pays as fk_country";
         $sql.= ", c.code as country_code, c.label as country";
         $sql.= ", d.code_departement as county_code , d.nom as county";
@@ -89,45 +89,45 @@ if (! empty($_GET['zipcode']) || ! empty($_GET['town']))
         if ($town)    $sql.= " s.town LIKE '%" . $db->escape($town) . "%'";
         $sql.= " ORDER BY s.fk_pays, s.zip, s.town";
         $sql.= $db->plimit(100); // Avoid pb with bad criteria
-	}
+    }
 
     //print $sql;
-	$resql=$db->query($sql);
-	//var_dump($db);
-	if ($resql)
-	{
-		while ($row = $db->fetch_array($resql))
-		{
-			$country = $row['fk_country']?($langs->transnoentitiesnoconv('Country'.$row['country_code'])!='Country'.$row['country_code']?$langs->transnoentitiesnoconv('Country'.$row['country_code']):$row['country']):'';
-			$county = $row['fk_county']?($langs->transnoentitiesnoconv($row['county_code'])!=$row['county_code']?$langs->transnoentitiesnoconv($row['county_code']):($row['county']!='-'?$row['county']:'')):'';
+    $resql=$db->query($sql);
+    //var_dump($db);
+    if ($resql)
+    {
+        while ($row = $db->fetch_array($resql))
+        {
+            $country = $row['fk_country']?($langs->transnoentitiesnoconv('Country'.$row['country_code'])!='Country'.$row['country_code']?$langs->transnoentitiesnoconv('Country'.$row['country_code']):$row['country']):'';
+            $county = $row['fk_county']?($langs->transnoentitiesnoconv($row['county_code'])!=$row['county_code']?$langs->transnoentitiesnoconv($row['county_code']):($row['county']!='-'?$row['county']:'')):'';
 
-			$row_array['label'] = $row['zip'].' '.$row['town'];
-			$row_array['label'] .= ($county || $country)?' (':'';
+            $row_array['label'] = $row['zip'].' '.$row['town'];
+            $row_array['label'] .= ($county || $country)?' (':'';
             $row_array['label'] .= $county;
-			$row_array['label'] .= ($county && $country?' - ':'');
+            $row_array['label'] .= ($county && $country?' - ':'');
             $row_array['label'] .= $country;
             $row_array['label'] .= ($county || $country)?')':'';
             if ($zipcode)
-			{
-				$row_array['value'] = $row['zip'];
-				$row_array['town'] = $row['town'];
-			}
-			if ($town)
-			{
-				$row_array['value'] = $row['town'];
-				$row_array['zipcode'] = $row['zip'];
-			}
-			$row_array['selectcountry_id'] = $row['fk_country'];
-			$row_array['state_id'] = $row['fk_county'];
+            {
+                $row_array['value'] = $row['zip'];
+                $row_array['town'] = $row['town'];
+            }
+            if ($town)
+            {
+                $row_array['value'] = $row['town'];
+                $row_array['zipcode'] = $row['zip'];
+            }
+            $row_array['selectcountry_id'] = $row['fk_country'];
+            $row_array['state_id'] = $row['fk_county'];
 
-			// TODO Use a cache here to avoid to make select_state in each pass (this make a SQL and lot of logs)
-			$row_array['states'] = $formcompany->select_state('', $row['fk_country'], '');
+            // TODO Use a cache here to avoid to make select_state in each pass (this make a SQL and lot of logs)
+            $row_array['states'] = $formcompany->select_state('', $row['fk_country'], '');
 
-			array_push($return_arr, $row_array);
-		}
-	}
+            array_push($return_arr, $row_array);
+        }
+    }
 
-	echo json_encode($return_arr);
+    echo json_encode($return_arr);
 }
 else
 {

@@ -18,14 +18,14 @@
  */
 
 /**
- *     	\file       htdocs/public/paybox/newpayment.php
- *		\ingroup    paybox
- *		\brief      File to offer a way to make a payment for a particular Dolibarr entity
- *		\author	    Laurent Destailleur
+ *         \file       htdocs/public/paybox/newpayment.php
+ *        \ingroup    paybox
+ *        \brief      File to offer a way to make a payment for a particular Dolibarr entity
+ *        \author        Laurent Destailleur
  */
 
-define("NOLOGIN", 1);		// This means this output page does not require to be logged.
-define("NOCSRFCHECK", 1);	// We accept to go on this page from external web site.
+define("NOLOGIN", 1);        // This means this output page does not require to be logged.
+define("NOCSRFCHECK", 1);    // We accept to go on this page from external web site.
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php

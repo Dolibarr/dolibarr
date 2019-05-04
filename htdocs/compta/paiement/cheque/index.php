@@ -19,9 +19,9 @@
  */
 
 /**
- *		\file       htdocs/compta/paiement/cheque/index.php
- *		\ingroup    compta
- *		\brief      Home page for cheque receipts
+ *        \file       htdocs/compta/paiement/cheque/index.php
+ *        \ingroup    compta
+ *        \brief      Home page for cheque receipts
  */
 
 require '../../../main.inc.php';
@@ -101,45 +101,45 @@ $sql.= $db->plimit($max);
 $resql = $db->query($sql);
 if ($resql)
 {
-	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre">';
-	print '<th>'.$langs->trans("LastCheckReceiptShort", $max).'</th>';
-	print '<th>'.$langs->trans("Date")."</th>";
-	print '<th>'.$langs->trans("Account").'</th>';
-	print '<th class="right">'.$langs->trans("NbOfCheques").'</th>';
-	print '<th class="right">'.$langs->trans("Amount").'</th>';
-	print '<th class="right">'.$langs->trans("Status").'</th>';
-	print "</tr>\n";
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre">';
+    print '<th>'.$langs->trans("LastCheckReceiptShort", $max).'</th>';
+    print '<th>'.$langs->trans("Date")."</th>";
+    print '<th>'.$langs->trans("Account").'</th>';
+    print '<th class="right">'.$langs->trans("NbOfCheques").'</th>';
+    print '<th class="right">'.$langs->trans("Amount").'</th>';
+    print '<th class="right">'.$langs->trans("Status").'</th>';
+    print "</tr>\n";
 
-	while ( $objp = $db->fetch_object($resql) )
-	{
+    while ( $objp = $db->fetch_object($resql) )
+    {
         $checkdepositstatic->id=$objp->rowid;
         $checkdepositstatic->ref=($objp->ref?$objp->ref:$objp->rowid);
-	    $checkdepositstatic->statut=$objp->statut;
+        $checkdepositstatic->statut=$objp->statut;
 
-		$accountstatic->id=$objp->bid;
-		$accountstatic->ref=$objp->bref;
-		$accountstatic->label=$objp->label;
-		$accountstatic->number=$objp->number;
-		$accountstatic->currency_code=$objp->currency_code;
-		$accountstatic->account_number=$objp->account_number;
-		$accountstatic->accountancy_journal=$objp->code;
-		$accountstatic->fk_accountancy_journal=$objp->fk_accountancy_journal;
+        $accountstatic->id=$objp->bid;
+        $accountstatic->ref=$objp->bref;
+        $accountstatic->label=$objp->label;
+        $accountstatic->number=$objp->number;
+        $accountstatic->currency_code=$objp->currency_code;
+        $accountstatic->account_number=$objp->account_number;
+        $accountstatic->accountancy_journal=$objp->code;
+        $accountstatic->fk_accountancy_journal=$objp->fk_accountancy_journal;
 
-		print '<tr class="oddeven">'."\n";
+        print '<tr class="oddeven">'."\n";
 
-		print '<td>'.$checkdepositstatic->getNomUrl(1).'</td>';
-		print '<td>'.dol_print_date($db->jdate($objp->db), 'day').'</td>';
-		print '<td>'.$accountstatic->getNomUrl(1).'</td>';
-		print '<td class="right">'.$objp->nbcheque.'</td>';
-		print '<td class="right">'.price($objp->amount).'</td>';
-		print '<td class="right">'.$checkdepositstatic->LibStatut($objp->statut, 3).'</td>';
+        print '<td>'.$checkdepositstatic->getNomUrl(1).'</td>';
+        print '<td>'.dol_print_date($db->jdate($objp->db), 'day').'</td>';
+        print '<td>'.$accountstatic->getNomUrl(1).'</td>';
+        print '<td class="right">'.$objp->nbcheque.'</td>';
+        print '<td class="right">'.price($objp->amount).'</td>';
+        print '<td class="right">'.$checkdepositstatic->LibStatut($objp->statut, 3).'</td>';
 
-		print '</tr>';
-	}
-	print "</table>";
+        print '</tr>';
+    }
+    print "</table>";
 
-	$db->free($resql);
+    $db->free($resql);
 }
 else
 {

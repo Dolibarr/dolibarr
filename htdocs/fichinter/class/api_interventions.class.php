@@ -68,9 +68,9 @@ class Interventions extends DolibarrApi
      * Return an array with Expense Report information
      *
      * @param       int         $id         ID of Expense Report
-     * @return 	    array|mixed             Data without useless information
+     * @return         array|mixed             Data without useless information
      *
-     * @throws 	RestException
+     * @throws     RestException
      */
     public function get($id)
     {
@@ -96,11 +96,11 @@ class Interventions extends DolibarrApi
      *
      * Return a list of interventions
      *
-     * @param string	       $sortfield	        Sort field
-     * @param string	       $sortorder	        Sort order
-     * @param int	       $limit		        Limit for list
-     * @param int	       $page		        Page number
-     * @param string   	       $thirdparty_ids	        Thirdparty ids to filter orders of. {@example '1' or '1,2,3'} {@pattern /^[0-9,]*$/i}
+     * @param string           $sortfield            Sort field
+     * @param string           $sortorder            Sort order
+     * @param int           $limit                Limit for list
+     * @param int           $page                Page number
+     * @param string              $thirdparty_ids            Thirdparty ids to filter orders of. {@example '1' or '1,2,3'} {@pattern /^[0-9,]*$/i}
      * @param string           $sqlfilters              Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
      * @return  array                                   Array of order objects
      *
@@ -128,7 +128,7 @@ class Interventions extends DolibarrApi
         $sql.= ' WHERE t.entity IN ('.getEntity('intervention').')';
         if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql.= " AND t.fk_soc = sc.fk_soc";
         if ($socids) $sql.= " AND t.fk_soc IN (".$socids.")";
-        if ($search_sale > 0) $sql.= " AND t.rowid = sc.fk_soc";		// Join for the needed table to filter by sale
+        if ($search_sale > 0) $sql.= " AND t.rowid = sc.fk_soc";        // Join for the needed table to filter by sale
         // Insert sale filter
         if ($search_sale > 0) {
             $sql .= " AND sc.fk_user = ".$search_sale;
@@ -145,7 +145,7 @@ class Interventions extends DolibarrApi
         }
 
         $sql.= $db->order($sortfield, $sortorder);
-        if ($limit)	{
+        if ($limit)    {
             if ($page < 0)
             {
                 $page = 0;
@@ -212,7 +212,7 @@ class Interventions extends DolibarrApi
      *
      * @param int   $id             Id of intervention
      *
-     * @url	GET {id}/lines
+     * @url    GET {id}/lines
      *
      * @return int
      */
@@ -243,7 +243,7 @@ class Interventions extends DolibarrApi
     /**
      * Add a line to given intervention
      *
-     * @param 	int   	$id             Id of intervention to update
+     * @param     int       $id             Id of intervention to update
      * @param   array   $request_data   Request data
      *
      * @url     POST {id}/lines
@@ -362,7 +362,7 @@ class Interventions extends DolibarrApi
     /**
      * Close an intervention
      *
-     * @param   int 	$id             Intervention ID
+     * @param   int     $id             Intervention ID
      *
      * @url POST    {id}/close
      *

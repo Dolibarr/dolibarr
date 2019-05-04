@@ -18,9 +18,9 @@
  */
 
 /**
- *   \file		    htdocs/core/class/interfaces.class.php
- *   \ingroup		core
- *   \brief			Fichier de la classe de gestion des triggers
+ *   \file            htdocs/core/class/interfaces.class.php
+ *   \ingroup        core
+ *   \brief            Fichier de la classe de gestion des triggers
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
@@ -36,7 +36,7 @@ class Interfaces
      */
     public $db;
 
-    public $dir;				// Directory with all core and external triggers files
+    public $dir;                // Directory with all core and external triggers files
 
     /**
      * @var string[] Error codes (or messages)
@@ -44,9 +44,9 @@ class Interfaces
     public $errors = array();
 
     /**
-     *	Constructor
+     *    Constructor
      *
-     *  @param		DoliDB		$db      Database handler
+     *  @param        DoliDB        $db      Database handler
      */
     public function __construct($db)
     {
@@ -58,29 +58,29 @@ class Interfaces
      *   Function called when a Dolibarr business event occurs
      *   This function call all qualified triggers.
      *
-     *   @param		string		$action     Trigger event code
-     *   @param     object		$object     Objet concerned. Some context information may also be provided into array property object->context.
-     *   @param     User		$user       Objet user
-     *   @param     Translate	$langs      Objet lang
-     *   @param     Conf		$conf       Objet conf
-     *   @return    int         			Nb of triggers ran if no error, -Nb of triggers with errors otherwise.
+     *   @param        string        $action     Trigger event code
+     *   @param     object        $object     Objet concerned. Some context information may also be provided into array property object->context.
+     *   @param     User        $user       Objet user
+     *   @param     Translate    $langs      Objet lang
+     *   @param     Conf        $conf       Objet conf
+     *   @return    int                     Nb of triggers ran if no error, -Nb of triggers with errors otherwise.
      */
     public function run_triggers($action, $object, $user, $langs, $conf)
     {
         // phpcs:enable
         // Check parameters
-        if (! is_object($object) || ! is_object($conf))	// Error
+        if (! is_object($object) || ! is_object($conf))    // Error
         {
             $this->error='function run_triggers called with wrong parameters action='.$action.' object='.is_object($object).' user='.is_object($user).' langs='.is_object($langs).' conf='.is_object($conf);
             dol_syslog(get_class($this).'::run_triggers '.$this->error, LOG_ERR);
             $this->errors[]=$this->error;
             return -1;
         }
-        if (! is_object($langs))	// Warning
+        if (! is_object($langs))    // Warning
         {
             dol_syslog(get_class($this).'::run_triggers was called with wrong parameters action='.$action.' object='.is_object($object).' user='.is_object($user).' langs='.is_object($langs).' conf='.is_object($conf), LOG_WARNING);
         }
-        if (! is_object($user))	    // Warning
+        if (! is_object($user))        // Warning
         {
             dol_syslog(get_class($this).'::run_triggers was called with wrong parameters action='.$action.' object='.is_object($object).' user='.is_object($user).' langs='.is_object($langs).' conf='.is_object($conf), LOG_WARNING);
             global $db;
@@ -179,12 +179,12 @@ class Interfaces
             {
                 $result=0;
 
-                if (method_exists($objMod, 'runTrigger'))	// New method to implement
+                if (method_exists($objMod, 'runTrigger'))    // New method to implement
                 {
                     //dol_syslog(get_class($this)."::run_triggers action=".$action." Launch runTrigger for file '".$files[$key]."'", LOG_DEBUG);
                     $result=$objMod->runTrigger($action, $object, $user, $langs, $conf);
                 }
-                elseif (method_exists($objMod, 'run_trigger'))	// Deprecated method
+                elseif (method_exists($objMod, 'run_trigger'))    // Deprecated method
                 {
                     dol_syslog(get_class($this)."::run_triggers action=".$action." Launch old method run_trigger (rename your trigger into runTrigger) for file '".$files[$key]."'", LOG_WARNING);
                     $result=$objMod->run_trigger($action, $object, $user, $langs, $conf);
@@ -238,8 +238,8 @@ class Interfaces
      *  Return list of triggers. Function used by admin page htdoc/admin/triggers.
      *  List is sorted by trigger filename so by priority to run.
      *
-     *  @param	array		$forcedirtriggers		null=All default directories. This parameter is used by modulebuilder module only.
-     * 	@return	array								Array list of triggers
+     *  @param    array        $forcedirtriggers        null=All default directories. This parameter is used by modulebuilder module only.
+     *     @return    array                                Array list of triggers
      */
     public function getTriggersList($forcedirtriggers = null)
     {

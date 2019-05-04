@@ -58,7 +58,7 @@ if ($id > 0 || ! empty($ref))
         $origin = $object->origin;
 
         $object->fetch_origin();
-		$typeobject = $object->origin;
+        $typeobject = $object->origin;
     }
 
     // Linked documents
@@ -83,26 +83,26 @@ if ($action == 'addcontact' && $user->rights->reception->creer)
 {
     if ($result > 0 && $id > 0)
     {
-  		$result = $objectsrc->add_contact(GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'), $_POST["type"], $_POST["source"]);
+          $result = $objectsrc->add_contact(GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'), $_POST["type"], $_POST["source"]);
     }
 
-	if ($result >= 0)
-	{
-		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
-		exit;
-	}
-	else
-	{
-		if ($objectsrc->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
-		{
-			$langs->load("errors");
-			$mesg = $langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType");
-		} else {
-			$mesg = $objectsrc->error;
-			$mesgs = $objectsrc->errors;
-		}
-		setEventMessages($mesg, $mesgs, 'errors');
-	}
+    if ($result >= 0)
+    {
+        header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+        exit;
+    }
+    else
+    {
+        if ($objectsrc->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+        {
+            $langs->load("errors");
+            $mesg = $langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType");
+        } else {
+            $mesg = $objectsrc->error;
+            $mesgs = $objectsrc->errors;
+        }
+        setEventMessages($mesg, $mesgs, 'errors');
+    }
 }
 
 // bascule du statut d'un contact
@@ -114,23 +114,23 @@ elseif ($action == 'swapstatut' && $user->rights->reception->creer)
 // Efface un contact
 elseif ($action == 'deletecontact' && $user->rights->reception->creer)
 {
-	$result = $objectsrc->delete_contact(GETPOST("lineid"));
+    $result = $objectsrc->delete_contact(GETPOST("lineid"));
 
-	if ($result >= 0)
-	{
-		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
-		exit;
-	}
-	else {
-		dol_print_error($db);
-	}
+    if ($result >= 0)
+    {
+        header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+        exit;
+    }
+    else {
+        dol_print_error($db);
+    }
 }
 /*
 elseif ($action == 'setaddress' && $user->rights->reception->creer)
 {
-	$object->fetch($id);
-	$result=$object->setDeliveryAddress($_POST['fk_address']);
-	if ($result < 0) dol_print_error($db,$object->error);
+    $object->fetch($id);
+    $result=$object->setDeliveryAddress($_POST['fk_address']);
+    if ($result < 0) dol_print_error($db,$object->error);
 }*/
 
 
@@ -155,20 +155,20 @@ $userstatic=new User($db);
 
 if ($id > 0 || ! empty($ref))
 {
-	$langs->trans("OrderCard");
+    $langs->trans("OrderCard");
 
-	$head = reception_prepare_head($object);
-	dol_fiche_head($head, 'contact', $langs->trans("Reception"), -1, 'sending');
+    $head = reception_prepare_head($object);
+    dol_fiche_head($head, 'contact', $langs->trans("Reception"), -1, 'sending');
 
 
-	// Reception card
-	$linkback = '<a href="'.DOL_URL_ROOT.'/reception/list.php">'.$langs->trans("BackToList").'</a>';
+    // Reception card
+    $linkback = '<a href="'.DOL_URL_ROOT.'/reception/list.php">'.$langs->trans("BackToList").'</a>';
 
-	$morehtmlref='<div class="refidno">';
-	// Ref customer reception
-	$morehtmlref.=$form->editfieldkey("RefSupplier", '', $object->ref_supplier, $object, $user->rights->reception->creer, 'string', '', 0, 1);
-	$morehtmlref.=$form->editfieldval("RefSupplier", '', $object->ref_supplier, $object, $user->rights->reception->creer, 'string', '', null, null, '', 1);
-	// Thirdparty
+    $morehtmlref='<div class="refidno">';
+    // Ref customer reception
+    $morehtmlref.=$form->editfieldkey("RefSupplier", '', $object->ref_supplier, $object, $user->rights->reception->creer, 'string', '', 0, 1);
+    $morehtmlref.=$form->editfieldval("RefSupplier", '', $object->ref_supplier, $object, $user->rights->reception->creer, 'string', '', null, null, '', 1);
+    // Thirdparty
     $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
     // Project
     if (! empty($conf->projet->enabled)) {
@@ -204,69 +204,69 @@ if ($id > 0 || ! empty($ref))
             }
         }
     }
-	$morehtmlref.='</div>';
+    $morehtmlref.='</div>';
 
-	$object->picto = 'sending';
-	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+    $object->picto = 'sending';
+    dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
 
-	print '<div class="fichecenter">';
+    print '<div class="fichecenter">';
     //print '<div class="fichehalfleft">';
-	print '<div class="underbanner clearboth"></div>';
+    print '<div class="underbanner clearboth"></div>';
 
     print '<table class="border centpercent">';
     // Linked documents
-	if ($origin == 'order_supplier' && $object->$typeobject->id && ! empty($conf->fournisseur->enabled))
-	{
-	    print '<tr><td class="titlefield">';
-	    $objectsrc=new CommandeFournisseur($db);
-	    $objectsrc->fetch($object->$typeobject->id);
-	    print $langs->trans("RefOrder").'</td>';
-	    print '<td colspan="3">';
-	    print $objectsrc->getNomUrl(1, 'commande');
-	    print "</td>\n";
-	    print '</tr>';
-	}
-	if ($typeobject == 'propal' && $object->$typeobject->id && ! empty($conf->propal->enabled))
-	{
-	    print '<tr><td class="titlefield">';
-	    $objectsrc=new Propal($db);
-	    $objectsrc->fetch($object->$typeobject->id);
-	    print $langs->trans("RefProposal").'</td>';
-	    print '<td colspan="3">';
-	    print $objectsrc->getNomUrl(1, 'reception');
-	    print "</td>\n";
-	    print '</tr>';
-	}
+    if ($origin == 'order_supplier' && $object->$typeobject->id && ! empty($conf->fournisseur->enabled))
+    {
+        print '<tr><td class="titlefield">';
+        $objectsrc=new CommandeFournisseur($db);
+        $objectsrc->fetch($object->$typeobject->id);
+        print $langs->trans("RefOrder").'</td>';
+        print '<td colspan="3">';
+        print $objectsrc->getNomUrl(1, 'commande');
+        print "</td>\n";
+        print '</tr>';
+    }
+    if ($typeobject == 'propal' && $object->$typeobject->id && ! empty($conf->propal->enabled))
+    {
+        print '<tr><td class="titlefield">';
+        $objectsrc=new Propal($db);
+        $objectsrc->fetch($object->$typeobject->id);
+        print $langs->trans("RefProposal").'</td>';
+        print '<td colspan="3">';
+        print $objectsrc->getNomUrl(1, 'reception');
+        print "</td>\n";
+        print '</tr>';
+    }
 
-	print "</table>";
-
-
-	//print '</div>';
-	//print '<div class="fichehalfright">';
-	//print '<div class="ficheaddleft">';
-	//print '<div class="underbanner clearboth"></div>';
+    print "</table>";
 
 
-	//print '</div>';
-	//print '</div>';
-	print '</div>';
+    //print '</div>';
+    //print '<div class="fichehalfright">';
+    //print '<div class="ficheaddleft">';
+    //print '<div class="underbanner clearboth"></div>';
 
-	print '<div class="clearboth"></div>';
+
+    //print '</div>';
+    //print '</div>';
+    print '</div>';
+
+    print '<div class="clearboth"></div>';
 
 
-	dol_fiche_end();
+    dol_fiche_end();
 
-	// Lignes de contacts
-	echo '<br>';
+    // Lignes de contacts
+    echo '<br>';
 
-	// Contacts lines (modules that overwrite templates must declare this into descriptor)
-	$dirtpls=array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
-	foreach($dirtpls as $reldir)
-	{
-		$res=@include dol_buildpath($reldir.'/contacts.tpl.php');
-		if ($res) break;
-	}
+    // Contacts lines (modules that overwrite templates must declare this into descriptor)
+    $dirtpls=array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
+    foreach($dirtpls as $reldir)
+    {
+        $res=@include dol_buildpath($reldir.'/contacts.tpl.php');
+        if ($res) break;
+    }
 }
 
 llxFooter();

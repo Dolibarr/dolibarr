@@ -18,22 +18,22 @@
 
 /**
  *      \file       test/phpunit/DateLibTest.php
- *		\ingroup    test
+ *        \ingroup    test
  *      \brief      PHPUnit test
- *		\remarks	To run this script as CLI:  phpunit filename.php
+ *        \remarks    To run this script as CLI:  phpunit filename.php
  */
 
 global $conf,$user,$langs,$db;
-//define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
+//define('TEST_DB_FORCE_TYPE','mysql');    // This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/date.lib.php';
 
 if (empty($user->id))
 {
-	print "Load permissions for admin user nb 1\n";
-	$user->fetch(1);
-	$user->getrights();
+    print "Load permissions for admin user nb 1\n";
+    $user->fetch(1);
+    $user->getrights();
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 
@@ -43,42 +43,42 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
- * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
+ * @remarks    backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
 class DateLibTest extends PHPUnit_Framework_TestCase
 {
-	protected $savconf;
-	protected $savuser;
-	protected $savlangs;
-	protected $savdb;
+    protected $savconf;
+    protected $savuser;
+    protected $savlangs;
+    protected $savdb;
 
-	/**
-	 * Constructor
-	 * We save global variables into local variables
-	 *
-	 * @return DateLibTest
-	 */
-	public function __construct()
-	{
-		parent::__construct();
+    /**
+     * Constructor
+     * We save global variables into local variables
+     *
+     * @return DateLibTest
+     */
+    public function __construct()
+    {
+        parent::__construct();
 
-		//$this->sharedFixture
-		global $conf,$user,$langs,$db;
-		$this->savconf=$conf;
-		$this->savuser=$user;
-		$this->savlangs=$langs;
-		$this->savdb=$db;
+        //$this->sharedFixture
+        global $conf,$user,$langs,$db;
+        $this->savconf=$conf;
+        $this->savuser=$user;
+        $this->savlangs=$langs;
+        $this->savdb=$db;
 
-		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-		//print " - db ".$db->db;
-		print "\n";
-	}
+        print __METHOD__." db->type=".$db->type." user->id=".$user->id;
+        //print " - db ".$db->db;
+        print "\n";
+    }
 
-	// Static methods
+    // Static methods
     public static function setUpBeforeClass()
     {
         global $conf,$user,$langs,$db;
-        $db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
+        $db->begin();    // This is to have all actions inside a transaction even if test launched without suite.
 
         print __METHOD__."\n";
     }
@@ -86,93 +86,93 @@ class DateLibTest extends PHPUnit_Framework_TestCase
     // tear down after class
     public static function tearDownAfterClass()
     {
-    	global $conf,$user,$langs,$db;
-		$db->rollback();
+        global $conf,$user,$langs,$db;
+        $db->rollback();
 
-		print __METHOD__."\n";
+        print __METHOD__."\n";
     }
 
-	/**
-	 * Init phpunit tests
-	 *
-	 * @return	void
-	 */
+    /**
+     * Init phpunit tests
+     *
+     * @return    void
+     */
     protected function setUp()
     {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-		print __METHOD__."\n";
+        print __METHOD__."\n";
     }
-	/**
-	 * End phpunit tests
-	 *
-	 * @return	void
-	 */
+    /**
+     * End phpunit tests
+     *
+     * @return    void
+     */
     protected function tearDown()
     {
-    	print __METHOD__."\n";
+        print __METHOD__."\n";
     }
 
     /**
      * testNumBetweenDay
      *
-     * @return	void
+     * @return    void
      */
     public function testNumBetweenDay()
     {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-		// With same hours
-		$date1=dol_mktime(0, 0, 0, 1, 1, 2012);
-		$date2=dol_mktime(0, 0, 0, 1, 2, 2012);
+        // With same hours
+        $date1=dol_mktime(0, 0, 0, 1, 1, 2012);
+        $date2=dol_mktime(0, 0, 0, 1, 2, 2012);
 
-		$result=num_between_day($date1, $date2, 1);
-    	print __METHOD__." result=".$result."\n";
-		$this->assertEquals(2, $result);
+        $result=num_between_day($date1, $date2, 1);
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals(2, $result);
 
-		$result=num_between_day($date1, $date2, 0);
-    	print __METHOD__." result=".$result."\n";
-		$this->assertEquals(1, $result);
+        $result=num_between_day($date1, $date2, 0);
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals(1, $result);
 
-		// With different hours
-		$date1=dol_mktime(0, 0, 0, 1, 1, 2012);
-		$date2=dol_mktime(12, 0, 0, 1, 2, 2012);
+        // With different hours
+        $date1=dol_mktime(0, 0, 0, 1, 1, 2012);
+        $date2=dol_mktime(12, 0, 0, 1, 2, 2012);
 
-		$result=num_between_day($date1, $date2, 1);
-    	print __METHOD__." result=".$result."\n";
-		$this->assertEquals(2, $result);
+        $result=num_between_day($date1, $date2, 1);
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals(2, $result);
 
-		$result=num_between_day($date1, $date2, 0);
-    	print __METHOD__." result=".$result."\n";
-		$this->assertEquals(1, $result);
+        $result=num_between_day($date1, $date2, 0);
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals(1, $result);
 
-		// With different date before and after sunlight hour (day to change sunlight hour is 2014-03-30)
-		$date1=dol_mktime(0, 0, 0, 3, 28, 2014, true);
-		$date2=dol_mktime(0, 0, 0, 3, 31, 2014, true);
+        // With different date before and after sunlight hour (day to change sunlight hour is 2014-03-30)
+        $date1=dol_mktime(0, 0, 0, 3, 28, 2014, true);
+        $date2=dol_mktime(0, 0, 0, 3, 31, 2014, true);
 
-		$result=num_between_day($date1, $date2, 1);
-    	print __METHOD__." result=".$result."\n";
-		$this->assertEquals(4, $result);
+        $result=num_between_day($date1, $date2, 1);
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals(4, $result);
 
-		$result=num_between_day($date1, $date2, 0);
-    	print __METHOD__." result=".$result."\n";
-		$this->assertEquals(3, $result);
+        $result=num_between_day($date1, $date2, 0);
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals(3, $result);
 
-		return $result;
+        return $result;
     }
 
     /**
      * testNumPublicHoliday
      *
-     * @return	void
+     * @return    void
      */
     public function testNumPublicHoliday()
     {
@@ -230,7 +230,7 @@ class DateLibTest extends PHPUnit_Framework_TestCase
     /**
      * testNumOpenDay
      *
-     * @return	void
+     * @return    void
      */
     public function testNumOpenDay()
     {
@@ -268,21 +268,21 @@ class DateLibTest extends PHPUnit_Framework_TestCase
     /**
      * testConvertTime2Seconds
      *
-     * @return	void
+     * @return    void
      */
     public function testConvertTime2Seconds()
     {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-		$result=convertTime2Seconds(1, 1, 2);
-    	print __METHOD__." result=".$result."\n";
-		$this->assertEquals(3662, $result);
+        $result=convertTime2Seconds(1, 1, 2);
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals(3662, $result);
 
-		return $result;
+        return $result;
     }
 
     /**
@@ -292,22 +292,22 @@ class DateLibTest extends PHPUnit_Framework_TestCase
      */
     public function testConvertSecondToTime()
     {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-		$result=convertSecondToTime(0, 'all', 86400);
-    	print __METHOD__." result=".$result."\n";
-		$this->assertEquals('0', $result);
+        $result=convertSecondToTime(0, 'all', 86400);
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals('0', $result);
 
-		$result=convertSecondToTime(86400, 'all', 86400);
-    	print __METHOD__." result=".$result."\n";
-		$this->assertSame('1 '.$langs->trans("Day"), $result);
+        $result=convertSecondToTime(86400, 'all', 86400);
+        print __METHOD__." result=".$result."\n";
+        $this->assertSame('1 '.$langs->trans("Day"), $result);
 
 
-		return $result;
+        return $result;
     }
 
     /**
@@ -323,60 +323,60 @@ class DateLibTest extends PHPUnit_Framework_TestCase
         $langs=$this->savlangs;
         $db=$this->savdb;
 
-    	// Check %Y-%m-%d %H:%M:%S format
+        // Check %Y-%m-%d %H:%M:%S format
         $result=dol_print_date(0, '%Y-%m-%d %H:%M:%S', true);
-       	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('1970-01-01 00:00:00', $result);
+           print __METHOD__." result=".$result."\n";
+        $this->assertEquals('1970-01-01 00:00:00', $result);
 
-    	// Check %Y-%m-%d %H:%M:%S format
-    	$result=dol_print_date(16725225600, '%Y-%m-%d %H:%M:%S', true);	// http://www.epochconverter.com/
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('2500-01-01 00:00:00', $result);
+        // Check %Y-%m-%d %H:%M:%S format
+        $result=dol_print_date(16725225600, '%Y-%m-%d %H:%M:%S', true);    // http://www.epochconverter.com/
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals('2500-01-01 00:00:00', $result);
 
-    	// Check %Y-%m-%d %H:%M:%S format
-    	$result=dol_print_date(-1830384000, '%Y-%m-%d %H:%M:%S', true);	// http://www.epochconverter.com/
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('1912-01-01 00:00:00', $result);	// dol_print_date use TZ (good) but epoch converter does not use it.
+        // Check %Y-%m-%d %H:%M:%S format
+        $result=dol_print_date(-1830384000, '%Y-%m-%d %H:%M:%S', true);    // http://www.epochconverter.com/
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals('1912-01-01 00:00:00', $result);    // dol_print_date use TZ (good) but epoch converter does not use it.
 
-    	// Check %Y-%m-%d %H:%M:%S format
-    	$result=dol_print_date(-11676096000, '%Y-%m-%d %H:%M:%S', true);	// http://www.epochconverter.com/
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('1600-01-01 00:00:00', $result);
+        // Check %Y-%m-%d %H:%M:%S format
+        $result=dol_print_date(-11676096000, '%Y-%m-%d %H:%M:%S', true);    // http://www.epochconverter.com/
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals('1600-01-01 00:00:00', $result);
 
-    	// test with negative timezone
-    	$result=dol_print_date(-1, '%Y-%m-%d %H:%M:%S', true);	// http://www.epochconverter.com/
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('1969-12-31 23:59:59', $result);
+        // test with negative timezone
+        $result=dol_print_date(-1, '%Y-%m-%d %H:%M:%S', true);    // http://www.epochconverter.com/
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals('1969-12-31 23:59:59', $result);
 
-    	// Check dayhour format for fr_FR
-    	$outputlangs=new Translate('', $conf);
-    	$outputlangs->setDefaultLang('fr_FR');
-    	$outputlangs->load("main");
+        // Check dayhour format for fr_FR
+        $outputlangs=new Translate('', $conf);
+        $outputlangs->setDefaultLang('fr_FR');
+        $outputlangs->load("main");
 
-    	$result=dol_print_date(0+24*3600, 'dayhour', true, $outputlangs);
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('02/01/1970 00:00', $result);
+        $result=dol_print_date(0+24*3600, 'dayhour', true, $outputlangs);
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals('02/01/1970 00:00', $result);
 
-    	// Check %a and %b format for fr_FR
-    	$result=dol_print_date(0, '%a %b %B', true, $outputlangs);
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('Jeu Jan. Janvier', $result);
+        // Check %a and %b format for fr_FR
+        $result=dol_print_date(0, '%a %b %B', true, $outputlangs);
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals('Jeu Jan. Janvier', $result);
 
-    	// Check day format for en_US
-    	$outputlangs=new Translate('', $conf);
-    	$outputlangs->setDefaultLang('en_US');
-    	$outputlangs->load("main");
+        // Check day format for en_US
+        $outputlangs=new Translate('', $conf);
+        $outputlangs->setDefaultLang('en_US');
+        $outputlangs->load("main");
 
-    	$result=dol_print_date(0+24*3600, 'day', true, $outputlangs);
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('01/02/1970', $result);
+        $result=dol_print_date(0+24*3600, 'day', true, $outputlangs);
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals('01/02/1970', $result);
 
-    	// Check %a and %b format for en_US
-    	$result=dol_print_date(0, '%a %b %B', true, $outputlangs);
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('Thu Jan January', $result);
+        // Check %a and %b format for en_US
+        $result=dol_print_date(0, '%a %b %B', true, $outputlangs);
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals('Thu Jan January', $result);
 
-    	return $result;
+        return $result;
     }
 
     /**
@@ -398,10 +398,10 @@ class DateLibTest extends PHPUnit_Framework_TestCase
         $outputlangs->load("main");
 
         $result=dol_print_date(dol_time_plus_duree(dol_time_plus_duree(dol_time_plus_duree(0, 1, 'm'), 1, 'y'), 1, 'd'), 'dayhour', true, $outputlangs);
-       	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('02/02/1971 00:00', $result);
+           print __METHOD__." result=".$result."\n";
+        $this->assertEquals('02/02/1971 00:00', $result);
 
-    	return $result;
+        return $result;
     }
 
     /**
@@ -417,30 +417,30 @@ class DateLibTest extends PHPUnit_Framework_TestCase
         $langs=$this->savlangs;
         $db=$this->savdb;
 
-		$stime='19700102';
-		$result=dol_stringtotime($stime);
-		print __METHOD__." result=".$result."\n";
-		$this->assertEquals(86400, $result);
-
-		$stime='1970-01-01T02:00:00Z';
+        $stime='19700102';
         $result=dol_stringtotime($stime);
-    	print __METHOD__." result=".$result."\n";
-		$this->assertEquals(7200, $result);
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals(86400, $result);
+
+        $stime='1970-01-01T02:00:00Z';
+        $result=dol_stringtotime($stime);
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals(7200, $result);
 
         $stime='1970-01-01 02:00:00';
         $result=dol_stringtotime($stime);
-    	print __METHOD__." result=".$result."\n";
-		$this->assertEquals(7200, $result);
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals(7200, $result);
 
         $stime='19700101T020000Z';
         $result=dol_stringtotime($stime);
-    	print __METHOD__." result=".$result."\n";
-		$this->assertEquals(7200, $result);
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals(7200, $result);
 
-		$stime='19700101020000';
-		$result=dol_stringtotime($stime);
-		print __METHOD__." result=".$result."\n";
-		$this->assertEquals(7200, $result);
+        $stime='19700101020000';
+        $result=dol_stringtotime($stime);
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals(7200, $result);
 
         return $result;
     }
@@ -452,16 +452,16 @@ class DateLibTest extends PHPUnit_Framework_TestCase
      */
     public function testDolGetFirstDayWeek()
     {
-    	global $conf;
+        global $conf;
 
-    	$day=3; $month=2; $year=2015;
-    	$conf->global->MAIN_START_WEEK = 1;	// start on monday
-   		$prev = dol_get_first_day_week($day, $month, $year);
-		$this->assertEquals(2, (int) $prev['first_day']);		// monday for month 2, year 2014 is the 2
+        $day=3; $month=2; $year=2015;
+        $conf->global->MAIN_START_WEEK = 1;    // start on monday
+           $prev = dol_get_first_day_week($day, $month, $year);
+        $this->assertEquals(2, (int) $prev['first_day']);        // monday for month 2, year 2014 is the 2
 
-    	$day=3; $month=2; $year=2015;
-    	$conf->global->MAIN_START_WEEK = 0;	// start on sunday
-   		$prev = dol_get_first_day_week($day, $month, $year);
-		$this->assertEquals(1, (int) $prev['first_day']);		// sunday for month 2, year 2015 is the 1st
+        $day=3; $month=2; $year=2015;
+        $conf->global->MAIN_START_WEEK = 0;    // start on sunday
+           $prev = dol_get_first_day_week($day, $month, $year);
+        $this->assertEquals(1, (int) $prev['first_day']);        // sunday for month 2, year 2015 is the 1st
     }
 }

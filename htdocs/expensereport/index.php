@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2003		Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003        Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015	Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004		Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2011	Regis Houssin        <regis.houssin@inodbox.com>
@@ -213,7 +213,7 @@ if ($result)
             print '<td class="right">'.dol_print_date($db->jdate($obj->dm), 'day').'</td>';
             print '<td class="right">';
             //print $obj->libelle;
-			print $expensereportstatic->LibStatut($obj->fk_status, 3);
+            print $expensereportstatic->LibStatut($obj->fk_status, 3);
             print '</td>';
             print '</tr>';
 

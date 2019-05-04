@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014	Alexandre Spangaro	<aspangaro@open-dsi.fr>
+/* Copyright (C) 2014    Alexandre Spangaro    <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,40 +17,40 @@
  */
 
 /**
- *	    \file       htdocs/core/lib/fiscalyear.lib.php
- *		\brief		Set basic functions for fiscal years
+ *        \file       htdocs/core/lib/fiscalyear.lib.php
+ *        \brief        Set basic functions for fiscal years
  */
 
 /**
  * Prepare array with list of tabs
  *
- * @param   Fiscalyear	$object		Object related to tabs
- * @return  array				Array of tabs to show
+ * @param   Fiscalyear    $object        Object related to tabs
+ * @return  array                Array of tabs to show
  */
 function fiscalyear_prepare_head(Fiscalyear $object)
 {
-	global $langs, $conf;
+    global $langs, $conf;
 
-	$h = 0;
-	$head = array();
+    $h = 0;
+    $head = array();
 
-	$head[$h][0] = DOL_URL_ROOT . '/accountancy/admin/fiscalyear_card.php?id=' . $object->id;
-	$head[$h][1] = $langs->trans("Card");
-	$head[$h][2] = 'card';
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT . '/accountancy/admin/fiscalyear_card.php?id=' . $object->id;
+    $head[$h][1] = $langs->trans("Card");
+    $head[$h][2] = 'card';
+    $h++;
 
-	// Show more tabs from modules
-	// Entries must be declared in modules descriptor with line
+    // Show more tabs from modules
+    // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
-    // $this->tabs = array('entity:-tabname);   												to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'fiscalyear');
+    // $this->tabs = array('entity:-tabname);                                                   to remove a tab
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'fiscalyear');
 
-	$head[$h][0] = DOL_URL_ROOT . '/accountancy/admin/fiscalyear_info.php?id=' . $object->id;
-	$head[$h][1] = $langs->trans("Info");
-	$head[$h][2] = 'info';
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT . '/accountancy/admin/fiscalyear_info.php?id=' . $object->id;
+    $head[$h][1] = $langs->trans("Info");
+    $head[$h][2] = 'info';
+    $h++;
 
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'fiscalyear', 'remove');
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'fiscalyear', 'remove');
 
-	return $head;
+    return $head;
 }

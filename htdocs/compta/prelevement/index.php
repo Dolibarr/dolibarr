@@ -20,9 +20,9 @@
  */
 
 /**
- *	\file       htdocs/compta/prelevement/index.php
+ *    \file       htdocs/compta/prelevement/index.php
  *  \ingroup    prelevement
- *	\brief      Prelevement index page
+ *    \brief      Prelevement index page
  */
 
 
@@ -57,8 +57,8 @@ llxHeader('', $langs->trans("CustomersStandingOrdersArea"));
 
 if (prelevement_check_config() < 0)
 {
-	$langs->load("errors");
-	setEventMessages($langs->trans("ErrorModuleSetupNotComplete"), null, 'errors');
+    $langs->load("errors");
+    setEventMessages($langs->trans("ErrorModuleSetupNotComplete"), null, 'errors');
 }
 
 print load_fiche_titre($langs->trans("CustomersStandingOrdersArea"));

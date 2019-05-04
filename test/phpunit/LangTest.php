@@ -18,13 +18,13 @@
 
 /**
  *      \file       test/phpunit/LangTest.php
- *		\ingroup    test
+ *        \ingroup    test
  *      \brief      PHPUnit test
- *		\remarks	To run this script as CLI:  phpunit filename.php
+ *        \remarks    To run this script as CLI:  phpunit filename.php
  */
 
 global $conf,$user,$langs,$db;
-//define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
+//define('TEST_DB_FORCE_TYPE','mysql');    // This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/security.lib.php';
@@ -55,79 +55,79 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
- * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
+ * @remarks    backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
 class LangTest extends PHPUnit_Framework_TestCase
 {
-	protected $savconf;
-	protected $savuser;
-	protected $savlangs;
-	protected $savdb;
+    protected $savconf;
+    protected $savuser;
+    protected $savlangs;
+    protected $savdb;
 
-	/**
-	 * Constructor
-	 * We save global variables into local variables
-	 *
-	 * @return SecurityTest
-	 */
-	public function __construct()
-	{
-		parent::__construct();
+    /**
+     * Constructor
+     * We save global variables into local variables
+     *
+     * @return SecurityTest
+     */
+    public function __construct()
+    {
+        parent::__construct();
 
-		//$this->sharedFixture
-		global $conf,$user,$langs,$db;
-		$this->savconf=$conf;
-		$this->savuser=$user;
-		$this->savlangs=$langs;
-		$this->savdb=$db;
+        //$this->sharedFixture
+        global $conf,$user,$langs,$db;
+        $this->savconf=$conf;
+        $this->savuser=$user;
+        $this->savlangs=$langs;
+        $this->savdb=$db;
 
-		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-		//print " - db ".$db->db;
-		print "\n";
-	}
+        print __METHOD__." db->type=".$db->type." user->id=".$user->id;
+        //print " - db ".$db->db;
+        print "\n";
+    }
 
-	// Static methods
+    // Static methods
     public static function setUpBeforeClass()
     {
-    	global $conf,$user,$langs,$db;
-		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
+        global $conf,$user,$langs,$db;
+        $db->begin();    // This is to have all actions inside a transaction even if test launched without suite.
 
-    	print __METHOD__."\n";
+        print __METHOD__."\n";
     }
 
     // tear down after class
     public static function tearDownAfterClass()
     {
-    	global $conf,$user,$langs,$db;
-		$db->rollback();
+        global $conf,$user,$langs,$db;
+        $db->rollback();
 
-		print __METHOD__."\n";
+        print __METHOD__."\n";
     }
 
-	/**
-	 * Init phpunit tests
-	 *
-	 * @return	void
-	 */
+    /**
+     * Init phpunit tests
+     *
+     * @return    void
+     */
     protected function setUp()
     {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-		print __METHOD__."\n";
+        print __METHOD__."\n";
     }
 
-	/**
-	 * End phpunit tests
-	 *
-	 * @return	void
-	 */
+    /**
+     * End phpunit tests
+     *
+     * @return    void
+     */
     protected function tearDown()
     {
-    	print __METHOD__."\n";
+        print __METHOD__."\n";
     }
 
     /**
@@ -137,43 +137,43 @@ class LangTest extends PHPUnit_Framework_TestCase
      */
     public function testLang()
     {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
         include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
 
-		$filesarray = scandir(DOL_DOCUMENT_ROOT.'/langs');
-		foreach($filesarray as $key => $code)
-		{
-			if (! preg_match('/^[a-z]+_[A-Z]+$/', $code)) continue;
+        $filesarray = scandir(DOL_DOCUMENT_ROOT.'/langs');
+        foreach($filesarray as $key => $code)
+        {
+            if (! preg_match('/^[a-z]+_[A-Z]+$/', $code)) continue;
 
-			print 'Check language file for lang code='.$code."\n";
-			$tmplangs=new Translate('', $conf);
-    		$langcode=$code;
-        	$tmplangs->setDefaultLang($langcode);
-			$tmplangs->load("main");
+            print 'Check language file for lang code='.$code."\n";
+            $tmplangs=new Translate('', $conf);
+            $langcode=$code;
+            $tmplangs->setDefaultLang($langcode);
+            $tmplangs->load("main");
 
-			$result=$tmplangs->transnoentitiesnoconv("SeparatorDecimal");
-			print __METHOD__." SeparatorDecimal=".$result."\n";
-			$this->assertContains($result, array('.',',','/',' ','','None'), 'Error for decimal separator for lang code '.$code);	// Note that ، that is coma for RTL languages is not supported
+            $result=$tmplangs->transnoentitiesnoconv("SeparatorDecimal");
+            print __METHOD__." SeparatorDecimal=".$result."\n";
+            $this->assertContains($result, array('.',',','/',' ','','None'), 'Error for decimal separator for lang code '.$code);    // Note that ، that is coma for RTL languages is not supported
 
-			$result=$tmplangs->transnoentitiesnoconv("SeparatorThousand");
-			print __METHOD__." SeparatorThousand=".$result."\n";
-			$this->assertContains($result, array('.',',','/',' ','','\'','None','Space'), 'Error for thousand separator for lang code '.$code);	// Note that ، that is coma for RTL languages is not supported
+            $result=$tmplangs->transnoentitiesnoconv("SeparatorThousand");
+            print __METHOD__." SeparatorThousand=".$result."\n";
+            $this->assertContains($result, array('.',',','/',' ','','\'','None','Space'), 'Error for thousand separator for lang code '.$code);    // Note that ، that is coma for RTL languages is not supported
 
-			// Test java string contains only d,M,y,/,-,. and not m,...
-			$result=$tmplangs->transnoentitiesnoconv("FormatDateShortJava");
-			print __METHOD__." FormatDateShortJava=".$result."\n";
-			$this->assertRegExp('/^[dMy\/\-\.]+$/', $result, 'FormatDateShortJava KO for lang code '.$code);
-			$result=$tmplangs->trans("FormatDateShortJavaInput");
-			print __METHOD__." FormatDateShortJavaInput=".$result."\n";
-			$this->assertRegExp('/^[dMy\/\-\.]+$/', $result, 'FormatDateShortJavaInput KO for lang code '.$code);
+            // Test java string contains only d,M,y,/,-,. and not m,...
+            $result=$tmplangs->transnoentitiesnoconv("FormatDateShortJava");
+            print __METHOD__." FormatDateShortJava=".$result."\n";
+            $this->assertRegExp('/^[dMy\/\-\.]+$/', $result, 'FormatDateShortJava KO for lang code '.$code);
+            $result=$tmplangs->trans("FormatDateShortJavaInput");
+            print __METHOD__." FormatDateShortJavaInput=".$result."\n";
+            $this->assertRegExp('/^[dMy\/\-\.]+$/', $result, 'FormatDateShortJavaInput KO for lang code '.$code);
 
-			unset($tmplangs);
-		}
+            unset($tmplangs);
+        }
 
         return;
     }

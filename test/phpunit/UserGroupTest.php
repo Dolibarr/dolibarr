@@ -42,7 +42,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
- * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
+ * @remarks    backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
 class UserGroupTest extends PHPUnit_Framework_TestCase
 {
@@ -59,9 +59,9 @@ class UserGroupTest extends PHPUnit_Framework_TestCase
      */
     public function __construct()
     {
-    	parent::__construct();
+        parent::__construct();
 
-    	//$this->sharedFixture
+        //$this->sharedFixture
         global $conf,$user,$langs,$db;
         $this->savconf=$conf;
         $this->savuser=$user;
@@ -120,7 +120,7 @@ class UserGroupTest extends PHPUnit_Framework_TestCase
     /**
      * testUserGroupCreate
      *
-     * @return	void
+     * @return    void
      */
     public function testUserGroupCreate()
     {

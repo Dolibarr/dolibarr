@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2002    Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
  *
@@ -18,15 +18,15 @@
  */
 
 /**
- *     	\file       htdocs/public/payment/paymentko.php
- *		\ingroup    core
- *		\brief      File to show page after a failed payment.
+ *         \file       htdocs/public/payment/paymentko.php
+ *        \ingroup    core
+ *        \brief      File to show page after a failed payment.
  *                  This page is called by payment system with url provided to it competed with parameter TOKEN=xxx
  *                  This token can be used to get more informations.
  */
 
-define("NOLOGIN", 1);		// This means this output page does not require to be logged.
-define("NOCSRFCHECK", 1);	// We accept to go on this page from external web site.
+define("NOLOGIN", 1);        // This means this output page does not require to be logged.
+define("NOCSRFCHECK", 1);    // We accept to go on this page from external web site.
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
@@ -40,8 +40,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 
 if (! empty($conf->paypal->enabled))
 {
-	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypal.lib.php';
-	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypalfunctions.lib.php';
+    require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypal.lib.php';
+    require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypalfunctions.lib.php';
 }
 
 $langs->loadLangs(array("main", "other", "dict", "bills", "companies", "paybox", "paypal", "stripe"));
@@ -137,61 +137,61 @@ if (! empty($_SESSION['ipaddress']))      // To avoid to make action twice
 
     // Send an email
     $sendemail = '';
-   	if (! empty($conf->global->ONLINE_PAYMENT_SENDEMAIL))
-   	{
+       if (! empty($conf->global->ONLINE_PAYMENT_SENDEMAIL))
+       {
         $sendemail = $conf->global->ONLINE_PAYMENT_SENDEMAIL;
-    }
+       }
 
     // Send warning of error to administrator
     if ($sendemail)
     {
-    	$companylangs = new Translate('', $conf);
-    	$companylangs->setDefaultLang($mysoc->default_lang);
-    	$companylangs->loadLangs(array('main','members','bills','paypal','paybox'));
+        $companylangs = new Translate('', $conf);
+        $companylangs->setDefaultLang($mysoc->default_lang);
+        $companylangs->loadLangs(array('main','members','bills','paypal','paybox'));
 
         $from=$conf->global->MAILING_EMAIL_FROM;
         $sendto=$sendemail;
 
-    	// Define link to login card
-    	$appli=constant('DOL_APPLICATION_TITLE');
-    	if (! empty($conf->global->MAIN_APPLICATION_TITLE))
-    	{
-    	    $appli=$conf->global->MAIN_APPLICATION_TITLE;
-    	    if (preg_match('/\d\.\d/', $appli))
-    	    {
-    	        if (! preg_match('/'.preg_quote(DOL_VERSION).'/', $appli)) $appli.=" (".DOL_VERSION.")";	// If new title contains a version that is different than core
-    	    }
-    	    else $appli.=" ".DOL_VERSION;
-    	}
-    	else $appli.=" ".DOL_VERSION;
+        // Define link to login card
+        $appli=constant('DOL_APPLICATION_TITLE');
+        if (! empty($conf->global->MAIN_APPLICATION_TITLE))
+        {
+            $appli=$conf->global->MAIN_APPLICATION_TITLE;
+            if (preg_match('/\d\.\d/', $appli))
+            {
+                if (! preg_match('/'.preg_quote(DOL_VERSION).'/', $appli)) $appli.=" (".DOL_VERSION.")";    // If new title contains a version that is different than core
+            }
+            else $appli.=" ".DOL_VERSION;
+        }
+        else $appli.=" ".DOL_VERSION;
 
-    	$urlback=$_SERVER["REQUEST_URI"];
-    	$topic='['.$appli.'] '.$companylangs->transnoentitiesnoconv("NewOnlinePaymentFailed");
-    	$content="";
-    	$content.='<font color="orange">'.$companylangs->transnoentitiesnoconv("ValidationOfOnlinePaymentFailed")."</font>\n";
+        $urlback=$_SERVER["REQUEST_URI"];
+        $topic='['.$appli.'] '.$companylangs->transnoentitiesnoconv("NewOnlinePaymentFailed");
+        $content="";
+        $content.='<font color="orange">'.$companylangs->transnoentitiesnoconv("ValidationOfOnlinePaymentFailed")."</font>\n";
 
-    	$content.="<br><br>\n";
-    	$content.='<u>'.$companylangs->transnoentitiesnoconv("TechnicalInformation").":</u><br>\n";
-    	$content.=$companylangs->transnoentitiesnoconv("OnlinePaymentSystem").': <strong>'.$paymentmethod."</strong><br>\n";
-    	$content.=$companylangs->transnoentitiesnoconv("ReturnURLAfterPayment").': '.$urlback."<br>\n";
-    	$content.=$companylangs->transnoentitiesnoconv("Error").': '.$errormessage."<br>\n";
-    	$content.="<br>\n";
-    	$content.="tag=".$fulltag." token=".$onlinetoken." paymentType=".$paymentType." currencycodeType=".$currencyCodeType." payerId=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt;
+        $content.="<br><br>\n";
+        $content.='<u>'.$companylangs->transnoentitiesnoconv("TechnicalInformation").":</u><br>\n";
+        $content.=$companylangs->transnoentitiesnoconv("OnlinePaymentSystem").': <strong>'.$paymentmethod."</strong><br>\n";
+        $content.=$companylangs->transnoentitiesnoconv("ReturnURLAfterPayment").': '.$urlback."<br>\n";
+        $content.=$companylangs->transnoentitiesnoconv("Error").': '.$errormessage."<br>\n";
+        $content.="<br>\n";
+        $content.="tag=".$fulltag." token=".$onlinetoken." paymentType=".$paymentType." currencycodeType=".$currencyCodeType." payerId=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt;
 
-    	$ishtml=dol_textishtml($content);	// May contain urls
+        $ishtml=dol_textishtml($content);    // May contain urls
 
-    	require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-    	$mailfile = new CMailFile($topic, $sendto, $from, $content, array(), array(), array(), '', '', 0, $ishtml);
+        require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+        $mailfile = new CMailFile($topic, $sendto, $from, $content, array(), array(), array(), '', '', 0, $ishtml);
 
-    	$result=$mailfile->sendfile();
-    	if ($result)
-    	{
-    		dol_syslog("EMail sent to ".$sendto, LOG_DEBUG, 0, '_payment');
-    	}
-    	else
-    	{
-    		dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0, '_payment');
-    	}
+        $result=$mailfile->sendfile();
+        if ($result)
+        {
+            dol_syslog("EMail sent to ".$sendto, LOG_DEBUG, 0, '_payment');
+        }
+        else
+        {
+            dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0, '_payment');
+        }
     }
 
     unset($_SESSION['ipaddress']);
@@ -224,21 +224,21 @@ elseif (! empty($conf->global->ONLINE_PAYMENT_LOGO)) $logosmall=$conf->global->O
 $urllogo='';
 if (! empty($logosmall) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$logosmall))
 {
-	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$logosmall);
-	$width=150;
+    $urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$logosmall);
+    $width=150;
 }
 elseif (! empty($logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$logo))
 {
-	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/'.$logo);
-	$width=150;
+    $urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/'.$logo);
+    $width=150;
 }
 // Output html code for logo
 if ($urllogo)
 {
-	print '<center><img id="dolpaymentlogo" title="'.$title.'" src="'.$urllogo.'"';
-	if ($width) print ' width="'.$width.'"';
-	print '></center>';
-	print '<br>';
+    print '<center><img id="dolpaymentlogo" title="'.$title.'" src="'.$urllogo.'"';
+    if ($width) print ' width="'.$width.'"';
+    print '></center>';
+    print '<br>';
 }
 
 print $langs->trans("YourPaymentHasNotBeenRecorded")."<br><br>";

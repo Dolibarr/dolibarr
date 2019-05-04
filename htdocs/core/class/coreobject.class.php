@@ -18,9 +18,9 @@
  */
 
 /**
- *	\file       htdocs/core/class/coreobject.class.php
- *	\ingroup    core
- *	\brief      File of class to manage all object. Might be replace or merge into commonobject
+ *    \file       htdocs/core/class/coreobject.class.php
+ *    \ingroup    core
+ *    \brief      File of class to manage all object. Might be replace or merge into commonobject
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
@@ -37,7 +37,7 @@ class CoreObject extends CommonObject
     /**
      *  Constructor
      *
-     *  @param      DoliDB		$db      Database handler
+     *  @param      DoliDB        $db      Database handler
      */
     public function __construct(DoliDB &$db)
     {
@@ -97,11 +97,11 @@ class CoreObject extends CommonObject
     }
 
     /**
-     *	Get object and children from database
+     *    Get object and children from database
      *
-     *	@param      int			$id       		Id of object to load
-     * 	@param		bool		$loadChild		used to load children from database
-     *	@return     int         				>0 if OK, <0 if KO, 0 if not found
+     *    @param      int            $id               Id of object to load
+     *     @param        bool        $loadChild        used to load children from database
+     *    @return     int                         >0 if OK, <0 if KO, 0 if not found
      */
     public function fetch($id, $loadChild = true)
     {

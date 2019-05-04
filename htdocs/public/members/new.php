@@ -22,9 +22,9 @@
  */
 
 /**
- *	\file       htdocs/public/members/new.php
- *	\ingroup    member
- *	\brief      Example of form to add a new member
+ *    \file       htdocs/public/members/new.php
+ *    \ingroup    member
+ *    \brief      Example of form to add a new member
  *
  *  Note that you can add following constant to change behaviour of page
  *  MEMBER_NEWFORM_AMOUNT               Default amount for auto-subscribe form
@@ -37,9 +37,9 @@
  *  MEMBER_NEWFORM_FORCECOUNTRYCODE     Force country
  */
 
-if (! defined('NOLOGIN'))		define("NOLOGIN", 1);		// This means this output page does not require to be logged.
-if (! defined('NOCSRFCHECK'))	define("NOCSRFCHECK", 1);	// We accept to go on this page from external web site.
-if (! defined('NOIPCHECK'))		define('NOIPCHECK', '1');	// Do not check IP defined into conf $dolibarr_main_restrict_ip
+if (! defined('NOLOGIN'))        define("NOLOGIN", 1);        // This means this output page does not require to be logged.
+if (! defined('NOCSRFCHECK'))    define("NOCSRFCHECK", 1);    // We accept to go on this page from external web site.
+if (! defined('NOIPCHECK'))        define('NOIPCHECK', '1');    // Do not check IP defined into conf $dolibarr_main_restrict_ip
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
@@ -83,13 +83,13 @@ $user->loadDefaultValues();
 /**
  * Show header for new member
  *
- * @param 	string		$title				Title
- * @param 	string		$head				Head array
- * @param 	int    		$disablejs			More content into html header
- * @param 	int    		$disablehead		More content into html header
- * @param 	array  		$arrayofjs			Array of complementary js files
- * @param 	array  		$arrayofcss			Array of complementary css files
- * @return	void
+ * @param     string        $title                Title
+ * @param     string        $head                Head array
+ * @param     int            $disablejs            More content into html header
+ * @param     int            $disablehead        More content into html header
+ * @param     array          $arrayofjs            Array of complementary js files
+ * @param     array          $arrayofcss            Array of complementary css files
+ * @return    void
  */
 function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '')
 {
@@ -124,7 +124,7 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
 /**
  * Show footer for new member
  *
- * @return	void
+ * @return    void
  */
 function llxFooterVierge()
 {
@@ -145,10 +145,10 @@ function llxFooterVierge()
 // Action called when page is submitted
 if ($action == 'add')
 {
-	$error = 0;
-	$urlback='';
+    $error = 0;
+    $urlback='';
 
-	$db->begin();
+    $db->begin();
 
     // test if login already exists
     if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
@@ -259,12 +259,12 @@ if ($action == 'add')
         // Fill array 'array_options' with data from add form
         $extralabels=$extrafields->fetch_name_optionals_label($adh->table_element);
         $ret = $extrafields->setOptionalsFromPost($extralabels, $adh);
-		if ($ret < 0) $error++;
+        if ($ret < 0) $error++;
 
         $result=$adh->create($user);
         if ($result > 0)
         {
-			require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+            require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
             $object = $adh;
 
             $adht = new AdherentType($db);
@@ -272,84 +272,84 @@ if ($action == 'add')
 
             if ($object->email)
             {
-            	$subject = '';
-            	$msg= '';
+                $subject = '';
+                $msg= '';
 
-            	// Send subscription email
-            	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-            	$formmail=new FormMail($db);
-            	// Set output language
-            	$outputlangs = new Translate('', $conf);
-            	$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
-            	// Load traductions files requiredby by page
-            	$outputlangs->loadLangs(array("main", "members"));
-            	// Get email content from template
-            	$arraydefaultmessage=null;
-            	$labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_AUTOREGISTER;
+                // Send subscription email
+                include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+                $formmail=new FormMail($db);
+                // Set output language
+                $outputlangs = new Translate('', $conf);
+                $outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
+                // Load traductions files requiredby by page
+                $outputlangs->loadLangs(array("main", "members"));
+                // Get email content from template
+                $arraydefaultmessage=null;
+                $labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_AUTOREGISTER;
 
-            	if (! empty($labeltouse)) $arraydefaultmessage=$formmail->getEMailTemplate($db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
+                if (! empty($labeltouse)) $arraydefaultmessage=$formmail->getEMailTemplate($db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
 
-            	if (! empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0)
-            	{
-            		$subject = $arraydefaultmessage->topic;
-            		$msg     = $arraydefaultmessage->content;
-            	}
+                if (! empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0)
+                {
+                    $subject = $arraydefaultmessage->topic;
+                    $msg     = $arraydefaultmessage->content;
+                }
 
-            	$substitutionarray=getCommonSubstitutionArray($outputlangs, 0, null, $object);
-            	complete_substitutions_array($substitutionarray, $outputlangs, $object);
-            	$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
-            	$texttosend = make_substitutions(dol_concatdesc($msg, $adht->getMailOnValid()), $substitutionarray, $outputlangs);
+                $substitutionarray=getCommonSubstitutionArray($outputlangs, 0, null, $object);
+                complete_substitutions_array($substitutionarray, $outputlangs, $object);
+                $subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
+                $texttosend = make_substitutions(dol_concatdesc($msg, $adht->getMailOnValid()), $substitutionarray, $outputlangs);
 
-            	if ($subjecttosend && $texttosend)
-            	{
-            		$moreinheader='X-Dolibarr-Info: send_an_email by public/members/new.php'."\r\n";
+                if ($subjecttosend && $texttosend)
+                {
+                    $moreinheader='X-Dolibarr-Info: send_an_email by public/members/new.php'."\r\n";
 
-            		$result=$object->send_an_email($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1, '', $moreinheader);
-            	}
-            	/*if ($result < 0)
-            	{
-            		$error++;
-            		setEventMessages($object->error, $object->errors, 'errors');
-            	}*/
+                    $result=$object->send_an_email($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1, '', $moreinheader);
+                }
+                /*if ($result < 0)
+                {
+                    $error++;
+                    setEventMessages($object->error, $object->errors, 'errors');
+                }*/
             }
 
             // Send email to the foundation to say a new member subscribed with autosubscribe form
             if (! empty($conf->global->MAIN_INFO_SOCIETE_MAIL) && ! empty($conf->global->ADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT) &&
                   ! empty($conf->global->ADHERENT_AUTOREGISTER_NOTIF_MAIL) )
             {
-            	// Define link to login card
-            	$appli=constant('DOL_APPLICATION_TITLE');
-            	if (! empty($conf->global->MAIN_APPLICATION_TITLE))
-            	{
-            		$appli=$conf->global->MAIN_APPLICATION_TITLE;
-            		if (preg_match('/\d\.\d/', $appli))
-            		{
-            			if (! preg_match('/'.preg_quote(DOL_VERSION).'/', $appli)) $appli.=" (".DOL_VERSION.")";	// If new title contains a version that is different than core
-            		}
-            		else $appli.=" ".DOL_VERSION;
-            	}
-            	else $appli.=" ".DOL_VERSION;
+                // Define link to login card
+                $appli=constant('DOL_APPLICATION_TITLE');
+                if (! empty($conf->global->MAIN_APPLICATION_TITLE))
+                {
+                    $appli=$conf->global->MAIN_APPLICATION_TITLE;
+                    if (preg_match('/\d\.\d/', $appli))
+                    {
+                        if (! preg_match('/'.preg_quote(DOL_VERSION).'/', $appli)) $appli.=" (".DOL_VERSION.")";    // If new title contains a version that is different than core
+                    }
+                    else $appli.=" ".DOL_VERSION;
+                }
+                else $appli.=" ".DOL_VERSION;
 
-            	$to=$adh->makeSubstitution($conf->global->MAIN_INFO_SOCIETE_MAIL);
-            	$from=$conf->global->ADHERENT_MAIL_FROM;
-				$mailfile = new CMailFile(
-					'['.$appli.'] '.$conf->global->ADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT,
-					$to,
-					$from,
-					$adh->makeSubstitution($conf->global->ADHERENT_AUTOREGISTER_NOTIF_MAIL),
-					array(),
-					array(),
-					array(),
-					"",
-					"",
-					0,
-					-1
-				);
+                $to=$adh->makeSubstitution($conf->global->MAIN_INFO_SOCIETE_MAIL);
+                $from=$conf->global->ADHERENT_MAIL_FROM;
+                $mailfile = new CMailFile(
+                    '['.$appli.'] '.$conf->global->ADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT,
+                    $to,
+                    $from,
+                    $adh->makeSubstitution($conf->global->ADHERENT_AUTOREGISTER_NOTIF_MAIL),
+                    array(),
+                    array(),
+                    array(),
+                    "",
+                    "",
+                    0,
+                    -1
+                );
 
-            	if (! $mailfile->sendfile())
-            	{
-            		dol_syslog($langs->trans("ErrorFailedToSendMail", $from, $to), LOG_ERR);
-            	}
+                if (! $mailfile->sendfile())
+                {
+                    dol_syslog($langs->trans("ErrorFailedToSendMail", $from, $to), LOG_ERR);
+                }
             }
 
             if (! empty($backtopage)) $urlback=$backtopage;
@@ -371,7 +371,7 @@ if ($action == 'add')
                     {
                         if (! empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE))
                         {
-                    	    $urlback.='&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN . 'membersubscription' . $adh->ref, 2));
+                            $urlback.='&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN . 'membersubscription' . $adh->ref, 2));
                         }
                         else
                         {
@@ -379,21 +379,21 @@ if ($action == 'add')
                         }
                     }
                 }
-            	elseif ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'paybox')
+                elseif ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'paybox')
                 {
                     $urlback=DOL_MAIN_URL_ROOT.'/public/paybox/newpayment.php?from=membernewform&source=membersubscription&ref='.urlencode($adh->ref);
                     if (price2num(GETPOST('amount', 'alpha'))) $urlback.='&amount='.price2num(GETPOST('amount', 'alpha'));
                     if (GETPOST('email')) $urlback.='&email='.urlencode(GETPOST('email'));
                     if (! empty($conf->global->PAYMENT_SECURITY_TOKEN))
                     {
-                    	if (! empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE))
-                    	{
-                    		$urlback.='&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN . 'membersubscription' . $adh->ref, 2));
-                    	}
-                    	else
-                    	{
-                    		$urlback.='&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
-                    	}
+                        if (! empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE))
+                        {
+                            $urlback.='&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN . 'membersubscription' . $adh->ref, 2));
+                        }
+                        else
+                        {
+                            $urlback.='&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
+                        }
                     }
                 }
                 elseif ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'paypal')
@@ -403,30 +403,30 @@ if ($action == 'add')
                     if (GETPOST('email')) $urlback.='&email='.urlencode(GETPOST('email'));
                     if (! empty($conf->global->PAYMENT_SECURITY_TOKEN))
                     {
-                    	if (! empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE))
+                        if (! empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE))
                         {
-                        	$urlback.='&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN . 'membersubscription' . $adh->ref, 2));
+                            $urlback.='&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN . 'membersubscription' . $adh->ref, 2));
                         }
                         else
                         {
-                        	$urlback.='&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
+                            $urlback.='&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
                         }
                     }
                 }
-				elseif ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'stripe')
+                elseif ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'stripe')
                 {
                     $urlback=DOL_MAIN_URL_ROOT.'/public/stripe/newpayment.php?from=membernewform&source=membersubscription&ref='.$adh->ref;
                     if (price2num(GETPOST('amount', 'alpha'))) $urlback.='&amount='.price2num(GETPOST('amount', 'alpha'));
                     if (GETPOST('email')) $urlback.='&email='.urlencode(GETPOST('email'));
                     if (! empty($conf->global->PAYMENT_SECURITY_TOKEN))
                     {
-                    	if (! empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE))
+                        if (! empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE))
                         {
-                        	$urlback.='&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN . 'membersubscription' . $adh->ref, 2));
+                            $urlback.='&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN . 'membersubscription' . $adh->ref, 2));
                         }
                         else
                         {
-                        	$urlback.='&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
+                            $urlback.='&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
                         }
                     }
                 }
@@ -442,21 +442,21 @@ if ($action == 'add')
         }
         else
         {
-        	$error++;
+            $error++;
             $errmsg .= join('<br>', $adh->errors);
         }
     }
 
     if (! $error)
     {
-    	$db->commit();
+        $db->commit();
 
-    	Header("Location: ".$urlback);
-    	exit;
+        Header("Location: ".$urlback);
+        exit;
     }
     else
     {
-    	$db->rollback();
+        $db->rollback();
     }
 }
 

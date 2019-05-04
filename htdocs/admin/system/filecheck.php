@@ -166,7 +166,7 @@ if (! $error && $xml)
     {
         $out.=load_fiche_titre($langs->trans("ForcedConstants"));
 
-		$out.='<div class="div-table-responsive-no-min">';
+        $out.='<div class="div-table-responsive-no-min">';
         $out.='<table class="noborder">';
         $out.='<tr class="liste_titre">';
         $out.='<td>#</td>';
@@ -219,7 +219,7 @@ if (! $error && $xml)
         $scanfiles = dol_dir_list(DOL_DOCUMENT_ROOT, 'files', 1, $regextoinclude, $regextoexclude);
 
         // Fill file_list with files in signature, new files, modified files
-        $ret = getFilesUpdated($file_list, $xml->dolibarr_htdocs_dir[0], '', DOL_DOCUMENT_ROOT, $checksumconcat, $scanfiles);		// Fill array $file_list
+        $ret = getFilesUpdated($file_list, $xml->dolibarr_htdocs_dir[0], '', DOL_DOCUMENT_ROOT, $checksumconcat, $scanfiles);        // Fill array $file_list
         // Complete with list of new files
         foreach ($scanfiles as $keyfile => $valfile)
         {
@@ -234,7 +234,7 @@ if (! $error && $xml)
         // Files missings
         $out.=load_fiche_titre($langs->trans("FilesMissing"));
 
-		$out.='<div class="div-table-responsive-no-min">';
+        $out.='<div class="div-table-responsive-no-min">';
         $out.='<table class="noborder">';
         $out.='<tr class="liste_titre">';
         $out.='<td>#</td>';
@@ -245,15 +245,15 @@ if (! $error && $xml)
         if (is_array($tmpfilelist) && count($tmpfilelist))
         {
             $i = 0;
-	        foreach ($tmpfilelist as $file)
-	        {
-	            $i++;
-	            $out.='<tr class="oddeven">';
-	            $out.='<td>'.$i.'</td>' . "\n";
-	            $out.='<td>'.$file['filename'].'</td>' . "\n";
-	            $out.='<td class="center">'.$file['expectedmd5'].'</td>' . "\n";
-	            $out.="</tr>\n";
-	        }
+            foreach ($tmpfilelist as $file)
+            {
+                $i++;
+                $out.='<tr class="oddeven">';
+                $out.='<td>'.$i.'</td>' . "\n";
+                $out.='<td>'.$file['filename'].'</td>' . "\n";
+                $out.='<td class="center">'.$file['expectedmd5'].'</td>' . "\n";
+                $out.="</tr>\n";
+            }
         }
         else
         {
@@ -268,7 +268,7 @@ if (! $error && $xml)
         $out.=load_fiche_titre($langs->trans("FilesModified"));
 
         $totalsize=0;
-		$out.='<div class="div-table-responsive-no-min">';
+        $out.='<div class="div-table-responsive-no-min">';
         $out.='<table class="noborder">';
         $out.='<tr class="liste_titre">';
         $out.='<td>#</td>';
@@ -282,20 +282,20 @@ if (! $error && $xml)
         if (is_array($tmpfilelist2) && count($tmpfilelist2))
         {
             $i = 0;
-	        foreach ($tmpfilelist2 as $file)
-	        {
-	            $i++;
-	            $out.='<tr class="oddeven">';
-	            $out.='<td>'.$i.'</td>' . "\n";
-	            $out.='<td>'.$file['filename'].'</td>' . "\n";
-	            $out.='<td class="center">'.$file['expectedmd5'].'</td>' . "\n";
-	            $out.='<td class="center">'.$file['md5'].'</td>' . "\n";
-	            $size = dol_filesize(DOL_DOCUMENT_ROOT.'/'.$file['filename']);
-	            $totalsize += $size;
-	            $out.='<td class="right">'.dol_print_size($size).'</td>' . "\n";
-	            $out.='<td class="right">'.dol_print_date(dol_filemtime(DOL_DOCUMENT_ROOT.'/'.$file['filename']), 'dayhour').'</td>' . "\n";
-	            $out.="</tr>\n";
-	        }
+            foreach ($tmpfilelist2 as $file)
+            {
+                $i++;
+                $out.='<tr class="oddeven">';
+                $out.='<td>'.$i.'</td>' . "\n";
+                $out.='<td>'.$file['filename'].'</td>' . "\n";
+                $out.='<td class="center">'.$file['expectedmd5'].'</td>' . "\n";
+                $out.='<td class="center">'.$file['md5'].'</td>' . "\n";
+                $size = dol_filesize(DOL_DOCUMENT_ROOT.'/'.$file['filename']);
+                $totalsize += $size;
+                $out.='<td class="right">'.dol_print_size($size).'</td>' . "\n";
+                $out.='<td class="right">'.dol_print_date(dol_filemtime(DOL_DOCUMENT_ROOT.'/'.$file['filename']), 'dayhour').'</td>' . "\n";
+                $out.="</tr>\n";
+            }
             $out.='<tr class="liste_total">';
             $out.='<td></td>' . "\n";
             $out.='<td>'.$langs->trans("Total").'</td>' . "\n";
@@ -318,7 +318,7 @@ if (! $error && $xml)
         $out.=load_fiche_titre($langs->trans("FilesAdded"));
 
         $totalsize = 0;
-		$out.='<div class="div-table-responsive-no-min">';
+        $out.='<div class="div-table-responsive-no-min">';
         $out.='<table class="noborder">';
         $out.='<tr class="liste_titre">';
         $out.='<td>#</td>';
@@ -339,8 +339,8 @@ if (! $error && $xml)
                 $out.='<td>'.$i.'</td>' . "\n";
                 $out.='<td>'.$file['filename'];
                 if (! preg_match('/^win/i', PHP_OS)) {
-                	$htmltext=$langs->trans("YouCanDeleteFileOnServerWith", 'rm '.DOL_DOCUMENT_ROOT.$file['filename']);    // The slash is included int file['filename']
-                	$out.=' '.$form->textwithpicto('', $htmltext, 1, 'help', '', 0, 2, 'helprm'.$i);
+                    $htmltext=$langs->trans("YouCanDeleteFileOnServerWith", 'rm '.DOL_DOCUMENT_ROOT.$file['filename']);    // The slash is included int file['filename']
+                    $out.=' '.$form->textwithpicto('', $htmltext, 1, 'help', '', 0, 2, 'helprm'.$i);
                 }
                 $out.='</td>' . "\n";
                 $out.='<td class="center">'.$file['expectedmd5'].'</td>' . "\n";
@@ -390,7 +390,7 @@ if (! $error && $xml)
     if (is_object($xml->dolibarr_script_dir[0]))
     {
         $file_list = array();
-        $ret = getFilesUpdated($file_list, $xml->dolibarr_htdocs_dir[0], '', ???, $checksumconcat);		// Fill array $file_list
+        $ret = getFilesUpdated($file_list, $xml->dolibarr_htdocs_dir[0], '', ???, $checksumconcat);        // Fill array $file_list
     }*/
 
 
@@ -407,24 +407,24 @@ if (! $error && $xml)
     $outexpectedchecksum = ($checksumtoget ? $checksumtoget : $langs->trans("Unknown"));
     if ($checksumget == $checksumtoget)
     {
-    	if (count($file_list['added']))
-    	{
-    		$resultcode = 'warning';
-    		$resultcomment='FileIntegrityIsOkButFilesWereAdded';
-    		$outcurrentchecksum =  $checksumget.' - <span class="'.$resultcode.'">'.$langs->trans("FileIntegrityIsOkButFilesWereAdded").'</span>';
-    	}
-    	else
-    	{
-    		$resultcode = 'ok';
-    		$resultcomment='Success';
-    		$outcurrentchecksum = '<span class="'.$resultcode.'">'.$checksumget.'</span>';
-    	}
+        if (count($file_list['added']))
+        {
+            $resultcode = 'warning';
+            $resultcomment='FileIntegrityIsOkButFilesWereAdded';
+            $outcurrentchecksum =  $checksumget.' - <span class="'.$resultcode.'">'.$langs->trans("FileIntegrityIsOkButFilesWereAdded").'</span>';
+        }
+        else
+        {
+            $resultcode = 'ok';
+            $resultcomment='Success';
+            $outcurrentchecksum = '<span class="'.$resultcode.'">'.$checksumget.'</span>';
+        }
     }
     else
     {
-    	$resultcode = 'error';
-    	$resultcomment='Error';
-    	$outcurrentchecksum = '<span class="'.$resultcode.'">'.$checksumget.'</span>';
+        $resultcode = 'error';
+        $resultcomment='Error';
+        $outcurrentchecksum = '<span class="'.$resultcode.'">'.$checksumget.'</span>';
     }
 
     print load_fiche_titre($langs->trans("GlobalChecksum")).'<br>';

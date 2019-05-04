@@ -24,34 +24,34 @@
 require_once DOL_DOCUMENT_ROOT .'/core/modules/expensereport/modules_expensereport.php';
 
 /**
- *	Class to manage expensereport numbering rules Jade
+ *    Class to manage expensereport numbering rules Jade
  */
 class mod_expensereport_jade extends ModeleNumRefExpenseReport
 {
-	/**
+    /**
      * Dolibarr version of the loaded document
      * @var string
      */
-	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+    public $version = 'dolibarr';        // 'development', 'experimental', 'dolibarr'
 
-	public $prefix='ER';
+    public $prefix='ER';
 
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error='';
+    /**
+     * @var string Error code (or message)
+     */
+    public $error='';
 
-	/**
-	 * @var string Nom du modele
-	 * @deprecated
-	 * @see $name
-	 */
-	public $nom='Jade';
+    /**
+     * @var string Nom du modele
+     * @deprecated
+     * @see $name
+     */
+    public $nom='Jade';
 
-	/**
-	 * @var string model name
-	 */
-	public $name='Jade';
+    /**
+     * @var string model name
+     */
+    public $name='Jade';
 
 
     /**
@@ -66,146 +66,146 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
     }
 
 
-	/**
-	 *  Returns an example of numbering
-	 *
-	 *  @return     string      Example
-	 */
+    /**
+     *  Returns an example of numbering
+     *
+     *  @return     string      Example
+     */
     public function getExample()
-	{
-		return $this->prefix."0501-0001";
-	}
+    {
+        return $this->prefix."0501-0001";
+    }
 
 
-	/**
-	 *  Test whether the numbers already in force in the base do not cause conflicts
-	 *  that would prevent this numbering from working.
-	 *
-	 *  @return     boolean     false si conflit, true si ok
-	 */
+    /**
+     *  Test whether the numbers already in force in the base do not cause conflicts
+     *  that would prevent this numbering from working.
+     *
+     *  @return     boolean     false si conflit, true si ok
+     */
     public function canBeActivated()
-	{
-		global $conf,$langs,$db;
+    {
+        global $conf,$langs,$db;
 
-		$coyymm=''; $max='';
+        $coyymm=''; $max='';
 
-		$posindice=8;
-		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
-		$sql.= " FROM ".MAIN_DB_PREFIX."expensereport";
-		$sql.= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
-		$sql.= " AND entity = ".$conf->entity;
+        $posindice=8;
+        $sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
+        $sql.= " FROM ".MAIN_DB_PREFIX."expensereport";
+        $sql.= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
+        $sql.= " AND entity = ".$conf->entity;
 
-		$resql=$db->query($sql);
-		if ($resql)
-		{
-			$row = $db->fetch_row($resql);
-			if ($row) { $coyymm = substr($row[0], 0, 6); $max=$row[0]; }
-		}
-		if ($coyymm && ! preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $coyymm))
-		{
-			$langs->load("errors");
-			$this->error=$langs->trans('ErrorNumRefModel', $max);
-			return false;
-		}
+        $resql=$db->query($sql);
+        if ($resql)
+        {
+            $row = $db->fetch_row($resql);
+            if ($row) { $coyymm = substr($row[0], 0, 6); $max=$row[0]; }
+        }
+        if ($coyymm && ! preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $coyymm))
+        {
+            $langs->load("errors");
+            $this->error=$langs->trans('ErrorNumRefModel', $max);
+            return false;
+        }
 
-		return true;
-	}
+        return true;
+    }
 
-	/**
-	 * 	Return next free value
-	 *
-	 *  @param  Object		$object		Object we need next value for
-	 *  @return string      			Value if KO, <0 if KO
-	 */
+    /**
+     *     Return next free value
+     *
+     *  @param  Object        $object        Object we need next value for
+     *  @return string                  Value if KO, <0 if KO
+     */
     public function getNextValue($object)
-	{
-		global $db,$conf;
+    {
+        global $db,$conf;
 
-		// For backward compatibility and restore old behavior to get ref of expense report
-		if ($conf->global->EXPENSEREPORT_USE_OLD_NUMBERING_RULE)
-		{
-			$fuser = null;
-			if ($object->fk_user_author > 0)
-			{
-				$fuser=new User($db);
-				$fuser->fetch($object->fk_user_author);
-			}
+        // For backward compatibility and restore old behavior to get ref of expense report
+        if ($conf->global->EXPENSEREPORT_USE_OLD_NUMBERING_RULE)
+        {
+            $fuser = null;
+            if ($object->fk_user_author > 0)
+            {
+                $fuser=new User($db);
+                $fuser->fetch($object->fk_user_author);
+            }
 
-			$expld_car = (empty($conf->global->NDF_EXPLODE_CHAR))?"-":$conf->global->NDF_EXPLODE_CHAR;
-			$num_car = (empty($conf->global->NDF_NUM_CAR_REF))?"5":$conf->global->NDF_NUM_CAR_REF;
+            $expld_car = (empty($conf->global->NDF_EXPLODE_CHAR))?"-":$conf->global->NDF_EXPLODE_CHAR;
+            $num_car = (empty($conf->global->NDF_NUM_CAR_REF))?"5":$conf->global->NDF_NUM_CAR_REF;
 
-			$sql = 'SELECT MAX(de.ref_number_int) as max';
-			$sql.= ' FROM '.MAIN_DB_PREFIX.'expensereport de';
+            $sql = 'SELECT MAX(de.ref_number_int) as max';
+            $sql.= ' FROM '.MAIN_DB_PREFIX.'expensereport de';
 
-			$result = $db->query($sql);
+            $result = $db->query($sql);
 
-			if($db->num_rows($result) > 0):
-			$objp = $db->fetch_object($result);
-			$newref = $objp->max;
-			$newref++;
-			while(strlen($newref) < $num_car):
-				$newref = "0".$newref;
-			endwhile;
-			else:
-				$newref = 1;
-			while(strlen($newref) < $num_car):
-				$newref = "0".$newref;
-			endwhile;
-			endif;
+            if($db->num_rows($result) > 0):
+            $objp = $db->fetch_object($result);
+            $newref = $objp->max;
+            $newref++;
+            while(strlen($newref) < $num_car):
+                $newref = "0".$newref;
+            endwhile;
+            else:
+                $newref = 1;
+            while(strlen($newref) < $num_car):
+                $newref = "0".$newref;
+            endwhile;
+            endif;
 
-			$ref_number_int = ($newref+1)-1;
+            $ref_number_int = ($newref+1)-1;
 
-			$user_author_infos = dolGetFirstLastname($fuser->firstname, $fuser->lastname);
+            $user_author_infos = dolGetFirstLastname($fuser->firstname, $fuser->lastname);
 
-			$prefix="ER";
-			if (! empty($conf->global->EXPENSE_REPORT_PREFIX)) $prefix=$conf->global->EXPENSE_REPORT_PREFIX;
-			$newref = str_replace(' ', '_', $user_author_infos).$expld_car.$prefix.$newref.$expld_car.dol_print_date($object->date_debut, '%y%m%d');
+            $prefix="ER";
+            if (! empty($conf->global->EXPENSE_REPORT_PREFIX)) $prefix=$conf->global->EXPENSE_REPORT_PREFIX;
+            $newref = str_replace(' ', '_', $user_author_infos).$expld_car.$prefix.$newref.$expld_car.dol_print_date($object->date_debut, '%y%m%d');
 
-			$sqlbis = 'UPDATE '.MAIN_DB_PREFIX.'expensereport SET ref_number_int = '.$ref_number_int.' WHERE rowid = '.$object->id;
-			$resqlbis = $db->query($sqlbis);
-			if (! $resqlbis)
-			{
-				dol_print_error($resqlbis);
-				exit;
-			}
+            $sqlbis = 'UPDATE '.MAIN_DB_PREFIX.'expensereport SET ref_number_int = '.$ref_number_int.' WHERE rowid = '.$object->id;
+            $resqlbis = $db->query($sqlbis);
+            if (! $resqlbis)
+            {
+                dol_print_error($resqlbis);
+                exit;
+            }
 
-			dol_syslog("mod_expensereport_jade::getNextValue return ".$newref);
-			return $newref;
-		}
+            dol_syslog("mod_expensereport_jade::getNextValue return ".$newref);
+            return $newref;
+        }
 
-		// First we get the max value
-		$posindice=8;
-		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
-		$sql.= " FROM ".MAIN_DB_PREFIX."expensereport";
-		$sql.= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
-		$sql.= " AND entity = ".$conf->entity;
+        // First we get the max value
+        $posindice=8;
+        $sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
+        $sql.= " FROM ".MAIN_DB_PREFIX."expensereport";
+        $sql.= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
+        $sql.= " AND entity = ".$conf->entity;
 
-		$resql=$db->query($sql);
-		if ($resql)
-		{
-			$obj = $db->fetch_object($resql);
-			if ($obj) $max = intval($obj->max);
-			else $max=0;
-		}
-		else
-		{
-			dol_syslog("mod_expensereport_jade::getNextValue", LOG_DEBUG);
-			return 0;
-		}
+        $resql=$db->query($sql);
+        if ($resql)
+        {
+            $obj = $db->fetch_object($resql);
+            if ($obj) $max = intval($obj->max);
+            else $max=0;
+        }
+        else
+        {
+            dol_syslog("mod_expensereport_jade::getNextValue", LOG_DEBUG);
+            return 0;
+        }
 
-		$date=$object->date_valid;		// $object->date does not exists
-		if (empty($date))
-		{
-			$this->error = 'Date valid not defined';
-			return 0;
-		}
+        $date=$object->date_valid;        // $object->date does not exists
+        if (empty($date))
+        {
+            $this->error = 'Date valid not defined';
+            return 0;
+        }
 
-		$yymm = strftime("%y%m", $date);
+        $yymm = strftime("%y%m", $date);
 
-    	if ($max >= (pow(10, 4) - 1)) $num=$max+1;	// If counter > 9999, we do not format on 4 chars, we take number as it is
-    	else $num = sprintf("%04s", $max+1);
+        if ($max >= (pow(10, 4) - 1)) $num=$max+1;    // If counter > 9999, we do not format on 4 chars, we take number as it is
+        else $num = sprintf("%04s", $max+1);
 
-		dol_syslog("mod_expensereport_jade::getNextValue return ".$this->prefix.$yymm."-".$num);
-		return $this->prefix.$yymm."-".$num;
-	}
+        dol_syslog("mod_expensereport_jade::getNextValue return ".$this->prefix.$yymm."-".$num);
+        return $this->prefix.$yymm."-".$num;
+    }
 }

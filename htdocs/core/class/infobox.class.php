@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2003		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+/* Copyright (C) 2003        Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  *
@@ -18,19 +18,19 @@
  */
 
 /**
- *	\file       htdocs/core/class/infobox.class.php
- *	\brief      File of class to manage widget boxes
+ *    \file       htdocs/core/class/infobox.class.php
+ *    \brief      File of class to manage widget boxes
  */
 
 /**
- *	Class to manage boxes on pages. This is an utility class (all is static)
+ *    Class to manage boxes on pages. This is an utility class (all is static)
  */
 class InfoBox
 {
     /**
      * Name of positions 0=Home, 1=...
      *
-     * @return	string[]		Array with list of zones
+     * @return    string[]        Array with list of zones
      */
     public static function getListOfPagesForBoxes()
     {
@@ -40,13 +40,13 @@ class InfoBox
     /**
      *  Return array of boxes qualified for area and user
      *
-     *  @param	DoliDB		$db				Database handler
-     *  @param	string		$mode			'available' or 'activated'
-     *  @param	string		$zone			Name or area (-1 for all, 0 for Homepage, 1 for xxx, ...)
-     *  @param  User|null   $user	  		Object user to filter
-     *  @param	array		$excludelist	Array of box id (box.box_id = boxes_def.rowid) to exclude
+     *  @param    DoliDB        $db                Database handler
+     *  @param    string        $mode            'available' or 'activated'
+     *  @param    string        $zone            Name or area (-1 for all, 0 for Homepage, 1 for xxx, ...)
+     *  @param  User|null   $user              Object user to filter
+     *  @param    array        $excludelist    Array of box id (box.box_id = boxes_def.rowid) to exclude
      *  @param  int         $includehidden  Include also hidden boxes
-     *  @return array       	        	Array of boxes
+     *  @return array                       Array of boxes
      */
     public static function listBoxes($db, $mode, $zone, $user = null, $excludelist = array(), $includehidden = 1)
     {
@@ -55,7 +55,7 @@ class InfoBox
         $boxes=array();
 
         $confuserzone='MAIN_BOXES_'.$zone;
-        if ($mode == 'activated')	// activated
+        if ($mode == 'activated')    // activated
         {
             $sql = "SELECT b.rowid, b.position, b.box_order, b.fk_user,";
             $sql.= " d.rowid as box_id, d.file, d.note, d.tms";
@@ -67,7 +67,7 @@ class InfoBox
             else $sql.= " AND b.fk_user = 0";
             $sql.= " ORDER BY b.box_order";
         }
-        else	// available
+        else    // available
         {
             $sql = "SELECT d.rowid as box_id, d.file, d.note, d.tms";
             $sql.= " FROM ".MAIN_DB_PREFIX."boxes_def as d";
@@ -107,19 +107,19 @@ class InfoBox
                     dol_include_once($relsourcefile);
                     if (class_exists($boxname))
                     {
-                        $box=new $boxname($db, $obj->note);		// Constructor may set properties like box->enabled. obj->note is note into box def, not user params.
+                        $box=new $boxname($db, $obj->note);        // Constructor may set properties like box->enabled. obj->note is note into box def, not user params.
                         //$box=new stdClass();
 
                         // box properties
-                        $box->rowid		= (empty($obj->rowid) ? '' : $obj->rowid);
-                        $box->id		= (empty($obj->box_id) ? '' : $obj->box_id);
-                        $box->position	= ($obj->position == '' ? '' : $obj->position);		// '0' must staty '0'
-                        $box->box_order	= (empty($obj->box_order) ? '' : $obj->box_order);
-                        $box->fk_user	= (empty($obj->fk_user) ? 0 : $obj->fk_user);
+                        $box->rowid        = (empty($obj->rowid) ? '' : $obj->rowid);
+                        $box->id        = (empty($obj->box_id) ? '' : $obj->box_id);
+                        $box->position    = ($obj->position == '' ? '' : $obj->position);        // '0' must staty '0'
+                        $box->box_order    = (empty($obj->box_order) ? '' : $obj->box_order);
+                        $box->fk_user    = (empty($obj->fk_user) ? 0 : $obj->fk_user);
                         $box->sourcefile= $relsourcefile;
                         $box->class     = $boxname;
 
-                        if ($mode == 'activated' && ! is_object($user))	// List of activated box was not yet personalized into database
+                        if ($mode == 'activated' && ! is_object($user))    // List of activated box was not yet personalized into database
                         {
                             if (is_numeric($box->box_order))
                             {
@@ -128,8 +128,8 @@ class InfoBox
                             }
                         }
                         // box_def properties
-                        $box->box_id	= (empty($obj->box_id) ? '' : $obj->box_id);
-                        $box->note		= (empty($obj->note) ? '' : $obj->note);
+                        $box->box_id    = (empty($obj->box_id) ? '' : $obj->box_id);
+                        $box->note        = (empty($obj->note) ? '' : $obj->note);
 
                         // Filter on box->enabled (used for example by box_comptes)
                         // Filter also on box->depends. Example: array("product|service") or array("contrat", "service")
@@ -139,14 +139,14 @@ class InfoBox
                             foreach($box->depends as $moduleelem)
                             {
                                 $arrayelem=explode('|', $moduleelem);
-                                $tmpenabled=0;	// $tmpenabled is used for the '|' test (OR)
+                                $tmpenabled=0;    // $tmpenabled is used for the '|' test (OR)
                                 foreach($arrayelem as $module)
                                 {
                                     $tmpmodule=preg_replace('/@[^@]+/', '', $module);
                                     if (! empty($conf->$tmpmodule->enabled)) $tmpenabled=1;
                                     //print $boxname.'-'.$module.'-module enabled='.(empty($conf->$tmpmodule->enabled)?0:1).'<br>';
                                 }
-                                if (empty($tmpenabled))	// We found at least one module required that is disabled
+                                if (empty($tmpenabled))    // We found at least one module required that is disabled
                                 {
                                     $enabled=0;
                                     break;
@@ -180,11 +180,11 @@ class InfoBox
     /**
      *  Save order of boxes for area and user
      *
-     *  @param	DoliDB	$db				Database handler
-     *  @param	string	$zone       	Name of area (0 for Homepage, ...)
-     *  @param  string  $boxorder   	List of boxes with correct order 'A:123,456,...-B:789,321...'
-     *  @param  int     $userid     	Id of user
-     *  @return int                   	<0 if KO, 0=Nothing done, > 0 if OK
+     *  @param    DoliDB    $db                Database handler
+     *  @param    string    $zone           Name of area (0 for Homepage, ...)
+     *  @param  string  $boxorder       List of boxes with correct order 'A:123,456,...-B:789,321...'
+     *  @param  int     $userid         Id of user
+     *  @return int                       <0 if KO, 0=Nothing done, > 0 if OK
      */
     public static function saveboxorder($db, $zone, $boxorder, $userid = 0)
     {

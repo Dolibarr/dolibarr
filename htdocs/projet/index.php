@@ -91,8 +91,8 @@ print '<div class="opacitymedium">';
 if ($mine) print $langs->trans("MyProjectsDesc").'<br><br>';
 else
 {
-	if (! empty($user->rights->projet->all->lire) && ! $socid) print $langs->trans("ProjectsDesc").'<br><br>';
-	else print $langs->trans("ProjectsPublicDesc").'<br><br>';
+    if (! empty($user->rights->projet->all->lire) && ! $socid) print $langs->trans("ProjectsDesc").'<br><br>';
+    else print $langs->trans("ProjectsPublicDesc").'<br><br>';
 }
 print '</div>';
 
@@ -104,17 +104,17 @@ $sql.= " WHERE active=1";
 $resql = $db->query($sql);
 if ( $resql )
 {
-	$num = $db->num_rows($resql);
-	$i = 0;
+    $num = $db->num_rows($resql);
+    $i = 0;
 
-	while ($i < $num)
-	{
-		$objp = $db->fetch_object($resql);
-		$listofoppstatus[$objp->rowid]=$objp->percent;
-		$listofopplabel[$objp->rowid]=$objp->label;
-		$listofoppcode[$objp->rowid]=$objp->code;
-		$i++;
-	}
+    while ($i < $num)
+    {
+        $objp = $db->fetch_object($resql);
+        $listofoppstatus[$objp->rowid]=$objp->percent;
+        $listofopplabel[$objp->rowid]=$objp->label;
+        $listofoppcode[$objp->rowid]=$objp->code;
+        $i++;
+    }
 }
 else dol_print_error($db);
 
@@ -128,27 +128,27 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
     // Search project
     if (! empty($conf->projet->enabled) && $user->rights->projet->lire)
     {
-    	$listofsearchfields['search_project']=array('text'=>'Project');
+        $listofsearchfields['search_project']=array('text'=>'Project');
     }
 
     if (count($listofsearchfields))
     {
-    	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
-    	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    	print '<table class="noborder nohover centpercent">';
-    	$i=0;
-    	foreach($listofsearchfields as $key => $value)
-    	{
-    		if ($i == 0) print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
-    		print '<tr '.$bc[false].'>';
-    		print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label></td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'" size="18"></td>';
-    		if ($i == 0) print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
-    		print '</tr>';
-    		$i++;
-    	}
-    	print '</table>';
-    	print '</form>';
-    	print '<br>';
+        print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
+        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        print '<table class="noborder nohover centpercent">';
+        $i=0;
+        foreach($listofsearchfields as $key => $value)
+        {
+            if ($i == 0) print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
+            print '<tr '.$bc[false].'>';
+            print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label></td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'" size="18"></td>';
+            if ($i == 0) print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
+            print '</tr>';
+            $i++;
+        }
+        print '</table>';
+        print '</form>';
+        print '<br>';
     }
 }
 
@@ -172,78 +172,78 @@ $sql.= " s.rowid as socid, s.nom as name, s.email, s.client, s.fournisseur, s.co
 $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 $sql.= " WHERE p.entity IN (".getEntity('project').")";
-if ($mine || empty($user->rights->projet->all->lire)) $sql.= " AND p.rowid IN (".$projectsListId.")";		// If we have this test true, it also means projectset is not 2
-if ($socid)	$sql.= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
+if ($mine || empty($user->rights->projet->all->lire)) $sql.= " AND p.rowid IN (".$projectsListId.")";        // If we have this test true, it also means projectset is not 2
+if ($socid)    $sql.= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
 $sql.= " ORDER BY p.tms DESC";
 $sql.= $db->plimit($max, 0);
 
 $resql=$db->query($sql);
 if ($resql)
 {
-	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre">';
-	print '<th colspan="4">'.$langs->trans("LatestModifiedProjects", $max).'</th></tr>';
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre">';
+    print '<th colspan="4">'.$langs->trans("LatestModifiedProjects", $max).'</th></tr>';
 
-	$num = $db->num_rows($resql);
-	if ($num)
-	{
-		$i = 0;
-		$var = true;
-		while ($i < $num)
-		{
+    $num = $db->num_rows($resql);
+    if ($num)
+    {
+        $i = 0;
+        $var = true;
+        while ($i < $num)
+        {
 
-			$obj = $db->fetch_object($resql);
+            $obj = $db->fetch_object($resql);
 
-			print '<tr class="oddeven">';
-			print '<td width="20%" class="nowrap">';
+            print '<tr class="oddeven">';
+            print '<td width="20%" class="nowrap">';
 
-			$projectstatic->id=$obj->rowid;
-			$projectstatic->ref=$obj->ref;
-			$projectstatic->title=$obj->title;
-			$projectstatic->dateo=$obj->dateo;
-			$projectstatic->datep=$obj->datep;
-			$projectstatic->thirdparty_name=$obj->name;
+            $projectstatic->id=$obj->rowid;
+            $projectstatic->ref=$obj->ref;
+            $projectstatic->title=$obj->title;
+            $projectstatic->dateo=$obj->dateo;
+            $projectstatic->datep=$obj->datep;
+            $projectstatic->thirdparty_name=$obj->name;
 
-			$companystatic->id=$obj->socid;
-			$companystatic->name=$obj->name;
-			$companystatic->email=$obj->email;
-			$companystatic->client=$obj->client;
-			$companystatic->fournisseur=$obj->fournisseur;
-			$companystatic->code_client=$obj->code_client;
-			$companystatic->code_fournisseur=$obj->code_fournisseur;
-			$companystatic->canvas=$obj->canvas;
+            $companystatic->id=$obj->socid;
+            $companystatic->name=$obj->name;
+            $companystatic->email=$obj->email;
+            $companystatic->client=$obj->client;
+            $companystatic->fournisseur=$obj->fournisseur;
+            $companystatic->code_client=$obj->code_client;
+            $companystatic->code_fournisseur=$obj->code_fournisseur;
+            $companystatic->canvas=$obj->canvas;
 
-			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-			print '<td width="96" class="nobordernopadding nowrap">';
-			print $projectstatic->getNomUrl(1);
-			print '</td>';
+            print '<table class="nobordernopadding"><tr class="nocellnopadd">';
+            print '<td width="96" class="nobordernopadding nowrap">';
+            print $projectstatic->getNomUrl(1);
+            print '</td>';
 
-			print '<td width="16" class="nobordernopadding nowrap">';
-			print '&nbsp;';
-			print '</td>';
+            print '<td width="16" class="nobordernopadding nowrap">';
+            print '&nbsp;';
+            print '</td>';
 
-			print '<td width="16" class="right nobordernopadding hideonsmartphone">';
-			$filename=dol_sanitizeFileName($obj->ref);
-			$filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($obj->ref);
-			$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
-			print $formfile->getDocumentsLink($projectstatic->element, $filename, $filedir);
-			print '</td></tr></table>';
+            print '<td width="16" class="right nobordernopadding hideonsmartphone">';
+            $filename=dol_sanitizeFileName($obj->ref);
+            $filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($obj->ref);
+            $urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
+            print $formfile->getDocumentsLink($projectstatic->element, $filename, $filedir);
+            print '</td></tr></table>';
 
-			print '</td>';
+            print '</td>';
 
-			print '<td class="nowrap">';
-			if ($companystatic->id > 0)
-			{
-				print $companystatic->getNomUrl(1, 'company', 16);
-			}
-			print '</td>';
-			print '<td>'.dol_print_date($db->jdate($obj->datem), 'day').'</td>';
-			print '<td class="right">'.$projectstatic->LibStatut($obj->fk_statut, 5).'</td>';
-			print '</tr>';
-			$i++;
-		}
-	}
-	print "</table><br>";
+            print '<td class="nowrap">';
+            if ($companystatic->id > 0)
+            {
+                print $companystatic->getNomUrl(1, 'company', 16);
+            }
+            print '</td>';
+            print '<td>'.dol_print_date($db->jdate($obj->datem), 'day').'</td>';
+            print '<td class="right">'.$projectstatic->LibStatut($obj->fk_statut, 5).'</td>';
+            print '</tr>';
+            $i++;
+        }
+    }
+    print "</table><br>";
 }
 else dol_print_error($db);
 
@@ -262,48 +262,48 @@ $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 $sql.= " WHERE p.entity IN (".getEntity('project', $conf->entity).")";
 $sql.= " AND p.fk_statut = 1";
-if ($mine || empty($user->rights->projet->all->lire)) $sql.= " AND p.rowid IN (".$projectsListId.")";		// If we have this test true, it also means projectset is not 2
-if ($socid)	$sql.= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
+if ($mine || empty($user->rights->projet->all->lire)) $sql.= " AND p.rowid IN (".$projectsListId.")";        // If we have this test true, it also means projectset is not 2
+if ($socid)    $sql.= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
 $sql.= " GROUP BY s.nom, s.rowid";
 $sql.= $db->order($sortfield, $sortorder);
 
 $resql = $db->query($sql);
 if ( $resql )
 {
-	$num = $db->num_rows($resql);
-	$i = 0;
+    $num = $db->num_rows($resql);
+    $i = 0;
 
-	while ($i < $num)
-	{
-		$obj = $db->fetch_object($resql);
+    while ($i < $num)
+    {
+        $obj = $db->fetch_object($resql);
 
-		print '<tr class="oddeven">';
-		print '<td class="nowrap">';
-		if ($obj->socid)
-		{
-			$companystatic->id=$obj->socid;
-			$companystatic->name=$obj->name;
-			print $companystatic->getNomUrl(1);
-		}
-		else
-		{
-			print $langs->trans("OthersNotLinkedToThirdParty");
-		}
-		print '</td>';
-		print '<td class="right">';
-		if ($obj->socid) print '<a href="'.DOL_URL_ROOT.'/projet/list.php?socid='.$obj->socid.'&search_status=1">'.$obj->nb.'</a>';
-		else print '<a href="'.DOL_URL_ROOT.'/projet/list.php?search_societe='.urlencode('^$').'&search_status=1">'.$obj->nb.'</a>';
-		print '</td>';
-		print "</tr>\n";
+        print '<tr class="oddeven">';
+        print '<td class="nowrap">';
+        if ($obj->socid)
+        {
+            $companystatic->id=$obj->socid;
+            $companystatic->name=$obj->name;
+            print $companystatic->getNomUrl(1);
+        }
+        else
+        {
+            print $langs->trans("OthersNotLinkedToThirdParty");
+        }
+        print '</td>';
+        print '<td class="right">';
+        if ($obj->socid) print '<a href="'.DOL_URL_ROOT.'/projet/list.php?socid='.$obj->socid.'&search_status=1">'.$obj->nb.'</a>';
+        else print '<a href="'.DOL_URL_ROOT.'/projet/list.php?search_societe='.urlencode('^$').'&search_status=1">'.$obj->nb.'</a>';
+        print '</td>';
+        print "</tr>\n";
 
-		$i++;
-	}
+        $i++;
+    }
 
-	$db->free($resql);
+    $db->free($resql);
 }
 else
 {
-	dol_print_error($db);
+    dol_print_error($db);
 }
 print "</table>";
 print '</div>';

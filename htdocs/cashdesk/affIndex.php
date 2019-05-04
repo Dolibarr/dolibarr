@@ -19,9 +19,9 @@
  */
 
 /**
- *	\file       htdocs/cashdesk/affIndex.php
- *	\ingroup    cashdesk
- *	\brief      First page of point of sale module
+ *    \file       htdocs/cashdesk/affIndex.php
+ *    \ingroup    cashdesk
+ *    \brief      First page of point of sale module
  */
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/cashdesk/include/environnement.php';
@@ -32,8 +32,8 @@ $error=GETPOST('error');
 // Test if already logged
 if ( $_SESSION['uid'] <= 0 )
 {
-	header('Location: index.php');
-	exit;
+    header('Location: index.php');
+    exit;
 }
 
 // Load translation files required by the page
@@ -55,7 +55,7 @@ print '<body>'."\n";
 
 if (!empty($error))
 {
-	dol_htmloutput_events();
+    dol_htmloutput_events();
 }
 
 print '<div class="conteneur">'."\n";

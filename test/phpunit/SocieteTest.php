@@ -43,7 +43,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
- * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
+ * @remarks    backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
 class SocieteTest extends PHPUnit_Framework_TestCase
 {
@@ -60,9 +60,9 @@ class SocieteTest extends PHPUnit_Framework_TestCase
      */
     public function __construct()
     {
-    	parent::__construct();
+        parent::__construct();
 
-    	//$this->sharedFixture
+        //$this->sharedFixture
         global $conf,$user,$langs,$db;
         $this->savconf=$conf;
         $this->savuser=$user;
@@ -83,7 +83,7 @@ class SocieteTest extends PHPUnit_Framework_TestCase
 
         if (! empty($conf->global->MAIN_DISABLEPROFIDRULES)) { print "\n".__METHOD__." constant MAIN_DISABLEPROFIDRULES must be empty (if a module set it, disable module).\n"; die(); }
 
-        $db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
+        $db->begin();    // This is to have all actions inside a transaction even if test launched without suite.
 
         print __METHOD__."\n";
     }
@@ -100,7 +100,7 @@ class SocieteTest extends PHPUnit_Framework_TestCase
     /**
      * Init phpunit tests
      *
-     * @return	void
+     * @return    void
      */
     protected function setUp()
     {
@@ -152,7 +152,7 @@ class SocieteTest extends PHPUnit_Framework_TestCase
      * @param   int     $id             Company id
      * @return  Societe $localobject    Company
      *
-     * @depends	testSocieteCreate
+     * @depends    testSocieteCreate
      * The depends says test is run only if previous is ok
      */
     public function testSocieteFetch($id)
@@ -213,13 +213,13 @@ class SocieteTest extends PHPUnit_Framework_TestCase
         print __METHOD__." id=".$localobject->id." result=".$result."\n";
         $this->assertLessThan($result, 0);
 
-		$result=$localobject->update_note($localobject->note_private, '_private');
-		print __METHOD__." id=".$localobject->id." result=".$result."\n";
-		$this->assertLessThan($result, 0, 'Holiday::update_note (private) error');
+        $result=$localobject->update_note($localobject->note_private, '_private');
+        print __METHOD__." id=".$localobject->id." result=".$result."\n";
+        $this->assertLessThan($result, 0, 'Holiday::update_note (private) error');
 
-		$result=$localobject->update_note($localobject->note_public, '_public');
-		print __METHOD__." id=".$localobject->id." result=".$result."\n";
-		$this->assertLessThan($result, 0, 'Holiday::update_note (public) error');
+        $result=$localobject->update_note($localobject->note_public, '_public');
+        print __METHOD__." id=".$localobject->id." result=".$result."\n";
+        $this->assertLessThan($result, 0, 'Holiday::update_note (public) error');
 
         $newobject=new Societe($this->savdb);
         $result=$newobject->fetch($localobject->id);

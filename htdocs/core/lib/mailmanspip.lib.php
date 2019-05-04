@@ -17,8 +17,8 @@
  */
 
 /**
- *	    \file       htdocs/core/lib/member.lib.php
- *		\brief      Ensemble de fonctions de base pour les adherents
+ *        \file       htdocs/core/lib/member.lib.php
+ *        \brief      Ensemble de fonctions de base pour les adherents
  */
 
 /**

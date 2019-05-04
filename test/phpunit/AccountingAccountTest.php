@@ -24,7 +24,7 @@
  */
 
 global $conf,$user,$langs,$db;
-//define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
+//define('TEST_DB_FORCE_TYPE','mysql');    // This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/accountancy/class/accountingaccount.class.php';
@@ -42,7 +42,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
- * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
+ * @remarks    backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
 class AccountingAccountTest extends PHPUnit\Framework\TestCase
 {
@@ -123,7 +123,7 @@ class AccountingAccountTest extends PHPUnit\Framework\TestCase
     /**
      * testAccountingAccountCreate
      *
-     * @return  int		Id of created object
+     * @return  int        Id of created object
      */
     public function testAccountingAccountCreate()
     {
@@ -156,7 +156,7 @@ class AccountingAccountTest extends PHPUnit\Framework\TestCase
      * @param   int $id     Id accounting account
      * @return  AccountingAccount
      *
-     * @depends	testAccountingAccountCreate
+     * @depends    testAccountingAccountCreate
      * The depends says test is run only if previous is ok
      */
     public function testAccountingAccountFetch($id)
@@ -179,10 +179,10 @@ class AccountingAccountTest extends PHPUnit\Framework\TestCase
     /**
      * testAccountingAccountUpdate
      *
-     * @param	Object		$localobject	AccountingAccount
-     * @return	int							ID accounting account
+     * @param    Object        $localobject    AccountingAccount
+     * @return    int                            ID accounting account
      *
-     * @depends	testAccountingAccountFetch
+     * @depends    testAccountingAccountFetch
      * The depends says test is run only if previous is ok
      */
     public function testAccountingAccountUpdate($localobject)
@@ -206,7 +206,7 @@ class AccountingAccountTest extends PHPUnit\Framework\TestCase
      * testAccountingAccountDelete
      *
      * @param   int $id         Id of accounting account
-     * @return  int				Result of delete
+     * @return  int                Result of delete
      *
      * @depends testAccountingAccountUpdate
      * The depends says test is run only if previous is ok

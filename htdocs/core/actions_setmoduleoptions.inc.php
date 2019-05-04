@@ -17,8 +17,8 @@
  */
 
 /**
- *	\file			htdocs/core/actions_setmoduleoptions.inc.php
- *  \brief			Code for actions on setting notes of object page
+ *    \file            htdocs/core/actions_setmoduleoptions.inc.php
+ *  \brief            Code for actions on setting notes of object page
  */
 
 
@@ -29,29 +29,29 @@
 
 if ($action == 'update' && is_array($arrayofparameters))
 {
-	$db->begin();
+    $db->begin();
 
-	$ok=true;
-	foreach($arrayofparameters as $key => $val)
-	{
-		$result=dolibarr_set_const($db, $key, GETPOST($key, 'alpha'), 'chaine', 0, '', $conf->entity);
-		if ($result < 0)
-		{
-			$ok=false;
-			break;
-		}
-	}
+    $ok=true;
+    foreach($arrayofparameters as $key => $val)
+    {
+        $result=dolibarr_set_const($db, $key, GETPOST($key, 'alpha'), 'chaine', 0, '', $conf->entity);
+        if ($result < 0)
+        {
+            $ok=false;
+            break;
+        }
+    }
 
-	if (! $error)
-	{
-		$db->commit();
-		if (empty($nomessageinupdate)) setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	}
-	else
-	{
-		$db->rollback();
-		if (empty($nomessageinupdate)) setEventMessages($langs->trans("SetupNotSaved"), null, 'errors');
-	}
+    if (! $error)
+    {
+        $db->commit();
+        if (empty($nomessageinupdate)) setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    }
+    else
+    {
+        $db->rollback();
+        if (empty($nomessageinupdate)) setEventMessages($langs->trans("SetupNotSaved"), null, 'errors');
+    }
 }
 
 // Define constants for submodules that contains parameters (forms with param1, param2, ... and value1, value2, ...)

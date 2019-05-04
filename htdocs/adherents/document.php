@@ -62,8 +62,8 @@ $membert=new AdherentType($db);
 $result=$object->fetch($id);
 if ($result < 0)
 {
-	dol_print_error($db);
-	exit;
+    dol_print_error($db);
+    exit;
 }
 $upload_dir = $conf->adherent->dir_output . "/" . get_exdir(0, 0, 0, 1, $object, 'member');
 
@@ -88,34 +88,34 @@ llxHeader("", $title, $helpurl);
 if ($id > 0)
 {
     $result=$membert->fetch($object->typeid);
-	if ($result > 0)
-	{
+    if ($result > 0)
+    {
 
-		// Build file list
-		$filearray=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);
-		$totalsize=0;
-		foreach($filearray as $key => $file)
-		{
-			$totalsize+=$file['size'];
-		}
+        // Build file list
+        $filearray=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);
+        $totalsize=0;
+        foreach($filearray as $key => $file)
+        {
+            $totalsize+=$file['size'];
+        }
 
-	    if (! empty($conf->notification->enabled))
-			$langs->load("mails");
+        if (! empty($conf->notification->enabled))
+            $langs->load("mails");
 
-		$head = member_prepare_head($object);
+        $head = member_prepare_head($object);
 
-		dol_fiche_head($head, 'document', $langs->trans("Member"), -1, 'user');
+        dol_fiche_head($head, 'document', $langs->trans("Member"), -1, 'user');
 
-    	$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+        $linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-    	dol_banner_tab($object, 'rowid', $linkback);
+        dol_banner_tab($object, 'rowid', $linkback);
 
         print '<div class="fichecenter">';
 
         print '<div class="underbanner clearboth"></div>';
-		print '<table class="border tableforfield centpercent">';
+        print '<table class="border tableforfield centpercent">';
 
-		$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php">'.$langs->trans("BackToList").'</a>';
+        $linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php">'.$langs->trans("BackToList").'</a>';
 
         // Login
         if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
@@ -140,34 +140,34 @@ if ($id > 0)
         print '<tr><td>'.$langs->trans("UserTitle").'</td><td class="valeur">'.$object->getCivilityLabel().'&nbsp;</td>';
         print '</tr>';
 
-    	// Number of Attached Files
-		print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
+        // Number of Attached Files
+        print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
 
-		//Total Size Of Attached Files
-		print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize, 1, 1).'</td></tr>';
+        //Total Size Of Attached Files
+        print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize, 1, 1).'</td></tr>';
 
-		print '</table>';
+        print '</table>';
 
-		print '</div>';
+        print '</div>';
 
-		dol_fiche_end();
+        dol_fiche_end();
 
-		$modulepart = 'member';
-		$permission = $user->rights->adherent->creer;
-		$permtoedit = $user->rights->adherent->creer;
-		$param = '&id=' . $object->id;
-		include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
-		print "<br><br>";
-	}
-	else
-	{
-		dol_print_error($db);
-	}
+        $modulepart = 'member';
+        $permission = $user->rights->adherent->creer;
+        $permtoedit = $user->rights->adherent->creer;
+        $param = '&id=' . $object->id;
+        include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
+        print "<br><br>";
+    }
+    else
+    {
+        dol_print_error($db);
+    }
 }
 else
 {
     $langs->load("errors");
-	print $langs->trans("ErrorRecordNotFound");
+    print $langs->trans("ErrorRecordNotFound");
 }
 
 // End of page

@@ -21,7 +21,7 @@
 
 /**
  *      \file       dev/initdata/import-product.php
- *		\brief      Script example to insert products from a csv file.
+ *        \brief      Script example to insert products from a csv file.
  *                  To purge data, you can have a look at purge-data.php
  */
 
@@ -81,8 +81,8 @@ if (! file_exists($filepath)) {
 $ret=$user->fetch('', 'admin');
 if (! $ret > 0)
 {
-	print 'A user with login "admin" and all permissions must be created to use this script.'."\n";
-	exit;
+    print 'A user with login "admin" and all permissions must be created to use this script.'."\n";
+    exit;
 }
 $user->getrights();
 
@@ -164,56 +164,56 @@ while ($fields=fgetcsv($fhandle, $linelength, $delimiter, $enclosure, $escape))
         print " - Error in create result code = ".$ret." - ".$produit->errorsToString();
         $errorrecord++;
     }
-	else
-	{
-	    print " - Creation OK with ref ".$produit->ref." - id = ".$ret;
-	}
+    else
+    {
+        print " - Creation OK with ref ".$produit->ref." - id = ".$ret;
+    }
 
-	dol_syslog("Add prices");
+    dol_syslog("Add prices");
 
     // If we use price level, insert price for each level
-	if (! $errorrecord && 1)
-	{
-	    $ret1=$produit->updatePrice($produit->price_ttc, $produit->price_base_type, $user, $produit->tva_tx, $produit->price_min, 1, $produit->tva_npr, 0, 0, array());
-	    $ret2=$produit->updatePrice(price2num($fields[14]), 'HT', $user, $produit->tva_tx, $produit->price_min, 2, $produit->tva_npr, 0, 0, array());
-	    if ($ret1 < 0 || $ret2 < 0)
+    if (! $errorrecord && 1)
+    {
+        $ret1=$produit->updatePrice($produit->price_ttc, $produit->price_base_type, $user, $produit->tva_tx, $produit->price_min, 1, $produit->tva_npr, 0, 0, array());
+        $ret2=$produit->updatePrice(price2num($fields[14]), 'HT', $user, $produit->tva_tx, $produit->price_min, 2, $produit->tva_npr, 0, 0, array());
+        if ($ret1 < 0 || $ret2 < 0)
         {
             print " - Error in updatePrice result code = ".$ret1." ".$ret2." - ".$produit->errorsToString();
             $errorrecord++;
         }
-    	else
-    	{
-    	    print " - updatePrice OK";
-    	}
-	}
+        else
+        {
+            print " - updatePrice OK";
+        }
+    }
 
-	dol_syslog("Add multilangs");
+    dol_syslog("Add multilangs");
 
-	// Add alternative languages
-	if (! $errorrecord && 1)
-	{
-    	$produit->multilangs['fr_FR']=array('label'=>$produit->label, 'description'=>$produit->description, 'note'=>$produit->note_private);
-	    $produit->multilangs['en_US']=array('label'=>$fields[3], 'description'=>$produit->description, 'note'=>$produit->note_private);
+    // Add alternative languages
+    if (! $errorrecord && 1)
+    {
+        $produit->multilangs['fr_FR']=array('label'=>$produit->label, 'description'=>$produit->description, 'note'=>$produit->note_private);
+        $produit->multilangs['en_US']=array('label'=>$fields[3], 'description'=>$produit->description, 'note'=>$produit->note_private);
 
-    	$ret=$produit->setMultiLangs($user);
+        $ret=$produit->setMultiLangs($user);
         if ($ret < 0)
         {
             print " - Error in setMultiLangs result code = ".$ret." - ".$produit->errorsToString();
             $errorrecord++;
         }
-    	else
-    	{
-    	    print " - setMultiLangs OK";
-    	}
-	}
+        else
+        {
+            print " - setMultiLangs OK";
+        }
+    }
 
-	print "\n";
+    print "\n";
 
-	if ($errorrecord)
-	{
-	    fwrite($fhandleerr, 'Error on record nb '.$i." - ".$produit->errorsToString()."\n");
-	    $error++;    // $errorrecord will be reset
-	}
+    if ($errorrecord)
+    {
+        fwrite($fhandleerr, 'Error on record nb '.$i." - ".$produit->errorsToString()."\n");
+        $error++;    // $errorrecord will be reset
+    }
 }
 
 

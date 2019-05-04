@@ -18,13 +18,13 @@
 
 /**
  *      \file       test/phpunit/Functions2LibTest.php
- *		\ingroup    test
+ *        \ingroup    test
  *      \brief      PHPUnit test
- *		\remarks	To run this script as CLI:  phpunit filename.php
+ *        \remarks    To run this script as CLI:  phpunit filename.php
  */
 
 global $conf,$user,$langs,$db;
-//define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
+//define('TEST_DB_FORCE_TYPE','mysql');    // This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/functions2.lib.php';
@@ -46,7 +46,7 @@ if (! defined("NOLOGIN"))        define("NOLOGIN", '1');       // If this page i
  *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
- * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
+ * @remarks    backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
 class Functions2LibTest extends PHPUnit_Framework_TestCase
 {
@@ -63,9 +63,9 @@ class Functions2LibTest extends PHPUnit_Framework_TestCase
      */
     public function __construct()
     {
-    	parent::__construct();
+        parent::__construct();
 
-    	//$this->sharedFixture
+        //$this->sharedFixture
         global $conf,$user,$langs,$db;
         $this->savconf=$conf;
         $this->savuser=$user;
@@ -81,7 +81,7 @@ class Functions2LibTest extends PHPUnit_Framework_TestCase
     public static function setUpBeforeClass()
     {
         global $conf,$user,$langs,$db;
-        //$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
+        //$db->begin();    // This is to have all actions inside a transaction even if test launched without suite.
 
         print __METHOD__."\n";
     }
@@ -95,11 +95,11 @@ class Functions2LibTest extends PHPUnit_Framework_TestCase
         print __METHOD__."\n";
     }
 
-	/**
-	 * Init phpunit tests
-	 *
-	 * @return	void
-	 */
+    /**
+     * Init phpunit tests
+     *
+     * @return    void
+     */
     protected function setUp()
     {
         global $conf,$user,$langs,$db;
@@ -110,11 +110,11 @@ class Functions2LibTest extends PHPUnit_Framework_TestCase
 
         print __METHOD__."\n";
     }
-	/**
-	 * End phpunit tests
-	 *
-	 * @return	void
-	 */
+    /**
+     * End phpunit tests
+     *
+     * @return    void
+     */
     protected function tearDown()
     {
         print __METHOD__."\n";
@@ -145,102 +145,102 @@ class Functions2LibTest extends PHPUnit_Framework_TestCase
     /**
      * testIsValidURL
      *
-     * @return	void
+     * @return    void
      */
     public function testIsValidUrl()
     {
-	    //Simple check
-	    $result = isValidUrl('http://google.com');
-	    $this->assertEquals(1, $result);
+        //Simple check
+        $result = isValidUrl('http://google.com');
+        $this->assertEquals(1, $result);
 
-	    $result = isValidUrl('goo=gle');	// This is good, it might be an alias of hostname
-	    $this->assertEquals(1, $result);
+        $result = isValidUrl('goo=gle');    // This is good, it might be an alias of hostname
+        $this->assertEquals(1, $result);
 
-	    //With scheme check
-    	$result = isValidUrl('http://www.google.com', 1);
-	    $this->assertEquals(1, $result);
+        //With scheme check
+        $result = isValidUrl('http://www.google.com', 1);
+        $this->assertEquals(1, $result);
 
-	    $result = isValidUrl('ftp://www.google.com', 1);
-	    $this->assertEquals(0, $result);
+        $result = isValidUrl('ftp://www.google.com', 1);
+        $this->assertEquals(0, $result);
 
-	    //With password check invalid. This test should be ko but currently it is not
-	    //$result = isValidUrl('http://user:password@http://www.google.com', 1, 1);
-	    //$this->assertEquals(0, $result);
+        //With password check invalid. This test should be ko but currently it is not
+        //$result = isValidUrl('http://user:password@http://www.google.com', 1, 1);
+        //$this->assertEquals(0, $result);
 
-	    //With password check valid
-	    $result = isValidUrl('http://user:password@www.google.com', 1, 1);
-	    $this->assertEquals(1, $result);
+        //With password check valid
+        $result = isValidUrl('http://user:password@www.google.com', 1, 1);
+        $this->assertEquals(1, $result);
 
-	    $result = isValidUrl('http://www.google.com', 1, 1);
-	    $this->assertEquals(0, $result);
+        $result = isValidUrl('http://www.google.com', 1, 1);
+        $this->assertEquals(0, $result);
 
-	    //With port check
-	    $result = isValidUrl('http://google.com:8080', 0, 0, 1);
-	    $this->assertEquals(1, $result);
+        //With port check
+        $result = isValidUrl('http://google.com:8080', 0, 0, 1);
+        $this->assertEquals(1, $result);
 
-	    $result = isValidUrl('http://google.com', 0, 0, 1);
-	    $this->assertEquals(0, $result);
+        $result = isValidUrl('http://google.com', 0, 0, 1);
+        $this->assertEquals(0, $result);
 
-	    //With path check
-	    $result = isValidUrl('http://google.com/search', 0, 0, 0, 1);
-	    $this->assertEquals(1, $result);
+        //With path check
+        $result = isValidUrl('http://google.com/search', 0, 0, 0, 1);
+        $this->assertEquals(1, $result);
 
-	    $result = isValidUrl('http://google.com', 0, 0, 0, 0);
-	    $this->assertEquals(1, $result);
+        $result = isValidUrl('http://google.com', 0, 0, 0, 0);
+        $this->assertEquals(1, $result);
 
-	    //With query check
-	    $result = isValidUrl('http://google.com/search?test=test', 0, 0, 0, 0, 1);
-	    $this->assertEquals(1, $result);
+        //With query check
+        $result = isValidUrl('http://google.com/search?test=test', 0, 0, 0, 0, 1);
+        $this->assertEquals(1, $result);
 
-	    //With query check
-	    $result = isValidUrl('http://google.com?test=test', 0, 0, 0, 0, 1);
-	    $this->assertEquals(1, $result);
+        //With query check
+        $result = isValidUrl('http://google.com?test=test', 0, 0, 0, 0, 1);
+        $this->assertEquals(1, $result);
 
-	    $result = isValidUrl('http://google.com', 0, 0, 0, 0, 1);
-	    $this->assertEquals(0, $result);
+        $result = isValidUrl('http://google.com', 0, 0, 0, 0, 1);
+        $this->assertEquals(0, $result);
 
-	    //With anchor check
-	    $result = isValidUrl('http://google.com/search#done', 0, 0, 0, 0, 0, 1);
-	    $this->assertEquals(1, $result);
+        //With anchor check
+        $result = isValidUrl('http://google.com/search#done', 0, 0, 0, 0, 0, 1);
+        $this->assertEquals(1, $result);
 
-	    $result = isValidUrl('http://google.com/search', 0, 0, 0, 0, 0, 1);
-	    $this->assertEquals(0, $result);
+        $result = isValidUrl('http://google.com/search', 0, 0, 0, 0, 0, 1);
+        $this->assertEquals(0, $result);
     }
 
     /**
      * testIsIP
      *
-     * @return	void
+     * @return    void
      */
     public function testIsIP()
     {
-    	// Not valid
-    	$ip='a299.299.299.299';
-    	$result=is_ip($ip);
+        // Not valid
+        $ip='a299.299.299.299';
+        $result=is_ip($ip);
         print __METHOD__." for ".$ip." result=".$result."\n";
-    	$this->assertEquals(0, $result, $ip);
+        $this->assertEquals(0, $result, $ip);
 
-    	// Reserved IP range (not checked by is_ip function)
-    	$ip='169.254.0.0';
-    	$result=is_ip($ip);
+        // Reserved IP range (not checked by is_ip function)
+        $ip='169.254.0.0';
+        $result=is_ip($ip);
         print __METHOD__." for ".$ip." result=".$result."\n";
-    	//$this->assertEquals(2,$result,$ip);      // Assertion disabled because returned value differs between PHP patch version
+        //$this->assertEquals(2,$result,$ip);      // Assertion disabled because returned value differs between PHP patch version
 
-    	$ip='1.2.3.4';
-    	$result=is_ip($ip);
+        $ip='1.2.3.4';
+        $result=is_ip($ip);
         print __METHOD__." for ".$ip." result=".$result."\n";
-    	$this->assertEquals(1, $result, $ip);
+        $this->assertEquals(1, $result, $ip);
 
-    	// Private IP ranges
-    	$ip='10.0.0.0';
-    	$result=is_ip($ip);
+        // Private IP ranges
+        $ip='10.0.0.0';
+        $result=is_ip($ip);
         print __METHOD__." for ".$ip." result=".$result."\n";
-    	$this->assertEquals(2, $result, $ip);
+        $this->assertEquals(2, $result, $ip);
 
-    	$ip='172.16.0.0';
-    	$result=is_ip($ip);
+        $ip='172.16.0.0';
+        $result=is_ip($ip);
         print __METHOD__." for ".$ip." result=".$result."\n";
-    	$this->assertEquals(2, $result, $ip);
+        $this->assertEquals(2, $result, $ip);
 
         $ip='192.168.0.0';
         $result=is_ip($ip);

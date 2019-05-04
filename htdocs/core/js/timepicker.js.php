@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2012	Regis Houssin		<regis.houssin@inodbox.com>
+/* Copyright (C) 2012    Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -42,22 +42,22 @@ else header('Cache-Control: no-cache');
 
 // For JQuery Timepicker
 jQuery(function($){
-	$.timepicker.regional['<?php echo $langs->defaultlang ?>'] = {
-		timeOnlyTitle: '<?php echo $langs->trans("TimeOnly") ?>',
-		timeText: '<?php echo $langs->trans("Time") ?>',
-		hourText: '<?php echo $langs->trans("Hour") ?>',
-		minuteText: '<?php echo $langs->trans("Minute") ?>',
-		secondText: '<?php echo $langs->trans("Second") ?>',
-		millisecText: '<?php echo $langs->trans("Millisecond") ?>',
-		timezoneText: '<?php echo $langs->trans("Timezone") ?>',
-		currentText: '<?php echo $langs->trans("Now") ?>',
-		closeText: '<?php echo $langs->trans("Close2") ?>',
-		timeFormat: 'HH:mm',
-		amNames: ['AM', 'A'],
-		pmNames: ['PM', 'P'],
-		isRTL: <?php echo ($langs->trans("DIRECTION")=='rtl'?'true':'false'); ?>
-	};
-	$.timepicker.setDefaults($.timepicker.regional['<?php echo $langs->defaultlang ?>']);
+    $.timepicker.regional['<?php echo $langs->defaultlang ?>'] = {
+        timeOnlyTitle: '<?php echo $langs->trans("TimeOnly") ?>',
+        timeText: '<?php echo $langs->trans("Time") ?>',
+        hourText: '<?php echo $langs->trans("Hour") ?>',
+        minuteText: '<?php echo $langs->trans("Minute") ?>',
+        secondText: '<?php echo $langs->trans("Second") ?>',
+        millisecText: '<?php echo $langs->trans("Millisecond") ?>',
+        timezoneText: '<?php echo $langs->trans("Timezone") ?>',
+        currentText: '<?php echo $langs->trans("Now") ?>',
+        closeText: '<?php echo $langs->trans("Close2") ?>',
+        timeFormat: 'HH:mm',
+        amNames: ['AM', 'A'],
+        pmNames: ['PM', 'P'],
+        isRTL: <?php echo ($langs->trans("DIRECTION")=='rtl'?'true':'false'); ?>
+    };
+    $.timepicker.setDefaults($.timepicker.regional['<?php echo $langs->defaultlang ?>']);
 });
 
 <?php

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2002    Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2003		Jean-Louis Bergamo		<jlb@j1b.org>
  * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
@@ -22,8 +22,8 @@
 
 /**
  *      \file       htdocs/contrat/admin/contract_extrafields.php
- *		\ingroup    contrat
- *		\brief      Page to setup extra fields of contract
+ *        \ingroup    contrat
+ *        \brief      Page to setup extra fields of contract
  */
 
 
@@ -88,13 +88,13 @@ if ($action != 'create' && $action != 'edit')
 
 /* ************************************************************************** */
 /*                                                                            */
-/* Creation of an optional field											  */
+/* Creation of an optional field                                              */
 /*                                                                            */
 /* ************************************************************************** */
 
 if ($action == 'create')
 {
-	print '<br><div name="topofform" id="newattrib"></div>';
+    print '<br><div name="topofform" id="newattrib"></div>';
     print load_fiche_titre($langs->trans('NewAttribute'));
 
     require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_add.tpl.php';
@@ -107,7 +107,7 @@ if ($action == 'create')
 /* ************************************************************************** */
 if ($action == 'edit' && ! empty($attrname))
 {
-	print '<div name="topofform"></div><br>';
+    print '<div name="topofform"></div><br>';
     print load_fiche_titre($langs->trans("FieldEdition", $attrname));
 
     require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_edit.tpl.php';

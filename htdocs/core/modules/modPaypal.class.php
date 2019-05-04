@@ -18,8 +18,8 @@
  */
 
 /**
- * 	\defgroup   paypal     Module paypal
- * 	\brief      Add integration with Paypal online payment system.
+ *     \defgroup   paypal     Module paypal
+ *     \brief      Add integration with Paypal online payment system.
  *  \file       htdocs/core/modules/modPaypal.class.php
  *  \ingroup    paypal
  *  \brief      Description and activation file for module Paypal
@@ -28,14 +28,14 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**
- * 	Description and activation class for module Paypal
+ *     Description and activation class for module Paypal
  */
 class modPaypal extends DolibarrModules
 {
     /**
      *   Constructor. Define names, constants, directories, boxes, permissions
      *
-     *   @param      DoliDB		$db      Database handler
+     *   @param      DoliDB        $db      Database handler
      */
     public function __construct($db)
     {
@@ -70,16 +70,16 @@ class modPaypal extends DolibarrModules
         $this->config_page_url = array("paypal.php@paypal");
 
         // Dependencies
-        $this->hidden = false;			// A condition to hide module
-		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
-		$this->requiredby = array('modPaypalPlus');	// List of module ids to disable if this one is disabled
-		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
-		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
-        $this->need_dolibarr_version = array(3,0);		// Minimum version of Dolibarr required by module
+        $this->hidden = false;            // A condition to hide module
+        $this->depends = array();        // List of module class names as string that must be enabled if this module is enabled
+        $this->requiredby = array('modPaypalPlus');    // List of module ids to disable if this one is disabled
+        $this->conflictwith = array();    // List of module class names as string this module is in conflict with
+        $this->phpmin = array(5,4);        // Minimum version of PHP required by module
+        $this->need_dolibarr_version = array(3,0);        // Minimum version of Dolibarr required by module
         $this->langfiles = array("paypal");
 
         // Constants
-        $this->const = array();			// List of particular constants to add when module is enabled
+        $this->const = array();            // List of particular constants to add when module is enabled
         //Example: $this->const=array(0=>array('MODULE_MY_NEW_CONST1','chaine','myvalue','This is a constant to add',0),
         //                            1=>array('MODULE_MY_NEW_CONST2','chaine','myvalue','This is another constant to add',0) );
 
@@ -88,7 +88,7 @@ class modPaypal extends DolibarrModules
 
 
         // Boxes
-        $this->boxes = array();			// List of boxes
+        $this->boxes = array();            // List of boxes
         $r=0;
 
         // Add here list of php file(s) stored in core/boxes that contains class to show a box.
@@ -100,67 +100,67 @@ class modPaypal extends DolibarrModules
 
 
         // Permissions
-        $this->rights = array();		// Permission array used by this module
+        $this->rights = array();        // Permission array used by this module
         $r=0;
 
 
         // Main menu entries
-        $this->menus = array();			// List of menus to add
+        $this->menus = array();            // List of menus to add
         $r=0;
         /*$this->menu[$r]=array(
-	        'fk_menu'=>'fk_mainmenu=billing,fk_leftmenu=customers_bills_payment',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-	        'mainmenu'=>'billing',
-	        'leftmenu'=>'customers_bills_payment_paypal',
-	        'type'=>'left',			                // This is a Left menu entry
-	        'titre'=>'PaypalImportPayment',
-	        'url'=>'/paypal/importpayments.php',
-	        'langs'=>'paypal',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-	        'position'=>501,
-	        'enabled'=>'$conf->paypal->enabled && $conf->banque->enabled && $conf->global->MAIN_FEATURES_LEVEL >= 2',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-	        'perms'=>'$user->rights->banque->consolidate',	// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
-	        'target'=>'',
-	        'user'=>2
-        );				                // 0=Menu for internal users, 1=external users, 2=both
+            'fk_menu'=>'fk_mainmenu=billing,fk_leftmenu=customers_bills_payment',            // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+            'mainmenu'=>'billing',
+            'leftmenu'=>'customers_bills_payment_paypal',
+            'type'=>'left',                            // This is a Left menu entry
+            'titre'=>'PaypalImportPayment',
+            'url'=>'/paypal/importpayments.php',
+            'langs'=>'paypal',            // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+            'position'=>501,
+            'enabled'=>'$conf->paypal->enabled && $conf->banque->enabled && $conf->global->MAIN_FEATURES_LEVEL >= 2',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+            'perms'=>'$user->rights->banque->consolidate',    // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+            'target'=>'',
+            'user'=>2
+        );                                // 0=Menu for internal users, 1=external users, 2=both
         $r++;*/
 
         // Add here entries to declare new menus
         // Example to declare the Top Menu entry:
-        // $this->menu[$r]=array(	'fk_menu'=>0,			// Put 0 if this is a top menu
-        //							'type'=>'top',			// This is a Top menu entry
-        //							'titre'=>'MyModule top menu',
-        //							'mainmenu'=>'mymodule',
-        //							'url'=>'/mymodule/pagetop.php',
-        //							'langs'=>'mylangfile',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-        //							'position'=>100,
-        //							'perms'=>'1',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
-        //							'target'=>'',
-        //							'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both
+        // $this->menu[$r]=array(    'fk_menu'=>0,            // Put 0 if this is a top menu
+        //                            'type'=>'top',            // This is a Top menu entry
+        //                            'titre'=>'MyModule top menu',
+        //                            'mainmenu'=>'mymodule',
+        //                            'url'=>'/mymodule/pagetop.php',
+        //                            'langs'=>'mylangfile',    // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+        //                            'position'=>100,
+        //                            'perms'=>'1',            // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+        //                            'target'=>'',
+        //                            'user'=>2);                // 0=Menu for internal users, 1=external users, 2=both
         // $r++;
         //
         // Example to declare a Left Menu entry:
-        // $this->menu[$r]=array(	'fk_menu'=>'r=0',		// Use r=value where r is index key used for the parent menu entry (higher parent must be a top menu entry)
-        //							'type'=>'left',			// This is a Left menu entry
-        //							'titre'=>'MyModule left menu 1',
-        //							'mainmenu'=>'mymodule',
-        //							'url'=>'/mymodule/pagelevel1.php',
-        //							'langs'=>'mylangfile',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-        //							'position'=>100,
-        //							'perms'=>'1',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
-        //							'target'=>'',
-        //							'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both
+        // $this->menu[$r]=array(    'fk_menu'=>'r=0',        // Use r=value where r is index key used for the parent menu entry (higher parent must be a top menu entry)
+        //                            'type'=>'left',            // This is a Left menu entry
+        //                            'titre'=>'MyModule left menu 1',
+        //                            'mainmenu'=>'mymodule',
+        //                            'url'=>'/mymodule/pagelevel1.php',
+        //                            'langs'=>'mylangfile',    // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+        //                            'position'=>100,
+        //                            'perms'=>'1',            // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+        //                            'target'=>'',
+        //                            'user'=>2);                // 0=Menu for internal users, 1=external users, 2=both
         // $r++;
         //
         // Example to declare another Left Menu entry:
-        // $this->menu[$r]=array(	'fk_menu'=>'r=1',		// Use r=value where r is index key used for the parent menu entry (higher parent must be a top menu entry)
-        //							'type'=>'left',			// This is a Left menu entry
-        //							'titre'=>'MyModule left menu 2',
-        //							'mainmenu'=>'mymodule',
-        //							'url'=>'/mymodule/pagelevel2.php',
-        //							'langs'=>'mylangfile',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-        //							'position'=>100,
-        //							'perms'=>'1',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
-        //							'target'=>'',
-        //							'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both
+        // $this->menu[$r]=array(    'fk_menu'=>'r=1',        // Use r=value where r is index key used for the parent menu entry (higher parent must be a top menu entry)
+        //                            'type'=>'left',            // This is a Left menu entry
+        //                            'titre'=>'MyModule left menu 2',
+        //                            'mainmenu'=>'mymodule',
+        //                            'url'=>'/mymodule/pagelevel2.php',
+        //                            'langs'=>'mylangfile',    // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+        //                            'position'=>100,
+        //                            'perms'=>'1',            // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+        //                            'target'=>'',
+        //                            'user'=>2);                // 0=Menu for internal users, 1=external users, 2=both
         // $r++;
 
 
@@ -169,7 +169,7 @@ class modPaypal extends DolibarrModules
 
         // Example:
         // $this->export_code[$r]=$this->rights_class.'_'.$r;
-        // $this->export_label[$r]='CustomersInvoicesAndInvoiceLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
+        // $this->export_label[$r]='CustomersInvoicesAndInvoiceLines';    // Translation key (used only if key ExportDataset_xxx_z not found)
         // $this->export_permission[$r]=array(array("facture","facture","export"));
         // $this->export_fields_array[$r]=array(
         //    's.rowid'=>"IdCompany",'s.nom'=>'CompanyName','s.address'=>'Address','s.zip'=>'Zip','s.town'=>'Town','s.fk_pays'=>'Country','s.phone'=>'Phone',

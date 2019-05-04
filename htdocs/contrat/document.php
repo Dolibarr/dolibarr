@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2003-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2007    Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005		Marc Barilley / Ocebo	<marc@ocebo.com>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
@@ -34,23 +34,23 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 if (! empty($conf->projet->enabled)) {
-	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+    require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 }
 
 // Load translation files required by the page
 $langs->loadLangs(array('other', 'products', 'contracts'));
 
-$action		= GETPOST('action', 'alpha');
-$confirm	= GETPOST('confirm', 'alpha');
-$id			= GETPOST('id', 'int');
-$ref		= GETPOST('ref', 'alpha');
+$action        = GETPOST('action', 'alpha');
+$confirm    = GETPOST('confirm', 'alpha');
+$id            = GETPOST('id', 'int');
+$ref        = GETPOST('ref', 'alpha');
 
 // Security check
 if ($user->societe_id > 0)
 {
-	unset($_GET["action"]);
-	$action='';
-	$socid = $user->societe_id;
+    unset($_GET["action"]);
+    $action='';
+    $socid = $user->societe_id;
 }
 $result = restrictedArea($user, 'contrat', $id);
 
@@ -70,7 +70,7 @@ $object = new Contrat($db);
 $object->fetch($id, $ref);
 if ($object->id > 0)
 {
-	$object->fetch_thirdparty();
+    $object->fetch_thirdparty();
 }
 
 $upload_dir = $conf->contrat->dir_output.'/'.dol_sanitizeFileName($object->ref);
@@ -98,84 +98,84 @@ llxHeader('', $langs->trans("Contract"), "");
 
 if ($object->id)
 {
-	$head=contract_prepare_head($object);
+    $head=contract_prepare_head($object);
 
-	dol_fiche_head($head, 'documents', $langs->trans("Contract"), -1, 'contract');
-
-
-	// Build file list
-	$filearray=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);
-	$totalsize=0;
-	foreach($filearray as $key => $file)
-	{
-		$totalsize+=$file['size'];
-	}
+    dol_fiche_head($head, 'documents', $langs->trans("Contract"), -1, 'contract');
 
 
-	// Contract card
-
-	$linkback = '<a href="'.DOL_URL_ROOT.'/contrat/list.php?restore_lastsearch_values=1'.(! empty($socid)?'&socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
-
-
-	$morehtmlref='';
-	//if (! empty($modCodeContract->code_auto)) {
-	$morehtmlref.=$object->ref;
-	/*} else {
-	 $morehtmlref.=$form->editfieldkey("",'ref',$object->ref,0,'string','',0,3);
-	$morehtmlref.=$form->editfieldval("",'ref',$object->ref,0,'string','',0,2);
-	}*/
-
-	$morehtmlref.='<div class="refidno">';
-	// Ref customer
-	$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_customer', $object->ref_customer, $object, 0, 'string', '', 0, 1);
-	$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_customer', $object->ref_customer, $object, 0, 'string', '', null, null, '', 1, 'getFormatedCustomerRef');
-	// Ref supplier
-	$morehtmlref.='<br>';
-	$morehtmlref.=$form->editfieldkey("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', 0, 1);
-	$morehtmlref.=$form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', null, null, '', 1, 'getFormatedSupplierRef');
-	// Thirdparty
-	$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
-	// Project
-	if (! empty($conf->projet->enabled))
-	{
-		$langs->load("projects");
-		$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
-		if ($user->rights->contrat->creer)
-		{
-			if ($action != 'classify')
-				//$morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
-				$morehtmlref.=' : ';
-			if ($action == 'classify') {
-				//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
-				$morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-				$morehtmlref.='<input type="hidden" name="action" value="classin">';
-				$morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-				$morehtmlref.=$formproject->select_projects($object->thirdparty->id, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-				$morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-				$morehtmlref.='</form>';
-			} else {
-				$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->thirdparty->id, $object->fk_project, 'none', 0, 0, 0, 1);
-			}
-		} else {
-			if (! empty($object->fk_project)) {
-				$proj = new Project($db);
-				$proj->fetch($object->fk_project);
-				$morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
-				$morehtmlref.=$proj->ref;
-				$morehtmlref.='</a>';
-			} else {
-				$morehtmlref.='';
-			}
-		}
-	}
-	$morehtmlref.='</div>';
+    // Build file list
+    $filearray=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);
+    $totalsize=0;
+    foreach($filearray as $key => $file)
+    {
+        $totalsize+=$file['size'];
+    }
 
 
-	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'none', $morehtmlref);
+    // Contract card
+
+    $linkback = '<a href="'.DOL_URL_ROOT.'/contrat/list.php?restore_lastsearch_values=1'.(! empty($socid)?'&socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
 
-	print '<div class="fichecenter">';
-	print '<div class="underbanner clearboth"></div>';
+    $morehtmlref='';
+    //if (! empty($modCodeContract->code_auto)) {
+    $morehtmlref.=$object->ref;
+    /*} else {
+     $morehtmlref.=$form->editfieldkey("",'ref',$object->ref,0,'string','',0,3);
+    $morehtmlref.=$form->editfieldval("",'ref',$object->ref,0,'string','',0,2);
+    }*/
+
+    $morehtmlref.='<div class="refidno">';
+    // Ref customer
+    $morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_customer', $object->ref_customer, $object, 0, 'string', '', 0, 1);
+    $morehtmlref.=$form->editfieldval("RefCustomer", 'ref_customer', $object->ref_customer, $object, 0, 'string', '', null, null, '', 1, 'getFormatedCustomerRef');
+    // Ref supplier
+    $morehtmlref.='<br>';
+    $morehtmlref.=$form->editfieldkey("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', 0, 1);
+    $morehtmlref.=$form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', null, null, '', 1, 'getFormatedSupplierRef');
+    // Thirdparty
+    $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
+    // Project
+    if (! empty($conf->projet->enabled))
+    {
+        $langs->load("projects");
+        $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
+        if ($user->rights->contrat->creer)
+        {
+            if ($action != 'classify')
+                //$morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+                $morehtmlref.=' : ';
+            if ($action == 'classify') {
+                //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+                $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+                $morehtmlref.='<input type="hidden" name="action" value="classin">';
+                $morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+                $morehtmlref.=$formproject->select_projects($object->thirdparty->id, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+                $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+                $morehtmlref.='</form>';
+            } else {
+                $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->thirdparty->id, $object->fk_project, 'none', 0, 0, 0, 1);
+            }
+        } else {
+            if (! empty($object->fk_project)) {
+                $proj = new Project($db);
+                $proj->fetch($object->fk_project);
+                $morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
+                $morehtmlref.=$proj->ref;
+                $morehtmlref.='</a>';
+            } else {
+                $morehtmlref.='';
+            }
+        }
+    }
+    $morehtmlref.='</div>';
+
+
+    dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'none', $morehtmlref);
+
+
+    print '<div class="fichecenter">';
+    print '<div class="underbanner clearboth"></div>';
 
 
     print '<table class="border tableforfield centpercent">';
@@ -195,7 +195,7 @@ if ($object->id)
 }
 else
 {
-	print $langs->trans("ErrorUnknown");
+    print $langs->trans("ErrorUnknown");
 }
 
 

@@ -36,163 +36,163 @@ include_once DOL_DOCUMENT_ROOT . "/core/boxes/modules_boxes.php";
  */
 class mymodulewidget1 extends ModeleBoxes
 {
-	/**
-	 * @var string Alphanumeric ID. Populated by the constructor.
-	 */
-	public $boxcode = "mymodulebox";
+    /**
+     * @var string Alphanumeric ID. Populated by the constructor.
+     */
+    public $boxcode = "mymodulebox";
 
-	/**
-	 * @var string Box icon (in configuration page)
-	 * Automatically calls the icon named with the corresponding "object_" prefix
-	 */
-	public $boximg = "mymodule@mymodule";
+    /**
+     * @var string Box icon (in configuration page)
+     * Automatically calls the icon named with the corresponding "object_" prefix
+     */
+    public $boximg = "mymodule@mymodule";
 
-	/**
-	 * @var string Box label (in configuration page)
-	 */
-	public $boxlabel;
+    /**
+     * @var string Box label (in configuration page)
+     */
+    public $boxlabel;
 
-	/**
-	 * @var string[] Module dependencies
-	 */
-	public $depends = array('mymodule');
+    /**
+     * @var string[] Module dependencies
+     */
+    public $depends = array('mymodule');
 
-	/**
-	 * @var DoliDb Database handler
-	 */
-	public $db;
+    /**
+     * @var DoliDb Database handler
+     */
+    public $db;
 
-	/**
-	 * @var mixed More parameters
-	 */
-	public $param;
+    /**
+     * @var mixed More parameters
+     */
+    public $param;
 
-	/**
-	 * @var array Header informations. Usually created at runtime by loadBox().
-	 */
-	public $info_box_head = array();
+    /**
+     * @var array Header informations. Usually created at runtime by loadBox().
+     */
+    public $info_box_head = array();
 
-	/**
-	 * @var array Contents informations. Usually created at runtime by loadBox().
-	 */
-	public $info_box_contents = array();
+    /**
+     * @var array Contents informations. Usually created at runtime by loadBox().
+     */
+    public $info_box_contents = array();
 
-	/**
-	 * Constructor
-	 *
-	 * @param DoliDB $db Database handler
-	 * @param string $param More parameters
-	 */
-	public function __construct(DoliDB $db, $param = '')
-	{
-		global $user, $conf, $langs;
-		$langs->load("boxes");
-		$langs->load('mymodule@mymodule');
+    /**
+     * Constructor
+     *
+     * @param DoliDB $db Database handler
+     * @param string $param More parameters
+     */
+    public function __construct(DoliDB $db, $param = '')
+    {
+        global $user, $conf, $langs;
+        $langs->load("boxes");
+        $langs->load('mymodule@mymodule');
 
-		parent::__construct($db, $param);
+        parent::__construct($db, $param);
 
-		$this->boxlabel = $langs->transnoentitiesnoconv("MyWidget");
+        $this->boxlabel = $langs->transnoentitiesnoconv("MyWidget");
 
-		$this->param = $param;
+        $this->param = $param;
 
-		//$this->enabled = $conf->global->FEATURES_LEVEL > 0;         // Condition when module is enabled or not
-		//$this->hidden = ! ($user->rights->mymodule->myobject->read);   // Condition when module is visible by user (test on permission)
-	}
+        //$this->enabled = $conf->global->FEATURES_LEVEL > 0;         // Condition when module is enabled or not
+        //$this->hidden = ! ($user->rights->mymodule->myobject->read);   // Condition when module is visible by user (test on permission)
+    }
 
-	/**
-	 * Load data into info_box_contents array to show array later. Called by Dolibarr before displaying the box.
-	 *
-	 * @param int $max Maximum number of records to load
-	 * @return void
-	 */
-	public function loadBox($max = 5)
-	{
-		global $langs;
+    /**
+     * Load data into info_box_contents array to show array later. Called by Dolibarr before displaying the box.
+     *
+     * @param int $max Maximum number of records to load
+     * @return void
+     */
+    public function loadBox($max = 5)
+    {
+        global $langs;
 
-		// Use configuration value for max lines count
-		$this->max = $max;
+        // Use configuration value for max lines count
+        $this->max = $max;
 
-		//include_once DOL_DOCUMENT_ROOT . "/mymodule/class/mymodule.class.php";
+        //include_once DOL_DOCUMENT_ROOT . "/mymodule/class/mymodule.class.php";
 
-		// Populate the head at runtime
-		$text = $langs->trans("MyModuleBoxDescription", $max);
-		$this->info_box_head = array(
-			// Title text
-			'text' => $text,
-			// Add a link
-			'sublink' => 'http://example.com',
-			// Sublink icon placed after the text
-			'subpicto' => 'object_mymodule@mymodule',
-			// Sublink icon HTML alt text
-			'subtext' => '',
-			// Sublink HTML target
-			'target' => '',
-			// HTML class attached to the picto and link
-			'subclass' => 'center',
-			// Limit and truncate with "…" the displayed text lenght, 0 = disabled
-			'limit' => 0,
-			// Adds translated " (Graph)" to a hidden form value's input (?)
-			'graph' => false
-		);
+        // Populate the head at runtime
+        $text = $langs->trans("MyModuleBoxDescription", $max);
+        $this->info_box_head = array(
+            // Title text
+            'text' => $text,
+            // Add a link
+            'sublink' => 'http://example.com',
+            // Sublink icon placed after the text
+            'subpicto' => 'object_mymodule@mymodule',
+            // Sublink icon HTML alt text
+            'subtext' => '',
+            // Sublink HTML target
+            'target' => '',
+            // HTML class attached to the picto and link
+            'subclass' => 'center',
+            // Limit and truncate with "…" the displayed text lenght, 0 = disabled
+            'limit' => 0,
+            // Adds translated " (Graph)" to a hidden form value's input (?)
+            'graph' => false
+        );
 
-		// Populate the contents at runtime
-		$this->info_box_contents = array(
-			0 => array( // First line
-				0 => array( // First Column
-					//  HTML properties of the TR element. Only available on the first column.
-					'tr' => 'class="left"',
-					// HTML properties of the TD element
-					'td' => '',
+        // Populate the contents at runtime
+        $this->info_box_contents = array(
+            0 => array( // First line
+                0 => array( // First Column
+                    //  HTML properties of the TR element. Only available on the first column.
+                    'tr' => 'class="left"',
+                    // HTML properties of the TD element
+                    'td' => '',
 
-					// Main text for content of cell
-					'text' => 'First cell of first line',
-					// Link on 'text' and 'logo' elements
-					'url' => 'http://example.com',
-					// Link's target HTML property
-					'target' => '_blank',
-					// Fist line logo (deprecated. Include instead logo html code into text or text2, and set asis property to true to avoid HTML cleaning)
-					//'logo' => 'monmodule@monmodule',
-					// Unformatted text, added after text. Usefull to add/load javascript code
-					'textnoformat' => '',
+                    // Main text for content of cell
+                    'text' => 'First cell of first line',
+                    // Link on 'text' and 'logo' elements
+                    'url' => 'http://example.com',
+                    // Link's target HTML property
+                    'target' => '_blank',
+                    // Fist line logo (deprecated. Include instead logo html code into text or text2, and set asis property to true to avoid HTML cleaning)
+                    //'logo' => 'monmodule@monmodule',
+                    // Unformatted text, added after text. Usefull to add/load javascript code
+                    'textnoformat' => '',
 
-					// Main text for content of cell (other method)
-					//'text2' => '<p><strong>Another text</strong></p>',
+                    // Main text for content of cell (other method)
+                    //'text2' => '<p><strong>Another text</strong></p>',
 
-					// Truncates 'text' element to the specified character length, 0 = disabled
-					'maxlength' => 0,
-					// Prevents HTML cleaning (and truncation)
-					'asis' => false,
-					// Same for 'text2'
-					'asis2' => true
-				),
-				1 => array( // Another column
-					// No TR for n≠0
-					'td' => '',
-					'text' => 'Second cell',
-				)
-			),
-			1 => array( // Another line
-				0 => array( // TR
-					'tr' => 'class="left"',
-					'text' => 'Another line'
-				),
-				1 => array( // TR
-					'tr' => 'class="left"',
-					'text' => ''
-				)
-			),
-			2 => array( // Another line
-				0 => array( // TR
-					'tr' => 'class="left"',
-					'text' => ''
-				),
-				1 => array( // TR
-					'tr' => 'class="left"',
-					'text' => ''
-				)
-			),
-		);
-	}
+                    // Truncates 'text' element to the specified character length, 0 = disabled
+                    'maxlength' => 0,
+                    // Prevents HTML cleaning (and truncation)
+                    'asis' => false,
+                    // Same for 'text2'
+                    'asis2' => true
+                ),
+                1 => array( // Another column
+                    // No TR for n≠0
+                    'td' => '',
+                    'text' => 'Second cell',
+                )
+            ),
+            1 => array( // Another line
+                0 => array( // TR
+                    'tr' => 'class="left"',
+                    'text' => 'Another line'
+                ),
+                1 => array( // TR
+                    'tr' => 'class="left"',
+                    'text' => ''
+                )
+            ),
+            2 => array( // Another line
+                0 => array( // TR
+                    'tr' => 'class="left"',
+                    'text' => ''
+                ),
+                1 => array( // TR
+                    'tr' => 'class="left"',
+                    'text' => ''
+                )
+            ),
+        );
+    }
 
     /**
      * Method to show box. Called by Dolibarr eatch time it wants to display the box.

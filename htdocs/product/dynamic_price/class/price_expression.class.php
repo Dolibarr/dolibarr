@@ -18,14 +18,14 @@
  */
 
 /**
- *	\file       htdocs/product/dynamic_price/class/price_expression.class.php
- *	\ingroup    product
+ *    \file       htdocs/product/dynamic_price/class/price_expression.class.php
+ *    \ingroup    product
  *  \brief      Class for accessing price expression table
  */
 
 
 /**
- *	Class for accesing price expression table
+ *    Class for accesing price expression table
  */
 class PriceExpression
 {
@@ -60,7 +60,7 @@ class PriceExpression
     /**
      *  Constructor
      *
-     *  @param	DoliDb		$db      Database handler
+     *  @param    DoliDb        $db      Database handler
      */
     public function __construct($db)
     {
@@ -71,9 +71,9 @@ class PriceExpression
     /**
      *  Create object into database
      *
-     *  @param	User	$user        User that creates
-     *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
-     *  @return int      		   	 <0 if KO, Id of created object if OK
+     *  @param    User    $user        User that creates
+     *  @param  int        $notrigger   0=launch triggers after, 1=disable triggers
+     *  @return int                      <0 if KO, Id of created object if OK
      */
     public function create($user, $notrigger = 0)
     {
@@ -135,8 +135,8 @@ class PriceExpression
     /**
      *  Load object in memory from the database
      *
-     *  @param		int		$id    	Id object
-     *  @return		int			    < 0 if KO, 0 if OK but not found, > 0 if OK
+     *  @param        int        $id        Id object
+     *  @return        int                < 0 if KO, 0 if OK but not found, > 0 if OK
      */
     public function fetch($id)
     {
@@ -158,9 +158,9 @@ class PriceExpression
             $obj = $this->db->fetch_object($resql);
             if ($obj)
             {
-                $this->id			= $id;
-                $this->title		= $obj->title;
-                $this->expression	= $obj->expression;
+                $this->id            = $id;
+                $this->title        = $obj->title;
+                $this->expression    = $obj->expression;
                 return 1;
             }
             else
@@ -179,7 +179,7 @@ class PriceExpression
     /**
      *    List all price expressions
      *
-     *    @return	array				Array of price expressions
+     *    @return    array                Array of price expressions
      */
     public function list_price_expression()
     {
@@ -197,9 +197,9 @@ class PriceExpression
             while ($record = $this->db->fetch_array($resql))
             {
                 $price_expression_obj = new PriceExpression($this->db);
-                $price_expression_obj->id			= $record["rowid"];
-                $price_expression_obj->title		= $record["title"];
-                $price_expression_obj->expression	= $record["expression"];
+                $price_expression_obj->id            = $record["rowid"];
+                $price_expression_obj->title        = $record["title"];
+                $price_expression_obj->expression    = $record["expression"];
                 $retarray[]=$price_expression_obj;
             }
 
@@ -218,8 +218,8 @@ class PriceExpression
     /**
      *  Returns any existing rowid with specified title
      *
-     *  @param		String	$title  Title of expression
-     *  @return		int			    < 0 if KO, 0 if OK but not found, > 0 rowid
+     *  @param        String    $title  Title of expression
+     *  @return        int                < 0 if KO, 0 if OK but not found, > 0 rowid
      */
     public function find_title($title)
     {
@@ -253,9 +253,9 @@ class PriceExpression
     /**
      *  Update object into database
      *
-     *  @param	User	$user        User that modifies
-     *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-     *  @return int     		   	 <0 if KO, >0 if OK
+     *  @param    User    $user        User that modifies
+     *  @param  int        $notrigger     0=launch triggers after, 1=disable triggers
+     *  @return int                     <0 if KO, >0 if OK
      */
     public function update($user = 0, $notrigger = 0)
     {
@@ -313,9 +313,9 @@ class PriceExpression
      /**
      *  Delete object in database
      *
-     *	@param  User	$user        User that deletes
-     *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-     *  @return	int					 <0 if KO, >0 if OK
+     *    @param  User    $user        User that deletes
+     *  @param  int        $notrigger     0=launch triggers after, 1=disable triggers
+     *  @return    int                     <0 if KO, >0 if OK
      */
     public function delete(User $user, $notrigger = 0)
     {
@@ -371,7 +371,7 @@ class PriceExpression
      *  Initialise object with example values
      *  Id must be 0 if object instance is a specimen
      *
-     *  @return	void
+     *  @return    void
      */
     public function initAsSpecimen()
     {

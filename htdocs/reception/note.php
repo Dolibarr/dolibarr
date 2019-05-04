@@ -77,14 +77,14 @@ if ($id > 0 || ! empty($ref))
     }
 }
 
-$permissionnote=$user->rights->reception->creer;	// Used by the include of actions_setnotes.inc.php
+$permissionnote=$user->rights->reception->creer;    // Used by the include of actions_setnotes.inc.php
 
 
 /*
  * Actions
  */
 
-include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, not includ_once
+include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';    // Must be include, not includ_once
 
 
 /*
@@ -98,19 +98,19 @@ $form = new Form($db);
 if ($id > 0 || ! empty($ref))
 {
 
-	$head=reception_prepare_head($object);
-	dol_fiche_head($head, 'note', $langs->trans("Reception"), -1, 'sending');
+    $head=reception_prepare_head($object);
+    dol_fiche_head($head, 'note', $langs->trans("Reception"), -1, 'sending');
 
 
-	// Reception card
-	$linkback = '<a href="'.DOL_URL_ROOT.'/reception/list.php">'.$langs->trans("BackToList").'</a>';
+    // Reception card
+    $linkback = '<a href="'.DOL_URL_ROOT.'/reception/list.php">'.$langs->trans("BackToList").'</a>';
 
-	$morehtmlref='<div class="refidno">';
-	// Ref customer reception
-	$morehtmlref.=$form->editfieldkey("RefSupplier", '', $object->ref_supplier, $object, $user->rights->reception->creer, 'string', '', 0, 1);
-	$morehtmlref.=$form->editfieldval("RefSupplier", '', $object->ref_supplier, $object, $user->rights->reception->creer, 'string', '', null, null, '', 1);
-	// Thirdparty
-	$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
+    $morehtmlref='<div class="refidno">';
+    // Ref customer reception
+    $morehtmlref.=$form->editfieldkey("RefSupplier", '', $object->ref_supplier, $object, $user->rights->reception->creer, 'string', '', 0, 1);
+    $morehtmlref.=$form->editfieldval("RefSupplier", '', $object->ref_supplier, $object, $user->rights->reception->creer, 'string', '', null, null, '', 1);
+    // Thirdparty
+    $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
     // Project
     if (! empty($conf->projet->enabled)) {
         $langs->load("projects");
@@ -153,10 +153,10 @@ if ($id > 0 || ! empty($ref))
 
     print '<div class="underbanner clearboth"></div>';
 
-	$cssclass='titlefield';
-	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
+    $cssclass='titlefield';
+    include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
-	dol_fiche_end();
+    dol_fiche_end();
 }
 
 

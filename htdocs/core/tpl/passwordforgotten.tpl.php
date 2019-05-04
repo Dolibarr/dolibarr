@@ -19,8 +19,8 @@
 // Protection to avoid direct call of template
 if (empty($conf) || ! is_object($conf))
 {
-	print "Error, template page can't be called as URL";
-	exit;
+    print "Error, template page can't be called as URL";
+    exit;
 }
 
 
@@ -59,8 +59,8 @@ $colorbackhmenu1=join(',', colorStringToArray($colorbackhmenu1));    // Normaliz
 <?php if (empty($conf->dol_use_jmobile)) { ?>
 <script type="text/javascript">
 $(document).ready(function () {
-	// Set focus on correct field
-	<?php if ($focus_element) { ?>$('#<?php echo $focus_element; ?>').focus(); <?php } ?>		// Warning to use this only on visible element
+    // Set focus on correct field
+    <?php if ($focus_element) { ?>$('#<?php echo $focus_element; ?>').focus(); <?php } ?>        // Warning to use this only on visible element
 });
 </script>
 <?php } ?>
@@ -111,45 +111,45 @@ if ($disablenofollow) echo '</a>';
 
 <?php
 if (! empty($morelogincontent)) {
-	if (is_array($morelogincontent)) {
-		foreach ($morelogincontent as $format => $option)
-		{
-			if ($format == 'table') {
-				echo '<!-- Option by hook -->';
-				echo $option;
-			}
-		}
-	}
-	else {
-		echo '<!-- Option by hook -->';
-		echo $morelogincontent;
-	}
+    if (is_array($morelogincontent)) {
+        foreach ($morelogincontent as $format => $option)
+        {
+            if ($format == 'table') {
+                echo '<!-- Option by hook -->';
+                echo $option;
+            }
+        }
+    }
+    else {
+        echo '<!-- Option by hook -->';
+        echo $morelogincontent;
+    }
 }
 ?>
 
 <?php if ($captcha) {
-		// Add a variable param to force not using cache (jmobile)
-		$php_self = preg_replace('/[&\?]time=(\d+)/', '', $php_self);	// Remove param time
-		if (preg_match('/\?/', $php_self)) $php_self.='&time='.dol_print_date(dol_now(), 'dayhourlog');
-		else $php_self.='?time='.dol_print_date(dol_now(), 'dayhourlog');
-	?>
-	<!-- Captcha -->
-	<div class="trinputlogin">
-	<div class="tdinputlogin nowraponall none center valignmiddle tdinputlogin">
+        // Add a variable param to force not using cache (jmobile)
+        $php_self = preg_replace('/[&\?]time=(\d+)/', '', $php_self);    // Remove param time
+        if (preg_match('/\?/', $php_self)) $php_self.='&time='.dol_print_date(dol_now(), 'dayhourlog');
+        else $php_self.='?time='.dol_print_date(dol_now(), 'dayhourlog');
+    ?>
+    <!-- Captcha -->
+    <div class="trinputlogin">
+    <div class="tdinputlogin nowraponall none center valignmiddle tdinputlogin">
 
-	<table class="login_table_securitycode centpercent">
-	<tr class="valignmiddle">
-	<td>
-	<!-- <span class="span-icon-security"> -->
-	<span class="nofa">
-	<input id="securitycode" placeholder="<?php echo $langs->trans("SecurityCode"); ?>" class="flat input-icon-security width100" type="text" maxlength="5" name="code" tabindex="3" />
-	</span>
-	</td>
-	<td><img src="<?php echo DOL_URL_ROOT ?>/core/antispamimage.php" border="0" width="80" height="32" id="img_securitycode" /></td>
-	<td><a href="<?php echo $php_self; ?>" tabindex="4"><?php echo $captcha_refresh; ?></a></td>
-	</tr></table>
+    <table class="login_table_securitycode centpercent">
+    <tr class="valignmiddle">
+    <td>
+    <!-- <span class="span-icon-security"> -->
+    <span class="nofa">
+    <input id="securitycode" placeholder="<?php echo $langs->trans("SecurityCode"); ?>" class="flat input-icon-security width100" type="text" maxlength="5" name="code" tabindex="3" />
+    </span>
+    </td>
+    <td><img src="<?php echo DOL_URL_ROOT ?>/core/antispamimage.php" border="0" width="80" height="32" id="img_securitycode" /></td>
+    <td><a href="<?php echo $php_self; ?>" tabindex="4"><?php echo $captcha_refresh; ?></a></td>
+    </tr></table>
 
-	</div></div>
+    </div></div>
 <?php } ?>
 
 </div>
@@ -166,15 +166,15 @@ if (! empty($morelogincontent)) {
 
 <br>
 <div class="center" style="margin-top: 15px;">
-	<?php
-	$moreparam='';
-	if (! empty($conf->dol_hide_topmenu))   $moreparam.=(strpos($moreparam, '?')===false?'?':'&').'dol_hide_topmenu='.$conf->dol_hide_topmenu;
-	if (! empty($conf->dol_hide_leftmenu))  $moreparam.=(strpos($moreparam, '?')===false?'?':'&').'dol_hide_leftmenu='.$conf->dol_hide_leftmenu;
-	if (! empty($conf->dol_no_mouse_hover)) $moreparam.=(strpos($moreparam, '?')===false?'?':'&').'dol_no_mouse_hover='.$conf->dol_no_mouse_hover;
-	if (! empty($conf->dol_use_jmobile))    $moreparam.=(strpos($moreparam, '?')===false?'?':'&').'dol_use_jmobile='.$conf->dol_use_jmobile;
+    <?php
+    $moreparam='';
+    if (! empty($conf->dol_hide_topmenu))   $moreparam.=(strpos($moreparam, '?')===false?'?':'&').'dol_hide_topmenu='.$conf->dol_hide_topmenu;
+    if (! empty($conf->dol_hide_leftmenu))  $moreparam.=(strpos($moreparam, '?')===false?'?':'&').'dol_hide_leftmenu='.$conf->dol_hide_leftmenu;
+    if (! empty($conf->dol_no_mouse_hover)) $moreparam.=(strpos($moreparam, '?')===false?'?':'&').'dol_no_mouse_hover='.$conf->dol_no_mouse_hover;
+    if (! empty($conf->dol_use_jmobile))    $moreparam.=(strpos($moreparam, '?')===false?'?':'&').'dol_use_jmobile='.$conf->dol_use_jmobile;
 
-	print '<a class="alogin" href="'.$dol_url_root.'/index.php'.$moreparam.'">'.$langs->trans('BackToLoginPage').'</a>';
-	?>
+    print '<a class="alogin" href="'.$dol_url_root.'/index.php'.$moreparam.'">'.$langs->trans('BackToLoginPage').'</a>';
+    ?>
 </div>
 
 </div>
@@ -186,13 +186,13 @@ if (! empty($morelogincontent)) {
 
 <div class="center login_main_home divpasswordmessagedesc paddingtopbottom<?php echo empty($conf->global->MAIN_LOGIN_BACKGROUND)?'':' backgroundsemitransparent'; ?>" style="max-width: 70%">
 <?php if ($mode == 'dolibarr' || ! $disabled) { ?>
-	<span class="passwordmessagedesc">
-	<?php echo $langs->trans('SendNewPasswordDesc'); ?>
-	</span>
+    <span class="passwordmessagedesc">
+    <?php echo $langs->trans('SendNewPasswordDesc'); ?>
+    </span>
 <?php }else{ ?>
-	<div class="warning" align="center">
-	<?php echo $langs->trans('AuthenticationDoesNotAllowSendNewPassword', $mode); ?>
-	</div>
+    <div class="warning" align="center">
+    <?php echo $langs->trans('AuthenticationDoesNotAllowSendNewPassword', $mode); ?>
+    </div>
 <?php } ?>
 </div>
 
@@ -200,28 +200,28 @@ if (! empty($morelogincontent)) {
 <br>
 
 <?php if ($message) { ?>
-	<div class="center login_main_message">
-	<?php echo dol_htmloutput_mesg($message, '', '', 1); ?>
-	</div>
+    <div class="center login_main_message">
+    <?php echo dol_htmloutput_mesg($message, '', '', 1); ?>
+    </div>
 <?php } ?>
 
 <?php if (! empty($morelogincontent) && is_array($morelogincontent)) {
-	foreach ($morelogincontent as $format => $option)
-	{
-		if ($format == 'js') {
-			echo "\n".'<!-- Javascript by hook -->';
-			echo $option."\n";
-		}
-	}
+    foreach ($morelogincontent as $format => $option)
+    {
+        if ($format == 'js') {
+            echo "\n".'<!-- Javascript by hook -->';
+            echo $option."\n";
+        }
+    }
 }
 elseif (! empty($moreloginextracontent)) {
-	echo '<!-- Javascript by hook -->';
-	echo $moreloginextracontent;
+    echo '<!-- Javascript by hook -->';
+    echo $moreloginextracontent;
 }
 ?>
 
 </div>
-</div>	<!-- end of center -->
+</div>    <!-- end of center -->
 
 
 </body>

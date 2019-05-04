@@ -105,8 +105,8 @@ if ($action == 'setvalue' && $user->admin)
 
 // Define $urlwithroot
 $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
-$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
-//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;        // This is to use external domain name found into config file
+//$urlwithroot=DOL_MAIN_URL_ROOT;                    // This is to use same domain name than current
 
 $form = new Form($db);
 
@@ -149,24 +149,24 @@ if ($mode == 'setup' && $user->admin)
         }
         elseif ($key[0] == 'OAUTH_STRIPE_TEST_NAME')
         {
-        	$OAUTH_SERVICENAME='StripeTest';
-        	$urltorenew=$urlwithroot.'/core/modules/oauth/stripetest_oauthcallback.php?backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
-        	$urltodelete='';
-        	$urltocheckperms='';
+            $OAUTH_SERVICENAME='StripeTest';
+            $urltorenew=$urlwithroot.'/core/modules/oauth/stripetest_oauthcallback.php?backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
+            $urltodelete='';
+            $urltocheckperms='';
         }
         elseif ($key[0] == 'OAUTH_STRIPE_LIVE_NAME')
         {
-        	$OAUTH_SERVICENAME='StripeLive';
-        	$urltorenew=$urlwithroot.'/core/modules/oauth/stripelive_oauthcallback.php?backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
-        	$urltodelete='';
-        	$urltocheckperms='';
+            $OAUTH_SERVICENAME='StripeLive';
+            $urltorenew=$urlwithroot.'/core/modules/oauth/stripelive_oauthcallback.php?backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
+            $urltodelete='';
+            $urltocheckperms='';
         }
         else
-		{
-			$urltorenew='';
-			$urltodelete='';
-			$urltocheckperms='';
-		}
+        {
+            $urltorenew='';
+            $urltodelete='';
+            $urltocheckperms='';
+        }
 
 
         // Show value of token
@@ -260,7 +260,7 @@ if ($mode == 'setup' && $user->admin)
         // Request remote token
         if ($urltorenew)
         {
-        	print '<a class="button" href="'.$urltorenew.'">'.$langs->trans('RequestAccess').'</a><br>';
+            print '<a class="button" href="'.$urltorenew.'">'.$langs->trans('RequestAccess').'</a><br>';
         }
         // Check remote access
         if ($urltocheckperms)

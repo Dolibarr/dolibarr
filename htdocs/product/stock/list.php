@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2004	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2004    Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2015       Juanjo Menent           <jmenent@2byte.es>
@@ -89,8 +89,8 @@ $sql.= " FROM ".MAIN_DB_PREFIX."entrepot as e";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON e.rowid = ps.fk_entrepot";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON ps.fk_product = p.rowid";
 $sql.= " WHERE e.entity IN (".getEntity('stock').")";
-if ($search_ref) $sql.= natural_search("e.ref", $search_ref);			// ref
-if ($search_label) $sql.= natural_search("e.lieu", $search_label);		// label
+if ($search_ref) $sql.= natural_search("e.ref", $search_ref);            // ref
+if ($search_label) $sql.= natural_search("e.lieu", $search_label);        // label
 if ($search_status != '' && $search_status >= 0) $sql.= " AND e.statut = ".$search_status;
 if ($sall) $sql .= natural_search(array_keys($fieldstosearchall), $sall);
 $sql.= " GROUP BY e.rowid, e.ref, e.statut, e.lieu, e.address, e.zip, e.town, e.fk_pays, e.fk_parent";
@@ -99,16 +99,16 @@ $result=$db->query($sql);
 if ($result)
 {
     $totalnboflines = $db->num_rows($result);
-	// fetch totals
-	$line = $total = $totalsell = $totalStock = 0;
-	while ($line < $totalnboflines)
-	{
-		$objp = $db->fetch_object($result);
-		$total += price2num($objp->estimatedvalue, 'MU');
-		$totalsell += price2num($objp->sellvalue, 'MU');
-		$totalStock += $objp->stockqty;
-		$line++;
-	}
+    // fetch totals
+    $line = $total = $totalsell = $totalStock = 0;
+    while ($line < $totalnboflines)
+    {
+        $objp = $db->fetch_object($result);
+        $total += price2num($objp->estimatedvalue, 'MU');
+        $totalsell += price2num($objp->sellvalue, 'MU');
+        $totalStock += $objp->stockqty;
+        $line++;
+    }
 }
 $sql.= $db->order($sortfield, $sortorder);
 $sql.= $db->plimit($limit+1, $offset);
@@ -116,95 +116,95 @@ $sql.= $db->plimit($limit+1, $offset);
 $result = $db->query($sql);
 if ($result)
 {
-	$num = $db->num_rows($result);
+    $num = $db->num_rows($result);
 
-	$i = 0;
+    $i = 0;
 
-	$help_url='EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
-	llxHeader("", $langs->trans("ListOfWarehouses"), $help_url);
+    $help_url='EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
+    llxHeader("", $langs->trans("ListOfWarehouses"), $help_url);
 
-	$param='';
+    $param='';
     if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
-	if ($search_ref)	$param.="&search_ref=".urlencode($search_ref);
-	if ($search_label)	$param.="&search_label=".urlencode($search_label);
-	if ($search_status)	$param.="&search_status=".urlencode($search_status);
-	if ($sall)			$param.="&sall=".urlencode($sall);
+    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+    if ($search_ref)    $param.="&search_ref=".urlencode($search_ref);
+    if ($search_label)    $param.="&search_label=".urlencode($search_label);
+    if ($search_status)    $param.="&search_status=".urlencode($search_status);
+    if ($sall)            $param.="&sall=".urlencode($sall);
 
-	$newcardbutton='';
-	if ($user->rights->stock->creer)
-	{
-		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans('MenuNewWarehouse').'</span>';
-		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-		$newcardbutton.= '</a>';
-	}
+    $newcardbutton='';
+    if ($user->rights->stock->creer)
+    {
+        $newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans('MenuNewWarehouse').'</span>';
+        $newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+        $newcardbutton.= '</a>';
+    }
 
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<input type="hidden" name="action" value="list">';
-	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
-	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-	print '<input type="hidden" name="page" value="'.$page.'">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="action" value="list">';
+    print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+    print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+    print '<input type="hidden" name="page" value="'.$page.'">';
 
-	print_barre_liste($langs->trans("ListOfWarehouses"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'title_generic.png', 0, $newcardbutton, '', $limit);
+    print_barre_liste($langs->trans("ListOfWarehouses"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'title_generic.png', 0, $newcardbutton, '', $limit);
 
-	if ($sall)
-	{
-	    foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-	    print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ', $fieldstosearchall).'</div>';
-	}
+    if ($sall)
+    {
+        foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
+        print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ', $fieldstosearchall).'</div>';
+    }
 
-	$moreforfilter='';
+    $moreforfilter='';
 
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
-	// Lignes des champs de filtre
-	print '<tr class="liste_titre_filter">';
+    // Lignes des champs de filtre
+    print '<tr class="liste_titre_filter">';
 
-	print '<td class="liste_titre left">';
-	print '<input class="flat" type="text" name="search_ref" size="6" value="'.dol_escape_htmltag($search_ref).'">';
-	print '</td>';
+    print '<td class="liste_titre left">';
+    print '<input class="flat" type="text" name="search_ref" size="6" value="'.dol_escape_htmltag($search_ref).'">';
+    print '</td>';
 
-	print '<td class="liste_titre left">';
-	print '<input class="flat" type="text" name="search_label" size="10" value="'.dol_escape_htmltag($search_label).'">';
-	print '</td>';
+    print '<td class="liste_titre left">';
+    print '<input class="flat" type="text" name="search_label" size="10" value="'.dol_escape_htmltag($search_label).'">';
+    print '</td>';
 
-	print '<td class="liste_titre" colspan="3">';
-	print '</td>';
+    print '<td class="liste_titre" colspan="3">';
+    print '</td>';
 
-	print '<td class="liste_titre right">';
-	print $form->selectarray('search_status', $warehouse->statuts, $search_status, 1, 0, 0, '', 1);
-	print '</td>';
+    print '<td class="liste_titre right">';
+    print $form->selectarray('search_status', $warehouse->statuts, $search_status, 1, 0, 0, '', 1);
+    print '</td>';
 
     print '<td class="liste_titre right">';
     $searchpicto=$form->showFilterAndCheckAddButtons(0);
     print $searchpicto;
     print '</td>';
 
-	print '</tr>';
+    print '</tr>';
 
-	print '<tr class="liste_titre">';
-	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "e.ref", "", $param, "", $sortfield, $sortorder);
-	print_liste_field_titre("LocationSummary", $_SERVER["PHP_SELF"], "e.lieu", "", $param, "", $sortfield, $sortorder);
-	print_liste_field_titre("PhysicalStock", $_SERVER["PHP_SELF"], "stockqty", '', $param, '', $sortfield, $sortorder, 'right ');
+    print '<tr class="liste_titre">';
+    print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "e.ref", "", $param, "", $sortfield, $sortorder);
+    print_liste_field_titre("LocationSummary", $_SERVER["PHP_SELF"], "e.lieu", "", $param, "", $sortfield, $sortorder);
+    print_liste_field_titre("PhysicalStock", $_SERVER["PHP_SELF"], "stockqty", '', $param, '', $sortfield, $sortorder, 'right ');
     print_liste_field_titre("EstimatedStockValue", $_SERVER["PHP_SELF"], "estimatedvalue", '', $param, '', $sortfield, $sortorder, 'right ');
     print_liste_field_titre("EstimatedStockValueSell", $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'right ');
-	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "e.statut", '', $param, '', $sortfield, $sortorder, 'right ');
-	print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'maxwidthsearch ');
-	print "</tr>\n";
+    print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "e.statut", '', $param, '', $sortfield, $sortorder, 'right ');
+    print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'maxwidthsearch ');
+    print "</tr>\n";
 
-	if ($num)
-	{
-		$warehouse=new Entrepot($db);
+    if ($num)
+    {
+        $warehouse=new Entrepot($db);
         $var=false;
-		while ($i < min($num, $limit))
-		{
-			$objp = $db->fetch_object($result);
+        while ($i < min($num, $limit))
+        {
+            $objp = $db->fetch_object($result);
 
-			$warehouse->id = $objp->rowid;
-			$warehouse->ref = $objp->ref;
-			$warehouse->label = $objp->ref;
+            $warehouse->id = $objp->rowid;
+            $warehouse->ref = $objp->ref;
+            $warehouse->label = $objp->ref;
             $warehouse->lieu = $objp->lieu;
             $warehouse->fk_parent = $objp->fk_parent;
 
@@ -223,10 +223,10 @@ if ($result)
             print '<td class="right">';
             if (empty($conf->global->PRODUIT_MULTIPRICES)) print price(price2num($objp->sellvalue, 'MT'), 1);
             else
-			{
-				$htmltext=$langs->trans("OptionMULTIPRICESIsOn");
-            	print $form->textwithtooltip($langs->trans("Variable"), $htmltext);
-			}
+            {
+                $htmltext=$langs->trans("OptionMULTIPRICESIsOn");
+                print $form->textwithtooltip($langs->trans("Variable"), $htmltext);
+            }
             print '</td>';
             // Status
             print '<td class="right">'.$warehouse->LibStatut($objp->statut, 5).'</td>';
@@ -237,34 +237,34 @@ if ($result)
 
 
             $i++;
-		}
+        }
 
-		if ($totalnboflines-$offset <= $limit)
-		{
-    		print '<tr class="liste_total">';
+        if ($totalnboflines-$offset <= $limit)
+        {
+            print '<tr class="liste_total">';
             print '<td colspan="2" class="right">'.$langs->trans("Total").'</td>';
-			print '<td class="right">'.price2num($totalStock, 5).'</td>';
+            print '<td class="right">'.price2num($totalStock, 5).'</td>';
             print '<td class="right">'.price(price2num($total, 'MT'), 1, $langs, 0, 0, -1, $conf->currency).'</td>';
             print '<td class="right">';
-    		if (empty($conf->global->PRODUIT_MULTIPRICES)) print price(price2num($totalsell, 'MT'), 1, $langs, 0, 0, -1, $conf->currency);
+            if (empty($conf->global->PRODUIT_MULTIPRICES)) print price(price2num($totalsell, 'MT'), 1, $langs, 0, 0, -1, $conf->currency);
             else
-    		{
-    			$htmltext=$langs->trans("OptionMULTIPRICESIsOn");
-               	print $form->textwithtooltip($langs->trans("Variable"), $htmltext);
-    		}
+            {
+                $htmltext=$langs->trans("OptionMULTIPRICESIsOn");
+                   print $form->textwithtooltip($langs->trans("Variable"), $htmltext);
+            }
             print '</td>';
             print '<td></td>';
             print '<td></td>';
             print "</tr>\n";
-		}
-	}
+        }
+    }
 
-	$db->free($result);
+    $db->free($result);
 
-	print "</table>";
+    print "</table>";
     print "</table>";
 
-	print '</form>';
+    print '</form>';
 }
 else
 {

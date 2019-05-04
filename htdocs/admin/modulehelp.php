@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017	Laurent Destailleur		<eldy@users.sourceforge.net>
+/* Copyright (C) 2017    Laurent Destailleur        <eldy@users.sourceforge.net>
  * Copyright (C) 2017	Regis Houssin			<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,7 +21,7 @@
  *  \brief      Page to activate/disable all modules
  */
 
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');			// If there is no need to load and show top and left menu
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');            // If there is no need to load and show top and left menu
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
@@ -37,7 +37,7 @@ $id = GETPOST('id', 'int');
 if (empty($mode)) $mode='desc';
 
 if (! $user->admin)
-	accessforbidden();
+    accessforbidden();
 
 
 
@@ -74,136 +74,136 @@ $modules = array();
 $orders = array();
 $categ = array();
 $dirmod = array();
-$i = 0;	// is a sequencer of modules found
-$j = 0;	// j is module number. Automatically affected if module number not defined.
+$i = 0;    // is a sequencer of modules found
+$j = 0;    // j is module number. Automatically affected if module number not defined.
 $modNameLoaded=array();
 
 foreach ($modulesdir as $dir)
 {
-	// Load modules attributes in arrays (name, numero, orders) from dir directory
-	//print $dir."\n<br>";
-	dol_syslog("Scan directory ".$dir." for module descriptor files (modXXX.class.php)");
-	$handle=@opendir($dir);
-	if (is_resource($handle))
-	{
-		while (($file = readdir($handle))!==false)
-		{
-			//print "$i ".$file."\n<br>";
-		    if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod'  && substr($file, dol_strlen($file) - 10) == '.class.php')
-		    {
-		        $modName = substr($file, 0, dol_strlen($file) - 10);
+    // Load modules attributes in arrays (name, numero, orders) from dir directory
+    //print $dir."\n<br>";
+    dol_syslog("Scan directory ".$dir." for module descriptor files (modXXX.class.php)");
+    $handle=@opendir($dir);
+    if (is_resource($handle))
+    {
+        while (($file = readdir($handle))!==false)
+        {
+            //print "$i ".$file."\n<br>";
+            if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod'  && substr($file, dol_strlen($file) - 10) == '.class.php')
+            {
+                $modName = substr($file, 0, dol_strlen($file) - 10);
 
-		        if ($modName)
-		        {
-		        	if (! empty($modNameLoaded[$modName]))
-		        	{
-		        		$mesg="Error: Module ".$modName." was found twice: Into ".$modNameLoaded[$modName]." and ".$dir.". You probably have an old file on your disk.<br>";
-		        		setEventMessages($mesg, null, 'warnings');
-		        		dol_syslog($mesg, LOG_ERR);
-						continue;
-		        	}
+                if ($modName)
+                {
+                    if (! empty($modNameLoaded[$modName]))
+                    {
+                        $mesg="Error: Module ".$modName." was found twice: Into ".$modNameLoaded[$modName]." and ".$dir.". You probably have an old file on your disk.<br>";
+                        setEventMessages($mesg, null, 'warnings');
+                        dol_syslog($mesg, LOG_ERR);
+                        continue;
+                    }
 
-		            try
-		            {
-		                $res=include_once $dir.$file;
-		                if (class_exists($modName))
-						{
-							try {
-				                $objMod = new $modName($db);
-								$modNameLoaded[$modName]=$dir;
+                    try
+                    {
+                        $res=include_once $dir.$file;
+                        if (class_exists($modName))
+                        {
+                            try {
+                                $objMod = new $modName($db);
+                                $modNameLoaded[$modName]=$dir;
 
-    		    		        if (! $objMod->numero > 0 && $modName != 'modUser')
-    		            		{
-    		         		    	dol_syslog('The module descriptor '.$modName.' must have a numero property', LOG_ERR);
-    		            		}
-								$j = $objMod->numero;
+                                if (! $objMod->numero > 0 && $modName != 'modUser')
+                                {
+                                     dol_syslog('The module descriptor '.$modName.' must have a numero property', LOG_ERR);
+                                }
+                                $j = $objMod->numero;
 
-    							$modulequalified=1;
+                                $modulequalified=1;
 
-		    					// We discard modules according to features level (PS: if module is activated we always show it)
-		    					$const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i', '', get_class($objMod)));
-		    					if ($objMod->version == 'development'  && (empty($conf->global->$const_name) && ($conf->global->MAIN_FEATURES_LEVEL < 2))) $modulequalified=0;
-		    					if ($objMod->version == 'experimental' && (empty($conf->global->$const_name) && ($conf->global->MAIN_FEATURES_LEVEL < 1))) $modulequalified=0;
-								if (preg_match('/deprecated/', $objMod->version) && (empty($conf->global->$const_name) && ($conf->global->MAIN_FEATURES_LEVEL >= 0))) $modulequalified=0;
+                                // We discard modules according to features level (PS: if module is activated we always show it)
+                                $const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i', '', get_class($objMod)));
+                                if ($objMod->version == 'development'  && (empty($conf->global->$const_name) && ($conf->global->MAIN_FEATURES_LEVEL < 2))) $modulequalified=0;
+                                if ($objMod->version == 'experimental' && (empty($conf->global->$const_name) && ($conf->global->MAIN_FEATURES_LEVEL < 1))) $modulequalified=0;
+                                if (preg_match('/deprecated/', $objMod->version) && (empty($conf->global->$const_name) && ($conf->global->MAIN_FEATURES_LEVEL >= 0))) $modulequalified=0;
 
-		    					// We discard modules according to property disabled
-		    					if (! empty($objMod->hidden)) $modulequalified=0;
+                                // We discard modules according to property disabled
+                                if (! empty($objMod->hidden)) $modulequalified=0;
 
-		    					if ($modulequalified > 0)
-		    					{
-		    					    $publisher=dol_escape_htmltag($objMod->getPublisher());
-		    					    $external=($objMod->isCoreOrExternalModule() == 'external');
-		    					    if ($external)
-		    					    {
-		    					        if ($publisher)
-		    					        {
-		    					            $arrayofnatures['external_'.$publisher]=$langs->trans("External").' - '.$publisher;
-		    					        }
-		    					        else
-		    					        {
-		    					            $arrayofnatures['external_']=$langs->trans("External").' - '.$langs->trans("UnknownPublishers");
-		    					        }
-		    					    }
-		    					    ksort($arrayofnatures);
-		    					}
+                                if ($modulequalified > 0)
+                                {
+                                    $publisher=dol_escape_htmltag($objMod->getPublisher());
+                                    $external=($objMod->isCoreOrExternalModule() == 'external');
+                                    if ($external)
+                                    {
+                                        if ($publisher)
+                                        {
+                                            $arrayofnatures['external_'.$publisher]=$langs->trans("External").' - '.$publisher;
+                                        }
+                                        else
+                                        {
+                                            $arrayofnatures['external_']=$langs->trans("External").' - '.$langs->trans("UnknownPublishers");
+                                        }
+                                    }
+                                    ksort($arrayofnatures);
+                                }
 
-		    					// Define array $categ with categ with at least one qualified module
-		    					if ($modulequalified > 0)
-		    					{
-		    						$modules[$i] = $objMod;
-		    			            $filename[$i]= $modName;
+                                // Define array $categ with categ with at least one qualified module
+                                if ($modulequalified > 0)
+                                {
+                                    $modules[$i] = $objMod;
+                                    $filename[$i]= $modName;
 
-		    			            // Gives the possibility to the module, to provide his own family info and position of this family
-		    			            if (is_array($objMod->familyinfo) && !empty($objMod->familyinfo)) {
-		    			            	if (!is_array($familyinfo)) $familyinfo=array();
-		    			            	$familyinfo = array_merge($familyinfo, $objMod->familyinfo);
-		    			            	$familykey = key($objMod->familyinfo);
-		    			            } else {
-		    			            	$familykey = $objMod->family;
-		    			            }
+                                    // Gives the possibility to the module, to provide his own family info and position of this family
+                                    if (is_array($objMod->familyinfo) && !empty($objMod->familyinfo)) {
+                                        if (!is_array($familyinfo)) $familyinfo=array();
+                                        $familyinfo = array_merge($familyinfo, $objMod->familyinfo);
+                                        $familykey = key($objMod->familyinfo);
+                                    } else {
+                                        $familykey = $objMod->family;
+                                    }
 
-		    			            $moduleposition = ($objMod->module_position?$objMod->module_position:'50');
-		    			            if ($moduleposition == '50' && ($objMod->isCoreOrExternalModule() == 'external'))
-		    			            {
-		    			                $moduleposition = '80';		// External modules at end by default
-		    			            }
+                                    $moduleposition = ($objMod->module_position?$objMod->module_position:'50');
+                                    if ($moduleposition == '50' && ($objMod->isCoreOrExternalModule() == 'external'))
+                                    {
+                                        $moduleposition = '80';        // External modules at end by default
+                                    }
 
-		    			            $orders[$i]  = $familyinfo[$familykey]['position']."_".$familykey."_".$moduleposition."_".$j;   // Sort by family, then by module position then number
-		    						$dirmod[$i]  = $dir;
-		    						//print $i.'-'.$dirmod[$i].'<br>';
-		    			            // Set categ[$i]
-		    						$specialstring = 'unknown';
-		    			            if ($objMod->version == 'development' || $objMod->version == 'experimental') $specialstring='expdev';
-		    						if (isset($categ[$specialstring])) $categ[$specialstring]++;					// Array of all different modules categories
-		    			            else $categ[$specialstring]=1;
-		    						$j++;
-		    			            $i++;
-		    					}
-		    					else dol_syslog("Module ".get_class($objMod)." not qualified");
-							}
-		            		catch(Exception $e)
-		            		{
-		            		     dol_syslog("Failed to load ".$dir.$file." ".$e->getMessage(), LOG_ERR);
-		            		}
-						}
-		            	else
-						{
-							print "Warning bad descriptor file : ".$dir.$file." (Class ".$modName." not found into file)<br>";
-						}
-					}
-		            catch(Exception $e)
-		            {
-		                 dol_syslog("Failed to load ".$dir.$file." ".$e->getMessage(), LOG_ERR);
-		            }
-		        }
-		    }
-		}
-		closedir($handle);
-	}
-	else
-	{
-		dol_syslog("htdocs/admin/modulehelp.php: Failed to open directory ".$dir.". See permission and open_basedir option.", LOG_WARNING);
-	}
+                                    $orders[$i]  = $familyinfo[$familykey]['position']."_".$familykey."_".$moduleposition."_".$j;   // Sort by family, then by module position then number
+                                    $dirmod[$i]  = $dir;
+                                    //print $i.'-'.$dirmod[$i].'<br>';
+                                    // Set categ[$i]
+                                    $specialstring = 'unknown';
+                                    if ($objMod->version == 'development' || $objMod->version == 'experimental') $specialstring='expdev';
+                                    if (isset($categ[$specialstring])) $categ[$specialstring]++;                    // Array of all different modules categories
+                                    else $categ[$specialstring]=1;
+                                    $j++;
+                                    $i++;
+                                }
+                                else dol_syslog("Module ".get_class($objMod)." not qualified");
+                            }
+                            catch(Exception $e)
+                            {
+                                 dol_syslog("Failed to load ".$dir.$file." ".$e->getMessage(), LOG_ERR);
+                            }
+                        }
+                        else
+                        {
+                            print "Warning bad descriptor file : ".$dir.$file." (Class ".$modName." not found into file)<br>";
+                        }
+                    }
+                    catch(Exception $e)
+                    {
+                         dol_syslog("Failed to load ".$dir.$file." ".$e->getMessage(), LOG_ERR);
+                    }
+                }
+            }
+        }
+        closedir($handle);
+    }
+    else
+    {
+        dol_syslog("htdocs/admin/modulehelp.php: Failed to open directory ".$dir.". See permission and open_basedir option.", LOG_WARNING);
+    }
 }
 
 asort($orders);
@@ -267,7 +267,7 @@ dol_fiche_head($head, $mode, $title, -1);
 
 if (! $modulename)
 {
-	dol_syslog("Error for module ".$key." - Property name of module looks empty", LOG_WARNING);
+    dol_syslog("Error for module ".$key." - Property name of module looks empty", LOG_WARNING);
 }
 
 $const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i', '', get_class($objMod)));
@@ -275,10 +275,10 @@ $const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i', '', get_class($o
 // Load all lang files of module
 if (isset($objMod->langfiles) && is_array($objMod->langfiles))
 {
-	foreach($objMod->langfiles as $domain)
-	{
-		$langs->load($domain);
-	}
+    foreach($objMod->langfiles as $domain)
+    {
+        $langs->load($domain);
+    }
 }
 
 
@@ -354,25 +354,25 @@ if ($mode == 'feature')
 {
     $text.='<br><strong>'.$langs->trans("DependsOn").':</strong> ';
     if (count($objMod->depends)) $text.=join(',', $objMod->depends);
-	else $text.=$langs->trans("None");
+    else $text.=$langs->trans("None");
     $text.='<br><strong>'.$langs->trans("RequiredBy").':</strong> ';
-	if (count($objMod->requiredby)) $text.=join(',', $objMod->requiredby);
-	else $text.=$langs->trans("None");
+    if (count($objMod->requiredby)) $text.=join(',', $objMod->requiredby);
+    else $text.=$langs->trans("None");
 
     $text.='<br><br>';
 
     $text.='<br><strong>'.$langs->trans("AddDataTables").':</strong> ';
-	$sqlfiles = dol_dir_list(dol_buildpath($moduledir.'/sql/'), 'files', 0, 'llx.*\.sql', array('\.key\.sql'));
+    $sqlfiles = dol_dir_list(dol_buildpath($moduledir.'/sql/'), 'files', 0, 'llx.*\.sql', array('\.key\.sql'));
     if (count($sqlfiles) > 0)
     {
-    	$text.=$langs->trans("Yes").' (';
-    	$i=0;
-    	foreach($sqlfiles as $val)
-    	{
-    		$text.=($i?', ':'').preg_replace('/\.sql$/', '', preg_replace('/llx_/', '', $val['name']));
-    		$i++;
-    	}
-    	$text.=')';
+        $text.=$langs->trans("Yes").' (';
+        $i=0;
+        foreach($sqlfiles as $val)
+        {
+            $text.=($i?', ':'').preg_replace('/\.sql$/', '', preg_replace('/llx_/', '', $val['name']));
+            $i++;
+        }
+        $text.=')';
     }
     else $text.=$langs->trans("No");
 
@@ -408,13 +408,13 @@ if ($mode == 'feature')
         $i=0;
         foreach($objMod->tabs as $val)
         {
-        	if (is_array($val)) $val=$val['data'];
-        	if (is_string($val))
-        	{
-            	$tmp=explode(':', $val, 3);
-            	$text.=($i?', ':'').$tmp[0].':'.$tmp[1];
-           		$i++;
-        	}
+            if (is_array($val)) $val=$val['data'];
+            if (is_string($val))
+            {
+                $tmp=explode(':', $val, 3);
+                $text.=($i?', ':'').$tmp[0].':'.$tmp[1];
+                   $i++;
+            }
         }
     }
     else $text.=$langs->trans("No");
@@ -457,23 +457,23 @@ if ($mode == 'feature')
     $moreinfoontriggerfile='';
     if (isset($objMod->module_parts) && isset($objMod->module_parts['triggers']) && $objMod->module_parts['triggers'])
     {
-    	$yesno='Yes';
+        $yesno='Yes';
     }
     else
     {
-    	$yesno='No';
+        $yesno='No';
     }
     require_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
     $interfaces = new Interfaces($db);
     $triggers = $interfaces->getTriggersList(array((($objMod->isCoreOrExternalModule() == 'external')?'/'.$moduledir:'').'/core/triggers'));
-	foreach($triggers as $triggercursor)
-	{
-		if ($triggercursor['module'] == $moduledir)
-		{
-			$yesno='Yes';
-			$moreinfoontriggerfile=' ('.$triggercursor['relpath'].')';
-		}
-	}
+    foreach($triggers as $triggercursor)
+    {
+        if ($triggercursor['module'] == $moduledir)
+        {
+            $yesno='Yes';
+            $moreinfoontriggerfile=' ('.$triggercursor['relpath'].')';
+        }
+    }
 
     $text.=$langs->trans($yesno).$moreinfoontriggerfile;
 
@@ -496,28 +496,28 @@ if ($mode == 'feature')
     $text.='<br><strong>'.$langs->trans("AddHooks").':</strong> ';
     if (isset($objMod->module_parts) && is_array($objMod->module_parts['hooks']) && count($objMod->module_parts['hooks']))
     {
-    	$i=0;
+        $i=0;
         foreach($objMod->module_parts['hooks'] as $key => $val)
         {
-        	if ($key === 'entity') continue;
+            if ($key === 'entity') continue;
 
-        	// For special values
-        	if ($key === 'data')
-        	{
-        		if (is_array($val))
-        		{
-        			foreach($val as $value)
-        			{
-        				$text.=($i?', ':'').($value);
-        				$i++;
-        			}
+            // For special values
+            if ($key === 'data')
+            {
+                if (is_array($val))
+                {
+                    foreach($val as $value)
+                    {
+                        $text.=($i?', ':'').($value);
+                        $i++;
+                    }
 
-        			continue;
-        		}
-        	}
+                    continue;
+                }
+            }
 
-        	$text.=($i?', ':'').($val);
-        	$i++;
+            $text.=($i?', ':'').($val);
+            $i++;
         }
     }
     else $text.=$langs->trans("No");
@@ -530,8 +530,8 @@ if ($mode == 'feature')
         $i=0;
         foreach($objMod->rights as $val)
         {
-        	$text.=($i?', ':'').($val[1]);
-        	$i++;
+            $text.=($i?', ':'').($val[1]);
+            $i++;
         }
     }
     else $text.=$langs->trans("No");

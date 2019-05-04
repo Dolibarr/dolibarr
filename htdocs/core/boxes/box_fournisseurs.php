@@ -36,7 +36,7 @@ class box_fournisseurs extends ModeleBoxes
     public $boxlabel="BoxLastSuppliers";
     public $depends = array("fournisseur");
 
-	/**
+    /**
      * @var DoliDB Database handler.
      */
     public $db;
@@ -63,24 +63,24 @@ class box_fournisseurs extends ModeleBoxes
     }
 
     /**
-	 *  Load data into info_box_contents array to show array later.
-	 *
-	 *  @param	int		$max        Maximum number of records to load
-     *  @return	void
+     *  Load data into info_box_contents array to show array later.
+     *
+     *  @param    int        $max        Maximum number of records to load
+     *  @return    void
      */
     public function loadBox($max = 5)
     {
         global $conf, $user, $langs, $db;
         $langs->load("boxes");
 
-		$this->max=$max;
+        $this->max=$max;
 
         include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
         $thirdpartystatic=new Societe($db);
-		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
-		$thirdpartytmp=new Fournisseur($db);
+        include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
+        $thirdpartytmp=new Fournisseur($db);
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedSuppliers", $max));
+        $this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedSuppliers", $max));
 
         if ($user->rights->societe->lire)
         {
@@ -105,14 +105,14 @@ class box_fournisseurs extends ModeleBoxes
                 while ($line < $num)
                 {
                     $objp = $db->fetch_object($result);
-    				$datec=$db->jdate($objp->datec);
-    				$datem=$db->jdate($objp->tms);
-					$thirdpartytmp->id = $objp->socid;
+                    $datec=$db->jdate($objp->datec);
+                    $datem=$db->jdate($objp->tms);
+                    $thirdpartytmp->id = $objp->socid;
                     $thirdpartytmp->name = $objp->name;
                     $thirdpartytmp->code_client = $objp->code_client;
                     $thirdpartytmp->logo = $objp->logo;
 
-                   	$this->info_box_contents[$line][] = array(
+                       $this->info_box_contents[$line][] = array(
                         'td' => '',
                         'text' => $thirdpartytmp->getNomUrl(1, '', 40),
                         'asis' => 1,
@@ -152,14 +152,14 @@ class box_fournisseurs extends ModeleBoxes
         }
     }
 
-	/**
-	 *	Method to show box
-	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
-	 *	@return	string
-	 */
+    /**
+     *    Method to show box
+     *
+     *    @param    array    $head       Array with properties of box title
+     *    @param  array    $contents   Array with properties of box lines
+     *  @param    int        $nooutput    No print, only return string
+     *    @return    string
+     */
     public function showBox($head = null, $contents = null, $nooutput = 0)
     {
         return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);

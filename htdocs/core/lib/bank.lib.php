@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2016	Laurent Destailleur	<eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2016    Laurent Destailleur    <eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2015		Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2016		Juanjo Menent   	<jmenent@2byte.es>
@@ -28,8 +28,8 @@
 /**
  * Prepare array with list of tabs
  *
- * @param   Account	$object		Object related to tabs
- * @return  array				Array of tabs to show
+ * @param   Account    $object        Object related to tabs
+ * @return  array                Array of tabs to show
  */
 function bank_prepare_head(Account $object)
 {
@@ -48,12 +48,12 @@ function bank_prepare_head(Account $object)
     $h++;
 
 //    if ($conf->global->MAIN_FEATURES_LEVEL >= 1)
-//	{
+//    {
     $head[$h][0] = DOL_URL_ROOT . "/compta/bank/treso.php?account=" . $object->id;
     $head[$h][1] = $langs->trans("PlannedTransactions");
     $head[$h][2] = 'cash';
     $h++;
-//	}
+//    }
 
     $head[$h][0] = DOL_URL_ROOT . "/compta/bank/annuel.php?account=" . $object->id;
     $head[$h][1] = $langs->trans("IOMonthlyReporting");
@@ -67,27 +67,27 @@ function bank_prepare_head(Account $object)
 
     if ($object->courant != Account::TYPE_CASH)
     {
-    	$nbReceipts=0;
+        $nbReceipts=0;
 
-    	// List of all standing receipts
-    	$sql = "SELECT COUNT(DISTINCT(b.num_releve)) as nb";
-    	$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
-    	$sql.= " WHERE b.fk_account = ".$object->id;
+        // List of all standing receipts
+        $sql = "SELECT COUNT(DISTINCT(b.num_releve)) as nb";
+        $sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
+        $sql.= " WHERE b.fk_account = ".$object->id;
 
-    	$resql = $db->query($sql);
-    	if ($resql)
-    	{
-    		$obj = $db->fetch_object($resql);
-    		if ($obj) $nbReceipts = $obj->nb;
-    		$db->free($resql);
-    	}
+        $resql = $db->query($sql);
+        if ($resql)
+        {
+            $obj = $db->fetch_object($resql);
+            if ($obj) $nbReceipts = $obj->nb;
+            $db->free($resql);
+        }
 
-    	$head[$h][0] = DOL_URL_ROOT."/compta/bank/releve.php?account=".$object->id;
-	    $head[$h][1] = $langs->trans("AccountStatements");
-	    if (($nbReceipts) > 0) $head[$h][1].= ' <span class="badge">'.($nbReceipts).'</span>';
-	    $head[$h][2] = 'statement';
-	    $h++;
-	}
+        $head[$h][0] = DOL_URL_ROOT."/compta/bank/releve.php?account=".$object->id;
+        $head[$h][1] = $langs->trans("AccountStatements");
+        if (($nbReceipts) > 0) $head[$h][1].= ' <span class="badge">'.($nbReceipts).'</span>';
+        $head[$h][2] = 'statement';
+        $h++;
+    }
 
     // Attached files
     require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -101,10 +101,10 @@ function bank_prepare_head(Account $object)
     $head[$h][2] = 'document';
     $h++;
 
-	// Show more tabs from modules
+    // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
-    // $this->tabs = array('entity:-tabname);   												to remove a tab
+    // $this->tabs = array('entity:-tabname);                                                   to remove a tab
     complete_head_from_modules($conf, $langs, $object, $head, $h, 'bank');
 
     /*$head[$h][0] = DOL_URL_ROOT . "/compta/bank/info.php?id=" . $object->id;
@@ -112,26 +112,26 @@ function bank_prepare_head(Account $object)
     $head[$h][2] = 'info';
     $h++;*/
 
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'bank', 'remove');
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'bank', 'remove');
 
     return $head;
 }
 /**
  * Prepare array with list of tabs
  *
- * @param   Object	$object		Object related to tabs
- * @return  array				Array of tabs to shoc
+ * @param   Object    $object        Object related to tabs
+ * @return  array                Array of tabs to shoc
  */
 function bank_admin_prepare_head($object)
 {
-	global $langs, $conf, $user;
-	$h = 0;
-	$head = array();
+    global $langs, $conf, $user;
+    $h = 0;
+    $head = array();
 
-	$head[$h][0] = DOL_URL_ROOT . '/admin/bank.php';
-	$head[$h][1] = $langs->trans("Miscellaneous");
-	$head[$h][2] = 'general';
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT . '/admin/bank.php';
+    $head[$h][1] = $langs->trans("Miscellaneous");
+    $head[$h][2] = 'general';
+    $h++;
 
     $head[$h][0] = DOL_URL_ROOT . '/admin/chequereceipts.php';
     $head[$h][1] = $langs->trans("CheckReceiptShort");
@@ -139,66 +139,66 @@ function bank_admin_prepare_head($object)
     $h++;
 
 
-	// Show more tabs from modules
-	// Entries must be declared in modules descriptor with line
-	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
-	// $this->tabs = array('entity:-tabname);   												to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'bank_admin');
+    // Show more tabs from modules
+    // Entries must be declared in modules descriptor with line
+    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+    // $this->tabs = array('entity:-tabname);                                                   to remove a tab
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'bank_admin');
 
-	$head[$h][0] = DOL_URL_ROOT.'/admin/bank_extrafields.php';
-	$head[$h][1] = $langs->trans("ExtraFields");
-	$head[$h][2] = 'attributes';
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT.'/admin/bank_extrafields.php';
+    $head[$h][1] = $langs->trans("ExtraFields");
+    $head[$h][2] = 'attributes';
+    $h++;
 
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'bank_admin', 'remove');
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'bank_admin', 'remove');
 
-	return $head;
+    return $head;
 }
 
 /**
  * Prepare array with list of tabs
  *
- * @param   Object	$object		Object related to tabs
- * @return  array				Array of tabs to shoc
+ * @param   Object    $object        Object related to tabs
+ * @return  array                Array of tabs to shoc
  */
 function various_payment_prepare_head($object)
 {
 
-	global $db, $langs, $conf;
+    global $db, $langs, $conf;
 
-	$h = 0;
-	$head = array();
+    $h = 0;
+    $head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/compta/bank/various_payment/card.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("Card");
-	$head[$h][2] = 'card';
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT.'/compta/bank/various_payment/card.php?id='.$object->id;
+    $head[$h][1] = $langs->trans("Card");
+    $head[$h][2] = 'card';
+    $h++;
 
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
-    // $this->tabs = array('entity:-tabname);   												to remove a tab
+    // $this->tabs = array('entity:-tabname);                                                   to remove a tab
     complete_head_from_modules($conf, $langs, $object, $head, $h, 'various_payment');
 
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
     require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-	$upload_dir = $conf->bank->dir_output . "/" . dol_sanitizeFileName($object->ref);
-	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
+    $upload_dir = $conf->bank->dir_output . "/" . dol_sanitizeFileName($object->ref);
+    $nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
     $nbLinks=Link::count($db, $object->element, $object->id);
-	$head[$h][0] = DOL_URL_ROOT.'/compta/bank/various_payment/document.php?id='.$object->id;
-	$head[$h][1] = $langs->trans('Documents');
-	if (($nbFiles+$nbLinks) > 0) $head[$h][1].= ' <span class="badge">'.($nbFiles+$nbLinks).'</span>';
-	$head[$h][2] = 'documents';
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT.'/compta/bank/various_payment/document.php?id='.$object->id;
+    $head[$h][1] = $langs->trans('Documents');
+    if (($nbFiles+$nbLinks) > 0) $head[$h][1].= ' <span class="badge">'.($nbFiles+$nbLinks).'</span>';
+    $head[$h][2] = 'documents';
+    $h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/compta/bank/various_payment/info.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("Info");
-	$head[$h][2] = 'info';
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT.'/compta/bank/various_payment/info.php?id='.$object->id;
+    $head[$h][1] = $langs->trans("Info");
+    $head[$h][2] = 'info';
+    $h++;
 
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'various_payment', 'remove');
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'various_payment', 'remove');
 
-	return $head;
+    return $head;
 }
 
 /**
@@ -235,10 +235,10 @@ function checkIbanForAccount($account)
 }
 
 /**
- * 		Check account number informations for a bank account
+ *         Check account number informations for a bank account
  *
- * 		@param	Account		$account    A bank account
- * 		@return boolean           		True if informations are valid, false otherwise
+ *         @param    Account        $account    A bank account
+ *         @return boolean                   True if informations are valid, false otherwise
  */
 function checkBanForAccount($account)
 {
@@ -259,7 +259,7 @@ function checkBanForAccount($account)
         // Concatenation des differents codes.
         $rib = strtolower(trim($account->code_banque) . trim($account->code_guichet) . trim($account->number) . trim($account->cle));
         // On remplace les eventuelles lettres par des chiffres.
-        //$rib = strtr($rib, "abcdefghijklmnopqrstuvwxyz","12345678912345678912345678");	//Ne marche pas
+        //$rib = strtr($rib, "abcdefghijklmnopqrstuvwxyz","12345678912345678912345678");    //Ne marche pas
         $rib = strtr($rib, "abcdefghijklmnopqrstuvwxyz", "12345678912345678923456789");
         // Separation du rib en 3 groupes de 7 + 1 groupe de 2.
         // Multiplication de chaque groupe par les coef du tableau
@@ -311,11 +311,11 @@ function checkBanForAccount($account)
 
 
 /**
- * 	Returns the key for Spanish Banks Accounts
+ *     Returns the key for Spanish Banks Accounts
  *
- *  @param	string	$IentOfi	IentOfi
- *  @param	string	$InumCta	InumCta
- *  @return	string				Key
+ *  @param    string    $IentOfi    IentOfi
+ *  @param    string    $InumCta    InumCta
+ *  @return    string                Key
  */
 function checkES($IentOfi, $InumCta)
 {

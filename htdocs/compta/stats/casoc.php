@@ -76,47 +76,47 @@ $date_endmonth = GETPOST("date_endmonth", 'alpha');
 $date_endday = GETPOST("date_endday", 'alpha');
 if (empty($year))
 {
-	$year_current = strftime("%Y", dol_now());
-	$month_current = strftime("%m", dol_now());
-	$year_start = $year_current;
+    $year_current = strftime("%Y", dol_now());
+    $month_current = strftime("%m", dol_now());
+    $year_start = $year_current;
 } else {
-	$year_current = $year;
-	$month_current = strftime("%m", dol_now());
-	$year_start = $year;
+    $year_current = $year;
+    $month_current = strftime("%m", dol_now());
+    $year_start = $year;
 }
 $date_start=dol_mktime(0, 0, 0, GETPOST("date_startmonth"), GETPOST("date_startday"), GETPOST("date_startyear"));
 $date_end=dol_mktime(23, 59, 59, GETPOST("date_endmonth"), GETPOST("date_endday"), GETPOST("date_endyear"));
 // Quarter
 if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 {
-	$q=GETPOST("q", "int")?GETPOST("q", "int"):0;
-	if (empty($q))
-	{
-		// We define date_start and date_end
-		$month_start=GETPOST("month")?GETPOST("month"):($conf->global->SOCIETE_FISCAL_MONTH_START?($conf->global->SOCIETE_FISCAL_MONTH_START):1);
-		$year_end=$year_start;
-		$month_end=$month_start;
-		if (! GETPOST("month"))	// If month not forced
-		{
-			if (! GETPOST('year') && $month_start > $month_current)
-			{
-				$year_start--;
-				$year_end--;
-			}
-			$month_end=$month_start-1;
-			if ($month_end < 1) $month_end=12;
-			else $year_end++;
-		}
-		$date_start=dol_get_first_day($year_start, $month_start, false); $date_end=dol_get_last_day($year_end, $month_end, false);
-	}
-	if ($q==1) { $date_start=dol_get_first_day($year_start, 1, false); $date_end=dol_get_last_day($year_start, 3, false); }
-	if ($q==2) { $date_start=dol_get_first_day($year_start, 4, false); $date_end=dol_get_last_day($year_start, 6, false); }
-	if ($q==3) { $date_start=dol_get_first_day($year_start, 7, false); $date_end=dol_get_last_day($year_start, 9, false); }
-	if ($q==4) { $date_start=dol_get_first_day($year_start, 10, false); $date_end=dol_get_last_day($year_start, 12, false); }
+    $q=GETPOST("q", "int")?GETPOST("q", "int"):0;
+    if (empty($q))
+    {
+        // We define date_start and date_end
+        $month_start=GETPOST("month")?GETPOST("month"):($conf->global->SOCIETE_FISCAL_MONTH_START?($conf->global->SOCIETE_FISCAL_MONTH_START):1);
+        $year_end=$year_start;
+        $month_end=$month_start;
+        if (! GETPOST("month"))    // If month not forced
+        {
+            if (! GETPOST('year') && $month_start > $month_current)
+            {
+                $year_start--;
+                $year_end--;
+            }
+            $month_end=$month_start-1;
+            if ($month_end < 1) $month_end=12;
+            else $year_end++;
+        }
+        $date_start=dol_get_first_day($year_start, $month_start, false); $date_end=dol_get_last_day($year_end, $month_end, false);
+    }
+    if ($q==1) { $date_start=dol_get_first_day($year_start, 1, false); $date_end=dol_get_last_day($year_start, 3, false); }
+    if ($q==2) { $date_start=dol_get_first_day($year_start, 4, false); $date_end=dol_get_last_day($year_start, 6, false); }
+    if ($q==3) { $date_start=dol_get_first_day($year_start, 7, false); $date_end=dol_get_last_day($year_start, 9, false); }
+    if ($q==4) { $date_start=dol_get_first_day($year_start, 10, false); $date_end=dol_get_last_day($year_start, 12, false); }
 }
 else
 {
-	// TODO We define q
+    // TODO We define q
 }
 
 // $date_start and $date_end are defined. We force $year_start and $nbofyear
@@ -175,24 +175,24 @@ if ($modecompta=="BOOKKEEPINGCOLLECTED") $modecompta="RECETTES-DEPENSES";
 // Show report header
 if ($modecompta=="CREANCES-DETTES")
 {
-	$name=$langs->trans("Turnover").', '.$langs->trans("ByThirdParties");
-	$calcmode=$langs->trans("CalcModeDebt");
-	//$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
-	$description=$langs->trans("RulesCADue");
-	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $description.= $langs->trans("DepositsAreNotIncluded");
-	else  $description.= $langs->trans("DepositsAreIncluded");
-	$builddate=dol_now();
-	//$exportlink=$langs->trans("NotYetAvailable");
+    $name=$langs->trans("Turnover").', '.$langs->trans("ByThirdParties");
+    $calcmode=$langs->trans("CalcModeDebt");
+    //$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
+    $description=$langs->trans("RulesCADue");
+    if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $description.= $langs->trans("DepositsAreNotIncluded");
+    else  $description.= $langs->trans("DepositsAreIncluded");
+    $builddate=dol_now();
+    //$exportlink=$langs->trans("NotYetAvailable");
 }
 elseif ($modecompta=="RECETTES-DEPENSES")
 {
-	$name=$langs->trans("TurnoverCollected").', '.$langs->trans("ByThirdParties");
-	$calcmode=$langs->trans("CalcModeEngagement");
-	//$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modecompta=CREANCES-DETTES">','</a>').')';
-	$description=$langs->trans("RulesCAIn");
-	$description.= $langs->trans("DepositsAreIncluded");
-	$builddate=dol_now();
-	//$exportlink=$langs->trans("NotYetAvailable");
+    $name=$langs->trans("TurnoverCollected").', '.$langs->trans("ByThirdParties");
+    $calcmode=$langs->trans("CalcModeEngagement");
+    //$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modecompta=CREANCES-DETTES">','</a>').')';
+    $description=$langs->trans("RulesCAIn");
+    $description.= $langs->trans("DepositsAreIncluded");
+    $builddate=dol_now();
+    //$exportlink=$langs->trans("NotYetAvailable");
 }
 elseif ($modecompta=="BOOKKEEPING")
 {
@@ -221,71 +221,71 @@ $name=array();
 // Show Array
 $catotal=0;
 if ($modecompta == 'CREANCES-DETTES') {
-	$sql = "SELECT DISTINCT s.rowid as socid, s.nom as name, s.zip, s.town, s.fk_pays,";
-	$sql.= " sum(f.total) as amount, sum(f.total_ttc) as amount_ttc";
-	$sql.= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s";
-	if ($selected_cat === -2)	// Without any category
-	{
-	    $sql.= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."categorie_societe as cs ON s.rowid = cs.fk_soc";
-	}
-	elseif ($selected_cat) 	// Into a specific category
-	{
-	    $sql.= ", ".MAIN_DB_PREFIX."categorie as c, ".MAIN_DB_PREFIX."categorie_societe as cs";
-	}
-	$sql.= " WHERE f.fk_statut in (1,2)";
-	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
-	    $sql.= " AND f.type IN (0,1,2,5)";
-	} else {
-	    $sql.= " AND f.type IN (0,1,2,3,5)";
-	}
-	$sql.= " AND f.fk_soc = s.rowid";
-	if ($date_start && $date_end) {
-	    $sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
-	}
-	if ($selected_cat === -2)	// Without any category
-	{
-	    $sql.=" AND cs.fk_soc is null";
-	}
-	elseif ($selected_cat) {	// Into a specific category
-	    $sql.= " AND (c.rowid = ".$db->escape($selected_cat);
-	    if ($subcat) $sql.=" OR c.fk_parent = " . $db->escape($selected_cat);
-	    $sql.= ")";
-		$sql.= " AND cs.fk_categorie = c.rowid AND cs.fk_soc = s.rowid";
-	}
+    $sql = "SELECT DISTINCT s.rowid as socid, s.nom as name, s.zip, s.town, s.fk_pays,";
+    $sql.= " sum(f.total) as amount, sum(f.total_ttc) as amount_ttc";
+    $sql.= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s";
+    if ($selected_cat === -2)    // Without any category
+    {
+        $sql.= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."categorie_societe as cs ON s.rowid = cs.fk_soc";
+    }
+    elseif ($selected_cat)     // Into a specific category
+    {
+        $sql.= ", ".MAIN_DB_PREFIX."categorie as c, ".MAIN_DB_PREFIX."categorie_societe as cs";
+    }
+    $sql.= " WHERE f.fk_statut in (1,2)";
+    if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+        $sql.= " AND f.type IN (0,1,2,5)";
+    } else {
+        $sql.= " AND f.type IN (0,1,2,3,5)";
+    }
+    $sql.= " AND f.fk_soc = s.rowid";
+    if ($date_start && $date_end) {
+        $sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
+    }
+    if ($selected_cat === -2)    // Without any category
+    {
+        $sql.=" AND cs.fk_soc is null";
+    }
+    elseif ($selected_cat) {    // Into a specific category
+        $sql.= " AND (c.rowid = ".$db->escape($selected_cat);
+        if ($subcat) $sql.=" OR c.fk_parent = " . $db->escape($selected_cat);
+        $sql.= ")";
+        $sql.= " AND cs.fk_categorie = c.rowid AND cs.fk_soc = s.rowid";
+    }
 } else {
-	/*
-	 * Liste des paiements (les anciens paiements ne sont pas vus par cette requete car, sur les
-	 * vieilles versions, ils n'etaient pas lies via paiement_facture. On les ajoute plus loin)
-	 */
-	$sql = "SELECT s.rowid as socid, s.nom as name, s.zip, s.town, s.fk_pays, sum(pf.amount) as amount_ttc";
-	$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
-	$sql.= ", ".MAIN_DB_PREFIX."paiement_facture as pf";
-	$sql.= ", ".MAIN_DB_PREFIX."paiement as p";
-	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
-	if ($selected_cat === -2)	// Without any category
-	{
-	    $sql.= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."categorie_societe as cs ON s.rowid = cs.fk_soc";
-	}
-	elseif ($selected_cat) 	// Into a specific category
-	{
-	    $sql.= ", ".MAIN_DB_PREFIX."categorie as c, ".MAIN_DB_PREFIX."categorie_societe as cs";
-	}
-	$sql.= " WHERE p.rowid = pf.fk_paiement";
-	$sql.= " AND pf.fk_facture = f.rowid";
-	$sql.= " AND f.fk_soc = s.rowid";
-	if ($date_start && $date_end) {
-	    $sql.= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
-	}
-	if ($selected_cat === -2)	// Without any category
-	{
-	    $sql.=" AND cs.fk_soc is null";
-	}
-	elseif ($selected_cat) {	// Into a specific category
-	    $sql.= " AND (c.rowid = ".$selected_cat;
-	    if ($subcat) $sql.=" OR c.fk_parent = " . $selected_cat;
-	    $sql.= ")";
-		$sql.= " AND cs.fk_categorie = c.rowid AND cs.fk_soc = s.rowid";
-	}
+    /*
+     * Liste des paiements (les anciens paiements ne sont pas vus par cette requete car, sur les
+     * vieilles versions, ils n'etaient pas lies via paiement_facture. On les ajoute plus loin)
+     */
+    $sql = "SELECT s.rowid as socid, s.nom as name, s.zip, s.town, s.fk_pays, sum(pf.amount) as amount_ttc";
+    $sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
+    $sql.= ", ".MAIN_DB_PREFIX."paiement_facture as pf";
+    $sql.= ", ".MAIN_DB_PREFIX."paiement as p";
+    $sql.= ", ".MAIN_DB_PREFIX."societe as s";
+    if ($selected_cat === -2)    // Without any category
+    {
+        $sql.= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."categorie_societe as cs ON s.rowid = cs.fk_soc";
+    }
+    elseif ($selected_cat)     // Into a specific category
+    {
+        $sql.= ", ".MAIN_DB_PREFIX."categorie as c, ".MAIN_DB_PREFIX."categorie_societe as cs";
+    }
+    $sql.= " WHERE p.rowid = pf.fk_paiement";
+    $sql.= " AND pf.fk_facture = f.rowid";
+    $sql.= " AND f.fk_soc = s.rowid";
+    if ($date_start && $date_end) {
+        $sql.= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
+    }
+    if ($selected_cat === -2)    // Without any category
+    {
+        $sql.=" AND cs.fk_soc is null";
+    }
+    elseif ($selected_cat) {    // Into a specific category
+        $sql.= " AND (c.rowid = ".$selected_cat;
+        if ($subcat) $sql.=" OR c.fk_parent = " . $selected_cat;
+        $sql.= ")";
+        $sql.= " AND cs.fk_categorie = c.rowid AND cs.fk_soc = s.rowid";
+    }
 }
 if (!empty($search_societe))  $sql.= natural_search('s.nom', $search_societe);
 if (!empty($search_zip))      $sql.= natural_search('s.zip', $search_zip);
@@ -300,56 +300,56 @@ $sql.= " ORDER BY s.rowid";
 dol_syslog("casoc", LOG_DEBUG);
 $result = $db->query($sql);
 if ($result) {
-	$num = $db->num_rows($result);
-	$i=0;
-	while ($i < $num) {
-		$obj = $db->fetch_object($result);
-	        $amount_ht[$obj->socid] = $obj->amount;
-	        $amount[$obj->socid] = $obj->amount_ttc;
-	        $name[$obj->socid] = $obj->name.' '.$obj->firstname;
-			$address_zip[$obj->socid] = $obj->zip;
-			$address_town[$obj->socid] = $obj->town;
-			$address_pays[$obj->socid] = getCountry($obj->fk_pays);
-	        $catotal_ht+=$obj->amount;
-	        $catotal+=$obj->amount_ttc;
-	        $i++;
-	}
+    $num = $db->num_rows($result);
+    $i=0;
+    while ($i < $num) {
+        $obj = $db->fetch_object($result);
+            $amount_ht[$obj->socid] = $obj->amount;
+            $amount[$obj->socid] = $obj->amount_ttc;
+            $name[$obj->socid] = $obj->name.' '.$obj->firstname;
+            $address_zip[$obj->socid] = $obj->zip;
+            $address_town[$obj->socid] = $obj->town;
+            $address_pays[$obj->socid] = getCountry($obj->fk_pays);
+            $catotal_ht+=$obj->amount;
+            $catotal+=$obj->amount_ttc;
+            $i++;
+    }
 } else {
-	dol_print_error($db);
+    dol_print_error($db);
 }
 
 // On ajoute les paiements anciennes version, non lies par paiement_facture
 if ($modecompta != 'CREANCES-DETTES') {
-	$sql = "SELECT '0' as socid, 'Autres' as name, sum(p.amount) as amount_ttc";
-	$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
-	$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
-	$sql.= ", ".MAIN_DB_PREFIX."paiement as p";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON p.rowid = pf.fk_paiement";
-	$sql.= " WHERE pf.rowid IS NULL";
-	$sql.= " AND p.fk_bank = b.rowid";
-	$sql.= " AND b.fk_account = ba.rowid";
-	$sql.= " AND ba.entity IN (".getEntity('bank_account').")";
-	if ($date_start && $date_end) $sql.= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
-	$sql.= " GROUP BY socid, name";
-	$sql.= " ORDER BY name";
+    $sql = "SELECT '0' as socid, 'Autres' as name, sum(p.amount) as amount_ttc";
+    $sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
+    $sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
+    $sql.= ", ".MAIN_DB_PREFIX."paiement as p";
+    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON p.rowid = pf.fk_paiement";
+    $sql.= " WHERE pf.rowid IS NULL";
+    $sql.= " AND p.fk_bank = b.rowid";
+    $sql.= " AND b.fk_account = ba.rowid";
+    $sql.= " AND ba.entity IN (".getEntity('bank_account').")";
+    if ($date_start && $date_end) $sql.= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
+    $sql.= " GROUP BY socid, name";
+    $sql.= " ORDER BY name";
 
-	$result = $db->query($sql);
-	if ($result) {
-		$num = $db->num_rows($result);
-		$i=0;
-		while ($i < $num) {
-			$obj = $db->fetch_object($result);
-			$amount[$obj->rowid] += $obj->amount_ttc;
-			$name[$obj->rowid] = $obj->name;
-			$address_zip[$obj->rowid] = $obj->zip;
-			$address_town[$obj->rowid] = $obj->town;
-			$address_pays[$obj->rowid] = getCountry($obj->fk_pays);
-			$catotal+=$obj->amount_ttc;
-			$i++;
-		}
-	} else {
-		dol_print_error($db);
-	}
+    $result = $db->query($sql);
+    if ($result) {
+        $num = $db->num_rows($result);
+        $i=0;
+        while ($i < $num) {
+            $obj = $db->fetch_object($result);
+            $amount[$obj->rowid] += $obj->amount_ttc;
+            $name[$obj->rowid] = $obj->name;
+            $address_zip[$obj->rowid] = $obj->zip;
+            $address_town[$obj->rowid] = $obj->town;
+            $address_pays[$obj->rowid] = getCountry($obj->fk_pays);
+            $catotal+=$obj->amount_ttc;
+            $i++;
+        }
+    } else {
+        dol_print_error($db);
+    }
 }
 
 
@@ -406,41 +406,41 @@ print '</tr>';
 // Array titles
 print "<tr class='liste_titre'>";
 print_liste_field_titre(
-	$langs->trans("Company"),
-	$_SERVER["PHP_SELF"],
-	"nom",
-	"",
-	$paramslink,
-	"",
-	$sortfield, $sortorder
-	);
+    $langs->trans("Company"),
+    $_SERVER["PHP_SELF"],
+    "nom",
+    "",
+    $paramslink,
+    "",
+    $sortfield, $sortorder
+    );
 print_liste_field_titre(
-	$langs->trans("Zip"),
-	$_SERVER["PHP_SELF"],
-	"zip",
-	"",
-	$paramslink,
-	"",
-	$sortfield, $sortorder
-	);
+    $langs->trans("Zip"),
+    $_SERVER["PHP_SELF"],
+    "zip",
+    "",
+    $paramslink,
+    "",
+    $sortfield, $sortorder
+    );
 print_liste_field_titre(
-	$langs->trans("Town"),
-	$_SERVER["PHP_SELF"],
-	"town",
-	"",
-	$paramslink,
-	"",
-	$sortfield, $sortorder
-	);
+    $langs->trans("Town"),
+    $_SERVER["PHP_SELF"],
+    "town",
+    "",
+    $paramslink,
+    "",
+    $sortfield, $sortorder
+    );
 print_liste_field_titre(
-	$langs->trans("Country"),
-	$_SERVER["PHP_SELF"],
-	"country",
-	"",
-	$paramslink,
-	"",
-	$sortfield, $sortorder
-	);
+    $langs->trans("Country"),
+    $_SERVER["PHP_SELF"],
+    "country",
+    "",
+    $paramslink,
+    "",
+    $sortfield, $sortorder
+    );
 if ($modecompta == 'CREANCES-DETTES') {
     print_liste_field_titre(
            $langs->trans('AmountHT'),
@@ -456,155 +456,155 @@ if ($modecompta == 'CREANCES-DETTES') {
     print_liste_field_titre('');
 }
 print_liste_field_titre(
-	$langs->trans("AmountTTC"),
-	$_SERVER["PHP_SELF"],
-	"amount_ttc",
-	"",
-	$paramslink,
-	'class="right"',
-	$sortfield,
-	$sortorder
+    $langs->trans("AmountTTC"),
+    $_SERVER["PHP_SELF"],
+    "amount_ttc",
+    "",
+    $paramslink,
+    'class="right"',
+    $sortfield,
+    $sortorder
 );
 print_liste_field_titre(
-	$langs->trans("Percentage"),
-	$_SERVER["PHP_SELF"],
-	"amount_ttc",
-	"",
-	$paramslink,
-	'class="right"',
-	$sortfield,
-	$sortorder
+    $langs->trans("Percentage"),
+    $_SERVER["PHP_SELF"],
+    "amount_ttc",
+    "",
+    $paramslink,
+    'class="right"',
+    $sortfield,
+    $sortorder
 );
 print_liste_field_titre(
-	$langs->trans("OtherStatistics"),
-	$_SERVER["PHP_SELF"],
-	"",
-	"",
-	"",
-	'align="center" width="20%"'
+    $langs->trans("OtherStatistics"),
+    $_SERVER["PHP_SELF"],
+    "",
+    "",
+    "",
+    'align="center" width="20%"'
 );
 print "</tr>\n";
 
 
 if (count($amount)) {
-	$arrayforsort=$name;
-	// Defining array arrayforsort
-	if ($sortfield == 'nom' && $sortorder == 'asc') {
-		asort($name);
-		$arrayforsort=$name;
-	}
-	if ($sortfield == 'nom' && $sortorder == 'desc') {
-		arsort($name);
-		$arrayforsort=$name;
-	}
-	if ($sortfield == 'amount_ht' && $sortorder == 'asc') {
-	    asort($amount_ht);
-	    $arrayforsort=$amount_ht;
-	}
-	if ($sortfield == 'amount_ht' && $sortorder == 'desc') {
-	    arsort($amount_ht);
-	    $arrayforsort=$amount_ht;
-	}
-	if ($sortfield == 'amount_ttc' && $sortorder == 'asc') {
-		asort($amount);
-		$arrayforsort=$amount;
-	}
-	if ($sortfield == 'amount_ttc' && $sortorder == 'desc') {
-		arsort($amount);
-		$arrayforsort=$amount;
-	}
-	if ($sortfield == 'zip' && $sortorder == 'asc') {
-		asort($address_zip);
-		$arrayforsort=$address_zip;
-	}
-	if ($sortfield == 'zip' && $sortorder == 'desc') {
-		arsort($address_zip);
-		$arrayforsort=$address_zip;
-	}
-	if ($sortfield == 'town' && $sortorder == 'asc') {
-		asort($address_town);
-		$arrayforsort=$address_town;
-	}
-	if ($sortfield == 'town' && $sortorder == 'desc') {
-		arsort($address_town);
-		$arrayforsort=$address_town;
-	}
-	if ($sortfield == 'country' && $sortorder == 'asc') {
-		asort($address_pays);
-		$arrayforsort=$address_town;
-	}
-	if ($sortfield == 'country' && $sortorder == 'desc') {
-		arsort($address_pays);
-		$arrayforsort=$address_town;
-	}
+    $arrayforsort=$name;
+    // Defining array arrayforsort
+    if ($sortfield == 'nom' && $sortorder == 'asc') {
+        asort($name);
+        $arrayforsort=$name;
+    }
+    if ($sortfield == 'nom' && $sortorder == 'desc') {
+        arsort($name);
+        $arrayforsort=$name;
+    }
+    if ($sortfield == 'amount_ht' && $sortorder == 'asc') {
+        asort($amount_ht);
+        $arrayforsort=$amount_ht;
+    }
+    if ($sortfield == 'amount_ht' && $sortorder == 'desc') {
+        arsort($amount_ht);
+        $arrayforsort=$amount_ht;
+    }
+    if ($sortfield == 'amount_ttc' && $sortorder == 'asc') {
+        asort($amount);
+        $arrayforsort=$amount;
+    }
+    if ($sortfield == 'amount_ttc' && $sortorder == 'desc') {
+        arsort($amount);
+        $arrayforsort=$amount;
+    }
+    if ($sortfield == 'zip' && $sortorder == 'asc') {
+        asort($address_zip);
+        $arrayforsort=$address_zip;
+    }
+    if ($sortfield == 'zip' && $sortorder == 'desc') {
+        arsort($address_zip);
+        $arrayforsort=$address_zip;
+    }
+    if ($sortfield == 'town' && $sortorder == 'asc') {
+        asort($address_town);
+        $arrayforsort=$address_town;
+    }
+    if ($sortfield == 'town' && $sortorder == 'desc') {
+        arsort($address_town);
+        $arrayforsort=$address_town;
+    }
+    if ($sortfield == 'country' && $sortorder == 'asc') {
+        asort($address_pays);
+        $arrayforsort=$address_town;
+    }
+    if ($sortfield == 'country' && $sortorder == 'desc') {
+        arsort($address_pays);
+        $arrayforsort=$address_town;
+    }
 
-	foreach($arrayforsort as $key=>$value) {
+    foreach($arrayforsort as $key=>$value) {
 
-		print '<tr class="oddeven">';
+        print '<tr class="oddeven">';
 
-		// Third party
-		$fullname=$name[$key];
-		if ($key > 0) {
-		    $thirdparty_static->id=$key;
-		    $thirdparty_static->name=$fullname;
-		    $thirdparty_static->client=1;
-		    $linkname=$thirdparty_static->getNomUrl(1, 'customer');
-		} else {
-			$linkname=$langs->trans("PaymentsNotLinkedToInvoice");
-		}
-		print "<td>".$linkname."</td>\n";
+        // Third party
+        $fullname=$name[$key];
+        if ($key > 0) {
+            $thirdparty_static->id=$key;
+            $thirdparty_static->name=$fullname;
+            $thirdparty_static->client=1;
+            $linkname=$thirdparty_static->getNomUrl(1, 'customer');
+        } else {
+            $linkname=$langs->trans("PaymentsNotLinkedToInvoice");
+        }
+        print "<td>".$linkname."</td>\n";
 
-		print '<td>';
-		print $address_zip[$key];
-		print '</td>';
+        print '<td>';
+        print $address_zip[$key];
+        print '</td>';
 
-		print '<td>';
-		print $address_town[$key];
-		print '</td>';
+        print '<td>';
+        print $address_town[$key];
+        print '</td>';
 
-		print '<td>';
-		print $address_pays[$key];
-		print '</td>';
+        print '<td>';
+        print $address_pays[$key];
+        print '</td>';
 
-		// Amount w/o VAT
-		print '<td class="right">';
-		if ($modecompta != 'CREANCES-DETTES') {
+        // Amount w/o VAT
+        print '<td class="right">';
+        if ($modecompta != 'CREANCES-DETTES') {
             if ($key > 0) {
                 print '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php?socid='.$key.'">';
-		    } else {
+            } else {
                 print '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php?socid=-1">';
             }
-		} else {
-		    if ($key > 0) {
+        } else {
+            if ($key > 0) {
                 print '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$key.'">';
-		    } else {
+            } else {
                 print '<a href="#">';
-		    }
+            }
             print price($amount_ht[$key]);
-		}
-		print '</td>';
+        }
+        print '</td>';
 
-		// Amount with VAT
-		print '<td class="right">';
-		if ($modecompta != 'CREANCES-DETTES') {
+        // Amount with VAT
+        print '<td class="right">';
+        if ($modecompta != 'CREANCES-DETTES') {
             if ($key > 0) {
                 print '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php?socid='.$key.'">';
-		    } else {
+            } else {
                 print '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php?orphelins=1">';
-		    }
-		} else {
+            }
+        } else {
             if ($key > 0) {
                 print '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$key.'">';
-		    } else {
+            } else {
                 print '<a href="#">';
-		    }
-		}
-		print price($amount[$key]);
-		print '</a>';
-		print '</td>';
+            }
+        }
+        print price($amount[$key]);
+        print '</a>';
+        print '</td>';
 
-		// Percent;
-		print '<td class="right">'.($catotal > 0 ? round(100 * $amount[$key] / $catotal, 2).'%' : '&nbsp;').'</td>';
+        // Percent;
+        print '<td class="right">'.($catotal > 0 ? round(100 * $amount[$key] / $catotal, 2).'%' : '&nbsp;').'</td>';
 
         // Other stats
         print '<td align="center">';
@@ -622,23 +622,23 @@ if (count($amount)) {
         $i++;
     }
 
-	// Total
-	print '<tr class="liste_total">';
-	print '<td>'.$langs->trans("Total").'</td>';
-	print '<td>&nbsp;</td>';
-	print '<td>&nbsp;</td>';
-	print '<td>&nbsp;</td>';
-	if ($modecompta != 'CREANCES-DETTES') {
-	    print '<td colspan="1"></td>';
-	} else {
-	    print '<td class="right">'.price($catotal_ht).'</td>';
-	}
-	print '<td class="right">'.price($catotal).'</td>';
-	print '<td>&nbsp;</td>';
-	print '<td>&nbsp;</td>';
-	print '</tr>';
+    // Total
+    print '<tr class="liste_total">';
+    print '<td>'.$langs->trans("Total").'</td>';
+    print '<td>&nbsp;</td>';
+    print '<td>&nbsp;</td>';
+    print '<td>&nbsp;</td>';
+    if ($modecompta != 'CREANCES-DETTES') {
+        print '<td colspan="1"></td>';
+    } else {
+        print '<td class="right">'.price($catotal_ht).'</td>';
+    }
+    print '<td class="right">'.price($catotal).'</td>';
+    print '<td>&nbsp;</td>';
+    print '<td>&nbsp;</td>';
+    print '</tr>';
 
-	$db->free($result);
+    $db->free($result);
 }
 
 print "</table>";

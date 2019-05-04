@@ -18,106 +18,106 @@
  */
 
 /**
- *	\file       htdocs/core/lib/propal.lib.php
- *	\brief      Ensemble de fonctions de base pour le module propal
- *	\ingroup    propal
+ *    \file       htdocs/core/lib/propal.lib.php
+ *    \brief      Ensemble de fonctions de base pour le module propal
+ *    \ingroup    propal
  */
 
 /**
  * Prepare array with list of tabs
  *
- * @param   object	$object		Object related to tabs
- * @return  array				Array of tabs to show
+ * @param   object    $object        Object related to tabs
+ * @return  array                Array of tabs to show
  */
 function supplier_proposal_prepare_head($object)
 {
-	global $db, $langs, $conf, $user;
+    global $db, $langs, $conf, $user;
 
-	// Load translation files required by the page
+    // Load translation files required by the page
     $langs->loadLangs(array("supplier_proposal","compta"));
 
-	$h = 0;
-	$head = array();
+    $h = 0;
+    $head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/supplier_proposal/card.php?id='.$object->id;
-	$head[$h][1] = $langs->trans('SupplierProposalCard');
-	$head[$h][2] = 'comm';
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT.'/supplier_proposal/card.php?id='.$object->id;
+    $head[$h][1] = $langs->trans('SupplierProposalCard');
+    $head[$h][2] = 'comm';
+    $h++;
 
-	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
-	{
-		$nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
-		$head[$h][0] = DOL_URL_ROOT.'/supplier_proposal/contact.php?id='.$object->id;
-		$head[$h][1] = $langs->trans('ContactsAddresses');
-		if ($nbContact > 0) $head[$h][1].= ' <span class="badge">'.$nbContact.'</span>';
-		$head[$h][2] = 'contact';
-		$h++;
-	}
+    if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
+    {
+        $nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
+        $head[$h][0] = DOL_URL_ROOT.'/supplier_proposal/contact.php?id='.$object->id;
+        $head[$h][1] = $langs->trans('ContactsAddresses');
+        if ($nbContact > 0) $head[$h][1].= ' <span class="badge">'.$nbContact.'</span>';
+        $head[$h][2] = 'contact';
+        $h++;
+    }
 
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
-    // $this->tabs = array('entity:-tabname);   												to remove a tab
+    // $this->tabs = array('entity:-tabname);                                                   to remove a tab
     complete_head_from_modules($conf, $langs, $object, $head, $h, 'supplier_proposal');
 
     if (empty($conf->global->MAIN_DISABLE_NOTES_TAB))
     {
-    	$nbNote = 0;
+        $nbNote = 0;
         if(!empty($object->note_private)) $nbNote++;
-		if(!empty($object->note_public)) $nbNote++;
-	    $head[$h][0] = DOL_URL_ROOT.'/supplier_proposal/note.php?id='.$object->id;
-		$head[$h][1] = $langs->trans('Notes');
-		if ($nbNote > 0) $head[$h][1].= ' <span class="badge">'.$nbNote.'</span>';
-		$head[$h][2] = 'note';
-		$h++;
+        if(!empty($object->note_public)) $nbNote++;
+        $head[$h][0] = DOL_URL_ROOT.'/supplier_proposal/note.php?id='.$object->id;
+        $head[$h][1] = $langs->trans('Notes');
+        if ($nbNote > 0) $head[$h][1].= ' <span class="badge">'.$nbNote.'</span>';
+        $head[$h][2] = 'note';
+        $h++;
     }
 
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
     require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-	$upload_dir = $conf->supplier_proposal->dir_output . "/" . dol_sanitizeFileName($object->ref);
-	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
+    $upload_dir = $conf->supplier_proposal->dir_output . "/" . dol_sanitizeFileName($object->ref);
+    $nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
     $nbLinks=Link::count($db, $object->element, $object->id);
-	$head[$h][0] = DOL_URL_ROOT.'/supplier_proposal/document.php?id='.$object->id;
-	$head[$h][1] = $langs->trans('Documents');
-	if (($nbFiles+$nbLinks) > 0) $head[$h][1].= ' <span class="badge">'.($nbFiles+$nbLinks).'</span>';
-	$head[$h][2] = 'document';
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT.'/supplier_proposal/document.php?id='.$object->id;
+    $head[$h][1] = $langs->trans('Documents');
+    if (($nbFiles+$nbLinks) > 0) $head[$h][1].= ' <span class="badge">'.($nbFiles+$nbLinks).'</span>';
+    $head[$h][2] = 'document';
+    $h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/supplier_proposal/info.php?id='.$object->id;
-	$head[$h][1] = $langs->trans('Info');
-	$head[$h][2] = 'info';
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT.'/supplier_proposal/info.php?id='.$object->id;
+    $head[$h][1] = $langs->trans('Info');
+    $head[$h][2] = 'info';
+    $h++;
 
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'supplier_proposal', 'remove');
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'supplier_proposal', 'remove');
 
-	return $head;
+    return $head;
 }
 
 /**
  *  Return array head with list of tabs to view object informations.
  *
- *  @return	array   	        head array with tabs
+ *  @return    array               head array with tabs
  */
 function supplier_proposal_admin_prepare_head()
 {
-	global $langs, $conf, $user;
+    global $langs, $conf, $user;
 
-	$h = 0;
-	$head = array();
+    $h = 0;
+    $head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/admin/supplier_proposal.php';
-	$head[$h][1] = $langs->trans("Miscellaneous");
-	$head[$h][2] = 'general';
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT.'/admin/supplier_proposal.php';
+    $head[$h][1] = $langs->trans("Miscellaneous");
+    $head[$h][2] = 'general';
+    $h++;
 
-	// Show more tabs from modules
-	// Entries must be declared in modules descriptor with line
-	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
-	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
-	complete_head_from_modules($conf, $langs, null, $head, $h, 'supplier_proposal_admin');
+    // Show more tabs from modules
+    // Entries must be declared in modules descriptor with line
+    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+    // $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
+    complete_head_from_modules($conf, $langs, null, $head, $h, 'supplier_proposal_admin');
 
-	$head[$h][0] = DOL_URL_ROOT.'/supplier_proposal/admin/supplier_proposal_extrafields.php';
-	$head[$h][1] = $langs->trans("ExtraFields");
+    $head[$h][0] = DOL_URL_ROOT.'/supplier_proposal/admin/supplier_proposal_extrafields.php';
+    $head[$h][1] = $langs->trans("ExtraFields");
     $head[$h][2] = 'attributes';
     $h++;
 
@@ -126,7 +126,7 @@ function supplier_proposal_admin_prepare_head()
     $head[$h][2] = 'attributeslines';
     $h++;
 
-	complete_head_from_modules($conf, $langs, null, $head, $h, 'supplier_proposal_admin', 'remove');
+    complete_head_from_modules($conf, $langs, null, $head, $h, 'supplier_proposal_admin', 'remove');
 
-	return $head;
+    return $head;
 }

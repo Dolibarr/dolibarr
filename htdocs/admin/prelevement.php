@@ -20,9 +20,9 @@
  */
 
 /**
- *	\file       htdocs/admin/prelevement.php
- *	\ingroup    prelevement
- *	\brief      Page to setup Withdrawals
+ *    \file       htdocs/admin/prelevement.php
+ *    \ingroup    prelevement
+ *    \brief      Page to setup Withdrawals
  */
 
 require '../main.inc.php';
@@ -97,15 +97,15 @@ if ($action == "set")
         $res = dolibarr_set_const($db, "PRELEVEMENT_ADDDAYS", GETPOST("PRELEVEMENT_ADDDAYS"), 'chaine', 0, '', $conf->entity);
         if (! $res > 0) $error++;
     } elseif (! $error)
-	{
-		$db->commit();
-		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	}
-	else
-	{
-		$db->rollback();
-		setEventMessages($langs->trans("Error"), null, 'errors');
-	}
+    {
+        $db->commit();
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    }
+    else
+    {
+        $db->rollback();
+        setEventMessages($langs->trans("Error"), null, 'errors');
+    }
 }
 
 if ($action == "addnotif")
@@ -506,39 +506,39 @@ if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
 
     print '<td class="right"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td></tr>';
 
-	// List of current notifications for objet_type='withdraw'
-	$sql = "SELECT u.lastname, u.firstname,";
-	$sql.= " nd.rowid, ad.code, ad.label";
-	$sql.= " FROM ".MAIN_DB_PREFIX."user as u,";
-	$sql.= " ".MAIN_DB_PREFIX."notify_def as nd,";
-	$sql.= " ".MAIN_DB_PREFIX."c_action_trigger as ad";
-	$sql.= " WHERE u.rowid = nd.fk_user";
-	$sql.= " AND nd.fk_action = ad.rowid";
-	$sql.= " AND u.entity IN (0,".$conf->entity.")";
+    // List of current notifications for objet_type='withdraw'
+    $sql = "SELECT u.lastname, u.firstname,";
+    $sql.= " nd.rowid, ad.code, ad.label";
+    $sql.= " FROM ".MAIN_DB_PREFIX."user as u,";
+    $sql.= " ".MAIN_DB_PREFIX."notify_def as nd,";
+    $sql.= " ".MAIN_DB_PREFIX."c_action_trigger as ad";
+    $sql.= " WHERE u.rowid = nd.fk_user";
+    $sql.= " AND nd.fk_action = ad.rowid";
+    $sql.= " AND u.entity IN (0,".$conf->entity.")";
 
-	$resql = $db->query($sql);
-	if ($resql)
-	{
-	    $num = $db->num_rows($resql);
-	    $i = 0;
-	    while ($i < $num)
-	    {
-	        $obj = $db->fetch_object($resql);
+    $resql = $db->query($sql);
+    if ($resql)
+    {
+        $num = $db->num_rows($resql);
+        $i = 0;
+        while ($i < $num)
+        {
+            $obj = $db->fetch_object($resql);
 
 
-	        print '<tr class="oddeven">';
-	        print '<td>'.dolGetFirstLastname($obj->firstname,$obj->lastname).'</td>';
-	        $label=($langs->trans("Notify_".$obj->code)!="Notify_".$obj->code?$langs->trans("Notify_".$obj->code):$obj->label);
-	        print '<td>'.$label.'</td>';
-	        print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=deletenotif&amp;notif='.$obj->rowid.'">'.img_delete().'</a></td>';
-	        print '</tr>';
-	        $i++;
-	    }
-	    $db->free($resql);
-	}
+            print '<tr class="oddeven">';
+            print '<td>'.dolGetFirstLastname($obj->firstname,$obj->lastname).'</td>';
+            $label=($langs->trans("Notify_".$obj->code)!="Notify_".$obj->code?$langs->trans("Notify_".$obj->code):$obj->label);
+            print '<td>'.$label.'</td>';
+            print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=deletenotif&amp;notif='.$obj->rowid.'">'.img_delete().'</a></td>';
+            print '</tr>';
+            $i++;
+        }
+        $db->free($resql);
+    }
 
-	print '</table>';
-	print '</form>';
+    print '</table>';
+    print '</form>';
 }
 */
 

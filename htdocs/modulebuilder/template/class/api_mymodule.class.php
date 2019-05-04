@@ -59,11 +59,11 @@ class MyModuleApi extends DolibarrApi
      *
      * Return an array with myobject informations
      *
-     * @param 	int 	$id ID of myobject
-     * @return 	array|mixed data without useless information
+     * @param     int     $id ID of myobject
+     * @return     array|mixed data without useless information
      *
-     * @url	GET myobjects/{id}
-     * @throws 	RestException
+     * @url    GET myobjects/{id}
+     * @throws     RestException
      */
     public function get($id)
     {
@@ -89,16 +89,16 @@ class MyModuleApi extends DolibarrApi
      *
      * Get a list of myobjects
      *
-     * @param string	       $sortfield	        Sort field
-     * @param string	       $sortorder	        Sort order
-     * @param int		       $limit		        Limit for list
-     * @param int		       $page		        Page number
+     * @param string           $sortfield            Sort field
+     * @param string           $sortorder            Sort order
+     * @param int               $limit                Limit for list
+     * @param int               $page                Page number
      * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
      * @return  array                               Array of order objects
      *
      * @throws RestException
      *
-     * @url	GET /myobjects/
+     * @url    GET /myobjects/
      */
     public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
     {
@@ -113,7 +113,7 @@ class MyModuleApi extends DolibarrApi
 
         $socid = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : '';
 
-        $restrictonsocid = 0;	// Set to 1 if there is a field socid in table of object
+        $restrictonsocid = 0;    // Set to 1 if there is a field socid in table of object
 
         // If the internal user must only see his customers, force searching by him
         $search_sale = 0;
@@ -133,7 +133,7 @@ class MyModuleApi extends DolibarrApi
         if ($tmpobject->ismultientitymanaged) $sql.= ' AND t.entity IN ('.getEntity('myobject').')';
         if ($restrictonsocid && (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql.= " AND t.fk_soc = sc.fk_soc";
         if ($restrictonsocid && $socid) $sql.= " AND t.fk_soc = ".$socid;
-        if ($restrictonsocid && $search_sale > 0) $sql.= " AND t.rowid = sc.fk_soc";		// Join for the needed table to filter by sale
+        if ($restrictonsocid && $search_sale > 0) $sql.= " AND t.rowid = sc.fk_soc";        // Join for the needed table to filter by sale
         // Insert sale filter
         if ($restrictonsocid && $search_sale > 0) {
             $sql .= " AND sc.fk_user = ".$search_sale;
@@ -148,7 +148,7 @@ class MyModuleApi extends DolibarrApi
         }
 
         $sql.= $db->order($sortfield, $sortorder);
-        if ($limit)	{
+        if ($limit)    {
             if ($page < 0) {
                 $page = 0;
             }
@@ -186,7 +186,7 @@ class MyModuleApi extends DolibarrApi
      * @param array $request_data   Request datas
      * @return int  ID of myobject
      *
-     * @url	POST myobjects/
+     * @url    POST myobjects/
      */
     public function post($request_data = null)
     {
@@ -212,7 +212,7 @@ class MyModuleApi extends DolibarrApi
      * @param array $request_data   Datas
      * @return int
      *
-     * @url	PUT myobjects/{id}
+     * @url    PUT myobjects/{id}
      */
     public function put($id, $request_data = null)
     {
@@ -250,7 +250,7 @@ class MyModuleApi extends DolibarrApi
      * @param   int     $id   MyObject ID
      * @return  array
      *
-     * @url	DELETE myobjects/{id}
+     * @url    DELETE myobjects/{id}
      */
     public function delete($id)
     {
@@ -305,10 +305,10 @@ class MyModuleApi extends DolibarrApi
     /**
      * Validate fields before create or update object
      *
-     * @param	array		$data   Array of data to validate
-     * @return	array
+     * @param    array        $data   Array of data to validate
+     * @return    array
      *
-     * @throws	RestException
+     * @throws    RestException
      */
     private function _validate($data)
     {

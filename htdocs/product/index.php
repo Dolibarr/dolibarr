@@ -33,8 +33,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 
 $type=GETPOST("type", 'int');
-if ($type =='' && !$user->rights->produit->lire) $type='1';	// Force global page on service page only
-if ($type =='' && !$user->rights->service->lire) $type='0';	// Force global page on product page only
+if ($type =='' && !$user->rights->produit->lire) $type='1';    // Force global page on service page only
+if ($type =='' && !$user->rights->service->lire) $type='0';    // Force global page on product page only
 
 // Security check
 if ($type=='0') $result=restrictedArea($user, 'produit');
@@ -59,18 +59,18 @@ $transAreaType = $langs->trans("ProductsAndServicesArea");
 $helpurl='';
 if (! isset($_GET["type"]))
 {
-	$transAreaType = $langs->trans("ProductsAndServicesArea");
-	$helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
+    $transAreaType = $langs->trans("ProductsAndServicesArea");
+    $helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
 }
 if ((isset($_GET["type"]) && $_GET["type"] == 0) || empty($conf->service->enabled))
 {
-	$transAreaType = $langs->trans("ProductsArea");
-	$helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
+    $transAreaType = $langs->trans("ProductsArea");
+    $helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
 }
 if ((isset($_GET["type"]) && $_GET["type"] == 1) || empty($conf->product->enabled))
 {
-	$transAreaType = $langs->trans("ServicesArea");
-	$helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
+    $transAreaType = $langs->trans("ServicesArea");
+    $helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 }
 
 llxHeader("", $langs->trans("ProductsAndServices"), $helpurl);
@@ -87,27 +87,27 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
     // Search contract
     if ((! empty($conf->product->enabled) || ! empty($conf->service->enabled)) && ($user->rights->produit->lire || $user->rights->service->lire))
     {
-    	$listofsearchfields['search_product']=array('text'=>'ProductOrService');
+        $listofsearchfields['search_product']=array('text'=>'ProductOrService');
     }
 
     if (count($listofsearchfields))
     {
-    	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
-    	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    	print '<table class="noborder nohover centpercent">';
-    	$i=0;
-    	foreach($listofsearchfields as $key => $value)
-    	{
-    		if ($i == 0) print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
-    		print '<tr '.$bc[false].'>';
-    		print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label></td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'" size="18"></td>';
-    		if ($i == 0) print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
-    		print '</tr>';
-    		$i++;
-    	}
-    	print '</table>';
-    	print '</form>';
-    	print '<br>';
+        print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
+        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        print '<table class="noborder nohover centpercent">';
+        $i=0;
+        foreach($listofsearchfields as $key => $value)
+        {
+            if ($i == 0) print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
+            print '<tr '.$bc[false].'>';
+            print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label></td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'" size="18"></td>';
+            if ($i == 0) print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
+            print '</tr>';
+            $i++;
+        }
+        print '</table>';
+        print '</form>';
+        print '<br>';
     }
 }
 
@@ -129,11 +129,11 @@ $sql.= " GROUP BY p.fk_product_type, p.tosell, p.tobuy";
 $result = $db->query($sql);
 while ($objp = $db->fetch_object($result))
 {
-	$status=3;
-	if (! $objp->tosell && ! $objp->tobuy) $status=0;	// Not on sale, not on purchase
-	if ($objp->tosell && ! $objp->tobuy) $status=1;     // On sale only
-	if (! $objp->tosell && $objp->tobuy) $status=2;     // On purchase only
-	$prodser[$objp->fk_product_type][$status]=$objp->total;
+    $status=3;
+    if (! $objp->tosell && ! $objp->tobuy) $status=0;    // Not on sale, not on purchase
+    if ($objp->tosell && ! $objp->tobuy) $status=1;     // On sale only
+    if (! $objp->tosell && $objp->tobuy) $status=2;     // On purchase only
+    $prodser[$objp->fk_product_type][$status]=$objp->total;
 }
 
 
@@ -142,49 +142,49 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</th></tr>';
 if (! empty($conf->product->enabled))
 {
-	$statProducts = '<tr class="oddeven">';
-	$statProducts.= '<td><a href="list.php?type=0&amp;tosell=0&amp;tobuy=0">'.$langs->trans("ProductsNotOnSell").'</a></td><td class="right">'.round($prodser[0][0]).'</td>';
-	$statProducts.= "</tr>";
-	$statProducts.= '<tr class="oddeven">';
-	$statProducts.= '<td><a href="list.php?type=0">'.$langs->trans("ProductsOnSaleOnly").'</a></td><td class="right">'.round($prodser[0][1]).'</td>';
-	$statProducts.= "</tr>";
-	$statProducts.= '<tr class="oddeven">';
-	$statProducts.= '<td><a href="list.php?type=0">'.$langs->trans("ProductsOnPurchaseOnly").'</a></td><td class="right">'.round($prodser[0][2]).'</td>';
-	$statProducts.= "</tr>";
-	$statProducts.= '<tr class="oddeven">';
-	$statProducts.= '<td><a href="list.php?type=0&amp;tosell=1&amp;tobuy=1">'.$langs->trans("ProductsOnSellAndOnBuy").'</a></td><td class="right">'.round($prodser[0][3]).'</td>';
-	$statProducts.= "</tr>";
+    $statProducts = '<tr class="oddeven">';
+    $statProducts.= '<td><a href="list.php?type=0&amp;tosell=0&amp;tobuy=0">'.$langs->trans("ProductsNotOnSell").'</a></td><td class="right">'.round($prodser[0][0]).'</td>';
+    $statProducts.= "</tr>";
+    $statProducts.= '<tr class="oddeven">';
+    $statProducts.= '<td><a href="list.php?type=0">'.$langs->trans("ProductsOnSaleOnly").'</a></td><td class="right">'.round($prodser[0][1]).'</td>';
+    $statProducts.= "</tr>";
+    $statProducts.= '<tr class="oddeven">';
+    $statProducts.= '<td><a href="list.php?type=0">'.$langs->trans("ProductsOnPurchaseOnly").'</a></td><td class="right">'.round($prodser[0][2]).'</td>';
+    $statProducts.= "</tr>";
+    $statProducts.= '<tr class="oddeven">';
+    $statProducts.= '<td><a href="list.php?type=0&amp;tosell=1&amp;tobuy=1">'.$langs->trans("ProductsOnSellAndOnBuy").'</a></td><td class="right">'.round($prodser[0][3]).'</td>';
+    $statProducts.= "</tr>";
 }
 if (! empty($conf->service->enabled))
 {
-	$statServices = '<tr class="oddeven">';
-	$statServices.= '<td><a href="list.php?type=1&amp;tosell=0&amp;tobuy=0">'.$langs->trans("ServicesNotOnSell").'</a></td><td class="right">'.round($prodser[1][0]).'</td>';
-	$statServices.= "</tr>";
-	$statServices.= '<tr class="oddeven">';
-	$statServices.= '<td><a href="list.php?type=1">'.$langs->trans("ServicesOnSaleOnly").'</a></td><td class="right">'.round($prodser[1][1]).'</td>';
-	$statServices.= "</tr>";
-	$statServices.= '<tr class="oddeven">';
-	$statServices.= '<td><a href="list.php?type=1">'.$langs->trans("ServicesOnPurchaseOnly").'</a></td><td class="right">'.round($prodser[1][2]).'</td>';
-	$statServices.= "</tr>";
-	$statServices.= '<tr class="oddeven">';
-	$statServices.= '<td><a href="list.php?type=1&amp;tosell=1&amp;tobuy=1">'.$langs->trans("ServicesOnSellAndOnBuy").'</a></td><td class="right">'.round($prodser[1][3]).'</td>';
-	$statServices.= "</tr>";
+    $statServices = '<tr class="oddeven">';
+    $statServices.= '<td><a href="list.php?type=1&amp;tosell=0&amp;tobuy=0">'.$langs->trans("ServicesNotOnSell").'</a></td><td class="right">'.round($prodser[1][0]).'</td>';
+    $statServices.= "</tr>";
+    $statServices.= '<tr class="oddeven">';
+    $statServices.= '<td><a href="list.php?type=1">'.$langs->trans("ServicesOnSaleOnly").'</a></td><td class="right">'.round($prodser[1][1]).'</td>';
+    $statServices.= "</tr>";
+    $statServices.= '<tr class="oddeven">';
+    $statServices.= '<td><a href="list.php?type=1">'.$langs->trans("ServicesOnPurchaseOnly").'</a></td><td class="right">'.round($prodser[1][2]).'</td>';
+    $statServices.= "</tr>";
+    $statServices.= '<tr class="oddeven">';
+    $statServices.= '<td><a href="list.php?type=1&amp;tosell=1&amp;tobuy=1">'.$langs->trans("ServicesOnSellAndOnBuy").'</a></td><td class="right">'.round($prodser[1][3]).'</td>';
+    $statServices.= "</tr>";
 }
 $total=0;
 if ($type == '0')
 {
-	print $statProducts;
-	$total=round($prodser[0][0])+round($prodser[0][1])+round($prodser[0][2])+round($prodser[0][3]);
+    print $statProducts;
+    $total=round($prodser[0][0])+round($prodser[0][1])+round($prodser[0][2])+round($prodser[0][3]);
 }
 elseif ($type == '1')
 {
-	print $statServices;
-	$total=round($prodser[1][0])+round($prodser[1][1])+round($prodser[1][2])+round($prodser[1][3]);
+    print $statServices;
+    $total=round($prodser[1][0])+round($prodser[1][1])+round($prodser[1][2])+round($prodser[1][3]);
 }
 else
 {
-	print $statProducts.$statServices;
-	$total=round($prodser[0][0])+round($prodser[0][1])+round($prodser[0][2])+round($prodser[0][3])+round($prodser[1][0])+round($prodser[1][1])+round($prodser[1][2])+round($prodser[1][3]); //Calcul du Total des Produits et Services
+    print $statProducts.$statServices;
+    $total=round($prodser[0][0])+round($prodser[0][1])+round($prodser[0][2])+round($prodser[0][3])+round($prodser[1][0])+round($prodser[1][1])+round($prodser[1][2])+round($prodser[1][3]); //Calcul du Total des Produits et Services
 }
 print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">';
 print $total;
@@ -194,76 +194,76 @@ print '</div>';
 
 if (! empty($conf->categorie->enabled) && ! empty($conf->global->CATEGORY_GRAPHSTATS_ON_PRODUCTS))
 {
-	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-	print '<br>';
-	print '<div class="div-table-responsive-no-min">';
-	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Categories").'</th></tr>';
-	print '<tr '.$bc[0].'><td class="center" colspan="2">';
-	$sql = "SELECT c.label, count(*) as nb";
-	$sql.= " FROM ".MAIN_DB_PREFIX."categorie_product as cs";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cs.fk_categorie = c.rowid";
-	$sql.= " WHERE c.type = 0";
-	$sql.= " AND c.entity IN (".getEntity('category').")";
-	$sql.= " GROUP BY c.label";
-	$total=0;
-	$result = $db->query($sql);
-	if ($result)
-	{
-		$num = $db->num_rows($result);
-		$i=0;
-		if (! empty($conf->use_javascript_ajax))
-		{
-			$dataseries=array();
-			$rest=0;
-			$nbmax=10;
-			while ($i < $num)
-			{
-				$obj = $db->fetch_object($result);
-				if ($i < $nbmax)
-				{
-					$dataseries[]=array($obj->label, round($obj->nb));
-				}
-				else
-				{
-					$rest+=$obj->nb;
-				}
-				$total+=$obj->nb;
-				$i++;
-			}
-			if ($i > $nbmax)
-			{
-				$dataseries[]=array($langs->trans("Other"), round($rest));
-			}
+    require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+    print '<br>';
+    print '<div class="div-table-responsive-no-min">';
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Categories").'</th></tr>';
+    print '<tr '.$bc[0].'><td class="center" colspan="2">';
+    $sql = "SELECT c.label, count(*) as nb";
+    $sql.= " FROM ".MAIN_DB_PREFIX."categorie_product as cs";
+    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cs.fk_categorie = c.rowid";
+    $sql.= " WHERE c.type = 0";
+    $sql.= " AND c.entity IN (".getEntity('category').")";
+    $sql.= " GROUP BY c.label";
+    $total=0;
+    $result = $db->query($sql);
+    if ($result)
+    {
+        $num = $db->num_rows($result);
+        $i=0;
+        if (! empty($conf->use_javascript_ajax))
+        {
+            $dataseries=array();
+            $rest=0;
+            $nbmax=10;
+            while ($i < $num)
+            {
+                $obj = $db->fetch_object($result);
+                if ($i < $nbmax)
+                {
+                    $dataseries[]=array($obj->label, round($obj->nb));
+                }
+                else
+                {
+                    $rest+=$obj->nb;
+                }
+                $total+=$obj->nb;
+                $i++;
+            }
+            if ($i > $nbmax)
+            {
+                $dataseries[]=array($langs->trans("Other"), round($rest));
+            }
 
-			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
-			$dolgraph = new DolGraph();
-			$dolgraph->SetData($dataseries);
-			$dolgraph->setShowLegend(1);
-			$dolgraph->setShowPercent(1);
-			$dolgraph->SetType(array('pie'));
-			$dolgraph->setWidth('100%');
-			$dolgraph->draw('idstatscategproduct');
-			print $dolgraph->show($total?0:1);
-		}
-		else
-		{
-			while ($i < $num)
-			{
-				$obj = $db->fetch_object($result);
+            include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+            $dolgraph = new DolGraph();
+            $dolgraph->SetData($dataseries);
+            $dolgraph->setShowLegend(1);
+            $dolgraph->setShowPercent(1);
+            $dolgraph->SetType(array('pie'));
+            $dolgraph->setWidth('100%');
+            $dolgraph->draw('idstatscategproduct');
+            print $dolgraph->show($total?0:1);
+        }
+        else
+        {
+            while ($i < $num)
+            {
+                $obj = $db->fetch_object($result);
 
-				print '<tr><td>'.$obj->label.'</td><td>'.$obj->nb.'</td></tr>';
-				$total+=$obj->nb;
-				$i++;
-			}
-		}
-	}
-	print '</td></tr>';
-	print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">';
-	print $total;
-	print '</td></tr>';
-	print '</table>';
-	print '</div>';
+                print '<tr><td>'.$obj->label.'</td><td>'.$obj->nb.'</td></tr>';
+                $total+=$obj->nb;
+                $i++;
+            }
+        }
+    }
+    print '</td></tr>';
+    print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">';
+    print $total;
+    print '</td></tr>';
+    print '</table>';
+    print '</div>';
 }
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
@@ -289,99 +289,99 @@ $sql.= $db->plimit($max, 0);
 $result = $db->query($sql);
 if ($result)
 {
-	$num = $db->num_rows($result);
+    $num = $db->num_rows($result);
 
-	$i = 0;
+    $i = 0;
 
-	if ($num > 0)
-	{
-		$transRecordedType = $langs->trans("LastModifiedProductsAndServices", $max);
-		if (isset($_GET["type"]) && $_GET["type"] == 0) $transRecordedType = $langs->trans("LastRecordedProducts", $max);
-		if (isset($_GET["type"]) && $_GET["type"] == 1) $transRecordedType = $langs->trans("LastRecordedServices", $max);
+    if ($num > 0)
+    {
+        $transRecordedType = $langs->trans("LastModifiedProductsAndServices", $max);
+        if (isset($_GET["type"]) && $_GET["type"] == 0) $transRecordedType = $langs->trans("LastRecordedProducts", $max);
+        if (isset($_GET["type"]) && $_GET["type"] == 1) $transRecordedType = $langs->trans("LastRecordedServices", $max);
 
-		print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder" width="100%">';
+        print '<div class="div-table-responsive-no-min">';
+        print '<table class="noborder" width="100%">';
 
-		$colnb=4;
-		if (empty($conf->global->PRODUIT_MULTIPRICES)) $colnb++;
+        $colnb=4;
+        if (empty($conf->global->PRODUIT_MULTIPRICES)) $colnb++;
 
-		print '<tr class="liste_titre"><th colspan="'.$colnb.'">'.$transRecordedType.'</th>';
-		print '<th class="right"><a href="'.DOL_URL_ROOT.'/product/list.php?sortfield=p.tms&sortorder=DESC">'.$langs->trans("FullList").'</td>';
-		print '</tr>';
+        print '<tr class="liste_titre"><th colspan="'.$colnb.'">'.$transRecordedType.'</th>';
+        print '<th class="right"><a href="'.DOL_URL_ROOT.'/product/list.php?sortfield=p.tms&sortorder=DESC">'.$langs->trans("FullList").'</td>';
+        print '</tr>';
 
-		while ($i < $num)
-		{
-			$objp = $db->fetch_object($result);
+        while ($i < $num)
+        {
+            $objp = $db->fetch_object($result);
 
-			//Multilangs
-			if (! empty($conf->global->MAIN_MULTILANGS))
-			{
-				$sql = "SELECT label";
-				$sql.= " FROM ".MAIN_DB_PREFIX."product_lang";
-				$sql.= " WHERE fk_product=".$objp->rowid;
-				$sql.= " AND lang='". $langs->getDefaultLang() ."'";
+            //Multilangs
+            if (! empty($conf->global->MAIN_MULTILANGS))
+            {
+                $sql = "SELECT label";
+                $sql.= " FROM ".MAIN_DB_PREFIX."product_lang";
+                $sql.= " WHERE fk_product=".$objp->rowid;
+                $sql.= " AND lang='". $langs->getDefaultLang() ."'";
 
-				$resultd = $db->query($sql);
-				if ($resultd)
-				{
-					$objtp = $db->fetch_object($resultd);
-					if ($objtp && $objtp->label != '') $objp->label = $objtp->label;
-				}
-			}
+                $resultd = $db->query($sql);
+                if ($resultd)
+                {
+                    $objtp = $db->fetch_object($resultd);
+                    if ($objtp && $objtp->label != '') $objp->label = $objtp->label;
+                }
+            }
 
 
-			print '<tr class="oddeven">';
-			print '<td class="nowrap">';
-			$product_static->id=$objp->rowid;
-			$product_static->ref=$objp->ref;
-			$product_static->label = $objp->label;
-			$product_static->type=$objp->fk_product_type;
-			$product_static->entity = $objp->entity;
-			$product_static->status_batch = $objp->tobatch;
-			print $product_static->getNomUrl(1, '', 16);
-			print "</td>\n";
-			print '<td>'.dol_trunc($objp->label, 32).'</td>';
-			print "<td>";
-			print dol_print_date($db->jdate($objp->datem), 'day');
-			print "</td>";
-			// Sell price
-			if (empty($conf->global->PRODUIT_MULTIPRICES))
-			{
+            print '<tr class="oddeven">';
+            print '<td class="nowrap">';
+            $product_static->id=$objp->rowid;
+            $product_static->ref=$objp->ref;
+            $product_static->label = $objp->label;
+            $product_static->type=$objp->fk_product_type;
+            $product_static->entity = $objp->entity;
+            $product_static->status_batch = $objp->tobatch;
+            print $product_static->getNomUrl(1, '', 16);
+            print "</td>\n";
+            print '<td>'.dol_trunc($objp->label, 32).'</td>';
+            print "<td>";
+            print dol_print_date($db->jdate($objp->datem), 'day');
+            print "</td>";
+            // Sell price
+            if (empty($conf->global->PRODUIT_MULTIPRICES))
+            {
                 if (!empty($conf->dynamicprices->enabled) && !empty($objp->fk_price_expression))
                 {
-                	$product = new Product($db);
-                	$product->fetch($objp->rowid);
+                    $product = new Product($db);
+                    $product->fetch($objp->rowid);
                     $priceparser = new PriceParser($db);
                     $price_result = $priceparser->parseProduct($product);
                     if ($price_result >= 0) {
                         $objp->price = $price_result;
                     }
                 }
-				print '<td class="right">';
-    			if (isset($objp->price_base_type) && $objp->price_base_type == 'TTC') print price($objp->price_ttc).' '.$langs->trans("TTC");
-    			else print price($objp->price).' '.$langs->trans("HT");
-    			print '</td>';
-			}
-			print '<td class="right nowrap"><span class="statusrefsell">';
-			print $product_static->LibStatut($objp->tosell, 3, 0);
-			print "</span></td>";
+                print '<td class="right">';
+                if (isset($objp->price_base_type) && $objp->price_base_type == 'TTC') print price($objp->price_ttc).' '.$langs->trans("TTC");
+                else print price($objp->price).' '.$langs->trans("HT");
+                print '</td>';
+            }
+            print '<td class="right nowrap"><span class="statusrefsell">';
+            print $product_static->LibStatut($objp->tosell, 3, 0);
+            print "</span></td>";
             print '<td class="right nowrap"><span class="statusrefbuy">';
             print $product_static->LibStatut($objp->tobuy, 3, 1);
             print "</span></td>";
-			print "</tr>\n";
-			$i++;
-		}
+            print "</tr>\n";
+            $i++;
+        }
 
-		$db->free($result);
+        $db->free($result);
 
-		print "</table>";
-		print '</div>';
-		print '<br>';
-	}
+        print "</table>";
+        print '</div>';
+        print '<br>';
+    }
 }
 else
 {
-	dol_print_error($db);
+    dol_print_error($db);
 }
 
 
@@ -390,8 +390,8 @@ else
 // "commitment engagment" method and "cash accounting" method
 if (! empty($conf->global->MAIN_SHOW_PRODUCT_ACTIVITY_TRIM))
 {
-	if (! empty($conf->product->enabled)) activitytrim(0);
-	if (! empty($conf->service->enabled)) activitytrim(1);
+    if (! empty($conf->product->enabled)) activitytrim(0);
+    if (! empty($conf->service->enabled)) activitytrim(1);
 }
 
 
@@ -410,102 +410,102 @@ $db->close();
  */
 function activitytrim($product_type)
 {
-	global $conf,$langs,$db;
-	global $bc;
+    global $conf,$langs,$db;
+    global $bc;
 
-	// We display the last 3 years
-	$yearofbegindate=date('Y', dol_time_plus_duree(time(), -3, "y"));
+    // We display the last 3 years
+    $yearofbegindate=date('Y', dol_time_plus_duree(time(), -3, "y"));
 
-	// breakdown by quarter
-	$sql = "SELECT DATE_FORMAT(p.datep,'%Y') as annee, DATE_FORMAT(p.datep,'%m') as mois, SUM(fd.total_ht) as Mnttot";
-	$sql.= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."facturedet as fd";
-	$sql.= " , ".MAIN_DB_PREFIX."paiement as p,".MAIN_DB_PREFIX."paiement_facture as pf";
-	$sql.= " WHERE f.entity IN (".getEntity('invoice').")";
-	$sql.= " AND f.rowid = fd.fk_facture";
-	$sql.= " AND pf.fk_facture = f.rowid";
-	$sql.= " AND pf.fk_paiement= p.rowid";
-	$sql.= " AND fd.product_type=".$product_type;
-	$sql.= " AND p.datep >= '".$db->idate(dol_get_first_day($yearofbegindate), 1)."'";
-	$sql.= " GROUP BY annee, mois ";
-	$sql.= " ORDER BY annee, mois ";
+    // breakdown by quarter
+    $sql = "SELECT DATE_FORMAT(p.datep,'%Y') as annee, DATE_FORMAT(p.datep,'%m') as mois, SUM(fd.total_ht) as Mnttot";
+    $sql.= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."facturedet as fd";
+    $sql.= " , ".MAIN_DB_PREFIX."paiement as p,".MAIN_DB_PREFIX."paiement_facture as pf";
+    $sql.= " WHERE f.entity IN (".getEntity('invoice').")";
+    $sql.= " AND f.rowid = fd.fk_facture";
+    $sql.= " AND pf.fk_facture = f.rowid";
+    $sql.= " AND pf.fk_paiement= p.rowid";
+    $sql.= " AND fd.product_type=".$product_type;
+    $sql.= " AND p.datep >= '".$db->idate(dol_get_first_day($yearofbegindate), 1)."'";
+    $sql.= " GROUP BY annee, mois ";
+    $sql.= " ORDER BY annee, mois ";
 
-	$result = $db->query($sql);
-	if ($result)
-	{
-		$tmpyear=0;
-		$trim1=0;
-		$trim2=0;
-		$trim3=0;
-		$trim4=0;
-		$lgn = 0;
-		$num = $db->num_rows($result);
+    $result = $db->query($sql);
+    if ($result)
+    {
+        $tmpyear=0;
+        $trim1=0;
+        $trim2=0;
+        $trim3=0;
+        $trim4=0;
+        $lgn = 0;
+        $num = $db->num_rows($result);
 
-		if ($num > 0 )
-		{
-			print '<table class="noborder" width="75%">';
+        if ($num > 0 )
+        {
+            print '<table class="noborder" width="75%">';
 
-			if ($product_type==0)
-				print '<tr class="liste_titre"><td class=left>'.$langs->trans("ProductSellByQuarterHT").'</td>';
-			else
-				print '<tr class="liste_titre"><td class=left>'.$langs->trans("ServiceSellByQuarterHT").'</td>';
-			print '<td class=right>'.$langs->trans("Quarter1").'</td>';
-			print '<td class=right>'.$langs->trans("Quarter2").'</td>';
-			print '<td class=right>'.$langs->trans("Quarter3").'</td>';
-			print '<td class=right>'.$langs->trans("Quarter4").'</td>';
-			print '<td class=right>'.$langs->trans("Total").'</td>';
-			print '</tr>';
-		}
-		$i = 0;
+            if ($product_type==0)
+                print '<tr class="liste_titre"><td class=left>'.$langs->trans("ProductSellByQuarterHT").'</td>';
+            else
+                print '<tr class="liste_titre"><td class=left>'.$langs->trans("ServiceSellByQuarterHT").'</td>';
+            print '<td class=right>'.$langs->trans("Quarter1").'</td>';
+            print '<td class=right>'.$langs->trans("Quarter2").'</td>';
+            print '<td class=right>'.$langs->trans("Quarter3").'</td>';
+            print '<td class=right>'.$langs->trans("Quarter4").'</td>';
+            print '<td class=right>'.$langs->trans("Total").'</td>';
+            print '</tr>';
+        }
+        $i = 0;
 
-		while ($i < $num)
-		{
-			$objp = $db->fetch_object($result);
-			if ($tmpyear != $objp->annee)
-			{
-				if ($trim1+$trim2+$trim3+$trim4 > 0)
-				{
-					print '<tr class="oddeven"><td class=left>'.$tmpyear.'</td>';
-					print '<td class=right>'.price($trim1).'</td>';
-					print '<td class=right>'.price($trim2).'</td>';
-					print '<td class=right>'.price($trim3).'</td>';
-					print '<td class=right>'.price($trim4).'</td>';
-					print '<td class=right>'.price($trim1+$trim2+$trim3+$trim4).'</td>';
-					print '</tr>';
-					$lgn++;
-				}
-				// We go to the following year
-				$tmpyear = $objp->annee;
-				$trim1=0;
-				$trim2=0;
-				$trim3=0;
-				$trim4=0;
-			}
+        while ($i < $num)
+        {
+            $objp = $db->fetch_object($result);
+            if ($tmpyear != $objp->annee)
+            {
+                if ($trim1+$trim2+$trim3+$trim4 > 0)
+                {
+                    print '<tr class="oddeven"><td class=left>'.$tmpyear.'</td>';
+                    print '<td class=right>'.price($trim1).'</td>';
+                    print '<td class=right>'.price($trim2).'</td>';
+                    print '<td class=right>'.price($trim3).'</td>';
+                    print '<td class=right>'.price($trim4).'</td>';
+                    print '<td class=right>'.price($trim1+$trim2+$trim3+$trim4).'</td>';
+                    print '</tr>';
+                    $lgn++;
+                }
+                // We go to the following year
+                $tmpyear = $objp->annee;
+                $trim1=0;
+                $trim2=0;
+                $trim3=0;
+                $trim4=0;
+            }
 
-			if ($objp->mois == "01" || $objp->mois == "02" || $objp->mois == "03")
-				$trim1 += $objp->Mnttot;
+            if ($objp->mois == "01" || $objp->mois == "02" || $objp->mois == "03")
+                $trim1 += $objp->Mnttot;
 
-			if ($objp->mois == "04" || $objp->mois == "05" || $objp->mois == "06")
-				$trim2 += $objp->Mnttot;
+            if ($objp->mois == "04" || $objp->mois == "05" || $objp->mois == "06")
+                $trim2 += $objp->Mnttot;
 
-			if ($objp->mois == "07" || $objp->mois == "08" || $objp->mois == "09")
-				$trim3 += $objp->Mnttot;
+            if ($objp->mois == "07" || $objp->mois == "08" || $objp->mois == "09")
+                $trim3 += $objp->Mnttot;
 
-			if ($objp->mois == "10" || $objp->mois == "11" || $objp->mois == "12")
-				$trim4 += $objp->Mnttot;
+            if ($objp->mois == "10" || $objp->mois == "11" || $objp->mois == "12")
+                $trim4 += $objp->Mnttot;
 
-			$i++;
-		}
-		if ($trim1+$trim2+$trim3+$trim4 > 0)
-		{
-			print '<tr class="oddeven"><td class=left>'.$tmpyear.'</td>';
-			print '<td class=right>'.price($trim1).'</td>';
-			print '<td class=right>'.price($trim2).'</td>';
-			print '<td class=right>'.price($trim3).'</td>';
-			print '<td class=right>'.price($trim4).'</td>';
-			print '<td class=right>'.price($trim1+$trim2+$trim3+$trim4).'</td>';
-			print '</tr>';
-		}
-		if ($num > 0 )
-			print '</table>';
-	}
+            $i++;
+        }
+        if ($trim1+$trim2+$trim3+$trim4 > 0)
+        {
+            print '<tr class="oddeven"><td class=left>'.$tmpyear.'</td>';
+            print '<td class=right>'.price($trim1).'</td>';
+            print '<td class=right>'.price($trim2).'</td>';
+            print '<td class=right>'.price($trim3).'</td>';
+            print '<td class=right>'.price($trim4).'</td>';
+            print '<td class=right>'.price($trim1+$trim2+$trim3+$trim4).'</td>';
+            print '</tr>';
+        }
+        if ($num > 0 )
+            print '</table>';
+    }
 }

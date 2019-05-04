@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+/* Copyright (C) 2004        Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2010-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2013   	Peter Fontaine          <contact@peterfontaine.fr>
@@ -21,16 +21,16 @@
  */
 
 /**
- * 		\file		htdocs/user/class/userbankaccount.class.php
- *		\ingroup    user
- *		\brief      File of class to manage bank accounts description of users
+ *         \file        htdocs/user/class/userbankaccount.class.php
+ *        \ingroup    user
+ *        \brief      File of class to manage bank accounts description of users
  */
 
 require_once DOL_DOCUMENT_ROOT .'/compta/bank/class/account.class.php';
 
 
 /**
- * 	Class to manage bank accounts description of third parties
+ *     Class to manage bank accounts description of third parties
  */
 class UserBankAccount extends Account
 {
@@ -54,7 +54,7 @@ class UserBankAccount extends Account
     /**
      *  Constructor
      *
-     *  @param      DoliDB		$db      Database handler
+     *  @param      DoliDB        $db      Database handler
      */
     public function __construct(DoliDB $db)
     {
@@ -69,9 +69,9 @@ class UserBankAccount extends Account
     /**
      * Create bank information record
      *
-     * @param	User	$user		User
-     * @param	int		$notrigger	1=Disable triggers
-     * @return	int					<0 if KO, >= 0 if OK
+     * @param    User    $user        User
+     * @param    int        $notrigger    1=Disable triggers
+     * @return    int                    <0 if KO, >= 0 if OK
      */
     public function create(User $user = null, $notrigger = 0)
     {
@@ -97,11 +97,11 @@ class UserBankAccount extends Account
     }
 
     /**
-     *	Update bank account
+     *    Update bank account
      *
-     *	@param	User	$user		Object user
-     *	@param	int		$notrigger	1=Disable triggers
-     *	@return	int					<=0 if KO, >0 if OK
+     *    @param    User    $user        Object user
+     *    @param    int        $notrigger    1=Disable triggers
+     *    @return    int                    <=0 if KO, >0 if OK
      */
     public function update(User $user = null, $notrigger = 0)
     {
@@ -143,12 +143,12 @@ class UserBankAccount extends Account
     }
 
     /**
-     * 	Load record from database
+     *     Load record from database
      *
-     *	@param	int		$id			Id of record
-     *	@param	string	$ref		Ref of record
+     *    @param    int        $id            Id of record
+     *    @param    string    $ref        Ref of record
      *  @param  int     $userid     User id
-     * 	@return	int					<0 if KO, >0 if OK
+     *     @return    int                    <0 if KO, >0 if OK
      */
     public function fetch($id, $ref = '', $userid = 0)
     {

@@ -47,94 +47,94 @@ require '../../../../main.inc.php';
  * Page used to upload new files in the current folder.
 -->
 <html>
-	<head>
-		<title>File Upload</title>
-		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-		<link href="browser.css" type="text/css" rel="stylesheet" >
-		<script type="text/javascript" src="js/common.js"></script>
-		<script type="text/javascript">
+    <head>
+        <title>File Upload</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <link href="browser.css" type="text/css" rel="stylesheet" >
+        <script type="text/javascript" src="js/common.js"></script>
+        <script type="text/javascript">
 
 function SetCurrentFolder( resourceType, folderPath )
 {
-	var sUrl = oConnector.ConnectorUrl + 'Command=FileUpload' ;
-	sUrl += '&Type=' + resourceType ;
-	sUrl += '&CurrentFolder=' + encodeURIComponent( folderPath );
+    var sUrl = oConnector.ConnectorUrl + 'Command=FileUpload' ;
+    sUrl += '&Type=' + resourceType ;
+    sUrl += '&CurrentFolder=' + encodeURIComponent( folderPath );
 
-	document.getElementById('frmUpload').action = sUrl ;
+    document.getElementById('frmUpload').action = sUrl ;
 }
 
 function OnSubmit()
 {
-	if ( document.getElementById('NewFile').value.length == 0 )
-	{
-		alert( 'Please select a file from your computer' );
-		return false ;
-	}
+    if ( document.getElementById('NewFile').value.length == 0 )
+    {
+        alert( 'Please select a file from your computer' );
+        return false ;
+    }
 
-	// Set the interface elements.
-	document.getElementById('eUploadMessage').innerHTML = 'Upload a new file in this folder (Upload in progress, please wait...)' ;
-	document.getElementById('btnUpload').disabled = true ;
+    // Set the interface elements.
+    document.getElementById('eUploadMessage').innerHTML = 'Upload a new file in this folder (Upload in progress, please wait...)' ;
+    document.getElementById('btnUpload').disabled = true ;
 
-	return true ;
+    return true ;
 }
 
 function OnUploadCompleted( errorNumber, data )
 {
-	// Reset the Upload Worker Frame.
-	window.parent.frames['frmUploadWorker'].location = 'javascript:void(0)' ;
+    // Reset the Upload Worker Frame.
+    window.parent.frames['frmUploadWorker'].location = 'javascript:void(0)' ;
 
-	// Reset the upload form (On IE we must do a little trick to avoid problems).
-	if ( document.all )
-		document.getElementById('NewFile').outerHTML = '<input id="NewFile" name="NewFile" style="WIDTH: 100%" type="file">' ;
-	else
-		document.getElementById('frmUpload').reset();
+    // Reset the upload form (On IE we must do a little trick to avoid problems).
+    if ( document.all )
+        document.getElementById('NewFile').outerHTML = '<input id="NewFile" name="NewFile" style="WIDTH: 100%" type="file">' ;
+    else
+        document.getElementById('frmUpload').reset();
 
-	// Reset the interface elements.
-	document.getElementById('eUploadMessage').innerHTML = 'Upload a new file in this folder' ;
-	document.getElementById('btnUpload').disabled = false ;
+    // Reset the interface elements.
+    document.getElementById('eUploadMessage').innerHTML = 'Upload a new file in this folder' ;
+    document.getElementById('btnUpload').disabled = false ;
 
-	switch ( errorNumber )
-	{
-		case 0:
-			window.parent.frames['frmResourcesList'].Refresh();
-			break;
-		case 1:	// Custom error.
-			alert( data );
-			break;
-		case 201:
-			window.parent.frames['frmResourcesList'].Refresh();
-			alert( 'A file with the same name is already available. The uploaded file has been renamed to "' + data + '"' );
-			break;
-		case 202:
-			alert( 'Invalid file' );
-			break;
-		default:
-			alert( 'Error on file upload. Error number: ' + errorNumber );
-			break;
-	}
+    switch ( errorNumber )
+    {
+        case 0:
+            window.parent.frames['frmResourcesList'].Refresh();
+            break;
+        case 1:    // Custom error.
+            alert( data );
+            break;
+        case 201:
+            window.parent.frames['frmResourcesList'].Refresh();
+            alert( 'A file with the same name is already available. The uploaded file has been renamed to "' + data + '"' );
+            break;
+        case 202:
+            alert( 'Invalid file' );
+            break;
+        default:
+            alert( 'Error on file upload. Error number: ' + errorNumber );
+            break;
+    }
 }
 
 window.onload = function()
 {
-	window.top.IsLoadedUpload = true ;
+    window.top.IsLoadedUpload = true ;
 }
-		</script>
-	</head>
-	<body>
-		<form id="frmUpload" action="" target="frmUploadWorker" method="post" enctype="multipart/form-data" onsubmit="return OnSubmit();">
-			<table class="fullHeight" cellspacing="0" cellpadding="0" width="100%" border="0">
-				<tr>
-					<td class="nowrap">
-						<span id="eUploadMessage">Upload a new file in this folder</span><br>
-						<table cellspacing="0" cellpadding="0" width="100%" border="0">
-							<tr>
-								<td width="100%"><input id="NewFile" name="NewFile" style="WIDTH: 100%" type="file"></td>
-								<td class="nowrap">&nbsp;<input id="btnUpload" type="submit" value="Upload"></td>
-							</tr>
-						</table>
-					</td>
-				</tr>
-			</table>
-		</form>
-	</body>
+        </script>
+    </head>
+    <body>
+        <form id="frmUpload" action="" target="frmUploadWorker" method="post" enctype="multipart/form-data" onsubmit="return OnSubmit();">
+            <table class="fullHeight" cellspacing="0" cellpadding="0" width="100%" border="0">
+                <tr>
+                    <td class="nowrap">
+                        <span id="eUploadMessage">Upload a new file in this folder</span><br>
+                        <table cellspacing="0" cellpadding="0" width="100%" border="0">
+                            <tr>
+                                <td width="100%"><input id="NewFile" name="NewFile" style="WIDTH: 100%" type="file"></td>
+                                <td class="nowrap">&nbsp;<input id="btnUpload" type="submit" value="Upload"></td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </body>
 </html>

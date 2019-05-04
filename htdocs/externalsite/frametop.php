@@ -17,9 +17,9 @@
  */
 
 /**
- *		\file 		htdocs/externalsite/frametop.php
+ *        \file         htdocs/externalsite/frametop.php
  *      \ingroup    externalsite
- *		\brief      Top frame to show external web application
+ *        \brief      Top frame to show external web application
  */
 
 require "../main.inc.php";

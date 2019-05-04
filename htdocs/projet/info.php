@@ -19,7 +19,7 @@
 /**
  *      \file       htdocs/projet/info.php
  *      \ingroup    project
- *		\brief      Page with events on project
+ *        \brief      Page with events on project
  */
 
 require '../main.inc.php';
@@ -50,12 +50,12 @@ $pagenext = $page + 1;
 
 if (GETPOST('actioncode', 'array'))
 {
-	$actioncode=GETPOST('actioncode', 'array', 3);
-	if (! count($actioncode)) $actioncode='0';
+    $actioncode=GETPOST('actioncode', 'array', 3);
+    if (! count($actioncode)) $actioncode='0';
 }
 else
 {
-	$actioncode=GETPOST("actioncode", "alpha", 3)?GETPOST("actioncode", "alpha", 3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
+    $actioncode=GETPOST("actioncode", "alpha", 3)?GETPOST("actioncode", "alpha", 3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
 }
 $search_agenda_label=GETPOST('search_agenda_label');
 
@@ -65,7 +65,7 @@ $socid=0;
 //if ($user->societe_id > 0) $socid = $user->societe_id;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
 $result=restrictedArea($user, 'projet', $id, '');
 
-if (!$user->rights->projet->lire)	accessforbidden();
+if (!$user->rights->projet->lire)    accessforbidden();
 
 
 
@@ -80,8 +80,8 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 // Purge search criteria
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All test are required to be compatible with all browsers
 {
-	$actioncode='';
-	$search_agenda_label='';
+    $actioncode='';
+    $search_agenda_label='';
 }
 
 
@@ -97,7 +97,7 @@ if ($id > 0 || ! empty($ref))
 {
     $object->fetch($id, $ref);
     $object->fetch_thirdparty();
-	if(! empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($object, 'fetchComments') && empty($object->comments)) $object->fetchComments();
+    if(! empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($object, 'fetchComments') && empty($object->comments)) $object->fetchComments();
     $object->info($object->id);
 }
 
@@ -177,9 +177,9 @@ if (! empty($conf->agenda->enabled))
 
 if (!empty($object->id))
 {
-	print '<br>';
+    print '<br>';
 
-	$param='&id='.$object->id;
+    $param='&id='.$object->id;
     if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
     if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 

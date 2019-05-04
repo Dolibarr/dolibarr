@@ -18,8 +18,8 @@
 */
 
 /**
- *		\file 		htdocs/admin/tools/export.php
- *		\brief      Page to export a database into a dump file
+ *        \file         htdocs/admin/tools/export.php
+ *        \brief      Page to export a database into a dump file
  */
 
 require '../../main.inc.php';
@@ -57,11 +57,11 @@ $errormsg='';
 
 if ($action == 'delete')
 {
-	$file=$conf->admin->dir_output.'/'.GETPOST('urlfile');
-	$ret=dol_delete_file($file, 1);
-	if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
-	else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
-	$action='';
+    $file=$conf->admin->dir_output.'/'.GETPOST('urlfile');
+    $ret=dol_delete_file($file, 1);
+    if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
+    else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
+    $action='';
 }
 
 
@@ -151,7 +151,7 @@ elseif (in_array($compression, array('gz', 'bz')))
 
 if ($errormsg)
 {
-	setEventMessages($langs->trans("Error")." : ".$errormsg, null, 'errors');
+    setEventMessages($langs->trans("Error")." : ".$errormsg, null, 'errors');
 }
 
 print '<br>';

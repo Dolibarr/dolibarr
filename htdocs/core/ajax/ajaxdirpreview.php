@@ -21,10 +21,10 @@
  */
 
 /**
- *	\file       htdocs/core/ajax/ajaxdirpreview.php
+ *    \file       htdocs/core/ajax/ajaxdirpreview.php
  *  \brief      Service to return a HTML preview of a directory
- *  			Call of this service is made with URL:
- * 				ajaxdirpreview.php?mode=nojs&action=preview&module=ecm&section=0&file=xxx
+ *              Call of this service is made with URL:
+ *                 ajaxdirpreview.php?mode=nojs&action=preview&module=ecm&section=0&file=xxx
  */
 
 if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', 1); // Disables token renewal
@@ -56,9 +56,9 @@ if (! isset($mode) || $mode != 'noajax')    // For ajax call
     if (! $sortorder) $sortorder="ASC";
     if (! $sortfield) $sortfield="name";
 
-	$rootdirfordoc = $conf->ecm->dir_output;
+    $rootdirfordoc = $conf->ecm->dir_output;
 
-	$upload_dir = dirname(str_replace("../", "/", $rootdirfordoc.'/'.$file));
+    $upload_dir = dirname(str_replace("../", "/", $rootdirfordoc.'/'.$file));
 
     $ecmdir = new EcmDirectory($db);
     $result=$ecmdir->fetch($section);
@@ -70,9 +70,9 @@ if (! isset($mode) || $mode != 'noajax')    // For ajax call
 }
 else    // For no ajax call
 {
-	$rootdirfordoc = $conf->ecm->dir_output;
+    $rootdirfordoc = $conf->ecm->dir_output;
 
-	$ecmdir = new EcmDirectory($db);
+    $ecmdir = new EcmDirectory($db);
     $relativepath='';
     if ($section > 0)
     {
@@ -83,21 +83,21 @@ else    // For no ajax call
             exit;
         }
 
-        $relativepath=$ecmdir->getRelativePath();	// Example   'mydir/'
+        $relativepath=$ecmdir->getRelativePath();    // Example   'mydir/'
     }
-	elseif (GETPOST('section_dir'))
-	{
-		$relativepath=GETPOST('section_dir');
-	}
-	//var_dump($section.'-'.GETPOST('section_dir').'-'.$relativepath);
+    elseif (GETPOST('section_dir'))
+    {
+        $relativepath=GETPOST('section_dir');
+    }
+    //var_dump($section.'-'.GETPOST('section_dir').'-'.$relativepath);
 
-	$upload_dir = $rootdirfordoc.'/'.$relativepath;
+    $upload_dir = $rootdirfordoc.'/'.$relativepath;
 }
 
 if (empty($url))
 {
-	if (GETPOSTISSET('website')) $url=DOL_URL_ROOT.'/website/index.php';
-	else $url=DOL_URL_ROOT.'/ecm/index.php';
+    if (GETPOSTISSET('website')) $url=DOL_URL_ROOT.'/website/index.php';
+    else $url=DOL_URL_ROOT.'/ecm/index.php';
 }
 
 // Load translation files required by the page
@@ -121,11 +121,11 @@ if (preg_match('/\.\./', $upload_dir) || preg_match('/[<>|]/', $upload_dir))
 // Check permissions
 if ($modulepart == 'ecm')
 {
-	if (! $user->rights->ecm->read) accessforbidden();
+    if (! $user->rights->ecm->read) accessforbidden();
 }
 if ($modulepart == 'medias')
 {
-	// Always allowed
+    // Always allowed
 }
 
 
@@ -143,7 +143,7 @@ if ($modulepart == 'medias')
 
 if (! isset($mode) || $mode != 'noajax')
 {
-	// Ajout directives pour resoudre bug IE
+    // Ajout directives pour resoudre bug IE
     header('Cache-Control: Public, must-revalidate');
     header('Pragma: public');
 
@@ -155,7 +155,7 @@ $type='directory';
 // This test if file exists should be useless. We keep it to find bug more easily
 if (! dol_is_dir($upload_dir))
 {
-//	dol_mkdir($upload_dir);
+//    dol_mkdir($upload_dir);
 /*    $langs->load("install");
     dol_print_error(0,$langs->trans("ErrorDirDoesNotExists",$upload_dir));
     exit;*/
@@ -210,7 +210,7 @@ if ($type == 'directory')
     elseif ($module == 'user') $upload_dir = $conf->user->dir_output;
     // Auto area for expense report
     elseif ($module == 'expensereport') $upload_dir = $conf->expensereport->dir_output;
-	// Auto area for holiday
+    // Auto area for holiday
     elseif ($module == 'holiday') $upload_dir = $conf->holiday->dir_output;
     // Auto area for holiday
     elseif ($module == 'banque') $upload_dir = $conf->bank->dir_output;
@@ -235,79 +235,79 @@ if ($type == 'directory')
     // Manual list
     else
     {
-    	if ($module == 'medias')
-    	{
-    		/*
-    		   $_POST is array like
-    		  'token' => string '062380e11b7dcd009d07318b57b71750' (length=32)
-			  'action' => string 'file_manager' (length=12)
-			  'website' => string 'template' (length=8)
-			  'pageid' => string '124' (length=3)
-			  'section_dir' => string 'mydir/' (length=3)
-			  'section_id' => string '0' (length=1)
-			  'max_file_size' => string '2097152' (length=7)
-			  'sendit' => string 'Envoyer fichier' (length=15)
-    		 */
-    		$relativepath=GETPOST('file', 'alpha')?GETPOST('file', 'alpha'):GETPOST('section_dir', 'alpha');
-    		if ($relativepath && $relativepath!= '/') $relativepath.='/';
-    		$upload_dir = $dolibarr_main_data_root.'/'.$module.'/'.$relativepath;
-    		if (GETPOSTISSET('website') || GETPOSTISSET('file_manager'))
-	    	{
-	    		$param.='&file_manager=1';
-	    		if (!preg_match('/website=/', $param)) $param.='&website='.urlencode(GETPOST('website', 'alpha'));
-	    		if (!preg_match('/pageid=/', $param)) $param.='&pageid='.urlencode(GETPOST('pageid', 'int'));
-	    		//if (!preg_match('/backtopage=/',$param)) $param.='&backtopage='.urlencode($_SERVER["PHP_SELF"].'?file_manager=1&website='.$websitekey.'&pageid='.$pageid);
-	    	}
-    	}
-    	else
-    	{
-        	$relativepath=$ecmdir->getRelativePath();
-        	$upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
-    	}
+        if ($module == 'medias')
+        {
+            /*
+               $_POST is array like
+              'token' => string '062380e11b7dcd009d07318b57b71750' (length=32)
+              'action' => string 'file_manager' (length=12)
+              'website' => string 'template' (length=8)
+              'pageid' => string '124' (length=3)
+              'section_dir' => string 'mydir/' (length=3)
+              'section_id' => string '0' (length=1)
+              'max_file_size' => string '2097152' (length=7)
+              'sendit' => string 'Envoyer fichier' (length=15)
+             */
+            $relativepath=GETPOST('file', 'alpha')?GETPOST('file', 'alpha'):GETPOST('section_dir', 'alpha');
+            if ($relativepath && $relativepath!= '/') $relativepath.='/';
+            $upload_dir = $dolibarr_main_data_root.'/'.$module.'/'.$relativepath;
+            if (GETPOSTISSET('website') || GETPOSTISSET('file_manager'))
+            {
+                $param.='&file_manager=1';
+                if (!preg_match('/website=/', $param)) $param.='&website='.urlencode(GETPOST('website', 'alpha'));
+                if (!preg_match('/pageid=/', $param)) $param.='&pageid='.urlencode(GETPOST('pageid', 'int'));
+                //if (!preg_match('/backtopage=/',$param)) $param.='&backtopage='.urlencode($_SERVER["PHP_SELF"].'?file_manager=1&website='.$websitekey.'&pageid='.$pageid);
+            }
+        }
+        else
+        {
+            $relativepath=$ecmdir->getRelativePath();
+            $upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
+        }
 
         // If $section defined with value 0
-		if (($section === '0' || empty($section)) && ($module != 'medias'))
+        if (($section === '0' || empty($section)) && ($module != 'medias'))
         {
             $filearray=array();
         }
         else
         {
-        	$filearray=dol_dir_list($upload_dir, "files", 0, '', array('^\.','(\.meta|_preview.*\.png)$','^temp$','^CVS$'), $sortfield, $sorting, 1);
+            $filearray=dol_dir_list($upload_dir, "files", 0, '', array('^\.','(\.meta|_preview.*\.png)$','^temp$','^CVS$'), $sortfield, $sorting, 1);
         }
 
         if ($section)
         {
             $param.='&section='.$section;
-        	if (isset($search_doc_ref) && $search_doc_ref != '') $param.='&search_doc_ref='.$search_doc_ref;
+            if (isset($search_doc_ref) && $search_doc_ref != '') $param.='&search_doc_ref='.$search_doc_ref;
 
             $textifempty = $langs->trans('NoFileFound');
         }
         elseif ($section === '0')
         {
-        	if ($module == 'ecm') $textifempty='<br><div align="center"><font class="warning">'.$langs->trans("DirNotSynchronizedSyncFirst").'</font></div><br>';
-        	else $textifempty = $langs->trans('NoFileFound');
+            if ($module == 'ecm') $textifempty='<br><div align="center"><font class="warning">'.$langs->trans("DirNotSynchronizedSyncFirst").'</font></div><br>';
+            else $textifempty = $langs->trans('NoFileFound');
         }
         else $textifempty=($showonrightsize=='featurenotyetavailable'?$langs->trans("FeatureNotYetAvailable"):$langs->trans("ECMSelectASection"));
 
-    	if ($module == 'medias')
-    	{
-    		$useinecm = 6;
-    		$modulepart='medias';
-        	$perm=($user->rights->website->write || $user->rights->emailing->creer);
-        	$title='none';
-    	}
-    	else
-    	{
-    		$useinecm = 5;
-    		$modulepart='ecm';
-        	$perm=$user->rights->ecm->upload;
-        	$title='';	// Use default
-    	}
+        if ($module == 'medias')
+        {
+            $useinecm = 6;
+            $modulepart='medias';
+            $perm=($user->rights->website->write || $user->rights->emailing->creer);
+            $title='none';
+        }
+        else
+        {
+            $useinecm = 5;
+            $modulepart='ecm';
+            $perm=$user->rights->ecm->upload;
+            $title='';    // Use default
+        }
 
-    	// When we show list of files for ECM files, $filearray contains file list, and directory is defined with modulepart + section into $param
-    	// When we show list of files for a directory, $filearray ciontains file list, and directory is defined with modulepart + $relativepath
-    	//var_dump("title=".$title." modulepart=".$modulepart." useinecm=".$useinecm." perm=".$perm." relativepath=".$relativepath." param=".$param." url=".$url);
-		$formfile->list_of_documents($filearray, '', $modulepart, $param, 1, $relativepath, $perm, $useinecm, $textifempty, $maxlengthname, $title, $url, 0, $perm);
+        // When we show list of files for ECM files, $filearray contains file list, and directory is defined with modulepart + section into $param
+        // When we show list of files for a directory, $filearray ciontains file list, and directory is defined with modulepart + $relativepath
+        //var_dump("title=".$title." modulepart=".$modulepart." useinecm=".$useinecm." perm=".$perm." relativepath=".$relativepath." param=".$param." url=".$url);
+        $formfile->list_of_documents($filearray, '', $modulepart, $param, 1, $relativepath, $perm, $useinecm, $textifempty, $maxlengthname, $title, $url, 0, $perm);
     }
 }
 
@@ -323,37 +323,37 @@ if (! empty($conf->global->MAIN_ECM_DISABLE_JS)) $useajax=0;
 
 if ($useajax || $action == 'delete')
 {
-	$urlfile='';
-	if ($action == 'delete') $urlfile=GETPOST('urlfile', 'alpha');
+    $urlfile='';
+    if ($action == 'delete') $urlfile=GETPOST('urlfile', 'alpha');
 
-	if (empty($section_dir)) $section_dir=GETPOST("file", "alpha");
-	$section_id=$section;
+    if (empty($section_dir)) $section_dir=GETPOST("file", "alpha");
+    $section_id=$section;
 
-	require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
-	$useglobalvars=1;
-	$form = new Form($db);
-	$formquestion['urlfile']=array('type'=>'hidden','value'=>$urlfile,'name'=>'urlfile');				// We must always put field, even if empty because it is fille by javascript later
-	$formquestion['section']=array('type'=>'hidden','value'=>$section,'name'=>'section');				// We must always put field, even if empty because it is fille by javascript later
-	$formquestion['section_id']=array('type'=>'hidden','value'=>$section_id,'name'=>'section_id');		// We must always put field, even if empty because it is fille by javascript later
-	$formquestion['section_dir']=array('type'=>'hidden','value'=>$section_dir,'name'=>'section_dir');	// We must always put field, even if empty because it is fille by javascript later
-	if (! empty($action) && $action == 'file_manager')	$formquestion['file_manager']=array('type'=>'hidden','value'=>1,'name'=>'file_manager');
-	if (! empty($websitekey))							$formquestion['website']     =array('type'=>'hidden','value'=>$websitekey,'name'=>'website');
-	if (! empty($pageid) && $pageid > 0)				$formquestion['pageid']      =array('type'=>'hidden','value'=>$pageid,'name'=>'pageid');
+    require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+    $useglobalvars=1;
+    $form = new Form($db);
+    $formquestion['urlfile']=array('type'=>'hidden','value'=>$urlfile,'name'=>'urlfile');                // We must always put field, even if empty because it is fille by javascript later
+    $formquestion['section']=array('type'=>'hidden','value'=>$section,'name'=>'section');                // We must always put field, even if empty because it is fille by javascript later
+    $formquestion['section_id']=array('type'=>'hidden','value'=>$section_id,'name'=>'section_id');        // We must always put field, even if empty because it is fille by javascript later
+    $formquestion['section_dir']=array('type'=>'hidden','value'=>$section_dir,'name'=>'section_dir');    // We must always put field, even if empty because it is fille by javascript later
+    if (! empty($action) && $action == 'file_manager')    $formquestion['file_manager']=array('type'=>'hidden','value'=>1,'name'=>'file_manager');
+    if (! empty($websitekey))                            $formquestion['website']     =array('type'=>'hidden','value'=>$websitekey,'name'=>'website');
+    if (! empty($pageid) && $pageid > 0)                $formquestion['pageid']      =array('type'=>'hidden','value'=>$pageid,'name'=>'pageid');
 
-	print $form->formconfirm($url, $langs->trans("DeleteFile"), $langs->trans("ConfirmDeleteFile"), 'confirm_deletefile', $formquestion, "no", ($useajax?'deletefile':0));
+    print $form->formconfirm($url, $langs->trans("DeleteFile"), $langs->trans("ConfirmDeleteFile"), 'confirm_deletefile', $formquestion, "no", ($useajax?'deletefile':0));
 }
 
 if ($useajax)
 {
-	print '<script type="text/javascript">';
+    print '<script type="text/javascript">';
 
-	// Enable jquery handlers on new generated HTML objects (same code than into lib_footer.js.php)
-	// Because the content is reloaded by ajax call, we must also reenable some jquery hooks
-	// Wrapper to manage document_preview
-	if ($conf->browser->layout != 'phone')
-	{
-		print "\n/* JS CODE TO ENABLE document_preview */\n";
-		print '
+    // Enable jquery handlers on new generated HTML objects (same code than into lib_footer.js.php)
+    // Because the content is reloaded by ajax call, we must also reenable some jquery hooks
+    // Wrapper to manage document_preview
+    if ($conf->browser->layout != 'phone')
+    {
+        print "\n/* JS CODE TO ENABLE document_preview */\n";
+        print '
                 jQuery(document).ready(function () {
 			        jQuery(".documentpreview").click(function () {
             		    console.log("We click on preview for element with href="+$(this).attr(\'href\')+" mime="+$(this).attr(\'mime\'));
@@ -362,19 +362,19 @@ if ($useajax)
         			});
         		});
            ' . "\n";
-	}
+    }
 
-	// Enable jquery handlers button to delete files
-	print 'jQuery(document).ready(function() {'."\n";
-	print '  jQuery(".deletefilelink").click(function(e) { '."\n";
-	print '    console.log("We click on button with class deletefilelink, param='.$param.', we set urlfile to "+jQuery(this).attr("rel"));'."\n";
-	print '    jQuery("#urlfile").val(jQuery(this).attr("rel"));'."\n";
-	//print '    jQuery("#section_dir").val(\'aaa\');'."\n";
-	print '    jQuery("#dialog-confirm-deletefile").dialog("open");'."\n";
-	print '    return false;'."\n";
-	print '  });'."\n";
-	print '});'."\n";
-	print '</script>'."\n";
+    // Enable jquery handlers button to delete files
+    print 'jQuery(document).ready(function() {'."\n";
+    print '  jQuery(".deletefilelink").click(function(e) { '."\n";
+    print '    console.log("We click on button with class deletefilelink, param='.$param.', we set urlfile to "+jQuery(this).attr("rel"));'."\n";
+    print '    jQuery("#urlfile").val(jQuery(this).attr("rel"));'."\n";
+    //print '    jQuery("#section_dir").val(\'aaa\');'."\n";
+    print '    jQuery("#dialog-confirm-deletefile").dialog("open");'."\n";
+    print '    return false;'."\n";
+    print '  });'."\n";
+    print '});'."\n";
+    print '</script>'."\n";
 }
 
 // Close db if mode is not noajax

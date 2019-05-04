@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2013-2019	Laurent Destailleur		<eldy@users.sourceforge.net>
+/* Copyright (C) 2013-2019    Laurent Destailleur        <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,11 +30,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 $langs->loadLangs(array("install","other","admin"));
 
 if (! $user->admin)
-	accessforbidden();
+    accessforbidden();
 
 if (GETPOST('action', 'aZ09') == 'donothing')
 {
-	exit;
+    exit;
 }
 
 
@@ -65,8 +65,8 @@ $test=!function_exists('xdebug_is_enabled');
 if ($test) print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled");
 else
 {
-	print img_picto('', 'warning').' '.$langs->trans("XDebugInstalled");
-	print ' '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xdebug.php'.'">XDebug admin page</a>';
+    print img_picto('', 'warning').' '.$langs->trans("XDebugInstalled");
+    print ' '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xdebug.php'.'">XDebug admin page</a>';
 }
 print '<br>';
 
@@ -88,16 +88,16 @@ print '<strong>'.$langs->trans("ApplicativeCache").'</strong>: ';
 $test=!empty($conf->memcached->enabled);
 if ($test)
 {
-	if (!empty($conf->global->MEMCACHED_SERVER))
-	{
-		print img_picto('', 'tick.png').' '.$langs->trans("MemcachedAvailableAndSetup");
-		print ' '.$langs->trans("MoreInformation").' <a href="'.dol_buildpath('/memcached/admin/memcached.php', 1).'">Memcached module admin page</a>';
-	}
-	else
-	{
-		print img_picto('', 'warning').' '.$langs->trans("MemcachedModuleAvailableButNotSetup");
-		print ' <a href="'.dol_buildpath('/memcached/admin/memcached.php', 1).'">Memcached module admin page</a>';
-	}
+    if (!empty($conf->global->MEMCACHED_SERVER))
+    {
+        print img_picto('', 'tick.png').' '.$langs->trans("MemcachedAvailableAndSetup");
+        print ' '.$langs->trans("MoreInformation").' <a href="'.dol_buildpath('/memcached/admin/memcached.php', 1).'">Memcached module admin page</a>';
+    }
+    else
+    {
+        print img_picto('', 'warning').' '.$langs->trans("MemcachedModuleAvailableButNotSetup");
+        print ' <a href="'.dol_buildpath('/memcached/admin/memcached.php', 1).'">Memcached module admin page</a>';
+    }
 }
 else print img_picto('', 'warning').' '.$langs->trans("MemcachedNotAvailable");
 print '</br>';
@@ -109,37 +109,37 @@ $foundcache=0;
 $test=function_exists('xcache_info');
 if (! $foundcache && $test)
 {
-	$foundcache++;
-	print img_picto('', 'tick.png').' '.$langs->trans("XCacheInstalled");
-	print ' '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xcache.php'.'">Xcache admin page</a>';
+    $foundcache++;
+    print img_picto('', 'tick.png').' '.$langs->trans("XCacheInstalled");
+    print ' '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xcache.php'.'">Xcache admin page</a>';
 }
 $test=function_exists('eaccelerator_info');
 if (! $foundcache && $test)
 {
-	$foundcache++;
-	print img_picto('', 'tick.png').' '.$langs->trans("EAcceleratorInstalled");
+    $foundcache++;
+    print img_picto('', 'tick.png').' '.$langs->trans("EAcceleratorInstalled");
 }
 $test=function_exists('opcache_get_status');
 if (! $foundcache && $test)
 {
-	$foundcache++;
-	print img_picto('', 'tick.png').' '.$langs->trans("ZendOPCacheInstalled");  // Should be by default starting with PHP 5.5
-	//$tmp=opcache_get_status();
-	//var_dump($tmp);
+    $foundcache++;
+    print img_picto('', 'tick.png').' '.$langs->trans("ZendOPCacheInstalled");  // Should be by default starting with PHP 5.5
+    //$tmp=opcache_get_status();
+    //var_dump($tmp);
 }
 $test=function_exists('apc_cache_info');
 if (! $foundcache && $test)
 {
-	//var_dump(apc_cache_info());
-	if (ini_get('apc.enabled'))
-	{
-		$foundcache++;
-		print img_picto('', 'tick.png').' '.$langs->trans("APCInstalled");
-	}
-	else
-	{
-		print img_picto('', 'warning').' '.$langs->trans("APCCacheInstalledButDisabled");
-	}
+    //var_dump(apc_cache_info());
+    if (ini_get('apc.enabled'))
+    {
+        $foundcache++;
+        print img_picto('', 'tick.png').' '.$langs->trans("APCInstalled");
+    }
+    else
+    {
+        print img_picto('', 'warning').' '.$langs->trans("APCCacheInstalledButDisabled");
+    }
 }
 if (! $foundcache) print $langs->trans("NoOPCodeCacheFound");
 print '<br>';
@@ -437,16 +437,16 @@ print '<strong>'.$langs->trans("DriverType").'</strong>: ';
 print '<br>';
 if ($conf->db->type == 'mysql' || $conf->db->type == 'mysqli')
 {
-	$test=($conf->db->type == 'mysqli');
-	if ($test)
-	{
-		print img_picto('', 'tick.png').' '.$langs->trans("YouUseBestDriver", $conf->db->type);
-	}
-	else
-	{
-		print img_picto('', 'warning.png').' '.$langs->trans("YouDoNotUseBestDriver", $conf->db->type, 'mysqli');
-	}
-	print '<br>';
+    $test=($conf->db->type == 'mysqli');
+    if ($test)
+    {
+        print img_picto('', 'tick.png').' '.$langs->trans("YouUseBestDriver", $conf->db->type);
+    }
+    else
+    {
+        print img_picto('', 'warning.png').' '.$langs->trans("YouDoNotUseBestDriver", $conf->db->type, 'mysqli');
+    }
+    print '<br>';
 }
 
 // Product search
@@ -459,27 +459,27 @@ $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 $resql=$db->query($sql);
 if ($resql)
 {
-	$limitforoptim=10000;
-	$num=$db->num_rows($resql);
-	$obj=$db->fetch_object($resql);
-	$nb=$obj->nb;
-	if ($nb > $limitforoptim)
-	{
-		if (empty($conf->global->PRODUCT_DONOTSEARCH_ANYWHERE))
-		{
-			print img_picto('', 'warning.png').' '.$langs->trans("YouHaveXProductUseSearchOptim", $nb);
-		}
-		else
-		{
-			print img_picto('', 'tick.png').' '.$langs->trans("YouHaveXProductAndSearchOptimOn", $nb);
-		}
-	}
-	else
-	{
-		print img_picto('', 'tick.png').' '.$langs->trans("NbOfProductIsLowerThanNoPb", $nb);
-	}
-	print '<br>';
-	$db->free($resql);
+    $limitforoptim=10000;
+    $num=$db->num_rows($resql);
+    $obj=$db->fetch_object($resql);
+    $nb=$obj->nb;
+    if ($nb > $limitforoptim)
+    {
+        if (empty($conf->global->PRODUCT_DONOTSEARCH_ANYWHERE))
+        {
+            print img_picto('', 'warning.png').' '.$langs->trans("YouHaveXProductUseSearchOptim", $nb);
+        }
+        else
+        {
+            print img_picto('', 'tick.png').' '.$langs->trans("YouHaveXProductAndSearchOptimOn", $nb);
+        }
+    }
+    else
+    {
+        print img_picto('', 'tick.png').' '.$langs->trans("NbOfProductIsLowerThanNoPb", $nb);
+    }
+    print '<br>';
+    $db->free($resql);
 }
 
 // Browser
@@ -487,11 +487,11 @@ print '<br>';
 print '<strong>'.$langs->trans("Browser").'</strong>:<br>';
 if (! in_array($conf->browser->name, array('chrome','opera','safari','firefox')))
 {
-	print img_picto('', 'warning.png').' '.$langs->trans("BrowserIsKO", $conf->browser->name);
+    print img_picto('', 'warning.png').' '.$langs->trans("BrowserIsKO", $conf->browser->name);
 }
 else
 {
-	print img_picto('', 'tick.png').' '.$langs->trans("BrowserIsOK", $conf->browser->name);
+    print img_picto('', 'tick.png').' '.$langs->trans("BrowserIsOK", $conf->browser->name);
 }
 print '<br>';
 

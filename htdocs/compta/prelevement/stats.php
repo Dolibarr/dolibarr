@@ -19,7 +19,7 @@
  */
 
 /**
- *		\file       htdocs/compta/prelevement/stats.php
+ *        \file       htdocs/compta/prelevement/stats.php
  *      \ingroup    prelevement
  *      \brief      Page with statistics on withdrawals
  */
@@ -85,50 +85,50 @@ $sql.= " GROUP BY pl.statut";
 $resql=$db->query($sql);
 if ($resql)
 {
-	$num = $db->num_rows($resql);
-	$i = 0;
+    $num = $db->num_rows($resql);
+    $i = 0;
 
-	print"\n<!-- debut table -->\n";
-	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre">';
-	print '<td width="30%">'.$langs->trans("Status").'</td><td align="center">'.$langs->trans("Number").'</td><td class="right">%</td>';
-	print '<td class="right">'.$langs->trans("Amount").'</td><td class="right">%</td></tr>';
+    print"\n<!-- debut table -->\n";
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre">';
+    print '<td width="30%">'.$langs->trans("Status").'</td><td align="center">'.$langs->trans("Number").'</td><td class="right">%</td>';
+    print '<td class="right">'.$langs->trans("Amount").'</td><td class="right">%</td></tr>';
 
-	while ($i < $num)
-	{
-		$row = $db->fetch_row($resql);
+    while ($i < $num)
+    {
+        $row = $db->fetch_row($resql);
 
-		print '<tr class="oddeven"><td>';
+        print '<tr class="oddeven"><td>';
 
-		print $ligne->LibStatut($row[2], 1);
-		//print $st[$row[2]];
-		print '</td><td align="center">';
-		print $row[1];
+        print $ligne->LibStatut($row[2], 1);
+        //print $st[$row[2]];
+        print '</td><td align="center">';
+        print $row[1];
 
-		print '</td><td class="right">';
-		print round($row[1]/$nbtotal*100, 2)." %";
+        print '</td><td class="right">';
+        print round($row[1]/$nbtotal*100, 2)." %";
 
-		print '</td><td class="right">';
+        print '</td><td class="right">';
 
-		print price($row[0]);
+        print price($row[0]);
 
-		print '</td><td class="right">';
-		print round($row[0]/$total*100, 2)." %";
-		print '</td></tr>';
-		
-		$i++;
-	}
+        print '</td><td class="right">';
+        print round($row[0]/$total*100, 2)." %";
+        print '</td></tr>';
+        
+        $i++;
+    }
 
-	print '<tr class="liste_total"><td class="right">'.$langs->trans("Total").'</td>';
-	print '<td align="center">'.$nbtotal.'</td><td>&nbsp;</td><td class="right">';
-	print price($total);
-	print '</td><td class="right">&nbsp;</td>';
-	print "</tr></table>";
-	$db->free();
+    print '<tr class="liste_total"><td class="right">'.$langs->trans("Total").'</td>';
+    print '<td align="center">'.$nbtotal.'</td><td>&nbsp;</td><td class="right">';
+    print price($total);
+    print '</td><td class="right">&nbsp;</td>';
+    print "</tr></table>";
+    $db->free();
 }
 else
 {
-	dol_print_error($db);
+    dol_print_error($db);
 }
 
 
@@ -178,51 +178,51 @@ $sql.= " ORDER BY cc DESC";
 $resql=$db->query($sql);
 if ($resql)
 {
-	$num = $db->num_rows($resql);
-	$i = 0;
+    $num = $db->num_rows($resql);
+    $i = 0;
 
-	print"\n<!-- debut table -->\n";
-	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre">';
-	print '<td width="30%">'.$langs->trans("Status").'</td><td align="center">'.$langs->trans("Number").'</td>';
-	print '<td class="right">%</td><td class="right">'.$langs->trans("Amount").'</td><td class="right">%</td></tr>';
+    print"\n<!-- debut table -->\n";
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre">';
+    print '<td width="30%">'.$langs->trans("Status").'</td><td align="center">'.$langs->trans("Number").'</td>';
+    print '<td class="right">%</td><td class="right">'.$langs->trans("Amount").'</td><td class="right">%</td></tr>';
 
-	require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/rejetprelevement.class.php';
-	$Rejet = new RejetPrelevement($db, $user);
+    require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/rejetprelevement.class.php';
+    $Rejet = new RejetPrelevement($db, $user);
 
-	while ($i < $num)
-	{
-		$row = $db->fetch_row($resql);
+    while ($i < $num)
+    {
+        $row = $db->fetch_row($resql);
 
-		print '<tr class="oddeven"><td>';
-		print $Rejet->motifs[$row[2]];
+        print '<tr class="oddeven"><td>';
+        print $Rejet->motifs[$row[2]];
 
-		print '</td><td align="center">'.$row[1];
+        print '</td><td align="center">'.$row[1];
 
-		print '</td><td class="right">';
-		print round($row[1]/$nbtotal*100, 2)." %";
+        print '</td><td class="right">';
+        print round($row[1]/$nbtotal*100, 2)." %";
 
-		print '</td><td class="right">';
-		print price($row[0]);
+        print '</td><td class="right">';
+        print price($row[0]);
 
-		print '</td><td class="right">';
-		print round($row[0]/$total*100, 2)." %";
+        print '</td><td class="right">';
+        print round($row[0]/$total*100, 2)." %";
 
-		print '</td></tr>';
-		
-		$i++;
-	}
+        print '</td></tr>';
+        
+        $i++;
+    }
 
-	print '<tr class="liste_total"><td class="right">'.$langs->trans("Total").'</td><td align="center">'.$nbtotal.'</td>';
-	print '<td>&nbsp;</td><td class="right">';
-	print price($total);
-	print '</td><td class="right">&nbsp;</td>';
-	print "</tr></table>";
-	$db->free($resql);
+    print '<tr class="liste_total"><td class="right">'.$langs->trans("Total").'</td><td align="center">'.$nbtotal.'</td>';
+    print '<td>&nbsp;</td><td class="right">';
+    print price($total);
+    print '</td><td class="right">&nbsp;</td>';
+    print "</tr></table>";
+    $db->free($resql);
 }
 else
 {
-	dol_print_error($db);
+    dol_print_error($db);
 }
 
 // End of page

@@ -17,41 +17,41 @@
  */
 
 /**
- *	\file       htdocs/core/modules/project/mod_project_universal.php
- *	\ingroup    project
- *	\brief      Fichier contenant la classe du modele de numerotation de reference de projet Universal
+ *    \file       htdocs/core/modules/project/mod_project_universal.php
+ *    \ingroup    project
+ *    \brief      Fichier contenant la classe du modele de numerotation de reference de projet Universal
  */
 
 require_once DOL_DOCUMENT_ROOT .'/core/modules/project/task/modules_task.php';
 
 
 /**
- * 	Classe du modele de numerotation de reference de projet Universal
+ *     Classe du modele de numerotation de reference de projet Universal
  */
 class mod_task_universal extends ModeleNumRefTask
 {
-	/**
+    /**
      * Dolibarr version of the loaded document
      * @var string
      */
-	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+    public $version = 'dolibarr';        // 'development', 'experimental', 'dolibarr'
 
-	/**
+    /**
      * @var string Error code (or message)
      */
     public $error = '';
 
-	/**
-	 * @var string
-	 * @deprecated
-	 * @see name
-	 */
-	public $nom='Universal';
+    /**
+     * @var string
+     * @deprecated
+     * @see name
+     */
+    public $nom='Universal';
 
-	/**
-	 * @var string name
-	 */
-	public $name='Universal';
+    /**
+     * @var string name
+     */
+    public $name='Universal';
 
 
     /**
@@ -61,38 +61,38 @@ class mod_task_universal extends ModeleNumRefTask
      */
     public function info()
     {
-    	global $conf,$langs;
+        global $conf,$langs;
 
-		// Load translation files required by the page
+        // Load translation files required by the page
         $langs->loadLangs(array("projects","admin"));
 
-		$form = new Form($this->db);
+        $form = new Form($this->db);
 
-		$texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
-		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-		$texte.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-		$texte.= '<input type="hidden" name="action" value="updateMaskTask">';
-		$texte.= '<input type="hidden" name="maskconsttask" value="PROJECT_TASK_UNIVERSAL_MASK">';
-		$texte.= '<table class="nobordernopadding" width="100%">';
+        $texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
+        $texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+        $texte.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        $texte.= '<input type="hidden" name="action" value="updateMaskTask">';
+        $texte.= '<input type="hidden" name="maskconsttask" value="PROJECT_TASK_UNIVERSAL_MASK">';
+        $texte.= '<table class="nobordernopadding" width="100%">';
 
-		$tooltip=$langs->trans("GenericMaskCodes", $langs->transnoentities("Task"), $langs->transnoentities("Task"));
-		$tooltip.=$langs->trans("GenericMaskCodes2");
-		$tooltip.=$langs->trans("GenericMaskCodes3");
-		$tooltip.=$langs->trans("GenericMaskCodes4a", $langs->transnoentities("Task"), $langs->transnoentities("Task"));
-		$tooltip.=$langs->trans("GenericMaskCodes5");
+        $tooltip=$langs->trans("GenericMaskCodes", $langs->transnoentities("Task"), $langs->transnoentities("Task"));
+        $tooltip.=$langs->trans("GenericMaskCodes2");
+        $tooltip.=$langs->trans("GenericMaskCodes3");
+        $tooltip.=$langs->trans("GenericMaskCodes4a", $langs->transnoentities("Task"), $langs->transnoentities("Task"));
+        $tooltip.=$langs->trans("GenericMaskCodes5");
 
-		// Parametrage du prefix
-		$texte.= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte.= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="masktask" value="'.$conf->global->PROJECT_TASK_UNIVERSAL_MASK.'">', $tooltip, 1, 1).'</td>';
+        // Parametrage du prefix
+        $texte.= '<tr><td>'.$langs->trans("Mask").':</td>';
+        $texte.= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="masktask" value="'.$conf->global->PROJECT_TASK_UNIVERSAL_MASK.'">', $tooltip, 1, 1).'</td>';
 
-		$texte.= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
+        $texte.= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
 
-		$texte.= '</tr>';
+        $texte.= '</tr>';
 
-		$texte.= '</table>';
-		$texte.= '</form>';
+        $texte.= '</table>';
+        $texte.= '</form>';
 
-		return $texte;
+        return $texte;
     }
 
     /**
@@ -102,56 +102,56 @@ class mod_task_universal extends ModeleNumRefTask
      */
     public function getExample()
     {
-    	global $conf,$langs,$mysoc;
+        global $conf,$langs,$mysoc;
 
-    	$old_code_client=$mysoc->code_client;
-    	$mysoc->code_client='CCCCCCCCCC';
-    	$numExample = $this->getNextValue($mysoc, '');
-		$mysoc->code_client=$old_code_client;
+        $old_code_client=$mysoc->code_client;
+        $mysoc->code_client='CCCCCCCCCC';
+        $numExample = $this->getNextValue($mysoc, '');
+        $mysoc->code_client=$old_code_client;
 
-		if (! $numExample)
-		{
-			$numExample = $langs->trans('NotConfigured');
-		}
-		return $numExample;
+        if (! $numExample)
+        {
+            $numExample = $langs->trans('NotConfigured');
+        }
+        return $numExample;
     }
 
    /**
-	*  Return next value
-	*
-	*  @param	Societe		$objsoc		Object third party
-	*  @param   Task		$object	    Object task
-	*  @return  string					Value if OK, 0 if KO
-	*/
+    *  Return next value
+    *
+    *  @param    Societe        $objsoc        Object third party
+    *  @param   Task        $object        Object task
+    *  @return  string                    Value if OK, 0 if KO
+    */
     public function getNextValue($objsoc, $object)
     {
-		global $db,$conf;
+        global $db,$conf;
 
-		require_once DOL_DOCUMENT_ROOT .'/core/lib/functions2.lib.php';
+        require_once DOL_DOCUMENT_ROOT .'/core/lib/functions2.lib.php';
 
-		// On defini critere recherche compteur
-		$mask=$conf->global->PROJECT_TASK_UNIVERSAL_MASK;
+        // On defini critere recherche compteur
+        $mask=$conf->global->PROJECT_TASK_UNIVERSAL_MASK;
 
-		if (! $mask)
-		{
-			$this->error='NotConfigured';
-			return 0;
-		}
+        if (! $mask)
+        {
+            $this->error='NotConfigured';
+            return 0;
+        }
 
-		$date=empty($object->date_c)?dol_now():$object->date_c;
-		$numFinal=get_next_value($db, $mask, 'projet_task', 'ref', '', (is_object($objsoc)?$objsoc->code_client:''), $date);
+        $date=empty($object->date_c)?dol_now():$object->date_c;
+        $numFinal=get_next_value($db, $mask, 'projet_task', 'ref', '', (is_object($objsoc)?$objsoc->code_client:''), $date);
 
-		return  $numFinal;
-	}
+        return  $numFinal;
+    }
 
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Return next reference not yet used as a reference
      *
-     *  @param	Societe		$objsoc     Object third party
-     *  @param  Task		$object	    Object task
-     *  @return string      			Next not used reference
+     *  @param    Societe        $objsoc     Object third party
+     *  @param  Task        $object        Object task
+     *  @return string                  Next not used reference
      */
     public function project_get_num($objsoc = 0, $object = '')
     {

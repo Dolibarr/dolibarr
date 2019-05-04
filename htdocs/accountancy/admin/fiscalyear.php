@@ -44,22 +44,22 @@ $langs->loadLangs(array("admin","compta"));
 
 // Security check
 if ($user->societe_id > 0)
-	accessforbidden();
+    accessforbidden();
 if (! $user->rights->accounting->fiscalyear)              // If we can read accounting records, we should be able to see fiscal year.
-	accessforbidden();
+    accessforbidden();
 
 $error = 0;
 
 // List of status
 static $tmpstatut2label = array (
-		'0' => 'OpenFiscalYear',
-		'1' => 'CloseFiscalYear'
+        '0' => 'OpenFiscalYear',
+        '1' => 'CloseFiscalYear'
 );
 $statut2label = array (
-		''
+        ''
 );
 foreach ($tmpstatut2label as $key => $val)
-	$statut2label[$key] = $langs->trans($val);
+    $statut2label[$key] = $langs->trans($val);
 
 $errors = array ();
 
@@ -93,13 +93,13 @@ $sql.=$db->order($sortfield, $sortorder);
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
-	$result = $db->query($sql);
-	$nbtotalofrecords = $db->num_rows($result);
-	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
-	{
-		$page = 0;
-		$offset = 0;
-	}
+    $result = $db->query($sql);
+    $nbtotalofrecords = $db->num_rows($result);
+    if (($page * $limit) > $nbtotalofrecords)    // if total resultset is smaller then paging size (filtering), goto and load page 0
+    {
+        $page = 0;
+        $offset = 0;
+    }
 }
 
 $sql.= $db->plimit($limit+1, $offset);
@@ -107,59 +107,59 @@ $sql.= $db->plimit($limit+1, $offset);
 $result = $db->query($sql);
 if ($result)
 {
-	$num = $db->num_rows($result);
+    $num = $db->num_rows($result);
 
-	$i = 0;
+    $i = 0;
 
-	if (! empty($user->rights->accounting->fiscalyear))
-	{
-		$addbutton = '<a class="butActionNew" href="fiscalyear_card.php?action=create"><span class="valignmiddle text-plus-circle">' . $langs->trans("NewFiscalYear") .'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
-	}
-	else
-	{
-		$addbutton = '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'"><span class="valignmiddle text-plus-circle">' . $langs->trans("NewFiscalYear") .'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
-	}
+    if (! empty($user->rights->accounting->fiscalyear))
+    {
+        $addbutton = '<a class="butActionNew" href="fiscalyear_card.php?action=create"><span class="valignmiddle text-plus-circle">' . $langs->trans("NewFiscalYear") .'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
+    }
+    else
+    {
+        $addbutton = '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'"><span class="valignmiddle text-plus-circle">' . $langs->trans("NewFiscalYear") .'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
+    }
 
-	$title = $langs->trans('AccountingPeriods');
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $params, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy', 0, $addbutton, '', $limit, 1);
+    $title = $langs->trans('AccountingPeriods');
+    print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $params, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy', 0, $addbutton, '', $limit, 1);
 
-	// Load attribute_label
-	print '<div class="div-table-responsive">';
-	print '<table class="tagtable liste" width="100%">';
-	print '<tr class="liste_titre">';
-	print '<td>' . $langs->trans("Ref") . '</td>';
-	print '<td>' . $langs->trans("Label") . '</td>';
-	print '<td>' . $langs->trans("DateStart") . '</td>';
-	print '<td>' . $langs->trans("DateEnd") . '</td>';
-	print '<td class="center">' . $langs->trans("NumberOfAccountancyEntries") . '</td>';
-	print '<td class="center">' . $langs->trans("NumberOfAccountancyMovements") . '</td>';
-	print '<td class="right">' . $langs->trans("Statut") . '</td>';
-	print '</tr>';
+    // Load attribute_label
+    print '<div class="div-table-responsive">';
+    print '<table class="tagtable liste" width="100%">';
+    print '<tr class="liste_titre">';
+    print '<td>' . $langs->trans("Ref") . '</td>';
+    print '<td>' . $langs->trans("Label") . '</td>';
+    print '<td>' . $langs->trans("DateStart") . '</td>';
+    print '<td>' . $langs->trans("DateEnd") . '</td>';
+    print '<td class="center">' . $langs->trans("NumberOfAccountancyEntries") . '</td>';
+    print '<td class="center">' . $langs->trans("NumberOfAccountancyMovements") . '</td>';
+    print '<td class="right">' . $langs->trans("Statut") . '</td>';
+    print '</tr>';
 
-	if ($num) {
-		$fiscalyearstatic = new Fiscalyear($db);
+    if ($num) {
+        $fiscalyearstatic = new Fiscalyear($db);
 
-		while ( $i < $num && $i < $max ) {
-			$obj = $db->fetch_object($result);
-			$fiscalyearstatic->id = $obj->rowid;
-			print '<tr class="oddeven">';
-			print '<td><a href="fiscalyear_card.php?id=' . $obj->rowid . '">' . img_object($langs->trans("ShowFiscalYear"), "technic") . ' ' . $obj->rowid . '</a></td>';
-			print '<td class="left">' . $obj->label . '</td>';
-			print '<td class="left">' . dol_print_date($db->jdate($obj->date_start), 'day') . '</td>';
-			print '<td class="left">' . dol_print_date($db->jdate($obj->date_end), 'day') . '</td>';
-			print '<td class="center">' . $object->getAccountancyEntriesByFiscalYear($obj->date_start, $obj->date_end) . '</td>';
-			print '<td class="center">' . $object->getAccountancyMovementsByFiscalYear($obj->date_start, $obj->date_end) . '</td>';
-			print '<td class="right">' . $fiscalyearstatic->LibStatut($obj->statut, 5) . '</td>';
-			print '</tr>';
-			$i++;
-		}
-	} else {
-		print '<tr class="oddeven"><td colspan="7" class="opacitymedium">' . $langs->trans("None") . '</td></tr>';
-	}
-	print '</table>';
-	print '</div>';
+        while ( $i < $num && $i < $max ) {
+            $obj = $db->fetch_object($result);
+            $fiscalyearstatic->id = $obj->rowid;
+            print '<tr class="oddeven">';
+            print '<td><a href="fiscalyear_card.php?id=' . $obj->rowid . '">' . img_object($langs->trans("ShowFiscalYear"), "technic") . ' ' . $obj->rowid . '</a></td>';
+            print '<td class="left">' . $obj->label . '</td>';
+            print '<td class="left">' . dol_print_date($db->jdate($obj->date_start), 'day') . '</td>';
+            print '<td class="left">' . dol_print_date($db->jdate($obj->date_end), 'day') . '</td>';
+            print '<td class="center">' . $object->getAccountancyEntriesByFiscalYear($obj->date_start, $obj->date_end) . '</td>';
+            print '<td class="center">' . $object->getAccountancyMovementsByFiscalYear($obj->date_start, $obj->date_end) . '</td>';
+            print '<td class="right">' . $fiscalyearstatic->LibStatut($obj->statut, 5) . '</td>';
+            print '</tr>';
+            $i++;
+        }
+    } else {
+        print '<tr class="oddeven"><td colspan="7" class="opacitymedium">' . $langs->trans("None") . '</td></tr>';
+    }
+    print '</table>';
+    print '</div>';
 } else {
-	dol_print_error($db);
+    dol_print_error($db);
 }
 
 // End of page

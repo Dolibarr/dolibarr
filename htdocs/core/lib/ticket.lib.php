@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2013-2018	Jean-François FERRY	<hello@librethic.io>
+/* Copyright (C) 2013-2018    Jean-François FERRY    <hello@librethic.io>
  * Copyright (C) 2016		Christophe Battarel	<christophe@altairis.fr>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -67,8 +67,8 @@ function ticketAdminPrepareHead()
 /**
  *  Build tabs for a Ticket object
  *
- *  @param	Ticket	  $object		Object Ticket
- *  @return array				          Array of tabs
+ *  @param    Ticket      $object        Object Ticket
+ *  @return array                          Array of tabs
  */
 function ticket_prepare_head($object)
 {
@@ -83,12 +83,12 @@ function ticket_prepare_head($object)
 
     if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && empty($user->socid))
     {
-    	$nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
-    	$head[$h][0] = DOL_URL_ROOT.'/ticket/contact.php?track_id='.$object->track_id;
-    	$head[$h][1] = $langs->trans('ContactsAddresses');
-    	if ($nbContact > 0) $head[$h][1].= ' <span class="badge">'.$nbContact.'</span>';
-    	$head[$h][2] = 'contact';
-    	$h++;
+        $nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
+        $head[$h][0] = DOL_URL_ROOT.'/ticket/contact.php?track_id='.$object->track_id;
+        $head[$h][1] = $langs->trans('ContactsAddresses');
+        if ($nbContact > 0) $head[$h][1].= ' <span class="badge">'.$nbContact.'</span>';
+        $head[$h][2] = 'contact';
+        $h++;
     }
 
     complete_head_from_modules($conf, $langs, $object, $head, $h, 'ticket');
@@ -112,8 +112,8 @@ function ticket_prepare_head($object)
     $head[$h][1] = $langs->trans('Events');
     if (! empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read) ))
     {
-    	$head[$h][1].= '/';
-    	$head[$h][1].= $langs->trans("Agenda");
+        $head[$h][1].= '/';
+        $head[$h][1].= $langs->trans("Agenda");
     }
     $head[$h][2] = 'tabTicketLogs';
     $h++;
@@ -166,23 +166,23 @@ function llxHeaderTicket($title, $head = "", $disablejs = 0, $disablehead = 0, $
         // Print logo
         if (! empty($conf->global->TICKET_SHOW_COMPANY_LOGO))
         {
-        	$urllogo = DOL_URL_ROOT . '/theme/login_logo.png';
+            $urllogo = DOL_URL_ROOT . '/theme/login_logo.png';
 
-        	if (!empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output . '/logos/thumbs/' . $mysoc->logo_small)) {
-        		$urllogo = DOL_URL_ROOT . '/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file=' . urlencode('logos/thumbs/'.$mysoc->logo_small);
-        	} elseif (!empty($mysoc->logo) && is_readable($conf->mycompany->dir_output . '/logos/' . $mysoc->logo)) {
-        		$urllogo = DOL_URL_ROOT . '/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file=' . urlencode('logos/'.$mysoc->logo);
-        		$width = 128;
-        	} elseif (is_readable(DOL_DOCUMENT_ROOT . '/theme/dolibarr_logo.png')) {
-        		$urllogo = DOL_URL_ROOT . '/theme/dolibarr_logo.png';
-        	}
-    	    print '<a href="' . ($conf->global->TICKET_URL_PUBLIC_INTERFACE ? $conf->global->TICKET_URL_PUBLIC_INTERFACE : dol_buildpath('/public/ticket/index.php', 1)) . '"><img alt="Logo" id="logosubscribe" title="" src="' . $urllogo . '" style="max-width: 440px" /></a><br>';
+            if (!empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output . '/logos/thumbs/' . $mysoc->logo_small)) {
+                $urllogo = DOL_URL_ROOT . '/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file=' . urlencode('logos/thumbs/'.$mysoc->logo_small);
+            } elseif (!empty($mysoc->logo) && is_readable($conf->mycompany->dir_output . '/logos/' . $mysoc->logo)) {
+                $urllogo = DOL_URL_ROOT . '/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file=' . urlencode('logos/'.$mysoc->logo);
+                $width = 128;
+            } elseif (is_readable(DOL_DOCUMENT_ROOT . '/theme/dolibarr_logo.png')) {
+                $urllogo = DOL_URL_ROOT . '/theme/dolibarr_logo.png';
+            }
+            print '<a href="' . ($conf->global->TICKET_URL_PUBLIC_INTERFACE ? $conf->global->TICKET_URL_PUBLIC_INTERFACE : dol_buildpath('/public/ticket/index.php', 1)) . '"><img alt="Logo" id="logosubscribe" title="" src="' . $urllogo . '" style="max-width: 440px" /></a><br>';
         }
         if (! empty($conf->global->TICKET_PUBLIC_INTERFACE_TOPIC))
         {
-    	   print '<strong>' . ($conf->global->TICKET_PUBLIC_INTERFACE_TOPIC ? $conf->global->TICKET_PUBLIC_INTERFACE_TOPIC : $langs->trans("TicketSystem")) . '</strong>';
+           print '<strong>' . ($conf->global->TICKET_PUBLIC_INTERFACE_TOPIC ? $conf->global->TICKET_PUBLIC_INTERFACE_TOPIC : $langs->trans("TicketSystem")) . '</strong>';
         }
-    	print '</center><br>';
+        print '</center><br>';
     }
 
     print '<div style="margin-left: 50px; margin-right: 50px;">';

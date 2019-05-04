@@ -17,9 +17,9 @@
  */
 
 /**
- *   	\file       htdocs/admin/socialnetworks.php
- *		\ingroup    socialnetworks
- *		\brief      Page to setup the module Social Networks
+ *       \file       htdocs/admin/socialnetworks.php
+ *        \ingroup    socialnetworks
+ *        \brief      Page to setup the module Social Networks
  */
 
 require '../main.inc.php';

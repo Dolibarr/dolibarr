@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 if (! empty($conf->projet->enabled)) {
-	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+    require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 }
 
 // Load translation files required by the page
@@ -56,7 +56,7 @@ $socid=0;
 if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user, 'fournisseur', $id, 'commande_fournisseur', 'commande');
 
-if (!$user->rights->fournisseur->commande->lire)	accessforbidden();
+if (!$user->rights->fournisseur->commande->lire)    accessforbidden();
 
 
 
@@ -82,7 +82,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
  * View
  */
 
-$form =	new	Form($db);
+$form =    new    Form($db);
 $object = new CommandeFournisseur($db);
 
 if ($id > 0 || ! empty($ref))

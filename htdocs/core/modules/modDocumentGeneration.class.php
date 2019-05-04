@@ -18,100 +18,100 @@
  */
 
 /**
- *	\defgroup   	document     Module mass mailings
- *	\brief      	Module pour gerer des generations de documents
- *	\file       	htdocs/core/modules/modDocumentGeneration.class.php
- *	\ingroup    	document
- *	\brief      	Fichier de description et activation du module Generation document
+ *    \defgroup       document     Module mass mailings
+ *    \brief          Module pour gerer des generations de documents
+ *    \file           htdocs/core/modules/modDocumentGeneration.class.php
+ *    \ingroup        document
+ *    \brief          Fichier de description et activation du module Generation document
  */
 
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *	Class to describe and enable module Document
+ *    Class to describe and enable module Document
  */
 class modDocumentGeneration extends DolibarrModules
 {
 
-	/**
-	 *   Constructor. Define names, constants, directories, boxes, permissions
-	 *
-	 *   @param      DoliDB		$db      Database handler
-	 */
-	public function __construct($db)
-	{
-		$this->db = $db;
-		$this->numero = 1520;
+    /**
+     *   Constructor. Define names, constants, directories, boxes, permissions
+     *
+     *   @param      DoliDB        $db      Database handler
+     */
+    public function __construct($db)
+    {
+        $this->db = $db;
+        $this->numero = 1520;
 
-		$this->family = "technic";
-		$this->module_position = '80';
-		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = preg_replace('/^mod/i', '', get_class($this));
-		$this->description = "Direct mail document generation";
-		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-		$this->version = 'development';
+        $this->family = "technic";
+        $this->module_position = '80';
+        // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+        $this->name = preg_replace('/^mod/i', '', get_class($this));
+        $this->description = "Direct mail document generation";
+        // Possible values for version are: 'development', 'experimental', 'dolibarr' or version
+        $this->version = 'development';
 
-		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->picto='email';
+        $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
+        $this->picto='email';
 
-		// Data directories to create when module is enabled
-		$this->dirs = array("/documentgeneration/temp");
+        // Data directories to create when module is enabled
+        $this->dirs = array("/documentgeneration/temp");
 
-		// Config pages
-		//$this->config_page_url = array("document.php");
+        // Config pages
+        //$this->config_page_url = array("document.php");
 
-		// Dependencies
-		$this->depends = array();
-		$this->requiredby = array();
-		$this->conflictwith = array();
-		$this->langfiles = array("orders","bills","companies","mails");
+        // Dependencies
+        $this->depends = array();
+        $this->requiredby = array();
+        $this->conflictwith = array();
+        $this->langfiles = array("orders","bills","companies","mails");
 
-		// Constants
+        // Constants
 
-		$this->const = array();
+        $this->const = array();
 
-		// Boxes
-		$this->boxes = array();
+        // Boxes
+        $this->boxes = array();
 
-		// Permissions
-		$this->rights = array();
-		$this->rights_class = 'document';
+        // Permissions
+        $this->rights = array();
+        $this->rights_class = 'document';
 
-		$r=0;
+        $r=0;
 
-		$this->rights[$r][0] = 1521;
-		$this->rights[$r][1] = 'Lire les documents';
-		$this->rights[$r][2] = 'r';
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'lire';
+        $this->rights[$r][0] = 1521;
+        $this->rights[$r][1] = 'Lire les documents';
+        $this->rights[$r][2] = 'r';
+        $this->rights[$r][3] = 0;
+        $this->rights[$r][4] = 'lire';
 
-		$r++;
-		$this->rights[$r][0] = 1522;
-		$this->rights[$r][1] = 'Supprimer les documents clients';
-		$this->rights[$r][2] = 'd';
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'supprimer';
-	}
+        $r++;
+        $this->rights[$r][0] = 1522;
+        $this->rights[$r][1] = 'Supprimer les documents clients';
+        $this->rights[$r][2] = 'd';
+        $this->rights[$r][3] = 0;
+        $this->rights[$r][4] = 'supprimer';
+    }
 
 
-	/**
-	 *  Function called when module is enabled.
-	 *  The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
-	 *  It also creates data directories
-	 *
+    /**
+     *  Function called when module is enabled.
+     *  The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+     *  It also creates data directories
+     *
      *  @param      string  $options    Options when enabling module ('', 'noboxes')
      *  @return     int                 1 if OK, 0 if KO
      */
     public function init($options = '')
     {
-		global $conf;
+        global $conf;
 
-		// Permissions
-		$this->remove($options);
+        // Permissions
+        $this->remove($options);
 
-		$sql = array();
+        $sql = array();
 
-		return $this->_init($sql, $options);
-	}
+        return $this->_init($sql, $options);
+    }
 }

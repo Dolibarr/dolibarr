@@ -18,13 +18,13 @@
 
 /**
  *      \file       test/phpunit/HolidayTest.php
- *		\ingroup    test
+ *        \ingroup    test
  *      \brief      PHPUnit test
- *		\remarks	To run this script as CLI:  phpunit filename.php
+ *        \remarks    To run this script as CLI:  phpunit filename.php
  */
 
 global $conf,$user,$langs,$db;
-//define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
+//define('TEST_DB_FORCE_TYPE','mysql');    // This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/holiday/class/holiday.class.php';
@@ -45,7 +45,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
- * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
+ * @remarks    backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
 class HolidayTest extends PHPUnit_Framework_TestCase
 {
@@ -81,7 +81,7 @@ class HolidayTest extends PHPUnit_Framework_TestCase
     {
         global $conf,$user,$langs,$db;
 
-        $db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
+        $db->begin();    // This is to have all actions inside a transaction even if test launched without suite.
 
         print __METHOD__."\n";
     }
@@ -98,7 +98,7 @@ class HolidayTest extends PHPUnit_Framework_TestCase
     /**
      * Init phpunit tests
      *
-     * @return	void
+     * @return    void
      */
     protected function setUp()
     {
@@ -113,7 +113,7 @@ class HolidayTest extends PHPUnit_Framework_TestCase
     /**
      * End phpunit tests
      *
-     * @return	void
+     * @return    void
      */
     protected function tearDown()
     {
@@ -123,7 +123,7 @@ class HolidayTest extends PHPUnit_Framework_TestCase
     /**
      * testHolidayCreate
      *
-     * @return	int
+     * @return    int
      */
     public function testHolidayCreate()
     {
@@ -146,9 +146,9 @@ class HolidayTest extends PHPUnit_Framework_TestCase
     /**
      * testHolidayFetch
      *
-     * @param	int		$id		Id of Holiday
-     * @return	int
-     * @depends	testHolidayCreate
+     * @param    int        $id        Id of Holiday
+     * @return    int
+     * @depends    testHolidayCreate
      * The depends says test is run only if previous is ok
      */
     public function testHolidayFetch($id)
@@ -171,10 +171,10 @@ class HolidayTest extends PHPUnit_Framework_TestCase
     /**
      * testHolidayUpdate
      *
-     * @param	Holiday		$localobject	Holiday
-     * @return	int
+     * @param    Holiday        $localobject    Holiday
+     * @return    int
      *
-     * @depends	testHolidayFetch
+     * @depends    testHolidayFetch
      * The depends says test is run only if previous is ok
      */
     public function testHolidayUpdate($localobject)
@@ -233,10 +233,10 @@ class HolidayTest extends PHPUnit_Framework_TestCase
     /**
      * testHolidayOther
      *
-     * @param	Holiday		$localobject		Holiday
-     * @return	void
+     * @param    Holiday        $localobject        Holiday
+     * @return    void
      *
-     * @depends	testHolidayUpdate
+     * @depends    testHolidayUpdate
      * The depends says test is run only if previous is ok
      */
     public function testHolidayOther($localobject)
@@ -269,10 +269,10 @@ class HolidayTest extends PHPUnit_Framework_TestCase
     /**
      * testHolidayDelete
      *
-     * @param	int		$id		Id of Holiday
-     * @return	void
+     * @param    int        $id        Id of Holiday
+     * @return    void
      *
-     * @depends	testHolidayOther
+     * @depends    testHolidayOther
      * The depends says test is run only if previous is ok
      */
     public function testHolidayDelete($id)
@@ -348,7 +348,7 @@ class HolidayTest extends PHPUnit_Framework_TestCase
         $result=$localobjectc->verifDateHolidayCP($user->id, $date_fin, $date_fin, -1);
         $this->assertFalse($result, 'result should be false, there is overlapping, afternoon of second day is not available');
 
-        $result=$localobjectc->verifDateHolidayCP($user->id, $date_debut, $date_fin, 2);	// start afternoon and end morning
+        $result=$localobjectc->verifDateHolidayCP($user->id, $date_debut, $date_fin, 2);    // start afternoon and end morning
         $this->assertTrue($result, 'result should be true, there is no overlapping');
     }
 }

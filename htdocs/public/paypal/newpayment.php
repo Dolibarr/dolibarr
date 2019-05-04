@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2002    Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@inodbox.com>
  *
@@ -21,13 +21,13 @@
  */
 
 /**
- *     	\file       htdocs/public/paypal/newpayment.php
- *		\ingroup    paypal
- *		\brief      File to offer a way to make a payment for a particular Dolibarr entity
+ *         \file       htdocs/public/paypal/newpayment.php
+ *        \ingroup    paypal
+ *        \brief      File to offer a way to make a payment for a particular Dolibarr entity
  */
 
-define("NOLOGIN", 1);		// This means this output page does not require to be logged.
-define("NOCSRFCHECK", 1);	// We accept to go on this page from external web site.
+define("NOLOGIN", 1);        // This means this output page does not require to be logged.
+define("NOCSRFCHECK", 1);    // We accept to go on this page from external web site.
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php

@@ -21,7 +21,7 @@
 
 /**
  *      \file       dev/initdata/generate-product.php
- *		\brief      Script example to inject random products (for load tests)
+ *        \brief      Script example to inject random products (for load tests)
  */
 
 // Test si mode batch
@@ -52,8 +52,8 @@ define(GEN_NUMBER_PRODUIT, 100000);
 $ret=$user->fetch('', 'admin');
 if (! $ret > 0)
 {
-	print 'A user with login "admin" and all permissions must be created to use this script.'."\n";
-	exit;
+    print 'A user with login "admin" and all permissions must be created to use this script.'."\n";
+    exit;
 }
 $user->getrights();
 
@@ -68,14 +68,14 @@ if ($resql) {
 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe"; $societesid = array();
 $resql=$db->query($sql);
 if ($resql) {
-	$num = $db->num_rows($resql); $i = 0;
+    $num = $db->num_rows($resql); $i = 0;
     while ($i < $num) { $row = $db->fetch_row($resql);      $societesid[$i] = $row[0];      $i++; }
 } else { print "err"; }
 
 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."commande"; $commandesid = array();
 $resql=$db->query($sql);
 if ($resql) {
-	$num = $db->num_rows($resql); $i = 0;
+    $num = $db->num_rows($resql); $i = 0;
     while ($i < $num) { $row = $db->fetch_row($resql);      $commandesid[$i] = $row[0];      $i++; }
 } else { print "err"; }
 
@@ -94,5 +94,5 @@ for ($s = 0 ; $s < GEN_NUMBER_PRODUIT ; $s++)
     $produit->tva_tx = "19.6";
     $ret=$produit->create($user);
     if ($ret < 0) print "Error $ret - ".$produit->error."\n";
-	else print " OK with ref ".$produit->ref."\n";
+    else print " OK with ref ".$produit->ref."\n";
 }

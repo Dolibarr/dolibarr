@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2009	Laurent Destailleur		<eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2009    Laurent Destailleur        <eldy@users.sourceforge.net>
  * Copyright (C) 2007		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@inodbox.com>
  *
@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 $langs->loadLangs(array("install","other","admin"));
 
 if (! $user->admin)
-	accessforbidden();
+    accessforbidden();
 
 
 /*
@@ -53,52 +53,52 @@ $modulesdir = dolGetModulesDirs();
 $i=0;
 foreach($modulesdir as $dir)
 {
-	$handle=@opendir(dol_osencode($dir));
+    $handle=@opendir(dol_osencode($dir));
     if (is_resource($handle))
     {
-    	while (($file = readdir($handle))!==false)
-    	{
-    		if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod' && substr($file, dol_strlen($file) - 10) == '.class.php')
-    		{
-    			$modName = substr($file, 0, dol_strlen($file) - 10);
+        while (($file = readdir($handle))!==false)
+        {
+            if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod' && substr($file, dol_strlen($file) - 10) == '.class.php')
+            {
+                $modName = substr($file, 0, dol_strlen($file) - 10);
 
-    			if ($modName)
-    			{
-    				//print 'xx'.$dir.$file.'<br>';
-					if (in_array($file, $modules_files))
-					{
-						// File duplicate
-						print "Warning duplicate file found : ".$file." (Found ".$dir.$file.", already found ".$modules_fullpath[$file].")<br>";
-					}
-					else
-					{
-						// File to load
-						$res=include_once $dir.$file;
-						if (class_exists($modName))
-						{
-							try {
-	    						$objMod = new $modName($db);
+                if ($modName)
+                {
+                    //print 'xx'.$dir.$file.'<br>';
+                    if (in_array($file, $modules_files))
+                    {
+                        // File duplicate
+                        print "Warning duplicate file found : ".$file." (Found ".$dir.$file.", already found ".$modules_fullpath[$file].")<br>";
+                    }
+                    else
+                    {
+                        // File to load
+                        $res=include_once $dir.$file;
+                        if (class_exists($modName))
+                        {
+                            try {
+                                $objMod = new $modName($db);
 
-			    				$modules[$objMod->numero]=$objMod;
-			    				$modules_names[$objMod->numero]=$objMod->name;
-	    						$modules_files[$objMod->numero]=$file;
-	    						$modules_fullpath[$file]=$dir.$file;
-	    						$picto[$objMod->numero]=(isset($objMod->picto) && $objMod->picto)?$objMod->picto:'generic';
-							}
-							catch(Exception $e)
-							{
-								dol_syslog("Failed to load ".$dir.$file." ".$e->getMessage(), LOG_ERR);
-							}
-						}
-						else
-						{
-							print "Warning bad descriptor file : ".$dir.$file." (Class ".$modName." not found into file)<br>";
-						}
-					}
-    			}
-    		}
-    	}
-    	closedir($handle);
+                                $modules[$objMod->numero]=$objMod;
+                                $modules_names[$objMod->numero]=$objMod->name;
+                                $modules_files[$objMod->numero]=$file;
+                                $modules_fullpath[$file]=$dir.$file;
+                                $picto[$objMod->numero]=(isset($objMod->picto) && $objMod->picto)?$objMod->picto:'generic';
+                            }
+                            catch(Exception $e)
+                            {
+                                dol_syslog("Failed to load ".$dir.$file." ".$e->getMessage(), LOG_ERR);
+                            }
+                        }
+                        else
+                        {
+                            print "Warning bad descriptor file : ".$dir.$file." (Class ".$modName." not found into file)<br>";
+                        }
+                    }
+                }
+            }
+        }
+        closedir($handle);
     }
 }
 
@@ -116,36 +116,36 @@ ksort($sortorder);
 $rights_ids = array();
 foreach($sortorder as $numero=>$name)
 {
-	$idperms="";
-	// Module
-	print '<tr class="oddeven"><td width="300" class="nowrap">';
-	$alt=$name.' - '.$modules_files[$numero];
+    $idperms="";
+    // Module
+    print '<tr class="oddeven"><td width="300" class="nowrap">';
+    $alt=$name.' - '.$modules_files[$numero];
     if (! empty($picto[$numero]))
     {
-       	if (preg_match('/^\//', $picto[$numero])) print img_picto($alt, $picto[$numero], 'width="14px"', 1);
-       	else print img_object($alt, $picto[$numero], 'width="14px"');
+           if (preg_match('/^\//', $picto[$numero])) print img_picto($alt, $picto[$numero], 'width="14px"', 1);
+           else print img_object($alt, $picto[$numero], 'width="14px"');
     }
     else
     {
-      	print img_object($alt, $picto[$numero], 'width="14px"');
+          print img_object($alt, $picto[$numero], 'width="14px"');
     }
-	print ' '.$modules[$numero]->getName();
-	print "</td>";
-	// Version
-	print '<td>'.$modules[$numero]->getVersion().'</td>';
-	// Id
-	print '<td class="center">'.$numero.'</td>';
-	// Permissions
-	if ($modules[$numero]->rights)
-	{
-		foreach($modules[$numero]->rights as $rights)
-		{
-			$idperms.=($idperms?", ":"").$rights[0];
-			array_push($rights_ids, $rights[0]);
-		}
-	}
-	print '<td>'.($idperms?$idperms:"&nbsp;").'</td>';
-	print "</tr>\n";
+    print ' '.$modules[$numero]->getName();
+    print "</td>";
+    // Version
+    print '<td>'.$modules[$numero]->getVersion().'</td>';
+    // Id
+    print '<td class="center">'.$numero.'</td>';
+    // Permissions
+    if ($modules[$numero]->rights)
+    {
+        foreach($modules[$numero]->rights as $rights)
+        {
+            $idperms.=($idperms?", ":"").$rights[0];
+            array_push($rights_ids, $rights[0]);
+        }
+    }
+    print '<td>'.($idperms?$idperms:"&nbsp;").'</td>';
+    print "</tr>\n";
 }
 print '</table>';
 print '</div>';
@@ -154,8 +154,8 @@ sort($rights_ids);
 $old='';
 foreach($rights_ids as $right_id)
 {
-	if ($old == $right_id) print "Warning duplicate id on permission : ".$right_id."<br>";
-	$old = $right_id;
+    if ($old == $right_id) print "Warning duplicate id on permission : ".$right_id."<br>";
+    $old = $right_id;
 }
 
 // End of page

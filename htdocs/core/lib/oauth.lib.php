@@ -17,9 +17,9 @@
  */
 
 /**
- *	\file       core/lib/oauth.lib.php
- *	\brief      Function for module Oauth
- *	\ingroup    oauth
+ *    \file       core/lib/oauth.lib.php
+ *    \brief      Function for module Oauth
+ *    \ingroup    oauth
  */
 
 
@@ -29,8 +29,8 @@ $supportedoauth2array=array(
 );
 if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 {
-	$supportedoauth2array['OAUTH_STRIPE_TEST_NAME']='stripetest';
-	$supportedoauth2array['OAUTH_STRIPE_LIVE_NAME']='stripelive';
+    $supportedoauth2array['OAUTH_STRIPE_TEST_NAME']='stripetest';
+    $supportedoauth2array['OAUTH_STRIPE_LIVE_NAME']='stripelive';
 }
 $supportedoauth2array['OAUTH_GITHUB_NAME']='github';
 
@@ -220,17 +220,17 @@ $list = array (
         'OAUTH_STRAVA_ID',
         'OAUTH_STRAVA_SECRET',
     ),
-	array(
-		'OAUTH_STRIPE_TEST_NAME',
-		'OAUTH_STRIPE_TEST_ID',
-		'STRIPE_TEST_SECRET_KEY',
-	),
-	array(
-		'OAUTH_STRIPE_LIVE_NAME',
-		'OAUTH_STRIPE_LIVE_ID',
-		'STRIPE_LIVE_SECRET_KEY',
-	),
-	array(
+    array(
+        'OAUTH_STRIPE_TEST_NAME',
+        'OAUTH_STRIPE_TEST_ID',
+        'STRIPE_TEST_SECRET_KEY',
+    ),
+    array(
+        'OAUTH_STRIPE_LIVE_NAME',
+        'OAUTH_STRIPE_LIVE_ID',
+        'STRIPE_LIVE_SECRET_KEY',
+    ),
+    array(
         'OAUTH_TUMBLR_NAME',
         'OAUTH_TUMBLR_ID',
         'OAUTH_TUMBLR_SECRET',
@@ -267,7 +267,7 @@ $list = array (
 /**
  * Return array of tabs to used on pages to setup cron module.
  *
- * @return 	array				Array of tabs
+ * @return     array                Array of tabs
  */
 function oauthadmin_prepare_head()
 {

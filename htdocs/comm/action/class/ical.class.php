@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006      Roman Ozana			<ozana@omdesign.cz>
+/* Copyright (C) 2006      Roman Ozana            <ozana@omdesign.cz>
  * Copyright (C) 2011	   Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2013-2014 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012	   Regis Houssin		<regis.houssin@inodbox.com>
@@ -97,8 +97,8 @@ class ICal
     /**
      * Translate Calendar
      *
-     * @param	string 	$uri	Url
-     * @return	array|string
+     * @param    string     $uri    Url
+     * @return    array|string
      */
     public function parse($uri)
     {
@@ -169,30 +169,30 @@ class ICal
                         break;
 
                     default: // no special string (SUMMARY, DESCRIPTION, ...)
-                    	if ($tmpvalue)
-						{
-							$tmpvalue .= $text;
-							if (! preg_match('/=$/', $text))	// No more lines
-							{
-								$key=$tmpkey;
-								$value=quotedPrintDecode(preg_replace('/^ENCODING=QUOTED-PRINTABLE:/i', '', $tmpvalue));
-								$tmpkey='';
-								$tmpvalue='';
-							}
-						}
-                    	elseif (preg_match('/^ENCODING=QUOTED-PRINTABLE:/i', $value))
-                    	{
-                    		if (preg_match('/=$/', $value))
-                    		{
-                    			$tmpkey=$key;
-                    			$tmpvalue=$tmpvalue.preg_replace('/=$/', "", $value);	// We must wait to have next line to have complete message
-                    		}
-                    		else
-                    		{
-                    			$value=quotedPrintDecode(preg_replace('/^ENCODING=QUOTED-PRINTABLE:/i', '', $tmpvalue.$value));
-                    		}
-                    	}                    	//$value=quotedPrintDecode($tmpvalue.$value);
-                    	if (! $insidealarm && ! $tmpkey) $this->add_to_array($type, $key, $value); // add to array
+                        if ($tmpvalue)
+                        {
+                            $tmpvalue .= $text;
+                            if (! preg_match('/=$/', $text))    // No more lines
+                            {
+                                $key=$tmpkey;
+                                $value=quotedPrintDecode(preg_replace('/^ENCODING=QUOTED-PRINTABLE:/i', '', $tmpvalue));
+                                $tmpkey='';
+                                $tmpvalue='';
+                            }
+                        }
+                        elseif (preg_match('/^ENCODING=QUOTED-PRINTABLE:/i', $value))
+                        {
+                            if (preg_match('/=$/', $value))
+                            {
+                                $tmpkey=$key;
+                                $tmpvalue=$tmpvalue.preg_replace('/=$/', "", $value);    // We must wait to have next line to have complete message
+                            }
+                            else
+                            {
+                                $value=quotedPrintDecode(preg_replace('/^ENCODING=QUOTED-PRINTABLE:/i', '', $tmpvalue.$value));
+                            }
+                        }                        //$value=quotedPrintDecode($tmpvalue.$value);
+                        if (! $insidealarm && ! $tmpkey) $this->add_to_array($type, $key, $value); // add to array
                         break;
                 }
             }
@@ -206,10 +206,10 @@ class ICal
     /**
      * Add to $this->ical array one value and key.
      *
-     * @param 	string 	$type		Type ('VTODO', 'VEVENT', 'VFREEBUSY', 'VCALENDAR'...)
-     * @param 	string 	$key		Key	('DTSTART', ...). Note: Field is never 'DTSTART;TZID=...' because ';...' was before removed and added as another property
-     * @param 	string 	$value		Value
-     * @return	void
+     * @param     string     $type        Type ('VTODO', 'VEVENT', 'VFREEBUSY', 'VCALENDAR'...)
+     * @param     string     $key        Key    ('DTSTART', ...). Note: Field is never 'DTSTART;TZID=...' because ';...' was before removed and added as another property
+     * @param     string     $value        Value
+     * @return    void
      */
     public function add_to_array($type, $key, $value)
     {
@@ -233,14 +233,14 @@ class ICal
 
         if (stristr($key, "DTSTART") || stristr($key, "DTEND") || stristr($key, "DTSTART;VALUE=DATE") || stristr($key, "DTEND;VALUE=DATE"))
         {
-        	if (stristr($key, "DTSTART;VALUE=DATE") || stristr($key, "DTEND;VALUE=DATE"))
-        	{
-        		list($key,$value) = array($key,$value);
-        	}
-        	else
-        	{
-        		list($key,$value) = $this->ical_dt_date($key, $value);
-        	}
+            if (stristr($key, "DTSTART;VALUE=DATE") || stristr($key, "DTEND;VALUE=DATE"))
+            {
+                list($key,$value) = array($key,$value);
+            }
+            else
+            {
+                list($key,$value) = $this->ical_dt_date($key, $value);
+            }
         }
 
         switch ($type)
@@ -268,8 +268,8 @@ class ICal
     /**
      * Parse text "XXXX:value text some with : " and return array($key = "XXXX", $value="value");
      *
-     * @param 	string 	$text	Text
-     * @return 	array
+     * @param     string     $text    Text
+     * @return     array
      */
     public function retun_key_value($text)
     {
@@ -293,8 +293,8 @@ class ICal
     /**
      * Parse RRULE  return array
      *
-     * @param 	string 	$value	string
-     * @return 	array
+     * @param     string     $value    string
+     * @return     array
      */
     public function ical_rrule($value)
     {
@@ -313,8 +313,8 @@ class ICal
     /**
      * Return Unix time from ical date time fomrat (YYYYMMDD[T]HHMMSS[Z] or YYYYMMDD[T]HHMMSS)
      *
-     * @param 	string		$ical_date		String date
-     * @return 	int
+     * @param     string        $ical_date        String date
+     * @return     int
      */
     public function ical_date_to_unix($ical_date)
     {
@@ -336,9 +336,9 @@ class ICal
     /**
      * Return unix date from iCal date format
      *
-     * @param 	string 		$key			Key
-     * @param 	string 		$value			Value
-     * @return 	array
+     * @param     string         $key            Key
+     * @param     string         $value            Value
+     * @return     array
      */
     public function ical_dt_date($key, $value)
     {
@@ -388,9 +388,9 @@ class ICal
     /**
      * Compare two unix timestamp
      *
-     * @param 	array 	$a		Operand a
-     * @param 	array 	$b		Operand b
-     * @return 	integer
+     * @param     array     $a        Operand a
+     * @param     array     $b        Operand b
+     * @return     integer
      */
     public function ical_dtstart_compare($a, $b)
     {

@@ -57,9 +57,9 @@ class AgendaEvents extends DolibarrApi
      * Return an array with Agenda Events informations
      *
      * @param       int         $id         ID of Agenda Events
-     * @return 	    array|mixed             Data without useless information
+     * @return         array|mixed             Data without useless information
      *
-     * @throws 	RestException
+     * @throws     RestException
      */
     public function get($id)
     {
@@ -91,11 +91,11 @@ class AgendaEvents extends DolibarrApi
      *
      * Get a list of Agenda Events
      *
-     * @param string	$sortfield	Sort field
-     * @param string	$sortorder	Sort order
-     * @param int		$limit		Limit for list
-     * @param int		$page		Page number
-     * @param string   	$user_ids   User ids filter field (owners of event). Example: '1' or '1,2,3'          {@pattern /^[0-9,]*$/i}
+     * @param string    $sortfield    Sort field
+     * @param string    $sortorder    Sort order
+     * @param int        $limit        Limit for list
+     * @param int        $page        Page number
+     * @param string       $user_ids   User ids filter field (owners of event). Example: '1' or '1,2,3'          {@pattern /^[0-9,]*$/i}
      * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.label:like:'%dol%') and (t.datec:<:'20160101')"
      * @return  array               Array of Agenda Events objects
      */
@@ -116,7 +116,7 @@ class AgendaEvents extends DolibarrApi
         // If the internal user must only see his customers, force searching by him
         $search_sale = 0;
         if (! DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) $search_sale = DolibarrApiAccess::$user->id;
-        if (empty($conf->societe->enabled)) $search_sale = 0;	// If module thirdparty not enabled, sale representative is something that does not exists
+        if (empty($conf->societe->enabled)) $search_sale = 0;    // If module thirdparty not enabled, sale representative is something that does not exists
 
         $sql = "SELECT t.id as rowid";
         if (! empty($conf->societe->enabled))
@@ -146,7 +146,7 @@ class AgendaEvents extends DolibarrApi
         }
 
         $sql.= $db->order($sortfield, $sortorder);
-        if ($limit)	{
+        if ($limit)    {
             if ($page < 0)
             {
                 $page = 0;
@@ -317,8 +317,8 @@ class AgendaEvents extends DolibarrApi
     /**
      * Clean sensible object datas
      *
-     * @param	object	$object		Object to clean
-     * @return	array				Array of cleaned object properties
+     * @param    object    $object        Object to clean
+     * @return    array                Array of cleaned object properties
      */
     protected function _cleanObjectDatas($object)
     {

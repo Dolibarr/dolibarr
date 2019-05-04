@@ -46,14 +46,14 @@ $result=restrictedArea($user, 'produit|service', $fieldvalue, 'product&product',
 $object = new Product($db);
 if ($id > 0 || ! empty($ref)) $object->fetch($id, $ref);
 
-$permissionnote=$user->rights->produit->creer;	// Used by the include of actions_setnotes.inc.php
+$permissionnote=$user->rights->produit->creer;    // Used by the include of actions_setnotes.inc.php
 
 
 /*
  * Actions
  */
 
-include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, not includ_once
+include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';    // Must be include, not includ_once
 
 
 /*
@@ -70,13 +70,13 @@ $title = $langs->trans('ProductServiceCard');
 $shortlabel = dol_trunc($object->label, 16);
 if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT))
 {
-	$title = $langs->trans('Product')." ". $shortlabel ." - ".$langs->trans('Notes');
-	$helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
+    $title = $langs->trans('Product')." ". $shortlabel ." - ".$langs->trans('Notes');
+    $helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
 }
 if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE))
 {
-	$title = $langs->trans('Service')." ". $shortlabel ." - ".$langs->trans('Notes');
-	$helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
+    $title = $langs->trans('Service')." ". $shortlabel ." - ".$langs->trans('Notes');
+    $helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 }
 
 llxHeader('', $title, $help_url);
@@ -94,13 +94,13 @@ if ($id > 0 || ! empty($ref))
 
     dol_fiche_head($head, 'note', $titre, -1, $picto);
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+    $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
     $object->next_prev_filter=" fk_product_type = ".$object->type;
 
     $shownav = 1;
     if ($user->societe_id && ! in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
 
-	dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref');
+    dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref');
 
     $cssclass='titlefield';
     //if ($action == 'editnote_public') $cssclass='titlefieldcreate';

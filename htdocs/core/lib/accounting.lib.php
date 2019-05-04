@@ -18,139 +18,139 @@
  */
 
 /**
- * 	\file		htdocs/core/lib/accounting.lib.php
- * 	\ingroup	Advanced accountancy
- * 	\brief		Library of accountancy functions
+ *     \file        htdocs/core/lib/accounting.lib.php
+ *     \ingroup    Advanced accountancy
+ *     \brief        Library of accountancy functions
  */
 
 /**
- *	Prepare array with list of tabs
+ *    Prepare array with list of tabs
  *
- *	@param	AccountingAccount	$object		Accounting account
- *	@return	array				Array of tabs to show
+ *    @param    AccountingAccount    $object        Accounting account
+ *    @return    array                Array of tabs to show
  */
 function accounting_prepare_head(AccountingAccount $object)
 {
-	global $langs, $conf;
+    global $langs, $conf;
 
-	$h = 0;
-	$head = array ();
+    $h = 0;
+    $head = array ();
 
-	$head[$h][0] = DOL_URL_ROOT.'/accountancy/admin/card.php?id=' . $object->id;
-	$head[$h][1] = $langs->trans("Card");
-	$head[$h][2] = 'card';
-	$h ++;
+    $head[$h][0] = DOL_URL_ROOT.'/accountancy/admin/card.php?id=' . $object->id;
+    $head[$h][1] = $langs->trans("Card");
+    $head[$h][2] = 'card';
+    $h ++;
 
-	// Show more tabs from modules
-	// Entries must be declared in modules descriptor with line
-	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__'); to add new tab
-	// $this->tabs = array('entity:-tabname); to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'accounting_account');
+    // Show more tabs from modules
+    // Entries must be declared in modules descriptor with line
+    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__'); to add new tab
+    // $this->tabs = array('entity:-tabname); to remove a tab
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'accounting_account');
 
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'accounting_account', 'remove');
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'accounting_account', 'remove');
 
-	return $head;
+    return $head;
 }
 
 /**
  * Return accounting account without zero on the right
  *
- * @param 	string	$account		Accounting account
- * @return	string          		String without zero on the right
+ * @param     string    $account        Accounting account
+ * @return    string                  String without zero on the right
  */
 function clean_account($account)
 {
-	$account = rtrim($account, "0");
+    $account = rtrim($account, "0");
 
-	return $account;
+    return $account;
 }
 
 /**
  * Return General accounting account with defined length (used for product and miscellaneous)
  *
- * @param 	string	$account		General accounting account
- * @return	string          		String with defined length
+ * @param     string    $account        General accounting account
+ * @return    string                  String with defined length
  */
 function length_accountg($account)
 {
-	global $conf;
+    global $conf;
 
-	if ($account < 0 || empty($account)) return '';
+    if ($account < 0 || empty($account)) return '';
 
-	if (! empty($conf->global->ACCOUNTING_MANAGE_ZERO)) return $account;
+    if (! empty($conf->global->ACCOUNTING_MANAGE_ZERO)) return $account;
 
-	$g = $conf->global->ACCOUNTING_LENGTH_GACCOUNT;
-	if (! empty($g)) {
-		// Clean parameters
-		$i = strlen($account);
+    $g = $conf->global->ACCOUNTING_LENGTH_GACCOUNT;
+    if (! empty($g)) {
+        // Clean parameters
+        $i = strlen($account);
 
-		if ($i >= 1) {
-			while ( $i < $g ) {
-				$account .= '0';
+        if ($i >= 1) {
+            while ( $i < $g ) {
+                $account .= '0';
 
-				$i ++;
-			}
+                $i ++;
+            }
 
-			return $account;
-		} else {
-			return $account;
-		}
-	} else {
-		return $account;
-	}
+            return $account;
+        } else {
+            return $account;
+        }
+    } else {
+        return $account;
+    }
 }
 
 /**
  * Return Auxiliary accounting account of thirdparties with defined length
  *
- * @param 	string	$accounta		Auxiliary accounting account
- * @return	string          		String with defined length
+ * @param     string    $accounta        Auxiliary accounting account
+ * @return    string                  String with defined length
  */
 function length_accounta($accounta)
 {
-	global $conf;
+    global $conf;
 
-	if ($accounta < 0 || empty($accounta)) return '';
+    if ($accounta < 0 || empty($accounta)) return '';
 
-	if (! empty($conf->global->ACCOUNTING_MANAGE_ZERO)) return $accounta;
+    if (! empty($conf->global->ACCOUNTING_MANAGE_ZERO)) return $accounta;
 
-	$a = $conf->global->ACCOUNTING_LENGTH_AACCOUNT;
-	if (! empty($a)) {
-		// Clean parameters
-		$i = strlen($accounta);
+    $a = $conf->global->ACCOUNTING_LENGTH_AACCOUNT;
+    if (! empty($a)) {
+        // Clean parameters
+        $i = strlen($accounta);
 
-		if ($i >= 1) {
-			while ( $i < $a ) {
-				$accounta .= '0';
+        if ($i >= 1) {
+            while ( $i < $a ) {
+                $accounta .= '0';
 
-				$i ++;
-			}
+                $i ++;
+            }
 
-			return $accounta;
-		} else {
-			return $accounta;
-		}
-	} else {
-		return $accounta;
-	}
+            return $accounta;
+        } else {
+            return $accounta;
+        }
+    } else {
+        return $accounta;
+    }
 }
 
 
 
 /**
- *	Show header of a VAT report
+ *    Show header of a VAT report
  *
- *	@param	string				$nom            Name of report
- *	@param 	string				$variante       Link for alternate report
- *	@param 	string				$period         Period of report
- *	@param 	string				$periodlink     Link to switch period
- *	@param 	string				$description    Description
- *	@param 	integer	            $builddate      Date of generation
- *	@param 	string				$exportlink     Link for export or ''
- *	@param	array				$moreparam		Array with list of params to add into form
- *	@param	string				$calcmode		Calculation mode
+ *    @param    string                $nom            Name of report
+ *    @param     string                $variante       Link for alternate report
+ *    @param     string                $period         Period of report
+ *    @param     string                $periodlink     Link to switch period
+ *    @param     string                $description    Description
+ *    @param     integer                $builddate      Date of generation
+ *    @param     string                $exportlink     Link for export or ''
+ *    @param    array                $moreparam        Array with list of params to add into form
+ *    @param    string                $calcmode        Calculation mode
  *  @param  string              $varlink        Add a variable into the address of the page
- *	@return	void
+ *    @return    void
  */
 function journalHead($nom, $variante, $period, $periodlink, $description, $builddate, $exportlink = '', $moreparam = array(), $calcmode = '', $varlink = '')
 {

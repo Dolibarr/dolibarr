@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+/* Copyright (C) 2005        Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
  *
@@ -85,22 +85,22 @@ if ($id > 0)
     $object->fetch_clicktodial();
 
 
-	$head = user_prepare_head($object);
+    $head = user_prepare_head($object);
 
-	$title = $langs->trans("User");
+    $title = $langs->trans("User");
 
 
-	print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="post">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<input type="hidden" name="action" value="update">';
+    print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="post">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="action" value="update">';
 
-	dol_fiche_head($head, 'clicktodial', $title, -1, 'user');
+    dol_fiche_head($head, 'clicktodial', $title, -1, 'user');
 
-	$linkback = '';
+    $linkback = '';
 
-	if ($user->rights->user->user->lire || $user->admin) {
-		$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
-	}
+    if ($user->rights->user->user->lire || $user->admin) {
+        $linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+    }
 
     dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
 
@@ -147,28 +147,28 @@ if ($id > 0)
 
         print '</table>';
     }
-    else	// View mode
+    else    // View mode
     {
 
         print '<table class="border centpercent">';
 
         if (! empty($user->admin))
         {
-        	print '<tr><td class="titlefield fieldrequired">ClickToDial URL</td>';
-        	print '<td class="valeur">';
-        	$url=$conf->global->CLICKTODIAL_URL;
-        	if (! empty($object->clicktodial_url)) $url=$object->clicktodial_url;
-        	if (empty($url))
-        	{
-        	    $langs->load("errors");
-        	    print '<font class="error">'.$langs->trans("ErrorModuleSetupNotComplete").'</font>';
-        	}
-        	else
-        	{
-        		print $form->textwithpicto((empty($object->clicktodial_url)?$langs->trans("DefaultLink").': ':'').$url, $langs->trans("ClickToDialUrlDesc"));
-        	}
-        	print '</td>';
-        	print '</tr>';
+            print '<tr><td class="titlefield fieldrequired">ClickToDial URL</td>';
+            print '<td class="valeur">';
+            $url=$conf->global->CLICKTODIAL_URL;
+            if (! empty($object->clicktodial_url)) $url=$object->clicktodial_url;
+            if (empty($url))
+            {
+                $langs->load("errors");
+                print '<font class="error">'.$langs->trans("ErrorModuleSetupNotComplete").'</font>';
+            }
+            else
+            {
+                print $form->textwithpicto((empty($object->clicktodial_url)?$langs->trans("DefaultLink").': ':'').$url, $langs->trans("ClickToDialUrlDesc"));
+            }
+            print '</td>';
+            print '</tr>';
         }
 
         print '<tr><td class="titlefield fieldrequired">ClickToDial '.$langs->trans("IdPhoneCaller").'</td>';

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2015 		Alexandre Spangaro <aspangaro@open-dsi.fr>
+/* Copyright (C) 2015         Alexandre Spangaro <aspangaro@open-dsi.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,9 +16,9 @@
  */
 
 /**
- * \file 	htdocs/hrm/admin/admin_hrm.php
+ * \file     htdocs/hrm/admin/admin_hrm.php
  * \ingroup HRM
- * \brief 	HRM module setup page
+ * \brief     HRM module setup page
  */
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/hrm.lib.php';
@@ -28,34 +28,34 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 $langs->loadLangs(array('admin', 'hrm'));
 
 if (! $user->admin)
-	accessforbidden();
+    accessforbidden();
 
 $action = GETPOST('action', 'alpha');
 
 // Other parameters HRM_*
 $list = array (
-		'HRM_EMAIL_EXTERNAL_SERVICE'   // To prevent your public accountant for example
+        'HRM_EMAIL_EXTERNAL_SERVICE'   // To prevent your public accountant for example
 );
 
 /*
  * Actions
  */
 if ($action == 'update') {
-	$error = 0;
-	
-	foreach ($list as $constname) {
-		$constvalue = GETPOST($constname, 'alpha');
-		
-		if (! dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
-			$error ++;
-		}
-	}
-	
-	if (! $error) {
-		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	} else {
-		setEventMessages($langs->trans("Error"), null, 'errors');
-	}
+    $error = 0;
+    
+    foreach ($list as $constname) {
+        $constvalue = GETPOST($constname, 'alpha');
+        
+        if (! dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
+            $error ++;
+        }
+    }
+    
+    if (! $error) {
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    } else {
+        setEventMessages($langs->trans("Error"), null, 'errors');
+    }
 }
 
 /*
@@ -86,18 +86,18 @@ print '<td colspan="3">' . $langs->trans('Journaux') . '</td>';
 print "</tr>\n";
 
 foreach ($list as $key) {
-	$var = ! $var;
-	
-	print '<tr ' . $bc[$var] . ' class="value">';
-	
-	// Param
-	$label = $langs->trans($key);
-	print '<td width="50%"><label for="' . $key . '">' . $label . '</label></td>';
-	
-	// Value
-	print '<td>';
-	print '<input type="text" size="20" id="' . $key . '" name="' . $key . '" value="' . $conf->global->$key . '">';
-	print '</td></tr>';
+    $var = ! $var;
+    
+    print '<tr ' . $bc[$var] . ' class="value">';
+    
+    // Param
+    $label = $langs->trans($key);
+    print '<td width="50%"><label for="' . $key . '">' . $label . '</label></td>';
+    
+    // Value
+    print '<td>';
+    print '<input type="text" size="20" id="' . $key . '" name="' . $key . '" value="' . $conf->global->$key . '">';
+    print '</td></tr>';
 }
 
 print "</table>\n";

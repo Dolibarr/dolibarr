@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2011	Laurent Destailleur	<eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2011    Laurent Destailleur    <eldy@users.sourceforge.net>
  * Copyright (C) 2011		Regis Houssin		<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -25,7 +25,7 @@
 set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
 
 require_once '../master.inc.php';
-require_once NUSOAP_PATH.'/nusoap.php';		// Include SOAP
+require_once NUSOAP_PATH.'/nusoap.php';        // Include SOAP
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
 $langs->load("admin");
@@ -40,11 +40,11 @@ dol_syslog("Call Dolibarr webservices interfaces");
 // Enable and test if module web services is enabled
 if (empty($conf->global->MAIN_MODULE_WEBSERVICES))
 {
-	$langs->load("admin");
-	dol_syslog("Call Dolibarr webservices interfaces with module webservices disabled");
-	print $langs->trans("WarningModuleNotActive", 'WebServices').'.<br><br>';
-	print $langs->trans("ToActivateModule");
-	exit;
+    $langs->load("admin");
+    dol_syslog("Call Dolibarr webservices interfaces with module webservices disabled");
+    print $langs->trans("WarningModuleNotActive", 'WebServices').'.<br><br>';
+    print $langs->trans("ToActivateModule");
+    exit;
 }
 
 

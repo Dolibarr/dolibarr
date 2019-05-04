@@ -24,7 +24,7 @@
  */
 
 global $conf,$user,$langs,$db;
-//define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
+//define('TEST_DB_FORCE_TYPE','mysql');    // This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/product/class/product.class.php';
@@ -199,7 +199,7 @@ class ProductTest extends PHPUnit_Framework_TestCase
      * @param   Product $localobject    Product
      * @return  void
      *
-     * @depends	testProductUpdate
+     * @depends    testProductUpdate
      * The depends says test is run only if previous is ok
      */
     public function testProductOther($localobject)

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005		Patrick Rouillon	<patrick@rouillon.net>
+/* Copyright (C) 2005        Patrick Rouillon    <patrick@rouillon.net>
  * Copyright (C) 2005-2009	Destailleur Laurent	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 if (! empty($conf->projet->enabled)) {
-	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+    require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 }
 
 // Load translation files required by the page
@@ -58,56 +58,56 @@ $hookmanager->initHooks(array('contractcard','globalcard'));
 
 if ($action == 'addcontact' && $user->rights->contrat->creer)
 {
-	$result = $object->fetch($id);
+    $result = $object->fetch($id);
 
     if ($result > 0 && $id > 0)
     {
-    	$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
-  		$result = $object->add_contact($contactid, $_POST["type"], $_POST["source"]);
+        $contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
+          $result = $object->add_contact($contactid, $_POST["type"], $_POST["source"]);
     }
 
-	if ($result >= 0)
-	{
-		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
-		exit;
-	}
-	else
-	{
-		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-			$langs->load("errors");
-			$msg = $langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType");
-		} else {
-			$mesg = $object->error;
-		}
+    if ($result >= 0)
+    {
+        header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+        exit;
+    }
+    else
+    {
+        if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+            $langs->load("errors");
+            $msg = $langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType");
+        } else {
+            $mesg = $object->error;
+        }
 
-		setEventMessages($mesg, null, 'errors');
-	}
+        setEventMessages($mesg, null, 'errors');
+    }
 }
 
 // bascule du statut d'un contact
 if ($action == 'swapstatut' && $user->rights->contrat->creer)
 {
-	if ($object->fetch($id))
-	{
-	    $result=$object->swapContactStatus(GETPOST('ligne'));
-	}
-	else
-	{
-		dol_print_error($db, $object->error);
-	}
+    if ($object->fetch($id))
+    {
+        $result=$object->swapContactStatus(GETPOST('ligne'));
+    }
+    else
+    {
+        dol_print_error($db, $object->error);
+    }
 }
 
 // Delete contact
 if ($action == 'deletecontact' && $user->rights->contrat->creer)
 {
-	$object->fetch($id);
-	$result = $object->delete_contact($_GET["lineid"]);
+    $object->fetch($id);
+    $result = $object->delete_contact($_GET["lineid"]);
 
-	if ($result >= 0)
-	{
-		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
-		exit;
-	}
+    if ($result >= 0)
+    {
+        header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+        exit;
+    }
 }
 
 
@@ -130,17 +130,17 @@ $userstatic=new User($db);
 
 if ($id > 0 || ! empty($ref))
 {
-	if ($object->fetch($id, $ref) > 0)
-	{
-		$object->fetch_thirdparty();
+    if ($object->fetch($id, $ref) > 0)
+    {
+        $object->fetch_thirdparty();
 
-	    $head = contract_prepare_head($object);
+        $head = contract_prepare_head($object);
 
-		$hselected=1;
+        $hselected=1;
 
-		dol_fiche_head($head, $hselected, $langs->trans("Contract"), -1, 'contract');
+        dol_fiche_head($head, $hselected, $langs->trans("Contract"), -1, 'contract');
 
-		// Contract card
+        // Contract card
 
         $linkback = '<a href="'.DOL_URL_ROOT.'/contrat/list.php?restore_lastsearch_values=1'.(! empty($socid)?'&socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
@@ -153,16 +153,16 @@ if ($id > 0 || ! empty($ref))
             $morehtmlref.=$form->editfieldval("",'ref',$object->ref,0,'string','',0,2);
         }*/
 
-		$morehtmlref.='<div class="refidno">';
-		// Ref customer
-		$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_customer', $object->ref_customer, $object, 0, 'string', '', 0, 1);
-		$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_customer', $object->ref_customer, $object, 0, 'string', '', null, null, '', 1, 'getFormatedCustomerRef');
-		// Ref supplier
-		$morehtmlref.='<br>';
-		$morehtmlref.=$form->editfieldkey("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', 0, 1);
-		$morehtmlref.=$form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', null, null, '', 1, 'getFormatedSupplierRef');
-		// Thirdparty
-	    $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
+        $morehtmlref.='<div class="refidno">';
+        // Ref customer
+        $morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_customer', $object->ref_customer, $object, 0, 'string', '', 0, 1);
+        $morehtmlref.=$form->editfieldval("RefCustomer", 'ref_customer', $object->ref_customer, $object, 0, 'string', '', null, null, '', 1, 'getFormatedCustomerRef');
+        // Ref supplier
+        $morehtmlref.='<br>';
+        $morehtmlref.=$form->editfieldkey("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', 0, 1);
+        $morehtmlref.=$form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', null, null, '', 1, 'getFormatedSupplierRef');
+        // Thirdparty
+        $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
         // Project
         if (! empty($conf->projet->enabled)) {
             $langs->load("projects");
@@ -173,38 +173,38 @@ if ($id > 0 || ! empty($ref))
                     $morehtmlref.=' : ';
                 }
                 if ($action == 'classify') {
-	                //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
-	                $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-	                $morehtmlref.='<input type="hidden" name="action" value="classin">';
-	                $morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	                $morehtmlref.=$formproject->select_projects($object->thirdparty->id, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-	                $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-	                $morehtmlref.='</form>';
-	            } else {
-	                $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->thirdparty->id, $object->fk_project, 'none', 0, 0, 0, 1);
-	            }
-	        } else {
-	            if (! empty($object->fk_project)) {
-	                $proj = new Project($db);
-	                $proj->fetch($object->fk_project);
-	                $morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
-	                $morehtmlref.=$proj->ref;
-	                $morehtmlref.='</a>';
-	            } else {
-	                $morehtmlref.='';
-	            }
-	        }
-	    }
-	    $morehtmlref.='</div>';
+                    //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+                    $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+                    $morehtmlref.='<input type="hidden" name="action" value="classin">';
+                    $morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+                    $morehtmlref.=$formproject->select_projects($object->thirdparty->id, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+                    $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+                    $morehtmlref.='</form>';
+                } else {
+                    $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->thirdparty->id, $object->fk_project, 'none', 0, 0, 0, 1);
+                }
+            } else {
+                if (! empty($object->fk_project)) {
+                    $proj = new Project($db);
+                    $proj->fetch($object->fk_project);
+                    $morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
+                    $morehtmlref.=$proj->ref;
+                    $morehtmlref.='</a>';
+                } else {
+                    $morehtmlref.='';
+                }
+            }
+        }
+        $morehtmlref.='</div>';
 
 
-	    dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'none', $morehtmlref);
+        dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'none', $morehtmlref);
 
 
-	    print '<div class="fichecenter">';
-	    print '<div class="underbanner clearboth"></div>';
+        print '<div class="fichecenter">';
+        print '<div class="underbanner clearboth"></div>';
 
-		print '<table class="border tableforfield" width="100%">';
+        print '<table class="border tableforfield" width="100%">';
 
 
         // Ligne info remises tiers
@@ -223,26 +223,26 @@ if ($id > 0 || ! empty($ref))
 
         // Date
         print '<tr>';
-		print '<td class="titlefield">';
-		print $form->editfieldkey("Date", 'date_contrat', $object->date_contrat, $object, 0);
-		print '</td><td>';
-		print $form->editfieldval("Date", 'date_contrat', $object->date_contrat, $object, 0, 'datehourpicker');
-		print '</td>';
-		print '</tr>';
+        print '<td class="titlefield">';
+        print $form->editfieldkey("Date", 'date_contrat', $object->date_contrat, $object, 0);
+        print '</td><td>';
+        print $form->editfieldval("Date", 'date_contrat', $object->date_contrat, $object, 0, 'datehourpicker');
+        print '</td>';
+        print '</tr>';
 
-		print "</table>";
+        print "</table>";
 
-		print '</div>';
+        print '</div>';
 
-		dol_fiche_end();
+        dol_fiche_end();
 
-		print '<br>';
+        print '<br>';
 
-		// Contacts lines
-		include DOL_DOCUMENT_ROOT.'/core/tpl/contacts.tpl.php';
-	} else {
-		print "ErrorRecordNotFound";
-	}
+        // Contacts lines
+        include DOL_DOCUMENT_ROOT.'/core/tpl/contacts.tpl.php';
+    } else {
+        print "ErrorRecordNotFound";
+    }
 }
 
 

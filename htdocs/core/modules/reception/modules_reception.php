@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2018	   Quentin Vial-Gouteyron    <quentin.vial-gouteyron@atm-consulting.fr>
+/* Copyright (C) 2018       Quentin Vial-Gouteyron    <quentin.vial-gouteyron@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
  require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
 
 /**
- *	Parent class of sending receipts models
+ *    Parent class of sending receipts models
  */
 abstract class ModelePdfReception extends CommonDocGenerator
 {
@@ -34,25 +34,25 @@ abstract class ModelePdfReception extends CommonDocGenerator
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
-	 *  Return list of active generation modules
-	 *
-     *  @param	DoliDB	$db     			Database handler
-     *  @param  integer	$maxfilenamelength  Max length of value to show
-     *  @return	array						List of templates
-	 */
-	public static function liste_modeles($db, $maxfilenamelength = 0)
-	{
+     *  Return list of active generation modules
+     *
+     *  @param    DoliDB    $db                 Database handler
+     *  @param  integer    $maxfilenamelength  Max length of value to show
+     *  @return    array                        List of templates
+     */
+    public static function liste_modeles($db, $maxfilenamelength = 0)
+    {
 		// phpcs:enable
-		global $conf;
+        global $conf;
 
-		$type='reception';
-		$liste=array();
+        $type='reception';
+        $liste=array();
 
-		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste=getListOfModels($db, $type, $maxfilenamelength);
+        include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+        $liste=getListOfModels($db, $type, $maxfilenamelength);
 
-		return $liste;
-	}
+        return $liste;
+    }
 }
 
 
@@ -63,76 +63,76 @@ abstract class ModelNumRefReception
 {
     public $error='';
 
-	/** Return if a model can be used or not
-	 *
-	 *  @return		boolean     true if model can be used
-	 */
-	public function isEnabled()
-	{
-		return true;
-	}
+    /** Return if a model can be used or not
+     *
+     *  @return        boolean     true if model can be used
+     */
+    public function isEnabled()
+    {
+        return true;
+    }
 
-	/**
-	 *	Return default description of numbering model
-	 *
-	 *	@return     string      text description
-	 */
-	public function info()
-	{
-		global $langs;
-		$langs->load("reception");
-		return $langs->trans("NoDescription");
-	}
+    /**
+     *    Return default description of numbering model
+     *
+     *    @return     string      text description
+     */
+    public function info()
+    {
+        global $langs;
+        $langs->load("reception");
+        return $langs->trans("NoDescription");
+    }
 
-	/**
-	 *	Returns numbering example
-	 *
-	 *	@return     string      Example
-	 */
-	public function getExample()
-	{
-		global $langs;
-		$langs->load("reception");
-		return $langs->trans("NoExample");
-	}
+    /**
+     *    Returns numbering example
+     *
+     *    @return     string      Example
+     */
+    public function getExample()
+    {
+        global $langs;
+        $langs->load("reception");
+        return $langs->trans("NoExample");
+    }
 
-	/**
-	 *	Test if existing numbers make problems with numbering
-	 *
-	 *	@return     boolean     false if conflit, true if ok
-	 */
-	public function canBeActivated()
-	{
-		return true;
-	}
+    /**
+     *    Test if existing numbers make problems with numbering
+     *
+     *    @return     boolean     false if conflit, true if ok
+     */
+    public function canBeActivated()
+    {
+        return true;
+    }
 
-	/**
-	 *	Returns next value assigned
-	 *
-	 *	@param	Societe		$objsoc     Third party object
-	 *	@param	Object		$shipment	Shipment object
-	 *	@return	string					Value
-	 */
-	public function getNextValue($objsoc, $shipment)
-	{
-		global $langs;
-		return $langs->trans("NotAvailable");
-	}
+    /**
+     *    Returns next value assigned
+     *
+     *    @param    Societe        $objsoc     Third party object
+     *    @param    Object        $shipment    Shipment object
+     *    @return    string                    Value
+     */
+    public function getNextValue($objsoc, $shipment)
+    {
+        global $langs;
+        return $langs->trans("NotAvailable");
+    }
 
-	/**
-	 *	Returns version of the numbering model
-	 *
-	 *	@return     string      Value
-	 */
-	public function getVersion()
-	{
-		global $langs;
-		$langs->load("admin");
+    /**
+     *    Returns version of the numbering model
+     *
+     *    @return     string      Value
+     */
+    public function getVersion()
+    {
+        global $langs;
+        $langs->load("admin");
 
-		if ($this->version == 'development') return $langs->trans("VersionDevelopment");
-		elseif ($this->version == 'experimental') return $langs->trans("VersionExperimental");
-		elseif ($this->version == 'dolibarr') return DOL_VERSION;
-		elseif ($this->version) return $this->version;
-		return $langs->trans("NotAvailable");
-	}
+        if ($this->version == 'development') return $langs->trans("VersionDevelopment");
+        elseif ($this->version == 'experimental') return $langs->trans("VersionExperimental");
+        elseif ($this->version == 'dolibarr') return DOL_VERSION;
+        elseif ($this->version) return $this->version;
+        return $langs->trans("NotAvailable");
+    }
 }

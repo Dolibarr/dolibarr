@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007-2016	Laurent Destailleur	<eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2016    Laurent Destailleur    <eldy@users.sourceforge.net>
  * Copyright (C) 2011		Dimitri Mouillard	<dmouillard@teclib.com>
  * Copyright (C) 2013		Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2016		Regis Houssin		<regis.houssin@inodbox.com>
@@ -19,11 +19,11 @@
  */
 
 /**
- *		File that defines the balance of paid holiday of users.
+ *        File that defines the balance of paid holiday of users.
  *
- *   	\file       htdocs/holiday/define_holiday.php
- *		\ingroup    holiday
- *		\brief      File that defines the balance of paid holiday of users.
+ *       \file       htdocs/holiday/define_holiday.php
+ *        \ingroup    holiday
+ *        \brief      File that defines the balance of paid holiday of users.
  */
 
 require '../main.inc.php';
@@ -104,57 +104,57 @@ if (empty($reshook))
     // Si il y a une action de mise à jour
     if ($action == 'update' && isset($_POST['update_cp']))
     {
-    	$error = 0;
+        $error = 0;
 
-    	$typeleaves=$holiday->getTypes(1, 1);
+        $typeleaves=$holiday->getTypes(1, 1);
 
         $userID = array_keys($_POST['update_cp']);
         $userID = $userID[0];
 
         foreach($typeleaves as $key => $val)
         {
-    	    $userValue = $_POST['nb_holiday_'.$val['rowid']];
-    	    $userValue = $userValue[$userID];
+            $userValue = $_POST['nb_holiday_'.$val['rowid']];
+            $userValue = $userValue[$userID];
 
-    	    if (!empty($userValue) || (string) $userValue == '0')
-    	    {
-    	        $userValue = price2num($userValue, 5);
-    	    } else {
-    	        $userValue = '';
-    	    }
+            if (!empty($userValue) || (string) $userValue == '0')
+            {
+                $userValue = price2num($userValue, 5);
+            } else {
+                $userValue = '';
+            }
 
-    	    //If the user set a comment, we add it to the log comment
-    	    $comment = ((isset($_POST['note_holiday'][$userID]) && !empty($_POST['note_holiday'][$userID])) ? ' ('.$_POST['note_holiday'][$userID].')' : '');
+            //If the user set a comment, we add it to the log comment
+            $comment = ((isset($_POST['note_holiday'][$userID]) && !empty($_POST['note_holiday'][$userID])) ? ' ('.$_POST['note_holiday'][$userID].')' : '');
 
-    	    //print 'holiday: '.$val['rowid'].'-'.$userValue;
-    		if ($userValue != '')
-    		{
-    			// We add the modification to the log (must be before update of sold because we read current value of sold)
-    		    $result=$holiday->addLogCP($user->id, $userID, $langs->transnoentitiesnoconv('ManualUpdate').$comment, $userValue, $val['rowid']);
-    			if ($result < 0)
-    			{
-    				setEventMessages($holiday->error, $holiday->errors, 'errors');
-    				$error++;
-    			}
+            //print 'holiday: '.$val['rowid'].'-'.$userValue;
+            if ($userValue != '')
+            {
+                // We add the modification to the log (must be before update of sold because we read current value of sold)
+                $result=$holiday->addLogCP($user->id, $userID, $langs->transnoentitiesnoconv('ManualUpdate').$comment, $userValue, $val['rowid']);
+                if ($result < 0)
+                {
+                    setEventMessages($holiday->error, $holiday->errors, 'errors');
+                    $error++;
+                }
 
-    			// Update of the days of the employee
-    		    $result = $holiday->updateSoldeCP($userID, $userValue, $val['rowid']);
-    			if ($result < 0)
-    			{
-    				setEventMessages($holiday->error, $holiday->errors, 'errors');
-    				$error++;
-    			}
+                // Update of the days of the employee
+                $result = $holiday->updateSoldeCP($userID, $userValue, $val['rowid']);
+                if ($result < 0)
+                {
+                    setEventMessages($holiday->error, $holiday->errors, 'errors');
+                    $error++;
+                }
 
-    		    // If it first update of balance, we set date to avoid to have sold incremented by new month
-    		    /*
-    			$now=dol_now();
-    		    $sql = "UPDATE ".MAIN_DB_PREFIX."holiday_config SET";
-    		    $sql.= " value = '".dol_print_date($now,'%Y%m%d%H%M%S')."'";
-    		    $sql.= " WHERE name = 'lastUpdate' and value IS NULL";	// Add value IS NULL to be sure to update only at init.
-    		    dol_syslog('define_holiday update lastUpdate entry', LOG_DEBUG);
-    		    $result = $db->query($sql);
-    		    */
-    		}
+                // If it first update of balance, we set date to avoid to have sold incremented by new month
+                /*
+                $now=dol_now();
+                $sql = "UPDATE ".MAIN_DB_PREFIX."holiday_config SET";
+                $sql.= " value = '".dol_print_date($now,'%Y%m%d%H%M%S')."'";
+                $sql.= " WHERE name = 'lastUpdate' and value IS NULL";    // Add value IS NULL to be sure to update only at init.
+                dol_syslog('define_holiday update lastUpdate entry', LOG_DEBUG);
+                $result = $db->query($sql);
+                */
+            }
         }
 
         if (! $error) setEventMessages('UpdateConfCPOK', '', 'mesgs');
@@ -199,10 +199,10 @@ if ($lastUpdate)
 else print $langs->trans('None');
 print "</div><br>\n";
 
-$result = $holiday->updateBalance();	// Create users into table holiday if they don't exists. TODO Remove this whif we use field into table user.
+$result = $holiday->updateBalance();    // Create users into table holiday if they don't exists. TODO Remove this whif we use field into table user.
 if ($result < 0)
 {
-	setEventMessages($holiday->error, $holiday->errors, 'errors');
+    setEventMessages($holiday->error, $holiday->errors, 'errors');
 }
 
 $filters = '';
@@ -211,14 +211,14 @@ $filters = '';
 $userchilds=array();
 if (empty($user->rights->holiday->read_all))
 {
-	$userchilds=$user->getAllChildIds(1);
-	$filters.=' AND u.rowid IN ('.join(', ', $userchilds).')';
+    $userchilds=$user->getAllChildIds(1);
+    $filters.=' AND u.rowid IN ('.join(', ', $userchilds).')';
 }
 if (!empty($search_name)) {
-	$filters.=natural_search(array('u.firstname','u.lastname'), $search_name);
+    $filters.=natural_search(array('u.firstname','u.lastname'), $search_name);
 }
 if ($search_supervisor > 0) $filters.=natural_search(array('u.fk_user'), $search_supervisor, 2);
-$filters.= ' AND employee = 1';	// Only employee users are visible
+$filters.= ' AND employee = 1';    // Only employee users are visible
 
 $listUsers = $holiday->fetchUsers(false, true, $filters);
 if (is_numeric($listUsers) && $listUsers < 0)
@@ -285,8 +285,8 @@ else
     {
         foreach($typeleaves as $key => $val)
         {
-        	$labeltype = ($langs->trans($val['code'])!=$val['code']) ? $langs->trans($val['code']) : $langs->trans($val['label']);
-        	print_liste_field_titre($labeltype, $_SERVER["PHP_SELF"], '', '', '', '', '', '', 'center ');
+            $labeltype = ($langs->trans($val['code'])!=$val['code']) ? $langs->trans($val['code']) : $langs->trans($val['label']);
+            print_liste_field_titre($labeltype, $_SERVER["PHP_SELF"], '', '', '', '', '', '', 'center ');
         }
     }
     else
@@ -333,18 +333,18 @@ else
         // Amount for each type
         if (count($typeleaves))
         {
-        	foreach($typeleaves as $key => $val)
-        	{
-        		$nbtoshow='';
-        		if ($holiday->getCPforUser($users['rowid'], $val['rowid']) != '') $nbtoshow=price2num($holiday->getCPforUser($users['rowid'], $val['rowid']), 5);
+            foreach($typeleaves as $key => $val)
+            {
+                $nbtoshow='';
+                if ($holiday->getCPforUser($users['rowid'], $val['rowid']) != '') $nbtoshow=price2num($holiday->getCPforUser($users['rowid'], $val['rowid']), 5);
 
-        		//var_dump($users['rowid'].' - '.$val['rowid']);
-            	print '<td style="text-align:center">';
-            	if ($canedit) print '<input type="text"'.($canedit?'':' disabled="disabled"').' value="'.$nbtoshow.'" name="nb_holiday_'.$val['rowid'].'['.$users['rowid'].']" size="5" style="text-align: center;"/>';
-            	else print $nbtoshow;
-        	    //print ' '.$langs->trans('days');
-            	print '</td>'."\n";
-        	}
+                //var_dump($users['rowid'].' - '.$val['rowid']);
+                print '<td style="text-align:center">';
+                if ($canedit) print '<input type="text"'.($canedit?'':' disabled="disabled"').' value="'.$nbtoshow.'" name="nb_holiday_'.$val['rowid'].'['.$users['rowid'].']" size="5" style="text-align: center;"/>';
+                else print $nbtoshow;
+                //print ' '.$langs->trans('days');
+                print '</td>'."\n";
+            }
         }
         else
         {
@@ -358,7 +358,7 @@ else
 
         // Button modify
         print '<td>';
-        if (! empty($user->rights->holiday->define_holiday))	// Allowed to set the balance of any user
+        if (! empty($user->rights->holiday->define_holiday))    // Allowed to set the balance of any user
         {
             print '<input type="submit" name="update_cp['.$users['rowid'].']" value="'.dol_escape_htmltag($langs->trans("Update")).'" class="button"/>';
         }

@@ -48,7 +48,7 @@ print "jQuery(document).ready(function () {\n";
 
 if (empty($conf->dol_no_mouse_hover))
 {
-	print 'jQuery(".classfortooltip").tooltip({
+    print 'jQuery(".classfortooltip").tooltip({
 				show: { collision: "flipfit", effect:\'toggle\', delay:50 },
 				hide: { delay: 50 },
 				tooltipClass: "mytooltip",
@@ -81,8 +81,8 @@ print "});\n";
 // Wrapper to manage dropdown
 if (! defined('JS_JQUERY_DISABLE_DROPDOWN'))
 {
-	print "\n/* JS CODE TO ENABLE dropdown */\n";
-	print '
+    print "\n/* JS CODE TO ENABLE dropdown */\n";
+    print '
                 jQuery(document).ready(function () {
                   $(".dropdown dt a").on(\'click\', function () {
                   	  console.log("We click on dropdown");
@@ -120,8 +120,8 @@ if (! defined('JS_JQUERY_DISABLE_DROPDOWN'))
 // Wrapper to manage document_preview
 if ($conf->browser->layout != 'phone')
 {
-	print "\n/* JS CODE TO ENABLE document_preview */\n";	// Function document_preview is into header
-	print '
+    print "\n/* JS CODE TO ENABLE document_preview */\n";    // Function document_preview is into header
+    print '
                 jQuery(document).ready(function () {
 			        jQuery(".documentpreview").click(function () {
             		    console.log("We click on preview for element with href="+$(this).attr(\'href\')+" mime="+$(this).attr(\'mime\'));

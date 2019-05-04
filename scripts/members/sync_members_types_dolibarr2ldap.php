@@ -1,9 +1,9 @@
 #!/usr/bin/env php
 <?php
 /**
- * Copyright (C) 2005	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
- * Copyright (C) 2006	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2017	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2005    Rodolphe Quiedeville        <rodolphe@quiedeville.org>
+ * Copyright (C) 2006    Laurent Destailleur        <eldy@users.sourceforge.net>
+ * Copyright (C) 2017    Regis Houssin            <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,12 +32,12 @@ $path=dirname(__FILE__).'/';
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
     echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-	exit(-1);
+    exit(-1);
 }
 
 if (! isset($argv[1]) || ! $argv[1]) {
     print "Usage: ".$script_file." now\n";
-	exit(-1);
+    exit(-1);
 }
 $now=$argv[1];
 
@@ -61,8 +61,8 @@ dol_syslog($script_file." launched with arg ".join(',', $argv));
 /*
 if (! $conf->global->LDAP_SYNCHRO_ACTIVE)
 {
-	print $langs->trans("LDAPSynchronizationNotSetupInDolibarr");
-	exit(-1);
+    print $langs->trans("LDAPSynchronizationNotSetupInDolibarr");
+    exit(-1);
 }
 */
 
@@ -72,60 +72,60 @@ $sql .= " FROM ".MAIN_DB_PREFIX."adherent_type";
 $resql = $db->query($sql);
 if ($resql)
 {
-	$num = $db->num_rows($resql);
-	$i = 0;
+    $num = $db->num_rows($resql);
+    $i = 0;
 
-	$ldap=new Ldap();
-	$result=$ldap->connect_bind();
+    $ldap=new Ldap();
+    $result=$ldap->connect_bind();
 
-	if ($result > 0)
-	{
-		while ($i < $num)
-		{
-			$ldap->error="";
+    if ($result > 0)
+    {
+        while ($i < $num)
+        {
+            $ldap->error="";
 
-			$obj = $db->fetch_object($resql);
+            $obj = $db->fetch_object($resql);
 
-			$membertype = new AdherentType($db);
-			$membertype->id = $obj->rowid;
-			$membertype->fetch($membertype->id);
+            $membertype = new AdherentType($db);
+            $membertype->id = $obj->rowid;
+            $membertype->fetch($membertype->id);
 
-			print $langs->trans("UpdateMemberType")." rowid=".$membertype->id." ".$membertype-label;
+            print $langs->trans("UpdateMemberType")." rowid=".$membertype->id." ".$membertype-label;
 
-			$oldobject=$membertype;
+            $oldobject=$membertype;
 
-			$oldinfo=$membertype->_load_ldap_info();
-			$olddn=$membertype->_load_ldap_dn($oldinfo);
+            $oldinfo=$membertype->_load_ldap_info();
+            $olddn=$membertype->_load_ldap_dn($oldinfo);
 
-			$info=$membertype->_load_ldap_info();
-			$dn=$membertype->_load_ldap_dn($info);
+            $info=$membertype->_load_ldap_info();
+            $dn=$membertype->_load_ldap_dn($info);
 
-			$result=$ldap->add($dn, $info, $user);	// Wil fail if already exists
-			$result=$ldap->update($dn, $info, $user, $olddn);
-			if ($result > 0)
-			{
-				print " - ".$langs->trans("OK");
-			}
-			else
-			{
-				$error++;
-				print " - ".$langs->trans("KO").' - '.$ldap->error;
-			}
-			print "\n";
+            $result=$ldap->add($dn, $info, $user);    // Wil fail if already exists
+            $result=$ldap->update($dn, $info, $user, $olddn);
+            if ($result > 0)
+            {
+                print " - ".$langs->trans("OK");
+            }
+            else
+            {
+                $error++;
+                print " - ".$langs->trans("KO").' - '.$ldap->error;
+            }
+            print "\n";
 
-			$i++;
-		}
+            $i++;
+        }
 
-		$ldap->unbind();
-		$ldap->close();
-	}
-	else {
-		print $ldap->error;
-	}
+        $ldap->unbind();
+        $ldap->close();
+    }
+    else {
+        print $ldap->error;
+    }
 }
 else
 {
-	dol_print_error($db);
+    dol_print_error($db);
 }
 
 exit($error);

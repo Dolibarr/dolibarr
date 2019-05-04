@@ -84,33 +84,33 @@ llxHeader("", "", $langs->trans("TripCard"));
 
 if ($object->id)
 {
-	$object->fetch_thirdparty();
+    $object->fetch_thirdparty();
 
-	$head=trip_prepare_head($object);
+    $head=trip_prepare_head($object);
 
-	dol_fiche_head($head, 'documents', $langs->trans("TripCard"), 0, 'trip');
+    dol_fiche_head($head, 'documents', $langs->trans("TripCard"), 0, 'trip');
 
 
-	// Build file list
-	$filearray=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);
-	$totalsize=0;
-	foreach($filearray as $key => $file)
-	{
-		$totalsize+=$file['size'];
-	}
+    // Build file list
+    $filearray=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);
+    $totalsize=0;
+    foreach($filearray as $key => $file)
+    {
+        $totalsize+=$file['size'];
+    }
 
 
     print '<table class="border tableforfield centpercent">';
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/compta/deplacement/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
-	// Ref
-	print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>';
-	print $form->showrefnav($object, 'id', $linkback, 1, 'rowid', 'ref', '');
-	print '</td></tr>';
+    // Ref
+    print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>';
+    print $form->showrefnav($object, 'id', $linkback, 1, 'rowid', 'ref', '');
+    print '</td></tr>';
 
-	// Societe
-	//print "<tr><td>".$langs->trans("Company")."</td><td>".$object->client->getNomUrl(1)."</td></tr>";
+    // Societe
+    //print "<tr><td>".$langs->trans("Company")."</td><td>".$object->client->getNomUrl(1)."</td></tr>";
 
     print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
     print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize, 1, 1).'</td></tr>';
@@ -125,7 +125,7 @@ if ($object->id)
 }
 else
 {
-	print $langs->trans("ErrorUnknown");
+    print $langs->trans("ErrorUnknown");
 }
 
 // End of page

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017		ATM-Consulting  	 <support@atm-consulting.fr>
+/* Copyright (C) 2017        ATM-Consulting       <support@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,27 +17,27 @@
  */
 
 /**
- *	\file       htdocs/core/modules/rapport/pdf_paiement_fourn.class.php
- *	\ingroup    banque
- *	\brief      File to build payment reports
+ *    \file       htdocs/core/modules/rapport/pdf_paiement_fourn.class.php
+ *    \ingroup    banque
+ *    \brief      File to build payment reports
  */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/rapport/pdf_paiement.class.php';
 
 /**
- *	Classe permettant de generer les rapports de paiement
+ *    Classe permettant de generer les rapports de paiement
  */
 class pdf_paiement_fourn extends pdf_paiement
 {
-	/**
+    /**
      *  Constructor
      *
-     *  @param      DoliDb		$db      Database handler
-	 */
-	public function __construct($db)
-	{
-		parent::__construct($db);
-		$this->doc_type = "fourn";
-	}
+     *  @param      DoliDb        $db      Database handler
+     */
+    public function __construct($db)
+    {
+        parent::__construct($db);
+        $this->doc_type = "fourn";
+    }
 }

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2010	Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2010    Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006-2017	Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -42,7 +42,7 @@ $result = restrictedArea($user, 'contact', $id, 'socpeople&societe');
 $object = new Contact($db);
 if ($id > 0)
 {
-	$object->fetch($id, $user);
+    $object->fetch($id, $user);
 }
 
 
@@ -52,27 +52,27 @@ if ($id > 0)
 
 if ($action == 'dolibarr2ldap')
 {
-	$db->begin();
+    $db->begin();
 
-	$ldap=new Ldap();
-	$result=$ldap->connect_bind();
+    $ldap=new Ldap();
+    $result=$ldap->connect_bind();
 
-	$info=$object->_load_ldap_info();
-	$dn=$object->_load_ldap_dn($info);
-	$olddn=$dn;	// We can say that old dn = dn as we force synchro
+    $info=$object->_load_ldap_info();
+    $dn=$object->_load_ldap_dn($info);
+    $olddn=$dn;    // We can say that old dn = dn as we force synchro
 
-	$result=$ldap->update($dn, $info, $user, $olddn);
+    $result=$ldap->update($dn, $info, $user, $olddn);
 
-	if ($result >= 0)
-	{
-		setEventMessages($langs->trans("ContactSynchronized"), null, 'mesgs');
-		$db->commit();
-	}
-	else
-	{
-		setEventMessages($ldap->error, $ldap->errors, 'errors');
-		$db->rollback();
-	}
+    if ($result >= 0)
+    {
+        setEventMessages($langs->trans("ContactSynchronized"), null, 'mesgs');
+        $db->commit();
+    }
+    else
+    {
+        setEventMessages($ldap->error, $ldap->errors, 'errors');
+        $db->rollback();
+    }
 }
 
 
@@ -102,16 +102,16 @@ print '<table class="border centpercent">';
 // Company
 if ($object->socid > 0)
 {
-	$thirdparty = new Societe($db);
-	$thirdparty->fetch($object->socid);
+    $thirdparty = new Societe($db);
+    $thirdparty->fetch($object->socid);
 
-	print '<tr><td class="titlefield">'.$langs->trans("ThirdParty").'</td><td colspan="3">'.$thirdparty->getNomUrl(1).'</td></tr>';
+    print '<tr><td class="titlefield">'.$langs->trans("ThirdParty").'</td><td colspan="3">'.$thirdparty->getNomUrl(1).'</td></tr>';
 }
 else
 {
-	print '<tr><td class="titlefield">'.$langs->trans("ThirdParty").'</td><td colspan="3">';
-	print $langs->trans("ContactNotLinkedToCompany");
-	print '</td></tr>';
+    print '<tr><td class="titlefield">'.$langs->trans("ThirdParty").'</td><td colspan="3">';
+    print $langs->trans("ContactNotLinkedToCompany");
+    print '</td></tr>';
 }
 
 // Civility
@@ -145,7 +145,7 @@ print '<div class="tabsAction">';
 
 if (! empty($conf->global->LDAP_CONTACT_ACTIVE) && $conf->global->LDAP_CONTACT_ACTIVE != 'ldap2dolibarr')
 {
-	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=dolibarr2ldap">'.$langs->trans("ForceSynchronize").'</a>';
+    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=dolibarr2ldap">'.$langs->trans("ForceSynchronize").'</a>';
 }
 
 print "</div>\n";
@@ -169,36 +169,36 @@ $ldap=new Ldap();
 $result=$ldap->connect_bind();
 if ($result > 0)
 {
-	$info=$object->_load_ldap_info();
-	$dn=$object->_load_ldap_dn($info, 1);
-	$search = "(".$object->_load_ldap_dn($info, 2).")";
-	$records = $ldap->getAttribute($dn, $search);
+    $info=$object->_load_ldap_info();
+    $dn=$object->_load_ldap_dn($info, 1);
+    $search = "(".$object->_load_ldap_dn($info, 2).")";
+    $records = $ldap->getAttribute($dn, $search);
 
-	//var_dump($records);
+    //var_dump($records);
 
-	// Affichage arbre
+    // Affichage arbre
     if ((! is_numeric($records) || $records != 0) && (! isset($records['count']) || $records['count'] > 0))
-	{
-		if (! is_array($records))
-		{
-			print '<tr '.$bc[false].'><td colspan="2"><font class="error">'.$langs->trans("ErrorFailedToReadLDAP").'</font></td></tr>';
-		}
-		else
-		{
-			$result=show_ldap_content($records, 0, $records['count'], true);
-		}
-	}
-	else
-	{
-		print '<tr '.$bc[false].'><td colspan="2">'.$langs->trans("LDAPRecordNotFound").' (dn='.$dn.' - search='.$search.')</td></tr>';
-	}
+    {
+        if (! is_array($records))
+        {
+            print '<tr '.$bc[false].'><td colspan="2"><font class="error">'.$langs->trans("ErrorFailedToReadLDAP").'</font></td></tr>';
+        }
+        else
+        {
+            $result=show_ldap_content($records, 0, $records['count'], true);
+        }
+    }
+    else
+    {
+        print '<tr '.$bc[false].'><td colspan="2">'.$langs->trans("LDAPRecordNotFound").' (dn='.$dn.' - search='.$search.')</td></tr>';
+    }
 
-	$ldap->unbind();
-	$ldap->close();
+    $ldap->unbind();
+    $ldap->close();
 }
 else
 {
-	setEventMessages($ldap->error, $ldap->errors, 'errors');
+    setEventMessages($ldap->error, $ldap->errors, 'errors');
 }
 
 

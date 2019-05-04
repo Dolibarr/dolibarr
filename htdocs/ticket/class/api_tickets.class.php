@@ -65,12 +65,12 @@ class Tickets extends DolibarrApi
      *
      * Return an array with ticket informations
      *
-     * @param	int 			$id 		ID of ticket
-     * @return 	array|mixed 				Data without useless information
+     * @param    int             $id         ID of ticket
+     * @return     array|mixed                 Data without useless information
      *
-     * @throws 	401
-     * @throws 	403
-     * @throws 	404
+     * @throws     401
+     * @throws     403
+     * @throws     404
      */
     public function get($id)
     {
@@ -82,14 +82,14 @@ class Tickets extends DolibarrApi
      *
      * Return an array with ticket informations
      *
-     * @param	string  		$track_id 	Tracking ID of ticket
-     * @return 	array|mixed 				Data without useless information
+     * @param    string          $track_id     Tracking ID of ticket
+     * @return     array|mixed                 Data without useless information
      *
      * @url GET track_id/{track_id}
      *
-     * @throws 	401
-     * @throws 	403
-     * @throws 	404
+     * @throws     401
+     * @throws     403
+     * @throws     404
      */
     public function getByTrackId($track_id)
     {
@@ -101,14 +101,14 @@ class Tickets extends DolibarrApi
      *
      * Return an array with ticket informations
      *
-     * @param	string  		$ref    	Reference for ticket
-     * @return 	array|mixed 				Data without useless information
+     * @param    string          $ref        Reference for ticket
+     * @return     array|mixed                 Data without useless information
      *
      * @url GET ref/{ref}
      *
-     * @throws 	401
-     * @throws 	403
-     * @throws 	404
+     * @throws     401
+     * @throws     403
+     * @throws     404
      */
     public function getByRef($ref)
     {
@@ -125,10 +125,10 @@ class Tickets extends DolibarrApi
      * Get properties of a Ticket object
      * Return an array with ticket informations
      *
-     * @param	int 			$id 		ID of ticket
-     * @param	string  		$track_id 	Tracking ID of ticket
-     * @param	string  		$ref    	Reference for ticket
-     * @return 	array|mixed 				Data without useless information
+     * @param    int             $id         ID of ticket
+     * @param    string          $track_id     Tracking ID of ticket
+     * @param    string          $ref        Reference for ticket
+     * @return     array|mixed                 Data without useless information
      */
     private function getCommon($id = 0, $track_id = '', $ref = '')
     {
@@ -218,12 +218,12 @@ class Tickets extends DolibarrApi
      * Get a list of tickets
      *
      * @param int       $socid      Filter list with thirdparty ID
-     * @param string	$mode		Use this param to filter list
-     * @param string	$sortfield	Sort field
-     * @param string	$sortorder	Sort order
-     * @param int		$limit		Limit for list
-     * @param int		$page		Page number
-     * @param string	$sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+     * @param string    $mode        Use this param to filter list
+     * @param string    $sortfield    Sort field
+     * @param string    $sortorder    Sort order
+     * @param int        $limit        Limit for list
+     * @param int        $page        Page number
+     * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
      *
      * @return array Array of ticket objects
      *
@@ -261,7 +261,7 @@ class Tickets extends DolibarrApi
             $sql.= " AND s.fk_soc = ".$socid;
         }
         if ($search_sale > 0) {
-            $sql.= " AND s.rowid = sc.fk_soc";		// Join for the needed table to filter by sale
+            $sql.= " AND s.rowid = sc.fk_soc";        // Join for the needed table to filter by sale
         }
 
         // Example of use $mode
@@ -512,8 +512,8 @@ class Tickets extends DolibarrApi
     /**
      * Clean sensible object datas
      *
-     * @param   object  $object	Object to clean
-     * @return	array	Array of cleaned object properties
+     * @param   object  $object    Object to clean
+     * @return    array    Array of cleaned object properties
      *
      * @todo use an array for properties to clean
      *

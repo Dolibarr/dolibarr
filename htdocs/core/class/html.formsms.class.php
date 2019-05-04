@@ -45,7 +45,7 @@ class FormSms
     public $toname;
     public $tomail;
 
-    public $withsubstit;			// Show substitution array
+    public $withsubstit;            // Show substitution array
     public $withfrom;
     public $withto;
     public $withtopic;
@@ -66,15 +66,15 @@ class FormSms
     public $error='';
 
     /**
-     * @var string[]	Array of error strings
+     * @var string[]    Array of error strings
      */
     public $errors=array();
 
 
     /**
-     *	Constructor
+     *    Constructor
      *
-     *  @param		DoliDB		$db      Database handler
+     *  @param        DoliDB        $db      Database handler
      */
     public function __construct($db)
     {
@@ -94,11 +94,11 @@ class FormSms
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
-     *	Show the form to input an sms.
+     *    Show the form to input an sms.
      *
-     *	@param	string	$morecss Class on first column td
+     *    @param    string    $morecss Class on first column td
      *  @param int $showform Show form tags and submit button (recommanded is to use with value 0)
-     *	@return	void
+     *    @return    void
      */
     public function show_form($morecss = 'titlefield', $showform = 1)
     {
@@ -141,7 +141,7 @@ function limitChars(textarea, limit, infodiv)
         print "<table class=\"border centpercent\">\n";
 
         // Substitution array
-        if (! empty($this->withsubstit))		// Unset or set ->withsubstit=0 to disable this.
+        if (! empty($this->withsubstit))        // Unset or set ->withsubstit=0 to disable this.
         {
             print "<tr><td colspan=\"2\">";
             $help="";
@@ -218,13 +218,13 @@ function limitChars(textarea, limit, infodiv)
                         $classname=ucfirst($classfile);
                         if (class_exists($classname))
                         {
-                        	$sms = new $classname($this->db);
-                        	$resultsender = $sms->SmsSenderList();
+                            $sms = new $classname($this->db);
+                            $resultsender = $sms->SmsSenderList();
                         }
                         else
                         {
-                        	$sms = new stdClass();
-                        	$sms->error='The SMS manager "'.$classfile.'" defined into SMS setup MAIN_SMS_SENDMODE is not found';
+                            $sms = new stdClass();
+                            $sms->error='The SMS manager "'.$classfile.'" defined into SMS setup MAIN_SMS_SENDMODE is not found';
                         }
                     }
                     catch(Exception $e)
@@ -236,7 +236,7 @@ function limitChars(textarea, limit, infodiv)
                 else
                 {
                     dol_syslog("Warning: The SMS sending method has not been defined into MAIN_SMS_SENDMODE", LOG_WARNING);
-	                $resultsender=array();
+                    $resultsender=array();
                     $resultsender[0]->number=$this->fromsms;
                 }
 

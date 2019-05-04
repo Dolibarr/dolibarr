@@ -36,13 +36,13 @@ $langs->loadLangs(array('companies', 'ldap', 'users', 'admin'));
 // Users/Groups management only in master entity if transverse mode
 if (! empty($conf->multicompany->enabled) && $conf->entity > 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE)
 {
-	accessforbidden();
+    accessforbidden();
 }
 
 $canreadperms=true;
 if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 {
-	$canreadperms=($user->admin || $user->rights->user->group_advance->read);
+    $canreadperms=($user->admin || $user->rights->user->group_advance->read);
 }
 
 $id = GETPOST('id', 'int');
@@ -62,32 +62,32 @@ $object->getrights();
 
 if ($action == 'dolibarr2ldap')
 {
-	$ldap=new Ldap();
-	$result=$ldap->connect_bind();
+    $ldap=new Ldap();
+    $result=$ldap->connect_bind();
 
-	if ($result > 0)
-	{
-		$info=$object->_load_ldap_info();
+    if ($result > 0)
+    {
+        $info=$object->_load_ldap_info();
 
-		// Get a gid number for objectclass PosixGroup
-		if (in_array('posixGroup', $info['objectclass'])) {
-			$info['gidNumber'] = $ldap->getNextGroupGid('LDAP_KEY_GROUPS');
-		}
+        // Get a gid number for objectclass PosixGroup
+        if (in_array('posixGroup', $info['objectclass'])) {
+            $info['gidNumber'] = $ldap->getNextGroupGid('LDAP_KEY_GROUPS');
+        }
 
-		$dn=$object->_load_ldap_dn($info);
-		$olddn=$dn;	// We can say that old dn = dn as we force synchro
+        $dn=$object->_load_ldap_dn($info);
+        $olddn=$dn;    // We can say that old dn = dn as we force synchro
 
-		$result=$ldap->update($dn, $info, $user, $olddn);
-	}
+        $result=$ldap->update($dn, $info, $user, $olddn);
+    }
 
-	if ($result >= 0)
-	{
-		setEventMessages($langs->trans("GroupSynchronized"), null, 'mesgs');
-	}
-	else
-	{
-		setEventMessages($ldap->error, $ldap->errors, 'errors');
-	}
+    if ($result >= 0)
+    {
+        setEventMessages($langs->trans("GroupSynchronized"), null, 'mesgs');
+    }
+    else
+    {
+        setEventMessages($ldap->error, $ldap->errors, 'errors');
+    }
 }
 
 
@@ -120,7 +120,7 @@ if (! empty($conf->mutlicompany->enabled))
     print '<td class="valeur">'.$object->name;
     if (!$object->entity)
     {
-    	print img_picto($langs->trans("GlobalGroup"), 'redstar');
+        print img_picto($langs->trans("GlobalGroup"), 'redstar');
     }
     print "</td></tr>\n";
 }
@@ -156,7 +156,7 @@ print '<div class="tabsAction">';
 
 if ($conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap')
 {
-	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=dolibarr2ldap">'.$langs->trans("ForceSynchronize").'</a>';
+    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=dolibarr2ldap">'.$langs->trans("ForceSynchronize").'</a>';
 }
 
 print "</div>\n";
@@ -180,35 +180,35 @@ $ldap=new Ldap();
 $result=$ldap->connect_bind();
 if ($result > 0)
 {
-	$info=$object->_load_ldap_info();
-	$dn=$object->_load_ldap_dn($info, 1);
-	$search = "(".$object->_load_ldap_dn($info, 2).")";
-	$records = $ldap->getAttribute($dn, $search);
+    $info=$object->_load_ldap_info();
+    $dn=$object->_load_ldap_dn($info, 1);
+    $search = "(".$object->_load_ldap_dn($info, 2).")";
+    $records = $ldap->getAttribute($dn, $search);
 
-	//var_dump($records);
+    //var_dump($records);
 
-	// Affichage arbre
+    // Affichage arbre
     if ((! is_numeric($records) || $records != 0) && (! isset($records['count']) || $records['count'] > 0))
-	{
-		if (! is_array($records))
-		{
-			print '<tr '.$bc[false].'><td colspan="2"><font class="error">'.$langs->trans("ErrorFailedToReadLDAP").'</font></td></tr>';
-		}
-		else
-		{
-			$result=show_ldap_content($records, 0, $records['count'], true);
-		}
-	}
-	else
-	{
-		print '<tr '.$bc[false].'><td colspan="2">'.$langs->trans("LDAPRecordNotFound").' (dn='.$dn.' - search='.$search.')</td></tr>';
-	}
-	$ldap->unbind();
-	$ldap->close();
+    {
+        if (! is_array($records))
+        {
+            print '<tr '.$bc[false].'><td colspan="2"><font class="error">'.$langs->trans("ErrorFailedToReadLDAP").'</font></td></tr>';
+        }
+        else
+        {
+            $result=show_ldap_content($records, 0, $records['count'], true);
+        }
+    }
+    else
+    {
+        print '<tr '.$bc[false].'><td colspan="2">'.$langs->trans("LDAPRecordNotFound").' (dn='.$dn.' - search='.$search.')</td></tr>';
+    }
+    $ldap->unbind();
+    $ldap->close();
 }
 else
 {
-	setEventMessages($ldap->error, $ldap->errors, 'errors');
+    setEventMessages($ldap->error, $ldap->errors, 'errors');
 }
 
 print '</table>';

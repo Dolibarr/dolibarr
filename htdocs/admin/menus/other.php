@@ -16,7 +16,7 @@
  */
 
 /**
- *	    \file       htdocs/admin/menus/other.php
+ *        \file       htdocs/admin/menus/other.php
  *      \ingroup    core
  *      \brief      Menus options setup
  */
@@ -38,15 +38,15 @@ $action=GETPOST('action', 'alpha');
 
 if ($action == 'activate_hidemenu')
 {
-	dolibarr_set_const($db, "MAIN_MENU_HIDE_UNAUTHORIZED", '1', 'chaine', 0, '', $conf->entity);
-	header("Location: ".$_SERVER["PHP_SELF"]);
-	exit;
+    dolibarr_set_const($db, "MAIN_MENU_HIDE_UNAUTHORIZED", '1', 'chaine', 0, '', $conf->entity);
+    header("Location: ".$_SERVER["PHP_SELF"]);
+    exit;
 }
 elseif ($action == 'disable_hidemenu')
 {
-	dolibarr_del_const($db, "MAIN_MENU_HIDE_UNAUTHORIZED", $conf->entity);
-	header("Location: ".$_SERVER["PHP_SELF"]);
-	exit;
+    dolibarr_del_const($db, "MAIN_MENU_HIDE_UNAUTHORIZED", $conf->entity);
+    header("Location: ".$_SERVER["PHP_SELF"]);
+    exit;
 }
 
 
@@ -93,11 +93,11 @@ print '<td colspan="3">'.$langs->trans("HideUnauthorizedMenu").'</td>';
 print '<td class="center">';
 if (empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED))
 {
-	print '<a href="'.$_SERVER["PHP_SELF"].'?action=activate_hidemenu">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+    print '<a href="'.$_SERVER["PHP_SELF"].'?action=activate_hidemenu">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 }
 else
 {
-	print '<a href="'.$_SERVER["PHP_SELF"].'?action=disable_hidemenu">'.img_picto($langs->trans("Enabled"), 'switch_on').'</a>';
+    print '<a href="'.$_SERVER["PHP_SELF"].'?action=disable_hidemenu">'.img_picto($langs->trans("Enabled"), 'switch_on').'</a>';
 }
 print "</td>";
 print '</tr>';

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
+/* Copyright (C) 2010-2012    Laurent Destailleur    <eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,13 +19,13 @@
 
 /**
  *      \file       test/phpunit/GetUrlLibTest.php
- *		\ingroup    test
+ *        \ingroup    test
  *      \brief      PHPUnit test
- *		\remarks	To run this script as CLI:  phpunit filename.php
+ *        \remarks    To run this script as CLI:  phpunit filename.php
  */
 
 global $conf,$user,$langs,$db;
-//define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
+//define('TEST_DB_FORCE_TYPE','mysql');    // This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/geturl.lib.php';
@@ -44,7 +44,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
- * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
+ * @remarks    backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
 class GetUrlLibTest extends PHPUnit_Framework_TestCase
 {
@@ -79,7 +79,7 @@ class GetUrlLibTest extends PHPUnit_Framework_TestCase
     public static function setUpBeforeClass()
     {
         global $conf,$user,$langs,$db;
-        $db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
+        $db->begin();    // This is to have all actions inside a transaction even if test launched without suite.
 
         print __METHOD__."\n";
     }
@@ -96,7 +96,7 @@ class GetUrlLibTest extends PHPUnit_Framework_TestCase
     /**
      * Init phpunit tests
      *
-     * @return	void
+     * @return    void
      */
     protected function setUp()
     {
@@ -111,7 +111,7 @@ class GetUrlLibTest extends PHPUnit_Framework_TestCase
     /**
      * End phpunit tests
      *
-     * @return	void
+     * @return    void
      */
     protected function tearDown()
     {
@@ -122,7 +122,7 @@ class GetUrlLibTest extends PHPUnit_Framework_TestCase
     /**
      * testGetRootURLFromURL
      *
-     * @return	int
+     * @return    int
      */
     public function testGetRootURLFromURL()
     {
@@ -171,7 +171,7 @@ class GetUrlLibTest extends PHPUnit_Framework_TestCase
     /**
      * testRemoveHtmlComment
      *
-     * @return	int
+     * @return    int
      */
     public function testRemoveHtmlComment()
     {

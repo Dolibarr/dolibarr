@@ -16,9 +16,9 @@
  */
 
 /**
- *	\file       htdocs/product/stock/info.php
- *	\ingroup    stock
- *	\brief      Page des informations d'un entrepot
+ *    \file       htdocs/product/stock/info.php
+ *    \ingroup    stock
+ *    \brief      Page des informations d'un entrepot
  */
 
 require '../../main.inc.php';

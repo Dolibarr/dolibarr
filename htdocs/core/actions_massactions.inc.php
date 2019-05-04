@@ -21,8 +21,8 @@
  */
 
 /**
- *	\file			htdocs/core/actions_massactions.inc.php
- *  \brief			Code for actions done with massaction button (send by email, merge pdf, delete, ...)
+ *    \file            htdocs/core/actions_massactions.inc.php
+ *  \brief            Code for actions done with massaction button (send by email, merge pdf, delete, ...)
  */
 
 
@@ -82,7 +82,7 @@ if (! $error && $massaction == 'confirm_presend')
 
         foreach($toselect as $toselectid)
         {
-            $objecttmp=new $objectclass($db);	// we must create new instance because instance is saved into $listofobjectref array for future use
+            $objecttmp=new $objectclass($db);    // we must create new instance because instance is saved into $listofobjectref array for future use
             $result=$objecttmp->fetch($toselectid);
             if ($result > 0)
             {
@@ -114,7 +114,7 @@ if (! $error && $massaction == 'confirm_presend')
         if (empty($receiver) || $receiver == '-1') $receiver=array();
         else $receiver=array($receiver);
     }
-    if (! trim($_POST['sendto']) && count($receiver) == 0 && count($listofobjectthirdparties) == 1)	// if only one recipient, receiver is mandatory
+    if (! trim($_POST['sendto']) && count($receiver) == 0 && count($listofobjectthirdparties) == 1)    // if only one recipient, receiver is mandatory
     {
         $error++;
         setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Recipient")), null, 'warnings');
@@ -161,7 +161,7 @@ if (! $error && $massaction == 'confirm_presend')
                     {
                         $tmparray[] = $thirdparty->name.' <'.$thirdparty->email.'>';
                     }
-                    elseif ($val && method_exists($thirdparty, 'contact_get_property'))		// Id of contact
+                    elseif ($val && method_exists($thirdparty, 'contact_get_property'))        // Id of contact
                     {
                         $tmparray[] = $thirdparty->contact_get_property((int) $val, 'email');
                         $sendtoid[] = $val;
@@ -191,7 +191,7 @@ if (! $error && $massaction == 'confirm_presend')
                     {
                         $tmparray[] = $thirdparty->name.' <'.$thirdparty->email.'>';
                     }
-                    elseif ($val)	// Id du contact
+                    elseif ($val)    // Id du contact
                     {
                         $tmparray[] = $thirdparty->contact_get_property((int) $val, 'email');
                         //$sendtoid[] = $val;  TODO Add also id of contact in CC ?
@@ -232,7 +232,7 @@ if (! $error && $massaction == 'confirm_presend')
                 }
 
                 // Test recipient
-                if (empty($sendto)) 	// For the case, no recipient were set (multi thirdparties send)
+                if (empty($sendto))     // For the case, no recipient were set (multi thirdparties send)
                 {
                     if ($objectobj->element == 'expensereport')
                     {
@@ -339,13 +339,13 @@ if (! $error && $massaction == 'confirm_presend')
                 $message = GETPOST('message', 'none');
 
                 $sendtobcc = GETPOST('sendtoccc');
-                if ($objectclass == 'Propal') 				$sendtobcc .= (empty($conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO) ? '' : (($sendtobcc?", ":"").$conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO));
-                if ($objectclass == 'Commande') 			$sendtobcc .= (empty($conf->global->MAIN_MAIL_AUTOCOPY_ORDER_TO) ? '' : (($sendtobcc?", ":"").$conf->global->MAIN_MAIL_AUTOCOPY_ORDER_TO));
-                if ($objectclass == 'Facture') 				$sendtobcc .= (empty($conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO) ? '' : (($sendtobcc?", ":"").$conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO));
-                if ($objectclass == 'Supplier_Proposal') 	$sendtobcc .= (empty($conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO) ? '' : (($sendtobcc?", ":"").$conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO));
-                if ($objectclass == 'CommandeFournisseur')	$sendtobcc .= (empty($conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_ORDER_TO) ? '' : (($sendtobcc?", ":"").$conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_ORDER_TO));
-                if ($objectclass == 'FactureFournisseur')	$sendtobcc .= (empty($conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO) ? '' : (($sendtobcc?", ":"").$conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO));
-                if ($objectclass == 'Project') 			    $sendtobcc .= (empty($conf->global->MAIN_MAIL_AUTOCOPY_PROJECT_TO) ? '' : (($sendtobcc?", ":"").$conf->global->MAIN_MAIL_AUTOCOPY_PROJECT_TO));
+                if ($objectclass == 'Propal')                 $sendtobcc .= (empty($conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO) ? '' : (($sendtobcc?", ":"").$conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO));
+                if ($objectclass == 'Commande')             $sendtobcc .= (empty($conf->global->MAIN_MAIL_AUTOCOPY_ORDER_TO) ? '' : (($sendtobcc?", ":"").$conf->global->MAIN_MAIL_AUTOCOPY_ORDER_TO));
+                if ($objectclass == 'Facture')                 $sendtobcc .= (empty($conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO) ? '' : (($sendtobcc?", ":"").$conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO));
+                if ($objectclass == 'Supplier_Proposal')     $sendtobcc .= (empty($conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO) ? '' : (($sendtobcc?", ":"").$conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO));
+                if ($objectclass == 'CommandeFournisseur')    $sendtobcc .= (empty($conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_ORDER_TO) ? '' : (($sendtobcc?", ":"").$conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_ORDER_TO));
+                if ($objectclass == 'FactureFournisseur')    $sendtobcc .= (empty($conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO) ? '' : (($sendtobcc?", ":"").$conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO));
+                if ($objectclass == 'Project')                 $sendtobcc .= (empty($conf->global->MAIN_MAIL_AUTOCOPY_PROJECT_TO) ? '' : (($sendtobcc?", ":"").$conf->global->MAIN_MAIL_AUTOCOPY_PROJECT_TO));
 
                 // $listofqualifiedobj is array with key = object id and value is instance of qualified objects, for the current thirdparty (but thirdparty property is not loaded yet)
                 // $looparray will be an array with number of email to send for the current thirdparty (so 1 or n if n object for same thirdparty)
@@ -368,7 +368,7 @@ if (! $error && $massaction == 'confirm_presend')
                 //var_dump($looparray);exit;
                 dol_syslog("We have set an array of ".count($looparray)." emails to send");
 
-                foreach ($looparray as $objectid => $objecttmp)		// $objecttmp is a real object or an empty object if we choose to send one email per thirdparty instead of one per object
+                foreach ($looparray as $objectid => $objecttmp)        // $objecttmp is a real object or an empty object if we choose to send one email per thirdparty instead of one per object
                 {
                     // Make substitution in email content
                     $substitutionarray=getCommonSubstitutionArray($langs, 0, null, $objecttmp);
@@ -430,7 +430,7 @@ if (! $error && $massaction == 'confirm_presend')
                         $result=$mailfile->sendfile();
                         if ($result)
                         {
-                            $resaction.=$langs->trans('MailSuccessfulySent', $mailfile->getValidAddress($from, 2), $mailfile->getValidAddress($sendto, 2)).'<br>';		// Must not contain "
+                            $resaction.=$langs->trans('MailSuccessfulySent', $mailfile->getValidAddress($from, 2), $mailfile->getValidAddress($sendto, 2)).'<br>';        // Must not contain "
 
                             $error=0;
 
@@ -459,11 +459,11 @@ if (! $error && $massaction == 'confirm_presend')
                                 $actionmsg2='';
 
                                 // Initialisation donnees
-                                $objectobj2->sendtoid		= 0;
-                                $objectobj2->actionmsg		= $actionmsg;  // Long text
-                                $objectobj2->actionmsg2		= $actionmsg2; // Short text
-                                $objectobj2->fk_element		= $objid2;
-                                $objectobj2->elementtype	= $objectobj2->element;
+                                $objectobj2->sendtoid        = 0;
+                                $objectobj2->actionmsg        = $actionmsg;  // Long text
+                                $objectobj2->actionmsg2        = $actionmsg2; // Short text
+                                $objectobj2->fk_element        = $objid2;
+                                $objectobj2->elementtype    = $objectobj2->element;
 
                                 $triggername = strtoupper(get_class($objectobj2)) .'_SENTBYMAIL';
                                 if ($triggername == 'SOCIETE_SENTBYMAIL')    $triggername = 'COMPANY_SENTBYMAIL';
@@ -520,7 +520,7 @@ if (! $error && $massaction == 'confirm_presend')
 
         if ($nbsent)
         {
-            $action='';	// Do not show form post if there was at least one successfull sent
+            $action='';    // Do not show form post if there was at least one successfull sent
             //setEventMessages($langs->trans("EMailSentToNRecipients", $nbsent.'/'.count($toselect)), null, 'mesgs');
             setEventMessages($langs->trans("EMailSentForNElements", $nbsent.'/'.count($toselect)), null, 'mesgs');
             setEventMessages($resaction, null, 'mesgs');
@@ -576,7 +576,7 @@ if ($massaction == 'confirm_createbills')   // Create bills from orders
             $objecttmp->origin    = 'commande';
             $objecttmp->origin_id = $id_order;
 
-            $objecttmp->array_options = $cmd->array_options;	// Copy extrafields
+            $objecttmp->array_options = $cmd->array_options;    // Copy extrafields
 
             $res = $objecttmp->create($user);
 
@@ -771,27 +771,27 @@ if ($massaction == 'confirm_createbills')   // Create bills from orders
         $param='';
         if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
         if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
-        if ($sall)					$param.='&sall='.urlencode($sall);
+        if ($sall)                    $param.='&sall='.urlencode($sall);
         if ($socid > 0)             $param.='&socid='.urlencode($socid);
         if ($viewstatut != '')      $param.='&viewstatut='.urlencode($viewstatut);
-        if ($search_orderday)      		$param.='&search_orderday='.urlencode($search_orderday);
-        if ($search_ordermonth)      		$param.='&search_ordermonth='.urlencode($search_ordermonth);
-        if ($search_orderyear)       		$param.='&search_orderyear='.urlencode($search_orderyear);
-        if ($search_deliveryday)   		$param.='&search_deliveryday='.urlencode($search_deliveryday);
-        if ($search_deliverymonth)   		$param.='&search_deliverymonth='.urlencode($search_deliverymonth);
-        if ($search_deliveryyear)    		$param.='&search_deliveryyear='.urlencode($search_deliveryyear);
-        if ($search_ref)      		$param.='&search_ref='.urlencode($search_ref);
-        if ($search_company)  		$param.='&search_company='.urlencode($search_company);
-        if ($search_ref_customer)	$param.='&search_ref_customer='.urlencode($search_ref_customer);
-        if ($search_user > 0) 		$param.='&search_user='.urlencode($search_user);
-        if ($search_sale > 0) 		$param.='&search_sale='.urlencode($search_sale);
+        if ($search_orderday)              $param.='&search_orderday='.urlencode($search_orderday);
+        if ($search_ordermonth)              $param.='&search_ordermonth='.urlencode($search_ordermonth);
+        if ($search_orderyear)               $param.='&search_orderyear='.urlencode($search_orderyear);
+        if ($search_deliveryday)           $param.='&search_deliveryday='.urlencode($search_deliveryday);
+        if ($search_deliverymonth)           $param.='&search_deliverymonth='.urlencode($search_deliverymonth);
+        if ($search_deliveryyear)            $param.='&search_deliveryyear='.urlencode($search_deliveryyear);
+        if ($search_ref)              $param.='&search_ref='.urlencode($search_ref);
+        if ($search_company)          $param.='&search_company='.urlencode($search_company);
+        if ($search_ref_customer)    $param.='&search_ref_customer='.urlencode($search_ref_customer);
+        if ($search_user > 0)         $param.='&search_user='.urlencode($search_user);
+        if ($search_sale > 0)         $param.='&search_sale='.urlencode($search_sale);
         if ($search_total_ht != '') $param.='&search_total_ht='.urlencode($search_total_ht);
         if ($search_total_vat != '') $param.='&search_total_vat='.urlencode($search_total_vat);
         if ($search_total_ttc != '') $param.='&search_total_ttc='.urlencode($search_total_ttc);
-        if ($search_project_ref >= 0)  	$param.="&search_project_ref=".urlencode($search_project_ref);
+        if ($search_project_ref >= 0)      $param.="&search_project_ref=".urlencode($search_project_ref);
         if ($show_files)            $param.='&show_files=' .urlencode($show_files);
         if ($optioncss != '')       $param.='&optioncss='.urlencode($optioncss);
-        if ($billed != '')			$param.='&billed='.urlencode($billed);
+        if ($billed != '')            $param.='&billed='.urlencode($billed);
 
         header("Location: ".$_SERVER['PHP_SELF'].'?'.$param);
         exit;
@@ -874,7 +874,7 @@ if (! $error && $massaction == "builddoc" && $permtoread && ! GETPOST('button_se
     $listofobjectref=array();
     foreach($toselect as $toselectid)
     {
-        $objecttmp=new $objectclass($db);	// must create new instance because instance is saved into $listofobjectref array for future use
+        $objecttmp=new $objectclass($db);    // must create new instance because instance is saved into $listofobjectref array for future use
         $result=$objecttmp->fetch($toselectid);
         if ($result > 0)
         {
@@ -887,7 +887,7 @@ if (! $error && $massaction == "builddoc" && $permtoread && ! GETPOST('button_se
 
     $arrayofinclusion=array();
     foreach($listofobjectref as $tmppdf) $arrayofinclusion[]='^'.preg_quote(dol_sanitizeFileName($tmppdf), '/').'\.pdf$';
-    foreach($listofobjectref as $tmppdf) $arrayofinclusion[]='^'.preg_quote(dol_sanitizeFileName($tmppdf), '/').'_[a-zA-Z0-9-_]+\.pdf$';	// To include PDF generated from ODX files
+    foreach($listofobjectref as $tmppdf) $arrayofinclusion[]='^'.preg_quote(dol_sanitizeFileName($tmppdf), '/').'_[a-zA-Z0-9-_]+\.pdf$';    // To include PDF generated from ODX files
     $listoffiles = dol_dir_list($uploaddir, 'all', 1, implode('|', $arrayofinclusion), '\.meta$|\.png', 'date', SORT_DESC, 0, true);
 
     // build list of files with full path

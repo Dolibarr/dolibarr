@@ -22,8 +22,8 @@
 
 /**
  *      \file       htdocs/admin/bank.php
- * 		\ingroup    bank
- * 		\brief      Page to setup the bank module
+ *         \ingroup    bank
+ *         \brief      Page to setup the bank module
  */
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';

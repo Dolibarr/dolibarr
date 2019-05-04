@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+/* Copyright (C) 2005        Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@inodbox.com>
  *
@@ -18,9 +18,9 @@
  */
 
 /**
- *	\file       htdocs/projet/tasks/task.php
- *	\ingroup    project
- *	\brief      Page of a project task
+ *    \file       htdocs/projet/tasks/task.php
+ *    \ingroup    project
+ *    \brief      Page of a project task
  */
 
 require '../main.inc.php';
@@ -64,12 +64,12 @@ $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 // Load object
 if ($id > 0 || ! empty($ref))
 {
-	$ret = $object->fetch($id, $ref);	// If we create project, ref may be defined into POST but record does not yet exists into database
-	if ($ret > 0) {
-		$object->fetch_thirdparty();
-		if(! empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($object, 'fetchComments') && empty($object->comments)) $object->fetchComments();
-		$id=$object->id;
-	}
+    $ret = $object->fetch($id, $ref);    // If we create project, ref may be defined into POST but record does not yet exists into database
+    if ($ret > 0) {
+        $object->fetch_thirdparty();
+        if(! empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($object, 'fetchComments') && empty($object->comments)) $object->fetchComments();
+        $id=$object->id;
+    }
 }
 
 // include comment actions
@@ -102,14 +102,14 @@ $morehtmlref = '<div class="refidno">';
 $morehtmlref .= $object->title;
 // Thirdparty
 if ($object->thirdparty->id > 0) {
-	$morehtmlref .= '<br>' . $langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1, 'project');
+    $morehtmlref .= '<br>' . $langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1, 'project');
 }
 $morehtmlref .= '</div>';
 
 // Define a complementary filter for search of next/prev ref.
 if (! $user->rights->projet->all->lire) {
-	$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
-	$object->next_prev_filter = " rowid in (" . (count($objectsListId) ? join(',', array_keys($objectsListId)) : '0') . ")";
+    $objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
+    $object->next_prev_filter = " rowid in (" . (count($objectsListId) ? join(',', array_keys($objectsListId)) : '0') . ")";
 }
 
 dol_banner_tab($object, 'project_ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -124,7 +124,7 @@ print '<table class="border" width="100%">';
 print '<tr><td class="titlefield">' . $langs->trans("Visibility") . '</td><td>';
 if ($object->public) print $langs->trans('SharedProject');
 else
-	print $langs->trans('PrivateProject');
+    print $langs->trans('PrivateProject');
 print '</td></tr>';
 
 // Date start - end
@@ -159,9 +159,9 @@ print '</td></tr>';
 
 // Categories
 if ($conf->categorie->enabled) {
-	print '<tr><td class="valignmiddle">' . $langs->trans("Categories") . '</td><td>';
-	print $form->showCategories($object->id, 'project', 1);
-	print "</td></tr>";
+    print '<tr><td class="valignmiddle">' . $langs->trans("Categories") . '</td><td>';
+    print $form->showCategories($object->id, 'project', 1);
+    print "</td></tr>";
 }
 
 // Nb comments

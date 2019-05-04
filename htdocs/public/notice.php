@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2016-2018	Laurent Destailleur		<eldy@users.sourceforge.net>
+/* Copyright (C) 2016-2018    Laurent Destailleur        <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
  */
 
 /**
- *	\file       htdocs/public/notice.php
- *	\brief      Dolibarr page to show a notice.
+ *    \file       htdocs/public/notice.php
+ *    \brief      Dolibarr page to show a notice.
  *              Default notice is a message to say network connection is off.
  *              You can also call this page with URL:
  *                /public/notice.php?lang=xx_XX&transkey=translation_key  (key must be inside file main.lang, error.lang or other.lang)

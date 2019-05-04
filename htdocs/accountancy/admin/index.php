@@ -23,9 +23,9 @@
  */
 
 /**
- * \file		htdocs/accountancy/admin/index.php
- * \ingroup		Advanced accountancy
- * \brief		Setup page to configure accounting expert module
+ * \file        htdocs/accountancy/admin/index.php
+ * \ingroup        Advanced accountancy
+ * \brief        Setup page to configure accounting expert module
  */
 
 require '../../main.inc.php';
@@ -38,7 +38,7 @@ $langs->loadLangs(array("compta","bills","admin","accountancy"));
 // Security access
 if (empty($user->rights->accounting->chartofaccount))
 {
-	accessforbidden();
+    accessforbidden();
 }
 
 $action = GETPOST('action', 'aZ09');
@@ -60,22 +60,22 @@ $list = array (
 $accounting_mode = empty($conf->global->ACCOUNTING_MODE) ? 'RECETTES-DEPENSES' : $conf->global->ACCOUNTING_MODE;
 
 if ($action == 'update') {
-	$error = 0;
+    $error = 0;
 
-	if (! $error)
-	{
-	    foreach ($list as $constname)
-	    {
-	        $constvalue = GETPOST($constname, 'alpha');
+    if (! $error)
+    {
+        foreach ($list as $constname)
+        {
+            $constvalue = GETPOST($constname, 'alpha');
 
-	        if (! dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
-	            $error++;
-	        }
-	    }
-	    if ($error) {
-	    	setEventMessages($langs->trans("Error"), null, 'errors');
-	    }
-	}
+            if (! dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
+                $error++;
+            }
+        }
+        if ($error) {
+            setEventMessages($langs->trans("Error"), null, 'errors');
+        }
+    }
 
     if (! $error) {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
@@ -121,27 +121,27 @@ if ($action == 'setmanagezero') {
 }
 
 if ($action == 'setdisabledirectinput') {
-	$setdisabledirectinput = GETPOST('value', 'int');
-	$res = dolibarr_set_const($db, "BANK_DISABLE_DIRECT_INPUT", $setdisabledirectinput, 'yesno', 0, '', $conf->entity);
-	if (! $res > 0)
-		$error ++;
-		if (! $error) {
-			setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-		} else {
-			setEventMessages($langs->trans("Error"), null, 'mesgs');
-		}
+    $setdisabledirectinput = GETPOST('value', 'int');
+    $res = dolibarr_set_const($db, "BANK_DISABLE_DIRECT_INPUT", $setdisabledirectinput, 'yesno', 0, '', $conf->entity);
+    if (! $res > 0)
+        $error ++;
+        if (! $error) {
+            setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+        } else {
+            setEventMessages($langs->trans("Error"), null, 'mesgs');
+        }
 }
 
 if ($action == 'setenabledraftexport') {
-	$setenabledraftexport = GETPOST('value', 'int');
-	$res = dolibarr_set_const($db, "ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL", $setenabledraftexport, 'yesno', 0, '', $conf->entity);
-	if (! $res > 0)
-		$error ++;
-		if (! $error) {
-			setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-		} else {
-			setEventMessages($langs->trans("Error"), null, 'mesgs');
-		}
+    $setenabledraftexport = GETPOST('value', 'int');
+    $res = dolibarr_set_const($db, "ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL", $setenabledraftexport, 'yesno', 0, '', $conf->entity);
+    if (! $res > 0)
+        $error ++;
+        if (! $error) {
+            setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+        } else {
+            setEventMessages($langs->trans("Error"), null, 'mesgs');
+        }
 }
 
 if ($action == 'setenablesubsidiarylist') {
@@ -237,31 +237,31 @@ if (! empty($user->admin))
     }
     print '</tr>';
 
-	print '<tr class="oddeven">';
-	print '<td>' . $langs->trans("ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL") . '</td>';
-	if (! empty($conf->global->ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL)) {
-		print '<td class="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setenabledraftexport&value=0">';
-		print img_picto($langs->trans("Activated"), 'switch_on');
-		print '</a></td>';
-	} else {
-		print '<td class="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setenabledraftexport&value=1">';
-		print img_picto($langs->trans("Disabled"), 'switch_off');
-		print '</a></td>';
-	}
-	print '</tr>';
+    print '<tr class="oddeven">';
+    print '<td>' . $langs->trans("ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL") . '</td>';
+    if (! empty($conf->global->ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL)) {
+        print '<td class="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setenabledraftexport&value=0">';
+        print img_picto($langs->trans("Activated"), 'switch_on');
+        print '</a></td>';
+    } else {
+        print '<td class="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setenabledraftexport&value=1">';
+        print img_picto($langs->trans("Disabled"), 'switch_off');
+        print '</a></td>';
+    }
+    print '</tr>';
 
-	print '<tr class="oddeven">';
-	print '<td>' . $langs->trans("BANK_DISABLE_DIRECT_INPUT") . '</td>';
-	if (! empty($conf->global->BANK_DISABLE_DIRECT_INPUT)) {
-		print '<td class="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setdisabledirectinput&value=0">';
-		print img_picto($langs->trans("Activated"), 'switch_on');
-		print '</a></td>';
-	} else {
-		print '<td class="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setdisabledirectinput&value=1">';
-		print img_picto($langs->trans("Disabled"), 'switch_off');
-		print '</a></td>';
-	}
-	print '</tr>';
+    print '<tr class="oddeven">';
+    print '<td>' . $langs->trans("BANK_DISABLE_DIRECT_INPUT") . '</td>';
+    if (! empty($conf->global->BANK_DISABLE_DIRECT_INPUT)) {
+        print '<td class="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setdisabledirectinput&value=0">';
+        print img_picto($langs->trans("Activated"), 'switch_on');
+        print '</a></td>';
+    } else {
+        print '<td class="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setdisabledirectinput&value=1">';
+        print img_picto($langs->trans("Disabled"), 'switch_off');
+        print '</a></td>';
+    }
+    print '</tr>';
 
     print '<tr class="oddeven">';
     print '<td>' . $langs->trans("ACCOUNTANCY_COMBO_FOR_AUX") . '</td>';

@@ -18,22 +18,22 @@
 
 /**
  *      \file       test/phpunit/LoanTest.php
- *		\ingroup    test
+ *        \ingroup    test
  *      \brief      PHPUnit test
- *		\remarks	To run this script as CLI:  phpunit filename.php
+ *        \remarks    To run this script as CLI:  phpunit filename.php
  */
 
 global $conf,$user,$langs,$db;
-//define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
+//define('TEST_DB_FORCE_TYPE','mysql');    // This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/loan/class/loan.class.php';
 
 if (empty($user->id))
 {
-	print "Load permissions for admin user nb 1\n";
-	$user->fetch(1);
-	$user->getrights();
+    print "Load permissions for admin user nb 1\n";
+    $user->fetch(1);
+    $user->getrights();
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 
@@ -43,133 +43,133 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
- * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
+ * @remarks    backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
 class LoanTest extends PHPUnit_Framework_TestCase
 {
-	protected $savconf;
-	protected $savuser;
-	protected $savlangs;
-	protected $savdb;
+    protected $savconf;
+    protected $savuser;
+    protected $savlangs;
+    protected $savdb;
 
-	/**
-	 * Constructor
-	 * We save global variables into local variables
-	 *
-	 * @return LoanTest
-	 */
-	public function __construct()
-	{
-		parent::__construct();
+    /**
+     * Constructor
+     * We save global variables into local variables
+     *
+     * @return LoanTest
+     */
+    public function __construct()
+    {
+        parent::__construct();
 
-		//$this->sharedFixture
-		global $conf,$user,$langs,$db;
-		$this->savconf=$conf;
-		$this->savuser=$user;
-		$this->savlangs=$langs;
-		$this->savdb=$db;
+        //$this->sharedFixture
+        global $conf,$user,$langs,$db;
+        $this->savconf=$conf;
+        $this->savuser=$user;
+        $this->savlangs=$langs;
+        $this->savdb=$db;
 
-		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-		//print " - db ".$db->db;
-		print "\n";
-	}
+        print __METHOD__." db->type=".$db->type." user->id=".$user->id;
+        //print " - db ".$db->db;
+        print "\n";
+    }
 
-	// Static methods
+    // Static methods
     public static function setUpBeforeClass()
     {
-    	global $conf,$user,$langs,$db;
-		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
+        global $conf,$user,$langs,$db;
+        $db->begin();    // This is to have all actions inside a transaction even if test launched without suite.
 
-    	print __METHOD__."\n";
+        print __METHOD__."\n";
     }
 
     // tear down after class
     public static function tearDownAfterClass()
     {
-    	global $conf,$user,$langs,$db;
-		$db->rollback();
+        global $conf,$user,$langs,$db;
+        $db->rollback();
 
-		print __METHOD__."\n";
+        print __METHOD__."\n";
     }
 
-	/**
-	 * Init phpunit tests
-	 *
-	 * @return	void
-	 */
+    /**
+     * Init phpunit tests
+     *
+     * @return    void
+     */
     protected function setUp()
     {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-		print __METHOD__."\n";
-		//print $db->getVersion()."\n";
+        print __METHOD__."\n";
+        //print $db->getVersion()."\n";
     }
-	/**
-	 * End phpunit tests
-	 *
-	 * @return	void
-	 */
+    /**
+     * End phpunit tests
+     *
+     * @return    void
+     */
     protected function tearDown()
     {
-    	print __METHOD__."\n";
+        print __METHOD__."\n";
     }
 
     /**
      * testLoanCreate
      *
-     * @return	void
+     * @return    void
      */
     public function testLoanCreate()
     {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-		$localobject=new Loan($this->savdb);
-    	$localobject->initAsSpecimen();
-    	$result=$localobject->create($user);
+        $localobject=new Loan($this->savdb);
+        $localobject->initAsSpecimen();
+        $result=$localobject->create($user);
 
-    	$this->assertLessThan($result, 0);
-    	print __METHOD__." result=".$result."\n";
-    	return $result;
+        $this->assertLessThan($result, 0);
+        print __METHOD__." result=".$result."\n";
+        return $result;
     }
 
     /**
      * testLoanFetch
      *
-     * @param	int		$id		Id of object
-     * @return	void
+     * @param    int        $id        Id of object
+     * @return    void
      *
-     * @depends	testLoanCreate
+     * @depends    testLoanCreate
      * The depends says test is run only if previous is ok
      */
     public function testLoanFetch($id)
     {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-		$localobject=new Loan($this->savdb);
-    	$result=$localobject->fetch($id);
+        $localobject=new Loan($this->savdb);
+        $result=$localobject->fetch($id);
 
-    	$this->assertLessThan($result, 0);
-    	print __METHOD__." id=".$id." result=".$result."\n";
-    	return $localobject;
+        $this->assertLessThan($result, 0);
+        print __METHOD__." id=".$id." result=".$result."\n";
+        return $localobject;
     }
 
-	/**
+    /**
      * testLoanOther
      *
-     * @param	Loan	$localobject	Loan
-     * @return	int
+     * @param    Loan    $localobject    Loan
+     * @return    int
      *
      * @depends testLoanFetch
      * The depends says test is run only if previous is ok
@@ -184,34 +184,34 @@ class LoanTest extends PHPUnit_Framework_TestCase
 
         $result=$localobject->set_paid($user);
 
-    	print __METHOD__." id=".$localobject->id." result=".$result."\n";
-    	$this->assertLessThan($result, 0);
+        print __METHOD__." id=".$localobject->id." result=".$result."\n";
+        $this->assertLessThan($result, 0);
         return $localobject->id;
     }
 
     /**
      * testLoanDelete
      *
-     * @param	int		$id		Id of loan
-     * @return	void
+     * @param    int        $id        Id of loan
+     * @return    void
      *
-     * @depends	testLoanCreate
+     * @depends    testLoanCreate
      * The depends says test is run only if previous is ok
      */
     public function testLoanDelete($id)
     {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-		$localobject=new Loan($this->savdb);
-    	$result=$localobject->fetch($id);
-		$result=$localobject->delete($user);
+        $localobject=new Loan($this->savdb);
+        $result=$localobject->fetch($id);
+        $result=$localobject->delete($user);
 
-		print __METHOD__." id=".$id." result=".$result."\n";
-    	$this->assertLessThan($result, 0);
-    	return $result;
+        print __METHOD__." id=".$id." result=".$result."\n";
+        $this->assertLessThan($result, 0);
+        return $result;
     }
 }

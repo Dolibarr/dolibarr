@@ -60,9 +60,9 @@ class Projects extends DolibarrApi
      * Return an array with project informations
      *
      * @param       int         $id         ID of project
-     * @return 	array|mixed data without useless information
+     * @return     array|mixed data without useless information
      *
-     * @throws 	RestException
+     * @throws     RestException
      */
     public function get($id)
     {
@@ -90,11 +90,11 @@ class Projects extends DolibarrApi
      *
      * Get a list of projects
      *
-     * @param string	       $sortfield	        Sort field
-     * @param string	       $sortorder	        Sort order
-     * @param int		       $limit		        Limit for list
-     * @param int		       $page		        Page number
-     * @param string   	       $thirdparty_ids	    Thirdparty ids to filter projects of. {@example '1' or '1,2,3'} {@pattern /^[0-9,]*$/i}
+     * @param string           $sortfield            Sort field
+     * @param string           $sortorder            Sort order
+     * @param int               $limit                Limit for list
+     * @param int               $page                Page number
+     * @param string              $thirdparty_ids        Thirdparty ids to filter projects of. {@example '1' or '1,2,3'} {@pattern /^[0-9,]*$/i}
      * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
      * @return  array                               Array of project objects
      */
@@ -120,7 +120,7 @@ class Projects extends DolibarrApi
         $sql.= ' WHERE t.entity IN ('.getEntity('project').')';
         if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql.= " AND t.fk_soc = sc.fk_soc";
         if ($socids) $sql.= " AND t.fk_soc IN (".$socids.")";
-        if ($search_sale > 0) $sql.= " AND t.rowid = sc.fk_soc";		// Join for the needed table to filter by sale
+        if ($search_sale > 0) $sql.= " AND t.rowid = sc.fk_soc";        // Join for the needed table to filter by sale
         // Insert sale filter
         if ($search_sale > 0)
         {
@@ -138,7 +138,7 @@ class Projects extends DolibarrApi
         }
 
         $sql.= $db->order($sortfield, $sortorder);
-        if ($limit)	{
+        if ($limit)    {
             if ($page < 0)
             {
                 $page = 0;
@@ -213,7 +213,7 @@ class Projects extends DolibarrApi
      * @param int   $includetimespent       0=Return only list of tasks. 1=Include a summary of time spent, 2=Include details of time spent lines (2 is no implemented yet)
      * @return int
      *
-     * @url	GET {id}/tasks
+     * @url    GET {id}/tasks
      */
     public function getLines($id, $includetimespent = 0)
     {
@@ -254,7 +254,7 @@ class Projects extends DolibarrApi
      * @param   int   $id             Id of project
      * @param   int   $userid         Id of user (0 = connected user)
      *
-     * @url	GET {id}/roles
+     * @url    GET {id}/roles
      *
      * @return int
      */
@@ -298,7 +298,7 @@ class Projects extends DolibarrApi
      * @param int   $id             Id of project to update
      * @param array $request_data   Projectline data
      *
-     * @url	POST {id}/tasks
+     * @url    POST {id}/tasks
      *
      * @return int
      */
@@ -361,7 +361,7 @@ class Projects extends DolibarrApi
      * @param int   $taskid         Id of task to update
      * @param array $request_data   Projectline data
      *
-     * @url	PUT {id}/tasks/{taskid}
+     * @url    PUT {id}/tasks/{taskid}
      *
      * @return object
      */

@@ -20,9 +20,9 @@
  */
 
 /**
- * \file 		htdocs/accountancy/bookkeeping/listbyaccount.php
- * \ingroup 	Advanced accountancy
- * \brief 		List operation of book keeping ordered by account number
+ * \file         htdocs/accountancy/bookkeeping/listbyaccount.php
+ * \ingroup     Advanced accountancy
+ * \brief         List operation of book keeping ordered by account number
  */
 
 require '../../main.inc.php';
@@ -48,11 +48,11 @@ $search_doc_date = dol_mktime(0, 0, 0, GETPOST('doc_datemonth', 'int'), GETPOST(
 $search_accountancy_code = GETPOST("search_accountancy_code");
 $search_accountancy_code_start = GETPOST('search_accountancy_code_start', 'alpha');
 if ($search_accountancy_code_start == - 1) {
-	$search_accountancy_code_start = '';
+    $search_accountancy_code_start = '';
 }
 $search_accountancy_code_end = GETPOST('search_accountancy_code_end', 'alpha');
 if ($search_accountancy_code_end == - 1) {
-	$search_accountancy_code_end = '';
+    $search_accountancy_code_end = '';
 }
 $search_doc_ref = GETPOST('search_doc_ref', 'alpha');
 $search_label_operation = GETPOST('search_label_operation', 'alpha');
@@ -74,29 +74,29 @@ if ($sortorder == "") $sortorder = "ASC";
 if ($sortfield == "") $sortfield = "t.rowid";
 
 if (empty($search_date_start) && empty($search_date_end)) {
-	$sql = 	"SELECT date_start, date_end from ".MAIN_DB_PREFIX."accounting_fiscalyear ";
-	$sql.= " where date_start < '".$db->idate(dol_now())."' and date_end > '".$db->idate(dol_now())."'";
-	$sql.= $db->plimit(1);
-	$res = $db->query($sql);
+    $sql =     "SELECT date_start, date_end from ".MAIN_DB_PREFIX."accounting_fiscalyear ";
+    $sql.= " where date_start < '".$db->idate(dol_now())."' and date_end > '".$db->idate(dol_now())."'";
+    $sql.= $db->plimit(1);
+    $res = $db->query($sql);
 
-	if ($res->num_rows > 0) {
-		$fiscalYear = $db->fetch_object($res);
-		$search_date_start = strtotime($fiscalYear->date_start);
-		$search_date_end = strtotime($fiscalYear->date_end);
-	} else {
-		$month_start= ($conf->global->SOCIETE_FISCAL_MONTH_START?($conf->global->SOCIETE_FISCAL_MONTH_START):1);
-		$year_start = dol_print_date(dol_now(), '%Y');
-		if (dol_print_date(dol_now(), '%m') < $month_start) $year_start--;	// If current month is lower that starting fiscal month, we start last year
-		$year_end = $year_start + 1;
-		$month_end = $month_start - 1;
-		if ($month_end < 1)
-		{
-			$month_end = 12;
-			$year_end--;
-		}
-		$search_date_start = dol_mktime(0, 0, 0, $month_start, 1, $year_start);
-		$search_date_end = dol_get_last_day($year_end, $month_end);
-	}
+    if ($res->num_rows > 0) {
+        $fiscalYear = $db->fetch_object($res);
+        $search_date_start = strtotime($fiscalYear->date_start);
+        $search_date_end = strtotime($fiscalYear->date_end);
+    } else {
+        $month_start= ($conf->global->SOCIETE_FISCAL_MONTH_START?($conf->global->SOCIETE_FISCAL_MONTH_START):1);
+        $year_start = dol_print_date(dol_now(), '%Y');
+        if (dol_print_date(dol_now(), '%m') < $month_start) $year_start--;    // If current month is lower that starting fiscal month, we start last year
+        $year_end = $year_start + 1;
+        $month_end = $month_start - 1;
+        if ($month_end < 1)
+        {
+            $month_end = 12;
+            $year_end--;
+        }
+        $search_date_start = dol_mktime(0, 0, 0, $month_start, 1, $year_start);
+        $search_date_end = dol_get_last_day($year_end, $month_end);
+    }
 }
 
 $object = new BookKeeping($db);
@@ -106,25 +106,25 @@ $object = new BookKeeping($db);
  */
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
 {
-	$search_doc_date = '';
-	$search_accountancy_code = '';
-	$search_accountancy_code_start = '';
-	$search_accountancy_code_end = '';
-	$search_label_account = '';
-	$search_doc_ref = '';
-	$search_label_operation = '';
-	$search_direction = '';
-	$search_ledger_code = '';
-	$search_date_start='';
-	$search_date_end='';
-	$search_date_startyear='';
-	$search_date_startmonth='';
-	$search_date_startday='';
-	$search_date_endyear='';
-	$search_date_endmonth='';
-	$search_date_endday='';
-	$search_debit = '';
-	$search_credit = '';
+    $search_doc_date = '';
+    $search_accountancy_code = '';
+    $search_accountancy_code_start = '';
+    $search_accountancy_code_end = '';
+    $search_label_account = '';
+    $search_doc_ref = '';
+    $search_label_operation = '';
+    $search_direction = '';
+    $search_ledger_code = '';
+    $search_date_start='';
+    $search_date_end='';
+    $search_date_startyear='';
+    $search_date_startmonth='';
+    $search_date_startday='';
+    $search_date_endyear='';
+    $search_date_endmonth='';
+    $search_date_endday='';
+    $search_debit = '';
+    $search_credit = '';
 }
 
 // Must be after the remove filter action, before the export.
@@ -132,67 +132,67 @@ $param = '';
 $filter = array ();
 
 if (! empty($search_date_start)) {
-	$filter['t.doc_date>='] = $search_date_start;
-	$param .= '&search_date_startmonth=' . GETPOST('search_date_startmonth', 'int') . '&search_date_startday=' . GETPOST('search_date_startday', 'int') . '&search_date_startyear=' . GETPOST('search_date_startyear', 'int');
+    $filter['t.doc_date>='] = $search_date_start;
+    $param .= '&search_date_startmonth=' . GETPOST('search_date_startmonth', 'int') . '&search_date_startday=' . GETPOST('search_date_startday', 'int') . '&search_date_startyear=' . GETPOST('search_date_startyear', 'int');
 }
 if (! empty($search_date_end)) {
-	$filter['t.doc_date<='] = $search_date_end;
-	$param .= '&search_date_endmonth=' . GETPOST('search_date_endmonth', 'int') . '&search_date_endday=' . GETPOST('search_date_endday', 'int') . '&search_date_endyear=' . GETPOST('search_date_endyear', 'int');
+    $filter['t.doc_date<='] = $search_date_end;
+    $param .= '&search_date_endmonth=' . GETPOST('search_date_endmonth', 'int') . '&search_date_endday=' . GETPOST('search_date_endday', 'int') . '&search_date_endyear=' . GETPOST('search_date_endyear', 'int');
 }
 if (! empty($search_doc_date)) {
-	$filter['t.doc_date'] = $search_doc_date;
-	$param .= '&doc_datemonth=' . GETPOST('doc_datemonth', 'int') . '&doc_dateday=' . GETPOST('doc_dateday', 'int') . '&doc_dateyear=' . GETPOST('doc_dateyear', 'int');
+    $filter['t.doc_date'] = $search_doc_date;
+    $param .= '&doc_datemonth=' . GETPOST('doc_datemonth', 'int') . '&doc_dateday=' . GETPOST('doc_dateday', 'int') . '&doc_dateyear=' . GETPOST('doc_dateyear', 'int');
 }
 if (! empty($search_accountancy_code_start)) {
-	$filter['t.numero_compte>='] = $search_accountancy_code_start;
-	$param .= '&search_accountancy_code_start=' . urlencode($search_accountancy_code_start);
+    $filter['t.numero_compte>='] = $search_accountancy_code_start;
+    $param .= '&search_accountancy_code_start=' . urlencode($search_accountancy_code_start);
 }
 if (! empty($search_accountancy_code_end)) {
-	$filter['t.numero_compte<='] = $search_accountancy_code_end;
-	$param .= '&search_accountancy_code_end=' . urlencode($search_accountancy_code_end);
+    $filter['t.numero_compte<='] = $search_accountancy_code_end;
+    $param .= '&search_accountancy_code_end=' . urlencode($search_accountancy_code_end);
 }
 if (! empty($search_label_account)) {
-	$filter['t.label_compte'] = $search_label_account;
-	$param .= '&search_label_compte=' . urlencode($search_label_account);
+    $filter['t.label_compte'] = $search_label_account;
+    $param .= '&search_label_compte=' . urlencode($search_label_account);
 }
 if (! empty($search_doc_ref)) {
-	$filter['t.doc_ref'] = $search_doc_ref;
-	$param .= '&search_doc_ref=' . urlencode($search_doc_ref);
+    $filter['t.doc_ref'] = $search_doc_ref;
+    $param .= '&search_doc_ref=' . urlencode($search_doc_ref);
 }
 if (! empty($search_label_operation)) {
-	$filter['t.label_operation'] = $search_label_operation;
-	$param .= '&search_label_operation=' . urlencode($search_label_operation);
+    $filter['t.label_operation'] = $search_label_operation;
+    $param .= '&search_label_operation=' . urlencode($search_label_operation);
 }
 if (! empty($search_direction)) {
-	$filter['t.sens'] = $search_direction;
-	$param .= '&search_direction=' . urlencode($search_direction);
+    $filter['t.sens'] = $search_direction;
+    $param .= '&search_direction=' . urlencode($search_direction);
 }
 if (! empty($search_ledger_code)) {
-	$filter['t.code_journal'] = $search_ledger_code;
-	$param .= '&search_ledger_code=' . urlencode($search_ledger_code);
+    $filter['t.code_journal'] = $search_ledger_code;
+    $param .= '&search_ledger_code=' . urlencode($search_ledger_code);
 }
 if (! empty($search_debit)) {
-	$filter['t.debit'] = $search_debit;
-	$param .= '&search_debit=' . urlencode($search_debit);
+    $filter['t.debit'] = $search_debit;
+    $param .= '&search_debit=' . urlencode($search_debit);
 }
 if (! empty($search_credit)) {
-	$filter['t.credit'] = $search_credit;
-	$param .= '&search_credit=' . urlencode($search_credit);
+    $filter['t.credit'] = $search_credit;
+    $param .= '&search_credit=' . urlencode($search_credit);
 }
 
 
 if ($action == 'delmouvconfirm') {
 
-	$mvt_num = GETPOST('mvt_num', 'int');
+    $mvt_num = GETPOST('mvt_num', 'int');
 
-	if (! empty($mvt_num)) {
-		$result = $object->deleteMvtNum($mvt_num);
-		if ($result < 0) {
-			setEventMessages($object->error, $object->errors, 'errors');
-		}
-		Header("Location: listbyaccount.php");
-		exit();
-	}
+    if (! empty($mvt_num)) {
+        $result = $object->deleteMvtNum($mvt_num);
+        if ($result < 0) {
+            setEventMessages($object->error, $object->errors, 'errors');
+        }
+        Header("Location: listbyaccount.php");
+        exit();
+    }
 }
 
 
@@ -212,45 +212,45 @@ llxHeader('', $title_page);
 // List
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-	$nbtotalofrecords = $object->fetchAllByAccount($sortorder, $sortfield, 0, 0, $filter);
-	if ($nbtotalofrecords < 0) {
-		setEventMessages($object->error, $object->errors, 'errors');
-	}
+    $nbtotalofrecords = $object->fetchAllByAccount($sortorder, $sortfield, 0, 0, $filter);
+    if ($nbtotalofrecords < 0) {
+        setEventMessages($object->error, $object->errors, 'errors');
+    }
 }
 
 $result = $object->fetchAllByAccount($sortorder, $sortfield, $limit, $offset, $filter);
 
 if ($result < 0) {
-	setEventMessages($object->error, $object->errors, 'errors');
+    setEventMessages($object->error, $object->errors, 'errors');
 }
 
 $num=count($object->lines);
 
 
 if ($action == 'delmouv') {
-	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?mvt_num=' . GETPOST('mvt_num'), $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvtPartial'), 'delmouvconfirm', '', 0, 1);
-	print $formconfirm;
+    $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?mvt_num=' . GETPOST('mvt_num'), $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvtPartial'), 'delmouvconfirm', '', 0, 1);
+    print $formconfirm;
 }
 if ($action == 'delbookkeepingyear') {
 
-	$form_question = array ();
-	$delyear = GETPOST('delyear');
+    $form_question = array ();
+    $delyear = GETPOST('delyear');
 
-	if (empty($delyear)) {
-		$delyear = dol_print_date(dol_now(), '%Y');
-	}
-	$year_array = $formaccounting->selectyear_accountancy_bookkepping($delyear, 'delyear', 0, 'array');
+    if (empty($delyear)) {
+        $delyear = dol_print_date(dol_now(), '%Y');
+    }
+    $year_array = $formaccounting->selectyear_accountancy_bookkepping($delyear, 'delyear', 0, 'array');
 
-	$form_question['delyear'] = array (
-			'name' => 'delyear',
-			'type' => 'select',
-			'label' => $langs->trans('DelYear'),
-			'values' => $year_array,
-			'default' => $delyear
-	);
+    $form_question['delyear'] = array (
+            'name' => 'delyear',
+            'type' => 'select',
+            'label' => $langs->trans('DelYear'),
+            'values' => $year_array,
+            'default' => $delyear
+    );
 
-	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvt'), 'delbookkeepingyearconfirm', $form_question, 0, 1, 250);
-	print $formconfirm;
+    $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvt'), 'delbookkeepingyearconfirm', $form_question, 0, 1, 250);
+    print $formconfirm;
 }
 
 
@@ -268,9 +268,9 @@ print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $param, $sortfield, 
 
 // Reverse sort order
 if ( preg_match('/^asc/i', $sortorder) )
-	$sortorder = "asc";
+    $sortorder = "asc";
 else
-	$sortorder = "desc";
+    $sortorder = "desc";
 
 print '<table class="noborder" width="100%">';
 
@@ -327,76 +327,76 @@ $displayed_account_number = null;       // Start with undefined to be able to di
 $i=0;
 while ($i < min($num, $limit))
 {
-	$line = $object->lines[$i];
+    $line = $object->lines[$i];
 
-	$total_debit += $line->debit;
-	$total_credit += $line->credit;
+    $total_debit += $line->debit;
+    $total_credit += $line->credit;
 
-	$accountg = length_accountg($line->numero_compte);
-	//if (empty($accountg)) $accountg = '-';
+    $accountg = length_accountg($line->numero_compte);
+    //if (empty($accountg)) $accountg = '-';
 
-	// Is it a break ?
-	if ($accountg != $displayed_account_number || ! isset($displayed_account_number)) {
+    // Is it a break ?
+    if ($accountg != $displayed_account_number || ! isset($displayed_account_number)) {
 
-		// Affiche un Sous-Total par compte comptable
-		if (isset($displayed_account_number)) {
-			print '<tr class="liste_total"><td class="right" colspan="5">'.$langs->trans("SubTotal").':</td><td class="nowrap right">'.price($sous_total_debit).'</td><td class="nowrap right">'.price($sous_total_credit).'</td>';
-			print "<td>&nbsp;</td>\n";
-			print "<td>&nbsp;</td>\n";
-			print '</tr>';
-		}
+        // Affiche un Sous-Total par compte comptable
+        if (isset($displayed_account_number)) {
+            print '<tr class="liste_total"><td class="right" colspan="5">'.$langs->trans("SubTotal").':</td><td class="nowrap right">'.price($sous_total_debit).'</td><td class="nowrap right">'.price($sous_total_credit).'</td>';
+            print "<td>&nbsp;</td>\n";
+            print "<td>&nbsp;</td>\n";
+            print '</tr>';
+        }
 
-		// Show the break account
-		$colspan = 9;
-		print "<tr>";
-		print '<td colspan="'.$colspan.'" style="font-weight:bold; border-bottom: 1pt solid black;">';
-		if (! empty($line->numero_compte) && $line->numero_compte != '-1') print length_accountg($line->numero_compte) . ' : ' . $object->get_compte_desc($line->numero_compte);
-		else print '<span class="error">'.$langs->trans("Unknown").'</span>';
-		print '</td>';
-		print '</tr>';
+        // Show the break account
+        $colspan = 9;
+        print "<tr>";
+        print '<td colspan="'.$colspan.'" style="font-weight:bold; border-bottom: 1pt solid black;">';
+        if (! empty($line->numero_compte) && $line->numero_compte != '-1') print length_accountg($line->numero_compte) . ' : ' . $object->get_compte_desc($line->numero_compte);
+        else print '<span class="error">'.$langs->trans("Unknown").'</span>';
+        print '</td>';
+        print '</tr>';
 
-		$displayed_account_number = $accountg;
-		//if (empty($displayed_account_number)) $displayed_account_number='-';
-		$sous_total_debit = 0;
-		$sous_total_credit = 0;
-	}
+        $displayed_account_number = $accountg;
+        //if (empty($displayed_account_number)) $displayed_account_number='-';
+        $sous_total_debit = 0;
+        $sous_total_credit = 0;
+    }
 
-	print '<tr class="oddeven">';
-	print '<td>&nbsp;</td>';
-	print '<td class="right"><a href="./card.php?piece_num=' . $line->piece_num . '">'.$line->piece_num.'</a></td>';
-	print '<td class="center">' . dol_print_date($line->doc_date, 'day') . '</td>';
+    print '<tr class="oddeven">';
+    print '<td>&nbsp;</td>';
+    print '<td class="right"><a href="./card.php?piece_num=' . $line->piece_num . '">'.$line->piece_num.'</a></td>';
+    print '<td class="center">' . dol_print_date($line->doc_date, 'day') . '</td>';
 
-	// TODO Add a link according to doc_type and fk_doc
-	print '<td class="nowrap">';
-	//if ($line->doc_type == 'supplier_invoice')
-	//if ($line->doc_type == 'customer_invoice')
-	print $line->doc_ref;
-	print '</td>';
+    // TODO Add a link according to doc_type and fk_doc
+    print '<td class="nowrap">';
+    //if ($line->doc_type == 'supplier_invoice')
+    //if ($line->doc_type == 'customer_invoice')
+    print $line->doc_ref;
+    print '</td>';
 
-	// Affiche un lien vers la facture client/fournisseur
-	$doc_ref = preg_replace('/\(.*\)/', '', $line->doc_ref);
-	print strlen(length_accounta($line->subledger_account)) == 0 ? '<td>' . $line->label_operation . '</td>' : '<td>' . $line->label_operation . '<br><span style="font-size:0.8em">(' . length_accounta($line->subledger_account) . ')</span></td>';
+    // Affiche un lien vers la facture client/fournisseur
+    $doc_ref = preg_replace('/\(.*\)/', '', $line->doc_ref);
+    print strlen(length_accounta($line->subledger_account)) == 0 ? '<td>' . $line->label_operation . '</td>' : '<td>' . $line->label_operation . '<br><span style="font-size:0.8em">(' . length_accounta($line->subledger_account) . ')</span></td>';
 
 
-	print '<td class="right">' . ($line->debit ? price($line->debit) :''). '</td>';
-	print '<td class="right">' . ($line->credit ? price($line->credit) : '') . '</td>';
+    print '<td class="right">' . ($line->debit ? price($line->debit) :''). '</td>';
+    print '<td class="right">' . ($line->credit ? price($line->credit) : '') . '</td>';
 
-	$accountingjournal = new AccountingJournal($db);
-	$result = $accountingjournal->fetch('', $line->code_journal);
-	$journaltoshow = (($result > 0)?$accountingjournal->getNomUrl(0, 0, 0, '', 0) : $line->code_journal);
-	print '<td class="center">' . $journaltoshow . '</td>';
+    $accountingjournal = new AccountingJournal($db);
+    $result = $accountingjournal->fetch('', $line->code_journal);
+    $journaltoshow = (($result > 0)?$accountingjournal->getNomUrl(0, 0, 0, '', 0) : $line->code_journal);
+    print '<td class="center">' . $journaltoshow . '</td>';
 
-	print '<td class="center">';
-	print '<a href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?piece_num=' . $line->piece_num . '">' . img_edit() . '</a>&nbsp;';
-	print '<a href="' . $_SERVER['PHP_SELF'] . '?action=delmouv&mvt_num=' . $line->piece_num . $param . '&page=' . $page . '">' . img_delete() . '</a>';
-	print '</td>';
-	print "</tr>\n";
+    print '<td class="center">';
+    print '<a href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?piece_num=' . $line->piece_num . '">' . img_edit() . '</a>&nbsp;';
+    print '<a href="' . $_SERVER['PHP_SELF'] . '?action=delmouv&mvt_num=' . $line->piece_num . $param . '&page=' . $page . '">' . img_delete() . '</a>';
+    print '</td>';
+    print "</tr>\n";
 
-	// Comptabilise le sous-total
-	$sous_total_debit += $line->debit;
-	$sous_total_credit += $line->credit;
+    // Comptabilise le sous-total
+    $sous_total_debit += $line->debit;
+    $sous_total_credit += $line->credit;
 
-	$i++;
+    $i++;
 }
 
 // Affiche un Sous-Total du dernier compte comptable affiché

@@ -16,7 +16,7 @@
  */
 
 /**
- * 	\defgroup   blockedlog   Module BlockedLog
+ *     \defgroup   blockedlog   Module BlockedLog
  *  \brief      Add a log into a block chain for some actions.
  *  \file       htdocs/core/modules/modBlockedLog.class.php
  *  \ingroup    blockedlog
@@ -25,14 +25,14 @@
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 /**
- *	Class to describe a BlockedLog module
+ *    Class to describe a BlockedLog module
  */
 class modBlockedLog extends DolibarrModules
 {
     /**
      *   Constructor. Define names, constants, directories, boxes, permissions
      *
-     *   @param      DoliDB		$db      Database handler
+     *   @param      DoliDB        $db      Database handler
      */
     public function __construct($db)
     {
@@ -67,10 +67,10 @@ class modBlockedLog extends DolibarrModules
 
         // Dependancies
         //-------------
-        $this->hidden = false;	// A condition to disable module
-        $this->depends = array('always'=>'modFacture');	   // List of modules id that must be enabled if this module is enabled
-        $this->requiredby = array();	                   // List of modules id to disable if this one is disabled
-        $this->conflictwith = array();	                   // List of modules id this module is in conflict with
+        $this->hidden = false;    // A condition to disable module
+        $this->depends = array('always'=>'modFacture');       // List of modules id that must be enabled if this module is enabled
+        $this->requiredby = array();                       // List of modules id to disable if this one is disabled
+        $this->conflictwith = array();                       // List of modules id this module is in conflict with
         $this->langfiles = array('blockedlog');
 
         $this->warnings_activation = array();                     // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
@@ -111,31 +111,31 @@ class modBlockedLog extends DolibarrModules
 
         // Permissions
         // -----------------
-        $this->rights = array();		// Permission array used by this module
+        $this->rights = array();        // Permission array used by this module
 
         $r=0;
-        $this->rights[$r][0] = $this->numero + $r;	// Permission id (must not be already used)
-        $this->rights[$r][1] = 'Read archived events and fingerprints';	// Permission label
-        $this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
-        $this->rights[$r][4] = 'read';				// In php code, permission will be checked by test if ($user->rights->mymodule->level1->level2)
+        $this->rights[$r][0] = $this->numero + $r;    // Permission id (must not be already used)
+        $this->rights[$r][1] = 'Read archived events and fingerprints';    // Permission label
+        $this->rights[$r][3] = 0;                     // Permission by default for new user (0/1)
+        $this->rights[$r][4] = 'read';                // In php code, permission will be checked by test if ($user->rights->mymodule->level1->level2)
         $this->rights[$r][5] = '';
 
         // Main menu entries
         // -----------------
         $r=0;
         $this->menu[$r]=array(
-        'fk_menu'=>'fk_mainmenu=tools',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+        'fk_menu'=>'fk_mainmenu=tools',            // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
         'mainmenu'=>'tools',
         'leftmenu'=>'blockedlogbrowser',
-        'type'=>'left',			                // This is a Left menu entry
+        'type'=>'left',                            // This is a Left menu entry
         'titre'=>'BrowseBlockedLog',
         'url'=>'/blockedlog/admin/blockedlog_list.php?mainmenu=tools&leftmenu=blockedlogbrowser',
-        'langs'=>'blockedlog',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+        'langs'=>'blockedlog',            // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
         'position'=>200,
         'enabled'=>'$conf->blockedlog->enabled',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-        'perms'=>'$user->rights->blockedlog->read',			    // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+        'perms'=>'$user->rights->blockedlog->read',                // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
         'target'=>'',
-        'user'=>2);				                // 0=Menu for internal users, 1=external users, 2=both
+        'user'=>2);                                // 0=Menu for internal users, 1=external users, 2=both
         $r++;
     }
 
@@ -143,7 +143,7 @@ class modBlockedLog extends DolibarrModules
     /**
      * Check if module was already used before unactivation linked to warnings_unactivation property
      *
-     * @return	boolean		True if already used, otherwise False
+     * @return    boolean        True if already used, otherwise False
      */
     public function alreadyUsed()
     {
@@ -158,8 +158,8 @@ class modBlockedLog extends DolibarrModules
      *      The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
      *      It also creates data directories.
      *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
-     *      @return     int             	1 if OK, 0 if KO
+     *      @param      string    $options    Options when enabling module ('', 'noboxes')
+     *      @return     int                 1 if OK, 0 if KO
      */
     public function init($options = '')
     {
@@ -201,8 +201,8 @@ class modBlockedLog extends DolibarrModules
      * The remove function removes tabs, constants, boxes, permissions and menus from Dolibarr database.
      * Data directories are not deleted
      *
-     * @param      string	$options    Options when enabling module ('', 'noboxes')
-     * @return     int             		1 if OK, 0 if KO
+     * @param      string    $options    Options when enabling module ('', 'noboxes')
+     * @return     int                     1 if OK, 0 if KO
      */
     public function remove($options = '')
     {

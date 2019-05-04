@@ -19,7 +19,7 @@
 
 /**
  *      \file       htdocs/modulebuilder/template/scripts/mymodule.php
- *		\ingroup    mymodule
+ *        \ingroup    mymodule
  *      \brief      This file is an example for a command line script for module MyModule
  */
 
@@ -30,7 +30,7 @@ $path=__DIR__.'/';
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
     echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-	exit(-1);
+    exit(-1);
 }
 
 // Global variables
@@ -39,8 +39,8 @@ $error=0;
 
 
 // -------------------- START OF YOUR CODE HERE --------------------
-@set_time_limit(0);							// No timeout for this script
-define('EVEN_IF_ONLY_LOGIN_ALLOWED', 1);		// Set this define to 0 if you want to lock your script when dolibarr setup is "locked to admin user only".
+@set_time_limit(0);                            // No timeout for this script
+define('EVEN_IF_ONLY_LOGIN_ALLOWED', 1);        // Set this define to 0 if you want to lock your script when dolibarr setup is "locked to admin user only".
 
 // Load Dolibarr environment
 $res=0;
@@ -57,19 +57,19 @@ if (! $res) die("Include of master fails");
 // After this $db, $mysoc, $langs, $conf and $hookmanager are defined (Opened $db handler to database will be closed at end of file).
 // $user is created but empty.
 
-//$langs->setDefaultLang('en_US'); 	// To change default language of $langs
-$langs->load("main");				// To load language file for default language
+//$langs->setDefaultLang('en_US');     // To change default language of $langs
+$langs->load("main");                // To load language file for default language
 
 // Load user and its permissions
-$result=$user->fetch('', 'admin');	// Load user for login 'admin'. Comment line to run as anonymous user.
+$result=$user->fetch('', 'admin');    // Load user for login 'admin'. Comment line to run as anonymous user.
 if (! $result > 0) { dol_print_error('', $user->error); exit; }
 $user->getrights();
 
 
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
-if (! isset($argv[1])) {	// Check parameters
+if (! isset($argv[1])) {    // Check parameters
     print "Usage: ".$script_file." param1 param2 ...\n";
-	exit(-1);
+    exit(-1);
 }
 print '--- start'."\n";
 print 'Argument 1='.$argv[1]."\n";
@@ -132,27 +132,27 @@ dol_syslog($script_file, LOG_DEBUG);
 $resql=$db->query($sql);
 if ($resql)
 {
-	$num = $db->num_rows($resql);
-	$i = 0;
-	if ($num)
-	{
-		while ($i < $num)
-		{
-			$obj = $db->fetch_object($resql);
-			if ($obj)
-			{
-				// You can use here results
-				print $obj->field1;
-				print $obj->field2;
-			}
-			$i++;
-		}
-	}
+    $num = $db->num_rows($resql);
+    $i = 0;
+    if ($num)
+    {
+        while ($i < $num)
+        {
+            $obj = $db->fetch_object($resql);
+            if ($obj)
+            {
+                // You can use here results
+                print $obj->field1;
+                print $obj->field2;
+            }
+            $i++;
+        }
+    }
 }
 else
 {
-	$error++;
-	dol_print_error($db);
+    $error++;
+    dol_print_error($db);
 }
 */
 
@@ -161,15 +161,15 @@ else
 
 if (! $error)
 {
-	$db->commit();
-	print '--- end ok'."\n";
+    $db->commit();
+    print '--- end ok'."\n";
 }
 else
 {
-	print '--- end error code='.$error."\n";
-	$db->rollback();
+    print '--- end error code='.$error."\n";
+    $db->rollback();
 }
 
-$db->close();	// Close $db database opened handler
+$db->close();    // Close $db database opened handler
 
 exit($error);

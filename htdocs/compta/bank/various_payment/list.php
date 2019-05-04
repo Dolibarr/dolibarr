@@ -53,7 +53,7 @@ $search_accountancy_code = GETPOST("search_accountancy_code");
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOST("page", 'int');
-if (empty($page) || $page == -1) { $page = 0; }	 // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -64,29 +64,29 @@ $filtre=GETPOST("filtre", 'alpha');
 
 if (! GETPOST('typeid'))
 {
-	$newfiltre=str_replace('filtre=', '', $filtre);
-	$filterarray=explode('-', $newfiltre);
-	foreach($filterarray as $val)
-	{
-		$part=explode(':', $val);
-		if ($part[0] == 'v.fk_typepayment') $typeid=$part[1];
-	}
+    $newfiltre=str_replace('filtre=', '', $filtre);
+    $filterarray=explode('-', $newfiltre);
+    foreach($filterarray as $val)
+    {
+        $part=explode(':', $val);
+        if ($part[0] == 'v.fk_typepayment') $typeid=$part[1];
+    }
 }
 else
 {
-	$typeid=GETPOST('typeid');
+    $typeid=GETPOST('typeid');
 }
 
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All test are required to be compatible with all browsers
 {
-	$search_ref="";
-	$search_label="";
-	$search_amount_deb="";
-	$search_amount_cred="";
-	$search_account='';
-	$typeid="";
-	$search_date = '';
-	$search_accountancy_code = '';
+    $search_ref="";
+    $search_label="";
+    $search_amount_deb="";
+    $search_amount_cred="";
+    $search_account='';
+    $typeid="";
+    $search_date = '';
+    $search_accountancy_code = '';
 }
 
 /*
@@ -110,17 +110,17 @@ $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.row
 $sql.= " WHERE v.entity IN (".getEntity('payment_various').")";
 
 // Search criteria
-if ($search_ref)					$sql.=" AND v.rowid=".$search_ref;
-if ($search_label)					$sql.=natural_search(array('v.label'), $search_label);
-if ($search_amount_deb)				$sql.=natural_search("v.amount", $search_amount_deb, 1);
-if ($search_amount_cred)			$sql.=natural_search("v.amount", $search_amount_cred, 1);
-if ($search_account > 0)			$sql.=" AND b.fk_account=".$search_account;
-if ($search_date)					$sql.=" AND v.datep=".$search_date;
-if ($search_accountancy_code > 0)	$sql.=" AND v.accountancy_code=".$search_accountancy_code;
+if ($search_ref)                    $sql.=" AND v.rowid=".$search_ref;
+if ($search_label)                    $sql.=natural_search(array('v.label'), $search_label);
+if ($search_amount_deb)                $sql.=natural_search("v.amount", $search_amount_deb, 1);
+if ($search_amount_cred)            $sql.=natural_search("v.amount", $search_amount_cred, 1);
+if ($search_account > 0)            $sql.=" AND b.fk_account=".$search_account;
+if ($search_date)                    $sql.=" AND v.datep=".$search_date;
+if ($search_accountancy_code > 0)    $sql.=" AND v.accountancy_code=".$search_accountancy_code;
 if ($typeid > 0) $sql .= " AND v.fk_typepayment=".$typeid;
 if ($filtre) {
-	$filtre=str_replace(":", "=", $filtre);
-	$sql .= " AND ".$filtre;
+    $filtre=str_replace(":", "=", $filtre);
+    $sql .= " AND ".$filtre;
 }
 
 $sql.= $db->order($sortfield, $sortorder);
@@ -129,219 +129,219 @@ $totalnboflines=0;
 $result=$db->query($sql);
 if ($result)
 {
-	$totalnboflines = $db->num_rows($result);
+    $totalnboflines = $db->num_rows($result);
 }
 $sql.= $db->plimit($limit+1, $offset);
 
 $result = $db->query($sql);
 if ($result)
 {
-	$num = $db->num_rows($result);
-	$i = 0;
-	$total = 0 ;
+    $num = $db->num_rows($result);
+    $i = 0;
+    $total = 0 ;
 
-	$param='';
-	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
-	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
-	if ($search_ref)			$param.='&search_ref='.urlencode($search_ref);
-	if ($search_label)			$param.='&search_label='.urlencode($search_label);
-	if ($typeid > 0)            $param.='&typeid='.urlencode($typeid);
-	if ($search_amount_deb)     $param.='&search_amount_deb='.urlencode($search_amount_deb);
-	if ($search_amount_cred)    $param.='&search_amount_cred='.urlencode($search_amount_cred);
-	if ($search_account > 0)			$param.='&search_amount='.urlencode($search_account);
-	//if ($search_date)					$param.='&search_date='.$search_date;
-	if ($search_accountancy_code > 0)	$param.='&search_accountancy_code='.urlencode($search_accountancy_code);
+    $param='';
+    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
+    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
+    if ($search_ref)            $param.='&search_ref='.urlencode($search_ref);
+    if ($search_label)            $param.='&search_label='.urlencode($search_label);
+    if ($typeid > 0)            $param.='&typeid='.urlencode($typeid);
+    if ($search_amount_deb)     $param.='&search_amount_deb='.urlencode($search_amount_deb);
+    if ($search_amount_cred)    $param.='&search_amount_cred='.urlencode($search_amount_cred);
+    if ($search_account > 0)            $param.='&search_amount='.urlencode($search_account);
+    //if ($search_date)                    $param.='&search_date='.$search_date;
+    if ($search_accountancy_code > 0)    $param.='&search_accountancy_code='.urlencode($search_accountancy_code);
 
-	if ($optioncss != '') $param.='&amp;optioncss='.urlencode($optioncss);
+    if ($optioncss != '') $param.='&amp;optioncss='.urlencode($optioncss);
 
-	$newcardbutton='';
-	if ($user->rights->banque->modifier)
-	{
-		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/compta/bank/various_payment/card.php?action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans('MenuNewVariousPayment').'</span>';
-		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-		$newcardbutton.= '</a>';
-	}
+    $newcardbutton='';
+    if ($user->rights->banque->modifier)
+    {
+        $newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/compta/bank/various_payment/card.php?action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans('MenuNewVariousPayment').'</span>';
+        $newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+        $newcardbutton.= '</a>';
+    }
 
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+    print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 
-	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
-	print '<input type="hidden" name="action" value="list">';
-	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
-	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-	print '<input type="hidden" name="page" value="'.$page.'">';
+    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+    print '<input type="hidden" name="action" value="list">';
+    print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+    print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+    print '<input type="hidden" name="page" value="'.$page.'">';
 
-	print_barre_liste($langs->trans("VariousPayments"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'title_accountancy.png', 0, $newcardbutton, '', $limit);
+    print_barre_liste($langs->trans("VariousPayments"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'title_accountancy.png', 0, $newcardbutton, '', $limit);
 
-	print '<div class="div-table-responsive">';
-	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+    print '<div class="div-table-responsive">';
+    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
-	print '<tr class="liste_titre">';
+    print '<tr class="liste_titre">';
 
-	// Ref
-	print '<td class="liste_titre left">';
-	print '<input class="flat" type="text" size="3" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
-	print '</td>';
+    // Ref
+    print '<td class="liste_titre left">';
+    print '<input class="flat" type="text" size="3" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
+    print '</td>';
 
-	// Label
-	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_label" value="'.dol_escape_htmltag($search_label).'"></td>';
+    // Label
+    print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_label" value="'.dol_escape_htmltag($search_label).'"></td>';
 
-	// Date
-	print '<td class="liste_titre center">';
-	print '<div class="nowrap">';
-	print $form->selectDate($search_date, 'date_doc', 0, 0, 1);
-	print '</div>';
-	print '</td>';
+    // Date
+    print '<td class="liste_titre center">';
+    print '<div class="nowrap">';
+    print $form->selectDate($search_date, 'date_doc', 0, 0, 1);
+    print '</div>';
+    print '</td>';
 
-	// Type
-	print '<td class="liste_titre left">';
-	$form->select_types_paiements($typeid, 'typeid', '', 0, 1, 1, 16);
-	print '</td>';
+    // Type
+    print '<td class="liste_titre left">';
+    $form->select_types_paiements($typeid, 'typeid', '', 0, 1, 1, 16);
+    print '</td>';
 
-	// Account
-	if (! empty($conf->banque->enabled))
-	{
-		print '<td class="liste_titre">';
-		$form->select_comptes($search_account, 'search_account', 0, '', 1);
-		print '</td>';
-	}
+    // Account
+    if (! empty($conf->banque->enabled))
+    {
+        print '<td class="liste_titre">';
+        $form->select_comptes($search_account, 'search_account', 0, '', 1);
+        print '</td>';
+    }
 
-	// Accounting account
-	if (! empty($conf->accounting->enabled))
-	{
-		print '<td class="liste_titre">';
-		print '<div class="nowrap">';
-		print $formaccounting->select_account($search_accountancy_code, 'search_accountancy_code', 1, array (), 1, 1, 'maxwidth200');
-		print '</div>';
-		print '</td>';
-	}
+    // Accounting account
+    if (! empty($conf->accounting->enabled))
+    {
+        print '<td class="liste_titre">';
+        print '<div class="nowrap">';
+        print $formaccounting->select_account($search_accountancy_code, 'search_accountancy_code', 1, array (), 1, 1, 'maxwidth200');
+        print '</div>';
+        print '</td>';
+    }
 
-	// Debit
-	print '<td class="liste_titre right"><input name="search_amount_deb" class="flat" type="text" size="8" value="'.$search_amount_deb.'"></td>';
+    // Debit
+    print '<td class="liste_titre right"><input name="search_amount_deb" class="flat" type="text" size="8" value="'.$search_amount_deb.'"></td>';
 
-	// Credit
-	print '<td class="liste_titre right"><input name="search_amount_cred" class="flat" type="text" size="8" value="'.$search_amount_cred.'"></td>';
+    // Credit
+    print '<td class="liste_titre right"><input name="search_amount_cred" class="flat" type="text" size="8" value="'.$search_amount_cred.'"></td>';
 
-	print '<td class="liste_titre right">';
-	$searchpicto=$form->showFilterAndCheckAddButtons(0);
-	print $searchpicto;
-	print '</td>';
+    print '<td class="liste_titre right">';
+    $searchpicto=$form->showFilterAndCheckAddButtons(0);
+    print $searchpicto;
+    print '</td>';
 
-	print "</tr>\n";
-
-
-	print '<tr class="liste_titre">';
-	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "v.rowid", "", $param, "", $sortfield, $sortorder);
-	print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "v.label", "", $param, '', $sortfield, $sortorder, 'left ');
-	print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "v.datep", "", $param, '', $sortfield, $sortorder, 'center ');
-	print_liste_field_titre("PaymentMode", $_SERVER["PHP_SELF"], "type", "", $param, '', $sortfield, $sortorder, 'left ');
-	if (! empty($conf->banque->enabled))     print_liste_field_titre("BankAccount", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
-	if (! empty($conf->accounting->enabled)) print_liste_field_titre("AccountAccounting", $_SERVER["PHP_SELF"], "v.accountancy_code", "", $param, '', $sortfield, $sortorder, 'left ');
-	print_liste_field_titre("Debit", $_SERVER["PHP_SELF"], "v.amount", "", $param, '', $sortfield, $sortorder, 'right ');
-	print_liste_field_titre("Credit", $_SERVER["PHP_SELF"], "v.amount", "", $param, '', $sortfield, $sortorder, 'right ');
-	print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch ');
-	print "</tr>\n";
+    print "</tr>\n";
 
 
-	$totalarray=array();
-	while ($i < min($num, $limit))
-	{
-		$obj = $db->fetch_object($result);
+    print '<tr class="liste_titre">';
+    print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "v.rowid", "", $param, "", $sortfield, $sortorder);
+    print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "v.label", "", $param, '', $sortfield, $sortorder, 'left ');
+    print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "v.datep", "", $param, '', $sortfield, $sortorder, 'center ');
+    print_liste_field_titre("PaymentMode", $_SERVER["PHP_SELF"], "type", "", $param, '', $sortfield, $sortorder, 'left ');
+    if (! empty($conf->banque->enabled))     print_liste_field_titre("BankAccount", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
+    if (! empty($conf->accounting->enabled)) print_liste_field_titre("AccountAccounting", $_SERVER["PHP_SELF"], "v.accountancy_code", "", $param, '', $sortfield, $sortorder, 'left ');
+    print_liste_field_titre("Debit", $_SERVER["PHP_SELF"], "v.amount", "", $param, '', $sortfield, $sortorder, 'right ');
+    print_liste_field_titre("Credit", $_SERVER["PHP_SELF"], "v.amount", "", $param, '', $sortfield, $sortorder, 'right ');
+    print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch ');
+    print "</tr>\n";
 
-		print '<tr class="oddeven">';
 
-		$variousstatic->id=$obj->rowid;
-		$variousstatic->ref=$obj->rowid;
+    $totalarray=array();
+    while ($i < min($num, $limit))
+    {
+        $obj = $db->fetch_object($result);
 
-		// Ref
-		print "<td>".$variousstatic->getNomUrl(1)."</td>\n";
+        print '<tr class="oddeven">';
 
-		// Label payment
-		print "<td>".dol_trunc($obj->label, 40)."</td>\n";
+        $variousstatic->id=$obj->rowid;
+        $variousstatic->ref=$obj->rowid;
 
-		// Date payment
-		print '<td class="center">'.dol_print_date($db->jdate($obj->datep), 'day')."</td>\n";
+        // Ref
+        print "<td>".$variousstatic->getNomUrl(1)."</td>\n";
 
-		// Type
-		print '<td>'.$langs->trans("PaymentTypeShort".$obj->payment_code).' '.$obj->num_payment.'</td>';
+        // Label payment
+        print "<td>".dol_trunc($obj->label, 40)."</td>\n";
 
-		// Account
-		if (! empty($conf->banque->enabled))
-		{
-			print '<td>';
-			if ($obj->bid > 0)
-			{
-				$accountstatic->id=$obj->bid;
-				$accountstatic->ref=$obj->bref;
-				$accountstatic->number=$obj->bnumber;
+        // Date payment
+        print '<td class="center">'.dol_print_date($db->jdate($obj->datep), 'day')."</td>\n";
 
-				if (! empty($conf->accounting->enabled)) {
-					$accountstatic->account_number=$obj->bank_account_number;
+        // Type
+        print '<td>'.$langs->trans("PaymentTypeShort".$obj->payment_code).' '.$obj->num_payment.'</td>';
 
-					$accountingjournal = new AccountingJournal($db);
-					$accountingjournal->fetch($obj->accountancy_journal);
-					$accountstatic->accountancy_journal = $accountingjournal->getNomUrl(0, 1, 1, '', 1);
-				}
+        // Account
+        if (! empty($conf->banque->enabled))
+        {
+            print '<td>';
+            if ($obj->bid > 0)
+            {
+                $accountstatic->id=$obj->bid;
+                $accountstatic->ref=$obj->bref;
+                $accountstatic->number=$obj->bnumber;
 
-				$accountstatic->label=$obj->blabel;
-				print $accountstatic->getNomUrl(1);
-			}
-			else print '&nbsp;';
-			print '</td>';
-		}
+                if (! empty($conf->accounting->enabled)) {
+                    $accountstatic->account_number=$obj->bank_account_number;
 
-		// Accounting account
-		if (! empty($conf->accounting->enabled)) {
-			$accountingaccount = new AccountingAccount($db);
-			$accountingaccount->fetch('', $obj->accountancy_code, 1);
+                    $accountingjournal = new AccountingJournal($db);
+                    $accountingjournal->fetch($obj->accountancy_journal);
+                    $accountstatic->accountancy_journal = $accountingjournal->getNomUrl(0, 1, 1, '', 1);
+                }
 
-			print '<td>'.$accountingaccount->getNomUrl(0, 1, 1, '', 1).'</td>';
-		}
+                $accountstatic->label=$obj->blabel;
+                print $accountstatic->getNomUrl(1);
+            }
+            else print '&nbsp;';
+            print '</td>';
+        }
 
-		// Debit
-		print "<td class=\"right\">";
-		if ($obj->sens == 0)
-		{
-			print price($obj->amount);
-			$totalarray['totaldeb'] += $obj->amount;
-		}
-		print "</td>";
+        // Accounting account
+        if (! empty($conf->accounting->enabled)) {
+            $accountingaccount = new AccountingAccount($db);
+            $accountingaccount->fetch('', $obj->accountancy_code, 1);
 
-		// Credit
-		print "<td class=\"right\">";
-		if ($obj->sens == 1)
-		{
-			print price($obj->amount);
-			$totalarray['totalcred'] += $obj->amount;
-		}
-		print "</td>";
+            print '<td>'.$accountingaccount->getNomUrl(0, 1, 1, '', 1).'</td>';
+        }
 
-		print "<td></td>";
+        // Debit
+        print "<td class=\"right\">";
+        if ($obj->sens == 0)
+        {
+            print price($obj->amount);
+            $totalarray['totaldeb'] += $obj->amount;
+        }
+        print "</td>";
 
-		$i++;
-	}
+        // Credit
+        print "<td class=\"right\">";
+        if ($obj->sens == 1)
+        {
+            print price($obj->amount);
+            $totalarray['totalcred'] += $obj->amount;
+        }
+        print "</td>";
 
-	$colspan=4;
-	if (! empty($conf->banque->enabled)) $colspan++;
-	if (! empty($conf->accounting->enabled)) $colspan++;
+        print "<td></td>";
 
-	print '<tr class="liste_total">';
-	print '<td colspan="'.$colspan.'" class="liste_total">'.$langs->trans("Total").'</td>';
-	print '<td class="liste_total right">'.price($totalarray['totaldeb'])."</td>";
-	print '<td class="liste_total right">'.price($totalarray['totalcred'])."</td>";
-	print '<td></td>';
-	print '</tr>';
+        $i++;
+    }
 
-	print "</table>";
-	print '</div>';
-	print '</form>';
+    $colspan=4;
+    if (! empty($conf->banque->enabled)) $colspan++;
+    if (! empty($conf->accounting->enabled)) $colspan++;
 
-	$db->free($result);
+    print '<tr class="liste_total">';
+    print '<td colspan="'.$colspan.'" class="liste_total">'.$langs->trans("Total").'</td>';
+    print '<td class="liste_total right">'.price($totalarray['totaldeb'])."</td>";
+    print '<td class="liste_total right">'.price($totalarray['totalcred'])."</td>";
+    print '<td></td>';
+    print '</tr>';
+
+    print "</table>";
+    print '</div>';
+    print '</form>';
+
+    $db->free($result);
 }
 else
 {
-	dol_print_error($db);
+    dol_print_error($db);
 }
 
 

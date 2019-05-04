@@ -16,32 +16,32 @@
  */
 
 /**
- *	\file       htdocs/core/class/link.class.php
- *	\ingroup    link
- *	\brief      File for link class
+ *    \file       htdocs/core/class/link.class.php
+ *    \ingroup    link
+ *    \brief      File for link class
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 
 
 /**
- *	Class to manage links
+ *    Class to manage links
  */
 class Link extends CommonObject
 {
     /**
-	 * @var string ID to identify managed object
-	 */
-	public $element = 'link';
+     * @var string ID to identify managed object
+     */
+    public $element = 'link';
 
     /**
-	 * @var string Name of table without prefix where object is stored
-	 */
-	public $table_element = 'links';
+     * @var string Name of table without prefix where object is stored
+     */
+    public $table_element = 'links';
 
     /**
-	 * @var int Entity
-	 */
-	public $entity;
+     * @var int Entity
+     */
+    public $entity;
 
     public $datea;
     public $url;
@@ -58,7 +58,7 @@ class Link extends CommonObject
     /**
      *    Constructor
      *
-     *    @param	DoliDB		$db		Database handler
+     *    @param    DoliDB        $db        Database handler
      */
     public function __construct($db)
     {
@@ -69,8 +69,8 @@ class Link extends CommonObject
     /**
      *    Create link in database
      *
-     *    @param	User	$user       Object of user that ask creation
-     *    @return   int         		>= 0 if OK, < 0 if KO
+     *    @param    User    $user       Object of user that ask creation
+     *    @return   int                 >= 0 if OK, < 0 if KO
      */
     public function create($user = '')
     {
@@ -152,9 +152,9 @@ class Link extends CommonObject
     /**
      *  Update parameters of third party
      *
-     *  @param  User	$user            			User executing update
-     *  @param  int		$call_trigger    			0=no, 1=yes
-     *  @return int  			           			<0 if KO, >=0 if OK
+     *  @param  User    $user                        User executing update
+     *  @param  int        $call_trigger                0=no, 1=yes
+     *  @return int                                     <0 if KO, >=0 if OK
      */
     public function update($user = '', $call_trigger = 1)
     {
@@ -312,8 +312,8 @@ class Link extends CommonObject
     /**
      *  Loads a link from database
      *
-     *  @param 	int		$rowid 		Id of link to load
-     *  @return int 				1 if ok, 0 if no record found, -1 if error
+     *  @param     int        $rowid         Id of link to load
+     *  @return int                 1 if ok, 0 if no record found, -1 if error
      **/
     public function fetch($rowid = null)
     {
@@ -343,7 +343,7 @@ class Link extends CommonObject
                 return 1;
             }
             else
-			{
+            {
                 return 0;
             }
         } else {
@@ -355,7 +355,7 @@ class Link extends CommonObject
     /**
      *    Delete a link from database
      *
-     *    @return	int				<0 if KO, 0 if nothing done, >0 if OK
+     *    @return    int                <0 if KO, 0 if nothing done, >0 if OK
      */
     public function delete()
     {

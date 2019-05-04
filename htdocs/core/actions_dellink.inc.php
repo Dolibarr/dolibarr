@@ -17,8 +17,8 @@
  */
 
 /**
- *	\file			htdocs/core/actions_dellink.inc.php
- *  \brief			Code for actions on linking and deleting link between elements
+ *    \file            htdocs/core/actions_dellink.inc.php
+ *  \brief            Code for actions on linking and deleting link between elements
  */
 
 
@@ -40,6 +40,6 @@ if ($action == 'addlink' && ! empty($permissiondellink) && ! GETPOST('cancel', '
 // Delete link
 if ($action == 'dellink' && ! empty($permissiondellink) && ! GETPOST('cancel', 'alpha') && $dellinkid > 0)
 {
-	$result=$object->deleteObjectLinked(0, '', 0, '', $dellinkid);
-	if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
+    $result=$object->deleteObjectLinked(0, '', 0, '', $dellinkid);
+    if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 }

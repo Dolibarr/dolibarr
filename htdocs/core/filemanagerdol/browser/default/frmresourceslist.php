@@ -48,69 +48,69 @@ require '../../../../main.inc.php';
 -->
 <html>
 <head>
-	<title>Resources</title>
-	<link href="browser.css" type="text/css" rel="stylesheet">
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-	<script type="text/javascript" src="js/common.js"></script>
-	<script type="text/javascript">
+    <title>Resources</title>
+    <link href="browser.css" type="text/css" rel="stylesheet">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <script type="text/javascript" src="js/common.js"></script>
+    <script type="text/javascript">
 
 var oListManager = new Object();
 
 oListManager.Clear = function()
 {
-	document.body.innerHTML = '' ;
+    document.body.innerHTML = '' ;
 }
 
 function ProtectPath(path)
 {
-	path = path.replace( /\\/g, '\\\\');
-	path = path.replace( /'/g, '\\\'');
-	return path ;
+    path = path.replace( /\\/g, '\\\\');
+    path = path.replace( /'/g, '\\\'');
+    return path ;
 }
 
 oListManager.GetFolderRowHtml = function( folderName, folderPath )
 {
-	// Build the link to view the folder.
-	var sLink = '<a href="#" onclick="OpenFolder(\'' + ProtectPath(folderPath) + '\');return false;">' ;
+    // Build the link to view the folder.
+    var sLink = '<a href="#" onclick="OpenFolder(\'' + ProtectPath(folderPath) + '\');return false;">' ;
 
-	return '<tr>' +
-			'<td width="16">' +
-				sLink +
-				'<img alt="" src="images/Folder.gif" width="16" height="16" border="0"><\/a>' +
-			'<\/td><td class="nowrap" colspan="2">&nbsp;' +
-				sLink +
-				folderName +
-				'<\/a>' +
-		'<\/td><\/tr>' ;
+    return '<tr>' +
+            '<td width="16">' +
+                sLink +
+                '<img alt="" src="images/Folder.gif" width="16" height="16" border="0"><\/a>' +
+            '<\/td><td class="nowrap" colspan="2">&nbsp;' +
+                sLink +
+                folderName +
+                '<\/a>' +
+        '<\/td><\/tr>' ;
 }
 
 // Note: fileUrl must be already "URL encoded"
 oListManager.GetFileRowHtml = function( fileName, fileUrl, fileSize )
 {
-	// Build the link to view the folder.
-	var sLink = '<a href="#" onclick="OpenFile(\'' + ProtectPath(fileUrl) + '\');return false;">' ;
+    // Build the link to view the folder.
+    var sLink = '<a href="#" onclick="OpenFile(\'' + ProtectPath(fileUrl) + '\');return false;">' ;
 
-	// Get the file icon.
-	var sIcon = oIcons.GetIcon( fileName );
+    // Get the file icon.
+    var sIcon = oIcons.GetIcon( fileName );
 
-	return '<tr>' +
-			'<td width="16">' +
-				sLink +
-				'<img alt="" src="images/icons/' + sIcon + '.gif" width="16" height="16" border="0"><\/a>' +
-			'<\/td><td>&nbsp;' +
-				sLink +
-				fileName +
-				'<\/a>' +
-			'<\/td><td class="nowrap right">&nbsp;' +
-				fileSize +
-				' KB' +
-		'<\/td><\/tr>' ;
+    return '<tr>' +
+            '<td width="16">' +
+                sLink +
+                '<img alt="" src="images/icons/' + sIcon + '.gif" width="16" height="16" border="0"><\/a>' +
+            '<\/td><td>&nbsp;' +
+                sLink +
+                fileName +
+                '<\/a>' +
+            '<\/td><td class="nowrap right">&nbsp;' +
+                fileSize +
+                ' KB' +
+        '<\/td><\/tr>' ;
 }
 
 function OpenFolder( folderPath )
 {
-	// Load the resources list for this folder.
-	window.parent.frames['frmFolders'].LoadFolders( folderPath );
+    // Load the resources list for this folder.
+    window.parent.frames['frmFolders'].LoadFolders( folderPath );
 }
 
 function GetUrlParam( paramName )
@@ -129,7 +129,7 @@ function OpenFile( fileUrl )
 {
     funcNum = GetUrlParam('CKEditorFuncNum');
     //window.top.opener.CKEDITOR.tools.callFunction(funcNum, encodeURI( fileUrl ).replace( '#', '%23' ));
-	window.top.opener.CKEDITOR.tools.callFunction(funcNum, fileUrl.replace( '#', '%23' ));
+    window.top.opener.CKEDITOR.tools.callFunction(funcNum, fileUrl.replace( '#', '%23' ));
     
     ///////////////////////////////////
     window.top.close();
@@ -138,73 +138,73 @@ function OpenFile( fileUrl )
 
 function LoadResources( resourceType, folderPath )
 {
-	oListManager.Clear();
-	oConnector.ResourceType = resourceType ;
-	oConnector.CurrentFolder = folderPath ;
-	oConnector.SendCommand( 'GetFoldersAndFiles', null, GetFoldersAndFilesCallBack );
+    oListManager.Clear();
+    oConnector.ResourceType = resourceType ;
+    oConnector.CurrentFolder = folderPath ;
+    oConnector.SendCommand( 'GetFoldersAndFiles', null, GetFoldersAndFilesCallBack );
 }
 
 function Refresh()
 {
-	LoadResources( oConnector.ResourceType, oConnector.CurrentFolder );
+    LoadResources( oConnector.ResourceType, oConnector.CurrentFolder );
 }
 
 function GetFoldersAndFilesCallBack( fckXml )
 {
-	if ( oConnector.CheckError( fckXml ) != 0 )
-		return ;
+    if ( oConnector.CheckError( fckXml ) != 0 )
+        return ;
 
-	// Get the current folder path.
-	var oFolderNode = fckXml.SelectSingleNode( 'Connector/CurrentFolder' );
-	if ( oFolderNode == null )
-	{
-		alert( 'The server didn\'t reply with a proper XML data. Please check your configuration.' );
-		return ;
-	}
-	var sCurrentFolderPath	= oFolderNode.attributes.getNamedItem('path').value ;
-	var sCurrentFolderUrl	= oFolderNode.attributes.getNamedItem('url').value ;
+    // Get the current folder path.
+    var oFolderNode = fckXml.SelectSingleNode( 'Connector/CurrentFolder' );
+    if ( oFolderNode == null )
+    {
+        alert( 'The server didn\'t reply with a proper XML data. Please check your configuration.' );
+        return ;
+    }
+    var sCurrentFolderPath    = oFolderNode.attributes.getNamedItem('path').value ;
+    var sCurrentFolderUrl    = oFolderNode.attributes.getNamedItem('url').value ;
 
-//	var dTimer = new Date();
+//    var dTimer = new Date();
 
-	var oHtml = new StringBuilder( '<table id="tableFiles" cellspacing="1" cellpadding="0" width="100%" border="0">' );
+    var oHtml = new StringBuilder( '<table id="tableFiles" cellspacing="1" cellpadding="0" width="100%" border="0">' );
 
-	// Add the Folders.
-	var oNodes ;
-	oNodes = fckXml.SelectNodes( 'Connector/Folders/Folder' );
-	for ( var i = 0 ; i < oNodes.length ; i++ )
-	{
-		var sFolderName = oNodes[i].attributes.getNamedItem('name').value ;
-		oHtml.Append( oListManager.GetFolderRowHtml( sFolderName, sCurrentFolderPath + sFolderName + "/" ) );
-	}
+    // Add the Folders.
+    var oNodes ;
+    oNodes = fckXml.SelectNodes( 'Connector/Folders/Folder' );
+    for ( var i = 0 ; i < oNodes.length ; i++ )
+    {
+        var sFolderName = oNodes[i].attributes.getNamedItem('name').value ;
+        oHtml.Append( oListManager.GetFolderRowHtml( sFolderName, sCurrentFolderPath + sFolderName + "/" ) );
+    }
 
-	// Add the Files.
-	oNodes = fckXml.SelectNodes( 'Connector/Files/File' );
-	for ( var j = 0 ; j < oNodes.length ; j++ )
-	{
-		var oNode = oNodes[j] ;
-		var sFileName = oNode.attributes.getNamedItem('name').value ;
-		var sFileSize = oNode.attributes.getNamedItem('size').value ;
+    // Add the Files.
+    oNodes = fckXml.SelectNodes( 'Connector/Files/File' );
+    for ( var j = 0 ; j < oNodes.length ; j++ )
+    {
+        var oNode = oNodes[j] ;
+        var sFileName = oNode.attributes.getNamedItem('name').value ;
+        var sFileSize = oNode.attributes.getNamedItem('size').value ;
 
-		// Get the optional "url" attribute. If not available, build the url.
-		var oFileUrlAtt = oNodes[j].attributes.getNamedItem('url');
-		var sFileUrl = oFileUrlAtt != null ? oFileUrlAtt.value : encodeURI( sCurrentFolderUrl + sFileName ).replace( /#/g, '%23' );
+        // Get the optional "url" attribute. If not available, build the url.
+        var oFileUrlAtt = oNodes[j].attributes.getNamedItem('url');
+        var sFileUrl = oFileUrlAtt != null ? oFileUrlAtt.value : encodeURI( sCurrentFolderUrl + sFileName ).replace( /#/g, '%23' );
 
-		oHtml.Append( oListManager.GetFileRowHtml( sFileName, sFileUrl, sFileSize ) );
-	}
+        oHtml.Append( oListManager.GetFileRowHtml( sFileName, sFileUrl, sFileSize ) );
+    }
 
-	oHtml.Append( '<\/table>' );
+    oHtml.Append( '<\/table>' );
 
-	document.body.innerHTML = oHtml.ToString();
+    document.body.innerHTML = oHtml.ToString();
 
-//	window.top.document.title = 'Finished processing in ' + ( ( ( new Date() ) - dTimer ) / 1000 ) + ' seconds' ;
+//    window.top.document.title = 'Finished processing in ' + ( ( ( new Date() ) - dTimer ) / 1000 ) + ' seconds' ;
 
 }
 
 window.onload = function()
 {
-	window.top.IsLoadedResourcesList = true ;
+    window.top.IsLoadedResourcesList = true ;
 }
-	</script>
+    </script>
 </head>
 <body class="FileArea">
 </body>

@@ -80,44 +80,44 @@ $sql.= " ".$db->plimit($conf->liste_limit+1, $offset);
 $result = $db->query($sql);
 if ($result)
 {
-	$num = $db->num_rows($result);
-	$i = 0;
+    $num = $db->num_rows($result);
+    $i = 0;
 
-	print_barre_liste($langs->trans("WithdrawsRefused"), $page, $_SERVER["PHP_SELF"], $urladd, $sortfield, $sortorder, '', $num);
-	print"\n<!-- debut table -->\n";
-	print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
-	print '<tr class="liste_titre">';
-	print_liste_field_titre("Line", $_SERVER["PHP_SELF"], "p.ref", '', $urladd);
-	print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "s.nom", '', $urladd);
-	print_liste_field_titre("Reason", $_SERVER["PHP_SELF"], "pr.motif", "", $urladd);
-	print "</tr>\n";
+    print_barre_liste($langs->trans("WithdrawsRefused"), $page, $_SERVER["PHP_SELF"], $urladd, $sortfield, $sortorder, '', $num);
+    print"\n<!-- debut table -->\n";
+    print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+    print '<tr class="liste_titre">';
+    print_liste_field_titre("Line", $_SERVER["PHP_SELF"], "p.ref", '', $urladd);
+    print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "s.nom", '', $urladd);
+    print_liste_field_titre("Reason", $_SERVER["PHP_SELF"], "pr.motif", "", $urladd);
+    print "</tr>\n";
 
-	$total = 0;
+    $total = 0;
 
-	while ($i < min($num, $conf->liste_limit))
-	{
-		$obj = $db->fetch_object($result);
+    while ($i < min($num, $conf->liste_limit))
+    {
+        $obj = $db->fetch_object($result);
 
-		print '<tr class="oddeven"><td>';
-		print $ligne->LibStatut($obj->statut, 2).'&nbsp;';
-		print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/ligne.php?id='.$obj->rowid.'">';
+        print '<tr class="oddeven"><td>';
+        print $ligne->LibStatut($obj->statut, 2).'&nbsp;';
+        print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/ligne.php?id='.$obj->rowid.'">';
 
-		print substr('000000'.$obj->rowid, -6)."</a></td>";
+        print substr('000000'.$obj->rowid, -6)."</a></td>";
 
-		print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.stripslashes($obj->nom)."</a></td>\n";
+        print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.stripslashes($obj->nom)."</a></td>\n";
 
-		print '<td>'.$rej->motifs[$obj->motif].'</td>';
-		print "</tr>\n";
+        print '<td>'.$rej->motifs[$obj->motif].'</td>';
+        print "</tr>\n";
 
-		$i++;
-	}
+        $i++;
+    }
 
-	print "</table>";
-	$db->free($result);
+    print "</table>";
+    $db->free($result);
 }
 else
 {
-	dol_print_error($db);
+    dol_print_error($db);
 }
 
 // End of page

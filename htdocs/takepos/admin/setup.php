@@ -17,12 +17,12 @@
  */
 
 /**
- *	\file       htdocs/takepos/admin/setup.php
- *	\ingroup    takepos
- *	\brief      Setup page for TakePos module
+ *    \file       htdocs/takepos/admin/setup.php
+ *    \ingroup    takepos
+ *    \brief      Setup page for TakePos module
  */
 
-require '../../main.inc.php';	// Load $user and permissions
+require '../../main.inc.php';    // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
@@ -31,9 +31,9 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 // If socid provided by ajax company selector
 if (! empty($_REQUEST['CASHDESK_ID_THIRDPARTY_id']))
 {
-	$_GET['CASHDESK_ID_THIRDPARTY'] = GETPOST('CASHDESK_ID_THIRDPARTY_id', 'alpha');
-	$_POST['CASHDESK_ID_THIRDPARTY'] = GETPOST('CASHDESK_ID_THIRDPARTY_id', 'alpha');
-	$_REQUEST['CASHDESK_ID_THIRDPARTY'] = GETPOST('CASHDESK_ID_THIRDPARTY_id', 'alpha');
+    $_GET['CASHDESK_ID_THIRDPARTY'] = GETPOST('CASHDESK_ID_THIRDPARTY_id', 'alpha');
+    $_POST['CASHDESK_ID_THIRDPARTY'] = GETPOST('CASHDESK_ID_THIRDPARTY_id', 'alpha');
+    $_REQUEST['CASHDESK_ID_THIRDPARTY'] = GETPOST('CASHDESK_ID_THIRDPARTY_id', 'alpha');
 }
 
 // Security check
@@ -50,9 +50,9 @@ $sql.= " ORDER BY libelle";
 $resql = $db->query($sql);
 $paiements = array();
 if($resql){
-	while ($obj = $db->fetch_object($resql)){
-		array_push($paiements, $obj);
-	}
+    while ($obj = $db->fetch_object($resql)){
+        array_push($paiements, $obj);
+    }
 }
 
 /*
@@ -60,54 +60,54 @@ if($resql){
  */
 if (GETPOST('action', 'alpha') == 'set')
 {
-	$db->begin();
-	if (GETPOST('socid', 'int') < 0) $_POST["socid"]='';
+    $db->begin();
+    if (GETPOST('socid', 'int') < 0) $_POST["socid"]='';
 
-	$res = dolibarr_set_const($db, "CASHDESK_ID_THIRDPARTY", (GETPOST('socid', 'int') > 0 ? GETPOST('socid', 'int') : ''), 'chaine', 0, '', $conf->entity);
+    $res = dolibarr_set_const($db, "CASHDESK_ID_THIRDPARTY", (GETPOST('socid', 'int') > 0 ? GETPOST('socid', 'int') : ''), 'chaine', 0, '', $conf->entity);
 
     $res = dolibarr_set_const($db, "CASHDESK_ID_BANKACCOUNT_CASH", (GETPOST('CASHDESK_ID_BANKACCOUNT_CASH', 'alpha') > 0 ? GETPOST('CASHDESK_ID_BANKACCOUNT_CASH', 'alpha') : ''), 'chaine', 0, '', $conf->entity);
-	$res = dolibarr_set_const($db, "CASHDESK_ID_BANKACCOUNT_CHEQUE", (GETPOST('CASHDESK_ID_BANKACCOUNT_CHEQUE', 'alpha') > 0 ? GETPOST('CASHDESK_ID_BANKACCOUNT_CHEQUE', 'alpha') : ''), 'chaine', 0, '', $conf->entity);
-	$res = dolibarr_set_const($db, "CASHDESK_ID_BANKACCOUNT_CB", (GETPOST('CASHDESK_ID_BANKACCOUNT_CB', 'alpha') > 0 ? GETPOST('CASHDESK_ID_BANKACCOUNT_CB', 'alpha') : ''), 'chaine', 0, '', $conf->entity);
+    $res = dolibarr_set_const($db, "CASHDESK_ID_BANKACCOUNT_CHEQUE", (GETPOST('CASHDESK_ID_BANKACCOUNT_CHEQUE', 'alpha') > 0 ? GETPOST('CASHDESK_ID_BANKACCOUNT_CHEQUE', 'alpha') : ''), 'chaine', 0, '', $conf->entity);
+    $res = dolibarr_set_const($db, "CASHDESK_ID_BANKACCOUNT_CB", (GETPOST('CASHDESK_ID_BANKACCOUNT_CB', 'alpha') > 0 ? GETPOST('CASHDESK_ID_BANKACCOUNT_CB', 'alpha') : ''), 'chaine', 0, '', $conf->entity);
     foreach($paiements as $modep) {
         if (in_array($modep->code, array('LIQ', 'CB', 'CHQ'))) continue;
-		$name="CASHDESK_ID_BANKACCOUNT_".$modep->code;
-		$res = dolibarr_set_const($db, $name, (GETPOST($name, 'alpha') > 0 ? GETPOST($name, 'alpha') : ''), 'chaine', 0, '', $conf->entity);
+        $name="CASHDESK_ID_BANKACCOUNT_".$modep->code;
+        $res = dolibarr_set_const($db, $name, (GETPOST($name, 'alpha') > 0 ? GETPOST($name, 'alpha') : ''), 'chaine', 0, '', $conf->entity);
     }
-	$res = dolibarr_set_const($db, "CASHDESK_ID_WAREHOUSE", (GETPOST('CASHDESK_ID_WAREHOUSE', 'alpha') > 0 ? GETPOST('CASHDESK_ID_WAREHOUSE', 'alpha') : ''), 'chaine', 0, '', $conf->entity);
-	$res = dolibarr_set_const($db, "CASHDESK_NO_DECREASE_STOCK", GETPOST('CASHDESK_NO_DECREASE_STOCK', 'alpha'), 'chaine', 0, '', $conf->entity);
-	$res = dolibarr_set_const($db, "CASHDESK_SERVICES", GETPOST('CASHDESK_SERVICES', 'alpha'), 'chaine', 0, '', $conf->entity);
-	$res = dolibarr_set_const($db, "TAKEPOS_ROOT_CATEGORY_ID", GETPOST('TAKEPOS_ROOT_CATEGORY_ID', 'alpha'), 'chaine', 0, '', $conf->entity);
+    $res = dolibarr_set_const($db, "CASHDESK_ID_WAREHOUSE", (GETPOST('CASHDESK_ID_WAREHOUSE', 'alpha') > 0 ? GETPOST('CASHDESK_ID_WAREHOUSE', 'alpha') : ''), 'chaine', 0, '', $conf->entity);
+    $res = dolibarr_set_const($db, "CASHDESK_NO_DECREASE_STOCK", GETPOST('CASHDESK_NO_DECREASE_STOCK', 'alpha'), 'chaine', 0, '', $conf->entity);
+    $res = dolibarr_set_const($db, "CASHDESK_SERVICES", GETPOST('CASHDESK_SERVICES', 'alpha'), 'chaine', 0, '', $conf->entity);
+    $res = dolibarr_set_const($db, "TAKEPOS_ROOT_CATEGORY_ID", GETPOST('TAKEPOS_ROOT_CATEGORY_ID', 'alpha'), 'chaine', 0, '', $conf->entity);
 
-	$res = dolibarr_set_const($db, "TAKEPOSCONNECTOR", GETPOST('TAKEPOSCONNECTOR', 'alpha'), 'chaine', 0, '', $conf->entity);
-	$res = dolibarr_set_const($db, "TAKEPOS_BAR_RESTAURANT", GETPOST('TAKEPOS_BAR_RESTAURANT', 'alpha'), 'chaine', 0, '', $conf->entity);
-	$res = dolibarr_set_const($db, "TAKEPOS_TICKET_VAT_GROUPPED", GETPOST('TAKEPOS_TICKET_VAT_GROUPPED', 'alpha'), 'chaine', 0, '', $conf->entity);
+    $res = dolibarr_set_const($db, "TAKEPOSCONNECTOR", GETPOST('TAKEPOSCONNECTOR', 'alpha'), 'chaine', 0, '', $conf->entity);
+    $res = dolibarr_set_const($db, "TAKEPOS_BAR_RESTAURANT", GETPOST('TAKEPOS_BAR_RESTAURANT', 'alpha'), 'chaine', 0, '', $conf->entity);
+    $res = dolibarr_set_const($db, "TAKEPOS_TICKET_VAT_GROUPPED", GETPOST('TAKEPOS_TICKET_VAT_GROUPPED', 'alpha'), 'chaine', 0, '', $conf->entity);
     $res = dolibarr_set_const($db, "TAKEPOS_PRINT_SERVER", GETPOST('TAKEPOS_PRINT_SERVER', 'alpha'), 'chaine', 0, '', $conf->entity);
-	$res = dolibarr_set_const($db, "TAKEPOS_ORDER_PRINTERS", GETPOST('TAKEPOS_ORDER_PRINTERS', 'alpha'), 'chaine', 0, '', $conf->entity);
-	$res = dolibarr_set_const($db, "TAKEPOS_ORDER_NOTES", GETPOST('TAKEPOS_ORDER_NOTES', 'alpha'), 'chaine', 0, '', $conf->entity);
-	$res = dolibarr_set_const($db, "TAKEPOS_AUTO_PRINT_TICKETS", GETPOST('TAKEPOS_AUTO_PRINT_TICKETS', 'int'), 'int', 0, '', $conf->entity);
-	$res = dolibarr_set_const($db, "TAKEPOS_HEADER", GETPOST('TAKEPOS_HEADER', 'alpha'), 'chaine', 0, '', $conf->entity);
-	$res = dolibarr_set_const($db, "TAKEPOS_FOOTER", GETPOST('TAKEPOS_FOOTER', 'alpha'), 'chaine', 0, '', $conf->entity);
-	$res = dolibarr_set_const($db, "TAKEPOS_NUMPAD", GETPOST('TAKEPOS_NUMPAD', 'alpha'), 'chaine', 0, '', $conf->entity);
+    $res = dolibarr_set_const($db, "TAKEPOS_ORDER_PRINTERS", GETPOST('TAKEPOS_ORDER_PRINTERS', 'alpha'), 'chaine', 0, '', $conf->entity);
+    $res = dolibarr_set_const($db, "TAKEPOS_ORDER_NOTES", GETPOST('TAKEPOS_ORDER_NOTES', 'alpha'), 'chaine', 0, '', $conf->entity);
+    $res = dolibarr_set_const($db, "TAKEPOS_AUTO_PRINT_TICKETS", GETPOST('TAKEPOS_AUTO_PRINT_TICKETS', 'int'), 'int', 0, '', $conf->entity);
+    $res = dolibarr_set_const($db, "TAKEPOS_HEADER", GETPOST('TAKEPOS_HEADER', 'alpha'), 'chaine', 0, '', $conf->entity);
+    $res = dolibarr_set_const($db, "TAKEPOS_FOOTER", GETPOST('TAKEPOS_FOOTER', 'alpha'), 'chaine', 0, '', $conf->entity);
+    $res = dolibarr_set_const($db, "TAKEPOS_NUMPAD", GETPOST('TAKEPOS_NUMPAD', 'alpha'), 'chaine', 0, '', $conf->entity);
 
-	if ($conf->global->TAKEPOS_ORDER_NOTES==1)
-	{
-		$extrafields = new ExtraFields($db);
-		$extrafields->addExtraField('order_notes', 'Order notes', 'varchar', 0, 255, 'facturedet', 0, 0, '', '', 0, '', 0, 1);
-	}
+    if ($conf->global->TAKEPOS_ORDER_NOTES==1)
+    {
+        $extrafields = new ExtraFields($db);
+        $extrafields->addExtraField('order_notes', 'Order notes', 'varchar', 0, 255, 'facturedet', 0, 0, '', '', 0, '', 0, 1);
+    }
 
-	dol_syslog("admin/cashdesk: level ".GETPOST('level', 'alpha'));
+    dol_syslog("admin/cashdesk: level ".GETPOST('level', 'alpha'));
 
-	if (! $res > 0) $error++;
+    if (! $res > 0) $error++;
 
- 	if (! $error)
+     if (! $error)
     {
         $db->commit();
-	    setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+     }
     else
     {
         $db->rollback();
-	    setEventMessages($langs->trans("Error"), null, 'errors');
+        setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
 
@@ -138,11 +138,11 @@ print "</tr>\n";
 
 if (! empty($conf->service->enabled))
 {
-	print '<tr class="oddeven"><td>';
-	print $langs->trans("CashdeskShowServices");
-	print '<td colspan="2">';
-	print $form->selectyesno("CASHDESK_SERVICES", $conf->global->CASHDESK_SERVICES, 1);
-	print "</td></tr>\n";
+    print '<tr class="oddeven"><td>';
+    print $langs->trans("CashdeskShowServices");
+    print '<td colspan="2">';
+    print $form->selectyesno("CASHDESK_SERVICES", $conf->global->CASHDESK_SERVICES, 1);
+    print "</td></tr>\n";
 }
 print '<tr class="oddeven"><td>';
 print $langs->trans("AutoPrintTickets");
@@ -167,11 +167,11 @@ print $form->selectyesno("TAKEPOSCONNECTOR", $conf->global->TAKEPOSCONNECTOR, 1)
 print "</td></tr>\n";
 
 if ($conf->global->TAKEPOSCONNECTOR){
-	print '<tr class="oddeven value"><td>';
-	print $langs->trans("IPAddress").' (<a href="http://en.takepos.com/connector">'.$langs->trans("TakeposConnectorNecesary").'</a>)';
-	print '<td colspan="2">';
-	print '<input type="text" size="20" id="TAKEPOS_PRINT_SERVER" name="TAKEPOS_PRINT_SERVER" value="'.$conf->global->TAKEPOS_PRINT_SERVER.'">';
-	print '</td></tr>';
+    print '<tr class="oddeven value"><td>';
+    print $langs->trans("IPAddress").' (<a href="http://en.takepos.com/connector">'.$langs->trans("TakeposConnectorNecesary").'</a>)';
+    print '<td colspan="2">';
+    print '<input type="text" size="20" id="TAKEPOS_PRINT_SERVER" name="TAKEPOS_PRINT_SERVER" value="'.$conf->global->TAKEPOS_PRINT_SERVER.'">';
+    print '</td></tr>';
 }
 
 
@@ -184,17 +184,17 @@ print $form->selectyesno("TAKEPOS_BAR_RESTAURANT", $conf->global->TAKEPOS_BAR_RE
 print "</td></tr>\n";
 
 if ($conf->global->TAKEPOS_BAR_RESTAURANT && $conf->global->TAKEPOSCONNECTOR){
-	print '<tr class="oddeven value"><td>';
-	print $langs->trans("OrderPrinters").' (<a href="orderprinters.php?leftmenu=setup">'.$langs->trans("Setup").'</a>)';
-	print '<td colspan="2">';
-	print $form->selectyesno("TAKEPOS_ORDER_PRINTERS", $conf->global->TAKEPOS_ORDER_PRINTERS, 1);
-	print '</td></tr>';
+    print '<tr class="oddeven value"><td>';
+    print $langs->trans("OrderPrinters").' (<a href="orderprinters.php?leftmenu=setup">'.$langs->trans("Setup").'</a>)';
+    print '<td colspan="2">';
+    print $form->selectyesno("TAKEPOS_ORDER_PRINTERS", $conf->global->TAKEPOS_ORDER_PRINTERS, 1);
+    print '</td></tr>';
 
-	print '<tr class="oddeven value"><td>';
-	print $langs->trans("OrderNotes");
-	print '<td colspan="2">';
-	print $form->selectyesno("TAKEPOS_ORDER_NOTES", $conf->global->TAKEPOS_ORDER_NOTES, 1);
-	print '</td></tr>';
+    print '<tr class="oddeven value"><td>';
+    print $langs->trans("OrderNotes");
+    print '<td colspan="2">';
+    print $form->selectyesno("TAKEPOS_ORDER_NOTES", $conf->global->TAKEPOS_ORDER_NOTES, 1);
+    print '</td></tr>';
 }
 
 print '<tr class="oddeven"><td>';
@@ -214,7 +214,7 @@ print "</td></tr>\n";
 $substitutionarray=pdf_getSubstitutionArray($langs, null, null, 2);
 $substitutionarray['__(AnyTranslationKey)__']=$langs->trans("Translation");
 $htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
-foreach($substitutionarray as $key => $val)	$htmltext.=$key.'<br>';
+foreach($substitutionarray as $key => $val)    $htmltext.=$key.'<br>';
 $htmltext.='</i>';
 
 print '<tr class="oddeven"><td>';
@@ -266,62 +266,62 @@ print '</td></tr>';
 if (! empty($conf->banque->enabled))
 {
     print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountForSell").'</td>';
-	print '<td colspan="2">';
-	$form->select_comptes($conf->global->CASHDESK_ID_BANKACCOUNT_CASH, 'CASHDESK_ID_BANKACCOUNT_CASH', 0, "courant=2", 1);
-	print '</td></tr>';
-	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountForCheque").'</td>';
-	print '<td colspan="2">';
-	$form->select_comptes($conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE, 'CASHDESK_ID_BANKACCOUNT_CHEQUE', 0, "courant=1", 1);
-	print '</td></tr>';
-	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountForCB").'</td>';
-	print '<td colspan="2">';
-	$form->select_comptes($conf->global->CASHDESK_ID_BANKACCOUNT_CB, 'CASHDESK_ID_BANKACCOUNT_CB', 0, "courant=1", 1);
-	print '</td></tr>';
+    print '<td colspan="2">';
+    $form->select_comptes($conf->global->CASHDESK_ID_BANKACCOUNT_CASH, 'CASHDESK_ID_BANKACCOUNT_CASH', 0, "courant=2", 1);
+    print '</td></tr>';
+    print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountForCheque").'</td>';
+    print '<td colspan="2">';
+    $form->select_comptes($conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE, 'CASHDESK_ID_BANKACCOUNT_CHEQUE', 0, "courant=1", 1);
+    print '</td></tr>';
+    print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountForCB").'</td>';
+    print '<td colspan="2">';
+    $form->select_comptes($conf->global->CASHDESK_ID_BANKACCOUNT_CB, 'CASHDESK_ID_BANKACCOUNT_CB', 0, "courant=1", 1);
+    print '</td></tr>';
 
-	foreach($paiements as $modep) {
+    foreach($paiements as $modep) {
         if (in_array($modep->code, array('LIQ', 'CB', 'CHQ'))) continue;
-		$name="CASHDESK_ID_BANKACCOUNT_".$modep->code;
-		print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountFor").' '.$langs->trans($modep->libelle).'</td>';
-		print '<td colspan="2">';
-		$cour=preg_match('/^LIQ.*/', $modep->code)?2:1;
-		$form->select_comptes($conf->global->$name, $name, 0, "courant=".$cour, 1);
-		print '</td></tr>';
-	}
+        $name="CASHDESK_ID_BANKACCOUNT_".$modep->code;
+        print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountFor").' '.$langs->trans($modep->libelle).'</td>';
+        print '<td colspan="2">';
+        $cour=preg_match('/^LIQ.*/', $modep->code)?2:1;
+        $form->select_comptes($conf->global->$name, $name, 0, "courant=".$cour, 1);
+        print '</td></tr>';
+    }
 }
 
 if (! empty($conf->stock->enabled))
 {
 
-	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskDoNotDecreaseStock").'</td>';	// Force warehouse (this is not a default value)
-	print '<td colspan="2">';
-	if (empty($conf->productbatch->enabled)) {
-	   print $form->selectyesno('CASHDESK_NO_DECREASE_STOCK', $conf->global->CASHDESK_NO_DECREASE_STOCK, 1);
-	}
-	else
-	{
-	    if (!$conf->global->CASHDESK_NO_DECREASE_STOCK) {
-	       $res = dolibarr_set_const($db, "CASHDESK_NO_DECREASE_STOCK", 1, 'chaine', 0, '', $conf->entity);
-	    }
-	    print $langs->trans("Yes").'<br>';
-	    print '<span class="opacitymedium">'.$langs->trans('StockDecreaseForPointOfSaleDisabledbyBatch').'</span>';
-	}
-	print '</td></tr>';
+    print '<tr class="oddeven"><td>'.$langs->trans("CashDeskDoNotDecreaseStock").'</td>';    // Force warehouse (this is not a default value)
+    print '<td colspan="2">';
+    if (empty($conf->productbatch->enabled)) {
+       print $form->selectyesno('CASHDESK_NO_DECREASE_STOCK', $conf->global->CASHDESK_NO_DECREASE_STOCK, 1);
+    }
+    else
+    {
+        if (!$conf->global->CASHDESK_NO_DECREASE_STOCK) {
+           $res = dolibarr_set_const($db, "CASHDESK_NO_DECREASE_STOCK", 1, 'chaine', 0, '', $conf->entity);
+        }
+        print $langs->trans("Yes").'<br>';
+        print '<span class="opacitymedium">'.$langs->trans('StockDecreaseForPointOfSaleDisabledbyBatch').'</span>';
+    }
+    print '</td></tr>';
 
-	$disabled=$conf->global->CASHDESK_NO_DECREASE_STOCK;
+    $disabled=$conf->global->CASHDESK_NO_DECREASE_STOCK;
 
 
-	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskIdWareHouse").'</td>';	// Force warehouse (this is not a default value)
-	print '<td colspan="2">';
-	if (! $disabled)
-	{
-		print $formproduct->selectWarehouses($conf->global->CASHDESK_ID_WAREHOUSE, 'CASHDESK_ID_WAREHOUSE', '', 1, $disabled);
-		print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"]).'">('.$langs->trans("Create").')</a>';
-	}
-	else
-	{
-		print '<span class="opacitymedium">'.$langs->trans("StockDecreaseForPointOfSaleDisabled").'</span>';
-	}
-	print '</td></tr>';
+    print '<tr class="oddeven"><td>'.$langs->trans("CashDeskIdWareHouse").'</td>';    // Force warehouse (this is not a default value)
+    print '<td colspan="2">';
+    if (! $disabled)
+    {
+        print $formproduct->selectWarehouses($conf->global->CASHDESK_ID_WAREHOUSE, 'CASHDESK_ID_WAREHOUSE', '', 1, $disabled);
+        print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"]).'">('.$langs->trans("Create").')</a>';
+    }
+    else
+    {
+        print '<span class="opacitymedium">'.$langs->trans("StockDecreaseForPointOfSaleDisabled").'</span>';
+    }
+    print '</td></tr>';
 }
 
 print '</table>';

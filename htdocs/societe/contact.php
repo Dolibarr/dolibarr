@@ -51,11 +51,11 @@ if (! empty($conf->notification->enabled)) $langs->load("mails");
 
 $mesg=''; $error=0; $errors=array();
 
-$action		= (GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view');
+$action        = (GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view');
 $cancel     = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
-$confirm	= GETPOST('confirm');
-$socid		= GETPOST('socid', 'int')?GETPOST('socid', 'int'):GETPOST('id', 'int');
+$confirm    = GETPOST('confirm');
+$socid        = GETPOST('socid', 'int')?GETPOST('socid', 'int'):GETPOST('id', 'int');
 if ($user->societe_id) $socid=$user->societe_id;
 if (empty($socid) && $action == 'view') $action='create';
 
@@ -70,9 +70,9 @@ $hookmanager->initHooks(array('thirdpartycontact','globalcard'));
 
 if ($action == 'view' && $object->fetch($socid)<=0)
 {
-	$langs->load("errors");
-	print($langs->trans('ErrorRecordNotFound'));
-	exit;
+    $langs->load("errors");
+    print($langs->trans('ErrorRecordNotFound'));
+    exit;
 }
 
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
@@ -102,7 +102,7 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
-	if ($cancel)
+    if ($cancel)
     {
         $action='';
         if (! empty($backtopage))
@@ -129,7 +129,7 @@ $formcompany = new FormCompany($db);
 if ($socid > 0 && empty($object->id))
 {
     $result=$object->fetch($socid);
-	if ($result <= 0) dol_print_error('', $object->error);
+    if ($result <= 0) dol_print_error('', $object->error);
 }
 
 $title=$langs->trans("ThirdParty");
@@ -158,11 +158,11 @@ print '<br>';
 
 if ($action != 'presend')
 {
-	// Contacts list
-	if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
-	{
-		$result=show_contacts($conf, $langs, $db, $object, $_SERVER["PHP_SELF"].'?socid='.$object->id);
-	}
+    // Contacts list
+    if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
+    {
+        $result=show_contacts($conf, $langs, $db, $object, $_SERVER["PHP_SELF"].'?socid='.$object->id);
+    }
 }
 
 // End of page

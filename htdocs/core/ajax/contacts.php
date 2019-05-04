@@ -27,10 +27,10 @@ if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
 
 require '../../main.inc.php';
 
-$id			= GETPOST('id', 'int');
-$action		= GETPOST('action', 'alpha');
-$htmlname	= GETPOST('htmlname', 'alpha');
-$showempty	= GETPOST('showempty', 'int');
+$id            = GETPOST('id', 'int');
+$action        = GETPOST('action', 'alpha');
+$htmlname    = GETPOST('htmlname', 'alpha');
+$showempty    = GETPOST('showempty', 'int');
 
 /*
  * View
@@ -43,14 +43,14 @@ top_httphead();
 // Load original field value
 if (! empty($id) && ! empty($action) && ! empty($htmlname))
 {
-	$form = new Form($db);
+    $form = new Form($db);
 
-	$return=array();
-	if (empty($showempty)) $showempty=0;
+    $return=array();
+    if (empty($showempty)) $showempty=0;
 
-	$return['value']	= $form->selectcontacts($id, '', $htmlname, $showempty, '', '', 0, '', true);
-	$return['num']		= $form->num;
-	$return['error']	= $form->error;
+    $return['value']    = $form->selectcontacts($id, '', $htmlname, $showempty, '', '', 0, '', true);
+    $return['num']        = $form->num;
+    $return['error']    = $form->error;
 
-	echo json_encode($return);
+    echo json_encode($return);
 }

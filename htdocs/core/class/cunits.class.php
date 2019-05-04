@@ -23,40 +23,40 @@
 
 
 /**
- *	Class of dictionary type of thirdparty (used by imports)
+ *    Class of dictionary type of thirdparty (used by imports)
  */
 class CUnits // extends CommonObject
 {
-	/**
+    /**
      * @var DoliDB Database handler.
      */
     public $db;
 
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error='';
-
-	/**
-	 * @var string[] Error codes (or messages)
-	 */
-	public $errors = array();
-	public $records = array();
-
-	//var $element='ctypent';			//!< Id that identify managed objects
-	//var $table_element='ctypent';	//!< Name of table without prefix where object is stored
+    /**
+     * @var string Error code (or message)
+     */
+    public $error='';
 
     /**
-	 * @var int ID
-	 */
-	public $id;
+     * @var string[] Error codes (or messages)
+     */
+    public $errors = array();
+    public $records = array();
 
-	public $code;
-	public $label;
-	public $short_label;
-	public $unit_type;
-	public $scale;
-	public $active;
+    //var $element='ctypent';            //!< Id that identify managed objects
+    //var $table_element='ctypent';    //!< Name of table without prefix where object is stored
+
+    /**
+     * @var int ID
+     */
+    public $id;
+
+    public $code;
+    public $label;
+    public $short_label;
+    public $unit_type;
+    public $scale;
+    public $active;
 
 
 
@@ -64,7 +64,7 @@ class CUnits // extends CommonObject
     /**
      *  Constructor
      *
-     *  @param      DoliDb		$db      Database handler
+     *  @param      DoliDb        $db      Database handler
      */
     public function __construct($db)
     {
@@ -75,105 +75,105 @@ class CUnits // extends CommonObject
     /**
      *  Create object into database
      *
-     *  @param      User	$user        User that create
-     *  @param      int		$notrigger   0=launch triggers after, 1=disable triggers
-     *  @return     int      		   	 <0 if KO, Id of created object if OK
+     *  @param      User    $user        User that create
+     *  @param      int        $notrigger   0=launch triggers after, 1=disable triggers
+     *  @return     int                      <0 if KO, Id of created object if OK
      */
     public function create($user, $notrigger = 0)
     {
-    	global $conf, $langs;
-		$error=0;
+        global $conf, $langs;
+        $error=0;
 
-		// Clean parameters
+        // Clean parameters
 
-		if (isset($this->id)) $this->id = (int) $this->id;
-		if (isset($this->code)) $this->code=trim($this->code);
-		if (isset($this->label)) $this->libelle=trim($this->label);
-		if (isset($this->short_label)) $this->libelle=trim($this->short_label);
-		if (isset($this->unit_type)) $this->active=trim($this->unit_type);
-		if (isset($this->active)) $this->active=trim($this->active);
+        if (isset($this->id)) $this->id = (int) $this->id;
+        if (isset($this->code)) $this->code=trim($this->code);
+        if (isset($this->label)) $this->libelle=trim($this->label);
+        if (isset($this->short_label)) $this->libelle=trim($this->short_label);
+        if (isset($this->unit_type)) $this->active=trim($this->unit_type);
+        if (isset($this->active)) $this->active=trim($this->active);
 
-		// Check parameters
-		// Put here code to add control on parameters values
+        // Check parameters
+        // Put here code to add control on parameters values
 
         // Insert request
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."c_units(";
-		$sql.= "rowid,";
-		$sql.= "code,";
-		$sql.= "label,";
-		$sql.= "short_label,";
-		$sql.= "unit_type";
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."c_units(";
+        $sql.= "rowid,";
+        $sql.= "code,";
+        $sql.= "label,";
+        $sql.= "short_label,";
+        $sql.= "unit_type";
         $sql.= ") VALUES (";
-		$sql.= " ".(! isset($this->id)?'NULL':"'".$this->db->escape($this->id)."'").",";
-		$sql.= " ".(! isset($this->code)?'NULL':"'".$this->db->escape($this->code)."'").",";
-		$sql.= " ".(! isset($this->label)?'NULL':"'".$this->db->escape($this->label)."'").",";
-		$sql.= " ".(! isset($this->short_label)?'NULL':"'".$this->db->escape($this->short_label)."'").",";
-		$sql.= " ".(! isset($this->unit_type)?'NULL':"'".$this->db->escape($this->unit_type)."'");
-		$sql.= ")";
+        $sql.= " ".(! isset($this->id)?'NULL':"'".$this->db->escape($this->id)."'").",";
+        $sql.= " ".(! isset($this->code)?'NULL':"'".$this->db->escape($this->code)."'").",";
+        $sql.= " ".(! isset($this->label)?'NULL':"'".$this->db->escape($this->label)."'").",";
+        $sql.= " ".(! isset($this->short_label)?'NULL':"'".$this->db->escape($this->short_label)."'").",";
+        $sql.= " ".(! isset($this->unit_type)?'NULL':"'".$this->db->escape($this->unit_type)."'");
+        $sql.= ")";
 
-		$this->db->begin();
+        $this->db->begin();
 
-	   	dol_syslog(get_class($this)."::create", LOG_DEBUG);
+           dol_syslog(get_class($this)."::create", LOG_DEBUG);
         $resql=$this->db->query($sql);
-    	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+        if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
-		if (! $error)
+        if (! $error)
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."c_units");
 
-			//if (! $notrigger)
-			//{
-	            // Uncomment this and change MYOBJECT to your own tag if you
-	            // want this action call a trigger.
+            //if (! $notrigger)
+            //{
+                // Uncomment this and change MYOBJECT to your own tag if you
+                // want this action call a trigger.
 
-	            //// Call triggers
-	            //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-	            //$interface=new Interfaces($this->db);
-	            //$result=$interface->run_triggers('MYOBJECT_CREATE',$this,$user,$langs,$conf);
-	            //if ($result < 0) { $error++; $this->errors=$interface->errors; }
-	            //// End call triggers
-			//}
+                //// Call triggers
+                //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+                //$interface=new Interfaces($this->db);
+                //$result=$interface->run_triggers('MYOBJECT_CREATE',$this,$user,$langs,$conf);
+                //if ($result < 0) { $error++; $this->errors=$interface->errors; }
+                //// End call triggers
+            //}
         }
 
         // Commit or rollback
         if ($error)
-		{
-			foreach($this->errors as $errmsg)
-			{
-	            dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
-	            $this->error.=($this->error?', '.$errmsg:$errmsg);
-			}
-			$this->db->rollback();
-			return -1*$error;
-		}
-		else
-		{
-			$this->db->commit();
+        {
+            foreach($this->errors as $errmsg)
+            {
+                dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
+                $this->error.=($this->error?', '.$errmsg:$errmsg);
+            }
+            $this->db->rollback();
+            return -1*$error;
+        }
+        else
+        {
+            $this->db->commit();
             return $this->id;
-		}
+        }
     }
 
 
     /**
      *  Load object in memory from database
      *
-     *  @param      int		$id    	Id object
-     *  @param		string	$code	Code
-     *  @param		string	$short_label	Short Label
-     *  @param		string	$unit_type	unit type
-     *  @return     int		<0 if KO, >0 if OK
+     *  @param      int        $id        Id object
+     *  @param        string    $code    Code
+     *  @param        string    $short_label    Short Label
+     *  @param        string    $unit_type    unit type
+     *  @return     int        <0 if KO, >0 if OK
      */
     public function fetch($id, $code = '', $short_label = '', $unit_type = '')
     {
-    	global $langs;
+        global $langs;
 
         $sql = "SELECT";
-		$sql.= " t.rowid,";
-		$sql.= " t.code,";
-		$sql.= " t.label,";
-		$sql.= " t.short_label,";
-		$sql.= " t.unit_type,";
-		$sql.= " t.active";
+        $sql.= " t.rowid,";
+        $sql.= " t.code,";
+        $sql.= " t.label,";
+        $sql.= " t.short_label,";
+        $sql.= " t.unit_type,";
+        $sql.= " t.active";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_units as t";
         $sql_where=array();
         if ($id)   $sql_where[]= " t.id = ".$id;
@@ -181,7 +181,7 @@ class CUnits // extends CommonObject
         if ($code) $sql_where[]= " t.code = '".$this->db->escape($code)."'";
         if ($short_label) $sql_where[]= " t.short_label = '".$this->db->escape($short_label)."'";
         if (count($sql_where)>0) {
-        	$sql.=' WHERE '. implode(' AND ', $sql_where);
+            $sql.=' WHERE '. implode(' AND ', $sql_where);
         }
 
         $resql=$this->db->query($sql);
@@ -192,11 +192,11 @@ class CUnits // extends CommonObject
                 $obj = $this->db->fetch_object($resql);
 
                 $this->id    = $obj->rowid;
-				$this->code = $obj->code;
-				$this->label = $obj->label;
-				$this->short_label = $obj->short_label;
-				$this->unit_type = $obj->unit_type;
-				$this->active = $obj->active;
+                $this->code = $obj->code;
+                $this->label = $obj->label;
+                $this->short_label = $obj->short_label;
+                $this->unit_type = $obj->unit_type;
+                $this->active = $obj->active;
             }
             $this->db->free($resql);
 
@@ -204,7 +204,7 @@ class CUnits // extends CommonObject
         }
         else
         {
-      	    $this->error="Error ".$this->db->lasterror();
+              $this->error="Error ".$this->db->lasterror();
             return -1;
         }
     }
@@ -223,202 +223,202 @@ class CUnits // extends CommonObject
      */
     public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
     {
-    	global $conf;
+        global $conf;
 
-    	dol_syslog(__METHOD__, LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
 
-    	$records=array();
+        $records=array();
 
-    	$sql = 'SELECT';
-    	$sql.= " t.rowid,";
-    	$sql.= " t.code,";
-    	$sql.= " t.label,";
-    	$sql.= " t.short_label,";
-    	$sql.= " t.unit_type,";
-    	$sql.= " t.active";
-    	$sql .= ' FROM ' . MAIN_DB_PREFIX . 'c_units as t';
-    	// Manage filter
-    	$sqlwhere = array();
-    	if (count($filter) > 0) {
-    		foreach ($filter as $key => $value) {
-    			if ($key=='t.rowid' || $key=='t.active') {
-    				$sqlwhere[] = $key . '='. $value;
-    			}
-    			elseif (strpos($key, 'date') !== false) {
-    				$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
-    			}
-    			elseif ($key=='t.unit_type' || $key=='t.code' || $key=='t.short_label') {
-    				$sqlwhere[] =  $key.' = \''.$this->db->escape($value).'\'';
-    			}
-    			else {
-    				$sqlwhere[] = $key . ' LIKE \'%' . $this->db->escape($value) . '%\'';
-    			}
-    		}
-    	}
-    	if (count($sqlwhere) > 0) {
-    		$sql .= ' WHERE (' . implode(' '.$filtermode.' ', $sqlwhere).')';
-    	}
+        $sql = 'SELECT';
+        $sql.= " t.rowid,";
+        $sql.= " t.code,";
+        $sql.= " t.label,";
+        $sql.= " t.short_label,";
+        $sql.= " t.unit_type,";
+        $sql.= " t.active";
+        $sql .= ' FROM ' . MAIN_DB_PREFIX . 'c_units as t';
+        // Manage filter
+        $sqlwhere = array();
+        if (count($filter) > 0) {
+            foreach ($filter as $key => $value) {
+                if ($key=='t.rowid' || $key=='t.active') {
+                    $sqlwhere[] = $key . '='. $value;
+                }
+                elseif (strpos($key, 'date') !== false) {
+                    $sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
+                }
+                elseif ($key=='t.unit_type' || $key=='t.code' || $key=='t.short_label') {
+                    $sqlwhere[] =  $key.' = \''.$this->db->escape($value).'\'';
+                }
+                else {
+                    $sqlwhere[] = $key . ' LIKE \'%' . $this->db->escape($value) . '%\'';
+                }
+            }
+        }
+        if (count($sqlwhere) > 0) {
+            $sql .= ' WHERE (' . implode(' '.$filtermode.' ', $sqlwhere).')';
+        }
 
-    	if (!empty($sortfield)) {
-    		$sql .= $this->db->order($sortfield, $sortorder);
-    	}
-    	if (!empty($limit)) {
-    		$sql .=  ' ' . $this->db->plimit($limit, $offset);
-    	}
-    	$resql = $this->db->query($sql);
-    	if ($resql) {
-    		$this->records=array();
-    		$num = $this->db->num_rows($resql);
-    		if ($num>0) {
-	    		while ($obj = $this->db->fetch_object($resql))
-	    		{
-	    			$record = new self($this->db);
+        if (!empty($sortfield)) {
+            $sql .= $this->db->order($sortfield, $sortorder);
+        }
+        if (!empty($limit)) {
+            $sql .=  ' ' . $this->db->plimit($limit, $offset);
+        }
+        $resql = $this->db->query($sql);
+        if ($resql) {
+            $this->records=array();
+            $num = $this->db->num_rows($resql);
+            if ($num>0) {
+                while ($obj = $this->db->fetch_object($resql))
+                {
+                    $record = new self($this->db);
 
-	    			$record->id    = $obj->rowid;
-	    			$record->code = $obj->code;
-	    			$record->label = $obj->label;
-	    			$record->short_label = $obj->short_label;
-	    			$record->unit_type = $obj->unit_type;
-	    			$record->active = $obj->active;
-	    			$this->records[$record->id] = $record;
-	    		}
-    		}
-    		$this->db->free($resql);
+                    $record->id    = $obj->rowid;
+                    $record->code = $obj->code;
+                    $record->label = $obj->label;
+                    $record->short_label = $obj->short_label;
+                    $record->unit_type = $obj->unit_type;
+                    $record->active = $obj->active;
+                    $this->records[$record->id] = $record;
+                }
+            }
+            $this->db->free($resql);
 
-    		return $this->records;
-    	} else {
-    		$this->errors[] = 'Error ' . $this->db->lasterror();
-    		dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
+            return $this->records;
+        } else {
+            $this->errors[] = 'Error ' . $this->db->lasterror();
+            dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
 
-    		return -1;
-    	}
+            return -1;
+        }
     }
 
 
     /**
      *  Update object into database
      *
-     *  @param      User	$user        User that modify
-     *  @param      int		$notrigger	 0=launch triggers after, 1=disable triggers
-     *  @return     int     		   	 <0 if KO, >0 if OK
+     *  @param      User    $user        User that modify
+     *  @param      int        $notrigger     0=launch triggers after, 1=disable triggers
+     *  @return     int                     <0 if KO, >0 if OK
      */
     public function update($user = null, $notrigger = 0)
     {
-    	global $conf, $langs;
-		$error=0;
+        global $conf, $langs;
+        $error=0;
 
-		// Clean parameters
-		if (isset($this->code)) $this->code=trim($this->code);
-		if (isset($this->label)) $this->libelle=trim($this->label);
-		if (isset($this->short_label)) $this->libelle=trim($this->short_label);
-		if (isset($this->unit_type)) $this->libelle=trim($this->unit_type);
-		if (isset($this->active)) $this->active=trim($this->active);
+        // Clean parameters
+        if (isset($this->code)) $this->code=trim($this->code);
+        if (isset($this->label)) $this->libelle=trim($this->label);
+        if (isset($this->short_label)) $this->libelle=trim($this->short_label);
+        if (isset($this->unit_type)) $this->libelle=trim($this->unit_type);
+        if (isset($this->active)) $this->active=trim($this->active);
 
-		// Check parameters
-		// Put here code to add control on parameters values
+        // Check parameters
+        // Put here code to add control on parameters values
 
         // Update request
         $sql = "UPDATE ".MAIN_DB_PREFIX."c_units SET";
-		$sql.= " code=".(isset($this->code)?"'".$this->db->escape($this->code)."'":"null").",";
-		$sql.= " label=".(isset($this->label)?"'".$this->db->escape($this->label)."'":"null").",";
-		$sql.= " short_label=".(isset($this->short_label)?"'".$this->db->escape($this->short_label)."'":"null").",";
-		$sql.= " unit_type=".(isset($this->unit_type)?"'".$this->db->escape($this->unit_type)."'":"null").",";
-		$sql.= " active=".(isset($this->active)?$this->active:"null");
+        $sql.= " code=".(isset($this->code)?"'".$this->db->escape($this->code)."'":"null").",";
+        $sql.= " label=".(isset($this->label)?"'".$this->db->escape($this->label)."'":"null").",";
+        $sql.= " short_label=".(isset($this->short_label)?"'".$this->db->escape($this->short_label)."'":"null").",";
+        $sql.= " unit_type=".(isset($this->unit_type)?"'".$this->db->escape($this->unit_type)."'":"null").",";
+        $sql.= " active=".(isset($this->active)?$this->active:"null");
         $sql.= " WHERE rowid=".$this->id;
 
-		$this->db->begin();
+        $this->db->begin();
 
-		dol_syslog(get_class($this)."::update", LOG_DEBUG);
+        dol_syslog(get_class($this)."::update", LOG_DEBUG);
         $resql = $this->db->query($sql);
-    	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+        if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
-		//if (! $error)
-		//{
-		//	if (! $notrigger)
-		//	{
-	            // Uncomment this and change MYOBJECT to your own tag if you
-	            // want this action call a trigger.
+        //if (! $error)
+        //{
+        //    if (! $notrigger)
+        //    {
+                // Uncomment this and change MYOBJECT to your own tag if you
+                // want this action call a trigger.
 
-	            //// Call triggers
-	            //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-	            //$interface=new Interfaces($this->db);
-	            //$result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
-	            //if ($result < 0) { $error++; $this->errors=$interface->errors; }
-	            //// End call triggers
-	    //	}
-		//}
+                //// Call triggers
+                //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+                //$interface=new Interfaces($this->db);
+                //$result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
+                //if ($result < 0) { $error++; $this->errors=$interface->errors; }
+                //// End call triggers
+        //    }
+        //}
 
         // Commit or rollback
-		if ($error)
-		{
-			foreach($this->errors as $errmsg)
-			{
-	            dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
-	            $this->error.=($this->error?', '.$errmsg:$errmsg);
-			}
-			$this->db->rollback();
-			return -1*$error;
-		}
-		else
-		{
-			$this->db->commit();
-			return 1;
-		}
+        if ($error)
+        {
+            foreach($this->errors as $errmsg)
+            {
+                dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
+                $this->error.=($this->error?', '.$errmsg:$errmsg);
+            }
+            $this->db->rollback();
+            return -1*$error;
+        }
+        else
+        {
+            $this->db->commit();
+            return 1;
+        }
     }
 
 
- 	/**
-	 *  Delete object in database
-	 *
-     *	@param  User	$user        User that delete
-     *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return	int					 <0 if KO, >0 if OK
-	 */
-	public function delete($user, $notrigger = 0)
-	{
-		global $conf, $langs;
-		$error=0;
+     /**
+     *  Delete object in database
+     *
+     *    @param  User    $user        User that delete
+     *  @param  int        $notrigger     0=launch triggers after, 1=disable triggers
+     *  @return    int                     <0 if KO, >0 if OK
+     */
+    public function delete($user, $notrigger = 0)
+    {
+        global $conf, $langs;
+        $error=0;
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."c_units";
-		$sql.= " WHERE rowid=".$this->id;
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."c_units";
+        $sql.= " WHERE rowid=".$this->id;
 
-		$this->db->begin();
+        $this->db->begin();
 
-		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
-		$resql = $this->db->query($sql);
-    	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+        dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+        $resql = $this->db->query($sql);
+        if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
-		//if (! $error)
-		//{
-		//	if (! $notrigger)
-		//	{
-				// Uncomment this and change MYOBJECT to your own tag if you
-		        // want this action call a trigger.
+        //if (! $error)
+        //{
+        //    if (! $notrigger)
+        //    {
+                // Uncomment this and change MYOBJECT to your own tag if you
+                // want this action call a trigger.
 
-		        //// Call triggers
-		        //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-		        //$interface=new Interfaces($this->db);
-		        //$result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
-		        //if ($result < 0) { $error++; $this->errors=$interface->errors; }
-		        //// End call triggers
-		//	}
-		//}
+                //// Call triggers
+                //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+                //$interface=new Interfaces($this->db);
+                //$result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
+                //if ($result < 0) { $error++; $this->errors=$interface->errors; }
+                //// End call triggers
+        //    }
+        //}
 
         // Commit or rollback
-		if ($error)
-		{
-			foreach($this->errors as $errmsg)
-			{
-	            dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
-	            $this->error.=($this->error?', '.$errmsg:$errmsg);
-			}
-			$this->db->rollback();
-			return -1*$error;
-		}
-		else
-		{
-			$this->db->commit();
-			return 1;
-		}
-	}
+        if ($error)
+        {
+            foreach($this->errors as $errmsg)
+            {
+                dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
+                $this->error.=($this->error?', '.$errmsg:$errmsg);
+            }
+            $this->db->rollback();
+            return -1*$error;
+        }
+        else
+        {
+            $this->db->commit();
+            return 1;
+        }
+    }
 }

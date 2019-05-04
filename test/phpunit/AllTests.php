@@ -40,8 +40,8 @@ if ($langs->defaultlang != 'en_US')
 }
 if (empty($conf->adherent->enabled))
 {
-	print "Error: Module member must be enabled to have significant results.\n";
-	exit(1);
+    print "Error: Module member must be enabled to have significant results.\n";
+    exit(1);
 }
 if (! empty($conf->ldap->enabled))
 {
@@ -70,7 +70,7 @@ class AllTests
     /**
      * Function suite to make all PHPUnit tests
      *
-     * @return	void
+     * @return    void
      */
     public static function suite()
     {
@@ -215,18 +215,18 @@ class AllTests
         // Test only with php7.2 or less
         //if ((float) phpversion() < 7.3)
         //{
-        	require_once dirname(__FILE__).'/WebservicesProductsTest.php';
-	        $suite->addTestSuite('WebservicesProductsTest');
-	        require_once dirname(__FILE__).'/WebservicesInvoicesTest.php';
-	        $suite->addTestSuite('WebservicesInvoicesTest');
-	        require_once dirname(__FILE__).'/WebservicesOrdersTest.php';
-	        $suite->addTestSuite('WebservicesOrdersTest');
-	        require_once dirname(__FILE__).'/WebservicesOtherTest.php';
-	        $suite->addTestSuite('WebservicesOtherTest');
-	        require_once dirname(__FILE__).'/WebservicesThirdpartyTest.php';
-	        $suite->addTestSuite('WebservicesThirdpartyTest');
-	        require_once dirname(__FILE__).'/WebservicesUserTest.php';
-	        $suite->addTestSuite('WebservicesUserTest');
+            require_once dirname(__FILE__).'/WebservicesProductsTest.php';
+            $suite->addTestSuite('WebservicesProductsTest');
+            require_once dirname(__FILE__).'/WebservicesInvoicesTest.php';
+            $suite->addTestSuite('WebservicesInvoicesTest');
+            require_once dirname(__FILE__).'/WebservicesOrdersTest.php';
+            $suite->addTestSuite('WebservicesOrdersTest');
+            require_once dirname(__FILE__).'/WebservicesOtherTest.php';
+            $suite->addTestSuite('WebservicesOtherTest');
+            require_once dirname(__FILE__).'/WebservicesThirdpartyTest.php';
+            $suite->addTestSuite('WebservicesThirdpartyTest');
+            require_once dirname(__FILE__).'/WebservicesUserTest.php';
+            $suite->addTestSuite('WebservicesUserTest');
         //}
 
         require_once dirname(__FILE__).'/ExportTest.php';

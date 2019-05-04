@@ -17,10 +17,10 @@
  */
 
 /**
- *	\file       htdocs/core/modules/export/export_excel2007.modules.php
- *	\ingroup    export
- *	\brief      File of class to generate export file with Excel format
- *	\author	    Laurent Destailleur
+ *    \file       htdocs/core/modules/export/export_excel2007.modules.php
+ *    \ingroup    export
+ *    \brief      File of class to generate export file with Excel format
+ *    \author        Laurent Destailleur
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/export/modules_export.php';
@@ -29,90 +29,90 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 
 /**
- *	Class to build export files with Excel format
+ *    Class to build export files with Excel format
  */
 class ExportExcel2007 extends ExportExcel
 {
-	/**
-	 * @var string ID
-	 */
-	public $id;
+    /**
+     * @var string ID
+     */
+    public $id;
 
-	/**
+    /**
      * @var string label
      */
     public $label;
 
-	public $extension;
+    public $extension;
 
-	/**
+    /**
      * Dolibarr version of the loaded document
      * @var string
      */
-	public $version = 'dolibarr';
+    public $version = 'dolibarr';
 
-	public $label_lib;
+    public $label_lib;
 
-	public $version_lib;
+    public $version_lib;
 
-	public $workbook;      // Handle fichier
+    public $workbook;      // Handle fichier
 
-	public $worksheet;     // Handle onglet
+    public $worksheet;     // Handle onglet
 
-	public $row;
+    public $row;
 
-	public $col;
+    public $col;
 
     public $file;          // To save filename
 
-	/**
-	 *	Constructor
-	 *
-	 *	@param	    DoliDB	$db      Database handler
-	 */
-	public function __construct($db)
-	{
-		global $conf, $langs;
-		$this->db = $db;
+    /**
+     *    Constructor
+     *
+     *    @param        DoliDB    $db      Database handler
+     */
+    public function __construct($db)
+    {
+        global $conf, $langs;
+        $this->db = $db;
 
-		$this->id='excel2007';                  // Same value then xxx in file name export_xxx.modules.php
-		$this->label='Excel 2007';               // Label of driver
-		$this->desc = $langs->trans('Excel2007FormatDesc');
-		$this->extension='xlsx';             // Extension for generated file by this driver
-        $this->picto='mime/xls';			// Picto
-		$this->version='1.30';             // Driver version
+        $this->id='excel2007';                  // Same value then xxx in file name export_xxx.modules.php
+        $this->label='Excel 2007';               // Label of driver
+        $this->desc = $langs->trans('Excel2007FormatDesc');
+        $this->extension='xlsx';             // Extension for generated file by this driver
+        $this->picto='mime/xls';            // Picto
+        $this->version='1.30';             // Driver version
 
-		$this->disabled = (in_array(constant('PHPEXCEL_PATH'), array('disabled','disabled/'))?1:0);	// A condition to disable module (used for native debian packages)
+        $this->disabled = (in_array(constant('PHPEXCEL_PATH'), array('disabled','disabled/'))?1:0);    // A condition to disable module (used for native debian packages)
 
-		if (empty($this->disabled))
-		{
-    		// If driver use an external library, put its name here
-    		if (! empty($conf->global->MAIN_USE_PHP_WRITEEXCEL))
-    		{
-    			require_once PHP_WRITEEXCEL_PATH.'class.writeexcel_workbookbig.inc.php';
+        if (empty($this->disabled))
+        {
+            // If driver use an external library, put its name here
+            if (! empty($conf->global->MAIN_USE_PHP_WRITEEXCEL))
+            {
+                require_once PHP_WRITEEXCEL_PATH.'class.writeexcel_workbookbig.inc.php';
                 require_once PHP_WRITEEXCEL_PATH.'class.writeexcel_worksheet.inc.php';
                 require_once PHP_WRITEEXCEL_PATH.'functions.writeexcel_utility.inc.php';
-    			$this->label_lib='PhpWriteExcel';
+                $this->label_lib='PhpWriteExcel';
                 $this->version_lib='unknown';
-    		}
-    		else
-    		{
+            }
+            else
+            {
                 require_once PHPEXCEL_PATH.'PHPExcel.php';
                 require_once PHPEXCEL_PATH.'PHPExcel/Style/Alignment.php';
-    			$this->label_lib='PhpExcel';
-                $this->version_lib='1.8.0';		// No way to get info from library
-    		}
-		}
+                $this->label_lib='PhpExcel';
+                $this->version_lib='1.8.0';        // No way to get info from library
+            }
+        }
 
-		$this->row=0;
-	}
+        $this->row=0;
+    }
 
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Close Excel file
      *
-	 *  @return		int							<0 if KO, >0 if OK
+     *  @return        int                            <0 if KO, >0 if OK
      */
     public function close_file()
     {

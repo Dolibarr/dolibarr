@@ -23,9 +23,9 @@
  *      \ingroup    modulebuilder
  *      \brief      Script to build a documentation from input files (.asciidoc or .md files). Use asciidoctor tool.
  *
- *		If file is a MD file, convert image links into asciidoc format.
+ *        If file is a MD file, convert image links into asciidoc format.
  *      ![Screenshot patient card](img/dolimed_screenshot_patientcard.png?raw=true "Patient card")
- *		image:img/dolimed_screenshot_patientcard.png[Screenshot patient card]
+ *        image:img/dolimed_screenshot_patientcard.png[Screenshot patient card]
  */
 
 
@@ -35,13 +35,13 @@ $path=dirname(__FILE__).'/';
 
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
-	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-	exit(-1);
+    echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
+    exit(-1);
 }
 
 if (! isset($argv[1]) || ! $argv[1]) {
-	print "Usage: ".$script_file." ModuleName\n";
-	exit(-1);
+    print "Usage: ".$script_file." ModuleName\n";
+    exit(-1);
 }
 $modulename=$argv[1];
 
@@ -69,9 +69,9 @@ $forceddirread = 0;
 $tmpdir = explode('@', $module);
 if (! empty($tmpdir[1]))
 {
-	$module=$tmpdir[0];
-	$dirread=$tmpdir[1];
-	$forceddirread=1;
+    $module=$tmpdir[0];
+    $dirread=$tmpdir[1];
+    $forceddirread=1;
 }
 
 $FILEFLAG='modulebuilder.txt';
@@ -79,9 +79,9 @@ $FILEFLAG='modulebuilder.txt';
 $now=dol_now();
 $newmask = 0;
 if (empty($newmask) && ! empty($conf->global->MAIN_UMASK)) $newmask=$conf->global->MAIN_UMASK;
-if (empty($newmask))	// This should no happen
+if (empty($newmask))    // This should no happen
 {
-	$newmask='0664';
+    $newmask='0664';
 }
 
 
@@ -94,7 +94,7 @@ print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
 print "modulename=".$modulename."\n";
 print "dirins=".$dirins."\n";
 
-$FILENAMEDOC=strtolower($module).'.html';			// TODO Use/text PDF
+$FILENAMEDOC=strtolower($module).'.html';            // TODO Use/text PDF
 $dirofmodule = dol_buildpath(strtolower($module), 0).'/doc';
 $outputfiledoc = $dirofmodule.'/'.$FILENAMEDOC;
 
@@ -103,8 +103,8 @@ $result = $util->generateDoc($module);
 
 if ($result <= 0)
 {
-	print $util->errors;
-	exit(1);
+    print $util->errors;
+    exit(1);
 }
 
 print $langs->trans("DocFileGeneratedInto", $outputfiledoc);

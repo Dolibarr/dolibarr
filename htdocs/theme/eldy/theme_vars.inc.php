@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2017    Laurent Destailleur        <eldy@users.sourceforge.net>
  * Copyright (C) 2006		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2007-2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011		Philippe Grand			<philippe.grand@atoo-net.com>
@@ -21,8 +21,8 @@
  */
 
 /**
- *	\file       htdocs/theme/eldy/theme_vars.inc.php
- *	\brief      File to declare variables of CSS style sheet
+ *    \file       htdocs/theme/eldy/theme_vars.inc.php
+ *    \brief      File to declare variables of CSS style sheet
  *  \ingroup    core
  *
  *  To include file, do this:
@@ -47,9 +47,9 @@ $colorbacklineimpair1='255,255,255';    // line impair
 $colorbacklineimpair2='255,255,255';    // line impair
 $colorbacklinepair1='250,250,250';    // line pair
 $colorbacklinepair2='250,250,250';    // line pair
-$colorbacklinepairhover='230,237,244';	// line hover
-$colorbacklinepairchecked='230,237,244';	// line checked
-$colorbacklinebreak='223,218,220';		// line break
+$colorbacklinepairhover='230,237,244';    // line hover
+$colorbacklinepairchecked='230,237,244';    // line checked
+$colorbacklinebreak='223,218,220';        // line break
 $colorbackbody='255,255,255';
 $colortexttitlenotab='100,60,20';
 $colortexttitle='0,0,0';

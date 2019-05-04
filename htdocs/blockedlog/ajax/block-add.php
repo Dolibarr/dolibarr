@@ -40,8 +40,8 @@ if ($element === 'facture') {
     require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
     require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
-	$facture = new Facture($db);
-	if($facture->fetch($id)>0) {
-		$facture->call_trigger($action, $user);
-	}
+    $facture = new Facture($db);
+    if($facture->fetch($id)>0) {
+        $facture->call_trigger($action, $user);
+    }
 }

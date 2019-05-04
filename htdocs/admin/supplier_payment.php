@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2015  Juanjo Menent				<jmenent@2byte.es>
+/* Copyright (C) 2015  Juanjo Menent                <jmenent@2byte.es>
  * Copyright (C) 2016  Laurent Destailleur          <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -18,8 +18,8 @@
 
 /**
  *      \file       htdocs/admin/supplier_payment.php
- *		\ingroup    supplier
- *		\brief      Page to setup supplier invoices payments
+ *        \ingroup    supplier
+ *        \brief      Page to setup supplier invoices payments
  */
 
 require '../main.inc.php';
@@ -69,34 +69,34 @@ if ($action == 'updateMask')
 // Activate a model
 elseif ($action == 'set')
 {
-	$ret = addDocumentModel($value, $type, $label, $scandir);
+    $ret = addDocumentModel($value, $type, $label, $scandir);
 }
 
 elseif ($action == 'del')
 {
-	$ret = delDocumentModel($value, $type);
-	if ($ret > 0)
-	{
+    $ret = delDocumentModel($value, $type);
+    if ($ret > 0)
+    {
         if ($conf->global->FACTURE_ADDON_PDF == "$value") dolibarr_del_const($db, 'SUPPLIER_PAYMENT_ADDON_PDF', $conf->entity);
-	}
+    }
 }
 
 // Set default model
 elseif ($action == 'setdoc')
 {
-	if (dolibarr_set_const($db, "SUPPLIER_PAYMENT_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity))
-	{
-		// La constante qui a ete lue en avant du nouveau set
-		// on passe donc par une variable pour avoir un affichage coherent
-		$conf->global->FACTURE_ADDON_PDF = $value;
-	}
+    if (dolibarr_set_const($db, "SUPPLIER_PAYMENT_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity))
+    {
+        // La constante qui a ete lue en avant du nouveau set
+        // on passe donc par une variable pour avoir un affichage coherent
+        $conf->global->FACTURE_ADDON_PDF = $value;
+    }
 
-	// On active le modele
-	$ret = delDocumentModel($value, $type);
-	if ($ret > 0)
-	{
-		$ret = addDocumentModel($value, $type, $label, $scandir);
-	}
+    // On active le modele
+    $ret = delDocumentModel($value, $type);
+    if ($ret > 0)
+    {
+        $ret = addDocumentModel($value, $type, $label, $scandir);
+    }
 }
 
 elseif ($action == 'specimen')
@@ -106,41 +106,41 @@ elseif ($action == 'specimen')
     $paiementFourn = new PaiementFourn($db);
     $paiementFourn->initAsSpecimen();
 
-	// Search template files
-	$file=''; $classname=''; $filefound=0;
-	$dirmodels=array_merge(array('/'), (array) $conf->modules_parts['models']);
-	foreach($dirmodels as $reldir)
-	{
-	    $file=dol_buildpath($reldir."core/modules/supplier_payment/doc/pdf_".$modele.".modules.php", 0);
-    	if (file_exists($file))
-    	{
-    		$filefound=1;
-    		$classname = "pdf_".$modele;
-    		break;
-    	}
+    // Search template files
+    $file=''; $classname=''; $filefound=0;
+    $dirmodels=array_merge(array('/'), (array) $conf->modules_parts['models']);
+    foreach($dirmodels as $reldir)
+    {
+        $file=dol_buildpath($reldir."core/modules/supplier_payment/doc/pdf_".$modele.".modules.php", 0);
+        if (file_exists($file))
+        {
+            $filefound=1;
+            $classname = "pdf_".$modele;
+            break;
+        }
     }
 
     if ($filefound)
     {
-    	require_once $file;
+        require_once $file;
 
-    	$module = new $classname($db);
+        $module = new $classname($db);
 
-    	if ($module->write_file($paiementFourn, $langs) > 0)
-    	{
-    		header("Location: ".DOL_URL_ROOT."/document.php?modulepart=supplier_payment&file=SPECIMEN.pdf");
-    		return;
-    	}
-    	else
-    	{
-    		setEventMessages($module->error, $module->errors, 'errors');
-    		dol_syslog($module->error, LOG_ERR);
-    	}
+        if ($module->write_file($paiementFourn, $langs) > 0)
+        {
+            header("Location: ".DOL_URL_ROOT."/document.php?modulepart=supplier_payment&file=SPECIMEN.pdf");
+            return;
+        }
+        else
+        {
+            setEventMessages($module->error, $module->errors, 'errors');
+            dol_syslog($module->error, LOG_ERR);
+        }
     }
     else
     {
-    	setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
-    	dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
+        setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
+        dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
     }
 }
 
@@ -333,7 +333,7 @@ clearstatcache();
 
 foreach ($dirmodels as $reldir)
 {
-	$dir = dol_buildpath($reldir."core/modules/supplier_payment/doc/");
+    $dir = dol_buildpath($reldir."core/modules/supplier_payment/doc/");
 
     if (is_dir($dir))
     {
@@ -350,18 +350,18 @@ foreach ($dirmodels as $reldir)
                     $name = substr($file, 4, dol_strlen($file) -16);
                     $classname = substr($file, 0, dol_strlen($file) -12);
 
-	                require_once $dir.'/'.$file;
-	                $module = new $classname($db, new PaiementFourn($db));
+                    require_once $dir.'/'.$file;
+                    $module = new $classname($db, new PaiementFourn($db));
 
                     print "<tr class=\"oddeven\">\n";
                     print "<td>";
-	                print (empty($module->name)?$name:$module->name);
-	                print "</td>\n";
+                    print (empty($module->name)?$name:$module->name);
+                    print "</td>\n";
                     print "<td>\n";
                     require_once $dir.$file;
                     $module = new $classname($db, $specimenthirdparty);
                     if (method_exists($module, 'info')) print $module->info($langs);
-	                else print $module->description;
+                    else print $module->description;
 
                     print "</td>\n";
 

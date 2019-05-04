@@ -18,13 +18,13 @@
 
 /**
  *      \file       test/phpunit/ImportTest.php
- *		\ingroup    test
+ *        \ingroup    test
  *      \brief      PHPUnit test
- *		\remarks	To run this script as CLI:  phpunit filename.php
+ *        \remarks    To run this script as CLI:  phpunit filename.php
  */
 
 global $conf,$user,$langs,$db;
-//define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
+//define('TEST_DB_FORCE_TYPE','mysql');    // This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/exports/class/export.class.php';
@@ -47,78 +47,78 @@ if (! defined("NOLOGIN"))        define("NOLOGIN", '1');       // If this page i
  *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
- * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
+ * @remarks    backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
 class ExportTest extends PHPUnit_Framework_TestCase
 {
-	protected $savconf;
-	protected $savuser;
-	protected $savlangs;
-	protected $savdb;
+    protected $savconf;
+    protected $savuser;
+    protected $savlangs;
+    protected $savdb;
 
-	/**
-	 * Constructor
-	 * We save global variables into local variables
-	 *
-	 * @return ExportTest
-	 */
-	public function __construct()
-	{
-		parent::__construct();
+    /**
+     * Constructor
+     * We save global variables into local variables
+     *
+     * @return ExportTest
+     */
+    public function __construct()
+    {
+        parent::__construct();
 
-		//$this->sharedFixture
-		global $conf,$user,$langs,$db;
-		$this->savconf=$conf;
-		$this->savuser=$user;
-		$this->savlangs=$langs;
-		$this->savdb=$db;
+        //$this->sharedFixture
+        global $conf,$user,$langs,$db;
+        $this->savconf=$conf;
+        $this->savuser=$user;
+        $this->savlangs=$langs;
+        $this->savdb=$db;
 
-		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-		//print " - db ".$db->db;
-		print "\n";
-	}
+        print __METHOD__." db->type=".$db->type." user->id=".$user->id;
+        //print " - db ".$db->db;
+        print "\n";
+    }
 
-	// Static methods
+    // Static methods
     public static function setUpBeforeClass()
     {
-    	global $conf,$user,$langs,$db;
-		//$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
+        global $conf,$user,$langs,$db;
+        //$db->begin();    // This is to have all actions inside a transaction even if test launched without suite.
 
-    	print __METHOD__."\n";
+        print __METHOD__."\n";
     }
 
     // tear down after class
     public static function tearDownAfterClass()
     {
-    	global $conf,$user,$langs,$db;
-		//$db->rollback();
+        global $conf,$user,$langs,$db;
+        //$db->rollback();
 
-		print __METHOD__."\n";
+        print __METHOD__."\n";
     }
 
-	/**
-	 * Init phpunit tests
-	 *
-	 * @return	void
-	 */
+    /**
+     * Init phpunit tests
+     *
+     * @return    void
+     */
     protected function setUp()
     {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-		print __METHOD__."\n";
+        print __METHOD__."\n";
     }
-	/**
-	 * End phpunit tests
-	 *
-	 * @return	void
-	 */
+    /**
+     * End phpunit tests
+     *
+     * @return    void
+     */
     protected function tearDown()
     {
-    	print __METHOD__."\n";
+        print __METHOD__."\n";
     }
 
 
@@ -210,8 +210,8 @@ class ExportTest extends PHPUnit_Framework_TestCase
     /**
      * Test export function for a personalized dataset
      *
-     * @depends	testExportOther
-	 * @return void
+     * @depends    testExportOther
+     * @return void
      */
     public function testExportPersonalizedExport()
     {
@@ -236,21 +236,21 @@ class ExportTest extends PHPUnit_Framework_TestCase
 
         // Build export file
         $result=$objexport->build_file($user, $model, $datatoexport, $array_selected, array(), $sql);
-		$expectedresult=1;
+        $expectedresult=1;
         $this->assertEquals($expectedresult, $result);
 
         $model='tsv';
 
         // Build export file
         $result=$objexport->build_file($user, $model, $datatoexport, $array_selected, array(), $sql);
-		$expectedresult=1;
+        $expectedresult=1;
         $this->assertEquals($expectedresult, $result);
 
         $model='excel';
 
         // Build export file
         $result=$objexport->build_file($user, $model, $datatoexport, $array_selected, array(), $sql);
-		$expectedresult=1;
+        $expectedresult=1;
         $this->assertEquals($expectedresult, $result);
 
         return true;
@@ -259,59 +259,59 @@ class ExportTest extends PHPUnit_Framework_TestCase
     /**
      * Test export function for a personalized dataset with filters
      *
-     * @depends	testExportPersonalizedExport
+     * @depends    testExportPersonalizedExport
      * @return void
      */
     public function testExportPersonalizedWithFilter()
     {
-    	global $conf,$user,$langs,$db;
+        global $conf,$user,$langs,$db;
 /*
-    	$sql = "SELECT f.ref as f_ref, f.total as f_total, f.tva as f_tva FROM ".MAIN_DB_PREFIX."facture f";
+        $sql = "SELECT f.ref as f_ref, f.total as f_total, f.tva as f_tva FROM ".MAIN_DB_PREFIX."facture f";
 
-    	$objexport=new Export($db);
-    	//$objexport->load_arrays($user,$datatoexport);
+        $objexport=new Export($db);
+        //$objexport->load_arrays($user,$datatoexport);
 
-    	// Define properties
-    	$datatoexport='test_filtered';
-    	$array_selected = array("f.ref"=>1, "f.total"=>2, "f.tva"=>3);
-    	$array_export_fields = array("f.ref"=>"FacNumber", "f.total"=>"FacTotal", "f.tva"=>"FacVat");
-    	$array_filtervalue = array("f.total" => ">100");
-    	$array_filtered = array("f.total" => 1);
-    	$array_alias = array("f_ref"=>"ref", "f_total"=>"total", "f_tva"=>"tva");
-    	$objexport->array_export_fields[0]=$array_export_fields;
-    	$objexport->array_export_alias[0]=$array_alias;
+        // Define properties
+        $datatoexport='test_filtered';
+        $array_selected = array("f.ref"=>1, "f.total"=>2, "f.tva"=>3);
+        $array_export_fields = array("f.ref"=>"FacNumber", "f.total"=>"FacTotal", "f.tva"=>"FacVat");
+        $array_filtervalue = array("f.total" => ">100");
+        $array_filtered = array("f.total" => 1);
+        $array_alias = array("f_ref"=>"ref", "f_total"=>"total", "f_tva"=>"tva");
+        $objexport->array_export_fields[0]=$array_export_fields;
+        $objexport->array_export_alias[0]=$array_alias;
 
-    	dol_mkdir($conf->export->dir_temp);
+        dol_mkdir($conf->export->dir_temp);
 
-    	$model='csv';
+        $model='csv';
 
-    	// Build export file
-    	$result=$objexport->build_file($user, $model, $datatoexport, $array_selected, $array_filtervalue, $sql);
-    	$expectedresult=1;
-    	$this->assertEquals($expectedresult,$result);
+        // Build export file
+        $result=$objexport->build_file($user, $model, $datatoexport, $array_selected, $array_filtervalue, $sql);
+        $expectedresult=1;
+        $this->assertEquals($expectedresult,$result);
 
-    	$model='tsv';
+        $model='tsv';
 
-    	// Build export file
-    	$result=$objexport->build_file($user, $model, $datatoexport, $array_selected, $array_filtervalue, $sql);
-    	$expectedresult=1;
-    	$this->assertEquals($expectedresult,$result);
+        // Build export file
+        $result=$objexport->build_file($user, $model, $datatoexport, $array_selected, $array_filtervalue, $sql);
+        $expectedresult=1;
+        $this->assertEquals($expectedresult,$result);
 
-    	$model='excel';
+        $model='excel';
 
-    	// Build export file
-    	$result=$objexport->build_file($user, $model, $datatoexport, $array_selected, $array_filtervalue, $sql);
-    	$expectedresult=1;
-    	$this->assertEquals($expectedresult,$result);
+        // Build export file
+        $result=$objexport->build_file($user, $model, $datatoexport, $array_selected, $array_filtervalue, $sql);
+        $expectedresult=1;
+        $this->assertEquals($expectedresult,$result);
 */
-    	return true;
+        return true;
     }
 
     /**
      * Test export function for all dataset predefined into modules
      *
-     * @depends	testExportPersonalizedWithFilter
-	 * @return void
+     * @depends    testExportPersonalizedWithFilter
+     * @return void
      */
     public function testExportModulesDatasets()
     {
@@ -321,35 +321,35 @@ class ExportTest extends PHPUnit_Framework_TestCase
 
         $filterdatatoexport='';
         //$filterdatatoexport='';
-        //$array_selected = array("s.rowid"=>1, "s.nom"=>2);	// Mut be fields found into declaration of dataset
+        //$array_selected = array("s.rowid"=>1, "s.nom"=>2);    // Mut be fields found into declaration of dataset
 
         // Load properties of arrays to make export
         $objexport=new Export($db);
-        $result=$objexport->load_arrays($user, $filterdatatoexport);	// This load ->array_export_xxx properties for datatoexport
+        $result=$objexport->load_arrays($user, $filterdatatoexport);    // This load ->array_export_xxx properties for datatoexport
 
         // Loop on each dataset
         foreach($objexport->array_export_code as $key => $datatoexport)
         {
-        	$exportfile=$conf->export->dir_temp.'/'.$user->id.'/export_'.$datatoexport.'.csv';
-	        print "Process export for dataset ".$datatoexport." into ".$exportfile."\n";
-	        dol_delete_file($exportfile);
+            $exportfile=$conf->export->dir_temp.'/'.$user->id.'/export_'.$datatoexport.'.csv';
+            print "Process export for dataset ".$datatoexport." into ".$exportfile."\n";
+            dol_delete_file($exportfile);
 
-	        // Generate $array_selected
-	        $i=0;
-	        $array_selected=array();
-			foreach($objexport->array_export_fields[$key] as $key => $val)
-			{
-				$array_selected[$key]=$i++;
-			}
-			//var_dump($array_selected);
+            // Generate $array_selected
+            $i=0;
+            $array_selected=array();
+            foreach($objexport->array_export_fields[$key] as $key => $val)
+            {
+                $array_selected[$key]=$i++;
+            }
+            //var_dump($array_selected);
 
-	        // Build export file
-        	$sql = "";
-			$result=$objexport->build_file($user, $model, $datatoexport, $array_selected, array(), $sql);
-			$expectedresult=1;
-	        $this->assertEquals($expectedresult, $result, "Call build_file() to export ".$exportfile.' failed');
-	        $result=dol_is_file($exportfile);
-	        $this->assertTrue($result, 'File '.$exportfile.' not found');
+            // Build export file
+            $sql = "";
+            $result=$objexport->build_file($user, $model, $datatoexport, $array_selected, array(), $sql);
+            $expectedresult=1;
+            $this->assertEquals($expectedresult, $result, "Call build_file() to export ".$exportfile.' failed');
+            $result=dol_is_file($exportfile);
+            $this->assertTrue($result, 'File '.$exportfile.' not found');
         }
 
         return true;

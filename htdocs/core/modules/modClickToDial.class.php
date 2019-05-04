@@ -17,60 +17,60 @@
  */
 
 /**
- *	\defgroup   clicktodial      Module clicktodial
- *	\brief      Module pour gerer l'appel automatique
- *	\file       htdocs/core/modules/modClickToDial.class.php
- *	\ingroup    clicktodial
- *	\brief      Fichier de description et activation du module de click to Dial
+ *    \defgroup   clicktodial      Module clicktodial
+ *    \brief      Module pour gerer l'appel automatique
+ *    \file       htdocs/core/modules/modClickToDial.class.php
+ *    \ingroup    clicktodial
+ *    \brief      Fichier de description et activation du module de click to Dial
  */
 
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *	Class to describe and enable module Click to Dial
+ *    Class to describe and enable module Click to Dial
  */
 class modClickToDial extends DolibarrModules
 {
 
-	/**
-	 *   Constructor. Define names, constants, directories, boxes, permissions
-	 *
-	 *   @param      DoliDB		$db      Database handler
-	 */
-	public function __construct($db)
-	{
-		$this->db = $db;
-		$this->numero = 58;
+    /**
+     *   Constructor. Define names, constants, directories, boxes, permissions
+     *
+     *   @param      DoliDB        $db      Database handler
+     */
+    public function __construct($db)
+    {
+        $this->db = $db;
+        $this->numero = 58;
 
-		$this->family = "interface";
-		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = preg_replace('/^mod/i', '', get_class($this));
-		$this->description = "Gestion du Click To Dial";
+        $this->family = "interface";
+        // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+        $this->name = preg_replace('/^mod/i', '', get_class($this));
+        $this->description = "Gestion du Click To Dial";
 
-		$this->version = 'dolibarr';		// 'development' or 'experimental' or 'dolibarr' or version
+        $this->version = 'dolibarr';        // 'development' or 'experimental' or 'dolibarr' or version
 
-		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->picto='phoning';
+        $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
+        $this->picto='phoning';
 
-		// Data directories to create when module is enabled
-		$this->dirs = array();
+        // Data directories to create when module is enabled
+        $this->dirs = array();
 
-		// Dependencies
-		$this->depends = array();
-		$this->requiredby = array();
+        // Dependencies
+        $this->depends = array();
+        $this->requiredby = array();
 
-		// Config pages
-		$this->config_page_url = array("clicktodial.php");
+        // Config pages
+        $this->config_page_url = array("clicktodial.php");
 
-		// Constants
-		$this->const = array();
+        // Constants
+        $this->const = array();
 
-		// Boxes
-		$this->boxes = array();
+        // Boxes
+        $this->boxes = array();
 
-		// Permissions
-		$this->rights = array();
-		$this->rights_class = 'clicktodial';
-	}
+        // Permissions
+        $this->rights = array();
+        $this->rights_class = 'clicktodial';
+    }
 }

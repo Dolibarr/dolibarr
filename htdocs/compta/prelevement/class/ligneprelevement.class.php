@@ -27,158 +27,158 @@
 
 
 /**
- *	Class to manage withdrawals
+ *    Class to manage withdrawals
  */
 class LignePrelevement
 {
-	/**
-	 * @var int ID
-	 */
-	public $id;
+    /**
+     * @var int ID
+     */
+    public $id;
 
-	/**
+    /**
      * @var DoliDB Database handler.
      */
     public $db;
 
-	public $statuts = array();
+    public $statuts = array();
 
-
-	/**
-	 *  Constructor
-	 *
-	 *  @param	DoliDb	$db			Database handler
-	 *  @param 	User	$user       Objet user
-	 */
-	public function __construct($db, $user)
-	{
-		global $conf,$langs;
-
-		$this->db = $db;
-		$this->user = $user;
-
-		// List of language codes for status
-
-		$langs->load("withdrawals");
-		$this->statuts[0]=$langs->trans("StatusWaiting");
-		$this->statuts[2]=$langs->trans("StatusCredited");
-		$this->statuts[3]=$langs->trans("StatusRefused");
-	}
-
-	/**
-	 *  Recupere l'objet prelevement
-	 *
-	 *  @param	int		$rowid       id de la facture a recuperer
-	 *  @return	integer
-	 */
-	public function fetch($rowid)
-	{
-		global $conf;
-
-		$result = 0;
-
-		$sql = "SELECT pl.rowid, pl.amount, p.ref, p.rowid as bon_rowid";
-		$sql.= ", pl.statut, pl.fk_soc";
-		$sql.= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
-		$sql.= ", ".MAIN_DB_PREFIX."prelevement_bons as p";
-		$sql.= " WHERE pl.rowid=".$rowid;
-		$sql.= " AND p.rowid = pl.fk_prelevement_bons";
-		$sql.= " AND p.entity = ".$conf->entity;
-
-		$resql=$this->db->query($sql);
-		if ($resql)
-		{
-			if ($this->db->num_rows($resql))
-			{
-				$obj = $this->db->fetch_object($resql);
-
-				$this->id              = $obj->rowid;
-				$this->amount          = $obj->amount;
-				$this->socid           = $obj->fk_soc;
-				$this->statut          = $obj->statut;
-				$this->bon_ref         = $obj->ref;
-				$this->bon_rowid       = $obj->bon_rowid;
-			}
-			else
-			{
-				$result++;
-				dol_syslog("LignePrelevement::Fetch rowid=$rowid numrows=0");
-			}
-
-			$this->db->free($resql);
-		}
-		else
-		{
-			$result++;
-			dol_syslog("LignePrelevement::Fetch rowid=$rowid");
-			dol_syslog($this->db->error());
-		}
-
-		return $result;
-	}
 
     /**
-	 *    Return status label of object
-	 *
-	 *    @param	int		$mode       0=Label, 1=Picto + label, 2=Picto, 3=Label + Picto
-	 * 	  @return   string      		Label
-	 */
-	public function getLibStatut($mode = 0)
-	{
-		return $this->LibStatut($this->statut, $mode);
-	}
+     *  Constructor
+     *
+     *  @param    DoliDb    $db            Database handler
+     *  @param     User    $user       Objet user
+     */
+    public function __construct($db, $user)
+    {
+        global $conf,$langs;
+
+        $this->db = $db;
+        $this->user = $user;
+
+        // List of language codes for status
+
+        $langs->load("withdrawals");
+        $this->statuts[0]=$langs->trans("StatusWaiting");
+        $this->statuts[2]=$langs->trans("StatusCredited");
+        $this->statuts[3]=$langs->trans("StatusRefused");
+    }
+
+    /**
+     *  Recupere l'objet prelevement
+     *
+     *  @param    int        $rowid       id de la facture a recuperer
+     *  @return    integer
+     */
+    public function fetch($rowid)
+    {
+        global $conf;
+
+        $result = 0;
+
+        $sql = "SELECT pl.rowid, pl.amount, p.ref, p.rowid as bon_rowid";
+        $sql.= ", pl.statut, pl.fk_soc";
+        $sql.= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
+        $sql.= ", ".MAIN_DB_PREFIX."prelevement_bons as p";
+        $sql.= " WHERE pl.rowid=".$rowid;
+        $sql.= " AND p.rowid = pl.fk_prelevement_bons";
+        $sql.= " AND p.entity = ".$conf->entity;
+
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            if ($this->db->num_rows($resql))
+            {
+                $obj = $this->db->fetch_object($resql);
+
+                $this->id              = $obj->rowid;
+                $this->amount          = $obj->amount;
+                $this->socid           = $obj->fk_soc;
+                $this->statut          = $obj->statut;
+                $this->bon_ref         = $obj->ref;
+                $this->bon_rowid       = $obj->bon_rowid;
+            }
+            else
+            {
+                $result++;
+                dol_syslog("LignePrelevement::Fetch rowid=$rowid numrows=0");
+            }
+
+            $this->db->free($resql);
+        }
+        else
+        {
+            $result++;
+            dol_syslog("LignePrelevement::Fetch rowid=$rowid");
+            dol_syslog($this->db->error());
+        }
+
+        return $result;
+    }
+
+    /**
+     *    Return status label of object
+     *
+     *    @param    int        $mode       0=Label, 1=Picto + label, 2=Picto, 3=Label + Picto
+     *       @return   string              Label
+     */
+    public function getLibStatut($mode = 0)
+    {
+        return $this->LibStatut($this->statut, $mode);
+    }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *    Return status label for a status
-	 *
-	 *    @param	int		$statut     id statut
-	 *    @param    int		$mode       0=Label, 1=Picto + label, 2=Picto, 3=Label + Picto
-	 * 	  @return   string      		Label
-	 */
-	public function LibStatut($statut, $mode = 0)
-	{
+    /**
+     *    Return status label for a status
+     *
+     *    @param    int        $statut     id statut
+     *    @param    int        $mode       0=Label, 1=Picto + label, 2=Picto, 3=Label + Picto
+     *       @return   string              Label
+     */
+    public function LibStatut($statut, $mode = 0)
+    {
         // phpcs:enable
-		global $langs;
+        global $langs;
 
-		if ($mode == 0)
-		{
-			return $langs->trans($this->statuts[$statut]);
-		}
-		elseif ($mode == 1)
-		{
-			if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]), 'statut1').' '.$langs->trans($this->statuts[$statut]);   // Waiting
-			elseif ($statut==2) return img_picto($langs->trans($this->statuts[$statut]), 'statut6').' '.$langs->trans($this->statuts[$statut]);   // Credited
-			elseif ($statut==3) return img_picto($langs->trans($this->statuts[$statut]), 'statut8').' '.$langs->trans($this->statuts[$statut]);   // Refused
-		}
-		elseif ($mode == 2)
-		{
-			if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]), 'statut1');
-			elseif ($statut==2) return img_picto($langs->trans($this->statuts[$statut]), 'statut6');
-			elseif ($statut==3) return img_picto($langs->trans($this->statuts[$statut]), 'statut8');
-		}
-		elseif ($mode == 3)
-		{
-			if ($statut==0) return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]), 'statut1');
-			elseif ($statut==2) return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]), 'statut6');
-			elseif ($statut==3) return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]), 'statut8');
-		}
-	}
+        if ($mode == 0)
+        {
+            return $langs->trans($this->statuts[$statut]);
+        }
+        elseif ($mode == 1)
+        {
+            if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]), 'statut1').' '.$langs->trans($this->statuts[$statut]);   // Waiting
+            elseif ($statut==2) return img_picto($langs->trans($this->statuts[$statut]), 'statut6').' '.$langs->trans($this->statuts[$statut]);   // Credited
+            elseif ($statut==3) return img_picto($langs->trans($this->statuts[$statut]), 'statut8').' '.$langs->trans($this->statuts[$statut]);   // Refused
+        }
+        elseif ($mode == 2)
+        {
+            if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]), 'statut1');
+            elseif ($statut==2) return img_picto($langs->trans($this->statuts[$statut]), 'statut6');
+            elseif ($statut==3) return img_picto($langs->trans($this->statuts[$statut]), 'statut8');
+        }
+        elseif ($mode == 3)
+        {
+            if ($statut==0) return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]), 'statut1');
+            elseif ($statut==2) return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]), 'statut6');
+            elseif ($statut==3) return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]), 'statut8');
+        }
+    }
 
-	/**
-	 * Function used to replace a thirdparty id with another one.
-	 *
-	 * @param DoliDB $db Database handler
-	 * @param int $origin_id Old thirdparty id
-	 * @param int $dest_id New thirdparty id
-	 * @return bool
-	 */
-	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
-	{
-		$tables = array(
-			'prelevement_lignes'
-		);
+    /**
+     * Function used to replace a thirdparty id with another one.
+     *
+     * @param DoliDB $db Database handler
+     * @param int $origin_id Old thirdparty id
+     * @param int $dest_id New thirdparty id
+     * @return bool
+     */
+    public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+    {
+        $tables = array(
+            'prelevement_lignes'
+        );
 
-		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
-	}
+        return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+    }
 }

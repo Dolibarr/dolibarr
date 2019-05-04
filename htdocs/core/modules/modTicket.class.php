@@ -93,11 +93,11 @@ class modTicket extends DolibarrModules
         $this->config_page_url = array("ticket.php");
 
         // Dependencies
-        $this->hidden = false;			// A condition to hide module
-		$this->depends = array('modAgenda');		// List of module class names as string that must be enabled if this module is enabled
-		$this->requiredby = array();	// List of module ids to disable if this one is disabled
-		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
-		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
+        $this->hidden = false;            // A condition to hide module
+        $this->depends = array('modAgenda');        // List of module class names as string that must be enabled if this module is enabled
+        $this->requiredby = array();    // List of module ids to disable if this one is disabled
+        $this->conflictwith = array();    // List of module class names as string this module is in conflict with
+        $this->phpmin = array(5,4);        // Minimum version of PHP required by module
         $this->langfiles = array("ticket");
         // Constants
         // List of particular constants to add when module is enabled
@@ -271,12 +271,12 @@ class modTicket extends DolibarrModules
     }
 
     /**
-     *	Function called when module is enabled.
-     *	The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
-     *	It also creates data directories
+     *    Function called when module is enabled.
+     *    The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+     *    It also creates data directories
      *
-     *	@param      string	$options    Options when enabling module ('', 'noboxes')
-     *	@return     int             	1 if OK, 0 if KO
+     *    @param      string    $options    Options when enabling module ('', 'noboxes')
+     *    @return     int                 1 if OK, 0 if KO
      */
     public function init($options = '')
     {

@@ -42,8 +42,8 @@ $ref = GETPOST('ref', 'alpha');
 // Security check
 if ($user->societe_id > 0)
 {
-	unset($action);
-	$socid = $user->societe_id;
+    unset($action);
+    $socid = $user->societe_id;
 }
 $result = restrictedArea($user, 'societe', $id, '&societe');
 
@@ -61,10 +61,10 @@ if (! $sortfield) $sortfield="position_name";
 $object = new Societe($db);
 if ($id > 0 || ! empty($ref))
 {
-	$result = $object->fetch($id, $ref);
+    $result = $object->fetch($id, $ref);
 
-	$upload_dir = $conf->societe->multidir_output[$object->entity] . "/" . $object->id ;
-	$courrier_dir = $conf->societe->multidir_output[$object->entity] . "/courrier/" . get_exdir($object->id, 0, 0, 0, $object, 'thirdparty');
+    $upload_dir = $conf->societe->multidir_output[$object->entity] . "/" . $object->id ;
+    $courrier_dir = $conf->societe->multidir_output[$object->entity] . "/courrier/" . get_exdir($object->id, 0, 0, 0, $object, 'thirdparty');
 }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -92,24 +92,24 @@ llxHeader('', $title, $help_url);
 
 if ($object->id)
 {
-	/*
-	 * Show tabs
-	 */
-	if (! empty($conf->notification->enabled)) $langs->load("mails");
-	$head = societe_prepare_head($object);
+    /*
+     * Show tabs
+     */
+    if (! empty($conf->notification->enabled)) $langs->load("mails");
+    $head = societe_prepare_head($object);
 
-	$form=new Form($db);
+    $form=new Form($db);
 
-	dol_fiche_head($head, 'document', $langs->trans("ThirdParty"), -1, 'company');
+    dol_fiche_head($head, 'document', $langs->trans("ThirdParty"), -1, 'company');
 
 
-	// Build file list
-	$filearray=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);
-	$totalsize=0;
-	foreach($filearray as $key => $file)
-	{
-		$totalsize+=$file['size'];
-	}
+    // Build file list
+    $filearray=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);
+    $totalsize=0;
+    foreach($filearray as $key => $file)
+    {
+        $totalsize+=$file['size'];
+    }
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -118,53 +118,53 @@ if ($object->id)
     print '<div class="fichecenter">';
 
     print '<div class="underbanner clearboth"></div>';
-	print '<table class="border tableforfield centpercent">';
+    print '<table class="border tableforfield centpercent">';
 
-	// Prefix
-	if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
-	{
-		print '<tr><td class="titlefield">'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
-	}
+    // Prefix
+    if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
+    {
+        print '<tr><td class="titlefield">'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
+    }
 
-	if ($object->client)
-	{
-		print '<tr><td class="titlefield">';
-		print $langs->trans('CustomerCode').'</td><td colspan="3">';
-		print $object->code_client;
-		if ($object->check_codeclient() <> 0) print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
-		print '</td></tr>';
-	}
+    if ($object->client)
+    {
+        print '<tr><td class="titlefield">';
+        print $langs->trans('CustomerCode').'</td><td colspan="3">';
+        print $object->code_client;
+        if ($object->check_codeclient() <> 0) print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
+        print '</td></tr>';
+    }
 
-	if ($object->fournisseur)
-	{
-		print '<tr><td class="titlefield">';
-		print $langs->trans('SupplierCode').'</td><td colspan="3">';
-		print $object->code_fournisseur;
-		if ($object->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
-		print '</td></tr>';
-	}
+    if ($object->fournisseur)
+    {
+        print '<tr><td class="titlefield">';
+        print $langs->trans('SupplierCode').'</td><td colspan="3">';
+        print $object->code_fournisseur;
+        if ($object->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
+        print '</td></tr>';
+    }
 
-	// Number of files
-	print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
+    // Number of files
+    print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
 
-	// Total size
-	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize, 1, 1).'</td></tr>';
+    // Total size
+    print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize, 1, 1).'</td></tr>';
 
-	print '</table>';
+    print '</table>';
 
-	print '</div>';
+    print '</div>';
 
-	dol_fiche_end();
+    dol_fiche_end();
 
-	$modulepart = 'societe';
-	$permission = $user->rights->societe->creer;
-	$permtoedit = $user->rights->societe->creer;
-	$param = '&id=' . $object->id;
-	include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
+    $modulepart = 'societe';
+    $permission = $user->rights->societe->creer;
+    $permtoedit = $user->rights->societe->creer;
+    $param = '&id=' . $object->id;
+    include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 }
 else
 {
-	accessforbidden('', 0, 0);
+    accessforbidden('', 0, 0);
 }
 
 // End of page

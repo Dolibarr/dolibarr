@@ -18,9 +18,9 @@
 
 /**
  *      \file       test/unit/TicketTest.php
- *		\ingroup    test
+ *        \ingroup    test
  *      \brief      PHPUnit test
- *		\remarks	To run this script as CLI:  phpunit filename.php
+ *        \remarks    To run this script as CLI:  phpunit filename.php
  */
 
 global $conf,$user,$langs,$db;
@@ -31,9 +31,9 @@ require_once dirname(__FILE__).'/../../htdocs/user/class/usergroup.class.php';
 require_once dirname(__FILE__).'/../../htdocs/ticket/class/ticket.class.php';
 
 if (empty($user->id)) {
-	print "Load permissions for admin user nb 1\n";
-	$user->fetch(1);
-	$user->getrights();
+    print "Load permissions for admin user nb 1\n";
+    $user->fetch(1);
+    $user->getrights();
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 
@@ -43,343 +43,343 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
- * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
+ * @remarks    backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
 class TicketTest extends PHPUnit_Framework_TestCase
 {
-	protected $savconf;
-	protected $savuser;
-	protected $savlangs;
-	protected $savdb;
+    protected $savconf;
+    protected $savuser;
+    protected $savlangs;
+    protected $savdb;
 
-	/**
-	 * Constructor
-	 * We save global variables into local variables
-	 *
-	 * @return ContratTest
-	 */
-	public function __construct()
-	{
-		parent::__construct();
+    /**
+     * Constructor
+     * We save global variables into local variables
+     *
+     * @return ContratTest
+     */
+    public function __construct()
+    {
+        parent::__construct();
 
-		//$this->sharedFixture
-		global $conf,$user,$langs,$db;
-		$this->savconf=$conf;
-		$this->savuser=$user;
-		$this->savlangs=$langs;
-		$this->savdb=$db;
+        //$this->sharedFixture
+        global $conf,$user,$langs,$db;
+        $this->savconf=$conf;
+        $this->savuser=$user;
+        $this->savlangs=$langs;
+        $this->savdb=$db;
 
-		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-		//print " - db ".$db->db;
-		print "\n";
-	}
+        print __METHOD__." db->type=".$db->type." user->id=".$user->id;
+        //print " - db ".$db->db;
+        print "\n";
+    }
 
-	// Static methods
-	public static function setUpBeforeClass()
-	{
-		global $conf,$user,$langs,$db;
-		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
+    // Static methods
+    public static function setUpBeforeClass()
+    {
+        global $conf,$user,$langs,$db;
+        $db->begin();    // This is to have all actions inside a transaction even if test launched without suite.
 
-		print __METHOD__."\n";
-	}
+        print __METHOD__."\n";
+    }
 
-	// tear down after class
-	public static function tearDownAfterClass()
-	{
-		global $conf,$user,$langs,$db;
-		$db->rollback();
+    // tear down after class
+    public static function tearDownAfterClass()
+    {
+        global $conf,$user,$langs,$db;
+        $db->rollback();
 
-		print __METHOD__."\n";
-	}
+        print __METHOD__."\n";
+    }
 
-	/**
-	 * Init phpunit tests
-	 *
-	 * @return	void
-	 */
-	protected function setUp()
-	{
-		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+    /**
+     * Init phpunit tests
+     *
+     * @return    void
+     */
+    protected function setUp()
+    {
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-		print __METHOD__."\n";
-	}
-	/**
-	 * End phpunit tests
-	 *
-	 * @return	void
-	 */
-	protected function tearDown()
-	{
-		print __METHOD__."\n";
-	}
+        print __METHOD__."\n";
+    }
+    /**
+     * End phpunit tests
+     *
+     * @return    void
+     */
+    protected function tearDown()
+    {
+        print __METHOD__."\n";
+    }
 
-	/**
-	 * testTicketCreate
-	 *
-	 * @return	int
-	 */
-	public function testTicketCreate()
-	{
-		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+    /**
+     * testTicketCreate
+     *
+     * @return    int
+     */
+    public function testTicketCreate()
+    {
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-		// Try to create one with bad values
-		$localobject=new Ticket($this->savdb);
-		$localobject->initAsSpecimen();
-		$localobject->ref = '';
-		$result=$localobject->create($user);
+        // Try to create one with bad values
+        $localobject=new Ticket($this->savdb);
+        $localobject->initAsSpecimen();
+        $localobject->ref = '';
+        $result=$localobject->create($user);
 
-		print __METHOD__." result=".$result."\n";
-		$this->assertEquals(-3, $result, $localobject->error.join(',', $localobject->errors));
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals(-3, $result, $localobject->error.join(',', $localobject->errors));
 
-		// Try to create one with correct values
-		$localobject=new Ticket($this->savdb);
-		$localobject->initAsSpecimen();
-		$result=$localobject->create($user);
+        // Try to create one with correct values
+        $localobject=new Ticket($this->savdb);
+        $localobject->initAsSpecimen();
+        $result=$localobject->create($user);
 
-		print __METHOD__." result=".$result."\n";
-		$this->assertGreaterThan(0, $result, $localobject->error.join(',', $localobject->errors));
+        print __METHOD__." result=".$result."\n";
+        $this->assertGreaterThan(0, $result, $localobject->error.join(',', $localobject->errors));
 
-		return $result;
-	}
+        return $result;
+    }
 
-	/**
-	 * testTicketFetch
-	 *
-	 * @param	int		$id		Id of ticket
-	 * @return	int
-	 *
-	 * @depends	testTicketCreate
-	 * The depends says test is run only if previous is ok
-	 */
-	public function testTicketFetch($id)
-	{
-		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+    /**
+     * testTicketFetch
+     *
+     * @param    int        $id        Id of ticket
+     * @return    int
+     *
+     * @depends    testTicketCreate
+     * The depends says test is run only if previous is ok
+     */
+    public function testTicketFetch($id)
+    {
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-		$localobject=new Ticket($this->savdb);
-		$result=$localobject->fetch($id);
+        $localobject=new Ticket($this->savdb);
+        $result=$localobject->fetch($id);
 
-		print __METHOD__." id=".$id." result=".$result."\n";
-		$this->assertGreaterThan(0, $result);
+        print __METHOD__." id=".$id." result=".$result."\n";
+        $this->assertGreaterThan(0, $result);
 
-		return $localobject;
-	}
+        return $localobject;
+    }
 
-	/**
-	 * testTicketmarkAsRead
-	 *
-	 * @param	Ticket		$localobject		Ticket
-	 * @return	int
-	 *
-	 * @depends	testTicketFetch
-	 * The depends says test is run only if previous is ok
-	 */
-	public function testTicketmarkAsRead($localobject)
-	{
-		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+    /**
+     * testTicketmarkAsRead
+     *
+     * @param    Ticket        $localobject        Ticket
+     * @return    int
+     *
+     * @depends    testTicketFetch
+     * The depends says test is run only if previous is ok
+     */
+    public function testTicketmarkAsRead($localobject)
+    {
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-		$result=$localobject->markAsRead($user);
-		print __METHOD__." id=".$localobject->id." result=".$result."\n";
+        $result=$localobject->markAsRead($user);
+        print __METHOD__." id=".$localobject->id." result=".$result."\n";
 
-		$this->assertGreaterThan(0, $result);
-		return $localobject;
-	}
+        $this->assertGreaterThan(0, $result);
+        return $localobject;
+    }
 
-	/**
-	 * testTicketsetProject
-	 *
-	 * @param	Ticket		$localobject		Ticket
-	 * @return	int
-	 *
-	 * @depends	testTicketFetch
-	 * The depends says test is run only if previous is ok
-	 */
-	public function testTicketsetProject($localobject)
-	{
-		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+    /**
+     * testTicketsetProject
+     *
+     * @param    Ticket        $localobject        Ticket
+     * @return    int
+     *
+     * @depends    testTicketFetch
+     * The depends says test is run only if previous is ok
+     */
+    public function testTicketsetProject($localobject)
+    {
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-		$project_id = 1;
+        $project_id = 1;
 
-		$result=$localobject->setProject($project_id);
-		print __METHOD__." id=".$localobject->id." result=".$result."\n";
+        $result=$localobject->setProject($project_id);
+        print __METHOD__." id=".$localobject->id." result=".$result."\n";
 
-		$this->assertGreaterThan(0, $result);
-		return $localobject;
-	}
+        $this->assertGreaterThan(0, $result);
+        return $localobject;
+    }
 
-	/**
-	 * testTicketsetContract
-	 *
-	 * @param	Ticket		$localobject		Ticket
-	 * @return	int
-	 *
-	 * @depends	testTicketFetch
-	 * The depends says test is run only if previous is ok
-	 */
-	public function testTicketsetContract($localobject)
-	{
-		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+    /**
+     * testTicketsetContract
+     *
+     * @param    Ticket        $localobject        Ticket
+     * @return    int
+     *
+     * @depends    testTicketFetch
+     * The depends says test is run only if previous is ok
+     */
+    public function testTicketsetContract($localobject)
+    {
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-		$contract_id = 1;
+        $contract_id = 1;
 
-		$result=$localobject->setContract($contract_id);
-		print __METHOD__." id=".$localobject->id." result=".$result."\n";
+        $result=$localobject->setContract($contract_id);
+        print __METHOD__." id=".$localobject->id." result=".$result."\n";
 
-		$this->assertGreaterThan(0, $result);
-		return $localobject;
-	}
+        $this->assertGreaterThan(0, $result);
+        return $localobject;
+    }
 
-	/**
-	 * testTicketsetProgression
-	 *
-	 * @param	Ticket		$localobject		Ticket
-	 * @return	int
-	 *
-	 * @depends	testTicketFetch
-	 * The depends says test is run only if previous is ok
-	 */
-	public function testTicketsetProgression($localobject)
-	{
-		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+    /**
+     * testTicketsetProgression
+     *
+     * @param    Ticket        $localobject        Ticket
+     * @return    int
+     *
+     * @depends    testTicketFetch
+     * The depends says test is run only if previous is ok
+     */
+    public function testTicketsetProgression($localobject)
+    {
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-		$percent = 80;
+        $percent = 80;
 
-		$result=$localobject->setProgression($percent);
-		print __METHOD__." id=".$localobject->id." result=".$result."\n";
+        $result=$localobject->setProgression($percent);
+        print __METHOD__." id=".$localobject->id." result=".$result."\n";
 
-		$this->assertGreaterThan(0, $result);
-		return $localobject;
-	}
+        $this->assertGreaterThan(0, $result);
+        return $localobject;
+    }
 
-	/**
-	 * testTicketassignUser
-	 *
-	 * @param	Ticket		$localobject		Ticket
-	 * @return	int
-	 *
-	 * @depends	testTicketFetch
-	 * The depends says test is run only if previous is ok
-	 */
-	public function testTicketassignUser($localobject)
-	{
-		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+    /**
+     * testTicketassignUser
+     *
+     * @param    Ticket        $localobject        Ticket
+     * @return    int
+     *
+     * @depends    testTicketFetch
+     * The depends says test is run only if previous is ok
+     */
+    public function testTicketassignUser($localobject)
+    {
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-		$user_id_to_assign = 1;
+        $user_id_to_assign = 1;
 
-		$result=$localobject->assignUser($user, $user_id_to_assign);
+        $result=$localobject->assignUser($user, $user_id_to_assign);
         ;
-		print __METHOD__." id=".$localobject->id." result=".$result."\n";
+        print __METHOD__." id=".$localobject->id." result=".$result."\n";
 
-		$this->assertGreaterThan(0, $result);
-		return $localobject;
-	}
+        $this->assertGreaterThan(0, $result);
+        return $localobject;
+    }
 
-	/**
-	 * testTicketassignUserOther
-	 *
-	 * @param	Ticket		$localobject		Ticket
-	 * @return	int
-	 *
-	 * @depends	testTicketFetch
-	 * The depends says test is run only if previous is ok
-	 */
-	public function testTicketassignUserOther($localobject)
-	{
-		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+    /**
+     * testTicketassignUserOther
+     *
+     * @param    Ticket        $localobject        Ticket
+     * @return    int
+     *
+     * @depends    testTicketFetch
+     * The depends says test is run only if previous is ok
+     */
+    public function testTicketassignUserOther($localobject)
+    {
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-		$user_id_to_assign = 2;
+        $user_id_to_assign = 2;
 
-		$result=$localobject->assignUser($user, $user_id_to_assign);
-		;
-		print __METHOD__." id=".$localobject->id." result=".$result."\n";
+        $result=$localobject->assignUser($user, $user_id_to_assign);
+        ;
+        print __METHOD__." id=".$localobject->id." result=".$result."\n";
 
-		$this->assertGreaterThan(0, $result);
-		return $localobject;
-	}
+        $this->assertGreaterThan(0, $result);
+        return $localobject;
+    }
 
-	/**
-	 * testTicketclose
-	 *
-	 * @param	Ticket		$localobject		Ticket
-	 * @return	int
-	 *
-	 * @depends	testTicketFetch
-	 * The depends says test is run only if previous is ok
-	 */
-	public function testTicketclose($localobject)
-	{
-		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+    /**
+     * testTicketclose
+     *
+     * @param    Ticket        $localobject        Ticket
+     * @return    int
+     *
+     * @depends    testTicketFetch
+     * The depends says test is run only if previous is ok
+     */
+    public function testTicketclose($localobject)
+    {
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-		$result=$localobject->close($user);
-		print __METHOD__." id=".$localobject->id." result=".$result."\n";
+        $result=$localobject->close($user);
+        print __METHOD__." id=".$localobject->id." result=".$result."\n";
 
-		$this->assertGreaterThan(0, $result);
-		return $localobject->id;
-	}
+        $this->assertGreaterThan(0, $result);
+        return $localobject->id;
+    }
 
 
-	/**
-	 * testTicketDelete
-	 *
-	 * @param	int		$id		Id of ticket
-	 * @return	int
-	 *
-	 * @depends	testTicketclose
-	 * The depends says test is run only if previous is ok
-	 */
-	public function testTicketDelete($id)
-	{
-		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+    /**
+     * testTicketDelete
+     *
+     * @param    int        $id        Id of ticket
+     * @return    int
+     *
+     * @depends    testTicketclose
+     * The depends says test is run only if previous is ok
+     */
+    public function testTicketDelete($id)
+    {
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-		$localobject=new Ticket($this->savdb);
-		$result=$localobject->fetch($id);
-		$result=$localobject->delete($user);
+        $localobject=new Ticket($this->savdb);
+        $result=$localobject->fetch($id);
+        $result=$localobject->delete($user);
 
-		print __METHOD__." id=".$id." result=".$result."\n";
-		$this->assertGreaterThan(0, $result);
-		return $result;
-	}
+        print __METHOD__." id=".$id." result=".$result."\n";
+        $this->assertGreaterThan(0, $result);
+        return $result;
+    }
 }

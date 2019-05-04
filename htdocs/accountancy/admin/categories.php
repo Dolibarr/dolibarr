@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2016		Jamal Elbaz			<jamelbaz@gmail.pro>
+/* Copyright (C) 2016        Jamal Elbaz            <jamelbaz@gmail.pro>
  * Copyright (C) 2017		Alexandre Spangaro	<aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -17,9 +17,9 @@
  */
 
 /**
- * \file	htdocs/accountancy/admin/categories.php
+ * \file    htdocs/accountancy/admin/categories.php
  * \ingroup Advanced accountancy
- * \brief	Page to assign mass categories to accounts
+ * \brief    Page to assign mass categories to accounts
  */
 
 require '../../main.inc.php';
@@ -42,13 +42,13 @@ $selectcpt = GETPOST('cpt_bk', 'array');
 $cpt_id = GETPOST('cptid', 'int');
 
 if ($cat_id == 0) {
-	$cat_id = null;
+    $cat_id = null;
 }
 
 // Security check
 if (empty($user->rights->accounting->chartofaccount))
 {
-	accessforbidden();
+    accessforbidden();
 }
 
 $accountingcategory = new AccountancyCategory($db);
@@ -60,28 +60,28 @@ $accountingcategory = new AccountancyCategory($db);
 
 // si ajout de comptes
 if (! empty($selectcpt)) {
-	$cpts = array();
-	foreach ($selectcpt as $selectedoption) {
-		if (! array_key_exists($selectedoption, $cpts))
-			$cpts[$selectedoption] = "'" . $selectedoption . "'";
-	}
+    $cpts = array();
+    foreach ($selectcpt as $selectedoption) {
+        if (! array_key_exists($selectedoption, $cpts))
+            $cpts[$selectedoption] = "'" . $selectedoption . "'";
+    }
 
-	$return= $accountingcategory->updateAccAcc($cat_id, $cpts);
+    $return= $accountingcategory->updateAccAcc($cat_id, $cpts);
 
-	if ($return<0) {
-		setEventMessages($langs->trans('errors'), $accountingcategory->errors, 'errors');
-	} else {
-		setEventMessages($langs->trans('RecordModifiedSuccessfully'), null, 'mesgs');
-	}
+    if ($return<0) {
+        setEventMessages($langs->trans('errors'), $accountingcategory->errors, 'errors');
+    } else {
+        setEventMessages($langs->trans('RecordModifiedSuccessfully'), null, 'mesgs');
+    }
 }
 if ($action == 'delete') {
-	if ($cpt_id) {
-		if ($accountingcategory->deleteCptCat($cpt_id)) {
-			setEventMessages($langs->trans('AccountRemovedFromGroup'), null, 'mesgs');
-		} else {
-			setEventMessages($langs->trans('errors'), null, 'errors');
-		}
-	}
+    if ($cpt_id) {
+        if ($accountingcategory->deleteCptCat($cpt_id)) {
+            setEventMessages($langs->trans('AccountRemovedFromGroup'), null, 'mesgs');
+        } else {
+            setEventMessages($langs->trans('errors'), null, 'errors');
+        }
+    }
 }
 
 
@@ -116,33 +116,33 @@ print '</td></tr>';
 // Select the accounts
 if (! empty($cat_id))
 {
-	$return = $accountingcategory->getAccountsWithNoCategory($cat_id);
-	if ($return < 0) {
-		setEventMessages(null, $accountingcategory->errors, 'errors');
-	}
-	print '<tr><td>' . $langs->trans("AddAccountFromBookKeepingWithNoCategories") . '</td>';
-	print '<td>';
+    $return = $accountingcategory->getAccountsWithNoCategory($cat_id);
+    if ($return < 0) {
+        setEventMessages(null, $accountingcategory->errors, 'errors');
+    }
+    print '<tr><td>' . $langs->trans("AddAccountFromBookKeepingWithNoCategories") . '</td>';
+    print '<td>';
 
-	$arraykeyvalue=array();
-	foreach($accountingcategory->lines_cptbk as $key => $val)
-	{
-		$arraykeyvalue[length_accountg($val->numero_compte)] = length_accountg($val->numero_compte) . ' (' . $val->label_compte . ($val->doc_ref?' '.$val->doc_ref:'').')';
-	}
+    $arraykeyvalue=array();
+    foreach($accountingcategory->lines_cptbk as $key => $val)
+    {
+        $arraykeyvalue[length_accountg($val->numero_compte)] = length_accountg($val->numero_compte) . ' (' . $val->label_compte . ($val->doc_ref?' '.$val->doc_ref:'').')';
+    }
 
-	if (is_array($accountingcategory->lines_cptbk) && count($accountingcategory->lines_cptbk) > 0) {
+    if (is_array($accountingcategory->lines_cptbk) && count($accountingcategory->lines_cptbk) > 0) {
 
-		print $form->multiselectarray('cpt_bk', $arraykeyvalue, GETPOST('cpt_bk', 'array'), null, null, null, null, "90%");
-		print '<br>';
-		/*print '<select class="flat minwidth200" size="8" name="cpt_bk[]" multiple>';
-		foreach ( $accountingcategory->lines_cptbk as $cpt ) {
-			print '<option value="' . length_accountg($cpt->numero_compte) . '">' . length_accountg($cpt->numero_compte) . ' (' . $cpt->label_compte . ' ' . $cpt->doc_ref . ')</option>';
-		}
-		print '</select><br>';
-		print ajax_combobox('cpt_bk');
-		*/
-		print '<input class="button" type="submit" id="" class="action-delete" value="' . $langs->trans("Add") . '"> ';
-	}
-	print '</td></tr>';
+        print $form->multiselectarray('cpt_bk', $arraykeyvalue, GETPOST('cpt_bk', 'array'), null, null, null, null, "90%");
+        print '<br>';
+        /*print '<select class="flat minwidth200" size="8" name="cpt_bk[]" multiple>';
+        foreach ( $accountingcategory->lines_cptbk as $cpt ) {
+            print '<option value="' . length_accountg($cpt->numero_compte) . '">' . length_accountg($cpt->numero_compte) . ' (' . $cpt->label_compte . ' ' . $cpt->doc_ref . ')</option>';
+        }
+        print '</select><br>';
+        print ajax_combobox('cpt_bk');
+        */
+        print '<input class="button" type="submit" id="" class="action-delete" value="' . $langs->trans("Add") . '"> ';
+    }
+    print '</td></tr>';
 }
 
 print '</table>';
@@ -156,33 +156,33 @@ if ($action == 'display' || $action == 'delete') {
 
     print "<table class='noborder' width='100%'>\n";
     print '<tr class="liste_titre">';
-	print '<td class="liste_titre">'.$langs->trans("AccountAccounting")."</td>";
-	print '<td class="liste_titre" colspan="2">'.$langs->trans("Label")."</td>";
-	print "</tr>\n";
+    print '<td class="liste_titre">'.$langs->trans("AccountAccounting")."</td>";
+    print '<td class="liste_titre" colspan="2">'.$langs->trans("Label")."</td>";
+    print "</tr>\n";
 
-	if (! empty($cat_id)) {
-		$return = $accountingcategory->display($cat_id);	// This load ->lines_display
-		if ($return < 0) {
-			setEventMessages(null, $accountingcategory->errors, 'errors');
-		}
+    if (! empty($cat_id)) {
+        $return = $accountingcategory->display($cat_id);    // This load ->lines_display
+        if ($return < 0) {
+            setEventMessages(null, $accountingcategory->errors, 'errors');
+        }
 
-		if (is_array($accountingcategory->lines_display) && count($accountingcategory->lines_display) > 0) {
-			foreach ($accountingcategory->lines_display as $cpt) {
-				print '<tr class="oddeven">';
-				print '<td>' . length_accountg($cpt->account_number) . '</td>';
-				print '<td>' . $cpt->label . '</td>';
-				print '<td class="right">';
-				print "<a href= '".$_SERVER['PHP_SELF']."?action=delete&account_category=" . $cat_id . "&cptid=" . $cpt->rowid."'>";
-				print $langs->trans("DeleteFromCat");
-				print img_picto($langs->trans("DeleteFromCat"), 'unlink');
-				print "</a>";
-				print "</td>";
-				print "</tr>\n";
-			}
-		}
-	}
+        if (is_array($accountingcategory->lines_display) && count($accountingcategory->lines_display) > 0) {
+            foreach ($accountingcategory->lines_display as $cpt) {
+                print '<tr class="oddeven">';
+                print '<td>' . length_accountg($cpt->account_number) . '</td>';
+                print '<td>' . $cpt->label . '</td>';
+                print '<td class="right">';
+                print "<a href= '".$_SERVER['PHP_SELF']."?action=delete&account_category=" . $cat_id . "&cptid=" . $cpt->rowid."'>";
+                print $langs->trans("DeleteFromCat");
+                print img_picto($langs->trans("DeleteFromCat"), 'unlink');
+                print "</a>";
+                print "</td>";
+                print "</tr>\n";
+            }
+        }
+    }
 
-	print "</table>";
+    print "</table>";
 }
 
 // End of page

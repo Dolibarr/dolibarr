@@ -30,8 +30,8 @@ use OAuth\OAuth2\Service\GitHub;
 
 // Define $urlwithroot
 $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
-$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
-//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;        // This is to use external domain name found into config file
+//$urlwithroot=DOL_MAIN_URL_ROOT;                    // This is to use same domain name than current
 
 
 
@@ -66,7 +66,7 @@ $storage = new DoliStorage($db, $conf);
 // Setup the credentials for the requests
 $credentials = new Credentials(
     $conf->global->OAUTH_STRIPE_TEST_ID,
-	$conf->global->STRIPE_TEST_SECRET_KEY,
+    $conf->global->STRIPE_TEST_SECRET_KEY,
     $currentUri->getAbsoluteUri()
 );
 
@@ -109,10 +109,10 @@ if ($action == 'delete')
 
 if (! empty($_GET['code']))     // We are coming from oauth provider page
 {
-	// We should have
-	//$_GET=array('code' => string 'aaaaaaaaaaaaaa' (length=20), 'state' => string 'user,public_repo' (length=16))
+    // We should have
+    //$_GET=array('code' => string 'aaaaaaaaaaaaaa' (length=20), 'state' => string 'user,public_repo' (length=16))
 
-	dol_syslog("We are coming from the oauth provider page");
+    dol_syslog("We are coming from the oauth provider page");
     //llxHeader('',$langs->trans("OAuthSetup"));
 
     //$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
@@ -160,8 +160,8 @@ else // If entry on page with no parameter, we arrive here
     else
     {
         //$url = $apiService->getAuthorizationUri();      // Parameter state will be randomly generated
-    	//https://connect.stripe.com/oauth/authorize?response_type=code&client_id=ca_AX27ut70tJ1j6eyFCV3ObEXhNOo2jY6V&scope=read_write
-    	$url = 'https://connect.stripe.com/oauth/authorize?response_type=code&client_id='.$conf->global->OAUTH_STRIPE_TEST_ID.'&scope=read_write';
+        //https://connect.stripe.com/oauth/authorize?response_type=code&client_id=ca_AX27ut70tJ1j6eyFCV3ObEXhNOo2jY6V&scope=read_write
+        $url = 'https://connect.stripe.com/oauth/authorize?response_type=code&client_id='.$conf->global->OAUTH_STRIPE_TEST_ID.'&scope=read_write';
     }
 
     // we go on oauth provider authorization page

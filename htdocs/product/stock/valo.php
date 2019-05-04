@@ -18,7 +18,7 @@
  */
 
 /**
- *	\file       htdocs/product/stock/valo.php
+ *    \file       htdocs/product/stock/valo.php
  *  \ingroup    stock
  *  \brief      Page with stock values
  */

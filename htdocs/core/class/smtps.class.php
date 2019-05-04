@@ -20,8 +20,8 @@
  */
 
 /**
- *	\file       htdocs/core/class/smtps.class.php
- *	\brief      Class to construct and send SMTP compliant email, even to a secure
+ *    \file       htdocs/core/class/smtps.class.php
+ *    \brief      Class to construct and send SMTP compliant email, even to a secure
  *              SMTP server, regardless of platform.
  * Goals:
  *  - mime compliant
@@ -40,8 +40,8 @@
 
 
 /**
- * 	Class to construct and send SMTP compliant email, even
- * 	to a secure SMTP server, regardless of platform.
+ *     Class to construct and send SMTP compliant email, even
+ *     to a secure SMTP server, regardless of platform.
  */
 class SMTPs
 {
@@ -232,8 +232,8 @@ class SMTPs
     /**
      * Set delivery receipt
      *
-     * @param	int		$_val		Value
-     * @return	void
+     * @param    int        $_val        Value
+     * @return    void
      */
     public function setDeliveryReceipt($_val = 0)
     {
@@ -243,7 +243,7 @@ class SMTPs
     /**
      * get delivery receipt
      *
-     * @return	int		Delivery receipt
+     * @return    int        Delivery receipt
      */
     public function getDeliveryReceipt()
     {
@@ -253,8 +253,8 @@ class SMTPs
     /**
      * Set trackid
      *
-     * @param	string		$_val		Value
-     * @return	void
+     * @param    string        $_val        Value
+     * @return    void
      */
     public function setTrackId($_val = '')
     {
@@ -264,8 +264,8 @@ class SMTPs
     /**
      * Set moreInHeader
      *
-     * @param	string		$_val		Value
-     * @return	void
+     * @param    string        $_val        Value
+     * @return    void
      */
     public function setMoreInHeader($_val = '')
     {
@@ -275,7 +275,7 @@ class SMTPs
     /**
      * get trackid
      *
-     * @return	string		Track id
+     * @return    string        Track id
      */
     public function getTrackId()
     {
@@ -285,7 +285,7 @@ class SMTPs
     /**
      * get moreInHeader
      *
-     * @return	string		moreInHeader
+     * @return    string        moreInHeader
      */
     public function getMoreInHeader()
     {
@@ -295,8 +295,8 @@ class SMTPs
     /**
      * Set errors to
      *
-     * @param	string		$_strErrorsTo		Errors to
-     * @return	void
+     * @param    string        $_strErrorsTo        Errors to
+     * @return    void
      */
     public function setErrorsTo($_strErrorsTo)
     {
@@ -307,8 +307,8 @@ class SMTPs
     /**
      * Get errors to
      *
-     * @param	boolean		$_part		Variant
-     * @return	string					Errors to
+     * @param    boolean        $_part        Variant
+     * @return    string                    Errors to
      */
     public function getErrorsTo($_part = true)
     {
@@ -325,8 +325,8 @@ class SMTPs
     /**
      * Set debug
      *
-     * @param	boolean		$_vDebug		Value for debug
-     * @return 	void
+     * @param    boolean        $_vDebug        Value for debug
+     * @return     void
      */
     public function setDebug($_vDebug = false)
     {
@@ -362,9 +362,9 @@ class SMTPs
         $host=$this->getHost();
         $usetls = preg_match('@tls://@i', $host);
 
-        $host=preg_replace('@tcp://@i', '', $host);	// Remove prefix
-        $host=preg_replace('@ssl://@i', '', $host);	// Remove prefix
-        $host=preg_replace('@tls://@i', '', $host);	// Remove prefix
+        $host=preg_replace('@tcp://@i', '', $host);    // Remove prefix
+        $host=preg_replace('@ssl://@i', '', $host);    // Remove prefix
+        $host=preg_replace('@tls://@i', '', $host);    // Remove prefix
 
         // @CHANGE LDR
         include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -424,9 +424,9 @@ class SMTPs
         $host=$this->getHost();
         $usetls = preg_match('@tls://@i', $host);
 
-        $host=preg_replace('@tcp://@i', '', $host);	// Remove prefix
-        $host=preg_replace('@ssl://@i', '', $host);	// Remove prefix
-        $host=preg_replace('@tls://@i', '', $host);	// Remove prefix
+        $host=preg_replace('@tcp://@i', '', $host);    // Remove prefix
+        $host=preg_replace('@ssl://@i', '', $host);    // Remove prefix
+        $host=preg_replace('@tls://@i', '', $host);    // Remove prefix
 
         if ($usetls) $host='tls://'.$host;
 
@@ -550,9 +550,9 @@ class SMTPs
                 $host=$this->getHost();
                 $usetls = preg_match('@tls://@i', $host);
 
-                $host=preg_replace('@tcp://@i', '', $host);	// Remove prefix
-                $host=preg_replace('@ssl://@i', '', $host);	// Remove prefix
-                $host=preg_replace('@tls://@i', '', $host);	// Remove prefix
+                $host=preg_replace('@tcp://@i', '', $host);    // Remove prefix
+                $host=preg_replace('@ssl://@i', '', $host);    // Remove prefix
+                $host=preg_replace('@tls://@i', '', $host);    // Remove prefix
 
                 $hosth = $host;
 
@@ -734,8 +734,8 @@ class SMTPs
      * This is defaulted to 'localhost'
      * This is  used only with 'socket' based mail transmission
      *
-     * @param 	string 	$_strHost 		Host Name or IP of the Mail Server to use
-     * @return 	void
+     * @param     string     $_strHost         Host Name or IP of the Mail Server to use
+     * @return     void
      */
     public function setHost($_strHost)
     {
@@ -747,7 +747,7 @@ class SMTPs
      * Retrieves the Host Name or IP of the Mail Server to use
      * This is  used only with 'socket' based mail transmission
      *
-     * @return 	string 	$_strHost 		Host Name or IP of the Mail Server to use
+     * @return     string     $_strHost         Host Name or IP of the Mail Server to use
      */
     public function getHost()
     {
@@ -759,8 +759,8 @@ class SMTPs
      * This is defaulted to '25'
      * This is  used only with 'socket' based mail transmission
      *
-     * @param 	int 	$_intPort 		Port Number of the Mail Server to use
-     * @return 	void
+     * @param     int     $_intPort         Port Number of the Mail Server to use
+     * @return     void
      */
     public function setPort($_intPort)
     {
@@ -773,7 +773,7 @@ class SMTPs
      * Retrieves the Port Number of the Mail Server to use
      * This is  used only with 'socket' based mail transmission
      *
-     * @return 	string 		Port Number of the Mail Server to use
+     * @return     string         Port Number of the Mail Server to use
      */
     public function getPort()
     {
@@ -783,8 +783,8 @@ class SMTPs
     /**
      * User Name for authentication on Mail Server
      *
-     * @param 	string 	$_strID 	User Name for authentication on Mail Server
-     * @return 	void
+     * @param     string     $_strID     User Name for authentication on Mail Server
+     * @return     void
      */
     public function setID($_strID)
     {
@@ -794,7 +794,7 @@ class SMTPs
     /**
      * Retrieves the User Name for authentication on Mail Server
      *
-     * @return string 	User Name for authentication on Mail Server
+     * @return string     User Name for authentication on Mail Server
      */
     public function getID()
     {
@@ -804,8 +804,8 @@ class SMTPs
     /**
      * User Password for authentication on Mail Server
      *
-     * @param 	string 	$_strPW 	User Password for authentication on Mail Server
-     * @return 	void
+     * @param     string     $_strPW     User Password for authentication on Mail Server
+     * @return     void
      */
     public function setPW($_strPW)
     {
@@ -815,7 +815,7 @@ class SMTPs
     /**
      * Retrieves the User Password for authentication on Mail Server
      *
-     * @return 	string 		User Password for authentication on Mail Server
+     * @return     string         User Password for authentication on Mail Server
      */
     public function getPW()
     {
@@ -901,7 +901,7 @@ class SMTPs
     /**
      * Retrieves the Content-Transfer-Encoding
      *
-     * @return 	string 		Content-Transfer-Encoding
+     * @return     string         Content-Transfer-Encoding
      */
     public function getTransEncodeType()
     {
@@ -914,8 +914,8 @@ class SMTPs
     /**
      * FROM Address from which mail will be sent
      *
-     * @param 	string 	$_strFrom 	Address from which mail will be sent
-     * @return 	void
+     * @param     string     $_strFrom     Address from which mail will be sent
+     * @return     void
      */
     public function setFrom($_strFrom)
     {
@@ -926,8 +926,8 @@ class SMTPs
     /**
      * Retrieves the Address from which mail will be sent
      *
-     * @param  	boolean $_part		To "strip" 'Real name' from address
-     * @return 	string 				Address from which mail will be sent
+     * @param      boolean $_part        To "strip" 'Real name' from address
+     * @return     string                 Address from which mail will be sent
      */
     public function getFrom($_part = true)
     {
@@ -944,8 +944,8 @@ class SMTPs
     /**
      * Reply-To Address from which mail will be the reply-to
      *
-     * @param 	string 	$_strReplyTo 	Address from which mail will be the reply-to
-     * @return 	void
+     * @param     string     $_strReplyTo     Address from which mail will be the reply-to
+     * @return     void
      */
     public function setReplyTo($_strReplyTo)
     {
@@ -956,8 +956,8 @@ class SMTPs
     /**
      * Retrieves the Address from which mail will be the reply-to
      *
-     * @param  	boolean $_part		To "strip" 'Real name' from address
-     * @return 	string 				Address from which mail will be the reply-to
+     * @param      boolean $_part        To "strip" 'Real name' from address
+     * @return     string                 Address from which mail will be the reply-to
      */
     public function getReplyTo($_part = true)
     {
@@ -978,8 +978,8 @@ class SMTPs
      * structured array. This array is designed to remove duplicate
      * addresses and to sort them by Domain.
      *
-     * @param 	string 	$_type 			TO, CC, or BCC lists to add addrresses into
-     * @param 	mixed 	$_addrList 		Array or COMMA delimited string of addresses
+     * @param     string     $_type             TO, CC, or BCC lists to add addrresses into
+     * @param     mixed     $_addrList         Array or COMMA delimited string of addresses
      * @return void
      *
      */
@@ -1053,8 +1053,8 @@ class SMTPs
      * - $_aryEmail[host] = "domain.tld"
      * - $_aryEmail[user] = "userName"
      *
-     *	@param		string		$_strAddr		Email address
-     * 	@return 	array	 					An array of the various parts of an email address
+     *    @param        string        $_strAddr        Email address
+     *     @return     array                         An array of the various parts of an email address
      */
     private function _strip_email($_strAddr)
     {
@@ -1098,7 +1098,7 @@ class SMTPs
      * This is a "build as you go" method. Each time this method is called
      * the underlaying array is destroyed and reconstructed.
      *
-     * @return 		array		Returns an array of bares addresses
+     * @return         array        Returns an array of bares addresses
      */
     public function get_RCPT_list()
     {
@@ -1128,8 +1128,8 @@ class SMTPs
     /**
      * Returns an array of addresses for a specific type; TO, CC or BCC
      *
-     * @param 		string 	       $_which 	    Which collection of addresses to return ('to', 'cc', 'bcc')
-     * @return 		string|false 				Array of emaill address
+     * @param         string            $_which         Which collection of addresses to return ('to', 'cc', 'bcc')
+     * @return         string|false                 Array of emaill address
      */
     public function get_email_list($_which = null)
     {
@@ -1148,7 +1148,7 @@ class SMTPs
                     {
                         foreach ($this->_msgRecipients[$_host][$_which] as $_addr => $_realName)
                         {
-                            if ( $_realName )	// @CHANGE LDR
+                            if ( $_realName )    // @CHANGE LDR
                             {
                                 $_realName = '"' . $_realName . '"';
                                 $_RCPT_list[] = $_realName . ' <' . $_addr . '@' . $_host . '>';
@@ -1179,8 +1179,8 @@ class SMTPs
     /**
      * TO Address[es] inwhich to send mail to
      *
-     * @param 	string 	$_addrTo 	TO Address[es] inwhich to send mail to
-     * @return 	void
+     * @param     string     $_addrTo     TO Address[es] inwhich to send mail to
+     * @return     void
      */
     public function setTO($_addrTo)
     {
@@ -1191,7 +1191,7 @@ class SMTPs
     /**
      * Retrieves the TO Address[es] inwhich to send mail to
      *
-     * @return 	string 	TO Address[es] inwhich to send mail to
+     * @return     string     TO Address[es] inwhich to send mail to
      */
     public function getTo()
     {
@@ -1201,8 +1201,8 @@ class SMTPs
     /**
      * CC Address[es] inwhich to send mail to
      *
-     * @param 	string	$_strCC		CC Address[es] inwhich to send mail to
-     * @return 	void
+     * @param     string    $_strCC        CC Address[es] inwhich to send mail to
+     * @return     void
      */
     public function setCC($_strCC)
     {
@@ -1213,7 +1213,7 @@ class SMTPs
     /**
      * Retrieves the CC Address[es] inwhich to send mail to
      *
-     * @return 	string 		CC Address[es] inwhich to send mail to
+     * @return     string         CC Address[es] inwhich to send mail to
      */
     public function getCC()
     {
@@ -1223,8 +1223,8 @@ class SMTPs
     /**
      * BCC Address[es] inwhich to send mail to
      *
-     * @param 	string		$_strBCC	Recipients BCC Address[es] inwhich to send mail to
-     * @return 	void
+     * @param     string        $_strBCC    Recipients BCC Address[es] inwhich to send mail to
+     * @return     void
      */
     public function setBCC($_strBCC)
     {
@@ -1235,7 +1235,7 @@ class SMTPs
     /**
      * Retrieves the BCC Address[es] inwhich to send mail to
      *
-     * @return 	string		BCC Address[es] inwhich to send mail to
+     * @return     string        BCC Address[es] inwhich to send mail to
      */
     public function getBCC()
     {
@@ -1245,8 +1245,8 @@ class SMTPs
     /**
      * Message Subject
      *
-     * @param 	string 	$_strSubject	Message Subject
-     * @return 	void
+     * @param     string     $_strSubject    Message Subject
+     * @return     void
      */
     public function setSubject($_strSubject = '')
     {
@@ -1257,7 +1257,7 @@ class SMTPs
     /**
      * Retrieves the Message Subject
      *
-     * @return 	string 		Message Subject
+     * @return     string         Message Subject
      */
     public function getSubject()
     {
@@ -1293,9 +1293,9 @@ class SMTPs
         $host=$this->getHost();
         $usetls = preg_match('@tls://@i', $host);
 
-        $host=preg_replace('@tcp://@i', '', $host);	// Remove prefix
-        $host=preg_replace('@ssl://@i', '', $host);	// Remove prefix
-        $host=preg_replace('@tls://@i', '', $host);	// Remove prefix
+        $host=preg_replace('@tcp://@i', '', $host);    // Remove prefix
+        $host=preg_replace('@ssl://@i', '', $host);    // Remove prefix
+        $host=preg_replace('@tls://@i', '', $host);    // Remove prefix
 
         $host=dol_getprefix('email');
 
@@ -1349,9 +1349,9 @@ class SMTPs
     /**
      * Message Content
      *
-     * @param 	string 	$strContent		Message Content
-     * @param	string	$strType		Type
-     * @return 	void
+     * @param     string     $strContent        Message Content
+     * @param    string    $strType        Type
+     * @return     void
      */
     public function setBodyContent($strContent, $strType = 'plain')
     {
@@ -1392,7 +1392,7 @@ class SMTPs
     /**
      * Retrieves the Message Content
      *
-     * @return 	string			Message Content
+     * @return     string            Message Content
      */
     public function getBodyContent()
     {
@@ -1540,7 +1540,7 @@ class SMTPs
                     if ( $this->getMD5flag() )
                     $content .= 'Content-MD5: ' . $_content['md5'] . "\r\n";
 
-                    $content .= "\r\n"	. $_content['data'] . "\r\n";
+                    $content .= "\r\n"    . $_content['data'] . "\r\n";
 
                     if (! key_exists('image', $this->_msgContent) && $_content['dataText'] && ! empty($conf->global->MAIN_MAIL_USE_MULTI_PART))  // Add plain text message part after html part
                     {
@@ -1590,11 +1590,11 @@ class SMTPs
      * Image attachments are added to the content array as sub-arrays,
      * allowing for multiple images for each outbound email
      *
-     * @param 	string $strContent  	Image data to attach to message
-     * @param 	string $strImageName 	Image Name to give to attachment
-     * @param 	string $strMimeType 	Image Mime Type of attachment
-     * @param 	string $strImageCid		CID
-     * @return 	void
+     * @param     string $strContent      Image data to attach to message
+     * @param     string $strImageName     Image Name to give to attachment
+     * @param     string $strMimeType     Image Mime Type of attachment
+     * @param     string $strImageCid        CID
+     * @return     void
      */
     public function setImageInline($strContent, $strImageName = 'unknown', $strMimeType = 'unknown', $strImageCid = 'unknown')
     {
@@ -1620,8 +1620,8 @@ class SMTPs
      *   - [2] Private
      *   - [3] Company Confidential
      *
-     * @param 	integer	$_value		Message Sensitivity
-     * @return 	void
+     * @param     integer    $_value        Message Sensitivity
+     * @return     void
      */
     public function setSensitivity($_value = 0)
     {
@@ -1638,7 +1638,7 @@ class SMTPs
      *   - [2] Private
      *   - [3] Company Confidential
      *
-     * @return 	void
+     * @return     void
      */
     public function getSensitivity()
     {
@@ -1655,8 +1655,8 @@ class SMTPs
      *  - [4] 'Low'
      *  - [5] 'Lowest'
      *
-     * @param 	integer 	$_value 	Message Priority
-     * @return 	void
+     * @param     integer     $_value     Message Priority
+     * @return     void
      */
     public function setPriority($_value = 3)
     {
@@ -1687,8 +1687,8 @@ class SMTPs
     /**
      * Set flag which determines whether to calculate message MD5 checksum.
      *
-     * @param 	string 	$_flag		Message Priority
-     * @return 	void
+     * @param     string     $_flag        Message Priority
+     * @return     void
      */
     public function setMD5flag($_flag = false)
     {
@@ -1698,7 +1698,7 @@ class SMTPs
     /**
      * Gets flag which determines whether to calculate message MD5 checksum.
      *
-     * @return 	boolean 				Message Priority
+     * @return     boolean                 Message Priority
      */
     public function getMD5flag()
     {
@@ -1744,8 +1744,8 @@ class SMTPs
     /**
      * Retrieves the MIME message Boundary
      *
-     * @param  string $type				Type of boundary
-     * @return string $_smtpsBoundary 	MIME message Boundary
+     * @param  string $type                Type of boundary
+     * @return string $_smtpsBoundary     MIME message Boundary
      */
     private function _getBoundary($type = 'mixed')
     {
@@ -1759,9 +1759,9 @@ class SMTPs
      * This function has been modified as provided by SirSir to allow multiline responses when
      * using SMTP Extensions
      *
-     * @param	resource    $socket			Socket handler
-     * @param	string		$response		Response. Example: "550 5.7.1  https://support.google.com/a/answer/6140680#invalidcred j21sm814390wre.3"
-     * @return	boolean						True or false
+     * @param    resource    $socket            Socket handler
+     * @param    string        $response        Response. Example: "550 5.7.1  https://support.google.com/a/answer/6140680#invalidcred j21sm814390wre.3"
+     * @return    boolean                        True or false
      */
     public function server_parse($socket, $response)
     {
@@ -1801,15 +1801,15 @@ class SMTPs
     /**
      * Send str
      *
-     * @param	string		$_strSend		String to send
-     * @param 	string		$_returnCode	Return code
-     * @param 	string		$CRLF			CRLF
-     * @return 	boolean|null						True or false
+     * @param    string        $_strSend        String to send
+     * @param     string        $_returnCode    Return code
+     * @param     string        $CRLF            CRLF
+     * @return     boolean|null                        True or false
      */
     public function socket_send_str($_strSend, $_returnCode = null, $CRLF = "\r\n")
     {
         // phpcs:enable
-        if ($this->_debug) $this->log.=$_strSend;	// @CHANGE LDR for log
+        if ($this->_debug) $this->log.=$_strSend;    // @CHANGE LDR for log
         fputs($this->socket, $_strSend . $CRLF);
         if ($this->_debug) $this->log.=' ('.$_returnCode.')' . $CRLF;
 

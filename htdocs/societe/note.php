@@ -41,7 +41,7 @@ $result = restrictedArea($user, 'societe', $id, '&societe');
 $object = new Societe($db);
 if ($id > 0) $object->fetch($id);
 
-$permissionnote=$user->rights->societe->creer;	// Used by the include of actions_setnotes.inc.php
+$permissionnote=$user->rights->societe->creer;    // Used by the include of actions_setnotes.inc.php
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('thirdpartynote','globalcard'));
@@ -51,7 +51,7 @@ $hookmanager->initHooks(array('thirdpartynote','globalcard'));
  * Actions
  */
 
-include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, not includ_once
+include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';    // Must be include, not includ_once
 
 
 /*
@@ -125,8 +125,8 @@ if ($object->id > 0)
 }
 else
 {
-	$langs->load("errors");
-	print $langs->trans("ErrorRecordNotFound");
+    $langs->load("errors");
+    print $langs->trans("ErrorRecordNotFound");
 }
 
 // End of page

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008-2015 	Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2015     Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2012-2013	Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2015		Jean-François Ferry	<jfefe@aternatik.fr>
@@ -19,7 +19,7 @@
  */
 
 /**
- *	    \file       htdocs/admin/agenda_xcal.php
+ *        \file       htdocs/admin/agenda_xcal.php
  *      \ingroup    agenda
  *      \brief      Page to setup miscellaneous options of agenda module
  */
@@ -100,7 +100,7 @@ print '<tr class="oddeven">';
 print '<td class="fieldrequired">'.$langs->trans("PasswordTogetVCalExport")."</td>";
 print '<td><input required="required" type="text" class="flat" id="MAIN_AGENDA_XCAL_EXPORTKEY" name="MAIN_AGENDA_XCAL_EXPORTKEY" value="' . (GETPOST('MAIN_AGENDA_XCAL_EXPORTKEY', 'alpha')?GETPOST('MAIN_AGENDA_XCAL_EXPORTKEY', 'alpha'):$conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) . '" size="40">';
 if (! empty($conf->use_javascript_ajax))
-	print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
+    print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
 print '</td>';
 print "<td>&nbsp;</td>";
 print "</tr>";
@@ -154,8 +154,8 @@ print "<br>";
 
 // Define $urlwithroot
 $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
-$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
-//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;        // This is to use external domain name found into config file
+//$urlwithroot=DOL_MAIN_URL_ROOT;                    // This is to use same domain name than current
 
 
 // Show message
@@ -183,8 +183,8 @@ print info_admin($message);
 
 if (! empty($conf->use_javascript_ajax))
 {
-	print "\n".'<script type="text/javascript">';
-	print '$(document).ready(function () {
+    print "\n".'<script type="text/javascript">';
+    print '$(document).ready(function () {
             $("#generate_token").click(function() {
             	$.get( "'.DOL_URL_ROOT.'/core/ajax/security.php", {
             		action: \'getrandompassword\',
@@ -195,7 +195,7 @@ if (! empty($conf->use_javascript_ajax))
 				});
             });
     });';
-	print '</script>';
+    print '</script>';
 }
 
 // End of page

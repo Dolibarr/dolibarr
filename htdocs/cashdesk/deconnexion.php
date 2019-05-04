@@ -16,9 +16,9 @@
  */
 
 /**
- *	\file       htdocs/cashdesk/deconnexion.php
- *	\ingroup    cashdesk
- *	\brief      Manage deconnexion for point of sale module
+ *    \file       htdocs/cashdesk/deconnexion.php
+ *    \ingroup    cashdesk
+ *    \brief      Manage deconnexion for point of sale module
  */
 
 //if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1'); // Uncomment creates pb to relogon after a disconnect

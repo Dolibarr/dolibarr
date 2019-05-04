@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2015 		Alexandre Spangaro <aspangaro@open-dsi.fr>
+/* Copyright (C) 2015         Alexandre Spangaro <aspangaro@open-dsi.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,9 +16,9 @@
  */
 
 /**
- * \file 	htdocs/hrm/admin/admin_establishment.php
+ * \file     htdocs/hrm/admin/admin_establishment.php
  * \ingroup HRM
- * \brief 	HRM Establishment module setup page
+ * \brief     HRM Establishment module setup page
  */
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/hrm.lib.php';
@@ -28,14 +28,14 @@ require_once DOL_DOCUMENT_ROOT.'/hrm/class/establishment.class.php';
 $langs->loadLangs(array('admin', 'hrm'));
 
 if (! $user->admin)
-	accessforbidden();
+    accessforbidden();
 
 $error=0;
 
 // List of statut
 static $tmpstatus2label=array(
-		'0'=>'OpenEtablishment',
-		'1'=>'CloseEtablishment'
+        '0'=>'OpenEtablishment',
+        '1'=>'CloseEtablishment'
 );
 $status2label=array('');
 foreach ($tmpstatus2label as $key => $val) $status2label[$key]=$langs->trans($val);
@@ -55,7 +55,7 @@ if (!$sortorder) $sortorder="DESC";
 if (!$sortfield) $sortfield="e.rowid";
 
 if ($page == -1) {
-	$page = 0 ;
+    $page = 0 ;
 }
 
 $offset = $conf->liste_limit * $page;
@@ -85,41 +85,41 @@ $sql.= $db->plimit($limit+1, $offset);
 $result = $db->query($sql);
 if ($result)
 {
-	$num = $db->num_rows($result);
-	$i = 0;
+    $num = $db->num_rows($result);
+    $i = 0;
 
-	// Load attribute_label
-	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre">';
-	print_liste_field_titre("Name", $_SERVER["PHP_SELF"], "e.name", "", "", "", $sortfield, $sortorder);
-	print_liste_field_titre("Address", $_SERVER["PHP_SELF"], "e.address", "", "", "", $sortfield, $sortorder);
-	print_liste_field_titre("Zipcode", $_SERVER["PHP_SELF"], "e.zip", "", "", "", $sortfield, $sortorder);
-	print_liste_field_titre("Town", $_SERVER["PHP_SELF"], "e.town", "", "", "", $sortfield, $sortorder);
-	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "e.status", "", "", '', $sortfield, $sortorder, 'right ');
-	print "</tr>\n";
+    // Load attribute_label
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre">';
+    print_liste_field_titre("Name", $_SERVER["PHP_SELF"], "e.name", "", "", "", $sortfield, $sortorder);
+    print_liste_field_titre("Address", $_SERVER["PHP_SELF"], "e.address", "", "", "", $sortfield, $sortorder);
+    print_liste_field_titre("Zipcode", $_SERVER["PHP_SELF"], "e.zip", "", "", "", $sortfield, $sortorder);
+    print_liste_field_titre("Town", $_SERVER["PHP_SELF"], "e.town", "", "", "", $sortfield, $sortorder);
+    print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "e.status", "", "", '', $sortfield, $sortorder, 'right ');
+    print "</tr>\n";
 
-	if ($num > 0)
+    if ($num > 0)
     {
-	    $establishmentstatic=new Establishment($db);
+        $establishmentstatic=new Establishment($db);
 
-		while ($i < min($num, $limit))
-		{
+        while ($i < min($num, $limit))
+        {
             $obj = $db->fetch_object($result);
 
-			$establishmentstatic->id=$obj->rowid;
-			$establishmentstatic->name=$obj->name;
-			$establishmentstatic->status=$obj->status;
+            $establishmentstatic->id=$obj->rowid;
+            $establishmentstatic->name=$obj->name;
+            $establishmentstatic->status=$obj->status;
 
 
-			print '<tr class="oddeven">';
-			print '<td>'.$establishmentstatic->getNomUrl(1).'</td>';
+            print '<tr class="oddeven">';
+            print '<td>'.$establishmentstatic->getNomUrl(1).'</td>';
             print '<td class="left">'.$obj->address.'</td>';
-			print '<td class="left">'.$obj->zip.'</td>';
-			print '<td class="left">'.$obj->town.'</td>';
+            print '<td class="left">'.$obj->zip.'</td>';
+            print '<td class="left">'.$obj->town.'</td>';
 
             print '<td class="right">';
-			print $establishmentstatic->getLibStatut(5);
-			print '</td>';
+            print $establishmentstatic->getLibStatut(5);
+            print '</td>';
             print "</tr>\n";
 
             $i++;
@@ -130,11 +130,11 @@ if ($result)
         print '<tr class="oddeven"><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
     }
 
-	print '</table>';
+    print '</table>';
 }
 else
 {
-	dol_print_error($db);
+    dol_print_error($db);
 }
 
 dol_fiche_end();

@@ -9,25 +9,25 @@
     font-variant: normal;
     text-rendering: auto;
     line-height: 26px;
-	font-size: <?php echo $topMenuFontSize; ?>;
+    font-size: <?php echo $topMenuFontSize; ?>;
     -webkit-font-smoothing: antialiased;
     text-align:center;
-	text-decoration:none;
-	color: #<?php echo $colortextbackhmenu; ?>;
+    text-decoration:none;
+    color: #<?php echo $colortextbackhmenu; ?>;
 }
 
 
 div.mainmenu.menu {
-	background-image: none;
+    background-image: none;
 }
 
 div.mainmenu.menu::before {
-	content: "\f0c9";
+    content: "\f0c9";
 }
 
 
 div.mainmenu.home::before{
-	content: "\f015";
+    content: "\f015";
 }
 
 div.mainmenu.billing::before {
@@ -57,7 +57,7 @@ div.mainmenu.cashdesk .tmenuimage {
     display: inline-block;
     vertical-align: middle;
     height: <?php echo $topMenuFontSize; ?>;
-	background-color: #<?php echo $colortextbackhmenu; ?>;
+    background-color: #<?php echo $colortextbackhmenu; ?>;
     width: 100%;
     -webkit-mask: url(<?php echo DOL_URL_ROOT.'/theme/common/fontawesome-5/svgs/solid/cash-register.svg' ?>) no-repeat 50% 50%; /* for old webkit browser */
     mask: url(<?php echo DOL_URL_ROOT.'/theme/common/fontawesome-5/svgs/solid/cash-register.svg' ?>) no-repeat 50% 50%;

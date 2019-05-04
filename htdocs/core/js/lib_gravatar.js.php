@@ -17,15 +17,15 @@
  */
 
 /**
- * \file		htdocs/core/js/lib_gravatar.js.php
- * \brief		File that include javascript functions (included if option use_javascript activated)
- * 				JQuery (providing object $) library must be loaded before this file.
+ * \file        htdocs/core/js/lib_gravatar.js.php
+ * \brief        File that include javascript functions (included if option use_javascript activated)
+ *                 JQuery (providing object $) library must be loaded before this file.
  */
 
-//if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER', '1');	// Not disabled cause need to load personalized language
+//if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER', '1');    // Not disabled cause need to load personalized language
 //if (! defined('NOREQUIREDB'))   define('NOREQUIREDB', '1');
 if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC', '1');
-//if (! defined('NOREQUIRETRAN')) define('NOREQUIRETRAN', '1');	// Not disabled cause need to do translations
+//if (! defined('NOREQUIRETRAN')) define('NOREQUIRETRAN', '1');    // Not disabled cause need to do translations
 if (! defined('NOCSRFCHECK'))     define('NOCSRFCHECK', 1);
 if (! defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL', 1);
 if (! defined('NOLOGIN'))         define('NOLOGIN', 1);

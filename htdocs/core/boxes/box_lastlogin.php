@@ -101,16 +101,16 @@ class box_lastlogin extends ModeleBoxes
     }
 
 
-	/**
-	 *  Method to show box
-	 *
-	 *  @param	array	$head       Array with properties of box title
-	 *  @param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
-	 *  @return	void
-	 */
+    /**
+     *  Method to show box
+     *
+     *  @param    array    $head       Array with properties of box title
+     *  @param  array    $contents   Array with properties of box lines
+     *  @param    int        $nooutput    No print, only return string
+     *  @return    void
+     */
     public function showBox($head = null, $contents = null, $nooutput = 0)
     {
-		parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
-	}
+        parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
+    }
 }

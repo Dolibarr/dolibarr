@@ -18,8 +18,8 @@
  */
 
 /**
- *		\file 		htdocs/admin/tools/update.php
- *		\brief      Page to make a Dolibarr online upgrade
+ *        \file         htdocs/admin/tools/update.php
+ *        \brief      Page to make a Dolibarr online upgrade
  */
 
 require '../../main.inc.php';
@@ -35,7 +35,7 @@ $action=GETPOST('action', 'alpha');
 if (! $user->admin) accessforbidden();
 
 if (GETPOST('msg', 'alpha')) {
-	setEventMessages(GETPOST('msg', 'alpha'), null, 'errors');
+    setEventMessages(GETPOST('msg', 'alpha'), null, 'errors');
 }
 
 
@@ -97,7 +97,7 @@ if (function_exists('curl_init'))
             }
 
             // Show version
-        	print $langs->trans("LastStableVersion").' : <b>'. (($version != '0.0')?$version:$langs->trans("Unknown")) .'</b><br>';
+            print $langs->trans("LastStableVersion").' : <b>'. (($version != '0.0')?$version:$langs->trans("Unknown")) .'</b><br>';
         }
         else
         {

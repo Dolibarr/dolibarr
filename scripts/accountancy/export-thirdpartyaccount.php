@@ -20,9 +20,9 @@
  */
 
 /**
- * \file 		htdocs/accountancy/admin/export-thirdpartyaccount.php
- * \ingroup		Accounting Expert
- * \brief		Page to detect empty accounting account
+ * \file         htdocs/accountancy/admin/export-thirdpartyaccount.php
+ * \ingroup        Accounting Expert
+ * \brief        Page to detect empty accounting account
  */
 
 require_once $path."../../htdocs/master.inc.php";
@@ -38,13 +38,13 @@ if (!$user->admin)
 // Date range
 $year = GETPOST("year");
 if (empty($year)) {
-	$year_current = strftime("%Y", dol_now());
-	$month_current = strftime("%m", dol_now());
-	$year_start = $year_current;
+    $year_current = strftime("%Y", dol_now());
+    $month_current = strftime("%m", dol_now());
+    $year_start = $year_current;
 } else {
-	$year_current = $year;
-	$month_current = strftime("%m", dol_now());
-	$year_start = $year;
+    $year_current = $year;
+    $month_current = strftime("%m", dol_now());
+    $year_start = $year;
 }
 $date_start = dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear);
 $date_end = dol_mktime(23, 59, 59, $date_endmonth, $date_endday, $date_endyear);
@@ -52,42 +52,42 @@ $date_end = dol_mktime(23, 59, 59, $date_endmonth, $date_endday, $date_endyear);
 // Quarter
 if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 {
-	$q = GETPOST("q") ? GETPOST("q") : 0;
-	if ($q == 0) {
-		// We define date_start and date_end
-		$year_end = $year_start;
-		$month_start = GETPOST("month") ? GETPOST("month") : ($conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START) : 1);
-		if (! GETPOST('month')) {
-			if (! GETPOST("year") && $month_start > $month_current) {
-				$year_start --;
-				$year_end --;
-			}
-			$month_end = $month_start - 1;
-			if ($month_end < 1)
-				$month_end = 12;
-			else
-				$year_end ++;
-		} else
-			$month_end = $month_start;
-		$date_start = dol_get_first_day($year_start, $month_start, false);
-		$date_end = dol_get_last_day($year_end, $month_end, false);
-	}
-	if ($q == 1) {
-		$date_start = dol_get_first_day($year_start, 1, false);
-		$date_end = dol_get_last_day($year_start, 3, false);
-	}
-	if ($q == 2) {
-		$date_start = dol_get_first_day($year_start, 4, false);
-		$date_end = dol_get_last_day($year_start, 6, false);
-	}
-	if ($q == 3) {
-		$date_start = dol_get_first_day($year_start, 7, false);
-		$date_end = dol_get_last_day($year_start, 9, false);
-	}
-	if ($q == 4) {
-		$date_start = dol_get_first_day($year_start, 10, false);
-		$date_end = dol_get_last_day($year_start, 12, false);
-	}
+    $q = GETPOST("q") ? GETPOST("q") : 0;
+    if ($q == 0) {
+        // We define date_start and date_end
+        $year_end = $year_start;
+        $month_start = GETPOST("month") ? GETPOST("month") : ($conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START) : 1);
+        if (! GETPOST('month')) {
+            if (! GETPOST("year") && $month_start > $month_current) {
+                $year_start --;
+                $year_end --;
+            }
+            $month_end = $month_start - 1;
+            if ($month_end < 1)
+                $month_end = 12;
+            else
+                $year_end ++;
+        } else
+            $month_end = $month_start;
+        $date_start = dol_get_first_day($year_start, $month_start, false);
+        $date_end = dol_get_last_day($year_end, $month_end, false);
+    }
+    if ($q == 1) {
+        $date_start = dol_get_first_day($year_start, 1, false);
+        $date_end = dol_get_last_day($year_start, 3, false);
+    }
+    if ($q == 2) {
+        $date_start = dol_get_first_day($year_start, 4, false);
+        $date_end = dol_get_last_day($year_start, 6, false);
+    }
+    if ($q == 3) {
+        $date_start = dol_get_first_day($year_start, 7, false);
+        $date_end = dol_get_last_day($year_start, 9, false);
+    }
+    if ($q == 4) {
+        $date_start = dol_get_first_day($year_start, 10, false);
+        $date_end = dol_get_last_day($year_start, 12, false);
+    }
 } else {
 }
 
@@ -127,10 +127,10 @@ $sql .= ", " . MAIN_DB_PREFIX . "c_country as cp";
 $sql .= " WHERE f.fk_soc = s.rowid";
 $sql .= " AND s.fk_pays = cp.rowid";
 if (! empty($date_start) && ! empty($date_end))
-	$sql .= " AND f.datec >= '" . $db->idate($date_start) . "' AND f.datec <= '" . $db->idate($date_end) . "'";
+    $sql .= " AND f.datec >= '" . $db->idate($date_start) . "' AND f.datec <= '" . $db->idate($date_end) . "'";
 $sql .= " AND f.entity IN (".getEntity('invoice', 0).")";
 if ($socid)
-	$sql .= " AND f.fk_soc = " . $socid;
+    $sql .= " AND f.fk_soc = " . $socid;
 $sql .= " GROUP BY name";
 $sql .= ")";
 $sql .= "UNION (SELECT s.rowid, s.nom as name , s.address, s.zip , s.town, s.code_compta_fournisseur as compta , ";
@@ -141,10 +141,10 @@ $sql .= ", " . MAIN_DB_PREFIX . "c_country as cp";
 $sql .= " WHERE ff.fk_soc = s.rowid";
 $sql .= " AND s.fk_pays = cp.rowid";
 if (! empty($date_start) && ! empty($date_end))
-	$sql .= " AND ff.datec >= '" . $db->idate($date_start) . "' AND ff.datec <= '" . $db->idate($date_end) . "'";
+    $sql .= " AND ff.datec >= '" . $db->idate($date_start) . "' AND ff.datec <= '" . $db->idate($date_end) . "'";
 $sql .= " AND ff.entity = " . $conf->entity;
 if ($socid)
-	$sql .= " AND f.fk_soc = " . $socid;
+    $sql .= " AND f.fk_soc = " . $socid;
 $sql .= " GROUP BY name";
 $sql .= ")";
 
@@ -153,81 +153,81 @@ $sql .= "ORDER BY name ASC";
 dol_syslog('accountancy/admin/thirdpartyaccount.php:: $sql=' . $sql);
 $resql = $db->query($sql);
 if ($resql) {
-	$num = $db->num_rows($resql);
-	$i = 0;
+    $num = $db->num_rows($resql);
+    $i = 0;
 
-	// export csv
-	if (GETPOST('action', 'aZ09') == 'export_csv') {
+    // export csv
+    if (GETPOST('action', 'aZ09') == 'export_csv') {
 
-		header('Content-Type: text/csv');
-		header('Content-Disposition: attachment;filename=export_csv.csv');
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment;filename=export_csv.csv');
 
-		$obj = $db->fetch_object($resql);
+        $obj = $db->fetch_object($resql);
 
-		print '"' . $obj->compta . '",';
-		print '"' . $obj->address . '",';
-		print '"' . $obj->zip . '",';
-		print '"' . $obj->town . '",';
-		print '"' . $obj->country . '",';
-		print '"' . $obj->phone . '",';
-		print '"' . $obj->fax . '",';
-		print "\n";
-		$i ++;
-	}
+        print '"' . $obj->compta . '",';
+        print '"' . $obj->address . '",';
+        print '"' . $obj->zip . '",';
+        print '"' . $obj->town . '",';
+        print '"' . $obj->country . '",';
+        print '"' . $obj->phone . '",';
+        print '"' . $obj->fax . '",';
+        print "\n";
+        $i ++;
+    }
 
-	/*
-	 * View
-	 */
+    /*
+     * View
+     */
 
-	$thirdpartystatic = new Societe($db);
+    $thirdpartystatic = new Societe($db);
 
-	print '<br><br>';
+    print '<br><br>';
 
-	print '<table class="noborder" width="100%">';
-	print "</table>\n";
-	print '</td><td valign="top" width="70%" class="notopnoleftnoright"></td>';
-	print '</tr><tr><td colspan=2>';
-	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td class="left">' . $langs->trans("ThirdParties") . '</td>';
-	print '<td class="left">' . $langs->trans("AccountNumber") . '</td>';
-	print '<td class="left">' . $langs->trans("RaisonSociale") . '</td>';
-	print '<td class="left">' . $langs->trans("Address") . '</td>';
-	print '<td class="left">' . $langs->trans("Zip") . '</td>';
-	print '<td class="left">' . $langs->trans("Town") . '</td>';
-	print '<td class="left">' . $langs->trans("Country") . '</td>';
-	print '<td class="left">' . $langs->trans("Contact") . '</td>';
-	print '<td class="left">' . $langs->trans("Phone") . '</td>';
-	print '<td class="left">' . $langs->trans("Fax") . '</td></tr>';
+    print '<table class="noborder" width="100%">';
+    print "</table>\n";
+    print '</td><td valign="top" width="70%" class="notopnoleftnoright"></td>';
+    print '</tr><tr><td colspan=2>';
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre"><td class="left">' . $langs->trans("ThirdParties") . '</td>';
+    print '<td class="left">' . $langs->trans("AccountNumber") . '</td>';
+    print '<td class="left">' . $langs->trans("RaisonSociale") . '</td>';
+    print '<td class="left">' . $langs->trans("Address") . '</td>';
+    print '<td class="left">' . $langs->trans("Zip") . '</td>';
+    print '<td class="left">' . $langs->trans("Town") . '</td>';
+    print '<td class="left">' . $langs->trans("Country") . '</td>';
+    print '<td class="left">' . $langs->trans("Contact") . '</td>';
+    print '<td class="left">' . $langs->trans("Phone") . '</td>';
+    print '<td class="left">' . $langs->trans("Fax") . '</td></tr>';
 
-	while ($obj = $db->fetch_object($resql))
-	{
-		print '<tr class="oddeven">';
-		print '<td>';
-		$thirdpartystatic->id = $obj->rowid;
-		$thirdpartystatic->name = $obj->name;
-		$thirdpartystatic->client = $obj->client;
-		$thirdpartystatic->canvas = $obj->canvas;
-		$thirdpartystatic->status = $obj->status;
-		print $thirdpartystatic->getNomUrl(1);
-		print '</td>';
-		print '<td class="left">' . $obj->compta . '</td>' . "\n";
-		print '<td class="left"></td>';
-		print '<td class="left">' . $obj->address . '</td>';
-		print '<td class="left">' . $obj->zip . '</td>';
-		print '<td class="left">' . $obj->town . '</td>';
-		print '<td class="left">' . $obj->country . '</td>';
-		print '<td class="left"></td>';
-		print '<td class="left">' . $obj->phone . '</td>';
-		print '<td class="left">' . $obj->fax . '</td>';
-		print "</tr>\n";
+    while ($obj = $db->fetch_object($resql))
+    {
+        print '<tr class="oddeven">';
+        print '<td>';
+        $thirdpartystatic->id = $obj->rowid;
+        $thirdpartystatic->name = $obj->name;
+        $thirdpartystatic->client = $obj->client;
+        $thirdpartystatic->canvas = $obj->canvas;
+        $thirdpartystatic->status = $obj->status;
+        print $thirdpartystatic->getNomUrl(1);
+        print '</td>';
+        print '<td class="left">' . $obj->compta . '</td>' . "\n";
+        print '<td class="left"></td>';
+        print '<td class="left">' . $obj->address . '</td>';
+        print '<td class="left">' . $obj->zip . '</td>';
+        print '<td class="left">' . $obj->town . '</td>';
+        print '<td class="left">' . $obj->country . '</td>';
+        print '<td class="left"></td>';
+        print '<td class="left">' . $obj->phone . '</td>';
+        print '<td class="left">' . $obj->fax . '</td>';
+        print "</tr>\n";
 
-		$i ++;
-	}
+        $i ++;
+    }
 
-	print "</table>";
-	$db->free($resql);
+    print "</table>";
+    $db->free($resql);
 } else {
-	dol_print_error($db);
+    dol_print_error($db);
 }
 
 llxFooter();

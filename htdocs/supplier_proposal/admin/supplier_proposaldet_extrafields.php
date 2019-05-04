@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2002    Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2003		Jean-Louis Bergamo		<jlb@j1b.org>
  * Copyright (C) 2004-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
@@ -27,9 +27,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 
 if (!$user->admin)
-	accessforbidden();
+    accessforbidden();
 
-	// Load translation files required by the page
+    // Load translation files required by the page
 $langs->loadLangs(array('admin', 'other', 'supplier_proposal'));
 
 $extrafields = new ExtraFields($db);
@@ -120,14 +120,14 @@ if ($action != 'create' && $action != 'edit')
 
 /* ************************************************************************** */
 /*                                                                            */
-/* Creation d'un champ optionnel											  */
+/* Creation d'un champ optionnel                                              */
 /*                                                                            */
 /* ************************************************************************** */
 
 if ($action == 'create')
 {
-	print '<br><div id="newattrib"></div>';
-	print load_fiche_titre($langs->trans('NewAttribute'));
+    print '<br><div id="newattrib"></div>';
+    print load_fiche_titre($langs->trans('NewAttribute'));
 
     require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_add.tpl.php';
 }

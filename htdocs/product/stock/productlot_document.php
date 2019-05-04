@@ -93,8 +93,8 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 if (empty($reshook))
 {
 
-	// Action submit/delete file/link
-	include_once DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
+    // Action submit/delete file/link
+    include_once DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 }
 
 $permtoedit = $user->rights->produit->creer;
@@ -112,23 +112,23 @@ llxHeader('', $langs->trans('ProductLot'), '');
 if ($object->id)
 {
 
-	$head = productlot_prepare_head($object);
-	dol_fiche_head($head, 'documents', $langs->trans("Batch"), -1, 'barcode');
+    $head = productlot_prepare_head($object);
+    dol_fiche_head($head, 'documents', $langs->trans("Batch"), -1, 'barcode');
 
 
-	$parameters=array();
-	$reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
+    $parameters=array();
+    $reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
-	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+    if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-	// Build file list
-	$filearray=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);
+    // Build file list
+    $filearray=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);
 
-	$totalsize=0;
-	foreach($filearray as $key => $file)
-	{
-		$totalsize+=$file['size'];
-	}
+    $totalsize=0;
+    foreach($filearray as $key => $file)
+    {
+        $totalsize+=$file['size'];
+    }
 
 
     $linkback = '<a href="' . DOL_URL_ROOT . '/product/stock/productlot_list.php?restore_lastsearch_values=1">' . $langs->trans("BackToList") . '</a>';
@@ -136,7 +136,7 @@ if ($object->id)
     $shownav = 1;
     if ($user->societe_id && ! in_array('batch', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
 
-	dol_banner_tab($object, 'id', $linkback, $shownav, 'rowid', 'batch');
+    dol_banner_tab($object, 'id', $linkback, $shownav, 'rowid', 'batch');
 
     print '<div class="fichecenter">';
 
@@ -158,7 +158,7 @@ if ($object->id)
 }
 else
 {
-	print $langs->trans("ErrorUnknown");
+    print $langs->trans("ErrorUnknown");
 }
 
 

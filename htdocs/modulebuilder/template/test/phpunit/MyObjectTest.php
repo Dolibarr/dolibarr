@@ -30,81 +30,81 @@ namespace test\unit;
  */
 class MyObjectTest extends \PHPUnit_Framework_TestCase
 {
-	/**
-	 * Global test setup
+    /**
+     * Global test setup
      * @return void
-	 */
-	public static function setUpBeforeClass()
-	{
-		fwrite(STDOUT, __METHOD__ . "\n");
-	}
+     */
+    public static function setUpBeforeClass()
+    {
+        fwrite(STDOUT, __METHOD__ . "\n");
+    }
 
-	/**
-	 * Unit test setup
+    /**
+     * Unit test setup
      * @return void
-	 */
-	protected function setUp()
-	{
-		fwrite(STDOUT, __METHOD__ . "\n");
-	}
+     */
+    protected function setUp()
+    {
+        fwrite(STDOUT, __METHOD__ . "\n");
+    }
 
-	/**
-	 * Verify pre conditions
+    /**
+     * Verify pre conditions
      * @return void
-	 */
-	protected function assertPreConditions()
-	{
-		fwrite(STDOUT, __METHOD__ . "\n");
-	}
+     */
+    protected function assertPreConditions()
+    {
+        fwrite(STDOUT, __METHOD__ . "\n");
+    }
 
-	/**
-	 * A sample test
+    /**
+     * A sample test
      * @return bool
-	 */
-	public function testSomething()
-	{
-		fwrite(STDOUT, __METHOD__ . "\n");
-		// TODO: test something
-		$this->assertTrue(true);
-	}
+     */
+    public function testSomething()
+    {
+        fwrite(STDOUT, __METHOD__ . "\n");
+        // TODO: test something
+        $this->assertTrue(true);
+    }
 
-	/**
-	 * Verify post conditions
+    /**
+     * Verify post conditions
      * @return void
-	 */
-	protected function assertPostConditions()
-	{
-		fwrite(STDOUT, __METHOD__ . "\n");
-	}
+     */
+    protected function assertPostConditions()
+    {
+        fwrite(STDOUT, __METHOD__ . "\n");
+    }
 
-	/**
-	 * Unit test teardown
+    /**
+     * Unit test teardown
      * @return void
-	 */
-	protected function tearDown()
-	{
-		fwrite(STDOUT, __METHOD__ . "\n");
-	}
+     */
+    protected function tearDown()
+    {
+        fwrite(STDOUT, __METHOD__ . "\n");
+    }
 
-	/**
-	 * Global test teardown
+    /**
+     * Global test teardown
      * @return void
-	 */
-	public static function tearDownAfterClass()
-	{
-		fwrite(STDOUT, __METHOD__ . "\n");
-	}
+     */
+    public static function tearDownAfterClass()
+    {
+        fwrite(STDOUT, __METHOD__ . "\n");
+    }
 
-	/**
-	 * Unsuccessful test
-	 *
-	 * @param  Exception $e    Exception
+    /**
+     * Unsuccessful test
+     *
+     * @param  Exception $e    Exception
      * @return void
-	 * @throws Exception
-	 */
-	protected function onNotSuccessfulTest(Exception $e)
-	{
-		fwrite(STDOUT, __METHOD__ . "\n");
-		throw $e;
-	}
+     * @throws Exception
+     */
+    protected function onNotSuccessfulTest(Exception $e)
+    {
+        fwrite(STDOUT, __METHOD__ . "\n");
+        throw $e;
+    }
 }

@@ -22,9 +22,9 @@
  */
 
 /**
- *   	\file       htdocs/admin/mailman.php
- *		\ingroup    mailmanspip
- *		\brief      Page to setup the module MailmanSpip (Mailman)
+ *       \file       htdocs/admin/mailman.php
+ *        \ingroup    mailmanspip
+ *        \brief      Page to setup the module MailmanSpip (Mailman)
  */
 
 require '../main.inc.php';
@@ -51,21 +51,21 @@ $testunsubscribeemail = GETPOST("testunsubscribeemail");
 // Action updated or added a constant
 if ($action == 'update' || $action == 'add')
 {
-	foreach($_POST['constname'] as $key => $val)
-	{
-		$constname=$_POST["constname"][$key];
-		$constvalue=$_POST["constvalue"][$key];
-		$consttype=$_POST["consttype"][$key];
-		$constnote=$_POST["constnote"][$key];
-		$res=dolibarr_set_const($db, $constname, $constvalue, $type[$consttype], 0, $constnote, $conf->entity);
+    foreach($_POST['constname'] as $key => $val)
+    {
+        $constname=$_POST["constname"][$key];
+        $constvalue=$_POST["constvalue"][$key];
+        $consttype=$_POST["consttype"][$key];
+        $constnote=$_POST["constnote"][$key];
+        $res=dolibarr_set_const($db, $constname, $constvalue, $type[$consttype], 0, $constnote, $conf->entity);
 
-		if (! $res > 0) $error++;
-	}
+        if (! $res > 0) $error++;
+    }
 
- 	if (! $error)
+     if (! $error)
     {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
+     }
     else
     {
         setEventMessages($langs->trans("Error"), null, 'errors');
@@ -114,28 +114,28 @@ if (($action == 'testsubscribe' || $action == 'testunsubscribe') && ! empty($con
         if ($action == 'testsubscribe')
         {
             $result=$mailmanspip->add_to_mailman($object);
-			if ($result < 0)
-			{
-				$error++;
-				setEventMessages($mailmanspip->error, $mailmanspip->errors, 'errors');
-			}
-			else
-			{
-				setEventMessages($langs->trans("MailmanCreationSuccess"), null);
-			}
+            if ($result < 0)
+            {
+                $error++;
+                setEventMessages($mailmanspip->error, $mailmanspip->errors, 'errors');
+            }
+            else
+            {
+                setEventMessages($langs->trans("MailmanCreationSuccess"), null);
+            }
         }
         if ($action == 'testunsubscribe')
         {
             $result=$mailmanspip->del_to_mailman($object);
             if ($result < 0)
-			{
-				$error++;
-				setEventMessages($mailmanspip->error, $mailmanspip->errors, 'errors');
-			}
-			else
-			{
-				setEventMessages($langs->trans("MailmanDeletionSuccess"), null);
-			}
+            {
+                $error++;
+                setEventMessages($mailmanspip->error, $mailmanspip->errors, 'errors');
+            }
+            else
+            {
+                setEventMessages($langs->trans("MailmanDeletionSuccess"), null);
+            }
         }
     }
 }

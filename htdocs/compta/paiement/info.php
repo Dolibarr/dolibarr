@@ -18,9 +18,9 @@
  */
 
 /**
- *   	\file       htdocs/compta/paiement/info.php
- *		\ingroup    facture
- *		\brief      Onglet info d'un paiement
+ *       \file       htdocs/compta/paiement/info.php
+ *        \ingroup    facture
+ *        \brief      Onglet info d'un paiement
  */
 
 require '../../main.inc.php';

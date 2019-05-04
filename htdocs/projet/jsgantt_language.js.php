@@ -16,8 +16,8 @@
  */
 
 /**
- *		\file       htdocs/projet/jsgantt_language.js.php
- *		\brief      Fichier de javascript de traduction pour JSGantt
+ *        \file       htdocs/projet/jsgantt_language.js.php
+ *        \brief      Fichier de javascript de traduction pour JSGantt
  */
 
 if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC', '1');
@@ -38,8 +38,8 @@ $langs->load("projects");
 ?>
 
 var vLangs={'<?php print $langs->getDefaultLang(1);?>':
-	{
-	'format':'<?php print $langs->transnoentities('Period');?>','hour':'"<?php print $langs->transnoentities('Hour'); ?>','day':'<?php print $langs->transnoentities('Day'); ?>',
+    {
+    'format':'<?php print $langs->transnoentities('Period');?>','hour':'"<?php print $langs->transnoentities('Hour'); ?>','day':'<?php print $langs->transnoentities('Day'); ?>',
     'week':'<?php print $langs->transnoentities('Week'); ?>','month':'<?php print $langs->transnoentities('Month'); ?>','quarter':'<?php print $langs->transnoentities('Quadri'); ?>',
     'hours':'<?php print $langs->transnoentities('Hours'); ?>','days':'<?php print $langs->transnoentities('Days'); ?>','weeks':'<?php print $langs->transnoentities('Weeks');?>',
     'months':'<?php print $langs->transnoentities('Months'); ?>','quarters':'<?php print $langs->transnoentities('Quadri'); ?>','hr':'Hr','dy':'<?php print $langs->transnoentities('Day'); ?>','wk':'<?php print $langs->transnoentities('Week'); ?>','mth':'<?php print $langs->transnoentities('Month'); ?>','qtr':'<?php print $langs->transnoentities('Quadri'); ?>','hrs':'<?php print $langs->transnoentities('Hours'); ?>',

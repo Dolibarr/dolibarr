@@ -24,7 +24,7 @@
  */
 
 global $conf,$user,$langs,$db;
-//define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
+//define('TEST_DB_FORCE_TYPE','mysql');    // This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/class/utils.class.php';
@@ -42,7 +42,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
- * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
+ * @remarks    backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
 class UtilsTest extends PHPUnit_Framework_TestCase
 {
@@ -78,7 +78,7 @@ class UtilsTest extends PHPUnit_Framework_TestCase
     {
         global $conf,$user,$langs,$db;
 
-        $db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
+        $db->begin();    // This is to have all actions inside a transaction even if test launched without suite.
 
         print __METHOD__."\n";
     }
@@ -95,7 +95,7 @@ class UtilsTest extends PHPUnit_Framework_TestCase
     /**
      * Init phpunit tests
      *
-     * @return	void
+     * @return    void
      */
     protected function setUp()
     {
@@ -111,7 +111,7 @@ class UtilsTest extends PHPUnit_Framework_TestCase
     /**
      * End phpunit tests
      *
-     * @return	void
+     * @return    void
      */
     protected function tearDown()
     {
@@ -133,14 +133,14 @@ class UtilsTest extends PHPUnit_Framework_TestCase
 
         $localobject=new Utils($this->savdb);
         $result = $localobject->executeCLI('ls', $conf->admin->dir_temp.'/out.tmp', 1);
-		print var_export($result, true);
+        print var_export($result, true);
         $this->assertEquals($result['result'], 0);
         $this->assertEquals($result['error'], '');
         //$this->assertEquals(preg_match('/phpunit/', $result['output']), 1);
 
         $localobject=new Utils($this->savdb);
         $result = $localobject->executeCLI('ls', $conf->admin->dir_temp.'/out.tmp', 2);
-		print var_export($result, true);
+        print var_export($result, true);
         $this->assertEquals($result['result'], 0);
         $this->assertEquals($result['error'], '');
         //$this->assertEquals(preg_match('/phpunit/', $result['output']), 1);

@@ -17,19 +17,19 @@
  */
 
 /**
- *	    \file       htdocs/public/donations/donateurs_code.php
+ *        \file       htdocs/public/donations/donateurs_code.php
  *      \ingroup    donation
- *		\brief      Page to list donators
+ *        \brief      Page to list donators
  */
 
-define("NOLOGIN", 1);		// This means this output page does not require to be logged.
-define("NOCSRFCHECK", 1);	// We accept to go on this page from external web site.
+define("NOLOGIN", 1);        // This means this output page does not require to be logged.
+define("NOCSRFCHECK", 1);    // We accept to go on this page from external web site.
 
 // C'est un wrapper, donc header vierge
 /**
  * Header function
  *
- * @return	void
+ * @return    void
  */
 function llxHeaderVierge()
 {
@@ -38,7 +38,7 @@ function llxHeaderVierge()
 /**
  * Header function
  *
- * @return	void
+ * @return    void
  */
 function llxFooterVierge()
 {
@@ -68,46 +68,46 @@ $sql.= " WHERE d.fk_statut in (2, 3) ORDER BY d.datedon DESC";
 $resql=$db->query($sql);
 if ($resql)
 {
-	$num = $db->num_rows($resql);
-	if ($num)
-	{
+    $num = $db->num_rows($resql);
+    if ($num)
+    {
 
-		print "<table border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
+        print "<table border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
 
-		print '<tr>';
-		print "<td>".$langs->trans("Name")." / ".$langs->trans("Company")."</td>";
-		print "<td>Date</td>";
-		print '<td class="right">'.$langs->trans("Amount").'</td>';
-		print "</tr>\n";
+        print '<tr>';
+        print "<td>".$langs->trans("Name")." / ".$langs->trans("Company")."</td>";
+        print "<td>Date</td>";
+        print '<td class="right">'.$langs->trans("Amount").'</td>';
+        print "</tr>\n";
 
-		while ($i < $num)
-		{
-			$objp = $db->fetch_object($resql);
+        while ($i < $num)
+        {
+            $objp = $db->fetch_object($resql);
 
-			print '<tr class="oddeven">';
-			if ($objp->public)
-			{
-				print "<td>".dolGetFirstLastname($objp->firstname, $objp->lastname)." ".$objp->societe."</td>\n";
-			}
-			else
-			{
-				print "<td>Anonyme Anonyme</td>\n";
-			}
-			print "<td>".dol_print_date($db->jdate($objp->datedon))."</td>\n";
-			print '<td class="right">'.number_format($objp->amount, 2, '.', ' ').' '.$langs->trans("Currency".$conf->currency).'</td>';
-			print "</tr>";
-			$i++;
-		}
-		print "</table>";
-	}
-	else
-	{
-		print "Aucun don publique";
-	}
+            print '<tr class="oddeven">';
+            if ($objp->public)
+            {
+                print "<td>".dolGetFirstLastname($objp->firstname, $objp->lastname)." ".$objp->societe."</td>\n";
+            }
+            else
+            {
+                print "<td>Anonyme Anonyme</td>\n";
+            }
+            print "<td>".dol_print_date($db->jdate($objp->datedon))."</td>\n";
+            print '<td class="right">'.number_format($objp->amount, 2, '.', ' ').' '.$langs->trans("Currency".$conf->currency).'</td>';
+            print "</tr>";
+            $i++;
+        }
+        print "</table>";
+    }
+    else
+    {
+        print "Aucun don publique";
+    }
 }
 else
 {
-	dol_print_error($db);
+    dol_print_error($db);
 }
 
 $db->close();

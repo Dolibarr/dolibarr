@@ -31,8 +31,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/contact.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'other'));
 
-$id		= GETPOST('id', 'int');
-$action	= GETPOST('action', 'alpha');
+$id        = GETPOST('id', 'int');
+$action    = GETPOST('action', 'alpha');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -45,77 +45,77 @@ $object = new Contact($db);
 
 if ($action == 'update' && ! $_POST["cancel"] && $user->rights->societe->contact->creer)
 {
-	$ret = $object->fetch($id);
+    $ret = $object->fetch($id);
 
-	// Note: Correct date should be completed with location to have exact GM time of birth.
-	$object->birthday = dol_mktime(0, 0, 0, $_POST["birthdaymonth"], $_POST["birthdayday"], $_POST["birthdayyear"]);
-	$object->birthday_alert = $_POST["birthday_alert"];
+    // Note: Correct date should be completed with location to have exact GM time of birth.
+    $object->birthday = dol_mktime(0, 0, 0, $_POST["birthdaymonth"], $_POST["birthdayday"], $_POST["birthdayyear"]);
+    $object->birthday_alert = $_POST["birthday_alert"];
 
-	if (GETPOST('deletephoto')) $object->photo='';
-	elseif (! empty($_FILES['photo']['name'])) $object->photo  = dol_sanitizeFileName($_FILES['photo']['name']);
+    if (GETPOST('deletephoto')) $object->photo='';
+    elseif (! empty($_FILES['photo']['name'])) $object->photo  = dol_sanitizeFileName($_FILES['photo']['name']);
 
-	$result = $object->update_perso($id, $user);
-	if ($result > 0)
-	{
-		$object->old_name='';
-		$object->old_firstname='';
-		// Logo/Photo save
-		$dir= $conf->societe->dir_output.'/contact/' . get_exdir($object->id, 0, 0, 1, $object, 'contact').'/photos';
+    $result = $object->update_perso($id, $user);
+    if ($result > 0)
+    {
+        $object->old_name='';
+        $object->old_firstname='';
+        // Logo/Photo save
+        $dir= $conf->societe->dir_output.'/contact/' . get_exdir($object->id, 0, 0, 1, $object, 'contact').'/photos';
 
-		$file_OK = is_uploaded_file($_FILES['photo']['tmp_name']);
-		if ($file_OK)
-		{
-			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-			if (GETPOST('deletephoto'))
-			{
-				require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
-				$fileimg=$conf->societe->dir_output.'/contact/'.get_exdir($object->id, 0, 0, 1, $object, 'contact').'/photos/'.$object->photo;
-				$dirthumbs=$conf->societe->dir_output.'/contact/'.get_exdir($object->id, 0, 0, 1, $object, 'contact').'/photos/thumbs';
-				dol_delete_file($fileimg);
-				dol_delete_dir_recursive($dirthumbs);
-			}
+        $file_OK = is_uploaded_file($_FILES['photo']['tmp_name']);
+        if ($file_OK)
+        {
+            require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+            if (GETPOST('deletephoto'))
+            {
+                require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
+                $fileimg=$conf->societe->dir_output.'/contact/'.get_exdir($object->id, 0, 0, 1, $object, 'contact').'/photos/'.$object->photo;
+                $dirthumbs=$conf->societe->dir_output.'/contact/'.get_exdir($object->id, 0, 0, 1, $object, 'contact').'/photos/thumbs';
+                dol_delete_file($fileimg);
+                dol_delete_dir_recursive($dirthumbs);
+            }
 
-			if (image_format_supported($_FILES['photo']['name']) > 0)
-			{
-				dol_mkdir($dir);
+            if (image_format_supported($_FILES['photo']['name']) > 0)
+            {
+                dol_mkdir($dir);
 
-				if (@is_dir($dir))
-				{
-					$newfile=$dir.'/'.dol_sanitizeFileName($_FILES['photo']['name']);
-					if (! dol_move_uploaded_file($_FILES['photo']['tmp_name'], $newfile, 1, 0, $_FILES['photo']['error']) > 0)
-					{
-						setEventMessages($langs->trans("ErrorFailedToSaveFile"), null, 'errors');
-					}
-					else
-					{
-					    // Create thumbs
-					    $object->addThumbs($newfile);
-					}
-				}
-			}
-			else
-			{
-				setEventMessages("ErrorBadImageFormat", null, 'errors');
-			}
-		}
-		else
-		{
-			switch($_FILES['photo']['error'])
-			{
-				case 1: //uploaded file exceeds the upload_max_filesize directive in php.ini
-				case 2: //uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the html form
-					$errors[] = "ErrorFileSizeTooLarge";
-					break;
-				case 3: //uploaded file was only partially uploaded
-					$errors[] = "ErrorFilePartiallyUploaded";
-					break;
-			}
-		}
-	}
-	else
-	{
-		$error = $object->error;
-	}
+                if (@is_dir($dir))
+                {
+                    $newfile=$dir.'/'.dol_sanitizeFileName($_FILES['photo']['name']);
+                    if (! dol_move_uploaded_file($_FILES['photo']['tmp_name'], $newfile, 1, 0, $_FILES['photo']['error']) > 0)
+                    {
+                        setEventMessages($langs->trans("ErrorFailedToSaveFile"), null, 'errors');
+                    }
+                    else
+                    {
+                        // Create thumbs
+                        $object->addThumbs($newfile);
+                    }
+                }
+            }
+            else
+            {
+                setEventMessages("ErrorBadImageFormat", null, 'errors');
+            }
+        }
+        else
+        {
+            switch($_FILES['photo']['error'])
+            {
+                case 1: //uploaded file exceeds the upload_max_filesize directive in php.ini
+                case 2: //uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the html form
+                    $errors[] = "ErrorFileSizeTooLarge";
+                    break;
+                case 3: //uploaded file was only partially uploaded
+                    $errors[] = "ErrorFilePartiallyUploaded";
+                    break;
+            }
+        }
+    }
+    else
+    {
+        $error = $object->error;
+    }
 }
 
 
@@ -139,8 +139,8 @@ $head = contact_prepare_head($object);
 if ($action == 'edit')
 {
     /*
-	 * Fiche en mode edition
-	 */
+     * Fiche en mode edition
+     */
 
     print '<form name="perso" method="POST" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';

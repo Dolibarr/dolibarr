@@ -21,9 +21,9 @@
  */
 
 /**
- *		\file       htdocs/compta/tva/clients.php
- *		\ingroup    tax
- *		\brief      Page of sales taxes
+ *        \file       htdocs/compta/tva/clients.php
+ *        \ingroup    tax
+ *        \brief      Page of sales taxes
  */
 
 require '../../main.inc.php';
@@ -228,7 +228,7 @@ if (! is_array($x_coll) || ! is_array($x_paye))
     foreach(array_keys($x_coll) as $my_coll_thirdpartyid)
     {
         $x_both[$my_coll_thirdpartyid]['coll']['totalht'] = $x_coll[$my_coll_thirdpartyid]['totalht'];
-        $x_both[$my_coll_thirdpartyid]['coll']['vat']	 = $x_coll[$my_coll_thirdpartyid]['vat'];
+        $x_both[$my_coll_thirdpartyid]['coll']['vat']     = $x_coll[$my_coll_thirdpartyid]['vat'];
         $x_both[$my_coll_thirdpartyid]['paye']['totalht'] = 0;
         $x_both[$my_coll_thirdpartyid]['paye']['vat'] = 0;
         $x_both[$my_coll_thirdpartyid]['coll']['links'] = '';
@@ -282,22 +282,22 @@ if (! is_array($x_coll) || ! is_array($x_paye))
                 $expensereport->type=$x_paye[$my_paye_thirdpartyid]['type'][$id];
 
                 $x_both[$my_paye_thirdpartyid]['paye']['detail'][] = array(
-                    'id'				=>$x_paye[$my_paye_thirdpartyid]['facid'][$id],
-                    'descr'				=>$x_paye[$my_paye_thirdpartyid]['descr'][$id],
-                    'pid'				=>$x_paye[$my_paye_thirdpartyid]['pid'][$id],
-                    'pref'				=>$x_paye[$my_paye_thirdpartyid]['pref'][$id],
-                    'ptype'				=>$x_paye[$my_paye_thirdpartyid]['ptype'][$id],
-                    'payment_id'		=>$x_paye[$my_paye_thirdpartyid]['payment_id'][$id],
-                    'payment_amount'	=>$x_paye[$my_paye_thirdpartyid]['payment_amount'][$id],
-                    'ftotal_ttc'		=>price2num($x_paye[$my_paye_thirdpartyid]['ftotal_ttc'][$id]),
-                    'dtotal_ttc'		=>price2num($x_paye[$my_paye_thirdpartyid]['dtotal_ttc'][$id]),
-                    'dtype'				=>$x_paye[$my_paye_thirdpartyid]['dtype'][$id],
+                    'id'                =>$x_paye[$my_paye_thirdpartyid]['facid'][$id],
+                    'descr'                =>$x_paye[$my_paye_thirdpartyid]['descr'][$id],
+                    'pid'                =>$x_paye[$my_paye_thirdpartyid]['pid'][$id],
+                    'pref'                =>$x_paye[$my_paye_thirdpartyid]['pref'][$id],
+                    'ptype'                =>$x_paye[$my_paye_thirdpartyid]['ptype'][$id],
+                    'payment_id'        =>$x_paye[$my_paye_thirdpartyid]['payment_id'][$id],
+                    'payment_amount'    =>$x_paye[$my_paye_thirdpartyid]['payment_amount'][$id],
+                    'ftotal_ttc'        =>price2num($x_paye[$my_paye_thirdpartyid]['ftotal_ttc'][$id]),
+                    'dtotal_ttc'        =>price2num($x_paye[$my_paye_thirdpartyid]['dtotal_ttc'][$id]),
+                    'dtype'                =>$x_paye[$my_paye_thirdpartyid]['dtype'][$id],
                     'drate'             =>$x_paye[$my_coll_thirdpartyid]['drate'][$id],
-                    'ddate_start'		=>$x_paye[$my_paye_thirdpartyid]['ddate_start'][$id],
-                    'ddate_end'			=>$x_paye[$my_paye_thirdpartyid]['ddate_end'][$id],
-                    'totalht'			=>price2num($x_paye[$my_paye_thirdpartyid]['totalht_list'][$id]),
-                    'vat'				=>$x_paye[$my_paye_thirdpartyid]['vat_list'][$id],
-                    'link'				=>$expensereport->getNomUrl(1)
+                    'ddate_start'        =>$x_paye[$my_paye_thirdpartyid]['ddate_start'][$id],
+                    'ddate_end'            =>$x_paye[$my_paye_thirdpartyid]['ddate_end'][$id],
+                    'totalht'            =>price2num($x_paye[$my_paye_thirdpartyid]['totalht_list'][$id]),
+                    'vat'                =>$x_paye[$my_paye_thirdpartyid]['vat_list'][$id],
+                    'link'                =>$expensereport->getNomUrl(1)
                 );
             }
             else

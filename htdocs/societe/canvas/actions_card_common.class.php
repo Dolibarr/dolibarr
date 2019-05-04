@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@inodbox.com>
+/* Copyright (C) 2010-2012    Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -17,13 +17,13 @@
  */
 
 /**
- *	\file       htdocs/societe/canvas/actions_card_common.class.php
- *	\ingroup    thirdparty
- *	\brief      Fichier de la classe Thirdparty card controller (common)
+ *    \file       htdocs/societe/canvas/actions_card_common.class.php
+ *    \ingroup    thirdparty
+ *    \brief      Fichier de la classe Thirdparty card controller (common)
  */
 
 /**
- *	Classe permettant la gestion des tiers par defaut
+ *    Classe permettant la gestion des tiers par defaut
  */
 abstract class ActionsCardCommon
 {
@@ -37,47 +37,47 @@ abstract class ActionsCardCommon
     public $canvas;
     public $card;
 
-	//! Template container
-	public $tpl = array();
-	//! Object container
-	public $object;
+    //! Template container
+    public $tpl = array();
+    //! Object container
+    public $object;
 
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error='';
-
-
-	/**
-	 * @var string[] Error codes (or messages)
-	 */
-	public $errors = array();
+    /**
+     * @var string Error code (or message)
+     */
+    public $error='';
 
 
-	/**
+    /**
+     * @var string[] Error codes (or messages)
+     */
+    public $errors = array();
+
+
+    /**
      *  Get object from id or ref and save it into this->object
-	 *
-     *  @param		int		$id			Object id
-     *  @param		string	$ref		Object ref
-     *  @return		object				Object loaded
+     *
+     *  @param        int        $id            Object id
+     *  @param        string    $ref        Object ref
+     *  @return        object                Object loaded
      */
     protected function getObject($id, $ref = '')
     {
-    	//$ret = $this->getInstanceDao();
+        //$ret = $this->getInstanceDao();
 
-    	$object = new Societe($this->db);
-    	if (! empty($id) || ! empty($ref)) $object->fetch($id, $ref);
-    	$this->object = $object;
+        $object = new Societe($this->db);
+        if (! empty($id) || ! empty($ref)) $object->fetch($id, $ref);
+        $this->object = $object;
     }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *    Assign custom values for canvas (for example into this->tpl to be used by templates)
-	 *
-	 *    @param	string	$action    Type of action
-	 *    @param	integer	$id			Id of object
-	 *    @param	string	$ref		Ref of object
-	 *    @return	void
+    /**
+     *    Assign custom values for canvas (for example into this->tpl to be used by templates)
+     *
+     *    @param    string    $action    Type of action
+     *    @param    integer    $id            Id of object
+     *    @param    string    $ref        Ref of object
+     *    @return    void
      */
     public function assign_values(&$action, $id = 0, $ref = '')
     {
@@ -87,11 +87,11 @@ abstract class ActionsCardCommon
 
         if ($action == 'add' || $action == 'update') $this->assign_post($action);
 
-        if ($_GET["type"]=='f')  		{ $this->object->fournisseur=1; }
-        if ($_GET["type"]=='c')  		{ $this->object->client=1; }
-        if ($_GET["type"]=='p')  		{ $this->object->client=2; }
-        if ($_GET["type"]=='cp') 		{ $this->object->client=3; }
-        if ($_REQUEST["private"]==1) 	{ $this->object->particulier=1;	}
+        if ($_GET["type"]=='f')          { $this->object->fournisseur=1; }
+        if ($_GET["type"]=='c')          { $this->object->client=1; }
+        if ($_GET["type"]=='p')          { $this->object->client=2; }
+        if ($_GET["type"]=='cp')         { $this->object->client=3; }
+        if ($_REQUEST["private"]==1)     { $this->object->particulier=1;    }
 
         foreach($this->object as $key => $value)
         {
@@ -103,9 +103,9 @@ abstract class ActionsCardCommon
 
         if ($action == 'create')
         {
-        	if ($conf->use_javascript_ajax)
-			{
-				$this->tpl['ajax_selecttype'] = "\n".'<script type="text/javascript" language="javascript">
+            if ($conf->use_javascript_ajax)
+            {
+                $this->tpl['ajax_selecttype'] = "\n".'<script type="text/javascript" language="javascript">
 				$(document).ready(function () {
 		              $("#radiocompany").click(function() {
                             document.formsoc.action.value="create";
@@ -121,14 +121,14 @@ abstract class ActionsCardCommon
                       });
 		          });
                 </script>'."\n";
-			}
+            }
         }
 
         if ($action == 'create' || $action == 'edit')
         {
-        	if ($conf->use_javascript_ajax)
-			{
-				$this->tpl['ajax_selectcountry'] = "\n".'<script type="text/javascript" language="javascript">
+            if ($conf->use_javascript_ajax)
+            {
+                $this->tpl['ajax_selectcountry'] = "\n".'<script type="text/javascript" language="javascript">
 				$(document).ready(function () {
 						$("#selectcountry_id").change(function() {
 							document.formsoc.action.value="'.$action.'";
@@ -137,7 +137,7 @@ abstract class ActionsCardCommon
 						});
 					})
 				</script>'."\n";
-			}
+            }
 
             // Load object modCodeClient
             $module=(! empty($conf->global->SOCIETE_CODECLIENT_ADDON)?$conf->global->SOCIETE_CODECLIENT_ADDON:'mod_codeclient_leopard');
@@ -173,35 +173,35 @@ abstract class ActionsCardCommon
 
             if (! empty($conf->fournisseur->enabled))
             {
-            	$this->tpl['supplier_enabled'] = 1;
+                $this->tpl['supplier_enabled'] = 1;
 
-            	// Load object modCodeFournisseur
-            	$module=$conf->global->SOCIETE_CODECLIENT_ADDON;
-            	if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php')
-            	{
-            		$module = substr($module, 0, dol_strlen($module)-4);
-            	}
+                // Load object modCodeFournisseur
+                $module=$conf->global->SOCIETE_CODECLIENT_ADDON;
+                if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php')
+                {
+                    $module = substr($module, 0, dol_strlen($module)-4);
+                }
                 $dirsociete=array_merge(array('/core/modules/societe/'), $conf->modules_parts['societe']);
                 foreach ($dirsociete as $dirroot)
                 {
                     $res=dol_include_once($dirroot.$module.'.php');
                     if ($res) break;
                 }
-            	$modCodeFournisseur = new $module;
-            	$this->tpl['auto_suppliercode'] = $modCodeFournisseur->code_auto;
-            	// We verified if the tag prefix is used
-            	if ($modCodeFournisseur->code_auto) $this->tpl['prefix_suppliercode'] = $modCodeFournisseur->verif_prefixIsUsed();
+                $modCodeFournisseur = new $module;
+                $this->tpl['auto_suppliercode'] = $modCodeFournisseur->code_auto;
+                // We verified if the tag prefix is used
+                if ($modCodeFournisseur->code_auto) $this->tpl['prefix_suppliercode'] = $modCodeFournisseur->verif_prefixIsUsed();
 
-            	// Supplier
-            	$this->tpl['yn_supplier'] = $form->selectyesno("fournisseur", $this->object->fournisseur, 1);
-            	$this->tpl['suppliercode'] = $this->object->code_fournisseur;
-            	if ((!$this->object->code_fournisseur || $this->object->code_fournisseur == -1) && $modCodeFournisseur->code_auto) $this->tpl['suppliercode'] = $modCodeFournisseur->getNextValue($this->object, 1);
-            	$this->tpl['ismodifiable_suppliercode'] = $this->object->codefournisseur_modifiable();
-            	$s=$modCodeFournisseur->getToolTip($langs, $this->object, 1);
-            	$this->tpl['help_suppliercode'] = $form->textwithpicto('', $s, 1);
+                // Supplier
+                $this->tpl['yn_supplier'] = $form->selectyesno("fournisseur", $this->object->fournisseur, 1);
+                $this->tpl['suppliercode'] = $this->object->code_fournisseur;
+                if ((!$this->object->code_fournisseur || $this->object->code_fournisseur == -1) && $modCodeFournisseur->code_auto) $this->tpl['suppliercode'] = $modCodeFournisseur->getNextValue($this->object, 1);
+                $this->tpl['ismodifiable_suppliercode'] = $this->object->codefournisseur_modifiable();
+                $s=$modCodeFournisseur->getToolTip($langs, $this->object, 1);
+                $this->tpl['help_suppliercode'] = $form->textwithpicto('', $s, 1);
 
-            	$this->object->LoadSupplierCateg();
-            	$this->tpl['suppliercategory'] = $this->object->SupplierCategories;
+                $this->object->LoadSupplierCateg();
+                $this->tpl['suppliercategory'] = $this->object->SupplierCategories;
             }
 
             // Zip
@@ -226,7 +226,7 @@ abstract class ActionsCardCommon
             if (! empty($conf->global->MAIN_MULTILANGS)) $this->tpl['select_lang'] = $formadmin->select_language(($this->object->default_lang?$this->object->default_lang:$conf->global->MAIN_LANG_DEFAULT), 'default_lang', 0, 0, 1);
 
             // VAT
-            $this->tpl['yn_assujtva'] = $form->selectyesno('assujtva_value', $this->tpl['tva_assuj'], 1);	// Assujeti par defaut en creation
+            $this->tpl['yn_assujtva'] = $form->selectyesno('assujtva_value', $this->tpl['tva_assuj'], 1);    // Assujeti par defaut en creation
 
             // Select users
             $this->tpl['select_users'] = $form->select_dolusers($this->object->commercial_id, 'commercial_id', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
@@ -266,22 +266,22 @@ abstract class ActionsCardCommon
             $this->tpl['showhead']=dol_get_fiche_head($head, 'card', '', 0, 'company');
             $this->tpl['showend']=dol_get_fiche_end();
 
-            $this->tpl['showrefnav'] 		= $form->showrefnav($this->object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
+            $this->tpl['showrefnav']         = $form->showrefnav($this->object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
 
             $this->tpl['checkcustomercode'] = $this->object->check_codeclient();
             $this->tpl['checksuppliercode'] = $this->object->check_codefournisseur();
-            $this->tpl['address'] 			= dol_nl2br($this->object->address);
+            $this->tpl['address']             = dol_nl2br($this->object->address);
 
             $img=picto_from_langcode($this->object->country_code);
             if ($this->object->isInEEC()) $this->tpl['country'] = $form->textwithpicto(($img?$img.' ':'').$this->object->country, $langs->trans("CountryIsInEEC"), 1, 0);
             $this->tpl['country'] = ($img?$img.' ':'').$this->object->country;
 
-            $this->tpl['phone'] 	= dol_print_phone($this->object->phone, $this->object->country_code, 0, $this->object->id, 'AC_TEL');
-            $this->tpl['fax'] 		= dol_print_phone($this->object->fax, $this->object->country_code, 0, $this->object->id, 'AC_FAX');
-            $this->tpl['email'] 	= dol_print_email($this->object->email, 0, $this->object->id, 'AC_EMAIL');
-            $this->tpl['url'] 		= dol_print_url($this->object->url);
+            $this->tpl['phone']     = dol_print_phone($this->object->phone, $this->object->country_code, 0, $this->object->id, 'AC_TEL');
+            $this->tpl['fax']         = dol_print_phone($this->object->fax, $this->object->country_code, 0, $this->object->id, 'AC_FAX');
+            $this->tpl['email']     = dol_print_email($this->object->email, 0, $this->object->id, 'AC_EMAIL');
+            $this->tpl['url']         = dol_print_url($this->object->url);
 
-            $this->tpl['tva_assuj']		= yn($this->object->tva_assuj);
+            $this->tpl['tva_assuj']        = yn($this->object->tva_assuj);
 
             // Third party type
             $arr = $formcompany->typent_array(1);
@@ -296,9 +296,9 @@ abstract class ActionsCardCommon
                 $this->tpl['default_lang'] = ($this->default_lang?$langs->trans('Language_'.$this->object->default_lang):'');
             }
 
-            $this->tpl['image_edit']	= img_edit();
+            $this->tpl['image_edit']    = img_edit();
 
-            $this->tpl['display_rib']	= $this->object->display_rib();
+            $this->tpl['display_rib']    = $this->object->display_rib();
 
             // Sales representatives
             $this->tpl['sales_representatives'] = '';
@@ -306,23 +306,23 @@ abstract class ActionsCardCommon
             $nbofsalesrepresentative=count($listsalesrepresentatives);
             if ($nbofsalesrepresentative > 3)   // We print only number
             {
-            	$this->tpl['sales_representatives'].= '<a href="'.DOL_URL_ROOT.'/societe/commerciaux.php?socid='.$this->object->id.'">';
-            	$this->tpl['sales_representatives'].= $nbofsalesrepresentative;
-            	$this->tpl['sales_representatives'].= '</a>';
+                $this->tpl['sales_representatives'].= '<a href="'.DOL_URL_ROOT.'/societe/commerciaux.php?socid='.$this->object->id.'">';
+                $this->tpl['sales_representatives'].= $nbofsalesrepresentative;
+                $this->tpl['sales_representatives'].= '</a>';
             }
             elseif ($nbofsalesrepresentative > 0)
             {
-            	$userstatic=new User($this->db);
-            	$i=0;
-            	foreach($listsalesrepresentatives as $val)
-            	{
-            		$userstatic->id=$val['id'];
-            		$userstatic->lastname=$val['name'];
-            		$userstatic->firstname=$val['firstname'];
-            		$this->tpl['sales_representatives'].= $userstatic->getNomUrl(1);
-            		$i++;
-            		if ($i < $nbofsalesrepresentative) $this->tpl['sales_representatives'].= ', ';
-            	}
+                $userstatic=new User($this->db);
+                $i=0;
+                foreach($listsalesrepresentatives as $val)
+                {
+                    $userstatic->id=$val['id'];
+                    $userstatic->lastname=$val['name'];
+                    $userstatic->firstname=$val['firstname'];
+                    $this->tpl['sales_representatives'].= $userstatic->getNomUrl(1);
+                    $i++;
+                    if ($i < $nbofsalesrepresentative) $this->tpl['sales_representatives'].= ', ';
+                }
             }
             else $this->tpl['sales_representatives'].= $langs->trans("NoSalesRepresentativeAffected");
 
@@ -374,55 +374,55 @@ abstract class ActionsCardCommon
     /**
      *  Assign POST values into object
      *
-     *	@param		string		$action		Action string
-     *  @return		string					HTML output
+     *    @param        string        $action        Action string
+     *  @return        string                    HTML output
      */
     private function assign_post($action)
     {
         // phpcs:enable
         global $langs, $mysoc;
 
-        $this->object->id					=	$_POST["socid"];
-        $this->object->name					=	$_POST["nom"];
-        $this->object->prefix_comm			=	$_POST["prefix_comm"];
-        $this->object->client				=	$_POST["client"];
-        $this->object->code_client			=	$_POST["code_client"];
-        $this->object->fournisseur			=	$_POST["fournisseur"];
-        $this->object->code_fournisseur		=	$_POST["code_fournisseur"];
-        $this->object->address				=	$_POST["adresse"];
-        $this->object->zip					=	$_POST["zipcode"];
-        $this->object->town					=	$_POST["town"];
-        $this->object->country_id			=	$_POST["country_id"]?$_POST["country_id"]:$mysoc->country_id;
-        $this->object->state_id		        =	$_POST["state_id"];
-        $this->object->phone				=	$_POST["tel"];
-        $this->object->fax					=	$_POST["fax"];
-        $this->object->email				=	$_POST["email"];
-        $this->object->url					=	$_POST["url"];
-        $this->object->capital				=	$_POST["capital"];
-        $this->object->idprof1				=	$_POST["idprof1"];
-        $this->object->idprof2				=	$_POST["idprof2"];
-        $this->object->idprof3				=	$_POST["idprof3"];
-        $this->object->idprof4				=	$_POST["idprof4"];
-        $this->object->typent_id			=	$_POST["typent_id"];
-        $this->object->effectif_id			=	$_POST["effectif_id"];
-        $this->object->barcode				=	$_POST["barcode"];
-        $this->object->forme_juridique_code	=	$_POST["forme_juridique_code"];
-        $this->object->default_lang			=	$_POST["default_lang"];
-        $this->object->commercial_id		=	$_POST["commercial_id"];
+        $this->object->id                    =    $_POST["socid"];
+        $this->object->name                    =    $_POST["nom"];
+        $this->object->prefix_comm            =    $_POST["prefix_comm"];
+        $this->object->client                =    $_POST["client"];
+        $this->object->code_client            =    $_POST["code_client"];
+        $this->object->fournisseur            =    $_POST["fournisseur"];
+        $this->object->code_fournisseur        =    $_POST["code_fournisseur"];
+        $this->object->address                =    $_POST["adresse"];
+        $this->object->zip                    =    $_POST["zipcode"];
+        $this->object->town                    =    $_POST["town"];
+        $this->object->country_id            =    $_POST["country_id"]?$_POST["country_id"]:$mysoc->country_id;
+        $this->object->state_id                =    $_POST["state_id"];
+        $this->object->phone                =    $_POST["tel"];
+        $this->object->fax                    =    $_POST["fax"];
+        $this->object->email                =    $_POST["email"];
+        $this->object->url                    =    $_POST["url"];
+        $this->object->capital                =    $_POST["capital"];
+        $this->object->idprof1                =    $_POST["idprof1"];
+        $this->object->idprof2                =    $_POST["idprof2"];
+        $this->object->idprof3                =    $_POST["idprof3"];
+        $this->object->idprof4                =    $_POST["idprof4"];
+        $this->object->typent_id            =    $_POST["typent_id"];
+        $this->object->effectif_id            =    $_POST["effectif_id"];
+        $this->object->barcode                =    $_POST["barcode"];
+        $this->object->forme_juridique_code    =    $_POST["forme_juridique_code"];
+        $this->object->default_lang            =    $_POST["default_lang"];
+        $this->object->commercial_id        =    $_POST["commercial_id"];
 
-        $this->object->tva_assuj 			= 	$_POST["assujtva_value"]?$_POST["assujtva_value"]:1;
-        $this->object->tva_intra			=	$_POST["tva_intra"];
+        $this->object->tva_assuj             =     $_POST["assujtva_value"]?$_POST["assujtva_value"]:1;
+        $this->object->tva_intra            =    $_POST["tva_intra"];
 
         //Local Taxes
-        $this->object->localtax1_assuj		= 	$_POST["localtax1assuj_value"];
-        $this->object->localtax2_assuj		= 	$_POST["localtax2assuj_value"];
+        $this->object->localtax1_assuj        =     $_POST["localtax1assuj_value"];
+        $this->object->localtax2_assuj        =     $_POST["localtax2assuj_value"];
 
         // We set country_id, and country_code label of the chosen country
         if ($this->object->country_id)
         {
             $tmparray=getCountry($this->object->country_id, 'all', $this->db, $langs, 0);
-            $this->object->country_code	=	$tmparray['code'];
-            $this->object->country_label=	$tmparray['label'];
+            $this->object->country_code    =    $tmparray['code'];
+            $this->object->country_label=    $tmparray['label'];
         }
     }
 }

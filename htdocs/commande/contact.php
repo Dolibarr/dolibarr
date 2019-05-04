@@ -51,67 +51,67 @@ $object = new Commande($db);
 
 if ($action == 'addcontact' && $user->rights->commande->creer)
 {
-	$result = $object->fetch($id);
+    $result = $object->fetch($id);
 
     if ($result > 0 && $id > 0)
     {
-    	$contactid = (GETPOST('userid', 'int') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
-  		$result = $object->add_contact($contactid, $_POST["type"], $_POST["source"]);
+        $contactid = (GETPOST('userid', 'int') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
+          $result = $object->add_contact($contactid, $_POST["type"], $_POST["source"]);
     }
 
-	if ($result >= 0)
-	{
-		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
-		exit;
-	}
-	else
-	{
-		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
-		{
-			$langs->load("errors");
-			setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
-		}
-		else
-		{
-			setEventMessages($object->error, $object->errors, 'errors');
-		}
-	}
+    if ($result >= 0)
+    {
+        header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+        exit;
+    }
+    else
+    {
+        if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+        {
+            $langs->load("errors");
+            setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
+        }
+        else
+        {
+            setEventMessages($object->error, $object->errors, 'errors');
+        }
+    }
 }
 
 // bascule du statut d'un contact
 elseif ($action == 'swapstatut' && $user->rights->commande->creer)
 {
-	if ($object->fetch($id))
-	{
-	    $result=$object->swapContactStatus(GETPOST('ligne'));
-	}
-	else
-	{
-		dol_print_error($db);
-	}
+    if ($object->fetch($id))
+    {
+        $result=$object->swapContactStatus(GETPOST('ligne'));
+    }
+    else
+    {
+        dol_print_error($db);
+    }
 }
 
 // Efface un contact
 elseif ($action == 'deletecontact' && $user->rights->commande->creer)
 {
-	$object->fetch($id);
-	$result = $object->delete_contact($_GET["lineid"]);
+    $object->fetch($id);
+    $result = $object->delete_contact($_GET["lineid"]);
 
-	if ($result >= 0)
-	{
-		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
-		exit;
-	}
-	else {
-		dol_print_error($db);
-	}
+    if ($result >= 0)
+    {
+        header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+        exit;
+    }
+    else {
+        dol_print_error($db);
+    }
 }
 /*
 elseif ($action == 'setaddress' && $user->rights->commande->creer)
 {
-	$object->fetch($id);
-	$result=$object->setDeliveryAddress($_POST['fk_address']);
-	if ($result < 0) dol_print_error($db,$object->error);
+    $object->fetch($id);
+    $result=$object->setDeliveryAddress($_POST['fk_address']);
+    if ($result < 0) dol_print_error($db,$object->error);
 }*/
 
 
@@ -136,81 +136,81 @@ $userstatic=new User($db);
 
 if ($id > 0 || ! empty($ref))
 {
-	$langs->trans("OrderCard");
+    $langs->trans("OrderCard");
 
-	if ($object->fetch($id, $ref) > 0)
-	{
-	    $object->fetch_thirdparty();
+    if ($object->fetch($id, $ref) > 0)
+    {
+        $object->fetch_thirdparty();
 
-		$head = commande_prepare_head($object);
-		dol_fiche_head($head, 'contact', $langs->trans("CustomerOrder"), -1, 'order');
-
-
-		// Order card
-
-		$linkback = '<a href="' . DOL_URL_ROOT . '/commande/list.php?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+        $head = commande_prepare_head($object);
+        dol_fiche_head($head, 'contact', $langs->trans("CustomerOrder"), -1, 'order');
 
 
-		$morehtmlref='<div class="refidno">';
-		// Ref customer
-		$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', 0, 1);
-		$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', null, null, '', 1);
-		// Thirdparty
-		$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
-	    // Project
-	    if (! empty($conf->projet->enabled))
-	    {
-	        $langs->load("projects");
-	        $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
-	        if ($user->rights->commande->creer)
-	        {
-	            if ($action != 'classify')
-	                //$morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
-	                $morehtmlref.=' : ';
-	                if ($action == 'classify') {
-	                    //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
-	                    $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-	                    $morehtmlref.='<input type="hidden" name="action" value="classin">';
-	                    $morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	                    $morehtmlref.=$formproject->select_projects($object->thirdparty->id, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-	                    $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-	                    $morehtmlref.='</form>';
-	                } else {
-	                    $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->thirdparty->id, $object->fk_project, 'none', 0, 0, 0, 1);
-	                }
-	        } else {
-	            if (! empty($object->fk_project)) {
-	                $proj = new Project($db);
-	                $proj->fetch($object->fk_project);
-	                $morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
-	                $morehtmlref.=$proj->ref;
-	                $morehtmlref.='</a>';
-	            } else {
-	                $morehtmlref.='';
-	            }
-	        }
-	    }
-		$morehtmlref.='</div>';
+        // Order card
 
-		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
+        $linkback = '<a href="' . DOL_URL_ROOT . '/commande/list.php?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
-		dol_fiche_end();
 
-		print '<br>';
+        $morehtmlref='<div class="refidno">';
+        // Ref customer
+        $morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', 0, 1);
+        $morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', null, null, '', 1);
+        // Thirdparty
+        $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
+        // Project
+        if (! empty($conf->projet->enabled))
+        {
+            $langs->load("projects");
+            $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
+            if ($user->rights->commande->creer)
+            {
+                if ($action != 'classify')
+                    //$morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+                    $morehtmlref.=' : ';
+                    if ($action == 'classify') {
+                        //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+                        $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+                        $morehtmlref.='<input type="hidden" name="action" value="classin">';
+                        $morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+                        $morehtmlref.=$formproject->select_projects($object->thirdparty->id, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+                        $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+                        $morehtmlref.='</form>';
+                    } else {
+                        $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->thirdparty->id, $object->fk_project, 'none', 0, 0, 0, 1);
+                    }
+            } else {
+                if (! empty($object->fk_project)) {
+                    $proj = new Project($db);
+                    $proj->fetch($object->fk_project);
+                    $morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
+                    $morehtmlref.=$proj->ref;
+                    $morehtmlref.='</a>';
+                } else {
+                    $morehtmlref.='';
+                }
+            }
+        }
+        $morehtmlref.='</div>';
 
-		// Contacts lines (modules that overwrite templates must declare this into descriptor)
-		$dirtpls=array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
-		foreach($dirtpls as $reldir)
-		{
-		    $res=@include dol_buildpath($reldir.'/contacts.tpl.php');
-		    if ($res) break;
-		}
-	}
-	else
-	{
-		// Contact not found
-		print "ErrorRecordNotFound";
-	}
+        dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
+
+        dol_fiche_end();
+
+        print '<br>';
+
+        // Contacts lines (modules that overwrite templates must declare this into descriptor)
+        $dirtpls=array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
+        foreach($dirtpls as $reldir)
+        {
+            $res=@include dol_buildpath($reldir.'/contacts.tpl.php');
+            if ($res) break;
+        }
+    }
+    else
+    {
+        // Contact not found
+        print "ErrorRecordNotFound";
+    }
 }
 
 

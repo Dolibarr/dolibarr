@@ -25,7 +25,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 
 
 /**
- *	Parent class for barcode document models
+ *    Parent class for barcode document models
  */
 abstract class ModeleBarCode
 {
@@ -38,7 +38,7 @@ abstract class ModeleBarCode
     /**
      * Return if a model can be used or not
      *
-     * @return		boolean     true if model can be used
+     * @return        boolean     true if model can be used
      */
     public function isEnabled()
     {
@@ -48,7 +48,7 @@ abstract class ModeleBarCode
 
 
 /**
- *	Parent class for barcode numbering models
+ *    Parent class for barcode numbering models
  */
 abstract class ModeleNumRefBarCode
 {
@@ -59,8 +59,8 @@ abstract class ModeleNumRefBarCode
 
     /**     Return default description of numbering model
      *
-     *		@param	Translate	$langs		Object langs
-     *      @return string      			Descriptive text
+     *        @param    Translate    $langs        Object langs
+     *      @return string                  Descriptive text
      */
     public function info($langs)
     {
@@ -70,8 +70,8 @@ abstract class ModeleNumRefBarCode
 
     /**     Return model name
      *
-     *		@param	Translate	$langs		Object langs
-     *      @return string      			Model name
+     *        @param    Translate    $langs        Object langs
+     *      @return string                  Model name
      */
     public function getNom($langs)
     {
@@ -80,8 +80,8 @@ abstract class ModeleNumRefBarCode
 
     /**     Return a numbering example
      *
-     *		@param	Translate	$langs		Object langs
-     *      @return string      			Example
+     *        @param    Translate    $langs        Object langs
+     *      @return string                  Example
      */
     public function getExample($langs)
     {
@@ -92,9 +92,9 @@ abstract class ModeleNumRefBarCode
     /**
      *  Return next value available
      *
-     *	@param	Product		$objproduct	Object Product
-     *	@param	string		$type		Type of barcode (EAN, ISBN, ...)
-     *  @return string      			Value
+     *    @param    Product        $objproduct    Object Product
+     *    @param    string        $type        Type of barcode (EAN, ISBN, ...)
+     *  @return string                  Value
      */
     public function getNextValue($objproduct, $type = '')
     {
@@ -121,10 +121,10 @@ abstract class ModeleNumRefBarCode
     /**
      *      Return description of module parameters
      *
-     *      @param	Translate	$langs      Output language
-     *		@param	Societe		$soc		Third party object
-     *		@param	int			$type		-1=Nothing, 0=Product, 1=Service
-     *		@return	string					HTML translated description
+     *      @param    Translate    $langs      Output language
+     *        @param    Societe        $soc        Third party object
+     *        @param    int            $type        -1=Nothing, 0=Product, 1=Service
+     *        @return    string                    HTML translated description
      */
     public function getToolTip($langs, $soc, $type)
     {

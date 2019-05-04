@@ -26,19 +26,19 @@
  * Check validity of user/password/entity
  * If test is ko, reason must be filled into $_SESSION["dol_loginmesg"]
  *
- * @param	string	$usertotest		Login
- * @param	string	$passwordtotest	Password
- * @param   int		$entitytotest   Number of instance (always 1 if module multicompany not enabled)
- * @return	string					Login if OK, '' if KO
+ * @param    string    $usertotest        Login
+ * @param    string    $passwordtotest    Password
+ * @param   int        $entitytotest   Number of instance (always 1 if module multicompany not enabled)
+ * @return    string                    Login if OK, '' if KO
  */
 function check_user_password_empty($usertotest, $passwordtotest, $entitytotest)
 {
-	global $langs;
+    global $langs;
 
-	dol_syslog("functions_empty::check_user_password_empty usertotest=".$usertotest);
+    dol_syslog("functions_empty::check_user_password_empty usertotest=".$usertotest);
 
-	$login='';
-	$_SESSION["dol_loginmesg"]=$langs->trans("FailedToLogin");
+    $login='';
+    $_SESSION["dol_loginmesg"]=$langs->trans("FailedToLogin");
 
-	return $login;
+    return $login;
 }

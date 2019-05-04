@@ -19,9 +19,9 @@
  */
 
 /**
- *	\file       htdocs/core/lib/barcode.lib.php
- *	\brief      Set of functions used for barcode generation
- *	\ingroup    core
+ *    \file       htdocs/core/lib/barcode.lib.php
+ *    \brief      Set of functions used for barcode generation
+ *    \ingroup    core
  */
 
 /* ******************************************************************** */
@@ -59,11 +59,11 @@ else $genbarcode_loc = $conf->global->GENBARCODE_LOCATION;
 /**
  * Print barcode
  *
- * @param	string	       $code		Code
- * @param	string	       $encoding	Encoding
- * @param	integer	       $scale		Scale
- * @param	string	       $mode		'png' or 'jpg' ...
- * @return	array|string   $bars		array('encoding': the encoding which has been used, 'bars': the bars, 'text': text-positioning info) or string with error message
+ * @param    string           $code        Code
+ * @param    string           $encoding    Encoding
+ * @param    integer           $scale        Scale
+ * @param    string           $mode        'png' or 'jpg' ...
+ * @return    array|string   $bars        array('encoding': the encoding which has been used, 'bars': the bars, 'text': text-positioning info) or string with error message
  */
 function barcode_print($code, $encoding = "ANY", $scale = 2, $mode = "png")
 {
@@ -104,9 +104,9 @@ function barcode_print($code, $encoding = "ANY", $scale = 2, $mode = "png")
  *   MSI    MSI (by Leonid A. Broukhis)
  *   PLS    Plessey (by Leonid A. Broukhis)
  *
- * @param	string	$code		Code
- * @param	string	$encoding	Encoding
- * @return	array|false			array('encoding': the encoding which has been used, 'bars': the bars, 'text': text-positioning info)
+ * @param    string    $code        Code
+ * @param    string    $encoding    Encoding
+ * @return    array|false            array('encoding': the encoding which has been used, 'bars': the bars, 'text': text-positioning info)
  */
 function barcode_encode($code, $encoding)
 {
@@ -128,7 +128,7 @@ function barcode_encode($code, $encoding)
         dol_syslog("barcode.lib.php::barcode_encode Use barcode_encode_ean");
         $bars=barcode_encode_ean($code, $encoding);
     }
-    elseif (file_exists($genbarcode_loc))	// For example C39
+    elseif (file_exists($genbarcode_loc))    // For example C39
     {
         /* use genbarcode */
         dol_syslog("barcode.lib.php::barcode_encode Use genbarcode ".$genbarcode_loc." code=".$code." encoding=".$encoding);
@@ -155,8 +155,8 @@ function barcode_encode($code, $encoding)
 /**
  * Calculate EAN sum
  *
- * @param	string	$ean	EAN to encode
- * @return	integer			Sum
+ * @param    string    $ean    EAN to encode
+ * @return    integer            Sum
  */
 function barcode_gen_ean_sum($ean)
 {
@@ -164,7 +164,7 @@ function barcode_gen_ean_sum($ean)
     $ln=strlen($ean)-1;
     for ($i=$ln; $i>=0; $i--)
     {
-        if ($even) $esum+=$ean[$i];	else $osum+=$ean[$i];
+        if ($even) $esum+=$ean[$i];    else $osum+=$ean[$i];
         $even=!$even;
     }
     return (10-((3*$esum+$osum)%10))%10;
@@ -173,9 +173,9 @@ function barcode_gen_ean_sum($ean)
 /**
  * Encode EAN
  *
- * @param	string	$ean		Code
- * @param	string	$encoding	Encoding
- * @return	array				array('encoding': the encoding which has been used, 'bars': the bars, 'text': text-positioning info, 'error': error message if error)
+ * @param    string    $ean        Code
+ * @param    string    $encoding    Encoding
+ * @return    array                array('encoding': the encoding which has been used, 'bars': the bars, 'text': text-positioning info, 'error': error message if error)
  */
 function barcode_encode_ean($ean, $encoding = "EAN-13")
 {
@@ -226,17 +226,17 @@ function barcode_encode_ean($ean, $encoding = "EAN-13")
     return array(
         "error" => '',
         "encoding" => $encoding,
-		"bars" => $line,
-		"text" => $text
+        "bars" => $line,
+        "text" => $text
     );
 }
 
 /**
  * Encode result of genbarcode command
  *
- * @param	string	$code		Code
- * @param	string	$encoding	Encoding
- * @return	array|false			array('encoding': the encoding which has been used, 'bars': the bars, 'text': text-positioning info)
+ * @param    string    $code        Code
+ * @param    string    $encoding    Encoding
+ * @return    array|false            array('encoding': the encoding which has been used, 'bars': the bars, 'text': text-positioning info)
  */
 function barcode_encode_genbarcode($code, $encoding)
 {
@@ -271,16 +271,16 @@ function barcode_encode_genbarcode($code, $encoding)
     }
     //var_dump($bars);
     $ret=array(
-		"bars" => trim($bars),
-		"text" => trim($text),
-		"encoding" => trim($encoding),
-    	"error" => ""
+        "bars" => trim($bars),
+        "text" => trim($text),
+        "encoding" => trim($encoding),
+        "error" => ""
     );
     //var_dump($ret);
     if (preg_match('/permission denied/i', $ret['bars']))
     {
-    	$ret['error']=$ret['bars']; $ret['bars']='';
-    	return $ret;
+        $ret['error']=$ret['bars']; $ret['bars']='';
+        return $ret;
     }
     if (!$ret['bars']) return false;
     if (!$ret['text']) return false;
@@ -291,13 +291,13 @@ function barcode_encode_genbarcode($code, $encoding)
 /**
  * Output image onto standard output, or onto disk if global filebarcode is defined
  *
- * @param	string	$text		the text-line (<position>:<font-size>:<character> ...)
- * @param	string	$bars   	where to place the bars  (<space-width><bar-width><space-width><bar-width>...)
- * @param	int		$scale		scale factor ( 1 < scale < unlimited (scale 50 will produce 5400x300 pixels when using EAN-13!!!))
- * @param	string	$mode   	png,gif,jpg (default='png')
- * @param	int		$total_y	the total height of the image ( default: scale * 60 )
- * @param	array	$space		default:  $space[top]   = 2 * $scale; $space[bottom]= 2 * $scale;  $space[left]  = 2 * $scale;  $space[right] = 2 * $scale;
- * @return	string|null
+ * @param    string    $text        the text-line (<position>:<font-size>:<character> ...)
+ * @param    string    $bars       where to place the bars  (<space-width><bar-width><space-width><bar-width>...)
+ * @param    int        $scale        scale factor ( 1 < scale < unlimited (scale 50 will produce 5400x300 pixels when using EAN-13!!!))
+ * @param    string    $mode       png,gif,jpg (default='png')
+ * @param    int        $total_y    the total height of the image ( default: scale * 60 )
+ * @param    array    $space        default:  $space[top]   = 2 * $scale; $space[bottom]= 2 * $scale;  $space[left]  = 2 * $scale;  $space[right] = 2 * $scale;
+ * @return    string|null
  */
 function barcode_outimage($text, $bars, $scale = 1, $mode = "png", $total_y = 0, $space = '')
 {

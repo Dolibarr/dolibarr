@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@inodbox.com>
+/* Copyright (C) 2010-2012    Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011		Laurent Destailleur	<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -17,71 +17,71 @@
  */
 
 /**
- *	\file       htdocs/contact/canvas/default/actions_contactcard_default.class.php
- *	\ingroup    thirdparty
- *	\brief      Fichier de la classe Thirdparty contact card controller (default canvas)
+ *    \file       htdocs/contact/canvas/default/actions_contactcard_default.class.php
+ *    \ingroup    thirdparty
+ *    \brief      Fichier de la classe Thirdparty contact card controller (default canvas)
  */
 include_once DOL_DOCUMENT_ROOT.'/contact/canvas/actions_contactcard_common.class.php';
 
 /**
- *	\class      ActionsContactCardDefault
- *	\brief      Classe permettant la gestion des contacts par defaut
+ *    \class      ActionsContactCardDefault
+ *    \brief      Classe permettant la gestion des contacts par defaut
  */
 class ActionsContactCardDefault extends ActionsContactCardCommon
 {
     /**
      *  Constructor
      *
-     *	@param	DoliDB	$db				Handler acces base de donnees
-     *	@param	string	$dirmodule		Name of directory of module
-     *	@param	string	$targetmodule	Name of directory of module where canvas is stored
-     *	@param	string	$canvas			Name of canvas
-     *	@param	string	$card			Name of tab (sub-canvas)
+     *    @param    DoliDB    $db                Handler acces base de donnees
+     *    @param    string    $dirmodule        Name of directory of module
+     *    @param    string    $targetmodule    Name of directory of module where canvas is stored
+     *    @param    string    $canvas            Name of canvas
+     *    @param    string    $card            Name of tab (sub-canvas)
      */
     public function __construct($db, $dirmodule, $targetmodule, $canvas, $card)
     {
         $this->db               = $db;
-        $this->dirmodule		= $dirmodule;
+        $this->dirmodule        = $dirmodule;
         $this->targetmodule     = $targetmodule;
         $this->canvas           = $canvas;
         $this->card             = $card;
-	}
+    }
 
-	/**
-	 * 	Return the title of card
-	 *
-	 * 	@param	string	$action		Code action
-	 * 	@return	string				Title
-	 */
-	private function getTitle($action)
-	{
-		global $langs;
+    /**
+     *     Return the title of card
+     *
+     *     @param    string    $action        Code action
+     *     @return    string                Title
+     */
+    private function getTitle($action)
+    {
+        global $langs;
 
-		$out='';
+        $out='';
 
-		if ($action == 'view') 		$out.= (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contact") : $langs->trans("ContactAddress"));
-		if ($action == 'edit') 		$out.= (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("EditContact") : $langs->trans("EditContactAddress"));
-		if ($action == 'create')	$out.= (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("NewContact") : $langs->trans("NewContactAddress"));
+        if ($action == 'view')         $out.= (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contact") : $langs->trans("ContactAddress"));
+        if ($action == 'edit')         $out.= (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("EditContact") : $langs->trans("EditContactAddress"));
+        if ($action == 'create')    $out.= (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("NewContact") : $langs->trans("NewContactAddress"));
 
-		return $out;
-	}
+        return $out;
+    }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *  Assign custom values for canvas
-	 *
-	 *  @param	string		$action    	Type of action
-	 *  @param	int			$id				Id
-	 *  @return	void
-	 */
-	public function assign_values(&$action, $id)
-	{
+    /**
+     *  Assign custom values for canvas
+     *
+     *  @param    string        $action        Type of action
+     *  @param    int            $id                Id
+     *  @return    void
+     */
+    public function assign_values(&$action, $id)
+    {
         // phpcs:enable
-		global $limit, $offset, $sortfield, $sortorder;
-		global $conf, $db, $langs, $user;
-		global $form;
+        global $limit, $offset, $sortfield, $sortorder;
+        global $conf, $db, $langs, $user;
+        global $form;
 
-		$ret = $this->getObject($id);
+        $ret = $this->getObject($id);
 
         parent::assign_values($action, $id);
 
@@ -89,48 +89,48 @@ class ActionsContactCardDefault extends ActionsContactCardCommon
         $this->tpl['error'] = $this->error;
         $this->tpl['errors']= $this->errors;
 
-		if ($action == 'view')
-		{
+        if ($action == 'view')
+        {
             // Card header
             $head = contact_prepare_head($this->object);
             $title = $this->getTitle($action);
 
-		    $this->tpl['showhead']=dol_get_fiche_head($head, 'card', $title, 0, 'contact');
-		    $this->tpl['showend']=dol_get_fiche_end();
+            $this->tpl['showhead']=dol_get_fiche_head($head, 'card', $title, 0, 'contact');
+            $this->tpl['showend']=dol_get_fiche_end();
 
-        	$objsoc = new Societe($db);
+            $objsoc = new Societe($db);
             $objsoc->fetch($this->object->socid);
 
             $this->tpl['actionstodo']=show_actions_todo($conf, $langs, $db, $objsoc, $this->object, 1);
 
             $this->tpl['actionsdone']=show_actions_done($conf, $langs, $db, $objsoc, $this->object, 1);
-		}
-		else
-		{
-			// Confirm delete contact
-        	if ($action == 'delete' && $user->rights->societe->contact->supprimer)
-        	{
-        		$this->tpl['action_delete'] = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$this->object->id, $langs->trans("DeleteContact"), $langs->trans("ConfirmDeleteContact"), "confirm_delete", '', 0, 1);
-        	}
-		}
+        }
+        else
+        {
+            // Confirm delete contact
+            if ($action == 'delete' && $user->rights->societe->contact->supprimer)
+            {
+                $this->tpl['action_delete'] = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$this->object->id, $langs->trans("DeleteContact"), $langs->trans("ConfirmDeleteContact"), "confirm_delete", '', 0, 1);
+            }
+        }
 
-		if ($action == 'list')
-		{
-	        $this->LoadListDatas($limit, $offset, $sortfield, $sortorder);
-		}
-	}
+        if ($action == 'list')
+        {
+            $this->LoadListDatas($limit, $offset, $sortfield, $sortorder);
+        }
+    }
 
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 * 	Fetch datas list and save into ->list_datas
-	 *
-	 *  @param	int		$limit		Limit number of responses
-	 *  @param	int		$offset		Offset for first response
-	 *  @param	string	$sortfield	Sort field
-	 *  @param	string	$sortorder	Sort order ('ASC' or 'DESC')
-	 *  @return	void
-	 */
+    /**
+     *     Fetch datas list and save into ->list_datas
+     *
+     *  @param    int        $limit        Limit number of responses
+     *  @param    int        $offset        Offset for first response
+     *  @param    string    $sortfield    Sort field
+     *  @param    string    $sortorder    Sort order ('ASC' or 'DESC')
+     *  @return    void
+     */
     public function LoadListDatas($limit, $offset, $sortfield, $sortorder)
     {
         // phpcs:enable

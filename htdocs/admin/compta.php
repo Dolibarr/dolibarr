@@ -21,9 +21,9 @@
  */
 
 /**
- *	\file       htdocs/admin/compta.php
- *	\ingroup    compta
- *	\brief      Page to setup accountancy module
+ *    \file       htdocs/admin/compta.php
+ *    \ingroup    compta
+ *    \brief      Page to setup accountancy module
  */
 
 require '../main.inc.php';
@@ -123,13 +123,13 @@ print '<td colspan="2">'.nl2br($langs->trans('OptionModeTrueDesc'));
 // Write info on way to count VAT
 //if (! empty($conf->global->MAIN_MODULE_COMPTABILITE))
 //{
-//	//	print "<br>\n";
-//	//	print nl2br($langs->trans('OptionModeTrueInfoModuleComptabilite'));
+//    //    print "<br>\n";
+//    //    print nl2br($langs->trans('OptionModeTrueInfoModuleComptabilite'));
 //}
 //else
 //{
-//	//	print "<br>\n";
-//	//	print nl2br($langs->trans('OptionModeTrueInfoExpert'));
+//    //    print "<br>\n";
+//    //    print nl2br($langs->trans('OptionModeTrueInfoExpert'));
 //}
 print "</td></tr>\n";
 print '<tr class="oddeven"><td width="200"><input type="radio" name="accounting_mode" value="CREANCES-DETTES"'.($accounting_mode == 'CREANCES-DETTES' ? ' checked' : '').'> '.$langs->trans('OptionModeVirtual').'</td>';
@@ -147,16 +147,16 @@ print "</tr>\n";
 
 foreach ($list as $key)
 {
-	print '<tr class="oddeven value">';
+    print '<tr class="oddeven value">';
 
-	// Param
-	$libelle = $langs->trans($key);
-	print '<td><label for="'.$key.'">'.$libelle.'</label></td>';
+    // Param
+    $libelle = $langs->trans($key);
+    print '<td><label for="'.$key.'">'.$libelle.'</label></td>';
 
-	// Value
-	print '<td>';
-	print '<input type="text" size="20" id="'.$key.'" name="'.$key.'" value="'.$conf->global->$key.'">';
-	print '</td></tr>';
+    // Value
+    print '<td>';
+    print '<input type="text" size="20" id="'.$key.'" name="'.$key.'" value="'.$conf->global->$key.'">';
+    print '</td></tr>';
 }
 
 print "</table>\n";

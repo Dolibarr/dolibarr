@@ -46,12 +46,12 @@ $langs->load("exports");
 // Check exportkey
 if (empty($datatoimport))
 {
-	$user->getrights();
+    $user->getrights();
 
-	llxHeader();
-	print '<div class="error">Bad value for datatoimport.</div>';
-	llxFooter();
-	exit;
+    llxHeader();
+    print '<div class="error">Bad value for datatoimport.</div>';
+    llxFooter();
+    exit;
 }
 
 
@@ -75,7 +75,7 @@ if (isset($_GET["contenttype"])) $contenttype=$_GET["contenttype"];
 $outputencoding='UTF-8';
 
 if ($contenttype)       header('Content-Type: '.$contenttype.($outputencoding?'; charset='.$outputencoding:''));
-if ($attachment) 		header('Content-Disposition: attachment; filename="'.$filename.'"');
+if ($attachment)         header('Content-Disposition: attachment; filename="'.$filename.'"');
 
 
 // List of targets fields
@@ -84,9 +84,9 @@ $contentlinevalues=array();
 $i = 0;
 foreach($fieldstarget as $code=>$label)
 {
-	$withoutstar=preg_replace('/\*/', '', $fieldstarget[$code]);
-	$headerlinefields[]=$langs->transnoentities($withoutstar).($withoutstar != $fieldstarget[$code]?'*':'').' ('.$code.')';
-	$contentlinevalues[]=$valuestarget[$code];
+    $withoutstar=preg_replace('/\*/', '', $fieldstarget[$code]);
+    $headerlinefields[]=$langs->transnoentities($withoutstar).($withoutstar != $fieldstarget[$code]?'*':'').' ('.$code.')';
+    $contentlinevalues[]=$valuestarget[$code];
 }
 //var_dump($headerlinefields);
 //var_dump($contentlinevalues);

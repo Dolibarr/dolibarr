@@ -18,9 +18,9 @@
  */
 
 /**
- *	\file       htdocs/projet/document.php
- *	\ingroup    project
- *	\brief      Page to managed related documents linked to a project
+ *    \file       htdocs/projet/document.php
+ *    \ingroup    project
+ *    \brief      Page to managed related documents linked to a project
  */
 
 require '../main.inc.php';
@@ -33,12 +33,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'other'));
 
-$action		= GETPOST('action', 'alpha');
-$confirm	= GETPOST('confirm', 'alpha');
-$id			= GETPOST('id', 'int');
-$ref		= GETPOST('ref', 'alpha');
-$mine 		= (GETPOST('mode', 'alpha') == 'mine' ? 1 : 0);
-//if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
+$action        = GETPOST('action', 'alpha');
+$confirm    = GETPOST('confirm', 'alpha');
+$id            = GETPOST('id', 'int');
+$ref        = GETPOST('ref', 'alpha');
+$mine         = (GETPOST('mode', 'alpha') == 'mine' ? 1 : 0);
+//if (! $user->rights->projet->all->lire) $mine=1;    // Special for projects
 
 // Security check
 $socid=0;
@@ -88,7 +88,7 @@ $form = new Form($db);
 
 if ($object->id > 0)
 {
-	$upload_dir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($object->ref);
+    $upload_dir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($object->ref);
 
     // To verify role of users
     //$userAccess = $object->restrictedProjectArea($user,'read');
@@ -96,66 +96,66 @@ if ($object->id > 0)
     //$userDelete = $object->restrictedProjectArea($user,'delete');
     //print "userAccess=".$userAccess." userWrite=".$userWrite." userDelete=".$userDelete;
 
-	$head = project_prepare_head($object);
-	dol_fiche_head($head, 'document', $langs->trans("Project"), -1, ($object->public?'projectpub':'project'));
+    $head = project_prepare_head($object);
+    dol_fiche_head($head, 'document', $langs->trans("Project"), -1, ($object->public?'projectpub':'project'));
 
-	// Files list constructor
-	$filearray=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);
-	$totalsize=0;
-	foreach($filearray as $key => $file)
-	{
-		$totalsize+=$file['size'];
-	}
-
-
-	// Project card
-
-	$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
-
-	$morehtmlref='<div class="refidno">';
-	// Title
-	$morehtmlref.=$object->title;
-	// Thirdparty
-	if ($object->thirdparty->id > 0)
-	{
-	    $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1, 'project');
-	}
-	$morehtmlref.='</div>';
-
-	// Define a complementary filter for search of next/prev ref.
-	if (! $user->rights->projet->all->lire)
-	{
-	    $objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
-	    $object->next_prev_filter=" rowid in (".(count($objectsListId)?join(',', array_keys($objectsListId)):'0').")";
-	}
-
-	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+    // Files list constructor
+    $filearray=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);
+    $totalsize=0;
+    foreach($filearray as $key => $file)
+    {
+        $totalsize+=$file['size'];
+    }
 
 
-	print '<div class="fichecenter">';
-	print '<div class="underbanner clearboth"></div>';
+    // Project card
 
-	print '<table class="border tableforfield centpercent">';
+    $linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-	// Files infos
-	print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td>'.count($filearray).'</td></tr>';
-	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td>'.dol_print_size($totalsize, 1, 1).'</td></tr>';
+    $morehtmlref='<div class="refidno">';
+    // Title
+    $morehtmlref.=$object->title;
+    // Thirdparty
+    if ($object->thirdparty->id > 0)
+    {
+        $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1, 'project');
+    }
+    $morehtmlref.='</div>';
 
-	print "</table>\n";
+    // Define a complementary filter for search of next/prev ref.
+    if (! $user->rights->projet->all->lire)
+    {
+        $objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
+        $object->next_prev_filter=" rowid in (".(count($objectsListId)?join(',', array_keys($objectsListId)):'0').")";
+    }
 
-	print '</div>';
+    dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
 
-	dol_fiche_end();
+    print '<div class="fichecenter">';
+    print '<div class="underbanner clearboth"></div>';
 
-	$modulepart = 'project';
-	$permission = ($userWrite > 0);
-	$permtoedit = ($userWrite > 0);
-	include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
+    print '<table class="border tableforfield centpercent">';
+
+    // Files infos
+    print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td>'.count($filearray).'</td></tr>';
+    print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td>'.dol_print_size($totalsize, 1, 1).'</td></tr>';
+
+    print "</table>\n";
+
+    print '</div>';
+
+
+    dol_fiche_end();
+
+    $modulepart = 'project';
+    $permission = ($userWrite > 0);
+    $permtoedit = ($userWrite > 0);
+    include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 }
 else
 {
-	dol_print_error('', 'NoRecordFound');
+    dol_print_error('', 'NoRecordFound');
 }
 
 // End of page

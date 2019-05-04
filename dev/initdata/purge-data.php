@@ -102,7 +102,7 @@ $sqls=array(
         "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseurdet WHERE fk_commande IN (select rowid FROM ".MAIN_DB_PREFIX."commande_fournisseur where date_creation < '__DATE__')",
         "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseur where date_creation < '__DATE__'",
     ),
-	'supplier_invoice'=>array(
+    'supplier_invoice'=>array(
         "DELETE FROM ".MAIN_DB_PREFIX."facture_fourn_det WHERE fk_facture_fourn IN (select rowid FROM ".MAIN_DB_PREFIX."facture_fourn where datec < '__DATE__')",
         "DELETE FROM ".MAIN_DB_PREFIX."facture_fourn where datec < '__DATE__'",
     ),
@@ -138,9 +138,9 @@ $sqls=array(
         "DELETE FROM ".MAIN_DB_PREFIX."product_price WHERE fk_product IN (select rowid FROM ".MAIN_DB_PREFIX."product where datec < '__DATE__')",
         "DELETE FROM ".MAIN_DB_PREFIX."product_fournisseur_price WHERE fk_product IN (select rowid FROM ".MAIN_DB_PREFIX."product where datec < '__DATE__')",
         "DELETE FROM ".MAIN_DB_PREFIX."product_batch WHERE fk_product_stock IN (select rowid FROM ".MAIN_DB_PREFIX."product_stock where fk_product IN (select rowid FROM ".MAIN_DB_PREFIX."product where datec < '__DATE__'))",
-    	"DELETE FROM ".MAIN_DB_PREFIX."product_stock WHERE fk_product IN (select rowid FROM ".MAIN_DB_PREFIX."product where datec < '__DATE__')",
+        "DELETE FROM ".MAIN_DB_PREFIX."product_stock WHERE fk_product IN (select rowid FROM ".MAIN_DB_PREFIX."product where datec < '__DATE__')",
         "DELETE FROM ".MAIN_DB_PREFIX."product_lot WHERE fk_product IN (select rowid FROM ".MAIN_DB_PREFIX."product where datec < '__DATE__')",
-    	"DELETE FROM ".MAIN_DB_PREFIX."product where datec < '__DATE__'",
+        "DELETE FROM ".MAIN_DB_PREFIX."product where datec < '__DATE__'",
     ),
     'project'=>array(
         // TODO set fk_project to null on object that refer to project
@@ -160,7 +160,7 @@ $sqls=array(
         "DELETE FROM ".MAIN_DB_PREFIX."categorie_societe WHERE fk_soc IN (select rowid FROM ".MAIN_DB_PREFIX."societe where datec < '__DATE__')",
         "DELETE FROM ".MAIN_DB_PREFIX."societe_remise_except WHERE fk_soc IN (select rowid FROM ".MAIN_DB_PREFIX."societe where datec < '__DATE__')",
         "DELETE FROM ".MAIN_DB_PREFIX."societe_rib WHERE fk_soc IN (select rowid FROM ".MAIN_DB_PREFIX."societe where datec < '__DATE__')",
-    	"DELETE FROM ".MAIN_DB_PREFIX."societe where datec < '__DATE__'",
+        "DELETE FROM ".MAIN_DB_PREFIX."societe where datec < '__DATE__'",
     )
 );
 
@@ -216,18 +216,18 @@ if ($date == 'all') $date = '2199-01-01';
 // Replace database handler
 if (! empty($argv[4]))
 {
-	$db->close();
-	unset($db);
-	$db=getDoliDBInstance($argv[4], $argv[5], $argv[6], $argv[7], $argv[8], $argv[9]);
-	$user=new User($db);
+    $db->close();
+    unset($db);
+    $db=getDoliDBInstance($argv[4], $argv[5], $argv[6], $argv[7], $argv[8], $argv[9]);
+    $user=new User($db);
 }
 
 //var_dump($user->db->database_name);
 $ret=$user->fetch('', 'admin');
 if (! $ret > 0)
 {
-	print 'An admin user with login "admin" must exists to use this script.'."\n";
-	exit;
+    print 'An admin user with login "admin" must exists to use this script.'."\n";
+    exit;
 }
 //$user->getrights();
 

@@ -57,30 +57,30 @@ class Donations extends DolibarrApi
      * Return an array with donation informations
      *
      * @param       int         $id         ID of order
-     * @return 	array|mixed data without useless information
+     * @return     array|mixed data without useless information
      *
-     * @throws 	RestException
+     * @throws     RestException
      */
     public function get($id)
     {
-		if(! DolibarrApiAccess::$user->rights->don->lire) {
-			throw new RestException(401);
-		}
+        if(! DolibarrApiAccess::$user->rights->don->lire) {
+            throw new RestException(401);
+        }
 
         $result = $this->don->fetch($id);
         if( ! $result ) {
             throw new RestException(404, 'Donation not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('don', $this->don->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-		}
+        if( ! DolibarrApi::_checkAccessToResource('don', $this->don->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
 
-		// Add external contacts ids
-		//$this->don->contacts_ids = $this->don->liste_contact(-1,'external',1);
-		//$this->don->fetchObjectLinked();
-		return $this->_cleanObjectDatas($this->don);
-	}
+        // Add external contacts ids
+        //$this->don->contacts_ids = $this->don->liste_contact(-1,'external',1);
+        //$this->don->fetchObjectLinked();
+        return $this->_cleanObjectDatas($this->don);
+    }
 
 
 
@@ -123,12 +123,12 @@ class Donations extends DolibarrApi
             {
                 throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
             }
-	        $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
             $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
 
         $sql.= $db->order($sortfield, $sortorder);
-        if ($limit)	{
+        if ($limit)    {
             if ($page < 0)
             {
                 $page = 0;
@@ -165,7 +165,7 @@ class Donations extends DolibarrApi
             throw new RestException(404, 'No donation found');
         }
 
-		return $obj_ret;
+        return $obj_ret;
     }
 
     /**
@@ -211,17 +211,17 @@ class Donations extends DolibarrApi
     public function put($id, $request_data = null)
     {
         if (! DolibarrApiAccess::$user->rights->don->creer) {
-			throw new RestException(401);
-		}
+            throw new RestException(401);
+        }
 
         $result = $this->don->fetch($id);
         if (! $result) {
             throw new RestException(404, 'Donation not found');
         }
 
-		if (! DolibarrApi::_checkAccessToResource('donation', $this->don->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-		}
+        if (! DolibarrApi::_checkAccessToResource('donation', $this->don->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
         foreach ($request_data as $field => $value) {
             if ($field == 'id') continue;
             $this->don->$field = $value;
@@ -233,7 +233,7 @@ class Donations extends DolibarrApi
         }
         else
         {
-        	throw new RestException(500, $this->don->error);
+            throw new RestException(500, $this->don->error);
         }
     }
 
@@ -246,16 +246,16 @@ class Donations extends DolibarrApi
     public function delete($id)
     {
         if(! DolibarrApiAccess::$user->rights->don->supprimer) {
-			throw new RestException(401);
-		}
+            throw new RestException(401);
+        }
         $result = $this->don->fetch($id);
         if( ! $result ) {
             throw new RestException(404, 'Donation not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('donation', $this->don->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-		}
+        if( ! DolibarrApi::_checkAccessToResource('donation', $this->don->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
 
         if( ! $this->don->delete(DolibarrApiAccess::$user)) {
             throw new RestException(500, 'Error when delete donation : '.$this->don->error);
@@ -272,7 +272,7 @@ class Donations extends DolibarrApi
     /**
      * Validate an donation
      *
-	 * If you get a bad value for param notrigger check, provide this in body
+     * If you get a bad value for param notrigger check, provide this in body
      * {
      *   "idwarehouse": 0,
      *   "notrigger": 0
@@ -284,7 +284,7 @@ class Donations extends DolibarrApi
      *
      * @url POST    {id}/validate
      *
-	 * @throws 304
+     * @throws 304
      * @throws 401
      * @throws 404
      * @throws 500
@@ -294,24 +294,24 @@ class Donations extends DolibarrApi
     public function validate($id, $idwarehouse = 0, $notrigger = 0)
     {
         if(! DolibarrApiAccess::$user->rights->don->creer) {
-			throw new RestException(401);
-		}
+            throw new RestException(401);
+        }
         $result = $this->don->fetch($id);
         if( ! $result ) {
             throw new RestException(404, 'Donation not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('don', $this->don->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-		}
+        if( ! DolibarrApi::_checkAccessToResource('don', $this->don->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
 
-		$result = $this->don->valid(DolibarrApiAccess::$user, $idwarehouse, $notrigger);
-		if ($result == 0) {
-		    throw new RestException(304, 'Error nothing done. May be object is already validated');
-		}
-		if ($result < 0) {
-		    throw new RestException(500, 'Error when validating Order: '.$this->don->error);
-		}
+        $result = $this->don->valid(DolibarrApiAccess::$user, $idwarehouse, $notrigger);
+        if ($result == 0) {
+            throw new RestException(304, 'Error nothing done. May be object is already validated');
+        }
+        if ($result < 0) {
+            throw new RestException(500, 'Error when validating Order: '.$this->don->error);
+        }
         $result = $this->don->fetch($id);
         if( ! $result ) {
             throw new RestException(404, 'Order not found');

@@ -29,8 +29,8 @@ $path=dirname(__FILE__).'/';
 
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
-	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-	exit(-1);
+    echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
+    exit(-1);
 }
 
 require_once $path."../../htdocs/master.inc.php";
@@ -63,13 +63,13 @@ print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
 dol_syslog($script_file." launched with arg ".join(',', $argv));
 
 if (! isset($argv[3]) || ! $argv[3]) {
-	print "Usage: ".$script_file." bank_ref [bank_receipt_number|all] (csv|tsv|excel|excel2007) [lang=xx_XX]\n";
-	exit(-1);
+    print "Usage: ".$script_file." bank_ref [bank_receipt_number|all] (csv|tsv|excel|excel2007) [lang=xx_XX]\n";
+    exit(-1);
 }
 $bankref=$argv[1];
 $num=$argv[2];
 $model=$argv[3];
-$newlangid='en_EN';	// To force a new lang id
+$newlangid='en_EN';    // To force a new lang id
 
 
 $invoicestatic=new Facture($db);
@@ -88,25 +88,25 @@ $banklinestatic=new AccountLine($db);
 // Parse parameters
 foreach ($argv as $key => $value)
 {
-	$found=false;
+    $found=false;
 
-	// Define options
-	if (preg_match('/^lang=/i', $value))
-	{
-		$found=true;
-		$valarray=explode('=', $value);
-		$newlangid=$valarray[1];
-		print 'Use language '.$newlangid.".\n";
-	}
+    // Define options
+    if (preg_match('/^lang=/i', $value))
+    {
+        $found=true;
+        $valarray=explode('=', $value);
+        $newlangid=$valarray[1];
+        print 'Use language '.$newlangid.".\n";
+    }
 }
 $outputlangs = $langs;
 if (! empty($newlangid))
 {
-	if ($outputlangs->defaultlang != $newlangid)
-	{
-		$outputlangs = new Translate("", $conf);
-		$outputlangs->setDefaultLang($newlangid);
-	}
+    if ($outputlangs->defaultlang != $newlangid)
+    {
+        $outputlangs = new Translate("", $conf);
+        $outputlangs->setDefaultLang($newlangid);
+    }
 }
 
 // Load translation files required by the page
@@ -116,12 +116,12 @@ $acct=new Account($db);
 $result=$acct->fetch('', $bankref);
 if ($result <= 0)
 {
-	print "Failed to find bank account with ref ".$bankref.".\n";
-	exit(-1);
+    print "Failed to find bank account with ref ".$bankref.".\n";
+    exit(-1);
 }
 else
 {
-	print "Export for bank account ".$acct->ref." (".$acct->label.").\n";
+    print "Export for bank account ".$acct->ref." (".$acct->label.").\n";
 }
 
 
@@ -131,8 +131,8 @@ $file = "export_".$model.".modules.php";
 $classname = "Export".$model;
 if (! dol_is_file($dir.$file))
 {
-	print "No driver to export with format ".$model."\n";
-	exit(-1);
+    print "No driver to export with format ".$model."\n";
+    exit(-1);
 }
 require_once $dir.$file;
 $objmodel = new $classname($db);
@@ -173,14 +173,14 @@ $array_export_TypeFields=array(
 $listofnum="";
 if (! empty($num) && $num != "all")
 {
-	$listofnum.="'";
-	$arraynum=explode(',', $num);
-	foreach($arraynum as $val)
-	{
-		if ($listofnum != "'") $listofnum.="','";
-		$listofnum.=$val;
-	}
-	$listofnum.="'";
+    $listofnum.="'";
+    $arraynum=explode(',', $num);
+    foreach($arraynum as $val)
+    {
+        if ($listofnum != "'") $listofnum.="','";
+        $listofnum.=$val;
+    }
+    $listofnum.="'";
 }
 $sql = "SELECT b.rowid, b.dateo as do, b.datev as dv,";
 $sql.= " b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type,";
@@ -197,251 +197,251 @@ $sql.= $db->order("b.num_releve, b.datev, b.datec", "ASC");  // We add date of c
 $resql=$db->query($sql);
 if ($resql)
 {
-	$balancebefore=array();
+    $balancebefore=array();
 
-	$numrows = $db->num_rows($resql);
+    $numrows = $db->num_rows($resql);
 
-	if ($numrows > 0)
-	{
-		// Open file
-		print 'Open file '.$filename.' into directory '.$dirname."\n";
-		dol_mkdir($dirname);
-		$result=$objmodel->open_file($dirname."/".$filename, $outputlangs);
+    if ($numrows > 0)
+    {
+        // Open file
+        print 'Open file '.$filename.' into directory '.$dirname."\n";
+        dol_mkdir($dirname);
+        $result=$objmodel->open_file($dirname."/".$filename, $outputlangs);
 
-		if ($result < 0)
-		{
-			print 'Failed to create file '.$filename.' into dir '.$dirname.'.'."\n";
-			return -1;
-		}
+        if ($result < 0)
+        {
+            print 'Failed to create file '.$filename.' into dir '.$dirname.'.'."\n";
+            return -1;
+        }
 
-		// Genere en-tete
-		$objmodel->write_header($outputlangs);
+        // Genere en-tete
+        $objmodel->write_header($outputlangs);
 
-		// Genere ligne de titre
-		$objmodel->write_title($array_fields, $array_selected, $outputlangs, $array_export_TypeFields);
-	}
+        // Genere ligne de titre
+        $objmodel->write_title($array_fields, $array_selected, $outputlangs, $array_export_TypeFields);
+    }
 
-	$i=0;
-	while ($i < $numrows)
-	{
-		$thirdparty='';
-		$accountelem='';
-		$comment='';
+    $i=0;
+    while ($i < $numrows)
+    {
+        $thirdparty='';
+        $accountelem='';
+        $comment='';
 
-		$objp = $db->fetch_object($resql);
+        $objp = $db->fetch_object($resql);
 
-		// Calculate start balance
-		if (! isset($balancebefore[$objp->num_releve]))
-		{
-			print 'Calculate start balance for receipt '.$objp->num_releve."\n";
+        // Calculate start balance
+        if (! isset($balancebefore[$objp->num_releve]))
+        {
+            print 'Calculate start balance for receipt '.$objp->num_releve."\n";
 
-			$sql2 = "SELECT sum(b.amount) as amount";
-			$sql2.= " FROM ".MAIN_DB_PREFIX."bank as b";
-			$sql2.= " WHERE b.num_releve < '".$db->escape($objp->num_releve)."'";
-			$sql2.= " AND b.fk_account = ".$objp->bankid;
-			$resql2=$db->query($sql2);
-			if ($resql2)
-			{
-				$obj2=$db->fetch_object($resql2);
-				$balancebefore[$objp->num_releve] = ($obj2->amount?$obj2->amount:0);
-				$db->free($resql2);
-			}
-			else
-			{
-				dol_print_error($db);
-				exit(-1);
-			}
+            $sql2 = "SELECT sum(b.amount) as amount";
+            $sql2.= " FROM ".MAIN_DB_PREFIX."bank as b";
+            $sql2.= " WHERE b.num_releve < '".$db->escape($objp->num_releve)."'";
+            $sql2.= " AND b.fk_account = ".$objp->bankid;
+            $resql2=$db->query($sql2);
+            if ($resql2)
+            {
+                $obj2=$db->fetch_object($resql2);
+                $balancebefore[$objp->num_releve] = ($obj2->amount?$obj2->amount:0);
+                $db->free($resql2);
+            }
+            else
+            {
+                dol_print_error($db);
+                exit(-1);
+            }
 
-			$total = $balancebefore[$objp->num_releve];
-		}
+            $total = $balancebefore[$objp->num_releve];
+        }
 
-		$totalbefore = $total;
-		$total = $total + $objp->amount;
+        $totalbefore = $total;
+        $total = $total + $objp->amount;
 
 
 
-		// Date operation
-		$dateop=$db->jdate($objp->do);
+        // Date operation
+        $dateop=$db->jdate($objp->do);
 
-		// Date de valeur
-		$datevalue=$db->jdate($objp->dv);
+        // Date de valeur
+        $datevalue=$db->jdate($objp->dv);
 
-		// Num cheque
-		$numchq=($objp->num_chq?$objp->num_chq:'');
+        // Num cheque
+        $numchq=($objp->num_chq?$objp->num_chq:'');
 
-		// Libelle
-		$reg=array();
-		preg_match('/\((.+)\)/i', $objp->label, $reg);	// Si texte entoure de parenthese on tente recherche de traduction
-		if ($reg[1] && $langs->transnoentitiesnoconv($reg[1])!=$reg[1]) $description=$langs->transnoentitiesnoconv($reg[1]);
-		else $description=$objp->label;
+        // Libelle
+        $reg=array();
+        preg_match('/\((.+)\)/i', $objp->label, $reg);    // Si texte entoure de parenthese on tente recherche de traduction
+        if ($reg[1] && $langs->transnoentitiesnoconv($reg[1])!=$reg[1]) $description=$langs->transnoentitiesnoconv($reg[1]);
+        else $description=$objp->label;
 
-		/*
-		 * Ajout les liens (societe, company...)
-		 */
-		$links = $acct->get_url($objp->rowid);
-		foreach($links as $key=>$val)
-		{
-			if ($links[$key]['type']=='payment')
-			{
-				$paymentstatic->fetch($links[$key]['url_id']);
-				$tmparray=$paymentstatic->getBillsArray('');
-				if (is_array($tmparray))
-				{
-					foreach($tmparray as $key => $val)
-					{
-						$invoicestatic->fetch($val);
-						if ($accountelem) $accountelem.= ', ';
-						$accountelem.=$invoicestatic->ref;
-					}
-				}
-			}
-			elseif ($links[$key]['type']=='payment_supplier')
-			{
-				$paymentsupplierstatic->fetch($links[$key]['url_id']);
-				$tmparray=$paymentsupplierstatic->getBillsArray('');
-				if (is_array($tmparray))
-				{
-					foreach($tmparray as $key => $val)
-					{
-						$invoicesupplierstatic->fetch($val);
-						if ($accountelem) $accountelem.= ', ';
-						$accountelem.=$invoicesupplierstatic->ref;
-					}
-				}
-			}
-			elseif ($links[$key]['type']=='payment_sc')
-			{
-				$paymentsocialcontributionstatic->fetch($links[$key]['url_id']);
-				if ($accountelem) $accountelem.= ', ';
-				$accountelem.=$langs->transnoentitiesnoconv("SocialContribution").' '.$paymentsocialcontributionstatic->ref;
-			}
-			elseif ($links[$key]['type']=='payment_vat')
-			{
-				$paymentvatstatic->fetch($links[$key]['url_id']);
-				if ($accountelem) $accountelem.= ', ';
-				$accountelem.=$langs->transnoentitiesnoconv("VATPayments").' '.$paymentvatstatic->ref;
-			}
-			elseif ($links[$key]['type']=='banktransfert')
-			{
-				$comment=$outputlangs->transnoentitiesnoconv("Transfer");
-				if ($objp->amount > 0)
-				{
-					if ($comment) $comment.= ' ';
-					$banklinestatic->fetch($links[$key]['url_id']);
-					$bankstatic->id=$banklinestatic->fk_account;
-					$bankstatic->label=$banklinestatic->bank_account_label;
-					$comment.= ' ('.$langs->transnoentitiesnoconv("from").' ';
-					$comment.= $bankstatic->getNomUrl(1, 'transactions');
-					$comment.= ' '.$langs->transnoentitiesnoconv("toward").' ';
-					$bankstatic->id=$objp->bankid;
-					$bankstatic->label=$objp->bankref;
-					$comment.= $bankstatic->getNomUrl(1, '');
-					$comment.= ')';
-				}
-				else
-				{
-					if ($comment) $comment.= ' ';
-					$bankstatic->id=$objp->bankid;
-					$bankstatic->label=$objp->bankref;
-					$comment.= ' ('.$langs->transnoentitiesnoconv("from").' ';
-					$comment.= $bankstatic->getNomUrl(1, '');
-					$comment.= ' '.$langs->transnoentitiesnoconv("toward").' ';
-					$banklinestatic->fetch($links[$key]['url_id']);
-					$bankstatic->id=$banklinestatic->fk_account;
-					$bankstatic->label=$banklinestatic->bank_account_label;
-					$comment.= $bankstatic->getNomUrl(1, 'transactions');
-					$comment.= ')';
-				}
-			}
-			elseif ($links[$key]['type']=='company')
-			{
-				if ($thirdparty) $thirdparty.= ', ';
-				$thirdparty.= dol_trunc($links[$key]['label'], 24);
-				$newline=0;
-			}
-			elseif ($links[$key]['type']=='member')
-			{
-				if ($thirdparty) $accountelem.= ', ';
-				$thirdparty.= $links[$key]['label'];
-				$newline=0;
-			}
-			/*elseif ($links[$key]['type']=='sc')
-				{
-			if ($accountelem) $accountelem.= ', ';
-			//$accountelem.= '<a href="'.DOL_URL_ROOT.'/compta/sociales/card.php?id='.$links[$key]['url_id'].'">';
-			//$accountelem.= img_object($langs->transnoentitiesnoconv('ShowBill'),'bill').' ';
-			$accountelem.= $langs->transnoentitiesnoconv("SocialContribution");
-			//$accountelem.= '</a>';
-			$newline=0;
-			}
-			else
-			{
-			if ($accountelem) $accountelem.= ', ';
-			//$accountelem.= '<a href="'.$links[$key]['url'].$links[$key]['url_id'].'">';
-			$accountelem.= $links[$key]['label'];
-			//$accountelem.= '</a>';
-			$newline=0;
-			}*/
-		}
+        /*
+         * Ajout les liens (societe, company...)
+         */
+        $links = $acct->get_url($objp->rowid);
+        foreach($links as $key=>$val)
+        {
+            if ($links[$key]['type']=='payment')
+            {
+                $paymentstatic->fetch($links[$key]['url_id']);
+                $tmparray=$paymentstatic->getBillsArray('');
+                if (is_array($tmparray))
+                {
+                    foreach($tmparray as $key => $val)
+                    {
+                        $invoicestatic->fetch($val);
+                        if ($accountelem) $accountelem.= ', ';
+                        $accountelem.=$invoicestatic->ref;
+                    }
+                }
+            }
+            elseif ($links[$key]['type']=='payment_supplier')
+            {
+                $paymentsupplierstatic->fetch($links[$key]['url_id']);
+                $tmparray=$paymentsupplierstatic->getBillsArray('');
+                if (is_array($tmparray))
+                {
+                    foreach($tmparray as $key => $val)
+                    {
+                        $invoicesupplierstatic->fetch($val);
+                        if ($accountelem) $accountelem.= ', ';
+                        $accountelem.=$invoicesupplierstatic->ref;
+                    }
+                }
+            }
+            elseif ($links[$key]['type']=='payment_sc')
+            {
+                $paymentsocialcontributionstatic->fetch($links[$key]['url_id']);
+                if ($accountelem) $accountelem.= ', ';
+                $accountelem.=$langs->transnoentitiesnoconv("SocialContribution").' '.$paymentsocialcontributionstatic->ref;
+            }
+            elseif ($links[$key]['type']=='payment_vat')
+            {
+                $paymentvatstatic->fetch($links[$key]['url_id']);
+                if ($accountelem) $accountelem.= ', ';
+                $accountelem.=$langs->transnoentitiesnoconv("VATPayments").' '.$paymentvatstatic->ref;
+            }
+            elseif ($links[$key]['type']=='banktransfert')
+            {
+                $comment=$outputlangs->transnoentitiesnoconv("Transfer");
+                if ($objp->amount > 0)
+                {
+                    if ($comment) $comment.= ' ';
+                    $banklinestatic->fetch($links[$key]['url_id']);
+                    $bankstatic->id=$banklinestatic->fk_account;
+                    $bankstatic->label=$banklinestatic->bank_account_label;
+                    $comment.= ' ('.$langs->transnoentitiesnoconv("from").' ';
+                    $comment.= $bankstatic->getNomUrl(1, 'transactions');
+                    $comment.= ' '.$langs->transnoentitiesnoconv("toward").' ';
+                    $bankstatic->id=$objp->bankid;
+                    $bankstatic->label=$objp->bankref;
+                    $comment.= $bankstatic->getNomUrl(1, '');
+                    $comment.= ')';
+                }
+                else
+                {
+                    if ($comment) $comment.= ' ';
+                    $bankstatic->id=$objp->bankid;
+                    $bankstatic->label=$objp->bankref;
+                    $comment.= ' ('.$langs->transnoentitiesnoconv("from").' ';
+                    $comment.= $bankstatic->getNomUrl(1, '');
+                    $comment.= ' '.$langs->transnoentitiesnoconv("toward").' ';
+                    $banklinestatic->fetch($links[$key]['url_id']);
+                    $bankstatic->id=$banklinestatic->fk_account;
+                    $bankstatic->label=$banklinestatic->bank_account_label;
+                    $comment.= $bankstatic->getNomUrl(1, 'transactions');
+                    $comment.= ')';
+                }
+            }
+            elseif ($links[$key]['type']=='company')
+            {
+                if ($thirdparty) $thirdparty.= ', ';
+                $thirdparty.= dol_trunc($links[$key]['label'], 24);
+                $newline=0;
+            }
+            elseif ($links[$key]['type']=='member')
+            {
+                if ($thirdparty) $accountelem.= ', ';
+                $thirdparty.= $links[$key]['label'];
+                $newline=0;
+            }
+            /*elseif ($links[$key]['type']=='sc')
+                {
+            if ($accountelem) $accountelem.= ', ';
+            //$accountelem.= '<a href="'.DOL_URL_ROOT.'/compta/sociales/card.php?id='.$links[$key]['url_id'].'">';
+            //$accountelem.= img_object($langs->transnoentitiesnoconv('ShowBill'),'bill').' ';
+            $accountelem.= $langs->transnoentitiesnoconv("SocialContribution");
+            //$accountelem.= '</a>';
+            $newline=0;
+            }
+            else
+            {
+            if ($accountelem) $accountelem.= ', ';
+            //$accountelem.= '<a href="'.$links[$key]['url'].$links[$key]['url_id'].'">';
+            $accountelem.= $links[$key]['label'];
+            //$accountelem.= '</a>';
+            $newline=0;
+            }*/
+        }
 
-		$debit=$credit='';
-		if ($objp->amount < 0)
-		{
-			$totald = $totald + abs($objp->amount);
-			$debit=price2num($objp->amount * -1);
-		}
-		else
-		{
-			$totalc = $totalc + abs($objp->amount);
-			$credit=price2num($objp->amount);
-		}
+        $debit=$credit='';
+        if ($objp->amount < 0)
+        {
+            $totald = $totald + abs($objp->amount);
+            $debit=price2num($objp->amount * -1);
+        }
+        else
+        {
+            $totalc = $totalc + abs($objp->amount);
+            $credit=price2num($objp->amount);
+        }
 
-		$i++;
+        $i++;
 
-		$rec=new stdClass();
-		$rec->bankreceipt=$objp->num_releve;
-		$rec->bankaccount=$objp->banklabel;
-		$rec->dateop=dol_print_date($dateop, 'dayrfc');
-		$rec->dateval=dol_print_date($datevalue, 'dayrfc');
-		$rec->type=$objp->fk_type.' '.($objp->num_chq?$objp->num_chq:'');
-		$rec->description=$description;
-		$rec->thirdparty=$thirdparty;
-		$rec->accountelem=$accountelem;
-		$rec->debit=$debit;
-		$rec->credit=$credit;
-		$rec->comment=$comment;
-		$rec->soldbefore=price2num($totalbefore);
-		$rec->soldafter=price2num($total);
+        $rec=new stdClass();
+        $rec->bankreceipt=$objp->num_releve;
+        $rec->bankaccount=$objp->banklabel;
+        $rec->dateop=dol_print_date($dateop, 'dayrfc');
+        $rec->dateval=dol_print_date($datevalue, 'dayrfc');
+        $rec->type=$objp->fk_type.' '.($objp->num_chq?$objp->num_chq:'');
+        $rec->description=$description;
+        $rec->thirdparty=$thirdparty;
+        $rec->accountelem=$accountelem;
+        $rec->debit=$debit;
+        $rec->credit=$credit;
+        $rec->comment=$comment;
+        $rec->soldbefore=price2num($totalbefore);
+        $rec->soldafter=price2num($total);
 
-		// end of special operation processing
-		$objmodel->write_record($array_selected, $rec, $outputlangs, $array_export_TypeFields);
-	}
+        // end of special operation processing
+        $objmodel->write_record($array_selected, $rec, $outputlangs, $array_export_TypeFields);
+    }
 
-	if ($numrows > 0)
-	{
-		print "Found ".$numrows." records for receipt ".$num."\n";
+    if ($numrows > 0)
+    {
+        print "Found ".$numrows." records for receipt ".$num."\n";
 
-		// Genere en-tete
-		$objmodel->write_footer($outputlangs);
+        // Genere en-tete
+        $objmodel->write_footer($outputlangs);
 
-		// Close file
-		$objmodel->close_file();
+        // Close file
+        $objmodel->close_file();
 
-		print 'File '.$filename.' was generated into dir '.$dirname.'.'."\n";
+        print 'File '.$filename.' was generated into dir '.$dirname.'.'."\n";
 
-		$ret=0;
-	}
-	else
-	{
-		print "No records found for receipt ".$num."\n";
+        $ret=0;
+    }
+    else
+    {
+        print "No records found for receipt ".$num."\n";
 
-		$ret=0;
-	}
+        $ret=0;
+    }
 }
 else
 {
-	dol_print_error($db);
-	$ret=-1;
+    dol_print_error($db);
+    $ret=-1;
 }
 
 $db->close();

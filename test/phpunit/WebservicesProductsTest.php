@@ -26,7 +26,7 @@
  */
 
 global $conf,$user,$langs,$db;
-//define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
+//define('TEST_DB_FORCE_TYPE','mysql');    // This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/date.lib.php';
@@ -44,8 +44,8 @@ $conf->global->MAIN_UMASK='0666';
 
 if (empty($conf->service->enabled))
 {
-	print "Error: Module service must be enabled.\n";
-	exit(1);
+    print "Error: Module service must be enabled.\n";
+    exit(1);
 }
 
 /**
@@ -53,7 +53,7 @@ if (empty($conf->service->enabled))
  *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
- * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
+ * @remarks    backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
 class WebservicesProductsTest extends PHPUnit_Framework_TestCase
 {
@@ -70,9 +70,9 @@ class WebservicesProductsTest extends PHPUnit_Framework_TestCase
      */
     public function __construct()
     {
-    	parent::__construct();
+        parent::__construct();
 
-    	//$this->sharedFixture
+        //$this->sharedFixture
         global $conf,$user,$langs,$db;
         $this->savconf=$conf;
         $this->savuser=$user;
@@ -205,7 +205,7 @@ class WebservicesProductsTest extends PHPUnit_Framework_TestCase
      * @param   int $id     Id of product or service
      * @return  int         Id of product or service
      *
-     * @depends	testWSProductsCreateProductOrService
+     * @depends    testWSProductsCreateProductOrService
      */
     public function testWSProductsGetProductOrService($id)
     {

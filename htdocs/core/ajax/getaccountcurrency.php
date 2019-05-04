@@ -26,7 +26,7 @@ if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
 
 require '../../main.inc.php';
 
-$id			= GETPOST('id', 'int');
+$id            = GETPOST('id', 'int');
 
 /*
  * View
@@ -39,18 +39,18 @@ top_httphead();
 // Load original field value
 if (! empty($id))
 {
-	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-	$account=new Account($db);
-	$result = $account->fetch($id);
-	if ($result<0) {
-		$return['value']	= '';
-		$return['num']		= $result;
-		$return['error']	= $account->errors[0];
-	} else {
-		$return['value']	= $account->currency_code;
-		$return['num']		= $result;
-		$return['error']	= '';
-	}
+    require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+    $account=new Account($db);
+    $result = $account->fetch($id);
+    if ($result<0) {
+        $return['value']    = '';
+        $return['num']        = $result;
+        $return['error']    = $account->errors[0];
+    } else {
+        $return['value']    = $account->currency_code;
+        $return['num']        = $result;
+        $return['error']    = '';
+    }
 
-	echo json_encode($return);
+    echo json_encode($return);
 }

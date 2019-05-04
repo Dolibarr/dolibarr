@@ -25,103 +25,103 @@
 /**
  * RemoveFromStart
  *
- * @param 	string		$sourceString	Source
- * @param 	string		$charToRemove	Char to remove
- * @return	string		Result
+ * @param     string        $sourceString    Source
+ * @param     string        $charToRemove    Char to remove
+ * @return    string        Result
  */
 function RemoveFromStart($sourceString, $charToRemove)
 {
-	$sPattern = '|^' . $charToRemove . '+|' ;
-	return preg_replace($sPattern, '', $sourceString);
+    $sPattern = '|^' . $charToRemove . '+|' ;
+    return preg_replace($sPattern, '', $sourceString);
 }
 
 /**
  * RemoveFromEnd
  *
- * @param 	string		$sourceString	Source
- * @param 	string		$charToRemove	Rhar to remove
- * @return	string		Result
+ * @param     string        $sourceString    Source
+ * @param     string        $charToRemove    Rhar to remove
+ * @return    string        Result
  */
 function RemoveFromEnd($sourceString, $charToRemove)
 {
-	$sPattern = '|' . $charToRemove . '+$|' ;
-	return preg_replace($sPattern, '', $sourceString);
+    $sPattern = '|' . $charToRemove . '+$|' ;
+    return preg_replace($sPattern, '', $sourceString);
 }
 
 /**
  * FindBadUtf8
  *
- * @param 	string $string		String
- * @return	boolean
+ * @param     string $string        String
+ * @return    boolean
  */
 function FindBadUtf8($string)
 {
-	$regex = '([\x00-\x7F]'.
-	'|[\xC2-\xDF][\x80-\xBF]'.
-	'|\xE0[\xA0-\xBF][\x80-\xBF]'.
-	'|[\xE1-\xEC\xEE\xEF][\x80-\xBF]{2}'.
-	'|\xED[\x80-\x9F][\x80-\xBF]'.
-	'|\xF0[\x90-\xBF][\x80-\xBF]{2}'.
-	'|[\xF1-\xF3][\x80-\xBF]{3}'.
-	'|\xF4[\x80-\x8F][\x80-\xBF]{2}'.
-	'|(.{1}))';
+    $regex = '([\x00-\x7F]'.
+    '|[\xC2-\xDF][\x80-\xBF]'.
+    '|\xE0[\xA0-\xBF][\x80-\xBF]'.
+    '|[\xE1-\xEC\xEE\xEF][\x80-\xBF]{2}'.
+    '|\xED[\x80-\x9F][\x80-\xBF]'.
+    '|\xF0[\x90-\xBF][\x80-\xBF]{2}'.
+    '|[\xF1-\xF3][\x80-\xBF]{3}'.
+    '|\xF4[\x80-\x8F][\x80-\xBF]{2}'.
+    '|(.{1}))';
 
-	while (preg_match('/'.$regex.'/S', $string, $matches)) {
-		if ( isset($matches[2])) {
-			return true;
-		}
-		$string = substr($string, strlen($matches[0]));
-	}
+    while (preg_match('/'.$regex.'/S', $string, $matches)) {
+        if ( isset($matches[2])) {
+            return true;
+        }
+        $string = substr($string, strlen($matches[0]));
+    }
 
-	return false;
+    return false;
 }
 
 /**
  * ConvertToXmlAttribute
  *
- * @param 	string		$value		Value
- * @return	string
+ * @param     string        $value        Value
+ * @return    string
  */
 function ConvertToXmlAttribute($value)
 {
-	if ( defined('PHP_OS') )
-	{
-		$os = PHP_OS ;
-	}
-	else
-	{
-		$os = php_uname();
-	}
+    if ( defined('PHP_OS') )
+    {
+        $os = PHP_OS ;
+    }
+    else
+    {
+        $os = php_uname();
+    }
 
-	if (strtoupper(substr($os, 0, 3)) === 'WIN' || FindBadUtf8($value))
-	{
-		return (utf8_encode(htmlspecialchars($value)));
-	}
-	else
-	{
-		return (htmlspecialchars($value));
-	}
+    if (strtoupper(substr($os, 0, 3)) === 'WIN' || FindBadUtf8($value))
+    {
+        return (utf8_encode(htmlspecialchars($value)));
+    }
+    else
+    {
+        return (htmlspecialchars($value));
+    }
 }
 
 /**
  * Check whether given extension is in html etensions list
  *
- * @param 	string 		$ext				Extension
- * @param 	array 		$formExtensions		Array of extensions
- * @return 	boolean
+ * @param     string         $ext                Extension
+ * @param     array         $formExtensions        Array of extensions
+ * @return     boolean
  */
 function IsHtmlExtension($ext, $formExtensions)
 {
-	if (!$formExtensions || !is_array($formExtensions) )
-	{
-		return false ;
-	}
-	$lcaseHtmlExtensions = array();
-	foreach ($formExtensions as $key => $val)
-	{
-		$lcaseHtmlExtensions[$key] = strtolower($val);
-	}
-	return in_array($ext, $lcaseHtmlExtensions);
+    if (!$formExtensions || !is_array($formExtensions) )
+    {
+        return false ;
+    }
+    $lcaseHtmlExtensions = array();
+    foreach ($formExtensions as $key => $val)
+    {
+        $lcaseHtmlExtensions[$key] = strtolower($val);
+    }
+    return in_array($ext, $lcaseHtmlExtensions);
 }
 
 /**
@@ -134,63 +134,63 @@ function IsHtmlExtension($ext, $formExtensions)
  */
 function DetectHtml($filePath)
 {
-	$fp = @fopen($filePath, 'rb');
+    $fp = @fopen($filePath, 'rb');
 
-	//open_basedir restriction, see #1906
-	if ( $fp === false || !flock($fp, LOCK_SH) )
-	{
-		return -1 ;
-	}
+    //open_basedir restriction, see #1906
+    if ( $fp === false || !flock($fp, LOCK_SH) )
+    {
+        return -1 ;
+    }
 
-	$chunk = fread($fp, 1024);
-	flock($fp, LOCK_UN);
-	fclose($fp);
+    $chunk = fread($fp, 1024);
+    flock($fp, LOCK_UN);
+    fclose($fp);
 
-	$chunk = strtolower($chunk);
+    $chunk = strtolower($chunk);
 
-	if (!$chunk)
-	{
-		return false ;
-	}
+    if (!$chunk)
+    {
+        return false ;
+    }
 
-	$chunk = trim($chunk);
+    $chunk = trim($chunk);
 
-	if ( preg_match("/<!DOCTYPE\W*X?HTML/sim", $chunk) )
-	{
-		return true;
-	}
+    if ( preg_match("/<!DOCTYPE\W*X?HTML/sim", $chunk) )
+    {
+        return true;
+    }
 
-	$tags = array( '<body', '<head', '<html', '<img', '<pre', '<script', '<table', '<title' );
+    $tags = array( '<body', '<head', '<html', '<img', '<pre', '<script', '<table', '<title' );
 
-	foreach($tags as $tag)
-	{
-		if( false !== strpos($chunk, $tag) )
-		{
-			return true ;
-		}
-	}
+    foreach($tags as $tag)
+    {
+        if( false !== strpos($chunk, $tag) )
+        {
+            return true ;
+        }
+    }
 
-	//type = javascript
-	if ( preg_match('!type\s*=\s*[\'"]?\s*(?:\w*/)?(?:ecma|java)!sim', $chunk) )
-	{
-		return true ;
-	}
+    //type = javascript
+    if ( preg_match('!type\s*=\s*[\'"]?\s*(?:\w*/)?(?:ecma|java)!sim', $chunk) )
+    {
+        return true ;
+    }
 
-	//href = javascript
-	//src = javascript
-	//data = javascript
-	if ( preg_match('!(?:href|src|data)\s*=\s*[\'"]?\s*(?:ecma|java)script:!sim', $chunk) )
-	{
-		return true ;
-	}
+    //href = javascript
+    //src = javascript
+    //data = javascript
+    if ( preg_match('!(?:href|src|data)\s*=\s*[\'"]?\s*(?:ecma|java)script:!sim', $chunk) )
+    {
+        return true ;
+    }
 
-	//url(javascript
-	if ( preg_match('!url\s*\(\s*[\'"]?\s*(?:ecma|java)script:!sim', $chunk) )
-	{
-		return true ;
-	}
+    //url(javascript
+    if ( preg_match('!url\s*\(\s*[\'"]?\s*(?:ecma|java)script:!sim', $chunk) )
+    {
+        return true ;
+    }
 
-	return false ;
+    return false ;
 }
 
 /**
@@ -198,17 +198,17 @@ function DetectHtml($filePath)
  * Currently this function validates only image files.
  * Returns false if file is invalid.
  *
- * @param 	string 	$filePath 		Absolute path to file
- * @param 	string 	$extension 		File extension
- * @return 	boolean					True or false
+ * @param     string     $filePath         Absolute path to file
+ * @param     string     $extension         File extension
+ * @return     boolean                    True or false
  */
 function IsImageValid($filePath, $extension)
 {
-	if (!@is_readable($filePath)) {
-		return -1;
-	}
+    if (!@is_readable($filePath)) {
+        return -1;
+    }
 
-	$imageCheckExtensions = array(
+    $imageCheckExtensions = array(
         'gif',
         'jpeg',
         'jpg',
@@ -228,13 +228,13 @@ function IsImageValid($filePath, $extension)
         'wbmp'
     );
 
-	if (!in_array($extension, $imageCheckExtensions) ) {
-		return true;
-	}
+    if (!in_array($extension, $imageCheckExtensions) ) {
+        return true;
+    }
 
-	if (@getimagesize($filePath) === false) {
-		return false ;
-	}
+    if (@getimagesize($filePath) === false) {
+        return false ;
+    }
 
-	return true;
+    return true;
 }

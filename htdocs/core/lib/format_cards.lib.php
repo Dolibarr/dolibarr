@@ -19,9 +19,9 @@
  */
 
 /**
- *	\file       htdocs/core/lib/format_cards.lib.php
- *	\brief      Set of functions used for cards generation
- *	\ingroup    core
+ *    \file       htdocs/core/lib/format_cards.lib.php
+ *    \brief      Set of functions used for cards generation
+ *    \ingroup    core
  */
 
 
@@ -64,5 +64,5 @@ else
 // We add characteristics to the name
 foreach($_Avery_Labels as $key => $val)
 {
-	$_Avery_Labels[$key]['name'].=' ('.$_Avery_Labels[$key]['paper-size'].' - '.$_Avery_Labels[$key]['NX'].'x'.$_Avery_Labels[$key]['NY'].')';
+    $_Avery_Labels[$key]['name'].=' ('.$_Avery_Labels[$key]['paper-size'].' - '.$_Avery_Labels[$key]['NX'].'x'.$_Avery_Labels[$key]['NY'].')';
 }

@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/bankcateg.class.php';
 $langs->loadLangs(array('banks', 'categories'));
 
 $action=GETPOST('action', 'aZ09');
-$optioncss  = GETPOST('optioncss', 'aZ');												// Option for the css output (always '' except when 'print')
+$optioncss  = GETPOST('optioncss', 'aZ');                                                // Option for the css output (always '' except when 'print')
 
 if (!$user->rights->banque->configurer)
   accessforbidden();
@@ -48,29 +48,29 @@ $label = GETPOST("label");
  */
 if (GETPOST('add'))
 {
-	if ($label) {
-		$bankcateg = new BankCateg($db);
-		$bankcateg->label = GETPOST('label');
-		$bankcateg->create($user);
-	}
+    if ($label) {
+        $bankcateg = new BankCateg($db);
+        $bankcateg->label = GETPOST('label');
+        $bankcateg->create($user);
+    }
 }
 
 if ($categid) {
-	$bankcateg = new BankCateg($db);
+    $bankcateg = new BankCateg($db);
 
-	if ($bankcateg->fetch($categid) > 0) {
+    if ($bankcateg->fetch($categid) > 0) {
 
-		//Update category
-		if (GETPOST('update') && $label) {
+        //Update category
+        if (GETPOST('update') && $label) {
 
-			$bankcateg->label = $label;
-			$bankcateg->update($user);
-		}
-		//Delete category
-		if ($action == 'delete') {
-			$bankcateg->delete($user);
-		}
-	}
+            $bankcateg->label = $label;
+            $bankcateg->update($user);
+        }
+        //Delete category
+        if ($action == 'delete') {
+            $bankcateg->delete($user);
+        }
+    }
 }
 
 
@@ -94,7 +94,7 @@ print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 */
 
-print '<div class="div-table-responsive">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
+print '<div class="div-table-responsive">';        // You can use div-table-responsive-no-min if you dont need reserved height for your table
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Ref").'</td><td colspan="2">'.$langs->trans("Label").'</td>';
@@ -104,10 +104,10 @@ print "</tr>\n";
 if ($action != 'edit')
 {
 
-	print '<tr class="oddeven">';
-	print '<td>&nbsp;</td><td><input name="label" type="text" size="45"></td>';
-	print '<td class="center"><input type="submit" name="add" class="button" value="'.$langs->trans("Add").'"></td>';
-	print '</tr>';
+    print '<tr class="oddeven">';
+    print '<td>&nbsp;</td><td><input name="label" type="text" size="45"></td>';
+    print '<td class="center"><input type="submit" name="add" class="button" value="'.$langs->trans("Add").'"></td>';
+    print '</tr>';
 }
 
 
@@ -119,35 +119,35 @@ $sql.= " ORDER BY label";
 $result = $db->query($sql);
 if ($result)
 {
-	$num = $db->num_rows($result);
-	$i = 0; $total = 0;
+    $num = $db->num_rows($result);
+    $i = 0; $total = 0;
 
-	while ($i < $num)
-	{
-		$objp = $db->fetch_object($result);
+    while ($i < $num)
+    {
+        $objp = $db->fetch_object($result);
 
-		print '<tr class="oddeven">';
-		print '<td><a href="'.DOL_URL_ROOT.'/compta/bank/budget.php?bid='.$objp->rowid.'">'.$objp->rowid.'</a></td>';
-		if (GETPOST('action', 'aZ09') == 'edit' && GETPOST("categid")== $objp->rowid)
-		{
-			print "<td colspan=2>";
-			print '<input type="hidden" name="categid" value="'.$objp->rowid.'">';
-			print '<input name="label" type="text" size=45 value="'.$objp->label.'">';
-			print '<input type="submit" name="update" class="button" value="'.$langs->trans("Edit").'">';
+        print '<tr class="oddeven">';
+        print '<td><a href="'.DOL_URL_ROOT.'/compta/bank/budget.php?bid='.$objp->rowid.'">'.$objp->rowid.'</a></td>';
+        if (GETPOST('action', 'aZ09') == 'edit' && GETPOST("categid")== $objp->rowid)
+        {
+            print "<td colspan=2>";
+            print '<input type="hidden" name="categid" value="'.$objp->rowid.'">';
+            print '<input name="label" type="text" size=45 value="'.$objp->label.'">';
+            print '<input type="submit" name="update" class="button" value="'.$langs->trans("Edit").'">';
 
-			print "</td>";
-		}
-		else
-		{
-			print "<td >".$objp->label."</td>";
-			print '<td style="text-align: center;">';
-			print '<a href="'.$_SERVER["PHP_SELF"].'?categid='.$objp->rowid.'&amp;action=edit">'.img_edit().'</a>&nbsp;&nbsp;';
-			print '<a href="'.$_SERVER["PHP_SELF"].'?categid='.$objp->rowid.'&amp;action=delete">'.img_delete().'</a></td>';
-		}
-		print "</tr>";
-		$i++;
-	}
-	$db->free($result);
+            print "</td>";
+        }
+        else
+        {
+            print "<td >".$objp->label."</td>";
+            print '<td style="text-align: center;">';
+            print '<a href="'.$_SERVER["PHP_SELF"].'?categid='.$objp->rowid.'&amp;action=edit">'.img_edit().'</a>&nbsp;&nbsp;';
+            print '<a href="'.$_SERVER["PHP_SELF"].'?categid='.$objp->rowid.'&amp;action=delete">'.img_delete().'</a></td>';
+        }
+        print "</tr>";
+        $i++;
+    }
+    $db->free($result);
 }
 
 print '</table>';

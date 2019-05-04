@@ -22,7 +22,7 @@
 /**
  *      \file       htdocs/fourn/facture/info.php
  *      \ingroup    facture, fournisseur
- *		\brief      Page des informations d'une facture fournisseur
+ *        \brief      Page des informations d'une facture fournisseur
  */
 
 require '../../main.inc.php';
@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 if (! empty($conf->projet->enabled)) {
-	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+    require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 }
 
 $langs->loadLangs(array("companies", "bills"));
@@ -79,35 +79,35 @@ if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0
 // Project
 if (! empty($conf->projet->enabled))
 {
-  	$langs->load("projects");
-   	$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
-   	if ($user->rights->facture->creer)
-   	{
-   		if ($action != 'classify')
-   			//$morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
-   			$morehtmlref.=' : ';
-   		if ($action == 'classify') {
-   			//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
-   			$morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-   			$morehtmlref.='<input type="hidden" name="action" value="classin">';
-   			$morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-   			$morehtmlref.=$formproject->select_projects($object->thirdparty->id, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-   			$morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-   			$morehtmlref.='</form>';
-   		} else {
-   			$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->thirdparty->id, $object->fk_project, 'none', 0, 0, 0, 1);
-   		}
-   	} else {
-   		if (! empty($object->fk_project)) {
-   			$proj = new Project($db);
-   			$proj->fetch($object->fk_project);
-   			$morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
-   			$morehtmlref.=$proj->ref;
-   			$morehtmlref.='</a>';
-   		} else {
-   			$morehtmlref.='';
-   		}
-   	}
+      $langs->load("projects");
+       $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
+       if ($user->rights->facture->creer)
+       {
+           if ($action != 'classify')
+               //$morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+               $morehtmlref.=' : ';
+           if ($action == 'classify') {
+               //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+               $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+               $morehtmlref.='<input type="hidden" name="action" value="classin">';
+               $morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+               $morehtmlref.=$formproject->select_projects($object->thirdparty->id, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+               $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+               $morehtmlref.='</form>';
+           } else {
+               $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->thirdparty->id, $object->fk_project, 'none', 0, 0, 0, 1);
+           }
+       } else {
+           if (! empty($object->fk_project)) {
+               $proj = new Project($db);
+               $proj->fetch($object->fk_project);
+               $morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
+               $morehtmlref.=$proj->ref;
+               $morehtmlref.='</a>';
+           } else {
+               $morehtmlref.='';
+           }
+       }
 }
 $morehtmlref.='</div>';
 

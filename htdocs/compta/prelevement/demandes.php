@@ -83,7 +83,7 @@ if ($statut) $sql.= " AND pfd.traite = ".$statut;
 $sql.= " AND pfd.fk_facture = f.rowid";
 if (dol_strlen(trim(GETPOST('search_societe', 'alpha'))))
 {
-	$sql.= natural_search("s.nom", 'search_societe');
+    $sql.= natural_search("s.nom", 'search_societe');
 }
 $sql.= " ORDER BY $sortfield $sortorder ";
 $sql.= $db->plimit($limit+1, $offset);
@@ -91,62 +91,62 @@ $sql.= $db->plimit($limit+1, $offset);
 $resql=$db->query($sql);
 if ($resql)
 {
-	$num = $db->num_rows($resql);
-	$i = 0;
+    $num = $db->num_rows($resql);
+    $i = 0;
 
-	if (!$statut)
-	{
-		print_barre_liste($langs->trans("RequestStandingOrderToTreat"), $page, "demandes.php", $urladd, $sortfield, $sortorder, '', $num);
-	}
-	else
-	{
-		print_barre_liste($langs->trans("RequestStandingOrderTreated"), $page, "demandes.php", $urladd, $sortfield, $sortorder, '', $num);
-	}
+    if (!$statut)
+    {
+        print_barre_liste($langs->trans("RequestStandingOrderToTreat"), $page, "demandes.php", $urladd, $sortfield, $sortorder, '', $num);
+    }
+    else
+    {
+        print_barre_liste($langs->trans("RequestStandingOrderTreated"), $page, "demandes.php", $urladd, $sortfield, $sortorder, '', $num);
+    }
 
-	print '<form action="'.$_SERVER["PHP_SELF"].'" method="GET">';
+    print '<form action="'.$_SERVER["PHP_SELF"].'" method="GET">';
 
-	print '<table class="liste" width="100%">';
+    print '<table class="liste" width="100%">';
 
-	print '<tr class="liste_titre">';
-	print_liste_field_titre("Bill", $_SERVER["PHP_SELF"]);
-	print_liste_field_titre("Company", $_SERVER["PHP_SELF"]);
+    print '<tr class="liste_titre">';
+    print_liste_field_titre("Bill", $_SERVER["PHP_SELF"]);
+    print_liste_field_titre("Company", $_SERVER["PHP_SELF"]);
     print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "", "", $param, 'class="right"');
-	print_liste_field_titre("DateRequest", $_SERVER["PHP_SELF"], "", "", $param, 'class="center"');
-	print_liste_field_titre('');
-	print '</tr>';
+    print_liste_field_titre("DateRequest", $_SERVER["PHP_SELF"], "", "", $param, 'class="center"');
+    print_liste_field_titre('');
+    print '</tr>';
 
-	print '<tr class="liste_titre">';
-	print '<td class="liste_titre"><input type="text" class="flat" name="search_facture" size="12" value="'.dol_escape_htmltag(GETPOST('search_facture', 'alpha')).'"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" name="search_societe" size="18" value="'.dol_escape_htmltag(GETPOST('search_societe', 'alpha')).'"></td>';
-	print '<td class="liste_titre"></td>';
-	print '<td class="liste_titre"></td>';
-	// Action column
-	print '<td class="liste_titre" class="middle">';
-	$searchpicto=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
-	print $searchpicto;
-	print '</td>';
-	print '</tr>';
+    print '<tr class="liste_titre">';
+    print '<td class="liste_titre"><input type="text" class="flat" name="search_facture" size="12" value="'.dol_escape_htmltag(GETPOST('search_facture', 'alpha')).'"></td>';
+    print '<td class="liste_titre"><input type="text" class="flat" name="search_societe" size="18" value="'.dol_escape_htmltag(GETPOST('search_societe', 'alpha')).'"></td>';
+    print '<td class="liste_titre"></td>';
+    print '<td class="liste_titre"></td>';
+    // Action column
+    print '<td class="liste_titre" class="middle">';
+    $searchpicto=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
+    print $searchpicto;
+    print '</td>';
+    print '</tr>';
 
-	$users = array();
+    $users = array();
 
-	while ($i < min($num, $limit))
-	{
-		$obj = $db->fetch_object($resql);
+    while ($i < min($num, $limit))
+    {
+        $obj = $db->fetch_object($resql);
 
-		print '<tr class="oddeven">';
+        print '<tr class="oddeven">';
 
-		// Ref facture
-		print '<td>';
-		$invoicestatic->id=$obj->rowid;
-		$invoicestatic->ref=$obj->ref;
-		print $invoicestatic->getNomUrl(1, 'withdraw');
-		print '</td>';
+        // Ref facture
+        print '<td>';
+        $invoicestatic->id=$obj->rowid;
+        $invoicestatic->ref=$obj->ref;
+        print $invoicestatic->getNomUrl(1, 'withdraw');
+        print '</td>';
 
-		print '<td>';
-		$thirdpartystatic->id=$obj->socid;
-		$thirdpartystatic->name=$obj->name;
-		print $thirdpartystatic->getNomUrl(1, 'customer');
-		print '</td>';
+        print '<td>';
+        $thirdpartystatic->id=$obj->socid;
+        $thirdpartystatic->name=$obj->name;
+        print $thirdpartystatic->getNomUrl(1, 'customer');
+        print '</td>';
 
         print '<td class="right">'.price($obj->total_ttc).'</td>';
 
@@ -154,17 +154,17 @@ if ($resql)
 
         print '<td class="right"></td>';
 
-		print '</tr>';
-		$i++;
-	}
+        print '</tr>';
+        $i++;
+    }
 
-	print "</table><br>";
+    print "</table><br>";
 
-	print '</form>';
+    print '</form>';
 }
 else
 {
-	dol_print_error($db);
+    dol_print_error($db);
 }
 
 // End of page

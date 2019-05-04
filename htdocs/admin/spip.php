@@ -22,9 +22,9 @@
  */
 
 /**
- *   	\file       htdocs/admin/spip.php
- *		\ingroup    mailmanspip
- *		\brief      Page to setup the module MailmanSpip (SPIP)
+ *       \file       htdocs/admin/spip.php
+ *        \ingroup    mailmanspip
+ *        \brief      Page to setup the module MailmanSpip (SPIP)
  */
 
 require '../main.inc.php';
@@ -50,28 +50,28 @@ $action = GETPOST('action', 'aZ09');
 // Action mise a jour ou ajout d'une constante
 if ($action == 'update' || $action == 'add')
 {
-	$constname=GETPOST("constname");
-	$constvalue=GETPOST("constvalue");
+    $constname=GETPOST("constname");
+    $constvalue=GETPOST("constvalue");
 
     // Action mise a jour ou ajout d'une constante
     if ($action == 'update' || $action == 'add')
     {
-    	foreach($_POST['constname'] as $key => $val)
-    	{
-    		$constname=$_POST["constname"][$key];
-    		$constvalue=$_POST["constvalue"][$key];
-    		$consttype=$_POST["consttype"][$key];
-    		$constnote=$_POST["constnote"][$key];
+        foreach($_POST['constname'] as $key => $val)
+        {
+            $constname=$_POST["constname"][$key];
+            $constvalue=$_POST["constvalue"][$key];
+            $consttype=$_POST["consttype"][$key];
+            $constnote=$_POST["constnote"][$key];
 
-        	$res=dolibarr_set_const($db, $constname, $constvalue, $type[$consttype], 0, $constnote, $conf->entity);
-    		
-    		if (! $res > 0) $error++;
-    	}
+            $res=dolibarr_set_const($db, $constname, $constvalue, $type[$consttype], 0, $constnote, $conf->entity);
+            
+            if (! $res > 0) $error++;
+        }
     
-     	if (! $error)
+         if (! $error)
         {
             setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-        }
+         }
         else
         {
             setEventMessages($langs->trans("Error"), null, 'errors');
@@ -122,9 +122,9 @@ $head = mailmanspip_admin_prepare_head();
  */
 if (! empty($conf->global->ADHERENT_USE_SPIP))
 {
-	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-	
-	dol_fiche_head($head, 'spip', $langs->trans("Setup"), 0, 'user');
+    print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+    
+    dol_fiche_head($head, 'spip', $langs->trans("Setup"), 0, 'user');
     
     //$link=img_picto($langs->trans("Active"),'tick').' ';
     $link='<a href="'.$_SERVER["PHP_SELF"].'?action=unset&value=0&name=ADHERENT_USE_SPIP">';
@@ -133,17 +133,17 @@ if (! empty($conf->global->ADHERENT_USE_SPIP))
     $link.='</a>';
     // Edition des varibales globales
     $constantes=array(
-    	'ADHERENT_SPIP_SERVEUR',
-    	'ADHERENT_SPIP_DB',
-    	'ADHERENT_SPIP_USER',
-    	'ADHERENT_SPIP_PASS'
-	);
+        'ADHERENT_SPIP_SERVEUR',
+        'ADHERENT_SPIP_DB',
+        'ADHERENT_SPIP_USER',
+        'ADHERENT_SPIP_PASS'
+    );
 
     print load_fiche_titre($langs->trans('SPIPTitle'), $link, '');
-	print '<br>';
+    print '<br>';
     
-	form_constantes($constantes, 2);
-	
+    form_constantes($constantes, 2);
+    
     dol_fiche_end();
 
     print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Update").'" name="update"></div>';

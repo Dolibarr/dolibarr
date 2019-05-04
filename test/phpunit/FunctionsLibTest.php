@@ -19,13 +19,13 @@
 
 /**
  *      \file       test/phpunit/FunctionsLibTest.php
- *		\ingroup    test
+ *        \ingroup    test
  *      \brief      PHPUnit test
- *		\remarks	To run this script as CLI:  phpunit filename.php
+ *        \remarks    To run this script as CLI:  phpunit filename.php
  */
 
 global $conf,$user,$langs,$db;
-//define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
+//define('TEST_DB_FORCE_TYPE','mysql');    // This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/date.lib.php';
@@ -46,7 +46,7 @@ if (! defined("NOLOGIN"))        define("NOLOGIN", '1');       // If this page i
  *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
- * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
+ * @remarks    backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
 class FunctionsLibTest extends PHPUnit\Framework\TestCase
 {
@@ -81,7 +81,7 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
     public static function setUpBeforeClass()
     {
         global $conf,$user,$langs,$db;
-        //$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
+        //$db->begin();    // This is to have all actions inside a transaction even if test launched without suite.
 
         if (! function_exists('mb_substr')) { print "\n".__METHOD__." function mb_substr must be enabled.\n"; die(); }
 
@@ -100,7 +100,7 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
     /**
      * Init phpunit tests
      *
-     * @return	void
+     * @return    void
      */
     protected function setUp()
     {
@@ -116,7 +116,7 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
     /**
      * End phpunit tests
      *
-     * @return	void
+     * @return    void
      */
     protected function tearDown()
     {
@@ -434,13 +434,13 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
         $input='xxx < br>';
         $after=dol_textishtml($input);
         $this->assertFalse($after);
-        $input='xxx <email@email.com>';	// <em> is html, <em... is not
+        $input='xxx <email@email.com>';    // <em> is html, <em... is not
         $after=dol_textishtml($input);
         $this->assertFalse($after);
         $input='xxx <brstyle="ee">';
         $after=dol_textishtml($input);
         $this->assertFalse($after);
-        $input='This is a text with html comments <!-- comment -->';	// we suppose this is not enough to be html content
+        $input='This is a text with html comments <!-- comment -->';    // we suppose this is not enough to be html content
         $after=dol_textishtml($input);
         $this->assertFalse($after);
     }
@@ -491,15 +491,15 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
      */
     public function testDolConcat()
     {
-        $text1="A string 1"; $text2="A string 2";	// text 1 and 2 are text, concat need only \n
+        $text1="A string 1"; $text2="A string 2";    // text 1 and 2 are text, concat need only \n
         $after=dol_concatdesc($text1, $text2);
         $this->assertEquals("A string 1\nA string 2", $after);
 
-        $text1="A<br>string 1"; $text2="A string 2";	// text 1 is html, concat need <br>\n
+        $text1="A<br>string 1"; $text2="A string 2";    // text 1 is html, concat need <br>\n
         $after=dol_concatdesc($text1, $text2);
         $this->assertEquals("A<br>string 1<br>\nA string 2", $after);
 
-        $text1="A string 1"; $text2="A <b>string</b> 2";	// text 2 is html, concat need <br>\n
+        $text1="A string 1"; $text2="A <b>string</b> 2";    // text 2 is html, concat need <br>\n
         $after=dol_concatdesc($text1, $text2);
         $this->assertEquals("A string 1<br>\nA <b>string</b> 2", $after);
 
@@ -580,11 +580,11 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
         $after=dol_htmlentitiesbr($input, 1);    // Replace \n with <br>
         $this->assertEquals("A string<br>with a &eacute;, &amp;, &lt; and &gt;.", $after);
 
-        $input="A string\nwith a é, &, < and >.\n\n";	// With some \n at end that should be cleaned
+        $input="A string\nwith a é, &, < and >.\n\n";    // With some \n at end that should be cleaned
         $after=dol_htmlentitiesbr($input, 0);    // Add <br> before \n
         $this->assertEquals("A string<br>\nwith a &eacute;, &amp;, &lt; and &gt;.", $after);
 
-        $input="A string\nwith a é, &, < and >.\n\n";	// With some \n at end that should be cleaned
+        $input="A string\nwith a é, &, < and >.\n\n";    // With some \n at end that should be cleaned
         $after=dol_htmlentitiesbr($input, 1);    // Replace \n with <br>
         $this->assertEquals("A string<br>with a &eacute;, &amp;, &lt; and &gt;.", $after);
 
@@ -598,11 +598,11 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
         $after=dol_htmlentitiesbr($input);
         $this->assertEquals("<li>\nA string with a &eacute;, &, < and >.</li>\nAnother string", $after);
 
-        $input="A string<br>\nwith a é, &, < and >.<br>";	// With some <br> at end that should be cleaned
+        $input="A string<br>\nwith a é, &, < and >.<br>";    // With some <br> at end that should be cleaned
         $after=dol_htmlentitiesbr($input);
         $this->assertEquals("A string<br>\nwith a &eacute;, &, < and >.", $after);
 
-        $input="<li>\nA string with a é, &, < and >.</li>\nAnother string<br>";	// With some <br> at end that should be cleaned
+        $input="<li>\nA string with a é, &, < and >.</li>\nAnother string<br>";    // With some <br> at end that should be cleaned
         $after=dol_htmlentitiesbr($input);
         $this->assertEquals("<li>\nA string with a &eacute;, &, < and >.</li>\nAnother string", $after);
 
@@ -734,7 +734,7 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
     /**
      * testDolMkTime
      *
-     * @return	void
+     * @return    void
      */
     public function testDolMkTime()
     {
@@ -777,10 +777,10 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
         // Check that tz for paris in winter is used
         $result=dol_mktime(2, 0, 0, 1, 1, 1970, 'server');         // 1970-01-01 02:00:00 = 7200 in local area Europe/Paris = 3600 GMT
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals(3600, $result);        			 // 7200 if we are at greenwich winter, 3600 at Europe/Paris
+        $this->assertEquals(3600, $result);                     // 7200 if we are at greenwich winter, 3600 at Europe/Paris
 
         // Check that daylight saving time is used
-        $result=dol_mktime(2, 0, 0, 6, 1, 2014, 0);         		// 2014-06-01 02:00:00 = 1401588000-3600(location)-3600(daylight) in local area Europe/Paris = 1401588000 GMT
+        $result=dol_mktime(2, 0, 0, 6, 1, 2014, 0);                 // 2014-06-01 02:00:00 = 1401588000-3600(location)-3600(daylight) in local area Europe/Paris = 1401588000 GMT
         print __METHOD__." result=".$result."\n";
         $this->assertEquals(1401588000-3600-3600, $result);  // 1401588000 are at greenwich summer, 1401588000-3600(location)-3600(daylight) at Europe/Paris summer
 
@@ -791,7 +791,7 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
     /**
      * testDolEscapeJs
      *
-     * @return	void
+     * @return    void
      */
     public function testDolEscapeJs()
     {
@@ -810,7 +810,7 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
     /**
     * testDolEscapeHtmlTag
     *
-    * @return	void
+    * @return    void
     */
     public function testDolEscapeHtmlTag()
     {
@@ -827,7 +827,7 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
     /**
      * testDolFormatAddress
      *
-     * @return	void
+     * @return    void
      */
     public function testDolFormatAddress()
     {
@@ -861,7 +861,7 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
     /**
      * testDolFormatAddress
      *
-     * @return	void
+     * @return    void
      */
     public function testDolPrintPhone()
     {
@@ -895,7 +895,7 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
     /**
      * testImgPicto
      *
-     * @return	void
+     * @return    void
      */
     public function testImgPicto()
     {
@@ -924,7 +924,7 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
     /**
      * testDolNow
      *
-     * @return	void
+     * @return    void
      */
     public function testDolNow()
     {
@@ -937,7 +937,7 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
     /**
      * testVerifCond
      *
-     * @return	void
+     * @return    void
      */
     public function testVerifCond()
     {
@@ -960,7 +960,7 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
     /**
      * testGetDefaultTva
      *
-     * @return	void
+     * @return    void
      */
     public function testGetDefaultTva()
     {
@@ -1064,7 +1064,7 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
     /**
      * testGetDefaultTva
      *
-     * @return	void
+     * @return    void
      */
     public function testGetDefaultLocalTax()
     {
@@ -1152,7 +1152,7 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
     /**
      * testDolExplodeIntoArray
      *
-     * @return	void
+     * @return    void
      */
     public function testDolExplodeIntoArray()
     {
@@ -1225,18 +1225,18 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 
         $conf->global->MAIN_START_WEEK = 0;
 
-        $tmp=dol_getdate(1);				// 1/1/1970 and 1 second = thirday
+        $tmp=dol_getdate(1);                // 1/1/1970 and 1 second = thirday
         $this->assertEquals(4, $tmp['wday']);
 
-        $tmp=dol_getdate(24*60*60+1);		// 2/1/1970 and 1 second = friday
+        $tmp=dol_getdate(24*60*60+1);        // 2/1/1970 and 1 second = friday
         $this->assertEquals(5, $tmp['wday']);
 
         $conf->global->MAIN_START_WEEK = 1;
 
-        $tmp=dol_getdate(1);				// 1/1/1970 and 1 second = thirday
+        $tmp=dol_getdate(1);                // 1/1/1970 and 1 second = thirday
         $this->assertEquals(4, $tmp['wday']);
 
-        $tmp=dol_getdate(24*60*60+1);		// 2/1/1970 and 1 second = friday
+        $tmp=dol_getdate(24*60*60+1);        // 2/1/1970 and 1 second = friday
         $this->assertEquals(5, $tmp['wday']);
 
         return true;

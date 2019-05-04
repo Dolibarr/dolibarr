@@ -87,13 +87,13 @@ if ($action != 'create' && $action != 'edit')
 
 /* ************************************************************************** */
 /*                                                                            */
-/* Creation of an optional field											  */
+/* Creation of an optional field                                              */
 /*                                                                            */
 /* ************************************************************************** */
 
 if ($action == 'create')
 {
-	print '<br><div id="newattrib"></div>';
+    print '<br><div id="newattrib"></div>';
     print load_fiche_titre($langs->trans('NewAttribute'));
 
     require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_add.tpl.php';
@@ -106,9 +106,9 @@ if ($action == 'create')
 /* ************************************************************************** */
 if ($action == 'edit' && ! empty($attrname))
 {
-	$langs->load("members");
+    $langs->load("members");
 
-	print "<br>";
+    print "<br>";
     print load_fiche_titre($langs->trans("FieldEdition", $attrname));
 
     require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_edit.tpl.php';

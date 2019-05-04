@@ -129,56 +129,56 @@ dol_syslog("Index:list stock movements", LOG_DEBUG);
 $resql = $db->query($sql);
 if ($resql)
 {
-	$num = $db->num_rows($resql);
+    $num = $db->num_rows($resql);
 
-	print '<table class="noborder" width="100%">';
-	print "<tr class=\"liste_titre\">";
-	print '<th>'.$langs->trans("LastMovements", min($num, $max)).'</th>';
-	print '<th>'.$langs->trans("Product").'</th>';
-	if (! empty($conf->productbatch->enabled))
-	{
-		print '<th>'.$langs->trans("Batch").'</th>';
-		print '<th>'.$langs->trans("SellByDate").'</th>';
-		print '<th>'.$langs->trans("EatByDate").'</th>';
-	}
-	print '<th>'.$langs->trans("Warehouse").'</th>';
-	print '<th class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/product/stock/movement_list.php">'.$langs->trans("FullList").'</a></th>';
-	print "</tr>\n";
+    print '<table class="noborder" width="100%">';
+    print "<tr class=\"liste_titre\">";
+    print '<th>'.$langs->trans("LastMovements", min($num, $max)).'</th>';
+    print '<th>'.$langs->trans("Product").'</th>';
+    if (! empty($conf->productbatch->enabled))
+    {
+        print '<th>'.$langs->trans("Batch").'</th>';
+        print '<th>'.$langs->trans("SellByDate").'</th>';
+        print '<th>'.$langs->trans("EatByDate").'</th>';
+    }
+    print '<th>'.$langs->trans("Warehouse").'</th>';
+    print '<th class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/product/stock/movement_list.php">'.$langs->trans("FullList").'</a></th>';
+    print "</tr>\n";
 
-	$i=0;
-	while ($i < min($num, $max))
-	{
-		$objp = $db->fetch_object($resql);
+    $i=0;
+    while ($i < min($num, $max))
+    {
+        $objp = $db->fetch_object($resql);
 
-		$producttmp->id = $objp->rowid;
-		$producttmp->ref = $objp->produit;
-		$producttmp->status_batch = $objp->tobatch;
-		$producttmp->status_sell = $objp->tosell;
-		$producttmp->status_buy = $objp->tobuy;
+        $producttmp->id = $objp->rowid;
+        $producttmp->ref = $objp->produit;
+        $producttmp->status_batch = $objp->tobatch;
+        $producttmp->status_sell = $objp->tosell;
+        $producttmp->status_buy = $objp->tobuy;
 
-		print '<tr class="oddeven">';
-		print '<td>'.dol_print_date($db->jdate($objp->datem), 'dayhour').'</td>';
-		print '<td class="tdoverflowmax200">';
-		print $producttmp->getNomUrl(1);
-		print "</td>\n";
-		if (! empty($conf->productbatch->enabled))
-		{
-			print '<td>'.$objp->batch.'</td>';
-			print '<td>'.dol_print_date($db->jdate($objp->sellby), 'day').'</td>';
-			print '<td>'.dol_print_date($db->jdate($objp->eatby), 'day').'</td>';
-		}
-		print '<td class="tdoverflowmax200"><a href="card.php?id='.$objp->entrepot_id.'">';
-		print img_object($langs->trans("ShowWarehouse"), "stock").' '.$objp->stock;
-		print "</a></td>\n";
-		print '<td class="right">';
-		if ($objp->qty > 0) print '+';
-		print $objp->qty.'</td>';
-		print "</tr>\n";
-		$i++;
-	}
-	$db->free($resql);
+        print '<tr class="oddeven">';
+        print '<td>'.dol_print_date($db->jdate($objp->datem), 'dayhour').'</td>';
+        print '<td class="tdoverflowmax200">';
+        print $producttmp->getNomUrl(1);
+        print "</td>\n";
+        if (! empty($conf->productbatch->enabled))
+        {
+            print '<td>'.$objp->batch.'</td>';
+            print '<td>'.dol_print_date($db->jdate($objp->sellby), 'day').'</td>';
+            print '<td>'.dol_print_date($db->jdate($objp->eatby), 'day').'</td>';
+        }
+        print '<td class="tdoverflowmax200"><a href="card.php?id='.$objp->entrepot_id.'">';
+        print img_object($langs->trans("ShowWarehouse"), "stock").' '.$objp->stock;
+        print "</a></td>\n";
+        print '<td class="right">';
+        if ($objp->qty > 0) print '+';
+        print $objp->qty.'</td>';
+        print "</tr>\n";
+        $i++;
+    }
+    $db->free($resql);
 
-	print "</table>";
+    print "</table>";
 }
 
 //print '</td></tr></table>';

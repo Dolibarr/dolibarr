@@ -89,42 +89,42 @@ llxHeader("", "", $langs->trans("InterventionCard"));
 
 if ($object->id)
 {
-	$valideur = new User($db);
-	$valideur->fetch($object->fk_validator);
+    $valideur = new User($db);
+    $valideur->fetch($object->fk_validator);
 
-	$userRequest = new User($db);
-	$userRequest->fetch($object->fk_user);
+    $userRequest = new User($db);
+    $userRequest->fetch($object->fk_user);
 
-	$head=holiday_prepare_head($object);
+    $head=holiday_prepare_head($object);
 
-	dol_fiche_head($head, 'documents', $langs->trans("CPTitreMenu"), -1, 'holiday');
-
-
-	// Build file list
-	$filearray=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);
-	$totalsize=0;
-	foreach($filearray as $key => $file)
-	{
-		$totalsize+=$file['size'];
-	}
+    dol_fiche_head($head, 'documents', $langs->trans("CPTitreMenu"), -1, 'holiday');
 
 
-	$linkback='<a href="'.DOL_URL_ROOT.'/holiday/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+    // Build file list
+    $filearray=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);
+    $totalsize=0;
+    foreach($filearray as $key => $file)
+    {
+        $totalsize+=$file['size'];
+    }
 
-	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref');
+
+    $linkback='<a href="'.DOL_URL_ROOT.'/holiday/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+
+    dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref');
 
 
-	print '<div class="fichecenter">';
-	//print '<div class="fichehalfleft">';
-	print '<div class="underbanner clearboth"></div>';
+    print '<div class="fichecenter">';
+    //print '<div class="fichehalfleft">';
+    print '<div class="underbanner clearboth"></div>';
 
-	print '<table class="border tableforfield centpercent">';
+    print '<table class="border tableforfield centpercent">';
 
     print '<tr>';
     print '<td class="titlefield">'.$langs->trans("User").'</td>';
-	print '<td>';
-	print $userRequest->getNomUrl(-1, 'leave');
-	print '</td></tr>';
+    print '<td>';
+    print $userRequest->getNomUrl(-1, 'leave');
+    print '</td></tr>';
 
     // Type
     print '<tr>';
@@ -155,7 +155,7 @@ if ($object->id)
         print '<td>';
         print $form->selectDate($object->date_debut, 'date_debut_');
         print ' &nbsp; &nbsp; ';
-		print $form->selectarray('starthalfday', $listhalfday, (GETPOST('starthalfday')?GETPOST('starthalfday'):$starthalfday));
+        print $form->selectarray('starthalfday', $listhalfday, (GETPOST('starthalfday')?GETPOST('starthalfday'):$starthalfday));
         print '</td>';
         print '</tr>';
     }
@@ -188,10 +188,10 @@ if ($object->id)
 
     if ($object->statut == 5)
     {
-    	print '<tr>';
-    	print '<td>'.$langs->trans('DetailRefusCP').'</td>';
-    	print '<td>'.$object->detail_refuse.'</td>';
-    	print '</tr>';
+        print '<tr>';
+        print '<td>'.$langs->trans('DetailRefusCP').'</td>';
+        print '<td>'.$object->detail_refuse.'</td>';
+        print '</tr>';
     }
 
     // Description
@@ -222,14 +222,14 @@ if ($object->id)
 
     print '<div class="underbanner clearboth"></div>';
 
-	// Info workflow
+    // Info workflow
     print '<table class="border tableforfield centpercent">'."\n";
     print '<tbody>';
 
     if (! empty($object->fk_user_create))
     {
-    	$userCreate=new User($db);
-    	$userCreate->fetch($object->fk_user_create);
+        $userCreate=new User($db);
+        $userCreate->fetch($object->fk_user_create);
         print '<tr>';
         print '<td class="titlefield">'.$langs->trans('RequestByCP').'</td>';
         print '<td>'.$userCreate->getNomUrl(-1).'</td>';
@@ -245,7 +245,7 @@ if ($object->id)
         print '<tr>';
         print '<td class="titlefield">'.$langs->trans('ReviewedByCP').'</td>';
         print '<td>';
-		print $form->select_dolusers($object->fk_user, "valideur", 1, ($user->admin ? '' : array($user->id)));	// By default, hierarchical parent
+        print $form->select_dolusers($object->fk_user, "valideur", 1, ($user->admin ? '' : array($user->id)));    // By default, hierarchical parent
         print '</td>';
         print '</tr>';
     }
@@ -293,7 +293,7 @@ if ($object->id)
 }
 else
 {
-	print $langs->trans("ErrorUnknown");
+    print $langs->trans("ErrorUnknown");
 }
 
 // End of page

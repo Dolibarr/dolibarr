@@ -21,10 +21,10 @@
  */
 
 /**
- *	\file       htdocs/core/modules/facture/modules_facture.php
- *	\ingroup    facture
- *	\brief      Fichier contenant la classe mere de generation des factures en PDF
- * 				et la classe mere de numerotation des factures
+ *    \file       htdocs/core/modules/facture/modules_facture.php
+ *    \ingroup    facture
+ *    \brief      Fichier contenant la classe mere de generation des factures en PDF
+ *                 et la classe mere de numerotation des factures
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
@@ -33,36 +33,36 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';   // Requ
 
 
 /**
- *	Parent class of invoice document generators
+ *    Parent class of invoice document generators
  */
 abstract class ModelePDFFactures extends CommonDocGenerator
 {
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error='';
+    /**
+     * @var string Error code (or message)
+     */
+    public $error='';
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *  Return list of active generation modules
-	 *
-     *  @param	DoliDB	$db     			Database handler
-     *  @param  integer	$maxfilenamelength  Max length of value to show
-     *  @return	array						List of templates
-	 */
+    /**
+     *  Return list of active generation modules
+     *
+     *  @param    DoliDB    $db                 Database handler
+     *  @param  integer    $maxfilenamelength  Max length of value to show
+     *  @return    array                        List of templates
+     */
     public static function liste_modeles($db, $maxfilenamelength = 0)
-	{
+    {
         // phpcs:enable
-		global $conf;
+        global $conf;
 
-		$type='invoice';
-		$liste=array();
+        $type='invoice';
+        $liste=array();
 
-		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste=getListOfModels($db, $type, $maxfilenamelength);
+        include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+        $liste=getListOfModels($db, $type, $maxfilenamelength);
 
-		return $liste;
-	}
+        return $liste;
+    }
 }
 
 /**
@@ -70,83 +70,83 @@ abstract class ModelePDFFactures extends CommonDocGenerator
  */
 abstract class ModeleNumRefFactures
 {
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error='';
+    /**
+     * @var string Error code (or message)
+     */
+    public $error='';
 
-	/**
-	 * Return if a module can be used or not
-	 *
-	 * @return	boolean     true if module can be used
-	 */
-	public function isEnabled()
-	{
-		return true;
-	}
+    /**
+     * Return if a module can be used or not
+     *
+     * @return    boolean     true if module can be used
+     */
+    public function isEnabled()
+    {
+        return true;
+    }
 
-	/**
-	 * Renvoi la description par defaut du modele de numerotation
-	 *
-	 * @return    string      Texte descripif
-	 */
-	public function info()
-	{
-		global $langs;
-		$langs->load("bills");
-		return $langs->trans("NoDescription");
-	}
+    /**
+     * Renvoi la description par defaut du modele de numerotation
+     *
+     * @return    string      Texte descripif
+     */
+    public function info()
+    {
+        global $langs;
+        $langs->load("bills");
+        return $langs->trans("NoDescription");
+    }
 
-	/**
-	 * Renvoi un exemple de numerotation
-	 *
-	 * @return	string      Example
-	 */
-	public function getExample()
-	{
-		global $langs;
-		$langs->load("bills");
-		return $langs->trans("NoExample");
-	}
+    /**
+     * Renvoi un exemple de numerotation
+     *
+     * @return    string      Example
+     */
+    public function getExample()
+    {
+        global $langs;
+        $langs->load("bills");
+        return $langs->trans("NoExample");
+    }
 
-	/**
-	 * Test si les numeros deja en vigueur dans la base ne provoquent pas
-	 * de conflits qui empecheraient cette numerotation de fonctionner.
-	 *
-	 * @return	boolean     false si conflit, true si ok
-	 */
-	public function canBeActivated()
-	{
-		return true;
-	}
+    /**
+     * Test si les numeros deja en vigueur dans la base ne provoquent pas
+     * de conflits qui empecheraient cette numerotation de fonctionner.
+     *
+     * @return    boolean     false si conflit, true si ok
+     */
+    public function canBeActivated()
+    {
+        return true;
+    }
 
-	/**
-	 * Renvoi prochaine valeur attribuee
-	 *
-	 * @param	Societe		$objsoc		Objet societe
-	 * @param   Facture		$facture	Objet facture
-	 * @return  string      			Value
-	 */
-	public function getNextValue($objsoc, $facture)
-	{
-		global $langs;
-		return $langs->trans("NotAvailable");
-	}
+    /**
+     * Renvoi prochaine valeur attribuee
+     *
+     * @param    Societe        $objsoc        Objet societe
+     * @param   Facture        $facture    Objet facture
+     * @return  string                  Value
+     */
+    public function getNextValue($objsoc, $facture)
+    {
+        global $langs;
+        return $langs->trans("NotAvailable");
+    }
 
-	/**
-	 * Renvoi version du modele de numerotation
-	 *
-	 * @return    string      Valeur
-	 */
-	public function getVersion()
-	{
-		global $langs;
-		$langs->load("admin");
+    /**
+     * Renvoi version du modele de numerotation
+     *
+     * @return    string      Valeur
+     */
+    public function getVersion()
+    {
+        global $langs;
+        $langs->load("admin");
 
-		if ($this->version == 'development') return $langs->trans("VersionDevelopment");
-		elseif ($this->version == 'experimental') return $langs->trans("VersionExperimental");
-		elseif ($this->version == 'dolibarr') return DOL_VERSION;
-		elseif ($this->version) return $this->version;
-		else return $langs->trans("NotAvailable");
-	}
+        if ($this->version == 'development') return $langs->trans("VersionDevelopment");
+        elseif ($this->version == 'experimental') return $langs->trans("VersionExperimental");
+        elseif ($this->version == 'dolibarr') return DOL_VERSION;
+        elseif ($this->version) return $this->version;
+        else return $langs->trans("NotAvailable");
+    }
 }

@@ -105,7 +105,7 @@ class Subscriptions extends DolibarrApi
             {
                 throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
             }
-	        $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
             $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
 
@@ -199,7 +199,7 @@ class Subscriptions extends DolibarrApi
         }
         else
         {
-        	throw new RestException(500, $subscription->error);
+            throw new RestException(500, $subscription->error);
         }
     }
 

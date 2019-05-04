@@ -143,7 +143,7 @@ class Setup extends DolibarrApi
             {
                 throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
             }
-	        $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
             $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
 
@@ -189,7 +189,7 @@ class Setup extends DolibarrApi
      * @param int       $id        ID of country
      * @param string    $lang      Code of the language the name of the
      *                             country must be translated to
-     * @return array 			   Array of cleaned object properties
+     * @return array                Array of cleaned object properties
      *
      * @url     GET dictionary/countries/{id}
      *
@@ -278,7 +278,7 @@ class Setup extends DolibarrApi
      * Clean sensible object datas
      *
      * @param object    $object    Object to clean
-     * @return array 				Array of cleaned object properties
+     * @return array                 Array of cleaned object properties
      */
     protected function _cleanObjectDatas($object)
     {
@@ -352,7 +352,7 @@ class Setup extends DolibarrApi
             {
                 throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
             }
-	        $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
             $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
 
@@ -414,7 +414,7 @@ class Setup extends DolibarrApi
             {
                 throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
             }
-	        $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
             $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
 
@@ -474,7 +474,7 @@ class Setup extends DolibarrApi
             {
                 throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
             }
-	        $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
             $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
 
@@ -508,8 +508,8 @@ class Setup extends DolibarrApi
     /**
      * Get the list of extra fields.
      *
-     * @param string	$sortfield	Sort field
-     * @param string	$sortorder	Sort order
+     * @param string    $sortfield    Sort field
+     * @param string    $sortorder    Sort order
      * @param string    $type       Type of element ('adherent', 'commande', 'thirdparty', 'facture', 'propal', 'product', ...)
      * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.label:like:'SO-%')"
      * @return List of extra fields
@@ -532,12 +532,12 @@ class Setup extends DolibarrApi
         // Add sql filters
         if ($sqlfilters)
         {
-        	if (! DolibarrApi::_checkFilters($sqlfilters))
-        	{
-        		throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
-        	}
-        	$regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
-        	$sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+            if (! DolibarrApi::_checkFilters($sqlfilters))
+            {
+                throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+            }
+            $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
 
         $sql.= $this->db->order($sortfield, $sortorder);
@@ -545,26 +545,26 @@ class Setup extends DolibarrApi
         $resql=$this->db->query($sql);
         if ($resql)
         {
-        	if ($this->db->num_rows($resql))
-        	{
-        		while ($tab = $this->db->fetch_object($resql))
-        		{
-        			// New usage
-        			$list[$tab->elementtype][$tab->name]['type']=$tab->type;
-        			$list[$tab->elementtype][$tab->name]['label']=$tab->label;
-        			$list[$tab->elementtype][$tab->name]['size']=$tab->size;
-        			$list[$tab->elementtype][$tab->name]['elementtype']=$tab->elementtype;
-        			$list[$tab->elementtype][$tab->name]['default']=$tab->fielddefault;
-        			$list[$tab->elementtype][$tab->name]['computed']=$tab->fieldcomputed;
-        			$list[$tab->elementtype][$tab->name]['unique']=$tab->fieldunique;
-        			$list[$tab->elementtype][$tab->name]['required']=$tab->fieldrequired;
-        			$list[$tab->elementtype][$tab->name]['param']=($tab->param ? unserialize($tab->param) : '');
-        			$list[$tab->elementtype][$tab->name]['pos']=$tab->pos;
-        			$list[$tab->elementtype][$tab->name]['alwayseditable']=$tab->alwayseditable;
-        			$list[$tab->elementtype][$tab->name]['perms']=$tab->perms;
-        			$list[$tab->elementtype][$tab->name]['list']=$tab->list;
-        		}
-        	}
+            if ($this->db->num_rows($resql))
+            {
+                while ($tab = $this->db->fetch_object($resql))
+                {
+                    // New usage
+                    $list[$tab->elementtype][$tab->name]['type']=$tab->type;
+                    $list[$tab->elementtype][$tab->name]['label']=$tab->label;
+                    $list[$tab->elementtype][$tab->name]['size']=$tab->size;
+                    $list[$tab->elementtype][$tab->name]['elementtype']=$tab->elementtype;
+                    $list[$tab->elementtype][$tab->name]['default']=$tab->fielddefault;
+                    $list[$tab->elementtype][$tab->name]['computed']=$tab->fieldcomputed;
+                    $list[$tab->elementtype][$tab->name]['unique']=$tab->fieldunique;
+                    $list[$tab->elementtype][$tab->name]['required']=$tab->fieldrequired;
+                    $list[$tab->elementtype][$tab->name]['param']=($tab->param ? unserialize($tab->param) : '');
+                    $list[$tab->elementtype][$tab->name]['pos']=$tab->pos;
+                    $list[$tab->elementtype][$tab->name]['alwayseditable']=$tab->alwayseditable;
+                    $list[$tab->elementtype][$tab->name]['perms']=$tab->perms;
+                    $list[$tab->elementtype][$tab->name]['list']=$tab->list;
+                }
+            }
         }
         else
         {
@@ -573,7 +573,7 @@ class Setup extends DolibarrApi
 
         if (! count($list))
         {
-        	throw new RestException(404, 'No extrafield found');
+            throw new RestException(404, 'No extrafield found');
         }
 
         return $list;
@@ -613,7 +613,7 @@ class Setup extends DolibarrApi
             {
                 throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
             }
-	        $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
             $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
 
@@ -724,47 +724,47 @@ class Setup extends DolibarrApi
      */
     public function getTicketsCategories($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
     {
-    	$list = array();
+        $list = array();
 
-    	$sql = "SELECT rowid, code, pos,  label, use_default, description";
-    	$sql.= " FROM ".MAIN_DB_PREFIX."c_ticket_category as t";
+        $sql = "SELECT rowid, code, pos,  label, use_default, description";
+        $sql.= " FROM ".MAIN_DB_PREFIX."c_ticket_category as t";
       $sql.= " WHERE t.active = ".$active;
-    	// Add sql filters
-    	if ($sqlfilters)
-    	{
-    		if (! DolibarrApi::_checkFilters($sqlfilters))
-    		{
-    			throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
-    		}
-    		$regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
-    		$sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
-    	}
+        // Add sql filters
+        if ($sqlfilters)
+        {
+            if (! DolibarrApi::_checkFilters($sqlfilters))
+            {
+                throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+            }
+            $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+        }
 
 
-    	$sql.= $this->db->order($sortfield, $sortorder);
+        $sql.= $this->db->order($sortfield, $sortorder);
 
-    	if ($limit) {
-    		if ($page < 0) {
-    			$page = 0;
-    		}
-    		$offset = $limit * $page;
+        if ($limit) {
+            if ($page < 0) {
+                $page = 0;
+            }
+            $offset = $limit * $page;
 
-    		$sql .= $this->db->plimit($limit, $offset);
-    	}
+            $sql .= $this->db->plimit($limit, $offset);
+        }
 
-    	$result = $this->db->query($sql);
+        $result = $this->db->query($sql);
 
-    	if ($result) {
-    		$num = $this->db->num_rows($result);
-    		$min = min($num, ($limit <= 0 ? $num : $limit));
-    		for ($i = 0; $i < $min; $i++) {
-    			$list[] = $this->db->fetch_object($result);
-    		}
-    	} else {
-    		throw new RestException(503, 'Error when retrieving list of ticket categories : '.$this->db->lasterror());
-    	}
+        if ($result) {
+            $num = $this->db->num_rows($result);
+            $min = min($num, ($limit <= 0 ? $num : $limit));
+            for ($i = 0; $i < $min; $i++) {
+                $list[] = $this->db->fetch_object($result);
+            }
+        } else {
+            throw new RestException(503, 'Error when retrieving list of ticket categories : '.$this->db->lasterror());
+        }
 
-    	return $list;
+        return $list;
     }
 
     /**
@@ -784,47 +784,47 @@ class Setup extends DolibarrApi
      */
     public function getTicketsSeverities($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
     {
-    	$list = array();
+        $list = array();
 
-    	$sql = "SELECT rowid, code, pos,  label, use_default, color, description";
-    	$sql.= " FROM ".MAIN_DB_PREFIX."c_ticket_severity as t";
+        $sql = "SELECT rowid, code, pos,  label, use_default, color, description";
+        $sql.= " FROM ".MAIN_DB_PREFIX."c_ticket_severity as t";
         $sql.= " WHERE t.active = ".$active;
-    	// Add sql filters
-    	if ($sqlfilters)
-    	{
-    		if (! DolibarrApi::_checkFilters($sqlfilters))
-    		{
-    			throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
-    		}
-    		$regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
-    		$sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
-    	}
+        // Add sql filters
+        if ($sqlfilters)
+        {
+            if (! DolibarrApi::_checkFilters($sqlfilters))
+            {
+                throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+            }
+            $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+        }
 
 
-    	$sql.= $this->db->order($sortfield, $sortorder);
+        $sql.= $this->db->order($sortfield, $sortorder);
 
-    	if ($limit) {
-    		if ($page < 0) {
-    			$page = 0;
-    		}
-    		$offset = $limit * $page;
+        if ($limit) {
+            if ($page < 0) {
+                $page = 0;
+            }
+            $offset = $limit * $page;
 
-    		$sql .= $this->db->plimit($limit, $offset);
-    	}
+            $sql .= $this->db->plimit($limit, $offset);
+        }
 
-    	$result = $this->db->query($sql);
+        $result = $this->db->query($sql);
 
-    	if ($result) {
-    		$num = $this->db->num_rows($result);
-    		$min = min($num, ($limit <= 0 ? $num : $limit));
-    		for ($i = 0; $i < $min; $i++) {
-    			$list[] = $this->db->fetch_object($result);
-    		}
-    	} else {
-    		throw new RestException(503, 'Error when retrieving list of ticket severities : '.$this->db->lasterror());
-    	}
+        if ($result) {
+            $num = $this->db->num_rows($result);
+            $min = min($num, ($limit <= 0 ? $num : $limit));
+            for ($i = 0; $i < $min; $i++) {
+                $list[] = $this->db->fetch_object($result);
+            }
+        } else {
+            throw new RestException(503, 'Error when retrieving list of ticket severities : '.$this->db->lasterror());
+        }
 
-    	return $list;
+        return $list;
     }
 
     /**
@@ -844,57 +844,57 @@ class Setup extends DolibarrApi
      */
     public function getTicketsTypes($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
     {
-    	$list = array();
+        $list = array();
 
-    	$sql = "SELECT rowid, code, pos,  label, use_default, description";
-    	$sql.= " FROM ".MAIN_DB_PREFIX."c_ticket_type as t";
+        $sql = "SELECT rowid, code, pos,  label, use_default, description";
+        $sql.= " FROM ".MAIN_DB_PREFIX."c_ticket_type as t";
         $sql.= " WHERE t.active = ".$active;
-    	if ($type) $sql.=" AND t.type LIKE '%" . $this->db->escape($type) . "%'";
-    	if ($module)    $sql.=" AND t.module LIKE '%" . $this->db->escape($module) . "%'";
-    	// Add sql filters
-    	if ($sqlfilters)
-    	{
-    		if (! DolibarrApi::_checkFilters($sqlfilters))
-    		{
-    			throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
-    		}
-    		$regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
-    		$sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
-    	}
+        if ($type) $sql.=" AND t.type LIKE '%" . $this->db->escape($type) . "%'";
+        if ($module)    $sql.=" AND t.module LIKE '%" . $this->db->escape($module) . "%'";
+        // Add sql filters
+        if ($sqlfilters)
+        {
+            if (! DolibarrApi::_checkFilters($sqlfilters))
+            {
+                throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+            }
+            $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+        }
 
 
-    	$sql.= $this->db->order($sortfield, $sortorder);
+        $sql.= $this->db->order($sortfield, $sortorder);
 
-    	if ($limit) {
-    		if ($page < 0) {
-    			$page = 0;
-    		}
-    		$offset = $limit * $page;
+        if ($limit) {
+            if ($page < 0) {
+                $page = 0;
+            }
+            $offset = $limit * $page;
 
-    		$sql .= $this->db->plimit($limit, $offset);
-    	}
+            $sql .= $this->db->plimit($limit, $offset);
+        }
 
-    	$result = $this->db->query($sql);
+        $result = $this->db->query($sql);
 
-    	if ($result) {
-    		$num = $this->db->num_rows($result);
-    		$min = min($num, ($limit <= 0 ? $num : $limit));
-    		for ($i = 0; $i < $min; $i++) {
-    			$list[] = $this->db->fetch_object($result);
-    		}
-    	} else {
-    		throw new RestException(503, 'Error when retrieving list of ticket types : '.$this->db->lasterror());
-    	}
+        if ($result) {
+            $num = $this->db->num_rows($result);
+            $min = min($num, ($limit <= 0 ? $num : $limit));
+            for ($i = 0; $i < $min; $i++) {
+                $list[] = $this->db->fetch_object($result);
+            }
+        } else {
+            throw new RestException(503, 'Error when retrieving list of ticket types : '.$this->db->lasterror());
+        }
 
-    	return $list;
+        return $list;
     }
 
 
     /**
      * Do a test of integrity for files and setup.
      *
-     * @param string	$target			Can be 'local' or 'default' or Url of the signatures file to use for the test. Must be reachable by the tested Dolibarr.
-     * @return 							Result of file and setup integrity check
+     * @param string    $target            Can be 'local' or 'default' or Url of the signatures file to use for the test. Must be reachable by the tested Dolibarr.
+     * @return                             Result of file and setup integrity check
      *
      * @url     GET checkintegrity
      *
@@ -902,328 +902,328 @@ class Setup extends DolibarrApi
      */
     public function getCheckIntegrity($target)
     {
-    	global $langs, $conf;
+        global $langs, $conf;
 
-    	if (! DolibarrApiAccess::$user->admin
-    		&& (empty($conf->global->API_LOGIN_ALLOWED_FOR_INTEGRITY_CHECK) || DolibarrApiAccess::$user->login != $conf->global->API_LOGIN_ALLOWED_FOR_INTEGRITY_CHECK))
-    	{
-    		throw new RestException(503, 'Error API open to admin users only or to login user defined with constant API_LOGIN_ALLOWED_FOR_INTEGRITY_CHECK');
-    	}
+        if (! DolibarrApiAccess::$user->admin
+            && (empty($conf->global->API_LOGIN_ALLOWED_FOR_INTEGRITY_CHECK) || DolibarrApiAccess::$user->login != $conf->global->API_LOGIN_ALLOWED_FOR_INTEGRITY_CHECK))
+        {
+            throw new RestException(503, 'Error API open to admin users only or to login user defined with constant API_LOGIN_ALLOWED_FOR_INTEGRITY_CHECK');
+        }
 
-    	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-    	require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
-    	$langs->load("admin");
+        $langs->load("admin");
 
-    	$outexpectedchecksum = '';
-    	$outcurrentchecksum = '';
+        $outexpectedchecksum = '';
+        $outcurrentchecksum = '';
 
-    	// Modified or missing files
-    	$file_list = array('missing' => array(), 'updated' => array());
+        // Modified or missing files
+        $file_list = array('missing' => array(), 'updated' => array());
 
-    	// Local file to compare to
-    	$xmlshortfile = GETPOST('xmlshortfile')?GETPOST('xmlshortfile'):'/install/filelist-'.DOL_VERSION.'.xml';
-    	$xmlfile = DOL_DOCUMENT_ROOT.$xmlshortfile;
-    	// Remote file to compare to
-    	$xmlremote = ($target == 'default' ? '' : $target);
-    	if (empty($xmlremote) && ! empty($conf->global->MAIN_FILECHECK_URL)) $xmlremote = $conf->global->MAIN_FILECHECK_URL;
-    	$param='MAIN_FILECHECK_URL_'.DOL_VERSION;
-    	if (empty($xmlremote) && ! empty($conf->global->$param)) $xmlremote = $conf->global->$param;
-    	if (empty($xmlremote)) $xmlremote = 'https://www.dolibarr.org/files/stable/signatures/filelist-'.DOL_VERSION.'.xml';
+        // Local file to compare to
+        $xmlshortfile = GETPOST('xmlshortfile')?GETPOST('xmlshortfile'):'/install/filelist-'.DOL_VERSION.'.xml';
+        $xmlfile = DOL_DOCUMENT_ROOT.$xmlshortfile;
+        // Remote file to compare to
+        $xmlremote = ($target == 'default' ? '' : $target);
+        if (empty($xmlremote) && ! empty($conf->global->MAIN_FILECHECK_URL)) $xmlremote = $conf->global->MAIN_FILECHECK_URL;
+        $param='MAIN_FILECHECK_URL_'.DOL_VERSION;
+        if (empty($xmlremote) && ! empty($conf->global->$param)) $xmlremote = $conf->global->$param;
+        if (empty($xmlremote)) $xmlremote = 'https://www.dolibarr.org/files/stable/signatures/filelist-'.DOL_VERSION.'.xml';
 
-    	if ($target == 'local')
-    	{
-    		if (dol_is_file($xmlfile))
-    		{
-    			$xml = simplexml_load_file($xmlfile);
-    		}
-    		else
-    		{
-    			throw new RestException(500, $langs->trans('XmlNotFound') . ': ' . $xmlfile);
-    		}
-    	}
-    	else
-    	{
-    		$xmlarray = getURLContent($xmlremote);
+        if ($target == 'local')
+        {
+            if (dol_is_file($xmlfile))
+            {
+                $xml = simplexml_load_file($xmlfile);
+            }
+            else
+            {
+                throw new RestException(500, $langs->trans('XmlNotFound') . ': ' . $xmlfile);
+            }
+        }
+        else
+        {
+            $xmlarray = getURLContent($xmlremote);
 
-    		// Return array('content'=>response,'curl_error_no'=>errno,'curl_error_msg'=>errmsg...)
-    		if (! $xmlarray['curl_error_no'] && $xmlarray['http_code'] != '404')
-    		{
-    			$xmlfile = $xmlarray['content'];
-    			//print "xmlfilestart".$xmlfile."endxmlfile";
-    			$xml = simplexml_load_string($xmlfile);
-    		}
-    		else
-    		{
-    			$errormsg=$langs->trans('XmlNotFound') . ': ' . $xmlremote.' - '.$xmlarray['http_code'].' '.$xmlarray['curl_error_no'].' '.$xmlarray['curl_error_msg'];
-    			throw new RestException(500, $errormsg);
-    		}
-    	}
-
-
-
-    	if ($xml)
-    	{
-    		$checksumconcat = array();
-    		$file_list = array();
-    		$out = '';
-
-    		// Forced constants
-    		if (is_object($xml->dolibarr_constants[0]))
-    		{
-    			$out.=load_fiche_titre($langs->trans("ForcedConstants"));
-
-    			$out.='<div class="div-table-responsive-no-min">';
-    			$out.='<table class="noborder">';
-    			$out.='<tr class="liste_titre">';
-    			$out.='<td>#</td>';
-    			$out.='<td>' . $langs->trans("Constant") . '</td>';
-    			$out.='<td align="center">' . $langs->trans("ExpectedValue") . '</td>';
-    			$out.='<td align="center">' . $langs->trans("Value") . '</td>';
-    			$out.='</tr>'."\n";
-
-    			$i = 0;
-    			foreach ($xml->dolibarr_constants[0]->constant as $constant)    // $constant is a simpleXMLElement
-    			{
-    				$constname=$constant['name'];
-    				$constvalue=(string) $constant;
-    				$constvalue = (empty($constvalue)?'0':$constvalue);
-    				// Value found
-    				$value='';
-    				if ($constname && $conf->global->$constname != '') $value=$conf->global->$constname;
-    				$valueforchecksum=(empty($value)?'0':$value);
-
-    				$checksumconcat[]=$valueforchecksum;
-
-    				$i++;
-    				$out.='<tr class="oddeven">';
-    				$out.='<td>'.$i.'</td>' . "\n";
-    				$out.='<td>'.$constname.'</td>' . "\n";
-    				$out.='<td align="center">'.$constvalue.'</td>' . "\n";
-    				$out.='<td align="center">'.$valueforchecksum.'</td>' . "\n";
-    				$out.="</tr>\n";
-    			}
-
-    			if ($i==0)
-    			{
-    				$out.='<tr class="oddeven"><td colspan="4" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
-    			}
-    			$out.='</table>';
-    			$out.='</div>';
-
-    			$out.='<br>';
-    		}
-
-    		// Scan htdocs
-    		if (is_object($xml->dolibarr_htdocs_dir[0]))
-    		{
-    			//var_dump($xml->dolibarr_htdocs_dir[0]['includecustom']);exit;
-    			$includecustom=(empty($xml->dolibarr_htdocs_dir[0]['includecustom'])?0:$xml->dolibarr_htdocs_dir[0]['includecustom']);
-
-    			// Defined qualified files (must be same than into generate_filelist_xml.php)
-    			$regextoinclude='\.(php|css|html|js|json|tpl|jpg|png|gif|sql|lang)$';
-    			$regextoexclude='('.($includecustom?'':'custom|').'documents|conf|install|public\/test|Shared\/PCLZip|nusoap\/lib\/Mail|php\/example|php\/test|geoip\/sample.*\.php|ckeditor\/samples|ckeditor\/adapters)$';  // Exclude dirs
-    			$scanfiles = dol_dir_list(DOL_DOCUMENT_ROOT, 'files', 1, $regextoinclude, $regextoexclude);
-
-    			// Fill file_list with files in signature, new files, modified files
-    			$ret = getFilesUpdated($file_list, $xml->dolibarr_htdocs_dir[0], '', DOL_DOCUMENT_ROOT, $checksumconcat, $scanfiles);		// Fill array $file_list
-    			// Complete with list of new files
-    			foreach ($scanfiles as $keyfile => $valfile)
-    			{
-    				$tmprelativefilename=preg_replace('/^'.preg_quote(DOL_DOCUMENT_ROOT, '/').'/', '', $valfile['fullname']);
-    				if (! in_array($tmprelativefilename, $file_list['insignature']))
-    				{
-    					$md5newfile=@md5_file($valfile['fullname']);    // Can fails if we don't have permission to open/read file
-    					$file_list['added'][]=array('filename'=>$tmprelativefilename, 'md5'=>$md5newfile);
-    				}
-    			}
-
-    			// Files missings
-    			$out.=load_fiche_titre($langs->trans("FilesMissing"));
-
-    			$out.='<div class="div-table-responsive-no-min">';
-    			$out.='<table class="noborder">';
-    			$out.='<tr class="liste_titre">';
-    			$out.='<td>#</td>';
-    			$out.='<td>' . $langs->trans("Filename") . '</td>';
-    			$out.='<td align="center">' . $langs->trans("ExpectedChecksum") . '</td>';
-    			$out.='</tr>'."\n";
-    			$tmpfilelist = dol_sort_array($file_list['missing'], 'filename');
-    			if (is_array($tmpfilelist) && count($tmpfilelist))
-    			{
-    				$i = 0;
-    				foreach ($tmpfilelist as $file)
-    				{
-    					$i++;
-    					$out.='<tr class="oddeven">';
-    					$out.='<td>'.$i.'</td>' . "\n";
-    					$out.='<td>'.$file['filename'].'</td>' . "\n";
-    					$out.='<td align="center">'.$file['expectedmd5'].'</td>' . "\n";
-    					$out.="</tr>\n";
-    				}
-    			}
-    			else
-    			{
-    				$out.='<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
-    			}
-    			$out.='</table>';
-    			$out.='</div>';
-
-    			$out.='<br>';
-
-    			// Files modified
-    			$out.=load_fiche_titre($langs->trans("FilesModified"));
-
-    			$totalsize=0;
-    			$out.='<div class="div-table-responsive-no-min">';
-    			$out.='<table class="noborder">';
-    			$out.='<tr class="liste_titre">';
-    			$out.='<td>#</td>';
-    			$out.='<td>' . $langs->trans("Filename") . '</td>';
-    			$out.='<td align="center">' . $langs->trans("ExpectedChecksum") . '</td>';
-    			$out.='<td align="center">' . $langs->trans("CurrentChecksum") . '</td>';
-    			$out.='<td class="right">' . $langs->trans("Size") . '</td>';
-    			$out.='<td class="right">' . $langs->trans("DateModification") . '</td>';
-    			$out.='</tr>'."\n";
-    			$tmpfilelist2 = dol_sort_array($file_list['updated'], 'filename');
-    			if (is_array($tmpfilelist2) && count($tmpfilelist2))
-    			{
-    				$i = 0;
-    				foreach ($tmpfilelist2 as $file)
-    				{
-    					$i++;
-    					$out.='<tr class="oddeven">';
-    					$out.='<td>'.$i.'</td>' . "\n";
-    					$out.='<td>'.$file['filename'].'</td>' . "\n";
-    					$out.='<td align="center">'.$file['expectedmd5'].'</td>' . "\n";
-    					$out.='<td align="center">'.$file['md5'].'</td>' . "\n";
-    					$size = dol_filesize(DOL_DOCUMENT_ROOT.'/'.$file['filename']);
-    					$totalsize += $size;
-    					$out.='<td class="right">'.dol_print_size($size).'</td>' . "\n";
-    					$out.='<td class="right">'.dol_print_date(dol_filemtime(DOL_DOCUMENT_ROOT.'/'.$file['filename']), 'dayhour').'</td>' . "\n";
-    					$out.="</tr>\n";
-    				}
-    				$out.='<tr class="liste_total">';
-    				$out.='<td></td>' . "\n";
-    				$out.='<td>'.$langs->trans("Total").'</td>' . "\n";
-    				$out.='<td align="center"></td>' . "\n";
-    				$out.='<td align="center"></td>' . "\n";
-    				$out.='<td class="right">'.dol_print_size($totalsize).'</td>' . "\n";
-    				$out.='<td class="right"></td>' . "\n";
-    				$out.="</tr>\n";
-    			}
-    			else
-    			{
-    				$out.='<tr class="oddeven"><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
-    			}
-    			$out.='</table>';
-    			$out.='</div>';
-
-    			$out.='<br>';
-
-    			// Files added
-    			$out.=load_fiche_titre($langs->trans("FilesAdded"));
-
-    			$totalsize = 0;
-    			$out.='<div class="div-table-responsive-no-min">';
-    			$out.='<table class="noborder">';
-    			$out.='<tr class="liste_titre">';
-    			$out.='<td>#</td>';
-    			$out.='<td>' . $langs->trans("Filename") . '</td>';
-    			$out.='<td align="center">' . $langs->trans("ExpectedChecksum") . '</td>';
-    			$out.='<td align="center">' . $langs->trans("CurrentChecksum") . '</td>';
-    			$out.='<td class="right">' . $langs->trans("Size") . '</td>';
-    			$out.='<td class="right">' . $langs->trans("DateModification") . '</td>';
-    			$out.='</tr>'."\n";
-    			$tmpfilelist3 = dol_sort_array($file_list['added'], 'filename');
-    			if (is_array($tmpfilelist3) && count($tmpfilelist3))
-    			{
-    				$i = 0;
-    				foreach ($tmpfilelist3 as $file)
-    				{
-    					$i++;
-    					$out.='<tr class="oddeven">';
-    					$out.='<td>'.$i.'</td>' . "\n";
-    					$out.='<td>'.$file['filename'].'</td>' . "\n";
-    					$out.='<td align="center">'.$file['expectedmd5'].'</td>' . "\n";
-    					$out.='<td align="center">'.$file['md5'].'</td>' . "\n";
-    					$size = dol_filesize(DOL_DOCUMENT_ROOT.'/'.$file['filename']);
-    					$totalsize += $size;
-    					$out.='<td class="right">'.dol_print_size($size).'</td>' . "\n";
-    					$out.='<td class="right">'.dol_print_date(dol_filemtime(DOL_DOCUMENT_ROOT.'/'.$file['filename']), 'dayhour').'</td>' . "\n";
-    					$out.="</tr>\n";
-    				}
-    				$out.='<tr class="liste_total">';
-    				$out.='<td></td>' . "\n";
-    				$out.='<td>'.$langs->trans("Total").'</td>' . "\n";
-    				$out.='<td align="center"></td>' . "\n";
-    				$out.='<td align="center"></td>' . "\n";
-    				$out.='<td class="right">'.dol_print_size($totalsize).'</td>' . "\n";
-    				$out.='<td class="right"></td>' . "\n";
-    				$out.="</tr>\n";
-    			}
-    			else
-    			{
-    				$out.='<tr class="oddeven"><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
-    			}
-    			$out.='</table>';
-    			$out.='</div>';
+            // Return array('content'=>response,'curl_error_no'=>errno,'curl_error_msg'=>errmsg...)
+            if (! $xmlarray['curl_error_no'] && $xmlarray['http_code'] != '404')
+            {
+                $xmlfile = $xmlarray['content'];
+                //print "xmlfilestart".$xmlfile."endxmlfile";
+                $xml = simplexml_load_string($xmlfile);
+            }
+            else
+            {
+                $errormsg=$langs->trans('XmlNotFound') . ': ' . $xmlremote.' - '.$xmlarray['http_code'].' '.$xmlarray['curl_error_no'].' '.$xmlarray['curl_error_msg'];
+                throw new RestException(500, $errormsg);
+            }
+        }
 
 
-    			// Show warning
-    			if (empty($tmpfilelist) && empty($tmpfilelist2) && empty($tmpfilelist3))
-    			{
-    				//setEventMessages($langs->trans("FileIntegrityIsStrictlyConformedWithReference"), null, 'mesgs');
-    			}
-    			else
-    			{
-    				//setEventMessages($langs->trans("FileIntegritySomeFilesWereRemovedOrModified"), null, 'warnings');
-    			}
-    		}
-    		else
-    		{
-    			throw new RestException(500, 'Error: Failed to found dolibarr_htdocs_dir into XML file '.$xmlfile);
-    		}
+
+        if ($xml)
+        {
+            $checksumconcat = array();
+            $file_list = array();
+            $out = '';
+
+            // Forced constants
+            if (is_object($xml->dolibarr_constants[0]))
+            {
+                $out.=load_fiche_titre($langs->trans("ForcedConstants"));
+
+                $out.='<div class="div-table-responsive-no-min">';
+                $out.='<table class="noborder">';
+                $out.='<tr class="liste_titre">';
+                $out.='<td>#</td>';
+                $out.='<td>' . $langs->trans("Constant") . '</td>';
+                $out.='<td align="center">' . $langs->trans("ExpectedValue") . '</td>';
+                $out.='<td align="center">' . $langs->trans("Value") . '</td>';
+                $out.='</tr>'."\n";
+
+                $i = 0;
+                foreach ($xml->dolibarr_constants[0]->constant as $constant)    // $constant is a simpleXMLElement
+                {
+                    $constname=$constant['name'];
+                    $constvalue=(string) $constant;
+                    $constvalue = (empty($constvalue)?'0':$constvalue);
+                    // Value found
+                    $value='';
+                    if ($constname && $conf->global->$constname != '') $value=$conf->global->$constname;
+                    $valueforchecksum=(empty($value)?'0':$value);
+
+                    $checksumconcat[]=$valueforchecksum;
+
+                    $i++;
+                    $out.='<tr class="oddeven">';
+                    $out.='<td>'.$i.'</td>' . "\n";
+                    $out.='<td>'.$constname.'</td>' . "\n";
+                    $out.='<td align="center">'.$constvalue.'</td>' . "\n";
+                    $out.='<td align="center">'.$valueforchecksum.'</td>' . "\n";
+                    $out.="</tr>\n";
+                }
+
+                if ($i==0)
+                {
+                    $out.='<tr class="oddeven"><td colspan="4" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+                }
+                $out.='</table>';
+                $out.='</div>';
+
+                $out.='<br>';
+            }
+
+            // Scan htdocs
+            if (is_object($xml->dolibarr_htdocs_dir[0]))
+            {
+                //var_dump($xml->dolibarr_htdocs_dir[0]['includecustom']);exit;
+                $includecustom=(empty($xml->dolibarr_htdocs_dir[0]['includecustom'])?0:$xml->dolibarr_htdocs_dir[0]['includecustom']);
+
+                // Defined qualified files (must be same than into generate_filelist_xml.php)
+                $regextoinclude='\.(php|css|html|js|json|tpl|jpg|png|gif|sql|lang)$';
+                $regextoexclude='('.($includecustom?'':'custom|').'documents|conf|install|public\/test|Shared\/PCLZip|nusoap\/lib\/Mail|php\/example|php\/test|geoip\/sample.*\.php|ckeditor\/samples|ckeditor\/adapters)$';  // Exclude dirs
+                $scanfiles = dol_dir_list(DOL_DOCUMENT_ROOT, 'files', 1, $regextoinclude, $regextoexclude);
+
+                // Fill file_list with files in signature, new files, modified files
+                $ret = getFilesUpdated($file_list, $xml->dolibarr_htdocs_dir[0], '', DOL_DOCUMENT_ROOT, $checksumconcat, $scanfiles);        // Fill array $file_list
+                // Complete with list of new files
+                foreach ($scanfiles as $keyfile => $valfile)
+                {
+                    $tmprelativefilename=preg_replace('/^'.preg_quote(DOL_DOCUMENT_ROOT, '/').'/', '', $valfile['fullname']);
+                    if (! in_array($tmprelativefilename, $file_list['insignature']))
+                    {
+                        $md5newfile=@md5_file($valfile['fullname']);    // Can fails if we don't have permission to open/read file
+                        $file_list['added'][]=array('filename'=>$tmprelativefilename, 'md5'=>$md5newfile);
+                    }
+                }
+
+                // Files missings
+                $out.=load_fiche_titre($langs->trans("FilesMissing"));
+
+                $out.='<div class="div-table-responsive-no-min">';
+                $out.='<table class="noborder">';
+                $out.='<tr class="liste_titre">';
+                $out.='<td>#</td>';
+                $out.='<td>' . $langs->trans("Filename") . '</td>';
+                $out.='<td align="center">' . $langs->trans("ExpectedChecksum") . '</td>';
+                $out.='</tr>'."\n";
+                $tmpfilelist = dol_sort_array($file_list['missing'], 'filename');
+                if (is_array($tmpfilelist) && count($tmpfilelist))
+                {
+                    $i = 0;
+                    foreach ($tmpfilelist as $file)
+                    {
+                        $i++;
+                        $out.='<tr class="oddeven">';
+                        $out.='<td>'.$i.'</td>' . "\n";
+                        $out.='<td>'.$file['filename'].'</td>' . "\n";
+                        $out.='<td align="center">'.$file['expectedmd5'].'</td>' . "\n";
+                        $out.="</tr>\n";
+                    }
+                }
+                else
+                {
+                    $out.='<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+                }
+                $out.='</table>';
+                $out.='</div>';
+
+                $out.='<br>';
+
+                // Files modified
+                $out.=load_fiche_titre($langs->trans("FilesModified"));
+
+                $totalsize=0;
+                $out.='<div class="div-table-responsive-no-min">';
+                $out.='<table class="noborder">';
+                $out.='<tr class="liste_titre">';
+                $out.='<td>#</td>';
+                $out.='<td>' . $langs->trans("Filename") . '</td>';
+                $out.='<td align="center">' . $langs->trans("ExpectedChecksum") . '</td>';
+                $out.='<td align="center">' . $langs->trans("CurrentChecksum") . '</td>';
+                $out.='<td class="right">' . $langs->trans("Size") . '</td>';
+                $out.='<td class="right">' . $langs->trans("DateModification") . '</td>';
+                $out.='</tr>'."\n";
+                $tmpfilelist2 = dol_sort_array($file_list['updated'], 'filename');
+                if (is_array($tmpfilelist2) && count($tmpfilelist2))
+                {
+                    $i = 0;
+                    foreach ($tmpfilelist2 as $file)
+                    {
+                        $i++;
+                        $out.='<tr class="oddeven">';
+                        $out.='<td>'.$i.'</td>' . "\n";
+                        $out.='<td>'.$file['filename'].'</td>' . "\n";
+                        $out.='<td align="center">'.$file['expectedmd5'].'</td>' . "\n";
+                        $out.='<td align="center">'.$file['md5'].'</td>' . "\n";
+                        $size = dol_filesize(DOL_DOCUMENT_ROOT.'/'.$file['filename']);
+                        $totalsize += $size;
+                        $out.='<td class="right">'.dol_print_size($size).'</td>' . "\n";
+                        $out.='<td class="right">'.dol_print_date(dol_filemtime(DOL_DOCUMENT_ROOT.'/'.$file['filename']), 'dayhour').'</td>' . "\n";
+                        $out.="</tr>\n";
+                    }
+                    $out.='<tr class="liste_total">';
+                    $out.='<td></td>' . "\n";
+                    $out.='<td>'.$langs->trans("Total").'</td>' . "\n";
+                    $out.='<td align="center"></td>' . "\n";
+                    $out.='<td align="center"></td>' . "\n";
+                    $out.='<td class="right">'.dol_print_size($totalsize).'</td>' . "\n";
+                    $out.='<td class="right"></td>' . "\n";
+                    $out.="</tr>\n";
+                }
+                else
+                {
+                    $out.='<tr class="oddeven"><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+                }
+                $out.='</table>';
+                $out.='</div>';
+
+                $out.='<br>';
+
+                // Files added
+                $out.=load_fiche_titre($langs->trans("FilesAdded"));
+
+                $totalsize = 0;
+                $out.='<div class="div-table-responsive-no-min">';
+                $out.='<table class="noborder">';
+                $out.='<tr class="liste_titre">';
+                $out.='<td>#</td>';
+                $out.='<td>' . $langs->trans("Filename") . '</td>';
+                $out.='<td align="center">' . $langs->trans("ExpectedChecksum") . '</td>';
+                $out.='<td align="center">' . $langs->trans("CurrentChecksum") . '</td>';
+                $out.='<td class="right">' . $langs->trans("Size") . '</td>';
+                $out.='<td class="right">' . $langs->trans("DateModification") . '</td>';
+                $out.='</tr>'."\n";
+                $tmpfilelist3 = dol_sort_array($file_list['added'], 'filename');
+                if (is_array($tmpfilelist3) && count($tmpfilelist3))
+                {
+                    $i = 0;
+                    foreach ($tmpfilelist3 as $file)
+                    {
+                        $i++;
+                        $out.='<tr class="oddeven">';
+                        $out.='<td>'.$i.'</td>' . "\n";
+                        $out.='<td>'.$file['filename'].'</td>' . "\n";
+                        $out.='<td align="center">'.$file['expectedmd5'].'</td>' . "\n";
+                        $out.='<td align="center">'.$file['md5'].'</td>' . "\n";
+                        $size = dol_filesize(DOL_DOCUMENT_ROOT.'/'.$file['filename']);
+                        $totalsize += $size;
+                        $out.='<td class="right">'.dol_print_size($size).'</td>' . "\n";
+                        $out.='<td class="right">'.dol_print_date(dol_filemtime(DOL_DOCUMENT_ROOT.'/'.$file['filename']), 'dayhour').'</td>' . "\n";
+                        $out.="</tr>\n";
+                    }
+                    $out.='<tr class="liste_total">';
+                    $out.='<td></td>' . "\n";
+                    $out.='<td>'.$langs->trans("Total").'</td>' . "\n";
+                    $out.='<td align="center"></td>' . "\n";
+                    $out.='<td align="center"></td>' . "\n";
+                    $out.='<td class="right">'.dol_print_size($totalsize).'</td>' . "\n";
+                    $out.='<td class="right"></td>' . "\n";
+                    $out.="</tr>\n";
+                }
+                else
+                {
+                    $out.='<tr class="oddeven"><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+                }
+                $out.='</table>';
+                $out.='</div>';
 
 
-    		// Scan scripts
+                // Show warning
+                if (empty($tmpfilelist) && empty($tmpfilelist2) && empty($tmpfilelist3))
+                {
+                    //setEventMessages($langs->trans("FileIntegrityIsStrictlyConformedWithReference"), null, 'mesgs');
+                }
+                else
+                {
+                    //setEventMessages($langs->trans("FileIntegritySomeFilesWereRemovedOrModified"), null, 'warnings');
+                }
+            }
+            else
+            {
+                throw new RestException(500, 'Error: Failed to found dolibarr_htdocs_dir into XML file '.$xmlfile);
+            }
 
 
-    		asort($checksumconcat); // Sort list of checksum
-    		//var_dump($checksumconcat);
-    		$checksumget = md5(join(',', $checksumconcat));
-    		$checksumtoget = trim((string) $xml->dolibarr_htdocs_dir_checksum);
+            // Scan scripts
 
-    		$outexpectedchecksum = ($checksumtoget ? $checksumtoget : $langs->trans("Unknown"));
-    		if ($checksumget == $checksumtoget)
-    		{
-    			if (count($file_list['added']))
-    			{
-    				$resultcode = 'warning';
-    				$resultcomment='FileIntegrityIsOkButFilesWereAdded';
-    				//$outcurrentchecksum =  $checksumget.' - <span class="'.$resultcode.'">'.$langs->trans("FileIntegrityIsOkButFilesWereAdded").'</span>';
-    				$outcurrentchecksum =  $checksumget;
-    			}
-    			else
-    			{
-    				$resultcode = 'ok';
-    				$resultcomment='Success';
-    				//$outcurrentchecksum = '<span class="'.$resultcode.'">'.$checksumget.'</span>';
-    				$outcurrentchecksum =  $checksumget;
-    			}
-    		}
-    		else
-    		{
-    			$resultcode = 'error';
-    			$resultcomment='Error';
-    			//$outcurrentchecksum = '<span class="'.$resultcode.'">'.$checksumget.'</span>';
-    			$outcurrentchecksum =  $checksumget;
-    		}
-    	}
-    	else {
-    		throw new RestException(404, 'No signature file known');
-    	}
 
-    	return array('resultcode'=>$resultcode, 'resultcomment'=>$resultcomment, 'expectedchecksum'=> $outexpectedchecksum, 'currentchecksum'=> $outcurrentchecksum, 'out'=>$out);
+            asort($checksumconcat); // Sort list of checksum
+            //var_dump($checksumconcat);
+            $checksumget = md5(join(',', $checksumconcat));
+            $checksumtoget = trim((string) $xml->dolibarr_htdocs_dir_checksum);
+
+            $outexpectedchecksum = ($checksumtoget ? $checksumtoget : $langs->trans("Unknown"));
+            if ($checksumget == $checksumtoget)
+            {
+                if (count($file_list['added']))
+                {
+                    $resultcode = 'warning';
+                    $resultcomment='FileIntegrityIsOkButFilesWereAdded';
+                    //$outcurrentchecksum =  $checksumget.' - <span class="'.$resultcode.'">'.$langs->trans("FileIntegrityIsOkButFilesWereAdded").'</span>';
+                    $outcurrentchecksum =  $checksumget;
+                }
+                else
+                {
+                    $resultcode = 'ok';
+                    $resultcomment='Success';
+                    //$outcurrentchecksum = '<span class="'.$resultcode.'">'.$checksumget.'</span>';
+                    $outcurrentchecksum =  $checksumget;
+                }
+            }
+            else
+            {
+                $resultcode = 'error';
+                $resultcomment='Error';
+                //$outcurrentchecksum = '<span class="'.$resultcode.'">'.$checksumget.'</span>';
+                $outcurrentchecksum =  $checksumget;
+            }
+        }
+        else {
+            throw new RestException(404, 'No signature file known');
+        }
+
+        return array('resultcode'=>$resultcode, 'resultcomment'=>$resultcomment, 'expectedchecksum'=> $outexpectedchecksum, 'currentchecksum'=> $outcurrentchecksum, 'out'=>$out);
     }
 }

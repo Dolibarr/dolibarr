@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2002    Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2016       Juanjo Menent		<jmenent@2byte.es>
@@ -20,7 +20,7 @@
 
 /**
  *      \file       htdocs/admin/system/phpinfo.php
- *		\brief      Page des infos systeme de php
+ *        \brief      Page des infos systeme de php
  */
 
 require '../../main.inc.php';
@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 $langs->load("admin");
 
 if (! $user->admin)
-	accessforbidden();
+    accessforbidden();
 
 
 
@@ -44,7 +44,7 @@ $title='InfoPHP';
 
 if (isset($title))
 {
-	print load_fiche_titre($langs->trans($title), '', 'title_setup');
+    print load_fiche_titre($langs->trans($title), '', 'title_setup');
 }
 
 
@@ -70,50 +70,50 @@ foreach($phparray as $key => $value)
 {
     print '<div class="div-table-responsive-no-min">';
     print '<table class="noborder">';
-	print '<tr class="liste_titre">';
-	//print '<td width="220px">'.$langs->trans("Parameter").'</td>';
-	print '<td width="220px">'.$key.'</td>';
-	print '<td colspan="2">'.$langs->trans("Value").'</td>';
-	print "</tr>\n";
+    print '<tr class="liste_titre">';
+    //print '<td width="220px">'.$langs->trans("Parameter").'</td>';
+    print '<td width="220px">'.$key.'</td>';
+    print '<td colspan="2">'.$langs->trans("Value").'</td>';
+    print "</tr>\n";
 
-	//var_dump($value);
-	foreach($value as $keyparam => $keyvalue)
-	{
-		if (! is_array($keyvalue))
-		{
-			print '<tr class="oddeven">';
-			print '<td>'.$keyparam.'</td>';
-			$valtoshow=$keyvalue;
-			if ($keyparam == 'X-ChromePhp-Data') $valtoshow=dol_trunc($keyvalue, 80);
-			print '<td colspan="2">';
-			if ($keyparam == 'Path') $valtoshow=implode('; ', explode(';', trim($valtoshow)));
-			if ($keyparam == 'PATH') $valtoshow=implode('; ', explode(';', trim($valtoshow)));
-			if ($keyparam == '_SERVER["PATH"]') $valtoshow=implode('; ', explode(';', trim($valtoshow)));
-			print $valtoshow;
-			print '</td>';
-			print '</tr>';
-		}
-		else
-		{
-			print '<tr class="oddeven">';
-			print '<td>'.$keyparam.'</td>';
-			$i=0;
-			foreach($keyvalue as $keyparam2 => $keyvalue2)
-			{
-				print '<td>';
-				$valtoshow=$keyvalue2;
-				if ($keyparam == 'disable_functions') $valtoshow=implode(', ', explode(',', trim($valtoshow)));
-				//print $keyparam;
-				print $valtoshow;
-				$i++;
-				print '</td>';
-			}
-			print '</tr>';
-		}
-	}
-	print '</table>';
-	print '</div>';
-	print '<br>';
+    //var_dump($value);
+    foreach($value as $keyparam => $keyvalue)
+    {
+        if (! is_array($keyvalue))
+        {
+            print '<tr class="oddeven">';
+            print '<td>'.$keyparam.'</td>';
+            $valtoshow=$keyvalue;
+            if ($keyparam == 'X-ChromePhp-Data') $valtoshow=dol_trunc($keyvalue, 80);
+            print '<td colspan="2">';
+            if ($keyparam == 'Path') $valtoshow=implode('; ', explode(';', trim($valtoshow)));
+            if ($keyparam == 'PATH') $valtoshow=implode('; ', explode(';', trim($valtoshow)));
+            if ($keyparam == '_SERVER["PATH"]') $valtoshow=implode('; ', explode(';', trim($valtoshow)));
+            print $valtoshow;
+            print '</td>';
+            print '</tr>';
+        }
+        else
+        {
+            print '<tr class="oddeven">';
+            print '<td>'.$keyparam.'</td>';
+            $i=0;
+            foreach($keyvalue as $keyparam2 => $keyvalue2)
+            {
+                print '<td>';
+                $valtoshow=$keyvalue2;
+                if ($keyparam == 'disable_functions') $valtoshow=implode(', ', explode(',', trim($valtoshow)));
+                //print $keyparam;
+                print $valtoshow;
+                $i++;
+                print '</td>';
+            }
+            print '</tr>';
+        }
+    }
+    print '</table>';
+    print '</div>';
+    print '<br>';
 }
 
 // End of page

@@ -27,8 +27,8 @@
 // Protection to avoid direct call of template
 if (empty($langs) || ! is_object($langs))
 {
-	print "Error, template page can't be called as URL";
-	exit;
+    print "Error, template page can't be called as URL";
+    exit;
 }
 
 
@@ -51,16 +51,16 @@ if (in_array($modulepart, array('product', 'produit', 'societe', 'user', 'ticket
 
 if ($action == 'delete')
 {
-	$langs->load("companies");	// Need for string DeleteFile+ConfirmDeleteFiles
+    $langs->load("companies");    // Need for string DeleteFile+ConfirmDeleteFiles
     print $form->formconfirm(
-			$_SERVER["PHP_SELF"] . '?id=' . $object->id . '&urlfile=' . urlencode(GETPOST("urlfile")) . '&linkid=' . GETPOST('linkid', 'int') . (empty($param)?'':$param),
-			$langs->trans('DeleteFile'),
-			$langs->trans('ConfirmDeleteFile'),
-			'confirm_deletefile',
-			'',
-			0,
-			1
-	);
+            $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&urlfile=' . urlencode(GETPOST("urlfile")) . '&linkid=' . GETPOST('linkid', 'int') . (empty($param)?'':$param),
+            $langs->trans('DeleteFile'),
+            $langs->trans('ConfirmDeleteFile'),
+            'confirm_deletefile',
+            '',
+            0,
+            1
+    );
 }
 
 $formfile=new FormFile($db);
@@ -69,15 +69,15 @@ $formfile=new FormFile($db);
 $savingdocmask='';
 if (empty($conf->global->MAIN_DISABLE_SUGGEST_REF_AS_PREFIX))
 {
-	//var_dump($modulepart);
-	if (in_array($modulepart, array('facture_fournisseur','commande_fournisseur','facture','commande','propal','supplier_proposal','ficheinter','contract','expedition','project','project_task','expensereport','tax', 'produit', 'product_batch')))
-	{
-		$savingdocmask=dol_sanitizeFileName($object->ref).'-__file__';
-	}
-	/*if (in_array($modulepart,array('member')))
-	{
-		$savingdocmask=$object->login.'___file__';
-	}*/
+    //var_dump($modulepart);
+    if (in_array($modulepart, array('facture_fournisseur','commande_fournisseur','facture','commande','propal','supplier_proposal','ficheinter','contract','expedition','project','project_task','expensereport','tax', 'produit', 'product_batch')))
+    {
+        $savingdocmask=dol_sanitizeFileName($object->ref).'-__file__';
+    }
+    /*if (in_array($modulepart,array('member')))
+    {
+        $savingdocmask=$object->login.'___file__';
+    }*/
 }
 
 // Show upload form (document and links)
@@ -89,9 +89,9 @@ $formfile->form_attach_new_file(
     $permission,
     $conf->browser->layout == 'phone' ? 40 : 60,
     $object,
-	'',
-	1,
-	$savingdocmask
+    '',
+    1,
+    $savingdocmask
 );
 
 // List of document
@@ -101,7 +101,7 @@ $formfile->list_of_documents(
     $modulepart,
     $param,
     0,
-    $relativepathwithnofile,		// relative path with no file. For example "0/1"
+    $relativepathwithnofile,        // relative path with no file. For example "0/1"
     $permission,
     0,
     '',

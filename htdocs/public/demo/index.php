@@ -19,13 +19,13 @@
  */
 
 /**
- *     	\file       htdocs/public/demo/index.php
- *		\ingroup    core
- *		\brief      Entry page to access demo
+ *         \file       htdocs/public/demo/index.php
+ *        \ingroup    core
+ *        \brief      Entry page to access demo
  */
 
-define("NOLOGIN", 1);	// This means this output page does not require to be logged.
-define("NOCSRFCHECK", 1);	// We accept to go on this page from external web site.
+define("NOLOGIN", 1);    // This means this output page does not require to be logged.
+define("NOCSRFCHECK", 1);    // We accept to go on this page from external web site.
 
 require '../../main.inc.php';
 require_once '../../core/lib/functions2.lib.php';
@@ -66,56 +66,56 @@ $reshook=$hookmanager->executeHooks('addDemoProfile', $parameters, $object, $tmp
 $error=$hookmanager->error; $errors=$hookmanager->errors;
 if (empty($reshook))
 {
-	$demoprofiles=array(
-		array('default'=>'1', 'key'=>'profdemoservonly','label'=>'DemoCompanyServiceOnly',
-		'disablemodules'=>'adherent,barcode,cashdesk,don,expedition,externalsite,ftp,incoterm,mailmanspip,margin,prelevement,product,productbatch,stock',
-		//'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot8.png',
-		'icon'=>DOL_URL_ROOT.'/public/demo/demo-profile-service.jpg',
-		'url'=>$url
-		),
-		array('default'=>'-1','key'=>'profdemoshopwithdesk','label'=>'DemoCompanyShopWithCashDesk',
-		'disablemodules'=>'adherent,don,externalsite,ficheinter,ftp,incoterm,mailmanspip,prelevement,product,productbatch,stock',
-		'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot2.png',
-		'url'=>$url
-		),
-		array('default'=>'0', 'key'=>'profdemoprodstock','label'=>'DemoCompanyProductAndStocks',
-		'disablemodules'=>'adherent,contrat,don,externalsite,ficheinter,ftp,mailmanspip,prelevement,service',
-		//'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot2.png',
-		'icon'=>DOL_URL_ROOT.'/public/demo/demo-profile-product.jpg',
-		'url'=>$url
-		),
-		array('default'=>'-1', 'key'=>'profdemofun','label'=>'DemoFundation',
-		'disablemodules'=>'banque,barcode,cashdesk,commande,commercial,compta,comptabilite,contrat,expedition,externalsite,ficheinter,ftp,incoterm,mailmanspip,margin,prelevement,product,productbatch,projet,propal,propale,service,societe,stock,tax',
-		'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot6.png',
-		'url'=>$url
-		),
-		array('default'=>'0', 'key'=>'profdemofun2','label'=>'DemoFundation2',
-		'disablemodules'=>'barcode,cashdesk,commande,commercial,compta,comptabilite,contrat,expedition,externalsite,ficheinter,ftp,incoterm,mailmanspip,margin,prelevement,product,productbatch,projet,propal,propale,service,societe,stock,tax',
-		//'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot6.png',
-		'icon'=>DOL_URL_ROOT.'/public/demo/demo-profile-foundation.jpg',
-		'url'=>$url
-		),
-	    // All demo profile
-	    array('default'=>'0', 'key'=>'profdemoall','label'=>'ChooseYourDemoProfilMore',
-		'disablemodules'=>'adherent,don,externalsite,mailmanspip',
-	    //'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot9.png'
-		'icon'=>DOL_URL_ROOT.'/public/demo/demo-profile-all.jpg'
-	    )
-	);
+    $demoprofiles=array(
+        array('default'=>'1', 'key'=>'profdemoservonly','label'=>'DemoCompanyServiceOnly',
+        'disablemodules'=>'adherent,barcode,cashdesk,don,expedition,externalsite,ftp,incoterm,mailmanspip,margin,prelevement,product,productbatch,stock',
+        //'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot8.png',
+        'icon'=>DOL_URL_ROOT.'/public/demo/demo-profile-service.jpg',
+        'url'=>$url
+        ),
+        array('default'=>'-1','key'=>'profdemoshopwithdesk','label'=>'DemoCompanyShopWithCashDesk',
+        'disablemodules'=>'adherent,don,externalsite,ficheinter,ftp,incoterm,mailmanspip,prelevement,product,productbatch,stock',
+        'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot2.png',
+        'url'=>$url
+        ),
+        array('default'=>'0', 'key'=>'profdemoprodstock','label'=>'DemoCompanyProductAndStocks',
+        'disablemodules'=>'adherent,contrat,don,externalsite,ficheinter,ftp,mailmanspip,prelevement,service',
+        //'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot2.png',
+        'icon'=>DOL_URL_ROOT.'/public/demo/demo-profile-product.jpg',
+        'url'=>$url
+        ),
+        array('default'=>'-1', 'key'=>'profdemofun','label'=>'DemoFundation',
+        'disablemodules'=>'banque,barcode,cashdesk,commande,commercial,compta,comptabilite,contrat,expedition,externalsite,ficheinter,ftp,incoterm,mailmanspip,margin,prelevement,product,productbatch,projet,propal,propale,service,societe,stock,tax',
+        'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot6.png',
+        'url'=>$url
+        ),
+        array('default'=>'0', 'key'=>'profdemofun2','label'=>'DemoFundation2',
+        'disablemodules'=>'barcode,cashdesk,commande,commercial,compta,comptabilite,contrat,expedition,externalsite,ficheinter,ftp,incoterm,mailmanspip,margin,prelevement,product,productbatch,projet,propal,propale,service,societe,stock,tax',
+        //'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot6.png',
+        'icon'=>DOL_URL_ROOT.'/public/demo/demo-profile-foundation.jpg',
+        'url'=>$url
+        ),
+        // All demo profile
+        array('default'=>'0', 'key'=>'profdemoall','label'=>'ChooseYourDemoProfilMore',
+        'disablemodules'=>'adherent,don,externalsite,mailmanspip',
+        //'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot9.png'
+        'icon'=>DOL_URL_ROOT.'/public/demo/demo-profile-all.jpg'
+        )
+    );
 
 
-	// Visible
-	$alwayscheckedmodules=array('barcode','bookmark','categorie','externalrss','fckeditor','geoipmaxmind','gravatar','memcached','syslog','user','webservices');  // Technical module we always want
-	$alwaysuncheckedmodules=array('dynamicprices','incoterm','loan','multicurrency','paybox','paypal','stripe','google','printing','scanner','skype','workflow');  // Module we dont want by default
-	// Not visible
-	$alwayshiddencheckedmodules=array('accounting','api','barcode','blockedlog','bookmark','clicktodial','comptabilite','cron','document','domain','externalrss','externalsite','fckeditor','geoipmaxmind','gravatar','label','ldap',
-									'mailmanspip','notification','oauth','syslog','user','webservices',
-	                                // Extended modules
-	                                'memcached','numberwords','zipautofillfr');
-	$alwayshiddenuncheckedmodules=array('ftp','hrm','webservicesclient','websites',
-	                                // Extended modules
-	                                'awstats','bittorrent','bootstrap','cabinetmed','cmcic','concatpdf','customfield','deplacement','dolicloud','filemanager','lightbox','mantis','monitoring','moretemplates','multicompany','nltechno','numberingpack','openstreetmap',
-	                                'ovh','phenix','phpsysinfo','pibarcode','postnuke','selectbank','skincoloreditor','submiteverywhere','survey','thomsonphonebook','topten','tvacerfa','voyage','webcalendar','webmail');
+    // Visible
+    $alwayscheckedmodules=array('barcode','bookmark','categorie','externalrss','fckeditor','geoipmaxmind','gravatar','memcached','syslog','user','webservices');  // Technical module we always want
+    $alwaysuncheckedmodules=array('dynamicprices','incoterm','loan','multicurrency','paybox','paypal','stripe','google','printing','scanner','skype','workflow');  // Module we dont want by default
+    // Not visible
+    $alwayshiddencheckedmodules=array('accounting','api','barcode','blockedlog','bookmark','clicktodial','comptabilite','cron','document','domain','externalrss','externalsite','fckeditor','geoipmaxmind','gravatar','label','ldap',
+                                    'mailmanspip','notification','oauth','syslog','user','webservices',
+                                    // Extended modules
+                                    'memcached','numberwords','zipautofillfr');
+    $alwayshiddenuncheckedmodules=array('ftp','hrm','webservicesclient','websites',
+                                    // Extended modules
+                                    'awstats','bittorrent','bootstrap','cabinetmed','cmcic','concatpdf','customfield','deplacement','dolicloud','filemanager','lightbox','mantis','monitoring','moretemplates','multicompany','nltechno','numberingpack','openstreetmap',
+                                    'ovh','phenix','phpsysinfo','pibarcode','postnuke','selectbank','skincoloreditor','submiteverywhere','survey','thomsonphonebook','topten','tvacerfa','voyage','webcalendar','webmail');
 }
 
 // Search modules
@@ -149,8 +149,8 @@ foreach ($modulesdir as $dir)
 
                 if ($modName)
                 {
-		            try
-		            {
+                    try
+                    {
                         include_once $dir.$file;
                         $objMod = new $modName($db);
 
@@ -180,7 +180,7 @@ foreach ($modulesdir as $dir)
                             $j++;
                             $i++;
                         }
-		            }
+                    }
                     catch(Exception $e)
                     {
                         dol_syslog("Failed to load ".$dir.$file." ".$e->getMessage(), LOG_ERR);
@@ -201,40 +201,40 @@ asort($orders);
 
 if (GETPOST('action', 'aZ09') == 'gotodemo')     // Action run when we click on "Start" after selection modules
 {
-	//print 'ee'.GETPOST("demochoice");
-	$disablestring='';
-	// If we disable modules using a profile choice
-	if (GETPOST("demochoice"))
-	{
-    	foreach ($demoprofiles as $profilearray)
-    	{
-    		if ($profilearray['key'] == GETPOST("demochoice"))
-    		{
-    			$disablestring=$profilearray['disablemodules'];
-    			break;
-    		}
-    	}
-	}
-	// If we disable modules using personalized list
-	foreach($modules as $val)
-	{
-	    $modulekeyname=strtolower($val->name);
-	    if (empty($_POST[$modulekeyname]) && empty($val->always_enabled) && ! in_array($modulekeyname, $alwayscheckedmodules))
-	    {
-	        $disablestring.=$modulekeyname.',';
-	        if ($modulekeyname=='propale') $disablestring.='propal,';
-	    }
-	}
+    //print 'ee'.GETPOST("demochoice");
+    $disablestring='';
+    // If we disable modules using a profile choice
+    if (GETPOST("demochoice"))
+    {
+        foreach ($demoprofiles as $profilearray)
+        {
+            if ($profilearray['key'] == GETPOST("demochoice"))
+            {
+                $disablestring=$profilearray['disablemodules'];
+                break;
+            }
+        }
+    }
+    // If we disable modules using personalized list
+    foreach($modules as $val)
+    {
+        $modulekeyname=strtolower($val->name);
+        if (empty($_POST[$modulekeyname]) && empty($val->always_enabled) && ! in_array($modulekeyname, $alwayscheckedmodules))
+        {
+            $disablestring.=$modulekeyname.',';
+            if ($modulekeyname=='propale') $disablestring.='propal,';
+        }
+    }
 
     // Do redirect to login page
-	if ($disablestring)
-	{
-		if (GETPOST('urlfrom')) $url.=(preg_match('/\?/', $url)?'&amp;':'?').'urlfrom='.urlencode(GETPOST('urlfrom', 'alpha'));
-		$url.=(preg_match('/\?/', $url)?'&amp;':'?').'disablemodules='.$disablestring;
+    if ($disablestring)
+    {
+        if (GETPOST('urlfrom')) $url.=(preg_match('/\?/', $url)?'&amp;':'?').'urlfrom='.urlencode(GETPOST('urlfrom', 'alpha'));
+        $url.=(preg_match('/\?/', $url)?'&amp;':'?').'disablemodules='.$disablestring;
         //var_dump($url);exit;
-		header("Location: ".$url);
-		exit;
-	}
+        header("Location: ".$url);
+        exit;
+    }
 }
 
 
@@ -297,36 +297,36 @@ print '<div class="demobanbox">';
 $i=0;
 foreach ($demoprofiles as $profilearray)
 {
-	if ($profilearray['default'] >= 0)
-	{
-	    //print $profilearray['lang'];
-	    if (! empty($profilearray['lang'])) $langs->load($profilearray['lang']);
+    if ($profilearray['default'] >= 0)
+    {
+        //print $profilearray['lang'];
+        if (! empty($profilearray['lang'])) $langs->load($profilearray['lang']);
 
-		$url=$_SERVER["PHP_SELF"].'?action=gotodemo';
-		$urlwithmod=$url.'&amp;demochoice='.$profilearray['key'];
-		// Should work with DOL_URL_ROOT='' or DOL_URL_ROOT='/dolibarr'
-		//print "xx".$_SERVER["PHP_SELF"].' '.DOL_URL_ROOT.'<br>';
+        $url=$_SERVER["PHP_SELF"].'?action=gotodemo';
+        $urlwithmod=$url.'&amp;demochoice='.$profilearray['key'];
+        // Should work with DOL_URL_ROOT='' or DOL_URL_ROOT='/dolibarr'
+        //print "xx".$_SERVER["PHP_SELF"].' '.DOL_URL_ROOT.'<br>';
 
         $urlfrom=preg_replace('/^'.preg_quote(DOL_URL_ROOT, '/').'/i', '', $_SERVER["PHP_SELF"]);
-		//print $urlfrom;
+        //print $urlfrom;
 
-		if (! empty($profilearray['url']))
-		{
-		    $urlwithmod=$profilearray['url'];
-		    $urlwithmod=$urlwithmod.(preg_match('/\?/', $urlwithmod)?'&amp;':'?').'urlfrom='.urlencode($urlfrom);
-		    if (! empty($profilearray['disablemodules']))
-		    {
-		          $urlwithmod=$urlwithmod.(preg_match('/\?/', $urlwithmod)?'&amp;':'?').'disablemodules='.$profilearray['disablemodules'];
-		    }
-		}
+        if (! empty($profilearray['url']))
+        {
+            $urlwithmod=$profilearray['url'];
+            $urlwithmod=$urlwithmod.(preg_match('/\?/', $urlwithmod)?'&amp;':'?').'urlfrom='.urlencode($urlfrom);
+            if (! empty($profilearray['disablemodules']))
+            {
+                  $urlwithmod=$urlwithmod.(preg_match('/\?/', $urlwithmod)?'&amp;':'?').'disablemodules='.$profilearray['disablemodules'];
+            }
+        }
 
-		if (empty($profilearray['url']))
-		{
-		    print '<div class="clearboth"></div>';
-		}
+        if (empty($profilearray['url']))
+        {
+            print '<div class="clearboth"></div>';
+        }
 
-		print '<form method="POST" class="valigntop inline-block" name="form'.$profilearray['key'].'" id="form'.$profilearray['key'].'" action="'.$_SERVER["PHP_SELF"].'#a1'.$profilearray['key'].'">'."\n";
-		print '<input type="hidden" name="action" value="gotodemo">'."\n";
+        print '<form method="POST" class="valigntop inline-block" name="form'.$profilearray['key'].'" id="form'.$profilearray['key'].'" action="'.$_SERVER["PHP_SELF"].'#a1'.$profilearray['key'].'">'."\n";
+        print '<input type="hidden" name="action" value="gotodemo">'."\n";
         print '<input type="hidden" name="urlfrom" value="'.dol_escape_htmltag($urlfrom).'">'."\n";
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
         print '<input type="hidden" name="username" value="demo">'."\n";
@@ -342,40 +342,40 @@ foreach ($demoprofiles as $profilearray)
         print '<div id="a1'.$profilearray['key'].'" class="demobox '.(empty($profilearray['url'])?'modulelineshow cursorpointer':'nomodulelines').'">';
 
         print '<a href="'.$urlwithmod.'" class="'.(empty($profilearray['url'])?'modulelineshow':'nomodulelines').'">';
-		print '<div style="padding: 10px;">';
+        print '<div style="padding: 10px;">';
 
-		print '<img class="demothumb" src="'.$profilearray['icon'].'" alt="Demo '.$profilearray['label'].'">';
+        print '<img class="demothumb" src="'.$profilearray['icon'].'" alt="Demo '.$profilearray['label'].'">';
 
-		print '<div class="clearboth"></div>';
+        print '<div class="clearboth"></div>';
 
-		print '<div class="demothumbtext">';
-    	print $langs->trans($profilearray['label']);
-    	print '</div>';
+        print '<div class="demothumbtext">';
+        print $langs->trans($profilearray['label']);
+        print '</div>';
 
-    	print '</div>';
-    	print '</a>';
+        print '</div>';
+        print '</a>';
 
 
         // Modules (a profile you must choose modules)
         if (empty($profilearray['url']))
         {
-    		print '<div id="tr1'.$profilearray['key'].'" class="moduleline hidden" style="margin-left: 8px; margin-right: 8px; text-align: justify; font-size:14px; line-height: 130%; padding-bottom: 8px">';
+            print '<div id="tr1'.$profilearray['key'].'" class="moduleline hidden" style="margin-left: 8px; margin-right: 8px; text-align: justify; font-size:14px; line-height: 130%; padding-bottom: 8px">';
 
-    		print $langs->trans("ThisIsListOfModules").'<br><br>';
+            print $langs->trans("ThisIsListOfModules").'<br><br>';
 
-    		print '<div class="csscolumns">';
+            print '<div class="csscolumns">';
 
-    		$listofdisabledmodules=explode(',', $profilearray['disablemodules']);
-    		$j=0;
-    		$nbcolsmod=empty($conf->dol_optimize_smallscreen)?4:3;
-    		//var_dump($modules);
-    		foreach($orders as $index => $key) // Loop on qualified (enabled) modules
-    		{
-    			//print $index.' '.$key;
-    			$val = $modules[$index];
-    		    $modulekeyname=strtolower($val->name);
+            $listofdisabledmodules=explode(',', $profilearray['disablemodules']);
+            $j=0;
+            $nbcolsmod=empty($conf->dol_optimize_smallscreen)?4:3;
+            //var_dump($modules);
+            foreach($orders as $index => $key) // Loop on qualified (enabled) modules
+            {
+                //print $index.' '.$key;
+                $val = $modules[$index];
+                $modulekeyname=strtolower($val->name);
 
-    		    $modulequalified=1;
+                $modulequalified=1;
                 if (! empty($val->always_enabled) || in_array($modulekeyname, $alwayshiddenuncheckedmodules)) $modulequalified=0;
                 if ($val->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2 && ! $conf->global->$const_name) $modulequalified=0;
                 if ($val->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1 && ! $conf->global->$const_name) $modulequalified=0;
@@ -389,7 +389,7 @@ foreach ($demoprofiles as $profilearray)
                 else
                 {
                     $modulo=($j % $nbcolsmod);
-        		    //if ($modulo == 0) print '<tr>';
+                    //if ($modulo == 0) print '<tr>';
                     print '<!-- id='.$val->numero.' -->';
                     print '<div class="nowrap">';
                     print '<input type="checkbox" class="checkbox" name="'.$modulekeyname.'" value="1"';
@@ -400,22 +400,22 @@ foreach ($demoprofiles as $profilearray)
                     //if ($modulo == ($nbcolsmod - 1)) print '</tr>';
                     $j++;
                 }
-    		}
+            }
 
-    		print '</div>';
+            print '</div>';
 
-		    print '<br><div class="center">';
-		    print '<input type="submit" value=" &nbsp; &nbsp; '.$langs->trans("Start").' &nbsp; &nbsp; " class="button">';
-		    print '</div>';
+            print '<br><div class="center">';
+            print '<input type="submit" value=" &nbsp; &nbsp; '.$langs->trans("Start").' &nbsp; &nbsp; " class="button">';
+            print '</div>';
 
-		    print '</div>';
+            print '</div>';
         }
 
         print '</div></div>';
-		print '</form>'."\n";
+        print '</form>'."\n";
 
-		$i++;
-	}
+        $i++;
+    }
 }
 
 print '</div>';
@@ -425,25 +425,25 @@ print '</div>';
 // Google Adsense (need Google module)
 if (! empty($conf->google->enabled) && ! empty($conf->global->MAIN_GOOGLE_AD_CLIENT) && ! empty($conf->global->MAIN_GOOGLE_AD_SLOT))
 {
-	if (empty($conf->dol_use_jmobile))
-	{
-		print '<div align="center">'."\n";
-		print '<script type="text/javascript"><!--'."\n";
-		print 'google_ad_client = "'.$conf->global->MAIN_GOOGLE_AD_CLIENT.'";'."\n";
-		print 'google_ad_slot = "'.$conf->global->MAIN_GOOGLE_AD_SLOT.'";'."\n";
-		print 'google_ad_width = '.$conf->global->MAIN_GOOGLE_AD_WIDTH.';'."\n";
-		print 'google_ad_height = '.$conf->global->MAIN_GOOGLE_AD_HEIGHT.';'."\n";
-		print '//-->'."\n";
-		print '</script>'."\n";
-		print '<script type="text/javascript"'."\n";
-		print 'src="http://pagead2.googlesyndication.com/pagead/show_ads.js">'."\n";
-		print '</script>'."\n";
-		print '</div>'."\n";
-	}
-	else
-	{
-		print '<!-- google js advert tag disabled with jmobile -->'."\n";
-	}
+    if (empty($conf->dol_use_jmobile))
+    {
+        print '<div align="center">'."\n";
+        print '<script type="text/javascript"><!--'."\n";
+        print 'google_ad_client = "'.$conf->global->MAIN_GOOGLE_AD_CLIENT.'";'."\n";
+        print 'google_ad_slot = "'.$conf->global->MAIN_GOOGLE_AD_SLOT.'";'."\n";
+        print 'google_ad_width = '.$conf->global->MAIN_GOOGLE_AD_WIDTH.';'."\n";
+        print 'google_ad_height = '.$conf->global->MAIN_GOOGLE_AD_HEIGHT.';'."\n";
+        print '//-->'."\n";
+        print '</script>'."\n";
+        print '<script type="text/javascript"'."\n";
+        print 'src="http://pagead2.googlesyndication.com/pagead/show_ads.js">'."\n";
+        print '</script>'."\n";
+        print '</div>'."\n";
+    }
+    else
+    {
+        print '<!-- google js advert tag disabled with jmobile -->'."\n";
+    }
 }
 
 llxFooterVierge();
@@ -454,9 +454,9 @@ $db->close();
 /**
  * Show header for demo
  *
- * @param 	string		$title		Title
- * @param 	string		$head		Head string
- * @return	void
+ * @param     string        $title        Title
+ * @param     string        $head        Head string
+ * @return    void
  */
 function llxHeaderVierge($title, $head = "")
 {
@@ -472,7 +472,7 @@ function llxHeaderVierge($title, $head = "")
 /**
  * Show footer for demo
  *
- * @return	void
+ * @return    void
  */
 function llxFooterVierge()
 {

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004		Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+/* Copyright (C) 2004        Rodolphe Quiedeville        <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2016	Laurent Destailleur		<eldy@users.sourceforge.org>
  * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2012-2018	Regis Houssin			<regis.houssin@inodbox.com>
@@ -21,8 +21,8 @@
 
 /**
  *      \file       htdocs/ifttt/admin/index.php
- *		\ingroup    api
- *		\brief      Page to setup IFTTT module
+ *        \ingroup    api
+ *        \brief      Page to setup IFTTT module
  */
 
 require '../../main.inc.php';
@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 $langs->load("admin");
 
 if (! $user->admin)
-	accessforbidden();
+    accessforbidden();
 
 $action=GETPOST('action', 'aZ09');
 
@@ -43,15 +43,15 @@ if ($action == 'set')
     $res1 = dolibarr_set_const($db, 'IFTTT_SERVICE_KEY', GETPOST('IFTTT_SERVICE_KEY', 'alpha'), 'chaine', 0, '', 0);
     $res2 = dolibarr_set_const($db, 'IFTTT_DOLIBARR_ENDPOINT_SECUREKEY', GETPOST('IFTTT_DOLIBARR_ENDPOINT_SECUREKEY', 'alpha'), 'chaine', 0, '', 0);
 
-	if ($res1 > 0 && $res2)
-	{
-   		header("Location: ".$_SERVER["PHP_SELF"]);
-   	    exit;
-	}
-	else
-	{
-		dol_print_error($db);
-	}
+    if ($res1 > 0 && $res2)
+    {
+           header("Location: ".$_SERVER["PHP_SELF"]);
+           exit;
+    }
+    else
+    {
+        dol_print_error($db);
+    }
 }
 
 
@@ -108,8 +108,8 @@ print '<br><br>';
 
 // Define $urlwithroot
 $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
-$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
-//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;        // This is to use external domain name found into config file
+//$urlwithroot=DOL_MAIN_URL_ROOT;                    // This is to use same domain name than current
 
 // Show message
 $message='';

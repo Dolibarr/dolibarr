@@ -190,7 +190,7 @@ class mailing_mailinglist_mymodule_myobject extends MailingTargets
      *  emails from a text file, this function must return 500.
      *
      *  @param  string  $filter     Filter
-     *  @param  string	$option     Options
+     *  @param  string    $option     Options
      *  @return int                 Nb of recipients or -1 if KO
      */
     public function getNbOfRecipients($filter = 1, $option = '')

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2012		Laurent Destailleur	<eldy@users.sourceforge.net>
+/* Copyright (C) 2012        Laurent Destailleur    <eldy@users.sourceforge.net>
  * Copyright (C) 2015		Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2016       Marcos García       <marcosgdf@gmail.com>
  *
@@ -18,14 +18,14 @@
  */
 
 /**
- *	\file       htdocs/core/class/html.formbank.class.php
+ *    \file       htdocs/core/class/html.formbank.class.php
  *  \ingroup    core
- *	\brief      File of class with all html predefined components
+ *    \brief      File of class with all html predefined components
  */
 
 
 /**
- *	Class to manage generation of HTML components for bank module
+ *    Class to manage generation of HTML components for bank module
  */
 class FormBank
 {
@@ -35,15 +35,15 @@ class FormBank
     public $db;
     
     /**
-	 * @var string Error code (or message)
-	 */
-	public $error='';
+     * @var string Error code (or message)
+     */
+    public $error='';
 
 
     /**
      * Constructor
      *
-     * @param		DoliDB		$db      Database handler
+     * @param        DoliDB        $db      Database handler
      */
     public function __construct($db)
     {
@@ -53,9 +53,9 @@ class FormBank
     /**
      *  Retourne la liste des types de comptes financiers
      *
-     *  @param	integer	$selected        Type pre-selectionne
-     *  @param  string	$htmlname        Nom champ formulaire
-     *  @return	void
+     *  @param    integer    $selected        Type pre-selectionne
+     *  @param  string    $htmlname        Nom champ formulaire
+     *  @return    void
      */
     public function selectTypeOfBankAccount($selected = Account::TYPE_CURRENT, $htmlname = 'type')
     {
@@ -64,18 +64,18 @@ class FormBank
         print Form::selectarray($htmlname, $account->type_lib, $selected);
     }
 
-	/**
-	 * Returns the name of the Iban label. India uses 'IFSC' and the rest of the world 'IBAN' name.
-	 *
-	 * @param Account $account Account object
-	 * @return string
-	 */
-	public static function getIBANLabel(Account $account)
-	{
-		if ($account->getCountryCode() == 'IN') {
-			return 'IFSC';
-		}
+    /**
+     * Returns the name of the Iban label. India uses 'IFSC' and the rest of the world 'IBAN' name.
+     *
+     * @param Account $account Account object
+     * @return string
+     */
+    public static function getIBANLabel(Account $account)
+    {
+        if ($account->getCountryCode() == 'IN') {
+            return 'IFSC';
+        }
 
-		return 'IBANNumber';
-	}
+        return 'IBANNumber';
+    }
 }

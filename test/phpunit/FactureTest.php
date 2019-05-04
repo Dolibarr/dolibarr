@@ -25,7 +25,7 @@
  */
 
 global $conf,$user,$langs,$db;
-//define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
+//define('TEST_DB_FORCE_TYPE','mysql');    // This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/compta/facture/class/facture.class.php';
@@ -43,7 +43,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
- * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
+ * @remarks    backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
 class FactureTest extends PHPUnit_Framework_TestCase
 {
@@ -60,9 +60,9 @@ class FactureTest extends PHPUnit_Framework_TestCase
      */
     public function __construct()
     {
-    	parent::__construct();
+        parent::__construct();
 
-    	//$this->sharedFixture
+        //$this->sharedFixture
         global $conf,$user,$langs,$db;
         $this->savconf=$conf;
         $this->savuser=$user;
@@ -225,16 +225,16 @@ class FactureTest extends PHPUnit_Framework_TestCase
         unset($localobject->array_options['options_reseller']);
 
         $arraywithdiff = $this->objCompare(
-			$localobject,
-			$newlocalobject,
-			true,
-			array(
-				'newref','oldref','id','lines','client','thirdparty','brouillon','user_author','date_creation','date_validation','datem','date_modification',
-				'ref','statut','paye','specimen','ref','actiontypecode','actionmsg2','actionmsg','mode_reglement','cond_reglement',
-				'cond_reglement_doc','situation_cycle_ref','situation_counter','situation_final','multicurrency_total_ht','multicurrency_total_tva',
-				'multicurrency_total_ttc','fk_multicurrency','multicurrency_code','multicurrency_tx'
-			)
-		);
+            $localobject,
+            $newlocalobject,
+            true,
+            array(
+                'newref','oldref','id','lines','client','thirdparty','brouillon','user_author','date_creation','date_validation','datem','date_modification',
+                'ref','statut','paye','specimen','ref','actiontypecode','actionmsg2','actionmsg','mode_reglement','cond_reglement',
+                'cond_reglement_doc','situation_cycle_ref','situation_counter','situation_final','multicurrency_total_ht','multicurrency_total_tva',
+                'multicurrency_total_ttc','fk_multicurrency','multicurrency_code','multicurrency_tx'
+            )
+        );
         $this->assertEquals($arraywithdiff, array());    // Actual, Expected
 
         return $localobject;
@@ -268,7 +268,7 @@ class FactureTest extends PHPUnit_Framework_TestCase
 
         $result=$localobject->demande_prelevement($user);
         print __METHOD__." result=".$result."\n";
-       	$this->assertLessThan($result, 0);
+           $this->assertLessThan($result, 0);
 
         return $localobject->id;
     }
@@ -302,26 +302,26 @@ class FactureTest extends PHPUnit_Framework_TestCase
         $result=$localobject2->initAsSpecimen();
         $result=$localobject2->create($user);
         $result=$localobject2->validate($user);
-		print 'Invoice $localobject ref = '.$localobject->ref."\n";
+        print 'Invoice $localobject ref = '.$localobject->ref."\n";
         print 'Invoice $localobject2 created with ref = '.$localobject2->ref."\n";
 
         $conf->global->INVOICE_CAN_NEVER_BE_REMOVED = 1;
 
-        $result=$localobject2->delete($user);					// Deletion is KO, option INVOICE_CAN_NEVER_BE_REMOVED is on
+        $result=$localobject2->delete($user);                    // Deletion is KO, option INVOICE_CAN_NEVER_BE_REMOVED is on
         print __METHOD__." id=".$localobject2->id." ref=".$localobject2->ref." result=".$result."\n";
         $this->assertEquals(0, $result, 'Deletion should fail, option INVOICE_CAN_NEVER_BE_REMOVED is on');
 
         unset($conf->global->INVOICE_CAN_NEVER_BE_REMOVED);
 
-        $result=$localobject->delete($user);					// Deletion is KO, it is not last invoice
+        $result=$localobject->delete($user);                    // Deletion is KO, it is not last invoice
         print __METHOD__." id=".$localobject->id." ref=".$localobject->ref." result=".$result."\n";
         $this->assertEquals(0, $result, 'Deletion should fail, it is not last invoice');
 
-        $result=$localobject2->delete($user);					// Deletion is OK, it is last invoice
+        $result=$localobject2->delete($user);                    // Deletion is OK, it is last invoice
         print __METHOD__." id=".$localobject2->id." ref=".$localobject2->ref." result=".$result."\n";
         $this->assertGreaterThan(0, $result, 'Deletion should work, it is last invoice');
 
-        $result=$localobject->delete($user);					// Deletion is KO, it is not last invoice
+        $result=$localobject->delete($user);                    // Deletion is KO, it is not last invoice
         print __METHOD__." id=".$localobject->id." ref=".$localobject->ref." result=".$result."\n";
         $this->assertGreaterThan(0, $result, 'Deletion should work, it is again last invoice');
 

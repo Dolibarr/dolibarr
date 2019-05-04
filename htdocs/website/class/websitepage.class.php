@@ -34,447 +34,447 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
  */
 class WebsitePage extends CommonObject
 {
-	/**
-	 * @var string Id to identify managed objects
-	 */
-	public $element = 'websitepage';
+    /**
+     * @var string Id to identify managed objects
+     */
+    public $element = 'websitepage';
 
-	/**
-	 * @var string Name of table without prefix where object is stored
-	 */
-	public $table_element = 'website_page';
+    /**
+     * @var string Name of table without prefix where object is stored
+     */
+    public $table_element = 'website_page';
 
-	/**
-	 * @var string String with name of icon for websitepage. Must be the part after the 'object_' into object_myobject.png
-	 */
-	public $picto = 'label';
+    /**
+     * @var string String with name of icon for websitepage. Must be the part after the 'object_' into object_myobject.png
+     */
+    public $picto = 'label';
 
-	/**
+    /**
      * @var int ID
      */
-	public $fk_website;
+    public $fk_website;
 
-	public $pageurl;
-	public $aliasalt;
-	public $type_container;
+    public $pageurl;
+    public $aliasalt;
+    public $type_container;
 
-	/**
-	 * @var string title
-	 */
-	public $title;
-	/**
-	 * @var string description
-	 */
-	public $description;
-	/**
-	 * @var string image
-	 */
-	public $image;
-	/**
-	 * @var string keywords
-	 */
-	public $keywords;
+    /**
+     * @var string title
+     */
+    public $title;
+    /**
+     * @var string description
+     */
+    public $description;
+    /**
+     * @var string image
+     */
+    public $image;
+    /**
+     * @var string keywords
+     */
+    public $keywords;
 
-	public $htmlheader;
-	public $content;
-	public $grabbed_from;
+    public $htmlheader;
+    public $content;
+    public $grabbed_from;
 
-	/**
-	 * @var int Status
-	 */
-	public $status;
+    /**
+     * @var int Status
+     */
+    public $status;
 
-	public $date_creation;
-	public $date_modification;
+    public $date_creation;
+    public $date_modification;
 
 
-	// BEGIN MODULEBUILDER PROPERTIES
-	/**
+    // BEGIN MODULEBUILDER PROPERTIES
+    /**
      * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
      */
-	public $fields=array(
-	    'rowid'          =>array('type'=>'integer',      'label'=>'TechnicalID',      'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'index'=>1, 'position'=>1,  'comment'=>'Id'),
-		'pageurl'        =>array('type'=>'varchar(16)',  'label'=>'WEBSITE_PAGENAME', 'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Ref/alias of page'),
-		'aliasalt'       =>array('type'=>'varchar(255)', 'label'=>'AliasAlt',         'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'index'=>0, 'position'=>11, 'searchall'=>0, 'comment'=>'Alias alternative of page'),
-		'type_container' =>array('type'=>'varchar(16)',  'label'=>'Type',             'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'index'=>0, 'position'=>12, 'comment'=>'Type of container'),
-		'title'          =>array('type'=>'varchar(255)', 'label'=>'Label',            'enabled'=>1, 'visible'=>1,  'position'=>30,  'searchall'=>1),
-	    'description'    =>array('type'=>'varchar(255)', 'label'=>'Description',      'enabled'=>1, 'visible'=>1,  'position'=>30,  'searchall'=>1),
-		'image'          =>array('type'=>'varchar(255)', 'label'=>'Image',            'enabled'=>1, 'visible'=>1,  'position'=>32,  'searchall'=>0, 'help'=>'Relative path of media. Used if Type is "blog_post"'),
-		'keywords'       =>array('type'=>'varchar(255)', 'label'=>'Keywords',         'enabled'=>1, 'visible'=>1,  'position'=>45,  'searchall'=>0),
-		'lang'           =>array('type'=>'varchar(6)',   'label'=>'Lang',             'enabled'=>1, 'visible'=>1,  'position'=>45,  'searchall'=>0),
-		//'status'        =>array('type'=>'integer',      'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'index'=>true,   'position'=>1000),
-	    'fk_website'     =>array('type'=>'integer',      'label'=>'WebsiteId',        'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'position'=>40,  'searchall'=>0, 'foreignkey'=>'websitepage.rowid'),
-	    'fk_page'        =>array('type'=>'integer',      'label'=>'ParentPageId',     'enabled'=>1, 'visible'=>1,  'notnull'=>-1, 'position'=>45,  'searchall'=>0, 'foreignkey'=>'website.rowid'),
-	    'htmlheader'     =>array('type'=>'text',         'label'=>'HtmlHeader',       'enabled'=>1, 'visible'=>0,  'position'=>50,  'searchall'=>0),
-	    'content'        =>array('type'=>'mediumtext',   'label'=>'Content',          'enabled'=>1, 'visible'=>0,  'position'=>51,  'searchall'=>0),
-		'grabbed_from'   =>array('type'=>'varchar(255)', 'label'=>'GrabbedFrom',      'enabled'=>1, 'visible'=>1,  'index'=>1,   'position'=>400, 'comment'=>'URL page content was grabbed from'),
-	    'date_creation'  =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>500),
-		'tms'            =>array('type'=>'timestamp',    'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>501),
-		//'date_valid'    =>array('type'=>'datetime',     'label'=>'DateValidation',     'enabled'=>1, 'visible'=>-1, 'position'=>502),
-		'fk_user_creat'  =>array('type'=>'integer',      'label'=>'UserAuthor',       'enabled'=>1, 'visible'=>-1, 'notnull'=>true, 'position'=>510),
-		'fk_user_modif'  =>array('type'=>'integer',      'label'=>'UserModif',        'enabled'=>1, 'visible'=>-1, 'position'=>511),
-		//'fk_user_valid' =>array('type'=>'integer',      'label'=>'UserValidation',        'enabled'=>1, 'visible'=>-1, 'position'=>512),
-		'import_key'     =>array('type'=>'varchar(14)',  'label'=>'ImportId',         'enabled'=>1, 'visible'=>-1,  'index'=>1,  'position'=>1000, 'notnull'=>-1),
-	);
-	// END MODULEBUILDER PROPERTIES
+    public $fields=array(
+        'rowid'          =>array('type'=>'integer',      'label'=>'TechnicalID',      'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'index'=>1, 'position'=>1,  'comment'=>'Id'),
+        'pageurl'        =>array('type'=>'varchar(16)',  'label'=>'WEBSITE_PAGENAME', 'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Ref/alias of page'),
+        'aliasalt'       =>array('type'=>'varchar(255)', 'label'=>'AliasAlt',         'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'index'=>0, 'position'=>11, 'searchall'=>0, 'comment'=>'Alias alternative of page'),
+        'type_container' =>array('type'=>'varchar(16)',  'label'=>'Type',             'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'index'=>0, 'position'=>12, 'comment'=>'Type of container'),
+        'title'          =>array('type'=>'varchar(255)', 'label'=>'Label',            'enabled'=>1, 'visible'=>1,  'position'=>30,  'searchall'=>1),
+        'description'    =>array('type'=>'varchar(255)', 'label'=>'Description',      'enabled'=>1, 'visible'=>1,  'position'=>30,  'searchall'=>1),
+        'image'          =>array('type'=>'varchar(255)', 'label'=>'Image',            'enabled'=>1, 'visible'=>1,  'position'=>32,  'searchall'=>0, 'help'=>'Relative path of media. Used if Type is "blog_post"'),
+        'keywords'       =>array('type'=>'varchar(255)', 'label'=>'Keywords',         'enabled'=>1, 'visible'=>1,  'position'=>45,  'searchall'=>0),
+        'lang'           =>array('type'=>'varchar(6)',   'label'=>'Lang',             'enabled'=>1, 'visible'=>1,  'position'=>45,  'searchall'=>0),
+        //'status'        =>array('type'=>'integer',      'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'index'=>true,   'position'=>1000),
+        'fk_website'     =>array('type'=>'integer',      'label'=>'WebsiteId',        'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'position'=>40,  'searchall'=>0, 'foreignkey'=>'websitepage.rowid'),
+        'fk_page'        =>array('type'=>'integer',      'label'=>'ParentPageId',     'enabled'=>1, 'visible'=>1,  'notnull'=>-1, 'position'=>45,  'searchall'=>0, 'foreignkey'=>'website.rowid'),
+        'htmlheader'     =>array('type'=>'text',         'label'=>'HtmlHeader',       'enabled'=>1, 'visible'=>0,  'position'=>50,  'searchall'=>0),
+        'content'        =>array('type'=>'mediumtext',   'label'=>'Content',          'enabled'=>1, 'visible'=>0,  'position'=>51,  'searchall'=>0),
+        'grabbed_from'   =>array('type'=>'varchar(255)', 'label'=>'GrabbedFrom',      'enabled'=>1, 'visible'=>1,  'index'=>1,   'position'=>400, 'comment'=>'URL page content was grabbed from'),
+        'date_creation'  =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>500),
+        'tms'            =>array('type'=>'timestamp',    'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>501),
+        //'date_valid'    =>array('type'=>'datetime',     'label'=>'DateValidation',     'enabled'=>1, 'visible'=>-1, 'position'=>502),
+        'fk_user_creat'  =>array('type'=>'integer',      'label'=>'UserAuthor',       'enabled'=>1, 'visible'=>-1, 'notnull'=>true, 'position'=>510),
+        'fk_user_modif'  =>array('type'=>'integer',      'label'=>'UserModif',        'enabled'=>1, 'visible'=>-1, 'position'=>511),
+        //'fk_user_valid' =>array('type'=>'integer',      'label'=>'UserValidation',        'enabled'=>1, 'visible'=>-1, 'position'=>512),
+        'import_key'     =>array('type'=>'varchar(14)',  'label'=>'ImportId',         'enabled'=>1, 'visible'=>-1,  'index'=>1,  'position'=>1000, 'notnull'=>-1),
+    );
+    // END MODULEBUILDER PROPERTIES
 
 
-	/**
-	 * Constructor
-	 *
-	 * @param DoliDb $db Database handler
-	 */
-	public function __construct(DoliDB $db)
-	{
-		$this->db = $db;
-	}
+    /**
+     * Constructor
+     *
+     * @param DoliDb $db Database handler
+     */
+    public function __construct(DoliDB $db)
+    {
+        $this->db = $db;
+    }
 
-	/**
-	 * Create object into database
-	 *
-	 * @param  User $user      User that creates
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, Id of created object if OK
-	 */
-	public function create(User $user, $notrigger = false)
-	{
-		$this->description = dol_trunc($this->description, 255, 'right', 'utf-8', 1);
-		$this->keywords = dol_trunc($this->keywords, 255, 'right', 'utf-8', 1);
-		if ($this->aliasalt) $this->aliasalt = ','.preg_replace('/,+$/', '', preg_replace('/^,+/', '', $this->aliasalt)).',';	// content in database must be ',xxx,...,yyy,'
+    /**
+     * Create object into database
+     *
+     * @param  User $user      User that creates
+     * @param  bool $notrigger false=launch triggers after, true=disable triggers
+     * @return int             <0 if KO, Id of created object if OK
+     */
+    public function create(User $user, $notrigger = false)
+    {
+        $this->description = dol_trunc($this->description, 255, 'right', 'utf-8', 1);
+        $this->keywords = dol_trunc($this->keywords, 255, 'right', 'utf-8', 1);
+        if ($this->aliasalt) $this->aliasalt = ','.preg_replace('/,+$/', '', preg_replace('/^,+/', '', $this->aliasalt)).',';    // content in database must be ',xxx,...,yyy,'
 
-		return $this->createCommon($user, $notrigger);
-	}
+        return $this->createCommon($user, $notrigger);
+    }
 
-	/**
-	 * Load object in memory from the database
-	 *
-	 * @param int       $id             Id object.
-	 *                                  - If this is 0, the value into $page will be used. If not found or $page not defined, the default page of website_id will be used or the first page found if not set.
-	 *                                  - If value is < 0, we must exclude this ID.
-	 * @param string    $website_id     Web site id (page name must also be filled if this parameter is used)
-	 * @param string    $page           Page name (website id must also be filled if this parameter is used)
-	 * @param string    $aliasalt       Alternative alias to search page (slow)
-	 *
-	 * @return int <0 if KO, 0 if not found, >0 if OK
-	 */
-	public function fetch($id, $website_id = null, $page = null, $aliasalt = null)
-	{
-		dol_syslog(__METHOD__, LOG_DEBUG);
+    /**
+     * Load object in memory from the database
+     *
+     * @param int       $id             Id object.
+     *                                  - If this is 0, the value into $page will be used. If not found or $page not defined, the default page of website_id will be used or the first page found if not set.
+     *                                  - If value is < 0, we must exclude this ID.
+     * @param string    $website_id     Web site id (page name must also be filled if this parameter is used)
+     * @param string    $page           Page name (website id must also be filled if this parameter is used)
+     * @param string    $aliasalt       Alternative alias to search page (slow)
+     *
+     * @return int <0 if KO, 0 if not found, >0 if OK
+     */
+    public function fetch($id, $website_id = null, $page = null, $aliasalt = null)
+    {
+        dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$sql = 'SELECT';
-		$sql .= ' t.rowid,';
-		$sql .= " t.fk_website,";
-		$sql .= ' t.type_container,';
-		$sql .= " t.pageurl,";
-		$sql .= " t.aliasalt,";
-		$sql .= " t.title,";
-		$sql .= " t.description,";
-		$sql .= " t.image,";
-		$sql .= " t.keywords,";
-		$sql .= " t.htmlheader,";
-		$sql .= " t.content,";
-		$sql .= " t.lang,";
-		$sql .= " t.fk_page,";
-		$sql .= " t.status,";
-		$sql .= " t.grabbed_from,";
-		$sql .= " t.date_creation,";
-		$sql .= " t.tms as date_modification,";
-		$sql .= " t.fk_user_creat,";
-		$sql .= " t.fk_user_modif";
-		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
-		//$sql .= ' WHERE entity IN ('.getEntity('website').')';       // entity is on website level
-		$sql .= ' WHERE 1 = 1';
-		if ($id > 0)
-		{
-			$sql .= ' AND t.rowid = ' . $id;
-		}
-		else
-		{
-			if ($id < 0) $sql .= ' AND t.rowid <> ' . abs($id);
-			if (null !== $website_id) {
-			    $sql .= " AND t.fk_website = '" . $this->db->escape($website_id) . "'";
-			    if ($page)		$sql .= " AND t.pageurl = '" . $this->db->escape($page) . "'";
-			    if ($aliasalt)	$sql .= " AND (t.aliasalt LIKE '%," . $this->db->escape($aliasalt) . ",%' OR t.aliasalt LIKE '%, " . $this->db->escape($aliasalt) . ",%')";
-			}
-		}
+        $sql = 'SELECT';
+        $sql .= ' t.rowid,';
+        $sql .= " t.fk_website,";
+        $sql .= ' t.type_container,';
+        $sql .= " t.pageurl,";
+        $sql .= " t.aliasalt,";
+        $sql .= " t.title,";
+        $sql .= " t.description,";
+        $sql .= " t.image,";
+        $sql .= " t.keywords,";
+        $sql .= " t.htmlheader,";
+        $sql .= " t.content,";
+        $sql .= " t.lang,";
+        $sql .= " t.fk_page,";
+        $sql .= " t.status,";
+        $sql .= " t.grabbed_from,";
+        $sql .= " t.date_creation,";
+        $sql .= " t.tms as date_modification,";
+        $sql .= " t.fk_user_creat,";
+        $sql .= " t.fk_user_modif";
+        $sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
+        //$sql .= ' WHERE entity IN ('.getEntity('website').')';       // entity is on website level
+        $sql .= ' WHERE 1 = 1';
+        if ($id > 0)
+        {
+            $sql .= ' AND t.rowid = ' . $id;
+        }
+        else
+        {
+            if ($id < 0) $sql .= ' AND t.rowid <> ' . abs($id);
+            if (null !== $website_id) {
+                $sql .= " AND t.fk_website = '" . $this->db->escape($website_id) . "'";
+                if ($page)        $sql .= " AND t.pageurl = '" . $this->db->escape($page) . "'";
+                if ($aliasalt)    $sql .= " AND (t.aliasalt LIKE '%," . $this->db->escape($aliasalt) . ",%' OR t.aliasalt LIKE '%, " . $this->db->escape($aliasalt) . ",%')";
+            }
+        }
         $sql .= $this->db->plimit(1);
 
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			$numrows = $this->db->num_rows($resql);
-			if ($numrows) {
-				$obj = $this->db->fetch_object($resql);
+        $resql = $this->db->query($sql);
+        if ($resql) {
+            $numrows = $this->db->num_rows($resql);
+            if ($numrows) {
+                $obj = $this->db->fetch_object($resql);
 
-				$this->id = $obj->rowid;
+                $this->id = $obj->rowid;
 
-				$this->fk_website = $obj->fk_website;
-				$this->type_container = $obj->type_container;
+                $this->fk_website = $obj->fk_website;
+                $this->type_container = $obj->type_container;
 
-				$this->pageurl = $obj->pageurl;
-				$this->ref = $obj->pageurl;
-				$this->aliasalt = preg_replace('/,+$/', '', preg_replace('/^,+/', '', $obj->aliasalt));
+                $this->pageurl = $obj->pageurl;
+                $this->ref = $obj->pageurl;
+                $this->aliasalt = preg_replace('/,+$/', '', preg_replace('/^,+/', '', $obj->aliasalt));
 
-				$this->title = $obj->title;
-				$this->description = $obj->description;
-				$this->image = $obj->image;
-				$this->keywords = $obj->keywords;
-				$this->htmlheader = $obj->htmlheader;
-				$this->content = $obj->content;
-				$this->lang = $obj->lang;
-				$this->fk_page = $obj->fk_page;
-				$this->status = $obj->status;
-				$this->grabbed_from = $obj->grabbed_from;
-				$this->date_creation = $this->db->jdate($obj->date_creation);
-				$this->date_modification = $this->db->jdate($obj->date_modification);
-				$this->fk_user_creat = $obj->fk_user_creat;
-				$this->fk_user_modif = $obj->fk_user_modif;
-			}
-			$this->db->free($resql);
+                $this->title = $obj->title;
+                $this->description = $obj->description;
+                $this->image = $obj->image;
+                $this->keywords = $obj->keywords;
+                $this->htmlheader = $obj->htmlheader;
+                $this->content = $obj->content;
+                $this->lang = $obj->lang;
+                $this->fk_page = $obj->fk_page;
+                $this->status = $obj->status;
+                $this->grabbed_from = $obj->grabbed_from;
+                $this->date_creation = $this->db->jdate($obj->date_creation);
+                $this->date_modification = $this->db->jdate($obj->date_modification);
+                $this->fk_user_creat = $obj->fk_user_creat;
+                $this->fk_user_modif = $obj->fk_user_modif;
+            }
+            $this->db->free($resql);
 
-			if ($numrows) {
-				return 1;
-			} else {
-				return 0;
-			}
-		} else {
-			$this->errors[] = 'Error ' . $this->db->lasterror();
-			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
+            if ($numrows) {
+                return 1;
+            } else {
+                return 0;
+            }
+        } else {
+            $this->errors[] = 'Error ' . $this->db->lasterror();
+            dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
 
-			return - 1;
-		}
-	}
+            return - 1;
+        }
+    }
 
-	/**
-	 * Load list of objects in memory from the database.
-	 *
-	 * @param  string      $websiteid    Web site
-	 * @param  string      $sortorder    Sort Order
-	 * @param  string      $sortfield    Sort field
-	 * @param  int         $limit        limit
-	 * @param  int         $offset       Offset
-	 * @param  array       $filter       Filter array
-	 * @param  string      $filtermode   Filter mode (AND or OR)
-	 * @return array|int                 int <0 if KO, array of pages if OK
-	 */
-	public function fetchAll($websiteid, $sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
-	{
-		dol_syslog(__METHOD__, LOG_DEBUG);
+    /**
+     * Load list of objects in memory from the database.
+     *
+     * @param  string      $websiteid    Web site
+     * @param  string      $sortorder    Sort Order
+     * @param  string      $sortfield    Sort field
+     * @param  int         $limit        limit
+     * @param  int         $offset       Offset
+     * @param  array       $filter       Filter array
+     * @param  string      $filtermode   Filter mode (AND or OR)
+     * @return array|int                 int <0 if KO, array of pages if OK
+     */
+    public function fetchAll($websiteid, $sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
+    {
+        dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$records=array();
+        $records=array();
 
-		$sql = 'SELECT';
-		$sql .= ' t.rowid,';
-		$sql .= " t.fk_website,";
-		$sql .= " t.type_container,";
-		$sql .= " t.pageurl,";
-		$sql .= " t.aliasalt,";
-		$sql .= " t.title,";
-		$sql .= " t.description,";
-		$sql .= " t.image,";
-		$sql .= " t.keywords,";
-		$sql .= " t.htmlheader,";
-		$sql .= " t.content,";
-		$sql .= " t.lang,";
-		$sql .= " t.fk_page,";
-		$sql .= " t.status,";
-		$sql .= " t.grabbed_from,";
-		$sql .= " t.date_creation,";
-		$sql .= " t.tms as date_modification,";
-		$sql .= " t.fk_user_creat,";
-		$sql .= " t.fk_user_modif";
-		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element. ' as t';
-		$sql .= ' WHERE t.fk_website = '.$websiteid;
-		// Manage filter
-		$sqlwhere = array();
-		if (count($filter) > 0) {
-			foreach ($filter as $key => $value) {
-				if ($key=='t.rowid' || $key=='t.fk_website') {
-					$sqlwhere[] = $key . '='. $value;
-				} else {
-					$sqlwhere[] = $key . ' LIKE \'%' . $this->db->escape($value) . '%\'';
-				}
-			}
-		}
-		if (count($sqlwhere) > 0) {
-			$sql .= ' AND (' . implode(' '.$filtermode.' ', $sqlwhere).')';
-		}
+        $sql = 'SELECT';
+        $sql .= ' t.rowid,';
+        $sql .= " t.fk_website,";
+        $sql .= " t.type_container,";
+        $sql .= " t.pageurl,";
+        $sql .= " t.aliasalt,";
+        $sql .= " t.title,";
+        $sql .= " t.description,";
+        $sql .= " t.image,";
+        $sql .= " t.keywords,";
+        $sql .= " t.htmlheader,";
+        $sql .= " t.content,";
+        $sql .= " t.lang,";
+        $sql .= " t.fk_page,";
+        $sql .= " t.status,";
+        $sql .= " t.grabbed_from,";
+        $sql .= " t.date_creation,";
+        $sql .= " t.tms as date_modification,";
+        $sql .= " t.fk_user_creat,";
+        $sql .= " t.fk_user_modif";
+        $sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element. ' as t';
+        $sql .= ' WHERE t.fk_website = '.$websiteid;
+        // Manage filter
+        $sqlwhere = array();
+        if (count($filter) > 0) {
+            foreach ($filter as $key => $value) {
+                if ($key=='t.rowid' || $key=='t.fk_website') {
+                    $sqlwhere[] = $key . '='. $value;
+                } else {
+                    $sqlwhere[] = $key . ' LIKE \'%' . $this->db->escape($value) . '%\'';
+                }
+            }
+        }
+        if (count($sqlwhere) > 0) {
+            $sql .= ' AND (' . implode(' '.$filtermode.' ', $sqlwhere).')';
+        }
 
-		if (!empty($sortfield)) {
-			$sql .= $this->db->order($sortfield, $sortorder);
-		}
-		if (!empty($limit)) {
-			$sql .=  ' ' . $this->db->plimit($limit, $offset);
-		}
+        if (!empty($sortfield)) {
+            $sql .= $this->db->order($sortfield, $sortorder);
+        }
+        if (!empty($limit)) {
+            $sql .=  ' ' . $this->db->plimit($limit, $offset);
+        }
 
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			$num = $this->db->num_rows($resql);
+        $resql = $this->db->query($sql);
+        if ($resql) {
+            $num = $this->db->num_rows($resql);
 
-			while ($obj = $this->db->fetch_object($resql))
-			{
-				$record = new self($this->db);
+            while ($obj = $this->db->fetch_object($resql))
+            {
+                $record = new self($this->db);
 
-				$record->id = $obj->rowid;
-				$record->fk_website = $obj->fk_website;
-				$record->type_container = $obj->type_container;
-				$record->pageurl = $obj->pageurl;
-				$record->aliasalt = preg_replace('/,+$/', '', preg_replace('/^,+/', '', $obj->aliasalt));
-				$record->title = $obj->title;
-				$record->description = $obj->description;
-				$record->image = $obj->image;
-				$record->keywords = $obj->keywords;
-				$record->htmlheader = $obj->htmlheader;
-				$record->content = $obj->content;
-				$record->lang = $obj->lang;
-				$record->fk_page = $obj->fk_page;
-				$record->status = $obj->status;
-				$record->grabbed_from = $obj->grabbed_from;
-				$record->date_creation = $this->db->jdate($obj->date_creation);
-				$record->date_modification = $this->db->jdate($obj->date_modification);
-				$record->fk_user_creat = $obj->fk_user_creat;
-				$record->fk_user_modif = $obj->fk_user_modif;
-				//var_dump($record->id);
-				$records[$record->id] = $record;
-			}
-			$this->db->free($resql);
+                $record->id = $obj->rowid;
+                $record->fk_website = $obj->fk_website;
+                $record->type_container = $obj->type_container;
+                $record->pageurl = $obj->pageurl;
+                $record->aliasalt = preg_replace('/,+$/', '', preg_replace('/^,+/', '', $obj->aliasalt));
+                $record->title = $obj->title;
+                $record->description = $obj->description;
+                $record->image = $obj->image;
+                $record->keywords = $obj->keywords;
+                $record->htmlheader = $obj->htmlheader;
+                $record->content = $obj->content;
+                $record->lang = $obj->lang;
+                $record->fk_page = $obj->fk_page;
+                $record->status = $obj->status;
+                $record->grabbed_from = $obj->grabbed_from;
+                $record->date_creation = $this->db->jdate($obj->date_creation);
+                $record->date_modification = $this->db->jdate($obj->date_modification);
+                $record->fk_user_creat = $obj->fk_user_creat;
+                $record->fk_user_modif = $obj->fk_user_modif;
+                //var_dump($record->id);
+                $records[$record->id] = $record;
+            }
+            $this->db->free($resql);
 
-			return $records;
-		} else {
-			$this->errors[] = 'Error ' . $this->db->lasterror();
-			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
+            return $records;
+        } else {
+            $this->errors[] = 'Error ' . $this->db->lasterror();
+            dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
 
-			return -1;
-		}
-	}
+            return -1;
+        }
+    }
 
-	/**
-	 * Update object into database
-	 *
-	 * @param  User $user      User that modifies
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
-	 */
-	public function update(User $user, $notrigger = false)
-	{
-		$this->description = dol_trunc($this->description, 255, 'right', 'utf-8', 1);
-		$this->keywords = dol_trunc($this->keywords, 255, 'right', 'utf-8', 1);
-		if ($this->aliasalt) $this->aliasalt = ','.preg_replace('/,+$/', '', preg_replace('/^,+/', '', $this->aliasalt)).',';	// content in database must be ',xxx,...,yyy,'
+    /**
+     * Update object into database
+     *
+     * @param  User $user      User that modifies
+     * @param  bool $notrigger false=launch triggers after, true=disable triggers
+     * @return int             <0 if KO, >0 if OK
+     */
+    public function update(User $user, $notrigger = false)
+    {
+        $this->description = dol_trunc($this->description, 255, 'right', 'utf-8', 1);
+        $this->keywords = dol_trunc($this->keywords, 255, 'right', 'utf-8', 1);
+        if ($this->aliasalt) $this->aliasalt = ','.preg_replace('/,+$/', '', preg_replace('/^,+/', '', $this->aliasalt)).',';    // content in database must be ',xxx,...,yyy,'
 
-		return $this->updateCommon($user, $notrigger);
-	}
+        return $this->updateCommon($user, $notrigger);
+    }
 
-	/**
-	 * Delete object in database
-	 *
-	 * @param User $user       User that deletes
-	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
-	 */
-	public function delete(User $user, $notrigger = false)
-	{
-		$result = $this->deleteCommon($user, $trigger);
+    /**
+     * Delete object in database
+     *
+     * @param User $user       User that deletes
+     * @param bool $notrigger  false=launch triggers after, true=disable triggers
+     * @return int             <0 if KO, >0 if OK
+     */
+    public function delete(User $user, $notrigger = false)
+    {
+        $result = $this->deleteCommon($user, $trigger);
 
-		if ($result > 0)
-		{
-			$websiteobj=new Website($this->db);
-			$result = $websiteobj->fetch($this->fk_website);
+        if ($result > 0)
+        {
+            $websiteobj=new Website($this->db);
+            $result = $websiteobj->fetch($this->fk_website);
 
-			if ($result > 0)
-			{
-				global $dolibarr_main_data_root;
-				$pathofwebsite=$dolibarr_main_data_root.'/website/'.$websiteobj->ref;
+            if ($result > 0)
+            {
+                global $dolibarr_main_data_root;
+                $pathofwebsite=$dolibarr_main_data_root.'/website/'.$websiteobj->ref;
 
-				$filealias=$pathofwebsite.'/'.$this->pageurl.'.php';
-				$filetpl=$pathofwebsite.'/page'.$this->id.'.tpl.php';
+                $filealias=$pathofwebsite.'/'.$this->pageurl.'.php';
+                $filetpl=$pathofwebsite.'/page'.$this->id.'.tpl.php';
 
-				dol_delete_file($filealias);
-				dol_delete_file($filetpl);
-			}
-		}
+                dol_delete_file($filealias);
+                dol_delete_file($filetpl);
+            }
+        }
 
-		return $result;
-	}
+        return $result;
+    }
 
-	/**
-	 * Load an object from its id and create a new one in database
-	 *
-	 * @param	User	$user				User making the clone
-	 * @param 	int 	$fromid 			Id of object to clone
-	 * @param	string	$newref				New ref/alias of page
-	 * @param	string	$newlang			New language
-	 * @param	int		$istranslation		1=New page is a translation of the cloned page.
-	 * @param	int		$newwebsite			0=Same web site, >0=Id of new website
-	 * @param	int		$keeptitleunchanged	1=Keep title unchanged
-	 * @return 	mixed 						New object created, <0 if KO
-	 */
-	public function createFromClone(User $user, $fromid, $newref, $newlang = '', $istranslation = 0, $newwebsite = 0, $keeptitleunchanged = 0)
-	{
-		global $hookmanager, $langs;
+    /**
+     * Load an object from its id and create a new one in database
+     *
+     * @param    User    $user                User making the clone
+     * @param     int     $fromid             Id of object to clone
+     * @param    string    $newref                New ref/alias of page
+     * @param    string    $newlang            New language
+     * @param    int        $istranslation        1=New page is a translation of the cloned page.
+     * @param    int        $newwebsite            0=Same web site, >0=Id of new website
+     * @param    int        $keeptitleunchanged    1=Keep title unchanged
+     * @return     mixed                         New object created, <0 if KO
+     */
+    public function createFromClone(User $user, $fromid, $newref, $newlang = '', $istranslation = 0, $newwebsite = 0, $keeptitleunchanged = 0)
+    {
+        global $hookmanager, $langs;
 
-		$now = dol_now();
-		$error = 0;
+        $now = dol_now();
+        $error = 0;
 
-		dol_syslog(__METHOD__, LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$object = new self($this->db);
+        $object = new self($this->db);
 
-		$this->db->begin();
+        $this->db->begin();
 
-		// Load source object
-		$object->fetch($fromid);
-		// Reset object
-		$object->id = 0;
+        // Load source object
+        $object->fetch($fromid);
+        // Reset object
+        $object->id = 0;
 
-		// Clear fields
-		$object->ref = $newref;
-		$object->pageurl = $newref;
-		$object->aliasalt = '';
-		$object->fk_user_creat = $user->id;
-		$object->date_creation = $now;
-		$object->title = ($keeptitleunchanged ? '' : $langs->trans("CopyOf").' ').$object->title;
-		if (! empty($newlang)) $object->lang=$newlang;
-		if ($istranslation) $object->fk_page = $fromid;
-		else $object->fk_page = 0;
-		if (! empty($newwebsite)) $object->fk_website=$newwebsite;
+        // Clear fields
+        $object->ref = $newref;
+        $object->pageurl = $newref;
+        $object->aliasalt = '';
+        $object->fk_user_creat = $user->id;
+        $object->date_creation = $now;
+        $object->title = ($keeptitleunchanged ? '' : $langs->trans("CopyOf").' ').$object->title;
+        if (! empty($newlang)) $object->lang=$newlang;
+        if ($istranslation) $object->fk_page = $fromid;
+        else $object->fk_page = 0;
+        if (! empty($newwebsite)) $object->fk_website=$newwebsite;
 
-		// Create clone
-		$object->context['createfromclone'] = 'createfromclone';
-		$result = $object->create($user);
-		if ($result < 0) {
-			$error++;
-			$this->error = $object->error;
-			$this->errors = $object->errors;
-			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
-		}
+        // Create clone
+        $object->context['createfromclone'] = 'createfromclone';
+        $result = $object->create($user);
+        if ($result < 0) {
+            $error++;
+            $this->error = $object->error;
+            $this->errors = $object->errors;
+            dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
+        }
 
-		unset($object->context['createfromclone']);
+        unset($object->context['createfromclone']);
 
-		// End
-		if (!$error) {
-			$this->db->commit();
+        // End
+        if (!$error) {
+            $this->db->commit();
 
-			return $object;
-		} else {
-			$this->db->rollback();
+            return $object;
+        } else {
+            $this->db->rollback();
 
-			return -1;
-		}
-	}
+            return -1;
+        }
+    }
 
-	/**
-	 *  Return a link to the user card (with optionaly the picto)
-	 * 	Use this->id,this->lastname, this->firstname
-	 *
-	 *	@param	int		$withpicto			Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
-	 *	@param	string	$option				On what the link point to
-     *  @param	integer	$notooltip			1=Disable tooltip
-     *  @param	int		$maxlen				Max length of visible user name
+    /**
+     *  Return a link to the user card (with optionaly the picto)
+     *     Use this->id,this->lastname, this->firstname
+     *
+     *    @param    int        $withpicto            Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
+     *    @param    string    $option                On what the link point to
+     *  @param    integer    $notooltip            1=Disable tooltip
+     *  @param    int        $maxlen                Max length of visible user name
      *  @param  string  $morecss            Add more css on link
-	 *	@return	string						String with URL
-	 */
-	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $maxlen = 24, $morecss = '')
-	{
-		global $langs, $conf, $db;
+     *    @return    string                        String with URL
+     */
+    public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $maxlen = 24, $morecss = '')
+    {
+        global $langs, $conf, $db;
         global $dolibarr_main_authentication, $dolibarr_main_demo;
         global $menumanager;
 
@@ -488,105 +488,105 @@ class WebsitePage extends CommonObject
         $linkstart = '<a href="'.DOL_URL_ROOT.'/website/card.php?id='.$this->id.'"';
         $linkstart.= ($notooltip?'':' title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip'.($morecss?' '.$morecss:'').'"');
         $linkstart.= '>';
-		$linkend='</a>';
+        $linkend='</a>';
 
-		$linkstart = $linkend = '';
+        $linkstart = $linkend = '';
 
         if ($withpicto)
         {
             $result.=($linkstart.img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?'':'class="classfortooltip"')).$linkend);
-        	if ($withpicto != 2) $result.=' ';
-		}
-		$result.= $linkstart . $this->ref . $linkend;
-		return $result;
-	}
+            if ($withpicto != 2) $result.=' ';
+        }
+        $result.= $linkstart . $this->ref . $linkend;
+        return $result;
+    }
 
-	/**
-	 *  Retourne le libelle du status d'un user (actif, inactif)
-	 *
-	 *  @param	int		$mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *  @return	string 			       Label of status
-	 */
-	public function getLibStatut($mode = 0)
-	{
-		return $this->LibStatut($this->status, $mode);
-	}
+    /**
+     *  Retourne le libelle du status d'un user (actif, inactif)
+     *
+     *  @param    int        $mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+     *  @return    string                    Label of status
+     */
+    public function getLibStatut($mode = 0)
+    {
+        return $this->LibStatut($this->status, $mode);
+    }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *  Renvoi le libelle d'un status donne
-	 *
-	 *  @param	int		$status        	Id status
-	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *  @return string 			       	Label of status
-	 */
-	public function LibStatut($status, $mode = 0)
-	{
+    /**
+     *  Renvoi le libelle d'un status donne
+     *
+     *  @param    int        $status            Id status
+     *  @param  int        $mode              0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+     *  @return string                        Label of status
+     */
+    public function LibStatut($status, $mode = 0)
+    {
         // phpcs:enable
-		global $langs;
+        global $langs;
 
-		if ($mode == 0)
-		{
-			$prefix='';
-			if ($status == 1) return $langs->trans('Enabled');
-			elseif ($status == 0) return $langs->trans('Disabled');
-		}
-		elseif ($mode == 1)
-		{
-			if ($status == 1) return $langs->trans('Enabled');
-			elseif ($status == 0) return $langs->trans('Disabled');
-		}
-		elseif ($mode == 2)
-		{
-			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
-			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
-		}
-		elseif ($mode == 3)
-		{
-			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4');
-			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5');
-		}
-		elseif ($mode == 4)
-		{
-			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
-			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
-		}
-		elseif ($mode == 5)
-		{
-			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'), 'statut4');
-			elseif ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'), 'statut5');
-		}
-	}
+        if ($mode == 0)
+        {
+            $prefix='';
+            if ($status == 1) return $langs->trans('Enabled');
+            elseif ($status == 0) return $langs->trans('Disabled');
+        }
+        elseif ($mode == 1)
+        {
+            if ($status == 1) return $langs->trans('Enabled');
+            elseif ($status == 0) return $langs->trans('Disabled');
+        }
+        elseif ($mode == 2)
+        {
+            if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
+            elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
+        }
+        elseif ($mode == 3)
+        {
+            if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4');
+            elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5');
+        }
+        elseif ($mode == 4)
+        {
+            if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
+            elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
+        }
+        elseif ($mode == 5)
+        {
+            if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'), 'statut4');
+            elseif ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'), 'statut5');
+        }
+    }
 
 
-	/**
-	 * Initialise object with example values
-	 * Id must be 0 if object instance is a specimen
-	 *
-	 * @return void
-	 */
-	public function initAsSpecimen()
-	{
-		global $user;
+    /**
+     * Initialise object with example values
+     * Id must be 0 if object instance is a specimen
+     *
+     * @return void
+     */
+    public function initAsSpecimen()
+    {
+        global $user;
 
-		$this->id = 0;
+        $this->id = 0;
 
-		$now=dol_now();
+        $now=dol_now();
 
-		$this->fk_website = '';
-		$this->type_container = 'page';
-		$this->pageurl = 'specimen';
-		$this->aliasalt = 'specimenalt';
-		$this->title = 'My Page';
-		$this->description = 'This is my page';
-		$this->image = '';
-		$this->keywords = 'keyword1, keyword2';
-		$this->htmlheader = '';
-		$this->content = '<html><body>This is a html content</body></html>';
-		$this->status = '';
-		$this->grabbed_from = '';
-		$this->date_creation = $now - (24 * 30 * 3600);
-		$this->date_modification = $now - (24 * 7 * 3600);
-		$this->fk_user_creat = $user->id;
-	}
+        $this->fk_website = '';
+        $this->type_container = 'page';
+        $this->pageurl = 'specimen';
+        $this->aliasalt = 'specimenalt';
+        $this->title = 'My Page';
+        $this->description = 'This is my page';
+        $this->image = '';
+        $this->keywords = 'keyword1, keyword2';
+        $this->htmlheader = '';
+        $this->content = '<html><body>This is a html content</body></html>';
+        $this->status = '';
+        $this->grabbed_from = '';
+        $this->date_creation = $now - (24 * 30 * 3600);
+        $this->date_modification = $now - (24 * 7 * 3600);
+        $this->fk_user_creat = $user->id;
+    }
 }

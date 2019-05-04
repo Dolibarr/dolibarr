@@ -26,19 +26,19 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 
 
 /**
- *		Class to manage Schedule of loans
+ *        Class to manage Schedule of loans
  */
 class LoanSchedule extends CommonObject
 {
-	/**
-	 * @var string ID to identify managed object
-	 */
-	public $element='loan_schedule';
+    /**
+     * @var string ID to identify managed object
+     */
+    public $element='loan_schedule';
 
-	/**
-	 * @var string Name of table without prefix where object is stored
-	 */
-	public $table_element='loan_schedule';
+    /**
+     * @var string Name of table without prefix where object is stored
+     */
+    public $table_element='loan_schedule';
 
     /**
      * @var int Loan ID
@@ -49,7 +49,7 @@ class LoanSchedule extends CommonObject
      * @var string Create date
      */
     public $datec='';
-	public $tms='';
+    public $tms='';
 
     /**
      * @var string Payment date
@@ -58,8 +58,8 @@ class LoanSchedule extends CommonObject
 
     public $amounts=array();   // Array of amounts
     public $amount_capital;    // Total amount of payment
-	public $amount_insurance;
-	public $amount_interest;
+    public $amount_insurance;
+    public $amount_interest;
 
     /**
      * @var int Payment Type ID
@@ -86,143 +86,143 @@ class LoanSchedule extends CommonObject
      */
     public $fk_user_modif;
 
-	public $lines=array();
+    public $lines=array();
 
-	/**
-	 * @deprecated
-	 * @see $amount, $amounts
-	 */
-	public $total;
+    /**
+     * @deprecated
+     * @see $amount, $amounts
+     */
+    public $total;
 
-	/**
-	 *	Constructor
-	 *
-	 *  @param		DoliDB		$db      Database handler
-	 */
-	public function __construct($db)
-	{
-		$this->db = $db;
-	}
+    /**
+     *    Constructor
+     *
+     *  @param        DoliDB        $db      Database handler
+     */
+    public function __construct($db)
+    {
+        $this->db = $db;
+    }
 
-	/**
-	 *  Create payment of loan into database.
+    /**
+     *  Create payment of loan into database.
      *  Use this->amounts to have list of lines for the payment
      *
-	 *  @param      User		$user   User making payment
-	 *  @return     int     			<0 if KO, id of payment if OK
-	 */
-	public function create($user)
-	{
-		global $conf, $langs;
+     *  @param      User        $user   User making payment
+     *  @return     int                 <0 if KO, id of payment if OK
+     */
+    public function create($user)
+    {
+        global $conf, $langs;
 
-		$error=0;
+        $error=0;
 
         $now=dol_now();
 
         // Validate parameters
-		if (! $this->datep)
-		{
-			$this->error='ErrorBadValueForParameter';
-			return -1;
-		}
+        if (! $this->datep)
+        {
+            $this->error='ErrorBadValueForParameter';
+            return -1;
+        }
 
-		// Clean parameters
-		if (isset($this->fk_loan)) $this->fk_loan = (int) $this->fk_loan;
-		if (isset($this->amount_capital))	$this->amount_capital = trim($this->amount_capital?$this->amount_capital:0);
-		if (isset($this->amount_insurance))	$this->amount_insurance = trim($this->amount_insurance?$this->amount_insurance:0);
-		if (isset($this->amount_interest))	$this->amount_interest = trim($this->amount_interest?$this->amount_interest:0);
-		if (isset($this->fk_typepayment)) $this->fk_typepayment = (int) $this->fk_typepayment;
-		if (isset($this->fk_bank)) $this->fk_bank = (int) $this->fk_bank;
-		if (isset($this->fk_user_creat)) $this->fk_user_creat = (int) $this->fk_user_creat;
-		if (isset($this->fk_user_modif)) $this->fk_user_modif = (int) $this->fk_user_modif;
+        // Clean parameters
+        if (isset($this->fk_loan)) $this->fk_loan = (int) $this->fk_loan;
+        if (isset($this->amount_capital))    $this->amount_capital = trim($this->amount_capital?$this->amount_capital:0);
+        if (isset($this->amount_insurance))    $this->amount_insurance = trim($this->amount_insurance?$this->amount_insurance:0);
+        if (isset($this->amount_interest))    $this->amount_interest = trim($this->amount_interest?$this->amount_interest:0);
+        if (isset($this->fk_typepayment)) $this->fk_typepayment = (int) $this->fk_typepayment;
+        if (isset($this->fk_bank)) $this->fk_bank = (int) $this->fk_bank;
+        if (isset($this->fk_user_creat)) $this->fk_user_creat = (int) $this->fk_user_creat;
+        if (isset($this->fk_user_modif)) $this->fk_user_modif = (int) $this->fk_user_modif;
 
         $totalamount = $this->amount_capital + $this->amount_insurance + $this->amount_interest;
         $totalamount = price2num($totalamount);
 
         // Check parameters
         if ($totalamount == 0) {
-        	$this->errors[]='step1';
-        	return -1; // Negative amounts are accepted for reject prelevement but not null
+            $this->errors[]='step1';
+            return -1; // Negative amounts are accepted for reject prelevement but not null
         }
 
 
-		$this->db->begin();
+        $this->db->begin();
 
-		if ($totalamount != 0)
-		{
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element." (fk_loan, datec, datep, amount_capital, amount_insurance, amount_interest,";
-			$sql.= " fk_typepayment, fk_user_creat, fk_bank)";
-			$sql.= " VALUES (".$this->fk_loan.", '".$this->db->idate($now)."',";
-			$sql.= " '".$this->db->idate($this->datep)."',";
-			$sql.= " ".$this->amount_capital.",";
-			$sql.= " ".$this->amount_insurance.",";
-			$sql.= " ".$this->amount_interest.",";
-			$sql.= " ".$this->fk_typepayment.", ";
-			$sql.= " ".$user->id.",";
-			$sql.= " ".$this->fk_bank . ")";
+        if ($totalamount != 0)
+        {
+            $sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element." (fk_loan, datec, datep, amount_capital, amount_insurance, amount_interest,";
+            $sql.= " fk_typepayment, fk_user_creat, fk_bank)";
+            $sql.= " VALUES (".$this->fk_loan.", '".$this->db->idate($now)."',";
+            $sql.= " '".$this->db->idate($this->datep)."',";
+            $sql.= " ".$this->amount_capital.",";
+            $sql.= " ".$this->amount_insurance.",";
+            $sql.= " ".$this->amount_interest.",";
+            $sql.= " ".$this->fk_typepayment.", ";
+            $sql.= " ".$user->id.",";
+            $sql.= " ".$this->fk_bank . ")";
 
-			dol_syslog(get_class($this)."::create", LOG_DEBUG);
-			$resql=$this->db->query($sql);
-			if ($resql)
-			{
-				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."payment_loan");
-			}
-			else
-			{
+            dol_syslog(get_class($this)."::create", LOG_DEBUG);
+            $resql=$this->db->query($sql);
+            if ($resql)
+            {
+                $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."payment_loan");
+            }
+            else
+            {
                 $this->error=$this->db->lasterror();
-				$error++;
-			}
-		}
+                $error++;
+            }
+        }
 
-		if ($totalamount != 0 && ! $error)
-		{
-		    $this->amount_capital=$totalamount;
-		    $this->db->commit();
-			return $this->id;
-		}
-		else
-		{
-			$this->errors[]=$this->db->lasterror();
-			$this->db->rollback();
-			return -1;
-		}
-	}
+        if ($totalamount != 0 && ! $error)
+        {
+            $this->amount_capital=$totalamount;
+            $this->db->commit();
+            return $this->id;
+        }
+        else
+        {
+            $this->errors[]=$this->db->lasterror();
+            $this->db->rollback();
+            return -1;
+        }
+    }
 
-	/**
-	 *  Load object in memory from database
-	 *
-	 *  @param	int		$id         Id object
-	 *  @return int         		<0 if KO, >0 if OK
-	 */
-	public function fetch($id)
-	{
-		global $langs;
-		$sql = "SELECT";
-		$sql.= " t.rowid,";
-		$sql.= " t.fk_loan,";
-		$sql.= " t.datec,";
-		$sql.= " t.tms,";
-		$sql.= " t.datep,";
-		$sql.= " t.amount_capital,";
-		$sql.= " t.amount_insurance,";
-		$sql.= " t.amount_interest,";
-		$sql.= " t.fk_typepayment,";
-		$sql.= " t.num_payment,";
+    /**
+     *  Load object in memory from database
+     *
+     *  @param    int        $id         Id object
+     *  @return int                 <0 if KO, >0 if OK
+     */
+    public function fetch($id)
+    {
+        global $langs;
+        $sql = "SELECT";
+        $sql.= " t.rowid,";
+        $sql.= " t.fk_loan,";
+        $sql.= " t.datec,";
+        $sql.= " t.tms,";
+        $sql.= " t.datep,";
+        $sql.= " t.amount_capital,";
+        $sql.= " t.amount_insurance,";
+        $sql.= " t.amount_interest,";
+        $sql.= " t.fk_typepayment,";
+        $sql.= " t.num_payment,";
         $sql.= " t.note_private,";
         $sql.= " t.note_public,";
-		$sql.= " t.fk_bank,";
-		$sql.= " t.fk_user_creat,";
-		$sql.= " t.fk_user_modif,";
-		$sql.= " pt.code as type_code, pt.libelle as type_libelle,";
-		$sql.= ' b.fk_account';
-		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pt ON t.fk_typepayment = pt.id";
-		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON t.fk_bank = b.rowid';
-		$sql.= " WHERE t.rowid = ".$id;
+        $sql.= " t.fk_bank,";
+        $sql.= " t.fk_user_creat,";
+        $sql.= " t.fk_user_modif,";
+        $sql.= " pt.code as type_code, pt.libelle as type_libelle,";
+        $sql.= ' b.fk_account';
+        $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pt ON t.fk_typepayment = pt.id";
+        $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON t.fk_bank = b.rowid';
+        $sql.= " WHERE t.rowid = ".$id;
 
-		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
-		$resql=$this->db->query($sql);
-		if ($resql) {
+        dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
+        $resql=$this->db->query($sql);
+        if ($resql) {
             if ($this->db->num_rows($resql)) {
                 $obj = $this->db->fetch_object($resql);
 
@@ -252,333 +252,333 @@ class LoanSchedule extends CommonObject
             }
             $this->db->free($resql);
 
-			return 1;
-		}
-		else
-		{
-			$this->error="Error ".$this->db->lasterror();
-			return -1;
-		}
-	}
-
-
-	/**
-	 *  Update database
-	 *
-	 *  @param	User	$user        	User that modify
-	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
-	 *  @return int         			<0 if KO, >0 if OK
-	 */
-	public function update($user = 0, $notrigger = 0)
-	{
-		global $conf, $langs;
-		$error=0;
-
-		// Clean parameters
-		if (isset($this->fk_loan)) $this->fk_loan=trim($this->fk_loan);
-		if (isset($this->amount_capital)) $this->amount_capital=trim($this->amount_capital);
-		if (isset($this->amount_insurance)) $this->amount_insurance=trim($this->amount_insurance);
-		if (isset($this->amount_interest)) $this->amount_interest=trim($this->amount_interest);
-		if (isset($this->fk_typepayment)) $this->fk_typepayment=trim($this->fk_typepayment);
-		if (isset($this->num_payment)) $this->num_payment=trim($this->num_payment);
-		if (isset($this->note_private)) $this->note_private=trim($this->note_private);
-		if (isset($this->note_public)) $this->note_public=trim($this->note_public);
-		if (isset($this->fk_bank)) $this->fk_bank=trim($this->fk_bank);
-		if (isset($this->fk_user_creat)) $this->fk_user_creat=trim($this->fk_user_creat);
-		if (isset($this->fk_user_modif)) $this->fk_user_modif=trim($this->fk_user_modif);
-
-		// Check parameters
-		// Put here code to add control on parameters values
-
-		// Update request
-		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
-
-		$sql.= " fk_loan=".(isset($this->fk_loan)?$this->fk_loan:"null").",";
-		$sql.= " datec=".(dol_strlen($this->datec)!=0 ? "'".$this->db->idate($this->datec)."'" : 'null').",";
-		$sql.= " tms=".(dol_strlen($this->tms)!=0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
-		$sql.= " datep=".(dol_strlen($this->datep)!=0 ? "'".$this->db->idate($this->datep)."'" : 'null').",";
-		$sql.= " amount_capital=".(isset($this->amount_capital)?$this->amount_capital:"null").",";
-		$sql.= " amount_insurance=".(isset($this->amount_insurance)?$this->amount_insurance:"null").",";
-		$sql.= " amount_interest=".(isset($this->amount_interest)?$this->amount_interest:"null").",";
-		$sql.= " fk_typepayment=".(isset($this->fk_typepayment)?$this->fk_typepayment:"null").",";
-		$sql.= " num_payment=".(isset($this->num_payment)?"'".$this->db->escape($this->num_payment)."'":"null").",";
-		$sql.= " note_private=".(isset($this->note_private)?"'".$this->db->escape($this->note_private)."'":"null").",";
-		$sql.= " note_public=".(isset($this->note_public)?"'".$this->db->escape($this->note_public)."'":"null").",";
-		$sql.= " fk_bank=".(isset($this->fk_bank)?$this->fk_bank:"null").",";
-		$sql.= " fk_user_creat=".(isset($this->fk_user_creat)?$this->fk_user_creat:"null").",";
-		$sql.= " fk_user_modif=".(isset($this->fk_user_modif)?$this->fk_user_modif:"null")."";
-
-		$sql.= " WHERE rowid=".$this->id;
-
-		$this->db->begin();
-
-		dol_syslog(get_class($this)."::update", LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
-
-		if (! $error)
-		{
-			if (! $notrigger)
-			{
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action call a trigger.
-
-				//// Call triggers
-				//include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				//$interface=new Interfaces($this->db);
-				//$result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
-				//if ($result < 0) { $error++; $this->errors=$interface->errors; }
-				//// End call triggers
-			}
-		}
-
-		// Commit or rollback
-		if ($error)
-		{
-			$this->db->rollback();
-			return -1*$error;
-		}
-		else
-		{
-			$this->db->commit();
-			return 1;
-		}
-	}
-
-
-	/**
-	 *  Delete object in database
-	 *
-	 *  @param	User	$user        	User that delete
-	 *  @param  int		$notrigger		0=launch triggers after, 1=disable triggers
-	 *  @return int						<0 if KO, >0 if OK
-	 */
-    public function delete($user, $notrigger = 0)
-	{
-		global $conf, $langs;
-		$error=0;
-
-		$this->db->begin();
-
-        if (! $error) {
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
-			$sql.= " WHERE rowid=".$this->id;
-
-			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
-			$resql = $this->db->query($sql);
-			if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+            return 1;
         }
-
-		if (! $error)
-		{
-			if (! $notrigger)
-			{
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action call a trigger.
-
-				//// Call triggers
-				//include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				//$interface=new Interfaces($this->db);
-				//$result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
-				//if ($result < 0) { $error++; $this->errors=$interface->errors; }
-				//// End call triggers
-			}
-		}
-
-		// Commit or rollback
-		if ($error)
-		{
-			foreach($this->errors as $errmsg)
-			{
-				dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
-				$this->error.=($this->error?', '.$errmsg:$errmsg);
-			}
-			$this->db->rollback();
-			return -1*$error;
-		}
-		else
-		{
-			$this->db->commit();
-			return 1;
-		}
+        else
+        {
+            $this->error="Error ".$this->db->lasterror();
+            return -1;
+        }
     }
 
-	/**
-	 * Calculate Monthly Payments
-	 *
-	 * @param   double  $capital        Capital
-	 * @param   double  $rate           rate
-	 * @param   int     $nbterm         nb term
-	 * @return  double                  mensuality
-	 */
-	public function calcMonthlyPayments($capital, $rate, $nbterm)
-	{
-		$result='';
 
-		if (!empty($capital) && !empty($rate) && !empty($nbterm)) {
-			$result = ($capital*($rate/12))/(1-pow((1+($rate/12)), ($nbterm*-1)));
-		}
+    /**
+     *  Update database
+     *
+     *  @param    User    $user            User that modify
+     *  @param  int        $notrigger        0=launch triggers after, 1=disable triggers
+     *  @return int                     <0 if KO, >0 if OK
+     */
+    public function update($user = 0, $notrigger = 0)
+    {
+        global $conf, $langs;
+        $error=0;
 
-		return $result;
-	}
+        // Clean parameters
+        if (isset($this->fk_loan)) $this->fk_loan=trim($this->fk_loan);
+        if (isset($this->amount_capital)) $this->amount_capital=trim($this->amount_capital);
+        if (isset($this->amount_insurance)) $this->amount_insurance=trim($this->amount_insurance);
+        if (isset($this->amount_interest)) $this->amount_interest=trim($this->amount_interest);
+        if (isset($this->fk_typepayment)) $this->fk_typepayment=trim($this->fk_typepayment);
+        if (isset($this->num_payment)) $this->num_payment=trim($this->num_payment);
+        if (isset($this->note_private)) $this->note_private=trim($this->note_private);
+        if (isset($this->note_public)) $this->note_public=trim($this->note_public);
+        if (isset($this->fk_bank)) $this->fk_bank=trim($this->fk_bank);
+        if (isset($this->fk_user_creat)) $this->fk_user_creat=trim($this->fk_user_creat);
+        if (isset($this->fk_user_modif)) $this->fk_user_modif=trim($this->fk_user_modif);
 
+        // Check parameters
+        // Put here code to add control on parameters values
 
-	/**
-	 *  Load all object in memory from database
-	 *
-	 *  @param	int		$loanid     Id object
-	 *  @return int         		<0 if KO, >0 if OK
-	 */
-	public function fetchAll($loanid)
-	{
-		global $langs;
+        // Update request
+        $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
 
-		$sql = "SELECT";
-		$sql.= " t.rowid,";
-		$sql.= " t.fk_loan,";
-		$sql.= " t.datec,";
-		$sql.= " t.tms,";
-		$sql.= " t.datep,";
-		$sql.= " t.amount_capital,";
-		$sql.= " t.amount_insurance,";
-		$sql.= " t.amount_interest,";
-		$sql.= " t.fk_typepayment,";
-		$sql.= " t.num_payment,";
-		$sql.= " t.note_private,";
-		$sql.= " t.note_public,";
-		$sql.= " t.fk_bank,";
-		$sql.= " t.fk_user_creat,";
-		$sql.= " t.fk_user_modif";
-		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
-		$sql.= " WHERE t.fk_loan = ".$loanid;
+        $sql.= " fk_loan=".(isset($this->fk_loan)?$this->fk_loan:"null").",";
+        $sql.= " datec=".(dol_strlen($this->datec)!=0 ? "'".$this->db->idate($this->datec)."'" : 'null').",";
+        $sql.= " tms=".(dol_strlen($this->tms)!=0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
+        $sql.= " datep=".(dol_strlen($this->datep)!=0 ? "'".$this->db->idate($this->datep)."'" : 'null').",";
+        $sql.= " amount_capital=".(isset($this->amount_capital)?$this->amount_capital:"null").",";
+        $sql.= " amount_insurance=".(isset($this->amount_insurance)?$this->amount_insurance:"null").",";
+        $sql.= " amount_interest=".(isset($this->amount_interest)?$this->amount_interest:"null").",";
+        $sql.= " fk_typepayment=".(isset($this->fk_typepayment)?$this->fk_typepayment:"null").",";
+        $sql.= " num_payment=".(isset($this->num_payment)?"'".$this->db->escape($this->num_payment)."'":"null").",";
+        $sql.= " note_private=".(isset($this->note_private)?"'".$this->db->escape($this->note_private)."'":"null").",";
+        $sql.= " note_public=".(isset($this->note_public)?"'".$this->db->escape($this->note_public)."'":"null").",";
+        $sql.= " fk_bank=".(isset($this->fk_bank)?$this->fk_bank:"null").",";
+        $sql.= " fk_user_creat=".(isset($this->fk_user_creat)?$this->fk_user_creat:"null").",";
+        $sql.= " fk_user_modif=".(isset($this->fk_user_modif)?$this->fk_user_modif:"null")."";
 
-		dol_syslog(get_class($this)."::fetchAll", LOG_DEBUG);
-		$resql=$this->db->query($sql);
+        $sql.= " WHERE rowid=".$this->id;
 
-		if ($resql)
-		{
-			while($obj = $this->db->fetch_object($resql))
-			{
-				$line = new LoanSchedule($this->db);
-				$line->id = $obj->rowid;
-				$line->ref = $obj->rowid;
+        $this->db->begin();
 
-				$line->fk_loan = $obj->fk_loan;
-				$line->datec = $this->db->jdate($obj->datec);
-				$line->tms = $this->db->jdate($obj->tms);
-				$line->datep = $this->db->jdate($obj->datep);
-				$line->amount_capital = $obj->amount_capital;
-				$line->amount_insurance = $obj->amount_insurance;
-				$line->amount_interest = $obj->amount_interest;
-				$line->fk_typepayment = $obj->fk_typepayment;
-				$line->num_payment = $obj->num_payment;
-				$line->note_private = $obj->note_private;
-				$line->note_public = $obj->note_public;
-				$line->fk_bank = $obj->fk_bank;
-				$line->fk_user_creat = $obj->fk_user_creat;
-				$line->fk_user_modif = $obj->fk_user_modif;
+        dol_syslog(get_class($this)."::update", LOG_DEBUG);
+        $resql = $this->db->query($sql);
+        if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
-				$this->lines[] = $line;
-			}
-			$this->db->free($resql);
-			return 1;
-		}
-		else
-		{
-			$this->error="Error ".$this->db->lasterror();
-			return -1;
-		}
-	}
+        if (! $error)
+        {
+            if (! $notrigger)
+            {
+                // Uncomment this and change MYOBJECT to your own tag if you
+                // want this action call a trigger.
 
-	/**
-	 *  transPayment
-	 *
-	 *  @return void
-	 */
-	private function transPayment()
-	{
-		require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/loan.lib.php';
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+                //// Call triggers
+                //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+                //$interface=new Interfaces($this->db);
+                //$result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
+                //if ($result < 0) { $error++; $this->errors=$interface->errors; }
+                //// End call triggers
+            }
+        }
 
-		$toinsert = array();
-
-		$sql = "SELECT l.rowid";
-		$sql.= " FROM ".MAIN_DB_PREFIX."loan as l ";
-		$sql.= " WHERE l.paid = 0";
-		$resql=$this->db->query($sql);
-
-		if($resql){
-			while($obj = $this->db->fetch_object($resql)){
-				$lastrecorded = $this->lastPayment($obj->rowid);
-				$toinsert = $this->paimenttorecord($obj->rowid, $lastrecorded);
-				if(count($toinsert)>0){
-					foreach ($toinsert as $echid){
-						$this->db->begin();
-						$sql = "INSERT INTO " .MAIN_DB_PREFIX . "payment_loan ";
-						$sql.= "(fk_loan,datec,tms,datep,amount_capital,amount_insurance,amount_interest,fk_typepayment,num_payment,note_private,note_public,fk_bank,fk_user_creat,fk_user_modif) ";
-						$sql.= "SELECT fk_loan,datec,tms,datep,amount_capital,amount_insurance,amount_interest,fk_typepayment,num_payment,note_private,note_public,fk_bank,fk_user_creat,fk_user_modif FROM " . MAIN_DB_PREFIX . "loan_schedule WHERE rowid =" .$echid;
-						$res=$this->db->query($sql);
-						if($res){
-							$this->db->commit();
-						}else {
-							$this->db->rollback();
-						}
-					}
-				}
-			}
-		}
-	}
+        // Commit or rollback
+        if ($error)
+        {
+            $this->db->rollback();
+            return -1*$error;
+        }
+        else
+        {
+            $this->db->commit();
+            return 1;
+        }
+    }
 
 
-	/**
-	 *  lastpayment
-	 *
-	 *  @param  int    $loanid     Loan id
-	 *  @return int                < 0 if KO, Date > 0 if OK
-	 */
-	private function lastPayment($loanid)
-	{
-		$sql = "SELECT p.datep";
-		$sql.= " FROM ".MAIN_DB_PREFIX."payment_loan as p ";
-		$sql.= " WHERE p.fk_loan = " . $loanid;
-		$sql.= " ORDER BY p.datep DESC ";
-		$sql.= " LIMIT 1 ";
+    /**
+     *  Delete object in database
+     *
+     *  @param    User    $user            User that delete
+     *  @param  int        $notrigger        0=launch triggers after, 1=disable triggers
+     *  @return int                        <0 if KO, >0 if OK
+     */
+    public function delete($user, $notrigger = 0)
+    {
+        global $conf, $langs;
+        $error=0;
 
-		$resql=$this->db->query($sql);
+        $this->db->begin();
 
-		if($resql){
-			$obj = $this->db->fetch_object($resql);
-			return $this->db->jdate($obj->datep);
-		}else{
-			return -1;
-		}
-	}
+        if (! $error) {
+            $sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
+            $sql.= " WHERE rowid=".$this->id;
 
-	/**
-	 *  paimenttorecord
-	 *
-	 *  @param  int        $loanid     Loan id
-	 *  @param  int        $datemax    Date max
-	 *  @return array                  Array of id
-	 */
-	public function paimenttorecord($loanid, $datemax)
-	{
-		$sql = "SELECT p.rowid";
-		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as p ";
-		$sql.= " WHERE p.fk_loan = " . $loanid;
-		if (!empty($datemax)) { $sql.= " AND p.datep > '" . $this->db->idate($datemax) ."'";}
-		$sql.= " AND p.datep <= '" . $this->db->idate(dol_now()). "'";
+            dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+            $resql = $this->db->query($sql);
+            if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+        }
 
-		$resql=$this->db->query($sql);
+        if (! $error)
+        {
+            if (! $notrigger)
+            {
+                // Uncomment this and change MYOBJECT to your own tag if you
+                // want this action call a trigger.
 
-		if($resql){
-			while($obj = $this->db->fetch_object($resql))
-			{
-				$result[] = $obj->rowid;
-			}
-		}
+                //// Call triggers
+                //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+                //$interface=new Interfaces($this->db);
+                //$result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
+                //if ($result < 0) { $error++; $this->errors=$interface->errors; }
+                //// End call triggers
+            }
+        }
 
-		return $result;
-	}
+        // Commit or rollback
+        if ($error)
+        {
+            foreach($this->errors as $errmsg)
+            {
+                dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
+                $this->error.=($this->error?', '.$errmsg:$errmsg);
+            }
+            $this->db->rollback();
+            return -1*$error;
+        }
+        else
+        {
+            $this->db->commit();
+            return 1;
+        }
+    }
+
+    /**
+     * Calculate Monthly Payments
+     *
+     * @param   double  $capital        Capital
+     * @param   double  $rate           rate
+     * @param   int     $nbterm         nb term
+     * @return  double                  mensuality
+     */
+    public function calcMonthlyPayments($capital, $rate, $nbterm)
+    {
+        $result='';
+
+        if (!empty($capital) && !empty($rate) && !empty($nbterm)) {
+            $result = ($capital*($rate/12))/(1-pow((1+($rate/12)), ($nbterm*-1)));
+        }
+
+        return $result;
+    }
+
+
+    /**
+     *  Load all object in memory from database
+     *
+     *  @param    int        $loanid     Id object
+     *  @return int                 <0 if KO, >0 if OK
+     */
+    public function fetchAll($loanid)
+    {
+        global $langs;
+
+        $sql = "SELECT";
+        $sql.= " t.rowid,";
+        $sql.= " t.fk_loan,";
+        $sql.= " t.datec,";
+        $sql.= " t.tms,";
+        $sql.= " t.datep,";
+        $sql.= " t.amount_capital,";
+        $sql.= " t.amount_insurance,";
+        $sql.= " t.amount_interest,";
+        $sql.= " t.fk_typepayment,";
+        $sql.= " t.num_payment,";
+        $sql.= " t.note_private,";
+        $sql.= " t.note_public,";
+        $sql.= " t.fk_bank,";
+        $sql.= " t.fk_user_creat,";
+        $sql.= " t.fk_user_modif";
+        $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
+        $sql.= " WHERE t.fk_loan = ".$loanid;
+
+        dol_syslog(get_class($this)."::fetchAll", LOG_DEBUG);
+        $resql=$this->db->query($sql);
+
+        if ($resql)
+        {
+            while($obj = $this->db->fetch_object($resql))
+            {
+                $line = new LoanSchedule($this->db);
+                $line->id = $obj->rowid;
+                $line->ref = $obj->rowid;
+
+                $line->fk_loan = $obj->fk_loan;
+                $line->datec = $this->db->jdate($obj->datec);
+                $line->tms = $this->db->jdate($obj->tms);
+                $line->datep = $this->db->jdate($obj->datep);
+                $line->amount_capital = $obj->amount_capital;
+                $line->amount_insurance = $obj->amount_insurance;
+                $line->amount_interest = $obj->amount_interest;
+                $line->fk_typepayment = $obj->fk_typepayment;
+                $line->num_payment = $obj->num_payment;
+                $line->note_private = $obj->note_private;
+                $line->note_public = $obj->note_public;
+                $line->fk_bank = $obj->fk_bank;
+                $line->fk_user_creat = $obj->fk_user_creat;
+                $line->fk_user_modif = $obj->fk_user_modif;
+
+                $this->lines[] = $line;
+            }
+            $this->db->free($resql);
+            return 1;
+        }
+        else
+        {
+            $this->error="Error ".$this->db->lasterror();
+            return -1;
+        }
+    }
+
+    /**
+     *  transPayment
+     *
+     *  @return void
+     */
+    private function transPayment()
+    {
+        require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/loan.lib.php';
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+
+        $toinsert = array();
+
+        $sql = "SELECT l.rowid";
+        $sql.= " FROM ".MAIN_DB_PREFIX."loan as l ";
+        $sql.= " WHERE l.paid = 0";
+        $resql=$this->db->query($sql);
+
+        if($resql){
+            while($obj = $this->db->fetch_object($resql)){
+                $lastrecorded = $this->lastPayment($obj->rowid);
+                $toinsert = $this->paimenttorecord($obj->rowid, $lastrecorded);
+                if(count($toinsert)>0){
+                    foreach ($toinsert as $echid){
+                        $this->db->begin();
+                        $sql = "INSERT INTO " .MAIN_DB_PREFIX . "payment_loan ";
+                        $sql.= "(fk_loan,datec,tms,datep,amount_capital,amount_insurance,amount_interest,fk_typepayment,num_payment,note_private,note_public,fk_bank,fk_user_creat,fk_user_modif) ";
+                        $sql.= "SELECT fk_loan,datec,tms,datep,amount_capital,amount_insurance,amount_interest,fk_typepayment,num_payment,note_private,note_public,fk_bank,fk_user_creat,fk_user_modif FROM " . MAIN_DB_PREFIX . "loan_schedule WHERE rowid =" .$echid;
+                        $res=$this->db->query($sql);
+                        if($res){
+                            $this->db->commit();
+                        }else {
+                            $this->db->rollback();
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+    /**
+     *  lastpayment
+     *
+     *  @param  int    $loanid     Loan id
+     *  @return int                < 0 if KO, Date > 0 if OK
+     */
+    private function lastPayment($loanid)
+    {
+        $sql = "SELECT p.datep";
+        $sql.= " FROM ".MAIN_DB_PREFIX."payment_loan as p ";
+        $sql.= " WHERE p.fk_loan = " . $loanid;
+        $sql.= " ORDER BY p.datep DESC ";
+        $sql.= " LIMIT 1 ";
+
+        $resql=$this->db->query($sql);
+
+        if($resql){
+            $obj = $this->db->fetch_object($resql);
+            return $this->db->jdate($obj->datep);
+        }else{
+            return -1;
+        }
+    }
+
+    /**
+     *  paimenttorecord
+     *
+     *  @param  int        $loanid     Loan id
+     *  @param  int        $datemax    Date max
+     *  @return array                  Array of id
+     */
+    public function paimenttorecord($loanid, $datemax)
+    {
+        $sql = "SELECT p.rowid";
+        $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as p ";
+        $sql.= " WHERE p.fk_loan = " . $loanid;
+        if (!empty($datemax)) { $sql.= " AND p.datep > '" . $this->db->idate($datemax) ."'";}
+        $sql.= " AND p.datep <= '" . $this->db->idate(dol_now()). "'";
+
+        $resql=$this->db->query($sql);
+
+        if($resql){
+            while($obj = $this->db->fetch_object($resql))
+            {
+                $result[] = $obj->rowid;
+            }
+        }
+
+        return $result;
+    }
 }

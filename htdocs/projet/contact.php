@@ -38,7 +38,7 @@ $socid  = GETPOST('socid', 'int');
 $action = GETPOST('action', 'alpha');
 
 $mine   = GETPOST('mode')=='mine' ? 1 : 0;
-//if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
+//if (! $user->rights->projet->all->lire) $mine=1;    // Special for projects
 
 $object = new Project($db);
 
@@ -59,62 +59,62 @@ $hookmanager->initHooks(array('projectcontactcard','globalcard'));
 // Add new contact
 if ($action == 'addcontact' && $user->rights->projet->creer)
 {
-	$result = 0;
-	$result = $object->fetch($id);
+    $result = 0;
+    $result = $object->fetch($id);
 
     if ($result > 0 && $id > 0)
     {
-  		$contactid = (GETPOST('userid') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
-  		$result = $object->add_contact($contactid, $_POST["type"], $_POST["source"]);
+          $contactid = (GETPOST('userid') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
+          $result = $object->add_contact($contactid, $_POST["type"], $_POST["source"]);
     }
 
-	if ($result >= 0)
-	{
-		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
-		exit;
-	}
-	else
-	{
-		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
-		{
-			$langs->load("errors");
-			setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
-		}
-		else
-		{
-			setEventMessages($object->error, $object->errors, 'errors');
-		}
-	}
+    if ($result >= 0)
+    {
+        header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+        exit;
+    }
+    else
+    {
+        if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+        {
+            $langs->load("errors");
+            setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
+        }
+        else
+        {
+            setEventMessages($object->error, $object->errors, 'errors');
+        }
+    }
 }
 
 // bascule du statut d'un contact
 if ($action == 'swapstatut' && $user->rights->projet->creer)
 {
-	if ($object->fetch($id))
-	{
-	    $result=$object->swapContactStatus(GETPOST('ligne', 'int'));
-	}
-	else
-	{
-		dol_print_error($db);
-	}
+    if ($object->fetch($id))
+    {
+        $result=$object->swapContactStatus(GETPOST('ligne', 'int'));
+    }
+    else
+    {
+        dol_print_error($db);
+    }
 }
 
 // Efface un contact
 if (($action == 'deleteline' || $action == 'deletecontact') && $user->rights->projet->creer)
 {
-	$object->fetch($id);
-	$result = $object->delete_contact(GETPOST("lineid"));
+    $object->fetch($id);
+    $result = $object->delete_contact(GETPOST("lineid"));
 
-	if ($result >= 0)
-	{
-		header("Location: contact.php?id=".$object->id);
-		exit;
-	}
-	else
-	{
-		dol_print_error($db);
-	}
+    if ($result >= 0)
+    {
+        header("Location: contact.php?id=".$object->id);
+        exit;
+    }
+    else
+    {
+        dol_print_error($db);
+    }
 }
 
 
@@ -141,15 +141,15 @@ $userstatic=new User($db);
 
 if ($id > 0 || ! empty($ref))
 {
-	if(! empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($object, 'fetchComments') && empty($object->comments)) $object->fetchComments();
-	// To verify role of users
-	//$userAccess = $object->restrictedProjectArea($user,'read');
-	$userWrite  = $object->restrictedProjectArea($user, 'write');
-	//$userDelete = $object->restrictedProjectArea($user,'delete');
-	//print "userAccess=".$userAccess." userWrite=".$userWrite." userDelete=".$userDelete;
+    if(! empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($object, 'fetchComments') && empty($object->comments)) $object->fetchComments();
+    // To verify role of users
+    //$userAccess = $object->restrictedProjectArea($user,'read');
+    $userWrite  = $object->restrictedProjectArea($user, 'write');
+    //$userDelete = $object->restrictedProjectArea($user,'delete');
+    //print "userAccess=".$userAccess." userWrite=".$userWrite." userDelete=".$userDelete;
 
-	$head = project_prepare_head($object);
-	dol_fiche_head($head, 'contact', $langs->trans("Project"), -1, ($object->public?'projectpub':'project'));
+    $head = project_prepare_head($object);
+    dol_fiche_head($head, 'contact', $langs->trans("Project"), -1, ($object->public?'projectpub':'project'));
 
 
     // Project card
@@ -182,51 +182,51 @@ if ($id > 0 || ! empty($ref))
 
     print '<table class="border tableforfield" width="100%">';
 
-	// Visibility
-	print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
-	if ($object->public) print $langs->trans('SharedProject');
-	else print $langs->trans('PrivateProject');
-	print '</td></tr>';
+    // Visibility
+    print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
+    if ($object->public) print $langs->trans('SharedProject');
+    else print $langs->trans('PrivateProject');
+    print '</td></tr>';
 
     if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
     {
-    	// Opportunity status
-    	print '<tr><td>'.$langs->trans("OpportunityStatus").'</td><td>';
-    	$code = dol_getIdFromCode($db, $object->opp_status, 'c_lead_status', 'rowid', 'code');
-    	if ($code) print $langs->trans("OppStatus".$code);
-    	print '</td></tr>';
+        // Opportunity status
+        print '<tr><td>'.$langs->trans("OpportunityStatus").'</td><td>';
+        $code = dol_getIdFromCode($db, $object->opp_status, 'c_lead_status', 'rowid', 'code');
+        if ($code) print $langs->trans("OppStatus".$code);
+        print '</td></tr>';
 
         // Opportunity percent
         print '<tr><td>'.$langs->trans("OpportunityProbability").'</td><td>';
         if (strcmp($object->opp_percent, '')) print price($object->opp_percent, '', $langs, 1, 0).' %';
         print '</td></tr>';
 
-    	// Opportunity Amount
-    	print '<tr><td>'.$langs->trans("OpportunityAmount").'</td><td>';
-    	if (strcmp($object->opp_amount, '')) print price($object->opp_amount, '', $langs, 0, 0, 0, $conf->currency);
-    	print '</td></tr>';
+        // Opportunity Amount
+        print '<tr><td>'.$langs->trans("OpportunityAmount").'</td><td>';
+        if (strcmp($object->opp_amount, '')) print price($object->opp_amount, '', $langs, 0, 0, 0, $conf->currency);
+        print '</td></tr>';
     }
 
     // Date start - end
     print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
-	$start = dol_print_date($object->date_start, 'day');
-	print ($start?$start:'?');
-	$end = dol_print_date($object->date_end, 'day');
-	print ' - ';
-	print ($end?$end:'?');
-	if ($object->hasDelay()) print img_warning("Late");
+    $start = dol_print_date($object->date_start, 'day');
+    print ($start?$start:'?');
+    $end = dol_print_date($object->date_end, 'day');
+    print ' - ';
+    print ($end?$end:'?');
+    if ($object->hasDelay()) print img_warning("Late");
     print '</td></tr>';
 
     // Budget
-	print '<tr><td>'.$langs->trans("Budget").'</td><td>';
-	if (strcmp($object->budget_amount, '')) print price($object->budget_amount, '', $langs, 0, 0, 0, $conf->currency);
-	print '</td></tr>';
+    print '<tr><td>'.$langs->trans("Budget").'</td><td>';
+    if (strcmp($object->budget_amount, '')) print price($object->budget_amount, '', $langs, 0, 0, 0, $conf->currency);
+    print '</td></tr>';
 
-	// Other attributes
-	$cols = 2;
-	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
+    // Other attributes
+    $cols = 2;
+    include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
-	print "</table>";
+    print "</table>";
 
     print '</div>';
     print '<div class="fichehalfright">';
@@ -243,9 +243,9 @@ if ($id > 0 || ! empty($ref))
     // Bill time
     if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_BILL_TIME_SPENT))
     {
-    	print '<tr><td>'.$langs->trans("BillTime").'</td><td>';
-    	print yn($object->bill_time);
-    	print '</td></tr>';
+        print '<tr><td>'.$langs->trans("BillTime").'</td><td>';
+        print yn($object->bill_time);
+        print '</td></tr>';
     }
 
     // Categories
@@ -267,13 +267,13 @@ if ($id > 0 || ! empty($ref))
 
     print '<br>';
 
-	// Contacts lines (modules that overwrite templates must declare this into descriptor)
-	$dirtpls=array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
-	foreach($dirtpls as $reldir)
-	{
-		$res=@include dol_buildpath($reldir.'/contacts.tpl.php');
-		if ($res) break;
-	}
+    // Contacts lines (modules that overwrite templates must declare this into descriptor)
+    $dirtpls=array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
+    foreach($dirtpls as $reldir)
+    {
+        $res=@include dol_buildpath($reldir.'/contacts.tpl.php');
+        if ($res) break;
+    }
 }
 
 // End of page

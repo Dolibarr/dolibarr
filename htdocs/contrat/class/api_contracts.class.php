@@ -61,9 +61,9 @@ class Contracts extends DolibarrApi
      * Return an array with contract informations
      *
      * @param       int         $id         ID of contract
-     * @return 	array|mixed data without useless information
+     * @return     array|mixed data without useless information
      *
-     * @throws 	RestException
+     * @throws     RestException
      */
     public function get($id)
     {
@@ -91,11 +91,11 @@ class Contracts extends DolibarrApi
      *
      * Get a list of contracts
      *
-     * @param string	       $sortfield	        Sort field
-     * @param string	       $sortorder	        Sort order
-     * @param int		       $limit		        Limit for list
-     * @param int		       $page		        Page number
-     * @param string   	       $thirdparty_ids	    Thirdparty ids to filter contracts of. {@example '1' or '1,2,3'} {@pattern /^[0-9,]*$/i}
+     * @param string           $sortfield            Sort field
+     * @param string           $sortorder            Sort order
+     * @param int               $limit                Limit for list
+     * @param int               $page                Page number
+     * @param string              $thirdparty_ids        Thirdparty ids to filter contracts of. {@example '1' or '1,2,3'} {@pattern /^[0-9,]*$/i}
      * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
      * @return  array                               Array of contract objects
      *
@@ -123,7 +123,7 @@ class Contracts extends DolibarrApi
         $sql.= ' WHERE t.entity IN ('.getEntity('contrat').')';
         if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql.= " AND t.fk_soc = sc.fk_soc";
         if ($socids) $sql.= " AND t.fk_soc IN (".$socids.")";
-        if ($search_sale > 0) $sql.= " AND t.rowid = sc.fk_soc";		// Join for the needed table to filter by sale
+        if ($search_sale > 0) $sql.= " AND t.rowid = sc.fk_soc";        // Join for the needed table to filter by sale
         // Insert sale filter
         if ($search_sale > 0)
         {
@@ -141,7 +141,7 @@ class Contracts extends DolibarrApi
         }
 
         $sql.= $db->order($sortfield, $sortorder);
-        if ($limit)	{
+        if ($limit)    {
             if ($page < 0)
             {
                 $page = 0;
@@ -214,7 +214,7 @@ class Contracts extends DolibarrApi
      *
      * @param int   $id             Id of contract
      *
-     * @url	GET {id}/lines
+     * @url    GET {id}/lines
      *
      * @return array
      */
@@ -246,7 +246,7 @@ class Contracts extends DolibarrApi
      * @param int   $id             Id of contrat to update
      * @param array $request_data   Contractline data
      *
-     * @url	POST {id}/lines
+     * @url    POST {id}/lines
      *
      * @return int|bool
      */
@@ -299,7 +299,7 @@ class Contracts extends DolibarrApi
      * @param int   $lineid         Id of line to update
      * @param array $request_data   Contractline data
      *
-     * @url	PUT {id}/lines/{lineid}
+     * @url    PUT {id}/lines/{lineid}
      *
      * @return array|bool
      */
@@ -353,13 +353,13 @@ class Contracts extends DolibarrApi
     /**
      * Activate a service line of a given contract
      *
-     * @param int   	$id             Id of contract to activate
-     * @param int   	$lineid         Id of line to activate
-     * @param string  	$datestart		{@from body}  Date start        {@type timestamp}
-     * @param string    $dateend		{@from body}  Date end          {@type timestamp}
-     * @param string    $comment  		{@from body}  Comment
+     * @param int       $id             Id of contract to activate
+     * @param int       $lineid         Id of line to activate
+     * @param string      $datestart        {@from body}  Date start        {@type timestamp}
+     * @param string    $dateend        {@from body}  Date end          {@type timestamp}
+     * @param string    $comment          {@from body}  Comment
      *
-     * @url	PUT {id}/lines/{lineid}/activate
+     * @url    PUT {id}/lines/{lineid}/activate
      *
      * @return array|bool
      */
@@ -392,12 +392,12 @@ class Contracts extends DolibarrApi
     /**
      * Unactivate a service line of a given contract
      *
-     * @param int   	$id             Id of contract to activate
-     * @param int   	$lineid         Id of line to activate
-     * @param string  	$datestart		{@from body}  Date start        {@type timestamp}
-     * @param string    $comment  		{@from body}  Comment
+     * @param int       $id             Id of contract to activate
+     * @param int       $lineid         Id of line to activate
+     * @param string      $datestart        {@from body}  Date start        {@type timestamp}
+     * @param string    $comment          {@from body}  Comment
      *
-     * @url	PUT {id}/lines/{lineid}/unactivate
+     * @url    PUT {id}/lines/{lineid}/unactivate
      *
      * @return array|bool
      */
@@ -436,7 +436,7 @@ class Contracts extends DolibarrApi
      * @param int   $id             Id of contract to update
      * @param int   $lineid         Id of line to delete
      *
-     * @url	DELETE {id}/lines/{lineid}
+     * @url    DELETE {id}/lines/{lineid}
      *
      * @return int
      * @throws 401

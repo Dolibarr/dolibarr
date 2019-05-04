@@ -49,8 +49,8 @@ top_httphead();
 
 if (($user->rights->banque->modifier || $user->rights->banque->consolidate) && $action == 'dvnext')
 {
-	// Increase date
-	$al = new AccountLine($db);
+    // Increase date
+    $al = new AccountLine($db);
     $al->datev_next(GETPOST('rowid', 'int'));
     $al->fetch(GETPOST('rowid', 'int'));
 
@@ -61,8 +61,8 @@ if (($user->rights->banque->modifier || $user->rights->banque->consolidate) && $
 
 if (($user->rights->banque->modifier || $user->rights->banque->consolidate) && $action == 'dvprev')
 {
-	// Decrease date
-	$al =new AccountLine($db);
+    // Decrease date
+    $al =new AccountLine($db);
     $al->datev_previous(GETPOST('rowid', 'int'));
     $al->fetch(GETPOST('rowid', 'int'));
 
@@ -73,8 +73,8 @@ if (($user->rights->banque->modifier || $user->rights->banque->consolidate) && $
 
 if (($user->rights->banque->modifier || $user->rights->banque->consolidate) && $action == 'donext')
 {
-	// Increase date
-	$al = new AccountLine($db);
+    // Increase date
+    $al = new AccountLine($db);
     $al->dateo_next(GETPOST('rowid', 'int'));
     $al->fetch(GETPOST('rowid', 'int'));
 
@@ -85,8 +85,8 @@ if (($user->rights->banque->modifier || $user->rights->banque->consolidate) && $
 
 if (($user->rights->banque->modifier || $user->rights->banque->consolidate) && $action == 'doprev')
 {
-	// Decrease date
-	$al =new AccountLine($db);
+    // Decrease date
+    $al =new AccountLine($db);
     $al->dateo_previous(GETPOST('rowid', 'int'));
     $al->fetch(GETPOST('rowid', 'int'));
 

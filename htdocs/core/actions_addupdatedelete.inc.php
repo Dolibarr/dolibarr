@@ -17,8 +17,8 @@
  */
 
 /**
- *	\file			htdocs/core/actions_addupdatedelete.inc.php
- *  \brief			Code for common actions cancel / add / update / delete / clone
+ *    \file            htdocs/core/actions_addupdatedelete.inc.php
+ *  \brief            Code for common actions cancel / add / update / delete / clone
  */
 
 
@@ -32,143 +32,143 @@
 
 if ($cancel)
 {
-	if (! empty($backtopage))
-	{
-		header("Location: ".$backtopage);
-		exit;
-	}
-	$action='';
+    if (! empty($backtopage))
+    {
+        header("Location: ".$backtopage);
+        exit;
+    }
+    $action='';
 }
 
 // Action to add record
 if ($action == 'add' && ! empty($permissiontoadd))
 {
-	foreach ($object->fields as $key => $val)
-	{
-		if (in_array($key, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat', 'fk_user_modif', 'import_key'))) continue;	// Ignore special fields
+    foreach ($object->fields as $key => $val)
+    {
+        if (in_array($key, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat', 'fk_user_modif', 'import_key'))) continue;    // Ignore special fields
 
-		// Set value to insert
-		if (in_array($object->fields[$key]['type'], array('text', 'html'))) {
-			$value = GETPOST($key, 'none');
-		} elseif ($object->fields[$key]['type']=='date') {
-			$value = dol_mktime(12, 0, 0, GETPOST($key.'month'), GETPOST($key.'day'), GETPOST($key.'year'));
-		} elseif ($object->fields[$key]['type']=='datetime') {
-			$value = dol_mktime(GETPOST($key.'hour'), GETPOST($key.'min'), 0, GETPOST($key.'month'), GETPOST($key.'day'), GETPOST($key.'year'));
-		} elseif ($object->fields[$key]['type']=='price') {
-			$value = price2num(GETPOST($key));
-		} else {
-			$value = GETPOST($key, 'alpha');
-		}
-		if (preg_match('/^integer:/i', $object->fields[$key]['type']) && $value == '-1') $value='';		// This is an implicit foreign key field
-		if (! empty($object->fields[$key]['foreignkey']) && $value == '-1') $value='';					// This is an explicit foreign key field
+        // Set value to insert
+        if (in_array($object->fields[$key]['type'], array('text', 'html'))) {
+            $value = GETPOST($key, 'none');
+        } elseif ($object->fields[$key]['type']=='date') {
+            $value = dol_mktime(12, 0, 0, GETPOST($key.'month'), GETPOST($key.'day'), GETPOST($key.'year'));
+        } elseif ($object->fields[$key]['type']=='datetime') {
+            $value = dol_mktime(GETPOST($key.'hour'), GETPOST($key.'min'), 0, GETPOST($key.'month'), GETPOST($key.'day'), GETPOST($key.'year'));
+        } elseif ($object->fields[$key]['type']=='price') {
+            $value = price2num(GETPOST($key));
+        } else {
+            $value = GETPOST($key, 'alpha');
+        }
+        if (preg_match('/^integer:/i', $object->fields[$key]['type']) && $value == '-1') $value='';        // This is an implicit foreign key field
+        if (! empty($object->fields[$key]['foreignkey']) && $value == '-1') $value='';                    // This is an explicit foreign key field
 
-		$object->$key=$value;
-		if ($val['notnull'] > 0 && $object->$key == '' && ! is_null($val['default']) && $val['default'] == '(PROV)')
-		{
-		    $object->$key = '(PROV)';
-		}
-		if ($val['notnull'] > 0 && $object->$key == '' && is_null($val['default']))
-		{
-			$error++;
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv($val['label'])), null, 'errors');
-		}
-	}
+        $object->$key=$value;
+        if ($val['notnull'] > 0 && $object->$key == '' && ! is_null($val['default']) && $val['default'] == '(PROV)')
+        {
+            $object->$key = '(PROV)';
+        }
+        if ($val['notnull'] > 0 && $object->$key == '' && is_null($val['default']))
+        {
+            $error++;
+            setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv($val['label'])), null, 'errors');
+        }
+    }
 
-	if (! $error)
-	{
-		$result=$object->create($user);
-		if ($result > 0)
-		{
-		    // Creation OK
-			$urltogo=$backtopage?str_replace('__ID__', $result, $backtopage):$backurlforlist;
-			header("Location: ".$urltogo);
-			exit;
-		}
-		else
-		{
-			// Creation KO
-			if (! empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
-			else  setEventMessages($object->error, null, 'errors');
-			$action='create';
-		}
-	}
-	else
-	{
-		$action='create';
-	}
+    if (! $error)
+    {
+        $result=$object->create($user);
+        if ($result > 0)
+        {
+            // Creation OK
+            $urltogo=$backtopage?str_replace('__ID__', $result, $backtopage):$backurlforlist;
+            header("Location: ".$urltogo);
+            exit;
+        }
+        else
+        {
+            // Creation KO
+            if (! empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
+            else  setEventMessages($object->error, null, 'errors');
+            $action='create';
+        }
+    }
+    else
+    {
+        $action='create';
+    }
 }
 
 // Action to update record
 if ($action == 'update' && ! empty($permissiontoadd))
 {
-	foreach ($object->fields as $key => $val)
-	{
-		if (! GETPOSTISSET($key)) continue;		// The field was not submited to be edited
-		if (in_array($key, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat', 'fk_user_modif', 'import_key'))) continue;	// Ignore special fields
+    foreach ($object->fields as $key => $val)
+    {
+        if (! GETPOSTISSET($key)) continue;        // The field was not submited to be edited
+        if (in_array($key, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat', 'fk_user_modif', 'import_key'))) continue;    // Ignore special fields
 
-		// Set value to update
-		if (in_array($object->fields[$key]['type'], array('text', 'html'))) {
-			$value = GETPOST($key, 'none');
-		} elseif ($object->fields[$key]['type']=='date') {
-			$value = dol_mktime(12, 0, 0, GETPOST($key.'month'), GETPOST($key.'day'), GETPOST($key.'year'));
-		} elseif ($object->fields[$key]['type']=='datetime') {
-			$value = dol_mktime(GETPOST($key.'hour'), GETPOST($key.'min'), 0, GETPOST($key.'month'), GETPOST($key.'day'), GETPOST($key.'year'));
-		} elseif ($object->fields[$key]['type']=='price') {
-			$value = price2num(GETPOST($key));
-		} else {
-			$value = GETPOST($key, 'alpha');
-		}
-		if (preg_match('/^integer:/i', $object->fields[$key]['type']) && $value == '-1') $value='';		// This is an implicit foreign key field
-		if (! empty($object->fields[$key]['foreignkey']) && $value == '-1') $value='';					// This is an explicit foreign key field
+        // Set value to update
+        if (in_array($object->fields[$key]['type'], array('text', 'html'))) {
+            $value = GETPOST($key, 'none');
+        } elseif ($object->fields[$key]['type']=='date') {
+            $value = dol_mktime(12, 0, 0, GETPOST($key.'month'), GETPOST($key.'day'), GETPOST($key.'year'));
+        } elseif ($object->fields[$key]['type']=='datetime') {
+            $value = dol_mktime(GETPOST($key.'hour'), GETPOST($key.'min'), 0, GETPOST($key.'month'), GETPOST($key.'day'), GETPOST($key.'year'));
+        } elseif ($object->fields[$key]['type']=='price') {
+            $value = price2num(GETPOST($key));
+        } else {
+            $value = GETPOST($key, 'alpha');
+        }
+        if (preg_match('/^integer:/i', $object->fields[$key]['type']) && $value == '-1') $value='';        // This is an implicit foreign key field
+        if (! empty($object->fields[$key]['foreignkey']) && $value == '-1') $value='';                    // This is an explicit foreign key field
 
-		$object->$key=$value;
-		if ($val['notnull'] > 0 && $object->$key == '' && is_null($val['default']))
-		{
-			$error++;
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv($val['label'])), null, 'errors');
-		}
-	}
+        $object->$key=$value;
+        if ($val['notnull'] > 0 && $object->$key == '' && is_null($val['default']))
+        {
+            $error++;
+            setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv($val['label'])), null, 'errors');
+        }
+    }
 
-	if (! $error)
-	{
-		$result=$object->update($user);
-		if ($result > 0)
-		{
-			$action='view';
-		}
-		else
-		{
-			// Creation KO
-			setEventMessages($object->error, $object->errors, 'errors');
-			$action='edit';
-		}
-	}
-	else
-	{
-		$action='edit';
-	}
+    if (! $error)
+    {
+        $result=$object->update($user);
+        if ($result > 0)
+        {
+            $action='view';
+        }
+        else
+        {
+            // Creation KO
+            setEventMessages($object->error, $object->errors, 'errors');
+            $action='edit';
+        }
+    }
+    else
+    {
+        $action='edit';
+    }
 }
 
 // Action to update one extrafield
 if ($action == "update_extras" && ! empty($permissiontoadd))
 {
-	$object->fetch(GETPOST('id', 'int'));
+    $object->fetch(GETPOST('id', 'int'));
 
-	$attributekey = GETPOST('attribute', 'alpha');
-	$attributekeylong = 'options_'.$attributekey;
-	$object->array_options['options_'.$attributekey] = GETPOST($attributekeylong, ' alpha');
+    $attributekey = GETPOST('attribute', 'alpha');
+    $attributekeylong = 'options_'.$attributekey;
+    $object->array_options['options_'.$attributekey] = GETPOST($attributekeylong, ' alpha');
 
-	$result = $object->insertExtraFields(empty($triggermodname)?'':$triggermodname, $user);
-	if ($result > 0)
-	{
-		setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
-		$action = 'view';
-	}
-	else
-	{
-		setEventMessages($object->error, $object->errors, 'errors');
-		$action = 'edit_extras';
-	}
+    $result = $object->insertExtraFields(empty($triggermodname)?'':$triggermodname, $user);
+    if ($result > 0)
+    {
+        setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+        $action = 'view';
+    }
+    else
+    {
+        setEventMessages($object->error, $object->errors, 'errors');
+        $action = 'edit_extras';
+    }
 }
 
 // Action to delete
@@ -180,47 +180,47 @@ if ($action == 'confirm_delete' && ! empty($permissiontodelete))
         exit;
     }
 
-	$result=$object->delete($user);
-	if ($result > 0)
-	{
-		// Delete OK
-		setEventMessages("RecordDeleted", null, 'mesgs');
-		header("Location: ".$backurlforlist);
-		exit;
-	}
-	else
-	{
-		if (! empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
-		else setEventMessages($object->error, null, 'errors');
-	}
+    $result=$object->delete($user);
+    if ($result > 0)
+    {
+        // Delete OK
+        setEventMessages("RecordDeleted", null, 'mesgs');
+        header("Location: ".$backurlforlist);
+        exit;
+    }
+    else
+    {
+        if (! empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
+        else setEventMessages($object->error, null, 'errors');
+    }
 }
 
 // Action clone object
 if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontoadd)
 {
-	if (1==0 && ! GETPOST('clone_content') && ! GETPOST('clone_receivers'))
-	{
-		setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
-	}
-	else
-	{
-	    $objectutil = dol_clone($object, 1);   // To avoid to denaturate loaded object when setting some properties for clone or if createFromClone modifies the object. We use native clone to keep this->db valid.
-		//$objectutil->date = dol_mktime(12, 0, 0, GETPOST('newdatemonth', 'int'), GETPOST('newdateday', 'int'), GETPOST('newdateyear', 'int'));
+    if (1==0 && ! GETPOST('clone_content') && ! GETPOST('clone_receivers'))
+    {
+        setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
+    }
+    else
+    {
+        $objectutil = dol_clone($object, 1);   // To avoid to denaturate loaded object when setting some properties for clone or if createFromClone modifies the object. We use native clone to keep this->db valid.
+        //$objectutil->date = dol_mktime(12, 0, 0, GETPOST('newdatemonth', 'int'), GETPOST('newdateday', 'int'), GETPOST('newdateyear', 'int'));
         // ...
 
-	    $result=$objectutil->createFromClone($user, (($object->id > 0) ? $object->id : $id));
-	    if (is_object($result) || $result > 0)
-		{
-			$newid = 0;
-			if (is_object($result)) $newid = $result->id;
-			else $newid = $result;
-			header("Location: ".$_SERVER['PHP_SELF'].'?id='.$newid);	// Open record of new object
-			exit;
-		}
-		else
-		{
-		    setEventMessages($objectutil->error, $objectutil->errors, 'errors');
-			$action='';
-		}
-	}
+        $result=$objectutil->createFromClone($user, (($object->id > 0) ? $object->id : $id));
+        if (is_object($result) || $result > 0)
+        {
+            $newid = 0;
+            if (is_object($result)) $newid = $result->id;
+            else $newid = $result;
+            header("Location: ".$_SERVER['PHP_SELF'].'?id='.$newid);    // Open record of new object
+            exit;
+        }
+        else
+        {
+            setEventMessages($objectutil->error, $objectutil->errors, 'errors');
+            $action='';
+        }
+    }
 }

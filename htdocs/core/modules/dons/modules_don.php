@@ -20,9 +20,9 @@
  */
 
 /**
- *	    \file       htdocs/core/modules/dons/modules_don.php
- *		\ingroup    donations
- *		\brief      File of class to manage donation document generation
+ *        \file       htdocs/core/modules/dons/modules_don.php
+ *        \ingroup    donations
+ *        \brief      File of class to manage donation document generation
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
 require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
@@ -30,22 +30,22 @@ require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 
 
 /**
- *	Parent class of subscription templates
+ *    Parent class of subscription templates
  */
 abstract class ModeleDon extends CommonDocGenerator
 {
     /**
-	 * @var string Error code (or message)
-	 */
-	public $error='';
+     * @var string Error code (or message)
+     */
+    public $error='';
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Return list of active generation modules
      *
-     *  @param	DoliDB  $db     			Database handler
+     *  @param    DoliDB  $db                 Database handler
      *  @param  integer $maxfilenamelength  Max length of value to show
-     *  @return	array						List of templates
+     *  @return    array                        List of templates
      */
     public static function liste_modeles($db, $maxfilenamelength = 0)
     {
@@ -64,19 +64,19 @@ abstract class ModeleDon extends CommonDocGenerator
 
 
 /**
- *	Parent class of donation numbering templates
+ *    Parent class of donation numbering templates
  */
 abstract class ModeleNumRefDons
 {
     /**
-	 * @var string Error code (or message)
-	 */
-	public $error='';
+     * @var string Error code (or message)
+     */
+    public $error='';
 
     /**
-     * 	Return if a module can be used or not
+     *     Return if a module can be used or not
      *
-     *  @return		boolean     true if module can be used
+     *  @return        boolean     true if module can be used
      */
     public function isEnabled()
     {
@@ -84,7 +84,7 @@ abstract class ModeleNumRefDons
     }
 
     /**
-     * 	Renvoi la description par defaut du modele de numerotation
+     *     Renvoi la description par defaut du modele de numerotation
      *
      *  @return     string      Texte descripif
      */
@@ -108,7 +108,7 @@ abstract class ModeleNumRefDons
     }
 
     /**
-     * 	Test si les numeros deja en vigueur dans la base ne provoquent pas d
+     *     Test si les numeros deja en vigueur dans la base ne provoquent pas d
      *  de conflits qui empechera cette numerotation de fonctionner.
      *
      *  @return     boolean     false si conflit, true si ok

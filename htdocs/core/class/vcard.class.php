@@ -17,16 +17,16 @@
  */
 
 /**
- *	\file       htdocs/core/class/vcard.class.php
- *	\brief      Class to manage vCard files
+ *    \file       htdocs/core/class/vcard.class.php
+ *    \brief      Class to manage vCard files
  */
 
 
 /**
  * Encode a string for vCard
  *
- * @param	string	$string		String to encode
- * @return	string				String encoded
+ * @param    string    $string        String to encode
+ * @return    string                String encoded
  */
 function encode($string)
 {
@@ -38,9 +38,9 @@ function encode($string)
  * Taken from php documentation comments
  * No more used
  *
- * @param	string	$input		String
- * @param	int		$line_max	Max length of lines
- * @return	string				Encoded string
+ * @param    string    $input        String
+ * @param    int        $line_max    Max length of lines
+ * @return    string                Encoded string
  */
 function dol_quoted_printable_encode($input, $line_max = 76)
 {
@@ -80,7 +80,7 @@ function dol_quoted_printable_encode($input, $line_max = 76)
 
 
 /**
- *	Class to buld vCard files
+ *    Class to buld vCard files
  */
 class vCard
 {
@@ -94,9 +94,9 @@ class vCard
     /**
      *  mise en forme du numero de telephone
      *
-     *  @param	int		$number		numero de telephone
-     *  @param	string	$type		Type
-     *  @return	void
+     *  @param    int        $number        numero de telephone
+     *  @param    string    $type        Type
+     *  @return    void
      */
     public function setPhoneNumber($number, $type = "")
     {
@@ -108,12 +108,12 @@ class vCard
     }
 
     /**
-     *	mise en forme de la photo
+     *    mise en forme de la photo
      *  warning NON TESTE !
      *
-     *  @param  string  $type			Type
-     *  @param  string  $photo			Photo
-     *  @return	void
+     *  @param  string  $type            Type
+     *  @param  string  $photo            Photo
+     *  @return    void
      */
     public function setPhoto($type, $photo)
     {
@@ -122,10 +122,10 @@ class vCard
     }
 
     /**
-     *	mise en forme du nom formate
+     *    mise en forme du nom formate
      *
-     *	@param	string	$name			Name
-     *	@return	void
+     *    @param    string    $name            Name
+     *    @return    void
      */
     public function setFormattedName($name)
     {
@@ -133,14 +133,14 @@ class vCard
     }
 
     /**
-     *	mise en forme du nom complet
+     *    mise en forme du nom complet
      *
-     *	@param	string	$family			Family
-     *	@param	string	$first			First
-     *	@param	string	$additional		Additionnal
-     *	@param	string	$prefix			Prefix
-     *	@param	string	$suffix			Suffix
-     *	@return	void
+     *    @param    string    $family            Family
+     *    @param    string    $first            First
+     *    @param    string    $additional        Additionnal
+     *    @param    string    $prefix            Prefix
+     *    @param    string    $suffix            Suffix
+     *    @return    void
      */
     public function setName($family = "", $first = "", $additional = "", $prefix = "", $suffix = "")
     {
@@ -150,10 +150,10 @@ class vCard
     }
 
     /**
-     *	mise en forme de l'anniversaire
+     *    mise en forme de l'anniversaire
      *
-     *	@param	integer	  $date		Date
-     *	@return	void
+     *    @param    integer      $date        Date
+     *    @return    void
      */
     public function setBirthday($date)
     {
@@ -162,17 +162,17 @@ class vCard
     }
 
     /**
-     *	mise en forme de l'adresse
+     *    mise en forme de l'adresse
      *
-     *	@param	string	$postoffice		Postoffice
-     *	@param	string	$extended		Extended
-     *	@param	string	$street			Street
-     *	@param	string	$city			City
-     *	@param	string	$region			Region
-     *	@param	string	$zip			Zip
-     *	@param	string	$country		Country
-     *	@param	string	$type			Type
-     *	@return	void
+     *    @param    string    $postoffice        Postoffice
+     *    @param    string    $extended        Extended
+     *    @param    string    $street            Street
+     *    @param    string    $city            City
+     *    @param    string    $region            Region
+     *    @param    string    $zip            Zip
+     *    @param    string    $country        Country
+     *    @param    string    $type            Type
+     *    @return    void
      */
     public function setAddress($postoffice = "", $extended = "", $street = "", $city = "", $region = "", $zip = "", $country = "", $type = "HOME;POSTAL")
     {
@@ -191,15 +191,15 @@ class vCard
     /**
      *  mise en forme du label
      *
-     *  @param	string	$postoffice		Postoffice
-     *  @param	string	$extended		Extended
-     *  @param	string	$street			Street
-     *  @param	string	$city			City
-     *  @param	string	$region			Region
-     *  @param	string	$zip			Zip
-     *  @param	string	$country		Country
-     *  @param	string	$type			Type
-     *  @return	void
+     *  @param    string    $postoffice        Postoffice
+     *  @param    string    $extended        Extended
+     *  @param    string    $street            Street
+     *  @param    string    $city            City
+     *  @param    string    $region            Region
+     *  @param    string    $zip            Zip
+     *  @param    string    $country        Country
+     *  @param    string    $type            Type
+     *  @return    void
      */
     public function setLabel($postoffice = "", $extended = "", $street = "", $city = "", $region = "", $zip = "", $country = "", $type = "HOME;POSTAL")
     {
@@ -216,11 +216,11 @@ class vCard
     }
 
     /**
-     *	mise en forme de l'email
+     *    mise en forme de l'email
      *
-     *	@param	string	$address		EMail
-     *	@param	string	$type			Vcard type
-     *	@return	void
+     *    @param    string    $address        EMail
+     *    @param    string    $type            Vcard type
+     *    @return    void
      */
     public function setEmail($address, $type = "internet,pref")
     {
@@ -228,10 +228,10 @@ class vCard
     }
 
     /**
-     *	mise en forme de la note
+     *    mise en forme de la note
      *
-     *	@param	string	$note		Note
-     *	@return	void
+     *    @param    string    $note        Note
+     *    @return    void
      */
     public function setNote($note)
     {
@@ -239,10 +239,10 @@ class vCard
     }
 
     /**
-     * 	mise en forme de la fonction
+     *     mise en forme de la fonction
      *
-     *	@param	string	$title		Title
-     *	@return	void
+     *    @param    string    $title        Title
+     *    @return    void
      */
     public function setTitle($title)
     {
@@ -253,8 +253,8 @@ class vCard
     /**
      *  mise en forme de la societe
      *
-     *  @param	string	$org		Org
-     *  @return	void
+     *  @param    string    $org        Org
+     *  @return    void
      */
     public function setOrg($org)
     {
@@ -263,10 +263,10 @@ class vCard
 
 
     /**
-     * 	mise en forme du logiciel generateur
+     *     mise en forme du logiciel generateur
      *
-     *  @param	string	$prodid		Prodid
-     *	@return	void
+     *  @param    string    $prodid        Prodid
+     *    @return    void
      */
     public function setProdId($prodid)
     {
@@ -275,10 +275,10 @@ class vCard
 
 
     /**
-     * 	mise en forme du logiciel generateur
+     *     mise en forme du logiciel generateur
      *
-     *  @param	string	$uid	Uid
-     *	@return	void
+     *  @param    string    $uid    Uid
+     *    @return    void
      */
     public function setUID($uid)
     {
@@ -289,9 +289,9 @@ class vCard
     /**
      *  mise en forme de l'url
      *
-     *	@param	string	$url		URL
-     *  @param	string	$type		Type
-     *	@return	void
+     *    @param    string    $url        URL
+     *  @param    string    $type        Type
+     *    @return    void
      */
     public function setURL($url, $type = "")
     {
@@ -304,7 +304,7 @@ class vCard
     /**
      *  permet d'obtenir une vcard
      *
-     *  @return	string
+     *  @return    string
      */
     public function getVCard()
     {
@@ -324,7 +324,7 @@ class vCard
     /**
      *  permet d'obtenir le nom de fichier
      *
-     *  @return	string		Filename
+     *  @return    string        Filename
      */
     public function getFileName()
     {

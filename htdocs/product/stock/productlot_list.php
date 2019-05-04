@@ -69,8 +69,8 @@ if (! $sortorder) $sortorder="ASC";
 $socid=0;
 if ($user->societe_id > 0)
 {
-	$socid = $user->societe_id;
-	//accessforbidden();
+    $socid = $user->societe_id;
+    //accessforbidden();
 }
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
@@ -84,39 +84,39 @@ $search_array_options=$extrafields->getOptionalsFromPost($object->table_element,
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
-	't.ref'=>'Ref',
-	't.note_public'=>'NotePublic',
+    't.ref'=>'Ref',
+    't.note_public'=>'NotePublic',
 );
 
 // Definition of fields for list
 $arrayfields=array(
-	//'t.entity'=>array('label'=>$langs->trans("Fieldentity"), 'checked'=>1),
-	't.batch'=>array('label'=>$langs->trans("Batch"), 'checked'=>1),
-	't.fk_product'=>array('label'=>$langs->trans("Product"), 'checked'=>1),
-	't.sellby'=>array('label'=>$langs->trans("SellByDate"), 'checked'=>1),
-	't.eatby'=>array('label'=>$langs->trans("EatByDate"), 'checked'=>1),
-	//'t.import_key'=>array('label'=>$langs->trans("ImportKey"), 'checked'=>1),
-	//'t.entity'=>array('label'=>$langs->trans("Entity"), 'checked'=>1, 'enabled'=>(! empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))),
-	//'t.fk_user_creat'=>array('label'=>$langs->trans("UserCreationShort"), 'checked'=>0, 'position'=>500),
-	//'t.fk_user_modif'=>array('label'=>$langs->trans("UserModificationShort"), 'checked'=>0, 'position'=>500),
-	't.datec'=>array('label'=>$langs->trans("DateCreationShort"), 'checked'=>0, 'position'=>500),
-	't.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
-	//'t.statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
+    //'t.entity'=>array('label'=>$langs->trans("Fieldentity"), 'checked'=>1),
+    't.batch'=>array('label'=>$langs->trans("Batch"), 'checked'=>1),
+    't.fk_product'=>array('label'=>$langs->trans("Product"), 'checked'=>1),
+    't.sellby'=>array('label'=>$langs->trans("SellByDate"), 'checked'=>1),
+    't.eatby'=>array('label'=>$langs->trans("EatByDate"), 'checked'=>1),
+    //'t.import_key'=>array('label'=>$langs->trans("ImportKey"), 'checked'=>1),
+    //'t.entity'=>array('label'=>$langs->trans("Entity"), 'checked'=>1, 'enabled'=>(! empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))),
+    //'t.fk_user_creat'=>array('label'=>$langs->trans("UserCreationShort"), 'checked'=>0, 'position'=>500),
+    //'t.fk_user_modif'=>array('label'=>$langs->trans("UserModificationShort"), 'checked'=>0, 'position'=>500),
+    't.datec'=>array('label'=>$langs->trans("DateCreationShort"), 'checked'=>0, 'position'=>500),
+    't.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
+    //'t.statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
 );
 // Extra fields
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 {
    foreach($extrafields->attribute_label as $key => $val)
    {
-		if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>(abs($extrafields->attribute_list[$key])!=3 && $extrafields->attribute_perms[$key]));
+        if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>(abs($extrafields->attribute_list[$key])!=3 && $extrafields->attribute_perms[$key]));
    }
 }
 
 // Load object if id or ref is provided as parameter
 if (($id > 0 || ! empty($ref)) && $action != 'add')
 {
-	$result=$object->fetch($id, $ref);
-	if ($result < 0) dol_print_error($db);
+    $result=$object->fetch($id, $ref);
+    if ($result < 0) dol_print_error($db);
 }
 
 
@@ -137,27 +137,27 @@ include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 // Purge search criteria
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') ||GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
 {
-	$search_entity='';
-	$search_product='';
-	$search_batch='';
-	$search_fk_user_creat='';
-	$search_fk_user_modif='';
-	$search_import_key='';
-	$search_date_creation='';
-	$search_date_update='';
-	$toselect=array();
-	$search_array_options=array();
+    $search_entity='';
+    $search_product='';
+    $search_batch='';
+    $search_fk_user_creat='';
+    $search_fk_user_modif='';
+    $search_import_key='';
+    $search_date_creation='';
+    $search_date_update='';
+    $toselect=array();
+    $search_array_options=array();
 }
 
 
 if (empty($reshook))
 {
-	$objectclass='ProductLot';
-	$objectlabel='LotSerial';
-	$permtoread = $user->rights->stock->read;
-	$permtodelete = $user->rights->stock->delete;
-	$uploaddir = $conf->stock->dir_output;
-	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+    $objectclass='ProductLot';
+    $objectlabel='LotSerial';
+    $permtoread = $user->rights->stock->read;
+    $permtodelete = $user->rights->stock->delete;
+    $uploaddir = $conf->stock->dir_output;
+    include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
 
@@ -244,13 +244,13 @@ $sql.=$db->order($sortfield, $sortorder);
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
-	$result = $db->query($sql);
-	$nbtotalofrecords = $db->num_rows($result);
-	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
-	{
-		$page = 0;
-		$offset = 0;
-	}
+    $result = $db->query($sql);
+    $nbtotalofrecords = $db->num_rows($result);
+    if (($page * $limit) > $nbtotalofrecords)    // if total resultset is smaller then paging size (filtering), goto and load page 0
+    {
+        $page = 0;
+        $offset = 0;
+    }
 }
 
 $sql.= $db->plimit($limit+1, $offset);
@@ -260,136 +260,136 @@ dol_syslog($script_file, LOG_DEBUG);
 $resql=$db->query($sql);
 if ($resql)
 {
-	$num = $db->num_rows($resql);
+    $num = $db->num_rows($resql);
 
-	$arrayofselected=is_array($toselect)?$toselect:array();
+    $arrayofselected=is_array($toselect)?$toselect:array();
 
-	$param='';
-	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
-	if ($search_entity != '') $param.= '&amp;search_entity='.urlencode($search_entity);
-	if ($search_product != '') $param.= '&amp;search_product='.urlencode($search_product);
-	if ($search_batch != '') $param.= '&amp;search_batch='.urlencode($search_batch);
-	if ($search_fk_user_creat != '') $param.= '&amp;search_fk_user_creat='.urlencode($search_fk_user_creat);
-	if ($search_fk_user_modif != '') $param.= '&amp;search_fk_user_modif='.urlencode($search_fk_user_modif);
-	if ($search_import_key != '') $param.= '&amp;search_import_key='.urlencode($search_import_key);
-	if ($optioncss != '') $param.='&optioncss='.$optioncss;
-	// Add $param from extra fields
-	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
+    $param='';
+    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
+    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+    if ($search_entity != '') $param.= '&amp;search_entity='.urlencode($search_entity);
+    if ($search_product != '') $param.= '&amp;search_product='.urlencode($search_product);
+    if ($search_batch != '') $param.= '&amp;search_batch='.urlencode($search_batch);
+    if ($search_fk_user_creat != '') $param.= '&amp;search_fk_user_creat='.urlencode($search_fk_user_creat);
+    if ($search_fk_user_modif != '') $param.= '&amp;search_fk_user_modif='.urlencode($search_fk_user_modif);
+    if ($search_import_key != '') $param.= '&amp;search_import_key='.urlencode($search_import_key);
+    if ($optioncss != '') $param.='&optioncss='.$optioncss;
+    // Add $param from extra fields
+    include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
-	$arrayofmassactions =  array(
-		//'presend'=>$langs->trans("SendByMail"),
-		//'builddoc'=>$langs->trans("PDFMerge"),
-	);
-	//if ($user->rights->stock->supprimer) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
-	if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
-	$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
+    $arrayofmassactions =  array(
+        //'presend'=>$langs->trans("SendByMail"),
+        //'builddoc'=>$langs->trans("PDFMerge"),
+    );
+    //if ($user->rights->stock->supprimer) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
+    if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
+    $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
-	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
-	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
-	print '<input type="hidden" name="action" value="list">';
-	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
-	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-	print '<input type="hidden" name="page" value="'.$page.'">';
+    print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
+    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+    print '<input type="hidden" name="action" value="list">';
+    print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+    print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+    print '<input type="hidden" name="page" value="'.$page.'">';
 
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_products', 0, '', '', $limit);
+    print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_products', 0, '', '', $limit);
 
-	$topicmail="Information";
-	$modelmail="productlot";
-	$objecttmp=new Productlot($db);
-	$trackid='lot'.$object->id;
-	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
+    $topicmail="Information";
+    $modelmail="productlot";
+    $objecttmp=new Productlot($db);
+    $trackid='lot'.$object->id;
+    include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
-	if ($sall)
-	{
-		foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-		print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ', $fieldstosearchall).'</div>';
-	}
+    if ($sall)
+    {
+        foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
+        print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ', $fieldstosearchall).'</div>';
+    }
 
-	/*$moreforfilter = '';
+    /*$moreforfilter = '';
     $moreforfilter.='<div class="divsearchfield">';
     $moreforfilter.= $langs->trans('MyFilter') . ': <input type="text" name="search_myfield" value="'.dol_escape_htmltag($search_myfield).'">';
     $moreforfilter.= '</div>';*/
 
-	$parameters=array();
-	$reshook=$hookmanager->executeHooks('printFieldPreListTitle', $parameters);    // Note that $action and $object may have been modified by hook
-	if (empty($reshook)) $moreforfilter .= $hookmanager->resPrint;
-	else $moreforfilter = $hookmanager->resPrint;
+    $parameters=array();
+    $reshook=$hookmanager->executeHooks('printFieldPreListTitle', $parameters);    // Note that $action and $object may have been modified by hook
+    if (empty($reshook)) $moreforfilter .= $hookmanager->resPrint;
+    else $moreforfilter = $hookmanager->resPrint;
 
-	if (! empty($moreforfilter))
-	{
-		print '<div class="liste_titre liste_titre_bydiv centpercent">';
-		print $moreforfilter;
-		print '</div>';
-	}
+    if (! empty($moreforfilter))
+    {
+        print '<div class="liste_titre liste_titre_bydiv centpercent">';
+        print $moreforfilter;
+        print '</div>';
+    }
 
-	$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
-	$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
+    $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
+    $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);    // This also change content of $arrayfields
 
-	print '<div class="div-table-responsive">';
-	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+    print '<div class="div-table-responsive">';
+    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
-	// Fields title search
-	print '<tr class="liste_titre_filter">';
-	if (! empty($arrayfields['t.entity']['checked'])) print '<td class="liste_titre"><input type="text" class="flat" name="search_entity" value="'.$search_entity.'" size="8"></td>';
-	if (! empty($arrayfields['t.batch']['checked'])) print '<td class="liste_titre"><input type="text" class="flat" name="search_batch" value="'.$search_batch.'" size="8"></td>';
-	if (! empty($arrayfields['t.fk_product']['checked'])) print '<td class="liste_titre"><input type="text" class="flat" name="search_product" value="'.$search_product.'" size="8"></td>';
-	if (! empty($arrayfields['t.sellby']['checked'])) print '<td class="liste_titre"></td>';
-	if (! empty($arrayfields['t.eatby']['checked'])) print '<td class="liste_titre"></td>';
-	if (! empty($arrayfields['t.fk_user_creat']['checked'])) print '<td class="liste_titre"><input type="text" class="flat" name="search_fk_user_creat" value="'.$search_fk_user_creat.'" size="10"></td>';
-	if (! empty($arrayfields['t.fk_user_modif']['checked'])) print '<td class="liste_titre"><input type="text" class="flat" name="search_fk_user_modif" value="'.$search_fk_user_modif.'" size="10"></td>';
-	if (! empty($arrayfields['t.import_key']['checked'])) print '<td class="liste_titre"><input type="text" class="flat" name="search_import_key" value="'.$search_import_key.'" size="10"></td>';
-	// Extra fields
-	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
+    // Fields title search
+    print '<tr class="liste_titre_filter">';
+    if (! empty($arrayfields['t.entity']['checked'])) print '<td class="liste_titre"><input type="text" class="flat" name="search_entity" value="'.$search_entity.'" size="8"></td>';
+    if (! empty($arrayfields['t.batch']['checked'])) print '<td class="liste_titre"><input type="text" class="flat" name="search_batch" value="'.$search_batch.'" size="8"></td>';
+    if (! empty($arrayfields['t.fk_product']['checked'])) print '<td class="liste_titre"><input type="text" class="flat" name="search_product" value="'.$search_product.'" size="8"></td>';
+    if (! empty($arrayfields['t.sellby']['checked'])) print '<td class="liste_titre"></td>';
+    if (! empty($arrayfields['t.eatby']['checked'])) print '<td class="liste_titre"></td>';
+    if (! empty($arrayfields['t.fk_user_creat']['checked'])) print '<td class="liste_titre"><input type="text" class="flat" name="search_fk_user_creat" value="'.$search_fk_user_creat.'" size="10"></td>';
+    if (! empty($arrayfields['t.fk_user_modif']['checked'])) print '<td class="liste_titre"><input type="text" class="flat" name="search_fk_user_modif" value="'.$search_fk_user_modif.'" size="10"></td>';
+    if (! empty($arrayfields['t.import_key']['checked'])) print '<td class="liste_titre"><input type="text" class="flat" name="search_import_key" value="'.$search_import_key.'" size="10"></td>';
+    // Extra fields
+    include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
-	// Fields from hook
-	$parameters=array('arrayfields'=>$arrayfields);
-	$reshook=$hookmanager->executeHooks('printFieldListOption', $parameters);    // Note that $action and $object may have been modified by hook
-	print $hookmanager->resPrint;
-	if (! empty($arrayfields['t.datec']['checked']))
-	{
-		// Date creation
-		print '<td class="liste_titre">';
-		print '</td>';
-	}
-	if (! empty($arrayfields['t.tms']['checked']))
-	{
-		// Date modification
-		print '<td class="liste_titre">';
-		print '</td>';
-	}
-	/*if (! empty($arrayfields['u.statut']['checked']))
+    // Fields from hook
+    $parameters=array('arrayfields'=>$arrayfields);
+    $reshook=$hookmanager->executeHooks('printFieldListOption', $parameters);    // Note that $action and $object may have been modified by hook
+    print $hookmanager->resPrint;
+    if (! empty($arrayfields['t.datec']['checked']))
+    {
+        // Date creation
+        print '<td class="liste_titre">';
+        print '</td>';
+    }
+    if (! empty($arrayfields['t.tms']['checked']))
+    {
+        // Date modification
+        print '<td class="liste_titre">';
+        print '</td>';
+    }
+    /*if (! empty($arrayfields['u.statut']['checked']))
      {
      // Status
      print '<td class="liste_titre center">';
      print $form->selectarray('search_statut', array('-1'=>'','0'=>$langs->trans('Disabled'),'1'=>$langs->trans('Enabled')),$search_statut);
      print '</td>';
      }*/
-	// Action column
-	print '<td class="liste_titre right">';
-	$searchpicto=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
-	print $searchpicto;
-	print '</td>';
-	print '</tr>'."\n";
+    // Action column
+    print '<td class="liste_titre right">';
+    $searchpicto=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
+    print $searchpicto;
+    print '</td>';
+    print '</tr>'."\n";
 
-	// Fields title
-	print '<tr class="liste_titre">';
-	if (! empty($arrayfields['t.entity']['checked']))        print_liste_field_titre($arrayfields['t.entity']['label'], $_SERVER['PHP_SELF'], 't.entity', '', $param, '', $sortfield, $sortorder);
-	if (! empty($arrayfields['t.batch']['checked']))         print_liste_field_titre($arrayfields['t.batch']['label'], $_SERVER['PHP_SELF'], 't.batch', '', $param, '', $sortfield, $sortorder);
-	if (! empty($arrayfields['t.fk_product']['checked']))    print_liste_field_titre($arrayfields['t.fk_product']['label'], $_SERVER['PHP_SELF'], 't.fk_product', '', $param, '', $sortfield, $sortorder);
-	if (! empty($arrayfields['t.sellby']['checked']))        print_liste_field_titre($arrayfields['t.sellby']['label'], $_SERVER['PHP_SELF'], 't.sellby', '', $param, '', $sortfield, $sortorder);
-	if (! empty($arrayfields['t.eatby']['checked']))         print_liste_field_titre($arrayfields['t.eatby']['label'], $_SERVER['PHP_SELF'], 't.eatby', '', $param, '', $sortfield, $sortorder);
-	if (! empty($arrayfields['t.fk_user_creat']['checked'])) print_liste_field_titre($arrayfields['t.fk_user_creat']['label'], $_SERVER['PHP_SELF'], 't.fk_user_creat', '', $param, '', $sortfield, $sortorder);
-	if (! empty($arrayfields['t.fk_user_modif']['checked'])) print_liste_field_titre($arrayfields['t.fk_user_modif']['label'], $_SERVER['PHP_SELF'], 't.fk_user_modif', '', $param, '', $sortfield, $sortorder);
-	if (! empty($arrayfields['t.import_key']['checked']))    print_liste_field_titre($arrayfields['t.import_key']['label'], $_SERVER['PHP_SELF'], 't.import_key', '', $param, '', $sortfield, $sortorder);
-	// Extra fields
-	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
-	// Hook fields
-	$parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
-	$reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters);    // Note that $action and $object may have been modified by hook
-	print $hookmanager->resPrint;
+    // Fields title
+    print '<tr class="liste_titre">';
+    if (! empty($arrayfields['t.entity']['checked']))        print_liste_field_titre($arrayfields['t.entity']['label'], $_SERVER['PHP_SELF'], 't.entity', '', $param, '', $sortfield, $sortorder);
+    if (! empty($arrayfields['t.batch']['checked']))         print_liste_field_titre($arrayfields['t.batch']['label'], $_SERVER['PHP_SELF'], 't.batch', '', $param, '', $sortfield, $sortorder);
+    if (! empty($arrayfields['t.fk_product']['checked']))    print_liste_field_titre($arrayfields['t.fk_product']['label'], $_SERVER['PHP_SELF'], 't.fk_product', '', $param, '', $sortfield, $sortorder);
+    if (! empty($arrayfields['t.sellby']['checked']))        print_liste_field_titre($arrayfields['t.sellby']['label'], $_SERVER['PHP_SELF'], 't.sellby', '', $param, '', $sortfield, $sortorder);
+    if (! empty($arrayfields['t.eatby']['checked']))         print_liste_field_titre($arrayfields['t.eatby']['label'], $_SERVER['PHP_SELF'], 't.eatby', '', $param, '', $sortfield, $sortorder);
+    if (! empty($arrayfields['t.fk_user_creat']['checked'])) print_liste_field_titre($arrayfields['t.fk_user_creat']['label'], $_SERVER['PHP_SELF'], 't.fk_user_creat', '', $param, '', $sortfield, $sortorder);
+    if (! empty($arrayfields['t.fk_user_modif']['checked'])) print_liste_field_titre($arrayfields['t.fk_user_modif']['label'], $_SERVER['PHP_SELF'], 't.fk_user_modif', '', $param, '', $sortfield, $sortorder);
+    if (! empty($arrayfields['t.import_key']['checked']))    print_liste_field_titre($arrayfields['t.import_key']['label'], $_SERVER['PHP_SELF'], 't.import_key', '', $param, '', $sortfield, $sortorder);
+    // Extra fields
+    include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
+    // Hook fields
+    $parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
+    $reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters);    // Note that $action and $object may have been modified by hook
+    print $hookmanager->resPrint;
     if (! empty($arrayfields['t.datec']['checked'])) {
         print_liste_field_titre($arrayfields['t.datec']['label'], $_SERVER["PHP_SELF"], "t.datec", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
     }
@@ -402,163 +402,163 @@ if ($resql)
     print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
     print '</tr>'."\n";
 
-	$productlot = new Productlot($db);
+    $productlot = new Productlot($db);
 
-	$i=0;
-	$totalarray=array();
-	while ($i < min($num, $limit))
-	{
-		$obj = $db->fetch_object($resql);
-		if ($obj)
-		{
+    $i=0;
+    $totalarray=array();
+    while ($i < min($num, $limit))
+    {
+        $obj = $db->fetch_object($resql);
+        if ($obj)
+        {
 
-			$productlot->id = $obj->rowid;
-			$productlot->batch = $obj->batch;
+            $productlot->id = $obj->rowid;
+            $productlot->batch = $obj->batch;
 
-			// You can use here results
-			print '<tr class="oddeven">';
-			if (! empty($arrayfields['t.entity']['checked']))
-			{
-				print '<td>'.$obj->entity.'</td>';
-				if (! $i) $totalarray['nbfield']++;
-			}
-			if (! empty($arrayfields['t.batch']['checked']))
-			{
-				print '<td>'.$productlot->getNomUrl(1).'</td>';
-				if (! $i) $totalarray['nbfield']++;
-			}
-			if (! empty($arrayfields['t.fk_product']['checked']))
-			{
-				$productstatic->id=$obj->fk_product;
-				$productstatic->type=$obj->product_type;
-				$productstatic->ref=$obj->product_ref;
-				$productstatic->label=$obj->product_label;
-				$productstatic->status_batch = $obj->tobatch;
-				print '<td>'.$productstatic->getNomUrl(1).'</td>';
-				if (! $i) $totalarray['nbfield']++;
-			}
-			if (! empty($arrayfields['t.sellby']['checked']))
-			{
-				print '<td>'.dol_print_date($db->jdate($obj->sellby), 'day').'</td>';
-				if (! $i) $totalarray['nbfield']++;
-			}
-			if (! empty($arrayfields['t.eatby']['checked']))
-			{
-				print '<td>'.dol_print_date($db->jdate($obj->eatby), 'day').'</td>';
-				if (! $i) $totalarray['nbfield']++;
-			}
-			if (! empty($arrayfields['t.fk_user_creat']['checked']))
-			{
-				print '<td>'.$obj->fk_user_creat.'</td>';
-				if (! $i) $totalarray['nbfield']++;
-			}
-			if (! empty($arrayfields['t.fk_user_modif']['checked']))
-			{
-				print '<td>'.$obj->fk_user_modif.'</td>';
-				if (! $i) $totalarray['nbfield']++;
-			}
-			if (! empty($arrayfields['t.import_key']['checked']))
-			{
-				print '<td>'.$obj->import_key.'</td>';
-				if (! $i) $totalarray['nbfield']++;
-			}
-			// Extra fields
-			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
-			// Fields from hook
-			$parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj);
-			$reshook=$hookmanager->executeHooks('printFieldListValue', $parameters);    // Note that $action and $object may have been modified by hook
-			print $hookmanager->resPrint;
-			// Date creation
-			if (! empty($arrayfields['t.datec']['checked']))
-			{
-				print '<td class="center">';
-				print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
-				print '</td>';
-				if (! $i) $totalarray['nbfield']++;
-			}
-			// Date modification
-			if (! empty($arrayfields['t.tms']['checked']))
-			{
-				print '<td class="center">';
-				print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
-				print '</td>';
-				if (! $i) $totalarray['nbfield']++;
-			}
-			// Status
-			/*
+            // You can use here results
+            print '<tr class="oddeven">';
+            if (! empty($arrayfields['t.entity']['checked']))
+            {
+                print '<td>'.$obj->entity.'</td>';
+                if (! $i) $totalarray['nbfield']++;
+            }
+            if (! empty($arrayfields['t.batch']['checked']))
+            {
+                print '<td>'.$productlot->getNomUrl(1).'</td>';
+                if (! $i) $totalarray['nbfield']++;
+            }
+            if (! empty($arrayfields['t.fk_product']['checked']))
+            {
+                $productstatic->id=$obj->fk_product;
+                $productstatic->type=$obj->product_type;
+                $productstatic->ref=$obj->product_ref;
+                $productstatic->label=$obj->product_label;
+                $productstatic->status_batch = $obj->tobatch;
+                print '<td>'.$productstatic->getNomUrl(1).'</td>';
+                if (! $i) $totalarray['nbfield']++;
+            }
+            if (! empty($arrayfields['t.sellby']['checked']))
+            {
+                print '<td>'.dol_print_date($db->jdate($obj->sellby), 'day').'</td>';
+                if (! $i) $totalarray['nbfield']++;
+            }
+            if (! empty($arrayfields['t.eatby']['checked']))
+            {
+                print '<td>'.dol_print_date($db->jdate($obj->eatby), 'day').'</td>';
+                if (! $i) $totalarray['nbfield']++;
+            }
+            if (! empty($arrayfields['t.fk_user_creat']['checked']))
+            {
+                print '<td>'.$obj->fk_user_creat.'</td>';
+                if (! $i) $totalarray['nbfield']++;
+            }
+            if (! empty($arrayfields['t.fk_user_modif']['checked']))
+            {
+                print '<td>'.$obj->fk_user_modif.'</td>';
+                if (! $i) $totalarray['nbfield']++;
+            }
+            if (! empty($arrayfields['t.import_key']['checked']))
+            {
+                print '<td>'.$obj->import_key.'</td>';
+                if (! $i) $totalarray['nbfield']++;
+            }
+            // Extra fields
+            include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
+            // Fields from hook
+            $parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj);
+            $reshook=$hookmanager->executeHooks('printFieldListValue', $parameters);    // Note that $action and $object may have been modified by hook
+            print $hookmanager->resPrint;
+            // Date creation
+            if (! empty($arrayfields['t.datec']['checked']))
+            {
+                print '<td class="center">';
+                print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
+                print '</td>';
+                if (! $i) $totalarray['nbfield']++;
+            }
+            // Date modification
+            if (! empty($arrayfields['t.tms']['checked']))
+            {
+                print '<td class="center">';
+                print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
+                print '</td>';
+                if (! $i) $totalarray['nbfield']++;
+            }
+            // Status
+            /*
             if (! empty($arrayfields['u.statut']['checked']))
             {
-    		  $userstatic->statut=$obj->statut;
+              $userstatic->statut=$obj->statut;
               print '<td class="center">'.$userstatic->getLibStatut(3).'</td>';
             }*/
 
-			// Action column
-			print '<td class="nowrap center">';
-			if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-			{
-				$selected=0;
-				if (in_array($obj->rowid, $arrayofselected)) $selected=1;
-				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected?' checked="checked"':'').'>';
-			}
-			print '</td>';
-			if (! $i) $totalarray['nbfield']++;
+            // Action column
+            print '<td class="nowrap center">';
+            if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+            {
+                $selected=0;
+                if (in_array($obj->rowid, $arrayofselected)) $selected=1;
+                print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected?' checked="checked"':'').'>';
+            }
+            print '</td>';
+            if (! $i) $totalarray['nbfield']++;
 
-			print '</tr>';
-		}
-		$i++;
-	}
+            print '</tr>';
+        }
+        $i++;
+    }
 
-	// Show total line
-	if (isset($totalarray['totalhtfield']))
-	{
-		print '<tr class="liste_total">';
-		$i=0;
-		while ($i < $totalarray['nbfield'])
-		{
-			$i++;
-			if ($i == 1)
-			{
-				if ($num < $limit && empty($offset)) print '<td class="left">'.$langs->trans("Total").'</td>';
-				else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
-			}
-			elseif ($totalarray['totalhtfield'] == $i) print '<td class="right">'.price($totalarray['totalht']).'</td>';
-			elseif ($totalarray['totalvatfield'] == $i) print '<td class="right">'.price($totalarray['totalvat']).'</td>';
-			elseif ($totalarray['totalttcfield'] == $i) print '<td class="right">'.price($totalarray['totalttc']).'</td>';
-			else print '<td></td>';
-		}
-		print '</tr>';
-	}
+    // Show total line
+    if (isset($totalarray['totalhtfield']))
+    {
+        print '<tr class="liste_total">';
+        $i=0;
+        while ($i < $totalarray['nbfield'])
+        {
+            $i++;
+            if ($i == 1)
+            {
+                if ($num < $limit && empty($offset)) print '<td class="left">'.$langs->trans("Total").'</td>';
+                else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
+            }
+            elseif ($totalarray['totalhtfield'] == $i) print '<td class="right">'.price($totalarray['totalht']).'</td>';
+            elseif ($totalarray['totalvatfield'] == $i) print '<td class="right">'.price($totalarray['totalvat']).'</td>';
+            elseif ($totalarray['totalttcfield'] == $i) print '<td class="right">'.price($totalarray['totalttc']).'</td>';
+            else print '<td></td>';
+        }
+        print '</tr>';
+    }
 
-	$db->free($resql);
+    $db->free($resql);
 
-	$parameters=array('arrayfields'=>$arrayfields, 'sql'=>$sql);
-	$reshook=$hookmanager->executeHooks('printFieldListFooter', $parameters);    // Note that $action and $object may have been modified by hook
-	print $hookmanager->resPrint;
+    $parameters=array('arrayfields'=>$arrayfields, 'sql'=>$sql);
+    $reshook=$hookmanager->executeHooks('printFieldListFooter', $parameters);    // Note that $action and $object may have been modified by hook
+    print $hookmanager->resPrint;
 
-	print '</table>'."\n";
-	print '</div>';
+    print '</table>'."\n";
+    print '</div>';
 
-	print '</form>'."\n";
+    print '</form>'."\n";
 
-	/*
-	$hidegeneratedfilelistifempty=1;
-	if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) $hidegeneratedfilelistifempty=0;
+    /*
+    $hidegeneratedfilelistifempty=1;
+    if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) $hidegeneratedfilelistifempty=0;
 
     // Show list of available documents
-	$urlsource=$_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
-	$urlsource.=str_replace('&amp;','&',$param);
+    $urlsource=$_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
+    $urlsource.=str_replace('&amp;','&',$param);
 
-	$filedir=$diroutputmassaction;
-	$genallowed=$user->rights->facture->lire;
-	$delallowed=$user->rights->facture->creer;
+    $filedir=$diroutputmassaction;
+    $genallowed=$user->rights->facture->lire;
+    $delallowed=$user->rights->facture->creer;
 
-	print $formfile->showdocuments('massfilesarea_orders','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'','','',null,$hidegeneratedfilelistifempty);
-	*/
+    print $formfile->showdocuments('massfilesarea_orders','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'','','',null,$hidegeneratedfilelistifempty);
+    */
 }
 else
 {
-	$error++;
-	dol_print_error($db);
+    $error++;
+    dol_print_error($db);
 }
 
 // End of page

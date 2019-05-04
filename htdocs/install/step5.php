@@ -41,8 +41,8 @@ $action=GETPOST('action', 'alpha')?GETPOST('action', 'alpha'):(empty($argv[4])?'
 
 // Define targetversion used to update MAIN_VERSION_LAST_INSTALL for first install
 // or MAIN_VERSION_LAST_UPGRADE for upgrade.
-$targetversion=DOL_VERSION;		// If it's latest upgrade
-if (! empty($action) && preg_match('/upgrade/i', $action))	// If it's an old upgrade
+$targetversion=DOL_VERSION;        // If it's latest upgrade
+if (! empty($action) && preg_match('/upgrade/i', $action))    // If it's an old upgrade
 {
     $tmp=explode('_', $action, 2);
     if ($tmp[0]=='upgrade')
@@ -65,14 +65,14 @@ $useforcedwizard=false;
 $forcedfile="./install.forced.php";
 if ($conffile == "/etc/dolibarr/conf.php") $forcedfile="/etc/dolibarr/install.forced.php";
 if (@file_exists($forcedfile)) {
-	$useforcedwizard = true;
-	include_once $forcedfile;
-	// If forced install is enabled, replace post values. These are empty because form fields are disabled.
-	if ($force_install_noedit == 2) {
-		if (!empty($force_install_dolibarrlogin)) {
-			$login = $force_install_dolibarrlogin;
-		}
-	}
+    $useforcedwizard = true;
+    include_once $forcedfile;
+    // If forced install is enabled, replace post values. These are empty because form fields are disabled.
+    if ($force_install_noedit == 2) {
+        if (!empty($force_install_dolibarrlogin)) {
+            $login = $force_install_dolibarrlogin;
+        }
+    }
 }
 
 dolibarr_install_syslog("- step5: entering step5.php page");
@@ -85,20 +85,20 @@ $error=0;
 
 // If install, check password and password_verification used to create admin account
 if ($action == "set") {
-	if ($pass <> $pass_verif) {
-		header("Location: step4.php?error=1&selectlang=$setuplang" . (isset($login) ? '&login=' . $login : ''));
-		exit;
-	}
+    if ($pass <> $pass_verif) {
+        header("Location: step4.php?error=1&selectlang=$setuplang" . (isset($login) ? '&login=' . $login : ''));
+        exit;
+    }
 
-	if (dol_strlen(trim($pass)) == 0) {
-		header("Location: step4.php?error=2&selectlang=$setuplang" . (isset($login) ? '&login=' . $login : ''));
-		exit;
-	}
+    if (dol_strlen(trim($pass)) == 0) {
+        header("Location: step4.php?error=2&selectlang=$setuplang" . (isset($login) ? '&login=' . $login : ''));
+        exit;
+    }
 
-	if (dol_strlen(trim($login)) == 0) {
-		header("Location: step4.php?error=3&selectlang=$setuplang" . (isset($login) ? '&login=' . $login : ''));
-		exit;
-	}
+    if (dol_strlen(trim($login)) == 0) {
+        header("Location: step4.php?error=3&selectlang=$setuplang" . (isset($login) ? '&login=' . $login : ''));
+        exit;
+    }
 }
 
 
@@ -129,7 +129,7 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action))
         {
             $dolibarr_main_db_pass = preg_replace('/crypted:/i', '', $dolibarr_main_db_pass);
             $dolibarr_main_db_pass = dol_decode($dolibarr_main_db_pass);
-            $dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass;	// We need to set this as it is used to know the password was initially crypted
+            $dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass;    // We need to set this as it is used to know the password was initially crypted
         }
         else $dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
     }
@@ -174,27 +174,27 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action))
             include_once DOL_DOCUMENT_ROOT .'/user/class/user.class.php';
 
             // Set default encryption to yes, generate a salt and set default encryption algorythm (but only if there is no user yet into database)
-		    $sql = "SELECT u.rowid, u.pass, u.pass_crypted";
-		    $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-		    $resql=$db->query($sql);
-		    if ($resql)
-		    {
-		        $numrows=$db->num_rows($resql);
-    			if ($numrows == 0)
-    			{
-    			    // Define default setup for password encryption
-    			    dolibarr_set_const($db, "DATABASE_PWD_ENCRYPTED", "1", 'chaine', 0, '', $conf->entity);
-    			    dolibarr_set_const($db, "MAIN_SECURITY_SALT", dol_print_date(dol_now(), 'dayhourlog'), 'chaine', 0, '', 0);      // All entities
+            $sql = "SELECT u.rowid, u.pass, u.pass_crypted";
+            $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
+            $resql=$db->query($sql);
+            if ($resql)
+            {
+                $numrows=$db->num_rows($resql);
+                if ($numrows == 0)
+                {
+                    // Define default setup for password encryption
+                    dolibarr_set_const($db, "DATABASE_PWD_ENCRYPTED", "1", 'chaine', 0, '', $conf->entity);
+                    dolibarr_set_const($db, "MAIN_SECURITY_SALT", dol_print_date(dol_now(), 'dayhourlog'), 'chaine', 0, '', 0);      // All entities
                     if (function_exists('password_hash'))
                         dolibarr_set_const($db, "MAIN_SECURITY_HASH_ALGO", 'password_hash', 'chaine', 0, '', 0);                     // All entities
                     else
                         dolibarr_set_const($db, "MAIN_SECURITY_HASH_ALGO", 'sha1md5', 'chaine', 0, '', 0);                           // All entities
-    			}
+                }
 
-    			dolibarr_install_syslog('step5: DATABASE_PWD_ENCRYPTED = '.$conf->global->DATABASE_PWD_ENCRYPTED.' MAIN_SECURITY_HASH_ALGO = '.$conf->global->MAIN_SECURITY_HASH_ALGO, LOG_INFO);
-		    }
+                dolibarr_install_syslog('step5: DATABASE_PWD_ENCRYPTED = '.$conf->global->DATABASE_PWD_ENCRYPTED.' MAIN_SECURITY_HASH_ALGO = '.$conf->global->MAIN_SECURITY_HASH_ALGO, LOG_INFO);
+            }
 
-		    // Create user used to create the admin user
+            // Create user used to create the admin user
             $createuser=new User($db);
             $createuser->id=0;
             $createuser->admin=1;
@@ -310,7 +310,7 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action))
 
             // Define if we need to update the MAIN_VERSION_LAST_UPGRADE value in database
             $tagdatabase=false;
-            if (empty($conf->global->MAIN_VERSION_LAST_UPGRADE)) $tagdatabase=true;	// We don't know what it was before, so now we consider we are version choosed.
+            if (empty($conf->global->MAIN_VERSION_LAST_UPGRADE)) $tagdatabase=true;    // We don't know what it was before, so now we consider we are version choosed.
             else
             {
                 $mainversionlastupgradearray=preg_split('/[.-]/', $conf->global->MAIN_VERSION_LAST_UPGRADE);
@@ -370,7 +370,7 @@ if ($action == "set" && $success)
             $fp = @fopen($lockfile, "w");
             if ($fp)
             {
-            	if (empty($force_install_lockinstall) || $force_install_lockinstall == 1) $force_install_lockinstall=444;    // For backward compatibility
+                if (empty($force_install_lockinstall) || $force_install_lockinstall == 1) $force_install_lockinstall=444;    // For backward compatibility
                 fwrite($fp, "This is a lock file to prevent use of install pages (set with permission ".$force_install_lockinstall.")");
                 fclose($fp);
                 @chmod($lockfile, octdec($force_install_lockinstall));
@@ -420,7 +420,7 @@ elseif (empty($action) || preg_match('/upgrade/i', $action))
             $fp = @fopen($lockfile, "w");
             if ($fp)
             {
-            	if (empty($force_install_lockinstall) || $force_install_lockinstall == 1) $force_install_lockinstall=444;    // For backward compatibility
+                if (empty($force_install_lockinstall) || $force_install_lockinstall == 1) $force_install_lockinstall=444;    // For backward compatibility
                 fwrite($fp, "This is a lock file to prevent use of install pages (set with permission ".$force_install_lockinstall.")");
                 fclose($fp);
                 @chmod($lockfile, octdec($force_install_lockinstall));

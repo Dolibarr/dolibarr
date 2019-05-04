@@ -178,18 +178,18 @@ class Ticket extends CommonObject
 
     public $fields=array(
         'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'position'=>1, 'visible'=>-2, 'enabled'=>1, 'position'=>1, 'notnull'=>1, 'index'=>1, 'comment'=>"Id"),
-    	'entity' => array('type'=>'integer', 'label'=>'Entity', 'visible'=>0, 'enabled'=>1, 'position'=>5, 'notnull'=>1, 'index'=>1),
-    	'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'visible'=>1, 'enabled'=>1, 'position'=>10, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of object", 'css'=>''),
-	    'track_id' => array('type'=>'varchar(255)', 'label'=>'TrackID', 'visible'=>0, 'enabled'=>1, 'position'=>11, 'notnull'=>-1, 'searchall'=>1, 'help'=>"Help text"),
-	    'fk_user_create' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Author', 'visible'=>1, 'enabled'=>1, 'position'=>15, 'notnull'=>1, 'css'=>'nowraponall'),
-    	'origin_email' => array('type'=>'mail', 'label'=>'OriginEmail', 'visible'=>-2, 'enabled'=>1, 'position'=>16, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of object"),
-    	'subject' => array('type'=>'varchar(255)', 'label'=>'Subject', 'visible'=>1, 'enabled'=>1, 'position'=>18, 'notnull'=>-1, 'searchall'=>1, 'help'=>""),
-    	'type_code' => array('type'=>'varchar(32)', 'label'=>'Type', 'visible'=>1, 'enabled'=>1, 'position'=>20, 'notnull'=>-1, 'searchall'=>1, 'help'=>"", 'css'=>'maxwidth100'),
-    	'category_code' => array('type'=>'varchar(32)', 'label'=>'TicketGroup', 'visible'=>-1, 'enabled'=>1, 'position'=>21, 'notnull'=>-1, 'help'=>"", 'css'=>'maxwidth100'),
-	    'severity_code' => array('type'=>'varchar(32)', 'label'=>'Severity', 'visible'=>1, 'enabled'=>1, 'position'=>22, 'notnull'=>-1, 'help'=>"", 'css'=>'maxwidth100'),
-    	'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'visible'=>1, 'enabled'=>1, 'position'=>50, 'notnull'=>-1, 'index'=>1, 'searchall'=>1, 'help'=>"LinkToThirparty"),
-	    'notify_tiers_at_create' => array('type'=>'integer', 'label'=>'NotifyThirdparty', 'visible'=>-1, 'enabled'=>0, 'position'=>51, 'notnull'=>1, 'index'=>1),
-    	'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php', 'label'=>'Project', 'visible'=>-1, 'enabled'=>1, 'position'=>52, 'notnull'=>-1, 'index'=>1, 'help'=>"LinkToProject"),
+        'entity' => array('type'=>'integer', 'label'=>'Entity', 'visible'=>0, 'enabled'=>1, 'position'=>5, 'notnull'=>1, 'index'=>1),
+        'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'visible'=>1, 'enabled'=>1, 'position'=>10, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of object", 'css'=>''),
+        'track_id' => array('type'=>'varchar(255)', 'label'=>'TrackID', 'visible'=>0, 'enabled'=>1, 'position'=>11, 'notnull'=>-1, 'searchall'=>1, 'help'=>"Help text"),
+        'fk_user_create' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Author', 'visible'=>1, 'enabled'=>1, 'position'=>15, 'notnull'=>1, 'css'=>'nowraponall'),
+        'origin_email' => array('type'=>'mail', 'label'=>'OriginEmail', 'visible'=>-2, 'enabled'=>1, 'position'=>16, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of object"),
+        'subject' => array('type'=>'varchar(255)', 'label'=>'Subject', 'visible'=>1, 'enabled'=>1, 'position'=>18, 'notnull'=>-1, 'searchall'=>1, 'help'=>""),
+        'type_code' => array('type'=>'varchar(32)', 'label'=>'Type', 'visible'=>1, 'enabled'=>1, 'position'=>20, 'notnull'=>-1, 'searchall'=>1, 'help'=>"", 'css'=>'maxwidth100'),
+        'category_code' => array('type'=>'varchar(32)', 'label'=>'TicketGroup', 'visible'=>-1, 'enabled'=>1, 'position'=>21, 'notnull'=>-1, 'help'=>"", 'css'=>'maxwidth100'),
+        'severity_code' => array('type'=>'varchar(32)', 'label'=>'Severity', 'visible'=>1, 'enabled'=>1, 'position'=>22, 'notnull'=>-1, 'help'=>"", 'css'=>'maxwidth100'),
+        'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'visible'=>1, 'enabled'=>1, 'position'=>50, 'notnull'=>-1, 'index'=>1, 'searchall'=>1, 'help'=>"LinkToThirparty"),
+        'notify_tiers_at_create' => array('type'=>'integer', 'label'=>'NotifyThirdparty', 'visible'=>-1, 'enabled'=>0, 'position'=>51, 'notnull'=>1, 'index'=>1),
+        'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php', 'label'=>'Project', 'visible'=>-1, 'enabled'=>1, 'position'=>52, 'notnull'=>-1, 'index'=>1, 'help'=>"LinkToProject"),
         'timing' => array('type'=>'varchar(20)', 'label'=>'Timing', 'visible'=>-1, 'enabled'=>1, 'position'=>42, 'notnull'=>-1, 'help'=>""),
         'datec' => array('type'=>'datetime', 'label'=>'DateCreation', 'visible'=>1, 'enabled'=>1, 'position'=>500, 'notnull'=>1),
         'date_read' => array('type'=>'datetime', 'label'=>'TicketReadOn', 'visible'=>1, 'enabled'=>1, 'position'=>500, 'notnull'=>1),
@@ -436,10 +436,10 @@ class Ticket extends CommonObject
     /**
      *  Load object in memory from the database
      *
-     *  @param  int        	$id    		Id object
-     *  @param	string		$ref		Ref
-     *  @param	string		$track_id	Track id, a hash like ref
-     *  @return int              		<0 if KO, >0 if OK
+     *  @param  int            $id            Id object
+     *  @param    string        $ref        Ref
+     *  @param    string        $track_id    Track id, a hash like ref
+     *  @return int                      <0 if KO, >0 if OK
      */
     public function fetch($id = '', $ref = '', $track_id = '')
     {
@@ -1156,8 +1156,8 @@ class Ticket extends CommonObject
     /**
      * Return status label of object
      *
-     * @param      int		$mode     0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
-     * @return     string    			  Label
+     * @param      int        $mode     0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+     * @return     string                  Label
      */
     public function getLibStatut($mode = 0)
     {
@@ -1169,9 +1169,9 @@ class Ticket extends CommonObject
     /**
      *    Return status label of object
      *
-     *    @param      string 	$statut      id statut
-     *    @param      int		$mode        0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
-     *    @return     string     			 Label
+     *    @param      string     $statut      id statut
+     *    @param      int        $mode        0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+     *    @return     string                  Label
      */
     public function LibStatut($statut, $mode = 0)
     {
@@ -1294,12 +1294,12 @@ class Ticket extends CommonObject
     /**
      *  Return a link to the object card (with optionaly the picto)
      *
-     *	@param	int		$withpicto					Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
-     *	@param	string	$option						On what the link point to ('nolink', ...)
-     *  @param	int  	$notooltip					1=Disable tooltip
-     *  @param  string  $morecss            		Add more css on link
-     *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-     *	@return	string								String with URL
+     *    @param    int        $withpicto                    Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
+     *    @param    string    $option                        On what the link point to ('nolink', ...)
+     *  @param    int      $notooltip                    1=Disable tooltip
+     *  @param  string  $morecss                    Add more css on link
+     *  @param  int     $save_lastsearch_value        -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+     *    @return    string                                String with URL
      */
     public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
     {
@@ -1358,9 +1358,9 @@ class Ticket extends CommonObject
     /**
      *    Mark a message as read
      *
-     *    @param    User		$user			    Object user
-     *    @param	  int			$notrigger		No trigger
-     *    @return   int							      <0 if KO, >0 if OK
+     *    @param    User        $user                Object user
+     *    @param      int            $notrigger        No trigger
+     *    @return   int                                  <0 if KO, >0 if OK
      */
     public function markAsRead($user, $notrigger = 0)
     {
@@ -1410,10 +1410,10 @@ class Ticket extends CommonObject
     /**
      *    Mark a message as read
      *
-     *    @param    User	$user				Object user
-     *    @param    int 	$id_assign_user		ID of user assigned
-     *    @param    int 	$notrigger        	Disable trigger
-     *    @return   int							<0 if KO, 0=Nothing done, >0 if OK
+     *    @param    User    $user                Object user
+     *    @param    int     $id_assign_user        ID of user assigned
+     *    @param    int     $notrigger            Disable trigger
+     *    @return   int                            <0 if KO, 0=Nothing done, >0 if OK
      */
     public function assignUser($user, $id_assign_user, $notrigger = 0)
     {
@@ -1467,9 +1467,9 @@ class Ticket extends CommonObject
     /**
      *  Send notification of changes by email
      *
-     * 	@param  User   $user    		User that create
-     * 	@param  string $message 		Log message
-     * 	@return int                 	<0 if KO, >0 if OK (number of emails sent)
+     *     @param  User   $user            User that create
+     *     @param  string $message         Log message
+     *     @return int                     <0 if KO, >0 if OK (number of emails sent)
      */
     private function sendLogByEmail($user, $message)
     {
@@ -1602,8 +1602,8 @@ class Ticket extends CommonObject
     /**
      *  Add message into database
      *
-     *  @param  User $user      	User that creates
-     *  @param  int  $notrigger 	0=launch triggers after, 1=disable triggers
+     *  @param  User $user          User that creates
+     *  @param  int  $notrigger     0=launch triggers after, 1=disable triggers
      *  @return int                 <0 if KO, Id of created object if OK
      */
     public function createTicketMessage($user, $notrigger = 0)
@@ -1704,7 +1704,7 @@ class Ticket extends CommonObject
      *    Close a ticket
      *
      *    @param    User    $user      User that close
-     *    @return   int		           <0 if KO, >0 if OK
+     *    @return   int                   <0 if KO, >0 if OK
      */
     public function close(User $user)
     {
@@ -1774,11 +1774,11 @@ class Ticket extends CommonObject
     /**
      *     Search and fetch thirparties by email
      *
-     *     @param  string $email   		Email
-     *     @param  int    $type    		Type of thirdparties (0=any, 1=customer, 2=prospect, 3=supplier)
-     *     @param  array  $filters 		Array of couple field name/value to filter the companies with the same name
-     *     @param  string $clause  		Clause for filters
-     *     @return array        		Array of thirdparties object
+     *     @param  string $email           Email
+     *     @param  int    $type            Type of thirdparties (0=any, 1=customer, 2=prospect, 3=supplier)
+     *     @param  array  $filters         Array of couple field name/value to filter the companies with the same name
+     *     @param  string $clause          Clause for filters
+     *     @return array                Array of thirdparties object
      */
     public function searchSocidByEmail($email, $type = '0', $filters = array(), $clause = 'AND')
     {
@@ -1841,10 +1841,10 @@ class Ticket extends CommonObject
     /**
      *     Search and fetch contacts by email
      *
-     *     @param  string $email 	Email
-     *     @param  array  $socid 	Limit to a thirdparty
-     *     @param  string $case  	Respect case
-     *     @return array        	Array of contacts object
+     *     @param  string $email     Email
+     *     @param  array  $socid     Limit to a thirdparty
+     *     @param  string $case      Respect case
+     *     @return array            Array of contacts object
      */
     public function searchContactByEmail($email, $socid = '', $case = '')
     {
@@ -1934,7 +1934,7 @@ class Ticket extends CommonObject
 
     /**
      *     Link element with a project
-     * 	   Override core function because of key name 'fk_project' used for this module
+     *        Override core function because of key name 'fk_project' used for this module
      *
      *     @param  int $projectid Project id to link element to
      *     @return int                        <0 if KO, >0 if OK
@@ -2053,7 +2053,7 @@ class Ticket extends CommonObject
     /**
      * Return id of all contacts for ticket
      *
-     * @return	array		Array of contacts for tickets
+     * @return    array        Array of contacts for tickets
      */
     public function getTicketAllContacts()
     {
@@ -2072,7 +2072,7 @@ class Ticket extends CommonObject
     /**
      * Return id of all contacts for ticket
      *
-     * @return	array		Array of contacts
+     * @return    array        Array of contacts
      */
     public function getTicketAllCustomerContacts()
     {
@@ -2087,7 +2087,7 @@ class Ticket extends CommonObject
     /**
      * Send message
      *
-     *  @param  string $subject	  Subject
+     *  @param  string $subject      Subject
      *  @param  string $texte      Message to send
      *  @return int                <0 if KO, or number of changes if OK
      */
@@ -2208,11 +2208,11 @@ class Ticket extends CommonObject
      *    Get array of all contacts for a ticket
      *    Override method of file commonobject.class.php to add phone number
      *
-     *    @param	int    	$statut 	Status of lines to get (-1=all)
-     *    @param	string 	$source 	Source of contact: external or thirdparty (llx_socpeople) or internal (llx_user)
-     *    @param	int    	$list   	0:Return array contains all properties, 1:Return array contains just id
+     *    @param    int        $statut     Status of lines to get (-1=all)
+     *    @param    string     $source     Source of contact: external or thirdparty (llx_socpeople) or internal (llx_user)
+     *    @param    int        $list       0:Return array contains all properties, 1:Return array contains just id
      *    @param    string  $code       Filter on this code of contact type ('SHIPPING', 'BILLING', ...)
-     *    @return 	array          		Array of contacts
+     *    @return     array                  Array of contacts
      */
     public function listeContact($statut = -1, $source = 'external', $list = 0, $code = '')
     {
@@ -2312,8 +2312,8 @@ class Ticket extends CommonObject
     /**
      * Get a default reference.
      *
-     * @param	Societe		$thirdparty		Thirdparty
-     * @return 	string   					Reference
+     * @param    Societe        $thirdparty        Thirdparty
+     * @return     string                       Reference
      */
     public function getDefaultRef($thirdparty = '')
     {
@@ -2391,7 +2391,7 @@ class Ticket extends CommonObject
      * Copy files into ticket directory
      * Used for files linked into messages
      *
-     * @return	void
+     * @return    void
      */
     public function copyFilesForTicket()
     {

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2003-2008	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2008    Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Sebastien Di Cintio		<sdicintio@ressource-toi.org>
  * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
@@ -23,9 +23,9 @@
  */
 
 /**
- *	\file       htdocs/admin/expedition.php
- *	\ingroup    expedition
- *	\brief      Page d'administration/configuration du module Expedition
+ *    \file       htdocs/admin/expedition.php
+ *    \ingroup    expedition
+ *    \brief      Page d'administration/configuration du module Expedition
  */
 
 require '../main.inc.php';
@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 $langs->loadLangs(array('admin', 'exports', 'other'));
 
 if (! $user->admin)
-	accessforbidden();
+    accessforbidden();
 
 $action=GETPOST('action', 'alpha');
 $value=GETPOST('value', 'alpha');

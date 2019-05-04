@@ -65,11 +65,11 @@ $ligne=new LignePrelevement($db, $user);
 
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
 {
-	$search_line="";
-	$search_bon="";
-	$search_code="";
+    $search_line="";
+    $search_bon="";
+    $search_code="";
     $search_company="";
-	$statut="";
+    $statut="";
 }
 
 
@@ -109,10 +109,10 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
     $result = $db->query($sql);
     $nbtotalofrecords = $db->num_rows($result);
-    if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+    if (($page * $limit) > $nbtotalofrecords)    // if total resultset is smaller then paging size (filtering), goto and load page 0
     {
-    	$page = 0;
-    	$offset = 0;
+        $page = 0;
+        $offset = 0;
     }
 }
 
@@ -126,14 +126,14 @@ if ($result)
 
     $urladd = "&amp;statut=".$statut;
     $urladd .= "&amp;search_bon=".$search_bon;
-	if ($limit > 0 && $limit != $conf->liste_limit) $urladd.='&limit='.urlencode($limit);
+    if ($limit > 0 && $limit != $conf->liste_limit) $urladd.='&limit='.urlencode($limit);
 
     print"\n<!-- debut table -->\n";
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="GET">';
 
-	print_barre_liste($langs->trans("WithdrawalsLines"), $page, $_SERVER["PHP_SELF"], $urladd, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_generic', 0, '', '', $limit);
+    print_barre_liste($langs->trans("WithdrawalsLines"), $page, $_SERVER["PHP_SELF"], $urladd, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_generic', 0, '', '', $limit);
 
-	$moreforfilter='';
+    $moreforfilter='';
 
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
@@ -161,7 +161,7 @@ if ($result)
     print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "p.datec", "", "", 'align="center"');
     print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "pl.amount", "", "", 'class="right"');
     print_liste_field_titre('');
-	print "</tr>\n";
+    print "</tr>\n";
 
     while ($i < min($num, $limit))
     {

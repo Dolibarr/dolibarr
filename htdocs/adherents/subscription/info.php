@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 $langs->loadLangs(array("companies","members","bills","users"));
 
 if (!$user->rights->adherent->lire)
-	accessforbidden();
+    accessforbidden();
 
 $rowid=GETPOST("rowid", 'int');
 

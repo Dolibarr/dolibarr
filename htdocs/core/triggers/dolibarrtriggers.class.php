@@ -21,118 +21,118 @@
 abstract class DolibarrTriggers
 {
 
-	/**
-	 * Database handler
-	 * @var DoliDB
-	 */
-	protected $db;
+    /**
+     * Database handler
+     * @var DoliDB
+     */
+    protected $db;
 
-	/**
-	 * Name of the trigger
-	 * @var mixed|string
-	 */
-	public $name = '';
+    /**
+     * Name of the trigger
+     * @var mixed|string
+     */
+    public $name = '';
 
-	/**
-	 * Description of the trigger
-	 * @var string
-	 */
-	public $description = '';
+    /**
+     * Description of the trigger
+     * @var string
+     */
+    public $description = '';
 
-	/**
-	 * Version of the trigger
-	 * @var string
-	 */
-	public $version = self::VERSION_DEVELOPMENT;
+    /**
+     * Version of the trigger
+     * @var string
+     */
+    public $version = self::VERSION_DEVELOPMENT;
 
-	/**
-	 * Image of the trigger
-	 * @var string
-	 */
-	public $picto = 'technic';
+    /**
+     * Image of the trigger
+     * @var string
+     */
+    public $picto = 'technic';
 
-	/**
-	 * Category of the trigger
-	 * @var string
-	 */
-	public $family = '';
+    /**
+     * Category of the trigger
+     * @var string
+     */
+    public $family = '';
 
-	/**
-	 * Error reported by the trigger
-	 * @var string
-	 * @deprecated Use $this->errors
-	 * @see $errors
-	 */
-	public $error = '';
+    /**
+     * Error reported by the trigger
+     * @var string
+     * @deprecated Use $this->errors
+     * @see $errors
+     */
+    public $error = '';
 
-	/**
-	 * Errors reported by the trigger
-	 * @var array
-	 */
-	public $errors = array();
+    /**
+     * Errors reported by the trigger
+     * @var array
+     */
+    public $errors = array();
 
-	const VERSION_DEVELOPMENT = 'development';
-	const VERSION_EXPERIMENTAL = 'experimental';
-	const VERSION_DOLIBARR = 'dolibarr';
+    const VERSION_DEVELOPMENT = 'development';
+    const VERSION_EXPERIMENTAL = 'experimental';
+    const VERSION_DOLIBARR = 'dolibarr';
 
-	/**
-	 * Constructor
-	 *
-	 * @param DoliDB $db Database handler
-	 */
+    /**
+     * Constructor
+     *
+     * @param DoliDB $db Database handler
+     */
     public function __construct(DoliDB $db)
     {
 
-		$this->db = $db;
+        $this->db = $db;
 
-		if (empty($this->name))
-		{
-			$this->name = preg_replace('/^Interface/i', '', get_class($this));
-		}
-	}
+        if (empty($this->name))
+        {
+            $this->name = preg_replace('/^Interface/i', '', get_class($this));
+        }
+    }
 
-	/**
-	 * Returns the name of the trigger file
-	 *
-	 * @return string
-	 */
-	public function getName()
-	{
-		return $this->name;
-	}
+    /**
+     * Returns the name of the trigger file
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
 
-	/**
-	 * Returns the description of trigger file
-	 *
-	 * @return string
-	 */
-	public function getDesc()
-	{
-		return $this->description;
-	}
+    /**
+     * Returns the description of trigger file
+     *
+     * @return string
+     */
+    public function getDesc()
+    {
+        return $this->description;
+    }
 
-	/**
-	 * Returns the version of the trigger file
-	 *
-	 * @return string Version of trigger file
-	 */
-	public function getVersion()
-	{
-		global $langs;
-		$langs->load("admin");
+    /**
+     * Returns the version of the trigger file
+     *
+     * @return string Version of trigger file
+     */
+    public function getVersion()
+    {
+        global $langs;
+        $langs->load("admin");
 
-		if ($this->version == self::VERSION_DEVELOPMENT) {
-			return $langs->trans("VersionDevelopment");
-		} elseif ($this->version == self::VERSION_EXPERIMENTAL) {
-			return $langs->trans("VersionExperimental");
-		} elseif ($this->version == self::VERSION_DOLIBARR) {
-			return DOL_VERSION;
-		} elseif ($this->version) {
-			return $this->version;
-		} else {
-			return $langs->trans("Unknown");
-		}
-	}
+        if ($this->version == self::VERSION_DEVELOPMENT) {
+            return $langs->trans("VersionDevelopment");
+        } elseif ($this->version == self::VERSION_EXPERIMENTAL) {
+            return $langs->trans("VersionExperimental");
+        } elseif ($this->version == self::VERSION_DOLIBARR) {
+            return DOL_VERSION;
+        } elseif ($this->version) {
+            return $this->version;
+        } else {
+            return $langs->trans("Unknown");
+        }
+    }
 
     /**
      *  Function called when a Dolibarrr business event is done.

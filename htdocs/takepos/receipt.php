@@ -20,12 +20,12 @@
  */
 
 /**
- *	\file       htdocs/takepos/floors.php
- *	\ingroup    takepos
- *	\brief      Page to show a receipt.
+ *    \file       htdocs/takepos/floors.php
+ *    \ingroup    takepos
+ *    \brief      Page to show a receipt.
  */
 
-require '../main.inc.php';	// Load $user and permissions
+require '../main.inc.php';    // Load $user and permissions
 include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 $langs->loadLangs(array("main", "cashdesk"));
@@ -81,8 +81,8 @@ $object->fetch($facid);
 $substitutionarray=getCommonSubstitutionArray($langs);
 if (! empty($conf->global->TAKEPOS_HEADER))
 {
-	$newfreetext=make_substitutions($conf->global->TAKEPOS_HEADER, $substitutionarray);
-	echo $newfreetext;
+    $newfreetext=make_substitutions($conf->global->TAKEPOS_HEADER, $substitutionarray);
+    echo $newfreetext;
 }
 ?>
 </p>
@@ -97,12 +97,12 @@ print $object->ref;
 
 <table width="100%" style="border-top-style: double;">
     <thead>
-	<tr>
+    <tr>
         <th class="center"><?php print $langs->trans("Label"); ?></th>
         <th class="right"><?php print $langs->trans("Qty"); ?></th>
         <th class="right"><?php print $langs->trans("Price"); ?></th>
         <th class="right"><?php print $langs->trans("TotalTTC"); ?></th>
-	</tr>
+    </tr>
     </thead>
     <tbody>
     <?php
@@ -130,30 +130,30 @@ print $object->ref;
 </tr>
 <?php if($conf->global->TAKEPOS_TICKET_VAT_GROUPPED):?>
 <?php
-	$vat_groups = array();
-	foreach ($object->lines as $line)
-	{
-		if(!array_key_exists($line->tva_tx, $vat_groups)){
-			$vat_groups[$line->tva_tx] = 0;
-		}
-		$vat_groups[$line->tva_tx] += $line->total_tva;
-	}
-	foreach($vat_groups as $key => $val){
-	?>
-	<tr>
-		<th align="right"><?php echo $langs->trans("VAT").' '.vatrate($key, 1);?></th>
-		<td align="right"><?php echo price($val, 1, '', 1, - 1, - 1, $conf->currency)."\n";?></td>
-	</tr>
+    $vat_groups = array();
+    foreach ($object->lines as $line)
+    {
+        if(!array_key_exists($line->tva_tx, $vat_groups)){
+            $vat_groups[$line->tva_tx] = 0;
+        }
+        $vat_groups[$line->tva_tx] += $line->total_tva;
+    }
+    foreach($vat_groups as $key => $val){
+    ?>
+    <tr>
+        <th align="right"><?php echo $langs->trans("VAT").' '.vatrate($key, 1);?></th>
+        <td align="right"><?php echo price($val, 1, '', 1, - 1, - 1, $conf->currency)."\n";?></td>
+    </tr>
 <?php
-	}
+    }
 ?>
 <?php else: ?>
 <tr>
-	<th class="right"><?php echo $langs->trans("TotalVAT").'</th><td class="right">'.price($object->total_tva, 1, '', 1, - 1, - 1, $conf->currency)."\n";?></td>
+    <th class="right"><?php echo $langs->trans("TotalVAT").'</th><td class="right">'.price($object->total_tva, 1, '', 1, - 1, - 1, $conf->currency)."\n";?></td>
 </tr>
 <?php endif ?>
 <tr>
-	<th class="right"><?php echo ''.$langs->trans("TotalTTC").'</th><td class="right">'.price($object->total_ttc, 1, '', 1, - 1, - 1, $conf->currency)."\n";?></td>
+    <th class="right"><?php echo ''.$langs->trans("TotalTTC").'</th><td class="right">'.price($object->total_ttc, 1, '', 1, - 1, - 1, $conf->currency)."\n";?></td>
 </tr>
 </table>
 <div style="border-top-style: double;">
@@ -164,8 +164,8 @@ print $object->ref;
 $substitutionarray=getCommonSubstitutionArray($langs);
 if (! empty($conf->global->TAKEPOS_FOOTER))
 {
-	$newfreetext=make_substitutions($conf->global->TAKEPOS_FOOTER, $substitutionarray);
-	echo $newfreetext;
+    $newfreetext=make_substitutions($conf->global->TAKEPOS_FOOTER, $substitutionarray);
+    echo $newfreetext;
 }
 ?>
 

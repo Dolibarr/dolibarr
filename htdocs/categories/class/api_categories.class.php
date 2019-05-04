@@ -70,10 +70,10 @@ class Categories extends DolibarrApi
      *
      * Return an array with category informations
      *
-     * @param 	int 	$id ID of category
-     * @return 	array|mixed data without useless information
+     * @param     int     $id ID of category
+     * @return     array|mixed data without useless information
      *
-     * @throws 	RestException
+     * @throws     RestException
      */
     public function get($id)
     {
@@ -98,11 +98,11 @@ class Categories extends DolibarrApi
      *
      * Get a list of categories
      *
-     * @param string	$sortfield	Sort field
-     * @param string	$sortorder	Sort order
-     * @param int		$limit		Limit for list
-     * @param int		$page		Page number
-     * @param string	$type		Type of category ('member', 'customer', 'supplier', 'product', 'contact')
+     * @param string    $sortfield    Sort field
+     * @param string    $sortorder    Sort order
+     * @param int        $limit        Limit for list
+     * @param int        $page        Page number
+     * @param string    $type        Type of category ('member', 'customer', 'supplier', 'product', 'contact')
      * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
      * @return array                Array of category objects
      *
@@ -137,7 +137,7 @@ class Categories extends DolibarrApi
         }
 
         $sql.= $db->order($sortfield, $sortorder);
-        if ($limit)	{
+        if ($limit)    {
             if ($page < 0)
             {
                 $page = 0;
@@ -354,15 +354,15 @@ class Categories extends DolibarrApi
      */
     public function getObjects($id, $type, $onlyids = 0)
     {
-		dol_syslog("getObjects($id, $type, $onlyids)", LOG_DEBUG);
+        dol_syslog("getObjects($id, $type, $onlyids)", LOG_DEBUG);
 
-		if (! DolibarrApiAccess::$user->rights->categorie->lire) {
-			throw new RestException(401);
-		}
+        if (! DolibarrApiAccess::$user->rights->categorie->lire) {
+            throw new RestException(401);
+        }
 
         if (empty($type))
         {
-			throw new RestException(500, 'The "type" parameter is required.');
+            throw new RestException(500, 'The "type" parameter is required.');
         }
 
         $result = $this->category->fetch($id);
@@ -370,34 +370,34 @@ class Categories extends DolibarrApi
             throw new RestException(404, 'category not found');
         }
 
-		if (! DolibarrApi::_checkAccessToResource('category', $this->category->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-		}
+        if (! DolibarrApi::_checkAccessToResource('category', $this->category->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
 
-		$result = $this->category->getObjectsInCateg($type, $onlyids);
+        $result = $this->category->getObjectsInCateg($type, $onlyids);
 
-		if ($result < 0) {
-			throw new RestException(503, 'Error when retrieving objects list : '.$this->category->error);
-		}
+        if ($result < 0) {
+            throw new RestException(503, 'Error when retrieving objects list : '.$this->category->error);
+        }
 
-		$objects = $result;
+        $objects = $result;
         $cleaned_objects = array();
         if ($type == 'member') {
-			$objects_api = new Members();
-		} elseif ($type == 'customer' || $type == 'supplier') {
-			$objects_api = new Thirdparties();
-		} elseif ($type == 'product') {
-			$objects_api = new Products();
-		} elseif ($type == 'contact') {
-			$objects_api = new Contacts();
-		}
-		if (is_object($objects_api))
-		{
-    		foreach ($objects as $obj) {
-    			$cleaned_objects[] = $objects_api->_cleanObjectDatas($obj);
-    		}
-		}
+            $objects_api = new Members();
+        } elseif ($type == 'customer' || $type == 'supplier') {
+            $objects_api = new Thirdparties();
+        } elseif ($type == 'product') {
+            $objects_api = new Products();
+        } elseif ($type == 'contact') {
+            $objects_api = new Contacts();
+        }
+        if (is_object($objects_api))
+        {
+            foreach ($objects as $obj) {
+                $cleaned_objects[] = $objects_api->_cleanObjectDatas($obj);
+            }
+        }
 
-		return $cleaned_objects;
+        return $cleaned_objects;
     }
 }

@@ -85,52 +85,52 @@ llxHeader("", $langs->trans("SalaryPayment"));
 
 if ($object->id)
 {
-	$object->fetch_thirdparty();
+    $object->fetch_thirdparty();
 
-	$head=salaries_prepare_head($object);
+    $head=salaries_prepare_head($object);
 
-	dol_fiche_head($head, 'documents', $langs->trans("SalaryPayment"), -1, 'payment');
+    dol_fiche_head($head, 'documents', $langs->trans("SalaryPayment"), -1, 'payment');
 
-	// Build file list
-	$filearray=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);
-	$totalsize=0;
-	foreach($filearray as $key => $file)
-	{
-		$totalsize+=$file['size'];
-	}
+    // Build file list
+    $filearray=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);
+    $totalsize=0;
+    foreach($filearray as $key => $file)
+    {
+        $totalsize+=$file['size'];
+    }
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/salaries/list.php?restore_lastsearch_values=1'.(! empty($socid)?'&socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+    $linkback = '<a href="'.DOL_URL_ROOT.'/compta/salaries/list.php?restore_lastsearch_values=1'.(! empty($socid)?'&socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
-	$morehtmlref='<div class="refidno">';
+    $morehtmlref='<div class="refidno">';
 
-	$userstatic=new User($db);
-	$userstatic->fetch($object->fk_user);
+    $userstatic=new User($db);
+    $userstatic->fetch($object->fk_user);
 
-	$morehtmlref.=$langs->trans('Employee') . ' : ' . $userstatic->getNomUrl(1);
-	$morehtmlref.='</div>';
+    $morehtmlref.=$langs->trans('Employee') . ' : ' . $userstatic->getNomUrl(1);
+    $morehtmlref.='</div>';
 
-	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', '');
+    dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', '');
 
-	print '<div class="fichecenter">';
-	print '<div class="underbanner clearboth"></div>';
+    print '<div class="fichecenter">';
+    print '<div class="underbanner clearboth"></div>';
 
-	print '<table class="border tableforfield centpercent">';
-	print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
-	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize, 1, 1).'</td></tr>';
-	print '</table>';
+    print '<table class="border tableforfield centpercent">';
+    print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
+    print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize, 1, 1).'</td></tr>';
+    print '</table>';
 
-	print '</div>';
+    print '</div>';
 
-	dol_fiche_end();
+    dol_fiche_end();
 
-	$modulepart = 'salaries';
-	$permission = $user->rights->salaries->write;
-	$param = '&id=' . $object->id;
-	include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
+    $modulepart = 'salaries';
+    $permission = $user->rights->salaries->write;
+    $param = '&id=' . $object->id;
+    include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 }
 else
 {
-	print $langs->trans("ErrorUnknown");
+    print $langs->trans("ErrorUnknown");
 }
 
 // End of page

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2005 Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2005 Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Eric Seigne			<erics@rycks.com>
  * Copyright (C) 2004-2009 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin		<regis.houssin@inodbox.com>
@@ -39,9 +39,9 @@ $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
 $offset = $limit * $page ;
 
 $type=GETPOST('type', 'alpha');
-$search_lastname=GETPOST('search_nom')?GETPOST('search_nom'):GETPOST('search_lastname');			// For backward compatibility
-$search_firstname=GETPOST('search_firstname')?GETPOST('search_firstname'):GETPOST('search_firstname');	// For backward compatibility
-$search_company=GETPOST('search_societe')?GETPOST('search_societe'):GETPOST('search_company');		// For backward compatibility
+$search_lastname=GETPOST('search_nom')?GETPOST('search_nom'):GETPOST('search_lastname');            // For backward compatibility
+$search_firstname=GETPOST('search_firstname')?GETPOST('search_firstname'):GETPOST('search_firstname');    // For backward compatibility
+$search_company=GETPOST('search_societe')?GETPOST('search_societe'):GETPOST('search_company');        // For backward compatibility
 $contactname=GETPOST('contactname');
 $begin=GETPOST('begin', 'alpha');
 
@@ -119,57 +119,57 @@ $sql.= $db->plimit($limit+1, $offset);
 $resql = $db->query($sql);
 if ($resql)
 {
-	$num = $db->num_rows($resql);
+    $num = $db->num_rows($resql);
 
-	$param="&type=".$type;
+    $param="&type=".$type;
 
-	$title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("ListOfContacts") : $langs->trans("ListOfContactsAddresses"));
-	print_barre_liste($title.($label?" (".$label.")":""), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, "", $num);
+    $title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("ListOfContacts") : $langs->trans("ListOfContactsAddresses"));
+    print_barre_liste($title.($label?" (".$label.")":""), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, "", $num);
 
-	print '<form action="'.$_SERVER["PHP_SELF"].'?type='.GETPOST("type", "alpha").'" method="GET">';
+    print '<form action="'.$_SERVER["PHP_SELF"].'?type='.GETPOST("type", "alpha").'" method="GET">';
 
-	print '<table class="liste" width="100%">';
-	print '<tr class="liste_titre">';
-	print_liste_field_titre("Lastname", $_SERVER["PHP_SELF"], "p.name", $begin, $param, "", $sortfield, $sortorder);
-	print_liste_field_titre("Firstname", $_SERVER["PHP_SELF"], "p.firstname", $begin, $param, "", $sortfield, $sortorder);
-	print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "s.nom", $begin, $param, "", $sortfield, $sortorder);
-	print_liste_field_titre("Email");
-	print_liste_field_titre("Phone");
-	print "</tr>\n";
+    print '<table class="liste" width="100%">';
+    print '<tr class="liste_titre">';
+    print_liste_field_titre("Lastname", $_SERVER["PHP_SELF"], "p.name", $begin, $param, "", $sortfield, $sortorder);
+    print_liste_field_titre("Firstname", $_SERVER["PHP_SELF"], "p.firstname", $begin, $param, "", $sortfield, $sortorder);
+    print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "s.nom", $begin, $param, "", $sortfield, $sortorder);
+    print_liste_field_titre("Email");
+    print_liste_field_titre("Phone");
+    print "</tr>\n";
 
-	print '<tr class="liste_titre">';
-	print '<td class="liste_titre"><input class="flat" name="search_lastname" size="12" value="'.$search_lastname.'"></td>';
-	print '<td class="liste_titre"><input class="flat" name="search_firstname" size="12"  value="'.$search_firstname.'"></td>';
-	print '<td class="liste_titre"><input class="flat" name="search_company" size="12"  value="'.$search_company.'"></td>';
-	print '<td class="liste_titre">&nbsp;</td>';
-	print '<td class="liste_titre right"><input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"), 'search.png', '', '', 1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'"></td>';
-	print "</tr>\n";
+    print '<tr class="liste_titre">';
+    print '<td class="liste_titre"><input class="flat" name="search_lastname" size="12" value="'.$search_lastname.'"></td>';
+    print '<td class="liste_titre"><input class="flat" name="search_firstname" size="12"  value="'.$search_firstname.'"></td>';
+    print '<td class="liste_titre"><input class="flat" name="search_company" size="12"  value="'.$search_company.'"></td>';
+    print '<td class="liste_titre">&nbsp;</td>';
+    print '<td class="liste_titre right"><input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"), 'search.png', '', '', 1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'"></td>';
+    print "</tr>\n";
 
-	$i = 0;
-	while ($i < min($num, $limit))
-	{
-		$obj = $db->fetch_object($resql);
+    $i = 0;
+    while ($i < min($num, $limit))
+    {
+        $obj = $db->fetch_object($resql);
 
-		print '<tr class="oddeven">';
-		print '<td><a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$obj->cidp.'&socid='.$obj->rowid.'">'.img_object($langs->trans("ShowContact"), "contact");
-		print '</a>&nbsp;<a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$obj->cidp.'&socid='.$obj->rowid.'">'.$obj->name.'</a></td>';
-		print "<td>$obj->firstname</TD>";
+        print '<tr class="oddeven">';
+        print '<td><a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$obj->cidp.'&socid='.$obj->rowid.'">'.img_object($langs->trans("ShowContact"), "contact");
+        print '</a>&nbsp;<a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$obj->cidp.'&socid='.$obj->rowid.'">'.$obj->name.'</a></td>';
+        print "<td>$obj->firstname</TD>";
 
-		print '<td><a href="'.$_SERVER["PHP_SELF"].'?type='.$type.'&socid='.$obj->rowid.'">'.img_object($langs->trans("ShowCompany"), "company").'</a>&nbsp;';
-		print "<a href=\"".$urlfiche."?socid=".$obj->rowid."\">$obj->name</a></td>\n";
+        print '<td><a href="'.$_SERVER["PHP_SELF"].'?type='.$type.'&socid='.$obj->rowid.'">'.img_object($langs->trans("ShowCompany"), "company").'</a>&nbsp;';
+        print "<a href=\"".$urlfiche."?socid=".$obj->rowid."\">$obj->name</a></td>\n";
 
-		print '<td>'.dol_print_phone($obj->email, $obj->cidp, $obj->rowid, 'AC_EMAIL').'</td>';
+        print '<td>'.dol_print_phone($obj->email, $obj->cidp, $obj->rowid, 'AC_EMAIL').'</td>';
 
-		print '<td>'.dol_print_phone($obj->phone, $obj->country_code, $obj->cidp, $obj->rowid, 'AC_TEL').'&nbsp;</td>';
+        print '<td>'.dol_print_phone($obj->phone, $obj->country_code, $obj->cidp, $obj->rowid, 'AC_TEL').'&nbsp;</td>';
 
-		print "</tr>\n";
-		$i++;
-	}
-	print "</table>";
+        print "</tr>\n";
+        $i++;
+    }
+    print "</table>";
 
-	print '</form>';
+    print '</form>';
 
-	$db->free($resql);
+    $db->free($resql);
 }
 else
 {

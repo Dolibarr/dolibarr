@@ -62,7 +62,7 @@ $object = new Ticket($db);
 $result = $object->fetch($id, $ref, $track_id);
 
 if ($result < 0) {
-	setEventMessages($object->error, $object->errors, 'errors');
+    setEventMessages($object->error, $object->errors, 'errors');
 } else {
     $upload_dir = $conf->ticket->dir_output . "/" . dol_sanitizeFileName($object->ref);
 }
@@ -87,9 +87,9 @@ llxHeader('', $langs->trans("TicketDocumentsLinked") . ' - ' . $langs->trans("Fi
 
 if ($object->id)
 {
-	/*
-	 * Show tabs
-	 */
+    /*
+     * Show tabs
+     */
     if ($socid > 0) {
         $object->fetch_thirdparty();
         $head = societe_prepare_head($object->thirdparty);
@@ -112,63 +112,63 @@ if ($object->id)
     $morehtmlref.= $object->subject;
     // Author
     if ($object->fk_user_create > 0) {
-    	$morehtmlref .= '<br>' . $langs->trans("CreatedBy") . '  : ';
+        $morehtmlref .= '<br>' . $langs->trans("CreatedBy") . '  : ';
 
-    	$langs->load("users");
-    	$fuser = new User($db);
-    	$fuser->fetch($object->fk_user_create);
-    	$morehtmlref .= $fuser->getNomUrl(0);
+        $langs->load("users");
+        $fuser = new User($db);
+        $fuser->fetch($object->fk_user_create);
+        $morehtmlref .= $fuser->getNomUrl(0);
     }
     if (!empty($object->origin_email)) {
-    	$morehtmlref .= '<br>' . $langs->trans("CreatedBy") . ' : ';
-    	$morehtmlref .= $object->origin_email . ' <small>(' . $langs->trans("TicketEmailOriginIssuer") . ')</small>';
+        $morehtmlref .= '<br>' . $langs->trans("CreatedBy") . ' : ';
+        $morehtmlref .= $object->origin_email . ' <small>(' . $langs->trans("TicketEmailOriginIssuer") . ')</small>';
     }
 
     // Thirdparty
     if (! empty($conf->societe->enabled))
     {
-    	$morehtmlref.='<br>'.$langs->trans('ThirdParty');
-    	/*if ($action != 'editcustomer' && $object->fk_statut < 8 && !$user->societe_id && $user->rights->ticket->write) {
-    		$morehtmlref.='<a href="' . $url_page_current . '?action=editcustomer&amp;track_id=' . $object->track_id . '">' . img_edit($langs->transnoentitiesnoconv('Edit'), 1) . '</a>';
-    	}*/
-    	$morehtmlref.=' : ';
-    	if ($action == 'editcustomer') {
-    		$morehtmlref.=$form->form_thirdparty($url_page_current . '?track_id=' . $object->track_id, $object->socid, 'editcustomer', '', 1, 0, 0, array(), 1);
-    	} else {
-    		$morehtmlref.=$form->form_thirdparty($url_page_current . '?track_id=' . $object->track_id, $object->socid, 'none', '', 1, 0, 0, array(), 1);
-    	}
+        $morehtmlref.='<br>'.$langs->trans('ThirdParty');
+        /*if ($action != 'editcustomer' && $object->fk_statut < 8 && !$user->societe_id && $user->rights->ticket->write) {
+            $morehtmlref.='<a href="' . $url_page_current . '?action=editcustomer&amp;track_id=' . $object->track_id . '">' . img_edit($langs->transnoentitiesnoconv('Edit'), 1) . '</a>';
+        }*/
+        $morehtmlref.=' : ';
+        if ($action == 'editcustomer') {
+            $morehtmlref.=$form->form_thirdparty($url_page_current . '?track_id=' . $object->track_id, $object->socid, 'editcustomer', '', 1, 0, 0, array(), 1);
+        } else {
+            $morehtmlref.=$form->form_thirdparty($url_page_current . '?track_id=' . $object->track_id, $object->socid, 'none', '', 1, 0, 0, array(), 1);
+        }
     }
 
     // Project
     if (! empty($conf->projet->enabled))
     {
-    	$langs->load("projects");
-    	$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
-    	if ($user->rights->ticket->write)
-    	{
-    		if ($action != 'classify')
-    			//$morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a>';
-    			$morehtmlref.=' : ';
-    			if ($action == 'classify') {
-    				//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
-    				$morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-    				$morehtmlref.='<input type="hidden" name="action" value="classin">';
-    				$morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    				$morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', 0, 0, 1, 0, 1, 0, 0, '', 1);
-    				$morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-    				$morehtmlref.='</form>';
-    			} else {
-    				$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
-    			}
-    	} else {
-    		if (! empty($object->fk_project)) {
-    			$proj = new Project($db);
-    			$proj->fetch($object->fk_project);
-    			$morehtmlref.=$proj->getNomUrl(1);
-    		} else {
-    			$morehtmlref.='';
-    		}
-    	}
+        $langs->load("projects");
+        $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
+        if ($user->rights->ticket->write)
+        {
+            if ($action != 'classify')
+                //$morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a>';
+                $morehtmlref.=' : ';
+                if ($action == 'classify') {
+                    //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+                    $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+                    $morehtmlref.='<input type="hidden" name="action" value="classin">';
+                    $morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+                    $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', 0, 0, 1, 0, 1, 0, 0, '', 1);
+                    $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+                    $morehtmlref.='</form>';
+                } else {
+                    $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+                }
+        } else {
+            if (! empty($object->fk_project)) {
+                $proj = new Project($db);
+                $proj->fetch($object->fk_project);
+                $morehtmlref.=$proj->getNomUrl(1);
+            } else {
+                $morehtmlref.='';
+            }
+        }
     }
 
     $morehtmlref.='</div>';
@@ -186,13 +186,13 @@ if ($object->id)
         $totalsize += $file['size'];
     }
 
-    //$object->ref = $object->track_id;	// For compatibility we use track ID for directory
+    //$object->ref = $object->track_id;    // For compatibility we use track ID for directory
     $modulepart = 'ticket';
-  	$permission = $user->rights->ticket->write;
-  	$permtoedit = $user->rights->ticket->write;
-  	$param = '&id=' . $object->id;
+      $permission = $user->rights->ticket->write;
+      $permtoedit = $user->rights->ticket->write;
+      $param = '&id=' . $object->id;
 
-  	include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
+      include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 }
 else
 {

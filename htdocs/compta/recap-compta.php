@@ -19,7 +19,7 @@
 
 /**
  *  \file       htdocs/compta/recap-compta.php
- *	\ingroup    compta
+ *    \ingroup    compta
  *  \brief      Page de fiche recap customer
  */
 
@@ -95,205 +95,205 @@ if ($id > 0)
 
     $head = societe_prepare_head($object);
 
-	dol_fiche_head($head, 'customer', $langs->trans("ThirdParty"), 0, 'company');
-	dol_banner_tab($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom', '', '', 0, '', '', 1);
-	dol_fiche_end();
+    dol_fiche_head($head, 'customer', $langs->trans("ThirdParty"), 0, 'company');
+    dol_banner_tab($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom', '', '', 0, '', '', 1);
+    dol_fiche_end();
 
-	if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
-	{
-		// Invoice list
-		print load_fiche_titre($langs->trans("CustomerPreview"));
+    if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
+    {
+        // Invoice list
+        print load_fiche_titre($langs->trans("CustomerPreview"));
 
-		print '<table class="noborder tagtable liste" width="100%">';
-		print '<tr class="liste_titre">';
+        print '<table class="noborder tagtable liste" width="100%">';
+        print '<tr class="liste_titre">';
         if (! empty($arrayfields['f.datef']['checked']))  print_liste_field_titre($arrayfields['f.datef']['label'], $_SERVER["PHP_SELF"], "f.datef", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
-		print '<td>'.$langs->trans("Element").'</td>';
-		print '<td>'.$langs->trans("Status").'</td>';
-		print '<td class="right">'.$langs->trans("Debit").'</td>';
-		print '<td class="right">'.$langs->trans("Credit").'</td>';
-		print '<td class="right">'.$langs->trans("Balance").'</td>';
-		print '<td class="right">'.$langs->trans("Author").'</td>';
-		print '</tr>';
+        print '<td>'.$langs->trans("Element").'</td>';
+        print '<td>'.$langs->trans("Status").'</td>';
+        print '<td class="right">'.$langs->trans("Debit").'</td>';
+        print '<td class="right">'.$langs->trans("Credit").'</td>';
+        print '<td class="right">'.$langs->trans("Balance").'</td>';
+        print '<td class="right">'.$langs->trans("Author").'</td>';
+        print '</tr>';
 
-		$TData = array();
+        $TData = array();
 
-		$sql = "SELECT s.nom, s.rowid as socid, f.ref, f.amount, f.datef as df,";
-		$sql.= " f.paye as paye, f.fk_statut as statut, f.rowid as facid,";
-		$sql.= " u.login, u.rowid as userid";
-		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f,".MAIN_DB_PREFIX."user as u";
-		$sql.= " WHERE f.fk_soc = s.rowid AND s.rowid = ".$object->id;
-		$sql.= " AND f.entity IN (".getEntity('invoice').")";
-		$sql.= " AND f.fk_user_valid = u.rowid";
-		$sql.= $db->order($sortfield, $sortorder);
+        $sql = "SELECT s.nom, s.rowid as socid, f.ref, f.amount, f.datef as df,";
+        $sql.= " f.paye as paye, f.fk_statut as statut, f.rowid as facid,";
+        $sql.= " u.login, u.rowid as userid";
+        $sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f,".MAIN_DB_PREFIX."user as u";
+        $sql.= " WHERE f.fk_soc = s.rowid AND s.rowid = ".$object->id;
+        $sql.= " AND f.entity IN (".getEntity('invoice').")";
+        $sql.= " AND f.fk_user_valid = u.rowid";
+        $sql.= $db->order($sortfield, $sortorder);
 
-		$resql=$db->query($sql);
-		if ($resql)
-		{
-			$num = $db->num_rows($resql);
+        $resql=$db->query($sql);
+        if ($resql)
+        {
+            $num = $db->num_rows($resql);
 
-			// Boucle sur chaque facture
-			for ($i = 0 ; $i < $num ; $i++)
-			{
-				$objf = $db->fetch_object($resql);
+            // Boucle sur chaque facture
+            for ($i = 0 ; $i < $num ; $i++)
+            {
+                $objf = $db->fetch_object($resql);
 
-				$fac = new Facture($db);
-				$ret=$fac->fetch($objf->facid);
-				if ($ret < 0)
-				{
-					print $fac->error."<br>";
-					continue;
-				}
-				$totalpaye = $fac->getSommePaiement();
+                $fac = new Facture($db);
+                $ret=$fac->fetch($objf->facid);
+                if ($ret < 0)
+                {
+                    print $fac->error."<br>";
+                    continue;
+                }
+                $totalpaye = $fac->getSommePaiement();
 
-				$userstatic->id=$objf->userid;
-				$userstatic->login=$objf->login;
+                $userstatic->id=$objf->userid;
+                $userstatic->login=$objf->login;
 
-				$values = array(
-					'fk_facture' => $objf->facid,
-					'date' => $fac->date,
-					'datefieldforsort' => $fac->date.'-'.$fac->ref,
-					'link' => $fac->getNomUrl(1),
-					'status' => $fac->getLibStatut(2, $totalpaye),
-					'amount' => $fac->total_ttc,
-					'author' => $userstatic->getLoginUrl(1)
-				);
+                $values = array(
+                    'fk_facture' => $objf->facid,
+                    'date' => $fac->date,
+                    'datefieldforsort' => $fac->date.'-'.$fac->ref,
+                    'link' => $fac->getNomUrl(1),
+                    'status' => $fac->getLibStatut(2, $totalpaye),
+                    'amount' => $fac->total_ttc,
+                    'author' => $userstatic->getLoginUrl(1)
+                );
 
-				$parameters = array('socid' => $id, 'values' => &$values, 'fac' => $fac, 'userstatic' => $userstatic);
-				$reshook = $hookmanager->executeHooks('facdao', $parameters, $object); // Note that $parameters['values'] and $object may have been modified by some hooks
-				if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+                $parameters = array('socid' => $id, 'values' => &$values, 'fac' => $fac, 'userstatic' => $userstatic);
+                $reshook = $hookmanager->executeHooks('facdao', $parameters, $object); // Note that $parameters['values'] and $object may have been modified by some hooks
+                if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-				$TData[] = $values;
+                $TData[] = $values;
 
-				// Paiements
-				$sql = "SELECT p.rowid, p.datep as dp, pf.amount, p.statut,";
-				$sql.= " p.fk_user_creat, u.login, u.rowid as userid";
-				$sql.= " FROM ".MAIN_DB_PREFIX."paiement_facture as pf,";
-				$sql.= " ".MAIN_DB_PREFIX."paiement as p";
-				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON p.fk_user_creat = u.rowid";
-				$sql.= " WHERE pf.fk_paiement = p.rowid";
-				$sql.= " AND p.entity = ".$conf->entity;
-				$sql.= " AND pf.fk_facture = ".$fac->id;
-				$sql.= " ORDER BY p.datep ASC, p.rowid ASC";
+                // Paiements
+                $sql = "SELECT p.rowid, p.datep as dp, pf.amount, p.statut,";
+                $sql.= " p.fk_user_creat, u.login, u.rowid as userid";
+                $sql.= " FROM ".MAIN_DB_PREFIX."paiement_facture as pf,";
+                $sql.= " ".MAIN_DB_PREFIX."paiement as p";
+                $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON p.fk_user_creat = u.rowid";
+                $sql.= " WHERE pf.fk_paiement = p.rowid";
+                $sql.= " AND p.entity = ".$conf->entity;
+                $sql.= " AND pf.fk_facture = ".$fac->id;
+                $sql.= " ORDER BY p.datep ASC, p.rowid ASC";
 
-				$resqlp = $db->query($sql);
-				if ($resqlp)
-				{
-					$nump = $db->num_rows($resqlp);
-					$j = 0;
+                $resqlp = $db->query($sql);
+                if ($resqlp)
+                {
+                    $nump = $db->num_rows($resqlp);
+                    $j = 0;
 
-					while ($j < $nump)
-					{
-						$objp = $db->fetch_object($resqlp);
+                    while ($j < $nump)
+                    {
+                        $objp = $db->fetch_object($resqlp);
 
-						$paymentstatic = new Paiement($db);
-						$paymentstatic->id = $objp->rowid;
+                        $paymentstatic = new Paiement($db);
+                        $paymentstatic->id = $objp->rowid;
 
-						$userstatic->id=$objp->userid;
-						$userstatic->login=$objp->login;
+                        $userstatic->id=$objp->userid;
+                        $userstatic->login=$objp->login;
 
-						$values = array(
-						'fk_paiement' => $objp->rowid,
-							'date' => $db->jdate($objp->dp),
-							'datefieldforsort' => $db->jdate($objp->dp).'-'.$fac->ref,
-							'link' => $langs->trans("Payment") .' '. $paymentstatic->getNomUrl(1),
-							'status' => '',
-							'amount' => -$objp->amount,
-							'author' => $userstatic->getLoginUrl(1)
-						);
+                        $values = array(
+                        'fk_paiement' => $objp->rowid,
+                            'date' => $db->jdate($objp->dp),
+                            'datefieldforsort' => $db->jdate($objp->dp).'-'.$fac->ref,
+                            'link' => $langs->trans("Payment") .' '. $paymentstatic->getNomUrl(1),
+                            'status' => '',
+                            'amount' => -$objp->amount,
+                            'author' => $userstatic->getLoginUrl(1)
+                        );
 
-						$parameters = array('socid' => $id, 'values' => &$values, 'fac' => $fac, 'userstatic' => $userstatic, 'paymentstatic' => $paymentstatic);
-						$reshook = $hookmanager->executeHooks('paydao', $parameters, $object); // Note that $parameters['values'] and $object may have been modified by some hooks
-						if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+                        $parameters = array('socid' => $id, 'values' => &$values, 'fac' => $fac, 'userstatic' => $userstatic, 'paymentstatic' => $paymentstatic);
+                        $reshook = $hookmanager->executeHooks('paydao', $parameters, $object); // Note that $parameters['values'] and $object may have been modified by some hooks
+                        if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-						$TData[] = $values;
+                        $TData[] = $values;
 
-						$j++;
-					}
+                        $j++;
+                    }
 
-					$db->free($resqlp);
-				}
-				else
-				{
-					dol_print_error($db);
-				}
-			}
-		}
-		else
-		{
-			dol_print_error($db);
-		}
+                    $db->free($resqlp);
+                }
+                else
+                {
+                    dol_print_error($db);
+                }
+            }
+        }
+        else
+        {
+            dol_print_error($db);
+        }
 
-		if(empty($TData)) {
-			print '<tr class="oddeven"><td colspan="7">'.$langs->trans("NoInvoice").'</td></tr>';
-		} else {
+        if(empty($TData)) {
+            print '<tr class="oddeven"><td colspan="7">'.$langs->trans("NoInvoice").'</td></tr>';
+        } else {
 
-			// Sort array by date ASC to calucalte balance
-			$TData = dol_sort_array($TData, 'datefieldforsort', 'ASC');
+            // Sort array by date ASC to calucalte balance
+            $TData = dol_sort_array($TData, 'datefieldforsort', 'ASC');
 
-			// Balance calculation
-			$balance = 0;
-			foreach($TData as &$data1) {
-				$balance += $data1['amount'];
-				$data1['balance'] += $balance;
-			}
+            // Balance calculation
+            $balance = 0;
+            foreach($TData as &$data1) {
+                $balance += $data1['amount'];
+                $data1['balance'] += $balance;
+            }
 
-			// Resorte array to have elements on the required $sortorder
-			$TData = dol_sort_array($TData, 'datefieldforsort', $sortorder);
+            // Resorte array to have elements on the required $sortorder
+            $TData = dol_sort_array($TData, 'datefieldforsort', $sortorder);
 
-			$totalDebit = 0;
-			$totalCredit = 0;
+            $totalDebit = 0;
+            $totalCredit = 0;
 
-			// Display array
-			foreach($TData as $data) {
+            // Display array
+            foreach($TData as $data) {
 
-				$html_class = '';
-				if (!empty($data['fk_facture'])) $html_class = 'facid-'.$data['fk_facture'];
-				elseif (!empty($data['fk_paiement'])) $html_class = 'payid-'.$data['fk_paiement'];
+                $html_class = '';
+                if (!empty($data['fk_facture'])) $html_class = 'facid-'.$data['fk_facture'];
+                elseif (!empty($data['fk_paiement'])) $html_class = 'payid-'.$data['fk_paiement'];
 
-				print '<tr class="oddeven '.$html_class.'">';
+                print '<tr class="oddeven '.$html_class.'">';
 
-				print "<td class=\"center\">";
-				if (!empty($data['fk_facture'])) print dol_print_date($data['date'], 'day');
-				elseif (!empty($data['fk_paiement'])) print dol_print_date($data['date'], 'dayhour');
-				print "</td>\n";
+                print "<td class=\"center\">";
+                if (!empty($data['fk_facture'])) print dol_print_date($data['date'], 'day');
+                elseif (!empty($data['fk_paiement'])) print dol_print_date($data['date'], 'dayhour');
+                print "</td>\n";
 
-				print '<td>'.$data['link']."</td>\n";
+                print '<td>'.$data['link']."</td>\n";
 
-				print '<td class="left">'.$data['status'].'</td>';
+                print '<td class="left">'.$data['status'].'</td>';
 
-				print '<td class="right">'.(($data['amount'] > 0) ? price(abs($data['amount'])) : '')."</td>\n";
+                print '<td class="right">'.(($data['amount'] > 0) ? price(abs($data['amount'])) : '')."</td>\n";
 
-				$totalDebit += ($data['amount'] > 0) ? abs($data['amount']) : 0;
+                $totalDebit += ($data['amount'] > 0) ? abs($data['amount']) : 0;
 
-				print '<td class="right">'.(($data['amount'] > 0) ? '' : price(abs($data['amount'])))."</td>\n";
-				$totalCredit += ($data['amount'] > 0) ? 0 : abs($data['amount']);
+                print '<td class="right">'.(($data['amount'] > 0) ? '' : price(abs($data['amount'])))."</td>\n";
+                $totalCredit += ($data['amount'] > 0) ? 0 : abs($data['amount']);
 
-				// Balance
-				print '<td class="right">'.price($data['balance'])."</td>\n";
+                // Balance
+                print '<td class="right">'.price($data['balance'])."</td>\n";
 
-				// Author
-				print '<td class="nowrap right">';
-				print $data['author'];
-				print '</td>';
+                // Author
+                print '<td class="nowrap right">';
+                print $data['author'];
+                print '</td>';
 
-				print "</tr>\n";
-			}
+                print "</tr>\n";
+            }
 
-			print '<tr class="liste_total">';
-			print '<td colspan="3">&nbsp;</td>';
-			print '<td class="right">'.price($totalDebit).'</td>';
-			print '<td class="right">'.price($totalCredit).'</td>';
-			print '<td class="right">'.price(price2num($totalDebit - $totalCredit, 'MT')).'</td>';
-			print '<td></td>';
-			print "</tr>\n";
-		}
+            print '<tr class="liste_total">';
+            print '<td colspan="3">&nbsp;</td>';
+            print '<td class="right">'.price($totalDebit).'</td>';
+            print '<td class="right">'.price($totalCredit).'</td>';
+            print '<td class="right">'.price(price2num($totalDebit - $totalCredit, 'MT')).'</td>';
+            print '<td></td>';
+            print "</tr>\n";
+        }
 
-		print "</table>";
-	}
+        print "</table>";
+    }
 }
 else
 {
-	dol_print_error($db);
+    dol_print_error($db);
 }
 
 llxFooter();

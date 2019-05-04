@@ -23,19 +23,19 @@
  *       \brief      File to return a page with search boxes
  */
 
-//if (! defined('NOREQUIREUSER'))   define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
-//if (! defined('NOREQUIREDB'))   define('NOREQUIREDB','1');		// Not disabled cause need to load personalized language
+//if (! defined('NOREQUIREUSER'))   define('NOREQUIREUSER','1');    // Not disabled cause need to load personalized language
+//if (! defined('NOREQUIREDB'))   define('NOREQUIREDB','1');        // Not disabled cause need to load personalized language
 //if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC','1');
-//if (! defined('NOREQUIRETRAN')) define('NOREQUIRETRAN','1');		// Not disabled cause need to do translations
+//if (! defined('NOREQUIRETRAN')) define('NOREQUIRETRAN','1');        // Not disabled cause need to do translations
 if (! defined('NOCSRFCHECK'))     define('NOCSRFCHECK', 1);
 if (! defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL', 1);
-//if (! defined('NOLOGIN')) define('NOLOGIN',1);					// Not disabled cause need to load personalized language
+//if (! defined('NOLOGIN')) define('NOLOGIN',1);                    // Not disabled cause need to load personalized language
 if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', 1);
 //if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML',1);
 
 require_once '../main.inc.php';
 
-if (GETPOST('lang', 'aZ09')) $langs->setDefaultLang(GETPOST('lang', 'aZ09'));	// If language was forced on URL by the main.inc.php
+if (GETPOST('lang', 'aZ09')) $langs->setDefaultLang(GETPOST('lang', 'aZ09'));    // If language was forced on URL by the main.inc.php
 
 $langs->load("main");
 
@@ -78,10 +78,10 @@ if ($conf->use_javascript_ajax && 1 == 2)   // select2 is ko with jmobile
 else
 {
     $usedbyinclude = 1; // Used into next include
-	$showtitlebefore = GETPOST('showtitlebefore', 'int');
-	include DOL_DOCUMENT_ROOT.'/core/ajax/selectsearchbox.php';
+    $showtitlebefore = GETPOST('showtitlebefore', 'int');
+    include DOL_DOCUMENT_ROOT.'/core/ajax/selectsearchbox.php';
 
-	$i=0;
+    $i=0;
     $accesskeyalreadyassigned=array();
     foreach($arrayresult as $key => $val)
     {
@@ -106,7 +106,7 @@ $parameters=array('searchform'=>$searchform);
 $reshook=$hookmanager->executeHooks('printSearchForm', $parameters);    // Note that $action and $object may have been modified by some hooks
 if (empty($reshook))
 {
-	$searchform.=$hookmanager->resPrint;
+    $searchform.=$hookmanager->resPrint;
 }
 else $searchform=$hookmanager->resPrint;
 

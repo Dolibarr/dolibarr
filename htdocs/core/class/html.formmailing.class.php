@@ -16,9 +16,9 @@
 */
 
 /**
- *	\file       htdocs/core/class/html.formmailing.class.php
+ *    \file       htdocs/core/class/html.formmailing.class.php
  *  \ingroup    core
- *	\brief      File of predefined functions for HTML forms for mailing module
+ *    \brief      File of predefined functions for HTML forms for mailing module
  */
 require_once DOL_DOCUMENT_ROOT .'/core/class/html.form.class.php';
 

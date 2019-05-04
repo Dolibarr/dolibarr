@@ -62,16 +62,16 @@ $classname=$InfoFieldList[0];
 $classpath=$InfoFieldList[1];
 if (! empty($classpath))
 {
-	dol_include_once($classpath);
-	if ($classname && class_exists($classname))
-	{
-		$objecttmp = new $classname($db);
-	}
+    dol_include_once($classpath);
+    if ($classname && class_exists($classname))
+    {
+        $objecttmp = new $classname($db);
+    }
 }
 if (! is_object($objecttmp))
 {
-	dol_syslog('Error bad param objectdesc', LOG_WARNING);
-	print 'Error bad param objectdesc';
+    dol_syslog('Error bad param objectdesc', LOG_WARNING);
+    print 'Error bad param objectdesc';
 }
 
 // When used from jQuery, the search term is added as GET param "term".

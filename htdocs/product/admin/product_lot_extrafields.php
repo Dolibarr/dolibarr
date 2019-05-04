@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2002    Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2003		Jean-Louis Bergamo		<jlb@j1b.org>
  * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Marcos García			<marcosgdf@gmail.com>
@@ -21,8 +21,8 @@
 
 /**
  *      \file       htdocs/product/admin/product_lot_extrafields.php
- *		\ingroup    societe
- *		\brief      Page to setup extra fields of third party
+ *        \ingroup    societe
+ *        \brief      Page to setup extra fields of third party
  */
 
 require '../../main.inc.php';
@@ -91,14 +91,14 @@ if ($action != 'create' && $action != 'edit')
 
 /* ************************************************************************** */
 /*                                                                            */
-/* Creation of an optional field											  */
+/* Creation of an optional field                                              */
 /*                                                                            */
 /* ************************************************************************** */
 
 if ($action == 'create')
 {
-	print '<br><div id="newattrib"></div>';
-	print load_fiche_titre($langs->trans('NewAttribute'));
+    print '<br><div id="newattrib"></div>';
+    print load_fiche_titre($langs->trans('NewAttribute'));
 
     require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_add.tpl.php';
 }

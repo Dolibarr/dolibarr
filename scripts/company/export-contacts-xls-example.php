@@ -30,13 +30,13 @@ $path=dirname(__FILE__).'/';
 
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
-	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-	exit(-1);
+    echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
+    exit(-1);
 }
 
 if (! isset($argv[1]) || ! $argv[1]) {
-	print "Usage: $script_file now\n";
-	exit(-1);
+    print "Usage: $script_file now\n";
+    exit(-1);
 }
 $now=$argv[1];
 
@@ -86,30 +86,30 @@ $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on s.rowid = c.fk_soc";
 $resql=$db->query($sql);
 if ($resql)
 {
-	$num = $db->num_rows($resql);
+    $num = $db->num_rows($resql);
 
-	print "Lines ".$num."\n";
+    print "Lines ".$num."\n";
 
-	$i = 0;
-	$j = 1;
+    $i = 0;
+    $j = 1;
 
-	$objPHPExcel->getActiveSheet()->SetCellValue('A1', $langs->trans("Firstname"));
-	$objPHPExcel->getActiveSheet()->SetCellValue('B1', $langs->trans("Lastname"));
-	$objPHPExcel->getActiveSheet()->SetCellValue('C1', $langs->trans("Email"));
-	$objPHPExcel->getActiveSheet()->SetCellValue('D1', $langs->trans("ThirdPart"));
+    $objPHPExcel->getActiveSheet()->SetCellValue('A1', $langs->trans("Firstname"));
+    $objPHPExcel->getActiveSheet()->SetCellValue('B1', $langs->trans("Lastname"));
+    $objPHPExcel->getActiveSheet()->SetCellValue('C1', $langs->trans("Email"));
+    $objPHPExcel->getActiveSheet()->SetCellValue('D1', $langs->trans("ThirdPart"));
 
-	while ($i < $num)
-	{
-		$obj = $db->fetch_object($resql);
+    while ($i < $num)
+    {
+        $obj = $db->fetch_object($resql);
 
-    	$objPHPExcel->getActiveSheet()->SetCellValue('A'.($i+2), $obj->firstname);
-    	$objPHPExcel->getActiveSheet()->SetCellValue('B'.($i+2), $obj->lastname);
-    	$objPHPExcel->getActiveSheet()->SetCellValue('C'.($i+2), $obj->email);
-    	$objPHPExcel->getActiveSheet()->SetCellValue('D'.($i+2), $obj->name);
+        $objPHPExcel->getActiveSheet()->SetCellValue('A'.($i+2), $obj->firstname);
+        $objPHPExcel->getActiveSheet()->SetCellValue('B'.($i+2), $obj->lastname);
+        $objPHPExcel->getActiveSheet()->SetCellValue('C'.($i+2), $obj->email);
+        $objPHPExcel->getActiveSheet()->SetCellValue('D'.($i+2), $obj->name);
 
-		$j++;
-		$i++;
-	}
+        $j++;
+        $i++;
+    }
 }
 
 

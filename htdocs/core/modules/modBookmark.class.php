@@ -17,89 +17,89 @@
  */
 
 /**
- *	\defgroup   bookmark    Module bookmarks
- *	\brief      Module to manage Bookmarks
- *	\file       htdocs/core/modules/modBookmark.class.php
- *	\ingroup    bookmark
- *	\brief      Fichier de description et activation du module Bookmarks
+ *    \defgroup   bookmark    Module bookmarks
+ *    \brief      Module to manage Bookmarks
+ *    \file       htdocs/core/modules/modBookmark.class.php
+ *    \ingroup    bookmark
+ *    \brief      Fichier de description et activation du module Bookmarks
  */
 
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *	Class to describe and enable module Bookmark
+ *    Class to describe and enable module Bookmark
  */
 class modBookmark extends DolibarrModules
 {
 
-	/**
-	 *   Constructor. Define names, constants, directories, boxes, permissions
-	 *
-	 *   @param      DoliDB		$db      Database handler
-	 */
-	public function __construct($db)
-	{
-		$this->db = $db;
-		$this->numero = 330;
+    /**
+     *   Constructor. Define names, constants, directories, boxes, permissions
+     *
+     *   @param      DoliDB        $db      Database handler
+     */
+    public function __construct($db)
+    {
+        $this->db = $db;
+        $this->numero = 330;
 
-		$this->family = "technic";
-		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = preg_replace('/^mod/i', '', get_class($this));
-		$this->description = "Gestion des Bookmarks";
+        $this->family = "technic";
+        // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+        $this->name = preg_replace('/^mod/i', '', get_class($this));
+        $this->description = "Gestion des Bookmarks";
 
-		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-		$this->version = 'dolibarr';
+        // Possible values for version are: 'development', 'experimental', 'dolibarr' or version
+        $this->version = 'dolibarr';
 
-		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->picto='bookmark';
+        $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
+        $this->picto='bookmark';
 
-		// Data directories to create when module is enabled
-		$this->dirs = array();
+        // Data directories to create when module is enabled
+        $this->dirs = array();
 
-		// Dependancies
-		$this->depends = array();
-		$this->requiredby = array();
-		$this->langfiles = array("bookmarks");
+        // Dependancies
+        $this->depends = array();
+        $this->requiredby = array();
+        $this->langfiles = array("bookmarks");
 
-		// Config pages
-		$this->config_page_url = array('bookmark.php@bookmarks');
+        // Config pages
+        $this->config_page_url = array('bookmark.php@bookmarks');
 
-		// Constants
-		$this->const = array();
+        // Constants
+        $this->const = array();
 
-		// Boxes
-		$this->boxes = array(0=>array('file'=>'box_bookmarks.php','enabledbydefaulton'=>'Home'));
+        // Boxes
+        $this->boxes = array(0=>array('file'=>'box_bookmarks.php','enabledbydefaulton'=>'Home'));
 
-		// Permissions
-		$this->rights = array();
-		$this->rights_class = 'bookmark';
-		$r=0;
+        // Permissions
+        $this->rights = array();
+        $this->rights_class = 'bookmark';
+        $r=0;
 
-		$r++;
-		$this->rights[$r][0] = 331; // id de la permission
-		$this->rights[$r][1] = 'Lire les bookmarks'; // libelle de la permission
-		$this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
-		$this->rights[$r][4] = 'lire';
+        $r++;
+        $this->rights[$r][0] = 331; // id de la permission
+        $this->rights[$r][1] = 'Lire les bookmarks'; // libelle de la permission
+        $this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
+        $this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+        $this->rights[$r][4] = 'lire';
 
-		$r++;
-		$this->rights[$r][0] = 332; // id de la permission
-		$this->rights[$r][1] = 'Creer/modifier les bookmarks'; // libelle de la permission
-		$this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
-		$this->rights[$r][4] = 'creer';
+        $r++;
+        $this->rights[$r][0] = 332; // id de la permission
+        $this->rights[$r][1] = 'Creer/modifier les bookmarks'; // libelle de la permission
+        $this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
+        $this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+        $this->rights[$r][4] = 'creer';
 
-		$r++;
-		$this->rights[$r][0] = 333; // id de la permission
-		$this->rights[$r][1] = 'Supprimer les bookmarks'; // libelle de la permission
-		$this->rights[$r][2] = 'r'; // type de la permission (d�pr�ci� � ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par d�faut
-		$this->rights[$r][4] = 'supprimer';
+        $r++;
+        $this->rights[$r][0] = 333; // id de la permission
+        $this->rights[$r][1] = 'Supprimer les bookmarks'; // libelle de la permission
+        $this->rights[$r][2] = 'r'; // type de la permission (d�pr�ci� � ce jour)
+        $this->rights[$r][3] = 0; // La permission est-elle une permission par d�faut
+        $this->rights[$r][4] = 'supprimer';
 
 
-		// Menus
-		//-------
-		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
-	}
+        // Menus
+        //-------
+        $this->menu = 1;        // This module add menu entries. They are coded into menu manager.
+    }
 }

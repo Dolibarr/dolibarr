@@ -25,7 +25,7 @@
 /**
  *      \defgroup   member     Module foundation
  *      \brief      Module to manage members of a foundation
- *		\file       htdocs/core/modules/modAdherent.class.php
+ *        \file       htdocs/core/modules/modAdherent.class.php
  *      \ingroup    member
  *      \brief      File descriptor or module Member
  */
@@ -40,7 +40,7 @@ class modAdherent extends DolibarrModules
     /**
      *   Constructor. Define names, constants, directories, boxes, permissions
      *
-     *   @param      DoliDB		$db      Database handler
+     *   @param      DoliDB        $db      Database handler
      */
     public function __construct($db)
     {
@@ -66,12 +66,12 @@ class modAdherent extends DolibarrModules
         $this->config_page_url = array("adherent.php@adherents");
 
         // Dependencies
-        $this->hidden = false;			// A condition to hide module
-        $this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
-        $this->requiredby = array();	// List of module ids to disable if this one is disabled
-        $this->conflictwith = array('modMailmanSpip');	// List of module class names as string this module is in conflict with
+        $this->hidden = false;            // A condition to hide module
+        $this->depends = array();        // List of module class names as string that must be enabled if this module is enabled
+        $this->requiredby = array();    // List of module ids to disable if this one is disabled
+        $this->conflictwith = array('modMailmanSpip');    // List of module class names as string this module is in conflict with
         $this->langfiles = array("members","companies");
-        $this->phpmin = array(5,4);		// Minimum version of PHP required by module
+        $this->phpmin = array(5,4);        // Minimum version of PHP required by module
 
         // Constants
         $this->const = array();
@@ -313,7 +313,7 @@ class modAdherent extends DolibarrModules
         $this->import_code[$r]=$this->rights_class.'_'.$r;
         $this->import_label[$r]="Members"; // Translation key
         $this->import_icon[$r]=$this->picto;
-        $this->import_entities_array[$r]=array();		// We define here only fields that use another icon that the one defined into import_icon
+        $this->import_entities_array[$r]=array();        // We define here only fields that use another icon that the one defined into import_icon
         $this->import_tables_array[$r]=array('a'=>MAIN_DB_PREFIX.'adherent','extra'=>MAIN_DB_PREFIX.'adherent_extrafields');
         $this->import_tables_creator_array[$r]=array('a'=>'fk_user_author');    // Fields to store import user id
         $this->import_fields_array[$r]=array(
@@ -370,12 +370,12 @@ class modAdherent extends DolibarrModules
 
 
     /**
-     *		Function called when module is enabled.
-     *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
-     *		It also creates data directories
+     *        Function called when module is enabled.
+     *        The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+     *        It also creates data directories
      *
-     *      @param      string	$options    Options when enabling module ('', 'newboxdefonly', 'noboxes')
-     *      @return     int             	1 if OK, 0 if KO
+     *      @param      string    $options    Options when enabling module ('', 'newboxdefonly', 'noboxes')
+     *      @return     int                 1 if OK, 0 if KO
      */
     public function init($options = '')
     {

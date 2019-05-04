@@ -18,13 +18,13 @@
 
 /**
  *      \file       test/phpunit/ChargeSociales.php
- *		\ingroup    test
+ *        \ingroup    test
  *      \brief      PHPUnit test
- *		\remarks	To run this script as CLI:  phpunit filename.php
+ *        \remarks    To run this script as CLI:  phpunit filename.php
  */
 
 global $conf,$user,$langs,$db;
-//define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
+//define('TEST_DB_FORCE_TYPE','mysql');    // This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/compta/sociales/class/chargesociales.class.php';
@@ -43,7 +43,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
- * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
+ * @remarks    backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
 class ChargeSocialesTest extends PHPUnit_Framework_TestCase
 {
@@ -78,7 +78,7 @@ class ChargeSocialesTest extends PHPUnit_Framework_TestCase
     public static function setUpBeforeClass()
     {
         global $conf,$user,$langs,$db;
-        $db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
+        $db->begin();    // This is to have all actions inside a transaction even if test launched without suite.
 
         print __METHOD__."\n";
     }
@@ -95,7 +95,7 @@ class ChargeSocialesTest extends PHPUnit_Framework_TestCase
     /**
      * Init phpunit tests
      *
-     * @return	void
+     * @return    void
      */
     protected function setUp()
     {
@@ -110,7 +110,7 @@ class ChargeSocialesTest extends PHPUnit_Framework_TestCase
     /**
      * End phpunit tests
      *
-     * @return	void
+     * @return    void
      */
     protected function tearDown()
     {
@@ -120,7 +120,7 @@ class ChargeSocialesTest extends PHPUnit_Framework_TestCase
     /**
      * testChargeSocialesCreate
      *
-     * @return	void
+     * @return    void
      */
     public function testChargeSocialesCreate()
     {
@@ -142,10 +142,10 @@ class ChargeSocialesTest extends PHPUnit_Framework_TestCase
     /**
      * testChargeSocialesFetch
      *
-     * @param	int		$id		Id of social contribution
-     * @return	void
+     * @param    int        $id        Id of social contribution
+     * @return    void
      *
-     * @depends	testChargeSocialesCreate
+     * @depends    testChargeSocialesCreate
      * The depends says test is run only if previous is ok
      */
     public function testChargeSocialesFetch($id)
@@ -167,10 +167,10 @@ class ChargeSocialesTest extends PHPUnit_Framework_TestCase
     /**
      * testChargeSocialesValid
      *
-     * @param	Object		$localobject	Social contribution
-     * @return	void
+     * @param    Object        $localobject    Social contribution
+     * @return    void
      *
-     * @depends	testChargeSocialesFetch
+     * @depends    testChargeSocialesFetch
      * The depends says test is run only if previous is ok
      */
     public function testChargeSocialesValid($localobject)
@@ -191,8 +191,8 @@ class ChargeSocialesTest extends PHPUnit_Framework_TestCase
     /**
      * testChargeSocialesOther
      *
-     * @param	Object	$localobject		Social contribution
-     * @return	void
+     * @param    Object    $localobject        Social contribution
+     * @return    void
      *
      * @depends testChargeSocialesValid
      * The depends says test is run only if previous is ok
@@ -219,10 +219,10 @@ class ChargeSocialesTest extends PHPUnit_Framework_TestCase
     /**
      * testChargeSocialesDelete
      *
-     * @param	int		$id			Social contribution
-     * @return 	void
+     * @param    int        $id            Social contribution
+     * @return     void
      *
-     * @depends	testChargeSocialesOther
+     * @depends    testChargeSocialesOther
      * The depends says test is run only if previous is ok
      */
     public function testChargeSocialesDelete($id)

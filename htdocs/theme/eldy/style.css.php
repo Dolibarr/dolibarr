@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2017    Laurent Destailleur        <eldy@users.sourceforge.net>
  * Copyright (C) 2006		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2007-2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011		Philippe Grand			<philippe.grand@atoo-net.com>
@@ -21,14 +21,14 @@
  */
 
 /**
- *		\file       htdocs/theme/eldy/style.css.php
- *		\brief      File for CSS style sheet Eldy
+ *        \file       htdocs/theme/eldy/style.css.php
+ *        \brief      File for CSS style sheet Eldy
  */
 
-//if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled because need to load personalized language
-//if (! defined('NOREQUIREDB'))   define('NOREQUIREDB','1');	// Not disabled to increase speed. Language code is found on url.
+//if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');    // Not disabled because need to load personalized language
+//if (! defined('NOREQUIREDB'))   define('NOREQUIREDB','1');    // Not disabled to increase speed. Language code is found on url.
 if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC', '1');
-//if (! defined('NOREQUIRETRAN')) define('NOREQUIRETRAN','1');	// Not disabled because need to do translations
+//if (! defined('NOREQUIRETRAN')) define('NOREQUIRETRAN','1');    // Not disabled because need to do translations
 if (! defined('NOCSRFCHECK'))     define('NOCSRFCHECK', 1);
 if (! defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL', 1);
 if (! defined('NOLOGIN'))         define('NOLOGIN', 1);          // File must be accessed by logon page so without login
@@ -65,14 +65,14 @@ if (empty($dolibarr_nocache)) header('Cache-Control: max-age=10800, public, must
 else header('Cache-Control: no-cache');
 
 if (GETPOST('theme', 'alpha')) $conf->theme=GETPOST('theme', 'alpha');  // If theme was forced on URL
-if (GETPOST('lang', 'aZ09')) $langs->setDefaultLang(GETPOST('lang', 'aZ09'));	// If language was forced on URL
+if (GETPOST('lang', 'aZ09')) $langs->setDefaultLang(GETPOST('lang', 'aZ09'));    // If language was forced on URL
 
 $langs->load("main", 0, 1);
 $right=($langs->trans("DIRECTION")=='rtl'?'left':'right');
 $left=($langs->trans("DIRECTION")=='rtl'?'right':'left');
 
-$path='';    	// This value may be used in future for external module to overwrite theme
-$theme='eldy';	// Value of theme
+$path='';        // This value may be used in future for external module to overwrite theme
+$theme='eldy';    // Value of theme
 if (! empty($conf->global->MAIN_OVERWRITE_THEME_RES)) { $path='/'.$conf->global->MAIN_OVERWRITE_THEME_RES; $theme=$conf->global->MAIN_OVERWRITE_THEME_RES; }
 
 // Define image path files and other constants
@@ -194,8 +194,8 @@ $colortextlink=join(',', colorStringToArray($colortextlink));
 $nbtopmenuentries=$menumanager->showmenu('topnb');
 
 
-$minwidthtmenu=66;		/* minimum width for one top menu entry */
-$heightmenu=48;			/* height of top menu, part with image */
+$minwidthtmenu=66;        /* minimum width for one top menu entry */
+$heightmenu=48;            /* height of top menu, part with image */
 $heightmenu2=49;        /* height of top menu, part with login  */
 $disableimages = 0;
 $maxwidthloginblock = 130;

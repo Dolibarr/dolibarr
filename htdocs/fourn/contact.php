@@ -18,9 +18,9 @@
  */
 
 /**
- *	    \file       htdocs/fourn/contact.php
+ *        \file       htdocs/fourn/contact.php
  *      \ingroup    fournisseur
- *		\brief      Liste des contacts fournisseurs
+ *        \brief      Liste des contacts fournisseurs
  */
 
 require '../main.inc.php';

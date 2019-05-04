@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007-2008	Jeremie Ollivier	<jeremie.o@laposte.net>
+/* Copyright (C) 2007-2008    Jeremie Ollivier    <jeremie.o@laposte.net>
  * Copyright (C) 2011		Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -20,8 +20,8 @@
 // Protection to avoid direct call of template
 if (empty($langs) || ! is_object($langs))
 {
-	print "Error, template page can't be called as URL";
-	exit;
+    print "Error, template page can't be called as URL";
+    exit;
 }
 
 

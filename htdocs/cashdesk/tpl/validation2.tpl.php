@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007-2008	Jeremie Ollivier	<jeremie.o@laposte.net>
+/* Copyright (C) 2007-2008    Jeremie Ollivier    <jeremie.o@laposte.net>
  * Copyright (C) 2012       Marcos García       <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -20,8 +20,8 @@
 // Protection to avoid direct call of template
 if (empty($langs) || ! is_object($langs))
 {
-	print "Error, template page can't be called as URL";
-	exit;
+    print "Error, template page can't be called as URL";
+    exit;
 }
 
 // Load translation files required by the page
@@ -36,15 +36,15 @@ $langs->loadLangs(array("main","bills"));
 
 <script type="text/javascript">
 
-	function popupTicket(id,name)
-	{
-		largeur = 600;
-		hauteur = 500;
-		opt = 'width='+largeur+', height='+hauteur+', left='+(screen.width - largeur)/2+', top='+(screen.height-hauteur)/2+'';
-		window.open('validation_ticket.php?facid='+id,name, opt);
-	}
+    function popupTicket(id,name)
+    {
+        largeur = 600;
+        hauteur = 500;
+        opt = 'width='+largeur+', height='+hauteur+', left='+(screen.width - largeur)/2+', top='+(screen.height-hauteur)/2+'';
+        window.open('validation_ticket.php?facid='+id,name, opt);
+    }
 
-	popupTicket(<?php echo GETPOST('facid', 'int'); ?>,'<?php echo $langs->trans('PrintTicket') ?>');
+    popupTicket(<?php echo GETPOST('facid', 'int'); ?>,'<?php echo $langs->trans('PrintTicket') ?>');
 
 </script>
 

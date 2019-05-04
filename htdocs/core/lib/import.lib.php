@@ -28,27 +28,27 @@
 /**
  * Function to return list of tabs for import pages
  *
- * @param	string		$param		Params to add on url links
- * @param	int			$maxstep	Limit steps to maxstep or no limit if 0
- * @return	array					Array of tabs
+ * @param    string        $param        Params to add on url links
+ * @param    int            $maxstep    Limit steps to maxstep or no limit if 0
+ * @return    array                    Array of tabs
  */
 function import_prepare_head($param, $maxstep = 0)
 {
-	global $langs;
+    global $langs;
 
-	if (empty($maxstep)) $maxstep=6;
+    if (empty($maxstep)) $maxstep=6;
 
-	$h=0;
-	$head = array();
-	$i=1;
-	while($i <= $maxstep)
-	{
-    	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step='.$i.$param;
-    	$head[$h][1] = $langs->trans("Step")." ".$i;
-    	$head[$h][2] = 'step'.$i;
-    	$h++;
-    	$i++;
-	}
+    $h=0;
+    $head = array();
+    $i=1;
+    while($i <= $maxstep)
+    {
+        $head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step='.$i.$param;
+        $head[$h][1] = $langs->trans("Step")." ".$i;
+        $head[$h][2] = 'step'.$i;
+        $h++;
+        $i++;
+    }
 
-	return $head;
+    return $head;
 }

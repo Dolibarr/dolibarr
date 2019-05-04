@@ -19,51 +19,51 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
 
 
 /**
- *	Parent class for trips and expenses templates
+ *    Parent class for trips and expenses templates
  */
 abstract class ModeleExpenseReport extends CommonDocGenerator
 {
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error='';
+    /**
+     * @var string Error code (or message)
+     */
+    public $error='';
 
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *  Return list of active models generation
+    /**
+     *  Return list of active models generation
      *
-     *  @param	DoliDB	$db     			Database handler
-     *  @param  integer	$maxfilenamelength  Max length of value to show
-     *  @return	array						List of templates
+     *  @param    DoliDB    $db                 Database handler
+     *  @param  integer    $maxfilenamelength  Max length of value to show
+     *  @return    array                        List of templates
      */
-	public static function liste_modeles($db, $maxfilenamelength = 0)
-	{
+    public static function liste_modeles($db, $maxfilenamelength = 0)
+    {
         // phpcs:enable
-		global $conf;
+        global $conf;
 
-		$type='expensereport';
-		$list=array();
+        $type='expensereport';
+        $list=array();
 
-		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$list = getListOfModels($db, $type, $maxfilenamelength);
+        include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+        $list = getListOfModels($db, $type, $maxfilenamelength);
 
-		return $list;
-	}
+        return $list;
+    }
 }
 
 /**
  * expensereport_pdf_create
  *
- *  @param	    DoliDB		$db  			Database handler
- *  @param	    ExpenseReport	$object		Object ExpenseReport
- *  @param		string		$message		Message
- *  @param	    string		$modele			Force the model to use ('' to not force)
- *  @param		Translate	$outputlangs	lang object to use for translation
- *  @param      int			$hidedetails    Hide details of lines
- *  @param      int			$hidedesc       Hide description
- *  @param      int			$hideref        Hide ref
- *  @return     int         				0 if KO, 1 if OK
+ *  @param        DoliDB        $db              Database handler
+ *  @param        ExpenseReport    $object        Object ExpenseReport
+ *  @param        string        $message        Message
+ *  @param        string        $modele            Force the model to use ('' to not force)
+ *  @param        Translate    $outputlangs    lang object to use for translation
+ *  @param      int            $hidedetails    Hide details of lines
+ *  @param      int            $hidedesc       Hide description
+ *  @param      int            $hideref        Hide ref
+ *  @return     int                         0 if KO, 1 if OK
  */
 function expensereport_pdf_create(DoliDB $db, ExpenseReport $object, $message, $modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 {
@@ -77,66 +77,66 @@ function expensereport_pdf_create(DoliDB $db, ExpenseReport $object, $message, $
 
 abstract class ModeleNumRefExpenseReport
 {
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error='';
+    /**
+     * @var string Error code (or message)
+     */
+    public $error='';
 
-	/**
-	 *	Return if a model can be used or not
-	 *
-	 *	@return		boolean     true if model can be used
-	 */
+    /**
+     *    Return if a model can be used or not
+     *
+     *    @return        boolean     true if model can be used
+     */
     public function isEnabled()
-	{
-		return true;
-	}
+    {
+        return true;
+    }
 
-	/**
-	 *	Returns the default description of the numbering model
-	 *
-	 *	@return     string      Descriptive text
-	 */
+    /**
+     *    Returns the default description of the numbering model
+     *
+     *    @return     string      Descriptive text
+     */
     public function info()
-	{
-		global $langs;
-		$langs->load("orders");
-		return $langs->trans("NoDescription");
-	}
+    {
+        global $langs;
+        $langs->load("orders");
+        return $langs->trans("NoDescription");
+    }
 
-	/**
-	 *	Returns an example of numbering
-	 *
-	 *	@return     string      Example
-	 */
+    /**
+     *    Returns an example of numbering
+     *
+     *    @return     string      Example
+     */
     public function getExample()
-	{
-		global $langs;
-		$langs->load("trips");
-		return $langs->trans("NoExample");
-	}
+    {
+        global $langs;
+        $langs->load("trips");
+        return $langs->trans("NoExample");
+    }
 
-	/**
-	 *	Test whether the numbers already in force in the base do not cause conflicts that would prevent this numbering from working.
-	 *
-	 *	@return     boolean     false if conflict, true if ok
-	 */
+    /**
+     *    Test whether the numbers already in force in the base do not cause conflicts that would prevent this numbering from working.
+     *
+     *    @return     boolean     false if conflict, true if ok
+     */
     public function canBeActivated()
-	{
-		return true;
-	}
+    {
+        return true;
+    }
 
-	/**
-	 *	Returns next assigned value
-	 *
-	 *	@param	Object		$object		Object we need next value for
-	 *	@return	string      Value
-	 */
+    /**
+     *    Returns next assigned value
+     *
+     *    @param    Object        $object        Object we need next value for
+     *    @return    string      Value
+     */
     public function getNextValue($object)
-	{
-		global $langs;
-		return $langs->trans("NotAvailable");
-	}
+    {
+        global $langs;
+        return $langs->trans("NotAvailable");
+    }
 
     /**
      *  Returns the version of the numbering module

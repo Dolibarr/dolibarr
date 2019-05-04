@@ -23,9 +23,9 @@
  */
 
 /**
- *	    \file       htdocs/admin/propal.php
- *		\ingroup    propale
- *		\brief      Setup page for commercial proposal module
+ *        \file       htdocs/admin/propal.php
+ *        \ingroup    propale
+ *        \brief      Setup page for commercial proposal module
  */
 
 require '../main.inc.php';
@@ -54,131 +54,131 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 $error=0;
 if ($action == 'updateMask')
 {
-	$maskconstpropal=GETPOST('maskconstpropal', 'alpha');
-	$maskpropal=GETPOST('maskpropal', 'alpha');
-	if ($maskconstpropal) $res = dolibarr_set_const($db, $maskconstpropal, $maskpropal, 'chaine', 0, '', $conf->entity);
+    $maskconstpropal=GETPOST('maskconstpropal', 'alpha');
+    $maskpropal=GETPOST('maskpropal', 'alpha');
+    if ($maskconstpropal) $res = dolibarr_set_const($db, $maskconstpropal, $maskpropal, 'chaine', 0, '', $conf->entity);
 
-	if (! $res > 0) $error++;
+    if (! $res > 0) $error++;
 
- 	if (! $error)
-	{
-		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	}
-	else
-	{
-		setEventMessages($langs->trans("Error"), null, 'errors');
-	}
+     if (! $error)
+    {
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+     }
+    else
+    {
+        setEventMessages($langs->trans("Error"), null, 'errors');
+    }
 }
 elseif ($action == 'specimen')
 {
-	$modele=GETPOST('module', 'alpha');
+    $modele=GETPOST('module', 'alpha');
 
-	$propal = new Propal($db);
-	$propal->initAsSpecimen();
+    $propal = new Propal($db);
+    $propal->initAsSpecimen();
 
-	// Search template files
-	$file=''; $classname=''; $filefound=0;
-	$dirmodels=array_merge(array('/'), (array) $conf->modules_parts['models']);
-	foreach($dirmodels as $reldir)
-	{
-	    $file=dol_buildpath($reldir."core/modules/propale/doc/pdf_".$modele.".modules.php");
-		if (file_exists($file))
-		{
-			$filefound=1;
-			$classname = "pdf_".$modele;
-			break;
-		}
-	}
+    // Search template files
+    $file=''; $classname=''; $filefound=0;
+    $dirmodels=array_merge(array('/'), (array) $conf->modules_parts['models']);
+    foreach($dirmodels as $reldir)
+    {
+        $file=dol_buildpath($reldir."core/modules/propale/doc/pdf_".$modele.".modules.php");
+        if (file_exists($file))
+        {
+            $filefound=1;
+            $classname = "pdf_".$modele;
+            break;
+        }
+    }
 
-	if ($filefound)
-	{
-		require_once $file;
+    if ($filefound)
+    {
+        require_once $file;
 
-		$module = new $classname($db);
+        $module = new $classname($db);
 
-		if ($module->write_file($propal, $langs) > 0)
-		{
-			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=propal&file=SPECIMEN.pdf");
-			return;
-		}
-		else
-		{
-			setEventMessages($module->error, $module->errors, 'errors');
-			dol_syslog($module->error, LOG_ERR);
-		}
-	}
-	else
-	{
-		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
-		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
-	}
+        if ($module->write_file($propal, $langs) > 0)
+        {
+            header("Location: ".DOL_URL_ROOT."/document.php?modulepart=propal&file=SPECIMEN.pdf");
+            return;
+        }
+        else
+        {
+            setEventMessages($module->error, $module->errors, 'errors');
+            dol_syslog($module->error, LOG_ERR);
+        }
+    }
+    else
+    {
+        setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
+        dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
+    }
 }
 elseif ($action == 'setribchq')
 {
-	$rib = GETPOST('rib', 'alpha');
-	$chq = GETPOST('chq', 'alpha');
+    $rib = GETPOST('rib', 'alpha');
+    $chq = GETPOST('chq', 'alpha');
 
-	$res = dolibarr_set_const($db, "FACTURE_RIB_NUMBER", $rib, 'chaine', 0, '', $conf->entity);
-	$res = dolibarr_set_const($db, "FACTURE_CHQ_NUMBER", $chq, 'chaine', 0, '', $conf->entity);
+    $res = dolibarr_set_const($db, "FACTURE_RIB_NUMBER", $rib, 'chaine', 0, '', $conf->entity);
+    $res = dolibarr_set_const($db, "FACTURE_CHQ_NUMBER", $chq, 'chaine', 0, '', $conf->entity);
 
-	if (! $res > 0) $error++;
+    if (! $res > 0) $error++;
 
-	if (! $error)
-	{
-		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	}
-	else
-	{
-		setEventMessages($langs->trans("Error"), null, 'errors');
-	}
+    if (! $error)
+    {
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    }
+    else
+    {
+        setEventMessages($langs->trans("Error"), null, 'errors');
+    }
 }
 elseif ($action == 'set_PROPALE_DRAFT_WATERMARK')
 {
-	$draft = GETPOST('PROPALE_DRAFT_WATERMARK', 'alpha');
+    $draft = GETPOST('PROPALE_DRAFT_WATERMARK', 'alpha');
 
-	$res = dolibarr_set_const($db, "PROPALE_DRAFT_WATERMARK", trim($draft), 'chaine', 0, '', $conf->entity);
-	if (! $res > 0) $error++;
+    $res = dolibarr_set_const($db, "PROPALE_DRAFT_WATERMARK", trim($draft), 'chaine', 0, '', $conf->entity);
+    if (! $res > 0) $error++;
 
- 	if (! $error)
-	{
-		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	}
-	else
-	{
-		setEventMessages($langs->trans("Error"), null, 'errors');
-	}
+     if (! $error)
+    {
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+     }
+    else
+    {
+        setEventMessages($langs->trans("Error"), null, 'errors');
+    }
 }
 elseif ($action == 'set_PROPOSAL_FREE_TEXT')
 {
-	$freetext = GETPOST('PROPOSAL_FREE_TEXT', 'none');	// No alpha here, we want exact string
+    $freetext = GETPOST('PROPOSAL_FREE_TEXT', 'none');    // No alpha here, we want exact string
 
-	$res = dolibarr_set_const($db, "PROPOSAL_FREE_TEXT", $freetext, 'chaine', 0, '', $conf->entity);
+    $res = dolibarr_set_const($db, "PROPOSAL_FREE_TEXT", $freetext, 'chaine', 0, '', $conf->entity);
 
-	if (! $res > 0) $error++;
+    if (! $res > 0) $error++;
 
- 	if (! $error)
-	{
-		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	}
-	else
-	{
-		setEventMessages($langs->trans("Error"), null, 'errors');
-	}
+     if (! $error)
+    {
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+     }
+    else
+    {
+        setEventMessages($langs->trans("Error"), null, 'errors');
+    }
 }
 elseif ($action == 'setdefaultduration')
 {
-	$res = dolibarr_set_const($db, "PROPALE_VALIDITY_DURATION", $value, 'chaine', 0, '', $conf->entity);
+    $res = dolibarr_set_const($db, "PROPALE_VALIDITY_DURATION", $value, 'chaine', 0, '', $conf->entity);
 
-	if (! $res > 0) $error++;
+    if (! $res > 0) $error++;
 
- 	if (! $error)
-	{
-		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	}
-	else
-	{
-		setEventMessages($langs->trans("Error"), null, 'errors');
-	}
+     if (! $error)
+    {
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+     }
+    else
+    {
+        setEventMessages($langs->trans("Error"), null, 'errors');
+    }
 }
 
 elseif ($action == 'set_BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL')
@@ -199,38 +199,38 @@ elseif ($action == 'set_BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL')
 // Activate a model
 elseif ($action == 'set')
 {
-	$ret = addDocumentModel($value, $type, $label, $scandir);
+    $ret = addDocumentModel($value, $type, $label, $scandir);
 }
 elseif ($action == 'del')
 {
-	$ret = delDocumentModel($value, $type);
-	if ($ret > 0)
-	{
+    $ret = delDocumentModel($value, $type);
+    if ($ret > 0)
+    {
         if ($conf->global->PROPALE_ADDON_PDF == "$value") dolibarr_del_const($db, 'PROPALE_ADDON_PDF', $conf->entity);
-	}
+    }
 }
 
 elseif ($action == 'setdoc')
 {
     if (dolibarr_set_const($db, "PROPALE_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity))
-	{
-		$conf->global->PROPALE_ADDON_PDF = $value;
-	}
+    {
+        $conf->global->PROPALE_ADDON_PDF = $value;
+    }
 
-	// On active le modele
-	$ret = delDocumentModel($value, $type);
-	if ($ret > 0)
-	{
-		$ret = addDocumentModel($value, $type, $label, $scandir);
-	}
+    // On active le modele
+    $ret = delDocumentModel($value, $type);
+    if ($ret > 0)
+    {
+        $ret = addDocumentModel($value, $type, $label, $scandir);
+    }
 }
 
 elseif ($action == 'setmod')
 {
-	// TODO Verifier si module numerotation choisi peut etre active
-	// par appel methode canBeActivated
+    // TODO Verifier si module numerotation choisi peut etre active
+    // par appel methode canBeActivated
 
-	dolibarr_set_const($db, "PROPALE_ADDON", $value, 'chaine', 0, '', $conf->entity);
+    dolibarr_set_const($db, "PROPALE_ADDON", $value, 'chaine', 0, '', $conf->entity);
 }
 
 
@@ -271,33 +271,33 @@ clearstatcache();
 
 foreach ($dirmodels as $reldir)
 {
-	$dir = dol_buildpath($reldir."core/modules/propale/");
+    $dir = dol_buildpath($reldir."core/modules/propale/");
 
-	if (is_dir($dir))
-	{
-		$handle = opendir($dir);
-		if (is_resource($handle))
-		{
-			while (($file = readdir($handle))!==false)
-			{
-				if (substr($file, 0, 12) == 'mod_propale_' && substr($file, dol_strlen($file)-3, 3) == 'php')
-				{
-					$file = substr($file, 0, dol_strlen($file)-4);
+    if (is_dir($dir))
+    {
+        $handle = opendir($dir);
+        if (is_resource($handle))
+        {
+            while (($file = readdir($handle))!==false)
+            {
+                if (substr($file, 0, 12) == 'mod_propale_' && substr($file, dol_strlen($file)-3, 3) == 'php')
+                {
+                    $file = substr($file, 0, dol_strlen($file)-4);
 
-					require_once $dir.$file.'.php';
+                    require_once $dir.$file.'.php';
 
-					$module = new $file;
+                    $module = new $file;
 
-					// Show modules according to features level
-					if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
-					if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
+                    // Show modules according to features level
+                    if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
+                    if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 
-					if ($module->isEnabled())
-					{
+                    if ($module->isEnabled())
+                    {
 
-						print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
-						print $module->info();
-						print '</td>';
+                        print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
+                        print $module->info();
+                        print '</td>';
 
                         // Show example of numbering module
                         print '<td class="nowrap">';
@@ -307,27 +307,27 @@ foreach ($dirmodels as $reldir)
                         else print $tmp;
                         print '</td>'."\n";
 
-						print '<td align="center">';
-						if ($conf->global->PROPALE_ADDON == "$file")
-						{
-							print img_picto($langs->trans("Activated"), 'switch_on');
-						}
-						else
-						{
-							print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'">';
-							print img_picto($langs->trans("Disabled"), 'switch_off');
-							print '</a>';
-						}
-						print '</td>';
+                        print '<td align="center">';
+                        if ($conf->global->PROPALE_ADDON == "$file")
+                        {
+                            print img_picto($langs->trans("Activated"), 'switch_on');
+                        }
+                        else
+                        {
+                            print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'">';
+                            print img_picto($langs->trans("Disabled"), 'switch_off');
+                            print '</a>';
+                        }
+                        print '</td>';
 
-						$propal=new Propal($db);
-						$propal->initAsSpecimen();
+                        $propal=new Propal($db);
+                        $propal->initAsSpecimen();
 
-						// Info
-						$htmltooltip='';
-						$htmltooltip.=''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
-						$propal->type=0;
-						$nextval=$module->getNextValue($mysoc, $propal);
+                        // Info
+                        $htmltooltip='';
+                        $htmltooltip.=''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
+                        $propal->type=0;
+                        $nextval=$module->getNextValue($mysoc, $propal);
                         if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
                             $htmltooltip.=''.$langs->trans("NextValue").': ';
                             if ($nextval) {
@@ -339,17 +339,17 @@ foreach ($dirmodels as $reldir)
                             }
                         }
 
-						print '<td align="center">';
-						print $form->textwithpicto('', $htmltooltip, 1, 0);
-						print '</td>';
+                        print '<td align="center">';
+                        print $form->textwithpicto('', $htmltooltip, 1, 0);
+                        print '</td>';
 
-						print "</tr>\n";
-					}
-				}
-			}
-			closedir($handle);
-		}
-	}
+                        print "</tr>\n";
+                    }
+                }
+            }
+            closedir($handle);
+        }
+    }
 }
 print "</table><br>\n";
 
@@ -369,18 +369,18 @@ $sql.= " AND entity = ".$conf->entity;
 $resql=$db->query($sql);
 if ($resql)
 {
-	$i = 0;
-	$num_rows=$db->num_rows($resql);
-	while ($i < $num_rows)
-	{
-		$array = $db->fetch_array($resql);
-		array_push($def, $array[0]);
-		$i++;
-	}
+    $i = 0;
+    $num_rows=$db->num_rows($resql);
+    while ($i < $num_rows)
+    {
+        $array = $db->fetch_array($resql);
+        array_push($def, $array[0]);
+        $i++;
+    }
 }
 else
 {
-	dol_print_error($db);
+    dol_print_error($db);
 }
 
 
@@ -400,7 +400,7 @@ foreach ($dirmodels as $reldir)
 {
     foreach (array('','/doc') as $valdir)
     {
-    	$dir = dol_buildpath($reldir."core/modules/propale".$valdir);
+        $dir = dol_buildpath($reldir."core/modules/propale".$valdir);
 
         if (is_dir($dir))
         {
@@ -418,92 +418,92 @@ foreach ($dirmodels as $reldir)
                 {
                     if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file))
                     {
-                    	if (file_exists($dir.'/'.$file))
-                    	{
-                    		$name = substr($file, 4, dol_strlen($file) -16);
-	                        $classname = substr($file, 0, dol_strlen($file) -12);
+                        if (file_exists($dir.'/'.$file))
+                        {
+                            $name = substr($file, 4, dol_strlen($file) -16);
+                            $classname = substr($file, 0, dol_strlen($file) -12);
 
-	                        require_once $dir.'/'.$file;
-	                        $module = new $classname($db);
+                            require_once $dir.'/'.$file;
+                            $module = new $classname($db);
 
-	                        $modulequalified=1;
-	                        if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) $modulequalified=0;
-	                        if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) $modulequalified=0;
+                            $modulequalified=1;
+                            if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) $modulequalified=0;
+                            if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) $modulequalified=0;
 
-	                        if ($modulequalified)
-	                        {
-	                            $var = !$var;
-	                            print '<tr class="oddeven"><td width="100">';
-	                            print (empty($module->name)?$name:$module->name);
-	                            print "</td><td>\n";
-	                            if (method_exists($module, 'info')) print $module->info($langs);
-	                            else print $module->description;
-	                            print '</td>';
+                            if ($modulequalified)
+                            {
+                                $var = !$var;
+                                print '<tr class="oddeven"><td width="100">';
+                                print (empty($module->name)?$name:$module->name);
+                                print "</td><td>\n";
+                                if (method_exists($module, 'info')) print $module->info($langs);
+                                else print $module->description;
+                                print '</td>';
 
-	                            // Active
-	                            if (in_array($name, $def))
-	                            {
-	                            	print '<td align="center">'."\n";
-	                            	print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'">';
-	                            	print img_picto($langs->trans("Enabled"), 'switch_on');
-	                            	print '</a>';
-	                            	print '</td>';
-	                            }
-	                            else
-	                            {
-	                                print "<td align=\"center\">\n";
-	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
-	                                print "</td>";
-	                            }
+                                // Active
+                                if (in_array($name, $def))
+                                {
+                                    print '<td align="center">'."\n";
+                                    print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'">';
+                                    print img_picto($langs->trans("Enabled"), 'switch_on');
+                                    print '</a>';
+                                    print '</td>';
+                                }
+                                else
+                                {
+                                    print "<td align=\"center\">\n";
+                                    print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+                                    print "</td>";
+                                }
 
-	                            // Defaut
-	                            print "<td align=\"center\">";
-	                            if ($conf->global->PROPALE_ADDON_PDF == "$name")
-	                            {
-	                                print img_picto($langs->trans("Default"), 'on');
-	                            }
-	                            else
-	                            {
-	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
-	                            }
-	                            print '</td>';
+                                // Defaut
+                                print "<td align=\"center\">";
+                                if ($conf->global->PROPALE_ADDON_PDF == "$name")
+                                {
+                                    print img_picto($langs->trans("Default"), 'on');
+                                }
+                                else
+                                {
+                                    print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+                                }
+                                print '</td>';
 
-	                           // Info
-	                            $htmltooltip = $langs->trans("Name").': '.$module->name;
-	                            $htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
-	                            if ($module->type == 'pdf')
-	                            {
-	                                $htmltooltip.='<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
-	                            }
-								$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
-								$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo, 1, 1);
-								$htmltooltip.='<br>'.$langs->trans("PaymentMode").': '.yn($module->option_modereg, 1, 1);
-								$htmltooltip.='<br>'.$langs->trans("PaymentConditions").': '.yn($module->option_condreg, 1, 1);
-								$htmltooltip.='<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang, 1, 1);
-								//$htmltooltip.='<br>'.$langs->trans("Discounts").': '.yn($module->option_escompte,1,1);
-								//$htmltooltip.='<br>'.$langs->trans("CreditNote").': '.yn($module->option_credit_note,1,1);
-								$htmltooltip.='<br>'.$langs->trans("WatermarkOnDraftProposal").': '.yn($module->option_draft_watermark, 1, 1);
+                               // Info
+                                $htmltooltip = $langs->trans("Name").': '.$module->name;
+                                $htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
+                                if ($module->type == 'pdf')
+                                {
+                                    $htmltooltip.='<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
+                                }
+                                $htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
+                                $htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo, 1, 1);
+                                $htmltooltip.='<br>'.$langs->trans("PaymentMode").': '.yn($module->option_modereg, 1, 1);
+                                $htmltooltip.='<br>'.$langs->trans("PaymentConditions").': '.yn($module->option_condreg, 1, 1);
+                                $htmltooltip.='<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang, 1, 1);
+                                //$htmltooltip.='<br>'.$langs->trans("Discounts").': '.yn($module->option_escompte,1,1);
+                                //$htmltooltip.='<br>'.$langs->trans("CreditNote").': '.yn($module->option_credit_note,1,1);
+                                $htmltooltip.='<br>'.$langs->trans("WatermarkOnDraftProposal").': '.yn($module->option_draft_watermark, 1, 1);
 
 
-	                            print '<td align="center">';
-	                            print $form->textwithpicto('', $htmltooltip, 1, 0);
-	                            print '</td>';
+                                print '<td align="center">';
+                                print $form->textwithpicto('', $htmltooltip, 1, 0);
+                                print '</td>';
 
-	                            // Preview
-	                            print '<td align="center">';
-	                            if ($module->type == 'pdf')
-	                            {
-	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'bill').'</a>';
-	                            }
-	                            else
-	                            {
-	                                print img_object($langs->trans("PreviewNotAvailable"), 'generic');
-	                            }
-	                            print '</td>';
+                                // Preview
+                                print '<td align="center">';
+                                if ($module->type == 'pdf')
+                                {
+                                    print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'bill').'</a>';
+                                }
+                                else
+                                {
+                                    print img_object($langs->trans("PreviewNotAvailable"), 'generic');
+                                }
+                                print '</td>';
 
-	                            print "</tr>\n";
-	                        }
-                    	}
+                                print "</tr>\n";
+                            }
+                        }
                     }
                 }
             }
@@ -518,98 +518,98 @@ print '</table>';
  */
 if (empty($conf->facture->enabled))
 {
-	print '<br>';
-	print load_fiche_titre($langs->trans("SuggestedPaymentModesIfNotDefinedInProposal"), '', '');
+    print '<br>';
+    print load_fiche_titre($langs->trans("SuggestedPaymentModesIfNotDefinedInProposal"), '', '');
 
-	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
+    print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
 
-	print '<table class="noborder" width="100%">';
+    print '<table class="noborder" width="100%">';
 
-	print '<tr class="liste_titre">';
-	print '<td>';
-	print '<input type="hidden" name="action" value="setribchq">';
-	print $langs->trans("PaymentMode").'</td>';
-	print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
-	print "</tr>\n";
+    print '<tr class="liste_titre">';
+    print '<td>';
+    print '<input type="hidden" name="action" value="setribchq">';
+    print $langs->trans("PaymentMode").'</td>';
+    print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+    print "</tr>\n";
 
-	print '<tr class="oddeven">';
-	print "<td>".$langs->trans("SuggestPaymentByRIBOnAccount")."</td>";
-	print "<td>";
-	if (! empty($conf->banque->enabled))
-	{
-		$sql = "SELECT rowid, label";
-		$sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
-		$sql.= " WHERE clos = 0";
-		$sql.= " AND courant = 1";
-		$sql.= " AND entity IN (".getEntity('bank_account').")";
-		$resql=$db->query($sql);
-		if ($resql)
-		{
-			$num = $db->num_rows($resql);
-			$i = 0;
-			if ($num > 0)
-			{
-				print '<select name="rib" class="flat" id="rib">';
-				print '<option value="0">'.$langs->trans("DoNotSuggestPaymentMode").'</option>';
-				while ($i < $num)
-				{
-					$row = $db->fetch_row($resql);
+    print '<tr class="oddeven">';
+    print "<td>".$langs->trans("SuggestPaymentByRIBOnAccount")."</td>";
+    print "<td>";
+    if (! empty($conf->banque->enabled))
+    {
+        $sql = "SELECT rowid, label";
+        $sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
+        $sql.= " WHERE clos = 0";
+        $sql.= " AND courant = 1";
+        $sql.= " AND entity IN (".getEntity('bank_account').")";
+        $resql=$db->query($sql);
+        if ($resql)
+        {
+            $num = $db->num_rows($resql);
+            $i = 0;
+            if ($num > 0)
+            {
+                print '<select name="rib" class="flat" id="rib">';
+                print '<option value="0">'.$langs->trans("DoNotSuggestPaymentMode").'</option>';
+                while ($i < $num)
+                {
+                    $row = $db->fetch_row($resql);
 
-					print '<option value="'.$row[0].'"';
-					print $conf->global->FACTURE_RIB_NUMBER == $row[0] ? ' selected':'';
-					print '>'.$row[1].'</option>';
+                    print '<option value="'.$row[0].'"';
+                    print $conf->global->FACTURE_RIB_NUMBER == $row[0] ? ' selected':'';
+                    print '>'.$row[1].'</option>';
 
-					$i++;
-				}
-				print "</select>";
-			}
-			else
-			{
-				print "<i>".$langs->trans("NoActiveBankAccountDefined")."</i>";
-			}
-		}
-	}
-	else
-	{
-		print $langs->trans("BankModuleNotActive");
-	}
-	print "</td></tr>";
+                    $i++;
+                }
+                print "</select>";
+            }
+            else
+            {
+                print "<i>".$langs->trans("NoActiveBankAccountDefined")."</i>";
+            }
+        }
+    }
+    else
+    {
+        print $langs->trans("BankModuleNotActive");
+    }
+    print "</td></tr>";
 
-	print '<tr class="oddeven">';
-	print "<td>".$langs->trans("SuggestPaymentByChequeToAddress")."</td>";
-	print "<td>";
-	print '<select class="flat" name="chq" id="chq">';
-	print '<option value="0">'.$langs->trans("DoNotSuggestPaymentMode").'</option>';
-	print '<option value="-1"'.($conf->global->FACTURE_CHQ_NUMBER?' selected':'').'>'.$langs->trans("MenuCompanySetup").' ('.($mysoc->name?$mysoc->name:$langs->trans("NotDefined")).')</option>';
+    print '<tr class="oddeven">';
+    print "<td>".$langs->trans("SuggestPaymentByChequeToAddress")."</td>";
+    print "<td>";
+    print '<select class="flat" name="chq" id="chq">';
+    print '<option value="0">'.$langs->trans("DoNotSuggestPaymentMode").'</option>';
+    print '<option value="-1"'.($conf->global->FACTURE_CHQ_NUMBER?' selected':'').'>'.$langs->trans("MenuCompanySetup").' ('.($mysoc->name?$mysoc->name:$langs->trans("NotDefined")).')</option>';
 
-	$sql = "SELECT rowid, label";
-	$sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
-	$sql.= " WHERE clos = 0";
-	$sql.= " AND courant = 1";
-	$sql.= " AND entity IN (".getEntity('bank_account').")";
+    $sql = "SELECT rowid, label";
+    $sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
+    $sql.= " WHERE clos = 0";
+    $sql.= " AND courant = 1";
+    $sql.= " AND entity IN (".getEntity('bank_account').")";
 
-	$resql=$db->query($sql);
-	if ($resql)
-	{
-		$num = $db->num_rows($resql);
-		$i = 0;
-		while ($i < $num)
-		{
+    $resql=$db->query($sql);
+    if ($resql)
+    {
+        $num = $db->num_rows($resql);
+        $i = 0;
+        while ($i < $num)
+        {
 
-			$row = $db->fetch_row($resql);
+            $row = $db->fetch_row($resql);
 
-			print '<option value="'.$row[0].'"';
-			print $conf->global->FACTURE_CHQ_NUMBER == $row[0] ? ' selected':'';
-			print '>'.$langs->trans("OwnerOfBankAccount", $row[1]).'</option>';
+            print '<option value="'.$row[0].'"';
+            print $conf->global->FACTURE_CHQ_NUMBER == $row[0] ? ' selected':'';
+            print '>'.$langs->trans("OwnerOfBankAccount", $row[1]).'</option>';
 
-			$i++;
-		}
-	}
-	print "</select>";
-	print "</td></tr>";
-	print "</table>";
-	print "</form>";
+            $i++;
+        }
+    }
+    print "</select>";
+    print "</td></tr>";
+    print "</table>";
+    print "</form>";
 }
 
 print '<br>';
@@ -656,7 +656,7 @@ print '</form>';
 $substitutionarray=pdf_getSubstitutionArray($langs, null, null, 2);
 $substitutionarray['__(AnyTranslationKey)__']=$langs->trans("Translation");
 $htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
-foreach($substitutionarray as $key => $val)	$htmltext.=$key.'<br>';
+foreach($substitutionarray as $key => $val)    $htmltext.=$key.'<br>';
 $htmltext.='</i>';
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';

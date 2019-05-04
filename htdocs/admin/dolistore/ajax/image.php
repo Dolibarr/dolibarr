@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017		 Oscss-Shop              <support@oscss-shop.fr>.
+/* Copyright (C) 2017         Oscss-Shop              <support@oscss-shop.fr>.
  * Copyright (C) 2008-2011   Laurent Destailleur     <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modifyion 2.0 (the "License");

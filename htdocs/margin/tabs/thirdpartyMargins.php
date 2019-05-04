@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2012-2013	Christophe Battarel	<christophe.battarel@altairis.fr>
+/* Copyright (C) 2012-2013    Christophe Battarel    <christophe.battarel@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,9 +16,9 @@
  */
 
 /**
- *	\file       htdocs/margin/tabs/thirdpartyMargins.php
- *	\ingroup    product margins
- *	\brief      Page des marges des factures clients pour un tiers
+ *    \file       htdocs/margin/tabs/thirdpartyMargins.php
+ *    \ingroup    product margins
+ *    \brief      Page des marges des factures clients pour un tiers
  */
 
 require '../../main.inc.php';
@@ -122,16 +122,16 @@ if ($socid > 0)
 
     // Margin Rate
     if (! empty($conf->global->DISPLAY_MARGIN_RATES)) {
-    	print '<tr><td>'.$langs->trans("MarginRate").'</td><td colspan="3">';
-    	print '<span id="marginRate"></span>'; // set by jquery (see below)
-    	print '</td></tr>';
+        print '<tr><td>'.$langs->trans("MarginRate").'</td><td colspan="3">';
+        print '<span id="marginRate"></span>'; // set by jquery (see below)
+        print '</td></tr>';
     }
 
     // Mark Rate
     if (! empty($conf->global->DISPLAY_MARK_RATES)) {
-    	print '<tr><td>'.$langs->trans("MarkRate").'</td><td colspan="3">';
-    	print '<span id="markRate"></span>'; // set by jquery (see below)
-    	print '</td></tr>';
+        print '<tr><td>'.$langs->trans("MarkRate").'</td><td colspan="3">';
+        print '<span id="markRate"></span>'; // set by jquery (see below)
+        print '</td></tr>';
     }
 
     print "</table>";
@@ -146,9 +146,9 @@ if ($socid > 0)
     $sql = "SELECT distinct s.nom, s.rowid as socid, s.code_client,";
     $sql.= " f.rowid as facid, f.ref, f.total as total_ht,";
     $sql.= " f.datef, f.paye, f.fk_statut as statut, f.type,";
-    $sql.= " sum(d.total_ht) as selling_price,";						// may be negative or positive
-    $sql.= " sum(d.qty * d.buy_price_ht) as buying_price,";				// always positive
-    $sql.= " sum(abs(d.total_ht) - (d.buy_price_ht * d.qty)) as marge";	// always positive
+    $sql.= " sum(d.total_ht) as selling_price,";                        // may be negative or positive
+    $sql.= " sum(d.qty * d.buy_price_ht) as buying_price,";                // always positive
+    $sql.= " sum(abs(d.total_ht) - (d.buy_price_ht * d.qty)) as marge";    // always positive
     $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
     $sql.= ", ".MAIN_DB_PREFIX."facture as f";
     $sql.= ", ".MAIN_DB_PREFIX."facturedet as d";
@@ -168,99 +168,99 @@ if ($socid > 0)
     $result = $db->query($sql);
     if ($result)
     {
-    	$num = $db->num_rows($result);
+        $num = $db->num_rows($result);
 
-    	print_barre_liste($langs->trans("MarginDetails"), $page, $_SERVER["PHP_SELF"], "&amp;socid=".$object->id, $sortfield, $sortorder, '', 0, 0, '');
+        print_barre_liste($langs->trans("MarginDetails"), $page, $_SERVER["PHP_SELF"], "&amp;socid=".$object->id, $sortfield, $sortorder, '', 0, 0, '');
 
-    	$i = 0;
-    	print '<div class="div-table-responsive">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
-    	print "<table class=\"noborder\" width=\"100%\">";
+        $i = 0;
+        print '<div class="div-table-responsive">';        // You can use div-table-responsive-no-min if you dont need reserved height for your table
+        print "<table class=\"noborder\" width=\"100%\">";
 
-    	print '<tr class="liste_titre">';
-    	print_liste_field_titre("Invoice", $_SERVER["PHP_SELF"], "f.ref", "", "&amp;socid=".$_REQUEST["socid"], '', $sortfield, $sortorder);
-    	print_liste_field_titre("DateInvoice", $_SERVER["PHP_SELF"], "f.datef", "", "&amp;socid=".$_REQUEST["socid"], '', $sortfield, $sortorder, 'center ');
-    	print_liste_field_titre("SoldAmount", $_SERVER["PHP_SELF"], "selling_price", "", "&amp;socid=".$_REQUEST["socid"], '', $sortfield, $sortorder, 'right ');
-    	print_liste_field_titre("PurchasedAmount", $_SERVER["PHP_SELF"], "buying_price", "", "&amp;socid=".$_REQUEST["socid"], '', $sortfield, $sortorder, 'right ');
-    	print_liste_field_titre("Margin", $_SERVER["PHP_SELF"], "marge", "", "&amp;socid=".$_REQUEST["socid"], '', $sortfield, $sortorder, 'right ');
-    	if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-    		print_liste_field_titre("MarginRate", $_SERVER["PHP_SELF"], "", "", "&amp;socid=".$_REQUEST["socid"], '', $sortfield, $sortorder, 'right ');
-    	if (! empty($conf->global->DISPLAY_MARK_RATES))
-    		print_liste_field_titre("MarkRate", $_SERVER["PHP_SELF"], "", "", "&amp;socid=".$_REQUEST["socid"], '', $sortfield, $sortorder, 'right ');
-    	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "f.paye,f.fk_statut", "", "&amp;socid=".$_REQUEST["socid"], '', $sortfield, $sortorder, 'right ');
-    	print "</tr>\n";
+        print '<tr class="liste_titre">';
+        print_liste_field_titre("Invoice", $_SERVER["PHP_SELF"], "f.ref", "", "&amp;socid=".$_REQUEST["socid"], '', $sortfield, $sortorder);
+        print_liste_field_titre("DateInvoice", $_SERVER["PHP_SELF"], "f.datef", "", "&amp;socid=".$_REQUEST["socid"], '', $sortfield, $sortorder, 'center ');
+        print_liste_field_titre("SoldAmount", $_SERVER["PHP_SELF"], "selling_price", "", "&amp;socid=".$_REQUEST["socid"], '', $sortfield, $sortorder, 'right ');
+        print_liste_field_titre("PurchasedAmount", $_SERVER["PHP_SELF"], "buying_price", "", "&amp;socid=".$_REQUEST["socid"], '', $sortfield, $sortorder, 'right ');
+        print_liste_field_titre("Margin", $_SERVER["PHP_SELF"], "marge", "", "&amp;socid=".$_REQUEST["socid"], '', $sortfield, $sortorder, 'right ');
+        if (! empty($conf->global->DISPLAY_MARGIN_RATES))
+            print_liste_field_titre("MarginRate", $_SERVER["PHP_SELF"], "", "", "&amp;socid=".$_REQUEST["socid"], '', $sortfield, $sortorder, 'right ');
+        if (! empty($conf->global->DISPLAY_MARK_RATES))
+            print_liste_field_titre("MarkRate", $_SERVER["PHP_SELF"], "", "", "&amp;socid=".$_REQUEST["socid"], '', $sortfield, $sortorder, 'right ');
+        print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "f.paye,f.fk_statut", "", "&amp;socid=".$_REQUEST["socid"], '', $sortfield, $sortorder, 'right ');
+        print "</tr>\n";
 
-    	$cumul_achat = 0;
-    	$cumul_vente = 0;
+        $cumul_achat = 0;
+        $cumul_vente = 0;
 
-    	$rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT, $conf->global->MAIN_MAX_DECIMALS_TOT);
+        $rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT, $conf->global->MAIN_MAX_DECIMALS_TOT);
 
-    	if ($num > 0)
-    	{
-    		while ($i < $num /*&& $i < $conf->liste_limit*/)
-    		{
-    			$objp = $db->fetch_object($result);
+        if ($num > 0)
+        {
+            while ($i < $num /*&& $i < $conf->liste_limit*/)
+            {
+                $objp = $db->fetch_object($result);
 
-    			$marginRate = ($objp->buying_price != 0)?(100 * $objp->marge / $objp->buying_price):'' ;
-    			$markRate = ($objp->selling_price != 0)?(100 * $objp->marge / $objp->selling_price):'' ;
+                $marginRate = ($objp->buying_price != 0)?(100 * $objp->marge / $objp->buying_price):'' ;
+                $markRate = ($objp->selling_price != 0)?(100 * $objp->marge / $objp->selling_price):'' ;
 
-    			$sign = '';
-    			if ($objp->type == Facture::TYPE_CREDIT_NOTE){
-    			    $sign = '-';
-    			}
+                $sign = '';
+                if ($objp->type == Facture::TYPE_CREDIT_NOTE){
+                    $sign = '-';
+                }
 
-    			print '<tr class="oddeven">';
-    			print '<td>';
-    			$invoicestatic->id=$objp->facid;
-    			$invoicestatic->ref=$objp->ref;
-    			print $invoicestatic->getNomUrl(1);
-    			print "</td>\n";
-    			print "<td class=\"center\">";
-    			print dol_print_date($db->jdate($objp->datef), 'day')."</td>";
-    			print "<td class=\"right\">".price($objp->selling_price, null, null, null, null, $rounding)."</td>\n";
-    			print "<td class=\"right\">".price(($objp->type == 2 ? -1 : 1) * $objp->buying_price, null, null, null, null, $rounding)."</td>\n";
-    			print "<td class=\"right\">".$sign.price($objp->marge, null, null, null, null, $rounding)."</td>\n";
-    			if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-    			    print "<td class=\"right\">".(($marginRate === '')?'n/a':$sign.price($marginRate, null, null, null, null, $rounding)."%")."</td>\n";
-    			if (! empty($conf->global->DISPLAY_MARK_RATES))
-    			    print "<td class=\"right\">".(($markRate === '')?'n/a':price($markRate, null, null, null, null, $rounding)."%")."</td>\n";
-    			print '<td class="right">'.$invoicestatic->LibStatut($objp->paye, $objp->statut, 5).'</td>';
-    			print "</tr>\n";
-    			$i++;
-    			$cumul_vente += $objp->selling_price;
-    			$cumul_achat += ($objp->type == 2 ? -1 : 1) * $objp->buying_price;
-    		}
-    	}
+                print '<tr class="oddeven">';
+                print '<td>';
+                $invoicestatic->id=$objp->facid;
+                $invoicestatic->ref=$objp->ref;
+                print $invoicestatic->getNomUrl(1);
+                print "</td>\n";
+                print "<td class=\"center\">";
+                print dol_print_date($db->jdate($objp->datef), 'day')."</td>";
+                print "<td class=\"right\">".price($objp->selling_price, null, null, null, null, $rounding)."</td>\n";
+                print "<td class=\"right\">".price(($objp->type == 2 ? -1 : 1) * $objp->buying_price, null, null, null, null, $rounding)."</td>\n";
+                print "<td class=\"right\">".$sign.price($objp->marge, null, null, null, null, $rounding)."</td>\n";
+                if (! empty($conf->global->DISPLAY_MARGIN_RATES))
+                    print "<td class=\"right\">".(($marginRate === '')?'n/a':$sign.price($marginRate, null, null, null, null, $rounding)."%")."</td>\n";
+                if (! empty($conf->global->DISPLAY_MARK_RATES))
+                    print "<td class=\"right\">".(($markRate === '')?'n/a':price($markRate, null, null, null, null, $rounding)."%")."</td>\n";
+                print '<td class="right">'.$invoicestatic->LibStatut($objp->paye, $objp->statut, 5).'</td>';
+                print "</tr>\n";
+                $i++;
+                $cumul_vente += $objp->selling_price;
+                $cumul_achat += ($objp->type == 2 ? -1 : 1) * $objp->buying_price;
+            }
+        }
 
-    	// affichage totaux marges
+        // affichage totaux marges
 
-    	$totalMargin = $cumul_vente - $cumul_achat;
-    	if ($totalMargin < 0)
-    	{
-    		$marginRate = ($cumul_achat != 0)?-1*(100 * $totalMargin / $cumul_achat):'';
-    		$markRate = ($cumul_vente != 0)?-1*(100 * $totalMargin / $cumul_vente):'';
-    	}
-    	else
-    	{
-    		$marginRate = ($cumul_achat != 0)?(100 * $totalMargin / $cumul_achat):'';
-    		$markRate = ($cumul_vente != 0)?(100 * $totalMargin / $cumul_vente):'';
-    	}
+        $totalMargin = $cumul_vente - $cumul_achat;
+        if ($totalMargin < 0)
+        {
+            $marginRate = ($cumul_achat != 0)?-1*(100 * $totalMargin / $cumul_achat):'';
+            $markRate = ($cumul_vente != 0)?-1*(100 * $totalMargin / $cumul_vente):'';
+        }
+        else
+        {
+            $marginRate = ($cumul_achat != 0)?(100 * $totalMargin / $cumul_achat):'';
+            $markRate = ($cumul_vente != 0)?(100 * $totalMargin / $cumul_vente):'';
+        }
 
-    	// Total
-    	print '<tr class="liste_total">';
-    	print '<td colspan=2>'.$langs->trans('TotalMargin')."</td>";
-    	print "<td class=\"right\">".price($cumul_vente, null, null, null, null, $rounding)."</td>\n";
-    	print "<td class=\"right\">".price($cumul_achat, null, null, null, null, $rounding)."</td>\n";
-    	print "<td class=\"right\">".price($totalMargin, null, null, null, null, $rounding)."</td>\n";
-    	if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-    		print "<td class=\"right\">".(($marginRate === '')?'n/a':price($marginRate, null, null, null, null, $rounding)."%")."</td>\n";
-    	if (! empty($conf->global->DISPLAY_MARK_RATES))
-    		print "<td class=\"right\">".(($markRate === '')?'n/a':price($markRate, null, null, null, null, $rounding)."%")."</td>\n";
-    	print '<td class="right">&nbsp;</td>';
-    	print "</tr>\n";
+        // Total
+        print '<tr class="liste_total">';
+        print '<td colspan=2>'.$langs->trans('TotalMargin')."</td>";
+        print "<td class=\"right\">".price($cumul_vente, null, null, null, null, $rounding)."</td>\n";
+        print "<td class=\"right\">".price($cumul_achat, null, null, null, null, $rounding)."</td>\n";
+        print "<td class=\"right\">".price($totalMargin, null, null, null, null, $rounding)."</td>\n";
+        if (! empty($conf->global->DISPLAY_MARGIN_RATES))
+            print "<td class=\"right\">".(($marginRate === '')?'n/a':price($marginRate, null, null, null, null, $rounding)."%")."</td>\n";
+        if (! empty($conf->global->DISPLAY_MARK_RATES))
+            print "<td class=\"right\">".(($markRate === '')?'n/a':price($markRate, null, null, null, null, $rounding)."%")."</td>\n";
+        print '<td class="right">&nbsp;</td>';
+        print "</tr>\n";
     }
     else
     {
-    	dol_print_error($db);
+        dol_print_error($db);
     }
     print "</table>";
     print '</div>';
@@ -270,7 +270,7 @@ if ($socid > 0)
 }
 else
 {
-	dol_print_error('', 'Parameter socid not defined');
+    dol_print_error('', 'Parameter socid not defined');
 }
 
 

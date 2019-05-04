@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007-2011	Laurent Destailleur	<eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2011    Laurent Destailleur    <eldy@users.sourceforge.net>
  * Copyright (C) 2008-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2008-2011	Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2014       Teddy Andreotti    	<125155@supinfo.com>
@@ -23,7 +23,7 @@
  *       \brief      Page to ask a new password
  */
 
-define("NOLOGIN", 1);	// This means this output page does not require to be logged.
+define("NOLOGIN", 1);    // This means this output page does not require to be logged.
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
@@ -84,7 +84,7 @@ if ($action == 'validatenewpassword' && $username && $passwordhash)
         }
         else
         {
-        	$langs->load("errors");
+            $langs->load("errors");
             $message = '<div class="error">'.$langs->trans("ErrorFailedToValidatePasswordReset").'</div>';
         }
     }
@@ -169,7 +169,7 @@ else $focus_element = 'password';
 // Send password button enabled ?
 $disabled='disabled';
 if (preg_match('/dolibarr/i', $mode)) $disabled='';
-if (! empty($conf->global->MAIN_SECURITY_ENABLE_SENDPASSWORD)) $disabled='';	 // To force button enabled
+if (! empty($conf->global->MAIN_SECURITY_ENABLE_SENDPASSWORD)) $disabled='';     // To force button enabled
 
 // Show logo (search in order: small company logo, large company logo, theme logo, common logo)
 $width=0;
@@ -177,36 +177,36 @@ $rowspan=2;
 $urllogo=DOL_URL_ROOT.'/theme/login_logo.png';
 if (! empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small))
 {
-	$urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_small);
+    $urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_small);
 }
 elseif (! empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/'.$mysoc->logo))
 {
-	$urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/'.$mysoc->logo);
-	$width=128;
+    $urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/'.$mysoc->logo);
+    $width=128;
 }
 elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/img/dolibarr_logo.png'))
 {
-	$urllogo=DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/dolibarr_logo.png';
+    $urllogo=DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/dolibarr_logo.png';
 }
 elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo.png'))
 {
-	$urllogo=DOL_URL_ROOT.'/theme/dolibarr_logo.png';
+    $urllogo=DOL_URL_ROOT.'/theme/dolibarr_logo.png';
 }
 
 // Security graphical code
 if (function_exists("imagecreatefrompng") && ! $disabled)
 {
-	$captcha = 1;
-	$captcha_refresh = img_picto($langs->trans("Refresh"), 'refresh', 'id="captcha_refresh_img"');
+    $captcha = 1;
+    $captcha_refresh = img_picto($langs->trans("Refresh"), 'refresh', 'id="captcha_refresh_img"');
 }
 
 // Execute hook getPasswordForgottenPageOptions (for table)
 $parameters=array('entity' => GETPOST('entity', 'int'));
 $hookmanager->executeHooks('getPasswordForgottenPageOptions', $parameters);    // Note that $action and $object may have been modified by some hooks
 if (is_array($hookmanager->resArray) && ! empty($hookmanager->resArray)) {
-	$morelogincontent = $hookmanager->resArray; // (deprecated) For compatibility
+    $morelogincontent = $hookmanager->resArray; // (deprecated) For compatibility
 } else {
-	$morelogincontent = $hookmanager->resPrint;
+    $morelogincontent = $hookmanager->resPrint;
 }
 
 // Execute hook getPasswordForgottenPageExtraOptions (eg for js)
@@ -214,4 +214,4 @@ $parameters=array('entity' => GETPOST('entity', 'int'));
 $reshook = $hookmanager->executeHooks('getPasswordForgottenPageExtraOptions', $parameters);    // Note that $action and $object may have been modified by some hooks.
 $moreloginextracontent = $hookmanager->resPrint;
 
-include $template_dir.'passwordforgotten.tpl.php';	// To use native PHP
+include $template_dir.'passwordforgotten.tpl.php';    // To use native PHP

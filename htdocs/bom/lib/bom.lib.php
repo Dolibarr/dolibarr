@@ -29,35 +29,35 @@
  */
 function bomAdminPrepareHead()
 {
-	global $langs, $conf;
+    global $langs, $conf;
 
-	$langs->load("mrp");
+    $langs->load("mrp");
 
-	$h = 0;
-	$head = array();
+    $h = 0;
+    $head = array();
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/bom.php";
-	$head[$h][1] = $langs->trans("Settings");
-	$head[$h][2] = 'settings';
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT."/admin/bom.php";
+    $head[$h][1] = $langs->trans("Settings");
+    $head[$h][2] = 'settings';
+    $h++;
 
-	/*$head[$h][0] = DOL_URL_ROOT."/bom/admin/about.php";
-	$head[$h][1] = $langs->trans("About");
-	$head[$h][2] = 'about';
-	$h++;
+    /*$head[$h][0] = DOL_URL_ROOT."/bom/admin/about.php";
+    $head[$h][1] = $langs->trans("About");
+    $head[$h][2] = 'about';
+    $h++;
     */
 
-	// Show more tabs from modules
-	// Entries must be declared in modules descriptor with line
-	//$this->tabs = array(
-	//	'entity:+tabname:Title:@bom:/bom/mypage.php?id=__ID__'
-	//); // to add new tab
-	//$this->tabs = array(
-	//	'entity:-tabname:Title:@bom:/bom/mypage.php?id=__ID__'
-	//); // to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'bom');
+    // Show more tabs from modules
+    // Entries must be declared in modules descriptor with line
+    //$this->tabs = array(
+    //    'entity:+tabname:Title:@bom:/bom/mypage.php?id=__ID__'
+    //); // to add new tab
+    //$this->tabs = array(
+    //    'entity:-tabname:Title:@bom:/bom/mypage.php?id=__ID__'
+    //); // to remove a tab
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'bom');
 
-	return $head;
+    return $head;
 }
 
 
@@ -66,8 +66,8 @@ function bomAdminPrepareHead()
 /**
  * Prepare array of tabs for BillOfMaterials
  *
- * @param	BOM	      $object		BillOfMaterials
- * @return 	array					Array of tabs
+ * @param    BOM          $object        BillOfMaterials
+ * @return     array                    Array of tabs
  */
 function bomPrepareHead($object)
 {
@@ -114,10 +114,10 @@ function bomPrepareHead($object)
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
     //$this->tabs = array(
-    //	'entity:+tabname:Title:@bom:/bom/mypage.php?id=__ID__'
+    //    'entity:+tabname:Title:@bom:/bom/mypage.php?id=__ID__'
     //); // to add new tab
     //$this->tabs = array(
-    //	'entity:-tabname:Title:@bom:/bom/mypage.php?id=__ID__'
+    //    'entity:-tabname:Title:@bom:/bom/mypage.php?id=__ID__'
     //); // to remove a tab
     complete_head_from_modules($conf, $langs, $object, $head, $h, 'bom');
 

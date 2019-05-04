@@ -18,7 +18,7 @@
  */
 
 /**
- * 	\defgroup   datapolicy     Module datapolicy
+ *     \defgroup   datapolicy     Module datapolicy
  *  \brief      datapolicy module descriptor.
  *
  *  \file       htdocs/datapolicy/core/modules/modDataPolicy.class.php
@@ -112,7 +112,7 @@ class modDataPolicy extends DolibarrModules {
         $this->warnings_activation = array();                     // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
         $this->warnings_activation_ext = array();                 // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
         //$this->automatic_activation = array('FR'=>'datapolicyWasAutomaticallyActivatedBecauseOfYourCountryChoice');
-        //$this->always_enabled = true;								// If true, can't be disabled
+        //$this->always_enabled = true;                                // If true, can't be disabled
         // Constants
         // List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 'current' or 'allentities', deleteonunactive)
         // Example: $this->const=array(0=>array('datapolicy_MYNEWCONST1','chaine','myvalue','This is a constant to add',1),
@@ -149,12 +149,12 @@ class modDataPolicy extends DolibarrModules {
         // Array to add new pages in new tabs
         $this->tabs = array();
         // Example:
-        // $this->tabs[] = array('data'=>'objecttype:+tabname1:Title1:mylangfile@datapolicy:$user->rights->datapolicy->read:/datapolicy/mynewtab1.php?id=__ID__');  					// To add a new tab identified by code tabname1
-        // $this->tabs[] = array('data'=>'objecttype:+tabname2:SUBSTITUTION_Title2:mylangfile@datapolicy:$user->rights->othermodule->read:/datapolicy/mynewtab2.php?id=__ID__',  	// To add another new tab identified by code tabname2. Label will be result of calling all substitution functions on 'Title2' key.
-        // $this->tabs[] = array('data'=>'objecttype:-tabname:NU:conditiontoremove');                                                     										// To remove an existing tab identified by code tabname
+        // $this->tabs[] = array('data'=>'objecttype:+tabname1:Title1:mylangfile@datapolicy:$user->rights->datapolicy->read:/datapolicy/mynewtab1.php?id=__ID__');                      // To add a new tab identified by code tabname1
+        // $this->tabs[] = array('data'=>'objecttype:+tabname2:SUBSTITUTION_Title2:mylangfile@datapolicy:$user->rights->othermodule->read:/datapolicy/mynewtab2.php?id=__ID__',      // To add another new tab identified by code tabname2. Label will be result of calling all substitution functions on 'Title2' key.
+        // $this->tabs[] = array('data'=>'objecttype:-tabname:NU:conditiontoremove');                                                                                             // To remove an existing tab identified by code tabname
         //
         // Where objecttype can be
-        // 'categories_x'	  to add a tab in category view (replace 'x' by type of category (0=product, 1=supplier, 2=customer, 3=member)
+        // 'categories_x'      to add a tab in category view (replace 'x' by type of category (0=product, 1=supplier, 2=customer, 3=member)
         // 'contact'          to add a tab in contact view
         // 'contract'         to add a tab in contract view
         // 'group'            to add a tab in group view
@@ -162,10 +162,10 @@ class modDataPolicy extends DolibarrModules {
         // 'invoice'          to add a tab in customer invoice view
         // 'invoice_supplier' to add a tab in supplier invoice view
         // 'member'           to add a tab in fundation member view
-        // 'opensurveypoll'	  to add a tab in opensurvey poll view
+        // 'opensurveypoll'      to add a tab in opensurvey poll view
         // 'order'            to add a tab in customer order view
         // 'order_supplier'   to add a tab in supplier order view
-        // 'payment'		  to add a tab in payment view
+        // 'payment'          to add a tab in payment view
         // 'payment_supplier' to add a tab in supplier payment view
         // 'product'          to add a tab in product view
         // 'propal'           to add a tab in propal view
@@ -201,12 +201,12 @@ class modDataPolicy extends DolibarrModules {
     }
 
     /**
-     * 	Function called when module is enabled.
-     * 	The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
-     * 	It also creates data directories
+     *     Function called when module is enabled.
+     *     The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+     *     It also creates data directories
      *
-     * 	@param      string	$options    Options when enabling module ('', 'noboxes')
-     * 	@return     int             	1 if OK, 0 if KO
+     *     @param      string    $options    Options when enabling module ('', 'noboxes')
+     *     @return     int                 1 if OK, 0 if KO
      */
     public function init($options = '')
     {
@@ -247,12 +247,12 @@ class modDataPolicy extends DolibarrModules {
     }
 
     /**
-     * 	Function called when module is disabled.
-     * 	Remove from database constants, boxes and permissions from Dolibarr database.
-     * 	Data directories are not deleted
+     *     Function called when module is disabled.
+     *     Remove from database constants, boxes and permissions from Dolibarr database.
+     *     Data directories are not deleted
      *
-     * 	@param      string	$options    Options when enabling module ('', 'noboxes')
-     * 	@return     int             	1 if OK, 0 if KO
+     *     @param      string    $options    Options when enabling module ('', 'noboxes')
+     *     @return     int                 1 if OK, 0 if KO
      */
     public function remove($options = '')
     {

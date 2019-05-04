@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017		Alexandre Spangaro		<aspangaro@open-dsi.fr>
+/* Copyright (C) 2017        Alexandre Spangaro        <aspangaro@open-dsi.fr>
  * Copyright (C) 2017		Saasprov				<saasprov@gmail.com>
  * Copyright (C) 2017		Ferran Marcet			<fmarcet@2byte.es.com>
  *
@@ -33,24 +33,24 @@ global $conf;
 global $stripearrayofkeysbyenv;
 
 $stripearrayofkeysbyenv = array(
-	0=>array(
-		"secret_key"      => $conf->global->STRIPE_TEST_SECRET_KEY,
-		"publishable_key" => $conf->global->STRIPE_TEST_PUBLISHABLE_KEY
-	),
-	1=>array(
-		"secret_key"      => $conf->global->STRIPE_LIVE_SECRET_KEY,
-		"publishable_key" => $conf->global->STRIPE_LIVE_PUBLISHABLE_KEY
-	)
+    0=>array(
+        "secret_key"      => $conf->global->STRIPE_TEST_SECRET_KEY,
+        "publishable_key" => $conf->global->STRIPE_TEST_PUBLISHABLE_KEY
+    ),
+    1=>array(
+        "secret_key"      => $conf->global->STRIPE_LIVE_SECRET_KEY,
+        "publishable_key" => $conf->global->STRIPE_LIVE_PUBLISHABLE_KEY
+    )
 );
 
 $stripearrayofkeys = array();
 if (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))
 {
-	$stripearrayofkeys = $stripearrayofkeysbyenv[0];	// Test
+    $stripearrayofkeys = $stripearrayofkeysbyenv[0];    // Test
 }
 else
 {
-	$stripearrayofkeys = $stripearrayofkeysbyenv[1];	// Live
+    $stripearrayofkeys = $stripearrayofkeysbyenv[1];    // Live
 }
 
 \Stripe\Stripe::setApiKey($stripearrayofkeys['secret_key']);

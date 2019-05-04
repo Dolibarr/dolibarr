@@ -19,9 +19,9 @@
  */
 
 /**
- * 	\defgroup   api     Module DolibarrApi
+ *     \defgroup   api     Module DolibarrApi
  *  \brief      API loader
- *				Search files htdocs/<module>/class/api_<module>.class.php
+ *                Search files htdocs/<module>/class/api_<module>.class.php
  *  \file       htdocs/api/admin/explorer.php
  */
 
@@ -78,16 +78,16 @@ foreach ($modulesdir as $dir)
                 $module=$part=$obj=strtolower(preg_replace('/^mod/i', '', $modulename));
                 //if ($part == 'propale') $part='propal';
                 if ($module == 'societe') {
-					$obj = 'thirdparty';
-				}
+                    $obj = 'thirdparty';
+                }
                 if ($module == 'categorie') {
                     $part = 'categories';
-					$obj = 'category';
-				}
+                    $obj = 'category';
+                }
                 if ($module == 'facture') {
                     $part = 'compta/facture';
-					$obj = 'facture';
-				}
+                    $obj = 'facture';
+                }
                 if ($module == 'ficheinter') {
                     $obj = 'fichinter';
                     $part = 'fichinter';
@@ -171,8 +171,8 @@ print load_fiche_titre($langs->trans("ApiSetup"), $linkback, 'title_setup');
 
 // Define $urlwithroot
 $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
-$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
-//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;        // This is to use external domain name found into config file
+//$urlwithroot=DOL_MAIN_URL_ROOT;                    // This is to use same domain name than current
 
 // Show message
 print '<br>';

@@ -37,9 +37,9 @@ class PrintingDriver
     public $db;
 
     /**
-	 * @var string Error code (or message)
-	 */
-	public $error='';
+     * @var string Error code (or message)
+     */
+    public $error='';
 
 
     /**

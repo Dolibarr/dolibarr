@@ -21,7 +21,7 @@
 
 /**
  *      \file       dev/initdata/import-thirdparties.php
- *		\brief      Script example to insert thirdparties from a csv file.
+ *        \brief      Script example to insert thirdparties from a csv file.
  *                  To purge data, you can have a look at purge-data.php
  */
 
@@ -81,8 +81,8 @@ if (! file_exists($filepath)) {
 $ret=$user->fetch('', 'admin');
 if (! $ret > 0)
 {
-	print 'A user with login "admin" and all permissions must be created to use this script.'."\n";
-	exit;
+    print 'A user with login "admin" and all permissions must be created to use this script.'."\n";
+    exit;
 }
 $user->getrights();
 
@@ -143,18 +143,18 @@ while ($fields=fgetcsv($fhandle, $linelength, $delimiter, $enclosure, $escape))
         print " - Error in create result code = ".$ret." - ".$object->errorsToString();
         $errorrecord++;
     }
-	else
-	{
-	    print " - Creation OK with login ".$object->login." - id = ".$ret;
-	}
+    else
+    {
+        print " - Creation OK with login ".$object->login." - id = ".$ret;
+    }
 
-	print "\n";
+    print "\n";
 
-	if ($errorrecord)
-	{
-	    fwrite($fhandleerr, 'Error on record nb '.$i." - ".$object->errorsToString()."\n");
-	    $error++;    // $errorrecord will be reset
-	}
+    if ($errorrecord)
+    {
+        fwrite($fhandleerr, 'Error on record nb '.$i." - ".$object->errorsToString()."\n");
+        $error++;    // $errorrecord will be reset
+    }
 }
 
 

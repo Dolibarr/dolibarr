@@ -8,29 +8,29 @@ use \DebugBar\DataCollector\MessagesCollector;
 
 class DolMessagesCollector extends MessagesCollector
 {
-	/**
-	 *	Return widget settings
-	 *
-	 *  @return array  Array
-	 */
-	public function getWidgets()
-	{
-		global $langs;
+    /**
+     *    Return widget settings
+     *
+     *  @return array  Array
+     */
+    public function getWidgets()
+    {
+        global $langs;
 
-		$title = $langs->transnoentities('Messages');
-		$name = $this->getName();
+        $title = $langs->transnoentities('Messages');
+        $name = $this->getName();
 
-		return array(
-			"$title" => array(
-				"icon" => "list-alt",
-				"widget" => "PhpDebugBar.Widgets.MessagesWidget",
-				"map" => "$name.messages",
-				"default" => "[]"
-			),
-			"$title:badge" => array(
-				"map" => "$name.count",
-				"default" => "null"
-			)
-		);
-	}
+        return array(
+            "$title" => array(
+                "icon" => "list-alt",
+                "widget" => "PhpDebugBar.Widgets.MessagesWidget",
+                "map" => "$name.messages",
+                "default" => "[]"
+            ),
+            "$title:badge" => array(
+                "map" => "$name.count",
+                "default" => "null"
+            )
+        );
+    }
 }

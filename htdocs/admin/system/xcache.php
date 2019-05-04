@@ -43,8 +43,8 @@ print "<br>\n";
 if (!function_exists('xcache_info'))
 {
     print 'XCache seems to be not installed. Function xcache_info not found.';
-	llxFooter();
-	exit;
+    llxFooter();
+    exit;
 }
 
 

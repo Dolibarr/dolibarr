@@ -17,8 +17,8 @@
  */
 
 /**
- *	\file       htdocs/theme/md/theme_vars.inc.php
- *	\brief      File to declare variables of CSS style sheet
+ *    \file       htdocs/theme/md/theme_vars.inc.php
+ *    \brief      File to declare variables of CSS style sheet
  *  \ingroup    core
  *
  *  To include file, do this:
@@ -45,7 +45,7 @@ $colorbacklineimpair2='255,255,255';    // line impair
 $colorbacklinepair1='248,248,248';    // line pair
 $colorbacklinepair2='246,246,246';    // line pair
 $colorbacklinepairhover='230,237,244';    // line hover
-$colorbacklinepairchecked='230,237,244';	// line checked
+$colorbacklinepairchecked='230,237,244';    // line checked
 $colorbacklinebreak='214,218,220';
 $colorbackbody='248,248,248';
 $colortexttitlenotab='90,90,90';

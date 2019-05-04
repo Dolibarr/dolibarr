@@ -24,14 +24,14 @@
 
 
 /**
- *	Class to manage left menus
+ *    Class to manage left menus
  */
 class Menu
 {
     public $liste;
 
     /**
-     *	Constructor
+     *    Constructor
      */
     public function __construct()
     {
@@ -41,7 +41,7 @@ class Menu
     /**
      * Clear property ->liste
      *
-     * @return	void
+     * @return    void
      */
     public function clear()
     {
@@ -51,19 +51,19 @@ class Menu
     /**
      * Add a menu entry into this->liste (at end)
      *
-     * @param	string	$url        Url to follow on click (does not include DOL_URL_ROOT)
-     * @param   string	$titre      Label of menu to add
-     * @param   integer	$level      Level of menu to add
-     * @param   int		$enabled    Menu active or not (0=Not active, 1=Active, 2=Active but grey)
-     * @param   string	$target		Target link
-     * @param	string	$mainmenu	Main menu ('home', 'companies', 'products', ...)
-     * @param	string	$leftmenu	Left menu ('setup', 'system', 'admintools', ...)
-     * @param	int		$position	Position (not used yet)
-     * @param	string	$id			Id
-     * @param	string	$idsel		Id sel
-     * @param	string	$classname	Class name
-     * @param	string	$prefix		Prefix to title (image or picto)
-     * @return	void
+     * @param    string    $url        Url to follow on click (does not include DOL_URL_ROOT)
+     * @param   string    $titre      Label of menu to add
+     * @param   integer    $level      Level of menu to add
+     * @param   int        $enabled    Menu active or not (0=Not active, 1=Active, 2=Active but grey)
+     * @param   string    $target        Target link
+     * @param    string    $mainmenu    Main menu ('home', 'companies', 'products', ...)
+     * @param    string    $leftmenu    Left menu ('setup', 'system', 'admintools', ...)
+     * @param    int        $position    Position (not used yet)
+     * @param    string    $id            Id
+     * @param    string    $idsel        Id sel
+     * @param    string    $classname    Class name
+     * @param    string    $prefix        Prefix to title (image or picto)
+     * @return    void
      */
     public function add($url, $titre, $level = 0, $enabled = 1, $target = '', $mainmenu = '', $leftmenu = '', $position = 0, $id = '', $idsel = '', $classname = '', $prefix = '')
     {
@@ -74,19 +74,19 @@ class Menu
      * Insert a menu entry into this->liste
      *
      * @param   int     $idafter    Array key after which inserting new entry
-     * @param	string	$url        Url to follow on click
-     * @param   string	$titre      Label of menu to add
-     * @param   integer	$level      Level of menu to add
-     * @param   int		$enabled    Menu active or not
-     * @param   string	$target		Target link
-     * @param	string	$mainmenu	Main menu ('home', 'companies', 'products', ...)
-     * @param	string	$leftmenu	Left menu ('setup', 'system', 'admintools', ...)
-     * @param	int		$position	Position (not used yet)
-     * @param	string	$id			Id
-     * @param	string	$idsel		Id sel
-     * @param	string	$classname	Class name
-     * @param	string	$prefix		Prefix to title (image or picto)
-     * @return	void
+     * @param    string    $url        Url to follow on click
+     * @param   string    $titre      Label of menu to add
+     * @param   integer    $level      Level of menu to add
+     * @param   int        $enabled    Menu active or not
+     * @param   string    $target        Target link
+     * @param    string    $mainmenu    Main menu ('home', 'companies', 'products', ...)
+     * @param    string    $leftmenu    Left menu ('setup', 'system', 'admintools', ...)
+     * @param    int        $position    Position (not used yet)
+     * @param    string    $id            Id
+     * @param    string    $idsel        Id sel
+     * @param    string    $classname    Class name
+     * @param    string    $prefix        Prefix to title (image or picto)
+     * @return    void
      */
     public function insert($idafter, $url, $titre, $level = 0, $enabled = 1, $target = '', $mainmenu = '', $leftmenu = '', $position = 0, $id = '', $idsel = '', $classname = '', $prefix = '')
     {
@@ -100,7 +100,7 @@ class Menu
     /**
      * Remove a menu entry from this->liste
      *
-     * @return	void
+     * @return    void
      */
     public function remove_last()
     {

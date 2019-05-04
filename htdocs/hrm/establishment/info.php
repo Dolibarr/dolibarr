@@ -16,8 +16,8 @@
  */
 
 /**
- *  \file       	htdocs/hrm/establishment/info.php
- *  \brief      	Page to show info of an establishment
+ *  \file           htdocs/hrm/establishment/info.php
+ *  \brief          Page to show info of an establishment
  */
 
 require '../../main.inc.php';
@@ -38,13 +38,13 @@ llxHeader();
 
 if ($id)
 {
-	$object = new Establishment($db);
-	$object->fetch($id);
-	$object->info($id);
+    $object = new Establishment($db);
+    $object->fetch($id);
+    $object->info($id);
 
-	$head = establishment_prepare_head($object);
+    $head = establishment_prepare_head($object);
 
-	dol_fiche_head($head, 'info', $langs->trans("Establishment"), -1, 'building');
+    dol_fiche_head($head, 'info', $langs->trans("Establishment"), -1, 'building');
 
     print '<table width="100%"><tr><td>';
     dol_print_object_info($object);

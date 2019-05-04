@@ -89,7 +89,7 @@ if ($action == "view_ticketlist") {
     }
 
     if (!$error) {
-    	$ret = $object->fetch('', '', $track_id);
+        $ret = $object->fetch('', '', $track_id);
 
         if ($ret && $object->id > 0) {
             // vérifie si l'adresse email est bien dans les contacts du ticket
@@ -223,9 +223,9 @@ if ($action == "view_ticketlist")
 
         // Extra fields
         if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
-        	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-        		if ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate') {
-        			$arrayfields["ef." . $key] = array('label' => $extrafields->attributes[$object->table_element]['label'][$key], 'checked' => $extrafields->attributes[$object->table_element]['list'][$key], 'position' => $extrafields->attributes[$object->table_element]['pos'][$key], 'enabled' => $extrafields->attributes[$object->table_element]['perms'][$key]);
+            foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
+                if ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate') {
+                    $arrayfields["ef." . $key] = array('label' => $extrafields->attributes[$object->table_element]['label'][$key], 'checked' => $extrafields->attributes[$object->table_element]['list'][$key], 'position' => $extrafields->attributes[$object->table_element]['pos'][$key], 'enabled' => $extrafields->attributes[$object->table_element]['perms'][$key]);
                 }
             }
         }
@@ -314,8 +314,8 @@ if ($action == "view_ticketlist")
         $sql .= " type.label as type_label, category.label as category_label, severity.label as severity_label";
         // Add fields for extrafields
         if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
-        	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val)
-        		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef." . $key . ' as options_' . $key : '');
+            foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val)
+                $sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef." . $key . ' as options_' . $key : '');
         }
         $sql .= " FROM " . MAIN_DB_PREFIX . "ticket as t";
         $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_ticket_type as type ON type.code=t.type_code";
@@ -421,7 +421,7 @@ if ($action == "view_ticketlist")
                 }
                 // Extra fields
                 if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
-                	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
+                    foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
                         if (!empty($arrayfields["ef." . $key]['checked'])) {
                             $align = $extrafields->getAlignFlag($key);
                             print_liste_field_titre($extralabels[$key], $url_page_current, "ef." . $key, "", $param, ($align ? 'align="' . $align . '"' : ''), $sortfield, $sortorder);
@@ -497,7 +497,7 @@ if ($action == "view_ticketlist")
 
                 // Extra fields
                 if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
-                	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
+                    foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
                         if (!empty($arrayfields["ef." . $key]['checked'])) {
                             print '<td class="liste_titre"></td>';
                         }
@@ -619,7 +619,7 @@ if ($action == "view_ticketlist")
 
                     // Extra fields
                     if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
-                    	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
+                        foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
                             if (!empty($arrayfields["ef." . $key]['checked'])) {
                                 print '<td';
                                 $align = $extrafields->getAlignFlag($key);

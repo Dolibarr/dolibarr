@@ -22,7 +22,7 @@
  * \brief   About page of module TakePos.
  */
 
-require '../../main.inc.php';	// Load $user and permissions
+require '../../main.inc.php';    // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once '../lib/takepos.lib.php';
@@ -32,7 +32,7 @@ $langs->loadLangs(array("errors","admin","cashdesk"));
 
 // Access control
 if (! $user->admin) {
-	accessforbidden();
+    accessforbidden();
 }
 
 // Parameters

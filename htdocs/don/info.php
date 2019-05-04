@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2015-2016	Alexandre Spangaro		<aspangaro@open-dsi.fr>
+/* Copyright (C) 2015-2016    Alexandre Spangaro        <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,9 +16,9 @@
  */
 
 /**
- * 	\file       htdocs/don/info.php
- * 	\ingroup    donations
- * 	\brief      Page to show a donation information
+ *     \file       htdocs/don/info.php
+ *     \ingroup    donations
+ *     \brief      Page to show a donation information
  */
 
 require '../main.inc.php';
@@ -49,8 +49,8 @@ $object->fetch($id);
  */
 if ($action == 'classin' && $user->rights->don->creer)
 {
-	$object->fetch($id);
-	$object->setProject($projectid);
+    $object->fetch($id);
+    $object->setProject($projectid);
 }
 
 /*

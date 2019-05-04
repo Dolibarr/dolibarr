@@ -63,14 +63,14 @@ if ($action == 'updateMask')
 
     if (! $res > 0) $error++;
 
-	if (! $error)
-	{
-		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	}
-	else
-	{
-		setEventMessages($langs->trans("Error"), null, 'errors');
-	}
+    if (! $error)
+    {
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    }
+    else
+    {
+        setEventMessages($langs->trans("Error"), null, 'errors');
+    }
 }
 
 elseif ($action == 'specimen')  // For orders
@@ -86,70 +86,70 @@ elseif ($action == 'specimen')  // For orders
     $dirmodels=array_merge(array('/'), (array) $conf->modules_parts['models']);
     foreach($dirmodels as $reldir)
     {
-    	$file=dol_buildpath($reldir."core/modules/supplier_order/pdf/pdf_".$modele.".modules.php", 0);
-    	if (file_exists($file))
-    	{
-    		$filefound=1;
-    		$classname = "pdf_".$modele;
-    		break;
-    	}
+        $file=dol_buildpath($reldir."core/modules/supplier_order/pdf/pdf_".$modele.".modules.php", 0);
+        if (file_exists($file))
+        {
+            $filefound=1;
+            $classname = "pdf_".$modele;
+            break;
+        }
     }
 
     if ($filefound)
     {
-    	require_once $file;
+        require_once $file;
 
-    	$module = new $classname($db, $commande);
+        $module = new $classname($db, $commande);
 
-    	if ($module->write_file($commande, $langs) > 0)
-    	{
-    		header("Location: ".DOL_URL_ROOT."/document.php?modulepart=commande_fournisseur&file=SPECIMEN.pdf");
-    		return;
-    	}
-    	else
-    	{
-    		setEventMessages($module->error, $module->errors, 'errors');
-    		dol_syslog($module->error, LOG_ERR);
-    	}
+        if ($module->write_file($commande, $langs) > 0)
+        {
+            header("Location: ".DOL_URL_ROOT."/document.php?modulepart=commande_fournisseur&file=SPECIMEN.pdf");
+            return;
+        }
+        else
+        {
+            setEventMessages($module->error, $module->errors, 'errors');
+            dol_syslog($module->error, LOG_ERR);
+        }
     }
     else
     {
-    	setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
-    	dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
+        setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
+        dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
     }
 }
 
 // Activate a model
 elseif ($action == 'set')
 {
-	$ret = addDocumentModel($value, $type, $label, $scandir);
+    $ret = addDocumentModel($value, $type, $label, $scandir);
 }
 
 elseif ($action == 'del')
 {
-	$ret = delDocumentModel($value, $type);
-	if ($ret > 0)
-	{
+    $ret = delDocumentModel($value, $type);
+    if ($ret > 0)
+    {
         if ($conf->global->COMMANDE_SUPPLIER_ADDON_PDF == "$value") dolibarr_del_const($db, 'COMMANDE_SUPPLIER_ADDON_PDF', $conf->entity);
-	}
+    }
 }
 
 // Set default model
 elseif ($action == 'setdoc')
 {
-	if (dolibarr_set_const($db, "COMMANDE_SUPPLIER_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity))
-	{
-		// La constante qui a ete lue en avant du nouveau set
-		// on passe donc par une variable pour avoir un affichage coherent
-		$conf->global->COMMANDE_SUPPLIER_ADDON_PDF = $value;
-	}
+    if (dolibarr_set_const($db, "COMMANDE_SUPPLIER_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity))
+    {
+        // La constante qui a ete lue en avant du nouveau set
+        // on passe donc par une variable pour avoir un affichage coherent
+        $conf->global->COMMANDE_SUPPLIER_ADDON_PDF = $value;
+    }
 
-	// On active le modele
-	$ret = delDocumentModel($value, $type);
-	if ($ret > 0)
-	{
-		$ret = addDocumentModel($value, $type, $label, $scandir);
-	}
+    // On active le modele
+    $ret = delDocumentModel($value, $type);
+    if ($ret > 0)
+    {
+        $ret = addDocumentModel($value, $type, $label, $scandir);
+    }
 }
 
 elseif ($action == 'setmod')
@@ -168,9 +168,9 @@ elseif ($action == 'addcat')
 
 elseif ($action == 'set_SUPPLIER_ORDER_OTHER')
 {
-    $freetext = GETPOST('SUPPLIER_ORDER_FREE_TEXT', 'none');	// No alpha here, we want exact string
-	$doubleapproval = GETPOST('SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED', 'alpha');
-	$doubleapproval = price2num($doubleapproval);
+    $freetext = GETPOST('SUPPLIER_ORDER_FREE_TEXT', 'none');    // No alpha here, we want exact string
+    $doubleapproval = GETPOST('SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED', 'alpha');
+    $doubleapproval = price2num($doubleapproval);
 
     $res1 = dolibarr_set_const($db, "SUPPLIER_ORDER_FREE_TEXT", $freetext, 'chaine', 0, '', $conf->entity);
     $res2 = dolibarr_set_const($db, "SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED", $doubleapproval, 'chaine', 0, '', $conf->entity);
@@ -181,27 +181,27 @@ elseif ($action == 'set_SUPPLIER_ORDER_OTHER')
     
     if ($conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED)
     {
-    	// clear default rights array
-    	$newmodule->rights=array();
-    	// add new right
-    	$r=0;
-    	$newmodule->rights[$r][0] = 1190;
-    	$newmodule->rights[$r][1] = $langs->trans("Permission1190");
-    	$newmodule->rights[$r][2] = 'w';
-    	$newmodule->rights[$r][3] = 0;
-    	$newmodule->rights[$r][4] = 'commande';
-    	$newmodule->rights[$r][5] = 'approve2';
-    	
-    	// Insert
-    	$newmodule->insert_permissions(1);
+        // clear default rights array
+        $newmodule->rights=array();
+        // add new right
+        $r=0;
+        $newmodule->rights[$r][0] = 1190;
+        $newmodule->rights[$r][1] = $langs->trans("Permission1190");
+        $newmodule->rights[$r][2] = 'w';
+        $newmodule->rights[$r][3] = 0;
+        $newmodule->rights[$r][4] = 'commande';
+        $newmodule->rights[$r][5] = 'approve2';
+        
+        // Insert
+        $newmodule->insert_permissions(1);
     }
     else
     {
-    	// Remove all rights with Permission1190
-    	$newmodule->delete_permissions();
-    	
-    	// Add all right without Permission1190
-    	$newmodule->insert_permissions(1);
+        // Remove all rights with Permission1190
+        $newmodule->delete_permissions();
+        
+        // Add all right without Permission1190
+        $newmodule->insert_permissions(1);
     }
 }
 
@@ -260,7 +260,7 @@ clearstatcache();
 
 foreach ($dirmodels as $reldir)
 {
-	$dir = dol_buildpath($reldir."core/modules/supplier_order/");
+    $dir = dol_buildpath($reldir."core/modules/supplier_order/");
 
     if (is_dir($dir))
     {
@@ -389,7 +389,7 @@ clearstatcache();
 
 foreach ($dirmodels as $reldir)
 {
-	$dir = dol_buildpath($reldir."core/modules/supplier_order/pdf/");
+    $dir = dol_buildpath($reldir."core/modules/supplier_order/pdf/");
 
     if (is_dir($dir))
     {
@@ -403,19 +403,19 @@ foreach ($dirmodels as $reldir)
                     $name = substr($file, 4, dol_strlen($file) -16);
                     $classname = substr($file, 0, dol_strlen($file) -12);
 
-	                require_once $dir.'/'.$file;
-	                $module = new $classname($db, new CommandeFournisseur($db));
+                    require_once $dir.'/'.$file;
+                    $module = new $classname($db, new CommandeFournisseur($db));
 
 
                     print "<tr class=\"oddeven\">\n";
                     print "<td>";
-	                print (empty($module->name)?$name:$module->name);
-	                print "</td>\n";
+                    print (empty($module->name)?$name:$module->name);
+                    print "</td>\n";
                     print "<td>\n";
                     require_once $dir.$file;
                     $module = new $classname($db, $specimenthirdparty);
-		    if (method_exists($module, 'info')) print $module->info($langs);
-	            else print $module->description;
+            if (method_exists($module, 'info')) print $module->info($langs);
+                else print $module->description;
                     print "</td>\n";
 
                     // Active
@@ -498,14 +498,14 @@ $var=false;
 
 //if ($conf->global->MAIN_FEATURES_LEVEL > 0)
 //{
-	print '<tr class="oddeven"><td>';
-	print $form->textwithpicto($langs->trans("UseDoubleApproval"), $langs->trans("Use3StepsApproval"), 1, 'help').'<br>';
-	print $langs->trans("IfSetToYesDontForgetPermission");
-	print '</td><td>';
-	print '<input type="text" size="6" name="SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED" value="'.$conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED.'">';
-	print '</td><td class="right">';
-	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-	print "</td></tr>\n";
+    print '<tr class="oddeven"><td>';
+    print $form->textwithpicto($langs->trans("UseDoubleApproval"), $langs->trans("Use3StepsApproval"), 1, 'help').'<br>';
+    print $langs->trans("IfSetToYesDontForgetPermission");
+    print '</td><td>';
+    print '<input type="text" size="6" name="SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED" value="'.$conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED.'">';
+    print '</td><td class="right">';
+    print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+    print "</td></tr>\n";
 
 //}
 
@@ -544,7 +544,7 @@ else
 $substitutionarray=pdf_getSubstitutionArray($langs, null, null, 2);
 $substitutionarray['__(AnyTranslationKey)__']=$langs->trans("Translation");
 $htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
-foreach($substitutionarray as $key => $val)	$htmltext.=$key.'<br>';
+foreach($substitutionarray as $key => $val)    $htmltext.=$key.'<br>';
 $htmltext.='</i>';
 
 print '<tr class="oddeven"><td colspan="2">';

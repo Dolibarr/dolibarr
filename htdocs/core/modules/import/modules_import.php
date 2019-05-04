@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2012    Laurent Destailleur    <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -18,15 +18,15 @@
  */
 
 /**
- *	\file       htdocs/core/modules/import/modules_import.php
- *	\ingroup    export
- *	\brief      File of parent class for import file readers
+ *    \file       htdocs/core/modules/import/modules_import.php
+ *    \ingroup    export
+ *    \brief      File of parent class for import file readers
  */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 
 
 /**
- *	Parent class for import file readers
+ *    Parent class for import file readers
  */
 class ModeleImports
 {
@@ -38,238 +38,238 @@ class ModeleImports
     public $datatoimport;
 
     /**
-	 * @var string Error code (or message)
-	 */
-	public $error='';
+     * @var string Error code (or message)
+     */
+    public $error='';
 
     /**
-	 * @var int id of driver
-	 */
-	public $id;
+     * @var int id of driver
+     */
+    public $id;
 
     /**
      * @var string label
      */
     public $label;
 
-	public $extension;    // Extension of files imported by driver
+    public $extension;    // Extension of files imported by driver
 
-	/**
+    /**
      * Dolibarr version of driver
      * @var string
      */
-	public $version = 'dolibarr';
+    public $version = 'dolibarr';
 
-	public $label_lib;    // Label of external lib used by driver
+    public $label_lib;    // Label of external lib used by driver
 
-	public $version_lib;  // Version of external lib used by driver
+    public $version_lib;  // Version of external lib used by driver
 
-	// Array of all drivers
-	public $driverlabel=array();
+    // Array of all drivers
+    public $driverlabel=array();
 
-	public $driverdesc=array();
+    public $driverdesc=array();
 
-	public $driverversion=array();
+    public $driverversion=array();
 
-	public $liblabel=array();
+    public $liblabel=array();
 
-	public $libversion=array();
+    public $libversion=array();
 
 
-	/**
+    /**
      *  Constructor
-	 */
+     */
     public function __construct()
-	{
-	}
+    {
+    }
 
 
-	/**
-	 * getDriverId
-	 *
-	 * @return string		Id
-	 */
+    /**
+     * getDriverId
+     *
+     * @return string        Id
+     */
     public function getDriverId()
-	{
-	    return $this->id;
-	}
+    {
+        return $this->id;
+    }
 
-	/**
-	 *	getDriverLabel
-	 *
-	 *	@return string	Label
-	 */
+    /**
+     *    getDriverLabel
+     *
+     *    @return string    Label
+     */
     public function getDriverLabel()
-	{
-	    return $this->label;
-	}
+    {
+        return $this->label;
+    }
 
-	/**
-	 *	getDriverDesc
-	 *
-	 *	@return string	Description
-	 */
+    /**
+     *    getDriverDesc
+     *
+     *    @return string    Description
+     */
     public function getDriverDesc()
-	{
-	    return $this->desc;
-	}
+    {
+        return $this->desc;
+    }
 
-	/**
-	 * getDriverExtension
-	 *
-	 * @return string	Driver suffix
-	 */
+    /**
+     * getDriverExtension
+     *
+     * @return string    Driver suffix
+     */
     public function getDriverExtension()
-	{
-	    return $this->extension;
-	}
+    {
+        return $this->extension;
+    }
 
-	/**
-	 *	getDriverVersion
-	 *
-	 *	@return string	Driver version
-	 */
+    /**
+     *    getDriverVersion
+     *
+     *    @return string    Driver version
+     */
     public function getDriverVersion()
-	{
-	    return $this->version;
-	}
+    {
+        return $this->version;
+    }
 
-	/**
-	 *	getDriverLabel
-	 *
-	 *	@return string	Label of external lib
-	 */
+    /**
+     *    getDriverLabel
+     *
+     *    @return string    Label of external lib
+     */
     public function getLibLabel()
-	{
-	    return $this->label_lib;
-	}
+    {
+        return $this->label_lib;
+    }
 
-	/**
-	 * getLibVersion
-	 *
-	 *	@return string	Version of external lib
-	 */
+    /**
+     * getLibVersion
+     *
+     *    @return string    Version of external lib
+     */
     public function getLibVersion()
-	{
-	    return $this->version_lib;
-	}
+    {
+        return $this->version_lib;
+    }
 
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Charge en memoire et renvoie la liste des modeles actifs
      *
-     *  @param	DoliDB	$db     			Database handler
-     *  @param  integer	$maxfilenamelength  Max length of value to show
-     *  @return	array						List of templates
-	 */
+     *  @param    DoliDB    $db                 Database handler
+     *  @param  integer    $maxfilenamelength  Max length of value to show
+     *  @return    array                        List of templates
+     */
     public function liste_modeles($db, $maxfilenamelength = 0)
-	{
+    {
         // phpcs:enable
-		dol_syslog(get_class($this)."::liste_modeles");
+        dol_syslog(get_class($this)."::liste_modeles");
 
-		$dir=DOL_DOCUMENT_ROOT."/core/modules/import/";
-		$handle=opendir($dir);
+        $dir=DOL_DOCUMENT_ROOT."/core/modules/import/";
+        $handle=opendir($dir);
 
-		// Recherche des fichiers drivers imports disponibles
-		$i=0;
+        // Recherche des fichiers drivers imports disponibles
+        $i=0;
         if (is_resource($handle))
         {
-    		while (($file = readdir($handle))!==false)
-    		{
-    			if (preg_match("/^import_(.*)\.modules\.php/i", $file, $reg))
-    			{
-    				$moduleid=$reg[1];
+            while (($file = readdir($handle))!==false)
+            {
+                if (preg_match("/^import_(.*)\.modules\.php/i", $file, $reg))
+                {
+                    $moduleid=$reg[1];
 
-    				// Loading Class
-    				$file = $dir."/import_".$moduleid.".modules.php";
-    				$classname = "Import".ucfirst($moduleid);
+                    // Loading Class
+                    $file = $dir."/import_".$moduleid.".modules.php";
+                    $classname = "Import".ucfirst($moduleid);
 
-    				require_once $file;
-    				$module = new $classname($db, '');
+                    require_once $file;
+                    $module = new $classname($db, '');
 
-    				// Picto
-    				$this->picto[$module->id]=$module->picto;
-    				// Driver properties
-    				$this->driverlabel[$module->id]=$module->getDriverLabel('');
-    				$this->driverdesc[$module->id]=$module->getDriverDesc('');
-    				$this->driverversion[$module->id]=$module->getDriverVersion('');
-    				// If use an external lib
-    				$this->liblabel[$module->id]=$module->getLibLabel('');
-    				$this->libversion[$module->id]=$module->getLibVersion('');
+                    // Picto
+                    $this->picto[$module->id]=$module->picto;
+                    // Driver properties
+                    $this->driverlabel[$module->id]=$module->getDriverLabel('');
+                    $this->driverdesc[$module->id]=$module->getDriverDesc('');
+                    $this->driverversion[$module->id]=$module->getDriverVersion('');
+                    // If use an external lib
+                    $this->liblabel[$module->id]=$module->getLibLabel('');
+                    $this->libversion[$module->id]=$module->getLibVersion('');
 
-    				$i++;
-    			}
-    		}
+                    $i++;
+                }
+            }
         }
 
-		return array_keys($this->driverlabel);
-	}
+        return array_keys($this->driverlabel);
+    }
 
 
-	/**
-	 *  Return picto of import driver
-	 *
-	 *	@param	string	$key	Key
-	 *	@return	string
-	 */
+    /**
+     *  Return picto of import driver
+     *
+     *    @param    string    $key    Key
+     *    @return    string
+     */
     public function getPictoForKey($key)
-	{
-		return $this->picto[$key];
-	}
+    {
+        return $this->picto[$key];
+    }
 
-	/**
-	 *  Renvoi libelle d'un driver import
-	 *
-	 *	@param	string	$key	Key
-	 *	@return	string
-	 */
+    /**
+     *  Renvoi libelle d'un driver import
+     *
+     *    @param    string    $key    Key
+     *    @return    string
+     */
     public function getDriverLabelForKey($key)
-	{
-		return $this->driverlabel[$key];
-	}
+    {
+        return $this->driverlabel[$key];
+    }
 
-	/**
-	 *  Renvoi la description d'un driver import
-	 *
-	 *	@param	string	$key	Key
-	 *	@return	string
-	 */
+    /**
+     *  Renvoi la description d'un driver import
+     *
+     *    @param    string    $key    Key
+     *    @return    string
+     */
     public function getDriverDescForKey($key)
-	{
-		return $this->driverdesc[$key];
-	}
+    {
+        return $this->driverdesc[$key];
+    }
 
-	/**
-	 *  Renvoi version d'un driver import
-	 *
-	 *	@param	string	$key	Key
-	 *	@return	string
-	 */
+    /**
+     *  Renvoi version d'un driver import
+     *
+     *    @param    string    $key    Key
+     *    @return    string
+     */
     public function getDriverVersionForKey($key)
-	{
-		return $this->driverversion[$key];
-	}
+    {
+        return $this->driverversion[$key];
+    }
 
-	/**
-	 *  Renvoi libelle de librairie externe du driver
-	 *
-	 *	@param	string	$key	Key
-	 *	@return	string
-	 */
+    /**
+     *  Renvoi libelle de librairie externe du driver
+     *
+     *    @param    string    $key    Key
+     *    @return    string
+     */
     public function getLibLabelForKey($key)
-	{
-		return $this->liblabel[$key];
-	}
+    {
+        return $this->liblabel[$key];
+    }
 
-	/**
-	 *  Renvoi version de librairie externe du driver
-	 *
-	 *	@param	string	$key	Key
-	 *	@return	string
-	 */
+    /**
+     *  Renvoi version de librairie externe du driver
+     *
+     *    @param    string    $key    Key
+     *    @return    string
+     */
     public function getLibVersionForKey($key)
-	{
-		return $this->libversion[$key];
-	}
+    {
+        return $this->libversion[$key];
+    }
 }

@@ -42,10 +42,10 @@ top_httphead();
 // Registering the location of boxes
 if (isset($_GET['action']) && ! empty($_GET['action']))
 {
-	if ($_GET['action'] == 'getrandompassword' && $user->admin)
-	{
+    if ($_GET['action'] == 'getrandompassword' && $user->admin)
+    {
         require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-	    $generic = $_GET['generic'] ? true : false;
-		echo getRandomPassword($generic);
-	}
+        $generic = $_GET['generic'] ? true : false;
+        echo getRandomPassword($generic);
+    }
 }

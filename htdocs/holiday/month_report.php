@@ -34,10 +34,10 @@ $langs->loadLangs(array("holiday"));
 
 // Security check
 $socid=0;
-if ($user->societe_id > 0)	// Protection if external user
+if ($user->societe_id > 0)    // Protection if external user
 {
-	//$socid = $user->societe_id;
-	accessforbidden();
+    //$socid = $user->societe_id;
+    accessforbidden();
 }
 $result = restrictedArea($user, 'holiday', $id, '');
 
@@ -85,15 +85,15 @@ $sql .= " FROM ".MAIN_DB_PREFIX."holiday cp";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user u ON cp.fk_user = u.rowid";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_holiday_types ct ON cp.fk_type = ct.rowid";
 $sql .= " WHERE cp.rowid > 0";
-$sql .= " AND cp.statut = 3";		// Approved
+$sql .= " AND cp.statut = 3";        // Approved
 $sql .= " AND (date_format(cp.date_debut, '%Y-%m') = '".$db->escape($year_month)."' OR date_format(cp.date_fin, '%Y-%m') = '".$db->escape($year_month)."')";
 $sql .= " ORDER BY u.lastname, cp.date_debut";
 
 $resql = $db->query($sql);
 if (empty($resql))
 {
-	dol_print_error($db);
-	exit;
+    dol_print_error($db);
+    exit;
 }
 
 $num = $db->num_rows($resql);
@@ -150,17 +150,17 @@ else
       $date_end_inmonth = $db->jdate($obj->date_fin, true);
       if ($tmpstart['year'] < $search_year || $tmpstart['mon'] < $search_month)
       {
-      	$date_start_inmonth = dol_get_first_day($search_year, $search_month, true);
-      	$starthalfdayinmonth = 'morning';
-      	if ($halfdayinmonth ==  2) $halfdayinmonth=1;
-      	if ($halfdayinmonth == -1) $halfdayinmonth=0;
+          $date_start_inmonth = dol_get_first_day($search_year, $search_month, true);
+          $starthalfdayinmonth = 'morning';
+          if ($halfdayinmonth ==  2) $halfdayinmonth=1;
+          if ($halfdayinmonth == -1) $halfdayinmonth=0;
       }
       if ($tmpend['year'] > $search_year || $tmpend['mon'] > $search_month)
       {
-      	$date_end_inmonth = dol_get_last_day($search_year, $search_month, true) - ((24 * 3600) - 1);
-      	$endhalfdayinmonth = 'afternoon';
-      	if ($halfdayinmonth ==  2) $halfdayinmonth=-1;
-      	if ($halfdayinmonth ==  1) $halfdayinmonth=0;
+          $date_end_inmonth = dol_get_last_day($search_year, $search_month, true) - ((24 * 3600) - 1);
+          $endhalfdayinmonth = 'afternoon';
+          if ($halfdayinmonth ==  2) $halfdayinmonth=-1;
+          if ($halfdayinmonth ==  1) $halfdayinmonth=0;
       }
 
       // Leave request
@@ -168,9 +168,9 @@ else
       $holidaystatic->ref=$obj->rowid;
 
       print '<tr class="oddeven">';
-      	 print '<td>';
-      	 print $holidaystatic->getNomUrl(1, 1);
-      	 print '</td>';
+           print '<td>';
+           print $holidaystatic->getNomUrl(1, 1);
+           print '</td>';
          print '<td>' . $user->getFullName($langs) . '</td>';
          print '<td>' . $obj->label . '</td>';
          print '<td class="center">' . dol_print_date($db->jdate($obj->date_debut), 'day');

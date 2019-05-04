@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014-2016	Alexandre Spangaro	<aspangaro@open-dsi.fr>
+/* Copyright (C) 2014-2016    Alexandre Spangaro    <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,9 +16,9 @@
  */
 
 /**
- * \file	    htdocs/accountancy/admin/fiscalyear_info.php
+ * \file        htdocs/accountancy/admin/fiscalyear_info.php
  * \ingroup     Advanced accountancy
- * \brief	    Page to show info of a fiscal year
+ * \brief        Page to show info of a fiscal year
  */
 
 require '../../main.inc.php';
@@ -31,9 +31,9 @@ $langs->loadLangs(array("admin","compta"));
 
 // Security check
 if ($user->societe_id > 0)
-	accessforbidden();
+    accessforbidden();
 if (! $user->rights->accounting->fiscalyear)
-	accessforbidden();
+    accessforbidden();
 
 $id = GETPOST('id', 'int');
 
@@ -43,19 +43,19 @@ $helpurl = "";
 llxHeader("", $title, $helpurl);
 
 if ($id) {
-	$object = new Fiscalyear($db);
-	$object->fetch($id);
-	$object->info($id);
+    $object = new Fiscalyear($db);
+    $object->fetch($id);
+    $object->info($id);
 
-	$head = fiscalyear_prepare_head($object);
+    $head = fiscalyear_prepare_head($object);
 
-	dol_fiche_head($head, 'info', $langs->trans("Fiscalyear"), 0, 'cron');
+    dol_fiche_head($head, 'info', $langs->trans("Fiscalyear"), 0, 'cron');
 
-	print '<table width="100%"><tr><td>';
-	dol_print_object_info($object);
-	print '</td></tr></table>';
+    print '<table width="100%"><tr><td>';
+    dol_print_object_info($object);
+    print '</td></tr></table>';
 
-	print '</div>';
+    print '</div>';
 }
 
 // End of page

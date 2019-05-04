@@ -42,14 +42,14 @@ $result = restrictedArea($user, 'contact', $id, 'socpeople&societe');
 $object = new Contact($db);
 if ($id > 0) $object->fetch($id);
 
-$permissionnote=$user->rights->societe->creer;	// Used by the include of actions_setnotes.inc.php
+$permissionnote=$user->rights->societe->creer;    // Used by the include of actions_setnotes.inc.php
 
 
 /*
  * Actions
  */
 
-include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, not includ_once
+include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';    // Must be include, not includ_once
 
 
 /*
@@ -99,7 +99,7 @@ if ($id > 0)
     print '<div class="fichecenter">';
     print '<div class="underbanner clearboth"></div>';
 
-	print '<table class="border centpercent">';
+    print '<table class="border centpercent">';
 
     // Civility
     print '<tr><td class="'.$cssclass.'">'.$langs->trans("UserTitle").'</td><td>';
@@ -109,10 +109,10 @@ if ($id > 0)
     print "</table>";
 
 
-	$cssclass="titlefield";
-	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
+    $cssclass="titlefield";
+    include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
-	print '</div>';
+    print '</div>';
 
     dol_fiche_end();
 }

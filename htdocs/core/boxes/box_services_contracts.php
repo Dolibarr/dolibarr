@@ -20,7 +20,7 @@
 
 /**
  *      \file       htdocs/core/boxes/box_services_contracts.php
- *		\ingroup    produits,services
+ *        \ingroup    produits,services
  *      \brief      Widget of sells products
  */
 
@@ -37,7 +37,7 @@ class box_services_contracts extends ModeleBoxes
     public $boxlabel="BoxLastProductsInContract";
     public $depends = array("service","contrat");
 
-	/**
+    /**
      * @var DoliDB Database handler.
      */
     public $db;
@@ -48,207 +48,207 @@ class box_services_contracts extends ModeleBoxes
     public $info_box_contents = array();
 
 
-	/**
-	 *  Constructor
-	 *
-	 *  @param  DoliDB  $db         Database handler
-	 *  @param  string  $param      More parameters
-	 */
-	public function __construct($db, $param)
-	{
-	    global $user;
+    /**
+     *  Constructor
+     *
+     *  @param  DoliDB  $db         Database handler
+     *  @param  string  $param      More parameters
+     */
+    public function __construct($db, $param)
+    {
+        global $user;
 
-	    $this->db=$db;
+        $this->db=$db;
 
-	    $this->hidden=! ($user->rights->service->lire && $user->rights->contrat->lire);
-	}
+        $this->hidden=! ($user->rights->service->lire && $user->rights->contrat->lire);
+    }
 
-	/**
-	 *  Load data into info_box_contents array to show array later.
-	 *
-	 *  @param	int		$max        Maximum number of records to load
-     *  @return	void
-	 */
-	public function loadBox($max = 5)
-	{
-		global $user, $langs, $db, $conf;
+    /**
+     *  Load data into info_box_contents array to show array later.
+     *
+     *  @param    int        $max        Maximum number of records to load
+     *  @return    void
+     */
+    public function loadBox($max = 5)
+    {
+        global $user, $langs, $db, $conf;
 
-		$this->max=$max;
+        $this->max=$max;
 
-		include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
+        include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 
-		$form = new Form($db);
+        $form = new Form($db);
 
-		$this->info_box_head = array('text' => $langs->trans("BoxLastProductsInContract", $max));
+        $this->info_box_head = array('text' => $langs->trans("BoxLastProductsInContract", $max));
 
-		if ($user->rights->service->lire && $user->rights->contrat->lire)
-		{
-		    $contractstatic=new Contrat($db);
-		    $contratlignestatic=new ContratLigne($db);
-		    $thirdpartytmp = new Societe($db);
-		    $productstatic = new Product($db);
+        if ($user->rights->service->lire && $user->rights->contrat->lire)
+        {
+            $contractstatic=new Contrat($db);
+            $contratlignestatic=new ContratLigne($db);
+            $thirdpartytmp = new Societe($db);
+            $productstatic = new Product($db);
 
-			$sql = "SELECT s.nom as name, s.rowid as socid, s.email, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,";
-			$sql.= " c.rowid, c.ref, c.statut as contract_status, c.ref_customer, c.ref_supplier,";
-			$sql.= " cd.rowid as cdid, cd.label, cd.description, cd.tms as datem, cd.statut, cd.product_type as type,";
-			$sql.= " p.rowid as product_id, p.ref as product_ref, p.label as plabel, p.fk_product_type as ptype, p.entity";
-			$sql.= " FROM (".MAIN_DB_PREFIX."societe as s";
-			$sql.= " INNER JOIN ".MAIN_DB_PREFIX."contrat as c ON s.rowid = c.fk_soc";
-			$sql.= " INNER JOIN ".MAIN_DB_PREFIX."contratdet as cd ON c.rowid = cd.fk_contrat";
-			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid";
-			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-			$sql.= ")";
-			$sql.= " WHERE c.entity = ".$conf->entity;
-			if($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;
-			$sql.= $db->order("c.tms", "DESC");
-			$sql.= $db->plimit($max, 0);
+            $sql = "SELECT s.nom as name, s.rowid as socid, s.email, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,";
+            $sql.= " c.rowid, c.ref, c.statut as contract_status, c.ref_customer, c.ref_supplier,";
+            $sql.= " cd.rowid as cdid, cd.label, cd.description, cd.tms as datem, cd.statut, cd.product_type as type,";
+            $sql.= " p.rowid as product_id, p.ref as product_ref, p.label as plabel, p.fk_product_type as ptype, p.entity";
+            $sql.= " FROM (".MAIN_DB_PREFIX."societe as s";
+            $sql.= " INNER JOIN ".MAIN_DB_PREFIX."contrat as c ON s.rowid = c.fk_soc";
+            $sql.= " INNER JOIN ".MAIN_DB_PREFIX."contratdet as cd ON c.rowid = cd.fk_contrat";
+            $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid";
+            if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+            $sql.= ")";
+            $sql.= " WHERE c.entity = ".$conf->entity;
+            if($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;
+            $sql.= $db->order("c.tms", "DESC");
+            $sql.= $db->plimit($max, 0);
 
-			$result = $db->query($sql);
-			if ($result)
-			{
-				$num = $db->num_rows($result);
-				$now=dol_now();
+            $result = $db->query($sql);
+            if ($result)
+            {
+                $num = $db->num_rows($result);
+                $now=dol_now();
 
-				$i = 0;
+                $i = 0;
 
-				while ($i < $num)
-				{
-					$objp = $db->fetch_object($result);
-					$datem=$db->jdate($objp->datem);
+                while ($i < $num)
+                {
+                    $objp = $db->fetch_object($result);
+                    $datem=$db->jdate($objp->datem);
 
-					$contratlignestatic->id=$objp->cdid;
-					$contratlignestatic->fk_contrat=$objp->rowid;
-					$contratlignestatic->label=$objp->label;
-					$contratlignestatic->description=$objp->description;
-					$contratlignestatic->type=$objp->type;
-					$contratlignestatic->product_id=$objp->product_id;
-					$contratlignestatic->product_ref=$objp->product_ref;
+                    $contratlignestatic->id=$objp->cdid;
+                    $contratlignestatic->fk_contrat=$objp->rowid;
+                    $contratlignestatic->label=$objp->label;
+                    $contratlignestatic->description=$objp->description;
+                    $contratlignestatic->type=$objp->type;
+                    $contratlignestatic->product_id=$objp->product_id;
+                    $contratlignestatic->product_ref=$objp->product_ref;
 
                     $contractstatic->statut=$objp->contract_status;
-					$contractstatic->id=$objp->rowid;
-					$contractstatic->ref=$objp->ref;
-					$contractstatic->ref_customer=$objp->ref_customer;
-					$contractstatic->ref_supplier=$objp->ref_supplier;
+                    $contractstatic->id=$objp->rowid;
+                    $contractstatic->ref=$objp->ref;
+                    $contractstatic->ref_customer=$objp->ref_customer;
+                    $contractstatic->ref_supplier=$objp->ref_supplier;
 
-					$thirdpartytmp->name = $objp->name;
-					$thirdpartytmp->id = $objp->socid;
-					$thirdpartytmp->email = $objp->email;
-					$thirdpartytmp->client = $objp->client;
-					$thirdpartytmp->fournisseur = $objp->fournisseur;
-					$thirdpartytmp->code_client = $objp->code_client;
-					$thirdpartytmp->code_fournisseur = $objp->code_fournisseur;
-					$thirdpartytmp->code_compta = $objp->code_compta;
-					$thirdpartytmp->code_compta_fournisseur = $objp->code_compta_fournisseur;
+                    $thirdpartytmp->name = $objp->name;
+                    $thirdpartytmp->id = $objp->socid;
+                    $thirdpartytmp->email = $objp->email;
+                    $thirdpartytmp->client = $objp->client;
+                    $thirdpartytmp->fournisseur = $objp->fournisseur;
+                    $thirdpartytmp->code_client = $objp->code_client;
+                    $thirdpartytmp->code_fournisseur = $objp->code_fournisseur;
+                    $thirdpartytmp->code_compta = $objp->code_compta;
+                    $thirdpartytmp->code_compta_fournisseur = $objp->code_compta_fournisseur;
 
-					// Multilangs
-					if (! empty($conf->global->MAIN_MULTILANGS) && $objp->product_id > 0) // if option multilang is on
-					{
-						$sqld = "SELECT label";
-						$sqld.= " FROM ".MAIN_DB_PREFIX."product_lang";
-						$sqld.= " WHERE fk_product=".$objp->product_id;
-						$sqld.= " AND lang='". $langs->getDefaultLang() ."'";
-						$sqld.= " LIMIT 1";
+                    // Multilangs
+                    if (! empty($conf->global->MAIN_MULTILANGS) && $objp->product_id > 0) // if option multilang is on
+                    {
+                        $sqld = "SELECT label";
+                        $sqld.= " FROM ".MAIN_DB_PREFIX."product_lang";
+                        $sqld.= " WHERE fk_product=".$objp->product_id;
+                        $sqld.= " AND lang='". $langs->getDefaultLang() ."'";
+                        $sqld.= " LIMIT 1";
 
-						$resultd = $db->query($sqld);
-						if ($resultd)
-						{
-							$objtp = $db->fetch_object($resultd);
-							if ($objtp->label != '') $contratlignestatic->label = $objtp->label;
-						}
-					}
+                        $resultd = $db->query($sqld);
+                        if ($resultd)
+                        {
+                            $objtp = $db->fetch_object($resultd);
+                            if ($objtp->label != '') $contratlignestatic->label = $objtp->label;
+                        }
+                    }
 
-					// Label
-					if ($objp->product_id > 0)
-					{
-						$productstatic->id=$objp->product_id;
-						$productstatic->type=$objp->ptype;
-						$productstatic->ref=$objp->product_ref;
-						$productstatic->entity=$objp->pentity;
-						$productstatic->label=$objp->plabel;
-						$text = $productstatic->getNomUrl(1, '', 20);
-						if ($objp->plabel)
-						{
-							$text .= ' - ';
-							//$productstatic->ref=$objp->label;
-							//$text .= $productstatic->getNomUrl(0,'',16);
-							$text .= $objp->plabel;
-						}
-						$description = $objp->description;
+                    // Label
+                    if ($objp->product_id > 0)
+                    {
+                        $productstatic->id=$objp->product_id;
+                        $productstatic->type=$objp->ptype;
+                        $productstatic->ref=$objp->product_ref;
+                        $productstatic->entity=$objp->pentity;
+                        $productstatic->label=$objp->plabel;
+                        $text = $productstatic->getNomUrl(1, '', 20);
+                        if ($objp->plabel)
+                        {
+                            $text .= ' - ';
+                            //$productstatic->ref=$objp->label;
+                            //$text .= $productstatic->getNomUrl(0,'',16);
+                            $text .= $objp->plabel;
+                        }
+                        $description = $objp->description;
 
-						// Add description in form
-						if (! empty($conf->global->PRODUIT_DESC_IN_FORM))
-						{
-							//$text .= (! empty($objp->description) && $objp->description!=$objp->plabel)?'<br>'.dol_htmlentitiesbr($objp->description):'';
-							$description = '';	// Already added into main visible desc
-						}
+                        // Add description in form
+                        if (! empty($conf->global->PRODUIT_DESC_IN_FORM))
+                        {
+                            //$text .= (! empty($objp->description) && $objp->description!=$objp->plabel)?'<br>'.dol_htmlentitiesbr($objp->description):'';
+                            $description = '';    // Already added into main visible desc
+                        }
 
-						$s = $form->textwithtooltip($text, $description, 3, '', '', $cursorline, 0, (!empty($line->fk_parent_line)?img_picto('', 'rightarrow'):''));
-					}
-					else
-					{
-						$s = img_object($langs->trans("ShowProductOrService"), ($objp->product_type ? 'service' : 'product')).' '.dol_htmlentitiesbr($objp->description);
-					}
+                        $s = $form->textwithtooltip($text, $description, 3, '', '', $cursorline, 0, (!empty($line->fk_parent_line)?img_picto('', 'rightarrow'):''));
+                    }
+                    else
+                    {
+                        $s = img_object($langs->trans("ShowProductOrService"), ($objp->product_type ? 'service' : 'product')).' '.dol_htmlentitiesbr($objp->description);
+                    }
 
 
-					$this->info_box_contents[$i][] = array(
+                    $this->info_box_contents[$i][] = array(
                         'td' => 'class="tdoverflowmax100 maxwidth100onsmartphone"',
                         'text' => $s,
                         'asis' => 1
                     );
 
-					$this->info_box_contents[$i][] = array(
+                    $this->info_box_contents[$i][] = array(
                         'td' => '',
                         'text' => $contractstatic->getNomUrl(1),
                         'asis' => 1
                     );
 
-					$this->info_box_contents[$i][] = array(
+                    $this->info_box_contents[$i][] = array(
                         'td' => 'class="tdoverflowmax100 maxwidth100onsmartphone"',
                         'text' => $thirdpartytmp->getNomUrl(1),
                         'asis' => 1
                     );
 
-					$this->info_box_contents[$i][] = array(
+                    $this->info_box_contents[$i][] = array(
                         'td' => '',
                         'text' => dol_print_date($datem, 'day'),
                     );
 
-					$this->info_box_contents[$i][] = array(
+                    $this->info_box_contents[$i][] = array(
                         'td' => 'class="right" width="18"',
                         'text' => $contratlignestatic->LibStatut($objp->statut, 3)
-					);
+                    );
 
-					$i++;
-				}
-				if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'class="center"','text'=>$langs->trans("NoContractedProducts"));
+                    $i++;
+                }
+                if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'class="center"','text'=>$langs->trans("NoContractedProducts"));
 
-				$db->free($result);
-			}
-			else
-			{
-				$this->info_box_contents[0][0] = array(
+                $db->free($result);
+            }
+            else
+            {
+                $this->info_box_contents[0][0] = array(
                     'td' => '',
                     'maxlength' => 500,
                     'text' => ($db->error().' sql='.$sql),
                 );
-			}
-		}
-		else {
-			$this->info_box_contents[0][0] = array(
-			    'td' => 'class="nohover opacitymedium left"',
+            }
+        }
+        else {
+            $this->info_box_contents[0][0] = array(
+                'td' => 'class="nohover opacitymedium left"',
                 'text' => $langs->trans("ReadPermissionNotAllowed")
-			);
-		}
-	}
+            );
+        }
+    }
 
-	/**
-	 *	Method to show box
-	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
-	 *	@return	string
-	 */
+    /**
+     *    Method to show box
+     *
+     *    @param    array    $head       Array with properties of box title
+     *    @param  array    $contents   Array with properties of box lines
+     *  @param    int        $nooutput    No print, only return string
+     *    @return    string
+     */
     public function showBox($head = null, $contents = null, $nooutput = 0)
     {
         return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);

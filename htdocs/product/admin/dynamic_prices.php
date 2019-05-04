@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2015	  Ion Agorria		  <ion@agorria.com>
+/* Copyright (C) 2015      Ion Agorria          <ion@agorria.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,9 +16,9 @@
  */
 
 /**
- *  \file		htdocs/product/admin/dynamic_prices.php
- *  \ingroup	product
- *  \brief		Page for configuring dynamic prices
+ *  \file        htdocs/product/admin/dynamic_prices.php
+ *  \ingroup    product
+ *  \brief        Page for configuring dynamic prices
  */
 
 require '../../main.inc.php';
@@ -170,22 +170,22 @@ if ($action != 'create_updater' && $action != 'edit_updater') {
     $arrayglobalvars=$price_globals->listGlobalVariables();
     if (! empty($arrayglobalvars))
     {
-	    foreach ($arrayglobalvars as $i=>$entry) {
-	        $var = !$var;
-	        print '<tr class="oddeven">';
-	        print '<td>'.$entry->code.'</td>';
-	        print '<td>'.$entry->description.'</td>';
-	        print '<td>'.price($entry->value).'</td>';
-	        print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit_variable&selection='.$entry->id.'">'.img_edit().'</a> &nbsp;';
-	        print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete_variable&selection='.$entry->id.'">'.img_delete().'</a></td>';
-	        print '</tr>';
-	    }
+        foreach ($arrayglobalvars as $i=>$entry) {
+            $var = !$var;
+            print '<tr class="oddeven">';
+            print '<td>'.$entry->code.'</td>';
+            print '<td>'.$entry->description.'</td>';
+            print '<td>'.price($entry->value).'</td>';
+            print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit_variable&selection='.$entry->id.'">'.img_edit().'</a> &nbsp;';
+            print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete_variable&selection='.$entry->id.'">'.img_delete().'</a></td>';
+            print '</tr>';
+        }
     }
     else
     {
-    	print '<tr colspan="7"><td class="opacitymedium">';
-    	print $langs->trans("None");
-    	print '</td></tr>';
+        print '<tr colspan="7"><td class="opacitymedium">';
+        print $langs->trans("None");
+        print '</td></tr>';
     }
     print '</table>';
 
@@ -252,31 +252,31 @@ if ($action != 'create_variable' && $action != 'edit_variable') {
     $arraypriceupdaters = $price_updaters->listUpdaters();
     if (! empty($arraypriceupdaters))
     {
-	    foreach ($arraypriceupdaters as $i=>$entry) {
-	        $code = "";
-	        if ($entry->fk_variable > 0) {
-	            $res = $price_globals->fetch($entry->fk_variable);
-	            if ($res > 0) {
-	                $code = $price_globals->code;
-	            }
-	        }
-	        print '<tr>';
-	        print '<td>'.$code.'</td>';
-	        print '<td>'.$entry->description.'</td>';
-	        print '<td>'.$langs->trans("GlobalVariableUpdaterType".$entry->type).'</td>';
-	        print '<td style="max-width: 250px; word-wrap: break-word; white-space: pre-wrap;">'.$entry->parameters.'</td>';
-	        print '<td>'.$entry->update_interval.'</td>';
-	        print '<td>'.$entry->getLastUpdated().'</td>';
-	        print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit_updater&selection='.$entry->id.'">'.img_edit().'</a> &nbsp;';
-	        print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete_updater&selection='.$entry->id.'">'.img_delete().'</a></td>';
-	        print '</tr>';
-	    }
+        foreach ($arraypriceupdaters as $i=>$entry) {
+            $code = "";
+            if ($entry->fk_variable > 0) {
+                $res = $price_globals->fetch($entry->fk_variable);
+                if ($res > 0) {
+                    $code = $price_globals->code;
+                }
+            }
+            print '<tr>';
+            print '<td>'.$code.'</td>';
+            print '<td>'.$entry->description.'</td>';
+            print '<td>'.$langs->trans("GlobalVariableUpdaterType".$entry->type).'</td>';
+            print '<td style="max-width: 250px; word-wrap: break-word; white-space: pre-wrap;">'.$entry->parameters.'</td>';
+            print '<td>'.$entry->update_interval.'</td>';
+            print '<td>'.$entry->getLastUpdated().'</td>';
+            print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit_updater&selection='.$entry->id.'">'.img_edit().'</a> &nbsp;';
+            print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete_updater&selection='.$entry->id.'">'.img_delete().'</a></td>';
+            print '</tr>';
+        }
     }
     else
     {
-    	print '<tr colspan="7"><td class="opacitymedium">';
-    	print $langs->trans("None");
-    	print '</td></tr>';
+        print '<tr colspan="7"><td class="opacitymedium">';
+        print $langs->trans("None");
+        print '</td></tr>';
     }
     print '</table>';
 

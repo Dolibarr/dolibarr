@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2016	Marcos García	<marcosgdf@gmail.com>
+/* Copyright (C) 2016    Marcos García    <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,18 +32,18 @@ $id = GETPOST('id');
 
 if (!$id) {
 print json_encode(array(
-		'error' => 'ID not set'
-	));
-	exit();
+        'error' => 'ID not set'
+    ));
+    exit();
 }
 
 $prodattr = new ProductAttribute($db);
 
 if ($prodattr->fetch($id) < 0) {
 print json_encode(array(
-		'error' => 'Attribute not found'
-	));
-	exit();
+        'error' => 'Attribute not found'
+    ));
+    exit();
 }
 
 $prodattrval = new ProductAttributeValue($db);
@@ -52,9 +52,9 @@ $res = $prodattrval->fetchAllByProductAttribute($id);
 
 if ($res == -1) {
 print json_encode(array(
-		'error' => 'Internal error'
-	));
-	exit();
+        'error' => 'Internal error'
+    ));
+    exit();
 }
 
 print json_encode($res);

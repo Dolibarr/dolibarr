@@ -37,7 +37,7 @@ if (! $user->admin) accessforbidden();
 
 $action = GETPOST('action', 'alpha');
 $mode = GETPOST('mode', 'alpha');
-$value = GETPOST('value', 'alpha', 0, null, null, 1);			// The value may be __google__docs so we force disable of replace
+$value = GETPOST('value', 'alpha', 0, null, null, 1);            // The value may be __google__docs so we force disable of replace
 $varname = GETPOST('varname', 'alpha');
 $driver = GETPOST('driver', 'alpha');
 

@@ -17,8 +17,8 @@
  */
 
 /**
- *	\file			htdocs/core/actions_builddoc.inc.php
- *  \brief			Code for actions on building or deleting documents
+ *    \file            htdocs/core/actions_builddoc.inc.php
+ *  \brief            Code for actions on building or deleting documents
  */
 
 
@@ -40,7 +40,7 @@ if ($action == 'builddoc' && $permissioncreate)
     }
     else
     {
-   		// Reload to get all modified line records and be ready for hooks
+           // Reload to get all modified line records and be ready for hooks
         $ret = $object->fetch($id);
         $ret = $object->fetch_thirdparty();
         /*if (empty($object->id) || ! $object->id > 0)
@@ -50,10 +50,10 @@ if ($action == 'builddoc' && $permissioncreate)
         }*/
 
         // Save last template used to generate document
-    	if (GETPOST('model', 'alpha'))
-    	{
-    	    $object->setDocModel($user, GETPOST('model', 'alpha'));
-    	}
+        if (GETPOST('model', 'alpha'))
+        {
+            $object->setDocModel($user, GETPOST('model', 'alpha'));
+        }
 
         // Special case to force bank account
         //if (property_exists($object, 'fk_bank'))
@@ -92,17 +92,17 @@ if ($action == 'builddoc' && $permissioncreate)
         }
         else
         {
-        	if (empty($donotredirect))	// This is set when include is done by bulk action "Bill Orders"
-        	{
-	            setEventMessages($langs->trans("FileGenerated"), null);
+            if (empty($donotredirect))    // This is set when include is done by bulk action "Bill Orders"
+            {
+                setEventMessages($langs->trans("FileGenerated"), null);
 
-	            $urltoredirect = $_SERVER['REQUEST_URI'];
-	            $urltoredirect = preg_replace('/#builddoc$/', '', $urltoredirect);
-	            $urltoredirect = preg_replace('/action=builddoc&?/', '', $urltoredirect);	// To avoid infinite loop
+                $urltoredirect = $_SERVER['REQUEST_URI'];
+                $urltoredirect = preg_replace('/#builddoc$/', '', $urltoredirect);
+                $urltoredirect = preg_replace('/action=builddoc&?/', '', $urltoredirect);    // To avoid infinite loop
 
-	            header('Location: '.$urltoredirect.'#builddoc');
-	            exit;
-        	}
+                header('Location: '.$urltoredirect.'#builddoc');
+                exit;
+            }
         }
     }
 }
@@ -121,7 +121,7 @@ if ($action == 'remove_file' && $permissioncreate)
 
     $langs->load("other");
     $filetodelete=GETPOST('file', 'alpha');
-    $file =	$upload_dir	. '/' .	$filetodelete;
+    $file =    $upload_dir    . '/' .    $filetodelete;
     $ret=dol_delete_file($file, 0, 0, 0, $object);
     if ($ret) setEventMessages($langs->trans("FileWasRemoved", $filetodelete), null, 'mesgs');
     else setEventMessages($langs->trans("ErrorFailToDeleteFile", $filetodelete), null, 'errors');

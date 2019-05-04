@@ -107,17 +107,17 @@ class InterfaceIFTTT extends DolibarrTriggers
      */
     public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
     {
-		$ok = 0;
+        $ok = 0;
 
-		if (empty($conf->ifttt->enabled)) return 0;     // Module not active, we do nothing
+        if (empty($conf->ifttt->enabled)) return 0;     // Module not active, we do nothing
 
-    	switch ($action) {
-    		case 'THIRDPARTY_CREATED':
-	            dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
+        switch ($action) {
+            case 'THIRDPARTY_CREATED':
+                dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
 
-	            include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+                include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
-	            // See https://platform.ifttt.com/docs/api_reference#realtime-api
+                // See https://platform.ifttt.com/docs/api_reference#realtime-api
 
                 $arrayofdata=array();
                 $arrayofdata['user_id']=$conf->global->IFTTT_USER_ID;
@@ -138,9 +138,9 @@ class InterfaceIFTTT extends DolibarrTriggers
 
                 $result = getURLContent($url, 'POSTALREADYFORMATED', '', 1, $addheaders);
 
-	            $ok = 1;
-	            break;
-    	}
+                $ok = 1;
+                break;
+        }
 
         return $ok;
     }

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2016	   Sergio Sanchis		<sergiosanchis@hotmail.com>
+/* Copyright (C) 2016       Sergio Sanchis        <sergiosanchis@hotmail.com>
  * Copyright (C) 2017	   Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify

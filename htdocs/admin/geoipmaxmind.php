@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2009-2012	Laurent Destailleur	<eldy@users.sourceforge.org>
+/* Copyright (C) 2009-2012    Laurent Destailleur    <eldy@users.sourceforge.org>
  * Copyright (C) 2011-2013  Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -17,9 +17,9 @@
  */
 
 /**
- *	\file       htdocs/admin/geoipmaxmind.php
- *	\ingroup    geoipmaxmind
- *	\brief      Setup page for geoipmaxmind module
+ *    \file       htdocs/admin/geoipmaxmind.php
+ *    \ingroup    geoipmaxmind
+ *    \brief      Setup page for geoipmaxmind module
  */
 
 require '../main.inc.php';
@@ -41,30 +41,30 @@ $action = GETPOST('action', 'aZ09');
  */
 if ($action == 'set')
 {
-	$error=0;
+    $error=0;
 
-	$gimcdf= GETPOST("GEOIPMAXMIND_COUNTRY_DATAFILE");
+    $gimcdf= GETPOST("GEOIPMAXMIND_COUNTRY_DATAFILE");
 
-	if (! $gimcdf && ! file_exists($gimcdf))
-	{
-		setEventMessages($langs->trans("ErrorFileNotFound", $gimcdf), null, 'errors');
-		$error++;
-	}
+    if (! $gimcdf && ! file_exists($gimcdf))
+    {
+        setEventMessages($langs->trans("ErrorFileNotFound", $gimcdf), null, 'errors');
+        $error++;
+    }
 
-	if (! $error)
-	{
-		$res = dolibarr_set_const($db, "GEOIPMAXMIND_COUNTRY_DATAFILE", $gimcdf, 'chaine', 0, '', $conf->entity);
-		if (! $res > 0) $error++;
+    if (! $error)
+    {
+        $res = dolibarr_set_const($db, "GEOIPMAXMIND_COUNTRY_DATAFILE", $gimcdf, 'chaine', 0, '', $conf->entity);
+        if (! $res > 0) $error++;
 
-		if (! $error)
-		{
-			setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-		}
-		else
-		{
-			setEventMessages($langs->trans("Error"), null, 'errors');
-		}
-	}
+        if (! $error)
+        {
+            setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+        }
+        else
+        {
+            setEventMessages($langs->trans("Error"), null, 'errors');
+        }
+    }
 }
 
 
@@ -84,14 +84,14 @@ $version='';
 $geoip='';
 if (! empty($conf->global->GEOIPMAXMIND_COUNTRY_DATAFILE))
 {
-	$geoip=new DolGeoIP('country', $conf->global->GEOIPMAXMIND_COUNTRY_DATAFILE);
-	//if ($geoip->error) print dol_htmloutput_errors($geoip->errorlabel,'',1);
-	if ($geoip->gi == 'NOGI') $geointernal=true;
-	else $geointernal=false;
+    $geoip=new DolGeoIP('country', $conf->global->GEOIPMAXMIND_COUNTRY_DATAFILE);
+    //if ($geoip->error) print dol_htmloutput_errors($geoip->errorlabel,'',1);
+    if ($geoip->gi == 'NOGI') $geointernal=true;
+    else $geointernal=false;
 }
 else
 {
-	if (function_exists('geoip_country_code_by_name')) 	$geointernal=true;
+    if (function_exists('geoip_country_code_by_name'))     $geointernal=true;
 }
 
 // Mode
@@ -113,7 +113,7 @@ print '<input size="50" type="text" name="GEOIPMAXMIND_COUNTRY_DATAFILE" value="
 if ($geoip) $version=$geoip->getVersion();
 if ($version)
 {
-	print '<br>'.$langs->trans("Version").': '.$version;
+    print '<br>'.$langs->trans("Version").': '.$version;
 }
 print '</td></tr>';
 
@@ -135,42 +135,42 @@ print $langs->trans("YouCanDownloadAdvancedDatFileTo", '<a href="'.$url2.'" targ
 
 if ($geoip)
 {
-	print '<br><br>';
-	print '<br>'.$langs->trans("TestGeoIPResult", $ip).':';
+    print '<br><br>';
+    print '<br>'.$langs->trans("TestGeoIPResult", $ip).':';
 
-	$ip='24.24.24.24';
-	print '<br>'.$ip.' -> ';
-	$result=dol_print_ip($ip, 1);
-	if ($result) print $result;
-	else print $langs->trans("Error");
+    $ip='24.24.24.24';
+    print '<br>'.$ip.' -> ';
+    $result=dol_print_ip($ip, 1);
+    if ($result) print $result;
+    else print $langs->trans("Error");
 
-	/* We disable this test because dol_print_ip need an ip as input
-	$ip='www.google.com';
-	print '<br>'.$ip.' -> ';
-	$result=dol_print_ip($ip,1);
-	if ($result) print $result;
-	else print $langs->trans("Error");
-	*/
-	//var_dump($_SERVER);
-	$ip = getUserRemoteIP();
-	//$ip='91.161.249.43';
-	$isip=is_ip($ip);
-	if ($isip == 1)
-	{
-		print '<br>'.$ip.' -> ';
-		$result=dol_print_ip($ip, 1);
-		if ($result) print $result;
-		else print $langs->trans("Error");
-	}
-	else
-	{
-		print '<br>'.$ip.' -> ';
-		$result=dol_print_ip($ip, 1);
-		if ($result) print $result;
-		else print $langs->trans("NotAPublicIp");
-	}
+    /* We disable this test because dol_print_ip need an ip as input
+    $ip='www.google.com';
+    print '<br>'.$ip.' -> ';
+    $result=dol_print_ip($ip,1);
+    if ($result) print $result;
+    else print $langs->trans("Error");
+    */
+    //var_dump($_SERVER);
+    $ip = getUserRemoteIP();
+    //$ip='91.161.249.43';
+    $isip=is_ip($ip);
+    if ($isip == 1)
+    {
+        print '<br>'.$ip.' -> ';
+        $result=dol_print_ip($ip, 1);
+        if ($result) print $result;
+        else print $langs->trans("Error");
+    }
+    else
+    {
+        print '<br>'.$ip.' -> ';
+        $result=dol_print_ip($ip, 1);
+        if ($result) print $result;
+        else print $langs->trans("NotAPublicIp");
+    }
 
-	$geoip->close();
+    $geoip->close();
 }
 
 // End of page

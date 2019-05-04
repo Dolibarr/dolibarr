@@ -47,93 +47,93 @@ require '../../../../main.inc.php';
  * Page used to create new folders in the current folder.
 -->
 <html>
-	<head>
-		<title>Create Folder</title>
-		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-		<link href="browser.css" type="text/css" rel="stylesheet">
-		<script type="text/javascript" src="js/common.js"></script>
-		<script type="text/javascript">
+    <head>
+        <title>Create Folder</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <link href="browser.css" type="text/css" rel="stylesheet">
+        <script type="text/javascript" src="js/common.js"></script>
+        <script type="text/javascript">
 
 function SetCurrentFolder( resourceType, folderPath )
 {
-	oConnector.ResourceType = resourceType ;
-	oConnector.CurrentFolder = folderPath ;
+    oConnector.ResourceType = resourceType ;
+    oConnector.CurrentFolder = folderPath ;
 }
 
 function CreateFolder()
 {
-	var sFolderName ;
+    var sFolderName ;
 
-	while ( true )
-	{
-		sFolderName = prompt( 'Type the name of the new folder:', '' );
+    while ( true )
+    {
+        sFolderName = prompt( 'Type the name of the new folder:', '' );
 
-		if ( sFolderName == null )
-			return ;
-		else if ( sFolderName.length == 0 )
-			alert( 'Please type the folder name' );
-		else
-			break ;
-	}
+        if ( sFolderName == null )
+            return ;
+        else if ( sFolderName.length == 0 )
+            alert( 'Please type the folder name' );
+        else
+            break ;
+    }
 
-	oConnector.SendCommand( 'CreateFolder', 'NewFolderName=' + encodeURIComponent( sFolderName) , CreateFolderCallBack );
+    oConnector.SendCommand( 'CreateFolder', 'NewFolderName=' + encodeURIComponent( sFolderName) , CreateFolderCallBack );
 }
 
 function CreateFolderCallBack( fckXml )
 {
-	if ( oConnector.CheckError( fckXml ) == 0 )
-		window.parent.frames['frmResourcesList'].Refresh();
+    if ( oConnector.CheckError( fckXml ) == 0 )
+        window.parent.frames['frmResourcesList'].Refresh();
 
-	/*
-	// Get the current folder path.
-	var oNode = fckXml.SelectSingleNode( 'Connector/Error' );
-	var iErrorNumber = parseInt( oNode.attributes.getNamedItem('number').value );
+    /*
+    // Get the current folder path.
+    var oNode = fckXml.SelectSingleNode( 'Connector/Error' );
+    var iErrorNumber = parseInt( oNode.attributes.getNamedItem('number').value );
 
-	switch ( iErrorNumber )
-	{
-		case 0:
-			window.parent.frames['frmResourcesList'].Refresh();
-			break;
-		case 101:
-			alert( 'Folder already exists' );
-			break;
-		case 102:
-			alert( 'Invalid folder name' );
-			break;
-		case 103:
-			alert( 'You have no permissions to create the folder' );
-			break;
-		case 110:
-			alert( 'Unknown error creating folder' );
-			break;
-		default:
-			alert( 'Error creating folder. Error number: ' + iErrorNumber );
-			break;
-	}
-	*/
+    switch ( iErrorNumber )
+    {
+        case 0:
+            window.parent.frames['frmResourcesList'].Refresh();
+            break;
+        case 101:
+            alert( 'Folder already exists' );
+            break;
+        case 102:
+            alert( 'Invalid folder name' );
+            break;
+        case 103:
+            alert( 'You have no permissions to create the folder' );
+            break;
+        case 110:
+            alert( 'Unknown error creating folder' );
+            break;
+        default:
+            alert( 'Error creating folder. Error number: ' + iErrorNumber );
+            break;
+    }
+    */
 }
 
 window.onload = function()
 {
-	window.top.IsLoadedCreateFolder = true ;
+    window.top.IsLoadedCreateFolder = true ;
 }
-		</script>
-	</head>
-	<body>
-		<table class="fullHeight" cellSpacing="0" cellPadding="0" width="100%" border="0">
-			<tr>
-				<td>
-					<button type="button" style="WIDTH: 100%" onclick="CreateFolder();">
-						<table cellSpacing="0" cellPadding="0" border="0">
-							<tr>
-								<td><?php echo img_picto_common('', 'treemenu/folder.gif', 'width="16" height="16"'); ?></td>
-								<td>&nbsp;</td>
-								<td class="nowrap">Create New Folder</td>
-							</tr>
-						</table>
-					</button>
-				</td>
-			</tr>
-		</table>
-	</body>
+        </script>
+    </head>
+    <body>
+        <table class="fullHeight" cellSpacing="0" cellPadding="0" width="100%" border="0">
+            <tr>
+                <td>
+                    <button type="button" style="WIDTH: 100%" onclick="CreateFolder();">
+                        <table cellSpacing="0" cellPadding="0" border="0">
+                            <tr>
+                                <td><?php echo img_picto_common('', 'treemenu/folder.gif', 'width="16" height="16"'); ?></td>
+                                <td>&nbsp;</td>
+                                <td class="nowrap">Create New Folder</td>
+                            </tr>
+                        </table>
+                    </button>
+                </td>
+            </tr>
+        </table>
+    </body>
 </html>

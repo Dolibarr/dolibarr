@@ -16,16 +16,16 @@
  */
 
 /**
- *	\file       htdocs/asterisk/wrapper.php
+ *    \file       htdocs/asterisk/wrapper.php
  *  \brief      File that is entry point to call an Asterisk server
- *	\remarks	To be used, an Asterisk user must be created by adding this
- * 				in /etc/asterisk/manager.conf
- * 				[dolibarr]
- * 				secret = dolibarr
- * 				deny=0.0.0.0/0.0.0.0
- * 				permit=127.0.0.1/255.255.255.0
- * 				read = system,call,log,verbose,command,agent,user
- * 				write = system,call,log,verbose,command,agent,user
+ *    \remarks    To be used, an Asterisk user must be created by adding this
+ *                 in /etc/asterisk/manager.conf
+ *                 [dolibarr]
+ *                 secret = dolibarr
+ *                 deny=0.0.0.0/0.0.0.0
+ *                 permit=127.0.0.1/255.255.255.0
+ *                 read = system,call,log,verbose,command,agent,user
+ *                 write = system,call,log,verbose,command,agent,user
  */
 
 if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC', '1');
@@ -39,7 +39,7 @@ if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX', '1');
 /**
  * Empty header
  *
- * @return	void
+ * @return    void
  */
 function llxHeader()
 {
@@ -51,7 +51,7 @@ function llxHeader()
 /**
  * Empty footer
  *
- * @return	void
+ * @return    void
  */
 function llxFooter()
 {
@@ -126,19 +126,19 @@ dol_syslog('click to dial search information with phone '.$called, LOG_DEBUG);
 $resql = $db->query($sql);
 if ($resql)
 {
-	$obj = $db->fetch_object($resql);
-	if ($obj)
-	{
-		$found = $obj->name;
-	} else {
-		$found = $notfound;
-	}
-	$db->free($resql);
+    $obj = $db->fetch_object($resql);
+    if ($obj)
+    {
+        $found = $obj->name;
+    } else {
+        $found = $notfound;
+    }
+    $db->free($resql);
 }
 else
 {
-	dol_print_error($db, 'Error');
-	$found = 'Error';
+    dol_print_error($db, 'Error');
+    $found = 'Error';
 }
 
 $number=strtolower($called);

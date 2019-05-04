@@ -109,7 +109,7 @@ class printing_printipp extends PrintingDriver
             $obj = $this->db->fetch_object($result);
             if ($obj)
             {
-            	dol_syslog("Found a default printer for user ".$user->id." = ".$obj->printer_id);
+                dol_syslog("Found a default printer for user ".$user->id." = ".$obj->printer_id);
                 $ipp->setPrinterURI($obj->printer_id);
             }
             else

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2012    Laurent Destailleur        <eldy@users.sourceforge.net>
  * Copyright (C) 2007		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2007-2012	Regis Houssin			<regis.houssin@inodbox.com>
  *
@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 $langs->loadLangs(array("install","other","admin"));
 
 if (! $user->admin)
-	accessforbidden();
+    accessforbidden();
 
 
 /*

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+/* Copyright (C) 2004        Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2013	Laurent Destailleur		<eldy@users.sourceforge.org>
  * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
@@ -21,7 +21,7 @@
 
 /**
  *      \file       cron/admin/cron.php
- *		\ingroup    cron
+ *        \ingroup    cron
  */
 
 // Dolibarr environment
@@ -33,29 +33,29 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/cron.lib.php';
 $langs->loadLangs(array('admin', 'cron'));
 
 if (! $user->admin)
-	accessforbidden();
+    accessforbidden();
 
 $actionsave=GETPOST("save");
 
 // Save parameters
 if (!empty($actionsave))
 {
-	$i=0;
+    $i=0;
 
-	$db->begin();
+    $db->begin();
 
-	$i+=dolibarr_set_const($db, 'CRON_KEY', trim(GETPOST("CRON_KEY")), 'chaine', 0, '', 0);
+    $i+=dolibarr_set_const($db, 'CRON_KEY', trim(GETPOST("CRON_KEY")), 'chaine', 0, '', 0);
 
-	if ($i >= 1)
-	{
-		$db->commit();
-		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	}
-	else
-	{
-		$db->rollback();
-		setEventMessages($langs->trans("Error"), null, 'errors');
-	}
+    if ($i >= 1)
+    {
+        $db->commit();
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    }
+    else
+    {
+        $db->rollback();
+        setEventMessages($langs->trans("Error"), null, 'errors');
+    }
 }
 
 
@@ -95,7 +95,7 @@ if (empty($conf->global->CRON_DISABLE_KEY_CHANGE))
 {
     print '<input type="text" class="flat minwidth200"'.$disabled.' id="CRON_KEY" name="CRON_KEY" value="'. (GETPOST('CRON_KEY')?GETPOST('CRON_KEY'):(! empty($conf->global->CRON_KEY)?$conf->global->CRON_KEY:'')) . '">';
     if (! empty($conf->use_javascript_ajax))
-    	print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
+        print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
 }
 else
 {
@@ -131,8 +131,8 @@ print '<br>';
 
 if (! empty($conf->use_javascript_ajax))
 {
-	print "\n".'<script type="text/javascript">';
-	print '$(document).ready(function () {
+    print "\n".'<script type="text/javascript">';
+    print '$(document).ready(function () {
 		$("#generate_token").click(function() {
 		$.get( "'.DOL_URL_ROOT.'/core/ajax/security.php", {
 			action: \'getrandompassword\',
@@ -143,7 +143,7 @@ if (! empty($conf->use_javascript_ajax))
 });
 });
 });';
-	print '</script>';
+    print '</script>';
 }
 
 llxFooter();

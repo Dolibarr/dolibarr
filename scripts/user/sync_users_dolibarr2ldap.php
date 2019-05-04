@@ -31,12 +31,12 @@ $path=dirname(__FILE__).'/';
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
     echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-	exit(-1);
+    exit(-1);
 }
 
 if (! isset($argv[1]) || ! $argv[1]) {
     print "Usage: $script_file now\n";
-	exit(-1);
+    exit(-1);
 }
 $now=$argv[1];
 
@@ -60,8 +60,8 @@ dol_syslog($script_file." launched with arg ".join(',', $argv));
 /*
 if (! $conf->global->LDAP_SYNCHRO_ACTIVE)
 {
-	print $langs->trans("LDAPSynchronizationNotSetupInDolibarr");
-	exit(-1);
+    print $langs->trans("LDAPSynchronizationNotSetupInDolibarr");
+    exit(-1);
 }
 */
 
@@ -71,53 +71,53 @@ $sql .= " FROM ".MAIN_DB_PREFIX."user";
 $resql = $db->query($sql);
 if ($resql)
 {
-	$num = $db->num_rows($resql);
-	$i = 0;
+    $num = $db->num_rows($resql);
+    $i = 0;
 
-	$ldap=new Ldap();
-	$ldap->connect_bind();
+    $ldap=new Ldap();
+    $ldap->connect_bind();
 
-	while ($i < $num)
-	{
-		$ldap->error="";
+    while ($i < $num)
+    {
+        $ldap->error="";
 
-		$obj = $db->fetch_object($resql);
+        $obj = $db->fetch_object($resql);
 
-		$fuser = new User($db);
-		$fuser->fetch($obj->rowid);
+        $fuser = new User($db);
+        $fuser->fetch($obj->rowid);
 
-		print $langs->trans("UpdateUser")." rowid=".$fuser->id." ".$fuser->getFullName($langs);
+        print $langs->trans("UpdateUser")." rowid=".$fuser->id." ".$fuser->getFullName($langs);
 
-		$oldobject=$fuser;
+        $oldobject=$fuser;
 
-	    $oldinfo=$oldobject->_load_ldap_info();
-	    $olddn=$oldobject->_load_ldap_dn($oldinfo);
+        $oldinfo=$oldobject->_load_ldap_info();
+        $olddn=$oldobject->_load_ldap_dn($oldinfo);
 
-	    $info=$fuser->_load_ldap_info();
-		$dn=$fuser->_load_ldap_dn($info);
+        $info=$fuser->_load_ldap_info();
+        $dn=$fuser->_load_ldap_dn($info);
 
-		$result=$ldap->add($dn, $info, $user);	// Wil fail if already exists
-		$result=$ldap->update($dn, $info, $user, $olddn);
-		if ($result > 0)
-		{
-			print " - ".$langs->trans("OK");
-		}
-		else
-		{
-			$error++;
-			print " - ".$langs->trans("KO").' - '.$ldap->error;
-		}
-		print "\n";
+        $result=$ldap->add($dn, $info, $user);    // Wil fail if already exists
+        $result=$ldap->update($dn, $info, $user, $olddn);
+        if ($result > 0)
+        {
+            print " - ".$langs->trans("OK");
+        }
+        else
+        {
+            $error++;
+            print " - ".$langs->trans("KO").' - '.$ldap->error;
+        }
+        print "\n";
 
-		$i++;
-	}
+        $i++;
+    }
 
-	$ldap->unbind();
-	$ldap->close();
+    $ldap->unbind();
+    $ldap->close();
 }
 else
 {
-	dol_print_error($db);
+    dol_print_error($db);
 }
 
 exit($error);

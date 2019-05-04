@@ -20,8 +20,8 @@
 // Protection to avoid direct call of template
 if (empty($langs) || ! is_object($langs))
 {
-	print "Error, template page can't be called as URL";
-	exit;
+    print "Error, template page can't be called as URL";
+    exit;
 }
 
 
@@ -67,13 +67,13 @@ $object->fetch($facid);
 
 <table class="liste_articles">
     <thead>
-	<tr class="titres">
+    <tr class="titres">
             <th><?php print $langs->trans("Code"); ?></th>
             <th><?php print $langs->trans("Label"); ?></th>
             <th><?php print $langs->trans("Qty"); ?></th>
             <th><?php print $langs->trans("Discount").' (%)'; ?></th>
             <th><?php print $langs->trans("TotalHT"); ?></th>
-	</tr>
+    </tr>
     </thead>
     <tbody>
     <?php

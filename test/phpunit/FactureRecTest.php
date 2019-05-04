@@ -18,13 +18,13 @@
 
 /**
  *      \file       test/phpunit/FactureRecTest.php
- *		\ingroup    test
+ *        \ingroup    test
  *      \brief      PHPUnit test
- *		\remarks	To run this script as CLI:  phpunit filename.php
+ *        \remarks    To run this script as CLI:  phpunit filename.php
  */
 
 global $conf,$user,$langs,$db;
-//define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
+//define('TEST_DB_FORCE_TYPE','mysql');    // This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/compta/facture/class/facture.class.php';
@@ -32,9 +32,9 @@ require_once dirname(__FILE__).'/../../htdocs/compta/facture/class/facture-rec.c
 
 if (empty($user->id))
 {
-	print "Load permissions for admin user nb 1\n";
-	$user->fetch(1);
-	$user->getrights();
+    print "Load permissions for admin user nb 1\n";
+    $user->fetch(1);
+    $user->getrights();
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 
@@ -44,79 +44,79 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
- * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
+ * @remarks    backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
 class FactureRecTest extends PHPUnit_Framework_TestCase
 {
-	protected $savconf;
-	protected $savuser;
-	protected $savlangs;
-	protected $savdb;
+    protected $savconf;
+    protected $savuser;
+    protected $savlangs;
+    protected $savdb;
 
-	/**
-	 * Constructor
-	 * We save global variables into local variables
-	 *
-	 * @return FactureTest
-	 */
-	public function __construct()
-	{
-		parent::__construct();
+    /**
+     * Constructor
+     * We save global variables into local variables
+     *
+     * @return FactureTest
+     */
+    public function __construct()
+    {
+        parent::__construct();
 
-		//$this->sharedFixture
-		global $conf,$user,$langs,$db;
-		$this->savconf=$conf;
-		$this->savuser=$user;
-		$this->savlangs=$langs;
-		$this->savdb=$db;
+        //$this->sharedFixture
+        global $conf,$user,$langs,$db;
+        $this->savconf=$conf;
+        $this->savuser=$user;
+        $this->savlangs=$langs;
+        $this->savdb=$db;
 
-		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-		//print " - db ".$db->db;
-		print "\n";
-	}
+        print __METHOD__." db->type=".$db->type." user->id=".$user->id;
+        //print " - db ".$db->db;
+        print "\n";
+    }
 
     // Static methods
     public static function setUpBeforeClass()
     {
         global $conf,$user,$langs,$db;
-		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
+        $db->begin();    // This is to have all actions inside a transaction even if test launched without suite.
 
-    	print __METHOD__."\n";
+        print __METHOD__."\n";
     }
 
     // tear down after class
     public static function tearDownAfterClass()
     {
-    	global $conf,$user,$langs,$db;
-		$db->rollback();
+        global $conf,$user,$langs,$db;
+        $db->rollback();
 
-		print __METHOD__."\n";
+        print __METHOD__."\n";
     }
 
-	/**
-	 * Init phpunit tests
-	 *
-	 * @return	void
-	 */
+    /**
+     * Init phpunit tests
+     *
+     * @return    void
+     */
     protected function setUp()
     {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-		print __METHOD__."\n";
+        print __METHOD__."\n";
     }
 
-	/**
-	 * End phpunit tests
-	 *
-	 * @return	void
-	 */
+    /**
+     * End phpunit tests
+     *
+     * @return    void
+     */
     protected function tearDown()
     {
-    	print __METHOD__."\n";
+        print __METHOD__."\n";
     }
 
     /**
@@ -126,23 +126,23 @@ class FactureRecTest extends PHPUnit_Framework_TestCase
      */
     public function testFactureRecCreate()
     {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-		$localobjectinv=new Facture($this->savdb);
-		$localobjectinv->initAsSpecimen();
-		$localobjectinv->create($user);
+        $localobjectinv=new Facture($this->savdb);
+        $localobjectinv->initAsSpecimen();
+        $localobjectinv->create($user);
 
-		$localobject=new FactureRec($this->savdb);
-    	$localobject->initAsSpecimen();
-    	$result=$localobject->create($user, $localobjectinv->id);
+        $localobject=new FactureRec($this->savdb);
+        $localobject->initAsSpecimen();
+        $result=$localobject->create($user, $localobjectinv->id);
 
-    	$this->assertLessThan($result, 0);
-    	print __METHOD__." result=".$result."\n";
-    	return $result;
+        $this->assertLessThan($result, 0);
+        print __METHOD__." result=".$result."\n";
+        return $result;
     }
 
 
@@ -153,8 +153,8 @@ class FactureRecTest extends PHPUnit_Framework_TestCase
     /**
      * Edit an object to test updates
      *
-     * @param 	mixed	$localobject		Object Facture
-     * @return	void
+     * @param     mixed    $localobject        Object Facture
+     * @return    void
      */
     public function changeProperties(&$localobject)
     {
@@ -165,11 +165,11 @@ class FactureRecTest extends PHPUnit_Framework_TestCase
     /**
      * Compare all public properties values of 2 objects
      *
-     * @param 	Object		$oA						Object operand 1
-     * @param 	Object		$oB						Object operand 2
-     * @param	boolean		$ignoretype				False will not report diff if type of value differs
-     * @param	array		$fieldstoignorearray	Array of fields to ignore in diff
-	 * @return	array								Array with differences
+     * @param     Object        $oA                        Object operand 1
+     * @param     Object        $oB                        Object operand 2
+     * @param    boolean        $ignoretype                False will not report diff if type of value differs
+     * @param    array        $fieldstoignorearray    Array of fields to ignore in diff
+     * @return    array                                Array with differences
      */
     public function objCompare($oA, $oB, $ignoretype = true, $fieldstoignorearray = array('id'))
     {

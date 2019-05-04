@@ -26,11 +26,11 @@ if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
 
 require '../../main.inc.php';
 
-$id			= GETPOST('id', 'int');
-$action		= GETPOST('action', 'alpha');
-$htmlname	= GETPOST('htmlname', 'alpha');
-$selected	= (GETPOST('selected')?GETPOST('selected'):'-1');
-$productid	= (GETPOST('productid', 'int')?GETPOST('productid', 'int'):0);
+$id            = GETPOST('id', 'int');
+$action        = GETPOST('action', 'alpha');
+$htmlname    = GETPOST('htmlname', 'alpha');
+$selected    = (GETPOST('selected')?GETPOST('selected'):'-1');
+$productid    = (GETPOST('productid', 'int')?GETPOST('productid', 'int'):0);
 
 /*
  * View
@@ -43,27 +43,27 @@ top_httphead();
 // Load original field value
 if (! empty($id) && ! empty($action) && ! empty($htmlname))
 {
-	$form = new Form($db);
-	$soc = new Societe($db);
+    $form = new Form($db);
+    $soc = new Societe($db);
 
-	$soc->fetch($id);
+    $soc->fetch($id);
 
-	if ($action == 'getSellerVATRates')
-	{
-		$seller = $mysoc;
-		$buyer = $soc;
-	}
-	else
-	{
-		$buyer = $mysoc;
-		$seller = $soc;
-	}
+    if ($action == 'getSellerVATRates')
+    {
+        $seller = $mysoc;
+        $buyer = $soc;
+    }
+    else
+    {
+        $buyer = $mysoc;
+        $seller = $soc;
+    }
 
-	$return=array();
+    $return=array();
 
-	$return['value']	= $form->load_tva('tva_tx', $selected, $seller, $buyer, $productid, 0, '', true);
-	$return['num']		= $form->num;
-	$return['error']	= $form->error;
+    $return['value']    = $form->load_tva('tva_tx', $selected, $seller, $buyer, $productid, 0, '', true);
+    $return['num']        = $form->num;
+    $return['error']    = $form->error;
 
-	echo json_encode($return);
+    echo json_encode($return);
 }

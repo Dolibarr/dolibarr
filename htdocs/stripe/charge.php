@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2018 	Thibault FOUCART        <support@ptibogxiv.net>
+/* Copyright (C) 2018     Thibault FOUCART        <support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,28 +61,28 @@ llxHeader('', $langs->trans("StripeChargeList"));
 
 if (! empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha')))
 {
-	$service = 'StripeTest';
-	$servicestatus = '0';
-	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning');
+    $service = 'StripeTest';
+    $servicestatus = '0';
+    dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning');
 }
 else
 {
-	$service = 'StripeLive';
-	$servicestatus = '1';
+    $service = 'StripeLive';
+    $servicestatus = '1';
 }
 
 $stripeacc = $stripe->getStripeAccount($service);
 /*if (empty($stripeaccount))
 {
-	print $langs->trans('ErrorStripeAccountNotDefined');
+    print $langs->trans('ErrorStripeAccountNotDefined');
 }*/
 
 if (!$rowid)
 {
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+    print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+    print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
     print '<input type="hidden" name="action" value="list">';
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
@@ -91,7 +91,7 @@ if (!$rowid)
     $title=$langs->trans("StripeChargeList");
     $title.=($stripeacc?' (Stripe connection with Stripe OAuth Connect account '.$stripeacc.')':' (Stripe connection with keys from Stripe module setup)');
 
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'title_accountancy.png', 0, '', '', $limit);
+    print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'title_accountancy.png', 0, '', '', $limit);
 
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
@@ -107,130 +107,130 @@ if (!$rowid)
     print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "", "", "", '', '', '', 'right ');
     print "</tr>\n";
 
-	print "</tr>\n";
+    print "</tr>\n";
 
-	if ($stripeacc)
-	{
-		$list=\Stripe\Charge::all(array("limit" => $limit), array("stripe_account" => $stripeacc));
-	}
-	else
-	{
-		$list=\Stripe\Charge::all(array("limit" => $limit));
-	}
+    if ($stripeacc)
+    {
+        $list=\Stripe\Charge::all(array("limit" => $limit), array("stripe_account" => $stripeacc));
+    }
+    else
+    {
+        $list=\Stripe\Charge::all(array("limit" => $limit));
+    }
 
-	//print $list;
-	foreach ($list->data as $charge)
-	{
-		// The metadata FULLTAG is defined by the online payment page
-		$FULLTAG=$charge->metadata->FULLTAG;
+    //print $list;
+    foreach ($list->data as $charge)
+    {
+        // The metadata FULLTAG is defined by the online payment page
+        $FULLTAG=$charge->metadata->FULLTAG;
 
-		// Save into $tmparray all metadata
-		$tmparray = dolExplodeIntoArray($FULLTAG, '.', '=');
-		// Load origin object according to metadata
-		if (! empty($tmparray['CUS']) && $tmparray['CUS'] > 0)
-		{
-			$societestatic->fetch($tmparray['CUS']);
-		}
-		elseif (! empty($charge->metadata->dol_thirdparty_id) && $charge->metadata->dol_thirdparty_id > 0)
-		{
-			$societestatic->fetch($charge->metadata->dol_thirdparty_id);
-		}
-		else
-		{
-			$societestatic->id = 0;
-		}
-		if (! empty($tmparray['MEM']) && $tmparray['MEM'] > 0)
-		{
-			$memberstatic->fetch($tmparray['MEM']);
-		}
-		else
-		{
-			$memberstatic->id = 0;
-		}
+        // Save into $tmparray all metadata
+        $tmparray = dolExplodeIntoArray($FULLTAG, '.', '=');
+        // Load origin object according to metadata
+        if (! empty($tmparray['CUS']) && $tmparray['CUS'] > 0)
+        {
+            $societestatic->fetch($tmparray['CUS']);
+        }
+        elseif (! empty($charge->metadata->dol_thirdparty_id) && $charge->metadata->dol_thirdparty_id > 0)
+        {
+            $societestatic->fetch($charge->metadata->dol_thirdparty_id);
+        }
+        else
+        {
+            $societestatic->id = 0;
+        }
+        if (! empty($tmparray['MEM']) && $tmparray['MEM'] > 0)
+        {
+            $memberstatic->fetch($tmparray['MEM']);
+        }
+        else
+        {
+            $memberstatic->id = 0;
+        }
 
-		print '<tr class="oddeven">';
+        print '<tr class="oddeven">';
 
     if (!empty($stripeacc)) $connect=$stripeacc.'/';
 
-		// Ref
-		$url='https://dashboard.stripe.com/'.$connect.'test/payments/'.$charge->id;
-			if ($servicestatus)
-			{
-				$url='https://dashboard.stripe.com/'.$connect.'payments/'.$charge->id;
-			}
-		print "<td><a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'object_globe')." ".$charge->id."</a></td>\n";
-		// Stripe customer
-		print "<td>";
+        // Ref
+        $url='https://dashboard.stripe.com/'.$connect.'test/payments/'.$charge->id;
+            if ($servicestatus)
+            {
+                $url='https://dashboard.stripe.com/'.$connect.'payments/'.$charge->id;
+            }
+        print "<td><a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'object_globe')." ".$charge->id."</a></td>\n";
+        // Stripe customer
+        print "<td>";
 
     if (! empty($conf->stripe->enabled) && !empty($stripeacc)) $connect=$stripeacc.'/';
-		$url='https://dashboard.stripe.com/'.$connect.'test/customers/'.$charge->customer;
-		if ($servicestatus)
-		{
+        $url='https://dashboard.stripe.com/'.$connect.'test/customers/'.$charge->customer;
+        if ($servicestatus)
+        {
     $url='https://dashboard.stripe.com/'.$connect.'customers/'.$charge->customer;
-		}
-		print '<a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe'), 'object_globe').' '.$charge->customer.'</a>';
+        }
+        print '<a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe'), 'object_globe').' '.$charge->customer.'</a>';
 
     print "</td>\n";
-		// Link
-		print "<td>";
-		if ($societestatic->id > 0)
-		{
-			print $societestatic->getNomUrl(1);
-		}
-		elseif ($memberstatic->id > 0)
-		{
-			print $memberstatic->getNomUrl(1);
-		}
-		print "</td>\n";
-		// Origine
-		print "<td>";
-		if ($charge->metadata->dol_type=="order"){
-			$object = new Commande($db);
-			$object->fetch($charge->metadata->dol_id);
+        // Link
+        print "<td>";
+        if ($societestatic->id > 0)
+        {
+            print $societestatic->getNomUrl(1);
+        }
+        elseif ($memberstatic->id > 0)
+        {
+            print $memberstatic->getNomUrl(1);
+        }
+        print "</td>\n";
+        // Origine
+        print "<td>";
+        if ($charge->metadata->dol_type=="order"){
+            $object = new Commande($db);
+            $object->fetch($charge->metadata->dol_id);
       if ($object->id > 0) {
-			print "<a href='".DOL_URL_ROOT."/commande/card.php?id=".$object->id."'>".img_picto('', 'object_order')." ".$object->ref."</a>";
+            print "<a href='".DOL_URL_ROOT."/commande/card.php?id=".$object->id."'>".img_picto('', 'object_order')." ".$object->ref."</a>";
       } else print $FULLTAG;
-		} elseif ($charge->metadata->dol_type=="invoice"){
-			$object = new Facture($db);
-			$object->fetch($charge->metadata->dol_id);
+        } elseif ($charge->metadata->dol_type=="invoice"){
+            $object = new Facture($db);
+            $object->fetch($charge->metadata->dol_id);
       if ($object->id > 0) {
-		  print "<a href='".DOL_URL_ROOT."/compta/facture/card.php?facid=".$charge->metadata->dol_id."'>".img_picto('', 'object_invoice')." ".$object->ref."</a>";
+          print "<a href='".DOL_URL_ROOT."/compta/facture/card.php?facid=".$charge->metadata->dol_id."'>".img_picto('', 'object_invoice')." ".$object->ref."</a>";
       } else print $FULLTAG;
-		} else print $FULLTAG;
-	    print "</td>\n";
-		// Date payment
-	    print '<td class="center">'.dol_print_date($charge->created, '%d/%m/%Y %H:%M')."</td>\n";
-	    // Type
-	    print '<td>';
-		if ($charge->source->object=='card')
-		{
-		    print $langs->trans("card");
-		}
-		elseif ($charge->source->type=='card'){
-		    print $langs->trans("card");
-		} elseif ($charge->source->type=='three_d_secure'){
-		    print $langs->trans("card3DS");
-		}
-	    print '</td>';
-	    // Amount
-	    print '<td class="right">'.price(($charge->amount-$charge->amount_refunded)/100, 0, '', 1, - 1, - 1, strtoupper($charge->currency))."</td>";
-	    // Status
-	    print '<td class="right">';
-	    if ($charge->refunded=='1'){
-	    	print img_picto($langs->trans("refunded"), 'statut6');
-	    } elseif ($charge->paid=='1'){
+        } else print $FULLTAG;
+        print "</td>\n";
+        // Date payment
+        print '<td class="center">'.dol_print_date($charge->created, '%d/%m/%Y %H:%M')."</td>\n";
+        // Type
+        print '<td>';
+        if ($charge->source->object=='card')
+        {
+            print $langs->trans("card");
+        }
+        elseif ($charge->source->type=='card'){
+            print $langs->trans("card");
+        } elseif ($charge->source->type=='three_d_secure'){
+            print $langs->trans("card3DS");
+        }
+        print '</td>';
+        // Amount
+        print '<td class="right">'.price(($charge->amount-$charge->amount_refunded)/100, 0, '', 1, - 1, - 1, strtoupper($charge->currency))."</td>";
+        // Status
+        print '<td class="right">';
+        if ($charge->refunded=='1'){
+            print img_picto($langs->trans("refunded"), 'statut6');
+        } elseif ($charge->paid=='1'){
 
         print img_picto($langs->trans("".$charge->status.""), 'statut4');
-	    } else {
-	    	$label="Message: ".$charge->failure_message."<br>";
-	    	$label.="Réseau: ".$charge->outcome->network_status."<br>";
-	    	$label.="Statut: ".$langs->trans("".$charge->outcome->seller_message."");
-	    	print $form->textwithpicto(img_picto($langs->trans("".$charge->status.""), 'statut8'), $label, 1);
-	    }
-	    print "</td>\n";
+        } else {
+            $label="Message: ".$charge->failure_message."<br>";
+            $label.="Réseau: ".$charge->outcome->network_status."<br>";
+            $label.="Statut: ".$langs->trans("".$charge->outcome->seller_message."");
+            print $form->textwithpicto(img_picto($langs->trans("".$charge->status.""), 'statut8'), $label, 1);
+        }
+        print "</td>\n";
 
-	    print "</tr>\n";
-	}
+        print "</tr>\n";
+    }
 } else {
 
 }

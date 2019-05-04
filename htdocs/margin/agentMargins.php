@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2012-2013	Christophe Battarel	<christophe.battarel@altairis.fr>
+/* Copyright (C) 2012-2013    Christophe Battarel    <christophe.battarel@altairis.fr>
  * Copyright (C) 2014		Ferran Marcet		<fmarcet@2byte.es>
  * Copyright (C) 2015       Marcos García       <marcosgdf@gmail.com>
  *
@@ -18,9 +18,9 @@
  */
 
 /**
- *	\file       htdocs/margin/agentMargins.php
- *	\ingroup    margin
- *	\brief      Page des marges par agent commercial
+ *    \file       htdocs/margin/agentMargins.php
+ *    \ingroup    margin
+ *    \brief      Page des marges par agent commercial
  */
 
 require '../main.inc.php';
@@ -46,10 +46,10 @@ $pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield)
 {
-	if ($agentid > 0)
-		$sortfield="s.nom";
-	else
-	    $sortfield="u.lastname";
+    if ($agentid > 0)
+        $sortfield="s.nom";
+    else
+        $sortfield="u.lastname";
 }
 
 $startdate=$enddate='';
@@ -152,17 +152,17 @@ $sql.= ' AND f.entity IN ('.getEntity('invoice').')';
 $sql.= " AND sc.fk_soc = f.fk_soc";
 $sql.= " AND (d.product_type = 0 OR d.product_type = 1)";
 if (! empty($conf->global->AGENT_CONTACT_TYPE))
-	$sql.= " AND ((e.fk_socpeople IS NULL AND sc.fk_user = u.rowid) OR (e.fk_socpeople IS NOT NULL AND e.fk_socpeople = u.rowid))";
+    $sql.= " AND ((e.fk_socpeople IS NULL AND sc.fk_user = u.rowid) OR (e.fk_socpeople IS NOT NULL AND e.fk_socpeople = u.rowid))";
 else
-	$sql .= " AND sc.fk_user = u.rowid";
+    $sql .= " AND sc.fk_user = u.rowid";
 $sql.= " AND f.fk_statut NOT IN (" . implode(', ', $invoice_status_except_list) . ")";
 $sql.= ' AND s.entity IN ('.getEntity('societe').')';
 $sql.= " AND d.fk_facture = f.rowid";
 if ($agentid > 0) {
-	if (! empty($conf->global->AGENT_CONTACT_TYPE))
-  		$sql.= " AND ((e.fk_socpeople IS NULL AND sc.fk_user = ".$agentid.") OR (e.fk_socpeople IS NOT NULL AND e.fk_socpeople = ".$agentid."))";
-	else
-	    $sql .= " AND sc.fk_user = ".$agentid;
+    if (! empty($conf->global->AGENT_CONTACT_TYPE))
+          $sql.= " AND ((e.fk_socpeople IS NULL AND sc.fk_user = ".$agentid.") OR (e.fk_socpeople IS NOT NULL AND e.fk_socpeople = ".$agentid."))";
+    else
+        $sql .= " AND sc.fk_user = ".$agentid;
 }
 if (!empty($startdate))
   $sql.= " AND f.datef >= '".$db->idate($startdate)."'";
@@ -195,35 +195,35 @@ dol_syslog('margin::agentMargins.php', LOG_DEBUG);
 $result = $db->query($sql);
 if ($result)
 {
-	$num = $db->num_rows($result);
+    $num = $db->num_rows($result);
 
-	print '<br>';
-	print_barre_liste($langs->trans("MarginDetails"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num, $num, '', 0, '', '', 0, 1);
+    print '<br>';
+    print_barre_liste($langs->trans("MarginDetails"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num, $num, '', 0, '', '', 0, 1);
 
-	if ($conf->global->MARGIN_TYPE == "1")
-	    $labelcostprice='BuyingPrice';
-	else   // value is 'costprice' or 'pmp'
-	    $labelcostprice='CostPrice';
+    if ($conf->global->MARGIN_TYPE == "1")
+        $labelcostprice='BuyingPrice';
+    else   // value is 'costprice' or 'pmp'
+        $labelcostprice='CostPrice';
 
-	$i = 0;
-	print "<table class=\"noborder\" width=\"100%\">";
+    $i = 0;
+    print "<table class=\"noborder\" width=\"100%\">";
 
-	print '<tr class="liste_titre">';
-	if ($agentid > 0)
-		print_liste_field_titre("Customer", $_SERVER["PHP_SELF"], "s.nom", "", $param, '', $sortfield, $sortorder);
-	else
-		print_liste_field_titre("SalesRepresentative", $_SERVER["PHP_SELF"], "u.lastname", "", $param, '', $sortfield, $sortorder);
+    print '<tr class="liste_titre">';
+    if ($agentid > 0)
+        print_liste_field_titre("Customer", $_SERVER["PHP_SELF"], "s.nom", "", $param, '', $sortfield, $sortorder);
+    else
+        print_liste_field_titre("SalesRepresentative", $_SERVER["PHP_SELF"], "u.lastname", "", $param, '', $sortfield, $sortorder);
 
-	print_liste_field_titre("SellingPrice", $_SERVER["PHP_SELF"], "selling_price", "", $param, '', $sortfield, $sortorder, 'right ');
-	print_liste_field_titre($labelcostprice, $_SERVER["PHP_SELF"], "buying_price", "", $param, '', $sortfield, $sortorder, 'right ');
-	print_liste_field_titre("Margin", $_SERVER["PHP_SELF"], "marge", "", $param, '', $sortfield, $sortorder, 'right ');
-	if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-		print_liste_field_titre("MarginRate", $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'right ');
-	if (! empty($conf->global->DISPLAY_MARK_RATES))
-		print_liste_field_titre("MarkRate", $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'right ');
-	print "</tr>\n";
+    print_liste_field_titre("SellingPrice", $_SERVER["PHP_SELF"], "selling_price", "", $param, '', $sortfield, $sortorder, 'right ');
+    print_liste_field_titre($labelcostprice, $_SERVER["PHP_SELF"], "buying_price", "", $param, '', $sortfield, $sortorder, 'right ');
+    print_liste_field_titre("Margin", $_SERVER["PHP_SELF"], "marge", "", $param, '', $sortfield, $sortorder, 'right ');
+    if (! empty($conf->global->DISPLAY_MARGIN_RATES))
+        print_liste_field_titre("MarginRate", $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'right ');
+    if (! empty($conf->global->DISPLAY_MARK_RATES))
+        print_liste_field_titre("MarkRate", $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'right ');
+    print "</tr>\n";
 
-	$rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT, $conf->global->MAIN_MAX_DECIMALS_TOT);
+    $rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT, $conf->global->MAIN_MAX_DECIMALS_TOT);
 
     if ($num > 0)
     {
@@ -305,7 +305,7 @@ if ($result)
 }
 else
 {
-	dol_print_error($db);
+    dol_print_error($db);
 }
 $db->free($result);
 

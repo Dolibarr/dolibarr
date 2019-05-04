@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+/* Copyright (C) 2005        Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@inodbox.com>
  *
@@ -18,9 +18,9 @@
  */
 
 /**
- *	\file       htdocs/projet/tasks/task.php
- *	\ingroup    project
- *	\brief      Page of a project task
+ *    \file       htdocs/projet/tasks/task.php
+ *    \ingroup    project
+ *    \brief      Page of a project task
  */
 
 require "../../main.inc.php";
@@ -68,18 +68,18 @@ include DOL_DOCUMENT_ROOT . '/core/actions_comments.inc.php';
 // Retreive First Task ID of Project if withprojet is on to allow project prev next to work
 if (! empty($project_ref) && ! empty($withproject))
 {
-	if ($projectstatic->fetch('', $project_ref) > 0)
-	{
-		$objectsarray=$object->getTasksArray(0, 0, $projectstatic->id, $socid, 0);
-		if (count($objectsarray) > 0)
-		{
-			$id=$objectsarray[0]->id;
-		}
-		else
-		{
-			header("Location: ".DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.(empty($mode)?'':'&mode='.$mode));
-		}
-	}
+    if ($projectstatic->fetch('', $project_ref) > 0)
+    {
+        $objectsarray=$object->getTasksArray(0, 0, $projectstatic->id, $socid, 0);
+        if (count($objectsarray) > 0)
+        {
+            $id=$objectsarray[0]->id;
+        }
+        else
+        {
+            header("Location: ".DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.(empty($mode)?'':'&mode='.$mode));
+        }
+    }
 }
 
 /*
@@ -95,33 +95,33 @@ $formfile = new FormFile($db);
 
 if ($id > 0 || ! empty($ref))
 {
-	if ($object->fetch($id, $ref) > 0)
-	{
-		$result=$object->fetch_optionals();
+    if ($object->fetch($id, $ref) > 0)
+    {
+        $result=$object->fetch_optionals();
 
-		$result=$object->fetchComments();
-		if ($result<0){
-			setEventMessages($object->error, $object->errors, 'errors');
-		}
+        $result=$object->fetchComments();
+        if ($result<0){
+            setEventMessages($object->error, $object->errors, 'errors');
+        }
 
-		$result=$projectstatic->fetch($object->fk_project);
-		if (! empty($projectstatic->socid)) $projectstatic->fetch_thirdparty();
-		if(! empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($projectstatic, 'fetchComments') && empty($projectstatic->comments)) $projectstatic->fetchComments();
+        $result=$projectstatic->fetch($object->fk_project);
+        if (! empty($projectstatic->socid)) $projectstatic->fetch_thirdparty();
+        if(! empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($projectstatic, 'fetchComments') && empty($projectstatic->comments)) $projectstatic->fetchComments();
 
-		$object->project = clone $projectstatic;
+        $object->project = clone $projectstatic;
 
-		$userWrite  = $projectstatic->restrictedProjectArea($user, 'write');
+        $userWrite  = $projectstatic->restrictedProjectArea($user, 'write');
 
-		if (! empty($withproject))
-		{
-			// Tabs for project
-			$tab='tasks';
-			$head=project_prepare_head($projectstatic);
-			dol_fiche_head($head, $tab, $langs->trans("Project"), -1, ($projectstatic->public?'projectpub':'project'));
+        if (! empty($withproject))
+        {
+            // Tabs for project
+            $tab='tasks';
+            $head=project_prepare_head($projectstatic);
+            dol_fiche_head($head, $tab, $langs->trans("Project"), -1, ($projectstatic->public?'projectpub':'project'));
 
-			$param=($mode=='mine'?'&mode=mine':'');
+            $param=($mode=='mine'?'&mode=mine':'');
 
-			// Project card
+            // Project card
 
             $linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -204,78 +204,78 @@ if ($id > 0 || ! empty($ref))
 
             print '<div class="clearboth"></div>';
 
-			dol_fiche_end();
+            dol_fiche_end();
 
-			print '<br>';
-		}
+            print '<br>';
+        }
 
-		$head=task_prepare_head($object);
+        $head=task_prepare_head($object);
 
-		/*
-		 * Fiche tache en mode visu
-		 */
-		$param=($withproject?'&withproject=1':'');
-		$linkback=$withproject?'<a href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.'&restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>':'';
+        /*
+         * Fiche tache en mode visu
+         */
+        $param=($withproject?'&withproject=1':'');
+        $linkback=$withproject?'<a href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.'&restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>':'';
 
-		dol_fiche_head($head, 'task_comment', $langs->trans("Task"), -1, 'projecttask');
+        dol_fiche_head($head, 'task_comment', $langs->trans("Task"), -1, 'projecttask');
 
-		if ($action == 'delete')
-		{
-			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"].'&withproject='.$withproject, $langs->trans("DeleteATask"), $langs->trans("ConfirmDeleteATask"), "confirm_delete");
-		}
+        if ($action == 'delete')
+        {
+            print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"].'&withproject='.$withproject, $langs->trans("DeleteATask"), $langs->trans("ConfirmDeleteATask"), "confirm_delete");
+        }
 
-		if (! GETPOST('withproject') || empty($projectstatic->id))
-		{
-		    $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1);
-		    $object->next_prev_filter=" fk_projet in (".$projectsListId.")";
-		}
-		else $object->next_prev_filter=" fk_projet = ".$projectstatic->id;
+        if (! GETPOST('withproject') || empty($projectstatic->id))
+        {
+            $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1);
+            $object->next_prev_filter=" fk_projet in (".$projectsListId.")";
+        }
+        else $object->next_prev_filter=" fk_projet = ".$projectstatic->id;
 
-		$morehtmlref='';
+        $morehtmlref='';
 
-		// Project
-		if (empty($withproject))
-		{
-		    $morehtmlref.='<div class="refidno">';
-		    $morehtmlref.=$langs->trans("Project").': ';
-		    $morehtmlref.=$projectstatic->getNomUrl(1);
-		    $morehtmlref.='<br>';
+        // Project
+        if (empty($withproject))
+        {
+            $morehtmlref.='<div class="refidno">';
+            $morehtmlref.=$langs->trans("Project").': ';
+            $morehtmlref.=$projectstatic->getNomUrl(1);
+            $morehtmlref.='<br>';
 
-		    // Third party
-		    $morehtmlref.=$langs->trans("ThirdParty").': ';
-		    if (!empty($projectstatic->thirdparty)) {
+            // Third party
+            $morehtmlref.=$langs->trans("ThirdParty").': ';
+            if (!empty($projectstatic->thirdparty)) {
                    $morehtmlref.=$projectstatic->thirdparty->getNomUrl(1);
-		    }
-		    $morehtmlref.='</div>';
-		}
+            }
+            $morehtmlref.='</div>';
+        }
 
-		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, $param);
+        dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, $param);
 
-		print '<div class="fichecenter">';
+        print '<div class="fichecenter">';
 
-		print '<div class="underbanner clearboth"></div>';
-		print '<table class="border" width="100%">';
+        print '<div class="underbanner clearboth"></div>';
+        print '<table class="border" width="100%">';
 
-		// Nb comments
-		print '<td class="titlefield">'.$langs->trans("NbComments").'</td><td>';
-		print $object->getNbComments();
-		print '</td></tr>';
+        // Nb comments
+        print '<td class="titlefield">'.$langs->trans("NbComments").'</td><td>';
+        print $object->getNbComments();
+        print '</td></tr>';
 
-		// Other attributes
-		$cols = 3;
-		$parameters=array('socid'=>$socid);
-		include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
+        // Other attributes
+        $cols = 3;
+        $parameters=array('socid'=>$socid);
+        include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
-		print '</table>';
+        print '</table>';
 
-		print '</div>';
+        print '</div>';
 
-		dol_fiche_end();
+        dol_fiche_end();
 
 
-		// Include comment tpl view
-		include DOL_DOCUMENT_ROOT . '/core/tpl/bloc_comment.tpl.php';
-	}
+        // Include comment tpl view
+        include DOL_DOCUMENT_ROOT . '/core/tpl/bloc_comment.tpl.php';
+    }
 }
 
 // End of page

@@ -17,8 +17,8 @@
  */
 
 /**
- *	\file			htdocs/core/actions_changeselectedfields.inc.php
- *  \brief			Code for actions when we change list of fields on a list page
+ *    \file            htdocs/core/actions_changeselectedfields.inc.php
+ *  \brief            Code for actions when we change list of fields on a list page
  */
 
 

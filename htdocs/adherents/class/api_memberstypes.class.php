@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017	Regis Houssin	<regis.houssin@inodbox.com>
+/* Copyright (C) 2017    Regis Houssin    <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -107,7 +107,7 @@ class MembersTypes extends DolibarrApi
             {
                 throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
             }
-	        $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
             $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
 
@@ -130,7 +130,7 @@ class MembersTypes extends DolibarrApi
             $min = min($num, ($limit <= 0 ? $num : $limit));
             while ($i < $min)
             {
-            	$obj = $db->fetch_object($result);
+                $obj = $db->fetch_object($result);
                 $membertype = new AdherentType($this->db);
                 if ($membertype->fetch($obj->rowid)) {
                     $obj_ret[] = $this->_cleanObjectDatas($membertype);
@@ -210,7 +210,7 @@ class MembersTypes extends DolibarrApi
         }
         else
         {
-        	throw new RestException(500, $membertype->error);
+            throw new RestException(500, $membertype->error);
         }
     }
 

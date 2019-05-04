@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014-2015  Alexandre Spangaro	<aspangaro@open-dsi.fr>
+/* Copyright (C) 2014-2015  Alexandre Spangaro    <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,9 +17,9 @@
  */
 
 /**
- * \file		htdocs/admin/salaries.php
- * \ingroup		Salaries
- * \brief		Setup page to configure salaries module
+ * \file        htdocs/admin/salaries.php
+ * \ingroup        Salaries
+ * \brief        Setup page to configure salaries module
  */
 
 require '../main.inc.php';
@@ -39,7 +39,7 @@ $action = GETPOST('action', 'alpha');
 
 // Other parameters SALARIES_*
 $list = array (
-		'SALARIES_XXX',
+        'SALARIES_XXX',
 );
 
 /*
@@ -98,23 +98,23 @@ foreach ($list as $key)
 {
 
 
-	print '<tr class="oddeven value">';
+    print '<tr class="oddeven value">';
 
-	// Param
-	$label = $langs->trans($key);
-	print '<td><label for="'.$key.'">'.$label.'</label></td>';
+    // Param
+    $label = $langs->trans($key);
+    print '<td><label for="'.$key.'">'.$label.'</label></td>';
 
-	// Value
-	print '<td>';
-	if (! empty($conf->accounting->enabled))
-	{
-		print $formaccounting->select_account($conf->global->$key, $key, 1, '', 1, 1);
-	}
-	else
-	{
-		print '<input type="text" size="20" id="'.$key.'" name="'.$key.'" value="'.$conf->global->$key.'">';
-	}
-	print '</td></tr>';
+    // Value
+    print '<td>';
+    if (! empty($conf->accounting->enabled))
+    {
+        print $formaccounting->select_account($conf->global->$key, $key, 1, '', 1, 1);
+    }
+    else
+    {
+        print '<input type="text" size="20" id="'.$key.'" name="'.$key.'" value="'.$conf->global->$key.'">';
+    }
+    print '</td></tr>';
 }
 
 print '</tr>';

@@ -19,7 +19,7 @@
 /**
  *      \file       htdocs/user/info.php
  *      \ingroup    core
- *		\brief      Page des informations d'un utilisateur
+ *        \brief      Page des informations d'un utilisateur
  */
 
 require '../main.inc.php';
@@ -35,8 +35,8 @@ $id = GETPOST('id', 'int');
 $object = new User($db);
 if ($id > 0 || ! empty($ref))
 {
-	$result = $object->fetch($id, $ref, '', 1);
-	$object->getrights();
+    $result = $object->fetch($id, $ref, '', 1);
+    $object->getrights();
 }
 
 // Security check
@@ -69,7 +69,7 @@ dol_fiche_head($head, 'info', $title, -1, 'user');
 $linkback = '';
 
 if ($user->rights->user->user->lire || $user->admin) {
-	$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+    $linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 }
 
 dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);

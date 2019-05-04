@@ -16,29 +16,29 @@
  */
 
 /**
- *	\file       htdocs/core/class/html.formwebsite.class.php
+ *    \file       htdocs/core/class/html.formwebsite.class.php
  *  \ingroup    core
- *	\brief      File of class to manage component html for module website
+ *    \brief      File of class to manage component html for module website
  */
 
 
 /**
- *	Class to manage component html for module website
+ *    Class to manage component html for module website
  */
 class FormWebsite
 {
     private $db;
 
     /**
-	 * @var string Error code (or message)
-	 */
-	public $error;
+     * @var string Error code (or message)
+     */
+    public $error;
 
 
     /**
-     *	Constructor
+     *    Constructor
      *
-     *	@param	DoliDB		$db      Database handler
+     *    @param    DoliDB        $db      Database handler
      */
     public function __construct($db)
     {
@@ -49,10 +49,10 @@ class FormWebsite
     /**
      *    Return HTML select list of export models
      *
-     *    @param    string	$selected          Id modele pre-selectionne
-     *    @param    string	$htmlname          Name of HTML select
-     *    @param    int		$useempty          Show empty value or not
-     *    @return	string					   Html component
+     *    @param    string    $selected          Id modele pre-selectionne
+     *    @param    string    $htmlname          Name of HTML select
+     *    @param    int        $useempty          Show empty value or not
+     *    @return    string                       Html component
      */
     public function selectWebsite($selected = '', $htmlname = 'exportmodelid', $useempty = 0)
     {
@@ -101,11 +101,11 @@ class FormWebsite
     /**
      *  Return a HTML select list of a dictionary
      *
-     *  @param  string	$htmlname          	Name of select zone
-     *  @param	string	$selected			Selected value
-     *  @param  int		$useempty          	1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
+     *  @param  string    $htmlname              Name of select zone
+     *  @param    string    $selected            Selected value
+     *  @param  int        $useempty              1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
      *  @param  string  $moreattrib         More attributes on HTML select tag
-     * 	@return	void
+     *     @return    void
      */
     public function selectTypeOfContainer($htmlname, $selected = '', $useempty = 0, $moreattrib = '')
     {
@@ -118,89 +118,89 @@ class FormWebsite
         $sql.= " WHERE active = 1 AND entity IN (".getEntity('c_type_container').")";
         $sql.= " ORDER BY label";
 
-    	dol_syslog(get_class($this)."::selectTypeOfContainer", LOG_DEBUG);
-    	$result = $this->db->query($sql);
-    	if ($result)
-    	{
-    		$num = $this->db->num_rows($result);
-    		$i = 0;
-    		if ($num)
-    		{
-    			print '<select id="select'.$htmlname.'" class="flat selectTypeOfContainer" name="'.$htmlname.'"'.($moreattrib?' '.$moreattrib:'').'>';
-    			if ($useempty == 1 || ($useempty == 2 && $num > 1))
-    			{
-    				print '<option value="-1">&nbsp;</option>';
-    			}
+        dol_syslog(get_class($this)."::selectTypeOfContainer", LOG_DEBUG);
+        $result = $this->db->query($sql);
+        if ($result)
+        {
+            $num = $this->db->num_rows($result);
+            $i = 0;
+            if ($num)
+            {
+                print '<select id="select'.$htmlname.'" class="flat selectTypeOfContainer" name="'.$htmlname.'"'.($moreattrib?' '.$moreattrib:'').'>';
+                if ($useempty == 1 || ($useempty == 2 && $num > 1))
+                {
+                    print '<option value="-1">&nbsp;</option>';
+                }
 
-    			while ($i < $num)
-    			{
-    				$obj = $this->db->fetch_object($result);
-    				if ($selected == $obj->rowid || $selected == $obj->code)
-    				{
-    					print '<option value="'.$obj->code.'" selected>';
-    				}
-    				else
-    				{
-    					print '<option value="'.$obj->code.'">';
-    				}
-    				print $obj->label;
-    				print '</option>';
-    				$i++;
-    			}
-    			print "</select>";
-    			if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
-    		}
-    		else
-    		{
-    			print $langs->trans("NoTypeOfPagePleaseEditDictionary");
-    		}
-    	}
-    	else {
-    		dol_print_error($this->db);
-    	}
+                while ($i < $num)
+                {
+                    $obj = $this->db->fetch_object($result);
+                    if ($selected == $obj->rowid || $selected == $obj->code)
+                    {
+                        print '<option value="'.$obj->code.'" selected>';
+                    }
+                    else
+                    {
+                        print '<option value="'.$obj->code.'">';
+                    }
+                    print $obj->label;
+                    print '</option>';
+                    $i++;
+                }
+                print "</select>";
+                if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+            }
+            else
+            {
+                print $langs->trans("NoTypeOfPagePleaseEditDictionary");
+            }
+        }
+        else {
+            dol_print_error($this->db);
+        }
     }
 
 
     /**
      *  Return a HTML select list of a dictionary
      *
-     *  @param  string	$htmlname          	Name of select zone
-     *  @param	string	$selected			Selected value
-     *  @param  int		$useempty          	1=Add an empty value in list
+     *  @param  string    $htmlname              Name of select zone
+     *  @param    string    $selected            Selected value
+     *  @param  int        $useempty              1=Add an empty value in list
      *  @param  string  $moreattrib         More attributes on HTML select tag
-     * 	@return	void
+     *     @return    void
      */
     public function selectSampleOfContainer($htmlname, $selected = '', $useempty = 0, $moreattrib = '')
     {
-    	global $langs, $conf, $user;
+        global $langs, $conf, $user;
 
-    	$langs->load("admin");
+        $langs->load("admin");
 
-    	$arrayofsamples=array('empty'=>'EmptyPage', 'corporatehome'=>'CorporateHomePage');
+        $arrayofsamples=array('empty'=>'EmptyPage', 'corporatehome'=>'CorporateHomePage');
 
-    	$out = '';
-    	$out .= '<select id="select'.$htmlname.'" class="flat selectTypeOfContainer" name="'.$htmlname.'"'.($moreattrib?' '.$moreattrib:'').'>';
+        $out = '';
+        $out .= '<select id="select'.$htmlname.'" class="flat selectTypeOfContainer" name="'.$htmlname.'"'.($moreattrib?' '.$moreattrib:'').'>';
 
-    	if ($useempty == 1 || $useempty == 2)
-    	{
-    		$out .= '<option value="-1">&nbsp;</option>';
-    	}
+        if ($useempty == 1 || $useempty == 2)
+        {
+            $out .= '<option value="-1">&nbsp;</option>';
+        }
 
-    	foreach($arrayofsamples as $key => $val)
-    	{
-    		if ($selected == $key)
-    		{
-    			$out .= '<option value="'.$key.'" selected>';
-    		}
-    		else
-    		{
-    			$out .= '<option value="'.$key.'">';
-    		}
-    		$out .= $langs->trans($val);
-    		$out .= '</option>';
-    	}
-    	$out .= "</select>";
+        foreach($arrayofsamples as $key => $val)
+        {
+            if ($selected == $key)
+            {
+                $out .= '<option value="'.$key.'" selected>';
+            }
+            else
+            {
+                $out .= '<option value="'.$key.'">';
+            }
+            $out .= $langs->trans($val);
+            $out .= '</option>';
+        }
+        $out .= "</select>";
 
-    	return $out;
+        return $out;
     }
 }

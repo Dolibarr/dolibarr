@@ -17,7 +17,7 @@
  */
 
 /**
- * 		\defgroup   opensurvey     Module opensurvey
+ *         \defgroup   opensurvey     Module opensurvey
  *      \brief      Module to OpenSurvey integration.
  *      \file       htdocs/core/modules/modOpenSurvey.class.php
  *      \ingroup    opensurvey
@@ -32,98 +32,98 @@ include_once DOL_DOCUMENT_ROOT ."/core/modules/DolibarrModules.class.php";
 class modOpenSurvey extends DolibarrModules
 {
 
-	/**
-	 *   Constructor. Define names, constants, directories, boxes, permissions
-	 *
-	 *   @param		DoliDB		$db		Database handler
-	 */
+    /**
+     *   Constructor. Define names, constants, directories, boxes, permissions
+     *
+     *   @param        DoliDB        $db        Database handler
+     */
     public function __construct($db)
     {
-		global $langs,$conf;
+        global $langs,$conf;
 
-		$this->db = $db;
+        $this->db = $db;
 
-		// Id for module (must be unique).
-		// Use here a free id (See in Home -> System information -> Dolibarr for list of used module id).
-		$this->numero = 55000;
-		// Key text used to identify module (for permission, menus, etc...)
-		$this->rights_class = 'opensurvey';
+        // Id for module (must be unique).
+        // Use here a free id (See in Home -> System information -> Dolibarr for list of used module id).
+        $this->numero = 55000;
+        // Key text used to identify module (for permission, menus, etc...)
+        $this->rights_class = 'opensurvey';
 
-		// Family can be 'crm','financial','hr','projects','product','technic','other'
-		// It is used to group modules in module setup page
-		$this->family = "portal";
-		$this->module_position = '40';
-		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = preg_replace('/^mod/i', '', get_class($this));
-		// Module description used if translation string 'ModuleXXXDesc' not found (XXX is value MyModule)
-		$this->description = "Module to make online surveys (like Doodle, Studs, Rdvz, ...)";
-		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-		$this->version = 'dolibarr';
-		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
-		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		// Name of image file used for this module.
-		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
-		// If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
-		$this->picto='opensurvey.png@opensurvey';
+        // Family can be 'crm','financial','hr','projects','product','technic','other'
+        // It is used to group modules in module setup page
+        $this->family = "portal";
+        $this->module_position = '40';
+        // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+        $this->name = preg_replace('/^mod/i', '', get_class($this));
+        // Module description used if translation string 'ModuleXXXDesc' not found (XXX is value MyModule)
+        $this->description = "Module to make online surveys (like Doodle, Studs, Rdvz, ...)";
+        // Possible values for version are: 'development', 'experimental', 'dolibarr' or version
+        $this->version = 'dolibarr';
+        // Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
+        $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
+        // Name of image file used for this module.
+        // If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
+        // If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
+        $this->picto='opensurvey.png@opensurvey';
 
-		// Data directories to create when module is enabled
-		$this->dirs = array();
-		//$this->dirs[0] = DOL_DATA_ROOT.'/mymodule;
-		//$this->dirs[1] = DOL_DATA_ROOT.'/mymodule/temp;
+        // Data directories to create when module is enabled
+        $this->dirs = array();
+        //$this->dirs[0] = DOL_DATA_ROOT.'/mymodule;
+        //$this->dirs[1] = DOL_DATA_ROOT.'/mymodule/temp;
 
-		// Dependencies
-		$this->hidden = false;			// A condition to hide module
-		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
-		$this->requiredby = array();	// List of module ids to disable if this one is disabled
-		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
-		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
-		$this->need_dolibarr_version = array(3,4,0);	// Minimum version of Dolibarr required by module
+        // Dependencies
+        $this->hidden = false;            // A condition to hide module
+        $this->depends = array();        // List of module class names as string that must be enabled if this module is enabled
+        $this->requiredby = array();    // List of module ids to disable if this one is disabled
+        $this->conflictwith = array();    // List of module class names as string this module is in conflict with
+        $this->phpmin = array(5,4);        // Minimum version of PHP required by module
+        $this->need_dolibarr_version = array(3,4,0);    // Minimum version of Dolibarr required by module
 
-		// Constants
-		$this->const = array();			// List of parameters
+        // Constants
+        $this->const = array();            // List of parameters
 
-		// Dictionaries
+        // Dictionaries
         $this->dictionaries=array();
 
-		// Boxes
-		$this->boxes = array();			// List of boxes
-		$r=0;
+        // Boxes
+        $this->boxes = array();            // List of boxes
+        $r=0;
 
-		// Add here list of php file(s) stored in includes/boxes that contains class to show a box.
-		// Example:
-		//$this->boxes[$r][1] = "myboxa.php";
-		//$r++;
-		//$this->boxes[$r][1] = "myboxb.php";
-		//$r++;
+        // Add here list of php file(s) stored in includes/boxes that contains class to show a box.
+        // Example:
+        //$this->boxes[$r][1] = "myboxa.php";
+        //$r++;
+        //$this->boxes[$r][1] = "myboxb.php";
+        //$r++;
 
-		// Permissions
-		$this->rights = array();		// Permission array used by this module
-		$r=0;
+        // Permissions
+        $this->rights = array();        // Permission array used by this module
+        $r=0;
 
-		// Add here list of permission defined by an id, a label, a boolean and two constant strings.
-		// Example:
-		$this->rights[$r][0] = 55001; 				// Permission id (must not be already used)
-		$this->rights[$r][1] = 'Read surveys';	// Permission label
-		$this->rights[$r][2] = 'r'; 					// Permission by default for new user (0/1)
-		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
-		$this->rights[$r][4] = 'read';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-		$r++;
+        // Add here list of permission defined by an id, a label, a boolean and two constant strings.
+        // Example:
+        $this->rights[$r][0] = 55001;                 // Permission id (must not be already used)
+        $this->rights[$r][1] = 'Read surveys';    // Permission label
+        $this->rights[$r][2] = 'r';                     // Permission by default for new user (0/1)
+        $this->rights[$r][3] = 0;                     // Permission by default for new user (0/1)
+        $this->rights[$r][4] = 'read';                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+        $r++;
 
-		// Add here list of permission defined by an id, a label, a boolean and two constant strings.
-		// Example:
-		$this->rights[$r][0] = 55002; 				// Permission id (must not be already used)
-		$this->rights[$r][1] = 'Create/modify surveys';	// Permission label
-		$this->rights[$r][2] = 'w'; 					// Permission by default for new user (0/1)
-		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
-		$this->rights[$r][4] = 'write';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-		$r++;
+        // Add here list of permission defined by an id, a label, a boolean and two constant strings.
+        // Example:
+        $this->rights[$r][0] = 55002;                 // Permission id (must not be already used)
+        $this->rights[$r][1] = 'Create/modify surveys';    // Permission label
+        $this->rights[$r][2] = 'w';                     // Permission by default for new user (0/1)
+        $this->rights[$r][3] = 0;                     // Permission by default for new user (0/1)
+        $this->rights[$r][4] = 'write';                // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+        $r++;
 
 
         // Menus
         //-------
         $r=0;
         $this->menu[$r]=array(
-            'fk_menu'=>'fk_mainmenu=tools',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+            'fk_menu'=>'fk_mainmenu=tools',            // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
             'type'=>'left',
             'titre'=>'Survey',
             'mainmenu'=>'tools',
@@ -139,7 +139,7 @@ class modOpenSurvey extends DolibarrModules
         $r++;
 
         $this->menu[$r]=array(
-            'fk_menu'=>'fk_mainmenu=tools,fk_leftmenu=opensurvey',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+            'fk_menu'=>'fk_mainmenu=tools,fk_leftmenu=opensurvey',            // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
             'type'=>'left',
             'titre'=>'NewSurvey',
             'mainmenu'=>'tools',
@@ -155,7 +155,7 @@ class modOpenSurvey extends DolibarrModules
         $r++;
 
         $this->menu[$r]=array(
-            'fk_menu'=>'fk_mainmenu=tools,fk_leftmenu=opensurvey',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+            'fk_menu'=>'fk_mainmenu=tools,fk_leftmenu=opensurvey',            // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
             'type'=>'left',
             'titre'=>'List',
             'mainmenu'=>'tools',
@@ -171,14 +171,14 @@ class modOpenSurvey extends DolibarrModules
         $r++;
     }
 
-	/**
-	 *	Function called when module is enabled.
-	 *	The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
-	 *	It also creates data directories
-	 *
-     *  @param      string	$options    Options when enabling module ('', 'noboxes')
-	 *  @return     int             	1 if OK, 0 if KO
-	 */
+    /**
+     *    Function called when module is enabled.
+     *    The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+     *    It also creates data directories
+     *
+     *  @param      string    $options    Options when enabling module ('', 'noboxes')
+     *  @return     int                 1 if OK, 0 if KO
+     */
     public function init($options = '')
     {
         // Permissions

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004      Rodolphe Quiedeville 	<rodolphe@quiedeville.org>
+/* Copyright (C) 2004      Rodolphe Quiedeville     <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2013 Laurent Destailleur  	<eldy@users.sourceforge.org>
  * Copyright (C) 2011-2013 Juanjo Menent			<jmenent@2byte.es>
  *
@@ -18,9 +18,9 @@
  */
 
 /**
- *	    \file       htdocs/admin/mailing.php
- *		\ingroup    mailing
- *		\brief      Page to setup emailing module
+ *        \file       htdocs/admin/mailing.php
+ *        \ingroup    mailing
+ *        \brief      Page to setup emailing module
  */
 
 require '../main.inc.php';
@@ -42,34 +42,34 @@ $action = GETPOST('action', 'alpha');
 
 if ($action == 'setvalue')
 {
-	$db->begin();
+    $db->begin();
 
-	$mailfrom = GETPOST('MAILING_EMAIL_FROM', 'alpha');
-	$mailerror = GETPOST('MAILING_EMAIL_ERRORSTO', 'alpha');
-	$checkread = GETPOST('value', 'alpha');
-	$checkread_key = GETPOST('MAILING_EMAIL_UNSUBSCRIBE_KEY', 'alpha');
+    $mailfrom = GETPOST('MAILING_EMAIL_FROM', 'alpha');
+    $mailerror = GETPOST('MAILING_EMAIL_ERRORSTO', 'alpha');
+    $checkread = GETPOST('value', 'alpha');
+    $checkread_key = GETPOST('MAILING_EMAIL_UNSUBSCRIBE_KEY', 'alpha');
     $mailingdelay = GETPOST('MAILING_DELAY', 'int');
 
-	$res=dolibarr_set_const($db, "MAILING_EMAIL_FROM", $mailfrom, 'chaine', 0, '', $conf->entity);
-	if (! $res > 0) $error++;
-	$res=dolibarr_set_const($db, "MAILING_EMAIL_ERRORSTO", $mailerror, 'chaine', 0, '', $conf->entity);
-	if (! $res > 0) $error++;
-	$res=dolibarr_set_const($db, "MAILING_DELAY", $mailingdelay, 'chaine', 0, '', $conf->entity);
-	if (! $res > 0) $error++;
+    $res=dolibarr_set_const($db, "MAILING_EMAIL_FROM", $mailfrom, 'chaine', 0, '', $conf->entity);
+    if (! $res > 0) $error++;
+    $res=dolibarr_set_const($db, "MAILING_EMAIL_ERRORSTO", $mailerror, 'chaine', 0, '', $conf->entity);
+    if (! $res > 0) $error++;
+    $res=dolibarr_set_const($db, "MAILING_DELAY", $mailingdelay, 'chaine', 0, '', $conf->entity);
+    if (! $res > 0) $error++;
 
-	// Create temporary encryption key if nedded
-	$res=dolibarr_set_const($db, "MAILING_EMAIL_UNSUBSCRIBE_KEY", $checkread_key, 'chaine', 0, '', $conf->entity);
-	if (! $res > 0) $error++;
+    // Create temporary encryption key if nedded
+    $res=dolibarr_set_const($db, "MAILING_EMAIL_UNSUBSCRIBE_KEY", $checkread_key, 'chaine', 0, '', $conf->entity);
+    if (! $res > 0) $error++;
 
     if (! $error)
     {
-    	$db->commit();
-    	setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+        $db->commit();
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
     else
     {
-    	$db->rollback();
-    	setEventMessages($langs->trans("Error"), null, 'errors');
+        $db->rollback();
+        setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
 
@@ -85,8 +85,8 @@ print load_fiche_titre($langs->trans("MailingSetup"), $linkback, 'title_setup');
 
 if (! empty($conf->use_javascript_ajax))
 {
-	print "\n".'<script type="text/javascript">';
-	print '$(document).ready(function () {
+    print "\n".'<script type="text/javascript">';
+    print '$(document).ready(function () {
             $("#generate_token").click(function() {
             	$.get( "'.DOL_URL_ROOT.'/core/ajax/security.php", {
             		action: \'getrandompassword\',
@@ -97,7 +97,7 @@ if (! empty($conf->use_javascript_ajax))
 				});
             });
     });';
-	print '</script>';
+    print '</script>';
 }
 
 print '<br>';
@@ -139,10 +139,10 @@ if (! empty($conf->use_javascript_ajax)) print '&nbsp;'.img_picto($langs->trans(
 print '</td></tr>';
 
 if (!empty($conf->use_javascript_ajax) && $conf->global->MAIN_FEATURES_LEVEL >=1) {
-	print '<tr class="oddeven"><td>';
-	print $langs->trans("MailAdvTargetRecipients").'</td><td>';
-	print ajax_constantonoff('EMAILING_USE_ADVANCED_SELECTOR');
-	print '</td></tr>';
+    print '<tr class="oddeven"><td>';
+    print $langs->trans("MailAdvTargetRecipients").'</td><td>';
+    print ajax_constantonoff('EMAILING_USE_ADVANCED_SELECTOR');
+    print '</td></tr>';
 }
 
 print '</table>';

@@ -18,14 +18,14 @@
  */
 
 /**
- *	\file       htdocs/product/dynamic_price/class/price_global_variable.class.php
- *	\ingroup    product
+ *    \file       htdocs/product/dynamic_price/class/price_global_variable.class.php
+ *    \ingroup    product
  *  \brief      Class for accessing price global variables table
  */
 
 
 /**
- *	Class for accesing price global variables table
+ *    Class for accesing price global variables table
  */
 class PriceGlobalVariable
 {
@@ -66,7 +66,7 @@ class PriceGlobalVariable
     /**
      *  Constructor
      *
-     *  @param	DoliDb		$db      Database handler
+     *  @param    DoliDb        $db      Database handler
      */
     public function __construct($db)
     {
@@ -77,9 +77,9 @@ class PriceGlobalVariable
     /**
      *  Create object into database
      *
-     *  @param	User	$user        User that creates
-     *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
-     *  @return int      		   	 <0 if KO, Id of created object if OK
+     *  @param    User    $user        User that creates
+     *  @param  int        $notrigger   0=launch triggers after, 1=disable triggers
+     *  @return int                      <0 if KO, Id of created object if OK
      */
     public function create($user, $notrigger = 0)
     {
@@ -140,8 +140,8 @@ class PriceGlobalVariable
     /**
      *  Load object in memory from the database
      *
-     *  @param		int		$id    	Id object
-     *  @return		int			    < 0 if KO, 0 if OK but not found, > 0 if OK
+     *  @param        int        $id        Id object
+     *  @return        int                < 0 if KO, 0 if OK but not found, > 0 if OK
      */
     public function fetch($id)
     {
@@ -156,10 +156,10 @@ class PriceGlobalVariable
             $obj = $this->db->fetch_object($resql);
             if ($obj)
             {
-                $this->id			= $id;
-                $this->code			= $obj->code;
-                $this->description	= $obj->description;
-                $this->value		= $obj->value;
+                $this->id            = $id;
+                $this->code            = $obj->code;
+                $this->description    = $obj->description;
+                $this->value        = $obj->value;
                 $this->checkParameters();
                 return 1;
             }
@@ -178,9 +178,9 @@ class PriceGlobalVariable
     /**
      *  Update object into database
      *
-     *  @param	User	$user        User that modifies
-     *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-     *  @return int     		   	 <0 if KO, >0 if OK
+     *  @param    User    $user        User that modifies
+     *  @param  int        $notrigger     0=launch triggers after, 1=disable triggers
+     *  @return int                     <0 if KO, >0 if OK
      */
     public function update($user = 0, $notrigger = 0)
     {
@@ -237,10 +237,10 @@ class PriceGlobalVariable
     /**
      *  Delete object in database
      *
-     * 	@param	int		$rowid		 Row id of global variable
-     *	@param  User	$user        User that deletes
-     *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-     *  @return	int					 <0 if KO, >0 if OK
+     *     @param    int        $rowid         Row id of global variable
+     *    @param  User    $user        User that deletes
+     *  @param  int        $notrigger     0=launch triggers after, 1=disable triggers
+     *  @return    int                     <0 if KO, >0 if OK
      */
     public function delete($rowid, $user, $notrigger = 0)
     {
@@ -291,10 +291,10 @@ class PriceGlobalVariable
     }
 
     /**
-     *	Initialise object with example values
-     *	Id must be 0 if object instance is a specimen
+     *    Initialise object with example values
+     *    Id must be 0 if object instance is a specimen
      *
-     *	@return	void
+     *    @return    void
      */
     public function initAsSpecimen()
     {
@@ -305,9 +305,9 @@ class PriceGlobalVariable
     }
 
     /**
-     *	Checks if all parameters are in order
+     *    Checks if all parameters are in order
      *
-     *	@return	void
+     *    @return    void
      */
     public function checkParameters()
     {
@@ -322,7 +322,7 @@ class PriceGlobalVariable
     /**
      *    List all price global variables
      *
-     *    @return	array				Array of price global variables
+     *    @return    array                Array of price global variables
      */
     public function listGlobalVariables()
     {
@@ -339,10 +339,10 @@ class PriceGlobalVariable
             while ($record = $this->db->fetch_array($resql))
             {
                 $variable_obj = new PriceGlobalVariable($this->db);
-                $variable_obj->id			= $record["rowid"];
-                $variable_obj->code			= $record["code"];
-                $variable_obj->description	= $record["description"];
-                $variable_obj->value			= $record["value"];
+                $variable_obj->id            = $record["rowid"];
+                $variable_obj->code            = $record["code"];
+                $variable_obj->description    = $record["description"];
+                $variable_obj->value            = $record["value"];
                 $variable_obj->checkParameters();
                 $retarray[]=$variable_obj;
             }

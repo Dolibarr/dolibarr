@@ -22,17 +22,17 @@
  */
 
 /**
- *	\file       htdocs/core/modules/livraison/modules_livraison.php
- *	\ingroup    expedition
- *	\brief      Fichier contenant la classe mere de generation de bon de livraison en PDF
- *				et la classe mere de numerotation des bons de livraisons
+ *    \file       htdocs/core/modules/livraison/modules_livraison.php
+ *    \ingroup    expedition
+ *    \brief      Fichier contenant la classe mere de generation de bon de livraison en PDF
+ *                et la classe mere de numerotation des bons de livraisons
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
 
 
 /**
- *	Classe mere des modeles de bon de livraison
+ *    Classe mere des modeles de bon de livraison
  */
 abstract class ModelePDFDeliveryOrder extends CommonDocGenerator
 {
@@ -46,7 +46,7 @@ abstract class ModelePDFDeliveryOrder extends CommonDocGenerator
      *  Return list of active generation modules
      *
      *  @param  DoliDB  $db                 Database handler
-     *  @param  integer	$maxfilenamelength  Max length of value to show
+     *  @param  integer    $maxfilenamelength  Max length of value to show
      *  @return array                       List of templates
      */
     public static function liste_modeles($db, $maxfilenamelength = 0)
@@ -125,9 +125,9 @@ abstract class ModeleNumRefDeliveryOrder
     /**
      * Renvoi prochaine valeur attribuee
      *
-     *	@param  Societe     $objsoc         Object third party
+     *    @param  Societe     $objsoc         Object third party
      *  @param  Object      $object         Object delivery
-     *	@return string                      Valeur
+     *    @return string                      Valeur
      */
     public function getNextValue($objsoc, $object)
     {

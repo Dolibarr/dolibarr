@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017		ATM-Consulting  	 <support@atm-consulting.fr>
+/* Copyright (C) 2017        ATM-Consulting       <support@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,9 +16,9 @@
  */
 
 /**
- *	\file       htdocs/fourn/facture/rapport.php
- *	\ingroup    fourn
- *	\brief      Payment reports page
+ *    \file       htdocs/fourn/facture/rapport.php
+ *    \ingroup    fourn
+ *    \brief      Payment reports page
  */
 
 require '../../main.inc.php';
@@ -43,7 +43,7 @@ if ($user->societe_id > 0)
 }
 
 $dir = $conf->fournisseur->facture->dir_output.'/payments';
-if (! $user->rights->societe->client->voir || $socid) $dir.='/private/'.$user->id;	// If user has no permission to see all, output dir is specific to user
+if (! $user->rights->societe->client->voir || $socid) $dir.='/private/'.$user->id;    // If user has no permission to see all, output dir is specific to user
 
 $year = $_GET["year"];
 if (! $year) { $year=date("Y"); }

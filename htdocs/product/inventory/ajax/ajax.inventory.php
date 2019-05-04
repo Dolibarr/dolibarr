@@ -9,7 +9,7 @@ $put = GETPOST('put', 'alpha');
     switch ($put)
     {
         case 'qty':
-        	if (empty($user->rights->stock->creer)) { echo -1; exit; }
+            if (empty($user->rights->stock->creer)) { echo -1; exit; }
 
             $fk_det_inventory = GETPOST('fk_det_inventory');
 
@@ -29,7 +29,7 @@ $put = GETPOST('put', 'alpha');
             break;
 
         case 'pmp':
-        	if (empty($user->rights->stock->creer) || empty($user->rights->stock->changePMP)) { echo -1; exit; }
+            if (empty($user->rights->stock->creer) || empty($user->rights->stock->changePMP)) { echo -1; exit; }
 
             $fk_det_inventory = GETPOST('fk_det_inventory');
 

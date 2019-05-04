@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2012-2013	Christophe Battarel	<christophe.battarel@altairis.fr>
+/* Copyright (C) 2012-2013    Christophe Battarel    <christophe.battarel@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,9 +16,9 @@
  */
 
 /**
- *	\file       htdocs/margin/tabs/productMargins.php
- *	\ingroup    product margins
- *	\brief      Page des marges des factures clients pour un produit
+ *    \file       htdocs/margin/tabs/productMargins.php
+ *    \ingroup    product margins
+ *    \brief      Page des marges des factures clients pour un produit
  */
 
 require '../../main.inc.php';
@@ -67,32 +67,32 @@ if ($id > 0 || ! empty($ref))
     $result = $object->fetch($id, $ref);
 
     $title = $langs->trans('ProductServiceCard');
-	$helpurl = '';
-	$shortlabel = dol_trunc($object->label, 16);
-	if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT))
-	{
-		$title = $langs->trans('Product')." ". $shortlabel ." - ".$langs->trans('Card');
-		$helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
-	}
-	if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE))
-	{
-		$title = $langs->trans('Service')." ". $shortlabel ." - ".$langs->trans('Card');
-		$helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
-	}
+    $helpurl = '';
+    $shortlabel = dol_trunc($object->label, 16);
+    if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT))
+    {
+        $title = $langs->trans('Product')." ". $shortlabel ." - ".$langs->trans('Card');
+        $helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
+    }
+    if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE))
+    {
+        $title = $langs->trans('Service')." ". $shortlabel ." - ".$langs->trans('Card');
+        $helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
+    }
 
-	llxHeader('', $title, $helpurl);
+    llxHeader('', $title, $helpurl);
 
-	/*
-	 *  En mode visu
-	 */
-	if ($result > 0)
-	{
-		$head=product_prepare_head($object);
-		$titre=$langs->trans("CardProduct".$object->type);
-		$picto=($object->type== Product::TYPE_SERVICE?'service':'product');
-		dol_fiche_head($head, 'margin', $titre, -1, $picto);
+    /*
+     *  En mode visu
+     */
+    if ($result > 0)
+    {
+        $head=product_prepare_head($object);
+        $titre=$langs->trans("CardProduct".$object->type);
+        $picto=($object->type== Product::TYPE_SERVICE?'service':'product');
+        dol_fiche_head($head, 'margin', $titre, -1, $picto);
 
-		$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+        $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
         dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref');
 
@@ -102,31 +102,31 @@ if ($id > 0 || ! empty($ref))
         print '<div class="underbanner clearboth"></div>';
         print '<table class="border tableforfield" width="100%">';
 
-		// Total Margin
-		print '<tr><td class="titlefield">'.$langs->trans("TotalMargin").'</td><td colspan="3">';
-		print '<span id="totalMargin"></span>'; // set by jquery (see below)
-		print '</td></tr>';
+        // Total Margin
+        print '<tr><td class="titlefield">'.$langs->trans("TotalMargin").'</td><td colspan="3">';
+        print '<span id="totalMargin"></span>'; // set by jquery (see below)
+        print '</td></tr>';
 
-		// Margin Rate
-		if (! empty($conf->global->DISPLAY_MARGIN_RATES)) {
-			print '<tr><td>'.$langs->trans("MarginRate").'</td><td colspan="3">';
-			print '<span id="marginRate"></span>'; // set by jquery (see below)
-			print '</td></tr>';
-		}
+        // Margin Rate
+        if (! empty($conf->global->DISPLAY_MARGIN_RATES)) {
+            print '<tr><td>'.$langs->trans("MarginRate").'</td><td colspan="3">';
+            print '<span id="marginRate"></span>'; // set by jquery (see below)
+            print '</td></tr>';
+        }
 
-		// Mark Rate
-		if (! empty($conf->global->DISPLAY_MARK_RATES)) {
-			print '<tr><td>'.$langs->trans("MarkRate").'</td><td colspan="3">';
-			print '<span id="markRate"></span>'; // set by jquery (see below)
-			print '</td></tr>';
-		}
+        // Mark Rate
+        if (! empty($conf->global->DISPLAY_MARK_RATES)) {
+            print '<tr><td>'.$langs->trans("MarkRate").'</td><td colspan="3">';
+            print '<span id="markRate"></span>'; // set by jquery (see below)
+            print '</td></tr>';
+        }
 
-		print "</table>";
+        print "</table>";
 
         print '</div>';
         print '<div style="clear:both"></div>';
 
-		dol_fiche_end();
+        dol_fiche_end();
 
 
         if ($user->rights->facture->lire) {
@@ -134,10 +134,10 @@ if ($id > 0 || ! empty($ref))
             $sql.= " f.rowid as facid, f.ref, f.total as total_ht,";
             $sql.= " f.datef, f.paye, f.fk_statut as statut, f.type,";
             if (!$user->rights->societe->client->voir && !$socid) $sql.= " sc.fk_soc, sc.fk_user,";
-            $sql.= " sum(d.total_ht) as selling_price,";							// may be negative or positive
-            $sql.= " IF(f.type = 2, -1, 1) * sum(d.qty) as qty,";						// not always positive in case of Credit note
-            $sql.= " IF(f.type = 2, -1, 1) * sum(d.qty * d.buy_price_ht) as buying_price,";			// not always positive in case of Credit note
-            $sql.= " IF(f.type = 2, -1, 1) * sum(abs(d.total_ht) - (d.buy_price_ht * d.qty)) as marge" ;	// not always positive in case of Credit note
+            $sql.= " sum(d.total_ht) as selling_price,";                            // may be negative or positive
+            $sql.= " IF(f.type = 2, -1, 1) * sum(d.qty) as qty,";                        // not always positive in case of Credit note
+            $sql.= " IF(f.type = 2, -1, 1) * sum(d.qty * d.buy_price_ht) as buying_price,";            // not always positive in case of Credit note
+            $sql.= " IF(f.type = 2, -1, 1) * sum(abs(d.total_ht) - (d.buy_price_ht * d.qty)) as marge" ;    // not always positive in case of Credit note
             $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
             $sql.= ", ".MAIN_DB_PREFIX."facture as f";
             $sql.= ", ".MAIN_DB_PREFIX."facturedet as d";
@@ -193,8 +193,8 @@ if ($id > 0 || ! empty($ref))
                     while ($i < $num /*&& $i < $conf->liste_limit*/) {
                         $objp = $db->fetch_object($result);
 
-						$marginRate = ($objp->buying_price != 0)?(100 * $objp->marge / $objp->buying_price):'' ;
-						$markRate = ($objp->selling_price != 0)?(100 * $objp->marge / $objp->selling_price):'' ;
+                        $marginRate = ($objp->buying_price != 0)?(100 * $objp->marge / $objp->buying_price):'' ;
+                        $markRate = ($objp->selling_price != 0)?(100 * $objp->marge / $objp->selling_price):'' ;
 
                         print '<tr class="oddeven">';
                         print '<td>';
@@ -204,17 +204,17 @@ if ($id > 0 || ! empty($ref))
                         print "</td>\n";
                         print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"), "company").' '.dol_trunc($objp->name, 44).'</a></td>';
                         print "<td>".$objp->code_client."</td>\n";
-						print "<td class=\"center\">";
-						print dol_print_date($db->jdate($objp->datef), 'day')."</td>";
-						print "<td class=\"right\">".price($objp->selling_price, null, null, null, null, $rounding)."</td>\n";
-						print "<td class=\"right\">".price($objp->buying_price, null, null, null, null, $rounding)."</td>\n";
-						print "<td class=\"right\">".price($objp->qty, null, null, null, null, $rounding)."</td>\n";
-						print "<td class=\"right\">".price($objp->marge, null, null, null, null, $rounding)."</td>\n";
-						if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-							print "<td class=\"right\">".(($marginRate === '')?'n/a':price($marginRate, null, null, null, null, $rounding)."%")."</td>\n";
-						if (! empty($conf->global->DISPLAY_MARK_RATES))
-							print "<td class=\"right\">".(($markRate === '')?'n/a':price($markRate, null, null, null, null, $rounding)."%")."</td>\n";
-						print '<td class="right">'.$invoicestatic->LibStatut($objp->paye, $objp->statut, 5).'</td>';
+                        print "<td class=\"center\">";
+                        print dol_print_date($db->jdate($objp->datef), 'day')."</td>";
+                        print "<td class=\"right\">".price($objp->selling_price, null, null, null, null, $rounding)."</td>\n";
+                        print "<td class=\"right\">".price($objp->buying_price, null, null, null, null, $rounding)."</td>\n";
+                        print "<td class=\"right\">".price($objp->qty, null, null, null, null, $rounding)."</td>\n";
+                        print "<td class=\"right\">".price($objp->marge, null, null, null, null, $rounding)."</td>\n";
+                        if (! empty($conf->global->DISPLAY_MARGIN_RATES))
+                            print "<td class=\"right\">".(($marginRate === '')?'n/a':price($marginRate, null, null, null, null, $rounding)."%")."</td>\n";
+                        if (! empty($conf->global->DISPLAY_MARK_RATES))
+                            print "<td class=\"right\">".(($markRate === '')?'n/a':price($markRate, null, null, null, null, $rounding)."%")."</td>\n";
+                        print '<td class="right">'.$invoicestatic->LibStatut($objp->paye, $objp->statut, 5).'</td>';
                         print "</tr>\n";
                         $i++;
                         $cumul_achat += $objp->buying_price;

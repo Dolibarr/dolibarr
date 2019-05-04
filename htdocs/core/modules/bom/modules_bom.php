@@ -23,18 +23,18 @@
  */
 
 /**
- *  \file			htdocs/core/modules/bom/modules_bom.php
- *  \ingroup		bom
- *  \brief			File that contains parent class for boms models
+ *  \file            htdocs/core/modules/bom/modules_bom.php
+ *  \ingroup        bom
+ *  \brief            File that contains parent class for boms models
  *                  and parent class for boms numbering models
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';	// required for use by classes that inherit
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';    // required for use by classes that inherit
 
 
 /**
- *	Parent class for boms models
+ *    Parent class for boms models
  */
 abstract class ModelePDFBoms extends CommonDocGenerator
 {
@@ -43,23 +43,23 @@ abstract class ModelePDFBoms extends CommonDocGenerator
     /**
      *  Return list of active generation modules
      *
-     *  @param	DoliDB	$db     			Database handler
-     *  @param  integer	$maxfilenamelength  Max length of value to show
-     *  @return	array						List of templates
-	 */
-	public static function liste_modeles($db, $maxfilenamelength = 0)
-	{
+     *  @param    DoliDB    $db                 Database handler
+     *  @param  integer    $maxfilenamelength  Max length of value to show
+     *  @return    array                        List of templates
+     */
+    public static function liste_modeles($db, $maxfilenamelength = 0)
+    {
         // phpcs:enable
-		global $conf;
+        global $conf;
 
-		$type = 'order';
-		$list = array();
+        $type = 'order';
+        $list = array();
 
-		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$list = getListOfModels($db, $type, $maxfilenamelength);
+        include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+        $list = getListOfModels($db, $type, $maxfilenamelength);
 
-		return $list;
-	}
+        return $list;
+    }
 }
 
 
@@ -69,82 +69,82 @@ abstract class ModelePDFBoms extends CommonDocGenerator
  */
 abstract class ModeleNumRefBoms
 {
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error='';
+    /**
+     * @var string Error code (or message)
+     */
+    public $error='';
 
-	/**
-	 *	Return if a module can be used or not
-	 *
-	 *	@return		boolean     true if module can be used
-	 */
-	public function isEnabled()
-	{
-		return true;
-	}
+    /**
+     *    Return if a module can be used or not
+     *
+     *    @return        boolean     true if module can be used
+     */
+    public function isEnabled()
+    {
+        return true;
+    }
 
-	/**
-	 *	Renvoie la description par defaut du modele de numerotation
-	 *
-	 *	@return     string      Texte descripif
-	 */
-	public function info()
-	{
-		global $langs;
-		$langs->load("mrp");
-		return $langs->trans("NoDescription");
-	}
+    /**
+     *    Renvoie la description par defaut du modele de numerotation
+     *
+     *    @return     string      Texte descripif
+     */
+    public function info()
+    {
+        global $langs;
+        $langs->load("mrp");
+        return $langs->trans("NoDescription");
+    }
 
-	/**
-	 *	Renvoie un exemple de numerotation
-	 *
-	 *	@return     string      Example
-	 */
-	public function getExample()
-	{
-		global $langs;
-		$langs->load("mrp");
-		return $langs->trans("NoExample");
-	}
+    /**
+     *    Renvoie un exemple de numerotation
+     *
+     *    @return     string      Example
+     */
+    public function getExample()
+    {
+        global $langs;
+        $langs->load("mrp");
+        return $langs->trans("NoExample");
+    }
 
-	/**
-	 *	Test si les numeros deja en vigueur dans la base ne provoquent pas de conflits qui empecheraient cette numerotation de fonctionner.
-	 *
-	 *	@return     boolean     false si conflit, true si ok
-	 */
-	public function canBeActivated()
-	{
-		return true;
-	}
+    /**
+     *    Test si les numeros deja en vigueur dans la base ne provoquent pas de conflits qui empecheraient cette numerotation de fonctionner.
+     *
+     *    @return     boolean     false si conflit, true si ok
+     */
+    public function canBeActivated()
+    {
+        return true;
+    }
 
-	/**
-	 *	Renvoie prochaine valeur attribuee
-	 *
-	 *	@param	Societe		$objsoc     Object thirdparty
-	 *	@param	Object		$object		Object we need next value for
-	 *	@return	string      Valeur
-	 */
-	public function getNextValue($objsoc, $object)
-	{
-		global $langs;
-		return $langs->trans("NotAvailable");
-	}
+    /**
+     *    Renvoie prochaine valeur attribuee
+     *
+     *    @param    Societe        $objsoc     Object thirdparty
+     *    @param    Object        $object        Object we need next value for
+     *    @return    string      Valeur
+     */
+    public function getNextValue($objsoc, $object)
+    {
+        global $langs;
+        return $langs->trans("NotAvailable");
+    }
 
-	/**
-	 *	Renvoie version du module numerotation
-	 *
-	 *	@return     string      Valeur
-	 */
-	public function getVersion()
-	{
-		global $langs;
-		$langs->load("admin");
+    /**
+     *    Renvoie version du module numerotation
+     *
+     *    @return     string      Valeur
+     */
+    public function getVersion()
+    {
+        global $langs;
+        $langs->load("admin");
 
-		if ($this->version == 'development') return $langs->trans("VersionDevelopment");
-		if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
-		if ($this->version == 'dolibarr') return DOL_VERSION;
-		if ($this->version) return $this->version;
-		return $langs->trans("NotAvailable");
-	}
+        if ($this->version == 'development') return $langs->trans("VersionDevelopment");
+        if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
+        if ($this->version == 'dolibarr') return DOL_VERSION;
+        if ($this->version) return $this->version;
+        return $langs->trans("NotAvailable");
+    }
 }

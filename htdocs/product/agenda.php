@@ -105,28 +105,28 @@ $form = new Form($db);
 
 if ($id > 0 || $ref)
 {
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+    require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+    require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
-	$langs->load("companies");
+    $langs->load("companies");
 
 
-	$object = new Product($db);
-	$result = $object->fetch($id, $ref);
+    $object = new Product($db);
+    $result = $object->fetch($id, $ref);
 
-	$title=$langs->trans("Agenda");
-	if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/productnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name." - ".$title;
-	llxHeader('', $title);
+    $title=$langs->trans("Agenda");
+    if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/productnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name." - ".$title;
+    llxHeader('', $title);
 
-	if (! empty($conf->notification->enabled)) $langs->load("mails");
-	$type = $langs->trans('Product');
-	if ($object->isService()) $type = $langs->trans('Service');
+    if (! empty($conf->notification->enabled)) $langs->load("mails");
+    $type = $langs->trans('Product');
+    if ($object->isService()) $type = $langs->trans('Service');
 
-	$head = product_prepare_head($object);
+    $head = product_prepare_head($object);
 
-	$titre=$langs->trans("CardProduct".$object->type);
-	$picto=($object->type== Product::TYPE_SERVICE?'service':'product');
-	dol_fiche_head($head, 'agenda', $titre, -1, $picto);
+    $titre=$langs->trans("CardProduct".$object->type);
+    $picto=($object->type== Product::TYPE_SERVICE?'service':'product');
+    dol_fiche_head($head, 'agenda', $titre, -1, $picto);
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
     $object->next_prev_filter=" fk_product_type = ".$object->type;
@@ -141,15 +141,15 @@ if ($id > 0 || $ref)
     print '<div class="underbanner clearboth"></div>';
 
     $object->info($object->id);
-	print dol_print_object_info($object, 1);
+    print dol_print_object_info($object, 1);
 
-	print '</div>';
+    print '</div>';
 
-	dol_fiche_end();
+    dol_fiche_end();
 
 
 
-	// Actions buttons
+    // Actions buttons
 
     $objproduct=$object;
     $objcon=new stdClass();
@@ -161,41 +161,41 @@ if ($id > 0 || $ref)
         //$out.='<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create';
         if (get_class($objproduct) == 'Product') $out.='&amp;prodid='.$objproduct->id.'&origin=product&originid='.$id;
         $out.=(! empty($objcon->id)?'&amp;contactid='.$objcon->id:'').'&amp;backtopage=1&amp;percentage=-1';
-    	//$out.=$langs->trans("AddAnAction").' ';
-    	//$out.=img_picto($langs->trans("AddAnAction"),'filenew');
-    	//$out.="</a>";
-	}
+        //$out.=$langs->trans("AddAnAction").' ';
+        //$out.=img_picto($langs->trans("AddAnAction"),'filenew');
+        //$out.="</a>";
+    }
 
 
-	//print '<div class="tabsAction">';
-	//print '</div>';
+    //print '<div class="tabsAction">';
+    //print '</div>';
 
 
-	$morehtmlcenter='';
+    $morehtmlcenter='';
     if (! empty($conf->agenda->enabled))
     {
-    	if (! empty($user->rights->agenda->myactions->create) || ! empty($user->rights->agenda->allactions->create))
-    	{
-        	$morehtmlcenter.='<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddAction").'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
-    	}
-    	else
-    	{
-        	$morehtmlcenter.='<a class="butActionNewRefused" href="#"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddAction").'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
-    	}
+        if (! empty($user->rights->agenda->myactions->create) || ! empty($user->rights->agenda->allactions->create))
+        {
+            $morehtmlcenter.='<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddAction").'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
+        }
+        else
+        {
+            $morehtmlcenter.='<a class="butActionNewRefused" href="#"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddAction").'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
+        }
     }
 
     if (! empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read) ))
     {
-    	print '<br>';
+        print '<br>';
 
         $param='&id='.$id;
         if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
         if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 
-		print_barre_liste($langs->trans("ActionsOnProduct"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlcenter, '', 0, 1, 1);
+        print_barre_liste($langs->trans("ActionsOnProduct"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlcenter, '', 0, 1, 1);
 
         // List of all actions
-		$filters=array();
+        $filters=array();
         $filters['search_agenda_label']=$search_agenda_label;
 
         // TODO Replace this with same code than into list.php

@@ -32,9 +32,9 @@ class modDynamicPrices extends DolibarrModules
 {
 
     /**
-	 *   Constructor. Define names, constants, directories, boxes, permissions
-	 *
-	 *   @param      DoliDB		$db      Database handler
+     *   Constructor. Define names, constants, directories, boxes, permissions
+     *
+     *   @param      DoliDB        $db      Database handler
      */
     public function __construct($db)
     {
@@ -45,7 +45,7 @@ class modDynamicPrices extends DolibarrModules
         // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
         $this->name = preg_replace('/^mod/i', '', get_class($this));
         $this->description = "Enable the usage of math expressions for prices";
-		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
+        // Possible values for version are: 'development', 'experimental', 'dolibarr' or version
         $this->version = 'experimental';
         // Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
@@ -57,7 +57,7 @@ class modDynamicPrices extends DolibarrModules
 
         // Config pages
         //-------------
-		$this->config_page_url = array("dynamic_prices.php@product");
+        $this->config_page_url = array("dynamic_prices.php@product");
 
         // Dependancies
         //-------------

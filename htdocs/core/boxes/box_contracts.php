@@ -18,9 +18,9 @@
  */
 
 /**
- * 		\file       htdocs/core/boxes/box_contracts.php
- * 		\ingroup    contracts
- * 		\brief      Module de generation de l'affichage de la box contracts
+ *         \file       htdocs/core/boxes/box_contracts.php
+ *         \ingroup    contracts
+ *         \brief      Module de generation de l'affichage de la box contracts
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
@@ -34,7 +34,7 @@ class box_contracts extends ModeleBoxes
     public $boxcode="lastcontracts";
     public $boximg="object_contract";
     public $boxlabel="BoxLastContracts";
-    public $depends = array("contrat");	// conf->contrat->enabled
+    public $depends = array("contrat");    // conf->contrat->enabled
 
     /**
      * @var DoliDB Database handler.
@@ -65,72 +65,72 @@ class box_contracts extends ModeleBoxes
     /**
      *  Load data for box to show them later
      *
-     *  @param	int		$max        Maximum number of records to load
-     *  @return	void
+     *  @param    int        $max        Maximum number of records to load
+     *  @return    void
      */
     public function loadBox($max = 5)
     {
-    	global $user, $langs, $db, $conf;
+        global $user, $langs, $db, $conf;
 
-    	$this->max=$max;
+        $this->max=$max;
 
-    	include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
+        include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 
-    	$this->info_box_head = array('text' => $langs->trans("BoxTitleLastContracts", $max));
+        $this->info_box_head = array('text' => $langs->trans("BoxTitleLastContracts", $max));
 
-    	if ($user->rights->contrat->lire)
-    	{
-        	$contractstatic=new Contrat($db);
-        	$thirdpartytmp=new Societe($db);
+        if ($user->rights->contrat->lire)
+        {
+            $contractstatic=new Contrat($db);
+            $thirdpartytmp=new Societe($db);
 
-    	    $sql = "SELECT s.nom as name, s.rowid as socid, s.email, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,";
-    		$sql.= " c.rowid, c.ref, c.statut as fk_statut, c.date_contrat, c.datec, c.fin_validite, c.date_cloture";
-    		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c";
-    		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-    		$sql.= " WHERE c.fk_soc = s.rowid";
-    		$sql.= " AND c.entity = ".$conf->entity;
-    		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-    		if($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;
-    		if ($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) $sql.= " ORDER BY c.date_contrat DESC, c.ref DESC ";
-    		else $sql.= " ORDER BY c.tms DESC, c.ref DESC ";
-    		$sql.= $db->plimit($max, 0);
+            $sql = "SELECT s.nom as name, s.rowid as socid, s.email, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,";
+            $sql.= " c.rowid, c.ref, c.statut as fk_statut, c.date_contrat, c.datec, c.fin_validite, c.date_cloture";
+            $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c";
+            if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+            $sql.= " WHERE c.fk_soc = s.rowid";
+            $sql.= " AND c.entity = ".$conf->entity;
+            if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+            if($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;
+            if ($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) $sql.= " ORDER BY c.date_contrat DESC, c.ref DESC ";
+            else $sql.= " ORDER BY c.tms DESC, c.ref DESC ";
+            $sql.= $db->plimit($max, 0);
 
-    		$resql = $db->query($sql);
-    		if ($resql)
-    		{
-    			$num = $db->num_rows($resql);
-    			$now=dol_now();
+            $resql = $db->query($sql);
+            if ($resql)
+            {
+                $num = $db->num_rows($resql);
+                $now=dol_now();
 
-    			$line = 0;
+                $line = 0;
 
-    			$langs->load("contracts");
+                $langs->load("contracts");
 
                 while ($line < $num)
                 {
-    				$objp = $db->fetch_object($resql);
+                    $objp = $db->fetch_object($resql);
 
-    				$datec=$db->jdate($objp->datec);
-    				$dateterm=$db->jdate($objp->fin_validite);
-    				$dateclose=$db->jdate($objp->date_cloture);
-    				$late = '';
+                    $datec=$db->jdate($objp->datec);
+                    $dateterm=$db->jdate($objp->fin_validite);
+                    $dateclose=$db->jdate($objp->date_cloture);
+                    $late = '';
 
-    				$contractstatic->statut=$objp->fk_statut;
-    				$contractstatic->id=$objp->rowid;
-    				$contractstatic->ref=$objp->ref;
-    				$result=$contractstatic->fetch_lines();
+                    $contractstatic->statut=$objp->fk_statut;
+                    $contractstatic->id=$objp->rowid;
+                    $contractstatic->ref=$objp->ref;
+                    $result=$contractstatic->fetch_lines();
 
-    				$thirdpartytmp->name = $objp->name;
-    				$thirdpartytmp->id = $objp->socid;
-    				$thirdpartytmp->email = $objp->email;
-    				$thirdpartytmp->client = $objp->client;
-    				$thirdpartytmp->fournisseur = $objp->fournisseur;
-    				$thirdpartytmp->code_client = $objp->code_client;
-    				$thirdpartytmp->code_fournisseur = $objp->code_fournisseur;
-    				$thirdpartytmp->code_compta = $objp->code_compta;
-    				$thirdpartytmp->code_compta_fournisseur = $objp->code_compta_fournisseur;
+                    $thirdpartytmp->name = $objp->name;
+                    $thirdpartytmp->id = $objp->socid;
+                    $thirdpartytmp->email = $objp->email;
+                    $thirdpartytmp->client = $objp->client;
+                    $thirdpartytmp->fournisseur = $objp->fournisseur;
+                    $thirdpartytmp->code_client = $objp->code_client;
+                    $thirdpartytmp->code_fournisseur = $objp->code_fournisseur;
+                    $thirdpartytmp->code_compta = $objp->code_compta;
+                    $thirdpartytmp->code_compta_fournisseur = $objp->code_compta_fournisseur;
 
-    				// fin_validite is no more on contract but on services
-    				// if ($objp->fk_statut == 1 && $dateterm < ($now - $conf->contrat->cloture->warning_delay)) { $late = img_warning($langs->trans("Late")); }
+                    // fin_validite is no more on contract but on services
+                    // if ($objp->fk_statut == 1 && $dateterm < ($now - $conf->contrat->cloture->warning_delay)) { $late = img_warning($langs->trans("Late")); }
 
                     $this->info_box_contents[$line][] = array(
                         'td' => '',
@@ -181,14 +181,14 @@ class box_contracts extends ModeleBoxes
         }
     }
 
-	/**
-	 *	Method to show box
-	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
-	 *	@return	string
-	 */
+    /**
+     *    Method to show box
+     *
+     *    @param    array    $head       Array with properties of box title
+     *    @param  array    $contents   Array with properties of box lines
+     *  @param    int        $nooutput    No print, only return string
+     *    @return    string
+     */
     public function showBox($head = null, $contents = null, $nooutput = 0)
     {
         return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);

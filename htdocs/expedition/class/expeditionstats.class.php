@@ -30,7 +30,7 @@ include_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 
 
 /**
- *		Class to manage shipment statistics
+ *        Class to manage shipment statistics
  */
 class ExpeditionStats extends Stats
 {
@@ -50,96 +50,96 @@ class ExpeditionStats extends Stats
     /**
      * Constructor
      *
-     * @param	DoliDB	$db      	Database handler
-	 * @param 	int		$socid	   	Id third party for filter
-	 * @param 	string	$mode	   	Option (not used)
-	 * @param   int		$userid    	Id user for filter (creation user)
+     * @param    DoliDB    $db          Database handler
+     * @param     int        $socid           Id third party for filter
+     * @param     string    $mode           Option (not used)
+     * @param   int        $userid        Id user for filter (creation user)
      */
     public function __construct($db, $socid, $mode, $userid = 0)
     {
-		global $user, $conf;
+        global $user, $conf;
 
-		$this->db = $db;
+        $this->db = $db;
 
-		$this->socid = ($socid > 0 ? $socid : 0);
+        $this->socid = ($socid > 0 ? $socid : 0);
         $this->userid = $userid;
-		$this->cachefilesuffix = $mode;
+        $this->cachefilesuffix = $mode;
 
         $object=new Expedition($this->db);
-		$this->from = MAIN_DB_PREFIX.$object->table_element." as c";
-		//$this->from.= ", ".MAIN_DB_PREFIX."societe as s";
-		$this->field='weight';	// Warning, unit of weight is NOT USED AND MUST BE
-		$this->where.= " c.fk_statut > 0";    // Not draft and not cancelled
+        $this->from = MAIN_DB_PREFIX.$object->table_element." as c";
+        //$this->from.= ", ".MAIN_DB_PREFIX."societe as s";
+        $this->field='weight';    // Warning, unit of weight is NOT USED AND MUST BE
+        $this->where.= " c.fk_statut > 0";    // Not draft and not cancelled
 
-		//$this->where.= " AND c.fk_soc = s.rowid AND c.entity = ".$conf->entity;
-		$this->where.= " AND c.entity = ".$conf->entity;
-		if (!$user->rights->societe->client->voir && !$this->socid) $this->where .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
-		if ($this->socid)
-		{
-			$this->where.=" AND c.fk_soc = ".$this->socid;
-		}
+        //$this->where.= " AND c.fk_soc = s.rowid AND c.entity = ".$conf->entity;
+        $this->where.= " AND c.entity = ".$conf->entity;
+        if (!$user->rights->societe->client->voir && !$this->socid) $this->where .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
+        if ($this->socid)
+        {
+            $this->where.=" AND c.fk_soc = ".$this->socid;
+        }
         if ($this->userid > 0) $this->where.=' AND c.fk_user_author = '.$this->userid;
     }
 
     /**
      * Return shipment number by month for a year
      *
-	 * @param	int		$year		Year to scan
-     *	@param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
-	 * @return	array				Array with number by month
+     * @param    int        $year        Year to scan
+     *    @param    int        $format        0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
+     * @return    array                Array with number by month
      */
     public function getNbByMonth($year, $format = 0)
     {
         global $user;
 
         $sql = "SELECT date_format(c.date_valid,'%m') as dm, COUNT(*) as nb";
-		$sql.= " FROM ".$this->from;
-		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql.= " WHERE c.date_valid BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
-		$sql.= " AND ".$this->where;
-		$sql.= " GROUP BY dm";
+        $sql.= " FROM ".$this->from;
+        if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        $sql.= " WHERE c.date_valid BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
+        $sql.= " AND ".$this->where;
+        $sql.= " GROUP BY dm";
         $sql.= $this->db->order('dm', 'DESC');
 
-		$res=$this->_getNbByMonth($year, $sql, $format);
-		return $res;
+        $res=$this->_getNbByMonth($year, $sql, $format);
+        return $res;
     }
 
-	/**
-	 * Return shipments number per year
-	 *
-	 * @return	array	Array with number by year
-	 *
-	 */
-	public function getNbByYear()
-	{
-		global $user;
+    /**
+     * Return shipments number per year
+     *
+     * @return    array    Array with number by year
+     *
+     */
+    public function getNbByYear()
+    {
+        global $user;
 
-		$sql = "SELECT date_format(c.date_valid,'%Y') as dm, COUNT(*) as nb, SUM(c.".$this->field.")";
-		$sql.= " FROM ".$this->from;
-		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql.= " WHERE ".$this->where;
-		$sql.= " GROUP BY dm";
+        $sql = "SELECT date_format(c.date_valid,'%Y') as dm, COUNT(*) as nb, SUM(c.".$this->field.")";
+        $sql.= " FROM ".$this->from;
+        if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        $sql.= " WHERE ".$this->where;
+        $sql.= " GROUP BY dm";
         $sql.= $this->db->order('dm', 'DESC');
 
-		return $this->_getNbByYear($sql);
-	}
+        return $this->_getNbByYear($sql);
+    }
 
-	/**
-	 *	Return nb, total and average
-	 *
-	 *	@return	array	Array of values
-	 */
-	public function getAllByYear()
-	{
-		global $user;
+    /**
+     *    Return nb, total and average
+     *
+     *    @return    array    Array of values
+     */
+    public function getAllByYear()
+    {
+        global $user;
 
-		$sql = "SELECT date_format(c.date_valid,'%Y') as year, COUNT(*) as nb, SUM(c.".$this->field.") as total, AVG(".$this->field.") as avg";
-		$sql.= " FROM ".$this->from;
-		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql.= " WHERE ".$this->where;
-		$sql.= " GROUP BY year";
+        $sql = "SELECT date_format(c.date_valid,'%Y') as year, COUNT(*) as nb, SUM(c.".$this->field.") as total, AVG(".$this->field.") as avg";
+        $sql.= " FROM ".$this->from;
+        if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        $sql.= " WHERE ".$this->where;
+        $sql.= " GROUP BY year";
         $sql.= $this->db->order('year', 'DESC');
 
-		return $this->_getAllByYear($sql);
-	}
+        return $this->_getAllByYear($sql);
+    }
 }

@@ -18,17 +18,17 @@
  */
 
 /**
- *	\file       htdocs/cashdesk/affContenu.php
- *	\ingroup    cashdesk
- *	\brief      Include to show main page for cashdesk module
+ *    \file       htdocs/cashdesk/affContenu.php
+ *    \ingroup    cashdesk
+ *    \brief      Include to show main page for cashdesk module
  */
 require_once 'class/Facturation.class.php';
 
 // Si nouvelle vente, reinitialisation des donnees (destruction de l'objet et vidage de la table contenant la liste des articles)
 if ( $_GET['id'] == 'NOUV' )
 {
-	unset($_SESSION['serObjFacturation']);
-	unset($_SESSION['poscart']);
+    unset($_SESSION['serObjFacturation']);
+    unset($_SESSION['poscart']);
 }
 
 // Recuperation, s'il existe, de l'objet contenant les infos de la vente en cours ...
@@ -39,13 +39,13 @@ if (isset($_SESSION['serObjFacturation']))
 }
 else
 {
-	// ... sinon, c'est une nouvelle vente
-	$obj_facturation = new Facturation();
+    // ... sinon, c'est une nouvelle vente
+    $obj_facturation = new Facturation();
 }
 
 // $obj_facturation contains data for all invoice total + selection of current product
 
-$obj_facturation->calculTotaux();	// Redefine prix_total_ttc, prix_total_ht et montant_tva from $_SESSION['poscart']
+$obj_facturation->calculTotaux();    // Redefine prix_total_ttc, prix_total_ht et montant_tva from $_SESSION['poscart']
 
 $total_ttc = $obj_facturation->prixTotalTtc();
 
@@ -63,19 +63,19 @@ $page=GETPOST('menutpl', 'alpha');
 if (empty($page)) $page='facturation';
 
 if (in_array(
-		$page,
-		array(
-			'deconnexion',
-			'index','index_verif','facturation','facturation_verif','facturation_dhtml',
-			'validation','validation_ok','validation_ticket','validation_verif',
-		)
-	))
+        $page,
+        array(
+            'deconnexion',
+            'index','index_verif','facturation','facturation_verif','facturation_dhtml',
+            'validation','validation_ok','validation_ticket','validation_verif',
+        )
+    ))
 {
-	include $page.'.php';
+    include $page.'.php';
 }
 else
 {
-	dol_print_error('', 'menu param '.$page.' is not inside allowed list');
+    dol_print_error('', 'menu param '.$page.' is not inside allowed list');
 }
 
 print '</div>';

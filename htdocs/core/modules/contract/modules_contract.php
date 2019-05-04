@@ -33,37 +33,37 @@
 
 
 /**
- *	Parent class to manage intervention document templates
+ *    Parent class to manage intervention document templates
  */
 abstract class ModelePDFContract extends CommonDocGenerator
 {
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error='';
+    /**
+     * @var string Error code (or message)
+     */
+    public $error='';
 
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *	Return list of active generation modules
-	 *
-     *  @param	DoliDB	$db     			Database handler
-     *  @param  integer	$maxfilenamelength  Max length of value to show
-     *  @return	array						List of templates
-	 */
+    /**
+     *    Return list of active generation modules
+     *
+     *  @param    DoliDB    $db                 Database handler
+     *  @param  integer    $maxfilenamelength  Max length of value to show
+     *  @return    array                        List of templates
+     */
     public static function liste_modeles($db, $maxfilenamelength = 0)
-	{
+    {
         // phpcs:enable
-		global $conf;
+        global $conf;
 
-		$type='contract';
-		$liste=array();
+        $type='contract';
+        $liste=array();
 
-		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste=getListOfModels($db, $type, $maxfilenamelength);
+        include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+        $liste=getListOfModels($db, $type, $maxfilenamelength);
 
-		return $liste;
-	}
+        return $liste;
+    }
 }
 
 
@@ -72,82 +72,82 @@ abstract class ModelePDFContract extends CommonDocGenerator
  */
 class ModelNumRefContracts
 {
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error='';
+    /**
+     * @var string Error code (or message)
+     */
+    public $error='';
 
-	/**
-	 *	Return if a module can be used or not
-	 *
-	 * 	@return		boolean     true if module can be used
-	 */
-	public function isEnabled()
-	{
-		return true;
-	}
+    /**
+     *    Return if a module can be used or not
+     *
+     *     @return        boolean     true if module can be used
+     */
+    public function isEnabled()
+    {
+        return true;
+    }
 
-	/**
-	 *	Return default description of numbering model
-	 *
-	 *	@return     string      text description
-	 */
-	public function info()
-	{
-		global $langs;
-		$langs->load("contracts");
-		return $langs->trans("NoDescription");
-	}
+    /**
+     *    Return default description of numbering model
+     *
+     *    @return     string      text description
+     */
+    public function info()
+    {
+        global $langs;
+        $langs->load("contracts");
+        return $langs->trans("NoDescription");
+    }
 
-	/**
-	 *	Return numbering example
-	 *
-	 *	@return     string      Example
-	 */
-	public function getExample()
-	{
-		global $langs;
-		$langs->load("contracts");
-		return $langs->trans("NoExample");
-	}
+    /**
+     *    Return numbering example
+     *
+     *    @return     string      Example
+     */
+    public function getExample()
+    {
+        global $langs;
+        $langs->load("contracts");
+        return $langs->trans("NoExample");
+    }
 
-	/**
-	 *	Test if existing numbers make problems with numbering
-	 *
-	 *	@return		boolean		false if conflict, true if ok
-	 */
-	public function canBeActivated()
-	{
-		return true;
-	}
+    /**
+     *    Test if existing numbers make problems with numbering
+     *
+     *    @return        boolean        false if conflict, true if ok
+     */
+    public function canBeActivated()
+    {
+        return true;
+    }
 
-	/**
-	 *	Return next value
-	 *
-	 *	@param	Societe		$objsoc     third party object
-	 *	@param	Object		$contract	contract object
-	 *	@return	string					Value
-	 */
-	public function getNextValue($objsoc, $contract)
-	{
-		global $langs;
-		return $langs->trans("NotAvailable");
-	}
+    /**
+     *    Return next value
+     *
+     *    @param    Societe        $objsoc     third party object
+     *    @param    Object        $contract    contract object
+     *    @return    string                    Value
+     */
+    public function getNextValue($objsoc, $contract)
+    {
+        global $langs;
+        return $langs->trans("NotAvailable");
+    }
 
-	/**
-	 *	Return numbering version module
-	 *
-	 *	@return     string      Value
-	 */
-	public function getVersion()
-	{
-		global $langs;
-		$langs->load("admin");
+    /**
+     *    Return numbering version module
+     *
+     *    @return     string      Value
+     */
+    public function getVersion()
+    {
+        global $langs;
+        $langs->load("admin");
 
-		if ($this->version == 'development') return $langs->trans("VersionDevelopment");
-		if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
-		if ($this->version == 'dolibarr') return DOL_VERSION;
-		if ($this->version) return $this->version;
-		return $langs->trans("NotAvailable");
-	}
+        if ($this->version == 'development') return $langs->trans("VersionDevelopment");
+        if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
+        if ($this->version == 'dolibarr') return DOL_VERSION;
+        if ($this->version) return $this->version;
+        return $langs->trans("NotAvailable");
+    }
 }

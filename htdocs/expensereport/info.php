@@ -18,9 +18,9 @@
  */
 
 /**
- * 	\file       htdocs/expensereport/info.php
- * 	\ingroup    expensereport
- * 	\brief      Page to show a trip information
+ *     \file       htdocs/expensereport/info.php
+ *     \ingroup    expensereport
+ *     \brief      Page to show a trip information
  */
 
 require '../main.inc.php';
@@ -49,28 +49,28 @@ llxHeader("", $title, $helpurl);
 
 if ($id > 0 || ! empty($ref))
 {
-	$object = new ExpenseReport($db);
-	$object->fetch($id, $ref);
-	$object->info($object->id);
+    $object = new ExpenseReport($db);
+    $object->fetch($id, $ref);
+    $object->info($object->id);
 
-	$head = expensereport_prepare_head($object);
+    $head = expensereport_prepare_head($object);
 
-	dol_fiche_head($head, 'info', $langs->trans("ExpenseReport"), -1, 'trip');
+    dol_fiche_head($head, 'info', $langs->trans("ExpenseReport"), -1, 'trip');
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/expensereport/list.php?restore_lastsearch_values=1'.(! empty($socid)?'&socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+    $linkback = '<a href="'.DOL_URL_ROOT.'/expensereport/list.php?restore_lastsearch_values=1'.(! empty($socid)?'&socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
-	$morehtmlref='<div class="refidno">';
+    $morehtmlref='<div class="refidno">';
     $morehtmlref.='</div>';
 
 
-	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+    dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
-	print '<div class="fichecenter">';
-	print '<div class="underbanner clearboth"></div>';
+    print '<div class="fichecenter">';
+    print '<div class="underbanner clearboth"></div>';
 
-	print '<br>';
+    print '<br>';
 
-	print '<table width="100%"><tr><td>';
+    print '<table width="100%"><tr><td>';
     dol_print_object_info($object);
     print '</td></tr></table>';
 

@@ -17,20 +17,20 @@
  */
 
 /**
- *  \file		htdocs/core/lib/ws.lib.php
- *  \ingroup	webservices
- *  \brief		Set of function for manipulating web services
+ *  \file        htdocs/core/lib/ws.lib.php
+ *  \ingroup    webservices
+ *  \brief        Set of function for manipulating web services
  */
 
 
 /**
  *  Check authentication array and set error, errorcode, errorlabel
  *
- *  @param	array	$authentication     Array with authentication informations ('login'=>,'password'=>,'entity'=>,'dolibarrkey'=>)
- *  @param 	int		$error				Number of errors
- *  @param  string	$errorcode			Error string code
- *  @param  string	$errorlabel		Error string label
- *  @return User						Return user object identified by login/pass/entity into authentication array
+ *  @param    array    $authentication     Array with authentication informations ('login'=>,'password'=>,'entity'=>,'dolibarrkey'=>)
+ *  @param     int        $error                Number of errors
+ *  @param  string    $errorcode            Error string code
+ *  @param  string    $errorlabel        Error string label
+ *  @return User                        Return user object identified by login/pass/entity into authentication array
  */
 function check_authentication($authentication, &$error, &$errorcode, &$errorlabel)
 {
@@ -65,32 +65,32 @@ function check_authentication($authentication, &$error, &$errorcode, &$errorlabe
             $errorcode='BAD_CREDENTIALS'; $errorlabel='Bad value for login or password';
         }
 
-		if (! $error && $fuser->statut == 0)
-		{
-			$error++;
-			$errorcode='ERROR_USER_DISABLED'; $errorlabel='This user has been locked or disabled';
-		}
+        if (! $error && $fuser->statut == 0)
+        {
+            $error++;
+            $errorcode='ERROR_USER_DISABLED'; $errorlabel='This user has been locked or disabled';
+        }
 
-    	// Validation of login
-		if (! $error)
-		{
-			$fuser->getrights();	// Load permission of user
+        // Validation of login
+        if (! $error)
+        {
+            $fuser->getrights();    // Load permission of user
 
-        	// Authentication mode
-        	if (empty($dolibarr_main_authentication)) $dolibarr_main_authentication='http,dolibarr';
-        	// Authentication mode: forceuser
-        	if ($dolibarr_main_authentication == 'forceuser' && empty($dolibarr_auto_user)) $dolibarr_auto_user='auto';
-        	// Set authmode
-        	$authmode=explode(',', $dolibarr_main_authentication);
+            // Authentication mode
+            if (empty($dolibarr_main_authentication)) $dolibarr_main_authentication='http,dolibarr';
+            // Authentication mode: forceuser
+            if ($dolibarr_main_authentication == 'forceuser' && empty($dolibarr_auto_user)) $dolibarr_auto_user='auto';
+            // Set authmode
+            $authmode=explode(',', $dolibarr_main_authentication);
 
             include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-        	$login = checkLoginPassEntity($authentication['login'], $authentication['password'], $authentication['entity'], $authmode);
-			if (empty($login))
-			{
-			    $error++;
+            $login = checkLoginPassEntity($authentication['login'], $authentication['password'], $authentication['entity'], $authmode);
+            if (empty($login))
+            {
+                $error++;
                 $errorcode='BAD_CREDENTIALS'; $errorlabel='Bad value for login or password';
-			}
-		}
+            }
+        }
     }
 
     return $fuser;

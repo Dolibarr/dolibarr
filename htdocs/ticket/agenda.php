@@ -16,9 +16,9 @@
  */
 
 /**
- *		\file       htdocs/ticket/agenda.php
- *    	\ingroup	ticket
- *    	\brief		Page with events on ticket
+ *        \file       htdocs/ticket/agenda.php
+ *        \ingroup    ticket
+ *        \brief        Page with events on ticket
  */
 
 require '../main.inc.php';
@@ -54,12 +54,12 @@ $pagenext = $page + 1;
 
 if (GETPOST('actioncode', 'array'))
 {
-	$actioncode=GETPOST('actioncode', 'array', 3);
-	if (! count($actioncode)) $actioncode='0';
+    $actioncode=GETPOST('actioncode', 'array', 3);
+    if (! count($actioncode)) $actioncode='0';
 }
 else
 {
-	$actioncode=GETPOST("actioncode", "alpha", 3)?GETPOST("actioncode", "alpha", 3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
+    $actioncode=GETPOST("actioncode", "alpha", 3)?GETPOST("actioncode", "alpha", 3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
 }
 $search_agenda_label=GETPOST('search_agenda_label');
 
@@ -70,7 +70,7 @@ $extrafields = new ExtraFields($db);
 $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 
 if (!$action) {
-	$action = 'view';
+    $action = 'view';
 }
 
 
@@ -81,16 +81,16 @@ $socid=0;
 $result=restrictedArea($user, 'ticket', $id, '');
 
 if (!$user->rights->ticket->read) {
-	accessforbidden();
+    accessforbidden();
 }
 // restrict access for externals users
 if ($user->societe_id > 0 && ($object->fk_soc != $user->societe_id))
 {
-	accessforbidden('', 0);
+    accessforbidden('', 0);
 }
 // or for unauthorized internals users
 if (!$user->societe_id && ($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY && $object->fk_user_assign != $user->id) && !$user->rights->ticket->manage) {
-	accessforbidden('', 0);
+    accessforbidden('', 0);
 }
 
 
@@ -106,8 +106,8 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 // Purge search criteria
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All test are required to be compatible with all browsers
 {
-	$actioncode='';
-	$search_agenda_label='';
+    $actioncode='';
+    $search_agenda_label='';
 }
 
 
@@ -149,63 +149,63 @@ $morehtmlref ='<div class="refidno">';
 $morehtmlref.= $object->subject;
 // Author
 if ($object->fk_user_create > 0) {
-	$morehtmlref .= '<br>' . $langs->trans("CreatedBy") . ' : ';
+    $morehtmlref .= '<br>' . $langs->trans("CreatedBy") . ' : ';
 
-	$langs->load("users");
-	$fuser = new User($db);
-	$fuser->fetch($object->fk_user_create);
-	$morehtmlref .= $fuser->getNomUrl(0);
+    $langs->load("users");
+    $fuser = new User($db);
+    $fuser->fetch($object->fk_user_create);
+    $morehtmlref .= $fuser->getNomUrl(0);
 }
 if (!empty($object->origin_email)) {
-	$morehtmlref .= '<br>' . $langs->trans("CreatedBy") . ' : ';
-	$morehtmlref .= $object->origin_email . ' <small>(' . $langs->trans("TicketEmailOriginIssuer") . ')</small>';
+    $morehtmlref .= '<br>' . $langs->trans("CreatedBy") . ' : ';
+    $morehtmlref .= $object->origin_email . ' <small>(' . $langs->trans("TicketEmailOriginIssuer") . ')</small>';
 }
 
 // Thirdparty
 if (! empty($conf->societe->enabled))
 {
-	$morehtmlref.='<br>'.$langs->trans('ThirdParty');
-	/*if ($action != 'editcustomer' && $object->fk_statut < 8 && !$user->societe_id && $user->rights->ticket->write) {
-		$morehtmlref.='<a href="' . $url_page_current . '?action=editcustomer&amp;track_id=' . $object->track_id . '">' . img_edit($langs->transnoentitiesnoconv('Edit'), 1) . '</a>';
-	}*/
-	$morehtmlref.=' : ';
-	if ($action == 'editcustomer') {
-		$morehtmlref.=$form->form_thirdparty($url_page_current . '?track_id=' . $object->track_id, $object->socid, 'editcustomer', '', 1, 0, 0, array(), 1);
-	} else {
-		$morehtmlref.=$form->form_thirdparty($url_page_current . '?track_id=' . $object->track_id, $object->socid, 'none', '', 1, 0, 0, array(), 1);
-	}
+    $morehtmlref.='<br>'.$langs->trans('ThirdParty');
+    /*if ($action != 'editcustomer' && $object->fk_statut < 8 && !$user->societe_id && $user->rights->ticket->write) {
+        $morehtmlref.='<a href="' . $url_page_current . '?action=editcustomer&amp;track_id=' . $object->track_id . '">' . img_edit($langs->transnoentitiesnoconv('Edit'), 1) . '</a>';
+    }*/
+    $morehtmlref.=' : ';
+    if ($action == 'editcustomer') {
+        $morehtmlref.=$form->form_thirdparty($url_page_current . '?track_id=' . $object->track_id, $object->socid, 'editcustomer', '', 1, 0, 0, array(), 1);
+    } else {
+        $morehtmlref.=$form->form_thirdparty($url_page_current . '?track_id=' . $object->track_id, $object->socid, 'none', '', 1, 0, 0, array(), 1);
+    }
 }
 
 // Project
 if (! empty($conf->projet->enabled))
 {
-	$langs->load("projects");
-	$morehtmlref.='<br>'.$langs->trans('Project');
-	if ($user->rights->ticket->write)
-	{
-		if ($action != 'classify')
-			//$morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a>';
-			$morehtmlref.=' : ';
-			if ($action == 'classify') {
-				//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
-				$morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-				$morehtmlref.='<input type="hidden" name="action" value="classin">';
-				$morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-				$morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', 0, 0, 1, 0, 1, 0, 0, '', 1);
-				$morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-				$morehtmlref.='</form>';
-			} else {
-				$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
-			}
-	} else {
-		if (! empty($object->fk_project)) {
-			$proj = new Project($db);
-			$proj->fetch($object->fk_project);
-			$morehtmlref.=$proj->getNomUrl(1);
-		} else {
-			$morehtmlref.='';
-		}
-	}
+    $langs->load("projects");
+    $morehtmlref.='<br>'.$langs->trans('Project');
+    if ($user->rights->ticket->write)
+    {
+        if ($action != 'classify')
+            //$morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a>';
+            $morehtmlref.=' : ';
+            if ($action == 'classify') {
+                //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+                $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+                $morehtmlref.='<input type="hidden" name="action" value="classin">';
+                $morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+                $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', 0, 0, 1, 0, 1, 0, 0, '', 1);
+                $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+                $morehtmlref.='</form>';
+            } else {
+                $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+            }
+    } else {
+        if (! empty($object->fk_project)) {
+            $proj = new Project($db);
+            $proj->fetch($object->fk_project);
+            $morehtmlref.=$proj->getNomUrl(1);
+        } else {
+            $morehtmlref.='';
+        }
+    }
 }
 
 $morehtmlref.='</div>';
@@ -221,16 +221,16 @@ print '<br>';
 
 if (!empty($object->id))
 {
-	$param='&id='.$object->id;
-	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+    $param='&id='.$object->id;
+    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
+    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 
-	print_barre_liste($langs->trans("ActionsOnTicket"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlcenter, '', 0, 1, 1);
+    print_barre_liste($langs->trans("ActionsOnTicket"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlcenter, '', 0, 1, 1);
 
-	// List of all actions
-	$filters=array();
-	$filters['search_agenda_label']=$search_agenda_label;
-	show_actions_done($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder);
+    // List of all actions
+    $filters=array();
+    $filters['search_agenda_label']=$search_agenda_label;
+    show_actions_done($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder);
 }
 
 // End of page

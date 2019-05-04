@@ -60,10 +60,10 @@ if ($action == 'updateMask')
 
     if (! $res > 0) $error++;
 
- 	if (! $error)
+     if (! $error)
     {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
+     }
     else
     {
         setEventMessages($langs->trans("Error"), null, 'errors');
@@ -72,15 +72,15 @@ if ($action == 'updateMask')
 
 if ($action == 'set_DELIVERY_FREE_TEXT')
 {
-    $free=GETPOST('DELIVERY_FREE_TEXT', 'none');	// No alpha here, we want exact string
+    $free=GETPOST('DELIVERY_FREE_TEXT', 'none');    // No alpha here, we want exact string
     $res=dolibarr_set_const($db, "DELIVERY_FREE_TEXT", $free, 'chaine', 0, '', $conf->entity);
 
     if (! $res > 0) $error++;
 
- 	if (! $error)
+     if (! $error)
     {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
+     }
     else
     {
         setEventMessages($langs->trans("Error"), null, 'errors');
@@ -127,7 +127,7 @@ if ($action == 'specimen')
     }
     else
     {
-		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
+        setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
         dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
     }
 }
@@ -224,11 +224,11 @@ foreach ($dirmodels as $reldir)
 
                     $module = new $file;
 
-					if ($module->isEnabled())
+                    if ($module->isEnabled())
                     {
-						// Show modules according to features level
-						if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
-						if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
+                        // Show modules according to features level
+                        if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
+                        if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 
 
                         print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
@@ -239,8 +239,8 @@ foreach ($dirmodels as $reldir)
                         print '<td class="nowrap">';
                         $tmp=$module->getExample();
                         if (preg_match('/^Error/', $tmp)) {
-							$langs->load("errors"); print '<div class="error">'.$langs->trans($tmp).'</div>';
-						}
+                            $langs->load("errors"); print '<div class="error">'.$langs->trans($tmp).'</div>';
+                        }
                         elseif ($tmp=='NotConfigured') print $langs->trans($tmp);
                         else print $tmp;
                         print '</td>'."\n";
@@ -308,18 +308,18 @@ $sql.= " AND entity = ".$conf->entity;
 $resql=$db->query($sql);
 if ($resql)
 {
-	$i = 0;
-	$num_rows=$db->num_rows($resql);
-	while ($i < $num_rows)
-	{
-		$array = $db->fetch_array($resql);
-		array_push($def, $array[0]);
-		$i++;
-	}
+    $i = 0;
+    $num_rows=$db->num_rows($resql);
+    while ($i < $num_rows)
+    {
+        $array = $db->fetch_array($resql);
+        array_push($def, $array[0]);
+        $i++;
+    }
 }
 else
 {
-	dol_print_error($db);
+    dol_print_error($db);
 }
 
 print '<table class="noborder" width="100%">';
@@ -343,92 +343,92 @@ foreach ($dirmodels as $reldir)
         $handle = opendir($dir);
         if (is_resource($handle))
         {
-        	while (($file = readdir($handle))!==false)
-			{
-				$filelist[]=$file;
-			}
-			closedir($handle);
-			arsort($filelist);
+            while (($file = readdir($handle))!==false)
+            {
+                $filelist[]=$file;
+            }
+            closedir($handle);
+            arsort($filelist);
 
-			foreach($filelist as $file)
-			{
+            foreach($filelist as $file)
+            {
                 if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file))
                 {
-                	if (file_exists($dir.'/'.$file))
-                	{
+                    if (file_exists($dir.'/'.$file))
+                    {
 
 
-		    			$name = substr($file, 4, dol_strlen($file) -16);
-		    			$classname = substr($file, 0, dol_strlen($file) -12);
+                        $name = substr($file, 4, dol_strlen($file) -16);
+                        $classname = substr($file, 0, dol_strlen($file) -12);
 
-		    			require_once $dir.'/'.$file;
-		    			$module = new $classname($db);
+                        require_once $dir.'/'.$file;
+                        $module = new $classname($db);
 
-		    			$modulequalified=1;
-		    			if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) $modulequalified=0;
-		    			if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) $modulequalified=0;
+                        $modulequalified=1;
+                        if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) $modulequalified=0;
+                        if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) $modulequalified=0;
 
-		    			if ($modulequalified)
-		    			{
-		    				print '<tr class="oddeven"><td width="100">';
-		    				print (empty($module->name)?$name:$module->name);
-		    				print "</td><td>\n";
-		    				if (method_exists($module, 'info')) print $module->info($langs);
-		    				else print $module->description;
-		    				print '</td>';
+                        if ($modulequalified)
+                        {
+                            print '<tr class="oddeven"><td width="100">';
+                            print (empty($module->name)?$name:$module->name);
+                            print "</td><td>\n";
+                            if (method_exists($module, 'info')) print $module->info($langs);
+                            else print $module->description;
+                            print '</td>';
 
-		    				// Active
-		    				if (in_array($name, $def))
-		    				{
-		    					print "<td align=\"center\">\n";
-		    					print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
-		    					print img_picto($langs->trans("Enabled"), 'switch_on');
-		    					print '</a>';
-		    					print "</td>";
-		    				}
-		    				else
-		    				{
-		    					print "<td align=\"center\">\n";
-		    					print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
-		    					print "</td>";
-		    				}
+                            // Active
+                            if (in_array($name, $def))
+                            {
+                                print "<td align=\"center\">\n";
+                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
+                                print img_picto($langs->trans("Enabled"), 'switch_on');
+                                print '</a>';
+                                print "</td>";
+                            }
+                            else
+                            {
+                                print "<td align=\"center\">\n";
+                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+                                print "</td>";
+                            }
 
-		    				// Default
-		    				print "<td align=\"center\">";
-		    				if ($conf->global->LIVRAISON_ADDON_PDF == "$name")
-		    				{
-		    					print img_picto($langs->trans("Default"), 'on');
-		    				}
-		    				else
-		    				{
-		    					print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
-		    				}
-		    				print '</td>';
+                            // Default
+                            print "<td align=\"center\">";
+                            if ($conf->global->LIVRAISON_ADDON_PDF == "$name")
+                            {
+                                print img_picto($langs->trans("Default"), 'on');
+                            }
+                            else
+                            {
+                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+                            }
+                            print '</td>';
 
-		    				// Info
-		    				$htmltooltip =    ''.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
-		    				$htmltooltip.='<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
-		    				$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").'</u>:';
-		    				$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo, 1, 1);
-		    				print '<td align="center">';
-		    				print $form->textwithpicto('', $htmltooltip, 1, 0);
-		    				print '</td>';
+                            // Info
+                            $htmltooltip =    ''.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
+                            $htmltooltip.='<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
+                            $htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").'</u>:';
+                            $htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo, 1, 1);
+                            print '<td align="center">';
+                            print $form->textwithpicto('', $htmltooltip, 1, 0);
+                            print '</td>';
 
-		    				// Preview
-		    				print '<td align="center">';
-		    				if ($module->type == 'pdf')
-		    				{
-		    					print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'sending').'</a>';
-		    				}
-		    				else
-		    				{
-		    					print img_object($langs->trans("PreviewNotAvailable"), 'generic');
-		    				}
-		    				print '</td>';
+                            // Preview
+                            print '<td align="center">';
+                            if ($module->type == 'pdf')
+                            {
+                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'sending').'</a>';
+                            }
+                            else
+                            {
+                                print img_object($langs->trans("PreviewNotAvailable"), 'generic');
+                            }
+                            print '</td>';
 
-		    				print '</tr>';
-		    			}
-                	}
+                            print '</tr>';
+                        }
+                    }
                 }
             }
         }
@@ -452,7 +452,7 @@ print "</tr>\n";
 $substitutionarray=pdf_getSubstitutionArray($langs, null, null, 2);
 $substitutionarray['__(AnyTranslationKey)__']=$langs->trans("Translation");
 $htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
-foreach($substitutionarray as $key => $val)	$htmltext.=$key.'<br>';
+foreach($substitutionarray as $key => $val)    $htmltext.=$key.'<br>';
 $htmltext.='</i>';
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';

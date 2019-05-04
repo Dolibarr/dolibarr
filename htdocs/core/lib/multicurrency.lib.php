@@ -17,10 +17,10 @@
  */
 
 /**
- *	\file		lib/multicurrency.lib.php
- *	\ingroup	multicurency
- *	\brief		This file is an example module library
- *				Put some comments here
+ *    \file        lib/multicurrency.lib.php
+ *    \ingroup    multicurency
+ *    \brief        This file is an example module library
+ *                Put some comments here
  */
 
 /**

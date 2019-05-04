@@ -57,10 +57,10 @@ class StockMovements extends DolibarrApi
      *
      * Return an array with stock movement informations
      *
-     * @param 	int 	$id ID of movement
-     * @return 	array|mixed data without useless information
+     * @param     int     $id ID of movement
+     * @return     array|mixed data without useless information
      *
-     * @throws 	RestException
+     * @throws     RestException
      */
     /*
     public function get($id)
@@ -84,10 +84,10 @@ class StockMovements extends DolibarrApi
     /**
      * Get a list of stock movement
      *
-     * @param string	$sortfield	Sort field
-     * @param string	$sortorder	Sort order
-     * @param int		$limit		Limit for list
-     * @param int		$page		Page number
+     * @param string    $sortfield    Sort field
+     * @param string    $sortorder    Sort order
+     * @param int        $limit        Limit for list
+     * @param int        $page        Page number
      * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.product_id:=:1) and (t.date_creation:<:'20160101')"
      * @return array                Array of warehouse objects
      *
@@ -119,7 +119,7 @@ class StockMovements extends DolibarrApi
         }
 
         $sql.= $db->order($sortfield, $sortorder);
-        if ($limit)	{
+        if ($limit)    {
             if ($page < 0)
             {
                 $page = 0;

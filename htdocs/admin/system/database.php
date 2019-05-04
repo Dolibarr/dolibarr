@@ -72,58 +72,58 @@ $arraylist=array('listofvars','listofstatus');
 
 if (! count($listofvars) && ! count($listofstatus))
 {
-	print $langs->trans("FeatureNotAvailableWithThisDatabaseDriver");
+    print $langs->trans("FeatureNotAvailableWithThisDatabaseDriver");
 }
 else
 {
-	foreach($arraylist as $listname)
-	{
-		print '<br>';
+    foreach($arraylist as $listname)
+    {
+        print '<br>';
         print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre">';
-		print '<td width="300">'.$langs->trans("Parameters").'</td>';
-		print '<td>'.$langs->trans("Value").'</td>';
-		print '</tr>'."\n";
+        print '<table class="noborder" width="100%">';
+        print '<tr class="liste_titre">';
+        print '<td width="300">'.$langs->trans("Parameters").'</td>';
+        print '<td>'.$langs->trans("Value").'</td>';
+        print '</tr>'."\n";
 
-		// arraytest is an array of test to do
-		$arraytest=array();
-		if (preg_match('/mysql/i', $db->type))
-		{
-			$arraytest=array(
-				'character_set_database'=>array('var'=>'dolibarr_main_db_character_set','valifempty'=>'utf8'),
-				'collation_database'=>array('var'=>'dolibarr_main_db_collation','valifempty'=>'utf8_unicode_ci')
-			);
-		}
+        // arraytest is an array of test to do
+        $arraytest=array();
+        if (preg_match('/mysql/i', $db->type))
+        {
+            $arraytest=array(
+                'character_set_database'=>array('var'=>'dolibarr_main_db_character_set','valifempty'=>'utf8'),
+                'collation_database'=>array('var'=>'dolibarr_main_db_collation','valifempty'=>'utf8_unicode_ci')
+            );
+        }
 
-		$listtouse=array();
-		if ($listname == 'listofvars') $listtouse=$listofvars;
-		if ($listname == 'listofstatus') $listtouse=$listofstatus;
+        $listtouse=array();
+        if ($listname == 'listofvars') $listtouse=$listofvars;
+        if ($listname == 'listofstatus') $listtouse=$listofstatus;
 
-		foreach($listtouse as $param => $paramval)
-		{
-			print '<tr class="oddeven">';
-			print '<td>';
-			print $param;
-			print '</td>';
-			print '<td>';
-			$show=0;$text='';
-			foreach($arraytest as $key => $val)
-			{
-				if ($key != $param) continue;
-				$val2=${$val['var']};
-				$text='Should be in line with value of param <b>'.$val['var'].'</b> thas is <b>'.($val2?$val2:"'' (=".$val['valifempty'].")").'</b>';
-				$show=1;
-			}
-			if ($show==0) print $paramval;
-			if ($show==1) print $form->textwithpicto($paramval, $text);
-			if ($show==2) print $form->textwithpicto($paramval, $text, 1, 'warning');
-			print '</td>';
-			print '</tr>'."\n";
-		}
-		print '</table>'."\n";
-		print '</div>';
-	}
+        foreach($listtouse as $param => $paramval)
+        {
+            print '<tr class="oddeven">';
+            print '<td>';
+            print $param;
+            print '</td>';
+            print '<td>';
+            $show=0;$text='';
+            foreach($arraytest as $key => $val)
+            {
+                if ($key != $param) continue;
+                $val2=${$val['var']};
+                $text='Should be in line with value of param <b>'.$val['var'].'</b> thas is <b>'.($val2?$val2:"'' (=".$val['valifempty'].")").'</b>';
+                $show=1;
+            }
+            if ($show==0) print $paramval;
+            if ($show==1) print $form->textwithpicto($paramval, $text);
+            if ($show==2) print $form->textwithpicto($paramval, $text, 1, 'warning');
+            print '</td>';
+            print '</tr>'."\n";
+        }
+        print '</table>'."\n";
+        print '</div>';
+    }
 }
 
 // End of page

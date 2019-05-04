@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2011	Laurent Destailleur	<eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2011    Laurent Destailleur    <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2012-20113	Juanjo Menent		<jmenent@2byte.es>
  *
@@ -99,27 +99,27 @@ foreach($modules as $const => $desc)
 
 if (GETPOST('save', 'alpha'))
 {
-	$error = 0;
+    $error = 0;
 
-	$fckeditor_skin = GETPOST('fckeditor_skin', 'alpha');
-	if (! empty($fckeditor_skin)) {
-		if (! dolibarr_set_const($db, 'FCKEDITOR_SKIN', $fckeditor_skin, 'chaine', 0, '', $conf->entity)) {
-			$error ++;
-		}
-	} else {
-		$error ++;
-	}
+    $fckeditor_skin = GETPOST('fckeditor_skin', 'alpha');
+    if (! empty($fckeditor_skin)) {
+        if (! dolibarr_set_const($db, 'FCKEDITOR_SKIN', $fckeditor_skin, 'chaine', 0, '', $conf->entity)) {
+            $error ++;
+        }
+    } else {
+        $error ++;
+    }
 
-	$fckeditor_test = GETPOST('formtestfield');
+    $fckeditor_test = GETPOST('formtestfield');
     if (! empty($fckeditor_test)) {
-		if (! dolibarr_set_const($db, 'FCKEDITOR_TEST', $fckeditor_test, 'chaine', 0, '', $conf->entity)) {
-			$error ++;
-		}
-	} else {
-		$error ++;
-	}
+        if (! dolibarr_set_const($db, 'FCKEDITOR_TEST', $fckeditor_test, 'chaine', 0, '', $conf->entity)) {
+            $error ++;
+        }
+    } else {
+        $error ++;
+    }
 
-	if (! $error)
+    if (! $error)
     {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
@@ -141,7 +141,7 @@ print '<br>';
 
 if (empty($conf->use_javascript_ajax))
 {
-	setEventMessages(array($langs->trans("NotAvailable"), $langs->trans("JavascriptDisabled")), null, 'errors');
+    setEventMessages(array($langs->trans("NotAvailable"), $langs->trans("JavascriptDisabled")), null, 'errors');
 }
 else
 {
@@ -178,11 +178,11 @@ else
 
     print '</table>'."\n";
 
-	print '<br>'."\n";
+    print '<br>'."\n";
 
-	print '<form name="formtest" method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+    print '<form name="formtest" method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 
-	// Skins
+    // Skins
     show_skin(null, 1);
     print '<br>'."\n";
 
@@ -198,7 +198,7 @@ else
         $linkstomode.='</a>';
     }
     $linkstomode.='';
-	print load_fiche_titre($langs->trans("TestSubmitForm"), $linkstomode, '');
+    print load_fiche_titre($langs->trans("TestSubmitForm"), $linkstomode, '');
     print '<input type="hidden" name="mode" value="'.dol_escape_htmltag($mode).'">';
     if ($mode != 'Full_inline')
     {
@@ -219,9 +219,9 @@ else
 
     // Add env of ckeditor
     // This is to show how CKEditor detect browser to understand why editor is disabled or not
-    if (1 == 2)		// Change this to enable output
+    if (1 == 2)        // Change this to enable output
     {
-	    print '<br><script language="javascript">
+        print '<br><script language="javascript">
 	    function jsdump(obj, id) {
 		    var out = \'\';
 		    for (var i in obj) {

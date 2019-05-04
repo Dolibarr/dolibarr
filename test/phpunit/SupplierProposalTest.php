@@ -18,25 +18,25 @@
 
 /**
  *      \file       test/phpunit/SupplierProposalTest.php
- *		\ingroup    test
+ *        \ingroup    test
  *      \brief      PHPUnit test
- *		\remarks	To run this script as CLI:  phpunit filename.php
+ *        \remarks    To run this script as CLI:  phpunit filename.php
  */
 
 global $conf,$user,$langs,$db;
-//define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
+//define('TEST_DB_FORCE_TYPE','mysql');    // This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/supplier_proposal/class/supplier_proposal.class.php';
 
 if (empty($user->id))
 {
-	print "Load permissions for user nb 1 (that should be admin)\n";
-	$user->fetch(1);
+    print "Load permissions for user nb 1 (that should be admin)\n";
+    $user->fetch(1);
 
-	//$user->addrights(0, 'supplier_proposal');
+    //$user->addrights(0, 'supplier_proposal');
 
-	$user->getrights();
+    $user->getrights();
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 
@@ -46,196 +46,196 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
- * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
+ * @remarks    backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
 class SupplierProposalTest extends PHPUnit_Framework_TestCase
 {
-	protected $savconf;
-	protected $savuser;
-	protected $savlangs;
-	protected $savdb;
+    protected $savconf;
+    protected $savuser;
+    protected $savlangs;
+    protected $savdb;
 
-	/**
-	 * Constructor
-	 * We save global variables into local variables
-	 *
-	 * @return PropalTest
-	 */
-	public function __construct()
-	{
+    /**
+     * Constructor
+     * We save global variables into local variables
+     *
+     * @return PropalTest
+     */
+    public function __construct()
+    {
         parent::__construct();
 
-		//$this->sharedFixture
-		global $conf,$user,$langs,$db;
-		$this->savconf=$conf;
-		$this->savuser=$user;
-		$this->savlangs=$langs;
-		$this->savdb=$db;
+        //$this->sharedFixture
+        global $conf,$user,$langs,$db;
+        $this->savconf=$conf;
+        $this->savuser=$user;
+        $this->savlangs=$langs;
+        $this->savdb=$db;
 
-		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-		//print " - db ".$db->db;
-		print "\n";
-	}
+        print __METHOD__." db->type=".$db->type." user->id=".$user->id;
+        //print " - db ".$db->db;
+        print "\n";
+    }
 
-	// Static methods
+    // Static methods
     public static function setUpBeforeClass()
     {
-    	global $conf,$user,$langs,$db;
-		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
+        global $conf,$user,$langs,$db;
+        $db->begin();    // This is to have all actions inside a transaction even if test launched without suite.
 
-		if (empty($conf->global->MAIN_MODULE_SUPPLIERPROPOSAL)) { print "\n".__METHOD__." module Supplier proposal must be enabled.\n"; die(); }
+        if (empty($conf->global->MAIN_MODULE_SUPPLIERPROPOSAL)) { print "\n".__METHOD__." module Supplier proposal must be enabled.\n"; die(); }
 
-    	print __METHOD__."\n";
+        print __METHOD__."\n";
     }
 
     // tear down after class
     public static function tearDownAfterClass()
     {
-    	global $conf,$user,$langs,$db;
-		$db->rollback();
+        global $conf,$user,$langs,$db;
+        $db->rollback();
 
-		print __METHOD__."\n";
+        print __METHOD__."\n";
     }
 
-	/**
-	 * Init phpunit tests
-	 *
-	 * @return	void
-	 */
+    /**
+     * Init phpunit tests
+     *
+     * @return    void
+     */
     protected function setUp()
     {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-		print __METHOD__."\n";
-		//print $db->getVersion()."\n";
+        print __METHOD__."\n";
+        //print $db->getVersion()."\n";
 
-		// Set permission not set by default sql sample
-		$user->addrights(0, 'supplier_proposal');
-		$user->getrights('supplier_proposal', 1);
+        // Set permission not set by default sql sample
+        $user->addrights(0, 'supplier_proposal');
+        $user->getrights('supplier_proposal', 1);
     }
 
-	/**
-	 * End phpunit tests
-	 *
-	 * @return	void
-	 */
+    /**
+     * End phpunit tests
+     *
+     * @return    void
+     */
     protected function tearDown()
     {
-    	print __METHOD__."\n";
+        print __METHOD__."\n";
     }
 
     /**
      * testSupplierProposalCreate
      *
-     * @return	void
+     * @return    void
      */
     public function testSupplierProposalCreate()
     {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-		$localobject=new SupplierProposal($this->savdb);
-    	$localobject->initAsSpecimen();
-    	$result=$localobject->create($user);
+        $localobject=new SupplierProposal($this->savdb);
+        $localobject->initAsSpecimen();
+        $result=$localobject->create($user);
 
-    	$this->assertLessThan($result, 0);
-    	print __METHOD__." result=".$result."\n";
-    	return $result;
+        $this->assertLessThan($result, 0);
+        print __METHOD__." result=".$result."\n";
+        return $result;
     }
 
     /**
      * testSupplierProposalFetch
      *
-     * @param	int		$id		Id of object
-     * @return	void
+     * @param    int        $id        Id of object
+     * @return    void
      *
-     * @depends	testSupplierProposalCreate
+     * @depends    testSupplierProposalCreate
      * The depends says test is run only if previous is ok
      */
     public function testSupplierProposalFetch($id)
     {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-		$localobject=new SupplierProposal($this->savdb);
-    	$result=$localobject->fetch($id);
+        $localobject=new SupplierProposal($this->savdb);
+        $result=$localobject->fetch($id);
 
-    	$this->assertLessThan($result, 0);
-    	print __METHOD__." id=".$id." result=".$result."\n";
-    	return $localobject;
+        $this->assertLessThan($result, 0);
+        print __METHOD__." id=".$id." result=".$result."\n";
+        return $localobject;
     }
 
     /**
      * testSupplierProposalAddLine
      *
-     * @param	int		$localobject	Proposal
-     * @return	void
+     * @param    int        $localobject    Proposal
+     * @return    void
      *
-     * @depends	testSupplierProposalFetch
+     * @depends    testSupplierProposalFetch
      * The depends says test is run only if previous is ok
      */
     public function testSupplierProposalAddLine($localobject)
     {
-    	global $conf,$user,$langs,$db;
-    	$conf=$this->savconf;
-    	$user=$this->savuser;
-    	$langs=$this->savlangs;
-    	$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-    	$localobject->fetch_thirdparty();
-    	$result=$localobject->addline('Added line', 10, 2, 19.6);
+        $localobject->fetch_thirdparty();
+        $result=$localobject->addline('Added line', 10, 2, 19.6);
 
-    	$this->assertLessThan($result, 0);
-    	print __METHOD__." id=".$localobject->id." result=".$result."\n";
-    	return $localobject;
+        $this->assertLessThan($result, 0);
+        print __METHOD__." id=".$localobject->id." result=".$result."\n";
+        return $localobject;
     }
 
     /**
      * testSupplierProposalValid
      *
-     * @param	SupplierProposal	$localobject	Proposal
-     * @return	SupplierProposal
+     * @param    SupplierProposal    $localobject    Proposal
+     * @return    SupplierProposal
      *
-     * @depends	testSupplierProposalAddLine
+     * @depends    testSupplierProposalAddLine
      * The depends says test is run only if previous is ok
      */
     public function testSupplierProposalValid($localobject)
     {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-		$result = $user->addrights(0, 'supplier_proposal');
-		$this->assertLessThan($result, 0);
+        $result = $user->addrights(0, 'supplier_proposal');
+        $this->assertLessThan($result, 0);
 
-		$result = $user->getrights('supplier_proposal', 1);
-		//$this->assertLessThan($result, 0);
+        $result = $user->getrights('supplier_proposal', 1);
+        //$this->assertLessThan($result, 0);
 
-		$result=$localobject->valid($user);
-		$this->assertLessThan($result, 0);
+        $result=$localobject->valid($user);
+        $this->assertLessThan($result, 0);
 
-    	print __METHOD__." id=".$localobject->id." result=".$result."\n";
-    	$this->assertLessThan($result, 0);
-    	return $localobject;
+        print __METHOD__." id=".$localobject->id." result=".$result."\n";
+        $this->assertLessThan($result, 0);
+        return $localobject;
     }
 
    /**
      * testSupplierProposalOther
      *
-     * @param	SupplierProposal	$localobject	Proposal
-     * @return	int
+     * @param    SupplierProposal    $localobject    Proposal
+     * @return    int
      *
      * @depends testSupplierProposalValid
      * The depends says test is run only if previous is ok
@@ -263,26 +263,26 @@ class SupplierProposalTest extends PHPUnit_Framework_TestCase
     /**
      * testSupplierProposalDelete
      *
-     * @param	int		$id		Id of proposal
-     * @return	void
+     * @param    int        $id        Id of proposal
+     * @return    void
      *
-     * @depends	testSupplierProposalOther
+     * @depends    testSupplierProposalOther
      * The depends says test is run only if previous is ok
      */
     public function testSupplierProposalDelete($id)
     {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-		$localobject=new SupplierProposal($this->savdb);
-    	$result=$localobject->fetch($id);
-		$result=$localobject->delete($user);
+        $localobject=new SupplierProposal($this->savdb);
+        $result=$localobject->fetch($id);
+        $result=$localobject->delete($user);
 
-		print __METHOD__." id=".$id." result=".$result."\n";
-    	$this->assertLessThan($result, 0);
-    	return $result;
+        print __METHOD__." id=".$id." result=".$result."\n";
+        $this->assertLessThan($result, 0);
+        return $result;
     }
 }

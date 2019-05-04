@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+/* Copyright (C) 2004        Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004		Sebastien Di Cintio	<sdicintio@ressource-toi.org>
  * Copyright (C) 2004		Benoit Mortier		<benoit.mortier@opensides.be>
  * Copyright (C) 2005-2017	Regis Houssin		<regis.houssin@inodbox.com>
@@ -21,9 +21,9 @@
  */
 
 /**
- *     	\file       htdocs/admin/ldap_members_types.php
- *     	\ingroup    ldap
- *		\brief      Page to setup LDAP synchronization for members types
+ *         \file       htdocs/admin/ldap_members_types.php
+ *         \ingroup    ldap
+ *        \brief      Page to setup LDAP synchronization for members types
  */
 
 require '../main.inc.php';
@@ -37,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/ldap.lib.php';
 $langs->loadLangs(array('admin', 'errors'));
 
 if (!$user->admin)
-	accessforbidden();
+    accessforbidden();
 
 $action = GETPOST('action', 'aZ09');
 
@@ -48,32 +48,32 @@ $action = GETPOST('action', 'aZ09');
 
 if ($action == 'setvalue' && $user->admin)
 {
-	$error=0;
-	$db->begin();
+    $error=0;
+    $db->begin();
 
-	if (! dolibarr_set_const($db, 'LDAP_MEMBER_TYPE_DN', GETPOST("membertype"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_MEMBER_TYPE_OBJECT_CLASS', GETPOST("objectclass"), 'chaine', 0, '', $conf->entity)) $error++;
+    if (! dolibarr_set_const($db, 'LDAP_MEMBER_TYPE_DN', GETPOST("membertype"), 'chaine', 0, '', $conf->entity)) $error++;
+    if (! dolibarr_set_const($db, 'LDAP_MEMBER_TYPE_OBJECT_CLASS', GETPOST("objectclass"), 'chaine', 0, '', $conf->entity)) $error++;
 
-	if (! dolibarr_set_const($db, 'LDAP_MEMBER_TYPE_FIELD_FULLNAME', GETPOST("fieldfullname"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_MEMBER_TYPE_FIELD_DESCRIPTION', GETPOST("fielddescription"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_MEMBER_TYPE_FIELD_GROUPMEMBERS', GETPOST("fieldmembertypemembers"), 'chaine', 0, '', $conf->entity)) $error++;
+    if (! dolibarr_set_const($db, 'LDAP_MEMBER_TYPE_FIELD_FULLNAME', GETPOST("fieldfullname"), 'chaine', 0, '', $conf->entity)) $error++;
+    if (! dolibarr_set_const($db, 'LDAP_MEMBER_TYPE_FIELD_DESCRIPTION', GETPOST("fielddescription"), 'chaine', 0, '', $conf->entity)) $error++;
+    if (! dolibarr_set_const($db, 'LDAP_MEMBER_TYPE_FIELD_GROUPMEMBERS', GETPOST("fieldmembertypemembers"), 'chaine', 0, '', $conf->entity)) $error++;
 
-	// This one must be after the others
-	$valkey='';
-	$key=GETPOST("key");
-	if ($key) $valkey=$conf->global->$key;
-	if (! dolibarr_set_const($db, 'LDAP_KEY_MEMBERS_TYPES', $valkey, 'chaine', 0, '', $conf->entity)) $error++;
+    // This one must be after the others
+    $valkey='';
+    $key=GETPOST("key");
+    if ($key) $valkey=$conf->global->$key;
+    if (! dolibarr_set_const($db, 'LDAP_KEY_MEMBERS_TYPES', $valkey, 'chaine', 0, '', $conf->entity)) $error++;
 
-	if (! $error)
-	{
-		$db->commit();
-		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	}
-	else
-	{
-		$db->rollback();
-		dol_print_error($db);
-	}
+    if (! $error)
+    {
+        $db->commit();
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    }
+    else
+    {
+        $db->rollback();
+        dol_print_error($db);
+    }
 }
 
 
@@ -92,7 +92,7 @@ $head = ldap_prepare_head();
 // Test si fonction LDAP actives
 if (! function_exists("ldap_connect"))
 {
-	setEventMessages($langs->trans("LDAPFunctionsNotAvailableOnPHP"), null, 'errors');
+    setEventMessages($langs->trans("LDAPFunctionsNotAvailableOnPHP"), null, 'errors');
 }
 
 dol_fiche_head($head, 'memberstypes', $langs->trans("LDAPSetup"), -1);
@@ -176,69 +176,69 @@ print '</form>';
  */
 if ($conf->global->LDAP_MEMBER_TYPE_ACTIVE == '1')
 {
-	$butlabel=$langs->trans("LDAPTestSynchroMemberType");
-	$testlabel='testmembertype';
-	$key=$conf->global->LDAP_KEY_MEMBERS_TYPES;
-	$dn=$conf->global->LDAP_MEMBER_TYPE_DN;
-	$objectclass=$conf->global->LDAP_MEMBER_TYPE_OBJECT_CLASS;
+    $butlabel=$langs->trans("LDAPTestSynchroMemberType");
+    $testlabel='testmembertype';
+    $key=$conf->global->LDAP_KEY_MEMBERS_TYPES;
+    $dn=$conf->global->LDAP_MEMBER_TYPE_DN;
+    $objectclass=$conf->global->LDAP_MEMBER_TYPE_OBJECT_CLASS;
 
-	show_ldap_test_button($butlabel, $testlabel, $key, $dn, $objectclass);
+    show_ldap_test_button($butlabel, $testlabel, $key, $dn, $objectclass);
 }
 
 if (function_exists("ldap_connect"))
 {
-	if ($_GET["action"] == 'testmembertype')
-	{
-		// Creation objet
-		$object=new AdherentType($db);
-		$object->initAsSpecimen();
+    if ($_GET["action"] == 'testmembertype')
+    {
+        // Creation objet
+        $object=new AdherentType($db);
+        $object->initAsSpecimen();
 
-		// Test synchro
-		$ldap=new Ldap();
-		$result=$ldap->connect_bind();
+        // Test synchro
+        $ldap=new Ldap();
+        $result=$ldap->connect_bind();
 
-		if ($result > 0)
-		{
-			$info=$object->_load_ldap_info();
-			$dn=$object->_load_ldap_dn($info);
+        if ($result > 0)
+        {
+            $info=$object->_load_ldap_info();
+            $dn=$object->_load_ldap_dn($info);
 
-			// Get a gid number for objectclass PosixGroup
-			if (in_array('posixGroup', $info['objectclass'])) {
-				$info['gidNumber'] = $ldap->getNextGroupGid('LDAP_KEY_MEMBERS_TYPES');
-			}
+            // Get a gid number for objectclass PosixGroup
+            if (in_array('posixGroup', $info['objectclass'])) {
+                $info['gidNumber'] = $ldap->getNextGroupGid('LDAP_KEY_MEMBERS_TYPES');
+            }
 
-			$result1=$ldap->delete($dn);			// To be sure to delete existing records
-			$result2=$ldap->add($dn, $info, $user);	// Now the test
-			$result3=$ldap->delete($dn);			// Clean what we did
+            $result1=$ldap->delete($dn);            // To be sure to delete existing records
+            $result2=$ldap->add($dn, $info, $user);    // Now the test
+            $result3=$ldap->delete($dn);            // Clean what we did
 
-			if ($result2 > 0)
-			{
-				print img_picto('', 'info').' ';
-				print '<font class="ok">'.$langs->trans("LDAPSynchroOK").'</font><br>';
-			}
-			else
-			{
-				print img_picto('', 'error').' ';
-				print '<font class="error">'.$langs->trans("LDAPSynchroKOMayBePermissions");
-				print ': '.$ldap->error;
-				print '</font><br>';
-				print $langs->trans("ErrorLDAPMakeManualTest", $conf->ldap->dir_temp).'<br>';
-			}
+            if ($result2 > 0)
+            {
+                print img_picto('', 'info').' ';
+                print '<font class="ok">'.$langs->trans("LDAPSynchroOK").'</font><br>';
+            }
+            else
+            {
+                print img_picto('', 'error').' ';
+                print '<font class="error">'.$langs->trans("LDAPSynchroKOMayBePermissions");
+                print ': '.$ldap->error;
+                print '</font><br>';
+                print $langs->trans("ErrorLDAPMakeManualTest", $conf->ldap->dir_temp).'<br>';
+            }
 
-			print "<br>\n";
-			print "LDAP input file used for test:<br><br>\n";
-			print nl2br($ldap->dump_content($dn, $info));
-			print "\n<br>";
-		}
-		else
-		{
-			print img_picto('', 'error').' ';
-			print '<font class="error">'.$langs->trans("LDAPSynchroKO");
-			print ': '.$ldap->error;
-			print '</font><br>';
-			print $langs->trans("ErrorLDAPMakeManualTest", $conf->ldap->dir_temp).'<br>';
-		}
-	}
+            print "<br>\n";
+            print "LDAP input file used for test:<br><br>\n";
+            print nl2br($ldap->dump_content($dn, $info));
+            print "\n<br>";
+        }
+        else
+        {
+            print img_picto('', 'error').' ';
+            print '<font class="error">'.$langs->trans("LDAPSynchroKO");
+            print ': '.$ldap->error;
+            print '</font><br>';
+            print $langs->trans("ErrorLDAPMakeManualTest", $conf->ldap->dir_temp).'<br>';
+        }
+    }
 }
 
 // End of page

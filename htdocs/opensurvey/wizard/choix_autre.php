@@ -17,9 +17,9 @@
  */
 
 /**
- *	\file       htdocs/opensurvey/wizard/choix_autre.php
- *	\ingroup    opensurvey
- *	\brief      Page to create a new survey (choice selection)
+ *    \file       htdocs/opensurvey/wizard/choix_autre.php
+ *    \ingroup    opensurvey
+ *    \brief      Page to create a new survey (choice selection)
  */
 
 require '../../main.inc.php';
@@ -38,61 +38,61 @@ if (!$user->rights->opensurvey->write) accessforbidden();
 
 // Set session vars
 if (isset($_SESSION["nbrecases"])) {
-	for ($i = 0; $i < $_SESSION["nbrecases"]; $i++) {
-		if (isset($_POST["choix"][$i])) {
-			$_SESSION["choix$i"]=$_POST["choix"][$i];
-		}
-		if (isset($_POST["typecolonne"][$i])) {
-			$_SESSION["typecolonne$i"]=$_POST["typecolonne"][$i];
-		}
-	}
+    for ($i = 0; $i < $_SESSION["nbrecases"]; $i++) {
+        if (isset($_POST["choix"][$i])) {
+            $_SESSION["choix$i"]=$_POST["choix"][$i];
+        }
+        if (isset($_POST["typecolonne"][$i])) {
+            $_SESSION["typecolonne$i"]=$_POST["typecolonne"][$i];
+        }
+    }
 } else { //nombre de cases par défaut
-	$_SESSION["nbrecases"]=5;
+    $_SESSION["nbrecases"]=5;
 }
 
 if (GETPOST("ajoutcases") || GETPOST("ajoutcases_x"))
 {
-	$_SESSION["nbrecases"]=$_SESSION["nbrecases"]+5;
+    $_SESSION["nbrecases"]=$_SESSION["nbrecases"]+5;
 }
 
 // Create survey into database
 if (isset($_POST["confirmecreation"]))
 {
-	//recuperation des données de champs textes
-	$toutchoix = '';
-	for ($i = 0; $i < $_SESSION["nbrecases"] + 1; $i++)
-	{
-		if (! empty($_POST["choix"][$i]))
-		{
-			$toutchoix.=',';
-			$toutchoix.=str_replace(array(",","@"), " ", $_POST["choix"][$i]).(empty($_POST["typecolonne"][$i])?'':'@'.$_POST["typecolonne"][$i]);
-		}
-	}
+    //recuperation des données de champs textes
+    $toutchoix = '';
+    for ($i = 0; $i < $_SESSION["nbrecases"] + 1; $i++)
+    {
+        if (! empty($_POST["choix"][$i]))
+        {
+            $toutchoix.=',';
+            $toutchoix.=str_replace(array(",","@"), " ", $_POST["choix"][$i]).(empty($_POST["typecolonne"][$i])?'':'@'.$_POST["typecolonne"][$i]);
+        }
+    }
 
-	$toutchoix=substr("$toutchoix", 1);
-	$_SESSION["toutchoix"]=$toutchoix;
+    $toutchoix=substr("$toutchoix", 1);
+    $_SESSION["toutchoix"]=$toutchoix;
 
-	//test de remplissage des cases
-	$testremplissage = '';
-	for ($i=0;$i<$_SESSION["nbrecases"];$i++)
-	{
-		if (isset($_POST["choix"][$i]))
-		{
-			$testremplissage="ok";
-		}
-	}
+    //test de remplissage des cases
+    $testremplissage = '';
+    for ($i=0;$i<$_SESSION["nbrecases"];$i++)
+    {
+        if (isset($_POST["choix"][$i]))
+        {
+            $testremplissage="ok";
+        }
+    }
 
-	//message d'erreur si aucun champ renseigné
-	if ($testremplissage != "ok" || (!$toutchoix)) {
-		setEventMessages($langs->trans("ErrorOpenSurveyOneChoice"), null, 'errors');
-	} else {
+    //message d'erreur si aucun champ renseigné
+    if ($testremplissage != "ok" || (!$toutchoix)) {
+        setEventMessages($langs->trans("ErrorOpenSurveyOneChoice"), null, 'errors');
+    } else {
 
-		//format du sondage AUTRE
-		$_SESSION["formatsondage"]="A";
+        //format du sondage AUTRE
+        $_SESSION["formatsondage"]="A";
 
-		// Add into database
-		ajouter_sondage();
-	}
+        // Add into database
+        ajouter_sondage();
+    }
 }
 
 
@@ -110,9 +110,9 @@ llxHeader('', $langs->trans("OpenSurvey"), "", '', 0, 0, $arrayofjs, $arrayofcss
 
 if (empty($_SESSION['titre']))
 {
-	dol_print_error('', $langs->trans('ErrorOpenSurveyFillFirstSection'));
-	llxFooterSurvey();
-	exit;
+    dol_print_error('', $langs->trans('ErrorOpenSurveyFillFirstSection'));
+    llxFooterSurvey();
+    exit;
 }
 
 
@@ -131,14 +131,14 @@ print '<table>'."\n";
 
 //affichage des cases texte de formulaire
 for ($i = 0; $i < $_SESSION["nbrecases"]; $i++) {
-	$j = $i + 1;
-	if (isset($_SESSION["choix$i"]) === false) {
-		$_SESSION["choix$i"] = '';
-	}
-	print '<tr><td>'. $langs->trans("TitleChoice") .' '.$j.': </td><td><input type="text" name="choix[]" size="40" maxlength="40" value="'.dol_escape_htmltag($_SESSION["choix$i"]).'" id="choix'.$i.'">';
-	$tmparray=array('checkbox'=>$langs->trans("CheckBox"),'yesno'=>$langs->trans("YesNoList"),'foragainst'=>$langs->trans("PourContreList"));
-	print ' &nbsp; '.$langs->trans("Type").' '.$form->selectarray("typecolonne[]", $tmparray, $_SESSION["typecolonne$i"]);
-	print '</td></tr>'."\n";
+    $j = $i + 1;
+    if (isset($_SESSION["choix$i"]) === false) {
+        $_SESSION["choix$i"] = '';
+    }
+    print '<tr><td>'. $langs->trans("TitleChoice") .' '.$j.': </td><td><input type="text" name="choix[]" size="40" maxlength="40" value="'.dol_escape_htmltag($_SESSION["choix$i"]).'" id="choix'.$i.'">';
+    $tmparray=array('checkbox'=>$langs->trans("CheckBox"),'yesno'=>$langs->trans("YesNoList"),'foragainst'=>$langs->trans("PourContreList"));
+    print ' &nbsp; '.$langs->trans("Type").' '.$form->selectarray("typecolonne[]", $tmparray, $_SESSION["typecolonne$i"]);
+    print '</td></tr>'."\n";
 }
 
 print '</table>'."\n";

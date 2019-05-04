@@ -19,7 +19,7 @@
 /**
  *      \file       htdocs/comm/mailing/info.php
  *      \ingroup    mailing
- *		\brief      Page with log information for emailing
+ *        \brief      Page with log information for emailing
  */
 
 require '../../main.inc.php';
@@ -50,29 +50,29 @@ $object = new Mailing($db);
 
 if ($object->fetch($id) >= 0)
 {
-	$head = emailing_prepare_head($object);
+    $head = emailing_prepare_head($object);
 
-	dol_fiche_head($head, 'info', $langs->trans("Mailing"), -1, 'email');
+    dol_fiche_head($head, 'info', $langs->trans("Mailing"), -1, 'email');
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/comm/mailing/list.php">'.$langs->trans("BackToList").'</a>';
+    $linkback = '<a href="'.DOL_URL_ROOT.'/comm/mailing/list.php">'.$langs->trans("BackToList").'</a>';
 
-	$morehtmlright='';
-	if ($object->statut == 2) $morehtmlright.=' ('.$object->countNbOfTargets('alreadysent').'/'.$object->nbemail.') ';
-	
-	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', '', '', 0, '', $morehtmlright);
-	
-	print '<div class="underbanner clearboth"></div><br>';
-	
-	//print '<table width="100%"><tr><td>';
-	$object->user_creation=$object->user_creat;
-	$object->date_creation=$object->date_creat;
-	$object->user_validation=$object->user_valid;
-	$object->date_validation=$object->date_valid;
-	dol_print_object_info($object, 0);
-	//print '</td></tr></table>';
-	
+    $morehtmlright='';
+    if ($object->statut == 2) $morehtmlright.=' ('.$object->countNbOfTargets('alreadysent').'/'.$object->nbemail.') ';
+    
+    dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', '', '', 0, '', $morehtmlright);
+    
+    print '<div class="underbanner clearboth"></div><br>';
+    
+    //print '<table width="100%"><tr><td>';
+    $object->user_creation=$object->user_creat;
+    $object->date_creation=$object->date_creat;
+    $object->user_validation=$object->user_valid;
+    $object->date_validation=$object->date_valid;
+    dol_print_object_info($object, 0);
+    //print '</td></tr></table>';
+    
 
-	dol_fiche_end();
+    dol_fiche_end();
 }
 
 // End of page

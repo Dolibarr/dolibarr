@@ -59,7 +59,7 @@ if ($action == 'add') {
     {
         foreach($_POST['boxid'] as $boxid)
         {
-            if (is_numeric($boxid['pos']) && $boxid['pos'] >= 0)	// 0=Home, 1=...
+            if (is_numeric($boxid['pos']) && $boxid['pos'] >= 0)    // 0=Home, 1=...
             {
                 $pos = $boxid['pos'];
 
@@ -91,7 +91,7 @@ if ($action == 'add') {
                     }
                 }
 
-                $distinctfkuser['0']='0';	// Add entry for fk_user = 0. We must use string as key and val
+                $distinctfkuser['0']='0';    // Add entry for fk_user = 0. We must use string as key and val
 
                 foreach($distinctfkuser as $fk_user)
                 {
@@ -143,72 +143,72 @@ if ($action == 'add') {
 
 if ($action == 'delete')
 {
-	$sql = "SELECT box_id FROM ".MAIN_DB_PREFIX."boxes";
-	$sql.= " WHERE rowid=".$rowid;
+    $sql = "SELECT box_id FROM ".MAIN_DB_PREFIX."boxes";
+    $sql.= " WHERE rowid=".$rowid;
 
-	$resql = $db->query($sql);
-	$obj=$db->fetch_object($resql);
+    $resql = $db->query($sql);
+    $obj=$db->fetch_object($resql);
     if (! empty($obj->box_id))
     {
-	    $db->begin();
+        $db->begin();
 
-    	// Remove all personalized setup when a box is activated or disabled (why removing all ? We removed only removed boxes)
-        //	$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_param";
-        //	$sql.= " WHERE param LIKE 'MAIN_BOXES_%'";
-        //	$resql = $db->query($sql);
+        // Remove all personalized setup when a box is activated or disabled (why removing all ? We removed only removed boxes)
+        //    $sql = "DELETE FROM ".MAIN_DB_PREFIX."user_param";
+        //    $sql.= " WHERE param LIKE 'MAIN_BOXES_%'";
+        //    $resql = $db->query($sql);
 
-	    $sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes";
-	    $sql.= " WHERE entity = ".$conf->entity;
-    	$sql.= " AND box_id=".$obj->box_id;
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes";
+        $sql.= " WHERE entity = ".$conf->entity;
+        $sql.= " AND box_id=".$obj->box_id;
 
-    	$resql = $db->query($sql);
+        $resql = $db->query($sql);
 
-    	$db->commit();
+        $db->commit();
     }
 }
 
 if ($action == 'switch')
 {
-	// On permute les valeur du champ box_order des 2 lignes de la table boxes
-	$db->begin();
+    // On permute les valeur du champ box_order des 2 lignes de la table boxes
+    $db->begin();
 
-	$objfrom=new ModeleBoxes($db);
-	$objfrom->fetch($_GET["switchfrom"]);
+    $objfrom=new ModeleBoxes($db);
+    $objfrom->fetch($_GET["switchfrom"]);
 
-	$objto=new ModeleBoxes($db);
-	$objto->fetch($_GET["switchto"]);
+    $objto=new ModeleBoxes($db);
+    $objto->fetch($_GET["switchto"]);
 
-	$resultupdatefrom=0;
-	$resultupdateto=0;
-	if (is_object($objfrom) && is_object($objto))
-	{
-	    $newfirst=$objto->box_order;
-		$newsecond=$objfrom->box_order;
-	    if ($newfirst == $newsecond)
-	    {
-	         $newsecondchar=preg_replace('/[0-9]+/', '', $newsecond);
-	         $newsecondnum=preg_replace('/[a-zA-Z]+/', '', $newsecond);
-	         $newsecond=sprintf("%s%02d", $newsecondchar?$newsecondchar:'A', $newsecondnum+1);
-	    }
-		$sql="UPDATE ".MAIN_DB_PREFIX."boxes SET box_order='".$newfirst."' WHERE rowid=".$objfrom->rowid;
-		dol_syslog($sql);
-		$resultupdatefrom = $db->query($sql);
-		if (! $resultupdatefrom) { dol_print_error($db); }
+    $resultupdatefrom=0;
+    $resultupdateto=0;
+    if (is_object($objfrom) && is_object($objto))
+    {
+        $newfirst=$objto->box_order;
+        $newsecond=$objfrom->box_order;
+        if ($newfirst == $newsecond)
+        {
+             $newsecondchar=preg_replace('/[0-9]+/', '', $newsecond);
+             $newsecondnum=preg_replace('/[a-zA-Z]+/', '', $newsecond);
+             $newsecond=sprintf("%s%02d", $newsecondchar?$newsecondchar:'A', $newsecondnum+1);
+        }
+        $sql="UPDATE ".MAIN_DB_PREFIX."boxes SET box_order='".$newfirst."' WHERE rowid=".$objfrom->rowid;
+        dol_syslog($sql);
+        $resultupdatefrom = $db->query($sql);
+        if (! $resultupdatefrom) { dol_print_error($db); }
 
-		$sql="UPDATE ".MAIN_DB_PREFIX."boxes SET box_order='".$newsecond."' WHERE rowid=".$objto->rowid;
-		dol_syslog($sql);
-		$resultupdateto = $db->query($sql);
-		if (! $resultupdateto) { dol_print_error($db); }
-	}
+        $sql="UPDATE ".MAIN_DB_PREFIX."boxes SET box_order='".$newsecond."' WHERE rowid=".$objto->rowid;
+        dol_syslog($sql);
+        $resultupdateto = $db->query($sql);
+        if (! $resultupdateto) { dol_print_error($db); }
+    }
 
-	if ($resultupdatefrom && $resultupdateto)
-	{
-		$db->commit();
-	}
-	else
-	{
-		$db->rollback();
-	}
+    if ($resultupdatefrom && $resultupdateto)
+    {
+        $db->commit();
+    }
+    else
+    {
+        $db->rollback();
+    }
 }
 
 
@@ -243,78 +243,78 @@ dol_syslog("Search available boxes", LOG_DEBUG);
 $resql = $db->query($sql);
 if ($resql)
 {
-	$num = $db->num_rows($resql);
+    $num = $db->num_rows($resql);
 
-	// Check record to know if we must recalculate sort order
-	$i = 0;
-	$decalage=0;
-	while ($i < $num)
-	{
-		$obj = $db->fetch_object($resql);
-		$boxes[$obj->position][$obj->box_id]=1;
-		$i++;
+    // Check record to know if we must recalculate sort order
+    $i = 0;
+    $decalage=0;
+    while ($i < $num)
+    {
+        $obj = $db->fetch_object($resql);
+        $boxes[$obj->position][$obj->box_id]=1;
+        $i++;
 
-		array_push($actives, $obj->box_id);
+        array_push($actives, $obj->box_id);
 
-		if ($obj->box_order == '' || $obj->box_order == '0' || $decalage) $decalage++;
-		// On renumerote l'ordre des boites si l'une d'elle est a ''
-		// This occurs just after an insert.
-		if ($decalage)
-		{
-			$sql="UPDATE ".MAIN_DB_PREFIX."boxes SET box_order='".$decalage."' WHERE rowid=".$obj->rowid;
-			$db->query($sql);
-		}
-	}
+        if ($obj->box_order == '' || $obj->box_order == '0' || $decalage) $decalage++;
+        // On renumerote l'ordre des boites si l'une d'elle est a ''
+        // This occurs just after an insert.
+        if ($decalage)
+        {
+            $sql="UPDATE ".MAIN_DB_PREFIX."boxes SET box_order='".$decalage."' WHERE rowid=".$obj->rowid;
+            $db->query($sql);
+        }
+    }
 
-	if ($decalage)
-	{
-	    // Si on a renumerote, on corrige champ box_order
-		// This occurs just after an insert.
-		$sql = "SELECT box_order";
-		$sql.= " FROM ".MAIN_DB_PREFIX."boxes";
-		$sql.= " WHERE entity = ".$conf->entity;
-		$sql.= " AND LENGTH(box_order) <= 2";
+    if ($decalage)
+    {
+        // Si on a renumerote, on corrige champ box_order
+        // This occurs just after an insert.
+        $sql = "SELECT box_order";
+        $sql.= " FROM ".MAIN_DB_PREFIX."boxes";
+        $sql.= " WHERE entity = ".$conf->entity;
+        $sql.= " AND LENGTH(box_order) <= 2";
 
-		dol_syslog("Execute requests to renumber box order", LOG_DEBUG);
-		$result = $db->query($sql);
-		if ($result)
-		{
-			while ($record = $db->fetch_array($result))
-			{
-				if (dol_strlen($record['box_order']) == 1)
-				{
-					if (preg_match("/[13579]{1}/", substr($record['box_order'], -1)))
-					{
-						$box_order = "A0".$record['box_order'];
-						$sql="UPDATE ".MAIN_DB_PREFIX."boxes SET box_order = '".$box_order."' WHERE entity = ".$conf->entity." AND box_order = '".$record['box_order']."'";
-						$resql = $db->query($sql);
-					}
-					elseif (preg_match("/[02468]{1}/", substr($record['box_order'], -1)))
-					{
-						$box_order = "B0".$record['box_order'];
-						$sql="UPDATE ".MAIN_DB_PREFIX."boxes SET box_order = '".$box_order."' WHERE entity = ".$conf->entity." AND box_order = '".$record['box_order']."'";
-						$resql = $db->query($sql);
-					}
-				}
-				elseif (dol_strlen($record['box_order']) == 2)
-				{
-					if (preg_match("/[13579]{1}/", substr($record['box_order'], -1)))
-					{
-						$box_order = "A".$record['box_order'];
-						$sql="UPDATE ".MAIN_DB_PREFIX."boxes SET box_order = '".$box_order."' WHERE entity = ".$conf->entity." AND box_order = '".$record['box_order']."'";
-						$resql = $db->query($sql);
-					}
-					elseif (preg_match("/[02468]{1}/", substr($record['box_order'], -1)))
-					{
-						$box_order = "B".$record['box_order'];
-						$sql="UPDATE ".MAIN_DB_PREFIX."boxes SET box_order = '".$box_order."' WHERE entity = ".$conf->entity." AND box_order = '".$record['box_order']."'";
-						$resql = $db->query($sql);
-					}
-				}
-			}
-		}
-	}
-	$db->free($resql);
+        dol_syslog("Execute requests to renumber box order", LOG_DEBUG);
+        $result = $db->query($sql);
+        if ($result)
+        {
+            while ($record = $db->fetch_array($result))
+            {
+                if (dol_strlen($record['box_order']) == 1)
+                {
+                    if (preg_match("/[13579]{1}/", substr($record['box_order'], -1)))
+                    {
+                        $box_order = "A0".$record['box_order'];
+                        $sql="UPDATE ".MAIN_DB_PREFIX."boxes SET box_order = '".$box_order."' WHERE entity = ".$conf->entity." AND box_order = '".$record['box_order']."'";
+                        $resql = $db->query($sql);
+                    }
+                    elseif (preg_match("/[02468]{1}/", substr($record['box_order'], -1)))
+                    {
+                        $box_order = "B0".$record['box_order'];
+                        $sql="UPDATE ".MAIN_DB_PREFIX."boxes SET box_order = '".$box_order."' WHERE entity = ".$conf->entity." AND box_order = '".$record['box_order']."'";
+                        $resql = $db->query($sql);
+                    }
+                }
+                elseif (dol_strlen($record['box_order']) == 2)
+                {
+                    if (preg_match("/[13579]{1}/", substr($record['box_order'], -1)))
+                    {
+                        $box_order = "A".$record['box_order'];
+                        $sql="UPDATE ".MAIN_DB_PREFIX."boxes SET box_order = '".$box_order."' WHERE entity = ".$conf->entity." AND box_order = '".$record['box_order']."'";
+                        $resql = $db->query($sql);
+                    }
+                    elseif (preg_match("/[02468]{1}/", substr($record['box_order'], -1)))
+                    {
+                        $box_order = "B".$record['box_order'];
+                        $sql="UPDATE ".MAIN_DB_PREFIX."boxes SET box_order = '".$box_order."' WHERE entity = ".$conf->entity." AND box_order = '".$record['box_order']."'";
+                        $resql = $db->query($sql);
+                    }
+                }
+            }
+        }
+    }
+    $db->free($resql);
 }
 
 // Available boxes to activate
@@ -359,10 +359,10 @@ foreach($boxtoadd as $box)
     print '<td>';
     if ($box->note == '(WarningUsingThisBoxSlowDown)')
     {
-    	$langs->load("errors");
-    	print $langs->trans("WarningUsingThisBoxSlowDown");
+        $langs->load("errors");
+        print $langs->trans("WarningUsingThisBoxSlowDown");
     }
-	else print ($box->note?$box->note:'&nbsp;');
+    else print ($box->note?$box->note:'&nbsp;');
     print '</td>'."\n";
     print '<td>' . $box->sourcefile . '</td>'."\n";
 
@@ -376,7 +376,7 @@ foreach($boxtoadd as $box)
 }
 if (! count($boxtoadd) && count($boxactivated))
 {
-	print '<tr><td class="opacitymedium" colspan="4">'.$langs->trans("AllWidgetsWereEnabled").'</td></tr>';
+    print '<tr><td class="opacitymedium" colspan="4">'.$langs->trans("AllWidgetsWereEnabled").'</td></tr>';
 }
 print '</table>'."\n";
 print '</div>';
@@ -407,41 +407,41 @@ $box_order=1;
 $foundrupture=1;
 foreach($boxactivated as $key => $box)
 {
-	if (preg_match('/^([^@]+)@([^@]+)$/i', $box->boximg))
-	{
-		$logo = $box->boximg;
-	}
-	else
-	{
-		$logo=preg_replace("/^object_/i", "", $box->boximg);
-	}
+    if (preg_match('/^([^@]+)@([^@]+)$/i', $box->boximg))
+    {
+        $logo = $box->boximg;
+    }
+    else
+    {
+        $logo=preg_replace("/^object_/i", "", $box->boximg);
+    }
 
     print "\n".'<!-- Box '.$box->boxcode.' -->'."\n";
-	print '<tr class="oddeven">';
-	print '<td>'.img_object("", $logo).' '.$langs->transnoentitiesnoconv($box->boxlabel);
-	if (! empty($box->class) && preg_match('/graph_/', $box->class)) print ' ('.$langs->trans("Graph").')';
-	print '</td>';
-	print '<td>';
-	if ($box->note == '(WarningUsingThisBoxSlowDown)')
-	{
-		$langs->load("errors");
-		print img_warning('', 0).' '.$langs->trans("WarningUsingThisBoxSlowDown");
-	}
-	else print ($box->note?$box->note:'&nbsp;');
-	print '</td>';
-	print '<td class="center">' . (empty($pos_name[$box->position])?'':$langs->trans($pos_name[$box->position])) . '</td>';
-	$hasnext=($key < (count($boxactivated)-1));
-	$hasprevious=($key != 0);
-	print '<td class="center">'.($key+1).'</td>';
-	print '<td class="center">';
-	print ($hasnext?'<a href="boxes.php?action=switch&amp;switchfrom='.$box->rowid.'&amp;switchto='.$boxactivated[$key+1]->rowid.'">'.img_down().'</a>&nbsp;':'');
-	print ($hasprevious?'<a href="boxes.php?action=switch&amp;switchfrom='.$box->rowid.'&amp;switchto='.$boxactivated[$key-1]->rowid.'">'.img_up().'</a>':'');
-	print '</td>';
-	print '<td class="center">';
-	print '<a href="boxes.php?rowid='.$box->rowid.'&amp;action=delete">'.img_delete().'</a>';
-	print '</td>';
+    print '<tr class="oddeven">';
+    print '<td>'.img_object("", $logo).' '.$langs->transnoentitiesnoconv($box->boxlabel);
+    if (! empty($box->class) && preg_match('/graph_/', $box->class)) print ' ('.$langs->trans("Graph").')';
+    print '</td>';
+    print '<td>';
+    if ($box->note == '(WarningUsingThisBoxSlowDown)')
+    {
+        $langs->load("errors");
+        print img_warning('', 0).' '.$langs->trans("WarningUsingThisBoxSlowDown");
+    }
+    else print ($box->note?$box->note:'&nbsp;');
+    print '</td>';
+    print '<td class="center">' . (empty($pos_name[$box->position])?'':$langs->trans($pos_name[$box->position])) . '</td>';
+    $hasnext=($key < (count($boxactivated)-1));
+    $hasprevious=($key != 0);
+    print '<td class="center">'.($key+1).'</td>';
+    print '<td class="center">';
+    print ($hasnext?'<a href="boxes.php?action=switch&amp;switchfrom='.$box->rowid.'&amp;switchto='.$boxactivated[$key+1]->rowid.'">'.img_down().'</a>&nbsp;':'');
+    print ($hasprevious?'<a href="boxes.php?action=switch&amp;switchfrom='.$box->rowid.'&amp;switchto='.$boxactivated[$key-1]->rowid.'">'.img_up().'</a>':'');
+    print '</td>';
+    print '<td class="center">';
+    print '<a href="boxes.php?rowid='.$box->rowid.'&amp;action=delete">'.img_delete().'</a>';
+    print '</td>';
 
-	print '</tr>'."\n";
+    print '</tr>'."\n";
 }
 
 print '</table>';

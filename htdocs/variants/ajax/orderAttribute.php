@@ -1,6 +1,6 @@
 <?php
 
-/* Copyright (C) 2016	Marcos García	<marcosgdf@gmail.com>
+/* Copyright (C) 2016    Marcos García    <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,19 +34,19 @@ top_httphead();
 
 // Registering the location of boxes
 if (isset($_POST['roworder'])) {
-	$roworder=GETPOST('roworder', 'alpha', 2);
+    $roworder=GETPOST('roworder', 'alpha', 2);
 
-	dol_syslog("AjaxOrderAttribute roworder=".$roworder, LOG_DEBUG);
+    dol_syslog("AjaxOrderAttribute roworder=".$roworder, LOG_DEBUG);
 
-	$rowordertab = explode(',', $roworder);
+    $rowordertab = explode(',', $roworder);
 
-	foreach ($rowordertab as $value) {
-		if (!empty($value)) {
-			$newrowordertab[] = $value;
-		}
-	}
+    foreach ($rowordertab as $value) {
+        if (!empty($value)) {
+            $newrowordertab[] = $value;
+        }
+    }
 
-	require DOL_DOCUMENT_ROOT.'/variants/class/ProductAttribute.class.php';
+    require DOL_DOCUMENT_ROOT.'/variants/class/ProductAttribute.class.php';
 
-	ProductAttribute::bulkUpdateOrder($db, $newrowordertab);
+    ProductAttribute::bulkUpdateOrder($db, $newrowordertab);
 }

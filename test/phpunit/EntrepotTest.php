@@ -18,22 +18,22 @@
 
 /**
  *      \file       test/phpunit/EntrepotTest.php
- *		\ingroup    test
+ *        \ingroup    test
  *      \brief      PHPUnit test
- *		\remarks	To run this script as CLI:  phpunit filename.php
+ *        \remarks    To run this script as CLI:  phpunit filename.php
  */
 
 global $conf,$user,$langs,$db;
-//define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
+//define('TEST_DB_FORCE_TYPE','mysql');    // This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/product/stock/class/entrepot.class.php';
 
 if (empty($user->id))
 {
-	print "Load permissions for admin user nb 1\n";
-	$user->fetch(1);
-	$user->getrights();
+    print "Load permissions for admin user nb 1\n";
+    $user->fetch(1);
+    $user->getrights();
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 
@@ -43,173 +43,173 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
- * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
+ * @remarks    backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
 class EntrepotTest extends PHPUnit_Framework_TestCase
 {
-	protected $savconf;
-	protected $savuser;
-	protected $savlangs;
-	protected $savdb;
+    protected $savconf;
+    protected $savuser;
+    protected $savlangs;
+    protected $savdb;
 
-	/**
-	 * Constructor
-	 * We save global variables into local variables
-	 *
-	 * @return EntrepotTest
-	 */
-	public function __construct()
-	{
-		parent::__construct();
+    /**
+     * Constructor
+     * We save global variables into local variables
+     *
+     * @return EntrepotTest
+     */
+    public function __construct()
+    {
+        parent::__construct();
 
-		//$this->sharedFixture
-		global $conf,$user,$langs,$db;
-		$this->savconf=$conf;
-		$this->savuser=$user;
-		$this->savlangs=$langs;
-		$this->savdb=$db;
+        //$this->sharedFixture
+        global $conf,$user,$langs,$db;
+        $this->savconf=$conf;
+        $this->savuser=$user;
+        $this->savlangs=$langs;
+        $this->savdb=$db;
 
-		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-		//print " - db ".$db->db;
-		print "\n";
-	}
+        print __METHOD__." db->type=".$db->type." user->id=".$user->id;
+        //print " - db ".$db->db;
+        print "\n";
+    }
 
     // Static methods
     public static function setUpBeforeClass()
     {
-    	global $conf,$user,$langs,$db;
+        global $conf,$user,$langs,$db;
 
-    	if (empty($conf->stock->enabled)) { print __METHOD__." Module Stock must be enabled.\n"; die(); }
+        if (empty($conf->stock->enabled)) { print __METHOD__." Module Stock must be enabled.\n"; die(); }
 
-        $db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
+        $db->begin();    // This is to have all actions inside a transaction even if test launched without suite.
 
-    	print __METHOD__."\n";
+        print __METHOD__."\n";
     }
 
     // tear down after class
     public static function tearDownAfterClass()
     {
-    	global $conf,$user,$langs,$db;
-		$db->rollback();
+        global $conf,$user,$langs,$db;
+        $db->rollback();
 
-		print __METHOD__."\n";
+        print __METHOD__."\n";
     }
 
-	/**
-	 * Init phpunit tests
-	 *
-	 * @return	void
-	 */
+    /**
+     * Init phpunit tests
+     *
+     * @return    void
+     */
     protected function setUp()
     {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-		print __METHOD__."\n";
+        print __METHOD__."\n";
     }
 
-	/**
-	 * End phpunit tests
-	 *
-	 * @return	void
-	 */
+    /**
+     * End phpunit tests
+     *
+     * @return    void
+     */
     protected function tearDown()
     {
-    	print __METHOD__."\n";
+        print __METHOD__."\n";
     }
 
     /**
      * testEntrepotCreate
      *
-     * @return	void
+     * @return    void
      */
     public function testEntrepotCreate()
     {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-		$localobject=new Entrepot($this->savdb);
-    	$localobject->initAsSpecimen();
-    	$result=$localobject->create($user);
+        $localobject=new Entrepot($this->savdb);
+        $localobject->initAsSpecimen();
+        $result=$localobject->create($user);
 
         print __METHOD__." result=".$result."\n";
-    	$this->assertLessThanOrEqual($result, 0);
+        $this->assertLessThanOrEqual($result, 0);
 
-    	return $result;
+        return $result;
     }
 
     /**
      * testEntrepotFetch
      *
-     * @param	int		$id		Id entrepot
-     * @return	Entrepot
+     * @param    int        $id        Id entrepot
+     * @return    Entrepot
      *
-     * @depends	testEntrepotCreate
+     * @depends    testEntrepotCreate
      * The depends says test is run only if previous is ok
      */
     public function testEntrepotFetch($id)
     {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-		$localobject=new Entrepot($this->savdb);
-    	$result=$localobject->fetch($id);
+        $localobject=new Entrepot($this->savdb);
+        $result=$localobject->fetch($id);
         print __METHOD__." id=".$id." result=".$result."\n";
-    	$this->assertLessThan($result, 0);
+        $this->assertLessThan($result, 0);
 
-    	return $localobject;
+        return $localobject;
     }
 
     /**
      * testEntrepotUpdate
      *
-     * @param	Entrepot	$localobject	Entrepot
-     * @return	void
+     * @param    Entrepot    $localobject    Entrepot
+     * @return    void
      *
-     * @depends	testEntrepotFetch
+     * @depends    testEntrepotFetch
      * The depends says test is run only if previous is ok
      */
     public function testEntrepotUpdate($localobject)
     {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-		$localobject->note='New note after update';
-    	$result=$localobject->update($localobject->id, $user);
-    	print __METHOD__." id=".$localobject->id." result=".$result."\n";
-    	$this->assertLessThan($result, 0);
+        $localobject->note='New note after update';
+        $result=$localobject->update($localobject->id, $user);
+        print __METHOD__." id=".$localobject->id." result=".$result."\n";
+        $this->assertLessThan($result, 0);
 
-    	return $localobject;
+        return $localobject;
     }
 
     /**
      * testEntrepotOther
      *
-     * @param	Entrepot	$localobject	Entrepot
-     * @return	void
+     * @param    Entrepot    $localobject    Entrepot
+     * @return    void
      *
-     * @depends	testEntrepotUpdate
+     * @depends    testEntrepotUpdate
      * The depends says test is run only if previous is ok
      */
     public function testEntrepotOther($localobject)
     {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
 
         return $localobject->id;
@@ -218,34 +218,34 @@ class EntrepotTest extends PHPUnit_Framework_TestCase
     /**
      * testEntrepotDelete
      *
-     * @param		int		$id		Id of entrepot
-     * @return		void
+     * @param        int        $id        Id of entrepot
+     * @return        void
      *
-     * @depends	testEntrepotOther
+     * @depends    testEntrepotOther
      * The depends says test is run only if previous is ok
      */
     public function testEntrepotDelete($id)
     {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-		$localobject=new Entrepot($this->savdb);
-    	$result=$localobject->fetch($id);
+        $localobject=new Entrepot($this->savdb);
+        $result=$localobject->fetch($id);
 
-    	$result=$localobject->delete($user);
-		print __METHOD__." id=".$id." result=".$result."\n";
-    	$this->assertLessThan($result, 0);
+        $result=$localobject->delete($user);
+        print __METHOD__." id=".$id." result=".$result."\n";
+        $this->assertLessThan($result, 0);
 
-    	return $result;
+        return $result;
     }
 
     /**
      * testEntrepotStatic
      *
-     * @return	void
+     * @return    void
      */
     public function testEntrepotStatic()
     {

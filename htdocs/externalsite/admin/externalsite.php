@@ -26,7 +26,7 @@
  *    \brief      Page de configuration du module externalsite
  */
 
-if (! defined('NOSCANPOSTFORINJECTION')) define('NOSCANPOSTFORINJECTION', '1');		// Do not check anti CSRF attack test
+if (! defined('NOSCANPOSTFORINJECTION')) define('NOSCANPOSTFORINJECTION', '1');        // Do not check anti CSRF attack test
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
@@ -49,7 +49,7 @@ if ($action == 'update')
 
     $db->begin();
 
-	$label  = GETPOST('EXTERNALSITE_LABEL', 'alpha');
+    $label  = GETPOST('EXTERNALSITE_LABEL', 'alpha');
     $exturl = GETPOST('EXTERNALSITE_URL', 'none');
 
     $i+=dolibarr_set_const($db, 'EXTERNALSITE_LABEL', trim($label), 'chaine', 0, '', $conf->entity);
@@ -58,12 +58,12 @@ if ($action == 'update')
     if ($i >= 2)
     {
         $db->commit();
-	    setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
     else
     {
         $db->rollback();
-	    setEventMessages($db->lasterror(), null, 'errors');
+        setEventMessages($db->lasterror(), null, 'errors');
     }
 }
 

@@ -20,9 +20,9 @@
  */
 
 /**
- *	\file       htdocs/fichinter/index.php
- *	\ingroup    commande
- *	\brief      Home page of interventional module
+ *    \file       htdocs/fichinter/index.php
+ *    \ingroup    commande
+ *    \brief      Home page of interventional module
  */
 
 require '../main.inc.php';
@@ -39,8 +39,8 @@ $langs->load("interventions");
 $socid=GETPOST('socid', 'int');
 if ($user->societe_id > 0)
 {
-	$action = '';
-	$socid = $user->societe_id;
+    $action = '';
+    $socid = $user->societe_id;
 }
 
 
@@ -175,39 +175,39 @@ else
  */
 if (! empty($conf->ficheinter->enabled))
 {
-	$sql = "SELECT f.rowid, f.ref, s.nom as name, s.rowid as socid";
-	$sql.= " FROM ".MAIN_DB_PREFIX."fichinter as f";
-	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
-	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql.= " WHERE f.entity IN (".getEntity('intervention').")";
-	$sql.= " AND f.fk_soc = s.rowid";
-	$sql.= " AND f.fk_statut = 0";
-	if ($socid) $sql.= " AND f.fk_soc = ".$socid;
-	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+    $sql = "SELECT f.rowid, f.ref, s.nom as name, s.rowid as socid";
+    $sql.= " FROM ".MAIN_DB_PREFIX."fichinter as f";
+    $sql.= ", ".MAIN_DB_PREFIX."societe as s";
+    if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+    $sql.= " WHERE f.entity IN (".getEntity('intervention').")";
+    $sql.= " AND f.fk_soc = s.rowid";
+    $sql.= " AND f.fk_statut = 0";
+    if ($socid) $sql.= " AND f.fk_soc = ".$socid;
+    if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 
-	$resql=$db->query($sql);
-	if ($resql)
-	{
-		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre">';
-		print '<th colspan="2">'.$langs->trans("DraftFichinter").'</th></tr>';
-		$langs->load("fichinter");
-		$num = $db->num_rows($resql);
-		if ($num)
-		{
-			$i = 0;
-			while ($i < $num)
-			{
-				$obj = $db->fetch_object($resql);
-				print '<tr class="oddeven">';
-				print '<td class="nowrap">';
-				print "<a href=\"card.php?id=".$obj->rowid."\">".img_object($langs->trans("ShowFichinter"), "intervention").' '.$obj->ref."</a></td>";
-				print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"), "company").' '.dol_trunc($obj->name, 24).'</a></td></tr>';
-				$i++;
-			}
-		}
-		print "</table><br>";
-	}
+    $resql=$db->query($sql);
+    if ($resql)
+    {
+        print '<table class="noborder" width="100%">';
+        print '<tr class="liste_titre">';
+        print '<th colspan="2">'.$langs->trans("DraftFichinter").'</th></tr>';
+        $langs->load("fichinter");
+        $num = $db->num_rows($resql);
+        if ($num)
+        {
+            $i = 0;
+            while ($i < $num)
+            {
+                $obj = $db->fetch_object($resql);
+                print '<tr class="oddeven">';
+                print '<td class="nowrap">';
+                print "<a href=\"card.php?id=".$obj->rowid."\">".img_object($langs->trans("ShowFichinter"), "intervention").' '.$obj->ref."</a></td>";
+                print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"), "company").' '.dol_trunc($obj->name, 24).'</a></td></tr>';
+                $i++;
+            }
+        }
+        print "</table><br>";
+    }
 }
 
 
@@ -236,50 +236,50 @@ $sql.= $db->plimit($max, 0);
 $resql=$db->query($sql);
 if ($resql)
 {
-	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre">';
-	print '<th colspan="4">'.$langs->trans("LastModifiedInterventions", $max).'</th></tr>';
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre">';
+    print '<th colspan="4">'.$langs->trans("LastModifiedInterventions", $max).'</th></tr>';
 
-	$num = $db->num_rows($resql);
-	if ($num)
-	{
-		$i = 0;
-		while ($i < $num)
-		{
-			$obj = $db->fetch_object($resql);
+    $num = $db->num_rows($resql);
+    if ($num)
+    {
+        $i = 0;
+        while ($i < $num)
+        {
+            $obj = $db->fetch_object($resql);
 
-			print '<tr class="oddeven">';
-			print '<td width="20%" class="nowrap">';
+            print '<tr class="oddeven">';
+            print '<td width="20%" class="nowrap">';
 
-			$fichinterstatic->id=$obj->rowid;
-			$fichinterstatic->ref=$obj->ref;
+            $fichinterstatic->id=$obj->rowid;
+            $fichinterstatic->ref=$obj->ref;
 
-			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-			print '<td width="96" class="nobordernopadding nowrap">';
-			print $fichinterstatic->getNomUrl(1);
-			print '</td>';
+            print '<table class="nobordernopadding"><tr class="nocellnopadd">';
+            print '<td width="96" class="nobordernopadding nowrap">';
+            print $fichinterstatic->getNomUrl(1);
+            print '</td>';
 
-			print '<td width="16" class="nobordernopadding nowrap">';
-			print '&nbsp;';
-			print '</td>';
+            print '<td width="16" class="nobordernopadding nowrap">';
+            print '&nbsp;';
+            print '</td>';
 
-			print '<td width="16" class="right nobordernopadding hideonsmartphone">';
-			$filename=dol_sanitizeFileName($obj->ref);
-			$filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($obj->ref);
-			$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
-			print $formfile->getDocumentsLink($fichinterstatic->element, $filename, $filedir);
-			print '</td></tr></table>';
+            print '<td width="16" class="right nobordernopadding hideonsmartphone">';
+            $filename=dol_sanitizeFileName($obj->ref);
+            $filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($obj->ref);
+            $urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
+            print $formfile->getDocumentsLink($fichinterstatic->element, $filename, $filedir);
+            print '</td></tr></table>';
 
-			print '</td>';
+            print '</td>';
 
-			print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"), "company").' '.$obj->name.'</a></td>';
-			print '<td>'.dol_print_date($db->jdate($obj->datem), 'day').'</td>';
-			print '<td class="right">'.$fichinterstatic->LibStatut($obj->fk_statut, 5).'</td>';
-			print '</tr>';
-			$i++;
-		}
-	}
-	print "</table><br>";
+            print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"), "company").' '.$obj->name.'</a></td>';
+            print '<td>'.dol_print_date($db->jdate($obj->datem), 'day').'</td>';
+            print '<td class="right">'.$fichinterstatic->LibStatut($obj->fk_statut, 5).'</td>';
+            print '</tr>';
+            $i++;
+        }
+    }
+    print "</table><br>";
 }
 else dol_print_error($db);
 
@@ -290,68 +290,68 @@ else dol_print_error($db);
 
 if (! empty($conf->ficheinter->enabled))
 {
-	$sql = "SELECT f.rowid, f.ref, f.fk_statut, s.nom as name, s.rowid as socid";
-	$sql.=" FROM ".MAIN_DB_PREFIX."fichinter as f";
-	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
-	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql.= " WHERE f.entity IN (".getEntity('intervention').")";
-	$sql.= " AND f.fk_soc = s.rowid";
-	$sql.= " AND f.fk_statut = 1";
-	if ($socid) $sql.= " AND f.fk_soc = ".$socid;
-	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-	$sql.= " ORDER BY f.rowid DESC";
+    $sql = "SELECT f.rowid, f.ref, f.fk_statut, s.nom as name, s.rowid as socid";
+    $sql.=" FROM ".MAIN_DB_PREFIX."fichinter as f";
+    $sql.= ", ".MAIN_DB_PREFIX."societe as s";
+    if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+    $sql.= " WHERE f.entity IN (".getEntity('intervention').")";
+    $sql.= " AND f.fk_soc = s.rowid";
+    $sql.= " AND f.fk_statut = 1";
+    if ($socid) $sql.= " AND f.fk_soc = ".$socid;
+    if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+    $sql.= " ORDER BY f.rowid DESC";
 
-	$resql=$db->query($sql);
-	if ($resql)
-	{
-		$num = $db->num_rows($resql);
+    $resql=$db->query($sql);
+    if ($resql)
+    {
+        $num = $db->num_rows($resql);
 
-		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre">';
-		print '<th colspan="3">'.$langs->trans("FichinterToProcess").' <a href="'.DOL_URL_ROOT.'/fichinter/list.php?viewstatut=1"><span class="badge">'.$num.'</span></a></th></tr>';
+        print '<table class="noborder" width="100%">';
+        print '<tr class="liste_titre">';
+        print '<th colspan="3">'.$langs->trans("FichinterToProcess").' <a href="'.DOL_URL_ROOT.'/fichinter/list.php?viewstatut=1"><span class="badge">'.$num.'</span></a></th></tr>';
 
-		if ($num)
-		{
-			$i = 0;
-			while ($i < $num)
-			{
-				$obj = $db->fetch_object($resql);
-				print '<tr class="oddeven">';
-				print '<td class="nowrap" width="20%">';
+        if ($num)
+        {
+            $i = 0;
+            while ($i < $num)
+            {
+                $obj = $db->fetch_object($resql);
+                print '<tr class="oddeven">';
+                print '<td class="nowrap" width="20%">';
 
-				$fichinterstatic->id=$obj->rowid;
-				$fichinterstatic->ref=$obj->ref;
+                $fichinterstatic->id=$obj->rowid;
+                $fichinterstatic->ref=$obj->ref;
 
-				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-				print '<td width="96" class="nobordernopadding nowrap">';
-				print $fichinterstatic->getNomUrl(1);
-				print '</td>';
+                print '<table class="nobordernopadding"><tr class="nocellnopadd">';
+                print '<td width="96" class="nobordernopadding nowrap">';
+                print $fichinterstatic->getNomUrl(1);
+                print '</td>';
 
-				print '<td width="16" class="nobordernopadding nowrap">';
-				print '&nbsp;';
-				print '</td>';
+                print '<td width="16" class="nobordernopadding nowrap">';
+                print '&nbsp;';
+                print '</td>';
 
-				print '<td width="16" class="right nobordernopadding hideonsmartphone">';
-				$filename=dol_sanitizeFileName($obj->ref);
-				$filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($obj->ref);
-				$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
-				print $formfile->getDocumentsLink($fichinterstatic->element, $filename, $filedir);
-				print '</td></tr></table>';
+                print '<td width="16" class="right nobordernopadding hideonsmartphone">';
+                $filename=dol_sanitizeFileName($obj->ref);
+                $filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($obj->ref);
+                $urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
+                print $formfile->getDocumentsLink($fichinterstatic->element, $filename, $filedir);
+                print '</td></tr></table>';
 
-				print '</td>';
+                print '</td>';
 
-				print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"), "company").' '.dol_trunc($obj->name, 24).'</a></td>';
+                print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"), "company").' '.dol_trunc($obj->name, 24).'</a></td>';
 
-				print '<td class="right">'.$fichinterstatic->LibStatut($obj->fk_statut, 5).'</td>';
+                print '<td class="right">'.$fichinterstatic->LibStatut($obj->fk_statut, 5).'</td>';
 
-				print '</tr>';
-				$i++;
-			}
-		}
+                print '</tr>';
+                $i++;
+            }
+        }
 
-		print "</table><br>";
-	}
-	else dol_print_error($db);
+        print "</table><br>";
+    }
+    else dol_print_error($db);
 }
 
 print '</div></div></div>';

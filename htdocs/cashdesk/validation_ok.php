@@ -16,9 +16,9 @@
  */
 
 /**
- *	\file       htdocs/cashdesk/validation_ok.php
- *	\ingroup    cashdesk
- *	\brief      validation_ok.php
+ *    \file       htdocs/cashdesk/validation_ok.php
+ *    \ingroup    cashdesk
+ *    \brief      validation_ok.php
  */
 
 // Affichage des templates

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014	Alexandre Spangaro	<aspangaro@open-dsi.fr>
+/* Copyright (C) 2014    Alexandre Spangaro    <aspangaro@open-dsi.fr>
  * Copyright (C) 2015	Frederic France		<frederic.france@free.fr>
  * Copyright (C) 2017	Regis Houssin		<regis.houssin@inodbox.com>
  *
@@ -92,7 +92,7 @@ llxHeader('', $title, $helpurl);
 if ($object->id)
 {
     $head = contact_prepare_head($object);
-	$title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
+    $title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
 
     dol_fiche_head($head, 'documents', $title, -1, 'contact');
 
@@ -130,20 +130,20 @@ if ($object->id)
     /*
     if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
     {
-    	if ($object->socid > 0)
-    	{
-    		$objsoc = new Societe($db);
-    		$objsoc->fetch($object->socid);
+        if ($object->socid > 0)
+        {
+            $objsoc = new Societe($db);
+            $objsoc->fetch($object->socid);
 
-    		print '<tr><td>'.$langs->trans("ThirdParty").'</td><td colspan="3">'.$objsoc->getNomUrl(1).'</td></tr>';
-    	}
+            print '<tr><td>'.$langs->trans("ThirdParty").'</td><td colspan="3">'.$objsoc->getNomUrl(1).'</td></tr>';
+        }
 
-    	else
-    	{
-    		print '<tr><td>'.$langs->trans("ThirdParty").'</td><td colspan="3">';
-    		print $langs->trans("ContactNotLinkedToCompany");
-    		print '</td></tr>';
-    	}
+        else
+        {
+            print '<tr><td>'.$langs->trans("ThirdParty").'</td><td colspan="3">';
+            print $langs->trans("ContactNotLinkedToCompany");
+            print '</td></tr>';
+        }
     }*/
 
     // Civility

@@ -18,8 +18,8 @@
 */
 
 /**
- *		\file 		htdocs/admin/tools/export.php
- *		\brief      Page to export a database into a dump file
+ *        \file         htdocs/admin/tools/export.php
+ *        \brief      Page to export a database into a dump file
  */
 
 require '../../main.inc.php';
@@ -63,11 +63,11 @@ $errormsg='';
 
 if ($action == 'delete')
 {
-	$file=$conf->admin->dir_output.'/'.GETPOST('urlfile');
-	$ret=dol_delete_file($file, 1);
-	if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
-	else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
-	$action='';
+    $file=$conf->admin->dir_output.'/'.GETPOST('urlfile');
+    $ret=dol_delete_file($file, 1);
+    if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
+    else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
+    $action='';
 }
 
 
@@ -123,7 +123,7 @@ $utils = new Utils($db);
 if ($what == 'mysql')
 {
 
-    $cmddump=GETPOST("mysqldump");	// Do not sanitize here with 'alpha', will be sanitize later by dol_sanitizePathName and escapeshellarg
+    $cmddump=GETPOST("mysqldump");    // Do not sanitize here with 'alpha', will be sanitize later by dol_sanitizePathName and escapeshellarg
     $cmddump=dol_sanitizePathName($cmddump);
 
     if (! empty($dolibarr_main_restrict_os_commands))
@@ -173,7 +173,7 @@ if ($what == 'mysqlnobin')
 // POSTGRESQL
 if ($what == 'postgresql')
 {
-    $cmddump=GETPOST("postgresqldump");	// Do not sanitize here with 'alpha', will be sanitize later by dol_sanitizePathName and escapeshellarg
+    $cmddump=GETPOST("postgresqldump");    // Do not sanitize here with 'alpha', will be sanitize later by dol_sanitizePathName and escapeshellarg
     $cmddump=dol_sanitizePathName($cmddump);
 
     if (! $errormsg && $cmddump)
@@ -196,17 +196,17 @@ if ($what == 'postgresql')
 
 if ($errormsg)
 {
-	setEventMessages($langs->trans("Error")." : ".$errormsg, null, 'errors');
+    setEventMessages($langs->trans("Error")." : ".$errormsg, null, 'errors');
 
-	$resultstring='';
+    $resultstring='';
     $resultstring.='<div class="error">'.$langs->trans("Error")." : ".$errormsg.'</div>';
 
     $_SESSION["commandbackupresult"]=$resultstring;
 }
 else
 {
-	if ($what)
-	{
+    if ($what)
+    {
         setEventMessages($langs->trans("BackupFileSuccessfullyCreated").'.<br>'.$langs->trans("YouCanDownloadBackupFile"), null, 'mesgs');
 
         $resultstring='<div class="ok">';
@@ -215,11 +215,11 @@ else
         $resultstring.='<div>';
 
         $_SESSION["commandbackupresult"]=$resultstring;
-	}
-	/*else
-	{
-		setEventMessages($langs->trans("YouMustRunCommandFromCommandLineAfterLoginToUser",$dolibarr_main_db_user,$dolibarr_main_db_user), null, 'warnings');
-	}*/
+    }
+    /*else
+    {
+        setEventMessages($langs->trans("YouMustRunCommandFromCommandLineAfterLoginToUser",$dolibarr_main_db_user,$dolibarr_main_db_user), null, 'warnings');
+    }*/
 }
 
 

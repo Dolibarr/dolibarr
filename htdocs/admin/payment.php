@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2015  Juanjo Menent				<jmenent@2byte.es>
+/* Copyright (C) 2015  Juanjo Menent                <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
 
 /**
  *      \file       htdocs/admin/payment.php
- *		\ingroup    facture
- *		\brief      Page to setup invoices payments
+ *        \ingroup    facture
+ *        \brief      Page to setup invoices payments
  */
 
 require '../main.inc.php';
@@ -69,20 +69,20 @@ if ($action == 'setmod')
 
 if ($action == 'setparams')
 {
-	$freetext = GETPOST('FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS', 'none');	// No alpha here, we want exact string
+    $freetext = GETPOST('FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS', 'none');    // No alpha here, we want exact string
 
-	$res = dolibarr_set_const($db, "FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS", $freetext, 'chaine', 0, '', $conf->entity);
+    $res = dolibarr_set_const($db, "FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS", $freetext, 'chaine', 0, '', $conf->entity);
 
-	if (! $res > 0) $error++;
+    if (! $res > 0) $error++;
 
-	if ($error)
-	{
-		setEventMessages($langs->trans("Error"), null, 'errors');
-	}
-	if (! $error)
-	{
-	    setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	}
+    if ($error)
+    {
+        setEventMessages($langs->trans("Error"), null, 'errors');
+    }
+    if (! $error)
+    {
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    }
 }
 
 

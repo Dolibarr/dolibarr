@@ -358,7 +358,7 @@ class BankAccounts extends DolibarrApi
     /**
      * Add a link to an account line
      *
-     * @param int    $id    		ID of account
+     * @param int    $id            ID of account
      * @param int    $line_id       ID of account line
      * @param int    $url_id        ID to set in the URL {@from body}
      * @param string $url           URL of the link {@from body}

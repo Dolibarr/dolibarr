@@ -16,9 +16,9 @@
  */
 
 /**
- *	\file       htdocs/product/dynamic_price/class/price_parser.class.php
- *	\ingroup    product
- *	\brief      File of class to calculate prices using expression
+ *    \file       htdocs/product/dynamic_price/class/price_parser.class.php
+ *    \ingroup    product
+ *    \brief      File of class to calculate prices using expression
  */
 require_once DOL_DOCUMENT_ROOT.'/includes/evalmath/evalmath.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
@@ -47,7 +47,7 @@ class PriceParser
     /**
      *  Constructor
      *
-     *  @param      DoliDB		$db      Database handler
+     *  @param      DoliDB        $db      Database handler
      */
     public function __construct($db)
     {
@@ -55,9 +55,9 @@ class PriceParser
     }
 
     /**
-     *	Returns translated error
+     *    Returns translated error
      *
-     *	@return string      Translated error
+     *    @return string      Translated error
      */
     public function translatedError()
     {
@@ -123,12 +123,12 @@ class PriceParser
     }
 
     /**
-     *	Calculates price based on expression
+     *    Calculates price based on expression
      *
-     *	@param	Product	$product    	The Product object to get information
-     *	@param	String 	$expression     The expression to parse
-     *	@param	array  	$values     	Strings to replaces
-     *  @return int 					> 0 if OK, < 1 if KO
+     *    @param    Product    $product        The Product object to get information
+     *    @param    String     $expression     The expression to parse
+     *    @param    array      $values         Strings to replaces
+     *  @return int                     > 0 if OK, < 1 if KO
      */
     public function parseExpression($product, $expression, $values)
     {
@@ -158,12 +158,12 @@ class PriceParser
         $extralabels = $extrafields->fetch_name_optionals_label('product', true);
         $product->fetch_optionals();
         if (is_array($extrafields->attributes[$product->table_element]['label']))
-		{
-			foreach ($extrafields->attributes[$product->table_element]['label'] as $key=>$label)
-			{
-				$values["extrafield_".$key] = $product->array_options['options_'.$key];
-			}
-		}
+        {
+            foreach ($extrafields->attributes[$product->table_element]['label'] as $key=>$label)
+            {
+                $values["extrafield_".$key] = $product->array_options['options_'.$key];
+            }
+        }
 
         //Process any pending updaters
         $price_updaters = new PriceGlobalVariableUpdater($this->db);
@@ -246,11 +246,11 @@ class PriceParser
     }
 
     /**
-     *	Calculates product price based on product id and associated expression
+     *    Calculates product price based on product id and associated expression
      *
-     *	@param	Product				$product    	The Product object to get information
-     *	@param	array 				$extra_values   Any aditional values for expression
-     *	@return int 						> 0 if OK, < 1 if KO
+     *    @param    Product                $product        The Product object to get information
+     *    @param    array                 $extra_values   Any aditional values for expression
+     *    @return int                         > 0 if OK, < 1 if KO
      */
     public function parseProduct($product, $extra_values = array())
     {
@@ -282,11 +282,11 @@ class PriceParser
     }
 
     /**
-     *	Calculates supplier product price based on product supplier price and associated expression
+     *    Calculates supplier product price based on product supplier price and associated expression
      *
-     *	@param	ProductFournisseur	$product_supplier   The Product supplier object to get information
-     *	@param	array 				$extra_values       Any aditional values for expression
-     *  @return int 				> 0 if OK, < 1 if KO
+     *    @param    ProductFournisseur    $product_supplier   The Product supplier object to get information
+     *    @param    array                 $extra_values       Any aditional values for expression
+     *  @return int                 > 0 if OK, < 1 if KO
      */
     public function parseProductSupplier($product_supplier, $extra_values = array())
     {
@@ -315,10 +315,10 @@ class PriceParser
     /**
      *  Tests string expression for validity
      *
-     *  @param  int					$product_id    	The Product id to get information
-     *  @param  string 				$expression     The expression to parse
-     *  @param  array 				$extra_values   Any aditional values for expression
-     *  @return int 				> 0 if OK, < 1 if KO
+     *  @param  int                    $product_id        The Product id to get information
+     *  @param  string                 $expression     The expression to parse
+     *  @param  array                 $extra_values   Any aditional values for expression
+     *  @return int                 > 0 if OK, < 1 if KO
      */
     public function testExpression($product_id, $expression, $extra_values = array())
     {

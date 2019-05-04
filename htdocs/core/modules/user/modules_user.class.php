@@ -21,8 +21,8 @@
 
 
 /**
- *	    \class      ModeleProductCode
- *		\brief  	Parent class for product code generators
+ *        \class      ModeleProductCode
+ *        \brief      Parent class for product code generators
  */
 
 /**
@@ -34,34 +34,34 @@
  require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
 
 /**
- *	Parent class to manage intervention document templates
+ *    Parent class to manage intervention document templates
  */
 abstract class ModelePDFUser extends CommonDocGenerator
 {
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error='';
+    /**
+     * @var string Error code (or message)
+     */
+    public $error='';
 
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *	Return list of active generation modules
-	 *
-     *  @param	DoliDB	$db     			Database handler
-     *  @param  integer	$maxfilenamelength  Max length of value to show
-     *  @return	array						List of templates
-	 */
-	public static function liste_modeles($db, $maxfilenamelength = 0)
-	{
+    /**
+     *    Return list of active generation modules
+     *
+     *  @param    DoliDB    $db                 Database handler
+     *  @param  integer    $maxfilenamelength  Max length of value to show
+     *  @return    array                        List of templates
+     */
+    public static function liste_modeles($db, $maxfilenamelength = 0)
+    {
         // phpcs:enable
-		global $conf;
+        global $conf;
 
-		$type='user';
-		$liste=array();
+        $type='user';
+        $liste=array();
 
-		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste=getListOfModels($db, $type, $maxfilenamelength);
-		return $liste;
-	}
+        include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+        $liste=getListOfModels($db, $type, $maxfilenamelength);
+        return $liste;
+    }
 }

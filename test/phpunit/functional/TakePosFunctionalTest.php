@@ -41,32 +41,32 @@ use PHPUnit_Extensions_Selenium2TestCase_WebDriverException;
  */
 class TakePosFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 {
-	// TODO: move to a global configuration file?
-	/** @var string Base URL of the webserver under test */
-	protected static $base_url = 'http://dev.zenfusion.fr';
-	/**
-	 * @var string Dolibarr admin username
-	 * @see authenticate
-	 */
-	protected static $dol_admin_user = 'admin';
-	/**
-	 * @var string Dolibarr admin password
-	 * @see authenticate
-	 */
-	protected static $dol_admin_pass = 'admin';
-	/** @var int Dolibarr module ID */
-	private static $module_id = 500000; // TODO: autodetect?
+    // TODO: move to a global configuration file?
+    /** @var string Base URL of the webserver under test */
+    protected static $base_url = 'http://dev.zenfusion.fr';
+    /**
+     * @var string Dolibarr admin username
+     * @see authenticate
+     */
+    protected static $dol_admin_user = 'admin';
+    /**
+     * @var string Dolibarr admin password
+     * @see authenticate
+     */
+    protected static $dol_admin_pass = 'admin';
+    /** @var int Dolibarr module ID */
+    private static $module_id = 500000; // TODO: autodetect?
 
-	/** @var array Browsers to test with */
-	public static $browsers = array(
-		array(
-			'browser' => 'Google Chrome on Linux',
-			'browserName' => 'chrome',
-			'sessionStrategy' => 'shared',
-			'desiredCapabilities' => array()
-		),
-		// Geckodriver does not keep the session at the moment?!
-		// XPath selectors also don't seem to work
+    /** @var array Browsers to test with */
+    public static $browsers = array(
+        array(
+            'browser' => 'Google Chrome on Linux',
+            'browserName' => 'chrome',
+            'sessionStrategy' => 'shared',
+            'desiredCapabilities' => array()
+        ),
+        // Geckodriver does not keep the session at the moment?!
+        // XPath selectors also don't seem to work
 //        array(
 //            'browser' => 'Mozilla Firefox on Linux',
 //            'browserName' => 'firefox',
@@ -75,243 +75,243 @@ class TakePosFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 //                'marionette' => true
 //            )
 //        )
-	);
+    );
 
-	/**
-	 * Helper function to select links by href
-	 *
-	 * @param  string  $value      Href
-	 * @return mixed               Helper string
-	 */
-	protected function byHref($value)
-	{
-		$anchor = null;
-		$anchors = $this->elements($this->using('tag name')->value('a'));
-		foreach ($anchors as $anchor) {
-			if (strstr($anchor->attribute('href'), $value)) {
-				break;
-			}
-		}
-		return $anchor;
-	}
+    /**
+     * Helper function to select links by href
+     *
+     * @param  string  $value      Href
+     * @return mixed               Helper string
+     */
+    protected function byHref($value)
+    {
+        $anchor = null;
+        $anchors = $this->elements($this->using('tag name')->value('a'));
+        foreach ($anchors as $anchor) {
+            if (strstr($anchor->attribute('href'), $value)) {
+                break;
+            }
+        }
+        return $anchor;
+    }
 
-	/**
-	 * Global test setup
-	 *
-	 * @return	void
-	 */
-	public static function setUpBeforeClass()
-	{
-	}
+    /**
+     * Global test setup
+     *
+     * @return    void
+     */
+    public static function setUpBeforeClass()
+    {
+    }
 
-	/**
-	 * Unit test setup
-	 *
-	 * @return	void
-	 */
-	public function setUp()
-	{
-		$this->setSeleniumServerRequestsTimeout(3600);
-		$this->setBrowserUrl(self::$base_url);
-	}
+    /**
+     * Unit test setup
+     *
+     * @return    void
+     */
+    public function setUp()
+    {
+        $this->setSeleniumServerRequestsTimeout(3600);
+        $this->setBrowserUrl(self::$base_url);
+    }
 
-	/**
-	 * Verify pre conditions
-	 *
-	 * @return	void
-	 */
-	protected function assertPreConditions()
-	{
-	}
+    /**
+     * Verify pre conditions
+     *
+     * @return    void
+     */
+    protected function assertPreConditions()
+    {
+    }
 
-	/**
-	 * Handle Dolibarr authentication
-	 *
-	 * @return	void
-	 */
-	private function authenticate()
-	{
-		try {
-			if ($this->byId('login')) {
-				$login = $this->byId('username');
-				$login->clear();
-				$login->value('admin');
-				$password = $this->byId('password');
-				$password->clear();
-				$password->value('admin');
-				$this->byId('login')->submit();
-			}
-		} catch (PHPUnit_Extensions_Selenium2TestCase_WebDriverException $e) {
-			// Login does not exist. Assume we are already authenticated
-		}
-	}
+    /**
+     * Handle Dolibarr authentication
+     *
+     * @return    void
+     */
+    private function authenticate()
+    {
+        try {
+            if ($this->byId('login')) {
+                $login = $this->byId('username');
+                $login->clear();
+                $login->value('admin');
+                $password = $this->byId('password');
+                $password->clear();
+                $password->value('admin');
+                $this->byId('login')->submit();
+            }
+        } catch (PHPUnit_Extensions_Selenium2TestCase_WebDriverException $e) {
+            // Login does not exist. Assume we are already authenticated
+        }
+    }
 
-	/**
-	 * Test enabling developer mode
-	 *
-	 * @return	void
-	 */
-	public function testEnableDeveloperMode()
-	{
-		$this->url('/admin/const.php');
-		$this->authenticate();
-		$main_features_level_path='//input[@value="MAIN_FEATURES_LEVEL"]/following::input[@type="text"]';
-		$main_features_level = $this->byXPath($main_features_level_path);
-		$main_features_level->clear();
-		$main_features_level->value('2');
-		$this->byName('update')->click();
-		// Page reloaded, we need a new XPath
-		$main_features_level = $this->byXPath($main_features_level_path);
-		$this->assertEquals('2', $main_features_level->value(), "MAIN_FEATURES_LEVEL value is 2");
-	}
+    /**
+     * Test enabling developer mode
+     *
+     * @return    void
+     */
+    public function testEnableDeveloperMode()
+    {
+        $this->url('/admin/const.php');
+        $this->authenticate();
+        $main_features_level_path='//input[@value="MAIN_FEATURES_LEVEL"]/following::input[@type="text"]';
+        $main_features_level = $this->byXPath($main_features_level_path);
+        $main_features_level->clear();
+        $main_features_level->value('2');
+        $this->byName('update')->click();
+        // Page reloaded, we need a new XPath
+        $main_features_level = $this->byXPath($main_features_level_path);
+        $this->assertEquals('2', $main_features_level->value(), "MAIN_FEATURES_LEVEL value is 2");
+    }
 
-	/**
-	 * Test enabling the module
-	 *
-	 * @return	void
-	 *
-	 * @depends testEnableDeveloperMode
-	 */
-	public function testModuleEnabled()
-	{
-		$this->url('/admin/modules.php');
-		$this->authenticate();
-		$module_status_image_path='//a[contains(@href, "' . self::$module_id . '")]/img';
-		$module_status_image = $this->byXPath($module_status_image_path);
-		if (strstr($module_status_image->attribute('src'), 'switch_off.png')) {
-			// Enable the module
-			$this->byHref('modTakePos')->click();
-		} else {
-			// Disable the module
-			$this->byHref('modTakePos')->click();
-			// Reenable the module
-			$this->byHref('modTakePos')->click();
-		}
-		// Page reloaded, we need a new Xpath
-		$module_status_image = $this->byXPath($module_status_image_path);
-		$this->assertContains('switch_on.png', $module_status_image->attribute('src'), "Module enabled");
-	}
+    /**
+     * Test enabling the module
+     *
+     * @return    void
+     *
+     * @depends testEnableDeveloperMode
+     */
+    public function testModuleEnabled()
+    {
+        $this->url('/admin/modules.php');
+        $this->authenticate();
+        $module_status_image_path='//a[contains(@href, "' . self::$module_id . '")]/img';
+        $module_status_image = $this->byXPath($module_status_image_path);
+        if (strstr($module_status_image->attribute('src'), 'switch_off.png')) {
+            // Enable the module
+            $this->byHref('modTakePos')->click();
+        } else {
+            // Disable the module
+            $this->byHref('modTakePos')->click();
+            // Reenable the module
+            $this->byHref('modTakePos')->click();
+        }
+        // Page reloaded, we need a new Xpath
+        $module_status_image = $this->byXPath($module_status_image_path);
+        $this->assertContains('switch_on.png', $module_status_image->attribute('src'), "Module enabled");
+    }
 
-	/**
-	 * Test access to the configuration page
-	 *
-	 * @return	void
-	 *
-	 * @depends testModuleEnabled
-	 */
-	public function testConfigurationPage()
-	{
-		$this->url('/custom/takepos/admin/setup.php');
-		$this->authenticate();
-		$this->assertContains('takepos/admin/setup.php', $this->url(), 'Configuration page');
-	}
+    /**
+     * Test access to the configuration page
+     *
+     * @return    void
+     *
+     * @depends testModuleEnabled
+     */
+    public function testConfigurationPage()
+    {
+        $this->url('/custom/takepos/admin/setup.php');
+        $this->authenticate();
+        $this->assertContains('takepos/admin/setup.php', $this->url(), 'Configuration page');
+    }
 
-	/**
-	 * Test access to the about page
-	 *
-	 * @return	void
-	 *
-	 * @depends testConfigurationPage
-	 */
-	public function testAboutPage()
-	{
-		$this->url('/custom/takepos/admin/about.php');
-		$this->authenticate();
-		$this->assertContains('takepos/admin/about.php', $this->url(), 'About page');
-	}
+    /**
+     * Test access to the about page
+     *
+     * @return    void
+     *
+     * @depends testConfigurationPage
+     */
+    public function testAboutPage()
+    {
+        $this->url('/custom/takepos/admin/about.php');
+        $this->authenticate();
+        $this->assertContains('takepos/admin/about.php', $this->url(), 'About page');
+    }
 
-	/**
-	 * Test about page is rendering Markdown
-	 *
-	 * @return	void
-	 *
-	 * @depends testAboutPage
-	 */
-	public function testAboutPageRendersMarkdownReadme()
-	{
-		$this->url('/custom/takepos/admin/about.php');
-		$this->authenticate();
-		$this->assertEquals(
-			'Dolibarr Module Template (aka My Module)',
-			$this->byTag('h1')->text(),
-			"Readme title"
-		);
-	}
+    /**
+     * Test about page is rendering Markdown
+     *
+     * @return    void
+     *
+     * @depends testAboutPage
+     */
+    public function testAboutPageRendersMarkdownReadme()
+    {
+        $this->url('/custom/takepos/admin/about.php');
+        $this->authenticate();
+        $this->assertEquals(
+            'Dolibarr Module Template (aka My Module)',
+            $this->byTag('h1')->text(),
+            "Readme title"
+        );
+    }
 
-	/**
-	 * Test box is properly declared
-	 *
-	 * @return	void
-	 *
-	 * @depends testModuleEnabled
-	 */
-	public function testBoxDeclared()
-	{
-		$this->url('/admin/boxes.php');
-		$this->authenticate();
-		$this->assertContains('takeposwidget1', $this->source(), "Box enabled");
-	}
+    /**
+     * Test box is properly declared
+     *
+     * @return    void
+     *
+     * @depends testModuleEnabled
+     */
+    public function testBoxDeclared()
+    {
+        $this->url('/admin/boxes.php');
+        $this->authenticate();
+        $this->assertContains('takeposwidget1', $this->source(), "Box enabled");
+    }
 
-	/**
-	 * Test trigger is properly enabled
-	 *
-	 * @return	void
-	 *
-	 * @depends testModuleEnabled
-	 */
-	public function testTriggerDeclared()
-	{
-		$this->url('/admin/triggers.php');
-		$this->authenticate();
-		$this->assertContains(
-			'interface_99_modTakePos_TakePosTriggers.class.php',
-			$this->byTag('body')->text(),
-			"Trigger declared"
-		);
-	}
+    /**
+     * Test trigger is properly enabled
+     *
+     * @return    void
+     *
+     * @depends testModuleEnabled
+     */
+    public function testTriggerDeclared()
+    {
+        $this->url('/admin/triggers.php');
+        $this->authenticate();
+        $this->assertContains(
+            'interface_99_modTakePos_TakePosTriggers.class.php',
+            $this->byTag('body')->text(),
+            "Trigger declared"
+        );
+    }
 
-	/**
-	 * Test trigger is properly declared
-	 *
-	 * @return	void
-	 *
-	 * @depends testTriggerDeclared
-	 */
-	public function testTriggerEnabled()
-	{
-		$this->url('/admin/triggers.php');
-		$this->authenticate();
-		$this->assertContains(
-			'tick.png',
-			$this->byXPath('//td[text()="interface_99_modTakePos_MyTrigger.class.php"]/following::img')->attribute('src'),
-			"Trigger enabled"
-		);
-	}
+    /**
+     * Test trigger is properly declared
+     *
+     * @return    void
+     *
+     * @depends testTriggerDeclared
+     */
+    public function testTriggerEnabled()
+    {
+        $this->url('/admin/triggers.php');
+        $this->authenticate();
+        $this->assertContains(
+            'tick.png',
+            $this->byXPath('//td[text()="interface_99_modTakePos_MyTrigger.class.php"]/following::img')->attribute('src'),
+            "Trigger enabled"
+        );
+    }
 
-	/**
-	 * Verify post conditions
-	 *
-	 * @return	void
-	 */
-	protected function assertPostConditions()
-	{
-	}
+    /**
+     * Verify post conditions
+     *
+     * @return    void
+     */
+    protected function assertPostConditions()
+    {
+    }
 
-	/**
-	 * Unit test teardown
-	 *
-	 * @return	void
-	 */
-	public function tearDown()
-	{
-	}
+    /**
+     * Unit test teardown
+     *
+     * @return    void
+     */
+    public function tearDown()
+    {
+    }
 
-	/**
-	 * Global test teardown
-	 *
-	 * @return	void
-	 */
-	public static function tearDownAfterClass()
-	{
-	}
+    /**
+     * Global test teardown
+     *
+     * @return    void
+     */
+    public static function tearDownAfterClass()
+    {
+    }
 }
