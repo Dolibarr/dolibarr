@@ -268,7 +268,7 @@ if ($resql) {
 
         if (empty($obj->lettering_code)) {
             print '<td class="nowrap center"><input type="checkbox" class="flat checkforselect" name="toselect[]" id="toselect[]" value="' . $obj->rowid . '" /></td>';
-            print '<td><a href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/card.php'. '?piece_num=' . $obj->piece_num . '">';
+            print '<td><a href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?piece_num=' . $obj->piece_num . '">';
             print img_edit();
             print '</a></td>' . "\n";
         } else {
