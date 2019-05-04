@@ -1939,7 +1939,7 @@ class Contrat extends CommonObject
 
         if ($user->rights->contrat->lire) {
             $label = '<u>'.$langs->trans("ShowContract").'</u>';
-            $label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+            $label .= '<br><b>'.$langs->trans('Ref').':</b> '.($this->ref?$this->ref:$this->id);
             $label .= '<br><b>'.$langs->trans('RefCustomer').':</b> '.($this->ref_customer ? $this->ref_customer : $this->ref_client);
             $label .= '<br><b>'.$langs->trans('RefSupplier').':</b> '.$this->ref_supplier;
             if (!empty($this->total_ht)) {
@@ -1971,7 +1971,7 @@ class Contrat extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) $result.=img_object(($notooltip?'':$label), $this->picto, ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
-		if ($withpicto != 2) $result.= $this->ref;
+		if ($withpicto != 2) $result.= ($this->ref?$this->ref:$this->id);
 		$result .= $linkend;
 
 		return $result;
