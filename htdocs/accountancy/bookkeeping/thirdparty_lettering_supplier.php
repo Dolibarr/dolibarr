@@ -259,8 +259,8 @@ if ($resql) {
 
         // Journal
         $accountingjournal = new AccountingJournal($db);
-        $result = $accountingjournal->fetch('',$obj->code_journal);
-        $journaltoshow = (($result > 0)?$accountingjournal->getNomUrl(0,0,0,'',0) : $obj->code_journal);
+        $result = $accountingjournal->fetch('', $obj->code_journal);
+        $journaltoshow = (($result > 0)?$accountingjournal->getNomUrl(0, 0, 0, '', 0) : $obj->code_journal);
         print '<td class="center">' . $journaltoshow . '</td>';
 
 		if (empty($obj->lettering_code)) {
