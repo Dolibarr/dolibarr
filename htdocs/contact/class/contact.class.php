@@ -750,7 +750,8 @@ class Contact extends CommonObject
 				$this->entity			= $obj->entity;
 				$this->ref				= $obj->rowid;
 				$this->ref_ext			= $obj->ref_ext;
-
+                
+                $this->civility_id      = $obj->civility_id;
 				$this->civility_code    = $obj->civility_code;
 				$this->civility	        = $obj->civility_code?($langs->trans("Civility".$obj->civility_code) != ("Civility".$obj->civility_code) ? $langs->trans("Civility".$obj->civility_code) : $obj->civility_code):'';
 
