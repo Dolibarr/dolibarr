@@ -300,3 +300,5 @@ ALTER TABLE llx_inventorydet DROP COLUMN pmp;
 ALTER TABLE llx_inventorydet DROP COLUMN pa; 
 ALTER TABLE llx_inventorydet DROP COLUMN new_pmp;
 
+ALTER TABLE llx_socpeople CHANGE fk_departement fk_state integer NOT NULL;
+ALTER TABLE llx_socpeople CHANGE fk_pays fk_country integer DEFAULT 0;
