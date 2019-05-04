@@ -4,7 +4,7 @@
  * Copyright (C) 2013      Olivier Geffroy      <jeff@jeffinfo.com>
  * Copyright (C) 2013      Florian Henry	    <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2019 Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2018      Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2019 Frédéric France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -239,7 +239,7 @@ if ($resql) {
 	print_liste_field_titre("Balancing", $_SERVER["PHP_SELF"], "", "", $param, "", $sortfield, $sortorder);
 	print_liste_field_titre("Codejournal", $_SERVER["PHP_SELF"], "bk.code_journal", "", $param, "", $sortfield, $sortorder, 'center ');
 	print_liste_field_titre("LetteringCode", $_SERVER["PHP_SELF"], "bk.lettering_code", "", $param, "", $sortfield, $sortorder, 'center ');
-    print_liste_field_titre("", "","",'','',"",$sortfield,$sortorder,'maxwidthsearch center ');
+    print_liste_field_titre("", "", "", '', '', "", $sortfield, $sortorder, 'maxwidthsearch center ');
 	print "</tr>\n";
 
 	$solde = 0;
@@ -268,7 +268,7 @@ if ($resql) {
 
         if (empty($obj->lettering_code)) {
             print '<td class="nowrap center"><input type="checkbox" class="flat checkforselect" name="toselect[]" id="toselect[]" value="' . $obj->rowid . '" /></td>';
-            print '<td><a href="' . dol_buildpath('/accountancy/bookkeeping/card.php', 1) . '?piece_num=' . $obj->piece_num . '">';
+            print '<td><a href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/card.php'. '?piece_num=' . $obj->piece_num . '">';
             print img_edit();
             print '</a></td>' . "\n";
         } else {
