@@ -200,7 +200,7 @@ $form = new FormAccounting($db);
 // at this time ACCOUNTING_SERVICE_SOLD_ACCOUNT & ACCOUNTING_PRODUCT_SOLD_ACCOUNT are account number not accountingacount rowid
 // so we need to get those default value rowid first
 $accounting = new AccountingAccount($db);
-// TODO: we should need to check if result is a really exist accountaccount rowid.....
+// TODO: we should need to check if result is already exists accountaccount rowid.....
 $aarowid_servbuy            = $accounting->fetch('', $conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT, 1);
 $aarowid_prodbuy            = $accounting->fetch('', $conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT, 1);
 $aarowid_servsell           = $accounting->fetch('', $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT, 1);
@@ -334,9 +334,12 @@ if ($result)
 	print '<tr class="oddeven"><td class="titlefield"><input type="radio" name="accounting_product_mode" value="ACCOUNTANCY_SELL"' . ($accounting_product_mode == 'ACCOUNTANCY_SELL' ? ' checked' : '') . '> ' . $langs->trans('OptionModeProductSell') . '</td>';
 	print '<td>'.$langs->trans('OptionModeProductSellDesc');
 	print "</td></tr>\n";
-    print '<tr class="oddeven"><td class="titlefield"><input type="radio" name="accounting_product_mode" value="ACCOUNTANCY_SELL_INTRA"' . ($accounting_product_mode == 'ACCOUNTANCY_SELL_INTRA' ? ' checked' : '') . '> ' . $langs->trans('OptionModeProductSellIntra') . '</td>';
-    print '<td>'.$langs->trans('OptionModeProductSellIntraDesc');
-    print "</td></tr>\n";
+	if ($mysoc->isInEEC())
+	{
+        print '<tr class="oddeven"><td class="titlefield"><input type="radio" name="accounting_product_mode" value="ACCOUNTANCY_SELL_INTRA"' . ($accounting_product_mode == 'ACCOUNTANCY_SELL_INTRA' ? ' checked' : '') . '> ' . $langs->trans('OptionModeProductSellIntra') . '</td>';
+        print '<td>'.$langs->trans('OptionModeProductSellIntraDesc');
+        print "</td></tr>\n";
+	}
     print '<tr class="oddeven"><td class="titlefield"><input type="radio" name="accounting_product_mode" value="ACCOUNTANCY_SELL_EXPORT"' . ($accounting_product_mode == 'ACCOUNTANCY_SELL_EXPORT' ? ' checked' : '') . '> ' . $langs->trans('OptionModeProductSellExport') . '</td>';
     print '<td>'.$langs->trans('OptionModeProductSellExportDesc');
     print "</td></tr>\n";
