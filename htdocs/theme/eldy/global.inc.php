@@ -2651,6 +2651,9 @@ tr.liste_titre_filter td.liste_titre {
 	padding-top: 1px;
 	padding-bottom: 0px;
 }
+tr.liste_titre_filter td.liste_titre:first-of-type {
+/*	height: 36px; */
+}
 .liste_titre_create td, .liste_titre_create th, .liste_titre_create .tagtd
 {
     border-bottom-width: 0 !important;
