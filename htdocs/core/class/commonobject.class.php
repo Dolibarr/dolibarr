@@ -1061,17 +1061,24 @@ abstract class CommonObject
         // phpcs:enable
 		global $langs;
 
+    $langs->load("dict");
+
 		$tab=array();
 
 		$sql = "SELECT ec.rowid, ec.statut as statuslink, ec.fk_socpeople as id, ec.fk_c_type_contact";    // This field contains id of llx_socpeople or id of llx_user
 		if ($source == 'internal') $sql.=", '-1' as socid, t.statut as statuscontact, t.login, t.photo";
 		if ($source == 'external' || $source == 'thirdparty') $sql.=", t.fk_soc as socid, t.statut as statuscontact";
-		$sql.= ", t.civility as civility, t.lastname as lastname, t.firstname, t.email";
+		$sql.= ", t.civility as civility, t.lastname as lastname, t.firstname, t.address, t.zip, t.town, t.fk_pays as country_id, t.fk_departement as state_id";
+		$sql.= ", t.phone, t.phone_perso, t.phone_mobile, t.fax, t.email";
 		$sql.= ", tc.source, tc.element, tc.code, tc.libelle";
+    $sql.= ", co.label as country, co.code as country_code";
+		$sql.= ", d.nom as state, d.code_departement as state_code";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_type_contact tc";
 		$sql.= ", ".MAIN_DB_PREFIX."element_contact ec";
 		if ($source == 'internal') $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."user t on ec.fk_socpeople = t.rowid";
 		if ($source == 'external'|| $source == 'thirdparty') $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."socpeople t on ec.fk_socpeople = t.rowid";
+    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON t.fk_pays = co.rowid";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as d ON t.fk_departement = d.rowid";
 		$sql.= " WHERE ec.element_id =".$this->id;
 		$sql.= " AND ec.fk_c_type_contact=tc.rowid";
 		$sql.= " AND tc.element='".$this->db->escape($this->element)."'";
@@ -1098,7 +1105,11 @@ abstract class CommonObject
 					$libelle_type=($langs->trans($transkey)!=$transkey ? $langs->trans($transkey) : $obj->libelle);
 					$tab[$i]=array('source'=>$obj->source,'socid'=>$obj->socid,'id'=>$obj->id,
 								   'nom'=>$obj->lastname,      // For backward compatibility
-								   'civility'=>$obj->civility, 'lastname'=>$obj->lastname, 'firstname'=>$obj->firstname, 'email'=>$obj->email, 'login'=>$obj->login, 'photo'=>$obj->photo, 'statuscontact'=>$obj->statuscontact,
+								   'civility'=>$obj->civility, 'lastname'=>$obj->lastname, 'firstname'=>$obj->firstname, 'address'=>$obj->address, 'zip'=>$obj->zip, 'town'=>$obj->town,
+                   'state_id'=>$obj->state_id, 'state_code'=>$obj->state_code, 'state'=>$obj->state,
+                   'country_id'=>$obj->country_id, 'country_code'=>$obj->country_id?$obj->country_code:'', 'country'=>$obj->country_id?($langs->trans('Country'.$obj->country_code)!='Country'.$obj->country_code?$langs->transnoentities('Country'.$obj->country_code):$obj->country):'', 
+                   'phone'=>$obj->phone, 'phone_perso'=>$obj->phone_perso, 'phone_mobile'=>$obj->phone_mobile, 'fax'=>$obj->fax, 'email'=>$obj->email,
+                   'login'=>$obj->login, 'photo'=>$obj->photo, 'statuscontact'=>$obj->statuscontact,
 								   'rowid'=>$obj->rowid, 'code'=>$obj->code, 'libelle'=>$libelle_type, 'status'=>$obj->statuslink, 'fk_c_type_contact'=>$obj->fk_c_type_contact);
 				}
 				else
