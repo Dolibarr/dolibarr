@@ -108,6 +108,8 @@ ALTER TABLE llx_prelevement_facture_demande ADD COLUMN ext_payment_id varchar(12
 ALTER TABLE llx_prelevement_facture_demande ADD COLUMN ext_payment_site varchar(128) NULL;
 
 -- Fix if table exists
+ALTER TABLE llx_c_shipment_mode ADD COLUMN entity integer;
+
 ALTER TABLE llx_c_units DROP INDEX uk_c_units_code;
 ALTER TABLE llx_c_units ADD COLUMN scale integer;
 ALTER TABLE llx_c_units ADD COLUMN unit_type varchar(10);
