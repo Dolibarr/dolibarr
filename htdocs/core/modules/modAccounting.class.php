@@ -228,6 +228,14 @@ class modAccounting extends DolibarrModules
 		$this->rights[$r][5] = '';
 		$r++;
 
+        $this->rights[$r][0] = 50431;
+        $this->rights[$r][1] = 'Validate movements of a fiscal year';
+        $this->rights[$r][2] = 'w';
+        $this->rights[$r][3] = 0;
+        $this->rights[$r][4] = 'fiscalyear';
+        $this->rights[$r][5] = 'closure';
+        $r++;
+
 
 		// Menus
 		//-------
