@@ -4,7 +4,7 @@
  * Copyright (C) 2017	Regis Houssin	        <regis.houssin@inodbox.com>
  * Copyright (C) 2017	Neil Orley	            <neil.orley@oeris.fr>
  * Copyright (C) 2018   Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2018   Thibault FOUCART        <support@ptibogxiv.net> 
+ * Copyright (C) 2018   Thibault FOUCART        <support@ptibogxiv.net>
  *
  *
  * This program is free software; you can redistribute it and/or modify
@@ -767,7 +767,7 @@ class Setup extends DolibarrApi
         }
 
         return $list;
-    }    
+    }
 
      /**
      * Get the list of tickets categories.
