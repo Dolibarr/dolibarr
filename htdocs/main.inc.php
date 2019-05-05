@@ -1920,7 +1920,7 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 		}
 		else
 		{
-		    if (is_array(arrayresult))
+		    if (is_array($arrayresult))
 		    {
     			foreach($arrayresult as $key => $val)
     			{
