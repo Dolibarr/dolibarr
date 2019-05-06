@@ -118,9 +118,11 @@ $htmlother=new FormOther($db);
 $sql = 'SELECT p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type, p.entity,';
 $sql.= ' p.fk_product_type, p.tms as datem,';
 $sql.= ' p.duration, p.tosell as statut, p.tobuy, p.seuil_stock_alerte, p.desiredstock,';
-$sql.= ' SUM(s.reel) as stock_physique';
+$sql.= ' SUM(s.reel) as stock_physique,';
+$sql.= ' u.short_label as unit_short';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'product as p';
 $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_stock as s on p.rowid = s.fk_product';
+$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_units as u on p.fk_unit = u.rowid';
 // We'll need this table joined to the select in order to filter by categ
 if ($search_categ) $sql.= ", ".MAIN_DB_PREFIX."categorie_product as cp";
 $sql.= " WHERE p.entity IN (".getEntity('product').")";
@@ -318,6 +320,10 @@ if ($resql)
 	    }
 	}
 	if ($virtualdiffersfromphysical) print_liste_field_titre("VirtualStock", $_SERVER["PHP_SELF"], "", $param, "", '', $sortfield, $sortorder, 'right ');
+    // units		
+    if($conf->global->PRODUCT_USE_UNITS) {
+        print_liste_field_titre($langs->trans("Unit"), $_SERVER["PHP_SELF"], "unit_short", $param, "", 'align="right"', $sortfield, $sortorder);
+    }
 	print_liste_field_titre('');
 	print_liste_field_titre("ProductStatusOnSell", $_SERVER["PHP_SELF"], "p.tosell", $param, "", '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre("ProductStatusOnBuy", $_SERVER["PHP_SELF"], "p.tobuy", $param, "", '', $sortfield, $sortorder, 'right ');
@@ -378,6 +384,10 @@ if ($resql)
 			print $product->stock_theorique;
 			print '</td>';
 		}
+        // units		
+        if($conf->global->PRODUCT_USE_UNITS) {
+            print '<td align="left">' . $objp->unit_short . '</td>';
+        }			
 		print '<td class="right"><a href="'.DOL_URL_ROOT.'/product/stock/movement_list.php?idproduct='.$product->id.'">'.$langs->trans("Movements").'</a></td>';
 		print '<td class="right nowrap">'.$product->LibStatut($objp->statut, 5, 0).'</td>';
         print '<td class="right nowrap">'.$product->LibStatut($objp->tobuy, 5, 1).'</td>';
