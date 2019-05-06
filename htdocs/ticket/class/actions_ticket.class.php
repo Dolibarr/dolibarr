@@ -443,8 +443,7 @@ class ActionsTicket
         // Sort results to be similar to status object list
         //sort($exclude_status);
 
-        //print '<br><div>';
-        foreach ($object->statuts_short as $status => $statut_label) {
+        foreach ($object->statuts_short as $status => $status_label) {
             if (!in_array($status, $exclude_status)) {
                 print '<div class="tagtd">';
 

@@ -67,6 +67,11 @@ $confirm=GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 $contextpage=GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'invoicelist';
 
+if ($contextpage == 'poslist')
+{
+    $_GET['optioncss'] = 'print';
+}
+
 $lineid=GETPOST('lineid', 'int');
 $userid=GETPOST('userid', 'int');
 $search_product_category=GETPOST('search_product_category', 'int');
@@ -950,7 +955,12 @@ if ($resql)
 				$totalpay = $facturestatic->total_ttc - $remaintopay;
 			}
 
-			print '<tr class="oddeven">';
+            print '<tr class="oddeven"';
+            if ($contextpage == 'poslist')
+            {
+                print ' onclick="parent.$(\'#poslines\').load(\'invoice.php?action=history&placeid='.$obj->id.'\', function() {parent.$.colorbox.close();});"';
+            }
+            print '>';
 			if (! empty($arrayfields['f.ref']['checked']))
 			{
 				print '<td class="nowrap">';
@@ -958,7 +968,14 @@ if ($resql)
 				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 
 				print '<td class="nobordernopadding nowraponall">';
-				print $facturestatic->getNomUrl(1, '', 200, 0, '', 0, 1);
+                if ($contextpage == 'poslist')
+                {
+                    print $obj->ref;
+                }
+                else
+                {
+                    print $facturestatic->getNomUrl(1, '', 200, 0, '', 0, 1);
+                }
 				print empty($obj->increment)?'':' ('.$obj->increment.')';
 
 				$filename=dol_sanitizeFileName($obj->ref);

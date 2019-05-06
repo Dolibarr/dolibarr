@@ -35,6 +35,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 if (! empty($conf->categorie->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
@@ -1077,7 +1078,7 @@ if ($resql)
 		// Date creation
 		if (! empty($arrayfields['p.datec']['checked']))
 		{
-			print '<td class="center">';
+			print '<td class="center nowraponall">';
 			print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
@@ -1085,7 +1086,7 @@ if ($resql)
 		// Date modification
 		if (! empty($arrayfields['p.tms']['checked']))
 		{
-			print '<td class="center">';
+			print '<td class="center nowraponall">';
 			print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;

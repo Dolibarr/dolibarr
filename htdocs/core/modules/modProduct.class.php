@@ -201,10 +201,10 @@ class modProduct extends DolibarrModules
 		if (! empty($conf->fournisseur->enabled)) $this->export_entities_array[$r]=array_merge($this->export_entities_array[$r], array('s.nom'=>'product_supplier_ref','pf.ref_fourn'=>'product_supplier_ref','pf.unitprice'=>'product_supplier_ref','pf.quantity'=>'product_supplier_ref','pf.remise_percent'=>'product_supplier_ref','pf.delivery_time_days'=>'product_supplier_ref'));
 		if (! empty($conf->global->MAIN_MULTILANGS)) $this->export_entities_array[$r]=array_merge($this->export_entities_array[$r], array('l.lang'=>'translation', 'l.label'=>'translation','l.description'=>'translation','l.note'=>'translation'));
 		if (! empty($conf->global->EXPORTTOOL_CATEGORIES)) $this->export_dependencies_array[$r]=array('category'=>'p.rowid');
-		if (! empty($conf->stock->enabled)) $this->export_entities_array[$r]=array_merge($this->export_entities_array[$r],array('p.stock'=>'product','p.pmp'=>'product'));
-		if (! empty($conf->barcode->enabled)) $this->export_entities_array[$r]=array_merge($this->export_entities_array[$r],array('p.barcode'=>'product'));
-		if (! empty($conf->fournisseur->enabled)) $this->export_entities_array[$r]=array_merge($this->export_entities_array[$r],array('s.nom'=>'product_supplier_ref','pf.ref_fourn'=>'product_supplier_ref','pf.unitprice'=>'product_supplier_ref','pf.quantity'=>'product_supplier_ref','pf.remise_percent'=>'product_supplier_ref','pf.delivery_time_days'=>'product_supplier_ref'));
-		if (! empty($conf->global->MAIN_MULTILANGS)) $this->export_entities_array[$r]=array_merge($this->export_entities_array[$r],array('l.lang'=>'translation', 'l.label'=>'translation','l.description'=>'translation','l.note'=>'translation'));
+		if (! empty($conf->stock->enabled)) $this->export_entities_array[$r]=array_merge($this->export_entities_array[$r], array('p.stock'=>'product','p.pmp'=>'product'));
+		if (! empty($conf->barcode->enabled)) $this->export_entities_array[$r]=array_merge($this->export_entities_array[$r], array('p.barcode'=>'product'));
+		if (! empty($conf->fournisseur->enabled)) $this->export_entities_array[$r]=array_merge($this->export_entities_array[$r], array('s.nom'=>'product_supplier_ref','pf.ref_fourn'=>'product_supplier_ref','pf.unitprice'=>'product_supplier_ref','pf.quantity'=>'product_supplier_ref','pf.remise_percent'=>'product_supplier_ref','pf.delivery_time_days'=>'product_supplier_ref'));
+		if (! empty($conf->global->MAIN_MULTILANGS)) $this->export_entities_array[$r]=array_merge($this->export_entities_array[$r], array('l.lang'=>'translation', 'l.label'=>'translation','l.description'=>'translation','l.note'=>'translation'));
 		if (! empty($conf->global->EXPORTTOOL_CATEGORIES)) $this->export_dependencies_array[$r]=array('category'=>'p.rowid');
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'product as p';
@@ -349,7 +349,7 @@ class modProduct extends DolibarrModules
             'p.note_public' => "PublicNote",//public note
             'p.note' => "PrivateNote",//private note
             'p.customcode' => 'CustomCode',
-            'p.price' => "SellingPriceHT",//without tax
+            'p.price' => "SellingPriceHT",//without
             'p.price_min' => "MinPrice",
             'p.price_ttc' => "SellingPriceTTC",//with tax
             'p.price_min_ttc' => "SellingMinPriceTTC",
@@ -518,19 +518,22 @@ class modProduct extends DolibarrModules
         if (is_object($mysoc) && $mysoc->useLocalTax(1)) $import_sample=array_merge($import_sample, array('p.localtax1_tx'=>'', 'p.localtax1_type'=>''));
         if (is_object($mysoc) && $mysoc->useLocalTax(2)) $import_sample=array_merge($import_sample, array('p.localtax2_tx'=>'', 'p.localtax2_type'=>''));
         if (! empty($conf->barcode->enabled)) $import_sample=array_merge($import_sample, array('p.barcode'=>''));
-		if (! empty($conf->global->PRODUCT_USE_UNITS)) {
-			$import_sample = array_merge($import_sample, array(
-					'p.fk_unit' => 'use a unit of measure from the dictionary. G/KG/M2/M3 etc....matches field "code" in table "' . MAIN_DB_PREFIX . 'c_units"'
-			));
+        if (! empty($conf->global->PRODUCT_USE_UNITS)) {
+            $import_sample = array_merge(
+                $import_sample,
+                array(
+                    'p.fk_unit' => 'use a unit of measure from the dictionary. G/KG/M2/M3 etc....matches field "code" in table "' . MAIN_DB_PREFIX . 'c_units"'
+                )
+            );
 
 			$this->import_convertvalue_array[$r] = array_merge($this->import_convertvalue_array[$r], array(
-					'p.fk_unit' => array(
-							'rule' => 'fetchidfromcodeorlabel',
-							'classfile' => '/core/class/cunits.class.php',
-							'class' => 'CUnits',
-							'method' => 'fetch',
-							'dict' => 'DictionaryUnits'
-					)
+				'p.fk_unit' => array(
+					'rule' => 'fetchidfromcodeorlabel',
+					'classfile' => '/core/class/cunits.class.php',
+					'class' => 'CUnits',
+					'method' => 'fetch',
+					'dict' => 'DictionaryUnits'
+				)
 			));
 		}
 		$this->import_examplevalues_array[$r]=array_merge($import_sample, $import_extrafield_sample);

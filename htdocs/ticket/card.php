@@ -75,7 +75,7 @@ if (empty($action) && empty($id) && empty($ref)) $action='view';
 
 //Select mail models is same action as add_message
 if (GETPOST('modelselected', 'alpha')) {
-    $action = 'add_message';
+    $action = 'create_message';
 }
 
 // Load object
@@ -369,9 +369,10 @@ if ($action == "assign_user" && GETPOST('btn_assign_user', 'aplha') && $user->ri
     $action = 'view';
 }
 
-if ($action == "new_message" && GETPOST('btn_add_message') && $user->rights->ticket->read) {
-    $ret = $object->newMessage($user, $action);
-    if ($ret) {
+if ($action == "add_message" && GETPOST('btn_add_message') && $user->rights->ticket->read) {
+    $ret = $object->newMessage($user, $action, (GETPOST('private_message', 'alpha') == "on" ? 1 : 0));
+
+    if ($ret > 0) {
         if (!empty($backtopage)) {
             $url = $backtopage;
         } else {
@@ -382,12 +383,8 @@ if ($action == "new_message" && GETPOST('btn_add_message') && $user->rights->tic
         exit;
     } else {
         setEventMessages($object->error, null, 'errors');
-        $action = 'add_message';
+        $action = 'create_message';
     }
-}
-
-if ($action == "new_public_message" && GETPOST('btn_add_message')) {
-    $object->newMessagePublic($user, $action);
 }
 
 if ($action == "confirm_close" && GETPOST('confirm', 'alpha') == 'yes' && $user->rights->ticket->write)
@@ -641,7 +638,7 @@ if ($action == 'create' || $action == 'presend')
     $formticket->showForm(1);
 }
 
-if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'dellink' || $action == 'add_message' || $action == 'close' || $action == 'delete' || $action == 'editcustomer' || $action == 'progression' || $action == 'reopen'
+if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'dellink' || $action == 'create_message' || $action == 'close' || $action == 'delete' || $action == 'editcustomer' || $action == 'progression' || $action == 'reopen'
 	|| $action == 'editsubject' || $action == 'edit_extras' || $action == 'update_extras' || $action == 'edit_extrafields' || $action == 'set_extrafields' || $action == 'classify' || $action == 'sel_contract' || $action == 'edit_message_init' || $action == 'set_status' || $action == 'dellink')
 {
     if ($res > 0)
@@ -821,7 +818,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 
         $morehtmlref.='</div>';
 
-        $linkback = '<a href="' . dol_buildpath('/ticket/list.php', 1) . '"><strong>' . $langs->trans("BackToList") . '</strong></a> ';
+        $linkback = '<a href="' . DOL_URL_ROOT. '/ticket/list.php"><strong>' . $langs->trans("BackToList") . '</strong></a> ';
 
         dol_banner_tab($object, 'ref', $linkback, ($user->societe_id ? 0 : 1), 'ref', 'ref', $morehtmlref);
 
@@ -1173,8 +1170,8 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 			if (empty($reshook))
 			{
 				// Show link to add a message (if read and not closed)
-			    if ($object->fk_statut < Ticket::STATUS_CLOSED && $action != "add_message") {
-		            print '<div class="inline-block divButAction"><a class="butAction" href="card.php?track_id=' . $object->track_id . '&action=add_message">' . $langs->trans('TicketAddMessage') . '</a></div>';
+			    if ($object->fk_statut < Ticket::STATUS_CLOSED && $action != "create_message") {
+		            print '<div class="inline-block divButAction"><a class="butAction" href="card.php?track_id=' . $object->track_id . '&action=create_message">' . $langs->trans('TicketAddMessage') . '</a></div>';
 		        }
 
 		        // Link to create an intervention
@@ -1210,7 +1207,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 			$action = 'presend';
 		}
 
-		if ($action != 'add_message')
+		if ($action != 'create_message')
 		{
 			print '<div class="fichecenter"><div class="fichehalfleft">';
 			print '<a name="builddoc"></a>'; // ancre
@@ -1221,10 +1218,10 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 
 			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
-			// Message list
-			print load_fiche_titre($langs->trans('TicketMessagesList'), '', 'messages@ticket');
-			$show_private_message = ($user->societe_id ? 0 : 1);
-			$actionobject->viewTicketTimelineMessages($show_private_message, true, $object);
+			// List of actions on element
+			include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
+			$formactions = new FormActions($db);
+			$somethingshown = $formactions->showactions($object, 'ticket', $socid, 1);
 
 			print '</div></div>';
 			print '</div><!-- fichecenter -->';
@@ -1232,11 +1229,43 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 		}
 		else
 		{
-			$action='new_message';
+			$action='add_message';   // action to use to post the message
 			$modelmail='ticket_send';
 
+			// Substitution array
+			$morehtmlright='';
+		    $help="";
+		    $substitutionarray=array();
+		    if ($object->fk_soc > 0) {
+		        $object->fetch_thirdparty();
+		        $substitutionarray['__THIRDPARTY_NAME__'] = $object->thirdparty->name;
+		    }
+		    $substitutionarray['__SIGNATURE__'] = $user->signature;
+		    $substitutionarray['__TICKETSUP_TRACKID__'] = $object->track_id;
+		    $substitutionarray['__TICKETSUP_REF__'] = $object->ref;
+		    $substitutionarray['__TICKETSUP_SUBJECT__'] = $object->subject;
+		    $substitutionarray['__TICKETSUP_TYPE__'] = $object->type_code;
+		    $substitutionarray['__TICKETSUP_SEVERITY__'] = $object->severity_code;
+		    $substitutionarray['__TICKETSUP_CATEGORY__'] = $object->category_code;         // For backward compatibility
+		    $substitutionarray['__TICKETSUP_ANALYTIC_CODE__'] = $object->category_code;
+		    $substitutionarray['__TICKETSUP_MESSAGE__'] = $object->message;
+		    $substitutionarray['__TICKETSUP_PROGRESSION__'] = $object->progress;
+		    if ($object->fk_user_assign > 0) {
+		        $userstat->fetch($object->fk_user_assign);
+		        $substitutionarray['__TICKETSUP_USER_ASSIGN__'] = dolGetFirstLastname($userstat->firstname, $userstat->lastname);
+		    }
+
+		    if ($object->fk_user_create > 0) {
+		        $userstat->fetch($object->fk_user_create);
+		        $substitutionarray['__TICKETSUP_USER_CREATE__'] = dolGetFirstLastname($userstat->firstname, $userstat->lastname);
+		    }
+		    foreach ($substitutionarray as $key => $val) {
+		        $help.=$key.' -> '.$langs->trans($val).'<br>';
+		    }
+		    $morehtmlright.=$form->textwithpicto($langs->trans("TicketMessageSubstitutionReplacedByGenericValues"), $help);
+
 			print '<div>';
-			print load_fiche_titre($langs->trans('TicketAddMessage'), '', 'messages@ticket');
+			print load_fiche_titre($langs->trans('TicketAddMessage'), $morehtmlright, 'messages@ticket');
 
 			print '<hr>';
 
@@ -1269,30 +1298,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 
 
 			$formticket->withsubstit = 1;
-
-			if ($object->fk_soc > 0) {
-				$object->fetch_thirdparty();
-				$formticket->substit['__THIRDPARTY_NAME__'] = $object->thirdparty->name;
-			}
-			$formticket->substit['__SIGNATURE__'] = $user->signature;
-			$formticket->substit['__TICKETSUP_TRACKID__'] = $object->track_id;
-			$formticket->substit['__TICKETSUP_REF__'] = $object->ref;
-			$formticket->substit['__TICKETSUP_SUBJECT__'] = $object->subject;
-			$formticket->substit['__TICKETSUP_TYPE__'] = $object->type_code;
-			$formticket->substit['__TICKETSUP_SEVERITY__'] = $object->severity_code;
-			$formticket->substit['__TICKETSUP_CATEGORY__'] = $object->category_code;         // For backward compatibility
-			$formticket->substit['__TICKETSUP_ANALYTIC_CODE__'] = $object->category_code;
-			$formticket->substit['__TICKETSUP_MESSAGE__'] = $object->message;
-			$formticket->substit['__TICKETSUP_PROGRESSION__'] = $object->progress;
-			if ($object->fk_user_assign > 0) {
-				$userstat->fetch($object->fk_user_assign);
-				$formticket->substit['__TICKETSUP_USER_ASSIGN__'] = dolGetFirstLastname($userstat->firstname, $userstat->lastname);
-			}
-
-			if ($object->fk_user_create > 0) {
-				$userstat->fetch($object->fk_user_create);
-				$formticket->substit['__TICKETSUP_USER_CREATE__'] = dolGetFirstLastname($userstat->firstname, $userstat->lastname);
-			}
+			$formticket->substit = $substitutionarray;
 
 			$formticket->showMessageForm('100%');
 			print '</div>';

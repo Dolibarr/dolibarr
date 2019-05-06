@@ -171,6 +171,13 @@ if ($action == 'valid' && $user->rights->facture->creer)
 	}
 }
 
+if ($action == 'history')
+{
+    $placeid = GETPOST('placeid', 'int');
+    $invoice = new Facture($db);
+    $invoice->fetch($placeid);
+}
+
 if (($action=="addline" || $action=="freezone") && $placeid == 0)
 {
 	$invoice->socid = $conf->global->CASHDESK_ID_THIRDPARTY;
@@ -336,7 +343,7 @@ if ($action == "order" and $placeid != 0)
 }
 
 $sectionwithinvoicelink='';
-if ($action=="valid")
+if ($action=="valid" || $action=="history")
 {
     $sectionwithinvoicelink.='<!-- Section with invoice link -->'."\n";
     $sectionwithinvoicelink.='<input type="hidden" name="invoiceid" id="invoiceid" value="'.$invoice->id.'">';

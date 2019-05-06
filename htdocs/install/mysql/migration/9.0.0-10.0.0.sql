@@ -94,6 +94,9 @@ ALTER TABLE llx_bank_url DROP INDEX uk_bank_url;
 ALTER TABLE llx_bank_url ADD UNIQUE INDEX uk_bank_url (fk_bank, url_id, type);
 
 ALTER TABLE llx_actioncomm ADD COLUMN calling_duration integer;
+ALTER TABLE llx_actioncomm ADD COLUMN visibility varchar(12) DEFAULT 'default';
+
+DROP TABLE llx_ticket_msg;
 
 ALTER TABLE llx_don ADD COLUMN fk_soc integer NULL;
 
