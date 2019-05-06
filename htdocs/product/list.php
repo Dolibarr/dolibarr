@@ -1078,7 +1078,7 @@ if ($resql)
 		// Date creation
 		if (! empty($arrayfields['p.datec']['checked']))
 		{
-			print '<td class="center">';
+			print '<td class="center nowraponall">';
 			print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
@@ -1086,7 +1086,7 @@ if ($resql)
 		// Date modification
 		if (! empty($arrayfields['p.tms']['checked']))
 		{
-			print '<td class="center">';
+			print '<td class="center nowraponall">';
 			print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;

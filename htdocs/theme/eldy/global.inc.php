@@ -1447,8 +1447,7 @@ li.menuhider:hover {
 	background-image: none !important;
 }
 li.tmenusel, li.tmenu:hover {
-    background: rgba(0, 0, 0, 0.1);
-	/* background: rgb(<?php echo $colorbackhmenu1 ?>); */
+    /* background: rgba(0, 0, 0, 0.1); */
 }
 
 li.tmenusel::after, li.tmenu:hover::after{
@@ -2651,6 +2650,9 @@ tr.liste_titre_filter td.liste_titre {
 	padding-top: 1px;
 	padding-bottom: 0px;
 }
+tr.liste_titre_filter td.liste_titre:first-of-type {
+/*	height: 36px; */
+}
 .liste_titre_create td, .liste_titre_create th, .liste_titre_create .tagtd
 {
     border-bottom-width: 0 !important;
@@ -2956,6 +2958,9 @@ form.pair, form.impair {
 form.tagtr:last-of-type div.tagtd, tr.pair:last-of-type td, tr.impair:last-of-type td {
     border-bottom: 0px !important;
 }
+tr.nobottom td {
+    border-bottom: 0px !important;
+}
 div.tableforcontact form.tagtr:last-of-type div.tagtd {
     border-bottom: 1px solid #ddd !important;
 }
@@ -3144,7 +3149,7 @@ div:not(.fichecenter):not(.fichehalfleft):not(.ficheaddleft) .oddeven.tagtr:nth-
 .noborder > tbody > tr:nth-child(even):not(:last-child) td:not(.liste_titre), .liste > tbody > tr:nth-child(even):not(:last-child) td:not(.liste_titre),
 .noborder .oddeven.tagtr:nth-child(even):not(:last-child) .tagtd:not(.liste_titre)
 {
-	border-bottom: 1px solid #ddd;
+	border-bottom: 1px solid #e0e0e0;
 }
 
 .noborder > tbody > tr:nth-child(odd):not(.liste_titre), .liste > tbody > tr:nth-child(odd):not(.liste_titre),
@@ -3160,7 +3165,7 @@ div:not(.fichecenter):not(.fichehalfleft):not(.ficheaddleft) .oddeven.tagtr:nth-
 .noborder > tbody > tr:nth-child(odd):not(:last-child) td:not(.liste_titre), .liste > tbody > tr:nth-child(odd):not(:last-child) td:not(.liste_titre),
 .noborder .oddeven.tagtr:nth-child(odd):not(:last-child) .tagtd:not(.liste_titre)
 {
-	border-bottom: 1px solid #ddd;
+	border-bottom: 1px solid #e0e0e0;
 }
 
 ul.noborder li:nth-child(even):not(.liste_titre) {
@@ -3206,7 +3211,10 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
     padding: 3px;
 }
 .boxstats {
-    padding: 3px;
+    padding-left: 3px;
+    padding-right: 3px;
+    padding-top: 2px;
+    padding-bottom: 2px;
     width: 121px;
 }
 .boxstatscontent {

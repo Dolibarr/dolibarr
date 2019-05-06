@@ -688,6 +688,18 @@ class Project extends CommonObject
 	        }
         }
 
+        // Remove linked categories.
+        if (! $error) {
+            $sql = "DELETE FROM ".MAIN_DB_PREFIX. "categorie_project";
+            $sql.= " WHERE fk_project = ". $this->id;
+
+            $result = $this->db->query($sql);
+            if (! $result) {
+                $error++;
+                $this->errors[] = $this->db->lasterror();
+            }
+        }
+
 		// Fetch tasks
 		$this->getLinesArray($user);
 
