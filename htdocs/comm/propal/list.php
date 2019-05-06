@@ -160,6 +160,7 @@ $arrayfields=array(
 	'p.total_ht'=>array('label'=>$langs->trans("AmountHT"), 'checked'=>1),
 	'p.total_vat'=>array('label'=>$langs->trans("AmountVAT"), 'checked'=>0),
 	'p.total_ttc'=>array('label'=>$langs->trans("AmountTTC"), 'checked'=>0),
+	'p.total_invoiced'=>array('label'=>$langs->trans("AmountInvoicedTTC"), 'checked'=>0),
 	'u.login'=>array('label'=>$langs->trans("Author"), 'checked'=>1, 'position'=>10),
 	'sale_representative'=>array('label'=>$langs->trans("SaleRepresentativesOfThirdParty"), 'checked'=>1),
 	'p.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
@@ -637,6 +638,12 @@ if ($resql)
 		print '<input class="flat" type="text" size="5" name="search_montant_ttc" value="'.dol_escape_htmltag($search_montant_ttc).'">';
 		print '</td>';
 	}
+	if (! empty($arrayfields['p.total_invoiced']['checked']))
+	{
+		// Amount invoiced
+		print '<td class="liste_titre right">';
+		print '</td>';
+	}
 	if (! empty($arrayfields['u.login']['checked']))
 	{
 		// Author
@@ -701,6 +708,7 @@ if ($resql)
 	if (! empty($arrayfields['p.total_ht']['checked']))       print_liste_field_titre($arrayfields['p.total_ht']['label'], $_SERVER["PHP_SELF"], 'p.total_ht', '', $param, 'class="right"', $sortfield, $sortorder);
 	if (! empty($arrayfields['p.total_vat']['checked']))      print_liste_field_titre($arrayfields['p.total_vat']['label'], $_SERVER["PHP_SELF"], 'p.tva', '', $param, 'class="right"', $sortfield, $sortorder);
 	if (! empty($arrayfields['p.total_ttc']['checked']))      print_liste_field_titre($arrayfields['p.total_ttc']['label'], $_SERVER["PHP_SELF"], 'p.total', '', $param, 'class="right"', $sortfield, $sortorder);
+	if (! empty($arrayfields['p.total_invoiced']['checked'])) print_liste_field_titre($arrayfields['p.total_invoiced']['label'], $_SERVER["PHP_SELF"], 'p.total', '', $param, 'class="right"', $sortfield, $sortorder);
 	if (! empty($arrayfields['u.login']['checked']))       	  print_liste_field_titre($arrayfields['u.login']['label'], $_SERVER["PHP_SELF"], 'u.login', '', $param, 'align="center"', $sortfield, $sortorder);
 	if (! empty($arrayfields['sale_representative']['checked'])) print_liste_field_titre($arrayfields['sale_representative']['label'], $_SERVER["PHP_SELF"], "", "", "$param", '', $sortfield, $sortorder);
 	// Extra fields
@@ -911,6 +919,27 @@ if ($resql)
 			if (! $i) $totalarray['totalttcfield']=$totalarray['nbfield'];
 			$totalarray['totalttc'] += $obj->total_ttc;
 		}
+		// Amount invoiced
+        if(! empty($arrayfields['p.total_invoiced']['checked'])) {
+            $totalInvoiced = 0;
+            $p = new Propal($db);
+            $TInvoiceData = $p->InvoiceArrayList($obj->rowid);
+
+            if(! empty($TInvoiceData)) {
+                foreach($TInvoiceData as $invoiceData) {
+                    $invoice = new Facture($db);
+                    $invoice->fetch($invoiceData->facid);
+
+                    if(! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS) && $invoice->type == Facture::TYPE_DEPOSIT) continue;
+                    $totalInvoiced += $invoice->total_ttc;
+                }
+            }
+
+            print '<td class="right">'.price($totalInvoiced)."</td>\n";
+            if (! $i) $totalarray['nbfield']++;
+            if (! $i) $totalarray['totalinvoicedfield']=$totalarray['nbfield'];
+            $totalarray['totalinvoiced'] += $totalInvoiced;
+        }
 
 		$userstatic->id=$obj->fk_user_author;
 		$userstatic->login=$obj->login;
@@ -1037,6 +1066,7 @@ if ($resql)
 		    elseif ($totalarray['totalhtfield'] == $i) print '<td class="right">'.price($totalarray['totalht']).'</td>';
 		    elseif ($totalarray['totalvatfield'] == $i) print '<td class="right">'.price($totalarray['totalvat']).'</td>';
 		    elseif ($totalarray['totalttcfield'] == $i) print '<td class="right">'.price($totalarray['totalttc']).'</td>';
+		    elseif ($totalarray['totalinvoicedfield'] == $i) print '<td class="right">'.price($totalarray['totalinvoiced']).'</td>';
 		    elseif ($totalarray['totalizable']) {
                 $printed = false;
                 foreach ($totalarray['totalizable'] as $totalizable) {

@@ -347,6 +347,7 @@ PriceUTTC=P.U TTC
 Amount=Montant
 AmountInvoice=Montant facture
 AmountInvoiced=Montant facturé
+AmountInvoicedTTC=Montant TTC facturé
 AmountPayment=Montant paiement
 AmountHTShort=Montant HT
 AmountTTCShort=Montant TTC
