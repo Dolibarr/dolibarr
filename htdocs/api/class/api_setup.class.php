@@ -475,7 +475,7 @@ class Setup extends DolibarrApi
         if (!empty($multicurrency)) {
         $sql.= " AND m.entity IN (".getEntity('multicurrency').")";
         $sql.= " AND cr.date_sync = (SELECT MAX(cr2.date_sync) FROM ".MAIN_DB_PREFIX."multicurrency_rate AS cr2 WHERE cr2.fk_multicurrency = m.rowid)";
-        }        
+        }
         
         // Add sql filters
         if ($sqlfilters)
