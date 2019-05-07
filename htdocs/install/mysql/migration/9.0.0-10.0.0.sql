@@ -300,3 +300,5 @@ ALTER TABLE llx_inventorydet DROP COLUMN pmp;
 ALTER TABLE llx_inventorydet DROP COLUMN pa; 
 ALTER TABLE llx_inventorydet DROP COLUMN new_pmp;
 
+UPDATE llx_c_shipment_mode SET label = 'https://www.laposte.fr/outils/suivre-vos-envois?code={TRACKID}' WHERE code IN ('COLSUI');
+UPDATE llx_c_shipment_mode SET label = 'https://www.laposte.fr/outils/suivre-vos-envois?code={TRACKID}' WHERE code IN ('LETTREMAX');
