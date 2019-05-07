@@ -131,11 +131,16 @@ class Export
     									//print_r("$perm[0]-$perm[1]-$perm[2]<br>");
     									if (! empty($perm[2]))
     									{
-    										$bool=$user->rights->$perm[0]->$perm[1]->$perm[2];
+    									    $a=$perm[0];
+    									    $b=$perm[1];
+    									    $c=$perm[2];
+    									    $bool=$user->rights->$a->$b->$c;
     									}
     									else
     									{
-    										$bool=$user->rights->$perm[0]->$perm[1];
+    									    $a=$perm[0];
+    									    $b=$perm[1];
+    									    $bool=$user->rights->$a->$b;
     									}
     									if ($perm[0]=='user' && $user->admin) $bool=true;
     									if (! $bool) break;
