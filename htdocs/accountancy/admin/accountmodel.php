@@ -522,7 +522,6 @@ if ($id)
 			if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label')
 			{
 				$valuetoshow=$langs->trans("Label");
-				if ($id != 25) $valuetoshow.="*";
 			}
 			if ($fieldlist[$field]=='country')         {
 				if (in_array('region_id', $fieldlist)) { print '<td>&nbsp;</td>'; continue; }		// For region page, we do not show the country input
@@ -583,10 +582,6 @@ if ($id)
 
 		$colspan=count($fieldlist)+3;
 
-		if (! empty($alabelisused))  // If there is one label among fields, we show legend of *
-		{
-			print '<tr><td colspan="'.$colspan.'">* '.$langs->trans("LabelUsedByDefault").'.</td></tr>';
-		}
 		print '<tr><td colspan="'.$colspan.'">&nbsp;</td></tr>';	// Keep &nbsp; to have a line with enough height
 	}
 
@@ -667,7 +662,6 @@ if ($id)
             }
             if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label') {
                 $valuetoshow=$langs->trans("Label");
-                if ($id != 25) $valuetoshow.="*";
             }
             if ($fieldlist[$field]=='country') {
                 $valuetoshow=$langs->trans("Country");
