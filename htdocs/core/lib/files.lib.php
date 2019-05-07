@@ -1556,7 +1556,8 @@ function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesessio
 				$destfull = $info['dirname'].'/'.dol_sanitizeFileName($info['filename'].'.'.strtolower($info['extension']));
 				$info = pathinfo($destfile);
 				$destfile = dol_sanitizeFileName($info['filename'].'.'.strtolower($info['extension']));
-
+				$destfile = dol_string_nohtmltag($destfile);
+				$destfull = dol_string_nohtmltag($destfull);
 				$resupload = dol_move_uploaded_file($TFile['tmp_name'][$i], $destfull, $allowoverwrite, 0, $TFile['error'][$i], 0, $varfiles);
 
 				if (is_numeric($resupload) && $resupload > 0)   // $resupload can be 'ErrorFileAlreadyExists'
