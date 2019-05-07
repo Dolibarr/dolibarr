@@ -561,7 +561,7 @@ if (empty($action) || $action=="view")
 	print '<div class="inline-block divButAction"><a target="_blank" class="butAction" href="report.php?id='.$id.'">' . $langs->trans('PrintTicket') . '</a></div>';
 	if ($object->status == CashControl::STATUS_DRAFT)
 	{
-		print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $id . '&amp;action=close">' . $langs->trans('Close') . '</a></div>';
+		print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $id . '&amp;action=close">' . $langs->trans('ValidateAndClose') . '</a></div>';
 
 		print '<div class="inline-block divButAction"><a class="butActionDelete" href="' . $_SERVER["PHP_SELF"] . '?id=' . $id . '&amp;action=confirm_delete">' . $langs->trans('Delete') . '</a></div>';
 	}
