@@ -1312,7 +1312,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 			// If CUSTOMER contact defined on order, we use it. Note: Even if this is a supplier object, the code for external contat that follow order is 'CUSTOMER'
 			$usecontact=false;
-			$arrayidcontact=$object->getIdContact('external','CUSTOMER');
+			$arrayidcontact=$object->getIdContact('external', 'CUSTOMER');
 			if (count($arrayidcontact) > 0)
 			{
 				$usecontact=true;
