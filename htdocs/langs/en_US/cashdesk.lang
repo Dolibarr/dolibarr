@@ -64,3 +64,5 @@ EnableBarOrRestaurantFeatures=Enable features for Bar or Restaurant
 ConfirmDeletionOfThisPOSSale=Do your confirm the deletion of this current sale ?
 History=History
 ValidateAndClose=Validate and close
+Terminals=Terminals
+TerminalSelect=Select terminal you want to use:
