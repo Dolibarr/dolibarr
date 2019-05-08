@@ -24,6 +24,7 @@
 /**
  * Prepare array with list of tabs
  *
+ * @return 	array				Array of tabs
  */
 function takepos_prepare_head()
 {
