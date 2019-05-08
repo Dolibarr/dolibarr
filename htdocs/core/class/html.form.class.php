@@ -2084,6 +2084,11 @@ class Form
 			$sql.=' pcp.price_base_type as custprice_base_type, pcp.tva_tx as custtva_tx';
 			$selectFields.= ", idprodcustprice, custprice, custprice_ttc, custprice_base_type, custtva_tx";
 		}
+        // Units
+        if (! empty($conf->global->PRODUCT_USE_UNITS)) {
+            $sql .= ', u.label as unit_long, u.short_label as unit_short';
+            $selectFields .= ', unit_long, unit_short';
+        }
 
 		// Multilang : we add translation
 		if (! empty($conf->global->MAIN_MULTILANGS))
@@ -2121,6 +2126,10 @@ class Form
 		if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES) && !empty($socid)) {
 			$sql.=" LEFT JOIN  ".MAIN_DB_PREFIX."product_customer_price as pcp ON pcp.fk_soc=".$socid." AND pcp.fk_product=p.rowid";
 		}
+        // Units
+        if (! empty($conf->global->PRODUCT_USE_UNITS)) {
+            $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_units u ON u.rowid = p.fk_unit";
+        }
 		// Multilang : we add translation
 		if (! empty($conf->global->MAIN_MULTILANGS))
 		{
@@ -2382,6 +2391,10 @@ class Form
 		$opt.= $objp->ref;
 		if ($outbarcode) $opt.=' ('.$outbarcode.')';
 		$opt.=' - '.dol_trunc($label, $maxlengtharticle);
+        // Units
+        if (! empty($conf->global->PRODUCT_USE_UNITS)) {
+            $opt .= ' (' . $objp->unit_short . ')';
+        }
 
 		$objRef = $objp->ref;
 		if (! empty($filterkey) && $filterkey != '') $objRef=preg_replace('/('.preg_quote($filterkey).')/i', '<strong>$1</strong>', $objRef, 1);
