@@ -759,6 +759,7 @@ if (empty($reshook))
 
 		$qty = GETPOST('qty' . $predef);
 		$remise_percent = GETPOST('remise_percent' . $predef);
+		if (empty($remise_percent)) $remise_percent=0;
 
 		// Extrafields
 		$extrafieldsline = new ExtraFields($db);

@@ -110,7 +110,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 	/**
 	 * Issuer
-	 * @var Company object that emits
+	 * @var Societe object that emits
 	 */
 	public $emetteur;
 
@@ -1306,9 +1306,9 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 
 
-			// If BILLING contact defined on order, we use it
+			// If CUSTOMER contact defined on order, we use it. Note: Even if this is a supplier object, the code for external contat that follow object is 'CUSTOMER'
 			$usecontact=false;
-			$arrayidcontact=$object->getIdContact('external','BILLING');
+			$arrayidcontact=$object->getIdContact('external','CUSTOMER');
 			if (count($arrayidcontact) > 0)
 			{
 				$usecontact=true;

@@ -239,36 +239,37 @@ class Utils
 			dol_mkdir($conf->admin->dir_output.'/backup');
 
 			// Parameteres execution
-			$command=$cmddump;
-			if (preg_match("/\s/",$command)) $command=escapeshellarg($command);	// Use quotes on command
+			$command = $cmddump;
+			$command = preg_replace('/(\$|%)/', '', $command);                  // We removed chars that can be used to inject vars that contains space inside path of command without seeing there is a space to bypass the escapeshellarg.
+			if (preg_match("/\s/",$command)) $command=escapeshellarg($command);	// If there is spaces, we add quotes on command to be sure $command is only a program and not a program+parameters
 
 			//$param=escapeshellarg($dolibarr_main_db_name)." -h ".escapeshellarg($dolibarr_main_db_host)." -u ".escapeshellarg($dolibarr_main_db_user)." -p".escapeshellarg($dolibarr_main_db_pass);
 			$param=$dolibarr_main_db_name." -h ".$dolibarr_main_db_host;
 			$param.=" -u ".$dolibarr_main_db_user;
 			if (! empty($dolibarr_main_db_port)) $param.=" -P ".$dolibarr_main_db_port;
-			if (! GETPOST("use_transaction"))    $param.=" -l --single-transaction";
-			if (GETPOST("disable_fk") || $usedefault) $param.=" -K";
-			if (GETPOST("sql_compat") && GETPOST("sql_compat") != 'NONE') $param.=" --compatible=".escapeshellarg(GETPOST("sql_compat","alpha"));
-			if (GETPOST("drop_database"))        $param.=" --add-drop-database";
-			if (GETPOST("sql_structure") || $usedefault)
+			if (! GETPOST("use_transaction", "alpha"))    $param.=" -l --single-transaction";
+			if (GETPOST("disable_fk", "alpha") || $usedefault) $param.=" -K";
+			if (GETPOST("sql_compat", "alpha") && GETPOST("sql_compat", "alpha") != 'NONE') $param.=" --compatible=".escapeshellarg(GETPOST("sql_compat", "alpha"));
+			if (GETPOST("drop_database", "alpha"))        $param.=" --add-drop-database";
+			if (GETPOST("sql_structure", "alpha") || $usedefault)
 			{
-				if (GETPOST("drop") || $usedefault)	$param.=" --add-drop-table=TRUE";
-				else 							    $param.=" --add-drop-table=FALSE";
+				if (GETPOST("drop", "alpha") || $usedefault)	$param.=" --add-drop-table=TRUE";
+				else 				       	         		    $param.=" --add-drop-table=FALSE";
 			}
 			else
 			{
 				$param.=" -t";
 			}
-			if (GETPOST("disable-add-locks")) $param.=" --add-locks=FALSE";
-			if (GETPOST("sql_data") || $usedefault)
+			if (GETPOST("disable-add-locks", "alpha")) $param.=" --add-locks=FALSE";
+			if (GETPOST("sql_data", "alpha") || $usedefault)
 			{
 				$param.=" --tables";
-				if (GETPOST("showcolumns") || $usedefault)	 $param.=" -c";
-				if (GETPOST("extended_ins") || $usedefault) $param.=" -e";
+				if (GETPOST("showcolumns", "alpha") || $usedefault)	 $param.=" -c";
+				if (GETPOST("extended_ins", "alpha") || $usedefault) $param.=" -e";
 				else $param.=" --skip-extended-insert";
-				if (GETPOST("delayed"))	 	 $param.=" --delayed-insert";
-				if (GETPOST("sql_ignore"))	 $param.=" --insert-ignore";
-				if (GETPOST("hexforbinary") || $usedefault) $param.=" --hex-blob";
+				if (GETPOST("delayed", "alpha"))	 	 $param.=" --delayed-insert";
+				if (GETPOST("sql_ignore", "alpha"))	 $param.=" --insert-ignore";
+				if (GETPOST("hexforbinary", "alpha") || $usedefault) $param.=" --hex-blob";
 			}
 			else
 			{
@@ -436,8 +437,9 @@ class Utils
 			dol_mkdir($conf->admin->dir_output.'/backup');
 
 			// Parameteres execution
-			$command=$cmddump;
-			if (preg_match("/\s/",$command)) $command=escapeshellarg($command);	// Use quotes on command
+			$command = $cmddump;
+			$command = preg_replace('/(\$|%)/', '', $command);                  // We removed chars that can be used to inject vars that contains space inside path of command without seeing there is a space to bypass the escapeshellarg.
+			if (preg_match("/\s/",$command)) $command=escapeshellarg($command);	// If there is spaces, we add quotes on command to be sure $command is only a program and not a program+parameters
 
 			//$param=escapeshellarg($dolibarr_main_db_name)." -h ".escapeshellarg($dolibarr_main_db_host)." -u ".escapeshellarg($dolibarr_main_db_user)." -p".escapeshellarg($dolibarr_main_db_pass);
 			//$param="-F c";

@@ -450,7 +450,7 @@ if (empty($reshook))
 	// Actions to send emails
 	$trigger_name='PROJECT_SENTBYMAIL';
 	$paramname='id';
-	$autocopy='MAIN_MAIL_AUTOCOPY_ORDER_TO';		// used to know the automatic BCC to add
+	$autocopy='MAIN_MAIL_AUTOCOPY_PROJECT_TO';		// used to know the automatic BCC to add
 	$trackid='proj'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 }
@@ -1286,6 +1286,7 @@ elseif ($object->id > 0)
 	$modelmail='project';
 	$defaulttopic='SendProjectRef';
 	$diroutput = $conf->projet->dir_output;
+	$autocopy='MAIN_MAIL_AUTOCOPY_PROJECT_TO';		// used to know the automatic BCC to add
 	$trackid = 'proj'.$object->id;
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
