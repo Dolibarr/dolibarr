@@ -41,7 +41,7 @@ $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOST('show_files', 'int');
 $confirm    = GETPOST('confirm', 'alpha');
 $toselect   = GETPOST('toselect', 'array');
-$socid      = GETPOST('socid','int')?GETPOST('socid','int'):GETPOST('id','int');
+$socid      = GETPOST('socid', 'int')?GETPOST('socid', 'int'):GETPOST('id', 'int');
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
