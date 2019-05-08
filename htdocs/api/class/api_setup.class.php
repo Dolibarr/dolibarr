@@ -448,7 +448,7 @@ class Setup extends DolibarrApi
     /**
      * Get the list of currencies.
      *
-     * @param int    $multicurrency  Multicurrency rates (0: no multicurrency, 1: last rate, 2: all rates) {@min 0} {@max 2}
+     * @param int       $multicurrency  Multicurrency rates (0: no multicurrency, 1: last rate, 2: all rates) {@min 0} {@max 2}
      * @param string    $sortfield  Sort field
      * @param string    $sortorder  Sort order
      * @param int       $limit      Number of items per page
