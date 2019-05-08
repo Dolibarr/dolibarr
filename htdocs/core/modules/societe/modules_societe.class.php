@@ -105,11 +105,12 @@ abstract class ModeleThirdPartyCode
         return $langs->trans("NoExample");
     }
 
-    /**     Test si les numeros deja en vigueur dans la base ne provoquent pas de
-     *      de conflits qui empechera cette numerotation de fonctionner.
-     *
-     *      @return     boolean     false si conflit, true si ok
-     */
+    /**
+	 *  Checks if the numbers already in force in the data base do not 
+	 *  cause conflicts that would prevent this numbering from working.
+	 *
+	 *	@return     boolean     false if conflict, true if ok
+	 */
     public function canBeActivated()
     {
         return true;
@@ -298,11 +299,12 @@ abstract class ModeleAccountancyCode
         return $langs->trans("NoExample");
     }
 
-    /**     Test si les numeros deja en vigueur dans la base ne provoquent pas de
-     *      de conflits qui empechera cette numerotation de fonctionner.
-     *
-     *      @return     boolean     false si conflit, true si ok
-     */
+    /**
+	 *  Checks if the numbers already in force in the data base do not 
+	 *  cause conflicts that would prevent this numbering from working.
+	 *
+	 *	@return     boolean     false if conflict, true if ok
+	 */
     public function canBeActivated()
     {
         return true;
