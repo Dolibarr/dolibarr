@@ -2085,7 +2085,7 @@ class Form
 			$selectFields.= ", idprodcustprice, custprice, custprice_ttc, custprice_base_type, custtva_tx";
 		}
         // Units
-        if($conf->global->PRODUCT_USE_UNITS) {
+        if (! empty($conf->global->PRODUCT_USE_UNITS)) {
             $sql .= ', u.label as unit_long, u.short_label as unit_short';
             $selectFields .= ', unit_long, unit_short';
         }
@@ -2127,7 +2127,7 @@ class Form
 			$sql.=" LEFT JOIN  ".MAIN_DB_PREFIX."product_customer_price as pcp ON pcp.fk_soc=".$socid." AND pcp.fk_product=p.rowid";
 		}
         // Units
-        if($conf->global->PRODUCT_USE_UNITS) {
+        if (! empty($conf->global->PRODUCT_USE_UNITS)) {
             $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_units u ON u.rowid = p.fk_unit";
         }
 		// Multilang : we add translation
@@ -2392,7 +2392,7 @@ class Form
 		if ($outbarcode) $opt.=' ('.$outbarcode.')';
 		$opt.=' - '.dol_trunc($label, $maxlengtharticle);
         // Units
-        if($conf->global->PRODUCT_USE_UNITS) {
+        if (! empty($conf->global->PRODUCT_USE_UNITS)) {
             $opt .= ' (' . $objp->unit_short . ')';
         }
 
