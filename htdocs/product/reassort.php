@@ -321,7 +321,7 @@ if ($resql)
 	}
 	if ($virtualdiffersfromphysical) print_liste_field_titre("VirtualStock", $_SERVER["PHP_SELF"], "", $param, "", '', $sortfield, $sortorder, 'right ');
     // Units
-    if($conf->global->PRODUCT_USE_UNITS) {
+    if (! empty($conf->global->PRODUCT_USE_UNITS)) {
         print_liste_field_titre("Unit", $_SERVER["PHP_SELF"], "unit_short", $param, "", 'align="right"', $sortfield, $sortorder);
     }
 	print_liste_field_titre('');
@@ -385,7 +385,7 @@ if ($resql)
 			print '</td>';
 		}
         // Units
-        if ($conf->global->PRODUCT_USE_UNITS) {
+        if (! empty($conf->global->PRODUCT_USE_UNITS)) {
             print '<td class="left">' . $objp->unit_short . '</td>';
         }
 		print '<td class="right"><a href="'.DOL_URL_ROOT.'/product/stock/movement_list.php?idproduct='.$product->id.'">'.$langs->trans("Movements").'</a></td>';
