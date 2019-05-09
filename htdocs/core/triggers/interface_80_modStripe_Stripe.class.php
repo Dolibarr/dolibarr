@@ -147,6 +147,7 @@ class InterfaceStripe
 				if ($customer)
 				{
 					$namecleaned = $object->name ? $object->name : null;
+                    $vatcleaned = $object->tva_intra ? $object->tva_intra : null;
           $desccleaned = $object->name_alias ? $object->name_alias : null;
 					$taxexemptcleaned = $object->tva_assuj ? 'none' : 'exempt';
           $langcleaned = $object->default_lang ? array(substr($object->default_lang, 0, 2)) : null;
