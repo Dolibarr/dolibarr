@@ -6,7 +6,7 @@
  * Copyright (C) 2013      Peter Fontaine       <contact@peterfontaine.fr>
  * Copyright (C) 2015-2016 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2017      Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2018      ptibogxiv            <support@ptibogxiv.net>
+ * Copyright (C) 2018-2019 Thibault FOUCART     <support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -640,6 +640,27 @@ if (empty($reshook))
 				setEventMessages($e->getMessage(), null, 'errors');
 			}
 		}
+		elseif ($action == 'deletepaymentmethod' && $source)
+		{
+			try {
+				$cu=$stripe->customerStripe($object, $stripeacc, $servicestatus);
+				$payment_method = \Stripe\PaymentMethod::retrieve($source);
+
+				if ($payment_method)
+				{
+					$payment_method->detach();
+				}
+
+				$url=DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id;
+				header('Location: '.$url);
+				exit;
+			}
+			catch(Exception $e)
+			{
+				$error++;
+				setEventMessages($e->getMessage(), null, 'errors');
+			}
+		}    
 	}
 }
 
@@ -763,13 +784,13 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		print $form->editfieldval("StripeCustomerId", 'key_account', $stripecu, $object, $permissiontowrite, 'string', '', null, null, '', 2, '', 'socid');
 		if (! empty($conf->stripe->enabled) && $stripecu && $action != 'editkey_account')
 		{
-		    $connect='';
-			if (!empty($stripeacc)) $connect=$stripeacc.'/';
-			$url='https://dashboard.stripe.com/'.$connect.'test/customers/'.$stripecu;
-			if ($servicestatus)
-			{
-				$url='https://dashboard.stripe.com/'.$connect.'customers/'.$stripecu;
-			}
+							    $connect='';
+							    if (!empty($stripeacc)) $connect=$stripeacc.'/';
+							    $url='https://dashboard.stripe.com/'.$connect.'test/search?query='.$stripecu;
+								if ($servicestatus)
+								{
+									$url='https://dashboard.stripe.com/'.$connect.'search?query='.$stripecu;
+								}
 			print ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe'), 'object_globe').'</a>';
 		}
 		print '</td><td class="right">';
@@ -810,7 +831,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			try {
 				$customerstripe=$stripe->customerStripe($object, $stripeacc, $servicestatus);
 				if ($customerstripe->id) {
-					$listofsources=$customerstripe->sources->data;
+					$listofsources=\Stripe\PaymentMethod::all(["customer" => "".$customerstripe->id."", "type" => "card"])->data;
 				}
 			}
 			catch(Exception $e)
@@ -989,35 +1010,19 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				print '</td>';
 				// Img of credit card
 				print '<td>';
-				if ($src->object=='card')
-				{
-					print img_credit_card($src->brand);
-				}
-				elseif ($src->object=='source' && $src->type=='card')
+        if ($src->type=='card')
 				{
 					print img_credit_card($src->card->brand);
 				}
-				elseif ($src->object=='source' && $src->type=='sepa_debit')
+				elseif ($src->type=='sepa_debit')
 				{
 					print '<span class="fa fa-university fa-2x fa-fw"></span>';
 				}
 				print'</td>';
 				print '<td valign="middle">';
-				if ($src->object=='card')
+        if ($src->type=='card')
 				{
-					print '....'.$src->last4.' - '.$src->exp_month.'/'.$src->exp_year.'';
-					print '</td><td>';
-					if ($src->country)
-					{
-						$img=picto_from_langcode($src->country);
-						print $img?$img.' ':'';
-						print getCountry($src->country, 1);
-					}
-					else print img_warning().' <font class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</font>';
-				}
-				elseif ($src->object=='source' && $src->type=='card')
-				{
-					print $src->owner->name.'<br>....'.$src->card->last4.' - '.$src->card->exp_month.'/'.$src->card->exp_year.'';
+					print $src->billing_details->name.'<br>....'.$src->card->last4.' - '.$src->card->exp_month.'/'.$src->card->exp_year.'';
 					print '</td><td>';
 
 				 	if ($src->card->country)
@@ -1028,7 +1033,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 					}
 					else print img_warning().' <font class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</font>';
 				}
-				elseif ($src->object=='source' && $src->type=='sepa_debit')
+				elseif ($src->type=='sepa_debit')
 				{
 					print 'info sepa';
 					print '</td><td>';
@@ -1043,7 +1048,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				print '</td>';
 				// Default
 				print '<td class="center" width="50">';
-				if (($customerstripe->default_source != $src->id))
+				if (($customerstripe->invoice_settings->default_payment_method != $src->id))
 				{
 					print '<a href="' . DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&source='.$src->id.'&action=setassourcedefault">';
 					print img_picto($langs->trans("Default"), 'off');
@@ -1068,7 +1073,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				print '<td class="right nowraponall">';
 				if ($user->rights->societe->creer)
 				{
-					print '<a href="' . DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&source='.$src->id.'&action=deletecard">';
+					print '<a href="' . DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&source='.$src->id.'&action=deletepaymentmethod">';
 					print img_picto($langs->trans("Delete"), 'delete');
 					print '</a>';
 				}
