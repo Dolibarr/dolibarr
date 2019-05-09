@@ -660,7 +660,7 @@ if (empty($reshook))
 				$error++;
 				setEventMessages($e->getMessage(), null, 'errors');
 			}
-		}    
+		}
 	}
 }
 
@@ -831,7 +831,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			try {
 				$customerstripe=$stripe->customerStripe($object, $stripeacc, $servicestatus);
 				if ($customerstripe->id) {
-          $listofpaymentmethods = $stripe->getListOfPaymentMethods($object, $customerstripe, 'card', $stripeacc, $servicestatus);  
+          $listofpaymentmethods = $stripe->getListOfPaymentMethods($object, $customerstripe, 'card', $stripeacc, $servicestatus);
 				}
 			}
 			catch(Exception $e)
@@ -1013,7 +1013,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
         if ($src->type=='card')
 				{
 					print img_credit_card($src->card->brand);
-				}
+        }
 				elseif ($src->type=='sepa_debit')
 				{
 					print '<span class="fa fa-university fa-2x fa-fw"></span>';
@@ -1032,7 +1032,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 						print getCountry($src->card->country, 1);
 					}
 					else print img_warning().' <font class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</font>';
-				}
+                 }
 				elseif ($src->type=='sepa_debit')
 				{
 					print 'info sepa';
