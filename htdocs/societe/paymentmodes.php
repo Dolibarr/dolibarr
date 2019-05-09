@@ -825,13 +825,13 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		}
 		print load_fiche_titre($langs->trans('StripePaymentModes').($stripeacc?' (Stripe connection with StripeConnect account '.$stripeacc.')':' (Stripe connection with keys from Stripe module setup)'), $morehtmlright, '');
 
-		$listofsources = array();
+		$listofpaymentmethods = array();
 		if (is_object($stripe))
 		{
 			try {
 				$customerstripe=$stripe->customerStripe($object, $stripeacc, $servicestatus);
 				if ($customerstripe->id) {
-					$listofsources=\Stripe\PaymentMethod::all(["customer" => "".$customerstripe->id."", "type" => "card"])->data;
+          $listofpaymentmethods = $stripe->getListOfPaymentMethods($object, $customerstripe, 'card', $stripeacc, $servicestatus);  
 				}
 			}
 			catch(Exception $e)
@@ -979,9 +979,9 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		}
 
 		// Show remote sources (not already shown as local source)
-		if (is_array($listofsources) && count($listofsources))
+		if (is_array($listofpaymentmethods) && count($listofpaymentmethods))
 		{
-			foreach ($listofsources as $src)
+			foreach ($listofpaymentmethods as $src)
 			{
 				if (! empty($arrayofstripecard[$src->id])) continue;	// Already in previous list
 
