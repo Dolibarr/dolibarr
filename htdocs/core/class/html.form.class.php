@@ -1898,8 +1898,10 @@ class Form
         // phpcs:enable
 		global $langs,$conf;
 
+		// check parameters
 		$price_level = (! empty($price_level) ? $price_level : 0);
-
+		if (is_null($ajaxoptions)) $ajaxoptions=array();
+		
 		if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT))
 		{
 			$placeholder='';
