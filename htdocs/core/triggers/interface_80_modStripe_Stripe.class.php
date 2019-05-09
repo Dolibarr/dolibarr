@@ -163,19 +163,26 @@ class InterfaceStripe
 					// Detect if we change a Stripe info (email, description, vat id)
 					$changerequested = 0;
 					if (! empty($object->email) && $object->email != $customer->email) $changerequested++;
-          if ($namecleaned != $customer->name) $changerequested++;
+                    if ($namecleaned != $customer->name) $changerequested++;
 					if ($desccleaned != $customer->description) $changerequested++;
 					if ( !($customer->tax_exempt == 'exempt' && is_null($object->tva_assuj)) || !($customer->tax_exempt == 'exempt' && is_null($object->tva_assuj)) ) $changerequested++;
-
+                    if (! isset($customer->tax_ids['data']) && ! is_null($vatcleaned)) $changerequested++;
+					elseif (isset($customer->tax_ids['data']) && is_null($vatcleaned)) $changerequested++;
+					elseif (isset($customer->tax_ids['data']) && ! is_null($vatcleaned))
+					{
+                        $taxinfo = reset($customer->tax_ids['data']);
+						if (isset($taxinfo->value) && $vatcleaned != $taxinfo->value) $changerequested++;
+					}
+                    
 					if ($changerequested)
 					{
 						if (! empty($object->email)) $customer->email = $object->email;
 						$customer->name = $namecleaned;
-            $customer->description = $desccleaned;
-            $customer->preferred_locales = $langcleaned;
-            $customer->tax_exempt = $taxexemptcleaned;
-						//if (empty($taxinfo)) $customer->tax_info = array('type'=>'vat', 'tax_id'=>null);
-						//else $customer->tax_info = $taxinfo;
+                        $customer->description = $desccleaned;
+                        $customer->preferred_locales = $langcleaned;
+                        $customer->tax_exempt = $taxexemptcleaned;
+						if (! empty($vatcleaned)) $customer->tax_ids = array('object'=>'list', 'data'=>array('value'=>$vatcleaned));
+						else $customer->tax_ids = null;
 
 						$customer->save();
 					}
