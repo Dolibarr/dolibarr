@@ -549,7 +549,7 @@ function TerminalsDialog()
 {
     jQuery("#dialog-info").dialog({
 	    resizable: false,
-	    height:200,
+	    height:220,
 	    width:400,
 	    modal: true,
 	    buttons: {
