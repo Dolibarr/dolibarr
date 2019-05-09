@@ -424,7 +424,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 				    complete_substitutions_array($substitutionarray, $outputlangs, $object);
 				    $notetoshow = make_substitutions($notetoshow, $substitutionarray, $outputlangs);
 				    $notetoshow = convertBackOfficeMediasLinksToPublicLinks($notetoshow);
-				    
+
 					$tab_top -= 2;
 
 				    $pdf->startTransaction();
@@ -1710,22 +1710,6 @@ class pdf_eratosthene extends ModelePDFCommandes
 	        ),
 	        'border-left' => true, // add left line separator
 	    );
-
-	    $rank = $rank + 10;
-	    $this->cols['progress'] = array(
-	        'rank' => $rank,
-	        'width' => 19, // in mm
-	        'status' => false,
-	        'title' => array(
-	            'textkey' => 'Progress'
-	        ),
-	        'border-left' => false, // add left line separator
-	    );
-
-	    if($this->situationinvoice)
-	    {
-	        $this->cols['progress']['status'] = true;
-	    }
 
 	    $rank = $rank + 10;
 	    $this->cols['unit'] = array(

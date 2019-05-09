@@ -83,12 +83,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 		if (! $this->emetteur->country_code) $this->emetteur->country_code=substr($langs->defaultlang, -2);    // By default if not defined
 
 		// Defini position des colonnes
-		$this->posxref=$this->marge_gauche+1;
-		$this->posxlabel=$this->marge_gauche+25;
-		$this->posxworkload=$this->marge_gauche+100;
-		$this->posxprogress=$this->marge_gauche+130;
-		$this->posxdatestart=$this->marge_gauche+150;
-		$this->posxdateend=$this->marge_gauche+170;
+		$this->posxref=$this->marge_gauche;
 	}
 
 
@@ -203,7 +198,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				if (! empty($object->note_public))
 				{
 					$pdf->SetFont('', '', $default_font_size - 1);
-					$pdf->writeHTMLCell(190, 3, $this->posxref-1, $tab_top-2, dol_htmlentitiesbr($object->note_public), 0, 1);
+					$pdf->writeHTMLCell(190, 3, $this->posxref, $tab_top-2, dol_htmlentitiesbr($object->note_public), 0, 1);
 					$nexY = $pdf->GetY();
 					$height_note=$nexY-($tab_top-2);
 
