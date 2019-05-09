@@ -378,7 +378,7 @@ class pdf_crabe extends ModelePDFFactures
 
 				$progress_width = 0;
 				// Situation invoice handling
-				if ($object->situation_cycle_ref)
+				if ($object->situation_cycle_ref && empty($conf->global->MAIN_PDF_HIDE_SITUATION))
 				{
 					$this->situationinvoice = true;
 					$progress_width = 10;
