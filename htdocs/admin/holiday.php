@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2011-2013      Juanjo Menent	    <jmenent@2byte.es>
+/* Copyright (C) 2011-2019      Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2011-2018      Philippe Grand	    <philippe.grand@atoo-net.com>
  * Copyright (C) 2018		    Charlene Benke		<charlie@patas-monkey.com>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018			Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,7 +55,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'updateMask')
 {
-    $maskconst = GETPOST('maskconstholidaty','alpha');
+    $maskconst = GETPOST('maskconstholiday','alpha');
     $maskvalue =  GETPOST('maskholiday','alpha');
     if ($maskconst) $res = dolibarr_set_const($db,$maskconst,$maskvalue,'chaine',0,'',$conf->entity);
 
