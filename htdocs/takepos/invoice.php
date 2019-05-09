@@ -90,7 +90,7 @@ if ($invoiceid > 0)
 }
 else
 {
-    $ret = $invoice->fetch('', '(PROV-POS-'.$place.')');
+    $ret = $invoice->fetch('', '(PROV-POS'.$_SESSION["takepostermvar"].'-'.$place.')');
 }
 if ($ret > 0)
 {
@@ -104,12 +104,12 @@ if ($ret > 0)
 
 if ($action == 'valid' && $user->rights->facture->creer)
 {
-    if ($pay == "cash") $bankaccount = $conf->global->CASHDESK_ID_BANKACCOUNT_CASH;            // For backward compatibility
-    elseif ($pay == "card") $bankaccount = $conf->global->CASHDESK_ID_BANKACCOUNT_CB;          // For backward compatibility
-    elseif ($pay == "cheque") $bankaccount = $conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE;    // For backward compatibility
+    if ($pay == "cash") $bankaccount = $conf->global->{'CASHDESK_ID_BANKACCOUNT_CASH'.$_SESSION["takepostermvar"]};            // For backward compatibility
+    elseif ($pay == "card") $bankaccount = $conf->global->{'CASHDESK_ID_BANKACCOUNT_CB'.$_SESSION["takepostermvar"]};          // For backward compatibility
+    elseif ($pay == "cheque") $bankaccount = $conf->global->{'CASHDESK_ID_BANKACCOUNT_CHEQUE'.$_SESSION["takepostermvar"]};    // For backward compatibility
     else
     {
-        $accountname="CASHDESK_ID_BANKACCOUNT_".$pay;
+        $accountname="CASHDESK_ID_BANKACCOUNT_".$pay.$_SESSION["takepostermvar"];
     	$bankaccount=$conf->global->$accountname;
     }
 	$now=dol_now();
@@ -137,9 +137,9 @@ if ($action == 'valid' && $user->rights->facture->creer)
 		$invoice->update($user);
 	}
 
-	if (! empty($conf->stock->enabled) && $conf->global->CASHDESK_NO_DECREASE_STOCK != "1")
+	if (! empty($conf->stock->enabled) && $conf->global->{'CASHDESK_NO_DECREASE_STOCK'.$_SESSION["takepostermvar"]} != "1")
 	{
-	    $invoice->validate($user, '', $conf->global->CASHDESK_ID_WAREHOUSE);
+	    $invoice->validate($user, '', $conf->global->{'CASHDESK_ID_WAREHOUSE'.$_SESSION["takepostermvar"]});
 	}
 	else
 	{
@@ -180,13 +180,13 @@ if ($action == 'history')
 
 if (($action=="addline" || $action=="freezone") && $placeid == 0)
 {
-	$invoice->socid = $conf->global->CASHDESK_ID_THIRDPARTY;
+	$invoice->socid = $conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takepostermvar"]};
 	$invoice->date = dol_now();
 	$invoice->module_source = 'takepos';
 	$invoice->pos_source = (string) $posnb;
 
 	$placeid = $invoice->create($user);
-	$sql="UPDATE ".MAIN_DB_PREFIX."facture set ref='(PROV-POS-".$place.")' where rowid=".$placeid;
+	$sql="UPDATE ".MAIN_DB_PREFIX."facture set ref='(PROV-POS".$_SESSION["takepostermvar"]."-".$place.")' where rowid=".$placeid;
 	$db->query($sql);
 }
 
@@ -559,11 +559,11 @@ else {      // No invoice generated yet
 
 print '</table>';
 
-if ($invoice->socid != $conf->global->CASHDESK_ID_THIRDPARTY)
+if ($invoice->socid != $conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takepostermvar"]})
 {
     $soc = new Societe($db);
     if ($invoice->socid > 0) $soc->fetch($invoice->socid);
-    else $soc->fetch($conf->global->CASHDESK_ID_THIRDPARTY);
+    else $soc->fetch($conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takepostermvar"]});
     print '<p style="font-size:120%;" class="right">';
     print $langs->trans("Customer").': '.$soc->name;
     print '</p>';

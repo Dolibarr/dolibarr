@@ -27,6 +27,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+require_once DOL_DOCUMENT_ROOT."/core/lib/takepos.lib.php";
 
 // If socid provided by ajax company selector
 if (! empty($_REQUEST['CASHDESK_ID_THIRDPARTY_id']))
@@ -88,6 +89,7 @@ if (GETPOST('action', 'alpha') == 'set')
 	$res = dolibarr_set_const($db, "TAKEPOS_HEADER", GETPOST('TAKEPOS_HEADER', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_FOOTER", GETPOST('TAKEPOS_FOOTER', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_NUMPAD", GETPOST('TAKEPOS_NUMPAD', 'alpha'), 'chaine', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "TAKEPOS_NUM_TERMINALS", GETPOST('TAKEPOS_NUM_TERMINALS', 'alpha'), 'chaine', 0, '', $conf->entity);
 
 	if ($conf->global->TAKEPOS_ORDER_NOTES==1)
 	{
@@ -122,6 +124,8 @@ llxHeader('', $langs->trans("CashDeskSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("CashDeskSetup").' (TakePOS)', $linkback, 'title_setup');
+$head = takepos_prepare_head();
+dol_fiche_head($head, 'setup', 'TakePOS', -1);
 print '<br>';
 
 
@@ -249,6 +253,14 @@ else
 }
 print "</td></tr>\n";
 
+// Terminals
+print '<tr class="oddeven"><td>';
+print $langs->trans("Terminals");
+print '<td colspan="2">';
+$array=array(1=>"1", 2=>"2", 3=>"3", 4=>"4", 5=>"5");
+print $form->selectarray('TAKEPOS_NUM_TERMINALS', $array, (empty($conf->global->TAKEPOS_NUM_TERMINALS)?'0':$conf->global->TAKEPOS_NUM_TERMINALS), 0);
+print "</td></tr>\n";
+
 print '</table>';
 
 print '<br>';
@@ -256,7 +268,8 @@ print '<br>';
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Terminal").' 0</td><td>'.$langs->trans("Value").'</td>';
+if (!$conf->global->TAKEPOS_NUM_TERMINALS || $conf->global->TAKEPOS_NUM_TERMINALS=="1") print '<td>'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td>';
+else print '<td>'.$langs->trans("Terminal").' 1</td><td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 
 print '<tr class="oddeven"><td width=\"50%\">'.$langs->trans("CashDeskThirdPartyForSell").'</td>';
