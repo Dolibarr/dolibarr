@@ -267,7 +267,6 @@ class Stripe extends CommonObject
 					} else {
 						$stripepaymentmethod = \Stripe\PaymentMethod::retrieve(''.$paymentmethod->id.'', array("stripe_account" => $key));
 					}
-
 				}
 				catch(Exception $e)
 				{
@@ -307,7 +306,6 @@ class Stripe extends CommonObject
 					} else {
 						$paymentmethods = \Stripe\PaymentMethod::retrieve(''.$paymentmethod->id.'', array("stripe_account" => $key));
 					}
-
 				}
 				catch(Exception $e)
 				{
@@ -315,7 +313,7 @@ class Stripe extends CommonObject
 				}
 
 		return $paymentmethods->data;
-	}    
+	}
 
     /**
 	 * Get the Stripe payment intent. Create it with confirm=false
