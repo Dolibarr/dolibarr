@@ -35,6 +35,7 @@ FIX: Total per day shows 00:00 if the total time spent is equal to 12:00
 FIX: Update/delete currency on same languages
 FIX: Wrong variable name make contact of supplier order not used on PDF.
 FIX: Add hidden option MAIN_PDF_HIDE_SITUATION to hide situation (quick hack to fix output pb).
+FIX: attached files list with link file was broked
 
 ***** ChangeLog for 9.0.2 compared to 9.0.1 *****
 FIX: #10822
