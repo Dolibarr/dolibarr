@@ -22,7 +22,7 @@
 /**
  *	\file       htdocs/societe/consumption.php
  *  \ingroup    societe
- *	\brief      Add a tab on thirpdarty view to list all products/services bought or sells by thirdparty
+ *	\brief      Add a tab on thirdparty view to list all products/services bought or sells by thirdparty
  */
 
 require "../main.inc.php";

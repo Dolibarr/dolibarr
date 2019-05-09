@@ -51,7 +51,7 @@ function shipping_prepare_head($object)
 	{
 		// delivery link
 		$object->fetchObjectLinked($object->id,$object->element);
-		if (count($object->linkedObjectsIds['delivery']) >  0)		// If there is a delivery
+		if (is_array($object->linkedObjectsIds['delivery']) && count($object->linkedObjectsIds['delivery']) > 0)        // If there is a delivery
 		{
 		    // Take first one element of array
 		    $tmp = reset($object->linkedObjectsIds['delivery']);

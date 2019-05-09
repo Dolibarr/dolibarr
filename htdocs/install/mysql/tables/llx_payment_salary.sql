@@ -19,7 +19,7 @@
 create table llx_payment_salary
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
-  ref             varchar(30) NOT NULL,       -- payment reference number
+  ref             varchar(30) NULL,           -- payment reference number (currently NULL because there is no numbering manager yet)
   tms             timestamp,
   datec           datetime,                   -- Create date
   fk_user         integer NOT NULL,

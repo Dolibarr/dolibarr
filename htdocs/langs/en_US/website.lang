@@ -96,3 +96,4 @@ ThisPageIsTranslationOf=This page/container is translation of
 ThisPageHasTranslationPages=This page/container has translation
 NoWebSiteCreateOneFirst=No website created yet. Create on first.
 GoTo=Go to
+DynamicPHPCodeContainsAForbiddenInstruction=You add dynamic PHP code that contains the PHP instruction '<strong>%s</strong>' that is forbidden by default as dynamic content (see hidden options WEBSITE_PHP_ALLOW_xxx to increase list of allowed commands).

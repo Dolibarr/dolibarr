@@ -133,7 +133,8 @@ if ($what == 'mysql')
         dol_syslog("Command are restricted to ".$dolibarr_main_restrict_os_commands.". We check that one of this command is inside ".$cmddump);
         foreach($arrayofallowedcommand as $allowedcommand)
         {
-            if (preg_match('/'.preg_quote($allowedcommand,'/').'/', $cmddump))
+            $basenamecmddump=basename($cmddump);
+            if (preg_match('/^'.preg_quote($allowedcommand,'/').'$/', $basenamecmddump)) // the provided command $cmddump must be an allowed command
             {
                 $ok=1;
                 break;

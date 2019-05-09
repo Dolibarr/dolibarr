@@ -757,7 +757,7 @@ class Expedition extends CommonObject
 						$result=$mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans("ShipmentValidatedInDolibarr",$numref));
 						if ($result < 0) {
 							$error++;
-							$this->errors[]=$mouvS->error;
+							$this->error = $mouvS->error;
 							$this->errors = array_merge($this->errors, $mouvS->errors);
 							break;
 						}
@@ -771,7 +771,7 @@ class Expedition extends CommonObject
 						$result=$mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans("ShipmentValidatedInDolibarr",$numref), '', $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch, $obj->fk_origin_stock);
 						if ($result < 0) {
 							$error++;
-							$this->errors[]=$mouvS->error;
+							$this->error = $mouvS->error;
 							$this->errors = array_merge($this->errors, $mouvS->errors);
 							break;
 						}
@@ -851,11 +851,6 @@ class Expedition extends CommonObject
 		}
 		else
 		{
-			foreach($this->errors as $errmsg)
-			{
-				dol_syslog(get_class($this)."::valid ".$errmsg, LOG_ERR);
-				$this->error.=($this->error?', '.$errmsg:$errmsg);
-			}
 			$this->db->rollback();
 			return -1*$error;
 		}
