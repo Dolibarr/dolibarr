@@ -1280,6 +1280,7 @@ class Adherent extends CommonObject
 				$this->societe			= $obj->company;
 				$this->company			= $obj->company;
 				$this->socid			= $obj->fk_soc;
+				$this->fk_soc			= $obj->fk_soc;     // For backward comaptibility
 				$this->address			= $obj->address;
 				$this->zip				= $obj->zip;
 				$this->town				= $obj->town;
