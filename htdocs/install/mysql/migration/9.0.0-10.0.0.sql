@@ -363,4 +363,7 @@ create table llx_reception_extrafields
 
 ALTER TABLE llx_reception_extrafields ADD INDEX idx_reception_extrafields (fk_object);
 
+ALTER TABLE llx_commande_fournisseur_dispatch ADD COLUMN fk_projet integer DEFAULT NULL;
+ALTER TABLE llx_commande_fournisseur_dispatch ADD COLUMN fk_reception integer DEFAULT NULL;
 
+  
