@@ -350,7 +350,7 @@ if ($action=="create" || $action=="start")
     {
         $selectedposnumber=1; $showempty=0;
     }
-    print $form->selectarray('posnumber', $array, GETPOSTISSET('posnumber')?GETPOST('posnumber','int'):$selectedposnumber, $showempty);
+    print $form->selectarray('posnumber', $array, GETPOSTISSET('posnumber')?GETPOST('posnumber', 'int'):$selectedposnumber, $showempty);
     //print '<input name="posnumber" type="text" class="maxwidth50" value="'.(GETPOSTISSET('posnumber')?GETPOST('posnumber', 'alpha'):'0').'">';
     print '</td>';
 	// Year
