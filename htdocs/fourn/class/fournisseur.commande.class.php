@@ -2639,6 +2639,8 @@ class CommandeFournisseur extends CommonOrder
     {
         global $user,$langs,$conf;
 
+        include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+
         dol_syslog(get_class($this)."::initAsSpecimen");
 
         $now=dol_now();
