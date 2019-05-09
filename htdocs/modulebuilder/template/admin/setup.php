@@ -59,13 +59,16 @@ $arrayofparameters=array(
 );
 
 
+
 /*
  * Actions
  */
+
 if ((float) DOL_VERSION >= 6)
 {
 	include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 }
+
 
 
 /*
@@ -85,7 +88,7 @@ $head = mymoduleAdminPrepareHead();
 dol_fiche_head($head, 'settings', '', -1, "mymodule@mymodule");
 
 // Setup page goes here
-echo $langs->trans("MyModuleSetupPage").'<br><br>';
+echo '<span class="opacitymedium">'.$langs->trans("MyModuleSetupPage").'</span><br><br>';
 
 
 if ($action == 'edit')
