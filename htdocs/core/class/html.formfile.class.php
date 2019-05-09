@@ -833,7 +833,7 @@ class FormFile
 				{
 					$out.='<tr class="oddeven">';
 					$out.='<td colspan="'.$colspan.'" class="maxwidhtonsmartphone">';
-					$out.='<a data-ajax="false" href="' . $link->url . '" target="_blank">';
+					$out.='<a data-ajax="false" href="' . $file->url . '" target="_blank">';
 					$out.=$file->label;
 					$out.='</a>';
 					$out.='</td>';
