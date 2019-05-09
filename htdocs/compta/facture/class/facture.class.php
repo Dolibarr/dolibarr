@@ -303,7 +303,7 @@ class Facture extends CommonInvoice
 		if (! $this->cond_reglement_id) $this->cond_reglement_id = 0;
 		if (! $this->mode_reglement_id) $this->mode_reglement_id = 0;
 		$this->brouillon = 1;
-        if (empty($this->entity)) $this->entity = $conf->entity;
+        //if (empty($this->entity)) $this->entity = $conf->entity;
 
 		// Multicurrency (test on $this->multicurrency_tx because we should take the default rate only if not using origin rate)
 		if (!empty($this->multicurrency_code) && empty($this->multicurrency_tx)) list($this->fk_multicurrency,$this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code);
@@ -441,7 +441,9 @@ class Facture extends CommonInvoice
 
 			$this->note_public=make_substitutions($this->note_public, $substitutionarray);
 			$this->note_private=make_substitutions($this->note_private, $substitutionarray);
-		}
+		} else {
+            $this->entity = $conf->entity;
+        }
 
 		// Define due date if not already defined
 		$datelim=(empty($forceduedate)?$this->calculate_date_lim_reglement():$forceduedate);
