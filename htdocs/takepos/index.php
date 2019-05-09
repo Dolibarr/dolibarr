@@ -18,7 +18,13 @@
  */
 
 
-//V20: Separando el DIV takepos nos permite refrescarlo sin que se salga de la pantlla completa.
+/**
+ *	\file       htdocs/takepos/index.php
+ *	\ingroup    Takepos
+ *	\brief      Head bar to start Takepos.
+ */
+
+//v20: Spliting original takepos.php DIV we can refresh screen quickly. This is usefull for manage user, terminal, etc 
 
 //if (! defined('NOREQUIREUSER'))	define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
 //if (! defined('NOREQUIREDB'))		define('NOREQUIREDB','1');		// Not disabled cause need to load personalized language
