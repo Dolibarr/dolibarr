@@ -57,26 +57,31 @@ if($resql){
 	}
 }
 
+$terminaltouse = $terminal;
+if ($terminaltouse == '1') $terminaltouse = '';
+
+
 /*
  * Actions
  */
+
 if (GETPOST('action', 'alpha') == 'set')
 {
 	$db->begin();
 	if (GETPOST('socid', 'int') < 0) $_POST["socid"]='';
 
-	$res = dolibarr_set_const($db, "CASHDESK_ID_THIRDPARTY".$terminal, (GETPOST('socid', 'int') > 0 ? GETPOST('socid', 'int') : ''), 'chaine', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "CASHDESK_ID_THIRDPARTY".$terminaltouse, (GETPOST('socid', 'int') > 0 ? GETPOST('socid', 'int') : ''), 'chaine', 0, '', $conf->entity);
 
-    $res = dolibarr_set_const($db, "CASHDESK_ID_BANKACCOUNT_CASH".$terminal, (GETPOST('CASHDESK_ID_BANKACCOUNT_CASH'.$terminal, 'alpha') > 0 ? GETPOST('CASHDESK_ID_BANKACCOUNT_CASH'.$terminal, 'alpha') : ''), 'chaine', 0, '', $conf->entity);
-	$res = dolibarr_set_const($db, "CASHDESK_ID_BANKACCOUNT_CHEQUE".$terminal, (GETPOST('CASHDESK_ID_BANKACCOUNT_CHEQUE'.$terminal, 'alpha') > 0 ? GETPOST('CASHDESK_ID_BANKACCOUNT_CHEQUE'.$terminal, 'alpha') : ''), 'chaine', 0, '', $conf->entity);
-	$res = dolibarr_set_const($db, "CASHDESK_ID_BANKACCOUNT_CB".$terminal, (GETPOST('CASHDESK_ID_BANKACCOUNT_CB'.$terminal, 'alpha') > 0 ? GETPOST('CASHDESK_ID_BANKACCOUNT_CB'.$terminal, 'alpha') : ''), 'chaine', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "CASHDESK_ID_BANKACCOUNT_CASH".$terminaltouse, (GETPOST('CASHDESK_ID_BANKACCOUNT_CASH'.$terminaltouse, 'alpha') > 0 ? GETPOST('CASHDESK_ID_BANKACCOUNT_CASH'.$terminaltouse, 'alpha') : ''), 'chaine', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "CASHDESK_ID_BANKACCOUNT_CHEQUE".$terminaltouse, (GETPOST('CASHDESK_ID_BANKACCOUNT_CHEQUE'.$terminaltouse, 'alpha') > 0 ? GETPOST('CASHDESK_ID_BANKACCOUNT_CHEQUE'.$terminaltouse, 'alpha') : ''), 'chaine', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "CASHDESK_ID_BANKACCOUNT_CB".$terminaltouse, (GETPOST('CASHDESK_ID_BANKACCOUNT_CB'.$terminaltouse, 'alpha') > 0 ? GETPOST('CASHDESK_ID_BANKACCOUNT_CB'.$terminaltouse, 'alpha') : ''), 'chaine', 0, '', $conf->entity);
     foreach($paiements as $modep) {
         if (in_array($modep->code, array('LIQ', 'CB', 'CHQ'))) continue;
-		$name="CASHDESK_ID_BANKACCOUNT_".$modep->code.$terminal;
+        $name="CASHDESK_ID_BANKACCOUNT_".$modep->code.$terminaltouse;
 		$res = dolibarr_set_const($db, $name, (GETPOST($name, 'alpha') > 0 ? GETPOST($name, 'alpha') : ''), 'chaine', 0, '', $conf->entity);
     }
-	$res = dolibarr_set_const($db, "CASHDESK_ID_WAREHOUSE".$terminal, (GETPOST('CASHDESK_ID_WAREHOUSE'.$terminal, 'alpha') > 0 ? GETPOST('CASHDESK_ID_WAREHOUSE'.$terminal, 'alpha') : ''), 'chaine', 0, '', $conf->entity);
-	$res = dolibarr_set_const($db, "CASHDESK_NO_DECREASE_STOCK".$terminal, GETPOST('CASHDESK_NO_DECREASE_STOCK'.$terminal, 'alpha'), 'chaine', 0, '', $conf->entity);
+    $res = dolibarr_set_const($db, "CASHDESK_ID_WAREHOUSE".$terminaltouse, (GETPOST('CASHDESK_ID_WAREHOUSE'.$terminaltouse, 'alpha') > 0 ? GETPOST('CASHDESK_ID_WAREHOUSE'.$terminaltouse, 'alpha') : ''), 'chaine', 0, '', $conf->entity);
+    $res = dolibarr_set_const($db, "CASHDESK_NO_DECREASE_STOCK".$terminaltouse, GETPOST('CASHDESK_NO_DECREASE_STOCK'.$terminaltouse, 'alpha'), 'chaine', 0, '', $conf->entity);
 
 	dol_syslog("admin/cashdesk: level ".GETPOST('level', 'alpha'));
 
@@ -93,6 +98,7 @@ if (GETPOST('action', 'alpha') == 'set')
 	    setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
+
 
 /*
  * View
@@ -111,7 +117,7 @@ print '<br>';
 
 
 // Mode
-print '<form action="'.$_SERVER["PHP_SELF"].'?terminal='.$terminal.'" method="post">';
+print '<form action="'.$_SERVER["PHP_SELF"].'?terminal='.(empty($terminal)?1:$terminal).'" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="set">';
 
@@ -122,26 +128,26 @@ print "</tr>\n";
 
 print '<tr class="oddeven"><td width=\"50%\">'.$langs->trans("CashDeskThirdPartyForSell").'</td>';
 print '<td colspan="2">';
-print $form->select_company($conf->global->{'CASHDESK_ID_THIRDPARTY'.$terminal}, 'socid', 's.client in (1, 3) AND s.status = 1', 1, 0, 0, array(), 0);
+print $form->select_company($conf->global->{'CASHDESK_ID_THIRDPARTY'.$terminaltouse}, 'socid', 's.client in (1, 3) AND s.status = 1', 1, 0, 0, array(), 0);
 print '</td></tr>';
 if (! empty($conf->banque->enabled))
 {
     print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountForSell").'</td>';
 	print '<td colspan="2">';
-	$form->select_comptes($conf->global->{'CASHDESK_ID_BANKACCOUNT_CASH'.$terminal}, 'CASHDESK_ID_BANKACCOUNT_CASH'.$terminal, 0, "courant=2", 1);
+	$form->select_comptes($conf->global->{'CASHDESK_ID_BANKACCOUNT_CASH'.$terminaltouse}, 'CASHDESK_ID_BANKACCOUNT_CASH'.$terminaltouse, 0, "courant=2", 1);
 	print '</td></tr>';
 	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountForCheque").'</td>';
 	print '<td colspan="2">';
-	$form->select_comptes($conf->global->{'CASHDESK_ID_BANKACCOUNT_CHEQUE'.$terminal}, 'CASHDESK_ID_BANKACCOUNT_CHEQUE'.$terminal, 0, "courant=1", 1);
+	$form->select_comptes($conf->global->{'CASHDESK_ID_BANKACCOUNT_CHEQUE'.$terminaltouse}, 'CASHDESK_ID_BANKACCOUNT_CHEQUE'.$terminaltouse, 0, "courant=1", 1);
 	print '</td></tr>';
 	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountForCB").'</td>';
 	print '<td colspan="2">';
-	$form->select_comptes($conf->global->{'CASHDESK_ID_BANKACCOUNT_CB'.$terminal}, 'CASHDESK_ID_BANKACCOUNT_CB'.$terminal, 0, "courant=1", 1);
+	$form->select_comptes($conf->global->{'CASHDESK_ID_BANKACCOUNT_CB'.$terminaltouse}, 'CASHDESK_ID_BANKACCOUNT_CB'.$terminaltouse, 0, "courant=1", 1);
 	print '</td></tr>';
 
 	foreach($paiements as $modep) {
         if (in_array($modep->code, array('LIQ', 'CB', 'CHQ'))) continue;
-		$name="CASHDESK_ID_BANKACCOUNT_".$modep->code.$terminal;
+        $name="CASHDESK_ID_BANKACCOUNT_".$modep->code.$terminaltouse;
 		print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountFor").' '.$langs->trans($modep->libelle).'</td>';
 		print '<td colspan="2">';
 		$cour=preg_match('/^LIQ.*/', $modep->code)?2:1;
