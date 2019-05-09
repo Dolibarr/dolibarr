@@ -179,7 +179,7 @@ class pdf_crabe extends ModelePDFFactures
 
 		// Define position of columns
 		$this->posxdesc=$this->marge_gauche+1;
-		if($conf->global->PRODUCT_USE_UNITS)
+		if (!empty($conf->global->PRODUCT_USE_UNITS))
 		{
 			$this->posxtva=101;
 			$this->posxup=118;
@@ -192,8 +192,8 @@ class pdf_crabe extends ModelePDFFactures
 			$this->posxup=126;
 			$this->posxqty=145;
 		}
+		$this->posxprogress=151; // Only displayed for situation invoices
 		$this->posxdiscount=162;
-		$this->posxprogress=126; // Only displayed for situation invoices
 		$this->postotalht=174;
 		if (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT) || ! empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN)) $this->posxtva=$this->posxup;
 		$this->posxpicture=$this->posxtva - (empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH)?20:$conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH);	// width of images
@@ -382,8 +382,8 @@ class pdf_crabe extends ModelePDFFactures
 					$this->posxtva -= $progress_width;
 					$this->posxup -= $progress_width;
 					$this->posxqty -= $progress_width;
-					if(empty($conf->global->PRODUCT_USE_UNITS)) {
-						$this->posxprogress += $progress_width;
+					if (empty($conf->global->PRODUCT_USE_UNITS)) {
+						$this->posxunit -= $progress_width;
 					}
 					/*$this->posxdiscount -= $progress_width;
 					$this->posxprogress -= $progress_width;*/
@@ -444,7 +444,7 @@ class pdf_crabe extends ModelePDFFactures
 					complete_substitutions_array($substitutionarray, $outputlangs, $object);
 					$notetoshow = make_substitutions($notetoshow, $substitutionarray, $outputlangs);
 					$notetoshow = convertBackOfficeMediasLinksToPublicLinks($notetoshow);
-					
+
 					$pdf->SetFont('', '', $default_font_size - 1);
 					$pdf->writeHTMLCell(190, 3, $this->posxdesc-1, $tab_top-1, dol_htmlentitiesbr($notetoshow), 0, 1);
 					$nexY = $pdf->GetY();
@@ -568,7 +568,6 @@ class pdf_crabe extends ModelePDFFactures
 					$qty = pdf_getlineqty($object, $i, $outputlangs, $hidedetails);
 					$pdf->SetXY($this->posxqty, $curY);
 					// Enough for 6 chars
-
 					if ($this->situationinvoice)
 					{
 						$pdf->MultiCell($this->posxprogress-$this->posxqty-0.8, 4, $qty, 0, 'R');
@@ -587,7 +586,7 @@ class pdf_crabe extends ModelePDFFactures
 					{
 						$progress = pdf_getlineprogress($object, $i, $outputlangs, $hidedetails);
 						$pdf->SetXY($this->posxprogress, $curY);
-						if($conf->global->PRODUCT_USE_UNITS)
+						if (! empty($conf->global->PRODUCT_USE_UNITS))
 						{
 							$pdf->MultiCell($this->posxunit-$this->posxprogress-1, 3, $progress, 0, 'R');
 						}
@@ -602,7 +601,7 @@ class pdf_crabe extends ModelePDFFactures
 					}
 
 					// Unit
-					if($conf->global->PRODUCT_USE_UNITS)
+					if (! empty($conf->global->PRODUCT_USE_UNITS))
 					{
 						$unit = pdf_getlineunit($object, $i, $outputlangs, $hidedetails, $hookmanager);
 						$pdf->SetXY($this->posxunit, $curY);
@@ -1550,15 +1549,15 @@ class pdf_crabe extends ModelePDFFactures
 
 				if($conf->global->PRODUCT_USE_UNITS)
 				{
-					$pdf->MultiCell($this->posxunit-$this->posxprogress, 2, $outputlangs->transnoentities("Progress"), '', 'C');
+					$pdf->MultiCell($this->posxunit-$this->posxprogress, 2, $outputlangs->transnoentities("%"), '', 'C');
 				}
 				elseif ($this->atleastonediscount)
 				{
-					$pdf->MultiCell($this->posxdiscount-$this->posxprogress, 2, $outputlangs->transnoentities("Progress"), '', 'C');
+					$pdf->MultiCell($this->posxdiscount-$this->posxprogress, 2, $outputlangs->transnoentities("%"), '', 'C');
 				}
 				else
 				{
-					$pdf->MultiCell($this->postotalht-$this->posxprogress, 2, $outputlangs->transnoentities("Progress"), '', 'C');
+					$pdf->MultiCell($this->postotalht-$this->posxprogress, 2, $outputlangs->transnoentities("%"), '', 'C');
 				}
 			}
 		}
@@ -1579,16 +1578,6 @@ class pdf_crabe extends ModelePDFFactures
 			{
 				$pdf->SetXY($this->posxdiscount-1, $tab_top+1);
 				$pdf->MultiCell($this->postotalht-$this->posxdiscount+1, 2, $outputlangs->transnoentities("ReductionShort"), '', 'C');
-			}
-		}
-
-		if ($this->situationinvoice)
-		{
-			$pdf->line($this->postotalht+4, $tab_top, $this->postotalht+4, $tab_top + $tab_height);
-			if (empty($hidetop))
-			{
-				$pdf->SetXY($this->postotalht-19, $tab_top+1);
-				$pdf->MultiCell(30, 2, $outputlangs->transnoentities("Situation"), '', 'C');
 			}
 		}
 
