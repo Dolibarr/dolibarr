@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
 dol_include_once('/emailcollector/class/emailcollector.class.php');
 
 if (!$user->admin) accessforbidden();
+if (empty($conf->emailcollector->enabled)) accessforbidden();
 
 // Load traductions files requiredby by page
 $langs->loadLangs(array("admin", "other"));
@@ -450,10 +451,10 @@ while ($i < min($num, $limit))
 	    $cssforfield='';
 	    if (in_array($val['type'], array('date','datetime','timestamp'))) $cssforfield.=($cssforfield?' ':'').'center';
 	    elseif ($key == 'status') $cssforfield.=($cssforfield?' ':'').'center';
-	    
+
 	    if (in_array($val['type'], array('timestamp'))) $cssforfield.=($cssforfield?' ':'').'nowrap';
 	    elseif ($key == 'ref') $cssforfield.=($cssforfield?' ':'').'nowrap';
-	    
+
 	    if (! empty($arrayfields['t.'.$key]['checked']))
 	    {
 	        print '<td';
