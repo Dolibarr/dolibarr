@@ -507,7 +507,7 @@ if (empty($reshook))
 											// Reset fk_parent_line for no child products and special product
 										if (($lines[$i]->product_type != 9 && empty($lines[$i]->fk_parent_line)) || $lines[$i]->product_type == 9) {
 											$fk_parent_line = 0;
-									2	}
+										}
 
 										// Extrafields
 										if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines[$i], 'fetch_optionals')) {
