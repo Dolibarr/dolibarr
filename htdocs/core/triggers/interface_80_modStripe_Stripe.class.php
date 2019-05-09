@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2018  ptibogxiv	<support@ptibogxiv.net>
+ * Copyright (C) 2018-2019  ptibogxiv	<support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -147,33 +147,34 @@ class InterfaceStripe
 				if ($customer)
 				{
 					$namecleaned = $object->name ? $object->name : null;
-					$vatcleaned = $object->tva_intra ? $object->tva_intra : null;
+          $desccleaned = $object->name_alias ? $object->name_alias : null;
+					$taxexemptcleaned = $object->tva_assuj ? 'none' : 'exempt';
+          $langcleaned = $object->default_lang ? array(substr($object->default_lang, 0, 2)) : null;
 
-					$taxinfo = array('type'=>'vat');
-					if ($vatcleaned)
-					{
-						$taxinfo["tax_id"] = $vatcleaned;
-					}
+					//$taxinfo = array('type'=>'vat');
+					//if ($vatcleaned)
+					//{
+					//	$taxinfo["tax_id"] = $vatcleaned;
+					//}
 					// We force data to "null" if not defined as expected by Stripe
-					if (empty($vatcleaned)) $taxinfo=null;
+					//if (empty($vatcleaned)) $taxinfo=null;
 
 					// Detect if we change a Stripe info (email, description, vat id)
 					$changerequested = 0;
 					if (! empty($object->email) && $object->email != $customer->email) $changerequested++;
-					if ($namecleaned != $customer->description) $changerequested++;
-					if (! isset($customer->tax_info['tax_id']) && ! is_null($vatcleaned)) $changerequested++;
-					elseif (isset($customer->tax_info['tax_id']) && is_null($vatcleaned)) $changerequested++;
-					elseif (isset($customer->tax_info['tax_id']) && ! is_null($vatcleaned))
-					{
-						if ($vatcleaned != $customer->tax_info['tax_id']) $changerequested++;
-					}
+          if ($namecleaned != $customer->name) $changerequested++;
+					if ($desccleaned != $customer->description) $changerequested++;
+					if ( !($customer->tax_exempt == 'exempt' && is_null($object->tva_assuj)) || !($customer->tax_exempt == 'exempt' && is_null($object->tva_assuj)) ) $changerequested++;
 
 					if ($changerequested)
 					{
 						if (! empty($object->email)) $customer->email = $object->email;
-						$customer->description = $namecleaned;
-						if (empty($taxinfo)) $customer->tax_info = array('type'=>'vat', 'tax_id'=>null);
-						else $customer->tax_info = $taxinfo;
+						$customer->name = $namecleaned;
+            $customer->description = $desccleaned;
+            $customer->preferred_locales = $langcleaned;
+            $customer->tax_exempt = $taxexemptcleaned;
+						//if (empty($taxinfo)) $customer->tax_info = array('type'=>'vat', 'tax_id'=>null);
+						//else $customer->tax_info = $taxinfo;
 
 						$customer->save();
 					}
