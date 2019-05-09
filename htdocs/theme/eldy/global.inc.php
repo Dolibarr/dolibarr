@@ -2645,6 +2645,10 @@ table.paddingtopbottomonly tr td {
 .liste_titre_filter {
 	background: rgb(<?php echo $colorbacktitle1; ?>) !important;
 }
+table:not(.listwithfilterbefore) tr.liste_titre_filter:first-of-type td.liste_titre {
+    padding-top: 5px;
+}
+
 tr.liste_titre_filter td.liste_titre {
 	/* border-bottom: 1px solid #ddd; */
 	padding-top: 1px;
