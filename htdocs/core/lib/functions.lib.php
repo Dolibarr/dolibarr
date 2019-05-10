@@ -3593,12 +3593,12 @@ function img_allow($allow, $titlealt = 'default')
  */
 function img_credit_card($brand)
 {
-	if ($brand == 'Visa') {$brand='cc-visa';}
-	elseif ($brand == 'MasterCard') {$brand='cc-mastercard';}
-	elseif ($brand == 'American Express') {$brand='cc-amex';}
-	elseif ($brand == 'Discover') {$brand='cc-discover';}
-	elseif ($brand == 'JCB') {$brand='cc-jcb';}
-	elseif ($brand == 'Diners Club') {$brand='cc-diners-club';}
+	if ($brand == 'visa' || $brand == 'Visa') {$brand='cc-visa';}
+	elseif ($brand == 'mastercard' || $brand == 'MasterCard') {$brand='cc-mastercard';}
+	elseif ($brand == 'amex' || $brand == 'American Express') {$brand='cc-amex';}
+	elseif ($brand == 'discover' || $brand == 'Discover') {$brand='cc-discover';}
+	elseif ($brand == 'jcb' || $brand == 'JCB') {$brand='cc-jcb';}
+	elseif ($brand == 'diners' || $brand == 'Diners club') {$brand='cc-diners-club';}
 	elseif (! in_array($brand, array('cc-visa','cc-mastercard','cc-amex','cc-discover','cc-jcb','cc-diners-club'))) {$brand='credit-card';}
 
 	return '<span class="fa fa-'.$brand.' fa-2x fa-fw"></span>';
