@@ -2030,6 +2030,16 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 			$bugbaseurl.= urlencode("- **PHP**: " . php_sapi_name() . ' ' . phpversion() . "\n");
 			$bugbaseurl.= urlencode("- **Database**: " . $db::LABEL . ' ' . $db->getVersion() . "\n");
 			$bugbaseurl.= urlencode("- **URL**: " . $_SERVER["REQUEST_URI"] . "\n");
+
+			// Execute hook printBugtrackInfo
+			$parameters=array('searchform'=>$searchform);
+			$reshook=$hookmanager->executeHooks('printBugtrackInfo', $parameters);    // Note that $action and $object may have been modified by some hooks
+			if (empty($reshook))
+			{
+				$bugbaseurl.=$hookmanager->resPrint;
+			}
+			else $bugbaseurl=$hookmanager->resPrint;
+
 			$bugbaseurl.= urlencode("\n");
 			$bugbaseurl.= urlencode("## Report\n");
 			print '<div id="blockvmenuhelpbugreport" class="blockvmenuhelp">';

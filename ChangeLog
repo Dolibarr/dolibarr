@@ -14,6 +14,7 @@ FIX: Disallow line start date if after end date.
 
 For Developers:
 NEW: Module "DebugBar" is available as a stable module.
+NEW: add "printBucktrackInfo" hook, an external module can add info
 
 
 WARNING:
