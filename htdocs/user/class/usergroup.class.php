@@ -934,7 +934,7 @@ class UserGroup extends CommonObject
 	 *									2=Return key only (uid=qqq)
 	 *	@return		string				DN
 	 */
-    private function _load_ldap_dn($info, $mode = 0)
+    public function _load_ldap_dn($info, $mode = 0)
 	{
         // phpcs:enable
 		global $conf;
@@ -952,7 +952,7 @@ class UserGroup extends CommonObject
 	 *
 	 *	@return		array		Tableau info des attributs
 	 */
-    private function _load_ldap_info()
+    public function _load_ldap_info()
 	{
         // phpcs:enable
 		global $conf,$langs;
