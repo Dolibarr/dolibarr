@@ -23,6 +23,10 @@
 create table llx_societe_rib
 (
   rowid          integer AUTO_INCREMENT PRIMARY KEY,
+
+  --For Stripe or other external payment method
+  ref varchar(128),								-- 'card_...', 'src_...' or 'pm_...'
+  
   type           varchar(32) DEFAULT 'ban' NOT NULL,							-- 'ban' or 'paypal' or 'card' or 'stripe'
   label          varchar(30),
   fk_soc         integer NOT NULL,
@@ -63,9 +67,6 @@ create table llx_societe_rib
   preapproval_key varchar(255),
   starting_date date,
   total_amount_of_all_payments double(24,8),
-  
-  --For Stripe
-  stripe_card_ref varchar(128),								-- 'card_...'
 
   comment        varchar(255),
   ipaddress      varchar(68),
