@@ -61,7 +61,7 @@ $entity = (GETPOST('entity', 'int') ? GETPOST('entity', 'int') : (!empty($conf->
 $publicDir = $conf->dav->multidir_output[$entity].'/public';
 $privateDir = $conf->dav->multidir_output[$entity].'/private';
 $ecmDir = $conf->ecm->multidir_output[$entity];
-$tmpDir = $conf->dav->multidir_temp[$entity];
+$tmpDir = $conf->dav->multidir_output[$entity];     // We need root dir, not a dir that can be deleted
 //var_dump($tmpDir);mkdir($tmpDir);exit;
 
 
@@ -151,7 +151,6 @@ if ((empty($conf->global->DAV_ALLOW_PUBLIC_DIR)
 	$server->addPlugin(new \Sabre\DAV\Auth\Plugin($authBackend));
 }
 // Support for LOCK and UNLOCK
-dol_mkdir($tmpDir);
 $lockBackend = new \Sabre\DAV\Locks\Backend\File($tmpDir . '/.locksdb');
 $lockPlugin = new \Sabre\DAV\Locks\Plugin($lockBackend);
 $server->addPlugin($lockPlugin);
