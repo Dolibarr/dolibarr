@@ -102,6 +102,9 @@ if (! $sortorder) $sortorder="ASC";
 
 if ($cancel) $action='';
 
+$usercanread = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->lire) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->lire));
+$usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->creer));
+
 $parameters=array('socid'=>$socid, 'id_prod'=>$id);
 $reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -385,9 +388,9 @@ if ($id > 0 || $ref)
 			$textdesc =$langs->trans("CostPriceDescription");
 			$textdesc.="<br>".$langs->trans("CostPriceUsage");
 			$text=$form->textwithpicto($langs->trans("CostPrice"), $textdesc, 1, 'help', '');
-            print $form->editfieldkey($text, 'cost_price', $object->cost_price, $object, $user->rights->produit->creer||$user->rights->service->creer, 'amount:6');
+			print $form->editfieldkey($text, 'cost_price', $object->cost_price, $object, $usercancreate, 'amount:6');
             print '</td><td colspan="2">';
-            print $form->editfieldval($text, 'cost_price', $object->cost_price, $object, $user->rights->produit->creer||$user->rights->service->creer, 'amount:6');
+            print $form->editfieldval($text, 'cost_price', $object->cost_price, $object, $usercancreate, 'amount:6');
             print '</td></tr>';
 
 			print '</table>';
@@ -399,7 +402,7 @@ if ($id > 0 || $ref)
 
 
 			// Form to add or update a price
-			if (($action == 'add_price' || $action == 'updateprice' ) && ($user->rights->produit->creer || $user->rights->service->creer))
+			if (($action == 'add_price' || $action == 'updateprice' ) && $usercancreate)
 			{
 				$langs->load("suppliers");
 
@@ -747,7 +750,7 @@ SCRIPT;
 				$reshook=$hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
 				if (empty($reshook))
 				{
-					if ($user->rights->produit->creer || $user->rights->service->creer)
+					if ($usercancreate)
 					{
 						print '<a class="butAction" href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$object->id.'&amp;action=add_price">';
 						print $langs->trans("AddSupplierPrice").'</a>';
@@ -758,7 +761,7 @@ SCRIPT;
 			print "\n</div>\n";
 			print '<br>';
 
-			if ($user->rights->fournisseur->lire)
+			if ($user->rights->fournisseur->lire) // Duplicate ? this check is already in the head of this file
 			{
 				$param='';
 				if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
@@ -822,7 +825,7 @@ SCRIPT;
 						print '<td>'.$productfourn->getSocNomUrl(1, 'supplier').'</td>';
 
 						// Supplier ref
-						if ($user->rights->produit->creer || $user->rights->service->creer) // change required right here
+						if ($usercancreate) // change required right here
 						{
 							print '<td class="left">'.$productfourn->getNomUrl().'</td>';
 						}
@@ -924,7 +927,7 @@ SCRIPT;
 
 						// Modify-Remove
 						print '<td class="center nowraponall">';
-						if ($user->rights->produit->creer || $user->rights->service->creer)
+						if ($usercancreate)
 						{
 							print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$productfourn->fourn_id.'&amp;action=add_price&amp;rowid='.$productfourn->product_fourn_price_id.'">'.img_edit()."</a>";
 							print ' &nbsp; ';
