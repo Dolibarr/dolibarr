@@ -14,6 +14,9 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * You can test with the WebDav client cadaver:
+ * cadaver http://myurl/dav/fileserver.php
  */
 
 /**
@@ -59,7 +62,8 @@ $publicDir = $conf->dav->multidir_output[$entity].'/public';
 $privateDir = $conf->dav->multidir_output[$entity].'/private';
 $ecmDir = $conf->ecm->multidir_output[$entity];
 $tmpDir = $conf->dav->multidir_temp[$entity];
-//var_dump($tmpDir);exit;
+//var_dump($tmpDir);mkdir($tmpDir);exit;
+
 
 // Authentication callback function
 $authBackend = new \Sabre\DAV\Auth\Backend\BasicCallBack(function ($username, $password) {
@@ -147,13 +151,17 @@ if ((empty($conf->global->DAV_ALLOW_PUBLIC_DIR)
 	$server->addPlugin(new \Sabre\DAV\Auth\Plugin($authBackend));
 }
 // Support for LOCK and UNLOCK
+dol_mkdir($tmpDir);
 $lockBackend = new \Sabre\DAV\Locks\Backend\File($tmpDir . '/.locksdb');
 $lockPlugin = new \Sabre\DAV\Locks\Plugin($lockBackend);
 $server->addPlugin($lockPlugin);
 
 // Support for html frontend
-$browser = new \Sabre\DAV\Browser\Plugin();
-$server->addPlugin($browser);
+if (empty($conf->global->DAV_DISABLE_BROWSER))
+{
+    $browser = new \Sabre\DAV\Browser\Plugin();
+    $server->addPlugin($browser);
+}
 
 // Automatically guess (some) contenttypes, based on extension
 //$server->addPlugin(new \Sabre\DAV\Browser\GuessContentType());
