@@ -2032,7 +2032,7 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 			$bugbaseurl.= urlencode("- **URL**: " . $_SERVER["REQUEST_URI"] . "\n");
 
 			// Execute hook printBugtrackInfo
-			$parameters=array('searchform'=>$searchform);
+			$parameters=array('bugbaseurl'=>$bugbaseurl);
 			$reshook=$hookmanager->executeHooks('printBugtrackInfo', $parameters);    // Note that $action and $object may have been modified by some hooks
 			if (empty($reshook))
 			{
