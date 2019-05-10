@@ -305,9 +305,14 @@ elseif ($event->type == 'payment_intent.payment_failed') {
 }
 elseif ($event->type == 'payment_method.attached') {
 require_once DOL_DOCUMENT_ROOT.'/societe/class/companypaymentmode.class.php';
-			$companypaymentmode = new CompanyPaymentMode($db);
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
 
-			$companypaymentmode->fk_soc          = 1;
+      $societeaccount = new SocieteAccount($db);    
+      
+      $companypaymentmode = new CompanyPaymentMode($db);
+      
+      $companypaymentmode->ref = $db->escape($event->data->object->id);
+			$companypaymentmode->fk_soc          = $societeaccount->retrieveCustomerAccount($db->escape($event->data->object->customer), 'stripe', $servicestatus);
 			$companypaymentmode->bank            = null;
 			$companypaymentmode->label           = null;
 			$companypaymentmode->number          = $db->escape($event->data->object->id);
@@ -320,7 +325,6 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/companypaymentmode.class.php';
 			$companypaymentmode->default_rib     = 0;
 			$companypaymentmode->type            = $db->escape($event->data->object->type);
  			$companypaymentmode->country_code    = $db->escape($event->data->object->card->country);
-      $companypaymentmode->stripe_card_ref = $db->escape($event->data->object->id);
 			$companypaymentmode->status          = $servicestatus;
 
 			$db->begin();
@@ -343,9 +347,47 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/companypaymentmode.class.php';
 				$db->rollback();
 			}
 }
+elseif ($event->type == 'payment_method.updated' || $event->type == 'payment_method.attached') {
+require_once DOL_DOCUMENT_ROOT.'/societe/class/companypaymentmode.class.php';
+			$companypaymentmode = new CompanyPaymentMode($db);
+      $companypaymentmode = fetch('',$db->escape($event->data->object->id));
+			$companypaymentmode->bank            = null;
+			$companypaymentmode->label           = null;
+			$companypaymentmode->number          = $db->escape($event->data->object->id);
+			$companypaymentmode->last_four       = $db->escape($event->data->object->card->last4);
+			$companypaymentmode->proprio         = $db->escape($event->data->object->billing_details->name);
+			$companypaymentmode->exp_date_month  = $db->escape($event->data->object->card->exp_month);
+			$companypaymentmode->exp_date_year   = $db->escape($event->data->object->card->exp_year);
+			$companypaymentmode->cvn             = null;
+			$companypaymentmode->datec           = $db->escape($event->data->object->created);
+			$companypaymentmode->default_rib     = 0;
+			$companypaymentmode->type            = $db->escape($event->data->object->type);
+ 			$companypaymentmode->country_code    = $db->escape($event->data->object->card->country);
+			$companypaymentmode->status          = $servicestatus;
+
+			$db->begin();
+
+			if (! $error)
+			{
+				$result = $companypaymentmode->update($user);
+				if ($result < 0)
+				{
+					$error++;
+				}
+			}
+
+			if (! $error)
+			{
+				$db->commit();
+			}
+			else
+			{
+				$db->rollback();
+			}
+} 
 elseif ($event->type == 'payment_method.detached') {
     $db->begin();
-    $sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_rib WHERE stripe_card_ref = '".$db->escape($event->data->object->id)."' and status = $servicestatus";
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_rib WHERE ref = '".$db->escape($event->data->object->id)."' and status = $servicestatus";
     //dol_syslog(get_class($this) . "::delete sql=" . $sql, LOG_DEBUG);
     $db->query($sql);
     $db->commit();
