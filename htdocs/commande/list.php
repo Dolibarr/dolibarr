@@ -84,6 +84,7 @@ $viewstatut=GETPOST('viewstatut');
 $search_btn=GETPOST('button_search', 'alpha');
 $search_remove_btn=GETPOST('button_removefilter', 'alpha');
 $search_project_ref=GETPOST('search_project_ref', 'alpha');
+$search_project=GETPOST('search_project', 'alpha');
 
 // Security check
 $id = (GETPOST('orderid')?GETPOST('orderid', 'int'):GETPOST('id', 'int'));
@@ -125,24 +126,25 @@ if (empty($user->socid)) $fieldstosearchall["c.note_private"]="NotePrivate";
 
 $checkedtypetiers=0;
 $arrayfields=array(
-	'c.ref'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
-	'c.ref_client'=>array('label'=>$langs->trans("RefCustomerOrder"), 'checked'=>1),
-	'p.project_ref'=>array('label'=>$langs->trans("ProjectRef"), 'checked'=>0, 'enabled'=>1),
-	's.nom'=>array('label'=>$langs->trans("ThirdParty"), 'checked'=>1),
-	's.town'=>array('label'=>$langs->trans("Town"), 'checked'=>1),
-	's.zip'=>array('label'=>$langs->trans("Zip"), 'checked'=>1),
-	'state.nom'=>array('label'=>$langs->trans("StateShort"), 'checked'=>0),
-	'country.code_iso'=>array('label'=>$langs->trans("Country"), 'checked'=>0),
-	'typent.code'=>array('label'=>$langs->trans("ThirdPartyType"), 'checked'=>$checkedtypetiers),
-	'c.date_commande'=>array('label'=>$langs->trans("OrderDateShort"), 'checked'=>1),
-	'c.date_delivery'=>array('label'=>$langs->trans("DateDeliveryPlanned"), 'checked'=>1, 'enabled'=>empty($conf->global->ORDER_DISABLE_DELIVERY_DATE)),
-	'c.total_ht'=>array('label'=>$langs->trans("AmountHT"), 'checked'=>1),
-	'c.total_vat'=>array('label'=>$langs->trans("AmountVAT"), 'checked'=>0),
-	'c.total_ttc'=>array('label'=>$langs->trans("AmountTTC"), 'checked'=>0),
-	'c.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
-	'c.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
-	'c.fk_statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
-	'c.facture'=>array('label'=>$langs->trans("Billed"), 'checked'=>1, 'position'=>1000, 'enabled'=>(empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT)))
+	'c.ref'=>array('label'=>"Ref", 'checked'=>1),
+	'c.ref_client'=>array('label'=>"RefCustomerOrder", 'checked'=>1),
+    'p.ref'=>array('label'=>"ProjectRef", 'checked'=>1, 'enabled'=>(empty($conf->projet->enabled)?0:1)),
+    'p.title'=>array('label'=>"ProjectLabel", 'checked'=>0, 'enabled'=>(empty($conf->projet->enabled)?0:1)),
+    's.nom'=>array('label'=>"ThirdParty", 'checked'=>1),
+	's.town'=>array('label'=>"Town", 'checked'=>1),
+	's.zip'=>array('label'=>"Zip", 'checked'=>1),
+	'state.nom'=>array('label'=>"StateShort", 'checked'=>0),
+	'country.code_iso'=>array('label'=>"Country", 'checked'=>0),
+	'typent.code'=>array('label'=>"ThirdPartyType", 'checked'=>$checkedtypetiers),
+	'c.date_commande'=>array('label'=>"OrderDateShort", 'checked'=>1),
+	'c.date_delivery'=>array('label'=>"DateDeliveryPlanned", 'checked'=>1, 'enabled'=>empty($conf->global->ORDER_DISABLE_DELIVERY_DATE)),
+	'c.total_ht'=>array('label'=>"AmountHT", 'checked'=>1),
+	'c.total_vat'=>array('label'=>"AmountVAT", 'checked'=>0),
+	'c.total_ttc'=>array('label'=>"AmountTTC", 'checked'=>0),
+	'c.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
+	'c.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500),
+	'c.fk_statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
+	'c.facture'=>array('label'=>"Billed", 'checked'=>1, 'position'=>1000, 'enabled'=>(empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT)))
 );
 // Extra fields
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
@@ -197,6 +199,7 @@ if (empty($reshook))
 		$search_deliverymonth='';
 		$search_deliveryyear='';
 		$search_project_ref='';
+		$search_project='';
 		$viewstatut='';
 		$billed='';
 		$toselect='';
@@ -315,6 +318,7 @@ if ($search_user > 0) $sql.= " AND ec.fk_c_type_contact = tc.rowid AND tc.elemen
 if ($search_total_ht != '') $sql.= natural_search('c.total_ht', $search_total_ht, 1);
 if ($search_total_ttc != '') $sql.= natural_search('c.total_ttc', $search_total_ttc, 1);
 if ($search_project_ref != '') $sql.= natural_search("p.ref", $search_project_ref);
+if ($search_project != '') $sql.= natural_search("p.title", $search_project);
 if ($search_categ_cus > 0) $sql.= " AND cc.fk_categorie = ".$db->escape($search_categ_cus);
 if ($search_categ_cus == -2)   $sql.= " AND cc.fk_categorie IS NULL";
 // Add where from extra fields
@@ -595,9 +599,14 @@ if ($resql)
 		print '</td>';
 	}
 	// Project ref
-	if (! empty($arrayfields['p.project_ref']['checked']))
+	if (! empty($arrayfields['p.ref']['checked']))
 	{
 		print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_project_ref" value="'.$search_project_ref.'"></td>';
+	}
+	// Project title
+	if (! empty($arrayfields['p.title']['checked']))
+	{
+	    print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_project" value="'.$search_project.'"></td>';
 	}
 	// Thirpdarty
 	if (! empty($arrayfields['s.nom']['checked']))
@@ -721,7 +730,8 @@ if ($resql)
 	print '<tr class="liste_titre">';
 	if (! empty($arrayfields['c.ref']['checked']))            print_liste_field_titre($arrayfields['c.ref']['label'], $_SERVER["PHP_SELF"], 'c.ref', '', $param, '', $sortfield, $sortorder);
 	if (! empty($arrayfields['c.ref_client']['checked']))     print_liste_field_titre($arrayfields['c.ref_client']['label'], $_SERVER["PHP_SELF"], 'c.ref_client', '', $param, '', $sortfield, $sortorder);
-	if (! empty($arrayfields['p.project_ref']['checked'])) 	  print_liste_field_titre($arrayfields['p.project_ref']['label'], $_SERVER["PHP_SELF"], "p.ref", "", $param, '', $sortfield, $sortorder);
+	if (! empty($arrayfields['p.ref']['checked'])) 	          print_liste_field_titre($arrayfields['p.ref']['label'], $_SERVER["PHP_SELF"], "p.ref", "", $param, '', $sortfield, $sortorder);
+	if (! empty($arrayfields['p.title']['checked'])) 	      print_liste_field_titre($arrayfields['p.title']['label'], $_SERVER["PHP_SELF"], "p.title", "", $param, '', $sortfield, $sortorder);
 	if (! empty($arrayfields['s.nom']['checked']))            print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], 's.nom', '', $param, '', $sortfield, $sortorder);
 	if (! empty($arrayfields['s.town']['checked']))           print_liste_field_titre($arrayfields['s.town']['label'], $_SERVER["PHP_SELF"], 's.town', '', $param, '', $sortfield, $sortorder);
 	if (! empty($arrayfields['s.zip']['checked']))            print_liste_field_titre($arrayfields['s.zip']['label'], $_SERVER["PHP_SELF"], 's.zip', '', $param, '', $sortfield, $sortorder);
@@ -780,6 +790,10 @@ if ($resql)
 		$generic_commande->total_ht = $obj->total_ht;
 		$generic_commande->total_tva = $obj->total_tva;
 		$generic_commande->total_ttc = $obj->total_ttc;
+
+		$projectstatic->id=$obj->project_id;
+		$projectstatic->ref=$obj->project_ref;
+		$projectstatic->title=$obj->project_label;
 
 		print '<tr class="oddeven">';
 
@@ -932,19 +946,28 @@ if ($resql)
 			if (! $i) $totalarray['nbfield']++;
 		}
 
-		// Project
-		if (! empty($arrayfields['p.project_ref']['checked']))
+		// Project ref
+		if (! empty($arrayfields['p.ref']['checked']))
 		{
-			print '<td class="nocellnopadd nowrap">';
+			print '<td class="nowrap">';
 			if ($obj->project_id > 0)
 			{
-			    $projectstatic->id=$obj->project_id;
-			    $projectstatic->ref=$obj->project_ref;
-			    $projectstatic->title=$obj->project_label;
 			    print $projectstatic->getNomUrl(1);
 			}
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
+		}
+
+		// Project label
+		if (! empty($arrayfields['p.title']['checked']))
+		{
+		    print '<td class="nowrap">';
+		    if ($obj->project_id > 0)
+		    {
+		        print $projectstatic->title;
+		    }
+		    print '</td>';
+		    if (! $i) $totalarray['nbfield']++;
 		}
 
 		// Third party
