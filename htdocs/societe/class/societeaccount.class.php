@@ -346,7 +346,7 @@ class SocieteAccount extends CommonObject
 		}
 
 		return $socid;
-	}  
+	}
 
 	/**
 	 * Update object into database
