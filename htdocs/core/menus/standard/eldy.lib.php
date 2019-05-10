@@ -142,12 +142,8 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 
 	// Products-Services
 	$tmpentry = array(
-	    'enabled'=> (( ! empty($conf->societe->enabled) &&
-	        ( empty($conf->global->SOCIETE_DISABLE_PROSPECTS) || empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) )
-	        )
-	        || ! empty($conf->fournisseur->enabled)
-	        ),
-	    'perms'=> (! empty($user->rights->societe->lire) || ! empty($user->rights->fournisseur->lire)),
+		'enabled'=> (! empty($conf->product->enabled) || ! empty($conf->service->enabled)),
+	    'perms'=> (! empty($user->rights->produit->lire)),
 	    'module'=>'product|service'
 	);
 	$menu_arr[] = array(
