@@ -660,7 +660,7 @@ if (empty($reshook))
 				$error++;
 				setEventMessages($e->getMessage(), null, 'errors');
 			}
-		}
+		}    
 	}
 }
 
@@ -831,7 +831,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			try {
 				$customerstripe=$stripe->customerStripe($object, $stripeacc, $servicestatus);
 				if ($customerstripe->id) {
-          $listofpaymentmethods = $stripe->getListOfPaymentMethods($object, $customerstripe, 'card', $stripeacc, $servicestatus);
+          $listofpaymentmethods = $stripe->getListOfPaymentMethods($object, $customerstripe, 'card', $stripeacc, $servicestatus);  
 				}
 			}
 			catch(Exception $e)
@@ -844,11 +844,11 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		print '<div class="div-table-responsive-no-min">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
 		print '<table class="liste" width="100%">'."\n";
 		print '<tr class="liste_titre">';
-		if (! empty($conf->global->STRIPE_ALLOW_LOCAL_CARD))
-		{
+		//if (! empty($conf->global->STRIPE_ALLOW_LOCAL_CARD))
+		//{
 			print '<td>'.$langs->trans('LocalID').'</td>';
-		}
-		print '<td>'.$langs->trans('StripeID').'</td>';
+		//}
+		print '<td>'.$langs->trans('ExternalID').'</td>';
 		print '<td>'.$langs->trans('Type').'</td>';
 		print '<td>'.$langs->trans('Informations').'</td>';
 		print '<td></td>';
@@ -868,8 +868,8 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		$arrayofstripecard = array();
 
 		// Show local sources
-		if (! empty($conf->global->STRIPE_ALLOW_LOCAL_CARD))
-		{
+		//if (! empty($conf->global->STRIPE_ALLOW_LOCAL_CARD))
+		//{
 			//$societeaccount = new SocieteAccount($db);
 			$companypaymentmodetemp = new CompanyPaymentMode($db);
 
@@ -959,11 +959,13 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 								{
 									print '<a href="'.$_SERVER['PHP_SELF'].'?action=synccardtostripe&socid='.$object->id.'&id='.$companypaymentmodetemp->id.'" class="button">'.$langs->trans("CreateCardOnStripe").'</a>';
 								}
-
+                if (! empty($conf->global->STRIPE_ALLOW_LOCAL_CARD))
+                {
 								print '<a href="' . DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&id='.$companypaymentmodetemp->id.'&action=editcard">';
 								print img_picto($langs->trans("Modify"), 'edit');
 								print '</a>';
 								print '&nbsp;';
+                }
 								print '<a href="' . DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&id='.$companypaymentmodetemp->id.'&action=deletecard">';	// source='.$companypaymentmodetemp->stripe_card_ref.'&
 								print img_picto($langs->trans("Delete"), 'delete');
 								print '</a>';
@@ -976,7 +978,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				}
 			}
 			else dol_print_error($db);
-		}
+		//}
 
 		// Show remote sources (not already shown as local source)
 		if (is_array($listofpaymentmethods) && count($listofpaymentmethods))
@@ -989,11 +991,11 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 
 				print '<tr class="oddeven">';
 				// Local ID
-				if (! empty($conf->global->STRIPE_ALLOW_LOCAL_CARD))
-				{
+				//if (! empty($conf->global->STRIPE_ALLOW_LOCAL_CARD))
+				//{
 					print '<td>';
 					print '</td>';
-				}
+				//}
 				// Src ID
 				print '<td>';
 				$connect='';
@@ -1013,7 +1015,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
         if ($src->type=='card')
 				{
 					print img_credit_card($src->card->brand);
-        }
+				}
 				elseif ($src->type=='sepa_debit')
 				{
 					print '<span class="fa fa-university fa-2x fa-fw"></span>';
@@ -1022,7 +1024,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				print '<td valign="middle">';
         if ($src->type=='card')
 				{
-					print $src->billing_details->name.'<br>....'.$src->card->last4.' - '.$src->card->exp_month.'/'.$src->card->exp_year.'';
+					print $src->billing_details->name.'<br>....'.$src->card->last4.' - '.sprintf("%02d", $src->card->exp_month).'/'.$src->card->exp_year.'';
 					print '</td><td>';
 
 				 	if ($src->card->country)
@@ -1032,7 +1034,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 						print getCountry($src->card->country, 1);
 					}
 					else print img_warning().' <font class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</font>';
-                 }
+				}
 				elseif ($src->type=='sepa_debit')
 				{
 					print 'info sepa';
