@@ -261,7 +261,7 @@ else
     	{
     		if (! empty($user->rights->agenda->myactions->create) || ! empty($user->rights->agenda->allactions->create))
     		{
-                $newcardbutton.= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle',DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out);
+                $newcardbutton.= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out);
     		}
     	}
 

@@ -150,7 +150,7 @@ if ($result)
 	$newcardbutton='';
 	if ($user->rights->tax->charges->creer)
 	{
-        $newcardbutton.= dolGetButtonTitle($langs->trans('NewVATPayment', ($ltt+1)), '', 'fa fa-plus-circle',DOL_URL_ROOT.'/compta/tva/card.php?action=create');
+        $newcardbutton.= dolGetButtonTitle($langs->trans('NewVATPayment', ($ltt+1)), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/tva/card.php?action=create');
     }
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';

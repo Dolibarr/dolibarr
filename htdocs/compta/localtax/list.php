@@ -45,7 +45,7 @@ $localtax_static = new Localtax($db);
 $newcardbutton='';
 if ($user->rights->tax->charges->creer)
 {
-    $newcardbutton.= dolGetButtonTitle($langs->trans('NewLocalTaxPayment', ($ltt+1)), '', 'fa fa-plus-circle',DOL_URL_ROOT.'/compta/localtax/card.php?action=create&localTaxType='.$ltt);
+    $newcardbutton.= dolGetButtonTitle($langs->trans('NewLocalTaxPayment', ($ltt+1)), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/localtax/card.php?action=create&localTaxType='.$ltt);
 }
 
 print load_fiche_titre($langs->transcountry($ltt==2?"LT2Payments":"LT1Payments", $mysoc->country_code), $newcardbutton);

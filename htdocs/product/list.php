@@ -439,7 +439,7 @@ if ($resql)
 	{
 		$label='NewProduct';
 		if($type == Product::TYPE_SERVICE) $label='NewService';
-        $newcardbutton.= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle',DOL_URL_ROOT.'/product/card.php?action=create&amp;type='.$type);
+        $newcardbutton.= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/card.php?action=create&amp;type='.$type);
     }
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire">';

@@ -280,7 +280,7 @@ if ($resql)
 	$newcardbutton='';
 	if ($user->rights->expedition->creer)
 	{
-        $newcardbutton.= dolGetButtonTitle($langs->trans('NewSending'), '', 'fa fa-plus-circle',DOL_URL_ROOT.'/expedition/card.php?action=create2');
+        $newcardbutton.= dolGetButtonTitle($langs->trans('NewSending'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/expedition/card.php?action=create2');
     }
 
 	$i = 0;

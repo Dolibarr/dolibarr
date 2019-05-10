@@ -455,7 +455,7 @@ if ($resql)
 		$newcardbutton='';
 		if ($user->rights->expensereport->creer)
 		{
-            $newcardbutton.= dolGetButtonTitle($langs->trans('NewTrip'), '', 'fa fa-plus-circle',DOL_URL_ROOT.'/expensereport/card.php?action=create');
+            $newcardbutton.= dolGetButtonTitle($langs->trans('NewTrip'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/expensereport/card.php?action=create');
 		}
 
 		print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_generic.png', 0, $newcardbutton, '', $limit);

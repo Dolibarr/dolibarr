@@ -197,7 +197,7 @@ if($ret == -1) {
 	$newcardbutton='';
 	if ($user->rights->resource->write)
 	{
-        $newcardbutton.= dolGetButtonTitle($langs->trans('MenuResourceAdd'), '', 'fa fa-plus-circle',DOL_URL_ROOT.'/resource/card.php?action=create');
+        $newcardbutton.= dolGetButtonTitle($langs->trans('MenuResourceAdd'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/resource/card.php?action=create');
     }
 
 	print_barre_liste($pagetitle, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $ret+1, $nbtotalofrecords, 'title_generic.png', 0, $newcardbutton, '', $limit);

@@ -388,7 +388,7 @@ if ($resql)
 	$newcardbutton='';
 	if($user->rights->supplier_proposal->creer)
 	{
-        $newcardbutton.= dolGetButtonTitle($langs->trans('NewAskPrice'), '', 'fa fa-plus-circle',DOL_URL_ROOT.'/supplier_proposal/card.php?action=create');
+        $newcardbutton.= dolGetButtonTitle($langs->trans('NewAskPrice'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/supplier_proposal/card.php?action=create');
     }
 
 	// Lignes des champs de filtre
