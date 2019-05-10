@@ -20,7 +20,7 @@
 /**
  *	\file       htdocs/takepos/index.php
  *	\ingroup    Takepos
- *	\brief      Head bar to start Takepos......
+ *	\brief      Head bar to start Takepos.
  */
 
 //v20: Spliting original takepos.php DIV we can refresh screen quickly. This is usefull for manage user, terminal, etc 
