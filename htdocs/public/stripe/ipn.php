@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2018       Thibault FOUCART        <support@ptibogxiv.net>
+/* Copyright (C) 2018-2019  Thibault FOUCART        <support@ptibogxiv.net>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -293,7 +293,7 @@ elseif ($event->type == 'customer.source.delete') {
 elseif ($event->type == 'customer.deleted') {
     $db->begin();
     $sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_account WHERE key_account = '".$db->escape($event->data->object->id)."' and site='stripe'";
-    dol_syslog(get_class($this) . "::delete sql=" . $sql, LOG_DEBUG);
+    //dol_syslog(get_class($this) . "::delete sql=" . $sql, LOG_DEBUG);
     $db->query($sql);
     $db->commit();
 }
@@ -302,6 +302,53 @@ elseif ($event->type == 'payment_intent.succeeded') {
 }
 elseif ($event->type == 'payment_intent.payment_failed') {
     // TODO: Redirect to paymentko.php
+}
+elseif ($event->type == 'payment_method.attached') {
+require_once DOL_DOCUMENT_ROOT.'/societe/class/companypaymentmode.class.php';
+			$companypaymentmode = new CompanyPaymentMode($db);
+
+			$companypaymentmode->fk_soc          = 1;
+			$companypaymentmode->bank            = null;
+			$companypaymentmode->label           = null;
+			$companypaymentmode->number          = $db->escape($event->data->object->id);
+			$companypaymentmode->last_four       = $db->escape($event->data->object->card->last4);
+			$companypaymentmode->proprio         = $db->escape($event->data->object->billing_details->name);
+			$companypaymentmode->exp_date_month  = $db->escape($event->data->object->card->exp_month);
+			$companypaymentmode->exp_date_year   = $db->escape($event->data->object->card->exp_year);
+			$companypaymentmode->cvn             = null;
+			$companypaymentmode->datec           = $db->escape($event->data->object->created);
+			$companypaymentmode->default_rib     = 0;
+			$companypaymentmode->type            = $db->escape($event->data->object->type);
+ 			$companypaymentmode->country_code    = $db->escape($event->data->object->card->country);
+      $companypaymentmode->stripe_card_ref = $db->escape($event->data->object->id);
+			$companypaymentmode->status          = $servicestatus;
+
+			$db->begin();
+
+			if (! $error)
+			{
+				$result = $companypaymentmode->create($user);
+				if ($result < 0)
+				{
+					$error++;
+				}
+			}
+
+			if (! $error)
+			{
+				$db->commit();
+			}
+			else
+			{
+				$db->rollback();
+			}
+}
+elseif ($event->type == 'payment_method.detached') {
+    $db->begin();
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_rib WHERE stripe_card_ref = '".$db->escape($event->data->object->id)."' and status = $servicestatus";
+    //dol_syslog(get_class($this) . "::delete sql=" . $sql, LOG_DEBUG);
+    $db->query($sql);
+    $db->commit();
 }
 elseif ($event->type == 'charge.succeeded') {
     // TODO: create fees
