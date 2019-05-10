@@ -87,7 +87,7 @@ $workflowcodes=array(
 	// Automatic classification supplier order
 	'WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER'=>array('family'=>'classify_supplier_order', 'position'=>62, 'enabled'=>'! empty($conf->fournisseur->enabled)', 'picto'=>'order','warning'=>''),
 	//Automatic classification reception
-	'WORKFLOW_BILL_ON_RECEPTION'=>array('family'=>'classify_reception', 'position'=>30, 'enabled'=>'! empty($conf->reception->enabled) && ! empty($conf->fournisseur->enabled)', 'picto'=>'bill'),
+	'WORKFLOW_BILL_ON_RECEPTION'=>array('family'=>'classify_reception', 'position'=>64, 'enabled'=>'! empty($conf->reception->enabled) && ! empty($conf->fournisseur->enabled)', 'picto'=>'bill'),
 );
 
 if (! empty($conf->modules_parts['workflow']) && is_array($conf->modules_parts['workflow']))
