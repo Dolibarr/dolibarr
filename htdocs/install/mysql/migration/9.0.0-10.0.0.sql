@@ -302,3 +302,5 @@ ALTER TABLE llx_inventorydet DROP COLUMN new_pmp;
 
 UPDATE llx_c_shipment_mode SET label = 'https://www.laposte.fr/outils/suivre-vos-envois?code={TRACKID}' WHERE code IN ('COLSUI');
 UPDATE llx_c_shipment_mode SET label = 'https://www.laposte.fr/outils/suivre-vos-envois?code={TRACKID}' WHERE code IN ('LETTREMAX');
+
+ALTER TABLE llx_societe_rib CHANGE stripe_card_ref ref varchar(128) NOT NULL;
