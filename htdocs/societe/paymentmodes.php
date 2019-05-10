@@ -212,7 +212,7 @@ if (empty($reshook))
 			$companypaymentmode->cvn             = GETPOST('cvn', 'alpha');
 			$companypaymentmode->country_code    = $object->country_code;
 
-			$companypaymentmode->stripe_card_ref = GETPOST('stripe_card_ref', 'alpha');
+			$companypaymentmode->ref = GETPOST('ref', 'alpha');
 
 			$result = $companypaymentmode->update($user);
 			if (! $result)
@@ -368,7 +368,7 @@ if (empty($reshook))
 			$companypaymentmode->country_code    = $object->country_code;
 			$companypaymentmode->status          = $servicestatus;
 
-			$companypaymentmode->stripe_card_ref = GETPOST('stripe_card_ref', 'alpha');
+			$companypaymentmode->ref = GETPOST('ref', 'alpha');
 
 			$db->begin();
 
@@ -839,7 +839,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				dol_syslog("Error when searching/loading Stripe customer for thirdparty id =".$object->id);
 			}
 		}
-
+      
 		print '<!-- List of stripe payments -->'."\n";
 		print '<div class="div-table-responsive-no-min">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
 		print '<table class="liste" width="100%">'."\n";
@@ -894,22 +894,22 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 						{
 							$companypaymentmodetemp->fetch($obj->rowid);
 
-							$arrayofstripecard[$companypaymentmodetemp->stripe_card_ref]=$companypaymentmodetemp->stripe_card_ref;
+							$arrayofstripecard[$companypaymentmodetemp->ref]=$companypaymentmodetemp->ref;
 
 							print '<tr class="oddeven">';
 							print '<td>';
 							print $companypaymentmodetemp->id;
 							print '</td>';
 							print '<td>';
-							print $companypaymentmodetemp->stripe_card_ref;
-							if ($companypaymentmodetemp->stripe_card_ref)
+							print $companypaymentmodetemp->ref;
+							if ($companypaymentmodetemp->ref)
 							{
 							    $connect='';
 							    if (!empty($stripeacc)) $connect=$stripeacc.'/';
-							    $url='https://dashboard.stripe.com/'.$connect.'test/search?query='.$companypaymentmodetemp->stripe_card_ref;
+							    $url='https://dashboard.stripe.com/'.$connect.'test/search?query='.$companypaymentmodetemp->ref;
 								if ($servicestatus)
 								{
-									$url='https://dashboard.stripe.com/'.$connect.'search?query='.$companypaymentmodetemp->stripe_card_ref;
+									$url='https://dashboard.stripe.com/'.$connect.'search?query='.$companypaymentmodetemp->ref;
 								}
 								print ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe'), 'object_globe').'</a>';
 							}
@@ -941,7 +941,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 							}
 							print '</td>';
 							print '<td>';
-							if (empty($companypaymentmodetemp->stripe_card_ref)) print $langs->trans("Local");
+							if (empty($companypaymentmodetemp->ref)) print $langs->trans("Local");
 							else print $langs->trans("LocalAndRemote");
 							print '</td>';
 							print '<td>';
@@ -955,7 +955,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 							print '<td class="right nowraponall">';
 							if ($user->rights->societe->creer)
 							{
-								if ($stripecu && empty($companypaymentmodetemp->stripe_card_ref))
+								if ($stripecu && empty($companypaymentmodetemp->ref))
 								{
 									print '<a href="'.$_SERVER['PHP_SELF'].'?action=synccardtostripe&socid='.$object->id.'&id='.$companypaymentmodetemp->id.'" class="button">'.$langs->trans("CreateCardOnStripe").'</a>';
 								}
@@ -966,7 +966,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 								print '</a>';
 								print '&nbsp;';
                 }
-								print '<a href="' . DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&id='.$companypaymentmodetemp->id.'&action=deletecard">';	// source='.$companypaymentmodetemp->stripe_card_ref.'&
+								print '<a href="' . DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&id='.$companypaymentmodetemp->id.'&action=deletecard">';	// source='.$companypaymentmodetemp->ref.'&
 								print img_picto($langs->trans("Delete"), 'delete');
 								print '</a>';
 							}
@@ -1491,7 +1491,7 @@ if ($socid && $action == 'editcard' && $user->rights->societe->creer)
 	print '<td><input size="8" type="text" name="cvn" value="'.$companypaymentmode->cvn.'"></td></tr>';
 
 	print '<tr><td>'.$langs->trans("StripeID")." ('card_....')</td>";
-	print '<td><input class="minwidth300" type="text" name="stripe_card_ref" value="'.$companypaymentmode->stripe_card_ref.'"></td></tr>';
+	print '<td><input class="minwidth300" type="text" name="ref" value="'.$companypaymentmode->ref.'"></td></tr>';
 
 	print '</table>';
 	print '</div>';
@@ -1637,7 +1637,7 @@ if ($socid && $action == 'createcard' && $user->rights->societe->creer)
 	print '<td><input size="8" type="text" name="cvn" value="'.GETPOST('cvn', 'alpha').'"></td></tr>';
 
 	print '<tr><td>'.$langs->trans("StripeID")." ('card_....')</td>";
-	print '<td><input class="minwidth300" type="text" name="stripe_card_ref" value="'.GETPOST('stripe_card_ref', 'alpha').'"></td></tr>';
+	print '<td><input class="minwidth300" type="text" name="ref" value="'.GETPOST('ref', 'alpha').'"></td></tr>';
 
 	print '</table>';
 
