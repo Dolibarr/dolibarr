@@ -806,7 +806,7 @@ if ($resql)
 
 		if (! empty($arrayfields['pr.title']['checked']))
 		{
-		    // Project ref
+		    // Project label
 		    print '<td class="nowrap">';
 		    if ($obj->project_id > 0) {
 		        print $projectstatic->title;
