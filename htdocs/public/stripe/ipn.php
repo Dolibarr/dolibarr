@@ -317,6 +317,7 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
 			$companypaymentmode->label           = null;
 			$companypaymentmode->number          = $db->escape($event->data->object->id);
 			$companypaymentmode->last_four       = $db->escape($event->data->object->card->last4);
+            $companypaymentmode->card_type       = $db->escape($event->data->object->card->branding);
 			$companypaymentmode->proprio         = $db->escape($event->data->object->billing_details->name);
 			$companypaymentmode->exp_date_month  = $db->escape($event->data->object->card->exp_month);
 			$companypaymentmode->exp_date_year   = $db->escape($event->data->object->card->exp_year);
