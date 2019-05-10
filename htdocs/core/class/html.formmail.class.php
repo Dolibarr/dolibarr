@@ -711,7 +711,7 @@ class FormMail extends Form
 				}
 				else
 				{
-					$out.= '<input class="minwidth200" id="sendtocc" name="sendtocc" value="'.((! is_array($this->withtocc) && ! is_numeric($this->withtocc))? (isset($_POST["sendtocc"])?$_POST["sendtocc"]:$this->withtocc) : (isset($_POST["sendtocc"])?$_POST["sendtocc"]:"") ).'" />';
+				    $out.= '<input class="minwidth200" id="sendtocc" name="sendtocc" value="'.(GETPOST("sendtocc", "alpha") ? GETPOST("sendtocc", "alpha") : ((! is_array($this->withtocc) && ! is_numeric($this->withtocc)) ? $this->withtocc : '')).'" />';
 					if (! empty($this->withtocc) && is_array($this->withtocc))
 					{
 						$out.= " ".$langs->trans("and")."/".$langs->trans("or")." ";
@@ -762,7 +762,7 @@ class FormMail extends Form
 				}
 				else
 				{
-					$out.= '<input class="minwidth200" id="sendtoccc" name="sendtoccc" value="'.((! is_array($this->withtoccc) && ! is_numeric($this->withtoccc))? (isset($_POST["sendtoccc"])?$_POST["sendtoccc"]:$this->withtoccc) : (isset($_POST["sendtoccc"])?$_POST["sendtoccc"]:"") ).'" />';
+				    $out.= '<input class="minwidth200" id="sendtoccc" name="sendtoccc" value="'.(GETPOST("sendtoccc", "alpha") ? GETPOST("sendtoccc", "alpha") : ((! is_array($this->withtoccc) && ! is_numeric($this->withtoccc)) ? $this->withtoccc : '')).'" />';
 					if (! empty($this->withtoccc) && is_array($this->withtoccc))
 					{
 						$out.= " ".$langs->trans("and")."/".$langs->trans("or")." ";
@@ -779,9 +779,12 @@ class FormMail extends Form
 
 				$showinfobcc='';
 				if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO) && ! empty($this->param['models']) && $this->param['models'] == 'propal_send') $showinfobcc=$conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO;
-				if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO) && ! empty($this->param['models']) && $this->param['models'] == 'supplier_proposal_send') $showinfobcc=$conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO;
 				if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_ORDER_TO) && ! empty($this->param['models']) && $this->param['models'] == 'order_send') $showinfobcc=$conf->global->MAIN_MAIL_AUTOCOPY_ORDER_TO;
 				if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO) && ! empty($this->param['models']) && $this->param['models'] == 'facture_send') $showinfobcc=$conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO;
+				if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO) && ! empty($this->param['models']) && $this->param['models'] == 'supplier_proposal_send') $showinfobcc=$conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO;
+				if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_ORDER_TO) && ! empty($this->param['models']) && $this->param['models'] == 'order_supplier_send') $showinfobcc=$conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_ORDER_TO;
+				if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO) && ! empty($this->param['models']) && $this->param['models'] == 'invoice_supplier_send') $showinfobcc=$conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO;
+				if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_PROJECT_TO) && ! empty($this->param['models']) && $this->param['models'] == 'project') $showinfobcc=$conf->global->MAIN_MAIL_AUTOCOPY_PROJECT_TO;
 				if ($showinfobcc) $out.=' + '.$showinfobcc;
 				$out.= "</td></tr>\n";
 			}

@@ -1192,7 +1192,7 @@ abstract class CommonObject
 		$sql.= " AND ec.fk_c_type_contact = tc.rowid";
 		$sql.= " AND tc.element = '".$element."'";
 		$sql.= " AND tc.source = '".$source."'";
-		$sql.= " AND tc.code = '".$code."'";
+		if ($code) $sql.= " AND tc.code = '".$code."'";
 		$sql.= " AND tc.active = 1";
 		if ($status) $sql.= " AND ec.statut = ".$status;
 

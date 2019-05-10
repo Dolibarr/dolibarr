@@ -442,7 +442,7 @@ if (empty($reshook))
 	    if ($result < 0)
 	    {
 			$langs->load("errors");
-	        setEventMessages($langs->trans($object->error), null, 'errors');
+			setEventMessages($langs->trans($object->error), $object->errors, 'errors');
 	    }
 	    else
 	    {

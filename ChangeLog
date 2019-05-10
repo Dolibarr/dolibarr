@@ -2,6 +2,41 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+
+***** ChangeLog for 9.0.3 compared to 9.0.2 *****
+FIX: #11013
+FIX: #11041
+FIX: actioncomm: sort events by date after external calendars and hook (into 7.0)
+FIX: better test
+FIX: Combo list was limited to 20 in stock correction
+FIX: Confusion between expired and late
+FIX: Cursor pointer in payment screen for autofill
+FIX: CVE-2019-11199
+FIX: CVE-2019-11200
+FIX: CVE-2019-11201
+FIX: Default value on form to send email
+FIX: error messages not displayed
+FIX: Massive debug in lettering function
+FIX: missing compatibility with multicompany
+FIX: missing global $user
+FIX: missing situation invoice in list
+FIX: MultiEntity in lettering functionality
+FIX: Product accountancey sell intra code must be visible if main feature level 1
+FIX: ref for table without ref manager are set to NULL.
+FIX: Sending email to mass actions send same email on same customer
+FIX: Several fixes on import of services/products
+FIX: shipping default warehouse if only one warehouse
+FIX: sortfield on lettering function
+FIX: Status of opportunity should never be -1
+FIX: test to display create invoice button on supplier_order card
+FIX: The autocopy feature was ko for suppliers
+FIX: Total per day in timespent per week
+FIX: Total per day shows 00:00 if the total time spent is equal to 12:00
+FIX: Update/delete currency on same languages
+FIX: Wrong variable name make contact of supplier order not used on PDF.
+FIX: Add hidden option MAIN_PDF_HIDE_SITUATION to hide situation (quick hack to fix output pb).
+FIX: attached files list with link file was broked
+
 ***** ChangeLog for 9.0.2 compared to 9.0.1 *****
 FIX: #10822
 FIX: Accountancy - Format EBP import
