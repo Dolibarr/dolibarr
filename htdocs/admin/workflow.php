@@ -34,9 +34,11 @@ if (! $user->admin) accessforbidden();
 
 $action = GETPOST('action', 'alpha');
 
+
 /*
  * Actions
  */
+
 if (preg_match('/set(.*)/', $action, $reg))
 {
     if (! dolibarr_set_const($db, $reg[1], '1', 'chaine', 0, '', $conf->entity) > 0)
@@ -47,7 +49,7 @@ if (preg_match('/set(.*)/', $action, $reg))
 
 if (preg_match('/del(.*)/', $action, $reg))
 {
-    if (! dolibarr_del_const($db, $reg[1], $conf->entity) > 0)
+    if (! dolibarr_set_const($db, $reg[1], '0', 'chaine', 0, '', $conf->entity) > 0)
     {
         dol_print_error($db);
     }
