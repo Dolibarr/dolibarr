@@ -1,2 +1,18 @@
 # Dolibarr language file - Source file is en_US - ldap
+YouMustChangePassNextLogon=Bitte ändere das Passwort für Benutzer <b>%s</b> auf der Domain <b>%s</b> bei deiner nächsten Anmeldung.
+UserMustChangePassNextLogon=Der Benutzer muss das Passwort für die Domäne %s bei der nächsten Anmeldung ändern.
+LDAPInformationsForThisContact=Kontaktinformationen im LDAP - Verzeichnis.
+LDAPInformationsForThisUser=Benutzerinformationen im LDAP - Verzeichnis
+LDAPInformationsForThisGroup=Gruppeninformationen im LDAP - Verzeichnis
+LDAPInformationsForThisMember=Mitgliedsinformationen im LDAP - Verzeichnis
+LDAPInformationsForThisMemberType=Mitgliedstyp im LDAP - Verzeichnis
 LDAPCard=LDAP-Karte
+LDAPRecordNotFound=Ich habe den LDAP - Verzeichniseintrag nicht gefunden...
+LDAPUsers=Benutzer im LDAP - Verzeichnis
+LDAPFieldFirstSubscriptionDate=Startdatum des Abonnements
+LDAPFieldFirstSubscriptionAmount=Umfang des Abonnementes
+LDAPFieldLastSubscriptionDate=Enddatum des Abonnementes
+LDAPFieldLastSubscriptionAmount=Umfang des Abonnementes
+LDAPFieldSkypeExample=Beispiel: skypeName
+MemberTypeSynchronized=Mitgliedstyp synchronisiert
+PasswordOfUserInLDAP=Benutzerpasswort für LDAP - Verzeichnis

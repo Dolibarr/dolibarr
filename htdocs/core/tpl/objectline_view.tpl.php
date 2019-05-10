@@ -237,14 +237,22 @@ $domData .= ' data-product_type="'.$line->product_type.'"';
 	<td class="linecoldiscount"><?php $coldisplay++; ?>&nbsp;</td>
 	<?php }
 
-	if ($this->situation_cycle_ref) {
+	$rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT, $conf->global->MAIN_MAX_DECIMALS_TOT);
+
+	// Fields for situation invoices
+	if ($this->situation_cycle_ref)
+	{
+	    include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 		$coldisplay++;
 		print '<td class="linecolcycleref nowrap right">' . $line->situation_percent . '%</td>';
+		$coldisplay++;
+		$locataxes_array = getLocalTaxesFromRate($line->tva.($line->vat_src_code ? ' ('.$line->vat_src_code.')' : ''), 0, ($senderissupplier?$mysoc:$object->thirdparty), ($senderissupplier?$object->thirdparty:$mysoc));
+		$tmp = calcul_price_total($line->qty, $line->pu, $line->remise_percent, $line->txtva, -1, -1, 0, 'HT', $line->info_bits, $line->type, ($senderissupplier?$object->thirdparty:$mysoc), $locataxes_array, 100, $object->multicurrency_tx, $line->multicurrency_subprice);
+		print '<td align="right" class="linecolcycleref2 nowrap">' . price($tmp[0]) . '</td>';
 	}
 
   	if ($usemargins && ! empty($conf->margin->enabled) && empty($user->societe_id))
   	{
-		$rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT, $conf->global->MAIN_MAX_DECIMALS_TOT);
   		?>
 
   	<?php if (!empty($user->rights->margins->creer)) { ?>
@@ -260,16 +268,34 @@ $domData .= ' data-product_type="'.$line->product_type.'"';
   	?>
 
 	<?php if ($line->special_code == 3)	{ ?>
-	<td class="linecoloption nowrap right"><?php $coldisplay++; ?><?php echo $langs->trans('Option'); ?></td>
+		<td class="linecoloption nowrap right"><?php $coldisplay++; ?><?php echo $langs->trans('Option'); ?></td>
 	<?php } else { ?>
-	<td class="linecolht nowrap right"><?php $coldisplay++; ?><?php echo price($line->total_ht); ?></td>
+		<td class="linecolht nowrap right"><?php
+		  $coldisplay++;
+		  if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+		  {
+    		  print '<span class="classfortooltip" title="';
+    		  print $langs->transcountry("TotalHT", $mysoc->country_code).'='.price($line->total_ht);
+    		  print '<br>'.$langs->transcountry("TotalVAT", ($senderissupplier?$object->thirdparty->country_code:$mysoc->country_code)).'='.price($line->total_tva);
+    		  if (price2num($line->total_localtax1)) print '<br>'.$langs->transcountry("TotalLT1", ($senderissupplier?$object->thirdparty->country_code:$mysoc->country_code)).'='.price($line->total_localtax1);
+    		  if (price2num($line->total_localtax2)) print '<br>'.$langs->transcountry("TotalLT2", ($senderissupplier?$object->thirdparty->country_code:$mysoc->country_code)).'='.price($line->total_localtax2);
+    		  print '<br>'.$langs->transcountry("TotalTTC", $mysoc->country_code).'='.price($line->total_ttc);
+    		  print '">';
+		  }
+		  print price($line->total_ht);
+		  if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+		  {
+		      print '</span>';
+		  }
+		  ?>
+		</td>
 		<?php if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) { ?>
-		<td class="linecolutotalht_currency nowrap right"><?php $coldisplay++; ?><?php echo price($line->multicurrency_total_ht); ?></td>
+			<td class="linecolutotalht_currency nowrap right"><?php $coldisplay++; ?><?php echo price($line->multicurrency_total_ht); ?></td>
 		<?php } ?>
 	<?php } ?>
-        <?php if ($outputalsopricetotalwithtax) { ?>
+    <?php if ($outputalsopricetotalwithtax) { ?>
         <td class="linecolht nowrap right"><?php $coldisplay++; ?><?php echo price($line->total_ttc); ?></td>
-        <?php } ?>
+    <?php } ?>
 
 
 	<?php

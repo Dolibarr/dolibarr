@@ -220,7 +220,7 @@ $arrayofmassactions =  array(
 //    'presend'=>$langs->trans("SendByMail"),
 //    'builddoc'=>$langs->trans("PDFMerge"),
 );
-if ($user->rights->banque->supprimer) $arrayofmassactions['predelete']=$langs->trans("Delete");
+if ($user->rights->banque->supprimer) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
@@ -575,7 +575,13 @@ foreach ($accounts as $key=>$type)
 	$i++;
 }
 
-if (! $found) print '<tr class="oddeven"><td colspan="'.$totalarray['nbfield'].'" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+// If no record found
+if (! $found)
+{
+    $colspan=1;
+    foreach($arrayfields as $key => $val) { if (! empty($val['checked'])) $colspan++; }
+    print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
+}
 
 // Show total line
 if (isset($totalarray['totalbalancefield']) && $lastcurrencycode != 'various')	// If there is several currency, $lastcurrencycode is set to 'various' before

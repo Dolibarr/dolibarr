@@ -1,8 +1,8 @@
 # Dolibarr language file - Source file is en_US - loan
-ModuleBuilderDesc=Esta herramienta debe ser usada por usuarios experimentados o desarrolladores. Te facilitará utilidades para construir o editar tu propio módulo (Documentación para un manual alternativo de desarrollo <a href="%s" target="_blank">aquí</a>).
+ModuleBuilderDesc=This tool must be used only by experienced users or developers. It provides utilities to build or edit your own module.<br>Documentation for alternative <a href="%s" target="_blank">manual development is here</a>.
 EnterNameOfModuleDesc=Introduce el nombre del módulo/aplicación a crear sin espacios. Utilice mayúsculas para separar palabras (Por ejemplo: MiModulo, EcommerceParaTienda, SincronizarConMiSistema...)
 EnterNameOfObjectDesc=Introduce el nombre del objeto a crear sin espacios. Usa mayúsculas para separar palabras (Por ejemplo: MiObjeto, Estudiante, Profesor...). El archivo de clase CRUD, pero también archivo API, páginas para listar/añadir/editar/eliminar objetos y archivos SQL serán generados.
-ModuleBuilderDesc2=Ruta donde los módulos son generados/editados (primer directorio alternativo definido en %s): <strong>%s</strong>
+ModuleBuilderDesc2=Path where modules are generated/edited (first directory for external modules defined into %s): <strong>%s</strong>
 ModuleBuilderDesc3=Módulos generados/editables encontrados: <strong>%s</strong>
 ModuleBuilderDesc4=Un módulo se detecta como 'editable' cuando el archivo <strong>%s</strong> existe en la raíz del directorio del módulo
 NewModule=Nuevo módulo
@@ -24,7 +24,7 @@ ModuleBuilderDescbuildpackage=Puedes generar aquí un archivo comprimido "listo 
 EnterNameOfModuleToDeleteDesc=Puede eliminar su módulo. ATENCIÓN: ¡Todos los ficheros del módulo pero también los datos estructurados y la documentación será eliminada definitivamente!
 EnterNameOfObjectToDeleteDesc=Puede eliminar un objeto. ATENCIÓN: ¡Todos los ficheros relacionados con el objeto serán eliminados!
 DangerZone=Zona peligrosa
-BuildPackage=Generar paquete/documentación
+BuildPackage=Crear paquete
 BuildDocumentation=Generar documentación
 ModuleIsNotActive=Este módulo no ha sido activado todavía. Vaya a %s para activarlo o pulse aquí:
 ModuleIsLive=Este módulo ha sido activado. Cualquier cambio en él puede romper una característica activa actual.
@@ -40,12 +40,12 @@ PageForAgendaTab=Página de PHP para la pestaña de eventos
 PageForDocumentTab=Página de PHP para la pestaña de documento
 PageForNoteTab=Página de PHP para la pestaña de notas
 PathToModulePackage=Ruta al zip del módulo/aplicación
-PathToModuleDocumentation=Ruta a la documentación del módulo/aplicación
+PathToModuleDocumentation=Path to file of module/application documentation (%s)
 SpaceOrSpecialCharAreNotAllowed=Espacios o caracteres especiales no son permitidos.
 FileNotYetGenerated=Fichero todavía no generado
 RegenerateClassAndSql=Borrar y regenerar archivos de clase y sql
 RegenerateMissingFiles=Generar archivos no encontrados
-SpecificationFile=Fichero con las reglas de negocio
+SpecificationFile=File of documentation
 LanguageFile=Archivo para el idioma
 ConfirmDeleteProperty=¿Está seguro de querer eliminar la propiedad <strong>%s</strong>? Esto cambiará código en la clase PHP pero también eliminará la columna de la definición de la tabla del objeto.
 NotNull=No NULL
@@ -76,7 +76,7 @@ ListOfMenusEntries=Lista de entradas de menú
 ListOfPermissionsDefined=Listado de permisos definidos
 SeeExamples=Vea ejemplos aquí
 EnabledDesc=Condición para tener este campo activo (Ejemplos: 1 o $conf->global->MYMODULE_MYOPTION)
-VisibleDesc=¿Es el campo visible? (Ejemplos: 0=Nunca visible, 1=Visible en listado y  en formularios creación /actualización/visualización, 2=Visible en listado solamente, 3=Visible en formularios creación /actualización/visualización. Usar un valor negativo significa que no se muestra el campo predeterminado en el listado pero se puede seleccionar para verlo)
+VisibleDesc=Is the field visible ? (Examples: 0=Never visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). Using a negative value means field is not shown by default on list but can be selected for viewing). It can be an expression, for example: preg_match('/public/', $_SERVER['PHP_SELF'])?0:1
 IsAMeasureDesc=¿Se puede acumular el valor del campo para obtener un total en el listado? (Ejemplos: 1 o 0)
 SearchAllDesc=¿El campo se usa para realizar una búsqueda desde la herramienta de búsqueda rápida? (Ejemplos: 1 o 0)
 SpecDefDesc=Ingrese aquí toda la documentación que desea proporcionar con su módulo que aún no está definido por otras pestañas. Puede usar .md o mejor, la rica sintaxis .asciidoc.
@@ -100,3 +100,13 @@ UseAboutPage=Desactivar la página acerca de
 UseDocFolder=Desactivar directorio de documentación
 UseSpecificReadme=Usar un archivo Léame específico
 RealPathOfModule=Ruta real del módulo
+ContentCantBeEmpty=El contenido del archivo no puede estar vacío
+WidgetDesc=You can generate and edit here the widgets that will be embedded with your module.
+CLIDesc=You can generate here some command line scripts you want to provide with your module.
+CLIFile=CLI File
+NoCLIFile=No CLI files
+UseSpecificEditorName = Use a specific editor name
+UseSpecificEditorURL = Use a specific editor URL
+UseSpecificFamily = Use a specific family
+UseSpecificAuthor = Use a specific author
+UseSpecificVersion = Use a specific initial version

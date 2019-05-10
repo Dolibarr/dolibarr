@@ -127,13 +127,13 @@ class Expedition extends CommonObject
 
 	/**
 	 * @deprecated
-	 * @see date_shipping
+	 * @see $date_shipping
 	 */
 	public $date;
 
 	/**
 	 * @deprecated
-	 * @see date_shipping
+	 * @see $date_shipping
 	 */
 	public $date_expedition;
 
@@ -607,7 +607,7 @@ class Expedition extends CommonObject
 				$this->getUrlTrackingStatus($obj->tracking_number);
 
 				/*
-				 * Thirparty
+				 * Thirdparty
 				 */
 				$result=$this->fetch_thirdparty();
 
@@ -757,7 +757,7 @@ class Expedition extends CommonObject
 						$result=$mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans("ShipmentValidatedInDolibarr", $numref));
 						if ($result < 0) {
 							$error++;
-							$this->errors[]=$mouvS->error;
+							$this->error = $mouvS->error;
 							$this->errors = array_merge($this->errors, $mouvS->errors);
 							break;
 						}
@@ -771,7 +771,7 @@ class Expedition extends CommonObject
 						$result=$mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans("ShipmentValidatedInDolibarr", $numref), '', $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch, $obj->fk_origin_stock);
 						if ($result < 0) {
 							$error++;
-							$this->errors[]=$mouvS->error;
+							$this->error = $mouvS->error;
 							$this->errors = array_merge($this->errors, $mouvS->errors);
 							break;
 						}
@@ -851,11 +851,6 @@ class Expedition extends CommonObject
 		}
 		else
 		{
-			foreach($this->errors as $errmsg)
-			{
-				dol_syslog(get_class($this)."::valid ".$errmsg, LOG_ERR);
-				$this->error.=($this->error?', '.$errmsg:$errmsg);
-			}
 			$this->db->rollback();
 			return -1*$error;
 		}
@@ -1776,8 +1771,8 @@ class Expedition extends CommonObject
 	/**
 	 *	Set the planned delivery date
 	 *
-	 *	@param      User			$user        		Objet utilisateur qui modifie
-	 *	@param      timestamp		$date_livraison     Date de livraison
+	 *	@param      User			$user        		Objet user that modify
+	 *	@param      integer 		$date_livraison     Date of delivery
 	 *	@return     int         						<0 if KO, >0 if OK
 	 */
 	public function set_date_livraison($user, $date_livraison)
@@ -1840,7 +1835,7 @@ class Expedition extends CommonObject
 	/**
 	 *  Fetch all deliveries method and return an array. Load array this->listmeths.
 	 *
-	 *  @param  id      $id     only this carrier, all if none
+	 *  @param  int      $id     only this carrier, all if none
 	 *  @return void
 	 */
 	public function list_delivery_methods($id = '')
@@ -1906,8 +1901,7 @@ class Expedition extends CommonObject
 	/**
 	 *  Activate delivery method.
 	 *
-	 *  @param      id      $id     id method to activate
-	 *
+	 *  @param      int      $id     id method to activate
 	 *  @return void
 	 */
 	public function activ_delivery_method($id)
@@ -1923,7 +1917,7 @@ class Expedition extends CommonObject
 	/**
 	 *  DesActivate delivery method.
 	 *
-	 *  @param      id      $id     id method to desactivate
+	 *  @param      int      $id     id method to desactivate
 	 *
 	 *  @return void
 	 */
@@ -2370,7 +2364,7 @@ class ExpeditionLigne extends CommonObjectLine
 
 	/**
 	 * @deprecated
-	 * @see fk_origin_line
+	 * @see $fk_origin_line
 	 */
 	public $origin_line_id;
 
@@ -2418,7 +2412,7 @@ class ExpeditionLigne extends CommonObjectLine
 
     /**
      * @deprecated
-     * @see product_ref
+     * @see $product_ref
      */
     public $ref;
 
@@ -2429,7 +2423,7 @@ class ExpeditionLigne extends CommonObjectLine
 
 	/**
 	 * @deprecated
-	 * @see product_label
+	 * @see $product_label
 	 */
 	public $libelle;
 
@@ -2441,7 +2435,7 @@ class ExpeditionLigne extends CommonObjectLine
     /**
      * @var string product description
      * @deprecated
-     * @see product_desc
+     * @see $product_desc
      */
     public $desc;
 

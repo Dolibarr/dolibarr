@@ -36,7 +36,6 @@ $action=GETPOST('action', 'aZ09');
 $hookmanager->initHooks(array('index'));
 
 
-
 /*
  * Actions
  */
@@ -122,7 +121,7 @@ if (empty($user->societe_id))
     $boxstat.='<div class="inline-block valignmiddle">'.$langs->trans("DolibarrStateBoard").'</div>';
     $boxstat.='</th>';
     $boxstat.='</tr>';
-    $boxstat.='<tr class="impair"><td class="tdboxstats nohover flexcontainer">';
+    $boxstat.='<tr class="nobottom nohover"><td class="tdboxstats nohover flexcontainer">';
 
     $object=new stdClass();
     $parameters=array();
@@ -434,9 +433,9 @@ if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
 {
 	include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 	$board=new Contrat($db);
-	$dashboardlines[] = $board->load_board($user, "inactives");
+	$dashboardlines[] = $board->load_board($user, "inactive");
 	// Number of active services (expired)
-	$dashboardlines[] = $board->load_board($user, "expired");
+	$dashboardlines[] = $board->load_board($user, "active");
 }
 // Number of invoices customers (has paid)
 if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
@@ -564,7 +563,7 @@ $boxwork.='</tr>'."\n";
 $nbworkboardempty=0;
 if (! empty($valid_dashboardlines))
 {
-    $boxwork.='<tr class="nohover"><td class="tdboxstats nohover flexcontainer centpercent"><div style="display: flex: flex-wrap: wrap">';
+    $boxwork.='<tr class="nobottom nohover"><td class="tdboxstats nohover flexcontainer centpercent"><div style="display: flex: flex-wrap: wrap">';
 
     foreach($valid_dashboardlines as $board)
     {
@@ -599,8 +598,6 @@ if (! empty($valid_dashboardlines))
         $boxwork .="\n";
     }
 
-    $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"><div class="boxstats150empty"></div></div>';
-    $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"><div class="boxstats150empty"></div></div>';
     $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"><div class="boxstats150empty"></div></div>';
     $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"><div class="boxstats150empty"></div></div>';
     $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"><div class="boxstats150empty"></div></div>';

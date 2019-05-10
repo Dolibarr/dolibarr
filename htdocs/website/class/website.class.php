@@ -519,7 +519,7 @@ class Website extends CommonObject
 	 */
 	public function createFromClone($user, $fromid, $newref, $newlang = '')
 	{
-        global $conf, $hookmanager, $langs;
+        global $conf, $hookmanager;
 		global $dolibarr_main_data_root;
 
 		$now = dol_now();

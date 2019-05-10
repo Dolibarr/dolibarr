@@ -57,7 +57,7 @@ class ProductFournisseur extends Product
 
     /**
      * @deprecated
-     * @see ref_supplier
+     * @see $ref_supplier
      */
     public $fourn_ref;
     public $delivery_time_days;
@@ -1078,7 +1078,7 @@ class ProductFournisseur extends Product
      * Private function to log price history
      *
      * @param User      $user                           Object user who adds/changes price
-     * @param date      $datec                          date create
+     * @param integer   $datec                          date create
      * @param float     $buyprice                       price for qty
      * @param float     $qty                            qty for price
      * @param float     $multicurrency_buyprice         Purchase price for the quantity min in currency

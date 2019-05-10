@@ -282,7 +282,7 @@ if ($mode == 'customer')
         Commande::STATUS_CLOSED=>$langs->trans("StatusOrderDelivered"),
         Commande::STATUS_CANCELED=>$langs->trans("StatusOrderCanceled")
     );
-    print $form->selectarray('object_status', $liststatus, GETPOST('object_status'), -4);
+    print $form->selectarray('object_status', $liststatus, GETPOST('object_status', 'int'), -4);
 }
 if ($mode == 'supplier')
 {

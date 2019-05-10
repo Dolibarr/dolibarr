@@ -1370,12 +1370,12 @@ else
                 print "\n";
                 print '<script language="JavaScript" type="text/javascript">';
                 print "function CheckVAT(a) {\n";
-                print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a,'".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."',500,300);\n";
+                print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a,'".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."', 540, 350);\n";
                 print "}\n";
                 print '</script>';
                 print "\n";
                 $s.='<a href="#" class="hideonsmartphone" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
-                $s = $form->textwithpicto($s, $langs->trans("VATIntraCheckDesc", $langs->trans("VATIntraCheck")), 1);
+                $s = $form->textwithpicto($s, $langs->trans("VATIntraCheckDesc", $langs->transnoentitiesnoconv("VATIntraCheck")), 1);
             }
             else
             {
@@ -1441,7 +1441,7 @@ else
         if (! empty($conf->global->MAIN_MULTILANGS))
         {
             print '<tr><td>'.$form->editfieldkey('DefaultLang', 'default_lang', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">'."\n";
-            print $formadmin->select_language(($object->default_lang?$object->default_lang:$conf->global->MAIN_LANG_DEFAULT), 'default_lang', 0, 0, 1, 0, 0, 'maxwidth200onsmartphone');
+            print $formadmin->select_language(GETPOST('default_lang', 'alpha')?GETPOST('default_lang', 'alpha'):($object->default_lang?$object->default_lang:''), 'default_lang', 0, 0, 1, 0, 0, 'maxwidth200onsmartphone');
             print '</td>';
             print '</tr>';
         }

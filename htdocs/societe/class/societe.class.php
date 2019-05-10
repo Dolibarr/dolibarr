@@ -60,7 +60,7 @@ class Societe extends CommonObject
 
 	public $fieldsforcombobox='nom,name_alias';
 	protected $childtables=array("supplier_proposal"=>'SupplierProposal',"propal"=>'Proposal',"commande"=>'Order',"facture"=>'Invoice',"facture_rec"=>'RecurringInvoiceTemplate',"contrat"=>'Contract',"fichinter"=>'Fichinter',"facture_fourn"=>'SupplierInvoice',"commande_fournisseur"=>'SupplierOrder',"projet"=>'Project',"expedition"=>'Shipment',"prelevement_lignes"=>'DirectDebitRecord');    // To test if we can delete object
-	protected $childtablesoncascade=array("societe_prices", "societe_log", "societe_address", "product_fournisseur_price", "product_customer_price_log", "product_customer_price", "socpeople", "adherent", "societe_rib", "societe_remise", "societe_remise_except", "societe_commerciaux", "categorie", "notify", "notify_def", "actioncomm");
+	protected $childtablesoncascade=array("societe_prices", "societe_log", "societe_address", "product_fournisseur_price", "product_customer_price_log", "product_customer_price", "socpeople", "adherent", "societe_account", "societe_rib", "societe_remise", "societe_remise_except", "societe_commerciaux", "categorie", "notify", "notify_def", "actioncomm");
 	public $picto = 'company';
 
 	/**
@@ -1136,12 +1136,16 @@ class Societe extends CommonObject
 							//$lmember->firstname=$this->firstname?$this->firstname:$lmember->firstname;	// We keep firstname and lastname of member unchanged
 							//$lmember->lastname=$this->lastname?$this->lastname:$lmember->lastname;		// We keep firstname and lastname of member unchanged
 							$lmember->address=$this->address;
+							$lmember->zip=$this->zip;
+							$lmember->town=$this->town;
 							$lmember->email=$this->email;
 							$lmember->skype=$this->skype;
 							$lmember->twitter=$this->twitter;
 							$lmember->facebook=$this->facebook;
 							$lmember->linkedin=$this->linkedin;
 							$lmember->phone=$this->phone;
+							$lmember->state_id=$this->state_id;
+							$lmember->country_id=$this->country_id;
 
 							$result=$lmember->update($user, 0, 1, 1, 1);	// Use nosync to 1 to avoid cyclic updates
 							if ($result < 0)
@@ -1252,7 +1256,7 @@ class Societe extends CommonObject
 		$sql .= ', s.fk_forme_juridique as forme_juridique_code';
 		$sql .= ', s.webservices_url, s.webservices_key';
 		$sql .= ', s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur, s.parent, s.barcode';
-		$sql .= ', s.fk_departement, s.fk_pays as country_id, s.fk_stcomm, s.remise_supplier, s.mode_reglement, s.cond_reglement, s.fk_account, s.tva_assuj';
+		$sql .= ', s.fk_departement as state_id, s.fk_pays as country_id, s.fk_stcomm, s.remise_supplier, s.mode_reglement, s.cond_reglement, s.fk_account, s.tva_assuj';
 		$sql .= ', s.mode_reglement_supplier, s.cond_reglement_supplier, s.localtax1_assuj, s.localtax1_value, s.localtax2_assuj, s.localtax2_value, s.fk_prospectlevel, s.default_lang, s.logo';
 		$sql .= ', s.fk_shipping_method';
 		$sql .= ', s.outstanding_limit, s.import_key, s.canvas, s.fk_incoterms, s.location_incoterms';
@@ -1328,7 +1332,7 @@ class Societe extends CommonObject
 				$this->country_code = $obj->country_id?$obj->country_code:'';
 				$this->country 		= $obj->country_id?($langs->trans('Country'.$obj->country_code)!='Country'.$obj->country_code?$langs->transnoentities('Country'.$obj->country_code):$obj->country):'';
 
-				$this->state_id     = $obj->fk_departement;
+				$this->state_id     = $obj->state_id;
 				$this->state_code   = $obj->state_code;
 				$this->state        = ($obj->state!='-'?$obj->state:'');
 
@@ -1457,7 +1461,7 @@ class Societe extends CommonObject
 	 *    Delete a third party from database and all its dependencies (contacts, rib...)
 	 *
 	 *    @param	int		$id             Id of third party to delete
-	 *    @param    User    $fuser          User who ask to delete thirparty
+	 *    @param    User    $fuser          User who ask to delete thirdparty
 	 *    @param    int		$call_trigger   0=No, 1=yes
 	 *    @return	int						<0 if KO, 0 if nothing done, >0 if OK
 	 */

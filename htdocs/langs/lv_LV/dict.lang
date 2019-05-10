@@ -290,6 +290,7 @@ CurrencyXOF=CFA franki BCEAO
 CurrencySingXOF=CFA Franc BCEAO
 CurrencyXPF=KZP franki
 CurrencySingXPF=CFP Franc
+CurrencyCentEUR=centiem
 CurrencyCentSingEUR=cents
 CurrencyCentINR=paisa
 CurrencyCentSingINR=paise

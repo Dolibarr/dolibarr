@@ -27,6 +27,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+require_once DOL_DOCUMENT_ROOT."/core/lib/takepos.lib.php";
 
 // If socid provided by ajax company selector
 if (! empty($_REQUEST['CASHDESK_ID_THIRDPARTY_id']))
@@ -63,6 +64,7 @@ if (GETPOST('action', 'alpha') == 'set')
 	$db->begin();
 	if (GETPOST('socid', 'int') < 0) $_POST["socid"]='';
 
+	/*
 	$res = dolibarr_set_const($db, "CASHDESK_ID_THIRDPARTY", (GETPOST('socid', 'int') > 0 ? GETPOST('socid', 'int') : ''), 'chaine', 0, '', $conf->entity);
 
     $res = dolibarr_set_const($db, "CASHDESK_ID_BANKACCOUNT_CASH", (GETPOST('CASHDESK_ID_BANKACCOUNT_CASH', 'alpha') > 0 ? GETPOST('CASHDESK_ID_BANKACCOUNT_CASH', 'alpha') : ''), 'chaine', 0, '', $conf->entity);
@@ -75,6 +77,8 @@ if (GETPOST('action', 'alpha') == 'set')
     }
 	$res = dolibarr_set_const($db, "CASHDESK_ID_WAREHOUSE", (GETPOST('CASHDESK_ID_WAREHOUSE', 'alpha') > 0 ? GETPOST('CASHDESK_ID_WAREHOUSE', 'alpha') : ''), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "CASHDESK_NO_DECREASE_STOCK", GETPOST('CASHDESK_NO_DECREASE_STOCK', 'alpha'), 'chaine', 0, '', $conf->entity);
+    */
+
 	$res = dolibarr_set_const($db, "CASHDESK_SERVICES", GETPOST('CASHDESK_SERVICES', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_ROOT_CATEGORY_ID", GETPOST('TAKEPOS_ROOT_CATEGORY_ID', 'alpha'), 'chaine', 0, '', $conf->entity);
 
@@ -88,6 +92,7 @@ if (GETPOST('action', 'alpha') == 'set')
 	$res = dolibarr_set_const($db, "TAKEPOS_HEADER", GETPOST('TAKEPOS_HEADER', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_FOOTER", GETPOST('TAKEPOS_FOOTER', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_NUMPAD", GETPOST('TAKEPOS_NUMPAD', 'alpha'), 'chaine', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "TAKEPOS_NUM_TERMINALS", GETPOST('TAKEPOS_NUM_TERMINALS', 'alpha'), 'chaine', 0, '', $conf->entity);
 
 	if ($conf->global->TAKEPOS_ORDER_NOTES==1)
 	{
@@ -122,6 +127,8 @@ llxHeader('', $langs->trans("CashDeskSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("CashDeskSetup").' (TakePOS)', $linkback, 'title_setup');
+$head = takepos_prepare_head();
+dol_fiche_head($head, 'setup', 'TakePOS', -1);
 print '<br>';
 
 
@@ -136,6 +143,15 @@ print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 
+// Terminals
+print '<tr class="oddeven"><td>';
+print $langs->trans("NumberOfTerminals");
+print '<td colspan="2">';
+$array=array(1=>"1", 2=>"2", 3=>"3", 4=>"4", 5=>"5", 6=>"6", 7=>"7", 8=>"8", 9=>"9");
+print $form->selectarray('TAKEPOS_NUM_TERMINALS', $array, (empty($conf->global->TAKEPOS_NUM_TERMINALS)?'0':$conf->global->TAKEPOS_NUM_TERMINALS), 0);
+print "</td></tr>\n";
+
+// Services
 if (! empty($conf->service->enabled))
 {
 	print '<tr class="oddeven"><td>';
@@ -144,14 +160,15 @@ if (! empty($conf->service->enabled))
 	print $form->selectyesno("CASHDESK_SERVICES", $conf->global->CASHDESK_SERVICES, 1);
 	print "</td></tr>\n";
 }
+
+// Auto print tickets
 print '<tr class="oddeven"><td>';
 print $langs->trans("AutoPrintTickets");
 print '<td colspan="2">';
 print $form->selectyesno("TAKEPOS_AUTO_PRINT_TICKETS", $conf->global->TAKEPOS_AUTO_PRINT_TICKETS, 1);
 print "</td></tr>\n";
 
-
-
+// Root category for products
 print '<tr class="oddeven"><td>';
 print $form->textwithpicto($langs->trans("RootCategoryForProductsToSell"), $langs->trans("RootCategoryForProductsToSellDesc"));
 print '<td colspan="2">';
@@ -253,10 +270,11 @@ print '</table>';
 
 print '<br>';
 
-
+/*
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Terminal").' 0</td><td>'.$langs->trans("Value").'</td>';
+if (!$conf->global->TAKEPOS_NUM_TERMINALS || $conf->global->TAKEPOS_NUM_TERMINALS=="1") print '<td>'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td>';
+else print '<td>'.$langs->trans("Terminal").' 1</td><td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 
 print '<tr class="oddeven"><td width=\"50%\">'.$langs->trans("CashDeskThirdPartyForSell").'</td>';
@@ -283,7 +301,7 @@ if (! empty($conf->banque->enabled))
 		$name="CASHDESK_ID_BANKACCOUNT_".$modep->code;
 		print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountFor").' '.$langs->trans($modep->libelle).'</td>';
 		print '<td colspan="2">';
-		$cour=preg_match('/^LIQ.*/', $modep->code)?2:1;
+		$cour=preg_match('|^LIQ.*|', $modep->code)?2:1;
 		$form->select_comptes($conf->global->$name, $name, 0, "courant=".$cour, 1);
 		print '</td></tr>';
 	}
@@ -326,6 +344,7 @@ if (! empty($conf->stock->enabled))
 
 print '</table>';
 print '<br>';
+*/
 
 print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></div>';
 

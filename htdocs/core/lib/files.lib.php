@@ -195,15 +195,9 @@ function dol_dir_list($path, $types = "all", $recursive = 0, $filter = "", $excl
 			closedir($dir);
 
 			// Obtain a list of columns
-			if (! empty($sortcriteria))
+			if (! empty($sortcriteria) && $sortorder)
 			{
-				$myarray=array();
-				foreach ($file_list as $key => $row)
-				{
-					$myarray[$key] = (isset($row[$sortcriteria])?$row[$sortcriteria]:'');
-				}
-				// Sort the data
-				if ($sortorder) array_multisort($myarray, $sortorder, $file_list);
+			    $file_list = dol_sort_array($file_list, $sortcriteria, ($sortorder == SORT_ASC ? 'asc' : 'desc'));
 			}
 		}
 	}
@@ -1561,10 +1555,9 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesess
 
 				// dol_sanitizeFileName the file name and lowercase extension
 				$info = pathinfo($destfull);
-				$destfull = $info['dirname'].'/'.dol_sanitizeFileName($info['filename'].'.'.strtolower($info['extension']));
+				$destfull = $info['dirname'].'/'.dol_sanitizeFileName($info['filename'].($info['extension']!='' ? ('.'.strtolower($info['extension'])) : ''));
 				$info = pathinfo($destfile);
-				$destfile = dol_sanitizeFileName($info['filename'].'.'.strtolower($info['extension']));
-
+				$destfile = dol_sanitizeFileName($info['filename'].($info['extension']!='' ? ('.'.strtolower($info['extension'])) : ''));
 				$resupload = dol_move_uploaded_file($TFile['tmp_name'][$i], $destfull, $allowoverwrite, 0, $TFile['error'][$i], 0, $varfiles);
 
 				if (is_numeric($resupload) && $resupload > 0)   // $resupload can be 'ErrorFileAlreadyExists'
@@ -2708,7 +2701,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	}
 
 	// Wrapping pour les remises de cheques
-	elseif ($modulepart == 'remisecheque' && !empty($conf->banque->dir_output))
+	elseif ($modulepart == 'remisecheque' && !empty($conf->bank->dir_output))
 	{
 		if ($fuser->rights->banque->{$lire} || preg_match('/^specimen/i', $original_file))
 		{
@@ -2719,7 +2712,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	}
 
 	// Wrapping for bank
-	elseif ($modulepart == 'bank' && !empty($conf->bank->dir_output))
+	elseif (($modulepart == 'banque' || $modulepart == 'bank') && !empty($conf->bank->dir_output))
 	{
 		if ($fuser->rights->banque->{$lire})
 		{

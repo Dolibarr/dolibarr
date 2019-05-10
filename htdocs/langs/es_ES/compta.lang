@@ -232,7 +232,6 @@ ACCOUNTING_ACCOUNT_CUSTOMER=Cuenta contable usada para clientes
 ACCOUNTING_ACCOUNT_CUSTOMER_Desc=Se utilizará una cuenta contable dedicada definida en la ficha de terceros para el relleno del Libro Mayor,  o como valor predeterminado de la contabilidad del Libro Mayor si no se define una cuenta contable en la ficha del tercero
 ACCOUNTING_ACCOUNT_SUPPLIER=Cuenta contable usada para proveedores
 ACCOUNTING_ACCOUNT_SUPPLIER_Desc=Se utilizará una cuenta contable dedicada definida en la ficha de terceros para el relleno del Libro Mayor, o como valor predeterminado de la contabilidad del Libro Mayor si no se define una cuenta contable en la ficha del tercero
-CloneTax=Clonar una tasa social/fiscal
 ConfirmCloneTax=Confirmar la clonación de una tasa social/fiscal
 CloneTaxForNextMonth=Clonarla para el próximo mes
 SimpleReport=informe simple

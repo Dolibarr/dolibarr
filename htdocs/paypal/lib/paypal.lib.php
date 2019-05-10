@@ -88,7 +88,7 @@ function showPaypalPaymentUrl($type, $ref)
  * @param	string	$freetag	Free tag
  * @return	string				Url string
  */
-function getPaypalPaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag = 'your_free_tag')
+function getPaypalPaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag = 'your_tag')
 {
 	global $conf;
 

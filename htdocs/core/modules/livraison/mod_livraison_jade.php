@@ -36,7 +36,7 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
 {
 	/**
      * Dolibarr version of the loaded document
-     * @public string
+     * @var string
      */
 	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
 
@@ -48,7 +48,7 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
 	/**
 	 * @var string Nom du modele
 	 * @deprecated
-	 * @see name
+	 * @see $name
 	 */
 	public $nom='Jade';
 

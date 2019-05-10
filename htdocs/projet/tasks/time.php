@@ -29,6 +29,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -611,7 +612,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 	        'generateinvoice'=>$langs->trans("GenerateBill"),
 	        //'builddoc'=>$langs->trans("PDFMerge"),
 	    );
-	    //if ($user->rights->projet->creer) $arrayofmassactions['predelete']=$langs->trans("Delete");
+	    //if ($user->rights->projet->creer) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 	    if (in_array($massaction, array('presend','predelete','generateinvoice'))) $arrayofmassactions=array();
 	    $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 	}
@@ -1054,7 +1055,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 
 		$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
 		$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
-		$selectedfields.=(count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
+		$selectedfields.=(is_array($arrayofmassactions) && count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
         print '<div class="div-table-responsive">';
 		print '<table class="tagtable nobottomiftotal liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";

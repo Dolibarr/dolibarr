@@ -50,7 +50,7 @@ if (! $user->admin)
 
 if ($action == 'delete')
 {
-	$file=$conf->admin->dir_output.'/'.GETPOST('urlfile');
+	$file=$conf->admin->dir_output.'/backup/'.basename(GETPOST('urlfile', 'alpha'));
     $ret=dol_delete_file($file, 1);
     if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
     else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
@@ -113,7 +113,7 @@ jQuery(document).ready(function() {
 print load_fiche_titre($langs->trans("Backup"), '', 'title_setup');
 //print_barre_liste($langs->trans("Backup"), '', '', '', '', '', $langs->trans("BackupDesc",DOL_DATA_ROOT), 0, 0, 'title_setup');
 
-print '<div class="center">';
+print '<div class="center opacitymedium">';
 print $langs->trans("BackupDesc", DOL_DATA_ROOT);
 print '</div>';
 print '<br>';

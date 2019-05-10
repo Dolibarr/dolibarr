@@ -32,7 +32,7 @@ class mod_project_universal extends ModeleNumRefProjects
 {
 	/**
      * Dolibarr version of the loaded document
-     * @public string
+     * @var string
      */
 	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
 

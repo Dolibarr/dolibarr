@@ -1,9 +1,11 @@
 <?php
 /* Copyright (C) 2015       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2016-2018  Philippe Grand          <philippe.grand@atoo-net.com>
+ * Copyright (C) 2016-2019  Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2018       Francis Appels          <francis.appels@z-application.com>
+ * Copyright (C) 2019       Markus Welters          <markus@welters.de>
+ * Copyright (C) 2019       Rafael Ingenleuf        <ingenleuf@welters.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,8 +34,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-
-
+require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT.'/user/class/userbankaccount.class.php';
 
 /**
  *	Class to generate expense report based on standard model
@@ -62,9 +65,9 @@ class pdf_standard extends ModeleExpenseReport
 
     /**
      * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 5.4 = array(5, 4)
+     * e.g.: PHP ≥ 5.5 = array(5, 5)
      */
-	public $phpmin = array(5, 4);
+	public $phpmin = array(5, 5);
 
 	/**
      * Dolibarr version of the loaded document
@@ -109,7 +112,7 @@ class pdf_standard extends ModeleExpenseReport
 
 	/**
 	 * Issuer
-	 * @var Company object that emits
+	 * @var Societe
 	 */
 	public $emetteur;
 
@@ -121,7 +124,7 @@ class pdf_standard extends ModeleExpenseReport
      */
     public function __construct($db)
     {
-		global $conf, $langs, $mysoc;
+		global $conf, $langs, $mysoc, $user;
 
 		// Translations
 		$langs->loadLangs(array("main", "trips", "projects"));
@@ -156,6 +159,7 @@ class pdf_standard extends ModeleExpenseReport
 
 		// Get source company
 		$this->emetteur=$mysoc;
+
 		if (empty($this->emetteur->country_code)) $this->emetteur->country_code=substr($langs->defaultlang, -2);    // By default, if was not defined
 
 		// Define position of columns
@@ -321,6 +325,7 @@ class pdf_standard extends ModeleExpenseReport
 					$substitutionarray=pdf_getSubstitutionArray($outputlangs, null, $object);
 					complete_substitutions_array($substitutionarray, $outputlangs, $object);
 					$notetoshow = make_substitutions($notetoshow, $substitutionarray, $outputlangs);
+					$notetoshow = convertBackOfficeMediasLinksToPublicLinks($notetoshow);
 
 					$tab_top = 95;
 
@@ -626,7 +631,8 @@ class pdf_standard extends ModeleExpenseReport
 	 */
 	private function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
-		global $conf, $langs, $hookmanager;
+		// global $conf, $langs, $hookmanager;
+		global $user, $langs, $conf, $mysoc, $db, $hookmanager;
 
 		// Load traductions files requiredby by page
 		$outputlangs->loadLangs(array("main", "trips", "companies"));
@@ -711,14 +717,22 @@ class pdf_standard extends ModeleExpenseReport
 			$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($this->emetteur->address);
 			$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($this->emetteur->zip).' '.$outputlangs->convToOutputCharset($this->emetteur->town);
 			$carac_emetteur .= "\n";
-			// Phone
 			if ($this->emetteur->phone) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Phone")." : ".$outputlangs->convToOutputCharset($this->emetteur->phone);
-			// Fax
 			if ($this->emetteur->fax) $carac_emetteur .= ($carac_emetteur ? ($this->emetteur->tel ? " - " : "\n") : '' ).$outputlangs->transnoentities("Fax")." : ".$outputlangs->convToOutputCharset($this->emetteur->fax);
-			// EMail
 			if ($this->emetteur->email) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Email")." : ".$outputlangs->convToOutputCharset($this->emetteur->email);
-			// Web
 			if ($this->emetteur->url) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Web")." : ".$outputlangs->convToOutputCharset($this->emetteur->url);
+
+			// Receiver Properties
+			$receiver=new User($this->db);
+			$receiver->fetch($object->fk_user_author);
+			$receiver_account=new UserBankAccount($this->db);
+			$receiver_account->fetch(0, '', $object->fk_user_author);
+			$expense_receiver = '';
+			$expense_receiver .= ($expense_receiver ? "\n" : '' ).$outputlangs->convToOutputCharset($receiver->address);
+			$expense_receiver .= ($expense_receiver ? "\n" : '' ).$outputlangs->convToOutputCharset($receiver->zip).' '.$outputlangs->convToOutputCharset($receiver->town);
+			$expense_receiver .= "\n";
+			if ($receiver->email) $expense_receiver .= ($expense_receiver ? "\n" : '' ).$outputlangs->transnoentities("Email")." : ".$outputlangs->convToOutputCharset($receiver->email);
+			if ($receiver_account->iban) $expense_receiver .= ($expense_receiver ? "\n" : '' ).$outputlangs->transnoentities("IBAN")." : ".$outputlangs->convToOutputCharset($receiver_account->iban);
 
 			// Show sender
 			$posy=50;
@@ -736,19 +750,27 @@ class pdf_standard extends ModeleExpenseReport
 			$pdf->MultiCell(82, $hautcadre, "", 0, 'R', 1);
 			$pdf->SetTextColor(0, 0, 60);
 
-			// Show sender name
-			$pdf->SetXY($posx+2, $posy+3);
-			$pdf->SetFont('', 'B', $default_font_size);
-			$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
-
 			// Show sender information
-			$pdf->SetXY($posx+2, $posy+8);
-			$pdf->SetFont('', '', $default_font_size - 1);
-			$pdf->MultiCell(80, 4, $carac_emetteur, 0, 'L');
+			if (empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) {
+				$pdf->SetXY($posx+2, $posy+3);
+				$pdf->SetFont('', 'B', $default_font_size);
+				$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
+				$pdf->SetXY($posx+2, $posy+8);
+				$pdf->SetFont('', '', $default_font_size - 1);
+				$pdf->MultiCell(80, 4, $carac_emetteur, 0, 'L');
+			} else {
+				$pdf->SetXY($posx+2, $posy+3);
+				$pdf->SetFont('', 'B', $default_font_size);
+				$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset(dolGetFirstLastname($receiver->firstname, $receiver->lastname)), 0, 'L');
+				$pdf->SetXY($posx+2, $posy+8);
+				$pdf->SetFont('', '', $default_font_size - 1);
+				$pdf->MultiCell(80, 4, $expense_receiver, 0, 'L');
+			}
 
 			// Show recipient
 			$posy=50;
 			$posx=100;
+			if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=$this->marge_gauche;
 
 			// Show recipient frame
 			$pdf->SetTextColor(0, 0, 0);
@@ -760,7 +782,8 @@ class pdf_standard extends ModeleExpenseReport
 			// Informations for trip (dates and users workflow)
 			if ($object->fk_user_author > 0) {
 				$userfee=new User($this->db);
-				$userfee->fetch($object->fk_user_author); $posy+=3;
+				$userfee->fetch($object->fk_user_author);
+				$posy+=3;
 				$pdf->SetXY($posx+2, $posy);
 				$pdf->SetFont('', '', 10);
 				$pdf->MultiCell(96, 4, $outputlangs->transnoentities("AUTHOR")." : ".dolGetFirstLastname($userfee->firstname, $userfee->lastname), 0, 'L');
@@ -926,7 +949,7 @@ class pdf_standard extends ModeleExpenseReport
 		$pdf->line($this->posxqty-1, $tab_top, $this->posxqty-1, $tab_top + $tab_height);
 		if (empty($hidetop)) {
 			$pdf->SetXY($this->posxqty-1, $tab_top+1);
-			$pdf->MultiCell($this->postotalttc-$this->posxqty - 1, 2, $outputlangs->transnoentities("Qty"), '', 'R');
+			$pdf->MultiCell($this->postotalttc-$this->posxqty - 1, 2, $outputlangs->transnoentities("Qty"), '', 'C');
 		}
 
 		// Total with all taxes
@@ -1030,18 +1053,18 @@ class pdf_standard extends ModeleExpenseReport
 				$pdf->SetXY($tab3_posx+17, $tab3_top+$y);
 				$pdf->MultiCell(15, 3, price($totalpaid), 0, 'R', 0);
 				$pdf->SetXY($tab3_posx+35, $tab3_top+$y);
-				$pdf->MultiCell(30, 4, $outputlangs->trans("AlreadyPaid"), 0, 'L', 0);
+				$pdf->MultiCell(30, 4, $outputlangs->transnoentitiesnoconv("AlreadyPaid"), 0, 'L', 0);
 				$y+=$tab3_height-2;
 				$pdf->SetXY($tab3_posx+17, $tab3_top+$y);
 				$pdf->MultiCell(15, 3, price($object->total_ttc), 0, 'R', 0);
 				$pdf->SetXY($tab3_posx+35, $tab3_top+$y);
-				$pdf->MultiCell(30, 4, $outputlangs->trans("AmountExpected"), 0, 'L', 0);
+				$pdf->MultiCell(30, 4, $outputlangs->transnoentitiesnoconv("AmountExpected"), 0, 'L', 0);
 				$y+=$tab3_height-2;
 				$remaintopay = $object->total_ttc - $totalpaid;
 				$pdf->SetXY($tab3_posx+17, $tab3_top+$y);
 				$pdf->MultiCell(15, 3, price($remaintopay), 0, 'R', 0);
 				$pdf->SetXY($tab3_posx+35, $tab3_top+$y);
-				$pdf->MultiCell(30, 4, $outputlangs->trans("RemainderToPay"), 0, 'L', 0);
+				$pdf->MultiCell(30, 4, $outputlangs->transnoentitiesnoconv("RemainderToPay"), 0, 'L', 0);
 			}
 		}
 		else

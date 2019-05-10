@@ -196,7 +196,7 @@ if ($action == 'confirm_delete' && ! empty($permissiontodelete))
 }
 
 // Action clone object
-if ($action == 'confirm_clone' && $confirm == 'yes' && ! empty($permissiontoadd))
+if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontoadd)
 {
 	if (1==0 && ! GETPOST('clone_content') && ! GETPOST('clone_receivers'))
 	{
@@ -204,26 +204,23 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && ! empty($permissiontoadd)
 	}
 	else
 	{
-		if ($object->id > 0)
-		{
-			// Because createFromClone modifies the object, we must clone it so that we can restore it later if error
-			$orig = clone $object;
+	    $objectutil = dol_clone($object, 1);   // To avoid to denaturate loaded object when setting some properties for clone or if createFromClone modifies the object. We use native clone to keep this->db valid.
+		//$objectutil->date = dol_mktime(12, 0, 0, GETPOST('newdatemonth', 'int'), GETPOST('newdateday', 'int'), GETPOST('newdateyear', 'int'));
+        // ...
 
-			$result=$object->createFromClone($user, $object->id);
-			if ($result > 0)
-			{
-				$newid = 0;
-				if (is_object($result)) $newid = $result->id;
-				else $newid = $result;
-				header("Location: ".$_SERVER['PHP_SELF'].'?id='.$newid);	// Open record of new object
-				exit;
-			}
-			else
-			{
-				setEventMessages($object->error, $object->errors, 'errors');
-				$object = $orig;
-				$action='';
-			}
+	    $result=$objectutil->createFromClone($user, (($object->id > 0) ? $object->id : $id));
+	    if (is_object($result) || $result > 0)
+		{
+			$newid = 0;
+			if (is_object($result)) $newid = $result->id;
+			else $newid = $result;
+			header("Location: ".$_SERVER['PHP_SELF'].'?id='.$newid);	// Open record of new object
+			exit;
+		}
+		else
+		{
+		    setEventMessages($objectutil->error, $objectutil->errors, 'errors');
+			$action='';
 		}
 	}
 }

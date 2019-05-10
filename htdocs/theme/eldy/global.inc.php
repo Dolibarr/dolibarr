@@ -91,6 +91,9 @@ input, select {
 	margin-bottom:1px;
 	margin-top:1px;
 }
+input.button.massactionconfirmed {
+    margin: 4px;
+}
 
 /* Focus definitions must be after standard definition */
 textarea:focus {
@@ -129,19 +132,27 @@ input.smallpadd {	/* Used for timesheet input */
 input.buttongen {
 	vertical-align: middle;
 }
-input.buttonpayment {
+input.buttonpayment, button.buttonpayment, div.buttonpayment {
 	min-width: 320px;
 	margin-bottom: 15px;
 	background-image: none;
 	line-height: 24px;
 	padding: 8px;
 	background: none;
-	padding-left: 38px;
-	text-align: <?php echo $left; ?>;
-	border: 1px solid #ddd;
-	background-color: #eee;
+	text-align: center;
+	border: 0;
+	background-color: #9999bb;
 	white-space: normal;
-	box-shadow: 1px 1px 8px #bbb;
+	box-shadow: 1px 1px 4px #bbb;
+	color: #fff;
+	border-radius: 4px;
+}
+div.buttonpayment input {
+    background-color: unset;
+    color: #fff;
+    border-bottom: unset;
+    font-weight: bold;
+    text-transform: uppercase;
 }
 input.buttonpaymentcb {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/common/credit_card.png', 1) ?>);
@@ -307,6 +318,13 @@ hr { border: 0; border-top: 1px solid #ccc; }
     box-shadow: none;
     -webkit-box-shadow: none;
 }
+.button_search, .button_removefilter {
+    border: unset;
+    background-color: unset;
+}
+.button_search:hover, .button_removefilter:hover {
+    cursor: pointer;
+}
 form {
     padding:0px;
     margin:0px;
@@ -436,7 +454,15 @@ textarea.centpercent {
 .cursornotallowed {
 	cursor: not-allowed;
 }
+.backgroundblank {
+    background-color: #fff;
+}
+.checkboxattachfilelabel {
+    font-size: 0.85em;
+    opacity: 0.7;
+}
 
+/* Themes for badges */
 <?php include dol_buildpath($path.'/theme/'.$theme.'/badges.inc.php', 0); ?>
 
 .borderrightlight
@@ -1421,8 +1447,7 @@ li.menuhider:hover {
 	background-image: none !important;
 }
 li.tmenusel, li.tmenu:hover {
-    background: rgba(0, 0, 0, 0.1);
-	/* background: rgb(<?php echo $colorbackhmenu1 ?>); */
+    /* background: rgba(0, 0, 0, 0.1); */
 }
 
 li.tmenusel::after, li.tmenu:hover::after{
@@ -1990,7 +2015,7 @@ input.vmenusearchselectcombo[type=text] {
 .searchform input { font-size: 16px; }
 
 
-a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active, span.vmenu { white-space: nowrap; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; }	/* bold = 600, 500 is ko with Edge on 1200x960 */
+a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active, span.vmenu, span.vsmenu { white-space: nowrap; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; }	/* bold = 600, 500 is ko with Edge on 1200x960 */
 font.vmenudisabled  { font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; color: #aaa; margin-left: 4px; }												/* bold = 600, 500 is ko with Edge on 1200x960 */
 a.vmenu:link, a.vmenu:visited { color: #<?php echo $colortextbackvmenu; ?>; }
 
@@ -2214,6 +2239,10 @@ div.tabBar table.tableforservicepart2:last-child {
 .tableforservicepart1 .tdhrthin {
 	height: unset;
     padding-top: 0 !important;
+}
+/* Payment Screen : Pointer cursor in the autofill image */
+.AutoFillAmount {
+	cursor:pointer;
 }
 
 div.popuptabset {
@@ -2587,12 +2616,17 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 
 	margin: 0px 0px 5px 0px;
 }
-table.liste tr:last-of-type td, table.noborder tr:last-of-type td, table.formdoc tr:last-of-type td, div.noborder tr:last-of-type td {
+#tablelines {
 	border-bottom-width: 1px;
 	border-bottom-color: rgb(<?php echo $colortopbordertitle1 ?>);
 	border-bottom-style: solid;
 }
-div.tabBar div.ficheaddleft table.noborder:last-of-type {
+table.liste tr:last-of-type td, table.noborder:not(#tablelines) tr:last-of-type td, table.formdoc tr:last-of-type td, div.noborder tr:last-of-type td {
+	border-bottom-width: 1px;
+	border-bottom-color: rgb(<?php echo $colortopbordertitle1 ?>);
+	border-bottom-style: solid;
+}
+div.tabBar div.ficheaddleft table.noborder:not(.margintable):not(.paymenttable):last-of-type {
     border-bottom: 1px solid rgb(<?php echo $colortopbordertitle1 ?>);
 }
 div.tabBar table.border>tbody>tr:last-of-type>td {
@@ -2611,20 +2645,25 @@ table.paddingtopbottomonly tr td {
 .liste_titre_filter {
 	background: rgb(<?php echo $colorbacktitle1; ?>) !important;
 }
+table:not(.listwithfilterbefore) tr.liste_titre_filter:first-of-type td.liste_titre {
+    padding-top: 5px;
+}
+
 tr.liste_titre_filter td.liste_titre {
 	/* border-bottom: 1px solid #ddd; */
 	padding-top: 1px;
 	padding-bottom: 0px;
 }
+tr.liste_titre_filter td.liste_titre:first-of-type {
+/*	height: 36px; */
+}
 .liste_titre_create td, .liste_titre_create th, .liste_titre_create .tagtd
 {
+    border-bottom-width: 0 !important;
     border-top-width: 1px;
     border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
     border-top-style: solid;
 }
-/*.liste_titre_create td.nobottom, tr#trlinefordates td {
-    background-color: rgb(<?php echo $colorbacktitle1; ?>) !important;
-}*/
 tr#trlinefordates td {
     border-bottom: 0px !important;
 }
@@ -2846,13 +2885,19 @@ div.pagination li.paginationafterarrows {
 /* Set the color for hover lines */
 .oddeven:hover, .evenodd:hover, .impair:hover, .pair:hover
 {
-<?php if ($colorbacklinepairhover) { ?>
 	background: rgb(<?php echo $colorbacklinepairhover; ?>) !important;		/* Must be background to be stronger than background of odd or even */
-<?php } ?>
+}
+.tredited, .tredited td {
+	background: rgb(<?php echo $colorbacklinepairchecked; ?>) !important;   /* Must be background to be stronger than background of odd or even */
+	border-bottom: 0 !important;
+}
+.treditedlinefordate {
+	background: rgb(<?php echo $colorbacklinepairchecked; ?>) !important;   /* Must be background to be stronger than background of odd or even */
+    border-bottom: 0px;
 }
 <?php if ($colorbacklinepairchecked) { ?>
 .highlight {
-	background: rgb(<?php echo $colorbacklinepairchecked; ?>) !important; /* Must be background to be stronger than background of odd or even */
+	background: rgb(<?php echo $colorbacklinepairchecked; ?>) !important;   /* Must be background to be stronger than background of odd or even */
 }
 <?php } ?>
 
@@ -2917,11 +2962,20 @@ form.pair, form.impair {
 form.tagtr:last-of-type div.tagtd, tr.pair:last-of-type td, tr.impair:last-of-type td {
     border-bottom: 0px !important;
 }
+tr.nobottom td {
+    border-bottom: 0px !important;
+}
+div.tableforcontact form.tagtr:last-of-type div.tagtd {
+    border-bottom: 1px solid #ddd !important;
+}
 tr.pair td .nobordernopadding tr td, tr.impair td .nobordernopadding tr td {
     border-bottom: 0px !important;
 }
 table.nobottomiftotal tr.liste_total td {
 	background-color: #fff;
+	border-bottom: 0px !important;
+}
+table.nobottom, td.nobottom {
 	border-bottom: 0px !important;
 }
 div.liste_titre .tagtd {
@@ -3099,7 +3153,7 @@ div:not(.fichecenter):not(.fichehalfleft):not(.ficheaddleft) .oddeven.tagtr:nth-
 .noborder > tbody > tr:nth-child(even):not(:last-child) td:not(.liste_titre), .liste > tbody > tr:nth-child(even):not(:last-child) td:not(.liste_titre),
 .noborder .oddeven.tagtr:nth-child(even):not(:last-child) .tagtd:not(.liste_titre)
 {
-	border-bottom: 1px solid #ddd;
+	border-bottom: 1px solid #e0e0e0;
 }
 
 .noborder > tbody > tr:nth-child(odd):not(.liste_titre), .liste > tbody > tr:nth-child(odd):not(.liste_titre),
@@ -3115,7 +3169,7 @@ div:not(.fichecenter):not(.fichehalfleft):not(.ficheaddleft) .oddeven.tagtr:nth-
 .noborder > tbody > tr:nth-child(odd):not(:last-child) td:not(.liste_titre), .liste > tbody > tr:nth-child(odd):not(:last-child) td:not(.liste_titre),
 .noborder .oddeven.tagtr:nth-child(odd):not(:last-child) .tagtd:not(.liste_titre)
 {
-	border-bottom: 1px solid #ddd;
+	border-bottom: 1px solid #e0e0e0;
 }
 
 ul.noborder li:nth-child(even):not(.liste_titre) {
@@ -3161,7 +3215,10 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
     padding: 3px;
 }
 .boxstats {
-    padding: 3px;
+    padding-left: 3px;
+    padding-right: 3px;
+    padding-top: 2px;
+    padding-bottom: 2px;
     width: 121px;
 }
 .boxstatscontent {
@@ -3367,7 +3424,7 @@ img.boxhandle, img.boxclose {
  */
 
 .ok      { color: #114466; }
-.warning { color: #887711; }
+.warning { color: #887711 !important; }
 .error   { color: #550000 !important; font-weight: bold; }
 
 div.ok {
@@ -3532,6 +3589,7 @@ div#card-errors {
 	color: #fa755a;
     text-align: center;
     padding-top: 3px;
+    max-width: 320px;
 }
 
 
@@ -4115,6 +4173,10 @@ A.none, A.none:active, A.none:visited, A.none:hover {
 /* ============================================================================== */
 /*  CKEditor                                                                      */
 /* ============================================================================== */
+
+body.cke_show_borders {
+    margin: 5px !important;
+}
 
 .cke_dialog {
     border: 1px #bbb solid ! important;
@@ -5599,7 +5661,7 @@ div.tabsElem a.tab {
 
 /* nboftopmenuentries = <?php echo $nbtopmenuentries ?>, fontsize=<?php echo is_numeric($fontsize)?$fontsize.'px':$fontsize ?> */
 /* rule to reduce top menu - 1st reduction: Reduce width of top menu icons */
-@media only screen and (max-width: <?php echo round($nbtopmenuentries * 91, 0) + 124; ?>px)	/* reduction 1 */
+@media only screen and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC1) ? round($nbtopmenuentries * 90, 0) + 240 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC1; ?>px)	/* reduction 1 */
 {
 	div.tmenucenter {
 	    width: <?php echo round(52); ?>px;	/* size of viewport */
@@ -5632,7 +5694,7 @@ div.tabsElem a.tab {
 	}
 }
 /* rule to reduce top menu - 2nd reduction: Reduce width of top menu icons again */
-@media only screen and (max-width: <?php echo round($nbtopmenuentries * 74, 0); ?>px)	/* reduction 2 */
+@media only screen and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2) ? round($nbtopmenuentries * 69, 0) + 40 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2; ?>px)	/* reduction 2 */
 {
 	div.mainmenu {
 		height: 23px;
@@ -5656,7 +5718,7 @@ div.tabsElem a.tab {
 	}
 }
 /* rule to reduce top menu - 3rd reduction: The menu for user is on left */
-@media only screen and (max-width: <?php echo round($nbtopmenuentries * 50, 0) + 12; ?>px)	/* reduction 3 */
+@media only screen and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3) ? round($nbtopmenuentries * 47, 0) + 40 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)	/* reduction 3 */
 {
 	.side-nav {
 		z-index: 200;
