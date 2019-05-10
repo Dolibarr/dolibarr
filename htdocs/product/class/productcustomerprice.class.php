@@ -895,14 +895,12 @@ class Productcustomerprice extends CommonObject
 	/**
 	 * Load an object from its id and create a new one in database
 	 *
-	 * @param int $fromid of object to clone
-	 * @return int id of clone
+	 * @param	User	$user		User making the clone
+	 * @param   int     $fromid     ID of object to clone
+	 * @return  int                 id of clone
 	 */
-    public function createFromClone($fromid)
+    public function createFromClone(User $user, $fromid)
     {
-
-		global $user, $langs;
-
 		$error = 0;
 
 		$object = new Productcustomerprice($this->db);

@@ -67,7 +67,7 @@ jQuery(document).ready(function() {
 
 print load_fiche_titre($langs->trans("Restore"), '', 'title_setup');
 
-print '<div class="center">';
+print '<div class="center opacitymedium">';
 print $langs->trans("RestoreDesc", DOL_DATA_ROOT);
 print '</div>';
 print '<br>';

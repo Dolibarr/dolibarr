@@ -34,7 +34,6 @@ SupplierProposalStatusSignedShort=Kabul edildi
 SupplierProposalStatusNotSignedShort=Reddedildi
 CopyAskFrom=Varolan bir isteği kopyalayarak fiyat isteği oluştur
 CreateEmptyAsk=Boş istek oluştur
-CloneAsk=Fiyat isteği kopyala
 ConfirmCloneAsk=Fiyat talebini çoğaltmak istediğinizden emin misiniz <b>%s</b>?
 ConfirmReOpenAsk=Fiyat talebini geri açmak istediğinizden emin misiniz <b>%s</b>?
 SendAskByMail=Fiyat isteğini postayla gönder

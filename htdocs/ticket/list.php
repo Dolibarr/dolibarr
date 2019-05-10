@@ -52,7 +52,7 @@ $id			= GETPOST('id', 'int');
 $msg_id     = GETPOST('msg_id', 'int');
 $socid      = GETPOST('socid', 'int');
 $projectid  = GETPOST('projectid', 'int');
-$search_fk_soc=GETPOST('$search_fk_soc', 'int')?GETPOST('$search_fk_soc', 'int'):GETPOST('socid', 'int');
+$search_societe = GETPOST('search_societe', 'alpha');
 $search_fk_project=GETPOST('search_fk_project', 'int')?GETPOST('search_fk_project', 'int'):GETPOST('projectid', 'int');
 $search_fk_status = GETPOST('search_fk_statut', 'array');
 $mode       = GETPOST('mode', 'alpha');
@@ -85,7 +85,7 @@ if (! $sortorder) $sortorder="DESC";
 if (GETPOST('search_fk_status', 'alpha') == 'non_closed') $_GET['search_fk_statut'][]='openall';     // For backward compatibility
 
 // Initialize array of search criterias
-$search_all=trim(GETPOST("search_all", 'alpha'));
+$search_all=trim(GETPOSTISSET("search_all")?GETPOSTISSET("search_all", 'alpha'):GETPOST('sall'));
 $search=array();
 foreach($object->fields as $key => $val)
 {
@@ -190,9 +190,6 @@ $socstatic = new Societe($db);
 $help_url = '';
 $title = $langs->trans('TicketList');
 
-llxHeader('', $title, $help_url);
-
-
 
 // Build and execute select
 // --------------------------------------------------------------------
@@ -211,12 +208,14 @@ $sql.=$hookmanager->resPrint;
 $sql=preg_replace('/, $/', '', $sql);
 $sql.= " FROM ".MAIN_DB_PREFIX.$object->table_element." as t";
 if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (t.rowid = ef.fk_object)";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON (t.fk_soc = s.rowid)";
 if ($object->ismultientitymanaged == 1) $sql.= " WHERE t.entity IN (".getEntity($object->element).")";
 else $sql.=" WHERE 1 = 1";
 
+
 foreach($search as $key => $val)
 {
-	if ($key == 'fk_statut')
+    if ($key == 'fk_statut')
 	{
 	    $tmpstatus='';
 	    if ($search['fk_statut'] == 'openall' || in_array('openall', $search['fk_statut'])) $tmpstatus.=($tmpstatus?',':'')."'0', '1', '3', '4', '5', '6'";
@@ -225,11 +224,16 @@ foreach($search as $key => $val)
 	    elseif (is_array($search[$key]) && count($search[$key])) $sql.=natural_search($key, join(',', $search[$key]), 2);
 	    continue;
 	}
+	if ($key == 'fk_user_assign')
+	{
+	    if ($search[$key] > 0) $sql.=natural_search($key, $search[$key], 2);
+	    continue;
+	}
 	$mode_search=(($object->isInt($object->fields[$key]) || $object->isFloat($object->fields[$key]))?1:0);
-    if ($search[$key] != '') $sql.=natural_search($key, $search[$key], (($key == 'fk_statut')?2:$mode_search));
+    if ($search[$key] != '') $sql.=natural_search($key, $search[$key], $mode_search);
 }
 if ($search_all) $sql.= natural_search(array_keys($fieldstosearchall), $search_all);
-if ($search_fk_soc)     $sql.= natural_search('fk_soc', $search_fk_soc, 2);
+if ($search_societe)     $sql .= natural_search('s.nom', $search_societe);
 if ($search_fk_project) $sql.= natural_search('fk_project', $search_fk_project, 2);
 if (! $user->societe_id && ($mode == "mine" || (!$user->admin && $conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY))) {
     $sql.= " AND (t.fk_user_assign = ".$user->id;
@@ -243,22 +247,6 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListWhere', $parameters, $object);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
-
-/* If a group by is required
-$sql.= " GROUP BY "
-foreach($object->fields as $key => $val)
-{
-	$sql.='t.'.$key.', ';
-}
-// Add fields from extrafields
-if (! empty($extrafields->attributes[$object->table_element]['label'])) {
-	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? "ef.".$key.', ' : '');
-// Add where from hooks
-$parameters=array();
-$reshook=$hookmanager->executeHooks('printFieldListGroupBy',$parameters);    // Note that $action and $object may have been modified by hook
-$sql.=$hookmanager->resPrint;
-$sql=preg_replace('/, $/','', $sql);
-*/
 
 $sql.=$db->order($sortfield, $sortorder);
 
@@ -305,6 +293,9 @@ if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && 
 
 // Output page
 // --------------------------------------------------------------------
+
+llxHeader('', $title, $help_url);
+
 
 if ($socid && !$projectid && $user->rights->societe->lire) {
     $socstat = new Societe($db);
@@ -442,7 +433,7 @@ $arrayofmassactions =  array(
 	//'presend'=>$langs->trans("SendByMail"),
 	//'builddoc'=>$langs->trans("PDFMerge"),
 );
-if ($user->rights->ticket->delete) $arrayofmassactions['predelete']=$langs->trans("Delete");
+if ($user->rights->ticket->delete) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
@@ -479,10 +470,10 @@ $objecttmp=new Ticket($db);
 $trackid='tick'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
-if ($sall)
+if ($search_all)
 {
 	foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ', $fieldstosearchall).'</div>';
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all) . join(', ', $fieldstosearchall).'</div>';
 }
 
 $moreforfilter = '';
@@ -548,6 +539,10 @@ foreach($object->fields as $key => $val)
 		    //var_dump($arrayofstatus);var_dump($search['fk_statut']);var_dump(array_values($search[$key]));
 			print Form::multiselectarray('search_fk_statut', $arrayofstatus, array_values($search[$key]), 0, 0, 'minwidth150', 1, 0, '', '', '');
 			print '</td>';
+		}
+		elseif ($key == "fk_soc")
+		{
+			print '<td class="liste_titre'.($cssforfield?' '.$cssforfield:'').'"><input type="text" class="flat maxwidth75" name="search_societe" value="'.dol_escape_htmltag($search_societe).'"></td>';
 		}
 		else {
 			print '<td class="liste_titre'.($cssforfield?' '.$cssforfield:'').'"><input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'"></td>';
@@ -640,6 +635,10 @@ while ($i < min($num, $limit))
 			if ($cssforfield || $val['css']) print '"';
 			print '>';
 			if ($key == 'fk_statut') print $object->getLibStatut(5);
+			elseif ($key == 'category_code') print $langs->getLabelFromKey($db, $object->category_code, 'c_ticket_category', 'code', 'label');
+			elseif ($key == 'severity_code') print $langs->getLabelFromKey($db, $object->severity_code, 'c_ticket_severity', 'code', 'label');
+			elseif ($key == 'type_code') print $langs->getLabelFromKey($db, $object->type_code, 'c_ticket_type', 'code', 'label');
+			elseif ($key == 'tms') print dol_print_date($db->jdate($obj->$key), 'dayhour', 'tzuser');
 			elseif (in_array($val['type'], array('date','datetime','timestamp'))) print $object->showOutputField($val, $key, $db->jdate($obj->$key), '');
 			else print $object->showOutputField($val, $key, $obj->$key, '');
 			print '</td>';

@@ -35,6 +35,7 @@ if (!defined('NOREQUIREAJAX'))  { define('NOREQUIREAJAX', '1'); }
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/paiement/class/paiement.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.form.class.php';
 
 $langs->loadLangs(array("bills", "cashdesk"));
 
@@ -89,7 +90,7 @@ if ($invoiceid > 0)
 }
 else
 {
-    $ret = $invoice->fetch('', '(PROV-POS-'.$place.')');
+    $ret = $invoice->fetch('', '(PROV-POS'.$_SESSION["takepostermvar"].'-'.$place.')');
 }
 if ($ret > 0)
 {
@@ -103,12 +104,12 @@ if ($ret > 0)
 
 if ($action == 'valid' && $user->rights->facture->creer)
 {
-    if ($pay == "cash") $bankaccount = $conf->global->CASHDESK_ID_BANKACCOUNT_CASH;            // For backward compatibility
-    elseif ($pay == "card") $bankaccount = $conf->global->CASHDESK_ID_BANKACCOUNT_CB;          // For backward compatibility
-    elseif ($pay == "cheque") $bankaccount = $conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE;    // For backward compatibility
+    if ($pay == "cash") $bankaccount = $conf->global->{'CASHDESK_ID_BANKACCOUNT_CASH'.$_SESSION["takepostermvar"]};            // For backward compatibility
+    elseif ($pay == "card") $bankaccount = $conf->global->{'CASHDESK_ID_BANKACCOUNT_CB'.$_SESSION["takepostermvar"]};          // For backward compatibility
+    elseif ($pay == "cheque") $bankaccount = $conf->global->{'CASHDESK_ID_BANKACCOUNT_CHEQUE'.$_SESSION["takepostermvar"]};    // For backward compatibility
     else
     {
-        $accountname="CASHDESK_ID_BANKACCOUNT_".$pay;
+        $accountname="CASHDESK_ID_BANKACCOUNT_".$pay.$_SESSION["takepostermvar"];
     	$bankaccount=$conf->global->$accountname;
     }
 	$now=dol_now();
@@ -136,9 +137,9 @@ if ($action == 'valid' && $user->rights->facture->creer)
 		$invoice->update($user);
 	}
 
-	if (! empty($conf->stock->enabled) && $conf->global->CASHDESK_NO_DECREASE_STOCK != "1")
+	if (! empty($conf->stock->enabled) && $conf->global->{'CASHDESK_NO_DECREASE_STOCK'.$_SESSION["takepostermvar"]} != "1")
 	{
-	    $invoice->validate($user, '', $conf->global->CASHDESK_ID_WAREHOUSE);
+	    $invoice->validate($user, '', $conf->global->{'CASHDESK_ID_WAREHOUSE'.$_SESSION["takepostermvar"]});
 	}
 	else
 	{
@@ -170,15 +171,22 @@ if ($action == 'valid' && $user->rights->facture->creer)
 	}
 }
 
+if ($action == 'history')
+{
+    $placeid = GETPOST('placeid', 'int');
+    $invoice = new Facture($db);
+    $invoice->fetch($placeid);
+}
+
 if (($action=="addline" || $action=="freezone") && $placeid == 0)
 {
-	$invoice->socid = $conf->global->CASHDESK_ID_THIRDPARTY;
+	$invoice->socid = $conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takepostermvar"]};
 	$invoice->date = dol_now();
 	$invoice->module_source = 'takepos';
 	$invoice->pos_source = (string) $posnb;
 
 	$placeid = $invoice->create($user);
-	$sql="UPDATE ".MAIN_DB_PREFIX."facture set ref='(PROV-POS-".$place.")' where rowid=".$placeid;
+	$sql="UPDATE ".MAIN_DB_PREFIX."facture set ref='(PROV-POS".$_SESSION["takepostermvar"]."-".$place.")' where rowid=".$placeid;
 	$db->query($sql);
 }
 
@@ -225,17 +233,30 @@ if ($action == "addnote") {
 }
 
 if ($action == "deleteline") {
-    if ($idline > 0 and $placeid > 0) { //If exist invoice and line, to avoid errors if deleted from other device or no line selected
+    if ($idline > 0 and $placeid > 0) { // If invoice exists and line selected. To avoid errors if deleted from another device or no line selected.
         $invoice->deleteline($idline);
         $invoice->fetch($placeid);
     }
-    elseif ($placeid > 0) { //If exist invoice, but no line selected, proceed to delete last line
+    elseif ($placeid > 0) {             // If invoice exists but no line selected, proceed to delete last line.
         $sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . "facturedet where fk_facture='".$placeid."' order by rowid DESC";
         $resql = $db->query($sql);
         $row = $db->fetch_array($resql);
         $deletelineid = $row[0];
         $invoice->deleteline($deletelineid);
         $invoice->fetch($placeid);
+    }
+}
+
+if ($action == "delete") {
+    if ($placeid > 0) { //If invoice exists
+        $result = $invoice->fetch($placeid);
+        if ($result > 0)
+        {
+            $sql = "DELETE FROM " . MAIN_DB_PREFIX . "facturedet where fk_facture='".$placeid."'";
+            $resql = $db->query($sql);
+
+            $invoice->fetch($placeid);
+        }
     }
 }
 
@@ -322,7 +343,7 @@ if ($action == "order" and $placeid != 0)
 }
 
 $sectionwithinvoicelink='';
-if ($action=="valid")
+if ($action=="valid" || $action=="history")
 {
     $sectionwithinvoicelink.='<!-- Section with invoice link -->'."\n";
     $sectionwithinvoicelink.='<input type="hidden" name="invoiceid" id="invoiceid" value="'.$invoice->id.'">';
@@ -339,7 +360,7 @@ if ($action=="valid")
         else $sectionwithinvoicelink.=$langs->trans('BillShortStatusValidated');
     }
     $sectionwithinvoicelink.='</span>';
-    if ($conf->global->TAKEPOSCONNECTOR) $sectionwithinvoicelink.=' <button type="button" onclick="TakeposPrinting('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
+    if ($conf->global->TAKEPOSCONNECTOR) $sectionwithinvoicelink.=' <button id="buttonprint" type="button" onclick="TakeposPrinting('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
     else $sectionwithinvoicelink.=' <button id="buttonprint" type="button" onclick="Print('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
     if ($conf->global->TAKEPOS_AUTO_PRINT_TICKETS) $sectionwithinvoicelink.='<script language="javascript">$("#buttonprint").click();</script>';
 }
@@ -538,11 +559,11 @@ else {      // No invoice generated yet
 
 print '</table>';
 
-if ($invoice->socid != $conf->global->CASHDESK_ID_THIRDPARTY)
+if ($invoice->socid != $conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takepostermvar"]})
 {
     $soc = new Societe($db);
     if ($invoice->socid > 0) $soc->fetch($invoice->socid);
-    else $soc->fetch($conf->global->CASHDESK_ID_THIRDPARTY);
+    else $soc->fetch($conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takepostermvar"]});
     print '<p style="font-size:120%;" class="right">';
     print $langs->trans("Customer").': '.$soc->name;
     print '</p>';

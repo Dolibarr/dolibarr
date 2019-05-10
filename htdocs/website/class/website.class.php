@@ -519,7 +519,7 @@ class Website extends CommonObject
 	 */
 	public function createFromClone($user, $fromid, $newref, $newlang = '')
 	{
-        global $conf, $hookmanager, $langs;
+        global $conf, $hookmanager;
 		global $dolibarr_main_data_root;
 
 		$now = dol_now();
@@ -532,7 +532,7 @@ class Website extends CommonObject
         // Check no site with ref exists
 		if ($object->fetch(0, $newref) > 0)
 		{
-			$this->error='NewRefIsAlreadyUsed';
+			$this->error='ErrorNewRefIsAlreadyUsed';
 			return -1;
 		}
 

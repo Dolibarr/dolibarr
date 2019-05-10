@@ -226,7 +226,7 @@ function GETPOSTISSET($paramname)
  *                               'san_alpha'=Use filter_var with FILTER_SANITIZE_STRING (do not use this for free text string)
  *                               'nohtml', 'alphanohtml'=check there is no html content
  *                               'custom'= custom filter specify $filter and $options)
- *  @param	int		$method	     Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get, 4 = post then get then cookie)
+ *  @param	int		$method	     Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get)
  *  @param  int     $filter      Filter to apply when $check is set to 'custom'. (See http://php.net/manual/en/filter.filters.php for détails)
  *  @param  mixed   $options     Options to pass to filter_var when $check is set to 'custom'
  *  @param	string	$noreplace	 Force disable of replacement of __xxx__ strings.
@@ -248,7 +248,6 @@ function GETPOST($paramname, $check = 'none', $method = 0, $filter = null, $opti
 	elseif ($method==1) $out = isset($_GET[$paramname])?$_GET[$paramname]:'';
 	elseif ($method==2) $out = isset($_POST[$paramname])?$_POST[$paramname]:'';
 	elseif ($method==3) $out = isset($_POST[$paramname])?$_POST[$paramname]:(isset($_GET[$paramname])?$_GET[$paramname]:'');
-	elseif ($method==4) $out = isset($_POST[$paramname])?$_POST[$paramname]:(isset($_GET[$paramname])?$_GET[$paramname]:(isset($_COOKIE[$paramname])?$_COOKIE[$paramname]:''));
 	else return 'BadThirdParameterForGETPOST';
 
 	if (empty($method) || $method == 3 || $method == 4)
@@ -308,7 +307,7 @@ function GETPOST($paramname, $check = 'none', $method = 0, $filter = null, $opti
 			}
 			if (! empty($conf->global->MAIN_ENABLE_DEFAULT_VALUES))
 			{
-				if (! empty($_GET['action']) && $_GET['action'] == 'create' && ! isset($_GET[$paramname]) && ! isset($_POST[$paramname]))
+			    if (! empty($_GET['action']) && (preg_match('/^create/', $_GET['action']) || preg_match('/^presend/', $_GET['action'])) && ! isset($_GET[$paramname]) && ! isset($_POST[$paramname]))
 				{
 					// Now search in setup to overwrite default values
 					if (! empty($user->default_values))		// $user->default_values defined from menu 'Setup - Default values'
@@ -574,34 +573,41 @@ if (! function_exists('dol_getprefix'))
 {
     /**
      *  Return a prefix to use for this Dolibarr instance, for session/cookie names or email id.
-     *  The prefix for session is unique in a web context only and is unique for instance and avoid conflict
-     *  between multi-instances, even when having two instances with same root dir or two instances in same virtual servers.
-     *  The prefix for email is unique if MAIL_PREFIX_FOR_EMAIL_ID is set to a value, otherwise value may be same than other instance.
+     *  The prefix is unique for instance and avoid conflict between multi-instances, even when having two instances with same root dir
+     *  or two instances in same virtual servers.
      *
      *  @param  string  $mode                   '' (prefix for session name) or 'email' (prefix for email id)
      *  @return	string                          A calculated prefix
      */
     function dol_getprefix($mode = '')
     {
-		global $conf;
+        global $conf;
 
 		// If prefix is for email
 		if ($mode == 'email')
 		{
-			if (! empty($conf->global->MAIL_PREFIX_FOR_EMAIL_ID))	// If MAIL_PREFIX_FOR_EMAIL_ID is set (a value initialized with a random value is recommended)
+		    if (! empty($conf->global->MAIL_PREFIX_FOR_EMAIL_ID))	// If MAIL_PREFIX_FOR_EMAIL_ID is set (a value initialized with a random value is recommended)
 			{
 				if ($conf->global->MAIL_PREFIX_FOR_EMAIL_ID != 'SERVER_NAME') return $conf->global->MAIL_PREFIX_FOR_EMAIL_ID;
 				elseif (isset($_SERVER["SERVER_NAME"])) return $_SERVER["SERVER_NAME"];
 			}
+
+			// The recommended value (may be not defined for old versions)
+			if (! empty($conf->file->instance_unique_id)) return $conf->file->instance_unique_id;
+
+			// For backward compatibility
 			return dol_hash(DOL_DOCUMENT_ROOT.DOL_URL_ROOT, '3');
 		}
 
+		// The recommended value (may be not defined for old versions)
+		if (! empty($conf->file->instance_unique_id)) return $conf->file->instance_unique_id;
+
+		// For backward compatibility
 		if (isset($_SERVER["SERVER_NAME"]) && isset($_SERVER["DOCUMENT_ROOT"]))
 		{
 			return dol_hash($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"].DOL_DOCUMENT_ROOT.DOL_URL_ROOT, '3');
-			// Use this for a "readable" key
-			//return dol_sanitizeFileName($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"].DOL_DOCUMENT_ROOT.DOL_URL_ROOT);
 		}
+
 		return dol_hash(DOL_DOCUMENT_ROOT.DOL_URL_ROOT, '3');
 	}
 }
@@ -735,18 +741,16 @@ function dol_buildpath($path, $type = 0, $returnemptyifnotfound = 0)
 
 /**
  *	Create a clone of instance of object (new instance with same value for properties)
- *  With native = 0: Property that are reference are also new object (true clone). This means $this->db is not valid.
- *  With native = 1: Use PHP clone. Property that are reference are same pointer. This means $this->db is still valid.
+ *  With native = 0: Property that are reference are also new object (full isolation clone). This means $this->db of new object is not valid.
+ *  With native = 1: Use PHP clone. Property that are reference are same pointer. This means $this->db of new object is still valid but point to same this->db than original object.
  *
  * 	@param	object	$object		Object to clone
- *  @param	int		$native		Native method or true method
- *	@return object				Object clone
+ *  @param	int		$native		Native method or full isolation method
+ *	@return object				Clone object
  *  @see https://php.net/manual/language.oop5.cloning.php
  */
 function dol_clone($object, $native = 0)
 {
-	//dol_syslog(__FUNCTION__ . " is deprecated", LOG_WARNING);
-
 	if (empty($native))
 	{
 		$myclone=unserialize(serialize($object));
@@ -1295,6 +1299,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 	if ($object->element == 'member')          $modulepart='memberphoto';
 	if ($object->element == 'user')            $modulepart='userphoto';
 	if ($object->element == 'product')         $modulepart='product';
+	if ($object->element == 'ticket')          $modulepart='ticket';
 
 	if (class_exists("Imagick"))
 	{
@@ -1633,7 +1638,7 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
 	{
 		$ret .= ($ret ? $sep : '' ).$object->zip;
 		$ret .= ($object->town?(($object->zip?' ':'').$object->town):'');
-		$ret .= ($object->departement_id?(' ('.($object->departement_id).')'):'');
+		$ret .= ($object->state_id?(' ('.($object->state_id).')'):'');
 	}
 	else                                        		// Other: title firstname name \n address lines \n zip town \n country
 	{
@@ -3748,6 +3753,11 @@ function dol_print_error($db = '', $error = '', $errors = null)
 	{
 		$out.='> '.$langs->transnoentities("ErrorInternalErrorDetected").":\n".$argv[0]."\n";
 		$syslog.="pid=".dol_getmypid();
+	}
+
+	if (! empty($conf->modules))
+	{
+	   $out.="<b>".$langs->trans("Modules").":</b> ".join(', ', $conf->modules)."<br>\n";
 	}
 
 	if (is_object($db))
@@ -6098,6 +6108,7 @@ $substitutionarray=array_merge($substitutionarray, array(
 	{
 		$substitutionarray['__DOL_MAIN_URL_ROOT__']=DOL_MAIN_URL_ROOT;
 		$substitutionarray['__(AnyTranslationKey)__']=$outputlangs->trans('TranslationOfKey');
+		$substitutionarray['__(AnyTranslationKey|langfile)__']=$outputlangs->trans('TranslationOfKey').' (load also language file before)';
 		$substitutionarray['__[AnyConstantKey]__']=$outputlangs->trans('ValueOfConstantKey');
 	}
 
@@ -6126,7 +6137,7 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null)
 
 	if (empty($outputlangs)) $outputlangs=$langs;
 
-	// Make substitution for language keys
+	// Make substitution for language keys: __(AnyTranslationKey)__ or __(AnyTranslationKey|langfile)__
 	if (is_object($outputlangs))
 	{
 		while (preg_match('/__\(([^\)]+)\)__/', $text, $reg))
@@ -6142,8 +6153,8 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null)
 		}
 	}
 
-	// Make substitution for constant keys. Must be after the substitution of translation, so if text of translation contains a constant,
-	// it is also converted.
+	// Make substitution for constant keys.
+	// Must be after the substitution of translation, so if the text of translation contains a string __[xxx]__, it is also converted.
 	while (preg_match('/__\[([^\]]+)\]__/', $text, $reg))
 	{
 		$msgishtml = 0;
@@ -6688,7 +6699,7 @@ function dol_getIdFromCode($db, $key, $tablename, $fieldkey = 'code', $fieldid =
 		return $cache_codes[$tablename][$key][$fieldid];   // Found in cache
 	}
 
-	dol_syslog('dol_getIdFromCode (value not found into cache)', LOG_DEBUG);
+	dol_syslog('dol_getIdFromCode (value for field '.$fieldid.' from key '.$key.' not found into cache)', LOG_DEBUG);
 
 	$sql = "SELECT ".$fieldid." as valuetoget";
 	$sql.= " FROM ".MAIN_DB_PREFIX.$tablename;
@@ -7012,15 +7023,22 @@ function getLanguageCodeFromCountryCode($countrycode)
 	$buildprimarykeytotest = strtolower($countrycode).'-'.strtoupper($countrycode);
 	if (in_array($buildprimarykeytotest, $locales)) return strtolower($countrycode).'_'.strtoupper($countrycode);
 
-	foreach ($locales as $locale)
+	if (function_exists('locale_get_primary_language'))    // Need extension php-intl
 	{
-		$locale_language = locale_get_primary_language($locale);
-		$locale_region = locale_get_region($locale);
-		if (strtoupper($countrycode) == $locale_region)
-		{
-			//var_dump($locale.'-'.$locale_language.'-'.$locale_region);
-			return strtolower($locale_language).'_'.strtoupper($locale_region);
-		}
+	    foreach ($locales as $locale)
+    	{
+    		$locale_language = locale_get_primary_language($locale);
+    		$locale_region = locale_get_region($locale);
+    		if (strtoupper($countrycode) == $locale_region)
+    		{
+    			//var_dump($locale.'-'.$locale_language.'-'.$locale_region);
+    			return strtolower($locale_language).'_'.strtoupper($locale_region);
+    		}
+    	}
+	}
+	else
+	{
+        dol_syslog("Warning Exention php-intl is not available", LOG_WARNING);
 	}
 
 	return null;
@@ -7180,7 +7198,7 @@ function printCommonFooter($zone = 'private')
 				print "\n";
 				print '/* JS CODE TO ENABLE to manage handler to switch left menu page (menuhider) */'."\n";
 				print 'jQuery(".menuhider").click(function(event) {';
-				print '  if(!$( "body" ).hasClass( "sidebar-collapse" )){ event.preventDefault(); }'."\n";
+				print '  if (!$( "body" ).hasClass( "sidebar-collapse" )){ event.preventDefault(); }'."\n";
 				print '  console.log("We click on .menuhider");'."\n";
 				print '  $("body").toggleClass("sidebar-collapse")'."\n";
 				print '});'."\n";

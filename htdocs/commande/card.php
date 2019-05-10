@@ -142,7 +142,7 @@ if (empty($reshook))
 				// Because createFromClone modifies the object, we must clone it so that we can restore it later
 				$orig = clone $object;
 
-				$result=$object->createFromClone($socid);
+				$result=$object->createFromClone($user, $socid);
 				if ($result > 0)
 				{
 					header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);
@@ -1637,7 +1637,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 			});
 			</script>';
 		}
-		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=3&fournisseur=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddThirdParty").'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
+		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=3&fournisseur=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddThirdParty").'</span><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
 		print '</td>';
 	}
 	print '</tr>' . "\n";

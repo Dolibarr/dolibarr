@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
 dol_include_once('/emailcollector/class/emailcollector.class.php');
 
 if (!$user->admin) accessforbidden();
+if (empty($conf->emailcollector->enabled)) accessforbidden();
 
 // Load traductions files requiredby by page
 $langs->loadLangs(array("admin", "other"));
@@ -304,7 +305,7 @@ $arrayofmassactions =  array(
 	//'presend'=>$langs->trans("SendByMail"),
 	//'builddoc'=>$langs->trans("PDFMerge"),
 );
-if ($user->rights->emailcollector->delete) $arrayofmassactions['predelete']=$langs->trans("Delete");
+if ($user->rights->emailcollector->delete) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 

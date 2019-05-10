@@ -1250,7 +1250,7 @@ abstract class CommonObject
 		$sql.= " AND ec.fk_c_type_contact = tc.rowid";
 		$sql.= " AND tc.element = '".$element."'";
 		$sql.= " AND tc.source = '".$source."'";
-		$sql.= " AND tc.code = '".$code."'";
+		if ($code) $sql.= " AND tc.code = '".$code."'";
 		$sql.= " AND tc.active = 1";
 		if ($status) $sql.= " AND ec.statut = ".$status;
 
@@ -3286,7 +3286,7 @@ abstract class CommonObject
 	 *	@param  string	$targettype		Object target type
 	 *  @param	int		$rowid			Row id of line to delete. If defined, other parameters are not used.
 	 *	@return     					int	>0 if OK, <0 if KO
-	 *	@see	add_object_linked, updateObjectLinked, fetchObjectLinked
+	 *	@see	add_object_linked(), updateObjectLinked(), fetchObjectLinked()
 	 */
 	public function deleteObjectLinked($sourceid = null, $sourcetype = '', $targetid = null, $targettype = '', $rowid = '')
 	{
@@ -3963,8 +3963,10 @@ abstract class CommonObject
 			// Reduction short
 			print '<td class="linecoldiscount right">'.$langs->trans('ReductionShort').'</td>';
 
+			// Fields for situation invoice
 			if ($this->situation_cycle_ref) {
 				print '<td class="linecolcycleref right">' . $langs->trans('Progress') . '</td>';
+				print '<td class="linecolcycleref2 right">' . $langs->trans('TotalHT100Short') . '</td>';
 			}
 
 			if ($usemargins && ! empty($conf->margin->enabled) && empty($user->societe_id))
@@ -4039,7 +4041,7 @@ abstract class CommonObject
 
 			$i++;
 		}
-		print "</tbody>\n";
+		print "</tbody><!-- end printObjectLines() -->\n";
 	}
 
 	/**
@@ -6130,6 +6132,12 @@ abstract class CommonObject
 				$value=price($value);
 			}
 		}
+		elseif ($type == 'real')
+		{
+		    if (!empty($value)) {
+		        $value=price($value);
+		    }
+		}
 		elseif ($type == 'boolean')
 		{
 			$checked='';
@@ -6517,7 +6525,7 @@ abstract class CommonObject
 							$out .= $extrafields->showOutputField($key, $value);
 							break;
 						case "edit":
-							$out .= $extrafields->showInputField($key, $value, '', $keysuffix, '', 0, $this->id);
+							$out .= $extrafields->showInputField($key, $value, '', $keysuffix, '', 0, $this->id, $this->table_element);
 							break;
 					}
 
@@ -7002,7 +7010,7 @@ abstract class CommonObject
 	{
 		if(is_array($info))
 		{
-			if (isset($info['type']) && (preg_match('/^(double|real)/i', $info['type']))) return true;
+			if (isset($info['type']) && (preg_match('/^(double|real|price)/i', $info['type']))) return true;
 			else return false;
 		}
 		else return false;

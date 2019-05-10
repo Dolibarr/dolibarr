@@ -327,7 +327,7 @@ class FormOther
      * @param   int     $showempty      Add also an empty line
      * @param   string  $morecss        More CSS
      * @return  string		        	Html combo list code
-     * @see	select_all_categories
+     * @see	select_all_categories()
      */
     public function select_categories($type, $selected = 0, $htmlname = 'search_categ', $nocateg = 0, $showempty = 1, $morecss = '')
     {
@@ -618,7 +618,7 @@ class FormOther
      *  @param	string		$color				String with hex (FFFFFF) or comma RGB ('255,255,255')
      *  @param	string		$textifnotdefined	Text to show if color not defined
      *  @return	string							HTML code for color thumb
-     *  @see selectColor
+     *  @see selectColor()
      */
     public static function showColor($color, $textifnotdefined = '')
     {
@@ -661,7 +661,7 @@ class FormOther
      *  @param 	array		$arrayofcolors	Array of colors. Example: array('29527A','5229A3','A32929','7A367A','B1365F','0D7813')
      *  @param	string		$morecss		Add css style into input field
      *  @return	string
-     *  @see showColor
+     *  @see showColor()
      */
     public static function selectColor($set_color = '', $prefix = 'f_color', $form_name = '', $showcolorbox = 1, $arrayofcolors = '', $morecss = '')
     {
@@ -1233,7 +1233,7 @@ class FormOther
             dol_print_error($this->db);
         }
     }
-    
+
     /**
 	 *	Return an html string with a select combo box to choose yes or no
 	 *

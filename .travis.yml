@@ -31,7 +31,6 @@ addons:
     - pgloader
 
 php:
-- '5.4'
 - '5.5'
 - '5.6'
 - '7.0'
@@ -62,8 +61,6 @@ matrix:
   - php: nightly
   # We exclude some combinations not usefull to save Travis CPU
   exclude:
-  - php: '5.5'
-    env: DB=mariadb
   - php: '5.6'
     env: DB=mariadb
   - php: '7.0'
@@ -72,8 +69,6 @@ matrix:
     env: DB=mariadb
   - php: '7.2'
     env: DB=mariadb
-  - php: '5.5'
-    env: DB=postgresql
   - php: '5.6'
     env: DB=postgresql
   - php: '7.0'

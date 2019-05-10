@@ -126,6 +126,7 @@ $usercancreatewithdrarequest = $user->rights->prelevement->bons->creer;
 $permissionnote = $usercancreate; // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $usercancreate;	// Used by the include of actions_dellink.inc.php
 $permissiontoedit = $usercancreate; // Used by the include of actions_lineupdonw.inc.php
+$permissiontoadd = $usercancreate; // Used by the include of actions_addupdatedelete.inc.php
 
 // Security check
 $fieldid = (! empty($ref) ? 'ref' : 'rowid');
@@ -160,21 +161,21 @@ if (empty($reshook))
 	include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';	// Must be include, not include_once
 
 	// Action clone object
-	if ($action == 'confirm_clone' && $confirm == 'yes' && $usercancreate) {
-	//	if (1 == 0 && empty($_REQUEST["clone_content"]) && empty($_REQUEST["clone_receivers"])) {
-	//		$mesgs [] = '<div class="error">' . $langs->trans("NoCloneOptionsSpecified") . '</div>';
-	//	} else {
-			if ($object->fetch($id) > 0) {
-				$result = $object->createFromClone($socid);
-				if ($result > 0) {
-					header("Location: " . $_SERVER['PHP_SELF'] . '?facid=' . $result);
-					exit();
-				} else {
-					setEventMessages($object->error, $object->errors, 'errors');
-					$action = '';
-				}
-			}
-	//	}
+	if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontoadd)
+	{
+	    $objectutil = dol_clone($object, 1);   // To avoid to denaturate loaded object when setting some properties for clone. We use native clone to keep this->db valid.
+
+	    $objectutil->date = dol_mktime(12, 0, 0, GETPOST('newdatemonth', 'int'), GETPOST('newdateday', 'int'), GETPOST('newdateyear', 'int'));
+	    $objectutil->socid = $socid;
+	    $result = $objectutil->createFromClone($user, $id);
+	    if ($result > 0) {
+       		header("Location: " . $_SERVER['PHP_SELF'] . '?facid=' . $result);
+       		exit();
+       	} else {
+       	    $langs->load("errors");
+       		setEventMessages($object->error, $object->errors, 'errors');
+       		$action = '';
+        }
 	}
 
 	// Change status of invoice
@@ -1391,7 +1392,7 @@ if (empty($reshook))
 									$desc=(! empty($lines[$i]->desc)?$lines[$i]->desc:$lines[$i]->libelle);
 									if ($object->situation_counter == 1) $lines[$i]->situation_percent =  0;
 
-									if ($lines[$i]->subprice < 0)
+									if ($lines[$i]->subprice < 0 && empty($conf->global->INVOICE_KEEP_DISCOUNT_LINES_AS_IN_ORIGIN))
 									{
 										// Negative line, we create a discount line
 										$discount = new DiscountAbsolute($db);
@@ -1542,14 +1543,16 @@ if (empty($reshook))
 			$datefacture = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 			if (empty($datefacture)) {
 				$error++;
-				$mesg = '<div class="error">' . $langs->trans("ErrorFieldRequired", $langs->trans("Date")) . '</div>';
+				$mesg = $langs->trans("ErrorFieldRequired", $langs->trans("Date"));
+                setEventMessages($mesg, null, 'errors');
 			}
 
 			$date_pointoftax = dol_mktime(12, 0, 0, $_POST['date_pointoftaxmonth'], $_POST['date_pointoftaxday'], $_POST['date_pointoftaxyear']);
 
 			if (!($_POST['situations'] > 0)) {
 				$error++;
-				$mesg = '<div class="error">' . $langs->trans("ErrorFieldRequired", $langs->trans("InvoiceSituation")) . '</div>';
+				$mesg = $langs->trans("ErrorFieldRequired", $langs->trans("InvoiceSituation"));
+                setEventMessages($mesg, null, 'errors');
 			}
 
 			if (!$error) {
@@ -2191,11 +2194,13 @@ $result = $object->updateline(GETPOST('lineid'), $description, $pu_ht, $qty, GET
 		if (!$object->fetch($id) > 0) dol_print_error($db);
 		if (!is_null(GETPOST('all_progress')) && GETPOST('all_progress') != "")
 		{
+            $all_progress = GETPOST('all_progress', 'int');
 			foreach ($object->lines as $line)
 			{
 				$percent = $line->get_prev_progress($object->id);
-				if (GETPOST('all_progress') < $percent) {
-					$mesg = '<div class="warning">' . $langs->trans("CantBeLessThanMinPercent") . '</div>';
+				if (floatval($all_progress) < floatval($percent)) {
+                    $mesg = $langs->trans("Line") . ' ' . $i . ' '. $line->ref .' : ' . $langs->trans("CantBeLessThanMinPercent");
+                    setEventMessages($mesg, null, 'warnings');
 					$result = -1;
 				} else
 					$object->update_percent($line, $_POST['all_progress']);
@@ -2588,22 +2593,47 @@ if ($action == 'create')
 			if (empty($socid))
 				$soc = $objectsrc->thirdparty;
 
-			$cond_reglement_id 	= (! empty($objectsrc->cond_reglement_id)?$objectsrc->cond_reglement_id:(! empty($soc->cond_reglement_id)?$soc->cond_reglement_id:0));
-			$mode_reglement_id 	= (! empty($objectsrc->mode_reglement_id)?$objectsrc->mode_reglement_id:(! empty($soc->mode_reglement_id)?$soc->mode_reglement_id:0));
-			$fk_account         = (! empty($objectsrc->fk_account)?$objectsrc->fk_account:(! empty($soc->fk_account)?$soc->fk_account:0));
-			$remise_percent 	= (! empty($objectsrc->remise_percent)?$objectsrc->remise_percent:(! empty($soc->remise_percent)?$soc->remise_percent:0));
-			$remise_absolue 	= (! empty($objectsrc->remise_absolue)?$objectsrc->remise_absolue:(! empty($soc->remise_absolue)?$soc->remise_absolue:0));
-			$dateinvoice		= (empty($dateinvoice)?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:''):$dateinvoice);
+			$dateinvoice = (empty($dateinvoice)?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:''):$dateinvoice);
 
-			if (!empty($conf->multicurrency->enabled))
-			{
-				if (!empty($objectsrc->multicurrency_code)) $currency_code = $objectsrc->multicurrency_code;
-				if (!empty($conf->global->MULTICURRENCY_USE_ORIGIN_TX) && !empty($objectsrc->multicurrency_tx))	$currency_tx = $objectsrc->multicurrency_tx;
+			if ($element == 'expedition') {
+				$ref_client		= (! empty($objectsrc->ref_customer)?$objectsrc->ref_customer:'');
+
+				$elem = $subelem = $objectsrc->origin;
+				$expeoriginid = $objectsrc->origin_id;
+				dol_include_once('/'.$elem.'/class/'.$subelem.'.class.php');
+				$classname = ucfirst($subelem);
+
+				$expesrc = new $classname($db);
+				$expesrc->fetch($expeoriginid);
+
+				$cond_reglement_id 	= (! empty($expesrc->cond_reglement_id)?$expesrc->cond_reglement_id:(! empty($soc->cond_reglement_id)?$soc->cond_reglement_id:1));
+				$mode_reglement_id 	= (! empty($expesrc->mode_reglement_id)?$expesrc->mode_reglement_id:(! empty($soc->mode_reglement_id)?$soc->mode_reglement_id:0));
+				$fk_account         = (! empty($expesrc->fk_account)?$expesrc->fk_account:(! empty($soc->fk_account)?$soc->fk_account:0));
+				$remise_percent 	= (! empty($expesrc->remise_percent)?$expesrc->remise_percent:(! empty($soc->remise_percent)?$soc->remise_percent:0));
+				$remise_absolue 	= (! empty($expesrc->remise_absolue)?$expesrc->remise_absolue:(! empty($soc->remise_absolue)?$soc->remise_absolue:0));
+
+				//Replicate extrafields
+				$expesrc->fetch_optionals($expeoriginid);
+				$object->array_options=$expesrc->array_options;
 			}
+			else
+			{
+				$cond_reglement_id 	= (! empty($objectsrc->cond_reglement_id)?$objectsrc->cond_reglement_id:(! empty($soc->cond_reglement_id)?$soc->cond_reglement_id:0));
+				$mode_reglement_id 	= (! empty($objectsrc->mode_reglement_id)?$objectsrc->mode_reglement_id:(! empty($soc->mode_reglement_id)?$soc->mode_reglement_id:0));
+				$fk_account         = (! empty($objectsrc->fk_account)?$objectsrc->fk_account:(! empty($soc->fk_account)?$soc->fk_account:0));
+				$remise_percent 	= (! empty($objectsrc->remise_percent)?$objectsrc->remise_percent:(! empty($soc->remise_percent)?$soc->remise_percent:0));
+				$remise_absolue 	= (! empty($objectsrc->remise_absolue)?$objectsrc->remise_absolue:(! empty($soc->remise_absolue)?$soc->remise_absolue:0));
 
-			// Replicate extrafields
-			$objectsrc->fetch_optionals($originid);
-			$object->array_options = $objectsrc->array_options;
+				if (!empty($conf->multicurrency->enabled))
+				{
+					if (!empty($objectsrc->multicurrency_code)) $currency_code = $objectsrc->multicurrency_code;
+					if (!empty($conf->global->MULTICURRENCY_USE_ORIGIN_TX) && !empty($objectsrc->multicurrency_tx))	$currency_tx = $objectsrc->multicurrency_tx;
+				}
+
+				// Replicate extrafields
+				$objectsrc->fetch_optionals($originid);
+				$object->array_options = $objectsrc->array_options;
+			}
 		}
 	}
 	else
@@ -2698,7 +2728,7 @@ if ($action == 'create')
 			});
 			</script>';
 		}
-		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=3&fournisseur=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddThirdParty").'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
+		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=3&fournisseur=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddThirdParty").'</span><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
 		print '</td>';
 	}
 	print '</tr>' . "\n";
@@ -2864,7 +2894,7 @@ if ($action == 'create')
 		{
 			// First situation invoice
 			print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
-			$tmp='<input id="radio_situation invoice" type="radio" name="type" value="5"' . (GETPOST('type') == 5 ? ' checked' : '') . '> ';
+			$tmp='<input id="radio_situation" type="radio" name="type" value="5"' . (GETPOST('type') == 5 ? ' checked' : '') . '> ';
 			$tmp  = $tmp.'<label for="radio_situation invoice" >'.$langs->trans("InvoiceFirstSituationAsk").'</label>';
 			$desc = $form->textwithpicto($tmp, $langs->transnoentities("InvoiceFirstSituationDesc"), 1, 'help', '', 0, 3);
 			print $desc;
@@ -2919,7 +2949,23 @@ if ($action == 'create')
 	}
 	else
 	{
-		print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
+	    print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
+	    $tmp='<input type="radio" name="type" id="radio_situation" value="0" disabled> ';
+	    $text = '<label>'.$tmp.$langs->trans("InvoiceFirstSituationAsk") . '</label> ';
+	    $text.= '('.$langs->trans("YouMustCreateInvoiceFromThird").') ';
+	    $desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceFirstSituationDesc"), 1, 'help', '', 0, 3);
+	    print $desc;
+	    print '</div></div>';
+
+	    print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
+	    $tmp='<input type="radio" name="type" id="radio_situation" value="0" disabled> ';
+	    $text = '<label>'.$tmp.$langs->trans("InvoiceSituationAsk") . '</label> ';
+	    $text.= '('.$langs->trans("YouMustCreateInvoiceFromThird").') ';
+	    $desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceFirstSituationDesc"), 1, 'help', '', 0, 3);
+	    print $desc;
+	    print '</div></div>';
+
+	    print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
 		$tmp='<input type="radio" name="type" id="radio_replacement" value="0" disabled> ';
 		$text = '<label>'.$tmp.$langs->trans("InvoiceReplacement") . '</label> ';
 		$text.= '('.$langs->trans("YouMustCreateInvoiceFromThird").') ';
@@ -3606,11 +3652,11 @@ elseif ($id > 0 || ! empty($ref))
 	{
 		// Create an array for form
 		$formquestion = array(
-							// 'text' => $langs->trans("ConfirmClone"),
-							// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1)
-							array('type' => 'other','name' => 'socid','label' => $langs->trans("SelectThirdParty"),'value' => $form->select_company($object->socid, 'socid', '(s.client=1 OR s.client=2 OR s.client=3)', 1)));
-		// Paiement incomplet. On demande si motif = escompte ou autre
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?facid=' . $object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneInvoice', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
+			array('type' => 'other','name' => 'socid','label' => $langs->trans("SelectThirdParty"),'value' => $form->select_company($object->socid, 'socid', '(s.client=1 OR s.client=2 OR s.client=3)', 1)),
+		    array('type' => 'date', 'name' => 'newdate', 'label' => $langs->trans("Date"), 'value' => dol_now())
+		);
+		// Ask confirmatio to clone
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?facid=' . $object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneInvoice', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 250);
 	}
 
 	// Call Hook formConfirm
@@ -4427,7 +4473,9 @@ elseif ($id > 0 || ! empty($ref))
 	// Show global modifiers
 	if (! empty($conf->global->INVOICE_USE_SITUATION))
 	{
-		if ($object->situation_cycle_ref && $object->statut == 0) {
+		if ($object->situation_cycle_ref && $object->statut == 0)
+		{
+		    print '<!-- Area to change globally the situation percent -->'."\n";
 			print '<div class="div-table-responsive">';
 
 			print '<form name="updatealllines" id="updatealllines" action="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '#updatealllines" method="POST">';
@@ -4443,38 +4491,19 @@ elseif ($id > 0 || ! empty($ref))
 			if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
 				print '<td align="center" width="5">&nbsp;</td>';
 			}
-			print '<td>' . $langs->trans('ModifyAllLines') . '</td>';
-			print '<td class="right" width="50">&nbsp;</td>';
-			print '<td class="right" width="80">&nbsp;</td>';
-			if ($inputalsopricewithtax) print '<td class="right" width="80">&nbsp;</td>';
-			print '<td class="right" width="50">&nbsp</td>';
-			print '<td class="right" width="50">&nbsp</td>';
-			print '<td class="right" width="50">' . $langs->trans('Progress') . '</td>';
-			if (! empty($conf->margin->enabled) && empty($user->societe_id))
-			{
-				print '<td class="margininfos right" width="80">&nbsp;</td>';
-				if ((! empty($conf->global->DISPLAY_MARGIN_RATES) || ! empty($conf->global->DISPLAY_MARK_RATES)) && $usercanreadallmargin) {
-					print '<td class="margininfos right" width="50">&nbsp;</td>';
-				}
-			}
-			print '<td class="right" width="50">&nbsp;</td>';
+			print '<td class="minwidth500imp">' . $langs->trans('ModifyAllLines') . '</td>';
+			print '<td class="right">' . $langs->trans('Progress') . '</td>';
 			print '<td>&nbsp;</td>';
-			print '<td width="10">&nbsp;</td>';
-			print '<td width="10">&nbsp;</td>';
 			print "</tr>\n";
 
+			print '<tr class="nodrag nodrop">';
 			// Adds a line numbering column
 			if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
-				print '<td align="center" width="5">&nbsp;</td>';
+			    print '<td align="center" width="5">&nbsp;</td>';
 			}
-			print '<tr width="100%" class="nodrag nodrop">';
 			print '<td>&nbsp;</td>';
-			print '<td width="50">&nbsp;</td>';
-			print '<td width="80">&nbsp;</td>';
-			print '<td width="50">&nbsp;</td>';
-			print '<td width="50">&nbsp;</td>';
 			print '<td class="nowrap right"><input type="text" size="1" value="" name="all_progress">%</td>';
-			print '<td colspan="4" class="right"><input class="button" type="submit" name="all_percent" value="Modifier" /></td>';
+			print '<td class="right"><input class="button" type="submit" name="all_percent" value="Modifier" /></td>';
 			print '</tr>';
 
 			print '</table>';

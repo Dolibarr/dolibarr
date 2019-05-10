@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2013-2014 Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2018 Alexandre Spangaro	<aspangaro@open-dsi.fr>
- * Copyright (C) 2014      Ari Elbaz (elarifr)	<github@accedinfo.com>
- * Copyright (C) 2014 	   Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2016-2017 Laurent Destailleur 	<eldy@users.sourceforge.net>
+/* Copyright (C) 2013-2014 Olivier Geffroy		 <jeff@jeffinfo.com>
+ * Copyright (C) 2013-2019 Alexandre Spangaro	 <aspangaro@open-dsi.fr>
+ * Copyright (C) 2014      Ari Elbaz (elarifr)  <github@accedinfo.com>
+ * Copyright (C) 2014 	    Florian Henry        <florian.henry@open-concept.pro>
+ * Copyright (C) 2016-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2017      Open-DSI             <support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,8 +22,8 @@
 
 /**
  * \file		htdocs/core/modules/modAccounting.class.php
- * \ingroup		Advanced accountancy
- * \brief		Module to activate Accounting Expert module
+ * \ingroup		Double entry accounting
+ * \brief		Module to activate the double entry accounting module
  */
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
@@ -48,7 +48,7 @@ class modAccounting extends DolibarrModules
 		$this->module_position = '61';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
-		$this->description = "Advanced accounting management";
+		$this->description = "Double entry accounting management";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or 'dolibarr_deprecated' or version
 		$this->version = 'dolibarr';

@@ -16,7 +16,6 @@ InvoiceWaitingWithdraw=Facture en attente de débit direct
 AmountToWithdraw=Montant à retirer
 WithdrawsRefused=Débit direct refusé
 NoInvoiceToWithdraw=Aucune facture de client avec Open 'Demandes de débit direct' est en attente. Allez sur l'onglet '%s' sur la carte de facture pour faire une demande.
-ResponsibleUser=Utilisateur responsable
 WithdrawStatistics=Statistiques de paiement par débit direct
 WithdrawRejectStatistics=Statistiques de rejet de paiement par débit direct
 LastWithdrawalReceipt=Derniers %s reçus de débit direct

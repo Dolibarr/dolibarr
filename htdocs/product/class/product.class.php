@@ -4007,8 +4007,10 @@ class Product extends CommonObject
         if (! empty($conf->accounting->enabled) && $this->status) {
             include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
             $label.= '<br><b>' . $langs->trans('ProductAccountancySellCode') . ':</b> '. length_accountg($this->accountancy_code_sell);
-            $label.= '<br><b>' . $langs->trans('ProductAccountancySellIntraCode') . ':</b> '. length_accountg($this->accountancy_code_sell_export);
-            $label.= '<br><b>' . $langs->trans('ProductAccountancySellExportCode') . ':</b> '. length_accountg($this->accountancy_code_sell_intra);
+            if(!empty($conf->global->MAIN_FEATURES_LEVEL)) {
+                $label.= '<br><b>' . $langs->trans('ProductAccountancySellIntraCode') . ':</b> '. length_accountg($this->accountancy_code_sell_export);
+                $label.= '<br><b>' . $langs->trans('ProductAccountancySellExportCode') . ':</b> '. length_accountg($this->accountancy_code_sell_intra);
+            }
         }
         if (! empty($conf->accounting->enabled) && $this->status_buy) {
             include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
@@ -4289,19 +4291,19 @@ class Product extends CommonObject
     /**
      *  Adjust stock in a warehouse for product with batch number
      *
-     * @param  User   $user           user asking change
-     * @param  int    $id_entrepot    id of warehouse
-     * @param  double $nbpiece        nb of units
-     * @param  int    $movement       0 = add, 1 = remove
-     * @param  string $label          Label of stock movement
-     * @param  double $price          Price to use for stock eval
-     * @param  date   $dlc            eat-by date
-     * @param  date   $dluo           sell-by date
-     * @param  string $lot            Lot number
-     * @param  string $inventorycode  Inventory code
-     * @param  string $origin_element Origin element type
-     * @param  int    $origin_id      Origin id of element
-     * @return int                     <0 if KO, >0 if OK
+     * @param  User     $user           user asking change
+     * @param  int      $id_entrepot    id of warehouse
+     * @param  double   $nbpiece        nb of units
+     * @param  int      $movement       0 = add, 1 = remove
+     * @param  string   $label          Label of stock movement
+     * @param  double   $price          Price to use for stock eval
+     * @param  integer  $dlc            eat-by date
+     * @param  integer  $dluo           sell-by date
+     * @param  string   $lot            Lot number
+     * @param  string   $inventorycode  Inventory code
+     * @param  string   $origin_element Origin element type
+     * @param  int      $origin_id      Origin id of element
+     * @return int                      <0 if KO, >0 if OK
      */
     public function correct_stock_batch($user, $id_entrepot, $nbpiece, $movement, $label = '', $price = 0, $dlc = '', $dluo = '', $lot = '', $inventorycode = '', $origin_element = '', $origin_id = null)
     {
@@ -5068,7 +5070,7 @@ class Product extends CommonObject
     /**
      * Returns the rights used for this class
      *
-     * @return stdClass
+     * @return Object
      */
     public function getRights()
     {

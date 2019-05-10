@@ -165,7 +165,7 @@ class Contrat extends CommonObject
 
 	/**
 	 * @deprecated Use fk_project instead
-	 * @see fk_project
+	 * @see $fk_project
 	 */
 	public $fk_projet;
 
@@ -305,7 +305,7 @@ class Contrat extends CommonObject
      *  @param	int			$notrigger		1=Does not execute triggers, 0=Execute triggers
      *  @param	string		$comment		Comment
 	 *	@return	int							<0 if KO, >0 if OK
-	 *  @see closeAll
+	 *  @see ()
 	 */
 	public function activateAll($user, $date_start = '', $notrigger = 0, $comment = '')
 	{
@@ -361,7 +361,7 @@ class Contrat extends CommonObject
      * @param	int			$notrigger		1=Does not execute triggers, 0=Execute triggers
      * @param	string		$comment		Comment
 	 * @return	int							<0 if KO, >0 if OK
-	 * @see activateAll
+	 * @see activateAll()
 	 */
 	public function closeAll(User $user, $notrigger = 0, $comment = '')
 	{
@@ -1939,7 +1939,7 @@ class Contrat extends CommonObject
 
         if ($user->rights->contrat->lire) {
             $label = '<u>'.$langs->trans("ShowContract").'</u>';
-            $label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+            $label .= '<br><b>'.$langs->trans('Ref').':</b> '.($this->ref?$this->ref:$this->id);
             $label .= '<br><b>'.$langs->trans('RefCustomer').':</b> '.($this->ref_customer ? $this->ref_customer : $this->ref_client);
             $label .= '<br><b>'.$langs->trans('RefSupplier').':</b> '.$this->ref_supplier;
             if (!empty($this->total_ht)) {
@@ -1971,7 +1971,7 @@ class Contrat extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) $result.=img_object(($notooltip?'':$label), $this->picto, ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
-		if ($withpicto != 2) $result.= $this->ref;
+		if ($withpicto != 2) $result.= ($this->ref?$this->ref:$this->id);
 		$result .= $linkend;
 
 		return $result;
@@ -2120,7 +2120,7 @@ class Contrat extends CommonObject
 		$this->from.= ", ".MAIN_DB_PREFIX."societe as s";
 		if (!$user->rights->societe->client->voir && !$user->societe_id) $this->from.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 
-		if ($mode == 'inactives')
+		if ($mode == 'inactive')
 		{
 			$sql = "SELECT cd.rowid, cd.date_ouverture_prevue as datefin";
 			$sql.= $this->from;
@@ -2135,25 +2135,43 @@ class Contrat extends CommonObject
 			$sql.= " WHERE c.statut = 1";
 			$sql.= " AND c.rowid = cd.fk_contrat";
 			$sql.= " AND cd.statut = 4";
-			$sql.= " AND cd.date_fin_validite < '".$this->db->idate(time())."'";
+			$sql.= " AND cd.date_fin_validite < '".$this->db->idate(dol_now())."'";
+		}
+		elseif ($mode == 'active')
+		{
+		    $sql = "SELECT cd.rowid, cd.date_fin_validite as datefin";
+		    $sql.= $this->from;
+		    $sql.= " WHERE c.statut = 1";
+		    $sql.= " AND c.rowid = cd.fk_contrat";
+		    $sql.= " AND cd.statut = 4";
+		    //$datetouse = dol_now();
+		    //$sql.= " AND cd.date_fin_validite < '".$this->db->idate($datetouse)."'";
 		}
 		$sql.= " AND c.fk_soc = s.rowid";
 		$sql.= " AND c.entity = ".$conf->entity;
 		if ($user->societe_id) $sql.=" AND c.fk_soc = ".$user->societe_id;
 		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
+
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
 			$langs->load("contracts");
 			$now=dol_now();
 
-			if ($mode == 'inactives') {
+			if ($mode == 'inactive') {
 				$warning_delay = $conf->contrat->services->inactifs->warning_delay;
 				$label = $langs->trans("BoardNotActivatedServices");
-				$url = DOL_URL_ROOT.'/contrat/services_list.php?mainmenu=commercial&amp;leftmenu=contracts&amp;mode=0';
+				$url = DOL_URL_ROOT.'/contrat/services_list.php?mainmenu=commercial&leftmenu=contracts&mode=0&sortfield=cd.date_fin_validite&sortorder=asc';
+			}
+			elseif ($mode == 'expired') {
+			    $warning_delay = $conf->contrat->services->expires->warning_delay;
+			    $url = DOL_URL_ROOT.'/contrat/services_list.php?mainmenu=commercial&leftmenu=contracts&mode=4&filter=expired&sortfield=cd.date_fin_validite&sortorder=asc';
+			    $label = $langs->trans("BoardExpiredServices");
 			} else {
 				$warning_delay = $conf->contrat->services->expires->warning_delay;
-				$url = DOL_URL_ROOT.'/contrat/services_list.php?mainmenu=commercial&amp;leftmenu=contracts&amp;mode=4&amp;filter=expired';
+				$url = DOL_URL_ROOT.'/contrat/services_list.php?mainmenu=commercial&leftmenu=contracts&mode=4&sortfield=cd.date_fin_validite&sortorder=asc';
+				//$url.= '&op2day='.$arraydatetouse['mday'].'&op2month='.$arraydatetouse['mon'].'&op2year='.$arraydatetouse['year'];
+				//if ($warning_delay >= 0) $url.='&amp;filter=expired';
 				$label = $langs->trans("BoardRunningServices");
 			}
 
@@ -2388,13 +2406,14 @@ class Contrat extends CommonObject
 	/**
 	 * Load an object from its id and create a new one in database
 	 *
-	 * @param int $socid Id of thirdparty
-	 * @param int $notrigger	1=Does not execute triggers, 0= execute triggers
-	 * @return int New id of clone
+	 * @param	User	$user		  User making the clone
+	 * @param   int     $socid        Id of thirdparty
+	 * @param   int     $notrigger	  1=Does not execute triggers, 0= execute triggers
+	 * @return  int                   New id of clone
 	 */
-    public function createFromClone($socid = 0, $notrigger = 0)
+    public function createFromClone(User $user, $socid = 0, $notrigger = 0)
     {
-		global $db, $user, $langs, $conf, $hookmanager, $extrafields;
+		global $db, $langs, $conf, $hookmanager, $extrafields;
 
 		dol_include_once('/projet/class/project.class.php');
 

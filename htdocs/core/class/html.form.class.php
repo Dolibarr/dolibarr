@@ -237,9 +237,9 @@ class Form
 				}
 				elseif (preg_match('/^ckeditor/', $typeofdata))
 				{
-					$tmp=explode(':', $typeofdata);		// Example: ckeditor:dolibarr_zzz:width:height:savemethod:toolbarstartexpanded:rows:cols
+				    $tmp=explode(':', $typeofdata);		// Example: ckeditor:dolibarr_zzz:width:height:savemethod:toolbarstartexpanded:rows:cols:uselocalbrowser
 					require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-					$doleditor=new DolEditor($htmlname, ($editvalue?$editvalue:$value), ($tmp[2]?$tmp[2]:''), ($tmp[3]?$tmp[3]:'100'), ($tmp[1]?$tmp[1]:'dolibarr_notes'), 'In', ($tmp[5]?$tmp[5]:0), true, true, ($tmp[6]?$tmp[6]:'20'), ($tmp[7]?$tmp[7]:'100'));
+					$doleditor=new DolEditor($htmlname, ($editvalue?$editvalue:$value), ($tmp[2]?$tmp[2]:''), ($tmp[3]?$tmp[3]:'100'), ($tmp[1]?$tmp[1]:'dolibarr_notes'), 'In', ($tmp[5]?$tmp[5]:0), (isset($tmp[8])?($tmp[8]?true:false):true), true, ($tmp[6]?$tmp[6]:'20'), ($tmp[7]?$tmp[7]:'100'));
 					$ret.=$doleditor->Create(1);
 				}
 				if (empty($notabletag)) $ret.='</td>';
@@ -586,7 +586,7 @@ class Form
 
 		$disabled=0;
 		$ret='<div class="centpercent center">';
-		$ret.='<select class="flat'.(empty($conf->use_javascript_ajax)?'':' hideobject').' massaction massactionselect" name="massaction"'.($disabled?' disabled="disabled"':'').'>';
+		$ret.='<select class="flat'.(empty($conf->use_javascript_ajax)?'':' hideobject').' massaction massactionselect valignmiddle" name="massaction"'.($disabled?' disabled="disabled"':'').'>';
 
 		// Complete list with data from external modules. THe module can use $_SERVER['PHP_SELF'] to know on which page we are, or use the $parameters['currentcontext'] completed by executeHooks.
 		$parameters=array();
@@ -596,12 +596,15 @@ class Form
 			$ret.='<option value="0"'.($disabled?' disabled="disabled"':'').'>-- '.$langs->trans("SelectAction").' --</option>';
 			foreach($arrayofaction as $code => $label)
 			{
-				$ret.='<option value="'.$code.'"'.($disabled?' disabled="disabled"':'').'>'.$label.'</option>';
+				$ret.='<option value="'.$code.'"'.($disabled?' disabled="disabled"':'').' data-html="'.dol_escape_htmltag($label).'">'.$label.'</option>';
 			}
 		}
 		$ret.=$hookmanager->resPrint;
 
 		$ret.='</select>';
+
+		if (empty($conf->dol_optimize_smallscreen)) $ret.=ajax_combobox('.massactionselect');
+
 		// Warning: if you set submit button to disabled, post using 'Enter' will no more work if there is no another input submit. So we add a hidden button
 		$ret.='<input type="submit" name="confirmmassactioninvisible" style="display: none" tabindex="-1">';	// Hidden button BEFORE so it is the one used when we submit with ENTER.
 		$ret.='<input type="submit" disabled name="confirmmassaction" class="button'.(empty($conf->use_javascript_ajax)?'':' hideobject').' massaction massactionconfirmed" value="'.dol_escape_htmltag($langs->trans("Confirm")).'">';
@@ -1895,8 +1898,10 @@ class Form
         // phpcs:enable
 		global $langs,$conf;
 
+		// check parameters
 		$price_level = (! empty($price_level) ? $price_level : 0);
-
+		if (is_null($ajaxoptions)) $ajaxoptions=array();
+		
 		if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT))
 		{
 			$placeholder='';
@@ -2081,6 +2086,11 @@ class Form
 			$sql.=' pcp.price_base_type as custprice_base_type, pcp.tva_tx as custtva_tx';
 			$selectFields.= ", idprodcustprice, custprice, custprice_ttc, custprice_base_type, custtva_tx";
 		}
+        // Units
+        if (! empty($conf->global->PRODUCT_USE_UNITS)) {
+            $sql .= ', u.label as unit_long, u.short_label as unit_short';
+            $selectFields .= ', unit_long, unit_short';
+        }
 
 		// Multilang : we add translation
 		if (! empty($conf->global->MAIN_MULTILANGS))
@@ -2118,6 +2128,10 @@ class Form
 		if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES) && !empty($socid)) {
 			$sql.=" LEFT JOIN  ".MAIN_DB_PREFIX."product_customer_price as pcp ON pcp.fk_soc=".$socid." AND pcp.fk_product=p.rowid";
 		}
+        // Units
+        if (! empty($conf->global->PRODUCT_USE_UNITS)) {
+            $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_units u ON u.rowid = p.fk_unit";
+        }
 		// Multilang : we add translation
 		if (! empty($conf->global->MAIN_MULTILANGS))
 		{
@@ -2321,7 +2335,7 @@ class Form
 	 * constructProductListOption.
 	 * This define value for &$opt and &$optJson.
 	 *
-	 * @param 	resultset	$objp			    Resultset of fetch
+	 * @param 	resource	$objp			    Resultset of fetch
 	 * @param 	string		$opt			    Option (var used for returned value in string option format)
 	 * @param 	string		$optJson		    Option (var used for returned value in json format)
 	 * @param 	int			$price_level	    Price level
@@ -2379,6 +2393,10 @@ class Form
 		$opt.= $objp->ref;
 		if ($outbarcode) $opt.=' ('.$outbarcode.')';
 		$opt.=' - '.dol_trunc($label, $maxlengtharticle);
+        // Units
+        if (! empty($conf->global->PRODUCT_USE_UNITS)) {
+            $opt .= ' (' . $objp->unit_short . ')';
+        }
 
 		$objRef = $objp->ref;
 		if (! empty($filterkey) && $filterkey != '') $objRef=preg_replace('/('.preg_quote($filterkey).')/i', '<strong>$1</strong>', $objRef, 1);
@@ -3801,16 +3819,21 @@ class Form
 	/**
 	 *    Return list of categories having choosed type
 	 *
-	 *    @param	string|int	$type				Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) is deprecated.
-	 *    @param    string		$selected    		Id of category preselected or 'auto' (autoselect category if there is only one element)
-	 *    @param    string		$htmlname			HTML field name
-	 *    @param    int			$maxlength      	Maximum length for labels
-	 *    @param    int			$excludeafterid 	Exclude all categories after this leaf in category tree.
-	 *    @param	int			$outputmode			0=HTML select string, 1=Array
+	 *    @param	string|int	            $type				Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) is deprecated.
+	 *    @param    string		            $selected    		Id of category preselected or 'auto' (autoselect category if there is only one element)
+	 *    @param    string		            $htmlname			HTML field name
+	 *    @param    int			            $maxlength      	Maximum length for labels
+     *    @param    int|string|array    	$markafterid        Keep only or removed all categories including the leaf $markafterid in category tree (exclude) or Keep only of category is inside the leaf starting with this id.
+     *                                                          $markafterid can be an :
+     *                                                          - int (id of category)
+     *                                                          - string (categories ids seprated by comma)
+     *                                                          - array (list of categories ids)
+	 *    @param	int			            $outputmode			0=HTML select string, 1=Array
+     *    @param	int			            $include			[=0] Removed or 1=Keep only
 	 *    @return	string
 	 *    @see select_categories()
 	 */
-    public function select_all_categories($type, $selected = '', $htmlname = "parent", $maxlength = 64, $excludeafterid = 0, $outputmode = 0)
+    public function select_all_categories($type, $selected = '', $htmlname = "parent", $maxlength = 64, $markafterid = 0, $outputmode = 0, $include = 0)
 	{
         // phpcs:enable
 		global $conf, $langs;
@@ -3850,7 +3873,7 @@ class Form
 		else
 		{
 			$cat = new Categorie($this->db);
-			$cate_arbo = $cat->get_full_arbo($type, $excludeafterid);
+            $cate_arbo = $cat->get_full_arbo($type, $markafterid, $include);
 		}
 
 		$output = '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
@@ -4773,9 +4796,10 @@ class Form
 	 *
 	 *  @param	string	$selected    preselected currency code
 	 *  @param  string	$htmlname    name of HTML select list
+	 *  @param  string  $mode        0 = Add currency symbol into label, 1 = Add 3 letter iso code
 	 * 	@return	string
 	 */
-    public function selectCurrency($selected = '', $htmlname = 'currency_id')
+    public function selectCurrency($selected = '', $htmlname = 'currency_id', $mode = 0)
 	{
 		global $conf,$langs,$user;
 
@@ -4797,7 +4821,14 @@ class Form
 				$out.= '<option value="'.$code_iso.'">';
 			}
 			$out.= $currency['label'];
-			$out.= ' ('.$langs->getCurrencySymbol($code_iso).')';
+			if ($mode == 1)
+			{
+			    $out.= ' ('.$code_iso.')';
+			}
+			else
+			{
+                $out.= ' ('.$langs->getCurrencySymbol($code_iso).')';
+			}
 			$out.= '</option>';
 		}
 		$out.= '</select>';
@@ -5138,7 +5169,7 @@ class Form
 	 *            	- local date in user area, if set_time is '' (so if set_time is '', output may differs when done from two different location)
 	 *            	- Empty (fields empty), if set_time is -1 (in this case, parameter empty must also have value 1)
 	 *
-	 *	@param	timestamp	$set_time 		Pre-selected date (must be a local PHP server timestamp), -1 to keep date not preselected, '' to use current date with 00:00 hour (Parameter 'empty' must be 0 or 2).
+	 *	@param	integer	    $set_time 		Pre-selected date (must be a local PHP server timestamp), -1 to keep date not preselected, '' to use current date with 00:00 hour (Parameter 'empty' must be 0 or 2).
 	 *	@param	string		$prefix			Prefix for fields name
 	 *	@param	int			$h				1 or 2=Show also hours (2=hours on a new line), -1 has same effect but hour and minutes are prefilled with 23:59 if date is empty, 3 show hour always empty
 	 *	@param	int			$m				1=Show also minutes, -1 has same effect but hour and minutes are prefilled with 23:59 if date is empty, 3 show minutes always empty
@@ -5153,7 +5184,7 @@ class Form
 	 *  @param  datetime    $adddateof      Add a link "Date of invoice" using the following date.
 	 *  @return	string|void					Nothing or string if nooutput is 1
      *  @deprecated
-	 *  @see    form_date, select_month, select_year, select_dayofweek
+	 *  @see    form_date(), select_month(), select_year(), select_dayofweek()
 	 */
     public function select_date($set_time = '', $prefix = 're', $h = 0, $m = 0, $empty = 0, $form_name = "", $d = 1, $addnowlink = 0, $nooutput = 0, $disabled = 0, $fullday = '', $addplusone = '', $adddateof = '')
     {
@@ -5828,7 +5859,7 @@ class Form
 	 *  Note: Do not apply langs->trans function on returned content, content may be entity encoded twice.
 	 *
 	 *	@param	string			$htmlname			Name of html select area. Must start with "multi" if this is a multiselect
-	 *	@param	array			$array				Array (key => value)
+	 *	@param	array			$array				Array like array(key => value) or array(key=>array('label'=>..., 'data-...'=>...))
 	 *	@param	string|string[]	$id					Preselected key or preselected keys for multiselect
 	 *	@param	int|string		$show_empty			0 no empty value allowed, 1 or string to add an empty value into list (key is -1 and value is '' or '&nbsp;' if 1, key is -1 and value is text if string), <0 to add an empty value with key that is this value.
 	 *	@param	int				$key_in_label		1 to show key into label with format "[key] value"
@@ -5889,7 +5920,8 @@ class Form
 			{
 				foreach($array as $key => $value)
 				{
-					$array[$key]=$langs->trans($value);
+				    if (! is_array($value)) $array[$key]=$langs->trans($value);
+				    else $array[$key]['label']=$langs->trans($value['label']);
 				}
 			}
 
@@ -5897,8 +5929,11 @@ class Form
 			if ($sort == 'ASC') asort($array);
 			elseif ($sort == 'DESC') arsort($array);
 
-			foreach($array as $key => $value)
+			foreach($array as $key => $tmpvalue)
 			{
+			    if (is_array($tmpvalue)) $value=$tmpvalue['label'];
+			    else $value = $tmpvalue;
+
 				$disabled=''; $style='';
 				if (! empty($disablebademail))
 				{
@@ -5926,6 +5961,13 @@ class Form
 				$out.=$style.$disabled;
 				if ($id != '' && $id == $key && ! $disabled) $out.=' selected';		// To preselect a value
 				if ($nohtmlescape) $out.=' data-html="'.dol_escape_htmltag($selectOptionValue).'"';
+				if (is_array($tmpvalue))
+				{
+				    foreach($tmpvalue as $keyforvalue => $valueforvalue)
+				    {
+				        if (preg_match('/^data-/', $keyforvalue)) $out.=' '.$keyforvalue.'="'.$valueforvalue.'"';
+				    }
+				}
 				$out.='>';
 				//var_dump($selectOptionValue);
 				$out.=$selectOptionValue;
@@ -6056,7 +6098,7 @@ class Form
 	 *  @param  string  $placeholder            String to use as placeholder
 	 *  @param  integer $acceptdelayedhtml      1 = caller is requesting to have html js content not returned but saved into global $delayedhtmlcontent (so caller can show it at end of page to avoid flash FOUC effect)
 	 *  @return	string   						HTML select string
-	 *  @see selectArrayAjax, ajax_combobox in ajax.lib.php
+	 *  @see selectArrayAjax(), ajax_combobox() in ajax.lib.php
 	 */
 	public static function selectArrayFilter($htmlname, $array, $id = '', $moreparam = '', $disableFiltering = 0, $disabled = 0, $minimumInputLength = 1, $morecss = '', $callurlonselect = 0, $placeholder = '', $acceptdelayedhtml = 0)
 	{
@@ -6329,7 +6371,7 @@ class Form
 
         <dl class="dropdown">
             <dt>
-            <a href="#">
+            <a href="#'.$htmlname.'">
               '.img_picto('', 'list').'
             </a>
             <input type="hidden" class="'.$htmlname.'" name="'.$htmlname.'" value="'.$listcheckedstring.'">
@@ -7288,8 +7330,10 @@ class Form
 		global $conf, $langs;
 
 		$out='<div class="nowrap">';
-		$out.='<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"), 'search.png', '', '', 1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-		$out.='<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"), 'searchclear.png', '', '', 1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+		//$out.='<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"), 'search.png', '', '', 1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+		//$out.='<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"), 'searchclear.png', '', '', 1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+		$out.='<button type="submit" class="liste_titre button_search" name="button_search_x" value="x"><span class="fa fa-search"></span></button>';
+		$out.='<button type="submit" class="liste_titre button_removefilter" name="button_removefilter_x" value="x"><span class="fa fa-remove"></span></button>';
 		$out.='</div>';
 
 		return $out;

@@ -271,7 +271,6 @@ if (isset($_SERVER["HTTP_USER_AGENT"]))
 	//var_dump($conf->browser);
 
 	if ($conf->browser->layout == 'phone') $conf->dol_no_mouse_hover=1;
-	if ($conf->browser->layout == 'phone') $conf->global->MAIN_TESTMENUHIDER=1;
 }
 
 // Force HTTPS if required ($conf->file->main_force_https is 0/1 or https dolibarr root url)
@@ -399,7 +398,7 @@ if ((! defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && ! empty($conf->
 }
 
 // Disable modules (this must be after session_start and after conf has been loaded)
-if (GETPOST('disablemodules', 'alpha'))  $_SESSION["disablemodules"]=GETPOST('disablemodules', 'alpha');
+if (GETPOSTISSET('disablemodules'))  $_SESSION["disablemodules"]=GETPOST('disablemodules', 'alpha');
 if (! empty($_SESSION["disablemodules"]))
 {
 	$disabled_modules=explode(',', $_SESSION["disablemodules"]);
@@ -427,7 +426,7 @@ if(is_array($modulepart) && count($modulepart)>0)
 		if(in_array($module, $modulepart))
 		{
 			$conf->modulepart = $module;
-                        break;
+            break;
 		}
 	}
 }
@@ -438,7 +437,7 @@ if(is_array($modulepart) && count($modulepart)>0)
 $login='';
 if (! defined('NOLOGIN'))
 {
-	// $authmode lists the different means of identification to be tested in order of preference.
+	// $authmode lists the different method of identification to be tested in order of preference.
 	// Example: 'http', 'dolibarr', 'ldap', 'http,forceuser', '...'
 
 	if (defined('MAIN_AUTHENTICATION_MODE'))
@@ -1092,11 +1091,15 @@ if (! function_exists("llxHeader"))
 		// html header
 		top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 
-		if ($conf->browser->layout == 'phone'){
-		    $morecssonbody.= ' sidebar-collapse';
+		$tmpcsstouse='sidebar-collapse'.($morecssonbody?' '.$morecssonbody:'');
+		// If theme MD and classic layer, we open the menulayer by default.
+		if ($conf->theme == 'md' && ! in_array($conf->browser->layout, array('phone','tablet')) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+		{
+		    global $mainmenu;
+		    if ($mainmenu != 'website') $tmpcsstouse=$morecssonbody;  // We do not use sidebar-collpase by default to have menuhider open by default.
 		}
 
-		print '<body id="mainbody"'.($morecssonbody?' class="'.$morecssonbody.'"':'').'>' . "\n";
+		print '<body id="mainbody" class="'.$tmpcsstouse.'">' . "\n";
 
 		// top menu and left menu area
 		if (empty($conf->dol_hide_topmenu) || GETPOST('dol_invisible_topmenu', 'int'))
@@ -1255,7 +1258,6 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		print "\n";
 
 		if (GETPOST('version', 'int')) $ext='version='.GETPOST('version', 'int');	// usefull to force no cache on css/js
-		if (GETPOST('testmenuhider', 'int') || ! empty($conf->global->MAIN_TESTMENUHIDER)) $ext.='&testmenuhider='.(GETPOST('testmenuhider', 'int')?GETPOST('testmenuhider', 'int'):$conf->global->MAIN_TESTMENUHIDER);
 
 		$themeparam='?lang='.$langs->defaultlang.'&amp;theme='.$conf->theme.(GETPOST('optioncss', 'aZ09')?'&amp;optioncss='.GETPOST('optioncss', 'aZ09', 1):'').'&amp;userid='.$user->id.'&amp;entity='.$conf->entity;
 		$themeparam.=($ext?'&amp;'.$ext:'');
@@ -1594,10 +1596,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 			}
 		}
 
-		$loginBlockMoreClass = '';
-		if (!empty($conf->global->MAIN_TOP_MENU_DROPDOWN)) { $loginBlockMoreClass = 'usedropdown'; }
-
-		print '<div class="login_block '.$loginBlockMoreClass.'">'."\n";
+		print '<div class="login_block usedropdown">'."\n";
 
 		// Add login user link
 		$toprightmenu.='<div class="login_block_user">';
@@ -1606,12 +1605,8 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 		$mode=-1;
 		$toprightmenu.='<div class="inline-block nowrap"><div class="inline-block login_block_elem login_block_elem_name" style="padding: 0px;">';
 
-		if (empty($conf->global->MAIN_TOP_MENU_DROPDOWN)){
-            $toprightmenu.= $user->getNomUrl($mode, '', 1, 0, 11, 0, ($user->firstname ? 'firstname' : -1), 'atoplogin');
-		}
-		else {
-		    $toprightmenu.= top_menu_user($user, $langs);
-		}
+	    $toprightmenu.= top_menu_user($user, $langs);
+
 		$toprightmenu.='</div></div>';
 
 		$toprightmenu.='</div>'."\n";
@@ -1740,8 +1735,16 @@ function top_menu_user(User $user, Translate $langs)
     $userImage = $userDropDownImage = '';
     if (! empty($user->photo))
     {
-        $userImage = Form::showphoto('userphoto', $user, 0, 0, 0, 'photouserphoto userphoto', 'small', 0, 1);
-        $userDropDownImage = Form::showphoto('userphoto', $user, 0, 0, 0, 'dropdown-user-image', 'small', 0, 1);
+        $userImage          = Form::showphoto('userphoto', $user, 0, 0, 0, 'photouserphoto userphoto', 'small', 0, 1);
+        $userDropDownImage  = Form::showphoto('userphoto', $user, 0, 0, 0, 'dropdown-user-image', 'small', 0, 1);
+    }
+    else{
+        $nophoto='/public/theme/common/user_anonymous.png';
+        if ($object->gender == 'man') $nophoto='/public/theme/common/user_man.png';
+        if ($object->gender == 'woman') $nophoto='/public/theme/common/user_woman.png';
+
+        $userImage = '<img class="photo photouserphoto userphoto" alt="No photo" src="'.DOL_URL_ROOT.$nophoto.'">';
+        $userDropDownImage = '<img class="photo dropdown-user-image" alt="No photo" src="'.DOL_URL_ROOT.$nophoto.'">';
     }
 
     $dropdownBody = '';
@@ -1810,7 +1813,7 @@ function top_menu_user(User $user, Translate $langs)
     <div id="topmenu-login-dropdown" class="userimg atoplogin dropdown user user-menu">
         <a href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'" class="dropdown-toggle" data-toggle="dropdown">
             '.$userImage.'
-            <span class="hidden-xs maxwidth200">'.dol_trunc($user->firstname ? $user->firstname : $user->login, 11).'</span>
+            <span class="hidden-xs maxwidth200 atoploginusername">'.dol_trunc($user->firstname ? $user->firstname : $user->login, 10).'</span>
             <span class="fa fa-chevron-down" id="dropdown-icon-down"></span>
             <span class="fa fa-chevron-up hidden" id="dropdown-icon-up"></span>
         </a>
@@ -1908,19 +1911,22 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 		if (! is_object($form)) $form=new Form($db);
 		$selected=-1;
 		$usedbyinclude=1;
+		$arrayresult=null;
 		include_once DOL_DOCUMENT_ROOT.'/core/ajax/selectsearchbox.php';	// This set $arrayresult
 
 		if ($conf->use_javascript_ajax && empty($conf->global->MAIN_USE_OLD_SEARCH_FORM))
 		{
-			//$searchform.=$form->selectArrayAjax('searchselectcombo', DOL_URL_ROOT.'/core/ajax/selectsearchbox.php', $selected, '', '', 0, 1, 'vmenusearchselectcombo', 1, $langs->trans("Search"), 1);
 			$searchform.=$form->selectArrayFilter('searchselectcombo', $arrayresult, $selected, '', 1, 0, (empty($conf->global->MAIN_SEARCHBOX_CONTENT_LOADED_BEFORE_KEY)?1:0), 'vmenusearchselectcombo', 1, $langs->trans("Search"), 1);
 		}
 		else
 		{
-			foreach($arrayresult as $key => $val)
-			{
-				$searchform.=printSearchForm($val['url'], $val['url'], $val['label'], 'maxwidth125', 'sall', $val['shortcut'], 'searchleft'.$key, img_picto('', $val['img'], '', false, 1, 1));
-			}
+		    if (is_array($arrayresult))
+		    {
+    			foreach($arrayresult as $key => $val)
+    			{
+    				$searchform.=printSearchForm($val['url'], $val['url'], $val['label'], 'maxwidth125', 'sall', $val['shortcut'], 'searchleft'.$key, img_picto('', $val['img'], '', false, 1, 1));
+    			}
+		    }
 		}
 
 		// Execute hook printSearchForm

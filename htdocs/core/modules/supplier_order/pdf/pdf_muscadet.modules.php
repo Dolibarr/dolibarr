@@ -3,9 +3,9 @@
  * Copyright (C) 2005-2011 Regis Houssin         <regis.houssin@inodbox.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2010-2014 Juanjo Menent         <jmenent@2byte.es>
- * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2015      Marcos García         <marcosgdf@gmail.com>
  * Copyright (C) 2017      Ferran Marcet         <fmarcet@2byte.es>
- * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018      Frédéric France       <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,9 +63,9 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
     /**
      * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 5.4 = array(5, 4)
+     * e.g.: PHP ≥ 5.5 = array(5, 5)
      */
-	public $phpmin = array(5, 4);
+	public $phpmin = array(5, 5);
 
 	/**
      * Dolibarr version of the loaded document
@@ -110,7 +110,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 	/**
 	 * Issuer
-	 * @var Company object that emits
+	 * @var Societe object that emits
 	 */
 	public $emetteur;
 
@@ -159,7 +159,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		$this->emetteur=$mysoc;
 		if (empty($this->emetteur->country_code)) $this->emetteur->country_code=substr($langs->defaultlang, -2);    // By default, if was not defined
 
-		// Defini position des colonnes
+		// Define position of columns
 		$this->posxdesc=$this->marge_gauche+1;
 		$this->posxdiscount=162;
 		$this->postotalht=174;
@@ -174,6 +174,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 			$this->posxtva=110;
 			$this->posxup=126;
 			$this->posxqty=145;
+			$this->posxunit=162;
 		}
 
 		if (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT)) $this->posxup = $this->posxtva; // posxtva is picture position reference
@@ -350,14 +351,16 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 						$this->atleastonediscount++;
 					}
 				}
-				if (empty($this->atleastonediscount) && empty($conf->global->PRODUCT_USE_UNITS))
+				if (empty($this->atleastonediscount))
 				{
-					$this->posxpicture+=($this->postotalht - $this->posxdiscount);
-					$this->posxtva+=($this->postotalht - $this->posxdiscount);
-					$this->posxup+=($this->postotalht - $this->posxdiscount);
-					$this->posxqty+=($this->postotalht - $this->posxdiscount);
-					$this->posxdiscount+=($this->postotalht - $this->posxdiscount);
-					//$this->postotalht;
+				    $delta = ($this->postotalht - $this->posxdiscount);
+				    $this->posxpicture+=$delta;
+				    $this->posxtva+=$delta;
+				    $this->posxup+=$delta;
+				    $this->posxqty+=$delta;
+				    $this->posxunit+=$delta;
+				    $this->posxdiscount+=$delta;
+				    // post of fields after are not modified, stay at same position
 				}
 
 				// New page
@@ -526,15 +529,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 					// Quantity
 					$qty = pdf_getlineqty($object, $i, $outputlangs, $hidedetails);
 					$pdf->SetXY($this->posxqty, $curY);
-					// Enough for 6 chars
-					if($conf->global->PRODUCT_USE_UNITS)
-					{
-						$pdf->MultiCell($this->posxunit-$this->posxqty-0.8, 4, $qty, 0, 'R');
-					}
-					else
-					{
-						$pdf->MultiCell($this->posxdiscount-$this->posxqty-0.8, 4, $qty, 0, 'R');
-					}
+					$pdf->MultiCell($this->posxunit-$this->posxqty-0.8, 4, $qty, 0, 'R');  // Enough for 6 chars
 
 					// Unit
 					if($conf->global->PRODUCT_USE_UNITS)
@@ -1077,22 +1072,14 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		if (empty($hidetop))
 		{
 			$pdf->SetXY($this->posxqty-1, $tab_top+1);
-			if($conf->global->PRODUCT_USE_UNITS)
-			{
-				$pdf->MultiCell($this->posxunit-$this->posxqty-1, 2, $outputlangs->transnoentities("Qty"), '', 'C');
-			}
-			else
-			{
-				$pdf->MultiCell($this->posxdiscount-$this->posxqty-1, 2, $outputlangs->transnoentities("Qty"), '', 'C');
-			}
+			$pdf->MultiCell($this->posxunit-$this->posxqty-1, 2, $outputlangs->transnoentities("Qty"), '', 'C');
 		}
 
 		if($conf->global->PRODUCT_USE_UNITS) {
 			$pdf->line($this->posxunit - 1, $tab_top, $this->posxunit - 1, $tab_top + $tab_height);
 			if (empty($hidetop)) {
 				$pdf->SetXY($this->posxunit - 1, $tab_top + 1);
-				$pdf->MultiCell($this->posxdiscount - $this->posxunit - 1, 2, $outputlangs->transnoentities("Unit"), '',
-					'C');
+				$pdf->MultiCell($this->posxdiscount - $this->posxunit - 1, 2, $outputlangs->transnoentities("Unit"), '', 'C');
 			}
 		}
 
@@ -1310,10 +1297,9 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 			$pdf->MultiCell(80, 4, $carac_emetteur, 0, 'L');
 
 
-
-			// If BILLING contact defined on order, we use it
+			// If CUSTOMER contact defined on order, we use it. Note: Even if this is a supplier object, the code for external contat that follow order is 'CUSTOMER'
 			$usecontact=false;
-			$arrayidcontact=$object->getIdContact('external', 'BILLING');
+			$arrayidcontact=$object->getIdContact('external', 'CUSTOMER');
 			if (count($arrayidcontact) > 0)
 			{
 				$usecontact=true;

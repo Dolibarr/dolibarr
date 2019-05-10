@@ -99,7 +99,7 @@ if (! isset($conf->global->THEME_ELDY_BACKBODY)) $conf->global->THEME_ELDY_BACKB
 if (! isset($conf->global->THEME_ELDY_TOPMENU_BACK1)) $conf->global->THEME_ELDY_TOPMENU_BACK1=$colorbackhmenu1;
 if (! isset($conf->global->THEME_ELDY_VERMENU_BACK1)) $conf->global->THEME_ELDY_VERMENU_BACK1=$colorbackvmenu1;
 if (! isset($conf->global->THEME_ELDY_BACKTITLE1)) $conf->global->THEME_ELDY_BACKTITLE1=$colorbacktitle1;
-if (! isset($conf->global->THEME_ELDY_USE_HOVER)) $conf->global->THEME_ELDY_USE_HOVER==$colorbacklinepairhover;
+if (! isset($conf->global->THEME_ELDY_USE_HOVER)) $conf->global->THEME_ELDY_USE_HOVER=$colorbacklinepairhover;
 if (! isset($conf->global->THEME_ELDY_USE_CHECKED)) $conf->global->THEME_ELDY_USE_CHECKED=$colorbacklinepairchecked;
 if (! isset($conf->global->THEME_ELDY_LINEBREAK)) $conf->global->THEME_ELDY_LINEBREAK=$colorbacklinebreak;
 if (! isset($conf->global->THEME_ELDY_TEXTTITLENOTAB)) $conf->global->THEME_ELDY_TEXTTITLENOTAB=$colortexttitlenotab;
@@ -137,16 +137,15 @@ $fontsize            =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty(
 $fontsizesmaller     =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_FONT_SIZE2)   ?$fontsize:$conf->global->THEME_ELDY_FONT_SIZE2)             :(empty($user->conf->THEME_ELDY_FONT_SIZE2)?$fontsize:$user->conf->THEME_ELDY_FONT_SIZE2);
 
 // Hover color
-$colorbacklinepairhover=((! isset($conf->global->THEME_ELDY_USE_HOVER) || (string) $conf->global->THEME_ELDY_USE_HOVER === '0')?'':($conf->global->THEME_ELDY_USE_HOVER === '1'?'edf4fb':$conf->global->THEME_ELDY_USE_HOVER));
-$colorbacklinepairchecked=((! isset($conf->global->THEME_ELDY_USE_CHECKED) || (string) $conf->global->THEME_ELDY_USE_CHECKED === '0')?'':($conf->global->THEME_ELDY_USE_CHECKED === '1'?'edf4fb':$conf->global->THEME_ELDY_USE_CHECKED));
+$colorbacklinepairhover=((! isset($conf->global->THEME_ELDY_USE_HOVER) || (string) $conf->global->THEME_ELDY_USE_HOVER === '255,255,255')?'':($conf->global->THEME_ELDY_USE_HOVER === '1'?'edf4fb':$conf->global->THEME_ELDY_USE_HOVER));
+$colorbacklinepairchecked=((! isset($conf->global->THEME_ELDY_USE_CHECKED) || (string) $conf->global->THEME_ELDY_USE_CHECKED === '255,255,255')?'':($conf->global->THEME_ELDY_USE_CHECKED === '1'?'edf4fb':$conf->global->THEME_ELDY_USE_CHECKED));
 if (! empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED))
 {
-    $colorbacklinepairhover=((! isset($user->conf->THEME_ELDY_USE_HOVER) || $user->conf->THEME_ELDY_USE_HOVER === '0')?'':($user->conf->THEME_ELDY_USE_HOVER === '1'?'edf4fb':$user->conf->THEME_ELDY_USE_HOVER));
-    $colorbacklinepairchecked=((! isset($user->conf->THEME_ELDY_USE_CHECKED) || $user->conf->THEME_ELDY_USE_CHECKED === '0')?'':($user->conf->THEME_ELDY_USE_CHECKED === '1'?'edf4fb':$user->conf->THEME_ELDY_USE_CHECKED));
+    $colorbacklinepairhover=((! isset($user->conf->THEME_ELDY_USE_HOVER) || $user->conf->THEME_ELDY_USE_HOVER === '255,255,255')?'':($user->conf->THEME_ELDY_USE_HOVER === '1'?'edf4fb':$user->conf->THEME_ELDY_USE_HOVER));
+    $colorbacklinepairchecked=((! isset($user->conf->THEME_ELDY_USE_CHECKED) || $user->conf->THEME_ELDY_USE_CHECKED === '255,255,255')?'':($user->conf->THEME_ELDY_USE_CHECKED === '1'?'edf4fb':$user->conf->THEME_ELDY_USE_CHECKED));
 }
 
 if (empty($colortopbordertitle1)) $colortopbordertitle1=$colorbackhmenu1;
-
 
 // Set text color to black or white
 $colorbackhmenu1=join(',', colorStringToArray($colorbackhmenu1));    // Normalize value to 'x,y,z'
@@ -324,7 +323,9 @@ input, select {
 	margin-bottom:1px;
 	margin-top:1px;
 }
-
+input.button.massactionconfirmed {
+    margin: 4px;
+}
 
 textarea {
 	border-radius: 0;
@@ -351,18 +352,25 @@ input.smallpadd {	/* Used for timesheet input */
 input.buttongen {
 	vertical-align: middle;
 }
-input.buttonpayment {
+input.buttonpayment, button.buttonpayment, div.buttonpayment {
 	min-width: 320px;
 	margin-bottom: 15px;
 	background-image: none;
 	line-height: 24px;
 	padding: 8px;
 	background: none;
-	padding-left: 30px;
-	text-align: <?php echo $left; ?>;
+	text-align: center;
 	border: 2px solid #ccc;
 	background-color: #eee;
 	white-space: normal;
+	color: #888 !important;
+}
+div.buttonpayment input {
+    background-color: unset;
+    border-bottom: unset;
+    font-weight: bold;
+    text-transform: uppercase;
+	color: #333;
 }
 input.buttonpaymentcb {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/common/credit_card.png', 1) ?>);
@@ -536,6 +544,10 @@ hr { border: 0; border-top: 1px solid #ccc; }
     box-shadow: none;
     -webkit-box-shadow: none;
 }
+.button_search, .button_removefilter {
+    border: unset;
+    background: unset;
+}
 form {
     padding:0px;
     margin:0px;
@@ -654,6 +666,15 @@ textarea.centpercent {
 .cursornotallowed {
 	cursor: not-allowed;
 }
+.backgroundblank {
+    background-color: #fff;
+}
+.checkboxattachfilelabel {
+    font-size: 0.85em;
+    opacity: 0.7;
+}
+
+/* Themes for badges */
 .badge {
 	display: inline-block;
 	min-width: 10px;
@@ -1160,7 +1181,7 @@ td.showDragHandle {
 	display: block;
 	font-family: "RobotoDraft","Roboto",sans-serif;
 	left: 0;
-<?php if (in_array($conf->browser->layout, array('phone','tablet')) && ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))) { ?>
+<?php if (in_array($conf->browser->layout, array('phone','tablet')) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
 <?php } else { ?>
 	position: fixed;
 	top: 50px;
@@ -1189,7 +1210,7 @@ td.showDragHandle {
 	-moz-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 	transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 	-webkit-overflow-scrolling: touch;
-<?php if (in_array($conf->browser->layout, array('phone','tablet')) && ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))) { ?>
+<?php if (in_array($conf->browser->layout, array('phone','tablet')) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
 <?php } else { ?>
 	overflow-x: hidden;
 	overflow-y: auto;
@@ -1217,7 +1238,7 @@ body.sidebar-collapse .side-nav-vert, body.sidebar-collapse #id-right {
 	margin-left: 228px;
 }
 body.sidebar-collapse .side-nav, body.sidebar-collapse .login_block {
-<?php if (in_array($conf->browser->layout, array('phone','tablet')) && ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))) { ?>
+<?php if (in_array($conf->browser->layout, array('phone','tablet')) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
 	left: -240px;
 <?php } else { ?>
 	left: -229px;
@@ -1232,7 +1253,7 @@ body.sidebar-collapse .side-nav, body.sidebar-collapse .login_block {
 <?php } ?>
 
 /* For smartphone (testmenuhider is on) */
-<?php if (in_array($conf->browser->layout, array('phone','tablet')) && ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))) { ?>
+<?php if (in_array($conf->browser->layout, array('phone','tablet')) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
 #id-container {
 	width: 100%;
 }
@@ -1245,7 +1266,7 @@ div.login_block {
 }
 
 .side-nav {
-<?php if (in_array($conf->browser->layout, array('phone','tablet')) && ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))) { ?>
+<?php if (in_array($conf->browser->layout, array('phone','tablet')) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
 <?php } else { ?>
 	overflow-x: initial !important;
 	overflow-y: scroll;
@@ -1293,7 +1314,7 @@ div.login_block {
 	z-index: 91;
 	background: rgb(<?php echo $colorbackvmenu1; ?>);
 	border-right: 1px solid rgba(0,0,0,0.3);
-<?php if (in_array($conf->browser->layout, array('phone','tablet')) && ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))) { ?>
+<?php if (in_array($conf->browser->layout, array('phone','tablet')) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
 	top: 50px ! important;
 <?php } else { ?>
 	top: 60px ! important;
@@ -1527,6 +1548,10 @@ img.photorefnoborder {
 .tdhrthin {
 	margin: 0;
 	padding-bottom: 0 !important;
+}
+/* Payment Screen : Pointer cursor in the autofill image */
+.AutoFillAmount {
+	cursor:pointer;
 }
 
 
@@ -1771,6 +1796,7 @@ div.mainmenu.members {
 div.mainmenu.menu {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/menu.png', 1) ?>);
 	top: 7px;
+	left: 5px;
 }
 
 div.mainmenu.products {
@@ -1884,6 +1910,10 @@ foreach($mainmenuusedarray as $val)
 a.tmenuimage {
     display: block;
 }
+a.tmenuimage:focus {
+    outline: none;
+}
+
 
 
 /* Login */
@@ -2014,7 +2044,7 @@ div.login_block {
     padding-bottom: 3px;
 	<?php print $left; ?>: 0;
 	top: 0px;
-<?php if (in_array($conf->browser->layout, array('phone','tablet')) && ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))) { ?>
+<?php if (in_array($conf->browser->layout, array('phone','tablet')) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
 	position: absolute;
 <?php } else { ?>
 	position: fixed;
@@ -2144,7 +2174,7 @@ div.vmenu, td.vmenu {
 .companylogo { padding-top: 4px; }
 .searchform { padding-top: 10px; }
 
-a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active, span.vmenu { white-space: nowrap; font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; }
+a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active, span.vmenu, span.vsmenu { white-space: nowrap; font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; }
 font.vmenudisabled  { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; color: #aaa; margin-left: 4px; }
 a.vmenu:link, a.vmenu:visited { color: #<?php echo $colortextbackvmenu; ?>; }
 
@@ -3001,13 +3031,14 @@ ul.noborder li:nth-child(odd):not(.liste_titre) {
 	box-shadow: unset;
 	-webkit-box-shadow: unset;
 }
+
 .oddeven:hover, .evenodd:hover, .impair:hover, .pair:hover
 {
-<?php if ($colorbacklinepairhover) { ?>
 	background: rgb(<?php echo $colorbacklinepairhover; ?>) !important;
-<?php } ?>
 }
-
+.tredited {
+	background: rgb(<?php echo $colorbacklinepairchecked; ?>) !important;   /* Must be background to be stronger than background of odd or even */
+}
 <?php if ($colorbacklinepairchecked) { ?>
 .highlight {
 	background: rgb(<?php echo $colorbacklinepairchecked; ?>) !important; /* Must be background to be stronger than background of odd or even */
@@ -3176,8 +3207,7 @@ input.liste_titre {
 
 .noborder tr.liste_total td, tr.liste_total td, form.liste_total div, .noborder tr.liste_total_wrap td, tr.liste_total_wrap td, form.liste_total_wrap div {
     color: #332266;
-    font-weight: normal;
-    padding: 4px;
+    /* padding: 4px; */
 }
 .noborder tr.liste_total td, tr.liste_total td, form.liste_total div {
     white-space: nowrap;
@@ -3468,7 +3498,7 @@ img.boxhandle, img.boxclose {
  *   Ok, Warning, Error
  */
 .ok      { color: #114466; }
-.warning { color: #887711; }
+.warning { color: #887711 !important; }
 .error   { color: #550000 !important; font-weight: bold; }
 
 div.ok {
@@ -3637,6 +3667,7 @@ div#card-errors {
 	color: #fa755a;
     text-align: center;
     padding-top: 3px;
+    max-width: 320px;
 }
 
 
@@ -5668,6 +5699,10 @@ border-top-right-radius: 6px;
 	}
 }
 
+.menuhider {
+	width: 40px;
+}
+
 /* nboftopmenuentries = <?php echo $nbtopmenuentries ?>, fontsize=<?php echo $fontsize ?> */
 /* disableimages = <?php echo $disableimages; ?> */
 /* rule to reduce top menu - 1st reduction */
@@ -5688,7 +5723,7 @@ border-top-right-radius: 6px;
     	margin-top: 0px;
 	}
     li.tmenu, li.tmenusel {
-    	min-width: 32px;
+    	min-width: 34px;
     }
     div.mainmenu {
     	min-width: auto;

@@ -216,7 +216,7 @@ class DolibarrApi
 	 *
 	 * @param string	$resource		element to check
 	 * @param int		$resource_id	Object ID if we want to check a particular record (optional) is linked to a owned thirdparty (optional).
-	 * @param type		$dbtablename	'TableName&SharedElement' with Tablename is table where object is stored. SharedElement is an optional key to define where to check entity. Not used if objectid is null (optional)
+	 * @param string	$dbtablename	'TableName&SharedElement' with Tablename is table where object is stored. SharedElement is an optional key to define where to check entity. Not used if objectid is null (optional)
 	 * @param string	$feature2		Feature to check, second level of permission (optional). Can be or check with 'level1|level2'.
 	 * @param string	$dbt_keyfield   Field name for socid foreign key if not fk_soc. Not used if objectid is null (optional)
 	 * @param string	$dbt_select     Field name for select if not rowid. Not used if objectid is null (optional)

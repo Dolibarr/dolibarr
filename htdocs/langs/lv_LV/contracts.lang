@@ -85,7 +85,6 @@ NoteListOfYourExpiredServices=Šajā sarakstā ir tikai pakalpojumu līgumi par 
 StandardContractsTemplate=Standarta līgumu paraugs
 ContactNameAndSignature=Kam %s vārds un paraksts:
 OnlyLinesWithTypeServiceAreUsed=Only lines with type "Service" will be cloned.
-CloneContract=Klonēt līgumu
 ConfirmCloneContract=Vai tiešām vēlaties klonēt līgumu <b> %s </b>?
 LowerDateEndPlannedShort=Aktīvo pakalpojumu beigu datums
 SendContractRef=Informācija par līgumu __REF__

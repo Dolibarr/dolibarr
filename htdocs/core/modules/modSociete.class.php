@@ -335,7 +335,7 @@ class modSociete extends DolibarrModules
 			'c.statut'=>"Status",
 			's.rowid'=>"IdCompany",'s.nom'=>"CompanyName",'s.status'=>"Status",'s.code_client'=>"CustomerCode",'s.code_fournisseur'=>"SupplierCode",
 			's.client'=>'Customer','s.fournisseur'=>'Supplier',
-            's.address'=>'Address','s.phone'=>'Phone','s.email'=>"Email",
+            's.address'=>'Address','s.zip'=>"Zip",'s.town'=>"Town",'s.phone'=>'Phone','s.email'=>"Email",
             't.libelle'=>"ThirdPartyType"
 		);
 		$this->export_examplevalues_array[$r]=array('s.client'=>'0 (no customer no prospect)/1 (customer)/2 (prospect)/3 (customer and prospect)','s.fournisseur'=>'0 (not a supplier) or 1 (supplier)');
@@ -346,13 +346,13 @@ class modSociete extends DolibarrModules
             'c.statut'=>"Status",
             's.rowid'=>"List:societe:nom::thirdparty",'s.nom'=>"Text",'s.status'=>"Status",'s.code_client'=>"Text",'s.code_fournisseur'=>"Text",
 			's.client'=>"Text",'s.fournisseur'=>"Text",
-            's.address'=>"Text",'s.phone'=>"Text",'s.email'=>"Text",
+            's.address'=>"Text",'s.zip'=>"Text",'s.town'=>"Text",'s.phone'=>"Text",'s.email'=>"Text",
             't.libelle'=>"Text"
 		);
 		$this->export_entities_array[$r]=array(
 			's.rowid'=>"company",'s.nom'=>"company", 's.status'=>'company', 's.code_client'=>"company",'s.code_fournisseur'=>"company", 's.client'=>"company",
 			's.fournisseur'=>"company",
-            's.address'=>"company", 's.phone'=>"company", 's.email'=>"company",
+            's.address'=>"company", 's.zip'=>"company", 's.town'=>"company", 's.phone'=>"company", 's.email'=>"company",
             't.libelle'=>"company"
 		);	// We define here only fields that use another picto
         if (empty($conf->fournisseur->enabled))

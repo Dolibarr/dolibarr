@@ -146,6 +146,8 @@ $fieldstosearchall = array(
 	'p.email'=>'EMail',
 	's.nom'=>"ThirdParty",
 	'p.phone'=>"Phone",
+    'p.note_public'=>"NotePublic",
+    'p.note_private'=>"NotePrivate",
 );
 
 // Definition of fields for list
@@ -398,7 +400,7 @@ $num = $db->num_rows($result);
 
 $arrayofselected=is_array($toselect)?$toselect:array();
 
-if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && ($sall != '' || $seearch_cti != ''))
+if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && ($sall != '' || $search_cti != ''))
 {
 	$obj = $db->fetch_object($resql);
 	$id = $obj->rowid;
@@ -446,7 +448,7 @@ $arrayofmassactions =  array(
 //    'builddoc'=>$langs->trans("PDFMerge"),
 );
 //if($user->rights->societe->creer) $arrayofmassactions['createbills']=$langs->trans("CreateInvoiceForThisCustomer");
-if ($user->rights->societe->supprimer) $arrayofmassactions['predelete']=$langs->trans("Delete");
+if ($user->rights->societe->supprimer) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 

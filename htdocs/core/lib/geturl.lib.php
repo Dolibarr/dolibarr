@@ -22,10 +22,10 @@
  */
 
 /**
- * Function get content from an URL (use proxy if proxy defined)
+ * Function to get a content from an URL (use proxy if proxy defined)
  *
  * @param	string	  $url 				    URL to call.
- * @param	string    $postorget		    'POST', 'GET', 'HEAD', 'PUT', 'PUTALREADYFORMATED', 'DELETE'
+ * @param	string    $postorget		    'POST', 'GET', 'HEAD', 'PUT', 'PUTALREADYFORMATED', 'POSTALREADYFORMATED', 'DELETE'
  * @param	string    $param			    Parameters of URL (x=value1&y=value2) or may be a formated content with PUTALREADYFORMATED
  * @param	integer   $followlocation		1=Follow location, 0=Do not follow
  * @param	string[]  $addheaders			Array of string to add into header. Example: ('Accept: application/xrds+xml', ....)
@@ -34,7 +34,7 @@
 function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 1, $addheaders = array())
 {
     //declaring of global variables
-    global $conf, $langs;
+    global $conf;
     $USE_PROXY=empty($conf->global->MAIN_PROXY_USE)?0:$conf->global->MAIN_PROXY_USE;
     $PROXY_HOST=empty($conf->global->MAIN_PROXY_HOST)?0:$conf->global->MAIN_PROXY_HOST;
     $PROXY_PORT=empty($conf->global->MAIN_PROXY_PORT)?0:$conf->global->MAIN_PROXY_PORT;
@@ -85,6 +85,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
     }
     elseif ($postorget == 'PUT')
     {
+        $array_param=null;
     	curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT'); // HTTP request is 'PUT'
     	if (! is_array($param)) parse_str($param, $array_param);
     	else
@@ -195,6 +196,7 @@ function getRootURLFromURL($url)
 {
 	$prefix='';
 	$tmpurl = $url;
+	$reg = null;
 	if (preg_match('/^(https?:\/\/)/i', $tmpurl, $reg)) $prefix = $reg[1];
 	$tmpurl = preg_replace('/^https?:\/\//i', '', $tmpurl);				// Remove http(s)://
 	$tmpurl = preg_replace('/\/.*$/i', '', $tmpurl);					// Remove part after domain

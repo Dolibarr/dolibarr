@@ -418,7 +418,7 @@ $arrayofmassactions =  array(
 //    'builddoc'=>$langs->trans("PDFMerge"),
 );
 //if($user->rights->societe->creer) $arrayofmassactions['createbills']=$langs->trans("CreateInvoiceForThisCustomer");
-if ($user->rights->societe->supprimer) $arrayofmassactions['predelete']=$langs->trans("Delete");
+if ($user->rights->societe->supprimer) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
@@ -441,17 +441,16 @@ print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="type" value="'.$type.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_project', 0, $newcardbutton, '', $limit);
-
 // Show description of content
-print '<div class="opacitymedium">';
-if ($search_task_user == $user->id) print $langs->trans("MyTasksDesc").'<br><br>';
+$texthelp='';
+if ($search_task_user == $user->id) $texthelp.=$langs->trans("MyTasksDesc");
 else
 {
-	if ($user->rights->projet->all->lire && ! $socid) print $langs->trans("TasksOnProjectsDesc").'<br><br>';
-	else print $langs->trans("TasksOnProjectsPublicDesc").'<br><br>';
+    if ($user->rights->projet->all->lire && ! $socid) $texthelp.=$langs->trans("TasksOnProjectsDesc");
+    else $texthelp.=$langs->trans("TasksOnProjectsPublicDesc");
 }
-print '</div>';
+
+print_barre_liste($form->textwithpicto($title, $texthelp), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_project', 0, $newcardbutton, '', $limit);
 
 $topicmail="Information";
 $modelmail="task";
@@ -506,7 +505,7 @@ if (! empty($moreforfilter))
 if ($massactionbutton) $selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
 
 print '<div class="div-table-responsive">';
-print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'" id="tablelines3">'."\n";
+print '<table class="tagtable nobottomiftotal liste'.($moreforfilter?" listwithfilterbefore":"").'" id="tablelines3">'."\n";
 
 print '<tr class="liste_titre_filter">';
 if (! empty($arrayfields['t.ref']['checked']))
@@ -524,7 +523,7 @@ if (! empty($arrayfields['t.label']['checked']))
 // Start date
 if (! empty($arrayfields['t.dateo']['checked']))
 {
-	print '<td class="liste_titre center">';
+	print '<td class="liste_titre center minwidth150">';
 	if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="search_sday" value="'.$search_sday.'">';
 	print '<input class="flat" type="text" size="1" maxlength="2" name="search_smonth" value="'.$search_smonth.'">';
 	$formother->select_year($search_syear?$search_syear:-1, 'search_syear', 1, 20, 5);
@@ -533,7 +532,7 @@ if (! empty($arrayfields['t.dateo']['checked']))
 // End date
 if (! empty($arrayfields['t.datee']['checked']))
 {
-	print '<td class="liste_titre center">';
+	print '<td class="liste_titre center minwidth150">';
 	if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="search_eday" value="'.$search_eday.'">';
 	print '<input class="flat" type="text" size="1" maxlength="2" name="search_emonth" value="'.$search_emonth.'">';
 	$formother->select_year($search_eyear?$search_eyear:-1, 'search_eyear', 1, 20, 5);
@@ -658,7 +657,7 @@ while ($i < min($num, $limit))
 		// Ref
 		if (! empty($arrayfields['t.ref']['checked']))
 		{
-			print '<td>';
+			print '<td class="nowraponall">';
 			print $object->getNomUrl(1, 'withproject');
 			if ($object->hasDelay()) print img_warning("Late");
 			print '</td>';

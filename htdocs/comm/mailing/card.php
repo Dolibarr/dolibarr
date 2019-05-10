@@ -97,7 +97,7 @@ if (empty($reshook))
 		}
 		else
 		{
-			$result=$object->createFromClone($object->id, $_REQUEST["clone_content"], $_REQUEST["clone_receivers"]);
+			$result=$object->createFromClone($user, $object->id, $_REQUEST["clone_content"], $_REQUEST["clone_receivers"]);
 			if ($result > 0)
 			{
 				header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);

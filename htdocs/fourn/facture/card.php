@@ -101,6 +101,7 @@ $result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture', 
 $permissionnote=$user->rights->fournisseur->facture->creer;	// Used by the include of actions_setnotes.inc.php
 $permissiondellink=$user->rights->fournisseur->facture->creer;	// Used by the include of actions_dellink.inc.php
 $permissionedit=$user->rights->fournisseur->facture->creer; // Used by the include of actions_lineupdown.inc.php
+$permissiontoadd=$user->rights->fournisseur->facture->creer; // Used by the include of actions_addupdatedelete.inc.php
 
 
 /*
@@ -138,27 +139,25 @@ if (empty($reshook))
 	}
 
 	// Action clone object
-	if ($action == 'confirm_clone' && $confirm == 'yes')
+	if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontoadd)
 	{
-	//    if (1==0 && empty($_REQUEST["clone_content"]) && empty($_REQUEST["clone_receivers"]))
-	//    {
-	//        $mesg='<div class="error">'.$langs->trans("NoCloneOptionsSpecified").'</div>';
-	//    }
-	//    else
-	//    {
-			$result=$object->createFromClone($id);
-			if ($result > 0)
-			{
-				header("Location: ".$_SERVER['PHP_SELF'].'?action=editref_supplier&id='.$result);
-				exit;
-			}
-			else
-			{
-				$langs->load("errors");
-				setEventMessages($langs->trans($object->error), null, 'errors');
-				$action='';
-			}
-	//    }
+	    $objectutil = dol_clone($object, 1);   // To avoid to denaturate loaded object when setting some properties for clone. We use native clone to keep this->db valid.
+
+	    if (GETPOST('newsupplierref', 'alphanohtml')) $objectutil->ref_supplier = GETPOST('newsupplierref', 'alphanohtml');
+	    $objectutil->date = dol_mktime(12, 0, 0, GETPOST('newdatemonth', 'int'), GETPOST('newdateday', 'int'), GETPOST('newdateyear', 'int'));
+
+	    $result=$objectutil->createFromClone($user, $id);
+        if ($result > 0)
+        {
+        	header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);
+        	exit;
+        }
+        else
+        {
+        	$langs->load("errors");
+        	setEventMessages($objectutil->error, $objectutil->errors, 'errors');
+        	$action='';
+        }
 	}
 
 	elseif ($action == 'confirm_valid' && $confirm == 'yes' &&
@@ -1756,7 +1755,7 @@ if ($action == 'create')
 			});
 			</script>';
 		}
-		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=0&fournisseur=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddThirdParty").'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
+		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=0&fournisseur=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddThirdParty").'</span><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
 	}
 	print '</td></tr>';
 
@@ -2228,11 +2227,11 @@ else
 		{
 			// Create an array for form
 			$formquestion=array(
-			//'text' => $langs->trans("ConfirmClone"),
-			//array('type' => 'checkbox', 'name' => 'clone_content',   'label' => $langs->trans("CloneMainAttributes"),   'value' => 1)
+			    array('type' => 'text', 'name' => 'newsupplierref', 'label' => $langs->trans("RefSupplier"), 'value' => $langs->trans("CopyOf").' '.$object->ref_supplier),
+			    array('type' => 'date', 'name' => 'newdate', 'label' => $langs->trans("Date"), 'value' => dol_now())
 			);
-			// Paiement incomplet. On demande si motif = escompte ou autre
-			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneInvoice', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
+			// Ask confirmation to clone
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneInvoice', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 250);
 		}
 
 		// Confirmation de la validation
@@ -2790,7 +2789,7 @@ else
 			}
 			else
 			{
-				print '<tr class="oddeven"><td colspan="'.$nbcols.'" class="opacitymedium">'.$langs->trans("None").'</td><td></td><td></td></tr>';
+				print '<tr class="oddeven"><td colspan="'.$nbcols.'"><span class="opacitymedium">'.$langs->trans("None").'</span></td><td></td><td></td></tr>';
 			}
 
 			/*
@@ -3229,6 +3228,7 @@ else
 		$modelmail='invoice_supplier_send';
 		$defaulttopic='SendBillRef';
 		$diroutput = $conf->fournisseur->facture->dir_output;
+		$autocopy='MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO';
 		$trackid = 'sin'.$object->id;
 
 		include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';

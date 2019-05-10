@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - errors
 ErrorBadValueForParamNotAString=Ungültiger Wert für ihre Parameter. Das passiert normalerweise, wenn die Übersetzung fehlt.
 ErrorFailToRenameFile=Konnte die Datei <b>'%s'</b> nicht in <b>'%s'</b> umzubenennen.
-ErrorBadThirdPartyName=Der für den Geschäftspartner eingegebene Name ist ungültig.
 ErrorBadValueForParameter=Ungültiger Wert '%s' für Parameter '%s'
 ErrorFieldsRequired=Ein oder mehrere erforderliche Felder wurden nicht ausgefüllt-
 ErrorFileSizeTooLarge=Die Grösse der gewählten Datei übersteigt den zulässigen Maximalwert.
@@ -9,9 +8,9 @@ ErrorSizeTooLongForIntType=Die Grösse überschreitet das Maximum für den Typ '
 ErrorSizeTooLongForVarcharType=Die Grösse überschreitet das Maximum für den Typ 'string' (%s Zeichen maximal)
 ErrorNoValueForCheckBoxType=Bitte Wert für Checkbox-Liste eingeben
 ErrorModuleSetupNotComplete=Das Setup des Moduls scheint unvollständig zu sein. Führen Sie nochmal das Setup aus um das Modul zu vervollständigen.
-ErrorMaxNumberReachForThisMask=Maximum Grösse für diese Maske erreicht
 ErrorProdIdAlreadyExist=%s wurde bereits einem Geschäftspartner zugewiesen
 ErrorForbidden3=Es scheint keine ordnungsgemässe Authentifizierung für das System vorzuliegen. Bitte werfen Sie einen Blick auf die Systemdokumentation um die entsprechenden Authentifizierungsoptionen zu verwalten (htaccess, mod_auth oder andere...)
+ErrorBadValueForCode=Unzulässiger Code-Wert. Versuchen Sie es mit einem anderen Wert erneut...
 ErrorDateMustBeBeforeToday=Datum darf nicht in der Zukunft sein
 ErrorWarehouseRequiredIntoShipmentLine=Warenlager ist auf der Lieferzeile erforderlich.
 ErrorFileMustHaveFormat=Datei muss das Format %s haben

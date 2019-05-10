@@ -63,11 +63,16 @@ if (empty($action) && empty($id) && empty($ref)) $action='view';
 //if ($user->societe_id > 0) $socid = $user->societe_id;
 //$result = restrictedArea($user, 'website', $id);
 
+$permissionnote=$user->rights->websiteaccount->write;	// Used by the include of actions_setnotes.inc.php
+$permissiondellink=$user->rights->websiteaccount->write;	// Used by the include of actions_dellink.inc.php
+$permissionedit=$user->rights->websiteaccount->write; // Used by the include of actions_lineupdown.inc.php
+$permissiontoadd=$user->rights->websiteaccount->write; // Used by the include of actions_addupdatedelete.inc.php
+
 // fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once.
 
 
 
