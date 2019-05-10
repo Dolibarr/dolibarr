@@ -307,7 +307,7 @@ elseif ($event->type == 'payment_method.attached') {
 require_once DOL_DOCUMENT_ROOT.'/societe/class/companypaymentmode.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
 
-      $societeaccount = new SocieteAccount($db);    
+      $societeaccount = new SocieteAccount($db);
       
       $companypaymentmode = new CompanyPaymentMode($db);
       
@@ -351,7 +351,7 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
 elseif ($event->type == 'payment_method.updated' || $event->type == 'payment_method.attached') {
 require_once DOL_DOCUMENT_ROOT.'/societe/class/companypaymentmode.class.php';
 			$companypaymentmode = new CompanyPaymentMode($db);
-      $companypaymentmode = fetch('',$db->escape($event->data->object->id));
+            $companypaymentmode = fetch('', $db->escape($event->data->object->id));
 			$companypaymentmode->bank            = null;
 			$companypaymentmode->label           = null;
 			$companypaymentmode->number          = $db->escape($event->data->object->id);
@@ -385,7 +385,7 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/companypaymentmode.class.php';
 			{
 				$db->rollback();
 			}
-} 
+}
 elseif ($event->type == 'payment_method.detached') {
     $db->begin();
     $sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_rib WHERE ref = '".$db->escape($event->data->object->id)."' and status = $servicestatus";
