@@ -3,7 +3,7 @@
  * Copyright (C) 2014-2016  Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) ---Put here your own copyright and developer email---
+ * Copyright (C) 2019       Thibault FOUCART    <support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -313,6 +313,40 @@ class SocieteAccount extends CommonObject
 
 		return $key;
 	}
+  
+	/**
+	 * Try to find the thirdparty id for an another site/system.
+	 *
+	 * @param	int		$id			Id of third party
+	 * @param	string	$site		Site (example: 'stripe', '...')
+	 * @param	int		$status		Status (0=test, 1=live)
+	 * @return	string				Stripe customer ref 'cu_xxxxxxxxxxxxx' or ''
+	 */
+	public function retrieveCustomerAccount($id, $site, $status = 0)
+	{
+		$sql = "SELECT sa.fk_soc as fk_soc, sa.key_account, sa.entity";
+		$sql.= " FROM " . MAIN_DB_PREFIX . "societe_account as sa";
+		$sql.= " WHERE sa.key_account = '" . $id . "'";
+		$sql.= " AND sa.entity IN (".getEntity('societe').")";
+		$sql.= " AND sa.site = '".$this->db->escape($site)."' AND sa.status = ".((int) $status);
+		$sql.= " AND sa.fk_soc IS NOT NULL AND sa.fk_soc <> ''";
+		//$sql.= " ORDER BY sa.key_account DESC";
+
+		dol_syslog(get_class($this) . "::getCustomerAccount Try to find the first thirdparty id for ".$site." of thirdparty id=".$id, LOG_DEBUG);
+		$result = $this->db->query($sql);
+		if ($result) {
+			if ($this->db->num_rows($result)) {
+				$obj = $this->db->fetch_object($result);
+				$socid = $obj->fk_soc;
+			} else {
+				$socid = '';
+			}
+		} else {
+			$key = '';
+		}
+
+		return $socid;
+	}  
 
 	/**
 	 * Update object into database
