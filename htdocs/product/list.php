@@ -330,7 +330,7 @@ $reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // No
 $sql.=$hookmanager->resPrint;
 $sql.= " GROUP BY p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type,";
 $sql.= " p.fk_product_type, p.duration, p.weight, p.length, p.surface, p.volume, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock,";
-$sql.= ' p.datec, p.tms, p.entity, p.tobatch, p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export, p.accountancy_code_buy, p.pmp';
+$sql.= ' p.datec, p.tms, p.entity, p.tobatch, p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export, p.accountancy_code_buy, p.pmp, p.stock';
 
 if (!empty($conf->variants->enabled) && (!empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD) && ! $show_childproducts )) {
 	$sql .= ', pac.rowid';
