@@ -437,7 +437,7 @@ class FormOther
         if (empty($user->rights->user->user->lire) && $user->socid)
         {
             $sql_usr.=" UNION ";
-            $sql_usr.= "SELECT DISTINCT u2.rowid, u2.lastname, u2.firstname, u2.statut, u2.login";
+            $sql_usr.= "SELECT u2.rowid, u2.lastname, u2.firstname, u2.statut, u2.login";
             $sql_usr.= " FROM ".MAIN_DB_PREFIX."user as u2, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 
             if (! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
@@ -445,9 +445,7 @@ class FormOther
             	if (! empty($user->admin) && empty($user->entity) && $conf->entity == 1) {
             		$sql_usr.= " WHERE u2.entity IS NOT NULL"; // Show all users
             	} else {
-            		$sql_usr.= ",".MAIN_DB_PREFIX."usergroup_user as ug2";
-            		$sql_usr.= " WHERE ug2.fk_user = u2.rowid";
-            		$sql_usr.= " AND ug2.entity IN (".getEntity('user').")";
+            		$sql_usr.= " WHERE EXISTS (SELECT ug2.fk_user FROM ".MAIN_DB_PREFIX."usergroup_user as ug2 WHERE u2.rowid = ug2.fk_user AND ug2.entity IN (".getEntity('user').") )";
             	}
             }
             else
