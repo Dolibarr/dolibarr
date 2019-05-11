@@ -6,14 +6,159 @@ English Dolibarr ChangeLog
 ***** ChangeLog for 10.0.0 compared to 9.0.0 *****
 For Users:
 NEW: Module "Ticket" is available as a stable module.
-NEW: module "Email Collector" is available as a stable module.
-NEW: module "TakePOS" is available as a stable module.
+NEW: Module "Email Collector" is available as a stable module.
+NEW: Module "TakePOS" is available as a stable module.
 NEW: Experimental module "Vendor receptions".
 NEW: Experimental module "BOM".
-FIX: Disallow line start date if after end date.
+NEW: Accounting - Add default accounting account for member subcriptions
+NEW: Accounting - More comprehensive menu
+NEW: Agenda/event list: add description column (hidden by default)
+NEW: Add accounting account for result
+NEW: Add accounting code for EEC sales and export sales on products
+NEW: Add a security permission to edit php dynamic content on website.
+NEW: Add attached document on bank account visible in automatic ECM.
+NEW: Add Autofill Remainder Amount to Expense Report Payment Page
+NEW: Add conf to set a search entry to the top
+NEW: add hidden option  DISPLAY_DISCOUNTED_SUPPLIER_PRICE
+NEW: add hidden option  MAIN_DEFAULT_LANGUAGE_FILTER
+NEW: add hidden option  NO_CONCAT_DESCRIPTION
+NEW: Add contact status in category export
+NEW: Add Default Warehouse to user record (if module stock is on)
+NEW: Add employee/user to subledger account list
+NEW: Add gender in member card
+NEW: Add getFormatedCustomerRef and getFormatedSupplierRef methods
+NEW: Add hidden option for ACCOUNTANCY_COMBO_FOR_AUX
+NEW: Add hidden option 'ADD_UNSPLASH_LOGIN_BACKGROUND'
+NEW: Add Hidden option 'OVERRIDE_VAT_FOR_EXPENSE_REPORT'
+NEW: Add hidden option to set a search entry to the top
+NEW: add hidden option MAIN_DOC_UPLOAD_NOT_RENAME_BY_DEFAULT
+NEW: Add history to view and print previous sales on TakePos.
+NEW: Add import of accounting account for intra/export selling on product card
+NEW: Adding code to show update date of supplier price shown
+NEW: Add line total on list of payments
+NEW: Add LinkedIn field in social network module
+NEW: Add more complete error messages in log on stripe payments
+NEW: Add no_email field in contact list
+NEW: Add notes are show in tooltips
+NEW: Add option DONATION_USE_THIRDPARTIES in admin of membership module
+NEW: Add option MAIN_ALLOW_SELECT2_WITH_SMARTPHONE
+NEW: Add option STOCK_SHOW_VIRTUAL_STOCK_IN_PRODUCTS_COMBO
+NEW: add page to setup opening hours of the company
+NEW: add payments table to pdf of expense report
+NEW: add payment terms to invoices list
+NEW: Add picto of deletion on mass action combo lists
+NEW: add product extrafields available into shipping export
+NEW: add ref supplier on supplier invoice
+NEW: Add stats on entries & movements by fiscal year
+NEW: Add subledger in various payment module
+NEW: Add tag for ODT generation for localtax rates
+NEW: Add the now link when creating expense report
+NEW: Ask date of invoice when using the Clone feature.
+NEW: auto event msg
+NEW: Automatically binding for intra/export accountancy code in customer list
+NEW: automatic / manual selector form
+NEW: Better explanation for setup of WebDav module
+NEW: Can add more lines on situation invoices at end of project when there is extra to add.
+NEW: Can change the customer account of an instance
+NEW: Can choose the root category to show products for TakePOS module
+NEW: Can edit supplier on draft order supplier
+NEW: Can enter price with or without tax when entering expense repor line
+NEW: Can filter on the date of period for social contributions
+NEW: Can generate invoices from the timespent entered on a project
+NEW: Can update product supplier price ref
+NEW: Can upload files from the edit page of expense report
+NEW: Color for hover and for checked line is on by default
+NEW: Column of parent company is available in list of third parties
+NEW: conditionnal add member button by statut
+NEW: constant KEEP_DISCOUNT_LINES_FROM_ORIGIN
+NEW: Contact related items tab
+NEW: Can create of supplier invoice from a reception
+NEW: Ensure External RSS Links Open in New Window
+NEW: Export available for reception module
+NEW: Extend import option to Order's card and Propal's card
+NEW: filter by thirdparty on report CA by prod/serv
+NEW: Save space by moving the meteo on the title line
+NEW: Get the list of groups of a user with the REST API.
+NEW: Grant right to child classes to use Category methods
+NEW: Hidden conf to improve pdf desc item visibitity
+NEW: Hidden option MAIN_CAN_EDIT_SUPPLIER_ON_SUPPLIER_ORDER to edit supplier on draft supplier order
+NEW: Improve Displaying Access Keys in Navigation
+NEW: improve Expensereport, Inverse Receiver
+NEW: improve pdf desc item visibitity
+NEW: Introduce a config parameter $dolibarr_main_instance_unique_id
+NEW: Introduce css "nobottomiftotal"
+NEW: Introduce PhpSpreadsheet for export (need php5.6+)
+NEW: Invoice creation from the timesheet
+NEW: list of stripe's payout
+NEW: Look and feel v10 - Add CSS tabBarNoTop
+NEW: | make credit note from invoice
+NEW: Manage account sell_intra & sell_export in page accoutancy admin default product
+NEW: manage loan schedule
+NEW: manage status of member type
+NEW: mass action "create bills" for validated reception
+NEW: measuring unit dictionary and product size/unit import
+NEW: modele pdf canelle_reception to display linked reception to line
+NEW: moral/physic status can be defined at member type level
+NEW: Pagination into list of time spent
+NEW: Performance enhancement (Replace dirname(__FILE__) with __DIR__)
+NEW: POS support in order (ex: online cart)
+NEW: Preview of images into the filemanager component.
+NEW: Resource module can be used in products/services (in a dedicated tab)
+NEW: Retrieve invoice infos from order when billing shipment
+NEW: save and display type of membership in subscription table for more explicit historic
+NEW: setup default thirdparty type (customer or prospect/customer)
+NEW: add shipping set draft button and can update line
+NEW: show in blod, the invoice amount where we came from, when making payment
+NEW: Show product dimensions in product tooltips.
+NEW: Show the latest date of subscription in member statistics reports.
+NEW: sort list of models alphabetically
+NEW: Stripe Payment Intent (need option to use this new Stripe api method)
+NEW: Prepare to support stripe payment prelevement
+NEW: Can support barcode on supplier price references.
+NEW: Support tag {ccc} on payment ref
+NEW: The preview of PDF files generates only 1 png file, even if several pages.
+NEW: thirdparty in donation if option ON
+NEW: Tooltip with vat amount and price incl tax on lines of objects.
+NEW: Unsubscribed emails are now stored in a dedicated table
+NEW: Update working chkbxlst filter for lists
+NEW: Use ajax switch into setup of donation.php and multi-currency module.
+NEW: use recipient language when generating the fullname for emails
+NEW: When you create product or service, sell accountancy account by default is suggested.
+NEW: Widget birthdays of the month.
+NEW: Option in workflow module to set a reception billed on validate supplier bill
 
 For Developers:
 NEW: Module "DebugBar" is available as a stable module.
+NEW: Add afterSelectContactOptions hook
+NEW: add API REST for donations
+NEW: Add a script to purge data older than a defined creation date
+NEW: Add constant XFRAMEOPTIONS_ALLOWALL
+NEW: Add function isValidVATID()
+NEW: ADD document's product support in API
+NEW: REST API: get the list of objects in a category.
+NEW: Update Stripe library to 6.34.3
+NEW: Upgrade jquery lib to 3.3.1
+NEW: link/delete contact in invoice API and object
+NEW: link/delete contact in order API and object
+NEW: Add hook 'addHtmlHeader'
+NEW: Add hooks in accountancy index
+NEW: adding hooks to createRecurringInvoices()
+NEW: Adding hooks to facturerec
+NEW: Add parameter replaceambiguouschars on getRandomPassword function
+NEW: Add property 'noteditable' in modulebuilder
+NEW: Add the current modulepart to the Conf class
+NEW: Add trigger FICHINTER_UNVALIDATE
+NEW: Add visibility with value 4 in framework to define fields to show
+NEW: advanced parameters for initiate a new module
+NEW: API to list currencies
+NEW: API Proposal, Orders, Invoices: Add contact details
+NEW: conf to change concat desc order
+NEW: enhance management of webhooks
+NEW: Generation of doc by modulebuilder can include README and CHANGELOG
+NEW: massfilesarea feature for plugin modules
+NEW: Show enabled modules in dol_print_error
+NEW: Simplification of styles. 
+NEW: Clean code of a lot of deprecated code.
 
 
 WARNING:
