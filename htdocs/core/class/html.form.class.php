@@ -3314,7 +3314,7 @@ class Form
 			            if ($obj->situation_final != 1) {
 							//Not prov?
 			                if (substr($obj->facnumber, 1, 4) != 'PROV') {
-			                    if ($selected == $obj->situation_final) {
+			                    if ($selected == $obj->rowid) {
 			                        $opt .= '<option value="' . $obj->rowid . '" selected>' . $obj->facnumber . '</option>';
 								} else {
 								    $opt .= '<option value="' . $obj->rowid . '">' . $obj->facnumber . '</option>';
