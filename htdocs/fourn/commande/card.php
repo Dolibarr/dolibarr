@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric	Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2016 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2010-2019 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2015 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2011-2015 Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2012-2016 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
@@ -399,8 +399,6 @@ if (empty($reshook))
 				if (empty($tva_tx)) $tva_npr=0;
 				$localtax1_tx= get_localtax($tva_tx, 1, $mysoc, $object->thirdparty, $tva_npr);
 				$localtax2_tx= get_localtax($tva_tx, 2, $mysoc, $object->thirdparty, $tva_npr);
-
-				$remise_percent = $productsupplier->remise_percent?$productsupplier->remise_percent:$remise_percent;
 
 				$result=$object->addline(
 					$desc,
