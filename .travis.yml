@@ -8,9 +8,6 @@ notifications:
     on_success: never # [always|never|change] default: change
     on_failure: change # [always|never|change] default: always
     
-services:
- - memcached # will start memcached
-
 # This will tell travis to run phpunit
 language: php
 php:
@@ -29,12 +26,6 @@ before_script:
  - echo Home dir is `echo ~`
  - export PHPV=`phpenv version-name`
  - echo PHP version $PHPV 
-# - echo Update composer
-# - ~/.phpenv/versions/$(phpenv version-name)/bin/composer.phar self-update 
- - echo Install phpcs then show installed rules
- - pyrus install pear/PHP_CodeSniffer
- - phpenv rehash
- - phpcs -i
  - echo Create dir $(pwd)/htdocs/documents
  - sudo mkdir -p $(pwd)/htdocs/documents/admin/temp;
  - sudo touch $(pwd)/htdocs/documents/dolibarr.log;
@@ -42,46 +33,87 @@ before_script:
  - sudo chmod -R a+rwx $(pwd);
  - sudo chown -R www-data:travis $(pwd)/htdocs/documents;
  - find $(pwd)/htdocs/documents -type d -exec ls -alt {} \;
- - echo Edit php.ini file
- - echo 'date.timezone = "Europe/Paris"' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
-# - echo "extension = memcache.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
- - echo "extension = memcached.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
- - sh -c "if [ '$PHPV' = '5.3' ]; then echo 'extension = apc.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi"
- - sh -c "if [ '$PHPV' = '5.4' ]; then echo 'extension = apc.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi"
- - sh -c "if [ '$PHPV' = '5.3' ]; then echo 'zend_extension_ts = xdebug.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi"
- - sh -c "if [ '$PHPV' = '5.4' ]; then echo 'zend_extension_ts = xdebug.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi"
- - cat ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
- - echo Init database
- - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'DROP DATABASE IF EXISTS myapp_test;' -U postgres; fi"
- - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'CREATE DATABASE myapp_test;' -U postgres; fi"
- - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'DROP DATABASE IF EXISTS myapp_test;'; fi"
- - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'CREATE DATABASE IF NOT EXISTS myapp_test;'; fi"
- - sh -c "if [ '$DB' = 'mysql' ]; then mysql -D myapp_test < $(pwd)/dev/initdata/mysqldump_dolibarr_3.5.0.sql; fi"
- - echo Create config file htdocs/conf/conf.php
- - echo '<?php ' > htdocs/conf/conf.php
- - sh -c "if [ '$DB' = 'pgsql' ]; then echo '$'dolibarr_main_db_type=\'pgsql\'';' >> htdocs/conf/conf.php; fi"
- - sh -c "if [ '$DB' = 'mysql' ]; then echo '$'dolibarr_main_db_type=\'mysqli\'';' >> htdocs/conf/conf.php; fi"
- - echo '$'dolibarr_main_url_root=\'http://localhost/\'';' >> htdocs/conf/conf.php
- - echo '$'dolibarr_main_document_root=\'$(pwd)/htdocs\'';' >> htdocs/conf/conf.php
- - echo '$'dolibarr_main_data_root=\'$(pwd)/htdocs/documents\'';' >> htdocs/conf/conf.php
- - echo '$'dolibarr_main_db_host=\'localhost\'';' >> htdocs/conf/conf.php
- - echo '$'dolibarr_main_db_name=\'myapp_test\'';' >> htdocs/conf/conf.php
- - echo '$'dolibarr_main_db_user=\'travis\'';' >> htdocs/conf/conf.php
- - echo '$'dolibarr_main_authentication=\'dolibarr\'';' >> htdocs/conf/conf.php
- - echo '?>' >> htdocs/conf/conf.php
- - echo Show conf.php content
- - cat htdocs/conf/conf.php
- - echo Install apache server
- - sudo apt-get update
- - sudo apt-get install -y --force-yes apache2 libapache2-mod-php5 php5-curl php5-mysql php5-pgsql php5-intl
- - sudo sed -i -e "s,/var/www,$(pwd)/htdocs,g" /etc/apache2/sites-available/default
- - echo Show default virtual host
- - sudo cat /etc/apache2/sites-available/default
- - sudo /etc/init.d/apache2 restart
- - wget http://localhost/
- - cat index.html
- 
 
+- |
+  echo "Setting up PHP"
+  echo
+  echo "Set timezone"
+  echo 'date.timezone = "Europe/Paris"' >> ~/.phpenv/versions/$PHP_VERSION_NAME/etc/php.ini
+  if [ "$TRAVIS_PHP_VERSION" = '5.3' ] || [ "$TRAVIS_PHP_VERSION" = '5.4' ]; then
+    #echo
+    #echo "Enabling APC for PHP <= 5.4"
+    #   Documentation says it should be available for PHP <= 5.6 but it's not for 5.5 and 5.6!
+    #echo 'extension = apc.so' >> ~/.phpenv/versions/$PHP_VERSION_NAME/etc/php.ini
+    echo
+    echo "Enabling Memcached for PHP <= 5.4"
+    #   Documentation says it should be available for all PHP versions but it's not for 5.5 and 5.6, 7.0 and nightly!
+    echo 'extension = memcached.so' >> ~/.phpenv/versions/$PHP_VERSION_NAME/etc/php.ini
+  fi
+  phpenv rehash
+  echo
+
+- |
+  echo "Setting up database"
+  if [ "$DB" = 'mysql' ] || [ "$DB" = 'mariadb' ]; then
+    echo "MySQL"
+    mysql -e 'DROP DATABASE IF EXISTS travis;'
+    mysql -e 'CREATE DATABASE IF NOT EXISTS travis;'
+    mysql -D travis < dev/initdata/mysqldump_dolibarr_3.5.0.sql
+  fi
+  # FIXME: find a way to import a MySQL dump into PostgreSQL
+  #if [ "$DB" = 'postgresql' ]; then
+  #  pgsql travis < dev/initdata/mysqldump_dolibarr_3.5.0.sql
+  #fi
+  # TODO: SQLite
+  echo
+ 
+- |
+  export CONF_FILE=htdocs/conf/conf.php
+  echo "Setting up Dolibarr $CONF_FILE"
+  echo '<?php ' > $CONF_FILE
+  echo '$'dolibarr_main_url_root=\'http://127.0.0.1\'';' >> $CONF_FILE
+  echo '$'dolibarr_main_document_root=\'$TRAVIS_BUILD_DIR/htdocs\'';' >> $CONF_FILE
+  echo '$'dolibarr_main_data_root=\'$TRAVIS_BUILD_DIR/documents\'';' >> $CONF_FILE
+  echo '$'dolibarr_main_db_host=\'127.0.0.1\'';' >> $CONF_FILE
+  echo '$'dolibarr_main_db_name=\'travis\'';' >> $CONF_FILE
+  echo '$'dolibarr_main_db_user=\'travis\'';' >> $CONF_FILE
+  if [ "$DB" = 'mysql' ] || [ "$DB" = 'mariadb' ]; then
+    echo '$'dolibarr_main_db_type=\'mysqli\'';' >> $CONF_FILE
+  fi
+  # FIXME
+  #if [ "$DB" = 'postgresql' ]; then
+  #  echo '$'dolibarr_main_db_type=\'pgsql\'';' >> $CONF_FILE
+  #fi
+  # TODO: SQLite
+  echo '$'dolibarr_main_authentication=\'dolibarr\'';' >> $CONF_FILE
+  cat $CONF_FILE
+  echo
+
+- |
+  echo "Setting up Apache + FPM"
+  # enable php-fpm
+  cp ~/.phpenv/versions/$PHP_VERSION_NAME/etc/php-fpm.conf.default ~/.phpenv/versions/$PHP_VERSION_NAME/etc/php-fpm.conf
+  if [ "$TRAVIS_PHP_VERSION" = '7.0' ] || [ "$TRAVIS_PHP_VERSION" = 'nightly' ]; then
+    # Copy the included pool
+    cp ~/.phpenv/versions/$PHP_VERSION_NAME/etc/php-fpm.d/www.conf.default ~/.phpenv/versions/$PHP_VERSION_NAME/etc/php-fpm.d/www.conf
+  fi
+  if [ "$DEBUG" = true ]; then
+    cat ~/.phpenv/versions/$PHP_VERSION_NAME/etc/php-fpm.conf
+  fi
+  sudo a2enmod rewrite actions fastcgi alias
+  echo "cgi.fix_pathinfo = 1" >> ~/.phpenv/versions/$PHP_VERSION_NAME/etc/php.ini
+  if [ "$DEBUG" = true ]; then
+    cat ~/.phpenv/versions/$PHP_VERSION_NAME/etc/php.ini
+  fi
+  ~/.phpenv/versions/$PHP_VERSION_NAME/sbin/php-fpm
+  # configure apache virtual hosts
+  sudo cp -f build/travis-ci/apache.conf /etc/apache2/sites-available/default
+  sudo sed -e "s?%TRAVIS_BUILD_DIR%?$TRAVIS_BUILD_DIR?g" --in-place /etc/apache2/sites-available/default
+  if [ "$DEBUG" = true ]; then
+    sudo cat /etc/apache2/sites-available/default
+  fi
+  sudo service apache2 restart
+  echo
 
 script: 
  - cd htdocs/install
