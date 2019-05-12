@@ -414,28 +414,6 @@ if (empty($reshook))
 		}
 	}
 
-	if ($action == 'confirm_deletecard' && GETPOST('confirm', 'alpha') == 'yes')
-	{
-		$companypaymentmode = new CompanyPaymentMode($db);
-		if ($companypaymentmode->fetch($ribid?$ribid:$id))
-		{
-			$result = $companypaymentmode->delete($user);
-			if ($result > 0)
-			{
-				$url = $_SERVER['PHP_SELF']."?socid=".$object->id;
-				header('Location: '.$url);
-				exit;
-			}
-			else
-			{
-				setEventMessages($companypaymentmode->error, $companypaymentmode->errors, 'errors');
-			}
-		}
-		else
-		{
-			setEventMessages($companypaymentmode->error, $companypaymentmode->errors, 'errors');
-		}
-	}
 	if ($action == 'confirm_delete' && GETPOST('confirm', 'alpha') == 'yes')
 	{
 		$companybankaccount = new CompanyBankAccount($db);
@@ -618,7 +596,7 @@ if (empty($reshook))
 				setEventMessages($e->getMessage(), null, 'errors');
 			}
 		}
-		elseif ($action == 'confirm_deletepaymentmethod' && $source)
+		elseif ($action == 'confirm_deletepaymentmethod' && $source && GETPOST('confirm', 'alpha') == 'yes')
 		{
 			try {
 				$cu=$stripe->customerStripe($object, $stripeacc, $servicestatus);
@@ -628,6 +606,26 @@ if (empty($reshook))
 				{
 					$payment_method->detach();
 				}
+             
+		$companypaymentmode = new CompanyPaymentMode($db);
+		if ($companypaymentmode->fetch($ribid?$ribid:$id))
+		{
+			$result = $companypaymentmode->delete($user);
+			if ($result > 0)
+			{
+				$url=DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id;
+				header('Location: '.$url);
+				exit;
+			}
+			else
+			{
+				setEventMessages($companypaymentmode->error, $companypaymentmode->errors, 'errors');
+			}
+		}
+		else
+		{
+			setEventMessages($companypaymentmode->error, $companypaymentmode->errors, 'errors');
+		}
 
 				$url=DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id;
 				header('Location: '.$url);
