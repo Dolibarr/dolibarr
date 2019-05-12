@@ -2425,7 +2425,7 @@ $result = $object->updateline(GETPOST('lineid'), $description, $pu_ht, $qty, GET
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 	// Actions to build doc
-	$upload_dir = $conf->facture->dir_output;
+	$upload_dir = $conf->facture->multidir_output[$object->entity];
 	$permissioncreate=$usercancreate;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
@@ -4859,12 +4859,12 @@ elseif ($id > 0 || ! empty($ref))
 
 		// Documents generes
 		$filename = dol_sanitizeFileName($object->ref);
-		$filedir = $conf->facture->dir_output . '/' . dol_sanitizeFileName($object->ref);
+		$filedir = $conf->facture->multidir_output[$object->entity] . '/' . dol_sanitizeFileName($object->ref);
 		$urlsource = $_SERVER['PHP_SELF'] . '?facid=' . $object->id;
 		$genallowed = $usercanread;
 		$delallowed = $usercancreate;
 
-		print $formfile->showdocuments('facture', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
+		print $formfile->showdocuments('facture', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang, '', $object);
 		$somethingshown = $formfile->numoffiles;
 
 		// Show links to link elements
@@ -4911,7 +4911,7 @@ elseif ($id > 0 || ! empty($ref))
 	// Presend form
 	$modelmail='facture_send';
 	$defaulttopic='SendBillRef';
-	$diroutput = $conf->facture->dir_output;
+	$diroutput = $conf->facture->multidir_output[$object->entity];
 	$trackid = 'inv'.$object->id;
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
