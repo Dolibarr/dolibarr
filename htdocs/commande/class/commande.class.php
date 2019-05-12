@@ -427,8 +427,8 @@ class Commande extends CommonOrder
 				// in order not to lose the attachments
 				$oldref = dol_sanitizeFileName($this->ref);
 				$newref = dol_sanitizeFileName($num);
-				$dirsource = $conf->commande->dir_output.'/'.$oldref;
-				$dirdest = $conf->commande->dir_output.'/'.$newref;
+				$dirsource = $conf->commande->multidir_output[$this->entity].'/'.$oldref;
+				$dirdest = $conf->commande->multidir_output[$this->entity].'/'.$newref;
 				if (file_exists($dirsource))
 				{
 					dol_syslog(get_class($this)."::valid() rename dir ".$dirsource." into ".$dirdest);
@@ -437,7 +437,7 @@ class Commande extends CommonOrder
 					{
 						dol_syslog("Rename ok");
 						// Rename docs starting with $oldref with $newref
-						$listoffiles=dol_dir_list($conf->commande->dir_output.'/'.$newref, 'files', 1, '^'.preg_quote($oldref, '/'));
+						$listoffiles=dol_dir_list($conf->commande->multidir_output[$this->entity].'/'.$newref, 'files', 1, '^'.preg_quote($oldref, '/'));
 						foreach($listoffiles as $fileentry)
 						{
 							$dirsource=$fileentry['name'];
@@ -776,6 +776,7 @@ class Commande extends CommonOrder
 
 		// Clean parameters
 		$this->brouillon = 1;		// set command as draft
+		if (empty($this->entity)) $this->entity = $conf->entity;
 
 		// $date_commande is deprecated
 		$date = ($this->date_commande ? $this->date_commande : $this->date);
@@ -859,7 +860,7 @@ class Commande extends CommonOrder
 		$sql.= ", ".($this->remise_percent>0?$this->db->escape($this->remise_percent):0);
 		$sql.= ", ".(int) $this->fk_incoterms;
 		$sql.= ", '".$this->db->escape($this->location_incoterms)."'";
-		$sql.= ", ".$conf->entity;
+		$sql.= ", ".$this->entity;
         $sql.= ", ".($this->module_source ? "'".$this->db->escape($this->module_source)."'" : "null");
 		$sql.= ", ".($this->pos_source != '' ? "'".$this->db->escape($this->pos_source)."'" : "null");
 		$sql.= ", ".(int) $this->fk_multicurrency;
@@ -1232,6 +1233,7 @@ class Commande extends CommonOrder
 				$this->lines[$i] = $line;
 		}
 
+		$this->entity               = $object->entity;
 		$this->socid                = $object->socid;
 		$this->fk_project           = $object->fk_project;
 		$this->cond_reglement_id    = $object->cond_reglement_id;
@@ -3320,10 +3322,10 @@ class Commande extends CommonOrder
 		{
 			// Remove directory with files
 			$comref = dol_sanitizeFileName($this->ref);
-			if ($conf->commande->dir_output && !empty($this->ref))
+			if ($conf->commande->multidir_output[$this->entity] && !empty($this->ref))
 			{
-				$dir = $conf->commande->dir_output . "/" . $comref ;
-				$file = $conf->commande->dir_output . "/" . $comref . "/" . $comref . ".pdf";
+				$dir = $conf->commande->multidir_output[$this->entity] . "/" . $comref ;
+				$file = $conf->commande->multidir_output[$this->entity] . "/" . $comref . "/" . $comref . ".pdf";
 				if (file_exists($file))	// We must delete all files before deleting directory
 				{
 					dol_delete_preview($this);

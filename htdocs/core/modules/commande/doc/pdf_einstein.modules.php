@@ -239,13 +239,13 @@ class pdf_einstein extends ModelePDFCommandes
             // Definition of $dir and $file
 			if ($object->specimen)
 			{
-				$dir = $conf->commande->dir_output;
+				$dir = $conf->commande->multidir_output[$conf->entity];
 				$file = $dir . "/SPECIMEN.pdf";
 			}
 			else
 			{
 				$objectref = dol_sanitizeFileName($object->ref);
-				$dir = $conf->commande->dir_output . "/" . $objectref;
+				$dir = $conf->commande->multidir_output[$object->entity] . "/" . $objectref;
 				$file = $dir . "/" . $objectref . ".pdf";
 			}
 

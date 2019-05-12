@@ -73,7 +73,7 @@ print '<table summary="who"><tr><td>'.img_picto('', 'who.png', 'class="valigntex
 print '<font style="'.$style1.'">'.$langs->trans("CommunitySupport").'</font>';
 print '<br>'.$langs->trans("TypeOfSupport").': <font style="'.$style2.'">'.$langs->trans("TypeSupportCommunauty").'</font>';
 print '<br>'.$langs->trans("TypeOfHelp").'/'.$langs->trans("Efficiency").'/'.$langs->trans("Price").': ';
-print $langs->trans("TypeHelpDev").'/'.img_picto_common('', 'redstar', 'class="valigntextbottom"', 1).img_picto_common('', 'redstar', 'class="valigntextbottom"', 1).'/'.img_picto_common('', 'star', 'class="valigntextbottom"', 1).img_picto_common('', 'star', 'class="valigntextbottom"', 1).img_picto_common('', 'star', 'class="valigntextbottom"', 1).img_picto_common('', 'star', 'class="valigntextbottom"', 1);
+print $langs->trans("TypeHelpDev").'/'.img_picto_common('', 'redstar', 'class="valigntextbottom minwidth50"', 1).img_picto_common('', 'redstar', 'class="valigntextbottom minwidth50"', 1).'/'.img_picto_common('', 'star', 'class="valigntextbottom"', 1).img_picto_common('', 'star', 'class="valigntextbottom"', 1).img_picto_common('', 'star', 'class="valigntextbottom"', 1).img_picto_common('', 'star', 'class="valigntextbottom"', 1);
 
 print '</td></tr></table>';
 print '</td>';

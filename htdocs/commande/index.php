@@ -235,7 +235,7 @@ $max=5;
  * Last modified orders
  */
 
-$sql = "SELECT c.rowid, c.ref, c.fk_statut, c.facture, c.date_cloture as datec, c.tms as datem,";
+$sql = "SELECT c.rowid, c.entity, c.ref, c.fk_statut, c.facture, c.date_cloture as datec, c.tms as datem,";
 $sql.= " s.nom as name, s.rowid as socid";
 $sql.= ", s.client";
 $sql.= ", s.code_client";
@@ -291,7 +291,7 @@ if ($resql)
 
 			print '<td width="16" class="nobordernopadding hideonsmartphone right">';
 			$filename=dol_sanitizeFileName($obj->ref);
-			$filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($obj->ref);
+			$filedir=$conf->commande->multidir_output[$obj->entity] . '/' . dol_sanitizeFileName($obj->ref);
 			$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
 			print $formfile->getDocumentsLink($commandestatic->element, $filename, $filedir);
 			print '</td></tr></table>';
@@ -317,7 +317,7 @@ else dol_print_error($db);
  */
 if (! empty($conf->commande->enabled))
 {
-	$sql = "SELECT c.rowid, c.ref, c.fk_statut, c.facture, s.nom as name, s.rowid as socid";
+	$sql = "SELECT c.rowid, c.entity, c.ref, c.fk_statut, c.facture, s.nom as name, s.rowid as socid";
     $sql.= ", s.client";
     $sql.= ", s.code_client";
     $sql.= ", s.canvas";
@@ -371,7 +371,7 @@ if (! empty($conf->commande->enabled))
 
 				print '<td width="16" class="nobordernopadding hideonsmartphone right">';
 				$filename=dol_sanitizeFileName($obj->ref);
-				$filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($obj->ref);
+				$filedir=$conf->commande->multidir_output[$obj->entity] . '/' . dol_sanitizeFileName($obj->ref);
 				$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
 				print $formfile->getDocumentsLink($commandestatic->element, $filename, $filedir);
 				print '</td></tr></table>';
@@ -399,7 +399,7 @@ if (! empty($conf->commande->enabled))
  */
 if (! empty($conf->commande->enabled))
 {
-	$sql = "SELECT c.rowid, c.ref, c.fk_statut, c.facture, s.nom as name, s.rowid as socid";
+	$sql = "SELECT c.rowid, c.entity, c.ref, c.fk_statut, c.facture, s.nom as name, s.rowid as socid";
     $sql.= ", s.client";
     $sql.= ", s.code_client";
     $sql.= ", s.canvas";
@@ -453,7 +453,7 @@ if (! empty($conf->commande->enabled))
 
 				print '<td width="16" class="nobordernopadding hideonsmartphone right">';
 				$filename=dol_sanitizeFileName($obj->ref);
-				$filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($obj->ref);
+				$filedir=$conf->commande->multidir_output[$obj->entity] . '/' . dol_sanitizeFileName($obj->ref);
 				$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
 				print $formfile->getDocumentsLink($commandestatic->element, $filename, $filedir);
 				print '</td></tr></table>';

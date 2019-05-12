@@ -1228,7 +1228,7 @@ class FormFile
 						print '</a>';
 					}
 					// Preview link
-					if (! $editline) print $this->showPreview($file, $modulepart, $filepath);
+					if (! $editline) print $this->showPreview($file, $modulepart, $filepath, 0, '&entity='.(! empty($object->entity)?$object->entity:$onf->entity));
 
 					print "</td>\n";
 

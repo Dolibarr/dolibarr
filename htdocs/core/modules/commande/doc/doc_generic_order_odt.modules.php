@@ -244,7 +244,7 @@ class doc_generic_order_odt extends ModelePDFCommandes
 				}
 			}
 
-			$dir = $conf->commande->dir_output;
+			$dir = $conf->commande->multidir_output[$object->entity];
 			$objectref = dol_sanitizeFileName($object->ref);
 			if (! preg_match('/specimen/i', $objectref)) $dir.= "/" . $objectref;
 			$file = $dir . "/" . $objectref . ".odt";
