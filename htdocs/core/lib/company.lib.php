@@ -217,7 +217,7 @@ function societe_prepare_head(Societe $object)
 
         $head[$h][0] = DOL_URL_ROOT .'/societe/paymentmodes.php?socid='.$object->id;
         $head[$h][1] = $title;
-        $head[$h][1].= ' <span class="badge">'.$nbBankAccount.'</span>';
+        if ($nbBankAccount > 0) $head[$h][1].= ' <span class="badge">'.$nbBankAccount.'</span>';
         $head[$h][2] = 'rib';
         $h++;
     }
