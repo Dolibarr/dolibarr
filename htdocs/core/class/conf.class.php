@@ -327,6 +327,9 @@ class Conf
 		}
 
 		// For mycompany storage
+		$this->mycompany->multidir_output	= array($this->entity => $rootfordata."/mycompany");
+		$this->mycompany->multidir_temp		= array($this->entity => $rootfordata."/mycompany/temp");
+		// For backward compatibility
 		$this->mycompany->dir_output=$rootfordata."/mycompany";
 		$this->mycompany->dir_temp=$rootfordata."/mycompany/temp";
 

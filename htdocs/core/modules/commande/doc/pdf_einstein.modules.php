@@ -1255,7 +1255,8 @@ class pdf_einstein extends ModelePDFCommandes
 		// Logo
 		if (empty($conf->global->PDF_DISABLE_MYCOMPANY_LOGO))
 		{
-			$logo=$conf->mycompany->dir_output.'/logos/'.$this->emetteur->logo;
+			var_dump($conf->mycompany); exit;
+			$logo=$conf->mycompany->dir_output[$object->entity].'/logos/'.$this->emetteur->logo;
 			if ($this->emetteur->logo)
 			{
 				if (is_readable($logo))
