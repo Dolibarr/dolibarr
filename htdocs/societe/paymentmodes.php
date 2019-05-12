@@ -579,12 +579,14 @@ if (empty($reshook))
 				setEventMessages($e->getMessage(), null, 'errors');
 			}
 		}
-		elseif ($action == 'setassourcedefault')
+		elseif ($action == 'setaspaymentmethoddefault')
 		{
 			try {
 				$cu=$stripe->customerStripe($object, $stripeacc, $servicestatus);
-				$cu->default_source = (string) $source;
+				$cu->invoice_settings->default_payment_method = (string) $source;
 				$result = $cu->save();
+        
+        if (isset($id)) $companypaymentmode->setAsDefault($id);
 
 				$url=DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id;
 				header('Location: '.$url);
@@ -909,7 +911,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 							print '<td class="center">';
 							if (empty($companypaymentmodetemp->default_rib))
 							{
-								print '<a href="' . DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&id='.$companypaymentmodetemp->id.'&action=setlocalassourcedefault">';
+								print '<a href="' . DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&id='.$companypaymentmodetemp->id.'&paymentmethod='.$companypaymentmodetemp->ref.'&action=setaspaymentmethoddefault">';
 								print img_picto($langs->trans("Default"), 'off');
 								print '</a>';
 							} else {
@@ -1028,7 +1030,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				print '<td class="center" width="50">';
 				if (($customerstripe->invoice_settings->default_payment_method != $src->id))
 				{
-					print '<a href="' . DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&source='.$src->id.'&action=setassourcedefault">';
+					print '<a href="' . DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&paymentmethod='.$src->id.'&action=setaspaymentmethoddefault">';
 					print img_picto($langs->trans("Default"), 'off');
 					print '</a>';
 				} else {
