@@ -48,7 +48,7 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'societe', '', '');
 
 $id=GETPOST("id", "int");
-$source=GETPOST("source", "alpha");
+$source=GETPOST("paymentmethod", "alpha");
 $ribid=GETPOST("ribid", "int");
 $action=GETPOST("action", 'alpha', 3);
 $cancel=GETPOST('cancel', 'alpha');
@@ -618,29 +618,7 @@ if (empty($reshook))
 				setEventMessages($e->getMessage(), null, 'errors');
 			}
 		}
-		elseif ($action == 'deletecard' && $source)
-		{
-			try {
-				$cu=$stripe->customerStripe($object, $stripeacc, $servicestatus);
-				$card=$cu->sources->retrieve("$source");
-				if ($card)
-				{
-					// $card->detach();  Does not work with card_, only with src_
-					if (method_exists($card, 'detach')) $card->detach();
-					else $card->delete();
-				}
-
-				$url=DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id;
-				header('Location: '.$url);
-				exit;
-			}
-			catch(Exception $e)
-			{
-				$error++;
-				setEventMessages($e->getMessage(), null, 'errors');
-			}
-		}
-		elseif ($action == 'deletepaymentmethod' && $source)
+		elseif ($action == 'confirm_deletepaymentmethod' && $source)
 		{
 			try {
 				$cu=$stripe->customerStripe($object, $stripeacc, $servicestatus);
@@ -731,9 +709,9 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		print $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$object->id."&ribid=".($ribid?$ribid:$id), $langs->trans("DeleteARib"), $langs->trans("ConfirmDeleteRib", $companybankaccount->getRibLabel()), "confirm_delete", '', 0, 1);
 	}
 	// Confirm delete card
-	if ($action == 'deletecard')
+	if ($action == 'deletepaymentmethod')
 	{
-		print $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$object->id."&ribid=".($ribid?$ribid:$id), $langs->trans("DeleteACard"), $langs->trans("ConfirmDeleteCard", $companybankaccount->getRibLabel()), "confirm_deletecard", '', 0, 1);
+		print $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$object->id."&id=".($ribid?$ribid:$id)."&paymentmethod=".$source, $langs->trans("DeletePaymentMethod"), $langs->trans("ConfirmDeletePaymentMethod", $companybankaccount->getRibLabel()), "confirm_deletepaymentmethod", '', 0, 1);
 	}
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
@@ -915,7 +893,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 							}
 							print '</td>';
 							print '<td>';
-							print img_credit_card($companypaymentmodetemp->type);
+							print img_credit_card($companypaymentmodetemp->card_type);
 							print '</td>';
 							print '<td>';
 							if ($companypaymentmodetemp->last_four) print '....'.$companypaymentmodetemp->last_four;
@@ -966,7 +944,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 								print '</a>';
 								print '&nbsp;';
                 }
-								print '<a href="' . DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&id='.$companypaymentmodetemp->id.'&action=deletecard">';	// source='.$companypaymentmodetemp->ref.'&
+								print '<a href="' . DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&id='.$companypaymentmodetemp->id.'&paymentmethod='.$companypaymentmodetemp->ref.'&action=deletepaymentmethod"">';	// source='.$companypaymentmodetemp->ref.'&
 								print img_picto($langs->trans("Delete"), 'delete');
 								print '</a>';
 							}
@@ -1075,7 +1053,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				print '<td class="right nowraponall">';
 				if ($user->rights->societe->creer)
 				{
-					print '<a href="' . DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&source='.$src->id.'&action=deletepaymentmethod">';
+					print '<a href="' . DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&paymentmethod='.$src->id.'&action=deletepaymentmethod">';
 					print img_picto($langs->trans("Delete"), 'delete');
 					print '</a>';
 				}
