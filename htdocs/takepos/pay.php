@@ -51,7 +51,7 @@ if ($invoiceid > 0)
 }
 else
 {
-    $sql="SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS-".$place.")'";
+    $sql="SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS".$_SESSION["takepostermvar"]."-".$place.")'";
     $resql = $db->query($sql);
     $obj = $db->fetch_object($resql);
     if ($obj)

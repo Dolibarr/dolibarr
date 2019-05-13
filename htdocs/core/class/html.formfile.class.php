@@ -290,7 +290,7 @@ class FormFile
 	 *      Return a string to show the box with list of available documents for object.
 	 *      This also set the property $this->numoffiles
 	 *
-	 *      @param      string				$modulepart         Module the files are related to ('propal', 'facture', 'facture_fourn', 'mymodule', 'mymodule_temp', ...)
+	 *      @param      string				$modulepart         Module the files are related to ('propal', 'facture', 'facture_fourn', 'mymodule', 'mymodule:nameofsubmodule', 'mymodule_temp', ...)
 	 *      @param      string				$modulesubdir       Existing (so sanitized) sub-directory to scan (Example: '0/1/10', 'FA/DD/MM/YY/9999'). Use '' if file is not into subdir of module.
 	 *      @param      string				$filedir            Directory to scan
 	 *      @param      string				$urlsource          Url of origin page (for return)
@@ -336,7 +336,7 @@ class FormFile
 		}
 
 		$printer=0;
-		if (in_array($modulepart, array('facture','supplier_proposal','propal','proposal','order','commande','expedition', 'commande_fournisseur', 'expensereport','livraison')))	// The direct print feature is implemented only for such elements
+		if (in_array($modulepart, array('facture', 'supplier_proposal', 'propal', 'proposal', 'order', 'commande', 'expedition', 'commande_fournisseur', 'expensereport', 'livraison', 'ticket')))	// The direct print feature is implemented only for such elements
 		{
 			$printer = (!empty($user->rights->printing->read) && !empty($conf->printing->enabled))?true:false;
 		}
@@ -643,19 +643,23 @@ class FormFile
 			}
 			else
 			{
+			    $submodulepart = $modulepart;
+
 				// For normalized standard modules
 				$file=dol_buildpath('/core/modules/'.$modulepart.'/modules_'.$modulepart.'.php', 0);
 				if (file_exists($file))
 				{
 					$res=include_once $file;
 				}
-				// For normalized external modules
+				// For normalized external modules. modulepart = 'nameofmodule' or 'nameofmodule:nameofsubmodule'
 				else
 				{
-					$file=dol_buildpath('/'.$modulepart.'/core/modules/'.$modulepart.'/modules_'.$modulepart.'.php', 0);
+				    $tmp=explode(':', $modulepart);
+				    if (! empty($tmp[2])) $submodulepart=$tmp[2];
+			        $file=dol_buildpath('/'.$modulepart.'/core/modules/'.$modulepart.'/modules_'.$submodulepart.'.php', 0);
 					$res=include_once $file;
 				}
-				$class='ModelePDF'.ucfirst($modulepart);
+				$class='ModelePDF'.ucfirst($submodulepart);
 				if (class_exists($class))
 				{
 					$modellist=call_user_func($class.'::liste_modeles', $this->db);
@@ -670,7 +674,6 @@ class FormFile
 			// Set headershown to avoid to have table opened a second time later
 			$headershown=1;
 
-			$buttonlabeltoshow=$buttonlabel;
 			if (empty($buttonlabel)) $buttonlabel=$langs->trans('Generate');
 
 			if ($conf->browser->layout == 'phone') $urlsource.='#'.$forname.'_form';   // So we switch to form after a generation
@@ -866,7 +869,7 @@ class FormFile
 				{
 					$out.='<tr class="oddeven">';
 					$out.='<td colspan="'.$colspan.'" class="maxwidhtonsmartphone">';
-					$out.='<a data-ajax="false" href="' . $link->url . '" target="_blank">';
+					$out.='<a data-ajax="false" href="' . $file->url . '" target="_blank">';
 					$out.=$file->label;
 					$out.='</a>';
 					$out.='</td>';
@@ -1317,7 +1320,7 @@ class FormFile
 					{
 						// Delete or view link
 						// ($param must start with &)
-						print '<td class="valignmiddle right actionbuttons"><!-- action on files -->';
+						print '<td class="valignmiddle right actionbuttons nowraponall"><!-- action on files -->';
 						if ($useinecm == 1 || $useinecm == 5)
 						{
 							print '<a href="'.DOL_URL_ROOT.'/ecm/file_card.php?urlfile='.urlencode($file['name']).$param.'" class="editfilelink" rel="'.urlencode($file['name']).'">'.img_edit('default', 0, 'class="paddingrightonly"').'</a>';

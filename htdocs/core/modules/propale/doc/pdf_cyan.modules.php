@@ -1864,22 +1864,6 @@ class pdf_cyan extends ModelePDFPropales
 	    );
 
 	    $rank = $rank + 10;
-	    $this->cols['progress'] = array(
-	        'rank' => $rank,
-	        'width' => 19, // in mm
-	        'status' => false,
-	        'title' => array(
-	            'textkey' => 'Progress'
-	        ),
-	        'border-left' => false, // add left line separator
-	    );
-
-	    if($this->situationinvoice)
-	    {
-	        $this->cols['progress']['status'] = true;
-	    }
-
-	    $rank = $rank + 10;
 	    $this->cols['unit'] = array(
 	        'rank' => $rank,
 	        'width' => 11, // in mm

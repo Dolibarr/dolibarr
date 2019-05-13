@@ -266,6 +266,10 @@ input#onlinepaymenturl, input#directdownloadlink {
 	opacity: 0.7;
 }
 
+div#moretabsListaction {
+    z-index: 5;
+}
+
 hr { border: 0; border-top: 1px solid #ccc; }
 .tabBar hr { margin-top: 20px; margin-bottom: 17px; }
 
@@ -2251,8 +2255,8 @@ div.popuptabset {
 	border: 1px solid #888;
 }
 div.popuptab {
-	padding-top: 3px;
-	padding-bottom: 3px;
+	padding-top: 5px;
+	padding-bottom: 5px;
 	padding-left: 5px;
 	padding-right: 5px;
 }
@@ -2645,6 +2649,10 @@ table.paddingtopbottomonly tr td {
 .liste_titre_filter {
 	background: rgb(<?php echo $colorbacktitle1; ?>) !important;
 }
+table:not(.listwithfilterbefore) tr.liste_titre_filter:first-of-type td.liste_titre {
+    padding-top: 5px;
+}
+
 tr.liste_titre_filter td.liste_titre {
 	/* border-bottom: 1px solid #ddd; */
 	padding-top: 1px;

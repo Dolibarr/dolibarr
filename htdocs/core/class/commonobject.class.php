@@ -1250,7 +1250,7 @@ abstract class CommonObject
 		$sql.= " AND ec.fk_c_type_contact = tc.rowid";
 		$sql.= " AND tc.element = '".$element."'";
 		$sql.= " AND tc.source = '".$source."'";
-		$sql.= " AND tc.code = '".$code."'";
+		if ($code) $sql.= " AND tc.code = '".$code."'";
 		$sql.= " AND tc.active = 1";
 		if ($status) $sql.= " AND ec.statut = ".$status;
 
@@ -7010,7 +7010,7 @@ abstract class CommonObject
 	{
 		if(is_array($info))
 		{
-			if (isset($info['type']) && (preg_match('/^(double|real)/i', $info['type']))) return true;
+			if (isset($info['type']) && (preg_match('/^(double|real|price)/i', $info['type']))) return true;
 			else return false;
 		}
 		else return false;
