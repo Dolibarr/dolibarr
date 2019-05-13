@@ -232,7 +232,7 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 		$newcardbutton='';
 		if ($user->rights->adherent->configurer)
 		{
-            $newcardbutton.= dolGetButtonTitle($langs->trans('NewMemberType'), '', 'fa fa-plus-circle',DOL_URL_ROOT.'/adherents/type.php?action=create');
+            $newcardbutton.= dolGetButtonTitle($langs->trans('NewMemberType'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/adherents/type.php?action=create');
         }
 
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';

@@ -447,7 +447,7 @@ $listofformat=AccountancyExport::getType();
 if (count($filter)) $buttonLabel = $langs->trans("ExportFilteredList");
 else $buttonLabel = $langs->trans("ExportList");
 
-$newcardbutton = dolGetButtonTitle($buttonLabel ,'', 'fa fa-file-export', $_SERVER["PHP_SELF"].'?action=export_file'.($param?'&'.$param:''));
+$newcardbutton = dolGetButtonTitle($buttonLabel, '', 'fa fa-file-export', $_SERVER["PHP_SELF"].'?action=export_file'.($param?'&'.$param:''));
 
 $newcardbutton.= dolGetButtonTitle($langs->trans('GroupByAccountAccounting'), '', 'fa fa-object-group', DOL_URL_ROOT.'/accountancy/bookkeeping/listbyaccount.php?'.$param);
 

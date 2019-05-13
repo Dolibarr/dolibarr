@@ -216,4 +216,4 @@ TITLE BUTTON
 .butActionRefused, .butActionNewRefused, .btnTitle.refused {
     display: none !important;
 }
-<?php } ?>
+<?php }
