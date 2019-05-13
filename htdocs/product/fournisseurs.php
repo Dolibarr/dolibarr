@@ -819,7 +819,7 @@ SCRIPT;
 						print '<tr class="oddeven">';
 
 						// Date from
-						print '<td>'.dol_print_date($productfourn->date_creation, 'dayhour').'</td>';
+						print '<td>'.dol_print_date(($productfourn->fourn_date_creation ? $productfourn->fourn_date_creation: $productfourn->date_creation), 'dayhour').'</td>';
 
 						// Supplier
 						print '<td>'.$productfourn->getSocNomUrl(1, 'supplier').'</td>';
