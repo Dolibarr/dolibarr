@@ -266,6 +266,10 @@ input#onlinepaymenturl, input#directdownloadlink {
 	opacity: 0.7;
 }
 
+div#moretabsListaction {
+    z-index: 5;
+}
+
 hr { border: 0; border-top: 1px solid #ccc; }
 .tabBar hr { margin-top: 20px; margin-bottom: 17px; }
 
@@ -2251,8 +2255,8 @@ div.popuptabset {
 	border: 1px solid #888;
 }
 div.popuptab {
-	padding-top: 3px;
-	padding-bottom: 3px;
+	padding-top: 5px;
+	padding-bottom: 5px;
 	padding-left: 5px;
 	padding-right: 5px;
 }
