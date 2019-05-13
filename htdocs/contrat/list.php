@@ -48,8 +48,8 @@ $contextpage= GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'contrac
 
 $search_name=GETPOST('search_name', 'alpha');
 $search_email=GETPOST('search_email', 'alpha');
-$search_town=GETPOST('search_town','alpha');
-$search_zip=GETPOST('search_zip','alpha');
+$search_town=GETPOST('search_town', 'alpha');
+$search_zip=GETPOST('search_zip', 'alpha');
 $search_state=trim(GETPOST("search_state"));
 $search_country=GETPOST("search_country", 'int');
 $search_type_thirdparty=GETPOST("search_type_thirdparty", 'int');
@@ -709,8 +709,8 @@ while ($i < min($num, $limit))
 			$listsalesrepresentatives=$socstatic->getSalesRepresentatives($user);
 			if ($listsalesrepresentatives < 0) dol_print_error($db);
 			$nbofsalesrepresentative=count($listsalesrepresentatives);
-            if ($nbofsalesrepresentative > 3) {
-                // We print only number
+			if ($nbofsalesrepresentative > 3) {
+				// We print only number
 				print '<a href="'.DOL_URL_ROOT.'/societe/commerciaux.php?socid='.$socstatic->id.'">';
 				print $nbofsalesrepresentative;
 				print '</a>';
