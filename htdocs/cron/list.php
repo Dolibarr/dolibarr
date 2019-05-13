@@ -56,7 +56,6 @@ if (! $sortfield) $sortfield='t.status,t.priority';
 if (! $sortorder) $sortorder='DESC,ASC';
 
 $search_status=GETPOST('search_status', 'int')?GETPOST('search_status', 'int'):GETPOST('status', 'int');
-if ($search_status == '') $search_status=-2;
 
 //Search criteria
 $search_label=GETPOST("search_label", 'alpha');
@@ -253,7 +252,6 @@ $sql.= " t.test";
 $sql.= " FROM ".MAIN_DB_PREFIX."cronjob as t";
 $sql.= " WHERE entity IN (0,".$conf->entity.")";
 if ($search_status >= 0 && $search_status < 2) $sql.= " AND t.status = ".(empty($search_status)?'0':'1');
-if ($search_status == 2) $sql.= " AND t.status = 2";
 //Manage filter
 if (is_array($filter) && count($filter)>0) {
 	foreach($filter as $key => $value) {
