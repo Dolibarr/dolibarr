@@ -25,7 +25,7 @@
 
 /**
  * \file		htdocs/accountancy/journal/expensereportsjournal.php
- * \ingroup		Advanced accountancy
+ * \ingroup		Accountancy (Double entries)
  * \brief		Page with expense reports journal
  */
 require '../../main.inc.php';

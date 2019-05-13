@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2016  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2013-2016  Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2018  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2019  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2016-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
@@ -21,7 +21,7 @@
 
 /**
  * \file		htdocs/accountancy/bookkeeping/list.php
- * \ingroup		Advanced accountancy
+ * \ingroup		Accountancy (Double entries)
  * \brief 		List operation of book keeping
  */
 require '../../main.inc.php';
@@ -47,6 +47,9 @@ $search_date_creation_start = dol_mktime(0, 0, 0, GETPOST('date_creation_startmo
 $search_date_creation_end = dol_mktime(0, 0, 0, GETPOST('date_creation_endmonth', 'int'), GETPOST('date_creation_endday', 'int'), GETPOST('date_creation_endyear', 'int'));
 $search_date_modification_start = dol_mktime(0, 0, 0, GETPOST('date_modification_startmonth', 'int'), GETPOST('date_modification_startday', 'int'), GETPOST('date_modification_startyear', 'int'));
 $search_date_modification_end = dol_mktime(0, 0, 0, GETPOST('date_modification_endmonth', 'int'), GETPOST('date_modification_endday', 'int'), GETPOST('date_modification_endyear', 'int'));
+$search_date_export_start = dol_mktime(0, 0, 0, GETPOST('date_export_startmonth', 'int'), GETPOST('date_export_startday', 'int'), GETPOST('date_export_startyear', 'int'));
+$search_date_export_end = dol_mktime(0, 0, 0, GETPOST('date_export_endmonth', 'int'), GETPOST('date_export_endday', 'int'), GETPOST('date_export_endyear', 'int'));
+
 //var_dump($search_date_start);exit;
 if (GETPOST("button_delmvt_x") || GETPOST("button_delmvt.x") || GETPOST("button_delmvt")) {
 	$action = 'delbookkeepingyear';

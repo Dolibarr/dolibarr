@@ -20,7 +20,7 @@
 
 /**
  * \file        htdocs/accountancy/class/bookkeeping.class.php
- * \ingroup     Advanced accountancy
+ * \ingroup     Accountancy (Double entries)
  * \brief       File of class to manage Ledger (General Ledger and Subledger)
  */
 

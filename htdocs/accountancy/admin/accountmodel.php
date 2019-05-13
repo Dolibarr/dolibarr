@@ -28,7 +28,7 @@
 
 /**
  *	    \file       htdocs/accountancy/admin/accountmodel.php
- *		\ingroup    Advanced accountancy
+ *		\ingroup    Accountancy (Double entries)
  *		\brief      Page to administer model of chart of accounts
  */
 

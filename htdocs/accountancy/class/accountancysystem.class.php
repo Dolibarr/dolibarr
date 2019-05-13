@@ -19,7 +19,7 @@
 
 /**
  * \file		htdocs/accountancy/class/accountancysystem.class.php
- * \ingroup		Advanced accountancy
+ * \ingroup		Accountancy (Double entries)
  * \brief		File of class to manage accountancy systems
  */
 
