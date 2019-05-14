@@ -1,6 +1,6 @@
 -- ============================================================================
 -- Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
--- Copyright (C) 2013-2017 Alexandre Spangaro   <aspangaro@open-dsi.fr>
+-- Copyright (C) 2013-2019 Alexandre Spangaro   <aspangaro@open-dsi.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -51,6 +51,7 @@ CREATE TABLE llx_accounting_bookkeeping
   piece_num             integer NOT NULL,			-- FEC:EcritureNum  | accounting source document
   validated             tinyint DEFAULT 0 NOT NULL,	-- 					| 0 line not validated / 1 line validated (No deleting / No modification) 
   date_validated        datetime,					-- FEC:ValidDate
-  import_key            varchar(14),
+  date_export			datetime DEFAULT NULL,		--
+  import_key            varchar(14),				--
   extraparams	        varchar(255)				-- for other parameters with json format
 ) ENGINE=innodb;

@@ -866,15 +866,16 @@ class BookKeeping extends CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param string 		$sortorder 		Sort Order
-	 * @param string 		$sortfield 		Sort field
-	 * @param int 			$limit 			Offset limit
-	 * @param int 			$offset 		Offset limit
-	 * @param array 		$filter 		Filter array
-	 * @param string 		$filtermode 	Filter mode (AND or OR)
-	 * @return int 							<0 if KO, >0 if OK
+	 * @param string 		$sortorder                      Sort Order
+	 * @param string 		$sortfield                      Sort field
+	 * @param int 			$limit                          Offset limit
+	 * @param int 			$offset                         Offset limit
+	 * @param array 		$filter                         Filter array
+	 * @param string 		$filtermode                     Filter mode (AND or OR)
+     * @param int           $showAlreadyExportMovements     Show movements when field 'date_export' is not empty (0:No / 1:Yes (Default))
+	 * @return int                                          <0 if KO, >0 if OK
 	 */
-    public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
+    public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND', $showAlreadyExportMovements = 1)
     {
 		global $conf;
 
@@ -904,7 +905,8 @@ class BookKeeping extends CommonObject
 		$sql .= " t.journal_label,";
 		$sql .= " t.piece_num,";
 		$sql .= " t.date_creation,";
-		$sql .= " t.tms as date_modification";
+		$sql .= " t.tms as date_modification,";
+        $sql .= " t.date_export";
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
 		// Manage filter
 		$sqlwhere = array ();
@@ -924,6 +926,8 @@ class BookKeeping extends CommonObject
 					$sqlwhere[] = $key . '\'' . $this->db->idate($value) . '\'';
 				} elseif ($key == 't.tms>=' || $key == 't.tms<=') {
 					$sqlwhere[] = $key . '\'' . $this->db->idate($value) . '\'';
+                } elseif ($key == 't.date_export>=' || $key == 't.date_export<=') {
+                    $sqlwhere[] = $key . '\'' . $this->db->idate($value) . '\'';
 				} elseif ($key == 't.credit' || $key == 't.debit') {
 					$sqlwhere[] = natural_search($key, $value, 1, 1);
 				} else {
@@ -978,6 +982,7 @@ class BookKeeping extends CommonObject
 				$line->piece_num = $obj->piece_num;
 				$line->date_creation = $this->db->jdate($obj->date_creation);
 				$line->date_modification = $this->db->jdate($obj->date_modification);
+                $line->date_export = $this->db->jdate($obj->date_export);
 
 				$this->lines[] = $line;
 

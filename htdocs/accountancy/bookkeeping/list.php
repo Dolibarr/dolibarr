@@ -146,6 +146,7 @@ $arrayfields=array(
 	't.code_journal'=>array('label'=>$langs->trans("Codejournal"), 'checked'=>1),
 	't.date_creation'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0),
 	't.tms'=>array('label'=>$langs->trans("DateModification"), 'checked'=>0),
+    't.date_export'=>array('label'=>$langs->trans("DateExport"), 'checked'=>0),
 );
 
 if (empty($conf->global->ACCOUNTING_ENABLE_LETTERING)) unset($arrayfields['t.lettering_code']);
@@ -181,6 +182,8 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_date_creation_end = '';
 	$search_date_modification_start = '';
 	$search_date_modification_end = '';
+    $search_date_export_start = '';
+    $search_date_export_end = '';
 	$search_debit = '';
 	$search_credit = '';
 	$search_lettering_code = '';
@@ -272,6 +275,16 @@ if (! empty($search_date_modification_end)) {
 	$tmp=dol_getdate($search_date_modification_end);
 	$param .= '&date_modification_endmonth=' . $tmp['mon'] . '&date_modification_endday=' . $tmp['mday'] . '&date_modification_endyear=' . $tmp['year'];
 }
+if (! empty($search_date_export_start)) {
+    $filter['t.date_export>='] = $search_date_export_start;
+    $tmp=dol_getdate($search_date_export_start);
+    $param .= '&date_export_startmonth=' . $tmp['mon'] . '&date_export_startday=' . $tmp['mday'] . '&date_export_startyear=' . $tmp['year'];
+}
+if (! empty($search_date_export_end)) {
+    $filter['t.date_export<='] = $search_date_export_end;
+    $tmp=dol_getdate($search_date_export_end);
+    $param .= '&date_export_endmonth=' . $tmp['mon'] . '&date_export_endday=' . $tmp['mday'] . '&date_export_endyear=' . $tmp['year'];
+}
 if (! empty($search_debit)) {
 	$filter['t.debit'] = $search_debit;
 	$param .= '&search_debit=' . urlencode($search_debit);
@@ -351,8 +364,9 @@ if ($action == 'delmouvconfirm') {
 
 // Export into a file with format defined into setup (FEC, CSV, ...)
 if ($action == 'export_file') {
+    $reexportMovements = GETPOST('already_exported')=='on'?1:0;
 
-	$result = $object->fetchAll($sortorder, $sortfield, 0, 0, $filter);
+	$result = $object->fetchAll($sortorder, $sortfield, 0, 0, $filter, 'AND', $reexportMovements);
 
 	if ($result < 0)
 	{
@@ -362,6 +376,22 @@ if ($action == 'export_file') {
 	{
 		$accountancyexport = new AccountancyExport($db);
 		$accountancyexport->export($object->lines);
+
+        // TODO Move in class bookKeeping
+        // Specify as export : update field date_export
+        foreach ( $object->lines as $movement ) {
+            $now = dol_now();
+            $sql = " UPDATE " . MAIN_DB_PREFIX . "accounting_bookkeeping";
+            $sql .= " SET date_export = '" . $db->idate($now) . "'";
+            $sql .= " WHERE rowid = " . $movement->id;
+
+            dol_syslog("/accountancy/bookeeping/list.php Function export_file Specify movements as exported sql=" . $sql, LOG_DEBUG);
+            if ($db->query($sql)) {
+                $db->commit();
+            } else {
+                $db->rollback();
+            }
+        }
 
 		if (!empty($accountancyexport->errors))
 		{
@@ -446,10 +476,10 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 
 $listofformat=AccountancyExport::getType();
-$button = '<a class="butAction" name="button_export_file" href="'.$_SERVER["PHP_SELF"].'?action=export_file'.($param?'&'.$param:'').'">';
+$button  = '<input type="checkbox" name="already_exported"> ' . $langs->trans("IncludeDocsAlreadyExported");
+$button .= '<a class="butAction" title="'.$langs->trans("ExportFilteredList").' ('.$listofformat[$conf->global->ACCOUNTING_EXPORT_MODELCSV].')'.'" name="button_export_file" href="'.$_SERVER["PHP_SELF"].'?action=export_file'.($param?'&'.$param:'').'">';
 if (count($filter)) $button.= $langs->trans("ExportFilteredList");
 else $button.= $langs->trans("ExportList");
-//$button.=' ('.$listofformat[$conf->global->ACCOUNTING_EXPORT_MODELCSV].')';
 $button.= '</a>';
 
 
@@ -600,6 +630,20 @@ if (! empty($arrayfields['t.tms']['checked']))
 	print '</div>';
 	print '</td>';
 }
+// Date export
+if (! empty($arrayfields['t.date_export']['checked']))
+{
+    print '<td class="liste_titre center">';
+    print '<div class="nowrap">';
+    print $langs->trans('From') . ' ';
+    print $form->selectDate($search_date_export_start, 'date_export_start', 0, 0, 1);
+    print '</div>';
+    print '<div class="nowrap">';
+    print $langs->trans('to') . ' ';
+    print $form->selectDate($search_date_export_end, 'date_export_end', 0, 0, 1);
+    print '</div>';
+    print '</td>';
+}
 // Action column
 print '<td class="liste_titre center">';
 $searchpicto=$form->showFilterButtons();
@@ -620,6 +664,7 @@ if (! empty($arrayfields['t.lettering_code']['checked']))		print_liste_field_tit
 if (! empty($arrayfields['t.code_journal']['checked']))			print_liste_field_titre($arrayfields['t.code_journal']['label'], $_SERVER['PHP_SELF'], "t.code_journal", "", $param, '', $sortfield, $sortorder, 'center ');
 if (! empty($arrayfields['t.date_creation']['checked']))		print_liste_field_titre($arrayfields['t.date_creation']['label'], $_SERVER['PHP_SELF'], "t.date_creation", "", $param, '', $sortfield, $sortorder, 'center ');
 if (! empty($arrayfields['t.tms']['checked']))					print_liste_field_titre($arrayfields['t.tms']['label'], $_SERVER['PHP_SELF'], "t.tms", "", $param, '', $sortfield, $sortorder, 'center ');
+if (! empty($arrayfields['t.date_export']['checked']))          print_liste_field_titre($arrayfields['t.date_export']['label'], $_SERVER['PHP_SELF'], "t.date_export", "", $param, '', $sortfield, $sortorder, 'center ');
 print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 print "</tr>\n";
 
@@ -732,11 +777,20 @@ if ($num > 0)
 			if (! $i) $totalarray['nbfield']++;
 		}
 
+        // Exported operation date
+        if (! empty($arrayfields['t.date_export']['checked']))
+        {
+            print '<td align="center">' . dol_print_date($line->date_export, 'dayhour') . '</td>';
+            if (! $i) $totalarray['nbfield']++;
+        }
+
 		// Action column
 		print '<td class="nowraponall center">';
-		print '<a href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?piece_num=' . $line->piece_num . $param . '&page=' . $page . ($sortfield ? '&sortfield='.$sortfield : '') . ($sortorder ? '&sortorder='.$sortorder : '') . '">' . img_edit() . '</a>&nbsp;';
-		print '<a href="' . $_SERVER['PHP_SELF'] . '?action=delmouv&mvt_num=' . $line->piece_num . $param . '&page=' . $page . ($sortfield ? '&sortfield='.$sortfield : '') . ($sortorder ? '&sortorder='.$sortorder : '') . '">' . img_delete() . '</a>';
-		print '</td>';
+        if(empty($line->date_export)) {
+		    print '<a href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?piece_num=' . $line->piece_num . $param . '&page=' . $page . ($sortfield ? '&sortfield='.$sortfield : '') . ($sortorder ? '&sortorder='.$sortorder : '') . '">' . img_edit() . '</a>&nbsp;';
+		    print '<a href="' . $_SERVER['PHP_SELF'] . '?action=delmouv&mvt_num=' . $line->piece_num . $param . '&page=' . $page . ($sortfield ? '&sortfield='.$sortfield : '') . ($sortorder ? '&sortorder='.$sortorder : '') . '">' . img_delete() . '</a>';
+        }
+        print '</td>';
 		if (! $i) $totalarray['nbfield']++;
 
 		print "</tr>\n";
