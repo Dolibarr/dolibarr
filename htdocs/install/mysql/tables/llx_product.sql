@@ -44,6 +44,7 @@ create table llx_product
   price_min                     double(24,8) DEFAULT 0,
   price_min_ttc                 double(24,8) DEFAULT 0,
   price_base_type               varchar(3)   DEFAULT 'HT',
+  retail_price                  double(24,8) DEFAULT NULL,          -- Retail price without tax.
   cost_price                    double(24,8) DEFAULT NULL,          -- Cost price without tax. Can be used for margin calculation.
   default_vat_code              varchar(10),                        -- Same code than into table llx_c_tva (but no constraints). Should be used in priority to find default vat, npr, localtaxes for product.
   tva_tx                        double(6,3),                        -- Default VAT rate of product
