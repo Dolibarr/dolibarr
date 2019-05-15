@@ -12,7 +12,7 @@ insert_final_newline = true
 # PHP PSR-2 Coding Standards
 # http://www.php-fig.org/psr/psr-2/
 [*.php]
-indent_style = tab		# An exception of PSR2
+indent_style = tab
 indent_size = 4
 trim_trailing_whitespace = true
 insert_final_newline = true
