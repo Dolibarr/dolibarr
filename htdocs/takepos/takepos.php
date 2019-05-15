@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2018	Andreu Bisquerra	<jove@bisquerra.com>
  * Copyright (C) 2019	Josep Lluís Amador	<joseplluis@lliuretic.cat>
+ * Copyright (C) 2019	JC Prieto			<jcprieto@virtual20.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,14 +43,14 @@ $place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0);   // $plac
 $posnb = (GETPOST('posnb', 'int') > 0 ? GETPOST('posnb', 'int') : 0);   // $posnb is id of POS
 $action = GETPOST('action', 'alpha');
 $setterminal = GETPOST('setterminal', 'int');
-
+/*
 if ($setterminal>0)
 {
 	$_SESSION["takeposterminal"]=$setterminal;
 	if ($setterminal==1) $_SESSION["takepostermvar"]="";
 	else $_SESSION["takepostermvar"]=$setterminal;
 }
-
+*/
 $langs->loadLangs(array("bills","orders","commercial","cashdesk","receiptprinter"));
 
 $categorie = new Categorie($db);
@@ -69,6 +70,7 @@ $MAXPRODUCT = (empty($conf->global->TAKEPOS_NB_MAXPRODUCT)?$maxproductbydefaultf
  * View
  */
 
+/* V20: Goes to index.php
 // Title
 $title='TakePOS - Dolibarr '.DOL_VERSION;
 if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $title='TakePOS - '.$conf->global->MAIN_APPLICATION_TITLE;
@@ -84,6 +86,7 @@ top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 <script type="text/javascript" src="js/jquery.colorbox-min.js"></script>	<!-- TODO It seems we don't need this -->
 <script language="javascript">
 <?php
+*/
 $categories = $categorie->get_full_arbo('product', (($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0)?$conf->global->TAKEPOS_ROOT_CATEGORY_ID:0), 1);
 
 
@@ -120,7 +123,7 @@ foreach($categories as $key => $categorycursor)
 sort($maincategories);
 sort($subcategories);
 ?>
-
+<script language="javascript">
 var categories = <?php echo json_encode($maincategories); ?>;
 var subcategories = <?php echo json_encode($subcategories); ?>;
 

@@ -143,6 +143,30 @@ table.postablelines tr td {
 	box-sizing: border-box;
 }
 
+/*V20: CSS index.php */
+.maincontainer{
+    width: 100%;
+    height: 95%;
+    margin: 0 auto;
+    overflow: visible;
+    box-sizing: border-box;
+}
+.topbuttons{
+    width: 30px;
+}
+
+.row0{
+    width: 100%;
+    height: 5%;
+    padding-right: 10px;
+    box-sizing: border-box;
+    background-color: black;
+    color: lightcyan;
+    font-size: large;
+}
+/* end */
+
+
 .row1{
 	margin: 0 auto;
 	width: 100%;
