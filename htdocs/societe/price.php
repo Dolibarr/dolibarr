@@ -428,7 +428,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 		$option = '&socid=' . GETPOST('socid', 'int') . '&prodid=' . GETPOST('prodid', 'int');
 
-		print_barre_liste($langs->trans('PriceByCustomerLog'), $page, $_SERVEUR ['PHP_SELF'], $option, $sortfield, $sortorder, '', count($prodcustprice->lines), $nbtotalofrecords);
+		print_barre_liste($langs->trans('PriceByCustomerLog'), $page, $_SERVER ['PHP_SELF'], $option, $sortfield, $sortorder, '', count($prodcustprice->lines), $nbtotalofrecords);
 
 		if (count($prodcustprice->lines) > 0) {
 
@@ -519,7 +519,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 	    print '<!-- view specific price for each product -->'."\n";
 
-	    print_barre_liste($langs->trans('PriceForEachProduct'), $page, $_SERVEUR['PHP_SELF'], $option, $sortfield, $sortorder, '', count($prodcustprice->lines), $nbtotalofrecords, '');
+	    print_barre_liste($langs->trans('PriceForEachProduct'), $page, $_SERVER['PHP_SELF'], $option, $sortfield, $sortorder, '', count($prodcustprice->lines), $nbtotalofrecords, '');
 
         print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';
         print '<input type="hidden" name="id" value="' . $object->id . '">';

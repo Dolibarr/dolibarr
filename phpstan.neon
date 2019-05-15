@@ -1,7 +1,9 @@
 parameters:
 	bootstrap: %currentWorkingDirectory%/build/phpstan/bootstrap.php
 	excludes_analyse: 
+		- %currentWorkingDirectory%/htdocs/includes/restler/framework/Luracast/Restler/AutoLoader.php
 		- %currentWorkingDirectory%/htdocs/includes/*
+		- %currentWorkingDirectory%/htdocs/*/class/api_*
 	autoload_directories:
 		- %currentWorkingDirectory%/htdocs/accountancy/class
 		- %currentWorkingDirectory%/htdocs/adherents/class
