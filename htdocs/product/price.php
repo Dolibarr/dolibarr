@@ -56,6 +56,7 @@ $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 $eid = GETPOST('eid', 'int');
+$retail_price=GETPOST('retail_price', 'alpha');
 
 $search_soc = GETPOST('search_soc');
 
@@ -90,6 +91,27 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
+
+	if ($action == 'setretail_price')
+	{
+		if ($id)
+		{
+			$result=$object->fetch($id);
+			$object->retail_price = price2num($retail_price);
+			$result=$object->update($object->id, $user);
+			if ($result > 0)
+			{
+				setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
+		        $action='';
+			}
+			else
+			{
+				$error++;
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
+		}
+	}
+
     if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
     {
         $search_soc = '';
@@ -818,6 +840,8 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES) || ! empty($conf->global->PRODUI
 	        else print vatrate($object->tva_tx . ($object->tva_npr ? '*' : ''), true);*/
 	        print '</td></tr>';
 		}
+   
+    
 	    print '</table>';
 
 	    print '<br>';
@@ -1090,6 +1114,17 @@ else
 		print '</td></tr>';
 	}
 }
+
+      $form = new Form($db);
+			// Recommanded retail price for resale by customer / public price
+      print '<tr><td>';
+			$textdesc =$langs->trans("RetailPriceDescription");
+			$textdesc.="<br>".$langs->trans("RetailPriceUsage");
+			$text=$form->textwithpicto($langs->trans("RecommandedRetailPrice"), $textdesc, 1, 'help', '');
+			print $form->editfieldkey($text, 'retail_price', $object->retail_price, $object, (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->creer)), 'amount:6');
+      print '</td><td colspan="2">';
+      print $form->editfieldval($text, 'retail_price', $object->retail_price, $object, (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->creer)), 'amount:6');
+      print '</td></tr>'; 
 
 print "</table>\n";
 
