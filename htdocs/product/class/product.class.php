@@ -977,7 +977,7 @@ class Product extends CommonObject
             $sql.= ", accountancy_code_sell_intra= '" . $this->db->escape($this->accountancy_code_sell_intra)."'";
             $sql.= ", accountancy_code_sell_export= '" . $this->db->escape($this->accountancy_code_sell_export)."'";
             $sql.= ", desiredstock = " . ((isset($this->desiredstock) && $this->desiredstock != '') ? (int) $this->desiredstock : "null");
-            $sql.= ", retail_price = " . ($this->retail_price != '' ? $this->db->escape($this->retail_price) : 'null');          
+            $sql.= ", retail_price = " . ($this->retail_price != '' ? $this->db->escape($this->retail_price) : 'null');
 			$sql.= ", cost_price = " . ($this->cost_price != '' ? $this->db->escape($this->cost_price) : 'null');
             $sql.= ", fk_unit= " . (!$this->fk_unit ? 'NULL' : (int) $this->fk_unit);
             $sql.= ", price_autogen = " . (!$this->price_autogen ? 0 : 1);
