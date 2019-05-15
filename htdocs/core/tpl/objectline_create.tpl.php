@@ -464,6 +464,27 @@ if ((! empty($conf->service->enabled) || ($object->element == 'contrat')) && $da
 	<?php
 	$date_start=dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), 0, GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
 	$date_end=dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), 0, GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
+
+	$prefillDates = false;
+
+	if(! empty($conf->global->MAIN_FILL_SERVICE_DATES_FROM_LAST_SERVICE_LINE) && ! empty($object->lines))
+    {
+	    for($i = count($object->lines) - 1; $i >= 0; $i--)
+	    {
+		    $lastline = $object->lines[$i];
+
+		    if($lastline->product_type == Product::TYPE_SERVICE && (! empty($lastline->date_start) || ! empty($lastline->date_end)))
+		    {
+			    $date_start_prefill = $lastline->date_start;
+			    $date_end_prefill = $lastline->date_end;
+
+			    $prefillDates = true;
+			    break;
+		    }
+	    }
+    }
+
+
 	if (! empty($object->element) && $object->element == 'contrat')
 	{
 		print $langs->trans("DateStartPlanned").' ';
@@ -478,7 +499,33 @@ if ((! empty($conf->service->enabled) || ($object->element == 'contrat')) && $da
 		echo ' '.$langs->trans('to').' ';
 		print $form->selectDate($date_end, 'date_end', empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?0:1, empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?0:1, 1, "addproduct", 1, 0);
 	};
+
+	if($prefillDates)
+    {
+        echo ' <span class="small"><a href="#" id="prefill_service_dates">' . $langs->trans('FillWithLastServiceDates') .  '</a></span>';
+    }
+
 	print '<script>';
+
+	if($prefillDates)
+	{
+?>
+        function prefill_service_dates()
+        {
+            $('#date_start').val("<?php echo dol_escape_js(dol_print_date($date_start_prefill, '%d/%m/%Y')); ?>").trigger('change');
+            $('#date_end').val("<?php echo dol_escape_js(dol_print_date($date_end_prefill, '%d/%m/%Y')); ?>").trigger('change');
+
+            return false; // Prevent default link behaviour (which is go to href URL)
+        }
+
+        $(document).ready(function()
+        {
+            $('#prefill_service_dates').click(prefill_service_dates);
+        });
+
+<?php
+	}
+
 	if (!$date_start) {
 		if (isset($conf->global->MAIN_DEFAULT_DATE_START_HOUR)) {
 			print 'jQuery("#date_starthour").val("'.$conf->global->MAIN_DEFAULT_DATE_START_HOUR.'");';

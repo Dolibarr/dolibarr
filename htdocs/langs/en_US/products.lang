@@ -97,6 +97,7 @@ SetDefaultBarcodeType=Set barcode type
 BarcodeValue=Barcode value
 NoteNotVisibleOnBill=Note (not visible on invoices, proposals...)
 ServiceLimitedDuration=If product is a service with limited duration:
+FillWithLastServiceDates=Fill with last service line dates
 MultiPricesAbility=Multiple price segments per product/service (each customer is in one price segment)
 MultiPricesNumPrices=Number of prices
 AssociatedProductsAbility=Activate virtual products (kits)
