@@ -179,6 +179,13 @@ class Product extends CommonObject
      */
     public $stock_theorique;
 
+	/**
+     * Retail price
+     *
+     * @var float
+     */
+    public $retail_price;
+
     /**
      * Cost price
      *
@@ -970,7 +977,8 @@ class Product extends CommonObject
             $sql.= ", accountancy_code_sell_intra= '" . $this->db->escape($this->accountancy_code_sell_intra)."'";
             $sql.= ", accountancy_code_sell_export= '" . $this->db->escape($this->accountancy_code_sell_export)."'";
             $sql.= ", desiredstock = " . ((isset($this->desiredstock) && $this->desiredstock != '') ? (int) $this->desiredstock : "null");
-            $sql.= ", cost_price = " . ($this->cost_price != '' ? $this->db->escape($this->cost_price) : 'null');
+            $sql.= ", retail_price = " . ($this->retail_price != '' ? $this->db->escape($this->retail_price) : 'null');          
+			$sql.= ", cost_price = " . ($this->cost_price != '' ? $this->db->escape($this->cost_price) : 'null');
             $sql.= ", fk_unit= " . (!$this->fk_unit ? 'NULL' : (int) $this->fk_unit);
             $sql.= ", price_autogen = " . (!$this->price_autogen ? 0 : 1);
             $sql.= ", fk_price_expression = ".($this->fk_price_expression != 0 ? (int) $this->fk_price_expression : 'NULL');
@@ -2036,7 +2044,7 @@ class Product extends CommonObject
         }
 
         $sql = "SELECT rowid, ref, ref_ext, label, description, url, note as note_private, customcode, fk_country, price, price_ttc,";
-        $sql.= " price_min, price_min_ttc, price_base_type, cost_price, default_vat_code, tva_tx, recuperableonly as tva_npr, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, tosell,";
+        $sql.= " price_min, price_min_ttc, price_base_type, retail_price, cost_price, default_vat_code, tva_tx, recuperableonly as tva_npr, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, tosell,";
         $sql.= " tobuy, fk_product_type, duration, fk_default_warehouse, seuil_stock_alerte, canvas, weight, weight_units,";
         $sql.= " length, length_units, width, width_units, height, height_units,";
         $sql.= " surface, surface_units, volume, volume_units, barcode, fk_barcode_type, finished,";
@@ -2063,36 +2071,37 @@ class Product extends CommonObject
                 $obj = $this->db->fetch_object($resql);
 
                 $this->id = $obj->rowid;
-                $this->ref                            = $obj->ref;
-                $this->ref_ext                        = $obj->ref_ext;
+                $this->ref                          = $obj->ref;
+                $this->ref_ext                      = $obj->ref_ext;
                 $this->label                        = $obj->label;
-                $this->description                    = $obj->description;
-                $this->url                            = $obj->url;
-                $this->note_private                    = $obj->note_private;
-                $this->note                            = $obj->note_private;  // deprecated
+                $this->description                  = $obj->description;
+                $this->url                          = $obj->url;
+                $this->note_private                 = $obj->note_private;
+                $this->note                         = $obj->note_private;  // deprecated
 
-                $this->type                            = $obj->fk_product_type;
-                $this->status                        = $obj->tosell;
-                $this->status_buy                    = $obj->tobuy;
-                $this->status_batch                    = $obj->tobatch;
+                $this->type                         = $obj->fk_product_type;
+                $this->status                       = $obj->tosell;
+                $this->status_buy                  	= $obj->tobuy;
+                $this->status_batch                 = $obj->tobatch;
 
-                $this->customcode                    = $obj->customcode;
-                $this->country_id                    = $obj->fk_country;
-                $this->country_code                    = getCountry($this->country_id, 2, $this->db);
+                $this->customcode                   = $obj->customcode;
+                $this->country_id                   = $obj->fk_country;
+                $this->country_code                 = getCountry($this->country_id, 2, $this->db);
                 $this->price                        = $obj->price;
                 $this->price_ttc                    = $obj->price_ttc;
                 $this->price_min                    = $obj->price_min;
                 $this->price_min_ttc                = $obj->price_min_ttc;
-                $this->price_base_type                = $obj->price_base_type;
-                $this->cost_price                    = $obj->cost_price;
-                $this->default_vat_code                = $obj->default_vat_code;
-                $this->tva_tx                        = $obj->tva_tx;
+                $this->price_base_type              = $obj->price_base_type;
+				$this->retail_price                 = $obj->retail_price;
+                $this->cost_price                   = $obj->cost_price;
+                $this->default_vat_code             = $obj->default_vat_code;
+                $this->tva_tx                       = $obj->tva_tx;
                 //! French VAT NPR
-                $this->tva_npr                        = $obj->tva_npr;
-                $this->recuperableonly                = $obj->tva_npr;       // For backward compatibility
+                $this->tva_npr                      = $obj->tva_npr;
+                $this->recuperableonly              = $obj->tva_npr;       // For backward compatibility
                 //! Local taxes
-                $this->localtax1_tx                    = $obj->localtax1_tx;
-                $this->localtax2_tx                    = $obj->localtax2_tx;
+                $this->localtax1_tx                	 = $obj->localtax1_tx;
+                $this->localtax2_tx                  = $obj->localtax2_tx;
                 $this->localtax1_type                = $obj->localtax1_type;
                 $this->localtax2_type                = $obj->localtax2_type;
 
