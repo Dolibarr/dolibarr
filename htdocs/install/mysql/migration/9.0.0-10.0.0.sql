@@ -366,4 +366,4 @@ ALTER TABLE llx_reception_extrafields ADD INDEX idx_reception_extrafields (fk_ob
 ALTER TABLE llx_commande_fournisseur_dispatch ADD COLUMN fk_projet integer DEFAULT NULL;
 ALTER TABLE llx_commande_fournisseur_dispatch ADD COLUMN fk_reception integer DEFAULT NULL;
 
-  
+ALTER TABLE llx_product ADD retail_price double(24,8) DEFAULT null;  
