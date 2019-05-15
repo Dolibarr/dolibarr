@@ -1,7 +1,9 @@
 parameters:
 	bootstrap: %currentWorkingDirectory%/build/phpstan/bootstrap.php
 	excludes_analyse: 
+		- %currentWorkingDirectory%/htdocs/includes/restler/framework/Luracast/Restler/AutoLoader.php
 		- %currentWorkingDirectory%/htdocs/includes/*
+		- %currentWorkingDirectory%/htdocs/*/class/api_*
 	autoload_directories:
 		- %currentWorkingDirectory%/htdocs/accountancy/class
 		- %currentWorkingDirectory%/htdocs/adherents/class
@@ -16,10 +18,16 @@ parameters:
 		- %currentWorkingDirectory%/htdocs/comm/propal/class
 		- %currentWorkingDirectory%/htdocs/commande/class
 		- %currentWorkingDirectory%/htdocs/compta/bank/class
+		- %currentWorkingDirectory%/htdocs/compta/cashcontrol/class
+		- %currentWorkingDirectory%/htdocs/compta/deplacement/class
+		- %currentWorkingDirectory%/htdocs/compta/facture/class
+		- %currentWorkingDirectory%/htdocs/compta/localtax/class
+		- %currentWorkingDirectory%/htdocs/compta/paiement/class
 		- %currentWorkingDirectory%/htdocs/conf
 		- %currentWorkingDirectory%/htdocs/contact/class
 		- %currentWorkingDirectory%/htdocs/contrat/class
 		- %currentWorkingDirectory%/htdocs/core/class
+		- %currentWorkingDirectory%/htdocs/product/class
 		- %currentWorkingDirectory%/htdocs/societe/class
 		- %currentWorkingDirectory%/htdocs/user/class
 	autoload_files: []
