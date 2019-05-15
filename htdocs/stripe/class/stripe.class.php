@@ -267,6 +267,7 @@ class Stripe extends CommonObject
 					} else {
 						$stripepaymentmethod = \Stripe\PaymentMethod::retrieve(''.$paymentmethod->id.'', array("stripe_account" => $key));
 					}
+
 				}
 				catch(Exception $e)
 				{
@@ -306,6 +307,7 @@ class Stripe extends CommonObject
 					} else {
 						$paymentmethods = \Stripe\PaymentMethod::retrieve(''.$paymentmethod->id.'', array("stripe_account" => $key));
 					}
+
 				}
 				catch(Exception $e)
 				{
@@ -313,6 +315,58 @@ class Stripe extends CommonObject
 				}
 
 		return $paymentmethods->data;
+	}    
+
+    /**
+	 * Get the Stripe payment intent. Create it with confirm=false
+	 *
+	 * @param	Societe	$object							    Object to pay with Stripe
+	 * @param	string 	$customer							Stripe customer ref 'cus_xxxxxxxxxxxxx' via customerStripe()
+	 * @param	string	$key							    ''=Use common API. If not '', it is the Stripe connect account 'acc_....' to use Stripe connect
+	 * @param	int		$status							    Status (0=test, 1=live)
+	 * @param	int		$usethirdpartyemailforreceiptemail	1=use thirdparty email for receipt
+	 * @param	int		$mode		                        automatic=automatic confirmation/payment when conditions are ok, manual=need to call confirm() on intent
+	 * @param   boolean $confirmnow                         false=default, true=try to confirm immediatly after create (if conditions are ok)
+	 * @return 	\Stripe\PaymentIntent|null 			        Stripe PaymentIntent or null if not found
+	 */
+	public function getStatutPaymentIntent($object = null, $customer = null, $key = null, $status = 0, $usethirdpartyemailforreceiptemail = 0, $mode = 'automatic', $confirmnow = false)
+	{
+		global $conf, $user, $mysoc;
+
+		dol_syslog("getPaymentIntent");
+
+		$error = 0;
+
+		if (empty($status)) $service = 'StripeTest';
+		else $service = 'StripeLive';
+
+		$paymentintent = null;
+
+		if (is_object($object))
+		{
+    				// Force to use the correct API key
+    				global $stripearrayofkeysbyenv;
+    				\Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$status]['secret_key']);
+
+    				try {
+    					if (empty($key)) {				// If the Stripe connect account not set, we use common API usage
+    						$paymentintent = \Stripe\PaymentIntent::retrieve($intent);
+    					} else {
+    						$paymentintent = \Stripe\PaymentIntent::retrieve($intent, array("stripe_account" => $key));
+    					}
+    				}
+    				catch(Exception $e)
+    				{
+    				    $error++;
+    					$this->error = $e->getMessage();
+    				}
+            
+          
+		} 
+
+		dol_syslog("getPaymentIntent return error=".$error);
+
+		return $paymentintent;
 	}
 
     /**
