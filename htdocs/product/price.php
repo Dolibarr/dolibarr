@@ -1115,16 +1115,16 @@ else
 	}
 }
 
-      $form = new Form($db);
-			// Recommanded retail price for resale by customer / public price
-      print '<tr><td>';
-			$textdesc =$langs->trans("RetailPriceDescription");
-			$textdesc.="<br>".$langs->trans("RetailPriceUsage");
-			$text=$form->textwithpicto($langs->trans("RecommandedRetailPrice"), $textdesc, 1, 'help', '');
-			print $form->editfieldkey($text, 'retail_price', $object->retail_price, $object, (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->creer)), 'amount:6');
-      print '</td><td colspan="2">';
-      print $form->editfieldval($text, 'retail_price', $object->retail_price, $object, (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->creer)), 'amount:6');
-      print '</td></tr>'; 
+$form = new Form($db);
+// Recommanded retail price for resale by customer / public price
+print '<tr><td>';
+$textdesc =$langs->trans("RetailPriceDescription");
+$textdesc.="<br>".$langs->trans("RetailPriceUsage");
+$text=$form->textwithpicto($langs->trans("RecommandedRetailPrice"), $textdesc, 1, 'help', '');
+print $form->editfieldkey($text, 'retail_price', $object->retail_price, $object, (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->creer)), 'amount:6');
+print '</td><td colspan="2">';
+print $form->editfieldval($text, 'retail_price', $object->retail_price, $object, (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->creer)), 'amount:6');
+print '</td></tr>';
 
 print "</table>\n";
 
