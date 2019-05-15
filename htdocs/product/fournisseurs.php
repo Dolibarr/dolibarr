@@ -673,9 +673,11 @@ SCRIPT;
 				print '<tr><td>'.$langs->trans("SupplierReputation").'</td><td>';
 				echo $form->selectarray('supplier_reputation', $object->reputations, $supplier_reputation?$supplier_reputation:$object->supplier_reputation);
 				print '</td></tr>';
-                if(!empty($conf->barcode->enabled)) {
 
-				// Option to define a transport cost on supplier price
+				// Barcode
+                if (! empty($conf->barcode->enabled))
+                {
+				    // Option to define a transport cost on supplier price
                     print '<tr>';
                     print '<td>' . $langs->trans('BarcodeValue') . '</td>';
                     print '<td><input class="flat" name="barcode"  value="'.($rowid ? $object->fourn_barcode : '').'"></td>';
@@ -690,6 +692,7 @@ SCRIPT;
                     print '</td>';
                     print '</tr>';
                 }
+
 				// Option to define a transport cost on supplier price
 				if ($conf->global->PRODUCT_CHARGES)
 				{
@@ -819,7 +822,7 @@ SCRIPT;
 						print '<tr class="oddeven">';
 
 						// Date from
-						print '<td>'.dol_print_date($productfourn->date_creation, 'dayhour').'</td>';
+						print '<td>'.dol_print_date(($productfourn->fourn_date_creation ? $productfourn->fourn_date_creation: $productfourn->date_creation), 'dayhour').'</td>';
 
 						// Supplier
 						print '<td>'.$productfourn->getSocNomUrl(1, 'supplier').'</td>';
@@ -907,7 +910,6 @@ SCRIPT;
 
                             // Barcode type
                             print '<td align="center">';
-
                             $productfourn->barcode_type = !empty($productfourn->fk_barcode_type) ? $productfourn->fk_barcode_type:0;
                             $productfourn->fetch_barcode();
                             print $productfourn->barcode_type_label?$productfourn->barcode_type_label:($productfourn->barcode?'<div class="warning">'.$langs->trans("SetDefaultBarcodeType").'<div>':'');
@@ -916,7 +918,7 @@ SCRIPT;
 
 						// Date
 						print '<td align="right">';
-						print dol_print_date($productfourn->date_modification, "dayhour");
+						print dol_print_date(($productfourn->fourn_date_modification ? $productfourn->fourn_date_modification : $productfourn->date_modification), "dayhour");
 						print '</td>';
 
 						if (is_object($hookmanager))

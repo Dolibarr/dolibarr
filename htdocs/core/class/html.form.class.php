@@ -1901,7 +1901,7 @@ class Form
 		// check parameters
 		$price_level = (! empty($price_level) ? $price_level : 0);
 		if (is_null($ajaxoptions)) $ajaxoptions=array();
-		
+
 		if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT))
 		{
 			$placeholder='';
@@ -7204,7 +7204,7 @@ class Form
 				if ($object->photo) $ret.="<br>\n";
 				$ret.='<table class="nobordernopadding centpercent">';
 				if ($object->photo) $ret.='<tr><td><input type="checkbox" class="flat photodelete" name="deletephoto" id="photodelete"> '.$langs->trans("Delete").'<br><br></td></tr>';
-				$ret.='<tr><td class="tdoverflow"><input type="file" class="flat maxwidth200onsmartphone" name="photo" id="photoinput"'.($capture?' capture="'.$capture.'"':'').'></td></tr>';
+				$ret.='<tr><td class="tdoverflow"><input type="file" class="flat maxwidth200onsmartphone" name="photo" id="photoinput" accept="image/*"'.($capture?' capture="'.$capture.'"':'').'></td></tr>';
 				$ret.='</table>';
 			}
 		}

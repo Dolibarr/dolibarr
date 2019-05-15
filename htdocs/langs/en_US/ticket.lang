@@ -266,6 +266,8 @@ TicketNewEmailBodyAdmin=<p>Ticket has just been created with ID #%s, see informa
 SeeThisTicketIntomanagementInterface=See ticket in management interface
 TicketPublicInterfaceForbidden=The public interface for the tickets was not enabled
 ErrorEmailOrTrackingInvalid=Bad value for tracking ID or email
+OldUser=Old user
+NewUser=New user
 
 # notifications
 TicketNotificationEmailSubject=Ticket %s updated

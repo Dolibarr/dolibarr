@@ -2,7 +2,7 @@
 /* Copyright (C) 2012      Nicolas Villa aka Boyquotes http://informetic.fr
  * Copyright (C) 2013      Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2016 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019      Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,7 +56,6 @@ if (! $sortfield) $sortfield='t.status,t.priority';
 if (! $sortorder) $sortorder='DESC,ASC';
 
 $search_status=GETPOST('search_status', 'int')?GETPOST('search_status', 'int'):GETPOST('status', 'int');
-if ($search_status == '') $search_status=-2;
 
 //Search criteria
 $search_label=GETPOST("search_label", 'alpha');
@@ -253,7 +252,6 @@ $sql.= " t.test";
 $sql.= " FROM ".MAIN_DB_PREFIX."cronjob as t";
 $sql.= " WHERE entity IN (0,".$conf->entity.")";
 if ($search_status >= 0 && $search_status < 2) $sql.= " AND t.status = ".(empty($search_status)?'0':'1');
-if ($search_status == 2) $sql.= " AND t.status = 2";
 //Manage filter
 if (is_array($filter) && count($filter)>0) {
 	foreach($filter as $key => $value) {
@@ -299,11 +297,11 @@ $num = $db->num_rows($result);
 $arrayofselected=is_array($toselect)?$toselect:array();
 
 $param = '';
-if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
-if ($search_status)   $param.='&search_status='.$search_status;
-if ($search_label)	  $param.='&search_label='.$search_label;
-if ($optioncss != '') $param.='&optioncss='.$optioncss;
+if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
+if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
+if ($search_status)   $param.='&search_status='.urlencode($search_status);
+if ($search_label)	  $param.='&search_label='.urlencode($search_label);
+if ($optioncss != '') $param.='&optioncss='.urlencode($optioncss);
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
@@ -393,7 +391,7 @@ print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre" align="center">';
-print $form->selectarray('search_status', array('0'=>$langs->trans("Disabled"), '1'=>$langs->trans("Enabled"), '-2'=>$langs->trans("EnabledAndDisabled"), '2'=>$langs->trans("Archived")), $search_status, 1);
+print $form->selectarray('search_status', array('0'=>$langs->trans("Disabled"), '1'=>$langs->trans("Enabled")), $search_status, 1);
 print '</td><td class="liste_titre right">';
 $searchpicto=$form->showFilterButtons();
 print $searchpicto;
