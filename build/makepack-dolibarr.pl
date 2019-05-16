@@ -357,7 +357,7 @@ if ($nboftargetok) {
 		}
 		else
 		{
-			print "ChangeLog for $MAJOR.$MINOR\.$BUILD was found into '$SOURCE/ChangeLog. But you can regenerate it with command:'\n";
+			print "ChangeLog for $MAJOR.$MINOR\.$BUILD was found into '$SOURCE/ChangeLog'. But you can regenerate it with command:\n";
 		}
 		if (! $BUILD || $BUILD eq '0-rc')	# For a major version
 		{

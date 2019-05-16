@@ -423,8 +423,20 @@ if (empty($reshook)) {
 				if (GETPOST('deletephoto')) {
 					$object->photo = '';
 				}
-				if (!empty($_FILES['photo']['name'])) {
-					$object->photo = dol_sanitizeFileName($_FILES['photo']['name']);
+				if (!empty($_FILES['photo']['name']))
+				{
+				    $isimage=image_format_supported($_FILES['photo']['name']);
+				    if ($isimage > 0)
+				    {
+    					$object->photo = dol_sanitizeFileName($_FILES['photo']['name']);
+				    }
+				    else
+				    {
+				        $error++;
+				        $langs->load("errors");
+				        setEventMessages($langs->trans("ErrorBadImageFormat"), null, 'errors');
+				        dol_syslog($langs->transnoentities("ErrorBadImageFormat"), LOG_INFO);
+				    }
 				}
 
 				if (!$error) {

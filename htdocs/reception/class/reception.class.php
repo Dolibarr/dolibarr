@@ -1765,8 +1765,6 @@ class Reception extends CommonObject
 		}
 	}
 
-
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	 /**
      *	Set draft status
      *
@@ -1799,7 +1797,7 @@ class Reception extends CommonObject
         $sql.= " SET fk_statut = ".self::STATUS_DRAFT;
         $sql.= " WHERE rowid = ".$this->id;
 
-        dol_syslog(get_class($this)."::set_draft", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         if ($this->db->query($sql))
         {
             // If stock increment is done on closing

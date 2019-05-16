@@ -783,6 +783,35 @@ class InterfaceActionsAuto extends DolibarrTriggers
 
 			$object->sendtoid=0;
 		}
+		elseif($action == 'TICKET_ASSIGNED')
+		{
+		    // Load translation files required by the page
+		    $langs->loadLangs(array("agenda","other","projects"));
+
+		    if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("TICKET_ASSIGNEDInDolibarr", $object->ref);
+		    $object->actionmsg=$langs->transnoentities("TICKET_ASSIGNEDInDolibarr", $object->ref);
+		    if ($object->oldcopy->fk_user_assign > 0)
+		    {
+		      $tmpuser=new User($this->db);
+		      $tmpuser->fetch($object->oldcopy->fk_user_assign);
+		      $object->actionmsg.="\n".$langs->transnoentities("OldUser").': '.$tmpuser->getFullName($langs);
+		    }
+		    else
+		    {
+		        $object->actionmsg.="\n".$langs->transnoentities("OldUser").': '.$langs->trans("None");
+		    }
+		    if ($object->fk_user_assign > 0)
+		    {
+		        $tmpuser=new User($this->db);
+		        $tmpuser->fetch($object->fk_user_assign);
+		        $object->actionmsg.="\n".$langs->transnoentities("NewUser").': '.$tmpuser->getFullName($langs);
+		    }
+		    else
+		    {
+		        $object->actionmsg.="\n".$langs->transnoentities("NewUser").': '.$langs->trans("None");
+		    }
+		    $object->sendtoid=0;
+		}
 		// TODO Merge all previous cases into this generic one
 		else	// $action = TICKET_CREATE, TICKET_MODIFY, TICKET_DELETE, ...
 		{

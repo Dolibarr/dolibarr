@@ -644,7 +644,7 @@ class FormFile
 			else
 			{
 			    $submodulepart = $modulepart;
-			    
+
 				// For normalized standard modules
 				$file=dol_buildpath('/core/modules/'.$modulepart.'/modules_'.$modulepart.'.php', 0);
 				if (file_exists($file))
@@ -869,7 +869,7 @@ class FormFile
 				{
 					$out.='<tr class="oddeven">';
 					$out.='<td colspan="'.$colspan.'" class="maxwidhtonsmartphone">';
-					$out.='<a data-ajax="false" href="' . $link->url . '" target="_blank">';
+					$out.='<a data-ajax="false" href="' . $file->url . '" target="_blank">';
 					$out.=$file->label;
 					$out.='</a>';
 					$out.='</td>';
@@ -1320,7 +1320,7 @@ class FormFile
 					{
 						// Delete or view link
 						// ($param must start with &)
-						print '<td class="valignmiddle right actionbuttons"><!-- action on files -->';
+						print '<td class="valignmiddle right actionbuttons nowraponall"><!-- action on files -->';
 						if ($useinecm == 1 || $useinecm == 5)
 						{
 							print '<a href="'.DOL_URL_ROOT.'/ecm/file_card.php?urlfile='.urlencode($file['name']).$param.'" class="editfilelink" rel="'.urlencode($file['name']).'">'.img_edit('default', 0, 'class="paddingrightonly"').'</a>';

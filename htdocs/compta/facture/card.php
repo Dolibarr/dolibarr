@@ -4656,6 +4656,14 @@ elseif ($id > 0 || ! empty($ref))
 				}
 			}
 
+			// POS Ticket
+			if (! empty($conf->takepos->enabled) && $object->module_source == 'takepos')
+			{
+			    $langs->load("cashdesk");
+			    $receipt_url=DOL_URL_ROOT."/takepos/receipt.php";
+			    print '<div class="inline-block divButAction"><a target="_blank" class="butAction" href="' . $receipt_url . '?facid=' . $object->id.'">' . $langs->trans('POSTicket') .'</a></div>';
+			}
+
 			// Create payment
 			if ($object->type != Facture::TYPE_CREDIT_NOTE && $object->statut == 1 && $object->paye == 0 && $usercanissuepayment) {
 				if ($objectidnext) {
@@ -4698,13 +4706,6 @@ elseif ($id > 0 || ! empty($ref))
 				{
 					print '<div class="inline-block divButAction"><a class="butAction'.($conf->use_javascript_ajax?' reposition':'').'" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc">'.$langs->trans('ConvertToReduc').'</a></div>';
 				}
-			}
-
-			// POS Ticket
-			if (! empty($conf->takepos->enabled) && $object->module_source != '')
-			{
-                $receipt_url=DOL_URL_ROOT."/takepos/receipt.php";
-                print '<div class="inline-block divButAction"><a target="_blank" class="butAction" href="' . $receipt_url . '?facid=' . $object->id.'">' . $langs->trans('POSTicket') .'</a></div>';
 			}
 
 			// Classify paid
