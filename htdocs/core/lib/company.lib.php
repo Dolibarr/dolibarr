@@ -191,7 +191,13 @@ function societe_prepare_head(Societe $object)
 		if (! empty($conf->stripe->enabled))
 		{
 			$langs->load("stripe");
-			$title = $langs->trans("PaymentMethods");
+			$title = $langs->trans("BankAccountsAndGateways");
+			$servicestatus = 0;
+			if (! empty($conf->global->STRIPE_LIVE) && ! GETPOST('forcesandbox', 'alpha')) $servicestatus = 1;
+			include_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
+			$societeaccount = new SocieteAccount($db);
+			$stripecu = $societeaccount->getCustomerAccount($object->id, 'stripe', $servicestatus);		// Get thirdparty cu_...
+			if ($stripecu) $foundonexternalonlinesystem++;
 		}
 
         $sql = "SELECT COUNT(n.rowid) as nb";
