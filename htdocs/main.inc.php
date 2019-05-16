@@ -1152,7 +1152,7 @@ function top_httphead($contenttype = 'text/html', $forcenocache = 0)
 		$contentsecuritypolicy = $conf->global->MAIN_HTTP_CONTENT_SECURITY_POLICY;
 
 		if (! is_object($hookmanager)) $hookmanager = new HookManager($db);
-		$hookmanager->initHooks("main");
+		$hookmanager->initHooks(array("main"));
 
 		$parameters=array('contentsecuritypolicy'=>$contentsecuritypolicy);
 		$result=$hookmanager->executeHooks('setContentSecurityPolicy', $parameters);    // Note that $action and $object may have been modified by some hooks
@@ -1212,7 +1212,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 	if (empty($disablehead))
 	{
 	    if (! is_object($hookmanager)) $hookmanager = new HookManager($db);
-	    $hookmanager->initHooks("main");
+	    $hookmanager->initHooks(array("main"));
 
 	    $ext='layout='.$conf->browser->layout.'&version='.urlencode(DOL_VERSION);
 

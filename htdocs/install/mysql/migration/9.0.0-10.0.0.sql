@@ -61,6 +61,8 @@ CREATE TABLE llx_pos_cash_fence(
 -- For 10.0
 
 DROP TABLE llx_cotisation;
+ALTER TABLE llx_accounting_bookkeeping DROP COLUMN validated;
+ALTER TABLE llx_accounting_bookkeeping_tmp DROP COLUMN validated;
 
 ALTER TABLE llx_loan ADD COLUMN insurance_amount double(24,8) DEFAULT 0;
 

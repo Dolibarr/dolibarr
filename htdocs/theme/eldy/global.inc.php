@@ -861,7 +861,7 @@ select.selectarrowonleft option {
 	input, input[type=text], input[type=password], select, textarea     {
 		min-width: 20px;
     }
-    input[type=text], input[type=password] {
+    .trinputlogin input[type=text], input[type=password] {
 		max-width: 180px;
 	}
     .vmenu .searchform input {
