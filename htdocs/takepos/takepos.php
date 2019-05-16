@@ -549,47 +549,18 @@ function MoreActions(totalactions){
 	}
 }
 
-function TerminalsDialog()
-{
-    jQuery("#dialog-info").dialog({
-	    resizable: false,
-	    height:220,
-	    width:400,
-	    modal: true,
-	    buttons: {
-			Terminal1: function() {
-				location.href='takepos.php?setterminal=1';
-			}
-			<?php
-			for ($i = 2; $i <= $conf->global->TAKEPOS_NUM_TERMINALS; $i++)
-			{
-				print "
-				,
-				Terminal".$i.": function() {
-					location.href='takepos.php?setterminal=".$i."';
-				}
-				";
-			}
-			?>
-	    }
-	});
-}
+
 
 $( document ).ready(function() {
     PrintCategories(0);
 	LoadProducts(0);
 	Refresh();
-	<?php
-	//IF THERE ARE MORE THAN 1 TERMINAL AND NO SELECTED
-	if ($conf->global->TAKEPOS_NUM_TERMINALS!="1" && $_SESSION["takeposterminal"]=="") print "TerminalsDialog();";
-	?>
+	
 });
 </script>
 
 <body style="overflow: hidden; background-color:#D1D1D1;">
-<?php
-if ($conf->global->TAKEPOS_NUM_TERMINALS!="1" && $_SESSION["takeposterminal"]=="") print '<div id="dialog-info" title="TakePOS">'.$langs->trans('TerminalSelect').'</div>';
-?>
+
 <div class="container">
 	<div class="row1">
 

@@ -51,16 +51,17 @@ if(!is_numeric($term)){
 }
 $_SESSION['term']=$term;
 */
-$setterminal = GETPOST('setterminal', 'int');
+$term = GETPOST('setterminal', 'int');
 
-if ($setterminal>0)
+if ($term>0)
 {
-	$_SESSION["takeposterminal"]=$setterminal;
-	if ($setterminal==1) $_SESSION["takepostermvar"]="";
-	else $_SESSION["takepostermvar"]=$setterminal;
-}
+	$_SESSION["takeposterminal"]=$term;
+	///////////////Don't use after PR #11177
+	if ($term==1) $_SESSION["takepostermvar"]="";
+	else $_SESSION["takepostermvar"]=$term;
+	/////////////////////////
+}else $term=$_SESSION['takeposterminal'];
 
-$term=$_SESSION["takepostermvar"];
 
 $userid=GETPOST('userid','int');
 
@@ -144,15 +145,45 @@ function exit(){
 	
 }
 
+function TerminalsDialog()
+{
+    jQuery("#dialog-info").dialog({
+	    resizable: false,
+	    height:220,
+	    width:400,
+	    modal: true,
+	    buttons: {
+			Terminal1: function() {
+				location.href='index.php?setterminal=1';
+			}
+			<?php
+			for ($i = 2; $i <= $conf->global->TAKEPOS_NUM_TERMINALS; $i++)
+			{
+				print "
+				,
+				Terminal".$i.": function() {
+					location.href='index.php?setterminal=".$i."';
+				}
+				";
+			}
+			?>
+	    }
+	});
+}
+
 $( document ).ready(function() {
 	var admin="<?php echo $user->admin;?>";
 	$("#takepos").load("takepos.php", function() {
 		if(fullscreen==0 && admin==0 )	FullScreen(1);	//V20: As admin, avoid auto fullscreen.
 
 	});
-	
+	<?php
+	//IF THERE ARE MORE THAN 1 TERMINAL AND NO SELECTED
+	if ($conf->global->TAKEPOS_NUM_TERMINALS!="1" && $_SESSION["takeposterminal"]=="") print "TerminalsDialog();";
+	?>
 	
 });
+
 
 </script>
 
@@ -171,6 +202,10 @@ if (! empty($object->members))
 	}
 }
 $include[]=$user->id;
+
+
+
+if ($conf->global->TAKEPOS_NUM_TERMINALS!="1" && $_SESSION["takeposterminal"]=="") print '<div id="dialog-info" title="TakePOS">'.$langs->trans('TerminalSelect').'</div>';
 
 
 print '<div class="row0" ><table width="100%"><tr>';
