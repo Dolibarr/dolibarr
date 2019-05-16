@@ -1,8 +1,35 @@
 parameters:
-	bootstrap: null
+	bootstrap: %currentWorkingDirectory%/build/phpstan/bootstrap.php
 	excludes_analyse: 
-		- %rootDir%/htdocs/includes/*
-	autoload_directories: []
+		- %currentWorkingDirectory%/htdocs/includes/restler/framework/Luracast/Restler/AutoLoader.php
+		- %currentWorkingDirectory%/htdocs/includes/*
+		- %currentWorkingDirectory%/htdocs/*/class/api_*
+	autoload_directories:
+		- %currentWorkingDirectory%/htdocs/accountancy/class
+		- %currentWorkingDirectory%/htdocs/adherents/class
+		- %currentWorkingDirectory%/htdocs/api/class
+		- %currentWorkingDirectory%/htdocs/asset/class
+		- %currentWorkingDirectory%/htdocs/blockedlog/class
+		- %currentWorkingDirectory%/htdocs/bom/class
+		- %currentWorkingDirectory%/htdocs/bookmarks/class
+		- %currentWorkingDirectory%/htdocs/cashdesk/class
+		- %currentWorkingDirectory%/htdocs/categories/class
+		- %currentWorkingDirectory%/htdocs/comm/action/class
+		- %currentWorkingDirectory%/htdocs/comm/propal/class
+		- %currentWorkingDirectory%/htdocs/commande/class
+		- %currentWorkingDirectory%/htdocs/compta/bank/class
+		- %currentWorkingDirectory%/htdocs/compta/cashcontrol/class
+		- %currentWorkingDirectory%/htdocs/compta/deplacement/class
+		- %currentWorkingDirectory%/htdocs/compta/facture/class
+		- %currentWorkingDirectory%/htdocs/compta/localtax/class
+		- %currentWorkingDirectory%/htdocs/compta/paiement/class
+		- %currentWorkingDirectory%/htdocs/conf
+		- %currentWorkingDirectory%/htdocs/contact/class
+		- %currentWorkingDirectory%/htdocs/contrat/class
+		- %currentWorkingDirectory%/htdocs/core/class
+		- %currentWorkingDirectory%/htdocs/product/class
+		- %currentWorkingDirectory%/htdocs/societe/class
+		- %currentWorkingDirectory%/htdocs/user/class
 	autoload_files: []
 	featureToggles:
 		subtractableTypes: false
@@ -30,7 +57,15 @@ parameters:
 	polluteCatchScopeWithTryAssignments: false
 	reportMagicMethods: false
 	reportMagicProperties: false
-	ignoreErrors: []
+	ignoreErrors:
+		- 
+			message: '#Call to an undefined method abcdef#'
+			path: %currentWorkingDirectory%/dirtoignoreerror/*
+		- '#Undefined variable: \$langs#'
+		- '#Undefined variable: \$user#'
+		- '#Undefined variable: \$db#'
+		- '#Undefined variable: \$conf#'
+		- '#Undefined variable: \$hookmanager#'
 	internalErrorsCountLimit: 50
 	cache:
 	    nodesByFileCountMax: 512

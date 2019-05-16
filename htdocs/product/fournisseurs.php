@@ -778,7 +778,7 @@ SCRIPT;
 				$num = count($product_fourn_list);
 				if (($num + ($offset * $limit)) < $nbtotalofrecords) $num++;
 
-				print_barre_liste($langs->trans('SupplierPrices'), $page, $_SERVEUR ['PHP_SELF'], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy.png', 0, '', '', $limit, 1);
+				print_barre_liste($langs->trans('SupplierPrices'), $page, $_SERVER ['PHP_SELF'], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy.png', 0, '', '', $limit, 1);
 
 				// Suppliers list title
 				print '<div class="div-table-responsive">';

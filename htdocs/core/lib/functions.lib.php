@@ -660,16 +660,19 @@ function dol_buildpath($path, $type = 0, $returnemptyifnotfound = 0)
 	if (empty($type))	// For a filesystem path
 	{
 		$res = DOL_DOCUMENT_ROOT.'/'.$path;		// Standard default path
-		foreach ($conf->file->dol_document_root as $key => $dirroot)	// ex: array(["main"]=>"/home/main/htdocs", ["alt0"]=>"/home/dirmod/htdocs", ...)
+		if (is_array($conf->file->dol_document_root))
 		{
-			if ($key == 'main')
+			foreach ($conf->file->dol_document_root as $key => $dirroot)	// ex: array("main"=>"/home/main/htdocs", "alt0"=>"/home/dirmod/htdocs", ...)
 			{
-				continue;
-			}
-			if (file_exists($dirroot.'/'.$path))
-			{
-				$res=$dirroot.'/'.$path;
-				return $res;
+				if ($key == 'main')
+				{
+					continue;
+				}
+				if (file_exists($dirroot.'/'.$path))
+				{
+					$res=$dirroot.'/'.$path;
+					return $res;
+				}
 			}
 		}
 		if ($returnemptyifnotfound)								// Not found into alternate dir
