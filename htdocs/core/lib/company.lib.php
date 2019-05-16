@@ -192,8 +192,10 @@ function societe_prepare_head(Societe $object)
 		{
 			$langs->load("stripe");
 			$title = $langs->trans("BankAccountsAndGateways");
+			
 			$servicestatus = 0;
 			if (! empty($conf->global->STRIPE_LIVE) && ! GETPOST('forcesandbox', 'alpha')) $servicestatus = 1;
+			
 			include_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
 			$societeaccount = new SocieteAccount($db);
 			$stripecu = $societeaccount->getCustomerAccount($object->id, 'stripe', $servicestatus);		// Get thirdparty cu_...
@@ -223,7 +225,8 @@ function societe_prepare_head(Societe $object)
 
         $head[$h][0] = DOL_URL_ROOT .'/societe/paymentmodes.php?socid='.$object->id;
         $head[$h][1] = $title;
-        if ($nbBankAccount > 0) $head[$h][1].= ' <span class="badge">'.$nbBankAccount.'</span>';
+		if ($foundonexternalonlinesystem) $head[$h][1].= ' <span class="badge">...</span>';
+       	elseif ($nbBankAccount > 0) $head[$h][1].= ' <span class="badge">'.$nbBankAccount.'</span>';
         $head[$h][2] = 'rib';
         $h++;
     }
