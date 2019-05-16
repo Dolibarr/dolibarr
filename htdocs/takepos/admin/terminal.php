@@ -58,7 +58,6 @@ if($resql){
 }
 
 $terminaltouse = $terminal;
-if ($terminaltouse == '1') $terminaltouse = '';
 
 
 /*
