@@ -67,6 +67,7 @@ require(dirname(__FILE__) . '/lib/BalanceTransaction.php');
 require(dirname(__FILE__) . '/lib/BankAccount.php');
 require(dirname(__FILE__) . '/lib/BitcoinReceiver.php');
 require(dirname(__FILE__) . '/lib/BitcoinTransaction.php');
+require(dirname(__FILE__) . '/lib/Capability.php');
 require(dirname(__FILE__) . '/lib/Card.php');
 require(dirname(__FILE__) . '/lib/Charge.php');
 require(dirname(__FILE__) . '/lib/Checkout/Session.php');
