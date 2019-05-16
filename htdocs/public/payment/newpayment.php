@@ -2025,7 +2025,7 @@ if (preg_match('/^dopayment/', $action))
     			        	    postal_code: '<?php echo $object->thirdparty->zip; ?>'}<?php } ?>
     			        }	/* TODO Add all other known data like emails, ... to be SCA compliant */
           			},
-          			save_payment_method: false
+          			save_payment_method: true	/* the card will be saved */
                 }
               ).then(function(result) {
               	  console.log(result);
