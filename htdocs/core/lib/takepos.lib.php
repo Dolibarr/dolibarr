@@ -37,8 +37,8 @@ function takepos_prepare_head()
 	$head[$h][1] = $langs->trans("Parameters");
 	$head[$h][2] = 'setup';
 	$h++;
-	
-	for ($i = 2; $i <= $conf->global->TAKEPOS_NUM_TERMINALS; $i++)
+
+	for ($i = 1; $i <= $conf->global->TAKEPOS_NUM_TERMINALS; $i++)
 	{
 		$head[$h][0] = DOL_URL_ROOT.'/takepos/admin/terminal.php?terminal='.$i;
 		$head[$h][1] = $langs->trans("Terminal"). " ".$i;

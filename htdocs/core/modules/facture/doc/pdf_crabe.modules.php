@@ -1523,7 +1523,7 @@ class pdf_crabe extends ModelePDFFactures
     		if (empty($hidetop))
     		{
    			    $pdf->SetXY($this->posxdiscount-1, $tab_top+1);
-   				$pdf->MultiCell($this->posxprogress-$this->posxdiscount+1, 2, $outputlangs->transnoentities("ReductionShort"),'','C');
+   				$pdf->MultiCell($this->posxprogress-$this->posxdiscount+1, 2, $outputlangs->transnoentities("ReductionShort"), '', 'C');
     		}
         }
 

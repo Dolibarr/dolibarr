@@ -39,15 +39,12 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 
 $place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0);   // $place is id of table for Ba or Restaurant
-$posnb = (GETPOST('posnb', 'int') > 0 ? GETPOST('posnb', 'int') : 0);   // $posnb is id of POS
 $action = GETPOST('action', 'alpha');
 $setterminal = GETPOST('setterminal', 'int');
 
 if ($setterminal>0)
 {
 	$_SESSION["takeposterminal"]=$setterminal;
-	if ($setterminal==1) $_SESSION["takepostermvar"]="";
-	else $_SESSION["takepostermvar"]=$setterminal;
 }
 
 $langs->loadLangs(array("bills","orders","commercial","cashdesk","receiptprinter"));
@@ -549,7 +546,7 @@ function TerminalsDialog()
 {
     jQuery("#dialog-info").dialog({
 	    resizable: false,
-	    height:200,
+	    height:220,
 	    width:400,
 	    modal: true,
 	    buttons: {

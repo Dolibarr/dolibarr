@@ -153,7 +153,7 @@ print "</form>\n";
 
 clearstatcache();
 
-print $langs->trans("WebDAVSetupDesc")."<br>\n";
+print '<span class="opacitymedium">'.$langs->trans("WebDAVSetupDesc")."</span><br>\n";
 print "<br>";
 
 

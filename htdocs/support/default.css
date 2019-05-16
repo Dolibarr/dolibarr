@@ -16,11 +16,11 @@
  */
 
 body {
-font-size:12px;
+font-size:14px;
 font-family: Verdana, Tahoma, Arial, Helvetica, sans-serif;
 background: #f9f9f9;
 /* background-color: #F4F4F4; */
-margin: 5px 10px;
+margin: 5px 5px;
 }
 
 div.titre {
@@ -29,7 +29,7 @@ margin: 0 0 0 0;
 }
 
 span.titre {
-font-size: 14px;
+font-size: 15px;
 font-weight: bold;
 background: #FFFFFF;
 color: #4965B3;
@@ -150,13 +150,26 @@ tr.title
 background: #DDDFDD;
 }
 
-table { font-size: 12px; }
-table.login {  border: 1px solid #C0C0C0; background: #FFF; font-size: 12px; }
+table.login {  border: 1px solid #C0C0C0; background: #FFF; }
+
+.tablesupport {
+	padding: 6px;
+}
+
+.blocksupport {
+	padding: 12px;
+	/* width: 90%; */
+}
+/* Force values for small screen 570 */
+@media only screen and (max-width: 570px)
+{
+	.blocksupport {
+		width: 90%;
+	}
+}
 
 .inline-block
 {
 	display:inline-block;
 	vertical-align: top;
-	margin: 12px;
-	min-width: 400px;
 }

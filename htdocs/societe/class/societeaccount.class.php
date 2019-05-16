@@ -20,7 +20,7 @@
  */
 
 /**
- * \file        class/societeaccount.class.php
+ * \file        societe/class/societeaccount.class.php
  * \ingroup     societe
  * \brief       This file is a CRUD class file for SocieteAccount (Create/Read/Update/Delete)
  */

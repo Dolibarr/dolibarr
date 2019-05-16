@@ -661,7 +661,7 @@ class pdf_standard extends ModelePDFProduct
 	    if (empty($hidetop))
 	    {
 	        $pdf->SetXY($this->posxqty-1, $tab_top+1);
-	        $pdf->MultiCell($this->posxunit-$this->posxqty-1, 2, $outputlangs->transnoentities("Qty"),'','C');
+	        $pdf->MultiCell($this->posxunit-$this->posxqty-1, 2, $outputlangs->transnoentities("Qty"), '', 'C');
 	    }
 
 	    if($conf->global->PRODUCT_USE_UNITS) {

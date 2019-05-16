@@ -61,6 +61,8 @@ CREATE TABLE llx_pos_cash_fence(
 -- For 10.0
 
 DROP TABLE llx_cotisation;
+ALTER TABLE llx_accounting_bookkeeping DROP COLUMN validated;
+ALTER TABLE llx_accounting_bookkeeping_tmp DROP COLUMN validated;
 
 ALTER TABLE llx_loan ADD COLUMN insurance_amount double(24,8) DEFAULT 0;
 
@@ -70,7 +72,10 @@ ALTER TABLE llx_facture ADD UNIQUE INDEX uk_facture_ref (ref, entity);
 
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('TICKET_CREATE','Ticket created','Executed when a ticket is created','ticket',161);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('TICKET_MODIFY','Ticket modified','Executed when a ticket is modified','ticket',163);
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('TICKET_DELETE','Ticket deleted','Executed when a ticket is deleted','ticket',164);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('TICKET_ASSIGNED','Ticket assigned','Executed when a ticket is assigned to another user','ticket',164);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('TICKET_CLOSE','Ticket closed','Executed when a ticket is closed','ticket',165);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('TICKET_SENTBYMAIL','Ticket message sent by email','Executed when a message is sent from the ticket record','ticket',166);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('TICKET_DELETE','Ticket deleted','Executed when a ticket is deleted','ticket',167);
 
 create table llx_mailing_unsubscribe
 (
@@ -293,9 +298,6 @@ ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN maxemailpercollect inte
 DELETE FROM llx_const WHERE name = 'THEME_ELDY_USE_HOVER' AND value = '0';
 DELETE FROM llx_const WHERE name = 'THEME_ELDY_USE_CHECKED' AND value = '0';
 
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('TICKET_CLOSE','Ticket closed','Executed when a ticket is closed','ticket',164);
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('TICKET_SENTBYMAIL','Ticket message sent by email','Executed when a message is sent from the ticket record','ticket',166);
-
 ALTER TABLE llx_inventorydet DROP COLUMN pmp; 
 ALTER TABLE llx_inventorydet DROP COLUMN pa; 
 ALTER TABLE llx_inventorydet DROP COLUMN new_pmp;
@@ -303,4 +305,67 @@ ALTER TABLE llx_inventorydet DROP COLUMN new_pmp;
 UPDATE llx_c_shipment_mode SET label = 'https://www.laposte.fr/outils/suivre-vos-envois?code={TRACKID}' WHERE code IN ('COLSUI');
 UPDATE llx_c_shipment_mode SET label = 'https://www.laposte.fr/outils/suivre-vos-envois?code={TRACKID}' WHERE code IN ('LETTREMAX');
 
-ALTER TABLE llx_societe_rib CHANGE stripe_card_ref ref varchar(128) NOT NULL;
+ALTER TABLE llx_societe_rib CHANGE COLUMN stripe_card_ref ref varchar(128) NOT NULL;
+
+
+create table llx_reception
+(
+  rowid                 integer AUTO_INCREMENT PRIMARY KEY,
+  tms                   timestamp,
+  ref                   varchar(30)        NOT NULL,
+  entity                integer  DEFAULT 1 NOT NULL,	-- multi company id
+  fk_soc                integer            NOT NULL,
+  fk_projet  		integer  DEFAULT NULL,
+  
+  ref_ext               varchar(30),					-- reference into an external system (not used by dolibarr)
+  ref_int				varchar(30),					-- reference into an internal system (used by dolibarr to store extern id like paypal info)
+  ref_supplier          varchar(30),					-- customer number
+  
+  date_creation         datetime,						-- date de creation
+  fk_user_author        integer,						-- author of creation
+  fk_user_modif         integer,						-- author of last change
+  date_valid            datetime,						-- date de validation
+  fk_user_valid         integer,						-- valideur
+  date_delivery			datetime	DEFAULT NULL,		-- date planned of delivery
+  date_reception       datetime,						
+  fk_shipping_method    integer,
+  tracking_number       varchar(50),
+  fk_statut             smallint	DEFAULT 0,			-- 0 = draft, 1 = validated, 2 = billed or closed depending on WORKFLOW_BILL_ON_SHIPMENT option
+  billed                smallint    DEFAULT 0,
+  
+  height                float,							-- height
+  width                 float,							-- with
+  size_units            integer,						-- unit of all sizes (height, width, depth)
+  size                  float,							-- depth
+  weight_units          integer,						-- unit of weight
+  weight                float,							-- weight
+  note_private          text,
+  note_public           text,
+  model_pdf             varchar(255),
+  fk_incoterms          integer,						-- for incoterms
+  location_incoterms    varchar(255),					-- for incoterms
+  
+  import_key			varchar(14),
+  extraparams			varchar(255)							-- for other parameters with json format
+)ENGINE=innodb;
+
+ALTER TABLE llx_reception ADD UNIQUE INDEX idx_reception_uk_ref (ref, entity);
+
+ALTER TABLE llx_reception ADD INDEX idx_reception_fk_soc (fk_soc);
+ALTER TABLE llx_reception ADD INDEX idx_reception_fk_user_author (fk_user_author);
+ALTER TABLE llx_reception ADD INDEX idx_reception_fk_user_valid (fk_user_valid);
+ALTER TABLE llx_reception ADD INDEX idx_reception_fk_shipping_method (fk_shipping_method);
+
+create table llx_reception_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                          		-- import key
+) ENGINE=innodb;
+
+ALTER TABLE llx_reception_extrafields ADD INDEX idx_reception_extrafields (fk_object);
+
+ALTER TABLE llx_commande_fournisseur_dispatch ADD COLUMN fk_projet integer DEFAULT NULL;
+ALTER TABLE llx_commande_fournisseur_dispatch ADD COLUMN fk_reception integer DEFAULT NULL;
+
