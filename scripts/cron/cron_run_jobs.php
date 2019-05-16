@@ -229,16 +229,12 @@ exit(0);
 /**
  * script cron usage
  *
- * @param string $path
- *        	path
- * @param string $script_file
- *        	filename
+ * @param string $path				Path
+ * @param string $script_file		Filename
  * @return void
  */
 function usage($path, $script_file)
 {
-	global $conf;
-
 	print "Usage: " . $script_file . " securitykey userlogin|'firstadmin' [cronjobid]\n";
 	print "The script return 0 when everything worked successfully.\n";
 	print "\n";
