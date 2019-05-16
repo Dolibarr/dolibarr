@@ -396,8 +396,9 @@ if ($action == 'dopayment')
 }
 
 
-// Called when choosing Stripe mode, after clicking the 'dopayment' with the Charge API architecture.
-// When using the PaymentItent architecture, we dont need this, the Stripe customer is created when creating PaymentItent when showing payment page.
+// Called when choosing Stripe mode.
+// When using the Charge API architecture, this code is called after clicking the 'dopayment' with the Charge API architecture.
+// When using the PaymentIntent API architecture, the Stripe customer is already created when creating PaymentItent when showing payment page and the payment is already ok.
 if ($action == 'charge' && ! empty($conf->stripe->enabled))
 {
 	$amountstripe = $amount;
@@ -426,6 +427,7 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 	$error = 0;
     $errormessage = '';
 
+    // When using the Charge API architecture
     if (empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION))
     {
     	try {
@@ -611,6 +613,7 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
     	}
     }
 
+    // When using the PaymentIntent API architecture
     if (! empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION))
     {
         $service = 'StripeTest';
@@ -655,6 +658,12 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
             dol_syslog($errormessage, LOG_WARNING, 0, '_stripe');
             setEventMessages($e->getMessage(), null, 'errors');
             $action='';
+        }
+        else
+        {
+        	// TODO We can alse record the payment mode into llx_societe_rib with stripe $paymentintent->payment_method
+        	// Note that with other Stripe architecture (using Charge API), the payment mode was not recorded, so it is not mandatory to do it here.
+        	//dol_syslog("Create payment_method for ".$paymentintent->payment_method, LOG_DEBUG, 0, '_stripe');
         }
     }
 
@@ -2008,7 +2017,7 @@ if (preg_match('/^dopayment/', $action))
     			        billing_details: {
     			        	name: cardholderName.value
     			        	<?php if (GETPOST('email', 'alpha')) { ?>, email: '<?php echo GETPOST('email', 'alpha'); ?>'<?php } ?>
-    			        	<?php if (is_object($object) && is_object($object->thirdparty)) { ?>, phone: '<?php echo $object->thirdparty->phone; ?>'<?php } ?>
+    			        	<?php if (is_object($object) && is_object($object->thirdparty) && is_object($object->thirdparty->phone)) { ?>, phone: '<?php echo $object->thirdparty->phone; ?>'<?php } ?>
     			        	<?php if (is_object($object) && is_object($object->thirdparty)) { ?>, address: {
     			        	    city: '<?php echo $object->thirdparty->town; ?>',
     			        	    country: '<?php echo $object->thirdparty->country_code; ?>',
