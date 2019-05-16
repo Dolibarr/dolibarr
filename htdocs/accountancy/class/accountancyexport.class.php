@@ -50,6 +50,7 @@ class AccountancyExport
 	public static $EXPORT_TYPE_COGILOG = 8;
 	public static $EXPORT_TYPE_AGIRIS = 9;
 	public static $EXPORT_TYPE_FEC = 11;
+	public static $EXPORT_TYPE_OPENCONCERTO = 12;
 
 
 	/**
@@ -103,6 +104,7 @@ class AccountancyExport
 			self::$EXPORT_TYPE_EBP => $langs->trans('Modelcsv_ebp'),
 			self::$EXPORT_TYPE_COGILOG => $langs->trans('Modelcsv_cogilog'),
 			self::$EXPORT_TYPE_AGIRIS => $langs->trans('Modelcsv_agiris'),
+            self::$EXPORT_TYPE_OPENCONCERTO => $langs->trans('Modelcsv_openconcerto'),
 			self::$EXPORT_TYPE_FEC => $langs->trans('Modelcsv_FEC'),
 		);
 	}
@@ -126,6 +128,7 @@ class AccountancyExport
 			self::$EXPORT_TYPE_EBP => 'ebp',
 			self::$EXPORT_TYPE_COGILOG => 'cogilog',
 			self::$EXPORT_TYPE_AGIRIS => 'agiris',
+			self::$EXPORT_TYPE_OPENCONCERTO => 'openconcerto',
 			self::$EXPORT_TYPE_FEC => 'fec',
 		);
 
@@ -187,6 +190,10 @@ class AccountancyExport
 					'label' => $langs->trans('Modelcsv_FEC'),
 					'ACCOUNTING_EXPORT_FORMAT' => 'txt',
 				),
+                self::$EXPORT_TYPE_OPENCONCERTO => array(
+                    'label' => $langs->trans('Modelcsv_openconcerto'),
+                    'ACCOUNTING_EXPORT_FORMAT' => 'csv',
+                ),
 			),
 			'cr'=> array (
 				'1' => $langs->trans("Unix"),
@@ -248,6 +255,9 @@ class AccountancyExport
 			case self::$EXPORT_TYPE_AGIRIS :
 				$this->exportAgiris($TData);
 				break;
+            case self::$EXPORT_TYPE_OPENCONCERTO :
+                $this->exportOpenConcerto($TData);
+                break;
 			case self::$EXPORT_TYPE_FEC :
 				$this->exportFEC($TData);
 				break;
@@ -587,6 +597,39 @@ class AccountancyExport
 			print $end_line;
 		}
 	}
+
+    /**
+     * Export format : OpenConcerto
+     *
+     * @param array $objectLines data
+     *
+     * @return void
+     */
+    public function exportOpenConcerto($objectLines)
+    {
+
+        $separator = ';';
+        $end_line = "\n";
+
+        foreach ($objectLines as $line) {
+
+            $date = dol_print_date($line->doc_date, '%d/%m/%Y');
+
+            print $date . $separator;
+            print $line->code_journal;
+            if (empty($line->subledger_account)) {
+                print length_accountg($line->numero_compte) . $separator;
+            } else {
+                print length_accounta($line->subledger_account) . $separator;
+            }
+            print $line->doc_ref . $separator;
+            print $line->label_operation . $separator;
+            print price($line->debit) . $separator;
+            print price($line->credit) . $separator;
+
+            print $end_line;
+        }
+    }
 
 	/**
 	 * Export format : Configurable
