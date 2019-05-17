@@ -3,7 +3,7 @@ PayBoxSetup=Impostazioni modulo Paybox
 PayBoxDesc=Questo modulo offre pagine per consentire il pagamento attraverso <a href="http://www.paybox.com" target="_blank">Paybox</a> da parte dei clienti. Può essere usato per un pagamento qualsiasi o per il pagamento di specifici oggetti Dolibarr (fattura, ordine, ...)
 FollowingUrlAreAvailableToMakePayments=Puoi utilizzare i seguenti indirizzi per permettere ai clienti di effettuare pagamenti su Dolibarr
 PaymentForm=Forma di pagamento
-WelcomeOnPaymentPage=Benvenuti sul nostro servizio di pagamento online
+WelcomeOnPaymentPage=Welcome to our online payment service
 ThisScreenAllowsYouToPay=Questa schermata consente di effettuare un pagamento online su %s.
 ThisIsInformationOnPayment=Informazioni sul pagamento da effettuare
 ToComplete=Per completare
@@ -20,10 +20,11 @@ ToOfferALinkForOnlinePaymentOnInvoice=URL per il pagamento %s di una fattura
 ToOfferALinkForOnlinePaymentOnContractLine=URL per il pagamento %s di una riga di contratto
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL per il pagamento %s di un importo
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL per il pagamento %s dell'adesione di un membro
+ToOfferALinkForOnlinePaymentOnDonation=URL to offer a %s online payment user interface for payment of donation
 YouCanAddTagOnUrl=Puoi anche aggiungere a qualunque di questi url il parametro <b>&tag=<i>value</i></b> (richiesto solo per il pagamento gratuito) per aggiungere una tag con un tuo commento.
-SetupPayBoxToHavePaymentCreatedAutomatically=Imposta il tuo Paybox con <b>url %s</b> perché venga automaticamente creato un pagamento alla convalida di Paybox.
+SetupPayBoxToHavePaymentCreatedAutomatically=Setup your Paybox with url <b>%s</b> to have payment created automatically when validated by Paybox.
 YourPaymentHasBeenRecorded=Il pagamento è stato registrato. Grazie.
-YourPaymentHasNotBeenRecorded=Il pagamento non è stato registrato e la transazione è stata annullata. Grazie.
+YourPaymentHasNotBeenRecorded=Your payment has NOT been recorded and the transaction has been canceled. Thank you.
 AccountParameter=Dati account
 UsageParameter=Parametri d'uso
 InformationToFindParameters=Aiuto per trovare informazioni sul tuo account %s

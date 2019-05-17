@@ -3,7 +3,7 @@ PayBoxSetup=Nastavitev modula za online plačila Paybox
 PayBoxDesc=Ta modul omogoča kupcem plačevanje na <a href="http://www.paybox.com" target="_blank">Paybox</a>. Lahko se uporabi za prosto plačevanje ali za plačilo posameznih Dolibarr postavk (račun, naročilo, ...)
 FollowingUrlAreAvailableToMakePayments=Naslednji URL naslovi so na voljo kupcem za izvedbo plačil Dolibarr postavk
 PaymentForm=Obrazec za plačilo
-WelcomeOnPaymentPage=Dobrodošli v naši storitvi online plačil
+WelcomeOnPaymentPage=Welcome to our online payment service
 ThisScreenAllowsYouToPay=Ta zaslon omogoča online plačilo za %s.
 ThisIsInformationOnPayment=To je informacija o potrebnem plačilu
 ToComplete=Za dokončanje
@@ -20,10 +20,11 @@ ToOfferALinkForOnlinePaymentOnInvoice=URL naslov s ponudbo %s vmesnika za online
 ToOfferALinkForOnlinePaymentOnContractLine=URL naslov s ponudbo %s vmesnika za online plačila po pogodbi
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL naslov s ponudbo %s vmesnika za online plačila poljubnih zneskov
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL naslov s ponudbo %s vmesnika za online plačila članarin
+ToOfferALinkForOnlinePaymentOnDonation=URL to offer a %s online payment user interface for payment of donation
 YouCanAddTagOnUrl=Vsakemu od teh URL naslovov lahko tudi dodate url parameter <b>&tag=<i>vrednost</i></b> (zahtevano samo pri poljubnih plačilih) s komentarjem vašega plačila.
-SetupPayBoxToHavePaymentCreatedAutomatically=Nastavite vaš PayBox z url <b>%s</b> za avtomatsko kreiranje plačil po potrditvi.
+SetupPayBoxToHavePaymentCreatedAutomatically=Setup your Paybox with url <b>%s</b> to have payment created automatically when validated by Paybox.
 YourPaymentHasBeenRecorded=Ta stran potrjuje, da je bilo vaše plačilo sprejeto. Hvala.
-YourPaymentHasNotBeenRecorded=Vaše plačilo ni bilo sprejeto in prenos je bil preklican. Hvala.
+YourPaymentHasNotBeenRecorded=Your payment has NOT been recorded and the transaction has been canceled. Thank you.
 AccountParameter=Parametri računa
 UsageParameter=Parametri uporabe
 InformationToFindParameters=Pomoč pri iskanju informacij računa %s

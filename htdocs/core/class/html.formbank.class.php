@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2012		Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2015		Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015		Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2016       Marcos García       <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -29,8 +29,15 @@
  */
 class FormBank
 {
-    var $db;
-    var $error;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+    
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 
     /**
@@ -72,4 +79,3 @@ class FormBank
 		return 'IBANNumber';
 	}
 }
-

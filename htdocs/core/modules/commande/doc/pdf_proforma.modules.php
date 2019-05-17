@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2014	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2008		Raphael Bertrand	<raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2013	Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2012      	Christophe Battarel <christophe.battarel@altairis.fr>
@@ -46,7 +46,7 @@ class pdf_proforma extends pdf_einstein
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		global $conf,$langs,$mysoc;
 
@@ -67,12 +67,10 @@ class pdf_proforma extends pdf_einstein
 	 *  @param	string		$titlekey		Translation key to show as title of document
 	 *  @return	void
 	 */
-	function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $titlekey="InvoiceProForma")
+	private function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $titlekey = "InvoiceProForma")
 	{
 		global $conf,$langs,$hookmanager;
 
 		parent::_pagehead($pdf, $object, $showaddress, $outputlangs, $titlekey);
 	}
-
 }
-

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2009-2015 Regis Houssin <regis.houssin@capnetworks.com>
+/* Copyright (C) 2009-2015 Regis Houssin <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2013 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,13 +19,15 @@
 // Need global variable $title to be defined by caller (like dol_loginfunction)
 // Caller can also set 	$morelogincontent = array(['options']=>array('js'=>..., 'table'=>...);
 
+
 // Protection to avoid direct call of template
-if (empty($conf) || ! is_object($conf))
-{
-	print "Error, template page can't be called as URL";
-	exit;
+if (empty($conf) || ! is_object($conf)) {
+    print "Error, template page can't be called as URL";
+    exit;
 }
 
+
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 header('Cache-Control: Public, must-revalidate');
 header("Content-type: text/html; charset=".$conf->file->character_set_client);
@@ -41,7 +43,7 @@ if (! empty($conf->dol_use_jmobile)) $conf->use_javascript_ajax=1;
 
 $php_self = dol_escape_htmltag($_SERVER['PHP_SELF']);
 $php_self.= dol_escape_htmltag($_SERVER["QUERY_STRING"])?'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]):'';
-if (! preg_match('/mainmenu=/',$php_self)) $php_self.=(preg_match('/\?/',$php_self)?'&':'?').'mainmenu=home';
+if (! preg_match('/mainmenu=/', $php_self)) $php_self.=(preg_match('/\?/', $php_self)?'&':'?').'mainmenu=home';
 
 // Javascript code on logon page only to detect user tz, dst_observed, dst_first, dst_second
 $arrayofjs=array(
@@ -55,10 +57,27 @@ if (! preg_match('/'.constant('DOL_APPLICATION_TITLE').'/', $title)) $disablenof
 
 print top_htmlhead('', $titleofloginpage, 0, 0, $arrayofjs, array(), 0, $disablenofollow);
 
+
+$colorbackhmenu1='60,70,100';      // topmenu
+if (! isset($conf->global->THEME_ELDY_TOPMENU_BACK1)) $conf->global->THEME_ELDY_TOPMENU_BACK1=$colorbackhmenu1;
+$colorbackhmenu1 = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_TOPMENU_BACK1)?$colorbackhmenu1:$conf->global->THEME_ELDY_TOPMENU_BACK1):(empty($user->conf->THEME_ELDY_TOPMENU_BACK1)?$colorbackhmenu1:$user->conf->THEME_ELDY_TOPMENU_BACK1);
+$colorbackhmenu1 = join(',', colorStringToArray($colorbackhmenu1));    // Normalize value to 'x,y,z'
+
 ?>
 <!-- BEGIN PHP TEMPLATE LOGIN.TPL.PHP -->
 
-<body class="body bodylogin"<?php print empty($conf->global->MAIN_LOGIN_BACKGROUND)?'':' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; background-image: url(\''.DOL_URL_ROOT.'/viewimage.php?cache=1&noalt=1&modulepart=mycompany&file='.urlencode($conf->global->MAIN_LOGIN_BACKGROUND).'\')"'; ?>>
+<?php
+if (!empty($conf->global->ADD_UNSPLASH_LOGIN_BACKGROUND)) {
+	// For example $conf->global->ADD_UNSPLASH_LOGIN_BACKGROUND = 'https://source.unsplash.com/random'
+?>
+	<body class="body bodylogin" style="background-image: url('<?php echo dol_escape_htmltag($conf->global->ADD_UNSPLASH_LOGIN_BACKGROUND); ?>'); background-repeat: no-repeat; background-position: center center; background-attachment: fixed; background-size: cover; background-color: #ffffff;">
+<?php
+} else {
+?>
+	<body class="body bodylogin"<?php print empty($conf->global->MAIN_LOGIN_BACKGROUND)?'':' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; background-image: url(\''.DOL_URL_ROOT.'/viewimage.php?cache=1&noalt=1&modulepart=mycompany&file=logos/'.urlencode($conf->global->MAIN_LOGIN_BACKGROUND).'\')"'; ?>>
+<?php
+}
+?>
 
 <?php if (empty($conf->dol_use_jmobile)) { ?>
 <script type="text/javascript">
@@ -69,7 +88,7 @@ $(document).ready(function () {
 </script>
 <?php } ?>
 
-<div class="login_center center">
+<div class="login_center center"<?php print empty($conf->global->MAIN_LOGIN_BACKGROUND)?' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; background-image: linear-gradient(rgb('.$colorbackhmenu1.',0.3), rgb(240,240,240));"':'' ?>>
 <div class="login_vertical_align">
 
 <form id="login" name="login" method="post" action="<?php echo $php_self; ?>">
@@ -114,26 +133,29 @@ if ($disablenofollow) echo '</a>';
 
 <div id="login_right">
 
-<table class="left centpercent" title="<?php echo $langs->trans("EnterLoginDetail"); ?>">
+<div class="tagtable left centpercent" title="<?php echo $langs->trans("EnterLoginDetail"); ?>">
+
 <!-- Login -->
-<tr>
-<td class="nowrap center valignmiddle">
+<div class="trinputlogin">
+<div class="tagtd nowraponall center valignmiddle tdinputlogin">
 <?php if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?><label for="username" class="hidden"><?php echo $langs->trans("Login"); ?></label><?php } ?>
 <!-- <span class="span-icon-user">-->
 <span class="fa fa-user">
-<input type="text" id="username" placeholder="<?php echo $langs->trans("Login"); ?>" name="username" class="flat input-icon-user minwidth150" value="<?php echo dol_escape_htmltag($login); ?>" tabindex="1" autofocus="autofocus" />
 </span>
-</td>
-</tr>
+<input type="text" id="username" placeholder="<?php echo $langs->trans("Login"); ?>" name="username" class="flat input-icon-user minwidth150" value="<?php echo dol_escape_htmltag($login); ?>" tabindex="1" autofocus="autofocus" />
+</div>
+</div>
+
 <!-- Password -->
-<tr>
-<td class="nowrap center valignmiddle">
+<div class="trinputlogin">
+<div class="tagtd nowraponall center valignmiddle tdinputlogin">
 <?php if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?><label for="password" class="hidden"><?php echo $langs->trans("Password"); ?></label><?php } ?>
 <!--<span class="span-icon-password">-->
 <span class="fa fa-key">
-<input id="password" placeholder="<?php echo $langs->trans("Password"); ?>" name="password" class="flat input-icon-password minwidth150" type="password" value="<?php echo dol_escape_htmltag($password); ?>" tabindex="2" autocomplete="<?php echo empty($conf->global->MAIN_LOGIN_ENABLE_PASSWORD_AUTOCOMPLETE)?'off':'on'; ?>" />
 </span>
-</td></tr>
+<input id="password" placeholder="<?php echo $langs->trans("Password"); ?>" name="password" class="flat input-icon-password minwidth150" type="password" value="<?php echo dol_escape_htmltag($password); ?>" tabindex="2" autocomplete="<?php echo empty($conf->global->MAIN_LOGIN_ENABLE_PASSWORD_AUTOCOMPLETE)?'off':'on'; ?>" />
+</div></div>
+
 <?php
 if (! empty($morelogincontent)) {
 	if (is_array($morelogincontent)) {
@@ -153,16 +175,17 @@ if (! empty($morelogincontent)) {
 
 if ($captcha) {
 	// Add a variable param to force not using cache (jmobile)
-	$php_self = preg_replace('/[&\?]time=(\d+)/','',$php_self);	// Remove param time
-	if (preg_match('/\?/',$php_self)) $php_self.='&time='.dol_print_date(dol_now(),'dayhourlog');
-	else $php_self.='?time='.dol_print_date(dol_now(),'dayhourlog');
+	$php_self = preg_replace('/[&\?]time=(\d+)/', '', $php_self);	// Remove param time
+	if (preg_match('/\?/', $php_self)) $php_self.='&time='.dol_print_date(dol_now(), 'dayhourlog');
+	else $php_self.='?time='.dol_print_date(dol_now(), 'dayhourlog');
 	// TODO: provide accessible captcha variants
 ?>
 	<!-- Captcha -->
-	<tr>
-	<td class="nowrap none center">
+	<div class="trinputlogin">
+	<div class="tagtd nowraponall none center valignmiddle tdinputlogin">
 
-	<table class="login_table_securitycode centpercent"><tr>
+	<table class="login_table_securitycode centpercent">
+	<tr class="valignmiddle">
 	<td>
 	<span class="span-icon-security">
 	<input id="securitycode" placeholder="<?php echo $langs->trans("SecurityCode"); ?>" class="flat input-icon-security width100" type="text" maxlength="5" name="code" tabindex="3" />
@@ -170,15 +193,17 @@ if ($captcha) {
 	</td>
 	<td><img src="<?php echo DOL_URL_ROOT ?>/core/antispamimage.php" border="0" width="80" height="32" id="img_securitycode" /></td>
 	<td><a href="<?php echo $php_self; ?>" tabindex="4" data-role="button"><?php echo $captcha_refresh; ?></a></td>
-	</tr></table>
+	</tr>
+	</table>
 
-	</td></tr>
+	</div></div>
 <?php } ?>
-</table>
 
-</div> <!-- end div login-right -->
+</div>
 
-</div> <!-- end div login-line1 -->
+</div> <!-- end div login_right -->
+
+</div> <!-- end div login_line1 -->
 
 
 <div id="login_line2" style="clear: both">
@@ -190,17 +215,18 @@ if ($captcha) {
 if ($forgetpasslink || $helpcenterlink)
 {
 	$moreparam='';
-	if ($dol_hide_topmenu)   $moreparam.=(strpos($moreparam,'?')===false?'?':'&').'dol_hide_topmenu='.$dol_hide_topmenu;
-	if ($dol_hide_leftmenu)  $moreparam.=(strpos($moreparam,'?')===false?'?':'&').'dol_hide_leftmenu='.$dol_hide_leftmenu;
-	if ($dol_no_mouse_hover) $moreparam.=(strpos($moreparam,'?')===false?'?':'&').'dol_no_mouse_hover='.$dol_no_mouse_hover;
-	if ($dol_use_jmobile)    $moreparam.=(strpos($moreparam,'?')===false?'?':'&').'dol_use_jmobile='.$dol_use_jmobile;
+	if ($dol_hide_topmenu)   $moreparam.=(strpos($moreparam, '?')===false?'?':'&').'dol_hide_topmenu='.$dol_hide_topmenu;
+	if ($dol_hide_leftmenu)  $moreparam.=(strpos($moreparam, '?')===false?'?':'&').'dol_hide_leftmenu='.$dol_hide_leftmenu;
+	if ($dol_no_mouse_hover) $moreparam.=(strpos($moreparam, '?')===false?'?':'&').'dol_no_mouse_hover='.$dol_no_mouse_hover;
+	if ($dol_use_jmobile)    $moreparam.=(strpos($moreparam, '?')===false?'?':'&').'dol_use_jmobile='.$dol_use_jmobile;
 
 	echo '<br>';
-	echo '<div class="center" style="margin-top: 8px;">';
+	echo '<div class="center" style="margin-top: 15px;">';
 	if ($forgetpasslink) {
-		echo '<a class="alogin" href="'.DOL_URL_ROOT.'/user/passwordforgotten.php'.$moreparam.'">(';
+		$url=DOL_URL_ROOT.'/user/passwordforgotten.php'.$moreparam;
+		if (! empty($conf->global->MAIN_PASSWORD_FORGOTLINK)) $url=$conf->global->MAIN_PASSWORD_FORGOTLINK;
+		echo '<a class="alogin" href="'.dol_escape_htmltag($url).'">';
 		echo $langs->trans('PasswordForgotten');
-		if (! $helpcenterlink) echo ')';
 		echo '</a>';
 	}
 
@@ -210,14 +236,13 @@ if ($forgetpasslink || $helpcenterlink)
 		$url=DOL_URL_ROOT.'/support/index.php'.$moreparam;
 		if (! empty($conf->global->MAIN_HELPCENTER_LINKTOUSE)) $url=$conf->global->MAIN_HELPCENTER_LINKTOUSE;
 		echo '<a class="alogin" href="'.dol_escape_htmltag($url).'" target="_blank">';
-		if (! $forgetpasslink) echo '(';
 		echo $langs->trans('NeedHelpCenter');
-		echo ')</a>';
+		echo '</a>';
 	}
 	echo '</div>';
 }
 
-if (isset($conf->file->main_authentication) && preg_match('/openid/',$conf->file->main_authentication))
+if (isset($conf->file->main_authentication) && preg_match('/openid/', $conf->file->main_authentication))
 {
 	$langs->load("users");
 
@@ -230,7 +255,7 @@ if (isset($conf->file->main_authentication) && preg_match('/openid/',$conf->file
 	else
 	{
 		$langs->load("errors");
-		print '<font class="warning">'.$langs->trans("ErrorOpenIDSetupNotComplete",'MAIN_AUTHENTICATION_OPENID_URL').'</font>';
+		print '<font class="warning">'.$langs->trans("ErrorOpenIDSetupNotComplete", 'MAIN_AUTHENTICATION_OPENID_URL').'</font>';
 	}
 
 	echo '</div>';
@@ -261,7 +286,7 @@ if (! empty($_SESSION['dol_loginmesg']))
 // Add commit strip
 if (!empty($conf->global->MAIN_EASTER_EGG_COMMITSTRIP)) {
     include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
-	if (substr($langs->defaultlang,0,2)=='fr') {
+	if (substr($langs->defaultlang, 0, 2)=='fr') {
 		$resgetcommitstrip = getURLContent("http://www.commitstrip.com/fr/feed/");
 	} else {
 		$resgetcommitstrip = getURLContent("http://www.commitstrip.com/en/feed/");
@@ -269,7 +294,7 @@ if (!empty($conf->global->MAIN_EASTER_EGG_COMMITSTRIP)) {
     if ($resgetcommitstrip && $resgetcommitstrip['http_code'] == '200')
     {
         $xml = simplexml_load_string($resgetcommitstrip['content']);
-        $little = $xml->channel->item[0]->children('content',true);
+        $little = $xml->channel->item[0]->children('content', true);
         print preg_replace('/width="650" height="658"/', '', $little->encoded);
     }
 }
@@ -304,7 +329,7 @@ if (! empty($morelogincontent) && is_array($morelogincontent)) {
 		}
 	}
 }
-else if (! empty($moreloginextracontent)) {
+elseif (! empty($moreloginextracontent)) {
 	echo '<!-- Javascript by hook -->';
 	echo $moreloginextracontent;
 }

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2011 Regis Houssin <regis.houssin@capnetworks.com>
+/* Copyright (C) 2010-2011 Regis Houssin <regis.houssin@inodbox.com>
  * Copyright (C) 2014      Marcos García <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -38,26 +38,25 @@ $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 $langs->load("orders");
 
 $total=0; $ilink=0;
-$var=true;
 foreach($linkedObjectBlock as $key => $objectlink)
 {
     $ilink++;
 
-    $trclass=($var?'pair':'impair');
+    $trclass='oddeven';
     if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) $trclass.=' liste_sub_total';
 ?>
     <tr class="<?php echo $trclass; ?>">
         <td><?php echo $langs->trans("SupplierOrder"); ?></td>
-    	<td><a href="<?php echo DOL_URL_ROOT.'/fourn/commande/card.php?id='.$objectlink->id ?>"><?php echo img_object($langs->trans("ShowOrder"),"order").' '.$objectlink->ref; ?></a></td>
-    	<td align="left"><?php echo $objectlink->ref_supplier; ?></td>
-    	<td align="center"><?php echo dol_print_date($objectlink->date,'day'); ?></td>
-    	<td align="right"><?php
+    	<td><a href="<?php echo DOL_URL_ROOT.'/fourn/commande/card.php?id='.$objectlink->id ?>"><?php echo img_object($langs->trans("ShowOrder"), "order").' '.$objectlink->ref; ?></a></td>
+    	<td class="left"><?php echo $objectlink->ref_supplier; ?></td>
+    	<td class="center"><?php echo dol_print_date($objectlink->date, 'day'); ?></td>
+    	<td class="right"><?php
     		if ($user->rights->fournisseur->commande->lire) {
     			$total = $total + $objectlink->total_ht;
     			echo price($objectlink->total_ht);
     		} ?></td>
-    	<td align="right"><?php echo $objectlink->getLibStatut(3); ?></td>
-    	<td align="right"><a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a></td>
+    	<td class="right"><?php echo $objectlink->getLibStatut(3); ?></td>
+    	<td class="right"><a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a></td>
     </tr>
 <?php
 }
@@ -67,11 +66,11 @@ if (count($linkedObjectBlock) > 1)
     <tr class="liste_total <?php echo (empty($noMoreLinkedObjectBlockAfter)?'liste_sub_total':''); ?>">
         <td><?php echo $langs->trans("Total"); ?></td>
         <td></td>
-    	<td align="center"></td>
-    	<td align="center"></td>
-    	<td align="right"><?php echo price($total); ?></td>
-    	<td align="right"></td>
-    	<td align="right"></td>
+    	<td class="center"></td>
+    	<td class="center"></td>
+    	<td class="right"><?php echo price($total); ?></td>
+    	<td class="right"></td>
+    	<td class="right"></td>
     </tr>
     <?php
 }

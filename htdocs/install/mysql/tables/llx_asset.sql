@@ -1,4 +1,4 @@
--- Copyright (C) 2018      Alexandre Spangaro   <aspangaro@zendsi.com>
+-- Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
 --
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -19,9 +19,9 @@ CREATE TABLE llx_asset(
 	ref varchar(128) NOT NULL,
 	entity integer DEFAULT 1 NOT NULL,
 	label varchar(255),
-	amount double(24,8) DEFAULT NULL,
+	amount_ht double(24,8) DEFAULT NULL,
+	amount_vat double(24,8) DEFAULT NULL,
 	fk_asset_type integer NOT NULL,
-	fk_soc integer,
 	description text,
 	note_public text,
 	note_private text,

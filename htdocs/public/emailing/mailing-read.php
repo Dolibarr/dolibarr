@@ -25,24 +25,28 @@
  *      \brief      Script use to update mail status if destinaries read it (if images during mail read are display)
  */
 
-if (! defined('NOLOGIN'))        define("NOLOGIN",1);			// This means this output page does not require to be logged.
-if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
-if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK','1');		// Do not check anti CSRF attack test
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1');	// Do not check anti POST attack test
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');	// If there is no need to load and show top and left menu
+if (! defined('NOLOGIN'))        define("NOLOGIN", 1);			// This means this output page does not require to be logged.
+if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN', '1');
+if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');		// Do not check anti CSRF attack test
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');	// Do not check anti POST attack test
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');	// If there is no need to load and show top and left menu
 
 /**
  * Header empty
  *
  * @return	void
  */
-function llxHeader() { }
+function llxHeader()
+{
+}
 /**
  * Footer empty
  *
  * @return	void
  */
-function llxFooter() { }
+function llxFooter()
+{
+}
 
 
 require '../../main.inc.php';
@@ -82,7 +86,6 @@ if (! empty($tag))
 	dol_syslog("public/emailing/mailing-read.php : Mail read contact : ".$sql, LOG_DEBUG);
 
 	$resql=$db->query($sql);
-
 }
 
 $db->close();

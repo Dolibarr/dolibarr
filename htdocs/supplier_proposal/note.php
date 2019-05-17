@@ -2,7 +2,7 @@
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
  *
@@ -32,14 +32,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/supplier_proposal.lib.php';
 if (! empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 }
+// Load translation files required by the page
+$langs->loadLangs(array('supplier_proposal', 'compta', 'bills'));
 
-$langs->load('supplier_proposal');
-$langs->load('compta');
-$langs->load('bills');
-
-$id = GETPOST('id','int');
-$ref=GETPOST('ref','alpha');
-$action=GETPOST('action','alpha');
+$id = GETPOST('id', 'int');
+$ref=GETPOST('ref', 'alpha');
+$action=GETPOST('action', 'alpha');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -62,7 +60,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, 
  * View
  */
 
-llxHeader('',$langs->trans('CommRequest'),'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur');
+llxHeader('', $langs->trans('CommRequest'), 'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur');
 
 $form = new Form($db);
 
@@ -145,6 +143,6 @@ if ($id > 0 || ! empty($ref))
 	}
 }
 
-
+// End of page
 llxFooter();
 $db->close();

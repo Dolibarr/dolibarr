@@ -25,6 +25,9 @@ namespace Stripe;
  */
 class BankAccount extends ApiResource
 {
+
+    const OBJECT_NAME = "bank_account";
+
     use ApiOperations\Delete;
     use ApiOperations\Update;
 

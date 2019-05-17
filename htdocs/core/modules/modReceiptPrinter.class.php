@@ -40,16 +40,16 @@ class modReceiptPrinter extends DolibarrModules
      *
      *  @param      DoliDB      $db      Database handler
      */
-    function  __construct($db)
+    public function __construct($db)
     {
         $this->db = $db ;
         $this->numero = 67000;
         // Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
         // It is used to group modules in module setup page
         $this->family = "interface";
-        $this->module_position = 530;
+        $this->module_position = '53';
         // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-        $this->name = preg_replace('/^mod/i','',get_class($this));
+        $this->name = preg_replace('/^mod/i', '', get_class($this));
         // Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
         $this->description = "ReceiptPrinterDesc";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or 'dolibarr_deprecated' or version
@@ -67,9 +67,11 @@ class modReceiptPrinter extends DolibarrModules
         $this->config_page_url = array("receiptprinter.php");
 
         // Dependencies
-        $this->depends = array();
-        $this->requiredby = array();
-        $this->phpmin = array(5,1);                     // Minimum version of PHP required by module
+        $this->hidden = false;			// A condition to hide module
+		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array();	// List of module ids to disable if this one is disabled
+		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
+		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
         $this->need_dolibarr_version = array(3,9,-2);   // Minimum version of Dolibarr required by module
         $this->conflictwith = array();
         $this->langfiles = array("receiptprinter");
@@ -111,14 +113,12 @@ class modReceiptPrinter extends DolibarrModules
         //                        'url'=>'/printing/index.php',
         //                        'langs'=>'printing',            // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
         //                        'position'=>300,
-        //                        'enabled'=>'$conf->printing->enabled && $leftmenu==\'admintools\'',
+        //                        'enabled'=>'$conf->printing->enabled && preg_match(\'/^(admintools|all)/\',$leftmenu)',
         //                        'perms'=>'$user->rights->printing->read',    // Use 'perms'=>'1' if you want your menu with no permission rules
         //                        'target'=>'',
         //                        'user'=>0);                     // 0=Menu for internal users, 1=external users, 2=both
 
         $r++;
-
-
     }
 
 
@@ -130,7 +130,7 @@ class modReceiptPrinter extends DolibarrModules
      *      @param      string  $options    Options when enabling module ('', 'noboxes')
      *      @return     int                 1 if OK, 0 if KO
      */
-    function init($options='')
+    public function init($options = '')
     {
         global $conf;
         // Clean before activation
@@ -139,7 +139,6 @@ class modReceiptPrinter extends DolibarrModules
             "CREATE TABLE IF NOT EXISTS llx_printer_receipt (rowid integer AUTO_INCREMENT PRIMARY KEY, name varchar(128), fk_type integer, fk_profile integer, parameter varchar(128), entity integer) ENGINE=innodb;",
             "CREATE TABLE IF NOT EXISTS llx_printer_receipt_template (rowid integer AUTO_INCREMENT PRIMARY KEY, name varchar(128), template text, entity integer) ENGINE=innodb;",
             );
-        return $this->_init($sql,$options);
+        return $this->_init($sql, $options);
     }
-
 }

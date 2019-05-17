@@ -1,11 +1,11 @@
 <?php
 /* Copyright (C) 2013-2014 Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2017 Alexandre Spangaro	<aspangaro@zendsi.com>
+ * Copyright (C) 2013-2017 Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2014	   Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
- * Copyright (C) 2017      Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2017-2018 Frédéric France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountancyexport.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("compta","bills","admin","accountancy"));
 
 // Security access
@@ -40,20 +41,20 @@ if (empty($user->rights->accounting->chartofaccount))
 	accessforbidden();
 }
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 // Parameters ACCOUNTING_EXPORT_*
-$main_option = array (
+$main_option = array(
     'ACCOUNTING_EXPORT_PREFIX_SPEC',
 );
 
 $configuration = AccountancyExport::getTypeConfig();
 
-$listparam = $configuration[param];
+$listparam = $configuration['param'];
 
-$listformat = $configuration[format];
+$listformat = $configuration['format'];
 
-$listcr = $configuration[cr];
+$listcr = $configuration['cr'];
 
 
 $model_option = array (
@@ -78,6 +79,7 @@ $model_option = array (
 /*
  * Actions
  */
+
 if ($action == 'update') {
 	$error = 0;
 
@@ -94,7 +96,7 @@ if ($action == 'update') {
 		$error ++;
 	}
 
-	foreach ( $main_option as $constname ) {
+	foreach ($main_option as $constname) {
 		$constvalue = GETPOST($constname, 'alpha');
 
 		if (! dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
@@ -102,7 +104,7 @@ if ($action == 'update') {
 		}
 	}
 
-    foreach ($listparam[$modelcsv] as $key => $value ) {
+    foreach ($listparam[$modelcsv] as $key => $value) {
         $constante = $key;
 
         if (strpos($constante, 'ACCOUNTING')!==false) {
@@ -116,12 +118,14 @@ if ($action == 'update') {
 	if (! $error) {
         // reload
         $configuration = AccountancyExport::getTypeConfig();
-        $listparam = $configuration[param];
+        $listparam = $configuration['param'];
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
+
+
 
 /*
  * View
@@ -141,27 +145,27 @@ print '    {'."\n";
 foreach ($listparam as $key => $param) {
     print '        if (jQuery("#ACCOUNTING_EXPORT_MODELCSV").val()=="'.$key.'")'."\n";
     print '        {'."\n";
-    print '            //console.log("'.$param[label].'");'."\n";
-    if (empty($param[ACCOUNTING_EXPORT_FORMAT])) {
+    print '            //console.log("'.$param['label'].'");'."\n";
+    if (empty($param['ACCOUNTING_EXPORT_FORMAT'])) {
         print '            jQuery("#ACCOUNTING_EXPORT_FORMAT").val("'.$conf->global->ACCOUNTING_EXPORT_FORMAT.'");'."\n";
         print '            jQuery("#ACCOUNTING_EXPORT_FORMAT").prop("disabled", true);'."\n";
     } else {
-        print '            jQuery("#ACCOUNTING_EXPORT_FORMAT").val("'.$param[ACCOUNTING_EXPORT_FORMAT].'");'."\n";
+        print '            jQuery("#ACCOUNTING_EXPORT_FORMAT").val("'.$param['ACCOUNTING_EXPORT_FORMAT'].'");'."\n";
         print '            jQuery("#ACCOUNTING_EXPORT_FORMAT").removeAttr("disabled");'."\n";
     }
-    if (empty($param[ACCOUNTING_EXPORT_SEPARATORCSV])) {
+    if (empty($param['ACCOUNTING_EXPORT_SEPARATORCSV'])) {
         print '            jQuery("#ACCOUNTING_EXPORT_SEPARATORCSV").val("");'."\n";
         print '            jQuery("#ACCOUNTING_EXPORT_SEPARATORCSV").prop("disabled", true);'."\n";
     } else {
         print '            jQuery("#ACCOUNTING_EXPORT_SEPARATORCSV").val("'.$conf->global->ACCOUNTING_EXPORT_SEPARATORCSV.'");'."\n";
         print '            jQuery("#ACCOUNTING_EXPORT_SEPARATORCSV").removeAttr("disabled");'."\n";
     }
-    if (empty($param[ACCOUNTING_EXPORT_ENDLINE])) {
+    if (empty($param['ACCOUNTING_EXPORT_ENDLINE'])) {
         print '            jQuery("#ACCOUNTING_EXPORT_ENDLINE").prop("disabled", true);'."\n";
     } else {
         print '            jQuery("#ACCOUNTING_EXPORT_ENDLINE").removeAttr("disabled");'."\n";
     }
-    if (empty($param[ACCOUNTING_EXPORT_DATE])) {
+    if (empty($param['ACCOUNTING_EXPORT_DATE'])) {
         print '            jQuery("#ACCOUNTING_EXPORT_DATE").val("");'."\n";
         print '            jQuery("#ACCOUNTING_EXPORT_DATE").prop("disabled", true);'."\n";
     } else {
@@ -194,7 +198,7 @@ print "</tr>\n";
 
 $num = count($main_option);
 if ($num) {
-	foreach ( $main_option as $key ) {
+	foreach ($main_option as $key) {
 
 		print '<tr class="oddeven value">';
 
@@ -252,21 +256,21 @@ if ($num2) {
 	print '<td colspan="3">' . $langs->trans('OtherOptions') . '</td>';
 	print "</tr>\n";
 
-	foreach ( $model_option as $key) {
+	foreach ($model_option as $key) {
 		print '<tr class="oddeven value">';
 
         // Param
-        $label = $key[label];
+        $label = $key['label'];
 		print '<td width="50%">' . $langs->trans($label) . '</td>';
 
 		// Value
         print '<td>';
-        if (is_array($key[param])) {
-            print $form->selectarray($label, $key[param], $conf->global->$label, 0);
+        if (is_array($key['param'])) {
+            print $form->selectarray($label, $key['param'], $conf->global->$label, 0);
         } else {
-            print '<input type="text" size="20" id="'. $label .'" name="' . $key[label] . '" value="' . $conf->global->$label . '">';
+            print '<input type="text" size="20" id="'. $label .'" name="' . $key['label'] . '" value="' . $conf->global->$label . '">';
         }
-		
+
 		print '</td></tr>';
 	}
 
@@ -277,5 +281,6 @@ print '<div class="center"><input type="submit" class="button" value="' . dol_es
 
 print '</form>';
 
+// End of page
 llxFooter();
 $db->close();

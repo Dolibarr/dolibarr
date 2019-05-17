@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012  Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012  Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013 	   Florian Henry        <florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -32,18 +32,12 @@ if (! empty($conf->projet->enabled)) {
     require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
-$langs->load("sendings");
-$langs->load("companies");
-$langs->load("bills");
-$langs->load('deliveries');
-$langs->load('orders');
-$langs->load('stocks');
-$langs->load('other');
-$langs->load('propal');
+// Load translation files required by the page
+$langs->loadLangs(array('sendings', 'companies', 'bills', 'deliveries', 'orders', 'stocks', 'other', 'propal'));
 
-$id=(GETPOST('id','int')?GETPOST('id','int'):GETPOST('facid','int'));  // For backward compatibility
-$ref=GETPOST('ref','alpha');
-$action=GETPOST('action','alpha');
+$id=(GETPOST('id', 'int')?GETPOST('id', 'int'):GETPOST('facid', 'int'));  // For backward compatibility
+$ref=GETPOST('ref', 'alpha');
+$action=GETPOST('action', 'alpha');
 
 // Security check
 $socid='';
@@ -158,7 +152,6 @@ if ($id > 0 || ! empty($ref))
 	dol_fiche_end();
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

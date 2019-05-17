@@ -52,6 +52,7 @@ ActionAC_TEL=Llamada telefónica
 ActionAC_FAX=Envío Fax
 ActionAC_PROP=Envío presupuesto por correo
 ActionAC_EMAIL=Envío E-Mail
+ActionAC_EMAIL_IN=Recepción de Email
 ActionAC_RDV=Cita
 ActionAC_INT=Intervención in situ
 ActionAC_FAC=Envío factura a cliente por correo

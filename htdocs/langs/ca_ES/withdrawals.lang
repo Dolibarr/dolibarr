@@ -13,7 +13,7 @@ RequestStandingOrderToTreat=Petició per a processar ordres de pagament mitjanç
 RequestStandingOrderTreated=Petició per a processar ordres de pagament mitjançant domiciliació bancària finalitzada
 NotPossibleForThisStatusOfWithdrawReceiptORLine=Encara no és possible. L'estat de la domiciliació ter que ser 'abonada' abans de poder realitzar devolucions a les seves línies
 NbOfInvoiceToWithdraw=Nombre de factures qualificades esperant l'ordre de domiciliació bancària
-NbOfInvoiceToWithdrawWithInfo=Nombre de factura de client amb pagament per domiciliació bancària havent definit la informació del compte bancari
+NbOfInvoiceToWithdrawWithInfo=Número de factures del client en espera de domiciliació per a clients que tenen el número de compte definida
 InvoiceWaitingWithdraw=Factura esperant per domiciliació bancària
 AmountToWithdraw=Import a domiciliar
 WithdrawsRefused=Domiciliació bancària refusada
@@ -26,7 +26,7 @@ LastWithdrawalReceipt=Últims %s rebuts domiciliats
 MakeWithdrawRequest=Fer una petició de pagament per domiciliació bancària
 WithdrawRequestsDone=%s domiciliacions registrades
 ThirdPartyBankCode=Codi banc del tercer
-NoInvoiceCouldBeWithdrawed=No s'ha domiciliat cap factura amb èxit. Comprova que les factures es troben en empreses amb un BAN vàlid per defecte i que aquest BAN té un RUM amb mode <strong>%s</strong>.
+NoInvoiceCouldBeWithdrawed=Cap factura s'ha carregat amb èxit. Comproveu que els tercers de les factures tenen un IBAN vàlid i que IBAN té un RUM (Referència de mandat exclusiva) amb mode <strong>%s</strong>.
 ClassCredited=Classificar com "Abonada"
 ClassCreditedConfirm=Esteu segur de voler classificar aquesta domiciliació com abonada al seu compte bancari?
 TransData=Data enviament
@@ -78,7 +78,7 @@ ThisWillAlsoAddPaymentOnInvoice=Això també registrarà els pagaments a les fac
 StatisticsByLineStatus=Estadístiques per estats de línies
 RUM=UMR
 RUMLong=Referència de mandat única (UMR)
-RUMWillBeGenerated=If empty, UMR number will be generated once bank account information are saved
+RUMWillBeGenerated=Si està buit, el número UMR es generarà una vegada que es guardi la informació del compte bancari
 WithdrawMode=Modo de domiciliació bancària (FRST o RECUR)
 WithdrawRequestAmount=Import de la domiciliació
 WithdrawRequestErrorNilAmount=No és possible crear una domiciliació sense import
@@ -100,12 +100,8 @@ DirectDebitOrderCreated=S'ha creat l'ordre de domiciliació bancària %s
 AmountRequested=Quantitat sol·licitada
 SEPARCUR=SEPA CUR
 SEPAFRST=SEPA FRST
-<<<<<<< HEAD
-ExecutionDate=Execution date
-=======
 ExecutionDate=Data d'execució
->>>>>>> branch '7.0' of git@github.com:Dolibarr/dolibarr.git
-CreateForSepa=Create direct debit file
+CreateForSepa=Crea un fitxer de domiciliació bancària
 
 ### Notifications
 InfoCreditSubject=Pagament de rebuts domiciliats %s pel banc

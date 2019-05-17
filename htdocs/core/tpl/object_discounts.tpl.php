@@ -105,4 +105,3 @@ if($absolute_discount <= 0 && $absolute_creditnote <= 0) {
 		print ' (' . $addabsolutediscount . ')';
 	}
 }
-

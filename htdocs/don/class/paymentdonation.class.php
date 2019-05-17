@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2015       Alexandre Spangaro	  	<aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2015       Alexandre Spangaro	  	<aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,13 +29,31 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
  */
 class PaymentDonation extends CommonObject
 {
-	public $element='payment_donation';			//!< Id that identify managed objects
-	public $table_element='payment_donation';	//!< Name of table without prefix where object is stored
-    public $picto = 'payment';
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element='payment_donation';
 
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='payment_donation';
+
+    /**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
+	public $picto = 'payment';
+
+	/**
+	 * @var int ID
+	 */
 	public $rowid;
 
+	/**
+     * @var int ID
+     */
 	public $fk_donation;
+
 	public $datec='';
 	public $tms='';
 	public $datep='';
@@ -43,13 +61,25 @@ class PaymentDonation extends CommonObject
     public $amounts=array();   // Array of amounts
 	public $typepayment;
 	public $num_payment;
+
+	/**
+     * @var int ID
+     */
 	public $fk_bank;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_creat;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_modif;
 
 	/**
 	 * @deprecated
-	 * @see amount, amounts
+	 * @see $amount, $amounts
 	 */
 	public $total;
 
@@ -58,7 +88,7 @@ class PaymentDonation extends CommonObject
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		$this->db = $db;
 	}
@@ -68,10 +98,10 @@ class PaymentDonation extends CommonObject
      *  Use this->amounts to have list of lines for the payment
      *
 	 *  @param      User		$user			User making payment
-	 *	@param      bool 		$notrigger 		false=launch triggers after, true=disable triggers
+	 *  @param      bool 		$notrigger 		false=launch triggers after, true=disable triggers
 	 *  @return     int     					<0 if KO, id of payment if OK
 	 */
-	function create($user, $notrigger=false)
+	public function create($user, $notrigger = false)
 	{
 		global $conf, $langs;
 
@@ -99,7 +129,7 @@ class PaymentDonation extends CommonObject
         $totalamount = 0;
         foreach ($this->amounts as $key => $value)  // How payment is dispatch
         {
-            $newvalue = price2num($value,'MT');
+            $newvalue = price2num($value, 'MT');
             $this->amounts[$key] = $newvalue;
             $totalamount += $newvalue;
         }
@@ -137,7 +167,7 @@ class PaymentDonation extends CommonObject
 		if (! $error && ! $notrigger)
 		{
 			// Call triggers
-			$result=$this->call_trigger('DONATION_PAYMENT_CREATE',$user);
+			$result=$this->call_trigger('DONATION_PAYMENT_CREATE', $user);
 			if ($result < 0) { $error++; }
 			// End call triggers
 		}
@@ -163,7 +193,7 @@ class PaymentDonation extends CommonObject
 	 *  @param	int		$id         Id object
 	 *  @return int         		<0 if KO, >0 if OK
 	 */
-	function fetch($id)
+	public function fetch($id)
 	{
 		global $langs;
 		$sql = "SELECT";
@@ -234,7 +264,7 @@ class PaymentDonation extends CommonObject
 	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
 	 *  @return int         			<0 if KO, >0 if OK
 	 */
-	function update($user, $notrigger=0)
+	public function update($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error=0;
@@ -281,7 +311,7 @@ class PaymentDonation extends CommonObject
 				if (! $error && ! $notrigger)
 				{
 					// Call triggers
-					$result=$this->call_trigger('DONATION_PAYMENT_MODIFY',$user);
+					$result=$this->call_trigger('DONATION_PAYMENT_MODIFY', $user);
 					if ($result < 0) { $error++; }
 					// End call triggers
 				}
@@ -314,7 +344,7 @@ class PaymentDonation extends CommonObject
 	 *  @param  int		$notrigger		0=launch triggers after, 1=disable triggers
 	 *  @return int						<0 if KO, >0 if OK
 	 */
-	function delete($user, $notrigger=0)
+	public function delete($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error=0;
@@ -348,7 +378,7 @@ class PaymentDonation extends CommonObject
 				if (! $error && ! $notrigger)
 				{
 					// Call triggers
-					$result=$this->call_trigger('DONATION_PAYMENT_DELETE',$user);
+					$result=$this->call_trigger('DONATION_PAYMENT_DELETE', $user);
 					if ($result < 0) { $error++; }
 					// End call triggers
 				}
@@ -378,18 +408,15 @@ class PaymentDonation extends CommonObject
 	/**
 	 *	Load an object from its id and create a new one in database
 	 *
+	 *  @param	User	$user		    User making the clone
 	 *	@param	int		$fromid     	Id of object to clone
 	 * 	@return	int						New id of clone
 	 */
-	function createFromClone($fromid)
+	public function createFromClone(User $user, $fromid)
 	{
-		global $user,$langs;
-
 		$error=0;
 
 		$object=new PaymentDonation($this->db);
-
-		$object->context['createfromclone'] = 'createfromclone';
 
 		$this->db->begin();
 
@@ -402,6 +429,7 @@ class PaymentDonation extends CommonObject
 		// ...
 
 		// Create clone
+		$object->context['createfromclone'] = 'createfromclone';
 		$result=$object->create($user);
 
 		// Other options
@@ -414,11 +442,9 @@ class PaymentDonation extends CommonObject
 		if (! $error)
 		{
 
-
-
 		}
 
-		unset($this->context['createfromclone']);
+		unset($object->context['createfromclone']);
 
 		// End
 		if (! $error)
@@ -440,11 +466,12 @@ class PaymentDonation extends CommonObject
 	 *  @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
 	 *  @return string        		Libelle
 	 */
-	function getLibStatut($mode=0)
+	public function getLibStatut($mode = 0)
 	{
 	    return '';
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Renvoi le libelle d'un statut donne
 	 *
@@ -452,12 +479,13 @@ class PaymentDonation extends CommonObject
 	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return string 			       	Libelle du statut
 	 */
-	function LibStatut($statut,$mode=0)
-	{
-	    global $langs;
+    public function LibStatut($statut, $mode = 0)
+    {
+        // phpcs:enable
+        global $langs;
 
-	    return '';
-	}
+        return '';
+    }
 
 
 	/**
@@ -467,7 +495,7 @@ class PaymentDonation extends CommonObject
      *
      *  @return	void
 	 */
-	function initAsSpecimen()
+	public function initAsSpecimen()
 	{
 		$this->id=0;
 
@@ -482,8 +510,6 @@ class PaymentDonation extends CommonObject
 		$this->fk_bank='';
 		$this->fk_user_creat='';
 		$this->fk_user_modif='';
-
-
 	}
 
 
@@ -499,7 +525,7 @@ class PaymentDonation extends CommonObject
      *      @param  string	$emetteur_banque    Name of bank
      *      @return int                 		<0 if KO, >0 if OK
      */
-    function addPaymentToBank($user,$mode,$label,$accountid,$emetteur_nom,$emetteur_banque)
+    public function addPaymentToBank($user, $mode, $label, $accountid, $emetteur_nom, $emetteur_banque)
     {
         global $conf;
 
@@ -570,14 +596,16 @@ class PaymentDonation extends CommonObject
     }
 
 
-	/**
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    /**
 	 *  Update link between the donation payment and the generated line in llx_bank
 	 *
 	 *  @param	int		$id_bank         Id if bank
 	 *  @return	int			             >0 if OK, <=0 if KO
 	 */
-	function update_fk_bank($id_bank)
+	public function update_fk_bank($id_bank)
 	{
+        // phpcs:enable
 		$sql = "UPDATE ".MAIN_DB_PREFIX."payment_donation SET fk_bank = ".$id_bank." WHERE rowid = ".$this->id;
 
 		dol_syslog(get_class($this)."::update_fk_bank", LOG_DEBUG);
@@ -600,7 +628,7 @@ class PaymentDonation extends CommonObject
 	 * 	@param	int		$maxlen			Longueur max libelle
 	 *	@return	string					Chaine avec URL
 	 */
-	function getNomUrl($withpicto=0,$maxlen=0)
+	public function getNomUrl($withpicto = 0, $maxlen = 0)
 	{
 		global $langs;
 
@@ -616,7 +644,7 @@ class PaymentDonation extends CommonObject
 
             if ($withpicto) $result.=($link.img_object($label, 'payment', 'class="classfortooltip"').$linkend.' ');
 			if ($withpicto && $withpicto != 2) $result.=' ';
-			if ($withpicto != 2) $result.=$link.($maxlen?dol_trunc($this->ref,$maxlen):$this->ref).$linkend;
+			if ($withpicto != 2) $result.=$link.($maxlen?dol_trunc($this->ref, $maxlen):$this->ref).$linkend;
 		}
 
 		return $result;

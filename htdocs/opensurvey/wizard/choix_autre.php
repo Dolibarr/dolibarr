@@ -22,10 +22,10 @@
  *	\brief      Page to create a new survey (choice selection)
  */
 
-require_once('../../main.inc.php');
-require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/opensurvey/fonctions.php");
+require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
+require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
+require_once DOL_DOCUMENT_ROOT."/opensurvey/fonctions.php";
 
 // Security check
 if (!$user->rights->opensurvey->write) accessforbidden();
@@ -69,7 +69,7 @@ if (isset($_POST["confirmecreation"]))
 		}
 	}
 
-	$toutchoix=substr("$toutchoix",1);
+	$toutchoix=substr("$toutchoix", 1);
 	$_SESSION["toutchoix"]=$toutchoix;
 
 	//test de remplissage des cases
@@ -161,6 +161,6 @@ print '<a name=bas></a>'."\n";
 print '<br><br><br>'."\n";
 print '</div>'."\n";
 
+// End of page
 llxFooter();
-
 $db->close();

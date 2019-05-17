@@ -26,23 +26,20 @@ include '../../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT.'/margin/lib/margins.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once(DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php');
-require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php";
 
-$langs->load("admin");
-$langs->load("bills");
-$langs->load("margins");
-$langs->load("stocks");
+$langs->loadLangs(array("admin", "bills", "margins", "stocks"));
 
 if (! $user->admin) accessforbidden();
 
-$action=GETPOST('action','alpha');
+$action=GETPOST('action', 'alpha');
 
 
 /*
  * Action
  */
-if (preg_match('/set_([a-z0-9_\-]+)/i',$action,$reg))
+if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
 {
     $code=$reg[1];
     if (dolibarr_set_const($db, $code, 1, 'yesno', 0, '', $conf->entity) > 0)
@@ -56,7 +53,7 @@ if (preg_match('/set_([a-z0-9_\-]+)/i',$action,$reg))
     }
 }
 
-if (preg_match('/del_([a-z0-9_\-]+)/i',$action,$reg))
+if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg))
 {
     $code=$reg[1];
     if (dolibarr_del_const($db, $code, $conf->entity) > 0)
@@ -110,30 +107,28 @@ if ($action == 'contact')
  * View
  */
 
-llxHeader('',$langs->trans("margesSetup"));
+llxHeader('', $langs->trans("margesSetup"));
 
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans("margesSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("margesSetup"), $linkback, 'title_setup');
 
 
 $head = marges_admin_prepare_head();
 
 dol_fiche_head($head, 'parameters', $langs->trans("Margins"), -1, 'margin');
 
-print load_fiche_titre($langs->trans("MemberMainOptions"),'','');
+print load_fiche_titre($langs->trans("MemberMainOptions"), '', '');
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td width=300>'.$langs->trans("Description").'</td>';
-print '<td colspan="2" align="center">'.$langs->trans("Value").'</td>'."\n";
-print '<td align="left">'.$langs->trans("Description").'</td>'."\n";
+print '<td colspan="2" class="center">'.$langs->trans("Value").'</td>'."\n";
+print '<td class="left">'.$langs->trans("Description").'</td>'."\n";
 print '</tr>';
 
-$var=true;
 $form = new Form($db);
 
 // GLOBAL DISCOUNT MANAGEMENT
-
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print "<input type=\"hidden\" name=\"action\" value=\"typemarges\">";
@@ -165,10 +160,9 @@ print '</tr>';
 print '</form>';
 
 // DISPLAY MARGIN RATES
-
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("DisplayMarginRates").'</td>';
-print '<td colspan="2" align="center">';
+print '<td colspan="2" class="center">';
 if (! empty($conf->use_javascript_ajax))
 {
 	print ajax_constantonoff('DISPLAY_MARGIN_RATES');
@@ -177,11 +171,11 @@ else
 {
 	if (empty($conf->global->DISPLAY_MARGIN_RATES))
 	{
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_DISPLAY_MARGIN_RATES">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_DISPLAY_MARGIN_RATES">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 	}
 	else
 	{
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_DISPLAY_MARGIN_RATES">'.img_picto($langs->trans("Enabled"),'on').'</a>';
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_DISPLAY_MARGIN_RATES">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 	}
 }
 print '</td>';
@@ -189,10 +183,9 @@ print '<td>'.$langs->trans('MarginRate').' = '.$langs->trans('Margin').' / '.$la
 print '</tr>';
 
 // DISPLAY MARK RATES
-
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("DisplayMarkRates").'</td>';
-print '<td colspan="2" align="center">';
+print '<td colspan="2" class="center">';
 if (! empty($conf->use_javascript_ajax))
 {
 	print ajax_constantonoff('DISPLAY_MARK_RATES');
@@ -201,11 +194,11 @@ else
 {
 	if (empty($conf->global->DISPLAY_MARK_RATES))
 	{
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_DISPLAY_MARK_RATES">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_DISPLAY_MARK_RATES">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 	}
 	else
 	{
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_DISPLAY_MARK_RATES">'.img_picto($langs->trans("Enabled"),'on').'</a>';
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_DISPLAY_MARK_RATES">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 	}
 }
 print '</td>';
@@ -215,7 +208,7 @@ print '</tr>';
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ForceBuyingPriceIfNull").'</td>';
-print '<td colspan="2" align="center">';
+print '<td colspan="2" class="center">';
 if (! empty($conf->use_javascript_ajax))
 {
 	print ajax_constantonoff('ForceBuyingPriceIfNull');
@@ -224,11 +217,11 @@ else
 {
 	if (empty($conf->global->ForceBuyingPriceIfNull))
 	{
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_ForceBuyingPriceIfNull">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_ForceBuyingPriceIfNull">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 	}
 	else
 	{
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_ForceBuyingPriceIfNull">'.img_picto($langs->trans("Enabled"),'on').'</a>';
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_ForceBuyingPriceIfNull">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 	}
 }
 print '</td>';
@@ -248,7 +241,7 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print "<input type=\"hidden\" name=\"action\" value=\"remises\">";
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("MARGIN_METHODE_FOR_DISCOUNT").'</td>';
-print '<td align="left">';
+print '<td class="left">';
 print Form::selectarray('MARGIN_METHODE_FOR_DISCOUNT', $methods, $conf->global->MARGIN_METHODE_FOR_DISCOUNT);
 print '</td>';
 print '<td>';
@@ -259,16 +252,15 @@ print '</tr>';
 print '</form>';
 
 // INTERNAL CONTACT TYPE USED AS COMMERCIAL AGENT
-
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print "<input type=\"hidden\" name=\"action\" value=\"contact\">";
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("AgentContactType").'</td>';
-print '<td align="left">';
+print '<td class="left">';
 $formcompany = new FormCompany($db);
 $facture = new Facture($db);
-print $formcompany->selectTypeContact($facture, $conf->global->AGENT_CONTACT_TYPE, "AGENT_CONTACT_TYPE","internal","code",1);
+print $formcompany->selectTypeContact($facture, $conf->global->AGENT_CONTACT_TYPE, "AGENT_CONTACT_TYPE", "internal", "code", 1);
 print '</td>';
 print '<td>';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
@@ -283,5 +275,6 @@ dol_fiche_end();
 
 print '<br>';
 
+// End of page
 llxFooter();
 $db->close();

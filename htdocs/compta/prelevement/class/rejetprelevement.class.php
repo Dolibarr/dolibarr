@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -30,8 +30,15 @@
  */
 class RejetPrelevement
 {
-	var $id;
-	var $db;
+	/**
+	 * @var int ID
+	 */
+	public $id;
+
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
 
 	/**
@@ -40,7 +47,7 @@ class RejetPrelevement
 	 *  @param	DoliDb	$db			Database handler
 	 *  @param 	User	$user       Objet user
 	 */
-	function __construct($db, $user)
+	public function __construct($db, $user)
 	{
 		global $langs;
 
@@ -62,7 +69,6 @@ class RejetPrelevement
 
     	$this->facturer[0]=$langs->trans("NoInvoiceRefused");
 		$this->facturer[1]=$langs->trans("InvoiceRefused");
-
 	}
 
 	/**
@@ -76,7 +82,7 @@ class RejetPrelevement
 	 * @param 	int			$facturation		Facturation
 	 * @return	void
 	 */
-	function create($user, $id, $motif, $date_rejet, $bonid, $facturation=0)
+	public function create($user, $id, $motif, $date_rejet, $bonid, $facturation = 0)
 	{
 		global $langs,$conf;
 
@@ -156,7 +162,7 @@ class RejetPrelevement
 			}
 			else
 			{
-				$result=$pai->addPaymentToBank($user,'payment','(InvoiceRefused)',$bankaccount,'','');
+				$result=$pai->addPaymentToBank($user, 'payment', '(InvoiceRefused)', $bankaccount, '', '');
 				if ($result < 0)
 				{
 					dol_syslog("RejetPrelevement::Create AddPaymentToBan Error");
@@ -169,7 +175,6 @@ class RejetPrelevement
 					$error++;
 					dol_syslog("RejetPrelevement::Create Error payment validation");
 				}
-
 			}
 			//Tag invoice as unpaid
 			dol_syslog("RejetPrelevement::Create set_unpaid fac ".$fac->ref);
@@ -191,17 +196,18 @@ class RejetPrelevement
 			dol_syslog("RejetPrelevement::Create Rollback");
 			$this->db->rollback();
 		}
-
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Send email to all users that has asked the withdraw request
 	 *
 	 * 	@param	Facture		$fac			Invoice object
 	 * 	@return	void
 	 */
-	function _send_email($fac)
+	private function _send_email($fac)
 	{
+        // phpcs:enable
 		global $langs;
 
 		$userid = 0;
@@ -249,9 +255,9 @@ class RejetPrelevement
 			$amount = price($fac->total_ttc);
 			$userinfo = $this->user->getFullName($langs);
 
-			$message = $langs->trans("InfoRejectMessage",$facref,$socname, $amount, $userinfo);
+			$message = $langs->trans("InfoRejectMessage", $facref, $socname, $amount, $userinfo);
 
-			$mailfile = new CMailFile($subject,$sendto,$from,$message,$arr_file,$arr_mime,$arr_name,'', '', 0, $msgishtml,$this->user->email);
+			$mailfile = new CMailFile($subject, $sendto, $from, $message, $arr_file, $arr_mime, $arr_name, '', '', 0, $msgishtml, $this->user->email);
 
 			$result=$mailfile->sendfile();
 			if ($result)
@@ -276,7 +282,7 @@ class RejetPrelevement
 	 * @return	array				Array List of invoices related to the withdrawal line
 	 * @TODO	A withdrawal line is today linked to one and only one invoice. So the function should return only one object ?
 	 */
-	private function getListInvoices($amounts=0)
+	private function getListInvoices($amounts = 0)
 	{
 		global $conf;
 
@@ -288,7 +294,7 @@ class RejetPrelevement
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON (pf.fk_facture = f.rowid)";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."prelevement_lignes as pl ON (pf.fk_prelevement_lignes = pl.rowid)";
 		$sql.= " WHERE pf.fk_prelevement_lignes = ".$this->id;
-		$sql.= " AND f.entity = ".$conf->entity;
+		$sql.= " AND f.entity IN  (".getEntity('invoice').")";
 
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -320,7 +326,6 @@ class RejetPrelevement
 		}
 
 		return $arr;
-
 	}
 
 	/**
@@ -329,7 +334,7 @@ class RejetPrelevement
 	 *    @param    int		$rowid       id of invoice to retrieve
 	 *    @return	int
 	 */
-	function fetch($rowid)
+	public function fetch($rowid)
 	{
 
 		$sql = "SELECT pr.date_rejet as dr, motif, afacturer";
@@ -364,6 +369,4 @@ class RejetPrelevement
 			return -2;
 		}
 	}
-
 }
-

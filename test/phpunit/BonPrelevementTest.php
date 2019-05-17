@@ -60,8 +60,10 @@ class BonPrelevementTest extends PHPUnit_Framework_TestCase
 	 *
 	 * @return BankAccountTest
 	 */
-	function __construct()
+	public function __construct()
 	{
+		parent::__construct();
+
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
 		$this->savconf=$conf;
@@ -74,14 +76,24 @@ class BonPrelevementTest extends PHPUnit_Framework_TestCase
 		print "\n";
 	}
 
-	// Static methods
-  	public static function setUpBeforeClass()
+    /**
+     * setUpBeforeClass
+     *
+     * @return	void
+     */
+    public static function setUpBeforeClass()
     {
     	global $conf,$user,$langs,$db;
 		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
 
     	print __METHOD__."\n";
     }
+
+    /**
+     * tearDownAfterClass
+     *
+     * @return	void
+     */
     public static function tearDownAfterClass()
     {
     	global $conf,$user,$langs,$db;
@@ -141,7 +153,7 @@ class BonPrelevementTest extends PHPUnit_Framework_TestCase
 		// Create withdraw record and generate SEPA file
 		$localobject=new BonPrelevement($this->savdb);
     	//$localobject->date_solde=dol_now();
-    	$result=$localobject->Create(0,0,'simu');
+    	$result=$localobject->Create(0, 0, 'simu');
 
     	print __METHOD__." result=".$result."\n";
     	$this->assertEquals($result, 0);
@@ -178,5 +190,4 @@ class BonPrelevementTest extends PHPUnit_Framework_TestCase
     	return $result;
     }
 */
-
 }

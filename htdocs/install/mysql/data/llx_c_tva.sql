@@ -3,7 +3,7 @@
 -- Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
 -- Copyright (C) 2004      Guillaume Delecourt  <guillaume.delecourt@opensides.be>
--- Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+-- Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
 -- Copyright (C) 2007 	   Patrick Raguin       <patrick.raguin@gmail.com>
 -- Copyright (C) 2010-2016 Juanjo Menent        <jmenent@2byte.es>
 -- Copyright (C) 2012      Sebastian Neuwert    <sebastian.neuwert@modula71.de>
@@ -231,7 +231,7 @@ insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 2
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 254,  25,   '6','0','VAT reduced rate',1); 
 
 -- ROMANIA (id country=188)
-insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (1881, 188,  '20','0','VAT standard rate',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (1881, 188,  '19','0','VAT standard rate',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (1882, 188,   '9','0','VAT reduced rate',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (1884, 188,   '5','0','VAT reduced rate',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (1883, 188,   '0','0','VAT Rate 0', 1);

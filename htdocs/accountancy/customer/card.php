@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2014 Olivier Geffroy		<jeff@jeffinfo.com>
  * Copyright (C) 2013-2014 Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2013-2017 Alexandre Spangaro	<aspangaro@zendsi.com>
+ * Copyright (C) 2013-2017 Alexandre Spangaro	<aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("bills","accountancy"));
 
 $action = GETPOST('action', 'alpha');
@@ -93,7 +94,7 @@ $facture_static = new Facture($db);
 $formaccounting = new FormAccounting($db);
 
 if (! empty($id)) {
-	$sql = "SELECT f.facnumber, f.rowid as facid, l.fk_product, l.description, l.price,";
+	$sql = "SELECT f.ref, f.rowid as facid, l.fk_product, l.description, l.price,";
 	$sql .= " l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice, p.accountancy_code_sell as code_sell,";
 	$sql .= " l.fk_code_ventilation, aa.account_number, aa.label";
 	$sql .= " FROM " . MAIN_DB_PREFIX . "facturedet as l";
@@ -101,7 +102,7 @@ if (! empty($id)) {
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON l.fk_code_ventilation = aa.rowid";
 	$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "facture as f ON f.rowid = l.fk_facture";
 	$sql .= " WHERE f.fk_statut > 0 AND l.rowid = " . $id;
-	$sql .= " AND f.entity IN (" . getEntity('facture', 0) . ")"; // We don't share object for accountancy
+	$sql .= " AND f.entity IN (" . getEntity('invoice', 0) . ")"; // We don't share object for accountancy
 
 	dol_syslog("/accounting/customer/card.php sql=" . $sql, LOG_DEBUG);
 	$result = $db->query($sql);
@@ -127,7 +128,7 @@ if (! empty($id)) {
 
 			// Ref facture
 			print '<tr><td>' . $langs->trans("Invoice") . '</td>';
-			$facture_static->ref = $objp->facnumber;
+			$facture_static->ref = $objp->ref;
 			$facture_static->id = $objp->facid;
 			print '<td>' . $facture_static->getNomUrl(1) . '</td>';
 			print '</tr>';
@@ -158,5 +159,6 @@ if (! empty($id)) {
 	print "Error ID incorrect";
 }
 
+// End of page
 llxFooter();
 $db->close();

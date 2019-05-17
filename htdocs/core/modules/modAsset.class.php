@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2018      Alexandre Spangaro   <aspangaro@zendsi.com>
+/* Copyright (C) 2004-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,15 +27,11 @@
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
-// The class name should start with a lower case mod for Dolibarr to pick it up
-// so we ignore the Squiz.Classes.ValidClassName.NotCamelCaps rule.
-// @codingStandardsIgnoreStart
 /**
  *  Description and activation class for module FixedAssets
  */
 class modAsset extends DolibarrModules
 {
-	// @codingStandardsIgnoreEnd
 	/**
 	 * Constructor. Define names, constants, directories, boxes, permissions
 	 *
@@ -43,26 +39,24 @@ class modAsset extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $langs,$conf;
+		global $langs, $conf;
 
 		$this->db = $db;
 
 		// Id for module (must be unique).
 		// Use here a free id (See in Home -> System information -> Dolibarr for list of used modules id).
 		$this->numero = 51000;		// TODO Go on page https://wiki.dolibarr.org/index.php/List_of_modules_id to reserve id number for your module
-		// Key text used to identify module (for permissions, menus, etc...)
-		$this->rights_class = 'asset';
 
 		// Family can be 'crm','financial','hr','projects','products','ecm','technic','interface','other'
 		// It is used to group modules by family in module setup page
 		$this->family = "financial";
 		// Module position in the family on 2 digits ('01', '10', '20', ...)
-		$this->module_position = '90';
+		$this->module_position = '70';
 		// Gives the possibility to the module, to provide his own family info and position of this family (Overwrite $this->family and $this->module_position. Avoid this)
 		//$this->familyinfo = array('myownfamily' => array('position' => '01', 'label' => $langs->trans("MyOwnFamily")));
 
 		// Module label (no space allowed), used if translation string 'ModuleAssetsName' not found (MyModue is name of module).
-		$this->name = preg_replace('/^mod/i','',get_class($this));
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		// Module description, used if translation string 'ModuleAssetsDesc' not found (MyModue is name of module).
 		$this->description = "Assets module";
 		// Used only if file README.md and README-LL.md not found.
@@ -96,7 +90,7 @@ class modAsset extends DolibarrModules
 		$this->requiredby = array();	// List of module ids to disable if this one is disabled
 		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
 		$this->langfiles = array("assets");
-		$this->phpmin = array(5,3);					// Minimum version of PHP required by module
+		$this->phpmin = array(5,4);					// Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(7,0);	// Minimum version of Dolibarr required by module
 		$this->warnings_activation = array();                     // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
 		$this->warnings_activation_ext = array();                 // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
@@ -151,20 +145,6 @@ class modAsset extends DolibarrModules
 
 		// Dictionaries
 		$this->dictionaries=array();
-		/* Example:
-		$this->dictionaries=array(
-			'langs'=>'mylangfile@assets',
-			'tabname'=>array(MAIN_DB_PREFIX."table1",MAIN_DB_PREFIX."table2",MAIN_DB_PREFIX."table3"),		// List of tables we want to see into dictonnary editor
-			'tablib'=>array("Table1","Table2","Table3"),													// Label of tables
-			'tabsql'=>array('SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table1 as f','SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table2 as f','SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table3 as f'),	// Request to select fields
-			'tabsqlsort'=>array("label ASC","label ASC","label ASC"),																					// Sort order
-			'tabfield'=>array("code,label","code,label","code,label"),																					// List of fields (result of select to show dictionary)
-			'tabfieldvalue'=>array("code,label","code,label","code,label"),																				// List of fields (list of fields to edit a record)
-			'tabfieldinsert'=>array("code,label","code,label","code,label"),																			// List of fields (list of fields for insert)
-			'tabrowid'=>array("rowid","rowid","rowid"),																									// Name of columns with primary key (try to always name it 'rowid')
-			'tabcond'=>array($conf->assets->enabled,$conf->assets->enabled,$conf->assets->enabled)												// Condition to show each dictionary
-		);
-		*/
 
 
 		// Boxes/Widgets
@@ -178,9 +158,9 @@ class modAsset extends DolibarrModules
 
 		// Cronjobs (List of cron jobs entries to add when module is enabled)
 		// unit_frequency must be 60 for minute, 3600 for hour, 86400 for day, 604800 for week
-		$this->cronjobs = array(
-			0=>array('label'=>'MyJob label', 'jobtype'=>'method', 'class'=>'/asset/class/asset.class.php', 'objectname'=>'Asset', 'method'=>'doScheduledJob', 'parameters'=>'', 'comment'=>'Comment', 'frequency'=>2, 'unitfrequency'=>3600, 'status'=>0, 'test'=>true)
-		);
+		//$this->cronjobs = array(
+		//	0=>array('label'=>'MyJob label', 'jobtype'=>'method', 'class'=>'/asset/class/asset.class.php', 'objectname'=>'Asset', 'method'=>'doScheduledJob', 'parameters'=>'', 'comment'=>'Comment', 'frequency'=>2, 'unitfrequency'=>3600, 'status'=>0, 'test'=>true)
+		//);
 		// Example: $this->cronjobs=array(0=>array('label'=>'My label', 'jobtype'=>'method', 'class'=>'/dir/class/file.class.php', 'objectname'=>'MyClass', 'method'=>'myMethod', 'parameters'=>'param1, param2', 'comment'=>'Comment', 'frequency'=>2, 'unitfrequency'=>3600, 'status'=>0, 'test'=>true),
 		//                                1=>array('label'=>'My label', 'jobtype'=>'command', 'command'=>'', 'parameters'=>'param1, param2', 'comment'=>'Comment', 'frequency'=>1, 'unitfrequency'=>3600*24, 'status'=>0, 'test'=>true)
 		// );
@@ -188,74 +168,61 @@ class modAsset extends DolibarrModules
 
 		// Permissions
 		$this->rights = array();		// Permission array used by this module
+        $this->rights_class = 'asset';
+        $r=0;
 
-		$r=0;
-		$this->rights[$r][0] = $this->numero + $r;	// Permission id (must not be already used)
+        $r++;
+        $this->rights[$r][0] = 51001;	            // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Read assets';		// Permission label
-		$this->rights[$r][3] = 1; 					// Permission by default for new user (0/1)
+        $this->rights[$r][2] = 'r';
+        $this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'read';				// In php code, permission will be checked by test if ($user->rights->asset->level1->level2)
 		$this->rights[$r][5] = '';					// In php code, permission will be checked by test if ($user->rights->asset->level1->level2)
 
 		$r++;
-		$this->rights[$r][0] = $this->numero + $r;	// Permission id (must not be already used)
+		$this->rights[$r][0] = 51002;               // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Create/Update assets';	// Permission label
-		$this->rights[$r][3] = 1; 					// Permission by default for new user (0/1)
+        $this->rights[$r][2] = 'w';
+        $this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'write';				// In php code, permission will be checked by test if ($user->rights->asset->level1->level2)
 		$this->rights[$r][5] = '';					// In php code, permission will be checked by test if ($user->rights->asset->level1->level2)
 
 		$r++;
-		$this->rights[$r][0] = $this->numero + $r;	// Permission id (must not be already used)
+		$this->rights[$r][0] = 51003;               // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Delete assets';		// Permission label
-		$this->rights[$r][3] = 1; 					// Permission by default for new user (0/1)
+        $this->rights[$r][2] = 'd';
+        $this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'delete';			// In php code, permission will be checked by test if ($user->rights->asset->level1->level2)
 		$this->rights[$r][5] = '';					// In php code, permission will be checked by test if ($user->rights->asset->level1->level2)
 
-
-		// Main menu entries
-		$this->menu = array();			// List of menus to add
-		$r=0;
-
-		// Add here entries to declare new menus
-		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
-
-		// Exports
-		$r=1;
-
-		/*
-		$langs->load("fixedassets@fixedassets");
-		$this->export_code[$r]=$this->rights_class.'_'.$r;
-		$this->export_label[$r]='FixedAssetsLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
-		$this->export_icon[$r]='fixedassets@fixedassets';
-		$keyforclass = 'FixedAssets'; $keyforclassfile='/mymobule/class/fixedassets.class.php'; $keyforelement='fixedassets';
-		include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
-		$keyforselect='fixedassets'; $keyforaliasextra='extra'; $keyforelement='fixedassets';
-		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-		//$this->export_dependencies_array[$r]=array('mysubobject'=>'ts.rowid', 't.myfield'=>array('t.myfield2','t.myfield3')); // To force to activate one or several fields if we select some fields that need same (like to select a unique key if we ask a field of a child to avoid the DISTINCT to discard them, or for computed field than need several other fields)
-		$this->export_sql_start[$r]='SELECT DISTINCT ';
-		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'fixedassets as t';
-		$this->export_sql_end[$r] .=' WHERE 1 = 1';
-		$this->export_sql_end[$r] .=' AND t.entity IN ('.getEntity('fixedassets').')';
-		$r++; */
+        $r++;
+        $this->rights[$r][0] = 51005;               // Permission id (must not be already used)
+        $this->rights[$r][1] = 'Setup types of asset';  // Permission label
+        $this->rights[$r][2] = 'w';
+        $this->rights[$r][3] = 0;                   // Permission by default for new user (0/1)
+        $this->rights[$r][4] = 'advanced_configurer';        // In php code, permission will be checked by test if ($user->rights->asset->level1->level2)
+        $this->rights[$r][5] = '';					// In php code, permission will be checked by test if ($user->rights->asset->level1->level2)
+        
+        // Menus
+        //-------
+        $this->menu = 1;        // This module add menu entries. They are coded into menu manager.
 	}
 
 	/**
-	 *	Function called when module is enabled.
-	 *	The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
-	 *	It also creates data directories
+	 *  Function called when module is enabled.
+	 *  The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+	 *  It also creates data directories
 	 *
-	 *	@param      string	$options    Options when enabling module ('', 'noboxes')
-	 *	@return     int             	1 if OK, 0 if KO
+	 *  @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *  @return     int             	1 if OK, 0 if KO
 	 */
-	function init($options='')
-	{
-		global $conf;
+    public function init($options = '')
+    {
+        // Permissions
+        $this->remove($options);
 
-		// Permissions
-		$this->remove($options);
+        $sql = array();
 
-		$sql = array();
-
-		return $this->_init($sql,$options);
-	}
-
+        return $this->_init($sql, $options);
+    }
 }

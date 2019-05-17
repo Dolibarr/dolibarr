@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014-2015  Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2014-2015  Alexandre Spangaro	<aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,8 +28,8 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 
-$langs->load("admin");
-$langs->load("salaries");
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'salaries'));
 
 // Security check
 if (!$user->admin)
@@ -72,13 +72,13 @@ if ($action == 'update')
  * View
  */
 
-llxHeader('',$langs->trans('SalariesSetup'));
+llxHeader('', $langs->trans('SalariesSetup'));
 
 $form = new Form($db);
-if (! empty($conf->accounting->enabled)) $formaccounting = New FormAccounting($db);
+if (! empty($conf->accounting->enabled)) $formaccounting = new FormAccounting($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans('SalariesSetup'),$linkback,'title_setup');
+print load_fiche_titre($langs->trans('SalariesSetup'), $linkback, 'title_setup');
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -127,5 +127,6 @@ print '<div class="center"><input type="submit" class="button" value="'.$langs->
 
 print '</form>';
 
+// End of page
 llxFooter();
 $db->close();

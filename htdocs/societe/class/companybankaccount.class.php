@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2010-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2012		Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2013   	Peter Fontaine          <contact@peterfontaine.fr>
  * Copyright (C) 2016       Marcos García           <marcosgdf@gmail.com>
  *
@@ -33,15 +33,26 @@ require_once DOL_DOCUMENT_ROOT .'/compta/bank/class/account.class.php';
  */
 class CompanyBankAccount extends Account
 {
-	var $socid;
+	public $socid;
 
-	var $default_rib;
-	var $frstrecur;
-	var $rum;
-	var $date_rum;
+	public $default_rib;
+	public $frstrecur;
+	public $rum;
+	public $date_rum;
 
-	var $datec;
-	var $datem;
+	/**
+     * Date creation record (datec)
+     *
+     * @var integer
+     */
+    public $datec;
+    
+	/**
+     * Date modification record (tms)
+     *
+     * @var integer
+     */
+    public $datem;
 
 
 	/**
@@ -67,7 +78,7 @@ class CompanyBankAccount extends Account
 	 * @param   int    $notrigger   1=Disable triggers
 	 * @return	int					<0 if KO, >= 0 if OK
 	 */
-	function create(User $user = null, $notrigger=0)
+    public function create(User $user = null, $notrigger = 0)
 	{
 		$now	= dol_now();
 		$error	= 0;
@@ -93,7 +104,7 @@ class CompanyBankAccount extends Account
 				if (! $notrigger)
 				{
 				   	// Call trigger
-					$result=$this->call_trigger('COMPANY_RIB_CREATE',$user);
+					$result=$this->call_trigger('COMPANY_RIB_CREATE', $user);
 					if ($result < 0) $error++;
 					// End call triggers
 
@@ -126,7 +137,7 @@ class CompanyBankAccount extends Account
 	 *  @param  int     $notrigger   1=Disable triggers
 	 *	@return	int				     <=0 if KO, >0 if OK
 	 */
-	function update(User $user = null, $notrigger = 0)
+    public function update(User $user = null, $notrigger = 0)
 	{
 		global $conf;
 		$error = 0;
@@ -168,7 +179,7 @@ class CompanyBankAccount extends Account
 		if (! $notrigger)
 		{
 			// Call trigger
-			$result=$this->call_trigger('COMPANY_RIB_MODIFY',$user);
+			$result=$this->call_trigger('COMPANY_RIB_MODIFY', $user);
 			if ($result < 0) $error++;
 			// End call triggers
 			if(! $error )
@@ -184,7 +195,6 @@ class CompanyBankAccount extends Account
 		{
 			return 1;
 		}
-
 		}
 		else
 		{
@@ -197,10 +207,12 @@ class CompanyBankAccount extends Account
 	 * 	Load record from database
 	 *
 	 *	@param	int		$id			Id of record
-	 * 	@param	int		$socid		Id of company. If this is filled, function will return the first default RIB of company
+	 * 	@param	int		$socid		Id of company. If this is filled, function will return the first entry found (matching $default and $type)
+	 *  @param	int		$default	If id of company filled, we say if we want first record among all (-1), default record (1) or non default record (0)
+	 *  @param	int		$type		If id of company filled, we say if we want record of this type only
 	 * 	@return	int					<0 if KO, >0 if OK
 	 */
-	function fetch($id, $socid=0)
+    public function fetch($id, $socid = 0, $default = 1, $type = 'ban')
 	{
 		if (empty($id) && empty($socid)) return -1;
 
@@ -208,7 +220,12 @@ class CompanyBankAccount extends Account
 		$sql.= " owner_address, default_rib, label, datec, tms as datem, rum, frstrecur";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe_rib";
 		if ($id)    $sql.= " WHERE rowid = ".$id;
-		if ($socid) $sql.= " WHERE fk_soc  = ".$socid." AND default_rib = 1 AND type ='ban'";
+		if ($socid)
+		{
+			$sql.= " WHERE fk_soc  = ".$socid;
+			if ($default > -1) $sql.=" AND default_rib = ".$this->db->escape($default);
+			if ($type) $sql.= " AND type ='".$this->db->escape($type)."'";
+		}
 
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -257,7 +274,7 @@ class CompanyBankAccount extends Account
 	 *	@param  	int		$notrigger	1=Disable triggers
 	 *  @return		int		            <0 if KO, >0 if OK
 	 */
-	function delete(User $user = null, $notrigger=0)
+    public function delete(User $user = null, $notrigger = 0)
 	{
 		global $conf;
 
@@ -270,7 +287,7 @@ class CompanyBankAccount extends Account
 		if (! $error && ! $notrigger)
 		{
 			// Call trigger
-			$result=$this->call_trigger('COMPANY_RIB_DELETE',$user);
+			$result=$this->call_trigger('COMPANY_RIB_DELETE', $user);
 			if ($result < 0) $error++;
 			// End call triggers
 		}
@@ -327,7 +344,7 @@ class CompanyBankAccount extends Account
 	 * @param   int     $rib    RIB id
 	 * @return  int             0 if KO, 1 if OK
 	 */
-	function setAsDefault($rib=0)
+    public function setAsDefault($rib = 0)
 	{
 		$sql1 = "SELECT rowid as id, fk_soc  FROM ".MAIN_DB_PREFIX."societe_rib";
 		$sql1.= " WHERE rowid = ".($rib?$rib:$this->id);
@@ -383,7 +400,7 @@ class CompanyBankAccount extends Account
 	 *
 	 *  @return	void
 	 */
-	function initAsSpecimen()
+    public function initAsSpecimen()
 	{
 		$this->specimen        = 1;
 		$this->ref             = 'CBA';
@@ -403,11 +420,9 @@ class CompanyBankAccount extends Account
 		$this->country_id      = 1;
 
 		$this->rum             = 'UMR-CU1212-0007-5-1475405262';
-		$this->date_rum        =dol_now() - 10000;
+		$this->date_rum        = dol_now() - 10000;
 		$this->frstrecur       = 'FRST';
 
 		$this->socid = 0;
 	}
-
 }
-

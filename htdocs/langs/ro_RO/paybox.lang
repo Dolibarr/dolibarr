@@ -3,7 +3,7 @@ PayBoxSetup=PayBox modul de configurare
 PayBoxDesc=Acest modul oferă pagini pentru a permite plata pe <a href="http://www.paybox.com" target="_blank">Paybox</a> de către clienţi. Acest lucru poate fi folosit pentru un cont gratuit sau plată pentru o plată de pe un anumit obiect Dolibarr (factură, pentru, ...)
 FollowingUrlAreAvailableToMakePayments=Ca urmare a URL-uri sunt disponibile pentru a oferi o pagină de la un client pentru a face o plată pe Dolibarr obiecte
 PaymentForm=Formă de plată
-WelcomeOnPaymentPage=Bine ati venit la serviciul de plată online
+WelcomeOnPaymentPage=Welcome to our online payment service
 ThisScreenAllowsYouToPay=Acest ecran vă permite de a face o plată online pentru %s.
 ThisIsInformationOnPayment=Acest lucru este de informatii cu privire la plata de a face
 ToComplete=Pentru a completa
@@ -20,10 +20,11 @@ ToOfferALinkForOnlinePaymentOnInvoice=URL-ul pentru a oferi un %s plata online i
 ToOfferALinkForOnlinePaymentOnContractLine=URL-ul pentru a oferi un %s plata online interfaţă cu utilizatorul pentru un contract de linie
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL-ul pentru a oferi un %s plata online interfaţă de utilizator pentru o suma de liber
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL-ul pentru a oferi o plată %s interfata online pentru un abonament de membru
+ToOfferALinkForOnlinePaymentOnDonation=URL to offer a %s online payment user interface for payment of donation
 YouCanAddTagOnUrl=Puteţi, de asemenea, să adăugaţi URL-ul parametru <b>& tag= <i>valoarea</i></b> la oricare dintre aceste URL-ul (necesar doar pentru liber de plată) pentru a adăuga propriul plată comentariu tag.
-SetupPayBoxToHavePaymentCreatedAutomatically=Configuraţi-vă PayBox cu <b>URL-ul %s</b> pentru a avea de plată a creat în mod automat atunci când validate de paybox.
+SetupPayBoxToHavePaymentCreatedAutomatically=Setup your Paybox with url <b>%s</b> to have payment created automatically when validated by Paybox.
 YourPaymentHasBeenRecorded=Această pagină confirmă faptul că plata dvs. a fost înregistrată. Mulţumesc.
-YourPaymentHasNotBeenRecorded=Sunteţi de plată nu a fost înregistrată şi pe tranzacţie a fost anulată. Mulţumesc.
+YourPaymentHasNotBeenRecorded=Your payment has NOT been recorded and the transaction has been canceled. Thank you.
 AccountParameter=Parametri Cont
 UsageParameter=Utilizarea parametrilor
 InformationToFindParameters=Ajutor pentru a găsi informaţiile dvs. de cont %s

@@ -25,26 +25,26 @@
 // Load Dolibarr environment
 $res=0;
 // Try main.inc.php into web root known defined into CONTEXT_DOCUMENT_ROOT (not always defined)
-if (! $res && ! empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) $res=@include($_SERVER["CONTEXT_DOCUMENT_ROOT"]."/main.inc.php");
-// Try main.inc.php into web root detected using web root caluclated from SCRIPT_FILENAME
+if (! $res && ! empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) $res=@include $_SERVER["CONTEXT_DOCUMENT_ROOT"]."/main.inc.php";
+// Try main.inc.php into web root detected using web root calculated from SCRIPT_FILENAME
 $tmp=empty($_SERVER['SCRIPT_FILENAME'])?'':$_SERVER['SCRIPT_FILENAME'];$tmp2=realpath(__FILE__); $i=strlen($tmp)-1; $j=strlen($tmp2)-1;
 while($i > 0 && $j > 0 && isset($tmp[$i]) && isset($tmp2[$j]) && $tmp[$i]==$tmp2[$j]) { $i--; $j--; }
-if (! $res && $i > 0 && file_exists(substr($tmp, 0, ($i+1))."/main.inc.php")) $res=@include(substr($tmp, 0, ($i+1))."/main.inc.php");
-if (! $res && $i > 0 && file_exists(dirname(substr($tmp, 0, ($i+1)))."/main.inc.php")) $res=@include(dirname(substr($tmp, 0, ($i+1)))."/main.inc.php");
+if (! $res && $i > 0 && file_exists(substr($tmp, 0, ($i+1))."/main.inc.php")) $res=@include substr($tmp, 0, ($i+1))."/main.inc.php";
+if (! $res && $i > 0 && file_exists(dirname(substr($tmp, 0, ($i+1)))."/main.inc.php")) $res=@include dirname(substr($tmp, 0, ($i+1)))."/main.inc.php";
 // Try main.inc.php using relative path
-if (! $res && file_exists("../main.inc.php")) $res=@include("../main.inc.php");
-if (! $res && file_exists("../../main.inc.php")) $res=@include("../../main.inc.php");
-if (! $res && file_exists("../../../main.inc.php")) $res=@include("../../../main.inc.php");
+if (! $res && file_exists("../main.inc.php")) $res=@include "../main.inc.php";
+if (! $res && file_exists("../../main.inc.php")) $res=@include "../../main.inc.php";
+if (! $res && file_exists("../../../main.inc.php")) $res=@include "../../../main.inc.php";
 if (! $res) die("Include of main fails");
 
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 dol_include_once('/mymodule/class/myobject.class.php');
-dol_include_once('/mymodule/lib/myobject.lib.php');
+dol_include_once('/mymodule/lib/mymodule_myobject.lib.php');
 
 
-// Load traductions files requiredby by page
+// Load translation files required by the page
 $langs->loadLangs(array("mymodule@mymodule","other"));
 
 // Get parameters
@@ -54,14 +54,14 @@ $action		= GETPOST('action', 'alpha');
 $cancel     = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
-if (GETPOST('actioncode','array'))
+if (GETPOST('actioncode', 'array'))
 {
-    $actioncode=GETPOST('actioncode','array',3);
+    $actioncode=GETPOST('actioncode', 'array', 3);
     if (! count($actioncode)) $actioncode='0';
 }
 else
 {
-    $actioncode=GETPOST("actioncode","alpha",3)?GETPOST("actioncode","alpha",3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
+    $actioncode=GETPOST("actioncode", "alpha", 3)?GETPOST("actioncode", "alpha", 3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
 }
 $search_agenda_label=GETPOST('search_agenda_label');
 
@@ -70,10 +70,10 @@ $search_agenda_label=GETPOST('search_agenda_label');
 //if ($user->societe_id > 0) $socid = $user->societe_id;
 //$result = restrictedArea($user, 'mymodule', $id);
 
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -100,20 +100,20 @@ if ($id > 0 || ! empty($ref)) $upload_dir = $conf->mymodule->multidir_output[$ob
  */
 
 $parameters=array('id'=>$socid);
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
 {
     // Cancel
-    if (GETPOST('cancel','alpha') && ! empty($backtopage))
+    if (GETPOST('cancel', 'alpha') && ! empty($backtopage))
     {
         header("Location: ".$backtopage);
         exit;
     }
 
     // Purge search criteria
-    if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
+    if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
     {
         $actioncode='';
         $search_agenda_label='';
@@ -145,7 +145,7 @@ if ($object->id > 0)
 
 	// Object card
 	// ------------------------------------------------------------
-	$linkback = '<a href="' .dol_buildpath('/mymodule/myobject_list.php',1) . '?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+	$linkback = '<a href="' .dol_buildpath('/mymodule/myobject_list.php', 1) . '?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
 	$morehtmlref='<div class="refidno">';
 	/*
@@ -232,7 +232,7 @@ if ($object->id > 0)
     	}
     	else
     	{
-        	print '<a class="butActionRefused" href="#">'.$langs->trans("AddAction").'</a>';
+        	print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("AddAction").'</a>';
     	}
     }
 
@@ -245,7 +245,7 @@ if ($object->id > 0)
         if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 
 
-		print load_fiche_titre($langs->trans("ActionsOnMyObject"),'','');
+		print load_fiche_titre($langs->trans("ActionsOnMyObject"), '', '');
 
         // List of all actions
 		$filters=array();
@@ -256,7 +256,6 @@ if ($object->id > 0)
     }
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

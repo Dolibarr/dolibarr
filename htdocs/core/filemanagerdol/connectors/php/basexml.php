@@ -55,7 +55,7 @@ function SetXmlHeaders()
  * @param string	$currentFolder	Current folder
  * @return void
  */
-function CreateXmlHeader( $command, $resourceType, $currentFolder )
+function CreateXmlHeader($command, $resourceType, $currentFolder)
 {
 	SetXmlHeaders();
 
@@ -93,7 +93,7 @@ function SendError($number, $text)
 	if ( $_GET['Command'] == 'FileUpload' )
 		SendUploadResults($number, "", "", $text);
 
-	if ( isset( $GLOBALS['HeaderSent'] ) && $GLOBALS['HeaderSent'] )
+	if ( isset($GLOBALS['HeaderSent']) && $GLOBALS['HeaderSent'] )
 	{
 		SendErrorNode($number, $text);
 		CreateXmlFooter();

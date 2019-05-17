@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+/* Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2010		Laurent Destailleur	<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -31,11 +31,30 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/project/modules_project.php';
  */
 class mod_project_simple extends ModeleNumRefProjects
 {
-	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
-	var $prefix='PJ';
-    var $error='';
-	var $nom = "Simple";
-	var $name = "Simple";
+	/**
+     * Dolibarr version of the loaded document
+     * @var string
+     */
+	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+
+	public $prefix='PJ';
+
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+	/**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='Simple';
+
+	/**
+	 * @var string model name
+	 */
+	public $name='Simple';
 
 
     /**
@@ -43,10 +62,10 @@ class mod_project_simple extends ModeleNumRefProjects
      *
      *  @return     string      Text with description
      */
-    function info()
+    public function info()
     {
     	global $langs;
-      	return $langs->trans("SimpleNumRefModelDesc",$this->prefix);
+      	return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
     }
 
 
@@ -55,7 +74,7 @@ class mod_project_simple extends ModeleNumRefProjects
      *
      * 	@return     string      Example
      */
-    function getExample()
+    public function getExample()
     {
         return $this->prefix."0501-0001";
     }
@@ -66,7 +85,7 @@ class mod_project_simple extends ModeleNumRefProjects
      *
      *   @return     boolean     false si conflit, true si ok
      */
-    function canBeActivated()
+    public function canBeActivated()
     {
     	global $conf,$langs,$db;
 
@@ -81,16 +100,16 @@ class mod_project_simple extends ModeleNumRefProjects
         if ($resql)
         {
             $row = $db->fetch_row($resql);
-            if ($row) { $coyymm = substr($row[0],0,6); $max=$row[0]; }
+            if ($row) { $coyymm = substr($row[0], 0, 6); $max=$row[0]; }
         }
-        if (! $coyymm || preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i',$coyymm))
+        if (! $coyymm || preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $coyymm))
         {
             return true;
         }
         else
         {
 			$langs->load("errors");
-			$this->error=$langs->trans('ErrorNumRefModel',$max);
+			$this->error=$langs->trans('ErrorNumRefModel', $max);
             return false;
         }
     }
@@ -103,7 +122,7 @@ class mod_project_simple extends ModeleNumRefProjects
 	*  @param   Project	$project	Object project
 	*  @return	string				Value if OK, 0 if KO
 	*/
-    function getNextValue($objsoc,$project)
+    public function getNextValue($objsoc, $project)
     {
 		global $db,$conf;
 
@@ -130,26 +149,27 @@ class mod_project_simple extends ModeleNumRefProjects
 		$date=empty($project->date_c)?dol_now():$project->date_c;
 
 		//$yymm = strftime("%y%m",time());
-		$yymm = strftime("%y%m",$date);
+		$yymm = strftime("%y%m", $date);
 
 		if ($max >= (pow(10, 4) - 1)) $num=$max+1;	// If counter > 9999, we do not format on 4 chars, we take number as it is
-		else $num = sprintf("%04s",$max+1);
+		else $num = sprintf("%04s", $max+1);
 
 		dol_syslog("mod_project_simple::getNextValue return ".$this->prefix.$yymm."-".$num);
 		return $this->prefix.$yymm."-".$num;
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
-     * 	Return next reference not yet used as a reference
+     *  Return next reference not yet used as a reference
      *
      *  @param	Societe	$objsoc     Object third party
      *  @param  Project	$project	Object project
      *  @return string      		Next not used reference
      */
-    function project_get_num($objsoc=0,$project='')
+    public function project_get_num($objsoc = 0, $project = '')
     {
-        return $this->getNextValue($objsoc,$project);
+        // phpcs:enable
+        return $this->getNextValue($objsoc, $project);
     }
 }
-

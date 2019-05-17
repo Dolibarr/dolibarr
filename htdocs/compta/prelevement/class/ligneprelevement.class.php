@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  *
@@ -31,10 +31,17 @@
  */
 class LignePrelevement
 {
-	var $id;
-	var $db;
+	/**
+	 * @var int ID
+	 */
+	public $id;
 
-	var $statuts = array();
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+	public $statuts = array();
 
 
 	/**
@@ -43,7 +50,7 @@ class LignePrelevement
 	 *  @param	DoliDb	$db			Database handler
 	 *  @param 	User	$user       Objet user
 	 */
-	function __construct($db, $user)
+	public function __construct($db, $user)
 	{
 		global $conf,$langs;
 
@@ -64,7 +71,7 @@ class LignePrelevement
 	 *  @param	int		$rowid       id de la facture a recuperer
 	 *  @return	integer
 	 */
-	function fetch($rowid)
+	public function fetch($rowid)
 	{
 		global $conf;
 
@@ -110,17 +117,18 @@ class LignePrelevement
 		return $result;
 	}
 
-/**
+    /**
 	 *    Return status label of object
 	 *
 	 *    @param	int		$mode       0=Label, 1=Picto + label, 2=Picto, 3=Label + Picto
 	 * 	  @return   string      		Label
 	 */
-	function getLibStatut($mode=0)
+	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->statut,$mode);
+		return $this->LibStatut($this->statut, $mode);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *    Return status label for a status
 	 *
@@ -128,31 +136,32 @@ class LignePrelevement
 	 *    @param    int		$mode       0=Label, 1=Picto + label, 2=Picto, 3=Label + Picto
 	 * 	  @return   string      		Label
 	 */
-	function LibStatut($statut,$mode=0)
+	public function LibStatut($statut, $mode = 0)
 	{
+        // phpcs:enable
 		global $langs;
 
 		if ($mode == 0)
 		{
 			return $langs->trans($this->statuts[$statut]);
 		}
-		if ($mode == 1)
+		elseif ($mode == 1)
 		{
-			if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]),'statut1').' '.$langs->trans($this->statuts[$statut]);   // Waiting
-			if ($statut==2) return img_picto($langs->trans($this->statuts[$statut]),'statut6').' '.$langs->trans($this->statuts[$statut]);   // Credited
-			if ($statut==3) return img_picto($langs->trans($this->statuts[$statut]),'statut8').' '.$langs->trans($this->statuts[$statut]);   // Refused
+			if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]), 'statut1').' '.$langs->trans($this->statuts[$statut]);   // Waiting
+			elseif ($statut==2) return img_picto($langs->trans($this->statuts[$statut]), 'statut6').' '.$langs->trans($this->statuts[$statut]);   // Credited
+			elseif ($statut==3) return img_picto($langs->trans($this->statuts[$statut]), 'statut8').' '.$langs->trans($this->statuts[$statut]);   // Refused
 		}
-		if ($mode == 2)
+		elseif ($mode == 2)
 		{
-			if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]),'statut1');
-			if ($statut==2) return img_picto($langs->trans($this->statuts[$statut]),'statut6');
-			if ($statut==3) return img_picto($langs->trans($this->statuts[$statut]),'statut8');
+			if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]), 'statut1');
+			elseif ($statut==2) return img_picto($langs->trans($this->statuts[$statut]), 'statut6');
+			elseif ($statut==3) return img_picto($langs->trans($this->statuts[$statut]), 'statut8');
 		}
-		if ($mode == 3)
+		elseif ($mode == 3)
 		{
-			if ($statut==0) return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut1');
-			if ($statut==2) return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut6');
-			if ($statut==3) return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut8');
+			if ($statut==0) return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]), 'statut1');
+			elseif ($statut==2) return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]), 'statut6');
+			elseif ($statut==3) return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]), 'statut8');
 		}
 	}
 
@@ -173,4 +182,3 @@ class LignePrelevement
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
 	}
 }
-

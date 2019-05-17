@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2012 Regis Houssin  <regis.houssin@capnetworks.com>
+/* Copyright (C) 2012 Regis Houssin  <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,16 +20,16 @@
  *       \brief      File to get ht and ttc
  */
 
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1'); // Disables token renewal
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
-if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
-if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Disables token renewal
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
+if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
+if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
 
-require('../../main.inc.php');
+require '../../main.inc.php';
 
-$output		= GETPOST('output','alpha');
-$amount		= price2num(GETPOST('amount','alpha'));
-$tva_tx		= str_replace('*','',GETPOST('tva_tx','alpha'));
+$output		= GETPOST('output', 'alpha');
+$amount		= price2num(GETPOST('amount', 'alpha'));
+$tva_tx		= str_replace('*', '', GETPOST('tva_tx', 'alpha'));
 
 /*
  * View
@@ -52,9 +52,8 @@ if (! empty($output) && isset($amount) && isset($tva_tx))
 			$price = price2num($amount * (1 + ($tva_tx/100)), 'MU');
 			$return['price_ht'] = $amount;
 			$return['price_ttc'] = (isset($price) && $price != '' ? price($price) : '');
-
 		}
-		else if ($output == 'price_ht') {
+		elseif ($output == 'price_ht') {
 
 			$price = price2num($amount / (1 + ($tva_tx/100)), 'MU');
 			$return['price_ht'] = (isset($price) && $price != '' ? price($price) : '');
@@ -64,4 +63,3 @@ if (! empty($output) && isset($amount) && isset($tva_tx))
 
 	echo json_encode($return);
 }
-

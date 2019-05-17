@@ -53,7 +53,7 @@ function GetFolders($resourceType, $currentFolder)
 	echo "<Folders>" ;
 
 	natcasesort($aFolders);
-	foreach ( $aFolders as $sFolder )
+	foreach ($aFolders as $sFolder)
 		echo $sFolder ;
 
 	// Close the "Folders" node.
@@ -67,7 +67,7 @@ function GetFolders($resourceType, $currentFolder)
  * @param	string	$currentFolder	Current folder
  * @return void
  */
-function GetFoldersAndFiles( $resourceType, $currentFolder )
+function GetFoldersAndFiles($resourceType, $currentFolder)
 {
 	// Map the virtual path to the local server path.
 	$sServerDir = ServerMapFolder($resourceType, $currentFolder, 'GetFoldersAndFiles');
@@ -110,7 +110,7 @@ function GetFoldersAndFiles( $resourceType, $currentFolder )
 	natcasesort($aFolders);
 	echo '<Folders>' ;
 
-	foreach ( $aFolders as $sFolder )
+	foreach ($aFolders as $sFolder)
 		echo $sFolder ;
 
 	echo '</Folders>' ;
@@ -119,7 +119,7 @@ function GetFoldersAndFiles( $resourceType, $currentFolder )
 	natcasesort($aFiles);
 	echo '<Files>' ;
 
-	foreach ( $aFiles as $sFiles )
+	foreach ($aFiles as $sFiles)
 		echo $sFiles ;
 
 	echo '</Files>' ;
@@ -132,7 +132,7 @@ function GetFoldersAndFiles( $resourceType, $currentFolder )
  * @param   string $currentFolder   Current folder
  * @return void
  */
-function CreateFolder( $resourceType, $currentFolder )
+function CreateFolder($resourceType, $currentFolder)
 {
 	if (!isset($_GET)) {
 		global $_GET;
@@ -140,7 +140,7 @@ function CreateFolder( $resourceType, $currentFolder )
 	$sErrorNumber	= '0' ;
 	$sErrorMsg		= '' ;
 
-	if ( isset( $_GET['NewFolderName'] ) )
+	if ( isset($_GET['NewFolderName']) )
 	{
 		$sNewFolderName = $_GET['NewFolderName'] ;
 		$sNewFolderName = SanitizeFolderName($sNewFolderName);
@@ -202,7 +202,7 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 	$sErrorNumber = '0' ;
 	$sFileName = '' ;
 
-	if ( isset( $_FILES['NewFile'] ) && !is_null($_FILES['NewFile']['tmp_name'])
+	if ( isset($_FILES['NewFile']) && !is_null($_FILES['NewFile']['tmp_name'])
        // This is for the QuickUpload tab box
         or (isset($_FILES['upload']) && !is_null($_FILES['upload']['tmp_name'])))
 	{
@@ -223,7 +223,7 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 		$sExtension = substr($sFileName, (strrpos($sFileName, '.') + 1));
 		$sExtension = strtolower($sExtension);
 
-		if ( isset( $Config['SecureImageUploads'] ) )
+		if ( isset($Config['SecureImageUploads']) )
 		{
 			if ( ( $isImageValid = IsImageValid($oFile['tmp_name'], $sExtension) ) === false )
 			{
@@ -231,7 +231,7 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 			}
 		}
 
-		if ( isset( $Config['HtmlExtensions'] ) )
+		if ( isset($Config['HtmlExtensions']) )
 		{
 			if (!IsHtmlExtension($sExtension, $Config['HtmlExtensions']) &&
 				($detectHtml = DetectHtml($oFile['tmp_name'])) === true)
@@ -261,13 +261,13 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 
 					if ( is_file($sFilePath) )
 					{
-						if ( isset( $Config['ChmodOnUpload'] ) && !$Config['ChmodOnUpload'] )
+						if ( isset($Config['ChmodOnUpload']) && !$Config['ChmodOnUpload'] )
 						{
 							break ;
 						}
 
 						$permissions = '0777';
-						if ( isset( $Config['ChmodOnUpload'] ) && $Config['ChmodOnUpload'] )
+						if ( isset($Config['ChmodOnUpload']) && $Config['ChmodOnUpload'] )
 						{
 							$permissions = (string) $Config['ChmodOnUpload'] ;
 						}
@@ -285,12 +285,12 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 			if ( file_exists($sFilePath) )
 			{
 				//previous checks failed, try once again
-				if ( isset( $isImageValid ) && $isImageValid === -1 && IsImageValid($sFilePath, $sExtension) === false )
+				if ( isset($isImageValid) && $isImageValid === -1 && IsImageValid($sFilePath, $sExtension) === false )
 				{
 					@unlink($sFilePath);
 					$sErrorNumber = '202' ;
 				}
-				else if ( isset( $detectHtml ) && $detectHtml === -1 && DetectHtml($sFilePath) === true )
+				elseif ( isset($detectHtml) && $detectHtml === -1 && DetectHtml($sFilePath) === true )
 				{
 					@unlink($sFilePath);
 					$sErrorNumber = '202' ;
@@ -318,7 +318,7 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
     else
 	{
 	    //issue the CKEditor Callback
-		SendCKEditorResults(
+SendCKEditorResults(
 			$CKEcallback,
 			$sFileUrl,
 			($sErrorNumber != 0 ? 'Error '. $sErrorNumber. ' upload failed.' : 'Upload Successful')

@@ -48,7 +48,7 @@ print $doleditor->Create(1);
 
 print '</td>';
 
-print '<td align="center">';
+print '<td class="center">';
 print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
 print '</td></tr>';
 print '</table></form>';
@@ -64,9 +64,11 @@ if (!empty($object->comments))
 		$fk_user = $comment->fk_user_author;
 		$userstatic->fetch($fk_user);
 
-		if(empty($TColors[$fk_user])) {
-			$bgcolor = random_color(180,240);
-			if(!empty($userstatic->color)) {
+		if (empty($TColors[$fk_user]))
+		{
+			$bgcolor = randomColor(180, 240);
+			if (!empty($userstatic->color))
+			{
 				$bgcolor = $userstatic->color;
 			}
 			$color = (colorIsLight($bgcolor))?'555':'fff';
@@ -84,7 +86,7 @@ if (!empty($object->comments))
 			print Form::showphoto('userphoto', $userstatic, 80, 0, 0, '', 'small', 0, 1).'<br/>';
 		}
 		print $langs->trans('User').' : '.$userstatic->getNomUrl().'<br/>';
-		print $langs->trans('Date').' : '.dol_print_date($comment->datec,'dayhoursec');
+		print $langs->trans('Date').' : '.dol_print_date($comment->datec, 'dayhoursec');
 		print '</div>'; // End comment-info
 
 		print '<div class="comment-cell comment-right">';

@@ -1,0 +1,83 @@
+# Dolibarr language file - Source file is en_US - receptions
+RefReception=Réf. réception
+Reception=Réception
+reception=Réception
+reception_line=Ligne de réception
+Receptions=Réceptions
+AllReceptions=Toutes les réceptions
+Reception=Réception
+Receptions=Réceptions
+ShowReception=Afficher Réceptions
+Receivings=Bons de réceptions
+ReceptionsArea=Espace réceptions
+ListOfReceptions=Liste des réceptions
+ReceptionMethod=Mode de transport
+LastReceptions=Les %s dernières réceptions
+StatisticsOfReceptions=Statistiques des réceptions
+NbOfReceptions=Nombre de réceptions
+NumberOfReceptionsByMonth=Nombre de réceptions par mois
+ReceptionCard=Fiche réception
+NewReception=Nouvelle réception
+CreateReception=Créer réception
+QtyShipped=Qté. expédiée
+QtyPreparedOrShipped=Quantité préparée ou envoyée
+QtyToReceive=Qté. à recevoir
+QtyReceived=Qté. reçue
+QtyInOtherReceptions=Qté dans les autres réceptions
+KeepToShip=Reste à expédier
+OtherReceptionsForSameOrder=Autres réceptions pour cette commande
+ReceptionsAndReceivingForSameOrder=Réceptions et réceptions pour cette commande
+ReceptionsToValidate=Réceptions à valider
+StatusReceptionCanceled=Annulée
+StatusReceptionDraft=Brouillon
+StatusReceptionValidated=Validée
+StatusReceptionProcessed=Traitée
+StatusReceptionDraftShort=Brouillon
+StatusReceptionValidatedShort=Validée
+StatusReceptionProcessedShort=Traitée
+ReceptionSheet=Fiche réception
+ConfirmDeleteReception=Êtes-vous sûr de vouloir supprimer cette réception ?
+ConfirmValidateReception=Êtes-vous sûr de vouloir valider cette réception sous la référence <b>%s</b>?
+ConfirmCancelReception=Êtes-vous sûr de vouloir annuler cette réception ?
+DocumentModelMerou=Modèle Merou A5
+WarningNoQtyLeftToSend=Alerte, aucun produit en attente de réception.
+StatsOnReceptionsOnlyValidated=Statistiques effectuées sur les réceptions validées uniquement. La date prise en compte est la date de validation (la date de prévision de livraison n'étant pas toujours renseignée).
+DateDeliveryPlanned=Date prévue de livraison
+RefDeliveryReceipt=Ref bon de réception
+StatusReceipt=Status du bon de réception
+DateReceived=Date de réception réelle
+SendReceptionByEMail=Envoyer bon de réception par email
+SendReceptionRef=Envoi du bordereau de réception %s
+ActionsOnReception=Événements sur l'réception
+LinkToTrackYourPackage=Lien pour le suivi de votre colis
+ReceptionCreationIsDoneFromOrder=Pour le moment, la création d'une nouvelle réception se fait depuis la fiche commande fournisseur.
+ReceptionLine=Ligne de réception
+RefSupplierOrder=Ref. Commande fournisseur
+ProductQtyInCustomersOrdersRunning=Quantité de produit en commandes client ouvertes
+ProductQtyInSuppliersOrdersRunning=Quantité de produit en commandes fournisseur ouvertes
+ProductQtyInReceptionAlreadySent=Quantité de produit en commande client ouverte déjà expédiée
+ProductQtyInSuppliersReceptionAlreadyRecevied=Quantité de produit déjà reçu en commandes fournisseur ouvertes
+NoProductToShipFoundIntoStock=Aucun produit à expédier n'a été trouver dans l'entrepôt <b>%s</b>. Corrigez l'inventaire ou retourner choisir un autre entrepôt.
+WeightVolShort=Poids/vol.
+ValidateOrderFirstBeforeReception=Vous devez d'abord valider la commande pour pouvoir créer une réception.
+CreateInvoiceForThisSupplier=Facturer réceptions
+ErrorRefAlreadyExists = La référence fournisseur existe déjà
+
+# Reception methods
+# ModelDocument
+DocumentModelTyphon=Modèle de bon de réception/livraison complet (logo…)
+Error_EXPEDITION_ADDON_NUMBER_NotDefined=Constante EXPEDITION_ADDON_NUMBER non définie
+SumOfProductVolumes=Somme des volumes des produits
+SumOfProductWeights=Somme des poids des produits
+
+# warehouse details
+DetailWarehouseNumber= Détail de l'entrepôt
+DetailWarehouseFormat= W:%s (Qté : %d)
+
+Billed=Facturé
+ClassifyUnbilled=Classer non facturé
+
+DateInvoice=Date de facturation
+CreateOneBillByThird=Créer une facture par tiers (sinon une par réception)
+ValidateInvoices=Factures validées
+StatusMustBeValidate=La réception %s doit être au statut 'Validée'

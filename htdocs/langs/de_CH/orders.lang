@@ -4,5 +4,6 @@ OrderCard=Bestell-Karte
 CancelOrder=Bestellung verwerfen
 NoOrder=Keine Bestellung
 CloseOrder=Bestellung schliessen
-RefOrderSupplier=Bestellreferenz für Lieferant
+OtherOrders=Bestellungen Anderer
 Error_OrderNotChecked=Keine zu verrechnenden Bestellungen ausgewählt
+OrderByEMail=E-Mail

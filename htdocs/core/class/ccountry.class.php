@@ -32,17 +32,38 @@
  */
 class Ccountry // extends CommonObject
 {
-	var $db;							//!< To store db handler
-	var $error;							//!< To return error code (or message)
-	var $errors=array();				//!< To return several error codes (or messages)
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+	/**
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array();
+
 	//var $element='ccountry';			//!< Id that identify managed objects
 	//var $table_element='ccountry';	//!< Name of table without prefix where object is stored
 
-    var $id;
-	var $code;
-	var $code_iso;
-	var $label;
-	var $active;
+    /**
+	 * @var int ID
+	 */
+	public $id;
+
+	public $code;
+	public $code_iso;
+
+	/**
+     * @var string Countries label
+     */
+    public $label;
+
+	public $active;
 
 
 
@@ -52,10 +73,9 @@ class Ccountry // extends CommonObject
      *
      *  @param      DoliDb		$db      Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
-        return 1;
     }
 
 
@@ -66,7 +86,7 @@ class Ccountry // extends CommonObject
      *  @param      int		$notrigger   0=launch triggers after, 1=disable triggers
      *  @return     int      		   	 <0 if KO, Id of created object if OK
      */
-    function create($user, $notrigger=0)
+    public function create($user, $notrigger = 0)
     {
     	global $conf, $langs;
 		$error=0;
@@ -145,7 +165,7 @@ class Ccountry // extends CommonObject
      *  @param		string	$code	Code
      *  @return     int          	>0 if OK, 0 if not found, <0 if KO
      */
-    function fetch($id,$code='')
+    public function fetch($id, $code = '')
     {
     	global $langs;
         $sql = "SELECT";
@@ -194,7 +214,7 @@ class Ccountry // extends CommonObject
      *  @param      int		$notrigger	 0=launch triggers after, 1=disable triggers
      *  @return     int     		   	 <0 if KO, >0 if OK
      */
-    function update($user=null, $notrigger=0)
+    public function update($user = null, $notrigger = 0)
     {
     	global $conf, $langs;
 		$error=0;
@@ -265,7 +285,7 @@ class Ccountry // extends CommonObject
      *  @param	int		$notrigger	 0=launch triggers after, 1=disable triggers
 	 *  @return	int					 <0 if KO, >0 if OK
 	 */
-	function delete($user, $notrigger=0)
+	public function delete($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error=0;
@@ -312,5 +332,4 @@ class Ccountry // extends CommonObject
 			return 1;
 		}
 	}
-
 }

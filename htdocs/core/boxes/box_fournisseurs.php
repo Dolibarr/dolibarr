@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2006 Destailleur Laurent  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -31,16 +31,20 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_fournisseurs extends ModeleBoxes
 {
-    var $boxcode="lastsuppliers";
-    var $boximg="object_company";
-    var $boxlabel="BoxLastSuppliers";
-    var $depends = array("fournisseur");
+    public $boxcode="lastsuppliers";
+    public $boximg="object_company";
+    public $boxlabel="BoxLastSuppliers";
+    public $depends = array("fournisseur");
 
-	var $db;
-	var $param;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
-    var $info_box_head = array();
-    var $info_box_contents = array();
+    public $param;
+
+    public $info_box_head = array();
+    public $info_box_contents = array();
 
 
     /**
@@ -49,7 +53,7 @@ class box_fournisseurs extends ModeleBoxes
      *  @param  DoliDB  $db         Database handler
      *  @param  string  $param      More parameters
      */
-    function __construct($db,$param)
+    public function __construct($db, $param)
     {
         global $user;
 
@@ -64,7 +68,7 @@ class box_fournisseurs extends ModeleBoxes
 	 *  @param	int		$max        Maximum number of records to load
      *  @return	void
      */
-    function loadBox($max=5)
+    public function loadBox($max = 5)
     {
         global $conf, $user, $langs, $db;
         $langs->load("boxes");
@@ -76,7 +80,7 @@ class box_fournisseurs extends ModeleBoxes
 		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 		$thirdpartytmp=new Fournisseur($db);
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedSuppliers",$max));
+		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedSuppliers", $max));
 
         if ($user->rights->societe->lire)
         {
@@ -120,15 +124,15 @@ class box_fournisseurs extends ModeleBoxes
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="right" width="18"',
-                        'text' => $thirdpartystatic->LibStatut($objp->status,3),
+                        'td' => 'class="right" width="18"',
+                        'text' => $thirdpartystatic->LibStatut($objp->status, 3),
                     );
 
                     $line++;
                 }
 
                 if ($num==0) $this->info_box_contents[$line][0] = array(
-                    'td' => 'align="center"',
+                    'td' => 'class="center"',
                     'text'=>$langs->trans("NoRecordedSuppliers"),
                 );
 
@@ -142,11 +146,10 @@ class box_fournisseurs extends ModeleBoxes
             }
         } else {
             $this->info_box_contents[0][0] = array(
-                'td' => 'align="left" class="nohover opacitymedium"',
+                'td' => 'class="nohover opacitymedium left"',
                 'text' => $langs->trans("ReadPermissionNotAllowed")
             );
         }
-
     }
 
 	/**
@@ -157,10 +160,8 @@ class box_fournisseurs extends ModeleBoxes
 	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	string
 	 */
-    function showBox($head = null, $contents = null, $nooutput=0)
+    public function showBox($head = null, $contents = null, $nooutput = 0)
     {
         return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
     }
-
 }
-

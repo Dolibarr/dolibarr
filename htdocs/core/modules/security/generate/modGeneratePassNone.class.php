@@ -31,13 +31,21 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/security/generate/modules_genpass
  */
 class modGeneratePassNone extends ModeleGenPassword
 {
-	var $id;
-	var $length;
+	/**
+	 * @var int ID
+	 */
+	public $id;
 
-	var $db;
-	var $conf;
-	var $lang;
-	var $user;
+	public $length;
+
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+	public $conf;
+	public $lang;
+	public $user;
 
 
 	/**
@@ -48,7 +56,7 @@ class modGeneratePassNone extends ModeleGenPassword
 	 *	@param		Translate	$langs		Handler de langue
 	 *	@param		User		$user		Handler du user connecte
 	 */
-	function __construct($db, $conf, $langs, $user)
+	public function __construct($db, $conf, $langs, $user)
 	{
 		$this->id = "none";
 		$this->length = 0;
@@ -64,7 +72,7 @@ class modGeneratePassNone extends ModeleGenPassword
 	 *
  	 *      @return     string      Description of text
 	 */
-	function getDescription()
+	public function getDescription()
 	{
 		global $langs;
 		return $langs->trans("PasswordGenerationNone");
@@ -75,7 +83,7 @@ class modGeneratePassNone extends ModeleGenPassword
 	 *
  	 *      @return     string      Example of password
 	 */
-	function getExample()
+	public function getExample()
 	{
 		return $this->langs->trans("None");
 	}
@@ -85,7 +93,7 @@ class modGeneratePassNone extends ModeleGenPassword
 	 *
  	 *      @return     string      Return a new generated password
 	 */
-	function getNewGeneratedPassword()
+	public function getNewGeneratedPassword()
 	{
 		return "";
 	}
@@ -96,10 +104,8 @@ class modGeneratePassNone extends ModeleGenPassword
 	 *		@param		string	$password	Password to check
  	 *      @return     int					0 if KO, >0 if OK
 	 */
-	function validatePassword($password)
+	public function validatePassword($password)
 	{
 		return 1;
 	}
-
 }
-
