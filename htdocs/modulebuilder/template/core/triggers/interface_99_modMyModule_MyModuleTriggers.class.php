@@ -292,6 +292,9 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
             //case 'TASK_TIMESPENT_CREATE':
             //case 'TASK_TIMESPENT_MODIFY':
             //case 'TASK_TIMESPENT_DELETE':
+            //case 'PROJECT_ADD_CONTACT':
+            //case 'PROJECT_DELETE_CONTACT':
+            //case 'PROJECT_DELETE_RESOURCE':
 
             // Shipping
             //case 'SHIPPING_CREATE':
