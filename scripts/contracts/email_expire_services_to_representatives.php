@@ -168,21 +168,14 @@ if ($resql) {
 /**
  * Send email
  *
- * @param string $mode
- *        	Mode (test | confirm)
- * @param string $oldemail
- *        	Old email
- * @param string $message
- *        	Message to send
- * @param string $total
- *        	Total amount of unpayed invoices
- * @param string $userlang
- *        	Code lang to use for email output.
- * @param string $oldsalerepresentative
- *        	Old sale representative
- * @param int $duration_value
- *        	duration value
- * @return int <0 if KO, >0 if OK
+ * @param string $mode					Mode (test | confirm)
+ * @param string $oldemail				Old email
+ * @param string $message				Message to send
+ * @param string $total					Total amount of unpayed invoices
+ * @param string $userlang				Code lang to use for email output.
+ * @param string $oldsalerepresentative	Old sale representative
+ * @param int $duration_value			Duration value
+ * @return int 							<0 if KO, >0 if OK
  */
 function envoi_mail($mode, $oldemail, $message, $total, $userlang, $oldsalerepresentative, $duration_value)
 {

@@ -86,9 +86,8 @@ exit($error);
 /**
  * Migrate file from old path to new one for product $product
  *
- * @param Product $product
- *        	Object product
- * @return void
+ * @param 	Product $product		Object product
+ * @return 	void
  */
 function migrate_product_photospath($product)
 {

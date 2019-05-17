@@ -273,12 +273,12 @@ if ($result >= 0) {
 
 exit($error);
 
+
 /**
  * Function to say if a value is empty or not
  *
- * @param string $element
- *        	Value to test
- * @return boolean True of false
+ * @param	string 	$element	Value to test
+ * @return 	boolean 			True of false
  */
 function dolValidElement($element)
 {

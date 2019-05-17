@@ -48,17 +48,17 @@ $contextpage= GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'contrac
 
 $search_name=GETPOST('search_name', 'alpha');
 $search_email=GETPOST('search_email', 'alpha');
-$search_town=GETPOST('search_town','alpha');
-$search_zip=GETPOST('search_zip','alpha');
-$search_state=trim(GETPOST("search_state"));
+$search_town=GETPOST('search_town', 'alpha');
+$search_zip=GETPOST('search_zip', 'alpha');
+$search_state=trim(GETPOST("search_state", 'alpha'));
 $search_country=GETPOST("search_country", 'int');
 $search_type_thirdparty=GETPOST("search_type_thirdparty", 'int');
-$search_contract=GETPOST('search_contract');
+$search_contract=GETPOST('search_contract', 'alpha');
 $search_ref_customer=GETPOST('search_ref_customer', 'alpha');
 $search_ref_supplier=GETPOST('search_ref_supplier', 'alpha');
 $sall=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
-$search_status=GETPOST('search_status');
-$socid=GETPOST('socid');
+$search_status=GETPOST('search_status', 'alpha');
+$socid=GETPOST('socid', 'int');
 $search_user=GETPOST('search_user', 'int');
 $search_sale=GETPOST('search_sale', 'int');
 $search_product_category=GETPOST('search_product_category', 'int');
@@ -709,8 +709,8 @@ while ($i < min($num, $limit))
 			$listsalesrepresentatives=$socstatic->getSalesRepresentatives($user);
 			if ($listsalesrepresentatives < 0) dol_print_error($db);
 			$nbofsalesrepresentative=count($listsalesrepresentatives);
-            if ($nbofsalesrepresentative > 3) {
-                // We print only number
+			if ($nbofsalesrepresentative > 3) {
+				// We print only number
 				print '<a href="'.DOL_URL_ROOT.'/societe/commerciaux.php?socid='.$socstatic->id.'">';
 				print $nbofsalesrepresentative;
 				print '</a>';
