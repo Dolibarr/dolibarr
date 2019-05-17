@@ -273,7 +273,7 @@ class pdf_beluga extends ModelePDFProjects
                     	'table'=>'commande',
                     	'datefieldname'=>'date_commande',
                     	'test'=>$conf->commande->enabled && $user->rights->commande->lire,
-                        'lang'=>'order'),
+                        'lang'=>'orders'),
                     'invoice'=>array(
                     	'name'=>"CustomersInvoices",
                     	'title'=>"ListInvoicesAssociatedProject",
