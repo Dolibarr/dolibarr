@@ -392,8 +392,8 @@ if (! $error && $massaction == 'confirm_presend')
                     $looparray[0]=$objectforloop;
                 }
                 //var_dump($looparray);exit;
-                dol_syslog("We have set an array of ".count($looparray)." emails to send");
-
+                dol_syslog("We have set an array of ".count($looparray)." emails to send. oneemailperrecipient=".$oneemailperrecipient);
+                //var_dump($oneemailperrecipient); var_dump($listofqualifiedobj); var_dump($listofqualifiedref);
                 foreach ($looparray as $objectid => $objecttmp)		// $objecttmp is a real object or an empty object if we choose to send one email per thirdparty instead of one per object
                 {
                     // Make substitution in email content
@@ -414,8 +414,8 @@ if (! $error && $massaction == 'confirm_presend')
 
                     complete_substitutions_array($substitutionarray, $langs, $objecttmp, $parameters);
 
-                    $subject=make_substitutions($subject, $substitutionarray);
-                    $message=make_substitutions($message, $substitutionarray);
+                    $subjectreplaced=make_substitutions($subject, $substitutionarray);
+                    $messagereplaced=make_substitutions($message, $substitutionarray);
 
                     $filepath = $attachedfiles['paths'];
                     $filename = $attachedfiles['names'];
@@ -443,10 +443,11 @@ if (! $error && $massaction == 'confirm_presend')
                     }
                     //var_dump($filepath);
                     //var_dump($trackid);exit;
+                    //var_dump($subjectreplaced);
 
                     // Send mail (substitutionarray must be done just before this)
                     require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-                    $mailfile = new CMailFile($subject, $sendto, $from, $message, $filepath, $mimetype, $filename, $sendtocc, $sendtobcc, $deliveryreceipt, -1, '', '', $trackid);
+                    $mailfile = new CMailFile($subjectreplaced, $sendto, $from, $messagereplaced, $filepath, $mimetype, $filename, $sendtocc, $sendtobcc, $deliveryreceipt, -1, '', '', $trackid);
                     if ($mailfile->error)
                     {
                         $resaction.='<div class="error">'.$mailfile->error.'</div>';
@@ -478,9 +479,9 @@ if (! $error && $massaction == 'confirm_presend')
                                 if ($message)
                                 {
                                     if ($sendtocc) $actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('Bcc') . ": " . $sendtocc);
-                                    $actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('MailTopic') . ": " . $subject);
+                                    $actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('MailTopic') . ": " . $subjectreplaced);
                                     $actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('TextUsedInTheMessageBody') . ":");
-                                    $actionmsg = dol_concatdesc($actionmsg, $message);
+                                    $actionmsg = dol_concatdesc($actionmsg, $messagereplaced);
                                 }
                                 $actionmsg2='';
 

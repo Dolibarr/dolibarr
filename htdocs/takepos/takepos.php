@@ -39,9 +39,13 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 
 $place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0);   // $place is id of table for Ba or Restaurant
-$posnb = (GETPOST('posnb', 'int') > 0 ? GETPOST('posnb', 'int') : 0);   // $posnb is id of POS
-
 $action = GETPOST('action', 'alpha');
+$setterminal = GETPOST('setterminal', 'int');
+
+if ($setterminal>0)
+{
+	$_SESSION["takeposterminal"]=$setterminal;
+}
 
 $langs->loadLangs(array("bills","orders","commercial","cashdesk","receiptprinter"));
 
@@ -538,15 +542,47 @@ function MoreActions(totalactions){
 	}
 }
 
+function TerminalsDialog()
+{
+    jQuery("#dialog-info").dialog({
+	    resizable: false,
+	    height:220,
+	    width:400,
+	    modal: true,
+	    buttons: {
+			Terminal1: function() {
+				location.href='takepos.php?setterminal=1';
+			}
+			<?php
+			for ($i = 2; $i <= $conf->global->TAKEPOS_NUM_TERMINALS; $i++)
+			{
+				print "
+				,
+				Terminal".$i.": function() {
+					location.href='takepos.php?setterminal=".$i."';
+				}
+				";
+			}
+			?>
+	    }
+	});
+}
+
 $( document ).ready(function() {
     PrintCategories(0);
 	LoadProducts(0);
 	Refresh();
+	<?php
+	//IF THERE ARE MORE THAN 1 TERMINAL AND NO SELECTED
+	if ($conf->global->TAKEPOS_NUM_TERMINALS!="1" && $_SESSION["takeposterminal"]=="") print "TerminalsDialog();";
+	?>
 });
 </script>
 
 <body style="overflow: hidden; background-color:#D1D1D1;">
-
+<?php
+if ($conf->global->TAKEPOS_NUM_TERMINALS!="1" && $_SESSION["takeposterminal"]=="") print '<div id="dialog-info" title="TakePOS">'.$langs->trans('TerminalSelect').'</div>';
+?>
 <div class="container">
 	<div class="row1">
 

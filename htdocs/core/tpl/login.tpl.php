@@ -70,7 +70,7 @@ $colorbackhmenu1 = join(',', colorStringToArray($colorbackhmenu1));    // Normal
 if (!empty($conf->global->ADD_UNSPLASH_LOGIN_BACKGROUND)) {
 	// For example $conf->global->ADD_UNSPLASH_LOGIN_BACKGROUND = 'https://source.unsplash.com/random'
 ?>
-	<body class="body bodylogin" style="background-image: url('<?php echo $conf->global->ADD_UNSPLASH_LOGIN_BACKGROUND; ?>'); background-repeat: no-repeat; background-position: center center; background-attachment: fixed; background-size: cover; background-color: #ffffff;">
+	<body class="body bodylogin" style="background-image: url('<?php echo dol_escape_htmltag($conf->global->ADD_UNSPLASH_LOGIN_BACKGROUND); ?>'); background-repeat: no-repeat; background-position: center center; background-attachment: fixed; background-size: cover; background-color: #ffffff;">
 <?php
 } else {
 ?>

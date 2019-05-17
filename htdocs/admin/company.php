@@ -271,7 +271,7 @@ if ($action == 'addthumb')  // Regenerate thumbs
 			$error++;
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorBadImageFormat"), null, 'errors');
-			dol_syslog($langs->transnoentities("ErrorBadImageFormat"), LOG_WARNING);
+			dol_syslog($langs->transnoentities("ErrorBadImageFormat"), LOG_INFO);
 		}
 	}
 	else
@@ -412,9 +412,9 @@ if ($action == 'edit' || $action == 'updateedit')
 	}
 
 	// Logo
-	print '<tr class="oddeven hideonsmartphone"><td><label for="logo">'.$langs->trans("Logo").' (png,jpg)</label></td><td>';
+	print '<tr class="oddeven"><td><label for="logo">'.$langs->trans("Logo").' (png,jpg)</label></td><td>';
 	print '<table width="100%" class="nobordernopadding"><tr class="nocellnopadd"><td valign="middle" class="nocellnopadd">';
-	print '<input type="file" class="flat class=minwidth200" name="logo" id="logo">';
+	print '<input type="file" class="flat class=minwidth200" name="logo" id="logo" accept="image/*">';
 	print '</td><td class="nocellnopadd right" valign="middle">';
 	if (! empty($mysoc->logo_mini)) {
 		print '<a href="'.$_SERVER["PHP_SELF"].'?action=removelogo">'.img_delete($langs->trans("Delete")).'</a>';
@@ -798,9 +798,9 @@ else
 	print '</td></tr>';
 
 	// Barcode
+
 	if (! empty($conf->barcode->enabled))
 	{
-
 		print '<tr class="oddeven"><td>'.$langs->trans("Gencod").'</td><td>' . $conf->global->MAIN_INFO_SOCIETE_GENCOD . '</td></tr>';
 	}
 

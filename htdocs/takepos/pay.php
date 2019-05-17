@@ -35,7 +35,6 @@ require '../main.inc.php';	// Load $user and permissions
 require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 
 $place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0);   // $place is id of table for Ba or Restaurant
-$posnb = (GETPOST('posnb', 'int') > 0 ? GETPOST('posnb', 'int') : 0);   // $posnb is id of POS
 
 $invoiceid = GETPOST('invoiceid', 'int');
 
@@ -51,7 +50,7 @@ if ($invoiceid > 0)
 }
 else
 {
-    $sql="SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS-".$place.")'";
+    $sql="SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
     $resql = $db->query($sql);
     $obj = $db->fetch_object($resql);
     if ($obj)

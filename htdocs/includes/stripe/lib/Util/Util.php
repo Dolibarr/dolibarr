@@ -80,6 +80,7 @@ abstract class Util
             \Stripe\BankAccount::OBJECT_NAME => 'Stripe\\BankAccount',
             \Stripe\BitcoinReceiver::OBJECT_NAME => 'Stripe\\BitcoinReceiver',
             \Stripe\BitcoinTransaction::OBJECT_NAME => 'Stripe\\BitcoinTransaction',
+            \Stripe\Capability::OBJECT_NAME => 'Stripe\\Capability',
             \Stripe\Card::OBJECT_NAME => 'Stripe\\Card',
             \Stripe\Charge::OBJECT_NAME => 'Stripe\\Charge',
             \Stripe\Checkout\Session::OBJECT_NAME => 'Stripe\\Checkout\\Session',

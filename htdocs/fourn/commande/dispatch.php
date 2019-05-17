@@ -414,13 +414,13 @@ if ($id > 0 || ! empty($ref)) {
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
 
-	print '<table class="border" width="100%">';
+	print '<table class="border tableforfield" width="100%">';
 
 	// Date
 	if ($object->methode_commande_id > 0) {
 		print '<tr><td class="titlefield">' . $langs->trans("Date") . '</td><td>';
 		if ($object->date_commande) {
-			print dol_print_date($object->date_commande, "dayhourtext") . "\n";
+			print dol_print_date($object->date_commande, "dayhour") . "\n";
 		}
 		print "</td></tr>";
 
@@ -450,7 +450,7 @@ if ($id > 0 || ! empty($ref)) {
 
 	// Line of orders
 	if ($object->statut <= CommandeFournisseur::STATUS_ACCEPTED || $object->statut >= CommandeFournisseur::STATUS_CANCELED) {
-		print '<span class="opacitymedium">'.$langs->trans("OrderStatusNotReadyToDispatch").'</span>';
+		print '<br><span class="opacitymedium">'.$langs->trans("OrderStatusNotReadyToDispatch").'</span>';
 	}
 
 	if ($object->statut == CommandeFournisseur::STATUS_ORDERSENT
@@ -714,13 +714,12 @@ if ($id > 0 || ! empty($ref)) {
 
 		print "</table>\n";
 		print '</div>';
-		print "<br>\n";
 
 		if ($nbproduct)
 		{
 			$checkboxlabel = $langs->trans("CloseReceivedSupplierOrdersAutomatically", $langs->transnoentitiesnoconv('StatusOrderReceivedAll'));
 
-			print '<br><div class="center">';
+			print '<div class="center">';
 			$parameters = array();
 			$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
 			// modified by hook
@@ -737,7 +736,7 @@ if ($id > 0 || ! empty($ref)) {
                 }
                 empty($conf->reception->enabled)?$dispatchBt=$langs->trans("DispatchVerb"):$dispatchBt=$langs->trans("Receive");
 
-                print '<br><input type="submit" class="button" value="' . $dispatchBt. '"';
+                print '<br><input type="submit" class="button" name="dispatch" value="' . dol_escape_htmltag($dispatchBt). '"';
                 if (count($listwarehouses) <= 0)
 					print ' disabled';
 				print '>';
@@ -747,7 +746,8 @@ if ($id > 0 || ! empty($ref)) {
 
 		// Message if nothing to dispatch
 		if (! $nbproduct) {
-			if (empty($conf->global->SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED))
+		    print "<br>\n";
+		    if (empty($conf->global->SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED))
 				print '<div class="opacitymedium">'.$langs->trans("NoPredefinedProductToDispatch").'</div>';		// No predefined line at all
 			else
 				print '<div class="opacitymedium">'.$langs->trans("NoMorePredefinedProductToDispatch").'</div>';	// No predefined line that remain to be dispatched.

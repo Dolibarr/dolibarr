@@ -660,16 +660,19 @@ function dol_buildpath($path, $type = 0, $returnemptyifnotfound = 0)
 	if (empty($type))	// For a filesystem path
 	{
 		$res = DOL_DOCUMENT_ROOT.'/'.$path;		// Standard default path
-		foreach ($conf->file->dol_document_root as $key => $dirroot)	// ex: array(["main"]=>"/home/main/htdocs", ["alt0"]=>"/home/dirmod/htdocs", ...)
+		if (is_array($conf->file->dol_document_root))
 		{
-			if ($key == 'main')
+			foreach ($conf->file->dol_document_root as $key => $dirroot)	// ex: array("main"=>"/home/main/htdocs", "alt0"=>"/home/dirmod/htdocs", ...)
 			{
-				continue;
-			}
-			if (file_exists($dirroot.'/'.$path))
-			{
-				$res=$dirroot.'/'.$path;
-				return $res;
+				if ($key == 'main')
+				{
+					continue;
+				}
+				if (file_exists($dirroot.'/'.$path))
+				{
+					$res=$dirroot.'/'.$path;
+					return $res;
+				}
 			}
 		}
 		if ($returnemptyifnotfound)								// Not found into alternate dir
@@ -3593,12 +3596,12 @@ function img_allow($allow, $titlealt = 'default')
  */
 function img_credit_card($brand)
 {
-	if ($brand == 'Visa') {$brand='cc-visa';}
-	elseif ($brand == 'MasterCard') {$brand='cc-mastercard';}
-	elseif ($brand == 'American Express') {$brand='cc-amex';}
-	elseif ($brand == 'Discover') {$brand='cc-discover';}
-	elseif ($brand == 'JCB') {$brand='cc-jcb';}
-	elseif ($brand == 'Diners Club') {$brand='cc-diners-club';}
+	if ($brand == 'visa' || $brand == 'Visa') {$brand='cc-visa';}
+	elseif ($brand == 'mastercard' || $brand == 'MasterCard') {$brand='cc-mastercard';}
+	elseif ($brand == 'amex' || $brand == 'American Express') {$brand='cc-amex';}
+	elseif ($brand == 'discover' || $brand == 'Discover') {$brand='cc-discover';}
+	elseif ($brand == 'jcb' || $brand == 'JCB') {$brand='cc-jcb';}
+	elseif ($brand == 'diners' || $brand == 'Diners club') {$brand='cc-diners-club';}
 	elseif (! in_array($brand, array('cc-visa','cc-mastercard','cc-amex','cc-discover','cc-jcb','cc-diners-club'))) {$brand='credit-card';}
 
 	return '<span class="fa fa-'.$brand.' fa-2x fa-fw"></span>';
@@ -6582,7 +6585,7 @@ function dol_htmloutput_errors($mesgstring = '', $mesgarray = array(), $keepembe
  *  or descending output and uses optionally natural case insensitive sorting (which
  *  can be optionally case sensitive as well).
  *
- *  @param      array		$array      		Array to sort (array of array('key','otherkey1','otherkey2'...))
+ *  @param      array		$array      		Array to sort (array of array('key1'=>val1,'key2'=>val2,'key3'...) or array of objects)
  *  @param      string		$index				Key in array to use for sorting criteria
  *  @param      int			$order				Sort order ('asc' or 'desc')
  *  @param      int			$natsort			1=use "natural" sort (natsort), 0=use "standard" sort (asort)
@@ -6601,7 +6604,17 @@ function dol_sort_array(&$array, $index, $order = 'asc', $natsort = 0, $case_sen
 		if ($sizearray>0)
 		{
 			$temp = array();
-			foreach(array_keys($array) as $key) $temp[$key]=$array[$key][$index];
+			foreach(array_keys($array) as $key)
+			{
+				if (is_object($array[$key]))
+				{
+					$temp[$key]=$array[$key]->$index;
+				}
+				else
+				{
+					$temp[$key]=$array[$key][$index];
+				}
+			}
 
             if (! $natsort) {
                 ($order=='asc') ? asort($temp) : arsort($temp);

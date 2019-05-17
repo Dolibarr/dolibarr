@@ -18,7 +18,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
  */
 
 /**
@@ -37,11 +36,12 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array("compta","accountancy"));
 
-$action = GETPOST('action', 'aZ09');
+$action     = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOST('show_files', 'int');
-$confirm = GETPOST('confirm', 'alpha');
-$toselect = GETPOST('toselect', 'array');
+$confirm    = GETPOST('confirm', 'alpha');
+$toselect   = GETPOST('toselect', 'array');
+$socid      = GETPOST('socid', 'int')?GETPOST('socid', 'int'):GETPOST('id', 'int');
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
@@ -176,21 +176,25 @@ while ($obj = $db->fetch_object($resql)) {
 
 $sql.= $db->plimit($limit+1, $offset);
 
-dol_syslog("/accountancy/bookkeeping/thirdparty_lettrage_supplier.php", LOG_DEBUG);
+dol_syslog("/accountancy/bookkeeping/thirdparty_lettering_supplier.php", LOG_DEBUG);
 $resql = $db->query($sql);
 if (! $resql) {
 		dol_print_error($db);
 		exit;
 }
 
+$param='';
+$param.="&socid=".urlencode($socid);
+
 $num = $db->num_rows($resql);
 
-dol_syslog("/accountancy/bookkeeping/thirdparty_lettrage_supplier.php", LOG_DEBUG);
+dol_syslog("/accountancy/bookkeeping/thirdparty_lettering_supplier.php", LOG_DEBUG);
 $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);
 	$i = 0;
 
+    $param="&socid=".$socid;
 	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'?socid=' . $object->id . '" method="POST">';
 	print '<input type="hidden" name="socid" value="' . $object->id . '">';
 
@@ -198,7 +202,8 @@ if ($resql) {
 
     print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_companies', 0, $letteringbutton, '', $limit);
 
-	print "<table class=\"noborder\" width=\"100%\">";
+    print '<div class="div-table-responsive-no-min">';
+    print '<table class="liste" width="100%">'."\n";
 
 	/*
     print '<tr class="liste_titre">';

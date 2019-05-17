@@ -229,7 +229,7 @@ else $sql.=" WHERE 1 = 1";
 foreach($search as $key => $val)
 {
 	if ($key == 'status' && $search[$key] == -1) continue;
-	$mode_search=(($object->isInt($object->fields[$key]) || $object->isFloat($object->fields[$key]))?1:0);
+	$mode_search=(($object->isInt($object->fields[$key]) || $object->isFloat($object->fields[$key])) ? 1 : 0);
 	if ($search[$key] != '') $sql.=natural_search($key, $search[$key], (($key == 'status')?2:$mode_search));
 }
 if ($search_all) $sql.= natural_search(array_keys($fieldstosearchall), $search_all);
@@ -335,8 +335,10 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 // List of mass actions available
 $arrayofmassactions =  array(
-	//'presend'=>$langs->trans("SendByMail"),
-	//'builddoc'=>$langs->trans("PDFMerge"),
+    //'validate'=>$langs->trans("Validate"),
+    //'generate_doc'=>$langs->trans("ReGeneratePDF"),
+    //'builddoc'=>$langs->trans("PDFMerge"),
+    //'presend'=>$langs->trans("SendByMail"),
 );
 if ($user->rights->mymodule->delete) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
@@ -414,7 +416,7 @@ foreach($object->fields as $key => $val)
 	$cssforfield='';
 	if (in_array($val['type'], array('date','datetime','timestamp'))) $cssforfield.=($cssforfield?' ':'').'center';
 	if (in_array($val['type'], array('timestamp'))) $cssforfield.=($cssforfield?' ':'').'nowrap';
-	if (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real'))) $cssforfield.=($cssforfield?' ':'').'right';
+	if (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price'))) $cssforfield.=($cssforfield?' ':'').'right';
 	if ($key == 'status') $cssforfield.=($cssforfield?' ':'').'center';
 	if (! empty($arrayfields['t.'.$key]['checked'])) print '<td class="liste_titre'.($cssforfield?' '.$cssforfield:'').'"><input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'"></td>';
 }
@@ -441,7 +443,7 @@ foreach($object->fields as $key => $val)
 	$cssforfield='';
 	if (in_array($val['type'], array('date','datetime','timestamp'))) $cssforfield.=($cssforfield?' ':'').'center';
 	if (in_array($val['type'], array('timestamp'))) $cssforfield.=($cssforfield?' ':'').'nowrap';
-	if (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real'))) $cssforfield.=($cssforfield?' ':'').'right';
+	if (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price'))) $cssforfield.=($cssforfield?' ':'').'right';
 	if ($key == 'status') $cssforfield.=($cssforfield?' ':'').'center';
 	if (! empty($arrayfields['t.'.$key]['checked']))
 	{
@@ -497,7 +499,7 @@ while ($i < min($num, $limit))
 	    if (in_array($val['type'], array('timestamp'))) $cssforfield.=($cssforfield?' ':'').'nowrap';
 	    elseif ($key == 'ref') $cssforfield.=($cssforfield?' ':'').'nowrap';
 
-	    if (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real'))) $cssforfield.=($cssforfield?' ':'').'right';
+	    if (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price'))) $cssforfield.=($cssforfield?' ':'').'right';
 
 	    if (! empty($arrayfields['t.'.$key]['checked']))
 		{
