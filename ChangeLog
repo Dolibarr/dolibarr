@@ -121,7 +121,7 @@ NEW: Add constant XFRAMEOPTIONS_ALLOWALL
 NEW: Add function isValidVATID()
 NEW: ADD document's product support in APIs
 NEW: REST API: get the list of objects in a category.
-NEW: Update Stripe library to 6.34.3
+NEW: Update Stripe library to 6.35
 NEW: Upgrade jquery lib to 3.3.1
 NEW: Add hook 'addHtmlHeader()'
 NEW: Add hook 'createRecurringInvoices()'
