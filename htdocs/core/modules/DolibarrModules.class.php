@@ -667,7 +667,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
                     array(
                         'doc/' => dol_buildpath(strtolower($this->name).'/doc/', 1),
                         'img/' => dol_buildpath(strtolower($this->name).'/img/', 1),
-                        'images/' => dol_buildpath(strtolower($this->name).'/imgages/', 1),
+                        'images/' => dol_buildpath(strtolower($this->name).'/images/', 1),
                     )
                 );
             }
