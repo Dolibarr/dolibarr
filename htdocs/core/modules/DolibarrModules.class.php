@@ -746,7 +746,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
         $filefound= false;
 
         // Define path to file README.md.
-        // First check README-la_LA.md then README.md
+        // First check ChangeLog-la_LA.md then ChangeLog.md
         $pathoffile = dol_buildpath(strtolower($this->name).'/ChangeLog-'.$langs->defaultlang.'.md', 0);
         if (dol_is_file($pathoffile)) {
             $filefound = true;
