@@ -8017,6 +8017,8 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
 {
     global $conf;
 
+    $return = '';
+
     // image's filename are still in French
     $statusImg=array(
         'status0' => 'statut0'
