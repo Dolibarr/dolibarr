@@ -1950,21 +1950,21 @@ if (preg_match('/^dopayment/', $action))
 		else
 		{
     		print '<script src="https://js.stripe.com/v3/"></script>'."\n";
-    
+
     	    // Code to ask the credit card. This use the default "API version". No way to force API version when using JS code.
     		print '<script type="text/javascript" language="javascript">'."\n";
-    
+
     		if (! empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION))
     		{
             ?>
     		// Code for payment with option STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION set
-    
+
     	    // Create a Stripe client.
     	    var stripe = Stripe('<?php echo $stripearrayofkeys['publishable_key']; // Defined into config.php ?>');
-    
+
     	    // Create an instance of Elements
     	    var elements = stripe.elements();
-    
+
     	    // Custom styling can be passed to options when creating an Element.
     	    // (Note that this demo uses a wider set of styles than the guide below.)
     	    var style = {
@@ -1983,12 +1983,12 @@ if (preg_match('/^dopayment/', $action))
     	        iconColor: '#fa755a'
     	      }
     	    };
-    
+
     		var cardElement = elements.create('card', {style: style});
-    
+
     		// Add an instance of the card Element into the `card-element` <div>
     		cardElement.mount('#card-element');
-    
+
     		// Handle real-time validation errors from the card Element.
     		cardElement.addEventListener('change', function(event) {
         		var displayError = document.getElementById('card-errors');
@@ -2000,16 +2000,16 @@ if (preg_match('/^dopayment/', $action))
         	        displayError.textContent = '';
         	      }
     	    });
-    
+
     		// Handle form submission
             var cardholderName = document.getElementById('cardholder-name');
             var cardButton = document.getElementById('buttontopay');
             var clientSecret = cardButton.dataset.secret;
-    
+
             cardButton.addEventListener('click', function(event) {
             	console.log("We click on buttontopay");
             	event.preventDefault();
-    
+
             	if (cardholderName.value == '')
             	{
     				console.log("Field Card holder is empty");
@@ -2055,21 +2055,21 @@ if (preg_match('/^dopayment/', $action))
                   });
                 }
             });
-    
-    
+
+
     		<?php
     		}
     		else
     		{
     		?>
     		// Code for payment with option STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION off
-    
+
     	    // Create a Stripe client.
     	    var stripe = Stripe('<?php echo $stripearrayofkeys['publishable_key']; // Defined into config.php ?>');
-    
+
     	    // Create an instance of Elements
     	    var elements = stripe.elements();
-    
+
     	    // Custom styling can be passed to options when creating an Element.
     	    // (Note that this demo uses a wider set of styles than the guide below.)
     	    var style = {
@@ -2088,13 +2088,13 @@ if (preg_match('/^dopayment/', $action))
     	        iconColor: '#fa755a'
     	      }
     	    };
-    
+
     	    // Create an instance of the card Element
     	    var card = elements.create('card', {style: style});
-    
+
     	    // Add an instance of the card Element into the `card-element` <div>
     	    card.mount('#card-element');
-    
+
     	    // Handle real-time validation errors from the card Element.
     	    card.addEventListener('change', function(event) {
     	      var displayError = document.getElementById('card-errors');
@@ -2104,7 +2104,7 @@ if (preg_match('/^dopayment/', $action))
     	        displayError.textContent = '';
     	      }
     	    });
-    
+
     	    // Handle form submission
     	    var form = document.getElementById('payment-form');
     	    console.log(form);
@@ -2145,8 +2145,8 @@ if (preg_match('/^dopayment/', $action))
     			}
     			?>
     	    });
-    
-    
+
+
     		/* Insert the Token into the form so it gets submitted to the server */
     	    function stripeTokenHandler(token) {
     	      // Insert the token ID into the form so it gets submitted to the server
@@ -2156,14 +2156,14 @@ if (preg_match('/^dopayment/', $action))
     	      hiddenInput.setAttribute('name', 'stripeToken');
     	      hiddenInput.setAttribute('value', token.id);
     	      form.appendChild(hiddenInput);
-    
+
     	      // Submit the form
     	      jQuery('#buttontopay').hide();
     	      jQuery('#hourglasstopay').show();
     	      console.log("submit token");
     	      form.submit();
     	    }
-    
+
     		/* Insert the Source into the form so it gets submitted to the server */
     		function stripeSourceHandler(source) {
     		  // Insert the source ID into the form so it gets submitted to the server
@@ -2173,17 +2173,17 @@ if (preg_match('/^dopayment/', $action))
     		  hiddenInput.setAttribute('name', 'stripeSource');
     		  hiddenInput.setAttribute('value', source.id);
     		  form.appendChild(hiddenInput);
-    
+
     		  // Submit the form
     	      jQuery('#buttontopay').hide();
     	      jQuery('#hourglasstopay').show();
     	      console.log("submit source");
     		  form.submit();
     		}
-    
+
     	    <?php
     		}
-    
+
     		print '</script>';
 		}
 	}

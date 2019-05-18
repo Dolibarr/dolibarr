@@ -112,6 +112,7 @@ NEW: When you create product or service, sell accountancy account by default is 
 NEW: Widget birthdays of the month.
 NEW: Option in workflow module to set a reception billed on validate supplier bill.
 NEW: Autocompletion on lists should be available on mobile applications.
+NEW: Add mass action to close several members.
 
 For Developers:
 NEW: Module "DebugBar" is available as a stable module.
