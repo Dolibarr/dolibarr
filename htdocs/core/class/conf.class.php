@@ -615,6 +615,10 @@ class Conf
 		    $this->expensereport->payment		= new stdClass();
 		    $this->expensereport->payment->warning_delay=(isset($this->global->MAIN_DELAY_EXPENSEREPORTS_TO_PAY)?$this->global->MAIN_DELAY_EXPENSEREPORTS_TO_PAY:0)*24*60*60;
 		}
+        if (isset($this->holiday)) {
+            $this->holiday->approve = new stdClass();
+            $this->holiday->approve->warning_delay=(isset($this->global->MAIN_DELAY_HOLIDAYS)?$this->global->MAIN_DELAY_HOLIDAYS:0)*24*60*60;
+        }
 
 		if (! empty($this->global->PRODUIT_MULTIPRICES) && empty($this->global->PRODUIT_MULTIPRICES_LIMIT))
 		{

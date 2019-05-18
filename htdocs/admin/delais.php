@@ -120,6 +120,12 @@ $modules=array(
     		        'img' => 'trip'
     		    )*/
 		),
+        'holiday' => array(
+            array(
+                'code' => 'MAIN_DELAY_HOLIDAYS',
+                'img' => 'holiday'
+            ),
+        ),
 );
 
 $labelmeteo = array(0=>$langs->trans("No"), 1=>$langs->trans("Yes"), 2=>$langs->trans("OnMobileOnly"));
