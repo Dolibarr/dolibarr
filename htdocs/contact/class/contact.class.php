@@ -698,9 +698,9 @@ class Contact extends CommonObject
 
         $langs->load("dict");
 
-		dol_syslog(get_class($this)."::fetch id=".$id, LOG_DEBUG);
+		dol_syslog(get_class($this) . "::fetch id=" . $id . " ref_ext=" . $ref_ext . " email=" . $email, LOG_DEBUG);
 
-		if (empty($id) && empty($ref_ext))
+		if (empty($id) && empty($ref_ext) && empty($email))
 		{
 			$this->error='BadParameter';
 			return -1;
