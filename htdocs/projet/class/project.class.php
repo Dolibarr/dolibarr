@@ -1229,12 +1229,18 @@ class Project extends CommonObject
         else dol_print_error($this->db);
         if (count($listofprojectcontacttype) == 0) $listofprojectcontacttype[0]='0';    // To avoid syntax error if not found
 
+
+	    if (!empty($user->contactid)) {
+	    	$userid=$user->contactid;
+	    } else {
+		    $userid=$user->id;
+	    }
         if ($mode == 0)
         {
             $sql.= " AND ec.element_id = p.rowid";
             $sql.= " AND ( p.public = 1";
             $sql.= " OR ( ec.fk_c_type_contact IN (".join(',', array_keys($listofprojectcontacttype)).")";
-            $sql.= " AND ec.fk_socpeople = ".$user->id.")";
+            $sql.= " AND ec.fk_socpeople = ".$userid.")";
             $sql.= " )";
         }
         if ($mode == 1)
@@ -1242,7 +1248,7 @@ class Project extends CommonObject
             $sql.= " AND ec.element_id = p.rowid";
             $sql.= " AND (";
             $sql.= "  ( ec.fk_c_type_contact IN (".join(',', array_keys($listofprojectcontacttype)).")";
-            $sql.= " AND ec.fk_socpeople = ".$user->id.")";
+            $sql.= " AND ec.fk_socpeople = ".$userid.")";
             $sql.= " )";
         }
         if ($mode == 2)
