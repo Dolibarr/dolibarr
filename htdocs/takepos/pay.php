@@ -84,7 +84,7 @@ if ($resql) {
         if ($paycode == 'CB')  $paycode = 'CB';
         if ($paycode == 'CHQ') $paycode = 'CHEQUE';
 
-        $accountname="CASHDESK_ID_BANKACCOUNT_".$paycode;
+        $accountname="CASHDESK_ID_BANKACCOUNT_".$paycode.$_SESSION["takeposterminal"];
 		if (! empty($conf->global->$accountname) && $conf->global->$accountname > 0) array_push($paiements, $obj);
 	}
 }
