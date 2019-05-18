@@ -189,6 +189,42 @@ if (empty($reshook))
 		$search_array_options=array();
 	}
 
+	// Close 
+	if ($massaction == 'close' && $user->rights->adherent->creer)
+	{
+	    $tmpmember = new Adherent($db);
+	    $error=0;
+	    $nbclose=0;
+	    
+	    $db->begin();
+	    
+        foreach($toselect as $idtoclose)
+        {
+            $tmpmember->fetch($idtoclose);
+            $result=$tmpmember->resiliate($user);
+
+            if ($result < 0 && ! count($tmpmember->errors))
+    	    {
+    	        setEventMessages($tmpmember->error, $tmpmember->errors, 'errors');
+    	    }
+    	    else
+    	    {
+    	        if ($result > 0) $nbclose++;
+    	    }
+        }
+
+        if (! $error)
+        {
+            setEventMessages($langs->trans("XMembersClosed", $nbclose), null, 'mesgs');
+            
+            $db->commit();
+        }
+        else
+        {
+            $db->rollback();
+        }
+	}
+	
 	// Mass actions
 	$objectclass='Adherent';
 	$objectlabel='Members';
@@ -326,12 +362,11 @@ if ($search_type > 0)
 }
 
 $param='';
-if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
+if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
 if ($sall != "") $param.="&sall=".urlencode($sall);
 if ($statut != "") $param.="&statut=".urlencode($statut);
 if ($search_ref)   $param.="&search_ref=".urlencode($search_ref);
-if ($search_nom)   $param.="&search_nom=".urlencode($search_nom);
 if ($search_civility) $param.="&search_civility=".urlencode($search_civility);
 if ($search_firstname) $param.="&search_firstname=".urlencode($search_firstname);
 if ($search_lastname)  $param.="&search_lastname=".urlencode($search_lastname);
@@ -358,6 +393,7 @@ $arrayofmassactions =  array(
 	//'presend'=>$langs->trans("SendByMail"),
 	//'builddoc'=>$langs->trans("PDFMerge"),
 );
+if ($user->rights->adherent->creer) $arrayofmassactions['close']=$langs->trans("Resiliate");
 if ($user->rights->adherent->supprimer) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
@@ -457,7 +493,7 @@ if (! empty($arrayfields['d.lastname']['checked']))
 if (! empty($arrayfields['d.gender']['checked']))
 {
 	print '<td class="liste_titre">';
-	$arraygender=array('man'=>$langs->trans("Genderman"),'woman'=>$langs->trans("Genderwoman"));
+	$arraygender=array('man'=>$langs->trans("Genderman"), 'woman'=>$langs->trans("Genderwoman"));
 	print $form->selectarray('search_gender', $arraygender, $search_gender, 1);
 	print '</td>';
 }
