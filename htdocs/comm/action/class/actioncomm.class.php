@@ -96,7 +96,7 @@ class ActionComm extends CommonObject
     public $datec;
 
     /**
-     * Date end record (datec)
+     * Date end record (datef)
      *
      * @var integer
      */
