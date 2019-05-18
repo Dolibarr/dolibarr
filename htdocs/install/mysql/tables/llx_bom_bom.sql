@@ -24,7 +24,7 @@ CREATE TABLE llx_bom_bom(
 	note_public text, 
 	note_private text, 
 	date_creation datetime NOT NULL, 
-	tms timestamp NOT NULL, 
+	tms timestamp, 
 	date_valid datetime, 
 	fk_user_creat integer NOT NULL, 
 	fk_user_modif integer, 
