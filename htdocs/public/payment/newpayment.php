@@ -1947,7 +1947,7 @@ if (preg_match('/^dopayment/', $action))
 		{
 		    print info_admin($langs->trans("ErrorModuleSetupNotComplete", "stripe"), 0, 0, 'error');
 		}
-		else 
+		else
 		{
     		print '<script src="https://js.stripe.com/v3/"></script>'."\n";
     
