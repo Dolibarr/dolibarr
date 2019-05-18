@@ -2178,15 +2178,15 @@ class Holiday extends CommonObject
 		$this->statut=Holiday::STATUS_VALIDATED;
 	}
 
-    /**
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+	/**
      *      Load this->nb for dashboard
      *
      *      @return     int         <0 if KO, >0 if OK
      */
     public function load_state_board()
     {
-        global $conf;
-
+        // phpcs:enable
         $this->nb=array();
 
         $sql = "SELECT count(h.rowid) as nb";
@@ -2210,11 +2210,11 @@ class Holiday extends CommonObject
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
      *
      *      @param	User	$user   		Objet user
-     *      @param  string  $option         'toapprove'
      *      @return WorkboardResponse|int 	<0 if KO, WorkboardResponse if OK
      */
     public function load_board($user)
