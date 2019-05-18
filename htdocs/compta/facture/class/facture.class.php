@@ -4492,7 +4492,7 @@ class FactureLigne extends CommonInvoiceLine
 		$sql.= " '".$this->db->escape($this->localtax1_type)."',";
 		$sql.= " '".$this->db->escape($this->localtax2_type)."',";
 		$sql.= ' '.(! empty($this->fk_product)?$this->fk_product:"null").',';
-		$sql.= " ".$this->product_type.",";
+		$sql.= " ".((int) $this->product_type).",";
 		$sql.= " ".price2num($this->remise_percent).",";
 		$sql.= " ".price2num($this->subprice).",";
 		$sql.= ' '.(! empty($this->fk_remise_except)?$this->fk_remise_except:"null").',';
