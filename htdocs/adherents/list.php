@@ -401,9 +401,7 @@ $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 $newcardbutton='';
 if ($user->rights->adherent->creer)
 {
-	$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/adherents/card.php?action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans('NewMember').'</span>';
-	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-	$newcardbutton.= '</a>';
+    $newcardbutton.= dolGetButtonTitle($langs->trans('NewMember'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/adherents/card.php?action=create');
 }
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';

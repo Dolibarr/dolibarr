@@ -842,6 +842,8 @@ class Dolresource extends CommonObject
      */
     public function getElementResources($element, $element_id, $resource_type = '')
     {
+	    $resources=array();
+
 	    // Links beetween objects are stored in this table
 	    $sql = 'SELECT rowid, resource_id, resource_type, busy, mandatory';
 	    $sql.= ' FROM '.MAIN_DB_PREFIX.'element_resources';

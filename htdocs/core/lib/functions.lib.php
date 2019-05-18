@@ -8017,6 +8017,8 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
 {
     global $conf;
 
+    $return = '';
+
     // image's filename are still in French
     $statusImg=array(
         'status0' => 'statut0'
@@ -8152,4 +8154,118 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
     $tag = !empty($attr['href'])?'a':'span';
 
     return '<div class="inline-block divButAction"><'.$tag.' '.$compiledAttributes.'>'.$html.'</'.$tag.'></div>';
+}
+
+
+
+/**
+ * Function dolGetButtonTitle : this kind of buttons are used in title in list
+ *
+ * @param string    $label      label of button
+ * @param string    $helpText   optional : content for help tooltip
+ * @param string    $iconClass  class for icon element
+ * @param string    $url        the url for link
+ * @param string    $id         attribute id of button
+ * @param int       $status     0 no user rights, 1 active, -1 Feature Disabled, -2 disable Other reason use helpText as tooltip
+ * @param array     $params     various params for future : recommended rather than adding more function arguments
+ * @return string               html button
+ */
+function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $url = '', $id = '', $status = 1, $params = array())
+{
+    global $langs, $conf, $user;
+
+    // Actually this conf is used in css too for external module compatibility and smooth transition to this function
+    if (! empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED) && (! $user->admin) && $status <= 0) {
+        return '';
+    }
+
+    $class = 'btnTitle' ;
+
+    // hidden conf keep during button transition TODO: remove this block
+    if(empty($conf->global->MAIN_USE_NEW_TITLE_BUTTON)){
+        $class = 'butActionNew';
+    }
+
+    $attr=array(
+        'class' => $class
+        ,'href' => empty($url)?'':$url
+    );
+
+    if(!empty($helpText)){
+        $attr['title'] = dol_escape_htmltag($helpText);
+    }
+
+    if($status <= 0){
+        $attr['class'] .= ' refused';
+
+        // hidden conf keep during button transition TODO: remove this block
+        if(empty($conf->global->MAIN_USE_NEW_TITLE_BUTTON)){
+            $attr['class'] = 'butActionNewRefused';
+        }
+
+        $attr['href'] = '';
+
+        if($status == -1){ // Not enough permissions
+            $attr['title'] = dol_escape_htmltag($langs->transnoentitiesnoconv("FeatureDisabled"));
+        }
+        elseif($status == 0){ // disable
+            $attr['title'] = dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions"));
+        }
+    }
+
+    if(!empty($attr['title'])){
+        $attr['class'] .= ' classfortooltip';
+    }
+
+    if(empty($id)){
+        $attr['id'] = $id;
+    }
+
+    // Override attr
+    if(!empty($params['attr']) && is_array($params['attr'])){
+        foreach($params['attr'] as $key => $value){
+            if($key == 'class'){
+                $attr['class'].= ' '.$value;
+            }
+            elseif($key == 'classOverride'){
+                $attr['class'] = $value;
+            }
+            else{
+                $attr[$key] = $value;
+            }
+        }
+    }
+
+    if(isset($attr['href']) && empty($attr['href'])){
+        unset($attr['href']);
+    }
+
+    // TODO : add a hook
+
+    // escape all attribute
+    $attr = array_map('dol_escape_htmltag', $attr);
+
+    $TCompiledAttr = array();
+    foreach($attr as $key => $value){
+        $TCompiledAttr[] = $key.'="'.$value.'"';
+    }
+
+    $compiledAttributes = !empty($TCompiledAttr)?implode(' ', $TCompiledAttr):'';
+
+    $tag = !empty($attr['href'])?'a':'span';
+
+
+    $button ='<'.$tag.' '.$compiledAttributes.' >';
+    $button.= '<span class="'.$iconClass.' valignmiddle btnTitle-icon"></span>';
+    $button.= '<span class="valignmiddle text-plus-circle btnTitle-label">'.$label.'</span>';
+    $button.= '</'.$tag.'>';
+
+    // hidden conf keep during button transition TODO: remove this block
+    if(empty($conf->global->MAIN_USE_NEW_TITLE_BUTTON)){
+        $button='<'.$tag.' '.$compiledAttributes.' ><span class="text-plus-circle">'.$label.'</span>';
+        $button.= '<span class="'.$iconClass.' valignmiddle"></span>';
+        $button.= '</'.$tag.'>';
+    }
+
+    return $button;
 }

@@ -103,7 +103,7 @@ class Form
 	 * @return	string					HTML edit field
 	 */
     public function editfieldkey($text, $htmlname, $preselected, $object, $perm, $typeofdata = 'string', $moreparam = '', $fieldrequired = 0, $notabletag = 0, $paramid = 'id')
-	{
+    {
 		global $conf,$langs;
 
 		$ret='';
@@ -144,7 +144,7 @@ class Form
 		}
 
 		return $ret;
-	}
+    }
 
 	/**
 	 * Output value of a field for an editable field
