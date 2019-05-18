@@ -579,31 +579,35 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		}
 
 		// Link to create time
+        $linktocreatetimeBtnStatus = 0;
+        $linktocreatetimeUrl = '';
+        $linktocreatetimeHelpText = '';
 		if ($user->rights->projet->all->creer || $user->rights->projet->creer)
 		{
 			if ($projectstatic->public || $userWrite > 0)
 		    {
+                $linktocreatetimeBtnStatus = 1;
+
 		    	if (! empty($projectidforalltimes))		// We are on tab 'Time Spent' of project
 		    	{
 		    		$backtourl = $_SERVER['PHP_SELF'].'?projectid='.$projectstatic->id.($withproject?'&withproject=1':'');
-		    		$linktocreatetime = '<a class="butActionNew" href="'.$_SERVER['PHP_SELF'].'?'.($withproject?'withproject=1':'').'&projectid='.$projectstatic->id.'&action=createtime'.$param.'&backtopage='.urlencode($backtourl).'"><span class="valignmiddle text-plus-circle">'.$langs->trans('AddTimeSpent').'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
+                    $linktocreatetimeUrl = $_SERVER['PHP_SELF'].'?'.($withproject?'withproject=1':'').'&projectid='.$projectstatic->id.'&action=createtime'.$param.'&backtopage='.urlencode($backtourl);
 		    	}
 		    	else									// We are on tab 'Time Spent' of task
 		    	{
 		    		$backtourl = $_SERVER['PHP_SELF'].'?id='.$object->id.($withproject?'&withproject=1':'');
-		    		$linktocreatetime = '<a class="butActionNew" href="'.$_SERVER['PHP_SELF'].'?'.($withproject?'withproject=1':'').($object->id > 0 ? '&id='.$object->id : '&projectid='.$projectstatic->id).'&action=createtime'.$param.'&backtopage='.urlencode($backtourl).'"><span class="valignmiddle text-plus-circle">'.$langs->trans('AddTimeSpent').'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
+                    $linktocreatetimeUrl = $_SERVER['PHP_SELF'].'?'.($withproject?'withproject=1':'').($object->id > 0 ? '&id='.$object->id : '&projectid='.$projectstatic->id).'&action=createtime'.$param.'&backtopage='.urlencode($backtourl);
 		    	}
 		    }
 		    else
 		    {
-		    	$linktocreatetime = '<a class="butActionNewRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'"><span class="valignmiddle text-plus-circle">'.$langs->trans('AddTime').'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
+                $linktocreatetimeBtnStatus = -2;
+                $linktocreatetimeHelpText = $langs->trans("NotOwnerOfProject");
 		    }
 		}
-		else
-		{
-			$linktocreatetime = '<a class="butActionNewRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'"><span class="valignmiddle text-plus-circle">'.$langs->trans('AddTime').'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
-		}
-	}
+
+        $linktocreatetime = dolGetButtonTitle($langs->trans('AddTimeSpent'), $linktocreatetimeHelpText, 'fa fa-plus-circle', $linktocreatetimeUrl, '', $linktocreatetimeBtnStatus);
+    }
 
 	$massactionbutton = '';
 	if ($projectstatic->bill_time)

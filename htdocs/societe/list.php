@@ -581,9 +581,7 @@ if ($user->rights->societe->creer && $contextpage != 'poslist')
 		if($type == 'f') $label='NewSupplier';
 	}
 
-	$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/societe/card.php?action=create'.$typefilter.'"><span class="valignmiddle text-plus-circle">'.$langs->trans($label).'</span>';
-	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-	$newcardbutton.= '</a>';
+    $newcardbutton.= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/societe/card.php?action=create'.$typefilter);
 }
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'" name="formfilter" autocomplete="off">';

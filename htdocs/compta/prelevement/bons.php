@@ -108,9 +108,7 @@ if ($result)
     $newcardbutton='';
     if ($user->rights->prelevement->bons->creer)
     {
-        $newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/compta/prelevement/create.php"><span class="valignmiddle text-plus-circle">'.$langs->trans('NewStandingOrder').'</span>';
-        $newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-        $newcardbutton.= '</a>';
+        $newcardbutton.= dolGetButtonTitle($langs->trans('NewStandingOrder'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/prelevement/create.php');
     }
 
     // Lines of title fields
