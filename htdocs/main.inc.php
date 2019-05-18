@@ -1227,7 +1227,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		print '<meta name="author" content="Dolibarr Development Team">'."\n";
 
 		// Favicon
-		$favicon=dol_buildpath('/theme/'.$conf->theme.'/img/favicon.ico', 1);
+		$favicon = DOL_MAIN_URL_ROOT . '/theme/'.$conf->theme.'/img/favicon.ico';
 		if (! empty($conf->global->MAIN_FAVICON_URL)) $favicon=$conf->global->MAIN_FAVICON_URL;
 		if (empty($conf->dol_use_jmobile)) print '<link rel="shortcut icon" type="image/x-icon" href="'.$favicon.'"/>'."\n";	// Not required into an Android webview
 		//if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<link rel="top" title="'.$langs->trans("Home").'" href="'.(DOL_URL_ROOT?DOL_URL_ROOT:'/').'">'."\n";
@@ -1235,7 +1235,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		//if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<link rel="author" title="Dolibarr Development Team" href="https://www.dolibarr.org">'."\n";
 
         // Mobile appli like icon
-        $manifest=dol_buildpath('/theme/'.$conf->theme.'/manifest.json.php', 1, 1);
+        $manifest = DOL_MAIN_URL_ROOT . '/theme/'.$conf->theme.'/manifest.json.php';
         if(!empty($manifest)){
             print '<link rel="manifest" href="'.$manifest.'" />'."\n";
         }
