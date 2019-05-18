@@ -151,9 +151,7 @@ if ($object->id > 0)
 	$newcardbutton = '';
     if (! empty($conf->agenda->enabled))
     {
-    	$newcardbutton.='<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&backtopage=1&origin=member&originid='.$id.'"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddAction").'</span>';
-    	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-    	$newcardbutton.= '</a>';
+        $newcardbutton.= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create&backtopage=1&origin=member&originid='.$id);
     }
 
     if (! empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read) ))
