@@ -1229,7 +1229,6 @@ class Project extends CommonObject
         else dol_print_error($this->db);
         if (count($listofprojectcontacttype) == 0) $listofprojectcontacttype[0]='0';    // To avoid syntax error if not found
 
-	    var_dump($mode);
         if ($mode == 0)
         {
             $sql.= " AND ec.element_id = p.rowid";
