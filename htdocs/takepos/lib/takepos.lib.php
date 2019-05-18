@@ -78,7 +78,7 @@ function create_ticket($place=0,$term=0, $placelabel='')
 	if($term==0)	$term=$_SESSION['takeposterminal'];
 	if($placelabel=='')	$placelabel=$langs->trans('FreeTicket');
 	
-	$defaultsoc=$conf->global->CASHDESK_ID_THIRDPARTY.$term;
+	$defaultsoc=$conf->global->{'CASHDESK_ID_THIRDPARTY'.$term};
 	
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 	$invoice = new Facture($db);
@@ -91,7 +91,7 @@ function create_ticket($place=0,$term=0, $placelabel='')
 	$invoice->pos_source = $term;	//V20: Terminal POS
 	
 	$facid=$invoice->create($user);
-	$sql="UPDATE ".MAIN_DB_PREFIX."facture set facnumber='(PROV-POS-".$place.")' where rowid=".$facid;
+	$sql="UPDATE ".MAIN_DB_PREFIX."facture set ref='(PROV-POS-".$place.")' where rowid=".$facid;
 	if($db->query($sql)){
 		dol_syslog("TakePos::create_ticket. Place=".$place."(".$placelabel."), term=".$term, LOG_DEBUG);
 		return $facid;

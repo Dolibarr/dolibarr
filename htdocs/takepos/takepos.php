@@ -37,6 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+require_once DOL_DOCUMENT_ROOT.'/takepos/lib/takepos.lib.php';
 
 $place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0);   // $place is id of table for Ba or Restaurant
 $action = GETPOST('action', 'alpha');
@@ -46,6 +47,15 @@ if ($setterminal>0)
 {
 	$_SESSION["takeposterminal"]=$setterminal;
 }
+
+$facid= GETPOST('facid', 'int');
+
+$ticket=array();	//V20
+$ticket=load_ticket($place, $facid);
+$diners=$ticket['diners'];
+$facid=$ticket['facid'];	//Reload, may be empty
+$place=$ticket['place'];
+$placelabel=$ticket['placelabel'];
 
 $langs->loadLangs(array("bills","orders","commercial","cashdesk","receiptprinter"));
 
@@ -126,6 +136,7 @@ var pageproducts=0;
 var pagecategories=0;
 var pageactions=0;
 var place="<?php echo $place;?>";
+var facid="<?php echo $facid;?>";
 var editaction="qty";
 var editnumber="";
 
@@ -363,9 +374,10 @@ function History()
 }
 
 function CloseBill() {
-	invoiceid = $("#invoiceid").val();
-	console.log("Open popup to enter payment on invoiceid="+invoiceid);
-	$.colorbox({href:"pay.php?place="+place+"&invoiceid="+invoiceid, width:"80%", height:"90%", transition:"none", iframe:"true", title:""});
+	//invoiceid = $("#invoiceid").val();
+	console.log("Open popup to enter payment on invoiceid="+facid);
+	//$.colorbox({href:"pay.php?place="+place+"&invoiceid="+invoiceid, width:"80%", height:"90%", transition:"none", iframe:"true", title:""});
+	$.colorbox({href:"pay.php?place="+place, width:"80%", height:"90%", transition:"none", iframe:"true", title:""});
 }
 
 function Floors() {

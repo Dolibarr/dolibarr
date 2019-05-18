@@ -36,6 +36,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.form.class.php';
+require_once DOL_DOCUMENT_ROOT . '/takepos/lib/takepos.lib.php';
 
 $langs->loadLangs(array("bills", "cashdesk"));
 
@@ -66,7 +67,7 @@ $desc = GETPOST('desc', 'alpha');
 $pay = GETPOST('pay', 'alpha');
 $amountofpayment = price2num(GETPOST('amount', 'alpha'));
 
-$invoiceid = GETPOST('invoiceid', 'int');
+//$invoiceid = GETPOST('invoiceid', 'int');
 
 $paycode = $pay;
 if ($pay == 'cash')   $paycode = 'LIQ';     // For backward compatibility
@@ -81,7 +82,7 @@ $resql = $db->query($sql);
 $codes = $db->fetch_array($resql);
 $paiementid=$codes[0];
 
-
+/*
 $invoice = new Facture($db);
 if ($invoiceid > 0)
 {
@@ -95,7 +96,20 @@ if ($ret > 0)
 {
     $placeid = $invoice->id;
 }
+*/
+$ticket=array();	//V20
+$ticket=json_decode($_SESSION['ticket'],true);
 
+//TODO: Must be clear with variables !!! :  Please better use $facid for invoice ID
+//Now $place is id of PLACE and $placeid is id of invoice
+$diners=$ticket['diners'];	//V20
+$facid=$placeid=$ticket['facid'];
+$place=$ticket['place'];
+$placelabel=$ticket['placelabel'];
+
+$invoice = new Facture($db);
+$invoice->fetch($placeid);
+$n_lines=count($invoice->lines);
 
 /*
  * Actions
@@ -179,6 +193,7 @@ if ($action == 'history')
 
 if (($action=="addline" || $action=="freezone") && $placeid == 0)
 {
+	/*
 	$invoice->socid = $conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"]};
 	$invoice->date = dol_now();
 	$invoice->module_source = 'takepos';
@@ -187,6 +202,26 @@ if (($action=="addline" || $action=="freezone") && $placeid == 0)
 	$placeid = $invoice->create($user);
 	$sql="UPDATE ".MAIN_DB_PREFIX."facture set ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")' where rowid=".$placeid;
 	$db->query($sql);
+	*/
+	
+	
+	//TODO: Must be clear with variables !!! :  Please better use $facid for invoice ID, (even $place should be named $placeid)
+	//Now $place is id of PLACE and $placeid is id of invoice
+	if ($placeid==0)
+	{
+		
+		$facid=$placeid=create_ticket($place,$_SESSION["takeposterminal"],$placelabel);
+		$invoice->fetch($facid);
+		//We update ticket SESSION
+		$ticket['facid']=$invoice->id;
+		$_SESSION['ticket']=json_encode($ticket);
+	}
+	//V20: Empty Tickets are not deleted, so with first line is like opening new ticket and date is now().
+	elseif($n_lines==0){
+		$invoice->date_creation=dol_now();
+		$invoice->date=dol_now();
+		$invoice->update($user);
+	}
 }
 
 if ($action == "addline")
@@ -345,7 +380,7 @@ $sectionwithinvoicelink='';
 if ($action=="valid" || $action=="history")
 {
     $sectionwithinvoicelink.='<!-- Section with invoice link -->'."\n";
-    $sectionwithinvoicelink.='<input type="hidden" name="invoiceid" id="invoiceid" value="'.$invoice->id.'">';
+    //$sectionwithinvoicelink.='<input type="hidden" name="invoiceid" id="invoiceid" value="'.$invoice->id.'">';
     $sectionwithinvoicelink.='<span style="font-size:120%;" class="center">';
     $sectionwithinvoicelink.=$invoice->getNomUrl(1, '', 0, 0, '', 0, 0, -1, '_backoffice')." - ";
     $remaintopay = $invoice->getRemainToPay();

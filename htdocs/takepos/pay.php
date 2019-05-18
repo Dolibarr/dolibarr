@@ -36,13 +36,13 @@ require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 
 $place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0);   // $place is id of table for Ba or Restaurant
 
-$invoiceid = GETPOST('invoiceid', 'int');
+//$invoiceid = GETPOST('invoiceid', 'int');
 
 
 /*
  * View
  */
-
+/*
 $invoice = new Facture($db);
 if ($invoiceid > 0)
 {
@@ -65,6 +65,22 @@ else
     {
         $invoice->fetch($invoiceid);
     }
+}
+*/
+
+$ticket=array();	//V20
+$ticket=json_decode($_SESSION['ticket'],true);
+
+$diners=$ticket['diners'];	//V20
+$facid=$placeid=$ticket['facid'];
+$place=$ticket['place'];
+$placelabel=$ticket['placelabel'];
+
+$invoice = new Facture($db);
+$invoice->fetch($placeid);
+if($invoice->statut==Facture::STATUS_CLOSED){
+	echo '<script>parent.$.colorbox.close();</script>';		//V20: Close windows colorbox. Ticket paid.
+	exit;
 }
 
 top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
@@ -165,13 +181,14 @@ else print "var received=0;";
 
 	function Validate(payment)
 	{
-		var invoiceid = <?php echo ($invoiceid > 0 ? $invoiceid : 0); ?>;
+		//var invoiceid = <?php echo ($invoiceid > 0 ? $invoiceid : 0); ?>;
 		var amountpayed = $("#change1").val();
 		if (amountpayed > <?php echo $invoice->total_ttc; ?>) {
 			amountpayed = <?php echo $invoice->total_ttc; ?>;
 		}
 		console.log("We click on the payment mode to pay amount = "+amountpayed);
-		parent.$("#poslines").load("invoice.php?place=<?php echo $place;?>&action=valid&pay="+payment+"&amount="+amountpayed+"&invoiceid="+invoiceid, function() {
+		//parent.$("#poslines").load("invoice.php?place=<?php echo $place;?>&action=valid&pay="+payment+"&amount="+amountpayed+"&invoiceid="+invoiceid, function() {
+		parent.$("#poslines").load("invoice.php?place=<?php echo $place;?>&action=valid&pay="+payment+"&amount="+amountpayed, function() {
 			//parent.$("#poslines").scrollTop(parent.$("#poslines")[0].scrollHeight);
 			parent.$.colorbox.close();
 			//parent.setFocusOnSearchField();	// This does not have effect
