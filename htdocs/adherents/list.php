@@ -189,15 +189,15 @@ if (empty($reshook))
 		$search_array_options=array();
 	}
 
-	// Close 
+	// Close
 	if ($massaction == 'close' && $user->rights->adherent->creer)
 	{
 	    $tmpmember = new Adherent($db);
 	    $error=0;
 	    $nbclose=0;
-	    
+
 	    $db->begin();
-	    
+
         foreach($toselect as $idtoclose)
         {
             $tmpmember->fetch($idtoclose);
@@ -216,7 +216,7 @@ if (empty($reshook))
         if (! $error)
         {
             setEventMessages($langs->trans("XMembersClosed", $nbclose), null, 'mesgs');
-            
+
             $db->commit();
         }
         else
@@ -224,7 +224,7 @@ if (empty($reshook))
             $db->rollback();
         }
 	}
-	
+
 	// Mass actions
 	$objectclass='Adherent';
 	$objectlabel='Members';
