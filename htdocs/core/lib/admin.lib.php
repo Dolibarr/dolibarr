@@ -1057,8 +1057,8 @@ function unActivateModule($value, $requiredby = 1)
         $genericMod->remove('');
     }
 
-    // Desactivation des modules qui dependent de lui
-    if (! $ret && $requiredby)
+    // Disable modules that depends on module we disable
+    if (! $ret && $requiredby && is_object($objMod) && is_array($objMod->requiredby))
     {
         $countrb=count($objMod->requiredby);
         for ($i = 0; $i < $countrb; $i++)
