@@ -96,6 +96,20 @@ class ActionComm extends CommonObject
     public $datec;
 
     /**
+     * Date end record (datec)
+     *
+     * @var integer
+     */
+    public $datef;
+
+    /**
+     * Duration (duree)
+     *
+     * @var integer
+     */
+    public $duree;
+
+    /**
      * Date modification record (tms)
      *
      * @var integer
