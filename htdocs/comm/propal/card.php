@@ -2421,10 +2421,15 @@ $formquestion = array_merge($formquestion, array(
 	}
 
 	print '<div class="div-table-responsive-no-min">';
-	print '<table id="tablelines" class="noborder noshadow" width="100%">';
+	if (! empty($object->lines) || ($object->statut == Propal::STATUS_DRAFT && $usercancreate && $action != 'selectlines' && $action != 'editline'))
+	{
+	    print '<table id="tablelines" class="noborder noshadow" width="100%">';
+	}
 
 	if (! empty($object->lines))
+	{
 		$ret = $object->printObjectLines($action, $mysoc, $soc, $lineid, 1);
+	}
 
 	// Form to add new line
 	if ($object->statut == Propal::STATUS_DRAFT && $usercancreate && $action != 'selectlines')
@@ -2439,16 +2444,21 @@ $formquestion = array_merge($formquestion, array(
 		}
 	}
 
-	print '</table>';
+	if (! empty($object->lines) || ($object->statut == Propal::STATUS_DRAFT && $usercancreate && $action != 'selectlines' && $action != 'editline'))
+	{
+	    print '</table>';
+	}
 	print '</div>';
 
 	print "</form>\n";
 
 	dol_fiche_end();
 
+
 	/*
-	 * Boutons Actions
+	 * Button Actions
 	 */
+
 	if ($action != 'presend') {
 		print '<div class="tabsAction">';
 
