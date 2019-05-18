@@ -106,9 +106,7 @@ elseif ($action == 'update_currency')
 {
 	$error = 0;
 
-	$submit = GETPOST('submit', 'alpha');
-
-	if ($submit == $langs->trans('Modify'))
+	if (GETPOST('updatecurrency', 'alpha'))
 	{
 		$fk_multicurrency = GETPOST('fk_multicurrency', 'int');
 		$rate = price2num(GETPOST('rate', 'alpha'));
@@ -127,7 +125,7 @@ elseif ($action == 'update_currency')
 			}
 		}
 	}
-	elseif ($submit == $langs->trans('Delete'))
+	elseif (GETPOST('deletecurrency', 'alpha'))
 	{
 		$fk_multicurrency = GETPOST('fk_multicurrency', 'int');
 		$currency = new MultiCurrency($db);
@@ -334,8 +332,8 @@ foreach ($TCurrency as &$currency)
 	print '<input type="hidden" name="fk_multicurrency" value="'.$currency->id.'">';
 	print '1 '.$conf->currency.' = ';
 	print '<input type="text" name="rate" value="'.($currency->rate->rate ? $currency->rate->rate : '').'" size="13" />&nbsp;'.$currency->code.'&nbsp;';
-	print '<input type="submit" name="submit" class="button" value="'.$langs->trans("Modify").'">&nbsp;';
-	print '<input type="submit" name="submit" class="button" value="'.$langs->trans("Delete").'">';
+	print '<input type="submit" name="updatecurrency" class="button" value="'.$langs->trans("Modify").'">&nbsp;';
+	print '<input type="submit" name="deletecurrency" class="button" value="'.$langs->trans("Delete").'">';
 	print '</form>';
 	print '</td></tr>';
 }

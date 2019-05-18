@@ -91,17 +91,11 @@ function parseTime(timeStr, dt)
         dt = new Date();
     }
  
-    var time = timeStr.match(/(\d+)(?::(\d\d))?\s*(p?)/i);
+    var time = timeStr.match(/(\d+)(?::(\d\d))?/i);
     if (!time) {
         return -1;
     }
     var hours = parseInt(time[1], 10);
-    if (hours == 12 && !time[3]) {
-        hours = 0;
-    }
-    else {
-        hours += (hours < 12 && time[3]) ? 12 : 0;
-    }
  
     dt.setHours(hours);
     dt.setMinutes(parseInt(time[2], 10) || 0);
