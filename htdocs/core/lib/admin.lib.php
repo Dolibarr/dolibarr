@@ -1044,9 +1044,9 @@ function unActivateModule($value, $requiredby = 1)
         $result=$objMod->remove();
         if ($result <= 0) $ret=$objMod->error;
     }
-    else
+    else    // We come here when we try to unactivate a module when module does not exists anymore in sources
     {
-        //print $dir.$modFile;
+        //print $dir.$modFile;exit;
     	// TODO Replace this after DolibarrModules is moved as abstract class with a try catch to show module we try to disable has not been found or could not be loaded
         include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
     	$genericMod = new DolibarrModules($db);
@@ -1054,7 +1054,7 @@ function unActivateModule($value, $requiredby = 1)
         $genericMod->rights_class=strtolower(preg_replace('/^mod/i', '', $modName));
         $genericMod->const_name='MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i', '', $modName));
         dol_syslog("modules::unActivateModule Failed to find module file, we use generic function with name " . $modName);
-        $genericMod->_remove(array());
+        $genericMod->remove('');
     }
 
     // Desactivation des modules qui dependent de lui
