@@ -75,7 +75,7 @@ if (!empty($cancel))
 	    }
 	    else
 	    {
-	        header("Location: ".DOL_URL_ROOT.'/cron/list.php?status=-2');
+	        header("Location: ".DOL_URL_ROOT.'/cron/list.php');
 		    exit;
 	    }
 	}
@@ -93,7 +93,7 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->cron->del
 	}
 	else
 	{
-		Header("Location: ".DOL_URL_ROOT.'/cron/list.php?status=-2');
+		Header("Location: ".DOL_URL_ROOT.'/cron/list.php');
 		exit;
 	}
 }
@@ -557,7 +557,7 @@ else
 
 	dol_fiche_head($head, 'card', $langs->trans("CronTask"), -1, 'cron');
 
-	$linkback = '<a href="' . DOL_URL_ROOT . '/cron/list.php?status=-2&restore_lastsearch_values=1">' . $langs->trans("BackToList") . '</a>';
+	$linkback = '<a href="' . DOL_URL_ROOT . '/cron/list.php?restore_lastsearch_values=1">' . $langs->trans("BackToList") . '</a>';
 
 	$morehtmlref='<div class="refidno">';
 	$morehtmlref.='</div>';

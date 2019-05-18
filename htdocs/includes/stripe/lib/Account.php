@@ -85,6 +85,7 @@ class Account extends ApiResource
         return $savedNestedResources;
     }
 
+    const PATH_CAPABILITIES = '/capabilities';
     const PATH_EXTERNAL_ACCOUNTS = '/external_accounts';
     const PATH_LOGIN_LINKS = '/login_links';
     const PATH_PERSONS = '/persons';
@@ -129,21 +130,6 @@ class Account extends ApiResource
     }
 
     /**
-     * @param array|null $params
-     * @param array|string|null $options
-     *
-     * @return Collection The list of persons.
-     */
-    public function persons($params = null, $options = null)
-    {
-        $url = $this->instanceUrl() . '/persons';
-        list($response, $opts) = $this->_request('get', $url, $params, $options);
-        $obj = Util\Util::convertToStripeObject($response, $opts);
-        $obj->setLastResponse($response);
-        return $obj;
-    }
-
-    /**
      * @param array|null $clientId
      * @param array|string|null $opts
      *
@@ -156,6 +142,51 @@ class Account extends ApiResource
             'stripe_user_id' => $this->id,
         ];
         return OAuth::deauthorize($params, $opts);
+    }
+
+    /*
+     * Capabilities methods
+     * We can not add the capabilities() method today as the Account object already has a
+     * capabilities property which is a hash and not the sub-list of capabilities.
+     */
+
+
+    /**
+     * @param string|null $id The ID of the account to which the capability belongs.
+     * @param string|null $capabilityId The ID of the capability to retrieve.
+     * @param array|null $params
+     * @param array|string|null $opts
+     *
+     * @return Capability
+     */
+    public static function retrieveCapability($id, $capabilityId, $params = null, $opts = null)
+    {
+        return self::_retrieveNestedResource($id, static::PATH_CAPABILITIES, $capabilityId, $params, $opts);
+    }
+
+    /**
+     * @param string|null $id The ID of the account to which the capability belongs.
+     * @param string|null $capabilityId The ID of the capability to update.
+     * @param array|null $params
+     * @param array|string|null $opts
+     *
+     * @return Capability
+     */
+    public static function updateCapability($id, $capabilityId, $params = null, $opts = null)
+    {
+        return self::_updateNestedResource($id, static::PATH_CAPABILITIES, $capabilityId, $params, $opts);
+    }
+
+    /**
+     * @param string|null $id The ID of the account on which to retrieve the capabilities.
+     * @param array|null $params
+     * @param array|string|null $opts
+     *
+     * @return Collection The list of capabilities.
+     */
+    public static function allCapabilities($id, $params = null, $opts = null)
+    {
+        return self::_allNestedResources($id, static::PATH_CAPABILITIES, $params, $opts);
     }
 
     /**
@@ -231,6 +262,21 @@ class Account extends ApiResource
     public static function createLoginLink($id, $params = null, $opts = null)
     {
         return self::_createNestedResource($id, static::PATH_LOGIN_LINKS, $params, $opts);
+    }
+
+    /**
+     * @param array|null $params
+     * @param array|string|null $options
+     *
+     * @return Collection The list of persons.
+     */
+    public function persons($params = null, $options = null)
+    {
+        $url = $this->instanceUrl() . '/persons';
+        list($response, $opts) = $this->_request('get', $url, $params, $options);
+        $obj = Util\Util::convertToStripeObject($response, $opts);
+        $obj->setLastResponse($response);
+        return $obj;
     }
 
     /**

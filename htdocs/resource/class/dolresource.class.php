@@ -408,6 +408,7 @@ class Dolresource extends CommonObject
     public function delete($rowid, $notrigger = 0)
 	{
 		global $user,$langs,$conf;
+        require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 
 		$error=0;
 
@@ -841,6 +842,8 @@ class Dolresource extends CommonObject
      */
     public function getElementResources($element, $element_id, $resource_type = '')
     {
+	    $resources=array();
+
 	    // Links beetween objects are stored in this table
 	    $sql = 'SELECT rowid, resource_id, resource_type, busy, mandatory';
 	    $sql.= ' FROM '.MAIN_DB_PREFIX.'element_resources';

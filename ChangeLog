@@ -6,21 +6,160 @@ English Dolibarr ChangeLog
 ***** ChangeLog for 10.0.0 compared to 9.0.0 *****
 For Users:
 NEW: Module "Ticket" is available as a stable module.
-NEW: module "Email Collector" is available as a stable module.
-NEW: module "TakePOS" is available as a stable module.
+NEW: Module "Email Collector" is available as a stable module.
+NEW: Module "TakePOS" is available as a stable module.
 NEW: Experimental module "Vendor receptions".
 NEW: Experimental module "BOM".
-FIX: Disallow line start date if after end date.
+NEW: Accounting - Add default accounting account for member subcriptions.
+NEW: Accounting - More comprehensive menu.
+NEW: Agenda/event - add description column available in list (hidden by default).
+NEW: Add accounting account for result.
+NEW: Add accounting code for EEC sales and export sales on products.
+NEW: Add a security permission to edit php dynamic content on the WebSite module.
+NEW: Attached document on bank account are now visible in automatic ECM.
+NEW: Add Autofill Remainder Amount picto on the Expense Report Payment Page.
+NEW: Add contact status in category export
+NEW: Add Default Warehouse to user record (if module stock is on)
+NEW: Add employee/user to subledger account list
+NEW: Add gender in member card
+NEW: Add getFormatedCustomerRef and getFormatedSupplierRef methods
+NEW: Add history to view and print previous sales on TakePos.
+NEW: Add import of accounting account for intra/export selling on product card
+NEW: Adding code to show update date of supplier price shown
+NEW: Add line total on list of payments
+NEW: Add LinkedIn field in social network module
+NEW: Add more complete error messages in log on stripe payments
+NEW: Add no_email field in contact list
+NEW: Add notes are show in tooltips
+NEW: Add option DONATION_USE_THIRDPARTIES in admin of membership module
+NEW: Add option STOCK_SHOW_VIRTUAL_STOCK_IN_PRODUCTS_COMBO
+NEW: add page to setup opening hours of the company
+NEW: add payments table to pdf of expense report
+NEW: add payment terms to invoices list
+NEW: Add picto of deletion on mass action combo lists
+NEW: add product extrafields available into shipping export
+NEW: add ref supplier on supplier invoice
+NEW: Add stats on entries & movements by fiscal year
+NEW: Add subledger in various payment module
+NEW: Add tag for ODT generation for localtax rates
+NEW: Add the now link when creating expense report
+NEW: Ask date of invoice when using the Clone feature.
+NEW: auto event msg
+NEW: Automatically binding for intra/export accountancy code in customer list
+NEW: automatic / manual selector form
+NEW: Better explanation for setup of WebDav module
+NEW: Can add more lines on situation invoices at end of project when there is extra to add.
+NEW: Can change the customer account of an instance
+NEW: Can choose the root category to show products for TakePOS module
+NEW: Can edit supplier on draft order supplier
+NEW: Can enter price with or without tax when entering expense repor line
+NEW: Can filter on the date of period for social contributions
+NEW: Can generate invoices from the timespent entered on a project
+NEW: Can update product supplier price ref
+NEW: Can upload files from the edit page of expense report
+NEW: Color for hover and for checked line is on by default
+NEW: Column of parent company is available in list of third parties
+NEW: conditionnal add member button by statut
+NEW: constant KEEP_DISCOUNT_LINES_FROM_ORIGIN
+NEW: Contact related items tab
+NEW: Can create of supplier invoice from a reception
+NEW: Ensure External RSS Links Open in New Window
+NEW: Export available for reception module
+NEW: Extend import option to Order's card and Propal's card
+NEW: filter by thirdparty on report CA by prod/serv
+NEW: Save space by moving the meteo on the title line
+NEW: Get the list of groups of a user with the REST API.
+NEW: Hidden option MAIN_CAN_EDIT_SUPPLIER_ON_SUPPLIER_ORDER to edit supplier on draft supplier order
+NEW: Improve Displaying Shortcut Access Keys in Navigation.
+NEW: Improve Expensereport, Inverse Receiver.
+NEW: Improve pdf description item visibitity.
+NEW: Introduce a config parameter $dolibarr_main_instance_unique_id
+NEW: Introduce css "nobottomiftotal"
+NEW: Introduce PhpSpreadsheet for export (need php5.6+)
+NEW: Invoice creation from the timesheet
+NEW: Can list remote stripe's payout in a dedicated page.
+NEW: Manage account sell_intra & sell_export in page accoutancy admin default product
+NEW: Manage loan schedule.
+NEW: Manage status of member types.
+NEW: Mass action "create bills" for validated reception
+NEW: Measuring unit are now defined into an editable dictionary. Add product size/unit into product import. 
+NEW: Template pdf 'canelle_reception' displays linked reception lines.
+NEW: Moral/physic status can be defined at member type level
+NEW: Pagination into list of time spent.
+NEW: Performance enhancement (Replace dirname(__FILE__) with __DIR__)
+NEW: POS support in order (ex: online cart).
+NEW: Preview of images into the filemanager component.
+NEW: Resource module can be used in products/services (in a dedicated tab)
+NEW: Retrieve invoice infos from order when billing shipment
+NEW: Save and display type of membership in subscription table for more explicit historic
+NEW: Setup default thirdparty type (customer or prospect/customer)
+NEW: Add shipping "set draft" button and can update lines.
+NEW: show in blod, the invoice amount where we came from, when making payment
+NEW: Show product dimensions in product tooltips.
+NEW: Show the latest date of subscription in member statistics reports.
+NEW: Sort list of templates alphabetically
+NEW: Stripe Payment Intent (need option to use this new Stripe api method)
+NEW: Can support barcode on supplier price references.
+NEW: Support tag {ccc} on payment ref
+NEW: The preview of PDF files generates only 1 png file, even if several pages.
+NEW: Can select a Thirdparty object in donation module if option ON.
+NEW: Tooltip with VAT amount and price incl tax on lines of objects.
+NEW: Unsubscribed emails are now stored in a dedicated table.
+NEW: Update working chkbxlst filter for lists.
+NEW: Use ajax switch into setup of donation.php and multi-currency module.
+NEW: use recipient language when generating the fullname for emails.
+NEW: When you create product or service, sell accountancy account by default is suggested.
+NEW: Widget birthdays of the month.
+NEW: Option in workflow module to set a reception billed on validate supplier bill.
+NEW: Autocompletion on lists should be available on mobile applications.
 
 For Developers:
 NEW: Module "DebugBar" is available as a stable module.
+NEW: Add API REST for donations
+NEW: Add a script 'purge-data.php' to purge data older than a defined creation date
+NEW: Add constant XFRAMEOPTIONS_ALLOWALL
+NEW: Add function isValidVATID()
+NEW: ADD document's product support in APIs
+NEW: REST API: get the list of objects in a category.
+NEW: Update Stripe library to 6.35
+NEW: Upgrade jquery lib to 3.3.1
+NEW: Add hook 'addHtmlHeader()'
+NEW: Add hook 'createRecurringInvoices()'
+NEW: Add hook 'afterSelectContactOptions'
+NEW: Add hook support in accountancy index
+NEW: Add hook support in list of template invoices
+NEW: Add parameter 'replaceambiguouschars' on getRandomPassword function
+NEW: Add property 'noteditable' in modulebuilder
+NEW: Add the current modulepart into the Conf class object
+NEW: Add trigger FICHINTER_UNVALIDATE
+NEW: Add visibility with value 4 in framework to define fields to show
+NEW: More option to tune initialization of a new module with modulebuilder.
+NEW: API to list currencies
+NEW: API Proposal, Orders, Invoices: Add contact details
+NEW: hidden option to change concat desc order
+NEW: Enhance management of webhooks
+NEW: Generation of doc by modulebuilder can include README and CHANGELOG
+NEW: massfilesarea feature for external modules
+NEW: Show enabled modules in dol_print_error()
+NEW: Simplification of CSS styles of default themes. 
+NEW: Clean code of a lot of deprecated code.
+NEW: Add hidden option to set a search entry to the top
+NEW: add hidden option DISPLAY_DISCOUNTED_SUPPLIER_PRICE
+NEW: add hidden option MAIN_DEFAULT_LANGUAGE_FILTER
+NEW: add hidden option NO_CONCAT_DESCRIPTION
+NEW: Add hidden option for ACCOUNTANCY_COMBO_FOR_AUX
+NEW: Add hidden option 'ADD_UNSPLASH_LOGIN_BACKGROUND'
+NEW: Add Hidden option 'OVERRIDE_VAT_FOR_EXPENSE_REPORT'
+NEW: add hidden option MAIN_DOC_UPLOAD_NOT_RENAME_BY_DEFAULT
+NEW: Hidden conf to improve pdf desc item visibitity
+NEW: Look and feel v10 - Add CSS 'tabBarNoTop'
 
 
 WARNING:
 
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
 * PHP 5.4 is no more supported. Minimum PHP is now 5.5+.
-* The PHP extension php-intl is not mandatory but should be installed to have new features working correctly.
+* The PHP extension php-intl is not mandatory and must be installed to have new features working correctly.
 * Method GetUrlTrackingStatus were renamed into getUrlTrackingStatus for consistency with naming rules.
 * API getListOfCivility has been renamed into getListOfCivilities for consistency with naming rules.
 * Deprecated function img_phone as been removed. You can use img_picto(..., 'call|call_out') instead.; 
@@ -35,6 +174,7 @@ Following changes may create regressions for some external modules, but were nec
 * Removed deprecated use of string in dol_print_date(). Only date allowed.
 * Deprecated property ->fk_departement is now ->state_id everywhere.
 * Removed the method 4 of GETPOST (to get $_COOKIE). It was not used and not recommanded to use in Dolibarr.
+* Column llx_facture.facnumber change to llx_facture.ref
 
 
 ***** ChangeLog for 9.0.3 compared to 9.0.2 *****
@@ -69,6 +209,7 @@ FIX: Total per day shows 00:00 if the total time spent is equal to 12:00
 FIX: Update/delete currency on same languages
 FIX: Wrong variable name make contact of supplier order not used on PDF.
 FIX: Add hidden option MAIN_PDF_HIDE_SITUATION to hide situation (quick hack to fix output pb).
+FIX: attached files list with link file was broked
 
 ***** ChangeLog for 9.0.2 compared to 9.0.1 *****
 FIX: #10822
@@ -288,6 +429,90 @@ Following changes may create regressions for some external modules, but were nec
 * Hidden option MAIN_PDF_SHIPPING_DISPLAY_AMOUNT_HT has been renamed into SHIPPING_PDF_DISPLAY_AMOUNT_HT
 * Remove the no more used and deprecated dol_print_graph function
 
+
+***** ChangeLog for 8.0.5 compared to 8.0.4 *****
+FIX: #10381
+FIX: #10460 compatibility with MariaDB 10.4
+FIX: #11025
+FIX: Accountancy - Add transaction with multicompany use all the time 1st entity
+FIX: Accountancy - Format EBP import
+FIX: actioncomm export: ORDER BY clause is in wrong export property + event type filter does not work
+FIX: actioncomm: sort events by date after external calendars and hook
+FIX: action list: add printFieldListSelect and printFieldListWhere hooks
+FIX: add fk_unit on addline action
+FIX: avoid php warning
+FIX: bad sql request
+FIX: better method
+FIX: better test
+FIX: better test on fetch
+FIX: broken external authentication module feature and avoid warning
+FIX: Can not create contract with numbering module without autogen rule
+FIX: can't add lines on invoices
+FIX: Can't generate invoice pdf
+FIX: Can't insert if there is extrafields mandatory on another entity.
+FIX: Can't insert if there is extrafields mandatory on another entity. FIX: Can't set default value of extrafield of type varchar
+FIX: Check for old picture name if the new one was not found
+FIX: Civility not saved when creating a member.
+FIX: $conf->fournisseur->commande->enabled doesn't exist, we must use $conf->fournisseur->enabled
+FIX: could not create several superadmin in transversal mode
+FIX: credit note can have negative value
+FIX: Default value on sales representative on third party creation
+FIX: Don't show journal:getNomUrl without data
+FIX: Erreur dans le Total
+FIX: error messages not displayed
+FIX: expedition: reset status on rollback + replace hardcoded status with const
+FIX: Fix PHP warning "count(): Parameter must be an array..."
+FIX: fk_default_warehouse missing in group by
+FIX: function sendEmailsReminder isn't completely developed, then MAIN_FEATURES_LEVEL must be 2 to "use" it
+FIX: holidays get natural_search if search params are set only
+FIX: if empty error message, we just see "error" displayed
+FIX: if(!method_exists(dol_loginfunction))
+FIX: If we build one invoice for several orders, we must put the ref of order on the line to not lose information.
+FIX: in fact expensereport must be in $check array
+FIX: Interface regression for bind people. Fix option MAIN_OPTIMIZEFORTEXTBROWSER
+FIX: line edit template: keep fk_parent_line
+FIX: Loan impossible to account
+FIX: Mark credit note as available for credit note in other currency
+FIX: missing access security checking with multicompany
+FIX: missing entity filter and wrong var name
+FIX: missing entity filter in function "build_filterField()" (export)
+FIX: Missing field in import/export of users
+FIX: missing hook completeTabsHead in margins module
+FIX: missing $ismultientitymanaged for previous/next ref
+FIX: Missing province in export of invoice
+FIX: multicompany compatibility
+FIX: must fetch member in current entity
+FIX: need an order by in case we found other invoice with same number but not same date
+FIX: need to round with 2 decimals to avoid movements not correctly balanced
+FIX: no need to test anything to display documents tabs on expense report
+FIX: positive values creating diff on addline rounding
+FIX: problem with multicompany transverse mode
+FIX: Product accountancey sell intra code must be visible if main feature level 1
+FIX: project_title for display of getNomUrl()
+FIX: quick search for supplier orders
+FIX: Remane of project
+FIX: same thing here
+FIX: Selection of email recipient with option MAIN_OPTIMIZEFORTEXTBROWSER
+FIX: several hooks in shipping/delivery cards
+FIX: shipping default warehouse if only one warehouse
+FIX: SQL injection on rowid of dict.php
+FIX: 'statut' is ignored when updating a user with the REST API.
+FIX: supplier invoice payment total dont care about deposit or credit
+FIX: supplier invoice product stats total ht is line total not invoice total
+FIX: The minimum amount filter does not work in the VAT report per customer
+FIX: Total per day shows 00:00 if the total time spent is equal to 12:00
+FIX: Update/delete currency on same languages
+FIX: [URGENT] broken feature, "$usercancreate" is for Dolibarr 9
+FIX: useless join
+FIX: we need to keep originline special_code
+FIX: we want to be able to reopen fourn credit note
+FIX: when 2 extra fields are mandatory in 2 different entities
+FIX: when we add a payment on an invoice which already has payments with credit note or deposit amount, and then we get an excess received, discount amount must be $total_paiements + $total_creditnote_and_deposit - $object->total_ttc;
+FIX: when we create deposit with multi tva, we mustn't add line if amount = 0 (example when we have a 100% reduc on one of origin invoice line)
+FIX: wrong redirect link on holiday refuse
+FIX: wrong test enabled
+FIX: Wrong variable name
+FIX: XSS
 
 ***** ChangeLog for 8.0.4 compared to 8.0.3 *****
 FIX: #10030 better german chart
