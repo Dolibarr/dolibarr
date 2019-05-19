@@ -1364,9 +1364,8 @@ div.fichehalfright {
 	<?php if ($conf->browser->layout != 'phone')   { print "float: ".$right.";\n"; } ?>
 	<?php if ($conf->browser->layout != 'phone')   { print "width: 50%;\n"; } ?>
 }
-div.ficheaddleft {
-	<?php if ($conf->browser->layout != 'phone')   { print "padding-".$left.": 16px;\n"; }
-	else print "margin-top: 10px;\n"; ?>
+div.fichehalfright {
+	<?php if ($conf->browser->layout == 'phone')   { print "margin-top: 10px;\n"; } ?>
 }
 div.firstcolumn div.box {
 	padding-right: 10px;
@@ -1408,8 +1407,7 @@ div.secondcolumn div.box {
     	float: none;
     	width: auto;
     }
-    div.ficheaddleft {
-    	<?php print "padding-".$left.": 0px;\n"; ?>
+    div.fichehalfright {
     	margin-top: 10px;
     }
     div.firstcolumn div.box {
@@ -1421,7 +1419,7 @@ div.secondcolumn div.box {
 }
 
 /* For table into table into card */
-div.ficheaddleft tr.liste_titre:first-child td table.nobordernopadding td, div.nopadding {
+div.fichehalfright tr.liste_titre:first-child td table.nobordernopadding td, div.nopadding {
     padding: 0 0 0 0;
 }
 div.nopadding {
@@ -2736,7 +2734,7 @@ td.border, div.tagtable div div.border {
 	border-bottom: 1px solid rgb(<?php echo $colortopbordertitle1 ?>);
 }
 
-.ficheaddleft table.noborder {
+.fichehalfright table.noborder {
 	margin: 0px 0px 0px 0px;
 }
 div.colorback
@@ -3275,8 +3273,8 @@ div .tdtop {
 /* Prepare to remove class pair - impair */
 
 .noborder > tbody > tr:nth-child(even):not(.liste_titre), .liste > tbody > tr:nth-child(even):not(.liste_titre),
-div:not(.fichecenter):not(.fichehalfleft):not(.ficheaddleft) > .border > tbody > tr:nth-of-type(even):not(.liste_titre), .liste > tbody > tr:nth-of-type(even):not(.liste_titre),
-div:not(.fichecenter):not(.fichehalfleft):not(.ficheaddleft) .oddeven.tagtr:nth-of-type(even):not(.liste_titre)
+div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright):not(.ficheaddleft) > .border > tbody > tr:nth-of-type(even):not(.liste_titre), .liste > tbody > tr:nth-of-type(even):not(.liste_titre),
+div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright):not(.ficheaddleft) .oddeven.tagtr:nth-of-type(even):not(.liste_titre)
 {
 	background: linear-gradient(to bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
 	background: -o-linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
@@ -3291,8 +3289,8 @@ div:not(.fichecenter):not(.fichehalfleft):not(.ficheaddleft) .oddeven.tagtr:nth-
 }
 
 .noborder > tbody > tr:nth-child(odd):not(.liste_titre), .liste > tbody > tr:nth-child(odd):not(.liste_titre),
-div:not(.fichecenter):not(.fichehalfleft):not(.ficheaddleft) > .border > tbody > tr:nth-of-type(odd):not(.liste_titre), .liste > tbody > tr:nth-of-type(odd):not(.liste_titre),
-div:not(.fichecenter):not(.fichehalfleft):not(.ficheaddleft) .oddeven.tagtr:nth-of-type(odd):not(.liste_titre)
+div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright):not(.ficheaddleft) > .border > tbody > tr:nth-of-type(odd):not(.liste_titre), .liste > tbody > tr:nth-of-type(odd):not(.liste_titre),
+div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright):not(.ficheaddleft) .oddeven.tagtr:nth-of-type(odd):not(.liste_titre)
 {
 	background: linear-gradient(to bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
 	background: -o-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
@@ -3319,9 +3317,9 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
     overflow-x: auto;
     min-height: 40px;
 }
-/*.ficheaddleft div.boxstats, .ficheaddright div.boxstats {
+.ficheaddleft div.boxstats, .ficheaddright div.boxstats {
     border: none;
-}*/
+}
 .boxstatsborder {
     /* border: 1px solid #CCC !important; */
 }

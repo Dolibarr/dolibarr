@@ -132,10 +132,8 @@ if ($object->id)
 	dol_fiche_end();
 
 	$modulepart = 'bom';
-	//$permission = $user->rights->bom->create;
-	$permission = 1;
-	//$permtoedit = $user->rights->bom->create;
-	$permtoedit = 1;
+	$permission = $user->rights->bom->write;
+	$permtoedit = $user->rights->bom->write;
 	$param = '&id=' . $object->id;
 
 	//$relativepathwithnofile='bom/' . dol_sanitizeFileName($object->id).'/';

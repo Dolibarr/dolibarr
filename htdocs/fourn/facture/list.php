@@ -466,9 +466,7 @@ if ($resql)
 	$newcardbutton='';
 	if ($user->rights->fournisseur->facture->creer)
 	{
-		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans('NewBill').'</span>';
-		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-		$newcardbutton.= '</a>';
+        $newcardbutton.= dolGetButtonTitle($langs->trans('NewBill'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/fourn/facture/card.php?action=create');
 	}
 
 	$i = 0;
@@ -730,7 +728,7 @@ if ($resql)
 	}
 	if (! empty($arrayfields['rtp']['checked']))
 	{
-		print '<td class="liste_titre right">';
+		print '<td class="liste_titre">';
 		print '</td>';
 	}
 	// Extra fields

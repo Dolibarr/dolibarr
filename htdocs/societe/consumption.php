@@ -396,7 +396,7 @@ if ($sql_select)
     print '</td>';
     print '<td class="liste_titre center">';
     print '</td>';
-    print '<td class="liste_titre right">';
+    print '<td class="liste_titre maxwidthsearch">';
     $searchpicto=$form->showFilterAndCheckAddButtons(0);
     print $searchpicto;
     print '</td>';

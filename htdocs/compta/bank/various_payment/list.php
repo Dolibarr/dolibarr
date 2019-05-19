@@ -223,7 +223,7 @@ if ($result)
 	// Credit
 	print '<td class="liste_titre right"><input name="search_amount_cred" class="flat" type="text" size="8" value="'.$search_amount_cred.'"></td>';
 
-	print '<td class="liste_titre right">';
+	print '<td class="liste_titre maxwidthsearch">';
 	$searchpicto=$form->showFilterAndCheckAddButtons(0);
 	print $searchpicto;
 	print '</td>';
