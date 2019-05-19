@@ -65,7 +65,7 @@ class AdherentType extends CommonObject
      * @var string Adherent type label
      */
     public $label;
-    
+
     /**
      * @var string Adherent type nature
      */
@@ -410,7 +410,7 @@ class AdherentType extends CommonObject
 			return -1;
 		}
 	}
-  
+
   /**
 	 *	Return translated label by the nature of a adherent (physical or moral)
 	 *
@@ -422,7 +422,7 @@ class AdherentType extends CommonObject
 		global $langs;
 		if ($morphy == 'phy') { return $langs->trans("Physical"); }
 		elseif ($morphy == 'mor') { return $langs->trans("Moral"); }
-    else return $langs->trans("Physical & Morale");
+        else return $langs->trans("Physical & Morale");
 		//return $morphy;
 	}
 
@@ -462,7 +462,8 @@ class AdherentType extends CommonObject
         return '';
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *	Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
 	 *
@@ -485,12 +486,13 @@ class AdherentType extends CommonObject
 
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *	Initialize the info array (array of LDAP values) that will be used to call LDAP functions
 	 *
 	 *	@return		array		Tableau info des attributs
 	 */
-	private function _load_ldap_info()
+	public function _load_ldap_info()
 	{
         // phpcs:enable
 		global $conf,$langs;
