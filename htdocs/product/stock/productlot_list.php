@@ -368,7 +368,7 @@ if ($resql)
      print '</td>';
      }*/
 	// Action column
-	print '<td class="liste_titre right">';
+	print '<td class="liste_titre maxwidthsearch">';
 	$searchpicto=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
 	print $searchpicto;
 	print '</td>';
