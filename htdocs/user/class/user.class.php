@@ -2018,7 +2018,6 @@ class User extends CommonObject
 			dol_syslog(get_class($this)."::send_password changelater is on, url=".$url);
 		}
 
-		$mesg.="<pre>".print_r($user,1)."</pre>";
         $mailfile = new CMailFile(
             $subject,
 			$this->email,
