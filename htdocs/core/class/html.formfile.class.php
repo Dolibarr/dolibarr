@@ -1830,7 +1830,7 @@ class FormFile
 				print '<td class="center">' . dol_print_date($link->datea, "dayhour", "tzuser") . '</td>';
 				print '<td class="center"></td>';
 				print '<td class="right">';
-				print '<a href="' . $_SERVER['PHP_SELF'] . '?action=update&linkid=' . $link->id . $param . '" class="editfilelink" >' . img_edit() . '</a>';	// id= is included into $param
+				print '<a href="' . $_SERVER['PHP_SELF'] . '?action=update&linkid=' . $link->id . $param . '" class="editfilelink reposition" >' . img_edit() . '</a>';	// id= is included into $param
 				if ($permtodelete) {
 					print ' &nbsp; <a href="'. $_SERVER['PHP_SELF'] .'?action=delete&linkid=' . $link->id . $param . '" class="deletefilelink">' . img_delete() . '</a>';	// id= is included into $param
 				} else {
