@@ -51,6 +51,11 @@ You can use a Web server and a supported database (MariaDB, MySQL or PostgreSQL)
  
 - Create an empty `htdocs/conf/conf.php` file and set *write* permissions for your web server user (*write* permission will be removed once install is finished)
 
+- Run composer 
+```console 
+composer update
+```
+
 - From your browser, go to the dolibarr "install/" page
 
     The URL will depends on how you web setup was setup to point to your dolibarr installation. It may looks like:
