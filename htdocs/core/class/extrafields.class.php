@@ -1194,13 +1194,14 @@ class ExtraFields
 
 						if ($value == $obj->rowid)
 						{
-							foreach ($fields_label as $field_toshow)
-							{
-								$translabel=$langs->trans($obj->$field_toshow);
-								if ($translabel!=$obj->$field_toshow) {
-									$labeltoshow=dol_trunc($translabel,18).' ';
-								}else {
-									$labeltoshow=dol_trunc($obj->$field_toshow,18).' ';
+							if (! $notrans) {
+								foreach ($fields_label as $field_toshow) {
+									$translabel = $langs->trans($obj->$field_toshow);
+									if ($translabel != $obj->$field_toshow) {
+										$labeltoshow = dol_trunc($translabel, 18) . ' ';
+									} else {
+										$labeltoshow = dol_trunc($obj->$field_toshow, 18) . ' ';
+									}
 								}
 							}
 							$out.='<option value="'.$obj->rowid.'" selected>'.$labeltoshow.'</option>';
