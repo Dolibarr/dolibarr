@@ -1961,17 +1961,21 @@ class User extends CommonObject
 		$mesg = '';
 
 		$outputlangs=new Translate("", $conf);
+
 		if (isset($this->conf->MAIN_LANG_DEFAULT)
 		&& $this->conf->MAIN_LANG_DEFAULT != 'auto')
 		{	// If user has defined its own language (rare because in most cases, auto is used)
 			$outputlangs->getDefaultLang($this->conf->MAIN_LANG_DEFAULT);
 		}
+		if($user->conf->MAIN_LANG_DEFAULT){
+            $outputlangs->setDefaultLang($user->conf->MAIN_LANG_DEFAULT);
+        }
 		else
 		{	// If user has not defined its own language, we used current language
 			$outputlangs=$langs;
 		}
 
-		// Load translation files required by the page
+        // Load translation files required by the page
 		$outputlangs->loadLangs(array("main", "errors", "users", "other"));
 
 		$appli=constant('DOL_APPLICATION_TITLE');
@@ -1986,7 +1990,6 @@ class User extends CommonObject
 		if (! $changelater)
 		{
 			$url = $urlwithroot.'/';
-
 			$mesg.= $outputlangs->transnoentitiesnoconv("RequestToResetPasswordReceived").".\n";
 			$mesg.= $outputlangs->transnoentitiesnoconv("NewKeyIs")." :\n\n";
 			$mesg.= $outputlangs->transnoentitiesnoconv("Login")." = ".$this->login."\n";
@@ -2015,6 +2018,7 @@ class User extends CommonObject
 			dol_syslog(get_class($this)."::send_password changelater is on, url=".$url);
 		}
 
+		$mesg.="<pre>".print_r($user,1)."</pre>";
         $mailfile = new CMailFile(
             $subject,
 			$this->email,
