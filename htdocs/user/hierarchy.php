@@ -172,7 +172,7 @@ print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre right">';
 print $form->selectarray('search_statut', array('-1'=>'','1'=>$langs->trans('Enabled')), $search_statut);
 print '</td>';
-print '<td class="liste_titre right">';
+print '<td class="liste_titre maxwidthsearch">';
 $searchpicto=$form->showFilterAndCheckAddButtons(0);
 print $searchpicto;
 print '</td>';

@@ -48,7 +48,7 @@ foreach($object->fields as $key => $val)
 	$value=$object->$key;
 
 	print '<tr><td';
-	print ' class="titlefield';
+	print ' class="titlefield fieldname_'.$key;
 	//if ($val['notnull'] > 0) print ' fieldrequired';     // No fieldrequired on the view output
 	if ($val['type'] == 'text' || $val['type'] == 'html') print ' tdtop';
 	print '">';
@@ -65,9 +65,11 @@ foreach($object->fields as $key => $val)
 }
 
 print '</table>';
+
+// We close div and reopen for second column
 print '</div>';
 print '<div class="fichehalfright">';
-print '<div class="ficheaddleft">';
+
 print '<div class="underbanner clearboth"></div>';
 print '<table class="border centpercent">';
 
@@ -87,7 +89,7 @@ foreach($object->fields as $key => $val)
 	$value=$object->$key;
 
 	print '<tr><td';
-	print ' class="titlefield';
+	print ' class="titlefield fieldname_'.$key;
 	if ($val['notnull'] > 0) print ' fieldrequired';
 	if ($val['type'] == 'text' || $val['type'] == 'html') print ' tdtop';
 	print '">';

@@ -134,7 +134,7 @@ if ($result)
     print '<td class="liste_titre">&nbsp;</td>';
     print '<td class="liste_titre right"><input type="text" class="flat maxwidth100" name="search_amount" value="'. dol_escape_htmltag($search_amount).'"></td>';
     print '<td class="liste_titre">&nbsp;</td>';
-    print '<td class="liste_titre right">';
+    print '<td class="liste_titre maxwidthsearch">';
     $searchpicto=$form->showFilterButtons();
     print $searchpicto;
     print '</td>';

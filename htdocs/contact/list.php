@@ -693,8 +693,8 @@ if (! empty($arrayfields['p.import_key']['checked']))
 	print '</td>';
 }
 // Action column
-print '<td class="liste_titre right">';
-$searchpicto=$form->showFilterButtons();
+print '<td class="liste_titre maxwidthsearch">';
+$searchpicto=$form->showFilterAndCheckAddButtons(0);
 print $searchpicto;
 print '</td>';
 
@@ -783,7 +783,7 @@ while ($i < min($num, $limit))
 	// Name
 	if (! empty($arrayfields['p.lastname']['checked']))
 	{
-		print '<td valign="middle">';
+		print '<td class="middle tdoverflowmax200">';
 		print $contactstatic->getNomUrl(1, '', 0);
 		print '</td>';
 		if (! $i) $totalarray['nbfield']++;
@@ -791,7 +791,7 @@ while ($i < min($num, $limit))
 	// Firstname
 	if (! empty($arrayfields['p.firstname']['checked']))
 	{
-		print '<td>'.$obj->firstname.'</td>';
+		print '<td class="tdoverflowmax200">'.$obj->firstname.'</td>';
 		if (! $i) $totalarray['nbfield']++;
 	}
 	// Job position

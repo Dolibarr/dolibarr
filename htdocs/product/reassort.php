@@ -297,7 +297,7 @@ if ($resql)
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre" colspan="'.$colspan_warehouse.'">&nbsp;</td>';
 	print '<td class="liste_titre"></td>';
-	print '<td class="liste_titre right">';
+	print '<td class="liste_titre maxwidthsearch">';
    	$searchpicto=$form->showFilterAndCheckAddButtons(0);
    	print $searchpicto;
 	print '</td>';

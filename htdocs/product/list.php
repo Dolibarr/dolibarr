@@ -676,7 +676,7 @@ if ($resql)
 		print $form->selectarray('search_tobuy', array('0'=>$langs->trans('ProductStatusNotOnBuyShort'),'1'=>$langs->trans('ProductStatusOnBuyShort')), $search_tobuy, 1);
 		print '</td>';
 	}
-	print '<td class="liste_titre center">';
+	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto=$form->showFilterButtons();
 	print $searchpicto;
 	print '</td>';
