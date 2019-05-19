@@ -111,7 +111,7 @@ class Hook extends CommonObject
             'visible' => -2,
             'notnull' => 1,
             'position' => 510,
-            'foreignkey' => (MAIN_DB_PREFIX.'user.rowid'),
+            'foreignkey' => 'llx_user.rowid',
         ),
         'url' => array(
             'type' => 'varchar(255)',

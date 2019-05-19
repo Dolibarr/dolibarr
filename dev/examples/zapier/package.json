@@ -1,10 +1,10 @@
 {
   "name": "Dolibarr",
-  "version": "1.0.2",
+  "version": "1.0.0",
   "description": "An app for connecting Dolibarr to the Zapier platform.",
-  "repository": "frederic34/ZapierForDolibarr",
-  "homepage": "https://netlogic-dev.fr/",
-  "author": "Frédéric France <fred@fredericfrance.fr>",
+  "repository": "Dolibarr/dolibarr",
+  "homepage": "https://www.dolibarr.fr/",
+  "author": "Frédéric France <frederic.france@netlogic.fr>",
   "license": "BSD-3-Clause",
   "main": "index.js",
   "scripts": {
