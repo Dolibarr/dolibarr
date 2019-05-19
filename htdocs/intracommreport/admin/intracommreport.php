@@ -64,11 +64,11 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="save">';
 
+print '<td>'.$langs->trans("Parameters").' (DEB)</td>'."\n";
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Parameters").' (DEB)</td>'."\n";
-print '<td class="center" width="20">&nbsp;</td>';
-print '<td class="center" width="100">'.$langs->trans("Value").'</td>'."\n";
+print '<td>'.$langs->trans("Description").'</td>';
+print '<td>'.$langs->trans("Value").'</td>';
 print '</tr>';
 
 print '<tr class="oddeven">';
