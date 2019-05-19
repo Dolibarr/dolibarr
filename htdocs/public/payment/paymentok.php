@@ -608,6 +608,9 @@ if ($ispaymentok)
 			// Do action only if $FinalPaymentAmt is set (session variable is cleaned after this page to avoid duplicate actions when page is POST a second time)
 			if (! empty($FinalPaymentAmt) && $paymentTypeId > 0)
 			{
+				$userpayment = new User($db);
+				$userpayment->fetch($invoice->user_author);
+
 				$db->begin();
 
 				// Creation of payment line
@@ -632,7 +635,7 @@ if ($ispaymentok)
 
 				if (! $error)
 				{
-					$paiement_id = $paiement->create($user, 1);    // This include closing invoices and regenerating documents
+					$paiement_id = $paiement->create($userpayment, 1);    // This include closing invoices and regenerating documents
 					if ($paiement_id < 0)
 					{
 						$postactionmessages[] = $paiement->error.' '.join("<br>\n", $paiement->errors);
@@ -657,7 +660,7 @@ if ($ispaymentok)
 					{
 						$label='(CustomerInvoicePayment)';
 						if ($invoice->type == Facture::TYPE_CREDIT_NOTE) $label='(CustomerInvoicePaymentBack)';  // Refund of a credit note
-						$result=$paiement->addPaymentToBank($user,'payment',$label, $bankaccountid, '', '');
+						$result=$paiement->addPaymentToBank($userpayment,'payment',$label, $bankaccountid, '', '');
 						if ($result < 0)
 						{
 							$postactionmessages[] = $paiement->error.' '.joint("<br>\n", $paiement->errors);

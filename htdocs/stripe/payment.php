@@ -274,6 +274,9 @@ if (empty($reshook))
 		$facture->fetch($facid);
 		$facture->fetch_thirdparty();
 
+		$userpayment = new User($db);
+		$userpayment->fetch($facture->user_author);
+
 		$error = 0;
 
 		if (is_object($stripe) && $stripeacc)
@@ -331,7 +334,7 @@ if (empty($reshook))
 		if (! $error)
 		{
 
-			$paiement_id = $paiement->create($user, 0);
+			$paiement_id = $paiement->create($userpayment, 0);
 			if ($paiement_id < 0)
 			{
 				setEventMessages($paiement->error, $paiement->errors, 'errors');
@@ -359,14 +362,14 @@ if (empty($reshook))
 		{
 			$label='(CustomerInvoicePayment)';
 			if (GETPOST('type') == 2) $label='(CustomerInvoicePaymentBack)';
-			$result=$paiement->addPaymentToBank($user,'payment',$label,GETPOST('accountid'),'','');
+			$result=$paiement->addPaymentToBank($userpayment,'payment',$label,GETPOST('accountid'),'','');
 			if ($result < 0)
 			{
 				setEventMessages($paiement->error, $paiement->errors, 'errors');
 				$error++;
 			}
 			elseif (GETPOST('closepaidinvoices')=='on') {
-				$facture->set_paid($user);
+				$facture->set_paid($userpayment);
 			}
 		}
 
