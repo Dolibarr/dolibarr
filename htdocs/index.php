@@ -151,6 +151,7 @@ if (empty($user->societe_id))
 		! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->lire && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_PROPOSAL_STATS),
 	    ! empty($conf->projet->enabled) && $user->rights->projet->lire,
 	    ! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire,
+        ! empty($conf->holiday->enabled) && $user->rights->holiday->read,
 		! empty($conf->don->enabled) && $user->rights->don->lire
 	    );
 	    // Class file containing the method load_state_board for each line
@@ -173,6 +174,7 @@ if (empty($user->societe_id))
     	    DOL_DOCUMENT_ROOT."/supplier_proposal/class/supplier_proposal.class.php",
             DOL_DOCUMENT_ROOT."/projet/class/project.class.php",
 	        DOL_DOCUMENT_ROOT."/expensereport/class/expensereport.class.php",
+            DOL_DOCUMENT_ROOT."/holiday/class/holiday.class.php",
 			DOL_DOCUMENT_ROOT."/don/class/don.class.php"
 	    );
 	    // Name class containing the method load_state_board for each line
@@ -194,6 +196,7 @@ if (empty($user->societe_id))
             	       'SupplierProposal',
 	                   'Project',
 	                   'ExpenseReport',
+                       'Holiday',
 					   'Don'
 	    );
 	    // Cle array returned by the method load_state_board for each line
@@ -204,7 +207,7 @@ if (empty($user->societe_id))
 	                'contacts',
 	                'members',
 	                'products',
-	                'services',
+	                 'services',
 	                'proposals',
 	                'orders',
 	                'invoices',
@@ -215,6 +218,7 @@ if (empty($user->societe_id))
 	                'askprice',
 	                'projects',
 	                'expensereports',
+                    'holidays',
 					'donations'
 	    );
 	    // Dashboard Icon lines
@@ -236,6 +240,7 @@ if (empty($user->societe_id))
 	                 'propal',
 	                 'projectpub',
 					 'trip',
+                     'holiday',
 					 'generic'
 	    );
 	    // Translation keyword
@@ -257,6 +262,7 @@ if (empty($user->societe_id))
 	                  "SupplierProposalShort",
 	                  "Projects",
 					  "ExpenseReports",
+                      "Holidays",
 					  "Donations"
 	    );
 	    // Dashboard Link lines
@@ -279,6 +285,7 @@ if (empty($user->societe_id))
 	        DOL_URL_ROOT.'/supplier_proposal/list.php?mainmenu=commercial&leftmenu=',
 	        DOL_URL_ROOT.'/projet/list.php?mainmenu=project',
     		DOL_URL_ROOT.'/expensereport/list.php?mainmenu=hrm&leftmenu=expensereport',
+            DOL_URL_ROOT.'/holiday/list.php?mainmenu=hrm&leftmenu=holiday',
 			DOL_URL_ROOT.'/don/list.php?leftmenu=donations'
 	    );
 	    // Translation lang files
@@ -300,6 +307,7 @@ if (empty($user->societe_id))
 	                    "supplier_proposal",
 	                    "projects",
 						"trips",
+                        "holidays",
 						"donations"
 	    );
 
@@ -495,6 +503,14 @@ if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->to_p
 	include_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 	$board=new ExpenseReport($db);
 	$dashboardlines[] = $board->load_board($user, 'topay');
+}
+
+// Number of holidays to approve
+if (! empty($conf->holiday->enabled) && $user->rights->holiday->approve)
+{
+    include_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
+    $board=new Holiday($db);
+    $dashboardlines[] = $board->load_board($user);
 }
 
 $object=new stdClass();

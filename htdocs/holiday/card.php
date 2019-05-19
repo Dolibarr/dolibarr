@@ -877,6 +877,7 @@ if ((empty($id) && empty($ref)) || $action == 'add' || $action == 'request' || $
 
         // Formulaire de demande
         print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" onsubmit="return valider()" name="demandeCP">'."\n";
+        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />'."\n";
         print '<input type="hidden" name="action" value="create" />'."\n";
 
         if (empty($conf->global->HOLIDAY_HIDE_BALANCE))
