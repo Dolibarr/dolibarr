@@ -1943,7 +1943,7 @@ if (empty($reshook))
 
 				if ($result > 0)
 				{
-					// Define output language
+					// Define output language and generate document
 					if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
 					{
 						$outputlangs = $langs;
@@ -2055,7 +2055,7 @@ if (empty($reshook))
 		$line->fetch(GETPOST('lineid'));
 		$percent = $line->get_prev_progress($object->id);
 
-		if($object->type == Facture::TYPE_CREDIT_NOTE && $object->situation_cycle_ref>0)
+		if ($object->type == Facture::TYPE_CREDIT_NOTE && $object->situation_cycle_ref>0)
 		{
 		    // in case of situation credit note
 		    if(GETPOST('progress') >= 0 )
@@ -2147,7 +2147,7 @@ if (empty($reshook))
 				}
 			}
 
-$result = $object->updateline(GETPOST('lineid'), $description, $pu_ht, $qty, GETPOST('remise_percent'),
+			$result = $object->updateline(GETPOST('lineid'), $description, $pu_ht, $qty, GETPOST('remise_percent'),
 				$date_start, $date_end, $vat_rate, $localtax1_rate, $localtax2_rate, 'HT', $info_bits, $type,
 				GETPOST('fk_parent_line'), 0, $fournprice, $buyingprice, $label, $special_code, $array_options, GETPOST('progress'),
 				$_POST['units'], $pu_ht_devise);

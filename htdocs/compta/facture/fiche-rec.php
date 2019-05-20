@@ -100,6 +100,20 @@ $permissionnote = $user->rights->facture->creer; // Used by the include of actio
 $permissiondellink=$user->rights->facture->creer;	// Used by the include of actions_dellink.inc.php
 $permissiontoedit = $user->rights->facture->creer; // Used by the include of actions_lineupdonw.inc.php
 
+$usercanread = $user->rights->facture->lire;
+$usercancreate = $user->rights->facture->creer;
+$usercanissuepayment = $user->rights->facture->paiement;
+$usercandelete = $user->rights->facture->supprimer;
+$usercanvalidate = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $usercancreate) || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->facture->invoice_advance->validate)));
+$usercansend = (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->facture->invoice_advance->send);
+$usercanreopen = (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->facture->invoice_advance->reopen);
+$usercanunvalidate = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($usercancreate)) || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->facture->invoice_advance->unvalidate)));
+
+$usercanproductignorepricemin = ((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->produit->ignore_price_min_advance)) || empty($conf->global->MAIN_USE_ADVANCED_PERMS));
+$usercancreatemargin = $user->rights->margins->creer;
+$usercanreadallmargin = $user->rights->margins->liretous;
+$usercancreatewithdrarequest = $user->rights->prelevement->bons->creer;
+
 $now = dol_now();
 
 
@@ -435,10 +449,12 @@ if (empty($reshook))
 		$predef='';
 		$product_desc=(GETPOST('dp_desc')?GETPOST('dp_desc'):'');
 		$price_ht = GETPOST('price_ht');
-		if (GETPOST('prod_entry_mode') == 'free')
+		$price_ht_devise = GETPOST('multicurrency_price_ht');
+		$prod_entry_mode = GETPOST('prod_entry_mode', 'alpha');
+		if ($prod_entry_mode == 'free')
 		{
 			$idprod=0;
-			$tva_tx = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
+			$tva_tx = (GETPOST('tva_tx', 'alpha') ? GETPOST('tva_tx', 'alpha') : 0);
 		}
 		else
 		{
@@ -466,11 +482,11 @@ if (empty($reshook))
 			setEventMessages($langs->trans('ErrorBothFieldCantBeNegative', $langs->transnoentitiesnoconv('UnitPriceHT'), $langs->transnoentitiesnoconv('Qty')), null, 'errors');
 			$error ++;
 		}
-		if (GETPOST('prod_entry_mode') == 'free' && empty($idprod) && GETPOST('type') < 0) {
+		if ($prod_entry_mode == 'free' && empty($idprod) && GETPOST('type') < 0) {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Type')), null, 'errors');
 			$error ++;
 		}
-		if (GETPOST('prod_entry_mode') == 'free' && empty($idprod) && (! ($price_ht >= 0) || $price_ht == '')) 	// Unit price can be 0 but not ''
+		if ($prod_entry_mode == 'free' && empty($idprod) && (! ($price_ht >= 0) || $price_ht == '')) 	// Unit price can be 0 but not ''
 		{
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("UnitPriceHT")), null, 'errors');
 			$error ++;
@@ -479,7 +495,7 @@ if (empty($reshook))
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), null, 'errors');
 			$error ++;
 		}
-		if (GETPOST('prod_entry_mode') == 'free' && empty($idprod) && empty($product_desc)) {
+		if ($prod_entry_mode == 'free' && empty($idprod) && empty($product_desc)) {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Description')), null, 'errors');
 			$error ++;
 		}
@@ -491,128 +507,97 @@ if (empty($reshook))
 
 		if (! $error && ($qty >= 0) && (! empty($product_desc) || ! empty($idprod)))
 		{
-		$ret = $object->fetch($id);
-		if ($ret < 0) {
-			dol_print_error($db, $object->error);
-			exit();
-		}
-		$ret = $object->fetch_thirdparty();
-
-		// Clean parameters
-		$date_start = dol_mktime(GETPOST('date_start' . $predef . 'hour'), GETPOST('date_start' . $predef . 'min'), GETPOST('date_start' . $predef . 'sec'), GETPOST('date_start' . $predef . 'month'), GETPOST('date_start' . $predef . 'day'), GETPOST('date_start' . $predef . 'year'));
-		$date_end = dol_mktime(GETPOST('date_end' . $predef . 'hour'), GETPOST('date_end' . $predef . 'min'), GETPOST('date_end' . $predef . 'sec'), GETPOST('date_end' . $predef . 'month'), GETPOST('date_end' . $predef . 'day'), GETPOST('date_end' . $predef . 'year'));
-		$price_base_type = (GETPOST('price_base_type', 'alpha') ? GETPOST('price_base_type', 'alpha') : 'HT');
-
-		// Define special_code for special lines
-		$special_code = 0;
-		// if (empty($_POST['qty'])) $special_code=3; // Options should not exists on invoices
-
-		// Ecrase $pu par celui du produit
-		// Ecrase $desc par celui du produit
-		// Ecrase $tva_tx par celui du produit
-		// Ecrase $base_price_type par celui du produit
-		// Replaces $fk_unit with the product's
-		if (! empty($idprod))
-			{
-			$prod = new Product($db);
-			$prod->fetch($idprod);
-
-			$label = ((GETPOST('product_label') && GETPOST('product_label') != $prod->label) ? GETPOST('product_label') : '');
-
-			// Update if prices fields are defined
-			$tva_tx = get_default_tva($mysoc, $object->thirdparty, $prod->id);
-			$tva_npr = get_default_npr($mysoc, $object->thirdparty, $prod->id);
-			if (empty($tva_tx)) $tva_npr=0;
-
-			$pu_ht = $prod->price;
-			$pu_ttc = $prod->price_ttc;
-			$price_min = $prod->price_min;
-			$price_base_type = $prod->price_base_type;
-
-			// We define price for product
-			if (! empty($conf->global->PRODUIT_MULTIPRICES) && ! empty($object->thirdparty->price_level))
-			{
-				$pu_ht = $prod->multiprices[$object->thirdparty->price_level];
-				$pu_ttc = $prod->multiprices_ttc[$object->thirdparty->price_level];
-				$price_min = $prod->multiprices_min[$object->thirdparty->price_level];
-				$price_base_type = $prod->multiprices_base_type[$object->thirdparty->price_level];
-				if (! empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL))  // using this option is a bug. kept for backward compatibility
-				{
-					if (isset($prod->multiprices_tva_tx[$object->thirdparty->price_level])) $tva_tx=$prod->multiprices_tva_tx[$object->thirdparty->price_level];
-					if (isset($prod->multiprices_recuperableonly[$object->thirdparty->price_level])) $tva_npr=$prod->multiprices_recuperableonly[$object->thirdparty->price_level];
-					if (empty($tva_tx)) $tva_npr=0;
-				}
+			$ret = $object->fetch($id);
+			if ($ret < 0) {
+				dol_print_error($db, $object->error);
+				exit();
 			}
-			elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
+			$ret = $object->fetch_thirdparty();
+
+			// Clean parameters
+			$date_start = dol_mktime(GETPOST('date_start' . $predef . 'hour'), GETPOST('date_start' . $predef . 'min'), GETPOST('date_start' . $predef . 'sec'), GETPOST('date_start' . $predef . 'month'), GETPOST('date_start' . $predef . 'day'), GETPOST('date_start' . $predef . 'year'));
+			$date_end = dol_mktime(GETPOST('date_end' . $predef . 'hour'), GETPOST('date_end' . $predef . 'min'), GETPOST('date_end' . $predef . 'sec'), GETPOST('date_end' . $predef . 'month'), GETPOST('date_end' . $predef . 'day'), GETPOST('date_end' . $predef . 'year'));
+			$price_base_type = (GETPOST('price_base_type', 'alpha') ? GETPOST('price_base_type', 'alpha') : 'HT');
+
+			// Define special_code for special lines
+			$special_code = 0;
+			// if (empty($_POST['qty'])) $special_code=3; // Options should not exists on invoices
+
+			// Ecrase $pu par celui du produit
+			// Ecrase $desc par celui du produit
+			// Ecrase $tva_tx par celui du produit
+			// Ecrase $base_price_type par celui du produit
+			// Replaces $fk_unit with the product's
+			if (! empty($idprod))
 			{
-				include_once DOL_DOCUMENT_ROOT . '/product/class/productcustomerprice.class.php';
+				$prod = new Product($db);
+				$prod->fetch($idprod);
 
-				$prodcustprice = new Productcustomerprice($db);
+				$label = ((GETPOST('product_label') && GETPOST('product_label') != $prod->label) ? GETPOST('product_label') : '');
 
-				$filter = array('t.fk_product' => $prod->id,'t.fk_soc' => $object->thirdparty->id);
+				// Update if prices fields are defined
+				$tva_tx = get_default_tva($mysoc, $object->thirdparty, $prod->id);
+				$tva_npr = get_default_npr($mysoc, $object->thirdparty, $prod->id);
+				if (empty($tva_tx)) $tva_npr=0;
 
-				$result = $prodcustprice->fetch_all('', '', 0, 0, $filter);
-				if ($result)
+				// Search the correct price into loaded array product_price_by_qty using id of array retrieved into POST['pqp'].
+				$pqp = (GETPOST('pbq', 'int') ? GETPOST('pbq', 'int') : 0);
+
+				$datapriceofproduct = $prod->getSellPrice($mysoc, $object->thirdparty, $pqp);
+
+				$pu_ht = $datapriceofproduct['pu_ht'];
+				$pu_ttc = $datapriceofproduct['pu_ttc'];
+				$price_min = $datapriceofproduct['price_min'];
+				$price_base_type = $datapriceofproduct['price_base_type'];
+				$tva_tx = $datapriceofproduct['tva_tx'];
+				$tva_npr = $datapriceofproduct['tva_npr'];
+
+				$tmpvat = price2num(preg_replace('/\s*\(.*\)/', '', $tva_tx));
+				$tmpprodvat = price2num(preg_replace('/\s*\(.*\)/', '', $prod->tva_tx));
+
+				// if price ht was forced (ie: from gui when calculated by margin rate and cost price). TODO Why this ?
+				if (! empty($price_ht))
 				{
-					if (count($prodcustprice->lines) > 0)
+					$pu_ht = price2num($price_ht, 'MU');
+					$pu_ttc = price2num($pu_ht * (1 + ($tmpvat / 100)), 'MU');
+				}
+				// On reevalue prix selon taux tva car taux tva transaction peut etre different
+				// de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
+				elseif ($tmpvat != $tmpprodvat)
+				{
+					if ($price_base_type != 'HT')
 					{
-						$pu_ht = price($prodcustprice->lines[0]->price);
-						$pu_ttc = price($prodcustprice->lines[0]->price_ttc);
-						$price_base_type = $prodcustprice->lines[0]->price_base_type;
-						$tva_tx = $prodcustprice->lines[0]->tva_tx;
-						if ($prodcustprice->lines[0]->default_vat_code && ! preg_match('/\(.*\)/', $tva_tx)) $tva_tx.= ' ('.$prodcustprice->lines[0]->default_vat_code.')';
-						$tva_npr = $prodcustprice->lines[0]->recuperableonly;
-						if (empty($tva_tx)) $tva_npr=0;
+						$pu_ht = price2num($pu_ttc / (1 + ($tmpvat / 100)), 'MU');
+					}
+					else
+					{
+						$pu_ttc = price2num($pu_ht * (1 + ($tmpvat / 100)), 'MU');
 					}
 				}
-			}
 
-			$tmpvat = price2num(preg_replace('/\s*\(.*\)/', '', $tva_tx));
-			$tmpprodvat = price2num(preg_replace('/\s*\(.*\)/', '', $prod->tva_tx));
+				$desc = '';
 
-			// if price ht was forced (ie: from gui when calculated by margin rate and cost price). TODO Why this ?
-			if (! empty($price_ht))
-			{
-				$pu_ht = price2num($price_ht, 'MU');
-				$pu_ttc = price2num($pu_ht * (1 + ($tmpvat / 100)), 'MU');
-			}
-			// On reevalue prix selon taux tva car taux tva transaction peut etre different
-			// de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
-			elseif ($tmpvat != $tmpprodvat)
-			{
-				if ($price_base_type != 'HT')
+				// Define output language
+				if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE))
 				{
-					$pu_ht = price2num($pu_ttc / (1 + ($tmpvat / 100)), 'MU');
+					$outputlangs = $langs;
+					$newlang = '';
+					if (empty($newlang) && GETPOST('lang_id', 'aZ09'))
+						$newlang = GETPOST('lang_id', 'aZ09');
+					if (empty($newlang))
+						$newlang = $object->thirdparty->default_lang;
+					if (! empty($newlang))
+					{
+						$outputlangs = new Translate("", $conf);
+						$outputlangs->setDefaultLang($newlang);
+					}
+
+					$desc = (! empty($prod->multilangs [$outputlangs->defaultlang] ["description"])) ? $prod->multilangs [$outputlangs->defaultlang] ["description"] : $prod->description;
 				}
 				else
 				{
-					$pu_ttc = price2num($pu_ht * (1 + ($tmpvat / 100)), 'MU');
+					$desc = $prod->description;
 				}
-			}
-
-			$desc = '';
-
-			// Define output language
-			if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE))
-			{
-				$outputlangs = $langs;
-				$newlang = '';
-				if (empty($newlang) && GETPOST('lang_id', 'aZ09'))
-					$newlang = GETPOST('lang_id', 'aZ09');
-				if (empty($newlang))
-					$newlang = $object->thirdparty->default_lang;
-				if (! empty($newlang))
-				{
-					$outputlangs = new Translate("", $conf);
-					$outputlangs->setDefaultLang($newlang);
-				}
-
-				$desc = (! empty($prod->multilangs [$outputlangs->defaultlang] ["description"])) ? $prod->multilangs [$outputlangs->defaultlang] ["description"] : $prod->description;
-			}
-			else
-			{
-				$desc = $prod->description;
-			}
 
 					$desc = dol_concatdesc($desc, $product_desc);
 
@@ -620,12 +605,33 @@ if (empty($reshook))
 			if (empty($conf->global->MAIN_PRODUCT_DISABLE_CUSTOMCOUNTRYCODE) && (! empty($prod->customcode) || ! empty($prod->country_code)))
 			{
 				$tmptxt = '(';
-				if (! empty($prod->customcode))
-					$tmptxt .= $langs->transnoentitiesnoconv("CustomCode") . ': ' . $prod->customcode;
-				if (! empty($prod->customcode) && ! empty($prod->country_code))
-					$tmptxt .= ' - ';
-				if (! empty($prod->country_code))
-					$tmptxt .= $langs->transnoentitiesnoconv("CountryOrigin") . ': ' . getCountry($prod->country_code, 0, $db, $langs, 0);
+				// Define output language
+				if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
+					$outputlangs = $langs;
+					$newlang = '';
+					if (empty($newlang) && GETPOST('lang_id', 'alpha'))
+						$newlang = GETPOST('lang_id', 'alpha');
+						if (empty($newlang))
+							$newlang = $object->thirdparty->default_lang;
+							if (! empty($newlang)) {
+								$outputlangs = new Translate("", $conf);
+								$outputlangs->setDefaultLang($newlang);
+								$outputlangs->load('products');
+							}
+							if (! empty($prod->customcode))
+								$tmptxt .= $outputlangs->transnoentitiesnoconv("CustomCode") . ': ' . $prod->customcode;
+								if (! empty($prod->customcode) && ! empty($prod->country_code))
+									$tmptxt .= ' - ';
+									if (! empty($prod->country_code))
+										$tmptxt .= $outputlangs->transnoentitiesnoconv("CountryOrigin") . ': ' . getCountry($prod->country_code, 0, $db, $outputlangs, 0);
+				} else {
+					if (! empty($prod->customcode))
+						$tmptxt .= $langs->transnoentitiesnoconv("CustomCode") . ': ' . $prod->customcode;
+						if (! empty($prod->customcode) && ! empty($prod->country_code))
+							$tmptxt .= ' - ';
+							if (! empty($prod->country_code))
+								$tmptxt .= $langs->transnoentitiesnoconv("CountryOrigin") . ': ' . getCountry($prod->country_code, 0, $db, $langs, 0);
+				}
 				$tmptxt .= ')';
 				$desc = dol_concatdesc($desc, $tmptxt);
 			}
@@ -661,18 +667,18 @@ if (empty($reshook))
 		if ($tva_npr)
 			$info_bits |= 0x01;
 
-		if (((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->produit->ignore_price_min_advance)) || empty($conf->global->MAIN_USE_ADVANCED_PERMS) )&& (! empty($price_min) && (price2num($pu_ht) * (1 - price2num($remise_percent) / 100) < price2num($price_min))))
-		{
+		if ($usercanproductignorepricemin && (! empty($price_min) && (price2num($pu_ht) * (1 - price2num($remise_percent) / 100) < price2num($price_min)))) {
 			$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, - 1, $conf->currency));
 			setEventMessages($mesg, null, 'errors');
 		}
 		else
 		{
 			// Insert line
-			$result = $object->addline($desc, $pu_ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $price_base_type, $info_bits, '', $pu_ttc, $type, - 1, $special_code, $label, $fk_unit, 0, $date_start_fill, $date_end_fill);
+			$result = $object->addline($desc, $pu_ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $price_base_type, $info_bits, '', $pu_ttc, $type, - 1, $special_code, $label, $fk_unit, 0, $date_start_fill, $date_end_fill, $fournprice, $buyingprice);
 
 			if ($result > 0)
 			{
+				// Define output language and generate document
 				/*if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
     			{
     			    // Define output language
@@ -741,7 +747,7 @@ if (empty($reshook))
 		}
 	}
 
-	elseif ($action == 'updateline' && $user->rights->facture->creer && ! GETPOST('cancel', 'alpha'))
+	elseif ($action == 'updateline' && $usercancreate && ! GETPOST('cancel', 'alpha'))
 	{
 		if (! $object->fetch($id) > 0)	dol_print_error($db);
 		$object->fetch_thirdparty();
@@ -855,7 +861,7 @@ if (empty($reshook))
 		// Update line
 		if (! $error)
 		{
-$result = $object->updateline(
+			$result = $object->updateline(
 				GETPOST('lineid'),
 				$description,
 				$pu_ht,
@@ -877,7 +883,9 @@ $result = $object->updateline(
 				$pu_ht_devise,
 				0,
 				$date_start_fill,
-				$date_end_fill
+				$date_end_fill,
+				$fournprice,
+				$buyingprice
 			);
 
 			if ($result >= 0)
