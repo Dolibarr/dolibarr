@@ -71,7 +71,7 @@ print '</div>';
 print '<div class="fichehalfright">';
 
 print '<div class="underbanner clearboth"></div>';
-print '<table class="border centpercent">';
+print '<table class="border centpercent tableforfield">';
 
 $alreadyoutput = 1;
 foreach($object->fields as $key => $val)
