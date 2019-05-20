@@ -1851,7 +1851,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 
 		$backbutton='<a class="justalink" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '">' . $langs->trans("Back") . '</a>';
 
-		print_barre_liste($title, $page, $_SERVEUR['PHP_SELF'], $option, $sortfield, $sortorder, $backbutton, count($prodcustprice->lines), $nbtotalofrecords, 'title_accountancy.png');
+		print_barre_liste($title, $page, $_SERVER['PHP_SELF'], $option, $sortfield, $sortorder, $backbutton, count($prodcustprice->lines), $nbtotalofrecords, 'title_accountancy.png');
 
 		if (count($prodcustprice->lines) > 0)
 		{
@@ -1973,7 +1973,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 
 		$option = '&search_soc=' . $search_soc . '&id=' . $object->id;
 
-		print_barre_liste($langs->trans('PriceByCustomer'), $page, $_SERVEUR ['PHP_SELF'], $option, $sortfield, $sortorder, '', count($prodcustprice->lines), $nbtotalofrecords, 'title_accountancy.png');
+		print_barre_liste($langs->trans('PriceByCustomer'), $page, $_SERVER ['PHP_SELF'], $option, $sortfield, $sortorder, '', count($prodcustprice->lines), $nbtotalofrecords, 'title_accountancy.png');
 
 		print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';
 		print '<input type="hidden" name="id" value="' . $object->id . '">';
@@ -1989,7 +1989,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
     		print '<td class="liste_titre"><input type="text" class="flat" name="search_soc" value="' . $search_soc . '" size="20"></td>';
     		print '<td class="liste_titre" colspan="'.$colspan.'">&nbsp;</td>';
     		// Print the search button
-            print '<td class="liste_titre right">';
+            print '<td class="liste_titre maxwidthsearch">';
             $searchpicto=$form->showFilterAndCheckAddButtons(0);
             print $searchpicto;
             print '</td>';

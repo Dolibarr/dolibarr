@@ -1152,7 +1152,7 @@ function top_httphead($contenttype = 'text/html', $forcenocache = 0)
 		$contentsecuritypolicy = $conf->global->MAIN_HTTP_CONTENT_SECURITY_POLICY;
 
 		if (! is_object($hookmanager)) $hookmanager = new HookManager($db);
-		$hookmanager->initHooks("main");
+		$hookmanager->initHooks(array("main"));
 
 		$parameters=array('contentsecuritypolicy'=>$contentsecuritypolicy);
 		$result=$hookmanager->executeHooks('setContentSecurityPolicy', $parameters);    // Note that $action and $object may have been modified by some hooks
@@ -1212,7 +1212,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 	if (empty($disablehead))
 	{
 	    if (! is_object($hookmanager)) $hookmanager = new HookManager($db);
-	    $hookmanager->initHooks("main");
+	    $hookmanager->initHooks(array("main"));
 
 	    $ext='layout='.$conf->browser->layout.'&version='.urlencode(DOL_VERSION);
 
@@ -1740,8 +1740,8 @@ function top_menu_user(User $user, Translate $langs)
     }
     else{
         $nophoto='/public/theme/common/user_anonymous.png';
-        if ($object->gender == 'man') $nophoto='/public/theme/common/user_man.png';
-        if ($object->gender == 'woman') $nophoto='/public/theme/common/user_woman.png';
+        if ($user->gender == 'man') $nophoto='/public/theme/common/user_man.png';
+        if ($user->gender == 'woman') $nophoto='/public/theme/common/user_woman.png';
 
         $userImage = '<img class="photo photouserphoto userphoto" alt="No photo" src="'.DOL_URL_ROOT.$nophoto.'">';
         $userDropDownImage = '<img class="photo dropdown-user-image" alt="No photo" src="'.DOL_URL_ROOT.$nophoto.'">';

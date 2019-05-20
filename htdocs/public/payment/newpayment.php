@@ -396,8 +396,9 @@ if ($action == 'dopayment')
 }
 
 
-// Called when choosing Stripe mode, after clicking the 'dopayment' with the Charge API architecture.
-// When using the PaymentItent architecture, we dont need this, the Stripe customer is created when creating PaymentItent when showing payment page.
+// Called when choosing Stripe mode.
+// When using the Charge API architecture, this code is called after clicking the 'dopayment' with the Charge API architecture.
+// When using the PaymentIntent API architecture, the Stripe customer is already created when creating PaymentItent when showing payment page and the payment is already ok.
 if ($action == 'charge' && ! empty($conf->stripe->enabled))
 {
 	$amountstripe = $amount;
@@ -426,6 +427,7 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 	$error = 0;
     $errormessage = '';
 
+    // When using the Charge API architecture
     if (empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION))
     {
     	try {
@@ -611,6 +613,7 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
     	}
     }
 
+    // When using the PaymentIntent API architecture
     if (! empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION))
     {
         $service = 'StripeTest';
@@ -655,6 +658,12 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
             dol_syslog($errormessage, LOG_WARNING, 0, '_stripe');
             setEventMessages($e->getMessage(), null, 'errors');
             $action='';
+        }
+        else
+        {
+        	// TODO We can alse record the payment mode into llx_societe_rib with stripe $paymentintent->payment_method
+        	// Note that with other Stripe architecture (using Charge API), the payment mode was not recorded, so it is not mandatory to do it here.
+        	//dol_syslog("Create payment_method for ".$paymentintent->payment_method, LOG_DEBUG, 0, '_stripe');
         }
     }
 
@@ -1934,241 +1943,249 @@ if (preg_match('/^dopayment/', $action))
 
 		print '</form>'."\n";
 
-		print '<script src="https://js.stripe.com/v3/"></script>'."\n";
-
-	    // Code to ask the credit card. This use the default "API version". No way to force API version when using JS code.
-		print '<script type="text/javascript" language="javascript">'."\n";
-
-		if (! empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION))
+		if (empty($stripearrayofkeys['publishable_key']))
 		{
-        ?>
-
-	    // Create a Stripe client.
-	    var stripe = Stripe('<?php echo $stripearrayofkeys['publishable_key']; // Defined into config.php ?>');
-
-	    // Create an instance of Elements
-	    var elements = stripe.elements();
-
-	    // Custom styling can be passed to options when creating an Element.
-	    // (Note that this demo uses a wider set of styles than the guide below.)
-	    var style = {
-	      base: {
-	        color: '#32325d',
-	        lineHeight: '24px',
-	        fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
-	        fontSmoothing: 'antialiased',
-	        fontSize: '16px',
-	        '::placeholder': {
-	          color: '#aab7c4'
-	        }
-	      },
-	      invalid: {
-	        color: '#fa755a',
-	        iconColor: '#fa755a'
-	      }
-	    };
-
-		var cardElement = elements.create('card', {style: style});
-
-		// Add an instance of the card Element into the `card-element` <div>
-		cardElement.mount('#card-element');
-
-		// Handle real-time validation errors from the card Element.
-		cardElement.addEventListener('change', function(event) {
-    		var displayError = document.getElementById('card-errors');
-    	      if (event.error) {
-    	      	console.log("Show event error (like 'Incorrect card number', ...)");
-    	        displayError.textContent = event.error.message;
-    	      } else {
-    	      	console.log("Reset error message");
-    	        displayError.textContent = '';
-    	      }
-	    });
-
-		// Handle form submission
-        var cardholderName = document.getElementById('cardholder-name');
-        var cardButton = document.getElementById('buttontopay');
-        var clientSecret = cardButton.dataset.secret;
-
-        cardButton.addEventListener('click', function(event) {
-        	console.log("We click on buttontopay");
-        	event.preventDefault();
-
-        	if (cardholderName.value == '')
-        	{
-				console.log("Field Card holder is empty");
-				var displayError = document.getElementById('card-errors');
-				displayError.textContent = '<?php print dol_escape_js($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CardOwner"))); ?>';
-        	}
-        	else
-        	{
-              stripe.handleCardPayment(
-                clientSecret, cardElement, {
-                	payment_method_data: {
-    			        billing_details: {
-    			        	name: cardholderName.value
-    			        	<?php if (GETPOST('email', 'alpha')) { ?>, email: '<?php echo GETPOST('email', 'alpha'); ?>'<?php } ?>
-    			        	<?php if (is_object($object) && is_object($object->thirdparty)) { ?>, phone: '<?php echo $object->thirdparty->phone; ?>'<?php } ?>
-    			        	<?php if (is_object($object) && is_object($object->thirdparty)) { ?>, address: {
-    			        	    city: '<?php echo $object->thirdparty->town; ?>',
-    			        	    country: '<?php echo $object->thirdparty->country_code; ?>',
-    			        	    line1: '<?php echo $object->thirdparty->address; ?>',
-    			        	    postal_code: '<?php echo $object->thirdparty->zip; ?>'}<?php } ?>
-    			        }	/* TODO Add all other known data like emails, ... to be SCA compliant */
-          			},
-          			save_payment_method: false
-                }
-              ).then(function(result) {
-              	  console.log(result);
-    	          if (result.error) {
-    	    	      console.log("Error on result of handleCardPayment");
-            	      jQuery('#buttontopay').show();
-            	      jQuery('#hourglasstopay').hide();
-    		          // Inform the user if there was an error
-    		          var errorElement = document.getElementById('card-errors');
-    		          errorElement.textContent = result.error.message;
-    		      } else {
-    		      	  // The payment has succeeded. Display a success message.
-    	    	      console.log("No error on result of handleCardPayment, so we submit the form");
-        			  // Submit the form
-        		      jQuery('#buttontopay').hide();
-        		      jQuery('#hourglasstopay').show();
-        		      // Send form (action=charge that will do nothing)
-        		      jQuery('#payment-form').submit();
-    		      }
-              });
-            }
-        });
-
-
-		<?php
+		    print info_admin($langs->trans("ErrorModuleSetupNotComplete", "stripe"), 0, 0, 'error');
 		}
 		else
 		{
-		?>
+    		print '<script src="https://js.stripe.com/v3/"></script>'."\n";
+
+    	    // Code to ask the credit card. This use the default "API version". No way to force API version when using JS code.
+    		print '<script type="text/javascript" language="javascript">'."\n";
+
+    		if (! empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION))
+    		{
+            ?>
+    		// Code for payment with option STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION set
+
+    	    // Create a Stripe client.
+    	    var stripe = Stripe('<?php echo $stripearrayofkeys['publishable_key']; // Defined into config.php ?>');
+
+    	    // Create an instance of Elements
+    	    var elements = stripe.elements();
+
+    	    // Custom styling can be passed to options when creating an Element.
+    	    // (Note that this demo uses a wider set of styles than the guide below.)
+    	    var style = {
+    	      base: {
+    	        color: '#32325d',
+    	        lineHeight: '24px',
+    	        fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+    	        fontSmoothing: 'antialiased',
+    	        fontSize: '16px',
+    	        '::placeholder': {
+    	          color: '#aab7c4'
+    	        }
+    	      },
+    	      invalid: {
+    	        color: '#fa755a',
+    	        iconColor: '#fa755a'
+    	      }
+    	    };
+
+    		var cardElement = elements.create('card', {style: style});
+
+    		// Add an instance of the card Element into the `card-element` <div>
+    		cardElement.mount('#card-element');
+
+    		// Handle real-time validation errors from the card Element.
+    		cardElement.addEventListener('change', function(event) {
+        		var displayError = document.getElementById('card-errors');
+        	      if (event.error) {
+        	      	console.log("Show event error (like 'Incorrect card number', ...)");
+        	        displayError.textContent = event.error.message;
+        	      } else {
+        	      	console.log("Reset error message");
+        	        displayError.textContent = '';
+        	      }
+    	    });
+
+    		// Handle form submission
+            var cardholderName = document.getElementById('cardholder-name');
+            var cardButton = document.getElementById('buttontopay');
+            var clientSecret = cardButton.dataset.secret;
+
+            cardButton.addEventListener('click', function(event) {
+            	console.log("We click on buttontopay");
+            	event.preventDefault();
+
+            	if (cardholderName.value == '')
+            	{
+    				console.log("Field Card holder is empty");
+    				var displayError = document.getElementById('card-errors');
+    				displayError.textContent = '<?php print dol_escape_js($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CardOwner"))); ?>';
+            	}
+            	else
+            	{
+                  stripe.handleCardPayment(
+                    clientSecret, cardElement, {
+                    	payment_method_data: {
+        			        billing_details: {
+        			        	name: cardholderName.value
+        			        	<?php if (GETPOST('email', 'alpha')) { ?>, email: '<?php echo GETPOST('email', 'alpha'); ?>'<?php } ?>
+        			        	<?php if (is_object($object) && is_object($object->thirdparty) && is_object($object->thirdparty->phone)) { ?>, phone: '<?php echo $object->thirdparty->phone; ?>'<?php } ?>
+        			        	<?php if (is_object($object) && is_object($object->thirdparty)) { ?>, address: {
+        			        	    city: '<?php echo $object->thirdparty->town; ?>',
+        			        	    country: '<?php echo $object->thirdparty->country_code; ?>',
+        			        	    line1: '<?php echo $object->thirdparty->address; ?>',
+        			        	    postal_code: '<?php echo $object->thirdparty->zip; ?>'}<?php } ?>
+        			        }	/* TODO Add all other known data like emails, ... to be SCA compliant */
+              			},
+              			save_payment_method: true	/* the card will be saved */
+                    }
+                  ).then(function(result) {
+                  	  console.log(result);
+        	          if (result.error) {
+        	    	      console.log("Error on result of handleCardPayment");
+                	      jQuery('#buttontopay').show();
+                	      jQuery('#hourglasstopay').hide();
+        		          // Inform the user if there was an error
+        		          var errorElement = document.getElementById('card-errors');
+        		          errorElement.textContent = result.error.message;
+        		      } else {
+        		      	  // The payment has succeeded. Display a success message.
+        	    	      console.log("No error on result of handleCardPayment, so we submit the form");
+            			  // Submit the form
+            		      jQuery('#buttontopay').hide();
+            		      jQuery('#hourglasstopay').show();
+            		      // Send form (action=charge that will do nothing)
+            		      jQuery('#payment-form').submit();
+        		      }
+                  });
+                }
+            });
 
 
-	    // Create a Stripe client.
-	    var stripe = Stripe('<?php echo $stripearrayofkeys['publishable_key']; // Defined into config.php ?>');
+    		<?php
+    		}
+    		else
+    		{
+    		?>
+    		// Code for payment with option STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION off
 
-	    // Create an instance of Elements
-	    var elements = stripe.elements();
+    	    // Create a Stripe client.
+    	    var stripe = Stripe('<?php echo $stripearrayofkeys['publishable_key']; // Defined into config.php ?>');
 
-	    // Custom styling can be passed to options when creating an Element.
-	    // (Note that this demo uses a wider set of styles than the guide below.)
-	    var style = {
-	      base: {
-	        color: '#32325d',
-	        lineHeight: '24px',
-	        fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
-	        fontSmoothing: 'antialiased',
-	        fontSize: '16px',
-	        '::placeholder': {
-	          color: '#aab7c4'
-	        }
-	      },
-	      invalid: {
-	        color: '#fa755a',
-	        iconColor: '#fa755a'
-	      }
-	    };
+    	    // Create an instance of Elements
+    	    var elements = stripe.elements();
 
-	    // Create an instance of the card Element
-	    var card = elements.create('card', {style: style});
+    	    // Custom styling can be passed to options when creating an Element.
+    	    // (Note that this demo uses a wider set of styles than the guide below.)
+    	    var style = {
+    	      base: {
+    	        color: '#32325d',
+    	        lineHeight: '24px',
+    	        fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+    	        fontSmoothing: 'antialiased',
+    	        fontSize: '16px',
+    	        '::placeholder': {
+    	          color: '#aab7c4'
+    	        }
+    	      },
+    	      invalid: {
+    	        color: '#fa755a',
+    	        iconColor: '#fa755a'
+    	      }
+    	    };
 
-	    // Add an instance of the card Element into the `card-element` <div>
-	    card.mount('#card-element');
+    	    // Create an instance of the card Element
+    	    var card = elements.create('card', {style: style});
 
-	    // Handle real-time validation errors from the card Element.
-	    card.addEventListener('change', function(event) {
-	      var displayError = document.getElementById('card-errors');
-	      if (event.error) {
-	        displayError.textContent = event.error.message;
-	      } else {
-	        displayError.textContent = '';
-	      }
-	    });
+    	    // Add an instance of the card Element into the `card-element` <div>
+    	    card.mount('#card-element');
 
-	    // Handle form submission
-	    var form = document.getElementById('payment-form');
-	    console.log(form);
-	    form.addEventListener('submit', function(event) {
-	      event.preventDefault();
-			<?php
-			if (empty($conf->global->STRIPE_USE_3DSECURE))	// Ask credit card directly, no 3DS test
-			{
-			?>
-				/* Use token */
-				stripe.createToken(card).then(function(result) {
-			        if (result.error) {
-			          // Inform the user if there was an error
-			          var errorElement = document.getElementById('card-errors');
-			          errorElement.textContent = result.error.message;
-			        } else {
-			          // Send the token to your server
-			          stripeTokenHandler(result.token);
-			        }
-				});
-			<?php
-			}
-			else											// Ask credit card with 3DS test
-			{
-			?>
-				/* Use 3DS source */
-				stripe.createSource(card).then(function(result) {
-				    if (result.error) {
-				      // Inform the user if there was an error
-				      var errorElement = document.getElementById('card-errors');
-				      errorElement.textContent = result.error.message;
-				    } else {
-				      // Send the source to your server
-				      stripeSourceHandler(result.source);
-				    }
-				});
-			<?php
-			}
-			?>
-	    });
+    	    // Handle real-time validation errors from the card Element.
+    	    card.addEventListener('change', function(event) {
+    	      var displayError = document.getElementById('card-errors');
+    	      if (event.error) {
+    	        displayError.textContent = event.error.message;
+    	      } else {
+    	        displayError.textContent = '';
+    	      }
+    	    });
+
+    	    // Handle form submission
+    	    var form = document.getElementById('payment-form');
+    	    console.log(form);
+    	    form.addEventListener('submit', function(event) {
+    	      event.preventDefault();
+    			<?php
+    			if (empty($conf->global->STRIPE_USE_3DSECURE))	// Ask credit card directly, no 3DS test
+    			{
+    			?>
+    				/* Use token */
+    				stripe.createToken(card).then(function(result) {
+    			        if (result.error) {
+    			          // Inform the user if there was an error
+    			          var errorElement = document.getElementById('card-errors');
+    			          errorElement.textContent = result.error.message;
+    			        } else {
+    			          // Send the token to your server
+    			          stripeTokenHandler(result.token);
+    			        }
+    				});
+    			<?php
+    			}
+    			else											// Ask credit card with 3DS test
+    			{
+    			?>
+    				/* Use 3DS source */
+    				stripe.createSource(card).then(function(result) {
+    				    if (result.error) {
+    				      // Inform the user if there was an error
+    				      var errorElement = document.getElementById('card-errors');
+    				      errorElement.textContent = result.error.message;
+    				    } else {
+    				      // Send the source to your server
+    				      stripeSourceHandler(result.source);
+    				    }
+    				});
+    			<?php
+    			}
+    			?>
+    	    });
 
 
-		/* Insert the Token into the form so it gets submitted to the server */
-	    function stripeTokenHandler(token) {
-	      // Insert the token ID into the form so it gets submitted to the server
-	      var form = document.getElementById('payment-form');
-	      var hiddenInput = document.createElement('input');
-	      hiddenInput.setAttribute('type', 'hidden');
-	      hiddenInput.setAttribute('name', 'stripeToken');
-	      hiddenInput.setAttribute('value', token.id);
-	      form.appendChild(hiddenInput);
+    		/* Insert the Token into the form so it gets submitted to the server */
+    	    function stripeTokenHandler(token) {
+    	      // Insert the token ID into the form so it gets submitted to the server
+    	      var form = document.getElementById('payment-form');
+    	      var hiddenInput = document.createElement('input');
+    	      hiddenInput.setAttribute('type', 'hidden');
+    	      hiddenInput.setAttribute('name', 'stripeToken');
+    	      hiddenInput.setAttribute('value', token.id);
+    	      form.appendChild(hiddenInput);
 
-	      // Submit the form
-	      jQuery('#buttontopay').hide();
-	      jQuery('#hourglasstopay').show();
-	      console.log("submit token");
-	      form.submit();
-	    }
+    	      // Submit the form
+    	      jQuery('#buttontopay').hide();
+    	      jQuery('#hourglasstopay').show();
+    	      console.log("submit token");
+    	      form.submit();
+    	    }
 
-		/* Insert the Source into the form so it gets submitted to the server */
-		function stripeSourceHandler(source) {
-		  // Insert the source ID into the form so it gets submitted to the server
-		  var form = document.getElementById('payment-form');
-		  var hiddenInput = document.createElement('input');
-		  hiddenInput.setAttribute('type', 'hidden');
-		  hiddenInput.setAttribute('name', 'stripeSource');
-		  hiddenInput.setAttribute('value', source.id);
-		  form.appendChild(hiddenInput);
+    		/* Insert the Source into the form so it gets submitted to the server */
+    		function stripeSourceHandler(source) {
+    		  // Insert the source ID into the form so it gets submitted to the server
+    		  var form = document.getElementById('payment-form');
+    		  var hiddenInput = document.createElement('input');
+    		  hiddenInput.setAttribute('type', 'hidden');
+    		  hiddenInput.setAttribute('name', 'stripeSource');
+    		  hiddenInput.setAttribute('value', source.id);
+    		  form.appendChild(hiddenInput);
 
-		  // Submit the form
-	      jQuery('#buttontopay').hide();
-	      jQuery('#hourglasstopay').show();
-	      console.log("submit source");
-		  form.submit();
+    		  // Submit the form
+    	      jQuery('#buttontopay').hide();
+    	      jQuery('#hourglasstopay').show();
+    	      console.log("submit source");
+    		  form.submit();
+    		}
+
+    	    <?php
+    		}
+
+    		print '</script>';
 		}
-
-	    <?php
-		}
-
-		print '</script>';
 	}
 }
 

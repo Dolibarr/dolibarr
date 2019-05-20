@@ -1958,7 +1958,7 @@ elseif (! empty($object->id))
 		print '<tr><td class="titlefield">'.$langs->trans("Date").'</td><td>';
 		if ($object->date_commande)
 		{
-			print dol_print_date($object->date_commande, "dayhourtext")."\n";
+			print dol_print_date($object->date_commande, "dayhour")."\n";
 		}
 		print "</td></tr>";
 

@@ -103,7 +103,7 @@ class Form
 	 * @return	string					HTML edit field
 	 */
     public function editfieldkey($text, $htmlname, $preselected, $object, $perm, $typeofdata = 'string', $moreparam = '', $fieldrequired = 0, $notabletag = 0, $paramid = 'id')
-	{
+    {
 		global $conf,$langs;
 
 		$ret='';
@@ -144,7 +144,7 @@ class Form
 		}
 
 		return $ret;
-	}
+    }
 
 	/**
 	 * Output value of a field for an editable field
@@ -1898,7 +1898,9 @@ class Form
         // phpcs:enable
 		global $langs,$conf;
 
+		// check parameters
 		$price_level = (! empty($price_level) ? $price_level : 0);
+		if (is_null($ajaxoptions)) $ajaxoptions=array();
 
 		if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT))
 		{
@@ -2084,6 +2086,11 @@ class Form
 			$sql.=' pcp.price_base_type as custprice_base_type, pcp.tva_tx as custtva_tx';
 			$selectFields.= ", idprodcustprice, custprice, custprice_ttc, custprice_base_type, custtva_tx";
 		}
+        // Units
+        if (! empty($conf->global->PRODUCT_USE_UNITS)) {
+            $sql .= ', u.label as unit_long, u.short_label as unit_short';
+            $selectFields .= ', unit_long, unit_short';
+        }
 
 		// Multilang : we add translation
 		if (! empty($conf->global->MAIN_MULTILANGS))
@@ -2121,6 +2128,10 @@ class Form
 		if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES) && !empty($socid)) {
 			$sql.=" LEFT JOIN  ".MAIN_DB_PREFIX."product_customer_price as pcp ON pcp.fk_soc=".$socid." AND pcp.fk_product=p.rowid";
 		}
+        // Units
+        if (! empty($conf->global->PRODUCT_USE_UNITS)) {
+            $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_units u ON u.rowid = p.fk_unit";
+        }
 		// Multilang : we add translation
 		if (! empty($conf->global->MAIN_MULTILANGS))
 		{
@@ -2382,6 +2393,10 @@ class Form
 		$opt.= $objp->ref;
 		if ($outbarcode) $opt.=' ('.$outbarcode.')';
 		$opt.=' - '.dol_trunc($label, $maxlengtharticle);
+        // Units
+        if (! empty($conf->global->PRODUCT_USE_UNITS)) {
+            $opt .= ' (' . $objp->unit_short . ')';
+        }
 
 		$objRef = $objp->ref;
 		if (! empty($filterkey) && $filterkey != '') $objRef=preg_replace('/('.preg_quote($filterkey).')/i', '<strong>$1</strong>', $objRef, 1);
@@ -7189,7 +7204,7 @@ class Form
 				if ($object->photo) $ret.="<br>\n";
 				$ret.='<table class="nobordernopadding centpercent">';
 				if ($object->photo) $ret.='<tr><td><input type="checkbox" class="flat photodelete" name="deletephoto" id="photodelete"> '.$langs->trans("Delete").'<br><br></td></tr>';
-				$ret.='<tr><td class="tdoverflow"><input type="file" class="flat maxwidth200onsmartphone" name="photo" id="photoinput"'.($capture?' capture="'.$capture.'"':'').'></td></tr>';
+				$ret.='<tr><td class="tdoverflow"><input type="file" class="flat maxwidth200onsmartphone" name="photo" id="photoinput" accept="image/*"'.($capture?' capture="'.$capture.'"':'').'></td></tr>';
 				$ret.='</table>';
 			}
 		}

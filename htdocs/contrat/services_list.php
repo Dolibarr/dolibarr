@@ -5,6 +5,7 @@
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019      Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,11 +48,11 @@ if (! $sortorder) $sortorder="ASC";
 
 $mode = GETPOST("mode");
 $filter=GETPOST("filter");
-$search_name=GETPOST("search_name");
-$search_contract=GETPOST("search_contract");
-$search_service=GETPOST("search_service");
-$search_status=GETPOST("search_status", "alpha");
-$statut=GETPOST('statut')?GETPOST('statut'):1;
+$search_name=GETPOST("search_name", 'alpha');
+$search_contract=GETPOST("search_contract", 'alpha');
+$search_service=GETPOST("search_service", 'alpha');
+$search_status=GETPOST("search_status", 'alpha');
+$statut=GETPOST('statut', 'int')?GETPOST('statut', 'int'):1;
 $search_product_category=GETPOST('search_product_category', 'int');
 $socid=GETPOST('socid', 'int');
 $contextpage=GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'contractservicelist'.$mode;
@@ -61,20 +62,20 @@ $opouvertureprevueday=GETPOST('opouvertureprevueday');
 $opouvertureprevueyear=GETPOST('opouvertureprevueyear');
 $filter_opouvertureprevue=GETPOST('filter_opouvertureprevue');
 
-$op1month=GETPOST('op1month');
-$op1day=GETPOST('op1day');
-$op1year=GETPOST('op1year');
-$filter_op1=GETPOST('filter_op1');
+$op1month=GETPOST('op1month', 'int');
+$op1day=GETPOST('op1day', 'int');
+$op1year=GETPOST('op1year', 'int');
+$filter_op1=GETPOST('filter_op1', 'alpha');
 
-$op2month=GETPOST('op2month');
-$op2day=GETPOST('op2day');
-$op2year=GETPOST('op2year');
-$filter_op2=GETPOST('filter_op2');
+$op2month=GETPOST('op2month', 'int');
+$op2day=GETPOST('op2day', 'int');
+$op2year=GETPOST('op2year', 'int');
+$filter_op2=GETPOST('filter_op2', 'alpha');
 
-$opcloturemonth=GETPOST('opcloturemonth');
-$opclotureday=GETPOST('opclotureday');
-$opclotureyear=GETPOST('opclotureyear');
-$filter_opcloture=GETPOST('filter_opcloture');
+$opcloturemonth=GETPOST('opcloturemonth', 'int');
+$opclotureday=GETPOST('opclotureday', 'int');
+$opclotureyear=GETPOST('opclotureyear', 'int');
+$filter_opcloture=GETPOST('filter_opcloture', 'alpha');
 
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -523,7 +524,7 @@ if (! empty($arrayfields['status']['checked']))
 	print '</td>';
 }
 // Action column
-print '<td class="liste_titre right">';
+print '<td class="liste_titre maxwidthsearch">';
 $searchpicto=$form->showFilterAndCheckAddButtons(0);
 print $searchpicto;
 print '</td>';

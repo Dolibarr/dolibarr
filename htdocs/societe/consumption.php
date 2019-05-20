@@ -22,7 +22,7 @@
 /**
  *	\file       htdocs/societe/consumption.php
  *  \ingroup    societe
- *	\brief      Add a tab on thirpdarty view to list all products/services bought or sells by thirdparty
+ *	\brief      Add a tab on thirdparty view to list all products/services bought or sells by thirdparty
  */
 
 require "../main.inc.php";
@@ -396,7 +396,7 @@ if ($sql_select)
     print '</td>';
     print '<td class="liste_titre center">';
     print '</td>';
-    print '<td class="liste_titre right">';
+    print '<td class="liste_titre maxwidthsearch">';
     $searchpicto=$form->showFilterAndCheckAddButtons(0);
     print $searchpicto;
     print '</td>';

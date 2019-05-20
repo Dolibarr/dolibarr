@@ -577,7 +577,7 @@ function isValidVATID($company)
         $vatprefix = $company->country_code;
         if ($vatprefix == 'GR') $vatprefix = '(EL|GR)';
         else $vatprefix = preg_quote($vatprefix, '/');
-        if (! preg_match('/^'.$vatprefix.'[a-zA-Z0-9\-\.]{5,10}$/', $company->tva_intra))
+        if (! preg_match('/^'.$vatprefix.'[a-zA-Z0-9\-\.]{5,12}$/', $company->tva_intra))
         {
             return 0;
         }
@@ -1282,6 +1282,10 @@ function check_value($mask, $value)
     if (! empty($reg[3]) && preg_match('/^@/', $reg[3]))  $maskraz=preg_replace('/^@/', '', $reg[3]);
     if ($maskraz >= 0)
     {
+        if ($maskraz == 99) {
+            $maskraz = date('m');
+            $resetEveryMonth = true;
+        }
         if ($maskraz > 12) return 'ErrorBadMaskBadRazMonth';
 
         // Define reg
