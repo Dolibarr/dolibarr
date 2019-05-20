@@ -4155,6 +4155,8 @@ class Product extends CommonObject
         // phpcs:enable
         global $conf, $langs;
 
+        $labelstatut = $labelstatutShort = '';
+
         $langs->load('products');
         if (! empty($conf->productbatch->enabled)) { $langs->load("productbatch");
         }

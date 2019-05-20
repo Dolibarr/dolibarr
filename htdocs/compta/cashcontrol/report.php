@@ -41,7 +41,7 @@ include_once 'class/cashcontrol.class.php';
 $cashcontrol= new CashControl($db);
 $cashcontrol->fetch($id);
 
-$limit = GETPOST('limit')?GETPOST('limit', 'int'):$conf->liste_limit;
+//$limit = GETPOST('limit')?GETPOST('limit', 'int'):$conf->liste_limit;
 $sortorder='ASC';
 $sortfield='b.datev,b.dateo,b.rowid';
 
@@ -152,7 +152,7 @@ if ($resql)
 	$cash=$bank=$cheque=$other=0;
 
     $totalarray=array();
-    while ($i < min($num, $limit))
+    while ($i < $num)
     {
         $objp = $db->fetch_object($resql);
 

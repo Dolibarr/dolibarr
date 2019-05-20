@@ -475,20 +475,20 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 
+$button .= '<a class="butAction" title="" name="button_export_file" href="'.$_SERVER["PHP_SELF"].'?action=export_file'.($param?'&'.$param:'').'">';
+
 $listofformat=AccountancyExport::getType();
-$button  = '<input type="checkbox" name="already_exported"> ' . $langs->trans("IncludeDocsAlreadyExported");
-$button .= '<a class="butAction" title="'.$langs->trans("ExportFilteredList").' ('.$listofformat[$conf->global->ACCOUNTING_EXPORT_MODELCSV].')'.'" name="button_export_file" href="'.$_SERVER["PHP_SELF"].'?action=export_file'.($param?'&'.$param:'').'">';
-if (count($filter)) $button.= $langs->trans("ExportFilteredList");
-else $button.= $langs->trans("ExportList");
-$button.= '</a>';
+if (count($filter)) $buttonLabel = $langs->trans("ExportFilteredList");
+else $buttonLabel = $langs->trans("ExportList");
 
+$newcardbutton = '<input type="checkbox" name="already_exported"> ' . $langs->trans("IncludeDocsAlreadyExported");
+$newcardbutton.= dolGetButtonTitle($buttonLabel, $langs->trans("ExportFilteredList").' ('.$listofformat[$conf->global->ACCOUNTING_EXPORT_MODELCSV].')', 'fa fa-file-export', $_SERVER["PHP_SELF"].'?action=export_file'.($param?'&'.$param:''));
 
-$groupby = ' <a class="nohover marginrightonly" href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/listbyaccount.php?'.$param.'">' . $langs->trans("GroupByAccountAccounting") . '</a>';
-$newcardbutton = '<a class="butActionNew" href="./card.php?action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans("NewAccountingMvt").'</span>';
-$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-$newcardbutton.= '</a>';
+$newcardbutton.= dolGetButtonTitle($langs->trans('GroupByAccountAccounting'), '', 'fa fa-object-group', DOL_URL_ROOT.'/accountancy/bookkeeping/listbyaccount.php?'.$param);
 
-print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $button, $result, $nbtotalofrecords, 'title_accountancy', 0, $groupby.$newcardbutton, '', $limit);
+$newcardbutton.= dolGetButtonTitle($langs->trans('NewAccountingMvt'), '', 'fa fa-plus-circle', './card.php?action=create');
+
+print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $result, $nbtotalofrecords, 'title_accountancy', 0, $newcardbutton, '', $limit);
 
 $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
 $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields

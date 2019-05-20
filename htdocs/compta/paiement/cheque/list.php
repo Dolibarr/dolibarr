@@ -138,9 +138,7 @@ if ($resql)
 	$newcardbutton='';
 	if ($user->rights->banque->cheque)
 	{
-		$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/compta/paiement/cheque/card.php?action=new"><span class="valignmiddle text-plus-circle">'.$langs->trans('NewCheckDeposit').'</span>';
-		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-		$newcardbutton.= '</a>';
+        $newcardbutton.= dolGetButtonTitle($langs->trans('NewCheckDeposit'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/paiement/cheque/card.php?action=new');
 	}
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
