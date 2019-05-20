@@ -16,7 +16,7 @@
  */
 
 /**
- * \file        class/bom.class.php
+ * \file        bom/class/bom.class.php
  * \ingroup     bom
  * \brief       This file is a CRUD class file for BOM (Create/Read/Update/Delete)
  */
@@ -98,7 +98,7 @@ class BOM extends CommonObject
 		'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>-1, 'position'=>62, 'notnull'=>-1,),
 		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-2, 'position'=>500, 'notnull'=>1,),
 		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'position'=>501, 'notnull'=>1,),
-	    'date_valid' => array('type'=>'datetime', 'label'=>'DateValid', 'enabled'=>1, 'visible'=>-2, 'position'=>502, 'notnull'=>0,),
+	    'date_valid' => array('type'=>'datetime', 'label'=>'DateValidation', 'enabled'=>1, 'visible'=>-2, 'position'=>502, 'notnull'=>0,),
 	    'fk_user_creat' => array('type'=>'integer', 'label'=>'UserValidation', 'enabled'=>1, 'visible'=>-2, 'position'=>510, 'notnull'=>1, 'foreignkey'=>'llx_user.rowid',),
 		'fk_user_modif' => array('type'=>'integer', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-2, 'position'=>511, 'notnull'=>-1,),
 	    'fk_user_valid' => array('type'=>'integer', 'label'=>'UserValidation', 'enabled'=>1, 'visible'=>-2, 'position'=>512, 'notnull'=>0,),
@@ -848,6 +848,31 @@ class BOM extends CommonObject
 		{
 			dol_print_error($this->db);
 		}
+	}
+
+	/**
+	 * 	Create an array of lines
+	 *
+	 * 	@return array|int		array of lines if OK, <0 if KO
+	 */
+	public function getLinesArray()
+	{
+	    $this->lines=array();
+
+	    $objectline = new BOMLine($this->db);
+	    $result = $objectline->fetchAll('', '', 0, 0, array('fk_bom'=>$this->id));
+
+	    if (is_numeric($result))
+	    {
+	        $this->error = $this->error;
+	        $this->errors = $this->errors;
+	        return $result;
+	    }
+	    else
+	    {
+	        $this->lines = $result;
+	        return $this->lines();
+	    }
 	}
 
 	/**

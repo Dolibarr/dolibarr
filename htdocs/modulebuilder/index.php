@@ -163,7 +163,10 @@ if ($dirins && $action == 'initmodule' && $modulename)
 		dol_delete_file($destdir.'/myobject_agenda.php');
 		dol_delete_file($destdir.'/myobject_list.php');
 		dol_delete_file($destdir.'/lib/'.strtolower($modulename).'_myobject.lib.php');
+		dol_delete_file($destdir.'/test/phpunit/MyObjectFunctionnalTest.php');
 		dol_delete_file($destdir.'/test/phpunit/MyObjectTest.php');
+		dol_delete_file($destdir.'/test/phpunit');
+		dol_delete_file($destdir.'/test');
 		dol_delete_file($destdir.'/sql/llx'.strtolower($modulename).'_myobject.sql');
 		dol_delete_file($destdir.'/sql/llx_'.strtolower($modulename).'_myobject_extrafields.sql');
 		dol_delete_file($destdir.'/sql/llx_'.strtolower($modulename).'_myobject.key.sql');
@@ -223,6 +226,9 @@ if ($dirins && $action == 'initmodule' && $modulename)
 
 if ($dirins && $action == 'initapi' && !empty($module))
 {
+    $modulename = ucfirst($module);     // Force first letter in uppercase
+    $objectname = $tabobj;
+
     dol_mkdir($dirins.'/'.strtolower($module).'/class');
     $srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
     $srcfile = $srcdir.'/class/api_mymodule.class.php';
@@ -232,9 +238,6 @@ if ($dirins && $action == 'initapi' && !empty($module))
 
     if ($result > 0)
     {
-        $modulename = ucfirst($module);     // Force first letter in uppercase
-        $objectname = $tabobj;
-
         //var_dump($phpfileval['fullname']);
         $arrayreplacement=array(
             'mymodule'=>strtolower($modulename),
@@ -254,6 +257,46 @@ if ($dirins && $action == 'initapi' && !empty($module))
         dolReplaceInFile($destfile, $arrayreplacement);
     }
 }
+
+if ($dirins && $action == 'initphpunit' && !empty($module))
+{
+    $modulename = ucfirst($module);     // Force first letter in uppercase
+    $objectname = $tabobj;
+
+    dol_mkdir($dirins.'/'.strtolower($module).'/class');
+    $srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
+    $srcfile = $srcdir.'/test/phpunit/MyObjectTest.php';
+    $destfile = $dirins.'/'.strtolower($module).'/test/phpunit/'.strtolower($objectname).'Test.php';
+    $result = dol_copy($srcfile, $destfile, 0, 0);
+    /*$srcfile = $srcdir.'/test/phpunit/MyModuleFunctionnalTest.class.php';
+    $destfile = $dirins.'/'.strtolower($module).'/test/phpunit/'.strtolower($module).'FunctionnalTest.class.php';
+    $result = dol_copy($srcfile, $destfile, 0, 0);*/
+    if ($result > 0)
+    {
+        //var_dump($phpfileval['fullname']);
+        $arrayreplacement=array(
+            'mymodule'=>strtolower($modulename),
+            'MyModule'=>$modulename,
+            'MYMODULE'=>strtoupper($modulename),
+            'My module'=>$modulename,
+            'my module'=>$modulename,
+            'Mon module'=>$modulename,
+            'mon module'=>$modulename,
+            'htdocs/modulebuilder/template'=>strtolower($modulename),
+            'myobject'=>strtolower($objectname),
+            'MyObject'=>$objectname,
+            'MYOBJECT'=>strtoupper($objectname),
+            '---Put here your own copyright and developer email---'=>dol_print_date($now, '%Y').' '.$user->getFullName($langs).($user->email?' <'.$user->email.'>':'')
+        );
+
+        dolReplaceInFile($destfile, $arrayreplacement);
+    }
+    else
+    {
+
+    }
+}
+
 if ($dirins && $action == 'inithook' && !empty($module))
 {
     dol_mkdir($dirins.'/'.strtolower($module).'/class');
@@ -518,7 +561,6 @@ if ($dirins && $action == 'initobject' && $module && $objectname)
 	dol_mkdir($destdir.'/lib');
 	dol_mkdir($destdir.'/scripts');
 	dol_mkdir($destdir.'/sql');
-	dol_mkdir($destdir.'/test/phpunit');
 
 	// Scan dir class to find if an object with same name already exists.
 	if (! $error)
@@ -548,7 +590,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname)
 		'myobject_agenda.php'=>strtolower($objectname).'_agenda.php',
 		'myobject_list.php'=>strtolower($objectname).'_list.php',
 		'lib/mymodule_myobject.lib.php'=>'lib/'.strtolower($module).'_'.strtolower($objectname).'.lib.php',
-		'test/phpunit/MyObjectTest.php'=>'test/phpunit/'.$objectname.'Test.php',
+		//'test/phpunit/MyObjectTest.php'=>'test/phpunit/'.strtolower($objectname).'Test.php',
 		'sql/llx_mymodule_myobject.sql'=>'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.sql',
 		'sql/llx_mymodule_myobject_extrafields.sql'=>'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'_extrafields.sql',
 		'sql/llx_mymodule_myobject.key.sql'=>'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.key.sql',
@@ -912,7 +954,7 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname)
 		'myobject_list.php'=>strtolower($objectname).'_list.php',
 		'lib/mymodule.lib.php'=>'lib/'.strtolower($module).'.lib.php',
 		'lib/mymodule_myobject.lib.php'=>'lib/'.strtolower($module).'_'.strtolower($objectname).'.lib.php',
-		'test/phpunit/MyObjectTest.php'=>'test/phpunit/'.$objectname.'Test.php',
+		'test/phpunit/MyObjectTest.php'=>'test/phpunit/'.strtolower($objectname).'Test.php',
 		'sql/llx_mymodule_myobject.sql'=>'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.sql',
 		'sql/llx_mymodule_myobject_extrafields.sql'=>'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'_extrafields.sql',
 		'sql/llx_mymodule_myobject.key.sql'=>'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.key.sql',
@@ -1803,17 +1845,17 @@ elseif (! empty($module))
 						$pathtodocument = strtolower($module).'/'.strtolower($tabobj).'_document.php';
 						$pathtolist     = strtolower($module).'/'.strtolower($tabobj).'_list.php';
 						$pathtonote     = strtolower($module).'/'.strtolower($tabobj).'_note.php';
-						$pathtophpunit  = strtolower($module).'/test/phpunit/'.$tabobj.'Test.php';
+						$pathtophpunit  = strtolower($module).'/test/phpunit/'.strtolower($tabobj).'Test.php';
 						$pathtosql      = strtolower($module).'/sql/llx_'.strtolower($module).'_'.strtolower($tabobj).'.sql';
 						$pathtosqlextra = strtolower($module).'/sql/llx_'.strtolower($module).'_'.strtolower($tabobj).'_extrafields.sql';
 						$pathtosqlkey   = strtolower($module).'/sql/llx_'.strtolower($module).'_'.strtolower($tabobj).'.key.sql';
+						$pathtosqlextrakey = strtolower($module).'/sql/llx_'.strtolower($module).'_'.strtolower($tabobj).'_extrafields.key.sql';
 						$pathtolib      = strtolower($module).'/lib/'.strtolower($module).'.lib.php';
 						$pathtoobjlib   = strtolower($module).'/lib/'.strtolower($module).'_'.strtolower($tabobj).'.lib.php';
 						$pathtopicto    = strtolower($module).'/img/object_'.strtolower($tabobj).'.png';
 						$pathtoscript   = strtolower($module).'/scripts/'.strtolower($tabobj).'.php';
 
 						//var_dump($pathtolib);
-
 						$realpathtoclass    = dol_buildpath($pathtoclass, 0, 2);
 						$realpathtoapi      = dol_buildpath($pathtoapi, 0, 2);
 						$realpathtoagenda   = dol_buildpath($pathtoagenda, 0, 2);
@@ -1825,6 +1867,7 @@ elseif (! empty($module))
 						$realpathtosql      = dol_buildpath($pathtosql, 0, 2);
 						$realpathtosqlextra = dol_buildpath($pathtosqlextra, 0, 2);
 						$realpathtosqlkey   = dol_buildpath($pathtosqlkey, 0, 2);
+						$realpathtosqlextrakey = dol_buildpath($pathtosqlextrakey, 0, 2);
 						$realpathtolib      = dol_buildpath($pathtolib, 0, 2);
 						$realpathtoobjlib   = dol_buildpath($pathtoobjlib, 0, 2);
 						$realpathtopicto    = dol_buildpath($pathtopicto, 0, 2);
@@ -1855,9 +1898,21 @@ elseif (! empty($module))
 						    //print '<span class="opacitymedium">'.$langs->trans("FileNotYetGenerated").'</span> ';
 						    print '<a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=initapi&format=php&file='.urlencode($pathtoapi).'"><input type="button" class="button" value="'.$langs->trans("Generate").'"></a>';
 						}
+						// PHPUnit
 						print '<br>';
 						print '<span class="fa fa-file-o"></span> '.$langs->trans("TestClassFile").' : <strong>'.($realpathtophpunit?'':'<strike>').$pathtophpunit.($realpathtophpunit?'':'</strike>').'</strong>';
-						print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtophpunit).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+
+						if ($realpathtophpunit)
+						{
+						    print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtophpunit).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+						    print ' &nbsp; ';
+						    print '<a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=confirm_removefile&file='.urlencode($pathtophpunit).'">'.img_picto($langs->trans("Delete"), 'delete').'</a>';
+						}
+						else
+						{
+						    //print '<span class="opacitymedium">'.$langs->trans("FileNotYetGenerated").'</span> ';
+						    print '<a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=initphpunit&format=php&file='.urlencode($pathtophpunit).'"><input type="button" class="button" value="'.$langs->trans("Generate").'"></a>';
+						}
 						print '<br>';
 
 						print '<br>';
@@ -1885,6 +1940,10 @@ elseif (! empty($module))
 						print '<br>';
 						print '<span class="fa fa-file-o"></span> '.$langs->trans("SqlFileKey").' : <strong>'.($realpathtosqlkey?'':'<strike>').$pathtosqlkey.($realpathtosqlkey?'':'</strike>').'</strong>';
 						print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=sql&file='.urlencode($pathtosqlkey).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+						//print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("RunSql").'</a>';
+						print '<br>';
+						print '<span class="fa fa-file-o"></span> '.$langs->trans("SqlFileKeyExtraFields").' : <strong>'.($realpathtosqlextrakey?'':'<strike>').$pathtosqlextrakey.($realpathtosqlextrakey?'':'</strike>').'</strong>';
+						print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=sql&file='.urlencode($pathtosqlextrakey).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
 						//print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("RunSql").'</a>';
 						print '<br>';
 
@@ -2737,7 +2796,7 @@ elseif (! empty($module))
 
 			if ($action != 'editfile' || empty($file))
 			{
-			    print '<span class="opacitymedium">'.$langs->trans("CronJobDefDesc", '<a href="'.DOL_URL_ROOT.'/cron/list.php?status=-2">'.$langs->transnoentities('CronList').'</a>').'</span><br>';
+			    print '<span class="opacitymedium">'.$langs->trans("CronJobDefDesc", '<a href="'.DOL_URL_ROOT.'/cron/list.php">'.$langs->transnoentities('CronList').'</a>').'</span><br>';
 				print '<br>';
 
 				print '<span class="fa fa-file-o"></span> '.$langs->trans("DescriptorFile").' : <strong>'.$pathtofile.'</strong>';

@@ -251,20 +251,31 @@ if (empty($reshook))
 	    $datepaye = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 
         // Clean parameters amount if payment is for a credit note
-        if (GETPOST('type', 'int') == FactureFournisseur::TYPE_CREDIT_NOTE)
+        foreach ($amounts as $key => $value)	// How payment is dispatched
         {
-            foreach ($amounts as $key => $value)	// How payment is dispatch
+            $tmpinvoice = new FactureFournisseur($db);
+            $tmpinvoice->fetch($key);
+            if ($tmpinvoice->type == FactureFournisseur::TYPE_CREDIT_NOTE)
             {
                 $newvalue = price2num($value, 'MT');
-                $amounts[$key] = -$newvalue;
-            }
-
-            foreach ($multicurrency_amounts as $key => $value)	// How payment is dispatch
-            {
-                $newvalue = price2num($value, 'MT');
-                $multicurrency_amounts[$key] = -$newvalue;
+                $amounts[$key] = - abs($newvalue);
             }
         }
+
+        foreach ($multicurrency_amounts as $key => $value)	// How payment is dispatched
+        {
+            $tmpinvoice = new FactureFournisseur($db);
+            $tmpinvoice->fetch($key);
+            if ($tmpinvoice->type == FactureFournisseur::TYPE_CREDIT_NOTE)
+            {
+                $newvalue = price2num($value, 'MT');
+                $multicurrency_amounts[$key] = - abs($newvalue);
+            }
+        }
+
+		//var_dump($amounts);
+        //var_dump($multicurrency_amounts);
+        //exit;
 
 	    if (! $error)
 	    {
@@ -491,26 +502,35 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 			if (empty($reshook))
 			{
 				/*
-	             * Autres factures impayees
+	             * All unpayed supplier invoices
 	             */
-	            $sql = 'SELECT f.rowid as facid, f.ref, f.ref_supplier, f.total_ht, f.total_ttc, f.multicurrency_total_ttc, f.datef as df,';
-	            $sql.= ' SUM(pf.amount) as am, SUM(pf.multicurrency_amount) as multicurrency_am, f.date_lim_reglement as dlr';
+	            $sql = 'SELECT f.rowid as facid, f.ref, f.ref_supplier, f.type, f.total_ht, f.total_ttc, f.multicurrency_total_ttc, f.datef as df, f.date_lim_reglement as dlr,';
+	            $sql.= ' SUM(pf.amount) as am, SUM(pf.multicurrency_amount) as multicurrency_am';
 	            $sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as f';
 	            $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf ON pf.fk_facturefourn = f.rowid';
 	            $sql.= " WHERE f.entity = ".$conf->entity;
 	            $sql.= ' AND f.fk_soc = '.$object->socid;
 	            $sql.= ' AND f.paye = 0';
 	            $sql.= ' AND f.fk_statut = 1';  // Statut=0 => non validee, Statut=2 => annulee
-	            $sql.= ' GROUP BY f.rowid, f.ref, f.ref_supplier, f.total_ht, f.total_ttc, f.multicurrency_total_ttc, f.datef, f.date_lim_reglement';
+	            if ($object->type != FactureFournisseur::TYPE_CREDIT_NOTE)
+	            {
+	                $sql .= ' AND f.type IN (0,1,3,5)';	// Standard invoice, replacement, deposit, situation
+	            }
+	            else
+	            {
+	                $sql .= ' AND f.type = 2';		// If paying back a credit note, we show all credit notes
+	            }
+                // Group by because we have a total
+	            $sql.= ' GROUP BY f.datef, f.ref, f.ref_supplier, f.rowid, f.type, f.total_ht, f.total_ttc, f.multicurrency_total_ttc, f.datef, f.date_lim_reglement';
+	            // Sort invoices by date and serial number: the older one comes first
+	            $sql.= ' ORDER BY f.datef ASC, f.ref ASC';
+
 	            $resql = $db->query($sql);
 	            if ($resql)
 	            {
 	                $num = $db->num_rows($resql);
 	                if ($num > 0)
 	                {
-	                	$sign=1;
-	                	if ($object->type == 2) $sign=-1;
-
 	                    $i = 0;
 	                    print '<br>';
 
@@ -551,8 +571,15 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                    {
 	                        $objp = $db->fetch_object($resql);
 
+	                        $sign=1;
+	                        if ($objp->type == FactureFournisseur::TYPE_CREDIT_NOTE) $sign=-1;
+
 	                        $invoice=new FactureFournisseur($db);
 	                        $invoice->fetch($objp->facid);
+
+	                        $invoicesupplierstatic->ref=$objp->ref;
+	                        $invoicesupplierstatic->id=$objp->facid;
+
 	                        $paiement = $invoice->getSommePaiement();
 	                        $creditnotes=$invoice->getSumCreditNotesUsed();
 	                        $deposits=$invoice->getSumDepositsUsed();
@@ -572,9 +599,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                        print '<tr class="oddeven">';
 
 	                        // Ref
-	                        print '<td>';
-	                        $invoicesupplierstatic->ref=$objp->ref;
-	                        $invoicesupplierstatic->id=$objp->facid;
+	                        print '<td class="nowraponall">';
 	                        print $invoicesupplierstatic->getNomUrl(1);
 	                        print '</td>';
 
@@ -582,7 +607,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                        print '<td>'.$objp->ref_supplier.'</td>';
 
 	                        // Date
-	                        if ($objp->df > 0 )
+	                        if ($objp->df > 0)
 	                        {
 	                            print '<td class="center">';
 	                            print dol_print_date($db->jdate($objp->df), 'day').'</td>';
@@ -593,7 +618,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                        }
 
 	                        // Date Max Payment
-	                        if ($objp->dlr > 0 )
+	                        if ($objp->dlr > 0)
 	                        {
 	                            print '<td class="center">';
 	                            print dol_print_date($db->jdate($objp->dlr), 'day');
@@ -648,7 +673,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                        print '<td class="right">'.price($sign * $remaintopay).'</td>';
 
 	                        // Amount
-	                        print '<td class="center">';
+	                        print '<td class="center nowraponall">';
 
 	                        $namef = 'amount_'.$objp->facid;
 	                        $nameRemain = 'remain_'.$objp->facid;
@@ -711,12 +736,12 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 							if (!empty($conf->multicurrency->enabled)) print '<td>&nbsp;</td>';
 							if (!empty($conf->multicurrency->enabled)) print '<td>&nbsp;</td>';
 							if (!empty($conf->multicurrency->enabled)) print '<td>&nbsp;</td>';
-	                        print '<td class="right"><b>'.price($total_ttc).'</b></td>';
-							print '<td class="right"><b>'.price($totalrecu);
+							print '<td class="right"><b>'.price($sign * $total_ttc).'</b></td>';
+							print '<td class="right"><b>'.price($sign * $totalrecu);
 							if ($totalrecucreditnote) print '+'.price($totalrecucreditnote);
 							if ($totalrecudeposits) print '+'.price($totalrecudeposits);
 							print	'</b></td>';
-	                        print '<td class="right"><b>'.price(price2num($total_ttc - $totalrecu - $totalrecucreditnote - $totalrecudeposits, 'MT')).'</b></td>';
+							print '<td class="right"><b>'.price($sign * price2num($total_ttc - $totalrecu - $totalrecucreditnote - $totalrecudeposits, 'MT')).'</b></td>';
 	                        print '<td class="center" id="result" style="font-weight: bold;"></td>';		// Autofilled
 							if (!empty($conf->multicurrency->enabled)) print '<td class="right" id="multicurrency_result" style="font-weight: bold;"></td>';
 	                        print "</tr>\n";
@@ -919,7 +944,7 @@ if (empty($action) || $action == 'list')
         print '<td class="liste_titre right">';
         print '<input class="flat" type="text" size="4" name="search_amount" value="'.dol_escape_htmltag($search_amount).'">';
         print '</td>';
-        print '<td class="liste_titre right">';
+        print '<td class="liste_titre maxwidthsearch">';
         $searchpicto=$form->showFilterAndCheckAddButtons(0);
         print $searchpicto;
         print '</td>';
@@ -936,11 +961,11 @@ if (empty($action) || $action == 'list')
             print_liste_field_titre("Account", $_SERVER["PHP_SELF"], 'ba.label', '', $param, '', $sortfield, $sortorder);
         }
         print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], 'p.amount', '', $param, '', $sortfield, $sortorder, 'right ');
-        
+
         $parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
         $reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters);    // Note that $action and $object may have been modified by hook
         print $hookmanager->resPrint;
-        
+
         print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch ');
         print "</tr>\n";
 
@@ -955,29 +980,29 @@ if (empty($action) || $action == 'list')
             // Ref payment
             print '<td class="nowrap"><a href="'.DOL_URL_ROOT.'/fourn/paiement/card.php?id='.$objp->pid.'">'.img_object($langs->trans('ShowPayment'), 'payment').' '.$objp->pid.'</a></td>';
             if (! $i) $totalarray['nbfield']++;
-            
+
             // Date
             $dateformatforpayment = 'day';
             if (! empty($conf->global->INVOICE_USE_HOURS_FOR_PAYMENT)) $dateformatforpayment='dayhour';
             print '<td class="nowrap center">'.dol_print_date($db->jdate($objp->dp), $dateformatforpayment)."</td>\n";
             if (! $i) $totalarray['nbfield']++;
-            
+
             // Thirdparty
             print '<td>';
             if ($objp->socid) print '<a href="'.DOL_URL_ROOT.'/societe/card.php?socid='.$objp->socid.'">'.img_object($langs->trans('ShowCompany'), 'company').' '.dol_trunc($objp->name, 32).'</a>';
             else print '&nbsp;';
             print '</td>';
             if (! $i) $totalarray['nbfield']++;
-            
+
             // Type
             $payment_type = $langs->trans("PaymentType".$objp->paiement_type)!=("PaymentType".$objp->paiement_type)?$langs->trans("PaymentType".$objp->paiement_type):$objp->paiement_libelle;
             print '<td>'.$payment_type.' '.dol_trunc($objp->num_paiement, 32)."</td>\n";
             if (! $i) $totalarray['nbfield']++;
-            
+
             // Payment number
             print '<td>'.$objp->num_paiement.'</td>';
             if (! $i) $totalarray['nbfield']++;
-            
+
             // Account
             if (! empty($conf->banque->enabled))
             {
@@ -987,13 +1012,13 @@ if (empty($action) || $action == 'list')
         	    print '</td>';
             	if (! $i) $totalarray['nbfield']++;
             }
-            
+
             // Amount
             print '<td class="right">'.price($objp->pamount).'</td>';
             if (! $i) $totalarray['nbfield']++;
             $totalarray['pos'][7]='amount';
             $totalarray['val']['amount'] += $objp->pamount;
-            
+
             // Ref invoice
             /*$invoicesupplierstatic->ref=$objp->ref_supplier;
             $invoicesupplierstatic->id=$objp->facid;
@@ -1003,11 +1028,11 @@ if (empty($action) || $action == 'list')
 
 			print '<td></td>';
 			if (! $i) $totalarray['nbfield']++;
-			
+
             print '</tr>';
             $i++;
         }
-        
+
         // Show total line
         if (isset($totalarray['pos']))
         {
@@ -1029,7 +1054,7 @@ if (empty($action) || $action == 'list')
             }
             print '</tr>';
         }
-        
+
         print "</table>";
         print "</div>";
         print "</form>\n";

@@ -1474,8 +1474,6 @@ class FactureFournisseur extends CommonInvoice
         }
     }
 
-
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *	Set draft status
      *
@@ -1492,11 +1490,11 @@ class FactureFournisseur extends CommonInvoice
 
         if ($this->statut == self::STATUS_DRAFT)
         {
-            dol_syslog(get_class($this)."::set_draft already draft status", LOG_WARNING);
+            dol_syslog(__METHOD__." already draft status", LOG_WARNING);
             return 0;
         }
 
-        dol_syslog(get_class($this)."::set_draft", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
 
         $this->db->begin();
 

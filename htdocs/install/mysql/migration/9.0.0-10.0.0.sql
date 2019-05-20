@@ -61,6 +61,8 @@ CREATE TABLE llx_pos_cash_fence(
 -- For 10.0
 
 DROP TABLE llx_cotisation;
+ALTER TABLE llx_accounting_bookkeeping DROP COLUMN validated;
+ALTER TABLE llx_accounting_bookkeeping_tmp DROP COLUMN validated;
 
 ALTER TABLE llx_loan ADD COLUMN insurance_amount double(24,8) DEFAULT 0;
 
@@ -70,7 +72,10 @@ ALTER TABLE llx_facture ADD UNIQUE INDEX uk_facture_ref (ref, entity);
 
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('TICKET_CREATE','Ticket created','Executed when a ticket is created','ticket',161);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('TICKET_MODIFY','Ticket modified','Executed when a ticket is modified','ticket',163);
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('TICKET_DELETE','Ticket deleted','Executed when a ticket is deleted','ticket',164);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('TICKET_ASSIGNED','Ticket assigned','Executed when a ticket is assigned to another user','ticket',164);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('TICKET_CLOSE','Ticket closed','Executed when a ticket is closed','ticket',165);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('TICKET_SENTBYMAIL','Ticket message sent by email','Executed when a message is sent from the ticket record','ticket',166);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('TICKET_DELETE','Ticket deleted','Executed when a ticket is deleted','ticket',167);
 
 create table llx_mailing_unsubscribe
 (
@@ -293,9 +298,6 @@ ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN maxemailpercollect inte
 DELETE FROM llx_const WHERE name = 'THEME_ELDY_USE_HOVER' AND value = '0';
 DELETE FROM llx_const WHERE name = 'THEME_ELDY_USE_CHECKED' AND value = '0';
 
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('TICKET_CLOSE','Ticket closed','Executed when a ticket is closed','ticket',164);
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('TICKET_SENTBYMAIL','Ticket message sent by email','Executed when a message is sent from the ticket record','ticket',166);
-
 ALTER TABLE llx_inventorydet DROP COLUMN pmp; 
 ALTER TABLE llx_inventorydet DROP COLUMN pa; 
 ALTER TABLE llx_inventorydet DROP COLUMN new_pmp;
@@ -366,4 +368,11 @@ ALTER TABLE llx_reception_extrafields ADD INDEX idx_reception_extrafields (fk_ob
 ALTER TABLE llx_commande_fournisseur_dispatch ADD COLUMN fk_projet integer DEFAULT NULL;
 ALTER TABLE llx_commande_fournisseur_dispatch ADD COLUMN fk_reception integer DEFAULT NULL;
 
-  
+
+
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (110, 'supplier_proposal', 'internal', 'SALESREPFOLL',  'Responsable suivi de la demande', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (111, 'supplier_proposal', 'external', 'BILLING',       'Contact fournisseur facturation', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (112, 'supplier_proposal', 'external', 'SHIPPING',      'Contact fournisseur livraison', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (113, 'supplier_proposal', 'external', 'SERVICE',       'Contact fournisseur prestation', 1);
+
+ALTER TABLE llx_ticket_extrafields ADD INDEX idx_ticket_extrafields (fk_object);
