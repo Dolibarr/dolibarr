@@ -1,16 +1,38 @@
 <?php
+/* Copyright (C) 2019       Open-DSI       <support@open-dsi.fr>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 
-require './config.php';
+/**
+ *	\file       htdocs/intracommreport/export.php
+ *	\ingroup    Intracomm report
+ *	\brief      Page to manage intracomm report export
+ */
+require_once '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
-dol_include_once('/intracommreport/class/deb_prodouane.class.php');
+require_once DOL_DOCUMENT_ROOT . '/intracommreport/class/intracommreport.class.php';
 
 $action = GETPOST('action');
 $exporttype = GETPOST('exporttype'); // DEB ou DES
 if (empty($exporttype)) $exporttype = 'deb';
 
+/*
 $PDOdb = new TPDOdb;
 $ATMform = new TFormCore;
+*/
 $formother = new FormOther($db);
 $year = GETPOST('year');
 $month = GETPOST('month');
@@ -65,7 +87,7 @@ function _print_form_deb() {
 	print '<td>';
 	$TabMonth = array();
 	for($i=1;$i<=12;$i++) $TabMonth[$i] = $langs->trans('Month'.str_pad($i, 2, 0, STR_PAD_LEFT));
-	print $ATMform->combo('','month', $TabMonth, empty($month) ? date('m') : $month);
+	//print $ATMform->combo('','month', $TabMonth, empty($month) ? date('m') : $month);
 	print $formother->selectyear(empty($year) ? date('Y') : $year,'year',0, 20, 5);
 	print '</td>';
 	print '</tr>';
@@ -74,7 +96,7 @@ function _print_form_deb() {
 	print 'Type de déclaration';
 	print '</td>';
 	print '<td>';
-	print $ATMform->combo('','type', array('introduction'=>'Introduction', 'expedition'=>'Expédition'), $type_declaration);
+	//print $ATMform->combo('','type', array('introduction'=>'Introduction', 'expedition'=>'Expédition'), $type_declaration);
 	print '</td>';
 	print '</tr>';
 	
@@ -116,7 +138,7 @@ function _print_form_des()
 	print '<td>';
 	$TabMonth = array();
 	for($i=1;$i<=12;$i++) $TabMonth[$i] = $langs->trans('Month'.str_pad($i, 2, 0, STR_PAD_LEFT));
-	print $ATMform->combo('','month', $TabMonth, empty($month) ? date('m') : $month);
+	//print $ATMform->combo('','month', $TabMonth, empty($month) ? date('m') : $month);
 	print $formother->selectyear(empty($year) ? date('Y') : $year,'year',0, 20, 5);
 	print '</td>';
 	print '</tr>';

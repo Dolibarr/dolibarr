@@ -395,3 +395,16 @@ INSERT INTO llx_c_transport_mode (code, libelle, active) VALUES ('PRO', 'Propuls
 
 ALTER TABLE llx_facture ADD COLUMN fk_mode_transport integer after location_incoterms;
 ALTER TABLE llx_facture_fourn ADD COLUMN fk_mode_transport integer after location_incoterms;
+
+create table llx_intracommreport
+(
+  rowid				integer AUTO_INCREMENT PRIMARY KEY,
+  
+  ref				varchar(30)        NOT NULL,			-- report reference number
+  entity			integer  DEFAULT 1 NOT NULL,			-- multi company id
+  type_declaration	varchar(32),
+  periode			varchar(32),
+  mode				varchar(32),
+  content_xml		text,
+  exporttype		varchar(10)
+)ENGINE=innodb;

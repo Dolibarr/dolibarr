@@ -1,16 +1,49 @@
 <?php
+/* Copyright (C) 2019       Open-DSI       <support@open-dsi.fr>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 
-class TDebProdouane extends TObjetStd {
+/**
+ *  \file       htdocs/intracommreport/class/intracommreport.class.php
+ *  \ingroup    Intracomm report
+ *  \brief      File of class to manage intracomm report
+ */
+
+/**
+ * Class to manage intracomm report
+ */
+class DebProdouane extends CommonObject
+{
 	
 	static $TType = array(
 							'introduction'=>'Introduction'
 							,'expedition'=>'Expédition'
 						);
-	
-	function __construct(&$ATMdb) {
-		
-		$this->ATMdb = $ATMdb;
-		$this->errors = array();
+
+    /**
+     * Constructor
+     *
+     * @param DoliDB $db Database handle
+     */
+    public function __construct($db)
+    {
+        global $conf;
+
+        $this->db = $db;
+
+		/*
 		parent::set_table(MAIN_DB_PREFIX.'deb_prodouane');
 		parent::add_champs('numero_declaration,entity','type=entier;');
 		parent::add_champs('type_declaration,periode,mode','type=chaine;');
@@ -18,6 +51,7 @@ class TDebProdouane extends TObjetStd {
 		parent::add_champs('exporttype', array('type'=>'string', 'size'=>'10'));
 		parent::start();
 		parent::_init_vars();
+		*/
 		
 		$this->exporttype = 'deb';
 	}
@@ -41,25 +75,25 @@ class TDebProdouane extends TObjetStd {
 		$e = new SimpleXMLElement('<?xml version="1.0" encoding="utf-8" standalone="yes"?><INSTAT></INSTAT>');
 		
 		$enveloppe = $e->addChild('Envelope');
-		$enveloppe->addChild('envelopeId', $conf->global->EXPORT_PRO_DEB_NUM_AGREMENT);
+		$enveloppe->addChild('envelopeId', $conf->global->INTRACOMMREPORT_NUM_AGREMENT);
 		$date_time = $enveloppe->addChild('DateTime');
 		$date_time->addChild('date', date('Y-m-d'));
 		$date_time->addChild('time', date('H:i:s'));
 		$party = $enveloppe->addChild('Party');
-		$party->addAttribute('partType', $conf->global->EXPORT_PRO_DEB_TYPE_ACTEUR);
-		$party->addAttribute('partyRole', $conf->global->EXPORT_PRO_DEB_ROLE_ACTEUR);
+		$party->addAttribute('partType', $conf->global->INTRACOMMREPORT_TYPE_ACTEUR);
+		$party->addAttribute('partyRole', $conf->global->INTRACOMMREPORT_ROLE_ACTEUR);
 		$party->addChild('partyId', $party_id);
 		$party->addChild('partyName', $declarant);
 		$enveloppe->addChild('softwareUsed', 'Dolibarr');
 		$declaration = $enveloppe->addChild('Declaration');
 		$declaration->addChild('declarationId', $id_declaration);
 		$declaration->addChild('referencePeriod', $periode_reference);
-		if($conf->global->EXPORT_PRO_DEB_TYPE_ACTEUR === 'PSI') $psiId = $party_id;
+		if($conf->global->INTRACOMMREPORT_TYPE_ACTEUR === 'PSI') $psiId = $party_id;
 		else $psiId = 'NA';
 		$declaration->addChild('PSIId', $psiId);
 		$function = $declaration->addChild('Function');
 		$functionCode = $function->addChild('functionCode', $mode);
-		$declaration->addChild('declarationTypeCode', $conf->global->{'EXPORT_PRO_DEB_NIV_OBLIGATION_'.strtoupper($type)});
+		$declaration->addChild('declarationTypeCode', $conf->global->{'INTRACOMMREPORT_NIV_OBLIGATION_'.strtoupper($type)});
 		$declaration->addChild('flowCode', ($type == 'introduction' ? 'A' : 'D'));
 		$declaration->addChild('currencyCode', $conf->global->MAIN_MONNAIE);
 		/********************************************************************/
@@ -118,9 +152,9 @@ class TDebProdouane extends TObjetStd {
 				return 0;
 			}
 			
-			if($exporttype == 'deb' && $conf->global->EXPORT_PRO_DEB_CATEG_FRAISDEPORT > 0) {
+			if($exporttype == 'deb' && $conf->global->INTRACOMMREPORT_CATEG_FRAISDEPORT > 0) {
 				$categ_fraisdeport = new Categorie($db);
-				$categ_fraisdeport->fetch($conf->global->EXPORT_PRO_DEB_CATEG_FRAISDEPORT);
+				$categ_fraisdeport->fetch($conf->global->INTRACOMMREPORT_CATEG_FRAISDEPORT);
 				$TLinesFraisDePort = array();
 			}
 			
@@ -136,7 +170,7 @@ class TDebProdouane extends TObjetStd {
 						// On n'arrête pas la boucle car on veut savoir quels sont tous les tiers qui n'ont pas de pays renseigné
 						$this->errors[] = 'Pays non renseigné pour le tiers <a href="'.dol_buildpath('/societe/soc.php',1).'?socid='.$res->id_client.'">'.$res->nom.'</a>';
 					} else {
-						if($conf->global->EXPORT_PRO_DEB_CATEG_FRAISDEPORT > 0 && $categ_fraisdeport->containsObject('product', $res->id_prod)) {
+						if($conf->global->INTRACOMMREPORT_CATEG_FRAISDEPORT > 0 && $categ_fraisdeport->containsObject('product', $res->id_prod)) {
 							$TLinesFraisDePort[] = $res;
 						} else $this->addItemXMl($declaration, $res, '', $i);
 					}	
