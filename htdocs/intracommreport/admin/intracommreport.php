@@ -32,16 +32,54 @@ $langs->loadLangs(array("admin","intracommreport"));
 
 if (! $user->admin) accessforbidden();
 
-$action=__get('action','');
+$action = GETPOST('action', 'aZ09');
 
-if($action=='save') {
-	
-	foreach($_REQUEST['TParamProDeb'] as $name=>$param) {
-		
-		dolibarr_set_const($db, $name, $param);
+// Parameters ACCOUNTING_* and others
+$list_DEB = array (
+    'INTRACOMMREPORT_NUM_AGREMENT',
+);
 
-	}
-	
+$list_DES = array (
+    'INTRACOMMREPORT_NUM_DECLARATION',
+);
+
+if ($action == 'update') {
+    $error = 0;
+
+    if (! $error)
+    {
+        foreach ($list_DEB as $constname)
+        {
+            $constvalue = GETPOST($constname, 'alpha');
+
+            if (! dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
+                $error++;
+            }
+        }
+
+        foreach ($list_DES as $constname)
+        {
+            $constvalue = GETPOST($constname, 'alpha');
+
+            if (! dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
+                $error++;
+            }
+        }
+
+        dolibarr_set_const($db, "INTRACOMMREPORT_TYPE_ACTEUR", GETPOST("INTRACOMMREPORT_TYPE_ACTEUR", 'alpha'), 'chaine', 0, '', $conf->entity);
+        dolibarr_set_const($db, "INTRACOMMREPORT_ROLE_ACTEUR", GETPOST("INTRACOMMREPORT_ROLE_ACTEUR", 'alpha'), 'chaine', 0, '', $conf->entity);
+        dolibarr_set_const($db, "INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION", GETPOST("INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION", 'alpha'), 'chaine', 0, '', $conf->entity);
+        dolibarr_set_const($db, "INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION", GETPOST("INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION", 'alpha'), 'chaine', 0, '', $conf->entity);
+        dolibarr_set_const($db, "INTRACOMMREPORT_CATEG_FRAISDEPORT", GETPOST("INTRACOMMREPORT_CATEG_FRAISDEPORT", 'alpha'), 'chaine', 0, '', $conf->entity);
+
+        if ($error) {
+            setEventMessages($langs->trans("Error"), null, 'errors');
+        }
+    }
+
+    if (! $error) {
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    }
 }
 
 /*
@@ -51,7 +89,7 @@ if($action=='save') {
 $form=new Form($db);
 $formother=new FormOther($db);
 
-llxHeader('', $langs->trans(IntracommReportSetup));
+llxHeader('', $langs->trans("IntracommReportSetup"));
 
 $linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php?restore_lastsearch_values=1">' . $langs->trans("BackToModuleList") . '</a>';
 print load_fiche_titre($langs->trans("IntracommReportSetup"), $linkback, 'title_setup');
@@ -60,9 +98,9 @@ $head = intracommReportAdminPrepareHead();
 
 dol_fiche_head($head, 'general', $langs->trans("IntracommReport"), 0, "intracommreport");
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="action" value="save">';
+print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">';
+print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
+print '<input type="hidden" name="action" value="update">';
 
 print '<td>'.$langs->trans("Parameters").' (DEB)</td>'."\n";
 print '<table class="noborder" width="100%">';
@@ -71,76 +109,85 @@ print '<td>'.$langs->trans("Description").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
 print '</tr>';
 
-print '<tr class="oddeven">';
-print '<td>'.$langs->trans("INTRACOMMREPORT_NUM_AGREMENT").'</td>';
-print '<td class="center" width="20">&nbsp;</td>';
-print '<td class="right" width="300">';
-print $atmForm->texte('','TParamProDeb[INTRACOMMREPORT_NUM_AGREMENT]',$conf->global->INTRACOMMREPORT_NUM_AGREMENT,30,255);
-print '</td></tr>';
+foreach ($list_DEB as $key)
+{
+    print '<tr class="oddeven value">';
+
+    // Param
+    $label = $langs->trans($key);
+    print '<td>'.$label.'</td>';
+    // Value
+    print '<td class="left">';
+    print '<input type="text" class="maxwidth100" id="' . $key . '" name="' . $key . '" value="' . $conf->global->$key . '">';
+    print '</td>';
+
+    print '</tr>';
+}
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("INTRACOMMREPORT_TYPE_ACTEUR").'</td>';
-print '<td class="center" width="20">&nbsp;</td>';
-print '<td class="right" width="300">';
-print $atmForm->combo('','TParamProDeb[INTRACOMMREPORT_TYPE_ACTEUR]', array(''=>'', 'PSI'=>'Déclarant pour son compte', 'TDP'=>'Tiers déclarant'), $conf->global->INTRACOMMREPORT_TYPE_ACTEUR);
-print '</td></tr>';
+$arraychoices=array(''=>$langs->trans("None"), 'PSI'=>'Déclarant pour son compte', 'TDP'=>'Tiers déclarant');
+print '<td>';
+print $form->selectarray('INTRACOMMREPORT_TYPE_ACTEUR', $arraychoices, $conf->global->INTRACOMMREPORT_TYPE_ACTEUR, 0);
+print '</td>';
+print "</tr>\n";
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("INTRACOMMREPORT_ROLE_ACTEUR").'</td>';
-print '<td class="center" width="20">&nbsp;</td>';
-print '<td class="right" width="300">';
-print $atmForm->combo('','TParamProDeb[INTRACOMMREPORT_ROLE_ACTEUR]', array(''=>'', 'sender'=>'Emetteur', 'PSI'=>'Déclarant'), $conf->global->INTRACOMMREPORT_ROLE_ACTEUR);
-print '</td></tr>';
+$arraychoices=array(''=>$langs->trans("None"), 'sender'=>'Emetteur', 'PSI'=>'Déclarant');
+print '<td>';
+print $form->selectarray('INTRACOMMREPORT_ROLE_ACTEUR', $arraychoices, $conf->global->INTRACOMMREPORT_ROLE_ACTEUR, 0);
+print '</td>';
+print "</tr>\n";
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION").'</td>';
-print '<td class="center" width="20">&nbsp;</td>';
-print '<td class="right" width="300">';
-print $atmForm->combo('','TParamProDeb[INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION]', array(0=>'', 1=>'Seuil de 460 000 €', 2=>'En dessous de 460 000 €'), $conf->global->INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION);
-print '</td></tr>';
+$arraychoices=array(1=>'Seuil de 460 000 €', 2=>'En dessous de 460 000 €');
+print '<td>';
+print $form->selectarray('INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION', $arraychoices, $conf->global->INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION, 0);
+print '</td>';
+print "</tr>\n";
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION").'</td>';
-print '<td class="center" width="20">&nbsp;</td>';
-print '<td class="right" width="300">';
-print $atmForm->combo('','TParamProDeb[INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION]', array(0=>'', 3=>'Seuil de 460 000 €', 4=>'En dessous de 460 000 €'), $conf->global->INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION);
-print '</td></tr>';
+$arraychoices=array(3=>'Seuil de 460 000 €', 4=>'En dessous de 460 000 €');
+print '<td>';
+print $form->selectarray('INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION', $arraychoices, $conf->global->INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION, 0);
+print '</td>';
+print "</tr>\n";
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("INTRACOMMREPORT_CATEG_FRAISDEPORT").'</td>';
-print '<td class="center" width="20">&nbsp;</td>';
-print '<td class="right" width="300">';
-print $formother->select_categories(0, $conf->global->INTRACOMMREPORT_CATEG_FRAISDEPORT, 'TParamProDeb[INTRACOMMREPORT_CATEG_FRAISDEPORT]');
-print '</td></tr>';
+$arraychoices=array(3=>'Seuil de 460 000 €', 4=>'En dessous de 460 000 €');
+print '<td>';
+print $formother->select_categories(0, $conf->global->INTRACOMMREPORT_CATEG_FRAISDEPORT, 'INTRACOMMREPORT_CATEG_FRAISDEPORT');
+print '</td>';
+print "</tr>\n";
 
 print '</table>';
 
-print '<div class="tabsAction">';
-print '<div class="inline-block divButAction">';
-print '<input type="submit" name="bt_save" class="butAction" value="'.$langs->trans('Save').'" />';
-print '</div>';
-print '</div>';
-
-print '</form>';
-	
-print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="action" value="save">';
-
+print '<td>'.$langs->trans("Parameters").' (DES)</td>'."\n";
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Parameters").' (DES)</td>'."\n";
-print '<td class="center" width="20">&nbsp;</td>';
-print '<td class="center" width="100">'.$langs->trans("Value").'</td>'."\n";
+print '<td>'.$langs->trans("Description").'</td>';
+print '<td>'.$langs->trans("Value").'</td>';
 print '</tr>';
 
-print '<tr class="oddeven">';
-print '<td>'.$langs->trans("EXPORT_PRO_DES_NUM_DECLARATION").'</td>';
-print '<td class="center" width="20">&nbsp;</td>';
-print '<td class="right" width="300">';
-print $atmForm->texte('','TParamProDeb[EXPORT_PRO_DES_NUM_DECLARATION]',$conf->global->EXPORT_PRO_DES_NUM_DECLARATION,30,255);
-print '</td></tr>';
-	
+foreach ($list_DES as $key)
+{
+    print '<tr class="oddeven value">';
+
+    // Param
+    $label = $langs->trans($key);
+    print '<td>'.$label.'</td>';
+    // Value
+    print '<td class="left">';
+    print '<input type="text" class="maxwidth100" id="' . $key . '" name="' . $key . '" value="' . $conf->global->$key . '">';
+    print '</td>';
+
+    print '</tr>';
+}
+
 print '</table>';
 
 print '<div class="tabsAction">';

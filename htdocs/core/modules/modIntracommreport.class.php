@@ -59,7 +59,7 @@ class modIntracommreport extends DolibarrModules
         $this->dirs = array('/intracommreport/temp');
 
         // Config pages
-        $this->config_page_url = array("intracommreport.php");
+        $this->config_page_url = array("intracommreport.php@intracommreport");
 
 		// Dependencies
 		$this->depends = array("modFacture","modTax");  // List of modules id that must be enabled if this module is enabled
@@ -201,46 +201,4 @@ class modIntracommreport extends DolibarrModules
 		$r=1;
 
 	}
-
-	/**
-	 *		Function called when module is enabled.
-	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
-	 *		It also creates data directories
-	 *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
-	 *      @return     int             	1 if OK, 0 if KO
-	 */
-	function init($options='')
-	{
-		global $db;
-		
-		$sql = array();
-		
-		define('INC_FROM_DOLIBARR',true);
-
-		dol_include_once('/intracommreport/config.php');
-		dol_include_once('/intracommreport/script/create-maj-base.php');
-
-		$result=$this->_load_tables('/intracommreport/sql/');
-		
-		$TModesTransport = array(
-							'options'=>array(
-								1=>'Transport maritime (y compris camions ou wagons sur bateau)'
-								,2=>'Transport par chemin de fer (y compris camions sur wagon)'
-								,3=>'Transport par route'
-								,4=>'Transport par air'
-								,5=>'Envois postaux'
-								,7=>'Installations de transport fixe (oléoduc)'
-								,8=>'Transport par navigation intérieure'
-								,9=>'Propulsion propre'
-								)
-							);
-		
-		$e = new ExtraFields($db);
-		$e->addExtraField('mode_transport', 'Mode de transport', 'select', '', '', 'facture', 0, 0, '', $TModesTransport);
-		$e->addExtraField('mode_transport', 'Mode de transport', 'select', '', '', 'facture_fourn', 0, 0, '', $TModesTransport);
-		
-		return $this->_init($sql, $options);
-	}
-
 }

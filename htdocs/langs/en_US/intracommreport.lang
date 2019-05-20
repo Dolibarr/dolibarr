@@ -1,7 +1,35 @@
-Module104994Name = intracommreport
-Module104994Desc = intracommreport Descripion
+Module68000Name = Intracomm report
+Module68000Desc = Intracomm report management (Support for French DEB/DES format)
+IntracommReportSetup = Intracommreport module setup
+IntracommReportAbout = About intracommreport
 
-ATMAbout = This module has been developed by <a href="http://www.atm-consulting.fr" target="_blank">ATM Consulting</a><br>You can find the documentation on our <a href="http://wiki.atm-consulting.fr/index.php/Accueil" target="_blank">wiki</a><br><br>For any question or feedback, contact us on <a href="mailto:support@atm-consulting.fr">support@atm-consulting.fr</a><br><br>For any commercial question, contact us on <a href="mailto:contact@atm-consulting.fr">contact@atm-consulting.fr</a> or at +33 9 77 19 50 70<br><br>Find our other modules on <a href="http://www.dolistore.com/search.php?orderby=position&orderway=desc&search_query=atm&submit_search=Rechercher" target="_blank">Dolistore</a>
+#Conf
+INTRACOMMREPORT_NUM_AGREMENT=Numéro d'agrément (délivré par le CISD de rattachement)
+INTRACOMMREPORT_TYPE_ACTEUR=Type d'acteur
+INTRACOMMREPORT_ROLE_ACTEUR=Rôle joué par l'acteur
+INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Niveau d'oligation sur les introductions
+INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Niveau d'obligation sur les expéditions
+INTRACOMMREPORT_CATEG_FRAISDEPORT=Catégorie de services de type "Frais de port"
 
-intracommreportSetup = intracommreport module setup
-intracommreportAbout = About intracommreport
+INTRACOMMREPORT_NUM_DECLARATION=Numéro de déclarant
+
+#Menu
+exportprodebDouane=Export Pro-Douane
+exportprodebDEB=Export DEB
+exportprodebNew=Nouvelle déclaration
+exportprodebList=Liste des déclarations
+exportprodebDES=Export DES
+exportprodesNew=Nouvelle déclaration
+exportprodesList=Liste des déclarations
+
+#page d'export
+exportprodebTitle=Export d'un fichier XML au format ProDouane - DEB
+exportprodesTitle=Export d'un fichier XML au format ProDouane - DES
+
+#Liste
+exportprodebListdeb=Liste des déclarations générées (DEB)
+exportprodebListdes=Liste des déclarations générées (DES)
+exportprodebNumber=Numéro déclaration
+exportprodebPeriod=Période d'analyse
+exportprodebTypeDeclaration=Type de déclaration
+exportprodebDownload=Télécharger fichier XML
