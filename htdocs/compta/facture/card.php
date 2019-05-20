@@ -527,7 +527,7 @@ if (empty($reshook))
 			} else {
 				$qualified_for_stock_change = $object->hasProductsOrServices(1);
 			}
-			
+
 			if ($qualified_for_stock_change)
 			{
 				if (! $idwarehouse || $idwarehouse == - 1) {
@@ -587,8 +587,8 @@ if (empty($reshook))
 			} else {
 				$qualified_for_stock_change = $object->hasProductsOrServices(1);
 			}
-			
-			if ($qualified_for_stock_change))
+
+			if ($qualified_for_stock_change)
 			{
 				if (! $idwarehouse || $idwarehouse == - 1) {
 					$error++;
@@ -3440,7 +3440,7 @@ elseif ($id > 0 || ! empty($ref))
 			} else {
 				$qualified_for_stock_change = $object->hasProductsOrServices(1);
 			}
-			
+
 			if ($qualified_for_stock_change)
 			{
 				$langs->load("stocks");
@@ -3517,7 +3517,7 @@ elseif ($id > 0 || ! empty($ref))
 			} else {
 				$qualified_for_stock_change = $object->hasProductsOrServices(1);
 			}
-			
+
 			if ($qualified_for_stock_change)
 			{
 				$langs->load("stocks");
@@ -3562,7 +3562,7 @@ elseif ($id > 0 || ! empty($ref))
 			} else {
 				$qualified_for_stock_change = $object->hasProductsOrServices(1);
 			}
-			
+
 			if ($qualified_for_stock_change)
 			{
 				$langs->load("stocks");
