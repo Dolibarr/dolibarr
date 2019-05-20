@@ -60,3 +60,12 @@ elseif ($action=="search" && $term != '') {
     }
     echo json_encode($rows);
 }
+if ($action=="changeuser"){	//V20
+	if($term>0){
+		$user->fetch($term);
+		$user->getRights();
+		$_SESSION["dol_login"]=$user->login;
+	}
+    echo json_encode($user->login);
+    //exit;
+}
