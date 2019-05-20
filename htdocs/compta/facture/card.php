@@ -477,7 +477,7 @@ if (empty($reshook))
 
 		// Check parameters
 
-		// Check for mandatory fields defined into setup
+		// Check for mandatory fields in thirdparty (defined into setup)
 		$array_to_check=array('IDPROF1','IDPROF2','IDPROF3','IDPROF4','IDPROF5','IDPROF6','EMAIL');
 		foreach($array_to_check as $key)
 		{
@@ -515,6 +515,23 @@ if (empty($reshook))
 						setEventMessages($langs->trans("ErrorBadEMail", $object->thirdparty->email).' ('.$langs->trans("ForbiddenBySetupRules").')', null, 'errors');
 					}
 				}
+			}
+		}
+
+		// Check for mandatory fields in invoice
+		$array_to_check=array('REF_CUSTOMER'=>'RefCustomer');
+		foreach($array_to_check as $key => $val)
+		{
+			$keymin=strtolower($key);
+			$vallabel=$object->$keymin;
+
+			// Check for mandatory
+			$keymandatory ='INVOICE_'.$key.'_MANDATORY_FOR_VALIDATION';
+			if (! $vallabel && ! empty($conf->global->$keymandatory))
+			{
+				$langs->load("errors");
+				$error++;
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv($val)), null, 'errors');
 			}
 		}
 
