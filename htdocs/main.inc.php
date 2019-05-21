@@ -1811,11 +1811,11 @@ function top_menu_user(User $user, Translate $langs)
 
     $btnUser = '
     <div id="topmenu-login-dropdown" class="userimg atoplogin dropdown user user-menu">
-        <a href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'" class="dropdown-toggle" data-toggle="dropdown">
+        <a href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'" class="dropdown-toggle login-dropdown-a" data-toggle="dropdown">
             '.$userImage.'
             <span class="hidden-xs maxwidth200 atoploginusername">'.dol_trunc($user->firstname ? $user->firstname : $user->login, 10).'</span>
-            <span class="fa fa-chevron-down" id="dropdown-icon-down"></span>
-            <span class="fa fa-chevron-up hidden" id="dropdown-icon-up"></span>
+            <span class="fa fa-chevron-down login-dropdown-btn" id="dropdown-icon-down"></span>
+            <span class="fa fa-chevron-up login-dropdown-btn hidden" id="dropdown-icon-up"></span>
         </a>
         <div class="dropdown-menu">
             <!-- User image -->
