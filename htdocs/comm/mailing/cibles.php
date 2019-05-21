@@ -196,7 +196,7 @@ if ($object->fetch($id) >= 0)
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
 
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent tableforfield">';
 
 	print '<tr><td class="titlefield">'.$langs->trans("MailTitle").'</td><td colspan="3">'.$object->titre.'</td></tr>';
 
@@ -432,7 +432,6 @@ if ($object->fetch($id) >= 0)
 	$resql=$db->query($sql);
 	if ($resql)
 	{
-
 		$num = $db->num_rows($resql);
 
 		$param = "&amp;id=".$object->id;
@@ -471,7 +470,7 @@ if ($object->fetch($id) >= 0)
 		if ($page)	$param.= "&amp;page=".$page;
 
 		print '<div class="div-table-responsive">';
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder centpercent">';
 
 		// Ligne des champs de filtres
 		print '<tr class="liste_titre_filter">';
