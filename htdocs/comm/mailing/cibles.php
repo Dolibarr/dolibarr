@@ -130,13 +130,12 @@ if ($action == 'delete')
 	$resql=$db->query($sql);
 	if ($resql)
 	{
-		if (!empty($id))
+		if (! empty($id))
 		{
 			$obj = new MailingTargets($db);
 			$obj->update_nb($id);
 
-			header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
-			exit;
+			setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
 		}
 		else
 		{
@@ -532,6 +531,15 @@ if ($object->fetch($id) >= 0)
 
 		if ($num)
 		{
+			include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+			include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+			include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+			include_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+			$objectstaticmember=new Adherent($db);
+			$objectstaticuser=new User($db);
+			$objectstaticcompany=new Societe($db);
+			$objectstaticcontact=new Contact($db);
+
 			while ($i < min($num, $limit))
 			{
 				$obj = $db->fetch_object($resql);
@@ -550,32 +558,23 @@ if ($object->fetch($id) >= 0)
                 {
                     if ($obj->source_type == 'member')
                     {
-                        include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-                        $objectstatic=new Adherent($db);
-						$objectstatic->fetch($obj->source_id);
-                        print $objectstatic->getNomUrl(1);
+						$objectstaticmember->fetch($obj->source_id);
+                        print $objectstaticmember->getNomUrl(1);
                     }
                     elseif ($obj->source_type == 'user')
                     {
-                        include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
-                        $objectstatic=new User($db);
-						$objectstatic->fetch($obj->source_id);
-                        $objectstatic->id=$obj->source_id;
-                        print $objectstatic->getNomUrl(1);
+						$objectstaticuser->fetch($obj->source_id);
+                        print $objectstaticuser->getNomUrl(1);
                     }
                     elseif ($obj->source_type == 'thirdparty')
                     {
-                        include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
-                        $objectstatic=new Societe($db);
-						$objectstatic->fetch($obj->source_id);
-                        print $objectstatic->getNomUrl(1);
+						$objectstaticcompany->fetch($obj->source_id);
+                        print $objectstaticcompany->getNomUrl(1);
                     }
                     elseif ($obj->source_type == 'contact')
                     {
-                    	include_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-                    	$objectstatic=new Contact($db);
-                    	$objectstatic->fetch($obj->source_id);
-                    	print $objectstatic->getNomUrl(1);
+                    	$objectstaticcontact->fetch($obj->source_id);
+                    	print $objectstaticcontact->getNomUrl(1);
                     }
                     else
                     {
@@ -604,7 +603,7 @@ if ($object->fetch($id) >= 0)
 				if ($obj->statut == 0)	// Not sent yet
 				{
 					if ($user->rights->mailing->creer && $allowaddtarget) {
-						print '<a href="'.$_SERVER['PHP_SELF'].'?action=delete&rowid='.$obj->rowid.$param.'">'.img_delete($langs->trans("RemoveRecipient")).'</a>';
+						print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=delete&rowid='.$obj->rowid.$param.'">'.img_delete($langs->trans("RemoveRecipient")).'</a>';
 					}
 				}
 				/*if ($obj->statut == -1)	// Sent with error
