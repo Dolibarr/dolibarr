@@ -36,6 +36,8 @@ $export_type=GETPOST('export_type','alpha');
 $file=GETPOST('zipfilename_template','alpha');
 $compression = GETPOST('compression');
 
+$file = dol_sanitizeFileName($file);
+
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
 $page = GETPOST("page",'int');
@@ -57,10 +59,11 @@ $errormsg='';
 
 if ($action == 'delete')
 {
-	$file=$conf->admin->dir_output.'/'.GETPOST('urlfile');
-	$ret=dol_delete_file($file, 1);
-	if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
-	else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
+    $filerelative = dol_sanitizeFileName(GETPOST('urlfile', 'alpha'));
+    $filepath=$conf->admin->dir_output.'/'.$filerelative;
+	$ret=dol_delete_file($filepath, 1);
+	if ($ret) setEventMessages($langs->trans("FileWasRemoved", $filerelative), null, 'mesgs');
+	else setEventMessages($langs->trans("ErrorFailToDeleteFile", $filerelative), null, 'errors');
 	$action='';
 }
 
@@ -122,7 +125,7 @@ elseif (in_array($compression, array('gz', 'bz')))
     $cmd = 'tar -cf '.$outputdir."/".$file." --exclude=documents/admin/documents -C ".DOL_DATA_ROOT." ".DOL_DATA_ROOT."/../documents/";
     exec($cmd, $out, $retval);
     //var_dump($cmd, DOL_DATA_ROOT);exit;
-    
+
     if ($retval != 0)
     {
         $langs->load("errors");
@@ -139,7 +142,7 @@ elseif (in_array($compression, array('gz', 'bz')))
         {
             $cmd = "bzip2 " . $outputdir."/".$file;
         }
-        
+
         exec($cmd, $out, $retval);
         if ($retval != 0)
         {
