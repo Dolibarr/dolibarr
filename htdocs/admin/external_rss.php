@@ -168,8 +168,8 @@ if ($_POST["delete"])
         }
 
 
-		$result1=dolibarr_del_const($db,"EXTERNAL_RSS_TITLE_" . GETPOST("norss", 'int'), $conf->entity);
-		if ($result1) $result2=dolibarr_del_const($db,"EXTERNAL_RSS_URLRSS_" . GETPOST("norss", 'int'), $conf->entity);
+		$result1=dolibarr_del_const($db, "EXTERNAL_RSS_TITLE_".GETPOST("norss", 'int'), $conf->entity);
+		if ($result1) $result2=dolibarr_del_const($db, "EXTERNAL_RSS_URLRSS_".GETPOST("norss", 'int'), $conf->entity);
 
         if ($result1 && $result2)
         {
