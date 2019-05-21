@@ -1,4 +1,6 @@
 <?php
+use PhpOffice\PhpSpreadsheet\NamedRange;
+
 /* Copyright (C) 2000-2007	Rodolphe Quiedeville			<rodolphe@quiedeville.org>
  * Copyright (C) 2003		Jean-Louis Bergamo			<jlb@j1b.org>
  * Copyright (C) 2004-2018	Laurent Destailleur			<eldy@users.sourceforge.net>
@@ -7924,4 +7926,19 @@ function isVisibleToUserType($type_user, &$menuentry, &$listofmodulesforexternal
 function roundUpToNextMultiple($n, $x=5)
 {
 	return (ceil($n)%$x === 0) ? ceil($n) : round(($n+$x/2)/$x)*$x;
+}
+
+/**
+ * Return if a file can contains executable content
+ *
+ * @param   string  $filename       File NamedRange
+ * @return  boolean                 True if yes, False if no
+ */
+function isAFileWithExecutableContent($filename)
+{
+    if (preg_match('/\.(htm|html|js|php|phtml|pl|py|cgi|ksh|sh|bash)$/i', $filename))
+    {
+        return true;
+    }
+    return false;
 }
