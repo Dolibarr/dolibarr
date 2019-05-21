@@ -54,7 +54,7 @@ class Interfaceintracommreporttrigger
             . "They are provided for tutorial purpose only.";
         // 'development', 'experimental', 'dolibarr' or version
         $this->version = 'development';
-        $this->picto = 'intracommreport@intracommreport';
+        $this->picto = 'intracommreport';
     }
 
     /**

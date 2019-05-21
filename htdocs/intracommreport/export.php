@@ -25,21 +25,18 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/intracommreport/class/intracommreport.class.php';
 
+$langs->loadLangs(array("intracommreport"));
+
 $action = GETPOST('action');
 $exporttype = GETPOST('exporttype'); // DEB ou DES
 if (empty($exporttype)) $exporttype = 'deb';
 
-/*
-$PDOdb = new TPDOdb;
-$ATMform = new TFormCore;
-*/
 $formother = new FormOther($db);
 $year = GETPOST('year');
 $month = GETPOST('month');
 $type_declaration = GETPOST('type');
 
 switch($action) {
-	
 	case 'generateXML':
 		$obj = new TDebProdouane($PDOdb);
 		$obj->load($PDOdb, GETPOST('id_declaration'));
@@ -55,26 +52,24 @@ switch($action) {
 		if ($exporttype == 'deb') _print_form_deb();
 		else _print_form_des();
 		break;
-
 }
 
 
 
 function _print_form_deb() {
 	
-	global $langs, $ATMform, $formother, $year, $month, $type_declaration;
-	
-	$langs->load('intracommreport@intracommreport');
-	$langs->load('main');
-	
-	llxHeader();
-	print_fiche_titre($langs->trans('intracommreportTitle'));
-	dol_fiche_head();
+	global $langs, $formother, $year, $month, $type_declaration;
+
+    $title = $langs->trans("IntracommReportDEBTitle");
+	llxHeader("", $title);
+    print load_fiche_titre($langs->trans("IntracommReportDEBTitle"));
+
+    dol_fiche_head();
 
 	print '<form action="'.$_SERVER['PHP_SELF'].'" name="save" method="POST">';
 	print '<input type="hidden" name="action" value="export" />';
 	
-	print '<table width="100%" class="noborder" style="background-color: #fff;">';
+	print '<table width="100%" class="noborder">';
 	print '<tr class="liste_titre">';
 	print '<td colspan="2">';
 	print 'Paramètres de l\'export';
@@ -112,14 +107,13 @@ function _print_form_deb() {
 
 function _print_form_des()
 {
-	global $langs, $ATMform, $formother, $year, $month, $type_declaration;
-	
-	$langs->load('intracommreport@intracommreport');
-	$langs->load('main');
-	
-	llxHeader();
-	print_fiche_titre($langs->trans('exportprodesTitle'));
-	dol_fiche_head();
+	global $langs, $formother, $year, $month, $type_declaration;
+
+    $title = $langs->trans("IntracommReportDESTitle");
+    llxHeader("", $title);
+    print load_fiche_titre($langs->trans("IntracommReportDESTitle"));
+
+    dol_fiche_head();
 
 	print '<form action="'.$_SERVER['PHP_SELF'].'" name="save" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -195,13 +189,13 @@ function _liste($exporttype='deb') {
 	
 	global $db, $conf, $PDOdb, $langs;
 	
-	$langs->load('intracommreport@intracommreport');
+	$langs->load('intracommreport');
 	
 	llxHeader();
 	$l = new TListviewTBS('intracommreport');
 	
 	$sql = 'SELECT numero_declaration, type_declaration, periode, rowid as dl
-			FROM '.MAIN_DB_PREFIX.'deb_prodouane
+			FROM '.MAIN_DB_PREFIX.'intracommreport
 			WHERE entity = '.$conf->entity.' AND exporttype = '.$PDOdb->quote($exporttype);
 	
 	print $l->render($PDOdb, $sql, array(

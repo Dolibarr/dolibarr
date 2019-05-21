@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2003       Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012  Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012  Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2019       Alexandre Spangaro   <aspangaro@open-dsi.fr>
+/* Copyright (C) 2003       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2019       Open-DSI                <support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 /**
  *  \file       htdocs/core/modules/modIntracommreport.class.php
  * 	\ingroup    Intracomm report
- *	\brief      Module to activate intracomm report double entry accounting module
+ *	\brief      Module to activate intracomm report module
  */
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
@@ -50,7 +50,7 @@ class modIntracommreport extends DolibarrModules
         $this->description = "Intracomm report management (Support for French DEB/DES format)";
 
         // Possible values for version are: 'development', 'experimental', 'dolibarr' or 'dolibarr_deprecated' or version
-        $this->version = 'dolibarr';
+        $this->version = 'development';
 
         $this->const_name = 'MAIN_MODULE_' . strtoupper($this->name);
         $this->picto = 'intracommreport';
@@ -95,108 +95,27 @@ class modIntracommreport extends DolibarrModules
 
         // Permissions
         $this->rights_class = 'intracommreport';
-
         $this->rights = array(); // Permission array used by this module
         $r = 0;
+
+        $r++;
+        $this->rights[$r][0] = 68001;
+        $this->rights[$r][1] = 'Read intracomm report';
+        $this->rights[$r][2] = 'r';
+        $this->rights[$r][3] = 0;
+        $this->rights[$r][4] = 'read';
+
+        $r++;
+        $this->rights[$r][0] = 68002;
+        $this->rights[$r][1] = 'Create/modify intracomm report';
+        $this->rights[$r][2] = 'w';
+        $this->rights[$r][3] = 0;
+        $this->rights[$r][4] = 'write';
 
 		// Main menu entries
 		$this->menu = array();			// List of menus to add
 		$r=0;
-		
-		$langs->load('intracommreport');
-		
-		$this->menu[$r]=array('fk_menu'=>0,			// Put 0 if this is a top menu
-				'type'=>'top',			// This is a Top menu entry
-				'titre'=>$langs->trans('intracommreportDouane'),
-				'mainmenu'=>'intracommreport',
-				'leftmenu'=>'',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
-				'url'=>'/intracommreport/export.php',
-				'langs'=>'intracommreport@intracommreport',
-				'position'=>100,
-				'enabled'=>'$conf->intracommreport->enabled',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
-				'perms'=>1,			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
-				'target'=>'',
-				'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both
-		$r++;
-		
-		$this->menu[$r]=array('fk_menu'=>'fk_mainmenu=intracommreport',			// Put 0 if this is a top menu
-					'type'=>'left',			// This is a Top menu entry
-					'titre'=>$langs->trans('intracommreportDEB'),
-					'mainmenu'=>'intracommreport',
-					'leftmenu'=>'intracommreport',
-					'url'=>'/intracommreport/export.php',
-					'position'=>100+$r,
-					'enabled'=>'$conf->intracommreport->enabled',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
-					'perms'=>1,			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
-					'target'=>'',
-					'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both
-		$r++;
-	   
-        $this->menu[$r]=array('fk_menu'=>'fk_mainmenu=intracommreport,fk_leftmenu=intracommreport',         // Put 0 if this is a top menu
-                    'type'=>'left',         // This is a Top menu entry
-                    'titre'=>$langs->trans('intracommreportNew'),
-                    'mainmenu'=>'intracommreport',
-                    'leftmenu'=>'intracommreportNew',
-                 	'url'=>'/intracommreport/export.php',
-                    'position'=>100+$r,
-                    'enabled'=>'$conf->intracommreport->enabled',           // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
-                    'perms'=>1,          // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
-                    'target'=>'',
-                    'user'=>2);             // 0=Menu for internal users, 1=external users, 2=both
-        $r++;
-        
-        $this->menu[$r]=array('fk_menu'=>'fk_mainmenu=intracommreport,fk_leftmenu=intracommreport',         // Put 0 if this is a top menu
-                    'type'=>'left',         // This is a Top menu entry
-                    'titre'=>$langs->trans('intracommreportList'),
-                    'mainmenu'=>'intracommreport',
-                    'leftmenu'=>'intracommreportList',
-                    'url'=>'/intracommreport/export.php?action=list',
-                    'position'=>100+$r,
-                    'enabled'=>'$conf->intracommreport->enabled',            // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
-                    'perms'=>1,          // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
-                    'target'=>'',
-                    'user'=>2);             // 0=Menu for internal users, 1=external users, 2=both
-        $r++;
-		
-		$this->menu[$r]=array('fk_menu'=>'fk_mainmenu=intracommreport',			// Put 0 if this is a top menu
-					'type'=>'left',			// This is a Top menu entry
-					'titre'=>$langs->trans('intracommreportDES'),
-					'mainmenu'=>'intracommreport',
-					'leftmenu'=>'exportprodes',
-					'url'=>'/intracommreport/export.php?exporttype=des',
-					'position'=>100+$r,
-					'enabled'=>'$conf->intracommreport->enabled',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
-					'perms'=>1,			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
-					'target'=>'',
-					'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both
-		$r++;
-		
-		$this->menu[$r]=array('fk_menu'=>'fk_mainmenu=intracommreport,fk_leftmenu=exportprodes',         // Put 0 if this is a top menu
-                    'type'=>'left',         // This is a Top menu entry
-                    'titre'=>$langs->trans('exportprodesNew'),
-                    'mainmenu'=>'intracommreport',
-                    'leftmenu'=>'exportprodes_new',
-                 	'url'=>'/intracommreport/export.php?exporttype=des',
-                    'position'=>100+$r,
-                    'enabled'=>'$conf->intracommreport->enabled',           // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
-                    'perms'=>1,          // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
-                    'target'=>'',
-                    'user'=>2);             // 0=Menu for internal users, 1=external users, 2=both
-        $r++;
-        
-        $this->menu[$r]=array('fk_menu'=>'fk_mainmenu=intracommreport,fk_leftmenu=exportprodes',         // Put 0 if this is a top menu
-                    'type'=>'left',         // This is a Top menu entry
-                    'titre'=>$langs->trans('exportprodesList'),
-                    'mainmenu'=>'intracommreport',
-                    'leftmenu'=>'exportprodes_list',
-                    'url'=>'/intracommreport/export.php?exporttype=des&action=list',
-                    'position'=>100+$r,
-                    'enabled'=>'$conf->intracommreport->enabled',            // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
-                    'perms'=>1,          // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
-                    'target'=>'',
-                    'user'=>2);             // 0=Menu for internal users, 1=external users, 2=both
-        $r++;
-		
+
 		// Exports
 		$r=1;
 

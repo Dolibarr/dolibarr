@@ -1360,6 +1360,22 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
                 //if ($leftmenu=="ca") $newmenu->add("/compta/journaux/index.php?leftmenu=ca",$langs->trans("Journaux"),1,$user->rights->compta->resultat->lire||$user->rights->accounting->comptarapport->lire);
             }
 
+            // Intracomm report
+            if (! empty($conf->intracommreport->enabled))
+            {
+                $newmenu->add("/intracommreport/export.php?leftmenu=intracommreport", $langs->trans("MenuDeclaration"), 0, $user->rights->intracommreport->read, '', $mainmenu, 'intracommreport', 1);
+                if ($usemenuhider || empty($leftmenu) || preg_match('/intracommreport/', $leftmenu)) {
+                    // DEB
+                    $newmenu->add("/intracommreport/export.php?leftmenu=intracommreport", $langs->trans("MenuDeclarationDEB"), 1, $user->rights->intracommreport->read, '', $mainmenu, 'intracommreportDEB', 1);
+                        $newmenu->add("/intracommreport/export.php?leftmenu=intracommreportDEB", $langs->trans("MenuDeclarationDEBNew"), 2, $user->rights->intracommreport->write, '', $mainmenu, 'intracommreport', 1);
+                        $newmenu->add("/intracommreport/export.php?action=list&leftmenu=intracommreportDEB", $langs->trans("MenuDeclarationDEBList"), 2, $user->rights->intracommreport->read, '', $mainmenu, 'intracommreport', 1);
+                    // DES
+                    $newmenu->add("/intracommreport/export.php?exporttype=des&leftmenu=intracommreport", $langs->trans("MenuDeclarationDES"), 1, $user->rights->intracommreport->read, '', $mainmenu, 'intracommreportDES', 1);
+                        $newmenu->add("/intracommreport/export.php?exporttype=des&leftmenu=intracommreportDES", $langs->trans("MenuDeclarationDESNew"), 2, $user->rights->intracommreport->write, '', $mainmenu, 'intracommreport', 1);
+                        $newmenu->add("/intracommreport/export.php?exporttype=des&action=list&leftmenu=intracommreportDES", $langs->trans("MenuDeclarationDESList"), 2, $user->rights->intracommreport->read, '', $mainmenu, 'intracommreport', 1);
+                }
+            }
+
 			// Assets
 			if (! empty($conf->asset->enabled))
 			{

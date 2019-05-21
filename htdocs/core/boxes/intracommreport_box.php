@@ -31,7 +31,7 @@ class intracommreportbox extends ModeleBoxes
 {
 
     public $boxcode = "mybox";
-    public $boximg = "intracommreport@intracommreport";
+    public $boximg = "intracommreport";
     public $boxlabel;
     public $depends = array("intracommreport");
     public $db;

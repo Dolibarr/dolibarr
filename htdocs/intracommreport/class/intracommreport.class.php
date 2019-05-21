@@ -24,10 +24,10 @@
 /**
  * Class to manage intracomm report
  */
-class DebProdouane extends CommonObject
+class IntracommReport extends CommonObject
 {
 	
-	static $TType = array(
+	static $type = array(
 							'introduction'=>'Introduction'
 							,'expedition'=>'Expédition'
 						);
