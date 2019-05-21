@@ -68,6 +68,7 @@ PageForLib=File for PHP library
 PageForObjLib=File for PHP library dedicated to object 
 SqlFileExtraFields=Sql file for complementary attributes
 SqlFileKey=Sql file for keys
+SqlFileKeyExtraFields=Sql file for keys of complementary attributes
 AnObjectAlreadyExistWithThisNameAndDiffCase=An object already exists with this name and a different case
 UseAsciiDocFormat=You can use Markdown format, but it is recommended to use Asciidoc format (omparison between .md and .asciidoc: http://asciidoctor.org/docs/user-manual/#compared-to-markdown)
 IsAMeasure=Is a measure
