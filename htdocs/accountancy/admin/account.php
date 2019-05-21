@@ -389,11 +389,11 @@ if ($resql)
 		{
 			print '<td>';
 			if (empty($obj->active)) {
-				print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $obj->rowid . '&action=enable">';
+				print '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?id=' . $obj->rowid . '&action=enable">';
 				print img_picto($langs->trans("Disabled"), 'switch_off');
 				print '</a>';
 			} else {
-				print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $obj->rowid . '&action=disable">';
+				print '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?id=' . $obj->rowid . '&action=disable">';
 				print img_picto($langs->trans("Activated"), 'switch_on');
 				print '</a>';
 			}
