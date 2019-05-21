@@ -516,8 +516,8 @@ class CMailFile
 
 			    // EMailing feature may be a spam problem, so when you host several users/instance, having this option may force each user to use their own SMTP agent.
 			    // You ensure that every user is using its own SMTP server when using the mass emailing module.
-			    $linktoadminemailbefore='';
-			    $linktoadminemailend='';
+			    $linktoadminemailbefore='<a href="'.DOL_URL_ROOT.'/admin/mails.php">';
+			    $linktoadminemailend='</a>';
 			    $this->error = $langs->trans("MailSendSetupIs", $listofmethods[$sendingmode]);
 			    $this->errors[] = $langs->trans("MailSendSetupIs", $listofmethods[$sendingmode]);
 			    $this->error .= '<br>'.$langs->trans("MailSendSetupIs2", $linktoadminemailbefore, $linktoadminemailend, $langs->transnoentitiesnoconv("MAIN_MAIL_SENDMODE"), $listofmethods['smtps']);
