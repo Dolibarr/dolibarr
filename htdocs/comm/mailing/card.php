@@ -471,13 +471,13 @@ if (empty($reshook))
 			if ($result)
 			{
 				setEventMessages($langs->trans("MailSuccessfulySent",$mailfile->getValidAddress($object->email_from,2),$mailfile->getValidAddress($object->sendto,2)), null, 'mesgs');
+				$action = '';
 			}
 			else
 			{
 				setEventMessages($langs->trans("ResultKo").'<br>'.$mailfile->error.' '.$result, null, 'errors');
+				$action = 'test';
 			}
-
-			$action='';
 		}
 	}
 
