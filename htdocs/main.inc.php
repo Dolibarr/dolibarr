@@ -91,7 +91,7 @@ function testSqlAndScriptInject($val, $type)
 	}
 	if ($type == 3)
 	{
-		$inj += preg_match('/select|update|delete|replace|group\s+by|concat|count|from/i', $val);
+		$inj += preg_match('/select|update|delete|truncate|replace|group\s+by|concat|count|from|union/i', $val);
 	}
 	if ($type != 2)	// Not common key strings, so we can check them both on GET and POST
 	{
