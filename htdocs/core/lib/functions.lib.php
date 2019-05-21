@@ -7955,7 +7955,6 @@ function roundUpToNextMultiple($n, $x = 5)
  */
 function dolGetBadge($label, $html = '', $type = 'primary', $mode = '', $url = '', $params = array())
 {
-
     $attr=array(
         'class'=>'badge'.(!empty($mode)?' badge-'.$mode:'').(!empty($type)?' badge-'.$type:'')
     );
@@ -8118,7 +8117,6 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
         $attr['aria-label'] = $label;
     }
 
-
     if(empty($userRight)){
         $attr['class'] = 'butActionRefused';
         $attr['href'] = '';
@@ -8155,8 +8153,6 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
 
     return '<div class="inline-block divButAction"><'.$tag.' '.$compiledAttributes.'>'.$html.'</'.$tag.'></div>';
 }
-
-
 
 /**
  * Function dolGetButtonTitle : this kind of buttons are used in title in list
@@ -8268,4 +8264,19 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
     }
 
     return $button;
+}
+
+/**
+ * Return if a file can contains executable content
+ *
+ * @param   string  $filename       File NamedRange
+ * @return  boolean                 True if yes, False if no
+ */
+function isAFileWithExecutableContent($filename)
+{
+    if (preg_match('/\.(htm|html|js|php|phtml|pl|py|cgi|ksh|sh|bash)$/i', $filename))
+    {
+        return true;
+    }
+    return false;
 }
