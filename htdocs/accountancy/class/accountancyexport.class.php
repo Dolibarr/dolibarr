@@ -616,7 +616,7 @@ class AccountancyExport
             $date = dol_print_date($line->doc_date, '%d/%m/%Y');
 
             print $date . $separator;
-            print $line->code_journal;
+            print $line->code_journal . $separator;
             if (empty($line->subledger_account)) {
                 print length_accountg($line->numero_compte) . $separator;
             } else {
