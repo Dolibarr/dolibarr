@@ -35,6 +35,7 @@ require_once '../main.inc.php';
 include_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 
@@ -989,6 +990,8 @@ while ($i < min($num, $limit))
 	$companystatic->fournisseur=$obj->fournisseur;
 	$companystatic->code_client=$obj->code_client;
 	$companystatic->code_fournisseur=$obj->code_fournisseur;
+	$companystatic->tva_intra=$obj->tva_intra;
+	$companystatic->country_code=$obj->country_code;
 
 	$companystatic->code_compta_client=$obj->code_compta;
 	$companystatic->code_compta_fournisseur=$obj->code_compta_fournisseur;
@@ -1166,7 +1169,13 @@ while ($i < min($num, $limit))
 	}
 	if (! empty($arrayfields['s.tva_intra']['checked']))
 	{
-		print "<td>".$obj->tva_intra."</td>\n";
+		print "<td>";
+		print $obj->tva_intra;
+		if ($obj->tva_intra && ! isValidVATID($companystatic))
+		{
+			print img_warning("BadVATNumber", '', '');
+		}
+		print "</td>\n";
 		if (! $i) $totalarray['nbfield']++;
 	}
 	// Type
