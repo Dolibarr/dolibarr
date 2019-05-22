@@ -778,8 +778,8 @@ class AccountancyExport
 	 *
 	 * @return void
 	 */
-	public function exportSAGE50SWISS($objectLines) {
-
+	public function exportSAGE50SWISS($objectLines)
+        {
 		// SAGE50SWISS
 		$this->separator = ',';
                 $this->end_line = "\r\n";
@@ -790,18 +790,18 @@ class AccountancyExport
                 $thisPieceNum= "";
                 $thisPieceAccountNr= "";
                 $aSize= count($objectLines);
-		foreach ( $objectLines as $aIndex=>$line ) {
-
+		foreach ( $objectLines as $aIndex=>$line )
+                {
                         $sammelBuchung= false;
                         if ($aIndex-2 >= 0 && $objectLines[$aIndex-2]->piece_num == $line->piece_num)
                         {
                             $sammelBuchung= true;
                         }
-                        else if ($aIndex+2 < $aSize && $objectLines[$aIndex+2]->piece_num == $line->piece_num)
+                        elseif ($aIndex+2 < $aSize && $objectLines[$aIndex+2]->piece_num == $line->piece_num)
                         {
                             $sammelBuchung= true;
                         }
-                        else if ($aIndex+1 < $aSize
+                        elseif ($aIndex+1 < $aSize
                                 && $objectLines[$aIndex+1]->piece_num == $line->piece_num
                                 && $aIndex-1 < $aSize
                                 && $objectLines[$aIndex-1]->piece_num == $line->piece_num
@@ -829,9 +829,9 @@ class AccountancyExport
                             print 'H' . $this->separator;
                         }
                         //Grp
-                        print self::trunc($line->code_journal,1 ) . $this->separator;
+                        print self::trunc($line->code_journal, 1) . $this->separator;
                         // GKto
-                        if (empty($line->code_tiers ))
+                        if (empty($line->code_tiers))
                         {
                             if ($line->piece_num == $thisPieceNum)
                             {
@@ -897,9 +897,9 @@ class AccountancyExport
                             $line2= "";
                         }
 
-			print '"' . self::toAnsi( $line1 ). '"' . $this->separator;
+			print '"' . self::toAnsi($line1). '"' . $this->separator;
                         // Tx2
-			print '"' . self::toAnsi( $line2 ). '"' . $this->separator;
+			print '"' . self::toAnsi($line2). '"' . $this->separator;
                         //PkKey
                         print "0" . $this->separator;
                         //OpId
@@ -931,10 +931,12 @@ class AccountancyExport
 
 	/**
 	 *
-	 * @param unknown $str data
-	 * @param integer $size data
+	 * @param unknown $str Original string to encode and optionaly truncate
+	 * @param integer $size trucate string after $size characters
+         * @return string String encoded in Windows-1251 charset
 	 */
-	public static function toAnsi($str, $size= -1) {
+	public static function toAnsi($str, $size = -1)
+        {
 		$retVal= dol_string_nohtmltag($str, 1, 'Windows-1251');
                 if ($retVal >= 0 && $size >= 0)
                 {
@@ -942,5 +944,4 @@ class AccountancyExport
                 }
                 return $retVal;
 	}
-
 }
