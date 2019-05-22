@@ -3862,7 +3862,7 @@ abstract class CommonObject
 	 *  @param	Societe			$buyer				Object thirdparty who buy
 	 *	@return	void
 	 */
-	public function formAddObjectLine($dateSelector, $seller, $buyer)
+	public function formAddObjectLine($dateSelector, $seller, $buyer, $defaulttpldir = '/core/tpl')
 	{
 		global $conf,$user,$langs,$object,$hookmanager;
 		global $form,$bcnd,$var;
@@ -3874,7 +3874,7 @@ abstract class CommonObject
 
 		// Output template part (modules that overwrite templates must declare this into descriptor)
 		// Use global variables + $dateSelector + $seller and $buyer
-		$dirtpls=array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
+		$dirtpls=array_merge($conf->modules_parts['tpl'], array($defaulttpldir));
 		foreach($dirtpls as $reldir)
 		{
 			$tpl = dol_buildpath($reldir.'/objectline_create.tpl.php');
