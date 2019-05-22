@@ -225,7 +225,7 @@ class modAccounting extends DolibarrModules
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'fiscalyear';
-		$this->rights[$r][5] = '';
+		$this->rights[$r][5] = 'write';
 		$r++;
 
         $this->rights[$r][0] = 50431;
