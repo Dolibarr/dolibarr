@@ -3031,6 +3031,12 @@ class Facture extends CommonInvoice
 	{
 	    global $mysoc,$user;
 
+	    // Progress should never be changed for discounts
+	    if(($line->info_bits & 2) == 2)
+	    {
+	    	return;
+	    }
+
 		include_once(DOL_DOCUMENT_ROOT . '/core/lib/price.lib.php');
 
 		// Cap percentages to 100
