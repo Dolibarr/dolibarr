@@ -3053,7 +3053,6 @@ class Facture extends CommonInvoice
 		$line->multicurrency_total_ttc = $tabprice[18];
 		$line->update($user);
 		$this->update_price(1);
-		$this->db->commit();
 	}
 
 	/**
