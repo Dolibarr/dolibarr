@@ -1738,7 +1738,7 @@ function top_menu_user(User $user, Translate $langs)
         $userImage          = Form::showphoto('userphoto', $user, 0, 0, 0, 'photouserphoto userphoto', 'small', 0, 1);
         $userDropDownImage  = Form::showphoto('userphoto', $user, 0, 0, 0, 'dropdown-user-image', 'small', 0, 1);
     }
-    else{
+    else {
         $nophoto='/public/theme/common/user_anonymous.png';
         if ($user->gender == 'man') $nophoto='/public/theme/common/user_man.png';
         if ($user->gender == 'woman') $nophoto='/public/theme/common/user_woman.png';
@@ -1752,7 +1752,7 @@ function top_menu_user(User $user, Translate $langs)
     $dropdownBody.= '<div id="topmenuloginmoreinfo" >';
 
     // login infos
-    if (!empty($user->admin)) {
+    if (! empty($user->admin)) {
         $dropdownBody.= '<br><b>' . $langs->trans("Administrator").'</b>: '.yn($user->admin);
     }
     if (! empty($user->socid))	// Add thirdparty for external users
@@ -1805,7 +1805,7 @@ function top_menu_user(User $user, Translate $langs)
 
     $profilName = $user->getFullName($langs).' ('.$user->login.')';
 
-    if($user->admin){
+    if (! empty($user->admin)) {
         $profilName = '<i class="far fa-star classfortooltip" title="'.$langs->trans("Administrator").'" ></i> '.$profilName;
     }
 
@@ -1851,6 +1851,8 @@ function top_menu_user(User $user, Translate $langs)
             if (!$(event.target).closest("#topmenu-login-dropdown").length) {
                 // Hide the menus.
                 $("#topmenu-login-dropdown").removeClass("open");
+				$("#dropdown-icon-down").show();	// use show/hide instead toggle for avoid conflict
+				$("#dropdown-icon-up").hide();		// use show/hide instead toggle for avoid conflict
             }
         });
 
