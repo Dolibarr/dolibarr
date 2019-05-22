@@ -169,6 +169,9 @@ $type = 'application/octet-stream';
 if (GETPOST('type','alpha')) $type=GETPOST('type','alpha');
 else $type=dol_mimetype($original_file);
 
+// Security: This wrapper is for images. We do not allow type/html
+if (preg_match('/html/', $type)) accessforbidden('Error: Using the image wrapper to output a file with a mime type HTML is not possible.', 1, 1, 1);
+
 // Security: Delete string ../ into $original_file
 $original_file = str_replace("../","/", $original_file);
 
@@ -176,7 +179,7 @@ $original_file = str_replace("../","/", $original_file);
 $refname=basename(dirname($original_file)."/");
 
 // Security check
-if (empty($modulepart)) accessforbidden('Bad value for parameter modulepart');
+if (empty($modulepart)) accessforbidden('Bad value for parameter modulepart', 1, 1, 1);
 
 $check_access = dol_check_secure_access_document($modulepart, $original_file, $entity, $refname);
 $accessallowed              = $check_access['accessallowed'];

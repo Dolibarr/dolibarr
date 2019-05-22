@@ -150,6 +150,7 @@ if (empty($user->societe_id))
 		! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->lire && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_PROPOSAL_STATS),
 	    ! empty($conf->projet->enabled) && $user->rights->projet->lire,
 	    ! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire,
+        ! empty($conf->holiday->enabled) && $user->rights->holiday->read,
 		! empty($conf->don->enabled) && $user->rights->don->lire
 	    );
 	    // Class file containing the method load_state_board for each line
@@ -172,6 +173,7 @@ if (empty($user->societe_id))
     	    DOL_DOCUMENT_ROOT."/supplier_proposal/class/supplier_proposal.class.php",
             DOL_DOCUMENT_ROOT."/projet/class/project.class.php",
 	        DOL_DOCUMENT_ROOT."/expensereport/class/expensereport.class.php",
+            DOL_DOCUMENT_ROOT."/holiday/class/holiday.class.php",
 			DOL_DOCUMENT_ROOT."/don/class/don.class.php"
 	    );
 	    // Name class containing the method load_state_board for each line
@@ -193,6 +195,7 @@ if (empty($user->societe_id))
             	       'SupplierProposal',
 	                   'Project',
 	                   'ExpenseReport',
+                       'Holiday',
 					   'Don'
 	    );
 	    // Cle array returned by the method load_state_board for each line
@@ -203,7 +206,7 @@ if (empty($user->societe_id))
 	                'contacts',
 	                'members',
 	                'products',
-	                'services',
+	                 'services',
 	                'proposals',
 	                'orders',
 	                'invoices',
@@ -214,6 +217,7 @@ if (empty($user->societe_id))
 	                'askprice',
 	                'projects',
 	                'expensereports',
+                    'holidays',
 					'donations'
 	    );
 	    // Dashboard Icon lines
@@ -235,6 +239,7 @@ if (empty($user->societe_id))
 	                 'propal',
 	                 'projectpub',
 					 'trip',
+                     'holiday',
 					 'generic'
 	    );
 	    // Translation keyword
@@ -256,6 +261,7 @@ if (empty($user->societe_id))
 	                  "SupplierProposalShort",
 	                  "Projects",
 					  "ExpenseReports",
+                      "Holidays",
 					  "Donations"
 	    );
 	    // Dashboard Link lines
@@ -278,6 +284,7 @@ if (empty($user->societe_id))
 	        DOL_URL_ROOT.'/supplier_proposal/list.php?mainmenu=commercial&leftmenu=',
 	        DOL_URL_ROOT.'/projet/list.php?mainmenu=project',
     		DOL_URL_ROOT.'/expensereport/list.php?mainmenu=hrm&leftmenu=expensereport',
+            DOL_URL_ROOT.'/holiday/list.php?mainmenu=hrm&leftmenu=holiday',
 			DOL_URL_ROOT.'/don/list.php?leftmenu=donations'
 	    );
 	    // Translation lang files
@@ -299,6 +306,7 @@ if (empty($user->societe_id))
 	                    "supplier_proposal",
 	                    "projects",
 						"trips",
+                        "holidays",
 						"donations"
 	    );
 
@@ -432,9 +440,9 @@ if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
 {
 	include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 	$board=new Contrat($db);
-	$dashboardlines[] = $board->load_board($user,"inactives");
+	$dashboardlines[] = $board->load_board($user, "inactive");
 	// Number of active services (expired)
-	$dashboardlines[] = $board->load_board($user,"expired");
+	$dashboardlines[] = $board->load_board($user, "active");
 }
 // Number of invoices customers (has paid)
 if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
@@ -496,6 +504,14 @@ if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->to_p
 	$dashboardlines[] = $board->load_board($user,'topay');
 }
 
+// Number of holidays to approve
+if (! empty($conf->holiday->enabled) && $user->rights->holiday->approve)
+{
+    include_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
+    $board=new Holiday($db);
+    $dashboardlines[] = $board->load_board($user);
+}
+
 $object=new stdClass();
 $parameters=array();
 $action='';
@@ -553,7 +569,7 @@ $nbworkboardempty=0;
 if (! empty($valid_dashboardlines))
 {
 	$boxwork.='<tr class="nohover"><td class="tdboxstats nohover flexcontainer centpercent"><div style="display: flex: flex-wrap: wrap">';
-	
+
     foreach($valid_dashboardlines as $board)
     {
         if (empty($board->nbtodo)) $nbworkboardempty++;
@@ -593,7 +609,7 @@ if (! empty($valid_dashboardlines))
     $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"><div class="boxstats150empty"></div></div>';
     $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"><div class="boxstats150empty"></div></div>';
     $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"><div class="boxstats150empty"></div></div>';
-    
+
     $boxwork .='</div>';
     $boxwork .='</td></tr>';
 }

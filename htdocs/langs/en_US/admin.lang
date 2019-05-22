@@ -1817,7 +1817,7 @@ ChartLoaded=Chart of account loaded
 SocialNetworkSetup=Setup of module Social Networks
 EnableFeatureFor=Enable features for <strong>%s</strong>
 VATIsUsedIsOff=Note: The option to use sales Tax or VAT has been set to <strong>Off</strong> in the menu %s - %s, so Sale tax or Vat used will always be 0 for sales.
-SwapSenderAndRecipientOnPDF=Swap sender and recipient address on PDF
+SwapSenderAndRecipientOnPDF=Swap sender and recipient address position on PDF documents
 FeatureSupportedOnTextFieldsOnly=Warning, feature supported on text fields only. Also an URL parameter action=create or action=edit must be set OR page name must end with 'new.php' to trigger this feature.
 EmailCollector=Email collector
 EmailCollectorDescription=Add a scheduled job and a setup page to scan regularly email boxes (using IMAP protocol) and record emails received into your application, at the right place and/or create some record automatically (like leads).

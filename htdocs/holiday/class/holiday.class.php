@@ -2177,4 +2177,91 @@ class Holiday extends CommonObject
 		$this->fk_type=1;
 		$this->statut=Holiday::STATUS_VALIDATED;
 	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+     *      Load this->nb for dashboard
+     *
+     *      @return     int         <0 if KO, >0 if OK
+     */
+    public function load_state_board()
+    {
+        // phpcs:enable
+        $this->nb=array();
+
+        $sql = "SELECT count(h.rowid) as nb";
+        $sql.= " FROM ".MAIN_DB_PREFIX."holiday as h";
+        $sql.= " WHERE h.statut > 1";
+        $sql.= " AND h.entity IN (".getEntity('holiday').")";
+
+        $resql=$this->db->query($sql);
+        if ($resql) {
+            while ($obj=$this->db->fetch_object($resql)) {
+                $this->nb["holidays"]=$obj->nb;
+            }
+            $this->db->free($resql);
+            return 1;
+        }
+        else
+        {
+            dol_print_error($this->db);
+            $this->error=$this->db->error();
+            return -1;
+        }
+    }
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    /**
+     *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
+     *
+     *      @param	User	$user   		Objet user
+     *      @return WorkboardResponse|int 	<0 if KO, WorkboardResponse if OK
+     */
+    public function load_board($user)
+    {
+        // phpcs:enable
+        global $conf, $langs;
+
+        if ($user->societe_id) return -1;   // protection pour eviter appel par utilisateur externe
+
+        $now=dol_now();
+
+        $userchildids = $user->getAllChildIds(1);
+
+        $sql = "SELECT h.rowid, h.date_debut";
+        $sql.= " FROM ".MAIN_DB_PREFIX."holiday as h";
+        $sql.= " WHERE h.statut = 2";
+        $sql.= " AND h.entity IN (".getEntity('holiday').")";
+        $sql.= " AND (h.fk_user IN (".join(',', $userchildids).")";
+        $sql.= " OR h.fk_validator IN (".join(',', $userchildids)."))";
+
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            $langs->load("members");
+
+            $response = new WorkboardResponse();
+            $response->warning_delay=$conf->holiday->approve->warning_delay/60/60/24;
+            $response->label=$langs->trans("HolidaysToApprove");
+            $response->url=DOL_URL_ROOT.'/holiday/list.php?search_statut=2&mainmenu=hrm&leftmenu=holiday';
+            $response->img=img_object('', "holiday");
+
+            while ($obj=$this->db->fetch_object($resql))
+            {
+                $response->nbtodo++;
+
+                if ($this->db->jdate($obj->date_debut) < ($now - $conf->holiday->approve->warning_delay)) {
+                    $response->nbtodolate++;
+                }
+            }
+
+            return $response;
+        }
+        else
+        {
+            dol_print_error($this->db);
+            $this->error=$this->db->error();
+            return -1;
+        }
+    }
 }

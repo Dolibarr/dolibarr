@@ -2388,14 +2388,11 @@ elseif (! empty($object->id))
 				}
 
 				// Create bill
-				if (! empty($conf->facture->enabled))
+				if (! empty($conf->fournisseur->enabled) && ($object->statut >= 2 && $object->statut != 7 && $object->billed != 1))  // statut 2 means approved, 7 means canceled
 				{
-					if (! empty($conf->fournisseur->enabled) && ($object->statut >= 2 && $object->statut != 7 && $object->billed != 1))  // statut 2 means approved, 7 means canceled
+					if ($user->rights->fournisseur->facture->creer)
 					{
-						if ($user->rights->fournisseur->facture->creer)
-						{
-							print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a>';
-						}
+						print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a>';
 					}
 				}
 
@@ -2764,6 +2761,7 @@ elseif (! empty($object->id))
 		$modelmail='order_supplier_send';
 		$defaulttopic='SendOrderRef';
 		$diroutput = $conf->fournisseur->commande->dir_output;
+		$autocopy='MAIN_MAIL_AUTOCOPY_SUPPLIER_ORDER_TO';
 		$trackid = 'sor'.$object->id;
 
 		include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
