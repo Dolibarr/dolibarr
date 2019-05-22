@@ -146,9 +146,18 @@ $dolibarr_main_db_character_set='utf8';
 // Database character set used to sort data (forced during database creation. value of database is then used).
 // Default value: depends on database driver
 // Examples:
-// dolibarr_main_db_collation='utf8_unicode_ci';
+// $dolibarr_main_db_collation='utf8_unicode_ci';
 //
 $dolibarr_main_db_collation='utf8_unicode_ci';
+
+
+// dolibarr_main_instance_unique_id
+// An ID that is unique for each installation.
+// Default value: randomly defined during installation
+// Examples:
+// $dolibarr_main_instance_unique_id='84b5bc91f83b56e458db71e0adac2b62';
+//
+$dolibarr_main_instance_unique_id='84b5bc91f83b56e458db71e0adac2b62';
 
 
 
