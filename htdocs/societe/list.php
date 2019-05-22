@@ -1094,7 +1094,7 @@ while ($i < min($num, $limit))
 	if (! empty($arrayfields['country.code_iso']['checked']))
 	{
 		print '<td class="center">';
-		$labelcountry=($obj->code && ($langs->trans("Country".$obj->code)!="Country".$obj->code))?$langs->trans("Country".$obj->code):$obj->country_label;
+		$labelcountry=($obj->country_code && ($langs->trans("Country".$obj->country_code)!="Country".$obj->country_code))?$langs->trans("Country".$obj->country_code):$obj->country_label;
 		print $labelcountry;
 		print '</td>';
 		if (! $i) $totalarray['nbfield']++;
