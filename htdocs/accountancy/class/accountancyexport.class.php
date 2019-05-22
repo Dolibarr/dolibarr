@@ -779,7 +779,7 @@ class AccountancyExport
 	 * @return void
 	 */
 	public function exportSAGE50SWISS($objectLines)
-        {
+    {
 		// SAGE50SWISS
 		$this->separator = ',';
                 $this->end_line = "\r\n";
@@ -915,7 +915,7 @@ class AccountancyExport
                             $thisPieceNum= $line->piece_num;
                             $thisPieceAccountNr= $line->numero_compte;
                         }
-                }
+        }
 	}
 
 	/**
@@ -936,12 +936,12 @@ class AccountancyExport
          * @return string String encoded in Windows-1251 charset
 	 */
 	public static function toAnsi($str, $size = -1)
-        {
+    {
 		$retVal= dol_string_nohtmltag($str, 1, 'Windows-1251');
-                if ($retVal >= 0 && $size >= 0)
-                {
-                    $retVal= mb_substr($retVal, 0, $size, 'Windows-1251');
-                }
-                return $retVal;
+        if ($retVal >= 0 && $size >= 0)
+        {
+            $retVal= mb_substr($retVal, 0, $size, 'Windows-1251');
+        }
+        return $retVal;
 	}
 }
