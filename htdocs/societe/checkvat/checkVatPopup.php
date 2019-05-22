@@ -54,7 +54,7 @@ if (! $vatNumber)
 else
 {
 	$vatNumber = preg_replace('/\^\w/', '', $vatNumber);
-	$vatNumber = str_replace(' ', '', $vatNumber);
+	$vatNumber = str_replace(array(' ', '.'), '', $vatNumber);
 	$countryCode=substr($vatNumber, 0, 2);
 	$vatNumber=substr($vatNumber, 2);
 
