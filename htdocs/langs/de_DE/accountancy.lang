@@ -290,7 +290,6 @@ Modelcsv_cogilog=Export for Cogilog
 Modelcsv_agiris=Export for Agiris
 Modelcsv_configurable=Konfigurierbarer CSV Export
 Modelcsv_FEC=Export FEC (Art. L47 A) (Test)
-Modelcsv_Sage50_Swiss=Export für Sage 50 Schweiz
 ChartofaccountsId=Kontenplan ID
 
 ## Tools - Init accounting account on product / service
