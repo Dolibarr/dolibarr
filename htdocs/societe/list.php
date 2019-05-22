@@ -374,7 +374,7 @@ $sql.= " s.code_compta, s.code_compta_fournisseur, s.parent as fk_parent,";
 $sql.= " s2.nom as name2,";
 $sql.= " typent.code as typent_code,";
 $sql.= " staff.code as staff_code,";
-$sql.= " country.code as country_code,";
+$sql.= " country.code as country_code, country.label as country_label,";
 $sql.= " state.code_departement as state_code, state.nom as state_name,";
 $sql.= " region.code_region as region_code, region.nom as region_name";
 // We'll need these fields in order to filter by sale (including the case where the user can only see his prospects)
@@ -1094,8 +1094,8 @@ while ($i < min($num, $limit))
 	if (! empty($arrayfields['country.code_iso']['checked']))
 	{
 		print '<td class="center">';
-		$tmparray=getCountry($obj->fk_pays, 'all');
-		print $tmparray['label'];
+		$labelcountry=($obj->code && ($langs->trans("Country".$obj->code)!="Country".$obj->code))?$langs->trans("Country".$obj->code):$obj->country_label;
+		print $labelcountry;
 		print '</td>';
 		if (! $i) $totalarray['nbfield']++;
 	}
