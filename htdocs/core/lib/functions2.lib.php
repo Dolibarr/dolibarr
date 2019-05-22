@@ -577,7 +577,7 @@ function isValidVATID($company)
         $vatprefix = $company->country_code;
         if ($vatprefix == 'GR') $vatprefix = '(EL|GR)';
         else $vatprefix = preg_quote($vatprefix, '/');
-        if (! preg_match('/^'.$vatprefix.'[a-zA-Z0-9\-\.]{5,12}$/i', str_replace(' ', '', $company->tva_intra)))
+        if (! preg_match('/^'.$vatprefix.'[a-zA-Z0-9\-\.]{5,14}$/i', str_replace(' ', '', $company->tva_intra)))
         {
             return 0;
         }
