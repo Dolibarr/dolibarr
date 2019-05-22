@@ -790,7 +790,7 @@ class AccountancyExport
                 $thisPieceNum= "";
                 $thisPieceAccountNr= "";
                 $aSize= count($objectLines);
-		foreach ( $objectLines as $aIndex=>$line )
+		foreach ($objectLines as $aIndex=>$line)
                 {
                         $sammelBuchung= false;
                         if ($aIndex-2 >= 0 && $objectLines[$aIndex-2]->piece_num == $line->piece_num)
