@@ -1207,7 +1207,7 @@ else
         {
             // Supplier
             print '<tr>';
-            print '<td>'.$form->editfieldkey('Supplier', 'fournisseur', '', $object, 0, 'string', '', 1).'</td><td>';
+            print '<td>'.$form->editfieldkey('Vendor', 'fournisseur', '', $object, 0, 'string', '', 1).'</td><td>';
             $default = -1;
             if (! empty($conf->global->THIRDPARTY_SUPPLIER_BY_DEFAULT)) $default=1;
             print $form->selectyesno("fournisseur", (GETPOST('fournisseur', 'int')!=''?GETPOST('fournisseur', 'int'):(GETPOST("type", 'alpha') == '' ? $default : $object->fournisseur)), 1, 0, (GETPOST("type", 'alpha') == '' ? 1 : 0));
@@ -1370,12 +1370,12 @@ else
                 print "\n";
                 print '<script language="JavaScript" type="text/javascript">';
                 print "function CheckVAT(a) {\n";
-                print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a,'".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."',500,300);\n";
+                print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a,'".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."', 540, 350);\n";
                 print "}\n";
                 print '</script>';
                 print "\n";
                 $s.='<a href="#" class="hideonsmartphone" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
-                $s = $form->textwithpicto($s, $langs->trans("VATIntraCheckDesc", $langs->trans("VATIntraCheck")), 1);
+                $s = $form->textwithpicto($s, $langs->trans("VATIntraCheckDesc", $langs->transnoentitiesnoconv("VATIntraCheck")), 1);
             }
             else
             {
@@ -2213,7 +2213,7 @@ else
 				    'name' => 'soc_origin',
 			    	'label' => $langs->trans('MergeOriginThirdparty'),
 				    'type' => 'other',
-				    'value' => $form->select_company('', 'soc_origin', 's.rowid != '.$object->id, 'SelectThirdParty', 0, 0, array(), 0, 'minwidth200')
+				    'value' => $form->select_company('', 'soc_origin', 's.rowid <> '.$object->id, 'SelectThirdParty', 0, 0, array(), 0, 'minwidth200')
 			    )
 		    );
 
@@ -2709,9 +2709,7 @@ else
 
 			$MAXEVENT = 10;
 
-			$morehtmlright = '<a href="'.DOL_URL_ROOT.'/societe/agenda.php?socid='.$object->id.'">';
-			$morehtmlright.= $langs->trans("SeeAll");
-			$morehtmlright.= '</a>';
+            $morehtmlright.= dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-list-alt', DOL_URL_ROOT.'/societe/agenda.php?socid='.$object->id);
 
 			// List of actions on element
 			include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';

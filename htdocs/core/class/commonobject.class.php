@@ -1227,12 +1227,12 @@ abstract class CommonObject
 		$result=array();
 		$i=0;
 		//cas particulier pour les expeditions
-		if($this->element=='shipping' && $this->origin_id != 0) {
+		if ($this->element=='shipping' && $this->origin_id != 0) {
 			$id=$this->origin_id;
 			$element='commande';
-        } elseif($this->element=='reception' && $this->origin_id != 0) {
-            $id=$this->origin_id;
-            $element='order_supplier';
+		} elseif ($this->element=='reception' && $this->origin_id != 0) {
+			$id=$this->origin_id;
+			$element='order_supplier';
 		} else {
 			$id=$this->id;
 			$element=$this->element;
@@ -1250,7 +1250,7 @@ abstract class CommonObject
 		$sql.= " AND ec.fk_c_type_contact = tc.rowid";
 		$sql.= " AND tc.element = '".$element."'";
 		$sql.= " AND tc.source = '".$source."'";
-		$sql.= " AND tc.code = '".$code."'";
+		if ($code) $sql.= " AND tc.code = '".$code."'";
 		$sql.= " AND tc.active = 1";
 		if ($status) $sql.= " AND ec.statut = ".$status;
 
@@ -2086,25 +2086,25 @@ abstract class CommonObject
 	 *  Change the shipping method
 	 *
 	 *  @param      int     $shipping_method_id     Id of shipping method
-     *  @param      bool    $notrigger              false=launch triggers after, true=disable triggers
-     *  @param      User	$userused               Object user
+	 *  @param      bool    $notrigger              false=launch triggers after, true=disable triggers
+	 *  @param      User	$userused               Object user
 	 *
 	 *  @return     int              1 if OK, 0 if KO
 	 */
 	public function setShippingMethod($shipping_method_id, $notrigger = false, $userused = null)
 	{
-        global $user;
+		global $user;
 
-        if (empty($userused)) $userused=$user;
+		if (empty($userused)) $userused=$user;
 
-        $error = 0;
+		$error = 0;
 
 		if (! $this->table_element) {
 			dol_syslog(get_class($this)."::setShippingMethod was called on objet with property table_element not defined", LOG_ERR);
 			return -1;
 		}
 
-        $this->db->begin();
+		$this->db->begin();
 
 		if ($shipping_method_id<0) $shipping_method_id='NULL';
 		dol_syslog(get_class($this).'::setShippingMethod('.$shipping_method_id.')');
@@ -2112,30 +2112,30 @@ abstract class CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
 		$sql.= " SET fk_shipping_method = ".$shipping_method_id;
 		$sql.= " WHERE rowid=".$this->id;
-        $resql = $this->db->query($sql);
+		$resql = $this->db->query($sql);
 		if (! $resql) {
 			dol_syslog(get_class($this).'::setShippingMethod Error ', LOG_DEBUG);
 			$this->error = $this->db->lasterror();
 			$error++;
-        } else {
-            if (!$notrigger)
-            {
-                // Call trigger
-                $this->context=array('shippingmethodupdate'=>1);
-                $result = $this->call_trigger(strtoupper(get_class($this)) . '_MODIFY', $userused);
-                if ($result < 0) $error++;
-                // End call trigger
-            }
-        }
-        if ($error)
-        {
-            $this->db->rollback();
-            return -1;
-        } else {
-            $this->shipping_method_id = ($shipping_method_id=='NULL')?null:$shipping_method_id;
-            $this->db->commit();
-            return 1;
-        }
+		} else {
+			if (!$notrigger)
+			{
+				// Call trigger
+				$this->context=array('shippingmethodupdate'=>1);
+				$result = $this->call_trigger(strtoupper(get_class($this)) . '_MODIFY', $userused);
+				if ($result < 0) $error++;
+				// End call trigger
+			}
+		}
+		if ($error)
+		{
+			$this->db->rollback();
+			return -1;
+		} else {
+			$this->shipping_method_id = ($shipping_method_id=='NULL')?null:$shipping_method_id;
+			$this->db->commit();
+			return 1;
+		}
 	}
 
 
@@ -2217,17 +2217,17 @@ abstract class CommonObject
 	 */
 	public function setBankAccount($fk_account, $notrigger = false, $userused = null)
 	{
-        global $user;
+		global $user;
 
-        if (empty($userused)) $userused=$user;
+		if (empty($userused)) $userused=$user;
 
-        $error = 0;
+		$error = 0;
 
 		if (! $this->table_element) {
 			dol_syslog(get_class($this)."::setBankAccount was called on objet with property table_element not defined", LOG_ERR);
 			return -1;
 		}
-        $this->db->begin();
+		$this->db->begin();
 
 		if ($fk_account<0) $fk_account='NULL';
 		dol_syslog(get_class($this).'::setBankAccount('.$fk_account.')');
@@ -2236,36 +2236,36 @@ abstract class CommonObject
 		$sql.= " SET fk_account = ".$fk_account;
 		$sql.= " WHERE rowid=".$this->id;
 
-        $resql = $this->db->query($sql);
-        if (! $resql)
-        {
-            dol_syslog(get_class($this).'::setBankAccount Error '.$sql.' - '.$this->db->error());
-            $this->error = $this->db->lasterror();
-            $error++;
-        }
-        else
-        {
-            if (!$notrigger)
-            {
-                // Call trigger
-                $this->context=array('bankaccountupdate'=>1);
-                $result = $this->call_trigger(strtoupper(get_class($this)) . '_MODIFY', $userused);
-                if ($result < 0) $error++;
-                // End call trigger
-            }
-        }
-        if ($error)
-        {
-            $this->db->rollback();
-            return -1;
-        }
-        else
-        {
-            $this->fk_account = ($fk_account=='NULL')?null:$fk_account;
-            $this->db->commit();
-            return 1;
-        }
-    }
+		$resql = $this->db->query($sql);
+		if (! $resql)
+		{
+			dol_syslog(get_class($this).'::setBankAccount Error '.$sql.' - '.$this->db->error());
+			$this->error = $this->db->lasterror();
+			$error++;
+		}
+		else
+		{
+			if (!$notrigger)
+			{
+				// Call trigger
+				$this->context=array('bankaccountupdate'=>1);
+				$result = $this->call_trigger(strtoupper(get_class($this)) . '_MODIFY', $userused);
+				if ($result < 0) $error++;
+				// End call trigger
+			}
+		}
+		if ($error)
+		{
+			$this->db->rollback();
+			return -1;
+		}
+		else
+		{
+			$this->fk_account = ($fk_account=='NULL')?null:$fk_account;
+			$this->db->commit();
+			return 1;
+		}
+	}
 
 
 	// TODO: Move line related operations to CommonObjectLine?
@@ -2967,7 +2967,7 @@ abstract class CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Add objects linked in llx_element_element.
 	 *
@@ -2978,7 +2978,7 @@ abstract class CommonObject
 	 */
 	public function add_object_linked($origin = null, $origin_id = null)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		$origin = (! empty($origin) ? $origin : $this->origin);
 		$origin_id = (! empty($origin_id) ? $origin_id : $this->origin_id);
 
@@ -2986,7 +2986,7 @@ abstract class CommonObject
 		if ($origin == 'order') $origin='commande';
 		if ($origin == 'invoice') $origin='facture';
 		if ($origin == 'invoice_template') $origin='facturerec';
-    	if ($origin == 'supplierorder') $origin='order_supplier';
+		if ($origin == 'supplierorder') $origin='order_supplier';
 		$this->db->begin();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."element_element (";
@@ -3003,16 +3003,16 @@ abstract class CommonObject
 
 		dol_syslog(get_class($this)."::add_object_linked", LOG_DEBUG);
 		if ($this->db->query($sql))
-	  	{
-	  		$this->db->commit();
-	  		return 1;
-	  	}
-	  	else
-	  	{
-	  		$this->error=$this->db->lasterror();
-	  		$this->db->rollback();
-	  		return 0;
-	  	}
+		{
+			$this->db->commit();
+			return 1;
+		}
+		else
+		{
+			$this->error=$this->db->lasterror();
+			$this->db->rollback();
+			return 0;
+		}
 	}
 
 	/**
@@ -3649,10 +3649,11 @@ abstract class CommonObject
 			{
 				if (empty($totalToShip)) $totalToShip=0;    // Avoid warning because $totalToShip is ''
 				$totalToShip+=$line->qty_shipped;   // defined for shipment only
-            }elseif ($line->element == 'commandefournisseurdispatch' && isset($line->qty))
-            {
-                if (empty($totalToShip)) $totalToShip=0;
-                $totalToShip+=$line->qty;   // defined for reception only
+			}
+			elseif ($line->element == 'commandefournisseurdispatch' && isset($line->qty))
+			{
+				if (empty($totalToShip)) $totalToShip=0;
+				$totalToShip+=$line->qty;   // defined for reception only
 			}
 
 			// Define qty, weight, volume, weight_units, volume_units
@@ -3912,7 +3913,7 @@ abstract class CommonObject
 
 		// Define usemargins
 		$usemargins=0;
-		if (! empty($conf->margin->enabled) && ! empty($this->element) && in_array($this->element, array('facture','propal','commande'))) $usemargins=1;
+		if (! empty($conf->margin->enabled) && ! empty($this->element) && in_array($this->element, array('facture','facturerec','propal','commande'))) $usemargins=1;
 
 		$num = count($this->lines);
 
@@ -4271,7 +4272,7 @@ abstract class CommonObject
 			$productstatic->id = $line->fk_product;
 			$productstatic->ref = $line->ref;
 			$productstatic->type = $line->fk_product_type;
-            if(empty($productstatic->ref)){
+			if (empty($productstatic->ref)) {
 				$line->fetch_product();
 				$productstatic = $line->product;
 			}
@@ -4637,14 +4638,14 @@ abstract class CommonObject
 							if (! empty($conf->global->PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD)) $setsharekey=true;
 						}
 						if ($this->element == 'commande' && ! empty($conf->global->ORDER_ALLOW_EXTERNAL_DOWNLOAD)) {
-                            $setsharekey=true;
-                        }
+							$setsharekey=true;
+						}
 						if ($this->element == 'facture' && ! empty($conf->global->INVOICE_ALLOW_EXTERNAL_DOWNLOAD)) {
-                            $setsharekey=true;
-                        }
+							$setsharekey=true;
+						}
 						if ($this->element == 'bank_account' && ! empty($conf->global->BANK_ACCOUNT_ALLOW_EXTERNAL_DOWNLOAD)) {
-                            $setsharekey=true;
-                        }
+							$setsharekey=true;
+						}
 
 						if ($setsharekey)
 						{
@@ -4807,7 +4808,7 @@ abstract class CommonObject
 	/* For triggers */
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Call trigger based on this instance.
 	 * Some context information may also be provided into array property this->context.
@@ -4818,9 +4819,9 @@ abstract class CommonObject
 	 * @param   User      $user           Object user
 	 * @return  int                       Result of run_triggers
 	 */
-    public function call_trigger($trigger_name, $user)
+	public function call_trigger($trigger_name, $user)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $langs,$conf;
 
 		include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
@@ -4845,7 +4846,7 @@ abstract class CommonObject
 	/* Functions for extrafields */
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Function to get extra fields of an object into $this->array_options
 	 *  This method is in most cases called by method fetch of objects but you can call it separately.
@@ -4854,9 +4855,9 @@ abstract class CommonObject
 	 *  @param  array	$optionsArray   Array resulting of call of extrafields->fetch_name_optionals_label(). Deprecated. Function must be called without parameters.
 	 *  @return	int						<0 if error, 0 if no values of extrafield to find nor found, 1 if an attribute is found and value loaded
 	 */
-    public function fetch_optionals($rowid = null, $optionsArray = null)
+	public function fetch_optionals($rowid = null, $optionsArray = null)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		if (empty($rowid)) $rowid=$this->id;
 
 		// To avoid SQL errors. Probably not the better solution though
@@ -5484,7 +5485,7 @@ abstract class CommonObject
 			elseif (in_array($type, array('int','integer','price')) || preg_match('/^double(\([0-9],[0-9]\)){0,1}/', $type))
 			{
 				$morecss = 'maxwidth75';
-            } elseif ($type == 'url') {
+			} elseif ($type == 'url') {
 				$morecss='minwidth400';
 			}
 			elseif ($type == 'boolean')
@@ -7010,7 +7011,7 @@ abstract class CommonObject
 	{
 		if(is_array($info))
 		{
-			if (isset($info['type']) && (preg_match('/^(double|real)/i', $info['type']))) return true;
+			if (isset($info['type']) && (preg_match('/^(double|real|price)/i', $info['type']))) return true;
 			else return false;
 		}
 		else return false;
@@ -7178,8 +7179,8 @@ abstract class CommonObject
 	 * @param	array		$fieldsentry	Properties of field
 	 * @return 	string
 	 */
-    protected function quote($value, $fieldsentry)
-    {
+	protected function quote($value, $fieldsentry)
+	{
 		if (is_null($value)) return 'NULL';
 		elseif (preg_match('/^(int|double|real)/i', $fieldsentry['type'])) return $this->db->escape("$value");
 		else return "'".$this->db->escape($value)."'";

@@ -37,6 +37,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 $langs->loadLangs(array("companies","website"));
 
+$action     = GETPOST('action', 'aZ09')?GETPOST('action', 'aZ09'):'view';				// The action 'add', 'create', 'edit', 'update', 'view', ...
+$show_files = GETPOST('show_files', 'int');
+$contextpage= GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'myobjectlist';   // To manage different context of search
+$backtopage = GETPOST('backtopage', 'alpha');											// Go back to a dedicated page
+$optioncss  = GETPOST('optioncss', 'aZ');												// Option for the css output (always '' except when 'print')
+
 $search_status=GETPOST('search_status');
 
 // Security check
@@ -224,13 +230,9 @@ dol_fiche_end();
 $newcardbutton = '';
 if (! empty($conf->website->enabled)) {
 	if (! empty($user->rights->societe->lire)) {
-		$newcardbutton .= '<a class="butActionNew" href="' . DOL_URL_ROOT.'/website/websiteaccount_card.php?action=create&fk_soc='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'"><span class="valignmiddle text-plus-circle">' . $langs->trans("AddWebsiteAccount").'</span>';
-		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-		$newcardbutton.= '</a>';
-	} else {
-		$newcardbutton .= '<a class="butActionNewRefused" href="#"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddAction").'</span>';
-		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-		$newcardbutton.= '</a>';
+        $morehtmlright.= dolGetButtonTitle($langs->trans("AddWebsiteAccount"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/website/websiteaccount_card.php?action=create&fk_soc='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id));
+    } else {
+        $morehtmlright.= dolGetButtonTitle($langs->trans("AddAction"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/website/websiteaccount_card.php?action=create&fk_soc='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id), '', 0);
 	}
 }
 
@@ -340,14 +342,14 @@ $objecttmp=new SocieteAccount($db);
 $trackid='thi'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
-if ($sall)
+/*if ($sall)
 {
 	foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
 	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ', $fieldstosearchall).'</div>';
-}
+}*/
 
-/*$moreforfilter = '';
-$moreforfilter.='<div class="divsearchfield">';
+$moreforfilter = '';
+/*$moreforfilter.='<div class="divsearchfield">';
 $moreforfilter.= $langs->trans('MyFilter') . ': <input type="text" name="search_myfield" value="'.dol_escape_htmltag($search_myfield).'">';
 $moreforfilter.= '</div>';*/
 
@@ -389,7 +391,7 @@ $parameters=array('arrayfields'=>$arrayfields);
 $reshook=$hookmanager->executeHooks('printFieldListOption', $parameters, $objectwebsiteaccount);    // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Action column
-print '<td class="liste_titre right">';
+print '<td class="liste_titre maxwidthsearch">';
 $searchpicto=$form->showFilterButtons();
 print $searchpicto;
 print '</td>';

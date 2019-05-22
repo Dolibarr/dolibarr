@@ -2532,7 +2532,6 @@ class Facture extends CommonInvoice
 		return true;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Set draft status
 	 *
@@ -2540,7 +2539,7 @@ class Facture extends CommonInvoice
 	 *	@param	int		$idwarehouse	Id warehouse to use for stock change.
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
-    public function setDraft($user, $idwarehouse = -1)
+	public function setDraft($user, $idwarehouse = -1)
 	{
         // phpcs:enable
 		global $conf,$langs;
@@ -2549,11 +2548,11 @@ class Facture extends CommonInvoice
 
 		if ($this->statut == self::STATUS_DRAFT)
 		{
-			dol_syslog(get_class($this)."::set_draft already draft status", LOG_WARNING);
+			dol_syslog(__METHOD__." already draft status", LOG_WARNING);
 			return 0;
 		}
 
-		dol_syslog(get_class($this)."::set_draft", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$this->db->begin();
 
@@ -2564,10 +2563,10 @@ class Facture extends CommonInvoice
 		$result=$this->db->query($sql);
 		if ($result)
 		{
-		    if (! $error)
-		    {
-		        $this->oldcopy= clone $this;
-		    }
+			if (! $error)
+			{
+				$this->oldcopy= clone $this;
+			}
 
 			// Si on decremente le produit principal et ses composants a la validation de facture, on réincrement
 			if ($this->type != self::TYPE_DEPOSIT && $result >= 0 && ! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_BILL))
@@ -2595,15 +2594,15 @@ class Facture extends CommonInvoice
 				$this->brouillon = 1;
 				$this->statut = self::STATUS_DRAFT;
 
-	            // Call trigger
-	            $result=$this->call_trigger('BILL_UNVALIDATE', $user);
-	            if ($result < 0)
+				// Call trigger
+				$result=$this->call_trigger('BILL_UNVALIDATE', $user);
+				if ($result < 0)
 				{
 					$error++;
 					$this->statut=$old_statut;
 					$this->brouillon=0;
 				}
-	            // End call triggers
+				// End call triggers
 			} else {
 				$this->db->rollback();
 				return -1;
@@ -4628,7 +4627,7 @@ class FactureLigne extends CommonInvoiceLine
 		$sql.= " '".$this->db->escape($this->localtax1_type)."',";
 		$sql.= " '".$this->db->escape($this->localtax2_type)."',";
 		$sql.= ' '.(! empty($this->fk_product)?$this->fk_product:"null").',';
-		$sql.= " ".$this->product_type.",";
+		$sql.= " ".((int) $this->product_type).",";
 		$sql.= " ".price2num($this->remise_percent).",";
 		$sql.= " ".price2num($this->subprice).",";
 		$sql.= ' '.(! empty($this->fk_remise_except)?$this->fk_remise_except:"null").',';

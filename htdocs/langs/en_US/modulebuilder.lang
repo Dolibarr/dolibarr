@@ -25,7 +25,7 @@ EnterNameOfModuleToDeleteDesc=You can delete your module. WARNING: All coding fi
 EnterNameOfObjectToDeleteDesc=You can delete an object. WARNING: All coding files (generated or created manually) related to object will be deleted!
 DangerZone=Danger zone
 BuildPackage=Build package
-BuildPackageDesc=You can generate a zip package or your application so your are ready to distribute it on any Dolibarr. You can also distribute it or sell it on marketplace like <a href="https://www.dolistore.com">DoliStore.com</a>.
+BuildPackageDesc=You can generate a zip package of your application so your are ready to distribute it on any Dolibarr. You can also distribute it or sell it on marketplace like <a href="https://www.dolistore.com">DoliStore.com</a>.
 BuildDocumentation=Build documentation
 ModuleIsNotActive=This module is not activated yet. Go to %s to make it live or click here:
 ModuleIsLive=This module has been activated. Any change may break a current live feature.
@@ -68,6 +68,7 @@ PageForLib=File for PHP library
 PageForObjLib=File for PHP library dedicated to object 
 SqlFileExtraFields=Sql file for complementary attributes
 SqlFileKey=Sql file for keys
+SqlFileKeyExtraFields=Sql file for keys of complementary attributes
 AnObjectAlreadyExistWithThisNameAndDiffCase=An object already exists with this name and a different case
 UseAsciiDocFormat=You can use Markdown format, but it is recommended to use Asciidoc format (omparison between .md and .asciidoc: http://asciidoctor.org/docs/user-manual/#compared-to-markdown)
 IsAMeasure=Is a measure

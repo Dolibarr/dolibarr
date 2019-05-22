@@ -141,12 +141,14 @@ class DoliDBMysqli extends DoliDB
             	// If client is old latin, we force utf8
             	$clientmustbe=empty($conf->db->dolibarr_main_db_character_set)?'utf8':$conf->db->dolibarr_main_db_character_set;
             	if (preg_match('/latin1/', $clientmustbe)) $clientmustbe='utf8';
+            	if (preg_match('/utf8mb4/', $clientmustbe)) $clientmustbe='utf8';
 
-				if ($this->db->character_set_name() != $clientmustbe) {
-					$this->db->set_charset($clientmustbe);	// This set utf8_general_ci
+            	if ($this->db->character_set_name() != $clientmustbe) {
+            		$this->db->set_charset($clientmustbe);	// This set utf8_unicode_ci
 
-					$collation = $conf->db->dolibarr_main_db_collation;
-					if (preg_match('/latin1/', $collation)) $collation='utf8_unicode_ci';
+            		$collation = $conf->db->dolibarr_main_db_collation;
+            		if (preg_match('/latin1/', $collation)) $collation='utf8_unicode_ci';
+            		if (preg_match('/utf8mb4/', $collation)) $collation='utf8_unicode_ci';
 
 					if (! preg_match('/general/', $collation)) $this->db->query("SET collation_connection = ".$collation);
 				}

@@ -99,9 +99,9 @@ class MyObject extends CommonObject
 		'note_public'   =>array('type'=>'html',			'label'=>'NotePublic',		 'enabled'=>1, 'visible'=>0,  'position'=>61),
 		'note_private'  =>array('type'=>'html',			'label'=>'NotePrivate',		 'enabled'=>1, 'visible'=>0,  'position'=>62),
 		'date_creation' =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-2, 'notnull'=> 1, 'position'=>500),
-	    'tms'           =>array('type'=>'timestamp',    'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'notnull'=> 1, 'position'=>501),
+	    'tms'           =>array('type'=>'timestamp',    'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'notnull'=> 0, 'position'=>501),
 		//'date_validation'    =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-2, 'position'=>502),
-		'fk_user_creat' =>array('type'=>'integer',      'label'=>'UserAuthor',       'enabled'=>1, 'visible'=>-2, 'notnull'=> 1, 'position'=>510, 'foreignkey'=>'llx_user.rowid'),
+		'fk_user_creat' =>array('type'=>'integer',      'label'=>'UserAuthor',       'enabled'=>1, 'visible'=>-2, 'notnull'=> 1, 'position'=>510, 'foreignkey'=>'user.rowid'),
 		'fk_user_modif' =>array('type'=>'integer',      'label'=>'UserModif',        'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>511),
 		//'fk_user_valid' =>array('type'=>'integer',      'label'=>'UserValidation',        'enabled'=>1, 'visible'=>-1, 'position'=>512),
 		'import_key'    =>array('type'=>'varchar(14)',  'label'=>'ImportId',         'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'index'=>0,  'position'=>1000),
@@ -644,6 +644,30 @@ class MyObject extends CommonObject
 		$this->initAsSpecimenCommon();
 	}
 
+	/**
+	 * 	Create an array of lines
+	 *
+	 * 	@return array|int		array of lines if OK, <0 if KO
+	 */
+	public function getLinesArray()
+	{
+	    $this->lines=array();
+
+	    $objectline = new BOMLine($this->db);
+	    $result = $objectline->fetchAll('', '', 0, 0, array('fk_myobject'=>$this->id));
+
+	    if (is_numeric($result))
+	    {
+	        $this->error = $this->error;
+	        $this->errors = $this->errors;
+	        return $result;
+	    }
+	    else
+	    {
+	        $this->lines = $result;
+	        return $this->lines();
+	    }
+	}
 
 	/**
 	 * Action executed by scheduler

@@ -239,6 +239,10 @@ class Stripe extends CommonObject
 
     /**
 	 * Get the Stripe payment intent. Create it with confirm=false
+     * Warning. If a payment was tried and failed, a payment intent was created.
+	 * But if we change someting on object to pay (amount or other), reusing same payment intent is not allowed.
+	 * Recommanded solution is to recreate a new payment intent each time we need one (old one will be automatically closed after a delay),
+	 * that's why i comment the part of code to retreive a payment intent with object id (never mind if we cumulate payment intent with old that will not be used)
 	 *
 	 * @param   double  $amount                             Amount
 	 * @param   string  $currency_code                      Currency code
@@ -279,7 +283,12 @@ class Stripe extends CommonObject
 
 		if (is_object($object))
 		{
-    		$sql = "SELECT pi.ext_payment_id, pi.entity, pi.fk_facture, pi.sourcetype, pi.ext_payment_site";
+			// Warning. If a payment was tried and failed, a payment intent was created.
+			// But if we change someting on object to pay (amount or other), reusing same payment intent is not allowed.
+			// Recommanded solution is to recreate a new payment intent each time we need one (old one will be automatically closed after a delay),
+			// that's why i comment the part of code to retreive a payment intent with object id (never mind if we cumulate payment intent with old that will not be used)
+			/*
+			$sql = "SELECT pi.ext_payment_id, pi.entity, pi.fk_facture, pi.sourcetype, pi.ext_payment_site";
     		$sql.= " FROM " . MAIN_DB_PREFIX . "prelevement_facture_demande as pi";
     		$sql.= " WHERE pi.fk_facture = " . $object->id;
     		$sql.= " AND pi.sourcetype = '" . $object->element . "'";
@@ -314,7 +323,7 @@ class Stripe extends CommonObject
     					$this->error = $e->getMessage();
     				}
     			}
-    		}
+    		}*/
 		}
 
 		if (empty($paymentintent))
@@ -335,11 +344,12 @@ class Stripe extends CommonObject
     		    "payment_method_types" => ["card"],
     		    "description" => $description,
     		    "statement_descriptor" => dol_trunc($tag, 10, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt (company + description)
+    			//"save_payment_method" => true,
     			"metadata" => $metadata
     		);
     		if (! is_null($customer)) $dataforintent["customer"]=$customer;
-    		// save_payment_method = true,
     		// payment_method =
+    		// payment_method_types = array('card')
             //var_dump($dataforintent);
 
     		if ($conf->entity!=$conf->global->STRIPECONNECT_PRINCIPAL && $fee>0)
@@ -368,15 +378,39 @@ class Stripe extends CommonObject
     			// Store the payment intent
     			if (is_object($object))
     			{
-                    $now=dol_now();
-    				$sql = "INSERT INTO " . MAIN_DB_PREFIX . "prelevement_facture_demande (fk_soc, date_demande, fk_user_demande, ext_payment_id, fk_facture, sourcetype, entity, ext_payment_site)";
-    				$sql .= " VALUES ('".$object->socid."','".$this->db->idate($now)."', '0', '".$this->db->escape($paymentintent->id)."', ".$object->id.", '".$this->db->escape($object->element)."', " . $conf->entity . ", '" . $service . "')";
+    				$paymentintentalreadyexists = 0;
+    				// Check that payment intent $paymentintent->id is not already recorded.
+    				$sql = "SELECT pi.rowid";
+    				$sql.= " FROM " . MAIN_DB_PREFIX . "prelevement_facture_demande as pi";
+    				$sql.= " WHERE pi.entity IN (".getEntity('societe').")";
+    				$sql.= " AND pi.ext_payment_site = '" . $service . "'";
+    				$sql.= " AND pi.ext_payment_id = '".$this->db->escape($paymentintent->id)."'";
+
+    				dol_syslog(get_class($this) . "::getPaymentIntent search if payment intent already in prelevement_facture_demande", LOG_DEBUG);
     				$resql = $this->db->query($sql);
-    				if (! $resql)
+    				if ($resql) {
+    					$num = $this->db->num_rows($resql);
+    					if ($num)
+    					{
+    						$obj = $this->db->fetch_object($resql);
+    						if ($obj) $paymentintentalreadyexists++;
+    					}
+    				}
+    				else dol_print_error($this->db);
+
+    				// If not, we create it.
+    				if (! $paymentintentalreadyexists)
     				{
-    				    $error++;
-    					$this->error = $this->db->lasterror();
-                        dol_syslog(get_class($this) . "::PaymentIntent failed to insert paymentintent with id=".$paymentintent->id." into database.");
+	    				$now=dol_now();
+	    				$sql = "INSERT INTO " . MAIN_DB_PREFIX . "prelevement_facture_demande (date_demande, fk_user_demande, ext_payment_id, fk_facture, sourcetype, entity, ext_payment_site)";
+	    				$sql .= " VALUES ('".$this->db->idate($now)."', '0', '".$this->db->escape($paymentintent->id)."', ".$object->id.", '".$this->db->escape($object->element)."', " . $conf->entity . ", '" . $service . "')";
+	    				$resql = $this->db->query($sql);
+	    				if (! $resql)
+	    				{
+	    				    $error++;
+	    					$this->error = $this->db->lasterror();
+	                        dol_syslog(get_class($this) . "::PaymentIntent failed to insert paymentintent with id=".$paymentintent->id." into database.");
+	    				}
     				}
     			}
     			else
@@ -398,7 +432,14 @@ class Stripe extends CommonObject
 
 		dol_syslog("getPaymentIntent return error=".$error);
 
-		return $paymentintent;
+		if (! $error)
+		{
+			return $paymentintent;
+		}
+		else
+		{
+			return null;
+		}
 	}
 
 	/**

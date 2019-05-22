@@ -196,7 +196,7 @@ if ($object->id > 0)
     print '<div class="underbanner clearboth"></div>';
 
     $object->info($object->id);
-	print dol_print_object_info($object, 1);
+	dol_print_object_info($object, 1);
 
 	print '</div>';
 

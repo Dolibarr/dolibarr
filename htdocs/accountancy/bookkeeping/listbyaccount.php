@@ -256,10 +256,8 @@ if ($action == 'delbookkeepingyear') {
 
 print '<form method="POST" id="searchFormList" action="' . $_SERVER["PHP_SELF"] . '">';
 
-$viewflat = ' <a class="nohover marginrightonly" href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/list.php?'.$param.'">' . $langs->trans("ViewFlatList") . '</a>';
-$newcardbutton = '<a class="butActionNew" href="./card.php?action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans("NewAccountingMvt").'</span>';
-$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-$newcardbutton.= '</a>';
+$newcardbutton.= dolGetButtonTitle($langs->trans('ViewFlatList'), '', 'fa fa-list', DOL_URL_ROOT.'/accountancy/bookkeeping/list.php?'.$param);
+$newcardbutton.= dolGetButtonTitle($langs->trans('NewAccountingMvt'), '', 'fa fa-plus-circle', './card.php?action=create');
 
 if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
 if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);

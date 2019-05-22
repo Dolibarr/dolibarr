@@ -4,7 +4,7 @@
  * Copyright (C) 2013      Olivier Geffroy      <jeff@jeffinfo.com>
  * Copyright (C) 2013      Florian Henry	    <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2019 Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2018      Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2019 Frédéric France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,11 +37,12 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array("compta","accountancy"));
 
-$action = GETPOST('action', 'aZ09');
+$action     = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOST('show_files', 'int');
-$confirm = GETPOST('confirm', 'alpha');
-$toselect = GETPOST('toselect', 'array');
+$confirm    = GETPOST('confirm', 'alpha');
+$toselect   = GETPOST('toselect', 'array');
+$socid      = GETPOST('socid', 'int')?GETPOST('socid', 'int'):GETPOST('id', 'int');
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
@@ -186,21 +187,25 @@ if (! $resql) {
 	exit();
 }
 
+$param='';
+$param.="&socid=".urlencode($socid);
+
 $num = $db->num_rows($resql);
 
 dol_syslog("/accountancy/bookkeeping/thirdparty_lettering_customer.php", LOG_DEBUG);
 if ($resql) {
 	$i = 0;
 
+    $param="&socid=".$socid;
 	print '<form name="add" action="' . $_SERVER["PHP_SELF"] . '?socid=' . $object->id . '" method="POST">';
 	print '<input type="hidden" name="socid" value="' . $object->id . '">';
 
     $letteringbutton = '<a class="divButAction"><span class="valignmiddle"><input class="butAction" type="submit" value="lettering" name="lettering" id="lettering"></span></a>';
-    //$letteringbutton = '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=lettering" value="lettering" name="lettering" id="lettering"><span class="valignmiddle">' . $langs->trans("Lettering") . '</span></a>';
 
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_companies', 0, $letteringbutton, '', $limit);
 
-	print "<table class=\"noborder\" width=\"100%\">";
+    print '<div class="div-table-responsive-no-min">';
+    print '<table class="liste" width="100%">'."\n";
 
 	/*
     print '<tr class="liste_titre">';
@@ -239,7 +244,7 @@ if ($resql) {
 	print_liste_field_titre("Balancing", $_SERVER["PHP_SELF"], "", "", $param, "", $sortfield, $sortorder);
 	print_liste_field_titre("Codejournal", $_SERVER["PHP_SELF"], "bk.code_journal", "", $param, "", $sortfield, $sortorder, 'center ');
 	print_liste_field_titre("LetteringCode", $_SERVER["PHP_SELF"], "bk.lettering_code", "", $param, "", $sortfield, $sortorder, 'center ');
-    print_liste_field_titre("", "","",'','',"",$sortfield,$sortorder,'maxwidthsearch center ');
+    print_liste_field_titre("", "", "", '', '', "", $sortfield, $sortorder, 'maxwidthsearch center ');
 	print "</tr>\n";
 
 	$solde = 0;
@@ -262,13 +267,13 @@ if ($resql) {
 
 		// Journal
         $accountingjournal = new AccountingJournal($db);
-        $result = $accountingjournal->fetch('',$obj->code_journal);
-        $journaltoshow = (($result > 0)?$accountingjournal->getNomUrl(0,0,0,'',0) : $obj->code_journal);
+        $result = $accountingjournal->fetch('', $obj->code_journal);
+        $journaltoshow = (($result > 0)?$accountingjournal->getNomUrl(0, 0, 0, '', 0) : $obj->code_journal);
         print '<td class="center">' . $journaltoshow . '</td>';
 
         if (empty($obj->lettering_code)) {
             print '<td class="nowrap center"><input type="checkbox" class="flat checkforselect" name="toselect[]" id="toselect[]" value="' . $obj->rowid . '" /></td>';
-            print '<td><a href="' . dol_buildpath('/accountancy/bookkeeping/card.php', 1) . '?piece_num=' . $obj->piece_num . '">';
+            print '<td><a href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?piece_num=' . $obj->piece_num . '">';
             print img_edit();
             print '</a></td>' . "\n";
         } else {

@@ -582,7 +582,7 @@ class Project extends CommonObject
 		}
         elseif ($type == 'project_task')
 		{
-			$sql = "SELECT DISTINCT pt.rowid FROM " . MAIN_DB_PREFIX . "projet_task as pt, " . MAIN_DB_PREFIX . "projet_task_time as ptt WHERE pt.rowid = ptt.fk_task AND pt.fk_projet IN (". $ids .")";
+			$sql = "SELECT DISTINCT pt.rowid FROM " . MAIN_DB_PREFIX . "projet_task as pt WHERE pt.fk_projet IN (". $ids .")";
 		}
 		elseif ($type == 'project_task_time')	// Case we want to duplicate line foreach user
 		{
@@ -686,6 +686,18 @@ class Project extends CommonObject
 	        	$error++;
 	        	break;
 	        }
+        }
+
+        // Remove linked categories.
+        if (! $error) {
+            $sql = "DELETE FROM ".MAIN_DB_PREFIX. "categorie_project";
+            $sql.= " WHERE fk_project = ". $this->id;
+
+            $result = $this->db->query($sql);
+            if (! $result) {
+                $error++;
+                $this->errors[] = $this->db->lasterror();
+            }
         }
 
 		// Fetch tasks

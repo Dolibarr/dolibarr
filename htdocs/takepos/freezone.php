@@ -36,7 +36,6 @@ require '../main.inc.php';	// Load $user and permissions
 $langs->loadLangs(array("bills", "cashdesk"));
 
 $place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0);   // $place is id of table for Ba or Restaurant
-$posnb = (GETPOST('posnb', 'int') > 0 ? GETPOST('posnb', 'int') : 0);   // $posnb is id of POS
 
 $idline = GETPOST('idline', 'int');
 $action = GETPOST('action', 'alpha');

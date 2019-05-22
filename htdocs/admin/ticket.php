@@ -259,7 +259,7 @@ foreach ($dirmodels as $reldir) {
                         if ($conf->global->TICKET_ADDON == 'mod_' . $classname) {
                             print img_picto($langs->trans("Activated"), 'switch_on');
                         } else {
-                            print '<a href="' . $_SERVER["PHP_SELF"] . '?action=setmod&amp;value=mod_' . $classname . '" alt="' . $langs->trans("Default") . '">' . img_picto($langs->trans("Disabled"), 'switch_off') . '</a>';
+                            print '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?action=setmod&amp;value=mod_' . $classname . '" alt="' . $langs->trans("Default") . '">' . img_picto($langs->trans("Disabled"), 'switch_off') . '</a>';
                         }
                         print '</td>';
 

@@ -19,7 +19,7 @@ PHPDebugBar			   1.15.0		 MIT License	             Yes             Used only by 
 EvalMath               1.0           BSD                         Yes             Safe math expressions evaluation
 Escpos-php             ?             MIT License                 Yes             Thermal receipt printer library, for use with ESC/POS compatible printers
 GeoIP                  1.4           LGPL-2.1+                   Yes             Sample code to make geoip convert (not into deb package)
-Mobiledetect           2.8.17        MIT License                 Yes             Detect mobile devices browsers
+Mobiledetect           2.8.83        MIT License                 Yes             Detect mobile devices browsers
 NuSoap                 0.9.5         LGPL 2.1+                   Yes             Library to develop SOAP Web services (not into rpm and deb package)
 PEAR Mail_MIME         1.8.9         BSD                         Yes             NuSoap dependency
 odtPHP                 1.0.1         GPL-2+                      Yes             Library to build/edit ODT files
@@ -35,7 +35,7 @@ Restler                3.0.0RC6      LGPL-3+                     Yes            
 TCPDF                  6.2.25        LGPL-3+                     Yes             PDF generation
 TCPDI                  1.0.0         LGPL-3+ / Apache 2.0        Yes             FPDI replacement
 Swift Mailer           5.4.2-DEV     MIT license                 Yes             Comprehensive mailing tools for PHP
-Stripe                 4.7.0         MIT licence                 Yes             Library for Stripe module
+Stripe                 6.34.5        MIT licence                 Yes             Library for Stripe module
 
 JS libraries:
 jQuery                 3.3.1         MIT License                 Yes             JS library
