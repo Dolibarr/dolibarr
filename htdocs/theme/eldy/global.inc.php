@@ -181,6 +181,10 @@ input.buttonpaymentstripe {
 	background-repeat: no-repeat;
 	background-position: 8px 11px;
 }
+a.buttonticket {
+	padding-left: 5px;
+	padding-right: 5px;
+}
 
 /* Used by timesheets */
 span.timesheetalreadyrecorded input {
@@ -3084,8 +3088,8 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 }
 .boxstats130 {
     width: 158px;
-    height: 48px;
-    padding: 3px;
+    height: 59px;
+    /* padding: 3px; */
 }
 .boxstats {
     padding-left: 3px;
@@ -3093,6 +3097,10 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
     padding-top: 2px;
     padding-bottom: 2px;
     width: 121px;
+}
+.tabBar .fichehalfright .boxstats {
+    padding-top: 8px;
+    padding-bottom: 4px;
 }
 .boxstatscontent {
 	padding: 3px;
@@ -3193,7 +3201,8 @@ span.dashboardlineko {
 	float: right;
 	position: relative;
     text-align: right;
-    top: -26px;
+    top: -27px;
+    right: 2px;
     padding: 0px 5px 0px 5px;
     border-radius: .25em;
 

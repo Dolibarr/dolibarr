@@ -114,7 +114,7 @@ dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'n
 print '<div class="fichecenter">';
 
 print '<div class="underbanner clearboth"></div>';
-print '<table class="border" width="100%">';
+print '<table class="border centpercent tableforfield">';
 
 if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
 {

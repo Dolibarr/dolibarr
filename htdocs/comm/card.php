@@ -245,7 +245,7 @@ if ($object->id > 0)
 	print '<div class="fichecenter"><div class="fichehalfleft">';
 
     print '<div class="underbanner clearboth"></div>';
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent tableforfield">';
 
 	// Prospect/Customer
 	print '<tr><td class="titlefield">'.$langs->trans('ProspectCustomer').'</td><td>';
@@ -534,7 +534,7 @@ if ($object->id > 0)
     	print '<br>';
 
     	print '<div class="underbanner clearboth"></div>';
-    	print '<table class="border" width="100%">';
+    	print '<table class="border centpercent tableforfield">';
 
 	    // Level of prospect
 	    print '<tr><td class="titlefield nowrap">';

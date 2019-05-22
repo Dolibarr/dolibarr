@@ -187,11 +187,13 @@ function societe_prepare_head(Societe $object)
 		$foundonexternalonlinesystem=0;
     	$langs->load("banks");
 
-        $title = $langs->trans("BankAccounts");
+        //$title = $langs->trans("BankAccounts");
+    	$title = $langs->trans("PaymentInformation");
+
 		if (! empty($conf->stripe->enabled))
 		{
-			$langs->load("stripe");
-			$title = $langs->trans("BankAccountsAndGateways");
+			//$langs->load("stripe");
+			//$title = $langs->trans("BankAccountsAndGateways");
 
 			$servicestatus = 0;
 			if (! empty($conf->global->STRIPE_LIVE) && ! GETPOST('forcesandbox', 'alpha')) $servicestatus = 1;

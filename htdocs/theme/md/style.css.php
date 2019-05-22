@@ -409,6 +409,11 @@ input.buttonpaymentstripe {
 	background-repeat: no-repeat;
 	background-position: 8px 7px;
 }
+a.buttonticket {
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
 /* Used for timesheets */
 span.timesheetalreadyrecorded input {
     border: none;
@@ -1358,11 +1363,11 @@ div.fichetwothirdright {
 }
 div.fichehalfleft {
 	<?php if ($conf->browser->layout != 'phone')   { print "float: ".$left.";\n"; } ?>
-	<?php if ($conf->browser->layout != 'phone')   { print "width: 50%;\n"; } ?>
+	<?php if ($conf->browser->layout != 'phone')   { print "width: calc(50% - 10px);\n"; } ?>
 }
 div.fichehalfright {
 	<?php if ($conf->browser->layout != 'phone')   { print "float: ".$right.";\n"; } ?>
-	<?php if ($conf->browser->layout != 'phone')   { print "width: 50%;\n"; } ?>
+	<?php if ($conf->browser->layout != 'phone')   { print "width: calc(50% - 10px);\n"; } ?>
 }
 div.fichehalfright {
 	<?php if ($conf->browser->layout == 'phone')   { print "margin-top: 10px;\n"; } ?>
@@ -2583,6 +2588,10 @@ a.butActionNewRefused>span.fa-plus-circle { padding-left: 6px; font-size: 1.5em;
     background-image: -o-linear-gradient(top, #ffffff, #e6e6e6);
     background-image: linear-gradient(to bottom, #ffffff, #e6e6e6);
     background-repeat: repeat-x
+}
+
+button.ui-button {
+    padding-top: 5px;
 }
 
 .butActionDelete, .buttonDelete {
@@ -5806,10 +5815,13 @@ border-top-right-radius: 6px;
 }
 
 
+
 <?php if (! defined('DISABLE_FONT_AWSOME') && empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5)) { ?>
         <?php include dol_buildpath($path.'/theme/'.$theme.'/main_menu_fa_icons.inc.php', 0); ?>
-<?php } ?>
+<?php }
+
+include dol_buildpath($path.'/theme/'.$theme.'/dropdown.inc.php', 0);
 
 
-<?php
+
 if (is_object($db)) $db->close();
