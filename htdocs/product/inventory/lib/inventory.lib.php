@@ -64,7 +64,7 @@ function inventoryAdminPrepareHead()
  *
  *  @return array                       Array of head
  */
-function inventoryPrepareHead(&$inventory, $title='Inventory', $get='')
+function inventoryPrepareHead(&$inventory, $title = 'Inventory', $get = '')
 {
 	global $langs;
 

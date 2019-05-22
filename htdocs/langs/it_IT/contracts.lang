@@ -85,10 +85,10 @@ NoteListOfYourExpiredServices=Questa lista contiene i servizi relativi a contrat
 StandardContractsTemplate=Template standard per i contratti
 ContactNameAndSignature=Per %s, nome e firma:
 OnlyLinesWithTypeServiceAreUsed=Verranno clonate solo le righe di tipo "servizio"
-CloneContract=Clona contratto
 ConfirmCloneContract=Sei sicuro di voler clonare il contratto <b>%s</b>?
 LowerDateEndPlannedShort=Data di fine pianificata inferiore dei servizi attivi
 SendContractRef=Informazione del contratto __REF__
+OtherContracts=Altri contratti
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Contatto interno per la firma del contratto
 TypeContact_contrat_internal_SALESREPFOLL=Contatto interno per i rapporti successivi alla firma

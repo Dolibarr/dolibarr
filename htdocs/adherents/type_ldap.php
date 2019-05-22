@@ -33,10 +33,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/ldap.lib.php';
 $langs->loadLangs(array("admin","members","ldap"));
 
 $id = GETPOST('rowid', 'int');
-$action = GETPOST('action','alpha');
+$action = GETPOST('action', 'alpha');
 
 // Security check
-$result=restrictedArea($user,'adherent',$id,'adherent_type');
+$result=restrictedArea($user, 'adherent', $id, 'adherent_type');
 
 $object = new AdherentType($db);
 $object->fetch($id);
@@ -50,7 +50,7 @@ $hookmanager->initHooks(array('membertypeldapcard','globalcard'));
 
 
 $parameters=array();
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
@@ -153,9 +153,9 @@ $result=$ldap->connect_bind();
 if ($result > 0)
 {
     $info=$object->_load_ldap_info();
-    $dn=$object->_load_ldap_dn($info,1);
-    $search = "(".$object->_load_ldap_dn($info,2).")";
-    $records = $ldap->getAttribute($dn,$search);
+    $dn=$object->_load_ldap_dn($info, 1);
+    $search = "(".$object->_load_ldap_dn($info, 2).")";
+    $records = $ldap->getAttribute($dn, $search);
 
     //print_r($records);
 
@@ -168,7 +168,7 @@ if ($result > 0)
         }
         else
         {
-            $result=show_ldap_content($records,0,$records['count'],true);
+            $result=show_ldap_content($records, 0, $records['count'], true);
         }
     }
     else

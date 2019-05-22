@@ -58,7 +58,7 @@ if (empty($datatoimport))
 $filename=$langs->trans("ExampleOfImportFile").'_'.$datatoimport.'.'.$format;
 
 $objimport=new Import($db);
-$objimport->load_arrays($user,$datatoimport);
+$objimport->load_arrays($user, $datatoimport);
 // Load arrays from descriptor module
 $entity=$objimport->array_import_entities[0][$code];
 $entityicon=$entitytoicon[$entity]?$entitytoicon[$entity]:$entity;
@@ -84,11 +84,11 @@ $contentlinevalues=array();
 $i = 0;
 foreach($fieldstarget as $code=>$label)
 {
-	$withoutstar=preg_replace('/\*/','',$fieldstarget[$code]);
+	$withoutstar=preg_replace('/\*/', '', $fieldstarget[$code]);
 	$headerlinefields[]=$langs->transnoentities($withoutstar).($withoutstar != $fieldstarget[$code]?'*':'').' ('.$code.')';
 	$contentlinevalues[]=$valuestarget[$code];
 }
 //var_dump($headerlinefields);
 //var_dump($contentlinevalues);
 
-print $objimport->build_example_file($format,$headerlinefields,$contentlinevalues,$datatoimport);
+print $objimport->build_example_file($format, $headerlinefields, $contentlinevalues, $datatoimport);

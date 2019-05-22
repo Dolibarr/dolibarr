@@ -55,6 +55,8 @@ create table llx_actioncomm
   label				varchar(255) NOT NULL,			-- label/title of event or topic of email
   note				text,							-- note of event or content of email
   
+  calling_duration  integer,                        -- when event is a phone call, duration of phone call
+  
   email_subject		varchar(255),					-- when event was an email, we store here the subject. content is stored into note.
   email_msgid		varchar(255),					-- when event was an email, we store here the msgid
   email_from		varchar(255),					-- when event was an email, we store here the from

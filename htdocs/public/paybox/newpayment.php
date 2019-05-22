@@ -24,8 +24,8 @@
  *		\author	    Laurent Destailleur
  */
 
-define("NOLOGIN",1);		// This means this output page does not require to be logged.
-define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
+define("NOLOGIN", 1);		// This means this output page does not require to be logged.
+define("NOCSRFCHECK", 1);	// We accept to go on this page from external web site.
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
@@ -41,7 +41,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 // Security check
-if (empty($conf->paybox->enabled)) accessforbidden('',0,0,1);
+if (empty($conf->paybox->enabled)) accessforbidden('', 0, 0, 1);
 
 $newurl = $_SERVER['REQUEST_URI'];
 $newurl = preg_replace('/\/paybox\/newpayment/', '/payment/newpayment', $newurl);

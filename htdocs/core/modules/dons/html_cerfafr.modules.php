@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2006	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2012       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2014-2015  Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2014-2015  Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2015  		Benoit Bruchard			<benoitb21@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -40,7 +40,7 @@ class html_cerfafr extends ModeleDon
 	 *
 	 *  @param      DoliDb      $db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		global $conf,$langs;
 
@@ -58,13 +58,13 @@ class html_cerfafr extends ModeleDon
 	 *
 	 *  @return	boolean     true if module can be used
 	 */
-	function isEnabled()
+	public function isEnabled()
 	{
 		return true;
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Write the object to document file to disk
 	 *
@@ -73,7 +73,7 @@ class html_cerfafr extends ModeleDon
 	 *  @param	string		$currency		Currency code
 	 *	@return	int             			>0 if OK, <0 if KO
 	 */
-	function write_file($don,$outputlangs,$currency='')
+	public function write_file($don, $outputlangs, $currency = '')
 	{
         // phpcs:enable
 		global $user,$conf,$langs,$mysoc;
@@ -115,7 +115,7 @@ class html_cerfafr extends ModeleDon
 			{
 				if (dol_mkdir($dir) < 0)
 				{
-					$this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
+					$this->error=$langs->trans("ErrorCanNotCreateDir", $dir);
 					return -1;
 				}
 			}
@@ -136,10 +136,10 @@ class html_cerfafr extends ModeleDon
 				if ($don->modepaymentcode=='CHQ'){
 					$ModePaiement = '<td width="25%"><input type="checkbox"> Remise d\'espèces</td><td width="25%"><input type="checkbox" disabled="true" checked="checked"> Chèque</td><td width="50%"><input type="checkbox"> Virement, prélèvement, carte bancaire</td>';
 				}
-				else if ($don->modepaymentcode=='LIQ'){
+				elseif ($don->modepaymentcode=='LIQ'){
 					$ModePaiement = '<td width="25%"><input type="checkbox" checked="checked"> Remise d\'espèces</td><td width="25%"><input type="checkbox"> Chèque</td><td width="50%"><input type="checkbox"> Virement, prélèvement, carte bancaire</td>';
 				}
-				else if ($don->modepaymentcode=='VIR' || $don->modepaymentcode=='PRE' || $don->modepaymentcode=='CB'){
+				elseif ($don->modepaymentcode=='VIR' || $don->modepaymentcode=='PRE' || $don->modepaymentcode=='CB'){
 					$ModePaiement = '<td width="25%"><input type="checkbox"> Remise d\'espèces</td><td width="25%"><input type="checkbox"> Chèque</td><td width="50%"><input type="checkbox" checked="checked"> Virement, prélèvement, carte bancaire</td>';
 				}
 				else
@@ -161,58 +161,58 @@ class html_cerfafr extends ModeleDon
 				// Define contents
 				$donmodel=DOL_DOCUMENT_ROOT ."/core/modules/dons/html_cerfafr.html";
 				$form = implode('', file($donmodel));
-				$form = str_replace('__REF__',$don->id,$form);
-				$form = str_replace('__DATE__',dol_print_date($don->date,'day',false,$outputlangs),$form);
+				$form = str_replace('__REF__', $don->id, $form);
+				$form = str_replace('__DATE__', dol_print_date($don->date, 'day', false, $outputlangs), $form);
 				//$form = str_replace('__IP__',$user->ip,$form); // TODO $user->ip not exist
 				$form = str_replace('__AMOUNT__', price($don->amount), $form);
-				$form = str_replace('__AMOUNTLETTERS__', $this->amountToLetters($don->amount),$form);
-				$form = str_replace('__CURRENCY__',$outputlangs->transnoentitiesnoconv("Currency".$currency),$form);
-				$form = str_replace('__CURRENCYCODE__',$conf->currency,$form);
-				$form = str_replace('__MAIN_INFO_SOCIETE_NOM__',$mysoc->name,$form);
-				$form = str_replace('__MAIN_INFO_SOCIETE_ADDRESS__',$mysoc->address,$form);
-				$form = str_replace('__MAIN_INFO_SOCIETE_ZIP__',$mysoc->zip,$form);
-				$form = str_replace('__MAIN_INFO_SOCIETE_TOWN__',$mysoc->town,$form);
-				$form = str_replace('__MAIN_INFO_SOCIETE_OBJECT__',$mysoc->object,$form);
-				$form = str_replace('__DONATOR_FIRSTNAME__',$don->firstname,$form);
-				$form = str_replace('__DONATOR_LASTNAME__',$don->lastname,$form);
-				$form = str_replace('__DONATOR_SOCIETE__',$don->societe,$form);
-				$form = str_replace('__DONATOR_STATUT__',$don->statut,$form);
-				$form = str_replace('__DONATOR_ADDRESS__',$don->address,$form);
-				$form = str_replace('__DONATOR_ZIP__',$don->zip,$form);
-				$form = str_replace('__DONATOR_TOWN__',$don->town,$form);
-				$form = str_replace('__PAYMENTMODE_LIB__ ', $paymentmode,$form);
-				$form = str_replace('__NOW__',dol_print_date($now,'day',false,$outputlangs),$form);
-				$form = str_replace('__DonationRef__',$outputlangs->trans("DonationRef"),$form);
-				$form = str_replace('__DonationTitle__',$outputlangs->trans("DonationTitle"),$form);
-				$form = str_replace('__DonationReceipt__',$outputlangs->trans("DonationReceipt"),$form);
-				$form = str_replace('__DonationRecipient__',$outputlangs->trans("DonationRecipient"),$form);
-				$form = str_replace('__DonationDatePayment__',$outputlangs->trans("DonationDatePayment"),$form);
-				$form = str_replace('__PaymentMode__',$outputlangs->trans("PaymentMode"),$form);
+				$form = str_replace('__AMOUNTLETTERS__', $this->amountToLetters($don->amount), $form);
+				$form = str_replace('__CURRENCY__', $outputlangs->transnoentitiesnoconv("Currency".$currency), $form);
+				$form = str_replace('__CURRENCYCODE__', $conf->currency, $form);
+				$form = str_replace('__MAIN_INFO_SOCIETE_NOM__', $mysoc->name, $form);
+				$form = str_replace('__MAIN_INFO_SOCIETE_ADDRESS__', $mysoc->address, $form);
+				$form = str_replace('__MAIN_INFO_SOCIETE_ZIP__', $mysoc->zip, $form);
+				$form = str_replace('__MAIN_INFO_SOCIETE_TOWN__', $mysoc->town, $form);
+				$form = str_replace('__MAIN_INFO_SOCIETE_OBJECT__', $mysoc->object, $form);
+				$form = str_replace('__DONATOR_FIRSTNAME__', $don->firstname, $form);
+				$form = str_replace('__DONATOR_LASTNAME__', $don->lastname, $form);
+				$form = str_replace('__DONATOR_SOCIETE__', $don->societe, $form);
+				$form = str_replace('__DONATOR_STATUT__', $don->statut, $form);
+				$form = str_replace('__DONATOR_ADDRESS__', $don->address, $form);
+				$form = str_replace('__DONATOR_ZIP__', $don->zip, $form);
+				$form = str_replace('__DONATOR_TOWN__', $don->town, $form);
+				$form = str_replace('__PAYMENTMODE_LIB__ ', $paymentmode, $form);
+				$form = str_replace('__NOW__', dol_print_date($now, 'day', false, $outputlangs), $form);
+				$form = str_replace('__DonationRef__', $outputlangs->trans("DonationRef"), $form);
+				$form = str_replace('__DonationTitle__', $outputlangs->trans("DonationTitle"), $form);
+				$form = str_replace('__DonationReceipt__', $outputlangs->trans("DonationReceipt"), $form);
+				$form = str_replace('__DonationRecipient__', $outputlangs->trans("DonationRecipient"), $form);
+				$form = str_replace('__DonationDatePayment__', $outputlangs->trans("DonationDatePayment"), $form);
+				$form = str_replace('__PaymentMode__', $outputlangs->trans("PaymentMode"), $form);
 				// $form = str_replace('__CodeDon__',$CodeDon,$form);
-				$form = str_replace('__Name__',$outputlangs->trans("Name"),$form);
-				$form = str_replace('__Address__',$outputlangs->trans("Address"),$form);
-				$form = str_replace('__Zip__',$outputlangs->trans("Zip"),$form);
-				$form = str_replace('__Town__',$outputlangs->trans("Town"),$form);
-				$form = str_replace('__Object__',$outputlangs->trans("Object"),$form);
-				$form = str_replace('__Donor__',$outputlangs->trans("Donor"),$form);
-				$form = str_replace('__Date__',$outputlangs->trans("Date"),$form);
-				$form = str_replace('__Signature__',$outputlangs->trans("Signature"),$form);
-				$form = str_replace('__Message__',$outputlangs->trans("Message"),$form);
-				$form = str_replace('__IConfirmDonationReception__',$outputlangs->trans("IConfirmDonationReception"),$form);
-				$form = str_replace('__DonationMessage__',$conf->global->DONATION_MESSAGE,$form);
+				$form = str_replace('__Name__', $outputlangs->trans("Name"), $form);
+				$form = str_replace('__Address__', $outputlangs->trans("Address"), $form);
+				$form = str_replace('__Zip__', $outputlangs->trans("Zip"), $form);
+				$form = str_replace('__Town__', $outputlangs->trans("Town"), $form);
+				$form = str_replace('__Object__', $outputlangs->trans("Object"), $form);
+				$form = str_replace('__Donor__', $outputlangs->trans("Donor"), $form);
+				$form = str_replace('__Date__', $outputlangs->trans("Date"), $form);
+				$form = str_replace('__Signature__', $outputlangs->trans("Signature"), $form);
+				$form = str_replace('__Message__', $outputlangs->trans("Message"), $form);
+				$form = str_replace('__IConfirmDonationReception__', $outputlangs->trans("IConfirmDonationReception"), $form);
+				$form = str_replace('__DonationMessage__', $conf->global->DONATION_MESSAGE, $form);
 
-				$form = str_replace('__ModePaiement__', $ModePaiement,$form);
+				$form = str_replace('__ModePaiement__', $ModePaiement, $form);
 
 				$frencharticle='';
-				if (preg_match('/fr/i',$outputlangs->defaultlang)) $frencharticle='<font size="+1">Article 200, 238 bis et 885-0 V bis A du code général des impôts (CGI)</font>';
-				$form = str_replace('__FrenchArticle__',$frencharticle,$form);
+				if (preg_match('/fr/i', $outputlangs->defaultlang)) $frencharticle='<font size="+1">Article 200, 238 bis et 885-0 V bis A du code général des impôts (CGI)</font>';
+				$form = str_replace('__FrenchArticle__', $frencharticle, $form);
 
 				$frencheligibility='';
-				if (preg_match('/fr/i',$outputlangs->defaultlang)) $frencheligibility='Le bénéficiaire certifie sur l\'honneur que les dons et versements qu\'il reçoit ouvrent droit à la réduction d\'impôt prévue à l\'article :';
-				$form = str_replace('__FrenchEligibility__',$frencheligibility,$form);
+				if (preg_match('/fr/i', $outputlangs->defaultlang)) $frencheligibility='Le bénéficiaire certifie sur l\'honneur que les dons et versements qu\'il reçoit ouvrent droit à la réduction d\'impôt prévue à l\'article :';
+				$form = str_replace('__FrenchEligibility__', $frencheligibility, $form);
 
 				$art200='';
-				if (preg_match('/fr/i',$outputlangs->defaultlang)) {
+				if (preg_match('/fr/i', $outputlangs->defaultlang)) {
 					if ($conf->global->DONATION_ART200 >= 1)
 					{
 						$art200='<input type="checkbox" disabled="true" checked="checked" >200 du CGI';
@@ -222,10 +222,10 @@ class html_cerfafr extends ModeleDon
 						$art200='<input type="checkbox" disabled="true">200 du CGI';
 					}
 				}
-				$form = str_replace('__ARTICLE200__',$art200,$form);
+				$form = str_replace('__ARTICLE200__', $art200, $form);
 
 				$art238='';
-				if (preg_match('/fr/i',$outputlangs->defaultlang)) {
+				if (preg_match('/fr/i', $outputlangs->defaultlang)) {
 					if ($conf->global->DONATION_ART238 >= 1)
 					{
 						$art238='<input type="checkbox" disabled="true" checked="checked" >238 bis du CGI';
@@ -235,10 +235,10 @@ class html_cerfafr extends ModeleDon
 						$art238='<input type="checkbox" disabled="true">238 bis du CGI';
 					}
 				}
-				$form = str_replace('__ARTICLE238__',$art238,$form);
+				$form = str_replace('__ARTICLE238__', $art238, $form);
 
 				$art885='';
-				if (preg_match('/fr/i',$outputlangs->defaultlang)) {
+				if (preg_match('/fr/i', $outputlangs->defaultlang)) {
 					if ($conf->global->DONATION_ART885 >= 1)
 					{
 						$art885='<input type="checkbox" disabled="true" checked="checked" >885-0 V bis du CGI';
@@ -248,12 +248,12 @@ class html_cerfafr extends ModeleDon
 						$art885='<input type="checkbox" disabled="true">885-0 V bis du CGI';
 					}
 				}
-				$form = str_replace('__ARTICLE885__',$art885,$form);
+				$form = str_replace('__ARTICLE885__', $art885, $form);
 
 				// Save file on disk
 				dol_syslog("html_cerfafr::write_file $file");
-				$handle=fopen($file,"w");
-				fwrite($handle,$form);
+				$handle=fopen($file, "w");
+				fwrite($handle, $form);
 				fclose($handle);
 				if (! empty($conf->global->MAIN_UMASK))
 					@chmod($file, octdec($conf->global->MAIN_UMASK));
@@ -264,13 +264,13 @@ class html_cerfafr extends ModeleDon
 			}
 			else
 			{
-				$this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
+				$this->error=$langs->trans("ErrorCanNotCreateDir", $dir);
 				return 0;
 			}
 		}
 		else
 		{
-			$this->error=$langs->trans("ErrorConstantNotDefined","DON_OUTPUTDIR");
+			$this->error=$langs->trans("ErrorConstantNotDefined", "DON_OUTPUTDIR");
 			return 0;
 		}
 	}
@@ -283,7 +283,7 @@ class html_cerfafr extends ModeleDon
 	 * @param   mixed   $devise2    devise 2 ex: centimes
 	 * @return string               amount in letters
 	 */
-	private function amountToLetters($montant, $devise1='', $devise2='')
+	private function amountToLetters($montant, $devise1 = '', $devise2 = '')
 	{
 		$unite = array();
 		$dix = array();
@@ -306,22 +306,22 @@ class html_cerfafr extends ModeleDon
 		$dix[3]=intval($valeur_entiere%100000000/10000000);
 		$cent[3]=intval($valeur_entiere%1000000000/100000000);
 		$chif=array('', 'un', 'deux', 'trois', 'quatre', 'cinq', 'six', 'sept', 'huit', 'neuf', 'dix', 'onze', 'douze', 'treize', 'quatorze', 'quinze', 'seize', 'dix sept', 'dix huit', 'dix neuf');
-			$secon_c='';
-			$trio_c='';
-		for($i=1; $i<=3; $i++){
+		$secon_c='';
+		$trio_c='';
+		for($i=1; $i<=3; $i++) {
 			$prim[$i]='';
 			$secon[$i]='';
 			$trio[$i]='';
-			if($dix[$i]==0){
+			if ($dix[$i]==0) {
 				$secon[$i]='';
 				$prim[$i]=$chif[$unite[$i]];
 			}
-			else if($dix[$i]==1){
+			elseif ($dix[$i]==1) {
 				$secon[$i]='';
 				$prim[$i]=$chif[($unite[$i]+10)];
 			}
-			else if($dix[$i]==2){
-				if($unite[$i]==1){
+			elseif ($dix[$i]==2) {
+				if ($unite[$i]==1) {
 				$secon[$i]='vingt et';
 				$prim[$i]=$chif[$unite[$i]];
 				}
@@ -330,8 +330,8 @@ class html_cerfafr extends ModeleDon
 				$prim[$i]=$chif[$unite[$i]];
 				}
 			}
-			else if($dix[$i]==3){
-				if($unite[$i]==1){
+			elseif ($dix[$i]==3) {
+				if ($unite[$i]==1) {
 				$secon[$i]='trente et';
 				$prim[$i]=$chif[$unite[$i]];
 				}
@@ -340,8 +340,8 @@ class html_cerfafr extends ModeleDon
 				$prim[$i]=$chif[$unite[$i]];
 				}
 			}
-			else if($dix[$i]==4){
-				if($unite[$i]==1){
+			elseif ($dix[$i]==4) {
+				if ($unite[$i]==1) {
 				$secon[$i]='quarante et';
 				$prim[$i]=$chif[$unite[$i]];
 				}
@@ -350,8 +350,8 @@ class html_cerfafr extends ModeleDon
 				$prim[$i]=$chif[$unite[$i]];
 				}
 			}
-			else if($dix[$i]==5){
-				if($unite[$i]==1){
+			elseif ($dix[$i]==5) {
+				if ($unite[$i]==1) {
 				$secon[$i]='cinquante et';
 				$prim[$i]=$chif[$unite[$i]];
 				}
@@ -360,8 +360,8 @@ class html_cerfafr extends ModeleDon
 				$prim[$i]=$chif[$unite[$i]];
 				}
 			}
-			else if($dix[$i]==6){
-				if($unite[$i]==1){
+			elseif ($dix[$i]==6) {
+				if ($unite[$i]==1) {
 				$secon[$i]='soixante et';
 				$prim[$i]=$chif[$unite[$i]];
 				}
@@ -370,8 +370,8 @@ class html_cerfafr extends ModeleDon
 				$prim[$i]=$chif[$unite[$i]];
 				}
 			}
-			else if($dix[$i]==7){
-				if($unite[$i]==1){
+			elseif ($dix[$i]==7) {
+				if ($unite[$i]==1) {
 				$secon[$i]='soixante et';
 				$prim[$i]=$chif[$unite[$i]+10];
 				}
@@ -380,8 +380,8 @@ class html_cerfafr extends ModeleDon
 				$prim[$i]=$chif[$unite[$i]+10];
 				}
 			}
-			else if($dix[$i]==8){
-				if($unite[$i]==1){
+			elseif ($dix[$i]==8) {
+				if ($unite[$i]==1) {
 				$secon[$i]='quatre-vingts et';
 				$prim[$i]=$chif[$unite[$i]];
 				}
@@ -390,8 +390,8 @@ class html_cerfafr extends ModeleDon
 				$prim[$i]=$chif[$unite[$i]];
 				}
 			}
-			else if($dix[$i]==9){
-				if($unite[$i]==1){
+			elseif ($dix[$i]==9) {
+				if ($unite[$i]==1) {
 				$secon[$i]='quatre-vingts et';
 				$prim[$i]=$chif[$unite[$i]+10];
 				}
@@ -401,25 +401,25 @@ class html_cerfafr extends ModeleDon
 				}
 			}
 			if($cent[$i]==1) $trio[$i]='cent';
-			else if($cent[$i]!=0 || $cent[$i]!='') $trio[$i]=$chif[$cent[$i]] .' cents';
+			elseif($cent[$i]!=0 || $cent[$i]!='') $trio[$i]=$chif[$cent[$i]] .' cents';
 		}
 
 
 		$chif2=array('', 'dix', 'vingt', 'trente', 'quarante', 'cinquante', 'soixante', 'soixante-dix', 'quatre-vingts', 'quatre-vingts dix');
 		$secon_c=$chif2[$dix_c];
-		if($cent_c==1) $trio_c='cent';
-		else if($cent_c!=0 || $cent_c!='') $trio_c=$chif[$cent_c] .' cents';
+		if ($cent_c==1) $trio_c='cent';
+		elseif ($cent_c!=0 || $cent_c!='') $trio_c=$chif[$cent_c] .' cents';
 
-		if(($cent[3]==0 || $cent[3]=='') && ($dix[3]==0 || $dix[3]=='') && ($unite[3]==1))
+		if (($cent[3]==0 || $cent[3]=='') && ($dix[3]==0 || $dix[3]=='') && ($unite[3]==1))
 			$somme = $trio[3]. '  ' .$secon[3]. ' ' . $prim[3]. ' million ';
-		else if(($cent[3]!=0 && $cent[3]!='') || ($dix[3]!=0 && $dix[3]!='') || ($unite[3]!=0 && $unite[3]!=''))
+		elseif (($cent[3]!=0 && $cent[3]!='') || ($dix[3]!=0 && $dix[3]!='') || ($unite[3]!=0 && $unite[3]!=''))
 			$somme = $trio[3]. ' ' .$secon[3]. ' ' . $prim[3]. ' millions ';
 		else
 			$somme = $trio[3]. ' ' .$secon[3]. ' ' . $prim[3];
 
-		if(($cent[2]==0 || $cent[2]=='') && ($dix[2]==0 || $dix[2]=='') && ($unite[2]==1))
+		if (($cent[2]==0 || $cent[2]=='') && ($dix[2]==0 || $dix[2]=='') && ($unite[2]==1))
 			$somme = $somme.' mille ';
-		else if(($cent[2]!=0 && $cent[2]!='') || ($dix[2]!=0 && $dix[2]!='') || ($unite[2]!=0 && $unite[2]!=''))
+		elseif (($cent[2]!=0 && $cent[2]!='') || ($dix[2]!=0 && $dix[2]!='') || ($unite[2]!=0 && $unite[2]!=''))
 			$somme = $somme. $trio[2]. ' ' .$secon[2]. ' ' . $prim[2]. ' milles ';
 		else
 			$somme = $somme. $trio[2]. ' ' .$secon[2]. ' ' . $prim[2];
@@ -428,7 +428,7 @@ class html_cerfafr extends ModeleDon
 
 		$somme = $somme. ' '. $dev1 .' ' ;
 
-		if(($cent_c=='0' || $cent_c=='') && ($dix_c=='0' || $dix_c==''))
+		if (($cent_c=='0' || $cent_c=='') && ($dix_c=='0' || $dix_c==''))
 			return $somme. ' et z&eacute;ro '. $dev2;
 		else
 			return $somme. $trio_c. ' ' .$secon_c. ' ' . $dev2;

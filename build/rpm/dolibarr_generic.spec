@@ -271,6 +271,7 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/ftp
 %_datadir/dolibarr/htdocs/holiday
 %_datadir/dolibarr/htdocs/hrm
+%_datadir/dolibarr/htdocs/ifttt
 %_datadir/dolibarr/htdocs/imports
 %_datadir/dolibarr/htdocs/includes
 %_datadir/dolibarr/htdocs/install

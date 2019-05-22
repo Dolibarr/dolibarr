@@ -164,5 +164,4 @@ AddVariousPayment=Çeşitli ödemeler ekle
 SEPAMandate=SEPA mandate
 YourSEPAMandate=Your SEPA mandate
 FindYourSEPAMandate=This is your SEPA mandate to authorize our company to make direct debit order to your bank. Return it signed (scan of the signed document) or send it by mail to
-BankAccountReleveModule=Module Bank statement
-AutoReportLastAccountStatement=Automatic report account stament
+AutoReportLastAccountStatement=Automaticaly fill the field 'numero of bank statement' with last statement numero when making reconciliation

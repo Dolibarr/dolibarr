@@ -39,7 +39,7 @@ abstract class CommonObjectLine extends CommonObject
 	 * Id of the line
 	 * @var int
 	 * @deprecated Try to use id property as possible (even if field into database is still rowid)
-	 * @see id
+	 * @see $id
 	 */
 	public $rowid;
 
@@ -57,7 +57,7 @@ abstract class CommonObjectLine extends CommonObject
      * 	@param	string $type Label type (long or short)
      *	@return	string|int <0 if ko, label if ok
      */
-	public function getLabelOfUnit($type='long')
+	public function getLabelOfUnit($type = 'long')
 	{
 		global $langs;
 

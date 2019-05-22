@@ -38,17 +38,17 @@ class StockMovements extends DolibarrApi
     );
 
     /**
-     * @var MouvmeentStock $stockmovement {@type MouvementStock}
+     * @var MouvementStock $stockmovement {@type MouvementStock}
      */
     public $stockmovement;
 
     /**
      * Constructor
      */
-    function __construct()
+    public function __construct()
     {
-		global $db, $conf;
-		$this->db = $db;
+        global $db, $conf;
+        $this->db = $db;
         $this->stockmovement = new MouvementStock($this->db);
     }
 
@@ -59,26 +59,26 @@ class StockMovements extends DolibarrApi
      *
      * @param 	int 	$id ID of movement
      * @return 	array|mixed data without useless information
-	 *
+     *
      * @throws 	RestException
      */
     /*
-    function get($id)
+    public function get($id)
     {
-		if(! DolibarrApiAccess::$user->rights->stock->lire) {
-			throw new RestException(401);
-		}
+        if(! DolibarrApiAccess::$user->rights->stock->lire) {
+            throw new RestException(401);
+        }
 
         $result = $this->stockmovement->fetch($id);
         if( ! $result ) {
             throw new RestException(404, 'warehouse not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('warehouse',$this->stockmovement->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-		}
+        if( ! DolibarrApi::_checkAccessToResource('warehouse',$this->stockmovement->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
 
-		return $this->_cleanObjectDatas($this->stockmovement);
+        return $this->_cleanObjectDatas($this->stockmovement);
     }*/
 
     /**
@@ -91,17 +91,17 @@ class StockMovements extends DolibarrApi
      * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.product_id:=:1) and (t.date_creation:<:'20160101')"
      * @return array                Array of warehouse objects
      *
-	 * @throws RestException
+     * @throws RestException
      */
-    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
+    public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
     {
         global $db, $conf;
 
         $obj_ret = array();
 
-         if(! DolibarrApiAccess::$user->rights->stock->lire) {
-			throw new RestException(401);
-		}
+        if(! DolibarrApiAccess::$user->rights->stock->lire) {
+            throw new RestException(401);
+        }
 
         $sql = "SELECT t.rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."stock_mouvement as t";
@@ -114,7 +114,7 @@ class StockMovements extends DolibarrApi
             {
                 throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
             }
-	        $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
             $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
 
@@ -132,7 +132,7 @@ class StockMovements extends DolibarrApi
         $result = $db->query($sql);
         if ($result)
         {
-        	$i=0;
+            $i=0;
             $num = $db->num_rows($result);
             $min = min($num, ($limit <= 0 ? $num : $limit));
             while ($i < $min)
@@ -151,7 +151,7 @@ class StockMovements extends DolibarrApi
         if( ! count($obj_ret)) {
             throw new RestException(404, 'No stock movement found');
         }
-		return $obj_ret;
+        return $obj_ret;
     }
 
     /*
@@ -174,11 +174,11 @@ class StockMovements extends DolibarrApi
      * @return  int                         ID of stock movement
      */
     //function post($product_id, $warehouse_id, $qty, $lot='', $movementcode='', $movementlabel='', $price=0)
-    function post($request_data = null)
+    public function post($request_data = null)
     {
         if(! DolibarrApiAccess::$user->rights->stock->creer) {
-			throw new RestException(401);
-		}
+            throw new RestException(401);
+        }
 
         // Check mandatory fields
         //$result = $this->_validate($request_data);
@@ -213,20 +213,20 @@ class StockMovements extends DolibarrApi
      * @return int
      */
     /*
-    function put($id, $request_data = null)
+    public function put($id, $request_data = null)
     {
         if(! DolibarrApiAccess::$user->rights->stock->creer) {
-			throw new RestException(401);
-		}
+            throw new RestException(401);
+        }
 
         $result = $this->stockmovement->fetch($id);
         if( ! $result ) {
             throw new RestException(404, 'stock movement not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('stock',$this->stockmovement->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-		}
+        if( ! DolibarrApi::_checkAccessToResource('stock',$this->stockmovement->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
 
         foreach($request_data as $field => $value) {
             if ($field == 'id') continue;
@@ -246,19 +246,19 @@ class StockMovements extends DolibarrApi
      * @return array
      */
     /*
-    function delete($id)
+    public function delete($id)
     {
         if(! DolibarrApiAccess::$user->rights->stock->supprimer) {
-			throw new RestException(401);
-		}
+            throw new RestException(401);
+        }
         $result = $this->stockmovement->fetch($id);
         if( ! $result ) {
             throw new RestException(404, 'stock movement not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('stock',$this->stockmovement->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-		}
+        if( ! DolibarrApi::_checkAccessToResource('stock',$this->stockmovement->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
 
         if (! $this->stockmovement->delete(DolibarrApiAccess::$user)) {
             throw new RestException(401,'error when delete stock movement');
@@ -274,15 +274,16 @@ class StockMovements extends DolibarrApi
 
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     /**
      * Clean sensible object datas
      *
      * @param   MouvementStock  $object    Object to clean
      * @return    array    Array of cleaned object properties
      */
-    function _cleanObjectDatas($object)
+    protected function _cleanObjectDatas($object)
     {
-
+        // phpcs:enable
         $object = parent::_cleanObjectDatas($object);
 
         // Remove useless data
@@ -338,7 +339,7 @@ class StockMovements extends DolibarrApi
      *
      * @throws RestException
      */
-    function _validate($data)
+    private function _validate($data)
     {
         $stockmovement = array();
         foreach (Warehouses::$FIELDS as $field) {

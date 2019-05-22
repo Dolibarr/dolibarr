@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2015 Alexandre Spangaro <aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2015 Alexandre Spangaro <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,14 +44,14 @@ function establishment_prepare_head($object)
 	// Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname);   												to remove a tab
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'establishment');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'establishment');
 
 	$head[$h][0] = DOL_URL_ROOT.'/hrm/establishment/info.php?id=' . $object->id;
 	$head[$h][1] = $langs->trans("Info");
 	$head[$h][2] = 'info';
 	$h++;
 
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'establishment','remove');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'establishment', 'remove');
 
 	return $head;
 }
@@ -82,10 +82,9 @@ function hrm_admin_prepare_head()
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
-    complete_head_from_modules($conf,$langs,'',$head,$h,'hrm_admin');
+    complete_head_from_modules($conf, $langs, '', $head, $h, 'hrm_admin');
 
-    complete_head_from_modules($conf,$langs,'',$head,$h,'hrm_admin','remove');
+    complete_head_from_modules($conf, $langs, '', $head, $h, 'hrm_admin', 'remove');
 
     return $head;
 }
-

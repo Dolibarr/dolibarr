@@ -34,20 +34,20 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 $langs->loadLangs(array('banks', 'categories', 'withdrawals', 'companies'));
 
 // Security check
-$socid = GETPOST('socid','int');
+$socid = GETPOST('socid', 'int');
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'prelevement','','','bons');
+$result = restrictedArea($user, 'prelevement', '', '', 'bons');
 
 // Get supervariables
-$page = GETPOST('page','int');
-$sortorder = GETPOST('sortorder','alpha');
-$sortfield = GETPOST('sortfield','alpha');
+$page = GETPOST('page', 'int');
+$sortorder = GETPOST('sortorder', 'alpha');
+$sortfield = GETPOST('sortfield', 'alpha');
 
 /*
  * View
  */
 
-llxHeader('',$langs->trans("WithdrawsRefused"));
+llxHeader('', $langs->trans("WithdrawsRefused"));
 
 $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
@@ -87,19 +87,19 @@ if ($result)
 	print"\n<!-- debut table -->\n";
 	print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 	print '<tr class="liste_titre">';
-	print_liste_field_titre("Line",$_SERVER["PHP_SELF"],"p.ref",'',$urladd);
-	print_liste_field_titre("ThirdParty",$_SERVER["PHP_SELF"],"s.nom",'',$urladd);
-	print_liste_field_titre("Reason",$_SERVER["PHP_SELF"],"pr.motif","",$urladd);
+	print_liste_field_titre("Line", $_SERVER["PHP_SELF"], "p.ref", '', $urladd);
+	print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "s.nom", '', $urladd);
+	print_liste_field_titre("Reason", $_SERVER["PHP_SELF"], "pr.motif", "", $urladd);
 	print "</tr>\n";
 
 	$total = 0;
 
-	while ($i < min($num,$conf->liste_limit))
+	while ($i < min($num, $conf->liste_limit))
 	{
 		$obj = $db->fetch_object($result);
 
 		print '<tr class="oddeven"><td>';
-		print $ligne->LibStatut($obj->statut,2).'&nbsp;';
+		print $ligne->LibStatut($obj->statut, 2).'&nbsp;';
 		print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/ligne.php?id='.$obj->rowid.'">';
 
 		print substr('000000'.$obj->rowid, -6)."</a></td>";

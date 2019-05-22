@@ -17,7 +17,7 @@
  */
 
 /**
- *	\file       htdocs/core/modules/export/export_excel.modules.php
+ *	\file       htdocs/core/modules/export/export_excel2007.modules.php
  *	\ingroup    export
  *	\brief      File of class to generate export file with Excel format
  *	\author	    Laurent Destailleur
@@ -70,7 +70,7 @@ class ExportExcel2007 extends ExportExcel
 	 *
 	 *	@param	    DoliDB	$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		global $conf, $langs;
 		$this->db = $db;
@@ -82,7 +82,7 @@ class ExportExcel2007 extends ExportExcel
         $this->picto='mime/xls';			// Picto
 		$this->version='1.30';             // Driver version
 
-		$this->disabled = (in_array(constant('PHPEXCEL_PATH'),array('disabled','disabled/'))?1:0);	// A condition to disable module (used for native debian packages)
+		$this->disabled = (in_array(constant('PHPEXCEL_PATH'), array('disabled','disabled/'))?1:0);	// A condition to disable module (used for native debian packages)
 
 		if (empty($this->disabled))
 		{
@@ -108,29 +108,29 @@ class ExportExcel2007 extends ExportExcel
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Close Excel file
      *
 	 *  @return		int							<0 if KO, >0 if OK
      */
-	function close_file()
-	{
+    public function close_file()
+    {
         // phpcs:enable
-		global $conf;
+        global $conf;
 
-		if (! empty($conf->global->MAIN_USE_PHP_WRITEEXCEL))
-    	{
-	        $this->workbook->close();
-    	}
-    	else
-    	{
+        if (! empty($conf->global->MAIN_USE_PHP_WRITEEXCEL))
+        {
+            $this->workbook->close();
+        }
+        else
+        {
             require_once PHPEXCEL_PATH.'PHPExcel/Writer/Excel5.php';
-    	    $objWriter = new PHPExcel_Writer_Excel2007($this->workbook);
+            $objWriter = new PHPExcel_Writer_Excel2007($this->workbook);
             $objWriter->save($this->file);
             $this->workbook->disconnectWorksheets();
             unset($this->workbook);
-    	}
-		return 1;
-	}
+        }
+        return 1;
+    }
 }

@@ -16,8 +16,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-define("NOLOGIN",1);		// This means this output page does not require to be logged.
-define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
+define("NOLOGIN", 1);		// This means this output page does not require to be logged.
+define("NOCSRFCHECK", 1);	// We accept to go on this page from external web site.
 
 $entity=(! empty($_GET['entity']) ? (int) $_GET['entity'] : (! empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
 if (is_numeric($entity)) define("DOLENTITY", $entity);
@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT .'/core/class/CMailFile.class.php';
 
-if (empty($conf->stripe->enabled)) accessforbidden('',0,0,1);
+if (empty($conf->stripe->enabled)) accessforbidden('', 0, 0, 1);
 
 // You can find your endpoint's secret in your webhook settings
 if (isset($_GET['connect']))
@@ -129,7 +129,7 @@ $stripe=new Stripe($db);
 if ($event->type == 'payout.created') {
 	$error=0;
 
-	$result=dolibarr_set_const($db, $service."_NEXTPAYOUT", date('Y-m-d H:i:s',$event->data->object->arrival_date), 'chaine', 0, '', $conf->entity);
+	$result=dolibarr_set_const($db, $service."_NEXTPAYOUT", date('Y-m-d H:i:s', $event->data->object->arrival_date), 'chaine', 0, '', $conf->entity);
 
 	if ($result > 0)
 	{
@@ -174,7 +174,7 @@ if ($event->type == 'payout.created') {
 elseif ($event->type == 'payout.paid') {
 	global $conf;
 	$error=0;
-	$result=dolibarr_set_const($db, $service."_NEXTPAYOUT",null,'chaine',0,'',$conf->entity);
+	$result=dolibarr_set_const($db, $service."_NEXTPAYOUT", null, 'chaine', 0, '', $conf->entity);
 	if ($result)
 	{
 		$langs->load("errors");
@@ -226,7 +226,7 @@ elseif ($event->type == 'payout.paid') {
 
 		$message = "A bank transfer of ".price2num($event->data->object->amount/100)." ".$event->data->object->currency." has been done to your account the ".dol_print_date($event->data->object->arrival_date, 'dayhour');
 
-		$mailfile = new CMailFile(
+$mailfile = new CMailFile(
 			$subject,
 			$sendto,
 			$replyto,
@@ -275,16 +275,16 @@ elseif (($event->type == 'source.chargeable') && ($event->data->object->type == 
 
     $fulltag=$event->data->object->metadata->FULLTAG;
 	// Save into $tmptag all metadata
-	$tmptag=dolExplodeIntoArray($fulltag,'.','=');
+	$tmptag=dolExplodeIntoArray($fulltag, '.', '=');
 
     if (! empty($tmptag['ORD'])) {
         $order=new Commande($db);
-	    $order->fetch('',$tmptag['ORD']);
+	    $order->fetch('', $tmptag['ORD']);
         $origin='order';
         $item=$order->id;
     } elseif (! empty($tmptag['INV'])) {
         $invoice = new Facture($db);
-	    $invoice->fetch('',$tmptag['INV']);
+	    $invoice->fetch('', $tmptag['INV']);
         $origin='invoice';
         $item=$invoice->id;
     }
@@ -292,7 +292,7 @@ elseif (($event->type == 'source.chargeable') && ($event->data->object->type == 
     $stripe=new Stripe($db);
     $stripeacc = $stripe->getStripeAccount($service);								// Stripe OAuth connect account of dolibarr user (no network access here)
     $stripecu = $stripe->getStripeCustomerAccount($tmptag['CUS'], $servicestatus);		// Get thirdparty cu_...
-	$charge=$stripe->createPaymentStripe($event->data->object->amount/100,$event->data->object->currency,$origin,$item,$event->data->object->id,$stripecu,$stripeacc,$servicestatus);
+	$charge=$stripe->createPaymentStripe($event->data->object->amount/100, $event->data->object->currency, $origin, $item, $event->data->object->id, $stripecu, $stripeacc, $servicestatus);
 
 	if (isset($charge->id) && $charge->statut=='error') {
 		$msg=$charge->message;
@@ -303,7 +303,7 @@ elseif (($event->type == 'source.chargeable') && ($event->data->object->type == 
         //$order=new Commande($db);
 	    //$order->fetch('',$tmptag['ORD']);
 		$invoice = new Facture($db);
-		$idinv=$invoice->createFromOrder($order,$user);
+		$idinv=$invoice->createFromOrder($order, $user);
 
 		if ($idinv > 0)
 		{
@@ -316,7 +316,7 @@ elseif (($event->type == 'source.chargeable') && ($event->data->object->type == 
 				$ref=$invoice->ref;
 				$ifverif=$invoice->socid;
 				$currency=$invoice->multicurrency_code;
-				$total=price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits,'MT');
+				$total=price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits, 'MT');
 			} else {
 				$msg=$invoice->error;
 				$error++;
@@ -349,7 +349,7 @@ elseif (($event->type == 'source.chargeable') && ($event->data->object->type == 
 		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE) && count($invoice->lines)) {
 			$outputlangs = $langs;
 			$newlang = '';
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang = GETPOST('lang_id','aZ09');
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
 			if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $invoice->thirdparty->default_lang;
 			if (! empty($newlang)) {
 				$outputlangs = new Translate("", $conf);
@@ -373,7 +373,7 @@ elseif (($event->type == 'source.chargeable') && ($event->data->object->type == 
 	if (! $error) {
 		$label='(CustomerInvoicePayment)';
 		if (GETPOST('type') == 2) $label='(CustomerInvoicePaymentBack)';
-		$paiement->addPaymentToBank($user,'payment',$label,$conf->global->STRIPE_BANK_ACCOUNT_FOR_PAYMENTS,'','');
+		$paiement->addPaymentToBank($user, 'payment', $label, $conf->global->STRIPE_BANK_ACCOUNT_FOR_PAYMENTS, '', '');
 		if ($result < 0)
 		{
 			$msg=$paiement->errors;

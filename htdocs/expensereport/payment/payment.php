@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2015       Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2015       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
@@ -31,11 +31,11 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'banks', 'trips'));
 
-$id=GETPOST("id",'int');
-$ref=GETPOST('ref','alpha');
-$action=GETPOST('action','aZ09');
+$id=GETPOST("id", 'int');
+$ref=GETPOST('ref', 'alpha');
+$action=GETPOST('action', 'aZ09');
 $amounts = array();
-$accountid=GETPOST('accountid','int');
+$accountid=GETPOST('accountid', 'int');
 
 // Security check
 $socid=0;
@@ -72,17 +72,17 @@ if ($action == 'add_payment')
 
 	if (! ($_POST["fk_typepayment"] > 0))
 	{
-		setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentities("PaymentMode")), null, 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("PaymentMode")), null, 'errors');
 		$error++;
 	}
 	if ($datepaid == '')
 	{
-		setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentities("Date")), null, 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Date")), null, 'errors');
 		$error++;
 	}
     if (! empty($conf->banque->enabled) && ! ($accountid > 0))
     {
-        setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentities("AccountToDebit")), null, 'errors');
+        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AccountToDebit")), null, 'errors');
         $error++;
     }
 
@@ -94,7 +94,7 @@ if ($action == 'add_payment')
 		// Read possible payments
 		foreach ($_POST as $key => $value)
 		{
-			if (substr($key,0,7) == 'amount_')
+			if (substr($key, 0, 7) == 'amount_')
 			{
 				$amounts[$expensereport->fk_user_author] = price2num($_POST[$key]);
 				$total += price2num($_POST[$key]);
@@ -133,7 +133,7 @@ if ($action == 'add_payment')
 
             if (! $error)
             {
-                $result=$payment->addPaymentToBank($user,'payment_expensereport','(ExpenseReportPayment)',$accountid,'','');
+                $result=$payment->addPaymentToBank($user, 'payment_expensereport', '(ExpenseReportPayment)', $accountid, '', '');
                 if (! $result > 0)
                 {
                 	setEventMessages($payment->error, $payment->errors, 'errors');
@@ -187,6 +187,19 @@ if ($action == 'create' || empty($action))
 
 	$total = $expensereport->total_ttc;
 
+	// autofill remainder amount
+	if (! empty($conf->use_javascript_ajax)) {
+		print "\n".'<script type="text/javascript" language="javascript">';
+		//Add js for AutoFill
+		print ' $(document).ready(function () {';
+		print ' 	$(".AutoFillAmount").on(\'click touchstart\', function(){
+                        var amount = $(this).data("value");
+						document.getElementById($(this).data(\'rowid\')).value = amount ;
+					});';
+        print "\t});\n";
+        print "</script>\n";
+    }
+
 	print load_fiche_titre($langs->trans("DoPayment"));
 
 	print '<form name="add_payment" action="'.$_SERVER['PHP_SELF'].'" method="post">';
@@ -207,8 +220,8 @@ if ($action == 'create' || empty($action))
 
     print '<table class="border centpercent">'."\n";
 
-	print '<tr><td class="titlefield">'.$langs->trans("Period").'</td><td>'.get_date_range($expensereport->date_debut,$expensereport->date_fin,"",$langs,0).'</td></tr>';
-	print '<tr><td>'.$langs->trans("Amount").'</td><td>'.price($expensereport->total_ttc,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
+	print '<tr><td class="titlefield">'.$langs->trans("Period").'</td><td>'.get_date_range($expensereport->date_debut, $expensereport->date_fin, "", $langs, 0).'</td></tr>';
+	print '<tr><td>'.$langs->trans("Amount").'</td><td>'.price($expensereport->total_ttc, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
 
 	$sql = "SELECT sum(p.amount) as total";
 	$sql.= " FROM ".MAIN_DB_PREFIX."payment_expensereport as p, ".MAIN_DB_PREFIX."expensereport as e";
@@ -221,8 +234,8 @@ if ($action == 'create' || empty($action))
 		$sumpaid = $obj->total;
 		$db->free();
 	}
-	print '<tr><td>'.$langs->trans("AlreadyPaid").'</td><td>'.price($sumpaid,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
-	print '<tr><td class="tdtop">'.$langs->trans("RemainderToPay").'</td><td>'.price($total-$sumpaid,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
+	print '<tr><td>'.$langs->trans("AlreadyPaid").'</td><td>'.price($sumpaid, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
+	print '<tr><td class="tdtop">'.$langs->trans("RemainderToPay").'</td><td>'.price($total-$sumpaid, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
 
     print '</table>';
 
@@ -249,7 +262,7 @@ if ($action == 'create' || empty($action))
     	print '<tr>';
     	print '<td class="fieldrequired">'.$langs->trans('AccountToDebit').'</td>';
     	print '<td colspan="2">';
-    	$form->select_comptes(isset($_POST["accountid"])?$_POST["accountid"]:$expensereport->accountid, "accountid", 0, '',1);  // Show open bank account list
+    	$form->select_comptes(isset($_POST["accountid"])?$_POST["accountid"]:$expensereport->accountid, "accountid", 0, '', 1);  // Show open bank account list
     	print '</td></tr>';
 	}
 
@@ -276,10 +289,10 @@ if ($action == 'create' || empty($action))
 
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
-	print '<td align="right">'.$langs->trans("Amount").'</td>';
-	print '<td align="right">'.$langs->trans("AlreadyPaid").'</td>';
-	print '<td align="right">'.$langs->trans("RemainderToPay").'</td>';
-	print '<td align="center">'.$langs->trans("Amount").'</td>';
+	print '<td class="right">'.$langs->trans("Amount").'</td>';
+	print '<td class="right">'.$langs->trans("AlreadyPaid").'</td>';
+	print '<td class="right">'.$langs->trans("RemainderToPay").'</td>';
+	print '<td class="center">'.$langs->trans("Amount").'</td>';
 	print "</tr>\n";
 
 	$total=0;
@@ -291,14 +304,19 @@ if ($action == 'create' || empty($action))
 
 		print '<tr class="oddeven">';
 
-		print '<td align="right">'.price($objp->total_ttc)."</td>";
-		print '<td align="right">'.price($sumpaid)."</td>";
-		print '<td align="right">'.price($objp->total_ttc - $sumpaid)."</td>";
-		print '<td align="center">';
+		print '<td class="right">'.price($objp->total_ttc)."</td>";
+		print '<td class="right">'.price($sumpaid)."</td>";
+		print '<td class="right">'.price($objp->total_ttc - $sumpaid)."</td>";
+		print '<td class="center">';
 		if ($sumpaid < $objp->total_ttc)
 		{
 			$namef = "amount_".$objp->id;
-			print '<input type="text" size="8" name="'.$namef.'">';
+			$nameRemain = "remain_".$objp->id; // autofill remainder amount
+			if (!empty($conf->use_javascript_ajax)) // autofill remainder amount
+					print img_picto("Auto fill", 'rightarrow', "class='AutoFillAmount' data-rowid='".$namef."' data-value='".($objp->total_ttc - $sumpaid)."'"); // autofill remainder amount
+			$remaintopay=$objp->total_ttc - $sumpaid; // autofill remainder amount
+			print '<input type=hidden class="sum_remain" name="'.$nameRemain.'" value="'.$remaintopay.'">'; // autofill remainder amount
+			print '<input type="text" size="8" name="'.$namef.'" id="'.$namef.'">';
 		}
 		else
 		{
@@ -317,11 +335,11 @@ if ($action == 'create' || empty($action))
 	{
 		// Print total
 		print '<tr class="oddeven">';
-		print '<td colspan="2" align="left">'.$langs->trans("Total").':</td>';
-		print "<td align=\"right\"><b>".price($total_ttc)."</b></td>";
-		print "<td align=\"right\"><b>".price($totalrecu)."</b></td>";
-		print "<td align=\"right\"><b>".price($total_ttc - $totalrecu)."</b></td>";
-		print '<td align="center">&nbsp;</td>';
+		print '<td colspan="2" class="left">'.$langs->trans("Total").':</td>';
+		print '<td class="right"><b>'.price($total_ttc).'</b></td>';
+		print '<td class="right"><b>'.price($totalrecu).'</b></td>';
+		print '<td class="right"><b>'.price($total_ttc - $totalrecu).'</b></td>';
+		print '<td class="center">&nbsp;</td>';
 		print "</tr>\n";
 	}
 

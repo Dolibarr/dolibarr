@@ -38,7 +38,7 @@ if (! $user->admin)
 
 llxHeader();
 
-print load_fiche_titre($langs->trans("AvailableModules"),'','title_setup');
+print load_fiche_titre($langs->trans("AvailableModules"), '', 'title_setup');
 
 print $langs->trans("ToActivateModule").'<br>';
 print "<br>\n";
@@ -107,7 +107,7 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Modules").'</td>';
 print '<td>'.$langs->trans("Version").'</td>';
-print '<td align="center">'.$langs->trans("IdModule").'</td>';
+print '<td class="center">'.$langs->trans("IdModule").'</td>';
 print '<td>'.$langs->trans("IdPermissions").'</td>';
 print '</tr>';
 $var=false;
@@ -122,19 +122,19 @@ foreach($sortorder as $numero=>$name)
 	$alt=$name.' - '.$modules_files[$numero];
     if (! empty($picto[$numero]))
     {
-       	if (preg_match('/^\//',$picto[$numero])) print img_picto($alt,$picto[$numero],'width="14px"',1);
-       	else print img_object($alt,$picto[$numero],'width="14px"');
+       	if (preg_match('/^\//', $picto[$numero])) print img_picto($alt, $picto[$numero], 'width="14px"', 1);
+       	else print img_object($alt, $picto[$numero], 'width="14px"');
     }
     else
     {
-      	print img_object($alt,$picto[$numero],'width="14px"');
+      	print img_object($alt, $picto[$numero], 'width="14px"');
     }
 	print ' '.$modules[$numero]->getName();
 	print "</td>";
 	// Version
 	print '<td>'.$modules[$numero]->getVersion().'</td>';
 	// Id
-	print '<td align="center">'.$numero.'</td>';
+	print '<td class="center">'.$numero.'</td>';
 	// Permissions
 	if ($modules[$numero]->rights)
 	{

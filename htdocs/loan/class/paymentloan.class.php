@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014-2018  Alexandre Spangaro   <aspangaro@zendsi.com>
+/* Copyright (C) 2014-2018  Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2015-2018  Frederic France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -25,8 +25,8 @@
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 
 
-/** \class      PaymentLoan
- *  \brief      Class to manage payments of loans
+/**
+ * Class to manage payments of loans
  */
 class PaymentLoan extends CommonObject
 {
@@ -91,12 +91,6 @@ class PaymentLoan extends CommonObject
     public $fk_user_modif;
 
 	/**
-	 * @deprecated
-	 * @see amount, amounts
-	 */
-    public $total;
-
-	/**
 	 *	Constructor
 	 *
 	 *  @param		DoliDB		$db      Database handler
@@ -113,7 +107,7 @@ class PaymentLoan extends CommonObject
 	 *  @param      User		$user   User making payment
 	 *  @return     int     			<0 if KO, id of payment if OK
 	 */
-	function create($user)
+	public function create($user)
 	{
 		global $conf, $langs;
 
@@ -178,7 +172,6 @@ class PaymentLoan extends CommonObject
 		if ($totalamount != 0 && ! $error)
 		{
 			$this->amount_capital=$totalamount;
-			$this->total=$totalamount;    // deprecated
 			$this->db->commit();
 			return $this->id;
 		}
@@ -196,7 +189,7 @@ class PaymentLoan extends CommonObject
 	 *  @param	int		$id         Id object
 	 *  @return int         		<0 if KO, >0 if OK
 	 */
-	function fetch($id)
+	public function fetch($id)
 	{
 		global $langs;
 		$sql = "SELECT";
@@ -273,7 +266,7 @@ class PaymentLoan extends CommonObject
 	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
 	 *  @return int         			<0 if KO, >0 if OK
 	 */
-	function update($user=0, $notrigger=0)
+	public function update($user = 0, $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error=0;
@@ -361,7 +354,7 @@ class PaymentLoan extends CommonObject
 	 *  @param  int		$notrigger		0=launch triggers after, 1=disable triggers
 	 *  @return int						<0 if KO, >0 if OK
 	 */
-	function delete($user, $notrigger=0)
+	public function delete($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error=0;
@@ -388,10 +381,10 @@ class PaymentLoan extends CommonObject
 			if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 		}
 
-		if (! $error)
-		{
-			if (! $notrigger)
-			{
+		//if (! $error)
+		//{
+		//	if (! $notrigger)
+		//	{
 				// Uncomment this and change MYOBJECT to your own tag if you
 				// want this action call a trigger.
 
@@ -401,8 +394,8 @@ class PaymentLoan extends CommonObject
 				//$result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
 				//if ($result < 0) { $error++; $this->errors=$interface->errors; }
 				//// End call triggers
-			}
-		}
+		//	}
+		//}
 
 		// Commit or rollback
 		if ($error)
@@ -435,7 +428,7 @@ class PaymentLoan extends CommonObject
 	 *      @param  string	$emetteur_banque    Name of bank
 	 *      @return int                 		<0 if KO, >0 if OK
 	 */
-	function addPaymentToBank($user, $fk_loan, $mode, $label, $accountid, $emetteur_nom, $emetteur_banque)
+	public function addPaymentToBank($user, $fk_loan, $mode, $label, $accountid, $emetteur_nom, $emetteur_banque)
 	{
 		global $conf;
 
@@ -448,11 +441,11 @@ class PaymentLoan extends CommonObject
 			$acc = new Account($this->db);
 			$acc->fetch($accountid);
 
-			$total=$this->total;
+			$total=$this->amount_capital;
 			if ($mode == 'payment_loan') $total=-$total;
 
 			// Insert payment into llx_bank
-			$bank_line_id = $acc->addline(
+            $bank_line_id = $acc->addline(
 				$this->datep,
 				$this->paymenttype,  // Payment mode id or code ("CHQ or VIR for example")
 				$label,
@@ -491,7 +484,7 @@ class PaymentLoan extends CommonObject
 				// Add link 'loan' in bank_url between invoice and bank transaction (for each invoice concerned by payment)
 				if ($mode == 'payment_loan')
 				{
-					$result=$acc->add_url_line($bank_line_id, $fk_loan, DOL_URL_ROOT.'/loan/card.php?id=', ($this->label?$this->label:''),'loan');
+					$result=$acc->add_url_line($bank_line_id, $fk_loan, DOL_URL_ROOT.'/loan/card.php?id=', ($this->label?$this->label:''), 'loan');
 					if ($result <= 0) dol_print_error($this->db);
 				}
 			}
@@ -513,14 +506,14 @@ class PaymentLoan extends CommonObject
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Update link between loan's payment and the line generate in llx_bank
 	 *
 	 *  @param	int		$id_bank         Id if bank
 	 *  @return	int			             >0 if OK, <=0 if KO
 	 */
-	function update_fk_bank($id_bank)
+	public function update_fk_bank($id_bank)
 	{
         // phpcs:enable
 		$sql = "UPDATE ".MAIN_DB_PREFIX."payment_loan SET fk_bank = ".$id_bank." WHERE rowid = ".$this->id;
@@ -529,6 +522,7 @@ class PaymentLoan extends CommonObject
 		$result = $this->db->query($sql);
 		if ($result)
 		{
+		    $this->fk_bank = $id_bank;
 			return 1;
 		}
 		else
@@ -545,7 +539,7 @@ class PaymentLoan extends CommonObject
 	 * 	@param	int		$maxlen			Max length label
 	 *	@return	string					Chaine with URL
 	 */
-	function getNomUrl($withpicto=0,$maxlen=0)
+	public function getNomUrl($withpicto = 0, $maxlen = 0)
 	{
 		global $langs;
 
@@ -558,9 +552,9 @@ class PaymentLoan extends CommonObject
 			$link = '<a href="'.DOL_URL_ROOT.'/loan/payment/card.php?id='.$this->id.'">';
 			$linkend='</a>';
 
-			if ($withpicto) $result.=($link.img_object($langs->trans("ShowPayment").': '.$this->ref,'payment').$linkend.' ');
+			if ($withpicto) $result.=($link.img_object($langs->trans("ShowPayment").': '.$this->ref, 'payment').$linkend.' ');
 			if ($withpicto && $withpicto != 2) $result.=' ';
-			if ($withpicto != 2) $result.=$link.($maxlen?dol_trunc($this->ref,$maxlen):$this->ref).$linkend;
+			if ($withpicto != 2) $result.=$link.($maxlen?dol_trunc($this->ref, $maxlen):$this->ref).$linkend;
 		}
 
 		return $result;

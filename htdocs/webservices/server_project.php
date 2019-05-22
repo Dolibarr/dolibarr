@@ -21,7 +21,7 @@
  *       \brief      File that is entry point to call Dolibarr WebServices
  */
 
-if (! defined("NOCSRFCHECK"))    define("NOCSRFCHECK",'1');
+if (! defined("NOCSRFCHECK"))    define("NOCSRFCHECK", '1');
 
 require '../master.inc.php';
 require_once NUSOAP_PATH.'/nusoap.php';        // Include SOAP
@@ -41,7 +41,7 @@ if (empty($conf->global->MAIN_MODULE_WEBSERVICES))
 {
     $langs->load("admin");
     dol_syslog("Call Dolibarr webservices interfaces with module webservices disabled");
-    print $langs->trans("WarningModuleNotActive",'WebServices').'.<br><br>';
+    print $langs->trans("WarningModuleNotActive", 'WebServices').'.<br><br>';
     print $langs->trans("ToActivateModule");
     exit;
 }
@@ -69,7 +69,7 @@ $server = new nusoap_server();
 $server->soap_defencoding='UTF-8';
 $server->decode_utf8=false;
 $ns='http://www.dolibarr.org/ns/';
-$server->configureWSDL('WebServicesDolibarrOther',$ns);
+$server->configureWSDL('WebServicesDolibarrOther', $ns);
 $server->wsdl->schemaTargetNamespace=$ns;
 
 // Define WSDL Authentication object
@@ -162,7 +162,7 @@ $project_fields = array(
 //Retreive all extrafield for thirdsparty
 // fetch optionals attributes and labels
 $extrafields=new ExtraFields($db);
-$extralabels=$extrafields->fetch_name_optionals_label('project',true);
+$extralabels=$extrafields->fetch_name_optionals_label('project', true);
 $extrafield_array=null;
 if (is_array($extrafields) && count($extrafields)>0) {
     $extrafield_array = array();
@@ -175,7 +175,7 @@ foreach($extrafields->attribute_label as $key=>$label)
     else {$type='xsd:string';}
     $extrafield_array['options_'.$key]=array('name'=>'options_'.$key,'type'=>$type);
 }
-if (is_array($extrafield_array)) $project_fields=array_merge($project_fields,$extrafield_array);
+if (is_array($extrafield_array)) $project_fields=array_merge($project_fields, $extrafield_array);
 
 $server->wsdl->addComplexType(
     'project',
@@ -241,7 +241,7 @@ function createProject($authentication, $project)
     $objectresp=array();
     $errorcode='';$errorlabel='';
     $error=0;
-    $fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+    $fuser=check_authentication($authentication, $error, $errorcode, $errorlabel);
     // Check parameters
     if (empty($project['ref']))
     {
@@ -261,15 +261,15 @@ function createProject($authentication, $project)
             $newobject->socid=$project['thirdparty_id'];
             $newobject->public=$project['public'];
             $newobject->statut=$project['status'];
-            $newobject->date_start=dol_stringtotime($project['date_start'],'dayrfc');
-            $newobject->date_end=dol_stringtotime($project['date_end'],'dayrfc');
+            $newobject->date_start=dol_stringtotime($project['date_start'], 'dayrfc');
+            $newobject->date_end=dol_stringtotime($project['date_end'], 'dayrfc');
             $newobject->budget_amount=$project['budget'];
             $newobject->description=$project['description'];
 
             // Retrieve all extrafields for project
             // fetch optionals attributes and labels
             $extrafields=new ExtraFields($db);
-            $extralabels=$extrafields->fetch_name_optionals_label('project',true);
+            $extralabels=$extrafields->fetch_name_optionals_label('project', true);
             foreach($extrafields->attribute_label as $key=>$label)
             {
                 $key='options_'.$key;
@@ -329,7 +329,7 @@ function createProject($authentication, $project)
  * @param	string		$ref		    	internal reference
  * @return	array							Array result
  */
-function getProject($authentication,$id='',$ref='')
+function getProject($authentication, $id = '', $ref = '')
 {
     global $db,$conf,$langs;
 
@@ -341,7 +341,7 @@ function getProject($authentication,$id='',$ref='')
     $objectresp=array();
     $errorcode='';$errorlabel='';
     $error=0;
-    $fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+    $fuser=check_authentication($authentication, $error, $errorcode, $errorlabel);
     // Check parameters
     if (! $error && (($id && $ref)))
     {
@@ -356,7 +356,7 @@ function getProject($authentication,$id='',$ref='')
         if ($fuser->rights->projet->lire)
         {
             $project=new Project($db);
-            $result=$project->fetch($id,$ref);
+            $result=$project->fetch($id, $ref);
             if ($result > 0)
             {
                 $project_result_fields=array(
@@ -374,13 +374,13 @@ function getProject($authentication,$id='',$ref='')
 
                 //Retrieve all extrafields for project
                 $extrafields=new ExtraFields($db);
-                $extralabels=$extrafields->fetch_name_optionals_label('societe',true);
+                $extralabels=$extrafields->fetch_name_optionals_label('societe', true);
 
                 //Get extrafield values
                 $project->fetch_optionals();
                 foreach($extrafields->attribute_label as $key=>$label)
                 {
-                    $project_result_fields=array_merge($project_result_fields,array('options_'.$key => $project->array_options['options_'.$key]));
+                    $project_result_fields=array_merge($project_result_fields, array('options_'.$key => $project->array_options['options_'.$key]));
                 }
 
                 //Get linked elements

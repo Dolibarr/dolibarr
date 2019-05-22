@@ -82,7 +82,7 @@
  * 						25=multicurrency_total_tax1 for total_ht
  *                      26=multicurrency_total_tax2 for total_ht
  */
-function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocaltax1_rate, $uselocaltax2_rate, $remise_percent_global, $price_base_type, $info_bits, $type, $seller = '', $localtaxes_array='', $progress=100, $multicurrency_tx=1, $pu_devise=0)
+function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocaltax1_rate, $uselocaltax2_rate, $remise_percent_global, $price_base_type, $info_bits, $type, $seller = '', $localtaxes_array = '', $progress = 100, $multicurrency_tx = 1, $pu_devise = 0)
 {
 	global $conf,$mysoc,$db;
 
@@ -187,9 +187,9 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
     //If input unit price is 'HT', we need to have the totals with main VAT for a correct calculation
     if ($price_base_type != 'TTC')
     {
-    	$tot_sans_remise_wt = price2num($tot_sans_remise * (1 + ($txtva / 100)),'MU');
-    	$tot_avec_remise_wt = price2num($tot_avec_remise * (1 + ($txtva / 100)),'MU');
-    	$pu_wt = price2num($pu * (1 + ($txtva / 100)),'MU');
+    	$tot_sans_remise_wt = price2num($tot_sans_remise * (1 + ($txtva / 100)), 'MU');
+    	$tot_avec_remise_wt = price2num($tot_avec_remise * (1 + ($txtva / 100)), 'MU');
+    	$pu_wt = price2num($pu * (1 + ($txtva / 100)), 'MU');
     }
     else
     {
@@ -291,9 +291,9 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
     //If input unit price is 'TTC', we need to have the totals without main VAT for a correct calculation
     if ($price_base_type == 'TTC')
     {
-    	$tot_sans_remise= price2num($tot_sans_remise / (1 + ($txtva / 100)),'MU');
-    	$tot_avec_remise= price2num($tot_avec_remise / (1 + ($txtva / 100)),'MU');
-    	$pu = price2num($pu / (1 + ($txtva / 100)),'MU');
+    	$tot_sans_remise= price2num($tot_sans_remise / (1 + ($txtva / 100)), 'MU');
+    	$tot_avec_remise= price2num($tot_avec_remise / (1 + ($txtva / 100)), 'MU');
+    	$pu = price2num($pu / (1 + ($txtva / 100)), 'MU');
     }
 
 	$apply_tax = false;
@@ -410,4 +410,3 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 
 	return $result;
 }
-

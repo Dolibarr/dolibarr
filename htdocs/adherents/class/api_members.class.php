@@ -41,7 +41,7 @@ class Members extends DolibarrApi
     /**
      * Constructor
      */
-    function __construct()
+    public function __construct()
     {
         global $db, $conf;
         $this->db = $db;
@@ -57,7 +57,7 @@ class Members extends DolibarrApi
      *
      * @throws    RestException
      */
-    function get($id)
+    public function get($id)
     {
         if(! DolibarrApiAccess::$user->rights->adherent->lire) {
             throw new RestException(401);
@@ -69,7 +69,7 @@ class Members extends DolibarrApi
             throw new RestException(404, 'member not found');
         }
 
-        if( ! DolibarrApi::_checkAccessToResource('adherent',$member->id)) {
+        if( ! DolibarrApi::_checkAccessToResource('adherent', $member->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
@@ -86,12 +86,13 @@ class Members extends DolibarrApi
      * @param int       $limit      Limit for list
      * @param int       $page       Page number
      * @param string    $typeid     ID of the type of member
-     * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+     * @param string    $sqlfilters Other criteria to filter answers separated by a comma.
+     *                              Example: "(t.ref:like:'SO-%') and ((t.date_creation:<:'20160101') or (t.nature:is:NULL))"
      * @return array                Array of member objects
      *
      * @throws RestException
      */
-    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $typeid = '', $sqlfilters = '')
+    public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $typeid = '', $sqlfilters = '')
     {
         global $db, $conf;
 
@@ -162,7 +163,7 @@ class Members extends DolibarrApi
      * @param array $request_data   Request data
      * @return int  ID of member
      */
-    function post($request_data = null)
+    public function post($request_data = null)
     {
         if(! DolibarrApiAccess::$user->rights->adherent->creer) {
             throw new RestException(401);
@@ -187,7 +188,7 @@ class Members extends DolibarrApi
      * @param array $request_data   Datas
      * @return int
      */
-    function put($id, $request_data = null)
+    public function put($id, $request_data = null)
     {
         if(! DolibarrApiAccess::$user->rights->adherent->creer) {
             throw new RestException(401);
@@ -199,7 +200,7 @@ class Members extends DolibarrApi
             throw new RestException(404, 'member not found');
         }
 
-        if( ! DolibarrApi::_checkAccessToResource('member',$member->id)) {
+        if( ! DolibarrApi::_checkAccessToResource('member', $member->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
@@ -213,7 +214,7 @@ class Members extends DolibarrApi
                     if ($result < 0) {
                         throw new RestException(500, 'Error when resiliating member: '.$member->error);
                     }
-                } else if ($value == '1') {
+                } elseif ($value == '1') {
                     $result = $member->validate(DolibarrApiAccess::$user);
                     if ($result < 0) {
                         throw new RestException(500, 'Error when validating member: '.$member->error);
@@ -242,7 +243,7 @@ class Members extends DolibarrApi
      * @param int $id   member ID
      * @return array
      */
-    function delete($id)
+    public function delete($id)
     {
         if(! DolibarrApiAccess::$user->rights->adherent->supprimer) {
             throw new RestException(401);
@@ -253,12 +254,12 @@ class Members extends DolibarrApi
             throw new RestException(404, 'member not found');
         }
 
-        if( ! DolibarrApi::_checkAccessToResource('member',$member->id)) {
+        if( ! DolibarrApi::_checkAccessToResource('member', $member->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
         if (! $member->delete($member->id, DolibarrApiAccess::$user)) {
-            throw new RestException(401,'error when deleting member');
+            throw new RestException(401, 'error when deleting member');
         }
 
         return array(
@@ -277,7 +278,7 @@ class Members extends DolibarrApi
      *
      * @throws RestException
      */
-    function _validate($data)
+    private function _validate($data)
     {
         $member = array();
         foreach (Members::$FIELDS as $field) {
@@ -288,15 +289,16 @@ class Members extends DolibarrApi
         return $member;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     /**
      * Clean sensible object datas
      *
      * @param   object  $object    Object to clean
      * @return    array    Array of cleaned object properties
      */
-    function _cleanObjectDatas($object)
+    protected function _cleanObjectDatas($object)
     {
-
+        // phpcs:enable
         $object = parent::_cleanObjectDatas($object);
 
         // Remove the subscriptions because they are handled as a subresource.
@@ -328,7 +330,7 @@ class Members extends DolibarrApi
      *
      * @url GET {id}/subscriptions
      */
-    function getSubscriptions($id)
+    public function getSubscriptions($id)
     {
         $obj_ret = array();
 
@@ -361,7 +363,7 @@ class Members extends DolibarrApi
      *
      * @url POST {id}/subscriptions
      */
-    function createSubscription($id, $start_date, $end_date, $amount, $label='')
+    public function createSubscription($id, $start_date, $end_date, $amount, $label = '')
     {
         if(! DolibarrApiAccess::$user->rights->adherent->cotisation->creer) {
             throw new RestException(401);
@@ -389,7 +391,7 @@ class Members extends DolibarrApi
      *
      * @url GET {id}/categories
      */
-	function getCategories($id, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0)
+	public function getCategories($id, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0)
 	{
 		if (! DolibarrApiAccess::$user->rights->categorie->lire) {
 			throw new RestException(401);

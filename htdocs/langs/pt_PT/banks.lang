@@ -164,5 +164,4 @@ AddVariousPayment=Adicionar pagamentos diversos
 SEPAMandate=Mandato SEPA
 YourSEPAMandate=Seu mandato SEPA
 FindYourSEPAMandate=Este é o seu mandato da SEPA para autorizar a nossa empresa a efetuar um pedido de débito direto ao seu banco. Devolva-o assinado (digitalização do documento assinado) ou envie-o por correio para
-BankAccountReleveModule=Module Bank statement
-AutoReportLastAccountStatement=Automatic report account stament
+AutoReportLastAccountStatement=Automaticaly fill the field 'numero of bank statement' with last statement numero when making reconciliation

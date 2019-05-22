@@ -18,8 +18,7 @@
  */
 
 /**
- *     \defgroup    ticket    Ticket module
- *     \brief       Ticket module descriptor.
+ *     \defgroup    ticket    Module Ticket
  *     \file        core/modules/modTicket.class.php
  *     \ingroup     ticket
  *     \brief       Description and activation file for module Ticket
@@ -32,7 +31,6 @@ require_once DOL_DOCUMENT_ROOT . "/core/modules/DolibarrModules.class.php";
  */
 class modTicket extends DolibarrModules
 {
-
     /**
      *     Constructor. Define names, constants, directories, boxes, permissions
      *
@@ -65,7 +63,7 @@ class modTicket extends DolibarrModules
         // (where XXX is value of numeric property 'numero' of module)
         $this->description = "Incident/support ticket management";
         // Possible values for version are: 'development', 'experimental' or version
-        $this->version = 'experimental';
+        $this->version = 'dolibarr';
         // Key used in llx_const table to save module status enabled/disabled
         // (where MYMODULE is value of property name of module in uppercase)
         $this->const_name = 'MAIN_MODULE_' . strtoupper($this->name);
@@ -96,7 +94,7 @@ class modTicket extends DolibarrModules
 
         // Dependencies
         $this->hidden = false;			// A condition to hide module
-		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
+		$this->depends = array('modAgenda');		// List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array();	// List of module ids to disable if this one is disabled
 		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
 		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
@@ -105,9 +103,10 @@ class modTicket extends DolibarrModules
         // List of particular constants to add when module is enabled
         // (key, 'chaine', value, desc, visible, 'current' or 'allentities', deleteonunactive)
         // Example:
-        $this->const = array();
-        $this->const[1] = array('TICKET_ENABLE_PUBLIC_INTERFACE', 'chaine', '1', 'Enable ticket public interface');
-        $this->const[2] = array('TICKET_ADDON', 'chaine', 'mod_ticket_simple', 'Ticket ref module');
+        $this->const = array(
+            1 => array('TICKET_ENABLE_PUBLIC_INTERFACE', 'chaine', '0', 'Enable ticket public interface', 0),
+            2 => array('TICKET_ADDON', 'chaine', 'mod_ticket_simple', 'Ticket ref module', 0)
+        );
 
         $this->tabs = array(
             'thirdparty:+ticket:Tickets:@ticket:$user->rights->ticket->read:/ticket/list.php?socid=__ID__',
@@ -194,7 +193,7 @@ class modTicket extends DolibarrModules
             'leftmenu' => '1', // Use 1 if you also want to add left menu entries using this descriptor.
             'url' => '/ticket/index.php',
             'langs' => 'ticket', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-            'position' => 100,
+            'position' => 88,
             'enabled' => '$conf->ticket->enabled', // Define condition to show or hide menu entry. Use '$conf->ticket->enabled' if entry must be visible if module is enabled.
             'perms' => '$user->rights->ticket->read', // Use 'perms'=>'$user->rights->ticket->level1->level2' if you want your menu with a permission rules
             'target' => '',
@@ -219,7 +218,7 @@ class modTicket extends DolibarrModules
             'type' => 'left',
             'titre' => 'NewTicket',
             'mainmenu' => 'ticket',
-            'url' => '/ticket/new.php?action=create_ticket',
+            'url' => '/ticket/card.php?action=create',
             'langs' => 'ticket',
             'position' => 102,
             'enabled' => '$conf->ticket->enabled',
@@ -233,23 +232,9 @@ class modTicket extends DolibarrModules
             'titre' => 'List',
             'mainmenu' => 'ticket',
             'leftmenu' => 'ticketlist',
-            'url' => '/ticket/list.php',
-            'langs' => 'ticket',
-            'position' => 103,
-            'enabled' => '$conf->ticket->enabled',
-            'perms' => '$user->rights->ticket->read',
-            'target' => '',
-            'user' => 2);
-        $r++;
-
-        $this->menu[$r] = array('fk_menu' => 'fk_mainmenu=ticket,fk_leftmenu=ticketlist',
-            'type' => 'left',
-            'titre' => 'MenuListNonClosed',
-            'mainmenu' => 'ticket',
-            'leftmenu' => 'ticketlist',
             'url' => '/ticket/list.php?search_fk_status=non_closed',
             'langs' => 'ticket',
-            'position' => 104,
+            'position' => 103,
             'enabled' => '$conf->ticket->enabled',
             'perms' => '$user->rights->ticket->read',
             'target' => '',
@@ -261,7 +246,7 @@ class modTicket extends DolibarrModules
             'titre' => 'MenuTicketMyAssign',
             'mainmenu' => 'ticket',
             'leftmenu' => 'ticketmy',
-            'url' => '/ticket/list.php?mode=my_assign',
+            'url' => '/ticket/list.php?mode=mine&search_fk_status=non_closed',
             'langs' => 'ticket',
             'position' => 105,
             'enabled' => '$conf->ticket->enabled',
@@ -270,13 +255,13 @@ class modTicket extends DolibarrModules
             'user' => 0);
         $r++;
 
-        $this->menu[$r] = array('fk_menu' => 'fk_mainmenu=ticket,fk_leftmenu=ticketmy',
+        $this->menu[$r] = array('fk_menu' => 'fk_mainmenu=ticket,fk_leftmenu=ticket',
             'type' => 'left',
-            'titre' => 'MenuTicketMyAssignNonClosed',
+            'titre' => 'Statistics',
             'mainmenu' => 'ticket',
-            'url' => '/ticket/list.php?mode=my_assign&search_fk_status=non_closed',
+            'url' => '/ticket/stats/index.php',
             'langs' => 'ticket',
-            'position' => 106,
+            'position' => 107,
             'enabled' => '$conf->ticket->enabled',
             'perms' => '$user->rights->ticket->read',
             'target' => '',
@@ -300,7 +285,6 @@ class modTicket extends DolibarrModules
             array("sql" => "insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (110121, 'ticket',  'internal', 'CONTRIBUTOR', 'Intervenant', 1);", "ignoreerror" => 1),
             array("sql" => "insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (110122, 'ticket',  'external', 'SUPPORTCLI', 'Contact client suivi incident', 1);", "ignoreerror" => 1),
             array("sql" => "insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (110123, 'ticket',  'external', 'CONTRIBUTOR', 'Intervenant', 1);", "ignoreerror" => 1),
-            array("sql" => "insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values ('','TICKETMESSAGE_SENTBYMAIL','Send email for ticket','Executed when a response is made on a ticket','ticket','');", "ignoreerror" => 1),
         );
 
         return $this->_init($sql, $options);

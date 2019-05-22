@@ -33,9 +33,9 @@ $langs->loadLangs(array('trips', 'companies'));
 $WIDTH=DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT=DolGraph::getDefaultGraphSizeForStats('height');
 
-$userid=GETPOST('userid','int'); if ($userid < 0) $userid=0;
-$socid=GETPOST('socid','int'); if ($socid < 0) $socid=0;
-$id = GETPOST('id','int');
+$userid=GETPOST('userid', 'int'); if ($userid < 0) $userid=0;
+$socid=GETPOST('socid', 'int'); if ($socid < 0) $socid=0;
+$id = GETPOST('id', 'int');
 
 // Security check
 if ($user->societe_id > 0)
@@ -44,7 +44,7 @@ if ($user->societe_id > 0)
 	$socid = $user->societe_id;
 }
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'deplacement', $id,'');
+$result = restrictedArea($user, 'deplacement', $id, '');
 
 // Other security check
 $childids = $user->getAllChildIds();
@@ -96,7 +96,7 @@ $stats = new DeplacementStats($db, $socid, $useridtofilter);
 // Build graphic number of object
 // $data = array(array('Lib',val1,val2,val3),...)
 //print "$endyear, $startyear";
-$data = $stats->getNbByMonthWithPrevYear($endyear,$startyear);
+$data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
 //var_dump($data);
 
 $filenamenb = $dir."/tripsexpensesnbinyear-".$year.".png";
@@ -125,11 +125,11 @@ if (! $mesg)
 	$px1->mode='depth';
 	$px1->SetTitle($langs->trans("NumberByMonth"));
 
-	$px1->draw($filenamenb,$fileurlnb);
+	$px1->draw($filenamenb, $fileurlnb);
 }
 
 // Build graphic amount of object
-$data = $stats->getAmountByMonthWithPrevYear($endyear,$startyear);
+$data = $stats->getAmountByMonthWithPrevYear($endyear, $startyear);
 //var_dump($data);
 // $data = array(array('Lib',val1,val2,val3),...)
 
@@ -149,7 +149,7 @@ if (! $mesg)
 	}
 	$px2->SetLegend($legend);
 	$px2->SetMaxValue($px2->GetCeilMaxValue());
-	$px2->SetMinValue(min(0,$px2->GetFloorMinValue()));
+	$px2->SetMinValue(min(0, $px2->GetFloorMinValue()));
 	$px2->SetWidth($WIDTH);
 	$px2->SetHeight($HEIGHT);
 	$px2->SetYLabel($langs->trans("Amount"));
@@ -159,7 +159,7 @@ if (! $mesg)
 	$px2->mode='depth';
 	$px2->SetTitle($langs->trans("AmountTotal"));
 
-	$px2->draw($filenameamount,$fileurlamount);
+	$px2->draw($filenameamount, $fileurlamount);
 }
 
 
@@ -201,7 +201,7 @@ if (! $mesg)
     $px3->mode='depth';
     $px3->SetTitle($langs->trans("AmountAverage"));
 
-    $px3->draw($filename_avg,$fileurl_avg);
+    $px3->draw($filename_avg, $fileurl_avg);
 }
 
 
@@ -221,7 +221,7 @@ $head[$h][1] = $langs->trans("ByMonthYear");
 $head[$h][2] = 'byyear';
 $h++;
 
-complete_head_from_modules($conf,$langs,null,$head,$h,'trip_stats');
+complete_head_from_modules($conf, $langs, null, $head, $h, 'trip_stats');
 
 dol_fiche_head($head, 'byyear', $langs->trans("Statistics"), -1);
 
@@ -237,7 +237,7 @@ print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->tra
 // Company
 print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
 $filter='';
-print $form->select_company($socid,'socid',$filter,1,1,0,array(),0,'','style="width: 95%"');
+print $form->select_company($socid, 'socid', $filter, 1, 1, 0, array(), 0, '', 'style="width: 95%"');
 print '</td></tr>';
 // User
 print '<tr><td>'.$langs->trans("User").'</td><td>';
@@ -247,9 +247,9 @@ print $form->select_dolusers($userid, 'userid', 1, '', 0, $include, '', 0, 0, 0,
 print '</td></tr>';
 // Year
 print '<tr><td>'.$langs->trans("Year").'</td><td>';
-if (! in_array($year,$arrayyears)) $arrayyears[$year]=$year;
+if (! in_array($year, $arrayyears)) $arrayyears[$year]=$year;
 arsort($arrayyears);
-print $form->selectarray('year',$arrayyears,$year,0);
+print $form->selectarray('year', $arrayyears, $year, 0);
 print '</td></tr>';
 print '<tr><td align="center" colspan="2"><input type="submit" name="submit" class="button" value="'.$langs->trans("Refresh").'"></td></tr>';
 print '</table>';
@@ -274,16 +274,16 @@ foreach ($data as $val)
 		$oldyear--;
 		print '<tr height="24">';
 		print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.'">'.$oldyear.'</a></td>';
-		print '<td align="right">0</td>';
-		print '<td align="right">0</td>';
-		print '<td align="right">0</td>';
+		print '<td class="right">0</td>';
+		print '<td class="right">0</td>';
+		print '<td class="right">0</td>';
 		print '</tr>';
 	}
 	print '<tr height="24">';
 	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.'">'.$year.'</a></td>';
-	print '<td align="right">'.$val['nb'].'</td>';
-	print '<td align="right">'.price(price2num($val['total'],'MT'),1).'</td>';
-	print '<td align="right">'.price(price2num($val['avg'],'MT'),1).'</td>';
+	print '<td class="right">'.$val['nb'].'</td>';
+	print '<td class="right">'.price(price2num($val['total'], 'MT'), 1).'</td>';
+	print '<td class="right">'.price(price2num($val['avg'], 'MT'), 1).'</td>';
 	print '</tr>';
 	$oldyear=$year;
 }

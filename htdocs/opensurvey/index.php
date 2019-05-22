@@ -45,7 +45,7 @@ if ($resql)
 	$obj=$db->fetch_object($resql);
 	$nbsondages=$obj->nb;
 }
-else dol_print_error($db,'');
+else dol_print_error($db, '');
 
 
 
@@ -63,14 +63,14 @@ if ($resql)
 	$obj=$db->fetch_object($resql);
 	$nbsondages=$obj->nb;
 }
-else dol_print_error($db,'');
+else dol_print_error($db, '');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("OpenSurveyArea").'</td></tr>';
 print "<tr ".$bc[0].">";
-print '<td>'.$langs->trans("NbOfSurveys").'</td><td align="right"><a href="list.php">'.$nbsondages.'</a></td>';
+print '<td>'.$langs->trans("NbOfSurveys").'</td><td class="right"><a href="list.php">'.$nbsondages.'</a></td>';
 print "</tr>";
-//print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td align="right">';
+//print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">';
 //print $total;
 //print '</td></tr>';
 print '</table>';

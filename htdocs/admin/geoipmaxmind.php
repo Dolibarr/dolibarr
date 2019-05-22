@@ -34,7 +34,7 @@ accessforbidden();
 // Load translation files required by the page
 $langs->loadLangs(array("admin","errors"));
 
-$action = GETPOST('action','aZ09');
+$action = GETPOST('action', 'aZ09');
 
 /*
  * Actions
@@ -47,13 +47,13 @@ if ($action == 'set')
 
 	if (! $gimcdf && ! file_exists($gimcdf))
 	{
-		setEventMessages($langs->trans("ErrorFileNotFound",$gimcdf), null, 'errors');
+		setEventMessages($langs->trans("ErrorFileNotFound", $gimcdf), null, 'errors');
 		$error++;
 	}
 
 	if (! $error)
 	{
-		$res = dolibarr_set_const($db,"GEOIPMAXMIND_COUNTRY_DATAFILE",$gimcdf,'chaine',0,'',$conf->entity);
+		$res = dolibarr_set_const($db, "GEOIPMAXMIND_COUNTRY_DATAFILE", $gimcdf, 'chaine', 0, '', $conf->entity);
 		if (! $res > 0) $error++;
 
 		if (! $error)
@@ -77,14 +77,14 @@ $form=new Form($db);
 llxHeader();
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans("GeoIPMaxmindSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("GeoIPMaxmindSetup"), $linkback, 'title_setup');
 print '<br>';
 
 $version='';
 $geoip='';
 if (! empty($conf->global->GEOIPMAXMIND_COUNTRY_DATAFILE))
 {
-	$geoip=new DolGeoIP('country',$conf->global->GEOIPMAXMIND_COUNTRY_DATAFILE);
+	$geoip=new DolGeoIP('country', $conf->global->GEOIPMAXMIND_COUNTRY_DATAFILE);
 	//if ($geoip->error) print dol_htmloutput_errors($geoip->errorlabel,'',1);
 	if ($geoip->gi == 'NOGI') $geointernal=true;
 	else $geointernal=false;
@@ -102,7 +102,7 @@ print '<input type="hidden" name="action" value="set">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td>';
-print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+print '<td class="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 print "</tr>\n";
 
 print '<tr class="oddeven"><td width=\"50%\">'.$langs->trans("PathToGeoIPMaxmindCountryDataFile").'</td>';
@@ -126,21 +126,21 @@ print '<br>';
 print $langs->trans("NoteOnPathLocation").'<br>';
 
 $url1='http://www.maxmind.com/en/city?rId=awstats';
-print $langs->trans("YouCanDownloadFreeDatFileTo",'<a href="'.$url1.'" target="_blank">'.$url1.'</a>');
+print $langs->trans("YouCanDownloadFreeDatFileTo", '<a href="'.$url1.'" target="_blank">'.$url1.'</a>');
 
 print '<br>';
 
 $url2='http://www.maxmind.com/en/city?rId=awstats';
-print $langs->trans("YouCanDownloadAdvancedDatFileTo",'<a href="'.$url2.'" target="_blank">'.$url2.'</a>');
+print $langs->trans("YouCanDownloadAdvancedDatFileTo", '<a href="'.$url2.'" target="_blank">'.$url2.'</a>');
 
 if ($geoip)
 {
 	print '<br><br>';
-	print '<br>'.$langs->trans("TestGeoIPResult",$ip).':';
+	print '<br>'.$langs->trans("TestGeoIPResult", $ip).':';
 
 	$ip='24.24.24.24';
 	print '<br>'.$ip.' -> ';
-	$result=dol_print_ip($ip,1);
+	$result=dol_print_ip($ip, 1);
 	if ($result) print $result;
 	else print $langs->trans("Error");
 
@@ -158,14 +158,14 @@ if ($geoip)
 	if ($isip == 1)
 	{
 		print '<br>'.$ip.' -> ';
-		$result=dol_print_ip($ip,1);
+		$result=dol_print_ip($ip, 1);
 		if ($result) print $result;
 		else print $langs->trans("Error");
 	}
 	else
 	{
 		print '<br>'.$ip.' -> ';
-		$result=dol_print_ip($ip,1);
+		$result=dol_print_ip($ip, 1);
 		if ($result) print $result;
 		else print $langs->trans("NotAPublicIp");
 	}

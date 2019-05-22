@@ -7,8 +7,13 @@ root = true
 charset = utf-8
 end_of_line = lf
 insert_final_newline = true
+
+# PHP PSR-2 Coding Standards
+# http://www.php-fig.org/psr/psr-2/
 [*.php]
-indent_style = tab
+indent_style = space
+indent_size = 4
+trim_trailing_whitespace = true
 [*.js]
 indent_style = tab
 [*.css]

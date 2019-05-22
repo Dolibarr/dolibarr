@@ -290,6 +290,7 @@ CurrencyXOF=CFA franki BCEAO
 CurrencySingXOF=CFA Franc BCEAO
 CurrencyXPF=KZP franki
 CurrencySingXPF=CFP Franc
+CurrencyCentEUR=centiem
 CurrencyCentSingEUR=cents
 CurrencyCentINR=paisa
 CurrencyCentSingINR=paise
@@ -306,7 +307,7 @@ DemandReasonTypeSRC_WOM=No mutes mutē
 DemandReasonTypeSRC_PARTNER=Partneris
 DemandReasonTypeSRC_EMPLOYEE=Darbinieks
 DemandReasonTypeSRC_SPONSORING=Sponsorēšana
-DemandReasonTypeSRC_SRC_CUSTOMER=Incoming contact of a customer
+DemandReasonTypeSRC_SRC_CUSTOMER=Klienta ienākošais kontakts
 #### Paper formats ####
 PaperFormatEU4A0=Formāts 4A0
 PaperFormatEU2A0=Formāts 2A0

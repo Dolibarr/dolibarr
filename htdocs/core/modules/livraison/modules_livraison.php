@@ -36,119 +36,119 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
  */
 abstract class ModelePDFDeliveryOrder extends CommonDocGenerator
 {
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error='';
+    /**
+     * @var string Error code (or message)
+     */
+    public $error='';
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
-	/**
-	 *  Return list of active generation modules
-	 *
-     *  @param	DoliDB	$db     			Database handler
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    /**
+     *  Return list of active generation modules
+     *
+     *  @param  DoliDB  $db                 Database handler
      *  @param  integer	$maxfilenamelength  Max length of value to show
-     *  @return	array						List of templates
-	 */
-	static function liste_modeles($db,$maxfilenamelength=0)
-	{
+     *  @return array                       List of templates
+     */
+    public static function liste_modeles($db, $maxfilenamelength = 0)
+    {
         // phpcs:enable
-		global $conf;
+        global $conf;
 
-		$type='delivery';
-		$liste=array();
+        $type='delivery';
+        $liste=array();
 
-		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste=getListOfModels($db,$type,$maxfilenamelength);
+        include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+        $liste=getListOfModels($db, $type, $maxfilenamelength);
 
-		return $liste;
-	}
+        return $liste;
+    }
 }
 
 
 
 /**
- *	\class      ModeleNumRefDeliveryOrder
- *	\brief      Classe mere des modeles de numerotation des references de bon de livraison
+ *  \class      ModeleNumRefDeliveryOrder
+ *  \brief      Classe mere des modeles de numerotation des references de bon de livraison
  */
 abstract class ModeleNumRefDeliveryOrder
 {
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error='';
+    /**
+     * @var string Error code (or message)
+     */
+    public $error='';
 
-	/**
-	 * Return if a module can be used or not
-	 *
-	 * @return		boolean     true if module can be used
-	 */
-	function isEnabled()
-	{
-		return true;
-	}
+    /**
+     * Return if a module can be used or not
+     *
+     * @return      boolean     true if module can be used
+     */
+    public function isEnabled()
+    {
+        return true;
+    }
 
-	/**
-	 * Renvoi la description par defaut du modele de numerotation
-	 *
-	 * @return     string      Texte descripif
-	 */
-	function info()
-	{
-		global $langs;
-		$langs->load("deliveries");
-		return $langs->trans("NoDescription");
-	}
+    /**
+     * Renvoi la description par defaut du modele de numerotation
+     *
+     * @return     string      Texte descripif
+     */
+    public function info()
+    {
+        global $langs;
+        $langs->load("deliveries");
+        return $langs->trans("NoDescription");
+    }
 
-	/**
-	 * Renvoi un exemple de numerotation
-	 *
-	 * @return     string      Example
-	 */
-	function getExample()
-	{
-		global $langs;
-		$langs->load("deliveries");
-		return $langs->trans("NoExample");
-	}
+    /**
+     * Renvoi un exemple de numerotation
+     *
+     * @return     string      Example
+     */
+    public function getExample()
+    {
+        global $langs;
+        $langs->load("deliveries");
+        return $langs->trans("NoExample");
+    }
 
-	/**
-	 * Test si les numeros deja en vigueur dans la base ne provoquent pas d
-	 * de conflits qui empechera cette numerotation de fonctionner.
-	 *
-	 * @return     boolean     false si conflit, true si ok
-	 */
-	function canBeActivated()
-	{
-		return true;
-	}
+    /**
+     * Test si les numeros deja en vigueur dans la base ne provoquent pas d
+     * de conflits qui empechera cette numerotation de fonctionner.
+     *
+     * @return     boolean     false si conflit, true si ok
+     */
+    public function canBeActivated()
+    {
+        return true;
+    }
 
-	/**
-	 * Renvoi prochaine valeur attribuee
-	 *
-	 *	@param	Societe		$objsoc     	Object third party
-	 *  @param  Object		$object			Object delivery
-	 *	@return	string						Valeur
-	 */
-	function getNextValue($objsoc, $object)
-	{
-		global $langs;
-		return $langs->trans("NotAvailable");
-	}
+    /**
+     * Renvoi prochaine valeur attribuee
+     *
+     *	@param  Societe     $objsoc         Object third party
+     *  @param  Object      $object         Object delivery
+     *	@return string                      Valeur
+     */
+    public function getNextValue($objsoc, $object)
+    {
+        global $langs;
+        return $langs->trans("NotAvailable");
+    }
 
-	/**
-	 * Renvoi version du module numerotation
-	 *
-	 * @return     string      Valeur
-	 */
-	function getVersion()
-	{
-		global $langs;
-		$langs->load("admin");
+    /**
+     * Renvoi version du module numerotation
+     *
+     * @return     string      Valeur
+     */
+    public function getVersion()
+    {
+        global $langs;
+        $langs->load("admin");
 
-		if ($this->version == 'development') return $langs->trans("VersionDevelopment");
-		if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
-		if ($this->version == 'dolibarr') return DOL_VERSION;
-		if ($this->version) return $this->version;
-		return $langs->trans("NotAvailable");
-	}
+        if ($this->version == 'development') return $langs->trans("VersionDevelopment");
+        elseif ($this->version == 'experimental') return $langs->trans("VersionExperimental");
+        elseif ($this->version == 'dolibarr') return DOL_VERSION;
+        elseif ($this->version) return $this->version;
+        else return $langs->trans("NotAvailable");
+    }
 }

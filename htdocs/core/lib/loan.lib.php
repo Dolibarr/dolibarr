@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014-2016	Alexandre Spangaro	<aspangaro@zendsi.com>
+/* Copyright (C) 2014-2016	Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2015		Frederic France		<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -40,17 +40,22 @@ function loan_prepare_head($object)
 	$head[$tab][1] = $langs->trans('Card');
 	$head[$tab][2] = 'card';
 	$tab++;
+	
+	$head[$tab][0] = DOL_URL_ROOT.'/loan/schedule.php?loanid='.$object->id;
+	$head[$tab][1] = $langs->trans('FinancialCommitment');
+	$head[$tab][2] = 'FinancialCommitment';
+	$tab++;
 
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname);   												to remove a tab
-    complete_head_from_modules($conf, $langs, $object, $head, $tab,'loan');
+    complete_head_from_modules($conf, $langs, $object, $head, $tab, 'loan');
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
     require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 	$upload_dir = $conf->loan->dir_output . "/" . dol_sanitizeFileName($object->ref);
-	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview.*\.png)$'));
+	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
     $nbLinks=Link::count($db, $object->element, $object->id);
 	$head[$tab][0] = DOL_URL_ROOT.'/loan/document.php?id='.$object->id;
 	$head[$tab][1] = $langs->trans("Documents");
@@ -73,7 +78,7 @@ function loan_prepare_head($object)
     $head[$tab][2] = 'info';
     $tab++;
 
-    complete_head_from_modules($conf,$langs,$object,$head,$tab,'loan','remove');
+    complete_head_from_modules($conf, $langs, $object, $head, $tab, 'loan', 'remove');
 
     return $head;
 }

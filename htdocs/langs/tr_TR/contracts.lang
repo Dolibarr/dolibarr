@@ -85,7 +85,6 @@ NoteListOfYourExpiredServices=Bu listede yalnızca satış temsilcisi olarak ata
 StandardContractsTemplate=Standart sözleşme kalıbı
 ContactNameAndSignature=%s için, ad ve imza
 OnlyLinesWithTypeServiceAreUsed=Yalnızca "Hizmet" türündeki satırlar klonlanacaktır.
-CloneContract=Sözleşmeyi kopyala
 ConfirmCloneContract=<b>%s</b> sözleşmesini kopyalamak istediğinizden emin misiniz?
 LowerDateEndPlannedShort=Aktif hizmetlerin planlı alt bitiş tarihi
 SendContractRef=Sözleşme bilgileri __REF__

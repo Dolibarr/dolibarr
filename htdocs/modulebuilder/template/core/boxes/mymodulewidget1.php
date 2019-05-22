@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2017  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2019  Frédéric France     <frederic.france@netlogic.fr>
  * Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software: you can redistribute it and/or modify
@@ -18,7 +18,7 @@
  */
 
 /**
- * \file    modulebuilder/template/core/boxes/mymodulewidget1.php
+ * \file    htdocs/modulebuilder/template/core/boxes/mymodulewidget1.php
  * \ingroup mymodule
  * \brief   Widget provided by MyModule
  *
@@ -140,72 +140,72 @@ class mymodulewidget1 extends ModeleBoxes
 			0 => array( // First line
 				0 => array( // First Column
 					//  HTML properties of the TR element. Only available on the first column.
-					'tr'           => 'align="left"',
+					'tr' => 'class="left"',
 					// HTML properties of the TD element
-					'td'           => '',
+					'td' => '',
 
 					// Main text for content of cell
-					'text'         => 'First cell of first line',
+					'text' => 'First cell of first line',
 					// Link on 'text' and 'logo' elements
-					'url'          => 'http://example.com',
+					'url' => 'http://example.com',
 					// Link's target HTML property
-					'target'       => '_blank',
+					'target' => '_blank',
 					// Fist line logo (deprecated. Include instead logo html code into text or text2, and set asis property to true to avoid HTML cleaning)
-					//'logo'         => 'monmodule@monmodule',
+					//'logo' => 'monmodule@monmodule',
 					// Unformatted text, added after text. Usefull to add/load javascript code
 					'textnoformat' => '',
 
 					// Main text for content of cell (other method)
-					//'text2'        => '<p><strong>Another text</strong></p>',
+					//'text2' => '<p><strong>Another text</strong></p>',
 
 					// Truncates 'text' element to the specified character length, 0 = disabled
-					'maxlength'    => 0,
+					'maxlength' => 0,
 					// Prevents HTML cleaning (and truncation)
-					'asis'         => false,
+					'asis' => false,
 					// Same for 'text2'
-					'asis2'        => true
+					'asis2' => true
 				),
 				1 => array( // Another column
 					// No TR for n≠0
-					'td'   => '',
+					'td' => '',
 					'text' => 'Second cell',
 				)
 			),
 			1 => array( // Another line
 				0 => array( // TR
-					'tr'   => 'align="left"',
+					'tr' => 'class="left"',
 					'text' => 'Another line'
 				),
 				1 => array( // TR
-					'tr'   => 'align="left"',
+					'tr' => 'class="left"',
 					'text' => ''
 				)
 			),
 			2 => array( // Another line
 				0 => array( // TR
-					'tr'   => 'align="left"',
+					'tr' => 'class="left"',
 					'text' => ''
 				),
-				0 => array( // TR
-					'tr'   => 'align="left"',
+				1 => array( // TR
+					'tr' => 'class="left"',
 					'text' => ''
 				)
 			),
 		);
 	}
 
-	/**
-	 * Method to show box. Called by Dolibarr eatch time it wants to display the box.
-	 *
-	 * @param array $head       Array with properties of box title
-	 * @param array $contents   Array with properties of box lines
+    /**
+     * Method to show box. Called by Dolibarr eatch time it wants to display the box.
+     *
+     * @param array $head       Array with properties of box title
+     * @param array $contents   Array with properties of box lines
      * @param int   $nooutput   No print, only return string
-	 * @return void
-	 */
-	public function showBox($head = null, $contents = null, $nooutput = 0)
-	{
-		// You may make your own code here…
-		// … or use the parent's class function using the provided head and contents templates
-		parent::showBox($this->info_box_head, $this->info_box_contents);
-	}
+     * @return void
+     */
+    public function showBox($head = null, $contents = null, $nooutput = 0)
+    {
+        // You may make your own code here…
+        // … or use the parent's class function using the provided head and contents templates
+        parent::showBox($this->info_box_head, $this->info_box_contents);
+    }
 }

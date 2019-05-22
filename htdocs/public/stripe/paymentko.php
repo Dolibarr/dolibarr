@@ -23,8 +23,8 @@
  *                  More data like token are saved into session. This token can be used to get more informations.
  */
 
-define("NOLOGIN",1);		// This means this output page does not require to be logged.
-define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
+define("NOLOGIN", 1);		// This means this output page does not require to be logged.
+define("NOCSRFCHECK", 1);	// We accept to go on this page from external web site.
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
@@ -42,7 +42,7 @@ $FULLTAG=GETPOST('FULLTAG');
 if (empty($FULLTAG)) $FULLTAG=GETPOST('fulltag');
 
 // Security check
-if (empty($conf->stripe->enabled)) accessforbidden('',0,0,1);
+if (empty($conf->stripe->enabled)) accessforbidden('', 0, 0, 1);
 
 $object = new stdClass();   // For triggers
 
@@ -79,7 +79,7 @@ if (! empty($_SESSION['ipaddress']))      // To avoid to make action twice
     // Appel des triggers
     include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
     $interface=new Interfaces($db);
-    $result=$interface->run_triggers('STRIPE_PAYMENT_KO',$object,$user,$langs,$conf);
+    $result=$interface->run_triggers('STRIPE_PAYMENT_KO', $object, $user, $langs, $conf);
     if ($result < 0) { $error++; $errors=$interface->errors; }
     // Fin appel triggers
 
@@ -152,7 +152,7 @@ if (! empty($conf->global->$key)) print $conf->global->$key;
 print "\n</div>\n";
 
 
-htmlPrintOnlinePaymentFooter($mysoc,$langs,0,$suffix);
+htmlPrintOnlinePaymentFooter($mysoc, $langs, 0, $suffix);
 
 
 llxFooter('', 'public');

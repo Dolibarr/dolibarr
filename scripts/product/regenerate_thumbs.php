@@ -34,7 +34,7 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 }
 
 @set_time_limit(0);							// No timeout for this script
-define('EVEN_IF_ONLY_LOGIN_ALLOWED',1);		// Set this define to 0 if you want to lock your script when dolibarr setup is "locked to admin user only".
+define('EVEN_IF_ONLY_LOGIN_ALLOWED', 1);		// Set this define to 0 if you want to lock your script when dolibarr setup is "locked to admin user only".
 
 // Include and load Dolibarr environment variables
 require_once $path."../../htdocs/master.inc.php";
@@ -55,7 +55,7 @@ $forcecommit=0;
 
 
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
-dol_syslog($script_file." launched with arg ".join(',',$argv));
+dol_syslog($script_file." launched with arg ".join(',', $argv));
 
 if (empty($argv[1])) {
     print "Usage:    $script_file  subdirtoscan\n";
@@ -78,14 +78,14 @@ if (! dol_is_dir($dir.'/'.$subdir))
 	exit(2);
 }
 
-$filearray=dol_dir_list($dir.'/'.$subdir,"directories",0,'','temp$');
+$filearray=dol_dir_list($dir.'/'.$subdir, "directories", 0, '', 'temp$');
 
 global $maxwidthsmall, $maxheightsmall, $maxwidthmini, $maxheightmini;
 
 foreach($filearray as $keyf => $valf)
 {
 	$ref=basename($valf['name']);
-	$filearrayimg=dol_dir_list($valf['fullname'],"files",0,'(\.gif|\.png|\.jpg|\.jpeg|\.bmp)$','(\.meta|_preview.*\.png)$');
+	$filearrayimg=dol_dir_list($valf['fullname'], "files", 0, '(\.gif|\.png|\.jpg|\.jpeg|\.bmp)$', '(\.meta|_preview.*\.png)$');
 	foreach($filearrayimg as $keyi => $vali)
 	{
 		print 'Process image for ref '.$ref.' : '.$vali['name']."\n";

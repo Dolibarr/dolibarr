@@ -96,7 +96,7 @@ class InterfaceNotification extends DolibarrTriggers
 	 *
 	 * @return      array       Array of events managed by notification module
 	 */
-	function getListOfManagedEvents()
+	public function getListOfManagedEvents()
 	{
 		global $conf;
 
@@ -130,7 +130,7 @@ class InterfaceNotification extends DolibarrTriggers
 					elseif ($element == 'withdraw' && empty($conf->prelevement->enabled)) $qualified=0;
 					elseif ($element == 'shipping' && empty($conf->expedition->enabled)) $qualified=0;
 					elseif ($element == 'member' && empty($conf->adherent->enabled)) $qualified=0;
-					elseif (! in_array($element,array('order_supplier','invoice_supplier','withdraw','shipping','member','expensereport')) && empty($conf->$element->enabled)) $qualified=0;
+					elseif (! in_array($element, array('order_supplier','invoice_supplier','withdraw','shipping','member','expensereport')) && empty($conf->$element->enabled)) $qualified=0;
 				}
 
 				if ($qualified)

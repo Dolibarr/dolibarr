@@ -33,17 +33,17 @@ $contact = $GLOBALS['objcanvas']->control->object;
 <?php
 print load_fiche_titre($this->control->tpl['title']);
 
-dol_htmloutput_errors($this->control->tpl['error'],$this->control->tpl['errors']);
+dol_htmloutput_errors($this->control->tpl['error'], $this->control->tpl['errors']);
 
 echo $this->control->tpl['ajax_selectcountry'];
 ?>
 
 <br>
 
-<form method="post" name="formmember" action="<?php echo $_SERVER["PHP_SELF"].'?id='.GETPOST('id','int'); ?>">
+<form method="post" name="formmember" action="<?php echo $_SERVER["PHP_SELF"].'?id='.GETPOST('id', 'int'); ?>">
 <input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>">
 <input type="hidden" name="canvas" value="<?php echo $canvas ?>">
-<input type="hidden" name="id" value="<?php echo GETPOST('id','int'); ?>">
+<input type="hidden" name="id" value="<?php echo GETPOST('id', 'int'); ?>">
 <input type="hidden" name="action" value="update">
 <input type="hidden" name="adherentid" value="<?php echo $this->control->tpl['id']; ?>">
 <input type="hidden" name="old_name" value="<?php echo $this->control->tpl['name']; ?>">
@@ -134,7 +134,7 @@ echo $this->control->tpl['ajax_selectcountry'];
 </tr>
 
 <tr>
-	<td colspan="4" align="center">
+	<td colspan="4" class="center">
 	<input type="submit" class="button" name="save" value="<?php echo $langs->trans("Save"); ?>">&nbsp;
 	<input type="submit" class="button" name="cancel" value="<?php echo $langs->trans("Cancel"); ?>">
 	</td>

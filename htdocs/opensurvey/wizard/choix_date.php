@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2013      Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2014 Marcos García				<marcosgdf@gmail.com>
+/* Copyright (C) 2013       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -169,7 +169,7 @@ if (GETPOST('confirmation'))
 	// Add survey into database
 	if (!$erreur)
 	{
-		$_SESSION["toutchoix"]=substr("$choixdate",1);
+		$_SESSION["toutchoix"]=substr("$choixdate", 1);
 
 		ajouter_sondage();
 	}
@@ -343,7 +343,7 @@ print '<div class="center">'."\n";
 print '<table align="center">'."\n";	// The div class=center has no effect on table, so we must keep the align=center for table
 print '<tr><td><input type="image" name="anneeavant" value="<<" src="../img/rewind.png"></td><td><input type="image" name="moisavant" value="<" src="../img/previous.png"></td>';
 print '<td width="150px" align="center"> '.$motmois.' '.$_SESSION["annee"].'<br>';
-print '<input type="image" name="retourmois" alt="'.dol_escape_htmltag($langs->trans("BackToCurrentMonth")).'" title="'.dol_escape_htmltag($langs->trans("BackToCurrentMonth")).'" value="" src="'.img_picto('', 'refresh','',0,1).'">';
+print '<input type="image" name="retourmois" alt="'.dol_escape_htmltag($langs->trans("BackToCurrentMonth")).'" title="'.dol_escape_htmltag($langs->trans("BackToCurrentMonth")).'" value="" src="'.img_picto('', 'refresh', '', 0, 1).'">';
 print '</td><td><input type="image" name="moisapres" value=">" src="../img/next.png"></td>';
 print '<td><input type="image" name="anneeapres" value=">>" src="../img/fforward.png"></td><td></td><td></td><td></td><td></td><td></td><td>';
 print '</td></tr>'."\n";
@@ -357,7 +357,7 @@ print '<tr>'."\n";
 //affichage des jours de la semaine en haut du tableau
 for($i = 0; $i < 7; $i++)
 {
-	print '<td align="center" class="joursemaine">'. dol_print_date(mktime(0,0,0,0, $i,10),'%A') .'</td>';
+	print '<td align="center" class="joursemaine">'. dol_print_date(mktime(0, 0, 0, 0, $i, 10), '%A') .'</td>';
 }
 
 print '</tr>'."\n";
@@ -429,7 +429,7 @@ if (issetAndNoEmpty('choixjourretrait')) {
 				$_SESSION["horaires$j"] = $_SESSION["horaires$k"];
 			}
 
-			array_splice($_SESSION["totalchoixjour"], $i,1);
+			array_splice($_SESSION["totalchoixjour"], $i, 1);
 		}
 	}
 }
@@ -448,7 +448,7 @@ if (issetAndNoEmpty('reporterhoraires')) {
 if (issetAndNoEmpty('resethoraires')) {
 	$nbofchoice=count($_SESSION["totalchoixjour"]);
 	for ($i = 0; $i < $nbofchoice; $i++) {
-		unset ($_SESSION["horaires$i"]);
+		unset($_SESSION["horaires$i"]);
 	}
 }
 
@@ -484,7 +484,8 @@ for ($i = 0; $i < $nbrejourmois + $premierjourmois; $i++) {
 			//bouton vert
 			if (($numerojour >= $jourAJ && $_SESSION["mois"] == $moisAJ && $_SESSION["annee"] == $anneeAJ) || ($_SESSION["mois"] > $moisAJ && $_SESSION["annee"] == $anneeAJ) || $_SESSION["annee"] > $anneeAJ) {
 				print '<td align="center" class="libre"><input type="submit" class="bouton ON" name="choixjourajout[]" value="'.$numerojour.'"></td>'."\n";
-			} else { //bouton gris
+			} else {
+                //bouton gris
 				print '<td align="center" class="avant">'.$numerojour.'</td>'."\n";
 			}
 		}

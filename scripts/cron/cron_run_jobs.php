@@ -23,11 +23,11 @@
  *  \ingroup    cron
  *  \brief      Execute pendings jobs
  */
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1'); // Disables token renewal
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
-if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
-if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
-if (! defined('NOLOGIN'))        define('NOLOGIN','1');
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Disables token renewal
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
+if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
+if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
+if (! defined('NOLOGIN'))        define('NOLOGIN', '1');
 //if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
 
 
@@ -35,7 +35,7 @@ $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
 $path=dirname(__FILE__).'/';
 
-// Test if batch mode
+// Error if Web mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
 	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
 	exit(-1);
@@ -47,13 +47,13 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
 // Check parameters
 if (! isset($argv[1]) || ! $argv[1]) {
-	usage($path,$script_file);
+	usage($path, $script_file);
 	exit(-1);
 }
 $key=$argv[1];
 
 if (! isset($argv[2]) || ! $argv[2]) {
-	usage($path,$script_file);
+	usage($path, $script_file);
 	exit(-1);
 }
 
@@ -65,9 +65,12 @@ $version=DOL_VERSION;
 $error=0;
 
 
+
 /*
  * Main
  */
+
+$langs->loadLangs(array('main', 'dict'));
 
 // current date
 $now=dol_now();
@@ -115,7 +118,7 @@ if ($userlogin == 'firstadmin')
 
 // Check user login
 $user=new User($db);
-$result=$user->fetch('',$userlogin);
+$result=$user->fetch('', $userlogin);
 if ($result < 0)
 {
 	echo "User Error: ".$user->error;
@@ -152,7 +155,7 @@ if (! empty($id)) {
 	$filter['t.rowid']=$id;
 }
 
-$result = $object->fetch_all('ASC,ASC,ASC','t.priority,t.entity,t.rowid', 0, 0, 1, $filter, 0);
+$result = $object->fetch_all('ASC,ASC,ASC', 't.priority,t.entity,t.rowid', 0, 0, 1, $filter, 0);
 if ($result<0)
 {
 	echo "Error: ".$object->error;
@@ -188,7 +191,7 @@ if (is_array($qualifiedjobs) && (count($qualifiedjobs)>0))
 		{
 			echo " - qualified";
 
-			dol_syslog("cron_run_jobs.php line->datenextrun:".dol_print_date($line->datenextrun,'dayhourrfc')." line->datestart:".dol_print_date($line->datestart,'dayhourrfc')." line->dateend:".dol_print_date($line->dateend,'dayhourrfc')." now:".dol_print_date($now,'dayhourrfc'));
+			dol_syslog("cron_run_jobs.php line->datenextrun:".dol_print_date($line->datenextrun, 'dayhourrfc')." line->datestart:".dol_print_date($line->datestart, 'dayhourrfc')." line->dateend:".dol_print_date($line->dateend, 'dayhourrfc')." now:".dol_print_date($now, 'dayhourrfc'));
 
 			$cronjob=new Cronjob($db);
 			$result=$cronjob->fetch($line->id);
@@ -232,7 +235,7 @@ if (is_array($qualifiedjobs) && (count($qualifiedjobs)>0))
 		{
 			echo " - not qualified\n";
 
-			dol_syslog("cron_run_jobs.php job not qualified line->datenextrun:".dol_print_date($line->datenextrun,'dayhourrfc')." line->datestart:".dol_print_date($line->datestart,'dayhourrfc')." line->dateend:".dol_print_date($line->dateend,'dayhourrfc')." now:".dol_print_date($now,'dayhourrfc'));
+			dol_syslog("cron_run_jobs.php job not qualified line->datenextrun:".dol_print_date($line->datenextrun, 'dayhourrfc')." line->datestart:".dol_print_date($line->datestart, 'dayhourrfc')." line->dateend:".dol_print_date($line->dateend, 'dayhourrfc')." now:".dol_print_date($now, 'dayhourrfc'));
 		}
 	}
 }
@@ -255,7 +258,7 @@ exit(0);
  * @param string $script_file   filename
  * @return void
  */
-function usage($path,$script_file)
+function usage($path, $script_file)
 {
 	global $conf;
 

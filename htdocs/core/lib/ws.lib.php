@@ -32,7 +32,7 @@
  *  @param  string	$errorlabel		Error string label
  *  @return User						Return user object identified by login/pass/entity into authentication array
  */
-function check_authentication($authentication,&$error,&$errorcode,&$errorlabel)
+function check_authentication($authentication, &$error, &$errorcode, &$errorlabel)
 {
     global $db,$conf,$langs;
     global $dolibarr_main_authentication,$dolibarr_auto_user;
@@ -53,13 +53,13 @@ function check_authentication($authentication,&$error,&$errorcode,&$errorlabel)
 
     if (! $error)
     {
-        $result=$fuser->fetch('',$authentication['login'],'',0);
+        $result=$fuser->fetch('', $authentication['login'], '', 0);
         if ($result < 0)
         {
             $error++;
             $errorcode='ERROR_FETCH_USER'; $errorlabel='A technical error occurred during fetch of user';
         }
-        else if ($result == 0)
+        elseif ($result == 0)
         {
             $error++;
             $errorcode='BAD_CREDENTIALS'; $errorlabel='Bad value for login or password';
@@ -81,10 +81,10 @@ function check_authentication($authentication,&$error,&$errorcode,&$errorlabel)
         	// Authentication mode: forceuser
         	if ($dolibarr_main_authentication == 'forceuser' && empty($dolibarr_auto_user)) $dolibarr_auto_user='auto';
         	// Set authmode
-        	$authmode=explode(',',$dolibarr_main_authentication);
+        	$authmode=explode(',', $dolibarr_main_authentication);
 
             include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-        	$login = checkLoginPassEntity($authentication['login'],$authentication['password'],$authentication['entity'],$authmode);
+        	$login = checkLoginPassEntity($authentication['login'], $authentication['password'], $authentication['entity'], $authmode);
 			if (empty($login))
 			{
 			    $error++;
@@ -95,4 +95,3 @@ function check_authentication($authentication,&$error,&$errorcode,&$errorlabel)
 
     return $fuser;
 }
-

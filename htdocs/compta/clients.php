@@ -27,7 +27,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
-$action=GETPOST('action','aZ09');
+$action=GETPOST('action', 'aZ09');
 
 // Secrutiy check
 if ($user->societe_id > 0)
@@ -44,9 +44,9 @@ $langs->load("companies");
 
 $mode=GETPOST("mode");
 
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
@@ -137,42 +137,42 @@ if ($resql)
 
 	$langs->load('commercial');
 
-	print_barre_liste($langs->trans("ListOfCustomers"), $page, $_SERVER["PHP_SELF"],"",$sortfield,$sortorder,'',$num);
+	print_barre_liste($langs->trans("ListOfCustomers"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num);
 
 	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
 
 	print '<table class="liste" width="100%">';
 	print '<tr class="liste_titre">';
 
-	print_liste_field_titre("Company",$_SERVER["PHP_SELF"],"s.nom","","",'valign="center"',$sortfield,$sortorder);
-	print_liste_field_titre("Town",$_SERVER["PHP_SELF"],"s.town","","",'valign="center"',$sortfield,$sortorder);
-	print_liste_field_titre("CustomerCode",$_SERVER["PHP_SELF"],"s.code_client","","",'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre("AccountancyCode",$_SERVER["PHP_SELF"],"s.code_compta","","",'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre("DateCreation",$_SERVER["PHP_SELF"],"datec",$addu,"",'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "s.nom", "", "", 'valign="center"', $sortfield, $sortorder);
+	print_liste_field_titre("Town", $_SERVER["PHP_SELF"], "s.town", "", "", 'valign="center"', $sortfield, $sortorder);
+	print_liste_field_titre("CustomerCode", $_SERVER["PHP_SELF"], "s.code_client", "", "", '', $sortfield, $sortorder, 'left ');
+	print_liste_field_titre("AccountancyCode", $_SERVER["PHP_SELF"], "s.code_compta", "", "", '', $sortfield, $sortorder, 'left ');
+	print_liste_field_titre("DateCreation", $_SERVER["PHP_SELF"], "datec", $addu, "", '', $sortfield, $sortorder, 'right ');
 	print "</tr>\n";
 
 	// Lignes des champs de filtre
 	print '<tr class="liste_titre">';
 
-	print '<td align="left" class="liste_titre">';
+	print '<td class="liste_titre left">';
 	print '<input class="flat" type="text" name="search_nom" value="'.$_GET["search_nom"].'"></td>';
 
 	print '<td class="liste_titre">&nbsp;</td>';
 
-	print '<td align="left" class="liste_titre">';
+	print '<td class="liste_titre left">';
 	print '<input class="flat" type="text" size="10" name="search_code_client" value="'.$_GET["search_code_client"].'">';
 	print '</td>';
 
-	print '<td align="left" class="liste_titre">';
+	print '<td class="liste_titre left">';
 	print '<input class="flat" type="text" size="10" name="search_compta" value="'.$_GET["search_compta"].'">';
 	print '</td>';
 
-	print '<td align="right" colspan="2" class="liste_titre">';
-	print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+	print '<td colspan="2" class="liste_titre right">';
+	print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"), 'search.png', '', '', 1).'" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '</td>';
 	print "</tr>\n";
 
-	while ($i < min($num,$conf->liste_limit))
+	while ($i < min($num, $conf->liste_limit))
 	{
 		$obj = $db->fetch_object($resql);
 
@@ -181,12 +181,12 @@ if ($resql)
 		$thirdpartystatic->id=$obj->rowid;
 		$thirdpartystatic->name=$obj->name;
 		$thirdpartystatic->client=$obj->client;
-		print $thirdpartystatic->getNomUrl(1,'compta');
+		print $thirdpartystatic->getNomUrl(1, 'compta');
 		print '</td>';
 		print '<td>'.$obj->town.'&nbsp;</td>';
-		print '<td align="left">'.$obj->code_client.'&nbsp;</td>';
-		print '<td align="left">'.$obj->code_compta.'&nbsp;</td>';
-		print '<td align="right">'.dol_print_date($db->jdate($obj->datec)).'</td>';
+		print '<td class="left">'.$obj->code_client.'&nbsp;</td>';
+		print '<td class="left">'.$obj->code_compta.'&nbsp;</td>';
+		print '<td class="right">'.dol_print_date($db->jdate($obj->datec)).'</td>';
 		print "</tr>\n";
 		$i++;
 	}
