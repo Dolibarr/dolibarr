@@ -1,9 +1,9 @@
 <?php
 if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
-/* <style type="text/css" > */
+
 /*
- Dropdown
-*/
+ * Dropdown
+ */
 
 .open>.dropdown-menu{ /*, #topmenu-login-dropdown:hover .dropdown-menu*/
     display: block;

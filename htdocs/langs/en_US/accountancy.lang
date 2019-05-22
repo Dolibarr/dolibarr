@@ -291,8 +291,9 @@ Modelcsv_quadratus=Export for Quadratus QuadraCompta
 Modelcsv_ebp=Export for EBP
 Modelcsv_cogilog=Export for Cogilog
 Modelcsv_agiris=Export for Agiris
+Modelcsv_openconcerto=Export for OpenConcerto (Test)
 Modelcsv_configurable=Export CSV Configurable
-Modelcsv_FEC=Export FEC (Art. L47 A) (Test)
+Modelcsv_FEC=Export FEC (Art. L47 A)
 ChartofaccountsId=Chart of accounts Id
 
 ## Tools - Init accounting account on product / service

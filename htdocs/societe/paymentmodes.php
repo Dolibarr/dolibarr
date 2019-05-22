@@ -800,7 +800,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		$morehtmlright='';
 		if (! empty($conf->global->STRIPE_ALLOW_LOCAL_CARD))
 		{
-			$morehtmlright='<a class="butActionNew" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=createcard"><span class="valignmiddle text-plus-circle">'.$langs->trans("Add").'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
+            $morehtmlright.= dolGetButtonTitle($langs->trans('Add'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=createcard');
 		}
 		print load_fiche_titre($langs->trans('StripePaymentModes').($stripeacc?' (Stripe connection with StripeConnect account '.$stripeacc.')':' (Stripe connection with keys from Stripe module setup)'), $morehtmlright, '');
 
@@ -810,7 +810,41 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			try {
 				$customerstripe=$stripe->customerStripe($object, $stripeacc, $servicestatus);
 				if ($customerstripe->id) {
-					$listofsources=$customerstripe->sources->data;
+
+					// When using the Charge API architecture
+					if (empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION))
+					{
+						$listofsources=$customerstripe->sources->data;
+					}
+					else
+					{
+						$service = 'StripeTest';
+						$servicestatus = 0;
+						if (! empty($conf->global->STRIPE_LIVE) && ! GETPOST('forcesandbox', 'alpha'))
+						{
+							$service = 'StripeLive';
+							$servicestatus = 1;
+						}
+
+						// Force to use the correct API key
+						global $stripearrayofkeysbyenv;
+						\Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$servicestatus]['secret_key']);
+
+						try {
+							if (empty($stripeacc)) {				// If the Stripe connect account not set, we use common API usage
+								$paymentmethodobjs = \Stripe\PaymentMethod::all(array("customer" => $customerstripe->id, "type" => "card"));
+							} else {
+								$paymentmethodobjs = \Stripe\PaymentMethod::all(array("customer" => $customerstripe->id, "type" => "card"), array("stripe_account" => $stripeacc));
+							}
+
+							$listofsources = $paymentmethodobjs->data;
+						}
+						catch(Exception $e)
+						{
+							$error++;
+							setEventMessages($e->getMessage(), null, 'errors');
+						}
+					}
 				}
 			}
 			catch(Exception $e)
@@ -1001,6 +1035,14 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				{
 					print '<span class="fa fa-university fa-2x fa-fw"></span>';
 				}
+				elseif ($src->object=='payment_method' && $src->type=='card')
+				{
+					print img_credit_card($src->card->brand);
+				}
+				elseif ($src->object=='payment_method' && $src->type=='sepa_debit')
+				{
+					print '<span class="fa fa-university fa-2x fa-fw"></span>';
+				}
 				print'</td>';
 				print '<td valign="middle">';
 				if ($src->object=='card')
@@ -1039,6 +1081,34 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 							print getCountry($src->sepa_debit->country, 1);
 					}
 					else print img_warning().' <font class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</font>';
+				}
+				elseif ($src->object=='payment_method' && $src->type=='card')
+				{
+					print $src->billing_details->name.'<br>....'.$src->card->last4.' - '.$src->card->exp_month.'/'.$src->card->exp_year.'';
+					print '</td><td>';
+
+					if ($src->card->country)
+					{
+						$img=picto_from_langcode($src->card->country);
+						print $img?$img.' ':'';
+						print getCountry($src->card->country, 1);
+					}
+					else print img_warning().' <font class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</font>';
+				}
+				elseif ($src->object=='payment_method' && $src->type=='sepa_debit')
+				{
+					print 'info sepa';
+					print '</td><td>';
+					if ($src->sepa_debit->country)
+					{
+						$img=picto_from_langcode($src->sepa_debit->country);
+						print $img?$img.' ':'';
+						print getCountry($src->sepa_debit->country, 1);
+					}
+					else print img_warning().' <font class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</font>';
+				}
+				else {
+					print '</td><td>';
 				}
 				print '</td>';
 				// Default
@@ -1080,7 +1150,9 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 
 		if ($nbremote == 0 && $nblocal == 0)
 		{
-			print '<tr><td class="opacitymedium" colspan="7">'.$langs->trans("None").'</td></tr>';
+			$colspan=8;
+			if (! empty($conf->global->STRIPE_ALLOW_LOCAL_CARD)) $colspan++;
+			print '<tr><td class="opacitymedium" colspan="'.$colspan.'">'.$langs->trans("None").'</td></tr>';
 		}
 		print "</table>";
 		print "</div>";
@@ -1090,7 +1162,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 	// List of bank accounts
 	print '<br>';
 
-	$morehtmlright='<a class="butActionNew" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans("Add").'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
+    $morehtmlright= dolGetButtonTitle($langs->trans('Add'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=create');
 
 	print load_fiche_titre($langs->trans("BankAccounts"), $morehtmlright, '');
 

@@ -1374,6 +1374,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 	if (! empty($object->lines[$i]->date_start) || ! empty($object->lines[$i]->date_end))
 	{
 		$format='day';
+        $period = '';
 		// Show duration if exists
 		if ($object->lines[$i]->date_start && $object->lines[$i]->date_end)
 		{

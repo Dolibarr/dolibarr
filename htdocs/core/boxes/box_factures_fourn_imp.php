@@ -138,7 +138,7 @@ class box_factures_fourn_imp extends ModeleBoxes
                     $tooltip = $langs->trans('SupplierInvoice') . ': ' . ($objp->ref?$objp->ref:$objp->facid) . '<br>' . $langs->trans('RefSupplier') . ': ' . $objp->ref_supplier;
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => '',
+                        'td' => 'class="nowraponall"',
                         'text' => $facturestatic->getNomUrl(1),
                         'text2'=> $late,
                         'asis' => 1
