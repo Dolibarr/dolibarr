@@ -436,14 +436,14 @@ llxHeader('', $title_page);
 // List
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-	$nbtotalofrecords = $object->fetchAll($sortorder, $sortfield, 0, 0, $filter);
+	$nbtotalofrecords = $object->fetchAll($sortorder, $sortfield, 0, 0, $filter, 'AND', $conf->global->ACCOUNTING_REEXPORT);
 	if ($nbtotalofrecords < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
 
 // TODO Do not use this
-$result = $object->fetchAll($sortorder, $sortfield, $limit, $offset, $filter);
+$result = $object->fetchAll($sortorder, $sortfield, $limit, $offset, $filter, 'AND', $conf->global->ACCOUNTING_REEXPORT);
 if ($result < 0) {
 	setEventMessages($object->error, $object->errors, 'errors');
 }
