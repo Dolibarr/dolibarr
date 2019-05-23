@@ -3441,16 +3441,17 @@ function img_info($titlealt = 'default')
  *
  *	@param	string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@param	string	$moreatt	Add more attribute on img tag (For example 'style="float: right"'). If 1, add float: right. Can't be "class" attribute.
+ *  @param	string  $morecss	Add more CSS
  *	@return string      		Return img tag
  */
-function img_warning($titlealt = 'default', $moreatt = '')
+function img_warning($titlealt = 'default', $moreatt = '', $morecss = 'pictowarning')
 {
 	global $conf, $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Warning');
 
 	//return '<div class="imglatecoin">'.img_picto($titlealt, 'warning_white.png', 'class="pictowarning valignmiddle"'.($moreatt ? ($moreatt == '1' ? ' style="float: right"' : ' '.$moreatt): '')).'</div>';
-	return img_picto($titlealt, 'warning.png', 'class="pictowarning valignmiddle"'.($moreatt ? ($moreatt == '1' ? ' style="float: right"' : ' '.$moreatt): ''));
+	return img_picto($titlealt, 'warning.png', 'class="valignmiddle'.($morecss?' '.$morecss:'').'"'.($moreatt ? ($moreatt == '1' ? ' style="float: right"' : ' '.$moreatt): ''));
 }
 
 /**

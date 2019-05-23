@@ -62,7 +62,7 @@ class BOM extends CommonObject
 
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
-	const STATUS_DISABLED = -1;
+	const STATUS_CANCELED = 9;
 
 
 	/**
@@ -105,7 +105,7 @@ class BOM extends CommonObject
 	    'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>1000, 'notnull'=>-1,),
 		'fk_product' => array('type'=>'integer:Product:product/class/product.class.php', 'label'=>'Product', 'enabled'=>1, 'visible'=>1, 'position'=>50, 'notnull'=>1, 'index'=>1, 'help'=>'ProductBOMHelp'),
 	    'qty' => array('type'=>'real', 'label'=>'Quantity', 'enabled'=>1, 'visible'=>1, 'default'=>1, 'position'=>55, 'notnull'=>1, 'isameasure'=>'1', 'css'=>'maxwidth75imp'),
-	    'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>1, 'visible'=>2, 'position'=>1000, 'notnull'=>1, 'default'=>0, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Enabled', '-1'=>'Disabled')),
+	    'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>1, 'visible'=>1, 'position'=>1000, 'notnull'=>1, 'default'=>0, 'index'=>1, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Enabled', 9=>'Disabled')),
 	);
 	public $rowid;
 	public $ref;
@@ -758,8 +758,9 @@ class BOM extends CommonObject
 		{
 			global $langs;
 			//$langs->load("mrp");
-			$this->labelstatus[1] = $langs->trans('Enabled');
-			$this->labelstatus[0] = $langs->trans('Disabled');
+			$this->labelstatus[self::STATUS_DRAFT] = $langs->trans('Draft');
+			$this->labelstatus[self::STATUS_VALIDATED] = $langs->trans('Enabled');
+			$this->labelstatus[self::STATUS_CANCELED] = $langs->trans('Disabled');
 		}
 
 		if ($mode == 0)
@@ -772,28 +773,23 @@ class BOM extends CommonObject
 		}
 		elseif ($mode == 2)
 		{
-			if ($status == 1) return img_picto($this->labelstatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
-			elseif ($status == 0) return img_picto($this->labelstatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
+			return img_picto($this->labelstatus[$status], 'statut'.$status, '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
 		}
 		elseif ($mode == 3)
 		{
-			if ($status == 1) return img_picto($this->labelstatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle');
-			elseif ($status == 0) return img_picto($this->labelstatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle');
+			return img_picto($this->labelstatus[$status], 'statut'.$status, '', false, 0, 0, '', 'valignmiddle');
 		}
 		elseif ($mode == 4)
 		{
-			if ($status == 1) return img_picto($this->labelstatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
-			elseif ($status == 0) return img_picto($this->labelstatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
+			return img_picto($this->labelstatus[$status], 'statut'.$status, '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
 		}
 		elseif ($mode == 5)
 		{
-			if ($status == 1) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle');
-			elseif ($status == 0) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle');
+			return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status], 'statut'.$status, '', false, 0, 0, '', 'valignmiddle');
 		}
 		elseif ($mode == 6)
 		{
-			if ($status == 1) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle');
-			elseif ($status == 0) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle');
+			return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status], 'statut'.$status, '', false, 0, 0, '', 'valignmiddle');
 		}
 	}
 

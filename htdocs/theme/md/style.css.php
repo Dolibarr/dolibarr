@@ -1361,6 +1361,9 @@ div.fichetwothirdright {
 	<?php if ($conf->browser->layout != 'phone')   { print "width: 50%;\n"; } ?>
 	<?php if ($conf->browser->layout == 'phone') { print "padding-bottom: 6px\n"; } ?>
 }
+div.fichetwothirdright div.ficheaddleft {
+    padding-left: 20px;
+}
 div.fichehalfleft {
 	<?php if ($conf->browser->layout != 'phone')   { print "float: ".$left.";\n"; } ?>
 	<?php if ($conf->browser->layout != 'phone')   { print "width: calc(50% - 10px);\n"; } ?>
@@ -1404,6 +1407,9 @@ div.secondcolumn div.box {
     	width: auto;
     	padding-bottom: 6px;
     }
+    div.fichetwothirdright div.ficheaddleft {
+    	padding-left: 0;
+	}
     div.fichehalfleft {
     	float: none;
     	width: auto;

@@ -1367,10 +1367,13 @@ else
 
             if (! empty($conf->use_javascript_ajax))
             {
+            	$widthpopup = 600;
+            	if (! empty($conf->dol_use_jmobile)) $widthpopup = 350;
+            	$heightpopup = 400;
                 print "\n";
                 print '<script language="JavaScript" type="text/javascript">';
                 print "function CheckVAT(a) {\n";
-                print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a,'".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."', 540, 350);\n";
+                print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a, '".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."', ".$widthpopup.", ".$heightpopup.");\n";
                 print "}\n";
                 print '</script>';
                 print "\n";
@@ -2028,10 +2031,13 @@ else
 
                 if ($conf->use_javascript_ajax)
                 {
-                    print "\n";
+                	$widthpopup = 600;
+                	if (! empty($conf->dol_use_jmobile)) $widthpopup = 350;
+                	$heightpopup = 400;
+                	print "\n";
                     print '<script language="JavaScript" type="text/javascript">';
                     print "function CheckVAT(a) {\n";
-                    print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a,'".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."',500,285);\n";
+                    print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a,'".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."', ".$widthpopup.", ".$heightpopup.");\n";
                     print "}\n";
                     print '</script>';
                     print "\n";
@@ -2437,10 +2443,13 @@ else
 
                 if ($conf->use_javascript_ajax)
                 {
+                	$widthpopup = 600;
+                	if (! empty($conf->dol_use_jmobile)) $widthpopup = 350;
+                	$heightpopup = 400;
                     print "\n";
                     print '<script language="JavaScript" type="text/javascript">';
                     print "function CheckVAT(a) {\n";
-                    print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a,'".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."',500,285);\n";
+                    print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a, '".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."', ".$widthpopup.", ".$heightpopup.");\n";
                     print "}\n";
                     print '</script>';
                     print "\n";
