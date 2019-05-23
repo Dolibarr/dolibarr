@@ -936,10 +936,12 @@ class BookKeeping extends CommonObject
 			}
 		}
 		$sql.= ' WHERE t.entity IN (' . getEntity('accountancy') . ')';
+        if ($showAlreadyExportMovements == 0) {
+            $sql .= " AND t.date_export IS NULL";
+        }
 		if (count($sqlwhere) > 0) {
 			$sql .= ' AND ' . implode(' ' . $filtermode . ' ', $sqlwhere);
 		}
-
 		if (! empty($sortfield)) {
 			$sql .= $this->db->order($sortfield, $sortorder);
 		}

@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("accountancy"));
@@ -146,7 +147,7 @@ $arrayfields=array(
 	't.code_journal'=>array('label'=>$langs->trans("Codejournal"), 'checked'=>1),
 	't.date_creation'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0),
 	't.tms'=>array('label'=>$langs->trans("DateModification"), 'checked'=>0),
-    't.date_export'=>array('label'=>$langs->trans("DateExport"), 'checked'=>0),
+    't.date_export'=>array('label'=>$langs->trans("DateExport"), 'checked'=>1),
 );
 
 if (empty($conf->global->ACCOUNTING_ENABLE_LETTERING)) unset($arrayfields['t.lettering_code']);
@@ -364,9 +365,7 @@ if ($action == 'delmouvconfirm') {
 
 // Export into a file with format defined into setup (FEC, CSV, ...)
 if ($action == 'export_file') {
-    $reexportMovements = GETPOST('already_exported')=='on'?1:0;
-
-	$result = $object->fetchAll($sortorder, $sortfield, 0, 0, $filter, 'AND', $reexportMovements);
+	$result = $object->fetchAll($sortorder, $sortfield, 0, 0, $filter, 'AND', $conf->global->ACCOUNTING_REEXPORT);
 
 	if ($result < 0)
 	{
@@ -374,33 +373,57 @@ if ($action == 'export_file') {
 	}
 	else
 	{
+	    // Export files
 		$accountancyexport = new AccountancyExport($db);
 		$accountancyexport->export($object->lines);
 
-        // TODO Move in class bookKeeping
-        // Specify as export : update field date_export
-        foreach ( $object->lines as $movement ) {
-            $now = dol_now();
-            $sql = " UPDATE " . MAIN_DB_PREFIX . "accounting_bookkeeping";
-            $sql .= " SET date_export = '" . $db->idate($now) . "'";
-            $sql .= " WHERE rowid = " . $movement->id;
+        if (! empty($accountancyexport->errors))
+        {
+            setEventMessages('', $accountancyexport->errors, 'errors');
+        } else {
+            // Specify as export : update field date_export
+            // TODO Move in class bookKeeping
+            $error=0;
+            $db->begin();
 
-            dol_syslog("/accountancy/bookeeping/list.php Function export_file Specify movements as exported sql=" . $sql, LOG_DEBUG);
-            if ($db->query($sql)) {
-                $db->commit();
-            } else {
-                $db->rollback();
+            if (is_array($object->lines)) {
+                foreach ($object->lines as $movement) {
+                    $now = dol_now();
+                    $sql = " UPDATE " . MAIN_DB_PREFIX . "accounting_bookkeeping";
+                    $sql .= " SET date_export = '" . $db->idate($now) . "'";
+                    $sql .= " WHERE rowid = " . $movement->id;
+
+                    dol_syslog("/accountancy/bookeeping/list.php Function export_file Specify movements as exported sql=" . $sql, LOG_DEBUG);
+                    $result = $db->query($sql);
+                    if ($result) {
+                        $db->commit();
+                        // setEventMessages($langs->trans("AllExportedMovementsWereRecordedAsExported"), null, 'mesgs');
+                    } else {
+                        $db->rollback();
+                        // setEventMessages($langs->trans("NotAllExportedMovementsCouldBeRecordedAsExported"), null, 'errors');
+                    }
+                }
             }
         }
-
-		if (!empty($accountancyexport->errors))
-		{
-			setEventMessages('', $accountancyexport->errors, 'errors');
-		}
 		exit;
 	}
 }
 
+if ($action == 'setreexport') {
+    $export = 0;
+    $setreexport = GETPOST('value', 'int');
+    if (! dolibarr_set_const($db, "ACCOUNTING_REEXPORT", $setreexport, 'yesno', 0, '', $conf->entity)) $error++;
+
+    if (! $error) {
+        if ($conf->global->ACCOUNTING_REEXPORT == 1) {
+            setEventMessages($langs->trans("ExportOfPiecesAlreadyExportedIsEnable"), null, 'mesgs');
+        } else {
+            setEventMessages($langs->trans("ExportOfPiecesAlreadyExportedIsDisable"), null, 'mesgs');
+        }
+    } else {
+        setEventMessages($langs->trans("Error"), null, 'errors');
+    }
+}
 
 /*
  * View
@@ -481,7 +504,14 @@ $listofformat=AccountancyExport::getType();
 if (count($filter)) $buttonLabel = $langs->trans("ExportFilteredList");
 else $buttonLabel = $langs->trans("ExportList");
 
-$newcardbutton = '<input type="checkbox" name="already_exported"> ' . $langs->trans("IncludeDocsAlreadyExported");
+// Button re-export
+if (! empty($conf->global->ACCOUNTING_REEXPORT)) {
+    print $newcardbutton ='<a href="'.$_SERVER['PHP_SELF'].'?action=setreexport&value=0'.($param?'&'.$param:'').'">'.img_picto($langs->trans("Activated"), 'switch_on').'</a> ';
+} else {
+    print $newcardbutton ='<a href="'.$_SERVER['PHP_SELF'].'?action=setreexport&value=1'.($param?'&'.$param:'').'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a> ';
+}
+$newcardbutton.= $langs->trans("IncludeDocsAlreadyExported");
+
 $newcardbutton.= dolGetButtonTitle($buttonLabel, $langs->trans("ExportFilteredList").' ('.$listofformat[$conf->global->ACCOUNTING_EXPORT_MODELCSV].')', 'fa fa-file-export', $_SERVER["PHP_SELF"].'?action=export_file'.($param?'&'.$param:''));
 
 $newcardbutton.= dolGetButtonTitle($langs->trans('GroupByAccountAccounting'), '', 'fa fa-object-group', DOL_URL_ROOT.'/accountancy/bookkeeping/listbyaccount.php?'.$param);
