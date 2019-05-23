@@ -17,9 +17,9 @@
  */
 
 /**
- * \file 	    htdocs/accountancy/closure/index.php
+ * \file 	    htdocs/accountancy/closure/validate.php
  * \ingroup     Accountancy
- * \brief 	    Home closure page
+ * \brief 	    Validate entries page
  */
 
 require '../../main.inc.php';
@@ -62,38 +62,60 @@ $year_current = $year_start;
  * Actions
  */
 
+if ($action == 'validate')
+{
+    $now = dol_now();
+
+    // Update database
+    $db->begin();
+    $sql = "UPDATE " . MAIN_DB_PREFIX . "accounting_bookkeeping as b";
+    $sql .= " SET b.date_validated = '" . $db->idate($now) . "'";
+    $sql .= ' WHERE b.date_validated IS NULL';
+
+    dol_syslog("htdocs/accountancy/closure/validate.php validate", LOG_DEBUG);
+    $resql = $db->query($sql);
+    if (! $resql1) {
+        $error ++;
+        $db->rollback();
+        setEventMessages($db->lasterror(), null, 'errors');
+    } else {
+        $db->commit();
+    }
+    // End clean database
+}
+
 
 /*
  * View
  */
 
-llxHeader('', $langs->trans("Closure"));
+llxHeader('', $langs->trans("ValidateMovements"));
 
 $textprevyear = '<a href="' . $_SERVER["PHP_SELF"] . '?year=' . ($year_current - 1) . '">' . img_previous() . '</a>';
 $textnextyear = '&nbsp;<a href="' . $_SERVER["PHP_SELF"] . '?year=' . ($year_current + 1) . '">' . img_next() . '</a>';
 
 
-print load_fiche_titre($langs->trans("Closure") . " " . $textprevyear . " " . $langs->trans("Year") . " " . $year_start . " " . $textnextyear, '', 'title_accountancy');
+print load_fiche_titre($langs->trans("ValidateMovements") . " " . $textprevyear . " " . $langs->trans("Year") . " " . $year_start . " " . $textnextyear, '', 'title_accountancy');
 
-print $langs->trans("DescClosure") . '<br>';
+print $langs->trans("DescValidateMovements") . '<br>';
 print '<br>';
 
 
 $y = $year_current;
 
-$buttonbind = '<a class="butAction" href="./validate.php">' . $langs->trans("ValidateMovements") . '</a>';
-
-print_barre_liste($langs->trans("OverviewOfMovementsNotValidated"), '', '', '', '', '', '', -1, '', '', 0, $buttonbind, '', 0, 1, 1);
+print_barre_liste($langs->trans("SelectMonthAndValidate"), '', '', '', '', '', '', -1, '', '', 0, '', 'class="right"', 0, 1, 1);
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
+print '<tr class="oddeven">';
 for($i = 1; $i <= 12; $i ++) {
 	$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START?$conf->global->SOCIETE_FISCAL_MONTH_START:1) - 1;
 	if ($j > 12) $j-=12;
-	print '<td width="60" class="right">' . $langs->trans('MonthShort' . str_pad($j, 2, '0', STR_PAD_LEFT)) . '</td>';
+	print '<td class="center">' . $langs->trans('MonthShort' . str_pad($j, 2, '0', STR_PAD_LEFT)) . '</td>';
 }
-print '<td width="60" class="right"><b>' . $langs->trans("Total") . '</b></td></tr>';
+print '<td><b>' . $langs->trans("Total") . '</b></td></tr>';
 
+print '<tr class="oddeven">';
 $sql = "SELECT COUNT(b.rowid) as detail,";
 for($i = 1; $i <= 12; $i ++) {
 	$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START?$conf->global->SOCIETE_FISCAL_MONTH_START:1) - 1;
@@ -113,18 +135,22 @@ if ($resql) {
 
 	while ( $row = $db->fetch_row($resql)) {
 
-		print '<tr class="oddeven">';
 		for($i = 1; $i <= 12; $i ++) {
-			print '<td class="right">' . $row[$i] . '</td>';
+			print '<td class="nowrap center">' . $row[$i] . '<br><br>';
+            print '<input id="cb'.$row[$i].'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$row[$i].'"'.($selected?' checked="checked"':'').'>';
+            print '</td>' ;
 		}
-		print '<td class="right"><b>' . $row[13] . '</b></td>';
-		print '</tr>';
+		print '<td class="valigntop"><b>' . $row[13] . '</b></td>';
 	}
+	print
 	$db->free($resql);
 } else {
 	print $db->lasterror(); // Show last sql error
 }
+print '</tr>';
 print "</table>\n";
+
+print '<br><div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?month=' . $year_current . '&action=validate"">' . $langs->trans("ValidateMovements") . '</a></div>';
 print '</div>';
 
 // End of page
