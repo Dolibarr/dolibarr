@@ -223,7 +223,7 @@ if (($id || $ref) && $action == 'edit')
 
 	dol_fiche_head();
 
-	print '<table class="border centpercent">'."\n";
+	print '<table class="border centpercent tableforfield">'."\n";
 
 	// Common attributes
 	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_edit.tpl.php';
@@ -389,7 +389,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
     	if (! empty($object->lines))
     	{
-    	    $ret = $object->printObjectLines($action, $mysoc, $soc, $lineid, 1);
+            // printObjectLines return void
+    	    $object->printObjectLines($action, $mysoc, $soc, $lineid, 1);
     	}
 
     	// Form to add new line

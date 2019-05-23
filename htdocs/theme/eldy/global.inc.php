@@ -181,6 +181,10 @@ input.buttonpaymentstripe {
 	background-repeat: no-repeat;
 	background-position: 8px 11px;
 }
+a.buttonticket {
+	padding-left: 5px;
+	padding-right: 5px;
+}
 
 /* Used by timesheets */
 span.timesheetalreadyrecorded input {
@@ -1124,17 +1128,19 @@ div.fichetwothirdright {
 	<?php if ($conf->browser->layout != 'phone')   { print "width: 50%;\n"; } ?>
 	<?php if ($conf->browser->layout == 'phone')   { print "padding-bottom: 6px\n"; } ?>
 }
+div.fichetwothirdright div.ficheaddleft {
+    padding-left: 20px;
+}
 div.fichehalfleft {
 	<?php if ($conf->browser->layout != 'phone')   { print "float: ".$left.";\n"; } ?>
-	<?php if ($conf->browser->layout != 'phone')   { print "width: 50%;\n"; } ?>
+	<?php if ($conf->browser->layout != 'phone')   { print "width: calc(50% - 10px);\n"; } ?>
 }
 div.fichehalfright {
 	<?php if ($conf->browser->layout != 'phone')   { print "float: ".$right.";\n"; } ?>
-	<?php if ($conf->browser->layout != 'phone')   { print "width: 50%;\n"; } ?>
+	<?php if ($conf->browser->layout != 'phone')   { print "width: calc(50% - 10px);\n"; } ?>
 }
-div.ficheaddleft {
-	<?php if ($conf->browser->layout != 'phone')   { print "padding-".$left.": 16px;\n"; }
-	else print "margin-top: 10px;\n"; ?>
+div.fichehalfright {
+	<?php if ($conf->browser->layout == 'phone')   { print "margin-top: 10px;\n"; } ?>
 }
 div.firstcolumn div.box {
 	padding-right: 10px;
@@ -1174,8 +1180,7 @@ div.secondcolumn div.box {
     	float: none;
     	width: auto;
     }
-    div.ficheaddleft {
-    	<?php print "padding-".$left.": 0px;\n"; ?>
+    div.fichehalfright {
     	margin-top: 10px;
     }
     div.firstcolumn div.box {
@@ -1198,13 +1203,13 @@ div.secondcolumn div.box {
     	width: auto;
     }
 
-    .fichehalfright-lg .ficheaddleft{
+    .fichehalfright-lg .fichehalfright {
     	padding-left:0;
     }
 }
 
 /* For table into table into card */
-div.ficheaddleft tr.liste_titre:first-child td table.nobordernopadding td {
+div.fichehalfright tr.liste_titre:first-child td table.nobordernopadding td {
     padding: 0 0 0 0;
 }
 div.nopadding {
@@ -2466,9 +2471,9 @@ td.border, div.tagtable div div.border {
 }
 
 
-/*.ficheaddleft table.noborder {
+.fichehalfright table.noborder {
 	margin: 0px 0px 0px 0px;
-}*/
+}
 table.liste, table.noborder, table.formdoc, div.noborder {
 	width: 100%;
 
@@ -2498,7 +2503,7 @@ table.liste tr:last-of-type td, table.noborder:not(#tablelines) tr:last-of-type 
 	border-bottom-color: rgb(<?php echo $colortopbordertitle1 ?>);
 	border-bottom-style: solid;
 }
-div.tabBar div.ficheaddleft table.noborder:not(.margintable):not(.paymenttable):last-of-type {
+div.tabBar div.fichehalfright table.noborder:not(.margintable):not(.paymenttable):last-of-type {
     border-bottom: 1px solid rgb(<?php echo $colortopbordertitle1 ?>);
 }
 div.tabBar table.border>tbody>tr:last-of-type>td {
@@ -2506,7 +2511,7 @@ div.tabBar table.border>tbody>tr:last-of-type>td {
 	border-bottom-color: rgb(<?php echo $colortopbordertitle1 ?>);
 	border-bottom-style: solid;
 }
-div.tabBar div.ficheaddleft table.noborder {
+div.tabBar div.fichehalfright table.noborder {
     border-bottom: none;
 }
 
@@ -2554,7 +2559,7 @@ table.liste th, table.noborder th, table.noborder tr.liste_titre td, table.nobor
 }
 table.liste td, table.noborder td, div.noborder form div, table.tableforservicepart1 td, table.tableforservicepart2 td {
 	padding: 7px 8px 7px 8px;			/* t r b l */
-	line-height: 1.2em;
+	line-height: 22px;
 	height: 22px;
 }
 div.liste_titre_bydiv .divsearchfield {
@@ -3013,8 +3018,8 @@ div.tabBar .noborder {
 /* Prepare to remove class pair - impair */
 
 .noborder > tbody > tr:nth-child(even):not(.liste_titre), .liste > tbody > tr:nth-child(even):not(.liste_titre),
-div:not(.fichecenter):not(.fichehalfleft):not(.ficheaddleft) > .border > tbody > tr:nth-of-type(even):not(.liste_titre), .liste > tbody > tr:nth-of-type(even):not(.liste_titre),
-div:not(.fichecenter):not(.fichehalfleft):not(.ficheaddleft) .oddeven.tagtr:nth-of-type(even):not(.liste_titre)
+div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright):not(.ficheaddleft) > .border > tbody > tr:nth-of-type(even):not(.liste_titre), .liste > tbody > tr:nth-of-type(even):not(.liste_titre),
+div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright):not(.ficheaddleft) .oddeven.tagtr:nth-of-type(even):not(.liste_titre)
 {
 	background: linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
 	background: -o-linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
@@ -3029,8 +3034,8 @@ div:not(.fichecenter):not(.fichehalfleft):not(.ficheaddleft) .oddeven.tagtr:nth-
 }
 
 .noborder > tbody > tr:nth-child(odd):not(.liste_titre), .liste > tbody > tr:nth-child(odd):not(.liste_titre),
-div:not(.fichecenter):not(.fichehalfleft):not(.ficheaddleft) > .border > tbody > tr:nth-of-type(odd):not(.liste_titre), .liste > tbody > tr:nth-of-type(odd):not(.liste_titre),
-div:not(.fichecenter):not(.fichehalfleft):not(.ficheaddleft) .oddeven.tagtr:nth-of-type(odd):not(.liste_titre)
+div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright):not(.ficheaddleft) > .border > tbody > tr:nth-of-type(odd):not(.liste_titre), .liste > tbody > tr:nth-of-type(odd):not(.liste_titre),
+div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright):not(.ficheaddleft) .oddeven.tagtr:nth-of-type(odd):not(.liste_titre)
 {
 	background: linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
 	background: -o-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
@@ -3057,9 +3062,9 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
     overflow-x: auto;
     min-height: 40px;
 }
-/*.ficheaddleft div.boxstats, .ficheaddright div.boxstats {
+.ficheaddleft div.boxstats, .ficheaddright div.boxstats {
     border: none;
-}*/
+}
 .boxstatsborder {
     /* border: 1px solid #CCC !important; */
 }
@@ -3083,8 +3088,8 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 }
 .boxstats130 {
     width: 158px;
-    height: 48px;
-    padding: 3px;
+    height: 59px;
+    /* padding: 3px; */
 }
 .boxstats {
     padding-left: 3px;
@@ -3092,6 +3097,10 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
     padding-top: 2px;
     padding-bottom: 2px;
     width: 121px;
+}
+.tabBar .fichehalfright .boxstats {
+    padding-top: 8px;
+    padding-bottom: 4px;
 }
 .boxstatscontent {
 	padding: 3px;
@@ -3192,7 +3201,8 @@ span.dashboardlineko {
 	float: right;
 	position: relative;
     text-align: right;
-    top: -26px;
+    top: -27px;
+    right: 2px;
     padding: 0px 5px 0px 5px;
     border-radius: .25em;
 

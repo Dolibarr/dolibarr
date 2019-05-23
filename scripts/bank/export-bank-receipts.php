@@ -127,7 +127,21 @@ $objmodel = new $classname($db);
 $dirname = $conf->bank->dir_temp;
 $filename = 'export-bank-receipts-' . $bankref . '-' . $num . '.' . $objmodel->extension;
 
-$array_fields = array('bankreceipt' => $outputlangs->transnoentitiesnoconv("AccountStatementShort"),'bankaccount' => $outputlangs->transnoentitiesnoconv("BankAccount"),'dateop' => $outputlangs->transnoentitiesnoconv("DateOperationShort"),'dateval' => $outputlangs->transnoentitiesnoconv("DateValueShort"),'type' => $outputlangs->transnoentitiesnoconv("Type"),'description' => $outputlangs->transnoentitiesnoconv("Description"),'thirdparty' => $outputlangs->transnoentitiesnoconv("Tiers"),'accountelem' => $outputlangs->transnoentitiesnoconv("Piece"),'debit' => $outputlangs->transnoentitiesnoconv("Debit"),'credit' => $outputlangs->transnoentitiesnoconv("Credit"),'soldbefore' => $outputlangs->transnoentitiesnoconv("BankBalanceBefore"),'soldafter' => $outputlangs->transnoentitiesnoconv("BankBalanceAfter"),'comment' => $outputlangs->transnoentitiesnoconv("Comment"));
+$array_fields = array(
+	'bankreceipt' => $outputlangs->transnoentitiesnoconv("AccountStatementShort"),
+	'bankaccount' => $outputlangs->transnoentitiesnoconv("BankAccount"),
+	'dateop' => $outputlangs->transnoentitiesnoconv("DateOperationShort"),
+	'dateval' => $outputlangs->transnoentitiesnoconv("DateValueShort"),
+	'type' => $outputlangs->transnoentitiesnoconv("Type"),
+	'description' => $outputlangs->transnoentitiesnoconv("Description"),
+	'thirdparty' => $outputlangs->transnoentitiesnoconv("Tiers"),
+	'accountelem' => $outputlangs->transnoentitiesnoconv("Piece"),
+	'debit' => $outputlangs->transnoentitiesnoconv("Debit"),
+	'credit' => $outputlangs->transnoentitiesnoconv("Credit"),
+	'soldbefore' => $outputlangs->transnoentitiesnoconv("BankBalanceBefore"),
+	'soldafter' => $outputlangs->transnoentitiesnoconv("BankBalanceAfter"),
+	'comment' => $outputlangs->transnoentitiesnoconv("Comment")
+);
 $array_selected = array('bankreceipt' => 'bankreceipt','bankaccount' => 'bankaccount','dateop' => 'dateop','dateval' => 'dateval','type' => 'type','description' => 'description','thirdparty' => 'thirdparty','accountelem' => 'accountelem','debit' => 'debit','credit' => 'credit','soldbefore' => 'soldbefore','soldafter' => 'soldafter','comment' => 'comment');
 $array_export_TypeFields = array('bankreceipt' => 'Text','bankaccount' => 'Text','dateop' => 'Date','dateval' => 'Date','type' => 'Text','description' => 'Text','thirdparty' => 'Text','accountelem' => 'Text','debit' => 'Number','credit' => 'Number','soldbefore' => 'Number','soldafter' => 'Number','comment' => 'Text');
 

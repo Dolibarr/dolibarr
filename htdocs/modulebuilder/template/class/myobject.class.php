@@ -644,6 +644,30 @@ class MyObject extends CommonObject
 		$this->initAsSpecimenCommon();
 	}
 
+	/**
+	 * 	Create an array of lines
+	 *
+	 * 	@return array|int		array of lines if OK, <0 if KO
+	 */
+	public function getLinesArray()
+	{
+	    $this->lines=array();
+
+	    $objectline = new BOMLine($this->db);
+	    $result = $objectline->fetchAll('', '', 0, 0, array('fk_myobject'=>$this->id));
+
+	    if (is_numeric($result))
+	    {
+	        $this->error = $this->error;
+	        $this->errors = $this->errors;
+	        return $result;
+	    }
+	    else
+	    {
+	        $this->lines = $result;
+	        return $this->lines();
+	    }
+	}
 
 	/**
 	 * Action executed by scheduler

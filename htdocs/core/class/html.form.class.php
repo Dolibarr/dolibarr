@@ -1046,7 +1046,7 @@ class Form
 	 *
 	 *	@param	string	$selected       		Preselected type
 	 *	@param  string	$htmlname       		Name of field in form
-	 *  @param  string	$filter         		optional filters criteras (example: 's.rowid <> x', 's.client IN (1,3)')
+	 *  @param  string	$filter         		Optional filters criteras. WARNING: To avoid SQL injection, only few chars [.a-z0-9 =<>] are allowed here (example: 's.rowid <> x', 's.client IN (1,3)')
 	 *	@param	string	$showempty				Add an empty field (Can be '1' or text key to use on empty line like 'SelectThirdParty')
 	 * 	@param	int		$showtype				Show third party type in combolist (customer, prospect or supplier)
 	 * 	@param	int		$forcecombo				Force to load all values and output a standard combobox (with no beautification)
@@ -1080,7 +1080,7 @@ class Form
 				unset($societetmp);
 			}
 			// mode 1
-			$urloption='htmlname='.$htmlname.'&outjson=1&filter='.$filter.($showtype?'&showtype='.$showtype:'');
+			$urloption='htmlname='.urlencode($htmlname).'&outjson=1&filter='.urlencode($filter).($showtype?'&showtype='.urlencode($showtype):'');
 			$out.=  ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/societe/ajax/company.php', $urloption, $conf->global->COMPANY_USE_SEARCH_TO_SELECT, 0, $ajaxoptions);
 			$out.='<style type="text/css">.ui-autocomplete { z-index: 250; }</style>';
 			if (empty($hidelabel)) print $langs->trans("RefOrLabel").' : ';
@@ -1138,7 +1138,7 @@ class Form
 
 		// Clean $filter that may contains sql conditions so sql code
 		if (function_exists('testSqlAndScriptInject')) {
-			if (testSqlAndScriptInject($filter, 3)>0) {
+			if (testSqlAndScriptInject($filter, 3) > 0) {
 				$filter ='';
 			}
 		}
@@ -5704,7 +5704,6 @@ class Form
 		{
 			$objectdesc=$classname.':'.$classpath;
 			$urlforajaxcall = DOL_URL_ROOT.'/core/ajax/selectobject.php';
-			//if ($objecttmp->element == 'societe') $urlforajaxcall = DOL_URL_ROOT.'/societe/ajax/company.php';
 
 			// No immediate load of all database
 			$urloption='htmlname='.$htmlname.'&outjson=1&objectdesc='.$objectdesc.($moreparams?$moreparams:'');

@@ -225,12 +225,12 @@ if (empty($conf->stripeconnect->enabled))
             $endpoint->save();
             if ($endpoint->status == 'enabled')
             {
-            	print '<a href="'.$_SERVER['PHP_SELF'].'?action=ipn&webhook='.$endpoint->id.'&status=0">';
+            	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=ipn&webhook='.$endpoint->id.'&status=0">';
             	print img_picto($langs->trans("Activated"), 'switch_on');
             }
             else
             {
-            	print '<a href="'.$_SERVER['PHP_SELF'].'?action=ipn&webhook='.$endpoint->id.'&status=1">';
+            	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=ipn&webhook='.$endpoint->id.'&status=1">';
             	print img_picto($langs->trans("Disabled"), 'switch_off');
             }
         //print $endpoint;
@@ -298,12 +298,12 @@ if (empty($conf->stripeconnect->enabled))
             $endpoint->save();
             if ($endpoint->status == 'enabled')
             {
-                print '<a href="'.$_SERVER['PHP_SELF'].'?action=ipn&webhook='.$endpoint->id.'&status=0">';
+                print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=ipn&webhook='.$endpoint->id.'&status=0">';
                 print img_picto($langs->trans("Activated"), 'switch_on');
             }
             else
             {
-                print '<a href="'.$_SERVER['PHP_SELF'].'?action=ipn&webhook='.$endpoint->id.'&status=1">';
+                print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=ipn&webhook='.$endpoint->id.'&status=1">';
                 print img_picto($langs->trans("Disabled"), 'switch_off');
             }
         //print $endpoint;

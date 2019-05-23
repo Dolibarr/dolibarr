@@ -471,13 +471,13 @@ if (empty($reshook))
 			if ($result)
 			{
 				setEventMessages($langs->trans("MailSuccessfulySent", $mailfile->getValidAddress($object->email_from, 2), $mailfile->getValidAddress($object->sendto, 2)), null, 'mesgs');
+				$action = '';
 			}
 			else
 			{
 				setEventMessages($langs->trans("ResultKo").'<br>'.$mailfile->error.' '.$result, null, 'errors');
+				$action = 'test';
 			}
-
-			$action='';
 		}
 	}
 
@@ -746,7 +746,7 @@ if ($action == 'create')
 
 	dol_fiche_head();
 
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("MailTitle").'</td><td><input class="flat minwidth300" name="titre" value="'.dol_escape_htmltag(GETPOST('titre')).'" autofocus="autofocus"></td></tr>';
 	print '<tr><td class="fieldrequired">'.$langs->trans("MailFrom").'</td><td><input class="flat minwidth200" name="from" value="'.$conf->global->MAILING_EMAIL_FROM.'"></td></tr>';
 	print '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td><input class="flat minwidth200" name="errorsto" value="'.(!empty($conf->global->MAILING_EMAIL_ERRORSTO)?$conf->global->MAILING_EMAIL_ERRORSTO:$conf->global->MAIN_MAIL_ERRORS_TO).'"></td></tr>';
@@ -893,7 +893,7 @@ else
 			print '<div class="fichecenter">';
 			print '<div class="underbanner clearboth"></div>';
 
-			print '<table class="border" width="100%">';
+			print '<table class="border centpercent tableforfield">';
 
 			// Description
 			print '<tr><td class="titlefield">'.$form->editfieldkey("MailTitle", 'titre', $object->titre, $object, $user->rights->mailing->creer && $object->statut < 3, 'string').'</td><td colspan="3">';
