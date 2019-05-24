@@ -3733,7 +3733,7 @@ abstract class CommonObject
 			} else {
 				$res=include $tpl; // for debug
 			}
-			if ($res === TRUE) break;
+			if ($res !== FALSE) break;
 		}
 	}
 
@@ -3994,7 +3994,7 @@ abstract class CommonObject
 				} else {
 					$res=include $tpl; // for debug
 				}
-				if ($res === TRUE) break;
+				if ($res !== FALSE) break;
 			}
 		}
 
@@ -4026,7 +4026,7 @@ abstract class CommonObject
 				} else {
 					$res=include $tpl; // for debug
 				}
-				if ($res === TRUE) break;
+				if ($res !== FALSE) break;
 			}
 		}
 	}
@@ -4231,7 +4231,7 @@ abstract class CommonObject
 			} else {
 				$res=include $tpl; // for debug
 			}
-			if ($res === TRUE) break;
+			if ($res !== FALSE) break;
 		}
 	}
 
