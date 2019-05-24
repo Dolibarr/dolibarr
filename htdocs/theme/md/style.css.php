@@ -2004,6 +2004,9 @@ form#login {
 	width: 14px;
 }
 
+.login_main_home {
+    word-break: break-word;
+}
 .login_main_message {
 	text-align: center;
 	max-width: 570px;
