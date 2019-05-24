@@ -174,7 +174,7 @@ class AccountingAccount extends CommonObject
 				$sql .= ' AND a.fk_pcg_version IN (SELECT pcg_version FROM ' . MAIN_DB_PREFIX . 'accounting_system WHERE rowid=' . $this->db->escape($conf->global->CHARTOFACCOUNTS) . ')';
 			}
 			if (! empty($limittoachartaccount)) {
-			    $sql .= " AND a.fk_pcg_version = '".$this->db->escape($limittoachartaccount)."')";
+			    $sql .= " AND a.fk_pcg_version = '".$this->db->escape($limittoachartaccount)."'";
 			}
 
 			dol_syslog(get_class($this) . "::fetch sql=" . $sql, LOG_DEBUG);
