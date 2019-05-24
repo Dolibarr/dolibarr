@@ -114,8 +114,16 @@ if (empty($reshook))
 		$object->num_payment=GETPOST("num_payment", 'alpha');
 		$object->fk_user_author=$user->id;
 
-		$object->accountancy_code=GETPOST("accountancy_code") > 0 ? GETPOST("accountancy_code", "alpha") : "";
-        $object->subledger_account=GETPOST("subledger_account") > 0 ? GETPOST("subledger_account", "alpha") : "";
+        // If subledger account is present, force general account with centralist account
+		if(GETPOST("subledger_account") > 0) {
+            $object->subledger_account = GETPOST("subledger_account", "alpha");
+
+            $subledgeraccount = new AccountingAccount($db);
+            $object->accountancy_code = $subledgeraccount->searchAccountSubledgerInfo($object->subledger_account);
+		} else {
+            $object->subledger_account = "";
+            $object->accountancy_code = GETPOST("accountancy_code") > 0 ? GETPOST("accountancy_code", "alpha") : "";
+        }
 
 		$object->sens=GETPOST('sens');
 		$object->fk_project= GETPOST('fk_project', 'int');

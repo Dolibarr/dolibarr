@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2017  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2013-2017  Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2018  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2019  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2017       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
@@ -53,18 +53,22 @@ $mesg = '';
 $accountingaccount = new AccountingAccount($db);
 $accountingjournal = new AccountingJournal($db);
 
-$accountingaccount_number = GETPOST('accountingaccount_number', 'alphanohtml');
+// If subledger account is present, force general account with centralist account
+if(GETPOST("subledger_account") > 0) {
+    $subledger_account = GETPOST("subledger_account", "alphanohtml");
+
+    $subledgeraccount = new AccountingAccount($db);
+    $accountingaccount_number = $subledgeraccount->searchAccountSubledgerInfo($subledger_account);
+} else {
+    $subledger_account = null;
+    $accountingaccount_number = GETPOST('accountingaccount_number', 'alphanohtml');
+}
+
 $accountingaccount->fetch(null, $accountingaccount_number, true);
 $accountingaccount_label = $accountingaccount->label;
-
 $journal_code = GETPOST('code_journal', 'alpha');
 $accountingjournal->fetch(null, $journal_code);
 $journal_label = $accountingjournal->label;
-
-$subledger_account = GETPOST('subledger_account', 'alphanohtml');
-if ($subledger_account == - 1) {
-	$subledger_account = null;
-}
 $label_operation= GETPOST('label_operation', 'alphanohtml');
 $debit = price2num(GETPOST('debit', 'alpha'));
 $credit = price2num(GETPOST('credit', 'alpha'));
@@ -599,7 +603,7 @@ if ($action == 'create')
 
 				print '<tr class="liste_titre">';
 
-				print_liste_field_titre("AccountAccountingShort");
+				print_liste_field_titre("AccountAccounting");
 				print_liste_field_titre("SubledgerAccount");
 				print_liste_field_titre("LabelOperation");
 				print_liste_field_titre("Debit", "", "", "", "", 'class="right"');
@@ -675,7 +679,7 @@ if ($action == 'create')
 					print $formaccounting->select_account($accountingaccount_number, 'accountingaccount_number', 1, array (), 1, 1, '');
 					print '</td>';
 					print '<td>';
-					// TODO For the moment we keep a fre input text instead of a combo. The select_auxaccount has problem because it does not
+					// TODO For the moment we keep a free input text instead of a combo. The select_auxaccount has problem because it does not
 					// use setup of keypress to select thirdparty and this hang browser on large database.
 					if (! empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX))
 					{
@@ -686,7 +690,7 @@ if ($action == 'create')
 						print '<input type="text" name="subledger_account" value="">';
 					}
 					print '</td>';
-					print '<td><input type="text" class="minwidth200" name="label_operation" value=""/></td>';
+					print '<td><input type="text" class="minwidth200" name="label_operation" value="'.$label_operation.'"/></td>';
 					print '<td class="right"><input type="text" size="6" class="right" name="debit" value=""/></td>';
 					print '<td class="right"><input type="text" size="6" class="right" name="credit" value=""/></td>';
 					print '<td><input type="submit" class="button" name="save" value="' . $langs->trans("Add") . '"></td>';

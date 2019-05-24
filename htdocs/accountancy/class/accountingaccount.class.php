@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2013-2014  Olivier Geffroy      <jeff@jeffinfo.com>
- * Copyright (C) 2013-2016  Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2013-2014  Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2014       Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2015       Ari Elbaz (elarifr)  <github@accedinfo.com>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+/* Copyright (C) 2013-2014  Olivier Geffroy     <jeff@jeffinfo.com>
+ * Copyright (C) 2013-2019  Alexandre Spangaro  <aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2014  Florian Henry       <florian.henry@open-concept.pro>
+ * Copyright (C) 2014       Juanjo Menent       <jmenent@2byte.es>
+ * Copyright (C) 2015       Ari Elbaz (elarifr) <github@accedinfo.com>
+ * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -388,6 +388,56 @@ class AccountingAccount extends CommonObject
 			return - 1;
 		}
 	}
+
+    /**
+     * Find centralist accounting account of a subledger
+     *
+     * @param	string  $subledgeraccount   Subledger account
+     * @return  string                      Centralist accounting acoount of subledger account
+     */
+    public function searchAccountSubledgerInfo($subledgeraccount)
+    {
+        global $conf, $langs;
+
+        // Search on table
+        // Customers
+        $sql  = "(SELECT code_compta as type_customer FROM " . MAIN_DB_PREFIX . "societe";
+        $sql .= " WHERE code_compta LIKE '" . $this->db->escape($subledgeraccount) . "')";
+        $sql .= " UNION ";
+        // Suppliers
+        $sql .= "(SELECT code_compta_fournisseur as type_supplier FROM " . MAIN_DB_PREFIX . "societe";
+        $sql .= " WHERE code_compta_fournisseur LIKE '" . $this->db->escape($subledgeraccount) . "')";
+        $sql .= " UNION ";
+        // Employees
+        $sql .= "(SELECT accountancy_code as type_employee FROM " . MAIN_DB_PREFIX . "user";
+        $sql .= " WHERE accountancy_code LIKE '" . $this->db->escape($subledgeraccount) . "')";
+
+        dol_syslog(get_class($this) . "::searchAccountSubledgerInfo sql=" . $sql, LOG_DEBUG);
+        $resql = $this->db->query($sql);
+
+        if ($resql) {
+            $obj = $this->db->fetch_object($resql);
+            if (! empty($obj)) {
+                if (! empty($obj->type_customer)) {
+                    $centralist = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER;
+                    return $centralist;
+                } elseif (! empty($obj->type_supplier)) {
+                    $centralist = $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER;
+                    return $centralist;
+                } else {
+                    $centralist = $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT;
+                    return $centralist;
+                }
+            } else {
+                $this->error = $langs->trans('ErrorUnknownSubledgerAccount');
+                $centralist = $conf->global->ACCOUNTING_ACCOUNT_SUSPENSE;
+                return $centralist;
+            }
+        } else {
+            $this->error = $this->db->lasterror();
+            return -1;
+        }
+    }
 
 	/**
 	 * Delete object in database

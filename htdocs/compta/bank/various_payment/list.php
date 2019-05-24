@@ -48,7 +48,8 @@ $search_amount_deb = GETPOST('search_amount_deb', 'alpha');
 $search_amount_cred = GETPOST('search_amount_cred', 'alpha');
 $search_account = GETPOST('search_account', 'int');
 $search_date = dol_mktime(0, 0, 0, GETPOST('date_docmonth', 'int'), GETPOST('date_docday', 'int'), GETPOST('date_docyear', 'int'));
-$search_accountancy_code = GETPOST("search_accountancy_code");
+$search_accountancy_code = GETPOST("search_accountancy_code", 'alpha');
+$search_subledger_account = GETPOST("search_subledger_account", 'alpha');
 
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
@@ -87,6 +88,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$typeid="";
 	$search_date = '';
 	$search_accountancy_code = '';
+	$search_subledger_account = '';
 }
 
 /*
@@ -100,7 +102,7 @@ $formaccounting = new FormAccounting($db);
 $variousstatic = new PaymentVarious($db);
 $accountstatic = new Account($db);
 
-$sql = "SELECT v.rowid, v.sens, v.amount, v.label, v.datep as datep, v.datev as datev, v.fk_typepayment as type, v.num_payment, v.fk_bank, v.accountancy_code,";
+$sql = "SELECT v.rowid, v.sens, v.amount, v.label, v.datep as datep, v.datev as datev, v.fk_typepayment as type, v.num_payment, v.fk_bank, v.accountancy_code, v.subledger_account,";
 $sql.= " ba.rowid as bid, ba.ref as bref, ba.number as bnumber, ba.account_number as bank_account_number, ba.fk_accountancy_journal as accountancy_journal, ba.label as blabel,";
 $sql.= " pst.code as payment_code";
 $sql.= " FROM ".MAIN_DB_PREFIX."payment_various as v";
@@ -117,6 +119,7 @@ if ($search_amount_cred)			$sql.=natural_search("v.amount", $search_amount_cred,
 if ($search_account > 0)			$sql.=" AND b.fk_account=".$search_account;
 if ($search_date)					$sql.=" AND v.datep=".$search_date;
 if ($search_accountancy_code > 0)	$sql.=" AND v.accountancy_code=".$search_accountancy_code;
+if ($search_subledger_account > 0)	$sql.=" AND v.subledger_account=".$search_subledger_account;
 if ($typeid > 0) $sql .= " AND v.fk_typepayment=".$typeid;
 if ($filtre) {
 	$filtre=str_replace(":", "=", $filtre);
@@ -143,14 +146,15 @@ if ($result)
 	$param='';
 	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
 	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
-	if ($search_ref)			$param.='&search_ref='.urlencode($search_ref);
-	if ($search_label)			$param.='&search_label='.urlencode($search_label);
-	if ($typeid > 0)            $param.='&typeid='.urlencode($typeid);
-	if ($search_amount_deb)     $param.='&search_amount_deb='.urlencode($search_amount_deb);
-	if ($search_amount_cred)    $param.='&search_amount_cred='.urlencode($search_amount_cred);
+	if ($search_ref)			        $param.='&search_ref='.urlencode($search_ref);
+	if ($search_label)			        $param.='&search_label='.urlencode($search_label);
+	if ($typeid > 0)                    $param.='&typeid='.urlencode($typeid);
+	if ($search_amount_deb)             $param.='&search_amount_deb='.urlencode($search_amount_deb);
+	if ($search_amount_cred)            $param.='&search_amount_cred='.urlencode($search_amount_cred);
 	if ($search_account > 0)			$param.='&search_amount='.urlencode($search_account);
 	//if ($search_date)					$param.='&search_date='.$search_date;
 	if ($search_accountancy_code > 0)	$param.='&search_accountancy_code='.urlencode($search_accountancy_code);
+    if ($search_subledger_account > 0)	$param.='&search_subledger_account='.urlencode($search_subledger_account);
 
 	if ($optioncss != '') $param.='&amp;optioncss='.urlencode($optioncss);
 
@@ -217,6 +221,19 @@ if ($result)
 		print '</td>';
 	}
 
+    // Subledger account
+    if (! empty($conf->accounting->enabled)) {
+        print '<td class="liste_titre">';
+        print '<div class="nowrap">';
+        if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX)) {
+            print $formaccounting->select_auxaccount($search_subledger_account, 'search_subledger_account', 1);
+        } else {
+            print '<input type="text" name="search_subledger_account" value="' . $search_subledger_account . '">';
+        }
+        print '</div>';
+        print '</td>';
+    }
+
 	// Debit
 	print '<td class="liste_titre right"><input name="search_amount_deb" class="flat" type="text" size="8" value="'.$search_amount_deb.'"></td>';
 
@@ -238,7 +255,8 @@ if ($result)
 	print_liste_field_titre("PaymentMode", $_SERVER["PHP_SELF"], "type", "", $param, '', $sortfield, $sortorder, 'left ');
 	if (! empty($conf->banque->enabled))     print_liste_field_titre("BankAccount", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
 	if (! empty($conf->accounting->enabled)) print_liste_field_titre("AccountAccounting", $_SERVER["PHP_SELF"], "v.accountancy_code", "", $param, '', $sortfield, $sortorder, 'left ');
-	print_liste_field_titre("Debit", $_SERVER["PHP_SELF"], "v.amount", "", $param, '', $sortfield, $sortorder, 'right ');
+    if (! empty($conf->accounting->enabled)) print_liste_field_titre("SubledgerAccount", $_SERVER["PHP_SELF"], "v.subledger_account", "", $param, '', $sortfield, $sortorder, 'left ');
+    print_liste_field_titre("Debit", $_SERVER["PHP_SELF"], "v.amount", "", $param, '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre("Credit", $_SERVER["PHP_SELF"], "v.amount", "", $param, '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch ');
 	print "</tr>\n";
@@ -292,12 +310,17 @@ if ($result)
 		}
 
 		// Accounting account
-		if (! empty($conf->accounting->enabled)) {
-			$accountingaccount = new AccountingAccount($db);
-			$accountingaccount->fetch('', $obj->accountancy_code, 1);
+        if (! empty($conf->accounting->enabled)) {
+            $accountingaccount = new AccountingAccount($db);
+            $accountingaccount->fetch('', $obj->accountancy_code, 1);
 
-			print '<td>'.$accountingaccount->getNomUrl(0, 1, 1, '', 1).'</td>';
-		}
+            print '<td>'.$accountingaccount->getNomUrl(0, 1, 1, '', 1).'</td>';
+        }
+
+        // Subledger account
+        if (! empty($conf->accounting->enabled)) {
+            print '<td>'.$obj->subledger_account.'</td>';
+        }
 
 		// Debit
 		print "<td class=\"right\">";
@@ -324,7 +347,7 @@ if ($result)
 
 	$colspan=4;
 	if (! empty($conf->banque->enabled)) $colspan++;
-	if (! empty($conf->accounting->enabled)) $colspan++;
+	if (! empty($conf->accounting->enabled)) $colspan+=2;
 
 	print '<tr class="liste_total">';
 	print '<td colspan="'.$colspan.'" class="liste_total">'.$langs->trans("Total").'</td>';
