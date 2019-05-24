@@ -191,7 +191,7 @@ $( document ).ready(function() {
 
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 $object = new Usergroup($db);
-$object->fetch($conf->global->POS_ID_GROUP);
+$object->fetch($conf->global->{'TAKEPOS_ID_GROUP'.$term});
 $include = array();
 
 if (! empty($object->members))

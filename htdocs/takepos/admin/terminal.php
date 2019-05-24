@@ -82,6 +82,7 @@ if (GETPOST('action', 'alpha') == 'set')
     }
     $res = dolibarr_set_const($db, "CASHDESK_ID_WAREHOUSE".$terminaltouse, (GETPOST('CASHDESK_ID_WAREHOUSE'.$terminaltouse, 'alpha') > 0 ? GETPOST('CASHDESK_ID_WAREHOUSE'.$terminaltouse, 'alpha') : ''), 'chaine', 0, '', $conf->entity);
     $res = dolibarr_set_const($db, "CASHDESK_NO_DECREASE_STOCK".$terminaltouse, GETPOST('CASHDESK_NO_DECREASE_STOCK'.$terminaltouse, 'alpha'), 'chaine', 0, '', $conf->entity);
+    $res = dolibarr_set_const($db, "TAKEPOS_ID_GROUP".$terminaltouse, GETPOST('TAKEPOS_ID_GROUP'.$terminaltouse, 'alpha'), 'chaine', 0, '', $conf->entity);
 
 	dol_syslog("admin/cashdesk: level ".GETPOST('level', 'alpha'));
 
@@ -130,6 +131,12 @@ print '<tr class="oddeven"><td width=\"50%\">'.$langs->trans("CashDeskThirdParty
 print '<td colspan="2">';
 print $form->select_company($conf->global->{'CASHDESK_ID_THIRDPARTY'.$terminaltouse}, 'socid', 's.client in (1, 3) AND s.status = 1', 1, 0, 0, array(), 0);
 print '</td></tr>';
+//V20: User group default
+print '<tr class="oddeven"><td>'.$langs->trans("POSGroup").'</td>';
+print '<td colspan="2">';
+print $form->select_dolgroups($conf->global->{'TAKEPOS_ID_GROUP'.$terminaltouse}, 'TAKEPOS_ID_GROUP'.$terminaltouse);
+print '</td></tr>';
+
 if (! empty($conf->banque->enabled))
 {
     print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountForSell").'</td>';
