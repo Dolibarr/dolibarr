@@ -573,8 +573,12 @@ $( document ).ready(function() {
 	LoadProducts(0);
 	Refresh();
 	<?php
-	//IF THERE ARE MORE THAN 1 TERMINAL AND NO SELECTED
-	if ($conf->global->TAKEPOS_NUM_TERMINALS!="1" && $_SESSION["takeposterminal"]=="") print "TerminalsDialog();";
+	//IF NO TERMINAL SELECTED
+	if ($_SESSION["takeposterminal"]=="")
+	{
+		if ($conf->global->TAKEPOS_NUM_TERMINALS=="1") $_SESSION["takeposterminal"]=1;
+		else print "TerminalsDialog();";
+	}
 	?>
 });
 </script>
