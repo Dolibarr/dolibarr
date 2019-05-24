@@ -470,11 +470,14 @@ class ImportXlsx extends ModeleImports
                                             }
                                             $classinstance=new $class($this->db);
                                             // Try the fetch from code or ref
-                                            call_user_func_array(array($classinstance, $method),array('', $newval));
+                                            $param_array = array('', $newval);
+                                            if ($class == 'AccountingAccount') $param_array = array('', $newval, 1);
+                                            call_user_func_array(array($classinstance, $method), $param_array);
                                             // If not found, try the fetch from label
                                             if (! ($classinstance->id != '') && $objimport->array_import_convertvalue[0][$val]['rule']=='fetchidfromcodeorlabel')
                                             {
-												call_user_func_array(array($classinstance, $method),array('', '', $newval));
+                                                $param_array = array('', '', $newval);
+                                                call_user_func_array(array($classinstance, $method), $param_array);
                                             }
                                             $this->cacheconvert[$file.'_'.$class.'_'.$method.'_'][$newval]=$classinstance->id;
                                             //print 'We have made a '.$class.'->'.$method.' to get id from code '.$newval.'. ';
