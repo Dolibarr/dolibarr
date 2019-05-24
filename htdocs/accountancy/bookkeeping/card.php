@@ -54,7 +54,7 @@ $accountingaccount = new AccountingAccount($db);
 $accountingjournal = new AccountingJournal($db);
 
 // If subledger account is present, force general account with centralist account
-if(GETPOST("subledger_account") > 0) {
+if (GETPOST("subledger_account", "alphanohtml") > 0) {
     $subledger_account = GETPOST("subledger_account", "alphanohtml");
 
     $subledgeraccount = new AccountingAccount($db);
