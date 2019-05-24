@@ -444,7 +444,22 @@ class ImportCsv extends ModeleImports
                                             $classinstance=new $class($this->db);
                                             // Try the fetch from code or ref
                                             $param_array = array('', $newval);
-                                            if ($class == 'AccountingAccount') $param_array = array('', $newval, 1);
+                                            if ($class == 'AccountingAccount') 
+                                            {
+                                                //var_dump($arrayrecord[0]['val']);
+                                                /*include_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancysystem.class.php';
+                                                 $tmpchartofaccount = new AccountancySystem($this->db);
+                                                 $tmpchartofaccount->fetch($conf->global->CHARTOFACCOUNTS);
+                                                 var_dump($tmpchartofaccount->ref.' - '.$arrayrecord[0]['val']);
+                                                 if ((! ($conf->global->CHARTOFACCOUNTS > 0)) || $tmpchartofaccount->ref != $arrayrecord[0]['val'])
+                                                 {
+                                                 $this->errors[$error]['lib']=$langs->trans('ErrorImportOfChartLimitedToCurrentChart', $tmpchartofaccount->ref);
+                                                 $this->errors[$error]['type']='RESTRICTONCURRENCTCHART';
+                                                 $errorforthistable++;
+                                                 $error++;
+                                                 }*/
+                                                $param_array = array('', $newval, 0, $arrayrecord[0]['val']);       // Param to fetch parent from account, in chart.
+                                            }
                                             call_user_func_array(array($classinstance, $method), $param_array);
                                             // If not found, try the fetch from label
                                             if (! ($classinstance->id != '') && $objimport->array_import_convertvalue[0][$val]['rule']=='fetchidfromcodeorlabel')
@@ -462,7 +477,7 @@ class ImportCsv extends ModeleImports
                                             {
                                                 if (!empty($objimport->array_import_convertvalue[0][$val]['dict'])) $this->errors[$error]['lib']=$langs->trans('ErrorFieldValueNotIn',$key,$newval,'code',$langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['dict']));
                                                 else if (!empty($objimport->array_import_convertvalue[0][$val]['element'])) $this->errors[$error]['lib']=$langs->trans('ErrorFieldRefNotIn',$key,$newval,$langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['element']));
-                                                else $this->errors[$error]['lib']='ErrorFieldValueNotIn';
+                                                else $this->errors[$error]['lib']='ErrorBadDefinitionOfImportProfile';
                                                 $this->errors[$error]['type']='FOREIGNKEY';
                                                 $errorforthistable++;
                                                 $error++;
