@@ -441,7 +441,7 @@ while ($i < min($num, $limit))
 	$objectwebsiteaccount->id = $obj->rowid;
 	foreach($objectwebsiteaccount->fields as $key => $val)
 	{
-		if (isset($obj->$key)) $objectwebsiteaccount->$key = $obj->$key;
+		if (property_exists($obj, $key)) $object->$key = $obj->$key;
 	}
 
 	// Show here line of result

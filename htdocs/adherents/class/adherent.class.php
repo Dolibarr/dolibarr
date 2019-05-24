@@ -596,7 +596,7 @@ class Adherent extends CommonObject
 			{
 			    while ($obj=$this->db->fetch_object($resql2))
 			    {
-				$this->type=$obj->label;
+					$this->type=$obj->label;
 			    }
 			}
 		}

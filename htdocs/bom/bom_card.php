@@ -320,7 +320,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '</div>';
 	print '</div>';
 
-	print '<div class="clearboth"></div><br>';
+	print '<div class="clearboth"></div>';
 
 	dol_fiche_end();
 
@@ -347,7 +347,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	    }
 
 	    print '<div class="div-table-responsive-no-min">';
-	    if (! empty($object->lines) && $object->status == 0 && $permissiontoadd && $action != 'selectlines' && $action != 'editline')
+	    if (! empty($object->lines) || ($object->status == 0 && $permissiontoadd && $action != 'selectlines' && $action != 'editline'))
 	    {
 	        print '<table id="tablelines" class="noborder noshadow" width="100%">';
 	    }
@@ -363,14 +363,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	        if ($action != 'editline')
 	        {
 	            // Add products/services form
-//	            $object->formAddObjectLine(1, $mysoc, $soc);
+	            $object->formAddObjectLine(1, $mysoc, $soc, '/bom/tpl');
 
 	            $parameters = array();
 	            $reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	        }
 	    }
 
-	    if (! empty($object->lines) && $object->status == 0 && $permissiontoadd && $action != 'selectlines' && $action != 'editline')
+	    if (! empty($object->lines) || ($object->status == 0 && $permissiontoadd && $action != 'selectlines' && $action != 'editline'))
 	    {
 	        print '</table>';
 	    }

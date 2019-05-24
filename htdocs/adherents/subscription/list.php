@@ -306,7 +306,7 @@ if (! empty($arrayfields['d.fk_type']['checked']))
 {
 	print '<td class="liste_titre left">';
 	print '<input class="flat" type="text" name="search_type" value="'.dol_escape_htmltag($search_type).'" size="7">';
-  print'</td>';
+	print'</td>';
 }
 
 if (! empty($arrayfields['d.lastname']['checked']))
