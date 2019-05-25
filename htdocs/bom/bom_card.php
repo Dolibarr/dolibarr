@@ -133,7 +133,7 @@ if (empty($reshook))
 
 		$bomline = new BOMLine($db);
 		$bomline->fk_bom = $id;
-		$bomline->fk_product = $prodid;
+		$bomline->fk_product = $idprod;
 		$bomline->qty = $qty;
 		$bomline->efficiency = $efficiency;
 
