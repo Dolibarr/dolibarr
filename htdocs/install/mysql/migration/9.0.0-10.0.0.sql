@@ -239,12 +239,12 @@ create table llx_bom_bom_extrafields
 CREATE TABLE llx_bom_bomline(
 	-- BEGIN MODULEBUILDER FIELDS
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
-	fk_bom integer, 
-	fk_product integer, 
+	fk_bom integer NOT NULL, 
+	fk_product integer NOT NULL, 
 	description text, 
 	import_key varchar(14), 
-	qty double(24,8), 
-	efficiency double(8,4) DEFAULT 1,
+	qty double(24,8) NOT NULL, 
+	efficiency double(8,4) NOT NULL DEFAULT 1,
 	rank integer NOT NULL
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;
