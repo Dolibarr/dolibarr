@@ -226,7 +226,7 @@ CREATE TABLE llx_bom_bom(
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;
 
-ALTER TABLE llx_bom_bom ADD COLUMN efficiency double(24,8) DEFAULT 1;
+ALTER TABLE llx_bom_bom ADD COLUMN efficiency double(8,4) DEFAULT 1;
 
 create table llx_bom_bom_extrafields
 (
@@ -239,14 +239,18 @@ create table llx_bom_bom_extrafields
 CREATE TABLE llx_bom_bomline(
 	-- BEGIN MODULEBUILDER FIELDS
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
+	fk_bom integer, 
+	fk_product integer, 
 	description text, 
 	import_key varchar(14), 
 	qty double(24,8), 
-	fk_product integer, 
-	fk_bom integer, 
+	efficiency double(8,4) DEFAULT 1,
 	rank integer NOT NULL
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;
+
+ALTER TABLE llx_bom_bomline ADD COLUMN efficiency double(8,4) DEFAULT 1;
+
 
 create table llx_bom_bomline_extrafields
 (

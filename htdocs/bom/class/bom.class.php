@@ -946,7 +946,7 @@ class BOMLine extends CommonObject
 	/**
 	 * @var string String with name of icon for bomline. Must be the part after the 'object_' into object_bomline.png
 	 */
-	public $picto = 'bomline@bom';
+	public $picto = 'bomline';
 
 
 	/**
@@ -974,20 +974,22 @@ class BOMLine extends CommonObject
 	 */
 	public $fields=array(
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'position'=>1, 'notnull'=>1, 'index'=>1, 'comment'=>"Id",),
-		'description' => array('type'=>'text', 'label'=>'Description', 'enabled'=>1, 'visible'=>-1, 'position'=>60, 'notnull'=>-1,),
-		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>1000, 'notnull'=>-1,),
-		'qty' => array('type'=>'double(24,8)', 'label'=>'Quantity', 'enabled'=>1, 'visible'=>1, 'position'=>30, 'notnull'=>-1, 'isameasure'=>'1',),
-		'fk_product' => array('type'=>'integer:Product:product/class/product.class.php', 'label'=>'Product', 'enabled'=>1, 'visible'=>1, 'position'=>20, 'notnull'=>-1, 'index'=>1,),
 		'fk_bom' => array('type'=>'integer:BillOfMaterials:societe/class/bom.class.php', 'label'=>'BillOfMaterials', 'enabled'=>1, 'visible'=>1, 'position'=>10, 'notnull'=>-1, 'index'=>1,),
-		'rank' => array('type'=>'integer', 'label'=>'Rank', 'enabled'=>1, 'visible'=>0, 'position'=>40, 'notnull'=>1,),
+		'fk_product' => array('type'=>'integer:Product:product/class/product.class.php', 'label'=>'Product', 'enabled'=>1, 'visible'=>1, 'position'=>20, 'notnull'=>-1, 'index'=>1,),
+		'description' => array('type'=>'text', 'label'=>'Description', 'enabled'=>1, 'visible'=>-1, 'position'=>60, 'notnull'=>-1,),
+		'qty' => array('type'=>'double(24,8)', 'label'=>'Quantity', 'enabled'=>1, 'visible'=>1, 'position'=>100, 'notnull'=>-1, 'isameasure'=>'1',),
+		'efficiency' => array('type'=>'double(8,4)', 'label'=>'ManufacturingEfficiency', 'enabled'=>1, 'visible'=>1, 'default'=>1, 'position'=>110, 'notnull'=>0, 'css'=>'maxwidth50imp', 'help'=>'ValueOfMeansLoss'),
+		'rank' => array('type'=>'integer', 'label'=>'Rank', 'enabled'=>1, 'visible'=>0, 'position'=>200, 'notnull'=>1,),
+		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>1000, 'notnull'=>-1,),
 	);
 	public $rowid;
-	public $description;
-	public $import_key;
-	public $qty;
-	public $fk_product;
 	public $fk_bom;
+	public $fk_product;
+	public $description;
+	public $qty;
+	public $efficiency;
 	public $rank;
+	public $import_key;
 	// END MODULEBUILDER PROPERTIES
 
 

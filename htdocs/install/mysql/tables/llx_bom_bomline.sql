@@ -17,11 +17,12 @@
 CREATE TABLE llx_bom_bomline(
 	-- BEGIN MODULEBUILDER FIELDS
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
+	fk_bom integer, 
+	fk_product integer, 
 	description text, 
 	import_key varchar(14), 
 	qty double(24,8), 
-	fk_product integer, 
-	fk_bom integer, 
+	efficiency double(8,4) DEFAULT 1,
 	rank integer NOT NULL
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;
