@@ -699,7 +699,7 @@ div.fiche {
     justify-content: flex-start;
 }
 .thumbstat {
-    min-width: 150px;
+    min-width: 148px;
 }
 .thumbstat150 {
     min-width: 168px;
@@ -3103,7 +3103,7 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
     padding-right: 3px;
     padding-top: 2px;
     padding-bottom: 2px;
-    width: 121px;
+    width: 118px;
 }
 .tabBar .fichehalfright .boxstats {
     padding-top: 8px;
