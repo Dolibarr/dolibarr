@@ -53,7 +53,7 @@ $paymenttype =          GETPOST("paymenttype", "int");
 $accountancy_code =     GETPOST("accountancy_code", "alpha");
 $subledger_account =    GETPOST("subledger_account", "alpha");
 $projectid =            (GETPOST('projectid', 'int') ? GETPOST('projectid', 'int') : GETPOST('fk_project', 'int'));
-$cat1 =                 GETPOST("cat1", 'alpha');
+$category_transaction = GETPOST("category_transaction", 'alpha');
 
 // Security check
 $socid = GETPOST("socid", "int");
@@ -112,7 +112,7 @@ if (empty($reshook))
 		$object->type_payment=GETPOST("paymenttype", 'int') > 0 ? GETPOST("paymenttype", "int") : 0;
 		$object->num_payment=GETPOST("num_payment", 'alpha');
 		$object->fk_user_author=$user->id;
-		$object->category_transaction=GETPOST("cat1", 'alpha');
+		$object->category_transaction=GETPOST("category_transaction", 'alpha');
 
 		$object->accountancy_code=GETPOST("accountancy_code") > 0 ? GETPOST("accountancy_code", "alpha") : "";
         $object->subledger_account=GETPOST("subledger_account") > 0 ? GETPOST("subledger_account", "alpha") : "";
@@ -328,7 +328,7 @@ if ($action == 'create')
     if (is_array($options) && count($options))
     {
         print '<tr><td>'.$langs->trans("Rubrique").'</td><td>';
-        print Form::selectarray('cat1', $options, GETPOST('cat1'), 1);
+        print Form::selectarray('category_transaction', $options, GETPOST('category_transaction'), 1);
         print '</td></tr>';
     }
 

@@ -421,7 +421,7 @@ class PaymentVarious extends CommonObject
 						$this->label,
 						$sign * abs($this->amount),
 						$this->num_payment,
-                        ($category_transaction > 0 ? $category_transaction : 0),
+                        ($this->category_transaction > 0 ? $this->category_transaction : 0),
 						$user
 					);
 
