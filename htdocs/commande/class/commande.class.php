@@ -499,7 +499,7 @@ class Commande extends CommonOrder
 			return -1;
 		}
 
-		dol_syslog(get_class($this)."::set_draft", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$this->db->begin();
 
@@ -1070,10 +1070,11 @@ class Commande extends CommonOrder
 	/**
 	 *	Load an object from its id and create a new one in database
 	 *
-	 *	@param		int			$socid			Id of thirdparty
-	 *	@return		int							New id of clone
+	 *  @param	    User	$user		User making the clone
+	 *	@param		int		$socid		Id of thirdparty
+	 *	@return		int					New id of clone
 	 */
-	public function createFromClone($socid = 0)
+	public function createFromClone(User $user, $socid = 0)
 	{
 		global $conf, $user,$hookmanager;
 
@@ -1684,7 +1685,7 @@ class Commande extends CommonOrder
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as cr ON c.fk_cond_reglement = cr.rowid';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON c.fk_mode_reglement = p.id';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_availability as ca ON c.fk_availability = ca.rowid';
-		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_input_reason as dr ON c.fk_input_reason = ca.rowid';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_input_reason as dr ON c.fk_input_reason = dr.rowid';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON c.fk_incoterms = i.rowid';
 
 		if ($id) $sql.= " WHERE c.rowid=".$id;
@@ -4049,6 +4050,33 @@ class OrderLine extends CommonOrderLine
 		global $conf, $langs;
 
 		$error=0;
+
+        // check if order line is not in a shipment line before deleting
+        $sqlCheckShipmentLine  = "SELECT";
+        $sqlCheckShipmentLine .= " ed.rowid";
+        $sqlCheckShipmentLine .= " FROM " . MAIN_DB_PREFIX . "expeditiondet ed";
+        $sqlCheckShipmentLine .= " WHERE ed.fk_origin_line = " . $this->rowid;
+
+        $resqlCheckShipmentLine = $this->db->query($sqlCheckShipmentLine);
+        if (!$resqlCheckShipmentLine) {
+            $error++;
+            $this->error    = $this->db->lasterror();
+            $this->errors[] = $this->error;
+        } else {
+            $langs->load('errors');
+            $num = $this->db->num_rows($resqlCheckShipmentLine);
+            if ($num > 0) {
+                $error++;
+                $objCheckShipmentLine = $this->db->fetch_object($resqlCheckShipmentLine);
+                $this->error = $langs->trans('ErrorRecordAlreadyExists') . ' : ' . $langs->trans('ShipmentLine') . ' ' . $objCheckShipmentLine->rowid;
+                $this->errors[] = $this->error;
+            }
+            $this->db->free($resqlCheckShipmentLine);
+        }
+        if ($error) {
+            dol_syslog(__METHOD__ . 'Error ; ' . $this->error, LOG_ERR);
+            return -1;
+        }
 
 		$this->db->begin();
 

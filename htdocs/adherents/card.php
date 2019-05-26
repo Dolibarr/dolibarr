@@ -82,7 +82,7 @@ if (! empty($canvas))
 }
 
 // Security check
-$result=restrictedArea($user, 'adherent', $id, '', '', 'fk_soc', 'rowid', $objcanvas);
+$result=restrictedArea($user, 'adherent', $id, '', '', 'socid', 'rowid', $objcanvas);
 
 if ($id > 0)
 {
@@ -163,10 +163,10 @@ if (empty($reshook))
 		$error=0;
 		if (! $error)
 		{
-			if ($socid != $object->fk_soc)	// If link differs from currently in database
+			if ($socid != $object->socid)	// If link differs from currently in database
 			{
 				$sql ="SELECT rowid FROM ".MAIN_DB_PREFIX."adherent";
-				$sql.=" WHERE fk_soc = '".$socid."'";
+				$sql.=" WHERE socid = '".$socid."'";
 				$sql.=" AND entity = ".$conf->entity;
 				$resql = $db->query($sql);
 				if ($resql)
@@ -492,7 +492,7 @@ if (empty($reshook))
 		//$object->note        = $comment;
 		$object->morphy      = $morphy;
 		$object->user_id     = $userid;
-		$object->fk_soc      = $socid;
+		$object->socid      = $socid;
 		$object->public      = $public;
 
 		// Fill array 'array_options' with data from add form
@@ -1333,10 +1333,10 @@ else
 		if (! empty($conf->societe->enabled))
 		{
 			print '<tr><td>'.$langs->trans("LinkedToDolibarrThirdParty").'</td><td colspan="2" class="valeur">';
-			if ($object->fk_soc)
+			if ($object->socid)
 			{
 				$company=new Societe($db);
-				$result=$company->fetch($object->fk_soc);
+				$result=$company->fetch($object->socid);
 				print $company->getNomUrl(1);
 			}
 			else
@@ -1421,7 +1421,7 @@ else
 			$text=$langs->trans("ConfirmCreateLogin").'<br>';
 			if (! empty($conf->societe->enabled))
 			{
-				if ($object->fk_soc > 0) $text.=$langs->trans("UserWillBeExternalUser");
+				if ($object->socid > 0) $text.=$langs->trans("UserWillBeExternalUser");
 				else $text.=$langs->trans("UserWillBeInternalUser");
 			}
 			print $form->formconfirm($_SERVER["PHP_SELF"]."?rowid=".$object->id, $langs->trans("CreateDolibarrLogin"), $text, "confirm_create_user", $formquestion, 'yes');
@@ -1567,7 +1567,7 @@ else
 			$formquestion=array();
 			if ($object->email) $formquestion[]=array('type' => 'checkbox', 'name' => 'send_mail', 'label' => $label, 'value' => (! empty($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL)?'true':'false'));
 			if ($backtopage)    $formquestion[]=array('type' => 'hidden', 'name' => 'backtopage', 'value' => ($backtopage != '1' ? $backtopage : $_SERVER["HTTP_REFERER"]));
-			print $form->formconfirm("card.php?rowid=".$id, $langs->trans("ResiliateMember"), $langs->trans("ConfirmResiliateMember"), "confirm_resign", $formquestion, 'no', 1, 220);
+			print $form->formconfirm("card.php?rowid=".$id, $langs->trans("ResiliateMember"), $langs->trans("ConfirmResiliateMember"), "confirm_resign", $formquestion, 'no', 1, 240);
 		}
 
 		// Confirm remove member
@@ -1688,17 +1688,17 @@ else
 				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 				print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
 				print '<tr><td>';
-				print $form->select_company($object->fk_soc, 'socid', '', 1);
+				print $form->select_company($object->socid, 'socid', '', 1);
 				print '</td>';
 				print '<td class="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 				print '</tr></table></form>';
 			}
 			else
 			{
-				if ($object->fk_soc)
+				if ($object->socid)
 				{
 					$company=new Societe($db);
-					$result=$company->fetch($object->fk_soc);
+					$result=$company->fetch($object->socid);
 					print $company->getNomUrl(1);
 				}
 				else
@@ -1848,7 +1848,7 @@ else
 				}
 
 				// Create third party
-				if (! empty($conf->societe->enabled) && ! $object->fk_soc)
+				if (! empty($conf->societe->enabled) && ! $object->socid)
 				{
 					if ($user->rights->societe->creer)
 					{

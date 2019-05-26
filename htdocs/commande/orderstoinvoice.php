@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2019  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005       Marc Barilley / Ocebo   <marc@ocebo.com>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2012       Andreu Bisquerra Gaya   <jove@bisquerra.com>
@@ -50,14 +50,14 @@ $id				= (GETPOST('id')?GETPOST('id', 'int'):GETPOST("facid", "int"));  // For b
 $ref			= GETPOST('ref', 'alpha');
 $action			= GETPOST('action', 'alpha');
 $confirm		= GETPOST('confirm', 'alpha');
-$sref			= GETPOST('sref');
-$sref_client	= GETPOST('sref_client');
+$sref			= GETPOST('sref', 'alpha');
+$sref_client	= GETPOST('sref_client', 'alpha');
 $sall			= trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
 $socid			= GETPOST('socid', 'int');
 $selected		= GETPOST('orders_to_invoice');
 $sortfield		= GETPOST("sortfield", 'alpha');
 $sortorder		= GETPOST("sortorder", 'alpha');
-$viewstatut		= GETPOST('viewstatut');
+$viewstatut		= GETPOST('viewstatut', 'alpha');
 
 $error = 0;
 
@@ -290,32 +290,32 @@ if (($action == 'create' || $action == 'add') && !$error)
 											$array_options = $lines[$i]->array_options;
 										}
 
-        $result = $object->addline(
-												$desc,
-												$lines[$i]->subprice,
-												$lines[$i]->qty,
-												$lines[$i]->tva_tx,
-												$lines[$i]->localtax1_tx,
-												$lines[$i]->localtax2_tx,
-												$lines[$i]->fk_product,
-												$lines[$i]->remise_percent,
-												$date_start,
-												$date_end,
-												0,
-												$lines[$i]->info_bits,
-												$lines[$i]->fk_remise_except,
-												'HT',
-												0,
-												$product_type,
-												$ii,
-												$lines[$i]->special_code,
-												$object->origin,
-												$lines[$i]->rowid,
-												$fk_parent_line,
-												$lines[$i]->fk_fournprice,
-												$lines[$i]->pa_ht,
-												$lines[$i]->label,
-                                                $array_options
+                                        $result = $object->addline(
+											$desc,
+											$lines[$i]->subprice,
+											$lines[$i]->qty,
+											$lines[$i]->tva_tx,
+											$lines[$i]->localtax1_tx,
+											$lines[$i]->localtax2_tx,
+											$lines[$i]->fk_product,
+											$lines[$i]->remise_percent,
+											$date_start,
+											$date_end,
+											0,
+											$lines[$i]->info_bits,
+											$lines[$i]->fk_remise_except,
+											'HT',
+											0,
+											$product_type,
+											$ii,
+											$lines[$i]->special_code,
+											$object->origin,
+											$lines[$i]->rowid,
+											$fk_parent_line,
+											$lines[$i]->fk_fournprice,
+											$lines[$i]->pa_ht,
+											$lines[$i]->label,
+                                            $array_options
 										);
 										if ($result > 0)
 										{
@@ -578,9 +578,9 @@ if (($action != 'create' && $action != 'add') || ($action == 'create' && $error)
 	{
 		$sql.= ' AND c.ref_client LIKE \'%'.$db->escape($sref_client).'%\'';
 	}
-	$sql.= ' ORDER BY '.$sortfield.' '.$sortorder;
-	$resql = $db->query($sql);
+	$sql.= $db->order($sortfield, $sortorder);
 
+	$resql = $db->query($sql);
 	if ($resql)
 	{
 		if ($socid)
@@ -604,6 +604,7 @@ if (($action != 'create' && $action != 'add') || ($action == 'create' && $error)
 			print '<h3>'.$companystatic->getNomUrl(1, 'customer').'</h3>';
 		}
 
+		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print_liste_field_titre('Ref', $_SERVER["PHP_SELF"], 'c.ref', '', '&amp;socid='.$socid, '', $sortfield, $sortorder);
@@ -618,8 +619,9 @@ if (($action != 'create' && $action != 'add') || ($action == 'create' && $error)
 		print '<form method="get" action="orderstoinvoice.php">';
 		print '<input type="hidden" name="socid" value="'.$socid.'">';
 		print '<tr class="liste_titre">';
-		print '<td class="liste_titre">';
+
 		//REF
+		print '<td class="liste_titre">';
 		print '<input class="flat" size="10" type="text" name="sref" value="'.$sref.'">';
 		print '</td>';
 
@@ -668,11 +670,11 @@ if (($action != 'create' && $action != 'add') || ($action == 'create' && $error)
 			$generic_commande->date_livraison = $db->jdate($objp->date_livraison);
 
 			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-			print '<td class="nobordernopadding nowrap">';
+			print '<td class="nobordernopadding nowraponall">';
 			print $generic_commande->getNomUrl(1, 0);
 			print '</td>';
 
-			print '<td width="20" class="nobordernopadding nowrap">';
+			print '<td width="20" class="nobordernopadding nowraponall">';
 			if ($generic_commande->hasDelay()) {
 				print img_picto($langs->trans("Late"), "warning");
 			}
@@ -713,10 +715,9 @@ if (($action != 'create' && $action != 'add') || ($action == 'create' && $error)
 			$i++;
 		}
 		print '</table>';
+        print '</div>';
 
-		/*
-		 * Boutons actions
-		*/
+		// Buttons actions
 		print '<br><div class="center"><input type="checkbox" '.(empty($conf->global->INVOICE_CLOSE_ORDERS_OFF_BY_DEFAULT_FORMASSINVOICE)?' checked="checked"':'').' name="autocloseorders"> '.$langs->trans("CloseProcessedOrdersAutomatically");
 		print '<div class="right">';
 		print '<input type="hidden" name="socid" value="'.$socid.'">';
@@ -726,7 +727,9 @@ if (($action != 'create' && $action != 'add') || ($action == 'create' && $error)
 		print '<input type="submit" class="butAction" value="'.$langs->trans("GenerateBill").'">';
 		print '</div>';
 		print '</div>';
+
 		print '</form>';
+
 		$db->free($resql);
 	}
 	else

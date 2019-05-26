@@ -568,7 +568,7 @@ function isValidUrl($url, $http = 0, $pass = 0, $port = 0, $path = 0, $query = 0
  *	Check if VAT numero is valid (check done on syntax only, no database or remote access)
  *
  *	@param	Societe   $company       VAT number
- *	@return int					                 1=Check is OK, 0=Check is KO
+ *	@return int					     1=Check is OK, 0=Check is KO
  */
 function isValidVATID($company)
 {
@@ -577,7 +577,7 @@ function isValidVATID($company)
         $vatprefix = $company->country_code;
         if ($vatprefix == 'GR') $vatprefix = '(EL|GR)';
         else $vatprefix = preg_quote($vatprefix, '/');
-        if (! preg_match('/^'.$vatprefix.'[a-zA-Z0-9\-\.]{5,10}$/', $company->tva_intra))
+        if (! preg_match('/^'.$vatprefix.'[a-zA-Z0-9\-\.]{5,14}$/i', str_replace(' ', '', $company->tva_intra)))
         {
             return 0;
         }
@@ -1282,6 +1282,10 @@ function check_value($mask, $value)
     if (! empty($reg[3]) && preg_match('/^@/', $reg[3]))  $maskraz=preg_replace('/^@/', '', $reg[3]);
     if ($maskraz >= 0)
     {
+        if ($maskraz == 99) {
+            $maskraz = date('m');
+            $resetEveryMonth = true;
+        }
         if ($maskraz > 12) return 'ErrorBadMaskBadRazMonth';
 
         // Define reg
@@ -2435,6 +2439,9 @@ function getModuleDirForApiClass($module)
     }
     elseif ($module == 'tickets') {
     	$moduledirforclass = 'ticket';
+    }
+    elseif ($module == 'boms') {
+        $moduledirforclass = 'bom';
     }
 
     return $moduledirforclass;

@@ -39,9 +39,13 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 
 $place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0);   // $place is id of table for Ba or Restaurant
-$posnb = (GETPOST('posnb', 'int') > 0 ? GETPOST('posnb', 'int') : 0);   // $posnb is id of POS
-
 $action = GETPOST('action', 'alpha');
+$setterminal = GETPOST('setterminal', 'int');
+
+if ($setterminal>0)
+{
+	$_SESSION["takeposterminal"]=$setterminal;
+}
 
 $langs->loadLangs(array("bills","orders","commercial","cashdesk","receiptprinter"));
 
@@ -55,7 +59,7 @@ if ($conf->browser->layout == 'phone')
     $maxproductbydefaultforthisdevice=16;
 }
 $MAXCATEG = (empty($conf->global->TAKEPOS_NB_MAXCATEG)?$maxcategbydefaultforthisdevice:$conf->global->TAKEPOS_NB_MAXCATEG);
-$MAXPRODUCT = (empty($conf->global->TAKEPOS_NB_MAXPRODUCT)?$maxproductbydefaultforthisdevice:$conf->global->TAKEPOS_NB_MAXPRODUCT);;
+$MAXPRODUCT = (empty($conf->global->TAKEPOS_NB_MAXPRODUCT)?$maxproductbydefaultforthisdevice:$conf->global->TAKEPOS_NB_MAXPRODUCT);
 
 
 /*
@@ -352,6 +356,12 @@ function Customer() {
 	$.colorbox({href:"../societe/list.php?contextpage=poslist&nomassaction=1&place="+place, width:"90%", height:"80%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("Customer");?>"});
 }
 
+function History()
+{
+    console.log("Open box to select the history");
+    $.colorbox({href:"../compta/facture/list.php?contextpage=poslist", width:"90%", height:"80%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("History");?>"});
+}
+
 function CloseBill() {
 	invoiceid = $("#invoiceid").val();
 	console.log("Open popup to enter payment on invoiceid="+invoiceid);
@@ -532,15 +542,51 @@ function MoreActions(totalactions){
 	}
 }
 
+function TerminalsDialog()
+{
+    jQuery("#dialog-info").dialog({
+	    resizable: false,
+	    height:220,
+	    width:400,
+	    modal: true,
+	    buttons: {
+			Terminal1: function() {
+				location.href='takepos.php?setterminal=1';
+			}
+			<?php
+			for ($i = 2; $i <= $conf->global->TAKEPOS_NUM_TERMINALS; $i++)
+			{
+				print "
+				,
+				Terminal".$i.": function() {
+					location.href='takepos.php?setterminal=".$i."';
+				}
+				";
+			}
+			?>
+	    }
+	});
+}
+
 $( document ).ready(function() {
     PrintCategories(0);
 	LoadProducts(0);
 	Refresh();
+	<?php
+	//IF NO TERMINAL SELECTED
+	if ($_SESSION["takeposterminal"]=="")
+	{
+		if ($conf->global->TAKEPOS_NUM_TERMINALS=="1") $_SESSION["takeposterminal"]=1;
+		else print "TerminalsDialog();";
+	}
+	?>
 });
 </script>
 
 <body style="overflow: hidden; background-color:#D1D1D1;">
-
+<?php
+if ($conf->global->TAKEPOS_NUM_TERMINALS!="1" && $_SESSION["takeposterminal"]=="") print '<div id="dialog-info" title="TakePOS">'.$langs->trans('TerminalSelect').'</div>';
+?>
 <div class="container">
 	<div class="row1">
 
@@ -582,7 +628,7 @@ if ($resql){
         if ($paycode == 'CB')  $paycode = 'CARD';
         if ($paycode == 'CHQ') $paycode = 'CHEQUE';
 
-		$accountname="CASHDESK_ID_BANKACCOUNT_".$paycode;
+		$accountname="CASHDESK_ID_BANKACCOUNT_".$paycode.$_SESSION["takeposterminal"];
 		if (! empty($conf->global->$accountname) && $conf->global->$accountname > 0) array_push($paiementsModes, $obj);
 	}
 }
@@ -607,6 +653,7 @@ else
 }
 
 $menus[$r++]=array('title'=>'<span class="far fa-building paddingrightonly"></span><div class="trunc">'.$langs->trans("Customer").'</div>', 'action'=>'Customer();');
+$menus[$r++]=array('title'=>'<span class="fa fa-history paddingrightonly"></span><div class="trunc">'.$langs->trans("History").'</div>', 'action'=>'History();');
 $menus[$r++]=array('title'=>'<span class="fa fa-cube paddingrightonly"></span><div class="trunc">'.$langs->trans("FreeZone").'</div>', 'action'=>'FreeZone();');
 $menus[$r++]=array('title'=>'<span class="far fa-money-bill-alt paddingrightonly"></span><div class="trunc">'.$langs->trans("Payment").'</div>', 'action'=>'CloseBill();');
 

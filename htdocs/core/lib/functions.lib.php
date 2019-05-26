@@ -307,7 +307,7 @@ function GETPOST($paramname, $check = 'none', $method = 0, $filter = null, $opti
 			}
 			if (! empty($conf->global->MAIN_ENABLE_DEFAULT_VALUES))
 			{
-				if (! empty($_GET['action']) && $_GET['action'] == 'create' && ! isset($_GET[$paramname]) && ! isset($_POST[$paramname]))
+			    if (! empty($_GET['action']) && (preg_match('/^create/', $_GET['action']) || preg_match('/^presend/', $_GET['action'])) && ! isset($_GET[$paramname]) && ! isset($_POST[$paramname]))
 				{
 					// Now search in setup to overwrite default values
 					if (! empty($user->default_values))		// $user->default_values defined from menu 'Setup - Default values'
@@ -660,16 +660,19 @@ function dol_buildpath($path, $type = 0, $returnemptyifnotfound = 0)
 	if (empty($type))	// For a filesystem path
 	{
 		$res = DOL_DOCUMENT_ROOT.'/'.$path;		// Standard default path
-		foreach ($conf->file->dol_document_root as $key => $dirroot)	// ex: array(["main"]=>"/home/main/htdocs", ["alt0"]=>"/home/dirmod/htdocs", ...)
+		if (is_array($conf->file->dol_document_root))
 		{
-			if ($key == 'main')
+			foreach ($conf->file->dol_document_root as $key => $dirroot)	// ex: array("main"=>"/home/main/htdocs", "alt0"=>"/home/dirmod/htdocs", ...)
 			{
-				continue;
-			}
-			if (file_exists($dirroot.'/'.$path))
-			{
-				$res=$dirroot.'/'.$path;
-				return $res;
+				if ($key == 'main')
+				{
+					continue;
+				}
+				if (file_exists($dirroot.'/'.$path))
+				{
+					$res=$dirroot.'/'.$path;
+					return $res;
+				}
 			}
 		}
 		if ($returnemptyifnotfound)								// Not found into alternate dir
@@ -1299,6 +1302,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 	if ($object->element == 'member')          $modulepart='memberphoto';
 	if ($object->element == 'user')            $modulepart='userphoto';
 	if ($object->element == 'product')         $modulepart='product';
+	if ($object->element == 'ticket')          $modulepart='ticket';
 
 	if (class_exists("Imagick"))
 	{
@@ -3437,16 +3441,17 @@ function img_info($titlealt = 'default')
  *
  *	@param	string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@param	string	$moreatt	Add more attribute on img tag (For example 'style="float: right"'). If 1, add float: right. Can't be "class" attribute.
+ *  @param	string  $morecss	Add more CSS
  *	@return string      		Return img tag
  */
-function img_warning($titlealt = 'default', $moreatt = '')
+function img_warning($titlealt = 'default', $moreatt = '', $morecss = 'pictowarning')
 {
 	global $conf, $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Warning');
 
 	//return '<div class="imglatecoin">'.img_picto($titlealt, 'warning_white.png', 'class="pictowarning valignmiddle"'.($moreatt ? ($moreatt == '1' ? ' style="float: right"' : ' '.$moreatt): '')).'</div>';
-	return img_picto($titlealt, 'warning.png', 'class="pictowarning valignmiddle"'.($moreatt ? ($moreatt == '1' ? ' style="float: right"' : ' '.$moreatt): ''));
+	return img_picto($titlealt, 'warning.png', 'class="valignmiddle'.($morecss?' '.$morecss:'').'"'.($moreatt ? ($moreatt == '1' ? ' style="float: right"' : ' '.$moreatt): ''));
 }
 
 /**
@@ -3592,12 +3597,12 @@ function img_allow($allow, $titlealt = 'default')
  */
 function img_credit_card($brand)
 {
-	if ($brand == 'Visa') {$brand='cc-visa';}
-	elseif ($brand == 'MasterCard') {$brand='cc-mastercard';}
-	elseif ($brand == 'American Express') {$brand='cc-amex';}
-	elseif ($brand == 'Discover') {$brand='cc-discover';}
-	elseif ($brand == 'JCB') {$brand='cc-jcb';}
-	elseif ($brand == 'Diners Club') {$brand='cc-diners-club';}
+	if ($brand == 'visa' || $brand == 'Visa') {$brand='cc-visa';}
+	elseif ($brand == 'mastercard' || $brand == 'MasterCard') {$brand='cc-mastercard';}
+	elseif ($brand == 'amex' || $brand == 'American Express') {$brand='cc-amex';}
+	elseif ($brand == 'discover' || $brand == 'Discover') {$brand='cc-discover';}
+	elseif ($brand == 'jcb' || $brand == 'JCB') {$brand='cc-jcb';}
+	elseif ($brand == 'diners' || $brand == 'Diners club') {$brand='cc-diners-club';}
 	elseif (! in_array($brand, array('cc-visa','cc-mastercard','cc-amex','cc-discover','cc-jcb','cc-diners-club'))) {$brand='credit-card';}
 
 	return '<span class="fa fa-'.$brand.' fa-2x fa-fw"></span>';
@@ -6107,6 +6112,7 @@ $substitutionarray=array_merge($substitutionarray, array(
 	{
 		$substitutionarray['__DOL_MAIN_URL_ROOT__']=DOL_MAIN_URL_ROOT;
 		$substitutionarray['__(AnyTranslationKey)__']=$outputlangs->trans('TranslationOfKey');
+		$substitutionarray['__(AnyTranslationKey|langfile)__']=$outputlangs->trans('TranslationOfKey').' (load also language file before)';
 		$substitutionarray['__[AnyConstantKey]__']=$outputlangs->trans('ValueOfConstantKey');
 	}
 
@@ -6135,7 +6141,7 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null)
 
 	if (empty($outputlangs)) $outputlangs=$langs;
 
-	// Make substitution for language keys
+	// Make substitution for language keys: __(AnyTranslationKey)__ or __(AnyTranslationKey|langfile)__
 	if (is_object($outputlangs))
 	{
 		while (preg_match('/__\(([^\)]+)\)__/', $text, $reg))
@@ -6151,8 +6157,8 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null)
 		}
 	}
 
-	// Make substitution for constant keys. Must be after the substitution of translation, so if text of translation contains a constant,
-	// it is also converted.
+	// Make substitution for constant keys.
+	// Must be after the substitution of translation, so if the text of translation contains a string __[xxx]__, it is also converted.
 	while (preg_match('/__\[([^\]]+)\]__/', $text, $reg))
 	{
 		$msgishtml = 0;
@@ -6580,7 +6586,7 @@ function dol_htmloutput_errors($mesgstring = '', $mesgarray = array(), $keepembe
  *  or descending output and uses optionally natural case insensitive sorting (which
  *  can be optionally case sensitive as well).
  *
- *  @param      array		$array      		Array to sort (array of array('key','otherkey1','otherkey2'...))
+ *  @param      array		$array      		Array to sort (array of array('key1'=>val1,'key2'=>val2,'key3'...) or array of objects)
  *  @param      string		$index				Key in array to use for sorting criteria
  *  @param      int			$order				Sort order ('asc' or 'desc')
  *  @param      int			$natsort			1=use "natural" sort (natsort), 0=use "standard" sort (asort)
@@ -6599,7 +6605,17 @@ function dol_sort_array(&$array, $index, $order = 'asc', $natsort = 0, $case_sen
 		if ($sizearray>0)
 		{
 			$temp = array();
-			foreach(array_keys($array) as $key) $temp[$key]=$array[$key][$index];
+			foreach(array_keys($array) as $key)
+			{
+				if (is_object($array[$key]))
+				{
+					$temp[$key]=$array[$key]->$index;
+				}
+				else
+				{
+					$temp[$key]=$array[$key][$index];
+				}
+			}
 
             if (! $natsort) {
                 ($order=='asc') ? asort($temp) : arsort($temp);
@@ -7940,7 +7956,6 @@ function roundUpToNextMultiple($n, $x = 5)
  */
 function dolGetBadge($label, $html = '', $type = 'primary', $mode = '', $url = '', $params = array())
 {
-
     $attr=array(
         'class'=>'badge'.(!empty($mode)?' badge-'.$mode:'').(!empty($type)?' badge-'.$type:'')
     );
@@ -8001,6 +8016,8 @@ function dolGetBadge($label, $html = '', $type = 'primary', $mode = '', $url = '
 function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $statusType = 'status0', $displayMode = 0, $url = '', $params = array())
 {
     global $conf;
+
+    $return = '';
 
     // image's filename are still in French
     $statusImg=array(
@@ -8101,7 +8118,6 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
         $attr['aria-label'] = $label;
     }
 
-
     if(empty($userRight)){
         $attr['class'] = 'butActionRefused';
         $attr['href'] = '';
@@ -8137,4 +8153,131 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
     $tag = !empty($attr['href'])?'a':'span';
 
     return '<div class="inline-block divButAction"><'.$tag.' '.$compiledAttributes.'>'.$html.'</'.$tag.'></div>';
+}
+
+/**
+ * Function dolGetButtonTitle : this kind of buttons are used in title in list
+ *
+ * @param string    $label      label of button
+ * @param string    $helpText   optional : content for help tooltip
+ * @param string    $iconClass  class for icon element
+ * @param string    $url        the url for link
+ * @param string    $id         attribute id of button
+ * @param int       $status     0 no user rights, 1 active, -1 Feature Disabled, -2 disable Other reason use helpText as tooltip
+ * @param array     $params     various params for future : recommended rather than adding more function arguments
+ * @return string               html button
+ */
+function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $url = '', $id = '', $status = 1, $params = array())
+{
+    global $langs, $conf, $user;
+
+    // Actually this conf is used in css too for external module compatibility and smooth transition to this function
+    if (! empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED) && (! $user->admin) && $status <= 0) {
+        return '';
+    }
+
+    $class = 'btnTitle' ;
+
+    // hidden conf keep during button transition TODO: remove this block
+    if(empty($conf->global->MAIN_USE_NEW_TITLE_BUTTON)){
+        $class = 'butActionNew';
+    }
+
+    $attr=array(
+        'class' => $class
+        ,'href' => empty($url)?'':$url
+    );
+
+    if(!empty($helpText)){
+        $attr['title'] = dol_escape_htmltag($helpText);
+    }
+
+    if($status <= 0){
+        $attr['class'] .= ' refused';
+
+        // hidden conf keep during button transition TODO: remove this block
+        if(empty($conf->global->MAIN_USE_NEW_TITLE_BUTTON)){
+            $attr['class'] = 'butActionNewRefused';
+        }
+
+        $attr['href'] = '';
+
+        if($status == -1){ // Not enough permissions
+            $attr['title'] = dol_escape_htmltag($langs->transnoentitiesnoconv("FeatureDisabled"));
+        }
+        elseif($status == 0){ // disable
+            $attr['title'] = dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions"));
+        }
+    }
+
+    if(!empty($attr['title'])){
+        $attr['class'] .= ' classfortooltip';
+    }
+
+    if(empty($id)){
+        $attr['id'] = $id;
+    }
+
+    // Override attr
+    if(!empty($params['attr']) && is_array($params['attr'])){
+        foreach($params['attr'] as $key => $value){
+            if($key == 'class'){
+                $attr['class'].= ' '.$value;
+            }
+            elseif($key == 'classOverride'){
+                $attr['class'] = $value;
+            }
+            else{
+                $attr[$key] = $value;
+            }
+        }
+    }
+
+    if(isset($attr['href']) && empty($attr['href'])){
+        unset($attr['href']);
+    }
+
+    // TODO : add a hook
+
+    // escape all attribute
+    $attr = array_map('dol_escape_htmltag', $attr);
+
+    $TCompiledAttr = array();
+    foreach($attr as $key => $value){
+        $TCompiledAttr[] = $key.'="'.$value.'"';
+    }
+
+    $compiledAttributes = !empty($TCompiledAttr)?implode(' ', $TCompiledAttr):'';
+
+    $tag = !empty($attr['href'])?'a':'span';
+
+
+    $button ='<'.$tag.' '.$compiledAttributes.' >';
+    $button.= '<span class="'.$iconClass.' valignmiddle btnTitle-icon"></span>';
+    $button.= '<span class="valignmiddle text-plus-circle btnTitle-label">'.$label.'</span>';
+    $button.= '</'.$tag.'>';
+
+    // hidden conf keep during button transition TODO: remove this block
+    if(empty($conf->global->MAIN_USE_NEW_TITLE_BUTTON)){
+        $button='<'.$tag.' '.$compiledAttributes.' ><span class="text-plus-circle">'.$label.'</span>';
+        $button.= '<span class="'.$iconClass.' valignmiddle"></span>';
+        $button.= '</'.$tag.'>';
+    }
+
+    return $button;
+}
+
+/**
+ * Return if a file can contains executable content
+ *
+ * @param   string  $filename       File NamedRange
+ * @return  boolean                 True if yes, False if no
+ */
+function isAFileWithExecutableContent($filename)
+{
+    if (preg_match('/\.(htm|html|js|php|phtml|pl|py|cgi|ksh|sh|bash)$/i', $filename))
+    {
+        return true;
+    }
+    return false;
 }

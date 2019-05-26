@@ -1374,6 +1374,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 	if (! empty($object->lines[$i]->date_start) || ! empty($object->lines[$i]->date_end))
 	{
 		$format='day';
+        $period = '';
 		// Show duration if exists
 		if ($object->lines[$i]->date_start && $object->lines[$i]->date_end)
 		{
@@ -1954,6 +1955,7 @@ function pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails = 0)
         	$total_ht = ($conf->multicurrency->enabled && $object->multicurrency_tx != 1 ? $object->lines[$i]->multicurrency_total_ht : $object->lines[$i]->total_ht);
         	if ($object->lines[$i]->situation_percent > 0)
         	{
+        	    // TODO Remove this. The total should be saved correctly in database instead of being modified here.
         		$prev_progress = 0;
         		$progress = 1;
         		if (method_exists($object->lines[$i], 'get_prev_progress'))
@@ -1964,7 +1966,9 @@ function pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails = 0)
 				$result.=price($sign * ($total_ht/($object->lines[$i]->situation_percent/100)) * $progress, 0, $outputlangs);
         	}
         	else
-			$result.=price($sign * $total_ht, 0, $outputlangs);
+        	{
+                $result.=price($sign * $total_ht, 0, $outputlangs);
+        	}
         }
     }
     return $result;

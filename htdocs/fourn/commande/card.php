@@ -955,7 +955,7 @@ $result	= $object->updateline(
 		{
 			if ($object->id > 0)
 			{
-				$result=$object->createFromClone();
+				$result=$object->createFromClone($user);
 				if ($result > 0)
 				{
 					header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);
@@ -1545,7 +1545,7 @@ if ($action=='create')
 	}
 	else
 	{
-		print $form->select_company((empty($socid)?'':$socid), 'socid', 's.fournisseur = 1', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300');
+		print $form->select_company((empty($socid)?'':$socid), 'socid', 's.fournisseur=1', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300');
 		// reload page to retrieve customer informations
 		if (!empty($conf->global->RELOAD_PAGE_ON_SUPPLIER_CHANGE))
 		{
@@ -1895,7 +1895,7 @@ elseif (! empty($object->id))
         $morehtmlref .= '<form method="post" action="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '">';
         $morehtmlref .= '<input type="hidden" name="action" value="set_thirdparty">';
         $morehtmlref .= '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
-        $morehtmlref .= $form->select_company($object->thirdparty->id, 'new_socid', 's.fournisseur = 1', '', 0, 0, array(), 0, 'minwidth300');
+        $morehtmlref .= $form->select_company($object->thirdparty->id, 'new_socid', 's.fournisseur=1', '', 0, 0, array(), 0, 'minwidth300');
         $morehtmlref .= '<input type="submit" class="button valignmiddle" value="' . $langs->trans("Modify") . '">';
         $morehtmlref .= '</form>';
     }
@@ -1958,7 +1958,7 @@ elseif (! empty($object->id))
 		print '<tr><td class="titlefield">'.$langs->trans("Date").'</td><td>';
 		if ($object->date_commande)
 		{
-			print dol_print_date($object->date_commande, "dayhourtext")."\n";
+			print dol_print_date($object->date_commande, "dayhour")."\n";
 		}
 		print "</td></tr>";
 
@@ -2467,8 +2467,8 @@ elseif (! empty($object->id))
 			}
 
 			// Create bill
-			if (! empty($conf->facture->enabled))
-			{
+			//if (! empty($conf->facture->enabled))
+			//{
 				if (! empty($conf->fournisseur->enabled) && ($object->statut >= 2 && $object->statut != 7 && $object->billed != 1))  // statut 2 means approved, 7 means canceled
 				{
 					if ($user->rights->fournisseur->facture->creer)
@@ -2476,7 +2476,7 @@ elseif (! empty($object->id))
 						print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a>';
 					}
 				}
-			}
+			//}
 
 			// Classify billed manually (need one invoice if module invoice is on, no condition on invoice if not)
 			if ($user->rights->fournisseur->commande->creer && $object->statut >= 2 && $object->statut != 7 && $object->billed != 1)  // statut 2 means approved
@@ -2843,6 +2843,7 @@ elseif (! empty($object->id))
 		$modelmail='order_supplier_send';
 		$defaulttopic='SendOrderRef';
 		$diroutput = $conf->fournisseur->commande->dir_output;
+		$autocopy='MAIN_MAIL_AUTOCOPY_SUPPLIER_ORDER_TO';
 		$trackid = 'sor'.$object->id;
 
 		include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';

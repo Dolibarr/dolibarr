@@ -43,7 +43,6 @@ $id = GETPOST('id', 'int');
 $action = GETPOST('action', 'alpha');
 $idproduct = GETPOST('idproduct', 'int');
 $place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0);   // $place is id of table for Ba or Restaurant
-$posnb = (GETPOST('posnb', 'int') > 0 ? GETPOST('posnb', 'int') : 0);   // $posnb is id of POS
 
 /**
  * Abort invoice creationg with a given error message
@@ -90,7 +89,7 @@ if ($invoiceid > 0)
 }
 else
 {
-    $ret = $invoice->fetch('', '(PROV-POS-'.$place.')');
+    $ret = $invoice->fetch('', '(PROV-POS'.$_SESSION["takeposterminal"].'-'.$place.')');
 }
 if ($ret > 0)
 {
@@ -104,12 +103,12 @@ if ($ret > 0)
 
 if ($action == 'valid' && $user->rights->facture->creer)
 {
-    if ($pay == "cash") $bankaccount = $conf->global->CASHDESK_ID_BANKACCOUNT_CASH;            // For backward compatibility
-    elseif ($pay == "card") $bankaccount = $conf->global->CASHDESK_ID_BANKACCOUNT_CB;          // For backward compatibility
-    elseif ($pay == "cheque") $bankaccount = $conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE;    // For backward compatibility
+    if ($pay == "cash") $bankaccount = $conf->global->{'CASHDESK_ID_BANKACCOUNT_CASH'.$_SESSION["takeposterminal"]};            // For backward compatibility
+    elseif ($pay == "card") $bankaccount = $conf->global->{'CASHDESK_ID_BANKACCOUNT_CB'.$_SESSION["takeposterminal"]};          // For backward compatibility
+    elseif ($pay == "cheque") $bankaccount = $conf->global->{'CASHDESK_ID_BANKACCOUNT_CHEQUE'.$_SESSION["takeposterminal"]};    // For backward compatibility
     else
     {
-        $accountname="CASHDESK_ID_BANKACCOUNT_".$pay;
+        $accountname="CASHDESK_ID_BANKACCOUNT_".$pay.$_SESSION["takeposterminal"];
     	$bankaccount=$conf->global->$accountname;
     }
 	$now=dol_now();
@@ -137,9 +136,9 @@ if ($action == 'valid' && $user->rights->facture->creer)
 		$invoice->update($user);
 	}
 
-	if (! empty($conf->stock->enabled) && $conf->global->CASHDESK_NO_DECREASE_STOCK != "1")
+	if (! empty($conf->stock->enabled) && $conf->global->{'CASHDESK_NO_DECREASE_STOCK'.$_SESSION["takeposterminal"]} != "1")
 	{
-	    $invoice->validate($user, '', $conf->global->CASHDESK_ID_WAREHOUSE);
+	    $invoice->validate($user, '', $conf->global->{'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"]});
 	}
 	else
 	{
@@ -171,15 +170,22 @@ if ($action == 'valid' && $user->rights->facture->creer)
 	}
 }
 
+if ($action == 'history')
+{
+    $placeid = GETPOST('placeid', 'int');
+    $invoice = new Facture($db);
+    $invoice->fetch($placeid);
+}
+
 if (($action=="addline" || $action=="freezone") && $placeid == 0)
 {
-	$invoice->socid = $conf->global->CASHDESK_ID_THIRDPARTY;
+	$invoice->socid = $conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"]};
 	$invoice->date = dol_now();
 	$invoice->module_source = 'takepos';
-	$invoice->pos_source = (string) $posnb;
+	$invoice->pos_source = $_SESSION["takeposterminal"];
 
 	$placeid = $invoice->create($user);
-	$sql="UPDATE ".MAIN_DB_PREFIX."facture set ref='(PROV-POS-".$place.")' where rowid=".$placeid;
+	$sql="UPDATE ".MAIN_DB_PREFIX."facture set ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")' where rowid=".$placeid;
 	$db->query($sql);
 }
 
@@ -336,7 +342,7 @@ if ($action == "order" and $placeid != 0)
 }
 
 $sectionwithinvoicelink='';
-if ($action=="valid")
+if ($action=="valid" || $action=="history")
 {
     $sectionwithinvoicelink.='<!-- Section with invoice link -->'."\n";
     $sectionwithinvoicelink.='<input type="hidden" name="invoiceid" id="invoiceid" value="'.$invoice->id.'">';
@@ -552,11 +558,11 @@ else {      // No invoice generated yet
 
 print '</table>';
 
-if ($invoice->socid != $conf->global->CASHDESK_ID_THIRDPARTY)
+if ($invoice->socid != $conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"]})
 {
     $soc = new Societe($db);
     if ($invoice->socid > 0) $soc->fetch($invoice->socid);
-    else $soc->fetch($conf->global->CASHDESK_ID_THIRDPARTY);
+    else $soc->fetch($conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"]});
     print '<p style="font-size:120%;" class="right">';
     print $langs->trans("Customer").': '.$soc->name;
     print '</p>';

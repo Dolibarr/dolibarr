@@ -9,7 +9,7 @@
  * Copyright (C) 2013-2017  Olivier Geffroy     <jeff@jeffinfo.com>
  * Copyright (C) 2017       Elarifr. Ari Elbaz  <github@accedinfo.com>
  * Copyright (C) 2017-2019  Frédéric France     <frederic.france@netlogic.fr>
-
+ * Copyright (C) 2017       André Schild        <a.schild@aarboard.ch>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,6 +50,8 @@ class AccountancyExport
 	public static $EXPORT_TYPE_COGILOG = 8;
 	public static $EXPORT_TYPE_AGIRIS = 9;
 	public static $EXPORT_TYPE_FEC = 11;
+	public static $EXPORT_TYPE_OPENCONCERTO = 12;
+	public static $EXPORT_TYPE_SAGE50_SWISS = 13;
 
 
 	/**
@@ -103,7 +105,9 @@ class AccountancyExport
 			self::$EXPORT_TYPE_EBP => $langs->trans('Modelcsv_ebp'),
 			self::$EXPORT_TYPE_COGILOG => $langs->trans('Modelcsv_cogilog'),
 			self::$EXPORT_TYPE_AGIRIS => $langs->trans('Modelcsv_agiris'),
+            self::$EXPORT_TYPE_OPENCONCERTO => $langs->trans('Modelcsv_openconcerto'),
 			self::$EXPORT_TYPE_FEC => $langs->trans('Modelcsv_FEC'),
+			self::$EXPORT_TYPE_SAGE50_SWISS => $langs->trans('Modelcsv_Sage50_Swiss'),
 		);
 	}
 
@@ -126,7 +130,9 @@ class AccountancyExport
 			self::$EXPORT_TYPE_EBP => 'ebp',
 			self::$EXPORT_TYPE_COGILOG => 'cogilog',
 			self::$EXPORT_TYPE_AGIRIS => 'agiris',
+			self::$EXPORT_TYPE_OPENCONCERTO => 'openconcerto',
 			self::$EXPORT_TYPE_FEC => 'fec',
+                        self::$EXPORT_TYPE_SAGE50_SWISS => 'sage50ch',
 		);
 
 		return $formatcode[$type];
@@ -187,6 +193,14 @@ class AccountancyExport
 					'label' => $langs->trans('Modelcsv_FEC'),
 					'ACCOUNTING_EXPORT_FORMAT' => 'txt',
 				),
+                self::$EXPORT_TYPE_OPENCONCERTO => array(
+                    'label' => $langs->trans('Modelcsv_openconcerto'),
+                    'ACCOUNTING_EXPORT_FORMAT' => 'csv',
+                ),
+                                self::$EXPORT_TYPE_SAGE50_SWISS => array(
+                                    'label' => $langs->trans('Modelcsv_Sage50_Swiss'),
+                                    'ACCOUNTING_EXPORT_FORMAT' => 'csv',
+                                ),
 			),
 			'cr'=> array (
 				'1' => $langs->trans("Unix"),
@@ -248,8 +262,14 @@ class AccountancyExport
 			case self::$EXPORT_TYPE_AGIRIS :
 				$this->exportAgiris($TData);
 				break;
+            case self::$EXPORT_TYPE_OPENCONCERTO :
+                $this->exportOpenConcerto($TData);
+                break;
 			case self::$EXPORT_TYPE_FEC :
 				$this->exportFEC($TData);
+				break;
+			case self::$EXPORT_TYPE_SAGE50_SWISS :
+				$this->exportSAGE50SWISS($TData);
 				break;
 			default:
 				$this->errors[] = $langs->trans('accountancy_error_modelnotfound');
@@ -588,6 +608,39 @@ class AccountancyExport
 		}
 	}
 
+    /**
+     * Export format : OpenConcerto
+     *
+     * @param array $objectLines data
+     *
+     * @return void
+     */
+    public function exportOpenConcerto($objectLines)
+    {
+
+        $separator = ';';
+        $end_line = "\n";
+
+        foreach ($objectLines as $line) {
+
+            $date = dol_print_date($line->doc_date, '%d/%m/%Y');
+
+            print $date . $separator;
+            print $line->code_journal . $separator;
+            if (empty($line->subledger_account)) {
+                print length_accountg($line->numero_compte) . $separator;
+            } else {
+                print length_accounta($line->subledger_account) . $separator;
+            }
+            print $line->doc_ref . $separator;
+            print $line->label_operation . $separator;
+            print price($line->debit) . $separator;
+            print price($line->credit) . $separator;
+
+            print $end_line;
+        }
+    }
+
 	/**
 	 * Export format : Configurable
 	 *
@@ -714,6 +767,157 @@ class AccountancyExport
 		}
 	}
 
+        /**
+	 * Export format : SAGE50SWISS
+	 *
+         *
+         * https://onlinehelp.sageschweiz.ch/default.aspx?tabid=19984
+         * http://media.topal.ch/Public/Schnittstellen/TAF/Specification/Sage50-TAF-format.pdf
+         *
+	 * @param array $objectLines data
+	 *
+	 * @return void
+	 */
+	public function exportSAGE50SWISS($objectLines)
+    {
+		// SAGE50SWISS
+		$this->separator = ',';
+                $this->end_line = "\r\n";
+
+                // Print header line
+                print "Blg,Datum,Kto,S/H,Grp,GKto,SId,SIdx,KIdx,BTyp,MTyp,Code,Netto,Steuer,FW-Betrag,Tx1,Tx2,PkKey,OpId,Flag";
+                print $this->end_line;
+                $thisPieceNum= "";
+                $thisPieceAccountNr= "";
+                $aSize= count($objectLines);
+		foreach ($objectLines as $aIndex=>$line)
+                {
+                        $sammelBuchung= false;
+                        if ($aIndex-2 >= 0 && $objectLines[$aIndex-2]->piece_num == $line->piece_num)
+                        {
+                            $sammelBuchung= true;
+                        }
+                        elseif ($aIndex+2 < $aSize && $objectLines[$aIndex+2]->piece_num == $line->piece_num)
+                        {
+                            $sammelBuchung= true;
+                        }
+                        elseif ($aIndex+1 < $aSize
+                                && $objectLines[$aIndex+1]->piece_num == $line->piece_num
+                                && $aIndex-1 < $aSize
+                                && $objectLines[$aIndex-1]->piece_num == $line->piece_num
+                                )
+                        {
+                            $sammelBuchung= true;
+                        }
+
+                        //Blg
+			print $line->piece_num . $this->separator;
+
+                        // Datum
+			$date = dol_print_date($line->doc_date, '%d.%m.%Y');
+			print $date . $this->separator;
+
+                        // Kto
+			print length_accountg($line->numero_compte) . $this->separator;
+                        // S/H
+                        if ($line->sens == 'D')
+                        {
+                            print 'S' . $this->separator;
+                        }
+                        else
+                        {
+                            print 'H' . $this->separator;
+                        }
+                        //Grp
+                        print self::trunc($line->code_journal, 1) . $this->separator;
+                        // GKto
+                        if (empty($line->code_tiers))
+                        {
+                            if ($line->piece_num == $thisPieceNum)
+                            {
+                                print length_accounta($thisPieceAccountNr) . $this->separator;
+                            }
+                            else
+                            {
+                                print "div" . $this->separator;
+                            }
+                        }
+                        else
+                        {
+                            print length_accounta($line->code_tiers) . $this->separator;
+                        }
+                        //SId
+                        print $this->separator;
+                        //SIdx
+                        print "0" . $this->separator;
+                        //KIdx
+                        print "0" . $this->separator;
+                        //BTyp
+                        print "0" . $this->separator;
+
+                        //MTyp 1=Fibu Einzelbuchung 2=Sammebuchung
+                        if ($sammelBuchung)
+                        {
+                            print "2" . $this->separator;
+                        }
+                        else
+                        {
+                            print "1" . $this->separator;
+                        }
+                        // Code
+                        print '""' . $this->separator;
+                        // Netto
+                        if ($line->montant >= 0)
+                        {
+                            print $line->montant . $this->separator;
+                        }
+                        else
+                        {
+                            print $line->montant*-1 . $this->separator;
+                        }
+                        // Steuer
+                        print "0.00" . $this->separator;
+                        // FW-Betrag
+                        print "0.00" . $this->separator;
+                        // Tx1
+                        $line1= self::toAnsi($line->label_compte, 29);
+                        if ($line1 == "LIQ" || $line1 == "LIQ Beleg ok" || strlen($line1) <= 3)
+                        {
+                            $line1= "";
+                        }
+                        $line2= self::toAnsi($line->doc_ref, 29);
+                        if (strlen($line1) == 0)
+                        {
+                            $line1= $line2;
+                            $line2= "";
+                        }
+                        if (strlen($line1) > 0 && strlen($line2) > 0 && (strlen($line1) + strlen($line2)) < 27)
+                        {
+                            $line1= $line1 . ' / ' . $line2;
+                            $line2= "";
+                        }
+
+			print '"' . self::toAnsi($line1). '"' . $this->separator;
+                        // Tx2
+			print '"' . self::toAnsi($line2). '"' . $this->separator;
+                        //PkKey
+                        print "0" . $this->separator;
+                        //OpId
+                        print $this->separator;
+
+                        // Flag
+			print "0";
+
+			print $this->end_line;
+
+                        if ($line->piece_num !== $thisPieceNum)
+                        {
+                            $thisPieceNum= $line->piece_num;
+                            $thisPieceAccountNr= $line->numero_compte;
+                        }
+        }
+	}
+
 	/**
 	 *
 	 * @param string	$str 	data
@@ -723,5 +927,21 @@ class AccountancyExport
 	public static function trunc($str, $size)
 	{
 		return dol_trunc($str, $size, 'right', 'UTF-8', 1);
+	}
+
+	/**
+	 *
+	 * @param unknown $str Original string to encode and optionaly truncate
+	 * @param integer $size trucate string after $size characters
+         * @return string String encoded in Windows-1251 charset
+	 */
+	public static function toAnsi($str, $size = -1)
+    {
+		$retVal= dol_string_nohtmltag($str, 1, 'Windows-1251');
+        if ($retVal >= 0 && $size >= 0)
+        {
+            $retVal= mb_substr($retVal, 0, $size, 'Windows-1251');
+        }
+        return $retVal;
 	}
 }

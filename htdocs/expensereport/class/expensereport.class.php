@@ -314,12 +314,13 @@ class ExpenseReport extends CommonObject
     /**
      *	Load an object from its id and create a new one in database
      *
-     *	@param		int			$fk_user_author		  Id of new user
-     *	@return		int							      New id of clone
+	 *  @param	    User	$user		        User making the clone
+     *	@param		int     $fk_user_author		Id of new user
+     *	@return		int							New id of clone
      */
-    public function createFromClone($fk_user_author)
+    public function createFromClone(User $user, $fk_user_author)
     {
-        global $user,$hookmanager;
+        global $hookmanager;
 
         $error=0;
 

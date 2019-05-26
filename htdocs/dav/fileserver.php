@@ -14,6 +14,9 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * You can test with the WebDav client cadaver:
+ * cadaver http://myurl/dav/fileserver.php
  */
 
 /**
@@ -58,8 +61,9 @@ $entity = (GETPOST('entity', 'int') ? GETPOST('entity', 'int') : (!empty($conf->
 $publicDir = $conf->dav->multidir_output[$entity].'/public';
 $privateDir = $conf->dav->multidir_output[$entity].'/private';
 $ecmDir = $conf->ecm->multidir_output[$entity];
-$tmpDir = $conf->dav->multidir_temp[$entity];
-//var_dump($tmpDir);exit;
+$tmpDir = $conf->dav->multidir_output[$entity];     // We need root dir, not a dir that can be deleted
+//var_dump($tmpDir);mkdir($tmpDir);exit;
+
 
 // Authentication callback function
 $authBackend = new \Sabre\DAV\Auth\Backend\BasicCallBack(function ($username, $password) {
@@ -152,8 +156,11 @@ $lockPlugin = new \Sabre\DAV\Locks\Plugin($lockBackend);
 $server->addPlugin($lockPlugin);
 
 // Support for html frontend
-$browser = new \Sabre\DAV\Browser\Plugin();
-$server->addPlugin($browser);
+if (empty($conf->global->DAV_DISABLE_BROWSER))
+{
+    $browser = new \Sabre\DAV\Browser\Plugin();
+    $server->addPlugin($browser);
+}
 
 // Automatically guess (some) contenttypes, based on extension
 //$server->addPlugin(new \Sabre\DAV\Browser\GuessContentType());

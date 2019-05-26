@@ -266,14 +266,15 @@ class Mailing extends CommonObject
 	/**
 	 *	Load an object from its id and create a new one in database
 	 *
+	 *  @param	User	$user		    User making the clone
 	 *	@param  int		$fromid     	Id of object to clone
 	 *	@param	int		$option1		1=Copy content, 0=Forget content
 	 *	@param	int		$option2		Not used
 	 *	@return	int						New id of clone
 	 */
-	public function createFromClone($fromid, $option1, $option2)
+	public function createFromClone(User $user, $fromid, $option1, $option2)
 	{
-		global $user,$langs;
+		global $langs;
 
 		$error=0;
 

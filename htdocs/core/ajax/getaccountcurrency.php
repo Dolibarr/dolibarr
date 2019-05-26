@@ -16,8 +16,8 @@
  */
 
 /**
- *       \file       htdocs/core/ajax/vatrates.php
- *       \brief      File to load vat rates combobox
+ *       \file       htdocs/core/ajax/getaccountcurrency.php
+ *       \brief      File to load currency rates
  */
 
 if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Disables token renewal
@@ -26,7 +26,8 @@ if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
 
 require '../../main.inc.php';
 
-$id			= GETPOST('id', 'int');
+$id	= GETPOST('id', 'int');
+
 
 /*
  * View

@@ -110,8 +110,40 @@ if (empty($reshook))
 	$autocopy='MAIN_MAIL_AUTOCOPY_BOM_TO';
 	$trackid='bom'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
-}
 
+	// Add line
+	if ($action == 'addline' && $user->rights->bom->write)
+	{
+		$langs->load('errors');
+		$error = 0;
+
+		// Set if we used free entry or predefined product
+		$idprod=GETPOST('idprod', 'int');
+		$qty=GETPOST('qty', 'int');
+		$efficiency=GETPOST('efficiency', 'int');
+
+		if ($qty == '') {
+			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), null, 'errors');
+			$error++;
+		}
+		if (! ($idprod > 0)) {
+			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Product')), null, 'errors');
+			$error++;
+		}
+
+		$bomline = new BOMLine($db);
+		$bomline->fk_bom = $id;
+		$bomline->fk_product = $idprod;
+		$bomline->qty = $qty;
+		$bomline->efficiency = $efficiency;
+
+		$result = $bomline->create($user);
+		if ($result <= 0)
+		{
+			setEventMessages($bomline->error, $bomline->errors, 'errors');
+		}
+	}
+}
 
 
 /*
@@ -307,10 +339,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<div class="fichecenter">';
 	print '<div class="fichehalfleft">';
 	print '<div class="underbanner clearboth"></div>';
-	print '<table class="border centpercent">'."\n";
+	print '<table class="border centpercent tableforfield">'."\n";
 
 	// Common attributes
-	//$keyforbreak='fieldkeytoswithonsecondcolumn';
+	$keyforbreak='description';
 	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_view.tpl.php';
 
 	// Other attributes
@@ -320,9 +352,65 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '</div>';
 	print '</div>';
 
-	print '<div class="clearboth"></div><br>';
+	print '<div class="clearboth"></div>';
 
 	dol_fiche_end();
+
+
+
+	/*
+	 * Lines
+	 */
+
+	if (! empty($object->table_element_line))
+	{
+	    // Show object lines
+	    $result = $object->getLinesArray();
+
+	    print '	<form name="addproduct" id="addproduct" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . (($action != 'editline') ? '#addline' : '#line_' . GETPOST('lineid', 'int')) . '" method="POST">
+    	<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">
+    	<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline') . '">
+    	<input type="hidden" name="mode" value="">
+    	<input type="hidden" name="id" value="' . $object->id . '">
+    	';
+
+	    if (! empty($conf->use_javascript_ajax) && $object->status == 0) {
+	        include DOL_DOCUMENT_ROOT . '/core/tpl/ajaxrow.tpl.php';
+	    }
+
+	    print '<div class="div-table-responsive-no-min">';
+	    if (! empty($object->lines) || ($object->status == 0 && $permissiontoadd && $action != 'selectlines' && $action != 'editline'))
+	    {
+	        print '<table id="tablelines" class="noborder noshadow" width="100%">';
+	    }
+
+	    if (! empty($object->lines))
+	    {
+//	        $ret = $object->printObjectLines($action, $mysoc, $soc, $lineid, 1);
+	    }
+
+	    // Form to add new line
+	    if ($object->status == 0 && $permissiontoadd && $action != 'selectlines')
+	    {
+	        if ($action != 'editline')
+	        {
+	            // Add products/services form
+	            $object->formAddObjectLine(1, $mysoc, $soc, '/bom/tpl');
+
+	            $parameters = array();
+	            $reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	        }
+	    }
+
+	    if (! empty($object->lines) || ($object->status == 0 && $permissiontoadd && $action != 'selectlines' && $action != 'editline'))
+	    {
+	        print '</table>';
+	    }
+	    print '</div>';
+
+	    print "</form>\n";
+	}
+
 
 
 	// Buttons for actions
@@ -335,7 +423,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	if (empty($reshook))
     	{
     	    // Send
-            print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendMail') . '</a>'."\n";
+            //print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendMail') . '</a>'."\n";
 
             // Modify
     		if ($user->rights->bom->write)
