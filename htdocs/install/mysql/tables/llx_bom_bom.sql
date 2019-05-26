@@ -23,6 +23,9 @@ CREATE TABLE llx_bom_bom(
 	description text, 
 	note_public text, 
 	note_private text, 
+	fk_product integer, 
+	qty double(24,8),
+	efficiency double(8,4) DEFAULT 1,
 	date_creation datetime NOT NULL, 
 	tms timestamp, 
 	date_valid datetime, 
@@ -30,8 +33,6 @@ CREATE TABLE llx_bom_bom(
 	fk_user_modif integer, 
 	fk_user_valid integer, 
 	import_key varchar(14), 
-	status integer NOT NULL, 
-	fk_product integer, 
-	qty double(24,8)
+	status integer NOT NULL 
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;

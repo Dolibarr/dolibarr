@@ -212,18 +212,21 @@ CREATE TABLE llx_bom_bom(
 	description text, 
 	note_public text, 
 	note_private text, 
+	fk_product integer, 
+	qty double(24,8),
+	efficiency double(8,4),
 	date_creation datetime NOT NULL, 
-	tms timestamp NOT NULL, 
+	tms timestamp, 
 	date_valid datetime, 
 	fk_user_creat integer NOT NULL, 
 	fk_user_modif integer, 
 	fk_user_valid integer, 
 	import_key varchar(14), 
-	status integer NOT NULL, 
-	fk_product integer, 
-	qty double(24,8)
+	status integer NOT NULL 
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;
+
+ALTER TABLE llx_bom_bom ADD COLUMN efficiency double(8,4) DEFAULT 1;
 
 create table llx_bom_bom_extrafields
 (
@@ -236,14 +239,20 @@ create table llx_bom_bom_extrafields
 CREATE TABLE llx_bom_bomline(
 	-- BEGIN MODULEBUILDER FIELDS
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
+	fk_bom integer NOT NULL, 
+	fk_product integer NOT NULL,
+	fk_bom_child integer NULL, 
 	description text, 
 	import_key varchar(14), 
-	qty double(24,8), 
-	fk_product integer, 
-	fk_bom integer, 
+	qty double(24,8) NOT NULL, 
+	efficiency double(8,4) NOT NULL DEFAULT 1,
 	rank integer NOT NULL
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;
+
+ALTER TABLE llx_bom_bomline ADD COLUMN efficiency double(8,4) DEFAULT 1;
+ALTER TABLE llx_bom_bomline ADD COLUMN fk_bom_child integer NULL;
+
 
 create table llx_bom_bomline_extrafields
 (

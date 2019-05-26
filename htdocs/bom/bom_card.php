@@ -110,8 +110,40 @@ if (empty($reshook))
 	$autocopy='MAIN_MAIL_AUTOCOPY_BOM_TO';
 	$trackid='bom'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
-}
 
+	// Add line
+	if ($action == 'addline' && $user->rights->bom->write)
+	{
+		$langs->load('errors');
+		$error = 0;
+
+		// Set if we used free entry or predefined product
+		$idprod=GETPOST('idprod', 'int');
+		$qty=GETPOST('qty', 'int');
+		$efficiency=GETPOST('efficiency', 'int');
+
+		if ($qty == '') {
+			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), null, 'errors');
+			$error++;
+		}
+		if (! ($idprod > 0)) {
+			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Product')), null, 'errors');
+			$error++;
+		}
+
+		$bomline = new BOMLine($db);
+		$bomline->fk_bom = $id;
+		$bomline->fk_product = $idprod;
+		$bomline->qty = $qty;
+		$bomline->efficiency = $efficiency;
+
+		$result = $bomline->create($user);
+		if ($result <= 0)
+		{
+			setEventMessages($bomline->error, $bomline->errors, 'errors');
+		}
+	}
+}
 
 
 /*
