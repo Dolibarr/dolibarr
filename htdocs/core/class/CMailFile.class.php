@@ -518,7 +518,7 @@ class CMailFile
 			}
 
 			$sendingmode = $this->sendmode;
-			if (! empty($conf->global->MAILING_NO_USING_PHPMAIL) && $sendingmode == 'mail')
+			if ($this->context == 'emailing' && ! empty($conf->global->MAILING_NO_USING_PHPMAIL) && $sendingmode == 'mail')
 			{
 			    // List of sending methods
 			    $listofmethods=array();
