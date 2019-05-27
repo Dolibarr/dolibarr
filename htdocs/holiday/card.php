@@ -1270,7 +1270,7 @@ else
                     print '</td>';
                     print '<td>'.$valideur->getNomUrl(-1);
                     $include_users = $object->fetch_users_approver_holiday();
-                    if (in_array($user->id, $include_users))
+                    if (in_array($user->id, $include_users) && $object->statut != 1)
                     {
                         print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editvalidator">'.img_edit($langs->trans("Edit")).'</a>';
                     }
@@ -1288,7 +1288,7 @@ else
                     if (empty($include_users)) print img_warning().' '.$langs->trans("NobodyHasPermissionToValidateHolidays");
                     else
                     {
-                    	$s=$form->select_dolusers($object->fk_validator, "valideur", 1, ($user->admin ? '' : array($user->id)), 0, $include_users);
+                        $s=$form->select_dolusers($object->fk_validator, "valideur", (($action == 'editvalidator') ? 0 : 1), ($user->admin ? '' : array($user->id)), 0, $include_users);
                     	print $form->textwithpicto($s, $langs->trans("AnyOtherInThisListCanValidate"));
                     }
                     if ($action == 'editvalidator')
