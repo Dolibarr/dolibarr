@@ -50,11 +50,11 @@ $confirm=GETPOST('confirm','alpha');
 $toselect = GETPOST('toselect', 'array');
 
 $sall=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
-$search_ref=GETPOST("search_ref");
-$search_barcode=GETPOST("search_barcode");
-$search_label=GETPOST("search_label");
+$search_ref=GETPOST("search_ref", 'alpha');
+$search_barcode=GETPOST("search_barcode", 'alpha');
+$search_label=GETPOST("search_label", 'alpha');
 $search_type = GETPOST("search_type", 'int');
-$search_sale = GETPOST("search_sale");
+$search_sale = GETPOST("search_sale", 'int');
 $search_categ = GETPOST("search_categ",'int');
 $search_tosell = GETPOST("search_tosell", 'int');
 $search_tobuy = GETPOST("search_tobuy", 'int');
@@ -142,6 +142,7 @@ if (! empty($conf->global->MAIN_MULTILANGS))
 }
 if (! empty($conf->barcode->enabled)) {
 	$fieldstosearchall['p.barcode']='Gencod';
+    $fieldstosearchall['pfp.barcode']='GencodBuyPrice';
 }
 
 if (empty($conf->global->PRODUIT_MULTIPRICES))

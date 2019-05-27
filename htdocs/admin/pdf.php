@@ -61,6 +61,8 @@ if ($action == 'update')
 	dolibarr_set_const($db, "MAIN_PROFID2_IN_ADDRESS", $_POST["MAIN_PROFID2_IN_ADDRESS"],'chaine',0,'', $conf->entity);
 	dolibarr_set_const($db, "MAIN_PROFID3_IN_ADDRESS", $_POST["MAIN_PROFID3_IN_ADDRESS"],'chaine',0,'', $conf->entity);
 	dolibarr_set_const($db, "MAIN_PROFID4_IN_ADDRESS", $_POST["MAIN_PROFID4_IN_ADDRESS"],'chaine',0,'', $conf->entity);
+	dolibarr_set_const($db, "MAIN_PROFID5_IN_ADDRESS", $_POST["MAIN_PROFID5_IN_ADDRESS"],'chaine',0,'', $conf->entity);
+	dolibarr_set_const($db, "MAIN_PROFID6_IN_ADDRESS", $_POST["MAIN_PROFID6_IN_ADDRESS"],'chaine',0,'', $conf->entity);
 	dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT", $_POST["MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT"],'chaine',0,'', $conf->entity);
 
 	dolibarr_set_const($db, "MAIN_TVAINTRA_NOT_IN_ADDRESS", $_POST["MAIN_TVAINTRA_NOT_IN_ADDRESS"],'chaine',0,'', $conf->entity);
@@ -177,76 +179,25 @@ if ($action == 'edit')	// Edit
     print $form->selectyesno('MAIN_TVAINTRA_NOT_IN_ADDRESS',(! empty($conf->global->MAIN_TVAINTRA_NOT_IN_ADDRESS))?$conf->global->MAIN_TVAINTRA_NOT_IN_ADDRESS:0,1);
     print '</td></tr>';
 
-    // Show prof id 1 in address into pdf
-
-    if (! $noCountryCode)
+    // Show prof id in address into pdf
+    for($i=1; $i<=6; $i++)
     {
-    	$pid1=$langs->transcountry("ProfId1",$mysoc->country_code);
-    	if ($pid1 == '-') $pid1=false;
-    }
-    else
-    {
-    	$pid1 = img_warning().' <font class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("CompanyCountry")).'</font>';
-    }
-    if ($pid1)
-    {
-    	print '<tr class="oddeven"><td>'.$langs->trans("ShowProfIdInAddress").' - '.$pid1.'</td><td>';
-    	print $form->selectyesno('MAIN_PROFID1_IN_ADDRESS',isset($conf->global->MAIN_PROFID1_IN_ADDRESS)?$conf->global->MAIN_PROFID1_IN_ADDRESS:0,1,$noCountryCode);
-    	print '</td></tr>';
-    }
-
-    // Show prof id 2 in address into pdf
-
-    if (! $noCountryCode)
-    {
-    	$pid2=$langs->transcountry("ProfId2",$mysoc->country_code);
-    	if ($pid2 == '-') $pid2=false;
-    }
-    else
-    {
-    	$pid2 = img_warning().' <font class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("CompanyCountry")).'</font>';
-    }
-    if ($pid2)
-    {
-    	print '<tr class="oddeven"><td>'.$langs->trans("ShowProfIdInAddress").' - '.$pid2.'</td><td>';
-    	print $form->selectyesno('MAIN_PROFID2_IN_ADDRESS',isset($conf->global->MAIN_PROFID2_IN_ADDRESS)?$conf->global->MAIN_PROFID2_IN_ADDRESS:0,1,$noCountryCode);
-    	print '</td></tr>';
-    }
-
-    // Show prof id 3 in address into pdf
-
-    if (! $noCountryCode)
-    {
-    	$pid3=$langs->transcountry("ProfId3",$mysoc->country_code);
-    	if ($pid3 == '-') $pid3=false;
-    }
-    else
-    {
-    	$pid3 = img_warning().' <font class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("CompanyCountry")).'</font>';
-    }
-    if ($pid3)
-    {
-    	print '<tr class="oddeven"><td>'.$langs->trans("ShowProfIdInAddress").' - '.$pid3.'</td><td>';
-    	print $form->selectyesno('MAIN_PROFID3_IN_ADDRESS',isset($conf->global->MAIN_PROFID3_IN_ADDRESS)?$conf->global->MAIN_PROFID3_IN_ADDRESS:0,1,$noCountryCode);
-    	print '</td></tr>';
-    }
-
-    // Show prof id 4 in address into pdf
-
-    if (! $noCountryCode)
-    {
-    	$pid4=$langs->transcountry("ProfId4",$mysoc->country_code);
-    	if ($pid4 == '-') $pid4=false;
-    }
-    else
-    {
-    	$pid4 = img_warning().' <font class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("CompanyCountry")).'</font>';
-    }
-    if ($pid4)
-    {
-    	print '<tr class="oddeven"><td>'.$langs->trans("ShowProfIdInAddress").' - '.$pid4.'</td><td>';
-    	print $form->selectyesno('MAIN_PROFID4_IN_ADDRESS',isset($conf->global->MAIN_PROFID4_IN_ADDRESS)?$conf->global->MAIN_PROFID4_IN_ADDRESS:0,1,$noCountryCode);
-    	print '</td></tr>';
+        if (! $noCountryCode)
+        {
+            $pid=$langs->transcountry("ProfId".$i, $mysoc->country_code);
+            if ($pid == '-') $pid=false;
+        }
+        else
+        {
+            $pid = img_warning().' <font class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</font>';
+        }
+        if ($pid)
+        {
+            print '<tr class="oddeven"><td>'.$langs->trans("ShowProfIdInAddress").' - '.$pid.'</td><td>';
+            $keyforconstant = 'MAIN_PROFID'.$i.'_IN_ADDRESS';
+            print $form->selectyesno($keyforconstant, isset($conf->global->$keyforconstant)?$conf->global->$keyforconstant:0, 1, $noCountryCode);
+            print '</td></tr>';
+        }
     }
 
 	print '</table>';
@@ -419,77 +370,26 @@ else	// Show
 	print yn($conf->global->MAIN_TVAINTRA_NOT_IN_ADDRESS,1);
 	print '</td></tr>';
 
-    // Show prof id 1 in address into pdf
-
-    if (! $noCountryCode)
-    {
-    	$pid1=$langs->transcountry("ProfId1",$mysoc->country_code);
-    	if ($pid1 == '-') $pid1=false;
-    }
-    else
-    {
-    	$pid1 = img_warning().' <font class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("CompanyCountry")).'</font>';
-    }
-    if ($pid1)
-    {
-    	print '<tr class="oddeven"><td>'.$langs->trans("ShowProfIdInAddress").' - '.$pid1.'</td><td>';
-    	print yn($conf->global->MAIN_PROFID1_IN_ADDRESS,1);
-    	print '</td></tr>';
-    }
-
-    // Show prof id 2 in address into pdf
-
-    if (! $noCountryCode)
-    {
-    	$pid2=$langs->transcountry("ProfId2",$mysoc->country_code);
-    	if ($pid2 == '-') $pid2=false;
-    }
-    else
-    {
-    	$pid2 = img_warning().' <font class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("CompanyCountry")).'</font>';
-    }
-    if ($pid2)
-    {
-    	print '<tr class="oddeven"><td>'.$langs->trans("ShowProfIdInAddress").' - '.$pid2.'</td><td>';
-    	print yn($conf->global->MAIN_PROFID2_IN_ADDRESS,1);
-    	print '</td></tr>';
-    }
-
-    // Show prof id 3 in address into pdf
-
-    if (! $noCountryCode)
-    {
-    	$pid3=$langs->transcountry("ProfId3",$mysoc->country_code);
-    	if ($pid3 == '-') $pid3=false;
-    }
-    else
-    {
-    	$pid3 = img_warning().' <font class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("CompanyCountry")).'</font>';
-    }
-    if ($pid3)
-    {
-    	print '<tr class="oddeven"><td>'.$langs->trans("ShowProfIdInAddress").' - '.$pid3.'</td><td>';
-    	print yn($conf->global->MAIN_PROFID3_IN_ADDRESS,1);
-    	print '</td></tr>';
-    }
-
-    // Show prof id 4 in address into pdf
-
-    if (! $noCountryCode)
-    {
-    	$pid4=$langs->transcountry("ProfId4",$mysoc->country_code);
-    	if ($pid4 == '-') $pid4=false;
-    }
-    else
-    {
-    	$pid4 = img_warning().' <font class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("CompanyCountry")).'</font>';
-    }
-    if ($pid4)
-    {
-    	print '<tr class="oddeven"><td>'.$langs->trans("ShowProfIdInAddress").' - '.$pid4.'</td><td>';
-    	print yn($conf->global->MAIN_PROFID4_IN_ADDRESS,1);
-    	print '</td></tr>';
-    }
+	// Show prof id in address into pdf
+	for ($i=1; $i<=6; $i++)
+	{
+	    if (! $noCountryCode)
+	    {
+	        $pid=$langs->transcountry("ProfId".$i, $mysoc->country_code);
+	        if ($pid == '-') $pid=false;
+	    }
+	    else
+	    {
+	        $pid = img_warning().' <font class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</font>';
+	    }
+	    if ($pid)
+	    {
+	        print '<tr class="oddeven"><td>'.$langs->trans("ShowProfIdInAddress").' - '.$pid.'</td><td>';
+	        $keyforconstant = 'MAIN_PROFID'.$i.'_IN_ADDRESS';
+	        print yn($conf->global->$keyforconstant, 1);
+	        print '</td></tr>';
+	    }
+	}
 
     print '</table>'."\n";
 	print '</div>';

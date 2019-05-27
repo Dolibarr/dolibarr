@@ -408,6 +408,7 @@ class Dolresource extends CommonObject
 	function delete($rowid, $notrigger=0)
 	{
 		global $user,$langs,$conf;
+        require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 
 		$error=0;
 
