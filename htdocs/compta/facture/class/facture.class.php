@@ -4604,6 +4604,7 @@ class FactureLigne extends CommonInvoiceLine
 			if ($result <= 0)
 			{
 				$this->error='ErrorProductIdDoesNotExists';
+				dol_syslog(get_class($this)."::insert Error ".$this->error, LOG_ERR);
 				return -1;
 			}
 		}
