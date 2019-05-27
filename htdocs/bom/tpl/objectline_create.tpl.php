@@ -81,7 +81,7 @@ if ($nolinesbefore) {
 		print '</span></td>';
 	}
 	?>
-	<td class="linecollost right"><?php echo $langs->trans('ManufacturingEfficiency'); ?></td>
+	<td class="linecollost right"><?php echo $form->textwithpicto($langs->trans('ManufacturingEfficiency'), $langs->trans('ValueOfMeansLoss')); ?></td>
 	<td class="linecoledit" colspan="<?php echo $colspan; ?>">&nbsp;</td>
 </tr>
 <?php
