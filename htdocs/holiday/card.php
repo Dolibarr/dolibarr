@@ -1212,7 +1212,7 @@ else
                 print '<td>'.num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday).'</td>';
                 print '</tr>';
 
-                if ($object->statut == 5)
+                if ($object->statut == Holiday::STATUS_REFUSED)
                 {
                 	print '<tr>';
                 	print '<td>'.$langs->trans('DetailRefusCP').'</td>';
@@ -1265,7 +1265,7 @@ else
                 if (!$edit && $action != 'editvalidator') {
                     print '<tr>';
                     print '<td class="titlefield">';
-                    if ($object->statut == 3 || $object->statut == 4) print $langs->trans('ApprovedBy');
+                    if ($object->statut == Holiday::STATUS_APPROVED || $object->statut == Holiday::STATUS_CANCELED) print $langs->trans('ApprovedBy');
                     else print $langs->trans('ReviewedByCP');
                     print '</td>';
                     print '<td>'.$valideur->getNomUrl(-1);
@@ -1304,19 +1304,19 @@ else
                 print '<td>'.$langs->trans('DateCreateCP').'</td>';
                 print '<td>'.dol_print_date($object->date_create, 'dayhour').'</td>';
                 print '</tr>';
-                if ($object->statut == 3 || $object->statut == 4) {
+                if ($object->statut == Holiday::STATUS_APPROVED || $object->statut == Holiday::STATUS_CANCELED) {
                     print '<tr>';
                     print '<td>'.$langs->trans('DateValidCP').'</td>';
                     print '<td>'.dol_print_date($object->date_valid, 'dayhour').'</td>';		// warning: date_valid is approval date on holiday module
                     print '</tr>';
                 }
-                if ($object->statut == 4) {
+                if ($object->statut == Holiday::STATUS_CANCELED) {
                     print '<tr>';
                     print '<td>'.$langs->trans('DateCancelCP').'</td>';
                     print '<td>'.dol_print_date($object->date_cancel, 'dayhour').'</td>';
                     print '</tr>';
                 }
-                if ($object->statut == 5) {
+                if ($object->statut == Holiday::STATUS_REFUSED) {
                     print '<tr>';
                     print '<td>'.$langs->trans('DateRefusCP').'</td>';
                     print '<td>'.dol_print_date($object->date_refuse, 'dayhour').'</td>';
