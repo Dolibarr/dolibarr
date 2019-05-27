@@ -268,7 +268,8 @@ TicketPublicInterfaceForbidden=The public interface for the tickets was not enab
 ErrorEmailOrTrackingInvalid=Bad value for tracking ID or email
 OldUser=Old user
 NewUser=New user
-
+NumberOfTicketsByMonth=Number of tickets per month
+NbOfTickets=Number of tickets
 # notifications
 TicketNotificationEmailSubject=Ticket %s updated
 TicketNotificationEmailBody=This is an automatic message to notify you that ticket %s has just been updated

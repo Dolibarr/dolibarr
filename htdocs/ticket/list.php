@@ -34,7 +34,7 @@ include_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
 include_once DOL_DOCUMENT_ROOT . '/core/lib/project.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("ticket","companies","other","projects"));
+$langs->loadLangs(array("ticket", "companies", "other", "projects"));
 
 
 // Get parameters
@@ -314,7 +314,7 @@ if ($socid && !$projectid && $user->rights->societe->lire) {
         print '<div class="fichecenter">';
 
         print '<div class="underbanner clearboth"></div>';
-        print '<table class="border centpercent">';
+        print '<table class="border centpercent tableforfield">';
 
         // Customer code
         if ($socstat->client && !empty($socstat->code_client)) {
@@ -553,7 +553,7 @@ $parameters=array('arrayfields'=>$arrayfields);
 $reshook=$hookmanager->executeHooks('printFieldListOption', $parameters, $object);    // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Action column
-print '<td class="liste_titre right">';
+print '<td class="liste_titre maxwidthsearch">';
 $searchpicto=$form->showFilterButtons();
 print $searchpicto;
 print '</td>';
@@ -608,7 +608,7 @@ while ($i < min($num, $limit))
 	$object->id = $obj->rowid;
 	foreach($object->fields as $key => $val)
 	{
-		if (isset($obj->$key)) $object->$key = $obj->$key;
+		if (property_exists($obj, $key)) $object->$key = $obj->$key;
 	}
 	$langs->load("ticket");
 

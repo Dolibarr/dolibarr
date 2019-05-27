@@ -460,7 +460,7 @@ $holiday->selectStatutCP($search_statut, 'search_statut');
 print '</td>';
 
 // Actions
-print '<td class="liste_titre right">';
+print '<td class="liste_titre maxwidthsearch">';
 $searchpicto=$form->showFilterAndCheckAddButtons(0);
 print $searchpicto;
 print '</td>';

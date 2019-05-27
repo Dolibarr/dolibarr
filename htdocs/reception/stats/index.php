@@ -52,6 +52,7 @@ $langs->load("other");
 $langs->load("companies");
 
 
+
 /*
  * View
  */
@@ -65,7 +66,7 @@ print load_fiche_titre($langs->trans("StatisticsOfReceptions"), $mesg);
 
 dol_mkdir($dir);
 
-$stats = new ReceptionStats($db, $socid, $mode, ($userid>0?$userid:0));
+$stats = new ReceptionStats($db, $socid, '', ($userid>0?$userid:0));
 
 // Build graphic number of object
 $data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
@@ -76,14 +77,10 @@ $data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
 if (!$user->rights->societe->client->voir || $user->societe_id)
 {
     $filenamenb = $dir.'/receptionsnbinyear-'.$user->id.'-'.$year.'.png';
-    if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=receptionstats&file=receptionsnbinyear-'.$user->id.'-'.$year.'.png';
-    if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=receptionstatssupplier&file=receptionsnbinyear-'.$user->id.'-'.$year.'.png';
 }
 else
 {
     $filenamenb = $dir.'/receptionsnbinyear-'.$year.'.png';
-    if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=receptionstats&file=receptionsnbinyear-'.$year.'.png';
-    if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=receptionstatssupplier&file=receptionsnbinyear-'.$year.'.png';
 }
 
 $px1 = new DolGraph();
@@ -122,14 +119,10 @@ $data = $stats->getAmountByMonthWithPrevYear($endyear,$startyear);
 if (!$user->rights->societe->client->voir || $user->societe_id)
 {
     $filenameamount = $dir.'/receptionsamountinyear-'.$user->id.'-'.$year.'.png';
-    if ($mode == 'customer') $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=receptionstats&file=receptionsamountinyear-'.$user->id.'-'.$year.'.png';
-    if ($mode == 'supplier') $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=receptionstatssupplier&file=receptionsamountinyear-'.$user->id.'-'.$year.'.png';
 }
 else
 {
     $filenameamount = $dir.'/receptionsamountinyear-'.$year.'.png';
-    if ($mode == 'customer') $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=receptionstats&file=receptionsamountinyear-'.$year.'.png';
-    if ($mode == 'supplier') $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=receptionstatssupplier&file=receptionsamountinyear-'.$year.'.png';
 }
 
 $px2 = new DolGraph();
@@ -165,14 +158,10 @@ $data = $stats->getAverageByMonthWithPrevYear($endyear, $startyear);
 if (!$user->rights->societe->client->voir || $user->societe_id)
 {
     $filename_avg = $dir.'/receptionsaverage-'.$user->id.'-'.$year.'.png';
-    if ($mode == 'customer') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=receptionstats&file=receptionsaverage-'.$user->id.'-'.$year.'.png';
-    if ($mode == 'supplier') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=receptionstatssupplier&file=receptionsaverage-'.$user->id.'-'.$year.'.png';
 }
 else
 {
     $filename_avg = $dir.'/receptionsaverage-'.$year.'.png';
-    if ($mode == 'customer') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=receptionstats&file=receptionsaverage-'.$year.'.png';
-    if ($mode == 'supplier') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=receptionstatssupplier&file=receptionsaverage-'.$year.'.png';
 }
 
 $px3 = new DolGraph();
@@ -215,7 +204,7 @@ if (! count($arrayyears)) $arrayyears[$nowyear]=$nowyear;
 
 $h=0;
 $head = array();
-$head[$h][0] = DOL_URL_ROOT . '/commande/stats/index.php?mode='.$mode;
+$head[$h][0] = DOL_URL_ROOT . '/commande/stats/index.php';
 $head[$h][1] = $langs->trans("ByMonthYear");
 $head[$h][2] = 'byyear';
 $h++;
@@ -234,15 +223,13 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 //{
 	// Show filter box
 	print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="mode" value="'.$mode.'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
 	// Company
 	print '<tr><td class="left">'.$langs->trans("ThirdParty").'</td><td class="left">';
-	if ($mode == 'customer') $filter='s.client in (1,2,3)';
-	if ($mode == 'supplier') $filter='s.fournisseur = 1';
-	print $form->select_company($socid, 'socid', $filter, 1, 0, 0, array(), 0, '', 'style="width: 95%"');
+	print $form->select_company($socid, 'socid', '', 1, 0, 0, array(), 0, '', 'style="width: 95%"');
 	print '</td></tr>';
 	// User
 	print '<tr><td class="left">'.$langs->trans("CreatedBy").'</td><td class="left">';
@@ -279,7 +266,7 @@ foreach ($data as $val)
 
 
 		print '<tr class="oddeven" height="24">';
-		print '<td class="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.'">'.$oldyear.'</a></td>';
+		print '<td class="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'">'.$oldyear.'</a></td>';
 
 		print '<td class="right">0</td>';
 		/*print '<td class="right">0</td>';
@@ -289,7 +276,7 @@ foreach ($data as $val)
 
 	print '<tr class="oddeven" height="24">';
 	print '<td class="center">';
-	if ($year) print '<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.'">'.$year.'</a>';
+	if ($year) print '<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'">'.$year.'</a>';
 	else print $langs->trans("ValidationDateNotDefinedEvenIfReceptionValidated");
 	print '</td>';
 	print '<td class="right">'.$val['nb'].'</td>';

@@ -1666,7 +1666,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		print '<tr>';
 		print '<td class="fieldrequired">' . $langs->trans('ThirdParty') . '</td>';
 		print '<td>';
-		print $form->select_company('', 'socid', 's.client in (1,2,3)', 'SelectThirdParty', 0, 0, array(), 0, 'minwidth300');
+		print $form->select_company('', 'socid', 's.client IN (1,2,3)', 'SelectThirdParty', 0, 0, array(), 0, 'minwidth300');
 		print '</td>';
 		print '</tr>';
 
@@ -1989,7 +1989,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
     		print '<td class="liste_titre"><input type="text" class="flat" name="search_soc" value="' . $search_soc . '" size="20"></td>';
     		print '<td class="liste_titre" colspan="'.$colspan.'">&nbsp;</td>';
     		// Print the search button
-            print '<td class="liste_titre right">';
+            print '<td class="liste_titre maxwidthsearch">';
             $searchpicto=$form->showFilterAndCheckAddButtons(0);
             print $searchpicto;
             print '</td>';

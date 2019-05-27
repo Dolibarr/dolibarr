@@ -545,7 +545,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 			print '<td class="liste_titre"><input type="text" class="flat" name="search_prod" value="' . $search_prod . '" size="20"></td>';
             print '<td class="liste_titre" colspan="8">&nbsp;</td>';
             // Print the search button
-            print '<td class="liste_titre right">';
+            print '<td class="liste_titre maxwidthsearch">';
             $searchpicto=$form->showFilterAndCheckAddButtons(0);
             print $searchpicto;
             print '</td>';

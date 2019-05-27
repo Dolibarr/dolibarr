@@ -13,7 +13,7 @@ $form= new Form($db);
 
 print '<div class="tagtable centpercent noborder allwidth">';
 
-print '<form method="POST" class="tagtable centpercent noborder allwidth">';
+print '<form method="POST" class="tagtable centpercent noborder borderbottom allwidth">';
 
 print '<div class="tagtr liste_titre">';
 print '<div class="tagtd liste_titre">'.$langs->trans('Resource').'</div>';

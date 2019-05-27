@@ -728,7 +728,7 @@ if ($resql)
 	}
 	if (! empty($arrayfields['rtp']['checked']))
 	{
-		print '<td class="liste_titre right">';
+		print '<td class="liste_titre">';
 		print '</td>';
 	}
 	// Extra fields

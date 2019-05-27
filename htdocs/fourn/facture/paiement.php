@@ -944,7 +944,7 @@ if (empty($action) || $action == 'list')
         print '<td class="liste_titre right">';
         print '<input class="flat" type="text" size="4" name="search_amount" value="'.dol_escape_htmltag($search_amount).'">';
         print '</td>';
-        print '<td class="liste_titre right">';
+        print '<td class="liste_titre maxwidthsearch">';
         $searchpicto=$form->showFilterAndCheckAddButtons(0);
         print $searchpicto;
         print '</td>';
