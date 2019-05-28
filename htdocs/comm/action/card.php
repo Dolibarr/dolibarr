@@ -237,6 +237,7 @@ if ($action == 'add')
 		$object->priority = GETPOST("priority")?GETPOST("priority"):0;
 		$object->fulldayevent = (! empty($fulldayevent)?1:0);
 		$object->location = GETPOST("location");
+		$object->private = GETPOST("private");
 		$object->label = trim(GETPOST('label'));
 		$object->fk_element = GETPOST("fk_element");
 		$object->elementtype = GETPOST("elementtype");
@@ -430,6 +431,7 @@ if ($action == 'update')
 		$object->priority    = GETPOST("priority");
         $object->fulldayevent= GETPOST("fullday")?1:0;
 		$object->location    = GETPOST('location');
+		$object->private    = GETPOST('private');
 		$object->socid       = GETPOST("socid");
 		$socpeopleassigned   = GETPOST("socpeopleassigned", 'array');
 		$object->socpeopleassigned = array();
@@ -814,6 +816,10 @@ if ($action == 'create')
 		print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3"><input type="text" name="location" class="soixantepercent" value="'.(GETPOST('location')?GETPOST('location'):$object->location).'"></td></tr>';
     }
 
+    //Private
+    $is_private = (GETPOST('private')?GETPOST('private'):$object->private);
+    print '<tr><td>'.$langs->trans("Private").'</td><td colspan="3">'.$form->selectyesno('private',$is_private,1).'</td></tr>';
+
 	// Assigned to
 	print '<tr><td class="tdtop nowrap">'.$langs->trans("ActionAffectedTo").'</td><td>';
 	$listofuserid=array();
@@ -1014,6 +1020,7 @@ if ($id > 0)
 		$object->priority    = GETPOST("priority");
         $object->fulldayevent= GETPOST("fullday")?1:0;
 		$object->location    = GETPOST('location');
+		$object->private    = GETPOST('private');
 		$object->socid       = GETPOST("socid");
 		$socpeopleassigned   = GETPOST("socpeopleassigned", 'array');
 		foreach ($socpeopleassigned as $tmpid) $object->socpeopleassigned[$id] = array('id' => $tmpid);
@@ -1201,6 +1208,9 @@ if ($id > 0)
 	    {
 			print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3"><input type="text" name="location" class="soixantepercent" value="'.$object->location.'"></td></tr>';
 	    }
+        //Private
+        $is_private = (GETPOST('private')?GETPOST('private'):$object->private);
+        print '<tr><td>'.$langs->trans("Private").'</td><td colspan="3">'.$form->selectyesno('private',$is_private).'</td></tr>';
 
 		// Assigned to
 	    $listofuserid=array();							// User assigned
@@ -1497,6 +1507,11 @@ if ($id > 0)
     	{
 			print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3">'.$object->location.'</td></tr>';
     	}
+        //Private
+        $yes_no = array($langs->trans('No'), $langs->trans('Yes'));
+	    if(empty($object->private)) $is_private = 0;
+	    else $is_private = 1;
+        print '<tr><td>'.$langs->trans("Private").'</td><td colspan="3">'.$yes_no[$is_private].'</td></tr>';
 
 		// Assigned to
     	print '<tr><td class="nowrap">'.$langs->trans("ActionAssignedTo").'</td><td colspan="3">';

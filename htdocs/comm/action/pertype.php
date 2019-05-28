@@ -348,7 +348,7 @@ $eventarray=array();
 
 $sql = 'SELECT';
 if ($usergroup > 0) $sql.=" DISTINCT";
-$sql.= ' a.id, a.label,';
+$sql.= ' a.id, a.label, a.private,';
 $sql.= ' a.datep,';
 $sql.= ' a.datep2,';
 $sql.= ' a.percent,';
@@ -462,6 +462,12 @@ if ($resql)
         // Create a new object action
         $event=new ActionComm($db);
         $event->id=$obj->id;
+        $event->private=$obj->private;
+        //check private rights
+        if(!$event->isViewable()) {
+            $i++;
+            continue;
+        }
         $event->datep=$datep;      // datep and datef are GMT date
         $event->datef=$datep2;
         $event->type_code=$obj->code;

@@ -63,6 +63,7 @@ if ($actioncode == '' && empty($actioncodearray)) $actioncode=(empty($conf->glob
 $search_id=GETPOST('search_id', 'alpha');
 $search_title=GETPOST('search_title', 'alpha');
 $search_note=GETPOST('search_note', 'alpha');
+$search_private=GETPOST('search_private','int');
 
 $dateselect=dol_mktime(0, 0, 0, GETPOST('dateselectmonth', 'int'), GETPOST('dateselectday', 'int'), GETPOST('dateselectyear', 'int'));
 $datestart=dol_mktime(0, 0, 0, GETPOST('datestartmonth', 'int'), GETPOST('datestartday', 'int'), GETPOST('datestartyear', 'int'));
@@ -126,6 +127,7 @@ $arrayfields=array(
 	'a.id'=>array('label'=>"Ref", 'checked'=>1),
 	'owner'=>array('label'=>"Owner", 'checked'=>1),
 	'c.libelle'=>array('label'=>"Type", 'checked'=>1),
+	'a.private'=>array('label'=>"Private", 'checked'=>1),
 	'a.label'=>array('label'=>"Title", 'checked'=>1),
 	'a.note'=>array('label'=>'Description', 'checked'=>0),
 	'a.datep'=>array('label'=>"DateStart", 'checked'=>1),
@@ -179,6 +181,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
     $search_id='';
 	$search_title='';
     $search_note='';
+	$search_private='';
     $datestart='';
     $dateend='';
     $status='';
@@ -226,6 +229,7 @@ if ($usergroup) $param.="&search_usergroup=".urlencode($usergroup);
 if ($search_id != '') $param.='&search_title='.urlencode($search_id);
 if ($search_title != '') $param.='&search_title='.urlencode($search_title);
 if ($search_note != '') $param.='&search_note='.$search_note;
+if ($search_private != '') $param.='&search_private='.$search_private;
 if (GETPOST('datestartday', 'int')) $param.='&datestartday='.GETPOST('datestartday', 'int');
 if (GETPOST('datestartmonth', 'int')) $param.='&datestartmonth='.GETPOST('datestartmonth', 'int');
 if (GETPOST('datestartyear', 'int')) $param.='&datestartyear='.GETPOST('datestartyear', 'int');
@@ -243,6 +247,7 @@ $sql.= " a.id, a.label, a.note, a.datep as dp, a.datep2 as dp2,";
 $sql.= ' a.fk_user_author,a.fk_user_action,';
 $sql.= " a.fk_contact, a.note, a.percent as percent,";
 $sql.= " a.fk_element, a.elementtype, a.datec, a.tms as datem,";
+$sql.= " a.private,";
 $sql.= " c.code as type_code, c.libelle as type_label,";
 $sql.= " sp.lastname, sp.firstname, sp.email, sp.phone, sp.address, sp.phone as phone_pro, sp.phone_mobile, sp.phone_perso, sp.fk_pays as country_id";
 
@@ -313,6 +318,8 @@ if ($status == 'todo') { $sql.= " AND (a.percent >= 0 AND a.percent < 100)"; }
 if ($search_id) $sql.=natural_search("a.id", $search_id, 1);
 if ($search_title) $sql.=natural_search("a.label", $search_title);
 if ($search_note) $sql.=natural_search('a.note', $search_note);
+if ($search_private != '' && $search_private>-1) $sql .= ' AND a.private = '.$search_private;
+
 // We must filter on assignement table
 if ($filtert > 0 || $usergroup > 0)
 {
@@ -453,6 +460,7 @@ if ($resql)
 	if (! empty($arrayfields['a.id']['checked']))		print '<td class="liste_titre"><input type="text" class="maxwidth50" name="search_id" value="'.$search_id.'"></td>';
 	if (! empty($arrayfields['owner']['checked']))		print '<td class="liste_titre"></td>';
 	if (! empty($arrayfields['c.libelle']['checked']))	print '<td class="liste_titre"></td>';
+	if (! empty($arrayfields['a.private']['checked']))  print '<td class="liste_titre">'.$form->selectyesno('search_private',$search_private,1,false,1).'</td>';
 	if (! empty($arrayfields['a.label']['checked']))	print '<td class="liste_titre"><input type="text" class="maxwidth75" name="search_title" value="'.$search_title.'"></td>';
 	if (! empty($arrayfields['a.datep']['checked']))	{
 		print '<td class="liste_titre nowraponall" align="center">';
@@ -497,6 +505,7 @@ if ($resql)
 	if (! empty($arrayfields['a.id']['checked']))	      print_liste_field_titre($arrayfields['a.id']['label'], $_SERVER["PHP_SELF"], "a.id", $param, "", "", $sortfield, $sortorder);
 	if (! empty($arrayfields['owner']['checked']))        print_liste_field_titre($arrayfields['owner']['label'], $_SERVER["PHP_SELF"], "", $param, "", "", $sortfield, $sortorder);
 	if (! empty($arrayfields['c.libelle']['checked']))	  print_liste_field_titre($arrayfields['c.libelle']['label'], $_SERVER["PHP_SELF"], "c.libelle", $param, "", "", $sortfield, $sortorder);
+	if (! empty($arrayfields['a.private']['checked']))	  print_liste_field_titre($arrayfields['a.private']['label'], $_SERVER["PHP_SELF"],"a.private",$param,"","",$sortfield,$sortorder);
 	if (! empty($arrayfields['a.label']['checked']))	  print_liste_field_titre($arrayfields['a.label']['label'], $_SERVER["PHP_SELF"], "a.label", $param, "", "", $sortfield, $sortorder);
 	if (! empty($arrayfields['a.note']['checked']))		  print_liste_field_titre($arrayfields['a.note']['label'], $_SERVER["PHP_SELF"], "a.note", $param, "", "", $sortfield, $sortorder);
 	//if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
@@ -547,6 +556,12 @@ if ($resql)
 		$actionstatic->type_picto=$obj->type_picto;
 		$actionstatic->label=$obj->label;
 		$actionstatic->note=dol_htmlentitiesbr($obj->note);
+		$actionstatic->private=$obj->private;
+		//check private rights
+        if(!$actionstatic->isViewable()) {
+            $i++;
+            continue;
+        }
 
 		print '<tr class="oddeven">';
 
@@ -590,6 +605,16 @@ if ($resql)
 			if (empty($conf->global->AGENDA_USE_EVENT_TYPE) && empty($arraylist[$labeltype])) $labeltype='AC_OTH';
 			if (! empty($arraylist[$labeltype])) $labeltype=$arraylist[$labeltype];
 			print dol_trunc($labeltype, 28);
+			print '</td>';
+		}
+
+  //Private
+        if (! empty($arrayfields['a.private']['checked'])) {
+            $yes_no = array($langs->trans('No'), $langs->trans('Yes'));
+            if(empty($actionstatic->private)) $is_private = 0;
+            else $is_private = 1;
+			print '<td>';
+			print $yes_no[$is_private];
 			print '</td>';
 		}
 

@@ -156,6 +156,14 @@ class modAgenda extends DolibarrModules
 		$this->rights[$r][5] = 'delete';
 		$r++;
 
+		$this->rights[$r][0] = 2404;
+		$this->rights[$r][1] = 'Read private actions/tasks linked to his account';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'myactions';
+		$this->rights[$r][5] = 'read_private';
+		$r++;
+
 		$this->rights[$r][0] = 2411;
 		$this->rights[$r][1] = 'Read actions/tasks of others';
 		$this->rights[$r][2] = 'r';
@@ -179,6 +187,14 @@ class modAgenda extends DolibarrModules
 		$this->rights[$r][4] = 'allactions';
 		$this->rights[$r][5] = 'delete';
 		$r++;
+
+        $this->rights[$r][0] = 2415;
+        $this->rights[$r][1] = 'Read private actions/tasks of others';
+        $this->rights[$r][2] = 'r';
+        $this->rights[$r][3] = 0;
+        $this->rights[$r][4] = 'allactions';
+        $this->rights[$r][5] = 'read_private';
+        $r++;
 
 		$this->rights[$r][0] = 2414;
 		$this->rights[$r][1] = 'Export actions/tasks of others';

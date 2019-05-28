@@ -384,6 +384,7 @@ $sql.= ' a.id, a.label,';
 $sql.= ' a.datep,';
 $sql.= ' a.datep2,';
 $sql.= ' a.percent,';
+$sql.= ' a.private,';
 $sql.= ' a.fk_user_author,a.fk_user_action,';
 $sql.= ' a.transparency, a.priority, a.fulldayevent, a.location,';
 $sql.= ' a.fk_soc, a.fk_contact, a.fk_element, a.elementtype, a.fk_project,';
@@ -502,6 +503,12 @@ if ($resql)
         // Create a new object action
         $event=new ActionComm($db);
         $event->id=$obj->id;
+        $event->private=$obj->private;
+        //check private rights
+        if(!$event->isViewable()) {
+            $i++;
+            continue;
+        }
         $event->datep=$datep;      // datep and datef are GMT date
         $event->datef=$datep2;
         $event->type_code=$obj->code;

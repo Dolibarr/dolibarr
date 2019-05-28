@@ -45,6 +45,8 @@ create table llx_actioncomm
 
   transparency      integer,						-- transparency (ical standard). used to say if user assigned to event are busy or not by event. This field may be deprecated if we want to store transparency for each assigned user, moved into table llx_actioncomm_resources.
 
+  private		    smallint NOT NULL default 0,
+
   priority			smallint,						-- priority (ical standard)
   visibility		varchar(12) DEFAULT 'default',	-- visibility (ical standard) - 'default', 'public', 'private', 'confidential'
   fulldayevent		smallint NOT NULL default 0,    -- full day (ical standard)
