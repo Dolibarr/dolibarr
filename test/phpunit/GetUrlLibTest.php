@@ -180,6 +180,14 @@ class GetUrlLibTest extends PHPUnit\Framework\TestCase
     	$langs=$this->savlangs;
     	$db=$this->savdb;
 
+    	$result=getDomainFromURL('http://localhost');
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals('localhost', $result, 'Test 0a');
+
+    	$result=getDomainFromURL('http://localhost', 1);
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals('localhost', $result, 'Test 0b');
+
     	$result=getDomainFromURL('https://dolimed.com');
     	print __METHOD__." result=".$result."\n";
     	$this->assertEquals('dolimed', $result, 'Test 1');
