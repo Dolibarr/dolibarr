@@ -172,7 +172,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
  * For example: https://www.abc.mydomain.com/dir/page.html return 'mydomain'
  *
  * @param	string	  $url 				    Full URL.
- * @param	string	  $mode					0=return 'mydomain', 1=return 'mydomain.com'
+ * @param	int	 	  $mode					0=return 'mydomain', 1=return 'mydomain.com'
  * @return	string						    Returns domaine name
  */
 function getDomainFromURL($url, $mode=0)
