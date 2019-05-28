@@ -3649,9 +3649,10 @@ class Form
 	 *  @param  int		$useempty           1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
 	 *  @param  string	$moreattrib         To add more attribute on select
 	 *  @param	int		$showcurrency		Show currency in label
+	 *  @param	string	$morecss			More CSS
 	 * 	@return	int							<0 if error, Num of bank account found if OK (0, 1, 2, ...)
 	 */
-    public function select_comptes($selected = '', $htmlname = 'accountid', $statut = 0, $filtre = '', $useempty = 0, $moreattrib = '', $showcurrency = 0)
+    public function select_comptes($selected = '', $htmlname = 'accountid', $statut = 0, $filtre = '', $useempty = 0, $moreattrib = '', $showcurrency = 0, $morecss = '')
 	{
         // phpcs:enable
 		global $langs, $conf;
@@ -3674,7 +3675,7 @@ class Form
 			$i = 0;
 			if ($num)
 			{
-				print '<select id="select'.$htmlname.'" class="flat selectbankaccount" name="'.$htmlname.'"'.($moreattrib?' '.$moreattrib:'').'>';
+				print '<select id="select'.$htmlname.'" class="flat selectbankaccount'.($morecss?' '.$morecss:'').'" name="'.$htmlname.'"'.($moreattrib?' '.$moreattrib:'').'>';
 				if ($useempty == 1 || ($useempty == 2 && $num > 1))
 				{
 					print '<option value="-1">&nbsp;</option>';

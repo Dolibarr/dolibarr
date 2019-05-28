@@ -877,12 +877,12 @@ if ($resql)
 	}
 	if (! empty($arrayfields['bu.label']['checked']))
 	{
-	    print '<td class="liste_titre"><input type="text" class="flat" name="search_thirdparty" value="'.dol_escape_htmltag($search_thirdparty).'" size="10"></td>';
+	    print '<td class="liste_titre"><input type="text" class="flat maxwidth75" name="search_thirdparty" value="'.dol_escape_htmltag($search_thirdparty).'"></td>';
 	}
 	if (! empty($arrayfields['ba.ref']['checked']))
 	{
-    	print '<td class="liste_titre right">';
-    	$form->select_comptes($search_account, 'search_account', 0, '', 1, ($id > 0 || ! empty($ref)?' disabled="disabled"':''));
+    	print '<td class="liste_titre">';
+    	$form->select_comptes($search_account, 'search_account', 0, '', 1, ($id > 0 || ! empty($ref)?' disabled="disabled"':''), 0, 'maxwidth100');
     	print '</td>';
 	}
 	if (! empty($arrayfields['b.debit']['checked']))
@@ -940,7 +940,7 @@ if ($resql)
 	if (! empty($arrayfields['type']['checked']))               print_liste_field_titre($arrayfields['type']['label'], $_SERVER['PHP_SELF'], '', '', $param, 'align="center"', $sortfield, $sortorder);
 	if (! empty($arrayfields['b.num_chq']['checked']))          print_liste_field_titre($arrayfields['b.num_chq']['label'], $_SERVER['PHP_SELF'], 'b.num_chq', '', $param, 'align="center"', $sortfield, $sortorder);
 	if (! empty($arrayfields['bu.label']['checked']))           print_liste_field_titre($arrayfields['bu.label']['label'], $_SERVER['PHP_SELF'], 'bu.label', '', $param, '', $sortfield, $sortorder);
-	if (! empty($arrayfields['ba.ref']['checked']))             print_liste_field_titre($arrayfields['ba.ref']['label'], $_SERVER['PHP_SELF'], 'ba.ref', '', $param, 'class="right"', $sortfield, $sortorder);
+	if (! empty($arrayfields['ba.ref']['checked']))             print_liste_field_titre($arrayfields['ba.ref']['label'], $_SERVER['PHP_SELF'], 'ba.ref', '', $param, '', $sortfield, $sortorder);
 	if (! empty($arrayfields['b.debit']['checked']))            print_liste_field_titre($arrayfields['b.debit']['label'], $_SERVER['PHP_SELF'], 'b.amount', '', $param, 'class="right"', $sortfield, $sortorder);
 	if (! empty($arrayfields['b.credit']['checked']))           print_liste_field_titre($arrayfields['b.credit']['label'], $_SERVER['PHP_SELF'], 'b.amount', '', $param, 'class="right"', $sortfield, $sortorder);
 	if (! empty($arrayfields['balancebefore']['checked']))      print_liste_field_titre($arrayfields['balancebefore']['label'], $_SERVER['PHP_SELF'], '', '', $param, 'class="right"', $sortfield, $sortorder);
@@ -1337,7 +1337,7 @@ if ($resql)
     	// Bank account
     	if (! empty($arrayfields['ba.ref']['checked']))
     	{
-        	print '<td class="nowrap right">';
+        	print '<td class="nowrap">';
 			print $bankaccount->getNomUrl(1);
 			print "</td>\n";
             if (! $i) $totalarray['nbfield']++;
