@@ -878,14 +878,14 @@ class Contrat extends CommonObject
 		if ($this->commercial_signature_id <= 0)
 		{
 			$langs->load("commercial");
-			$this->error.=$langs->trans("ErrorFieldRequired", $langs->trans("SalesRepresentativeSignature"));
+			$this->error.=$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("SalesRepresentativeSignature"));
 			$paramsok=0;
 		}
 		if ($this->commercial_suivi_id <= 0)
 		{
 			$langs->load("commercial");
 			$this->error.=($this->error?"<br>":'');
-			$this->error.=$langs->trans("ErrorFieldRequired", $langs->trans("SalesRepresentativeFollowUp"));
+			$this->error.=$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("SalesRepresentativeFollowUp"));
 			$paramsok=0;
 		}
 		if (! $paramsok) return -1;

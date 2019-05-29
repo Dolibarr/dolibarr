@@ -424,7 +424,7 @@ if (empty($reshook))
 		$object->sendto = $_POST["sendto"];
 		if (! $object->sendto)
 		{
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("MailTo")), null, 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("MailTo")), null, 'errors');
 			$error++;
 		}
 
