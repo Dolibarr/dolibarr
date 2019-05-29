@@ -1231,6 +1231,11 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 
     if (! empty($conf->agenda->enabled))
     {
+		$search_private=GETPOST('search_private','int');
+        if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
+        {
+            $search_private='';
+        }
         // Recherche histo sur actioncomm
         if (is_object($objcon) && $objcon->id) {
             $sql = "SELECT DISTINCT a.id, a.label as label,";
@@ -1321,6 +1326,8 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
                 else $sql.= " AND c.code = '".$db->escape($actioncode)."'";
             }
         }
+        if ($search_private != '' && $search_private>-1) $sql .= ' AND a.private = '.$search_private;
+
         if ($donetodo == 'todo') $sql.= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep > '".$db->idate($now)."'))";
         elseif ($donetodo == 'done') $sql.= " AND (a.percent = 100 OR (a.percent = -1 AND a.datep <= '".$db->idate($now)."'))";
         if (is_array($filters) && $filters['search_agenda_label']) $sql.= natural_search('a.label', $filters['search_agenda_label']);
@@ -1394,7 +1401,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
                     'dateend'=>$db->jdate($obj->dp2),
                     'note'=>$obj->label,
                     'percent'=>$obj->percent,
-
+                    'private'=> $obj->private,
                     'userid'=>$obj->user_id,
                     'login'=>$obj->user_login,
                     'userfirstname'=>$obj->user_firstname,
@@ -1483,6 +1490,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
         $out.='<td class="liste_titre">';
         $out.=$formactions->select_type_actions($actioncode, "actioncode", '', empty($conf->global->AGENDA_USE_EVENT_TYPE)?1:-1, 0, 0, 1);
         $out.='</td>';
+        $out.='<td class="liste_titre">'.$form->selectyesno('search_private',$search_private,1,false,1).'</td>';
         $out.='<td class="liste_titre maxwidth100onsmartphone"><input type="text" class="maxwidth100onsmartphone" name="search_agenda_label" value="'.$filters['search_agenda_label'].'"></td>';
         $out.='<td class="liste_titre"></td>';
         $out.='<td class="liste_titre"></td>';
@@ -1510,6 +1518,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 		$out.=getTitleFieldOfList($langs->trans("Ref"), 0, $_SERVER["PHP_SELF"], 'a.id', '', $param, '', $sortfield, $sortorder);
 		$out.=getTitleFieldOfList($langs->trans("Owner"));
         $out.=getTitleFieldOfList($langs->trans("Type"));
+        $out.=getTitleFieldOfList($langs->trans("Private"),0, $_SERVER["PHP_SELF"], 'a.private', '', $param, '', $sortfield, $sortorder);
 		$out.=getTitleFieldOfList($langs->trans("Label"), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder);
         $out.=getTitleFieldOfList($langs->trans("Date"), 0, $_SERVER["PHP_SELF"], 'a.datep,a.id', '', $param, 'align="center"', $sortfield, $sortorder);
 		$out.=getTitleFieldOfList('');
@@ -1579,6 +1588,14 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
             if (empty($conf->global->AGENDA_USE_EVENT_TYPE) && empty($arraylist[$labeltype])) $labeltype='AC_OTH';
             if (! empty($arraylist[$labeltype])) $labeltype=$arraylist[$labeltype];
             $out.= dol_trunc($labeltype, 28);
+            $out.='</td>';
+
+            //Private
+            $yes_no = array($langs->trans('No'), $langs->trans('Yes'));
+            if(empty($actionstatic->private)) $is_private = 0;
+            else $is_private = 1;
+            $out.='<td>';
+            $out.=$yes_no[$is_private];
             $out.='</td>';
 
             // Title
