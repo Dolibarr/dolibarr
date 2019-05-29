@@ -327,7 +327,7 @@ if ($action == 'create')
 	// Category
     if (is_array($options) && count($options))
     {
-        print '<tr><td>'.$langs->trans("Rubrique").'</td><td>';
+        print '<tr><td>'.$langs->trans("RubriquesTransactions").'</td><td>';
         print Form::selectarray('category_transaction', $options, GETPOST('category_transaction'), 1);
         print '</td></tr>';
     }
