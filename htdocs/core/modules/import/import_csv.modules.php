@@ -137,7 +137,7 @@ class ImportCsv extends ModeleImports
 	 *
 	 * 	@param	Translate	$outputlangs		Output language
 	 *  @param	array		$headerlinefields	Array of fields name
-	 * 	@return	string
+	 * 	@return	string$limittoachartaccount
 	 */
 	function write_title_example($outputlangs,$headerlinefields)
 	{
@@ -444,7 +444,7 @@ class ImportCsv extends ModeleImports
                                             $classinstance=new $class($this->db);
                                             // Try the fetch from code or ref
                                             $param_array = array('', $newval);
-                                            if ($class == 'AccountingAccount') 
+                                            if ($class == 'AccountingAccount')
                                             {
                                                 //var_dump($arrayrecord[0]['val']);
                                                 /*include_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancysystem.class.php';
