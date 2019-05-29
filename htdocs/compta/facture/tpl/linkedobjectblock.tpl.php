@@ -55,7 +55,7 @@ foreach($linkedObjectBlock as $key => $objectlink)
 			case Facture::TYPE_CREDIT_NOTE:
 				echo $langs->trans("InvoiceAvoir");
 				break;
-				case Facture::TYPE_DEPOSIT:
+			case Facture::TYPE_DEPOSIT:
 				echo $langs->trans("InvoiceDeposit");
 				break;
 			case Facture::TYPE_PROFORMA:
@@ -70,7 +70,7 @@ foreach($linkedObjectBlock as $key => $objectlink)
 		}
 		?></td>
         <td class="linkedcol-name"><?php echo $objectlink->getNomUrl(1); ?></td>
-    	<td class="linkedcol-ref center"><?php echo $objectlink->ref_client; ?></td>
+    	<td class="linkedcol-ref left"><?php echo $objectlink->ref_client; ?></td>
     	<td class="linkedcol-date center"><?php echo dol_print_date($objectlink->date, 'day'); ?></td>
     	<td class="linkedcol-amount right"><?php
     		if ($user->rights->facture->lire) {
