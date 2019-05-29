@@ -3718,8 +3718,6 @@ abstract class CommonObject
 		$dirtpls=array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
 		foreach($dirtpls as $module => $reldir)
 		{
-			if (!empty($module) && empty($conf->$module->enabled)) continue;
-
 			if (!empty($module))
 			{
 				$tpl = dol_buildpath($reldir.'/objectline_create.tpl.php');
@@ -3979,8 +3977,6 @@ abstract class CommonObject
 			$dirtpls=array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
 			foreach($dirtpls as $module => $reldir)
 			{
-				if (!empty($module) && empty($conf->$module->enabled)) continue;
-
 				if (!empty($module))
 				{
 					$tpl = dol_buildpath($reldir.'/objectline_view.tpl.php');
@@ -4011,8 +4007,6 @@ abstract class CommonObject
 			$dirtpls=array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
 			foreach($dirtpls as $module => $reldir)
 			{
-				if (!empty($module) && empty($conf->$module->enabled)) continue;
-
 				if (!empty($module))
 				{
 					$tpl = dol_buildpath($reldir.'/objectline_edit.tpl.php');
@@ -4216,8 +4210,6 @@ abstract class CommonObject
 		$dirtpls=array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
 		foreach($dirtpls as $module => $reldir)
 		{
-			if (!empty($module) && empty($conf->$module->enabled)) continue;
-
 			if (!empty($module))
 			{
 				$tpl = dol_buildpath($reldir.'/originproductline.tpl.php');
