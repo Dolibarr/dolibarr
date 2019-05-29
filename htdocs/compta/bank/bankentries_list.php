@@ -961,6 +961,7 @@ if ($resql)
 	$balancebefore = 0;    // For balance
 	$balancecalculated = false;
 	$posconciliatecol = 0;
+	$cachebankaccount = array();
 
 	// Loop on each record
 	$sign = 1;

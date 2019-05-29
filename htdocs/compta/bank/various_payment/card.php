@@ -395,7 +395,7 @@ if ($id)
 {
 	$head=various_payment_prepare_head($object);
 
-	dol_fiche_head($head, 'card', $langs->trans("VariousPayment"), -1, 'payment');
+	dol_fiche_head($head, 'card', $langs->trans("VariousPayment"), -1, $object->picto);
 
 	$morehtmlref='<div class="refidno">';
 	// Project
@@ -479,7 +479,7 @@ if ($id)
     print '</td><td>';
     print $object->subledger_account;
     print '</td></tr>';
-    
+
 	if (! empty($conf->banque->enabled))
 	{
 		if ($object->fk_account > 0)
