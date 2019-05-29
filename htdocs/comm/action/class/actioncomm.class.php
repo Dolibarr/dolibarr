@@ -1085,10 +1085,10 @@ class ActionComm extends CommonObject
         // phpcs:enable
         global $conf, $langs;
 
-    	if(empty($load_state_board)) $sql = "SELECT a.id, a.datep as dp";
+    	if(empty($load_state_board)) $sql = "SELECT a.id, a.datep as dp, a.private";
     	else {
     		$this->nb=array();
-    		$sql = "SELECT count(a.id) as nb";
+    		$sql = "SELECT a.id, a.private";
     	}
     	$sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
     	if (! $user->rights->societe->client->voir && ! $user->societe_id) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
@@ -1103,23 +1103,31 @@ class ActionComm extends CommonObject
     	$resql=$this->db->query($sql);
     	if ($resql)
     	{
+
+    	    $agenda_static = new ActionComm($this->db);
     		if(empty($load_state_board)) {
-	    		$agenda_static = new ActionComm($this->db);
 	    		$response = new WorkboardResponse();
 	    		$response->warning_delay = $conf->agenda->warning_delay/60/60/24;
 	    		$response->label = $langs->trans("ActionsToDo");
 	    		$response->url = DOL_URL_ROOT.'/comm/action/list.php?actioncode=0&amp;status=todo&amp;mainmenu=agenda';
 	    		if ($user->rights->agenda->allactions->read) $response->url.='&amp;filtert=-1';
 	    		$response->img = img_object('', "action", 'class="inline-block valigntextmiddle"');
-    		}
+    		} else $this->nb["actionscomm"] = 0;
     		// This assignment in condition is not a bug. It allows walking the results.
     		while ($obj=$this->db->fetch_object($resql))
     		{
+                $agenda_static->id=$obj->id;
+                $agenda_static->private=$obj->private;
+                //check private rights
+                if(!$agenda_static->isViewable()) continue;
+
     			if(empty($load_state_board)) {
 	    			$response->nbtodo++;
 	    			$agenda_static->datep = $this->db->jdate($obj->dp);
 	    			if ($agenda_static->hasDelay()) $response->nbtodolate++;
-    			} else $this->nb["actionscomm"]=$obj->nb;
+    			} else {
+                    $this->nb["actionscomm"]++;
+                }
     		}
 
     		$this->db->free($resql);

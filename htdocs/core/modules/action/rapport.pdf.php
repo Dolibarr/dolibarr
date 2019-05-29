@@ -222,7 +222,7 @@ class CommActionRapport
 		$pdf->SetFont('', '', 8);
 
 		$sql = "SELECT s.nom as thirdparty, s.rowid as socid, s.client,";
-		$sql.= " a.id, a.datep as dp, a.datep2 as dp2,";
+		$sql.= " a.id, a.datep as dp, a.datep2 as dp2, a.private,";
 		$sql.= " a.fk_contact, a.note, a.percent as percent, a.label, a.fk_project,";
 		$sql.= " c.code, c.libelle,";
 		$sql.= " u.login";
@@ -250,6 +250,11 @@ class CommActionRapport
 				$obj = $this->db->fetch_object($resql);
 
 				$eventstatic->id=$obj->id;
+				$eventstatic->private=$obj->private;
+                if(!$eventstatic->isViewable()) {
+                    $i++;
+                    continue;
+                }
 				$eventstatic->percentage=$obj->percent;
 				$eventstatic->fulldayevent=$obj->fulldayevent;
 				$eventstatic->punctual=$obj->punctual;

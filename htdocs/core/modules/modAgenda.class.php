@@ -406,7 +406,7 @@ class modAgenda extends DolibarrModules
 		$this->export_label[$r]="ExportDataset_event1";
 		$this->export_permission[$r]=array(array("agenda","export"));
 		$this->export_fields_array[$r]=array('ac.id'=>"IdAgenda",'ac.ref_ext'=>"ExternalRef",'ac.datec'=>"DateCreation",'ac.datep'=>"DateActionBegin",
-			'ac.datep2'=>"DateActionEnd",'ac.label'=>"Title",'ac.note'=>"Note",'ac.percent'=>"Percent",'ac.durationp'=>"Duration",
+			'ac.datep2'=>"DateActionEnd",'ac.label'=>"Title",'ac.note'=>"Note",'ac.percent'=>"Percent",'ac.durationp'=>"Duration",'ac.private'=>"Private",
 			'cac.libelle'=>"ActionType",
 			's.rowid'=>"IdCompany",'s.nom'=>'CompanyName','s.address'=>'Address','s.zip'=>'Zip','s.town'=>'Town',
 			'co.code'=>'CountryCode','s.phone'=>'Phone','s.siren'=>'ProfId1','s.siret'=>'ProfId2','s.ape'=>'ProfId3','s.idprof4'=>'ProfId4','s.idprof5'=>'ProfId5','s.idprof6'=>'ProfId6',
@@ -419,7 +419,7 @@ class modAgenda extends DolibarrModules
 			'co.code'=>'Text','s.phone'=>'Text','s.siren'=>'Text','s.siret'=>'Text','s.ape'=>'Text','s.idprof4'=>'Text','s.idprof5'=>'Text','s.idprof6'=>'Text',
 			's.code_compta'=>'Text','s.code_compta_fournisseur'=>'Text','s.tva_intra'=>'Text');
 		$this->export_entities_array[$r]=array('ac.id'=>"action",'ac.ref_ext'=>"action",'ac.datec'=>"action",'ac.datep'=>"action",
-			'ac.datep2'=>"action",'ac.label'=>"action",'ac.note'=>"action",'ac.percent'=>"action",'ac.durationp'=>"action",
+			'ac.datep2'=>"action",'ac.label'=>"action",'ac.note'=>"action",'ac.percent'=>"action",'ac.durationp'=>"action",'ac.private'=>"action",
 			'cac.libelle'=>"action",
 			's.rowid'=>"company",'s.nom'=>'company','s.address'=>'company','s.zip'=>'company','s.town'=>'company',
 			'co.code'=>'company','s.phone'=>'company','s.siren'=>'company','s.siret'=>'company','s.ape'=>'company','s.idprof4'=>'company','s.idprof5'=>'company','s.idprof6'=>'company',

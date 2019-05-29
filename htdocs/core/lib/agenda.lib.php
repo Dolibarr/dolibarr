@@ -218,7 +218,7 @@ function show_array_actions_to_do($max = 5)
 	include_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 	include_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 
-	$sql = "SELECT a.id, a.label, a.datep as dp, a.datep2 as dp2, a.fk_user_author, a.percent,";
+	$sql = "SELECT a.id, a.label, a.datep as dp, a.datep2 as dp2, a.fk_user_author, a.percent, a.private,";
 	$sql.= " c.code, c.libelle as type_label,";
 	$sql.= " s.nom as sname, s.rowid, s.client";
 	$sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a LEFT JOIN ";
@@ -252,12 +252,17 @@ function show_array_actions_to_do($max = 5)
         {
             $obj = $db->fetch_object($resql);
 
-
+            $staticaction->id=$obj->id;
+            $staticaction->private=$obj->private;
+            if(!$staticaction->isViewable()) {
+                $i++;
+                continue;
+            }
             print '<tr class="oddeven">';
 
             $staticaction->type_code=$obj->code;
             $staticaction->label=($obj->label?$obj->label:$obj->type_label);
-            $staticaction->id=$obj->id;
+
             print '<td>'.$staticaction->getNomUrl(1, 34).'</td>';
 
            // print '<td>'.dol_trunc($obj->label,22).'</td>';
@@ -315,7 +320,7 @@ function show_array_last_actions_done($max = 5)
 
 	$now=dol_now();
 
-	$sql = "SELECT a.id, a.percent, a.datep as da, a.datep2 as da2, a.fk_user_author, a.label,";
+	$sql = "SELECT a.id, a.percent, a.datep as da, a.datep2 as da2, a.fk_user_author, a.label, a.private,";
 	$sql.= " c.code, c.libelle,";
 	$sql.= " s.rowid, s.nom as sname, s.client";
 	$sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a LEFT JOIN ";
@@ -348,12 +353,17 @@ function show_array_last_actions_done($max = 5)
 		{
 			$obj = $db->fetch_object($resql);
 
-
+            $staticaction->id=$obj->id;
+            $staticaction->private=$obj->private;
+            if(!$staticaction->isViewable()) {
+                $i++;
+                continue;
+            }
 			print '<tr class="oddeven">';
 
 			$staticaction->type_code=$obj->code;
 			$staticaction->libelle=$obj->label;
-			$staticaction->id=$obj->id;
+
 			print '<td>'.$staticaction->getNomUrl(1, 34).'</td>';
 
             //print '<td>'.dol_trunc($obj->label,24).'</td>';

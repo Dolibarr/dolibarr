@@ -76,14 +76,18 @@ $formfile=new FormFile($db);
 
 llxHeader();
 
-$sql = "SELECT count(*) as cc,";
+$sql = "SELECT count(DISTINCT a.id) as cc,";
 $sql.= " date_format(a.datep, '%m/%Y') as df,";
 $sql.= " date_format(a.datep, '%m') as month,";
 $sql.= " date_format(a.datep, '%Y') as year";
-$sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a,";
-$sql.= " ".MAIN_DB_PREFIX."user as u";
+$sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
+if(!empty($user->rights->agenda->myactions->read_private) && empty($user->rights->agenda->allactions->read_private))
+    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."actioncomm_resources as ar ON (ar.fk_actioncomm = a.id)";
+$sql.= " ,".MAIN_DB_PREFIX."user as u";
 $sql.= " WHERE a.fk_user_author = u.rowid";
 $sql.= ' AND a.entity IN ('.getEntity('agenda').')';
+if(empty($user->rights->agenda->myactions->read_private)) $sql .= ' AND a.private = 0';
+else if(empty($user->rights->agenda->allactions->read_private)) $sql .= ' AND (a.private = 0 OR (a.private = 1 AND ar.fk_element = '.$user->id.' AND ar.element_type="user"))';
 //$sql.= " AND percent = 100";
 $sql.= " GROUP BY year, month, df";
 $sql.= " ORDER BY year DESC, month DESC, df DESC";

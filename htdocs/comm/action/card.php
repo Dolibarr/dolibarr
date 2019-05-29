@@ -1210,7 +1210,7 @@ if ($id > 0)
 	    }
         //Private
         $is_private = (GETPOST('private')?GETPOST('private'):$object->private);
-        print '<tr><td>'.$langs->trans("Private").'</td><td colspan="3">'.$form->selectyesno('private',$is_private).'</td></tr>';
+        print '<tr><td>'.$langs->trans("Private").'</td><td colspan="3">'.$form->selectyesno('private',$is_private,1).'</td></tr>';
 
 		// Assigned to
 	    $listofuserid=array();							// User assigned

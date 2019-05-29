@@ -1240,6 +1240,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
             $sql = "SELECT a.id, a.label as label,";
         }
         $sql.= " a.datep as dp,";
+        $sql.= " a.private,";
         $sql.= " a.datep2 as dp2,";
         $sql.= " a.percent as percent, 'action' as type,";
         $sql.= " a.fk_element, a.elementtype,";
@@ -1368,6 +1369,12 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
             if ($obj->type == 'action') {
                 $contactaction = new ActionComm($db);
                 $contactaction->id=$obj->id;
+                $contactaction->private=$obj->private;
+                //check private rights
+                if(!$contactaction->isViewable()) {
+                    $i++;
+                    continue;
+                }
                 $result = $contactaction->fetchResources();
                 if ($result<0) {
                     dol_print_error($db);

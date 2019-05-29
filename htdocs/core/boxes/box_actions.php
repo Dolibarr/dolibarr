@@ -78,12 +78,11 @@ class box_actions extends ModeleBoxes
         include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
         include_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
         $societestatic = new Societe($db);
-        $actionstatic = new ActionComm($db);
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastActionsToDo", $max));
 
         if ($user->rights->agenda->myactions->read) {
-			$sql = "SELECT a.id, a.label, a.datep as dp, a.percent as percentage";
+			$sql = "SELECT a.id, a.label, a.datep as dp, a.percent as percentage, a.private";
             $sql.= ", ta.code";
             $sql.= ", ta.libelle as type_label";
             $sql.= ", s.nom as name";
@@ -113,7 +112,14 @@ class box_actions extends ModeleBoxes
 					$late = '';
 					$objp = $db->fetch_object($result);
 					$datelimite = $db->jdate($objp->dp);
+					$actionstatic = new ActionComm($db);
                     $actionstatic->id = $objp->id;
+                    $actionstatic->private = $objp->private;
+                    //check private rights
+                    if(!$actionstatic->isViewable()) {
+                        $line++;
+                        continue;
+                    }
                     $actionstatic->label = $objp->label;
                     $actionstatic->type_label = $objp->type_label;
                     $actionstatic->code = $objp->code;

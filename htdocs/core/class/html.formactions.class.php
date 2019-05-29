@@ -235,6 +235,8 @@ class FormActions
 	        	foreach($listofactions as $action)
 	        	{
 	        		if ($max && $cursorevent >= $max) break;
+                    //check private rights
+                    if(!$action->isViewable()) continue;
 
 	        		$ref=$action->getNomUrl(1, -1);
 	        		$label=$action->getNomUrl(0, 38);
