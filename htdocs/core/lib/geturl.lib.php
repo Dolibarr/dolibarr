@@ -175,7 +175,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
  * @param	int	 	  $mode					0=return 'mydomain', 1=return 'mydomain.com'
  * @return	string						    Returns domaine name
  */
-function getDomainFromURL($url, $mode=0)
+function getDomainFromURL($url, $mode = 0)
 {
 	$tmpdomain = preg_replace('/^https?:\/\//i', '', $url);				// Remove http(s)://
 	$tmpdomain = preg_replace('/\/.*$/i', '', $tmpdomain);				// Remove part after domain
