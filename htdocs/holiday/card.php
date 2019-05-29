@@ -1268,7 +1268,7 @@ else
                     print '</td>';
                     print '<td>'.$valideur->getNomUrl(-1);
                     $include_users = $object->fetch_users_approver_holiday();
-                    if (in_array($user->id, $include_users) && $object->statut != 1)
+                    if (in_array($user->id, $include_users) && $object->statut == Holiday::STATUS_VALIDATED)
                     {
                         print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editvalidator">'.img_edit($langs->trans("Edit")).'</a>';
                     }
