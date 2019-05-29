@@ -279,7 +279,8 @@ if ($result)
     if ($search_desc > 0) $param.="&search_desc=".urlencode($search_desc);
     if ($search_current_account > 0) $param.="&search_current_account=".urlencode($search_current_account);
     if ($search_current_account_valid && $search_current_account_valid != '-1') $param.="&search_current_account_valid=".urlencode($search_current_account_valid);
-
+    if ($accounting_product_mode) $param.="&accounting_product_mode=".urlencode($accounting_product_mode);
+    
     print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">';
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
