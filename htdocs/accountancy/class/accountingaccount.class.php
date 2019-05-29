@@ -152,7 +152,7 @@ class AccountingAccount extends CommonObject
 	 * @param 	int 	       $rowid 				    Id
 	 * @param 	string 	       $account_number 	        Account number
 	 * @param 	int|boolean    $limittocurrentchart     1 or true=Load record only if it is into current active char of account
-	 * @param   string         $limittochartaccount     'ABC'=Load record only if it is into chart account with code 'ABC'.
+	 * @param   string         $limittoachartaccount    'ABC'=Load record only if it is into chart account with code 'ABC'.
 	 * @return 	int                                     <0 if KO, 0 if not found, Id of record if OK and found
 	 */
 	function fetch($rowid = null, $account_number = null, $limittocurrentchart = 0, $limittoachartaccount = '')
