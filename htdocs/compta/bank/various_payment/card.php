@@ -37,7 +37,7 @@ if (! empty($conf->projet->enabled))
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array("compta", "banks", "bills", "users", "accountancy"));
+$langs->loadLangs(array("compta", "banks", "bills", "users", "accountancy", "categories"));
 
 // Get parameters
 $id			= GETPOST('id', 'int');
@@ -144,6 +144,7 @@ if (empty($reshook))
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BankAccount")), null, 'errors');
 			$error++;
 		}
+		// TODO Remove this and allow instead to edit a various payment to enter accounting code
 		if (! empty($conf->accounting->enabled) && ! $object->accountancy_code)
 		{
 			$langs->load('errors');
@@ -324,14 +325,6 @@ if ($action == 'create')
 		print '<td><input name="num_payment" id="num_payment" type="text" value="'.GETPOST("num_payment").'"></td></tr>'."\n";
 	}
 
-	// Category
-    if (is_array($options) && count($options))
-    {
-        print '<tr><td>'.$langs->trans("RubriquesTransactions").'</td><td>';
-        print Form::selectarray('category_transaction', $options, GETPOST('category_transaction'), 1);
-        print '</td></tr>';
-    }
-
     // Project
     if (! empty($conf->projet->enabled))
     {
@@ -353,14 +346,20 @@ if ($action == 'create')
     print $hookmanager->resPrint;
 
     print '</td></tr>';
-    print '</table>';
-    print '<br>';
 
-    print '<table class="border" width="100%">';
+    // Category
+    if (is_array($options) && count($options) && $conf->categorie->enabled)
+    {
+    	print '<tr><td>'.$langs->trans("RubriquesTransactions").'</td><td>';
+    	print Form::selectarray('category_transaction', $options, GETPOST('category_transaction'), 1);
+    	print '</td></tr>';
+    }
+
 	// Accountancy account
 	if (! empty($conf->accounting->enabled))
 	{
-		print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("AccountAccounting").'</td>';
+		// TODO Remove the fieldrequired and allow instead to edit a various payment to enter accounting code
+		print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("AccountAccounting").'</td>';
         print '<td>';
 		print $formaccounting->select_account($accountancy_code, 'accountancy_code', 1, null, 1, 1, '');
         print '</td></tr>';
@@ -526,7 +525,6 @@ if ($id)
 	print '</table>';
 
 	print '</div>';
-	print '</div>';
 
 	print '<div class="clearboth"></div>';
 
@@ -537,7 +535,12 @@ if ($id)
 	 * Action buttons
 	 */
 	print '<div class="tabsAction">'."\n";
-	if ($object->rappro == 0)
+
+	// TODO
+	// Add button modify
+
+	// Delete
+	if (empty($object->rappro))
 	{
 		if (! empty($user->rights->banque->modifier))
 		{
@@ -552,6 +555,7 @@ if ($id)
 	{
 		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("LinkedToAConciliatedTransaction").'">'.$langs->trans("Delete").'</a>';
 	}
+
 	print "</div>";
 }
 
