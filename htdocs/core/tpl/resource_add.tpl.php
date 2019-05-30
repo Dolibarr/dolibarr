@@ -14,7 +14,7 @@ require_once DOL_DOCUMENT_ROOT.'/resource/class/html.formresource.class.php';
 $form = new Form($db);
 $formresources = new FormResource($db);
 
-$out  = '<div class="tagtable centpercent noborder allwidth nohover">';
+$out  = '<div class="tagtable centpercent noborder borderbottom allwidth nohover">';
 
 $out .= '<form class="tagtr nohover '.($var==true?'pair':'impair').'" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 $out .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';

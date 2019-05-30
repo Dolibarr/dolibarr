@@ -1009,7 +1009,7 @@ if ($step == 4 && $datatoexport)
 
         print '<td class="right" width="100">';
         print $value.' ';
-        print '</td><td class="center" width="20">';
+        print '</td><td class="center nowraponall" width="40">';
         if ($value < count($array_selected)) print '<a href="'.$_SERVER["PHP_SELF"].'?step='.$step.'&datatoexport='.$datatoexport.'&action=downfield&field='.$code.'">'.img_down().'</a>';
         if ($value > 1) print '<a href="'.$_SERVER["PHP_SELF"].'?step='.$step.'&datatoexport='.$datatoexport.'&action=upfield&field='.$code.'">'.img_up().'</a>';
         print '</td>';

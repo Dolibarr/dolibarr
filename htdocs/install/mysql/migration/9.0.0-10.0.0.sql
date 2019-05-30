@@ -29,6 +29,8 @@
 
 -- Missing in 9.0
 
+ALTER TABLE llx_actioncomm MODIFY COLUMN code varchar(50);
+
 DROP TABLE llx_ticket_logs;
 
 CREATE TABLE llx_pos_cash_fence(
@@ -59,6 +61,8 @@ CREATE TABLE llx_pos_cash_fence(
 -- For 10.0
 
 DROP TABLE llx_cotisation;
+ALTER TABLE llx_accounting_bookkeeping DROP COLUMN validated;
+ALTER TABLE llx_accounting_bookkeeping_tmp DROP COLUMN validated;
 
 ALTER TABLE llx_loan ADD COLUMN insurance_amount double(24,8) DEFAULT 0;
 
@@ -68,7 +72,10 @@ ALTER TABLE llx_facture ADD UNIQUE INDEX uk_facture_ref (ref, entity);
 
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('TICKET_CREATE','Ticket created','Executed when a ticket is created','ticket',161);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('TICKET_MODIFY','Ticket modified','Executed when a ticket is modified','ticket',163);
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('TICKET_DELETE','Ticket deleted','Executed when a ticket is deleted','ticket',164);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('TICKET_ASSIGNED','Ticket assigned','Executed when a ticket is assigned to another user','ticket',164);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('TICKET_CLOSE','Ticket closed','Executed when a ticket is closed','ticket',165);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('TICKET_SENTBYMAIL','Ticket message sent by email','Executed when a message is sent from the ticket record','ticket',166);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('TICKET_DELETE','Ticket deleted','Executed when a ticket is deleted','ticket',167);
 
 create table llx_mailing_unsubscribe
 (
@@ -84,6 +91,7 @@ create table llx_mailing_unsubscribe
 ALTER TABLE llx_mailing_unsubscribe ADD UNIQUE uk_mailing_unsubscribe(email, entity, unsubscribegroup);
 
 ALTER TABLE llx_adherent ADD gender VARCHAR(10);
+ALTER TABLE llx_adherent_type ADD morphy VARCHAR(3);
 ALTER TABLE llx_subscription ADD fk_type integer;
 
 -- Add url_id into unique index of bank_url
@@ -91,6 +99,9 @@ ALTER TABLE llx_bank_url DROP INDEX uk_bank_url;
 ALTER TABLE llx_bank_url ADD UNIQUE INDEX uk_bank_url (fk_bank, url_id, type);
 
 ALTER TABLE llx_actioncomm ADD COLUMN calling_duration integer;
+ALTER TABLE llx_actioncomm ADD COLUMN visibility varchar(12) DEFAULT 'default';
+
+DROP TABLE llx_ticket_msg;
 
 ALTER TABLE llx_don ADD COLUMN fk_soc integer NULL;
 
@@ -201,18 +212,21 @@ CREATE TABLE llx_bom_bom(
 	description text, 
 	note_public text, 
 	note_private text, 
+	fk_product integer, 
+	qty double(24,8),
+	efficiency double(8,4),
 	date_creation datetime NOT NULL, 
-	tms timestamp NOT NULL, 
+	tms timestamp, 
 	date_valid datetime, 
 	fk_user_creat integer NOT NULL, 
 	fk_user_modif integer, 
 	fk_user_valid integer, 
 	import_key varchar(14), 
-	status integer NOT NULL, 
-	fk_product integer, 
-	qty double(24,8)
+	status integer NOT NULL 
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;
+
+ALTER TABLE llx_bom_bom ADD COLUMN efficiency double(8,4) DEFAULT 1;
 
 create table llx_bom_bom_extrafields
 (
@@ -225,14 +239,20 @@ create table llx_bom_bom_extrafields
 CREATE TABLE llx_bom_bomline(
 	-- BEGIN MODULEBUILDER FIELDS
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
+	fk_bom integer NOT NULL, 
+	fk_product integer NOT NULL,
+	fk_bom_child integer NULL, 
 	description text, 
 	import_key varchar(14), 
-	qty double(24,8), 
-	fk_product integer, 
-	fk_bom integer, 
+	qty double(24,8) NOT NULL, 
+	efficiency double(8,4) NOT NULL DEFAULT 1,
 	rank integer NOT NULL
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;
+
+ALTER TABLE llx_bom_bomline ADD COLUMN efficiency double(8,4) DEFAULT 1;
+ALTER TABLE llx_bom_bomline ADD COLUMN fk_bom_child integer NULL;
+
 
 create table llx_bom_bomline_extrafields
 (
@@ -282,10 +302,86 @@ ALTER TABLE llx_product ADD INDEX idx_product_fk_project (fk_project);
 ALTER TABLE llx_actioncomm ADD COLUMN calling_duration integer;
 
 ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN datelastok datetime;
+ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN maxemailpercollect integer DEFAULT 100;
 
 DELETE FROM llx_const WHERE name = 'THEME_ELDY_USE_HOVER' AND value = '0';
 DELETE FROM llx_const WHERE name = 'THEME_ELDY_USE_CHECKED' AND value = '0';
 
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('TICKET_CLOSE','Ticket closed','Executed when a ticket is closed','ticket',164);
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('TICKET_SENTBYMAIL','Ticket message sent by email','Executed when a message is sent from the ticket record','ticket',166);
+ALTER TABLE llx_inventorydet DROP COLUMN pmp; 
+ALTER TABLE llx_inventorydet DROP COLUMN pa; 
+ALTER TABLE llx_inventorydet DROP COLUMN new_pmp;
 
+UPDATE llx_c_shipment_mode SET label = 'https://www.laposte.fr/outils/suivre-vos-envois?code={TRACKID}' WHERE code IN ('COLSUI');
+UPDATE llx_c_shipment_mode SET label = 'https://www.laposte.fr/outils/suivre-vos-envois?code={TRACKID}' WHERE code IN ('LETTREMAX');
+
+
+
+create table llx_reception
+(
+  rowid                 integer AUTO_INCREMENT PRIMARY KEY,
+  tms                   timestamp,
+  ref                   varchar(30)        NOT NULL,
+  entity                integer  DEFAULT 1 NOT NULL,	-- multi company id
+  fk_soc                integer            NOT NULL,
+  fk_projet  		integer  DEFAULT NULL,
+  
+  ref_ext               varchar(30),					-- reference into an external system (not used by dolibarr)
+  ref_int				varchar(30),					-- reference into an internal system (used by dolibarr to store extern id like paypal info)
+  ref_supplier          varchar(30),					-- customer number
+  
+  date_creation         datetime,						-- date de creation
+  fk_user_author        integer,						-- author of creation
+  fk_user_modif         integer,						-- author of last change
+  date_valid            datetime,						-- date de validation
+  fk_user_valid         integer,						-- valideur
+  date_delivery			datetime	DEFAULT NULL,		-- date planned of delivery
+  date_reception       datetime,						
+  fk_shipping_method    integer,
+  tracking_number       varchar(50),
+  fk_statut             smallint	DEFAULT 0,			-- 0 = draft, 1 = validated, 2 = billed or closed depending on WORKFLOW_BILL_ON_SHIPMENT option
+  billed                smallint    DEFAULT 0,
+  
+  height                float,							-- height
+  width                 float,							-- with
+  size_units            integer,						-- unit of all sizes (height, width, depth)
+  size                  float,							-- depth
+  weight_units          integer,						-- unit of weight
+  weight                float,							-- weight
+  note_private          text,
+  note_public           text,
+  model_pdf             varchar(255),
+  fk_incoterms          integer,						-- for incoterms
+  location_incoterms    varchar(255),					-- for incoterms
+  
+  import_key			varchar(14),
+  extraparams			varchar(255)							-- for other parameters with json format
+)ENGINE=innodb;
+
+ALTER TABLE llx_reception ADD UNIQUE INDEX idx_reception_uk_ref (ref, entity);
+
+ALTER TABLE llx_reception ADD INDEX idx_reception_fk_soc (fk_soc);
+ALTER TABLE llx_reception ADD INDEX idx_reception_fk_user_author (fk_user_author);
+ALTER TABLE llx_reception ADD INDEX idx_reception_fk_user_valid (fk_user_valid);
+ALTER TABLE llx_reception ADD INDEX idx_reception_fk_shipping_method (fk_shipping_method);
+
+create table llx_reception_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                          		-- import key
+) ENGINE=innodb;
+
+ALTER TABLE llx_reception_extrafields ADD INDEX idx_reception_extrafields (fk_object);
+
+ALTER TABLE llx_commande_fournisseur_dispatch ADD COLUMN fk_projet integer DEFAULT NULL;
+ALTER TABLE llx_commande_fournisseur_dispatch ADD COLUMN fk_reception integer DEFAULT NULL;
+
+
+
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (110, 'supplier_proposal', 'internal', 'SALESREPFOLL',  'Responsable suivi de la demande', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (111, 'supplier_proposal', 'external', 'BILLING',       'Contact fournisseur facturation', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (112, 'supplier_proposal', 'external', 'SHIPPING',      'Contact fournisseur livraison', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (113, 'supplier_proposal', 'external', 'SERVICE',       'Contact fournisseur prestation', 1);
+
+ALTER TABLE llx_ticket_extrafields ADD INDEX idx_ticket_extrafields (fk_object);

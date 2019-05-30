@@ -1276,14 +1276,16 @@ class ExtraFields
                             $labeltoshow = dol_trunc($labeltoshow, 45);
 
                             if ($value == $obj->rowid) {
-                                foreach ($fields_label as $field_toshow) {
-                                    $translabel = $langs->trans($obj->$field_toshow);
-                                    if ($translabel != $obj->$field_toshow) {
-                                        $labeltoshow = dol_trunc($translabel, 18) . ' ';
-                                    } else {
-                                        $labeltoshow = dol_trunc($obj->$field_toshow, 18) . ' ';
-                                    }
-                                }
+                            	if (!$notrans) {
+	                                foreach ($fields_label as $field_toshow) {
+	                                    $translabel = $langs->trans($obj->$field_toshow);
+	                                    if ($translabel != $obj->$field_toshow) {
+	                                        $labeltoshow = dol_trunc($translabel, 18) . ' ';
+	                                    } else {
+	                                        $labeltoshow = dol_trunc($obj->$field_toshow, 18) . ' ';
+	                                    }
+	                                }
+                            	}
                                 $out .= '<option value="' . $obj->rowid . '" selected>' . $labeltoshow . '</option>';
                             } else {
                                 if (!$notrans) {
@@ -1567,6 +1569,9 @@ class ExtraFields
 		 if ($type == 'date') $out.=' (YYYY-MM-DD)';
 		 elseif ($type == 'datetime') $out.=' (YYYY-MM-DD HH:MM:SS)';
 		 */
+		 if (! empty($help)) {
+			$out .= $form->textwithpicto("", $help);
+		 }
 		return $out;
 	}
 
@@ -1837,7 +1842,7 @@ class ExtraFields
 			$out='';
 
 			// Only if something to display (perf)
-			if ($value)		// If we have -1 here, pb is into sert, not into ouptu
+			if ($value)		// If we have -1 here, pb is into insert, not into ouptut (fix insert instead of changing code here to compensate)
 			{
 				$param_list=array_keys($param['options']);				// $param_list='ObjectName:classPath'
 

@@ -74,7 +74,7 @@ class pdf_cyan extends ModelePDFPropales
 
 	/**
      * Dolibarr version of the loaded document
-     * @public string
+     * @var string
      */
 	public $version = 'development';
 
@@ -434,7 +434,7 @@ class pdf_cyan extends ModelePDFPropales
 					complete_substitutions_array($substitutionarray, $outputlangs, $object);
 					$notetoshow = make_substitutions($notetoshow, $substitutionarray, $outputlangs);
 					$notetoshow = convertBackOfficeMediasLinksToPublicLinks($notetoshow);
-					
+
 					$pdf->startTransaction();
 
 					$pdf->SetFont('', '', $default_font_size - 1);
@@ -549,11 +549,11 @@ class pdf_cyan extends ModelePDFPropales
 				$pdf->startTransaction();
 				$this->pdfTabTitles($pdf, $tab_top, $tab_height, $outputlangs, $hidetop);
 				$pdf->rollbackTransaction(true);
-				
+
 				$iniY = $tab_top + $this->tabTitleHeight + 2;
 				$curY = $tab_top + $this->tabTitleHeight + 2;
 				$nexY = $tab_top + $this->tabTitleHeight + 2;
-				
+
 				// Loop on each lines
 				$pageposbeforeprintlines=$pdf->getPage();
 				$pagenb = $pageposbeforeprintlines;
@@ -1460,7 +1460,7 @@ class pdf_cyan extends ModelePDFPropales
 
 
 		$this->pdfTabTitles($pdf, $tab_top, $tab_height, $outputlangs, $hidetop);
-		
+
 		if (empty($hidetop)){
 		    $pdf->line($this->marge_gauche, $tab_top+$this->tabTitleHeight, $this->page_largeur-$this->marge_droite, $tab_top+$this->tabTitleHeight);	// line prend une position y en 2eme param et 4eme param
 		}
@@ -1862,22 +1862,6 @@ class pdf_cyan extends ModelePDFPropales
 	        ),
 	        'border-left' => true, // add left line separator
 	    );
-
-	    $rank = $rank + 10;
-	    $this->cols['progress'] = array(
-	        'rank' => $rank,
-	        'width' => 19, // in mm
-	        'status' => false,
-	        'title' => array(
-	            'textkey' => 'Progress'
-	        ),
-	        'border-left' => false, // add left line separator
-	    );
-
-	    if($this->situationinvoice)
-	    {
-	        $this->cols['progress']['status'] = true;
-	    }
 
 	    $rank = $rank + 10;
 	    $this->cols['unit'] = array(

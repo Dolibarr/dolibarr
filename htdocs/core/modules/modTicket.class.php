@@ -120,15 +120,16 @@ class modTicket extends DolibarrModules
         }
         $this->dictionaries = array(
             'langs' => 'ticket',
-            'tabname' => array(MAIN_DB_PREFIX . "c_ticket_type", MAIN_DB_PREFIX . "c_ticket_category", MAIN_DB_PREFIX . "c_ticket_severity"),
-            'tablib' => array("TicketDictType", "TicketDictCategory", "TicketDictSeverity"),
-            'tabsql' => array('SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default FROM ' . MAIN_DB_PREFIX . 'c_ticket_type as f', 'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default FROM ' . MAIN_DB_PREFIX . 'c_ticket_category as f', 'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default FROM ' . MAIN_DB_PREFIX . 'c_ticket_severity as f'),
+            'tabname' => array(MAIN_DB_PREFIX . "c_ticket_type", MAIN_DB_PREFIX . "c_ticket_severity", MAIN_DB_PREFIX . "c_ticket_category"),
+            'tablib' => array("TicketDictType", "TicketDictSeverity", "TicketDictCategory"),
+            'tabsql' => array('SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default FROM ' . MAIN_DB_PREFIX . 'c_ticket_type as f', 'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default FROM ' . MAIN_DB_PREFIX . 'c_ticket_severity as f', 'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default FROM ' . MAIN_DB_PREFIX . 'c_ticket_category as f'),
             'tabsqlsort' => array("pos ASC", "pos ASC", "pos ASC"),
             'tabfield' => array("pos,code,label,use_default", "pos,code,label,use_default", "pos,code,label,use_default"),
             'tabfieldvalue' => array("pos,code,label,use_default", "pos,code,label,use_default", "pos,code,label,use_default"),
             'tabfieldinsert' => array("pos,code,label,use_default", "pos,code,label,use_default", "pos,code,label,use_default"),
             'tabrowid' => array("rowid", "rowid", "rowid"),
             'tabcond' => array($conf->ticket->enabled, $conf->ticket->enabled, $conf->ticket->enabled),
+            'tabhelp' => array(array('code'=>$langs->trans("EnterAnyCode"), 'use_default'=>$langs->trans("Enter0or1")), array('code'=>$langs->trans("EnterAnyCode"), 'use_default'=>$langs->trans("Enter0or1")), array('code'=>$langs->trans("EnterAnyCode"), 'use_default'=>$langs->trans("Enter0or1"))),
         );
 
         // Boxes
@@ -150,7 +151,7 @@ class modTicket extends DolibarrModules
         $this->rights[$r][0] = 56001; // id de la permission
         $this->rights[$r][1] = "Read ticket"; // libelle de la permission
         $this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
-        $this->rights[$r][3] = 1; // La permission est-elle une permission par defaut
+        $this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
         $this->rights[$r][4] = 'read';
 
         $r++;

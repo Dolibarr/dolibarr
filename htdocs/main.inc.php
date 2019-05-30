@@ -91,7 +91,7 @@ function testSqlAndScriptInject($val, $type)
 	}
 	if ($type == 3)
 	{
-		$inj += preg_match('/select|update|delete|replace|group\s+by|concat|count|from/i', $val);
+		$inj += preg_match('/select|update|delete|truncate|replace|group\s+by|concat|count|from|union/i', $val);
 	}
 	if ($type != 2)	// Not common key strings, so we can check them both on GET and POST
 	{
@@ -1152,7 +1152,7 @@ function top_httphead($contenttype = 'text/html', $forcenocache = 0)
 		$contentsecuritypolicy = $conf->global->MAIN_HTTP_CONTENT_SECURITY_POLICY;
 
 		if (! is_object($hookmanager)) $hookmanager = new HookManager($db);
-		$hookmanager->initHooks("main");
+		$hookmanager->initHooks(array("main"));
 
 		$parameters=array('contentsecuritypolicy'=>$contentsecuritypolicy);
 		$result=$hookmanager->executeHooks('setContentSecurityPolicy', $parameters);    // Note that $action and $object may have been modified by some hooks
@@ -1212,7 +1212,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 	if (empty($disablehead))
 	{
 	    if (! is_object($hookmanager)) $hookmanager = new HookManager($db);
-	    $hookmanager->initHooks("main");
+	    $hookmanager->initHooks(array("main"));
 
 	    $ext='layout='.$conf->browser->layout.'&version='.urlencode(DOL_VERSION);
 
@@ -1740,8 +1740,8 @@ function top_menu_user(User $user, Translate $langs)
     }
     else{
         $nophoto='/public/theme/common/user_anonymous.png';
-        if ($object->gender == 'man') $nophoto='/public/theme/common/user_man.png';
-        if ($object->gender == 'woman') $nophoto='/public/theme/common/user_woman.png';
+        if ($user->gender == 'man') $nophoto='/public/theme/common/user_man.png';
+        if ($user->gender == 'woman') $nophoto='/public/theme/common/user_woman.png';
 
         $userImage = '<img class="photo photouserphoto userphoto" alt="No photo" src="'.DOL_URL_ROOT.$nophoto.'">';
         $userDropDownImage = '<img class="photo dropdown-user-image" alt="No photo" src="'.DOL_URL_ROOT.$nophoto.'">';
@@ -1811,11 +1811,11 @@ function top_menu_user(User $user, Translate $langs)
 
     $btnUser = '
     <div id="topmenu-login-dropdown" class="userimg atoplogin dropdown user user-menu">
-        <a href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'" class="dropdown-toggle" data-toggle="dropdown">
+        <a href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'" class="dropdown-toggle login-dropdown-a" data-toggle="dropdown">
             '.$userImage.'
-            <span class="hidden-xs maxwidth200 atoploginusername">'.dol_trunc($user->firstname ? $user->firstname : $user->login, 11).'</span>
-            <span class="fa fa-chevron-down" id="dropdown-icon-down"></span>
-            <span class="fa fa-chevron-up hidden" id="dropdown-icon-up"></span>
+            <span class="hidden-xs maxwidth200 atoploginusername">'.dol_trunc($user->firstname ? $user->firstname : $user->login, 10).'</span>
+            <span class="fa fa-chevron-down login-dropdown-btn" id="dropdown-icon-down"></span>
+            <span class="fa fa-chevron-up login-dropdown-btn hidden" id="dropdown-icon-up"></span>
         </a>
         <div class="dropdown-menu">
             <!-- User image -->
@@ -1920,7 +1920,7 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 		}
 		else
 		{
-		    if (is_array(arrayresult))
+		    if (is_array($arrayresult))
 		    {
     			foreach($arrayresult as $key => $val)
     			{

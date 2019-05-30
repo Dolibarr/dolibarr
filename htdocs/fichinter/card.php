@@ -134,7 +134,7 @@ if (empty($reshook))
 				// Because createFromClone modifies the object, we must clone it so that we can restore it later
 				$orig = clone $object;
 
-				$result=$object->createFromClone($socid);
+				$result=$object->createFromClone($user, $socid);
 				if ($result > 0)
 				{
 					header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);
@@ -427,7 +427,7 @@ if (empty($reshook))
 	    }
 	    else
 	    {
-	        $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired", $langs->trans("ThirdParty")).'</div>';
+	    	$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ThirdParty")).'</div>';
 	        $action = 'create';
 	    }
 	}

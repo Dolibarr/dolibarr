@@ -198,23 +198,6 @@ if ($action == 'confirm_delete' && ! empty($permissiontodelete))
 // Action clone object
 if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontoadd)
 {
-    $objectutil = dol_clone($object);   // To avoid to denaturate loaded object when setting some properties for clone
-    //$objectutil->date = dol_mktime(12, 0, 0, GETPOST('newdatemonth', 'int'), GETPOST('newdateday', 'int'), GETPOST('newdateyear', 'int'));
-
-    $result = $objectutil->createFromClone($id);
-    if ($result > 0) {
-        header("Location: " . $_SERVER['PHP_SELF'] . '?facid=' . $result);
-        exit();
-    } else {
-        $langs->load("errors");
-        setEventMessages($objectutil->error, $objectutil->errors, 'errors');
-        $action = '';
-    }
-}
-
-// Action clone object
-if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontoadd)
-{
 	if (1==0 && ! GETPOST('clone_content') && ! GETPOST('clone_receivers'))
 	{
 		setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');

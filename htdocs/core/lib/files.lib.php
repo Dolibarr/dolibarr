@@ -1056,7 +1056,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 		// Security:
 		// Disallow file with some extensions. We rename them.
 		// Because if we put the documents directory into a directory inside web root (very bad), this allows to execute on demand arbitrary code.
-		if (preg_match('/(\.htm|\.html|\.php|\.pl|\.cgi)$/i', $dest_file) && empty($conf->global->MAIN_DOCUMENT_IS_OUTSIDE_WEBROOT_SO_NOEXE_NOT_REQUIRED))
+		if (isAFileWithExecutableContent($dest_file) && empty($conf->global->MAIN_DOCUMENT_IS_OUTSIDE_WEBROOT_SO_NOEXE_NOT_REQUIRED))
 		{
 			$file_name.= '.noexe';
 		}
@@ -1557,7 +1557,13 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesess
 				$info = pathinfo($destfull);
 				$destfull = $info['dirname'].'/'.dol_sanitizeFileName($info['filename'].($info['extension']!='' ? ('.'.strtolower($info['extension'])) : ''));
 				$info = pathinfo($destfile);
+
 				$destfile = dol_sanitizeFileName($info['filename'].($info['extension']!='' ? ('.'.strtolower($info['extension'])) : ''));
+				// We apply dol_string_nohtmltag also to clean file names (this remove duplicate spaces) because
+				// this function is also applied when we make try to download file (by the GETPOST(filename, 'alphanohtml') call).
+				$destfile = dol_string_nohtmltag($destfile);
+				$destfull = dol_string_nohtmltag($destfull);
+
 				$resupload = dol_move_uploaded_file($TFile['tmp_name'][$i], $destfull, $allowoverwrite, 0, $TFile['error'][$i], 0, $varfiles);
 
 				if (is_numeric($resupload) && $resupload > 0)   // $resupload can be 'ErrorFileAlreadyExists'
@@ -2701,7 +2707,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	}
 
 	// Wrapping pour les remises de cheques
-	elseif ($modulepart == 'remisecheque' && !empty($conf->banque->dir_output))
+	elseif ($modulepart == 'remisecheque' && !empty($conf->bank->dir_output))
 	{
 		if ($fuser->rights->banque->{$lire} || preg_match('/^specimen/i', $original_file))
 		{
@@ -2712,7 +2718,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	}
 
 	// Wrapping for bank
-	elseif ($modulepart == 'bank' && !empty($conf->bank->dir_output))
+	elseif (($modulepart == 'banque' || $modulepart == 'bank') && !empty($conf->bank->dir_output))
 	{
 		if ($fuser->rights->banque->{$lire})
 		{

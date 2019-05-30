@@ -220,6 +220,14 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 
 		$param = '';
 
+        $newcardbutton='';
+        if ($user->rights->asset->configurer)
+        {
+            $newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/asset/type.php?action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans('NewAssetType').'</span>';
+            $newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+            $newcardbutton.= '</a>';
+        }
+
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 		if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -229,7 +237,7 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 		print '<input type="hidden" name="page" value="'.$page.'">';
 		print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
-		print_barre_liste($langs->trans("AssetsTypes"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_generic.png', 0, '', '', $limit);
+		print_barre_liste($langs->trans("AssetsTypes"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_generic.png', 0, $newcardbutton, '', $limit);
 
 		$moreforfilter = '';
 

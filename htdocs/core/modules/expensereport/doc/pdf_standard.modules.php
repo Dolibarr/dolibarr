@@ -112,7 +112,7 @@ class pdf_standard extends ModeleExpenseReport
 
 	/**
 	 * Issuer
-	 * @var Company object that emits
+	 * @var Societe
 	 */
 	public $emetteur;
 
@@ -326,7 +326,7 @@ class pdf_standard extends ModeleExpenseReport
 					complete_substitutions_array($substitutionarray, $outputlangs, $object);
 					$notetoshow = make_substitutions($notetoshow, $substitutionarray, $outputlangs);
 					$notetoshow = convertBackOfficeMediasLinksToPublicLinks($notetoshow);
-					
+
 					$tab_top = 95;
 
 					$pdf->SetFont('', '', $default_font_size - 1);
@@ -767,11 +767,10 @@ class pdf_standard extends ModeleExpenseReport
 				$pdf->MultiCell(80, 4, $expense_receiver, 0, 'L');
 			}
 
-			if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=$this->marge_gauche;
-
 			// Show recipient
 			$posy=50;
-			$posx=10;
+			$posx=100;
+			if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=$this->marge_gauche;
 
 			// Show recipient frame
 			$pdf->SetTextColor(0, 0, 0);
@@ -950,7 +949,7 @@ class pdf_standard extends ModeleExpenseReport
 		$pdf->line($this->posxqty-1, $tab_top, $this->posxqty-1, $tab_top + $tab_height);
 		if (empty($hidetop)) {
 			$pdf->SetXY($this->posxqty-1, $tab_top+1);
-			$pdf->MultiCell($this->postotalttc-$this->posxqty - 1, 2, $outputlangs->transnoentities("Qty"), '', 'R');
+			$pdf->MultiCell($this->postotalttc-$this->posxqty - 1, 2, $outputlangs->transnoentities("Qty"), '', 'C');
 		}
 
 		// Total with all taxes
@@ -1054,18 +1053,18 @@ class pdf_standard extends ModeleExpenseReport
 				$pdf->SetXY($tab3_posx+17, $tab3_top+$y);
 				$pdf->MultiCell(15, 3, price($totalpaid), 0, 'R', 0);
 				$pdf->SetXY($tab3_posx+35, $tab3_top+$y);
-				$pdf->MultiCell(30, 4, $outputlangs->trans("AlreadyPaid"), 0, 'L', 0);
+				$pdf->MultiCell(30, 4, $outputlangs->transnoentitiesnoconv("AlreadyPaid"), 0, 'L', 0);
 				$y+=$tab3_height-2;
 				$pdf->SetXY($tab3_posx+17, $tab3_top+$y);
 				$pdf->MultiCell(15, 3, price($object->total_ttc), 0, 'R', 0);
 				$pdf->SetXY($tab3_posx+35, $tab3_top+$y);
-				$pdf->MultiCell(30, 4, $outputlangs->trans("AmountExpected"), 0, 'L', 0);
+				$pdf->MultiCell(30, 4, $outputlangs->transnoentitiesnoconv("AmountExpected"), 0, 'L', 0);
 				$y+=$tab3_height-2;
 				$remaintopay = $object->total_ttc - $totalpaid;
 				$pdf->SetXY($tab3_posx+17, $tab3_top+$y);
 				$pdf->MultiCell(15, 3, price($remaintopay), 0, 'R', 0);
 				$pdf->SetXY($tab3_posx+35, $tab3_top+$y);
-				$pdf->MultiCell(30, 4, $outputlangs->trans("RemainderToPay"), 0, 'L', 0);
+				$pdf->MultiCell(30, 4, $outputlangs->transnoentitiesnoconv("RemainderToPay"), 0, 'L', 0);
 			}
 		}
 		else

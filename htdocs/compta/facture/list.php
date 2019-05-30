@@ -67,12 +67,18 @@ $confirm=GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 $contextpage=GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'invoicelist';
 
+if ($contextpage == 'poslist')
+{
+    $_GET['optioncss'] = 'print';
+}
+
 $lineid=GETPOST('lineid', 'int');
 $userid=GETPOST('userid', 'int');
 $search_product_category=GETPOST('search_product_category', 'int');
 $search_ref=GETPOST('sf_ref')?GETPOST('sf_ref', 'alpha'):GETPOST('search_ref', 'alpha');
 $search_refcustomer=GETPOST('search_refcustomer', 'alpha');
 $search_type=GETPOST('search_type', 'int');
+$search_project_ref=GETPOST('search_project_ref', 'alpha');
 $search_project=GETPOST('search_project', 'alpha');
 $search_societe=GETPOST('search_societe', 'alpha');
 $search_montant_ht=GETPOST('search_montant_ht', 'alpha');
@@ -155,8 +161,9 @@ $arrayfields=array(
 	'f.type'=>array('label'=>"Type", 'checked'=>0),
 	'f.date'=>array('label'=>"DateInvoice", 'checked'=>1),
 	'f.date_lim_reglement'=>array('label'=>"DateDue", 'checked'=>1),
-	'p.ref'=>array('label'=>"ProjectRef", 'checked'=>0, 'enabled'=>(empty($conf->projet->enabled)?0:1)),
-	's.nom'=>array('label'=>"ThirdParty", 'checked'=>1),
+	'p.ref'=>array('label'=>"ProjectRef", 'checked'=>1, 'enabled'=>(empty($conf->projet->enabled)?0:1)),
+    'p.title'=>array('label'=>"ProjectLabel", 'checked'=>0, 'enabled'=>(empty($conf->projet->enabled)?0:1)),
+    's.nom'=>array('label'=>"ThirdParty", 'checked'=>1),
 	's.town'=>array('label'=>"Town", 'checked'=>1),
 	's.zip'=>array('label'=>"Zip", 'checked'=>1),
 	'state.nom'=>array('label'=>"StateShort", 'checked'=>0),
@@ -207,6 +214,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 	$search_ref='';
 	$search_refcustomer='';
 	$search_type='';
+	$search_project_ref='';
 	$search_project='';
 	$search_societe='';
 	$search_montant_ht='';
@@ -358,8 +366,6 @@ $facturestatic=new Facture($db);
 $formcompany=new FormCompany($db);
 $thirdpartystatic=new Societe($db);
 
-// llxHeader('',$langs->trans('CustomersInvoices'),'EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes');
-
 $sql = 'SELECT';
 if ($sall || $search_product_category > 0) $sql = 'SELECT DISTINCT';
 $sql.= ' f.rowid as id, f.ref, f.ref_client, f.type, f.note_private, f.note_public, f.increment, f.fk_mode_reglement, f.fk_cond_reglement, f.total as total_ht, f.tva as total_vat, f.total_ttc,';
@@ -376,9 +382,8 @@ $sql.= " p.rowid as project_id, p.ref as project_ref, p.title as project_label";
 // TODO Better solution to be able to sort on already payed or remain to pay is to store amount_payed in a denormalized field.
 if (! $sall) $sql.= ', SUM(pf.amount) as dynamount_payed';
 if ($search_categ_cus) $sql .= ", cc.fk_categorie, cc.fk_soc";
-
 // Add fields from extrafields
-foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
+foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
 // Add fields from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
@@ -424,7 +429,8 @@ if ($filtre)
 if ($search_ref) $sql .= natural_search('f.ref', $search_ref);
 if ($search_refcustomer) $sql .= natural_search('f.ref_client', $search_refcustomer);
 if ($search_type != '' && $search_type != '-1') $sql.=" AND f.type IN (".$db->escape($search_type).")";
-if ($search_project) $sql .= natural_search('p.ref', $search_project);
+if ($search_project_ref) $sql .= natural_search('p.ref', $search_project_ref);
+if ($search_project) $sql .= natural_search('p.title', $search_project);
 if ($search_societe) $sql .= natural_search('s.nom', $search_societe);
 if ($search_town)  $sql.= natural_search('s.town', $search_town);
 if ($search_zip)   $sql.= natural_search("s.zip", $search_zip);
@@ -450,7 +456,7 @@ if ($search_status != '-1' && $search_status != '')
 	}
 	else
 	{
-		$sql.= " AND f.fk_statut IN (".$search_status.")";	// When search_status is '1,2' for example
+		$sql.= " AND f.fk_statut IN (".$db->escape($search_status).")";	// When search_status is '1,2' for example
 	}
 }
 if ($search_paymentmode > 0) $sql .= " AND f.fk_mode_reglement = ".$db->escape($search_paymentmode);
@@ -458,7 +464,7 @@ if ($search_paymentterms > 0) $sql .= " AND f.fk_cond_reglement = ".$db->escape(
 $sql.= dolSqlDateFilter("f.datef", $search_day, $search_month, $search_year);
 $sql.= dolSqlDateFilter("f.date_lim_reglement",	$search_day_lim, $search_month_lim, $search_year_lim);
 if ($option == 'late') $sql.=" AND f.date_lim_reglement < '".$db->idate(dol_now() - $conf->facture->client->warning_delay)."'";
-if ($search_sale > 0)  $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$search_sale;
+if ($search_sale > 0)  $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .(int) $search_sale;
 if ($search_user > 0)
 {
 	$sql.= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='facture' AND tc.source='internal' AND ec.element_id = f.rowid AND ec.fk_socpeople = ".$search_user;
@@ -552,6 +558,8 @@ if ($resql)
 	if ($search_year_lim)    $param.='&search_year_lim=' .urlencode($search_year_lim);
 	if ($search_ref)         $param.='&search_ref=' .urlencode($search_ref);
 	if ($search_refcustomer) $param.='&search_refcustomer=' .urlencode($search_refcustomer);
+	if ($search_project_ref) $param.='&search_project_ref='.urlencode($search_project_ref);
+	if ($search_project)     $param.='&search_project='.urlencode($search_project);
 	if ($search_type != '')  $param.='&search_type='.urlencode($search_type);
 	if ($search_societe)     $param.='&search_societe=' .urlencode($search_societe);
 	if ($search_town)        $param.='&search_town='.urlencode($search_town);
@@ -599,9 +607,7 @@ if ($resql)
 	$newcardbutton='';
 	if($user->rights->facture->creer)
 	{
-		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans('NewBill').'</span>';
-		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-		$newcardbutton.= '</a>';
+        $newcardbutton.= dolGetButtonTitle($langs->trans('NewBill'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/facture/card.php?action=create');
 	}
 
 	$i = 0;
@@ -739,10 +745,15 @@ if ($resql)
 		print '<br><input type="checkbox" name="search_option" value="late"'.($option == 'late'?' checked':'').'> '.$langs->trans("Alert");
 		print '</td>';
 	}
-	// Project
+	// Project ref
 	if (! empty($arrayfields['p.ref']['checked']))
 	{
-		print '<td class="liste_titre"><input class="flat maxwidth50imp" type="text" name="search_project" value="'.$search_project.'"></td>';
+		print '<td class="liste_titre"><input class="flat maxwidth50imp" type="text" name="search_project_ref" value="'.$search_project_ref.'"></td>';
+	}
+	// Project label
+	if (! empty($arrayfields['p.title']['checked']))
+	{
+	    print '<td class="liste_titre"><input class="flat maxwidth50imp" type="text" name="search_project" value="'.$search_project.'"></td>';
 	}
 	// Thirpdarty
 	if (! empty($arrayfields['s.nom']['checked']))
@@ -874,6 +885,7 @@ if ($resql)
 	if (! empty($arrayfields['f.date']['checked']))               print_liste_field_titre($arrayfields['f.date']['label'], $_SERVER['PHP_SELF'], 'f.datef', '', $param, 'align="center"', $sortfield, $sortorder);
 	if (! empty($arrayfields['f.date_lim_reglement']['checked'])) print_liste_field_titre($arrayfields['f.date_lim_reglement']['label'], $_SERVER['PHP_SELF'], "f.date_lim_reglement", '', $param, 'align="center"', $sortfield, $sortorder);
 	if (! empty($arrayfields['p.ref']['checked']))                print_liste_field_titre($arrayfields['p.ref']['label'], $_SERVER['PHP_SELF'], "p.ref", '', $param, '', $sortfield, $sortorder);
+	if (! empty($arrayfields['p.title']['checked']))              print_liste_field_titre($arrayfields['p.title']['label'], $_SERVER['PHP_SELF'], "p.title", '', $param, '', $sortfield, $sortorder);
 	if (! empty($arrayfields['s.nom']['checked']))                print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER['PHP_SELF'], 's.nom', '', $param, '', $sortfield, $sortorder);
 	if (! empty($arrayfields['s.town']['checked']))               print_liste_field_titre($arrayfields['s.town']['label'], $_SERVER["PHP_SELF"], 's.town', '', $param, '', $sortfield, $sortorder);
 	if (! empty($arrayfields['s.zip']['checked']))                print_liste_field_titre($arrayfields['s.zip']['label'], $_SERVER["PHP_SELF"], 's.zip', '', $param, '', $sortfield, $sortorder);
@@ -939,6 +951,10 @@ if ($resql)
 			$thirdpartystatic->email=$obj->email;
 			$thirdpartystatic->country_code=$obj->country_code;
 
+			$projectstatic->id=$obj->project_id;
+			$projectstatic->ref=$obj->project_ref;
+			$projectstatic->title=$obj->project_label;
+
 			$paiement = $facturestatic->getSommePaiement();
 			$totalcreditnotes = $facturestatic->getSumCreditNotesUsed();
 			$totaldeposits = $facturestatic->getSumDepositsUsed();
@@ -950,7 +966,12 @@ if ($resql)
 				$totalpay = $facturestatic->total_ttc - $remaintopay;
 			}
 
-			print '<tr class="oddeven">';
+            print '<tr class="oddeven"';
+            if ($contextpage == 'poslist')
+            {
+                print ' onclick="parent.$(\'#poslines\').load(\'invoice.php?action=history&placeid='.$obj->id.'\', function() {parent.$.colorbox.close();});"';
+            }
+            print '>';
 			if (! empty($arrayfields['f.ref']['checked']))
 			{
 				print '<td class="nowrap">';
@@ -958,7 +979,14 @@ if ($resql)
 				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 
 				print '<td class="nobordernopadding nowraponall">';
-				print $facturestatic->getNomUrl(1, '', 200, 0, '', 0, 1);
+                if ($contextpage == 'poslist')
+                {
+                    print $obj->ref;
+                }
+                else
+                {
+                    print $facturestatic->getNomUrl(1, '', 200, 0, '', 0, 1);
+                }
 				print empty($obj->increment)?'':' ('.$obj->increment.')';
 
 				$filename=dol_sanitizeFileName($obj->ref);
@@ -1012,19 +1040,28 @@ if ($resql)
 				if (! $i) $totalarray['nbfield']++;
 			}
 
-			// Project
+			// Project ref
 			if (! empty($arrayfields['p.ref']['checked']))
 			{
-				print '<td class="nowrap">';
+				print '<td class="nocellnopadd nowrap">';
 				if ($obj->project_id > 0)
 				{
-					$projectstatic->id=$obj->project_id;
-					$projectstatic->ref=$obj->project_ref;
-					$projectstatic->title=$obj->project_label;
 					print $projectstatic->getNomUrl(1);
 				}
 				print '</td>';
 				if (! $i) $totalarray['nbfield']++;
+			}
+
+			// Project title
+			if (! empty($arrayfields['p.title']['checked']))
+			{
+			    print '<td class="nowrap">';
+			    if ($obj->project_id > 0)
+			    {
+			        print $projectstatic->title;
+			    }
+			    print '</td>';
+			    if (! $i) $totalarray['nbfield']++;
 			}
 
 			// Third party

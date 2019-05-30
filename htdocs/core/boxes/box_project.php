@@ -118,7 +118,7 @@ class box_project extends ModeleBoxes
                     $projectstatic->public = $objp->public;
 
                     $this->info_box_contents[$i][] = array(
-                        'td' => '',
+                        'td' => 'class="nowraponall"',
                         'text' => $projectstatic->getNomUrl(1),
                         'asis' => 1
                     );

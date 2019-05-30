@@ -259,7 +259,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 /*
- * Last tickets
+ * Latest tickets
  */
 
 $max = 10;
@@ -302,13 +302,8 @@ if ($result) {
 
     print '<div class="div-table-responsive-no-min">';
     print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre"><th>' . $transRecordedType . '</th>';
-    print '<th></th>';
-    print '<th></th>';
-    print '<th></th>';
-    print '<th></th>';
-    print '<th class="right"><a href="'.DOL_URL_ROOT.'/ticket/list.php">'.$langs->trans("FullList").'</th>';
-    print '<th></th>';
+    print '<tr class="liste_titre"><th colspan="5">' . $transRecordedType . '</th>';
+    print '<th class="right" colspan="2"><a href="'.DOL_URL_ROOT.'/ticket/list.php">'.$langs->trans("FullList").'</th>';
     print '</tr>';
     if ($num > 0) {
 

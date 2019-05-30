@@ -56,6 +56,7 @@ $type_container=GETPOST('WEBSITE_TYPE_CONTAINER', 'alpha');
 
 $section_dir = GETPOST('section_dir', 'alpha');
 $file_manager = GETPOST('file_manager', 'alpha');
+$replacesite = GETPOST('replacesite', 'alpha');
 
 if (GETPOST('deletesite', 'alpha')) { $action='deletesite'; }
 if (GETPOST('delete', 'alpha')) { $action='delete'; }
@@ -73,6 +74,7 @@ if (GETPOST('importsite', 'alpha')) { $action='importsite'; }
 if (GETPOST('createfromclone', 'alpha')) { $action='createfromclone'; }
 if (GETPOST('createpagefromclone', 'alpha')) { $action='createpagefromclone'; }
 if (empty($action) && $file_manager) $action='file_manager';
+if (empty($action) && $replacesite) $action='replacesite';
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
@@ -1448,7 +1450,39 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
 		{
 			$db->begin();
 
+			$phpfullcodestringold = dolKeepOnlyPhpCode($objectpage->content);
+
 			$objectpage->content = GETPOST('PAGE_CONTENT', 'none');
+
+            // Security analysis
+			$phpfullcodestring = dolKeepOnlyPhpCode($objectpage->content);
+			//print dol_escape_htmltag($phpfullcodestring);exit;
+            $forbiddenphpcommands=array("exec", "passthru", "system", "shell_exec", "proc_open");
+            if (empty($conf->global->WEBSITE_PHP_ALLOW_WRITE))    // If option is not on, we disallow functions to write files
+            {
+                $forbiddenphpcommands=array_merge($forbiddenphpcommands, array("fopen", "file_put_contents", "fputs", "fputscsv", "fwrite", "fpassthru", "unlink", "mkdir", "rmdir", "symlink", "touch", "umask"));
+            }
+            foreach($forbiddenphpcommands as $forbiddenphpcommand)
+            {
+                if (preg_match('/'.$forbiddenphpcommand.'\s*\(/ms', $phpfullcodestring))
+                {
+                    $error++;
+                    setEventMessages($langs->trans("DynamicPHPCodeContainsAForbiddenInstruction", $forbiddenphpcommand), null, 'errors');
+                    if ($action == 'updatesource') $action = 'editsource';
+                    if ($action == 'updatecontent') $action = 'editcontent';
+                }
+            }
+
+            if (empty($user->rights->website->writephp))
+            {
+                if ($phpfullcodestringold != $phpfullcodestring)
+                {
+                    $error++;
+                    setEventMessages($langs->trans("NotAllowedToAddDynamicContent"), null, 'errors');
+                    if ($action == 'updatesource') $action = 'editsource';
+                    if ($action == 'updatecontent') $action = 'editcontent';
+                }
+            }
 
 			// Clean data. We remove all the head section.
 			$objectpage->content = preg_replace('/<head>.*<\/head>/ims', '', $objectpage->content);
@@ -1460,6 +1494,8 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
 			{
 				$error++;
 				setEventMessages($objectpage->error, $objectpage->errors, 'errors');
+				if ($action == 'updatesource') $action = 'editsource';
+				if ($action == 'updatecontent') $action = 'editcontent';
 			}
 
 			if (! $error)
@@ -1711,6 +1747,10 @@ if ($action == 'file_manager')
 {
 	print '<input type="hidden" name="action" value="file_manager">';
 }
+if ($action == 'replacesite')
+{
+	print '<input type="hidden" name="action" value="replacesite">';
+}
 
 print '<div>';
 
@@ -1783,9 +1823,7 @@ if (! GETPOST('hide_websitemenu'))
 		print ' &nbsp; ';
 
 		print '<input type="submit" class="button nobordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditCss")).'" name="editcss">';
-		//print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditMenu")).'" name="editmenu">';
-		print '<input type="submit" class="button nobordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("CloneSite")).'" name="createfromclone">';
-		print '<input type="submit" class="button nobordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("ExportSite")).'" name="exportsite">';
+
 		if (! $atleastonepage)
 		{
 			print '<input type="submit" class="button nobordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("ImportSite")).'" name="importsite">';
@@ -1795,11 +1833,16 @@ if (! GETPOST('hide_websitemenu'))
 			print '<input type="submit" class="button nobordertransp" disabled="disabled" value="'.dol_escape_htmltag($langs->trans("ImportSite")).'" name="importsite">';
 		}
 
+		//print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditMenu")).'" name="editmenu">';
+		print '<input type="submit" class="button nobordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("CloneSite")).'" name="createfromclone">';
+		print '<input type="submit" class="button nobordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("ExportSite")).'" name="exportsite">';
+
 		print '<input type="submit" class="buttonDelete" name="deletesite" value="'.$langs->trans("Delete").'"'.($atleastonepage?' disabled="disabled"':'').'>';
 
 		print ' &nbsp; ';
 
-		print '<input type="submit" class="button nobordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("MediaFiles")).'" name="file_manager">';
+		print '<a href="'.$_SERVER["PHP_SEFL"].'?action=file_manager&website='.$website->ref.'" class="button nobordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("MediaFiles")).'"><span class="fa fa-image"><span></a>';
+		//print '<input type="submit" class="button nobordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("MediaFiles")).'" name="file_manager">';
 		/*print '<a class="button button_file_manager"'.$disabled.'>'.dol_escape_htmltag($langs->trans("MediaFiles")).'</a>';
 		print '<script language="javascript">
 			jQuery(document).ready(function () {
@@ -1817,6 +1860,9 @@ if (! GETPOST('hide_websitemenu'))
 			});
 			</script>';
 		*/
+
+		//print '<input type="submit" class="button nobordertransp"'.$disabled.' value="<span class="fa fa-globe"><span>'.dol_escape_htmltag($langs->trans("Replace")).'" name="replacesite">';
+		print '<a href="'.$_SERVER["PHP_SEFL"].'?action=replacesite&website='.$website->ref.'" class="button nobordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("ReplaceWebSiteContent")).'"><span class="fa fa-file-code"><span></a>';
 	}
 
 	print '</div>';
@@ -1850,7 +1896,7 @@ if (! GETPOST('hide_websitemenu'))
 		}
 		if (! empty($conf->global->WEBSITE_REPLACE_INFO_ABOUT_USAGE_WITH_WEBSERVER))
 		{
-		    $htmltext.= '<br>'.$conf->global->WEBSITE_REPLACE_INFO_ABOUT_USAGE_WITH_WEBSERVER;
+		    $htmltext.= '<br>'.$langs->trans($conf->global->WEBSITE_REPLACE_INFO_ABOUT_USAGE_WITH_WEBSERVER);
 		}
 		else
 		{
@@ -1866,10 +1912,10 @@ if (! GETPOST('hide_websitemenu'))
 		print '</div>';
 	}
 
-	if (in_array($action, array('editcss','editmenu','file_manager')))
+	if (in_array($action, array('editcss','editmenu','file_manager','replacesite')))
 	{
-		if (preg_match('/^create/', $action) && $action != 'file_manager') print '<input type="submit" id="savefile" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
-		if (preg_match('/^edit/', $action) && $action != 'file_manager') print '<input type="submit" id="savefile" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
+		if (preg_match('/^create/', $action) && $action != 'file_manager' && $action != 'replacesite') print '<input type="submit" id="savefile" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
+		if (preg_match('/^edit/', $action) && $action != 'file_manager' && $action != 'replacesite') print '<input type="submit" id="savefile" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
 		if ($action != 'preview') print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" name="preview">';
 	}
 
@@ -2121,7 +2167,7 @@ if (! GETPOST('hide_websitemenu'))
 
 			// TODO Add js to save alias like we save virtual host name and use dynamic virtual host for url of id=previewpageext
 		}
-		if (! in_array($action, array('editcss','editmenu','file_manager','createsite','createcontainer','createpagefromclone')))
+		if (! in_array($action, array('editcss','editmenu','file_manager','replacesite','createsite','createcontainer','createpagefromclone')))
 		{
 			if (preg_match('/^create/', $action)) print '<input type="submit" id="savefile" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
 			if (preg_match('/^edit/', $action)) print '<input type="submit" id="savefile" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
@@ -2781,12 +2827,24 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 if ($action == 'editfile' || $action == 'file_manager')
 {
 	print '<!-- Edit Media -->'."\n";
-	print '<div class="fiche"><br><br>';
+	print '<div class="fiche"><br>';
 	//print '<div class="center">'.$langs->trans("FeatureNotYetAvailable").'</center>';
 
 	$module = 'medias';
 	if (empty($url)) $url=DOL_URL_ROOT.'/website/index.php';	// Must be an url without param
 	include DOL_DOCUMENT_ROOT.'/core/tpl/filemanager.tpl.php';
+
+	print '</div>';
+}
+
+if ($action == 'replacesite')
+{
+	print '<!-- Edit Media -->'."\n";
+	print '<div class="fiche"><br>';
+
+	print load_fiche_titre($langs->trans("ReplaceWebSiteContent"));
+
+	print '<div class="center">'.$langs->trans("FeatureNotYetAvailable").'</center>';
 
 	print '</div>';
 }

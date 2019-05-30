@@ -569,7 +569,7 @@ else
         if (count($notavailable_choices)) {
 
             print '<br><div id="AShowChoices" style="opacity: 0.5">';
-            print '<img id="availchoice" src="../theme/eldy/img/1downarrow.png"> '.$langs->trans('ShowNotAvailableOptions').'...';
+            print '> '.$langs->trans('ShowNotAvailableOptions').'...';
             print '</div>';
 
             print '<div id="navail_choices" style="display:none">';
@@ -592,7 +592,7 @@ $("div#AShowChoices").click(function() {
     $("div#navail_choices").toggle();
 
     if ($("div#navail_choices").css("display") == "none") {
-        $(this).text("'.$langs->trans('ShowNotAvailableOptions').'...");
+        $(this).text("> '.$langs->trans('ShowNotAvailableOptions').'...");
     } else {
         $(this).text("'.$langs->trans('HideNotAvailableOptions').'...");
     }

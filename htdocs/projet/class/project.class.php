@@ -582,7 +582,7 @@ class Project extends CommonObject
 		}
         elseif ($type == 'project_task')
 		{
-			$sql = "SELECT DISTINCT pt.rowid FROM " . MAIN_DB_PREFIX . "projet_task as pt, " . MAIN_DB_PREFIX . "projet_task_time as ptt WHERE pt.rowid = ptt.fk_task AND pt.fk_projet IN (". $ids .")";
+			$sql = "SELECT DISTINCT pt.rowid FROM " . MAIN_DB_PREFIX . "projet_task as pt WHERE pt.fk_projet IN (". $ids .")";
 		}
 		elseif ($type == 'project_task_time')	// Case we want to duplicate line foreach user
 		{
@@ -686,6 +686,18 @@ class Project extends CommonObject
 	        	$error++;
 	        	break;
 	        }
+        }
+
+        // Remove linked categories.
+        if (! $error) {
+            $sql = "DELETE FROM ".MAIN_DB_PREFIX. "categorie_project";
+            $sql.= " WHERE fk_project = ". $this->id;
+
+            $result = $this->db->query($sql);
+            if (! $result) {
+                $error++;
+                $this->errors[] = $this->db->lasterror();
+            }
         }
 
 		// Fetch tasks
@@ -1274,20 +1286,21 @@ class Project extends CommonObject
      /**
      * Load an object from its id and create a new one in database
 	 *
-	 *  @param	int		$fromid     	Id of object to clone
-	 *  @param	bool	$clone_contact	Clone contact of project
-	 *  @param	bool	$clone_task		Clone task of project
-	 *  @param	bool	$clone_project_file		Clone file of project
-	 *  @param	bool	$clone_task_file		Clone file of task (if task are copied)
-     *  @param	bool	$clone_note		Clone note of project
-     *  @param	bool	$move_date		Move task date on clone
-     *  @param	integer	$notrigger		No trigger flag
-     *  @param  int     $newthirdpartyid  New thirdparty id
-	 *  @return	int						New id of clone
+	 *  @param	User	$user		          User making the clone
+	 *  @param	int		$fromid     	      Id of object to clone
+	 *  @param	bool	$clone_contact	      Clone contact of project
+	 *  @param	bool	$clone_task		      Clone task of project
+	 *  @param	bool	$clone_project_file	  Clone file of project
+	 *  @param	bool	$clone_task_file	  Clone file of task (if task are copied)
+     *  @param	bool	$clone_note		      Clone note of project
+     *  @param	bool	$move_date		      Move task date on clone
+     *  @param	integer	$notrigger		      No trigger flag
+     *  @param  int     $newthirdpartyid      New thirdparty id
+	 *  @return	int						      New id of clone
 	 */
-    public function createFromClone($fromid, $clone_contact = false, $clone_task = true, $clone_project_file = false, $clone_task_file = false, $clone_note = true, $move_date = true, $notrigger = 0, $newthirdpartyid = 0)
+    public function createFromClone(User $user, $fromid, $clone_contact = false, $clone_task = true, $clone_project_file = false, $clone_task_file = false, $clone_note = true, $move_date = true, $notrigger = 0, $newthirdpartyid = 0)
     {
-		global $user,$langs,$conf;
+		global $langs,$conf;
 
 		$error=0;
 
@@ -1477,7 +1490,7 @@ class Project extends CommonObject
 				// Loop on each task, to clone it
 			    foreach ($tasksarray as $tasktoclone)
 			    {
-					$result_clone = $taskstatic->createFromClone($tasktoclone->id, $clone_project_id, $tasktoclone->fk_parent, $move_date, true, false, $clone_task_file, true, false);
+					$result_clone = $taskstatic->createFromClone($user, $tasktoclone->id, $clone_project_id, $tasktoclone->fk_parent, $move_date, true, false, $clone_task_file, true, false);
 					if ($result_clone <= 0)
 				    {
 				    	$this->error.=$result_clone->error;

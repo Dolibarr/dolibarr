@@ -87,14 +87,28 @@ class ActionComm extends CommonObject
      * @var string Agenda event label
      */
     public $label;
-    
+
     /**
      * Date creation record (datec)
      *
      * @var integer
      */
     public $datec;
-    
+
+    /**
+     * Date end record (datef)
+     *
+     * @var integer
+     */
+    public $datef;
+
+    /**
+     * Duration (duree)
+     *
+     * @var integer
+     */
+    public $duree;
+
     /**
      * Date modification record (tms)
      *
@@ -129,14 +143,14 @@ class ActionComm extends CommonObject
      * @var int
      */
     public $usermodid;
-    
+
     /**
      * Date action start (datep)
      *
      * @var integer
      */
     public $datep;
-    
+
     /**
      * Date action end (datep2)
      *
@@ -281,6 +295,7 @@ class ActionComm extends CommonObject
         if (! empty($this->datep) && ! empty($this->datef) && $this->datep > $this->datef) $this->datef=$this->datep;
         //if (! empty($this->date)  && ! empty($this->dateend) && $this->date > $this->dateend) $this->dateend=$this->date;
         if (! isset($this->fk_project) || $this->fk_project < 0) $this->fk_project = 0;
+        // For backward compatibility
         if ($this->elementtype=='facture')  $this->elementtype='invoice';
         if ($this->elementtype=='commande') $this->elementtype='order';
         if ($this->elementtype=='contrat')  $this->elementtype='contract';
@@ -504,13 +519,13 @@ class ActionComm extends CommonObject
     /**
      *  Load an object from its id and create a new one in database
      *
-     *  @param	    user	        $fuser      	Object user making action
+     *  @param	    User	        $fuser      	Object user making action
 	 *  @param		int				$socid			Id of thirdparty
      *  @return		int								New id of clone
      */
-    public function createFromClone($fuser, $socid)
+    public function createFromClone(User $fuser, $socid)
     {
-        global $db, $user, $langs, $conf, $hookmanager;
+        global $db, $conf, $hookmanager;
 
         $error=0;
         $now=dol_now();
@@ -528,20 +543,6 @@ class ActionComm extends CommonObject
 		$this->fetchResources();
 
         $this->id=0;
-
-		if (!is_object($fuser))
-		{
-			if ($fuser > 0)
-			{
-				$u = new User($db);
-				$u->fetch($fuser);
-				$fuser = $u;
-			}
-			else
-			{
-				$fuser = $user;
-			}
-		}
 
         // Create clone
 		$this->context['createfromclone']='createfromclone';

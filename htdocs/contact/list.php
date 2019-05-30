@@ -146,6 +146,8 @@ $fieldstosearchall = array(
 	'p.email'=>'EMail',
 	's.nom'=>"ThirdParty",
 	'p.phone'=>"Phone",
+    'p.note_public'=>"NotePublic",
+    'p.note_private'=>"NotePrivate",
 );
 
 // Definition of fields for list
@@ -398,7 +400,7 @@ $num = $db->num_rows($result);
 
 $arrayofselected=is_array($toselect)?$toselect:array();
 
-if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && ($sall != '' || $seearch_cti != ''))
+if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && ($sall != '' || $search_cti != ''))
 {
 	$obj = $db->fetch_object($resql);
 	$id = $obj->rowid;
@@ -453,9 +455,7 @@ $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 $newcardbutton='';
 if ($user->rights->societe->contact->creer)
 {
-	$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/contact/card.php?action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans('NewContactAddress').'</span>';
-	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-	$newcardbutton.= '</a>';
+    $newcardbutton.= dolGetButtonTitle($langs->trans('NewContactAddress'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/contact/card.php?action=create');
 }
 
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'" name="formfilter">';
@@ -693,8 +693,8 @@ if (! empty($arrayfields['p.import_key']['checked']))
 	print '</td>';
 }
 // Action column
-print '<td class="liste_titre right">';
-$searchpicto=$form->showFilterButtons();
+print '<td class="liste_titre maxwidthsearch">';
+$searchpicto=$form->showFilterAndCheckAddButtons(0);
 print $searchpicto;
 print '</td>';
 
@@ -783,7 +783,7 @@ while ($i < min($num, $limit))
 	// Name
 	if (! empty($arrayfields['p.lastname']['checked']))
 	{
-		print '<td valign="middle">';
+		print '<td class="middle tdoverflowmax200">';
 		print $contactstatic->getNomUrl(1, '', 0);
 		print '</td>';
 		if (! $i) $totalarray['nbfield']++;
@@ -791,7 +791,7 @@ while ($i < min($num, $limit))
 	// Firstname
 	if (! empty($arrayfields['p.firstname']['checked']))
 	{
-		print '<td>'.$obj->firstname.'</td>';
+		print '<td class="tdoverflowmax200">'.$obj->firstname.'</td>';
 		if (! $i) $totalarray['nbfield']++;
 	}
 	// Job position

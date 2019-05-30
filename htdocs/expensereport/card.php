@@ -145,7 +145,11 @@ if (empty($reshook))
 
 	include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
-	if (GETPOST('sendit', 'alpha')) $action='';
+	if (GETPOSTISSET('sendit'))    // If we just submit a file
+	{
+	    if ($action == 'updateline') $action='editline';   // To avoid to make the updateline now
+	    else $action='';                                   // To avoid to make the addline now
+	}
 
     include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; 	// Must be include, not include_once
 
@@ -167,7 +171,7 @@ if (empty($reshook))
                 // Because createFromClone modifies the object, we must clone it so that we can restore it later if it fails
                 $orig = clone $object;
 
-                $result=$object->createFromClone(GETPOST('fk_user_author', 'int'));
+                $result=$object->createFromClone($user, GETPOST('fk_user_author', 'int'));
                 if ($result > 0)
                 {
                     header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);
@@ -2004,7 +2008,7 @@ else
 			        print '<tr><td colspan="' . $nbcols . '" class="right">'.$langs->trans("AmountExpected").':</td><td class="right">'.price($object->total_ttc).'</td><td></td></tr>';
 
 			        print '<tr><td colspan="' . $nbcols . '" class="right">'.$langs->trans("RemainderToPay").':</td>';
-			        print '<td align="right'.($resteapayeraffiche?' amountremaintopay':(' '.$cssforamountpaymentcomplete)).'">'.price($resteapayeraffiche).'</td><td></td></tr>';
+			        print '<td class="right'.($resteapayeraffiche?' amountremaintopay':(' '.$cssforamountpaymentcomplete)).'">'.price($resteapayeraffiche).'</td><td></td></tr>';
 
 				    $db->free($resql);
 				}
@@ -2072,17 +2076,13 @@ else
 						if ($action != 'editline' || $line->rowid != GETPOST('rowid', 'int'))
 						{
 							print '<tr class="oddeven">';
-
+							// Num
 							print '<td class="center">';
 							print $numline;
 							print '</td>';
-
-							/*print '<td class="center">';
-							print img_picto($langs->trans("Document"), "object_generic");
-							print ' <span>'.$piece_comptable.'</span>';
-							print '</td>';*/
-
+							// Date
 							print '<td class="center">'.dol_print_date($db->jdate($line->date), 'day').'</td>';
+							// Project
 							if (! empty($conf->projet->enabled))
 							{
 								print '<td>';
@@ -2090,21 +2090,26 @@ else
 								{
 									$projecttmp->id=$line->fk_project;
 									$projecttmp->ref=$line->projet_ref;
+									$projecttmp->title=$line->projet_title;
 									print $projecttmp->getNomUrl(1);
 								}
 								print '</td>';
 							}
+							// IK
 							if (!empty($conf->global->MAIN_USE_EXPENSE_IK))
 							{
 								print '<td class="fk_c_exp_tax_cat">';
 								print dol_getIdFromCode($db, $line->fk_c_exp_tax_cat, 'c_exp_tax_cat', 'rowid', 'label');
 								print '</td>';
 							}
+							// Type of fee
 							print '<td class="center">';
 							$labeltype = ($langs->trans(($line->type_fees_code)) == $line->type_fees_code ? $line->type_fees_libelle : $langs->trans($line->type_fees_code));
 							print $labeltype;
 							print '</td>';
+							// Comment
 							print '<td class="left">'.dol_nl2br($line->comments).'</td>';
+							// VAT rate
 							print '<td class="right">'.vatrate($line->vatrate, true).'</td>';
                             // Unit price HT
 							print '<td class="right">';
@@ -2209,7 +2214,7 @@ else
 							{
 								print '<td class="nowrap right">';
 
-								print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=editline&amp;rowid='.$line->rowid.'#'.$line->rowid.'">';
+								print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=editline&amp;rowid='.$line->rowid.'">';
 								print img_edit();
 								print '</a> &nbsp; ';
 								print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete_line&amp;rowid='.$line->rowid.'">';
@@ -2224,14 +2229,18 @@ else
 
 						if ($action == 'editline' && $line->rowid == GETPOST('rowid', 'int'))
 						{
-
-						    // Add line with link to add new file or attach to an existing file
-						    $colspan = 12;
+						    // Add line with link to add new file or attach line to an existing file
+						    $colspan = 10;
 						    if (! empty($conf->projet->enabled)) $colspan++;
 						    if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) $colspan++;
 
 						    print '<tr class="tredited">';
-						    print '<td colspan="'.$colspan.'" class="liste_titre">';
+
+						    print '<td class="center">';
+						    print $numline;
+						    print '</td>';
+
+						    print '<td colspan="'.($colspan-1).'" class="liste_titre">';
 						    print '<a href="" class="commonlink auploadnewfilenow reposition">'.$langs->trans("UploadANewFileNow");
 						    print img_picto($langs->trans("UploadANewFileNow"), 'chevron-down', '', false, 0, 0, '', 'marginleftonly');
 						    print '</a>';
@@ -2355,7 +2364,9 @@ else
 				}
 
 				// Add a line
-				if (($object->fk_statut == ExpenseReport::STATUS_DRAFT || $object->fk_statut == ExpenseReport::STATUS_REFUSED) && $action != 'editline' && $user->rights->expensereport->creer)
+				if (($object->fk_statut == ExpenseReport::STATUS_DRAFT || $object->fk_statut == ExpenseReport::STATUS_REFUSED)
+				    && $action != 'editline'
+				    && $user->rights->expensereport->creer)
 				{
 				    $colspan = 11;
 				    if (! empty($conf->global->MAIN_USE_EXPENSE_IK)) $colspan++;
@@ -2399,10 +2410,10 @@ else
 				            jQuery(".trattachnewfilenow").toggle();
                             jQuery(".truploadnewfilenow").hide();
                             return false;
-                        });';
-				    if (is_array(GETPOST('attachfile', 'array')) && count(GETPOST('attachfile', 'array')))
+                        });'."\n";
+				    if (is_array(GETPOST('attachfile', 'array')) && count(GETPOST('attachfile', 'array')) && $action != 'updateline')
 				    {
-				        print 'jQuery(".trattachnewfilenow").toggle();'."\n";
+				        print 'jQuery(".trattachnewfilenow").show();'."\n";
 				    }
 				    print '
                     });
@@ -2704,9 +2715,6 @@ if ($action != 'create' && $action != 'edit')
 }
 
 print '</div>';
-
-
-//$conf->global->DOL_URL_ROOT_DOCUMENT_PHP=dol_buildpath('/expensereport/documentwrapper.php',1);
 
 
 // Select mail models is same action as presend

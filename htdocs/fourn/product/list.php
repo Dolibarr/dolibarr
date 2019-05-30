@@ -117,9 +117,9 @@ if ($fourn_id)
 
 
 $arrayofmassactions =  array(
-	'generate_doc'=>$langs->trans("Generate"),
-    'presend'=>$langs->trans("SendByMail"),
+	'generate_doc'=>$langs->trans("ReGeneratePDF"),
     'builddoc'=>$langs->trans("PDFMerge"),
+    'presend'=>$langs->trans("SendByMail"),
 );
 if ($user->rights->mymodule->supprimer) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
@@ -243,7 +243,7 @@ if ($resql)
 	print '<td></td>';
 	print '<td></td>';
 	print '<td></td>';
-	print '<td class="liste_titre right">';
+	print '<td class="liste_titre maxwidthsearch">';
 	$searchpicto=$form->showFilterButtons();
 	print $searchpicto;
 	print '</td>';
