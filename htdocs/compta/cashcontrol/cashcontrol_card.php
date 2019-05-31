@@ -412,10 +412,10 @@ if ($action=="create" || $action=="start")
 
 		print '<tr class="liste_titre">';
 		print '<td></td>';
-		print '<td align="center">'.$langs->trans("InitialBankBalance");
+		print '<td class="center">'.$langs->trans("InitialBankBalance");
 		//print '<br>'.$langs->trans("TheoricalAmount").'<br>'.$langs->trans("RealAmount");
 		print '</td>';
-		print '<td align="center" class="hide0" colspan="'.count($arrayofpaymentmode).'">';
+		print '<td class="center" class="hide0" colspan="'.count($arrayofpaymentmode).'">';
 		print $langs->trans("AmountAtEndOfPeriod");
 		print '</td>';
 		print '<td></td>';
@@ -423,13 +423,13 @@ if ($action=="create" || $action=="start")
 
 		print '<tr class="liste_titre">';
 		print '<td></td>';
-		print '<td align="center">'.$langs->trans("Cash");
+		print '<td class="center">'.$langs->trans("Cash");
 		//print '<br>'.$langs->trans("TheoricalAmount").'<br>'.$langs->trans("RealAmount");
 		print '</td>';
 		$i=0;
 		foreach($arrayofpaymentmode as $key => $val)
 		{
-			print '<td align="center"'.($i == 0 ? ' class="hide0"':'').'>'.$langs->trans($val);
+			print '<td class="center"'.($i == 0 ? ' class="hide0"':'').'>'.$langs->trans($val);
 			//print '<br>'.$langs->trans("TheoricalAmount").'<br>'.$langs->trans("RealAmount");
 			print '</td>';
 			$i++;

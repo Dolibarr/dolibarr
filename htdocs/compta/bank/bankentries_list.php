@@ -866,14 +866,14 @@ if ($resql)
 	}
 	if (! empty($arrayfields['type']['checked']))
 	{
-        print '<td class="liste_titre" align="center">';
+        print '<td class="liste_titre center">';
         $form->select_types_paiements(empty($search_type)?'':$search_type, 'search_type', '', 2, 1, 1, 0, 1, 'maxwidth100');
         print '</td>';
 	}
 	if (! empty($arrayfields['b.num_chq']['checked']))
 	{
         // Numero
-        print '<td class="liste_titre" align="center"><input type="text" class="flat" name="req_nb" value="'.dol_escape_htmltag($search_req_nb).'" size="2"></td>';
+        print '<td class="liste_titre center"><input type="text" class="flat" name="req_nb" value="'.dol_escape_htmltag($search_req_nb).'" size="2"></td>';
 	}
 	if (! empty($arrayfields['bu.label']['checked']))
 	{
@@ -914,12 +914,12 @@ if ($resql)
 	// Numero statement
 	if (! empty($arrayfields['b.num_releve']['checked']))
 	{
-        print '<td class="liste_titre" align="center"><input type="text" class="flat" name="search_num_releve" value="'.dol_escape_htmltag($search_num_releve).'" size="3"></td>';
+        print '<td class="liste_titre center"><input type="text" class="flat" name="search_num_releve" value="'.dol_escape_htmltag($search_num_releve).'" size="3"></td>';
 	}
 	// Conciliated
 	if (! empty($arrayfields['b.conciliated']['checked']))
 	{
-        print '<td class="liste_titre" align="center">';
+        print '<td class="liste_titre center">';
         print $form->selectyesno('search_conciliated', $search_conciliated, 1, false, 1);
         print '</td>';
 	}
@@ -935,26 +935,26 @@ if ($resql)
 	print '<tr class="liste_titre">';
 	if (! empty($arrayfields['b.rowid']['checked']))            print_liste_field_titre($arrayfields['b.rowid']['label'], $_SERVER['PHP_SELF'], 'b.rowid', '', $param, '', $sortfield, $sortorder);
 	if (! empty($arrayfields['description']['checked']))        print_liste_field_titre($arrayfields['description']['label'], $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder);
-	if (! empty($arrayfields['b.dateo']['checked']))            print_liste_field_titre($arrayfields['b.dateo']['label'], $_SERVER['PHP_SELF'], 'b.dateo', '', $param, 'align="center"', $sortfield, $sortorder);
-	if (! empty($arrayfields['b.datev']['checked']))            print_liste_field_titre($arrayfields['b.datev']['label'], $_SERVER['PHP_SELF'], 'b.datev,b.dateo,b.rowid', '', $param, 'align="center"', $sortfield, $sortorder);
-	if (! empty($arrayfields['type']['checked']))               print_liste_field_titre($arrayfields['type']['label'], $_SERVER['PHP_SELF'], '', '', $param, 'align="center"', $sortfield, $sortorder);
-	if (! empty($arrayfields['b.num_chq']['checked']))          print_liste_field_titre($arrayfields['b.num_chq']['label'], $_SERVER['PHP_SELF'], 'b.num_chq', '', $param, 'align="center"', $sortfield, $sortorder);
+	if (! empty($arrayfields['b.dateo']['checked']))            print_liste_field_titre($arrayfields['b.dateo']['label'], $_SERVER['PHP_SELF'], 'b.dateo', '', $param, '', $sortfield, $sortorder, 'center ');
+	if (! empty($arrayfields['b.datev']['checked']))            print_liste_field_titre($arrayfields['b.datev']['label'], $_SERVER['PHP_SELF'], 'b.datev,b.dateo,b.rowid', '', $param, '', $sortfield, $sortorder, 'center ');
+	if (! empty($arrayfields['type']['checked']))               print_liste_field_titre($arrayfields['type']['label'], $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, 'center ');
+	if (! empty($arrayfields['b.num_chq']['checked']))          print_liste_field_titre($arrayfields['b.num_chq']['label'], $_SERVER['PHP_SELF'], 'b.num_chq', '', $param, '', $sortfield, $sortorder, 'center ');
 	if (! empty($arrayfields['bu.label']['checked']))           print_liste_field_titre($arrayfields['bu.label']['label'], $_SERVER['PHP_SELF'], 'bu.label', '', $param, '', $sortfield, $sortorder);
 	if (! empty($arrayfields['ba.ref']['checked']))             print_liste_field_titre($arrayfields['ba.ref']['label'], $_SERVER['PHP_SELF'], 'ba.ref', '', $param, '', $sortfield, $sortorder);
-	if (! empty($arrayfields['b.debit']['checked']))            print_liste_field_titre($arrayfields['b.debit']['label'], $_SERVER['PHP_SELF'], 'b.amount', '', $param, 'class="right"', $sortfield, $sortorder);
-	if (! empty($arrayfields['b.credit']['checked']))           print_liste_field_titre($arrayfields['b.credit']['label'], $_SERVER['PHP_SELF'], 'b.amount', '', $param, 'class="right"', $sortfield, $sortorder);
-	if (! empty($arrayfields['balancebefore']['checked']))      print_liste_field_titre($arrayfields['balancebefore']['label'], $_SERVER['PHP_SELF'], '', '', $param, 'class="right"', $sortfield, $sortorder);
-	if (! empty($arrayfields['balance']['checked']))            print_liste_field_titre($arrayfields['balance']['label'], $_SERVER['PHP_SELF'], '', '', $param, 'class="right"', $sortfield, $sortorder);
-	if (! empty($arrayfields['b.num_releve']['checked']))       print_liste_field_titre($arrayfields['b.num_releve']['label'], $_SERVER['PHP_SELF'], 'b.num_releve', '', $param, 'align="center"', $sortfield, $sortorder);
-	if (! empty($arrayfields['b.conciliated']['checked']))      print_liste_field_titre($arrayfields['b.conciliated']['label'], $_SERVER['PHP_SELF'], 'b.rappro', '', $param, 'align="center"', $sortfield, $sortorder);
+	if (! empty($arrayfields['b.debit']['checked']))            print_liste_field_titre($arrayfields['b.debit']['label'], $_SERVER['PHP_SELF'], 'b.amount', '', $param, '', $sortfield, $sortorder, 'right ');
+	if (! empty($arrayfields['b.credit']['checked']))           print_liste_field_titre($arrayfields['b.credit']['label'], $_SERVER['PHP_SELF'], 'b.amount', '', $param, '', $sortfield, $sortorder, 'right ');
+	if (! empty($arrayfields['balancebefore']['checked']))      print_liste_field_titre($arrayfields['balancebefore']['label'], $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, 'right ');
+	if (! empty($arrayfields['balance']['checked']))            print_liste_field_titre($arrayfields['balance']['label'], $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, 'right ');
+	if (! empty($arrayfields['b.num_releve']['checked']))       print_liste_field_titre($arrayfields['b.num_releve']['label'], $_SERVER['PHP_SELF'], 'b.num_releve', '', $param, '', $sortfield, $sortorder, 'center ');
+	if (! empty($arrayfields['b.conciliated']['checked']))      print_liste_field_titre($arrayfields['b.conciliated']['label'], $_SERVER['PHP_SELF'], 'b.rappro', '', $param, '', $sortfield, $sortorder, 'center ');
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 	// Hook fields
 	$parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
 	$reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
-	print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', 'class="right"', $sortfield, $sortorder, 'maxwidthsearch ');
-	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
+	print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch right ');
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch center ');
 	print "</tr>\n";
 
 	$balance = 0;    // For balance
@@ -1262,7 +1262,7 @@ if ($resql)
         // Date ope
     	if (! empty($arrayfields['b.dateo']['checked']))
     	{
-    	   print '<td align="center" class="nowrap">';
+    	   print '<td class="center nowrap">';
     	   print '<span id="dateoperation_'.$objp->rowid.'">'.dol_print_date($db->jdate($objp->do), "day")."</span>";
     	   print '&nbsp;';
     	   print '<span class="inline-block">';
@@ -1278,7 +1278,7 @@ if ($resql)
         // Date value
     	if (! empty($arrayfields['b.datev']['checked']))
     	{
-    	   print '<td align="center" class="nowrap">';
+    	   print '<td class="center nowrap">';
     	   print '<span id="datevalue_'.$objp->rowid.'">'.dol_print_date($db->jdate($objp->dv), "day")."</span>";
     	   print '&nbsp;';
     	   print '<span class="inline-block">';
@@ -1294,7 +1294,7 @@ if ($resql)
         // Payment type
     	if (! empty($arrayfields['type']['checked']))
     	{
-        	print '<td align="center" class="nowrap">';
+        	print '<td class="center nowrap">';
 	        $labeltype=($langs->trans("PaymentTypeShort".$objp->fk_type)!="PaymentTypeShort".$objp->fk_type)?$langs->trans("PaymentTypeShort".$objp->fk_type):$langs->getLabelFromKey($db, $objp->fk_type, 'c_paiement', 'code', 'libelle', '', 1);
 	        if ($labeltype == 'SOLD') print '&nbsp;'; //$langs->trans("InitialBankBalance");
 	        else print $labeltype;
@@ -1305,7 +1305,7 @@ if ($resql)
         // Num cheque
     	if (! empty($arrayfields['b.num_chq']['checked']))
     	{
-    	    print '<td class="nowrap" align="center">'.($objp->num_chq?$objp->num_chq:"")."</td>\n";
+    	    print '<td class="center nowrap">'.($objp->num_chq?$objp->num_chq:"")."</td>\n";
     	    if (! $i) $totalarray['nbfield']++;
     	}
 
@@ -1415,7 +1415,7 @@ if ($resql)
 
     	if (! empty($arrayfields['b.num_releve']['checked']))
     	{
-            print '<td class="nowraponall" align="center">';
+            print '<td class="nowraponall center">';
         	// Transaction reconciliated or edit link
         	if ($bankaccount->canBeConciliated() > 0)
         	{
@@ -1439,14 +1439,14 @@ if ($resql)
 
         if (! empty($arrayfields['b.conciliated']['checked']))
     	{
-            print '<td class="nowraponall" align="center">';
+            print '<td class="nowraponall center">';
             print $objp->conciliated?$langs->trans("Yes"):$langs->trans("No");
         	print '</td>';
             if (! $i) $totalarray['nbfield']++;
     	}
 
     	// Action edit/delete
-    	print '<td class="nowraponall" align="center">';
+    	print '<td class="nowraponall center">';
     	// Transaction reconciliated or edit link
     	if ($objp->conciliated && $bankaccount->canBeConciliated() > 0)  // If line not conciliated and account can be conciliated
     	{
@@ -1487,7 +1487,7 @@ if ($resql)
     	if (! $i) $totalarray['nbfield']++;
 
     	// Action column
-    	print '<td class="nowrap" align="center">';
+    	print '<td class="nowrap center">';
     	if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
     	{
     	    $selected=0;
