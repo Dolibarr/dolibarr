@@ -188,7 +188,7 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td class="liste_titre">'.$langs->trans("Month").'</td>';
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
-	print '<td align="center" width="20%" colspan="2" class="liste_titre borderrightlight">'.$annee.'</td>';
+	print '<td width="20%" colspan="2" class="liste_titre center borderrightlight">'.$annee.'</td>';
 }
 print '</tr>';
 

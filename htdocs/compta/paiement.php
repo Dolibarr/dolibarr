@@ -584,8 +584,8 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
                 print '<tr class="liste_titre">';
                 print '<td>'.$arraytitle.'</td>';
-                print '<td align="center">'.$langs->trans('Date').'</td>';
-                print '<td align="center">'.$langs->trans('DateMaxPayment').'</td>';
+                print '<td class="center">'.$langs->trans('Date').'</td>';
+                print '<td class="center">'.$langs->trans('DateMaxPayment').'</td>';
                 if (!empty($conf->multicurrency->enabled)) {
                 	print '<td>'.$langs->trans('Currency').'</td>';
                 	print '<td class="right">'.$langs->trans('MulticurrencyAmountTTC').'</td>';
@@ -641,12 +641,12 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                     print "</td>\n";
 
                     // Date
-                   	print '<td align="center">'.dol_print_date($db->jdate($objp->df), 'day')."</td>\n";
+                   	print '<td class="center">'.dol_print_date($db->jdate($objp->df), 'day')."</td>\n";
 
                     // Due date
                     if ($objp->dlr > 0 )
                     {
-                        print '<td align="center">';
+                        print '<td class="center">';
                         print dol_print_date($db->jdate($objp->dlr), 'day');
 
                         if ($invoice->hasDelay())
@@ -658,11 +658,11 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                     }
                     else
                     {
-                        print '<td align="center"></td>';
+                        print '<td class="center"></td>';
                     }
 
                     // Currency
-                    if (!empty($conf->multicurrency->enabled)) print '<td align="center">'.$objp->multicurrency_code."</td>\n";
+                    if (!empty($conf->multicurrency->enabled)) print '<td class="center">'.$objp->multicurrency_code."</td>\n";
 
 					// Multicurrency Price
 					if (!empty($conf->multicurrency->enabled))
@@ -745,7 +745,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                     print "</td>";
 
                     // Warning
-                    print '<td align="center" width="16">';
+                    print '<td class="center" width="16">';
                     //print "xx".$amounts[$invoice->id]."-".$amountsresttopay[$invoice->id]."<br>";
                     if ($amounts[$invoice->id] && (abs($amounts[$invoice->id]) > abs($amountsresttopay[$invoice->id]))
                     	|| $multicurrency_amounts[$invoice->id] && (abs($multicurrency_amounts[$invoice->id]) > abs($multicurrency_amountsresttopay[$invoice->id])))
@@ -786,7 +786,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                     print '</b></td>';
                     print '<td class="right"><b>'.price($sign * price2num($total_ttc - $totalrecu - $totalrecucreditnote - $totalrecudeposits, 'MT')).'</b></td>';
                     print '<td class="right" id="result" style="font-weight: bold;"></td>';		// Autofilled
-                    print '<td align="center">&nbsp;</td>';
+                    print '<td class="center">&nbsp;</td>';
                     print "</tr>\n";
                 }
                 print "</table>";
