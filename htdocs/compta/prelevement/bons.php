@@ -141,11 +141,11 @@ if ($result)
     print '</tr>';
 
     print '<tr class="liste_titre">';
-    print_liste_field_titre("WithdrawalsReceipts", $_SERVER["PHP_SELF"], "p.ref", '', '', 'class="liste_titre"', $sortfield, $sortorder);
-    print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "p.datec", "", "", 'class="liste_titre" align="center"', $sortfield, $sortorder);
-    print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "p.amount", "", "", 'class="right"', $sortfield, $sortorder);
-    print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "", "", "", 'class="right"', $sortfield, $sortorder);
-    print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ')."\n";
+    print_liste_field_titre("WithdrawalsReceipts", $_SERVER["PHP_SELF"], "p.ref", '', '', '', $sortfield, $sortorder, 'liste_titre ');
+    print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "p.datec", "", "", '', $sortfield, $sortorder, 'liste_titre center ');
+    print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "p.amount", "", "", '', $sortfield, $sortorder, 'right ');
+    print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'right ');
+    print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
     print "</tr>\n";
 
     while ($i < min($num, $limit))
