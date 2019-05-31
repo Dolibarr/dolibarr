@@ -415,7 +415,7 @@ if ($action=="create" || $action=="start")
 		print '<td class="center">'.$langs->trans("InitialBankBalance");
 		//print '<br>'.$langs->trans("TheoricalAmount").'<br>'.$langs->trans("RealAmount");
 		print '</td>';
-		print '<td class="center" class="hide0" colspan="'.count($arrayofpaymentmode).'">';
+		print '<td class="hide0 center" colspan="'.count($arrayofpaymentmode).'">';
 		print $langs->trans("AmountAtEndOfPeriod");
 		print '</td>';
 		print '<td></td>';
