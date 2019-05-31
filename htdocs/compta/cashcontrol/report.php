@@ -129,7 +129,7 @@ if ($resql)
 	$invoicetmp = new Facture($db);
 
 
-	print "<div style='text-align: right'><h2>";
+	print "<div class='right'><h2>";
 	print $langs->trans("InitialBankBalance").' - '.$langs->trans("Cash")." : ".price($cashcontrol->opening);
 	print "</h2></div>";
 
@@ -253,7 +253,7 @@ if ($resql)
 	print "</table>";
 
 	$cash=$cash+$cashcontrol->opening;
-	print "<div style='text-align: right'><h2>";
+	print "<div class='right'><h2>";
 	print $langs->trans("Cash").": ".price($cash)."<br><br>";
 	print $langs->trans("PaymentTypeCB").": ".price($bank)."<br><br>";
 	print $langs->trans("PaymentTypeCHQ").": ".price($cheque)."<br><br>";
