@@ -1901,7 +1901,6 @@ class ExtraFields
 						$error_field_required[] = $langs->transnoentitiesnoconv($value);
 					}
 				}
-
 				if (in_array($key_type,array('date')))
 				{
 					// Clean parameters
