@@ -1639,7 +1639,7 @@ elseif ($id || $ref)
 
 		$formconfirm='';
 
-		// Confirm deleteion
+		// Confirm deletion
 		if ($action == 'delete')
 		{
 			$formconfirm=$form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('DeleteSending'), $langs->trans("ConfirmDeleteSending", $object->ref), 'confirm_delete', '', 0, 1);

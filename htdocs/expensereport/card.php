@@ -2648,7 +2648,7 @@ if ($action != 'create' && $action != 'edit')
 	}
 
 
-	// If status is Appoved
+	// If status is Approved
 	// --------------------
 
 	if ($user->rights->expensereport->approve && $object->fk_statut == ExpenseReport::STATUS_APPROVED)
