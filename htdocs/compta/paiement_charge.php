@@ -268,7 +268,7 @@ if ($action == 'create')
 	print '<td class="right">'.$langs->trans("Amount").'</td>';
 	print '<td class="right">'.$langs->trans("AlreadyPaid").'</td>';
 	print '<td class="right">'.$langs->trans("RemainderToPay").'</td>';
-	print '<td align="center">'.$langs->trans("Amount").'</td>';
+	print '<td class="center">'.$langs->trans("Amount").'</td>';
 	print "</tr>\n";
 
 	$total=0;
@@ -286,7 +286,7 @@ if ($action == 'create')
 		}
 		else
 		{
-			print "<td align=\"center\"><b>!!!</b></td>\n";
+			print "<td class=\"center\"><b>!!!</b></td>\n";
 		}
 
 		print '<td class="right">'.price($objp->amount)."</td>";
@@ -295,7 +295,7 @@ if ($action == 'create')
 
 		print '<td class="right">'.price($objp->amount - $sumpaid)."</td>";
 
-		print '<td align="center">';
+		print '<td class="center">';
 		if ($sumpaid < $objp->amount)
 		{
 			$namef = "amount_".$objp->id;
@@ -326,7 +326,7 @@ if ($action == 'create')
 		print '<td class="right"><b>'.price($total_ttc).'</b></td>';
 		print '<td class="right"><b>'.price($totalrecu).'</b></td>';
 		print '<td class="right"><b>'.price($total_ttc - $totalrecu).'</b></td>';
-		print '<td align="center">&nbsp;</td>';
+		print '<td class="center">&nbsp;</td>';
 		print "</tr>\n";
 	}
 
