@@ -49,8 +49,8 @@ foreach($linkedObjectBlock as $key => $objectlink)
 <tr class="<?php echo $trclass; ?>" >
     <td class="linkedcol-element"><?php echo $langs->trans("RepeatableInvoice"); ?></td>
     <td class="linkedcol-name"><?php echo $objectlink->getNomUrl(1); ?></td>
-	<td class="linkedcol-ref" align="center"></td>
-	<td class="linkedcol-date" align="center"><?php echo dol_print_date($objectlink->date_when, 'day'); ?></td>
+	<td class="linkedcol-ref center"></td>
+	<td class="linkedcol-date center"><?php echo dol_print_date($objectlink->date_when, 'day'); ?></td>
 	<td class="linkedcol-amount right"><?php
 		if ($user->rights->facture->lire) {
 			$total = $total + $objectlink->total_ht;
@@ -67,8 +67,8 @@ if (count($linkedObjectBlock) > 1)
     <tr class="liste_total <?php echo (empty($noMoreLinkedObjectBlockAfter)?'liste_sub_total':''); ?>">
         <td><?php echo $langs->trans("Total"); ?></td>
         <td></td>
-    	<td align="center"></td>
-    	<td align="center"></td>
+    	<td class="center"></td>
+    	<td class="center"></td>
     	<td class="right"><?php echo price($total); ?></td>
     	<td class="right"></td>
     	<td class="right"></td>

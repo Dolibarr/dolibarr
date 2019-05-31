@@ -274,7 +274,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	arsort($arrayyears);
 	print $form->selectarray('year', $arrayyears, $year, 0);
 	print '</td></tr>';
-	print '<tr><td align="center" colspan="2"><input type="submit" name="submit" class="button" value="'.$langs->trans("Refresh").'"></td></tr>';
+	print '<tr><td class="center" colspan="2"><input type="submit" name="submit" class="button" value="'.$langs->trans("Refresh").'"></td></tr>';
 	print '</table>';
 	print '</form>';
 	print '<br><br>';
@@ -283,7 +283,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre" height="24">';
-print '<td align="center">'.$langs->trans("Year").'</td>';
+print '<td class="center">'.$langs->trans("Year").'</td>';
 print '<td class="right">'.$langs->trans("NumberOfBills").'</td>';
 print '<td class="right">%</td>';
 print '<td class="right">'.$langs->trans("AmountTotal").'</td>';
@@ -301,7 +301,7 @@ foreach ($data as $val)
 		$oldyear--;
 
 		print '<tr class="oddeven" height="24">';
-		print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$oldyear.'</a></td>';
+		print '<td class="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$oldyear.'</a></td>';
 		print '<td class="right">0</td>';
 		print '<td class="right"></td>';
 		print '<td class="right">0</td>';
@@ -312,7 +312,7 @@ foreach ($data as $val)
 	}
 
 	print '<tr class="oddeven" height="24">';
-	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$year.'</a></td>';
+	print '<td class="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$year.'</a></td>';
 	print '<td class="right">'.$val['nb'].'</td>';
 	print '<td class="right" style="'.(($val['nb_diff'] >= 0) ? 'color: green;':'color: red;').'">'.round($val['nb_diff']).'</td>';
 	print '<td class="right">'.price(price2num($val['total'], 'MT'), 1).'</td>';
@@ -330,7 +330,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 // Show graphs
-print '<table class="border" width="100%"><tr class="pair nohover"><td align="center">';
+print '<table class="border" width="100%"><tr class="pair nohover"><td class="center">';
 if ($mesg) { print $mesg; }
 else {
 	print $px1->show();

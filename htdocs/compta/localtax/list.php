@@ -64,11 +64,11 @@ if ($result)
 
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
-    print '<td class="nowrap" align="left">'.$langs->trans("Ref").'</td>';
+    print '<td class="nowrap left">'.$langs->trans("Ref").'</td>';
     print "<td>".$langs->trans("Label")."</td>";
     print "<td>".$langs->trans("PeriodEndDate")."</td>";
-    print '<td class="nowrap" align="left">'.$langs->trans("DatePayment").'</td>';
-    print "<td align=\"right\">".$langs->trans("PayedByThisPayment")."</td>";
+    print '<td class="nowrap left">'.$langs->trans("DatePayment").'</td>';
+    print "<td class=\"right\">".$langs->trans("PayedByThisPayment")."</td>";
     print "</tr>\n";
     $var=1;
     while ($i < $num)
@@ -85,7 +85,7 @@ if ($result)
         print '<td class="left">'.dol_print_date($db->jdate($obj->datep), 'day')."</td>\n";
         $total = $total + $obj->amount;
 
-        print "<td align=\"right\">".price($obj->amount)."</td>";
+        print "<td class=\"right\">".price($obj->amount)."</td>";
         print "</tr>\n";
 
         $i++;
