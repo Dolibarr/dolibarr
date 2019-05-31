@@ -271,8 +271,8 @@ print '<tr class="liste_titre"><td>&nbsp;</td>';
 
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
-	if ($modecompta == 'CREANCES-DETTES') print '<td align="center" width="10%" colspan="3">';
-	else print '<td align="center" width="10%" colspan="2" class="borderrightlight">';
+	if ($modecompta == 'CREANCES-DETTES') print '<td class="center" width="10%" colspan="3">';
+	else print '<td class="center" width="10%" colspan="2" class="borderrightlight">';
 	if ($modecompta != 'BOOKKEEPING') print '<a href="casoc.php?year='.$annee.'">';
 	print $annee;
     if ($conf->global->SOCIETE_FISCAL_MONTH_START > 1) print '-'.($annee+1);
