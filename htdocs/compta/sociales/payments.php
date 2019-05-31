@@ -349,7 +349,7 @@ while($j<$numlt)
 			print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "pv.label", "", $param, '', $sortfield, $sortorder);
 			print_liste_field_titre("ExpectedToPay", $_SERVER["PHP_SELF"], "pv.amount", "", $param, '', $sortfield, $sortorder, 'right ');
 			print_liste_field_titre("RefPayment", $_SERVER["PHP_SELF"], "pv.rowid", "", $param, '', $sortfield, $sortorder);
-			print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "pv.datep", "", $param, '', $sortfield, $sortorder,'center ');
+			print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "pv.datep", "", $param, '', $sortfield, $sortorder, 'center ');
 			print_liste_field_titre("PayedByThisPayment", $_SERVER["PHP_SELF"], "pv.amount", "", $param, '', $sortfield, $sortorder, 'right ');
 			print "</tr>\n";
 

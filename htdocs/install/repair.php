@@ -409,9 +409,6 @@ if ($ok && GETPOST('standard', 'alpha'))
 			$db->commit();
 		}
 	}
-
-
-
 }
 
 /* From here, actions need a parameter */

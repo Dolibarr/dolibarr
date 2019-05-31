@@ -484,7 +484,7 @@ if ($resql)
 	if (! empty($arrayfields['f.total_ttc']['checked']))     print_liste_field_titre($arrayfields['f.total_ttc']['label'], $_SERVER['PHP_SELF'], "f.total_ttc", "", $param, '', $sortfield, $sortorder, 'right ');
 	if (! empty($arrayfields['f.fk_cond_reglement']['checked']))     print_liste_field_titre($arrayfields['f.fk_cond_reglement']['label'], $_SERVER['PHP_SELF'], "f.fk_cond_reglement", "", $param, '', $sortfield, $sortorder);
 	if (! empty($arrayfields['f.fk_mode_reglement']['checked']))     print_liste_field_titre($arrayfields['f.fk_mode_reglement']['label'], $_SERVER['PHP_SELF'], "f.fk_mode_reglement", "", $param, '', $sortfield, $sortorder);
-	if (! empty($arrayfields['recurring']['checked']))       print_liste_field_titre($arrayfields['recurring']['label'], $_SERVER['PHP_SELF'], "recurring", "", $param, '', $sortfield, $sortorder,'center ');
+	if (! empty($arrayfields['recurring']['checked']))       print_liste_field_titre($arrayfields['recurring']['label'], $_SERVER['PHP_SELF'], "recurring", "", $param, '', $sortfield, $sortorder, 'center ');
 	if (! empty($arrayfields['f.frequency']['checked']))     print_liste_field_titre($arrayfields['f.frequency']['label'], $_SERVER['PHP_SELF'], "f.frequency", "", $param, '', $sortfield, $sortorder, 'center ');
 	if (! empty($arrayfields['f.unit_frequency']['checked'])) print_liste_field_titre($arrayfields['f.unit_frequency']['label'], $_SERVER['PHP_SELF'], "f.unit_frequency", "", $param, '', $sortfield, $sortorder, 'center ');
 	if (! empty($arrayfields['f.nb_gen_done']['checked']))   print_liste_field_titre($arrayfields['f.nb_gen_done']['label'], $_SERVER['PHP_SELF'], "f.nb_gen_done", "", $param, '', $sortfield, $sortorder, 'center ');
