@@ -190,7 +190,7 @@ if ($resql)
   	print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   	print '<tr class="liste_titre">';
   	print '<td>'.$langs->trans("Line").'</td><td>'.$langs->trans("ThirdParty").'</td><td class="right">'.$langs->trans("Amount").'</td>';
-  	print '<td>'.$langs->trans("Reason").'</td><td align="center">'.$langs->trans("ToBill").'</td><td class="center">'.$langs->trans("Invoice").'</td></tr>';
+  	print '<td>'.$langs->trans("Reason").'</td><td class="center">'.$langs->trans("ToBill").'</td><td class="center">'.$langs->trans("Invoice").'</td></tr>';
 
 	$total = 0;
 
@@ -212,8 +212,8 @@ if ($resql)
     		print '<td class="right">'.price($obj->amount)."</td>\n";
     		print '<td>'.$rej->motifs[$obj->motif].'</td>';
 
-    		print '<td align="center">'.yn($obj->afacturer).'</td>';
-    		print '<td align="center">'.$obj->fk_facture.'</td>';
+    		print '<td class="center">'.yn($obj->afacturer).'</td>';
+    		print '<td class="center">'.$obj->fk_facture.'</td>';
     		print "</tr>\n";
 
     		$total += $obj->amount;
