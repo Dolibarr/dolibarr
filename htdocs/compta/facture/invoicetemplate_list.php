@@ -395,34 +395,34 @@ if ($resql)
 	if (! empty($arrayfields['recurring']['checked']))
 	{
 		// Recurring or not
-		print '<td class="liste_titre" align="center">';
+		print '<td class="liste_titre center">';
 		print $form->selectyesno('search_recurring', $search_recurring, 1, false, 1);
 		print '</td>';
 	}
 	if (! empty($arrayfields['f.frequency']['checked']))
 	{
 		// Recurring or not
-		print '<td class="liste_titre" align="center">';
+		print '<td class="liste_titre center">';
 		print '<input class="flat" type="text" size="1" name="search_frequency" value="'.dol_escape_htmltag($search_frequency).'">';
 		print '</td>';
 	}
 	if (! empty($arrayfields['f.unit_frequency']['checked']))
 	{
 		// Frequency unit
-		print '<td class="liste_titre" align="center">';
+		print '<td class="liste_titre center">';
 		print '<input class="flat" type="text" size="1" name="search_unit_frequency" value="'.dol_escape_htmltag($search_unit_frequency).'">';
 		print '</td>';
 	}
 	if (! empty($arrayfields['f.nb_gen_done']['checked']))
 	{
 		// Nb generation
-		print '<td class="liste_titre" align="center">';
+		print '<td class="liste_titre center">';
 		print '</td>';
 	}
 	// Date invoice
 	if (! empty($arrayfields['f.date_last_gen']['checked']))
 	{
-		print '<td class="liste_titre nowraponall" align="center">';
+		print '<td class="liste_titre nowraponall center">';
 		if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_day" value="'.$search_day.'">';
 		print '<input class="flat valignmiddle width25" type="text" size="1" maxlength="2" name="search_month" value="'.$search_month.'">';
 		$formother->select_year($search_year?$search_year:-1, 'search_year', 1, 20, 5, 0, 0, '', 'witdhauto valignmiddle');
@@ -431,7 +431,7 @@ if ($resql)
 	// Date next generation
 	if (! empty($arrayfields['f.date_when']['checked']))
 	{
-		print '<td class="liste_titre nowraponall" align="center">';
+		print '<td class="liste_titre nowraponall center">';
 		if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_day_date_when" value="'.$search_day_date_when.'">';
 		print '<input class="flat valignmiddle width25" type="text" size="1" maxlength="2" name="search_month_date_when" value="'.$search_month_date_when.'">';
 		$formother->select_year($search_year_date_when?$search_year_date_when:-1, 'search_year_date_when', 1, 20, 5, 0, 0, '', 'witdhauto valignmiddle');
@@ -459,7 +459,7 @@ if ($resql)
 	// Status
 	if (! empty($arrayfields['status']['checked']))
 	{
-		print '<td class="liste_titre" align="center">';
+		print '<td class="liste_titre center">';
 		$liststatus=array(
 			0=>$langs->trans("Draft"),
 			1=>$langs->trans("Active"),
@@ -479,21 +479,21 @@ if ($resql)
 	print '<tr class="liste_titre">';
 	if (! empty($arrayfields['f.titre']['checked']))         print_liste_field_titre($arrayfields['f.titre']['label'], $_SERVER['PHP_SELF'], "f.titre", "", $param, "", $sortfield, $sortorder);
 	if (! empty($arrayfields['s.nom']['checked']))           print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER['PHP_SELF'], "s.nom", "", $param, "", $sortfield, $sortorder);
-	if (! empty($arrayfields['f.total']['checked']))         print_liste_field_titre($arrayfields['f.total']['label'], $_SERVER['PHP_SELF'], "f.total", "", $param, 'class="right"', $sortfield, $sortorder);
-	if (! empty($arrayfields['f.tva']['checked']))           print_liste_field_titre($arrayfields['f.tva']['label'], $_SERVER['PHP_SELF'], "f.tva", "", $param, 'class="right"', $sortfield, $sortorder);
-	if (! empty($arrayfields['f.total_ttc']['checked']))     print_liste_field_titre($arrayfields['f.total_ttc']['label'], $_SERVER['PHP_SELF'], "f.total_ttc", "", $param, 'class="right"', $sortfield, $sortorder);
+	if (! empty($arrayfields['f.total']['checked']))         print_liste_field_titre($arrayfields['f.total']['label'], $_SERVER['PHP_SELF'], "f.total", "", $param, '', $sortfield, $sortorder, 'right ');
+	if (! empty($arrayfields['f.tva']['checked']))           print_liste_field_titre($arrayfields['f.tva']['label'], $_SERVER['PHP_SELF'], "f.tva", "", $param, '', $sortfield, $sortorder, 'right ');
+	if (! empty($arrayfields['f.total_ttc']['checked']))     print_liste_field_titre($arrayfields['f.total_ttc']['label'], $_SERVER['PHP_SELF'], "f.total_ttc", "", $param, '', $sortfield, $sortorder, 'right ');
 	if (! empty($arrayfields['f.fk_cond_reglement']['checked']))     print_liste_field_titre($arrayfields['f.fk_cond_reglement']['label'], $_SERVER['PHP_SELF'], "f.fk_cond_reglement", "", $param, '', $sortfield, $sortorder);
 	if (! empty($arrayfields['f.fk_mode_reglement']['checked']))     print_liste_field_titre($arrayfields['f.fk_mode_reglement']['label'], $_SERVER['PHP_SELF'], "f.fk_mode_reglement", "", $param, '', $sortfield, $sortorder);
-	if (! empty($arrayfields['recurring']['checked']))       print_liste_field_titre($arrayfields['recurring']['label'], $_SERVER['PHP_SELF'], "recurring", "", $param, 'class="center"', $sortfield, $sortorder);
-	if (! empty($arrayfields['f.frequency']['checked']))     print_liste_field_titre($arrayfields['f.frequency']['label'], $_SERVER['PHP_SELF'], "f.frequency", "", $param, 'align="center"', $sortfield, $sortorder);
-	if (! empty($arrayfields['f.unit_frequency']['checked'])) print_liste_field_titre($arrayfields['f.unit_frequency']['label'], $_SERVER['PHP_SELF'], "f.unit_frequency", "", $param, 'align="center"', $sortfield, $sortorder);
-	if (! empty($arrayfields['f.nb_gen_done']['checked']))   print_liste_field_titre($arrayfields['f.nb_gen_done']['label'], $_SERVER['PHP_SELF'], "f.nb_gen_done", "", $param, 'align="center"', $sortfield, $sortorder);
-	if (! empty($arrayfields['f.date_last_gen']['checked'])) print_liste_field_titre($arrayfields['f.date_last_gen']['label'], $_SERVER['PHP_SELF'], "f.date_last_gen", "", $param, 'align="center"', $sortfield, $sortorder);
-	if (! empty($arrayfields['f.date_when']['checked']))     print_liste_field_titre($arrayfields['f.date_when']['label'], $_SERVER['PHP_SELF'], "f.date_when", "", $param, 'align="center"', $sortfield, $sortorder);
-	if (! empty($arrayfields['f.datec']['checked']))         print_liste_field_titre($arrayfields['f.datec']['label'], $_SERVER['PHP_SELF'], "f.datec", "", $param, 'align="center"', $sortfield, $sortorder);
-	if (! empty($arrayfields['f.tms']['checked']))           print_liste_field_titre($arrayfields['f.tms']['label'], $_SERVER['PHP_SELF'], "f.tms", "", $param, 'align="center"', $sortfield, $sortorder);
-	if (! empty($arrayfields['status']['checked']))          print_liste_field_titre($arrayfields['status']['label'], $_SERVER['PHP_SELF'], "f.suspended,f.frequency", "", $param, 'align="center"', $sortfield, $sortorder);
-	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'nomaxwidthsearch ')."\n";
+	if (! empty($arrayfields['recurring']['checked']))       print_liste_field_titre($arrayfields['recurring']['label'], $_SERVER['PHP_SELF'], "recurring", "", $param, '', $sortfield, $sortorder,'center ');
+	if (! empty($arrayfields['f.frequency']['checked']))     print_liste_field_titre($arrayfields['f.frequency']['label'], $_SERVER['PHP_SELF'], "f.frequency", "", $param, '', $sortfield, $sortorder, 'center ');
+	if (! empty($arrayfields['f.unit_frequency']['checked'])) print_liste_field_titre($arrayfields['f.unit_frequency']['label'], $_SERVER['PHP_SELF'], "f.unit_frequency", "", $param, '', $sortfield, $sortorder, 'center ');
+	if (! empty($arrayfields['f.nb_gen_done']['checked']))   print_liste_field_titre($arrayfields['f.nb_gen_done']['label'], $_SERVER['PHP_SELF'], "f.nb_gen_done", "", $param, '', $sortfield, $sortorder, 'center ');
+	if (! empty($arrayfields['f.date_last_gen']['checked'])) print_liste_field_titre($arrayfields['f.date_last_gen']['label'], $_SERVER['PHP_SELF'], "f.date_last_gen", "", $param, '', $sortfield, $sortorder, 'center ');
+	if (! empty($arrayfields['f.date_when']['checked']))     print_liste_field_titre($arrayfields['f.date_when']['label'], $_SERVER['PHP_SELF'], "f.date_when", "", $param, '', $sortfield, $sortorder, 'center ');
+	if (! empty($arrayfields['f.datec']['checked']))         print_liste_field_titre($arrayfields['f.datec']['label'], $_SERVER['PHP_SELF'], "f.datec", "", $param, '', $sortfield, $sortorder, 'center ');
+	if (! empty($arrayfields['f.tms']['checked']))           print_liste_field_titre($arrayfields['f.tms']['label'], $_SERVER['PHP_SELF'], "f.tms", "", $param, '', $sortfield, $sortorder, 'center ');
+	if (! empty($arrayfields['status']['checked']))          print_liste_field_titre($arrayfields['status']['label'], $_SERVER['PHP_SELF'], "f.suspended,f.frequency", "", $param, '', $sortfield, $sortorder, 'center ');
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'nomaxwidthsearch center ')."\n";
 	print "</tr>\n";
 
 	if ($num > 0)
@@ -570,22 +570,22 @@ if ($resql)
 			}
 			if (! empty($arrayfields['recurring']['checked']))
 			{
-			   print '<td align="center">'.yn($objp->frequency?1:0).'</td>';
+			   print '<td class="center">'.yn($objp->frequency?1:0).'</td>';
 			   if (! $i) $totalarray['nbfield']++;
 			}
 			if (! empty($arrayfields['f.frequency']['checked']))
 			{
-			   print '<td align="center">'.($objp->frequency > 0 ? $objp->frequency : '').'</td>';
+			   print '<td class="center">'.($objp->frequency > 0 ? $objp->frequency : '').'</td>';
 			   if (! $i) $totalarray['nbfield']++;
 			}
 			if (! empty($arrayfields['f.unit_frequency']['checked']))
 			{
-			   print '<td align="center">'.($objp->frequency > 0 ? $objp->unit_frequency : '').'</td>';
+			   print '<td class="center">'.($objp->frequency > 0 ? $objp->unit_frequency : '').'</td>';
 			   if (! $i) $totalarray['nbfield']++;
 			}
 			if (! empty($arrayfields['f.nb_gen_done']['checked']))
 			{
-				print '<td align="center">';
+				print '<td class="center">';
 				print ($objp->frequency > 0 ? $objp->nb_gen_done.($objp->nb_gen_max>0?' / '. $objp->nb_gen_max:'') : '<span class="opacitymedium">'.$langs->trans('NA').'</span>');
 				print '</td>';
 				if (! $i) $totalarray['nbfield']++;
@@ -593,7 +593,7 @@ if ($resql)
 			// Date last generation
 			if (! empty($arrayfields['f.date_last_gen']['checked']))
 			{
-			   print '<td align="center">';
+			   print '<td class="center">';
 			   print ($objp->frequency > 0 ? dol_print_date($db->jdate($objp->date_last_gen), 'day') : '<span class="opacitymedium">'.$langs->trans('NA').'</span>');
 			   print '</td>';
 			   if (! $i) $totalarray['nbfield']++;
@@ -601,7 +601,7 @@ if ($resql)
 			// Date next generation
 			if (! empty($arrayfields['f.date_when']['checked']))
 			{
-				print '<td align="center">';
+				print '<td class="center">';
 				print '<div class="nowraponall">';
 				print ($objp->frequency ? ($invoicerectmp->isMaxNbGenReached()?'<strike>':'').dol_print_date($db->jdate($objp->date_when), 'day').($invoicerectmp->isMaxNbGenReached()?'</strike>':'') : '<span class="opacitymedium">'.$langs->trans('NA').'</span>');
 				if (! $invoicerectmp->isMaxNbGenReached())
@@ -618,27 +618,27 @@ if ($resql)
 			}
 			if (! empty($arrayfields['f.datec']['checked']))
 			{
-			   print '<td align="center">';
+			   print '<td class="center">';
 			   print dol_print_date($db->jdate($objp->datec), 'dayhour');
 			   print '</td>';
 			   if (! $i) $totalarray['nbfield']++;
 			}
 			if (! empty($arrayfields['f.tms']['checked']))
 			{
-			   print '<td align="center">';
+			   print '<td class="center">';
 			   print dol_print_date($db->jdate($objp->tms), 'dayhour');
 			   print '</td>';
 			   if (! $i) $totalarray['nbfield']++;
 			}
 			if (! empty($arrayfields['status']['checked']))
 			{
-			   print '<td align="center">';
+			   print '<td class="center">';
 			   print $invoicerectmp->getLibStatut(3, 0);
 			   print '</td>';
 			   if (! $i) $totalarray['nbfield']++;
 			}
 			// Action column
-			print '<td align="center">';
+			print '<td class="center">';
 			if ($user->rights->facture->creer && empty($invoicerectmp->suspended))
 			{
 				if ($invoicerectmp->isMaxNbGenReached())

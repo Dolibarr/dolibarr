@@ -4148,7 +4148,7 @@ elseif ($id > 0 || ! empty($ref))
 	    print '<tr class="liste_titre">';
 	    print '<td>' . $langs->trans('ListOfSituationInvoices') . '</td>';
 	    print '<td></td>';
-	    print '<td align="center">' . $langs->trans('Situation') . '</td>';
+	    print '<td class="center">' . $langs->trans('Situation') . '</td>';
 	    if (! empty($conf->banque->enabled)) print '<td class="right"></td>';
 	    print '<td class="right">' . $langs->trans('AmountHT') . '</td>';
 	    print '<td class="right">' . $langs->trans('AmountTTC') . '</td>';
@@ -4171,7 +4171,7 @@ elseif ($id > 0 || ! empty($ref))
 	            print '<tr class="oddeven">';
 	            print '<td>' . $prev_invoice->getNomUrl(1) . '</td>';
 	            print '<td></td>';
-	            print '<td align="center" >'.(($prev_invoice->type == Facture::TYPE_CREDIT_NOTE)?$langs->trans('situationInvoiceShortcode_AS'):$langs->trans('situationInvoiceShortcode_S')) . $prev_invoice->situation_counter.'</td>';
+	            print '<td class="center" >'.(($prev_invoice->type == Facture::TYPE_CREDIT_NOTE)?$langs->trans('situationInvoiceShortcode_AS'):$langs->trans('situationInvoiceShortcode_S')) . $prev_invoice->situation_counter.'</td>';
 	            if (! empty($conf->banque->enabled)) print '<td class="right"></td>';
 	            print '<td class="right">' . price($prev_invoice->total_ht) . '</td>';
 	            print '<td class="right">' . price($prev_invoice->total_ttc) . '</td>';
@@ -4189,7 +4189,7 @@ elseif ($id > 0 || ! empty($ref))
 	    print '<tr class="oddeven">';
 	    print '<td>' . $object->getNomUrl(1) . '</td>';
 	    print '<td></td>';
-	    print '<td align="center">'.(($object->type == Facture::TYPE_CREDIT_NOTE)?$langs->trans('situationInvoiceShortcode_AS'):$langs->trans('situationInvoiceShortcode_S')) . $object->situation_counter.'</td>';
+	    print '<td class="center">'.(($object->type == Facture::TYPE_CREDIT_NOTE)?$langs->trans('situationInvoiceShortcode_AS'):$langs->trans('situationInvoiceShortcode_S')) . $object->situation_counter.'</td>';
 	    if (! empty($conf->banque->enabled)) print '<td class="right"></td>';
 	    print '<td class="right">' . price($object->total_ht) . '</td>';
 	    print '<td class="right">' . price($object->total_ttc) . '</td>';
@@ -4239,7 +4239,7 @@ elseif ($id > 0 || ! empty($ref))
 	            print '<tr class="oddeven">';
 	            print '<td>' . $next_invoice->getNomUrl(1) . '</td>';
 	            print '<td></td>';
-	            print '<td align="center">'.(($next_invoice->type == Facture::TYPE_CREDIT_NOTE)?$langs->trans('situationInvoiceShortcode_AS'):$langs->trans('situationInvoiceShortcode_S')) . $next_invoice->situation_counter.'</td>';
+	            print '<td class="center">'.(($next_invoice->type == Facture::TYPE_CREDIT_NOTE)?$langs->trans('situationInvoiceShortcode_AS'):$langs->trans('situationInvoiceShortcode_S')) . $next_invoice->situation_counter.'</td>';
 	            if (! empty($conf->banque->enabled)) print '<td class="right"></td>';
 	            print '<td class="right">' . price($next_invoice->total_ht) . '</td>';
 	            print '<td class="right">' . price($next_invoice->total_ttc) . '</td>';
@@ -4336,7 +4336,7 @@ elseif ($id > 0 || ! empty($ref))
 					print '</td>';
 				}
 				print '<td class="right">' . price($sign * $objp->amount) . '</td>';
-				print '<td align="center">';
+				print '<td class="center">';
 				if ($object->statut == Facture::STATUS_VALIDATED && $object->paye == 0 && $user->societe_id == 0)
 				{
 					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deletepaiement&paiement_id='.$objp->rowid.'">';
@@ -4527,7 +4527,7 @@ elseif ($id > 0 || ! empty($ref))
 
 			// Adds a line numbering column
 			if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
-				print '<td align="center" width="5">&nbsp;</td>';
+				print '<td class="center" width="5">&nbsp;</td>';
 			}
 			print '<td class="minwidth500imp">' . $langs->trans('ModifyAllLines') . '</td>';
 			print '<td class="right">' . $langs->trans('Progress') . '</td>';
@@ -4537,7 +4537,7 @@ elseif ($id > 0 || ! empty($ref))
 			print '<tr class="nodrag nodrop">';
 			// Adds a line numbering column
 			if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
-			    print '<td align="center" width="5">&nbsp;</td>';
+			    print '<td class="center" width="5">&nbsp;</td>';
 			}
 			print '<td>&nbsp;</td>';
 			print '<td class="nowrap right"><input type="text" size="1" value="" name="all_progress">%</td>';

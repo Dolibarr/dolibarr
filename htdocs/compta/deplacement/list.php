@@ -139,7 +139,7 @@ if ($resql)
     print '<td class="liste_titre">';
     print '&nbsp;';
     print '</td>';
-    print '<td class="liste_titre" align="center">';
+    print '<td class="liste_titre center">';
     if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="day" value="'.$day.'">';
     print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
     $formother->select_year($year?$year:-1, 'year', 1, 20, 5);
@@ -172,7 +172,7 @@ if ($resql)
         // Type
         print '<td>'.$langs->trans($obj->type).'</td>';
         // Date
-        print '<td align="center">'.dol_print_date($db->jdate($obj->dd), 'day').'</td>';
+        print '<td class="center">'.dol_print_date($db->jdate($obj->dd), 'day').'</td>';
         // User
         print '<td>';
         $userstatic->id = $obj->fk_user;
