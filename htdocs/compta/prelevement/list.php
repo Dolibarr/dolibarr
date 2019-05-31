@@ -143,7 +143,7 @@ if ($result)
     print '<td class="liste_titre"><input type="text" class="flat" name="search_bon" value="'. dol_escape_htmltag($search_bon).'" size="6"></td>';
     print '<td class="liste_titre">&nbsp;</td>';
     print '<td class="liste_titre"><input type="text" class="flat" name="search_company" value="'. dol_escape_htmltag($search_company).'" size="6"></td>';
-    print '<td class="liste_titre" align="center"><input type="text" class="flat" name="search_code" value="'. dol_escape_htmltag($search_code).'" size="6"></td>';
+    print '<td class="liste_titre center"><input type="text" class="flat" name="search_code" value="'. dol_escape_htmltag($search_code).'" size="6"></td>';
     print '<td class="liste_titre">&nbsp;</td>';
     print '<td class="liste_titre">&nbsp;</td>';
     print '<td class="liste_titre maxwidthsearch">';
@@ -190,9 +190,9 @@ if ($result)
 
         print '<td><a href="card.php?id='.$obj->rowid.'">'.$obj->name."</a></td>\n";
 
-        print '<td align="center"><a href="card.php?id='.$obj->rowid.'">'.$obj->code_client."</a></td>\n";
+        print '<td class="center"><a href="card.php?id='.$obj->rowid.'">'.$obj->code_client."</a></td>\n";
 
-        print '<td align="center">'.dol_print_date($db->jdate($obj->datec), 'day')."</td>\n";
+        print '<td class="center">'.dol_print_date($db->jdate($obj->datec), 'day')."</td>\n";
 
         print '<td class="right">'.price($obj->amount)."</td>\n";
 

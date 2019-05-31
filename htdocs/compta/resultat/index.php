@@ -882,7 +882,7 @@ print '<tr class="liste_titre"><td class="liste_titre">&nbsp;</td>';
 
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
-	print '<td align="center" colspan="2" class="liste_titre borderrightlight">';
+	print '<td colspan="2" class="liste_titre borderrightlight center">';
 	print '<a href="clientfourn.php?year='.$annee.'">';
 	print $annee;
 	if ($conf->global->SOCIETE_FISCAL_MONTH_START > 1) print '-'.($annee+1);
@@ -893,12 +893,12 @@ print '<tr class="liste_titre"><td class="liste_titre">'.$langs->trans("Month").
 // Loop on each year to ouput
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
-	print '<td class="liste_titre" align="center">';
+	print '<td class="liste_titre center">';
 	$htmlhelp='';
 	// if ($modecompta == 'RECETTES-DEPENSES') $htmlhelp=$langs->trans("PurchasesPlusVATEarnedAndDue");
 	print $form->textwithpicto($langs->trans("Outcome"), $htmlhelp);
 	print '</td>';
-	print '<td class="liste_titre" align="center" class="borderrightlight">';
+	print '<td class="liste_titre borderrightlight center">';
 	$htmlhelp='';
 	// if ($modecompta == 'RECETTES-DEPENSES') $htmlhelp=$langs->trans("SalesPlusVATToRetreive");
 	print $form->textwithpicto($langs->trans("Income"), $htmlhelp);

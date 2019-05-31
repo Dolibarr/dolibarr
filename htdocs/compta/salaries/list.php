@@ -171,7 +171,7 @@ if ($result)
 
 	print '<tr class="liste_titre_filter">';
 	// Ref
-	print '<td class="liste_titre" align="left">';
+	print '<td class="liste_titre left">';
 	print '<input class="flat" type="text" size="3" name="search_ref" value="'.$db->escape($search_ref).'">';
 	print '</td>';
 	// Employee
@@ -183,7 +183,7 @@ if ($result)
 	// Date
 	print '<td class="liste_titre">&nbsp;</td>';
 	// Type
-	print '<td class="liste_titre" align="left">';
+	print '<td class="liste_titre left">';
 	$form->select_types_paiements($typeid, 'typeid', '', 0, 1, 1, 16);
 	print '</td>';
 	// Account
@@ -239,7 +239,7 @@ if ($result)
 		// Label payment
         print "<td>".dol_trunc($obj->label, 40)."</td>\n";
 		// Date payment
-        print '<td align="center">'.dol_print_date($db->jdate($obj->datep), 'day')."</td>\n";
+        print '<td class="center">'.dol_print_date($db->jdate($obj->datep), 'day')."</td>\n";
         // Type
         print '<td>'.$langs->trans("PaymentTypeShort".$obj->payment_code).' '.$obj->num_payment.'</td>';
 		// Account

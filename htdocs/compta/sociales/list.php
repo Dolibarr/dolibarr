@@ -210,13 +210,13 @@ if ($resql)
 
 		print '<tr class="liste_titre_filter">';
 		// Ref
-		print '<td class="liste_titre" align="left">';
+		print '<td class="liste_titre left">';
 		print '<input class="flat maxwidth75" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
 		print '</td>';
 		// Label
 		print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_label" value="'.dol_escape_htmltag($search_label).'"></td>';
 		// Type
-		print '<td class="liste_titre" align="left">';
+		print '<td class="liste_titre left">';
 	    $formsocialcontrib->select_type_socialcontrib($search_typeid, 'search_typeid', 1, 0, 0, 'maxwidth100onsmartphone');
 	    print '</td>';
 		// Period end date
@@ -244,12 +244,12 @@ if ($resql)
 
 		print '<tr class="liste_titre">';
 		print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "id", "", $param, "", $sortfield, $sortorder);
-		print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "cs.libelle", "", $param, 'class="left"', $sortfield, $sortorder);
-		print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "type", "", $param, 'class="left"', $sortfield, $sortorder);
-		print_liste_field_titre("PeriodEndDate", $_SERVER["PHP_SELF"], "periode", "", $param, 'align="center"', $sortfield, $sortorder);
-		print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "cs.amount", "", $param, 'class="right"', $sortfield, $sortorder);
-		print_liste_field_titre("DateDue", $_SERVER["PHP_SELF"], "cs.date_ech", "", $param, 'align="center"', $sortfield, $sortorder);
-		print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "cs.paye", "", $param, 'class="right"', $sortfield, $sortorder);
+		print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "cs.libelle", "", $param, '', $sortfield, $sortorder, 'left ');
+		print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "type", "", $param, '', $sortfield, $sortorder, 'left ');
+		print_liste_field_titre("PeriodEndDate", $_SERVER["PHP_SELF"], "periode", "", $param, '', $sortfield, $sortorder, 'center ');
+		print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "cs.amount", "", $param, '', $sortfield, $sortorder, 'right ');
+		print_liste_field_titre("DateDue", $_SERVER["PHP_SELF"], "cs.date_ech", "", $param, '', $sortfield, $sortorder, 'center ');
+		print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "cs.paye", "", $param, '', $sortfield, $sortorder, 'right ');
 		print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch ');
 		print "</tr>\n";
 
@@ -278,7 +278,7 @@ if ($resql)
 			print '<td>'.$obj->type_lib.'</td>';
 
 			// Date end period
-			print '<td align="center">';
+			print '<td class="center">';
 			if ($obj->periode)
 			{
 				print '<a href="index.php?year='.strftime("%Y", $db->jdate($obj->periode)).'">'.dol_print_date($db->jdate($obj->periode), 'day').'</a>';
@@ -296,7 +296,7 @@ if ($resql)
 			$totalarray['totalttc'] += $obj->amount;
 
 			// Due date
-			print '<td width="110" align="center">'.dol_print_date($db->jdate($obj->date_ech), 'day').'</td>';
+			print '<td width="110" class="center">'.dol_print_date($db->jdate($obj->date_ech), 'day').'</td>';
 
 			print '<td class="nowrap right">'.$chargesociale_static->LibStatut($obj->paye, 5, $obj->alreadypayed).'</td>';
 

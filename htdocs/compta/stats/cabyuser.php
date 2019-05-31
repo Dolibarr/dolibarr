@@ -342,7 +342,7 @@ print_liste_field_titre(
 	"",
 	"",
 	"",
-	'align="center" width="20%"'
+	'class="center" width="20%"'
 );
 print "</tr>\n";
 

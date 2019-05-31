@@ -159,10 +159,10 @@ if ($resql)
 
 	// Lignes des champs de filtre
 	print '<tr class="liste_titre">';
-	print '<td class="liste_titre" align="left">';
+	print '<td class="liste_titre left">';
 	print '<input class="flat" type="text" size="4" name="search_ref" value="'.$search_ref.'">';
     print '</td>';
-	print '<td class="liste_titre" align="center">';
+	print '<td class="liste_titre center">';
     if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="day" value="'.$day.'">';
     print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
     $formother->select_year($year?$year:-1, 'year', 1, 20, 5);
@@ -183,11 +183,11 @@ if ($resql)
 
     print '<tr class="liste_titre">';
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "bc.ref", "", $param, "", $sortfield, $sortorder);
-	print_liste_field_titre("DateCreation", $_SERVER["PHP_SELF"], "dp", "", $param, 'align="center"', $sortfield, $sortorder);
+	print_liste_field_titre("DateCreation", $_SERVER["PHP_SELF"], "dp", "", $param, '', $sortfield, $sortorder, 'center ');
 	print_liste_field_titre("Account", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
-	print_liste_field_titre("NbOfCheques", $_SERVER["PHP_SELF"], "bc.nbcheque", "", $param, 'class="right"', $sortfield, $sortorder);
-	print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "bc.amount", "", $param, 'class="right"', $sortfield, $sortorder);
-	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "bc.statut", "", $param, 'class="right"', $sortfield, $sortorder);
+	print_liste_field_titre("NbOfCheques", $_SERVER["PHP_SELF"], "bc.nbcheque", "", $param, '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "bc.amount", "", $param, '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "bc.statut", "", $param, '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre('');
 	print "</tr>\n";
 

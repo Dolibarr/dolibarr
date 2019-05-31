@@ -170,13 +170,13 @@ if ($result)
 	print '<td class="liste_titre"><input type="text" class="flat" size="4" name="search_ref" value="'.dol_escape_htmltag($search_ref).'"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_label" value="'.dol_escape_htmltag($search_label).'"></td>';
 	print '<td class="liste_titre"></td>';
-	print '<td class="liste_titre" align="center">';
+	print '<td class="liste_titre center">';
 	print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="month" value="'.dol_escape_htmltag($month).'">';
 	$syear = $year;
 	$formother->select_year($syear?$syear:-1, 'year', 1, 20, 5);
 	print '</td>';
 	// Type
-	print '<td class="liste_titre" align="left">';
+	print '<td class="liste_titre left">';
 	$form->select_types_paiements($typeid, 'typeid', '', 0, 1, 1, 16);
 	print '</td>';
 	// Account
@@ -195,9 +195,9 @@ if ($result)
 
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "t.rowid", "", $param, "", $sortfield, $sortorder);
-	print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "t.label", "", $param, 'align="left"', $sortfield, $sortorder);
-	print_liste_field_titre("PeriodEndDate", $_SERVER["PHP_SELF"], "t.datev", "", $param, 'align="center"', $sortfield, $sortorder);
-	print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "t.datep", "", $param, 'align="center"', $sortfield, $sortorder);
+	print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "t.label", "", $param, '', $sortfield, $sortorder, 'left ');
+	print_liste_field_titre("PeriodEndDate", $_SERVER["PHP_SELF"], "t.datev", "", $param, '', $sortfield, $sortorder, 'center ');
+	print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "t.datep", "", $param, '', $sortfield, $sortorder, 'center ');
 	print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "type", "", $param, '', $sortfield, $sortorder, 'left ');
 	if (! empty($conf->banque->enabled)) print_liste_field_titre("Account", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
 	print_liste_field_titre("PayedByThisPayment", $_SERVER["PHP_SELF"], "t.amount", "", $param, '', $sortfield, $sortorder, 'right ');
@@ -226,8 +226,8 @@ if ($result)
 		print "<td>".$tva_static->getNomUrl(1)."</td>\n";
         // Label
 		print "<td>".dol_trunc($obj->label, 40)."</td>\n";
-        print '<td align="center">'.dol_print_date($db->jdate($obj->datev), 'day')."</td>\n";
-        print '<td align="center">'.dol_print_date($db->jdate($obj->datep), 'day')."</td>\n";
+        print '<td class="center">'.dol_print_date($db->jdate($obj->datev), 'day')."</td>\n";
+        print '<td class="center">'.dol_print_date($db->jdate($obj->datep), 'day')."</td>\n";
         // Type
 		print $type;
 		// Account
@@ -253,7 +253,7 @@ if ($result)
 		}
 		// Amount
         $total = $total + $obj->amount;
-		print "<td align=\"right\">".price($obj->amount)."</td>";
+		print "<td class=\"right\">".price($obj->amount)."</td>";
 	    print "<td>&nbsp;</td>";
         print "</tr>\n";
 

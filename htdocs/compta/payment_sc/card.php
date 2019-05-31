@@ -241,7 +241,7 @@ if ($resql)
     print '<td>'.$langs->trans('Type').'</td>';
 	print '<td>'.$langs->trans('Label').'</td>';
 	print '<td class="right">'.$langs->trans('ExpectedToPay').'</td>';
-	print '<td align="center">'.$langs->trans('Status').'</td>';
+	print '<td class="center">'.$langs->trans('Status').'</td>';
 	print '<td class="right">'.$langs->trans('PayedByThisPayment').'</td>';
 	print "</tr>\n";
 
@@ -267,7 +267,7 @@ if ($resql)
 			// Expected to pay
 			print '<td class="right">'.price($objp->sc_amount).'</td>';
 			// Status
-			print '<td align="center">'.$socialcontrib->getLibStatut(4, $objp->amount).'</td>';
+			print '<td class="center">'.$socialcontrib->getLibStatut(4, $objp->amount).'</td>';
 			// Amount payed
 			print '<td class="right">'.price($objp->amount).'</td>';
 			print "</tr>\n";

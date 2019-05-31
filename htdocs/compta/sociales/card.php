@@ -689,7 +689,7 @@ if ($id > 0)
 
 		if ($action == 'edit')
 		{
-			print '<div align="center">';
+			print '<div class="center">';
 			print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
 			print ' &nbsp; ';
 			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';

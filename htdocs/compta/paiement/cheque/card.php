@@ -477,9 +477,9 @@ if ($action == 'new')
 		print '<td style="min-width: 200px">'.$langs->trans("CheckTransmitter")."</td>\n";
 		print '<td style="min-width: 200px">'.$langs->trans("Bank")."</td>\n";
 		print '<td class="right" width="100px">'.$langs->trans("Amount")."</td>\n";
-		print '<td align="center" width="100px">'.$langs->trans("Payment")."</td>\n";
-		print '<td align="center" width="100px">'.$langs->trans("LineRecord")."</td>\n";
-		print '<td align="center" width="100px">'.$langs->trans("Select")."<br>";
+		print '<td class="center" width="100px">'.$langs->trans("Payment")."</td>\n";
+		print '<td class="center" width="100px">'.$langs->trans("LineRecord")."</td>\n";
+		print '<td class="center" width="100px">'.$langs->trans("Select")."<br>";
 		if ($conf->use_javascript_ajax) print '<a href="#" id="checkall_'.$bid.'">'.$langs->trans("All").'</a> / <a href="#" id="checknone_'.$bid.'">'.$langs->trans("None").'</a>';
 		print '</td>';
 		print "</tr>\n";
@@ -503,7 +503,7 @@ if ($action == 'new')
 				print '<td class="right">'.price($value["amount"], 0, $langs, 1, -1, -1, $conf->currency).'</td>';
 
 				// Link to payment
-				print '<td align="center">';
+				print '<td class="center">';
 				$paymentstatic->id=$value["paymentid"];
 				$paymentstatic->ref=$value["paymentid"];
 				if ($paymentstatic->id)
@@ -516,7 +516,7 @@ if ($action == 'new')
 				}
 				print '</td>';
 				// Link to bank transaction
-				print '<td align="center">';
+				print '<td class="center">';
 				$accountlinestatic->rowid=$value["id"];
 				if ($accountlinestatic->rowid)
 				{
@@ -528,7 +528,7 @@ if ($action == 'new')
 				}
 				print '</td>';
 
-				print '<td align="center">';
+				print '<td class="center">';
 				print '<input id="'.$value["id"].'" class="flat checkforremise_'.$bid.'" checked type="checkbox" name="toRemise[]" value="'.$value["id"].'">';
 				print '</td>' ;
 				print '</tr>';
@@ -693,14 +693,14 @@ else
     			$accounts[$objp->bid] += 1;*/
 
     			print '<tr class="oddeven">';
-    			print '<td align="center">'.$i.'</td>';
-    			print '<td align="center">'.dol_print_date($db->jdate($objp->date), 'day').'</td>';	// Date operation
-    			print '<td align="center">'.($objp->num_chq?$objp->num_chq:'&nbsp;').'</td>';
+    			print '<td class="center">'.$i.'</td>';
+    			print '<td class="center">'.dol_print_date($db->jdate($objp->date), 'day').'</td>';	// Date operation
+    			print '<td class="center">'.($objp->num_chq?$objp->num_chq:'&nbsp;').'</td>';
     			print '<td>'.dol_trunc($objp->emetteur, 24).'</td>';
     			print '<td>'.dol_trunc($objp->banque, 24).'</td>';
     			print '<td class="right">'.price($objp->amount).'</td>';
     			// Link to payment
-    			print '<td align="center">';
+    			print '<td class="center">';
     			$paymentstatic->id=$objp->pid;
     			$paymentstatic->ref=$objp->pid;
     			if ($paymentstatic->id)
@@ -713,7 +713,7 @@ else
     			}
     			print '</td>';
     			// Link to bank transaction
-    			print '<td align="center">';
+    			print '<td class="center">';
     			$accountlinestatic->rowid=$objp->rowid;
     			if ($accountlinestatic->rowid)
     			{

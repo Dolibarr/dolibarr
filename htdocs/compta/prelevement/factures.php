@@ -241,7 +241,7 @@ if ($result)
       	print '<td class="right">'.price($obj->amount_requested)."</td>\n";
 
       	// Status of requests
-      	print '<td align="center">';
+      	print '<td class="center">';
 
       	if ($obj->statut == 0)
 		{
