@@ -675,11 +675,11 @@ if ($resql)
 		print '<td class=right>'.$langs->trans("Credit").'</td>';
 		/*if (! empty($conf->accounting->enabled))
 		{
-			print '<td align="center">';
+			print '<td class="center">';
 			print $langs->trans("AccountAccounting");
 			print '</td>';
 		}*/
-		print '<td align="center">&nbsp;</td>';
+		print '<td class="center">&nbsp;</td>';
 		print '</tr>';
 
 		print '<tr>';
@@ -711,11 +711,11 @@ if ($resql)
 		print '<td class="right"><input name="addcredit" class="flat" type="text" size="4" value="'.GETPOST("addcredit", "alpha").'"></td>';
 		/*if (! empty($conf->accounting->enabled))
 		{
-			print '<td align="center">';
+			print '<td class="center">';
 			print $formaccounting->select_account($search_accountancy_code, 'search_accountancy_code', 1, null, 1, 1, '');
 			print '</td>';
 		}*/
-		print '<td align="center">';
+		print '<td class="center">';
 		print '<input type="submit" name="save" class="button" value="'.$langs->trans("Add").'"><br>';
 		print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
 		print '</td></tr>';
@@ -1069,7 +1069,7 @@ if ($resql)
 					print '</td>';
             	}
 
-				print '<td align="center">';
+				print '<td class="center">';
 				print '<input type="checkbox" id="selectAll" />';
 				print ' <script type="text/javascript">
 						$("input#selectAll").change(function() {
