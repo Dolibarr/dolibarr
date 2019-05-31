@@ -637,10 +637,10 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 			print '<table class="noborder" width="100%">';
 			print '<tr class="liste_titre">';
 			print '<th>'.$langs->trans("ContributionsToPay").($num?' <a href="'.DOL_URL_ROOT.'/compta/sociales/list.php?status=0"><span class="badge">'.$num.'</span></a>':'').'</th>';
-			print '<th align="center">'.$langs->trans("DateDue").'</th>';
+			print '<th class="center">'.$langs->trans("DateDue").'</th>';
 			print '<th class="right">'.$langs->trans("AmountTTC").'</th>';
 			print '<th class="right">'.$langs->trans("Paid").'</th>';
-			print '<th align="center" width="16">&nbsp;</th>';
+			print '<th class="center" width="16">&nbsp;</th>';
 			print '</tr>';
 			if ($num)
 			{
@@ -657,10 +657,10 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 
 					print '<tr class="oddeven">';
 					print '<td>'.$chargestatic->getNomUrl(1).'</td>';
-					print '<td align="center">'.dol_print_date($db->jdate($obj->date_ech), 'day').'</td>';
+					print '<td class="center">'.dol_print_date($db->jdate($obj->date_ech), 'day').'</td>';
 					print '<td class="right">'.price($obj->amount).'</td>';
 					print '<td class="right">'.price($obj->sumpaid).'</td>';
-					print '<td align="center">'.$chargestatic->getLibStatut(3).'</td>';
+					print '<td class="center">'.$chargestatic->getLibStatut(3).'</td>';
 					print '</tr>';
 					$tot_ttc+=$obj->amount;
 					$i++;
@@ -732,7 +732,7 @@ if (! empty($conf->facture->enabled) && ! empty($conf->commande->enabled) && $us
 			if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<th class="right">'.$langs->trans("AmountHT").'</th>';
 			print '<th class="right">'.$langs->trans("AmountTTC").'</th>';
 			print '<th class="right">'.$langs->trans("ToBill").'</th>';
-			print '<th align="center" width="16">&nbsp;</th>';
+			print '<th class="center" width="16">&nbsp;</th>';
 			print '</tr>';
 
 			$tot_ht=$tot_ttc=$tot_tobill=0;
