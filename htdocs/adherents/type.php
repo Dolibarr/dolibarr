@@ -633,8 +633,8 @@ if ($rowid > 0)
 		    print_liste_field_titre("Nature", $_SERVER["PHP_SELF"], "d.morphy", $param, "", "", $sortfield, $sortorder);
 		    print_liste_field_titre("EMail", $_SERVER["PHP_SELF"], "d.email", $param, "", "", $sortfield, $sortorder);
 		    print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "d.statut,d.datefin", $param, "", "", $sortfield, $sortorder);
-		    print_liste_field_titre("EndSubscription", $_SERVER["PHP_SELF"], "d.datefin", $param, "", 'align="center"', $sortfield, $sortorder);
-		    print_liste_field_titre("Action", $_SERVER["PHP_SELF"], "", $param, "", 'width="60" align="center"', $sortfield, $sortorder);
+		    print_liste_field_titre("EndSubscription", $_SERVER["PHP_SELF"], "d.datefin", $param, "", "", $sortfield, $sortorder, 'center ');
+		    print_liste_field_titre("Action", $_SERVER["PHP_SELF"], "", $param, "", 'width="60"', $sortfield, $sortorder, 'center ');
 		    print "</tr>\n";
 
 		    while ($i < $num && $i < $conf->liste_limit)
