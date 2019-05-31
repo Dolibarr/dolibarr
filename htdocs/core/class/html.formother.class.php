@@ -396,7 +396,12 @@ class FormOther
         // Get list of users allowed to be viewed
         $sql_usr = "SELECT u.rowid, u.lastname, u.firstname, u.statut, u.login";
         $sql_usr.= " FROM ".MAIN_DB_PREFIX."user as u";
-        $sql_usr.= " WHERE u.entity IN (0,".$conf->entity.")";
+        if (!empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)){
+            $sql_usr.= " WHERE u.entity IN (0,1,".$conf->entity.")";
+        }
+        else{
+            $sql_usr.= " WHERE u.entity IN (0,".$conf->entity.")";
+        }
         if (empty($user->rights->user->user->lire)) $sql_usr.=" AND u.rowid = ".$user->id;
         if (! empty($user->societe_id)) $sql_usr.=" AND u.fk_soc = ".$user->societe_id;
         // Add existing sales representatives of thirdparty of external user
