@@ -440,57 +440,57 @@ if ($action=="create" || $action=="start")
 		print '<tr>';
 		// Initial amount
 		print '<td>'.$langs->trans("NbOfInvoices").'</td>';
-		print '<td align="center">';
+		print '<td class="center">';
 		print '</td>';
 		// Amount per payment type
 		$i=0;
 		foreach($arrayofpaymentmode as $key => $val)
 		{
-		    print '<td align="center"'.($i == 0 ? ' class="hide0"':'').'>';
+		    print '<td '.($i == 0 ? 'class="hide0 center"':'class="center"').'>';
 		    print $theoricalnbofinvoiceforterminal[$terminalid][$key];
 		    print '</td>';
 		    $i++;
 		}
 		// Save
-		print '<td align="center"></td>';
+		print '<td class="center"></td>';
 		print '</tr>';
 
 		print '<tr>';
 		// Initial amount
 		print '<td>'.$langs->trans("TheoricalAmount").'</td>';
-		print '<td align="center">';
+		print '<td class="center">';
 		print price($initialbalanceforterminal[$terminalid]['cash']).'<br>';
 		print '</td>';
 		// Amount per payment type
 		$i=0;
 		foreach($arrayofpaymentmode as $key => $val)
 		{
-			print '<td align="center"'.($i == 0 ? ' class="hide0"':'').'>';
+			print '<td '.($i == 0 ? 'class="hide0 center"':'class="center"').'>';
 			print price($theoricalamountforterminal[$terminalid][$key]).'<br>';
 			print '</td>';
 			$i++;
 		}
 		// Save
-		print '<td align="center"></td>';
+		print '<td class="center"></td>';
 		print '</tr>';
 
 		print '<tr>';
 		print '<td>'.$langs->trans("RealAmount").'</td>';
 		// Initial amount
-		print '<td align="center">';
+		print '<td class="center">';
 		print '<input name="opening" type="text" class="maxwidth100 center" value="'.(GETPOSTISSET('opening')?price2num(GETPOST('opening', 'alpha')):price($initialbalanceforterminal[$terminalid]['cash'])).'">';
 		print '</td>';
 		// Amount per payment type
 		$i=0;
 		foreach($arrayofpaymentmode as $key => $val)
 		{
-			print '<td align="center"'.($i == 0 ? ' class="hide0"':'').'>';
+			print '<td '.($i == 0 ? 'class="hide0 center"':'class="center"').'>';
 			print '<input name="'.$key.'_amount" type="text"'.($key == 'cash'?' autofocus':'').' class="maxwidth100 center" value="'.GETPOST($key.'_amount', 'alpha').'">';
 			print '</td>';
 			$i++;
 		}
 		// Save
-		print '<td align="center">';
+		print '<td class="center">';
 		print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
 		print '<input type="submit" name="add" class="button" value="'.$langs->trans("Save").'">';
 		print '</td>';
