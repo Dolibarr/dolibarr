@@ -233,9 +233,9 @@ if ($socid > 0)
 			$tag = !$tag;
 			print '<tr class="liste_titre">';
 			print '<td width="160">'.$langs->trans("Date").'</td>';
-			print '<td width="160" align="center">'.$langs->trans("CustomerRelativeDiscountShort").'</td>';
+			print '<td width="160" class="center">'.$langs->trans("CustomerRelativeDiscountShort").'</td>';
 			print '<td class="left">'.$langs->trans("NoteReason").'</td>';
-			print '<td align="center">'.$langs->trans("User").'</td>';
+			print '<td class="center">'.$langs->trans("User").'</td>';
 			print '</tr>';
 			$num = $db->num_rows($resql);
 	        if ($num > 0)
@@ -246,9 +246,9 @@ if ($socid > 0)
 	    			$obj = $db->fetch_object($resql);
 	    			print '<tr class="oddeven">';
 	    			print '<td>'.dol_print_date($db->jdate($obj->dc), "dayhour").'</td>';
-	    			print '<td align="center">'.price2num($obj->remise_percent).'%</td>';
+	    			print '<td class="center">'.price2num($obj->remise_percent).'%</td>';
 	    			print '<td class="left">'.$obj->note.'</td>';
-	    			print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"), 'user').' '.$obj->login.'</a></td>';
+	    			print '<td class="center"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"), 'user').' '.$obj->login.'</a></td>';
 	    			print '</tr>';
 	    			$i++;
 	    		}
@@ -292,9 +292,9 @@ if ($socid > 0)
 			$tag = !$tag;
 			print '<tr class="liste_titre">';
 			print '<td width="160">'.$langs->trans("Date").'</td>';
-			print '<td width="160" align="center">'.$langs->trans("CustomerRelativeDiscountShort").'</td>';
+			print '<td width="160" class="center">'.$langs->trans("CustomerRelativeDiscountShort").'</td>';
 			print '<td class="left">'.$langs->trans("NoteReason").'</td>';
-			print '<td align="center">'.$langs->trans("User").'</td>';
+			print '<td class="center">'.$langs->trans("User").'</td>';
 			print '</tr>';
 			$num = $db->num_rows($resql);
 			if ($num > 0)
@@ -305,9 +305,9 @@ if ($socid > 0)
 					$obj = $db->fetch_object($resql);
 					print '<tr class="oddeven">';
 					print '<td>'.dol_print_date($db->jdate($obj->dc), "dayhour").'</td>';
-					print '<td align="center">'.price2num($obj->remise_percent).'%</td>';
+					print '<td class="center">'.price2num($obj->remise_percent).'%</td>';
 					print '<td class="left">'.$obj->note.'</td>';
-					print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"), 'user').' '.$obj->login.'</a></td>';
+					print '<td class="center"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"), 'user').' '.$obj->login.'</a></td>';
 					print '</tr>';
 					$i++;
 				}
