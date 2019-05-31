@@ -387,7 +387,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i', $act
 
 	print '<!-- Title for auto directories -->'."\n";
 	print '<tr class="liste_titre">'."\n";
-    print '<th class="liste_titre" align="left" colspan="6">';
+    print '<th class="liste_titre" class="left" colspan="6">';
     print '&nbsp;'.$langs->trans("ECMSections");
 	print '</th></tr>';
 
