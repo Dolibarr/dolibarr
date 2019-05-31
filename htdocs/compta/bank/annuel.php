@@ -196,7 +196,7 @@ print '<tr class="liste_titre">';
 print '<td class="liste_titre">&nbsp;</td>';
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
-	print '<td class="liste_titre" align="center">'.$langs->trans("Debit").'</td><td class="liste_titre" align="center">'.$langs->trans("Credit").'</td>';
+	print '<td class="liste_titre center">'.$langs->trans("Debit").'</td><td class="liste_titre center">'.$langs->trans("Credit").'</td>';
 }
 print '</tr>';
 
@@ -482,9 +482,9 @@ else
 	unset($tblyear[1]);
 	unset($tblyear[2]);
 
-	print '<div class="fichecenter"><div class="fichehalfleft"><div align="center">';	// do not use class="center" here, it will have no effect for the js graph inside.
+	print '<div class="fichecenter"><div class="fichehalfleft"><div class="center">';	// do not use class="center" here, it will have no effect for the js graph inside.
 	print $show1;
-	print '</div></div><div class="fichehalfright"><div class="ficheaddleft"><div align="center">';		// do not use class="center" here, it will have no effect for the js graph inside.
+	print '</div></div><div class="fichehalfright"><div class="ficheaddleft"><div class="center">';		// do not use class="center" here, it will have no effect for the js graph inside.
 	print $show2;
 	print '</div></div></div></div>';
 	print '<div style="clear:both"></div>';

@@ -140,7 +140,7 @@ if ($result)
 		else
 		{
 			print "<td >".$objp->label."</td>";
-			print '<td style="text-align: center;">';
+			print '<td class="center">';
 			print '<a href="'.$_SERVER["PHP_SELF"].'?categid='.$objp->rowid.'&amp;action=edit">'.img_edit().'</a>&nbsp;&nbsp;';
 			print '<a href="'.$_SERVER["PHP_SELF"].'?categid='.$objp->rowid.'&amp;action=delete">'.img_delete().'</a></td>';
 		}
