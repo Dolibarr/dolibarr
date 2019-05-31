@@ -91,7 +91,7 @@ if ($resql)
 	print"\n<!-- debut table -->\n";
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
-	print '<td width="30%">'.$langs->trans("Status").'</td><td align="center">'.$langs->trans("Number").'</td><td class="right">%</td>';
+	print '<td width="30%">'.$langs->trans("Status").'</td><td class="center">'.$langs->trans("Number").'</td><td class="right">%</td>';
 	print '<td class="right">'.$langs->trans("Amount").'</td><td class="right">%</td></tr>';
 
 	while ($i < $num)
@@ -102,7 +102,7 @@ if ($resql)
 
 		print $ligne->LibStatut($row[2], 1);
 		//print $st[$row[2]];
-		print '</td><td align="center">';
+		print '</td><td class="center">';
 		print $row[1];
 
 		print '</td><td class="right">';
@@ -120,7 +120,7 @@ if ($resql)
 	}
 
 	print '<tr class="liste_total"><td class="right">'.$langs->trans("Total").'</td>';
-	print '<td align="center">'.$nbtotal.'</td><td>&nbsp;</td><td class="right">';
+	print '<td class="center">'.$nbtotal.'</td><td>&nbsp;</td><td class="right">';
 	print price($total);
 	print '</td><td class="right">&nbsp;</td>';
 	print "</tr></table>";
@@ -184,7 +184,7 @@ if ($resql)
 	print"\n<!-- debut table -->\n";
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
-	print '<td width="30%">'.$langs->trans("Status").'</td><td align="center">'.$langs->trans("Number").'</td>';
+	print '<td width="30%">'.$langs->trans("Status").'</td><td class="center">'.$langs->trans("Number").'</td>';
 	print '<td class="right">%</td><td class="right">'.$langs->trans("Amount").'</td><td class="right">%</td></tr>';
 
 	require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/rejetprelevement.class.php';
@@ -197,7 +197,7 @@ if ($resql)
 		print '<tr class="oddeven"><td>';
 		print $Rejet->motifs[$row[2]];
 
-		print '</td><td align="center">'.$row[1];
+		print '</td><td class="center">'.$row[1];
 
 		print '</td><td class="right">';
 		print round($row[1]/$nbtotal*100, 2)." %";
@@ -213,7 +213,7 @@ if ($resql)
 		$i++;
 	}
 
-	print '<tr class="liste_total"><td class="right">'.$langs->trans("Total").'</td><td align="center">'.$nbtotal.'</td>';
+	print '<tr class="liste_total"><td class="right">'.$langs->trans("Total").'</td><td class="center">'.$nbtotal.'</td>';
 	print '<td>&nbsp;</td><td class="right">';
 	print price($total);
 	print '</td><td class="right">&nbsp;</td>';
