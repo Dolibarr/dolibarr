@@ -477,7 +477,7 @@ foreach ($fieldlist as $field => $value)
 
 	if ($valuetoshow != '')
 	{
-		print '<td align="'.$align.'">';
+		print '<td class="'.$align.'">';
 		if (! empty($tabhelp[$id][$value]) && preg_match('/^http(s*):/i', $tabhelp[$id][$value])) print '<a href="'.$tabhelp[$id][$value].'" target="_blank">'.$valuetoshow.' '.img_help(1, $valuetoshow).'</a>';
 		elseif (! empty($tabhelp[$id][$value]))
 		{
@@ -570,7 +570,7 @@ foreach ($fieldsforcontent as $tmpfieldlist)
 	}
 	print '</td>';
 	if ($tmpfieldlist == 'topic') {
-		print '<td align="center" rowspan="' . (count($fieldsforcontent)) . '">';
+		print '<td class="center" rowspan="' . (count($fieldsforcontent)) . '">';
 		if ($action != 'edit') {
 			print '<input type="submit" class="button" name="actionadd" value="' . $langs->trans("Add") . '">';
 		}
@@ -731,7 +731,7 @@ if ($resql)
                 if (empty($reshook)) fieldList($fieldlist, $obj, $tabname[$id], 'edit');
 
                 print '<td></td><td></td><td></td>';
-                print '<td align="center">';
+                print '<td class="center">';
                 print '<input type="hidden" name="page" value="'.$page.'">';
                 print '<input type="hidden" name="rowid" value="'.$rowid.'">';
                 print '<input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
@@ -852,7 +852,7 @@ if ($resql)
 						if ($showfield)
 						{
                            	print '<!-- '.$fieldlist[$field].' -->';
-                           	print '<td align="'.$align.'" class="'.$class.'">'.$valuetoshow.'</td>';
+                           	print '<td class="'.$class.' '.$align.'">'.$valuetoshow.'</td>';
 						}
                     }
                 }
@@ -871,7 +871,7 @@ if ($resql)
                 $url.='&';
 
                 // Status / Active
-                print '<td align="center" class="nowrap">';
+                print '<td class="nowrap center">';
                 if ($canbedisabled) print '<a href="'.$url.'action='.$acts[$obj->active].'">'.$actl[$obj->active].'</a>';
                 print "</td>";
 

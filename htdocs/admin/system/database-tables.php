@@ -126,14 +126,14 @@ else
 					print '<td>&nbsp;</td>';
 				}
 				print '<td>'.$obj->Row_format.'</td>';
-				print '<td align="right">'.$obj->Rows.'</td>';
-				print '<td align="right">'.$obj->Avg_row_length.'</td>';
-				print '<td align="right">'.$obj->Data_length.'</td>';
-				print '<td align="right">'.$obj->Max_data_length.'</td>';
-				print '<td align="right">'.$obj->Index_length.'</td>';
-				print '<td align="right">'.$obj->Auto_increment.'</td>';
-				print '<td align="right">'.$obj->Check_time.'</td>';
-				print '<td align="right">'.$obj->Collation;
+				print '<td class="right">'.$obj->Rows.'</td>';
+				print '<td class="right">'.$obj->Avg_row_length.'</td>';
+				print '<td class="right">'.$obj->Data_length.'</td>';
+				print '<td class="right">'.$obj->Max_data_length.'</td>';
+				print '<td class="right">'.$obj->Index_length.'</td>';
+				print '<td class="right">'.$obj->Auto_increment.'</td>';
+				print '<td class="right">'.$obj->Check_time.'</td>';
+				print '<td class="right">'.$obj->Collation;
 				if (isset($obj->Collation) && ($obj->Collation == "utf8mb4_general_ci" || $obj->Collation == "utf8mb4_unicode_ci"))
 				{
 				    print '<br><a class="reposition" href="database-tables.php?action=convertutf8&amp;table='.$obj->Name.'">'.$langs->trans("Convert").' UTF8</a>';

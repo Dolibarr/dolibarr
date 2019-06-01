@@ -606,7 +606,7 @@ if ($id)
                             $valuetoshow=$obj->$fieldname;
 
 							// Show value for field
-							if ($showfield) print '<td align="'.$align.'">'.$valuetoshow.'</td>';
+							if ($showfield) print '<td class="'.$align.'">'.$valuetoshow.'</td>';
                         }
                     }
 
@@ -617,12 +617,12 @@ if ($id)
                     $url = $_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.(! empty($obj->rowid)?$obj->rowid:(! empty($obj->code)?$obj->code:'')).'&amp;code='.(! empty($obj->code)?urlencode($obj->code):'').'&amp;';
 
                     // Active
-                    print '<td align="center" class="nowrap">';
+                    print '<td class="nowrap center">';
                     print '<a href="'.$url.'action='.$acts[$obj->status].'">'.$actl[$obj->status].'</a>';
                     print "</td>";
 
                     // Modify link
-                    print '<td align="center"><a class="reposition" href="'.$url.'action=edit">'.img_edit().'</a></td>';
+                    print '<td class="center"><a class="reposition" href="'.$url.'action=edit">'.img_edit().'</a></td>';
 
                     // Delete link
                     if ($iserasable) print '<td align="center"><a href="'.$url.'action=delete">'.img_delete().'</a></td>';

@@ -149,7 +149,7 @@ foreach($workflowcodes as $key => $params)
 			print $langs->trans("Description");
 		}
 		print '</td>';
-		print '  <td align="center">'.$langs->trans("Status").'</td>';
+		print '  <td class="center">'.$langs->trans("Status").'</td>';
 		print "</tr>\n";
 		$oldfamily = $family;
    	}
@@ -162,7 +162,7 @@ foreach($workflowcodes as $key => $params)
    		print ' '.img_warning($langs->transnoentitiesnoconv($params['warning']));
    	}
    	print "</td>\n";
-   	print '<td align="center">';
+   	print '<td class="center">';
    	if (! empty($conf->use_javascript_ajax))
    	{
    		print ajax_constantonoff($key);

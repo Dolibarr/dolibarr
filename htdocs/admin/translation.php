@@ -283,7 +283,7 @@ if ($mode == 'overwrite')
     print_liste_field_titre("Key", $_SERVER["PHP_SELF"], 'transkey', '', $param, '', $sortfield, $sortorder);
     print_liste_field_titre("NewTranslationStringToShow", $_SERVER["PHP_SELF"], 'transvalue', '', $param, '', $sortfield, $sortorder);
     //if (! empty($conf->multicompany->enabled) && !$user->entity) print_liste_field_titre("Entity", $_SERVER["PHP_SELF"], 'entity,transkey', '', $param, '', $sortfield, $sortorder);
-    print '<td align="center"></td>';
+    print '<td class="center"></td>';
     print "</tr>\n";
 
 
@@ -304,11 +304,11 @@ if ($mode == 'overwrite')
     	print '<td>';
     	print '<input type="text" class="flat" size="1" name="entity" value="'.$conf->entity.'">';
     	print '</td>';
-    	print '<td align="center">';
+    	print '<td class="center">';
     }
     else
     {*/
-    	print '<td align="center">';
+    	print '<td class="center">';
     	print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
     //}
     print '<input type="submit" class="button"'.$disabled.' value="'.$langs->trans("Add").'" name="add" title="'.dol_escape_htmltag($langs->trans("YouMustEnabledTranslationOverwriteBefore")).'">';
@@ -358,7 +358,7 @@ if ($mode == 'overwrite')
     		}
     		print '</td>';
 
-    		print '<td align="center">';
+    		print '<td class="center">';
     		if ($action == 'edit' && $obj->rowid == GETPOST('rowid', 'int'))
     		{
     			print '<input type="hidden" class="button" name="rowid" value="'.$obj->rowid.'">';
@@ -472,7 +472,7 @@ if ($mode == 'searchkey')
     print_liste_field_titre("Key", $_SERVER["PHP_SELF"], 'transkey', '', $param, '', $sortfield, $sortorder);
     print_liste_field_titre("CurrentTranslationString", $_SERVER["PHP_SELF"], 'transvalue', '', $param, '', $sortfield, $sortorder);
     //if (! empty($conf->multicompany->enabled) && !$user->entity) print_liste_field_titre("Entity", $_SERVER["PHP_SELF"], 'entity,transkey', '', $param, '', $sortfield, $sortorder);
-    print '<td align="center"></td>';
+    print '<td class="center"></td>';
     print "</tr>\n";
 
     // Line to search new record

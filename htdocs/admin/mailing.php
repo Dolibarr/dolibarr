@@ -148,7 +148,7 @@ if (!empty($conf->use_javascript_ajax) && $conf->global->MAIN_FEATURES_LEVEL >=1
 print '</table>';
 
 print '<br>';
-print '<div align="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div>';
+print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div>';
 
 print '</form>';
 

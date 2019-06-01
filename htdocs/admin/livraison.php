@@ -199,8 +199,8 @@ print '<tr class="liste_titre">';
 print '<td width="100">'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td class="nowrap">'.$langs->trans("Example").'</td>';
-print '<td align="center" width="60">'.$langs->trans("Status").'</td>';
-print '<td align="center" width="16">'.$langs->trans("ShortInfo").'</td>';
+print '<td class="center" width="60">'.$langs->trans("Status").'</td>';
+print '<td class="center" width="16">'.$langs->trans("ShortInfo").'</td>';
 print '</tr>'."\n";
 
 clearstatcache();
@@ -245,7 +245,7 @@ foreach ($dirmodels as $reldir)
                         else print $tmp;
                         print '</td>'."\n";
 
-                        print '<td align="center">';
+                        print '<td class="center">';
                         if ($conf->global->LIVRAISON_ADDON_NUMBER == "$file")
                         {
                             print img_picto($langs->trans("Activated"), 'switch_on');
@@ -274,7 +274,7 @@ foreach ($dirmodels as $reldir)
                             }
                         }
 
-                        print '<td align="center">';
+                        print '<td class="center">';
                         print $form->textwithpicto('', $htmltooltip, 1, 0);
                         print '</td>';
 
@@ -326,10 +326,10 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td width="140">'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
-print '<td align="center" width="60">'.$langs->trans("Status").'</td>';
-print '<td align="center" width="60">'.$langs->trans("Default").'</td>';
-print '<td align="center" width="32">'.$langs->trans("ShortInfo").'</td>';
-print '<td align="center" width="32">'.$langs->trans("Preview").'</td>';
+print '<td class="center" width="60">'.$langs->trans("Status").'</td>';
+print '<td class="center" width="60">'.$langs->trans("Default").'</td>';
+print '<td class="center" width="32">'.$langs->trans("ShortInfo").'</td>';
+print '<td class="center" width="32">'.$langs->trans("Preview").'</td>';
 print "</tr>\n";
 
 clearstatcache();
@@ -380,7 +380,7 @@ foreach ($dirmodels as $reldir)
 		    				// Active
 		    				if (in_array($name, $def))
 		    				{
-		    					print "<td align=\"center\">\n";
+		    					print "<td class=\"center\">\n";
 		    					print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
 		    					print img_picto($langs->trans("Enabled"), 'switch_on');
 		    					print '</a>';
@@ -388,13 +388,13 @@ foreach ($dirmodels as $reldir)
 		    				}
 		    				else
 		    				{
-		    					print "<td align=\"center\">\n";
+		    					print "<td class=\"center\">\n";
 		    					print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 		    					print "</td>";
 		    				}
 
 		    				// Default
-		    				print "<td align=\"center\">";
+		    				print "<td class=\"center\">";
 		    				if ($conf->global->LIVRAISON_ADDON_PDF == "$name")
 		    				{
 		    					print img_picto($langs->trans("Default"), 'on');
@@ -410,12 +410,12 @@ foreach ($dirmodels as $reldir)
 		    				$htmltooltip.='<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
 		    				$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").'</u>:';
 		    				$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo, 1, 1);
-		    				print '<td align="center">';
+		    				print '<td class="center">';
 		    				print $form->textwithpicto('', $htmltooltip, 1, 0);
 		    				print '</td>';
 
 		    				// Preview
-		    				print '<td align="center">';
+		    				print '<td class="center">';
 		    				if ($module->type == 'pdf')
 		    				{
 		    					print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'sending').'</a>';
@@ -445,7 +445,7 @@ print load_fiche_titre($langs->trans("OtherOptions"), '', '');
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
-print '<td align="center" width="60">'.$langs->trans("Value").'</td>';
+print '<td class="center" width="60">'.$langs->trans("Value").'</td>';
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
 

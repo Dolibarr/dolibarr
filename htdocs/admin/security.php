@@ -231,7 +231,7 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td colspan="2">'.$langs->trans("RuleForGeneratedPasswords").'</td>';
 print '<td>'.$langs->trans("Example").'</td>';
-print '<td align="center">'.$langs->trans("Activated").'</td>';
+print '<td class="center">'.$langs->trans("Activated").'</td>';
 print '</tr>';
 
 foreach ($arrayhandler as $key => $module)
@@ -257,7 +257,7 @@ foreach ($arrayhandler as $key => $module)
         else print $tmp;
         print '</td>'."\n";
 
-        print '<td width="100" align="center">';
+        print '<td width="100" class="center">';
         if ($conf->global->USER_PASSWORD_GENERATED == $key)
         {
             print img_picto('', 'tick');
@@ -393,14 +393,14 @@ print "<input type=\"hidden\" name=\"action\" value=\"encrypt\">";
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td colspan="3">'.$langs->trans("Parameters").'</td>';
-print '<td align="center">'.$langs->trans("Activated").'</td>';
-print '<td align="center">'.$langs->trans("Action").'</td>';
+print '<td class="center">'.$langs->trans("Activated").'</td>';
+print '<td class="center">'.$langs->trans("Action").'</td>';
 print '</tr>';
 
 // Disable clear password in database
 print '<tr class="oddeven">';
 print '<td colspan="3">'.$langs->trans("DoNotStoreClearPassword").'</td>';
-print '<td align="center" width="60">';
+print '<td class="center" width="60">';
 if (! empty($conf->global->DATABASE_PWD_ENCRYPTED))
 {
 	print img_picto($langs->trans("Active"), 'tick');
@@ -408,7 +408,7 @@ if (! empty($conf->global->DATABASE_PWD_ENCRYPTED))
 print '</td>';
 if (! $conf->global->DATABASE_PWD_ENCRYPTED)
 {
-	print '<td align="center" width="100">';
+	print '<td class="center" width="100">';
 	print '<a href="security.php?action=activate_encrypt">'.$langs->trans("Activate").'</a>';
 	print "</td>";
 }
@@ -416,7 +416,7 @@ if (! $conf->global->DATABASE_PWD_ENCRYPTED)
 // Database conf file encryption
 if (! empty($conf->global->DATABASE_PWD_ENCRYPTED))
 {
-	print '<td align="center" width="100">';
+	print '<td class="center" width="100">';
 	if ($allow_disable_encryption)
 	{
 		//On n'autorise pas l'annulation de l'encryption car les mots de passe ne peuvent pas etre decodes
@@ -436,7 +436,7 @@ print '</tr>';
 
 print '<tr class="oddeven">';
 print '<td colspan="3">'.$langs->trans("MainDbPasswordFileConfEncrypted").'</td>';
-print '<td align="center" width="60">';
+print '<td class="center" width="60">';
 if (preg_match('/crypted:/i', $dolibarr_main_db_pass) || ! empty($dolibarr_main_db_encrypted_pass))
 {
 	print img_picto($langs->trans("Active"), 'tick');
@@ -444,7 +444,7 @@ if (preg_match('/crypted:/i', $dolibarr_main_db_pass) || ! empty($dolibarr_main_
 
 print '</td>';
 
-print '<td align="center" width="100">';
+print '<td class="center" width="100">';
 if (empty($dolibarr_main_db_pass) && empty($dolibarr_main_db_encrypted_pass))
 {
 	$langs->load("errors");
@@ -471,7 +471,7 @@ print '</tr>';
 
 print '<tr class="oddeven">';
 print '<td colspan="3">'.$langs->trans("DisableForgetPasswordLinkOnLogonPage").'</td>';
-print '<td align="center" width="60">';
+print '<td class="center" width="60">';
 if(! empty($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK))
 {
 	print img_picto($langs->trans("Active"), 'tick');
@@ -479,13 +479,13 @@ if(! empty($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK))
 print '</td>';
 if (empty($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK))
 {
-	print '<td align="center" width="100">';
+	print '<td class="center" width="100">';
 	print '<a href="security.php?action=activate_MAIN_SECURITY_DISABLEFORGETPASSLINK">'.$langs->trans("Activate").'</a>';
 	print "</td>";
 }
 if (!empty($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK))
 {
-	print '<td align="center" width="100">';
+	print '<td class="center" width="100">';
 	print '<a href="security.php?action=disable_MAIN_SECURITY_DISABLEFORGETPASSLINK">'.$langs->trans("Disable").'</a>';
 	print "</td>";
 }

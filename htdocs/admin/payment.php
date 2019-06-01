@@ -114,8 +114,8 @@ print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td class="nowrap">'.$langs->trans("Example").'</td>';
-print '<td align="center" width="60">'.$langs->trans("Status").'</td>';
-print '<td align="center" width="16">'.$langs->trans("ShortInfo").'</td>';
+print '<td class="center" width="60">'.$langs->trans("Status").'</td>';
+print '<td class="center" width="16">'.$langs->trans("ShortInfo").'</td>';
 print '</tr>'."\n";
 
 clearstatcache();
@@ -175,7 +175,7 @@ foreach ($dirmodels as $reldir)
                             else print $tmp;
                             print '</td>'."\n";
 
-                            print '<td align="center">';
+                            print '<td class="center">';
                             //print "> ".$conf->global->PAYMENT_ADDON." - ".$file;
                             if ($conf->global->PAYMENT_ADDON == $file || $conf->global->PAYMENT_ADDON.'.php' == $file)
                             {
@@ -205,7 +205,7 @@ foreach ($dirmodels as $reldir)
                                 }
                             }
 
-                            print '<td align="center">';
+                            print '<td class="center">';
                             print $form->textwithpicto('', $htmltooltip, 1, 0);
 
                             if ($conf->global->PAYMENT_ADDON.'.php' == $file)  // If module is the one used, we show existing errors
@@ -238,14 +238,14 @@ print '<input type="hidden" name="action" value="setparams" />';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
-print '<td align="center" width="60">'.$langs->trans("Value").'</td>';
+print '<td class="center" width="60">'.$langs->trans("Value").'</td>';
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
 
 // Allow payments on different thirdparties bills but same parent company
 print '<tr class="oddeven"><td>';
 print $langs->trans("PaymentOnDifferentThirdBills");
-print '</td><td width="60" align="center">';
+print '</td><td width="60" class="center">';
 print $form->selectyesno("FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS", $conf->global->FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS, 1);
 print '</td><td class="right">';
 print "</td></tr>\n";

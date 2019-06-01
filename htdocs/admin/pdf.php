@@ -459,7 +459,7 @@ else	// Show
 		print img_picto($langs->trans("Active"), 'tick');
 	}
 	print '</td>';
-	print '<td align="center" width="140">';
+	print '<td class="center" width="140">';
 	if (empty($conf->global->PDF_SECURITY_ENCRYPTION))
 	{
 		print '<a href="'.$_SERVER["PHP_SELF"].'?action=activate_pdfsecurity">'.$langs->trans("Activate").'</a>';

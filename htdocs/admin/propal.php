@@ -263,8 +263,8 @@ print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name")."</td>\n";
 print '<td>'.$langs->trans("Description")."</td>\n";
 print '<td class="nowrap">'.$langs->trans("Example")."</td>\n";
-print '<td align="center" width="60">'.$langs->trans("Status").'</td>';
-print '<td align="center" width="16">'.$langs->trans("ShortInfo").'</td>';
+print '<td class="center" width="60">'.$langs->trans("Status").'</td>';
+print '<td class="center" width="16">'.$langs->trans("ShortInfo").'</td>';
 print '</tr>'."\n";
 
 clearstatcache();
@@ -307,7 +307,7 @@ foreach ($dirmodels as $reldir)
                         else print $tmp;
                         print '</td>'."\n";
 
-						print '<td align="center">';
+						print '<td class="center">';
 						if ($conf->global->PROPALE_ADDON == "$file")
 						{
 							print img_picto($langs->trans("Activated"), 'switch_on');
@@ -339,7 +339,7 @@ foreach ($dirmodels as $reldir)
                             }
                         }
 
-						print '<td align="center">';
+						print '<td class="center">';
 						print $form->textwithpicto('', $htmltooltip, 1, 0);
 						print '</td>';
 
@@ -388,10 +388,10 @@ print "<table class=\"noborder\" width=\"100%\">\n";
 print "<tr class=\"liste_titre\">\n";
 print "  <td>".$langs->trans("Name")."</td>\n";
 print "  <td>".$langs->trans("Description")."</td>\n";
-print '<td align="center" width="40">'.$langs->trans("Status")."</td>\n";
-print '<td align="center" width="40">'.$langs->trans("Default")."</td>\n";
-print '<td align="center" width="40">'.$langs->trans("ShortInfo").'</td>';
-print '<td align="center" width="40">'.$langs->trans("Preview").'</td>';
+print '<td class="center" width="40">'.$langs->trans("Status")."</td>\n";
+print '<td class="center" width="40">'.$langs->trans("Default")."</td>\n";
+print '<td class="center" width="40">'.$langs->trans("ShortInfo").'</td>';
+print '<td class="center" width="40">'.$langs->trans("Preview").'</td>';
 print "</tr>\n";
 
 clearstatcache();
@@ -443,7 +443,7 @@ foreach ($dirmodels as $reldir)
 	                            // Active
 	                            if (in_array($name, $def))
 	                            {
-	                            	print '<td align="center">'."\n";
+	                            	print '<td class="center">'."\n";
 	                            	print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'">';
 	                            	print img_picto($langs->trans("Enabled"), 'switch_on');
 	                            	print '</a>';
@@ -451,13 +451,13 @@ foreach ($dirmodels as $reldir)
 	                            }
 	                            else
 	                            {
-	                                print "<td align=\"center\">\n";
+	                                print "<td class=\"center\">\n";
 	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 	                                print "</td>";
 	                            }
 
 	                            // Defaut
-	                            print "<td align=\"center\">";
+	                            print "<td class=\"center\">";
 	                            if ($conf->global->PROPALE_ADDON_PDF == "$name")
 	                            {
 	                                print img_picto($langs->trans("Default"), 'on');
@@ -485,12 +485,12 @@ foreach ($dirmodels as $reldir)
 								$htmltooltip.='<br>'.$langs->trans("WatermarkOnDraftProposal").': '.yn($module->option_draft_watermark, 1, 1);
 
 
-	                            print '<td align="center">';
+	                            print '<td class="center">';
 	                            print $form->textwithpicto('', $htmltooltip, 1, 0);
 	                            print '</td>';
 
 	                            // Preview
-	                            print '<td align="center">';
+	                            print '<td class="center">';
 	                            if ($module->type == 'pdf')
 	                            {
 	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'bill').'</a>';
@@ -530,7 +530,7 @@ if (empty($conf->facture->enabled))
 	print '<td>';
 	print '<input type="hidden" name="action" value="setribchq">';
 	print $langs->trans("PaymentMode").'</td>';
-	print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+	print '<td class="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 	print "</tr>\n";
 
 	print '<tr class="oddeven">';
@@ -624,7 +624,7 @@ print load_fiche_titre($langs->trans("OtherOptions"), '', '');
 print "<table class=\"noborder\" width=\"100%\">";
 print "<tr class=\"liste_titre\">";
 print "<td>".$langs->trans("Parameter")."</td>\n";
-print '<td width="60" align="center">'.$langs->trans("Value")."</td>\n";
+print '<td width="60" class="center">'.$langs->trans("Value")."</td>\n";
 print "<td>&nbsp;</td>\n";
 print "</tr>";
 
@@ -634,7 +634,7 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print "<input type=\"hidden\" name=\"action\" value=\"setdefaultduration\">";
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("DefaultProposalDurationValidity").'</td>';
-print '<td width="60" align="center">'."<input size=\"3\" class=\"flat\" type=\"text\" name=\"value\" value=\"".$conf->global->PROPALE_VALIDITY_DURATION."\"></td>";
+print '<td width="60" class="center">'."<input size=\"3\" class=\"flat\" type=\"text\" name=\"value\" value=\"".$conf->global->PROPALE_VALIDITY_DURATION."\"></td>";
 print '<td class="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 print '</tr>';
 print '</form>';
@@ -645,7 +645,7 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="setusecustomercontactasrecipient">';
 print '<tr class="oddeven"><td>';
 print $langs->trans("UseCustomerContactAsPropalRecipientIfExist");
-print '</td><td width="60" align="center">';
+print '</td><td width="60" class="center">';
 print $form->selectyesno("value",$conf->global->PROPALE_USE_CUSTOMER_CONTACT_AS_RECIPIENT,1);
 print '</td><td class="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
@@ -720,7 +720,7 @@ else
 {
 
     print '<tr class="oddeven"><td>';
-    print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL").'</td><td>&nbsp;</td><td align="center">'.$langs->trans('NotAvailable').'</td></tr>';
+    print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL").'</td><td>&nbsp;</td><td class="center">'.$langs->trans('NotAvailable').'</td></tr>';
 }
 */
 
@@ -751,7 +751,7 @@ print load_fiche_titre($langs->trans("Notifications"), '', '');
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
-print '<td align="center" width="60"></td>';
+print '<td class="center" width="60"></td>';
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
 
