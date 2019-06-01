@@ -694,7 +694,7 @@ if ($rowid > 0)
             print '<tr class="liste_titre">';
             print_liste_field_titre('Ref', $_SERVER["PHP_SELF"], 'c.rowid', '', $param, '', $sortfield, $sortorder);
             print '<td class="center">'.$langs->trans("DateCreation").'</td>';
-            print '<td align="center">'.$langs->trans("Type").'</td>';
+            print '<td class="center">'.$langs->trans("Type").'</td>';
             print '<td class="center">'.$langs->trans("DateStart").'</td>';
             print '<td class="center">'.$langs->trans("DateEnd").'</td>';
             print '<td class="right">'.$langs->trans("Amount").'</td>';
