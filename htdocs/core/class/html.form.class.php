@@ -1915,7 +1915,7 @@ class Form
 				unset($producttmpselect);
 			}
 			// handle case where product or service module is disabled + no filter specified
-			if (empty($filtertype))
+			if ($filtertype == '')
 			{
 				if (empty($conf->product->enabled)) { // when product module is disabled, show services only
 					$filtertype = 1;
