@@ -1914,6 +1914,16 @@ class Form
 				$selected_input_value=$producttmpselect->ref;
 				unset($producttmpselect);
 			}
+			// handle case where product or service module is disabled + no filter specified
+			if (empty($filtertype))
+			{
+				if (empty($conf->product->enabled)) { // when product module is disabled, show services only
+					$filtertype = 1;
+				}
+				elseif (empty($conf->service->enabled)) { // when service module is disabled, show products only
+					$filtertype = 0;
+				}
+			}
 			// mode=1 means customers products
 			$urloption='htmlname='.$htmlname.'&outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=1&status='.$status.'&finished='.$finished.'&hidepriceinlabel='.$hidepriceinlabel.'&warehousestatus='.$warehouseStatus;
 			//Price by customer
@@ -2165,7 +2175,14 @@ class Form
 		{
 			$sql.= " AND p.tosell = ".$status;
 		}
-		if (strval($filtertype) != '') $sql.=" AND p.fk_product_type=".$filtertype;
+		// Filter by product type
+		if (strval($filtertype) != '') $sql.= " AND p.fk_product_type = ".$filtertype;
+		elseif (empty($conf->product->enabled)) { // when product module is disabled, show services only
+			$sql.= " AND p.fk_product_type = 1";
+		}
+		elseif (empty($conf->service->enabled)) { // when service module is disabled, show products only
+			$sql.= " AND p.fk_product_type = 0";
+		}
 		// Add criteria on ref/label
 		if ($filterkey != '')
 		{
