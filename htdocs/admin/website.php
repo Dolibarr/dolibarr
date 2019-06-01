@@ -560,11 +560,11 @@ if ($id)
                 // Affiche nom du champ
                 if ($showfield)
                 {
-                    print getTitleFieldOfList($valuetoshow, 0, $_SERVER["PHP_SELF"], ($sortable?$fieldlist[$field]:''), ($page?'page='.$page.'&':''), "", "align=".$align, $sortfield, $sortorder);
+                    print getTitleFieldOfList($valuetoshow, 0, $_SERVER["PHP_SELF"], ($sortable?$fieldlist[$field]:''), ($page?'page='.$page.'&':''), "", '', $sortfield, $sortorder, $align.' ');
                 }
             }
 
-			print getTitleFieldOfList($langs->trans("Status"), 0, $_SERVER["PHP_SELF"], "status", ($page?'page='.$page.'&':''), "", 'align="center"', $sortfield, $sortorder);
+			print getTitleFieldOfList($langs->trans("Status"), 0, $_SERVER["PHP_SELF"], "status", ($page?'page='.$page.'&':''), "", '', $sortfield, $sortorder, 'center ');
             print getTitleFieldOfList('');
             print getTitleFieldOfList('');
             print '</tr>';
@@ -625,8 +625,8 @@ if ($id)
                     print '<td class="center"><a class="reposition" href="'.$url.'action=edit">'.img_edit().'</a></td>';
 
                     // Delete link
-                    if ($iserasable) print '<td align="center"><a href="'.$url.'action=delete">'.img_delete().'</a></td>';
-                    else print '<td align="center">'.img_delete($langs->trans("DisableSiteFirst"), 'class="opacitymedium"').'</td>';
+                    if ($iserasable) print '<td class="center"><a href="'.$url.'action=delete">'.img_delete().'</a></td>';
+                    else print '<td class="center">'.img_delete($langs->trans("DisableSiteFirst"), 'class="opacitymedium"').'</td>';
 
                     print "</tr>\n";
                 }
