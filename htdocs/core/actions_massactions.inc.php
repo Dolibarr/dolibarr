@@ -566,6 +566,7 @@ if ($massaction == 'confirm_createbills')
             $objecttmp->mode_reglement_id	= $cmd->mode_reglement_id;
             $objecttmp->fk_project			= $cmd->fk_project;
             $objecttmp->multicurrency_code  = $cmd->multicurrency_code;
+            if (empty($createbills_onebythird)) $objecttmp->ref_client = $cmd->ref_client;
 
             $datefacture = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
             if (empty($datefacture))
