@@ -47,7 +47,7 @@ $result = restrictedArea($user, 'loan', $id, '','');
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) {
+if (empty($page) || $page == -1) {
     $page = 0;
 }
 $offset = $conf->liste_limit * $page;

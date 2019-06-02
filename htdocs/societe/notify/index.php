@@ -42,7 +42,7 @@ if ($sortfield == "")
   $sortfield="s.nom";
 }
 
-if ($page == -1 || $page == null) { $page = 0 ; }
+if (empty($page) || $page == -1) { $page = 0 ; }
 
 $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
