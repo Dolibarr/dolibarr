@@ -304,8 +304,8 @@ ALTER TABLE llx_actioncomm ADD COLUMN calling_duration integer;
 ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN datelastok datetime;
 ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN maxemailpercollect integer DEFAULT 100;
 
-DELETE FROM llx_const WHERE name = 'THEME_ELDY_USE_HOVER' AND value = '0';
-DELETE FROM llx_const WHERE name = 'THEME_ELDY_USE_CHECKED' AND value = '0';
+DELETE FROM llx_const WHERE name = __ENCRYPT('THEME_ELDY_USE_HOVER')__ AND value = __ENCRYPT('0')__;
+DELETE FROM llx_const WHERE name = __ENCRYPT('THEME_ELDY_USE_CHECKED')__ AND value = __ENCRYPT('0')__;
 
 ALTER TABLE llx_inventorydet DROP COLUMN pmp; 
 ALTER TABLE llx_inventorydet DROP COLUMN pa; 
