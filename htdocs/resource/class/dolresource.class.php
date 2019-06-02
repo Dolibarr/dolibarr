@@ -881,7 +881,7 @@ class Dolresource extends CommonObject
     {
     	global $langs;
 
-    	if (!empty($this->cache_code_type_resource) && count($this->cache_code_type_resource)) return 0;    // Cache deja charge
+    	if (is_array($this->cache_code_type_resource) && count($this->cache_code_type_resource)) return 0;    // Cache deja charge
 
     	$sql = "SELECT rowid, code, label, active";
     	$sql.= " FROM ".MAIN_DB_PREFIX."c_type_resource";
