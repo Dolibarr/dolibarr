@@ -388,7 +388,7 @@ if ($ok && GETPOST('standard', 'alpha'))
 							if (GETPOST('standard', 'alpha') == 'confirmed')
 							{
 								$db->query($sqldelete);
-							
+
 								print '<tr><td>Constant '.$obj->name.' set in entity '.$obj->entity.' with value '.$obj->value.' -> Module not enabled in entity '.$obj->entity.', we delete record</td></tr>';
 							}
 							else
@@ -409,13 +409,7 @@ if ($ok && GETPOST('standard', 'alpha'))
 			$db->commit();
 		}
 	}
-
-
-
 }
-
-/* From here, actions need a parameter */
-
 
 
 // restore_thirdparties_logos: Move logos to correct new directory.
