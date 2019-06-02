@@ -56,9 +56,10 @@ $result = restrictedArea($user, 'tax', $id, 'vat','charges');
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) {
+if (empty($page) || $page == -1) {
     $page = 0;
 }
+
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
