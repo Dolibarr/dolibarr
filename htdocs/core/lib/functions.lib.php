@@ -99,7 +99,7 @@ function getEntity($element, $shared = 1, $currentobject = null)
  * 	Set entity id to use when to create an object
  *
  * 	@param	object	$currentobject	Current object
- * 	@return	mixed					Entity id to use ( eg. entity = '.getEntity($object) )
+ * 	@return	mixed					Entity id to use ( eg. entity = '.setEntity($object) )
  */
 function setEntity($currentobject)
 {
