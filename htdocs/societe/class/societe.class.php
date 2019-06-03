@@ -1642,7 +1642,7 @@ class Societe extends CommonObject
 		$note=trim($note);
 		if (! $note)
 		{
-			$this->error=$langs->trans("ErrorFieldRequired", $langs->trans("NoteReason"));
+			$this->error=$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("NoteReason"));
 			return -2;
 		}
 
@@ -1705,7 +1705,7 @@ class Societe extends CommonObject
 		$note=trim($note);
 		if (! $note)
 		{
-			$this->error=$langs->trans("ErrorFieldRequired", $langs->trans("NoteReason"));
+			$this->error=$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("NoteReason"));
 			return -2;
 		}
 

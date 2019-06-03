@@ -112,6 +112,7 @@ NEW: When you create product or service, sell accountancy account by default is 
 NEW: Widget birthdays of the month.
 NEW: Option in workflow module to set a reception billed on validate supplier bill.
 NEW: Autocompletion on lists should be available on mobile applications.
+NEW: Add mass action to close several members.
 
 For Developers:
 NEW: Module "DebugBar" is available as a stable module.
@@ -121,7 +122,7 @@ NEW: Add constant XFRAMEOPTIONS_ALLOWALL
 NEW: Add function isValidVATID()
 NEW: ADD document's product support in APIs
 NEW: REST API: get the list of objects in a category.
-NEW: Update Stripe library to 6.34.3
+NEW: Update Stripe library to 6.35
 NEW: Upgrade jquery lib to 3.3.1
 NEW: Add hook 'addHtmlHeader()'
 NEW: Add hook 'createRecurringInvoices()'
@@ -174,7 +175,9 @@ Following changes may create regressions for some external modules, but were nec
 * Removed deprecated use of string in dol_print_date(). Only date allowed.
 * Deprecated property ->fk_departement is now ->state_id everywhere.
 * Removed the method 4 of GETPOST (to get $_COOKIE). It was not used and not recommanded to use in Dolibarr.
-
+* Column llx_facture.facnumber change to llx_facture.ref
+* Variable $dolibarr_main_cookie_cryptkey is no more created at install (it was not used by Dolibarr). A new variable 
+  called $dolibarr_main_instance_unique_id is now generated at each installation. It will be used by some future features.
 
 ***** ChangeLog for 9.0.3 compared to 9.0.2 *****
 FIX: #11013

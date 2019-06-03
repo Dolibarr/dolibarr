@@ -187,11 +187,13 @@ function societe_prepare_head(Societe $object)
 		$foundonexternalonlinesystem=0;
     	$langs->load("banks");
 
-        $title = $langs->trans("BankAccounts");
+        //$title = $langs->trans("BankAccounts");
+    	$title = $langs->trans("PaymentInformation");
+
 		if (! empty($conf->stripe->enabled))
 		{
-			$langs->load("stripe");
-			$title = $langs->trans("BankAccountsAndGateways");
+			//$langs->load("stripe");
+			//$title = $langs->trans("BankAccountsAndGateways");
 
 			$servicestatus = 0;
 			if (! empty($conf->global->STRIPE_LIVE) && ! GETPOST('forcesandbox', 'alpha')) $servicestatus = 1;
@@ -730,9 +732,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
         $newcardbutton='';
         if (! empty($conf->projet->enabled) && $user->rights->projet->creer && empty($nocreatelink))
         {
-			$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage).'"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddProject").'</span>';
-			$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-			$newcardbutton.= '</a>';
+            $newcardbutton.= dolGetButtonTitle($langs->trans('AddProject'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/card.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage));
         }
 
         print "\n";
@@ -934,9 +934,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
     if ($user->rights->societe->contact->creer)
     {
     	$addcontact = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("AddContact") : $langs->trans("AddContactAddress"));
-		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/contact/card.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage).'"><span class="valignmiddle text-plus-circle">'.$addcontact.'</span>';
-		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-		$newcardbutton.= '</a>';
+        $newcardbutton.= dolGetButtonTitle($addcontact, '', 'fa fa-plus-circle', DOL_URL_ROOT.'/contact/card.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage));
     }
 
     print "\n";

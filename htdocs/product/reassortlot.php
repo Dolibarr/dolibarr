@@ -293,7 +293,7 @@ if ($resql)
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
     print '<td class="liste_titre">&nbsp;</td>';
-    print '<td class="liste_titre right">';
+    print '<td class="liste_titre maxwidthsearch">';
     $searchpicto=$form->showFilterAndCheckAddButtons(0);
     print $searchpicto;
     print '</td>';
@@ -388,7 +388,7 @@ if ($resql)
 		//print '<td class="right">'.$objp->desiredstock.'</td>';
 
 		// Warehouse
-		print '<td>';
+		print '<td class="nowrap">';
 		if ($objp->fk_entrepot > 0)
 		{
     		print $warehousetmp->getNomUrl(1);
@@ -396,7 +396,7 @@ if ($resql)
 		print '</td>';
 
 		// Lot
-		print '<td class="center">';
+		print '<td class="center nowrap">';
 		if ($product_lot_static->batch)
 		{
 			print $product_lot_static->getNomUrl(1);

@@ -1276,14 +1276,16 @@ class ExtraFields
                             $labeltoshow = dol_trunc($labeltoshow, 45);
 
                             if ($value == $obj->rowid) {
-                                foreach ($fields_label as $field_toshow) {
-                                    $translabel = $langs->trans($obj->$field_toshow);
-                                    if ($translabel != $obj->$field_toshow) {
-                                        $labeltoshow = dol_trunc($translabel, 18) . ' ';
-                                    } else {
-                                        $labeltoshow = dol_trunc($obj->$field_toshow, 18) . ' ';
-                                    }
-                                }
+                            	if (!$notrans) {
+	                                foreach ($fields_label as $field_toshow) {
+	                                    $translabel = $langs->trans($obj->$field_toshow);
+	                                    if ($translabel != $obj->$field_toshow) {
+	                                        $labeltoshow = dol_trunc($translabel, 18) . ' ';
+	                                    } else {
+	                                        $labeltoshow = dol_trunc($obj->$field_toshow, 18) . ' ';
+	                                    }
+	                                }
+                            	}
                                 $out .= '<option value="' . $obj->rowid . '" selected>' . $labeltoshow . '</option>';
                             } else {
                                 if (!$notrans) {
@@ -1968,7 +1970,7 @@ class ExtraFields
 	public function setOptionalsFromPost($extralabels, &$object, $onlykey = '')
 	{
 		global $_POST, $langs;
-		$nofillrequired='';// For error when required field left blank
+		$nofillrequired=0;// For error when required field left blank
 		$error_field_required = array();
 
 		if (is_array($this->attributes[$object->table_element]['label'])) $extralabels=$this->attributes[$object->table_element]['label'];
@@ -1999,7 +2001,8 @@ class ExtraFields
 				if ($this->attributes[$object->table_element]['required'][$key])	// Value is required
 				{
 					// Check if empty without using GETPOST, value can be alpha, int, array, etc...
-					if ((! is_array($_POST["options_".$key]) && empty($_POST["options_".$key]) && $_POST["options_".$key] != '0')
+				    if ((! is_array($_POST["options_".$key]) && empty($_POST["options_".$key]) && $this->attributes[$object->table_element]['type'][$key] != 'select' && $_POST["options_".$key] != '0')
+				        || (! is_array($_POST["options_".$key]) && empty($_POST["options_".$key]) && $this->attributes[$object->table_element]['type'][$key] == 'select')
 						|| (is_array($_POST["options_".$key]) && empty($_POST["options_".$key])))
 					{
 						//print 'ccc'.$value.'-'.$this->attributes[$object->table_element]['required'][$key];

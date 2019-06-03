@@ -145,7 +145,7 @@ if ($id > 0 || ! empty($ref))
     print '<div class="fichecenter">';
     print '<div class="underbanner clearboth"></div>';
 
-    print '<table class="border" width="100%">';
+    print '<table class="border centpercent tableforfield">';
 
 
     // Ligne info remises tiers

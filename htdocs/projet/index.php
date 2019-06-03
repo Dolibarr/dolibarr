@@ -63,7 +63,6 @@ $projectset = ($mine?$mine:(empty($user->rights->projet->all->lire)?0:2));
 $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, $projetset, 1);
 //var_dump($projectsListId);
 
-
 llxHeader("", $langs->trans("Projects"), "EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos");
 
 $title=$langs->trans("ProjectsArea");

@@ -64,21 +64,6 @@ if (GETPOST('action', 'alpha') == 'set')
 	$db->begin();
 	if (GETPOST('socid', 'int') < 0) $_POST["socid"]='';
 
-	/*
-	$res = dolibarr_set_const($db, "CASHDESK_ID_THIRDPARTY", (GETPOST('socid', 'int') > 0 ? GETPOST('socid', 'int') : ''), 'chaine', 0, '', $conf->entity);
-
-    $res = dolibarr_set_const($db, "CASHDESK_ID_BANKACCOUNT_CASH", (GETPOST('CASHDESK_ID_BANKACCOUNT_CASH', 'alpha') > 0 ? GETPOST('CASHDESK_ID_BANKACCOUNT_CASH', 'alpha') : ''), 'chaine', 0, '', $conf->entity);
-	$res = dolibarr_set_const($db, "CASHDESK_ID_BANKACCOUNT_CHEQUE", (GETPOST('CASHDESK_ID_BANKACCOUNT_CHEQUE', 'alpha') > 0 ? GETPOST('CASHDESK_ID_BANKACCOUNT_CHEQUE', 'alpha') : ''), 'chaine', 0, '', $conf->entity);
-	$res = dolibarr_set_const($db, "CASHDESK_ID_BANKACCOUNT_CB", (GETPOST('CASHDESK_ID_BANKACCOUNT_CB', 'alpha') > 0 ? GETPOST('CASHDESK_ID_BANKACCOUNT_CB', 'alpha') : ''), 'chaine', 0, '', $conf->entity);
-    foreach($paiements as $modep) {
-        if (in_array($modep->code, array('LIQ', 'CB', 'CHQ'))) continue;
-		$name="CASHDESK_ID_BANKACCOUNT_".$modep->code;
-		$res = dolibarr_set_const($db, $name, (GETPOST($name, 'alpha') > 0 ? GETPOST($name, 'alpha') : ''), 'chaine', 0, '', $conf->entity);
-    }
-	$res = dolibarr_set_const($db, "CASHDESK_ID_WAREHOUSE", (GETPOST('CASHDESK_ID_WAREHOUSE', 'alpha') > 0 ? GETPOST('CASHDESK_ID_WAREHOUSE', 'alpha') : ''), 'chaine', 0, '', $conf->entity);
-	$res = dolibarr_set_const($db, "CASHDESK_NO_DECREASE_STOCK", GETPOST('CASHDESK_NO_DECREASE_STOCK', 'alpha'), 'chaine', 0, '', $conf->entity);
-    */
-
 	$res = dolibarr_set_const($db, "CASHDESK_SERVICES", GETPOST('CASHDESK_SERVICES', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_ROOT_CATEGORY_ID", GETPOST('TAKEPOS_ROOT_CATEGORY_ID', 'alpha'), 'chaine', 0, '', $conf->entity);
 
@@ -269,82 +254,6 @@ print "</td></tr>\n";
 print '</table>';
 
 print '<br>';
-
-/*
-print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre">';
-if (!$conf->global->TAKEPOS_NUM_TERMINALS || $conf->global->TAKEPOS_NUM_TERMINALS=="1") print '<td>'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td>';
-else print '<td>'.$langs->trans("Terminal").' 1</td><td>'.$langs->trans("Value").'</td>';
-print "</tr>\n";
-
-print '<tr class="oddeven"><td width=\"50%\">'.$langs->trans("CashDeskThirdPartyForSell").'</td>';
-print '<td colspan="2">';
-print $form->select_company($conf->global->CASHDESK_ID_THIRDPARTY, 'socid', 's.client in (1, 3) AND s.status = 1', 1, 0, 0, array(), 0);
-print '</td></tr>';
-if (! empty($conf->banque->enabled))
-{
-    print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountForSell").'</td>';
-	print '<td colspan="2">';
-	$form->select_comptes($conf->global->CASHDESK_ID_BANKACCOUNT_CASH, 'CASHDESK_ID_BANKACCOUNT_CASH', 0, "courant=2", 1);
-	print '</td></tr>';
-	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountForCheque").'</td>';
-	print '<td colspan="2">';
-	$form->select_comptes($conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE, 'CASHDESK_ID_BANKACCOUNT_CHEQUE', 0, "courant=1", 1);
-	print '</td></tr>';
-	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountForCB").'</td>';
-	print '<td colspan="2">';
-	$form->select_comptes($conf->global->CASHDESK_ID_BANKACCOUNT_CB, 'CASHDESK_ID_BANKACCOUNT_CB', 0, "courant=1", 1);
-	print '</td></tr>';
-
-	foreach($paiements as $modep) {
-        if (in_array($modep->code, array('LIQ', 'CB', 'CHQ'))) continue;
-		$name="CASHDESK_ID_BANKACCOUNT_".$modep->code;
-		print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountFor").' '.$langs->trans($modep->libelle).'</td>';
-		print '<td colspan="2">';
-		$cour=preg_match('|^LIQ.*|', $modep->code)?2:1;
-		$form->select_comptes($conf->global->$name, $name, 0, "courant=".$cour, 1);
-		print '</td></tr>';
-	}
-}
-
-if (! empty($conf->stock->enabled))
-{
-
-	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskDoNotDecreaseStock").'</td>';	// Force warehouse (this is not a default value)
-	print '<td colspan="2">';
-	if (empty($conf->productbatch->enabled)) {
-	   print $form->selectyesno('CASHDESK_NO_DECREASE_STOCK', $conf->global->CASHDESK_NO_DECREASE_STOCK, 1);
-	}
-	else
-	{
-	    if (!$conf->global->CASHDESK_NO_DECREASE_STOCK) {
-	       $res = dolibarr_set_const($db, "CASHDESK_NO_DECREASE_STOCK", 1, 'chaine', 0, '', $conf->entity);
-	    }
-	    print $langs->trans("Yes").'<br>';
-	    print '<span class="opacitymedium">'.$langs->trans('StockDecreaseForPointOfSaleDisabledbyBatch').'</span>';
-	}
-	print '</td></tr>';
-
-	$disabled=$conf->global->CASHDESK_NO_DECREASE_STOCK;
-
-
-	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskIdWareHouse").'</td>';	// Force warehouse (this is not a default value)
-	print '<td colspan="2">';
-	if (! $disabled)
-	{
-		print $formproduct->selectWarehouses($conf->global->CASHDESK_ID_WAREHOUSE, 'CASHDESK_ID_WAREHOUSE', '', 1, $disabled);
-		print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"]).'">('.$langs->trans("Create").')</a>';
-	}
-	else
-	{
-		print '<span class="opacitymedium">'.$langs->trans("StockDecreaseForPointOfSaleDisabled").'</span>';
-	}
-	print '</td></tr>';
-}
-
-print '</table>';
-print '<br>';
-*/
 
 print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></div>';
 

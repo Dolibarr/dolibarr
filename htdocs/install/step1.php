@@ -366,7 +366,7 @@ if (! $error && $db->connected && $action == "set")
 
             print "<tr><td>";
             print $langs->trans("ErrorDirDoesNotExists", $main_dir).'<br>';
-            print $langs->trans("ErrorWrongValueForParameter", $langs->trans("WebPagesDirectory")).'<br>';
+            print $langs->trans("ErrorWrongValueForParameter", $langs->transnoentitiesnoconv("WebPagesDirectory")).'<br>';
             print $langs->trans("ErrorGoBackAndCorrectParameters").'<br><br>';
             print '</td><td>';
             print $langs->trans("Error");

@@ -1890,3 +1890,4 @@ IFTTT_DOLIBARR_ENDPOINT_SECUREKEY=Security key to secure the endpoint URL used b
 IFTTTDesc=This module is designed to trigger events on IFTTT and/or to execute some action on external IFTTT triggers.
 UrlForIFTTT=URL endpoint for IFTTT
 YouWillFindItOnYourIFTTTAccount=You will find it on your IFTTT account
+EndPointFor=End point for %s : %s

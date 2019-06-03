@@ -91,7 +91,7 @@ function testSqlAndScriptInject($val, $type)
 	}
 	if ($type == 3)
 	{
-		$inj += preg_match('/select|update|delete|replace|group\s+by|concat|count|from/i', $val);
+		$inj += preg_match('/select|update|delete|truncate|replace|group\s+by|concat|count|from|union/i', $val);
 	}
 	if ($type != 2)	// Not common key strings, so we can check them both on GET and POST
 	{
@@ -1740,8 +1740,8 @@ function top_menu_user(User $user, Translate $langs)
     }
     else{
         $nophoto='/public/theme/common/user_anonymous.png';
-        if ($object->gender == 'man') $nophoto='/public/theme/common/user_man.png';
-        if ($object->gender == 'woman') $nophoto='/public/theme/common/user_woman.png';
+        if ($user->gender == 'man') $nophoto='/public/theme/common/user_man.png';
+        if ($user->gender == 'woman') $nophoto='/public/theme/common/user_woman.png';
 
         $userImage = '<img class="photo photouserphoto userphoto" alt="No photo" src="'.DOL_URL_ROOT.$nophoto.'">';
         $userDropDownImage = '<img class="photo dropdown-user-image" alt="No photo" src="'.DOL_URL_ROOT.$nophoto.'">';
@@ -1811,11 +1811,11 @@ function top_menu_user(User $user, Translate $langs)
 
     $btnUser = '
     <div id="topmenu-login-dropdown" class="userimg atoplogin dropdown user user-menu">
-        <a href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'" class="dropdown-toggle" data-toggle="dropdown">
+        <a href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'" class="dropdown-toggle login-dropdown-a" data-toggle="dropdown">
             '.$userImage.'
             <span class="hidden-xs maxwidth200 atoploginusername">'.dol_trunc($user->firstname ? $user->firstname : $user->login, 10).'</span>
-            <span class="fa fa-chevron-down" id="dropdown-icon-down"></span>
-            <span class="fa fa-chevron-up hidden" id="dropdown-icon-up"></span>
+            <span class="fa fa-chevron-down login-dropdown-btn" id="dropdown-icon-down"></span>
+            <span class="fa fa-chevron-up login-dropdown-btn hidden" id="dropdown-icon-up"></span>
         </a>
         <div class="dropdown-menu">
             <!-- User image -->

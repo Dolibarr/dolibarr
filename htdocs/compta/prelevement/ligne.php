@@ -59,7 +59,7 @@ if ($action == 'confirm_rejet')
 		if (empty($daterej))
 		{
 			$error++;
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("Date")), null, 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
 		}
 
 		elseif ($daterej > dol_now())

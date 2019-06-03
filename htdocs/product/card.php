@@ -497,7 +497,7 @@ if (empty($reshook))
             $originalId = $id;
             if ($object->id > 0)
             {
-                $object->ref = GETPOST('clone_ref');
+                $object->ref = GETPOST('clone_ref', 'alphanohtml');
                 $object->status = 0;
                 $object->status_buy = 0;
                 $object->id = null;
@@ -505,7 +505,8 @@ if (empty($reshook))
 
                 if ($object->check())
                 {
-                    $id = $object->create($user);
+                	$object->context['createfromclone'] = 'createfromclone';
+                	$id = $object->create($user);
                     if ($id > 0)
                     {
                         if (GETPOST('clone_composition'))
@@ -546,7 +547,7 @@ if (empty($reshook))
                             $object->fetch($id);
                         }
                         else
-                     {
+                     	{
                             $db->rollback();
                             if (count($object->errors))
                             {
@@ -560,6 +561,8 @@ if (empty($reshook))
                             }
                         }
                     }
+
+                    unset($object->context['createfromclone']);
                 }
             }
             else
@@ -1966,7 +1969,7 @@ if (($action == 'delete' && (empty($conf->use_javascript_ajax) || ! empty($conf-
 if (($action == 'clone' && (empty($conf->use_javascript_ajax) || ! empty($conf->dol_use_jmobile)))		// Output when action = clone if jmobile or no js
 	|| (! empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile)))							// Always output when not jmobile nor js
 {
-    print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneProduct', $object->ref), 'confirm_clone', $formquestionclone, 'yes', 'action-clone', 260, 600);
+    print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneProduct', $object->ref), 'confirm_clone', $formquestionclone, 'yes', 'action-clone', 350, 600);
 }
 
 

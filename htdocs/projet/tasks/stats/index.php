@@ -146,9 +146,7 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
 // Company
 /*print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
-if ($mode == 'customer') $filter='s.client in (1,2,3)';
-if ($mode == 'supplier') $filter='s.fournisseur = 1';
-print $form->select_company($socid,'socid',$filter,1,0,0,array(),0,'','style="width: 95%"');
+print $form->select_company($socid,'socid','',1,0,0,array(),0,'','style="width: 95%"');
 print '</td></tr>';
 */
 // User

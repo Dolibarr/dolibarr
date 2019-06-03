@@ -55,7 +55,7 @@ $pagenext = $page + 1;
 if (! $sortfield) $sortfield='t.status,t.priority';
 if (! $sortorder) $sortorder='DESC,ASC';
 
-$search_status=GETPOST('search_status', 'int')?GETPOST('search_status', 'int'):GETPOST('status', 'int');
+$search_status=(GETPOSTISSET('search_status')?GETPOST('search_status', 'int'):GETPOST('status', 'int'));
 
 //Search criteria
 $search_label=GETPOST("search_label", 'alpha');
@@ -251,7 +251,7 @@ $sql.= " t.libname,";
 $sql.= " t.test";
 $sql.= " FROM ".MAIN_DB_PREFIX."cronjob as t";
 $sql.= " WHERE entity IN (0,".$conf->entity.")";
-if ($search_status >= 0 && $search_status < 2) $sql.= " AND t.status = ".(empty($search_status)?'0':'1');
+if ($search_status >= 0 && $search_status < 2 && $search_status != '') $sql.= " AND t.status = ".(empty($search_status)?'0':'1');
 //Manage filter
 if (is_array($filter) && count($filter)>0) {
 	foreach($filter as $key => $value) {
@@ -337,23 +337,10 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
-print '<input type="hidden" name="search_status" value="'.$search_status.'" >';
-print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
 
-// Line with explanation and button new job
-$newcardbutton='';
-if ($user->rights->cron->create)
-{
-	$newcardbutton.='<a class="butActionNew" style="margin-right: 0px;margin-left: 0px;" href="'.DOL_URL_ROOT.'/cron/card.php?action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans("CronCreateJob").'</span>';
-	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-	$newcardbutton.= '</a>';
-}
-else
-{
-	$newcardbutton.='<a class="butActionNewRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'"><span class="valignmiddle text-plus-circle">'.$langs->trans("CronCreateJob").'</span>';
-	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-	$newcardbutton.= '</a>';
-}
+// Line with explanation and button new
+$newcardbutton = dolGetButtonTitle($langs->trans('New'), $langs->trans('CronCreateJob'), 'fa fa-plus-circle', DOL_URL_ROOT.'/cron/card.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $user->rights->cron->create);
+
 
 print_barre_liste($pagetitle, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_setup', 0, $newcardbutton, '', $limit);
 

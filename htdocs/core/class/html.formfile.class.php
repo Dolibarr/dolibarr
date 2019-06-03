@@ -688,7 +688,9 @@ class FormFile
 			$out.= '<tr class="liste_titre">';
 
 			$addcolumforpicto=($delallowed || $printer || $morepicto);
-			$out.= '<th colspan="'.(3+($addcolumforpicto?1:0)).'" class="formdoc liste_titre maxwidthonsmartphone center">';
+			$colspan = (3+($addcolumforpicto?1:0)); $colspanmore = 0;
+
+			$out.= '<th colspan="'.$colspan.'" class="formdoc liste_titre maxwidthonsmartphone center">';
 
 			// Model
 			if (! empty($modellist))
@@ -745,13 +747,17 @@ class FormFile
 			{
 				foreach($hookmanager->hooks['formfile'] as $module)
 				{
-					if (method_exists($module, 'formBuilddocLineOptions')) $out .= '<th></th>';
+					if (method_exists($module, 'formBuilddocLineOptions'))
+					{
+						$colspanmore++;
+						$out .= '<th></th>';
+					}
 				}
 			}
 			$out.= '</tr>';
 
 			// Execute hooks
-			$parameters=array('socid'=>(isset($GLOBALS['socid'])?$GLOBALS['socid']:''),'id'=>(isset($GLOBALS['id'])?$GLOBALS['id']:''),'modulepart'=>$modulepart);
+			$parameters=array('colspan'=>($colspan+$colspanmore), 'socid'=>(isset($GLOBALS['socid'])?$GLOBALS['socid']:''), 'id'=>(isset($GLOBALS['id'])?$GLOBALS['id']:''), 'modulepart'=>$modulepart);
 			if (is_object($hookmanager))
 			{
 				$reshook = $hookmanager->executeHooks('formBuilddocOptions', $parameters, $GLOBALS['object']);
@@ -801,9 +807,10 @@ class FormFile
 					// Show file name with link to download
 					$out.= '<td class="minwidth200">';
 					$out.= '<a class="documentdownload paddingright" href="'.$documenturl.'?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).($param?'&'.$param:'').'"';
+
 					$mime=dol_mimetype($relativepath, '', 0);
 					if (preg_match('/text/', $mime)) $out.= ' target="_blank"';
-					$out.= ' target="_blank">';
+					$out.= '>';
 					$out.= img_mime($file["name"], $langs->trans("File").': '.$file["name"]);
 					$out.= dol_trunc($file["name"], 150);
 					$out.= '</a>'."\n";
@@ -847,14 +854,17 @@ class FormFile
 
 					if (is_object($hookmanager))
 					{
-						$parameters=array('socid'=>(isset($GLOBALS['socid'])?$GLOBALS['socid']:''),'id'=>(isset($GLOBALS['id'])?$GLOBALS['id']:''),'modulepart'=>$modulepart,'relativepath'=>$relativepath);
+						$parameters=array('colspan'=>($colspan+$colspanmore), 'socid'=>(isset($GLOBALS['socid'])?$GLOBALS['socid']:''),'id'=>(isset($GLOBALS['id'])?$GLOBALS['id']:''),'modulepart'=>$modulepart,'relativepath'=>$relativepath);
 						$res = $hookmanager->executeHooks('formBuilddocLineOptions', $parameters, $file);
 						if (empty($res))
 						{
 							$out.= $hookmanager->resPrint;		// Complete line
 							$out.= '</tr>';
 						}
-						else $out = $hookmanager->resPrint;		// Replace line
+						else
+						{
+							$out = $hookmanager->resPrint;		// Replace all $out
+						}
 			  		}
 				}
 
@@ -1830,7 +1840,7 @@ class FormFile
 				print '<td class="center">' . dol_print_date($link->datea, "dayhour", "tzuser") . '</td>';
 				print '<td class="center"></td>';
 				print '<td class="right">';
-				print '<a href="' . $_SERVER['PHP_SELF'] . '?action=update&linkid=' . $link->id . $param . '" class="editfilelink" >' . img_edit() . '</a>';	// id= is included into $param
+				print '<a href="' . $_SERVER['PHP_SELF'] . '?action=update&linkid=' . $link->id . $param . '" class="editfilelink reposition" >' . img_edit() . '</a>';	// id= is included into $param
 				if ($permtodelete) {
 					print ' &nbsp; <a href="'. $_SERVER['PHP_SELF'] .'?action=delete&linkid=' . $link->id . $param . '" class="deletefilelink">' . img_delete() . '</a>';	// id= is included into $param
 				} else {

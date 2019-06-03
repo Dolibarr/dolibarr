@@ -271,7 +271,7 @@ else
     print '<td class="liste_titre"></td>';
 
     // Action column
-    print '<td class="liste_titre right">';
+    print '<td class="liste_titre maxwidthsearch">';
     $searchpicto=$form->showFilterButtons();
     print $searchpicto;
     print '</td>';

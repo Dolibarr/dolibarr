@@ -649,7 +649,7 @@ function dol_include_once($relpath, $classname = '')
  *  @param	int		$returnemptyifnotfound		0:If $type==0 and if file was not found into alternate dir, return default path into main dir (no test on it)
  *  											1:If $type==0 and if file was not found into alternate dir, return empty string
  *  											2:If $type==0 and if file was not found into alternate dir, test into main dir, return default path if found, empty string if not found
- *  @return string								Full filesystem path (if path=0), Full url path (if mode=1)
+ *  @return string								Full filesystem path (if path=0) or '' if file not found, Full url path (if mode=1)
  */
 function dol_buildpath($path, $type = 0, $returnemptyifnotfound = 0)
 {
@@ -1982,7 +1982,7 @@ function dol_mktime($hour, $minute, $second, $month, $day, $year, $gm = false, $
 		//var_dump($localtz);
 		//var_dump($year.'-'.$month.'-'.$day.'-'.$hour.'-'.$minute);
 		$dt = new DateTime(null, $localtz);
-		$dt->setDate($year, $month, $day);
+		$dt->setDate((int) $year, (int) $month, (int) $day);
 		$dt->setTime((int) $hour, (int) $minute, (int) $second);
 		$date=$dt->getTimestamp();	// should include daylight saving time
 		//var_dump($date);
@@ -3441,16 +3441,17 @@ function img_info($titlealt = 'default')
  *
  *	@param	string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@param	string	$moreatt	Add more attribute on img tag (For example 'style="float: right"'). If 1, add float: right. Can't be "class" attribute.
+ *  @param	string  $morecss	Add more CSS
  *	@return string      		Return img tag
  */
-function img_warning($titlealt = 'default', $moreatt = '')
+function img_warning($titlealt = 'default', $moreatt = '', $morecss = 'pictowarning')
 {
 	global $conf, $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Warning');
 
 	//return '<div class="imglatecoin">'.img_picto($titlealt, 'warning_white.png', 'class="pictowarning valignmiddle"'.($moreatt ? ($moreatt == '1' ? ' style="float: right"' : ' '.$moreatt): '')).'</div>';
-	return img_picto($titlealt, 'warning.png', 'class="pictowarning valignmiddle"'.($moreatt ? ($moreatt == '1' ? ' style="float: right"' : ' '.$moreatt): ''));
+	return img_picto($titlealt, 'warning.png', 'class="valignmiddle'.($morecss?' '.$morecss:'').'"'.($moreatt ? ($moreatt == '1' ? ' style="float: right"' : ' '.$moreatt): ''));
 }
 
 /**
@@ -3626,7 +3627,7 @@ function img_mime($file, $titlealt = '', $morecss = '')
 	if (empty($titlealt)) $titlealt = 'Mime type: '.$mimetype;
 
 	//return img_picto_common($titlealt, 'mime/'.$mimeimg, 'class="'.$morecss.'"');
-	return '<i class="fa fa-'.$mimefa.' paddingright"></i>';
+	return '<i class="fa fa-'.$mimefa.' paddingright"'.($titlealt ? ' title="'.$titlealt.'"' : '').'></i>';
 }
 
 
@@ -7955,7 +7956,6 @@ function roundUpToNextMultiple($n, $x = 5)
  */
 function dolGetBadge($label, $html = '', $type = 'primary', $mode = '', $url = '', $params = array())
 {
-
     $attr=array(
         'class'=>'badge'.(!empty($mode)?' badge-'.$mode:'').(!empty($type)?' badge-'.$type:'')
     );
@@ -8016,6 +8016,8 @@ function dolGetBadge($label, $html = '', $type = 'primary', $mode = '', $url = '
 function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $statusType = 'status0', $displayMode = 0, $url = '', $params = array())
 {
     global $conf;
+
+    $return = '';
 
     // image's filename are still in French
     $statusImg=array(
@@ -8116,7 +8118,6 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
         $attr['aria-label'] = $label;
     }
 
-
     if(empty($userRight)){
         $attr['class'] = 'butActionRefused';
         $attr['href'] = '';
@@ -8152,4 +8153,131 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
     $tag = !empty($attr['href'])?'a':'span';
 
     return '<div class="inline-block divButAction"><'.$tag.' '.$compiledAttributes.'>'.$html.'</'.$tag.'></div>';
+}
+
+/**
+ * Function dolGetButtonTitle : this kind of buttons are used in title in list
+ *
+ * @param string    $label      label of button
+ * @param string    $helpText   optional : content for help tooltip
+ * @param string    $iconClass  class for icon element
+ * @param string    $url        the url for link
+ * @param string    $id         attribute id of button
+ * @param int       $status     0 no user rights, 1 active, -1 Feature Disabled, -2 disable Other reason use helpText as tooltip
+ * @param array     $params     various params for future : recommended rather than adding more function arguments
+ * @return string               html button
+ */
+function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $url = '', $id = '', $status = 1, $params = array())
+{
+    global $langs, $conf, $user;
+
+    // Actually this conf is used in css too for external module compatibility and smooth transition to this function
+    if (! empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED) && (! $user->admin) && $status <= 0) {
+        return '';
+    }
+
+    $class = 'btnTitle' ;
+
+    // hidden conf keep during button transition TODO: remove this block
+    if(empty($conf->global->MAIN_USE_NEW_TITLE_BUTTON)){
+        $class = 'butActionNew';
+    }
+
+    $attr=array(
+        'class' => $class
+        ,'href' => empty($url)?'':$url
+    );
+
+    if(!empty($helpText)){
+        $attr['title'] = dol_escape_htmltag($helpText);
+    }
+
+    if($status <= 0){
+        $attr['class'] .= ' refused';
+
+        // hidden conf keep during button transition TODO: remove this block
+        if(empty($conf->global->MAIN_USE_NEW_TITLE_BUTTON)){
+            $attr['class'] = 'butActionNewRefused';
+        }
+
+        $attr['href'] = '';
+
+        if($status == -1){ // Not enough permissions
+            $attr['title'] = dol_escape_htmltag($langs->transnoentitiesnoconv("FeatureDisabled"));
+        }
+        elseif($status == 0){ // disable
+            $attr['title'] = dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions"));
+        }
+    }
+
+    if(!empty($attr['title'])){
+        $attr['class'] .= ' classfortooltip';
+    }
+
+    if(empty($id)){
+        $attr['id'] = $id;
+    }
+
+    // Override attr
+    if(!empty($params['attr']) && is_array($params['attr'])){
+        foreach($params['attr'] as $key => $value){
+            if($key == 'class'){
+                $attr['class'].= ' '.$value;
+            }
+            elseif($key == 'classOverride'){
+                $attr['class'] = $value;
+            }
+            else{
+                $attr[$key] = $value;
+            }
+        }
+    }
+
+    if(isset($attr['href']) && empty($attr['href'])){
+        unset($attr['href']);
+    }
+
+    // TODO : add a hook
+
+    // escape all attribute
+    $attr = array_map('dol_escape_htmltag', $attr);
+
+    $TCompiledAttr = array();
+    foreach($attr as $key => $value){
+        $TCompiledAttr[] = $key.'="'.$value.'"';
+    }
+
+    $compiledAttributes = !empty($TCompiledAttr)?implode(' ', $TCompiledAttr):'';
+
+    $tag = !empty($attr['href'])?'a':'span';
+
+
+    $button ='<'.$tag.' '.$compiledAttributes.' >';
+    $button.= '<span class="'.$iconClass.' valignmiddle btnTitle-icon"></span>';
+    $button.= '<span class="valignmiddle text-plus-circle btnTitle-label">'.$label.'</span>';
+    $button.= '</'.$tag.'>';
+
+    // hidden conf keep during button transition TODO: remove this block
+    if(empty($conf->global->MAIN_USE_NEW_TITLE_BUTTON)){
+        $button='<'.$tag.' '.$compiledAttributes.' ><span class="text-plus-circle">'.$label.'</span>';
+        $button.= '<span class="'.$iconClass.' valignmiddle"></span>';
+        $button.= '</'.$tag.'>';
+    }
+
+    return $button;
+}
+
+/**
+ * Return if a file can contains executable content
+ *
+ * @param   string  $filename       File NamedRange
+ * @return  boolean                 True if yes, False if no
+ */
+function isAFileWithExecutableContent($filename)
+{
+    if (preg_match('/\.(htm|html|js|php|phtml|pl|py|cgi|ksh|sh|bash|bat|cmd|wpk|exe|dmg)$/i', $filename))
+    {
+        return true;
+    }
+    return false;
 }
