@@ -106,7 +106,7 @@ class BOM extends CommonObject
 		'fk_user_modif' => array('type'=>'integer', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-2, 'position'=>511, 'notnull'=>-1,),
 		'fk_user_valid' => array('type'=>'integer', 'label'=>'UserValidation', 'enabled'=>1, 'visible'=>-2, 'position'=>512, 'notnull'=>0,),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>900, 'notnull'=>-1,),
-		'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>1, 'visible'=>1, 'position'=>1000, 'notnull'=>1, 'default'=>0, 'index'=>1, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Enabled', 9=>'Disabled')),
+		'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>1, 'visible'=>2, 'position'=>1000, 'notnull'=>1, 'default'=>0, 'index'=>1, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Enabled', 9=>'Disabled')),
 	);
 	public $rowid;
 	public $ref;
@@ -753,23 +753,23 @@ class BOM extends CommonObject
 		}
 		elseif ($mode == 2)
 		{
-			return img_picto($this->labelstatus[$status], 'statut'.$status, '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
+			return img_picto($this->labelstatus[$status], 'statut'.($status == self::STATUS_VALIDATED ? 4 : $status), '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
 		}
 		elseif ($mode == 3)
 		{
-			return img_picto($this->labelstatus[$status], 'statut'.$status, '', false, 0, 0, '', 'valignmiddle');
+			return img_picto($this->labelstatus[$status], 'statut'.($status == self::STATUS_VALIDATED ? 4 : $status), '', false, 0, 0, '', 'valignmiddle');
 		}
 		elseif ($mode == 4)
 		{
-			return img_picto($this->labelstatus[$status], 'statut'.$status, '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
+			return img_picto($this->labelstatus[$status], 'statut'.($status == self::STATUS_VALIDATED ? 4 : $status), '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
 		}
 		elseif ($mode == 5)
 		{
-			return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status], 'statut'.$status, '', false, 0, 0, '', 'valignmiddle');
+			return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status], 'statut'.($status == self::STATUS_VALIDATED ? 4 : $status), '', false, 0, 0, '', 'valignmiddle');
 		}
 		elseif ($mode == 6)
 		{
-			return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status], 'statut'.$status, '', false, 0, 0, '', 'valignmiddle');
+			return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status], 'statut'.($status == self::STATUS_VALIDATED ? 4 : $status), '', false, 0, 0, '', 'valignmiddle');
 		}
 	}
 

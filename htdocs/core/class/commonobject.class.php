@@ -3911,12 +3911,13 @@ abstract class CommonObject
 	 *	@param  string  	$buyer             	Object of buyer third party
 	 *	@param	int			$selected		   	Object line selected
 	 *	@param  int	    	$dateSelector      	1=Show also date range input fields
+	 *  @param	string		$defaulttpldir		Directory where to find the template
 	 *	@return	void
 	 */
-	public function printObjectLines($action, $seller, $buyer, $selected = 0, $dateSelector = 0)
+	public function printObjectLines($action, $seller, $buyer, $selected = 0, $dateSelector = 0, $defaulttpldir = '/core/tpl')
 	{
-		global $conf, $hookmanager, $langs, $user;
-		// TODO We should not use global var for this !
+		global $conf, $hookmanager, $langs, $user, $object;
+		// TODO We should not use global var for this
 		global $inputalsopricewithtax, $usemargins, $disableedit, $disablemove, $disableremove, $outputalsopricetotalwithtax;
 
 		// Define usemargins
@@ -3934,90 +3935,26 @@ abstract class CommonObject
 		$reshook = $hookmanager->executeHooks('printObjectLineTitle', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if (empty($reshook))
 		{
-			// Title line
-		    print "<thead>\n";
-
-			print '<tr class="liste_titre nodrag nodrop">';
-
-			// Adds a line numbering column
-			if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) print '<td class="linecolnum center">&nbsp;</td>';
-
-			// Description
-			print '<td class="linecoldescription">'.$langs->trans('Description').'</td>';
-
-			if ($this->element == 'supplier_proposal' || $this->element == 'order_supplier' || $this->element == 'invoice_supplier')
+			// Output template part (modules that overwrite templates must declare this into descriptor)
+			// Use global variables + $dateSelector + $seller and $buyer
+			$dirtpls=array_merge($conf->modules_parts['tpl'], array($defaulttpldir));
+			foreach($dirtpls as $module => $reldir)
 			{
-				print '<td class="linerefsupplier"><span id="title_fourn_ref">'.$langs->trans("SupplierRef").'</span></td>';
-			}
-
-			// VAT
-			print '<td class="linecolvat right" style="width: 80px">'.$langs->trans('VAT').'</td>';
-
-			// Price HT
-			print '<td class="linecoluht right" style="width: 80px">'.$langs->trans('PriceUHT').'</td>';
-
-			// Multicurrency
-			if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) print '<td class="linecoluht_currency right" style="width: 80px">'.$langs->trans('PriceUHTCurrency', $this->multicurrency_code).'</td>';
-
-			if ($inputalsopricewithtax) print '<td class="right" style="width: 80px">'.$langs->trans('PriceUTTC').'</td>';
-
-			// Qty
-			print '<td class="linecolqty right">'.$langs->trans('Qty').'</td>';
-
-			if($conf->global->PRODUCT_USE_UNITS)
-			{
-				print '<td class="linecoluseunit left">'.$langs->trans('Unit').'</td>';
-			}
-
-			// Reduction short
-			print '<td class="linecoldiscount right">'.$langs->trans('ReductionShort').'</td>';
-
-			// Fields for situation invoice
-			if ($this->situation_cycle_ref) {
-				print '<td class="linecolcycleref right">' . $langs->trans('Progress') . '</td>';
-				print '<td class="linecolcycleref2 right">' . $langs->trans('TotalHT100Short') . '</td>';
-			}
-
-			if ($usemargins && ! empty($conf->margin->enabled) && empty($user->societe_id))
-			{
-				if (!empty($user->rights->margins->creer))
+				if (!empty($module))
 				{
-					if ($conf->global->MARGIN_TYPE == "1")
-						print '<td class="linecolmargin1 margininfos right" style="width: 80px">'.$langs->trans('BuyingPrice').'</td>';
-					else
-						print '<td class="linecolmargin1 margininfos right" style="width: 80px">'.$langs->trans('CostPrice').'</td>';
+					$tpl = dol_buildpath($reldir.'/objectline_title.tpl.php');
 				}
-
-				if (! empty($conf->global->DISPLAY_MARGIN_RATES) && $user->rights->margins->liretous)
-					print '<td class="linecolmargin2 margininfos right" style="width: 50px">'.$langs->trans('MarginRate').'</td>';
-				if (! empty($conf->global->DISPLAY_MARK_RATES) && $user->rights->margins->liretous)
-					print '<td class="linecolmargin2 margininfos right" style="width: 50px">'.$langs->trans('MarkRate').'</td>';
+				else
+				{
+					$tpl = DOL_DOCUMENT_ROOT.$reldir.'/objectline_title.tpl.php';
+				}
+				if (empty($conf->file->strict_mode)) {
+					$res=@include $tpl;
+				} else {
+					$res=include $tpl; // for debug
+				}
+				if ($res) break;
 			}
-
-			// Total HT
-			print '<td class="linecolht right">'.$langs->trans('TotalHTShort').'</td>';
-
-			// Multicurrency
-			if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) print '<td class="linecoltotalht_currency right">'.$langs->trans('TotalHTShortCurrency', $this->multicurrency_code).'</td>';
-
-			if ($outputalsopricetotalwithtax) print '<td class="right" style="width: 80px">'.$langs->trans('TotalTTCShort').'</td>';
-
-			print '<td class="linecoledit"></td>';  // No width to allow autodim
-
-			print '<td class="linecoldelete" style="width: 10px"></td>';
-
-			print '<td class="linecolmove" style="width: 10px"></td>';
-
-			if($action == 'selectlines')
-			{
-			    print '<td class="linecolcheckall center">';
-			    print '<input type="checkbox" class="linecheckboxtoggle" />';
-			    print '<script>$(document).ready(function() {$(".linecheckboxtoggle").click(function() {var checkBoxes = $(".linecheckbox");checkBoxes.prop("checked", this.checked);})});</script>';
-			    print '</td>';
-			}
-
-			print "</tr>\n";
-			print "</thead>\n";
 		}
 
 		$var = true;
@@ -4045,7 +3982,7 @@ abstract class CommonObject
 			}
 			if (empty($reshook))
 			{
-				$this->printObjectLine($action, $line, $var, $num, $i, $dateSelector, $seller, $buyer, $selected, $extrafieldsline);
+				$this->printObjectLine($action, $line, $var, $num, $i, $dateSelector, $seller, $buyer, $selected, $extrafieldsline, $defaulttpldir);
 			}
 
 			$i++;
@@ -4067,9 +4004,10 @@ abstract class CommonObject
 	 *	@param  string	    $buyer             	Object of buyer third party
 	 *	@param	int			$selected		   	Object line selected
 	 *  @param  int			$extrafieldsline	Object of extrafield line attribute
+	 *  @param	string		$defaulttpldir		Directory where to find the template
 	 *	@return	void
 	 */
-	public function printObjectLine($action, $line, $var, $num, $i, $dateSelector, $seller, $buyer, $selected = 0, $extrafieldsline = 0)
+	public function printObjectLine($action, $line, $var, $num, $i, $dateSelector, $seller, $buyer, $selected = 0, $extrafieldsline = 0, $defaulttpldir = '/core/tpl')
 	{
 		global $conf,$langs,$user,$object,$hookmanager;
 		global $form,$bc,$bcdd;
@@ -4157,7 +4095,7 @@ abstract class CommonObject
 			}
 		}
 
-		// Ligne en mode update
+		// Line in update mode
 		if ($this->statut == 0 && $action == 'editline' && $selected == $line->id)
 		{
 			$label = (! empty($line->label) ? $line->label : (($line->fk_product > 0) ? $line->product_label : ''));
@@ -4167,7 +4105,7 @@ abstract class CommonObject
 
 			// Output template part (modules that overwrite templates must declare this into descriptor)
 			// Use global variables + $dateSelector + $seller and $buyer
-			$dirtpls=array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
+			$dirtpls=array_merge($conf->modules_parts['tpl'], array($defaulttpldir));
 			foreach($dirtpls as $module => $reldir)
 			{
 				if (!empty($module))
