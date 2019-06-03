@@ -3916,7 +3916,7 @@ abstract class CommonObject
 	 */
 	public function printObjectLines($action, $seller, $buyer, $selected = 0, $dateSelector = 0, $defaulttpldir = '/core/tpl')
 	{
-		global $conf, $hookmanager, $langs, $user, $object;
+		global $conf, $hookmanager, $langs, $user, $object, $form;
 		// TODO We should not use global var for this
 		global $inputalsopricewithtax, $usemargins, $disableedit, $disablemove, $disableremove, $outputalsopricetotalwithtax;
 
@@ -4075,7 +4075,7 @@ abstract class CommonObject
 
 			// Output template part (modules that overwrite templates must declare this into descriptor)
 			// Use global variables + $dateSelector + $seller and $buyer
-			$dirtpls=array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
+			$dirtpls=array_merge($conf->modules_parts['tpl'], array($defaulttpldir));
 			foreach($dirtpls as $module => $reldir)
 			{
 				if (!empty($module))
@@ -7526,6 +7526,66 @@ abstract class CommonObject
 		} else {
 			$this->db->commit();
 			return 1;
+		}
+	}
+
+	/**
+	 *  Delete a line of object in database
+	 *
+	 *	@param  User	$user       User that delete
+	 *  @param	int		$idline		Id of line to delete
+	 *  @param 	bool 	$notrigger  false=launch triggers after, true=disable triggers
+	 *  @return int         		>0 if OK, <0 if KO
+	 */
+	public function deleteLineCommon(User $user, $idline, $notrigger = false)
+	{
+		global $conf;
+
+		$error=0;
+
+		$tmpforobjectclass = get_class($this);
+		$tmpforobjectlineclass = ucfirst($tmpforobjectclass).'Line';
+
+		// Call trigger
+		$result=$this->call_trigger('LINE'.strtoupper($tmpforobjectclass).'_DELETE', $user);
+		if ($result < 0) return -1;
+		// End call triggers
+
+		$this->db->begin();
+
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element_line;
+		$sql.= " WHERE rowid=".$idline;
+
+		dol_syslog(get_class($this)."::deleteLineCommon", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if (! $resql)
+		{
+			$this->error="Error ".$this->db->lasterror();
+			$error++;
+		}
+
+		if (empty($error)) {
+			// Remove extrafields
+			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			{
+				$tmpobjectline = new $tmpforobjectlineclass($this->db);
+				$tmpobjectline->id= $idline;
+				$result=$tmpobjectline->deleteExtraFields();
+				if ($result < 0)
+				{
+					$error++;
+					$this->error="Error ".get_class($this)."::deleteLineCommon deleteExtraFields error -4 ".$tmpobjectline->error;
+				}
+			}
+		}
+
+		if (empty($error)) {
+			$this->db->commit();
+			return 1;
+		} else {
+			dol_syslog(get_class($this)."::deleteLineCommon ERROR:".$this->error, LOG_ERR);
+			$this->db->rollback();
+			return -1;
 		}
 	}
 

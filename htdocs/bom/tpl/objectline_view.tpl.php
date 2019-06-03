@@ -24,11 +24,9 @@
  * $object (invoice, order, ...)
  * $conf
  * $langs
- * $dateSelector
  * $forceall (0 by default, 1 for supplier invoices/orders)
  * $element     (used to test $user->rights->$element->creer)
  * $permtoedit  (used to replace test $user->rights->$element->creer)
- * $senderissupplier (0 by default, 1 for supplier invoices/orders)
  * $inputalsopricewithtax (0 by default, 1 to also show column with unit price including tax)
  * $object_rights->creer initialized from = $object->getRights()
  * $disableedit, $disablemove, $disableremove
@@ -76,7 +74,6 @@ $objectline = new BOMLine($this->db);
 		{
 			print (! empty($line->description) && $line->description!=$line->product_label)?'<br>'.dol_htmlentitiesbr($line->description):'';
 		}
-	}
 	?>
 	</td>
 	<td class="linecolqty nowrap right"><?php $coldisplay++; ?>
@@ -96,43 +93,14 @@ $objectline = new BOMLine($this->db);
 		print '</td>';
 	}
 	?>
-
-	<?php if (!empty($line->remise_percent) && $line->special_code != 3) { ?>
-	<td class="linecoldiscount right"><?php
-		$coldisplay++;
-		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		echo dol_print_reduction($line->remise_percent, $langs);
-	?></td>
-	<?php } else { ?>
-	<td class="linecoldiscount"><?php $coldisplay++; ?>&nbsp;</td>
-	<?php }
-
-	$rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT, $conf->global->MAIN_MAX_DECIMALS_TOT);
-
-	?>
-
-		<td class="linecolht nowrap right"><?php
-		  $coldisplay++;
-		  if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
-		  {
-    		  print '<span class="classfortooltip" title="';
-    		  print $langs->transcountry("TotalHT", $mysoc->country_code).'='.price($line->total_ht);
-    		  print '<br>'.$langs->transcountry("TotalVAT", ($senderissupplier?$object->thirdparty->country_code:$mysoc->country_code)).'='.price($line->total_tva);
-    		  if (price2num($line->total_localtax1)) print '<br>'.$langs->transcountry("TotalLT1", ($senderissupplier?$object->thirdparty->country_code:$mysoc->country_code)).'='.price($line->total_localtax1);
-    		  if (price2num($line->total_localtax2)) print '<br>'.$langs->transcountry("TotalLT2", ($senderissupplier?$object->thirdparty->country_code:$mysoc->country_code)).'='.price($line->total_localtax2);
-    		  print '<br>'.$langs->transcountry("TotalTTC", $mysoc->country_code).'='.price($line->total_ttc);
-    		  print '">';
-		  }
-		  print price($line->total_ht);
-		  if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
-		  {
-		      print '</span>';
-		  }
-	 ?>
-		</td>
-
+	<td class="linecolqty nowrap right"><?php $coldisplay++; ?>
+    <?php
+	echo $line->efficiency;
+    ?>
+	</td>
 	<?php
-	if ($this->statut == 0  && ($object_rights->creer) && $action != 'selectlines' ) { ?>
+
+	if ($this->statut == 0  && ($object_rights->write) && $action != 'selectlines' ) { ?>
 		<td class="linecoledit center"><?php $coldisplay++; ?>
 			<?php if (($line->info_bits & 2) == 2 || ! empty($disableedit)) { ?>
 			<?php } else { ?>
@@ -145,7 +113,7 @@ $objectline = new BOMLine($this->db);
 		<td class="linecoldelete center"><?php $coldisplay++; ?>
 			<?php
 			if (($line->fk_prev_id == null ) && empty($disableremove)) { //La suppression n'est autorisée que si il n'y a pas de ligne dans une précédente situation
-				print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $this->id . '&amp;action=ask_deleteline&amp;lineid=' . $line->id . '">';
+				print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $this->id . '&amp;action=deleteline&amp;lineid=' . $line->id . '">';
 				print img_delete();
 				print '</a>';
 			}

@@ -40,6 +40,7 @@ $confirm    = GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel', 'aZ09');
 $contextpage= GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'bomcard';   // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
+$lineid     = GETPOST('lineid', 'int');
 
 // Initialize technical objects
 $object=new BOM($db);
@@ -149,14 +150,12 @@ if (empty($reshook))
 
 /*
  * View
- *
- * Put here all code to build page
  */
 
 $form=new Form($db);
 $formfile=new FormFile($db);
 
-llxHeader('', 'NewBOM', '');
+llxHeader('', $langs->trans("BOM"), '');
 
 // Example : Adding jquery code
 print '<script type="text/javascript" language="javascript">
@@ -254,7 +253,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	{
 	    $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('DeleteBillOfMaterials'), $langs->trans('ConfirmDeleteBillOfMaterials'), 'confirm_delete', '', 0, 1);
 	}
-
+	// Confirmation to delete line
+	if ($action == 'deleteline')
+	{
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_deleteline', '', 0, 1);
+	}
 	// Clone confirmation
 	if ($action == 'clone') {
 		// Create an array for form
@@ -387,7 +390,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	    if (! empty($object->lines))
 	    {
-	        $object->printObjectLines($action, $mysoc, null, GETPOST('lineid', 'int'), 1);
+	        $object->printObjectLines($action, $mysoc, null, GETPOST('lineid', 'int'), 1, '/bom/tpl');
 	    }
 
 	    // Form to add new line
