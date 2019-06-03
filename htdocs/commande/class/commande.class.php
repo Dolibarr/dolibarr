@@ -776,7 +776,6 @@ class Commande extends CommonOrder
 
 		// Clean parameters
 		$this->brouillon = 1;		// set command as draft
-		if (empty($this->entity)) $this->entity = $conf->entity;
 
 		// $date_commande is deprecated
 		$date = ($this->date_commande ? $this->date_commande : $this->date);
@@ -860,7 +859,7 @@ class Commande extends CommonOrder
 		$sql.= ", ".($this->remise_percent>0?$this->db->escape($this->remise_percent):0);
 		$sql.= ", ".(int) $this->fk_incoterms;
 		$sql.= ", '".$this->db->escape($this->location_incoterms)."'";
-		$sql.= ", ".$this->entity;
+		$sql.= ", ".setEntity($this);
         $sql.= ", ".($this->module_source ? "'".$this->db->escape($this->module_source)."'" : "null");
 		$sql.= ", ".($this->pos_source != '' ? "'".$this->db->escape($this->pos_source)."'" : "null");
 		$sql.= ", ".(int) $this->fk_multicurrency;

@@ -260,7 +260,6 @@ if (empty($reshook))
 			$db->begin();
 
 			$object->date_commande = $datecommande;
-			$object->entity = (GETPOSTISSET('entity')?GETPOST('entity', 'int'):$conf->entity);
 			$object->note_private = GETPOST('note_private', 'none');
 			$object->note_public = GETPOST('note_public', 'none');
 			$object->source = GETPOST('source_id');
