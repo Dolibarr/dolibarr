@@ -4103,7 +4103,7 @@ abstract class CommonObject
 				// Define output language and label
 				if (! empty($conf->global->MAIN_MULTILANGS))
 				{
-					if (! is_object($this->thirdparty))
+					if (property_exists($this, 'socid') && ! is_object($this->thirdparty))
 					{
 						dol_print_error('', 'Error: Method printObjectLine was called on an object and object->fetch_thirdparty was not done before');
 						return;
@@ -4115,7 +4115,7 @@ abstract class CommonObject
 					$outputlangs = $langs;
 					$newlang='';
 					if (empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang=GETPOST('lang_id', 'aZ09');
-					if (! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE) && empty($newlang)) $newlang=$this->thirdparty->default_lang;		// For language to language of customer
+					if (! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE) && empty($newlang) && is_object($this->thirdparty)) $newlang=$this->thirdparty->default_lang;		// To use language of customer
 					if (! empty($newlang))
 					{
 						$outputlangs = new Translate("", $conf);
@@ -7361,6 +7361,56 @@ abstract class CommonObject
 			{
 				return 0;
 			}
+		}
+		else
+		{
+			$this->error = $this->db->lasterror();
+			$this->errors[] = $this->error;
+			return -1;
+		}
+	}
+
+	/**
+	 * Load object in memory from the database
+	 *
+	 * @param	string	$morewhere		More SQL filters (' AND ...')
+	 * @return 	int         			<0 if KO, 0 if not found, >0 if OK
+	 */
+	public function fetchLinesCommon($morewhere = '')
+	{
+		$objectlineclassname = get_class($this).'Line';
+		if (! class_exists($objectlineclassname))
+		{
+			$this->error = 'Error, class '.$objectlineclassname.' not found during call of fetchLinesCommon';
+			return -1;
+		}
+
+		$objectline = new $objectlineclassname($this->db);
+
+		$sql = 'SELECT '.$objectline->getFieldList();
+		$sql.= ' FROM '.MAIN_DB_PREFIX.$objectline->table_element;
+		$sql.=' WHERE fk_'.$this->element.' = '.$this->id;
+		if ($morewhere)   $sql.= $morewhere;
+
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$num_rows = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < $num_rows)
+			{
+				$obj = $this->db->fetch_object($resql);
+				if ($obj)
+				{
+					$newline = new $objectlineclassname($this->db);
+					$newline->setVarsFromFetchObj($obj);
+
+					$this->lines[] = $newline;
+				}
+				$i++;
+			}
+
+			return 1;
 		}
 		else
 		{

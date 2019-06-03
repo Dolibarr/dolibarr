@@ -389,8 +389,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
     	if (! empty($object->lines))
     	{
-            // printObjectLines return void
-    	    $object->printObjectLines($action, $mysoc, $soc, $lineid, 1);
+    		$object->printObjectLines($action, $mysoc, null, GETPOST('lineid', 'int'), 1);
     	}
 
     	// Form to add new line

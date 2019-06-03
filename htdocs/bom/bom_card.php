@@ -141,6 +141,7 @@ if (empty($reshook))
 		if ($result <= 0)
 		{
 			setEventMessages($bomline->error, $bomline->errors, 'errors');
+			$action = '';
 		}
 	}
 }
@@ -386,7 +387,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	    if (! empty($object->lines))
 	    {
-//	        $ret = $object->printObjectLines($action, $mysoc, $soc, $lineid, 1);
+	        $object->printObjectLines($action, $mysoc, null, GETPOST('lineid', 'int'), 1);
 	    }
 
 	    // Form to add new line
@@ -395,7 +396,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	        if ($action != 'editline')
 	        {
 	            // Add products/services form
-	            $object->formAddObjectLine(1, $mysoc, $soc, '/bom/tpl');
+	            $object->formAddObjectLine(1, $mysoc, null, '/bom/tpl');
 
 	            $parameters = array();
 	            $reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
