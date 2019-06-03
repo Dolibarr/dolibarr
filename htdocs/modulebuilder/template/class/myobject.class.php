@@ -43,6 +43,11 @@ class MyObject extends CommonObject
 	public $table_element = 'mymodule_myobject';
 
 	/**
+	 * @var string Name of subtable if this object has sub lines
+	 */
+	//public $table_element_line = 'mymodule_myobjectline';
+
+	/**
 	 * @var int  Does myobject support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 */
 	public $ismultientitymanaged = 0;
@@ -327,14 +332,14 @@ class MyObject extends CommonObject
 	 *
 	 * @return int         <0 if KO, 0 if not found, >0 if OK
 	 */
-	/*public function fetchLines()
+	public function fetchLines()
 	{
 		$this->lines=array();
 
-		// Load lines with object MyObjectLine
+		$result = $this->fetchLinesCommon();
+		return $result;
+	}
 
-		return count($this->lines)?1:0;
-	}*/
 
 	/**
 	 * Load list of objects in memory from the database.
@@ -355,11 +360,11 @@ class MyObject extends CommonObject
 
 		$records=array();
 
-		$sql = 'SELECT';
-		$sql .= ' t.rowid';
-		// TODO Get all fields
+		$sql = 'SELECT ';
+		$sql .= $this->getFieldList();
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element. ' as t';
-		$sql .= ' WHERE t.entity = '.$conf->entity;
+		if ($this->ismultientitymanaged) $sql .= ' WHERE t.entity IN ('.getEntity($this->table_element).')';
+		else $sql .= ' WHERE 1 = 1';
 		// Manage filter
 		$sqlwhere = array();
 		if (count($filter) > 0) {
@@ -398,11 +403,8 @@ class MyObject extends CommonObject
 			    $obj = $this->db->fetch_object($resql);
 
 				$record = new self($this->db);
+				$record->setVarsFromFetchObj($obj);
 
-				$record->id = $obj->rowid;
-				// TODO Get other fields
-
-				//var_dump($record->id);
 				$records[$record->id] = $record;
 
 				$i++;
@@ -441,6 +443,25 @@ class MyObject extends CommonObject
 	{
 		return $this->deleteCommon($user, $notrigger);
 		//return $this->deleteCommon($user, $notrigger, 1);
+	}
+
+	/**
+	 *  Delete a line of object in database
+	 *
+	 *	@param  User	$user       User that delete
+	 *  @param	int		$idline		Id of line to delete
+	 *  @param 	bool 	$notrigger  false=launch triggers after, true=disable triggers
+	 *  @return int         		>0 if OK, <0 if KO
+	 */
+	public function deleteLine(User $user, $idline, $notrigger = false)
+	{
+		if ($this->status < 0)
+		{
+			$this->error = 'ErrorDeleteLineNotAllowedByObjectStatus';
+			return -2;
+		}
+
+		return $this->deleteLineCommon($user, $idline, $notrigger);
 	}
 
     /**
@@ -649,8 +670,8 @@ class MyObject extends CommonObject
 	{
 	    $this->lines=array();
 
-	    $objectline = new BOMLine($this->db);
-	    $result = $objectline->fetchAll('', '', 0, 0, array('fk_myobject'=>$this->id));
+	    $objectline = new MyObjectLine($this->db);
+	    $result = $objectline->fetchAll('', '', 0, 0, array('customsql'=>'fk_myobject = '.$this->id));
 
 	    if (is_numeric($result))
 	    {
@@ -661,8 +682,41 @@ class MyObject extends CommonObject
 	    else
 	    {
 	        $this->lines = $result;
-	        return $this->lines();
+	        return $this->lines;
 	    }
+	}
+
+	/**
+	 *  Create a document onto disk according to template module.
+	 *
+	 *  @param	    string		$modele			Force template to use ('' to not force)
+	 *  @param		Translate	$outputlangs	objet lang a utiliser pour traduction
+	 *  @param      int			$hidedetails    Hide details of lines
+	 *  @param      int			$hidedesc       Hide description
+	 *  @param      int			$hideref        Hide ref
+	 *  @param      null|array  $moreparams     Array to provide more information
+	 *  @return     int         				0 if KO, 1 if OK
+	 */
+	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
+	{
+		global $conf,$langs;
+
+		$langs->load("mymodule@mymodule");
+
+		if (! dol_strlen($modele)) {
+
+			$modele = 'standard';
+
+			if ($this->modelpdf) {
+				$modele = $this->modelpdf;
+			} elseif (! empty($conf->global->MYOBJECT_ADDON_PDF)) {
+				$modele = $conf->global->MYOBJECT_ADDON_PDF;
+			}
+		}
+
+		$modelpath = "core/modules/mymodule/doc/";
+
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 	}
 
 	/**
@@ -699,14 +753,7 @@ class MyObject extends CommonObject
 /**
  * Class MyObjectLine. You can also remove this and generate a CRUD class for lines objects.
  */
-/*
 class MyObjectLine
 {
-    // @var int ID
-    public $id;
-    // @var mixed Sample line property 1
-    public $prop1;
-    // @var mixed Sample line property 2
-    public $prop2;
+	// To complete with content of an object MyObjectLine
 }
-*/
