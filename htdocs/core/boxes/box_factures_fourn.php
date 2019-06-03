@@ -151,14 +151,14 @@ class box_factures_fourn extends ModeleBoxes
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'class="tdoverflowmax50"',
+                        'td' => 'class="tdoverflowmax150"',
                         'text' => $objp->ref_supplier,
                         'tooltip' => $langs->trans('SupplierInvoice').': '.($objp->ref?$objp->ref:$objp->facid).'<br>'.$langs->trans('RefSupplier').': '.$objp->ref_supplier,
                         'url' => DOL_URL_ROOT."/fourn/facture/card.php?facid=".$objp->facid,
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'class="tdoverflowmax50"',
+                        'td' => 'class="tdoverflowmax150"',
                         'text' => $thirdpartytmp->getNomUrl(1, 'supplier'),
                         'asis' => 1,
                     );
