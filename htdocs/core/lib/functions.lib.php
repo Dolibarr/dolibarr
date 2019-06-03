@@ -649,7 +649,7 @@ function dol_include_once($relpath, $classname = '')
  *  @param	int		$returnemptyifnotfound		0:If $type==0 and if file was not found into alternate dir, return default path into main dir (no test on it)
  *  											1:If $type==0 and if file was not found into alternate dir, return empty string
  *  											2:If $type==0 and if file was not found into alternate dir, test into main dir, return default path if found, empty string if not found
- *  @return string								Full filesystem path (if path=0), Full url path (if mode=1)
+ *  @return string								Full filesystem path (if path=0) or '' if file not found, Full url path (if mode=1)
  */
 function dol_buildpath($path, $type = 0, $returnemptyifnotfound = 0)
 {
@@ -1982,7 +1982,7 @@ function dol_mktime($hour, $minute, $second, $month, $day, $year, $gm = false, $
 		//var_dump($localtz);
 		//var_dump($year.'-'.$month.'-'.$day.'-'.$hour.'-'.$minute);
 		$dt = new DateTime(null, $localtz);
-		$dt->setDate($year, $month, $day);
+		$dt->setDate((int) $year, (int) $month, (int) $day);
 		$dt->setTime((int) $hour, (int) $minute, (int) $second);
 		$date=$dt->getTimestamp();	// should include daylight saving time
 		//var_dump($date);
@@ -3441,16 +3441,17 @@ function img_info($titlealt = 'default')
  *
  *	@param	string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@param	string	$moreatt	Add more attribute on img tag (For example 'style="float: right"'). If 1, add float: right. Can't be "class" attribute.
+ *  @param	string  $morecss	Add more CSS
  *	@return string      		Return img tag
  */
-function img_warning($titlealt = 'default', $moreatt = '')
+function img_warning($titlealt = 'default', $moreatt = '', $morecss = 'pictowarning')
 {
 	global $conf, $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Warning');
 
 	//return '<div class="imglatecoin">'.img_picto($titlealt, 'warning_white.png', 'class="pictowarning valignmiddle"'.($moreatt ? ($moreatt == '1' ? ' style="float: right"' : ' '.$moreatt): '')).'</div>';
-	return img_picto($titlealt, 'warning.png', 'class="pictowarning valignmiddle"'.($moreatt ? ($moreatt == '1' ? ' style="float: right"' : ' '.$moreatt): ''));
+	return img_picto($titlealt, 'warning.png', 'class="valignmiddle'.($morecss?' '.$morecss:'').'"'.($moreatt ? ($moreatt == '1' ? ' style="float: right"' : ' '.$moreatt): ''));
 }
 
 /**
@@ -3626,7 +3627,7 @@ function img_mime($file, $titlealt = '', $morecss = '')
 	if (empty($titlealt)) $titlealt = 'Mime type: '.$mimetype;
 
 	//return img_picto_common($titlealt, 'mime/'.$mimeimg, 'class="'.$morecss.'"');
-	return '<i class="fa fa-'.$mimefa.' paddingright"></i>';
+	return '<i class="fa fa-'.$mimefa.' paddingright"'.($titlealt ? ' title="'.$titlealt.'"' : '').'></i>';
 }
 
 
@@ -8274,7 +8275,7 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
  */
 function isAFileWithExecutableContent($filename)
 {
-    if (preg_match('/\.(htm|html|js|php|phtml|pl|py|cgi|ksh|sh|bash)$/i', $filename))
+    if (preg_match('/\.(htm|html|js|php|phtml|pl|py|cgi|ksh|sh|bash|bat|cmd|wpk|exe|dmg)$/i', $filename))
     {
         return true;
     }

@@ -816,7 +816,7 @@ class Commande extends CommonOrder
 		}
 		if (! empty($conf->global->COMMANDE_REQUIRE_SOURCE) && $this->source < 0)
 		{
-			$this->error=$langs->trans("ErrorFieldRequired", $langs->trans("Source"));
+			$this->error=$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Source"));
 			dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
 			return -1;
 		}
@@ -4052,6 +4052,33 @@ class OrderLine extends CommonOrderLine
 		global $conf, $langs;
 
 		$error=0;
+
+        // check if order line is not in a shipment line before deleting
+        $sqlCheckShipmentLine  = "SELECT";
+        $sqlCheckShipmentLine .= " ed.rowid";
+        $sqlCheckShipmentLine .= " FROM " . MAIN_DB_PREFIX . "expeditiondet ed";
+        $sqlCheckShipmentLine .= " WHERE ed.fk_origin_line = " . $this->rowid;
+
+        $resqlCheckShipmentLine = $this->db->query($sqlCheckShipmentLine);
+        if (!$resqlCheckShipmentLine) {
+            $error++;
+            $this->error    = $this->db->lasterror();
+            $this->errors[] = $this->error;
+        } else {
+            $langs->load('errors');
+            $num = $this->db->num_rows($resqlCheckShipmentLine);
+            if ($num > 0) {
+                $error++;
+                $objCheckShipmentLine = $this->db->fetch_object($resqlCheckShipmentLine);
+                $this->error = $langs->trans('ErrorRecordAlreadyExists') . ' : ' . $langs->trans('ShipmentLine') . ' ' . $objCheckShipmentLine->rowid;
+                $this->errors[] = $this->error;
+            }
+            $this->db->free($resqlCheckShipmentLine);
+        }
+        if ($error) {
+            dol_syslog(__METHOD__ . 'Error ; ' . $this->error, LOG_ERR);
+            return -1;
+        }
 
 		$this->db->begin();
 

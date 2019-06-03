@@ -1914,6 +1914,16 @@ class Form
 				$selected_input_value=$producttmpselect->ref;
 				unset($producttmpselect);
 			}
+			// handle case where product or service module is disabled + no filter specified
+			if ($filtertype == '')
+			{
+				if (empty($conf->product->enabled)) { // when product module is disabled, show services only
+					$filtertype = 1;
+				}
+				elseif (empty($conf->service->enabled)) { // when service module is disabled, show products only
+					$filtertype = 0;
+				}
+			}
 			// mode=1 means customers products
 			$urloption='htmlname='.$htmlname.'&outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=1&status='.$status.'&finished='.$finished.'&hidepriceinlabel='.$hidepriceinlabel.'&warehousestatus='.$warehouseStatus;
 			//Price by customer
@@ -2165,7 +2175,14 @@ class Form
 		{
 			$sql.= " AND p.tosell = ".$status;
 		}
-		if (strval($filtertype) != '') $sql.=" AND p.fk_product_type=".$filtertype;
+		// Filter by product type
+		if (strval($filtertype) != '') $sql.= " AND p.fk_product_type = ".$filtertype;
+		elseif (empty($conf->product->enabled)) { // when product module is disabled, show services only
+			$sql.= " AND p.fk_product_type = 1";
+		}
+		elseif (empty($conf->service->enabled)) { // when service module is disabled, show products only
+			$sql.= " AND p.fk_product_type = 0";
+		}
 		// Add criteria on ref/label
 		if ($filterkey != '')
 		{
@@ -3649,9 +3666,10 @@ class Form
 	 *  @param  int		$useempty           1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
 	 *  @param  string	$moreattrib         To add more attribute on select
 	 *  @param	int		$showcurrency		Show currency in label
+	 *  @param	string	$morecss			More CSS
 	 * 	@return	int							<0 if error, Num of bank account found if OK (0, 1, 2, ...)
 	 */
-    public function select_comptes($selected = '', $htmlname = 'accountid', $statut = 0, $filtre = '', $useempty = 0, $moreattrib = '', $showcurrency = 0)
+    public function select_comptes($selected = '', $htmlname = 'accountid', $statut = 0, $filtre = '', $useempty = 0, $moreattrib = '', $showcurrency = 0, $morecss = '')
 	{
         // phpcs:enable
 		global $langs, $conf;
@@ -3674,7 +3692,7 @@ class Form
 			$i = 0;
 			if ($num)
 			{
-				print '<select id="select'.$htmlname.'" class="flat selectbankaccount" name="'.$htmlname.'"'.($moreattrib?' '.$moreattrib:'').'>';
+				print '<select id="select'.$htmlname.'" class="flat selectbankaccount'.($morecss?' '.$morecss:'').'" name="'.$htmlname.'"'.($moreattrib?' '.$moreattrib:'').'>';
 				if ($useempty == 1 || ($useempty == 2 && $num > 1))
 				{
 					print '<option value="-1">&nbsp;</option>';

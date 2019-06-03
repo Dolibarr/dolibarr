@@ -488,7 +488,7 @@ jQuery(document).ready(function() {
         console.log("We click on submitcrop");
 	    var idClicked = e.target.id;
 	    if (parseInt(jQuery(\'#w\').val())) return true;
-	    alert(\''.dol_escape_js($langs->trans("ErrorFieldRequired", $langs->trans("Dimension"))).'\');
+	    alert(\''.dol_escape_js($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Dimension"))).'\');
 	    return false;
 	});
 });

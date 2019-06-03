@@ -3860,9 +3860,10 @@ abstract class CommonObject
 	 *  @param	int		        $dateSelector       1=Show also date range input fields
 	 *  @param	Societe			$seller				Object thirdparty who sell
 	 *  @param	Societe			$buyer				Object thirdparty who buy
+	 *  @param	string			$defaulttpldir		Directory where to find the template
 	 *	@return	void
 	 */
-	public function formAddObjectLine($dateSelector, $seller, $buyer)
+	public function formAddObjectLine($dateSelector, $seller, $buyer, $defaulttpldir = '/core/tpl')
 	{
 		global $conf,$user,$langs,$object,$hookmanager;
 		global $form,$bcnd,$var;
@@ -3874,10 +3875,17 @@ abstract class CommonObject
 
 		// Output template part (modules that overwrite templates must declare this into descriptor)
 		// Use global variables + $dateSelector + $seller and $buyer
-		$dirtpls=array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
-		foreach($dirtpls as $reldir)
+		$dirtpls=array_merge($conf->modules_parts['tpl'], array($defaulttpldir));
+		foreach($dirtpls as $module => $reldir)
 		{
-			$tpl = dol_buildpath($reldir.'/objectline_create.tpl.php');
+			if (!empty($module))
+			{
+				$tpl = dol_buildpath($reldir.'/objectline_create.tpl.php');
+			}
+			else
+			{
+				$tpl = DOL_DOCUMENT_ROOT.$reldir.'/objectline_create.tpl.php';
+			}
 			if (empty($conf->file->strict_mode)) {
 				$res=@include $tpl;
 			} else {
@@ -4130,9 +4138,16 @@ abstract class CommonObject
 			// Output template part (modules that overwrite templates must declare this into descriptor)
 			// Use global variables + $dateSelector + $seller and $buyer
 			$dirtpls=array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
-			foreach($dirtpls as $reldir)
+			foreach($dirtpls as $module => $reldir)
 			{
-				$tpl = dol_buildpath($reldir.'/objectline_view.tpl.php');
+				if (!empty($module))
+				{
+					$tpl = dol_buildpath($reldir.'/objectline_view.tpl.php');
+				}
+				else
+				{
+					$tpl = DOL_DOCUMENT_ROOT.$reldir.'/objectline_view.tpl.php';
+				}
 				if (empty($conf->file->strict_mode)) {
 					$res=@include $tpl;
 				} else {
@@ -4153,9 +4168,16 @@ abstract class CommonObject
 			// Output template part (modules that overwrite templates must declare this into descriptor)
 			// Use global variables + $dateSelector + $seller and $buyer
 			$dirtpls=array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
-			foreach($dirtpls as $reldir)
+			foreach($dirtpls as $module => $reldir)
 			{
-				$tpl = dol_buildpath($reldir.'/objectline_edit.tpl.php');
+				if (!empty($module))
+				{
+					$tpl = dol_buildpath($reldir.'/objectline_edit.tpl.php');
+				}
+				else
+				{
+					$tpl = DOL_DOCUMENT_ROOT.$reldir.'/objectline_edit.tpl.php';
+				}
 				if (empty($conf->file->strict_mode)) {
 					$res=@include $tpl;
 				} else {
@@ -4355,9 +4377,16 @@ abstract class CommonObject
 		// Output template part (modules that overwrite templates must declare this into descriptor)
 		// Use global variables + $dateSelector + $seller and $buyer
 		$dirtpls=array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
-		foreach($dirtpls as $reldir)
+		foreach($dirtpls as $module => $reldir)
 		{
-			$tpl = dol_buildpath($reldir.'/originproductline.tpl.php');
+			if (!empty($module))
+			{
+				$tpl = dol_buildpath($reldir.'/originproductline.tpl.php');
+			}
+			else
+			{
+				$tpl = DOL_DOCUMENT_ROOT.$reldir.'/originproductline.tpl.php';
+			}
 			if (empty($conf->file->strict_mode)) {
 				$res=@include $tpl;
 			} else {

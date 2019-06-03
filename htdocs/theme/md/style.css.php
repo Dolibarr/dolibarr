@@ -540,7 +540,7 @@ hr { border: 0; border-top: 1px solid #ccc; }
 	-webkit-box-shadow: 0px 0px 6px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 	box-shadow: 0px 0px 6px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 }
-.button:disabled, .buttonDelete:disabled {
+.button:disabled, .buttonDelete:disabled, .button.disabled {
 	opacity: 0.4;
     box-shadow: none;
     -webkit-box-shadow: none;
@@ -1361,6 +1361,9 @@ div.fichetwothirdright {
 	<?php if ($conf->browser->layout != 'phone')   { print "width: 50%;\n"; } ?>
 	<?php if ($conf->browser->layout == 'phone') { print "padding-bottom: 6px\n"; } ?>
 }
+div.fichetwothirdright div.ficheaddleft {
+    padding-left: 20px;
+}
 div.fichehalfleft {
 	<?php if ($conf->browser->layout != 'phone')   { print "float: ".$left.";\n"; } ?>
 	<?php if ($conf->browser->layout != 'phone')   { print "width: calc(50% - 10px);\n"; } ?>
@@ -1404,6 +1407,9 @@ div.secondcolumn div.box {
     	width: auto;
     	padding-bottom: 6px;
     }
+    div.fichetwothirdright div.ficheaddleft {
+    	padding-left: 0;
+	}
     div.fichehalfleft {
     	float: none;
     	width: auto;
@@ -1998,6 +2004,9 @@ form#login {
 	width: 14px;
 }
 
+.login_main_home {
+    word-break: break-word;
+}
 .login_main_message {
 	text-align: center;
 	max-width: 570px;
@@ -3352,7 +3361,7 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 }
 .boxstats130 {
     width: 135px;
-    height: 48px;
+    height: 54px;
     padding: 3px;
 }
 @media only screen and (max-width: 767px)

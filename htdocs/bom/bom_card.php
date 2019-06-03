@@ -110,8 +110,40 @@ if (empty($reshook))
 	$autocopy='MAIN_MAIL_AUTOCOPY_BOM_TO';
 	$trackid='bom'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
-}
 
+	// Add line
+	if ($action == 'addline' && $user->rights->bom->write)
+	{
+		$langs->load('errors');
+		$error = 0;
+
+		// Set if we used free entry or predefined product
+		$idprod=GETPOST('idprod', 'int');
+		$qty=GETPOST('qty', 'int');
+		$efficiency=GETPOST('efficiency', 'int');
+
+		if ($qty == '') {
+			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), null, 'errors');
+			$error++;
+		}
+		if (! ($idprod > 0)) {
+			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Product')), null, 'errors');
+			$error++;
+		}
+
+		$bomline = new BOMLine($db);
+		$bomline->fk_bom = $id;
+		$bomline->fk_product = $idprod;
+		$bomline->qty = $qty;
+		$bomline->efficiency = $efficiency;
+
+		$result = $bomline->create($user);
+		if ($result <= 0)
+		{
+			setEventMessages($bomline->error, $bomline->errors, 'errors');
+		}
+	}
+}
 
 
 /*
@@ -320,7 +352,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '</div>';
 	print '</div>';
 
-	print '<div class="clearboth"></div><br>';
+	print '<div class="clearboth"></div>';
 
 	dol_fiche_end();
 
@@ -347,7 +379,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	    }
 
 	    print '<div class="div-table-responsive-no-min">';
-	    if (! empty($object->lines) && $object->status == 0 && $permissiontoadd && $action != 'selectlines' && $action != 'editline')
+	    if (! empty($object->lines) || ($object->status == 0 && $permissiontoadd && $action != 'selectlines' && $action != 'editline'))
 	    {
 	        print '<table id="tablelines" class="noborder noshadow" width="100%">';
 	    }
@@ -363,14 +395,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	        if ($action != 'editline')
 	        {
 	            // Add products/services form
-//	            $object->formAddObjectLine(1, $mysoc, $soc);
+	            $object->formAddObjectLine(1, $mysoc, $soc, '/bom/tpl');
 
 	            $parameters = array();
 	            $reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	        }
 	    }
 
-	    if (! empty($object->lines) && $object->status == 0 && $permissiontoadd && $action != 'selectlines' && $action != 'editline')
+	    if (! empty($object->lines) || ($object->status == 0 && $permissiontoadd && $action != 'selectlines' && $action != 'editline'))
 	    {
 	        print '</table>';
 	    }

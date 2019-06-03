@@ -248,7 +248,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     $res = $object->fetch_optionals();
 
 	$head = myobjectPrepareHead($object);
-	dol_fiche_head($head, 'card', $langs->trans("MyObject"), -1, 'myobject@mymodule');
+	dol_fiche_head($head, 'card', $langs->trans("MyObject"), -1, $object->picto);
 
 	$formconfirm = '';
 
@@ -356,7 +356,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '</div>';
 	print '</div>';
 
-	print '<div class="clearboth"></div><br>';
+	print '<div class="clearboth"></div>';
 
 	dol_fiche_end();
 

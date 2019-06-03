@@ -427,7 +427,7 @@ if (empty($reshook))
 	    }
 	    else
 	    {
-	        $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired", $langs->trans("ThirdParty")).'</div>';
+	    	$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ThirdParty")).'</div>';
 	        $action = 'create';
 	    }
 	}
