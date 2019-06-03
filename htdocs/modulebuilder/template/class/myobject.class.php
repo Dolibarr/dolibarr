@@ -46,6 +46,7 @@ class MyObject extends CommonObject
 	 * @var string Name of subtable if this object has sub lines
 	 */
 	//public $table_element_line = 'mymodule_myobjectline';
+	//public $fk_element = 'fk_myobject';
 
 	/**
 	 * @var int  Does myobject support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
@@ -267,11 +268,18 @@ class MyObject extends CommonObject
 	    $this->db->begin();
 
 	    // Load source object
-	    $object->fetchCommon($fromid);
+	    $result = $object->fetchCommon($fromid);
+	    if ($result > 0 && ! empty($object->table_element_line)) $object->fetchLines();
+
+	    // get lines so they will be clone
+	    //foreach($this->lines as $line)
+	    //	$line->fetch_optionals();
+
 	    // Reset some properties
 	    unset($object->id);
 	    unset($object->fk_user_creat);
 	    unset($object->import_key);
+
 
 	    // Clear fields
 	    $object->ref = "copy_of_".$object->ref;
@@ -299,6 +307,25 @@ class MyObject extends CommonObject
 	        $error++;
 	        $this->error = $object->error;
 	        $this->errors = $object->errors;
+	    }
+
+	    if (! $error)
+	    {
+	    	// copy internal contacts
+	    	if ($this->copy_linked_contact($object, 'internal') < 0)
+	    	{
+	    		$error++;
+	    	}
+	    }
+
+	    if (! $error)
+	    {
+	    	// copy external contacts if same company
+	    	if (property_exists($this, 'socid') && $this->socid == $object->socid)
+	    	{
+	    		if ($this->copy_linked_contact($object, 'external') < 0)
+	    			$error++;
+	    	}
 	    }
 
 	    unset($object->context['createfromclone']);
@@ -671,7 +698,7 @@ class MyObject extends CommonObject
 	    $this->lines=array();
 
 	    $objectline = new MyObjectLine($this->db);
-	    $result = $objectline->fetchAll('', '', 0, 0, array('customsql'=>'fk_myobject = '.$this->id));
+	    $result = $objectline->fetchAll('ASC', 'rank', 0, 0, array('customsql'=>'fk_myobject = '.$this->id));
 
 	    if (is_numeric($result))
 	    {
@@ -756,4 +783,5 @@ class MyObject extends CommonObject
 class MyObjectLine
 {
 	// To complete with content of an object MyObjectLine
+	// We should have a field rowid, fk_myobject and rank
 }

@@ -2443,8 +2443,9 @@ abstract class CommonObject
 	 */
 	public function updateRangOfLine($rowid, $rang)
 	{
-		$fieldposition = 'rang';
+		$fieldposition = 'rang';	// @TODO Rename 'rang' and 'position' into 'rank'
 		if (in_array($this->table_element_line, array('ecm_files', 'emailcollector_emailcollectoraction'))) $fieldposition = 'position';
+		if (in_array($this->table_element_line, array('bom_bomline'))) $fieldposition = 'rank';
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET '.$fieldposition.' = '.$rang;
 		$sql.= ' WHERE rowid = '.$rowid;
@@ -7243,6 +7244,31 @@ abstract class CommonObject
 		{
 			$result=$this->insertExtraFields();
 			if ($result < 0) $error++;
+		}
+
+		// Create lines
+		if (! empty($this->table_element_line) && ! empty($this->fk_element))
+		{
+			$num=(is_array($this->lines) ? count($this->lines) : 0);
+			for ($i = 0; $i < $num; $i++)
+			{
+				$line = $this->lines[$i];
+
+				$keyforparent = $this->fk_element;
+				$line->$keyforparent = $this->id;
+
+				// Test and convert into object this->lines[$i]. When coming from REST API, we may still have an array
+				//if (! is_object($line)) $line=json_decode(json_encode($line), false);  // convert recursively array into object.
+				if (! is_object($line)) $line = (object) $line;
+
+				$result = $line->create($user, 1);
+				if ($result < 0)
+				{
+					$this->error=$this->db->lasterror();
+					$this->db->rollback();
+					return -1;
+				}
+			}
 		}
 
 		// Triggers

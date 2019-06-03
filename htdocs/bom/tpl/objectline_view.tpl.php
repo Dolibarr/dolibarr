@@ -57,7 +57,7 @@ $domData .= ' data-qty="'.$line->qty.'"';
 $domData .= ' data-product_type="'.$line->product_type.'"';
 
 // Lines for extrafield
-$objectline = new BOMLine($this->db);
+$objectline = new BOMLine($object->db);
 
 ?>
 <?php $coldisplay=0; ?>
@@ -68,12 +68,9 @@ $objectline = new BOMLine($this->db);
 	<?php } ?>
 	<td class="linecoldescription minwidth300imp"><?php $coldisplay++; ?><div id="line_<?php echo $line->id; ?>"></div>
 	<?php
-		echo $form->textwithtooltip($text, $description, 3, '', '', $i, 0, (!empty($line->fk_parent_line)?img_picto('', 'rightarrow'):''));
-		// Add description in form
-		if (! empty($conf->global->PRODUIT_DESC_IN_FORM))
-		{
-			print (! empty($line->description) && $line->description!=$line->product_label)?'<br>'.dol_htmlentitiesbr($line->description):'';
-		}
+	$tmpproduct = new Product($object->db);
+	$tmpproduct->fetch($line->fk_product);
+	print $tmpproduct->getNomUrl(1);
 	?>
 	</td>
 	<td class="linecolqty nowrap right"><?php $coldisplay++; ?>

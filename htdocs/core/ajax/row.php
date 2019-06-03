@@ -20,6 +20,11 @@
  *       \file       htdocs/core/ajax/row.php
  *       \brief      File to return Ajax response on Row move.
  *                   This ajax page is called when doing an up or down drag and drop.
+ *                   Parameters:
+ *                   roworder (Example: '1,3,2,4'),
+ *                   table_element_line (Example: 'commandedet')
+ *                   fk_element (Example: 'fk_order')
+ *                   element_id (Example: 1)
  */
 
 if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Disable token renewal

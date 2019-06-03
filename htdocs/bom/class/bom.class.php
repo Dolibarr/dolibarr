@@ -42,6 +42,12 @@ class BOM extends CommonObject
 	public $table_element = 'bom_bom';
 
 	/**
+	 * @var string Name of subtable if this object has sub lines
+	 */
+	public $table_element_line = 'bom_bomline';
+	public $fk_element = 'fk_bom';
+
+	/**
 	 * @var int  Does bom support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 */
 	public $ismultientitymanaged = 1;
@@ -55,9 +61,6 @@ class BOM extends CommonObject
 	 * @var string String with name of icon for bom. Must be the part after the 'object_' into object_bom.png
 	 */
 	public $picto = 'bom';
-
-
-	public $table_element_line = 'bom_bomline';
 
 
 	const STATUS_DRAFT = 0;
@@ -222,7 +225,13 @@ class BOM extends CommonObject
 	    $this->db->begin();
 
 	    // Load source object
-	    $object->fetchCommon($fromid);
+	    $result = $object->fetchCommon($fromid);
+	    if ($result > 0 && ! empty($object->table_element_line)) $object->fetchLines();
+
+	    // Get lines so they will be clone
+	    //foreach($object->lines as $line)
+	    //	$line->fetch_optionals();
+
 	    // Reset some properties
 	    unset($object->id);
 	    unset($object->fk_user_creat);
@@ -231,7 +240,7 @@ class BOM extends CommonObject
 	    // Clear fields
 	    $object->ref = "copy_of_".$object->ref;
 	    $object->title = $langs->trans("CopyOf")." ".$object->title;
-	    // ...
+
 	    // Clear extrafields that are unique
 	    if (is_array($object->array_options) && count($object->array_options) > 0)
 	    {
@@ -255,6 +264,29 @@ class BOM extends CommonObject
 	        $this->error = $object->error;
 	        $this->errors = $object->errors;
 	    }
+
+	    if (! $error)
+	    {
+	    	// copy internal contacts
+	    	if ($this->copy_linked_contact($object, 'internal') < 0)
+	    	{
+	    		$error++;
+	    	}
+	    }
+
+	    if (! $error)
+	    {
+	    	// copy external contacts if same company
+	    	if (property_exists($this, 'socid') && $this->socid == $object->socid)
+	    	{
+	    		if ($this->copy_linked_contact($object, 'external') < 0)
+	    			$error++;
+	    	}
+	    }
+
+	    // If there is lines, create lines too
+
+
 
 	    unset($object->context['createfromclone']);
 
@@ -854,7 +886,7 @@ class BOM extends CommonObject
 	    $this->lines=array();
 
 	    $objectline = new BOMLine($this->db);
-	    $result = $objectline->fetchAll('', '', 0, 0, array('customsql'=>'fk_bom = '.$this->id));
+	    $result = $objectline->fetchAll('ASC', 'rank', 0, 0, array('customsql'=>'fk_bom = '.$this->id));
 
 	    if (is_numeric($result))
 	    {
@@ -1069,71 +1101,6 @@ class BOMLine extends CommonObject
 	public function create(User $user, $notrigger = false)
 	{
 		return $this->createCommon($user, $notrigger);
-	}
-
-	/**
-	 * Clone an object into another one
-	 *
-	 * @param  	User 	$user      	User that creates
-	 * @param  	int 	$fromid     Id of object to clone
-	 * @return 	mixed 				New object created, <0 if KO
-	 */
-	public function createFromClone(User $user, $fromid)
-	{
-		global $langs, $hookmanager, $extrafields;
-	    $error = 0;
-
-	    dol_syslog(__METHOD__, LOG_DEBUG);
-
-	    $object = new self($this->db);
-
-	    $this->db->begin();
-
-	    // Load source object
-	    $object->fetchCommon($fromid);
-	    // Reset some properties
-	    unset($object->id);
-	    unset($object->fk_user_creat);
-	    unset($object->import_key);
-
-	    // Clear fields
-	    $object->ref = "copy_of_".$object->ref;
-	    $object->title = $langs->trans("CopyOf")." ".$object->title;
-	    // ...
-	    // Clear extrafields that are unique
-	    if (is_array($object->array_options) && count($object->array_options) > 0)
-	    {
-	    	$extrafields->fetch_name_optionals_label($this->element);
-	    	foreach($object->array_options as $key => $option)
-	    	{
-	    		$shortkey = preg_replace('/options_/', '', $key);
-	    		if (! empty($extrafields->attributes[$this->element]['unique'][$shortkey]))
-	    		{
-	    			//var_dump($key); var_dump($clonedObj->array_options[$key]); exit;
-	    			unset($object->array_options[$key]);
-	    		}
-	    	}
-	    }
-
-	    // Create clone
-		$object->context['createfromclone'] = 'createfromclone';
-	    $result = $object->createCommon($user);
-	    if ($result < 0) {
-	        $error++;
-	        $this->error = $object->error;
-	        $this->errors = $object->errors;
-	    }
-
-	    unset($object->context['createfromclone']);
-
-	    // End
-	    if (!$error) {
-	        $this->db->commit();
-	        return $object;
-	    } else {
-	        $this->db->rollback();
-	        return -1;
-	    }
 	}
 
 	/**
