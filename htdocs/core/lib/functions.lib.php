@@ -75,7 +75,7 @@ function getDoliDBInstance($type, $host, $user, $pass, $name, $port)
  * 	@param	int		$shared			0=Return id of current entity only,
  * 									1=Return id of current entity + shared entities (default)
  *  @param	object	$currentobject	Current object if needed
- * 	@return	mixed					Entity id(s) to use
+ * 	@return	mixed					Entity id(s) to use ( eg. entity IN ('.getEntity(elementname).')' )
  */
 function getEntity($element, $shared = 1, $currentobject = null)
 {
@@ -96,10 +96,10 @@ function getEntity($element, $shared = 1, $currentobject = null)
 }
 
 /**
- * 	Get entity id to use when to create an object
+ * 	Set entity id to use when to create an object
  *
  * 	@param	object	$currentobject	Current object
- * 	@return	mixed					Entity id to use
+ * 	@return	mixed					Entity id to use ( eg. entity = '.getEntity($object) )
  */
 function setEntity($currentobject)
 {
