@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/stock.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('companies', 'admin', 'stock'));
+$langs->loadLangs(array('companies', 'admin', 'stocks'));
 
 $extrafields = new ExtraFields($db);
 $form = new Form($db);
