@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2018 Regis Houssin <regis.houssin@capnetworks.com>
+/* Copyright (C) 2010-2018 Regis Houssin <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,13 +31,13 @@ $statutarray=array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSe
 <!-- BEGIN PHP TEMPLATE -->
 
 <?php
-print load_fiche_titre($langs->trans("NewProduct"),'','title_products.png');
+print load_fiche_titre($langs->trans("NewProduct"), '', 'title_products.png');
 dol_fiche_head('');
 ?>
 
-<?php dol_htmloutput_errors((is_numeric($object->error)?'':$object->error),$object->errors); ?>
+<?php dol_htmloutput_errors((is_numeric($object->error)?'':$object->error), $object->errors); ?>
 
-<?php dol_htmloutput_errors($GLOBALS['mesg'],$GLOBALS['mesgs']); ?>
+<?php dol_htmloutput_errors($GLOBALS['mesg'], $GLOBALS['mesgs']); ?>
 
 <form action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post">
 <input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>">
@@ -63,12 +63,12 @@ dol_fiche_head('');
 
 <tr>
 <td class="fieldrequired"><?php echo $langs->trans("Status").' ('.$langs->trans("Sell").')'; ?></td>
-<td><?php echo $form->selectarray('statut',$statutarray,$object->status); ?></td>
+<td><?php echo $form->selectarray('statut', $statutarray, $object->status); ?></td>
 </tr>
 
 <tr>
 <td class="fieldrequired"><?php echo $langs->trans("Status").' ('.$langs->trans("Buy").')'; ?></td>
-<td><?php echo $form->selectarray('statut_buy',$statutarray,$object->status_buy); ?></td>
+<td><?php echo $form->selectarray('statut_buy', $statutarray, $object->status_buy); ?></td>
 </tr>
 
 <?php if (! empty($conf->stock->enabled)) { ?>

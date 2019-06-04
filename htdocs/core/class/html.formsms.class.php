@@ -1,20 +1,21 @@
 <?php
-/* Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
-*
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
-*/
+/* Copyright (C) 2005-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2010       Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 
 /**
  *       \file       htdocs/core/class/html.formsms.class.php
@@ -32,31 +33,42 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/html.form.class.php';
  */
 class FormSms
 {
-    var $db;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
-    var $fromname;
-    var $fromsms;
-    var $replytoname;
-    var $replytomail;
-    var $toname;
-    var $tomail;
+    public $fromname;
+    public $fromsms;
+    public $replytoname;
+    public $replytomail;
+    public $toname;
+    public $tomail;
 
-    var $withsubstit;			// Show substitution array
-    var $withfrom;
-    var $withto;
-    var $withtopic;
-    var $withbody;
+    public $withsubstit;			// Show substitution array
+    public $withfrom;
+    public $withto;
+    public $withtopic;
+    public $withbody;
 
-    var $withfromreadonly;
-    var $withreplytoreadonly;
-    var $withtoreadonly;
-    var $withtopicreadonly;
-    var $withcancel;
+    public $withfromreadonly;
+    public $withreplytoreadonly;
+    public $withtoreadonly;
+    public $withtopicreadonly;
+    public $withcancel;
 
-    var $substit=array();
-    var $param=array();
+    public $substit=array();
+    public $param=array();
 
-    var $error;
+    /**
+     * @var string Error code (or message)
+     */
+    public $error='';
+
+    /**
+     * @var string[]	Array of error strings
+     */
+    public $errors=array();
 
 
     /**
@@ -64,7 +76,7 @@ class FormSms
      *
      *  @param		DoliDB		$db      Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
 
@@ -78,26 +90,25 @@ class FormSms
         $this->withtoreadonly=0;
         $this->withtopicreadonly=0;
         $this->withbodyreadonly=0;
-
-        return 1;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *	Show the form to input an sms.
      *
-     *	@param	string	$morecss        Class on first column td
-     *  @param  int     $showform       Show form tags and submit button (recommanded is to use with value 0)
+     *	@param	string	$morecss Class on first column td
+     *  @param int $showform Show form tags and submit button (recommanded is to use with value 0)
      *	@return	void
      */
-    function show_form($morecss='titlefield', $showform=1)
+    public function show_form($morecss = 'titlefield', $showform = 1)
     {
+     // phpcs:enable
         global $conf, $langs, $user, $form;
 
         if (! is_object($form)) $form=new Form($this->db);
 
-        $langs->load("other");
-        $langs->load("mails");
-        $langs->load("sms");
+        // Load translation files required by the page
+        $langs->loadLangs(array('other', 'mails', 'sms'));
 
         $soc=new Societe($this->db);
         if (!empty($this->withtosocid) && $this->withtosocid > 0)
@@ -138,7 +149,7 @@ function limitChars(textarea, limit, infodiv)
             {
                 $help.=$key.' -> '.$langs->trans($val).'<br>';
             }
-            print $form->textwithpicto($langs->trans("SmsTestSubstitutionReplacedByGenericValues"),$help);
+            print $form->textwithpicto($langs->trans("SmsTestSubstitutionReplacedByGenericValues"), $help);
             print "</td></tr>\n";
         }
 
@@ -194,12 +205,12 @@ function limitChars(textarea, limit, infodiv)
                     }
                     catch(Exception $e)
                     {
-                        dol_print_error('','Error to get list of senders: '.$e->getMessage());
+                        dol_print_error('', 'Error to get list of senders: '.$e->getMessage());
                     }
                 }
-                else if (!empty($conf->global->MAIN_SMS_SENDMODE))    // $conf->global->MAIN_SMS_SENDMODE looks like a value 'class@module'
+                elseif (!empty($conf->global->MAIN_SMS_SENDMODE))    // $conf->global->MAIN_SMS_SENDMODE looks like a value 'class@module'
                 {
-                    $tmp=explode('@',$conf->global->MAIN_SMS_SENDMODE);
+                    $tmp=explode('@', $conf->global->MAIN_SMS_SENDMODE);
                     $classfile=$tmp[0]; $module=(empty($tmp[1])?$tmp[0]:$tmp[1]);
                     dol_include_once('/'.$module.'/class/'.$classfile.'.class.php');
                     try
@@ -218,7 +229,7 @@ function limitChars(textarea, limit, infodiv)
                     }
                     catch(Exception $e)
                     {
-                        dol_print_error('','Error to get list of senders: '.$e->getMessage());
+                        dol_print_error('', 'Error to get list of senders: '.$e->getMessage());
                         exit;
                     }
                 }
@@ -255,7 +266,7 @@ function limitChars(textarea, limit, infodiv)
             print '<tr><td>';
             //$moretext=$langs->trans("YouCanUseCommaSeparatorForSeveralRecipients");
             $moretext='';
-            print $form->textwithpicto($langs->trans("SmsTo"),$moretext);
+            print $form->textwithpicto($langs->trans("SmsTo"), $moretext);
             print '</td><td>';
             if ($this->withtoreadonly)
             {
@@ -288,9 +299,9 @@ function limitChars(textarea, limit, infodiv)
             {
                 $defaultmessage=$this->withbody;
             }
-            $defaultmessage=make_substitutions($defaultmessage,$this->substit);
+            $defaultmessage=make_substitutions($defaultmessage, $this->substit);
             if (isset($_POST["message"])) $defaultmessage=$_POST["message"];
-            $defaultmessage=str_replace('\n',"\n",$defaultmessage);
+            $defaultmessage=str_replace('\n', "\n", $defaultmessage);
 
             print "<tr>";
             print '<td class="tdtop">'.$langs->trans("SmsText")."</td>";
@@ -354,6 +365,4 @@ function limitChars(textarea, limit, infodiv)
 
         print "<!-- End form SMS -->\n";
     }
-
 }
-

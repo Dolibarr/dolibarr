@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013-2014 Cedric GROSS         <c.gross@kreiz-it.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -38,7 +38,7 @@ class modProductBatch extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
         global $langs,$conf;
 
@@ -46,9 +46,9 @@ class modProductBatch extends DolibarrModules
 		$this->numero = 39000;
 
 		$this->family = "products";
-		$this->module_position = 45;
+		$this->module_position = '45';
 
-		$this->name = preg_replace('/^mod/i','',get_class($this));
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "Batch number, eat-by and sell-by date management module";
 
 		$this->rights_class = 'productbatch';
@@ -104,7 +104,6 @@ class modProductBatch extends DolibarrModules
 
 		// Exports
 		$r=0;
-
 	}
 
 	/**
@@ -115,7 +114,7 @@ class modProductBatch extends DolibarrModules
      *      @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
 	 */
-	function init($options='')
+	public function init($options = '')
 	{
 	    global $db,$conf;
 
@@ -124,11 +123,10 @@ class modProductBatch extends DolibarrModules
 		if (! empty($conf->cashdesk->enabled)) {
     		if (empty($conf->global->CASHDESK_NO_DECREASE_STOCK)) {
     		    include_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-    		    $res = dolibarr_set_const($db,"CASHDESK_NO_DECREASE_STOCK",1,'chaine',0,'',$conf->entity);
+    		    $res = dolibarr_set_const($db, "CASHDESK_NO_DECREASE_STOCK", 1, 'chaine', 0, '', $conf->entity);
     		}
 		}
 
 		return $this->_init($sql, $options);
 	}
 }
-

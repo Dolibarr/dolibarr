@@ -29,11 +29,32 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/holiday/modules_holiday.php';
  */
 class mod_holiday_madonna extends ModelNumRefHolidays
 {
-	var $version='dolibarr';
-	var $prefix='HL';
-	var $error='';
-	var $nom='Madonna';
-	var $code_auto=1;
+	/**
+     * Dolibarr version of the loaded document
+     * @var string
+     */
+	public $version = 'dolibarr';
+
+	public $prefix='HL';
+
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+	/**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see $name
+	 */
+	public $nom='Madonna';
+
+	/**
+	 * @var string model name
+	 */
+	public $name='Madonna';
+
+	public $code_auto=1;
 
 
 	/**
@@ -41,10 +62,10 @@ class mod_holiday_madonna extends ModelNumRefHolidays
 	 *
 	 *	@return     string      text description
 	 */
-    function info()
+    public function info()
     {
     	global $langs;
-      	return $langs->trans("SimpleNumRefModelDesc",$this->prefix);
+      	return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
     }
 
 
@@ -53,7 +74,7 @@ class mod_holiday_madonna extends ModelNumRefHolidays
 	 *
 	 *	@return     string      Example
 	 */
-	function getExample()
+	public function getExample()
 	{
 		return $this->prefix."0501-0001";
 	}
@@ -64,7 +85,7 @@ class mod_holiday_madonna extends ModelNumRefHolidays
 	 *
 	 *	@return     boolean     false if conflit, true if ok
 	 */
-	function canBeActivated()
+	public function canBeActivated()
 	{
 		global $conf,$langs,$db;
 
@@ -80,9 +101,9 @@ class mod_holiday_madonna extends ModelNumRefHolidays
 		if ($resql)
 		{
 			$row = $db->fetch_row($resql);
-			if ($row) { $coyymm = substr($row[0],0,6); $max=$row[0]; }
+			if ($row) { $coyymm = substr($row[0], 0, 6); $max=$row[0]; }
 		}
-		if ($coyymm && ! preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i',$coyymm))
+		if ($coyymm && ! preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $coyymm))
 		{
 			$langs->load("errors");
 			$this->error=$langs->trans('ErrorNumRefModel', $max);
@@ -96,10 +117,10 @@ class mod_holiday_madonna extends ModelNumRefHolidays
 	 *	Return next value
 	 *
 	 *	@param	Societe		$objsoc     third party object
-	 *	@param	Object		$contract	contract object
+	 *	@param	Object		$holiday	Holiday object
 	 *	@return string      			Value if OK, 0 if KO
 	 */
-	function getNextValue($objsoc,$contract)
+	public function getNextValue($objsoc, $holiday)
 	{
 		global $db,$conf;
 
@@ -122,17 +143,18 @@ class mod_holiday_madonna extends ModelNumRefHolidays
 			return -1;
 		}
 
-		$date=$contract->date_contrat;
-		$yymm = strftime("%y%m",$date);
+		$date=$holiday->date_debut;
+		$yymm = strftime("%y%m", $date);
 
 		if ($max >= (pow(10, 4) - 1)) $num=$max+1;	// If counter > 9999, we do not format on 4 chars, we take number as it is
-		else $num = sprintf("%04s",$max+1);
+		else $num = sprintf("%04s", $max+1);
 
 		dol_syslog("mod_holiday_madonna::getNextValue return ".$this->prefix.$yymm."-".$num);
 		return $this->prefix.$yymm."-".$num;
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Return next value
 	 *
@@ -140,9 +162,9 @@ class mod_holiday_madonna extends ModelNumRefHolidays
 	 *	@param	Object		$objforref	Holiday object
 	 *	@return string      			Value if OK, 0 if KO
 	 */
-	function holiday_get_num($fuser,$objforref)
+	public function holiday_get_num($fuser, $objforref)
 	{
-		return $this->getNextValue($fuser,$objforref);
+        // phpcs:enable
+		return $this->getNextValue($fuser, $objforref);
 	}
-
 }

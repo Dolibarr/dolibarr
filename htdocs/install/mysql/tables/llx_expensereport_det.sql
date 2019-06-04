@@ -27,7 +27,8 @@ CREATE TABLE llx_expensereport_det
    comments text NOT NULL,
    product_type integer DEFAULT -1,
    qty real NOT NULL,
-   value_unit real NOT NULL,
+   subprice						double(24,8) DEFAULT 0 NOT NULL, -- P.U. HT (example 100)
+   value_unit                   double(24,8) NOT NULL,          -- P.U. TTC (example 120)
    remise_percent real,
    vat_src_code					varchar(10)  DEFAULT '',		-- Vat code used as source of vat fields. Not strict foreign key here.
    tva_tx						double(6,3),					-- Vat rate
@@ -50,6 +51,7 @@ CREATE TABLE llx_expensereport_det
    multicurrency_total_tva      double(24,8) DEFAULT 0,
    multicurrency_total_ttc      double(24,8) DEFAULT 0,
    fk_facture					integer DEFAULT 0,				-- ID of customer invoice line if expense is rebilled to a customer
+   fk_ecm_files        integer DEFAULT NULL,			-- ID of ECM file that is source document of expense report 
    fk_code_ventilation			integer DEFAULT 0,
    rang							integer DEFAULT 0,				-- position of line
    import_key					varchar(14),

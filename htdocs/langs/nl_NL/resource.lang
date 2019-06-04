@@ -5,7 +5,7 @@ DeleteResource=Verwijder resource
 ConfirmDeleteResourceElement=Bevestig het verwijderen van de resource voor dit element
 NoResourceInDatabase=Geen resource in de database
 NoResourceLinked=Geen gelinkte resource
-
+ActionsOnResource=Gebeurtenissen over deze bron
 ResourcePageIndex=Resource lijst
 ResourceSingular=Resource
 ResourceCard=Resource kaart

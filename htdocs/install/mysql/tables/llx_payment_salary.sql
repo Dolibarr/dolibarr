@@ -1,5 +1,5 @@
 -- ===================================================================
--- Copyright (C) 2011-2018 Alexandre Spangaro <aspangaro@zendsi.com>
+-- Copyright (C) 2011-2018 Alexandre Spangaro <aspangaro@open-dsi.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 create table llx_payment_salary
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  ref             varchar(30) NULL,           -- payment reference number (currently NULL because there is no numbering manager yet)
   tms             timestamp,
   datec           datetime,                   -- Create date
   fk_user         integer NOT NULL,
@@ -28,7 +29,7 @@ create table llx_payment_salary
   amount          double(24,8) NOT NULL DEFAULT 0,
   fk_projet       integer DEFAULT NULL,
   fk_typepayment  integer NOT NULL,
-  num_payment     varchar(50),                -- ref
+  num_payment     varchar(50),                -- num cheque or other
   label           varchar(255),
   datesp          date,                       -- date start period
   dateep          date,                       -- date end period

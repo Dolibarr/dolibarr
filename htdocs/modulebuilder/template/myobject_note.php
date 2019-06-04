@@ -38,7 +38,7 @@ if (! $res && file_exists("../../../main.inc.php")) $res=@include "../../../main
 if (! $res) die("Include of main fails");
 
 dol_include_once('/mymodule/class/myobject.class.php');
-dol_include_once('/mymodule/lib/myobject.lib.php');
+dol_include_once('/mymodule/lib/mymodule_myobject.lib.php');
 
 // Load translation files required by the page
 $langs->loadLangs(array("mymodule@mymodule","companies"));
@@ -87,7 +87,7 @@ $form = new Form($db);
 
 //$help_url='EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes';
 $help_url='';
-llxHeader('',$langs->trans('MyObject'),$help_url);
+llxHeader('', $langs->trans('MyObject'), $help_url);
 
 if ($id > 0 || ! empty($ref))
 {
@@ -95,11 +95,11 @@ if ($id > 0 || ! empty($ref))
 
 	$head = myobjectPrepareHead($object);
 
-	dol_fiche_head($head, 'note', $langs->trans("MyObject"), -1, 'myobject@mymodule');
+	dol_fiche_head($head, 'note', $langs->trans("MyObject"), -1, $object->picto);
 
 	// Object card
 	// ------------------------------------------------------------
-	$linkback = '<a href="' .dol_buildpath('/mymodule/myobject_list.php',1) . '?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+	$linkback = '<a href="' .dol_buildpath('/mymodule/myobject_list.php', 1) . '?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
 	$morehtmlref='<div class="refidno">';
 	/*
@@ -159,6 +159,6 @@ if ($id > 0 || ! empty($ref))
 	dol_fiche_end();
 }
 
-
+// End of page
 llxFooter();
 $db->close();

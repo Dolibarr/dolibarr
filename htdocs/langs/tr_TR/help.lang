@@ -5,9 +5,9 @@ RemoteControlSupport=Çevrimiçi gerçek zamanlı/uzaktan destek
 OtherSupport=Diğer destek
 ToSeeListOfAvailableRessources=İletişim için/mevcut kaynaklara bakın:
 HelpCenter=Yardım merkezi
-DolibarrHelpCenter=Dolibarr yardım ve destek merkezi
-ToGoBackToDolibarr=Aksi takdirde Dolibarr’ı kullanmak için<a href="%s">burayı tıklayın</a>
-TypeOfSupport=Destek Kaynağı
+DolibarrHelpCenter=Dolibarr Yardım ve Destek Merkezi
+ToGoBackToDolibarr=Aksi takdirde, <a href="%s">Dolibarr'ı kullanmaya devam etmek için buraya tıklayın</a>.
+TypeOfSupport=Destek türü
 TypeSupportCommunauty=Genel (ücretsiz)
 TypeSupportCommercial=Ticaret
 TypeOfHelp=Tür
@@ -15,12 +15,9 @@ NeedHelpCenter=Yardım veya desteğe mi ihtiyacınız var?
 Efficiency=Verim
 TypeHelpOnly=Yalnızca yardım
 TypeHelpDev=Yardım+Geliştirme
-TypeHelpDevForm=Yardım+Geliştirme+Biçimlendirme
-ToGetHelpGoOnSparkAngels1=Bazı firmalar ve bilgisayarınızın kontrolünü alarak daha hızlı çevrimiçi destek verir (bazen anında). Bu tür yardımcılar <b>%s</b> web sitesinden bulunabilir:
-ToGetHelpGoOnSparkAngels3=Ayrıca Dolibarr’n tüm eğiticileri listesine bakabilirsiniz, bunun için burayı tıklayın
-ToGetHelpGoOnSparkAngels2=Bazen, arama yaptığınız sırada bir firma bulunmaz, bu nedenle süzgeçi “uygun olanların hepsi” değiştirerek aramayı düşünün.
-BackToHelpCenter=Aksi durumda yardım merkezine geri gitmek için <a href="%s">burayı </a>.
-LinkToGoldMember=Bo parçaçcığı (widget) tıklayarak Dolibar tarafından sizin için dilinizde önseçilen eğitmeni arayabilirsiniz (durumu ve ençok ücreti otomatikmen güncellenir):
+TypeHelpDevForm=Yardım + Geliştirme + Eğitim
+BackToHelpCenter=Otherwise, <a href="%s">go back to Help center home page</a>.
+LinkToGoldMember=You can call one of the trainers preselected by Dolibarr for your language (%s) by clicking their Widget (status and maximum price are automatically updated):
 PossibleLanguages=Desteklenen diller
-SubscribeToFoundation=Dolibarr projesine yardım edin, vakıfa abone olun
+SubscribeToFoundation=Help the Dolibarr project, subscribe to the foundation
 SeeOfficalSupport=Kendi dilinizde Dolibarr desteği için: <br><b><a href="%s" target="_blank">%s</a></b>

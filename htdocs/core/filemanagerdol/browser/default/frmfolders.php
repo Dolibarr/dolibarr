@@ -19,7 +19,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-define('NOTOKENRENEWAL',1); // Disables token renewal
+define('NOTOKENRENEWAL', 1); // Disables token renewal
 
 require '../../../../main.inc.php';
 ?>

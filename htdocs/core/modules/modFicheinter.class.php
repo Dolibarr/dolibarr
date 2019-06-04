@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ class modFicheinter extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         global $conf;
 
@@ -50,8 +50,9 @@ class modFicheinter extends DolibarrModules
         $this->numero = 70;
 
         $this->family = "crm";
+        $this->module_position = '45';
         // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-        $this->name = preg_replace('/^mod/i','',get_class($this));
+        $this->name = preg_replace('/^mod/i', '', get_class($this));
         $this->description = "Gestion des fiches d'intervention";
 
         // Possible values for version are: 'development', 'experimental', 'dolibarr' or version
@@ -196,19 +197,18 @@ class modFicheinter extends DolibarrModules
         $this->export_sql_end[$r] .=' WHERE f.fk_soc = s.rowid';
         $this->export_sql_end[$r] .=' AND f.entity IN ('.getEntity('intervention').')';
         $r++;
-
     }
 
 
     /**
-	 *		Function called when module is enabled.
-	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
-	 *		It also creates data directories
+	 *  Function called when module is enabled.
+	 *  The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+	 *  It also creates data directories
 	 *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
-	 *      @return     int             	1 if OK, 0 if KO
+     *  @param      string	$options    Options when enabling module ('', 'noboxes')
+     *  @return     int             	1 if OK, 0 if KO
      */
-    function init($options='')
+    public function init($options = '')
     {
         global $conf;
 
@@ -220,6 +220,6 @@ class modFicheinter extends DolibarrModules
 			 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."','ficheinter',".$conf->entity.")",
         );
 
-        return $this->_init($sql,$options);
+        return $this->_init($sql, $options);
     }
 }

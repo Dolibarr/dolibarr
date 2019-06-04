@@ -37,7 +37,7 @@ class modSyslog extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		$this->db = $db;
 		$this->numero = 42;
@@ -48,7 +48,7 @@ class modSyslog extends DolibarrModules
 		// Module position in the family on 2 digits ('01', '10', '20', ...)
 		$this->module_position = '50';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = preg_replace('/^mod/i','',get_class($this));
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
 		$this->description = "Activate debug logs (syslog)";
 		// Can be enabled / disabled only in the main company
@@ -85,7 +85,20 @@ class modSyslog extends DolibarrModules
 
 		// Cronjobs
 		$this->cronjobs = array(
-		    0=>array('label'=>'CompressSyslogs', 'jobtype'=>'method', 'class'=>'core/class/utils.class.php', 'objectname'=>'Utils', 'method'=>'compressSyslogs', 'parameters'=>'', 'comment'=>'Compress and archive log files', 'frequency'=>1, 'unitfrequency'=> 3600 * 24, 'priority'=>50, 'status'=>0, 'test'=>true),
+			0 => array(
+				'label' => 'CompressSyslogs',
+				'jobtype' => 'method',
+				'class' => 'core/class/utils.class.php',
+				'objectname' => 'Utils',
+				'method' => 'compressSyslogs',
+				'parameters' => '',
+				'comment' => 'Compress and archive log files. Warning: batch must be run with same account than your web server to avoid to get log files with different owner than required by web server. Another solution is to set web server Operating System group as the group of directory documents and set GROUP permission "rws" on this directory so log files will always have the group and permissions of the web server Operating System group',
+				'frequency' => 1,
+				'unitfrequency' => 3600 * 24,
+				'priority' => 50,
+				'status' => 0,
+				'test' => true
+			)
 		);
 	}
 }

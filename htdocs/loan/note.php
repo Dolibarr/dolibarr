@@ -1,10 +1,10 @@
 <?php
 /* Copyright (C) 2004       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Frederic France         <frederic.france@free.fr>
- * Copyright (C) 2016-2018  Alexandre Spangaro      <aspangaro@zendsi.com>
+ * Copyright (C) 2016-2018  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2017       Ferran Marcet       	 <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -34,13 +34,13 @@ if (! empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 }
 
-$action = GETPOST('action','aZ09');
+$action = GETPOST('action', 'aZ09');
 
 // Load translation files required by the page
 $langs->loadLangs(array("loan"));
 
 // Security check
-$id = GETPOST('id','int');
+$id = GETPOST('id', 'int');
 $result = restrictedArea($user, 'loan', $id, '&loan');
 
 $object = new Loan($db);
@@ -64,7 +64,7 @@ $form = new Form($db);
 
 $title = $langs->trans("Loan") . ' - ' . $langs->trans("Notes");
 $help_url = 'EN:Module_Loan|FR:Module_Emprunt';
-llxHeader("",$title,$help_url);
+llxHeader("", $title, $help_url);
 
 if ($id > 0)
 {
@@ -113,7 +113,7 @@ if ($id > 0)
 	}
 	$morehtmlref.='</div>';
 
-	$linkback = '<a href="' . DOL_URL_ROOT . '/loan/index.php">' . $langs->trans("BackToList") . '</a>';
+	$linkback = '<a href="' . DOL_URL_ROOT . '/loan/list.php">' . $langs->trans("BackToList") . '</a>';
 
 	$object->totalpaid = $totalpaid;   // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
@@ -129,6 +129,6 @@ if ($id > 0)
     dol_fiche_end();
 }
 
+// End of page
 llxFooter();
 $db->close();
-

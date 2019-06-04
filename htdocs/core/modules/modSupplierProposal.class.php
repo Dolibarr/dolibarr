@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Sebastien Di Cintio		<sdicintio@ressource-toi.org>
  * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2012		Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -42,7 +42,7 @@ class modSupplierProposal extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		global $conf;
 
@@ -50,17 +50,17 @@ class modSupplierProposal extends DolibarrModules
 		$this->numero = 1120;
 
 		$this->family = "srm";
-		$this->name = preg_replace('/^mod/i','',get_class($this));
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "supplier_proposalDESC";
 
 		$this->version = 'dolibarr';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->picto='supplier_proposal';
-        
+
 		// Data directories to create when module is enabled.
 		$this->dirs = array();
-		
+
 		 // Config pages. Put here list of php page names stored in admin directory used to setup module.
         $this->config_page_url = array("supplier_proposal.php");
 
@@ -206,7 +206,7 @@ class modSupplierProposal extends DolibarrModules
      *      @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
 	 */
-	function init($options='')
+    public function init($options = '')
 	{
 		global $conf,$langs;
 
@@ -222,11 +222,11 @@ class modSupplierProposal extends DolibarrModules
 		{
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_mkdir($dirodt);
-			$result=dol_copy($src,$dest,0,0);
+			$result=dol_copy($src, $dest, 0, 0);
 			if ($result < 0)
 			{
 				$langs->load("errors");
-				$this->error=$langs->trans('ErrorFailToCopyFile',$src,$dest);
+				$this->error=$langs->trans('ErrorFailToCopyFile', $src, $dest);
 				return 0;
 			}
 		}
@@ -257,5 +257,4 @@ class modSupplierProposal extends DolibarrModules
 
 	    return $this->_remove($sql, $options);
 	}
-
 }

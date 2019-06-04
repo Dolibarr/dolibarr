@@ -31,12 +31,12 @@ $langs->load("admin");
 if (!$user->admin)
 accessforbidden();
 
-$action=GETPOST('action','alpha');
+$action=GETPOST('action', 'alpha');
 
 if ($action == 'setvalue')
 {
-	$showmenu = GETPOST('BOOKMARKS_SHOW_IN_MENU','alpha');
-	$res = dolibarr_set_const($db, "BOOKMARKS_SHOW_IN_MENU",$showmenu,'chaine',0,'',$conf->entity);
+	$showmenu = GETPOST('BOOKMARKS_SHOW_IN_MENU', 'alpha');
+	$res = dolibarr_set_const($db, "BOOKMARKS_SHOW_IN_MENU", $showmenu, 'chaine', 0, '', $conf->entity);
 
 	if (! $res > 0) $error++;
 
@@ -60,7 +60,7 @@ if ($action == 'setvalue')
 llxHeader();
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans("BookmarkSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("BookmarkSetup"), $linkback, 'title_setup');
 
 print $langs->trans("BookmarkDesc")."<br>\n";
 

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014-2016	Alexandre Spangaro	<aspangaro@zendsi.com>
+/* Copyright (C) 2014-2016	Alexandre Spangaro	<aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ $id = GETPOST('id', 'int');
 // View
 $title = $langs->trans("Fiscalyear") . " - " . $langs->trans("Info");
 $helpurl = "";
-llxHeader("",$title,$helpurl);
+llxHeader("", $title, $helpurl);
 
 if ($id) {
 	$object = new Fiscalyear($db);

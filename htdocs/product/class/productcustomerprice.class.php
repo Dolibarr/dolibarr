@@ -28,37 +28,63 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
  */
 class Productcustomerprice extends CommonObject
 {
-	var $element = 'product_customer_price'; // !< Id that identify managed objects
-	var $table_element = 'product_customer_price'; // !< Name of table without prefix where object is stored
-	var $entity;
-	var $datec = '';
-	var $tms = '';
-	var $fk_product;
-	var $fk_soc;
-	var $price;
-	var $price_ttc;
-	var $price_min;
-	var $price_min_ttc;
-	var $price_base_type;
-	var $tva_tx;
-	var $recuperableonly;
-	var $localtax1_type;
-	var $localtax1_tx;
-	var $localtax2_type;
-	var $localtax2_tx;
-	var $fk_user;
-	var $lines = array ();
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element = 'product_customer_price';
+
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element = 'product_customer_price';
+
+	/**
+	 * @var int Entity
+	 */
+	public $entity;
+
+	public $datec = '';
+	public $tms = '';
+
+	/**
+     * @var int ID
+     */
+	public $fk_product;
+
+	/**
+	 * @var int Thirdparty ID
+	 */
+    public $fk_soc;
+
+	public $price;
+	public $price_ttc;
+	public $price_min;
+	public $price_min_ttc;
+	public $price_base_type;
+	public $tva_tx;
+	public $recuperableonly;
+	public $localtax1_type;
+	public $localtax1_tx;
+	public $localtax2_type;
+	public $localtax2_tx;
+
+	/**
+	 * @var int User ID
+	 */
+	public $fk_user;
+
+	public $lines = array ();
+
 
 	/**
 	 * Constructor
 	 *
 	 * @param DoliDb $db handler
 	 */
-	function __construct($db) {
-
-		$this->db = $db;
-		return 1;
-	}
+    public function __construct($db)
+    {
+        $this->db = $db;
+    }
 
 	/**
 	 * Create object into database
@@ -68,7 +94,8 @@ class Productcustomerprice extends CommonObject
 	 * @param int $forceupdateaffiliate update price on each soc child
 	 * @return int <0 if KO, Id of created object if OK
 	 */
-	function create($user, $notrigger = 0, $forceupdateaffiliate = 0) {
+    public function create($user, $notrigger = 0, $forceupdateaffiliate = 0)
+    {
 
 		global $conf, $langs;
 		$error = 0;
@@ -213,7 +240,7 @@ class Productcustomerprice extends CommonObject
 
 		// Commit or rollback
 		if ($error) {
-			foreach ( $this->errors as $errmsg ) {
+			foreach ($this->errors as $errmsg) {
 				dol_syslog(get_class($this) . "::create " . $errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
 			}
@@ -231,7 +258,7 @@ class Productcustomerprice extends CommonObject
 	 * @param int $id object
 	 * @return int <0 if KO, >0 if OK
 	 */
-	function fetch($id)
+	public function fetch($id)
 	{
 		global $langs;
 
@@ -294,6 +321,7 @@ class Productcustomerprice extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Load all customer prices in memory from database
 	 *
@@ -304,8 +332,9 @@ class Productcustomerprice extends CommonObject
 	 * @param 	array 	$filter 	Filter for select
 	 * @return 	int 				<0 if KO, >0 if OK
 	 */
-	function fetch_all($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = array())
+	public function fetch_all($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = array())
 	{
+        // phpcs:enable
 		global $langs;
 
 		if ( empty($sortfield)) $sortfield = "t.rowid";
@@ -342,10 +371,10 @@ class Productcustomerprice extends CommonObject
 		$sql .= " AND prod.rowid=t.fk_product ";
 		$sql .= " AND prod.entity IN (" . getEntity('product') . ")";
 		$sql .= " AND t.entity IN (" . getEntity('productprice') . ")";
-		
+
 		// Manage filter
 		if (count($filter) > 0) {
-			foreach ( $filter as $key => $value ) {
+			foreach ($filter as $key => $value) {
 				if (strpos($key, 'date')) 				// To allow $filter['YEAR(s.dated)']=>$year
 				{
 					$sql .= ' AND ' . $key . ' = \'' . $value . '\'';
@@ -407,6 +436,7 @@ class Productcustomerprice extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Load all objects in memory from database
 	 *
@@ -417,8 +447,9 @@ class Productcustomerprice extends CommonObject
 	 * @param 	array 	$filter 	Filter for sql request
 	 * @return 	int 			<0 if KO, >0 if OK
 	 */
-	function fetch_all_log($sortorder, $sortfield, $limit, $offset, $filter = array())
+	public function fetch_all_log($sortorder, $sortfield, $limit, $offset, $filter = array())
 	{
+        // phpcs:enable
 		global $langs;
 
 		if (! empty($sortfield)) $sortfield = "t.rowid";
@@ -455,7 +486,7 @@ class Productcustomerprice extends CommonObject
 
 		// Manage filter
 		if (count($filter) > 0) {
-			foreach ( $filter as $key => $value ) {
+			foreach ($filter as $key => $value) {
 				if (strpos($key, 'date')) 				// To allow $filter['YEAR(s.dated)']=>$year
 				{
 					$sql .= ' AND ' . $key . ' = \'' . $value . '\'';
@@ -522,7 +553,8 @@ class Productcustomerprice extends CommonObject
 	 * @param int $forceupdateaffiliate update price on each soc child
 	 * @return int <0 if KO, >0 if OK
 	 */
-	function update($user = 0, $notrigger = 0, $forceupdateaffiliate = 0) {
+    public function update($user = 0, $notrigger = 0, $forceupdateaffiliate = 0)
+    {
 
 		global $conf, $langs;
 		$error = 0;
@@ -685,7 +717,7 @@ class Productcustomerprice extends CommonObject
 				// Call triggers
 				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 				$interface=new Interfaces($this->db);
-				$result=$interface->run_triggers('PRODUCT_CUSTOMER_PRICE_UPDATE',$this,$user,$langs,$conf);
+				$result=$interface->run_triggers('PRODUCT_CUSTOMER_PRICE_UPDATE', $this, $user, $langs, $conf);
 				if ($result < 0) { $error++; $this->errors=$interface->errors; }
 				// End call triggers
 			}
@@ -700,7 +732,7 @@ class Productcustomerprice extends CommonObject
 
 		// Commit or rollback
 		if ($error) {
-			foreach ( $this->errors as $errmsg ) {
+			foreach ($this->errors as $errmsg) {
 				dol_syslog(get_class($this) . "::update " . $errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
 			}
@@ -710,7 +742,7 @@ class Productcustomerprice extends CommonObject
 			$this->db->commit();
 			return 1;
 		}
-	}
+    }
 
 	/**
 	 * Force update price on child price
@@ -719,7 +751,8 @@ class Productcustomerprice extends CommonObject
 	 * @param int $forceupdateaffiliate update price on each soc child
 	 * @return int <0 if KO, >0 if OK
 	 */
-	function setPriceOnAffiliateThirdparty($user, $forceupdateaffiliate) {
+    public function setPriceOnAffiliateThirdparty($user, $forceupdateaffiliate)
+    {
 
 		$error = 0;
 
@@ -802,7 +835,7 @@ class Productcustomerprice extends CommonObject
 			$this->error = "Error " . $this->db->lasterror();
 			return - 1;
 		}
-	}
+    }
 
 	/**
 	 * Delete object in database
@@ -811,7 +844,8 @@ class Productcustomerprice extends CommonObject
 	 * @param int $notrigger triggers after, 1=disable triggers
 	 * @return int <0 if KO, >0 if OK
 	 */
-	function delete($user, $notrigger = 0) {
+    public function delete($user, $notrigger = 0)
+    {
 
 		global $conf, $langs;
 		$error = 0;
@@ -846,7 +880,7 @@ class Productcustomerprice extends CommonObject
 
 		// Commit or rollback
 		if ($error) {
-			foreach ( $this->errors as $errmsg ) {
+			foreach ($this->errors as $errmsg) {
 				dol_syslog(get_class($this) . "::delete " . $errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
 			}
@@ -856,23 +890,20 @@ class Productcustomerprice extends CommonObject
 			$this->db->commit();
 			return 1;
 		}
-	}
+    }
 
 	/**
 	 * Load an object from its id and create a new one in database
 	 *
-	 * @param int $fromid of object to clone
-	 * @return int id of clone
+	 * @param	User	$user		User making the clone
+	 * @param   int     $fromid     ID of object to clone
+	 * @return  int                 id of clone
 	 */
-	function createFromClone($fromid) {
-
-		global $user, $langs;
-
+    public function createFromClone(User $user, $fromid)
+    {
 		$error = 0;
 
 		$object = new Productcustomerprice($this->db);
-
-		$object->context['createfromclone']='createfromclone';
 
 		$this->db->begin();
 
@@ -885,15 +916,18 @@ class Productcustomerprice extends CommonObject
 		// ...
 
 		// Create clone
+		$object->context['createfromclone']='createfromclone';
 		$result = $object->create($user);
 
 		// Other options
 		if ($result < 0) {
 			$this->error = $object->error;
-			$error ++;
+			$this->errors=array_merge($this->errors, $object->errors);
+			$error++;
 		}
 
 		if (! $error) {
+
 		}
 
 		unset($object->context['createfromclone']);
@@ -906,7 +940,7 @@ class Productcustomerprice extends CommonObject
 			$this->db->rollback();
 			return - 1;
 		}
-	}
+    }
 
 	/**
 	 * Initialise object with example values
@@ -914,7 +948,8 @@ class Productcustomerprice extends CommonObject
 	 *
 	 * @return void
 	 */
-	function initAsSpecimen() {
+    public function initAsSpecimen()
+    {
 
 		$this->id = 0;
 
@@ -935,7 +970,7 @@ class Productcustomerprice extends CommonObject
 		$this->localtax2_tx = '';
 		$this->fk_user = '';
 		$this->import_key = '';
-	}
+    }
 }
 
 /**
@@ -943,24 +978,46 @@ class Productcustomerprice extends CommonObject
  */
 class PriceByCustomerLine
 {
-	var $id;
-	var $entity;
-	var $datec = '';
-	var $tms = '';
-	var $fk_product;
-	var $fk_soc;
-	var $price;
-	var $price_ttc;
-	var $price_min;
-	var $price_min_ttc;
-	var $price_base_type;
-	var $default_vat_code;
-	var $tva_tx;
-	var $recuperableonly;
-	var $localtax1_tx;
-	var $localtax2_tx;
-	var $fk_user;
-	var $import_key;
-	var $socname;
-	var $prodref;
+	/**
+	 * @var int ID
+	 */
+	public $id;
+
+	/**
+	 * @var int Entity
+	 */
+	public $entity;
+
+	public $datec = '';
+	public $tms = '';
+
+	/**
+     * @var int ID
+     */
+	public $fk_product;
+
+	/**
+	 * @var int Thirdparty ID
+	 */
+    public $fk_soc;
+
+	public $price;
+	public $price_ttc;
+	public $price_min;
+	public $price_min_ttc;
+	public $price_base_type;
+	public $default_vat_code;
+	public $tva_tx;
+	public $recuperableonly;
+	public $localtax1_tx;
+	public $localtax2_tx;
+
+    /**
+     * @var int User ID
+     */
+    public $fk_user;
+
+    public $import_key;
+    public $socname;
+    public $prodref;
 }

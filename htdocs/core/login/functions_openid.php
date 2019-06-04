@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2007-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2007-2009 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/class/openid.class.php';
  * @param   int		$entitytotest   Number of instance (always 1 if module multicompany not enabled)
  * @return	string					Login if OK, '' if KO
  */
-function check_user_password_openid($usertotest,$passwordtotest,$entitytotest)
+function check_user_password_openid($usertotest, $passwordtotest, $entitytotest)
 {
     global $_POST,$db,$conf,$langs;
 
@@ -70,7 +70,7 @@ function check_user_password_openid($usertotest,$passwordtotest,$entitytotest)
         $openid = new SimpleOpenID();
         $openid->SetIdentity($_GET['openid_identity']);
         $openid_validation_result = $openid->ValidateWithServer();
-        if ($openid_validation_result == true)
+        if ($openid_validation_result === true)
         {
             // OK HERE KEY IS VALID
 
@@ -90,7 +90,7 @@ function check_user_password_openid($usertotest,$passwordtotest,$entitytotest)
                 }
             }
         }
-        else if($openid->IsError() == true)
+        elseif($openid->IsError() === true)
         {
             // ON THE WAY, WE GOT SOME ERROR
             $error = $openid->GetError();
@@ -103,7 +103,7 @@ function check_user_password_openid($usertotest,$passwordtotest,$entitytotest)
             return false;
         }
     }
-    else if ($_GET['openid_mode'] == 'cancel')
+    elseif ($_GET['openid_mode'] == 'cancel')
     {
         // User Canceled your Request
         //echo "USER CANCELED REQUEST";

@@ -58,8 +58,10 @@ class CompanyBankAccountTest extends PHPUnit_Framework_TestCase
 	 *
 	 * @return CompanyBankAccountTest
 	 */
-	function __construct()
+	public function __construct()
 	{
+		parent::__construct();
+
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
 		$this->savconf=$conf;
@@ -72,13 +74,13 @@ class CompanyBankAccountTest extends PHPUnit_Framework_TestCase
 		print "\n";
 	}
 
-	// Static methods
-  	public static function setUpBeforeClass()
+    // Static methods
+    public static function setUpBeforeClass()
     {
-    	global $conf,$user,$langs,$db;
-		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
+        global $conf,$user,$langs,$db;
+        $db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
 
-    	print __METHOD__."\n";
+        print __METHOD__."\n";
     }
 
     // tear down after class
@@ -233,5 +235,4 @@ class CompanyBankAccountTest extends PHPUnit_Framework_TestCase
         $this->assertLessThan($result, 0);
         return $localobject->id;
     }
-
 }

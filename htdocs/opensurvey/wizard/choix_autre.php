@@ -69,7 +69,7 @@ if (isset($_POST["confirmecreation"]))
 		}
 	}
 
-	$toutchoix=substr("$toutchoix",1);
+	$toutchoix=substr("$toutchoix", 1);
 	$_SESSION["toutchoix"]=$toutchoix;
 
 	//test de remplissage des cases
@@ -161,6 +161,6 @@ print '<a name=bas></a>'."\n";
 print '<br><br><br>'."\n";
 print '</div>'."\n";
 
+// End of page
 llxFooter();
-
 $db->close();

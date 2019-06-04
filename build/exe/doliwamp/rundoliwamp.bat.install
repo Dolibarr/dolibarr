@@ -3,7 +3,7 @@ REM Launch Dolibarr
 REM ---------------
 
 REM If no lock file, we call install process
-IF NOT EXIST dolibarr_documents\install.lock start "Dolibarr" "WAMPBROWSER" http://localhost:WAMPAPACHEPORT/dolibarr/install/
+IF NOT EXIST dolibarr_documents\install.lock start "WAMPBROWSER" http://localhost:WAMPAPACHEPORT/dolibarr/install/
 
 REM If lock file exists, we call home page
-IF EXIST dolibarr_documents\install.lock start "Dolibarr" "WAMPBROWSER" http://localhost:WAMPAPACHEPORT/dolibarr/
+IF EXIST dolibarr_documents\install.lock start "WAMPBROWSER" http://localhost:WAMPAPACHEPORT/dolibarr/

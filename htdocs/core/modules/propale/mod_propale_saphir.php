@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville        <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur         <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2007 Regis Houssin               <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2007 Regis Houssin               <regis.houssin@inodbox.com>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -33,9 +33,28 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/propale/modules_propale.php';
  */
 class mod_propale_saphir extends ModeleNumRefPropales
 {
-	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
-	var $error = '';
-	var $nom = 'Saphir';
+	/**
+     * Dolibarr version of the loaded document
+     * @var string
+     */
+	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+
+	/**
+     * @var string Error code (or message)
+     */
+    public $error = '';
+
+	/**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='Saphir';
+
+	/**
+	 * @var string model name
+	 */
+	public $name='Saphir';
 
 
     /**
@@ -43,9 +62,9 @@ class mod_propale_saphir extends ModeleNumRefPropales
      *
      *  @return     string      Texte descripif
      */
-	function info()
+	public function info()
     {
-    	global $conf,$langs;
+    	global $conf, $langs;
 
 		$langs->load("bills");
 
@@ -58,17 +77,17 @@ class mod_propale_saphir extends ModeleNumRefPropales
 		$texte.= '<input type="hidden" name="maskconstpropal" value="PROPALE_SAPHIR_MASK">';
 		$texte.= '<table class="nobordernopadding" width="100%">';
 
-		$tooltip=$langs->trans("GenericMaskCodes",$langs->transnoentities("Proposal"),$langs->transnoentities("Proposal"));
+		$tooltip=$langs->trans("GenericMaskCodes", $langs->transnoentities("Proposal"), $langs->transnoentities("Proposal"));
 		$tooltip.=$langs->trans("GenericMaskCodes2");
 		$tooltip.=$langs->trans("GenericMaskCodes3");
-		$tooltip.=$langs->trans("GenericMaskCodes4a",$langs->transnoentities("Proposal"),$langs->transnoentities("Proposal"));
+		$tooltip.=$langs->trans("GenericMaskCodes4a", $langs->transnoentities("Proposal"), $langs->transnoentities("Proposal"));
 		$tooltip.=$langs->trans("GenericMaskCodes5");
 
 		// Parametrage du prefix
 		$texte.= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskpropal" value="'.$conf->global->PROPALE_SAPHIR_MASK.'">',$tooltip,1,1).'</td>';
+		$texte.= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskpropal" value="'.$conf->global->PROPALE_SAPHIR_MASK.'">', $tooltip, 1, 1).'</td>';
 
-		$texte.= '<td align="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
+		$texte.= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
 
 		$texte.= '</tr>';
 
@@ -83,7 +102,7 @@ class mod_propale_saphir extends ModeleNumRefPropales
      *
      *  @return     string      Example
      */
-    function getExample()
+    public function getExample()
     {
      	global $conf,$langs,$mysoc;
 
@@ -91,7 +110,7 @@ class mod_propale_saphir extends ModeleNumRefPropales
     	$old_code_type=$mysoc->typent_code;
     	$mysoc->code_client='CCCCCCCCCC';
     	$mysoc->typent_code='TTTTTTTTTT';
-     	$numExample = $this->getNextValue($mysoc,'');
+     	$numExample = $this->getNextValue($mysoc, '');
 		$mysoc->code_client=$old_code_client;
 		$mysoc->typent_code=$old_code_type;
 
@@ -109,20 +128,14 @@ class mod_propale_saphir extends ModeleNumRefPropales
 	 * 	@param	Propal		$propal		Object commercial proposal
 	 *  @return string      			Value if OK, 0 if KO
 	 */
-	function getNextValue($objsoc,$propal)
+	public function getNextValue($objsoc, $propal)
 	{
 		global $db,$conf;
 
 		require_once DOL_DOCUMENT_ROOT .'/core/lib/functions2.lib.php';
 
-		$constant = 'PROPALE_SAPHIR_MASK_'.$propal->entity;
-
 		// On defini critere recherche compteur
-		if (! empty($conf->global->$constant)) {
-			$mask = $conf->global->$constant; // for multicompany proposal sharing
-		} else {
-			$mask = $conf->global->PROPALE_SAPHIR_MASK;
-		}
+		$mask = $conf->global->PROPALE_SAPHIR_MASK;
 
 		if (! $mask)
 		{
@@ -130,14 +143,13 @@ class mod_propale_saphir extends ModeleNumRefPropales
 			return 0;
 		}
 
-		// Use object entity ID
-		$entity = ((isset($propal->entity) && is_numeric($propal->entity)) ? $propal->entity : $conf->entity);
+		// Get entities
+		$entity = getEntity('proposalnumber', 1, $propal);
 
 		$date = $propal->date;
 
-		$numFinal=get_next_value($db,$mask,'propal','ref','',$objsoc,$date,'next',false,null,$entity);
+		$numFinal=get_next_value($db, $mask, 'propal', 'ref', '', $objsoc, $date, 'next', false, null, $entity);
 
 		return  $numFinal;
 	}
-
 }

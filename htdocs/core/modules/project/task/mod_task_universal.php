@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010 Regis Houssin  <regis.houssin@capnetworks.com>
+/* Copyright (C) 2010 Regis Houssin  <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,10 +30,28 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/project/task/modules_task.php';
  */
 class mod_task_universal extends ModeleNumRefTask
 {
-	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
-	var $error = '';
-	var $nom = 'Universal';
-	var $name = 'Universal';
+	/**
+     * Dolibarr version of the loaded document
+     * @var string
+     */
+	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+
+	/**
+     * @var string Error code (or message)
+     */
+    public $error = '';
+
+	/**
+	 * @var string
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='Universal';
+
+	/**
+	 * @var string name
+	 */
+	public $name='Universal';
 
 
     /**
@@ -41,12 +59,12 @@ class mod_task_universal extends ModeleNumRefTask
      *
      *  @return     string      Texte descripif
      */
-	function info()
+    public function info()
     {
     	global $conf,$langs;
 
-		$langs->load("projects");
-		$langs->load("admin");
+		// Load translation files required by the page
+        $langs->loadLangs(array("projects","admin"));
 
 		$form = new Form($this->db);
 
@@ -57,17 +75,17 @@ class mod_task_universal extends ModeleNumRefTask
 		$texte.= '<input type="hidden" name="maskconsttask" value="PROJECT_TASK_UNIVERSAL_MASK">';
 		$texte.= '<table class="nobordernopadding" width="100%">';
 
-		$tooltip=$langs->trans("GenericMaskCodes",$langs->transnoentities("Task"),$langs->transnoentities("Task"));
+		$tooltip=$langs->trans("GenericMaskCodes", $langs->transnoentities("Task"), $langs->transnoentities("Task"));
 		$tooltip.=$langs->trans("GenericMaskCodes2");
 		$tooltip.=$langs->trans("GenericMaskCodes3");
-		$tooltip.=$langs->trans("GenericMaskCodes4a",$langs->transnoentities("Task"),$langs->transnoentities("Task"));
+		$tooltip.=$langs->trans("GenericMaskCodes4a", $langs->transnoentities("Task"), $langs->transnoentities("Task"));
 		$tooltip.=$langs->trans("GenericMaskCodes5");
 
 		// Parametrage du prefix
 		$texte.= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="masktask" value="'.$conf->global->PROJECT_TASK_UNIVERSAL_MASK.'">',$tooltip,1,1).'</td>';
+		$texte.= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="masktask" value="'.$conf->global->PROJECT_TASK_UNIVERSAL_MASK.'">', $tooltip, 1, 1).'</td>';
 
-		$texte.= '<td align="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
+		$texte.= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
 
 		$texte.= '</tr>';
 
@@ -82,13 +100,13 @@ class mod_task_universal extends ModeleNumRefTask
      *
      *  @return     string      Example
      */
-    function getExample()
+    public function getExample()
     {
     	global $conf,$langs,$mysoc;
 
     	$old_code_client=$mysoc->code_client;
     	$mysoc->code_client='CCCCCCCCCC';
-    	$numExample = $this->getNextValue($mysoc,'');
+    	$numExample = $this->getNextValue($mysoc, '');
 		$mysoc->code_client=$old_code_client;
 
 		if (! $numExample)
@@ -105,7 +123,7 @@ class mod_task_universal extends ModeleNumRefTask
 	*  @param   Task		$object	    Object task
 	*  @return  string					Value if OK, 0 if KO
 	*/
-    function getNextValue($objsoc,$object)
+    public function getNextValue($objsoc, $object)
     {
 		global $db,$conf;
 
@@ -121,12 +139,13 @@ class mod_task_universal extends ModeleNumRefTask
 		}
 
 		$date=empty($object->date_c)?dol_now():$object->date_c;
-		$numFinal=get_next_value($db,$mask,'projet_task','ref','',(is_object($objsoc)?$objsoc->code_client:''),$date);
+		$numFinal=get_next_value($db, $mask, 'projet_task', 'ref', '', (is_object($objsoc)?$objsoc->code_client:''), $date);
 
 		return  $numFinal;
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Return next reference not yet used as a reference
      *
@@ -134,9 +153,9 @@ class mod_task_universal extends ModeleNumRefTask
      *  @param  Task		$object	    Object task
      *  @return string      			Next not used reference
      */
-    function project_get_num($objsoc=0,$object='')
+    public function project_get_num($objsoc = 0, $object = '')
     {
-        return $this->getNextValue($objsoc,$object);
+        // phpcs:enable
+        return $this->getNextValue($objsoc, $object);
     }
 }
-

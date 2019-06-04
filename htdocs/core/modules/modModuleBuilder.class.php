@@ -35,7 +35,7 @@ class modModuleBuilder extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
     	global $langs,$conf;
 
@@ -46,10 +46,10 @@ class modModuleBuilder extends DolibarrModules
 		// It is used to group modules in module setup page
         $this->family = "technic";
         // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-        $this->name = preg_replace('/^mod/i','',get_class($this));
+        $this->name = preg_replace('/^mod/i', '', get_class($this));
         $this->description = "A RAD (Rapid Application Development) tool to help developers to build their own module.";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-        $this->version = 'experimental';
+        $this->version = 'dolibarr';
         // Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
         // Name of image file used for this module.
@@ -60,7 +60,7 @@ class modModuleBuilder extends DolibarrModules
 
         // Config pages
         //-------------
-        $this->config_page_url = array('setup@modulebuilder');
+        $this->config_page_url = array('setup.php@modulebuilder');
 
         // Dependencies
         //-------------
@@ -98,6 +98,5 @@ class modModuleBuilder extends DolibarrModules
             'enabled'=>'$conf->modulebuilder->enabled && preg_match(\'/^(admintools|all)/\',$leftmenu) && ($user->admin || $conf->global->MODULEBUILDER_FOREVERYONE)',
             'target'=>'_modulebuilder',
             'user'=>0);
-
     }
 }

@@ -2,20 +2,17 @@
 EventReports=Gebeurtenisrapporten
 ToUserOfGroup=Aan elke gebruiker in groep
 ViewPerType=Overzicht per type
-AgendaAutoActionDesc=Stel hier de gebeurtenissen in waarvoor u wilt dat Dolibarr automatische een afspraak in de agenda creëert. Als er niets is aangevinkt (standaard), zullen alleen handmatige acties worden opgenomen in de agenda. Automatische tracking van acties zullen niet bewaard worden.
-EventRemindersByEmailNotEnabled=Herinneringen via email voor gebeurtenissen is niet ingeschakeld in de module setup van de Agenda
+EventRemindersByEmailNotEnabled=Herinneringen via email was niet ingeschakeld in %s van module setup.
 NewCompanyToDolibarr=Derde %s aangemaakt
 ContractValidatedInDolibarr=Contract %s goedgekeurd
+CONTRACT_DELETEInDolibarr=Contract %s geannuleerd
 MemberModifiedInDolibarr=Lid %s werd aangepast
 MemberResiliatedInDolibarr=Lid %s verwijderd
-MemberSubscriptionAddedInDolibarr=Abonnement %s voor lid %s toegevoegd
 MemberSubscriptionModifiedInDolibarr=Abonnement %s voor lid %s aangepast
-MemberSubscriptionDeletedInDolibarr=Abonnement %s voor lid %s verwijderd
 ShipmentValidatedInDolibarr=Shipment %s goedgekeurd
 ShipmentClassifyClosedInDolibarr=Verzending %s werd geclassificeerd als gefactureerd
 ShipmentUnClassifyCloseddInDolibarr=Verzending %s werd geclassificieerd als opnieuw geopend
 ShipmentDeletedInDolibarr=Shipment %s gewist
-ContractSentByEMail=Contract %s verstuurd via Email
 ProposalDeleted=Offerte verwijderd
 EXPENSE_REPORT_CREATEInDolibarr=Onkostenrapport %s aangemaakt
 EXPENSE_REPORT_VALIDATEInDolibarr=Onkostenrapport %s gevalideerd
@@ -30,5 +27,4 @@ AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> om de uitvoer te beperken 
 AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> om automatische gebeurtenis uit te sluiten.
 AgendaShowBirthdayEvents=Toon verjaardagen van contacten
 AgendaHideBirthdayEvents=Verberg verjaardagen van contacten
-AgendaExtNb=Kalender nr. %s
 ConfirmCloneEvent=Weet u zeker als u event <b>%s</b> wilt klonen?

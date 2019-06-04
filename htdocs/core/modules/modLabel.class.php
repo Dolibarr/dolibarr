@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007-2009 Regis Houssin       <regis.houssin@capnetworks.com>
+/* Copyright (C) 2007-2009 Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2008      Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -38,15 +38,15 @@ class modLabel extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		$this->db = $db;
 		$this->numero = 60;
 
 		$this->family = "technic";
-		$this->module_position = 80;
+		$this->module_position = '75';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = preg_replace('/^mod/i','',get_class($this));
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "Gestion des etiquettes";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'development';
@@ -90,7 +90,6 @@ class modLabel extends DolibarrModules
 		$this->rights[4][1] = 'Supprimer les etiquettes'; // libelle de la permission
 		$this->rights[4][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[4][4] = 'supprimer';
-
 	}
 
 	/**
@@ -101,13 +100,13 @@ class modLabel extends DolibarrModules
      *      @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
 	 */
-	function init($options='')
-	{
+    public function init($options = '')
+    {
 		// Permissions
 		$this->remove($options);
 
 		$sql = array();
 
-		return $this->_init($sql,$options);
-	}
+		return $this->_init($sql, $options);
+    }
 }

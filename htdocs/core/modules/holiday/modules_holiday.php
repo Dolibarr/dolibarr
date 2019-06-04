@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2011      Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2013      Philippe Grand	    <philippe.grand@atoo-net.com>
@@ -34,48 +34,56 @@
 
 
 /**
- *	Parent class to manage intervention document templates
+ *	Parent class to manage holidays document templates
  */
 abstract class ModelePDFHoliday extends CommonDocGenerator
 {
-	var $error='';
-
-
 	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    /**
 	 *	Return list of active generation modules
 	 *
-     *  @param	DoliDB	$db     			Database handler
+     *  @param  DoliDB  $db     			Database handler
      *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
-	 */
-	static function liste_modeles($db,$maxfilenamelength=0)
+     */
+	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
+        // phpcs:enable
 		global $conf;
 
-		$type='contract';
-		$liste=array();
+		$type = 'holiday';
+		$list = array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste=getListOfModels($db,$type,$maxfilenamelength);
+		$list = getListOfModels($db, $type, $maxfilenamelength);
 
-		return $liste;
+		return $list;
 	}
 }
 
 
 /**
- * Parent class for all contract numbering modules
+ * Parent class for all holidays numbering modules
  */
 class ModelNumRefHolidays
 {
-	var $error='';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 	/**
 	 *	Return if a module can be used or not
 	 *
 	 * 	@return		boolean     true if module can be used
 	 */
-	function isEnabled()
+	public function isEnabled()
 	{
 		return true;
 	}
@@ -85,7 +93,7 @@ class ModelNumRefHolidays
 	 *
 	 *	@return     string      text description
 	 */
-	function info()
+	public function info()
 	{
 		global $langs;
 		$langs->load("holidays");
@@ -97,7 +105,7 @@ class ModelNumRefHolidays
 	 *
 	 *	@return     string      Example
 	 */
-	function getExample()
+	public function getExample()
 	{
 		global $langs;
 		$langs->load("holidays");
@@ -109,7 +117,7 @@ class ModelNumRefHolidays
 	 *
 	 *	@return		boolean		false if conflict, true if ok
 	 */
-	function canBeActivated()
+	public function canBeActivated()
 	{
 		return true;
 	}
@@ -121,7 +129,7 @@ class ModelNumRefHolidays
 	 *	@param	Object		$contract	contract object
 	 *	@return	string					Value
 	 */
-	function getNextValue($objsoc, $contract)
+	public function getNextValue($objsoc, $contract)
 	{
 		global $langs;
 		return $langs->trans("NotAvailable");
@@ -132,15 +140,15 @@ class ModelNumRefHolidays
 	 *
 	 *	@return     string      Value
 	 */
-	function getVersion()
+	public function getVersion()
 	{
 		global $langs;
 		$langs->load("admin");
 
 		if ($this->version == 'development') return $langs->trans("VersionDevelopment");
-		if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
-		if ($this->version == 'dolibarr') return DOL_VERSION;
-		if ($this->version) return $this->version;
-		return $langs->trans("NotAvailable");
+		elseif ($this->version == 'experimental') return $langs->trans("VersionExperimental");
+		elseif ($this->version == 'dolibarr') return DOL_VERSION;
+		elseif ($this->version) return $this->version;
+		else return $langs->trans("NotAvailable");
 	}
 }

@@ -61,9 +61,11 @@ class WebservicesUserTest extends PHPUnit_Framework_TestCase
      *
      * @return DateLibTest
      */
-    function __construct()
+    public function __construct()
     {
-        //$this->sharedFixture
+    	parent::__construct();
+
+    	//$this->sharedFixture
         global $conf,$user,$langs,$db;
         $this->savconf=$conf;
         $this->savuser=$user;
@@ -159,7 +161,7 @@ class WebservicesUserTest extends PHPUnit_Framework_TestCase
         $parameters = array('authentication'=>$authentication,'id'=>0,'ref'=>'admin');
         print __METHOD__."Call method ".$WS_METHOD."\n";
         try {
-            $result = $soapclient->call($WS_METHOD,$parameters,$ns,'');
+            $result = $soapclient->call($WS_METHOD, $parameters, $ns, '');
         } catch(SoapFault $exception) {
             echo $exception;
             $result=0;
@@ -186,7 +188,7 @@ class WebservicesUserTest extends PHPUnit_Framework_TestCase
         $parameters = array('authentication'=>$authentication,'id'=>0,'ref'=>'refthatdoesnotexists');
         print __METHOD__."Call method ".$WS_METHOD."\n";
         try {
-            $result = $soapclient->call($WS_METHOD,$parameters,$ns,'');
+            $result = $soapclient->call($WS_METHOD, $parameters, $ns, '');
         } catch(SoapFault $exception) {
             echo $exception;
             $result=0;
@@ -206,5 +208,4 @@ class WebservicesUserTest extends PHPUnit_Framework_TestCase
 
         return $result;
     }
-
 }

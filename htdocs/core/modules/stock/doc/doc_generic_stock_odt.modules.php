@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010-2012 	Laurent Destailleur <eldy@stocks.sourceforge.net>
  * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
 *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -36,10 +37,23 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/doc.lib.php';
  */
 class doc_generic_stock_odt extends ModelePDFStock
 {
-	var $emetteur;	// Objet societe qui emet
+	/**
+	 * Issuer
+	 * @var Societe
+	 */
+	public $emetteur;
 
-	var $phpmin = array(5,2,0);	// Minimum version of PHP required by module
-	var $version = 'dolibarr';
+    /**
+     * @var array Minimum version of PHP required by module.
+     * e.g.: PHP ≥ 5.5 = array(5, 5)
+     */
+	public $phpmin = array(5, 5);
+
+	/**
+     * Dolibarr version of the loaded document
+     * @var string
+     */
+	public $version = 'dolibarr';
 
 
 	/**
@@ -47,12 +61,12 @@ class doc_generic_stock_odt extends ModelePDFStock
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
-		global $conf,$langs,$mysoc;
+		global $conf, $langs, $mysoc;
 
-		$langs->load("main");
-		$langs->load("companies");
+		// Load translation files required by the page
+        $langs->loadLangs(array("main","companies"));
 
 		$this->db = $db;
 		$this->name = "ODT templates";
@@ -82,7 +96,7 @@ class doc_generic_stock_odt extends ModelePDFStock
 
 		// Recupere emetteur
 		$this->emetteur=$mysoc;
-		if (! $this->emetteur->country_code) $this->emetteur->country_code=substr($langs->defaultlang,-2);    // By default if not defined
+		if (! $this->emetteur->country_code) $this->emetteur->country_code=substr($langs->defaultlang, -2);    // By default if not defined
 	}
 
 
@@ -92,12 +106,12 @@ class doc_generic_stock_odt extends ModelePDFStock
 	 *	@param	Translate	$langs      Lang object to use for output
 	 *	@return string       			Description
 	 */
-	function info($langs)
+	public function info($langs)
 	{
-		global $conf,$langs;
+		global $conf, $langs;
 
-		$langs->load("companies");
-		$langs->load("errors");
+		// Load translation files required by the page
+        $langs->loadLangs(array("errors","companies"));
 
 		$form = new Form($this->db);
 
@@ -117,20 +131,20 @@ class doc_generic_stock_odt extends ModelePDFStock
 		// List of directories area
 		$texte.= '<tr><td>';
 		$texttitle=$langs->trans("ListOfDirectories");
-		$listofdir=explode(',',preg_replace('/[\r\n]+/',',',trim($conf->global->STOCK_ADDON_PDF_ODT_PATH)));
+		$listofdir=explode(',', preg_replace('/[\r\n]+/', ',', trim($conf->global->STOCK_ADDON_PDF_ODT_PATH)));
 		$listoffiles=array();
 		foreach($listofdir as $key=>$tmpdir)
 		{
 			$tmpdir=trim($tmpdir);
-			$tmpdir=preg_replace('/DOL_DATA_ROOT/',DOL_DATA_ROOT,$tmpdir);
+			$tmpdir=preg_replace('/DOL_DATA_ROOT/', DOL_DATA_ROOT, $tmpdir);
 			if (! $tmpdir) {
 				unset($listofdir[$key]); continue;
 			}
-			if (! is_dir($tmpdir)) $texttitle.=img_warning($langs->trans("ErrorDirNotFound",$tmpdir),0);
+			if (! is_dir($tmpdir)) $texttitle.=img_warning($langs->trans("ErrorDirNotFound", $tmpdir), 0);
 			else
 			{
-				$tmpfiles=dol_dir_list($tmpdir,'files',0,'\.(ods|odt)');
-				if (count($tmpfiles)) $listoffiles=array_merge($listoffiles,$tmpfiles);
+				$tmpfiles=dol_dir_list($tmpdir, 'files', 0, '\.(ods|odt)');
+				if (count($tmpfiles)) $listoffiles=array_merge($listoffiles, $tmpfiles);
 			}
 		}
 		$texthelp=$langs->trans("ListOfDirectoriesForModelGenODT");
@@ -138,7 +152,7 @@ class doc_generic_stock_odt extends ModelePDFStock
 		$texthelp.='<br>'.$langs->trans("FollowingSubstitutionKeysCanBeUsed").'<br>';
 		$texthelp.=$langs->transnoentitiesnoconv("FullListOnOnlineDocumentation");    // This contains an url, we don't modify it
 
-		$texte.= $form->textwithpicto($texttitle,$texthelp,1,'help','',1);
+		$texte.= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1);
 		$texte.= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
 		$texte.= '<textarea class="flat" cols="60" name="value1">';
 		$texte.=$conf->global->STOCK_ADDON_PDF_ODT_PATH;
@@ -191,6 +205,7 @@ class doc_generic_stock_odt extends ModelePDFStock
 		return $texte;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Function to build a document on disk using the generic odt module.
 	 *
@@ -202,8 +217,9 @@ class doc_generic_stock_odt extends ModelePDFStock
 	 *  @param		int			$hideref			Do not show ref
 	 *	@return		int         					1 if OK, <=0 if KO
 	 */
-	function write_file($object,$outputlangs,$srctemplatepath,$hidedetails=0,$hidedesc=0,$hideref=0)
+	public function write_file($object, $outputlangs, $srctemplatepath, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
+        // phpcs:enable
 		global $stock,$langs,$conf,$mysoc,$hookmanager,$user;
 
 		if (empty($srctemplatepath))
@@ -225,10 +241,9 @@ class doc_generic_stock_odt extends ModelePDFStock
 		$sav_charset_output=$outputlangs->charset_output;
 		$outputlangs->charset_output='UTF-8';
 
-		$outputlangs->load("main");
-		$outputlangs->load("dict");
-		$outputlangs->load("companies");
-		$outputlangs->load("bills");
+		// Load translation files required by the page
+		$outputlangs->loadLangs(array("main", "dict", "companies", "bills"));
+
 		if ($conf->produit->dir_output)
 		{
 			// If $object is id instead of object
@@ -239,7 +254,7 @@ class doc_generic_stock_odt extends ModelePDFStock
 				$result=$object->fetch($id);
 				if ($result < 0)
 				{
-					dol_print_error($this->db,$object->error);
+					dol_print_error($this->db, $object->error);
 					return -1;
 				}
 			}
@@ -249,14 +264,14 @@ class doc_generic_stock_odt extends ModelePDFStock
 
 			$dir = $conf->produit->dir_output;
 			$objectref = dol_sanitizeFileName($object->ref);
-			if (! preg_match('/specimen/i',$objectref)) $dir.= "/" . $objectref;
+			if (! preg_match('/specimen/i', $objectref)) $dir.= "/" . $objectref;
 			$file = $dir . "/" . $objectref . ".odt";
 
 			if (! file_exists($dir))
 			{
 				if (dol_mkdir($dir) < 0)
 				{
-					$this->error=$langs->transnoentities("ErrorCanNotCreateDir",$dir);
+					$this->error=$langs->transnoentities("ErrorCanNotCreateDir", $dir);
 					return -1;
 				}
 			}
@@ -265,9 +280,9 @@ class doc_generic_stock_odt extends ModelePDFStock
 			{
 				//print "srctemplatepath=".$srctemplatepath;	// Src filename
 				$newfile=basename($srctemplatepath);
-				$newfiletmp=preg_replace('/\.od(t|s)/i','',$newfile);
-				$newfiletmp=preg_replace('/template_/i','',$newfiletmp);
-				$newfiletmp=preg_replace('/modele_/i','',$newfiletmp);
+				$newfiletmp=preg_replace('/\.od(t|s)/i', '', $newfile);
+				$newfiletmp=preg_replace('/template_/i', '', $newfiletmp);
+				$newfiletmp=preg_replace('/modele_/i', '', $newfiletmp);
 
 				$newfiletmp=$objectref.'_'.$newfiletmp;
 
@@ -277,7 +292,7 @@ class doc_generic_stock_odt extends ModelePDFStock
 				{
 				    $format=$conf->global->MAIN_DOC_USE_TIMING;
 				    if ($format == '1') $format='%Y%m%d%H%M%S';
-					$filename=$newfiletmp.'-'.dol_print_date(dol_now(),$format).'.'.$newfileformat;
+					$filename=$newfiletmp.'-'.dol_print_date(dol_now(), $format).'.'.$newfileformat;
 				}
 				else
 				{
@@ -294,7 +309,7 @@ class doc_generic_stock_odt extends ModelePDFStock
 
 				// If CUSTOMER contact defined on stock, we use it
 				$usecontact=false;
-				$arrayidcontact=$object->getIdContact('external','CUSTOMER');
+				$arrayidcontact=$object->getIdContact('external', 'CUSTOMER');
 				if (count($arrayidcontact) > 0)
 				{
 					$usecontact=true;
@@ -306,12 +321,13 @@ class doc_generic_stock_odt extends ModelePDFStock
 				if (! empty($usecontact))
 				{
 					// On peut utiliser le nom de la societe du contact
-					if (! empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) $socobject = $object->contact;
-					else {
-                        			$socobject = $object->thirdparty;
-                        			// if we have a CUSTOMER contact and we dont use it as recipient we store the contact object for later use
-                        			$contactobject = $object->contact;
-                    			}
+					if (! empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) {
+                        $socobject = $object->contact;
+                    } else {
+                        $socobject = $object->thirdparty;
+                        // if we have a CUSTOMER contact and we dont use it as recipient we store the contact object for later use
+                        $contactobject = $object->contact;
+                    }
 				}
 				else
 				{
@@ -328,32 +344,33 @@ class doc_generic_stock_odt extends ModelePDFStock
 				complete_substitutions_array($substitutionarray, $langs, $object);
 				// Call the ODTSubstitution hook
 				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$substitutionarray);
-				$reshook=$hookmanager->executeHooks('ODTSubstitution',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+				$reshook=$hookmanager->executeHooks('ODTSubstitution', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
 
 				// Line of free text
 				$newfreetext='';
 				$paramfreetext='stock_FREE_TEXT';
 				if (! empty($conf->global->$paramfreetext))
 				{
-					$newfreetext=make_substitutions($conf->global->$paramfreetext,$substitutionarray);
+					$newfreetext=make_substitutions($conf->global->$paramfreetext, $substitutionarray);
 				}
 
 				// Open and load template
 				require_once ODTPHP_PATH.'odf.php';
 				try {
-					$odfHandler = new odf(
-						$srctemplatepath,
-						array(
-						'PATH_TO_TMP'	  => $conf->produit->dir_temp,
-						'ZIP_PROXY'		  => 'PclZipProxy',	// PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
-						'DELIMITER_LEFT'  => '{',
-						'DELIMITER_RIGHT' => '}'
+                    $odfHandler = new odf(
+                        $srctemplatepath,
+					    array(
+						    'PATH_TO_TMP'	  => $conf->produit->dir_temp,
+						    'ZIP_PROXY'		  => 'PclZipProxy',	// PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
+						    'DELIMITER_LEFT'  => '{',
+						    'DELIMITER_RIGHT' => '}'
 						)
 					);
 				}
 				catch(Exception $e)
 				{
 					$this->error=$e->getMessage();
+					dol_syslog($e->getMessage(), LOG_INFO);
 					return -1;
 				}
 				// After construction $odfHandler->contentXml contains content and
@@ -368,33 +385,34 @@ class doc_generic_stock_odt extends ModelePDFStock
 				try {
 					$odfHandler->setVars('free_text', $newfreetext, true, 'UTF-8');
 				}
-				catch(OdfException $e)
+				catch (OdfException $e)
 				{
+					dol_syslog($e->getMessage(), LOG_INFO);
 				}
 
 				// Define substitution array
 				$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
 				$array_object_from_properties = $this->get_substitutionarray_each_var_object($object, $outputlangs);
 				//$array_objet=$this->get_substitutionarray_object($object,$outputlangs);
-				$array_user=$this->get_substitutionarray_user($user,$outputlangs);
-				$array_soc=$this->get_substitutionarray_mysoc($mysoc,$outputlangs);
-				$array_thirdparty=$this->get_substitutionarray_thirdparty($socobject,$outputlangs);
+				$array_user=$this->get_substitutionarray_user($user, $outputlangs);
+				$array_soc=$this->get_substitutionarray_mysoc($mysoc, $outputlangs);
+				$array_thirdparty=$this->get_substitutionarray_thirdparty($socobject, $outputlangs);
 				$array_other=$this->get_substitutionarray_other($outputlangs);
 				// retrieve contact information for use in stock as contact_xxx tags
 				$array_thirdparty_contact = array();
-				if ($usecontact && is_object($contactobject)) $array_thirdparty_contact=$this->get_substitutionarray_contact($contactobject,$outputlangs,'contact');
+				if ($usecontact && is_object($contactobject)) $array_thirdparty_contact=$this->get_substitutionarray_contact($contactobject, $outputlangs, 'contact');
 
-				$tmparray = array_merge($substitutionarray,$array_object_from_properties,$array_user,$array_soc,$array_thirdparty,$array_other,$array_thirdparty_contact);
+				$tmparray = array_merge($substitutionarray, $array_object_from_properties, $array_user, $array_soc, $array_thirdparty, $array_other, $array_thirdparty_contact);
 				complete_substitutions_array($tmparray, $outputlangs, $object);
 
 				// Call the ODTSubstitution hook
 				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$tmparray);
-				$reshook=$hookmanager->executeHooks('ODTSubstitution',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+				$reshook=$hookmanager->executeHooks('ODTSubstitution', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
 
 				foreach($tmparray as $key=>$value)
 				{
 					try {
-						if (preg_match('/logo$/',$key)) // Image
+						if (preg_match('/logo$/', $key)) // Image
 						{
 							if (file_exists($value)) $odfHandler->setImage($key, $value);
 							else $odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
@@ -404,8 +422,9 @@ class doc_generic_stock_odt extends ModelePDFStock
 							$odfHandler->setVars($key, $value, true, 'UTF-8');
 						}
 					}
-					catch(OdfException $e)
+					catch (OdfException $e)
 					{
+                        dol_syslog($e->getMessage(), LOG_INFO);
 					}
 				}
 				// Replace tags of lines
@@ -419,7 +438,7 @@ class doc_generic_stock_odt extends ModelePDFStock
 							complete_substitutions_array($array_lines, $outputlangs, $object, $supplierprice, "completesubstitutionarray_lines");
 							// Call the ODTSubstitutionLine hook
 							$parameters=array('odfHandler'=>&$odfHandler,'file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$array_lines,'line'=>$supplierprice);
-							$reshook=$hookmanager->executeHooks('ODTSubstitutionLine',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+							$reshook=$hookmanager->executeHooks('ODTSubstitutionLine', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
 							foreach($array_lines as $key => $val)
 							{
 								try
@@ -428,9 +447,11 @@ class doc_generic_stock_odt extends ModelePDFStock
 								}
 								catch(OdfException $e)
 								{
+									dol_syslog($e->getMessage(), LOG_INFO);
 								}
 								catch(SegmentException $e)
 								{
+									dol_syslog($e->getMessage(), LOG_INFO);
 								}
 							}
 							$listlines->merge();
@@ -454,32 +475,35 @@ class doc_generic_stock_odt extends ModelePDFStock
 					}
 					catch(OdfException $e)
 					{
+                        dol_syslog($e->getMessage(), LOG_INFO);
 					}
 				}
 
 				// Call the beforeODTSave hook
 				$parameters=array('odfHandler'=>&$odfHandler,'file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
-				$reshook=$hookmanager->executeHooks('beforeODTSave',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+				$reshook=$hookmanager->executeHooks('beforeODTSave', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
 
 				// Write new file
 				if (!empty($conf->global->MAIN_ODT_AS_PDF)) {
 					try {
 						$odfHandler->exportAsAttachedPDF($file);
-					}catch (Exception $e){
+					} catch (Exception $e) {
 						$this->error=$e->getMessage();
+                        dol_syslog($e->getMessage(), LOG_INFO);
 						return -1;
 					}
 				}
 				else {
 					try {
 					$odfHandler->saveToDisk($file);
-					}catch (Exception $e){
+					} catch (Exception $e) {
 						$this->error=$e->getMessage();
+                        dol_syslog($e->getMessage(), LOG_INFO);
 						return -1;
 					}
 				}
 
-				$reshook=$hookmanager->executeHooks('afterODTCreation',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+				$reshook=$hookmanager->executeHooks('afterODTCreation', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
 
 				if (! empty($conf->global->MAIN_UMASK))
 					@chmod($file, octdec($conf->global->MAIN_UMASK));
@@ -492,13 +516,11 @@ class doc_generic_stock_odt extends ModelePDFStock
 			}
 			else
 			{
-				$this->error=$langs->transnoentities("ErrorCanNotCreateDir",$dir);
+				$this->error=$langs->transnoentities("ErrorCanNotCreateDir", $dir);
 				return -1;
 			}
 		}
 
 		return -1;
 	}
-
 }
-

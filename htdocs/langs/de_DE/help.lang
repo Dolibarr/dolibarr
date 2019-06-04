@@ -5,9 +5,9 @@ RemoteControlSupport=Fernwartungs-Support
 OtherSupport=Weitere Unterstützung
 ToSeeListOfAvailableRessources=Hier sehen Sie die verfügbaren Ressourcen:
 HelpCenter=Hilfe-Center
-DolibarrHelpCenter=Hilfe- und Supportcenter
-ToGoBackToDolibarr=Andernfalls klicken Sie <a href="%s">hier um zum System</a> zurückzukehren
-TypeOfSupport=Support-Typ
+DolibarrHelpCenter=Dolibarr Help and Support Center
+ToGoBackToDolibarr=Otherwise, <a href="%s">click here to continue to use Dolibarr</a>.
+TypeOfSupport=Type of support
 TypeSupportCommunauty=Community (kostenlos)
 TypeSupportCommercial=Kommerzieller Support
 TypeOfHelp=Hilfe-Typ
@@ -15,12 +15,9 @@ NeedHelpCenter=Benötigen Sie Hilfe oder Unterstützung?
 Efficiency=Effizienz
 TypeHelpOnly=Ausschließlich Hilfe
 TypeHelpDev=Hilfe & Entwicklung
-TypeHelpDevForm=Hilfe&Entwicklung&Ausbildung
-ToGetHelpGoOnSparkAngels1=Einige Unternehmen bieten eine schnelle (manchmal prompte) und effiziente Online-Unterstützung durch Fernwartung. Solche Helfer finden Sie auf dieser Website <b>%s</b>
-ToGetHelpGoOnSparkAngels3=Über einen Klick auf diese Schaltfläche erhalten Sie eine Liste aller verfügbaren Trainer für das System
-ToGetHelpGoOnSparkAngels2=Gelegentlich ist zum Zeitpunkt Ihrer Suche vielleicht kein Partner verfügbar. Denken Sie daran, den Filter auf "Alle verfügbaren" zu setzen. So können Sie mehr Anfragen stellen.
-BackToHelpCenter=Klicken Sie hier um zur <a href="%s">Hilfeseite</a> zurückzukehren.
-LinkToGoldMember=Sie können einen, vom System für Ihre Sprache (%s) automatisch ausgewählten, Trainer über einen Klick auf sein Widget kontaktieren (Status und Maximalpreis aktualisieren sich automatisch):
+TypeHelpDevForm=Help+Development+Training
+BackToHelpCenter=Otherwise, <a href="%s">go back to Help center home page</a>.
+LinkToGoldMember=You can call one of the trainers preselected by Dolibarr for your language (%s) by clicking their Widget (status and maximum price are automatically updated):
 PossibleLanguages=Unterstützte Sprachen
-SubscribeToFoundation=Helfen auch Sie dem Dolibarr Projekt und unterstützen uns mit einer Abo-Spende.
+SubscribeToFoundation=Help the Dolibarr project, subscribe to the foundation
 SeeOfficalSupport=Für offizielle Dolibarr Unterstützung in Ihrer Sprache: br><b><a href="%s" target="_blank">%s</a></b>

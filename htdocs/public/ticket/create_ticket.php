@@ -33,6 +33,9 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/actions_ticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ticket.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
@@ -109,11 +112,11 @@ if ($action == 'create_ticket' && GETPOST('add_ticket')) {
         }
     }
 
-    if (!GETPOST("subject","none")) {
+    if (!GETPOST("subject", "none")) {
         $error++;
         array_push($object->errors, $langs->trans("ErrorFieldRequired", $langs->transnoentities("Subject")));
         $action = '';
-    } elseif (!GETPOST("message","none")) {
+    } elseif (!GETPOST("message", "none")) {
         $error++;
         array_push($object->errors, $langs->trans("ErrorFieldRequired", $langs->transnoentities("message")));
         $action = '';
@@ -131,8 +134,8 @@ if ($action == 'create_ticket' && GETPOST('add_ticket')) {
 
         $object->track_id = generate_random_id(16);
 
-        $object->subject = GETPOST("subject","none");
-        $object->message = GETPOST("message","none");
+        $object->subject = GETPOST("subject", "none");
+        $object->message = GETPOST("message", "none");
         $object->origin_email = $origin_email;
 
         $object->type_code = GETPOST("type_code", 'az09');
@@ -213,7 +216,7 @@ if ($action == 'create_ticket' && GETPOST('add_ticket')) {
                 $message .= dol_nl2br($infos_new_ticket);
                 $message .= $conf->global->TICKET_MESSAGE_MAIL_SIGNATURE ? $conf->global->TICKET_MESSAGE_MAIL_SIGNATURE : $langs->transnoentities('TicketMessageMailSignatureText');
 
-                $sendto = GETPOST('email','alpha');
+                $sendto = GETPOST('email', 'alpha');
 
                 $from = $conf->global->MAIN_INFO_SOCIETE_NOM . '<' . $conf->global->TICKET_NOTIFICATION_EMAIL_FROM . '>';
                 $replyto = $from;
@@ -226,12 +229,9 @@ if ($action == 'create_ticket' && GETPOST('add_ticket')) {
                 }
                 include_once DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php';
                 $mailfile = new CMailFile($subject, $sendto, $from, $message, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, -1);
-                if ($mailfile->error || $mailfile->errors) 
-                {
+                if ($mailfile->error || $mailfile->errors) {
                     setEventMessages($mailfile->error, $mailfile->errors, 'errors');
-                } 
-                else 
-                {
+                } else {
                     $result = $mailfile->sendfile();
                 }
                 if (!empty($conf->global->TICKET_DISABLE_MAIL_AUTOCOPY_TO)) {
@@ -290,12 +290,9 @@ if ($action == 'create_ticket' && GETPOST('add_ticket')) {
 	                }
 	                include_once DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php';
 	                $mailfile = new CMailFile($subject, $sendto, $from, $message_admin, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, -1);
-	                if ($mailfile->error || $mailfile->errors) 
-                    {
+	                if ($mailfile->error || $mailfile->errors) {
                         setEventMessages($mailfile->error, $mailfile->errors, 'errors');
-                    } 
-	                else 
-	                {
+                    } else {
 	                    $result = $mailfile->sendfile();
 	                }
 	                if (!empty($conf->global->TICKET_DISABLE_MAIL_AUTOCOPY_TO)) {
@@ -316,9 +313,7 @@ if ($action == 'create_ticket' && GETPOST('add_ticket')) {
 
             setEventMessages($langs->trans('YourTicketSuccessfullySaved'), null, 'mesgs');
         }
-    } 
-    else 
-    {
+    } else {
         setEventMessages($object->error, $object->errors, 'errors');
     }
 }
@@ -374,7 +369,8 @@ if ($action != "infos_success") {
 print '</div>';
 
 // End of page
+htmlPrintOnlinePaymentFooter($mysoc, $langs, 1, $suffix, $object);
 
-llxFooter('');
+llxFooter('', 'public');
 
 $db->close();

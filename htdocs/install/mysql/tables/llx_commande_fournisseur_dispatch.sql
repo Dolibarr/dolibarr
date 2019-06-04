@@ -25,6 +25,8 @@ create table llx_commande_fournisseur_dispatch
   fk_commande    integer,
   fk_product     integer,
   fk_commandefourndet integer,
+  fk_projet  	 integer  DEFAULT NULL,
+  fk_reception 	 integer  DEFAULT NULL,
   qty            float,              -- qty
   fk_entrepot    integer,
   fk_user        integer,

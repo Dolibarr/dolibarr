@@ -59,9 +59,11 @@ class BankAccountTest extends PHPUnit_Framework_TestCase
      *
      * @return BankAccountTest
      */
-    function __construct()
+    public function __construct()
     {
-        //$this->sharedFixture
+    	parent::__construct();
+
+    	//$this->sharedFixture
         global $conf,$user,$langs,$db;
         $this->savconf=$conf;
         $this->savuser=$user;
@@ -220,5 +222,4 @@ class BankAccountTest extends PHPUnit_Framework_TestCase
         $this->assertLessThan($result, 0);
         return $result;
     }
-
 }

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville         <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur          <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin                <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin                <regis.houssin@inodbox.com>
  * Copyright (C) 2008      Raphael Bertrand (Resultic)  <raphael.bertrand@resultic.fr>
  * Copyright (C) 2013      Juanjo Menent				<jmenent@2byte.es>
  *
@@ -32,9 +32,28 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/fichinter/modules_fichinter.php';
  */
 class mod_arctic extends ModeleNumRefFicheinter
 {
-	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
-	var $error = '';
-	var $nom = 'arctic';
+    /**
+     * Dolibarr version of the loaded document
+     * @var string
+     */
+	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+
+	/**
+	 * @var string Error message
+	 */
+	public $error = '';
+
+	/**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='arctic';
+
+	/**
+	 * @var string model name
+	 */
+	public $name='arctic';
 
 
 	/**
@@ -42,9 +61,9 @@ class mod_arctic extends ModeleNumRefFicheinter
      *
      *  @return     string      Texte descripif
      */
-	function info()
+    public function info()
     {
-    	global $conf,$langs;
+    	global $conf, $langs;
 
 		$langs->load("bills");
 
@@ -57,17 +76,17 @@ class mod_arctic extends ModeleNumRefFicheinter
 		$texte.= '<input type="hidden" name="maskconst" value="FICHINTER_ARTIC_MASK">';
 		$texte.= '<table class="nobordernopadding" width="100%">';
 
-		$tooltip=$langs->trans("GenericMaskCodes",$langs->transnoentities("InterventionCard"),$langs->transnoentities("InterventionCard"));
+		$tooltip=$langs->trans("GenericMaskCodes", $langs->transnoentities("InterventionCard"), $langs->transnoentities("InterventionCard"));
 		$tooltip.=$langs->trans("GenericMaskCodes2");
 		$tooltip.=$langs->trans("GenericMaskCodes3");
-		$tooltip.=$langs->trans("GenericMaskCodes4a",$langs->transnoentities("InterventionCard"),$langs->transnoentities("InterventionCard"));
+		$tooltip.=$langs->trans("GenericMaskCodes4a", $langs->transnoentities("InterventionCard"), $langs->transnoentities("InterventionCard"));
 		$tooltip.=$langs->trans("GenericMaskCodes5");
 
 		// Parametrage du prefix
 		$texte.= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskvalue" value="'.$conf->global->FICHINTER_ARTIC_MASK.'">',$tooltip,1,1).'</td>';
+		$texte.= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskvalue" value="'.$conf->global->FICHINTER_ARTIC_MASK.'">', $tooltip, 1, 1).'</td>';
 
-		$texte.= '<td align="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
+		$texte.= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
 
 		$texte.= '</tr>';
 
@@ -82,13 +101,13 @@ class mod_arctic extends ModeleNumRefFicheinter
      *
      * @return     string      Example
      */
-    function getExample()
+    public function getExample()
     {
      	global $conf,$langs,$mysoc;
 
     	$old_code_client=$mysoc->code_client;
     	$mysoc->code_client='CCCCCCCCCC';
-     	$numExample = $this->getNextValue($mysoc,'');
+     	$numExample = $this->getNextValue($mysoc, '');
 		$mysoc->code_client=$old_code_client;
 
 		if (! $numExample)
@@ -105,13 +124,13 @@ class mod_arctic extends ModeleNumRefFicheinter
 	 *  @param  Object		$object		Object we need next value for
 	 *  @return string      			Value if KO, <0 if KO
 	 */
-    function getNextValue($objsoc=0,$object='')
+    public function getNextValue($objsoc = 0, $object = '')
     {
 		global $db,$conf;
 
 		require_once DOL_DOCUMENT_ROOT .'/core/lib/functions2.lib.php';
 
-		// On d�fini critere recherche compteur
+		// On défini critere recherche compteur
 		$mask=$conf->global->FICHINTER_ARTIC_MASK;
 
 		if (! $mask)
@@ -120,23 +139,21 @@ class mod_arctic extends ModeleNumRefFicheinter
 			return 0;
 		}
 
-		$numFinal=get_next_value($db,$mask,'fichinter','ref','',$objsoc,$object->datec);
+		$numFinal=get_next_value($db, $mask, 'fichinter', 'ref', '', $objsoc, $object->datec);
 
 		return  $numFinal;
-  }
+    }
 
 
 	/**
-	 * 	Return next free value
+	 *  Return next free value
 	 *
      *  @param	Societe		$objsoc     Object third party
-	 * 	@param	Object		$objforref	Object for number to search
+	 *  @param	Object		$objforref	Object for number to search
      *  @return string      			Next free value
      */
-    function getNumRef($objsoc,$objforref)
+    public function getNumRef($objsoc, $objforref)
     {
-        return $this->getNextValue($objsoc,$objforref);
+        return $this->getNextValue($objsoc, $objforref);
     }
-
 }
-
