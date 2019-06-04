@@ -237,8 +237,7 @@ if ($action == 'create' || $object->fetch($id) > 0)
 
 	if ($action == 'create' || $action == 'edit')
 	{
-		if ( ! $user->rights->resource->write )
-			accessforbidden('', 0);
+		if (! $user->rights->resource->write) accessforbidden('', 0, 1);
 
 		// Create/Edit object
 

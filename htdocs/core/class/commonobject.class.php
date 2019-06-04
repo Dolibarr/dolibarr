@@ -2443,8 +2443,9 @@ abstract class CommonObject
 	 */
 	public function updateRangOfLine($rowid, $rang)
 	{
-		$fieldposition = 'rang';
+		$fieldposition = 'rang';	// @TODO Rename 'rang' and 'position' into 'rank'
 		if (in_array($this->table_element_line, array('ecm_files', 'emailcollector_emailcollectoraction'))) $fieldposition = 'position';
+		if (in_array($this->table_element_line, array('bom_bomline'))) $fieldposition = 'rank';
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET '.$fieldposition.' = '.$rang;
 		$sql.= ' WHERE rowid = '.$rowid;
@@ -3886,6 +3887,7 @@ abstract class CommonObject
 			{
 				$tpl = DOL_DOCUMENT_ROOT.$reldir.'/objectline_create.tpl.php';
 			}
+
 			if (empty($conf->file->strict_mode)) {
 				$res=@include $tpl;
 			} else {
@@ -4086,6 +4088,7 @@ abstract class CommonObject
 				{
 					$tpl = DOL_DOCUMENT_ROOT.$reldir.'/objectline_view.tpl.php';
 				}
+
 				if (empty($conf->file->strict_mode)) {
 					$res=@include $tpl;
 				} else {
@@ -4116,6 +4119,7 @@ abstract class CommonObject
 				{
 					$tpl = DOL_DOCUMENT_ROOT.$reldir.'/objectline_edit.tpl.php';
 				}
+
 				if (empty($conf->file->strict_mode)) {
 					$res=@include $tpl;
 				} else {
@@ -4191,9 +4195,10 @@ abstract class CommonObject
 	 * 	@param	CommonObjectLine	$line				Line
 	 * 	@param	string				$var				Var
 	 *	@param	string				$restrictlist		''=All lines, 'services'=Restrict to services only (strike line if not)
+	 *  @param	string				$defaulttpldir		Directory where to find the template
 	 * 	@return	void
 	 */
-	public function printOriginLine($line, $var, $restrictlist = '')
+	public function printOriginLine($line, $var, $restrictlist = '', $defaulttpldir = '/core/tpl')
 	{
 		global $langs, $conf;
 
@@ -4314,7 +4319,7 @@ abstract class CommonObject
 
 		// Output template part (modules that overwrite templates must declare this into descriptor)
 		// Use global variables + $dateSelector + $seller and $buyer
-		$dirtpls=array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
+		$dirtpls=array_merge($conf->modules_parts['tpl'], array($defaulttpldir));
 		foreach($dirtpls as $module => $reldir)
 		{
 			if (!empty($module))
@@ -4325,6 +4330,7 @@ abstract class CommonObject
 			{
 				$tpl = DOL_DOCUMENT_ROOT.$reldir.'/originproductline.tpl.php';
 			}
+
 			if (empty($conf->file->strict_mode)) {
 				$res=@include $tpl;
 			} else {
@@ -7243,6 +7249,31 @@ abstract class CommonObject
 		{
 			$result=$this->insertExtraFields();
 			if ($result < 0) $error++;
+		}
+
+		// Create lines
+		if (! empty($this->table_element_line) && ! empty($this->fk_element))
+		{
+			$num=(is_array($this->lines) ? count($this->lines) : 0);
+			for ($i = 0; $i < $num; $i++)
+			{
+				$line = $this->lines[$i];
+
+				$keyforparent = $this->fk_element;
+				$line->$keyforparent = $this->id;
+
+				// Test and convert into object this->lines[$i]. When coming from REST API, we may still have an array
+				//if (! is_object($line)) $line=json_decode(json_encode($line), false);  // convert recursively array into object.
+				if (! is_object($line)) $line = (object) $line;
+
+				$result = $line->create($user, 1);
+				if ($result < 0)
+				{
+					$this->error=$this->db->lasterror();
+					$this->db->rollback();
+					return -1;
+				}
+			}
 		}
 
 		// Triggers

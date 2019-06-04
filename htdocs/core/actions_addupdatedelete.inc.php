@@ -244,7 +244,6 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && ! empty($permissiontoadd)
 	    $objectutil = dol_clone($object, 1);   // To avoid to denaturate loaded object when setting some properties for clone or if createFromClone modifies the object. We use native clone to keep this->db valid.
 		//$objectutil->date = dol_mktime(12, 0, 0, GETPOST('newdatemonth', 'int'), GETPOST('newdateday', 'int'), GETPOST('newdateyear', 'int'));
         // ...
-
 	    $result=$objectutil->createFromClone($user, (($object->id > 0) ? $object->id : $id));
 	    if (is_object($result) || $result > 0)
 		{
