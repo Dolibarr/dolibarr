@@ -59,19 +59,17 @@ span.butAction, span.butActionDelete {
     display: inline-block;
     /* text-align: center; New button are on right of screen */
     cursor: pointer;
-    /*color: #fff !important;
-    background: rgb(<?php echo $colorbackhmenu1 ?>);
-border: 1px solid rgb(<?php echo $colorbackhmenu1 ?>);
-border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25);
-border-top-right-radius: 0 !important;
-border-bottom-right-radius: 0 !important;
-border-top-left-radius: 0 !important;
-border-bottom-left-radius: 0 !important;*/
 }
-a.butActionNew>span.fa-plus-circle, a.butActionNew>span.fa-plus-circle:hover { padding-left: 6px; font-size: 1.5em; border: none; box-shadow: none; webkit-box-shadow: none; }
-a.butActionNewRefused>span.fa-plus-circle, a.butActionNewRefused>span.fa-plus-circle:hover { padding-left: 6px; font-size: 1.5em; border: none; box-shadow: none; webkit-box-shadow: none; }
-a.butActionNew>span.fa-list-alt, a.butActionNew>span.fa-list-alt:hover { padding-left: 6px; font-size: 1.5em; border: none; box-shadow: none; webkit-box-shadow: none; }
-a.butActionNewRefused>span.fa-list-alt, a.butActionNewRefused>span.fa-list-alt:hover { padding-left: 6px; font-size: 1.5em; border: none; box-shadow: none; webkit-box-shadow: none; }
+a.butActionNew>span.fa-plus-circle, a.butActionNew>span.fa-plus-circle:hover,
+span.butActionNew>span.fa-plus-circle, span.butActionNew>span.fa-plus-circle:hover,
+a.butActionNewRefused>span.fa-plus-circle, a.butActionNewRefused>span.fa-plus-circle:hover,
+span.butActionNewRefused>span.fa-plus-circle, span.butActionNewRefused>span.fa-plus-circle:hover,
+a.butActionNew>span.fa-list-alt, a.butActionNew>span.fa-list-alt:hover,
+span.butActionNew>span.fa-list-alt, span.butActionNew>span.fa-list-alt:hover,
+a.butActionNewRefused>span.fa-list-alt, a.butActionNewRefused>span.fa-list-alt:hover,
+span.butActionNewRefused>span.fa-list-alt, span.butActionNewRefused>span.fa-list-alt:hover {
+	padding-left: 6px; font-size: 1.5em; border: none; box-shadow: none; webkit-box-shadow: none;
+}
 
 .butAction:hover   {
     -webkit-box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);

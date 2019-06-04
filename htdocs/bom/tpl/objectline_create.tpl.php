@@ -81,7 +81,7 @@ if ($nolinesbefore) {
 		print '</span></td>';
 	}
 	?>
-	<td class="linecollost right"><?php echo $langs->trans('Lost'); ?></td>
+	<td class="linecollost right"><?php echo $form->textwithpicto($langs->trans('ManufacturingEfficiency'), $langs->trans('ValueOfMeansLoss')); ?></td>
 	<td class="linecoledit" colspan="<?php echo $colspan; ?>">&nbsp;</td>
 </tr>
 <?php
@@ -144,7 +144,7 @@ if ($nolinesbefore) {
 
 	$coldisplay++;
 	?>
-	<td class="nobottom nowrap linecollost right"><input type="text" size="1" name="lost" id="lost" class="flat right" value="<?php echo (isset($_POST["lsot"])?GETPOST("lost", 'alpha', 2):$remise_percent); ?>"><span class="hideonsmartphone">%</span></td>
+	<td class="nobottom nowrap linecollost right"><input type="text" size="1" name="efficiency" id="efficiency" class="flat right" value="<?php echo (GETPOSTISSET("efficiency")?GETPOST("efficiency", 'alpha'):1); ?>"></td>
 	<?php
 
 	$coldisplay+=$colspan;
@@ -165,39 +165,12 @@ if (is_object($objectline)) {
 /* JQuery for product free or predefined select */
 jQuery(document).ready(function() {
 	/* When changing predefined product, we reload list of supplier prices required for margin combo */
-	$("#idprod, #idprodfournprice").change(function()
+	$("#idprod").change(function()
 	{
-		console.log("#idprod, #idprodfournprice change triggered");
-
-		setforpredef();		// TODO Keep vat combo visible and set it to first entry into list that match result of get_default_tva
-
-		jQuery('#trlinefordates').show();
-
-        /* To process customer price per quantity */
-        var pbq = parseInt($('option:selected', this).attr('data-pbq'));
-        var pbqqty = parseFloat($('option:selected', this).attr('data-pbqqty'));
-        var pbqpercent = parseFloat($('option:selected', this).attr('data-pbqpercent'));
-
-        if ((jQuery('#idprod').val() > 0 || jQuery('#idprodfournprice').val()) && typeof pbq !== "undefined")
-        {
-            console.log("We choose a price by quanty price_by_qty id = "+pbq+" price_by_qty qty = "+pbqqty+" price_by_qty percent = "+pbqpercent);
-            jQuery("#pbq").val(pbq);
-            if (jQuery("#qty").val() < pbqqty)
-            {
-                    jQuery("#qty").val(pbqqty);
-            }
-            if (jQuery("#remise_percent").val() < pbqpercent)
-            {
-                    jQuery("#remise_percent").val(pbqpercent);
-            }
-        }
-        else
-        {
-            jQuery("#pbq").val('');
-        }
+		console.log("#idprod change triggered");
 
   		/* To set focus */
-  		if (jQuery('#idprod').val() > 0 || jQuery('#idprodfournprice').val() > 0)
+  		if (jQuery('#idprod').val() > 0)
   	  	{
 			/* focus work on a standard textarea but not if field was replaced with CKEDITOR */
 			jQuery('#dp_desc').focus();

@@ -688,7 +688,9 @@ class FormFile
 			$out.= '<tr class="liste_titre">';
 
 			$addcolumforpicto=($delallowed || $printer || $morepicto);
-			$out.= '<th colspan="'.(3+($addcolumforpicto?1:0)).'" class="formdoc liste_titre maxwidthonsmartphone center">';
+			$colspan = (3+($addcolumforpicto?1:0)); $colspanmore = 0;
+
+			$out.= '<th colspan="'.$colspan.'" class="formdoc liste_titre maxwidthonsmartphone center">';
 
 			// Model
 			if (! empty($modellist))
@@ -745,13 +747,17 @@ class FormFile
 			{
 				foreach($hookmanager->hooks['formfile'] as $module)
 				{
-					if (method_exists($module, 'formBuilddocLineOptions')) $out .= '<th></th>';
+					if (method_exists($module, 'formBuilddocLineOptions'))
+					{
+						$colspanmore++;
+						$out .= '<th></th>';
+					}
 				}
 			}
 			$out.= '</tr>';
 
 			// Execute hooks
-			$parameters=array('socid'=>(isset($GLOBALS['socid'])?$GLOBALS['socid']:''),'id'=>(isset($GLOBALS['id'])?$GLOBALS['id']:''),'modulepart'=>$modulepart);
+			$parameters=array('colspan'=>($colspan+$colspanmore), 'socid'=>(isset($GLOBALS['socid'])?$GLOBALS['socid']:''), 'id'=>(isset($GLOBALS['id'])?$GLOBALS['id']:''), 'modulepart'=>$modulepart);
 			if (is_object($hookmanager))
 			{
 				$reshook = $hookmanager->executeHooks('formBuilddocOptions', $parameters, $GLOBALS['object']);
@@ -848,14 +854,17 @@ class FormFile
 
 					if (is_object($hookmanager))
 					{
-						$parameters=array('socid'=>(isset($GLOBALS['socid'])?$GLOBALS['socid']:''),'id'=>(isset($GLOBALS['id'])?$GLOBALS['id']:''),'modulepart'=>$modulepart,'relativepath'=>$relativepath);
+						$parameters=array('colspan'=>($colspan+$colspanmore), 'socid'=>(isset($GLOBALS['socid'])?$GLOBALS['socid']:''),'id'=>(isset($GLOBALS['id'])?$GLOBALS['id']:''),'modulepart'=>$modulepart,'relativepath'=>$relativepath);
 						$res = $hookmanager->executeHooks('formBuilddocLineOptions', $parameters, $file);
 						if (empty($res))
 						{
 							$out.= $hookmanager->resPrint;		// Complete line
 							$out.= '</tr>';
 						}
-						else $out = $hookmanager->resPrint;		// Replace line
+						else
+						{
+							$out = $hookmanager->resPrint;		// Replace all $out
+						}
 			  		}
 				}
 

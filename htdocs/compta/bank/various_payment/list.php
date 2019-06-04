@@ -58,7 +58,7 @@ if (empty($page) || $page == -1) { $page = 0; }	 // If $page is not defined, or 
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortfield) $sortfield="v.datep";
+if (! $sortfield) $sortfield="v.datep,v.rowid";
 if (! $sortorder) $sortorder="DESC";
 
 $filtre=GETPOST("filtre", 'alpha');
@@ -112,14 +112,14 @@ $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.row
 $sql.= " WHERE v.entity IN (".getEntity('payment_various').")";
 
 // Search criteria
-if ($search_ref)					$sql.=" AND v.rowid=".$search_ref;
+if ($search_ref)					$sql.=" AND v.rowid=".$db->escape($search_ref);
 if ($search_label)					$sql.=natural_search(array('v.label'), $search_label);
 if ($search_amount_deb)				$sql.=natural_search("v.amount", $search_amount_deb, 1);
 if ($search_amount_cred)			$sql.=natural_search("v.amount", $search_amount_cred, 1);
-if ($search_account > 0)			$sql.=" AND b.fk_account=".$search_account;
-if ($search_date)					$sql.=" AND v.datep=".$search_date;
-if ($search_accountancy_code > 0)	$sql.=" AND v.accountancy_code=".$search_accountancy_code;
-if ($search_subledger_account > 0)	$sql.=" AND v.subledger_account=".$search_subledger_account;
+if ($search_account > 0)			$sql.=" AND b.fk_account=".$db->escape($search_account);
+if ($search_date)					$sql.=" AND v.datep=  '".$db->idate($search_date)."'";
+if ($search_accountancy_code > 0)	$sql.=" AND v.accountancy_code= ".$db->escape($search_accountancy_code);
+if ($search_subledger_account > 0)	$sql.=" AND v.subledger_account= ".$db->escape($search_subledger_account);
 if ($typeid > 0) $sql .= " AND v.fk_typepayment=".$typeid;
 if ($filtre) {
 	$filtre=str_replace(":", "=", $filtre);
@@ -251,7 +251,7 @@ if ($result)
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "v.rowid", "", $param, "", $sortfield, $sortorder);
 	print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "v.label", "", $param, '', $sortfield, $sortorder, 'left ');
-	print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "v.datep", "", $param, '', $sortfield, $sortorder, 'center ');
+	print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "v.datep,v.rowid", "", $param, '', $sortfield, $sortorder, 'center ');
 	print_liste_field_titre("PaymentMode", $_SERVER["PHP_SELF"], "type", "", $param, '', $sortfield, $sortorder, 'left ');
 	if (! empty($conf->banque->enabled))     print_liste_field_titre("BankAccount", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
 	if (! empty($conf->accounting->enabled)) print_liste_field_titre("AccountAccounting", $_SERVER["PHP_SELF"], "v.accountancy_code", "", $param, '', $sortfield, $sortorder, 'left ');

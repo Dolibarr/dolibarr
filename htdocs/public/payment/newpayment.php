@@ -355,7 +355,7 @@ if ($action == 'dopayment')
 	if ($paymentmethod == 'paybox')
 	{
 		$PRICE=price2num(GETPOST("newamount"), 'MT');
-		$email=GETPOST("email", 'alpha');
+		$email=$conf->global->ONLINE_PAYMENT_SENDEMAIL;
 		$thirdparty_id=GETPOST('thirdparty_id', 'int');
 
 		$origfulltag=GETPOST("fulltag", 'alpha');
@@ -754,7 +754,7 @@ if (! empty($conf->paypal->enabled))
 }
 if (! empty($conf->paybox->enabled))
 {
-
+	print '<!-- PAYBOX_CGI_URL = '.$conf->global->PAYBOX_CGI_URL_V2.' -->'."\n";
 }
 if (! empty($conf->stripe->enabled))
 {

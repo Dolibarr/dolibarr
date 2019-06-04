@@ -131,7 +131,7 @@ class ActionsCardCompany extends ActionsCardCommon
 				if ($conf->use_javascript_ajax)
 				{
 					$s.='<a href="#" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
-					$this->tpl['tva_intra'] =  $form->textwithpicto($s, $langs->trans("VATIntraCheckDesc", $langs->trans("VATIntraCheck")), 1);
+					$this->tpl['tva_intra'] =  $form->textwithpicto($s, $langs->trans("VATIntraCheckDesc", $langs->transnoentitiesnoconv("VATIntraCheck")), 1);
 				}
 				else
 				{
@@ -170,7 +170,7 @@ class ActionsCardCompany extends ActionsCardCommon
 					if ($conf->use_javascript_ajax)
 					{
 						$s.='<a href="#" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
-						$this->tpl['tva_intra'] = $form->textwithpicto($s, $langs->trans("VATIntraCheckDesc", $langs->trans("VATIntraCheck")), 1);
+						$this->tpl['tva_intra'] = $form->textwithpicto($s, $langs->trans("VATIntraCheckDesc", $langs->transnoentitiesnoconv("VATIntraCheck")), 1);
 					}
 					else
 					{
