@@ -128,6 +128,7 @@ NEW: Upgrade jquery lib to 3.3.1
 NEW: Add hook 'addHtmlHeader()'
 NEW: Add hook 'createRecurringInvoices()'
 NEW: Add hook 'afterSelectContactOptions'
+NEW: Add hook 'getAccessForbiddenMessage'
 NEW: Add hook support in accountancy index
 NEW: Add hook support in list of template invoices
 NEW: Add parameter 'replaceambiguouschars' on getRandomPassword function
