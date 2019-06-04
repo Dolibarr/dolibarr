@@ -1533,7 +1533,7 @@ if ($action == 'create')
 	print '</td></tr>';
 
 	// Validaty duration
-	print '<tr><td class="fieldrequired">' . $langs->trans("ValidityDuration") . '</td><td><input name="duree_validite" size="5" value="' . $conf->global->PROPALE_VALIDITY_DURATION . '"> ' . $langs->trans("days") . '</td></tr>';
+	print '<tr><td class="fieldrequired">' . $langs->trans("ValidityDuration") . '</td><td><input name="duree_validite" value="' . (GETPOST('duree_validite', 'int') ? GETPOST('duree_validite', 'int') : $conf->global->PROPALE_VALIDITY_DURATION) . '"> ' . $langs->trans("days") . '</td></tr>';
 
 	// Terms of payment
 	print '<tr><td class="nowrap fieldrequired">' . $langs->trans('PaymentConditionsShort') . '</td><td>';
