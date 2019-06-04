@@ -248,7 +248,7 @@ if ($result) {
 
 	print_barre_liste($langs->trans("ExpenseReportLinesDone"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num_lines, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit);
 
-	print $langs->trans("DescVentilDoneExpenseReport") . '<br>';
+	print '<span class="opacitymedium">'.$langs->trans("DescVentilDoneExpenseReport") . '</span><br>';
 
 	print '<br><div class="inline-block divButAction">' . $langs->trans("ChangeAccount") . '<br>';
 	print $formaccounting->select_account($account_parent, 'account_parent', 2, array(), 0, 0, 'maxwidth300 maxwidthonsmartphone valignmiddle');
