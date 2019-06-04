@@ -696,7 +696,7 @@ function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $sho
 			if ($user->login)
 			{
 				print $langs->trans("CurrentLogin").': <font class="error">'.$user->login.'</font><br>';
-				print $langs->trans("ErrorForbidden2",$langs->trans("Home"),$langs->trans("Users"));
+				print $langs->trans("ErrorForbidden2", $langs->transnoentitiesnoconv("Home"), $langs->transnoentitiesnoconv("Users"));
 			}
 			else
 			{
