@@ -3887,6 +3887,7 @@ abstract class CommonObject
 			{
 				$tpl = DOL_DOCUMENT_ROOT.$reldir.'/objectline_create.tpl.php';
 			}
+
 			if (empty($conf->file->strict_mode)) {
 				$res=@include $tpl;
 			} else {
@@ -4087,6 +4088,7 @@ abstract class CommonObject
 				{
 					$tpl = DOL_DOCUMENT_ROOT.$reldir.'/objectline_view.tpl.php';
 				}
+
 				if (empty($conf->file->strict_mode)) {
 					$res=@include $tpl;
 				} else {
@@ -4117,6 +4119,7 @@ abstract class CommonObject
 				{
 					$tpl = DOL_DOCUMENT_ROOT.$reldir.'/objectline_edit.tpl.php';
 				}
+
 				if (empty($conf->file->strict_mode)) {
 					$res=@include $tpl;
 				} else {
@@ -4192,9 +4195,10 @@ abstract class CommonObject
 	 * 	@param	CommonObjectLine	$line				Line
 	 * 	@param	string				$var				Var
 	 *	@param	string				$restrictlist		''=All lines, 'services'=Restrict to services only (strike line if not)
+	 *  @param	string				$defaulttpldir		Directory where to find the template
 	 * 	@return	void
 	 */
-	public function printOriginLine($line, $var, $restrictlist = '')
+	public function printOriginLine($line, $var, $restrictlist = '', $defaulttpldir = '/core/tpl')
 	{
 		global $langs, $conf;
 
@@ -4315,7 +4319,7 @@ abstract class CommonObject
 
 		// Output template part (modules that overwrite templates must declare this into descriptor)
 		// Use global variables + $dateSelector + $seller and $buyer
-		$dirtpls=array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
+		$dirtpls=array_merge($conf->modules_parts['tpl'], array($defaulttpldir));
 		foreach($dirtpls as $module => $reldir)
 		{
 			if (!empty($module))
@@ -4326,6 +4330,7 @@ abstract class CommonObject
 			{
 				$tpl = DOL_DOCUMENT_ROOT.$reldir.'/originproductline.tpl.php';
 			}
+
 			if (empty($conf->file->strict_mode)) {
 				$res=@include $tpl;
 			} else {

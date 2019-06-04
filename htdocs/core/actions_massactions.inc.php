@@ -563,14 +563,16 @@ if ($massaction == 'confirm_createbills')   // Create bills from orders
 
             $objecttmp->socid = $cmd->socid;
             $objecttmp->type = Facture::TYPE_STANDARD;
-            $objecttmp->cond_reglement_id = $cmd->cond_reglement_id;
-            $objecttmp->mode_reglement_id = $cmd->mode_reglement_id;
-            $objecttmp->fk_project = $cmd->fk_project;
+            $objecttmp->cond_reglement_id	= $cmd->cond_reglement_id;
+            $objecttmp->mode_reglement_id	= $cmd->mode_reglement_id;
+            $objecttmp->fk_project			= $cmd->fk_project;
+            $objecttmp->multicurrency_code  = $cmd->multicurrency_code;
+            if (empty($createbills_onebythird)) $objecttmp->ref_client = $cmd->ref_client;
 
-            $datefacture = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+            $datefacture = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
             if (empty($datefacture))
             {
-                $datefacture = dol_mktime(date("h"), date("M"), 0, date("m"), date("d"), date("Y"));
+                $datefacture = dol_now();
             }
 
             $objecttmp->date = $datefacture;
