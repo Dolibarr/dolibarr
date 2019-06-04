@@ -227,6 +227,7 @@ CREATE TABLE llx_bom_bom(
 ) ENGINE=innodb;
 
 ALTER TABLE llx_bom_bom ADD COLUMN efficiency double(8,4) DEFAULT 1;
+ALTER TABLE llx_bom_bom ADD COLUMN entity integer DEFAULT 1 NOT NULL;
 
 create table llx_bom_bom_extrafields
 (
