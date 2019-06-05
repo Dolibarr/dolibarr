@@ -1049,16 +1049,16 @@ if ($ok && GETPOST('force_disable_of_modules_not_found', 'alpha'))
 	                            print ' - File of '.$key.' ('.$reloffile.') NOT found, we disable the module.';
 	                            if (GETPOST('force_disable_of_modules_not_found') == 'confirmed')
 	                            {
-	                                $sql2 ="DELETE FROM ".MAIN_DB_PREFIX."const WHERE name 'MAIN_MODULE_".strtoupper($name)."_".strtoupper($key)."'";
+	                                $sql2 ="DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'MAIN_MODULE_".strtoupper($name)."_".strtoupper($key)."'";
 	                                $resql2=$db->query($sql2);
 	                                if (! $resql2)
 	                                {
 	                                    $error++;
 	                                    dol_print_error($db);
 	                                }
-	                                $sql2 ="DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'MAIN_MODULE_".strtoupper($name)."'";
-	                                $resql2=$db->query($sql2);
-	                                if (! $resql2)
+	                                $sql3 ="DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'MAIN_MODULE_".strtoupper($name)."'";
+	                                $resql3=$db->query($sql3);
+	                                if (! $resql3)
 	                                {
 	                                    $error++;
 	                                    dol_print_error($db);
