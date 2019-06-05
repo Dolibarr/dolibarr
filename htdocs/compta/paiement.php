@@ -848,7 +848,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
  */
 if (! GETPOST('action', 'aZ09'))
 {
-    if ($page == -1) $page = 0 ;
+    if (empty($page) || $page == -1) $page = 0;
     $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
     $offset = $limit * $page ;
 

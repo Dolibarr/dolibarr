@@ -227,6 +227,7 @@ CREATE TABLE llx_bom_bom(
 ) ENGINE=innodb;
 
 ALTER TABLE llx_bom_bom ADD COLUMN efficiency double(8,4) DEFAULT 1;
+ALTER TABLE llx_bom_bom ADD COLUMN entity integer DEFAULT 1 NOT NULL;
 
 create table llx_bom_bom_extrafields
 (
@@ -271,6 +272,10 @@ ALTER TABLE llx_bom_bom ADD INDEX idx_bom_bom_fk_product (fk_product);
 ALTER TABLE llx_bom_bomline ADD INDEX idx_bom_bomline_rowid (rowid);
 ALTER TABLE llx_bom_bomline ADD INDEX idx_bom_bomline_fk_product (fk_product);
 ALTER TABLE llx_bom_bomline ADD INDEX idx_bom_bomline_fk_bom (fk_bom);
+
+ALTER TABLE llx_bom_bom ADD UNIQUE INDEX uk_bom_bom_ref(ref, entity);
+ALTER TABLE llx_bom_bomline ADD CONSTRAINT llx_bom_bomline_fk_bom FOREIGN KEY (fk_bom) REFERENCES llx_bom_bom(rowid);
+
 
 ALTER TABLE llx_product_fournisseur_price ADD COLUMN barcode varchar(180) DEFAULT NULL;
 ALTER TABLE llx_product_fournisseur_price ADD COLUMN fk_barcode_type integer DEFAULT NULL;
