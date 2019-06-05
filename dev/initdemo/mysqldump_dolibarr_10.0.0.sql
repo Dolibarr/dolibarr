@@ -11237,83 +11237,6 @@ LOCK TABLES `llx_websiteaccount_extrafields` WRITE;
 /*!40000 ALTER TABLE `llx_websiteaccount_extrafields` DISABLE KEYS */;
 /*!40000 ALTER TABLE `llx_websiteaccount_extrafields` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Table structure for table `tmp_llx_accouting_account`
---
-
-DROP TABLE IF EXISTS `tmp_llx_accouting_account`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `tmp_llx_accouting_account` (
-  `MINID` int(11) DEFAULT NULL,
-  `account_number` varchar(20) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `entity` int(11) NOT NULL DEFAULT '1',
-  `fk_pcg_version` varchar(32) COLLATE utf8_unicode_ci NOT NULL,
-  `NB` bigint(21) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `tmp_llx_accouting_account`
---
-
-LOCK TABLES `tmp_llx_accouting_account` WRITE;
-/*!40000 ALTER TABLE `tmp_llx_accouting_account` DISABLE KEYS */;
-/*!40000 ALTER TABLE `tmp_llx_accouting_account` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `tmp_llx_product_batch`
---
-
-DROP TABLE IF EXISTS `tmp_llx_product_batch`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `tmp_llx_product_batch` (
-  `fk_product_stock` int(11) NOT NULL,
-  `eatby` datetime DEFAULT NULL,
-  `sellby` datetime DEFAULT NULL,
-  `batch` varchar(30) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `qty` double DEFAULT NULL,
-  `nb` bigint(21) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `tmp_llx_product_batch`
---
-
-LOCK TABLES `tmp_llx_product_batch` WRITE;
-/*!40000 ALTER TABLE `tmp_llx_product_batch` DISABLE KEYS */;
-/*!40000 ALTER TABLE `tmp_llx_product_batch` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `tmp_llx_product_batch2`
---
-
-DROP TABLE IF EXISTS `tmp_llx_product_batch2`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `tmp_llx_product_batch2` (
-  `rowid` int(11) NOT NULL DEFAULT '0',
-  `fk_product_stock` int(11) NOT NULL,
-  `eatby` datetime DEFAULT NULL,
-  `sellby` datetime DEFAULT NULL,
-  `batch` varchar(30) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `qty` double NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `tmp_llx_product_batch2`
---
-
-LOCK TABLES `tmp_llx_product_batch2` WRITE;
-/*!40000 ALTER TABLE `tmp_llx_product_batch2` DISABLE KEYS */;
-/*!40000 ALTER TABLE `tmp_llx_product_batch2` ENABLE KEYS */;
-UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -11324,4 +11247,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-06-05 11:53:50
+-- Dump completed on 2019-06-05 11:58:13
