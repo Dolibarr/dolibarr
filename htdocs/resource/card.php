@@ -323,7 +323,7 @@ if ($action == 'create' || $object->fetch($id) > 0)
 		/*---------------------------------------
 		 * View object
 		 */
-		print '<table width="100%" class="border">';
+		print '<table class="border tableforfield centpercent">';
 
 		// Resource type
 		print '<tr>';
