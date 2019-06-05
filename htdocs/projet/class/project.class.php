@@ -1660,7 +1660,7 @@ class Project extends CommonObject
         // phpcs:enable
 		$sql="UPDATE ".MAIN_DB_PREFIX.$tableName;
 
-		if ($TableName=="actioncomm")
+		if ($tableName=="actioncomm")
 		{
 			$sql.= " SET fk_project=NULL";
 			$sql.= " WHERE id=".$elementSelectId;
