@@ -3803,6 +3803,13 @@ elseif ($id > 0 || ! empty($ref))
 			print '. '.$langs->trans("CreditNoteConvertedIntoDiscount", $object->getLibType(1), $discount->getNomUrl(1, 'discount')).'<br>';
 		}
 	}
+
+	if ($object->fk_fac_rec_source > 0)
+	{
+	    $tmptemplate = new FactureRec($db);
+	    $result = $tmptemplate->fetch($object->fk_fac_rec_source);
+	    if ($result > 0) print '. '.$langs->trans("GeneratedFromTemplate", $tmptemplate->ref);
+	}
 	print '</td></tr>';
 
 	// Relative and absolute discounts
@@ -4015,9 +4022,8 @@ elseif ($id > 0 || ! empty($ref))
 	print '</div>';
 	print '<div class="fichehalfright">';
 	print '<div class="ficheaddleft">';
-	print '<div class="underbanner clearboth"></div>';
 
-	print '<table class="border tableforfield centpercent">';
+	print '<table class="border bordertop tableforfield centpercent">';
 
 	if (!empty($conf->multicurrency->enabled) && ($object->multicurrency_code != $conf->currency))
 	{
