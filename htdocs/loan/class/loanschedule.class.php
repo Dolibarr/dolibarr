@@ -48,13 +48,13 @@ class LoanSchedule extends CommonObject
     /**
      * @var string Create date
      */
-    public $datec='';
-	public $tms='';
+    public $datec;
+	public $tms;
 
     /**
      * @var string Payment date
      */
-    public $datep='';
+    public $datep;
 
     public $amounts=array();   // Array of amounts
     public $amount_capital;    // Total amount of payment
