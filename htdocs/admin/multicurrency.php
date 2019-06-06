@@ -93,9 +93,8 @@ elseif ($action == 'update_currency')
 			{
 				$result=$currency->updateRate($rate);
 				if ($result<0) {
-					setEventMessages(null,$currency->errors,'errors');
+					setEventMessages(null, $currency->errors, 'errors');
 				}
-
 			}
 		}
 	}
