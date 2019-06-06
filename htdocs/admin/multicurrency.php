@@ -49,15 +49,14 @@ $action = GETPOST('action', 'alpha');
 if (preg_match('/set_([a-z0-9_\-]+)/i',$action,$reg))
 {
 	$code=$reg[1];
-	$value=(GETPOST($code, 'alpha') ? GETPOST($code, 'alpha') : 1);
+	$value=GETPOST($code, 'alpha');
 	if (dolibarr_set_const($db, $code, $value, 'chaine', 0, '', $conf->entity) > 0)
 	{
-		header("Location: ".$_SERVER["PHP_SELF"]);
-		exit;
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	}
 	else
 	{
-		dol_print_error($db);
+        setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
 
@@ -66,12 +65,11 @@ if (preg_match('/del_([a-z0-9_\-]+)/i',$action,$reg))
 	$code=$reg[1];
 	if (dolibarr_del_const($db, $code, 0) > 0)
 	{
-		header("Location: ".$_SERVER["PHP_SELF"]);
-		exit;
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	}
 	else
 	{
-		dol_print_error($db);
+        setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
 
