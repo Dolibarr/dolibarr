@@ -133,7 +133,7 @@ input.buttongen {
 	vertical-align: middle;
 }
 input.buttonpayment, button.buttonpayment, div.buttonpayment {
-	min-width: 320px;
+	min-width: 290px;
 	margin-bottom: 15px;
 	background-image: none;
 	line-height: 24px;
@@ -146,6 +146,11 @@ input.buttonpayment, button.buttonpayment, div.buttonpayment {
 	box-shadow: 1px 1px 4px #bbb;
 	color: #fff;
 	border-radius: 4px;
+}
+.buttonpaymentsmall {
+	font-size: 0.65em;
+	padding-left: 5px;
+	padding-right: 5px;
 }
 div.buttonpayment input {
     background-color: unset;
