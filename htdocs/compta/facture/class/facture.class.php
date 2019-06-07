@@ -1203,7 +1203,7 @@ class Facture extends CommonInvoice
 	 */
     public function getNomUrl($withpicto = 0, $option = '', $max = 0, $short = 0, $moretitle = '', $notooltip = 0, $addlinktonotes = 0, $save_lastsearch_value = -1, $target = '')
 	{
-		global $langs, $conf, $user, $form;
+		global $langs, $conf, $user;
 
 		if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
 
@@ -1225,7 +1225,7 @@ class Facture extends CommonInvoice
 
 		if ($short) return $url;
 
-		$picto='bill';
+		$picto=$this->picto;
 		if ($this->type == self::TYPE_REPLACEMENT) $picto.='r';	// Replacement invoice
 		if ($this->type == self::TYPE_CREDIT_NOTE) $picto.='a';	// Credit note
 		if ($this->type == self::TYPE_DEPOSIT) $picto.='d';	// Deposit invoice
@@ -1241,6 +1241,8 @@ class Facture extends CommonInvoice
                 $label .= '<br><b>'.$langs->trans('Ref') . ':</b> ' . $this->ref;
             if (! empty($this->ref_client))
                 $label .= '<br><b>' . $langs->trans('RefCustomer') . ':</b> ' . $this->ref_client;
+            if (! empty($this->date))
+              	$label .= '<br><b>' . $langs->trans('Date') . ':</b> ' . dol_print_date($this->date, 'day');
             if (! empty($this->total_ht))
                 $label.= '<br><b>' . $langs->trans('AmountHT') . ':</b> ' . price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
             if (! empty($this->total_tva))
