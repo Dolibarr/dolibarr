@@ -684,6 +684,7 @@ class DoliDBMysqli extends DoliDB
         // ex. : $fields['rowid'] = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
         $sql = "CREATE TABLE ".$table."(";
         $i=0;
+	    $sqlfields=array();
         foreach($fields as $field_name => $field_desc)
         {
         	$sqlfields[$i] = $field_name." ";

@@ -6227,6 +6227,7 @@ abstract class CommonObject
 			$value='';
 			if (is_array($value_arr) && count($value_arr)>0)
 			{
+				$toprint=array();
 				foreach ($value_arr as $keyval=>$valueval) {
 					$toprint[]='<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #aaa">'.$param['options'][$valueval].'</li>';
 				}

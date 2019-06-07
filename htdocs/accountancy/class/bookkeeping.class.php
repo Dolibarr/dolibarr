@@ -202,9 +202,6 @@ class BookKeeping extends CommonObject
 		if (isset($this->sens)) {
 			$this->sens = trim($this->sens);
 		}
-		if (isset($this->fk_user_author)) {
-			$this->fk_user_author = trim($this->fk_user_author);
-		}
 		if (isset($this->import_key)) {
 			$this->import_key = trim($this->import_key);
 		}
@@ -521,9 +518,6 @@ class BookKeeping extends CommonObject
 		}
 		if (isset($this->sens)) {
 			$this->sens = trim($this->sens);
-		}
-		if (isset($this->fk_user_author)) {
-			$this->fk_user_author = trim($this->fk_user_author);
 		}
 		if (isset($this->import_key)) {
 			$this->import_key = trim($this->import_key);
@@ -1138,9 +1132,6 @@ class BookKeeping extends CommonObject
 		}
 		if (isset($this->sens)) {
 			$this->sens = trim($this->sens);
-		}
-		if (isset($this->fk_user_author)) {
-			$this->fk_user_author = trim($this->fk_user_author);
 		}
 		if (isset($this->import_key)) {
 			$this->import_key = trim($this->import_key);

@@ -91,7 +91,10 @@ elseif ($action == 'update_currency')
 		{
 			if ($currency->fetch($fk_multicurrency) > 0)
 			{
-				$currency->updateRate($rate);
+				$result=$currency->updateRate($rate);
+				if ($result<0) {
+					setEventMessages(null, $currency->errors, 'errors');
+				}
 			}
 		}
 	}
