@@ -1670,27 +1670,37 @@ if ($action != 'dopayment')
 			if ((empty($paymentmethod) || $paymentmethod == 'paybox') && ! empty($conf->paybox->enabled))
 			{
 				// If STRIPE_PICTO_FOR_PAYMENT is 'cb' we show a picto of a crdit card instead of paybox
-				print '<br><div class="button buttonpayment"><span class="fa fa-credit-card"></span> <input class="" type="submit" name="dopayment_paybox" value="'.$langs->trans("PayBoxDoPayment").'"></div>';
+				print '<br><div class="button buttonpayment"><span class="fa fa-credit-card"></span> <input class="" type="submit" name="dopayment_paybox" value="'.$langs->trans("PayBoxDoPayment").'">';
+				print '<br>';
+				print '<span class="buttonpaymentsmall">'.$langs->trans("CreditOrDebitCard").'</span>';
+				print '</div>';
 			}
 
 			if ((empty($paymentmethod) || $paymentmethod == 'stripe') && ! empty($conf->stripe->enabled))
 			{
 				// If STRIPE_PICTO_FOR_PAYMENT is 'cb' we show a picto of a crdit card instead of stripe
-				print '<br><div class="button buttonpayment"><span class="fa fa-credit-card"></span> <input class="" type="submit" name="dopayment_stripe" value="'.$langs->trans("StripeDoPayment").'"></div>';
+				print '<br><div class="button buttonpayment"><span class="fa fa-credit-card"></span> <input class="" type="submit" name="dopayment_stripe" value="'.$langs->trans("StripeDoPayment").'">';
+				print '<br>';
+				print '<span class="buttonpaymentsmall">'.$langs->trans("CreditOrDebitCard").'</span>';
+				print '</div>';
 			}
 
 			if ((empty($paymentmethod) || $paymentmethod == 'paypal') && ! empty($conf->paypal->enabled))
 			{
 				if (empty($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY)) $conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY='integral';
 
+				print '<br><div class="button buttonpayment"><span class="fa fa-paypal"></span> <input class="" type="submit" name="dopayment_paypal" value="'.$langs->trans("PaypalDoPayment").'">';
 				if ($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY == 'integral')
 				{
-					print '<br><div class="button buttonpayment"><span class="fa fa-paypal"></span> <input class="" type="submit" name="dopayment_paypal" value="'.$langs->trans("PaypalOrCBDoPayment").'"></div>';
+					print '<br>';
+					print '<span class="buttonpaymentsmall">'.$langs->trans("CreditOrDebitCard").'</span><span class="buttonpaymentsmall"> - </span>';
+					print '<span class="buttonpaymentsmall">'.$langs->trans("PayPalBalance").'</span>';
 				}
 				if ($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY == 'paypalonly')
 				{
-					print '<br><div class="button buttonpayment"><span class="fa fa-paypal"></span> <input class="" type="submit" name="dopayment_paypal" value="'.$langs->trans("PaypalDoPayment").'"></div>';
+					//print '<br><span class="buttonpaymentsmall">'.$langs->trans("PaypalAccount").'"></span>';
 				}
+				print '</div>';
 			}
 		}
 	}
