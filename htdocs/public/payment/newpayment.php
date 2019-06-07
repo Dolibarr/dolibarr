@@ -1872,7 +1872,21 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
     			$arrayzerounitcurrency=array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
     			if (! in_array($currency, $arrayzerounitcurrency)) $amountstripe=$amountstripe * 100;
 
+    			$ipaddress=getUserRemoteIP();
+    			$metadata = array('dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>$ipaddress);
+    			if (is_object($object))
+    			{
+    				$metadata['dol_type'] = $object->element;
+    				$metadata['dol_id'] = $object->id;
+    			}
+
     			try {
+    				$arrayforpaymentintent = array(
+    					'description'=>'Stripe payment: '.$FULLTAG.(is_object($object)?' ref='.$object->ref:''),
+    					"metadata" => $metadata
+    				);
+    				if ($TAG) $arrayforpaymentintent["statement_descriptor"] = dol_trunc($TAG, 10, 'right', 'UTF-8', 1);     // 22 chars that appears on bank receipt (company + description)
+
     				$arrayforcheckout = array(
     					'payment_method_types' => array('card'),
     					'line_items' => array(array(
@@ -1886,6 +1900,7 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
     					'client_reference_id' => $FULLTAG,
     					'success_url' => $urlok,
     					'cancel_url' => $urlko,
+    					'payment_intent_data' => $arrayforpaymentintent
     				);
     				if ($stripecu) $arrayforcheckout['customer'] = $stripecu;
     				elseif (GETPOST('email', 'alpha') && isValidEmail(GETPOST('email', 'alpha'))) $arrayforcheckout['customer_email'] = GETPOST('email', 'alpha');
