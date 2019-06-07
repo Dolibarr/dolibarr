@@ -313,8 +313,6 @@ if ($action == 'dopayment')
 
 			// Other
 			$PAYPAL_API_DEVISE="USD";
-			//if ($currency == 'EUR') $PAYPAL_API_DEVISE="EUR";
-			//if ($currency == 'USD') $PAYPAL_API_DEVISE="USD";
 			if (! empty($currency)) $PAYPAL_API_DEVISE=$currency;
 
 			// Show var initialized by include fo paypal lib at begin of this file
@@ -340,9 +338,6 @@ if ($action == 'dopayment')
 			dol_syslog("desc: $desc", LOG_DEBUG);
 
 			dol_syslog("SCRIPT_URI: ".(empty($_SERVER["SCRIPT_URI"])?'':$_SERVER["SCRIPT_URI"]), LOG_DEBUG);	// If defined script uri must match domain of PAYPAL_API_OK and PAYPAL_API_KO
-			//$_SESSION["PaymentType"]=$PAYPAL_PAYMENT_TYPE;
-			//$_SESSION["currencyCodeType"]=$PAYPAL_API_DEVISE;
-			//$_SESSION["FinalPaymentAmt"]=$PAYPAL_API_PRICE;
 
 			// A redirect is added if API call successfull
 			$mesg = print_paypal_redirect($PAYPAL_API_PRICE, $PAYPAL_API_DEVISE, $PAYPAL_PAYMENT_TYPE, $PAYPAL_API_OK, $PAYPAL_API_KO, $FULLTAG);
@@ -777,16 +772,20 @@ elseif (! empty($conf->global->ONLINE_PAYMENT_LOGO)) $logosmall=$conf->global->O
 //print '<!-- Show logo (logosmall='.$logosmall.' logo='.$logo.') -->'."\n";
 // Define urllogo
 $urllogo='';
+$urllogofull='';
 if (! empty($logosmall) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$logosmall))
 {
 	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/thumbs/'.$logosmall);
+	$urllogofull=$dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany&entity='.$conf->entity.'&file='.urlencode('logos/thumbs/'.$logosmall);
 	$width=150;
 }
 elseif (! empty($logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$logo))
 {
 	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/'.$logo);
+	$urllogofull=$dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany&entity='.$conf->entity.'&file='.urlencode('logos/'.$logo);
 	$width=150;
 }
+
 // Output html code for logo
 if ($urllogo)
 {
@@ -1771,7 +1770,7 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
 		print '<input type="hidden" name="email" value="'.GETPOST('email', 'alpha').'" />';
 		print '<input type="hidden" name="thirdparty_id" value="'.GETPOST('thirdparty_id', 'int').'" />';
 
-		if (! empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION))
+		if (! empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION) || ! empty($conf->global->STRIPE_USE_NEW_CHECKOUT))
 		{
 			require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 
@@ -1788,8 +1787,11 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
 			$stripecu = null;
 			if (is_object($object) && is_object($object->thirdparty)) $stripecu = $stripe->customerStripe($object->thirdparty, $stripeacc, $servicestatus, 1);
 
-			$paymentintent=$stripe->getPaymentIntent($amount, $currency, $tag, 'Stripe payment: '.$fulltag.(is_object($object)?' ref='.$object->ref:''), $object, $stripecu, $stripeacc, $servicestatus);
-			if ($stripe->error) setEventMessages($stripe->error, null, 'errors');
+			if (! empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION))
+			{
+				$paymentintent=$stripe->getPaymentIntent($amount, $currency, $tag, 'Stripe payment: '.$fulltag.(is_object($object)?' ref='.$object->ref:''), $object, $stripecu, $stripeacc, $servicestatus);
+				if ($stripe->error) setEventMessages($stripe->error, null, 'errors');
+			}
 		}
 
 		if (empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION) || ! empty($paymentintent))
@@ -1847,13 +1849,14 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
 
 		print '</form>'."\n";
 
+
+		// JS Code for Stripe
 		if (empty($stripearrayofkeys['publishable_key']))
 		{
 		    print info_admin($langs->trans("ErrorModuleSetupNotComplete", "stripe"), 0, 0, 'error');
 		}
 		else
 		{
-			// JS Code for Stripe
 			print '<!-- JS Code for Stripe components -->';
     		print '<script src="https://js.stripe.com/v3/"></script>'."\n";
 
@@ -1862,21 +1865,46 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
 
     		if (! empty($conf->global->STRIPE_USE_NEW_CHECKOUT))
     		{
-    			$sessionstripe = \Stripe\Checkout\Session::create([
-    				'customer_email' => (GETPOST('email', 'alpha')?GETPOST('email', 'alpha'):''),
-    				'payment_method_types' => ['card'],
-    				'line_items' => [[
-    					'name' => 'T-shirt',
-    					'description' => 'Stripe payment: '.$FULLTAG.' ref='.$ref,
-    					//'images' => ['https://example.com/t-shirt.png'],
-    					'amount' => $amount,
-    					'currency' => $currency,
-    					'quantity' => 1,
-    				]],
-    				'success_url' => $urlok,
-    				'cancel_url' => $urlko,
-    			]);
+    			$amountstripe = $amount;
 
+    			// Correct the amount according to unit of currency
+    			// See https://support.stripe.com/questions/which-zero-decimal-currencies-does-stripe-support
+    			$arrayzerounitcurrency=array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
+    			if (! in_array($currency, $arrayzerounitcurrency)) $amountstripe=$amountstripe * 100;
+
+    			try {
+    				$arrayforcheckout = array(
+    					'payment_method_types' => array('card'),
+    					'line_items' => array(array(
+    						'name' => $langs->transnoentitiesnoconv("Payment").' '.$FULLTAG.' ref='.$ref,
+    						'description' => 'Stripe payment: '.$FULLTAG.' ref='.$ref,
+    						'amount' => $amountstripe,
+    						'currency' => $currency,
+    						'images' => array($urllogofull),
+    						'quantity' => 1,
+    					)),
+    					'client_reference_id' => $FULLTAG,
+    					'success_url' => $urlok,
+    					'cancel_url' => $urlko,
+    				);
+    				if ($stripecu) $arrayforcheckout['customer'] = $stripecu;
+    				elseif (GETPOST('email', 'alpha') && isValidEmail(GETPOST('email', 'alpha'))) $arrayforcheckout['customer_email'] = GETPOST('email', 'alpha');
+    				$sessionstripe = \Stripe\Checkout\Session::create($arrayforcheckout);
+
+    				$remoteip = getUserRemoteIP();
+
+    				// Save some data for the paymentok
+    				$_SESSION["currencyCodeType"] = $currency;
+    				$_SESSION["paymentType"] = '';
+    				$_SESSION["FinalPaymentAmt"] = $amount;
+    				$_SESSION['ipaddress'] = ($remoteip?$remoteip:'unknown');  // Payer ip
+    				$_SESSION['payerID'] = is_object($stripecu)?$stripecu->id:'';
+    				$_SESSION['TRANSACTIONID'] = $sessionstripe->id;
+    			}
+    			catch(Exception $e)
+    			{
+    				print $e->getMessage();
+    			}
     		?>
    			// Code for payment with option STRIPE_USE_NEW_CHECKOUT set
 
