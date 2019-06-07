@@ -662,7 +662,7 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
         else
         {
         	// TODO We can alse record the payment mode into llx_societe_rib with stripe $paymentintent->payment_method
-        	// Note that with other Stripe architecture (using Charge API), the payment mode was not recorded, so it is not mandatory to do it here.
+        	// Note that with other old Stripe architecture (using Charge API), the payment mode was not recorded, so it is not mandatory to do it here.
         	//dol_syslog("Create payment_method for ".$paymentintent->payment_method, LOG_DEBUG, 0, '_stripe');
         }
     }
@@ -864,25 +864,6 @@ if (! $source)
 	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
 	print '</td></tr>'."\n";
 
-	if (! empty($conf->stripe->enabled) && $paymentmethod == 'stripe' && ! empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION))
-	{
-	    require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
-
-	    $service = 'StripeLive';
-	    $servicestatus = 1;
-
-	    if (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))
-	    {
-	        $service = 'StripeTest';
-	        $servicestatus = 0;
-	    }
-	    $stripe = new Stripe($db);
-	    $stripeacc = $stripe->getStripeAccount($service);
-	    $stripecu = null;
-
-	    $paymentintent=$stripe->getPaymentIntent($amount, $currency, $tag, 'Stripe payment: '.$fulltag, $object, $stripecu, $stripeacc, $servicestatus);
-	    if ($stripe->error) setEventMessages($stripe->error, null, 'errors');
-	}
 	// We do not add fields shipToName, shipToStreet, shipToCity, shipToState, shipToCountryCode, shipToZip, shipToStreet2, phoneNum
 	// as they don't exists (buyer is unknown, tag is free).
 }
@@ -973,26 +954,6 @@ if ($source == 'order')
 	print '<input type="hidden" name="tag" value="'.$tag.'">';
 	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
 	print '</td></tr>'."\n";
-
-	if (! empty($conf->stripe->enabled) && $paymentmethod == 'stripe' && empty($order->billed) && ! empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION))
-	{
-	    require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
-
-	    $service = 'StripeLive';
-	    $servicestatus = 1;
-
-	    if (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))
-	    {
-	        $service = 'StripeTest';
-	        $servicestatus = 0;
-	    }
-	    $stripe = new Stripe($db);
-	    $stripeacc = $stripe->getStripeAccount($service);
-	    $stripecu = $stripe->customerStripe($order->thirdparty, $stripeacc, $servicestatus, 1);
-
-	    $paymentintent=$stripe->getPaymentIntent($amount, $currency, $tag, 'Stripe payment: '.$fulltag.' ref='.$object->ref, $object, $stripecu, $stripeacc, $servicestatus);
-	    if ($stripe->error) setEventMessages($stripe->error, null, 'errors');
-	}
 
 	// Shipping address
 	$shipToName=$order->thirdparty->name;
@@ -1120,25 +1081,6 @@ if ($source == 'invoice')
 	print '<input type="hidden" name="tag" value="'.$tag.'">';
 	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
 	print '</td></tr>'."\n";
-
-	if (! empty($conf->stripe->enabled) && ($paymentmethod == 'stripe') && empty($object->paye) && ! empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION))
-	{
-	    require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
-
-	    $service = 'StripeLive';
-	    $servicestatus = 1;
-	    if (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))
-	    {
-	        $service = 'StripeTest';
-	        $servicestatus = 0;
-	    }
-	    $stripe = new Stripe($db);
-	    $stripeacc = $stripe->getStripeAccount($service);
-	    $stripecu = $stripe->customerStripe($invoice->thirdparty, $stripeacc, $servicestatus, 1);
-
-	    $paymentintent=$stripe->getPaymentIntent($amount, $currency, $tag, 'Stripe payment: '.$fulltag.' ref='.$object->ref, $object, $stripecu, $stripeacc, $servicestatus);
-	    if ($stripe->error) setEventMessages($stripe->error, null, 'errors');
-	}
 
 	// Shipping address
 	$shipToName=$invoice->thirdparty->name;
@@ -1350,26 +1292,6 @@ if ($source == 'contractline')
 	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
 	print '</td></tr>'."\n";
 
-	if (! empty($conf->stripe->enabled) && $paymentmethod == 'stripe' && ! empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION))
-	{
-	    require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
-
-	    $service = 'StripeLive';
-	    $servicestatus = 1;
-
-	    if (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))
-	    {
-	        $service = 'StripeTest';
-	        $servicestatus = 0;
-	    }
-	    $stripe = new Stripe($db);
-	    $stripeacc = $stripe->getStripeAccount($service);
-	    $stripecu = null;
-
-	    $paymentintent=$stripe->getPaymentIntent($amount, $currency, $tag, 'Stripe payment: '.$fulltag." ref=".$object->ref, $object, $stripecu, $stripeacc, $servicestatus);
-	    if ($stripe->error) setEventMessages($stripe->error, null, 'errors');
-	}
-
 	// Shipping address
 	$shipToName=$contract->thirdparty->name;
 	$shipToStreet=$contract->thirdparty->address;
@@ -1536,26 +1458,6 @@ if ($source == 'membersubscription')
 	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
 	print '</td></tr>'."\n";
 
-	if (! empty($conf->stripe->enabled) && $paymentmethod == 'stripe' && ! empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION))
-	{
-	    require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
-
-	    $service = 'StripeLive';
-	    $servicestatus = 1;
-
-	    if (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))
-	    {
-	        $service = 'StripeTest';
-	        $servicestatus = 0;
-	    }
-	    $stripe = new Stripe($db);
-	    $stripeacc = $stripe->getStripeAccount($service);
-	    $stripecu = null;
-
-	    $paymentintent=$stripe->getPaymentIntent($amount, $currency, $tag, 'Stripe payment: '.$fulltag." ref=".$object->ref, $object, $stripecu, $stripeacc, $servicestatus);
-	    if ($stripe->error) setEventMessages($stripe->error, null, 'errors');
-	}
-
 	// Shipping address
 	$shipToName=$member->getFullName($langs);
 	$shipToStreet=$member->address;
@@ -1697,26 +1599,6 @@ if ($source == 'donation')
 	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
 	print '</td></tr>'."\n";
 
-	if (! empty($conf->stripe->enabled) && ($paymentmethod == 'stripe') && empty($object->paid) && ! empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION))
-	{
-	    require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
-
-	    $service = 'StripeLive';
-	    $servicestatus = 1;
-
-	    if (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))
-	    {
-	        $service = 'StripeTest';
-	        $servicestatus = 0;
-	    }
-	    $stripe = new Stripe($db);
-	    $stripeacc = $stripe->getStripeAccount($service);
-	    $stripecu = $stripe->customerStripe($don->thirdparty, $stripeacc, $servicestatus, 1);
-
-	    $paymentintent=$stripe->getPaymentIntent($amount, $currency, $tag, 'Stripe payment: '.$fulltag." ref=".$object->ref, $object, $stripecu, $stripeacc, $servicestatus);
-	    if ($stripe->error) setEventMessages($stripe->error, null, 'errors');
-	}
-
 	// Shipping address
 	$shipToName=$don->getFullName($langs);
 	$shipToStreet=$don->address;
@@ -1758,6 +1640,7 @@ print '</table>'."\n";
 print "\n";
 
 
+// Show all payment mode buttons (Stripe, Paypal, ...)
 if ($action != 'dopayment')
 {
 	if ($found && ! $error)	// We are in a management option and no error
@@ -1833,7 +1716,7 @@ print '<br>';
 
 
 // Add more content on page for some services
-if (preg_match('/^dopayment/', $action))
+if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment mode
 {
 
 	// Stripe
@@ -1887,6 +1770,27 @@ if (preg_match('/^dopayment/', $action))
 		print '<input type="hidden" name="forcesandbox" value="'.GETPOST('forcesandbox', 'int').'" />';
 		print '<input type="hidden" name="email" value="'.GETPOST('email', 'alpha').'" />';
 		print '<input type="hidden" name="thirdparty_id" value="'.GETPOST('thirdparty_id', 'int').'" />';
+
+		if (! empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION))
+		{
+			require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
+
+			$service = 'StripeLive';
+			$servicestatus = 1;
+
+			if (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))
+			{
+				$service = 'StripeTest';
+				$servicestatus = 0;
+			}
+			$stripe = new Stripe($db);
+			$stripeacc = $stripe->getStripeAccount($service);
+			$stripecu = null;
+			if (is_object($object) && is_object($object->thirdparty)) $stripecu = $stripe->customerStripe($object->thirdparty, $stripeacc, $servicestatus, 1);
+
+			$paymentintent=$stripe->getPaymentIntent($amount, $currency, $tag, 'Stripe payment: '.$fulltag.(is_object($object)?' ref='.$object->ref:''), $object, $stripecu, $stripeacc, $servicestatus);
+			if ($stripe->error) setEventMessages($stripe->error, null, 'errors');
+		}
 
 		if (empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION) || ! empty($paymentintent))
 		{
@@ -1949,12 +1853,75 @@ if (preg_match('/^dopayment/', $action))
 		}
 		else
 		{
+			// JS Code for Stripe
+			print '<!-- JS Code for Stripe components -->';
     		print '<script src="https://js.stripe.com/v3/"></script>'."\n";
 
     	    // Code to ask the credit card. This use the default "API version". No way to force API version when using JS code.
     		print '<script type="text/javascript" language="javascript">'."\n";
 
-    		if (! empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION))
+    		if (! empty($conf->global->STRIPE_USE_NEW_CHECKOUT))
+    		{
+    			$sessionstripe = \Stripe\Checkout\Session::create([
+    				'customer_email' => (GETPOST('email', 'alpha')?GETPOST('email', 'alpha'):''),
+    				'payment_method_types' => ['card'],
+    				'line_items' => [[
+    					'name' => 'T-shirt',
+    					'description' => 'Stripe payment: '.$FULLTAG.' ref='.$ref,
+    					//'images' => ['https://example.com/t-shirt.png'],
+    					'amount' => $amount,
+    					'currency' => $currency,
+    					'quantity' => 1,
+    				]],
+    				'success_url' => $urlok,
+    				'cancel_url' => $urlko,
+    			]);
+
+    		?>
+   			// Code for payment with option STRIPE_USE_NEW_CHECKOUT set
+
+    	    // Create a Stripe client.
+    	    var stripe = Stripe('<?php echo $stripearrayofkeys['publishable_key']; // Defined into config.php ?>');
+
+    	    // Create an instance of Elements
+    	    var elements = stripe.elements();
+
+    	    // Custom styling can be passed to options when creating an Element.
+    	    // (Note that this demo uses a wider set of styles than the guide below.)
+    	    var style = {
+    	      base: {
+    	        color: '#32325d',
+    	        lineHeight: '24px',
+    	        fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+    	        fontSmoothing: 'antialiased',
+    	        fontSize: '16px',
+    	        '::placeholder': {
+    	          color: '#aab7c4'
+    	        }
+    	      },
+    	      invalid: {
+    	        color: '#fa755a',
+    	        iconColor: '#fa755a'
+    	      }
+    	    };
+
+    		var cardElement = elements.create('card', {style: style});
+
+			stripe.redirectToCheckout({
+			  // Make the id field from the Checkout Session creation API response
+			  // available to this file, so you can provide it as parameter here
+			  // instead of the {{CHECKOUT_SESSION_ID}} placeholder.
+			  sessionId: '<?php print $sessionstripe->id; ?>'
+			}).then(function (result) {
+			  // If `redirectToCheckout` fails due to a browser or network
+			  // error, display the localized error message to your customer
+			  // using `result.error.message`.
+			});
+
+
+    		<?php
+    		}
+    		elseif (! empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION))
     		{
             ?>
     		// Code for payment with option STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION set
@@ -2032,7 +1999,7 @@ if (preg_match('/^dopayment/', $action))
         			        	    postal_code: '<?php echo $object->thirdparty->zip; ?>'}<?php } ?>
         			        }	/* TODO Add all other known data like emails, ... to be SCA compliant */
               			},
-              			save_payment_method: true	/* the card will be saved */
+              			save_payment_method: <?php if ($stripecu) { print 'true'; } else { print 'false'; } ?>	/* true when a customer was provided when creating payment intent. true ask to save the card */
                     }
                   ).then(function(result) {
                   	  console.log(result);
@@ -2056,13 +2023,12 @@ if (preg_match('/^dopayment/', $action))
                 }
             });
 
-
     		<?php
     		}
     		else
     		{
     		?>
-    		// Code for payment with option STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION off
+    		// Code for payment with option STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION off and STRIPE_USE_NEW_CHECKOUT off
 
     	    // Create a Stripe client.
     	    var stripe = Stripe('<?php echo $stripearrayofkeys['publishable_key']; // Defined into config.php ?>');
