@@ -1147,9 +1147,10 @@ class Expedition extends CommonObject
 	 * 	Delete shipment.
 	 * 	Warning, do not delete a shipment if a delivery is linked to (with table llx_element_element)
 	 *
+	 *  @param  int  $notrigger Disable triggers
 	 * 	@return	int		>0 if OK, 0 if deletion done but failed to delete files, <0 if KO
 	 */
-	public function delete()
+	public function delete($notrigger = 0)
 	{
 		global $conf, $langs, $user;
 
