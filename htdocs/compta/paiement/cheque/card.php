@@ -474,9 +474,9 @@ if ($action == 'new')
 		print '<tr class="liste_titre">';
 		print '<td style="min-width: 120px">'.$langs->trans("DateChequeReceived").'</td>'."\n";
 		print '<td style="min-width: 120px">'.$langs->trans("ChequeNumber")."</td>\n";
-		print '<td style="min-width: 200px">'.$langs->trans("CheckTransmitter")."</td>\n";
-		print '<td style="min-width: 200px">'.$langs->trans("Bank")."</td>\n";
-		print '<td class="right" width="100px">'.$langs->trans("Amount")."</td>\n";
+		print '<td style="min-width: 120px">'.$langs->trans("CheckTransmitter")."</td>\n";
+		print '<td style="min-width: 120px">'.$langs->trans("Bank")."</td>\n";
+		print '<td style="min-width: 120px" class="right">'.$langs->trans("Amount")."</td>\n";
 		print '<td align="center" width="100px">'.$langs->trans("Payment")."</td>\n";
 		print '<td align="center" width="100px">'.$langs->trans("LineRecord")."</td>\n";
 		print '<td align="center" width="100px">'.$langs->trans("Select")."<br>";
