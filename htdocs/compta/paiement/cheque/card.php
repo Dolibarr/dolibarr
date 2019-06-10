@@ -472,11 +472,11 @@ if ($action == 'new')
         print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
 		print '<tr class="liste_titre">';
-		print '<td style="min-width: 120px">'.$langs->trans("DateChequeReceived").'</td>'."\n";
-		print '<td style="min-width: 120px">'.$langs->trans("ChequeNumber")."</td>\n";
-		print '<td style="min-width: 120px">'.$langs->trans("CheckTransmitter")."</td>\n";
-		print '<td style="min-width: 120px">'.$langs->trans("Bank")."</td>\n";
-		print '<td style="min-width: 120px" class="right">'.$langs->trans("Amount")."</td>\n";
+		print '<td class="minwidth100">'.$langs->trans("DateChequeReceived").'</td>'."\n";
+		print '<td class="minwidth100">'.$langs->trans("ChequeNumber")."</td>\n";
+		print '<td class="minwidth100">'.$langs->trans("CheckTransmitter")."</td>\n";
+		print '<td class="minwidth100">'.$langs->trans("Bank")."</td>\n";
+		print '<td class="minwidth100 right">'.$langs->trans("Amount")."</td>\n";
 		print '<td align="center" width="100px">'.$langs->trans("Payment")."</td>\n";
 		print '<td align="center" width="100px">'.$langs->trans("LineRecord")."</td>\n";
 		print '<td align="center" width="100px">'.$langs->trans("Select")."<br>";
