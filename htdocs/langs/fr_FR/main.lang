@@ -972,3 +972,4 @@ TMenuMRP=GPAO
 ShowMoreInfos=Afficher plus d'informations
 NoFilesUploadedYet=S'il vous plaît, téléverser un document d'abord
 SeePrivateNote=Voir note privée
+ReversedSearch=Inverser les sélections avec opérateur NOT

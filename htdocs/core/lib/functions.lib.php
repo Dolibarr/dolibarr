@@ -7562,7 +7562,9 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 					}
 					else
 					{
-						$newres .= $field . " LIKE '";
+						$newres .= $field;
+						if(GETPOST('button_ReversedSearch')=='RS')$newres .=" NOT";
+						$newres .=" LIKE '";
 
 						$tmpcrit=trim($tmpcrit);
 						$tmpcrit2=$tmpcrit;

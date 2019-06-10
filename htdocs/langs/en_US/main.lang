@@ -973,3 +973,4 @@ SeePrivateNote=See private note
 PaymentInformation=Payment information
 ValidFrom=Valid from
 ValidUntil=Valid until
+ReversedSearch=Reversed Search with not operator

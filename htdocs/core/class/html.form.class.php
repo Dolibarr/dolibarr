@@ -4885,7 +4885,7 @@ class Form
 
 		$out='';
 		$out.= '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
-		if ($useempty) $out .= '<option value="">&nbsp;</option>';
+		if ($useempty) $out .= '<option value=""></option>';
 		// If company current currency not in table, we add it into list. Should always be available.
 		if (! in_array($conf->currency, $TCurrency))
 		{
@@ -7351,6 +7351,7 @@ class Form
 		//$out.='<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"), 'searchclear.png', '', '', 1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
 		$out.='<button type="submit" class="liste_titre button_search" name="button_search_x" value="x"><span class="fa fa-search"></span></button>';
 		$out.='<button type="submit" class="liste_titre button_removefilter" name="button_removefilter_x" value="x"><span class="fa fa-remove"></span></button>';
+                $out.='<input type="submit" class="liste_titre" name="button_ReversedSearch" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="RS" title="'.dol_escape_htmltag($langs->trans("ReversedSearch")).'">';
 		$out.='</div>';
 
 		return $out;
