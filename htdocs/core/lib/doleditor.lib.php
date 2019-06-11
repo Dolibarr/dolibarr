@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2006-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2015		Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015		Alexandre Spangaro	<aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@
  * 	@param	int			$edit				1 to add edit form
  * 	@return	void
  */
-function show_skin($fuser,$edit=0)
+function show_skin($fuser, $edit = 0)
 {
     global $conf,$langs,$db;
     global $bc;
@@ -45,7 +45,7 @@ function show_skin($fuser,$edit=0)
     {
     	foreach($conf->modules_parts['theme'] as $reldir)
     	{
-	    	$dirskins=array_merge($dirskins,(array) ($reldir.'theme'));
+	    	$dirskins=array_merge($dirskins, (array) ($reldir.'theme'));
     	}
     }
     $dirskins=array_unique($dirskins);
@@ -64,7 +64,7 @@ function show_skin($fuser,$edit=0)
 
     // Title
    	print '<tr class="liste_titre"><th width="35%">'.$langs->trans("DefaultSkin").'</th>';
-   	print '<th align="right">';
+   	print '<th class="right">';
    	$url='http://ckeditor.com/addons/skins/all';
    	/*print '<a href="'.$url.'" target="_blank">';
    	print $langs->trans('DownloadMoreSkins');
@@ -84,14 +84,14 @@ function show_skin($fuser,$edit=0)
     //
     print '<tr class="oddeven"><td colspan="'.$colspan.'">';
 
-    print '<table class="nobordernopadding" width="100%"><tr><td><div align="center">';
+    print '<table class="nobordernopadding" width="100%"><tr><td><div class="center">';
 
     $i=0;
     foreach($dirskins as $dir)
     {
     	//print $dirroot.$dir;exit;
-    	$dirskin=dol_buildpath($dir,0);	// This include loop on $conf->file->dol_document_root
-    	$urltheme=dol_buildpath($dir,1);
+    	$dirskin=dol_buildpath($dir, 0);	// This include loop on $conf->file->dol_document_root
+    	$urltheme=dol_buildpath($dir, 1);
 
     	if (is_dir($dirskin))
     	{
@@ -101,11 +101,11 @@ function show_skin($fuser,$edit=0)
     			while (($subdir = readdir($handle))!==false)
     			{
     				if (is_dir($dirskin."/".$subdir) && substr($subdir, 0, 1) <> '.'
-    						&& substr($subdir, 0, 3) <> 'CVS' && ! preg_match('/common|phones/i',$subdir))
+    						&& substr($subdir, 0, 3) <> 'CVS' && ! preg_match('/common|phones/i', $subdir))
     				{
     					// Disable not stable themes (dir ends with _exp or _dev)
-    					if ($conf->global->MAIN_FEATURES_LEVEL < 2 && preg_match('/_dev$/i',$subdir)) continue;
-    					if ($conf->global->MAIN_FEATURES_LEVEL < 1 && preg_match('/_exp$/i',$subdir)) continue;
+    					if ($conf->global->MAIN_FEATURES_LEVEL < 2 && preg_match('/_dev$/i', $subdir)) continue;
+    					if ($conf->global->MAIN_FEATURES_LEVEL < 1 && preg_match('/_exp$/i', $subdir)) continue;
 
     					print '<div class="inline-block" style="margin-top: 10px; margin-bottom: 10px; margin-right: 20px; margin-left: 20px;">';
     					if ($subdir == $selected_theme)
@@ -131,4 +131,3 @@ function show_skin($fuser,$edit=0)
 
     print '</table>';
 }
-

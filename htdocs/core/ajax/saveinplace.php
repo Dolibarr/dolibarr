@@ -20,18 +20,18 @@
  *       \brief      File to save field value
  */
 
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1'); // Disables token renewal
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
-if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
-if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Disables token renewal
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
+if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
+if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
 
-$field			= GETPOST('field','alpha',2);
-$element		= GETPOST('element','alpha',2);
-$table_element	= GETPOST('table_element','alpha',2);
-$fk_element		= GETPOST('fk_element','alpha',2);
+$field			= GETPOST('field', 'alpha', 2);
+$element		= GETPOST('element', 'alpha', 2);
+$table_element	= GETPOST('table_element', 'alpha', 2);
+$fk_element		= GETPOST('fk_element', 'alpha', 2);
 
 /* Example:
 field:editval_ref_customer (8 first chars will removed to know name of property)
@@ -58,12 +58,12 @@ top_httphead();
 // Load original field value
 if (! empty($field) && ! empty($element) && ! empty($table_element) && ! empty($fk_element))
 {
-	$ext_element		= GETPOST('ext_element','alpha',2);
+	$ext_element		= GETPOST('ext_element', 'alpha', 2);
 	$field				= substr($field, 8); // remove prefix val_
-	$type				= GETPOST('type','alpha',2);
-	$value				= ($type == 'ckeditor' ? GETPOST('value','',2) : GETPOST('value','alpha',2));
-	$loadmethod			= GETPOST('loadmethod','alpha',2);
-	$savemethod			= GETPOST('savemethod','alpha',2);
+	$type				= GETPOST('type', 'alpha', 2);
+	$value				= ($type == 'ckeditor' ? GETPOST('value', '', 2) : GETPOST('value', 'alpha', 2));
+	$loadmethod			= GETPOST('loadmethod', 'alpha', 2);
+	$savemethod			= GETPOST('savemethod', 'alpha', 2);
 	$savemethodname		= (! empty($savemethod) ? $savemethod : 'setValueFrom');
 	$newelement			= $element;
 
@@ -72,21 +72,21 @@ if (! empty($field) && ! empty($element) && ! empty($table_element) && ! empty($
 	$return=array();
 	$error=0;
 
-	if ($element != 'order_supplier' && $element != 'invoice_supplier' && preg_match('/^([^_]+)_([^_]+)/i',$element,$regs))
+	if ($element != 'order_supplier' && $element != 'invoice_supplier' && preg_match('/^([^_]+)_([^_]+)/i', $element, $regs))
 	{
 		$element = $regs[1];
 		$subelement = $regs[2];
 	}
 
 	if ($element == 'propal') $newelement = 'propale';
-	else if ($element == 'fichinter') $newelement = 'ficheinter';
-	else if ($element == 'product') $newelement = 'produit';
-	else if ($element == 'member') $newelement = 'adherent';
-	else if ($element == 'order_supplier') {
+	elseif ($element == 'fichinter') $newelement = 'ficheinter';
+	elseif ($element == 'product') $newelement = 'produit';
+	elseif ($element == 'member') $newelement = 'adherent';
+	elseif ($element == 'order_supplier') {
 		$newelement = 'fournisseur';
 		$subelement = 'commande';
 	}
-	else if ($element == 'invoice_supplier') {
+	elseif ($element == 'invoice_supplier') {
 		$newelement = 'fournisseur';
 		$subelement = 'facture';
 	}
@@ -131,13 +131,13 @@ if (! empty($field) && ! empty($element) && ! empty($table_element) && ! empty($
 				$return['error'] = $langs->trans('ErrorBadValue');
 			}
 		}
-		else if ($type == 'datepicker')
+		elseif ($type == 'datepicker')
 		{
-			$timestamp	= GETPOST('timestamp','int',2);
+			$timestamp	= GETPOST('timestamp', 'int', 2);
 			$format		= 'date';
 			$newvalue	= ($timestamp / 1000);
 		}
-		else if ($type == 'select')
+		elseif ($type == 'select')
 		{
 			$loadmethodname	= 'load_cache_'.$loadmethod;
 			$loadcachename	= 'cache_'.$loadmethod;
@@ -167,7 +167,7 @@ if (! empty($field) && ! empty($element) && ! empty($table_element) && ! empty($
 			else
 			{
 				$module = $subelement = $ext_element;
-				if (preg_match('/^([^_]+)_([^_]+)/i',$ext_element,$regs))
+				if (preg_match('/^([^_]+)_([^_]+)/i', $ext_element, $regs))
 				{
 					$module = $regs[1];
 					$subelement = $regs[2];
@@ -211,7 +211,7 @@ if (! empty($field) && ! empty($element) && ! empty($table_element) && ! empty($
 			if ($ret > 0)
 			{
 				if ($type == 'numeric') $value = price($newvalue);
-				else if ($type == 'textarea') $value = dol_nl2br($newvalue);
+				elseif ($type == 'textarea') $value = dol_nl2br($newvalue);
 
 				$return['value'] = $value;
 				$return['view'] = (! empty($view) ? $view : $value);
@@ -229,4 +229,3 @@ if (! empty($field) && ! empty($element) && ! empty($table_element) && ! empty($
 		echo $langs->trans('NotEnoughPermissions');
 	}
 }
-

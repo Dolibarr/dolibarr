@@ -35,8 +35,8 @@ if (! empty($conf->projet->enabled)) {
 // Load translation files required by the page
 $langs->loadLangs(array('supplier_proposal', 'compta'));
 
-$id=GETPOST('id','int');
-$socid=GETPOST('socid','int');
+$id=GETPOST('id', 'int');
+$socid=GETPOST('socid', 'int');
 
 // Security check
 if (! empty($user->societe_id)) $socid=$user->societe_id;
@@ -49,7 +49,7 @@ $result = restrictedArea($user, 'supplier_proposal', $id);
 
 $form = new Form($db);
 
-llxHeader('',$langs->trans('CommRequest'),'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur');
+llxHeader('', $langs->trans('CommRequest'), 'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur');
 
 $object = new SupplierProposal($db);
 $object->fetch($id);

@@ -33,7 +33,7 @@ class mod_task_simple extends ModeleNumRefTask
 {
 	/**
      * Dolibarr version of the loaded document
-     * @public string
+     * @var string
      */
 	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
 
@@ -62,10 +62,10 @@ class mod_task_simple extends ModeleNumRefTask
      *
      *  @return     string      Text with description
      */
-    function info()
+    public function info()
     {
     	global $langs;
-      	return $langs->trans("SimpleNumRefModelDesc",$this->prefix);
+      	return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
     }
 
 
@@ -74,7 +74,7 @@ class mod_task_simple extends ModeleNumRefTask
      *
      * 	@return     string      Example
      */
-    function getExample()
+    public function getExample()
     {
         return $this->prefix."0501-0001";
     }
@@ -85,7 +85,7 @@ class mod_task_simple extends ModeleNumRefTask
      *
      *   @return     boolean     false si conflit, true si ok
      */
-    function canBeActivated()
+    public function canBeActivated()
     {
     	global $conf,$langs,$db;
 
@@ -101,16 +101,16 @@ class mod_task_simple extends ModeleNumRefTask
         if ($resql)
         {
             $row = $db->fetch_row($resql);
-            if ($row) { $coyymm = substr($row[0],0,6); $max=$row[0]; }
+            if ($row) { $coyymm = substr($row[0], 0, 6); $max=$row[0]; }
         }
-        if (! $coyymm || preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i',$coyymm))
+        if (! $coyymm || preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $coyymm))
         {
             return true;
         }
         else
         {
 			$langs->load("errors");
-			$this->error=$langs->trans('ErrorNumRefModel',$max);
+			$this->error=$langs->trans('ErrorNumRefModel', $max);
             return false;
         }
     }
@@ -123,7 +123,7 @@ class mod_task_simple extends ModeleNumRefTask
 	*  @param   Task	$object		Object Task
 	*  @return	string				Value if OK, 0 if KO
 	*/
-    function getNextValue($objsoc,$object)
+    public function getNextValue($objsoc, $object)
     {
 		global $db,$conf;
 
@@ -149,17 +149,17 @@ class mod_task_simple extends ModeleNumRefTask
 		$date=empty($object->date_c)?dol_now():$object->date_c;
 
 		//$yymm = strftime("%y%m",time());
-		$yymm = strftime("%y%m",$date);
+		$yymm = strftime("%y%m", $date);
 
 		if ($max >= (pow(10, 4) - 1)) $num=$max+1;	// If counter > 9999, we do not format on 4 chars, we take number as it is
-		else $num = sprintf("%04s",$max+1);
+		else $num = sprintf("%04s", $max+1);
 
 		dol_syslog("mod_task_simple::getNextValue return ".$this->prefix.$yymm."-".$num);
 		return $this->prefix.$yymm."-".$num;
     }
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Return next reference not yet used as a reference
      *
@@ -167,8 +167,8 @@ class mod_task_simple extends ModeleNumRefTask
      *  @param  Task	$object     Object task
      *  @return string              Next not used reference
      */
-    function task_get_num($objsoc=0,$object='')
+    public function task_get_num($objsoc = 0, $object = '')
     {
-        return $this->getNextValue($objsoc,$object);
+        return $this->getNextValue($objsoc, $object);
     }
 }

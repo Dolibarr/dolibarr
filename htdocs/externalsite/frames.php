@@ -63,7 +63,7 @@ if (! empty($keyforcontent))
 		$langs->load("errors");
 		print $langs->trans("ErrorBadSyntaxForParamKeyForContent", 'EXTERNAL_SITE_CONTENT_', 'EXTERNAL_SITE_URL_');
 	}
-	else if (empty($conf->global->$keyforcontent))
+	elseif (empty($conf->global->$keyforcontent))
 	{
 		$langs->load("errors");
 		print $langs->trans("ErrorVariableKeyForContentMustBeSet", 'EXTERNAL_SITE_CONTENT_'.$keyforcontent, 'EXTERNAL_SITE_URL_'.$keyforcontent);

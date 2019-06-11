@@ -35,7 +35,7 @@ class mod_supplier_proposal_saphir extends ModeleNumRefSupplierProposal
 {
 	/**
      * Dolibarr version of the loaded document
-     * @public string
+     * @var string
      */
 	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
 
@@ -62,7 +62,7 @@ class mod_supplier_proposal_saphir extends ModeleNumRefSupplierProposal
      *
      *  @return     string      Texte descripif
      */
-	function info()
+    public function info()
     {
     	global $conf, $langs;
 
@@ -77,17 +77,17 @@ class mod_supplier_proposal_saphir extends ModeleNumRefSupplierProposal
 		$texte.= '<input type="hidden" name="maskconstsupplier_proposal" value="SUPPLIER_PROPOSAL_SAPHIR_MASK">';
 		$texte.= '<table class="nobordernopadding" width="100%">';
 
-		$tooltip=$langs->trans("GenericMaskCodes",$langs->transnoentities("CommRequest"),$langs->transnoentities("CommRequest"));
+		$tooltip=$langs->trans("GenericMaskCodes", $langs->transnoentities("CommRequest"), $langs->transnoentities("CommRequest"));
 		$tooltip.=$langs->trans("GenericMaskCodes2");
 		$tooltip.=$langs->trans("GenericMaskCodes3");
-		$tooltip.=$langs->trans("GenericMaskCodes4a",$langs->transnoentities("CommRequest"),$langs->transnoentities("CommRequest"));
+		$tooltip.=$langs->trans("GenericMaskCodes4a", $langs->transnoentities("CommRequest"), $langs->transnoentities("CommRequest"));
 		$tooltip.=$langs->trans("GenericMaskCodes5");
 
 		// Parametrage du prefix
 		$texte.= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="masksupplier_proposal" value="'.$conf->global->SUPPLIER_PROPOSAL_SAPHIR_MASK.'">',$tooltip,1,1).'</td>';
+		$texte.= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="masksupplier_proposal" value="'.$conf->global->SUPPLIER_PROPOSAL_SAPHIR_MASK.'">', $tooltip, 1, 1).'</td>';
 
-		$texte.= '<td align="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
+		$texte.= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
 
 		$texte.= '</tr>';
 
@@ -102,13 +102,13 @@ class mod_supplier_proposal_saphir extends ModeleNumRefSupplierProposal
      *
      *  @return     string      Example
      */
-    function getExample()
+    public function getExample()
     {
      	global $conf,$langs,$mysoc;
 
     	$old_code_client=$mysoc->code_client;
     	$mysoc->code_client='CCCCCCCCCC';
-     	$numExample = $this->getNextValue($mysoc,'');
+     	$numExample = $this->getNextValue($mysoc, '');
 		$mysoc->code_client=$old_code_client;
 
 		if (! $numExample)
@@ -125,7 +125,7 @@ class mod_supplier_proposal_saphir extends ModeleNumRefSupplierProposal
 	 * 	@param	Propal		$supplier_proposal	Object supplier_proposal
 	 *  @return string      					Value if OK, 0 if KO
 	 */
-	function getNextValue($objsoc,$supplier_proposal)
+	public function getNextValue($objsoc, $supplier_proposal)
 	{
 		global $db,$conf;
 
@@ -142,7 +142,7 @@ class mod_supplier_proposal_saphir extends ModeleNumRefSupplierProposal
 
 		$date=$supplier_proposal->datep;
 		$customercode=$objsoc->code_client;
-		$numFinal=get_next_value($db,$mask,'supplier_proposal','ref','',$customercode,$date);
+		$numFinal=get_next_value($db, $mask, 'supplier_proposal', 'ref', '', $customercode, $date);
 
 		return  $numFinal;
 	}

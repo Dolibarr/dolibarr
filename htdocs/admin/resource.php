@@ -61,12 +61,12 @@ if ($action == 'updateoptions')
  * View
  */
 
-llxHeader('',$langs->trans('ResourceSetup'));
+llxHeader('', $langs->trans('ResourceSetup'));
 
 $form = new Form($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans('ResourceSetup'),$linkback,'title_setup');
+print load_fiche_titre($langs->trans('ResourceSetup'), $linkback, 'title_setup');
 
 $head=resource_admin_prepare_head();
 
@@ -79,7 +79,7 @@ print '<input type="hidden" name="action" value="updateoptions">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameters").'</td>'."\n";
-print '<td align="right" width="60">'.$langs->trans("Value").'</td>'."\n";
+print '<td class="right" width="60">'.$langs->trans("Value").'</td>'."\n";
 print '<td></td>';
 
 
@@ -88,22 +88,22 @@ print '<tr class="oddeven">';
 print '<td width="80%">'.$langs->trans("UseSearchToSelectResource").'</td>';
 if (empty($conf->use_javascript_ajax))
 {
-	print '<td class="nowrap" align="right" colspan="2">';
+	print '<td class="nowrap right" colspan="2">';
 	print $langs->trans("NotAvailableWhenAjaxDisabled");
 	print '</td>';
 }
 else
 {
-	print '<td width="60" align="right">';
+	print '<td width="60" class="right">';
 	$arrval=array(
 			'0'=>$langs->trans("No"),
-			'1'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch",1).')',
-			'2'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch",2).')',
-			'3'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch",3).')',
+			'1'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 1).')',
+			'2'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 2).')',
+			'3'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 3).')',
 	);
-	print $form->selectarray("activate_RESOURCE_USE_SEARCH_TO_SELECT",$arrval,$conf->global->RESOURCE_USE_SEARCH_TO_SELECT);
+	print $form->selectarray("activate_RESOURCE_USE_SEARCH_TO_SELECT", $arrval, $conf->global->RESOURCE_USE_SEARCH_TO_SELECT);
 	print '</td>';
-	print '<td align="right">';
+	print '<td class="right">';
 	print '<input type="submit" class="button" name="RESOURCE_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';
 	print '</td>';
 }

@@ -22,6 +22,7 @@ create table llx_subscription
   tms             timestamp,
   datec           datetime,
   fk_adherent     integer,
+  fk_type         integer,
   dateadh         datetime,
   datef           date,
   subscription    double(24,8),

@@ -224,7 +224,7 @@ class MyModuleFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 	{
 		$this->url('/custom/mymodule/admin/about.php');
 		$this->authenticate();
-		return $this->assertEquals(
+return $this->assertEquals(
 			'Dolibarr Module Template (aka My Module)',
 			$this->byTag('h1')->text(),
 			"Readme title"
@@ -254,7 +254,7 @@ class MyModuleFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 	{
 		$this->url('/admin/triggers.php');
 		$this->authenticate();
-		return $this->assertContains(
+return $this->assertContains(
 			'interface_99_modMyModule_MyModuleTriggers.class.php',
 			$this->byTag('body')->text(),
 			"Trigger declared"
@@ -271,7 +271,7 @@ class MyModuleFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 	{
 		$this->url('/admin/triggers.php');
 		$this->authenticate();
-		return $this->assertContains(
+return $this->assertContains(
 			'tick.png',
 			$this->byXPath('//td[text()="interface_99_modMyModule_MyTrigger.class.php"]/following::img')->attribute('src'),
 			"Trigger enabled"

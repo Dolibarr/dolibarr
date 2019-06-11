@@ -34,21 +34,21 @@ require_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('errors', 'admin', 'companies', 'website'));
 
-$action=GETPOST('action','alpha')?GETPOST('action','alpha'):'view';
-$confirm=GETPOST('confirm','alpha');
+$action=GETPOST('action', 'alpha')?GETPOST('action', 'alpha'):'view';
+$confirm=GETPOST('confirm', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
-$rowid=GETPOST('rowid','alpha');
+$rowid=GETPOST('rowid', 'alpha');
 
 if (!$user->admin) accessforbidden();
 
 $status = 1;
 
 // Load variable for pagination
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
-$sortfield = GETPOST('sortfield','alpha');
-$sortorder = GETPOST('sortorder','alpha');
-$page = GETPOST('page','int');
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST('sortfield', 'alpha');
+$sortorder = GETPOST('sortorder', 'alpha');
+$page = GETPOST('page', 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -78,7 +78,7 @@ llxHeader('', $langs->trans("WebsiteSetup"));
 
 $titre=$langs->trans("WebsiteSetup");
 $linkback='<a href="'.($backtopage?$backtopage:DOL_URL_ROOT.'/admin/modules.php').'">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($titre,$linkback,'title_setup');
+print load_fiche_titre($titre, $linkback, 'title_setup');
 
 // Onglets
 $head=array();
@@ -109,7 +109,7 @@ if ($action == 'edit')
 	foreach($arrayofparameters as $key => $val)
 	{
 		print '<tr class="oddeven"><td>';
-		print $form->textwithpicto($langs->trans($key),$langs->trans($key.'Tooltip'));
+		print $form->textwithpicto($langs->trans($key), $langs->trans($key.'Tooltip'));
 		print '</td><td><input name="'.$key.'"  class="flat '.(empty($val['css'])?'minwidth200':$val['css']).'" value="' . $conf->global->$key . '"></td></tr>';
 	}
 
@@ -130,7 +130,7 @@ else
 	foreach($arrayofparameters as $key => $val)
 	{
 		print '<tr class="oddeven"><td>';
-		print $form->textwithpicto($langs->trans($key),$langs->trans($key.'Tooltip'));
+		print $form->textwithpicto($langs->trans($key), $langs->trans($key.'Tooltip'));
 		print '</td><td>' . $conf->global->$key . '</td></tr>';
 	}
 
@@ -147,4 +147,3 @@ dol_fiche_end();
 // End of page
 llxFooter();
 $db->close();
-

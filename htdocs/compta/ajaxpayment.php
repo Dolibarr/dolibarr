@@ -20,11 +20,11 @@
  *       \brief      File to return Ajax response on payment breakdown process
  */
 
-if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
-if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK','1');
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1');
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1'); // If there is no menu to show
-if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1'); // If we don't need to load the html.form.class.php
+if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
+if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1'); // If there is no menu to show
+if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1'); // If we don't need to load the html.form.class.php
 
 require '../main.inc.php';
 
@@ -36,7 +36,7 @@ $langs->load('compta');
  */
 
 //init var
-$invoice_type = GETPOST('invoice_type','int');
+$invoice_type = GETPOST('invoice_type', 'int');
 $amountPayment = $_POST['amountPayment'];
 $amounts = $_POST['amounts'];				// from text inputs : invoice amount payment (check required)
 $remains = $_POST['remains'];				// from dolibarr's object (no need to check)
@@ -75,7 +75,7 @@ if ($currentInvId)																	// Here to breakdown
 	if($amountPayment == '')
 	{
 		// Check if current amount exists in amounts
-		$amountExists = array_key_exists('amount_'.$currentInvId,$amounts);
+		$amountExists = array_key_exists('amount_'.$currentInvId, $amounts);
 		if($amountExists)
 		{
 			$remainAmount = $currentRemain - $currentAmount;	// To keep value between curRemain and curAmount

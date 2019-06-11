@@ -40,24 +40,24 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancycategory.class.php
 // Load translation files required by the page
 $langs->loadLangs(array('compta','bills','donation','salaries','accountancy'));
 
-$date_startmonth=GETPOST('date_startmonth','int');
-$date_startday=GETPOST('date_startday','int');
-$date_startyear=GETPOST('date_startyear','int');
-$date_endmonth=GETPOST('date_endmonth','int');
-$date_endday=GETPOST('date_endday','int');
-$date_endyear=GETPOST('date_endyear','int');
-$showaccountdetail = GETPOST('showaccountdetail','aZ09')?GETPOST('showaccountdetail','aZ09'):'no';
+$date_startmonth=GETPOST('date_startmonth', 'int');
+$date_startday=GETPOST('date_startday', 'int');
+$date_startyear=GETPOST('date_startyear', 'int');
+$date_endmonth=GETPOST('date_endmonth', 'int');
+$date_endday=GETPOST('date_endday', 'int');
+$date_endyear=GETPOST('date_endyear', 'int');
+$showaccountdetail = GETPOST('showaccountdetail', 'aZ09')?GETPOST('showaccountdetail', 'aZ09'):'no';
 
 // Security check
-$socid = GETPOST('socid','int');
+$socid = GETPOST('socid', 'int');
 if ($user->societe_id > 0) $socid = $user->societe_id;
-if (! empty($conf->comptabilite->enabled)) $result=restrictedArea($user,'compta','','','resultat');
-if (! empty($conf->accounting->enabled)) $result=restrictedArea($user,'accounting','','','comptarapport');
+if (! empty($conf->comptabilite->enabled)) $result=restrictedArea($user, 'compta', '', '', 'resultat');
+if (! empty($conf->accounting->enabled)) $result=restrictedArea($user, 'accounting', '', '', 'comptarapport');
 
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -66,15 +66,15 @@ $pagenext = $page + 1;
 if (! $sortorder) $sortorder='ASC';
 
 // Date range
-$year=GETPOST('year','int');
+$year=GETPOST('year', 'int');
 if (empty($year))
 {
-    $year_current = strftime("%Y",dol_now());
-    $month_current = strftime("%m",dol_now());
+    $year_current = strftime("%Y", dol_now());
+    $month_current = strftime("%m", dol_now());
     $year_start = $year_current;
 } else {
     $year_current = $year;
-    $month_current = strftime("%m",dol_now());
+    $month_current = strftime("%m", dol_now());
     $year_start = $year;
 }
 $date_start=dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear);
@@ -101,12 +101,12 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
             else $year_end++;
         }
         else $month_end=$month_start;
-        $date_start=dol_get_first_day($year_start,$month_start,false); $date_end=dol_get_last_day($year_end,$month_end,false);
+        $date_start=dol_get_first_day($year_start, $month_start, false); $date_end=dol_get_last_day($year_end, $month_end, false);
     }
-    if ($q==1) { $date_start=dol_get_first_day($year_start,1,false); $date_end=dol_get_last_day($year_start,3,false); }
-    if ($q==2) { $date_start=dol_get_first_day($year_start,4,false); $date_end=dol_get_last_day($year_start,6,false); }
-    if ($q==3) { $date_start=dol_get_first_day($year_start,7,false); $date_end=dol_get_last_day($year_start,9,false); }
-    if ($q==4) { $date_start=dol_get_first_day($year_start,10,false); $date_end=dol_get_last_day($year_start,12,false); }
+    if ($q==1) { $date_start=dol_get_first_day($year_start, 1, false); $date_end=dol_get_last_day($year_start, 3, false); }
+    if ($q==2) { $date_start=dol_get_first_day($year_start, 4, false); $date_end=dol_get_last_day($year_start, 6, false); }
+    if ($q==3) { $date_start=dol_get_first_day($year_start, 7, false); $date_end=dol_get_last_day($year_start, 9, false); }
+    if ($q==4) { $date_start=dol_get_first_day($year_start, 10, false); $date_end=dol_get_last_day($year_start, 12, false); }
 }
 
 // $date_start and $date_end are defined. We force $year_start and $nbofyear
@@ -120,7 +120,7 @@ $nbofyear = ($year_end - $start_year) + 1;
 // Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES' or 'BOOKKEEPING')
 $modecompta = $conf->global->ACCOUNTING_MODE;
 if (! empty($conf->accounting->enabled)) $modecompta='BOOKKEEPING';
-if (GETPOST("modecompta",'alpha')) $modecompta=GETPOST("modecompta",'alpha');
+if (GETPOST("modecompta", 'alpha')) $modecompta=GETPOST("modecompta", 'alpha');
 
 $AccCat = new AccountancyCategory($db);
 
@@ -160,8 +160,8 @@ if ($modecompta=="CREANCES-DETTES")
 {
 	$name = $langs->trans("ReportInOut").', '.$langs->trans("ByPredefinedAccountGroups");
 	$calcmode=$langs->trans("CalcModeDebt");
-    $calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?date_startyear='.$tmps['year'].'&date_startmonth='.$tmps['mon'].'&date_startday='.$tmps['mday'].'&date_endyear='.$tmpe['year'].'&date_endmonth='.$tmpe['mon'].'&date_endday='.$tmpe['mday'].'&modecompta=RECETTES-DEPENSES">','</a>').')';
-    if (! empty($conf->accounting->enabled)) $calcmode.='<br>('.$langs->trans("SeeReportInBookkeepingMode",'<a href="'.$_SERVER["PHP_SELF"].'?date_startyear='.$tmps['year'].'&date_startmonth='.$tmps['mon'].'&date_startday='.$tmps['mday'].'&date_endyear='.$tmpe['year'].'&date_endmonth='.$tmpe['mon'].'&date_endday='.$tmpe['mday'].'&modecompta=BOOKKEEPING">','</a>').')';
+    $calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode", '<a href="'.$_SERVER["PHP_SELF"].'?date_startyear='.$tmps['year'].'&date_startmonth='.$tmps['mon'].'&date_startday='.$tmps['mday'].'&date_endyear='.$tmpe['year'].'&date_endmonth='.$tmpe['mon'].'&date_endday='.$tmpe['mday'].'&modecompta=RECETTES-DEPENSES">', '</a>').')';
+    if (! empty($conf->accounting->enabled)) $calcmode.='<br>('.$langs->trans("SeeReportInBookkeepingMode", '<a href="'.$_SERVER["PHP_SELF"].'?date_startyear='.$tmps['year'].'&date_startmonth='.$tmps['mon'].'&date_startday='.$tmps['mday'].'&date_endyear='.$tmpe['year'].'&date_endmonth='.$tmpe['mon'].'&date_endday='.$tmpe['mday'].'&modecompta=BOOKKEEPING">', '</a>').')';
     $period=$form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 	$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year=".($tmps['year']-1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($tmps['year']+1)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
     $description=$langs->trans("RulesResultDue");
@@ -174,8 +174,8 @@ elseif ($modecompta=="RECETTES-DEPENSES")
 {
 	$name = $langs->trans("ReportInOut").', '.$langs->trans("ByPredefinedAccountGroups");
 	$calcmode=$langs->trans("CalcModeEngagement");
-    $calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?date_startyear='.$tmps['year'].'&date_startmonth='.$tmps['mon'].'&date_startday='.$tmps['mday'].'&date_endyear='.$tmpe['year'].'&date_endmonth='.$tmpe['mon'].'&date_endday='.$tmpe['mday'].'&modecompta=CREANCES-DETTES">','</a>').')';
-    if (! empty($conf->accounting->enabled)) $calcmode.='<br>('.$langs->trans("SeeReportInBookkeepingMode",'<a href="'.$_SERVER["PHP_SELF"].'?date_startyear='.$tmps['year'].'&date_startmonth='.$tmps['mon'].'&date_startday='.$tmps['mday'].'&date_endyear='.$tmpe['year'].'&date_endmonth='.$tmpe['mon'].'&date_endday='.$tmpe['mday'].'&modecompta=BOOKKEEPING">','</a>').')';
+    $calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode", '<a href="'.$_SERVER["PHP_SELF"].'?date_startyear='.$tmps['year'].'&date_startmonth='.$tmps['mon'].'&date_startday='.$tmps['mday'].'&date_endyear='.$tmpe['year'].'&date_endmonth='.$tmpe['mon'].'&date_endday='.$tmpe['mday'].'&modecompta=CREANCES-DETTES">', '</a>').')';
+    if (! empty($conf->accounting->enabled)) $calcmode.='<br>('.$langs->trans("SeeReportInBookkeepingMode", '<a href="'.$_SERVER["PHP_SELF"].'?date_startyear='.$tmps['year'].'&date_startmonth='.$tmps['mon'].'&date_startday='.$tmps['mday'].'&date_endyear='.$tmpe['year'].'&date_endmonth='.$tmpe['mon'].'&date_endday='.$tmpe['mday'].'&modecompta=BOOKKEEPING">', '</a>').')';
     $period=$form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
     $periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year=".($tmps['year']-1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($tmps['year']+1)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
     $description=$langs->trans("RulesResultInOut");
@@ -186,8 +186,8 @@ elseif ($modecompta=="BOOKKEEPING")
 {
 	$name = $langs->trans("ReportInOut").', '.$langs->trans("ByPredefinedAccountGroups");
 	$calcmode=$langs->trans("CalcModeBookkeeping");
-    $calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?date_startyear='.$tmps['year'].'&date_startmonth='.$tmps['mon'].'&date_startday='.$tmps['mday'].'&date_endyear='.$tmpe['year'].'&date_endmonth='.$tmpe['mon'].'&date_endday='.$tmpe['mday'].'&modecompta=RECETTES-DEPENSES">','</a>').')';
-	$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?date_startyear='.$tmps['year'].'&date_startmonth='.$tmps['mon'].'&date_startday='.$tmps['mday'].'&date_endyear='.$tmpe['year'].'&date_endmonth='.$tmpe['mon'].'&date_endday='.$tmpe['mday'].'&modecompta=CREANCES-DETTES">','</a>').')';
+    $calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode", '<a href="'.$_SERVER["PHP_SELF"].'?date_startyear='.$tmps['year'].'&date_startmonth='.$tmps['mon'].'&date_startday='.$tmps['mday'].'&date_endyear='.$tmpe['year'].'&date_endmonth='.$tmpe['mon'].'&date_endday='.$tmpe['mday'].'&modecompta=RECETTES-DEPENSES">', '</a>').')';
+	$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode", '<a href="'.$_SERVER["PHP_SELF"].'?date_startyear='.$tmps['year'].'&date_startmonth='.$tmps['mon'].'&date_startday='.$tmps['mday'].'&date_endyear='.$tmpe['year'].'&date_endmonth='.$tmpe['mon'].'&date_endday='.$tmpe['mday'].'&modecompta=CREANCES-DETTES">', '</a>').')';
 	$period=$form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 	$arraylist=array('no'=>$langs->trans("No"), 'yes'=>$langs->trans("AccountWithNonZeroValues"), 'all'=>$langs->trans("All"));
 	$period.=' &nbsp; &nbsp; '.$langs->trans("DetailByAccount").' '. $form->selectarray('showaccountdetail', $arraylist, $showaccountdetail, 0);
@@ -200,7 +200,7 @@ elseif ($modecompta=="BOOKKEEPING")
 
 $hselected = 'report';
 
-report_header($name,'',$period,$periodlink,$description,$builddate,$exportlink,array('modecompta'=>$modecompta),$calcmode);
+report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink, array('modecompta'=>$modecompta), $calcmode);
 
 if (! empty($conf->accounting->enabled) && $modecompta != 'BOOKKEEPING')
 {
@@ -218,19 +218,19 @@ if ($date_endyear) $param.='&date_endyear='.$date_startyear;
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print_liste_field_titre("PredefinedGroups", $_SERVER["PHP_SELF"], 'f.thirdparty_code,f.rowid','',$param,'',$sortfield,$sortorder,'width200 ');
+print_liste_field_titre("PredefinedGroups", $_SERVER["PHP_SELF"], 'f.thirdparty_code,f.rowid', '', $param, '', $sortfield, $sortorder, 'width200 ');
 print_liste_field_titre('');
 if ($modecompta == 'BOOKKEEPING')
 {
-	print_liste_field_titre("Amount", $_SERVER["PHP_SELF"],'amount','',$param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], 'amount', '', $param, 'class="right"', $sortfield, $sortorder);
 }
 else
 {
 	if ($modecompta == 'CREANCES-DETTES')
 	{
-		print_liste_field_titre("AmountHT", $_SERVER["PHP_SELF"],'amount_ht','',$param,'align="right"',$sortfield,$sortorder);
+		print_liste_field_titre("AmountHT", $_SERVER["PHP_SELF"], 'amount_ht', '', $param, 'class="right"', $sortfield, $sortorder);
 	}
-	print_liste_field_titre("AmountTTC", $_SERVER["PHP_SELF"],'amount_ttc','',$param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre("AmountTTC", $_SERVER["PHP_SELF"], 'amount_ttc', '', $param, 'class="right"', $sortfield, $sortorder);
 }
 print "</tr>\n";
 
@@ -284,7 +284,7 @@ if ($modecompta == 'BOOKKEEPING')
 				print '<tr class="oddeven">';
 				print '<td>&nbsp;</td>';
 				print '<td>'.$objp->pcg_type.($objp->pcg_subtype != 'XXXXXX'?' - '.$objp->pcg_subtype:'').($objp->name?' ('.$objp->name.')':'')."</td>\n";
-				print '<td align="right">'.price($objp->amount)."</td>\n";
+				print '<td class="right">'.price($objp->amount)."</td>\n";
 				print "</tr>\n";
 
 				$total_ht += (isset($objp->amount)?$objp->amount:0);
@@ -301,7 +301,7 @@ if ($modecompta == 'BOOKKEEPING')
 					// Get cpts of category/group
 					$cpts = $AccCat->getCptsCat(0, $tmppredefinedgroupwhere);
 
-					foreach($cpts as $i => $cpt)
+					foreach($cpts as $j => $cpt)
 					{
 						$return = $AccCat->getSumDebitCredit($cpt['account_number'], $date_start, $date_end, $cpt['dc']);
 						if ($return < 0) {
@@ -317,7 +317,7 @@ if ($modecompta == 'BOOKKEEPING')
 							print '<tr>';
 							print '<td></td>';
 							print '<td class="tdoverflowmax200"> &nbsp; &nbsp; ' . length_accountg($cpt['account_number']) . ' - ' . $cpt['account_label'] . '</td>';
-							print '<td align="right">' . price($resultN) . '</td>';
+							print '<td class="right">' . price($resultN) . '</td>';
 							print "</tr>\n";
 						}
 					}
@@ -371,7 +371,7 @@ else
 	    if (! empty($date_start) && ! empty($date_end))
 	    	$sql.= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
 	}
-	$sql.= " AND f.entity = ".$conf->entity;
+	$sql.= " AND f.entity IN (".getEntity('invoice').")";
 	if ($socid) $sql.= " AND f.fk_soc = ".$socid;
 	$sql.= " GROUP BY name, socid";
 	$sql.= $db->order($sortfield, $sortorder);
@@ -389,8 +389,8 @@ else
 	        print "<td>".$langs->trans("Bills").' <a href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$objp->socid.'">'.$objp->name."</td>\n";
 
 	        if ($modecompta == 'CREANCES-DETTES')
-	        	print "<td align=\"right\">".price($objp->amount_ht)."</td>\n";
-	        print "<td align=\"right\">".price($objp->amount_ttc)."</td>\n";
+	        	print '<td class="right">'.price($objp->amount_ht)."</td>\n";
+	        print '<td class="right">'.price($objp->amount_ttc)."</td>\n";
 
 	        $total_ht += (isset($objp->amount_ht)?$objp->amount_ht:0);
 	        $total_ttc += $objp->amount_ttc;
@@ -434,8 +434,8 @@ else
 	                print "<td>".$langs->trans("Bills")." ".$langs->trans("Other")." (".$langs->trans("PaymentsNotLinkedToInvoice").")\n";
 
 	                if ($modecompta == 'CREANCES-DETTES')
-	                	print "<td align=\"right\">".price($objp->amount_ht)."</td>\n";
-	                print "<td align=\"right\">".price($objp->amount_ttc)."</td>\n";
+	                	print '<td class="right">'.price($objp->amount_ht)."</td>\n";
+	                print '<td class="right">'.price($objp->amount_ttc)."</td>\n";
 
 	                $total_ht += (isset($objp->amount_ht)?$objp->amount_ht:0);
 	                $total_ttc += $objp->amount_ttc;
@@ -459,8 +459,8 @@ else
 
 	print '<tr class="liste_total">';
 	if ($modecompta == 'CREANCES-DETTES')
-		print '<td colspan="3" align="right">'.price($total_ht).'</td>';
-	print '<td colspan="3" align="right">'.price($total_ttc).'</td>';
+		print '<td colspan="3" class="right">'.price($total_ht).'</td>';
+	print '<td colspan="3" class="right">'.price($total_ttc).'</td>';
 	print '</tr>';
 
 
@@ -519,8 +519,8 @@ else
 	            print "<td>".$langs->trans("Bills")." <a href=\"".DOL_URL_ROOT."/fourn/facture/list.php?socid=".$objp->socid."\">".$objp->name."</a></td>\n";
 
 	            if ($modecompta == 'CREANCES-DETTES')
-	            	print "<td align=\"right\">".price(-$objp->amount_ht)."</td>\n";
-	            print "<td align=\"right\">".price(-$objp->amount_ttc)."</td>\n";
+	            	print '<td class="right">'.price(-$objp->amount_ht)."</td>\n";
+	            print '<td class="right">'.price(-$objp->amount_ttc)."</td>\n";
 
 	            $total_ht -= (isset($objp->amount_ht)?$objp->amount_ht:0);
 	            $total_ttc -= $objp->amount_ttc;
@@ -544,8 +544,8 @@ else
 	}
 	print '<tr class="liste_total">';
 	if ($modecompta == 'CREANCES-DETTES')
-		print '<td colspan="3" align="right">'.price(-$subtotal_ht).'</td>';
-	print '<td colspan="3" align="right">'.price(-$subtotal_ttc).'</td>';
+		print '<td colspan="3" class="right">'.price(-$subtotal_ht).'</td>';
+	print '<td colspan="3" class="right">'.price(-$subtotal_ttc).'</td>';
 	print '</tr>';
 
 
@@ -605,8 +605,8 @@ else
 
 	            print '<tr class="oddeven"><td>&nbsp;</td>';
 	            print '<td>'.$obj->label.'</td>';
-	            if ($modecompta == 'CREANCES-DETTES') print '<td align="right">'.price(-$obj->amount).'</td>';
-	            print '<td align="right">'.price(-$obj->amount).'</td>';
+	            if ($modecompta == 'CREANCES-DETTES') print '<td class="right">'.price(-$obj->amount).'</td>';
+	            print '<td class="right">'.price(-$obj->amount).'</td>';
 	            print '</tr>';
 	            $i++;
 	        }
@@ -621,8 +621,8 @@ else
 	}
 	print '<tr class="liste_total">';
 	if ($modecompta == 'CREANCES-DETTES')
-		print '<td colspan="3" align="right">'.price(-$subtotal_ht).'</td>';
-	print '<td colspan="3" align="right">'.price(-$subtotal_ttc).'</td>';
+		print '<td colspan="3" class="right">'.price(-$subtotal_ht).'</td>';
+	print '<td colspan="3" class="right">'.price(-$subtotal_ttc).'</td>';
 	print '</tr>';
 
 
@@ -682,8 +682,8 @@ else
 	            print '<tr class="oddeven"><td>&nbsp;</td>';
 	            print '<td>'.$obj->label.'</td>';
 	            if ($modecompta == 'CREANCES-DETTES')
-	            	print '<td align="right">'.price(-$obj->amount).'</td>';
-	            print '<td align="right">'.price(-$obj->amount).'</td>';
+	            	print '<td class="right">'.price(-$obj->amount).'</td>';
+	            print '<td class="right">'.price(-$obj->amount).'</td>';
 	            print '</tr>';
 	            $i++;
 	        }
@@ -698,8 +698,8 @@ else
 	}
 	print '<tr class="liste_total">';
 	if ($modecompta == 'CREANCES-DETTES')
-		print '<td colspan="3" align="right">'.price(-$subtotal_ht).'</td>';
-	print '<td colspan="3" align="right">'.price(-$subtotal_ttc).'</td>';
+		print '<td colspan="3" class="right">'.price(-$subtotal_ht).'</td>';
+	print '<td colspan="3" class="right">'.price(-$subtotal_ttc).'</td>';
 	print '</tr>';
 
 	if ($mysoc->tva_assuj == 'franchise')	// Non assujetti
@@ -709,10 +709,10 @@ else
 	    print '<td colspan="4">&nbsp;</td>';
 	    print '</tr>';
 
-	    print '<tr class="liste_total"><td align="left" colspan="2">'.$langs->trans("Profit").'</td>';
+	    print '<tr class="liste_total"><td class="left" colspan="2">'.$langs->trans("Profit").'</td>';
 	    if ($modecompta == 'CREANCES-DETTES')
-	    	print '<td class="border" align="right">'.price($total_ht).'</td>';
-	    print '<td align="right">'.price($total_ttc).'</td>';
+	    	print '<td class="border right">'.price($total_ht).'</td>';
+	    print '<td class="right">'.price($total_ttc).'</td>';
 	    print '</tr>';
 
 	    print '<tr>';
@@ -775,8 +775,8 @@ else
 
 		            print "<td>".$langs->trans("Salary")." <a href=\"".DOL_URL_ROOT."/compta/salaries/list.php?filtre=s.fk_user=".$obj->fk_user."\">".$obj->firstname." ".$obj->lastname."</a></td>\n";
 
-		            if ($modecompta == 'CREANCES-DETTES') print '<td align="right">'.price(-$obj->amount).'</td>';
-		            print '<td align="right">'.price(-$obj->amount).'</td>';
+		            if ($modecompta == 'CREANCES-DETTES') print '<td class="right">'.price(-$obj->amount).'</td>';
+		            print '<td class="right">'.price(-$obj->amount).'</td>';
 		            print '</tr>';
 		            $i++;
 		        }
@@ -794,8 +794,8 @@ else
 		}
 		print '<tr class="liste_total">';
 		if ($modecompta == 'CREANCES-DETTES')
-			print '<td colspan="3" align="right">'.price(-$subtotal_ht).'</td>';
-		print '<td colspan="3" align="right">'.price(-$subtotal_ttc).'</td>';
+			print '<td colspan="3" class="right">'.price(-$subtotal_ht).'</td>';
+		print '<td colspan="3" class="right">'.price(-$subtotal_ttc).'</td>';
 		print '</tr>';
 	}
 
@@ -862,8 +862,8 @@ else
 
 					print "<td>".$langs->trans("ExpenseReport")." <a href=\"".DOL_URL_ROOT."/expensereport/list.php?search_user=".$obj->userid."\">".$obj->firstname." ".$obj->lastname."</a></td>\n";
 
-					if ($modecompta == 'CREANCES-DETTES') print '<td align="right">'.price(-$obj->amount_ht).'</td>';
-					print '<td align="right">'.price(-$obj->amount_ttc).'</td>';
+					if ($modecompta == 'CREANCES-DETTES') print '<td class="right">'.price(-$obj->amount_ht).'</td>';
+					print '<td class="right">'.price(-$obj->amount_ttc).'</td>';
 					print '</tr>';
 				}
 			}
@@ -879,8 +879,8 @@ else
 			dol_print_error($db);
 		}
 		print '<tr class="liste_total">';
-		if ($modecompta == 'CREANCES-DETTES') print '<td colspan="3" align="right">'.price(-$subtotal_ht).'</td>';
-		print '<td colspan="3" align="right">'.price(-$subtotal_ttc).'</td>';
+		if ($modecompta == 'CREANCES-DETTES') print '<td colspan="3" class="right">'.price(-$subtotal_ht).'</td>';
+		print '<td colspan="3" class="right">'.price(-$subtotal_ttc).'</td>';
 		print '</tr>';
 	}
 
@@ -943,8 +943,8 @@ else
 
 					print "<td>".$langs->trans("Donation")." <a href=\"".DOL_URL_ROOT."/don/list.php?search_company=".$obj->name."&search_name=".$obj->firstname." ".$obj->lastname."\">".$obj->name. " ".$obj->firstname." ".$obj->lastname."</a></td>\n";
 
-					if ($modecompta == 'CREANCES-DETTES') print '<td align="right">'.price($obj->amount).'</td>';
-					print '<td align="right">'.price($obj->amount).'</td>';
+					if ($modecompta == 'CREANCES-DETTES') print '<td class="right">'.price($obj->amount).'</td>';
+					print '<td class="right">'.price($obj->amount).'</td>';
 					print '</tr>';
 					$i++;
 				}
@@ -962,8 +962,8 @@ else
 		}
 		print '<tr class="liste_total">';
 		if ($modecompta == 'CREANCES-DETTES')
-			print '<td colspan="3" align="right">'.price($subtotal_ht).'</td>';
-		print '<td colspan="3" align="right">'.price($subtotal_ttc).'</td>';
+			print '<td colspan="3" class="right">'.price($subtotal_ht).'</td>';
+		print '<td colspan="3" class="right">'.price($subtotal_ttc).'</td>';
 		print '</tr>';
 	}
 
@@ -991,7 +991,7 @@ else
 				$sql.= " AND f.type IN (0,1,2,3,5)";
 		    if (! empty($date_start) && ! empty($date_end))
 		    	$sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
-		    $sql.= " AND f.entity = ".$conf->entity;
+		    $sql.= " AND f.entity IN (".getEntity('invoice').")";
 		    $sql.= " GROUP BY dm";
 		    $newsortfield = $sortfield;
 		    if ($newsortfield == 's.nom, s.rowid') $newsortfield = 'dm';
@@ -1024,8 +1024,8 @@ else
 		    }
 		    print '<tr class="oddeven"><td>&nbsp;</td>';
 		    print "<td>".$langs->trans("VATToPay")."</td>\n";
-		    print "<td align=\"right\">&nbsp;</td>\n";
-		    print "<td align=\"right\">".price($amount)."</td>\n";
+		    print '<td class="right">&nbsp;</td>'."\n";
+		    print '<td class="right">'.price($amount)."</td>\n";
 		    print "</tr>\n";
 
 		    // TVA a recuperer
@@ -1072,9 +1072,9 @@ else
 		        dol_print_error($db);
 		    }
 		    print '<tr class="oddeven"><td>&nbsp;</td>';
-		    print "<td>".$langs->trans("VATToCollect")."</td>\n";
-		    print "<td align=\"right\">&nbsp;</td>\n";
-		    print "<td align=\"right\">".price($amount)."</td>\n";
+		    print '<td>'.$langs->trans("VATToCollect")."</td>\n";
+		    print '<td class="right">&nbsp;</td>'."\n";
+		    print '<td class="right">'.price($amount)."</td>\n";
 		    print "</tr>\n";
 		}
 		else
@@ -1119,8 +1119,8 @@ else
 		    print '<tr class="oddeven"><td>&nbsp;</td>';
 		    print "<td>".$langs->trans("VATPaid")."</td>\n";
 		    if ($modecompta == 'CREANCES-DETTES')
-		    	print "<td align=\"right\">".price($amount)."</td>\n";
-		    print "<td align=\"right\">".price($amount)."</td>\n";
+		    	print '<td <class="right">'.price($amount)."</td>\n";
+		    print '<td class="right">'.price($amount)."</td>\n";
 		    print "</tr>\n";
 
 		    // VAT really received
@@ -1165,8 +1165,8 @@ else
 		    print '<tr class="oddeven"><td>&nbsp;</td>';
 		    print "<td>".$langs->trans("VATCollected")."</td>\n";
 		    if ($modecompta == 'CREANCES-DETTES')
-		    	print "<td align=\"right\">".price($amount)."</td>\n";
-		    print "<td align=\"right\">".price($amount)."</td>\n";
+		    	print '<td class="right">'.price($amount)."</td>\n";
+		    print '<td class="right">'.price($amount)."</td>\n";
 		    print "</tr>\n";
 		}
 	}
@@ -1175,8 +1175,8 @@ else
 	{
 	    print '<tr class="liste_total">';
 	    if ($modecompta == 'CREANCES-DETTES')
-	    	print '<td colspan="3" align="right">&nbsp;</td>';
-	    print '<td colspan="3" align="right">'.price(price2num($subtotal_ttc,'MT')).'</td>';
+	    	print '<td colspan="3" class="right">&nbsp;</td>';
+	    print '<td colspan="3" class="right">'.price(price2num($subtotal_ttc, 'MT')).'</td>';
 	    print '</tr>';
 	}
 }
@@ -1189,7 +1189,7 @@ $parameters["date_end"] = $date_end;
 $parameters["bc"] = $bc;
 // Initialize technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('externalbalance'));
-$reshook=$hookmanager->executeHooks('addBalanceLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('addBalanceLine', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 print $hookmanager->resPrint;
 
 if ($mysoc->tva_assuj != 'franchise')	// Assujetti
@@ -1199,10 +1199,10 @@ if ($mysoc->tva_assuj != 'franchise')	// Assujetti
     print '<td colspan="4">&nbsp;</td>';
     print '</tr>';
 
-    print '<tr class="liste_total"><td align="left" colspan="2">'.$langs->trans("Profit").'</td>';
+    print '<tr class="liste_total"><td class="left" colspan="2">'.$langs->trans("Profit").'</td>';
     if ($modecompta == 'CREANCES-DETTES')
-    	print '<td class="liste_total" align="right">'.price(price2num($total_ht,'MT')).'</td>';
-    print '<td class="liste_total" align="right">'.price(price2num($total_ttc,'MT')).'</td>';
+    	print '<td class="liste_total right">'.price(price2num($total_ht, 'MT')).'</td>';
+    print '<td class="liste_total right">'.price(price2num($total_ttc, 'MT')).'</td>';
     print '</tr>';
 }
 

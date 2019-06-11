@@ -32,8 +32,8 @@ $HEIGHT=DolGraph::getDefaultGraphSizeForStats('height');
 $mode='customer';
 if (! $user->rights->ficheinter->lire) accessforbidden();
 
-$userid=GETPOST('userid','int');
-$socid=GETPOST('socid','int');
+$userid=GETPOST('userid', 'int');
+$socid=GETPOST('socid', 'int');
 // Security check
 if ($user->societe_id > 0)
 {
@@ -65,7 +65,7 @@ $dir=$conf->ficheinter->dir_temp;
 
 llxHeader('', $title);
 
-print load_fiche_titre($title,'','title_commercial.png');
+print load_fiche_titre($title, '', 'title_commercial.png');
 
 dol_mkdir($dir);
 
@@ -73,7 +73,7 @@ $stats = new FichinterStats($db, $socid, $mode, ($userid>0?$userid:0));
 if ($object_status != '' && $object_status > -1) $stats->where .= ' AND c.fk_statut IN ('.$db->escape($object_status).')';
 
 // Build graphic number of object
-$data = $stats->getNbByMonthWithPrevYear($endyear,$startyear);
+$data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
 // $data = array(array('Lib',val1,val2,val3),...)
 
 
@@ -102,7 +102,7 @@ if (! $mesg)
     }
     $px1->SetLegend($legend);
     $px1->SetMaxValue($px1->GetCeilMaxValue());
-    $px1->SetMinValue(min(0,$px1->GetFloorMinValue()));
+    $px1->SetMinValue(min(0, $px1->GetFloorMinValue()));
     $px1->SetWidth($WIDTH);
     $px1->SetHeight($HEIGHT);
     $px1->SetYLabel($langs->trans("NbOfIntervention"));
@@ -112,11 +112,11 @@ if (! $mesg)
     $px1->mode='depth';
     $px1->SetTitle($langs->trans("NumberOfInterventionsByMonth"));
 
-    $px1->draw($filenamenb,$fileurlnb);
+    $px1->draw($filenamenb, $fileurlnb);
 }
 
 // Build graphic amount of object
-$data = $stats->getAmountByMonthWithPrevYear($endyear,$startyear);
+$data = $stats->getAmountByMonthWithPrevYear($endyear, $startyear);
 // $data = array(array('Lib',val1,val2,val3),...)
 
 if (!$user->rights->societe->client->voir || $user->societe_id)
@@ -143,7 +143,7 @@ if (! $mesg)
     }
     $px2->SetLegend($legend);
     $px2->SetMaxValue($px2->GetCeilMaxValue());
-    $px2->SetMinValue(min(0,$px2->GetFloorMinValue()));
+    $px2->SetMinValue(min(0, $px2->GetFloorMinValue()));
     $px2->SetWidth($WIDTH);
     $px2->SetHeight($HEIGHT);
     $px2->SetYLabel($langs->trans("AmountOfinterventions"));
@@ -153,7 +153,7 @@ if (! $mesg)
     $px2->mode='depth';
     $px2->SetTitle($langs->trans("AmountOfinterventionsByMonthHT"));
 
-    $px2->draw($filenameamount,$fileurlamount);
+    $px2->draw($filenameamount, $fileurlamount);
 }
 
 
@@ -193,7 +193,7 @@ if (! $mesg)
     $px3->mode='depth';
     $px3->SetTitle($langs->trans("AmountAverage"));
 
-    $px3->draw($filename_avg,$fileurl_avg);
+    $px3->draw($filename_avg, $fileurl_avg);
 }
 
 
@@ -217,7 +217,7 @@ $h++;
 
 $type = 'fichinter_stats';
 
-complete_head_from_modules($conf,$langs,null,$head,$h,$type);
+complete_head_from_modules($conf, $langs, null, $head, $h, $type);
 
 dol_fiche_head($head, 'byyear', $langs->trans("Statistics"), -1);
 
@@ -233,28 +233,28 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
 	// Company
-	print '<tr><td align="left">'.$langs->trans("ThirdParty").'</td><td align="left">';
-    $filter = 's.client in (1,2,3)';
+	print '<tr><td class="left">'.$langs->trans("ThirdParty").'</td><td class="left">';
+    $filter = 's.client IN (1,2,3)';
 	print $form->select_company($socid, 'socid', $filter, 1, 0, 0, array(), 0, '', 'style="width: 95%"');
 	print '</td></tr>';
 	// User
-	print '<tr><td align="left">'.$langs->trans("CreatedBy").'</td><td align="left">';
+	print '<tr><td class="left">'.$langs->trans("CreatedBy").'</td><td class="left">';
 	print $form->select_dolusers($userid, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 	// Status
-	print '<tr><td align="left">'.$langs->trans("Status").'</td><td align="left">';
+	print '<tr><td class="left">'.$langs->trans("Status").'</td><td class="left">';
 	$tmp = $objectstatic->LibStatut(0);		// To load $this->statuts_short
 	$liststatus=$objectstatic->statuts_short;
 	if (empty($conf->global->FICHINTER_CLASSIFY_BILLED)) unset($liststatus[2]);   // Option deprecated. In a future, billed must be managed with a dedicated field to 0 or 1
 	print $form->selectarray('object_status', $liststatus, $object_status, 1, 0, 0, '', 1);
 	print '</td></tr>';
 	// Year
-	print '<tr><td align="left">'.$langs->trans("Year").'</td><td align="left">';
-	if (! in_array($year,$arrayyears)) $arrayyears[$year]=$year;
-	if (! in_array($nowyear,$arrayyears)) $arrayyears[$nowyear]=$nowyear;
+	print '<tr><td class="left">'.$langs->trans("Year").'</td><td class="left">';
+	if (! in_array($year, $arrayyears)) $arrayyears[$year]=$year;
+	if (! in_array($nowyear, $arrayyears)) $arrayyears[$nowyear]=$nowyear;
 	arsort($arrayyears);
-	print $form->selectarray('year',$arrayyears,$year,0);
+	print $form->selectarray('year', $arrayyears, $year, 0);
 	print '</td></tr>';
-	print '<tr><td align="center" colspan="2"><input type="submit" name="submit" class="button" value="'.$langs->trans("Refresh").'"></td></tr>';
+	print '<tr><td class="center" colspan="2"><input type="submit" name="submit" class="button" value="'.$langs->trans("Refresh").'"></td></tr>';
 	print '</table>';
 	print '</form>';
 	print '<br><br>';
@@ -263,13 +263,13 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre" height="24">';
-print '<td align="center">'.$langs->trans("Year").'</td>';
-print '<td align="right">'.$langs->trans("NbOfinterventions").'</td>';
-print '<td align="right">%</td>';
-print '<td align="right">'.$langs->trans("AmountTotal").'</td>';
-print '<td align="right">%</td>';
-print '<td align="right">'.$langs->trans("AmountAverage").'</td>';
-print '<td align="right">%</td>';
+print '<td class="center">'.$langs->trans("Year").'</td>';
+print '<td class="right">'.$langs->trans("NbOfinterventions").'</td>';
+print '<td class="right">%</td>';
+print '<td class="right">'.$langs->trans("AmountTotal").'</td>';
+print '<td class="right">%</td>';
+print '<td class="right">'.$langs->trans("AmountAverage").'</td>';
+print '<td class="right">%</td>';
 print '</tr>';
 
 $oldyear=0;
@@ -282,26 +282,26 @@ foreach ($data as $val)
 		$oldyear--;
 
 		print '<tr class="oddeven" height="24">';
-		print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$oldyear.'</a></td>';
+		print '<td class="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$oldyear.'</a></td>';
 
-		print '<td align="right">0</td>';
-		print '<td align="right"></td>';
-		print '<td align="right">0</td>';
-		print '<td align="right"></td>';
-		print '<td align="right">0</td>';
-		print '<td align="right"></td>';
+		print '<td class="right">0</td>';
+		print '<td class="right"></td>';
+		print '<td class="right">0</td>';
+		print '<td class="right"></td>';
+		print '<td class="right">0</td>';
+		print '<td class="right"></td>';
 		print '</tr>';
 	}
 
 
 	print '<tr class="oddeven" height="24">';
-	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$year.'</a></td>';
-	print '<td align="right">'.$val['nb'].'</td>';
-	print '<td align="right" style="'.(($val['nb_diff'] >= 0) ? 'color: green;':'color: red;').'">'.round($val['nb_diff']).'</td>';
-	print '<td align="right">'.price(price2num($val['total'],'MT'),1).'</td>';
-	print '<td align="right" style="'.(($val['total_diff'] >= 0) ? 'color: green;':'color: red;').'">'.round($val['total_diff']).'</td>';
-	print '<td align="right">'.price(price2num($val['avg'],'MT'),1).'</td>';
-	print '<td align="right" style="'.(($val['avg_diff'] >= 0) ? 'color: green;':'color: red;').'">'.round($val['avg_diff']).'</td>';
+	print '<td class="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$year.'</a></td>';
+	print '<td class="right">'.$val['nb'].'</td>';
+	print '<td class="right" style="'.(($val['nb_diff'] >= 0) ? 'color: green;':'color: red;').'">'.round($val['nb_diff']).'</td>';
+	print '<td class="right">'.price(price2num($val['total'], 'MT'), 1).'</td>';
+	print '<td class="right" style="'.(($val['total_diff'] >= 0) ? 'color: green;':'color: red;').'">'.round($val['total_diff']).'</td>';
+	print '<td class="right">'.price(price2num($val['avg'], 'MT'), 1).'</td>';
+	print '<td class="right" style="'.(($val['avg_diff'] >= 0) ? 'color: green;':'color: red;').'">'.round($val['avg_diff']).'</td>';
 	print '</tr>';
 	$oldyear=$year;
 }
@@ -314,7 +314,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 // Show graphs
-print '<table class="border" width="100%"><tr class="pair nohover"><td align="center">';
+print '<table class="border" width="100%"><tr class="pair nohover"><td class="center">';
 if ($mesg) { print $mesg; }
 else {
     print $px1->show();

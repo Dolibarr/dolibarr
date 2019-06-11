@@ -43,59 +43,59 @@ require_once DOL_DOCUMENT_ROOT."/societe/class/societe.class.php";
 
 define(GEN_NUMBER_FACTURE, 1);
 $year = 2016;
-$dates = array (mktime(12,0,0,1,3,$year),
-    mktime(12,0,0,1,9,$year),
-    mktime(12,0,0,2,13,$year),
-    mktime(12,0,0,2,23,$year),
-    mktime(12,0,0,3,30,$year),
-    mktime(12,0,0,4,3,$year),
-    mktime(12,0,0,4,3,$year),
-    mktime(12,0,0,5,9,$year),
-    mktime(12,0,0,5,1,$year),
-    mktime(12,0,0,5,13,$year),
-    mktime(12,0,0,5,19,$year),
-    mktime(12,0,0,5,23,$year),
-    mktime(12,0,0,6,3,$year),
-    mktime(12,0,0,6,19,$year),
-    mktime(12,0,0,6,24,$year),
-    mktime(12,0,0,7,3,$year),
-    mktime(12,0,0,7,9,$year),
-    mktime(12,0,0,7,23,$year),
-    mktime(12,0,0,7,30,$year),
-    mktime(12,0,0,8,9,$year),
-    mktime(12,0,0,9,23,$year),
-    mktime(12,0,0,10,3,$year),
-    mktime(12,0,0,11,12,$year),
-    mktime(12,0,0,11,13,$year),
-    mktime(12,0,0,1,3,($year - 1)),
-    mktime(12,0,0,1,9,($year - 1)),
-    mktime(12,0,0,2,13,($year - 1)),
-    mktime(12,0,0,2,23,($year - 1)),
-    mktime(12,0,0,3,30,($year - 1)),
-    mktime(12,0,0,4,3,($year - 1)),
-    mktime(12,0,0,4,3,($year - 1)),
-    mktime(12,0,0,5,9,($year - 1)),
-    mktime(12,0,0,5,1,($year - 1)),
-    mktime(12,0,0,5,13,($year - 1)),
-    mktime(12,0,0,5,19,($year - 1)),
-    mktime(12,0,0,5,23,($year - 1)),
-    mktime(12,0,0,6,3,($year - 1)),
-    mktime(12,0,0,6,19,($year - 1)),
-    mktime(12,0,0,6,24,($year - 1)),
-    mktime(12,0,0,7,3,($year - 1)),
-    mktime(12,0,0,7,9,($year - 1)),
-    mktime(12,0,0,7,23,($year - 1)),
-    mktime(12,0,0,7,30,($year - 1)),
-    mktime(12,0,0,8,9,($year - 1)),
-    mktime(12,0,0,9,23,($year - 1)),
-    mktime(12,0,0,10,3,($year - 1)),
-    mktime(12,0,0,11,12,$year),
-    mktime(12,0,0,11,13,$year),
-    mktime(12,0,0,12,12,$year),
-    mktime(12,0,0,12,13,$year),
+$dates = array (mktime(12, 0, 0, 1, 3, $year),
+    mktime(12, 0, 0, 1, 9, $year),
+    mktime(12, 0, 0, 2, 13, $year),
+    mktime(12, 0, 0, 2, 23, $year),
+    mktime(12, 0, 0, 3, 30, $year),
+    mktime(12, 0, 0, 4, 3, $year),
+    mktime(12, 0, 0, 4, 3, $year),
+    mktime(12, 0, 0, 5, 9, $year),
+    mktime(12, 0, 0, 5, 1, $year),
+    mktime(12, 0, 0, 5, 13, $year),
+    mktime(12, 0, 0, 5, 19, $year),
+    mktime(12, 0, 0, 5, 23, $year),
+    mktime(12, 0, 0, 6, 3, $year),
+    mktime(12, 0, 0, 6, 19, $year),
+    mktime(12, 0, 0, 6, 24, $year),
+    mktime(12, 0, 0, 7, 3, $year),
+    mktime(12, 0, 0, 7, 9, $year),
+    mktime(12, 0, 0, 7, 23, $year),
+    mktime(12, 0, 0, 7, 30, $year),
+    mktime(12, 0, 0, 8, 9, $year),
+    mktime(12, 0, 0, 9, 23, $year),
+    mktime(12, 0, 0, 10, 3, $year),
+    mktime(12, 0, 0, 11, 12, $year),
+    mktime(12, 0, 0, 11, 13, $year),
+    mktime(12, 0, 0, 1, 3, ($year - 1)),
+    mktime(12, 0, 0, 1, 9, ($year - 1)),
+    mktime(12, 0, 0, 2, 13, ($year - 1)),
+    mktime(12, 0, 0, 2, 23, ($year - 1)),
+    mktime(12, 0, 0, 3, 30, ($year - 1)),
+    mktime(12, 0, 0, 4, 3, ($year - 1)),
+    mktime(12, 0, 0, 4, 3, ($year - 1)),
+    mktime(12, 0, 0, 5, 9, ($year - 1)),
+    mktime(12, 0, 0, 5, 1, ($year - 1)),
+    mktime(12, 0, 0, 5, 13, ($year - 1)),
+    mktime(12, 0, 0, 5, 19, ($year - 1)),
+    mktime(12, 0, 0, 5, 23, ($year - 1)),
+    mktime(12, 0, 0, 6, 3, ($year - 1)),
+    mktime(12, 0, 0, 6, 19, ($year - 1)),
+    mktime(12, 0, 0, 6, 24, ($year - 1)),
+    mktime(12, 0, 0, 7, 3, ($year - 1)),
+    mktime(12, 0, 0, 7, 9, ($year - 1)),
+    mktime(12, 0, 0, 7, 23, ($year - 1)),
+    mktime(12, 0, 0, 7, 30, ($year - 1)),
+    mktime(12, 0, 0, 8, 9, ($year - 1)),
+    mktime(12, 0, 0, 9, 23, ($year - 1)),
+    mktime(12, 0, 0, 10, 3, ($year - 1)),
+    mktime(12, 0, 0, 11, 12, $year),
+    mktime(12, 0, 0, 11, 13, $year),
+    mktime(12, 0, 0, 12, 12, $year),
+    mktime(12, 0, 0, 12, 13, $year),
 );
 
-$ret=$user->fetch('','admin');
+$ret=$user->fetch('', 'admin');
 if (! $ret > 0)
 {
 	print 'A user with login "admin" and all permissions must be created to use this script.'."\n";
@@ -150,7 +150,7 @@ while ($i < GEN_NUMBER_FACTURE && $result >= 0)
 	$object->mode_reglement_id = 3;
 
     $fuser = new User($db);
-    $fuser->fetch(mt_rand(1,2));
+    $fuser->fetch(mt_rand(1, 2));
     $fuser->getRights();
     
 	$result=$object->create($fuser);
@@ -163,10 +163,10 @@ while ($i < GEN_NUMBER_FACTURE && $result >= 0)
 			$prodid = mt_rand(1, $num_prods);
 			$product=new Product($db);
 			$result=$product->fetch($prodids[$prodid]);
-			$result=$object->addline($product->description, $product->price, mt_rand(1,5), 0, 0, 0, $prodids[$prodid], 0, '', '', 0, 0, '', $product->price_base_type, $product->price_ttc, $product->type);
+			$result=$object->addline($product->description, $product->price, mt_rand(1, 5), 0, 0, 0, $prodids[$prodid], 0, '', '', 0, 0, '', $product->price_base_type, $product->price_ttc, $product->type);
 		    if ($result < 0)
             {
-                dol_print_error($db,$propal->error);
+                dol_print_error($db, $propal->error);
             }
             $xnbp++;
 		}
@@ -178,11 +178,11 @@ while ($i < GEN_NUMBER_FACTURE && $result >= 0)
 		}
 		else
 		{
-			dol_print_error($db,$object->error);
+			dol_print_error($db, $object->error);
 		}
 	}
 	else
 	{
-		dol_print_error($db,$object->error);
+		dol_print_error($db, $object->error);
 	}
 }

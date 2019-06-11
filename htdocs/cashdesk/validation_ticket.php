@@ -32,7 +32,7 @@ unset($_SESSION['serObjFacturation']);
 $hookmanager->initHooks(array('cashdeskTplTicket'));
 
 $parameters=array();
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$obj_facturation);
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $obj_facturation);
 if (empty($reshook))
 {
     require 'tpl/ticket.tpl.php';
@@ -40,4 +40,3 @@ if (empty($reshook))
 
 
 $_SESSION['serObjFacturation'] = serialize($obj_facturation);
-

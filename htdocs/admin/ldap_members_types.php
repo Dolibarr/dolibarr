@@ -39,7 +39,7 @@ $langs->loadLangs(array('admin', 'errors'));
 if (!$user->admin)
 	accessforbidden();
 
-$action = GETPOST('action','aZ09');
+$action = GETPOST('action', 'aZ09');
 
 
 /*
@@ -51,18 +51,18 @@ if ($action == 'setvalue' && $user->admin)
 	$error=0;
 	$db->begin();
 
-	if (! dolibarr_set_const($db, 'LDAP_MEMBER_TYPE_DN',GETPOST("membertype"),'chaine',0,'',$conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_MEMBER_TYPE_OBJECT_CLASS',GETPOST("objectclass"),'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_MEMBER_TYPE_DN', GETPOST("membertype"), 'chaine', 0, '', $conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_MEMBER_TYPE_OBJECT_CLASS', GETPOST("objectclass"), 'chaine', 0, '', $conf->entity)) $error++;
 
-	if (! dolibarr_set_const($db, 'LDAP_MEMBER_TYPE_FIELD_FULLNAME',GETPOST("fieldfullname"),'chaine',0,'',$conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_MEMBER_TYPE_FIELD_DESCRIPTION',GETPOST("fielddescription"),'chaine',0,'',$conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_MEMBER_TYPE_FIELD_GROUPMEMBERS',GETPOST("fieldmembertypemembers"),'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_MEMBER_TYPE_FIELD_FULLNAME', GETPOST("fieldfullname"), 'chaine', 0, '', $conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_MEMBER_TYPE_FIELD_DESCRIPTION', GETPOST("fielddescription"), 'chaine', 0, '', $conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_MEMBER_TYPE_FIELD_GROUPMEMBERS', GETPOST("fieldmembertypemembers"), 'chaine', 0, '', $conf->entity)) $error++;
 
 	// This one must be after the others
 	$valkey='';
 	$key=GETPOST("key");
 	if ($key) $valkey=$conf->global->$key;
-	if (! dolibarr_set_const($db, 'LDAP_KEY_MEMBERS_TYPES',$valkey,'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_KEY_MEMBERS_TYPES', $valkey, 'chaine', 0, '', $conf->entity)) $error++;
 
 	if (! $error)
 	{
@@ -82,10 +82,10 @@ if ($action == 'setvalue' && $user->admin)
  * View
  */
 
-llxHeader('',$langs->trans("LDAPSetup"),'EN:Module_LDAP_En|FR:Module_LDAP|ES:M&oacute;dulo_LDAP');
+llxHeader('', $langs->trans("LDAPSetup"), 'EN:Module_LDAP_En|FR:Module_LDAP|ES:M&oacute;dulo_LDAP');
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 
-print load_fiche_titre($langs->trans("LDAPSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("LDAPSetup"), $linkback, 'title_setup');
 
 $head = ldap_prepare_head();
 
@@ -134,7 +134,7 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td width="25%">'.$langs->trans("LDAPDolibarrMapping").'</td>';
 print '<td colspan="2">'.$langs->trans("LDAPLdapMapping").'</td>';
-print '<td align="right">'.$langs->trans("LDAPNamingAttribute").'</td>';
+print '<td class="right">'.$langs->trans("LDAPNamingAttribute").'</td>';
 print "</tr>\n";
 
 // Filtre
@@ -143,21 +143,21 @@ print "</tr>\n";
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldName").'</td><td>';
 print '<input size="25" type="text" name="fieldfullname" value="'.$conf->global->LDAP_MEMBER_TYPE_FIELD_FULLNAME.'">';
 print '</td><td>'.$langs->trans("LDAPFieldCommonNameExample").'</td>';
-print '<td align="right"><input type="radio" name="key" value="LDAP_MEMBER_TYPE_FIELD_FULLNAME"'.(($conf->global->LDAP_KEY_MEMBERS_TYPES && $conf->global->LDAP_KEY_MEMBERS_TYPES==$conf->global->LDAP_MEMBER_TYPE_FIELD_FULLNAME)?' checked':'')."></td>";
+print '<td class="right"><input type="radio" name="key" value="LDAP_MEMBER_TYPE_FIELD_FULLNAME"'.(($conf->global->LDAP_KEY_MEMBERS_TYPES && $conf->global->LDAP_KEY_MEMBERS_TYPES==$conf->global->LDAP_MEMBER_TYPE_FIELD_FULLNAME)?' checked':'')."></td>";
 print '</tr>';
 
 // Description
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldDescription").'</td><td>';
 print '<input size="25" type="text" name="fielddescription" value="'.$conf->global->LDAP_MEMBER_TYPE_FIELD_DESCRIPTION.'">';
 print '</td><td>'.$langs->trans("LDAPFieldDescriptionExample").'</td>';
-print '<td align="right"><input type="radio" name="key" value="LDAP_MEMBER_TYPE_FIELD_DESCRIPTION"'.(($conf->global->LDAP_KEY_MEMBERS_TYPES && $conf->global->LDAP_KEY_MEMBER_TYPES==$conf->global->LDAP_MEMBER_TYPE_FIELD_DESCRIPTION)?' checked':'')."></td>";
+print '<td class="right"><input type="radio" name="key" value="LDAP_MEMBER_TYPE_FIELD_DESCRIPTION"'.(($conf->global->LDAP_KEY_MEMBERS_TYPES && $conf->global->LDAP_KEY_MEMBER_TYPES==$conf->global->LDAP_MEMBER_TYPE_FIELD_DESCRIPTION)?' checked':'')."></td>";
 print '</tr>';
 
 // User group
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldGroupMembers").'</td><td>';
 print '<input size="25" type="text" name="fieldmembertypemembers" value="'.$conf->global->LDAP_MEMBER_TYPE_FIELD_GROUPMEMBERS.'">';
 print '</td><td>'.$langs->trans("LDAPFieldGroupMembersExample").'</td>';
-print '<td align="right"><input type="radio" name="key" value="LDAP_MEMBER_TYPE_FIELD_GROUPMEMBERS"'.(($conf->global->LDAP_KEY_MEMBERS_TYPES && $conf->global->LDAP_KEY_MEMBERS_TYPES==$conf->global->LDAP_MEMBER_TYPE_FIELD_GROUPMEMBERS)?' checked':'')."></td>";
+print '<td class="right"><input type="radio" name="key" value="LDAP_MEMBER_TYPE_FIELD_GROUPMEMBERS"'.(($conf->global->LDAP_KEY_MEMBERS_TYPES && $conf->global->LDAP_KEY_MEMBERS_TYPES==$conf->global->LDAP_MEMBER_TYPE_FIELD_GROUPMEMBERS)?' checked':'')."></td>";
 print '</tr>';
 
 print '</table>';
@@ -182,7 +182,7 @@ if ($conf->global->LDAP_MEMBER_TYPE_ACTIVE == '1')
 	$dn=$conf->global->LDAP_MEMBER_TYPE_DN;
 	$objectclass=$conf->global->LDAP_MEMBER_TYPE_OBJECT_CLASS;
 
-	show_ldap_test_button($butlabel,$testlabel,$key,$dn,$objectclass);
+	show_ldap_test_button($butlabel, $testlabel, $key, $dn, $objectclass);
 }
 
 if (function_exists("ldap_connect"))
@@ -203,40 +203,40 @@ if (function_exists("ldap_connect"))
 			$dn=$object->_load_ldap_dn($info);
 
 			// Get a gid number for objectclass PosixGroup
-			if (in_array('posixGroup',$info['objectclass'])) {
+			if (in_array('posixGroup', $info['objectclass'])) {
 				$info['gidNumber'] = $ldap->getNextGroupGid('LDAP_KEY_MEMBERS_TYPES');
 			}
 
 			$result1=$ldap->delete($dn);			// To be sure to delete existing records
-			$result2=$ldap->add($dn,$info,$user);	// Now the test
+			$result2=$ldap->add($dn, $info, $user);	// Now the test
 			$result3=$ldap->delete($dn);			// Clean what we did
 
 			if ($result2 > 0)
 			{
-				print img_picto('','info').' ';
+				print img_picto('', 'info').' ';
 				print '<font class="ok">'.$langs->trans("LDAPSynchroOK").'</font><br>';
 			}
 			else
 			{
-				print img_picto('','error').' ';
+				print img_picto('', 'error').' ';
 				print '<font class="error">'.$langs->trans("LDAPSynchroKOMayBePermissions");
 				print ': '.$ldap->error;
 				print '</font><br>';
-				print $langs->trans("ErrorLDAPMakeManualTest",$conf->ldap->dir_temp).'<br>';
+				print $langs->trans("ErrorLDAPMakeManualTest", $conf->ldap->dir_temp).'<br>';
 			}
 
 			print "<br>\n";
 			print "LDAP input file used for test:<br><br>\n";
-			print nl2br($ldap->dump_content($dn,$info));
+			print nl2br($ldap->dump_content($dn, $info));
 			print "\n<br>";
 		}
 		else
 		{
-			print img_picto('','error').' ';
+			print img_picto('', 'error').' ';
 			print '<font class="error">'.$langs->trans("LDAPSynchroKO");
 			print ': '.$ldap->error;
 			print '</font><br>';
-			print $langs->trans("ErrorLDAPMakeManualTest",$conf->ldap->dir_temp).'<br>';
+			print $langs->trans("ErrorLDAPMakeManualTest", $conf->ldap->dir_temp).'<br>';
 		}
 	}
 }

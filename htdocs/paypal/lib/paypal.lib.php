@@ -46,9 +46,9 @@ function paypaladmin_prepare_head()
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname);   												to remove a tab
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'paypaladmin');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'paypaladmin');
 
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'paypaladmin','remove');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'paypaladmin', 'remove');
 
     return $head;
 }
@@ -62,7 +62,7 @@ function paypaladmin_prepare_head()
  * @param	string	$ref		Ref of object
  * @return	string				Url string
  */
-function showPaypalPaymentUrl($type,$ref)
+function showPaypalPaymentUrl($type, $ref)
 {
 	global $conf, $langs;
 
@@ -70,8 +70,8 @@ function showPaypalPaymentUrl($type,$ref)
     $langs->load("paybox");
     $servicename='PayPal';
     $out='<br><br>';
-    $out.=img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePayment",$servicename).'<br>';
-    $url=getPaypalPaymentUrl(0,$type,$ref);
+    $out.=img_picto('', 'object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePayment", $servicename).'<br>';
+    $url=getPaypalPaymentUrl(0, $type, $ref);
     $out.='<input type="text" id="paypalurl" class="quatrevingtpercent" value="'.$url.'">';
     $out.=ajax_autoselect("paypalurl", 0);
     return $out;
@@ -88,11 +88,11 @@ function showPaypalPaymentUrl($type,$ref)
  * @param	string	$freetag	Free tag
  * @return	string				Url string
  */
-function getPaypalPaymentUrl($mode,$type,$ref='',$amount='9.99',$freetag='your_free_tag')
+function getPaypalPaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag = 'your_tag')
 {
 	global $conf;
 
-	$ref=str_replace(' ','',$ref);
+	$ref=str_replace(' ', '', $ref);
 
     if ($type == 'free')
     {
@@ -194,7 +194,7 @@ function getPaypalPaymentUrl($mode,$type,$ref='',$amount='9.99',$freetag='your_f
  * @param   string	$tag				Full tag
  * @return	string						No return (a redirect is done) if OK, or Error message if KO
  */
-function print_paypal_redirect($paymentAmount,$currencyCodeType,$paymentType,$returnURL,$cancelURL,$tag)
+function print_paypal_redirect($paymentAmount, $currencyCodeType, $paymentType, $returnURL, $cancelURL, $tag)
 {
     //declaring of global variables
     global $conf, $langs;
@@ -330,7 +330,7 @@ function print_paypal_redirect($paymentAmount,$currencyCodeType,$paymentType,$re
  * @param	string			$desc				Description
  * @return	array								Array
  */
-function callSetExpressCheckout($paymentAmount, $currencyCodeType, $paymentType, $returnURL, $cancelURL, $tag, $solutionType, $landingPage, $shipToName, $shipToStreet, $shipToCity, $shipToState, $shipToCountryCode, $shipToZip, $shipToStreet2, $phoneNum, $email='', $desc='')
+function callSetExpressCheckout($paymentAmount, $currencyCodeType, $paymentType, $returnURL, $cancelURL, $tag, $solutionType, $landingPage, $shipToName, $shipToStreet, $shipToCity, $shipToState, $shipToCountryCode, $shipToZip, $shipToStreet2, $phoneNum, $email = '', $desc = '')
 {
     //------------------------------------------------------------------------------------------------------------------------------------
     // Construct the parameter string that describes the SetExpressCheckout API call in the shortcut implementation
@@ -396,7 +396,7 @@ function callSetExpressCheckout($paymentAmount, $currencyCodeType, $paymentType,
     	global $dolibarr_main_url_root;
 
 	    // Define $urlwithroot
-	    $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+	    $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
 	    $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
 	    //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
@@ -467,7 +467,7 @@ function getDetails($token)
     //'     an action to complete the payment.
     //' If failed, show the error
     //'---------------------------------------------------------------------------
-    $resArray=hash_call("GetExpressCheckoutDetails",$nvpstr);
+    $resArray=hash_call("GetExpressCheckoutDetails", $nvpstr);
     $ack = strtoupper($resArray["ACK"]);
     if($ack == "SUCCESS" || $ack=="SUCCESSWITHWARNING")
     {
@@ -513,7 +513,7 @@ function confirmPayment($token, $paymentType, $currencyCodeType, $payerID, $ipad
     /* Make the call to PayPal to finalize payment
      If an error occured, show the resulting errors
      */
-    $resArray=hash_call("DoExpressCheckoutPayment",$nvpstr);
+    $resArray=hash_call("DoExpressCheckoutPayment", $nvpstr);
 
     /* Display the API response back to the browser.
      If the response from PayPal was a success, display the response parameters'
@@ -583,7 +583,7 @@ function DirectPayment($paymentType, $paymentAmount, $creditCardType, $creditCar
  * @param	string	$nvpStr 		is nvp string.
  * @return	array					returns an associtive array containing the response from the server.
  */
-function hash_call($methodName,$nvpStr)
+function hash_call($methodName, $nvpStr)
 {
     //declaring of global variables
     global $conf, $langs;
@@ -592,7 +592,7 @@ function hash_call($methodName,$nvpStr)
 
     // TODO problem with triggers
     $API_version="98.0";
-	if (! empty($conf->global->PAYPAL_API_SANDBOX) || GETPOST('forcesandbox','alpha'))		// We can force sand box with param 'forcesandbox'
+	if (! empty($conf->global->PAYPAL_API_SANDBOX) || GETPOST('forcesandbox', 'alpha'))		// We can force sand box with param 'forcesandbox'
 	{
 	    $API_Endpoint = "https://api-3t.sandbox.paypal.com/nvp";
 	    $API_Url = "https://www.sandbox.paypal.com/webscr?cmd=_express-checkout&token=";
@@ -635,7 +635,7 @@ function hash_call($methodName,$nvpStr)
     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, empty($conf->global->MAIN_USE_CONNECT_TIMEOUT)?5:$conf->global->MAIN_USE_CONNECT_TIMEOUT);
     curl_setopt($ch, CURLOPT_TIMEOUT, empty($conf->global->MAIN_USE_RESPONSE_TIMEOUT)?30:$conf->global->MAIN_USE_RESPONSE_TIMEOUT);
 
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($ch, CURLOPT_POST, 1);
 
     //if USE_PROXY constant set to true in Constants.php, then only proxy will be enabled.
@@ -702,16 +702,16 @@ function deformatNVP($nvpstr)
     while(strlen($nvpstr))
     {
         //postion of Key
-        $keypos= strpos($nvpstr,'=');
+        $keypos= strpos($nvpstr, '=');
         //position of value
-        $valuepos = strpos($nvpstr,'&') ? strpos($nvpstr,'&'): strlen($nvpstr);
+        $valuepos = strpos($nvpstr, '&') ? strpos($nvpstr, '&'): strlen($nvpstr);
 
         /*getting the Key and Value values and storing in a Associative Array*/
-        $keyval=substr($nvpstr,$intial,$keypos);
-        $valval=substr($nvpstr,$keypos+1,$valuepos-$keypos-1);
+        $keyval=substr($nvpstr, $intial, $keypos);
+        $valval=substr($nvpstr, $keypos+1, $valuepos-$keypos-1);
         //decoding the respose
         $nvpArray[urldecode($keyval)] =urldecode($valval);
-        $nvpstr=substr($nvpstr,$valuepos+1,strlen($nvpstr));
+        $nvpstr=substr($nvpstr, $valuepos+1, strlen($nvpstr));
     }
     return $nvpArray;
 }
@@ -739,4 +739,3 @@ function getApiError()
 
 	return $errors;
 }
-

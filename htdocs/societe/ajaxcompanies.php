@@ -23,12 +23,12 @@
  *       \brief      File to return Ajax response on third parties request
  */
 
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL',1); // Disables token renewal
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
-if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
-if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
-if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
-if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK','1');
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', 1); // Disables token renewal
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
+if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
+if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
+if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
+if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');
 
 require '../main.inc.php';
 
@@ -46,11 +46,11 @@ top_httphead();
 
 //print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
-dol_syslog(join(',',$_GET));
+dol_syslog(join(',', $_GET));
 
 
 // Generation liste des societes
-if (GETPOST('newcompany') || GETPOST('socid','int') || GETPOST('id_fourn'))
+if (GETPOST('newcompany') || GETPOST('socid', 'int') || GETPOST('id_fourn'))
 {
 	$return_arr = array();
 
@@ -81,7 +81,7 @@ if (GETPOST('newcompany') || GETPOST('socid','int') || GETPOST('id_fourn'))
 		if (! empty($conf->global->SOCIETE_ALLOW_SEARCH_ON_ROWID)) $sql.=" OR rowid = '" . $db->escape($socid) . "'";
 		$sql.=")";
 	}
-	if (GETPOST("filter")) $sql.= " AND ".GETPOST("filter","alpha"); // Add other filters
+	//if (GETPOST("filter")) $sql.= " AND (".GETPOST("filter", "alpha").")"; // Add other filters
 	$sql.= " ORDER BY nom ASC";
 
 	//dol_syslog("ajaxcompanies", LOG_DEBUG);
@@ -91,12 +91,12 @@ if (GETPOST('newcompany') || GETPOST('socid','int') || GETPOST('id_fourn'))
 		while ($row = $db->fetch_array($resql))
 		{
 		    $label=$row['nom'];
-		    if ($socid) $label=preg_replace('/('.preg_quote($socid,'/').')/i','<strong>$1</strong>',$label,1);
+		    if ($socid) $label=preg_replace('/('.preg_quote($socid, '/').')/i', '<strong>$1</strong>', $label, 1);
 			$row_array['label'] = $label;
 			$row_array['value'] = $row['nom'];
 	        $row_array['key'] = $row['rowid'];
 
-	        array_push($return_arr,$row_array);
+	        array_push($return_arr, $row_array);
 	    }
 
 	    echo json_encode($return_arr);

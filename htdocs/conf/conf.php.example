@@ -146,9 +146,18 @@ $dolibarr_main_db_character_set='utf8';
 // Database character set used to sort data (forced during database creation. value of database is then used).
 // Default value: depends on database driver
 // Examples:
-// dolibarr_main_db_collation='utf8_unicode_ci';
+// $dolibarr_main_db_collation='utf8_unicode_ci';
 //
 $dolibarr_main_db_collation='utf8_unicode_ci';
+
+
+// dolibarr_main_instance_unique_id
+// An ID that is unique for each installation.
+// Default value: randomly defined during installation
+// Examples:
+// $dolibarr_main_instance_unique_id='84b5bc91f83b56e458db71e0adac2b62';
+//
+$dolibarr_main_instance_unique_id='84b5bc91f83b56e458db71e0adac2b62';
 
 
 
@@ -159,18 +168,18 @@ $dolibarr_main_db_collation='utf8_unicode_ci';
 // dolibarr_main_authentication
 // This parameter contains the way authentication is done.
 // If value "ldap" is used, you must also set parameters dolibarr_main_auth_ldap_*
-// Default value: dolibarr
+// Default value: 'dolibarr'
 // Possible values: Any values found in files in htdocs/core/login directory after
 // the "function_" string and before the ".php" string. You can also separate several
 // values using a ",". In this case, Dolibarr will check login/pass for each value in
 // order defined into value. However, note that this can't work with all values.
 // Examples:
-// $dolibarr_main_authentication='http';
-// $dolibarr_main_authentication='dolibarr';
-// $dolibarr_main_authentication='ldap';
-// $dolibarr_main_authentication='openid,dolibarr';
-// $dolibarr_main_authentication='forceuser';	// Add also $dolibarr_auto_user='loginforuser';
-
+// $dolibarr_main_authentication='dolibarr';		// Use the password defined into application on user record.
+// $dolibarr_main_authentication='http';			// Use the HTTP Basic authentication
+// $dolibarr_main_authentication='ldap';			// Check the password into a LDAP server
+// $dolibarr_main_authentication='ldap,dolibarr';	// You can set several mode using a comma as a separator.
+// $dolibarr_main_authentication='forceuser';		// This need to add also $dolibarr_auto_user='loginforuser';
+// $dolibarr_main_authentication='twofactor';		// To use Google Authenticator. This need the non official external module "Two Factor" available on www.dolistore.com
 //
 $dolibarr_main_authentication='dolibarr';
 

@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2013      Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2013-2016 Alexandre Spangaro 	<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2013-2016 Alexandre Spangaro 	<aspangaro@open-dsi.fr>
  * Copyright (C) 2014      Juanjo Menent	 	<jmenent@2byte.es>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  *
@@ -49,11 +49,11 @@ $langs->loadLangs(array('companies', 'users', 'other', 'commercial'));
 
 $mesg=''; $error=0; $errors=array();
 
-$action		= (GETPOST('action','alpha') ? GETPOST('action','alpha') : 'view');
-$confirm	= GETPOST('confirm','alpha');
-$backtopage = GETPOST('backtopage','alpha');
-$id			= GETPOST('id','int');
-$socid		= GETPOST('socid','int');
+$action		= (GETPOST('action', 'alpha') ? GETPOST('action', 'alpha') : 'view');
+$confirm	= GETPOST('confirm', 'alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
+$id			= GETPOST('id', 'int');
+$socid		= GETPOST('socid', 'int');
 
 $object = new Contact($db);
 $extrafields = new ExtraFields($db);
@@ -72,14 +72,14 @@ if (! empty($canvas))
     $objcanvas->getCanvas('contact', 'contactcard', $canvas);
 }
 
-if (GETPOST('actioncode','array'))
+if (GETPOST('actioncode', 'array'))
 {
-    $actioncode=GETPOST('actioncode','array',3);
+    $actioncode=GETPOST('actioncode', 'array', 3);
     if (! count($actioncode)) $actioncode='0';
 }
 else
 {
-    $actioncode=GETPOST("actioncode","alpha",3)?GETPOST("actioncode","alpha",3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
+    $actioncode=GETPOST("actioncode", "alpha", 3)?GETPOST("actioncode", "alpha", 3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
 }
 $search_agenda_label=GETPOST('search_agenda_label');
 
@@ -87,10 +87,10 @@ $search_agenda_label=GETPOST('search_agenda_label');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'contact', $id, 'socpeople&societe', '', '', 'rowid', $objcanvas); // If we create a contact with no company (shared contacts), no check on write permission
 
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -107,20 +107,20 @@ $hookmanager->initHooks(array('contactagenda','globalcard'));
  */
 
 $parameters=array('id'=>$id, 'objcanvas'=>$objcanvas);
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
 {
     // Cancel
-    if (GETPOST('cancel','alpha') && ! empty($backtopage))
+    if (GETPOST('cancel', 'alpha') && ! empty($backtopage))
     {
         header("Location: ".$backtopage);
         exit;
     }
 
     // Purge search criteria
-    if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All test are required to be compatible with all browsers
+    if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All test are required to be compatible with all browsers
     {
         $actioncode='';
         $search_agenda_label='';
@@ -135,7 +135,7 @@ if (empty($reshook))
 $form = new Form($db);
 
 $title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
-if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/contactnameonly/',$conf->global->MAIN_HTML_TITLE) && $object->lastname) $title=$object->lastname;
+if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/contactnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->lastname) $title=$object->lastname;
 $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('', $title, $help_url);
 
@@ -155,7 +155,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
  	{
  		$object = new Contact($db);
  		$result=$object->fetch($id);
-		if ($result <= 0) dol_print_error('',$object->error);
+		if ($result <= 0) dol_print_error('', $object->error);
  	}
    	$objcanvas->assign_values($action, $object->id, $object->ref);	// Set value for templates
     $objcanvas->display_canvas($action);							// Show template
@@ -171,7 +171,7 @@ else
     {
         if ($action == 'delete')
         {
-            print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id.($backtopage?'&backtopage='.$backtopage:''),$langs->trans("DeleteContact"),$langs->trans("ConfirmDeleteContact"),"confirm_delete",'',0,1);
+            print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id.($backtopage?'&backtopage='.$backtopage:''), $langs->trans("DeleteContact"), $langs->trans("ConfirmDeleteContact"), "confirm_delete", '', 0, 1);
         }
     }
 
@@ -184,9 +184,9 @@ else
         // Si edition contact deja existant
         $object = new Contact($db);
         $res=$object->fetch($id, $user);
-        if ($res < 0) { dol_print_error($db,$object->error); exit; }
+        if ($res < 0) { dol_print_error($db, $object->error); exit; }
         $res=$object->fetch_optionals();
-        if ($res < 0) { dol_print_error($db,$object->error); exit; }
+        if ($res < 0) { dol_print_error($db, $object->error); exit; }
 
         // Show tabs
         $head = contact_prepare_head($object);
@@ -202,7 +202,7 @@ else
          * Fiche en mode visualisation
          */
 
-        dol_htmloutput_errors($error,$errors);
+        dol_htmloutput_errors($error, $errors);
 
         dol_fiche_head($head, 'agenda', $title, -1, 'contact');
 
@@ -227,7 +227,7 @@ else
         print '<div class="underbanner clearboth"></div>';
 
         $object->info($id);
-        print dol_print_object_info($object, 1);
+        dol_print_object_info($object, 1);
 
         print '</div>';
 
@@ -261,9 +261,7 @@ else
     	{
     		if (! empty($user->rights->agenda->myactions->create) || ! empty($user->rights->agenda->allactions->create))
     		{
-    			$newcardbutton.='<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'"><span class="valignmiddle">'.$langs->trans("AddAction").'</span>';
-    			$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-    			$newcardbutton.= '</a>';
+                $newcardbutton.= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out);
     		}
     	}
 
@@ -282,7 +280,7 @@ else
     		$filters=array();
         	$filters['search_agenda_label']=$search_agenda_label;
 
-            show_actions_done($conf,$langs,$db,$objthirdparty,$object,0,$actioncode, '', $filters, $sortfield, $sortorder);
+            show_actions_done($conf, $langs, $db, $objthirdparty, $object, 0, $actioncode, '', $filters, $sortfield, $sortorder);
         }
     }
 }

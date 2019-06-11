@@ -35,7 +35,7 @@ class mod_contract_olive extends ModelNumRefContracts
     /**
 	 * @var string Nom du modele
 	 * @deprecated
-	 * @see name
+	 * @see $name
 	 */
 	public $nom='Olive';
 
@@ -54,7 +54,7 @@ class mod_contract_olive extends ModelNumRefContracts
 
 	/**
      * Dolibarr version of the loaded document
-     * @public string
+     * @var string
      */
 	public $version = 'dolibarr';    		// 'development', 'experimental', 'dolibarr'
 
@@ -66,7 +66,7 @@ class mod_contract_olive extends ModelNumRefContracts
 	 *
 	 *	@return string      		Description of module
 	 */
-	function info()
+	public function info()
 	{
 		global $langs;
 
@@ -81,7 +81,7 @@ class mod_contract_olive extends ModelNumRefContracts
 	 * @param	Contrat		$contract	Object contract
 	 * @return	string					Return next value
 	 */
-	function getNextValue($objsoc,$contract)
+	public function getNextValue($objsoc, $contract)
 	{
 		global $langs;
 		return '';
@@ -101,7 +101,7 @@ class mod_contract_olive extends ModelNumRefContracts
 	 * 								-3 ErrorProductCodeAlreadyUsed
 	 * 								-4 ErrorPrefixRequired
 	 */
-	function verif($db, &$code, $product, $type)
+	public function verif($db, &$code, $product, $type)
 	{
 		global $conf;
 
@@ -112,7 +112,7 @@ class mod_contract_olive extends ModelNumRefContracts
 		{
 			$result=0;
 		}
-		else if (empty($code) && (! $this->code_null || ! empty($conf->global->MAIN_CONTARCT_CODE_ALWAYS_REQUIRED)) )
+		elseif (empty($code) && (! $this->code_null || ! empty($conf->global->MAIN_CONTARCT_CODE_ALWAYS_REQUIRED)) )
 		{
 			$result=-2;
 		}
@@ -121,4 +121,3 @@ class mod_contract_olive extends ModelNumRefContracts
 		return $result;
 	}
 }
-

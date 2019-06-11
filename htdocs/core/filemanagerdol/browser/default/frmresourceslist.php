@@ -19,7 +19,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-define('NOTOKENRENEWAL',1); // Disables token renewal
+define('NOTOKENRENEWAL', 1); // Disables token renewal
 
 require '../../../../main.inc.php';
 ?>
@@ -101,7 +101,7 @@ oListManager.GetFileRowHtml = function( fileName, fileUrl, fileSize )
 				sLink +
 				fileName +
 				'<\/a>' +
-			'<\/td><td align="right" class="nowrap">&nbsp;' +
+			'<\/td><td class="nowrap right">&nbsp;' +
 				fileSize +
 				' KB' +
 		'<\/td><\/tr>' ;

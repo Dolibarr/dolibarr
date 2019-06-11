@@ -33,20 +33,20 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
  */
 class box_factures_imp extends ModeleBoxes
 {
-	var $boxcode="oldestunpaidcustomerbills";
-	var $boximg="object_bill";
-	var $boxlabel="BoxOldestUnpaidCustomerBills";
-	var $depends = array("facture");
+    public $boxcode="oldestunpaidcustomerbills";
+    public $boximg="object_bill";
+    public $boxlabel="BoxOldestUnpaidCustomerBills";
+    public $depends = array("facture");
 
 	/**
      * @var DoliDB Database handler.
      */
     public $db;
-    
-	var $param;
 
-	var $info_box_head = array();
-	var $info_box_contents = array();
+    public $param;
+
+    public $info_box_head = array();
+    public $info_box_contents = array();
 
 
 	/**
@@ -55,7 +55,7 @@ class box_factures_imp extends ModeleBoxes
 	 *  @param  DoliDB  $db         Database handler
 	 *  @param  string  $param      More parameters
 	 */
-	function __construct($db,$param)
+	public function __construct($db, $param)
 	{
 	    global $user;
 
@@ -70,7 +70,7 @@ class box_factures_imp extends ModeleBoxes
 	 *  @param	int		$max        Maximum number of records to load
      *  @return	void
 	 */
-	function loadBox($max=5)
+	public function loadBox($max = 5)
 	{
 		global $conf, $user, $langs, $db;
 
@@ -82,7 +82,7 @@ class box_factures_imp extends ModeleBoxes
         $facturestatic = new Facture($db);
         $societestatic = new Societe($db);
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleOldestUnpaidCustomerBills",$max));
+		$this->info_box_head = array('text' => $langs->trans("BoxTitleOldestUnpaidCustomerBills", $max));
 
 		if ($user->rights->facture->lire)
 		{
@@ -102,7 +102,7 @@ class box_factures_imp extends ModeleBoxes
 			$sql.= ", ".MAIN_DB_PREFIX."facture as f";
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid=pf.fk_facture ";
 			$sql.= " WHERE f.fk_soc = s.rowid";
-			$sql.= " AND f.entity = ".$conf->entity;
+			$sql.= " AND f.entity IN (".getEntity('invoice').")";
 			$sql.= " AND f.paye = 0";
 			$sql.= " AND fk_statut = 1";
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
@@ -144,7 +144,7 @@ class box_factures_imp extends ModeleBoxes
 
 					$late='';
 					if ($facturestatic->hasDelay()) {
-						$late = img_warning(sprintf($l_due_date,dol_print_date($datelimite,'day')));
+						$late = img_warning(sprintf($l_due_date, dol_print_date($datelimite, 'day')));
 					}
 
                     $this->info_box_contents[$line][] = array(
@@ -167,18 +167,18 @@ class box_factures_imp extends ModeleBoxes
 
                     $this->info_box_contents[$line][] = array(
                         'td' => 'class="right"',
-                        'text' => dol_print_date($datelimite,'day'),
+                        'text' => dol_print_date($datelimite, 'day'),
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="right" width="18"',
-                        'text' => $facturestatic->LibStatut($objp->paye,$objp->fk_statut,3,$objp->am),
+                        'td' => 'class="right" width="18"',
+                        'text' => $facturestatic->LibStatut($objp->paye, $objp->fk_statut, 3, $objp->am),
                     );
 
 					$line++;
 				}
 
-				if ($num==0) $this->info_box_contents[$line][0] = array('td' => 'align="center"','text'=>$langs->trans("NoUnpaidCustomerBills"));
+				if ($num==0) $this->info_box_contents[$line][0] = array('td' => 'class="center"','text'=>$langs->trans("NoUnpaidCustomerBills"));
 
 				$db->free($result);
 			}
@@ -193,7 +193,7 @@ class box_factures_imp extends ModeleBoxes
 		}
 		else {
             $this->info_box_contents[0][0] = array(
-                'td' => 'align="left" class="nohover opacitymedium"',
+                'td' => 'class="nohover opacitymedium left"',
                 'text' => $langs->trans("ReadPermissionNotAllowed")
             );
 		}
@@ -207,7 +207,7 @@ class box_factures_imp extends ModeleBoxes
 	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	string
 	 */
-    function showBox($head = null, $contents = null, $nooutput=0)
+    public function showBox($head = null, $contents = null, $nooutput = 0)
     {
 		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}

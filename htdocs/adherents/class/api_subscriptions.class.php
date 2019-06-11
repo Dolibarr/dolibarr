@@ -40,7 +40,7 @@ class Subscriptions extends DolibarrApi
     /**
      * Constructor
      */
-    function __construct()
+    public function __construct()
     {
         global $db, $conf;
         $this->db = $db;
@@ -56,7 +56,7 @@ class Subscriptions extends DolibarrApi
      *
      * @throws    RestException
      */
-    function get($id)
+    public function get($id)
     {
         if(! DolibarrApiAccess::$user->rights->adherent->cotisation->lire) {
             throw new RestException(401);
@@ -85,7 +85,7 @@ class Subscriptions extends DolibarrApi
      *
      * @throws RestException
      */
-    function index($sortfield = "dateadh", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
+    public function index($sortfield = "dateadh", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
     {
         global $db, $conf;
 
@@ -151,7 +151,7 @@ class Subscriptions extends DolibarrApi
      * @param array $request_data   Request data
      * @return int  ID of subscription
      */
-    function post($request_data = null)
+    public function post($request_data = null)
     {
         if(! DolibarrApiAccess::$user->rights->adherent->cotisation->creer) {
             throw new RestException(401);
@@ -176,7 +176,7 @@ class Subscriptions extends DolibarrApi
      * @param array $request_data   Datas
      * @return int
      */
-    function put($id, $request_data = null)
+    public function put($id, $request_data = null)
     {
         if(! DolibarrApiAccess::$user->rights->adherent->creer) {
             throw new RestException(401);
@@ -209,7 +209,7 @@ class Subscriptions extends DolibarrApi
      * @param int $id   ID of subscription to delete
      * @return array
      */
-    function delete($id)
+    public function delete($id)
     {
         // The right to delete a subscription comes with the right to create one.
         if(! DolibarrApiAccess::$user->rights->adherent->cotisation->creer) {
@@ -222,7 +222,7 @@ class Subscriptions extends DolibarrApi
         }
 
         if (! $subscription->delete(DolibarrApiAccess::$user)) {
-            throw new RestException(401,'error when deleting subscription');
+            throw new RestException(401, 'error when deleting subscription');
         }
 
         return array(
@@ -241,7 +241,7 @@ class Subscriptions extends DolibarrApi
      *
      * @throws RestException
      */
-    function _validate($data)
+    private function _validate($data)
     {
         $subscription = array();
         foreach (Subscriptions::$FIELDS as $field) {

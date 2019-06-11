@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2016	Alexandre Spangaro	<aspangaro@zendsi.com>
+/* Copyright (C) 2016	Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2018   Philippe Grand      <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -45,12 +45,12 @@ function vat_prepare_head($object)
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname);   												to remove a tab
-    complete_head_from_modules($conf, $langs, $object, $head, $tab,'vat');
+    complete_head_from_modules($conf, $langs, $object, $head, $tab, 'vat');
 	
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
     require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 	$upload_dir = $conf->tax->dir_output . "/" . dol_sanitizeFileName($object->ref);
-	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview.*\.png)$'));
+	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
     $nbLinks=Link::count($db, $object->element, $object->id);
 	$head[$tab][0] = DOL_URL_ROOT.'/compta/tva/document.php?id='.$object->id;
 	$head[$tab][1] = $langs->trans("Documents");
@@ -63,7 +63,7 @@ function vat_prepare_head($object)
     $head[$tab][2] = 'info';
     $tab++;
 
-    complete_head_from_modules($conf,$langs,$object,$head,$tab,'vat','remove');
+    complete_head_from_modules($conf, $langs, $object, $head, $tab, 'vat', 'remove');
 
     return $head;
 }

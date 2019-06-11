@@ -5,8 +5,8 @@
  * Copyright (C) 2005-2012 Regis Houssin               <regis.houssin@inodbox.com>
  * Copyright (C) 2007      Franky Van Liedekerke       <franky.van.liedekerker@telenet.be>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
- * Copyright (C) 2013      Florian Henry		  	       <florian.henry@open-concept.pro>
- * Copyright (C) 2013      Alexandre Spangaro 	       <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2013      Florian Henry		  	   <florian.henry@open-concept.pro>
+ * Copyright (C) 2013      Alexandre Spangaro 	       <aspangaro@open-dsi.fr>
  * Copyright (C) 2013      Juanjo Menent	 	       <jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García               <marcosgdf@gmail.com>
  *
@@ -81,6 +81,7 @@ class Contact extends CommonObject
 
 	public $civility_id;      // In fact we store civility_code
 	public $civility_code;
+  public $civility;
 	public $address;
 	public $zip;
 	public $town;
@@ -143,19 +144,19 @@ class Contact extends CommonObject
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		$this->db = $db;
 		$this->statut = 1;	// By default, status is enabled
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Load indicators into this->nb for board
 	 *
 	 *  @return     int         <0 if KO, >0 if OK
 	 */
-	function load_state_board()
+	public function load_state_board()
 	{
         // phpcs:enable
 		global $user;
@@ -200,7 +201,7 @@ class Contact extends CommonObject
 	 *  @param      User	$user       Object user that create
 	 *  @return     int      			<0 if KO, >0 if OK
 	 */
-	function create($user)
+	public function create($user)
 	{
 		global $conf, $langs;
 
@@ -273,10 +274,10 @@ class Contact extends CommonObject
                 }
             }
 
-			if (! $error)
+            if (! $error)
             {
                 // Call trigger
-                $result=$this->call_trigger('CONTACT_CREATE',$user);
+                $result=$this->call_trigger('CONTACT_CREATE', $user);
                 if ($result < 0) { $error++; }
                 // End call triggers
             }
@@ -313,7 +314,7 @@ class Contact extends CommonObject
 	 *      @param		int		$nosyncuser		No sync linked user (external users and contacts are linked)
 	 *      @return     int      			   	<0 if KO, >0 if OK
 	 */
-	function update($id, $user=null, $notrigger=0, $action='update', $nosyncuser=0)
+	public function update($id, $user = null, $notrigger = 0, $action = 'update', $nosyncuser = 0)
 	{
 		global $conf, $langs, $hookmanager;
 
@@ -337,14 +338,13 @@ class Contact extends CommonObject
 		$this->zip=(empty($this->zip)?'':$this->zip);
 		$this->town=(empty($this->town)?'':$this->town);
 		$this->country_id=($this->country_id > 0?$this->country_id:$this->country_id);
-		$this->state_id=($this->state_id > 0?$this->state_id:$this->fk_departement);
 		if (empty($this->statut)) $this->statut = 0;
 
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET ";
 		if ($this->socid > 0) $sql .= " fk_soc='".$this->db->escape($this->socid)."',";
-		else if ($this->socid == -1) $sql .= " fk_soc=null,";
+		elseif ($this->socid == -1) $sql .= " fk_soc=null,";
 		$sql .= "  civility='".$this->db->escape($this->civility_id)."'";
 		$sql .= ", lastname='".$this->db->escape($this->lastname)."'";
 		$sql .= ", firstname='".$this->db->escape($this->firstname)."'";
@@ -359,6 +359,7 @@ class Contact extends CommonObject
 		$sql .= ", skype='".$this->db->escape($this->skype)."'";
 		$sql .= ", twitter='".$this->db->escape($this->twitter)."'";
 		$sql .= ", facebook='".$this->db->escape($this->facebook)."'";
+		$sql .= ", linkedin='".$this->db->escape($this->linkedin)."'";
 		$sql .= ", photo='".$this->db->escape($this->photo)."'";
 		$sql .= ", birthday=".($this->birthday ? "'".$this->db->idate($this->birthday)."'" : "null");
 		$sql .= ", note_private = ".(isset($this->note_private)?"'".$this->db->escape($this->note_private)."'":"null");
@@ -455,6 +456,11 @@ class Contact extends CommonObject
 					$tmpobj->facebook = $this->facebook;
 					$usermustbemodified++;
 				}
+				if ($tmpobj->linkedin != $this->linkedin)
+				{
+				    $tmpobj->linkedin = $this->linkedin;
+				    $usermustbemodified++;
+				}
 				if ($usermustbemodified)
 				{
 					$result=$tmpobj->update($user, 0, 1, 1, 1);
@@ -465,7 +471,7 @@ class Contact extends CommonObject
 			if (! $error && ! $notrigger)
 			{
 				// Call trigger
-				$result=$this->call_trigger('CONTACT_MODIFY',$user);
+				$result=$this->call_trigger('CONTACT_MODIFY', $user);
 				if ($result < 0) { $error++; }
 				// End call triggers
 			}
@@ -477,7 +483,7 @@ class Contact extends CommonObject
 			}
 			else
 			{
-				dol_syslog(get_class($this)."::update Error ".$this->error,LOG_ERR);
+				dol_syslog(get_class($this)."::update Error ".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -$error;
 			}
@@ -491,7 +497,7 @@ class Contact extends CommonObject
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
 	 *
@@ -501,7 +507,7 @@ class Contact extends CommonObject
 	 *									2=Return key only (uid=qqq)
 	 *	@return		string				DN
 	 */
-	function _load_ldap_dn($info,$mode=0)
+	private function _load_ldap_dn($info, $mode = 0)
 	{
         // phpcs:enable
 		global $conf;
@@ -513,13 +519,13 @@ class Contact extends CommonObject
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Initialise tableau info (tableau des attributs LDAP)
 	 *
 	 *	@return		array		Tableau info des attributs
 	 */
-	function _load_ldap_info()
+	private function _load_ldap_info()
 	{
         // phpcs:enable
 		global $conf, $langs;
@@ -588,7 +594,7 @@ class Contact extends CommonObject
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Update field alert birthday
 	 *
@@ -597,7 +603,7 @@ class Contact extends CommonObject
 	 *  @param      int		    $notrigger	0=no, 1=yes
      *  @return     int         			<0 if KO, >=0 if OK
 	 */
-	function update_perso($id, $user=null, $notrigger=0)
+	public function update_perso($id, $user = null, $notrigger = 0)
 	{
         // phpcs:enable
 	    $error=0;
@@ -658,7 +664,7 @@ class Contact extends CommonObject
 		if (! $error && ! $notrigger)
 		{
 		    // Call trigger
-		    $result=$this->call_trigger('CONTACT_MODIFY',$user);
+		    $result=$this->call_trigger('CONTACT_MODIFY', $user);
 		    if ($result < 0) { $error++; }
 		    // End call triggers
 		}
@@ -670,7 +676,7 @@ class Contact extends CommonObject
 		}
 		else
 		{
-		    dol_syslog(get_class($this)."::update Error ".$this->error,LOG_ERR);
+		    dol_syslog(get_class($this)."::update Error ".$this->error, LOG_ERR);
 		    $this->db->rollback();
 		    return -$error;
 		}
@@ -686,13 +692,15 @@ class Contact extends CommonObject
      *  @param		string	$email		Email
 	 *  @return     int     		    -1 if KO, 0 if OK but not found, 1 if OK
 	 */
-	function fetch($id, $user=null, $ref_ext='', $email='')
+	public function fetch($id, $user = null, $ref_ext = '', $email = '')
 	{
 		global $langs;
 
-		dol_syslog(get_class($this)."::fetch id=".$id, LOG_DEBUG);
+        $langs->load("dict");
 
-		if (empty($id) && empty($ref_ext))
+		dol_syslog(get_class($this) . "::fetch id=" . $id . " ref_ext=" . $ref_ext . " email=" . $email, LOG_DEBUG);
+
+		if (empty($id) && empty($ref_ext) && empty($email))
 		{
 			$this->error='BadParameter';
 			return -1;
@@ -700,12 +708,12 @@ class Contact extends CommonObject
 
 		$langs->load("companies");
 
-		$sql = "SELECT c.rowid, c.entity, c.fk_soc, c.ref_ext, c.civility as civility_id, c.lastname, c.firstname,";
+		$sql = "SELECT c.rowid, c.entity, c.fk_soc, c.ref_ext, c.civility as civility_code, c.lastname, c.firstname,";
 		$sql.= " c.address, c.statut, c.zip, c.town,";
 		$sql.= " c.fk_pays as country_id,";
-		$sql.= " c.fk_departement,";
+		$sql.= " c.fk_departement as state_id,";
 		$sql.= " c.birthday,";
-		$sql.= " c.poste, c.phone, c.phone_perso, c.phone_mobile, c.fax, c.email, c.jabberid, c.skype, c.twitter, c.facebook,";
+		$sql.= " c.poste, c.phone, c.phone_perso, c.phone_mobile, c.fax, c.email, c.jabberid, c.skype, c.twitter, c.facebook, c.linkedin,";
         $sql.= " c.photo,";
 		$sql.= " c.priv, c.note_private, c.note_public, c.default_lang, c.canvas,";
 		$sql.= " c.import_key,";
@@ -742,10 +750,12 @@ class Contact extends CommonObject
 				$this->entity			= $obj->entity;
 				$this->ref				= $obj->rowid;
 				$this->ref_ext			= $obj->ref_ext;
-				$this->civility_id		= $obj->civility_id;
-				$this->civility_code		= $obj->civility_id;
-				$this->lastname			= $obj->lastname;
-				$this->firstname			= $obj->firstname;
+
+				$this->civility_code    = $obj->civility_code;
+				$this->civility	        = $obj->civility_code?($langs->trans("Civility".$obj->civility_code) != ("Civility".$obj->civility_code) ? $langs->trans("Civility".$obj->civility_code) : $obj->civility_code):'';
+
+                $this->lastname			= $obj->lastname;
+				$this->firstname		= $obj->firstname;
 				$this->address			= $obj->address;
 				$this->zip				= $obj->zip;
 				$this->town				= $obj->town;
@@ -753,33 +763,31 @@ class Contact extends CommonObject
 				$this->date_creation     = $this->db->jdate($obj->date_creation);
 				$this->date_modification = $this->db->jdate($obj->date_modification);
 
-				$this->fk_departement	= $obj->fk_departement;    // deprecated
-				$this->state_id			= $obj->fk_departement;
-				$this->departement_code	= $obj->state_code;	       // deprecated
+				$this->state_id			= $obj->state_id;
 				$this->state_code		= $obj->state_code;
-				$this->departement		= $obj->state;	           // deprecated
-				$this->state				= $obj->state;
+				$this->state			= $obj->state;
 
 				$this->country_id 		= $obj->country_id;
 				$this->country_code		= $obj->country_id?$obj->country_code:'';
 				$this->country			= $obj->country_id?($langs->trans('Country'.$obj->country_code)!='Country'.$obj->country_code?$langs->transnoentities('Country'.$obj->country_code):$obj->country):'';
 
-				$this->socid				= $obj->fk_soc;
+				$this->socid			= $obj->fk_soc;
 				$this->socname			= $obj->socname;
-				$this->poste				= $obj->poste;
+				$this->poste			= $obj->poste;
 				$this->statut			= $obj->statut;
 
-				$this->phone_pro			= trim($obj->phone);
+				$this->phone_pro		= trim($obj->phone);
 				$this->fax				= trim($obj->fax);
 				$this->phone_perso		= trim($obj->phone_perso);
 				$this->phone_mobile		= trim($obj->phone_mobile);
 
-				$this->email				= $obj->email;
+				$this->email			= $obj->email;
 				$this->jabberid			= $obj->jabberid;
-				$this->skype				= $obj->skype;
-				$this->twitter				= $obj->twitter;
-				$this->facebook				= $obj->facebook;
-				$this->photo				= $obj->photo;
+				$this->skype			= $obj->skype;
+				$this->twitter			= $obj->twitter;
+				$this->facebook			= $obj->facebook;
+				$this->linkedin			= $obj->linkedin;
+				$this->photo			= $obj->photo;
 				$this->priv				= $obj->priv;
 				$this->mail				= $obj->email;
 
@@ -869,17 +877,17 @@ class Contact extends CommonObject
 	 *
 	 * @return void
 	 */
-	function setGenderFromCivility()
+	public function setGenderFromCivility()
 	{
 	    unset($this->gender);
     	if (in_array($this->civility_id, array('MR'))) {
     	    $this->gender = 'man';
-    	} else if(in_array($this->civility_id, array('MME','MLE'))) {
+    	} elseif(in_array($this->civility_id, array('MME','MLE'))) {
     	    $this->gender = 'woman';
     	}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Load number of elements the contact is used as a link for
 	 *  ref_facturation
@@ -889,7 +897,7 @@ class Contact extends CommonObject
 	 *
      *  @return     int             					<0 if KO, >=0 if OK
 	 */
-	function load_ref_elements()
+	public function load_ref_elements()
 	{
         // phpcs:enable
 		// Compte les elements pour lesquels il est contact
@@ -931,7 +939,7 @@ class Contact extends CommonObject
 	 *   	@param		int		$notrigger		Disable all trigger
 	 *		@return		int						<0 if KO, >0 if OK
 	 */
-	function delete($notrigger=0)
+	public function delete($notrigger = 0)
 	{
 		global $conf, $langs, $user;
 
@@ -1010,7 +1018,8 @@ class Contact extends CommonObject
 		}
 
 		// Removed extrafields
-		 if ((! $error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) { // For avoid conflicts if trigger used
+        if ((! $error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) {
+            // For avoid conflicts if trigger used
 			$result=$this->deleteExtraFields($this);
 			if ($result < 0) $error++;
 		}
@@ -1018,7 +1027,7 @@ class Contact extends CommonObject
 		if (! $error && ! $notrigger)
 		{
             // Call trigger
-            $result=$this->call_trigger('CONTACT_DELETE',$user);
+            $result=$this->call_trigger('CONTACT_DELETE', $user);
             if ($result < 0) { $error++; }
             // End call triggers
 		}
@@ -1032,7 +1041,7 @@ class Contact extends CommonObject
 		else
 		{
 			$this->db->rollback();
-			dol_syslog("Error ".$this->error,LOG_ERR);
+			dol_syslog("Error ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -1044,7 +1053,7 @@ class Contact extends CommonObject
 	 *  @param		int		$id      Id du contact a charger
 	 *  @return		void
 	 */
-	function info($id)
+	public function info($id)
 	{
 		$sql = "SELECT c.rowid, c.datec as datec, c.fk_user_creat,";
 		$sql.= " c.tms as tms, c.fk_user_modif";
@@ -1089,7 +1098,7 @@ class Contact extends CommonObject
 	 *
 	 *  @return       int     Number of EMailings
 	 */
-	function getNbOfEMailings()
+	public function getNbOfEMailings()
 	{
 		$sql = "SELECT count(mc.email) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc, ".MAIN_DB_PREFIX."mailing as m";
@@ -1124,7 +1133,7 @@ class Contact extends CommonObject
 	 *	@param		int			$notooltip					1=Disable tooltip
 	 *	@return		string									String with URL
 	 */
-	function getNomUrl($withpicto=0, $option='', $maxlen=0, $moreparam='', $save_lastsearch_value=-1, $notooltip=0)
+	public function getNomUrl($withpicto = 0, $option = '', $maxlen = 0, $moreparam = '', $save_lastsearch_value = -1, $notooltip = 0)
 	{
 		global $conf, $langs, $hookmanager;
 
@@ -1139,7 +1148,7 @@ class Contact extends CommonObject
         if ($this->phone_pro) $phonelist[]=$this->phone_pro;
         if ($this->phone_mobile) $phonelist[]=$this->phone_mobile;
         if ($this->phone_perso) $phonelist[]=$this->phone_perso;
-        $label.= '<br><b>' . $langs->trans("Phone") . ':</b> '.join(', ',$phonelist);
+        $label.= '<br><b>' . $langs->trans("Phone") . ':</b> '.join(', ', $phonelist);
         $label.= '<br><b>' . $langs->trans("Address") . ':</b> '.dol_format_address($this, 1, ' ', $langs);
 
         $url = DOL_URL_ROOT.'/contact/card.php?id='.$this->id;
@@ -1148,7 +1157,7 @@ class Contact extends CommonObject
         {
         	// Add param to save lastsearch_values or not
         	$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
-        	if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+        	if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
         	if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
         }
 
@@ -1184,13 +1193,13 @@ class Contact extends CommonObject
 
 		$result.=$linkstart;
 		if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip valigntextbottom"'), 0, 0, $notooltip?0:1);
-		if ($withpicto != 2) $result.=($maxlen?dol_trunc($this->getFullName($langs),$maxlen):$this->getFullName($langs));
+		if ($withpicto != 2) $result.=($maxlen?dol_trunc($this->getFullName($langs), $maxlen):$this->getFullName($langs));
 		$result.=$linkend;
 
 		global $action;
 		$hookmanager->initHooks(array('contactdao'));
 		$parameters=array('id'=>$this->id, 'getnomurl'=>$result);
-		$reshook=$hookmanager->executeHooks('getNomUrl',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+		$reshook=$hookmanager->executeHooks('getNomUrl', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) $result = $hookmanager->resPrint;
 		else $result .= $hookmanager->resPrint;
 
@@ -1202,7 +1211,7 @@ class Contact extends CommonObject
 	 *
 	 *    @return	string      			Translated name of civility
 	 */
-	function getCivilityLabel()
+	public function getCivilityLabel()
 	{
 		global $langs;
 		$langs->load("dict");
@@ -1218,12 +1227,12 @@ class Contact extends CommonObject
 	 *	@param      int			$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 * 	@return 	string					Label of contact status
 	 */
-	function getLibStatut($mode)
+	public function getLibStatut($mode)
 	{
-		return $this->LibStatut($this->statut,$mode);
+		return $this->LibStatut($this->statut, $mode);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Renvoi le libelle d'un statut donne
 	 *
@@ -1231,7 +1240,7 @@ class Contact extends CommonObject
 	 *  @param      int			$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return     string					Libelle
 	 */
-	function LibStatut($statut,$mode)
+	public function LibStatut($statut, $mode)
 	{
         // phpcs:enable
 		global $langs;
@@ -1248,35 +1257,35 @@ class Contact extends CommonObject
 		}
 		elseif ($mode == 2)
 		{
-			if ($statut==0 || $statut==5) return img_picto($langs->trans('Disabled'),'statut5', 'class="pictostatus"').' '.$langs->trans('Disabled');
-			elseif ($statut==1 || $statut==4) return img_picto($langs->trans('Enabled'),'statut4', 'class="pictostatus"').' '.$langs->trans('Enabled');
+			if ($statut==0 || $statut==5) return img_picto($langs->trans('Disabled'), 'statut5', 'class="pictostatus"').' '.$langs->trans('Disabled');
+			elseif ($statut==1 || $statut==4) return img_picto($langs->trans('Enabled'), 'statut4', 'class="pictostatus"').' '.$langs->trans('Enabled');
 		}
 		elseif ($mode == 3)
 		{
-			if ($statut==0 || $statut==5) return img_picto($langs->trans('Disabled'),'statut5', 'class="pictostatus"');
-			elseif ($statut==1 || $statut==4) return img_picto($langs->trans('Enabled'),'statut4', 'class="pictostatus"');
+			if ($statut==0 || $statut==5) return img_picto($langs->trans('Disabled'), 'statut5', 'class="pictostatus"');
+			elseif ($statut==1 || $statut==4) return img_picto($langs->trans('Enabled'), 'statut4', 'class="pictostatus"');
 		}
 		elseif ($mode == 4)
 		{
-			if ($statut==0) return img_picto($langs->trans('Disabled'),'statut5', 'class="pictostatus"').' '.$langs->trans('Disabled');
-			elseif ($statut==1 || $statut==4) return img_picto($langs->trans('Enabled'),'statut4', 'class="pictostatus"').' '.$langs->trans('Enabled');
+			if ($statut==0) return img_picto($langs->trans('Disabled'), 'statut5', 'class="pictostatus"').' '.$langs->trans('Disabled');
+			elseif ($statut==1 || $statut==4) return img_picto($langs->trans('Enabled'), 'statut4', 'class="pictostatus"').' '.$langs->trans('Enabled');
 		}
 		elseif ($mode == 5)
 		{
-			if ($statut==0 || $statut==5) return '<span class="hideonsmartphone">'.$langs->trans('Disabled').' </span>'.img_picto($langs->trans('Disabled'),'statut5', 'class="pictostatus"');
-			elseif ($statut==1 || $statut==4) return '<span class="hideonsmartphone">'.$langs->trans('Enabled').' </span>'.img_picto($langs->trans('Enabled'),'statut4', 'class="pictostatus"');
+			if ($statut==0 || $statut==5) return '<span class="hideonsmartphone">'.$langs->trans('Disabled').' </span>'.img_picto($langs->trans('Disabled'), 'statut5', 'class="pictostatus"');
+			elseif ($statut==1 || $statut==4) return '<span class="hideonsmartphone">'.$langs->trans('Enabled').' </span>'.img_picto($langs->trans('Enabled'), 'statut4', 'class="pictostatus"');
 		}
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Return translated label of Public or Private
 	 *
 	 * 	@param      int			$statut		Type (0 = public, 1 = private)
 	 *  @return     string					Label translated
 	 */
-	function LibPubPriv($statut)
+	public function LibPubPriv($statut)
 	{
         // phpcs:enable
 		global $langs;
@@ -1292,14 +1301,13 @@ class Contact extends CommonObject
      *
      *  @return	void
 	 */
-	function initAsSpecimen()
+	public function initAsSpecimen()
 	{
 		// Get first id of existing company and save it into $socid
 		$socid = 0;
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe ORDER BY rowid LIMIT 1";
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
 			if ($obj) $socid=$obj->rowid;
 		}
@@ -1336,7 +1344,7 @@ class Contact extends CommonObject
 	 *	@param	int		$statut		Status to set
 	 *  @return int     			<0 if KO, 0 if nothing is done, >0 if OK
 	 */
-	function setstatus($statut)
+	public function setstatus($statut)
 	{
 		global $conf,$langs,$user;
 
@@ -1358,7 +1366,7 @@ class Contact extends CommonObject
 		if ($result)
 		{
             // Call trigger
-            $result=$this->call_trigger('CONTACT_ENABLEDISABLE',$user);
+            $result=$this->call_trigger('CONTACT_ENABLEDISABLE', $user);
             if ($result < 0) { $error++; }
             // End call triggers
 		}

@@ -49,10 +49,8 @@ foreach($object->fields as $key => $val)
 	if ($val['type'] == 'text' || $val['type'] == 'html') print ' tdtop';
 	print '"';
 	print '>';
-	print $langs->trans($val['label']);
-    if(!empty($val['help'])){
-        print $form->textwithpicto('',$langs->trans($val['help']));
-    }
+	if (! empty($val['help'])) print $form->textwithpicto($langs->trans($val['label']), $langs->trans($val['help']));
+	else print $langs->trans($val['label']);
 	print '</td>';
 	print '<td>';
 	if (in_array($val['type'], array('int', 'integer'))) $value = GETPOST($key, 'int');

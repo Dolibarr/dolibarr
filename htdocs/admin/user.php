@@ -38,10 +38,10 @@ if (! $user->admin) accessforbidden();
 
 $extrafields = new ExtraFields($db);
 
-$action = GETPOST('action','alpha');
+$action = GETPOST('action', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
-$value = GETPOST('value','alpha');
+$value = GETPOST('value', 'alpha');
 $type='user';
 
 
@@ -62,7 +62,7 @@ elseif ($action == 'del_default')
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0)
 	{
-        if ($conf->global->USER_ADDON_PDF_ODT == "$value") dolibarr_del_const($db, 'USER_ADDON_PDF_ODT',$conf->entity);
+        if ($conf->global->USER_ADDON_PDF_ODT == "$value") dolibarr_del_const($db, 'USER_ADDON_PDF_ODT', $conf->entity);
 	}
 	$res = true;
 }
@@ -70,7 +70,7 @@ elseif ($action == 'del_default')
 // Set default model
 elseif ($action == 'setdoc')
 {
-	if (dolibarr_set_const($db, "USER_ADDON_PDF_ODT",$value,'chaine',0,'',$conf->entity))
+	if (dolibarr_set_const($db, "USER_ADDON_PDF_ODT", $value, 'chaine', 0, '', $conf->entity))
 	{
 		// La constante qui a ete lue en avant du nouveau set
 		// on passe donc par une variable pour avoir un affichage coherent
@@ -85,7 +85,7 @@ elseif ($action == 'setdoc')
 	}
 	$res = true;
 }
-elseif (preg_match('/set_([a-z0-9_\-]+)/i',$action,$reg))
+elseif (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
 {
     $code=$reg[1];
     if (dolibarr_set_const($db, $code, 1, 'chaine', 0, '', $conf->entity) > 0)
@@ -99,7 +99,7 @@ elseif (preg_match('/set_([a-z0-9_\-]+)/i',$action,$reg))
     }
 }
 
-elseif (preg_match('/del_([a-z0-9_\-]+)/i',$action,$reg))
+elseif (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg))
 {
     $code=$reg[1];
     if (dolibarr_del_const($db, $code, $conf->entity) > 0)
@@ -115,9 +115,9 @@ elseif (preg_match('/del_([a-z0-9_\-]+)/i',$action,$reg))
 //Set hide closed customer into combox or select
 elseif ($action == 'sethideinactiveuser')
 {
-	$status = GETPOST('status','alpha');
+	$status = GETPOST('status', 'alpha');
 
-	if (dolibarr_set_const($db, "USER_HIDE_INACTIVE_IN_COMBOBOX",$status,'chaine',0,'',$conf->entity) > 0)
+	if (dolibarr_set_const($db, "USER_HIDE_INACTIVE_IN_COMBOBOX", $status, 'chaine', 0, '', $conf->entity) > 0)
 	{
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
@@ -135,15 +135,15 @@ elseif ($action == 'sethideinactiveuser')
 $form = new Form($db);
 
 $help_url='EN:Module_Users|FR:Module_Utilisateurs|ES:M&oacute;dulo_Usuarios';
-llxHeader('',$langs->trans("UsersSetup"),$help_url);
+llxHeader('', $langs->trans("UsersSetup"), $help_url);
 
-$linkback='<a href="'.($backtopage?$backtopage:DOL_URL_ROOT.'/admin/modules.php').'">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans("UsersSetup"),$linkback,'title_setup');
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+print load_fiche_titre($langs->trans("UsersSetup"), $linkback, 'title_setup');
 
 
 $head=user_admin_prepare_head();
 
-dol_fiche_head($head,'card', $langs->trans("MenuUsersAndGroups"), -1, 'user');
+dol_fiche_head($head, 'card', $langs->trans("MenuUsersAndGroups"), -1, 'user');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -168,11 +168,11 @@ else
 {
 	if (empty($conf->global->USER_MAIL_REQUIRED))
 	{
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_USER_MAIL_REQUIRED">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_USER_MAIL_REQUIRED">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 	}
 	else
 	{
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_USER_MAIL_REQUIRED">'.img_picto($langs->trans("Enabled"),'on').'</a>';
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_USER_MAIL_REQUIRED">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 	}
 }
 print '</td></tr>';
@@ -181,9 +181,7 @@ print '</table>';
 
 print '<br>';
 
-$dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
-
-$form=new Form($db);
+$dirmodels=array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 // Defini tableau def des modeles
 $def = array();
@@ -239,7 +237,7 @@ foreach ($dirmodels as $reldir)
 
                 foreach($filelist as $file)
                 {
-                    if (preg_match('/\.modules\.php$/i',$file) && preg_match('/^(pdf_|doc_)/',$file))
+                    if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file))
                     {
 
                     	if (file_exists($dir.'/'.$file))
@@ -259,7 +257,7 @@ foreach ($dirmodels as $reldir)
 	                            print '<tr class="oddeven"><td width="100">';
 	                            print (empty($module->name)?$name:$module->name);
 	                            print "</td><td>\n";
-	                            if (method_exists($module,'info')) print $module->info($langs);
+	                            if (method_exists($module, 'info')) print $module->info($langs);
 	                            else print $module->description;
 	                            print '</td>';
 
@@ -268,14 +266,14 @@ foreach ($dirmodels as $reldir)
 	                            {
 	                            	print '<td align="center">'."\n";
 	                            	print '<a href="'.$_SERVER["PHP_SELF"].'?action=del_default&value='.$name.'">';
-	                            	print img_picto($langs->trans("Enabled"),'switch_on');
+	                            	print img_picto($langs->trans("Enabled"), 'switch_on');
 	                            	print '</a>';
 	                            	print '</td>';
 	                            }
 	                            else
 	                            {
 	                                print '<td align="center">'."\n";
-	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=set_default&value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=set_default&value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 	                                print "</td>";
 	                            }
 
@@ -283,11 +281,11 @@ foreach ($dirmodels as $reldir)
 	                            print '<td align="center">';
 	                            if ($conf->global->USER_ADDON_PDF == $name)
 	                            {
-	                                print img_picto($langs->trans("Default"),'on');
+	                                print img_picto($langs->trans("Default"), 'on');
 	                            }
 	                            else
 	                            {
-	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 	                            }
 	                            print '</td>';
 
@@ -299,26 +297,26 @@ foreach ($dirmodels as $reldir)
 			                        $htmltooltip.='<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
 			                    }
 					    		$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
-					    		$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);
-					    		$htmltooltip.='<br>'.$langs->trans("PaymentMode").': '.yn($module->option_modereg,1,1);
-					    		$htmltooltip.='<br>'.$langs->trans("PaymentConditions").': '.yn($module->option_condreg,1,1);
-					    		$htmltooltip.='<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang,1,1);
-					    		$htmltooltip.='<br>'.$langs->trans("WatermarkOnDraftOrders").': '.yn($module->option_draft_watermark,1,1);
+					    		$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo, 1, 1);
+					    		$htmltooltip.='<br>'.$langs->trans("PaymentMode").': '.yn($module->option_modereg, 1, 1);
+					    		$htmltooltip.='<br>'.$langs->trans("PaymentConditions").': '.yn($module->option_condreg, 1, 1);
+					    		$htmltooltip.='<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang, 1, 1);
+					    		$htmltooltip.='<br>'.$langs->trans("WatermarkOnDraftOrders").': '.yn($module->option_draft_watermark, 1, 1);
 
 
 	                            print '<td align="center">';
-	                            print $form->textwithpicto('',$htmltooltip,1,0);
+	                            print $form->textwithpicto('', $htmltooltip, 1, 0);
 	                            print '</td>';
 
 	                            // Preview
 	                            print '<td align="center">';
 	                            if ($module->type == 'pdf')
 	                            {
-	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"),'contract').'</a>';
+	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'contract').'</a>';
 	                            }
 	                            else
 	                            {
-	                                print img_object($langs->trans("PreviewNotAvailable"),'generic');
+	                                print img_object($langs->trans("PreviewNotAvailable"), 'generic');
 	                            }
 	                            print '</td>';
 

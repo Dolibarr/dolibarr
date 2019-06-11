@@ -39,7 +39,7 @@ class modFckeditor extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		$this->db = $db;
 		$this->numero = 2000;
@@ -47,7 +47,7 @@ class modFckeditor extends DolibarrModules
 		$this->family = "technic";
 		$this->module_position = '20';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = preg_replace('/^mod/i','',get_class($this));
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "Editeur WYSIWYG";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'dolibarr';
@@ -63,7 +63,7 @@ class modFckeditor extends DolibarrModules
 		$this->config_page_url = array("fckeditor.php");
 
 		// Dependencies
-		$this->disabled = (in_array(constant('JS_CKEDITOR'),array('disabled','disabled/'))?1:0);	// A condition to disable module (used for native debian packages)
+		$this->disabled = (in_array(constant('JS_CKEDITOR'), array('disabled','disabled/'))?1:0);	// A condition to disable module (used for native debian packages)
 		$this->depends = array();
 		$this->requiredby = array('modWebsites');
 

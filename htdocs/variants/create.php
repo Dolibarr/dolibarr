@@ -77,7 +77,7 @@ print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
 ?>
 
-	<table class="border" style="width: 100%">
+	<table class="border centpercent">
 		<tr>
 			<td class="titlefield fieldrequired"><label for="ref"><?php echo $langs->trans('Ref') ?></label></td>
 			<td><input type="text" id="ref" name="ref" value="<?php echo $ref ?>"></td>

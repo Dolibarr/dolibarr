@@ -24,17 +24,16 @@
  *	\brief      Dolibarr home page
  */
 
-define('NOCSRFCHECK',1);	// This is main home and login page. We must be able to go on it from another web site.
+define('NOCSRFCHECK', 1);	// This is main home and login page. We must be able to go on it from another web site.
 
 require 'main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 // If not defined, we select menu "home"
 $_GET['mainmenu']=GETPOST('mainmenu', 'aZ09')?GETPOST('mainmenu', 'aZ09'):'home';
-$action=GETPOST('action','aZ09');
+$action=GETPOST('action', 'aZ09');
 
 $hookmanager->initHooks(array('index'));
-
 
 
 /*
@@ -60,7 +59,7 @@ if (GETPOST('addbox'))	// Add box (when submit is done from a form when ajax dis
 	$boxorder=GETPOST('boxorder', 'aZ09');
 	$boxorder.=GETPOST('boxcombo', 'aZ09');
 
-	$result=InfoBox::saveboxorder($db,$zone,$boxorder,$userid);
+	$result=InfoBox::saveboxorder($db, $zone, $boxorder, $userid);
 	if ($result > 0) setEventMessages($langs->trans("BoxAdded"), null);
 }
 
@@ -75,17 +74,17 @@ if (! is_object($form)) $form=new Form($db);
 $title=$langs->trans("HomeArea").' - Dolibarr '.DOL_VERSION;
 if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $title=$langs->trans("HomeArea").' - '.$conf->global->MAIN_APPLICATION_TITLE;
 
-llxHeader('',$title);
+llxHeader('', $title);
 
 
-$resultboxes=FormOther::getBoxesArea($user,"0");    // Load $resultboxes (selectboxlist + boxactivated + boxlista + boxlistb)
+$resultboxes=FormOther::getBoxesArea($user, "0");    // Load $resultboxes (selectboxlist + boxactivated + boxlista + boxlistb)
 
 
-print load_fiche_titre($langs->trans("HomeArea"),$resultboxes['selectboxlist'],'title_home');
+print load_fiche_titre($langs->trans("HomeArea"), $resultboxes['selectboxlist'], 'title_home');
 
 if (! empty($conf->global->MAIN_MOTD))
 {
-    $conf->global->MAIN_MOTD=preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>/i','<br>',$conf->global->MAIN_MOTD);
+    $conf->global->MAIN_MOTD=preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>/i', '<br>', $conf->global->MAIN_MOTD);
     if (! empty($conf->global->MAIN_MOTD))
     {
         $substitutionarray=getCommonSubstitutionArray($langs);
@@ -118,14 +117,16 @@ if (empty($user->societe_id))
     $boxstat.='<div class="box">';
     $boxstat.='<table summary="'.dol_escape_htmltag($langs->trans("DolibarrStateBoard")).'" class="noborder boxtable boxtablenobottom nohover" width="100%">';
     $boxstat.='<tr class="liste_titre">';
-    $boxstat.='<th class="liste_titre">'.$langs->trans("DolibarrStateBoard").'</th>';
+    $boxstat.='<th class="liste_titre">';
+    $boxstat.='<div class="inline-block valignmiddle">'.$langs->trans("DolibarrStateBoard").'</div>';
+    $boxstat.='</th>';
     $boxstat.='</tr>';
-    $boxstat.='<tr class="impair"><td class="tdboxstats nohover flexcontainer">';
+    $boxstat.='<tr class="nobottom nohover"><td class="tdboxstats nohover flexcontainer">';
 
     $object=new stdClass();
     $parameters=array();
     $action='';
-    $reshook=$hookmanager->executeHooks('addStatisticLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+    $reshook=$hookmanager->executeHooks('addStatisticLine', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
     $boxstat.=$hookmanager->resPrint;
 
     if (empty($reshook))
@@ -150,6 +151,7 @@ if (empty($user->societe_id))
 		! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->lire && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_PROPOSAL_STATS),
 	    ! empty($conf->projet->enabled) && $user->rights->projet->lire,
 	    ! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire,
+        ! empty($conf->holiday->enabled) && $user->rights->holiday->read,
 		! empty($conf->don->enabled) && $user->rights->don->lire
 	    );
 	    // Class file containing the method load_state_board for each line
@@ -172,6 +174,7 @@ if (empty($user->societe_id))
     	    DOL_DOCUMENT_ROOT."/supplier_proposal/class/supplier_proposal.class.php",
             DOL_DOCUMENT_ROOT."/projet/class/project.class.php",
 	        DOL_DOCUMENT_ROOT."/expensereport/class/expensereport.class.php",
+            DOL_DOCUMENT_ROOT."/holiday/class/holiday.class.php",
 			DOL_DOCUMENT_ROOT."/don/class/don.class.php"
 	    );
 	    // Name class containing the method load_state_board for each line
@@ -193,6 +196,7 @@ if (empty($user->societe_id))
             	       'SupplierProposal',
 	                   'Project',
 	                   'ExpenseReport',
+                       'Holiday',
 					   'Don'
 	    );
 	    // Cle array returned by the method load_state_board for each line
@@ -203,7 +207,7 @@ if (empty($user->societe_id))
 	                'contacts',
 	                'members',
 	                'products',
-	                'services',
+	                 'services',
 	                'proposals',
 	                'orders',
 	                'invoices',
@@ -214,6 +218,7 @@ if (empty($user->societe_id))
 	                'askprice',
 	                'projects',
 	                'expensereports',
+                    'holidays',
 					'donations'
 	    );
 	    // Dashboard Icon lines
@@ -235,6 +240,7 @@ if (empty($user->societe_id))
 	                 'propal',
 	                 'projectpub',
 					 'trip',
+                     'holiday',
 					 'generic'
 	    );
 	    // Translation keyword
@@ -256,6 +262,7 @@ if (empty($user->societe_id))
 	                  "SupplierProposalShort",
 	                  "Projects",
 					  "ExpenseReports",
+                      "Holidays",
 					  "Donations"
 	    );
 	    // Dashboard Link lines
@@ -278,6 +285,7 @@ if (empty($user->societe_id))
 	        DOL_URL_ROOT.'/supplier_proposal/list.php?mainmenu=commercial&leftmenu=',
 	        DOL_URL_ROOT.'/projet/list.php?mainmenu=project',
     		DOL_URL_ROOT.'/expensereport/list.php?mainmenu=hrm&leftmenu=expensereport',
+            DOL_URL_ROOT.'/holiday/list.php?mainmenu=hrm&leftmenu=holiday',
 			DOL_URL_ROOT.'/don/list.php?leftmenu=donations'
 	    );
 	    // Translation lang files
@@ -299,6 +307,7 @@ if (empty($user->societe_id))
 	                    "supplier_proposal",
 	                    "projects",
 						"trips",
+                        "holidays",
 						"donations"
 	    );
 
@@ -330,7 +339,7 @@ if (empty($user->societe_id))
 	            $boxstat.='<a href="'.$links[$key].'" class="boxstatsindicator thumbstat nobold nounderline">';
 	            $boxstat.='<div class="boxstats">';
 	            $boxstat.='<span class="boxstatstext" title="'.dol_escape_htmltag($text).'">'.$text.'</span><br>';
-	            $boxstat.='<span class="boxstatsindicator">'.img_object("",$icons[$key],'class="inline-block"').' '.($board->nb[$val]?$board->nb[$val]:0).'</span>';
+	            $boxstat.='<span class="boxstatsindicator">'.img_object("", $icons[$key], 'class="inline-block"').' '.($board->nb[$val]?$board->nb[$val]:0).'</span>';
 	            $boxstat.='</div>';
 	            $boxstat.='</a>';
 	        }
@@ -396,9 +405,9 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 {
 	include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 	$board=new Propal($db);
-	$dashboardlines[] = $board->load_board($user,"opened");
+	$dashboardlines[] = $board->load_board($user, "opened");
 	// Number of commercial proposals CLOSED signed (billed)
-	$dashboardlines[] = $board->load_board($user,"signed");
+	$dashboardlines[] = $board->load_board($user, "signed");
 }
 
 // Number of commercial proposals opened (expired)
@@ -406,9 +415,9 @@ if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_propos
 {
 	include_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
 	$board=new SupplierProposal($db);
-	$dashboardlines[] = $board->load_board($user,"opened");
+	$dashboardlines[] = $board->load_board($user, "opened");
 	// Number of commercial proposals CLOSED signed (billed)
-	$dashboardlines[] = $board->load_board($user,"signed");
+	$dashboardlines[] = $board->load_board($user, "signed");
 }
 
 // Number of customer orders a deal
@@ -432,9 +441,9 @@ if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
 {
 	include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 	$board=new Contrat($db);
-	$dashboardlines[] = $board->load_board($user,"inactives");
+	$dashboardlines[] = $board->load_board($user, "inactive");
 	// Number of active services (expired)
-	$dashboardlines[] = $board->load_board($user,"expired");
+	$dashboardlines[] = $board->load_board($user, "active");
 }
 // Number of invoices customers (has paid)
 if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
@@ -485,7 +494,7 @@ if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->appr
 {
 	include_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 	$board=new ExpenseReport($db);
-	$dashboardlines[] = $board->load_board($user,'toapprove');
+	$dashboardlines[] = $board->load_board($user, 'toapprove');
 }
 
 // Number of expense reports to pay
@@ -493,13 +502,21 @@ if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->to_p
 {
 	include_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 	$board=new ExpenseReport($db);
-	$dashboardlines[] = $board->load_board($user,'topay');
+	$dashboardlines[] = $board->load_board($user, 'topay');
+}
+
+// Number of holidays to approve
+if (! empty($conf->holiday->enabled) && $user->rights->holiday->approve)
+{
+    include_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
+    $board=new Holiday($db);
+    $dashboardlines[] = $board->load_board($user);
 }
 
 $object=new stdClass();
 $parameters=array();
 $action='';
-$reshook=$hookmanager->executeHooks('addOpenElementsDashboardLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('addOpenElementsDashboardLine', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook == 0) {
 	$dashboardlines = array_merge($dashboardlines, $hookmanager->resArray);
 }
@@ -530,35 +547,45 @@ $boxwork='';
 $boxwork.='<div class="box">';
 $boxwork.='<table summary="'.dol_escape_htmltag($langs->trans("WorkingBoard")).'" class="noborder boxtable boxtablenobottom boxworkingboard" width="100%">'."\n";
 $boxwork.='<tr class="liste_titre">';
-$boxwork.='<th class="liste_titre">'.$langs->trans("DolibarrWorkBoard").'</th>';
+$boxwork.='<th class="liste_titre"><div class="inline-block valignmiddle">'.$langs->trans("DolibarrWorkBoard").'</div>';
+if ($showweather)
+{
+    if ($totallate > 0) $text=$langs->transnoentitiesnoconv("WarningYouHaveAtLeastOneTaskLate").' ('.$langs->transnoentitiesnoconv("NActionsLate", $totallate.(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE) ? '%' : '')).')';
+    else $text=$langs->transnoentitiesnoconv("NoItemLate");
+    $text.='. '.$langs->transnoentitiesnoconv("LateDesc");
+    //$text.=$form->textwithpicto('',$langs->trans("LateDesc"));
+    $options='height="24px" style="float: right"';
+    $boxwork.=showWeather($totallate, $text, $options, 'inline-block valignmiddle');
+}
+$boxwork.='</th>';
 $boxwork.='</tr>'."\n";
 
-if ($showweather)
+/*if ($showweather)
 {
     $boxwork.='<tr class="nohover">';
     $boxwork.='<td class="nohover'.($conf->global->MAIN_DISABLE_METEO == 2 ?' hideonsmartphone' : '').' center valignmiddle">';
     $text='';
-    if ($totallate > 0) $text=$langs->transnoentitiesnoconv("WarningYouHaveAtLeastOneTaskLate").' ('.$langs->transnoentitiesnoconv("NActionsLate",$totallate.(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE) ? '%' : '')).')';
+    if ($totallate > 0) $text=$langs->transnoentitiesnoconv("WarningYouHaveAtLeastOneTaskLate").' ('.$langs->transnoentitiesnoconv("NActionsLate", $totallate.(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE) ? '%' : '')).')';
     else $text=$langs->transnoentitiesnoconv("NoItemLate");
     $text.='. '.$langs->transnoentitiesnoconv("LateDesc");
     //$text.=$form->textwithpicto('',$langs->trans("LateDesc"));
     $options='height="64px"';
-    $boxwork.=showWeather($totallate,$text,$options);
+    $boxwork.=showWeather($totallate, $text, $options);
     $boxwork.='</td>';
     $boxwork.='</tr>';
-}
+}*/
 
 // Show dashboard
 $nbworkboardempty=0;
 if (! empty($valid_dashboardlines))
 {
-	$boxwork.='<tr class="nohover"><td class="tdboxstats nohover flexcontainer centpercent"><div style="display: flex: flex-wrap: wrap">';
-	
+    $boxwork.='<tr class="nobottom nohover"><td class="tdboxstats nohover flexcontainer centpercent"><div style="display: flex: flex-wrap: wrap">';
+
     foreach($valid_dashboardlines as $board)
     {
         if (empty($board->nbtodo)) $nbworkboardempty++;
 
-        $textlate = $langs->trans("NActionsLate",$board->nbtodolate);
+        $textlate = $langs->trans("NActionsLate", $board->nbtodolate);
         $textlate.= ' ('.$langs->trans("Late").' = '.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil($board->warning_delay) >= 0 ? '+' : '').ceil($board->warning_delay).' '.$langs->trans("days").')';
 
         $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"><div class="boxstats130 boxstatsborder">';
@@ -567,9 +594,9 @@ if (! empty($valid_dashboardlines))
         $boxwork .= '<span class="boxstatstext" title="'.dol_escape_htmltag($board->label).'">'.$board->img.' '.$board->label.'</span><br>';
         $boxwork .= '<a class="valignmiddle dashboardlineindicator" href="'.$board->url.'"><span class="dashboardlineindicator'.(($board->nbtodo == 0)?' dashboardlineok':'').'">'.$board->nbtodo.'</span></a>';
         if ($board->total > 0 && ! empty($conf->global->MAIN_WORKBOARD_SHOW_TOTAL_WO_TAX))
-	{
-		$boxwork .= '&nbsp;/&nbsp;<a class="valignmiddle dashboardlineindicator" href="'.$board->url.'"><span class="dashboardlineindicator'.(($board->nbtodo == 0)?' dashboardlineok':'').'">'.price($board->total)	.'</span></a>';
-	}
+        {
+            $boxwork .= '&nbsp;/&nbsp;<a class="valignmiddle dashboardlineindicator" href="'.$board->url.'"><span class="dashboardlineindicator'.(($board->nbtodo == 0)?' dashboardlineok':'').'">'.price($board->total)	.'</span></a>';
+        }
         $boxwork .= '</div>';
         if ($board->nbtodolate > 0)
         {
@@ -591,9 +618,7 @@ if (! empty($valid_dashboardlines))
     $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"><div class="boxstats150empty"></div></div>';
     $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"><div class="boxstats150empty"></div></div>';
     $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"><div class="boxstats150empty"></div></div>';
-    $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"><div class="boxstats150empty"></div></div>';
-    $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"><div class="boxstats150empty"></div></div>';
-    
+
     $boxwork .='</div>';
     $boxwork .='</td></tr>';
 }
@@ -660,7 +685,7 @@ if ($user->admin && empty($conf->global->MAIN_REMOVE_INSTALL_WARNING))
     {
         $langs->load("errors");
         //if (! empty($message)) $message.='<br>';
-        $message.=info_admin($langs->trans("WarningLockFileDoesNotExists",DOL_DATA_ROOT).' '.$langs->trans("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 0, '1', 'clearboth');
+        $message.=info_admin($langs->trans("WarningLockFileDoesNotExists", DOL_DATA_ROOT).' '.$langs->trans("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 0, '1', 'clearboth');
     }
 
     // Conf files must be in read only mode
@@ -694,9 +719,10 @@ $db->close();
  *  @param      int     $totallate      Nb of element late
  *  @param      string  $text           Text to show on logo
  *  @param      string  $options        More parameters on img tag
+ *  @param      string  $morecss        More CSS
  *  @return     string                  Return img tag of weather
  */
-function showWeather($totallate,$text,$options)
+function showWeather($totallate, $text, $options, $morecss = '')
 {
     global $conf;
 
@@ -723,10 +749,10 @@ function showWeather($totallate,$text,$options)
         $level3=$conf->global->{$used_conf.'3'};
     }
 
-    if ($totallate <= $level0) $out.=img_weather($text,'weather-clear.png',$options);
-    elseif ($totallate > $level0 && $totallate <= $level1) $out.=img_weather($text,'weather-few-clouds.png',$options);
-    elseif ($totallate > $level1 && $totallate <= $level2) $out.=img_weather($text,'weather-clouds.png',$options);
-    elseif ($totallate > $level2 && $totallate <= $level3) $out.=img_weather($text,'weather-many-clouds.png',$options);
-    elseif ($totallate > $level3) $out.=img_weather($text,'weather-storm.png',$options);
+    if ($totallate <= $level0) $out.=img_weather($text, 'weather-clear.png', $options, 0, $morecss);
+    elseif ($totallate > $level0 && $totallate <= $level1) $out.=img_weather($text, 'weather-few-clouds.png', $options, 0, $morecss);
+    elseif ($totallate > $level1 && $totallate <= $level2) $out.=img_weather($text, 'weather-clouds.png', $options, 0, $morecss);
+    elseif ($totallate > $level2 && $totallate <= $level3) $out.=img_weather($text, 'weather-many-clouds.png', $options, 0, $morecss);
+    elseif ($totallate > $level3) $out.=img_weather($text, 'weather-storm.png', $options, 0, $morecss);
     return $out;
 }

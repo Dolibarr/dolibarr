@@ -47,7 +47,7 @@
  * @param	int   	$resourceid	    Preselected value of resource for filter on resource
  * @return	void
  */
-function print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, $filtera, $filtert, $filterd, $pid, $socid, $action, $showextcals=array(), $actioncode='', $usergroupid='', $excludetype='', $resourceid=0)
+function print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, $filtera, $filtert, $filterd, $pid, $socid, $action, $showextcals = array(), $actioncode = '', $usergroupid = '', $excludetype = '', $resourceid = 0)
 {
 	global $conf, $user, $langs, $db, $hookmanager;
 	global $begin_h, $end_h, $begin_d, $end_d;
@@ -209,7 +209,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
  *  @param	int		$max		Max nb of records
  *  @return	void
  */
-function show_array_actions_to_do($max=5)
+function show_array_actions_to_do($max = 5)
 {
 	global $langs, $conf, $user, $db, $bc, $socid;
 
@@ -238,8 +238,8 @@ function show_array_actions_to_do($max=5)
 	    $num = $db->num_rows($resql);
 
 	    print '<table class="noborder" width="100%">';
-	    print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("LastActionsToDo",$max).'</th>';
-		print '<th colspan="2" align="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/comm/action/list.php?status=todo">'.$langs->trans("FullList").'</a></th>';
+	    print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("LastActionsToDo", $max).'</th>';
+		print '<th colspan="2" class="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/comm/action/list.php?status=todo">'.$langs->trans("FullList").'</a></th>';
 		print '</tr>';
 
 		$var = true;
@@ -258,7 +258,7 @@ function show_array_actions_to_do($max=5)
             $staticaction->type_code=$obj->code;
             $staticaction->label=($obj->label?$obj->label:$obj->type_label);
             $staticaction->id=$obj->id;
-            print '<td>'.$staticaction->getNomUrl(1,34).'</td>';
+            print '<td>'.$staticaction->getNomUrl(1, 34).'</td>';
 
            // print '<td>'.dol_trunc($obj->label,22).'</td>';
 
@@ -268,7 +268,7 @@ function show_array_actions_to_do($max=5)
             	$customerstatic->id=$obj->rowid;
             	$customerstatic->name=$obj->sname;
             	$customerstatic->client=$obj->client;
-            	print $customerstatic->getNomUrl(1,'',16);
+            	print $customerstatic->getNomUrl(1, '', 16);
             }
             print '</td>';
 
@@ -276,7 +276,7 @@ function show_array_actions_to_do($max=5)
             $datep2=$db->jdate($obj->dp2);
 
             // Date
-			print '<td width="100" align="right">'.dol_print_date($datep,'day').'&nbsp;';
+			print '<td width="100" class="right">'.dol_print_date($datep, 'day').'&nbsp;';
 			$late=0;
 			if ($obj->percent == 0 && $datep && $datep < time()) $late=1;
 			if ($obj->percent == 0 && ! $datep && $datep2 && $datep2 < time()) $late=1;
@@ -286,7 +286,7 @@ function show_array_actions_to_do($max=5)
 			print "</td>";
 
 			// Statut
-			print "<td align=\"right\" width=\"14\">".$staticaction->LibStatut($obj->percent,3)."</td>\n";
+			print '<td class="right" width="14">'.$staticaction->LibStatut($obj->percent, 3)."</td>\n";
 
 			print "</tr>\n";
 
@@ -309,7 +309,7 @@ function show_array_actions_to_do($max=5)
  *  @param	int		$max		Max nb of records
  *  @return	void
  */
-function show_array_last_actions_done($max=5)
+function show_array_last_actions_done($max = 5)
 {
 	global $langs, $conf, $user, $db, $bc, $socid;
 
@@ -335,8 +335,8 @@ function show_array_last_actions_done($max=5)
 		$num = $db->num_rows($resql);
 
 		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("LastDoneTasks",$max).'</th>';
-		print '<th colspan="2" align="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/comm/action/list.php?status=done">'.$langs->trans("FullList").'</a></th>';
+		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("LastDoneTasks", $max).'</th>';
+		print '<th colspan="2" class="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/comm/action/list.php?status=done">'.$langs->trans("FullList").'</a></th>';
 		print '</tr>';
 		$var = true;
 		$i = 0;
@@ -354,7 +354,7 @@ function show_array_last_actions_done($max=5)
 			$staticaction->type_code=$obj->code;
 			$staticaction->libelle=$obj->label;
 			$staticaction->id=$obj->id;
-			print '<td>'.$staticaction->getNomUrl(1,34).'</td>';
+			print '<td>'.$staticaction->getNomUrl(1, 34).'</td>';
 
             //print '<td>'.dol_trunc($obj->label,24).'</td>';
 
@@ -364,16 +364,16 @@ function show_array_last_actions_done($max=5)
                 $customerstatic->id=$obj->rowid;
                 $customerstatic->name=$obj->sname;
                 $customerstatic->client=$obj->client;
-			    print $customerstatic->getNomUrl(1,'',24);
+			    print $customerstatic->getNomUrl(1, '', 24);
 			}
 			print '</td>';
 
 			// Date
-			print '<td width="100" align="right">'.dol_print_date($db->jdate($obj->da2),'day');
+			print '<td width="100" class="right">'.dol_print_date($db->jdate($obj->da2), 'day');
 			print "</td>";
 
 			// Statut
-			print "<td align=\"right\" width=\"14\">".$staticaction->LibStatut($obj->percent,3)."</td>\n";
+			print "<td class=\"right\" width=\"14\">".$staticaction->LibStatut($obj->percent, 3)."</td>\n";
 
 			print "</tr>\n";
 			$i++;
@@ -430,14 +430,14 @@ function agenda_prepare_head()
 	$head[$h][2] = 'extsites';
 	$h++;
 
-	complete_head_from_modules($conf,$langs,null,$head,$h,'agenda_admin');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'agenda_admin');
 
 	$head[$h][0] = DOL_URL_ROOT."/admin/agenda_extrafields.php";
 	$head[$h][1] = $langs->trans("ExtraFields");
 	$head[$h][2] = 'attributes';
 	$h++;
 
-	complete_head_from_modules($conf,$langs,null,$head,$h,'agenda_admin','remove');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'agenda_admin', 'remove');
 
 
 	return $head;
@@ -469,7 +469,7 @@ function actions_prepare_head($object)
 
 		$head[$h][0] = DOL_URL_ROOT.'/resource/element_resource.php?element=action&element_id='.$object->id;
         $listofresourcelinked = $resource->getElementResources($object->element, $object->id);
-        $nbResources=count($listofresourcelinked);
+        $nbResources=(is_array($listofresourcelinked)?count($listofresourcelinked):0);
 		$head[$h][1] = $langs->trans("Resources");
 		if ($nbResources > 0) $head[$h][1].= ' <span class="badge">'.($nbResources).'</span>';
 		$head[$h][2] = 'resources';
@@ -480,7 +480,7 @@ function actions_prepare_head($object)
     require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
     require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
     $upload_dir = $conf->agenda->dir_output . "/" . $object->id;
-    $nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview.*\.png)$'));
+    $nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
     $nbLinks=Link::count($db, $object->element, $object->id);
     $head[$h][0] = DOL_URL_ROOT.'/comm/action/document.php?id='.$object->id;
     $head[$h][1] = $langs->trans("Documents");
@@ -493,9 +493,9 @@ function actions_prepare_head($object)
 	$head[$h][2] = 'info';
 	$h++;
 
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'action');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'action');
 
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'action','remove');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'action', 'remove');
 
 	return $head;
 }
@@ -555,10 +555,9 @@ function calendars_prepare_head($param)
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname);   												to remove a tab
-    complete_head_from_modules($conf,$langs,$object,$head,$h,'agenda');
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'agenda');
 
-    complete_head_from_modules($conf,$langs,$object,$head,$h,'agenda','remove');
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'agenda', 'remove');
 
     return $head;
 }
-

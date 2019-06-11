@@ -55,17 +55,6 @@ $langs->loadLangs(array("main","bills","cashdesk"));
 				onfocus="javascript: this.select();" />
 			</td>
 			<td class="select_design maxwidthonsmartphone">
-            <?php /*
-            $selected='';
-            $htmlname='idprod';
-            $status=-1;
-            $rice_level=$company->price_level;
-            print ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/product/ajax/products.php', 'outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=1&status='.$status.'&finished='.$finished, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT);
-            if (! $hidelabel) print $langs->trans("RefOrLabel").' : ';
-            print '<input type="text" size="4" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'" />';
-            */
-            ?>
-
 				<select id="selProduit" class="maxwidthonsmartphone" name="selProduit" onchange="javascript: setSource('LISTE');">
 					<?php
                         print '<option value="0">'.$top_liste_produits.'</option>'."\n";
@@ -86,7 +75,7 @@ $langs->loadLangs(array("main","bills","cashdesk"));
 
 							$label = $tab_designations[$i]['label'];
 
-							print '<option '.$selected.' value="'.$tab_designations[$i]['rowid'].'">'.dol_trunc($tab_designations[$i]['ref'],16).' - '.dol_trunc($label,35,'middle');
+							print '<option '.$selected.' value="'.$tab_designations[$i]['rowid'].'">'.dol_trunc($tab_designations[$i]['ref'], 16).' - '.dol_trunc($label, 35, 'middle');
 							if (! empty($conf->stock->enabled) && !empty($conf_fkentrepot) && $tab_designations[$i]['fk_product_type']==0) print ' ('.$langs->trans("CashDeskStock").': '.(empty($tab_designations[$i]['reel'])?0:$tab_designations[$i]['reel']).')';
 							print '</option>'."\n";
 						}
@@ -125,7 +114,7 @@ $langs->loadLangs(array("main","bills","cashdesk"));
 
 					$buyer = new Societe($db);
 					if ($_SESSION["CASHDESK_ID_THIRDPARTY"] > 0) $buyer->fetch($_SESSION["CASHDESK_ID_THIRDPARTY"]);
-					echo $form->load_tva('selTva', (isset($_POST["selTva"])?GETPOST("selTva",'alpha',2):$vatrate), $mysoc, $buyer, 0, 0, '', false, -1);
+					echo $form->load_tva('selTva', (isset($_POST["selTva"])?GETPOST("selTva", 'alpha', 2):$vatrate), $mysoc, $buyer, 0, 0, '', false, -1);
 			    ?>
                 </td>
 				<td></td>
@@ -202,7 +191,7 @@ $langs->loadLangs(array("main","bills","cashdesk"));
 				<input class="button bouton_mode_reglement" type="submit" name="btnModeReglement" value="<?php echo $langs->trans("Reported"); ?>" onclick="javascript: verifClic('DIF');" />
 			<?php
 			print $langs->trans("DateDue").' :';
-			print $form->selectDate(-1,'txtDatePaiement',0,0,0,'paymentmode',1,0);
+			print $form->selectDate(-1, 'txtDatePaiement', 0, 0, 0, 'paymentmode', 1, 0);
 			print '</div>';
 			?>
 		</div>

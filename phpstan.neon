@@ -1,0 +1,118 @@
+parameters:
+	bootstrap: %currentWorkingDirectory%/build/phpstan/bootstrap.php
+	excludes_analyse: 
+		- %currentWorkingDirectory%/htdocs/includes/restler/framework/Luracast/Restler/AutoLoader.php
+		- %currentWorkingDirectory%/htdocs/includes/*
+		- %currentWorkingDirectory%/htdocs/*/class/api_*
+	autoload_directories:
+		- %currentWorkingDirectory%/htdocs/accountancy/class
+		- %currentWorkingDirectory%/htdocs/adherents/class
+		- %currentWorkingDirectory%/htdocs/api/class
+		- %currentWorkingDirectory%/htdocs/asset/class
+		- %currentWorkingDirectory%/htdocs/blockedlog/class
+		- %currentWorkingDirectory%/htdocs/bom/class
+		- %currentWorkingDirectory%/htdocs/bookmarks/class
+		- %currentWorkingDirectory%/htdocs/cashdesk/class
+		- %currentWorkingDirectory%/htdocs/categories/class
+		- %currentWorkingDirectory%/htdocs/comm/action/class
+		- %currentWorkingDirectory%/htdocs/comm/propal/class
+		- %currentWorkingDirectory%/htdocs/commande/class
+		- %currentWorkingDirectory%/htdocs/compta/bank/class
+		- %currentWorkingDirectory%/htdocs/compta/cashcontrol/class
+		- %currentWorkingDirectory%/htdocs/compta/deplacement/class
+		- %currentWorkingDirectory%/htdocs/compta/facture/class
+		- %currentWorkingDirectory%/htdocs/compta/localtax/class
+		- %currentWorkingDirectory%/htdocs/compta/paiement/class
+		- %currentWorkingDirectory%/htdocs/conf
+		- %currentWorkingDirectory%/htdocs/contact/class
+		- %currentWorkingDirectory%/htdocs/contrat/class
+		- %currentWorkingDirectory%/htdocs/core/class
+		- %currentWorkingDirectory%/htdocs/product/class
+		- %currentWorkingDirectory%/htdocs/societe/class
+		- %currentWorkingDirectory%/htdocs/user/class
+	autoload_files: []
+	featureToggles:
+		subtractableTypes: false
+		validateParameters: false
+	fileExtensions:
+		- php
+	checkAlwaysTrueCheckTypeFunctionCall: false
+	checkAlwaysTrueInstanceof: false
+	checkAlwaysTrueStrictComparison: false
+	checkClassCaseSensitivity: false
+	checkFunctionArgumentTypes: false
+	checkFunctionNameCase: false
+	checkArgumentsPassedByReference: false
+	checkMaybeUndefinedVariables: false
+	checkNullables: false
+	checkThisOnly: true
+	checkUnionTypes: false
+	checkExplicitMixedMissingReturn: false
+	checkPhpDocMissingReturn: false
+	reportMaybes: false
+	reportMaybesInMethodSignatures: false
+	reportStaticMethodSignatures: false
+	polluteScopeWithLoopInitialAssignments: true
+	polluteScopeWithAlwaysIterableForeach: true
+	polluteCatchScopeWithTryAssignments: false
+	reportMagicMethods: false
+	reportMagicProperties: false
+	ignoreErrors:
+		- 
+			message: '#Call to an undefined method abcdef#'
+			path: %currentWorkingDirectory%/dirtoignoreerror/*
+		- '#Undefined variable: \$langs#'
+		- '#Undefined variable: \$user#'
+		- '#Undefined variable: \$db#'
+		- '#Undefined variable: \$conf#'
+		- '#Undefined variable: \$hookmanager#'
+	internalErrorsCountLimit: 50
+	cache:
+	    nodesByFileCountMax: 512
+	    nodesByStringCountMax: 512
+	reportUnmatchedIgnoredErrors: true
+	scopeClass: PHPStan\Analyser\Scope
+	universalObjectCratesClasses:
+		- stdClass
+		- SimpleXMLElement
+	earlyTerminatingMethodCalls: []
+	memoryLimitFile: %tmpDir%/.memory_limit
+	benchmarkFile: null
+	dynamicConstantNames:
+		- ICONV_IMPL
+		- PHP_VERSION
+		- PHP_MAJOR_VERSION
+		- PHP_MINOR_VERSION
+		- PHP_RELEASE_VERSION
+		- PHP_VERSION_ID
+		- PHP_EXTRA_VERSION
+		- PHP_ZTS
+		- PHP_DEBUG
+		- PHP_MAXPATHLEN
+		- PHP_OS
+		- PHP_OS_FAMILY
+		- PHP_SAPI
+		- PHP_EOL
+		- PHP_INT_MAX
+		- PHP_INT_MIN
+		- PHP_INT_SIZE
+		- PHP_FLOAT_DIG
+		- PHP_FLOAT_EPSILON
+		- PHP_FLOAT_MIN
+		- PHP_FLOAT_MAX
+		- DEFAULT_INCLUDE_PATH
+		- PEAR_INSTALL_DIR
+		- PEAR_EXTENSION_DIR
+		- PHP_EXTENSION_DIR
+		- PHP_PREFIX
+		- PHP_BINDIR
+		- PHP_BINARY
+		- PHP_MANDIR
+		- PHP_LIBDIR
+		- PHP_DATADIR
+		- PHP_SYSCONFDIR
+		- PHP_LOCALSTATEDIR
+		- PHP_CONFIG_FILE_PATH
+		- PHP_CONFIG_FILE_SCAN_DIR
+		- PHP_SHLIB_SUFFIX
+		- PHP_FD_SETSIZE

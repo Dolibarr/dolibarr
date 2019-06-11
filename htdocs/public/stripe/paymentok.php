@@ -23,8 +23,8 @@
  *                  More data like token are saved into session. This token can be used to get more informations.
  */
 
-define("NOLOGIN",1);		// This means this output page does not require to be logged.
-define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
+define("NOLOGIN", 1);		// This means this output page does not require to be logged.
+define("NOCSRFCHECK", 1);	// We accept to go on this page from external web site.
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
@@ -107,13 +107,13 @@ if ($ispaymentok)
     // Appel des triggers
     include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
     $interface=new Interfaces($db);
-    $result=$interface->run_triggers('STRIPE_PAYMENT_OK',$object,$user,$langs,$conf);
+    $result=$interface->run_triggers('STRIPE_PAYMENT_OK', $object, $user, $langs, $conf);
     if ($result < 0) { $error++; $errors=$interface->errors; }
     // Fin appel triggers
 
 
     print $langs->trans("YourPaymentHasBeenRecorded")."<br>\n";
-    print $langs->trans("ThisIsTransactionId",$TRANSACTIONID)."<br><br>\n";
+    print $langs->trans("ThisIsTransactionId", $TRANSACTIONID)."<br><br>\n";
 
 	$key='ONLINE_PAYMENT_MESSAGE_OK';
 	if (! empty($conf->global->$key)) print $conf->global->$key;
@@ -121,7 +121,7 @@ if ($ispaymentok)
     $sendemail = '';
     if (! empty($conf->global->ONLINE_PAYMENT_SENDEMAIL)) $sendemail=$conf->global->ONLINE_PAYMENT_SENDEMAIL;
 
-    $tmptag=dolExplodeIntoArray($fulltag,'.','=');
+    $tmptag=dolExplodeIntoArray($fulltag, '.', '=');
 
 	// Send an email
     if ($sendemail)
@@ -129,7 +129,7 @@ if ($ispaymentok)
 		$sendto=$sendemail;
 		$from=$conf->global->MAILING_EMAIL_FROM;
 		// Define $urlwithroot
-		$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+		$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
 		$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
 		//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
@@ -188,7 +188,7 @@ if ($ispaymentok)
 print "\n</div>\n";
 
 
-htmlPrintOnlinePaymentFooter($mysoc,$langs,0,$suffix);
+htmlPrintOnlinePaymentFooter($mysoc, $langs, 0, $suffix);
 
 
 llxFooter('', 'public');

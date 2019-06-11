@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010 Regis Houssin  <regis.houssin@inodbox.com>
+/* Copyright (C) 2010       Regis Houssin           <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,21 +16,21 @@
  */
 
 /**
- *   \file			htdocs/core/class/dolexception.class.php
- *   \ingroup		core
- *   \brief			File of class for exceptions
+ *   \file          htdocs/core/class/dolexception.class.php
+ *   \ingroup       core
+ *   \brief         File of class for exceptions
  */
 
 
 /**
- *	Class to manage exceptions
+ *  Class to manage exceptions
  */
 class DolException extends Exception
 {
     /**
      * Constructor
      */
-    function __construct()
+    public function __construct()
     {
     }
 }

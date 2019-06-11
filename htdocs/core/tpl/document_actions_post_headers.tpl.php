@@ -52,7 +52,7 @@ if (in_array($modulepart, array('product', 'produit', 'societe', 'user', 'ticket
 if ($action == 'delete')
 {
 	$langs->load("companies");	// Need for string DeleteFile+ConfirmDeleteFiles
-	print $form->formconfirm(
+    print $form->formconfirm(
 			$_SERVER["PHP_SELF"] . '?id=' . $object->id . '&urlfile=' . urlencode(GETPOST("urlfile")) . '&linkid=' . GETPOST('linkid', 'int') . (empty($param)?'':$param),
 			$langs->trans('DeleteFile'),
 			$langs->trans('ConfirmDeleteFile'),
@@ -70,7 +70,7 @@ $savingdocmask='';
 if (empty($conf->global->MAIN_DISABLE_SUGGEST_REF_AS_PREFIX))
 {
 	//var_dump($modulepart);
-	if (in_array($modulepart,array('facture_fournisseur','commande_fournisseur','facture','commande','propal','supplier_proposal','ficheinter','contract','expedition','project','project_task','expensereport','tax', 'produit', 'product_batch')))
+	if (in_array($modulepart, array('facture_fournisseur','commande_fournisseur','facture','commande','propal','supplier_proposal','ficheinter','contract','expedition','project','project_task','expensereport','tax', 'produit', 'product_batch')))
 	{
 		$savingdocmask=dol_sanitizeFileName($object->ref).'-__file__';
 	}

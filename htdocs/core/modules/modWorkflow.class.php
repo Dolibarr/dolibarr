@@ -37,7 +37,7 @@ class modWorkflow extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
 
@@ -49,7 +49,7 @@ class modWorkflow extends DolibarrModules
 
         $this->family = "technic";
         // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-        $this->name = preg_replace('/^mod/i','',get_class($this));
+        $this->name = preg_replace('/^mod/i', '', get_class($this));
         // Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
         $this->description = "Workflow management";
         // Possible values for version are: 'development', 'experimental', 'dolibarr' or version
@@ -68,7 +68,7 @@ class modWorkflow extends DolibarrModules
         $this->config_page_url = array('workflow.php');
 
         // Dependencies
-       $this->hidden = false;			// A condition to hide module
+        $this->hidden = false;			// A condition to hide module
 		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array();	// List of module ids to disable if this one is disabled
 		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
@@ -77,10 +77,21 @@ class modWorkflow extends DolibarrModules
         $this->langfiles = array("@workflow");
 
         // Constants
-        // List of particular constants to add when module is enabled
-        //Example: $this->const=array(0=>array('MODULE_MY_NEW_CONST1','chaine','myvalue','This is a constant to add',0),
-        //                            1=>array('MODULE_MY_NEW_CONST2','chaine','myvalue','This is another constant to add',0) );
-        $this->const=array();
+        // List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 'current' or 'allentities', deleteonunactive)
+        // Example: $this->const=array(1 => array('MYMODULE_MYNEWCONST1', 'chaine', 'myvalue', 'This is a constant to add', 1),
+        //                             2 => array('MYMODULE_MYNEWCONST2', 'chaine', 'myvalue', 'This is another constant to add', 0, 'current', 1)
+        // );
+        $this->const=array(
+            //0=>array('WORKFLOW_PROPAL_AUTOCREATE_ORDER', 'chaine', '1', 'WORKFLOW_PROPAL_AUTOCREATE_ORDER', 0, 'current', 0),
+            //0=>array('WORKFLOW_ORDER_AUTOCREATE_INVOICE', 'chaine', '1', 'WORKFLOW_ORDER_AUTOCREATE_INVOICE', 0, 'current', 0),
+            0=>array('WORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL',                  'chaine', '1', 'WORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL', 0, 'current', 0),
+            1=>array('WORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL',                'chaine', '1', 'WORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL', 0, 'current', 0),
+            2=>array('WORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING',               'chaine', '1', 'WORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING', 0, 'current', 0),
+            4=>array('WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER',          'chaine', '1', 'WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER', 0, 'current', 0),
+            5=>array('WORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL',       'chaine', '1', 'WORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL', 0, 'current', 0),
+            6=>array('WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER', 'chaine', '1', 'WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER', 0, 'current', 0),
+            7=>array('WORKFLOW_BILL_ON_RECEPTION',                             'chaine', '1', 'WORKFLOW_BILL_ON_RECEPTION', 0, 'current', 0)
+        );
 
         // Boxes
         $this->boxes = array();
@@ -137,15 +148,15 @@ class modWorkflow extends DolibarrModules
 	 *		It also creates data directories
 	 *
      *      @param      string	$options    Options when enabling module ('', 'noboxes')
-	 *      @return     int             	1 if OK, 0 if KO
+	 *      @return     int                 1 if OK, 0 if KO
      */
-    function init($options='')
+    public function init($options = '')
     {
 		// Permissions
 		$this->remove($options);
 
 		$sql = array();
 
-        return $this->_init($sql,$options);
+        return $this->_init($sql, $options);
     }
 }

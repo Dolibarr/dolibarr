@@ -122,7 +122,7 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 			{
 			    $fieldid='id';
 			    if ($object->table_element == 'societe') $fieldid='socid';
-				print '<td align="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?'.$fieldid.'=' . $object->id . '&action=edit_extras&attribute=' . $key . '">' . img_edit().'</a></td>';
+				print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?'.$fieldid.'=' . $object->id . '&action=edit_extras&attribute=' . $key . '">' . img_edit().'</a></td>';
 			}
 			print '</tr></table>';
 			print '</td>';
@@ -144,7 +144,7 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 				$value = isset($_POST["options_" . $key]) ? dol_mktime($_POST["options_" . $key . "hour"], $_POST["options_" . $key . "min"], 0, $_POST["options_" . $key . "month"], $_POST["options_" . $key . "day"], $_POST["options_" . $key . "year"]) : $datenotinstring;
 			}
 			//TODO Improve element and rights detection
-			if ($action == 'edit_extras' && $permok && GETPOST('attribute','none') == $key)
+			if ($action == 'edit_extras' && $permok && GETPOST('attribute', 'none') == $key)
 			{
 			    $fieldid='id';
 			    if ($object->table_element == 'societe') $fieldid='socid';
@@ -154,7 +154,6 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 				print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
 				print '<input type="hidden" name="'.$fieldid.'" value="' . $object->id . '">';
 				print $extrafields->showInputField($key, $value, '', '', '', 0, $object->id);
-
 
 				print '<input type="submit" class="button" value="' . dol_escape_htmltag($langs->trans('Modify')) . '">';
 

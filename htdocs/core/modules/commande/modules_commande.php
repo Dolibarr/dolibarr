@@ -40,7 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 abstract class ModelePDFCommandes extends CommonDocGenerator
 {
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Return list of active generation modules
      *
@@ -48,7 +48,7 @@ abstract class ModelePDFCommandes extends CommonDocGenerator
      *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
 	 */
-	static function liste_modeles($db, $maxfilenamelength=0)
+	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
         // phpcs:enable
 		global $conf;
@@ -66,10 +66,8 @@ abstract class ModelePDFCommandes extends CommonDocGenerator
 
 
 /**
- *  \class      ModeleNumRefCommandes
- *  \brief      Classe mere des modeles de numerotation des references de commandes
+ *  Parent class to manage numbering of Sale Orders
  */
-
 abstract class ModeleNumRefCommandes
 {
 	/**
@@ -82,7 +80,7 @@ abstract class ModeleNumRefCommandes
 	 *
 	 *	@return		boolean     true if module can be used
 	 */
-	function isEnabled()
+	public function isEnabled()
 	{
 		return true;
 	}
@@ -92,7 +90,7 @@ abstract class ModeleNumRefCommandes
 	 *
 	 *	@return     string      Texte descripif
 	 */
-	function info()
+	public function info()
 	{
 		global $langs;
 		$langs->load("orders");
@@ -104,7 +102,7 @@ abstract class ModeleNumRefCommandes
 	 *
 	 *	@return     string      Example
 	 */
-	function getExample()
+	public function getExample()
 	{
 		global $langs;
 		$langs->load("orders");
@@ -116,7 +114,7 @@ abstract class ModeleNumRefCommandes
 	 *
 	 *	@return     boolean     false si conflit, true si ok
 	 */
-	function canBeActivated()
+	public function canBeActivated()
 	{
 		return true;
 	}
@@ -128,7 +126,7 @@ abstract class ModeleNumRefCommandes
 	 *	@param	Object		$object		Object we need next value for
 	 *	@return	string      Valeur
 	 */
-	function getNextValue($objsoc,$object)
+	public function getNextValue($objsoc, $object)
 	{
 		global $langs;
 		return $langs->trans("NotAvailable");
@@ -139,7 +137,7 @@ abstract class ModeleNumRefCommandes
 	 *
 	 *	@return     string      Valeur
 	 */
-	function getVersion()
+	public function getVersion()
 	{
 		global $langs;
 		$langs->load("admin");

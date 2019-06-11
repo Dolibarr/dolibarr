@@ -37,17 +37,23 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 $langs->loadLangs(array("companies","website"));
 
+$action     = GETPOST('action', 'aZ09')?GETPOST('action', 'aZ09'):'view';				// The action 'add', 'create', 'edit', 'update', 'view', ...
+$show_files = GETPOST('show_files', 'int');
+$contextpage= GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'myobjectlist';   // To manage different context of search
+$backtopage = GETPOST('backtopage', 'alpha');											// Go back to a dedicated page
+$optioncss  = GETPOST('optioncss', 'aZ');												// Option for the css output (always '' except when 'print')
+
 $search_status=GETPOST('search_status');
 
 // Security check
-$id = GETPOST('id','int')?GETPOST('id','int'):GETPOST('socid','int');
+$id = GETPOST('id', 'int')?GETPOST('id', 'int'):GETPOST('socid', 'int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'societe', $socid, '&societe');
 
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -63,16 +69,16 @@ $diroutputmassaction=$conf->website->dir_output . '/temp/massgeneration/'.$user-
 $hookmanager->initHooks(array('websitethirdpartylist'));     // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('thirdpartyaccount');
-$search_array_options=$extrafields->getOptionalsFromPost('thirdpartyaccount','','search_');
+$search_array_options=$extrafields->getOptionalsFromPost('thirdpartyaccount', '', 'search_');
 
 unset($objectwebsiteaccount->fields['fk_soc']);		// Remove this field, we are already on the thirdparty
 
 // Initialize array of search criterias
-$search_all=trim(GETPOST("search_all",'alpha'));
+$search_all=trim(GETPOST("search_all", 'alpha'));
 $search=array();
 foreach($objectwebsiteaccount->fields as $key => $val)
 {
-	if (GETPOST('search_'.$key,'alpha')) $search[$key]=GETPOST('search_'.$key,'alpha');
+	if (GETPOST('search_'.$key, 'alpha')) $search[$key]=GETPOST('search_'.$key, 'alpha');
 }
 
 // List of fields to search into when doing a "search in all"
@@ -110,13 +116,13 @@ if ($id > 0)
  */
 
 $parameters=array('id'=>$socid);
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
 {
     // Cancel
-    if (GETPOST('cancel','alpha') && ! empty($backtopage))
+    if (GETPOST('cancel', 'alpha') && ! empty($backtopage))
     {
         header("Location: ".$backtopage);
         exit;
@@ -126,7 +132,7 @@ if (empty($reshook))
     include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
     // Purge search criteria
-    if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') ||GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
+    if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') ||GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
     {
     	foreach($objectwebsiteaccount->fields as $key => $val)
     	{
@@ -135,8 +141,8 @@ if (empty($reshook))
     	$toselect='';
     	$search_array_options=array();
     }
-    if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')
-    	|| GETPOST('button_search_x','alpha') || GETPOST('button_search.x','alpha') || GETPOST('button_search','alpha'))
+    if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')
+    	|| GETPOST('button_search_x', 'alpha') || GETPOST('button_search.x', 'alpha') || GETPOST('button_search', 'alpha'))
     {
     	$massaction='';     // Protection to avoid mass action if we force a new search during a mass action confirmation
     }
@@ -224,13 +230,9 @@ dol_fiche_end();
 $newcardbutton = '';
 if (! empty($conf->website->enabled)) {
 	if (! empty($user->rights->societe->lire)) {
-		$newcardbutton .= '<a class="butActionNew" href="' . DOL_URL_ROOT.'/website/websiteaccount_card.php?action=create&fk_soc='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'"><span class="valignmiddle">' . $langs->trans("AddWebsiteAccount").'</span>';
-		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-		$newcardbutton.= '</a>';
-	} else {
-		$newcardbutton .= '<a class="butActionNewRefused" href="#">' . $langs->trans("AddAction");
-		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-		$newcardbutton.= '</a>';
+        $morehtmlright.= dolGetButtonTitle($langs->trans("AddWebsiteAccount"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/website/websiteaccount_card.php?action=create&fk_soc='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id));
+    } else {
+        $morehtmlright.= dolGetButtonTitle($langs->trans("AddAction"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/website/websiteaccount_card.php?action=create&fk_soc='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id), '', 0);
 	}
 }
 
@@ -251,7 +253,7 @@ foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->att
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters, $objectwebsiteaccount);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
-$sql=preg_replace('/, $/','', $sql);
+$sql=preg_replace('/, $/', '', $sql);
 $sql.= " FROM ".MAIN_DB_PREFIX."societe_account as t";
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_account_extrafields as ef on (t.rowid = ef.fk_object)";
 if ($objectwebsiteaccount->ismultientitymanaged == 1) $sql.= " WHERE t.entity IN (".getEntity('societeaccount').")";
@@ -284,7 +286,7 @@ $sql.=$hookmanager->resPrint;
  $sql.=$hookmanager->resPrint;
  */
 
-$sql.=$db->order($sortfield,$sortorder);
+$sql.=$db->order($sortfield, $sortorder);
 
 // Count total nb of records
 $nbtotalofrecords = '';
@@ -317,7 +319,7 @@ $arrayofmassactions =  array(
 //'presend'=>$langs->trans("SendByMail"),
 //'builddoc'=>$langs->trans("PDFMerge"),
 );
-if ($user->rights->mymodule->delete) $arrayofmassactions['predelete']=$langs->trans("Delete");
+if ($user->rights->mymodule->delete) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
@@ -340,14 +342,14 @@ $objecttmp=new SocieteAccount($db);
 $trackid='thi'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
-if ($sall)
+/*if ($sall)
 {
 	foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall).'</div>';
-}
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ', $fieldstosearchall).'</div>';
+}*/
 
-/*$moreforfilter = '';
-$moreforfilter.='<div class="divsearchfield">';
+$moreforfilter = '';
+/*$moreforfilter.='<div class="divsearchfield">';
 $moreforfilter.= $langs->trans('MyFilter') . ': <input type="text" name="search_myfield" value="'.dol_escape_htmltag($search_myfield).'">';
 $moreforfilter.= '</div>';*/
 
@@ -389,7 +391,7 @@ $parameters=array('arrayfields'=>$arrayfields);
 $reshook=$hookmanager->executeHooks('printFieldListOption', $parameters, $objectwebsiteaccount);    // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Action column
-print '<td class="liste_titre" align="right">';
+print '<td class="liste_titre maxwidthsearch">';
 $searchpicto=$form->showFilterButtons();
 print $searchpicto;
 print '</td>';
@@ -414,7 +416,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 $parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
 $reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters, $objectwebsiteaccount);    // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
-print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ')."\n";
+print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch center ')."\n";
 print '</tr>'."\n";
 
 
@@ -422,7 +424,7 @@ print '</tr>'."\n";
 $needToFetchEachLine=0;
 foreach ($extrafields->attribute_computed as $key => $val)
 {
-	if (preg_match('/\$object/',$val)) $needToFetchEachLine++;  // There is at least one compute field that use $object
+	if (preg_match('/\$object/', $val)) $needToFetchEachLine++;  // There is at least one compute field that use $object
 }
 
 
@@ -439,7 +441,7 @@ while ($i < min($num, $limit))
 	$objectwebsiteaccount->id = $obj->rowid;
 	foreach($objectwebsiteaccount->fields as $key => $val)
 	{
-		if (isset($obj->$key)) $objectwebsiteaccount->$key = $obj->$key;
+		if (property_exists($obj, $key)) $object->$key = $obj->$key;
 	}
 
 	// Show here line of result
@@ -473,7 +475,7 @@ while ($i < min($num, $limit))
 	$reshook=$hookmanager->executeHooks('printFieldListValue', $parameters, $objectwebsiteaccount);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Action column
-	print '<td class="nowrap" align="center">';
+	print '<td class="nowrap center">';
 	if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 	{
 		$selected=0;
@@ -496,13 +498,13 @@ if (isset($totalarray['pos']))
 	while ($i < $totalarray['nbfield'])
 	{
 		$i++;
-		if (! empty($totalarray['pos'][$i]))  print '<td align="right">'.price($totalarray['val'][$totalarray['pos'][$i]]).'</td>';
+		if (! empty($totalarray['pos'][$i]))  print '<td class="right">'.price($totalarray['val'][$totalarray['pos'][$i]]).'</td>';
 		else
 		{
 			if ($i == 1)
 			{
-				if ($num < $limit) print '<td align="left">'.$langs->trans("Total").'</td>';
-				else print '<td align="left">'.$langs->trans("Totalforthispage").'</td>';
+				if ($num < $limit) print '<td class="left">'.$langs->trans("Total").'</td>';
+				else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
 			}
 			else print '<td></td>';
 		}
@@ -530,7 +532,7 @@ print '</div>'."\n";
 
 print '</form>'."\n";
 
-if (in_array('builddoc',$arrayofmassactions) && ($nbtotalofrecords === '' || $nbtotalofrecords))
+if (in_array('builddoc', $arrayofmassactions) && ($nbtotalofrecords === '' || $nbtotalofrecords))
 {
 	$hidegeneratedfilelistifempty=1;
 	if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) $hidegeneratedfilelistifempty=0;
@@ -540,13 +542,13 @@ if (in_array('builddoc',$arrayofmassactions) && ($nbtotalofrecords === '' || $nb
 
 	// Show list of available documents
 	$urlsource=$_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
-	$urlsource.=str_replace('&amp;','&',$param);
+	$urlsource.=str_replace('&amp;', '&', $param);
 
 	$filedir=$diroutputmassaction;
 	$genallowed=$user->rights->mymodule->read;
 	$delallowed=$user->rights->mymodule->create;
 
-	print $formfile->showdocuments('massfilesarea_mymodule','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'','','',null,$hidegeneratedfilelistifempty);
+	print $formfile->showdocuments('massfilesarea_mymodule', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
 }
 
 // End of page

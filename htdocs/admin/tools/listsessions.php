@@ -41,9 +41,9 @@ if ($user->societe_id > 0)
   $socid = $user->societe_id;
 }
 
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
@@ -65,7 +65,7 @@ if ($action == 'confirm_purge' && $confirm == 'yes' && $user->admin)
 // Lock new sessions
 if ($action == 'confirm_lock' && $confirm == 'yes' && $user->admin)
 {
-	if (dolibarr_set_const($db, 'MAIN_ONLY_LOGIN_ALLOWED', $user->login, 'text',1,'Logon is restricted to a particular user', 0) < 0)
+	if (dolibarr_set_const($db, 'MAIN_ONLY_LOGIN_ALLOWED', $user->login, 'text', 1, 'Logon is restricted to a particular user', 0) < 0)
 	{
 		dol_print_error($db);
 	}
@@ -96,7 +96,7 @@ $usefilter=0;
 $listofsessions=listOfSessions();
 $num=count($listofsessions);
 
-print_barre_liste($langs->trans("Sessions"), $page, $_SERVER["PHP_SELF"],"",$sortfield,$sortorder,'', $num, ($num?$num:''),'setup');		// Do not show numer (0) if no session found (it means we can't know)
+print_barre_liste($langs->trans("Sessions"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num, ($num?$num:''), 'setup');		// Do not show numer (0) if no session found (it means we can't know)
 
 $savehandler=ini_get("session.save_handler");
 $savepath=ini_get("session.save_path");
@@ -113,24 +113,24 @@ print '<br>';
 if ($action == 'purge')
 {
 	$formquestion=array();
-	print $form->formconfirm($_SERVER["PHP_SELF"].'?noparam=noparam', $langs->trans('PurgeSessions'), $langs->trans('ConfirmPurgeSessions'),'confirm_purge',$formquestion,'no',2);
+	print $form->formconfirm($_SERVER["PHP_SELF"].'?noparam=noparam', $langs->trans('PurgeSessions'), $langs->trans('ConfirmPurgeSessions'), 'confirm_purge', $formquestion, 'no', 2);
 }
-else if ($action == 'lock')
+elseif ($action == 'lock')
 {
 	$formquestion=array();
-	print $form->formconfirm($_SERVER["PHP_SELF"].'?noparam=noparam', $langs->trans('LockNewSessions'), $langs->trans('ConfirmLockNewSessions',$user->login),'confirm_lock',$formquestion,'no',1);
+	print $form->formconfirm($_SERVER["PHP_SELF"].'?noparam=noparam', $langs->trans('LockNewSessions'), $langs->trans('ConfirmLockNewSessions', $user->login), 'confirm_lock', $formquestion, 'no', 1);
 }
 
 if ($savehandler == 'files')
 {
 	print '<table class="liste" width="100%">';
 	print '<tr class="liste_titre">';
-	print_liste_field_titre("Login",$_SERVER["PHP_SELF"],"login","","",'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre("SessionId",$_SERVER["PHP_SELF"],"id","","",'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre("DateCreation",$_SERVER["PHP_SELF"],"datec","","",'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre("DateModification",$_SERVER["PHP_SELF"],"datem","","",'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre("Age",$_SERVER["PHP_SELF"],"age","","",'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre("Raw",$_SERVER["PHP_SELF"],"raw","","",'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre("Login", $_SERVER["PHP_SELF"], "login", "", "", 'align="left"', $sortfield, $sortorder);
+	print_liste_field_titre("SessionId", $_SERVER["PHP_SELF"], "id", "", "", 'align="left"', $sortfield, $sortorder);
+	print_liste_field_titre("DateCreation", $_SERVER["PHP_SELF"], "datec", "", "", 'align="left"', $sortfield, $sortorder);
+	print_liste_field_titre("DateModification", $_SERVER["PHP_SELF"], "datem", "", "", 'align="left"', $sortfield, $sortorder);
+	print_liste_field_titre("Age", $_SERVER["PHP_SELF"], "age", "", "", 'align="left"', $sortfield, $sortorder);
+	print_liste_field_titre("Raw", $_SERVER["PHP_SELF"], "raw", "", "", 'align="left"', $sortfield, $sortorder);
 	print_liste_field_titre('');
 	print "</tr>\n";
 
@@ -142,22 +142,22 @@ if ($savehandler == 'files')
 		print '<td>'.$sessionentry['login'].'</td>';
 
 		// ID
-		print '<td align="left" class="nowrap">';
-		if ("$key" == session_id()) print $form->textwithpicto($key,$langs->trans("YourSession"));
+		print '<td class="nowrap left">';
+		if ("$key" == session_id()) print $form->textwithpicto($key, $langs->trans("YourSession"));
 		else print $key;
 		print '</td>';
 
 		// Date creation
-		print '<td align="left" class="nowrap">'.dol_print_date($sessionentry['creation'],'%Y-%m-%d %H:%M:%S').'</td>';
+		print '<td class="nowrap left">'.dol_print_date($sessionentry['creation'], '%Y-%m-%d %H:%M:%S').'</td>';
 
 		// Date modification
-		print '<td align="left" class="nowrap">'.dol_print_date($sessionentry['modification'],'%Y-%m-%d %H:%M:%S').'</td>';
+		print '<td class="nowrap left">'.dol_print_date($sessionentry['modification'], '%Y-%m-%d %H:%M:%S').'</td>';
 
 		// Age
 		print '<td>'.$sessionentry['age'].'</td>';
 
 		// Raw
-		print '<td>'.dol_trunc($sessionentry['raw'],40,'middle').'</td>';
+		print '<td>'.dol_trunc($sessionentry['raw'], 40, 'middle').'</td>';
 
 		print '<td>&nbsp;</td>';
 
@@ -167,7 +167,7 @@ if ($savehandler == 'files')
 
 	if (count($listofsessions) == 0)
 	{
-		print '<tr '.$bc[false].'><td colspan="6">'.$langs->trans("NoSessionFound",$savepath,$openbasedir).'</td></tr>';
+		print '<tr '.$bc[false].'><td colspan="6">'.$langs->trans("NoSessionFound", $savepath, $openbasedir).'</td></tr>';
 	}
 	print "</table>";
 }

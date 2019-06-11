@@ -35,9 +35,9 @@ $langs->loadLangs(array('admin', 'printing', 'oauth'));
 
 if (! $user->admin) accessforbidden();
 
-$action = GETPOST('action','alpha');
-$mode = GETPOST('mode','alpha');
-$value = GETPOST('value','alpha',0,null,null,1);			// The value may be __google__docs so we force disable of replace
+$action = GETPOST('action', 'alpha');
+$mode = GETPOST('mode', 'alpha');
+$value = GETPOST('value', 'alpha', 0, null, null, 1);			// The value may be __google__docs so we force disable of replace
 $varname = GETPOST('varname', 'alpha');
 $driver = GETPOST('driver', 'alpha');
 
@@ -65,7 +65,7 @@ if ($action == 'setconst' && $user->admin)
     $db->begin();
     foreach ($_POST['setupdriver'] as $setupconst) {
         //print '<pre>'.print_r($setupconst, true).'</pre>';
-        $result=dolibarr_set_const($db, $setupconst['varname'],$setupconst['value'],'chaine',0,'',$conf->entity);
+        $result=dolibarr_set_const($db, $setupconst['varname'], $setupconst['value'], 'chaine', 0, '', $conf->entity);
         if (! $result > 0) $error++;
     }
 
@@ -86,7 +86,7 @@ if ($action == 'setvalue' && $user->admin)
 {
     $db->begin();
 
-    $result=dolibarr_set_const($db, $varname, $value,'chaine',0,'',$conf->entity);
+    $result=dolibarr_set_const($db, $varname, $value, 'chaine', 0, '', $conf->entity);
     if (! $result > 0) $error++;
 
     if (! $error)
@@ -112,7 +112,7 @@ $form = new Form($db);
 llxHeader('', $langs->trans("PrintingSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans("PrintingSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("PrintingSetup"), $linkback, 'title_setup');
 
 $head = printingAdminPrepareHead($mode);
 
@@ -272,11 +272,11 @@ if ($mode == 'config' && $user->admin)
         {
             if (empty($conf->global->{$printer->conf}))
             {
-                print '<a href="'.$_SERVER['PHP_SELF'].'?action=setvalue&amp;varname='.$printer->active.'&amp;value=1">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+                print '<a href="'.$_SERVER['PHP_SELF'].'?action=setvalue&amp;varname='.$printer->active.'&amp;value=1">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
             }
             else
             {
-                print '<a href="'.$_SERVER['PHP_SELF'].'?action=setvalue&amp;varname='.$printer->active.'&amp;value=0">'.img_picto($langs->trans("Enabled"),'on').'</a>';
+                print '<a href="'.$_SERVER['PHP_SELF'].'?action=setvalue&amp;varname='.$printer->active.'&amp;value=0">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
             }
         }
         print '<td class="center"><a href="'.$_SERVER['PHP_SELF'].'?mode=setup&amp;driver='.$printer->name.'">'.img_picto('', 'setup').'</a></td>';

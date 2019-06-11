@@ -29,9 +29,9 @@ $langs->load("admin");
 if (! $user->admin)
 	accessforbidden();
 
-$action=GETPOST('action','alpha');
-$confirm=GETPOST('confirm','alpha');
-$choice=GETPOST('choice','aZ09');
+$action=GETPOST('action', 'alpha');
+$confirm=GETPOST('confirm', 'alpha');
+$choice=GETPOST('choice', 'aZ09');
 
 
 // Define filelog to discard it from purge
@@ -39,15 +39,26 @@ $filelog='';
 if (! empty($conf->syslog->enabled))
 {
 	$filelog=$conf->global->SYSLOG_FILE;
-	$filelog=preg_replace('/DOL_DATA_ROOT/i',DOL_DATA_ROOT,$filelog);
+	$filelog=preg_replace('/DOL_DATA_ROOT/i', DOL_DATA_ROOT, $filelog);
 }
 
 
 /*
  *	Actions
  */
-if ($action=='purge' && ! preg_match('/^confirm/i',$choice) && ($choice != 'allfiles' || $confirm == 'yes') )
+if ($action=='purge' && ! preg_match('/^confirm/i', $choice) && ($choice != 'allfiles' || $confirm == 'yes') )
 {
+    // Increase limit of time. Works only if we are not in safe mode
+    $ExecTimeLimit=600;
+    if (!empty($ExecTimeLimit))
+    {
+        $err=error_reporting();
+        error_reporting(0);     // Disable all errors
+        //error_reporting(E_ALL);
+        @set_time_limit($ExecTimeLimit);   // Need more than 240 on Windows 7/64
+        error_reporting($err);
+    }
+
 	require_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
 	$utils = new Utils($db);
 	$result = $utils->purgeFiles($choice);
@@ -65,9 +76,9 @@ llxHeader();
 
 $form=new Form($db);
 
-print load_fiche_titre($langs->trans("Purge"),'','title_setup');
+print load_fiche_titre($langs->trans("Purge"), '', 'title_setup');
 
-print $langs->trans("PurgeAreaDesc",$dolibarr_main_data_root).'<br>';
+print $langs->trans("PurgeAreaDesc", $dolibarr_main_data_root).'<br>';
 print '<br>';
 
 
@@ -100,7 +111,7 @@ print '> '.$langs->trans("PurgeDeleteTemporaryFiles").'<br><br>';
 
 print '<input type="radio" name="choice" value="confirm_allfiles"';
 print ($choice && $choice=='confirm_allfiles') ? ' checked' : '';
-print '> '.$langs->trans("PurgeDeleteAllFilesInDocumentsDir",$dolibarr_main_data_root).'<br>';
+print '> '.$langs->trans("PurgeDeleteAllFilesInDocumentsDir", $dolibarr_main_data_root).'<br>';
 
 print '</td></tr></table>';
 
@@ -112,7 +123,7 @@ print '</td></tr></table>';
 
 print '</form>';
 
-if (preg_match('/^confirm/i',$choice))
+if (preg_match('/^confirm/i', $choice))
 {
 	print '<br>';
 	$formquestion=array();

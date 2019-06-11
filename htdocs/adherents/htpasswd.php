@@ -43,13 +43,13 @@ if (empty($sortorder)) {  $sortorder="ASC"; }
 if (empty($sortfield)) {  $sortfield="d.login"; }
 if (! isset($statut))
 {
-  $statut = 1 ;
+	$statut = 1 ;
 }
 
 if (! isset($cotis))
 {
-  // by default, members must be up to date of subscription
-  $cotis=1;
+	// by default, members must be up to date of subscription
+	$cotis=1;
 }
 
 
@@ -60,7 +60,7 @@ if ($cotis==1)
 {
 	$sql .= " AND datefin > '".$db->idate($now)."'";
 }
-$sql.= $db->order($sortfield,$sortorder);
+$sql.= $db->order($sortfield, $sortorder);
 //$sql.=$db->plimit($conf->liste_limit, $offset);
 
 $resql = $db->query($sql);
@@ -69,13 +69,13 @@ if ($resql)
 	$num = $db->num_rows($resql);
 	$i = 0;
 
-	print_barre_liste($langs->trans("HTPasswordExport"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',0);
+	print_barre_liste($langs->trans("HTPasswordExport"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', 0);
 
 	print "<hr>\n";
 	while ($i < $num)
 	{
 		$objp = $db->fetch_object($result);
-		$htpass=crypt($objp->pass,makesalt());
+		$htpass=crypt($objp->pass, makesalt());
 		print $objp->login.":".$htpass."<br>\n";
 		$i++;
 	}

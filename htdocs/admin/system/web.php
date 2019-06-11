@@ -42,7 +42,7 @@ if (!$user->admin) accessforbidden();
 
 llxHeader('', $langs->trans("InfoWebServer"));
 
-print load_fiche_titre($langs->trans("InfoWebServer"),'','title_setup');
+print load_fiche_titre($langs->trans("InfoWebServer"), '', 'title_setup');
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';

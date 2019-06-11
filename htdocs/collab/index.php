@@ -21,8 +21,8 @@
  *		\brief      Page to work on a shared document (PAD)
  */
 
-define('NOSCANPOSTFORINJECTION',1);
-define('NOSTYLECHECK',1);
+define('NOSCANPOSTFORINJECTION', 1);
+define('NOSTYLECHECK', 1);
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
@@ -33,16 +33,13 @@ $langs->loadLangs(array("admin","other","website"));
 
 if (! $user->admin) accessforbidden();
 
-if (! ((GETPOST('testmenuhider','int') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)))
-{
-	$conf->dol_hide_leftmenu = 1;   // Force hide of left menu.
-}
+$conf->dol_hide_leftmenu = 1;   // Force hide of left menu.
 
 $error=0;
 $website=GETPOST('website', 'alpha');
 $page=GETPOST('page', 'alpha');
 $pageid=GETPOST('pageid', 'int');
-$action=GETPOST('action','alpha');
+$action=GETPOST('action', 'alpha');
 
 if (GETPOST('delete')) { $action='delete'; }
 if (GETPOST('preview')) $action='preview';
@@ -253,8 +250,8 @@ if (count($object->records) > 0)
 	if (in_array($action, array('editcss','editmenu','create')))
 	{
 		if ($action != 'preview') print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" name="preview">';
-		if (preg_match('/^create/',$action)) print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
-		if (preg_match('/^edit/',$action)) print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
+		if (preg_match('/^create/', $action)) print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
+		if (preg_match('/^edit/', $action)) print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
 	}
 
 	print '</div>';
@@ -380,8 +377,8 @@ if (count($object->records) > 0)
 		if (! in_array($action, array('editcss','editmenu','create')))
 		{
 			if ($action != 'preview') print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" name="preview">';
-			if (preg_match('/^create/',$action)) print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
-			if (preg_match('/^edit/',$action)) print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
+			if (preg_match('/^create/', $action)) print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
+			if (preg_match('/^edit/', $action)) print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
 		}
 
 		print '</div>';
@@ -449,7 +446,7 @@ if ($action == 'editcontent')
 	$contentforedit .= $objectpage->content;
 
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor=new DolEditor('PAGE_CONTENT',$contentforedit,'',500,'Full','',true,true,true,ROWS_5,'90%');
+	$doleditor=new DolEditor('PAGE_CONTENT', $contentforedit, '', 500, 'Full', '', true, true, true, ROWS_5, '90%');
 	$doleditor->Create(0, '', false);
 }
 

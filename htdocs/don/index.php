@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
+/* Copyright (C) 2001-2002  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ $donation_static=new Don($db);
 $donstatic=new Don($db);
 
 $help_url='EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Donaciones';
-llxHeader('',$langs->trans("Donations"),$help_url);
+llxHeader('', $langs->trans("Donations"), $help_url);
 
 $nb=array();
 $somme=array();
@@ -121,12 +121,12 @@ print "</tr>\n";
 $listofstatus=array(0,1,-1,2);
 foreach ($listofstatus as $status)
 {
-    $dataseries[]=array($donstatic->LibStatut($status,1), (isset($nb[$status])?(int) $nb[$status]:0));
+    $dataseries[]=array($donstatic->LibStatut($status, 1), (isset($nb[$status])?(int) $nb[$status]:0));
 }
 
 if ($conf->use_javascript_ajax)
 {
-    print '<tr><td align="center" colspan="4">';
+    print '<tr><td class="center" colspan="4">';
 
     include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
     $dolgraph = new DolGraph();
@@ -143,9 +143,9 @@ if ($conf->use_javascript_ajax)
 
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Status").'</td>';
-print '<td align="right">'.$langs->trans("Number").'</td>';
-print '<td align="right">'.$langs->trans("Total").'</td>';
-print '<td align="right">'.$langs->trans("Average").'</td>';
+print '<td class="right">'.$langs->trans("Number").'</td>';
+print '<td class="right">'.$langs->trans("Total").'</td>';
+print '<td class="right">'.$langs->trans("Average").'</td>';
 print '</tr>';
 
 $total=0;
@@ -154,10 +154,10 @@ foreach ($listofstatus as $status)
 {
 
     print '<tr class="oddeven">';
-    print '<td><a href="list.php?statut='.$status.'">'.$donstatic->LibStatut($status,4).'</a></td>';
-    print '<td align="right">'.(! empty($nb[$status])?$nb[$status]:'&nbsp;').'</td>';
-    print '<td align="right">'.(! empty($nb[$status])?price($somme[$status],'MT'):'&nbsp;').'</td>';
-    print '<td align="right">'.(! empty($nb[$status])?price(price2num($somme[$status]/$nb[$status],'MT')):'&nbsp;').'</td>';
+    print '<td><a href="list.php?statut='.$status.'">'.$donstatic->LibStatut($status, 4).'</a></td>';
+    print '<td class="right">'.(! empty($nb[$status])?$nb[$status]:'&nbsp;').'</td>';
+    print '<td class="right">'.(! empty($nb[$status])?price($somme[$status], 'MT'):'&nbsp;').'</td>';
+    print '<td class="right">'.(! empty($nb[$status])?price(price2num($somme[$status]/$nb[$status], 'MT')):'&nbsp;').'</td>';
     $totalnb += (! empty($nb[$status])?$nb[$status]:0);
     $total += (! empty($somme[$status])?$somme[$status]:0);
     print "</tr>";
@@ -165,9 +165,9 @@ foreach ($listofstatus as $status)
 
 print '<tr class="liste_total">';
 print '<td>'.$langs->trans("Total").'</td>';
-print '<td align="right">'.$totalnb.'</td>';
-print '<td align="right">'.price($total,'MT').'</td>';
-print '<td align="right">'.($totalnb?price(price2num($total/$totalnb,'MT')):'&nbsp;').'</td>';
+print '<td class="right">'.$totalnb.'</td>';
+print '<td class="right">'.price($total, 'MT').'</td>';
+print '<td class="right">'.($totalnb?price(price2num($total/$totalnb, 'MT')):'&nbsp;').'</td>';
 print '</tr>';
 print "</table>";
 
@@ -193,7 +193,7 @@ if ($resql)
 {
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
-    print '<th colspan="5">'.$langs->trans("LastModifiedDonations",$max).'</th></tr>';
+    print '<th colspan="5">'.$langs->trans("LastModifiedDonations", $max).'</th></tr>';
 
     $num = $db->num_rows($resql);
     if ($num)
@@ -215,17 +215,17 @@ if ($resql)
             print '<td class="nobordernopadding">';
             print $obj->societe;
             print ($obj->societe && ($obj->lastname || $obj->firstname)?' / ':'');
-            print dolGetFirstLastname($obj->lastname,$obj->firstname);
+            print dolGetFirstLastname($obj->lastname, $obj->firstname);
             print '</td>';
 
-            print '<td align="right" class="nobordernopadding">';
-            print price($obj->amount,1);
+            print '<td class="right nobordernopadding">';
+            print price($obj->amount, 1);
             print '</td>';
 
             // Date
-            print '<td align="center">'.dol_print_date($db->jdate($obj->datem),'day').'</td>';
+            print '<td class="center">'.dol_print_date($db->jdate($obj->datem), 'day').'</td>';
 
-            print '<td align="right">'.$donation_static->LibStatut($obj->fk_statut,5).'</td>';
+            print '<td class="right">'.$donation_static->LibStatut($obj->fk_statut, 5).'</td>';
 
             print '</tr>';
             $i++;

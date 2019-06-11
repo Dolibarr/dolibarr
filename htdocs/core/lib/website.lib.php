@@ -22,7 +22,6 @@
  */
 
 
-
 /**
  * Convert a page content to have correct links (based on DOL_URL_ROOT) into an html content.
  * Used to ouput the page on the Preview from backoffice.
@@ -31,9 +30,9 @@
  * @param	string		$content			Content to replace
  * @param	int			$removephppart		0=Replace PHP sections with a PHP badge. 1=Remove completely PHP sections.
  * @return	boolean							True if OK
- * @see dolWebsiteOutput for function used to replace content in a web server context
+ * @see dolWebsiteOutput() for function used to replace content in a web server context
  */
-function dolWebsiteReplacementOfLinks($website, $content, $removephppart=0)
+function dolWebsiteReplacementOfLinks($website, $content, $removephppart = 0)
 {
 	$nbrep = 0;
 
@@ -80,7 +79,7 @@ function dolWebsiteReplacementOfLinks($website, $content, $removephppart=0)
 	// <img src="medias/image.png... => <img src="dolibarr/viewimage.php/modulepart=medias&file=image.png...
 	$content = preg_replace('/(<img[^>]*src=")(medias\/)/', '\1'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file=', $content, -1, $nbrep);
 	// <img src="image.png... => <img src="dolibarr/viewimage.php/modulepart=medias&file=image.png...
-	$content = preg_replace('/(<img[^>]*src=")(?!(http|\/?viewimage|'.preg_quote(DOL_URL_ROOT,'/').'\/viewimage))/', '\1'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file=', $content, -1, $nbrep);
+	$content = preg_replace('/(<img[^>]*src=")(?!(http|\/?viewimage|'.preg_quote(DOL_URL_ROOT, '/').'\/viewimage))/', '\1'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file=', $content, -1, $nbrep);
 	// <img src="viewimage.php/modulepart=medias&file=image.png" => <img src="dolibarr/viewimage.php/modulepart=medias&file=image.png"
 	$content = preg_replace('/(<img[^>]*src=")(\/?viewimage\.php)/', '\1'.DOL_URL_ROOT.'/viewimage.php', $content, -1, $nbrep);
 
@@ -101,13 +100,14 @@ function dolWebsiteReplacementOfLinks($website, $content, $removephppart=0)
  * @param 	string	$str			String to clean
  * @param	string	$replacewith	String to use as replacement
  * @return 	string					Result string without php code
+ * @see dolKeepOnlyPhpCode()
  */
-function dolStripPhpCode($str, $replacewith='')
+function dolStripPhpCode($str, $replacewith = '')
 {
 	$newstr = '';
 
 	//split on each opening tag
-	$parts = explode('<?php',$str);
+	$parts = explode('<?php', $str);
 	if (!empty($parts))
 	{
 		$i=0;
@@ -126,13 +126,51 @@ function dolStripPhpCode($str, $replacewith='')
 				//remove content before closing tag
 				if (count($partlings) > 1) $partlings[0] = '';
 				//append to out string
-				$newstr .= $replacewith.implode('',$partlings);
+				$newstr .= $replacewith.implode('', $partlings);
 			}
 		}
 	}
 	return $newstr;
 }
 
+/**
+ * Keep only PHP code part from a HTML string page.
+ *
+ * @param 	string	$str			String to clean
+ * @return 	string					Result string with php code only
+ * @see dolStripPhpCode()
+ */
+function dolKeepOnlyPhpCode($str)
+{
+    $newstr = '';
+
+    //split on each opening tag
+    $parts = explode('<?php', $str);
+    if (!empty($parts))
+    {
+        $i=0;
+        foreach($parts as $part)
+        {
+            if ($i == 0) 	// The first part is never php code
+            {
+                $i++;
+                continue;
+            }
+            $newstr.='<?php';
+            //split on closing tag
+            $partlings = explode('?>', $part, 2);
+            if (!empty($partlings))
+            {
+                $newstr .= $partlings[0].'?>';
+            }
+            else
+            {
+                $newstr .= $part.'?>';
+            }
+        }
+    }
+    return $newstr;
+}
 
 /**
  * Render a string of an HTML content and output it.
@@ -140,7 +178,7 @@ function dolStripPhpCode($str, $replacewith='')
  *
  * @param   string  $content    Content string
  * @return  void
- * @see	dolWebsiteReplacementOfLinks  for function used to replace content in the backoffice context when USEDOLIBARREDITOR is not on
+ * @see	dolWebsiteReplacementOfLinks()  for function used to replace content in the backoffice context when USEDOLIBARREDITOR is not on
  */
 function dolWebsiteOutput($content)
 {
@@ -150,7 +188,7 @@ function dolWebsiteOutput($content)
 	dol_syslog("dolWebsiteOutput start (USEDOLIBARRSERVER=".(defined('USEDOLIBARRSERVER')?'1':'')." (USEDOLIBARREDITOR=".(defined('USEDOLIBARREDITOR')?'1':'').')');
 
 	// Define $urlwithroot
-	$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+	$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
 	$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
 	//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
@@ -188,7 +226,7 @@ function dolWebsiteOutput($content)
 		// <img src="medias/image.png... => <img src="dolibarr/viewimage.php/modulepart=medias&file=image.png...
 		$content = preg_replace('/(<img[^>]*src=")(medias\/)/', '\1'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file=', $content, -1, $nbrep);
 		// <img src="image.png... => <img src="dolibarr/viewimage.php/modulepart=medias&file=image.png...
-		$content = preg_replace('/(<img[^>]*src=")(?!(http|\/?viewimage|'.preg_quote(DOL_URL_ROOT,'/').'\/viewimage))/', '\1'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file=', $content, -1, $nbrep);
+		$content = preg_replace('/(<img[^>]*src=")(?!(http|\/?viewimage|'.preg_quote(DOL_URL_ROOT, '/').'\/viewimage))/', '\1'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file=', $content, -1, $nbrep);
 		// <img src="viewimage.php/modulepart=medias&file=image.png" => <img src="dolibarr/viewimage.php/modulepart=medias&file=image.png"
 		$content = preg_replace('/(<img[^>]*src=")(\/?viewimage\.php)/', '\1'.DOL_URL_ROOT.'/viewimage.php', $content, -1, $nbrep);
 
@@ -210,11 +248,11 @@ function dolWebsiteOutput($content)
 
 			$content=preg_replace('/(<a[^>]*href=")[^\"]*viewimage\.php([^\"]*)modulepart=medias([^\"]*)file=([^\"]*)("[^>]*>)/', '\1/wrapper.php\2modulepart=medias\3file=\4\5', $content, -1, $nbrep);
 			$content=preg_replace('/(<img[^>]*src=")[^\"]*viewimage\.php([^\"]*)modulepart=medias([^\"]*)file=([^\"]*)("[^>]*>)/', '\1/wrapper.php\2modulepart=medias\3file=\4\5', $content, -1, $nbrep);
-			$content=preg_replace('/(url\(["\']?)[^\)]*viewimage\.php([^\)]*)modulepart=medias([^\)]*)file=([^\)]*)(["\']?\))/',  '\1/wrapper.php\2modulepart=medias\3file=\4\5', $content, -1, $nbrep);
+			$content=preg_replace('/(url\(["\']?)[^\)]*viewimage\.php([^\)]*)modulepart=medias([^\)]*)file=([^\)]*)(["\']?\))/', '\1/wrapper.php\2modulepart=medias\3file=\4\5', $content, -1, $nbrep);
 
 			$content=preg_replace('/(<a[^>]*href=")[^\"]*viewimage\.php([^\"]*)hashp=([^\"]*)("[^>]*>)/', '\1/wrapper.php\2hashp=\3\4', $content, -1, $nbrep);
 			$content=preg_replace('/(<img[^>]*src=")[^\"]*viewimage\.php([^\"]*)hashp=([^\"]*)("[^>]*>)/', '\1/wrapper.php\2hashp=\3\4', $content, -1, $nbrep);
-			$content=preg_replace('/(url\(["\']?)[^\)]*viewimage\.php([^\)]*)hashp=([^\)]*)(["\']?\))/',  '\1/wrapper.php\2hashp\3\4', $content, -1, $nbrep);
+			$content=preg_replace('/(url\(["\']?)[^\)]*viewimage\.php([^\)]*)hashp=([^\)]*)(["\']?\))/', '\1/wrapper.php\2hashp\3\4', $content, -1, $nbrep);
 
 			$content=preg_replace('/(<img[^>]*src=")[^\"]*viewimage\.php([^\"]*)modulepart=mycompany([^\"]*)file=([^\"]*)("[^>]*>)/', '\1/wrapper.php\2modulepart=mycompany\3file=\4\5', $content, -1, $nbrep);
 		}
@@ -277,7 +315,7 @@ function dolWebsiteSaveContent($content)
  * @param 	int		$containerid		Id of container.
  * @return  void
  */
-function redirectToContainer($containerref, $containeraliasalt='',$containerid=0)
+function redirectToContainer($containerref, $containeraliasalt = '', $containerid = 0)
 {
 	global $db, $website;
 
@@ -412,7 +450,7 @@ function includeContainer($containerref)
  * @param	string		$grabimagesinto	'root' or 'subpage'
  * @return	void
  */
-function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modifylinks=0, $grabimages=1, $grabimagesinto='subpage')
+function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modifylinks = 0, $grabimages = 1, $grabimagesinto = 'subpage')
 {
 	global $conf;
 
@@ -498,7 +536,7 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 
 		if ($modifylinks)
 		{
-			$tmp = preg_replace('/'.preg_quote($regs[0][$key],'/').'/i', '<img'.$regs[1][$key].'src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file='.$filename.'"'.$regs[3][$key].'>', $tmp);
+			$tmp = preg_replace('/'.preg_quote($regs[0][$key], '/').'/i', '<img'.$regs[1][$key].'src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file='.$filename.'"'.$regs[3][$key].'>', $tmp);
 		}
 	}
 
@@ -577,7 +615,7 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 
 		if ($modifylinks)
 		{
-			$tmp = preg_replace('/'.preg_quote($regs[0][$key],'/').'/i', 'background'.$regs[1][$key].'url("'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file='.$filename.'")', $tmp);
+			$tmp = preg_replace('/'.preg_quote($regs[0][$key], '/').'/i', 'background'.$regs[1][$key].'url("'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file='.$filename.'")', $tmp);
 		}
 	}
 }
@@ -661,12 +699,16 @@ function dolSavePageContent($filetpl, $object, $objectpage)
 
 	$tplcontent ='';
 	$tplcontent.= "<?php // BEGIN PHP\n";
-	$tplcontent.= '$websitekey=basename(dirname(__FILE__)); if (empty($websitepagefile)) $websitepagefile=__FILE__;'."\n";
+	$tplcontent.= '$websitekey=basename(__DIR__); if (empty($websitepagefile)) $websitepagefile=__FILE__;'."\n";
 	$tplcontent.= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once './master.inc.php'; } // Not already loaded"."\n";
 	$tplcontent.= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
 	$tplcontent.= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
 	$tplcontent.= "ob_start();\n";
 	$tplcontent.= "// END PHP ?>\n";
+	if (! empty($conf->global->WEBSITE_FORCE_DOCTYPE_HTML5))
+	{
+	   $tplcontent.= "<!DOCTYPE html>\n";
+	}
 	$tplcontent.= '<html'.($shortlangcode ? ' lang="'.$shortlangcode.'"':'').'>'."\n";
 	$tplcontent.= '<head>'."\n";
 	$tplcontent.= '<title>'.dol_string_nohtmltag($objectpage->title, 0, 'UTF-8').'</title>'."\n";
@@ -678,6 +720,7 @@ function dolSavePageContent($filetpl, $object, $objectpage)
 	$tplcontent.= '<meta name="title" content="'.dol_string_nohtmltag($objectpage->title, 0, 'UTF-8').'" />'."\n";
 	$tplcontent.= '<meta name="description" content="'.dol_string_nohtmltag($objectpage->description, 0, 'UTF-8').'" />'."\n";
 	$tplcontent.= '<meta name="generator" content="'.DOL_APPLICATION_TITLE.' '.DOL_VERSION.' (https://www.dolibarr.org)" />'."\n";
+	$tplcontent.= '<meta name="dolibarr:pageid" content="'.dol_string_nohtmltag($objectpage->id).'" />'."\n";
 	$tplcontent.= '<link href="/'.(($objectpage->id == $object->fk_default_home) ? '' : ($objectpage->pageurl.'.php')).'" rel="canonical" />'."\n";
 	$tplcontent.= '<!-- Include link to CSS file -->'."\n";
 	$tplcontent.= '<link rel="stylesheet" href="styles.css.php?website=<?php echo $websitekey; ?>" type="text/css" />'."\n";
@@ -727,7 +770,7 @@ function dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper)
 	dol_delete_file($fileindex);
 	$indexcontent = '<?php'."\n";
 	$indexcontent.= "// BEGIN PHP File generated to provide an index.php as Home Page or alias redirector - DO NOT MODIFY - It is just a generated wrapper.\n";
-	$indexcontent.= '$websitekey=basename(dirname(__FILE__)); if (empty($websitepagefile)) $websitepagefile=__FILE__;'."\n";
+	$indexcontent.= '$websitekey=basename(__DIR__); if (empty($websitepagefile)) $websitepagefile=__FILE__;'."\n";
 	$indexcontent.= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once './master.inc.php'; } // Load master if not already loaded\n";
 	$indexcontent.= 'if (! empty($_GET[\'pageref\']) || ! empty($_GET[\'pagealiasalt\']) || ! empty($_GET[\'pageid\'])) {'."\n";
 	$indexcontent.= "	require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";

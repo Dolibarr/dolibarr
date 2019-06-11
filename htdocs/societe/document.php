@@ -34,9 +34,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 $langs->loadLangs(array("companies", "other"));
 
-$action=GETPOST('action','aZ09');
+$action=GETPOST('action', 'aZ09');
 $confirm=GETPOST('confirm');
-$id=(GETPOST('socid','int') ? GETPOST('socid','int') : GETPOST('id','int'));
+$id=(GETPOST('socid', 'int') ? GETPOST('socid', 'int') : GETPOST('id', 'int'));
 $ref = GETPOST('ref', 'alpha');
 
 // Security check
@@ -48,9 +48,9 @@ if ($user->societe_id > 0)
 $result = restrictedArea($user, 'societe', $id, '&societe');
 
 // Get parameters
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
@@ -64,7 +64,7 @@ if ($id > 0 || ! empty($ref))
 	$result = $object->fetch($id, $ref);
 
 	$upload_dir = $conf->societe->multidir_output[$object->entity] . "/" . $object->id ;
-	$courrier_dir = $conf->societe->multidir_output[$object->entity] . "/courrier/" . get_exdir($object->id,0,0,0,$object,'thirdparty');
+	$courrier_dir = $conf->societe->multidir_output[$object->entity] . "/courrier/" . get_exdir($object->id, 0, 0, 0, $object, 'thirdparty');
 }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -86,9 +86,9 @@ include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
 $form = new Form($db);
 
 $title=$langs->trans("ThirdParty").' - '.$langs->trans("Files");
-if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name.' - '.$langs->trans("Files");
+if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name.' - '.$langs->trans("Files");
 $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
-llxHeader('',$title,$help_url);
+llxHeader('', $title, $help_url);
 
 if ($object->id)
 {
@@ -104,7 +104,7 @@ if ($object->id)
 
 
 	// Build file list
-	$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+	$filearray=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);
 	$totalsize=0;
 	foreach($filearray as $key => $file)
 	{
@@ -118,7 +118,7 @@ if ($object->id)
     print '<div class="fichecenter">';
 
     print '<div class="underbanner clearboth"></div>';
-	print '<table class="border centpercent">';
+	print '<table class="border tableforfield centpercent">';
 
 	// Prefix
 	if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
@@ -148,7 +148,7 @@ if ($object->id)
 	print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
 
 	// Total size
-	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize,1,1).'</td></tr>';
+	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize, 1, 1).'</td></tr>';
 
 	print '</table>';
 
@@ -164,7 +164,7 @@ if ($object->id)
 }
 else
 {
-	accessforbidden('',0,0);
+	accessforbidden('', 0, 0);
 }
 
 // End of page

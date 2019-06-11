@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2006-2016	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2015		Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015		Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2016		Juanjo Menent   	<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -93,7 +93,7 @@ function bank_prepare_head(Account $object)
     require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
     require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
     $upload_dir = $conf->bank->dir_output . "/" . dol_sanitizeFileName($object->ref);
-    $nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview.*\.png)$'));
+    $nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
     $nbLinks=Link::count($db, $object->element, $object->id);
     $head[$h][0] = DOL_URL_ROOT . "/compta/bank/document.php?account=" . $object->id;
     $head[$h][1] = $langs->trans("Documents");
@@ -178,12 +178,12 @@ function various_payment_prepare_head($object)
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname);   												to remove a tab
-    complete_head_from_modules($conf,$langs,$object,$head,$h,'various_payment');
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'various_payment');
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
     require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-	$upload_dir = $conf->banque->dir_output . "/" . dol_sanitizeFileName($object->ref);
-	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview.*\.png)$'));
+	$upload_dir = $conf->bank->dir_output . "/" . dol_sanitizeFileName($object->ref);
+	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
     $nbLinks=Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT.'/compta/bank/various_payment/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
@@ -196,7 +196,7 @@ function various_payment_prepare_head($object)
 	$head[$h][2] = 'info';
 	$h++;
 
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'various_payment', 'remove');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'various_payment', 'remove');
 
 	return $head;
 }
@@ -292,7 +292,7 @@ function checkBanForAccount($account)
     if ($country_code == 'AU') {  // Australian
         if (strlen($account->code_banque) > 7)
             return false; // Sould be 6 but can be 123-456
-        else if (strlen($account->code_banque) < 6)
+        elseif (strlen($account->code_banque) < 6)
             return false; // Sould be 6
         else
             return true;

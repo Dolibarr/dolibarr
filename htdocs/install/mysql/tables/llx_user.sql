@@ -48,16 +48,19 @@ create table llx_user
   fk_state          integer        DEFAULT 0,
   fk_country        integer        DEFAULT 0,
   birth             date,						-- birthday
-  job				varchar(128),
+  job				        varchar(128),
   office_phone      varchar(20),
   office_fax        varchar(20),
   user_mobile       varchar(20),
+  personal_mobile   varchar(20),
   email             varchar(255),
+  personal_email    varchar(255),
   
   jabberid			varchar(255),
   skype				varchar(255),
   twitter			varchar(255),                        		--
   facebook			varchar(255),                        		--
+  linkedin                  varchar(255),                         	--
   instagram                varchar(255),                        		--
   snapchat                 varchar(255),                        		--
   googleplus               varchar(255),                        		--
@@ -72,6 +75,8 @@ create table llx_user
   fk_socpeople      integer,
   fk_member         integer,
   fk_user           integer,					-- Hierarchic parent
+  fk_user_expense_validator           integer,
+  fk_user_holiday_validator           integer,
   note_public		text,
   note              text DEFAULT NULL,
   model_pdf         varchar(255) DEFAULT NULL,
@@ -99,5 +104,6 @@ create table llx_user
 
   import_key        varchar(14),				-- import key
   default_range     integer,
-  default_c_exp_tax_cat     integer
+  default_c_exp_tax_cat     integer,
+  fk_warehouse     integer
 )ENGINE=innodb;

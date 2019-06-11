@@ -32,8 +32,8 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
-$id=GETPOST('id','intcomma');
-$ref=GETPOST('ref','alpha');
+$id=GETPOST('id', 'intcomma');
+$ref=GETPOST('ref', 'alpha');
 
 $mode = GETPOST('mode', 'alpha');
 $mine = ($mode == 'mine' ? 1 : 0);
@@ -83,15 +83,15 @@ if (! empty($conf->use_javascript_ajax))
 
 //$title=$langs->trans("Gantt").($object->ref?' - '.$object->ref.' '.$object->name:'');
 $title=$langs->trans("Gantt");
-if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=($object->ref?$object->ref.' '.$object->name.' - ':'').$langs->trans("Gantt");
+if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) $title=($object->ref?$object->ref.' '.$object->name.' - ':'').$langs->trans("Gantt");
 $help_url="EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
-llxHeader("",$title,$help_url,'',0,0,$arrayofjs,$arrayofcss);
+llxHeader("", $title, $help_url, '', 0, 0, $arrayofjs, $arrayofcss);
 
 if (($id > 0 && is_numeric($id)) || ! empty($ref))
 {
 	// To verify role of users
 	//$userAccess = $object->restrictedProjectArea($user,'read');
-	$userWrite  = $object->restrictedProjectArea($user,'write');
+	$userWrite  = $object->restrictedProjectArea($user, 'write');
 	//$userDelete = $object->restrictedProjectArea($user,'delete');
 	//print "userAccess=".$userAccess." userWrite=".$userWrite." userDelete=".$userDelete;
 
@@ -121,8 +121,8 @@ if (($id > 0 && is_numeric($id)) || ! empty($ref))
     // Define a complementary filter for search of next/prev ref.
     if (! $user->rights->projet->all->lire)
     {
-        $objectsListId = $object->getProjectsAuthorizedForUser($user,0,0);
-        $object->next_prev_filter=" rowid in (".(count($objectsListId)?join(',',array_keys($objectsListId)):'0').")";
+        $objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
+        $object->next_prev_filter=" rowid in (".(count($objectsListId)?join(',', array_keys($objectsListId)):'0').")";
     }
 
     dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -142,9 +142,9 @@ if (($id > 0 && is_numeric($id)) || ! empty($ref))
 
     // Date start - end
     print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
-	$start = dol_print_date($object->date_start,'day');
+	$start = dol_print_date($object->date_start, 'day');
 	print ($start?$start:'?');
-	$end = dol_print_date($object->date_end,'day');
+	$end = dol_print_date($object->date_end, 'day');
 	print ' - ';
 	print ($end?$end:'?');
 	if ($object->hasDelay()) print img_warning("Late");
@@ -152,7 +152,7 @@ if (($id > 0 && is_numeric($id)) || ! empty($ref))
 
     // Budget
     print '<tr><td>'.$langs->trans("Budget").'</td><td>';
-    if (strcmp($object->budget_amount, '')) print price($object->budget_amount,'',$langs,1,0,0,$conf->currency);
+    if (strcmp($object->budget_amount, '')) print price($object->budget_amount, '', $langs, 1, 0, 0, $conf->currency);
     print '</td></tr>';
 
     // Other attributes
@@ -175,8 +175,8 @@ if (($id > 0 && is_numeric($id)) || ! empty($ref))
 
     // Categories
     if($conf->categorie->enabled) {
-        print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td>';
-        print $form->showCategories($object->id,'project',1);
+        print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
+        print $form->showCategories($object->id, 'project', 1);
         print "</td></tr>";
     }
 
@@ -194,23 +194,19 @@ if (($id > 0 && is_numeric($id)) || ! empty($ref))
 }
 
 // Link to create task
-if ($user->rights->projet->all->creer || $user->rights->projet->creer)
-{
-	if ($object->public || $userWrite > 0)
-	{
-		$linktocreatetask = '<a class="butActionNew" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=create'.$param.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id).'">'.$langs->trans('AddTask').'<span class="fa fa-plus-circle valignmiddle"></span></a>';
+$linktocreatetaskParam = array();
+$linktocreatetaskUserRight = false;
+if ($user->rights->projet->all->creer || $user->rights->projet->creer) {
+	if ($object->public || $userWrite > 0){
+        $linktocreatetaskUserRight = true;
+	}else{
+        $linktocreatetaskParam['attr']['title'] = $langs->trans("NotOwnerOfProject");
 	}
-	else
-	{
-		$linktocreatetask = '<a class="butActionNewRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('AddTask').'<span class="fa fa-plus-circle valignmiddle"></span></a>';
-	}
-}
-else
-{
-	$linktocreatetask = '<a class="butActionNewRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans('AddTask').'<span class="fa fa-plus-circle valignmiddle"></span></a>';
 }
 
-$linktolist='<a href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id.'">'.$langs->trans("GoToListOfTasks").'<span class="paddingleft fa fa-list-ul valignmiddle"></span></a>';
+$linktocreatetask = dolGetButtonTitle($langs->trans('AddTask'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id.'&action=create'.$param.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id), '', $linktocreatetaskUserRight, $linktocreatetaskParam);
+
+$linktolist = dolGetButtonTitle($langs->trans('GoToListOfTasks'), '', 'fa fa-tasks', DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id);
 
 //print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $linktotasks, $num, $totalnboflines, 'title_generic.png', 0, '', '', 0, 1);
 print load_fiche_titre($title, $linktolist.' &nbsp; '.$linktocreatetask, 'title_generic.png');
