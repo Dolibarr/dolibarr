@@ -386,7 +386,7 @@ if ($result) {
 		print '</td>';
 
 		// Current account
-		print '<td class="center">';
+		print '<td>';
 		print length_accountg(html_entity_decode($objp->code_buy));
 		print '</td>';
 

@@ -214,7 +214,7 @@ $sql.= " l.rowid, l.fk_product, l.description, l.total_ht, l.fk_code_ventilation
 $sql.= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type, p.accountancy_code_sell as code_sell, p.tva_tx as tva_tx_prod,";
 $sql.= " p.accountancy_code_sell_intra as code_sell_intra, p.accountancy_code_sell_export as code_sell_export,";
 $sql.= " aa.rowid as aarowid, aa2.rowid as aarowid_intra, aa3.rowid as aarowid_export,";
-$sql.= " co.code as country_code, co.label as country,";
+$sql.= " co.code as country_code, co.label as country_label,";
 $sql.= " s.tva_intra";
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
@@ -514,7 +514,10 @@ if ($result) {
 		print vatrate($objp->tva_tx_line.($objp->vat_src_code?' ('.$objp->vat_src_code.')':''));
 		print '</td>';
 
-		print '<td>' . $objp->country .'</td>';
+        print '<td class="center">';
+        $labelcountry=($objp->country_code && ($langs->trans("Country".$objp->country_code)!="Country".$objp->country_code))?$langs->trans("Country".$objp->country_code):$objp->country_label;
+        print $labelcountry;
+        print '</td>';
 
 		print '<td>' . $objp->tva_intra . '</td>';
 
@@ -529,7 +532,7 @@ if ($result) {
 		print '</td>';
 
 		// Suggested accounting account
-		print '<td class="center">';
+		print '<td>';
 		print $formaccounting->select_account($objp->aarowid_suggest, 'codeventil'.$objp->rowid, 1, array(), 0, 0, 'codeventil maxwidth300 maxwidthonsmartphone', 'cachewithshowemptyone');
 		print '</td>';
 
