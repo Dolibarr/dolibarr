@@ -32,8 +32,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-if (!empty($conf->projet->enabled))     require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+Fif (!empty($conf->projet->enabled))     require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 if (!empty($conf->contrat->enabled))    require_once DOL_DOCUMENT_ROOT . '/contrat/class/contrat.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'bills', 'interventions'));
@@ -54,9 +55,8 @@ $search_projet_ref=GETPOST('search_projet_ref', 'alpha');
 $search_contrat_ref=GETPOST('search_contrat_ref', 'alpha');
 $search_status=GETPOST('search_status', 'alpha');
 $sall=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
-$optioncss = GETPOST('optioncss', 'alpha');
-$socid=GETPOST('socid', 'int');
-
+$optioncss = GETPOST('optioncss','alpha');
+$socid=GETPOST('socid','int');
 // Security check
 $id = GETPOST('id', 'int');
 if ($user->societe_id) $socid=$user->societe_id;
@@ -84,6 +84,7 @@ if (! $sortfield)
 $object = new Fichinter($db);
 $hookmanager->initHooks(array('interventionlist'));
 $extrafields = new ExtraFields($db);
+$fac=new Facture($db);
 
 // fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('fichinter');
@@ -113,6 +114,8 @@ $arrayfields=array(
 	'fd.date'=>array('label'=>'DateOfLine', 'checked'=>1, 'enabled'=>empty($conf->global->FICHINTER_DISABLE_DETAILS)?1:0),
 	'fd.duree'=>array('label'=>'DurationOfLine', 'checked'=>1, 'enabled'=>empty($conf->global->FICHINTER_DISABLE_DETAILS)?1:0),
 );
+if(!empty($conf->global->FICHINTER_LIST_SHOW_INVOICES))
+    $arrayfields['inter.facref']=array('label'=>'Facture', 'checked'=>1);
 // Extra fields
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 {
@@ -212,6 +215,7 @@ foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->att
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
+if(!empty($conf->global->FICHINTER_LIST_SHOW_INVOICES)) $sql.= ", ifnull(inter.facid,'') facid";
 $sql.= " FROM ".MAIN_DB_PREFIX."fichinter as f";
 if (!empty($conf->projet->enabled)) {
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet as pr on f.fk_projet = pr.rowid";
@@ -222,6 +226,7 @@ if (!empty($conf->contrat->enabled)) {
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."fichinter_extrafields as ef on (f.rowid = ef.fk_object)";
 if (empty($conf->global->FICHINTER_DISABLE_DETAILS) && $atleastonefieldinlines) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."fichinterdet as fd ON fd.fk_fichinter = f.rowid";
 if (! $user->rights->societe->client->voir && empty($socid)) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if(!empty($conf->global->FICHINTER_LIST_SHOW_INVOICES)) $sql.= " LEFT JOIN llx_interfacs as inter ON inter.fid = f.rowid";
 $sql.= ", ".MAIN_DB_PREFIX."societe as s";
 $sql.= " WHERE f.entity IN (".getEntity('intervention').")";
 $sql.= " AND f.fk_soc = s.rowid";
@@ -434,6 +439,10 @@ if ($resql)
 	    print '<td class="liste_titre">&nbsp;</td>';
 	}
 	print '<td class="liste_titre maxwidthsearch">';
+	if (! empty($arrayfields['inter.facref']['checked']))
+	{
+	    print '<td class="liste_titre">&nbsp;</td>';
+	}
 	$searchpicto=$form->showFilterButtons();
 	print $searchpicto;
 	print '</td>';
@@ -458,6 +467,7 @@ if ($resql)
 	if (! empty($arrayfields['fd.description']['checked'])) print_liste_field_titre($arrayfields['fd.description']['label'], $_SERVER["PHP_SELF"], '');
 	if (! empty($arrayfields['fd.date']['checked']))        print_liste_field_titre($arrayfields['fd.date']['label'], $_SERVER["PHP_SELF"], "fd.date", "", $param, '', $sortfield, $sortorder, 'center ');
 	if (! empty($arrayfields['fd.duree']['checked']))       print_liste_field_titre($arrayfields['fd.duree']['label'], $_SERVER["PHP_SELF"], "fd.duree", "", $param, '', $sortfield, $sortorder, 'right ');
+	if (! empty($arrayfields['inter.facref']['checked']))       print_liste_field_titre($arrayfields['inter.facref']['label'],       $_SERVER["PHP_SELF"],"inter.facref","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 	print "</tr>\n";
 
@@ -597,6 +607,15 @@ if ($resql)
 		    if (! $i) $totalarray['nbfield']++;
 		    if (! $i) $totalarray['totaldurationfield']=$totalarray['nbfield'];
 		    $totalarray['totalduration']+=$obj->duree;
+		}
+		if (! empty($arrayfields['inter.facref']['checked']))
+		{
+            print "<td>";
+            if(!empty($obj->facid)){
+                $fac->fetch($obj->facid);
+                print $fac->getNomUrl(1);
+            }
+            print '</td>';
 		}
 		// Action column
 		print '<td class="nowrap center">';
