@@ -289,7 +289,7 @@ if ($result) {
 
 	print_barre_liste($langs->trans("ExpenseReportLines"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num_lines, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit);
 
-	print $langs->trans("DescVentilTodoExpenseReport") . '</br><br>';
+	print '<span class="opacitymedium">'.$langs->trans("DescVentilTodoExpenseReport") . '</span></br><br>';
 
 	/*$topicmail="Information";
 	$modelmail="project";

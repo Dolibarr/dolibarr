@@ -411,7 +411,7 @@ class AdherentType extends CommonObject
 		}
 	}
 
-  /**
+	/**
 	 *	Return translated label by the nature of a adherent (physical or moral)
 	 *
 	 *	@param	string		$morphy		Nature of the adherent (physical or moral)

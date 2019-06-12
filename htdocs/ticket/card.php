@@ -647,7 +647,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
     {
         // or for unauthorized internals users
         if (!$user->societe_id && ($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY && $object->fk_user_assign != $user->id) && !$user->rights->ticket->manage) {
-            accessforbidden('', 0);
+            accessforbidden('', 0, 1);
         }
 
         // Confirmation close

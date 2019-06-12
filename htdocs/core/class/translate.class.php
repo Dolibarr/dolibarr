@@ -196,6 +196,7 @@ class Translate
 		$modulename = '';
 
 		// Search if a module directory name is provided into lang file name
+		$regs=array();
 		if (preg_match('/^([^@]+)@([^@]+)$/i', $domain, $regs))
 		{
 			$newdomain = $regs[1];
@@ -223,7 +224,7 @@ class Translate
 			return -1;
 		}
 
-		foreach($this->dir as $keydir => $searchdir)
+		foreach($this->dir as $searchdir)
 		{
 			// Directory of translation files
 			$file_lang = $searchdir.($modulename?'/'.$modulename:'')."/langs/".$langofdir."/".$newdomain.".lang";

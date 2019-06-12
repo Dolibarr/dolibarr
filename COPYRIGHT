@@ -13,7 +13,6 @@ Component              Version       License                     GPL Compatible 
 -------------------------------------------------------------------------------------
 PHP libraries:
 AdoDb-Date             0.36          Modified BSD License        Yes             Date convertion (not into rpm package)
-ChromePHP              4.1.0         Apache Software License 2.0 Yes             Return server log to chrome browser console
 CKEditor               4.11.4        LGPL-2.1+                   Yes             Editor WYSIWYG
 PHPDebugBar			   1.15.0		 MIT License	             Yes             Used only by the module "debugbar" for developers
 EvalMath               1.0           BSD                         Yes             Safe math expressions evaluation
@@ -30,12 +29,13 @@ php-iban               1.4.7         LGPL-3+                     Yes            
 PHPoAuthLib            0.8.2         MIT License                 Yes             Library to provide oauth1 and oauth2 to different service
 PHPPrintIPP            1.3           GPL-2+                      Yes             Library to send print IPP requests
 PSR/Logs			   1.0										                 Library for logs (used by DebugBar)
-PSR/simple-cache												                 Library for cache (used by PHPSpreadSheet)
+PSR/simple-cache	   ?										                 Library for cache (used by PHPSpreadSheet)
 Restler                3.0.0RC6      LGPL-3+                     Yes             Library to develop REST Web services (+ swagger-ui js lib into dir explorer)
+Sabre                  3.2.2         BSD                         Yes             DAV support
+Swift Mailer           5.4.2-DEV     MIT license                 Yes             Comprehensive mailing tools for PHP
+Stripe                 6.35          MIT licence                 Yes             Library for Stripe module
 TCPDF                  6.2.25        LGPL-3+                     Yes             PDF generation
 TCPDI                  1.0.0         LGPL-3+ / Apache 2.0        Yes             FPDI replacement
-Swift Mailer           5.4.2-DEV     MIT license                 Yes             Comprehensive mailing tools for PHP
-Stripe                 6.34.5        MIT licence                 Yes             Library for Stripe module
 
 JS libraries:
 jQuery                 3.3.1         MIT License                 Yes             JS library

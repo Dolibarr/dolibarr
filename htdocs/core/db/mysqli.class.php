@@ -684,6 +684,7 @@ class DoliDBMysqli extends DoliDB
         // ex. : $fields['rowid'] = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
         $sql = "CREATE TABLE ".$table."(";
         $i=0;
+	    $sqlfields=array();
         foreach($fields as $field_name => $field_desc)
         {
         	$sqlfields[$i] = $field_name." ";
@@ -930,11 +931,17 @@ class DoliDBMysqli extends DoliDB
             	dol_syslog(get_class($this)."::DDLCreateUser sql=".$sql, LOG_WARNING);
             }
         }
+
+        // Redo with localhost forced (sometimes user is created on %)
+        $sql = "CREATE USER '".$this->escape($dolibarr_main_db_user)."'@'localhost'";
+        $resql=$this->query($sql);
+
         $sql = "GRANT ALL PRIVILEGES ON ".$this->escape($dolibarr_main_db_name).".* TO '".$this->escape($dolibarr_main_db_user)."'@'".$this->escape($dolibarr_main_db_host)."' IDENTIFIED BY '".$this->escape($dolibarr_main_db_pass)."'";
         dol_syslog(get_class($this)."::DDLCreateUser", LOG_DEBUG);	// No sql to avoid password in log
         $resql=$this->query($sql);
         if (! $resql)
         {
+            $this->error = "Connected user not allowed to GRANT ALL PRIVILEGES ON ".$this->escape($dolibarr_main_db_name).".* TO '".$this->escape($dolibarr_main_db_user)."'@'".$this->escape($dolibarr_main_db_host)."'  IDENTIFIED BY '*****'";
             return -1;
         }
 
