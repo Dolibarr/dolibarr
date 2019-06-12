@@ -260,6 +260,11 @@ if (! $error && $massaction == 'confirm_presend')
 					$filename=dol_sanitizeFileName($objectobj->ref).'.pdf';
 					$filedir=$uploaddir . '/' . dol_sanitizeFileName($objectobj->ref);
 					$file = $filedir . '/' . $filename;
+					if ($object->element == 'invoice_supplier')
+					{
+						$fileparams = dol_most_recent_file($uploaddir . '/' . get_exdir($objectobj->id,2,0,0,$objectobj,$objectobj->element).$objectobj->ref, preg_quote($objectobj->ref,'/').'([^\-])+');
+						$file = $fileparams['fullname'];
+					}
 					$mime = dol_mimetype($file);
 
 	   				if (dol_is_file($file))
