@@ -511,7 +511,7 @@ if ($massaction == 'confirm_createbills')
 			$objecttmp->cond_reglement_id	= $cmd->cond_reglement_id;
 			$objecttmp->mode_reglement_id	= $cmd->mode_reglement_id;
 			$objecttmp->fk_project			= $cmd->fk_project;
-
+            $objecttmp->multicurrency_code  = $cmd->multicurrency_code;
 			$datefacture = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 			if (empty($datefacture))
 			{
