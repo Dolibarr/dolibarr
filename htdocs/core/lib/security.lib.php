@@ -247,11 +247,12 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 		{
 			if (! $user->rights->projet->lire && ! $user->rights->projet->all->lire) { $readok=0; $nbko++; }
 		}
-		elseif (! empty($feature2))	// This should be used for future changes
+		elseif (! empty($feature2))														// This is for permissions on 2 levels
 		{
 			$tmpreadok=1;
 			foreach($feature2 as $subfeature)
 			{
+				var_dump($subfeature);
 				if ($subfeature == 'user' && $user->id == $objectid) continue; // A user can always read its own card
 				if (! empty($subfeature) && empty($user->rights->$feature->$subfeature->lire) && empty($user->rights->$feature->$subfeature->read)) { $tmpreadok=0; }
 				elseif (empty($subfeature) && empty($user->rights->$feature->lire) && empty($user->rights->$feature->read)) { $tmpreadok=0; }
@@ -263,7 +264,7 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 				$nbko++;
 			}
 		}
-		elseif (! empty($feature) && ($feature!='user' && $feature!='usergroup'))		// This is for old permissions
+		elseif (! empty($feature) && ($feature!='user' && $feature!='usergroup'))		// This is permissions on 1 level
 		{
 			if (empty($user->rights->$feature->lire)
 				&& empty($user->rights->$feature->read)
@@ -307,7 +308,7 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 			{
 				if (! $user->rights->banque->cheque) { $createok=0; $nbko++; }
 			}
-			elseif (! empty($feature2))	// This should be used
+			elseif (! empty($feature2))														// This is for permissions on one level
 			{
 				foreach($feature2 as $subfeature)
 				{
@@ -317,7 +318,7 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 						else { $createok=1; break; } // Break to bypass second test if the first is ok
 				}
 			}
-			elseif (! empty($feature))		// This is for old permissions ('creer' or 'write')
+			elseif (! empty($feature))														// This is for permissions on 2 levels ('creer' or 'write')
 			{
 				//print '<br>feature='.$feature.' creer='.$user->rights->$feature->creer.' write='.$user->rights->$feature->write;
 				if (empty($user->rights->$feature->creer)
@@ -384,7 +385,7 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 			{
 				if (! $user->rights->salaries->delete) $deleteok=0;
 			}
-			elseif (! empty($feature2))	// This should be used for permissions on 2 levels
+			elseif (! empty($feature2))							// This is for permissions on 2 levels
 			{
 				foreach($feature2 as $subfeature)
 				{
@@ -392,7 +393,7 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 					else { $deleteok=1; break; } // For bypass the second test if the first is ok
 				}
 			}
-			elseif (! empty($feature))		// This is used for permissions on 1 level
+			elseif (! empty($feature))							// This is used for permissions on 1 level
 			{
 				//print '<br>feature='.$feature.' creer='.$user->rights->$feature->supprimer.' write='.$user->rights->$feature->delete;
 				if (empty($user->rights->$feature->supprimer)
@@ -451,7 +452,7 @@ function checkUserAccessToObject($user, $featuresarray, $objectid = 0, $tableand
 		if ($feature == 'project') $feature='projet';
 		if ($feature == 'task')    $feature='projet_task';
 
-		$check = array('adherent','banque','don','user','usergroup','product','produit','service','produit|service','categorie','resource','expensereport','holiday'); // Test on entity only (Objects with no link to company)
+		$check = array('adherent','banque','bom','don','user','usergroup','product','produit','service','produit|service','categorie','resource','expensereport','holiday'); // Test on entity only (Objects with no link to company)
 		$checksoc = array('societe');	 // Test for societe object
 		$checkother = array('contact','agenda');	 // Test on entity and link to third party. Allowed if link is empty (Ex: contacts...).
 		$checkproject = array('projet','project'); // Test for project object
