@@ -238,8 +238,8 @@ if ($action == 'add')
 		$object->fulldayevent = (! empty($fulldayevent)?1:0);
 		$object->location = GETPOST("location");
 		$object->label = trim(GETPOST('label'));
-		$object->fk_element = GETPOST("fk_element");
-		$object->elementtype = GETPOST("elementtype");
+		$object->fk_element = GETPOST("fk_element", 'int');
+		$object->elementtype = GETPOST("elementtype", 'alpha');
 		if (! GETPOST('label'))
 		{
 			if (GETPOST('actioncode') == 'AC_RDV' && $contact->getFullName($langs))
@@ -349,7 +349,7 @@ if ($action == 'add')
 	{
 		$db->begin();
 
-		// On cree l'action
+		// Creation of action/event
 		$idaction=$object->create($user);
 
 		if ($idaction > 0)
@@ -857,7 +857,7 @@ if ($action == 'create')
 	print '<br><hr><br>';
 
 
-	print '<table class="border tableforfield" width="100%">';
+	print '<table class="border centpercent">';
 
 	if ($conf->societe->enabled)
 	{
