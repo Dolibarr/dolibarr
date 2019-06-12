@@ -993,8 +993,8 @@ if (empty($action) || $action == 'view') {
 	print "<td>" . $langs->trans("SubledgerAccount") . "</td>";
 	print "<td>" . $langs->trans("LabelOperation") . "</td>";
 	print "<td class='center'>" . $langs->trans("PaymentMode") . "</td>";
-	print "<td class='minwidth100 right'>" . $langs->trans("Debit") . "</td>";
-	print "<td class='minwidth100 right'>" . $langs->trans("Credit") . "</td>";
+	print "<td class='right'>" . $langs->trans("Debit") . "</td>";
+	print "<td class='right'>" . $langs->trans("Credit") . "</td>";
 	print "</tr>\n";
 
 	$r = '';
