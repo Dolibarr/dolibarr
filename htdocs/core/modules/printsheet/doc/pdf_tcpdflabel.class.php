@@ -213,7 +213,7 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 				if ($logo) $pdf->Image($logo, $_PosX+$xleft+$widthtouse-$logoWidth+1, $_PosY+$ytop, $logoWidth, $logoHeight);
 				if ($code && !empty($encoding))
 				{
-					$this->writeBarcode($pdf, $code, $encoding, $is2d, $_Pos%X+$xleft, $_PosY+$ytop, $widthtouse-$logoWidth-1, $heighttouse);
+					$this->writeBarcode($pdf, $code, $encoding, $is2d, $_PosX+$xleft, $_PosY+$ytop, $widthtouse-$logoWidth-1, $heighttouse);
 				} else {
 					$pdf->SetXY($_PosX+$xleft, $_PosY+$ytop);
 					$pdf->MultiCell($widthtouse-$logoWidth-1, $this->_Line_Height, $outputlangs->convToOutputCharset($textleft), 0, 'L');
