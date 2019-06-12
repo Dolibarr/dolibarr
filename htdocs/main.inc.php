@@ -1695,12 +1695,8 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 				if ($mode == 'wiki') $text.=sprintf($helpbaseurl, urlencode(html_entity_decode($helppage)));
 				else $text.=sprintf($helpbaseurl, $helppage);
 				$text.='">';
-				//$text.=img_picto('', 'helpdoc_top').' ';
 				$text.='<span class="fa fa-question-circle atoplogin valignmiddle"></span>';
-				//$toprightmenu.=$langs->trans($mode == 'wiki' ? 'OnlineHelp': 'Help');
-				//if ($mode == 'wiki') $text.=' ('.dol_trunc(strtr($helppage,'_',' '),8).')';
 				$text.='</a>';
-				//$toprightmenu.='</div>'."\n";
 				$toprightmenu.=@Form::textwithtooltip('', $title, 2, 1, $text, 'login_block_elem', 2);
 			}
 		}
@@ -1815,6 +1811,19 @@ function top_menu_user(User $user, Translate $langs)
         $profilName = '<i class="far fa-star classfortooltip" title="'.$langs->trans("Administrator").'" ></i> '.$profilName;
     }
 
+    // Define version to show
+    $appli=constant('DOL_APPLICATION_TITLE');
+    if (! empty($conf->global->MAIN_APPLICATION_TITLE))
+    {
+    	$appli=$conf->global->MAIN_APPLICATION_TITLE;
+    	if (preg_match('/\d\.\d/', $appli))
+    	{
+    		if (! preg_match('/'.preg_quote(DOL_VERSION).'/', $appli)) $appli.=" (".DOL_VERSION.")";	// If new title contains a version that is different than core
+    	}
+    	else $appli.=" ".DOL_VERSION;
+    }
+    else $appli.=" ".DOL_VERSION;
+
     $btnUser = '
     <div id="topmenu-login-dropdown" class="userimg atoplogin dropdown user user-menu">
         <a href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'" class="dropdown-toggle login-dropdown-a" data-toggle="dropdown">
@@ -1829,8 +1838,9 @@ function top_menu_user(User $user, Translate $langs)
                 '.$userDropDownImage.'
 
                 <p>
-                    '.$profilName.'
-                    <br/><small class="classfortooltip" title="'.$langs->trans("PreviousConnexion").'" ><i class="fa fa-user-clock"></i> '.dol_print_date($user->datepreviouslogin, "dayhour", 'tzuser').'</small>
+                    '.$profilName.'<br>
+					<small class="classfortooltip" title="'.$langs->trans("PreviousConnexion").'" ><i class="fa fa-user-clock"></i> '.dol_print_date($user->datepreviouslogin, "dayhour", 'tzuser').'</small><br>
+					<small class="classfortooltip"><i class="fa fa-cog"></i> '.$langs->trans("Version").' '.$appli.'</small>
                 </p>
             </div>
 

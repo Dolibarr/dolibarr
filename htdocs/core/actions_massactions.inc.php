@@ -33,6 +33,7 @@
 // $permtoread, $permtocreate and $permtodelete may be defined
 // $uploaddir may be defined (example to $conf->projet->dir_output."/";)
 // $toselect may be defined
+// $diroutputmassaction may be defined
 
 
 // Protection
@@ -1268,6 +1269,8 @@ if (! $error && $massaction == 'generate_doc' && $permtoread)
 
 $parameters['toselect']=$toselect;
 $parameters['uploaddir']=$uploaddir;
+$parameters['massaction']=$massaction;
+$parameters['diroutputmassaction']=$diroutputmassaction;
 
 $reshook=$hookmanager->executeHooks('doMassActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
