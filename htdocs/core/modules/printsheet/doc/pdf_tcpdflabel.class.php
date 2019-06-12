@@ -154,7 +154,7 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 		$widthtouse = $maxwidthtouse;
 		$heighttouse = $maxheighttouse;
 		$logoHeight = $heighttouse;
-		$logoWidth = $heighttouse;
+		$logoWidth = $widthtouse;
 
 		//var_dump($this->_Width.'x'.$this->_Height.' with border and scale '.$imgscale.' => max '.$maxwidthtouse.'x'.$maxheighttouse.' => We use '.$widthtouse.'x'.$heighttouse);exit;
 
@@ -175,9 +175,11 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 		}
 		elseif ($textleft!='' && $textright!='')	// left and right part
 		{
+			$logoHeight = $heighttouse/2;
+			$logoWidth = $widthtouse/2;
 			if (($textleft == '%LOGO%' || $textleft == '%PHOTO%' || $textleft == '%BARCODE%') && !strstr($textright, '%') )	 // left part logo/barcode right part text
 			{
-				if ($textleft == '%LOGO%' && $logo) $pdf->Image($logo, $_PosX+$xleft, $_PosY+$ytop, $widthtouse/2, 0);
+				if ($textleft == '%LOGO%' && $logo) $pdf->Image($logo, $_PosX+$xleft, $_PosY+$ytop, $logoWidth, $logoHeight);
 				elseif ($code && !empty($encoding))
 				{
 					$this->writeBarcode($pdf, $code, $encoding, $is2d, $_PosX+$xleft, $_PosY+$ytop, $widthtouse/2, $heighttouse);
@@ -187,7 +189,7 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 			}
 			elseif (($textright == '%LOGO%' || $textright == '%PHOTO%' || $textright == '%BARCODE%') && !strstr($textleft, '%')) // right part logo/barcode left part text
 			{
-				if ($textright == '%LOGO%' && $logo) $pdf->Image($logo, $_PosX+($widthtouse/2), $_PosY+$ytop, $widthtouse/2, 0);
+				if ($textright == '%LOGO%' && $logo) $pdf->Image($logo, $_PosX+($widthtouse/2), $_PosY+$ytop, $logoWidth, $logoHeight);
 				elseif ($code && !empty($encoding))
 				{
 					$this->writeBarcode($pdf, $code, $encoding, $is2d, $_PosX+($widthtouse/2), $_PosY+$ytop, $widthtouse/2, $heighttouse);
@@ -197,21 +199,21 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 			}
 			elseif ($textleft == '%LOGO%')	 // left part logo right part text/barcode
 			{
-				if ($logo) $pdf->Image($logo, $_PosX+$xleft, $_PosY+$ytop, 0, $logoHeight);
+				if ($logo) $pdf->Image($logo, $_PosX+$xleft, $_PosY+$ytop, $logoWidth, $logoHeight);
 				if ($code && !empty($encoding))
 				{
 					$this->writeBarcode($pdf, $code, $encoding, $is2d, $_PosX+$xleft+$logoWidth+1, $_PosY+$ytop, $widthtouse-$logoWidth-1, $heighttouse);
 				} else {
 					$pdf->SetXY($_PosX+$xleft+$logoWidth+1, $_PosY+$ytop);
-					$pdf->MultiCell($widthtouse-$logoWidth1-1, $this->_Line_Height, $outputlangs->convToOutputCharset($textright), 0, 'R');
+					$pdf->MultiCell($widthtouse-$logoWidth-1, $this->_Line_Height, $outputlangs->convToOutputCharset($textright), 0, 'R');
 				}
 			}
 			elseif ($textright == '%LOGO%')  // right part logo left part text/barcode
 			{
-				if ($logo) $pdf->Image($logo, $_PosX+$xleft+$widthtouse-$logoWidth+1, $_PosY+$ytop, 0, $logoHeight);
+				if ($logo) $pdf->Image($logo, $_PosX+$xleft+$widthtouse-$logoWidth+1, $_PosY+$ytop, $logoWidth, $logoHeight);
 				if ($code && !empty($encoding))
 				{
-					$this->writeBarcode($pdf, $code, $encoding, $is2d, $_PosX+$xleft, $_PosY+$ytop, $widthtouse-$logoWidth-1, $heighttouse);
+					$this->writeBarcode($pdf, $code, $encoding, $is2d, $_Pos%X+$xleft, $_PosY+$ytop, $widthtouse-$logoWidth-1, $heighttouse);
 				} else {
 					$pdf->SetXY($_PosX+$xleft, $_PosY+$ytop);
 					$pdf->MultiCell($widthtouse-$logoWidth-1, $this->_Line_Height, $outputlangs->convToOutputCharset($textleft), 0, 'L');
