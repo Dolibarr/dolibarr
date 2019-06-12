@@ -1122,9 +1122,9 @@ if (empty($action) || $action == 'view') {
 					}
 					print "</td>";
 					print "<td>" . $reflabel . "</td>";
-					print "<td class='center'>" . $val["type_payment"] . "</td>";
-					print "<td class='minwidth100 right'>" . ($mt < 0 ? price(- $mt) : '') . "</td>";
-					print "<td class='minwidth100 right'>" . ($mt >= 0 ? price($mt) : '') . "</td>";
+					print '<td class="center">' . $val["type_payment"] . "</td>";
+					print '<td class="right nowraponall">' . ($mt < 0 ? price(- $mt) : '') . "</td>";
+					print '<td class="right nowraponall">' . ($mt >= 0 ? price($mt) : '') . "</td>";
 					print "</tr>";
 				}
 			}
@@ -1158,9 +1158,9 @@ if (empty($action) || $action == 'view') {
 					*/
 					print "</td>";
 					print "<td>" . $reflabel . "</td>";
-					print "<td class='center'>" . $val["type_payment"] . "</td>";
-					print "<td class='minwidth100 right'>" . ($mt < 0 ? price(- $mt) : '') . "</td>";
-					print "<td class='minwidth100 right'>" . ($mt >= 0 ? price($mt) : '') . "</td>";
+					print '<td class="center">' . $val["type_payment"] . "</td>";
+					print '<td class="right nowraponall">' . ($mt < 0 ? price(- $mt) : '') . "</td>";
+					print '<td class="right nowraponall">' . ($mt >= 0 ? price($mt) : '') . "</td>";
 					print "</tr>";
 				}
 			}
