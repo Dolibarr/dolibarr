@@ -2269,7 +2269,7 @@ class FactureFournisseur extends CommonInvoice
         	if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
         }
 
-        $picto='bill';
+        $picto=$this->picto;
         if ($this->type == self::TYPE_REPLACEMENT) $picto.='r'; // Replacement invoice
         if ($this->type == self::TYPE_CREDIT_NOTE) $picto.='a'; // Credit note
         if ($this->type == self::TYPE_DEPOSIT)     $picto.='d'; // Deposit invoice
@@ -2281,6 +2281,8 @@ class FactureFournisseur extends CommonInvoice
             $label.= '<br><b>' . $langs->trans('RefSupplier') . ':</b> ' . $this->ref_supplier;
         if (! empty($this->libelle))
         	$label.= '<br><b>' . $langs->trans('Label') . ':</b> ' . $this->libelle;
+        if (! empty($this->date))
+        	$label .= '<br><b>' . $langs->trans('Date') . ':</b> ' . dol_print_date($this->date, 'day');
         if (! empty($this->total_ht))
             $label.= '<br><b>' . $langs->trans('AmountHT') . ':</b> ' . price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
         if (! empty($this->total_tva))
@@ -2312,7 +2314,7 @@ class FactureFournisseur extends CommonInvoice
         $linkend='</a>';
 
         $result .= $linkstart;
-        if ($withpicto) $result.=img_object(($notooltip?'':$label), $this->picto, ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
+        if ($withpicto) $result.=img_object(($notooltip?'':$label), $picto, ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
         if ($withpicto != 2) $result.= ($max?dol_trunc($ref, $max):$ref);
         $result .= $linkend;
 

@@ -62,7 +62,7 @@ $listofvoters=explode(',', $_SESSION["savevoter"]);
 // Add comment
 if (GETPOST('ajoutcomment', 'alpha'))
 {
-	if (!$canbemodified) accessforbidden();
+	if (!$canbemodified) accessforbidden('', 0, 0, 1);
 
 	$error=0;
 
@@ -97,7 +97,7 @@ if (GETPOST('ajoutcomment', 'alpha'))
 // Add vote
 if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x"))		// boutonp for chrome, boutonp_x for firefox
 {
-	if (!$canbemodified) accessforbidden();
+	if (!$canbemodified) accessforbidden('', 0, 0, 1);
 
 	//Si le nom est bien entré
 	if (GETPOST('nom', 'nohtml'))
@@ -220,7 +220,7 @@ if ($testmodifier)
 		}
 	}
 
-	if (!$canbemodified) accessforbidden();
+	if (!$canbemodified) accessforbidden('', 0, 0, 1);
 
 	$idtomodify=$_POST["idtomodify".$modifier];
 	$sql = 'UPDATE '.MAIN_DB_PREFIX."opensurvey_user_studs";
@@ -235,7 +235,7 @@ if ($testmodifier)
 $idcomment=GETPOST('deletecomment', 'int');
 if ($idcomment)
 {
-	if (!$canbemodified) accessforbidden();
+	if (!$canbemodified) accessforbidden('', 0, 0, 1);
 
 	$resql = $object->deleteComment($idcomment);
 }

@@ -388,7 +388,7 @@ if ($ok && GETPOST('standard', 'alpha'))
 							if (GETPOST('standard', 'alpha') == 'confirmed')
 							{
 								$db->query($sqldelete);
-							
+
 								print '<tr><td>Constant '.$obj->name.' set in entity '.$obj->entity.' with value '.$obj->value.' -> Module not enabled in entity '.$obj->entity.', we delete record</td></tr>';
 							}
 							else
@@ -409,13 +409,7 @@ if ($ok && GETPOST('standard', 'alpha'))
 			$db->commit();
 		}
 	}
-
-
-
 }
-
-/* From here, actions need a parameter */
-
 
 
 // restore_thirdparties_logos: Move logos to correct new directory.
@@ -853,7 +847,7 @@ if ($ok && GETPOST('clean_product_stock_batch', 'alpha'))
                             if ($resql2)
                             {
                                 // We update product_stock, so we must field stock into product too.
-                                $sql3='UPDATE llx_product p SET p.stock= (SELECT SUM(ps.reel) FROM llx_product_stock ps WHERE ps.fk_product = p.rowid)';
+                                $sql3='UPDATE '.MAIN_DB_PREFIX.'product p SET p.stock= (SELECT SUM(ps.reel) FROM '.MAIN_DB_PREFIX.'product_stock ps WHERE ps.fk_product = p.rowid)';
                                 $resql3=$db->query($sql3);
                                 if (! $resql3)
                                 {
@@ -1055,16 +1049,16 @@ if ($ok && GETPOST('force_disable_of_modules_not_found', 'alpha'))
 	                            print ' - File of '.$key.' ('.$reloffile.') NOT found, we disable the module.';
 	                            if (GETPOST('force_disable_of_modules_not_found') == 'confirmed')
 	                            {
-	                                $sql2 ="DELETE FROM ".MAIN_DB_PREFIX."const WHERE name 'MAIN_MODULE_".strtoupper($name)."_".strtoupper($key)."'";
+	                                $sql2 ="DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'MAIN_MODULE_".strtoupper($name)."_".strtoupper($key)."'";
 	                                $resql2=$db->query($sql2);
 	                                if (! $resql2)
 	                                {
 	                                    $error++;
 	                                    dol_print_error($db);
 	                                }
-	                                $sql2 ="DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'MAIN_MODULE_".strtoupper($name)."'";
-	                                $resql2=$db->query($sql2);
-	                                if (! $resql2)
+	                                $sql3 ="DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'MAIN_MODULE_".strtoupper($name)."'";
+	                                $resql3=$db->query($sql3);
+	                                if (! $resql3)
 	                                {
 	                                    $error++;
 	                                    dol_print_error($db);

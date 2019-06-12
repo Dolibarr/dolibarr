@@ -113,20 +113,22 @@ NEW: Widget birthdays of the month.
 NEW: Option in workflow module to set a reception billed on validate supplier bill.
 NEW: Autocompletion on lists should be available on mobile applications.
 NEW: Add mass action to close several members.
+NEW: Add hidden option ADD_UNSPLASH_LOGIN_BACKGROUND for random background
 
 For Developers:
 NEW: Module "DebugBar" is available as a stable module.
 NEW: Add API REST for donations
 NEW: Add a script 'purge-data.php' to purge data older than a defined creation date
 NEW: Add constant XFRAMEOPTIONS_ALLOWALL
-NEW: Add function isValidVATID()
-NEW: ADD document's product support in APIs
-NEW: REST API: get the list of objects in a category.
+NEW: Add function isValidVATID() to heck syntax of a VAT ID/number.
+NEW: Add document's product support in APIs
+NEW: Add REST API: get the list of objects in a category.
 NEW: Update Stripe library to 6.35
 NEW: Upgrade jquery lib to 3.3.1
 NEW: Add hook 'addHtmlHeader()'
 NEW: Add hook 'createRecurringInvoices()'
 NEW: Add hook 'afterSelectContactOptions'
+NEW: Add hook 'getAccessForbiddenMessage'
 NEW: Add hook support in accountancy index
 NEW: Add hook support in list of template invoices
 NEW: Add parameter 'replaceambiguouschars' on getRandomPassword function
@@ -135,22 +137,21 @@ NEW: Add the current modulepart into the Conf class object
 NEW: Add trigger FICHINTER_UNVALIDATE
 NEW: Add visibility with value 4 in framework to define fields to show
 NEW: More option to tune initialization of a new module with modulebuilder.
-NEW: API to list currencies
-NEW: API Proposal, Orders, Invoices: Add contact details
-NEW: hidden option to change concat desc order
+NEW: Add REST API to list currencies
+NEW: REST API Proposal, Orders, Invoices: Add contact details
+NEW: hidden option to change concat order of description/product label.
 NEW: Enhance management of webhooks
 NEW: Generation of doc by modulebuilder can include README and CHANGELOG
-NEW: massfilesarea feature for external modules
-NEW: Show enabled modules in dol_print_error()
+NEW: massfilesarea feature is possible for external modules
+NEW: Show list of enabled modules in dol_print_error().
 NEW: Simplification of CSS styles of default themes. 
 NEW: Clean code of a lot of deprecated code.
 NEW: Add hidden option to set a search entry to the top
 NEW: add hidden option DISPLAY_DISCOUNTED_SUPPLIER_PRICE
 NEW: add hidden option MAIN_DEFAULT_LANGUAGE_FILTER
 NEW: add hidden option NO_CONCAT_DESCRIPTION
-NEW: Add hidden option for ACCOUNTANCY_COMBO_FOR_AUX
-NEW: Add hidden option 'ADD_UNSPLASH_LOGIN_BACKGROUND'
-NEW: Add Hidden option 'OVERRIDE_VAT_FOR_EXPENSE_REPORT'
+NEW: Add hidden option ACCOUNTANCY_COMBO_FOR_AUX
+NEW: Add Hidden option OVERRIDE_VAT_FOR_EXPENSE_REPORT
 NEW: add hidden option MAIN_DOC_UPLOAD_NOT_RENAME_BY_DEFAULT
 NEW: Hidden conf to improve pdf desc item visibitity
 NEW: Look and feel v10 - Add CSS 'tabBarNoTop'
@@ -178,6 +179,8 @@ Following changes may create regressions for some external modules, but were nec
 * Column llx_facture.facnumber change to llx_facture.ref
 * Variable $dolibarr_main_cookie_cryptkey is no more created at install (it was not used by Dolibarr). A new variable 
   called $dolibarr_main_instance_unique_id is now generated at each installation. It will be used by some future features.
+
+
 
 ***** ChangeLog for 9.0.3 compared to 9.0.2 *****
 FIX: #11013

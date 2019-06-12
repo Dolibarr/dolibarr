@@ -86,11 +86,11 @@ if (!$user->rights->ticket->read) {
 // restrict access for externals users
 if ($user->societe_id > 0 && ($object->fk_soc != $user->societe_id))
 {
-	accessforbidden('', 0);
+	accessforbidden();
 }
 // or for unauthorized internals users
 if (!$user->societe_id && ($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY && $object->fk_user_assign != $user->id) && !$user->rights->ticket->manage) {
-	accessforbidden('', 0);
+	accessforbidden();
 }
 
 

@@ -33,3 +33,4 @@ PostActionAfterPayment=Post actions after payments
 ARollbackWasPerformedOnPostActions=A rollback was performed on all Post actions. You must complete post actions manually if they are necessary.
 ValidationOfPaymentFailed=Validation of payment has failed
 CardOwner=Card holder
+PayPalBalance=Paypal credit

@@ -659,7 +659,7 @@ function checkUserAccessToObject($user, $featuresarray, $objectid = 0, $tableand
  */
 function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $showonlymessage = 0)
 {
-    global $conf, $db, $user, $langs;
+    global $conf, $db, $user, $langs, $hookmanager;
     if (! is_object($langs))
     {
         include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
@@ -681,14 +681,27 @@ function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $sho
 	print '<br>';
 	if (empty($showonlymessage))
 	{
-		if ($user->login)
+		global $action, $object;
+		if (empty($hookmanager))
 		{
-			print $langs->trans("CurrentLogin").': <font class="error">'.$user->login.'</font><br>';
-			print $langs->trans("ErrorForbidden2", $langs->trans("Home"), $langs->trans("Users"));
+			$hookmanager = new HookManager($db);
+			// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+			$hookmanager->initHooks(array('main'));
 		}
-		else
+		$parameters = array('message'=>$message);
+		$reshook=$hookmanager->executeHooks('getAccessForbiddenMessage', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+		print $hookmanager->resPrint;
+		if (empty($reshook))
 		{
-			print $langs->trans("ErrorForbidden3");
+			if ($user->login)
+			{
+				print $langs->trans("CurrentLogin").': <font class="error">'.$user->login.'</font><br>';
+				print $langs->trans("ErrorForbidden2", $langs->transnoentitiesnoconv("Home"), $langs->transnoentitiesnoconv("Users"));
+			}
+			else
+			{
+				print $langs->trans("ErrorForbidden3");
+			}
 		}
 	}
 	if ($printfooter && function_exists("llxFooter")) llxFooter();
