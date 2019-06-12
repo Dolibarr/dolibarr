@@ -554,8 +554,8 @@ if (empty($action) || $action == 'view') {
 	print "<td>" . $langs->trans("AccountAccounting") . "</td>";
 	print "<td>" . $langs->trans("SubledgerAccount") . "</td>";
 	print "<td>" . $langs->trans("LabelOperation") . "</td>";
-	print "<td class='minwidth100 center'>" . $langs->trans("Debit") . "</td>";
-	print "<td class='minwidth100 center'>" . $langs->trans("Credit") . "</td>";
+	print '<td class="right">' . $langs->trans("Debit") . "</td>";
+	print '<td class="right">' . $langs->trans("Credit") . "</td>";
 	print "</tr>\n";
 
 	$r = '';
@@ -597,20 +597,21 @@ if (empty($action) || $action == 'view') {
 				$userstatic->id = $tabuser[$key]['id'];
 				$userstatic->name = $tabuser[$key]['name'];
 				print "<td>" . $userstatic->getNomUrl(0, 'user', 16) . ' - ' . $accountingaccount->label . "</td>";
-				print '<td class="minwidth100 right">' . ($mt >= 0 ? price($mt) : '') . "</td>";
-				print '<td class="minwidth100 right">' . ($mt < 0 ? price(- $mt) : '') . "</td>";
+				print '<td class="right nowraponall">' . ($mt >= 0 ? price($mt) : '') . "</td>";
+				print '<td class="right nowraponall">' . ($mt < 0 ? price(- $mt) : '') . "</td>";
 				print "</tr>";
 			}
 		}
 
 		// Third party
 		foreach ($tabttc[$key] as $k => $mt) {
+			$userstatic->id = $tabuser[$key]['id'];
+			$userstatic->name = $tabuser[$key]['name'];
+
 			print '<tr class="oddeven">';
 			print "<!-- Thirdparty -->";
 			print "<td>" . $date . "</td>";
 			print "<td>" . $expensereportstatic->getNomUrl(1) . "</td>";
-			$userstatic->id = $tabuser[$key]['id'];
-			$userstatic->name = $tabuser[$key]['name'];
 			// Account
 			print "<td>";
 			$accountoshow = length_accounta($conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT);
@@ -630,8 +631,8 @@ if (empty($action) || $action == 'view') {
 			else print $accountoshow;
 			print '</td>';
 			print "<td>" . $userstatic->getNomUrl(0, 'user', 16) . ' - ' . $langs->trans("SubledgerAccount") . "</td>";
-			print '<td class="minwidth100 right">' . ($mt < 0 ? - price(- $mt) : '') . "</td>";
-			print '<td class="minwidth100 right">' . ($mt >= 0 ? price($mt) : '') . "</td>";
+			print '<td class="right nowraponall">' . ($mt < 0 ? - price(- $mt) : '') . "</td>";
+			print '<td class="right nowraponall">' . ($mt >= 0 ? price($mt) : '') . "</td>";
 			print "</tr>";
 		}
 
@@ -662,8 +663,8 @@ if (empty($action) || $action == 'view') {
 				print '</td>';
 				print "<td>" . $userstatic->getNomUrl(0, 'user', 16) . ' - ' . $langs->trans("VAT"). ' '.join(', ', $def_tva[$key][$k]).' %'.($numtax?' - Localtax '.$numtax:'');
 				print "</td>";
-				print '<td class="minwidth100 right">' . ($mt >= 0 ? price($mt) : '') . "</td>";
-				print '<td class="minwidth100 right">' . ($mt < 0 ? price(- $mt) : '') . "</td>";
+				print '<td class="right nowraponall">' . ($mt >= 0 ? price($mt) : '') . "</td>";
+				print '<td class="right nowraponall">' . ($mt < 0 ? price(- $mt) : '') . "</td>";
 				print "</tr>";
 			}
 			}
