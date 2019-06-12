@@ -26,7 +26,7 @@
 
 /**
  * \file		htdocs/accountancy/journal/sellsjournal.php
- * \ingroup		Advanced accountancy
+ * \ingroup		Accountancy (Double entries)
  * \brief		Page with sells journal
  */
 

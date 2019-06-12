@@ -20,7 +20,7 @@
 
 /**
  * \file		htdocs/accountancy/supplier/index.php
- * \ingroup		Advanced accountancy
+ * \ingroup		Accountancy (Double entries)
  * \brief		Home supplier journalization page
  */
 

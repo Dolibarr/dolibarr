@@ -22,7 +22,7 @@
 
 /**
  * \file 		htdocs/accountancy/expensereport/list.php
- * \ingroup 	Advanced accountancy
+ * \ingroup 	Accountancy (Double entries)
  * \brief 		Ventilation page from expense reports
  */
 require '../../main.inc.php';

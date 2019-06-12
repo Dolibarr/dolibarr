@@ -25,7 +25,7 @@
 
 /**
  * \file		htdocs/accountancy/journal/purchasesjournal.php
- * \ingroup		Advanced accountancy
+ * \ingroup		Accountancy (Double entries)
  * \brief		Page with purchases journal
  */
 require '../../main.inc.php';
