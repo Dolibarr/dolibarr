@@ -17,7 +17,7 @@
 
 /**
  *	\file       htdocs/admin/openinghours.php
- *	\ingroup    Opening hours
+ *	\ingroup    core
  *	\brief      Setup page to configure opening hours
  */
 
