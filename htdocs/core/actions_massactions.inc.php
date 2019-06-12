@@ -44,7 +44,7 @@ if (empty($objectclass) || empty($uploaddir))
 
 // Mass actions. Controls on number of lines checked.
 $maxformassaction=(empty($conf->global->MAIN_LIMIT_FOR_MASS_ACTIONS)?1000:$conf->global->MAIN_LIMIT_FOR_MASS_ACTIONS);
-if (! empty($massaction) && count($toselect) < 1)
+if (! empty($massaction) && is_array($toselect) && count($toselect) < 1)
 {
     $error++;
     setEventMessages($langs->trans("NoRecordSelected"), null, "warnings");
@@ -1269,9 +1269,10 @@ if (! $error && $massaction == 'generate_doc' && $permtoread)
 
 $parameters['toselect']=$toselect;
 $parameters['uploaddir']=$uploaddir;
+$parameters['massaction']=$massaction;
+$parameters['diroutputmassaction']=$diroutputmassaction;
 
 $reshook=$hookmanager->executeHooks('doMassActions',$parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-
 
 

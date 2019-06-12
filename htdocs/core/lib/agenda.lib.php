@@ -469,7 +469,7 @@ function actions_prepare_head($object)
 
 		$head[$h][0] = DOL_URL_ROOT.'/resource/element_resource.php?element=action&element_id='.$object->id;
         $listofresourcelinked = $resource->getElementResources($object->element, $object->id);
-        $nbResources=count($listofresourcelinked);
+        $nbResources=(is_array($listofresourcelinked)?count($listofresourcelinked):0);
 		$head[$h][1] = $langs->trans("Resources");
 		if ($nbResources > 0) $head[$h][1].= ' <span class="badge">'.($nbResources).'</span>';
 		$head[$h][2] = 'resources';
