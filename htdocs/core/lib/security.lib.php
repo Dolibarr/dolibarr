@@ -252,7 +252,6 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 			$tmpreadok=1;
 			foreach($feature2 as $subfeature)
 			{
-				var_dump($subfeature);
 				if ($subfeature == 'user' && $user->id == $objectid) continue; // A user can always read its own card
 				if (! empty($subfeature) && empty($user->rights->$feature->$subfeature->lire) && empty($user->rights->$feature->$subfeature->read)) { $tmpreadok=0; }
 				elseif (empty($subfeature) && empty($user->rights->$feature->lire) && empty($user->rights->$feature->read)) { $tmpreadok=0; }

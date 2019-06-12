@@ -690,7 +690,7 @@ if ($action == 'create')
 
 	dol_fiche_head();
 
-	print '<table class="border tableforfield" width="100%">';
+	print '<table class="border centpercent">';
 
 	// Type of event
 	if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
