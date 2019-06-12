@@ -20,7 +20,7 @@
 
 /**
  * \file		htdocs/accountancy/expensereport/index.php
- * \ingroup		Advanced accountancy
+ * \ingroup		Accountancy (Double entries)
  * \brief		Home expense report ventilation
  */
 

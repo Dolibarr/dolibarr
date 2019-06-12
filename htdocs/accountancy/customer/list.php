@@ -22,7 +22,7 @@
 
 /**
  * \file 		htdocs/accountancy/customer/list.php
- * \ingroup 	Advanced accountancy
+ * \ingroup 	Accountancy (Double entries)
  * \brief 		Ventilation page from customers invoices
  */
 require '../../main.inc.php';

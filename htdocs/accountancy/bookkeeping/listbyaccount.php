@@ -21,7 +21,7 @@
 
 /**
  * \file 		htdocs/accountancy/bookkeeping/listbyaccount.php
- * \ingroup 	Advanced accountancy
+ * \ingroup 	Accountancy (Double entries)
  * \brief 		List operation of book keeping ordered by account number
  */
 
