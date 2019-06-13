@@ -1398,6 +1398,8 @@ class Expedition extends CommonObject
 			$this->total_localtax1 = 0;
 			$this->total_localtax2 = 0;
 
+			$line = new ExpeditionLigne($this->db);
+
 			while ($i < $num)
 			{
 				$obj = $this->db->fetch_object($resql);
@@ -2562,8 +2564,6 @@ class ExpeditionLigne extends CommonObjectLine
 			$this->error = 'ErrorMandatoryParametersNotProvided';
 			return -1;
 		}
-		// Clean parameters
-		if (empty($this->entrepot_id)) $this->entrepot_id='null';
 
 		$this->db->begin();
 
@@ -2574,7 +2574,7 @@ class ExpeditionLigne extends CommonObjectLine
 		$sql.= ", qty";
 		$sql.= ") VALUES (";
 		$sql.= $this->fk_expedition;
-		$sql.= ", ".$this->entrepot_id;
+		$sql.= ", ".(empty($this->entrepot_id) ? 'NULL' : $this->entrepot_id);
 		$sql.= ", ".$this->fk_origin_line;
 		$sql.= ", ".$this->qty;
 		$sql.= ")";
