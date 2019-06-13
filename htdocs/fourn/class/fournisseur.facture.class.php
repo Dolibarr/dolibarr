@@ -205,7 +205,7 @@ class FactureFournisseur extends CommonInvoice
     public $multicurrency_total_ht;
     public $multicurrency_total_tva;
     public $multicurrency_total_ttc;
-    //! id of source invoice if replacement invoice or credit note
+    //! id of source var_dump($$this);invoice if replacement invoice or credit note
     /**
      * @var int ID
      */
@@ -312,7 +312,6 @@ class FactureFournisseur extends CommonInvoice
         $this->db->begin();
 
         if (! $remise) $remise = 0 ;
-        $totalht = ($amount - $remise);
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."facture_fourn (";
 		$sql.= "ref";
@@ -424,7 +423,7 @@ class FactureFournisseur extends CommonInvoice
 
 			if (count($this->lines) && is_object($this->lines[0]))	// If this->lines is array of InvoiceLines (preferred mode)
 			{
-                dol_syslog("There is ".count($this->lines)." lines that are invoice lines objects");
+				dol_syslog("There is ".count($this->lines)." lines that are invoice lines objects");
                 foreach ($this->lines as $i => $val)
                 {
                     $sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facture_fourn_det (fk_facture_fourn, special_code)';
