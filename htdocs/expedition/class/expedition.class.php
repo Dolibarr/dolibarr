@@ -446,7 +446,9 @@ class Expedition extends CommonObject
 	 */
 	public function create_line($entrepot_id, $origin_line_id, $qty, $array_options = 0)
 	{
-        //phpcs:enable
+		//phpcs:enable
+		global $user;
+
 		$expeditionline = new ExpeditionLigne($this->db);
 		$expeditionline->fk_expedition = $this->id;
 		$expeditionline->entrepot_id = $entrepot_id;
@@ -454,7 +456,7 @@ class Expedition extends CommonObject
 		$expeditionline->qty = $qty;
 		$expeditionline->array_options = $array_options;
 
-		if (($lineId = $expeditionline->insert()) < 0)
+		if (($lineId = $expeditionline->insert($user)) < 0)
 		{
 			$this->errors[]=$expeditionline->error;
 		}
@@ -2552,7 +2554,7 @@ class ExpeditionLigne extends CommonObjectLine
 	 *	@param      int		$notrigger		1 = disable triggers
 	 *	@return     int						<0 if KO, line id >0 if OK
 	 */
-	public function insert($user = null, $notrigger = 0)
+	public function insert($user, $notrigger = 0)
 	{
 		global $langs, $conf;
 
