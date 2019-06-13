@@ -281,7 +281,7 @@ if (! $error && $massaction == 'confirm_presend')
 					// For supplier invoices, we use the file provided by supplier, not the one we generate
 					if ($objectobj->element == 'invoice_supplier')
 					{
-						$fileparams = dol_most_recent_file($uploaddir . '/' . get_exdir($objectobj->id,2,0,0,$objectobj,$objectobj->element).$objectobj->ref, preg_quote($objectobj->ref,'/').'([^\-])+');
+						$fileparams = dol_most_recent_file($uploaddir.'/'.get_exdir($objectobj->id, 2, 0, 0, $objectobj, $objectobj->element).$objectobj->ref, preg_quote($objectobj->ref, '/').'([^\-])+');
 						$file = $fileparams['fullname'];
 					}
 
