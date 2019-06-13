@@ -247,10 +247,10 @@ class ProductFournisseur extends Product
 	    if (empty($supplier_reputation) || $supplier_reputation == -1) $supplier_reputation='';
         if ($delivery_time_days != '' && ! is_numeric($delivery_time_days)) $delivery_time_days = '';
         if ($price_base_type == 'TTC')
-		{
-			$ttx = $tva_tx;
-			$buyprice = $buyprice/(1+($ttx/100));
-		}
+        {
+            $ttx = $tva_tx;
+            $buyprice = $buyprice/(1+($ttx/100));
+        }
 
 		// Multicurrency
         if ($conf->multicurrency->enabled) {
@@ -259,10 +259,10 @@ class ProductFournisseur extends Product
 
             if (empty($multicurrency_buyprice)) $multicurrency_buyprice=0;
             if ($multicurrency_price_base_type == 'TTC')
-    		{
-    			$ttx = $tva_tx;
-    			$multicurrency_buyprice = $multicurrency_buyprice/(1+($ttx/100));
-    		}
+            {
+                $ttx = $tva_tx;
+                $multicurrency_buyprice = $multicurrency_buyprice/(1+($ttx/100));
+            }
             $multicurrency_buyprice=price2num($multicurrency_buyprice, 'MU');
             $multicurrency_unitBuyPrice=price2num($multicurrency_buyprice/$qty, 'MU');
 
@@ -369,7 +369,7 @@ class ProductFournisseur extends Product
                 // End call triggers
                 if (! $error && empty($conf->global->PRODUCT_PRICE_SUPPLIER_NO_LOG))
                 {
-                    $result = $this->logPrice($user, $now, $buyprice, $qty, $multicurrency_buyprice, $multicurrency_unitBuyPrice, $multicurrency_tx, $fk_multicurrenc, $multicurrency_code);
+                    $result = $this->logPrice($user, $now, $buyprice, $qty, $multicurrency_buyprice, $multicurrency_unitBuyPrice, $multicurrency_tx, $fk_multicurrency, $multicurrency_code);
                     if ($result < 0) {
                         $error++;
                     }
@@ -911,21 +911,21 @@ class ProductFournisseur extends Product
         return $out;
     }
 
-	/**
-	 * Function used to replace a thirdparty id with another one.
-	 *
-	 * @param DoliDB $db Database handler
-	 * @param int $origin_id Old thirdparty id
-	 * @param int $dest_id New thirdparty id
-	 * @return bool
-	 */
-	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
-	{
-		$tables = array(
-			'product_fournisseur_price'
-		);
+    /**
+     * Function used to replace a thirdparty id with another one.
+     *
+     * @param DoliDB $db Database handler
+     * @param int $origin_id Old thirdparty id
+     * @param int $dest_id New thirdparty id
+     * @return bool
+     */
+    public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+    {
+        $tables = array(
+            'product_fournisseur_price'
+        );
 
-		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+        return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
     }
 
     /**
@@ -1089,7 +1089,7 @@ class ProductFournisseur extends Product
      *
      * @return int < 0 NOK > 0 OK
      */
-    private function logPrice($user, $datec, $buyprice, $qty, $multicurrency_buyprice, $multicurrency_unitBuyPrice, $multicurrency_tx, $fk_multicurrency, $multicurrency_code)
+    private function logPrice($user, $datec, $buyprice, $qty, $multicurrency_buyprice = null, $multicurrency_unitBuyPrice = null, $multicurrency_tx = null, $fk_multicurrency = null, $multicurrency_code = null)
     {
         // Add record into log table
         $sql = "INSERT INTO " . MAIN_DB_PREFIX . "product_fournisseur_price_log(";

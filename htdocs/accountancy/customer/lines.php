@@ -21,7 +21,7 @@
 
 /**
  * \file 		htdocs/accountancy/customer/lines.php
- * \ingroup 	Advanced accountancy
+ * \ingroup 	Accountancy (Double entries)
  * \brief 		Page of detail of the lines of ventilation of invoices customers
  */
 require '../../main.inc.php';
@@ -310,9 +310,9 @@ if ($result) {
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_invoice" value="' . dol_escape_htmltag($search_invoice) . '"></td>';
 	print '<td class="liste_titre center nowraponall">';
     if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) {
-        print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_day" value="'.dol_escape_htmltag($search_day).'">';
+        print '<input class="flat valignmiddle maxwidth25" type="text" maxlength="2" name="search_day" value="'.dol_escape_htmltag($search_day).'">';
     }
-   	print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_month" value="'.dol_escape_htmltag($search_month).'">';
+   	print '<input class="flat valignmiddle maxwidth25" type="text" maxlength="2" name="search_month" value="'.dol_escape_htmltag($search_month).'">';
    	$formother->select_year($search_year, 'search_year', 1, 20, 5);
 	print '</td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_ref" value="' . dol_escape_htmltag($search_ref) . '"></td>';
