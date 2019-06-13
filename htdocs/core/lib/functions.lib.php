@@ -8123,7 +8123,7 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
         $attr['href'] = '';
     }
 
-    if(empty($id)){
+    if(!empty($id)){
         $attr['id'] = $id;
     }
 
