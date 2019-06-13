@@ -145,6 +145,35 @@ if (empty($reshook))
 			$action = '';
 		}
 	}
+
+	// Add line
+	if ($action == 'updateline' && $user->rights->bom->write)
+	{
+		$langs->load('errors');
+		$error = 0;
+
+		// Set if we used free entry or predefined product
+		$qty=GETPOST('qty', 'int');
+		$efficiency=GETPOST('efficiency', 'int');
+
+		if ($qty == '') {
+			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), null, 'errors');
+			$error++;
+		}
+
+		$bomline = new BOMLine($db);
+		$bomline->fetch($lineid);
+		$bomline->qty = $qty;
+		$bomline->efficiency = $efficiency;
+
+		$result = $bomline->update($user);
+		if ($result <= 0)
+		{
+			setEventMessages($bomline->error, $bomline->errors, 'errors');
+			$action = '';
+		}
+	}
+
 }
 
 
