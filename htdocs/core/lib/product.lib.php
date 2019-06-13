@@ -494,7 +494,7 @@ function measuring_units_string($unit, $measuring_style = '')
 	require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
 	$measuringUnits= new CUnits($db);
 	$result = $measuringUnits->fetchAll('', '', 0, 0, array(
-			't.rowid => $unit,
+			't.rowid' => $unit,
 			't.unit_type' => $measuring_style,
 			't.active' => 1
 	));
