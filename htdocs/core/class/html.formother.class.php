@@ -402,7 +402,6 @@ class FormOther
         	if (! empty($user->admin) && empty($user->entity) && $conf->entity == 1) {
         		$sql_usr.= " WHERE u.entity IS NOT NULL"; // Show all users
         	} else {
-        		$sql_usr.= ",
         		$sql_usr.= " WHERE EXISTS (SELECT ug.fk_user FROM ".MAIN_DB_PREFIX."usergroup_user as ug WHERE u.rowid = ug.fk_user AND ug.entity IN (".getEntity('user')."))";
         		$sql_usr.= " OR u.entity = 0"; // Show always superadmin
         	}
