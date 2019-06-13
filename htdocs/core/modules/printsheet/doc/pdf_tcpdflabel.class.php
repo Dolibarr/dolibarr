@@ -199,7 +199,7 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 			}
 			elseif ($textleft == '%LOGO%')	 // left part logo right part text/barcode
 			{
-				if ($logo) $pdf->Image($logo, $_PosX+$xleft, $_PosY+$ytop, $logoWidth, $logoHeight);
+				if ($logo) $pdf->Image($logo, $_PosX+$xleft, $_PosY+$ytop, 0, $logoHeight);
 				if ($code && !empty($encoding))
 				{
 					$this->writeBarcode($pdf, $code, $encoding, $is2d, $_PosX+$xleft+$logoWidth+1, $_PosY+$ytop, $widthtouse-$logoWidth-1, $heighttouse);
@@ -210,7 +210,7 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 			}
 			elseif ($textright == '%LOGO%')  // right part logo left part text/barcode
 			{
-				if ($logo) $pdf->Image($logo, $_PosX+$xleft+$widthtouse-$logoWidth+1, $_PosY+$ytop, $logoWidth, $logoHeight);
+				if ($logo) $pdf->Image($logo, $_PosX+$xleft+$widthtouse-$logoWidth+1, $_PosY+$ytop, 0, $logoHeight);
 				if ($code && !empty($encoding))
 				{
 					$this->writeBarcode($pdf, $code, $encoding, $is2d, $_PosX+$xleft, $_PosY+$ytop, $widthtouse-$logoWidth-1, $heighttouse);
