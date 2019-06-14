@@ -83,13 +83,13 @@ class AccountancySystem
 
 	    if ($rowid > 0 || $ref)
 	    {
-	        $sql  = "SELECT a.pcg_version, a.label, a.active";
+	        $sql  = "SELECT a.rowid, a.pcg_version, a.label, a.active";
 	        $sql .= " FROM " . MAIN_DB_PREFIX . "accounting_system as a";
 	        $sql .= " WHERE";
 	        if ($rowid) {
 	            $sql .= " a.rowid = '" . $rowid . "'";
 	        } elseif ($ref) {
-	            $sql .= " a.pcg_version = '" . $ref . "'";
+	            $sql .= " a.pcg_version = '" . $this->db->escape($ref) . "'";
 	        }
 
 	        dol_syslog(get_class($this) . "::fetch sql=" . $sql, LOG_DEBUG);

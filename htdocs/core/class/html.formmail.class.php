@@ -394,6 +394,7 @@ class FormMail extends Form
 			if ($this->param['models'] != 'none')
 			{
 				$result = $this->fetchAllEMailTemplate($this->param["models"], $user, $outputlangs);
+
 				if ($result < 0)
 				{
 					setEventMessages($this->error, $this->errors, 'errors');

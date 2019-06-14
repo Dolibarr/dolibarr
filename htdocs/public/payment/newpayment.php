@@ -354,7 +354,7 @@ if ($action == 'dopayment')
 	if ($paymentmethod == 'paybox')
 	{
 		$PRICE=price2num(GETPOST("newamount"),'MT');
-		$email=GETPOST("email",'alpha');
+		$email=$conf->global->ONLINE_PAYMENT_SENDEMAIL;
 		$thirdparty_id=GETPOST('thirdparty_id', 'int');
 
 		$origfulltag=GETPOST("fulltag",'alpha');

@@ -70,6 +70,11 @@ $error = 0;
  * Actions
  */
 
+if (GETPOST('cancel', 'alpha'))
+{
+    $action = '';
+}
+
 // If create a request
 if ($action == 'create')
 {
@@ -192,7 +197,35 @@ if ($action == 'create')
     }
 }
 
-if ($action == 'update')
+if ($action == 'update' && GETPOSTISSET('savevalidator') && ! empty($user->rights->holiday->approve))
+{
+    $object = new Holiday($db);
+    $object->fetch($id);
+
+    $object->oldcopy = dol_clone($object);
+
+    $object->fk_validator = GETPOST('valideur', 'int');
+
+    if ($object->fk_validator != $object->oldcopy->fk_validator)
+    {
+        $verif = $object->update($user);
+
+        if ($verif <= 0)
+        {
+            setEventMessages($object->error, $object->errors, 'warnings');
+            $action='editvalidator';
+        }
+        else
+        {
+            header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+            exit;
+        }
+    }
+
+    $action = '';
+}
+
+if ($action == 'update' && ! GETPOSTISSET('savevalidator'))
 {
 	$date_debut = dol_mktime(0, 0, 0, GETPOST('date_debut_month'), GETPOST('date_debut_day'), GETPOST('date_debut_year'));
 	$date_fin = dol_mktime(0, 0, 0, GETPOST('date_fin_month'), GETPOST('date_fin_day'), GETPOST('date_fin_year'));
@@ -1086,9 +1119,9 @@ else
             {
                 $head=holiday_prepare_head($object);
 
-                if ($action == 'edit' && $object->statut == 1)
+                if (($action == 'edit' && $object->statut == 1) || ($action == 'editvalidator'))
                 {
-                    $edit = true;
+                    if ($action == 'edit' && $object->statut == 1) $edit = true;
                     print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">'."\n";
                     print '<input type="hidden" name="action" value="update"/>'."\n";
                     print '<input type="hidden" name="id" value="'.$object->id.'" />'."\n";
@@ -1128,7 +1161,7 @@ else
 			    $starthalfday=($object->halfday == -1 || $object->halfday == 2)?'afternoon':'morning';
 			    $endhalfday=($object->halfday == 1 || $object->halfday == 2)?'morning':'afternoon';
 
-                if(!$edit)
+                if (!$edit)
                 {
                     print '<tr>';
                     print '<td class="nowrap">'.$langs->trans('DateDebCP').' ('.$langs->trans("FirstDayOfHoliday").')</td>';
@@ -1227,24 +1260,39 @@ else
                 }
 
                 // Validator
-                if (!$edit) {
+                if (!$edit && $action != 'editvalidator') {
                     print '<tr>';
                     print '<td class="titlefield">';
                     if ($object->statut == 3 || $object->statut == 4) print $langs->trans('ApprovedBy');
                     else print $langs->trans('ReviewedByCP');
                     print '</td>';
-                    print '<td>'.$valideur->getNomUrl(-1).'</td>';
+                    print '<td>'.$valideur->getNomUrl(-1);
+                    $include_users = $object->fetch_users_approver_holiday();
+                    if (in_array($user->id, $include_users) && $object->statut == Holiday::STATUS_VALIDATED)
+                    {
+                        print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editvalidator">'.img_edit($langs->trans("Edit")).'</a>';
+                    }
+                    print '</td>';
                     print '</tr>';
                 } else {
                 	print '<tr>';
                     print '<td class="titlefield">'.$langs->trans('ReviewedByCP').'</td>';
                     print '<td>';
                     $include_users = $object->fetch_users_approver_holiday();
+                    if (! in_array($object->fk_validator, $include_users))  // Add the current validator to the list to not lose it when editing.
+                    {
+                        $include_users[]=$object->fk_validator;
+                    }
                     if (empty($include_users)) print img_warning().' '.$langs->trans("NobodyHasPermissionToValidateHolidays");
                     else
                     {
-                    	$s=$form->select_dolusers($object->fk_validator, "valideur", 1, ($user->admin ? '' : array($user->id)), 0, $include_users);
+                        $s=$form->select_dolusers($object->fk_validator, "valideur", (($action == 'editvalidator') ? 0 : 1), ($user->admin ? '' : array($user->id)), 0, $include_users);
                     	print $form->textwithpicto($s, $langs->trans("AnyOtherInThisListCanValidate"));
+                    }
+                    if ($action == 'editvalidator')
+                    {
+                        print '<input type="submit" class="button" name="savevalidator" value="'.$langs->trans("Save").'">';
+                        print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
                     }
                     print '</td>';
                     print '</tr>';
@@ -1324,19 +1372,20 @@ else
                 	print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("TitleSetToDraft"),$langs->trans("ConfirmSetToDraft"),"confirm_draft", '', 1, 1);
                 }
 
-
-                if ($action == 'edit' && $object->statut == Holiday::STATUS_DRAFT)
+                if (($action == 'edit' && $object->statut == Holiday::STATUS_DRAFT) || ($action == 'editvalidator'))
                 {
-                    print '<div align="center">';
-                    if ($cancreate && $object->statut == Holiday::STATUS_DRAFT)
+                    if ($action == 'edit' && $object->statut == Holiday::STATUS_DRAFT)
                     {
-                        print '<input type="submit" value="'.$langs->trans("Save").'" class="button">';
+                        print '<div align="center">';
+                        if ($cancreate && $object->statut == Holiday::STATUS_DRAFT)
+                        {
+                            print '<input type="submit" value="'.$langs->trans("Save").'" class="button">';
+                        }
+                        print '</div>';
                     }
-                    print '</div>';
 
                     print '</form>';
                 }
-
 
                 if (! $edit)
                 {
