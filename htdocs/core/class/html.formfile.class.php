@@ -1042,7 +1042,7 @@ class FormFile
 	 * 	@param	 int	$useinecm			Change output for use in ecm module:
 	 * 										0 or 6: Add a preview column. Show also a rename button. Show also a crop button for some values of $modulepart (must be supported into hard coded list in this function + photos_resize.php + restrictedArea + checkUserAccessToObject)
 	 * 										1: Add link to edit ECM entry
-	 * 										2: Add rename and crop file
+	 * 										2: Add rename and crop link
 	 *                                      4: Add a preview column
 	 *                                      5: Add link to edit ECM entry and Add a preview column
 	 * 	@param	 string	$textifempty		Text to show if filearray is empty ('NoFileFound' if not defined)
