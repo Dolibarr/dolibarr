@@ -228,6 +228,7 @@ CREATE TABLE llx_bom_bom(
 
 ALTER TABLE llx_bom_bom ADD COLUMN efficiency double(8,4) DEFAULT 1;
 ALTER TABLE llx_bom_bom ADD COLUMN entity integer DEFAULT 1 NOT NULL;
+ALTER TABLE llx_bom_bom ADD COLUMN date_valid datetime NOT NULL;
 
 create table llx_bom_bom_extrafields
 (
