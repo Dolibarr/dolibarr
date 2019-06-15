@@ -1158,6 +1158,7 @@ if (! $error && ($massaction == 'delete' || ($action == 'delete' && $confirm == 
     $db->begin();
 
     $objecttmp=new $objectclass($db);
+    $permissiontodeletenondraft=strtoupper($objectclass).'_CAN_ALWAYS_BE_REMOVED';
     $nbok = 0;
     foreach($toselect as $toselectid)
     {
@@ -1165,7 +1166,7 @@ if (! $error && ($massaction == 'delete' || ($action == 'delete' && $confirm == 
         if ($result > 0)
         {
             // Refuse deletion for some objects/status
-            if ($objectclass == 'Facture' && empty($conf->global->INVOICE_CAN_ALWAYS_BE_REMOVED) && $objecttmp->status != Facture::STATUS_DRAFT)
+            if (empty($conf->global->$permissiontodeletenondraft) && $objecttmp->statut != $objecttmp::STATUS_DRAFT)
             {
                 $langs->load("errors");
                 $nbignored++;
