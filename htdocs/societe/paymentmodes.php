@@ -1123,7 +1123,8 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				print '</td>';
 				// Default
 				print '<td class="center" width="50">';
-				if (($customerstripe->default_source != $src->id))
+				if ((empty($customerstripe->invoice_settings) && $customerstripe->default_source != $src->id) ||
+					(! empty($customerstripe->invoice_settings) && $customerstripe->invoice_settings->default_payment_method != $src->id))
 				{
 					print '<a href="' . DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&source='.$src->id.'&action=setassourcedefault">';
 					print img_picto($langs->trans("Default"), 'off');
