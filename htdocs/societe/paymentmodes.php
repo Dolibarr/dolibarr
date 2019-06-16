@@ -614,8 +614,14 @@ if (empty($reshook))
 		{
 			try {
 				$cu=$stripe->customerStripe($object, $stripeacc, $servicestatus);
-				$cu->default_source = (string) $source;								// Old
-				$cu->invoice_settings->default_payment_method = (string) $source;	// New
+				if (preg_match('/pm_/', $source))
+				{
+					$cu->invoice_settings->default_payment_method = (string) $source;	// New
+				}
+				else
+				{
+					$cu->default_source = (string) $source;								// Old
+				}
 				$result = $cu->save();
 
 				$url=DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id;
