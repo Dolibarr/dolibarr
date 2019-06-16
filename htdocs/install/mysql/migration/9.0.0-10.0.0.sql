@@ -228,7 +228,7 @@ CREATE TABLE llx_bom_bom(
 
 ALTER TABLE llx_bom_bom ADD COLUMN efficiency double(8,4) DEFAULT 1;
 ALTER TABLE llx_bom_bom ADD COLUMN entity integer DEFAULT 1 NOT NULL;
-ALTER TABLE llx_bom_bom ADD COLUMN date_valid datetime NOT NULL;
+ALTER TABLE llx_bom_bom ADD COLUMN date_valid datetime;
 
 create table llx_bom_bom_extrafields
 (
@@ -254,7 +254,6 @@ CREATE TABLE llx_bom_bomline(
 
 ALTER TABLE llx_bom_bomline ADD COLUMN efficiency double(8,4) DEFAULT 1;
 ALTER TABLE llx_bom_bomline ADD COLUMN fk_bom_child integer NULL;
-
 
 create table llx_bom_bomline_extrafields
 (

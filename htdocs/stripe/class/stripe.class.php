@@ -237,6 +237,33 @@ class Stripe extends CommonObject
 		return $customer;
 	}
 
+	/**
+	 * Get the Stripe payment method Object from its ID
+	 *
+	 * @param	string	$paymentmethod	   			Payment Method ID
+	 * @param	string	$key						''=Use common API. If not '', it is the Stripe connect account 'acc_....' to use Stripe connect
+	 * @param	int		$status						Status (0=test, 1=live)
+	 * @return 	\Stripe\PaymentMethod|null 			Stripe PaymentMethod or null if not found
+	 */
+	public function getPaymentMethodStripe($paymentmethod, $key = '', $status = 0)
+	{
+		try {
+			// Force to use the correct API key
+			global $stripearrayofkeysbyenv;
+			\Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$status]['secret_key']);
+			if (empty($key)) {				// If the Stripe connect account not set, we use common API usage
+				$stripepaymentmethod = \Stripe\PaymentMethod::retrieve(''.$paymentmethod->id.'');
+			} else {
+				$stripepaymentmethod = \Stripe\PaymentMethod::retrieve(''.$paymentmethod->id.'', array("stripe_account" => $key));
+			}
+		}
+		catch(Exception $e)
+		{
+			$this->error = $e->getMessage();
+		}
+		return $stripepaymentmethod;
+	}
+
     /**
 	 * Get the Stripe payment intent. Create it with confirm=false
      * Warning. If a payment was tried and failed, a payment intent was created.
@@ -259,7 +286,7 @@ class Stripe extends CommonObject
 	 */
 	public function getPaymentIntent($amount, $currency_code, $tag, $description = '', $object = null, $customer = null, $key = null, $status = 0, $usethirdpartyemailforreceiptemail = 0, $mode = 'automatic', $confirmnow = false)
 	{
-		global $conf, $user, $mysoc;
+		global $conf;
 
 		dol_syslog("getPaymentIntent");
 
@@ -272,12 +299,14 @@ class Stripe extends CommonObject
 		if (! in_array($currency_code, $arrayzerounitcurrency)) $stripeamount = $amount * 100;
 		else $stripeamount = $amount;
 
-		$fee = round(($$stripeamount * ($conf->global->STRIPE_APPLICATION_FEE_PERCENT / 100) + $conf->global->STRIPE_APPLICATION_FEE) * 100);
-		if ($fee >= ($conf->global->STRIPE_APPLICATION_FEE_MAXIMAL * 100) && $conf->global->STRIPE_APPLICATION_FEE_MAXIMAL>$conf->global->STRIPE_APPLICATION_FEE_MINIMAL) {
-		    $fee = round($conf->global->STRIPE_APPLICATION_FEE_MAXIMAL * 100);
-		} elseif ($fee < ($conf->global->STRIPE_APPLICATION_FEE_MINIMAL * 100)) {
-		    $fee = round($conf->global->STRIPE_APPLICATION_FEE_MINIMAL * 100);
+		$fee = round($amount * ($conf->global->STRIPE_APPLICATION_FEE_PERCENT / 100) + $conf->global->STRIPE_APPLICATION_FEE);
+		if ($fee >= $conf->global->STRIPE_APPLICATION_FEE_MAXIMAL && $conf->global->STRIPE_APPLICATION_FEE_MAXIMAL > $conf->global->STRIPE_APPLICATION_FEE_MINIMAL) {
+		    $fee = round($conf->global->STRIPE_APPLICATION_FEE_MAXIMAL);
+		} elseif ($fee < $conf->global->STRIPE_APPLICATION_FEE_MINIMAL) {
+		    $fee = round($conf->global->STRIPE_APPLICATION_FEE_MINIMAL);
 		}
+		if (! in_array($currency_code, $arrayzerounitcurrency)) $stripefee = $fee * 100;
+		else $stripefee = $fee;
 
 		$paymentintent = null;
 
@@ -352,9 +381,9 @@ class Stripe extends CommonObject
     		// payment_method_types = array('card')
             //var_dump($dataforintent);
 
-    		if ($conf->entity!=$conf->global->STRIPECONNECT_PRINCIPAL && $fee>0)
+    		if ($conf->entity!=$conf->global->STRIPECONNECT_PRINCIPAL && $stripefee > 0)
     		{
-    			$dataforintent["application_fee"] = $fee;
+    			$dataforintent["application_fee"] = $stripefee;
     		}
     		if ($usethirdpartyemailforreceiptemail && is_object($object) && $object->thirdparty->email)
     		{
@@ -461,8 +490,7 @@ class Stripe extends CommonObject
 
 		$sql = "SELECT sa.stripe_card_ref, sa.proprio, sa.exp_date_month, sa.exp_date_year, sa.number, sa.cvn";			// stripe_card_ref is card_....
 		$sql.= " FROM " . MAIN_DB_PREFIX . "societe_rib as sa";
-		$sql.= " WHERE sa.rowid = " . $object->id;
-		//$sql.= " AND sa.entity IN (".getEntity('societe').")";
+		$sql.= " WHERE sa.rowid = " . $object->id;		// We get record from ID, no need for filter on entity
 		$sql.= " AND sa.type = 'card'";
 
 		dol_syslog(get_class($this) . "::fetch search stripe card id for paymentmode id=".$object->id.", stripeacc=".$stripeacc.", status=".$status.", createifnotlinkedtostripe=".$createifnotlinkedtostripe, LOG_DEBUG);
@@ -660,13 +688,15 @@ class Stripe extends CommonObject
 					$charge = \Stripe\Charge::create($paymentarray, array("idempotency_key" => "$description"));
 				}
 			} else {
-                $fee = round(($object->total_ttc * ($conf->global->STRIPE_APPLICATION_FEE_PERCENT / 100) + $conf->global->STRIPE_APPLICATION_FEE) * 100);
-			    if ($fee >= ($conf->global->STRIPE_APPLICATION_FEE_MAXIMAL * 100) && $conf->global->STRIPE_APPLICATION_FEE_MAXIMAL>$conf->global->STRIPE_APPLICATION_FEE_MINIMAL) {
-					$fee = round($conf->global->STRIPE_APPLICATION_FEE_MAXIMAL * 100);
+				$fee = round($amount * ($conf->global->STRIPE_APPLICATION_FEE_PERCENT / 100) + $conf->global->STRIPE_APPLICATION_FEE);
+			    if ($fee >= $conf->global->STRIPE_APPLICATION_FEE_MAXIMAL && $conf->global->STRIPE_APPLICATION_FEE_MAXIMAL > $conf->global->STRIPE_APPLICATION_FEE_MINIMAL) {
+					$fee = round($conf->global->STRIPE_APPLICATION_FEE_MAXIMAL);
 				}
-                elseif ($fee < ($conf->global->STRIPE_APPLICATION_FEE_MINIMAL * 100)) {
-					$fee = round($conf->global->STRIPE_APPLICATION_FEE_MINIMAL * 100);
+                elseif ($fee < $conf->global->STRIPE_APPLICATION_FEE_MINIMAL) {
+					$fee = round($conf->global->STRIPE_APPLICATION_FEE_MINIMAL);
 				}
+				if (! in_array($currency, $arrayzerounitcurrency)) $stripefee = $fee * 100;
+				else $stripefee = $fee;
 
         		$paymentarray = array(
 					"amount" => "$stripeamount",
@@ -678,9 +708,9 @@ class Stripe extends CommonObject
 					"source" => "$source",
 					"customer" => "$customer"
 				);
-				if ($conf->entity!=$conf->global->STRIPECONNECT_PRINCIPAL && $fee>0)
+				if ($conf->entity!=$conf->global->STRIPECONNECT_PRINCIPAL && $stripefee > 0)
 				{
-					$paymentarray["application_fee"] = $fee;
+					$paymentarray["application_fee"] = $stripefee;
 				}
 				if ($societe->email && $usethirdpartyemailforreceiptemail)
 				{
