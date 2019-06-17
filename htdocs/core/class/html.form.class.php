@@ -5234,10 +5234,12 @@ class Form
 	 *  @param  int			$fullday        When a checkbox with this html name is on, hour and day are set with 00:00 or 23:59
 	 *  @param	string		$addplusone		Add a link "+1 hour". Value must be name of another selectDate field.
 	 *  @param  datetime    $adddateof      Add a link "Date of invoice" using the following date.
+     *  @param  string      $openinghours   Specify hour strat and hour end for the select ex 8,20
+     *  @param  int         $stepminutes    Specify step for minutes between 1 and 30
 	 * 	@return string                      Html for selectDate
 	 *  @see    form_date(), select_month(), select_year(), select_dayofweek()
 	 */
-    public function selectDate($set_time = '', $prefix = 're', $h = 0, $m = 0, $empty = 0, $form_name = "", $d = 1, $addnowlink = 0, $disabled = 0, $fullday = '', $addplusone = '', $adddateof = '')
+    public function selectDate($set_time = '', $prefix = 're', $h = 0, $m = 0, $empty = 0, $form_name = "", $d = 1, $addnowlink = 0, $disabled = 0, $fullday = '', $addplusone = '', $adddateof = '', $openinghours = '', $stepminutes = 1)
 	{
 		global $conf,$langs;
 
@@ -5248,6 +5250,7 @@ class Form
 		if ($m == '') $m=0;
 		$emptydate=0;
 		$emptyhours=0;
+        if ($stepminutes<=0 || $stepminutes>30) $stepminutes = 1;
 		if ($empty == 1) { $emptydate=1; $emptyhours=1; }
 		if ($empty == 2) { $emptydate=0; $emptyhours=1; }
 		$orig_set_time=$set_time;
@@ -5468,10 +5471,18 @@ class Form
 
 		if ($h)
 		{
+			$hourstart = 0;
+			$hourend = 24;
+			if ($openinghours != '') {
+				$openinghours = explode(',', $openinghours);
+				$hourstart = $openinghours[0];
+				$hourend = $openinghours[1];
+				if ($hourend<$hourstart) $hourend = $hourstart;
+			}
 			// Show hour
 			$retstring.='<select'.($disabled?' disabled':'').' class="flat valignmiddle maxwidth50 '.($fullday?$fullday.'hour':'').'" id="'.$prefix.'hour" name="'.$prefix.'hour">';
 			if ($emptyhours) $retstring.='<option value="-1">&nbsp;</option>';
-			for ($hour = 0; $hour < 24; $hour++)
+			for ($hour = $hourstart; $hour < $hourend; $hour++)
 			{
 				if (strlen($hour) < 2) $hour = "0" . $hour;
 				$retstring.='<option value="'.$hour.'"'.(($hour == $shour)?' selected':'').'>'.$hour.(empty($conf->dol_optimize_smallscreen)?'':'H').'</option>';
@@ -5485,7 +5496,7 @@ class Form
 			// Show minutes
 			$retstring.='<select'.($disabled?' disabled':'').' class="flat valignmiddle maxwidth50 '.($fullday?$fullday.'min':'').'" id="'.$prefix.'min" name="'.$prefix.'min">';
 			if ($emptyhours) $retstring.='<option value="-1">&nbsp;</option>';
-			for ($min = 0; $min < 60 ; $min++)
+			for ($min = 0; $min < 60 ; $min+=$stepminutes)
 			{
 				if (strlen($min) < 2) $min = "0" . $min;
 				$retstring.='<option value="'.$min.'"'.(($min == $smin)?' selected':'').'>'.$min.(empty($conf->dol_optimize_smallscreen)?'':'').'</option>';
