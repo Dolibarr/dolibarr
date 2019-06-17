@@ -338,3 +338,4 @@ ErrorCopyProductCombinations=There was an error while copying the product varian
 ErrorDestinationProductNotFound=Destination product not found
 ErrorProductCombinationNotFound=Product variant not found
 ActionAvailableOnVariantProductOnly=Action only available on the variant of product
+ProductsPricePerCustomer=Product prices per customers

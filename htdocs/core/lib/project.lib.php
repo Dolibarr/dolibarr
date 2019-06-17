@@ -461,7 +461,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				}
 
 				// Ref of task
-				print '<td>';
+				print '<td class="nowraponall">';
 				if ($showlineingray)
 				{
 					print '<i>'.img_object('','projecttask').' '.$lines[$i]->ref.'</i>';

@@ -265,13 +265,12 @@ $sql.= " ava.rowid as availability,";
 $sql.= " state.code_departement as state_code, state.nom as state_name,";
 $sql.= ' p.rowid, p.entity, p.note_private, p.total_ht, p.tva as total_vat, p.total as total_ttc, p.localtax1, p.localtax2, p.ref, p.ref_client, p.fk_statut, p.fk_user_author, p.datep as dp, p.fin_validite as dfv,p.date_livraison as ddelivery,';
 $sql.= ' p.datec as date_creation, p.tms as date_update,';
-$sql.= " pr.rowid as project_id, pr.ref as project_ref,";
-if (! $user->rights->societe->client->voir && ! $socid) $sql .= " sc.fk_soc, sc.fk_user,";
+$sql.= " pr.rowid as project_id, pr.ref as project_ref, pr.title as project_label,";
 $sql.= ' u.login';
+if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", sc.fk_soc, sc.fk_user,";
 if ($search_categ_cus) $sql .= ", cc.fk_categorie, cc.fk_soc";
-
 // Add fields from extrafields
-foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
+foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
 // Add fields from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // Note that $action and $object may have been modified by hook
@@ -760,6 +759,12 @@ if ($resql)
 		$objectstatic->id=$obj->rowid;
 		$objectstatic->ref=$obj->ref;
 
+		$companystatic->id=$obj->socid;
+		$companystatic->name=$obj->name;
+		$companystatic->client=$obj->client;
+		$companystatic->code_client=$obj->code_client;
+		$companystatic->email=$obj->email;
+
 		print '<tr class="oddeven">';
 
 		if (! empty($arrayfields['p.ref']['checked']))
@@ -812,19 +817,15 @@ if ($resql)
 		{
     		// Project ref
     		print '<td class="nocellnopadd nowrap">';
-    		if ($obj->project_id) {
-				$projectstatic->fetch($obj->project_id);
+    		if ($obj->project_id > 0) {
+    		    $projectstatic->id=$obj->project_id;
+    		    $projectstatic->ref=$obj->project_ref;
+    		    $projectstatic->title=$obj->project_label;
 				print $projectstatic->getNomUrl(1);
 			}
     		print '</td>';
     		if (! $i) $totalarray['nbfield']++;
 		}
-
-		$companystatic->id=$obj->socid;
-		$companystatic->name=$obj->name;
-		$companystatic->client=$obj->client;
-		$companystatic->code_client=$obj->code_client;
-		$companystatic->email=$obj->email;
 
 		// Thirdparty
 		if (! empty($arrayfields['s.nom']['checked']))

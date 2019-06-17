@@ -32,9 +32,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+if (!empty($conf->projet->enabled))     require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+if (!empty($conf->contrat->enabled))    require_once DOL_DOCUMENT_ROOT . '/contrat/class/contrat.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'bills', 'interventions'));
+if (!empty($conf->projet->enabled))     $langs->load("projects");
+if (!empty($conf->contrat->enabled))    $langs->load("contracts");
 
 $action=GETPOST('action','alpha');
 $massaction=GETPOST('massaction','alpha');
@@ -45,6 +49,8 @@ $contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'interventi
 
 $search_ref=GETPOST('search_ref')?GETPOST('search_ref','alpha'):GETPOST('search_inter','alpha');
 $search_company=GETPOST('search_company','alpha');
+$search_projet_ref=GETPOST('search_projet_ref','alpha');
+$search_contrat_ref=GETPOST('search_contrat_ref','alpha');
 $search_desc=GETPOST('search_desc','alpha');
 $search_status=GETPOST('search_status');
 $sall=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
@@ -74,13 +80,6 @@ if (! $sortfield)
  	$sortfield="f.ref";
 }
 
-$sall=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
-$search_ref=GETPOST('search_ref')?GETPOST('search_ref','alpha'):GETPOST('search_inter','alpha');
-$search_company=GETPOST('search_company','alpha');
-$search_desc=GETPOST('search_desc','alpha');
-$search_status=GETPOST('search_status');
-$optioncss = GETPOST('optioncss','alpha');
-
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $object = new Fichinter($db);
 $hookmanager->initHooks(array('interventionlist'));
@@ -104,15 +103,15 @@ if (! empty($conf->global->FICHINTER_DISABLE_DETAILS)) unset($fieldstosearchall[
 $arrayfields=array(
 	'f.ref'=>array('label'=>'Ref', 'checked'=>1),
 	's.nom'=>array('label'=>'ThirdParty', 'checked'=>1),
-	'f.fk_project'=>array('label'=>'Project', 'checked'=>1),
-	'f.fk_contrat'=>array('label'=>'Contract', 'checked'=>1),
+	'pr.ref'=>array('label'=>'Project', 'checked'=>1, 'enabled'=>(empty($conf->projet->enabled)?0:1)),
+	'c.ref'=>array('label'=>'Contract', 'checked'=>1, 'enabled'=>(empty($conf->contrat->enabled)?0:1)),
 	'f.description'=>array('label'=>'Description', 'checked'=>1),
 	'f.datec'=>array('label'=>'DateCreation', 'checked'=>0, 'position'=>500),
 	'f.tms'=>array('label'=>'DateModificationShort', 'checked'=>0, 'position'=>500),
 	'f.fk_statut'=>array('label'=>'Status', 'checked'=>1, 'position'=>1000),
-    'fd.description'=>array('label'=>"DescriptionOfLine", 'checked'=>1, 'enabled'=>empty($conf->global->FICHINTER_DISABLE_DETAILS)?1:0),
-    'fd.date'=>array('label'=>'DateOfLine', 'checked'=>1, 'enabled'=>empty($conf->global->FICHINTER_DISABLE_DETAILS)?1:0),
-    'fd.duree'=>array('label'=>'DurationOfLine', 'checked'=>1, 'enabled'=>empty($conf->global->FICHINTER_DISABLE_DETAILS)?1:0),
+	'fd.description'=>array('label'=>"DescriptionOfLine", 'checked'=>1, 'enabled'=>empty($conf->global->FICHINTER_DISABLE_DETAILS)?1:0),
+	'fd.date'=>array('label'=>'DateOfLine', 'checked'=>1, 'enabled'=>empty($conf->global->FICHINTER_DISABLE_DETAILS)?1:0),
+	'fd.duree'=>array('label'=>'DurationOfLine', 'checked'=>1, 'enabled'=>empty($conf->global->FICHINTER_DISABLE_DETAILS)?1:0),
 );
 // Extra fields
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
@@ -145,8 +144,8 @@ if (empty($reshook))
 	{
 		$search_ref="";
 		$search_company="";
-		$search_project="";
-		$search_contract="";
+		$search_projet_ref="";
+		$search_contrat_ref="";
 		$search_desc="";
 		$search_status="";
 		$toselect='';
@@ -174,6 +173,12 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 $objectstatic=new Fichinter($db);
 $companystatic=new Societe($db);
+if (!empty($conf->projet->enabled)) {
+    $projetstatic=new Project($db);
+}
+if (!empty($conf->contrat->enabled)) {
+    $contratstatic=new Contrat($db);
+}
 
 $title=$langs->trans("ListOfInterventions");
 llxHeader('', $title);
@@ -195,6 +200,12 @@ $sql = "SELECT";
 $sql.= " f.ref, f.rowid, f.fk_statut, f.description, f.datec as date_creation, f.tms as date_update, f.note_private,";
 if (empty($conf->global->FICHINTER_DISABLE_DETAILS) && $atleastonefieldinlines) $sql.= "fd.rowid as lineid, fd.description as descriptiondetail, fd.date as dp, fd.duree,";
 $sql.= " s.nom as name, s.rowid as socid, s.client";
+if (!empty($conf->projet->enabled)) {
+    $sql .= ", pr.rowid as projet_id, pr.ref as projet_ref, pr.title as projet_title";
+}
+if (!empty($conf->contrat->enabled)) {
+    $sql .= ", c.rowid as contrat_id, c.ref as contrat_ref, c.ref_customer as contrat_ref_supplier, c.ref_supplier as contrat_ref_supplier";
+}
 // Add fields from extrafields
 foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
 // Add fields from hooks
@@ -202,6 +213,12 @@ $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
 $sql.= " FROM ".MAIN_DB_PREFIX."fichinter as f";
+if (!empty($conf->projet->enabled)) {
+    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet as pr on f.fk_projet = pr.rowid";
+}
+if (!empty($conf->contrat->enabled)) {
+    $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."contrat as c on f.fk_contrat = c.rowid";
+}
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."fichinter_extrafields as ef on (f.rowid = ef.fk_object)";
 if (empty($conf->global->FICHINTER_DISABLE_DETAILS) && $atleastonefieldinlines) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."fichinterdet as fd ON fd.fk_fichinter = f.rowid";
 if (! $user->rights->societe->client->voir && empty($socid)) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -213,6 +230,12 @@ if ($search_ref) {
 }
 if ($search_company) {
 	$sql .= natural_search('s.nom', $search_company);
+}
+if ($search_projet_ref) {
+    $sql .= natural_search('pr.ref', $search_projet_ref);
+}
+if ($search_contrat_ref) {
+    $sql .= natural_search('c.ref', $search_contrat_ref);
 }
 if ($search_desc) {
 	if (empty($conf->global->FICHINTER_DISABLE_DETAILS)) $sql .= natural_search(array('f.description', 'fd.description'), $search_desc);
@@ -354,6 +377,18 @@ if ($resql)
 		print '<input type="text" class="flat" name="search_company" value="'.$search_company.'" size="10">';
 		print '</td>';
 	}
+    if (! empty($arrayfields['pr.ref']['checked']))
+    {
+        print '<td class="liste_titre">';
+        print '<input type="text" class="flat" name="search_projet_ref" value="'.$search_projet_ref.'" size="8">';
+        print '</td>';
+    }
+    if (! empty($arrayfields['c.ref']['checked']))
+    {
+        print '<td class="liste_titre">';
+        print '<input type="text" class="flat" name="search_contrat_ref" value="'.$search_contrat_ref.'" size="8">';
+        print '</td>';
+    }
 	if (! empty($arrayfields['f.description']['checked']))
 	{
 		print '<td class="liste_titre">';
@@ -412,6 +447,8 @@ if ($resql)
 	print '<tr class="liste_titre">';
 	if (! empty($arrayfields['f.ref']['checked']))          print_liste_field_titre($arrayfields['f.ref']['label'],         $_SERVER["PHP_SELF"],"f.ref","",$param,'',$sortfield,$sortorder);
 	if (! empty($arrayfields['s.nom']['checked']))          print_liste_field_titre($arrayfields['s.nom']['label'],         $_SERVER["PHP_SELF"],"s.nom","",$param,'',$sortfield,$sortorder);
+    if (! empty($arrayfields['pr.ref']['checked']))         print_liste_field_titre("Project",$_SERVER["PHP_SELF"],"pr.ref","",$param,'',$sortfield,$sortorder);
+    if (! empty($arrayfields['c.ref']['checked']))          print_liste_field_titre("Contract",$_SERVER["PHP_SELF"],"c.ref","",$param,'',$sortfield,$sortorder);
 	if (! empty($arrayfields['f.description']['checked']))  print_liste_field_titre($arrayfields['f.description']['label'], $_SERVER["PHP_SELF"],"f.description","",$param,'',$sortfield,$sortorder);
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
@@ -488,6 +525,31 @@ if ($resql)
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
 		}
+        if (! empty($arrayfields['pr.ref']['checked']))
+        {
+            print '<td>';
+            $projetstatic->id=$obj->projet_id;
+            $projetstatic->ref=$obj->projet_ref;
+            $projetstatic->title=$obj->projet_title;
+            if ($projetstatic->id > 0) {
+                print $projetstatic->getNomUrl(1,'');
+            }
+            print '</td>';
+            if (! $i) $totalarray['nbfield']++;
+        }
+        if (! empty($arrayfields['c.ref']['checked']))
+        {
+            print '<td>';
+            $contratstatic->id=$obj->contrat_id;
+            $contratstatic->ref=$obj->contrat_ref;
+            $contratstatic->ref_customer=$obj->contrat_ref_customer;
+            $contratstatic->ref_supplier=$obj->contrat_ref_supplier;
+            if ($contratstatic->id > 0) {
+                print $contratstatic->getNomUrl(1, '');
+                print '</td>';
+            }
+            if (! $i) $totalarray['nbfield']++;
+        }
 		if (! empty($arrayfields['f.description']['checked']))
 		{
 			print '<td>'.dol_trunc(dolGetFirstLineOfText($obj->description),48).'</td>';

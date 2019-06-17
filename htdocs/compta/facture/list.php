@@ -354,8 +354,6 @@ $facturestatic=new Facture($db);
 $formcompany=new FormCompany($db);
 $thirdpartystatic=new Societe($db);
 
-// llxHeader('',$langs->trans('CustomersInvoices'),'EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes');
-
 $sql = 'SELECT';
 if ($sall || $search_product_category > 0) $sql = 'SELECT DISTINCT';
 $sql.= ' f.rowid as id, f.facnumber as ref, f.ref_client, f.type, f.note_private, f.note_public, f.increment, f.fk_mode_reglement, f.total as total_ht, f.tva as total_vat, f.total_ttc,';
@@ -372,9 +370,8 @@ $sql.= " p.rowid as project_id, p.ref as project_ref, p.title as project_label";
 // TODO Better solution to be able to sort on already payed or remain to pay is to store amount_payed in a denormalized field.
 if (! $sall) $sql.= ', SUM(pf.amount) as dynamount_payed';
 if ($search_categ_cus) $sql .= ", cc.fk_categorie, cc.fk_soc";
-
 // Add fields from extrafields
-foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
+foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
 // Add fields from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // Note that $action and $object may have been modified by hook
@@ -1024,7 +1021,7 @@ if ($resql)
 			// Project
 			if (! empty($arrayfields['p.ref']['checked']))
 			{
-				print '<td class="nowrap">';
+				print '<td class="nocellnopadd nowrap">';
 				if ($obj->project_id > 0)
 				{
 					$projectstatic->id=$obj->project_id;

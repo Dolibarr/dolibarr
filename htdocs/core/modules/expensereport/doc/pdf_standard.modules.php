@@ -915,7 +915,7 @@ class pdf_standard extends ModeleExpenseReport
 		$pdf->line($this->posxqty-1, $tab_top, $this->posxqty-1, $tab_top + $tab_height);
 		if (empty($hidetop)) {
 			$pdf->SetXY($this->posxqty-1, $tab_top+1);
-			$pdf->MultiCell($this->postotalttc-$this->posxqty - 1,2, $outputlangs->transnoentities("Qty"),'','R');
+			$pdf->MultiCell($this->postotalttc-$this->posxqty - 1,2, $outputlangs->transnoentities("Qty"),'','C');
 		}
 
 		// Total with all taxes

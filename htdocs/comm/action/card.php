@@ -7,7 +7,7 @@
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2014      Cedric GROSS         <c.gross@kreiz-it.fr>
  * Copyright (C) 2015       Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -268,7 +268,7 @@ if ($action == 'add')
 		$object->datep = $datep;
 		$object->datef = $datef;
 		$object->percentage = $percentage;
-		$object->duree=((float) (GETPOST('dureehour') * 60) + (float) GETPOST('dureemin')) * 60;
+		$object->duree=(((int) GETPOST('dureehour') * 60) + (int) GETPOST('dureemin')) * 60;
 
 		$transparency=(GETPOST("transparency")=='on'?1:0);
 

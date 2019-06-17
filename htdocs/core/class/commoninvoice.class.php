@@ -664,6 +664,7 @@ abstract class CommonInvoice extends CommonObject
 		// 2 : application de la règle, le N du mois courant ou suivant
 		elseif ($cdr_type == 2 && !empty($cdr_decalage))
 		{
+		    include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 			$datelim = $this->date + ($cdr_nbjour * 3600 * 24);
 
 			$date_piece = dol_mktime(0, 0, 0, date('m', $datelim),date('d', $datelim),date('Y', $datelim)); // Sans les heures minutes et secondes

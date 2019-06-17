@@ -1326,7 +1326,7 @@ if (empty($reshook))
 								} elseif ($typeamount=='variable') {
 									$descline.= ' ('. $valuedeposit.'%)';
 								}
-								
+
 								$descline.= ' - '.$srcobject->ref;
 								$result = $object->addline(
 										$descline,
@@ -1382,8 +1382,9 @@ if (empty($reshook))
 								{
 									// Don't add lines with qty 0 when coming from a shipment including all order lines
 									if($srcobject->element == 'shipping' && $conf->global->SHIPMENT_GETS_ALL_ORDER_PRODUCTS && $lines[$i]->qty == 0) continue;
-									// Don't add closed lines when coming from a contract
-									if($srcobject->element == 'contrat' && $lines[$i]->statut == 5) continue;
+									// Don't add closed lines when coming from a contract (Set constant to '0,5' to exclude also inactive lines)
+									if (! isset( $conf->global->CONTRACT_EXCLUDE_SERVICES_STATUS_FOR_INVOICE)) $conf->global->CONTRACT_EXCLUDE_SERVICES_STATUS_FOR_INVOICE = '5';
+									if ($srcobject->element == 'contrat' && in_array($lines[$i]->statut, explode(',', $conf->global->CONTRACT_EXCLUDE_SERVICES_STATUS_FOR_INVOICE))) continue;
 
 									$label=(! empty($lines[$i]->label)?$lines[$i]->label:'');
 									$desc=(! empty($lines[$i]->desc)?$lines[$i]->desc:$lines[$i]->libelle);
@@ -1540,14 +1541,16 @@ if (empty($reshook))
 			$datefacture = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 			if (empty($datefacture)) {
 				$error++;
-				$mesg = '<div class="error">' . $langs->trans("ErrorFieldRequired", $langs->trans("Date")) . '</div>';
+				$mesg = $langs->trans("ErrorFieldRequired", $langs->trans("Date"));
+                setEventMessages($mesg, null, 'errors');
 			}
 
 			$date_pointoftax = dol_mktime(12, 0, 0, $_POST['date_pointoftaxmonth'], $_POST['date_pointoftaxday'], $_POST['date_pointoftaxyear']);
 
 			if (!($_POST['situations'] > 0)) {
 				$error++;
-				$mesg = '<div class="error">' . $langs->trans("ErrorFieldRequired", $langs->trans("InvoiceSituation")) . '</div>';
+				$mesg = $langs->trans("ErrorFieldRequired", $langs->trans("InvoiceSituation"));
+                setEventMessages($mesg, null, 'errors');
 			}
 
 			if (!$error) {
@@ -2275,11 +2278,13 @@ if (empty($reshook))
 		if (!$object->fetch($id) > 0) dol_print_error($db);
 		if (!is_null(GETPOST('all_progress')) && GETPOST('all_progress') != "")
 		{
+            $all_progress = GETPOST('all_progress', 'int');
 			foreach ($object->lines as $line)
 			{
 				$percent = $line->get_prev_progress($object->id);
-				if (GETPOST('all_progress') < $percent) {
-					$mesg = '<div class="warning">' . $langs->trans("CantBeLessThanMinPercent") . '</div>';
+				if (floatval($all_progress) < floatval($percent)) {
+                    $mesg = $langs->trans("Line") . ' ' . $i . ' '. $line->ref .' : ' . $langs->trans("CantBeLessThanMinPercent");
+                    setEventMessages($mesg, null, 'warnings');
 					$result = -1;
 				} else
 					$object->update_percent($line, $_POST['all_progress']);
@@ -2948,7 +2953,7 @@ if ($action == 'create')
 		{
 			// First situation invoice
 			print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
-			$tmp='<input id="radio_situation invoice" type="radio" name="type" value="5"' . (GETPOST('type') == 5 ? ' checked' : '') . '> ';
+			$tmp='<input id="radio_situation" type="radio" name="type" value="5"' . (GETPOST('type') == 5 ? ' checked' : '') . '> ';
 			$tmp  = $tmp.'<label for="radio_situation invoice" >'.$langs->trans("InvoiceFirstSituationAsk").'</label>';
 			$desc = $form->textwithpicto($tmp, $langs->transnoentities("InvoiceFirstSituationDesc"), 1, 'help', '', 0, 3);
 			print $desc;
@@ -3003,7 +3008,23 @@ if ($action == 'create')
 	}
 	else
 	{
-		print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
+	    print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
+	    $tmp='<input type="radio" name="type" id="radio_situation" value="0" disabled> ';
+	    $text = '<label>'.$tmp.$langs->trans("InvoiceFirstSituationAsk") . '</label> ';
+	    $text.= '('.$langs->trans("YouMustCreateInvoiceFromThird").') ';
+	    $desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceFirstSituationDesc"), 1, 'help', '', 0, 3);
+	    print $desc;
+	    print '</div></div>';
+
+	    print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
+	    $tmp='<input type="radio" name="type" id="radio_situation" value="0" disabled> ';
+	    $text = '<label>'.$tmp.$langs->trans("InvoiceSituationAsk") . '</label> ';
+	    $text.= '('.$langs->trans("YouMustCreateInvoiceFromThird").') ';
+	    $desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceFirstSituationDesc"), 1, 'help', '', 0, 3);
+	    print $desc;
+	    print '</div></div>';
+
+	    print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
 		$tmp='<input type="radio" name="type" id="radio_replacement" value="0" disabled> ';
 		$text = '<label>'.$tmp.$langs->trans("InvoiceReplacement") . '</label> ';
 		$text.= '('.$langs->trans("YouMustCreateInvoiceFromThird").') ';

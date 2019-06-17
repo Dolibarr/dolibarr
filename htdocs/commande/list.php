@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2019  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005       Marc Barilley / Ocebo   <marc@ocebo.com>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2012       Juanjo Menent           <jmenent@2byte.es>
@@ -243,11 +243,10 @@ $sql.= " state.code_departement as state_code, state.nom as state_name,";
 $sql.= ' c.rowid, c.ref, c.total_ht, c.tva as total_tva, c.total_ttc, c.ref_client,';
 $sql.= ' c.date_valid, c.date_commande, c.note_private, c.date_livraison as date_delivery, c.fk_statut, c.facture as billed,';
 $sql.= ' c.date_creation as date_creation, c.tms as date_update,';
-$sql.= " p.rowid as project_id, p.ref as project_ref";
+$sql.= " p.rowid as project_id, p.ref as project_ref, p.title as project_label";
 if ($search_categ_cus) $sql .= ", cc.fk_categorie, cc.fk_soc";
-
 // Add fields from extrafields
-foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
+foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
 // Add fields from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // Note that $action and $object may have been modified by hook
@@ -957,10 +956,14 @@ if ($resql)
 		// Project
 		if (! empty($arrayfields['p.project_ref']['checked']))
 		{
-			$projectstatic->id=$obj->project_id;
-			$projectstatic->ref=$obj->project_ref;
-			print '<td>';
-			if ($obj->project_id > 0) print $projectstatic->getNomUrl(1);
+			print '<td class="nocellnopadd nowrap">';
+			if ($obj->project_id > 0)
+			{
+			    $projectstatic->id=$obj->project_id;
+			    $projectstatic->ref=$obj->project_ref;
+			    $projectstatic->title=$obj->project_label;
+			    print $projectstatic->getNomUrl(1);
+			}
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
 		}

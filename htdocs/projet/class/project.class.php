@@ -5,6 +5,7 @@
  * Copyright (C) 2013	   Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2014-2017 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2017      Ferran Marcet        <fmarcet@2byte.es>
+ * Copyright (C) 2019      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -226,7 +227,7 @@ class Project extends CommonObject
         $sql.= ", " . ($this->socid > 0 ? $this->socid : "null");
         $sql.= ", " . $user->id;
         $sql.= ", ".(is_numeric($this->statut) ? $this->statut : '0');
-        $sql.= ", ".(is_numeric($this->opp_status) ? $this->opp_status : 'NULL');
+        $sql.= ", ".((is_numeric($this->opp_status) && $this->opp_status > 0) ? $this->opp_status : 'NULL');
         $sql.= ", ".(is_numeric($this->opp_percent) ? $this->opp_percent : 'NULL');
         $sql.= ", " . ($this->public ? 1 : 0);
         $sql.= ", '".$this->db->idate($now)."'";
@@ -378,7 +379,7 @@ class Project extends CommonObject
                 		if (file_exists($olddir))
                 		{
 							include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
-							$res=dol_move($olddir, $newdir);
+							$res=@rename($olddir, $newdir);
 							if (! $res)
                 			{
 							    $langs->load("errors");
@@ -582,7 +583,7 @@ class Project extends CommonObject
 		}
         elseif ($type == 'project_task')
 		{
-			$sql = "SELECT DISTINCT pt.rowid FROM " . MAIN_DB_PREFIX . "projet_task as pt, " . MAIN_DB_PREFIX . "projet_task_time as ptt WHERE pt.rowid = ptt.fk_task AND pt.fk_projet IN (". $ids .")";
+			$sql = "SELECT DISTINCT pt.rowid FROM " . MAIN_DB_PREFIX . "projet_task as pt WHERE pt.fk_projet IN (". $ids .")";
 		}
 		elseif ($type == 'project_task_time')	// Case we want to duplicate line foreach user
 		{
@@ -694,6 +695,27 @@ class Project extends CommonObject
 		// Delete tasks
 		$ret = $this->deleteTasks($user);
 		if ($ret < 0) $error++;
+
+
+		// Delete all child tables
+		if (! $error) {
+			$elements = array('categorie_project');  // elements to delete. TODO Make goodway to delete
+			foreach($elements as $table)
+			{
+				if (! $error) {
+					$sql = "DELETE FROM ".MAIN_DB_PREFIX.$table;
+					$sql.= " WHERE fk_project = ".$this->id;
+
+					$result = $this->db->query($sql);
+					if (! $result) {
+						$error++;
+						$this->errors[] = $this->db->lasterror();
+					}
+				}
+			}
+		}
+
+
 
         // Delete project
         if (! $error)

@@ -6,6 +6,7 @@
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015 	   Claudio Aschieri     <c.aschieri@19.coop>
  * Copyright (C) 2018 	   Ferran Marcet	    <fmarcet@2byte.es>
+ * Copyright (C) 2019 	   Juanjo Menent	    <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,9 +73,9 @@ $pagenext = $page + 1;
 
 $search_all=GETPOST('search_all', 'alphanohtml') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml');
 $search_categ=GETPOST("search_categ",'alpha');
-$search_ref=GETPOST("search_ref");
-$search_label=GETPOST("search_label");
-$search_societe=GETPOST("search_societe");
+$search_ref=GETPOST("search_ref",'alpha');
+$search_label=GETPOST("search_label",'alpha');
+$search_societe=GETPOST("search_societe",'alpha');
 $search_year=GETPOST("search_year");
 $search_status=GETPOST("search_status",'int');
 $search_opp_status=GETPOST("search_opp_status",'alpha');
@@ -276,7 +277,6 @@ if ($resql)
 else dol_print_error($db);
 if (count($listofprojectcontacttype) == 0) $listofprojectcontacttype[0]='0';    // To avoid sql syntax error if not found
 
-
 $distinct='DISTINCT';   // We add distinct until we are added a protection to be sure a contact of a project and task is only once.
 $sql = "SELECT ".$distinct." p.rowid as id, p.ref, p.title, p.fk_statut, p.fk_opp_status, p.public, p.fk_user_creat";
 $sql.= ", p.datec as date_creation, p.dateo as date_start, p.datee as date_end, p.opp_amount, p.opp_percent, p.tms as date_update, p.budget_amount";
@@ -350,10 +350,10 @@ if ($search_status >= 0)
 if ($search_opp_status)
 {
 	if (is_numeric($search_opp_status) && $search_opp_status > 0) $sql .= " AND p.fk_opp_status = ".$db->escape($search_opp_status);
-	if ($search_opp_status == 'all') $sql .= " AND p.fk_opp_status IS NOT NULL";
-	if ($search_opp_status == 'openedopp') $sql .= " AND p.fk_opp_status IS NOT NULL AND p.fk_opp_status NOT IN (SELECT rowid FROM ".MAIN_DB_PREFIX."c_lead_status WHERE code IN ('WON','LOST'))";
-	if ($search_opp_status == 'notopenedopp') $sql .= " AND (p.fk_opp_status IS NULL OR p.fk_opp_status IN (SELECT rowid FROM ".MAIN_DB_PREFIX."c_lead_status WHERE code IN ('WON')))";
-	if ($search_opp_status == 'none') $sql .= " AND p.fk_opp_status IS NULL";
+	if ($search_opp_status == 'all') $sql .= " AND (p.fk_opp_status IS NOT NULL AND p.fk_opp_status <> -1)";
+	if ($search_opp_status == 'openedopp') $sql .= " AND p.fk_opp_status IS NOT NULL AND p.fk_opp_status <> -1 AND p.fk_opp_status NOT IN (SELECT rowid FROM ".MAIN_DB_PREFIX."c_lead_status WHERE code IN ('WON','LOST'))";
+	if ($search_opp_status == 'notopenedopp') $sql .= " AND (p.fk_opp_status IS NULL OR p.fk_opp_status = -1 OR p.fk_opp_status IN (SELECT rowid FROM ".MAIN_DB_PREFIX."c_lead_status WHERE code IN ('WON')))";
+	if ($search_opp_status == 'none') $sql .= " AND (p.fk_opp_status IS NULL OR p.fk_opp_status = -1)";
 }
 if ($search_public!='') $sql .= " AND p.public = ".$db->escape($search_public);
 // For external user, no check is done on company permission because readability is managed by public status of project and assignement.
@@ -713,8 +713,8 @@ while ($i < min($num,$limit))
 		// Title
 		if (! empty($arrayfields['p.title']['checked']))
 		{
-			print '<td class="tdoverflowmax100">';
-			print dol_trunc($obj->title,80);
+			print '<td class="tdoverflowmax200">';
+			print dol_trunc($obj->title, 80);
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
 		}
