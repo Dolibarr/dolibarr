@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2017      Pierre-Henry Favre   <support@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -16,11 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-/**
- *  \file       htdocs/compta/compta-files.php
+
+ /**
+ *  \file       htdocs/compta/accounting-files.php
  *  \ingroup    compta
  *  \brief      Page to show portoflio and files of a thirdparty and download it
  */
+
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -89,149 +91,165 @@ $entity = GETPOST('entity', 'int')?GETPOST('entity', 'int'):$conf->entity;
 
 $filesarray=array();
 $result=false;
-if(($action=="searchfiles" || $action=="dl" ) && $date_start && $date_stop) {
-    $wheretail=" '".$db->idate($date_start)."' AND '".$db->idate($date_stop)."'";
-    $sql="SELECT rowid as id, ref as ref, paye as paid, total_ttc, fk_soc, datef as date, 'Invoice' as item FROM ".MAIN_DB_PREFIX."facture";
-    $sql.=" WHERE datef between ".$wheretail;
-    $sql.=" AND entity IN (".($entity==1?'0,1':$entity).')';
-    $sql.=" AND fk_statut <> ".Facture::STATUS_DRAFT;
-    $sql.=" UNION ALL";
-    $sql.=" SELECT rowid as id, ref, paye as paid, total_ttc, fk_soc, datef as date, 'SupplierInvoice' as item FROM ".MAIN_DB_PREFIX."facture_fourn";
-    $sql.=" WHERE datef between ".$wheretail;
-    $sql.=" AND entity IN (".($entity==1?'0,1':$entity).')';
-    $sql.=" AND fk_statut <> ".FactureFournisseur::STATUS_DRAFT;
-    $sql.=" UNION ALL";
-    $sql.=" SELECT rowid as id, ref, paid, total_ttc, fk_user_author as fk_soc, date_fin as date, 'ExpenseReport' as item FROM ".MAIN_DB_PREFIX."expensereport";
-    $sql.=" WHERE date_fin between  ".$wheretail;
-    $sql.=" AND entity IN (".($entity==1?'0,1':$entity).')';
-    $sql.=" AND fk_statut <> ".ExpenseReport::STATUS_DRAFT;
-    $sql.=" UNION ALL";
-    $sql.=" SELECT rowid as id, ref, paid, amount as total_ttc, '0' as fk_soc, datedon as date, 'Donation' as item FROM ".MAIN_DB_PREFIX."don";
-    $sql.=" WHERE datedon between ".$wheretail;
-    $sql.=" AND entity IN (".($entity==1?'0,1':$entity).')';
-    $sql.=" AND fk_statut <> ".Don::STATUS_DRAFT;
-    $sql.=" UNION ALL";
-    $sql.=" SELECT rowid as id, label as ref, 1 as paid, amount as total_ttc, fk_user as fk_soc,datep as date, 'SalaryPayment' as item FROM ".MAIN_DB_PREFIX."payment_salary";
-    $sql.=" WHERE datep between ".$wheretail;
-    $sql.=" AND entity IN (".($entity==1?'0,1':$entity).')';
-    //$sql.=" AND fk_statut <> ".PaymentSalary::STATUS_DRAFT;
-    $sql.=" UNION ALL";
-    $sql.=" SELECT rowid as id, libelle as ref, paye as paid, amount as total_ttc, 0 as fk_soc, date_creation as date, 'SocialContributions' as item FROM ".MAIN_DB_PREFIX."chargesociales";
-    $sql.=" WHERE date_creation between ".$wheretail;
-    $sql.=" AND entity IN (".($entity==1?'0,1':$entity).')';
-    //$sql.=" AND fk_statut <> ".ChargeSociales::STATUS_DRAFT;
-    $sql.= $db->order($sortfield, $sortorder);
+if (($action=="searchfiles" || $action=="dl" )) {
 
-    $resd = $db->query($sql);
-    $files=array();
-    $link='';
+	if (empty($date_start))
+	{
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DateStart")), null, 'errors');
+		$error++;
+	}
+	if (empty($date_stop))
+	{
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DateEnd")), null, 'errors');
+		$error++;
+	}
 
-    if ($resd)
-    {
-        $numd = $db->num_rows($resd);
+	if (! $error)
+	{
+	    $wheretail=" '".$db->idate($date_start)."' AND '".$db->idate($date_stop)."'";
 
-        $tmpinvoice=new Facture($db);
-        $tmpinvoicesupplier=new FactureFournisseur($db);
-        $tmpdonation=new Don($db);
+	    $sql="SELECT rowid as id, ref as ref, paye as paid, total_ttc, fk_soc, datef as date, 'Invoice' as item FROM ".MAIN_DB_PREFIX."facture";
+	    $sql.=" WHERE datef between ".$wheretail;
+	    $sql.=" AND entity IN (".($entity==1?'0,1':$entity).')';
+	    $sql.=" AND fk_statut <> ".Facture::STATUS_DRAFT;
+	    $sql.=" UNION ALL";
+	    $sql.=" SELECT rowid as id, ref, paye as paid, total_ttc, fk_soc, datef as date, 'SupplierInvoice' as item FROM ".MAIN_DB_PREFIX."facture_fourn";
+	    $sql.=" WHERE datef between ".$wheretail;
+	    $sql.=" AND entity IN (".($entity==1?'0,1':$entity).')';
+	    $sql.=" AND fk_statut <> ".FactureFournisseur::STATUS_DRAFT;
+	    $sql.=" UNION ALL";
+	    $sql.=" SELECT rowid as id, ref, paid, total_ttc, fk_user_author as fk_soc, date_fin as date, 'ExpenseReport' as item FROM ".MAIN_DB_PREFIX."expensereport";
+	    $sql.=" WHERE date_fin between  ".$wheretail;
+	    $sql.=" AND entity IN (".($entity==1?'0,1':$entity).')';
+	    $sql.=" AND fk_statut <> ".ExpenseReport::STATUS_DRAFT;
+	    $sql.=" UNION ALL";
+	    $sql.=" SELECT rowid as id, ref, paid, amount as total_ttc, '0' as fk_soc, datedon as date, 'Donation' as item FROM ".MAIN_DB_PREFIX."don";
+	    $sql.=" WHERE datedon between ".$wheretail;
+	    $sql.=" AND entity IN (".($entity==1?'0,1':$entity).')';
+	    $sql.=" AND fk_statut <> ".Don::STATUS_DRAFT;
+	    $sql.=" UNION ALL";
+	    $sql.=" SELECT rowid as id, label as ref, 1 as paid, amount as total_ttc, fk_user as fk_soc,datep as date, 'SalaryPayment' as item FROM ".MAIN_DB_PREFIX."payment_salary";
+	    $sql.=" WHERE datep between ".$wheretail;
+	    $sql.=" AND entity IN (".($entity==1?'0,1':$entity).')';
+	    //$sql.=" AND fk_statut <> ".PaymentSalary::STATUS_DRAFT;
+	    $sql.=" UNION ALL";
+	    $sql.=" SELECT rowid as id, libelle as ref, paye as paid, amount as total_ttc, 0 as fk_soc, date_creation as date, 'SocialContributions' as item FROM ".MAIN_DB_PREFIX."chargesociales";
+	    $sql.=" WHERE date_creation between ".$wheretail;
+	    $sql.=" AND entity IN (".($entity==1?'0,1':$entity).')';
+	    //$sql.=" AND fk_statut <> ".ChargeSociales::STATUS_DRAFT;
+	    $sql.= $db->order($sortfield, $sortorder);
 
-        $upload_dir ='';
-        $i=0;
-        while ($i < $numd)
-        {
-            $objd = $db->fetch_object($resd);
+	    $resd = $db->query($sql);
+	    $files=array();
+	    $link='';
 
-            switch($objd->item)
-            {
-                case "Invoice":
-                	$subdir = '';
-                	$subdir.=($subdir ? '/' : '').dol_sanitizeFileName($objd->ref);
-                    $upload_dir = $conf->facture->dir_output.'/'.$subdir;
-                    $link="document.php?modulepart=facture&file=".str_replace('/', '%2F', $subdir).'%2F';
-                    break;
-                case "SupplierInvoice":
-                	$tmpinvoicesupplier->fetch($objd->id);
-                	$subdir = get_exdir($tmpinvoicesupplier->id, 2, 0, 1, $tmpinvoicesupplier, 'invoice_supplier');		// TODO Use first file
-                    $subdir.=($subdir ? '/' : '').dol_sanitizeFileName($objd->ref);
-                    $upload_dir = $conf->fournisseur->facture->dir_output.'/'.$subdir;
-                    $link="document.php?modulepart=facture_fournisseur&file=".str_replace('/', '%2F', $subdir).'%2F';
-                    break;
-                case "ExpenseReport":
-                	$subdir = '';
-                	$subdir.=($subdir ? '/' : '').dol_sanitizeFileName($objd->ref);
-                    $upload_dir = $conf->expensereport->dir_output.'/'.$subdir;
-                    $link="document.php?modulepart=expensereport&file=".str_replace('/', '%2F', $subdir).'%2F';
-                    break;
-                case "SalaryPayment":
-                	$subdir = '';
-                	$subdir.=($subdir ? '/' : '').dol_sanitizeFileName($objd->id);
-                    $upload_dir = $conf->salaries->dir_output.'/'.$subdir;
-                    $link="document.php?modulepart=salaries&file=".str_replace('/', '%2F', $subdir).'%2F';
-                    break;
-                case "Donation":
-                    $tmpdonation->fetch($objp->id);
-                    $subdir=get_exdir(0, 0, 0, 0, $tmpdonation, 'donation');
-                    $subdir.=($subdir ? '/' : '').dol_sanitizeFileName($objd->id);
-                    $upload_dir = $conf->don->dir_output . '/' . $subdir;
-                    $link="document.php?modulepart=don&file=".str_replace('/', '%2F', $subdir).'%2F';
-                    break;
-                case "SocialContributions":
-                	$subdir = '';
-                	$subdir.=($subdir ? '/' : '').dol_sanitizeFileName($objd->id);
-                    $upload_dir = $conf->tax->dir_output . '/' . $subdir;
-                    $link="document.php?modulepart=tax&file=".str_replace('/', '%2F', $subdir).'%2F';
-                    break;
-                default:
-                	$subdir = '';
-                    $upload_dir = '';
-                    $link = '';
-                    break;
-            }
+	    if ($resd)
+	    {
+	        $numd = $db->num_rows($resd);
 
-            if (!empty($upload_dir))
-            {
-                $result=true;
+	        $tmpinvoice=new Facture($db);
+	        $tmpinvoicesupplier=new FactureFournisseur($db);
+	        $tmpdonation=new Don($db);
 
-                $files=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview\.png)$', '', SORT_ASC, 1);
+	        $upload_dir ='';
+	        $i=0;
+	        while ($i < $numd)
+	        {
+	            $objd = $db->fetch_object($resd);
 
-                if (count($files) < 1)
-                {
-                    $nofile['id']=$objd->id;
-                    $nofile['date']=$db->idate($objd->date);
-                    $nofile['paid']=$objd->paid;
-                    $nofile['amount']=$objd->total_ttc;
-                    $nofile['ref']=($objd->ref ? $objd->ref : $objd->id);
-                    $nofile['fk']=$objd->fk_soc;
-                    $nofile['item']=$objd->item;
+	            switch($objd->item)
+	            {
+	                case "Invoice":
+	                	$subdir = '';
+	                	$subdir.=($subdir ? '/' : '').dol_sanitizeFileName($objd->ref);
+	                    $upload_dir = $conf->facture->dir_output.'/'.$subdir;
+	                    $link="document.php?modulepart=facture&file=".str_replace('/', '%2F', $subdir).'%2F';
+	                    break;
+	                case "SupplierInvoice":
+	                	$tmpinvoicesupplier->fetch($objd->id);
+	                	$subdir = get_exdir($tmpinvoicesupplier->id, 2, 0, 1, $tmpinvoicesupplier, 'invoice_supplier');		// TODO Use first file
+	                    $subdir.=($subdir ? '/' : '').dol_sanitizeFileName($objd->ref);
+	                    $upload_dir = $conf->fournisseur->facture->dir_output.'/'.$subdir;
+	                    $link="document.php?modulepart=facture_fournisseur&file=".str_replace('/', '%2F', $subdir).'%2F';
+	                    break;
+	                case "ExpenseReport":
+	                	$subdir = '';
+	                	$subdir.=($subdir ? '/' : '').dol_sanitizeFileName($objd->ref);
+	                    $upload_dir = $conf->expensereport->dir_output.'/'.$subdir;
+	                    $link="document.php?modulepart=expensereport&file=".str_replace('/', '%2F', $subdir).'%2F';
+	                    break;
+	                case "SalaryPayment":
+	                	$subdir = '';
+	                	$subdir.=($subdir ? '/' : '').dol_sanitizeFileName($objd->id);
+	                    $upload_dir = $conf->salaries->dir_output.'/'.$subdir;
+	                    $link="document.php?modulepart=salaries&file=".str_replace('/', '%2F', $subdir).'%2F';
+	                    break;
+	                case "Donation":
+	                    $tmpdonation->fetch($objp->id);
+	                    $subdir=get_exdir(0, 0, 0, 0, $tmpdonation, 'donation');
+	                    $subdir.=($subdir ? '/' : '').dol_sanitizeFileName($objd->id);
+	                    $upload_dir = $conf->don->dir_output . '/' . $subdir;
+	                    $link="document.php?modulepart=don&file=".str_replace('/', '%2F', $subdir).'%2F';
+	                    break;
+	                case "SocialContributions":
+	                	$subdir = '';
+	                	$subdir.=($subdir ? '/' : '').dol_sanitizeFileName($objd->id);
+	                    $upload_dir = $conf->tax->dir_output . '/' . $subdir;
+	                    $link="document.php?modulepart=tax&file=".str_replace('/', '%2F', $subdir).'%2F';
+	                    break;
+	                default:
+	                	$subdir = '';
+	                    $upload_dir = '';
+	                    $link = '';
+	                    break;
+	            }
 
-                    $filesarray[]=$nofile;
-                }
-                else
-                {
-                    foreach ($files as $key => $file)
-                    {
-                        $file['id']=$objd->id;
-                        $file['date']=$db->idate($objd->date);
-                        $file['paid']=$objd->paid;
-                        $file['amount']=$objd->total_ttc;
-                        $file['ref']=($objd->ref ? $objd->ref : $objd->id);
-                        $file['fk']=$objd->fk_soc;
-                        $file['item']=$objd->item;
-                        $file['link']=$link.$file['name'];
-                        $file['relpathnamelang'] = $langs->trans($file['item']).'/'.$file['name'];
+	            if (!empty($upload_dir))
+	            {
+	                $result=true;
 
-                        $filesarray[]=$file;
-                    }
-                }
-            }
-            $i++;
-        }
-    }
-    else
-    {
-        dol_print_error($db);
-    }
+	                $files=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview\.png)$', '', SORT_ASC, 1);
 
-    $db->free($resd);
+	                if (count($files) < 1)
+	                {
+	                    $nofile['id']=$objd->id;
+	                    $nofile['date']=$db->idate($objd->date);
+	                    $nofile['paid']=$objd->paid;
+	                    $nofile['amount']=$objd->total_ttc;
+	                    $nofile['ref']=($objd->ref ? $objd->ref : $objd->id);
+	                    $nofile['fk']=$objd->fk_soc;
+	                    $nofile['item']=$objd->item;
+
+	                    $filesarray[]=$nofile;
+	                }
+	                else
+	                {
+	                    foreach ($files as $key => $file)
+	                    {
+	                        $file['id']=$objd->id;
+	                        $file['date']=$db->idate($objd->date);
+	                        $file['paid']=$objd->paid;
+	                        $file['amount']=$objd->total_ttc;
+	                        $file['ref']=($objd->ref ? $objd->ref : $objd->id);
+	                        $file['fk']=$objd->fk_soc;
+	                        $file['item']=$objd->item;
+	                        $file['link']=$link.$file['name'];
+	                        $file['relpathnamelang'] = $langs->trans($file['item']).'/'.$file['name'];
+
+	                        $filesarray[]=$file;
+	                    }
+	                }
+	            }
+	            $i++;
+	        }
+	    }
+	    else
+	    {
+	        dol_print_error($db);
+	    }
+
+	    $db->free($resd);
+	}
 }
 
 /*
@@ -318,7 +336,9 @@ if (! empty($conf->multicompany->enabled) && is_object($mc))
     print ")</span>\n";
 }
 
-print '<input class="button" type="submit" value="'.$langs->trans("Refresh").'" /></form>'."\n";
+print '<input class="button" type="submit" name="search" value="'.$langs->trans("Search").'">';
+
+print '</form>'."\n";
 
 dol_fiche_end();
 
