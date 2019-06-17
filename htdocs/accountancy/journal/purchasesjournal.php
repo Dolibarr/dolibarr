@@ -56,8 +56,7 @@ if ($in_bookkeeping == '') $in_bookkeeping = 'notyet';
 $now = dol_now();
 
 // Security check
-if ($user->societe_id > 0)
-	accessforbidden();
+$result=restrictedArea($user,'accounting','','','comptarapport');
 
 $hookmanager->initHooks(array('purchasesjournal'));
 $parameters=array();

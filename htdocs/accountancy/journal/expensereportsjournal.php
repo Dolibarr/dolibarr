@@ -56,8 +56,7 @@ if ($in_bookkeeping == '') $in_bookkeeping = 'notyet';
 $now = dol_now();
 
 // Security check
-if ($user->societe_id > 0)
-	accessforbidden();
+$result=restrictedArea($user,'accounting','','','comptarapport');
 
 /*
  * Actions
@@ -444,10 +443,10 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 
 	foreach ($taber as $key => $val) {
 	  $date = dol_print_date($val["date"], 'day');
-	  
+
 	  $userstatic->id = $tabuser[$key]['id'];
 	  $userstatic->name = $tabuser[$key]['name'];
-	  
+
 	  // Fees
 	  foreach ($tabht[$key] as $k => $mt) {
 	    $accountingaccount = new AccountingAccount($db);
@@ -474,7 +473,7 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 	      print "\n";
 	    }
 	  }
-	  
+
 	  // Third party
 	  foreach ($tabttc[$key] as $k => $mt) {
 	    print '"' . $date . '"' . $sep;
