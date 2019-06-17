@@ -417,7 +417,7 @@ if (! empty($arrayfields['d.bank']['checked']))
 }
 if (! empty($arrayfields['c.dateadh']['checked']))
 {
-	print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "c.dateadh", $param, "", 'align="center"', $sortfield, $sortorder);
+	print_liste_field_titre("DateStart", $_SERVER["PHP_SELF"], "c.dateadh", $param, "", 'align="center"', $sortfield, $sortorder);
 }
 if (! empty($arrayfields['c.datef']['checked']))
 {

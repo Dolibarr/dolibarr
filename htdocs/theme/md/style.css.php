@@ -353,8 +353,11 @@ input.buttongen {
 	vertical-align: middle;
 }
 input.buttonpayment, button.buttonpayment, div.buttonpayment {
-	min-width: 320px;
+	min-width: 290px;
 	margin-bottom: 15px;
+	margin-top: 0;
+    margin-left: 5px;
+    margin-right: 5px;
 	background-image: none;
 	line-height: 24px;
 	padding: 8px;

@@ -191,19 +191,19 @@ class box_services_contracts extends ModeleBoxes
 
 
 					$this->info_box_contents[$i][] = array(
-                        'td' => 'class="tdoverflowmax100 maxwidth100onsmartphone"',
+                        'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
                         'text' => $s,
                         'asis' => 1
                     );
 
 					$this->info_box_contents[$i][] = array(
-                        'td' => '',
+                        'td' => 'class="nowraponall"',
                         'text' => $contractstatic->getNomUrl(1),
                         'asis' => 1
                     );
 
 					$this->info_box_contents[$i][] = array(
-                        'td' => 'class="tdoverflowmax100 maxwidth100onsmartphone"',
+                        'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
                         'text' => $thirdpartytmp->getNomUrl(1),
                         'asis' => 1
                     );

@@ -120,7 +120,7 @@ class ActionComm extends CommonObject
      * Object user that create action
      * @var User
      * @deprecated
-     * @see authorid
+     * @see $authorid
      */
     public $author;
 
@@ -128,7 +128,7 @@ class ActionComm extends CommonObject
      * Object user that modified action
      * @var User
      * @deprecated
-     * @see usermodid
+     * @see $usermodid
      */
     public $usermod;
 
@@ -1010,7 +1010,7 @@ class ActionComm extends CommonObject
 
     /**
      *  Load all objects with filters.
-     *  WARNING: This make a fetch on all records instead of making one request with a join.
+     *  @TODO WARNING: This make a fetch on all records instead of making one request with a join.
      *
      *  @param		DoliDb	$db				Database handler
      *  @param		int		$socid			Filter by thirdparty
@@ -1020,13 +1020,15 @@ class ActionComm extends CommonObject
      *  @param		string	$sortfield		Sort on this field
      *  @param		string	$sortorder		ASC or DESC
      *  @param		string	$limit			Limit number of answers
-     *  @return	array or string			Error string if KO, array with actions if OK
+     *  @return		array|string			Error string if KO, array with actions if OK
      */
     public static function getActions($db, $socid = 0, $fk_element = 0, $elementtype = '', $filter = '', $sortfield = 'a.datep', $sortorder = 'DESC', $limit = 0)
     {
         global $conf, $langs;
 
         $resarray=array();
+
+        dol_syslog(get_class()."::getActions", LOG_DEBUG);
 
         $sql = "SELECT a.id";
         $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
@@ -1041,7 +1043,6 @@ class ActionComm extends CommonObject
 		if ($sortorder && $sortfield) $sql.=$db->order($sortfield, $sortorder);
 		$sql.=$db->plimit($limit, 0);
 
-        dol_syslog(get_class()."::getActions", LOG_DEBUG);
         $resql=$db->query($sql);
         if ($resql)
         {
@@ -1285,7 +1286,7 @@ class ActionComm extends CommonObject
 
         if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
 
-        if ((!$user->rights->agenda->allactions->read && $this->author->id != $user->id) || (!$user->rights->agenda->myactions->read && $this->author->id == $user->id))
+        if ((!$user->rights->agenda->allactions->read && $this->authorid != $user->id) || (!$user->rights->agenda->myactions->read && $this->authorid == $user->id))
             $option = 'nolink';
 
         $label = $this->label;

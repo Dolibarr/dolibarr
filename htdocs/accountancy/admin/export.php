@@ -23,7 +23,7 @@
 
 /**
  * \file 		htdocs/accountancy/admin/export.php
- * \ingroup 	Advanced accountancy
+ * \ingroup 	Accountancy (Double entries)
  * \brief 		Setup page to configure accounting expert module
  */
 require '../../main.inc.php';

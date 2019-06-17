@@ -59,12 +59,12 @@ class FormProduct
 	 * Load in cache array list of warehouses
 	 * If fk_product is not 0, we do not use cache
 	 *
-	 * @param	int		$fk_product		    Add quantity of stock in label for product with id fk_product. Nothing if 0.
-	 * @param	string	$batch			    Add quantity of batch stock in label for product with batch name batch, batch name precedes batch_id. Nothing if ''.
-	 * @param	string	$status		      	warehouse status filter, following comma separated filter options can be used
-     *										'warehouseopen' = select products from open warehouses,
-	 *										'warehouseclosed' = select products from closed warehouses,
-	 *										'warehouseinternal' = select products from warehouses for internal correct/transfer only
+	 * @param	int		$fk_product			Add quantity of stock in label for product with id fk_product. Nothing if 0.
+	 * @param	string	$batch				Add quantity of batch stock in label for product with batch name batch, batch name precedes batch_id. Nothing if ''.
+	 * @param	string	$status				warehouse status filter, following comma separated filter options can be used
+	 *                      				'warehouseopen' = select products from open warehouses,
+	 *                      				'warehouseclosed' = select products from closed warehouses,
+	 *                      				'warehouseinternal' = select products from warehouses for internal correct/transfer only
 	 * @param	boolean	$sumStock		    sum total stock of a warehouse, default true
 	 * @param	array	$exclude		    warehouses ids to exclude
 	 * @return  int  		    		    Nb of loaded lines, 0 if already loaded, <0 if KO
@@ -114,9 +114,9 @@ class FormProduct
 		{
 			$sql.= " AND ps.fk_product = '".$fk_product."'";
 			if (!empty($batch))
-            {
-                $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_batch as pb on pb.fk_product_stock = ps.rowid AND pb.batch = '".$batch."'";
-            }
+			{
+				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_batch as pb on pb.fk_product_stock = ps.rowid AND pb.batch = '".$batch."'";
+			}
 		}
 		$sql.= " WHERE e.entity IN (".getEntity('stock').")";
 		if (count($warehouseStatus))
@@ -173,9 +173,9 @@ class FormProduct
 	 * @param	String	$final_label	full label with all parents, separated by ' >> ' (completed on each call)
 	 * @return	String					full label with all parents, separated by ' >> '
 	 */
-    private function get_parent_path($tab, $final_label = '')
-    {
-        //phpcs:enable
+	private function get_parent_path($tab, $final_label = '')
+	{
+		//phpcs:enable
 		if(empty($final_label)) $final_label = $tab['label'];
 
 		if(empty($tab['parent_id'])) return $final_label;
@@ -195,9 +195,9 @@ class FormProduct
 	 *  @param	int		$selected       Id of preselected warehouse ('' for no value, 'ifone'=select value if one value otherwise no value)
 	 *  @param  string	$htmlname       Name of html select html
 	 *  @param  string	$filterstatus   warehouse status filter, following comma separated filter options can be used
-     *									'warehouseopen' = select products from open warehouses,
-	 *									'warehouseclosed' = select products from closed warehouses,
-	 *									'warehouseinternal' = select products from warehouses for internal correct/transfer only
+	 *                                	'warehouseopen' = select products from open warehouses,
+	 *                                	'warehouseclosed' = select products from closed warehouses,
+	 *                                	'warehouseinternal' = select products from warehouses for internal correct/transfer only
 	 *  @param  int		$empty			1=Can be empty, 0 if not
 	 * 	@param	int		$disabled		1=Select is disabled
 	 * 	@param	int		$fk_product		Add quantity of stock in label for product with id fk_product. Nothing if 0.
@@ -379,9 +379,9 @@ class FormProduct
 	 */
 	public function selectLotStock($selected = '', $htmlname = 'batch_id', $filterstatus = '', $empty = 0, $disabled = 0, $fk_product = 0, $fk_entrepot = 0, $objectLines = array(), $empty_label = '', $forcecombo = 0, $events = array(), $morecss = 'minwidth200')
 	{
-		global $langs;
+		global $conf, $langs;
 
-		dol_syslog(get_class($this)."::selectLot $selected, $htmlname, $filterstatus, $empty, $disabled, $fk_product, $fk_entrepot, $empty_label, $showstock, $forcecombo, $morecss", LOG_DEBUG);
+		dol_syslog(get_class($this)."::selectLot $selected, $htmlname, $filterstatus, $empty, $disabled, $fk_product, $fk_entrepot, $empty_label, $forcecombo, $morecss", LOG_DEBUG);
 
 		$out='';
 		$productIdArray = array();
