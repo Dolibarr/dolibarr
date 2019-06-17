@@ -582,7 +582,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
         $linktocreatetimeBtnStatus = 0;
         $linktocreatetimeUrl = '';
         $linktocreatetimeHelpText = '';
-		if ($user->rights->projet->all->lire || $user->rights->projet->lire)
+        if ($user->rights->projet->all->lire || $user->rights->projet->lire)	// To enter time, read permission is enough
 		{
 			if ($projectstatic->public || $userRead > 0)
 		    {
