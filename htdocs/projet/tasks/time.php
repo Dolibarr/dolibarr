@@ -428,7 +428,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			print '<br>';
 
 			// Link to create time
-		    if ($user->rights->projet->all->lire || $user->rights->projet->lire))	// To enter time, read permission is enough
+		    if ($user->rights->projet->all->lire || $user->rights->projet->lire)	// To enter time, read permission is enough
 			{
 			    if ($projectstatic->public || $userRead > 0)
 			    {
