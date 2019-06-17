@@ -186,11 +186,11 @@ function pdf_getEncryption($pathoffile)
 
 	$content = file_get_contents($pathoffile);
 
-	ob_start();
+	//ob_start();
 	@($parser = new \TCPDF_PARSER(ltrim($content)));
 	list($xref, $data) = $parser->getParsedData();
 	unset($parser);
-	ob_end_clean();
+	//ob_end_clean();
 
 	if (isset($xref['trailer']['encrypt'])) {
 		$isencrypted = true;	// Secured pdf file are currently not supported
