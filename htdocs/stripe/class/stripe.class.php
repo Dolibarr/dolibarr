@@ -247,6 +247,8 @@ class Stripe extends CommonObject
 	 */
 	public function getPaymentMethodStripe($paymentmethod, $key = '', $status = 0)
 	{
+		$stripepaymentmethod = null;
+
 		try {
 			// Force to use the correct API key
 			global $stripearrayofkeysbyenv;
@@ -261,6 +263,7 @@ class Stripe extends CommonObject
 		{
 			$this->error = $e->getMessage();
 		}
+
 		return $stripepaymentmethod;
 	}
 
