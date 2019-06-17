@@ -619,7 +619,7 @@ print '<tr>'."\n";
 print '<td></td>'."\n";
 print '<td></td>'."\n";
 
-//boucle pour l'affichage des boutons de suppression de colonne
+// loop to show the delete link
 if ($user->rights->opensurvey->write) {
 	for ($i = 0; isset($toutsujet[$i]); $i++) {
 

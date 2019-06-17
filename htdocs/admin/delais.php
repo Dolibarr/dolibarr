@@ -418,7 +418,6 @@ if($action == 'edit') {
 	print '<br></form>';
 } else {
 
-	// Boutons d'action
 	print '<br><div class="tabsAction">';
 	print '<a class="butAction" href="delais.php?action=edit">'.$langs->trans("Modify").'</a></div>';
 }

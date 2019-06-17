@@ -434,7 +434,7 @@ if ($resql)
 			$canedit=((in_array($user_id, $childids) && $user->rights->expensereport->creer)
 				|| ($conf->global->MAIN_USE_ADVANCED_PERMS && $user->rights->expensereport->writeall_advance));
 
-			// Boutons d'actions
+			// Buttons for actions
 			if ($canedit)
 			{
 				print '<a href="'.DOL_URL_ROOT.'/expensereport/card.php?action=create&fk_user_author='.$fuser->id.'" class="butAction">'.$langs->trans("AddTrip").'</a>';

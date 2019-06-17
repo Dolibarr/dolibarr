@@ -415,7 +415,6 @@ if ($action == 'create')
 
     dol_fiche_end();
 
-    // Boutons
     print '<div class="center">';
 	print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
     print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
