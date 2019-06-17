@@ -2,6 +2,7 @@
 /* Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
  * Copyright (C) 2013-2017 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2014      Florian Henry        <florian.henry@open-concept.pro>
+ * Copyright (C) 2019      Eric Seigne         <eric.seigne@cap-rel.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +23,22 @@
  * 	\ingroup	Advanced accountancy
  * 	\brief		Library of accountancy functions
  */
+
+ /**
+  *	Check if a value is empty with some options
+  *
+	*	@param	allow_false : setting this to true will make the function consider a boolean value of false as NOT empty. This parameter is false by default.
+	*	@param	allow_ws :    setting this to true will make the function consider a string with nothing but white space as NOT empty. This parameter is false by default.
+  *	@return	array				  Bool
+	* @author Michael - https://www.php.net/manual/fr/function.empty.php#90767
+  */
+	function is_empty($var, $allow_false = false, $allow_ws = false) {
+		if (!isset($var) || is_null($var) || ($allow_ws == false && trim($var) == "" && !is_bool($var)) || ($allow_false === false && is_bool($var) && $var === false) || (is_array($var) && empty($var))) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 
 /**
  *	Prepare array with list of tabs
@@ -75,12 +92,12 @@ function length_accountg($account)
 {
 	global $conf;
 
-	if ($account < 0 || empty($account)) return '';
+	if ($account < 0 || is_empty($account)) return '';
 
-	if (! empty($conf->global->ACCOUNTING_MANAGE_ZERO)) return $account;
+	if (! is_empty($conf->global->ACCOUNTING_MANAGE_ZERO)) return $account;
 
 	$g = $conf->global->ACCOUNTING_LENGTH_GACCOUNT;
-	if (! empty($g)) {
+	if (! is_empty($g)) {
 		// Clean parameters
 		$i = strlen($account);
 
@@ -110,12 +127,12 @@ function length_accounta($accounta)
 {
 	global $conf;
 
-	if ($accounta < 0 || empty($accounta)) return '';
+	if ($accounta < 0 || is_empty($accounta)) return '';
 
-	if (! empty($conf->global->ACCOUNTING_MANAGE_ZERO)) return $accounta;
+	if (! is_empty($conf->global->ACCOUNTING_MANAGE_ZERO)) return $accounta;
 
 	$a = $conf->global->ACCOUNTING_LENGTH_AACCOUNT;
-	if (! empty($a)) {
+	if (! is_empty($a)) {
 		// Clean parameters
 		$i = strlen($accounta);
 
@@ -158,7 +175,7 @@ function journalHead($nom, $variante, $period, $periodlink, $description, $build
 
     print "\n\n<!-- debut cartouche journal -->\n";
 
-    if(! empty($varlink)) $varlink = '?'.$varlink;
+    if(! is_empty($varlink)) $varlink = '?'.$varlink;
 
     $head=array();
     $h=0;

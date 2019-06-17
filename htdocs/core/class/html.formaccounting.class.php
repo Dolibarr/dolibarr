@@ -392,7 +392,7 @@ class FormAccounting extends Form
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			while ($obj = $this->db->fetch_object($resql)) {
-				if (!empty($obj->code_compta_fournisseur)) {
+				if ($obj->code_compta_fournisseur != "") {
 					$aux_account[$obj->code_compta_fournisseur] = $obj->code_compta_fournisseur.' ('.$obj->nom.')';
 				}
 			}
