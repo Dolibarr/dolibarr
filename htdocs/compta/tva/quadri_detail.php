@@ -5,6 +5,7 @@
  * Copyright (C) 2006-2015  Yannick Warnier         <ywarnier@beeznest.org>
  * Copyright (C) 2014       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019       Eric Seigne             <eric.seigne@cap-rel.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -116,7 +117,8 @@ foreach ($listofparams as $param)
 	if (GETPOST($param)!='') $morequerystring.=($morequerystring?'&':'').$param.'='.GETPOST($param);
 }
 
-llxHeader('', $langs->trans("VATReport"), '', '', 0, 0, '', '', $morequerystring);
+$title = $langs->trans("VATReport") . " " . dol_print_date($date_start) . " -> " . dol_print_date($date_end);
+llxHeader('',$title,'','',0,0,'','',$morequerystring);
 
 
 //print load_fiche_titre($langs->trans("VAT"),"");
@@ -184,8 +186,10 @@ if ($mysoc->tva_assuj) {
 	$vatsup.=' ('.$langs->trans("ToGetBack").')';
 }
 
-
-report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink, array(), $calcmode);
+$optioncss = GETPOST('optioncss');
+if($optioncss != "print") {
+	report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink, array(), $calcmode);
+}
 
 $vatcust=$langs->trans("VATReceived");
 $vatsup=$langs->trans("VATPaid");
