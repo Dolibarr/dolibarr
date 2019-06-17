@@ -3021,7 +3021,7 @@ else
 		if ($action != 'presend')
 		{
 			/*
-             * Boutons actions
+             * Buttons actions
              */
 
 			print '<div class="tabsAction">';

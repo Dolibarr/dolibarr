@@ -1287,7 +1287,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 				// Files
 				if (! empty($conf->global->MAIN_FEATURES_LEVEL) && $conf->global->MAIN_FEATURES_LEVEL >= 1)
 				{
-					$newmenu->add("/compta/compta-files.php?mainmenu=accountancy&amp;leftmenu=accountancy_files", $langs->trans("AccountantFiles"), 1, $user->rights->accounting->mouvements->lire);
+					$newmenu->add("/compta/accounting-files.php?mainmenu=accountancy&amp;leftmenu=accountancy_files", $langs->trans("AccountantFiles"), 1, $user->rights->accounting->mouvements->lire);
 				}
 
 				// Reports
@@ -1329,6 +1329,12 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 			// Accountancy (simple)
             if (! empty($conf->comptabilite->enabled))
             {
+            	// Files
+            	if (! empty($conf->global->MAIN_FEATURES_LEVEL) && $conf->global->MAIN_FEATURES_LEVEL >= 1)
+            	{
+            		$newmenu->add("/compta/accounting-files.php?mainmenu=accountancy&amp;leftmenu=accountancy_files", $langs->trans("AccountantFiles"), 0, $user->rights->compta->resultat->lire, '', $mainmenu, 'files');
+            	}
+
                 // Bilan, resultats
                 $newmenu->add("/compta/resultat/index.php?leftmenu=report&amp;mainmenu=accountancy", $langs->trans("Reportings"), 0, $user->rights->compta->resultat->lire, '', $mainmenu, 'ca');
 
