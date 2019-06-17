@@ -161,7 +161,7 @@ class Commande extends CommonOrder
 
 	/**
 	 * @deprecated
-	 * @see date
+	 * @see $date
 	 */
 	public $date_commande;
 
@@ -499,16 +499,22 @@ class Commande extends CommonOrder
 			return -1;
 		}
 
+		dol_syslog(__METHOD__, LOG_DEBUG);
+
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."commande";
 		$sql.= " SET fk_statut = ".self::STATUS_DRAFT;
 		$sql.= " WHERE rowid = ".$this->id;
 
-		dol_syslog(get_class($this)."::set_draft", LOG_DEBUG);
 		if ($this->db->query($sql))
 		{
-			// If stock is decremented on validate order, we must reincrement it
+		    if (! $error)
+		    {
+		        $this->oldcopy= clone $this;
+		    }
+
+		    // If stock is decremented on validate order, we must reincrement it
 			if (! empty($conf->stock->enabled) && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1)
 			{
 				$result = 0;
@@ -809,7 +815,7 @@ class Commande extends CommonOrder
 		}
 		if (! empty($conf->global->COMMANDE_REQUIRE_SOURCE) && $this->source < 0)
 		{
-			$this->error=$langs->trans("ErrorFieldRequired", $langs->trans("Source"));
+			$this->error=$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Source"));
 			dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
 			return -1;
 		}
@@ -1064,12 +1070,13 @@ class Commande extends CommonOrder
 	/**
 	 *	Load an object from its id and create a new one in database
 	 *
-	 *	@param		int			$socid			Id of thirdparty
-	 *	@return		int							New id of clone
+	 *  @param	    User	$user		User making the clone
+	 *	@param		int		$socid		Id of thirdparty
+	 *	@return		int					New id of clone
 	 */
-	public function createFromClone($socid = 0)
+	public function createFromClone(User $user, $socid = 0)
 	{
-		global $user,$hookmanager;
+		global $conf, $user,$hookmanager;
 
 		$error=0;
 
@@ -1079,69 +1086,88 @@ class Commande extends CommonOrder
 		foreach($this->lines as $line)
 			$line->fetch_optionals();
 
-			// Load source object
-			$objFrom = clone $this;
+		// Load source object
+		$objFrom = clone $this;
 
-			// Change socid if needed
-			if (! empty($socid) && $socid != $this->socid)
+		// Change socid if needed
+		if (! empty($socid) && $socid != $this->socid)
+		{
+			$objsoc = new Societe($this->db);
+
+			if ($objsoc->fetch($socid)>0)
 			{
-				$objsoc = new Societe($this->db);
-
-				if ($objsoc->fetch($socid)>0)
-				{
-					$this->socid 				= $objsoc->id;
-					$this->cond_reglement_id	= (! empty($objsoc->cond_reglement_id) ? $objsoc->cond_reglement_id : 0);
-					$this->mode_reglement_id	= (! empty($objsoc->mode_reglement_id) ? $objsoc->mode_reglement_id : 0);
-					$this->fk_project			= 0;
-					$this->fk_delivery_address	= 0;
-				}
-
-				// TODO Change product price if multi-prices
+				$this->socid 				= $objsoc->id;
+				$this->cond_reglement_id	= (! empty($objsoc->cond_reglement_id) ? $objsoc->cond_reglement_id : 0);
+				$this->mode_reglement_id	= (! empty($objsoc->mode_reglement_id) ? $objsoc->mode_reglement_id : 0);
+				$this->fk_project			= 0;
+				$this->fk_delivery_address	= 0;
 			}
 
-			$this->id=0;
-			$this->ref = '';
-			$this->statut=self::STATUS_DRAFT;
+			// TODO Change product price if multi-prices
+		}
 
-			// Clear fields
-			$this->user_author_id     = $user->id;
-			$this->user_valid         = '';
-			$this->date				  = dol_now();
-			$this->date_commande	  = dol_now();
-			$this->date_creation      = '';
-			$this->date_validation    = '';
-			$this->ref_client         = '';
+		$this->id=0;
+		$this->ref = '';
+		$this->statut=self::STATUS_DRAFT;
 
-			// Create clone
-			$this->context['createfromclone'] = 'createfromclone';
-			$result=$this->create($user);
-			if ($result < 0) $error++;
+		// Clear fields
+		$this->user_author_id     = $user->id;
+		$this->user_valid         = '';
+		$this->date				  = dol_now();
+		$this->date_commande	  = dol_now();
+		$this->date_creation      = '';
+		$this->date_validation    = '';
+		if (empty($conf->global->MAIN_KEEP_REF_CUSTOMER_ON_CLONING)) $this->ref_client = '';
 
-			if (! $error)
+		// Create clone
+		$this->context['createfromclone'] = 'createfromclone';
+		$result=$this->create($user);
+		if ($result < 0) $error++;
+
+		if (! $error)
+		{
+			// copy internal contacts
+			if ($this->copy_linked_contact($objFrom, 'internal') < 0)
 			{
-				// Hook of thirdparty module
-				if (is_object($hookmanager))
-				{
-					$parameters=array('objFrom'=>$objFrom);
-					$action='';
-					$reshook=$hookmanager->executeHooks('createFrom', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
-					if ($reshook < 0) $error++;
-				}
+				$error++;
 			}
+		}
 
-			unset($this->context['createfromclone']);
+		if (! $error)
+		{
+			// copy external contacts if same company
+			if ($this->socid == $objFrom->socid)
+			{
+				if ($this->copy_linked_contact($objFrom, 'external') < 0)
+					$error++;
+			}
+		}
 
-			// End
-			if (! $error)
+		if (! $error)
+		{
+			// Hook of thirdparty module
+			if (is_object($hookmanager))
 			{
-				$this->db->commit();
-				return $this->id;
+				$parameters=array('objFrom'=>$objFrom);
+				$action='';
+				$reshook=$hookmanager->executeHooks('createFrom', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
+				if ($reshook < 0) $error++;
 			}
-			else
-			{
-				$this->db->rollback();
-				return -1;
-			}
+		}
+
+		unset($this->context['createfromclone']);
+
+		// End
+		if (! $error)
+		{
+			$this->db->commit();
+			return $this->id;
+		}
+		else
+		{
+			$this->db->rollback();
+			return -1;
+		}
 	}
 
 
@@ -1219,8 +1245,12 @@ class Commande extends CommonOrder
 		$this->fk_delivery_address  = $object->fk_delivery_address;
 		$this->contact_id           = $object->contactid;
 		$this->ref_client           = $object->ref_client;
-		$this->note_private         = $object->note_private;
-		$this->note_public          = $object->note_public;
+
+		if (empty($conf->global->MAIN_DISABLE_PROPAGATE_NOTES_FROM_ORIGIN))
+		{
+            $this->note_private         = $object->note_private;
+            $this->note_public          = $object->note_public;
+		}
 
 		$this->origin				= $object->element;
 		$this->origin_id			= $object->id;
@@ -1281,7 +1311,7 @@ class Commande extends CommonOrder
 	 * 	@param		float			$txlocaltax1		Local tax 1 rate (deprecated, use instead txtva with code inside)
 	 * 	@param		float			$txlocaltax2		Local tax 2 rate (deprecated, use instead txtva with code inside)
 	 *	@param      int				$fk_product      	Id of product
-	 *	@param      float			$remise_percent  	Pourcentage de remise de la ligne
+	 *	@param      float			$remise_percent  	Percentage discount of the line
 	 *	@param      int				$info_bits			Bits de type de lignes
 	 *	@param      int				$fk_remise_except	Id remise
 	 *	@param      string			$price_base_type	HT or TTC
@@ -1302,7 +1332,7 @@ class Commande extends CommonOrder
 	 * 	@param		double			$pu_ht_devise		Unit price in currency
 	 *	@return     int             					>0 if OK, <0 if KO
 	 *
-	 *	@see        add_product
+	 *	@see        add_product()
 	 *
 	 *	Les parametres sont deja cense etre juste et avec valeurs finales a l'appel
 	 *	de cette methode. Aussi, pour le taux tva, il doit deja avoir ete defini
@@ -1357,6 +1387,12 @@ class Commande extends CommonOrder
 
 			// Check parameters
 			if ($type < 0) return -1;
+
+			if ($date_start && $date_end && $date_start > $date_end) {
+				$langs->load("errors");
+				$this->error=$langs->trans('ErrorStartDateGreaterEnd');
+				return -1;
+			}
 
             $this->db->begin();
 
@@ -1649,7 +1685,7 @@ class Commande extends CommonOrder
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as cr ON c.fk_cond_reglement = cr.rowid';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON c.fk_mode_reglement = p.id';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_availability as ca ON c.fk_availability = ca.rowid';
-		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_input_reason as dr ON c.fk_input_reason = ca.rowid';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_input_reason as dr ON c.fk_input_reason = dr.rowid';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON c.fk_incoterms = i.rowid';
 
 		if ($id) $sql.= " WHERE c.rowid=".$id;
@@ -2920,9 +2956,8 @@ class Commande extends CommonOrder
 		dol_syslog(get_class($this)."::updateline id=$rowid, desc=$desc, pu=$pu, qty=$qty, remise_percent=$remise_percent, txtva=$txtva, txlocaltax1=$txlocaltax1, txlocaltax2=$txlocaltax2, price_base_type=$price_base_type, info_bits=$info_bits, date_start=$date_start, date_end=$date_end, type=$type, fk_parent_line=$fk_parent_line, pa_ht=$pa_ht, special_code=$special_code");
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
-		if (! empty($this->brouillon))
+		if ($this->statut == Commande::STATUS_DRAFT)
 		{
-			$this->db->begin();
 
 			// Clean parameters
 			if (empty($qty)) $qty=0;
@@ -2933,6 +2968,12 @@ class Commande extends CommonOrder
 			if (empty($remise_percent)) $remise_percent=0;
 			if (empty($special_code) || $special_code == 3) $special_code=0;
 
+			if ($date_start && $date_end && $date_start > $date_end) {
+				$langs->load("errors");
+				$this->error=$langs->trans('ErrorStartDateGreaterEnd');
+				return -1;
+			}
+
 			$remise_percent=price2num($remise_percent);
 			$qty=price2num($qty);
 			$pu = price2num($pu);
@@ -2941,6 +2982,8 @@ class Commande extends CommonOrder
 			$txtva=price2num($txtva);
 			$txlocaltax1=price2num($txlocaltax1);
 			$txlocaltax2=price2num($txlocaltax2);
+
+			$this->db->begin();
 
 			// Calcul du total TTC et de la TVA pour la ligne a partir de
 			// qty, pu, remise_percent et txtva
@@ -3863,7 +3906,7 @@ class OrderLine extends CommonOrderLine
 	 * Id of parent order
 	 * @var int
 	 * @deprecated Use fk_commande
-	 * @see fk_commande
+	 * @see $fk_commande
 	 */
 	public $commande_id;
 
@@ -3890,7 +3933,7 @@ class OrderLine extends CommonOrderLine
 
 	/**
 	 * @deprecated
-	 * @see remise_percent, fk_remise_except
+	 * @see $remise_percent, $fk_remise_except
 	 */
 	public $remise;
 
@@ -4007,6 +4050,33 @@ class OrderLine extends CommonOrderLine
 		global $conf, $langs;
 
 		$error=0;
+
+        // check if order line is not in a shipment line before deleting
+        $sqlCheckShipmentLine  = "SELECT";
+        $sqlCheckShipmentLine .= " ed.rowid";
+        $sqlCheckShipmentLine .= " FROM " . MAIN_DB_PREFIX . "expeditiondet ed";
+        $sqlCheckShipmentLine .= " WHERE ed.fk_origin_line = " . $this->rowid;
+
+        $resqlCheckShipmentLine = $this->db->query($sqlCheckShipmentLine);
+        if (!$resqlCheckShipmentLine) {
+            $error++;
+            $this->error    = $this->db->lasterror();
+            $this->errors[] = $this->error;
+        } else {
+            $langs->load('errors');
+            $num = $this->db->num_rows($resqlCheckShipmentLine);
+            if ($num > 0) {
+                $error++;
+                $objCheckShipmentLine = $this->db->fetch_object($resqlCheckShipmentLine);
+                $this->error = $langs->trans('ErrorRecordAlreadyExists') . ' : ' . $langs->trans('ShipmentLine') . ' ' . $objCheckShipmentLine->rowid;
+                $this->errors[] = $this->error;
+            }
+            $this->db->free($resqlCheckShipmentLine);
+        }
+        if ($error) {
+            dol_syslog(__METHOD__ . 'Error ; ' . $this->error, LOG_ERR);
+            return -1;
+        }
 
 		$this->db->begin();
 

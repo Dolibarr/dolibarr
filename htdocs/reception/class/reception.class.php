@@ -444,7 +444,7 @@ class Reception extends CommonObject
 				$this->getUrlTrackingStatus($obj->tracking_number);
 
 				/*
-				 * Thirparty
+				 * Thirdparty
 				 */
 				$result=$this->fetch_thirdparty();
 
@@ -707,8 +707,8 @@ class Reception extends CommonObject
 	 * @param 	int			$qty				Quantity
 	 * @param	array		$array_options		extrafields array
 	 * @param	string		$comment				Comment for stock movement
-	 * @param	date		$eatby					eat-by date
-	 * @param	date		$sellby					sell-by date
+	 * @param	integer		$eatby					eat-by date
+	 * @param	integer		$sellby					sell-by date
 	 * @param	string		$batch					Lot number
 	 * @return	int							<0 if KO, >0 if OK
 	 */
@@ -1183,7 +1183,9 @@ class Reception extends CommonObject
     public function initAsSpecimen()
     {
 		global $langs;
-		dol_include_once('/fourn/class/fournisseur.commande.dispatch.class.php');
+
+		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.dispatch.class.php';
 		$now=dol_now();
 
 		dol_syslog(get_class($this)."::initAsSpecimen");
@@ -1207,7 +1209,7 @@ class Reception extends CommonObject
 			}
 		}
 
-		$order=new Commande($this->db);
+		$order=new CommandeFournisseur($this->db);
 		$order->initAsSpecimen();
 
 		// Initialise parametres
@@ -1256,7 +1258,7 @@ class Reception extends CommonObject
 	 *	Set the planned delivery date
 	 *
 	 *	@param      User			$user        		Objet utilisateur qui modifie
-	 *	@param      timestamp		$date_livraison     Date de livraison
+	 *	@param      integer 		$date_livraison     Date de livraison
 	 *	@return     int         						<0 if KO, >0 if OK
 	 */
     public function set_date_livraison($user, $date_livraison)
@@ -1763,8 +1765,6 @@ class Reception extends CommonObject
 		}
 	}
 
-
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	 /**
      *	Set draft status
      *
@@ -1797,7 +1797,7 @@ class Reception extends CommonObject
         $sql.= " SET fk_statut = ".self::STATUS_DRAFT;
         $sql.= " WHERE rowid = ".$this->id;
 
-        dol_syslog(get_class($this)."::set_draft", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         if ($this->db->query($sql))
         {
             // If stock increment is done on closing

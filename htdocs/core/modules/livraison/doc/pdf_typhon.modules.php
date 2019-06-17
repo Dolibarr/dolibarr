@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2014 Regis Houssin         <regis.houssin@inodbox.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2008      Chiptronik
- * Copyright (C) 2011-2018 Philippe Grand        <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2019 Philippe Grand        <philippe.grand@atoo-net.com>
  * Copyright (C) 2015      Marcos García         <marcosgdf@gmail.com>
 
  * This program is free software; you can redistribute it and/or modify
@@ -61,9 +61,9 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
     /**
      * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 5.4 = array(5, 4)
+     * e.g.: PHP ≥ 5.5 = array(5, 5)
      */
-	public $phpmin = array(5, 4);
+	public $phpmin = array(5, 5);
 
 	/**
      * Dolibarr version of the loaded document

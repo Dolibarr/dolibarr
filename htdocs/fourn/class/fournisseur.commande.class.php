@@ -123,7 +123,7 @@ class CommandeFournisseur extends CommonOrder
 
 	/**
 	 * @deprecated
-	 * @see note_private, note_public
+	 * @see $note_private, $note_public
 	 */
     public $note;
 
@@ -264,7 +264,7 @@ class CommandeFournisseur extends CommonOrder
         $sql.= " c.note_private, c.note_public, c.model_pdf, c.extraparams, c.billed,";
         $sql.= " c.fk_multicurrency, c.multicurrency_code, c.multicurrency_tx, c.multicurrency_total_ht, c.multicurrency_total_tva, c.multicurrency_total_ttc,";
         $sql.= " cm.libelle as methode_commande,";
-        $sql.= " cr.code as cond_reglement_code, cr.libelle as cond_reglement_libelle,";
+        $sql.= " cr.code as cond_reglement_code, cr.libelle as cond_reglement_libelle, cr.libelle_facture as cond_reglement_libelle_doc,";
         $sql.= " p.code as mode_reglement_code, p.libelle as mode_reglement_libelle";
         $sql.= ', c.fk_incoterms, c.location_incoterms';
         $sql.= ', i.libelle as libelle_incoterms';
@@ -322,7 +322,7 @@ class CommandeFournisseur extends CommonOrder
             $this->cond_reglement_id	= $obj->fk_cond_reglement;
             $this->cond_reglement_code	= $obj->cond_reglement_code;
             $this->cond_reglement		= $obj->cond_reglement_libelle;
-            $this->cond_reglement_doc	= $obj->cond_reglement_libelle;
+            $this->cond_reglement_doc	= $obj->cond_reglement_libelle_doc;
             $this->fk_account           = $obj->fk_account;
             $this->mode_reglement_id	= $obj->fk_mode_reglement;
             $this->mode_reglement_code	= $obj->mode_reglement_code;
@@ -776,7 +776,7 @@ class CommandeFournisseur extends CommonOrder
      *  Returns the following order reference not used depending on the numbering model activated
      *                  defined within COMMANDE_SUPPLIER_ADDON_NUMBER
      *
-     *  @param	    Company		$soc  		company object
+     *  @param	    Societe		$soc  		company object
      *  @return     string                  free reference for the invoice
      */
     public function getNextNumRef($soc)
@@ -1145,7 +1145,7 @@ class CommandeFournisseur extends CommonOrder
      * 	Submit a supplier order to supplier
      *
      * 	@param		User	$user		User making change
-     * 	@param		date	$date		Date
+     * 	@param		integer	$date		Date
      * 	@param		int		$methode	Method
      * 	@param		string	$comment	Comment
      * 	@return		int			        <0 if KO, >0 if OK
@@ -1409,11 +1409,12 @@ class CommandeFournisseur extends CommonOrder
     /**
      *	Load an object from its id and create a new one in database
      *
-     *	@return		int							New id of clone
+	 *  @param	    User	$user		User making the clone
+     *	@return		int					New id of clone
      */
-    public function createFromClone()
+    public function createFromClone(User $user)
     {
-        global $conf,$user,$langs,$hookmanager;
+        global $hookmanager;
 
         $error=0;
 
@@ -1539,10 +1540,15 @@ class CommandeFournisseur extends CommonOrder
 			// Check parameters
 			if ($qty < 1 && ! $fk_product)
 			{
-				$this->error=$langs->trans("ErrorFieldRequired", $langs->trans("Product"));
+				$this->error=$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Product"));
 				return -1;
 			}
 			if ($type < 0) return -1;
+			if ($date_start && $date_end && $date_start > $date_end) {
+				$langs->load("errors");
+				$this->error=$langs->trans('ErrorStartDateGreaterEnd');
+				return -1;
+			}
 
 
             $this->db->begin();
@@ -1747,8 +1753,8 @@ class CommandeFournisseur extends CommonOrder
      * @param 	int			$entrepot				Id of warehouse to add product
      * @param 	double		$price					Unit Price for PMP value calculation (Unit price without Tax and taking into account discount)
      * @param	string		$comment				Comment for stock movement
-	 * @param	date		$eatby					eat-by date
-	 * @param	date		$sellby					sell-by date
+	 * @param	integer		$eatby					eat-by date
+	 * @param	integer		$sellby					sell-by date
 	 * @param	string		$batch					Lot number
 	 * @param	int			$fk_commandefourndet	Id of supplier order line
      * @param	int			$notrigger          	1 = notrigger
@@ -2098,7 +2104,7 @@ class CommandeFournisseur extends CommonOrder
      * 	Set a delivery in database for this supplier order
      *
      *	@param	User	$user		User that input data
-     *	@param	date	$date		Date of reception
+     *	@param	integer	$date		Date of reception
      *	@param	string	$type		Type of receipt ('tot' = total/done, 'par' = partial, 'nev' = never, 'can' = cancel)
      *	@param	string	$comment	Comment
      *	@return	int					<0 if KO, >0 if OK
@@ -2215,7 +2221,7 @@ class CommandeFournisseur extends CommonOrder
      *	Set the planned delivery date
      *
      *	@param      User			$user        		Objet user making change
-     *	@param      timestamp		$date_livraison     Planned delivery date
+     *	@param      integer  		$date_livraison     Planned delivery date
      *  @param     	int				$notrigger			1=Does not execute triggers, 0= execute triggers
      *	@return     int         						<0 if KO, >0 if OK
      */
@@ -2460,8 +2466,8 @@ class CommandeFournisseur extends CommonOrder
      *	@param		int			$info_bits			Miscellaneous informations
      *	@param		int			$type				Type of line (0=product, 1=service)
      *  @param		int			$notrigger			Disable triggers
-     *  @param      timestamp   $date_start     	Date start of service
-     *  @param      timestamp   $date_end       	Date end of service
+     *  @param      integer     $date_start     	Date start of service
+     *  @param      integer     $date_end       	Date end of service
 	 *  @param		array		$array_options		Extrafields array
      * 	@param 		string		$fk_unit 			Code of the unit to use. Null to use the default one
 	 * 	@param		double		$pu_ht_devise		Unit price in currency
@@ -2470,7 +2476,7 @@ class CommandeFournisseur extends CommonOrder
      */
     public function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $price_base_type = 'HT', $info_bits = 0, $type = 0, $notrigger = 0, $date_start = '', $date_end = '', $array_options = 0, $fk_unit = null, $pu_ht_devise = 0, $ref_supplier = '')
     {
-        global $mysoc, $conf;
+        global $mysoc, $conf, $langs;
         dol_syslog(get_class($this)."::updateline $rowid, $desc, $pu, $qty, $remise_percent, $txtva, $price_base_type, $info_bits, $type, $fk_unit");
         include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
@@ -2478,8 +2484,6 @@ class CommandeFournisseur extends CommonOrder
 
         if ($this->brouillon)
         {
-            $this->db->begin();
-
             // Clean parameters
             if (empty($qty)) $qty=0;
             if (empty($info_bits)) $info_bits=0;
@@ -2500,6 +2504,13 @@ class CommandeFournisseur extends CommonOrder
 
             // Check parameters
             if ($type < 0) return -1;
+            if ($date_start && $date_end && $date_start > $date_end) {
+                $langs->load("errors");
+                $this->error=$langs->trans('ErrorStartDateGreaterEnd');
+                return -1;
+            }
+
+            $this->db->begin();
 
             // Calcul du total TTC et de la TVA pour la ligne a partir de
             // qty, pu, remise_percent et txtva
@@ -2627,6 +2638,8 @@ class CommandeFournisseur extends CommonOrder
     public function initAsSpecimen()
     {
         global $user,$langs,$conf;
+
+        include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 
         dol_syslog(get_class($this)."::initAsSpecimen");
 
@@ -2916,7 +2929,7 @@ class CommandeFournisseur extends CommonOrder
      * Return the max number delivery delay in day
      *
      * @param	Translate	$langs		Language object
-     * @return 							Translated string
+     * @return 	string                  Translated string
      */
     public function getMaxDeliveryTimeDay($langs)
     {

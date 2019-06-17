@@ -84,14 +84,14 @@ if ($action == 'update')
 
     if (empty($donation_date))
     {
-	    setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("Date")), null, 'errors');
+    	setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
         $action = "create";
         $error++;
     }
 
 	if (empty($amount))
 	{
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("Amount")), null, 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Amount")), null, 'errors');
 		$action = "create";
 		$error++;
 	}
@@ -140,14 +140,14 @@ if ($action == 'add')
 
     if (empty($donation_date))
     {
-	    setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("Date")), null, 'errors');
+    	setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
         $action = "create";
         $error++;
     }
 
 	if (empty($amount))
 	{
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("Amount")), null, 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Amount")), null, 'errors');
 		$action = "create";
 		$error++;
 	}
@@ -372,7 +372,7 @@ if ($action == 'create')
 				});
 				</script>';
 			}
-			print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=3&fournisseur=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">'.$langs->trans("AddThirdParty").' <span class="fa fa-plus-circle valignmiddle"></span></a>';
+			print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=3&fournisseur=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddThirdParty").'</span><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
 			print '</td>';
 		}
 		print '</tr>' . "\n";
@@ -772,7 +772,7 @@ if ($object->socid) {
 			$remaintopay = $object->amount - $totalpaid;
 
 			print "<tr><td colspan=\"3\" class=\"right\">".$langs->trans("RemainderToPay")." :</td>";
-			print '<td class="right"'.($resteapayeraffiche?' class="amountremaintopay"':'').'><b>'.price($remaintopay)."</b></td></tr>\n";
+			print '<td class="right'.($resteapayeraffiche?' amountremaintopay':'').'">'.price($remaintopay)."</td></tr>\n";
 		}
 		print "</table>";
 		$db->free($resql);

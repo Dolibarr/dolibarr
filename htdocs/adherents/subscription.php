@@ -5,6 +5,7 @@
  * Copyright (C) 2012-2017  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2016  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019       Thibault FOUCART        <support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -668,7 +669,7 @@ if ($rowid > 0)
     {
         $sql = "SELECT d.rowid, d.firstname, d.lastname, d.societe,";
         $sql.= " c.rowid as crowid, c.subscription,";
-        $sql.= " c.datec,";
+        $sql.= " c.datec, c.fk_type as cfk_type,";
         $sql.= " c.dateadh as dateh,";
         $sql.= " c.datef,";
         $sql.= " c.fk_bank,";
@@ -692,9 +693,10 @@ if ($rowid > 0)
 
             print '<tr class="liste_titre">';
             print_liste_field_titre('Ref', $_SERVER["PHP_SELF"], 'c.rowid', '', $param, '', $sortfield, $sortorder);
-            print '<td align="center">'.$langs->trans("DateCreation").'</td>';
-            print '<td align="center">'.$langs->trans("DateStart").'</td>';
-            print '<td align="center">'.$langs->trans("DateEnd").'</td>';
+            print '<td class="center">'.$langs->trans("DateCreation").'</td>';
+            print '<td align="center">'.$langs->trans("Type").'</td>';
+            print '<td class="center">'.$langs->trans("DateStart").'</td>';
+            print '<td class="center">'.$langs->trans("DateEnd").'</td>';
             print '<td class="right">'.$langs->trans("Amount").'</td>';
             if (! empty($conf->banque->enabled))
             {
@@ -703,6 +705,7 @@ if ($rowid > 0)
             print "</tr>\n";
 
             $accountstatic=new Account($db);
+            $adht = new AdherentType($db);
 
             while ($i < $num)
             {
@@ -711,11 +714,22 @@ if ($rowid > 0)
                 $subscriptionstatic->ref=$objp->crowid;
                 $subscriptionstatic->id=$objp->crowid;
 
+                if ($objp->cfk_type > 0)
+                {
+                    $adht->fetch($objp->cfk_type);
+                }
+
                 print '<tr class="oddeven">';
                 print '<td>'.$subscriptionstatic->getNomUrl(1).'</td>';
-                print '<td align="center">'.dol_print_date($db->jdate($objp->datec), 'dayhour')."</td>\n";
-                print '<td align="center">'.dol_print_date($db->jdate($objp->dateh), 'day')."</td>\n";
-                print '<td align="center">'.dol_print_date($db->jdate($objp->datef), 'day')."</td>\n";
+                print '<td class="center">'.dol_print_date($db->jdate($objp->datec), 'dayhour')."</td>\n";
+                print '<td class="center">';
+                if ($objp->cfk_type > 0)
+                {
+                    print $adht->getNomUrl(1);
+                }
+                print '</td>';
+                print '<td class="center">'.dol_print_date($db->jdate($objp->dateh), 'day')."</td>\n";
+                print '<td class="center">'.dol_print_date($db->jdate($objp->datef), 'day')."</td>\n";
                 print '<td class="right">'.price($objp->subscription).'</td>';
 				if (! empty($conf->banque->enabled))
 				{

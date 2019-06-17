@@ -307,7 +307,8 @@ if (! empty($id) || ! empty($ref))
     $head=product_prepare_head($object);
     $titre=$langs->trans("CardProduct".$object->type);
     $picto=($object->type== Product::TYPE_SERVICE?'service':'product');
-    dol_fiche_head($head, 'combinations', $titre, 0, $picto);
+
+    dol_fiche_head($head, 'combinations', $titre, -1, $picto);
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
     $object->next_prev_filter=" fk_product_type = ".$object->type;
@@ -711,7 +712,7 @@ if (! empty($id) || ! empty($ref))
 		    'presend'=>$langs->trans("SendByMail"),
 		    'builddoc'=>$langs->trans("PDFMerge"),
 		);
-		if ($user->rights->product->supprimer) $arrayofmassactions['predelete']=$langs->trans("Delete");
+		if ($user->rights->product->supprimer) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 		if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 		$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 		*/

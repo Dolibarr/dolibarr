@@ -33,7 +33,7 @@ class mod_supplier_proposal_marbre extends ModeleNumRefSupplierProposal
 {
 	/**
      * Dolibarr version of the loaded document
-     * @public string
+     * @var string
      */
 	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
 

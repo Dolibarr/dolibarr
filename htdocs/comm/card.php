@@ -110,7 +110,7 @@ if (empty($reshook))
 		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 	}
 
-	// conditions de reglement
+	// terms of the settlement
 	if ($action == 'setconditions' && $user->rights->societe->creer)
 	{
 		$object->fetch($id);
@@ -245,7 +245,7 @@ if ($object->id > 0)
 	print '<div class="fichecenter"><div class="fichehalfleft">';
 
     print '<div class="underbanner clearboth"></div>';
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent tableforfield">';
 
 	// Prospect/Customer
 	print '<tr><td class="titlefield">'.$langs->trans('ProspectCustomer').'</td><td>';
@@ -317,7 +317,7 @@ if ($object->id > 0)
 	print $object->tva_intra;
 	print '</td></tr>';
 
-	// Conditions de reglement par defaut
+	// default terms of the settlement
 	$langs->load('bills');
 	print '<tr><td>';
 	print '<table width="100%" class="nobordernopadding"><tr><td>';
@@ -534,7 +534,7 @@ if ($object->id > 0)
     	print '<br>';
 
     	print '<div class="underbanner clearboth"></div>';
-    	print '<table class="border" width="100%">';
+    	print '<table class="border centpercent tableforfield">';
 
 	    // Level of prospect
 	    print '<tr><td class="titlefield nowrap">';

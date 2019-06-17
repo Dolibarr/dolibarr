@@ -126,7 +126,7 @@ if (empty($reshook))
 		{
 			$langs->load('errors');
 			$langs->load('companies');
-			setEventMessages($langs->trans('ErrorThirdPartyIdIsMandatory', $langs->trans('MergeOriginThirdparty')), null, 'errors');
+			setEventMessages($langs->trans('ErrorThirdPartyIdIsMandatory', $langs->transnoentitiesnoconv('MergeOriginThirdparty')), null, 'errors');
 		}
 		else
 		{
@@ -1207,7 +1207,7 @@ else
         {
             // Supplier
             print '<tr>';
-            print '<td>'.$form->editfieldkey('Supplier', 'fournisseur', '', $object, 0, 'string', '', 1).'</td><td>';
+            print '<td>'.$form->editfieldkey('Vendor', 'fournisseur', '', $object, 0, 'string', '', 1).'</td><td>';
             $default = -1;
             if (! empty($conf->global->THIRDPARTY_SUPPLIER_BY_DEFAULT)) $default=1;
             print $form->selectyesno("fournisseur", (GETPOST('fournisseur', 'int')!=''?GETPOST('fournisseur', 'int'):(GETPOST("type", 'alpha') == '' ? $default : $object->fournisseur)), 1, 0, (GETPOST("type", 'alpha') == '' ? 1 : 0));
@@ -1367,15 +1367,18 @@ else
 
             if (! empty($conf->use_javascript_ajax))
             {
+            	$widthpopup = 600;
+            	if (! empty($conf->dol_use_jmobile)) $widthpopup = 350;
+            	$heightpopup = 400;
                 print "\n";
                 print '<script language="JavaScript" type="text/javascript">';
                 print "function CheckVAT(a) {\n";
-                print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a,'".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."',500,300);\n";
+                print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a, '".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."', ".$widthpopup.", ".$heightpopup.");\n";
                 print "}\n";
                 print '</script>';
                 print "\n";
                 $s.='<a href="#" class="hideonsmartphone" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
-                $s = $form->textwithpicto($s, $langs->trans("VATIntraCheckDesc", $langs->trans("VATIntraCheck")), 1);
+                $s = $form->textwithpicto($s, $langs->trans("VATIntraCheckDesc", $langs->transnoentitiesnoconv("VATIntraCheck")), 1);
             }
             else
             {
@@ -1441,7 +1444,7 @@ else
         if (! empty($conf->global->MAIN_MULTILANGS))
         {
             print '<tr><td>'.$form->editfieldkey('DefaultLang', 'default_lang', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">'."\n";
-            print $formadmin->select_language(($object->default_lang?$object->default_lang:$conf->global->MAIN_LANG_DEFAULT), 'default_lang', 0, 0, 1, 0, 0, 'maxwidth200onsmartphone');
+            print $formadmin->select_language(GETPOST('default_lang', 'alpha')?GETPOST('default_lang', 'alpha'):($object->default_lang?$object->default_lang:''), 'default_lang', 0, 0, 1, 0, 0, 'maxwidth200onsmartphone');
             print '</td>';
             print '</tr>';
         }
@@ -2028,15 +2031,18 @@ else
 
                 if ($conf->use_javascript_ajax)
                 {
-                    print "\n";
+                	$widthpopup = 600;
+                	if (! empty($conf->dol_use_jmobile)) $widthpopup = 350;
+                	$heightpopup = 400;
+                	print "\n";
                     print '<script language="JavaScript" type="text/javascript">';
                     print "function CheckVAT(a) {\n";
-                    print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a,'".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."',500,285);\n";
+                    print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a,'".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."', ".$widthpopup.", ".$heightpopup.");\n";
                     print "}\n";
                     print '</script>';
                     print "\n";
                     $s.='<a href="#" class="hideonsmartphone" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
-                    $s = $form->textwithpicto($s, $langs->trans("VATIntraCheckDesc", $langs->trans("VATIntraCheck")), 1);
+                    $s = $form->textwithpicto($s, $langs->trans("VATIntraCheckDesc", $langs->transnoentitiesnoconv("VATIntraCheck")), 1);
                 }
                 else
                 {
@@ -2213,7 +2219,7 @@ else
 				    'name' => 'soc_origin',
 			    	'label' => $langs->trans('MergeOriginThirdparty'),
 				    'type' => 'other',
-				    'value' => $form->select_company('', 'soc_origin', 's.rowid != '.$object->id, 'SelectThirdParty', 0, 0, array(), 0, 'minwidth200')
+				    'value' => $form->select_company('', 'soc_origin', 's.rowid <> '.$object->id, 'SelectThirdParty', 0, 0, array(), 0, 'minwidth200')
 			    )
 		    );
 
@@ -2348,7 +2354,7 @@ else
 			        print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'">';
 			        print '<input type="hidden" name="action" value="set_localtax1">';
 			        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			        print '<tr><td>'.$langs->transcountry("TypeLocaltax1", $mysoc->country_code).' <a href="'.$_SERVER["PHP_SELF"].'?action=editRE&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</td>';
+			        print '<tr><td>'.$langs->transcountry("Localtax1", $mysoc->country_code).' <a href="'.$_SERVER["PHP_SELF"].'?action=editRE&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</td>';
 			        if($action == 'editRE')
 			        {
 			            print '<td class="left">';
@@ -2366,7 +2372,7 @@ else
 			        print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'">';
 			        print '<input type="hidden" name="action" value="set_localtax2">';
 			        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			        print '<tr><td>'.$langs->transcountry("TypeLocaltax2", $mysoc->country_code).'<a href="'.$_SERVER["PHP_SELF"].'?action=editIRPF&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</td>';
+			        print '<tr><td>'.$langs->transcountry("Localtax2", $mysoc->country_code).'<a href="'.$_SERVER["PHP_SELF"].'?action=editIRPF&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</td>';
 			        if($action == 'editIRPF'){
 			            print '<td class="left">';
 			            $formcompany->select_localtax(2, $object->localtax2_value, "lt2");
@@ -2387,7 +2393,7 @@ else
 			        print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'">';
 			        print '<input type="hidden" name="action" value="set_localtax1">';
 			        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			        print '<tr><td> '.$langs->transcountry("TypeLocaltax1", $mysoc->country_code).'<a href="'.$_SERVER["PHP_SELF"].'?action=editRE&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</td>';
+			        print '<tr><td> '.$langs->transcountry("Localtax1", $mysoc->country_code).'<a href="'.$_SERVER["PHP_SELF"].'?action=editRE&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</td>';
 			        if($action == 'editRE'){
 			            print '<td class="left">';
 			            $formcompany->select_localtax(1, $object->localtax1_value, "lt1");
@@ -2409,7 +2415,7 @@ else
 			        print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'">';
 			        print '<input type="hidden" name="action" value="set_localtax2">';
 			        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			        print '<tr><td> '.$langs->transcountry("TypeLocaltax2", $mysoc->country_code).' <a href="'.$_SERVER["PHP_SELF"].'?action=editIRPF&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</td>';
+			        print '<tr><td> '.$langs->transcountry("Localtax2", $mysoc->country_code).' <a href="'.$_SERVER["PHP_SELF"].'?action=editIRPF&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</td>';
 			        if($action == 'editIRPF'){
 			            print '<td class="left">';
 			            $formcompany->select_localtax(2, $object->localtax2_value, "lt2");
@@ -2437,15 +2443,18 @@ else
 
                 if ($conf->use_javascript_ajax)
                 {
+                	$widthpopup = 600;
+                	if (! empty($conf->dol_use_jmobile)) $widthpopup = 350;
+                	$heightpopup = 400;
                     print "\n";
                     print '<script language="JavaScript" type="text/javascript">';
                     print "function CheckVAT(a) {\n";
-                    print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a,'".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."',500,285);\n";
+                    print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a, '".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."', ".$widthpopup.", ".$heightpopup.");\n";
                     print "}\n";
                     print '</script>';
                     print "\n";
                     $s.='<a href="#" class="hideonsmartphone" onclick="javascript: CheckVAT( $(\'#tva_intra\').val() );">'.$langs->trans("VATIntraCheck").'</a>';
-                    $s = $form->textwithpicto($s, $langs->trans("VATIntraCheckDesc", $langs->trans("VATIntraCheck")), 1);
+                    $s = $form->textwithpicto($s, $langs->trans("VATIntraCheckDesc", $langs->transnoentitiesnoconv("VATIntraCheck")), 1);
                 }
                 else
                 {
@@ -2709,9 +2718,7 @@ else
 
 			$MAXEVENT = 10;
 
-			$morehtmlright = '<a href="'.DOL_URL_ROOT.'/societe/agenda.php?socid='.$object->id.'">';
-			$morehtmlright.= $langs->trans("SeeAll");
-			$morehtmlright.= '</a>';
+            $morehtmlright.= dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-list-alt', DOL_URL_ROOT.'/societe/agenda.php?socid='.$object->id);
 
 			// List of actions on element
 			include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';

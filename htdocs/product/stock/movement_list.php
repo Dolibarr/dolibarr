@@ -697,7 +697,7 @@ if ($resql)
 	//    'presend'=>$langs->trans("SendByMail"),
 	//    'builddoc'=>$langs->trans("PDFMerge"),
 	);
-	//if ($user->rights->stock->supprimer) $arrayofmassactions['predelete']=$langs->trans("Delete");
+	//if ($user->rights->stock->supprimer) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 	if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 	$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
@@ -880,7 +880,7 @@ if ($resql)
 	    print '</td>';
 	}
     // Actions
-    print '<td class="liste_titre right">';
+    print '<td class="liste_titre maxwidthsearch">';
     $searchpicto=$form->showFilterAndCheckAddButtons(0);
     print $searchpicto;
     print '</td>';

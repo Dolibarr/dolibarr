@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - agenda
+IdAgenda=ID do evento
 TMenuAgenda=Agenda Eletrônica
 LocalAgenda=Calendário local
 ActionsOwnedBy=Evento de propriedade do
@@ -16,11 +17,9 @@ ViewDay=Ver dia
 ViewWeek=ver semana
 ViewPerUser=Visão do usuário
 ViewPerType=Por visualização de tipo
-AgendaAutoActionDesc=Defina aqui eventos para os quais você queira que o Dolibarr crie automaticamente uma evento na agenda. Se nada for confirmado, apenas ações manuais terão registro e visibilidade inclusos na agenda. O rastreamento automático de ações de negócio realizadas sobre objetos (validação, alteração de estado) não serão salvos.
-AgendaSetupOtherDesc=Essa página fornece a opção de exportar seus eventos Dolibarr para um calendário externo (thunderbird, google, ...)
 AgendaExtSitesDesc=Essa página permite declarar calendários externos para serem visto nos eventos da agenda Dolibarr.
 ActionsEvents=Eventos no qual Dolibarr cria uma ação na agenda automáticamente.
-EventRemindersByEmailNotEnabled=Lembretes de eventos por e-mail não foram ativados na configuração do módulo Agenda.
+EventRemindersByEmailNotEnabled=Lembretes por email desabilitados no %s setup
 NewCompanyToDolibarr=Terceiro %s criados
 ContractValidatedInDolibarr=Contrato %s validado
 PropalClosedSignedInDolibarr=Proposta %s assinada
@@ -35,6 +34,9 @@ InvoiceCanceledInDolibarr=Fatura %s cancelada
 MemberValidatedInDolibarr=Membro %s validado
 MemberResiliatedInDolibarr=Membro %s finalizado
 MemberDeletedInDolibarr=Membro %s cancelado
+MemberSubscriptionAddedInDolibarr=Adicionada inscrição %spara membro %s
+MemberSubscriptionModifiedInDolibarr=Modificada %s inscrição para %smembro
+MemberSubscriptionDeletedInDolibarr=Deletada inscrição %spara membro %s
 ShipmentValidatedInDolibarr=Envio %s validado
 ShipmentClassifyClosedInDolibarr=Expedição%s classificado(s) e faturado(s)
 ShipmentUnClassifyCloseddInDolibarr=Expedição%s classificado(s) reaberto(s)
@@ -47,13 +49,6 @@ OrderBilledInDolibarr=Ordem %s classificadas faturado
 OrderApprovedInDolibarr=Pedido %s aprovado
 OrderRefusedInDolibarr=Pedido %s recusado
 OrderBackToDraftInDolibarr=Pedido %s voltou para o status de rascunho
-ProposalSentByEMail=Orçamento %s enviada por e-mail
-ContractSentByEMail=Contrato%s enviar por EMail
-OrderSentByEMail=Pedido de cliente %s enviado por e-mail
-InvoiceSentByEMail=Fatura de cliente %s enviado por e-mail
-SupplierOrderSentByEMail=Pedido de fornecedor %s enviado por e-mail
-SupplierInvoiceSentByEMail=Fatura de fornecedor %s enviado por e-mail
-ShippingSentByEMail=Frete %s enviado por e-mail
 ShippingValidated=Envio %s validado
 ProposalDeleted=Proposta excluída
 OrderDeleted=Pedido excluído
@@ -75,19 +70,17 @@ AgendaUrlOptions3=<b>logina=%s</b> para restringir a saída para ações criada 
 AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> para restringir a saída das ações não pertencentes ao usuário<b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s</b> para restringir a saída às ações atribuídas ao usuário <b>%s</b> (proprietário e outros).
 AgendaUrlOptionsProject=<b>projeto=__PROJECT_ID__</b> para restringir a saída para ações ligadas ao  <b>__PROJECT_ID__</b>.
-AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> para exclusão automática do evento
 AgendaShowBirthdayEvents=Mostrar datas de nascimento dos contatos
 AgendaHideBirthdayEvents=Ocultar datas de nascimento dos contatos
 ExportDataset_event1=Lista dos eventos da agenda
 DefaultWorkingDays=Padrão dias úteis por semana (Exemplo: 1-5, 1-6)
 DefaultWorkingHours=Padrão horas de trabalho em dia (Exemplo: 9-18)
-ExtSitesEnableThisTool=Mostrar calendários externos na agenda
+AgendaExtNb=Calendário no. %s
 ExtSiteUrlAgenda=URL para acessar arquivos .ical
 ExtSiteNoLabel=Sem descrição
 VisibleDaysRange=Intervalo de dias visíveis
 MyAvailability=Minha disponibilidade
 DateActionBegin=Iniciar a data do evento
-CloneAction=Evento Clone
 ConfirmCloneEvent=Tem certeza que deseja clonar o evento <b>%s</b>?
 RepeatEvent=Repita evento
 EveryWeek=Toda semana

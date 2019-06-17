@@ -447,7 +447,7 @@ class Conf
 		if (empty($this->global->SOCIETE_CODECOMPTA_ADDON))		$this->global->SOCIETE_CODECOMPTA_ADDON="mod_codecompta_panicum";
 
 		if (empty($this->global->CHEQUERECEIPTS_ADDON))			$this->global->CHEQUERECEIPTS_ADDON='mod_chequereceipt_mint';
-		if (empty($conf->global->TICKETSUP_ADDON))				$this->global->TICKETSUP_ADDON='mod_ticket_simple';
+		if (empty($conf->global->TICKET_ADDON))				    $this->global->TICKET_ADDON='mod_ticket_simple';
 
         // Security
 		if (empty($this->global->USER_PASSWORD_GENERATED)) $this->global->USER_PASSWORD_GENERATED='standard'; // Default password generator
@@ -637,6 +637,10 @@ class Conf
 		    $this->expensereport->payment = new stdClass();
 		    $this->expensereport->payment->warning_delay=(isset($this->global->MAIN_DELAY_EXPENSEREPORTS_TO_PAY)?$this->global->MAIN_DELAY_EXPENSEREPORTS_TO_PAY:0)*24*60*60;
 		}
+        if (isset($this->holiday)) {
+            $this->holiday->approve = new stdClass();
+            $this->holiday->approve->warning_delay=(isset($this->global->MAIN_DELAY_HOLIDAYS)?$this->global->MAIN_DELAY_HOLIDAYS:0)*24*60*60;
+        }
 
 		if (! empty($this->global->PRODUIT_MULTIPRICES) && empty($this->global->PRODUIT_MULTIPRICES_LIMIT))
 		{
@@ -659,8 +663,8 @@ class Conf
 
 		if (! isset($this->global->MAIN_EXTRAFIELDS_IN_ONE_TD)) $this->global->MAIN_EXTRAFIELDS_IN_ONE_TD = 1;
 
-		$this->global->MAIN_MODULE_DOLISTORE_API_SRV='https://www.dolistore.com';
-		$this->global->MAIN_MODULE_DOLISTORE_API_KEY='dolistorecatalogpublickey1234567';
+		if (empty($this->global->MAIN_MODULE_DOLISTORE_API_SRV)) $this->global->MAIN_MODULE_DOLISTORE_API_SRV='https://www.dolistore.com';
+		if (empty($this->global->MAIN_MODULE_DOLISTORE_API_KEY)) $this->global->MAIN_MODULE_DOLISTORE_API_KEY='dolistorecatalogpublickey1234567';
 
 		// For backward compatibility
 		if (isset($this->product))   $this->produit=$this->product;

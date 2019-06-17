@@ -134,8 +134,7 @@ $head=agenda_prepare_head();
 
 dol_fiche_head($head, 'autoactions', $langs->trans("Agenda"), -1, 'action');
 
-print $langs->trans("AgendaAutoActionDesc")."<br>\n";
-print $langs->trans("OnlyActiveElementsAreShown", 'modules.php').'<br>';
+print '<span class="opacitymedium">'.$langs->trans("AgendaAutoActionDesc")." ".$langs->trans("OnlyActiveElementsAreShown", 'modules.php').'</span><br>';
 print "<br>\n";
 
 print '<div class="div-table-responsive">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
@@ -144,7 +143,7 @@ print '<tr class="liste_titre">';
 print '<td class="liste_titre"><input type="text" name="search_event" value="'.dol_escape_htmltag($search_event).'"></td>';
 print '<td class="liste_titre"></td>';
 // Action column
-print '<td class="liste_titre right">';
+print '<td class="liste_titre maxwidthsearch">';
 $searchpicto=$form->showFilterButtons();
 print $searchpicto;
 print '</td>';

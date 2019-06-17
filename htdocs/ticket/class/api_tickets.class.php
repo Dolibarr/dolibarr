@@ -123,19 +123,14 @@ class Tickets extends DolibarrApi
 
     /**
      * Get properties of a Ticket object
-     *
      * Return an array with ticket informations
      *
      * @param	int 			$id 		ID of ticket
      * @param	string  		$track_id 	Tracking ID of ticket
      * @param	string  		$ref    	Reference for ticket
      * @return 	array|mixed 				Data without useless information
-     *
-     * @throws 	401
-     * @throws 	403
-     * @throws 	404
      */
-    public function getCommon($id = 0, $track_id = '', $ref = '')
+    private function getCommon($id = 0, $track_id = '', $ref = '')
     {
         if (! DolibarrApiAccess::$user->rights->ticket->read) {
             throw new RestException(403);

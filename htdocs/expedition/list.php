@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2016-2018 Ferran Marcet        <fmarcet@2byte.es>
+ * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -279,10 +280,8 @@ if ($resql)
 	$newcardbutton='';
 	if ($user->rights->expedition->creer)
 	{
-		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/expedition/card.php?action=create2"><span class="valignmiddle">'.$langs->trans('NewSending').'</span>';
-		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-		$newcardbutton.= '</a>';
-	}
+        $newcardbutton.= dolGetButtonTitle($langs->trans('NewSending'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/expedition/card.php?action=create2');
+    }
 
 	$i = 0;
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
@@ -622,6 +621,10 @@ if ($resql)
 
 		$i++;
 	}
+
+    $parameters=array('arrayfields'=>$arrayfields, 'sql'=>$sql);
+    $reshook=$hookmanager->executeHooks('printFieldListFooter', $parameters);    // Note that $action and $object may have been modified by hook
+    print $hookmanager->resPrint;
 
 	print "</table>";
 	print "</div>";

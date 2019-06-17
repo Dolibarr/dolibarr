@@ -841,10 +841,11 @@ function copyToClipboard(text,text2)
  * @return	boolean			False
  * @see document_preview
  */
-function newpopup(url,title) {
+function newpopup(url, title) {
 	var argv = newpopup.arguments;
 	var argc = newpopup.arguments.length;
 	tmp=url;
+	console.log("newpopup "+argv[2]+" "+argv[3]);
 	var l = (argc > 2) ? argv[2] : 600;
 	var h = (argc > 3) ? argv[3] : 400;
 	var left = (screen.width - l)/2;
@@ -1008,6 +1009,23 @@ function getParameterByName(name, valueifnotfound)
 // Another solution, easier, to build a javascript rounding function
 function dolroundjs(number, decimals) { return +(Math.round(number + "e+" + decimals) + "e-" + decimals); }
 
+
+/**
+ * Function similar to PHP price()
+ *
+ * @param  {number|string} amount    The amount to show
+ * @param  {string} mode             'MT' or 'MU'
+ * @return {string}                  The amount with digits
+ */
+function pricejs(amount, mode) {
+	var main_max_dec_shown = <?php echo (int) str_replace('.', '', $conf->global->MAIN_MAX_DECIMALS_SHOWN); ?>;
+	var main_rounding_unit = <?php echo (int) $conf->global->MAIN_MAX_DECIMALS_UNIT; ?>;
+	var main_rounding_tot = <?php echo (int) $conf->global->MAIN_MAX_DECIMALS_TOT; ?>;
+
+	if (mode == 'MU') return amount.toFixed(main_rounding_unit);
+	if (mode == 'MT') return amount.toFixed(main_rounding_tot);
+	return 'Bad value for parameter mode';
+}
 
 /**
  * Function similar to PHP price2num()

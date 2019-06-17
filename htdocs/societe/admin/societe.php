@@ -404,7 +404,7 @@ foreach ($dirsociete as $dirroot)
     				$disabled = false;
     				if (! empty($conf->multicompany->enabled) && (is_object($mc) && ! empty($mc->sharings['referent']) && $mc->sharings['referent'] == $conf->entity) ? false : true);
     				print '<td class="center">';
-    				if (! $disabled) print '<a href="'.$_SERVER['PHP_SELF'].'?action=setcodeclient&value='.$file.'">';
+    				if (! $disabled) print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setcodeclient&value='.$file.'">';
     				print img_picto($langs->trans("Disabled"), 'switch_off');
     				if (! $disabled) print '</a>';
     				print '</td>';
@@ -478,7 +478,7 @@ foreach ($dirsociete as $dirroot)
     			}
     			else
     			{
-    				print '<td class="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setcodecompta&value='.$file.'">';
+    				print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setcodecompta&value='.$file.'">';
     				print img_picto($langs->trans("Disabled"), 'switch_off');
     				print '</a></td>';
     			}
@@ -813,12 +813,12 @@ print '<td>&nbsp</td>';
 print '<td class="center">';
 if (!empty($conf->global->SOCIETE_ADD_REF_IN_LIST))
 {
-	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setaddrefinlist&value=0">';
+	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setaddrefinlist&value=0">';
 	print img_picto($langs->trans("Activated"), 'switch_on');
 }
 else
 {
-	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setaddrefinlist&value=1">';
+	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setaddrefinlist&value=1">';
 	print img_picto($langs->trans("Disabled"), 'switch_off');
 }
 print '</a></td>';
@@ -830,12 +830,12 @@ print '<td>&nbsp</td>';
 print '<td class="center">';
 if (!empty($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST))
 {
-	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setaddadressinlist&value=0">';
+	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setaddadressinlist&value=0">';
 	print img_picto($langs->trans("Activated"), 'switch_on');
 }
 else
 {
-	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setaddadressinlist&value=1">';
+	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setaddadressinlist&value=1">';
 	print img_picto($langs->trans("Disabled"), 'switch_off');
 }
 print '</a></td>';
@@ -849,12 +849,12 @@ print '<td>&nbsp</td>';
 print '<td class="center">';
 if (!empty($conf->global->SOCIETE_ASK_FOR_SHIPPING_METHOD))
 {
-	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setaskforshippingmet&value=0">';
+	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setaskforshippingmet&value=0">';
 	print img_picto($langs->trans("Activated"), 'switch_on');
 }
 else
 {
-	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setaskforshippingmet&value=1">';
+	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setaskforshippingmet&value=1">';
 	print img_picto($langs->trans("Disabled"), 'switch_off');
 }
 print '</a></td>';
@@ -867,12 +867,12 @@ print '<td>&nbsp</td>';
 print '<td class="center">';
 if (!empty($conf->global->SOCIETE_DISABLE_PROSPECTSCUSTOMERS))
 {
-    print '<a href="'.$_SERVER['PHP_SELF'].'?action=setdisableprospectcustomer&value=0">';
+    print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setdisableprospectcustomer&value=0">';
     print img_picto($langs->trans("Activated"), 'switch_on');
 }
 else
 {
-    print '<a href="'.$_SERVER['PHP_SELF'].'?action=setdisableprospectcustomer&value=1">';
+    print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setdisableprospectcustomer&value=1">';
     print img_picto($langs->trans("Disabled"), 'switch_off');
 }
 print '</a></td>';

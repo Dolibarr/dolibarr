@@ -4,7 +4,7 @@
  * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
  * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2010-2016	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2011-2015	Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2019	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2011		Remy Younes				<ryounes@gmail.com>
  * Copyright (C) 2012-2015	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2012		Christophe Battarel		<christophe.battarel@ltairis.fr>
@@ -370,7 +370,7 @@ $tabfieldinsert[35]= "label";
 $tabfieldinsert[36]= "range_ik,fk_c_exp_tax_cat";
 $tabfieldinsert[37]= "code,label,short_label,unit_type,scale";
 
-// Nom du rowid si le champ n'est pas de type autoincrement
+// Rowid name if the field is not autoincrement type
 // Example: "" if id field is "rowid" and has autoincrement on
 //          "nameoffield" if id field is not "rowid" or has not autoincrement on
 $tabrowid=array();
@@ -652,6 +652,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
             if ($fieldnamekey == 'sortorder') $fieldnamekey = 'SortOrder';
 			if ($fieldnamekey == 'category_type') $fieldnamekey = 'Calculated';
 			if ($fieldnamekey == 'revenuestamp_type') $fieldnamekey = 'TypeOfRevenueStamp';
+			if ($fieldnamekey == 'use_default') $fieldnamekey = 'UseByDefault';
 
             setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->transnoentities($fieldnamekey)), null, 'errors');
         }
@@ -703,12 +704,12 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         $_POST["code"]=preg_replace('/\s/', '', $_POST["code"]);
     }
 
-    // Si verif ok et action add, on ajoute la ligne
+    // If check ok and action add, add the line
     if ($ok && GETPOST('actionadd'))
     {
         if ($tabrowid[$id])
         {
-            // Recupere id libre pour insertion
+            // Get free id for insert
             $newid=0;
             $sql = "SELECT max(".$tabrowid[$id].") newid from ".$tabname[$id];
             $result = $db->query($sql);
@@ -771,7 +772,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         }
     }
 
-    // Si verif ok et action modify, on modifie la ligne
+    // If verif ok and action modify, modify the line
     if ($ok && GETPOST('actionmodify'))
     {
         if ($tabrowid[$id]) { $rowidcol=$tabrowid[$id]; }
@@ -1053,11 +1054,12 @@ if ($id)
         		continue;
         	}
 
-            // Determine le nom du champ par rapport aux noms possibles
-            // dans les dictionnaires de donnees
+            // Define field friedly name from its technical name
             $valuetoshow=ucfirst($fieldlist[$field]);   // Par defaut
             $valuetoshow=$langs->trans($valuetoshow);   // try to translate
             $class='';
+
+            if ($fieldlist[$field]=='pos')             { $valuetoshow=$langs->trans("Position"); $class='width100'; }
             if ($fieldlist[$field]=='source')          { $valuetoshow=$langs->trans("Contact"); }
             if ($fieldlist[$field]=='price')           { $valuetoshow=$langs->trans("PriceUHT"); }
             if ($fieldlist[$field]=='taux')            {
@@ -1125,6 +1127,7 @@ if ($id)
 			if ($fieldlist[$field]=='range_ik')        { $valuetoshow=$langs->trans("RangeIk"); }
 			if ($fieldlist[$field]=='fk_c_exp_tax_cat')  { $valuetoshow=$langs->trans("CarCategory"); }
 			if ($fieldlist[$field]=='revenuestamp_type') { $valuetoshow=$langs->trans('TypeOfRevenueStamp'); }
+			if ($fieldlist[$field]=='use_default')     { $valuetoshow=$langs->trans('Default'); }
 
             if ($id == 2)	// Special cas for state page
             {
@@ -1197,7 +1200,9 @@ if ($id)
 
     print '</form>';
 
+
     print '<br>';
+
 
     print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -1221,7 +1226,7 @@ if ($id)
 	    print '<div class="div-table-responsive">';
         print '<table class="noborder" width="100%">';
 
-        // Title line with search boxes
+        // Title line with search input fields
         print '<tr class="liste_titre_filter">';
         $filterfound=0;
         foreach ($fieldlist as $field => $value)
@@ -1276,17 +1281,12 @@ if ($id)
             // dans les dictionnaires de donnees
             $showfield=1;							  	// By defaut
             $align="left";
+            $cssprefix='';
             $sortable=1;
-            $valuetoshow='';
-            /*
-            $tmparray=getLabelOfField($fieldlist[$field]);
-            $showfield=$tmp['showfield'];
-            $valuetoshow=$tmp['valuetoshow'];
-            $align=$tmp['align'];
-            $sortable=$tmp['sortable'];
-			*/
             $valuetoshow=ucfirst($fieldlist[$field]);   // By defaut
             $valuetoshow=$langs->trans($valuetoshow);   // try to translate
+
+            // Special cases
             if ($fieldlist[$field]=='source')          { $valuetoshow=$langs->trans("Contact"); }
             if ($fieldlist[$field]=='price')           { $valuetoshow=$langs->trans("PriceUHT"); }
             if ($fieldlist[$field]=='taux')            {
@@ -1304,10 +1304,7 @@ if ($id)
             if ($fieldlist[$field]=='code')            { $valuetoshow=$langs->trans("Code"); }
             if ($fieldlist[$field]=='position')        { $align='right'; }
             if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label') { $valuetoshow=$langs->trans("Label"); }
-            if ($fieldlist[$field]=='libelle_facture') {
-                //$valuetoshow=$form->textwithtooltip($langs->trans("LabelOnDocuments"), $langs->trans("LabelUsedByDefault"),2,1,img_help(1,''));
-                $valuetoshow=$langs->trans("LabelOnDocuments");
-            }
+            if ($fieldlist[$field]=='libelle_facture') { $valuetoshow=$langs->trans("LabelOnDocuments"); }
             if ($fieldlist[$field]=='country')         { $valuetoshow=$langs->trans("Country"); }
             if ($fieldlist[$field]=='recuperableonly') { $valuetoshow=$langs->trans("NPR"); $align="center"; }
             if ($fieldlist[$field]=='nbjour')          { $valuetoshow=$langs->trans("NbOfDays"); }
@@ -1316,7 +1313,6 @@ if ($id)
             if ($fieldlist[$field]=='width' || $fieldlist[$field]=='nx') { $valuetoshow=$langs->trans("Width"); }
             if ($fieldlist[$field]=='height' || $fieldlist[$field]=='ny') { $valuetoshow=$langs->trans("Height"); }
             if ($fieldlist[$field]=='unit' || $fieldlist[$field]=='metric') { $valuetoshow=$langs->trans("MeasuringUnit"); }
-            if ($fieldlist[$field]=='region_id' || $fieldlist[$field]=='country_id') { $showfield=0; }
             if ($fieldlist[$field]=='accountancy_code'){ $valuetoshow=$langs->trans("AccountancyCode"); }
             if ($fieldlist[$field]=='accountancy_code_sell'){ $valuetoshow=$langs->trans("AccountancyCodeSell"); $sortable=0; }
             if ($fieldlist[$field]=='accountancy_code_buy'){ $valuetoshow=$langs->trans("AccountancyCodeBuy"); $sortable=0; }
@@ -1347,11 +1343,14 @@ if ($id)
 			if ($fieldlist[$field]=='range_ik')        { $valuetoshow=$langs->trans("RangeIk"); }
 			if ($fieldlist[$field]=='fk_c_exp_tax_cat')  { $valuetoshow=$langs->trans("CarCategory"); }
 			if ($fieldlist[$field]=='revenuestamp_type') { $valuetoshow=$langs->trans('TypeOfRevenueStamp'); }
+			if ($fieldlist[$field]=='use_default')     { $valuetoshow=$langs->trans('Default'); }
 
-            // Affiche nom du champ
+			if ($fieldlist[$field]=='region_id' || $fieldlist[$field]=='country_id') { $showfield=0; }
+
+            // Show field title
             if ($showfield)
             {
-                print getTitleFieldOfList($valuetoshow, 0, $_SERVER["PHP_SELF"], ($sortable?$fieldlist[$field]:''), ($page?'page='.$page.'&':''), $param, "align=".$align, $sortfield, $sortorder);
+                print getTitleFieldOfList($valuetoshow, 0, $_SERVER["PHP_SELF"], ($sortable?$fieldlist[$field]:''), ($page?'page='.$page.'&':''), $param, "align=".$align, $sortfield, $sortorder, $cssprefix);
             }
         }
 		// Favorite - Only activated on country dictionary
@@ -1382,7 +1381,7 @@ if ($id)
                     	$withentity = fieldList($fieldlist, $obj, $tabname[$id], 'edit');
                     }
 
-                    print '<td colspan="3" align="center">';
+                    print '<td colspan="3" class="center">';
                     print '<div name="'.(! empty($obj->rowid)?$obj->rowid:$obj->code).'"></div>';
                     print '<input type="hidden" name="page" value="'.dol_escape_htmltag($page).'">';
                     print '<input type="hidden" name="rowid" value="'.dol_escape_htmltag($rowid).'">';
@@ -1549,7 +1548,7 @@ if ($id)
                                 $valuetoshow = ($obj->code && $key != 'SizeUnit'.strtolower($obj->unit) ? $key : $obj->{$fieldlist[$field]});
                             }
 							elseif ($fieldlist[$field]=='localtax1' || $fieldlist[$field]=='localtax2') {
-							    $align="center";
+							    $class="center";
 							}
 							elseif ($fieldlist[$field]=='localtax1_type') {
                               if ($obj->localtax1 != 0)
@@ -1644,14 +1643,14 @@ if ($id)
 					// Only activated on country dictionary
                     if ($id == 4)
 					{
-						print '<td align="center" class="nowrap">';
+						print '<td class="nowrap center">';
 						if ($iserasable) print '<a class="reposition" href="'.$url.'action='.$acts[$obj->favorite].'_favorite">'.$actl[$obj->favorite].'</a>';
 						else print $langs->trans("AlwaysActive");
 						print '</td>';
 					}
 
                     // Active
-                    print '<td align="center" class="nowrap">';
+                    print '<td class="nowrap center">';
                     if ($canbedisabled) print '<a class="reposition" href="'.$url.'action='.$acts[$obj->active].'">'.$actl[$obj->active].'</a>';
                     else
                  	{
@@ -1669,7 +1668,7 @@ if ($id)
                     // Delete link
                     if ($iserasable)
                     {
-                        print '<td align="center">';
+                        print '<td class="center">';
                         if ($user->admin) print '<a href="'.$url.'action=delete">'.img_delete().'</a>';
                         //else print '<a href="#">'.img_delete().'</a>';    // Some dictionary can be edited by other profile than admin
                         print '</td>';
@@ -1806,7 +1805,6 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 			if (in_array('region_id', $fieldlist))
 			{
 				print '<td>';
-				//print join(',',$fieldlist);
 				print '</td>';
 				continue;
 			}	// For state page, we do not show the country input (we link to region, not country)
@@ -1872,7 +1870,7 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 			print '</td>';
 		}
 		elseif ($fieldlist[$field] == 'recuperableonly' || $fieldlist[$field] == 'type_cdr' || $fieldlist[$field] == 'deductible' || $fieldlist[$field] == 'category_type') {
-		    if ($fieldlist[$field] == 'type_cdr') print '<td align="center">';
+		    if ($fieldlist[$field] == 'type_cdr') print '<td class="center">';
 		    else print '<td>';
 			if ($fieldlist[$field] == 'type_cdr') {
 				print $form->selectarray($fieldlist[$field], array(0=>$langs->trans('None'), 1=>$langs->trans('AtEndOfMonth'), 2=>$langs->trans('CurrentNext')), (! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:''));
@@ -1884,7 +1882,7 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 		elseif (in_array($fieldlist[$field], array('nbjour','decalage','taux','localtax1','localtax2'))) {
 			$align="left";
 			if (in_array($fieldlist[$field], array('taux','localtax1','localtax2'))) $align="center";	// Fields aligned on right
-			print '<td align="'.$align.'">';
+			print '<td class="'.$align.'">';
 			print '<input type="text" class="flat" value="'.(isset($obj->{$fieldlist[$field]}) ? $obj->{$fieldlist[$field]} : '').'" size="3" name="'.$fieldlist[$field].'">';
 			print '</td>';
 		}
@@ -1912,7 +1910,7 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 			print '<td><input type="text" class="flat minwidth75" value="'.price((! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:'')).'" name="'.$fieldlist[$field].'"></td>';
 		}
 		elseif ($fieldlist[$field] == 'code' && isset($obj->{$fieldlist[$field]})) {
-			print '<td class="maxxxx"><input type="text" class="flat minwidth75 maxwidth100" value="'.(! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:'').'" name="'.$fieldlist[$field].'"></td>';
+			print '<td><input type="text" class="flat minwidth75 maxwidth100" value="'.(! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:'').'" name="'.$fieldlist[$field].'"></td>';
 		}
 		elseif ($fieldlist[$field]=='unit') {
 			print '<td>';
@@ -1928,7 +1926,7 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 		// Le type de taxe locale
 		elseif ($fieldlist[$field] == 'localtax1_type' || $fieldlist[$field] == 'localtax2_type')
 		{
-			print '<td align="center">';
+			print '<td class="center">';
 			print $form->selectarray($fieldlist[$field], $localtax_typeList, (! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:''));
 			print '</td>';
 		}
@@ -1972,12 +1970,8 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 
 			$classtd=''; $class='';
 			if ($fieldlist[$field]=='code') $classtd='width100';
-			if ($fieldlist[$field]=='affect') $class='maxwidth50';
-			if ($fieldlist[$field]=='delay') $class='maxwidth50';
-			if ($fieldlist[$field]=='position') $class='maxwidth50';
-			if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label') $class='quatrevingtpercent';
-			if ($fieldlist[$field]=='tracking') $class='quatrevingtpercent';
-			if ($fieldlist[$field]=='sortorder' || $fieldlist[$field]=='sens' || $fieldlist[$field]=='category_type') $class='maxwidth50';
+			if (in_array($fieldlist[$field], array('pos', 'use_default', 'affect', 'delay', 'position', 'sortorder', 'sens', 'category_type'))) $class='maxwidth50';
+			if (in_array($fieldlist[$field], array('libelle', 'label', 'tracking'))) $class='quatrevingtpercent';
 			print '<td class="'.$classtd.'">';
 			$transfound=0;
 			if (in_array($fieldlist[$field], array('label','libelle')))
@@ -1999,7 +1993,7 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 			}
 			if (! $transfound)
 			{
-                print '<input type="text" class="flat'.($class?' '.$class:'').'" value="'.(isset($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:'').'" name="'.$fieldlist[$field].'">';
+                print '<input type="text" class="flat'.($class?' '.$class:'').'" value="'.dol_escape_htmltag(isset($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:'').'" name="'.$fieldlist[$field].'">';
 			}
 			print '</td>';
 		}

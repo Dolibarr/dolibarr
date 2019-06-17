@@ -63,7 +63,7 @@ $userstatic=new User($db);
 <!-- BEGIN PHP TEMPLATE CONTACTS -->
 <div class="underbanner clearboth"></div>
 <div class="div-table-responsive">
-<div class="tagtable centpercent noborder nobordertop allwidth">
+<div class="tagtable tableforcontact centpercent noborder nobordertop allwidth">
 
 <?php
 if ($permission) {
@@ -129,7 +129,7 @@ if ($permission) {
 			<?php $selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany', '', 0, '', 'minwidth300imp'); ?>
 		</div>
 		<div class="tagtd maxwidthonsmartphone noborderbottom">
-			<?php $nbofcontacts=$form->select_contacts(($selectedCompany > 0 ? $selectedCompany : -1), '', 'contactid', 3, '', '', 0, 'minwidth100imp'); ?>
+			<?php $nbofcontacts=$form->select_contacts(($selectedCompany > 0 ? $selectedCompany : -1), '', 'contactid', 3, '', '', 1, 'minwidth100imp'); ?>
 		</div>
 		<div class="tagtd maxwidthonsmartphone noborderbottom">
 			<?php

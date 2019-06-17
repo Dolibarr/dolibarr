@@ -454,21 +454,19 @@ if ($resql)
 	// List of mass actions available
 	$arrayofmassactions =  array(
 		'validate'=>$langs->trans("Validate"),
-		'generate_doc'=>$langs->trans("Generate"),
-		//'presend'=>$langs->trans("SendByMail"),
+		'generate_doc'=>$langs->trans("ReGeneratePDF"),
 		//'builddoc'=>$langs->trans("PDFMerge"),
+	    //'presend'=>$langs->trans("SendByMail"),
 	);
 	//if($user->rights->fournisseur->facture->creer) $arrayofmassactions['createbills']=$langs->trans("CreateInvoiceForThisCustomer");
-	if ($user->rights->fournisseur->facture->supprimer) $arrayofmassactions['predelete']=$langs->trans("Delete");
+	if ($user->rights->fournisseur->facture->supprimer) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 	if (in_array($massaction, array('presend','predelete','createbills'))) $arrayofmassactions=array();
 	$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
 	$newcardbutton='';
 	if ($user->rights->fournisseur->facture->creer)
 	{
-		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create"><span class="valignmiddle">'.$langs->trans('NewBill').'</span>';
-		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-		$newcardbutton.= '</a>';
+        $newcardbutton.= dolGetButtonTitle($langs->trans('NewBill'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/fourn/facture/card.php?action=create');
 	}
 
 	$i = 0;
@@ -486,7 +484,7 @@ if ($resql)
 	print_barre_liste($langs->trans("BillsSuppliers").($socid?' '.$soc->name:''), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_accountancy', 0, $newcardbutton, '', $limit);
 
 	$topicmail="SendBillRef";
-	$modelmail="supplier_invoice_send";
+	$modelmail="invoice_supplier_send";
 	$objecttmp=new FactureFournisseur($db);
 	$trackid='sinv'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
@@ -518,7 +516,7 @@ if ($resql)
 		print $langs->trans('ValidateInvoices');
 		print '</td>';
 		print '<td>';
-		print $form->selectyesno('valdate_invoices', 1, 1);
+		print $form->selectyesno('validate_invoices', 1, 1);
 		print '</td>';
 		print '</tr>';
 		print '</table>';
@@ -730,7 +728,7 @@ if ($resql)
 	}
 	if (! empty($arrayfields['rtp']['checked']))
 	{
-		print '<td class="liste_titre right">';
+		print '<td class="liste_titre">';
 		print '</td>';
 	}
 	// Extra fields

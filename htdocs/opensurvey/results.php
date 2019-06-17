@@ -80,7 +80,7 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x"))		// bout
 			}
 		}
 
-		$nom=substr(GETPOST("nom"), 0, 64);
+		$nom=substr(GETPOST("nom", 'nohtml'), 0, 64);
 
 		// Check if vote already exists
 		$sql = 'SELECT id_users, nom as name';
@@ -438,7 +438,7 @@ dol_banner_tab($object, 'id', $linkback, 1, 'id_sondage', 'id_sondage', $morehtm
 print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';
 
-print '<table class="border" width="100%">';
+print '<table class="border tableforfield centpercent">';
 
 // Type
 $type=($object->format=="A")?'classic':'date';

@@ -17,7 +17,7 @@
 
 /**
  * \file	    htdocs/accountancy/admin/fiscalyear_info.php
- * \ingroup     Advanced accountancy
+ * \ingroup     Accountancy (Double entries)
  * \brief	    Page to show info of a fiscal year
  */
 

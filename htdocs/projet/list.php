@@ -6,6 +6,7 @@
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015 	   Claudio Aschieri     <c.aschieri@19.coop>
  * Copyright (C) 2018 	   Ferran Marcet	    <fmarcet@2byte.es>
+ * Copyright (C) 2019 	   Juanjo Menent	    <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,10 +73,10 @@ $pagenext = $page + 1;
 
 $search_all=GETPOST('search_all', 'alphanohtml') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml');
 $search_categ=GETPOST("search_categ", 'alpha');
-$search_ref=GETPOST("search_ref");
-$search_label=GETPOST("search_label");
-$search_societe=GETPOST("search_societe");
-$search_year=GETPOST("search_year");
+$search_ref=GETPOST("search_ref", 'alpha');
+$search_label=GETPOST("search_label", 'alpha');
+$search_societe=GETPOST("search_societe", 'alpha');
+$search_year=GETPOST("search_year", 'int');
 $search_status=GETPOST("search_status", 'int');
 $search_opp_status=GETPOST("search_opp_status", 'alpha');
 $search_opp_percent=GETPOST("search_opp_percent", 'alpha');
@@ -254,7 +255,6 @@ $formother = new FormOther($db);
 $formproject = new FormProjets($db);
 
 $title=$langs->trans("Projects");
-//if ($search_project_user == $user->id) $title=$langs->trans("MyProjects");
 
 
 // Get list of project id allowed to user (in a string list separated by coma)
@@ -277,11 +277,10 @@ if ($resql)
 else dol_print_error($db);
 if (count($listofprojectcontacttype) == 0) $listofprojectcontacttype[0]='0';    // To avoid sql syntax error if not found
 
-
 $distinct='DISTINCT';   // We add distinct until we are added a protection to be sure a contact of a project and task is only once.
 $sql = "SELECT ".$distinct." p.rowid as id, p.ref, p.title, p.fk_statut, p.fk_opp_status, p.public, p.fk_user_creat";
 $sql.= ", p.datec as date_creation, p.dateo as date_start, p.datee as date_end, p.opp_amount, p.opp_percent, p.tms as date_update, p.budget_amount, p.bill_time";
-$sql.= ", s.nom as name, s.rowid as socid";
+$sql.= ", s.rowid as socid, s.nom as name, s.email";
 $sql.= ", cls.code as opp_status_code";
 // We'll need these fields in order to filter by categ
 if ($search_categ) $sql .= ", cs.fk_categorie, cs.fk_project";
@@ -351,10 +350,10 @@ if ($search_status >= 0)
 if ($search_opp_status)
 {
 	if (is_numeric($search_opp_status) && $search_opp_status > 0) $sql .= " AND p.fk_opp_status = ".$db->escape($search_opp_status);
-	if ($search_opp_status == 'all') $sql .= " AND p.fk_opp_status IS NOT NULL";
-	if ($search_opp_status == 'openedopp') $sql .= " AND p.fk_opp_status IS NOT NULL AND p.fk_opp_status NOT IN (SELECT rowid FROM ".MAIN_DB_PREFIX."c_lead_status WHERE code IN ('WON','LOST'))";
-	if ($search_opp_status == 'notopenedopp') $sql .= " AND (p.fk_opp_status IS NULL OR p.fk_opp_status IN (SELECT rowid FROM ".MAIN_DB_PREFIX."c_lead_status WHERE code IN ('WON')))";
-	if ($search_opp_status == 'none') $sql .= " AND p.fk_opp_status IS NULL";
+	if ($search_opp_status == 'all') $sql .= " AND (p.fk_opp_status IS NOT NULL AND p.fk_opp_status <> -1)";
+	if ($search_opp_status == 'openedopp') $sql .= " AND p.fk_opp_status IS NOT NULL AND p.fk_opp_status <> -1 AND p.fk_opp_status NOT IN (SELECT rowid FROM ".MAIN_DB_PREFIX."c_lead_status WHERE code IN ('WON','LOST'))";
+	if ($search_opp_status == 'notopenedopp') $sql .= " AND (p.fk_opp_status IS NULL OR p.fk_opp_status = -1 OR p.fk_opp_status IN (SELECT rowid FROM ".MAIN_DB_PREFIX."c_lead_status WHERE code IN ('WON')))";
+	if ($search_opp_status == 'none') $sql .= " AND (p.fk_opp_status IS NULL OR p.fk_opp_status = -1)";
 }
 if ($search_public!='') $sql .= " AND p.public = ".$db->escape($search_public);
 // For external user, no check is done on company permission because readability is managed by public status of project and assignement.
@@ -438,13 +437,13 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 // List of mass actions available
 $arrayofmassactions =  array(
-	'generate_doc'=>$langs->trans("Generate"),
-//    'presend'=>$langs->trans("SendByMail"),
-//    'builddoc'=>$langs->trans("PDFMerge"),
+	'generate_doc'=>$langs->trans("ReGeneratePDF"),
+    //'builddoc'=>$langs->trans("PDFMerge"),
+    //'presend'=>$langs->trans("SendByMail"),
 );
 //if($user->rights->societe->creer) $arrayofmassactions['createbills']=$langs->trans("CreateInvoiceForThisCustomer");
 if ($user->rights->projet->creer) $arrayofmassactions['close']=$langs->trans("Close");
-if ($user->rights->societe->supprimer) $arrayofmassactions['predelete']=$langs->trans("Delete");
+if ($user->rights->societe->supprimer) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 
 $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
@@ -452,9 +451,7 @@ $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 $newcardbutton='';
 if ($user->rights->projet->creer)
 {
-	$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/projet/card.php?action=create"><span class="valignmiddle">'.$langs->trans('NewProject').'</span>';
-	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-	$newcardbutton.= '</a>';
+    $newcardbutton.= dolGetButtonTitle($langs->trans('NewProject'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/card.php?action=create');
 }
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
@@ -468,17 +465,17 @@ print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="type" value="'.$type.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_project', 0, $newcardbutton, '', $limit);
-
 // Show description of content
-print '<div class="opacitymedium">';
-if ($search_project_user == $user->id) print $langs->trans("MyProjectsDesc").'<br><br>';
+$texthelp='';
+if ($search_project_user == $user->id) $texthelp.=$langs->trans("MyProjectsDesc");
 else
 {
-	if ($user->rights->projet->all->lire && ! $socid) print $langs->trans("ProjectsDesc").'<br><br>';
-	else print $langs->trans("ProjectsPublicDesc").'<br><br>';
+    if ($user->rights->projet->all->lire && ! $socid) $texthelp.=$langs->trans("ProjectsDesc");
+    else $texthelp.=$langs->trans("ProjectsPublicDesc");
 }
-print '</div>';
+
+print_barre_liste($form->textwithpicto($title, $texthelp), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_project', 0, $newcardbutton, '', $limit);
+
 
 $topicmail="Information";
 $modelmail="project";
@@ -537,7 +534,7 @@ $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfiel
 if ($massactionbutton) $selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
 
 print '<div class="div-table-responsive">';
-print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+print '<table class="tagtable nobottomiftotal liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
 print '<tr class="liste_titre_filter">';
 // Project ref
@@ -658,7 +655,7 @@ if (! empty($arrayfields['p.fk_statut']['checked']))
 	print '</td>';
 }
 // Action column
-print '<td class="liste_titre right">';
+print '<td class="liste_titre maxwidthsearch">';
 $searchpicto=$form->showFilterButtons();
 print $searchpicto;
 print '</td>';
@@ -708,6 +705,10 @@ while ($i < min($num, $limit))
 	$userAccess = $object->restrictedProjectArea($user);    // why this ?
 	if ($userAccess >= 0)
 	{
+	    $socstatic->id=$obj->socid;
+	    $socstatic->name=$obj->name;
+	    $socstatic->email=$obj->email;
+
 		print '<tr class="oddeven">';
 
 		// Project url
@@ -722,7 +723,7 @@ while ($i < min($num, $limit))
 		// Title
 		if (! empty($arrayfields['p.title']['checked']))
 		{
-			print '<td class="tdoverflowmax100">';
+			print '<td class="tdoverflowmax200">';
 			print dol_trunc($obj->title, 80);
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
@@ -733,8 +734,6 @@ while ($i < min($num, $limit))
 			print '<td class="tdoverflowmax100">';
 			if ($obj->socid)
 			{
-				$socstatic->id=$obj->socid;
-				$socstatic->name=$obj->name;
 				print $socstatic->getNomUrl(1);
 			}
 			else

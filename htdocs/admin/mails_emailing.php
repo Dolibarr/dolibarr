@@ -396,7 +396,7 @@ else
 {
     dol_fiche_head($head, 'common_emailing', '', -1);
 
-    print $langs->trans("EMailsDesc")."<br>\n";
+    print '<span class="opacitymedium">'.$langs->trans("EMailsDesc")."</span><br>\n";
     print "<br>\n";
 
 	print '<table class="noborder" width="100%">';

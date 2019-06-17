@@ -164,9 +164,9 @@ if (! dol_is_dir($upload_dir))
 print '<!-- ajaxdirpreview type='.$type.' -->'."\n";
 //print '<!-- Page called with mode='.dol_escape_htmltag(isset($mode)?$mode:'').' type='.dol_escape_htmltag($type).' module='.dol_escape_htmltag($module).' url='.dol_escape_htmltag($url).' '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
-$param=($sortfield?'&sortfield='.$sortfield:'').($sortorder?'&sortorder='.$sortorder:'');
-if (! empty($websitekey)) $param.='&website='.$websitekey;
-if (! empty($pageid))     $param.='&pageid='.$pageid;
+$param=($sortfield?'&sortfield='.urlencode($sortfield):'').($sortorder?'&sortorder='.urlencode($sortorder):'');
+if (! empty($websitekey)) $param.='&website='.urlencode($websitekey);
+if (! empty($pageid))     $param.='&pageid='.urlencode($pageid);
 
 
 // Dir scan
@@ -179,7 +179,7 @@ if ($type == 'directory')
     $sorting = (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC);
 
     // Right area. If module is defined here, we are in automatic ecm.
-    $automodules = array('company', 'invoice', 'invoice_supplier', 'propal', 'supplier_proposal', 'order', 'order_supplier', 'contract', 'product', 'tax', 'project', 'fichinter', 'user', 'expensereport', 'holiday');
+    $automodules = array('company', 'invoice', 'invoice_supplier', 'propal', 'supplier_proposal', 'order', 'order_supplier', 'contract', 'product', 'tax', 'project', 'fichinter', 'user', 'expensereport', 'holiday', 'banque');
 
     // TODO change for multicompany sharing
     // Auto area for suppliers invoices
@@ -212,12 +212,14 @@ if ($type == 'directory')
     elseif ($module == 'expensereport') $upload_dir = $conf->expensereport->dir_output;
 	// Auto area for holiday
     elseif ($module == 'holiday') $upload_dir = $conf->holiday->dir_output;
+    // Auto area for holiday
+    elseif ($module == 'banque') $upload_dir = $conf->bank->dir_output;
 
     // Automatic list
     if (in_array($module, $automodules))
     {
         $param.='&module='.$module;
-        if (isset($search_doc_ref) && $search_doc_ref != '') $param.='&search_doc_ref='.$search_doc_ref;
+        if (isset($search_doc_ref) && $search_doc_ref != '') $param.='&search_doc_ref='.urlencode($search_doc_ref);
 
         $textifempty=($section?$langs->trans("NoFileFound"):($showonrightsize=='featurenotyetavailable'?$langs->trans("FeatureNotYetAvailable"):$langs->trans("NoFileFound")));
 
@@ -335,8 +337,8 @@ if ($useajax || $action == 'delete')
 	$formquestion['section_id']=array('type'=>'hidden','value'=>$section_id,'name'=>'section_id');		// We must always put field, even if empty because it is fille by javascript later
 	$formquestion['section_dir']=array('type'=>'hidden','value'=>$section_dir,'name'=>'section_dir');	// We must always put field, even if empty because it is fille by javascript later
 	if (! empty($action) && $action == 'file_manager')	$formquestion['file_manager']=array('type'=>'hidden','value'=>1,'name'=>'file_manager');
-	if (! empty($websitekey))							$formquestion['website']=array('type'=>'hidden','value'=>$websitekey,'name'=>'website');
-	if (! empty($pageid) && $pageid > 0)				$formquestion['pageid']=array('type'=>'hidden','value'=>$pageid,'name'=>'pageid');
+	if (! empty($websitekey))							$formquestion['website']     =array('type'=>'hidden','value'=>$websitekey,'name'=>'website');
+	if (! empty($pageid) && $pageid > 0)				$formquestion['pageid']      =array('type'=>'hidden','value'=>$pageid,'name'=>'pageid');
 
 	print $form->formconfirm($url, $langs->trans("DeleteFile"), $langs->trans("ConfirmDeleteFile"), 'confirm_deletefile', $formquestion, "no", ($useajax?'deletefile':0));
 }

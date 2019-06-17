@@ -138,9 +138,7 @@ if ($resql)
 	$newcardbutton='';
 	if ($user->rights->banque->cheque)
 	{
-		$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/compta/paiement/cheque/card.php?action=new"><span class="valignmiddle">'.$langs->trans('NewCheckDeposit').'</span>';
-		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-		$newcardbutton.= '</a>';
+        $newcardbutton.= dolGetButtonTitle($langs->trans('NewCheckDeposit'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/paiement/cheque/card.php?action=new');
 	}
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -177,7 +175,7 @@ if ($resql)
 	print '<input class="flat maxwidth50" type="text" name="search_amount" value="'.$search_amount.'">';
 	print '</td>';
 	print '<td class="liste_titre"></td>';
-    print '<td class="liste_titre right">';
+    print '<td class="liste_titre maxwidthsearch">';
     $searchpicto=$form->showFilterAndCheckAddButtons(0);
     print $searchpicto;
     print '</td>';

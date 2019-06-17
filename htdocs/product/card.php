@@ -74,8 +74,8 @@ $action=(GETPOST('action', 'alpha') ? GETPOST('action', 'alpha') : 'view');
 $cancel=GETPOST('cancel', 'alpha');
 $confirm=GETPOST('confirm', 'alpha');
 $socid=GETPOST('socid', 'int');
-$duration_value = GETPOST('duration_value');
-$duration_unit = GETPOST('duration_unit');
+$duration_value = GETPOST('duration_value', 'int');
+$duration_unit = GETPOST('duration_unit', 'alpha');
 if (! empty($user->societe_id)) $socid=$user->societe_id;
 
 $object = new Product($db);
@@ -399,8 +399,8 @@ if (empty($reshook))
                 $object->seuil_stock_alerte     = GETPOST('seuil_stock_alerte');
                 $object->desiredstock           = GETPOST('desiredstock');
                 */
-                $object->duration_value         = GETPOST('duration_value');
-                $object->duration_unit          = GETPOST('duration_unit');
+                $object->duration_value         = GETPOST('duration_value', 'int');
+                $object->duration_unit          = GETPOST('duration_unit', 'alpha');
 
                 $object->canvas                 = GETPOST('canvas');
                 $object->weight                 = GETPOST('weight');
@@ -497,7 +497,7 @@ if (empty($reshook))
             $originalId = $id;
             if ($object->id > 0)
             {
-                $object->ref = GETPOST('clone_ref');
+                $object->ref = GETPOST('clone_ref', 'alphanohtml');
                 $object->status = 0;
                 $object->status_buy = 0;
                 $object->id = null;
@@ -505,7 +505,8 @@ if (empty($reshook))
 
                 if ($object->check())
                 {
-                    $id = $object->create($user);
+                	$object->context['createfromclone'] = 'createfromclone';
+                	$id = $object->create($user);
                     if ($id > 0)
                     {
                         if (GETPOST('clone_composition'))
@@ -546,7 +547,7 @@ if (empty($reshook))
                             $object->fetch($id);
                         }
                         else
-                     {
+                     	{
                             $db->rollback();
                             if (count($object->errors))
                             {
@@ -560,6 +561,8 @@ if (empty($reshook))
                             }
                         }
                     }
+
+                    unset($object->context['createfromclone']);
                 }
             }
             else
@@ -1024,13 +1027,9 @@ else
         // Duration
         if ($type == 1)
         {
-            print '<tr><td>' . $langs->trans("Duration") . '</td><td colspan="3"><input name="duration_value" size="6" maxlength="5" value="' . $duration_value . '"> &nbsp;';
-            print '<input name="duration_unit" type="radio" value="i">'.$langs->trans("Minute").'&nbsp;';
-            print '<input name="duration_unit" type="radio" value="h">'.$langs->trans("Hour").'&nbsp;';
-            print '<input name="duration_unit" type="radio" value="d">'.$langs->trans("Day").'&nbsp;';
-            print '<input name="duration_unit" type="radio" value="w">'.$langs->trans("Week").'&nbsp;';
-            print '<input name="duration_unit" type="radio" value="m">'.$langs->trans("Month").'&nbsp;';
-            print '<input name="duration_unit" type="radio" value="y">'.$langs->trans("Year").'&nbsp;';
+            print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="3">';
+            print '<input name="surface" size="4" value="'.GETPOST('duration_value', 'int').'">';
+            print $formproduct->selectMeasuringUnits("duration_unit", "time", GETPOST('duration_value', 'alpha'), 0, 1);
             print '</td></tr>';
         }
 
@@ -1045,7 +1044,7 @@ else
             // Weight
             print '<tr><td>'.$langs->trans("Weight").'</td><td colspan="3">';
             print '<input name="weight" size="4" value="'.GETPOST('weight').'">';
-            print $formproduct->select_measuring_units("weight_units", "weight", (empty($conf->global->MAIN_WEIGHT_DEFAULT_UNIT)?0:$conf->global->MAIN_WEIGHT_DEFAULT_UNIT));
+            print $formproduct->selectMeasuringUnits("weight_units", "weight", (empty($conf->global->MAIN_WEIGHT_DEFAULT_UNIT)?0:$conf->global->MAIN_WEIGHT_DEFAULT_UNIT));
             print '</td></tr>';
             // Length
             if (empty($conf->global->PRODUCT_DISABLE_SIZE))
@@ -1054,7 +1053,7 @@ else
                 print '<input name="size" size="4" value="'.GETPOST('size').'"> x ';
                 print '<input name="sizewidth" size="4" value="'.GETPOST('sizewidth').'"> x ';
                 print '<input name="sizeheight" size="4" value="'.GETPOST('sizeheight').'">';
-                print $formproduct->select_measuring_units("size_units", "size");
+                print $formproduct->selectMeasuringUnits("size_units", "size");
                 print '</td></tr>';
             }
             if (empty($conf->global->PRODUCT_DISABLE_SURFACE))
@@ -1062,7 +1061,7 @@ else
                 // Surface
                 print '<tr><td>'.$langs->trans("Surface").'</td><td colspan="3">';
                 print '<input name="surface" size="4" value="'.GETPOST('surface').'">';
-                print $formproduct->select_measuring_units("surface_units", "surface");
+                print $formproduct->selectMeasuringUnits("surface_units", "surface");
                 print '</td></tr>';
             }
             if (empty($conf->global->PRODUCT_DISABLE_VOLUME))
@@ -1070,7 +1069,7 @@ else
                 // Volume
                 print '<tr><td>'.$langs->trans("Volume").'</td><td colspan="3">';
                 print '<input name="volume" size="4" value="'.GETPOST('volume').'">';
-                print $formproduct->select_measuring_units("volume_units", "volume");
+                print $formproduct->selectMeasuringUnits("volume_units", "volume");
                 print '</td></tr>';
             }
         }
@@ -1222,20 +1221,18 @@ else
 			print '<td class="maxwidthonsmartphone"><input class="minwidth100" name="accountancy_code_sell" value="'.$object->accountancy_code_sell.'">';
 			print '</td></tr>';
 
-			if ($conf->global->MAIN_FEATURES_LEVEL)
+			// Accountancy_code_sell_intra
+			if ($mysoc->isInEEC())
 			{
-				// Accountancy_code_sell_intra
-				if ($mysoc->isInEEC()) {
-					print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellIntraCode").'</td>';
-					print '<td class="maxwidthonsmartphone"><input class="minwidth100" name="accountancy_code_sell_intra" value="'.$object->accountancy_code_sell_intra.'">';
-					print '</td></tr>';
-				}
-
-				// Accountancy_code_sell_export
-				print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellExportCode").'</td>';
-				print '<td class="maxwidthonsmartphone"><input class="minwidth100" name="accountancy_code_sell_export" value="'.$object->accountancy_code_sell_export.'">';
+				print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellIntraCode").'</td>';
+				print '<td class="maxwidthonsmartphone"><input class="minwidth100" name="accountancy_code_sell_intra" value="'.$object->accountancy_code_sell_intra.'">';
 				print '</td></tr>';
 			}
+
+			// Accountancy_code_sell_export
+			print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellExportCode").'</td>';
+			print '<td class="maxwidthonsmartphone"><input class="minwidth100" name="accountancy_code_sell_export" value="'.$object->accountancy_code_sell_export.'">';
+			print '</td></tr>';
 
 			// Accountancy_code_buy
 			print '<tr><td>'.$langs->trans("ProductAccountancyBuyCode").'</td>';
@@ -1404,19 +1401,9 @@ else
             if ($object->isService())
             {
                 // Duration
-                print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="3"><input name="duration_value" size="3" maxlength="5" value="'.$object->duration_value.'">';
-                print '&nbsp; ';
-                print '<input name="duration_unit" type="radio" value="i"'.($object->duration_unit=='i'?' checked':'').'>'.$langs->trans("Minute");
-                print '&nbsp; ';
-                print '<input name="duration_unit" type="radio" value="h"'.($object->duration_unit=='h'?' checked':'').'>'.$langs->trans("Hour");
-                print '&nbsp; ';
-                print '<input name="duration_unit" type="radio" value="d"'.($object->duration_unit=='d'?' checked':'').'>'.$langs->trans("Day");
-                print '&nbsp; ';
-                print '<input name="duration_unit" type="radio" value="w"'.($object->duration_unit=='w'?' checked':'').'>'.$langs->trans("Week");
-                print '&nbsp; ';
-                print '<input name="duration_unit" type="radio" value="m"'.($object->duration_unit=='m'?' checked':'').'>'.$langs->trans("Month");
-                print '&nbsp; ';
-                print '<input name="duration_unit" type="radio" value="y"'.($object->duration_unit=='y'?' checked':'').'>'.$langs->trans("Year");
+                print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="3">';
+                print '<input name="duration_value" size="5" value="'.$object->duration_value.'"> ';
+                print $formproduct->selectMeasuringUnits("duration_unit", "time", $object->duration_unit, 0, 1);
                 print '</td></tr>';
             }
             else
@@ -1426,11 +1413,11 @@ else
                 $statutarray=array('-1'=>'&nbsp;', '1' => $langs->trans("Finished"), '0' => $langs->trans("RowMaterial"));
                 print $form->selectarray('finished', $statutarray, $object->finished);
                 print '</td></tr>';
-              
+
                 // Weight
                 print '<tr><td>'.$langs->trans("Weight").'</td><td colspan="3">';
                 print '<input name="weight" size="5" value="'.$object->weight.'"> ';
-                print $formproduct->select_measuring_units("weight_units", "weight", $object->weight_units);
+                print $formproduct->selectMeasuringUnits("weight_units", "weight", $object->weight_units);
                 print '</td></tr>';
                 if (empty($conf->global->PRODUCT_DISABLE_SIZE))
                 {
@@ -1439,7 +1426,7 @@ else
                   print '<input name="size" size="5" value="'.$object->length.'">x';
                   print '<input name="sizewidth" size="5" value="'.$object->width.'">x';
                   print '<input name="sizeheight" size="5" value="'.$object->height.'"> ';
-                  print $formproduct->select_measuring_units("size_units", "size", $object->length_units);
+                  print $formproduct->selectMeasuringUnits("size_units", "size", $object->length_units);
                   print '</td></tr>';
                 }
                 if (empty($conf->global->PRODUCT_DISABLE_SURFACE))
@@ -1447,7 +1434,7 @@ else
                     // Surface
                     print '<tr><td>'.$langs->trans("Surface").'</td><td colspan="3">';
                     print '<input name="surface" size="5" value="'.$object->surface.'"> ';
-                    print $formproduct->select_measuring_units("surface_units", "surface", $object->surface_units);
+                    print $formproduct->selectMeasuringUnits("surface_units", "surface", $object->surface_units);
                     print '</td></tr>';
                 }
                 if (empty($conf->global->PRODUCT_DISABLE_VOLUME))
@@ -1455,7 +1442,7 @@ else
                     // Volume
                     print '<tr><td>'.$langs->trans("Volume").'</td><td colspan="3">';
                     print '<input name="volume" size="5" value="'.$object->volume.'"> ';
-                    print $formproduct->select_measuring_units("volume_units", "volume", $object->volume_units);
+                    print $formproduct->selectMeasuringUnits("volume_units", "volume", $object->volume_units);
                     print '</td></tr>';
                 }
             }
@@ -1528,23 +1515,20 @@ else
 				print $formaccounting->select_account($object->accountancy_code_sell, 'accountancy_code_sell', 1, '', 1, 1);
 				print '</td></tr>';
 
-				if ($conf->global->MAIN_FEATURES_LEVEL)
+				// Accountancy_code_sell_intra
+				if ($mysoc->isInEEC())
 				{
-					// Accountancy_code_sell_intra
-					if ($mysoc->isInEEC())
-					{
-						print '<tr><td class="titlefield">'.$langs->trans("ProductAccountancySellIntraCode").'</td>';
-						print '<td>';
-						print $formaccounting->select_account($object->accountancy_code_sell_intra, 'accountancy_code_sell_intra', 1, '', 1, 1);
-						print '</td></tr>';
-					}
-
-					// Accountancy_code_sell_export
-					print '<tr><td class="titlefield">'.$langs->trans("ProductAccountancySellExportCode").'</td>';
+					print '<tr><td class="titlefield">'.$langs->trans("ProductAccountancySellIntraCode").'</td>';
 					print '<td>';
-					print $formaccounting->select_account($object->accountancy_code_sell_export, 'accountancy_code_sell_export', 1, '', 1, 1);
+					print $formaccounting->select_account($object->accountancy_code_sell_intra, 'accountancy_code_sell_intra', 1, '', 1, 1);
 					print '</td></tr>';
 				}
+
+				// Accountancy_code_sell_export
+				print '<tr><td class="titlefield">'.$langs->trans("ProductAccountancySellExportCode").'</td>';
+				print '<td>';
+				print $formaccounting->select_account($object->accountancy_code_sell_export, 'accountancy_code_sell_export', 1, '', 1, 1);
+				print '</td></tr>';
 
 				// Accountancy_code_buy
 				print '<tr><td>'.$langs->trans("ProductAccountancyBuyCode").'</td>';
@@ -1559,21 +1543,18 @@ else
 				print '<td><input name="accountancy_code_sell" class="maxwidth200" value="'.$object->accountancy_code_sell.'">';
 				print '</td></tr>';
 
-				if ($conf->global->MAIN_FEATURES_LEVEL)
+				// Accountancy_code_sell_intra
+				if ($mysoc->isInEEC())
 				{
-					// Accountancy_code_sell_intra
-					if ($mysoc->isInEEC())
-					{
-						print '<tr><td class="titlefield">'.$langs->trans("ProductAccountancySellIntraCode").'</td>';
-						print '<td><input name="accountancy_code_sell_intra" class="maxwidth200" value="'.$object->accountancy_code_sell_intra.'">';
-						print '</td></tr>';
-					}
-
-					// Accountancy_code_sell_export
-					print '<tr><td class="titlefield">'.$langs->trans("ProductAccountancySellExportCode").'</td>';
-					print '<td><input name="accountancy_code_sell_export" class="maxwidth200" value="'.$object->accountancy_code_sell_export.'">';
+					print '<tr><td class="titlefield">'.$langs->trans("ProductAccountancySellIntraCode").'</td>';
+					print '<td><input name="accountancy_code_sell_intra" class="maxwidth200" value="'.$object->accountancy_code_sell_intra.'">';
 					print '</td></tr>';
 				}
+
+				// Accountancy_code_sell_export
+				print '<tr><td class="titlefield">'.$langs->trans("ProductAccountancySellExportCode").'</td>';
+				print '<td><input name="accountancy_code_sell_export" class="maxwidth200" value="'.$object->accountancy_code_sell_export.'">';
+				print '</td></tr>';
 
 				// Accountancy_code_buy
 				print '<tr><td>'.$langs->trans("ProductAccountancyBuyCode").'</td>';
@@ -1701,47 +1682,44 @@ else
 			}
 			print '</td></tr>';
 
-			if ($conf->global->MAIN_FEATURES_LEVEL)
+			// Accountancy sell code intra-community
+			if ($mysoc->isInEEC())
 			{
-				// Accountancy sell code intra-community
-				if ($mysoc->isInEEC())
-				{
-					print '<tr><td class="nowrap">';
-					print $langs->trans("ProductAccountancySellIntraCode");
-					print '</td><td colspan="2">';
-					if (! empty($conf->accounting->enabled))
-					{
-						if (! empty($object->accountancy_code_sell_intra))
-						{
-							$accountingaccount2 = new AccountingAccount($db);
-							$accountingaccount2->fetch('', $object->accountancy_code_sell_intra, 1);
-
-							print $accountingaccount2->getNomUrl(0, 1, 1, '', 1);
-						}
-					} else {
-						print $object->accountancy_code_sell_intra;
-					}
-					print '</td></tr>';
-				}
-
-				// Accountancy sell code export
 				print '<tr><td class="nowrap">';
-				print $langs->trans("ProductAccountancySellExportCode");
+				print $langs->trans("ProductAccountancySellIntraCode");
 				print '</td><td colspan="2">';
 				if (! empty($conf->accounting->enabled))
 				{
-					if (! empty($object->accountancy_code_sell_export))
+					if (! empty($object->accountancy_code_sell_intra))
 					{
-						$accountingaccount3 = new AccountingAccount($db);
-						$accountingaccount3->fetch('', $object->accountancy_code_sell_export, 1);
+						$accountingaccount2 = new AccountingAccount($db);
+						$accountingaccount2->fetch('', $object->accountancy_code_sell_intra, 1);
 
-						print $accountingaccount3->getNomUrl(0, 1, 1, '', 1);
+						print $accountingaccount2->getNomUrl(0, 1, 1, '', 1);
 					}
 				} else {
-					print $object->accountancy_code_sell_export;
+					print $object->accountancy_code_sell_intra;
 				}
 				print '</td></tr>';
 			}
+
+			// Accountancy sell code export
+			print '<tr><td class="nowrap">';
+			print $langs->trans("ProductAccountancySellExportCode");
+			print '</td><td colspan="2">';
+			if (! empty($conf->accounting->enabled))
+			{
+				if (! empty($object->accountancy_code_sell_export))
+				{
+					$accountingaccount3 = new AccountingAccount($db);
+					$accountingaccount3->fetch('', $object->accountancy_code_sell_export, 1);
+
+					print $accountingaccount3->getNomUrl(0, 1, 1, '', 1);
+				}
+			} else {
+				print $object->accountancy_code_sell_export;
+			}
+			print '</td></tr>';
 
 			// Accountancy buy code
 			print '<tr><td class="nowrap">';
@@ -1991,7 +1969,7 @@ if (($action == 'delete' && (empty($conf->use_javascript_ajax) || ! empty($conf-
 if (($action == 'clone' && (empty($conf->use_javascript_ajax) || ! empty($conf->dol_use_jmobile)))		// Output when action = clone if jmobile or no js
 	|| (! empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile)))							// Always output when not jmobile nor js
 {
-    print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneProduct', $object->ref), 'confirm_clone', $formquestionclone, 'yes', 'action-clone', 260, 600);
+    print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneProduct', $object->ref), 'confirm_clone', $formquestionclone, 'yes', 'action-clone', 350, 600);
 }
 
 

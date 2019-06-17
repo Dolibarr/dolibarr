@@ -221,8 +221,7 @@ print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->tra
 // Company
 /*
 print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
-$filter='';
-print $form->select_company($socid,'socid',$filter,1,1,0,array(),0,'','style="width: 95%"');
+print $form->select_company($socid,'socid','',1,1,0,array(),0,'','style="width: 95%"');
 print '</td></tr>';
 */
 // User
@@ -234,7 +233,7 @@ print '</td></tr>';
 // Status
 print '<tr><td class="left">'.$langs->trans("Status").'</td><td class="left">';
 $liststatus=$tmpexpensereport->statuts;
-print $form->selectarray('object_status', $liststatus, GETPOST('object_status'), -4, 0, 0, '', 1);
+print $form->selectarray('object_status', $liststatus, GETPOST('object_status', 'int'), -4, 0, 0, '', 1);
 print '</td></tr>';
 // Year
 print '<tr><td>'.$langs->trans("Year").'</td><td>';

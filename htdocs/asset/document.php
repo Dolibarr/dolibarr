@@ -117,7 +117,7 @@ if ($object->id)
 	print '<div class="fichecenter">';
 
 	print '<div class="underbanner clearboth"></div>';
-	print '<table class="border centpercent">';
+	print '<table class="border tableforfield centpercent">';
 
 	// Number of files
 	print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
@@ -145,7 +145,7 @@ if ($object->id)
 }
 else
 {
-	accessforbidden('', 0, 0);
+	accessforbidden('', 0, 1);
 }
 
 // End of page

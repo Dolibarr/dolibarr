@@ -29,6 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 
 /**
@@ -216,7 +217,8 @@ class pdf_timespent extends ModelePDFProjects
 					$substitutionarray=pdf_getSubstitutionArray($outputlangs, null, $object);
 					complete_substitutions_array($substitutionarray, $outputlangs, $object);
 					$notetoshow = make_substitutions($notetoshow, $substitutionarray, $outputlangs);
-
+					$notetoshow = convertBackOfficeMediasLinksToPublicLinks($notetoshow);
+					
 					$tab_top -= 2;
 
 					$pdf->SetFont('', '', $default_font_size - 1);
@@ -258,7 +260,7 @@ class pdf_timespent extends ModelePDFProjects
 					//$progress=($object->lines[$i]->progress?$object->lines[$i]->progress.'%':'');
 					$datestart=dol_print_date($object->lines[$i]->date_start, 'day');
 					$dateend=dol_print_date($object->lines[$i]->date_end, 'day');
-					$planned_timespent=convertSecondToTime((int) $object->lines[$i]->planned_timespent, 'allhourmin');
+					$duration=convertSecondToTime((int) $object->lines[$i]->duration, 'allhourmin');
 
 					$showpricebeforepagebreak=1;
 
@@ -346,7 +348,7 @@ class pdf_timespent extends ModelePDFProjects
 					$pdf->MultiCell($this->posxlabel-$this->posxref, 3, $outputlangs->convToOutputCharset($ref), 0, 'L');
 					// timespent
 					$pdf->SetXY($this->posxtimespent, $curY);
-					$pdf->MultiCell($this->posxdatestart-$this->posxtimespent, 3, $planned_timespent?$planned_timespent:'', 0, 'R');
+					$pdf->MultiCell($this->posxdatestart-$this->posxtimespent, 3, $duration?$duration:'', 0, 'R');
 					// Progress
 					//$pdf->SetXY($this->posxprogress, $curY);
 					//$pdf->MultiCell($this->posxdatestart-$this->posxprogress, 3, $progress, 0, 'R');

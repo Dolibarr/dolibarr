@@ -127,6 +127,25 @@ function product_prepare_head($object)
             $h++;
         }
     }
+    
+    // Tab to link resources
+    if (!empty($conf->resource->enabled))
+    {
+        if ($object->isProduct() && ! empty($conf->global->RESOURCE_ON_PRODUCTS))
+        {
+            $head[$h][0] = DOL_URL_ROOT . '/resource/element_resource.php?element=product&ref=' . $object->ref;
+            $head[$h][1] = $langs->trans("Resources");
+            $head[$h][2] = 'resources';
+            $h++;
+        }
+        if ($object->isService() && ! empty($conf->global->RESOURCE_ON_SERVICES))
+        {
+            $head[$h][0] = DOL_URL_ROOT . '/resource/element_resource.php?element=service&ref=' . $object->ref;
+            $head[$h][1] = $langs->trans("Resources");
+            $head[$h][2] = 'resources';
+            $h++;
+        }
+    }
 
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
@@ -464,10 +483,10 @@ function show_stats_for_company($product, $socid)
 /**
  *	Return translation label of a unit key
  *
- *	@param	int		$unit                Unit key (-3,0,3,98,99...)
+ *	@param	int		$unit                ID of unit (rowid in llx_c_units table)
  *	@param  string	$measuring_style     Style of unit: weight, volume,...
  *	@return	string	   			         Unit string
- * 	@see	formproduct->load_measuring_units
+ * 	@see	formproduct->selectMeasuringUnits
  */
 function measuring_units_string($unit, $measuring_style = '')
 {
@@ -475,7 +494,7 @@ function measuring_units_string($unit, $measuring_style = '')
 	require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
 	$measuringUnits= new CUnits($db);
 	$result = $measuringUnits->fetchAll('', '', 0, 0, array(
-			't.code' => $unit,
+			't.rowid' => $unit,
 			't.unit_type' => $measuring_style,
 			't.active' => 1
 	));
@@ -496,7 +515,7 @@ function measuring_units_string($unit, $measuring_style = '')
  *
  *	@param	int		$unit            Unit key (-3,-2,-1,0,98,99...)
  *	@return	int	   			         Squared unit key (-6,-4,-2,0,98,99...)
- * 	@see	formproduct->load_measuring_units
+ * 	@see	formproduct->selectMeasuringUnits
  */
 function measuring_units_squared($unit)
 {
@@ -516,7 +535,7 @@ function measuring_units_squared($unit)
  *
  *	@param	int		$unit            Unit key (-3,-2,-1,0,98,99...)
  *	@return	int	   			         Cubed unit key (-9,-6,-3,0,88,89...)
- * 	@see	formproduct->load_measuring_units
+ * 	@see	formproduct->selectMeasuringUnits
  */
 function measuring_units_cubed($unit)
 {

@@ -73,7 +73,12 @@ class DiscountAbsolute
 	 */
 	public $description;
 
-    public $datec;					// Date creation
+    /**
+     * Date creation record (datec)
+     *
+     * @var integer
+     */
+    public $datec;
 
     /**
      * @var int ID invoice line when a discount is used into an invoice line (for absolute discounts)
@@ -492,8 +497,9 @@ class DiscountAbsolute
     {
         global $conf;
 
+        dol_syslog(get_class($this)."::getAvailableDiscounts discount_type=".$discount_type, LOG_DEBUG);
+
         $sql  = "SELECT SUM(rc.amount_ttc) as amount";
-        //$sql  = "SELECT rc.amount_ttc as amount";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe_remise_except as rc";
         $sql.= " WHERE rc.entity = " . $conf->entity;
         $sql.= " AND rc.discount_type=".intval($discount_type);
@@ -507,7 +513,6 @@ class DiscountAbsolute
         if ($filter)   $sql.=' AND ('.$filter.')';
         if ($maxvalue) $sql.=' AND rc.amount_ttc <= '.price2num($maxvalue);
 
-        dol_syslog(get_class($this)."::getAvailableDiscounts", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {

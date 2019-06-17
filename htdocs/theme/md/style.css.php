@@ -99,7 +99,7 @@ if (! isset($conf->global->THEME_ELDY_BACKBODY)) $conf->global->THEME_ELDY_BACKB
 if (! isset($conf->global->THEME_ELDY_TOPMENU_BACK1)) $conf->global->THEME_ELDY_TOPMENU_BACK1=$colorbackhmenu1;
 if (! isset($conf->global->THEME_ELDY_VERMENU_BACK1)) $conf->global->THEME_ELDY_VERMENU_BACK1=$colorbackvmenu1;
 if (! isset($conf->global->THEME_ELDY_BACKTITLE1)) $conf->global->THEME_ELDY_BACKTITLE1=$colorbacktitle1;
-if (! isset($conf->global->THEME_ELDY_USE_HOVER)) $conf->global->THEME_ELDY_USE_HOVER==$colorbacklinepairhover;
+if (! isset($conf->global->THEME_ELDY_USE_HOVER)) $conf->global->THEME_ELDY_USE_HOVER=$colorbacklinepairhover;
 if (! isset($conf->global->THEME_ELDY_USE_CHECKED)) $conf->global->THEME_ELDY_USE_CHECKED=$colorbacklinepairchecked;
 if (! isset($conf->global->THEME_ELDY_LINEBREAK)) $conf->global->THEME_ELDY_LINEBREAK=$colorbacklinebreak;
 if (! isset($conf->global->THEME_ELDY_TEXTTITLENOTAB)) $conf->global->THEME_ELDY_TEXTTITLENOTAB=$colortexttitlenotab;
@@ -137,16 +137,15 @@ $fontsize            =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty(
 $fontsizesmaller     =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_FONT_SIZE2)   ?$fontsize:$conf->global->THEME_ELDY_FONT_SIZE2)             :(empty($user->conf->THEME_ELDY_FONT_SIZE2)?$fontsize:$user->conf->THEME_ELDY_FONT_SIZE2);
 
 // Hover color
-$colorbacklinepairhover=((! isset($conf->global->THEME_ELDY_USE_HOVER) || (string) $conf->global->THEME_ELDY_USE_HOVER === '0')?'':($conf->global->THEME_ELDY_USE_HOVER === '1'?'edf4fb':$conf->global->THEME_ELDY_USE_HOVER));
-$colorbacklinepairchecked=((! isset($conf->global->THEME_ELDY_USE_CHECKED) || (string) $conf->global->THEME_ELDY_USE_CHECKED === '0')?'':($conf->global->THEME_ELDY_USE_CHECKED === '1'?'edf4fb':$conf->global->THEME_ELDY_USE_CHECKED));
+$colorbacklinepairhover=((! isset($conf->global->THEME_ELDY_USE_HOVER) || (string) $conf->global->THEME_ELDY_USE_HOVER === '255,255,255')?'':($conf->global->THEME_ELDY_USE_HOVER === '1'?'edf4fb':$conf->global->THEME_ELDY_USE_HOVER));
+$colorbacklinepairchecked=((! isset($conf->global->THEME_ELDY_USE_CHECKED) || (string) $conf->global->THEME_ELDY_USE_CHECKED === '255,255,255')?'':($conf->global->THEME_ELDY_USE_CHECKED === '1'?'edf4fb':$conf->global->THEME_ELDY_USE_CHECKED));
 if (! empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED))
 {
-    $colorbacklinepairhover=((! isset($user->conf->THEME_ELDY_USE_HOVER) || $user->conf->THEME_ELDY_USE_HOVER === '0')?'':($user->conf->THEME_ELDY_USE_HOVER === '1'?'edf4fb':$user->conf->THEME_ELDY_USE_HOVER));
-    $colorbacklinepairchecked=((! isset($user->conf->THEME_ELDY_USE_CHECKED) || $user->conf->THEME_ELDY_USE_CHECKED === '0')?'':($user->conf->THEME_ELDY_USE_CHECKED === '1'?'edf4fb':$user->conf->THEME_ELDY_USE_CHECKED));
+    $colorbacklinepairhover=((! isset($user->conf->THEME_ELDY_USE_HOVER) || $user->conf->THEME_ELDY_USE_HOVER === '255,255,255')?'':($user->conf->THEME_ELDY_USE_HOVER === '1'?'edf4fb':$user->conf->THEME_ELDY_USE_HOVER));
+    $colorbacklinepairchecked=((! isset($user->conf->THEME_ELDY_USE_CHECKED) || $user->conf->THEME_ELDY_USE_CHECKED === '255,255,255')?'':($user->conf->THEME_ELDY_USE_CHECKED === '1'?'edf4fb':$user->conf->THEME_ELDY_USE_CHECKED));
 }
 
 if (empty($colortopbordertitle1)) $colortopbordertitle1=$colorbackhmenu1;
-
 
 // Set text color to black or white
 $colorbackhmenu1=join(',', colorStringToArray($colorbackhmenu1));    // Normalize value to 'x,y,z'
@@ -324,7 +323,9 @@ input, select {
 	margin-bottom:1px;
 	margin-top:1px;
 }
-
+input.button.massactionconfirmed {
+    margin: 4px;
+}
 
 textarea {
 	border-radius: 0;
@@ -351,18 +352,28 @@ input.smallpadd {	/* Used for timesheet input */
 input.buttongen {
 	vertical-align: middle;
 }
-input.buttonpayment {
-	min-width: 320px;
+input.buttonpayment, button.buttonpayment, div.buttonpayment {
+	min-width: 290px;
 	margin-bottom: 15px;
+	margin-top: 0;
+    margin-left: 5px;
+    margin-right: 5px;
 	background-image: none;
 	line-height: 24px;
 	padding: 8px;
 	background: none;
-	padding-left: 30px;
-	text-align: <?php echo $left; ?>;
+	text-align: center;
 	border: 2px solid #ccc;
 	background-color: #eee;
 	white-space: normal;
+	color: #888 !important;
+}
+div.buttonpayment input {
+    background-color: unset;
+    border-bottom: unset;
+    font-weight: bold;
+    text-transform: uppercase;
+	color: #333;
 }
 input.buttonpaymentcb {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/common/credit_card.png', 1) ?>);
@@ -401,6 +412,11 @@ input.buttonpaymentstripe {
 	background-repeat: no-repeat;
 	background-position: 8px 7px;
 }
+a.buttonticket {
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
 /* Used for timesheets */
 span.timesheetalreadyrecorded input {
     border: none;
@@ -484,6 +500,10 @@ input[name=surface] { margin-right: 4px; }
 fieldset { border: 1px solid #AAAAAA !important; }
 .legendforfieldsetstep { padding-bottom: 10px; }
 
+div#moretabsListaction {
+    z-index: 5;
+}
+
 hr { border: 0; border-top: 1px solid #ccc; }
 
 .button, .buttonDelete, input[name="sbmtConnexion"] {
@@ -523,7 +543,7 @@ hr { border: 0; border-top: 1px solid #ccc; }
 	-webkit-box-shadow: 0px 0px 6px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 	box-shadow: 0px 0px 6px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 }
-.button:disabled, .buttonDelete:disabled {
+.button:disabled, .buttonDelete:disabled, .button.disabled {
 	opacity: 0.4;
     box-shadow: none;
     -webkit-box-shadow: none;
@@ -535,6 +555,10 @@ hr { border: 0; border-top: 1px solid #ccc; }
 	opacity: 0.4;
     box-shadow: none;
     -webkit-box-shadow: none;
+}
+.button_search, .button_removefilter {
+    border: unset;
+    background: unset;
 }
 form {
     padding:0px;
@@ -654,6 +678,15 @@ textarea.centpercent {
 .cursornotallowed {
 	cursor: not-allowed;
 }
+.backgroundblank {
+    background-color: #fff;
+}
+.checkboxattachfilelabel {
+    font-size: 0.85em;
+    opacity: 0.7;
+}
+
+/* Themes for badges */
 .badge {
 	display: inline-block;
 	min-width: 10px;
@@ -1160,7 +1193,7 @@ td.showDragHandle {
 	display: block;
 	font-family: "RobotoDraft","Roboto",sans-serif;
 	left: 0;
-<?php if (in_array($conf->browser->layout, array('phone','tablet')) && ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))) { ?>
+<?php if (in_array($conf->browser->layout, array('phone','tablet')) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
 <?php } else { ?>
 	position: fixed;
 	top: 50px;
@@ -1189,7 +1222,7 @@ td.showDragHandle {
 	-moz-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 	transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 	-webkit-overflow-scrolling: touch;
-<?php if (in_array($conf->browser->layout, array('phone','tablet')) && ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))) { ?>
+<?php if (in_array($conf->browser->layout, array('phone','tablet')) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
 <?php } else { ?>
 	overflow-x: hidden;
 	overflow-y: auto;
@@ -1217,7 +1250,7 @@ body.sidebar-collapse .side-nav-vert, body.sidebar-collapse #id-right {
 	margin-left: 228px;
 }
 body.sidebar-collapse .side-nav, body.sidebar-collapse .login_block {
-<?php if (in_array($conf->browser->layout, array('phone','tablet')) && ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))) { ?>
+<?php if (in_array($conf->browser->layout, array('phone','tablet')) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
 	left: -240px;
 <?php } else { ?>
 	left: -229px;
@@ -1232,7 +1265,7 @@ body.sidebar-collapse .side-nav, body.sidebar-collapse .login_block {
 <?php } ?>
 
 /* For smartphone (testmenuhider is on) */
-<?php if (in_array($conf->browser->layout, array('phone','tablet')) && ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))) { ?>
+<?php if (in_array($conf->browser->layout, array('phone','tablet')) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
 #id-container {
 	width: 100%;
 }
@@ -1243,8 +1276,9 @@ div.login_block {
 	/* border-right: none ! important; */
 	top: inherit !important;
 }
+
 .side-nav {
-<?php if (in_array($conf->browser->layout, array('phone','tablet')) && ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))) { ?>
+<?php if (in_array($conf->browser->layout, array('phone','tablet')) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
 <?php } else { ?>
 	overflow-x: initial !important;
 	overflow-y: scroll;
@@ -1279,7 +1313,9 @@ div.login_block {
 .login_block_getinfo .atoplogin, .login_block_getinfo .atoplogin:hover {
 	color: #333 !important;
 }
-
+.login_block_elem a span.atoplogin, .login_block_elem span.atoplogin {
+    vertical-align: middle;
+}
 
 
 
@@ -1290,7 +1326,7 @@ div.login_block {
 	z-index: 91;
 	background: rgb(<?php echo $colorbackvmenu1; ?>);
 	border-right: 1px solid rgba(0,0,0,0.3);
-<?php if (in_array($conf->browser->layout, array('phone','tablet')) && ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))) { ?>
+<?php if (in_array($conf->browser->layout, array('phone','tablet')) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
 	top: 50px ! important;
 <?php } else { ?>
 	top: 60px ! important;
@@ -1328,17 +1364,19 @@ div.fichetwothirdright {
 	<?php if ($conf->browser->layout != 'phone')   { print "width: 50%;\n"; } ?>
 	<?php if ($conf->browser->layout == 'phone') { print "padding-bottom: 6px\n"; } ?>
 }
+div.fichetwothirdright div.ficheaddleft {
+    padding-left: 20px;
+}
 div.fichehalfleft {
 	<?php if ($conf->browser->layout != 'phone')   { print "float: ".$left.";\n"; } ?>
-	<?php if ($conf->browser->layout != 'phone')   { print "width: 50%;\n"; } ?>
+	<?php if ($conf->browser->layout != 'phone')   { print "width: calc(50% - 10px);\n"; } ?>
 }
 div.fichehalfright {
 	<?php if ($conf->browser->layout != 'phone')   { print "float: ".$right.";\n"; } ?>
-	<?php if ($conf->browser->layout != 'phone')   { print "width: 50%;\n"; } ?>
+	<?php if ($conf->browser->layout != 'phone')   { print "width: calc(50% - 10px);\n"; } ?>
 }
-div.ficheaddleft {
-	<?php if ($conf->browser->layout != 'phone')   { print "padding-".$left.": 16px;\n"; }
-	else print "margin-top: 10px;\n"; ?>
+div.fichehalfright {
+	<?php if ($conf->browser->layout == 'phone')   { print "margin-top: 10px;\n"; } ?>
 }
 div.firstcolumn div.box {
 	padding-right: 10px;
@@ -1372,6 +1410,9 @@ div.secondcolumn div.box {
     	width: auto;
     	padding-bottom: 6px;
     }
+    div.fichetwothirdright div.ficheaddleft {
+    	padding-left: 0;
+	}
     div.fichehalfleft {
     	float: none;
     	width: auto;
@@ -1380,8 +1421,7 @@ div.secondcolumn div.box {
     	float: none;
     	width: auto;
     }
-    div.ficheaddleft {
-    	<?php print "padding-".$left.": 0px;\n"; ?>
+    div.fichehalfright {
     	margin-top: 10px;
     }
     div.firstcolumn div.box {
@@ -1393,7 +1433,7 @@ div.secondcolumn div.box {
 }
 
 /* For table into table into card */
-div.ficheaddleft tr.liste_titre:first-child td table.nobordernopadding td, div.nopadding {
+div.fichehalfright tr.liste_titre:first-child td table.nobordernopadding td, div.nopadding {
     padding: 0 0 0 0;
 }
 div.nopadding {
@@ -1524,6 +1564,10 @@ img.photorefnoborder {
 .tdhrthin {
 	margin: 0;
 	padding-bottom: 0 !important;
+}
+/* Payment Screen : Pointer cursor in the autofill image */
+.AutoFillAmount {
+	cursor:pointer;
 }
 
 
@@ -1768,6 +1812,7 @@ div.mainmenu.members {
 div.mainmenu.menu {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/menu.png', 1) ?>);
 	top: 7px;
+	left: 5px;
 }
 
 div.mainmenu.products {
@@ -1881,6 +1926,10 @@ foreach($mainmenuusedarray as $val)
 a.tmenuimage {
     display: block;
 }
+a.tmenuimage:focus {
+    outline: none;
+}
+
 
 
 /* Login */
@@ -1958,6 +2007,9 @@ form#login {
 	width: 14px;
 }
 
+.login_main_home {
+    word-break: break-word;
+}
 .login_main_message {
 	text-align: center;
 	max-width: 570px;
@@ -2001,13 +2053,17 @@ table.login_table_securitycode tr td {
 }
 
 
+.atoplogin.dropdown .dropdown-menu {
+	display: none;
+}
+
 div.login_block {
 	border-right: 1px solid rgba(0,0,0,0.3);
     padding-top: 5px;
     padding-bottom: 3px;
 	<?php print $left; ?>: 0;
 	top: 0px;
-<?php if (in_array($conf->browser->layout, array('phone','tablet')) && ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))) { ?>
+<?php if (in_array($conf->browser->layout, array('phone','tablet')) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
 	position: absolute;
 <?php } else { ?>
 	position: fixed;
@@ -2137,7 +2193,7 @@ div.vmenu, td.vmenu {
 .companylogo { padding-top: 4px; }
 .searchform { padding-top: 10px; }
 
-a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active, span.vmenu { white-space: nowrap; font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; }
+a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active, span.vmenu, span.vsmenu { white-space: nowrap; font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; }
 font.vmenudisabled  { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; color: #aaa; margin-left: 4px; }
 a.vmenu:link, a.vmenu:visited { color: #<?php echo $colortextbackvmenu; ?>; }
 
@@ -2368,8 +2424,8 @@ div.popuptabset {
 	border: 1px solid #888;
 }
 div.popuptab {
-	padding-top: 3px;
-	padding-bottom: 3px;
+	padding-top: 5px;
+	padding-bottom: 5px;
 	padding-left: 5px;
 	padding-right: 5px;
 }
@@ -2546,6 +2602,10 @@ a.butActionNewRefused>span.fa-plus-circle { padding-left: 6px; font-size: 1.5em;
     background-repeat: repeat-x
 }
 
+button.ui-button {
+    padding-top: 5px;
+}
+
 .butActionDelete, .buttonDelete {
 	color: #ffffff !important;
 	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
@@ -2695,7 +2755,7 @@ td.border, div.tagtable div div.border {
 	border-bottom: 1px solid rgb(<?php echo $colortopbordertitle1 ?>);
 }
 
-.ficheaddleft table.noborder {
+.fichehalfright table.noborder {
 	margin: 0px 0px 0px 0px;
 }
 div.colorback
@@ -2994,13 +3054,14 @@ ul.noborder li:nth-child(odd):not(.liste_titre) {
 	box-shadow: unset;
 	-webkit-box-shadow: unset;
 }
+
 .oddeven:hover, .evenodd:hover, .impair:hover, .pair:hover
 {
-<?php if ($colorbacklinepairhover) { ?>
 	background: rgb(<?php echo $colorbacklinepairhover; ?>) !important;
-<?php } ?>
 }
-
+.tredited {
+	background: rgb(<?php echo $colorbacklinepairchecked; ?>) !important;   /* Must be background to be stronger than background of odd or even */
+}
 <?php if ($colorbacklinepairchecked) { ?>
 .highlight {
 	background: rgb(<?php echo $colorbacklinepairchecked; ?>) !important; /* Must be background to be stronger than background of odd or even */
@@ -3063,9 +3124,12 @@ tr.pair:last-of-type td, tr.impair:last-of-type td {
 tr.pair td .nobordernopadding tr td, tr.impair td .nobordernopadding tr td {
     border-bottom: 0px !important;
 }
-tr.nobottom td, tr.nobottom , td.nobottom {
-    border-bottom: 0px !important;
+/*
+table.nobottomiftotal tr.liste_total td {
+	background-color: #fff;
+	border-bottom: 0px !important;
 }
+*/
 div.liste_titre .tagtd {
 	vertical-align: middle;
 }
@@ -3166,8 +3230,7 @@ input.liste_titre {
 
 .noborder tr.liste_total td, tr.liste_total td, form.liste_total div, .noborder tr.liste_total_wrap td, tr.liste_total_wrap td, form.liste_total_wrap div {
     color: #332266;
-    font-weight: normal;
-    padding: 4px;
+    /* padding: 4px; */
 }
 .noborder tr.liste_total td, tr.liste_total td, form.liste_total div {
     white-space: nowrap;
@@ -3231,8 +3294,8 @@ div .tdtop {
 /* Prepare to remove class pair - impair */
 
 .noborder > tbody > tr:nth-child(even):not(.liste_titre), .liste > tbody > tr:nth-child(even):not(.liste_titre),
-div:not(.fichecenter):not(.fichehalfleft):not(.ficheaddleft) > .border > tbody > tr:nth-of-type(even):not(.liste_titre), .liste > tbody > tr:nth-of-type(even):not(.liste_titre),
-div:not(.fichecenter):not(.fichehalfleft):not(.ficheaddleft) .oddeven.tagtr:nth-of-type(even):not(.liste_titre)
+div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright):not(.ficheaddleft) > .border > tbody > tr:nth-of-type(even):not(.liste_titre), .liste > tbody > tr:nth-of-type(even):not(.liste_titre),
+div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright):not(.ficheaddleft) .oddeven.tagtr:nth-of-type(even):not(.liste_titre)
 {
 	background: linear-gradient(to bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
 	background: -o-linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
@@ -3247,8 +3310,8 @@ div:not(.fichecenter):not(.fichehalfleft):not(.ficheaddleft) .oddeven.tagtr:nth-
 }
 
 .noborder > tbody > tr:nth-child(odd):not(.liste_titre), .liste > tbody > tr:nth-child(odd):not(.liste_titre),
-div:not(.fichecenter):not(.fichehalfleft):not(.ficheaddleft) > .border > tbody > tr:nth-of-type(odd):not(.liste_titre), .liste > tbody > tr:nth-of-type(odd):not(.liste_titre),
-div:not(.fichecenter):not(.fichehalfleft):not(.ficheaddleft) .oddeven.tagtr:nth-of-type(odd):not(.liste_titre)
+div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright):not(.ficheaddleft) > .border > tbody > tr:nth-of-type(odd):not(.liste_titre), .liste > tbody > tr:nth-of-type(odd):not(.liste_titre),
+div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright):not(.ficheaddleft) .oddeven.tagtr:nth-of-type(odd):not(.liste_titre)
 {
 	background: linear-gradient(to bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
 	background: -o-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
@@ -3275,9 +3338,9 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
     overflow-x: auto;
     min-height: 40px;
 }
-/*.ficheaddleft div.boxstats, .ficheaddright div.boxstats {
+.ficheaddleft div.boxstats, .ficheaddright div.boxstats {
     border: none;
-}*/
+}
 .boxstatsborder {
     /* border: 1px solid #CCC !important; */
 }
@@ -3301,7 +3364,7 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 }
 .boxstats130 {
     width: 135px;
-    height: 48px;
+    height: 54px;
     padding: 3px;
 }
 @media only screen and (max-width: 767px)
@@ -3458,7 +3521,7 @@ img.boxhandle, img.boxclose {
  *   Ok, Warning, Error
  */
 .ok      { color: #114466; }
-.warning { color: #887711; }
+.warning { color: #887711 !important; }
 .error   { color: #550000 !important; font-weight: bold; }
 
 div.ok {
@@ -3627,6 +3690,7 @@ div#card-errors {
 	color: #fa755a;
     text-align: center;
     padding-top: 3px;
+    max-width: 320px;
 }
 
 
@@ -3840,7 +3904,7 @@ div.visible {
     display: block;
 }
 
-div.hidden, td.hidden, img.hidden {
+div.hidden, td.hidden, img.hidden, span.hidden {
     display: none;
 }
 
@@ -5658,6 +5722,10 @@ border-top-right-radius: 6px;
 	}
 }
 
+.menuhider {
+	width: 40px;
+}
+
 /* nboftopmenuentries = <?php echo $nbtopmenuentries ?>, fontsize=<?php echo $fontsize ?> */
 /* disableimages = <?php echo $disableimages; ?> */
 /* rule to reduce top menu - 1st reduction */
@@ -5678,7 +5746,7 @@ border-top-right-radius: 6px;
     	margin-top: 0px;
 	}
     li.tmenu, li.tmenusel {
-    	min-width: 32px;
+    	min-width: 34px;
     }
     div.mainmenu {
     	min-width: auto;
@@ -5753,16 +5821,19 @@ border-top-right-radius: 6px;
 	.titlefield {
 		width: auto !important;		/* We want to ignor the 30%, try to use more if you can */
 	}
-	.tableforfield>tr>td:first-child {
+	.tableforfield>tr>td:first-child, div.tableforfield div.tagtr>div.tagtd:first-of-type {
 		max-width: 100px;			/* but no more than 100px */
 	}
 }
 
 
+
 <?php if (! defined('DISABLE_FONT_AWSOME') && empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5)) { ?>
         <?php include dol_buildpath($path.'/theme/'.$theme.'/main_menu_fa_icons.inc.php', 0); ?>
-<?php } ?>
+<?php }
+
+include dol_buildpath($path.'/theme/'.$theme.'/dropdown.inc.php', 0);
 
 
-<?php
+
 if (is_object($db)) $db->close();

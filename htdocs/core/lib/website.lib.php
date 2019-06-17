@@ -100,6 +100,7 @@ function dolWebsiteReplacementOfLinks($website, $content, $removephppart = 0)
  * @param 	string	$str			String to clean
  * @param	string	$replacewith	String to use as replacement
  * @return 	string					Result string without php code
+ * @see dolKeepOnlyPhpCode()
  */
 function dolStripPhpCode($str, $replacewith = '')
 {
@@ -132,6 +133,44 @@ function dolStripPhpCode($str, $replacewith = '')
 	return $newstr;
 }
 
+/**
+ * Keep only PHP code part from a HTML string page.
+ *
+ * @param 	string	$str			String to clean
+ * @return 	string					Result string with php code only
+ * @see dolStripPhpCode()
+ */
+function dolKeepOnlyPhpCode($str)
+{
+    $newstr = '';
+
+    //split on each opening tag
+    $parts = explode('<?php', $str);
+    if (!empty($parts))
+    {
+        $i=0;
+        foreach($parts as $part)
+        {
+            if ($i == 0) 	// The first part is never php code
+            {
+                $i++;
+                continue;
+            }
+            $newstr.='<?php';
+            //split on closing tag
+            $partlings = explode('?>', $part, 2);
+            if (!empty($partlings))
+            {
+                $newstr .= $partlings[0].'?>';
+            }
+            else
+            {
+                $newstr .= $part.'?>';
+            }
+        }
+    }
+    return $newstr;
+}
 
 /**
  * Render a string of an HTML content and output it.
@@ -681,6 +720,7 @@ function dolSavePageContent($filetpl, $object, $objectpage)
 	$tplcontent.= '<meta name="title" content="'.dol_string_nohtmltag($objectpage->title, 0, 'UTF-8').'" />'."\n";
 	$tplcontent.= '<meta name="description" content="'.dol_string_nohtmltag($objectpage->description, 0, 'UTF-8').'" />'."\n";
 	$tplcontent.= '<meta name="generator" content="'.DOL_APPLICATION_TITLE.' '.DOL_VERSION.' (https://www.dolibarr.org)" />'."\n";
+	$tplcontent.= '<meta name="dolibarr:pageid" content="'.dol_string_nohtmltag($objectpage->id).'" />'."\n";
 	$tplcontent.= '<link href="/'.(($objectpage->id == $object->fk_default_home) ? '' : ($objectpage->pageurl.'.php')).'" rel="canonical" />'."\n";
 	$tplcontent.= '<!-- Include link to CSS file -->'."\n";
 	$tplcontent.= '<link rel="stylesheet" href="styles.css.php?website=<?php echo $websitekey; ?>" type="text/css" />'."\n";

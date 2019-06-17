@@ -1,2 +1,6 @@
 # Dolibarr language file - Source file is en_US - contracts
 NewContractSubscription=Nieuwe contracten/abonnementen
+DateStartPlanned=Geplande startdatum
+DateStartPlannedShort=Geplande startdatum
+DateEndPlanned=Geplande einddatum
+DateEndPlannedShort=Geplande einddatum

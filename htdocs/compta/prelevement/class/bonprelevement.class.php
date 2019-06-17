@@ -1592,6 +1592,9 @@ class BonPrelevement extends CommonObject
 	{
         // phpcs:enable
         global $conf;
+
+        include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+
 		$CrLf = "\n";
 		$Rowing = sprintf("%06d", $row_idfac);
 

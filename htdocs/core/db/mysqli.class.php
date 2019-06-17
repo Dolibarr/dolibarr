@@ -141,12 +141,14 @@ class DoliDBMysqli extends DoliDB
             	// If client is old latin, we force utf8
             	$clientmustbe=empty($conf->db->dolibarr_main_db_character_set)?'utf8':$conf->db->dolibarr_main_db_character_set;
             	if (preg_match('/latin1/', $clientmustbe)) $clientmustbe='utf8';
+            	if (preg_match('/utf8mb4/', $clientmustbe)) $clientmustbe='utf8';
 
-				if ($this->db->character_set_name() != $clientmustbe) {
-					$this->db->set_charset($clientmustbe);	// This set utf8_general_ci
+            	if ($this->db->character_set_name() != $clientmustbe) {
+            		$this->db->set_charset($clientmustbe);	// This set utf8_unicode_ci
 
-					$collation = $conf->db->dolibarr_main_db_collation;
-					if (preg_match('/latin1/', $collation)) $collation='utf8_unicode_ci';
+            		$collation = $conf->db->dolibarr_main_db_collation;
+            		if (preg_match('/latin1/', $collation)) $collation='utf8_unicode_ci';
+            		if (preg_match('/utf8mb4/', $collation)) $collation='utf8_unicode_ci';
 
 					if (! preg_match('/general/', $collation)) $this->db->query("SET collation_connection = ".$collation);
 				}
@@ -191,7 +193,7 @@ class DoliDBMysqli extends DoliDB
 	 * @param   string $name name of database (not used for mysql, used for pgsql)
 	 * @param   integer $port Port of database server
 	 * @return  mysqli  Database access object
-	 * @see close
+	 * @see close()
 	 */
     public function connect($host, $login, $passwd, $name, $port = 0)
     {
@@ -228,7 +230,7 @@ class DoliDBMysqli extends DoliDB
      *  Close database connexion
      *
      *  @return     bool     True if disconnect successfull, false otherwise
-     *  @see        connect
+     *  @see        connect()
      */
     public function close()
     {
@@ -280,6 +282,7 @@ class DoliDBMysqli extends DoliDB
 
 				if ($conf->global->SYSLOG_LEVEL < LOG_DEBUG) dol_syslog(get_class($this)."::query SQL Error query: ".$query, LOG_ERR);	// Log of request was not yet done previously
                 dol_syslog(get_class($this)."::query SQL Error message: ".$this->lasterrno." ".$this->lasterror, LOG_ERR);
+                //var_dump(debug_print_backtrace());
             }
             $this->lastquery=$query;
             $this->_results = $ret;
@@ -324,7 +327,7 @@ class DoliDBMysqli extends DoliDB
      *	Return datas as an array
      *
      *	@param	mysqli_result	$resultset	Resultset of request
-     *	@return	array|null|0				Array or null if KO or end of cursor or 0 if resultset is bool
+     *	@return	array|null|int				Array or null if KO or end of cursor or 0 if resultset is bool
      */
     public function fetch_row($resultset)
     {
@@ -348,7 +351,7 @@ class DoliDBMysqli extends DoliDB
      *
      *	@param	mysqli_result	$resultset  Resulset of requests
      *	@return	int				Nb of lines
-     *	@see    affected_rows
+     *	@see    affected_rows()
      */
     public function num_rows($resultset)
     {
@@ -364,7 +367,7 @@ class DoliDBMysqli extends DoliDB
      *
      *	@param	mysqli_result	$resultset	Curseur de la requete voulue
      *	@return int							Nombre de lignes
-     *	@see    num_rows
+     *	@see    num_rows()
      */
     public function affected_rows($resultset)
     {
@@ -681,6 +684,7 @@ class DoliDBMysqli extends DoliDB
         // ex. : $fields['rowid'] = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
         $sql = "CREATE TABLE ".$table."(";
         $i=0;
+	    $sqlfields=array();
         foreach($fields as $field_name => $field_desc)
         {
         	$sqlfields[$i] = $field_name." ";
@@ -868,7 +872,7 @@ class DoliDBMysqli extends DoliDB
         if ($field_desc['default'] != '')
         {
 			if ($field_desc['type'] == 'double' || $field_desc['type'] == 'tinyint' || $field_desc['type'] == 'int') $sql.=" DEFAULT ".$this->escape($field_desc['default']);
-        	elseif ($field_desc['type'] == 'text') $sql.=" DEFAULT '".$this->escape($field_desc['default'])."'";							// Default not supported on text fields
+			elseif ($field_desc['type'] != 'text') $sql.=" DEFAULT '".$this->escape($field_desc['default'])."'";							// Default not supported on text fields
         }
 
         dol_syslog(get_class($this)."::DDLUpdateField ".$sql, LOG_DEBUG);
@@ -927,11 +931,17 @@ class DoliDBMysqli extends DoliDB
             	dol_syslog(get_class($this)."::DDLCreateUser sql=".$sql, LOG_WARNING);
             }
         }
+
+        // Redo with localhost forced (sometimes user is created on %)
+        $sql = "CREATE USER '".$this->escape($dolibarr_main_db_user)."'@'localhost'";
+        $resql=$this->query($sql);
+
         $sql = "GRANT ALL PRIVILEGES ON ".$this->escape($dolibarr_main_db_name).".* TO '".$this->escape($dolibarr_main_db_user)."'@'".$this->escape($dolibarr_main_db_host)."' IDENTIFIED BY '".$this->escape($dolibarr_main_db_pass)."'";
         dol_syslog(get_class($this)."::DDLCreateUser", LOG_DEBUG);	// No sql to avoid password in log
         $resql=$this->query($sql);
         if (! $resql)
         {
+            $this->error = "Connected user not allowed to GRANT ALL PRIVILEGES ON ".$this->escape($dolibarr_main_db_name).".* TO '".$this->escape($dolibarr_main_db_user)."'@'".$this->escape($dolibarr_main_db_host)."'  IDENTIFIED BY '*****'";
             return -1;
         }
 
@@ -952,7 +962,7 @@ class DoliDBMysqli extends DoliDB
      *  Note: if we are connected to databasename, it is same result than using SELECT default_character_set_name FROM information_schema.SCHEMATA WHERE schema_name = "databasename";)
      *
      *	@return		string		Charset
-     *  @see getDefaultCollationDatabase
+     *  @see getDefaultCollationDatabase()
      */
     public function getDefaultCharacterSetDatabase()
     {
@@ -998,7 +1008,7 @@ class DoliDBMysqli extends DoliDB
      *	Return collation used in current database
      *
      *	@return		string		Collation value
-     *  @see getDefaultCharacterSetDatabase
+     *  @see getDefaultCharacterSetDatabase()
      */
     public function getDefaultCollationDatabase()
     {

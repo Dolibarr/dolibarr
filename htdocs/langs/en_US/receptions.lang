@@ -1,10 +1,11 @@
 # Dolibarr language file - Source file is en_US - receptions
+ReceptionsSetup=Product Reception setup
 RefReception=Ref. reception
 Reception=Reception
 Receptions=Receptions
 AllReceptions=All Receptions
-Reception=Reception
-Receptions=Receptions
+Reception=Product reception
+Receptions=Reception
 ShowReception=Show Receptions
 ReceptionsArea=Receptions area
 ListOfReceptions=List of receptions
@@ -40,3 +41,5 @@ ReceptionLine=Reception line
 ProductQtyInReceptionAlreadySent=Product quantity from open sales order already sent
 ProductQtyInSuppliersReceptionAlreadyRecevied=Product quantity from open supplier order already received
 ValidateOrderFirstBeforeReception=You must first validate the order before being able to make receptions.
+ReceptionsNumberingModules=Numbering module for receptions
+ReceptionsReceiptModel=Document templates for receptions

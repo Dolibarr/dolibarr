@@ -58,9 +58,9 @@ class pdf_standard extends ModelePDFProduct
 
 	/**
      * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 5.4 = array(5, 4)
+     * e.g.: PHP ≥ 5.5 = array(5, 5)
      */
-	public $phpmin = array(5, 4);
+	public $phpmin = array(5, 5);
 
 	/**
      * Dolibarr version of the loaded document
@@ -319,6 +319,7 @@ class pdf_standard extends ModelePDFProduct
 					$substitutionarray=pdf_getSubstitutionArray($outputlangs, null, $object);
 					complete_substitutions_array($substitutionarray, $outputlangs, $object);
 					$notetoshow = make_substitutions($notetoshow, $substitutionarray, $outputlangs);
+					$notetoshow = convertBackOfficeMediasLinksToPublicLinks($notetoshow);
 
 					$tab_top = 88;
 
@@ -422,15 +423,7 @@ class pdf_standard extends ModelePDFProduct
 					// Quantity
 					$qty = pdf_getlineqty($object, $i, $outputlangs, $hidedetails);
 					$pdf->SetXY($this->posxqty, $curY);
-					// Enough for 6 chars
-					if($conf->global->PRODUCT_USE_UNITS)
-					{
-						$pdf->MultiCell($this->posxunit-$this->posxqty-0.8, 4, $qty, 0, 'R');
-					}
-					else
-					{
-						$pdf->MultiCell($this->posxdiscount-$this->posxqty-0.8, 4, $qty, 0, 'R');
-					}
+					$pdf->MultiCell($this->posxunit-$this->posxqty-0.8, 4, $qty, 0, 'R');  // Enough for 6 chars
 
 					// Unit
 					if($conf->global->PRODUCT_USE_UNITS)
@@ -668,14 +661,7 @@ class pdf_standard extends ModelePDFProduct
 	    if (empty($hidetop))
 	    {
 	        $pdf->SetXY($this->posxqty-1, $tab_top+1);
-	        if($conf->global->PRODUCT_USE_UNITS)
-	        {
-	            $pdf->MultiCell($this->posxunit-$this->posxqty-1, 2, $outputlangs->transnoentities("Qty"), '', 'C');
-	        }
-	        else
-	        {
-	            $pdf->MultiCell($this->posxdiscount-$this->posxqty-1, 2, $outputlangs->transnoentities("Qty"), '', 'C');
-	        }
+	        $pdf->MultiCell($this->posxunit-$this->posxqty-1, 2, $outputlangs->transnoentities("Qty"), '', 'C');
 	    }
 
 	    if($conf->global->PRODUCT_USE_UNITS) {

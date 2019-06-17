@@ -31,6 +31,9 @@ if (! empty($conf->projet->enabled)) {
     require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
     require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
 }
+if (! empty($conf->product->enabled) || ! empty($conf->service->enabled)) {
+    require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array('resource', 'other', 'interventions'));
@@ -79,7 +82,6 @@ if ($socid > 0) // Special for thirdparty
 
 if ($action == 'add_element_resource' && ! $cancel)
 {
-	$error++;
 	$res = 0;
 	if (! ($resource_id > 0))
 	{
@@ -89,16 +91,20 @@ if ($action == 'add_element_resource' && ! $cancel)
 	}
 	else
 	{
-		$objstat = fetchObjectByElement($element_id, $element);
+		$objstat = fetchObjectByElement($element_id, $element, $element_ref);
 		$objstat->element = $element; // For externals module, we need to keep @xx
 		$res = $objstat->add_element_resource($resource_id, $resource_type, $busy, $mandatory);
 	}
 	if (! $error && $res > 0)
 	{
 		setEventMessages($langs->trans('ResourceLinkedWithSuccess'), null, 'mesgs');
-		header("Location: ".$_SERVER['PHP_SELF'].'?element='.$element.'&element_id='.$element_id);
+		header("Location: ".$_SERVER['PHP_SELF'].'?element='.$element.'&element_id='.$objstat->id);
 		exit;
 	}
+    elseif ($objstat)
+    {
+        setEventMessages($objstat->error, $objstat->errors, 'errors');
+    }
 }
 
 // Update ressource
@@ -414,6 +420,31 @@ else
 
 			dol_fiche_end();
 		}
+	}
+
+	// Specific to product/service module
+	if (($element_id || $element_ref) && ($element == 'product' || $element == 'service'))
+	{
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
+
+        $product = new Product($db);
+        $product->fetch($element_id, $element_ref);
+
+		if (is_object($product))
+		{
+
+			$head = product_prepare_head($product);
+			$titre=$langs->trans("CardProduct".$product->type);
+			$picto=($product->type==Product::TYPE_SERVICE?'service':'product');
+
+			dol_fiche_head($head, 'resources', $titre, -1, $picto);
+
+            $shownav = 1;
+            if ($user->societe_id && ! in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+			dol_banner_tab($product, 'ref', '', $shownav, 'ref', 'ref', '', '&element='.$element);
+
+			dol_fiche_end();
+        }
 	}
 
 

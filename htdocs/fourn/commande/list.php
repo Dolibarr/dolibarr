@@ -8,6 +8,7 @@
  * Copyright (C) 2016      Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2018      Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2018      Charlene Benke       <charlie@patas-monkey.com>
+ * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -228,7 +229,7 @@ if (empty($reshook))
 	{
 		$orders = GETPOST('toselect', 'array');
 		$createbills_onebythird = GETPOST('createbills_onebythird', 'int');
-		$validate_invoices = GETPOST('valdate_invoices', 'int');
+		$validate_invoices = GETPOST('validate_invoices', 'int');
 
 		$TFact = array();
 		$TFactThird = array();
@@ -619,22 +620,20 @@ if ($resql)
 
 	// List of mass actions available
 	$arrayofmassactions =  array(
-		'generate_doc'=>$langs->trans("Generate"),
-		'presend'=>$langs->trans("SendByMail"),
+		'generate_doc'=>$langs->trans("ReGeneratePDF"),
 		'builddoc'=>$langs->trans("PDFMerge"),
+	    'presend'=>$langs->trans("SendByMail"),
 	);
 	//if($user->rights->fournisseur->facture->creer) $arrayofmassactions['createbills']=$langs->trans("CreateInvoiceForThisCustomer");
-	if ($user->rights->fournisseur->commande->supprimer) $arrayofmassactions['predelete']=$langs->trans("Delete");
+	if ($user->rights->fournisseur->commande->supprimer) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 	if (in_array($massaction, array('presend','predelete','createbills'))) $arrayofmassactions=array();
 	$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
 	$newcardbutton='';
 	if($user->rights->fournisseur->commande->creer)
 	{
-		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/fourn/commande/card.php?action=create"><span class="valignmiddle">'.$langs->trans('NewOrder').'</span>';
-		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-		$newcardbutton.= '</a>';
-	}
+        $newcardbutton.= dolGetButtonTitle($langs->trans('NewOrder'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/fourn/commande/card.php?action=create');
+    }
 
 	// Lignes des champs de filtre
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -682,7 +681,7 @@ if ($resql)
 		print $langs->trans('ValidateInvoices');
 		print '</td>';
 		print '<td>';
-		print $form->selectyesno('valdate_invoices', 1, 1);
+		print $form->selectyesno('validate_invoices', 1, 1);
 		print '</td>';
 		print '</tr>';
 		print '</table>';
@@ -1158,6 +1157,10 @@ if ($resql)
 		}
 		print '</tr>';
 	}
+
+    $parameters=array('arrayfields'=>$arrayfields, 'sql'=>$sql);
+    $reshook=$hookmanager->executeHooks('printFieldListFooter', $parameters);    // Note that $action and $object may have been modified by hook
+    print $hookmanager->resPrint;
 
 	print "</table>\n";
 	print '</div>';

@@ -324,7 +324,7 @@ if ($id > 0 || ! empty($ref))
 	    print '<div class="fichehalfleft">';
 	    print '<div class="underbanner clearboth"></div>';
 
-	    print '<table class="border" width="100%">';
+	    print '<table class="border centpercent tableforfield">';
 
 		// Discounts for third party
 	    if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
@@ -436,7 +436,7 @@ if ($id > 0 || ! empty($ref))
 		print $langs->trans('PaymentConditionsShort');
 		print '</td>';
 
-		if ($action != 'editconditions' && ! empty($object->brouillon)) print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;id='.$object->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
+		if ($action != 'editconditions' && $object->statut == Expedition::STATUS_VALIDATED) print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;id='.$object->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td colspan="2">';
 		if ($action == 'editconditions')
@@ -454,7 +454,7 @@ if ($id > 0 || ! empty($ref))
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print $langs->trans('PaymentMode');
 		print '</td>';
-		if ($action != 'editmode' && ! empty($object->brouillon)) print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$object->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
+		if ($action != 'editmode' && $object->statut == Expedition::STATUS_VALIDATED) print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$object->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td colspan="2">';
 		if ($action == 'editmode')
@@ -549,7 +549,7 @@ if ($id > 0 || ! empty($ref))
 		print '<div class="ficheaddleft">';
 		print '<div class="underbanner clearboth"></div>';
 
-		print '<table class="border centpercent">';
+		print '<table class="border centpercent tableforfield">';
 
 		if (!empty($conf->multicurrency->enabled) && ($object->multicurrency_code != $conf->currency))
 		{
@@ -894,7 +894,7 @@ if ($id > 0 || ! empty($ref))
 					print $langs->trans("WarehouseSource");
 					//print '</td>';
 					//print '<td>';
-					print $formproduct->selectWarehouses(! empty($object->warehouse_id)?$object->warehouse_id:-1, 'entrepot_id', '', 1, 0, 0, '', 0, 0, array(), 'minwidth200');
+					print $formproduct->selectWarehouses(! empty($object->warehouse_id)?$object->warehouse_id:'ifone', 'entrepot_id', '', 1, 0, 0, '', 0, 0, array(), 'minwidth200');
 					if (count($formproduct->cache_warehouses) <= 0)
 					{
 						print ' &nbsp; '.$langs->trans("WarehouseSourceNotDefined").' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create">'.$langs->trans("AddOne").'</a>';

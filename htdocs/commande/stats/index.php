@@ -264,7 +264,7 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
 // Company
 print '<tr><td class="left">'.$langs->trans("ThirdParty").'</td><td class="left">';
-if ($mode == 'customer') $filter='s.client in (1,2,3)';
+if ($mode == 'customer') $filter='s.client IN (1,2,3)';
 if ($mode == 'supplier') $filter='s.fournisseur = 1';
 print $form->select_company($socid, 'socid', $filter, 1, 0, 0, array(), 0, '', 'style="width: 95%"');
 print '</td></tr>';
@@ -282,7 +282,7 @@ if ($mode == 'customer')
         Commande::STATUS_CLOSED=>$langs->trans("StatusOrderDelivered"),
         Commande::STATUS_CANCELED=>$langs->trans("StatusOrderCanceled")
     );
-    print $form->selectarray('object_status', $liststatus, GETPOST('object_status'), -4);
+    print $form->selectarray('object_status', $liststatus, GETPOST('object_status', 'int'), -4);
 }
 if ($mode == 'supplier')
 {

@@ -21,14 +21,14 @@
 
 <div class="center">
 
-<div class="login_table" align="center">
+<div class="login_table center">
 
 <!-- <tr><td colspan="2" valign="middle"> -->
-<div id="login_line1" align="center">
+<div id="login_line1" class="center">
 
 <div id="login_left" style="display: inline-block; min-width: 250px; margin: 0 auto;"><div class="center">
 
-<table class="none" summary="Login pass" cellpadding="2" align="center">
+<table class="none center" summary="Login pass" cellpadding="2">
 
 <!-- Login -->
 <tr>
@@ -50,7 +50,7 @@
 </div> <!-- end div left -->
 
 <!-- </td>
-<td align="center" valign="middle">-->
+<td class="center" valign="middle">-->
 <div id="login_right" style="display: inline-block; min-width: 250px; margin: 0 auto;">
 
 <img alt="Logo" title="" src="/dolibarrnew/theme/dolibarr_logo.png" id="img_logo" />

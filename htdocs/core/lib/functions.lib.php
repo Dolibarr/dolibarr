@@ -14,6 +14,7 @@
  * Copyright (C) 2014-2015	Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
  * Copyright (C) 2018-2019  Frédéric France             <frederic.france@netlogic.fr>
+ * Copyright (C) 2019       Thibault Foucart            <support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -225,7 +226,7 @@ function GETPOSTISSET($paramname)
  *                               'san_alpha'=Use filter_var with FILTER_SANITIZE_STRING (do not use this for free text string)
  *                               'nohtml', 'alphanohtml'=check there is no html content
  *                               'custom'= custom filter specify $filter and $options)
- *  @param	int		$method	     Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get, 4 = post then get then cookie)
+ *  @param	int		$method	     Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get)
  *  @param  int     $filter      Filter to apply when $check is set to 'custom'. (See http://php.net/manual/en/filter.filters.php for détails)
  *  @param  mixed   $options     Options to pass to filter_var when $check is set to 'custom'
  *  @param	string	$noreplace	 Force disable of replacement of __xxx__ strings.
@@ -247,7 +248,6 @@ function GETPOST($paramname, $check = 'none', $method = 0, $filter = null, $opti
 	elseif ($method==1) $out = isset($_GET[$paramname])?$_GET[$paramname]:'';
 	elseif ($method==2) $out = isset($_POST[$paramname])?$_POST[$paramname]:'';
 	elseif ($method==3) $out = isset($_POST[$paramname])?$_POST[$paramname]:(isset($_GET[$paramname])?$_GET[$paramname]:'');
-	elseif ($method==4) $out = isset($_POST[$paramname])?$_POST[$paramname]:(isset($_GET[$paramname])?$_GET[$paramname]:(isset($_COOKIE[$paramname])?$_COOKIE[$paramname]:''));
 	else return 'BadThirdParameterForGETPOST';
 
 	if (empty($method) || $method == 3 || $method == 4)
@@ -307,7 +307,7 @@ function GETPOST($paramname, $check = 'none', $method = 0, $filter = null, $opti
 			}
 			if (! empty($conf->global->MAIN_ENABLE_DEFAULT_VALUES))
 			{
-				if (! empty($_GET['action']) && $_GET['action'] == 'create' && ! isset($_GET[$paramname]) && ! isset($_POST[$paramname]))
+			    if (! empty($_GET['action']) && (preg_match('/^create/', $_GET['action']) || preg_match('/^presend/', $_GET['action'])) && ! isset($_GET[$paramname]) && ! isset($_POST[$paramname]))
 				{
 					// Now search in setup to overwrite default values
 					if (! empty($user->default_values))		// $user->default_values defined from menu 'Setup - Default values'
@@ -573,34 +573,41 @@ if (! function_exists('dol_getprefix'))
 {
     /**
      *  Return a prefix to use for this Dolibarr instance, for session/cookie names or email id.
-     *  The prefix for session is unique in a web context only and is unique for instance and avoid conflict
-     *  between multi-instances, even when having two instances with same root dir or two instances in same virtual servers.
-     *  The prefix for email is unique if MAIL_PREFIX_FOR_EMAIL_ID is set to a value, otherwise value may be same than other instance.
+     *  The prefix is unique for instance and avoid conflict between multi-instances, even when having two instances with same root dir
+     *  or two instances in same virtual servers.
      *
      *  @param  string  $mode                   '' (prefix for session name) or 'email' (prefix for email id)
      *  @return	string                          A calculated prefix
      */
     function dol_getprefix($mode = '')
     {
-		global $conf;
+        global $conf;
 
 		// If prefix is for email
 		if ($mode == 'email')
 		{
-			if (! empty($conf->global->MAIL_PREFIX_FOR_EMAIL_ID))	// If MAIL_PREFIX_FOR_EMAIL_ID is set (a value initialized with a random value is recommended)
+		    if (! empty($conf->global->MAIL_PREFIX_FOR_EMAIL_ID))	// If MAIL_PREFIX_FOR_EMAIL_ID is set (a value initialized with a random value is recommended)
 			{
 				if ($conf->global->MAIL_PREFIX_FOR_EMAIL_ID != 'SERVER_NAME') return $conf->global->MAIL_PREFIX_FOR_EMAIL_ID;
 				elseif (isset($_SERVER["SERVER_NAME"])) return $_SERVER["SERVER_NAME"];
 			}
+
+			// The recommended value (may be not defined for old versions)
+			if (! empty($conf->file->instance_unique_id)) return $conf->file->instance_unique_id;
+
+			// For backward compatibility
 			return dol_hash(DOL_DOCUMENT_ROOT.DOL_URL_ROOT, '3');
 		}
 
+		// The recommended value (may be not defined for old versions)
+		if (! empty($conf->file->instance_unique_id)) return $conf->file->instance_unique_id;
+
+		// For backward compatibility
 		if (isset($_SERVER["SERVER_NAME"]) && isset($_SERVER["DOCUMENT_ROOT"]))
 		{
 			return dol_hash($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"].DOL_DOCUMENT_ROOT.DOL_URL_ROOT, '3');
-			// Use this for a "readable" key
-			//return dol_sanitizeFileName($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"].DOL_DOCUMENT_ROOT.DOL_URL_ROOT);
 		}
+
 		return dol_hash(DOL_DOCUMENT_ROOT.DOL_URL_ROOT, '3');
 	}
 }
@@ -642,7 +649,7 @@ function dol_include_once($relpath, $classname = '')
  *  @param	int		$returnemptyifnotfound		0:If $type==0 and if file was not found into alternate dir, return default path into main dir (no test on it)
  *  											1:If $type==0 and if file was not found into alternate dir, return empty string
  *  											2:If $type==0 and if file was not found into alternate dir, test into main dir, return default path if found, empty string if not found
- *  @return string								Full filesystem path (if path=0), Full url path (if mode=1)
+ *  @return string								Full filesystem path (if path=0) or '' if file not found, Full url path (if mode=1)
  */
 function dol_buildpath($path, $type = 0, $returnemptyifnotfound = 0)
 {
@@ -653,16 +660,19 @@ function dol_buildpath($path, $type = 0, $returnemptyifnotfound = 0)
 	if (empty($type))	// For a filesystem path
 	{
 		$res = DOL_DOCUMENT_ROOT.'/'.$path;		// Standard default path
-		foreach ($conf->file->dol_document_root as $key => $dirroot)	// ex: array(["main"]=>"/home/main/htdocs", ["alt0"]=>"/home/dirmod/htdocs", ...)
+		if (is_array($conf->file->dol_document_root))
 		{
-			if ($key == 'main')
+			foreach ($conf->file->dol_document_root as $key => $dirroot)	// ex: array("main"=>"/home/main/htdocs", "alt0"=>"/home/dirmod/htdocs", ...)
 			{
-				continue;
-			}
-			if (file_exists($dirroot.'/'.$path))
-			{
-				$res=$dirroot.'/'.$path;
-				return $res;
+				if ($key == 'main')
+				{
+					continue;
+				}
+				if (file_exists($dirroot.'/'.$path))
+				{
+					$res=$dirroot.'/'.$path;
+					return $res;
+				}
 			}
 		}
 		if ($returnemptyifnotfound)								// Not found into alternate dir
@@ -734,18 +744,16 @@ function dol_buildpath($path, $type = 0, $returnemptyifnotfound = 0)
 
 /**
  *	Create a clone of instance of object (new instance with same value for properties)
- *  With native = 0: Property that are reference are also new object (true clone). This means $this->db is not valid.
- *  With native = 1: Use PHP clone. Property that are reference are same pointer. This means $this->db is still valid.
+ *  With native = 0: Property that are reference are also new object (full isolation clone). This means $this->db of new object is not valid.
+ *  With native = 1: Use PHP clone. Property that are reference are same pointer. This means $this->db of new object is still valid but point to same this->db than original object.
  *
  * 	@param	object	$object		Object to clone
- *  @param	int		$native		Native method or true method
- *	@return object				Object clone
+ *  @param	int		$native		Native method or full isolation method
+ *	@return object				Clone object
  *  @see https://php.net/manual/language.oop5.cloning.php
  */
 function dol_clone($object, $native = 0)
 {
-	//dol_syslog(__FUNCTION__ . " is deprecated", LOG_WARNING);
-
 	if (empty($native))
 	{
 		$myclone=unserialize(serialize($object));
@@ -886,17 +894,6 @@ function dol_string_nospecial($str, $newstr = '_', $badcharstoreplace = '')
 
 
 /**
- * Encode string for xml usage
- *
- * @param 	string	$string		String to encode
- * @return	string				String encoded
- */
-function dolEscapeXML($string)
-{
-	return strtr($string, array('\''=>'&apos;','"'=>'&quot;','&'=>'&amp;','<'=>'&lt;','>'=>'&gt;'));
-}
-
-/**
  *  Returns text escaped for inclusion into javascript code
  *
  *  @param      string		$stringtoescape		String to escape
@@ -982,7 +979,7 @@ function dol_strtoupper($utf8_string)
  */
 function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename = '', $restricttologhandler = '')
 {
-	global $conf, $user;
+    global $conf, $user, $debugbar;
 
 	// If syslog module enabled
 	if (empty($conf->syslog->enabled)) return;
@@ -998,8 +995,8 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 	if (! empty($message))
 	{
 		// Test log level
-		$logLevels = array(LOG_EMERG, LOG_ALERT, LOG_CRIT, LOG_ERR, LOG_WARNING, LOG_NOTICE, LOG_INFO, LOG_DEBUG);
-		if (!in_array($level, $logLevels, true))
+		$logLevels = array(LOG_EMERG=>'EMERG', LOG_ALERT=>'ALERT', LOG_CRIT=>'CRITICAL', LOG_ERR=>'ERR', LOG_WARNING=>'WARN', LOG_NOTICE=>'NOTICE', LOG_INFO=>'INFO', LOG_DEBUG=>'DEBUG');
+		if (! array_key_exists($level, $logLevels))
 		{
 			throw new Exception('Incorrect log level');
 		}
@@ -1008,9 +1005,10 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 		$message = preg_replace('/password=\'[^\']*\'/', 'password=\'hidden\'', $message);	// protection to avoid to have value of password in log
 
 		// If adding log inside HTML page is required
-		if (! empty($_REQUEST['logtohtml']) && (! empty($conf->global->MAIN_ENABLE_LOG_TO_HTML) || ! empty($conf->global->MAIN_LOGTOHTML)))   // MAIN_LOGTOHTML kept for backward compatibility
+		if ((! empty($_REQUEST['logtohtml']) && ! empty($conf->global->MAIN_ENABLE_LOG_TO_HTML))
+		    || (! empty($user->rights->debugbar->read) && is_object($debugbar)))
 		{
-			$conf->logbuffer[] = dol_print_date(time(), "%Y-%m-%d %H:%M:%S")." ".$message;
+		    $conf->logbuffer[] = dol_print_date(time(), "%Y-%m-%d %H:%M:%S")." ".$logLevels[$level]." ".$message;
 		}
 
 		//TODO: Remove this. MAIN_ENABLE_LOG_INLINE_HTML should be deprecated and use a log handler dedicated to HTML output
@@ -1304,6 +1302,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 	if ($object->element == 'member')          $modulepart='memberphoto';
 	if ($object->element == 'user')            $modulepart='userphoto';
 	if ($object->element == 'product')         $modulepart='product';
+	if ($object->element == 'ticket')          $modulepart='ticket';
 
 	if (class_exists("Imagick"))
 	{
@@ -1381,53 +1380,46 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 
 					$filepath = $dir_output . $subdir . "/";
 
-					$file = $filepath . $objectref . ".pdf";
+					$filepdf = $filepath . $objectref . ".pdf";
 					$relativepath = $subdir.'/'.$objectref.'.pdf';
 
 					// Define path to preview pdf file (preview precompiled "file.ext" are "file.ext_preview.png")
-					$fileimage = $file.'_preview.png';              // If PDF has 1 page
-					$fileimagebis = $file.'_preview-0.png';         // If PDF has more than one page
+					$fileimage = $filepdf.'_preview.png';
 					$relativepathimage = $relativepath.'_preview.png';
 
-					// Si fichier PDF existe
-					if (file_exists($file))
+					$pdfexists = file_exists($filepdf);
+
+					// If PDF file exists
+					if ($pdfexists)
 					{
-						$encfile = urlencode($file);
 						// Conversion du PDF en image png si fichier png non existant
-						if ( (! file_exists($fileimage) || (filemtime($fileimage) < filemtime($file)))
-						  && (! file_exists($fileimagebis) || (filemtime($fileimagebis) < filemtime($file)))
-						   )
+						if (! file_exists($fileimage) || (filemtime($fileimage) < filemtime($filepdf)))
 						{
-							if (empty($conf->global->MAIN_DISABLE_PDF_THUMBS))		// If you experienc trouble with pdf thumb generation and imagick, you can disable here.
+							if (empty($conf->global->MAIN_DISABLE_PDF_THUMBS))		// If you experience trouble with pdf thumb generation and imagick, you can disable here.
 							{
 								include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-								$ret = dol_convert_file($file, 'png', $fileimage);
+								$ret = dol_convert_file($filepdf, 'png', $fileimage, '0');     // Convert first page of PDF into a file _preview.png
 								if ($ret < 0) $error++;
 							}
 						}
+					}
 
+					if ($pdfexists && ! $error)
+					{
 						$heightforphotref=70;
 						if (! empty($conf->dol_optimize_smallscreen)) $heightforphotref=60;
-						// Si fichier png PDF d'1 page trouve
+						// If the preview file is found
 						if (file_exists($fileimage))
 						{
 							$phototoshow = '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref">';
 							$phototoshow.= '<img height="'.$heightforphotref.'" class="photo photowithmargin photowithborder" src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercu'.$modulepart.'&amp;file='.urlencode($relativepathimage).'">';
 							$phototoshow.= '</div></div>';
 						}
-						// Si fichier png PDF de plus d'1 page trouve
-						elseif (file_exists($fileimagebis))
-						{
-							$preview = preg_replace('/\.png/', '', $relativepathimage) . "-0.png";
-							$phototoshow = '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref">';
-							$phototoshow.= '<img height="'.$heightforphotref.'" class="photo photowithmargin photowithborder" src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercu'.$modulepart.'&amp;file='.urlencode($preview).'"><p>';
-							$phototoshow.= '</div></div>';
-						}
 					}
 				}
 				elseif (! $phototoshow)
 				{
-					$phototoshow = $form->showphoto($modulepart, $object, 0, 0, 0, 'photoref', 'small', 1, 0, $maxvisiblephotos);
+					$phototoshow.= $form->showphoto($modulepart, $object, 0, 0, 0, 'photoref', 'small', 1, 0, $maxvisiblephotos);
 				}
 
 				if ($phototoshow)
@@ -1440,7 +1432,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 
 			if (! $phototoshow)      // Show No photo link (picto of pbject)
 			{
-				$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">';
+			    $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">';
 				if ($object->element == 'action')
 				{
 					$width=80;
@@ -1649,7 +1641,7 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
 	{
 		$ret .= ($ret ? $sep : '' ).$object->zip;
 		$ret .= ($object->town?(($object->zip?' ':'').$object->town):'');
-		$ret .= ($object->departement_id?(' ('.($object->departement_id).')'):'');
+		$ret .= ($object->state_id?(' ('.($object->state_id).')'):'');
 	}
 	else                                        		// Other: title firstname name \n address lines \n zip town \n country
 	{
@@ -1787,22 +1779,27 @@ function dol_print_date($time, $format = '', $tzoutput = 'tzserver', $outputlang
 	}
 
 	// Analyze date
-	if (preg_match('/^([0-9]+)\-([0-9]+)\-([0-9]+) ?([0-9]+)?:?([0-9]+)?:?([0-9]+)?/i', $time, $reg)
-	|| preg_match('/^([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])$/i', $time, $reg))	// Deprecated. Ex: 1970-01-01, 1970-01-01 01:00:00, 19700101010000
+	$reg=array();
+	if (preg_match('/^([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])$/i', $time, $reg))	// Deprecated. Ex: 1970-01-01, 1970-01-01 01:00:00, 19700101010000
 	{
-		// TODO Remove this. This part of code should not be used.
-		dol_syslog("Functions.lib::dol_print_date function call with deprecated value of time in page ".$_SERVER["PHP_SELF"], LOG_ERR);
-		//if (function_exists('debug_print_backtrace')) debug_print_backtrace();
-		// Date has format 'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM:SS' or 'YYYYMMDDHHMMSS'
-		$syear	= (! empty($reg[1]) ? $reg[1] : '');
-		$smonth	= (! empty($reg[2]) ? $reg[2] : '');
-		$sday	= (! empty($reg[3]) ? $reg[3] : '');
-		$shour	= (! empty($reg[4]) ? $reg[4] : '');
-		$smin	= (! empty($reg[5]) ? $reg[5] : '');
-		$ssec	= (! empty($reg[6]) ? $reg[6] : '');
+	    dol_print_error("Functions.lib::dol_print_date function called with a bad value from page ".$_SERVER["PHP_SELF"]);
+	    return '';
+	}
+	elseif (preg_match('/^([0-9]+)\-([0-9]+)\-([0-9]+) ?([0-9]+)?:?([0-9]+)?:?([0-9]+)?/i', $time, $reg))    // Still available to solve problems in extrafields of type date
+	{
+	    // This part of code should not be used.
+	    dol_syslog("Functions.lib::dol_print_date function called with a bad value from page ".$_SERVER["PHP_SELF"], LOG_WARNING);
+	    //if (function_exists('debug_print_backtrace')) debug_print_backtrace();
+	    // Date has format 'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM:SS'
+	    $syear	= (! empty($reg[1]) ? $reg[1] : '');
+	    $smonth	= (! empty($reg[2]) ? $reg[2] : '');
+	    $sday	= (! empty($reg[3]) ? $reg[3] : '');
+	    $shour	= (! empty($reg[4]) ? $reg[4] : '');
+	    $smin	= (! empty($reg[5]) ? $reg[5] : '');
+	    $ssec	= (! empty($reg[6]) ? $reg[6] : '');
 
-		$time=dol_mktime($shour, $smin, $ssec, $smonth, $sday, $syear, true);
-		$ret=adodb_strftime($format, $time+$offsettz+$offsetdst, $to_gmt);
+	    $time=dol_mktime($shour, $smin, $ssec, $smonth, $sday, $syear, true);
+	    $ret=adodb_strftime($format, $time+$offsettz+$offsetdst, $to_gmt);
 	}
 	else
 	{
@@ -1985,7 +1982,7 @@ function dol_mktime($hour, $minute, $second, $month, $day, $year, $gm = false, $
 		//var_dump($localtz);
 		//var_dump($year.'-'.$month.'-'.$day.'-'.$hour.'-'.$minute);
 		$dt = new DateTime(null, $localtz);
-		$dt->setDate($year, $month, $day);
+		$dt->setDate((int) $year, (int) $month, (int) $day);
 		$dt->setTime((int) $hour, (int) $minute, (int) $second);
 		$date=$dt->getTimestamp();	// should include daylight saving time
 		//var_dump($date);
@@ -3444,16 +3441,17 @@ function img_info($titlealt = 'default')
  *
  *	@param	string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@param	string	$moreatt	Add more attribute on img tag (For example 'style="float: right"'). If 1, add float: right. Can't be "class" attribute.
+ *  @param	string  $morecss	Add more CSS
  *	@return string      		Return img tag
  */
-function img_warning($titlealt = 'default', $moreatt = '')
+function img_warning($titlealt = 'default', $moreatt = '', $morecss = 'pictowarning')
 {
 	global $conf, $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Warning');
 
 	//return '<div class="imglatecoin">'.img_picto($titlealt, 'warning_white.png', 'class="pictowarning valignmiddle"'.($moreatt ? ($moreatt == '1' ? ' style="float: right"' : ' '.$moreatt): '')).'</div>';
-	return img_picto($titlealt, 'warning.png', 'class="pictowarning valignmiddle"'.($moreatt ? ($moreatt == '1' ? ' style="float: right"' : ' '.$moreatt): ''));
+	return img_picto($titlealt, 'warning.png', 'class="valignmiddle'.($morecss?' '.$morecss:'').'"'.($moreatt ? ($moreatt == '1' ? ' style="float: right"' : ' '.$moreatt): ''));
 }
 
 /**
@@ -3599,12 +3597,12 @@ function img_allow($allow, $titlealt = 'default')
  */
 function img_credit_card($brand)
 {
-	if ($brand == 'Visa') {$brand='cc-visa';}
-	elseif ($brand == 'MasterCard') {$brand='cc-mastercard';}
-	elseif ($brand == 'American Express') {$brand='cc-amex';}
-	elseif ($brand == 'Discover') {$brand='cc-discover';}
-	elseif ($brand == 'JCB') {$brand='cc-jcb';}
-	elseif ($brand == 'Diners Club') {$brand='cc-diners-club';}
+	if ($brand == 'visa' || $brand == 'Visa') {$brand='cc-visa';}
+	elseif ($brand == 'mastercard' || $brand == 'MasterCard') {$brand='cc-mastercard';}
+	elseif ($brand == 'amex' || $brand == 'American Express') {$brand='cc-amex';}
+	elseif ($brand == 'discover' || $brand == 'Discover') {$brand='cc-discover';}
+	elseif ($brand == 'jcb' || $brand == 'JCB') {$brand='cc-jcb';}
+	elseif ($brand == 'diners' || $brand == 'Diners club') {$brand='cc-diners-club';}
 	elseif (! in_array($brand, array('cc-visa','cc-mastercard','cc-amex','cc-discover','cc-jcb','cc-diners-club'))) {$brand='credit-card';}
 
 	return '<span class="fa fa-'.$brand.' fa-2x fa-fw"></span>';
@@ -3629,7 +3627,7 @@ function img_mime($file, $titlealt = '', $morecss = '')
 	if (empty($titlealt)) $titlealt = 'Mime type: '.$mimetype;
 
 	//return img_picto_common($titlealt, 'mime/'.$mimeimg, 'class="'.$morecss.'"');
-	return '<i class="fa fa-'.$mimefa.' paddingright"></i>';
+	return '<i class="fa fa-'.$mimefa.' paddingright"'.($titlealt ? ' title="'.$titlealt.'"' : '').'></i>';
 }
 
 
@@ -3681,7 +3679,7 @@ function img_searchclear($titlealt = 'default', $other = '')
  *	@param	string	$text			Text info
  *	@param  integer	$infoonimgalt	Info is shown only on alt of star picto, otherwise it is show on output after the star picto
  *	@param	int		$nodiv			No div
- *  @param  string  $admin          '1'=Info for admin users. '0'=Info for standard users (change only the look), 'xxx'=Other
+ *  @param  string  $admin          '1'=Info for admin users. '0'=Info for standard users (change only the look), 'error','xxx'=Other
  *  @param	string	$morecss		More CSS
  *	@return	string					String with info text
  */
@@ -3759,6 +3757,11 @@ function dol_print_error($db = '', $error = '', $errors = null)
 	{
 		$out.='> '.$langs->transnoentities("ErrorInternalErrorDetected").":\n".$argv[0]."\n";
 		$syslog.="pid=".dol_getmypid();
+	}
+
+	if (! empty($conf->modules))
+	{
+	   $out.="<b>".$langs->trans("Modules").":</b> ".join(', ', $conf->modules)."<br>\n";
 	}
 
 	if (is_object($db))
@@ -5217,7 +5220,6 @@ function yn($yesno, $case = 1, $color = 0)
 	return $result;
 }
 
-
 /**
  *	Return a path to have a the directory according to object where files are stored.
  *  New usage:       $conf->module->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 1, $object, $modulepart)
@@ -5272,10 +5274,10 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart)
 /**
  *	Creation of a directory (this can create recursive subdir)
  *
- *	@param	string	$dir		Directory to create (Separator must be '/'. Example: '/mydir/mysubdir')
- *	@param	string	$dataroot	Data root directory (To avoid having the data root in the loop. Using this will also lost the warning on first dir PHP has no permission when open_basedir is used)
- *  @param	int		$newmask	Mask for new file (Defaults to $conf->global->MAIN_UMASK or 0755 if unavailable). Example: '0444'
- *	@return int         		< 0 if KO, 0 = already exists, > 0 if OK
+ *	@param	string		$dir		Directory to create (Separator must be '/'. Example: '/mydir/mysubdir')
+ *	@param	string		$dataroot	Data root directory (To avoid having the data root in the loop. Using this will also lost the warning on first dir PHP has no permission when open_basedir is used)
+ *  @param	string|null	$newmask	Mask for new file (Defaults to $conf->global->MAIN_UMASK or 0755 if unavailable). Example: '0444'
+ *	@return int         			< 0 if KO, 0 = already exists, > 0 if OK
  */
 function dol_mkdir($dir, $dataroot = '', $newmask = null)
 {
@@ -5760,7 +5762,7 @@ function dol_textishtml($msg, $option = 0)
  *  @param  string  $text1          Text 1
  *  @param  string  $text2          Text 2
  *  @param  bool    $forxml         false=Use <br>instead of \n if html content detected, true=Use <br /> instead of \n if html content detected
- *  @param  bool    $invert         invert order of description lines if CONF CHANGE_ORDER_CONCAT_DESCRIPTION is active
+ *  @param  bool    $invert         invert order of description lines (we often use config MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION in this parameter)
  *  @return string                  Text 1 + new line + Text2
  *  @see    dol_textishtml()
  */
@@ -6110,6 +6112,7 @@ $substitutionarray=array_merge($substitutionarray, array(
 	{
 		$substitutionarray['__DOL_MAIN_URL_ROOT__']=DOL_MAIN_URL_ROOT;
 		$substitutionarray['__(AnyTranslationKey)__']=$outputlangs->trans('TranslationOfKey');
+		$substitutionarray['__(AnyTranslationKey|langfile)__']=$outputlangs->trans('TranslationOfKey').' (load also language file before)';
 		$substitutionarray['__[AnyConstantKey]__']=$outputlangs->trans('ValueOfConstantKey');
 	}
 
@@ -6138,7 +6141,7 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null)
 
 	if (empty($outputlangs)) $outputlangs=$langs;
 
-	// Make substitution for language keys
+	// Make substitution for language keys: __(AnyTranslationKey)__ or __(AnyTranslationKey|langfile)__
 	if (is_object($outputlangs))
 	{
 		while (preg_match('/__\(([^\)]+)\)__/', $text, $reg))
@@ -6154,8 +6157,8 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null)
 		}
 	}
 
-	// Make substitution for constant keys. Must be after the substitution of translation, so if text of translation contains a constant,
-	// it is also converted.
+	// Make substitution for constant keys.
+	// Must be after the substitution of translation, so if the text of translation contains a string __[xxx]__, it is also converted.
 	while (preg_match('/__\[([^\]]+)\]__/', $text, $reg))
 	{
 		$msgishtml = 0;
@@ -6583,7 +6586,7 @@ function dol_htmloutput_errors($mesgstring = '', $mesgarray = array(), $keepembe
  *  or descending output and uses optionally natural case insensitive sorting (which
  *  can be optionally case sensitive as well).
  *
- *  @param      array		$array      		Array to sort (array of array('key','otherkey1','otherkey2'...))
+ *  @param      array		$array      		Array to sort (array of array('key1'=>val1,'key2'=>val2,'key3'...) or array of objects)
  *  @param      string		$index				Key in array to use for sorting criteria
  *  @param      int			$order				Sort order ('asc' or 'desc')
  *  @param      int			$natsort			1=use "natural" sort (natsort), 0=use "standard" sort (asort)
@@ -6602,7 +6605,17 @@ function dol_sort_array(&$array, $index, $order = 'asc', $natsort = 0, $case_sen
 		if ($sizearray>0)
 		{
 			$temp = array();
-			foreach(array_keys($array) as $key) $temp[$key]=$array[$key][$index];
+			foreach(array_keys($array) as $key)
+			{
+				if (is_object($array[$key]))
+				{
+					$temp[$key]=$array[$key]->$index;
+				}
+				else
+				{
+					$temp[$key]=$array[$key][$index];
+				}
+			}
 
             if (! $natsort) {
                 ($order=='asc') ? asort($temp) : arsort($temp);
@@ -6700,7 +6713,7 @@ function dol_getIdFromCode($db, $key, $tablename, $fieldkey = 'code', $fieldid =
 		return $cache_codes[$tablename][$key][$fieldid];   // Found in cache
 	}
 
-	dol_syslog('dol_getIdFromCode (value not found into cache)', LOG_DEBUG);
+	dol_syslog('dol_getIdFromCode (value for field '.$fieldid.' from key '.$key.' not found into cache)', LOG_DEBUG);
 
 	$sql = "SELECT ".$fieldid." as valuetoget";
 	$sql.= " FROM ".MAIN_DB_PREFIX.$tablename;
@@ -7024,15 +7037,22 @@ function getLanguageCodeFromCountryCode($countrycode)
 	$buildprimarykeytotest = strtolower($countrycode).'-'.strtoupper($countrycode);
 	if (in_array($buildprimarykeytotest, $locales)) return strtolower($countrycode).'_'.strtoupper($countrycode);
 
-	foreach ($locales as $locale)
+	if (function_exists('locale_get_primary_language'))    // Need extension php-intl
 	{
-		$locale_language = locale_get_primary_language($locale);
-		$locale_region = locale_get_region($locale);
-		if (strtoupper($countrycode) == $locale_region)
-		{
-			//var_dump($locale.'-'.$locale_language.'-'.$locale_region);
-			return strtolower($locale_language).'_'.strtoupper($locale_region);
-		}
+	    foreach ($locales as $locale)
+    	{
+    		$locale_language = locale_get_primary_language($locale);
+    		$locale_region = locale_get_region($locale);
+    		if (strtoupper($countrycode) == $locale_region)
+    		{
+    			//var_dump($locale.'-'.$locale_language.'-'.$locale_region);
+    			return strtolower($locale_language).'_'.strtoupper($locale_region);
+    		}
+    	}
+	}
+	else
+	{
+        dol_syslog("Warning Exention php-intl is not available", LOG_WARNING);
 	}
 
 	return null;
@@ -7164,7 +7184,7 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
  */
 function printCommonFooter($zone = 'private')
 {
-	global $conf, $hookmanager, $user;
+	global $conf, $hookmanager, $user, $debugbar;
 	global $action;
 	global $micro_start_time;
 
@@ -7192,10 +7212,9 @@ function printCommonFooter($zone = 'private')
 				print "\n";
 				print '/* JS CODE TO ENABLE to manage handler to switch left menu page (menuhider) */'."\n";
 				print 'jQuery(".menuhider").click(function(event) {';
-				print '  if(!$( "body" ).hasClass( "sidebar-collapse" )){ event.preventDefault(); }'."\n";
+				print '  if (!$( "body" ).hasClass( "sidebar-collapse" )){ event.preventDefault(); }'."\n";
 				print '  console.log("We click on .menuhider");'."\n";
 				print '  $("body").toggleClass("sidebar-collapse")'."\n";
-				print '  $(".login_block").toggle()'."\n";
 				print '});'."\n";
 			}
 
@@ -7329,11 +7348,17 @@ function printCommonFooter($zone = 'private')
 		// Add Xdebug coverage of code
 		if (defined('XDEBUGCOVERAGE'))
 		{
-			print_r(xdebug_get_code_coverage());
+		    print_r(xdebug_get_code_coverage());
 		}
 
-		// If there is some logs in buffer to show
-		if (count($conf->logbuffer))
+		// Add DebugBar data
+	    if (! empty($user->rights->debugbar->read) && is_object($debugbar))
+	    {
+	        $debugbar['time']->stopMeasure('pageaftermaster');
+	        print '<!-- Output debugbar data -->'."\n";
+		    print $debugbar->getRenderer()->render();
+		}
+		elseif (count($conf->logbuffer))    // If there is some logs in buffer to show
 		{
 			print "\n";
 			print "<!-- Start of log output\n";
@@ -7931,7 +7956,6 @@ function roundUpToNextMultiple($n, $x = 5)
  */
 function dolGetBadge($label, $html = '', $type = 'primary', $mode = '', $url = '', $params = array())
 {
-
     $attr=array(
         'class'=>'badge'.(!empty($mode)?' badge-'.$mode:'').(!empty($type)?' badge-'.$type:'')
     );
@@ -7993,6 +8017,8 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
 {
     global $conf;
 
+    $return = '';
+
     // image's filename are still in French
     $statusImg=array(
         'status0' => 'statut0'
@@ -8028,7 +8054,7 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
         }
 
         if ($displayMode === 2) {
-            $return =  $htmlImg .' '. $htmlLabel;
+            $return =  $htmlImg .' '. $htmlLabelShort;
         }
         elseif ($displayMode === 3) {
             $return = $htmlImg;
@@ -8092,20 +8118,27 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
         $attr['aria-label'] = $label;
     }
 
-
     if(empty($userRight)){
         $attr['class'] = 'butActionRefused';
         $attr['href'] = '';
     }
 
-    if(empty($id)){
+    if(!empty($id)){
         $attr['id'] = $id;
     }
 
     // Override attr
     if(!empty($params['attr']) && is_array($params['attr'])){
         foreach($params['attr'] as $key => $value){
-            $attr[$key] = $value;
+            if($key == 'class'){
+                $attr['class'].= ' '.$value;
+            }
+            elseif($key == 'classOverride'){
+                $attr['class'] = $value;
+            }
+            else{
+                $attr[$key] = $value;
+            }
         }
     }
 
@@ -8128,4 +8161,131 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
     $tag = !empty($attr['href'])?'a':'span';
 
     return '<div class="inline-block divButAction"><'.$tag.' '.$compiledAttributes.'>'.$html.'</'.$tag.'></div>';
+}
+
+/**
+ * Function dolGetButtonTitle : this kind of buttons are used in title in list
+ *
+ * @param string    $label      label of button
+ * @param string    $helpText   optional : content for help tooltip
+ * @param string    $iconClass  class for icon element
+ * @param string    $url        the url for link
+ * @param string    $id         attribute id of button
+ * @param int       $status     0 no user rights, 1 active, -1 Feature Disabled, -2 disable Other reason use helpText as tooltip
+ * @param array     $params     various params for future : recommended rather than adding more function arguments
+ * @return string               html button
+ */
+function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $url = '', $id = '', $status = 1, $params = array())
+{
+    global $langs, $conf, $user;
+
+    // Actually this conf is used in css too for external module compatibility and smooth transition to this function
+    if (! empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED) && (! $user->admin) && $status <= 0) {
+        return '';
+    }
+
+    $class = 'btnTitle' ;
+
+    // hidden conf keep during button transition TODO: remove this block
+    if(empty($conf->global->MAIN_USE_NEW_TITLE_BUTTON)){
+        $class = 'butActionNew';
+    }
+
+    $attr=array(
+        'class' => $class
+        ,'href' => empty($url)?'':$url
+    );
+
+    if(!empty($helpText)){
+        $attr['title'] = dol_escape_htmltag($helpText);
+    }
+
+    if($status <= 0){
+        $attr['class'] .= ' refused';
+
+        // hidden conf keep during button transition TODO: remove this block
+        if(empty($conf->global->MAIN_USE_NEW_TITLE_BUTTON)){
+            $attr['class'] = 'butActionNewRefused';
+        }
+
+        $attr['href'] = '';
+
+        if($status == -1){ // disable
+            $attr['title'] = dol_escape_htmltag($langs->transnoentitiesnoconv("FeatureDisabled"));
+        }
+        elseif($status == 0){ // Not enough permissions
+            $attr['title'] = dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions"));
+        }
+    }
+
+    if(!empty($attr['title'])){
+        $attr['class'] .= ' classfortooltip';
+    }
+
+    if(empty($id)){
+        $attr['id'] = $id;
+    }
+
+    // Override attr
+    if(!empty($params['attr']) && is_array($params['attr'])){
+        foreach($params['attr'] as $key => $value){
+            if($key == 'class'){
+                $attr['class'].= ' '.$value;
+            }
+            elseif($key == 'classOverride'){
+                $attr['class'] = $value;
+            }
+            else{
+                $attr[$key] = $value;
+            }
+        }
+    }
+
+    if(isset($attr['href']) && empty($attr['href'])){
+        unset($attr['href']);
+    }
+
+    // TODO : add a hook
+
+    // escape all attribute
+    $attr = array_map('dol_escape_htmltag', $attr);
+
+    $TCompiledAttr = array();
+    foreach($attr as $key => $value){
+        $TCompiledAttr[] = $key.'="'.$value.'"';
+    }
+
+    $compiledAttributes = !empty($TCompiledAttr)?implode(' ', $TCompiledAttr):'';
+
+    $tag = !empty($attr['href'])?'a':'span';
+
+
+    $button ='<'.$tag.' '.$compiledAttributes.' >';
+    $button.= '<span class="'.$iconClass.' valignmiddle btnTitle-icon"></span>';
+    $button.= '<span class="valignmiddle text-plus-circle btnTitle-label">'.$label.'</span>';
+    $button.= '</'.$tag.'>';
+
+    // hidden conf keep during button transition TODO: remove this block
+    if(empty($conf->global->MAIN_USE_NEW_TITLE_BUTTON)){
+        $button='<'.$tag.' '.$compiledAttributes.' ><span class="text-plus-circle">'.$label.'</span>';
+        $button.= '<span class="'.$iconClass.' valignmiddle"></span>';
+        $button.= '</'.$tag.'>';
+    }
+
+    return $button;
+}
+
+/**
+ * Return if a file can contains executable content
+ *
+ * @param   string  $filename       File NamedRange
+ * @return  boolean                 True if yes, False if no
+ */
+function isAFileWithExecutableContent($filename)
+{
+    if (preg_match('/\.(htm|html|js|php|phtml|pl|py|cgi|ksh|sh|bash|bat|cmd|wpk|exe|dmg)$/i', $filename))
+    {
+        return true;
+    }
+    return false;
 }

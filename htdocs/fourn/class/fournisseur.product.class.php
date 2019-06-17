@@ -6,6 +6,7 @@
  * Copyright (C) 2012		Christophe Battarel	<christophe.battarel@altairis.fr>
  * Copyright (C) 2015		Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2016		Charlie Benke           <charlie@patas-monkey.com>
+ * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,7 +57,7 @@ class ProductFournisseur extends Product
 
     /**
      * @deprecated
-     * @see ref_supplier
+     * @see $ref_supplier
      */
     public $fourn_ref;
     public $delivery_time_days;
@@ -246,10 +247,10 @@ class ProductFournisseur extends Product
 	    if (empty($supplier_reputation) || $supplier_reputation == -1) $supplier_reputation='';
         if ($delivery_time_days != '' && ! is_numeric($delivery_time_days)) $delivery_time_days = '';
         if ($price_base_type == 'TTC')
-		{
-			$ttx = $tva_tx;
-			$buyprice = $buyprice/(1+($ttx/100));
-		}
+        {
+            $ttx = $tva_tx;
+            $buyprice = $buyprice/(1+($ttx/100));
+        }
 
 		// Multicurrency
         if ($conf->multicurrency->enabled) {
@@ -258,10 +259,10 @@ class ProductFournisseur extends Product
 
             if (empty($multicurrency_buyprice)) $multicurrency_buyprice=0;
             if ($multicurrency_price_base_type == 'TTC')
-    		{
-    			$ttx = $tva_tx;
-    			$multicurrency_buyprice = $multicurrency_buyprice/(1+($ttx/100));
-    		}
+            {
+                $ttx = $tva_tx;
+                $multicurrency_buyprice = $multicurrency_buyprice/(1+($ttx/100));
+            }
             $multicurrency_buyprice=price2num($multicurrency_buyprice, 'MU');
             $multicurrency_unitBuyPrice=price2num($multicurrency_buyprice/$qty, 'MU');
 
@@ -368,7 +369,7 @@ class ProductFournisseur extends Product
                 // End call triggers
                 if (! $error && empty($conf->global->PRODUCT_PRICE_SUPPLIER_NO_LOG))
                 {
-                    $result = $this->logPrice($user, $now, $buyprice, $qty, $multicurrency_buyprice, $multicurrency_unitBuyPrice, $multicurrency_tx, $fk_multicurrenc, $multicurrency_code);
+                    $result = $this->logPrice($user, $now, $buyprice, $qty, $multicurrency_buyprice, $multicurrency_unitBuyPrice, $multicurrency_tx, $fk_multicurrency, $multicurrency_code);
                     if ($result < 0) {
                         $error++;
                     }
@@ -893,13 +894,13 @@ class ProductFournisseur extends Product
         $langs->load("suppliers");
         if (count($productFournList) > 0) {
             $out .= '<table class="nobordernopadding" width="100%">';
-            $out .= '<tr><td class="liste_titre" align="right">'.($showunitprice?$langs->trans("Price").' '.$langs->trans("HT"):'').'</td>';
-            $out .= '<td class="liste_titre" align="right">'.($showunitprice?$langs->trans("QtyMin"):'').'</td>';
+            $out .= '<tr><td class="liste_titre right">'.($showunitprice?$langs->trans("Price").' '.$langs->trans("HT"):'').'</td>';
+            $out .= '<td class="liste_titre right">'.($showunitprice?$langs->trans("QtyMin"):'').'</td>';
             $out .= '<td class="liste_titre">'.$langs->trans("Supplier").'</td>';
             $out .= '<td class="liste_titre">'.$langs->trans("SupplierRef").'</td></tr>';
             foreach ($productFournList as $productFourn) {
-                $out.= '<tr><td align="right">'.($showunitprice?price($productFourn->fourn_unitprice * (1 -$productFourn->fourn_remise_percent/100) - $productFourn->fourn_remise):'').'</td>';
-                $out.= '<td align="right">'.($showunitprice?$productFourn->fourn_qty:'').'</td>';
+                $out.= '<tr><td class="right">'.($showunitprice?price($productFourn->fourn_unitprice * (1 -$productFourn->fourn_remise_percent/100) - $productFourn->fourn_remise):'').'</td>';
+                $out.= '<td class="right">'.($showunitprice?$productFourn->fourn_qty:'').'</td>';
                 $out.= '<td>'.$productFourn->getSocNomUrl(1, 'supplier', $maxlen, $notooltip).'</td>';
                 $out.= '<td>'.$productFourn->fourn_ref.'<td></tr>';
             }
@@ -910,21 +911,21 @@ class ProductFournisseur extends Product
         return $out;
     }
 
-	/**
-	 * Function used to replace a thirdparty id with another one.
-	 *
-	 * @param DoliDB $db Database handler
-	 * @param int $origin_id Old thirdparty id
-	 * @param int $dest_id New thirdparty id
-	 * @return bool
-	 */
-	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
-	{
-		$tables = array(
-			'product_fournisseur_price'
-		);
+    /**
+     * Function used to replace a thirdparty id with another one.
+     *
+     * @param DoliDB $db Database handler
+     * @param int $origin_id Old thirdparty id
+     * @param int $dest_id New thirdparty id
+     * @return bool
+     */
+    public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+    {
+        $tables = array(
+            'product_fournisseur_price'
+        );
 
-		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+        return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
     }
 
     /**
@@ -992,13 +993,13 @@ class ProductFournisseur extends Product
         if (count($productFournLogList) > 0) {
             $out .= '<table class="nobordernopadding" width="100%">';
             $out .= '<tr><td class="liste_titre">'.$langs->trans("Date").'</td>';
-            $out .= '<td class="liste_titre" align="right">'.$langs->trans("Price").'</td>';
-            //$out .= '<td class="liste_titre" align="right">'.$langs->trans("QtyMin").'</td>';
+            $out .= '<td class="liste_titre right">'.$langs->trans("Price").'</td>';
+            //$out .= '<td class="liste_titre right">'.$langs->trans("QtyMin").'</td>';
             $out .= '<td class="liste_titre">'.$langs->trans("User").'</td></tr>';
             foreach ($productFournLogList as $productFournLog) {
-                $out.= '<tr><td align="right">'.dol_print_date($productFournLog['datec'], 'dayhour', 'tzuser').'</td>';
-                $out.= '<td align="right">'.price($productFournLog['price']).'</td>';
-                //$out.= '<td align="right">'.$productFournLog['quantity'].'</td>';
+                $out.= '<tr><td class="right">'.dol_print_date($productFournLog['datec'], 'dayhour', 'tzuser').'</td>';
+                $out.= '<td class="right">'.price($productFournLog['price']).'</td>';
+                //$out.= '<td class="right">'.$productFournLog['quantity'].'</td>';
                 $out.= '<td>'.$productFournLog['lastname'].'</td></tr>';
             }
             $out .= '</table>';
@@ -1077,7 +1078,7 @@ class ProductFournisseur extends Product
      * Private function to log price history
      *
      * @param User      $user                           Object user who adds/changes price
-     * @param date      $datec                          date create
+     * @param integer   $datec                          date create
      * @param float     $buyprice                       price for qty
      * @param float     $qty                            qty for price
      * @param float     $multicurrency_buyprice         Purchase price for the quantity min in currency
@@ -1088,7 +1089,7 @@ class ProductFournisseur extends Product
      *
      * @return int < 0 NOK > 0 OK
      */
-    private function logPrice($user, $datec, $buyprice, $qty, $multicurrency_buyprice, $multicurrency_unitBuyPrice, $multicurrency_tx, $fk_multicurrency, $multicurrency_code)
+    private function logPrice($user, $datec, $buyprice, $qty, $multicurrency_buyprice = null, $multicurrency_unitBuyPrice = null, $multicurrency_tx = null, $fk_multicurrency = null, $multicurrency_code = null)
     {
         // Add record into log table
         $sql = "INSERT INTO " . MAIN_DB_PREFIX . "product_fournisseur_price_log(";

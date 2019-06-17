@@ -145,8 +145,8 @@ function user_prepare_head($object)
 
 	if ((! empty($conf->salaries->enabled) && ! empty($user->rights->salaries->read))
 		|| (! empty($conf->hrm->enabled) && ! empty($user->rights->hrm->employee->read))
-		|| (! empty($conf->expensereport->enabled) && ! empty($user->rights->expensereport->lire) && $user->id == $object->id)
-		|| (! empty($conf->holiday->enabled) && ! empty($user->rights->holiday->read) && $user->id == $object->id )
+		|| (! empty($conf->expensereport->enabled) && ! empty($user->rights->expensereport->lire) && ($user->id == $object->id || $user->rights->expensereport->readall))
+		|| (! empty($conf->holiday->enabled) && ! empty($user->rights->holiday->read) && ($user->id == $object->id || $user->rights->holiday->read_all))
 		)
 	{
 		// Bank
@@ -842,7 +842,7 @@ function show_theme($fuser, $edit = 0, $foruserprofile = false)
 				if ($color != 'e6edf0') print '<input type="text" class="colorthumb" disabled="disabled" style="padding: 1px; margin-top: 0; margin-bottom: 0; background-color: #'.$color.'" value="'.$color.'">';
 				else print $langs->trans("Default");
 			}
-			else print $langs->trans("None");
+			else print $langs->trans("Default");
 		}
 		print ' &nbsp; <span class="nowraponall">('.$langs->trans("Default").': <strong>e6edf0</strong>) ';
 		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
@@ -886,7 +886,7 @@ function show_theme($fuser, $edit = 0, $foruserprofile = false)
 				if ($color != 'e6edf0') print '<input type="text" class="colorthumb" disabled="disabled" style="padding: 1px; margin-top: 0; margin-bottom: 0; background-color: #'.$color.'" value="'.$color.'">';
 				else print $langs->trans("Default");
 			}
-			else print $langs->trans("None");
+			else print $langs->trans("Default");
 		}
 		print ' &nbsp; <span class="nowraponall">('.$langs->trans("Default").': <strong>e6edf0</strong>) ';
 		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));

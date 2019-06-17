@@ -284,7 +284,7 @@ $arrayofmassactions =  array(
 //'presend'=>$langs->trans("SendByMail"),
 //'builddoc'=>$langs->trans("PDFMerge"),
 );
-if ($user->rights->holiday->delete) $arrayofmassactions['predelete']=$langs->trans("Delete");
+if ($user->rights->holiday->delete) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
@@ -340,10 +340,8 @@ else
 	$newcardbutton='';
 	if ($user->rights->holiday->write)
 	{
-		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/holiday/card.php?action=request"><span class="valignmiddle">'.$langs->trans('MenuAddCP').'</span>';
-		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-		$newcardbutton.= '</a>';
-	}
+		$newcardbutton.= dolGetButtonTitle($langs->trans('MenuAddCP'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/holiday/card.php?action=request');
+    }
 
 	print_barre_liste($langs->trans("ListeCP"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_hrm.png', 0, $newcardbutton, '', $limit);
 
@@ -462,7 +460,7 @@ $holiday->selectStatutCP($search_statut, 'search_statut');
 print '</td>';
 
 // Actions
-print '<td class="liste_titre right">';
+print '<td class="liste_titre maxwidthsearch">';
 $searchpicto=$form->showFilterAndCheckAddButtons(0);
 print $searchpicto;
 print '</td>';

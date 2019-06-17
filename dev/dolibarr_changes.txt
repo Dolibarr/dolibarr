@@ -8,6 +8,15 @@ ALL:
 Check "@CHANGE"
 
 
+PrestaShopWebservice:
+---------------------
+Replace
+	$params = array('filter', 'display', 'sort', 'limit', 'id_shop', 'id_group_shop');
+With
+	$params = array('filter', 'display', 'sort', 'limit', 'id_shop', 'id_group_shop', 'date');
+
+
+
 CKEDITOR (4.6.2):
 -----------------
 * In ckeditor/ckeditor/contents.css

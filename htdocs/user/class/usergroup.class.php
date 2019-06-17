@@ -61,7 +61,7 @@ class UserGroup extends CommonObject
 	/**
 	 * @var string
 	 * @deprecated
-	 * @see name
+	 * @see $name
 	 */
 	public $nom;
 
@@ -72,9 +72,19 @@ class UserGroup extends CommonObject
 
 	public $globalgroup;	// Global group
 
-	public $datec;			// Creation date of group
+	/**
+     * Date creation record (datec)
+     *
+     * @var integer
+     */
+    public $datec;
 
-	public $datem;			// Modification date of group
+	/**
+     * Date modification record (tms)
+     *
+     * @var integer
+     */
+    public $datem;
 
 	public $note;			// Description
 
@@ -100,7 +110,7 @@ class UserGroup extends CommonObject
 
 
 	/**
-	 *  Charge un objet group avec toutes ces caracteristiques (except ->members array)
+	 *  Charge un objet group avec toutes ses caracteristiques (except ->members array)
 	 *
 	 *	@param      int		$id				Id of group to load
 	 *	@param      string	$groupname		Name of group to load
@@ -914,7 +924,8 @@ class UserGroup extends CommonObject
 		return $result;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
 	 *
@@ -924,7 +935,7 @@ class UserGroup extends CommonObject
 	 *									2=Return key only (uid=qqq)
 	 *	@return		string				DN
 	 */
-    private function _load_ldap_dn($info, $mode = 0)
+    public function _load_ldap_dn($info, $mode = 0)
 	{
         // phpcs:enable
 		global $conf;
@@ -936,13 +947,14 @@ class UserGroup extends CommonObject
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Initialize the info array (array of LDAP values) that will be used to call LDAP functions
 	 *
 	 *	@return		array		Tableau info des attributs
 	 */
-    private function _load_ldap_info()
+    public function _load_ldap_info()
 	{
         // phpcs:enable
 		global $conf,$langs;

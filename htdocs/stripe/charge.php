@@ -150,27 +150,30 @@ if (!$rowid)
 
 		print '<tr class="oddeven">';
 
-    if (!empty($stripeacc)) $connect=$stripeacc.'/';
+        if (!empty($stripeacc)) $connect=$stripeacc.'/';
 
 		// Ref
 		$url='https://dashboard.stripe.com/'.$connect.'test/payments/'.$charge->id;
-			if ($servicestatus)
-			{
-				$url='https://dashboard.stripe.com/'.$connect.'payments/'.$charge->id;
-			}
-		print "<td><a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'object_globe')." ".$charge->id."</a></td>\n";
+        if ($servicestatus)
+        {
+        	$url='https://dashboard.stripe.com/'.$connect.'payments/'.$charge->id;
+        }
+		print "<td>";
+        print "<a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'object_globe')." ".$charge->id."</a>";
+		print "</td>\n";
 		// Stripe customer
 		print "<td>";
-
-    if (! empty($conf->stripe->enabled) && !empty($stripeacc)) $connect=$stripeacc.'/';
+        if (! empty($conf->stripe->enabled) && !empty($stripeacc)) $connect=$stripeacc.'/';
 		$url='https://dashboard.stripe.com/'.$connect.'test/customers/'.$charge->customer;
 		if ($servicestatus)
 		{
-    $url='https://dashboard.stripe.com/'.$connect.'customers/'.$charge->customer;
+            $url='https://dashboard.stripe.com/'.$connect.'customers/'.$charge->customer;
 		}
-		print '<a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe'), 'object_globe').' '.$charge->customer.'</a>';
-
-    print "</td>\n";
+		if (! empty($charge->customer))
+		{
+    		print '<a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe'), 'object_globe').' '.$charge->customer.'</a>';
+		}
+        print "</td>\n";
 		// Link
 		print "<td>";
 		if ($societestatic->id > 0)

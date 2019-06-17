@@ -190,10 +190,10 @@ class Project extends CommonObject
             dol_syslog(get_class($this)."::create error -1 ref null", LOG_ERR);
             return -1;
         }
-        if (! empty($conf->global->PROJECT_THIRDPARTY_REQUIRED) && ! $this->socid > 0)
+        if (! empty($conf->global->PROJECT_THIRDPARTY_REQUIRED) && ! ($this->socid > 0))
         {
             $this->error = 'ErrorFieldsRequired';
-            dol_syslog(get_class($this)."::create error -1 ref null", LOG_ERR);
+            dol_syslog(get_class($this)."::create error -1 thirdparty not defined and option PROJECT_THIRDPARTY_REQUIRED is set", LOG_ERR);
             return -1;
         }
 
@@ -226,7 +226,7 @@ class Project extends CommonObject
         $sql.= ", " . ($this->socid > 0 ? $this->socid : "null");
         $sql.= ", " . $user->id;
         $sql.= ", ".(is_numeric($this->statut) ? $this->statut : '0');
-        $sql.= ", ".(is_numeric($this->opp_status) ? $this->opp_status : 'NULL');
+        $sql.= ", ".((is_numeric($this->opp_status) && $this->opp_status > 0) ? $this->opp_status : 'NULL');
         $sql.= ", ".(is_numeric($this->opp_percent) ? $this->opp_percent : 'NULL');
         $sql.= ", " . ($this->public ? 1 : 0);
         $sql.= ", '".$this->db->idate($now)."'";
@@ -378,7 +378,7 @@ class Project extends CommonObject
                 		if (file_exists($olddir))
                 		{
 							include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
-							$res=dol_move($olddir, $newdir);
+							$res=@rename($olddir, $newdir);
 							if (! $res)
                 			{
 							    $langs->load("errors");
@@ -582,7 +582,7 @@ class Project extends CommonObject
 		}
         elseif ($type == 'project_task')
 		{
-			$sql = "SELECT DISTINCT pt.rowid FROM " . MAIN_DB_PREFIX . "projet_task as pt, " . MAIN_DB_PREFIX . "projet_task_time as ptt WHERE pt.rowid = ptt.fk_task AND pt.fk_projet IN (". $ids .")";
+			$sql = "SELECT DISTINCT pt.rowid FROM " . MAIN_DB_PREFIX . "projet_task as pt WHERE pt.fk_projet IN (". $ids .")";
 		}
 		elseif ($type == 'project_task_time')	// Case we want to duplicate line foreach user
 		{
@@ -686,6 +686,18 @@ class Project extends CommonObject
 	        	$error++;
 	        	break;
 	        }
+        }
+
+        // Remove linked categories.
+        if (! $error) {
+            $sql = "DELETE FROM ".MAIN_DB_PREFIX. "categorie_project";
+            $sql.= " WHERE fk_project = ". $this->id;
+
+            $result = $this->db->query($sql);
+            if (! $result) {
+                $error++;
+                $this->errors[] = $this->db->lasterror();
+            }
         }
 
 		// Fetch tasks
@@ -1274,20 +1286,21 @@ class Project extends CommonObject
      /**
      * Load an object from its id and create a new one in database
 	 *
-	 *  @param	int		$fromid     	Id of object to clone
-	 *  @param	bool	$clone_contact	Clone contact of project
-	 *  @param	bool	$clone_task		Clone task of project
-	 *  @param	bool	$clone_project_file		Clone file of project
-	 *  @param	bool	$clone_task_file		Clone file of task (if task are copied)
-     *  @param	bool	$clone_note		Clone note of project
-     *  @param	bool	$move_date		Move task date on clone
-     *  @param	integer	$notrigger		No trigger flag
-     *  @param  int     $newthirdpartyid  New thirdparty id
-	 *  @return	int						New id of clone
+	 *  @param	User	$user		          User making the clone
+	 *  @param	int		$fromid     	      Id of object to clone
+	 *  @param	bool	$clone_contact	      Clone contact of project
+	 *  @param	bool	$clone_task		      Clone task of project
+	 *  @param	bool	$clone_project_file	  Clone file of project
+	 *  @param	bool	$clone_task_file	  Clone file of task (if task are copied)
+     *  @param	bool	$clone_note		      Clone note of project
+     *  @param	bool	$move_date		      Move task date on clone
+     *  @param	integer	$notrigger		      No trigger flag
+     *  @param  int     $newthirdpartyid      New thirdparty id
+	 *  @return	int						      New id of clone
 	 */
-    public function createFromClone($fromid, $clone_contact = false, $clone_task = true, $clone_project_file = false, $clone_task_file = false, $clone_note = true, $move_date = true, $notrigger = 0, $newthirdpartyid = 0)
+    public function createFromClone(User $user, $fromid, $clone_contact = false, $clone_task = true, $clone_project_file = false, $clone_task_file = false, $clone_note = true, $move_date = true, $notrigger = 0, $newthirdpartyid = 0)
     {
-		global $user,$langs,$conf;
+		global $langs,$conf;
 
 		$error=0;
 
@@ -1477,7 +1490,7 @@ class Project extends CommonObject
 				// Loop on each task, to clone it
 			    foreach ($tasksarray as $tasktoclone)
 			    {
-					$result_clone = $taskstatic->createFromClone($tasktoclone->id, $clone_project_id, $tasktoclone->fk_parent, $move_date, true, false, $clone_task_file, true, false);
+					$result_clone = $taskstatic->createFromClone($user, $tasktoclone->id, $clone_project_id, $tasktoclone->fk_parent, $move_date, true, false, $clone_task_file, true, false);
 					if ($result_clone <= 0)
 				    {
 				    	$this->error.=$result_clone->error;
@@ -1647,7 +1660,7 @@ class Project extends CommonObject
         // phpcs:enable
 		$sql="UPDATE ".MAIN_DB_PREFIX.$tableName;
 
-		if ($TableName=="actioncomm")
+		if ($tableName=="actioncomm")
 		{
 			$sql.= " SET fk_project=NULL";
 			$sql.= " WHERE id=".$elementSelectId;
@@ -1725,7 +1738,7 @@ class Project extends CommonObject
         $sql.= " AND pt.fk_projet = ".$this->id;
         $sql.= " AND (ptt.task_date >= '".$this->db->idate($datestart)."' ";
         $sql.= " AND ptt.task_date <= '".$this->db->idate(dol_time_plus_duree($datestart, 1, 'w') - 1)."')";
-        if ($task_id) $sql.= " AND ptt.fk_task=".$taskid;
+        if ($taskid) $sql.= " AND ptt.fk_task=".$taskid;
         if (is_numeric($userid)) $sql.= " AND ptt.fk_user=".$userid;
 
         //print $sql;
@@ -1781,7 +1794,8 @@ class Project extends CommonObject
         // For external user, no check is done on company because readability is managed by public status of project and assignement.
         //$socid=$user->societe_id;
 
-        if (! $user->rights->projet->all->lire) $projectsListId = $this->getProjectsAuthorizedForUser($user, 0, 1, $socid);
+		$projectsListId = null;
+        if (! $user->rights->projet->all->lire) $projectsListId = $this->getProjectsAuthorizedForUser($user, 0, 1);
 
         $sql = "SELECT p.rowid, p.fk_statut as status, p.fk_opp_status, p.datee as datee";
         $sql.= " FROM (".MAIN_DB_PREFIX."projet as p";
@@ -1791,7 +1805,7 @@ class Project extends CommonObject
         //if (! $user->rights->societe->client->voir && ! $socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = s.rowid";
         $sql.= " WHERE p.fk_statut = 1";
         $sql.= " AND p.entity IN (".getEntity('project').')';
-        if (! $user->rights->projet->all->lire) $sql.= " AND p.rowid IN (".$projectsListId.")";
+        if (! empty($projectsListId)) $sql.= " AND p.rowid IN (".$projectsListId.")";
         // No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
         //if ($socid || ! $user->rights->societe->client->voir)	$sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
         // For external user, no check is done on company permission because readability is managed by public status of project and assignement.

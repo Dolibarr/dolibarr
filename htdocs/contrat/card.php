@@ -540,7 +540,7 @@ if (empty($reshook))
 				}
 
 			   	$desc=$prod->description;
-			   	$desc=dol_concatdesc($desc, $product_desc, '', !empty($conf->global->CHANGE_ORDER_CONCAT_DESCRIPTION));
+			   	$desc=dol_concatdesc($desc, $product_desc, '', !empty($conf->global->MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION));
 				$fk_unit = $prod->fk_unit;
 			}
 			else
@@ -1072,7 +1072,7 @@ if (empty($reshook))
 		else
 		{
 			if ($object->id > 0) {
-				$result = $object->createFromClone($socid);
+				$result = $object->createFromClone($user, $socid);
 				if ($result > 0) {
 					header("Location: " . $_SERVER['PHP_SELF'] . '?id=' . $result);
 					exit();
@@ -1212,7 +1212,7 @@ if ($action == 'create')
 	{
 		print '<td>';
 		print $form->select_company('', 'socid', '', 'SelectThirdParty', 1, 0, null, 0, 'minwidth300');
-		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">'.$langs->trans("AddThirdParty").' <span class="fa fa-plus-circle valignmiddle"></span></a>';
+		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddThirdParty").'</span><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
 		print '</td>';
 	}
 	print '</tr>'."\n";
@@ -1254,7 +1254,7 @@ if ($action == 'create')
 
 		print '<tr><td>'.$langs->trans("Project").'</td><td>';
 		$formproject->select_projects(($soc->id>0?$soc->id:-1), $projectid, "projectid", 0, 0, 1, 1);
-		print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid=' . $soc->id . '&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id).'">' . $langs->trans("AddProject") . ' <span class="fa fa-plus-circle valignmiddle"></span></a>';
+		print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid=' . $soc->id . '&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id).'"><span class="valignmiddle text-plus-circle">' . $langs->trans("AddProject") . '</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
 		print "</td></tr>";
 	}
 
@@ -2139,22 +2139,22 @@ else
 				{
 					if ($user->rights->contrat->activer)
 					{
-						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=activate">'.$langs->trans("ActivateAllContracts").'</a></div>';
+						print '<div class="inline-block divButAction"><a class="butAction" id="btnactivateall" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=activate">'.$langs->trans("ActivateAllContracts").'</a></div>';
 					}
 					else
 					{
-						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">'.$langs->trans("ActivateAllContracts").'</a></div>';
+						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" id="btnactivateall" href="#">'.$langs->trans("ActivateAllContracts").'</a></div>';
 					}
 				}
 				if ($object->nbofservicesclosed < $nbofservices)
 				{
 					if ($user->rights->contrat->desactiver)
 					{
-						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=close">'.$langs->trans("CloseAllContracts").'</a></div>';
+						print '<div class="inline-block divButAction"><a class="butAction" id="btncloseall" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=close">'.$langs->trans("CloseAllContracts").'</a></div>';
 					}
 					else
 					{
-						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">'.$langs->trans("CloseAllContracts").'</a></div>';
+						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" id="btncloseall" href="#">'.$langs->trans("CloseAllContracts").'</a></div>';
 					}
 
 					//if (! $numactive)

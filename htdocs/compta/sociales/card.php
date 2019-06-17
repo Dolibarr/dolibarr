@@ -121,7 +121,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes')
 	$result=$object->delete($user);
 	if ($result > 0)
 	{
-		header("Location: index.php");
+		header("Location: list.php");
 		exit;
 	}
 	else
@@ -602,6 +602,8 @@ if ($id > 0)
 
 			$num = $db->num_rows($resql);
 			$i = 0; $total = 0;
+
+			print '<div class="div-table-responsive-no-min">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
 			print '<table class="noborder paymenttable">';
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("RefPayment").'</td>';
@@ -665,9 +667,11 @@ if ($id > 0)
 			$cssforamountpaymentcomplete = 'amountpaymentcomplete';
 
 			print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("RemainderToPay")." :</td>";
-			print '<td class="right"'.($resteapayer?' class="amountremaintopay"':(' class="'.$cssforamountpaymentcomplete.'"')).'>'.price($resteapayer)."</td></tr>\n";
+			print '<td class="right'.($resteapayer?' amountremaintopay':(' '.$cssforamountpaymentcomplete)).'">'.price($resteapayer)."</td></tr>\n";
 
 			print "</table>";
+			print '</div>';
+
 			$db->free($resql);
 		}
 		else

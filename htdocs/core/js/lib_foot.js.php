@@ -53,6 +53,7 @@ if (empty($conf->dol_no_mouse_hover))
 				hide: { delay: 50 },
 				tooltipClass: "mytooltip",
 				content: function () {
+                    console.log("Return title for popup");
             		return $(this).prop(\'title\');		/* To force to get title as is */
           		}
 			});'."\n";

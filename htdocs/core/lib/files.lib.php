@@ -195,15 +195,9 @@ function dol_dir_list($path, $types = "all", $recursive = 0, $filter = "", $excl
 			closedir($dir);
 
 			// Obtain a list of columns
-			if (! empty($sortcriteria))
+			if (! empty($sortcriteria) && $sortorder)
 			{
-				$myarray=array();
-				foreach ($file_list as $key => $row)
-				{
-					$myarray[$key] = (isset($row[$sortcriteria])?$row[$sortcriteria]:'');
-				}
-				// Sort the data
-				if ($sortorder) array_multisort($myarray, $sortorder, $file_list);
+			    $file_list = dol_sort_array($file_list, $sortcriteria, ($sortorder == SORT_ASC ? 'asc' : 'desc'));
 			}
 		}
 	}
@@ -1062,7 +1056,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 		// Security:
 		// Disallow file with some extensions. We rename them.
 		// Because if we put the documents directory into a directory inside web root (very bad), this allows to execute on demand arbitrary code.
-		if (preg_match('/(\.htm|\.html|\.php|\.pl|\.cgi)$/i', $dest_file) && empty($conf->global->MAIN_DOCUMENT_IS_OUTSIDE_WEBROOT_SO_NOEXE_NOT_REQUIRED))
+		if (isAFileWithExecutableContent($dest_file) && empty($conf->global->MAIN_DOCUMENT_IS_OUTSIDE_WEBROOT_SO_NOEXE_NOT_REQUIRED))
 		{
 			$file_name.= '.noexe';
 		}
@@ -1561,9 +1555,14 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesess
 
 				// dol_sanitizeFileName the file name and lowercase extension
 				$info = pathinfo($destfull);
-				$destfull = $info['dirname'].'/'.dol_sanitizeFileName($info['filename'].'.'.strtolower($info['extension']));
+				$destfull = $info['dirname'].'/'.dol_sanitizeFileName($info['filename'].($info['extension']!='' ? ('.'.strtolower($info['extension'])) : ''));
 				$info = pathinfo($destfile);
-				$destfile = dol_sanitizeFileName($info['filename'].'.'.strtolower($info['extension']));
+
+				$destfile = dol_sanitizeFileName($info['filename'].($info['extension']!='' ? ('.'.strtolower($info['extension'])) : ''));
+				// We apply dol_string_nohtmltag also to clean file names (this remove duplicate spaces) because
+				// this function is also applied when we make try to download file (by the GETPOST(filename, 'alphanohtml') call).
+				$destfile = dol_string_nohtmltag($destfile);
+				$destfull = dol_string_nohtmltag($destfull);
 
 				$resupload = dol_move_uploaded_file($TFile['tmp_name'][$i], $destfull, $allowoverwrite, 0, $TFile['error'][$i], 0, $varfiles);
 
@@ -1823,24 +1822,27 @@ function deleteFilesIntoDatabaseIndex($dir, $file, $mode = 'uploaded')
  *  @param	string	$fileinput  Input file name
  *  @param  string	$ext        Format of target file (It is also extension added to file if fileoutput is not provided).
  *  @param	string	$fileoutput	Output filename
+ *  @param  string  $page       Page number if we convert a PDF into png
  *  @return	int					<0 if KO, 0=Nothing done, >0 if OK
  */
-function dol_convert_file($fileinput, $ext = 'png', $fileoutput = '')
+function dol_convert_file($fileinput, $ext = 'png', $fileoutput = '', $page = '')
 {
 	global $langs;
-
 	if (class_exists('Imagick'))
 	{
-		$image=new Imagick();
+	    $image=new Imagick();
 		try {
-			$ret = $image->readImage($fileinput);
+		    $filetoconvert=$fileinput.(($page != '')?'['.$page.']':'');
+		    //var_dump($filetoconvert);
+		    $ret = $image->readImage($filetoconvert);
 		} catch(Exception $e) {
-			dol_syslog("Failed to read image using Imagick. Try to install package 'apt-get install ghostscript'.", LOG_WARNING);
+		    $ext = pathinfo($fileinput, PATHINFO_EXTENSION);
+		    dol_syslog("Failed to read image using Imagick (Try to install package 'apt-get install php-imagick ghostscript' and check there is no policy to disable ".$ext." convertion in /etc/ImageMagick*/policy.xml): ".$e->getMessage(), LOG_WARNING);
 			return 0;
 		}
 		if ($ret)
 		{
-			$ret = $image->setImageFormat($ext);
+		    $ret = $image->setImageFormat($ext);
 			if ($ret)
 			{
 				if (empty($fileoutput)) $fileoutput=$fileinput.".".$ext;
@@ -2705,7 +2707,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	}
 
 	// Wrapping pour les remises de cheques
-	elseif ($modulepart == 'remisecheque' && !empty($conf->banque->dir_output))
+	elseif ($modulepart == 'remisecheque' && !empty($conf->bank->dir_output))
 	{
 		if ($fuser->rights->banque->{$lire} || preg_match('/^specimen/i', $original_file))
 		{
@@ -2716,7 +2718,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	}
 
 	// Wrapping for bank
-	elseif ($modulepart == 'bank' && !empty($conf->bank->dir_output))
+	elseif (($modulepart == 'banque' || $modulepart == 'bank') && !empty($conf->bank->dir_output))
 	{
 		if ($fuser->rights->banque->{$lire})
 		{

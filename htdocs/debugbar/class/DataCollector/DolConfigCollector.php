@@ -54,8 +54,8 @@ class DolConfigCollector extends ConfigCollector
 		$config = array(
 			'Dolibarr' => array(
 				'const' => $const['user'],
-				'$conf' => $this->object_to_array($conf),
-				'$user' => $this->object_to_array($user)
+				'$conf' => $this->objectToArray($conf),
+				'$user' => $this->objectToArray($user)
 			),
 			'PHP' => array(
 				'version'   => PHP_VERSION,
@@ -74,12 +74,12 @@ class DolConfigCollector extends ConfigCollector
 	 * @param  mixed   $obj        Object
 	 * @return array               Array
 	 */
-	protected function object_to_array($obj)
+	protected function objectToArray($obj)
 	{
 	    // phpcs:enable
 		$_arr = is_object($obj) ? get_object_vars($obj) : $obj;
 		foreach ($_arr as $key => $val) {
-			$val = (is_array($val) || is_object($val)) ? $this->object_to_array($val) : $val;
+			$val = (is_array($val) || is_object($val)) ? $this->objectToArray($val) : $val;
 			$arr[$key] = $val;
 		}
 
