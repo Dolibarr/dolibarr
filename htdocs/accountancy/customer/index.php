@@ -22,7 +22,7 @@
 
 /**
  * \file 	htdocs/accountancy/customer/index.php
- * \ingroup Advanced accountancy
+ * \ingroup Accountancy (Double entries)
  * \brief 	Home customer journalization page
  */
 
@@ -143,9 +143,9 @@ $textnextyear = '&nbsp;<a href="' . $_SERVER["PHP_SELF"] . '?year=' . ($year_cur
 
 print load_fiche_titre($langs->trans("CustomersVentilation") . " " . $textprevyear . " " . $langs->trans("Year") . " " . $year_start . " " . $textnextyear, '', 'title_accountancy');
 
-print $langs->trans("DescVentilCustomer") . '<br>';
+print '<span class="opacitymedium">'.$langs->trans("DescVentilCustomer") . '<br>';
 print $langs->trans("DescVentilMore", $langs->transnoentitiesnoconv("ValidateHistory"), $langs->transnoentitiesnoconv("ToBind")) . '<br>';
-print '<br>';
+print '</span><br>';
 
 
 $y = $year_current;

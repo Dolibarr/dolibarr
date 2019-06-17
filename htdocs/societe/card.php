@@ -126,7 +126,7 @@ if (empty($reshook))
 		{
 			$langs->load('errors');
 			$langs->load('companies');
-			setEventMessages($langs->trans('ErrorThirdPartyIdIsMandatory', $langs->trans('MergeOriginThirdparty')), null, 'errors');
+			setEventMessages($langs->trans('ErrorThirdPartyIdIsMandatory', $langs->transnoentitiesnoconv('MergeOriginThirdparty')), null, 'errors');
 		}
 		else
 		{
@@ -2042,7 +2042,7 @@ else
                     print '</script>';
                     print "\n";
                     $s.='<a href="#" class="hideonsmartphone" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
-                    $s = $form->textwithpicto($s, $langs->trans("VATIntraCheckDesc", $langs->trans("VATIntraCheck")), 1);
+                    $s = $form->textwithpicto($s, $langs->trans("VATIntraCheckDesc", $langs->transnoentitiesnoconv("VATIntraCheck")), 1);
                 }
                 else
                 {
@@ -2454,7 +2454,7 @@ else
                     print '</script>';
                     print "\n";
                     $s.='<a href="#" class="hideonsmartphone" onclick="javascript: CheckVAT( $(\'#tva_intra\').val() );">'.$langs->trans("VATIntraCheck").'</a>';
-                    $s = $form->textwithpicto($s, $langs->trans("VATIntraCheckDesc", $langs->trans("VATIntraCheck")), 1);
+                    $s = $form->textwithpicto($s, $langs->trans("VATIntraCheckDesc", $langs->transnoentitiesnoconv("VATIntraCheck")), 1);
                 }
                 else
                 {

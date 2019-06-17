@@ -716,12 +716,13 @@ class FormCompany
 					}
 				}
 				print "</select>\n";
+				print ajax_combobox($htmlname);
 				return $firstCompany;
 			}
 			else
 			{
 				dol_print_error($this->db);
-				print 'Error sql';
+				return 0;
 			}
 		}
 	}

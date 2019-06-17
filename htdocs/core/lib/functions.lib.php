@@ -649,7 +649,7 @@ function dol_include_once($relpath, $classname = '')
  *  @param	int		$returnemptyifnotfound		0:If $type==0 and if file was not found into alternate dir, return default path into main dir (no test on it)
  *  											1:If $type==0 and if file was not found into alternate dir, return empty string
  *  											2:If $type==0 and if file was not found into alternate dir, test into main dir, return default path if found, empty string if not found
- *  @return string								Full filesystem path (if path=0), Full url path (if mode=1)
+ *  @return string								Full filesystem path (if path=0) or '' if file not found, Full url path (if mode=1)
  */
 function dol_buildpath($path, $type = 0, $returnemptyifnotfound = 0)
 {
@@ -1982,7 +1982,7 @@ function dol_mktime($hour, $minute, $second, $month, $day, $year, $gm = false, $
 		//var_dump($localtz);
 		//var_dump($year.'-'.$month.'-'.$day.'-'.$hour.'-'.$minute);
 		$dt = new DateTime(null, $localtz);
-		$dt->setDate($year, $month, $day);
+		$dt->setDate((int) $year, (int) $month, (int) $day);
 		$dt->setTime((int) $hour, (int) $minute, (int) $second);
 		$date=$dt->getTimestamp();	// should include daylight saving time
 		//var_dump($date);
@@ -3627,7 +3627,7 @@ function img_mime($file, $titlealt = '', $morecss = '')
 	if (empty($titlealt)) $titlealt = 'Mime type: '.$mimetype;
 
 	//return img_picto_common($titlealt, 'mime/'.$mimeimg, 'class="'.$morecss.'"');
-	return '<i class="fa fa-'.$mimefa.' paddingright"></i>';
+	return '<i class="fa fa-'.$mimefa.' paddingright"'.($titlealt ? ' title="'.$titlealt.'"' : '').'></i>';
 }
 
 
@@ -5274,10 +5274,10 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart)
 /**
  *	Creation of a directory (this can create recursive subdir)
  *
- *	@param	string	$dir		Directory to create (Separator must be '/'. Example: '/mydir/mysubdir')
- *	@param	string	$dataroot	Data root directory (To avoid having the data root in the loop. Using this will also lost the warning on first dir PHP has no permission when open_basedir is used)
- *  @param	int		$newmask	Mask for new file (Defaults to $conf->global->MAIN_UMASK or 0755 if unavailable). Example: '0444'
- *	@return int         		< 0 if KO, 0 = already exists, > 0 if OK
+ *	@param	string		$dir		Directory to create (Separator must be '/'. Example: '/mydir/mysubdir')
+ *	@param	string		$dataroot	Data root directory (To avoid having the data root in the loop. Using this will also lost the warning on first dir PHP has no permission when open_basedir is used)
+ *  @param	string|null	$newmask	Mask for new file (Defaults to $conf->global->MAIN_UMASK or 0755 if unavailable). Example: '0444'
+ *	@return int         			< 0 if KO, 0 = already exists, > 0 if OK
  */
 function dol_mkdir($dir, $dataroot = '', $newmask = null)
 {
@@ -8123,14 +8123,22 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
         $attr['href'] = '';
     }
 
-    if(empty($id)){
+    if(!empty($id)){
         $attr['id'] = $id;
     }
 
     // Override attr
     if(!empty($params['attr']) && is_array($params['attr'])){
         foreach($params['attr'] as $key => $value){
-            $attr[$key] = $value;
+            if($key == 'class'){
+                $attr['class'].= ' '.$value;
+            }
+            elseif($key == 'classOverride'){
+                $attr['class'] = $value;
+            }
+            else{
+                $attr[$key] = $value;
+            }
         }
     }
 
@@ -8202,10 +8210,10 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
 
         $attr['href'] = '';
 
-        if($status == -1){ // Not enough permissions
+        if($status == -1){ // disable
             $attr['title'] = dol_escape_htmltag($langs->transnoentitiesnoconv("FeatureDisabled"));
         }
-        elseif($status == 0){ // disable
+        elseif($status == 0){ // Not enough permissions
             $attr['title'] = dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions"));
         }
     }
@@ -8275,7 +8283,7 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
  */
 function isAFileWithExecutableContent($filename)
 {
-    if (preg_match('/\.(htm|html|js|php|phtml|pl|py|cgi|ksh|sh|bash)$/i', $filename))
+    if (preg_match('/\.(htm|html|js|php|phtml|pl|py|cgi|ksh|sh|bash|bat|cmd|wpk|exe|dmg)$/i', $filename))
     {
         return true;
     }

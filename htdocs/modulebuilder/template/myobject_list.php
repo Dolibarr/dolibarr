@@ -354,19 +354,7 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-$newcardbutton='';
-//if ($user->rights->mymodule->creer)
-//{
-	$newcardbutton='<a class="butActionNew" href="myobject_card.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']).'"><span class="valignmiddle text-plus-circle">'.$langs->trans('New').'</span>';
-	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-	$newcardbutton.= '</a>';
-//}
-//else
-//{
-//    $newcardbutton='<a class="butActionNewRefused" href="#"><span class="valignmiddle text-plus-circle">'.$langs->trans('New').'</span>;
-//    $newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-//    $newcardbutton.= '</a>';
-//}
+$newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/mymodule/myobject_card.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $user->rights->mymodule->write);
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_companies', 0, $newcardbutton, '', $limit);
 
@@ -600,7 +588,7 @@ if (in_array('builddoc', $arrayofmassactions) && ($nbtotalofrecords === '' || $n
 
 	$filedir=$diroutputmassaction;
 	$genallowed=$user->rights->mymodule->read;
-	$delallowed=$user->rights->mymodule->create;
+	$delallowed=$user->rights->mymodule->write;
 
 	print $formfile->showdocuments('massfilesarea_mymodule', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
 }

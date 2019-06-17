@@ -484,7 +484,7 @@ if ($resql)
 	print_barre_liste($langs->trans("BillsSuppliers").($socid?' '.$soc->name:''), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_accountancy', 0, $newcardbutton, '', $limit);
 
 	$topicmail="SendBillRef";
-	$modelmail="supplier_invoice_send";
+	$modelmail="invoice_supplier_send";
 	$objecttmp=new FactureFournisseur($db);
 	$trackid='sinv'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';

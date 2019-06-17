@@ -110,7 +110,7 @@ if ($object->id)
 	 */
 	$head = myobjectPrepareHead($object);
 
-	dol_fiche_head($head, 'document', $langs->trans("MyObject"), -1, 'myobject@mymodule');
+	dol_fiche_head($head, 'document', $langs->trans("MyObject"), -1, $object->picto);
 
 
 	// Build file list
@@ -158,7 +158,7 @@ if ($object->id)
 }
 else
 {
-	accessforbidden('', 0, 0);
+	accessforbidden('', 0, 1);
 }
 
 // End of page

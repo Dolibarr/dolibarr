@@ -21,7 +21,7 @@
 
 /**
  * \file		htdocs/accountancy/admin/productaccount.php
- * \ingroup		Advanced accountancy
+ * \ingroup		Accountancy (Double entries)
  * \brief		To define accounting account on product / service
  */
 require '../../main.inc.php';

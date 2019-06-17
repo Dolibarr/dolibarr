@@ -815,7 +815,7 @@ class Commande extends CommonOrder
 		}
 		if (! empty($conf->global->COMMANDE_REQUIRE_SOURCE) && $this->source < 0)
 		{
-			$this->error=$langs->trans("ErrorFieldRequired", $langs->trans("Source"));
+			$this->error=$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Source"));
 			dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
 			return -1;
 		}

@@ -133,7 +133,7 @@ input.buttongen {
 	vertical-align: middle;
 }
 input.buttonpayment, button.buttonpayment, div.buttonpayment {
-	min-width: 320px;
+	min-width: 290px;
 	margin-bottom: 15px;
 	background-image: none;
 	line-height: 24px;
@@ -146,6 +146,11 @@ input.buttonpayment, button.buttonpayment, div.buttonpayment {
 	box-shadow: 1px 1px 4px #bbb;
 	color: #fff;
 	border-radius: 4px;
+}
+.buttonpaymentsmall {
+	font-size: 0.65em;
+	padding-left: 5px;
+	padding-right: 5px;
 }
 div.buttonpayment input {
     background-color: unset;
@@ -313,7 +318,7 @@ hr { border: 0; border-top: 1px solid #ccc; }
 	-webkit-box-shadow: 0px 0px 1px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 	box-shadow: 0px 0px 1px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 }
-.button:disabled, .buttonDelete:disabled {
+.button:disabled, .buttonDelete:disabled, .button.disabled {
 	opacity: 0.4;
     box-shadow: none;
     -webkit-box-shadow: none;
@@ -699,7 +704,7 @@ div.fiche {
     justify-content: flex-start;
 }
 .thumbstat {
-    min-width: 150px;
+    min-width: 148px;
 }
 .thumbstat150 {
     min-width: 168px;
@@ -1822,6 +1827,9 @@ if (! empty($conf->global->MAIN_LOGIN_BACKGROUND)) {
 }
 .login_table .tdinputlogin input#securitycode {
 	font-size: 1em;
+}
+.login_main_home {
+    word-break: break-word;
 }
 .login_main_message {
 	text-align: center;
@@ -3073,7 +3081,8 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 }
 .boxstats, .boxstats130 {
     display: inline-block;
-    margin: 8px;
+    margin-left: 8px;
+    margin-right: 8px;
     margin-top: 5px;
     margin-bottom: 5px;
     text-align: center;
@@ -3090,7 +3099,7 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
     text-overflow: ellipsis;
 }
 .boxstats130 {
-    width: 158px;
+    width: 100%;
     height: 59px;
     /* padding: 3px; */
 }
@@ -3099,7 +3108,7 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
     padding-right: 3px;
     padding-top: 2px;
     padding-bottom: 2px;
-    width: 121px;
+    width: 118px;
 }
 .tabBar .fichehalfright .boxstats {
     padding-top: 8px;
@@ -3127,8 +3136,6 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 {
 	.boxstats, .boxstats130 {
 		margin: 3px;
-	    /*border: 1px solid #ccc;
-    	box-shadow: none; */
     }
     .boxstats130 {
     	text-align: <?php echo $left; ?>
@@ -3136,18 +3143,18 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 	.thumbstat {
 		flex: 1 1 110px;
 		margin-bottom: 8px;
+	    min-width: <?php echo isset($_SESSION['dol_screenwidth'])?min(160, round($_SESSION['dol_screenwidth']/2 - 20)):150; ?>px;	/* on screen < 320, we guaranty to have 2 columns */
 	}
 	.thumbstat150 {
 		flex: 1 1 110px;
 		margin-bottom: 8px;
-		width: 160px;
+	    min-width: <?php echo isset($_SESSION['dol_screenwidth'])?min(160, round($_SESSION['dol_screenwidth']/2 - 20)):160; ?>px;	/* on screen < 320, we guaranty to have 2 columns */
+	    max-width: <?php echo isset($_SESSION['dol_screenwidth'])?min(161, round($_SESSION['dol_screenwidth']/2 - 20)):161; ?>px;	/* on screen < 320, we guaranty to have 2 columns */
+    	/* width: ...px; If I use with, there is trouble on size of flex boxes solved with min + (max that is a little bit higer than min) */
 	}
     .dashboardlineindicator {
         float: left;
     	padding-left: 5px;
-    }
-    .boxstats130 {
-    	width: 148px;
     }
     .boxstats {
         width: 111px;
