@@ -184,6 +184,8 @@ class mod_facture_terre extends ModeleNumRefFactures
 	{
 		global $db;
 
+		dol_syslog(get_class($this)."::getNextValue mode=".$mode, LOG_DEBUG);
+
 		if ($invoice->type == 2) $prefix=$this->prefixcreditnote;
 		elseif ($invoice->type == 3) $prefix=$this->prefixdeposit;
 		else $prefix=$this->prefixinvoice;
@@ -195,7 +197,6 @@ class mod_facture_terre extends ModeleNumRefFactures
 		$sql.= " AND entity IN (".getEntity('invoicenumber', 1, $invoice).")";
 
 		$resql=$db->query($sql);
-		dol_syslog(get_class($this)."::getNextValue", LOG_DEBUG);
 		if ($resql)
 		{
 			$obj = $db->fetch_object($resql);
@@ -219,7 +220,6 @@ class mod_facture_terre extends ModeleNumRefFactures
             $sql.= " AND entity IN (".getEntity('invoicenumber', 1, $invoice).")";
             $sql.= " ORDER BY ref DESC";
 
-            dol_syslog(get_class($this)."::getNextValue", LOG_DEBUG);
             $resql=$db->query($sql);
             if ($resql)
             {

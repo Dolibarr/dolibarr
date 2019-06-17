@@ -472,14 +472,14 @@ if ($action == 'new')
         print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
 		print '<tr class="liste_titre">';
-		print '<td style="min-width: 120px">'.$langs->trans("DateChequeReceived").'</td>'."\n";
-		print '<td style="min-width: 120px">'.$langs->trans("ChequeNumber")."</td>\n";
-		print '<td style="min-width: 200px">'.$langs->trans("CheckTransmitter")."</td>\n";
-		print '<td style="min-width: 200px">'.$langs->trans("Bank")."</td>\n";
-		print '<td class="right" width="100px">'.$langs->trans("Amount")."</td>\n";
-		print '<td align="center" width="100px">'.$langs->trans("Payment")."</td>\n";
-		print '<td align="center" width="100px">'.$langs->trans("LineRecord")."</td>\n";
-		print '<td align="center" width="100px">'.$langs->trans("Select")."<br>";
+		print '<td>'.$langs->trans("DateChequeReceived").'</td>'."\n";
+		print '<td>'.$langs->trans("ChequeNumber")."</td>\n";
+		print '<td>'.$langs->trans("CheckTransmitter")."</td>\n";
+		print '<td>'.$langs->trans("Bank")."</td>\n";
+		print '<td>'.$langs->trans("Amount")."</td>\n";
+		print '<td class="center">'.$langs->trans("Payment")."</td>\n";
+		print '<td class="center">'.$langs->trans("LineRecord")."</td>\n";
+		print '<td class="center">'.$langs->trans("Select")."<br>";
 		if ($conf->use_javascript_ajax) print '<a href="#" id="checkall_'.$bid.'">'.$langs->trans("All").'</a> / <a href="#" id="checknone_'.$bid.'">'.$langs->trans("None").'</a>';
 		print '</td>';
 		print "</tr>\n";

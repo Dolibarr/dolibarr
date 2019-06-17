@@ -117,13 +117,13 @@ class pdf_standard extends ModeleExpenseReport
 	public $emetteur;
 
 
-    /**
-     *  Constructor
-     *
-     *  @param      DoliDB      $db      Database handler
-     */
-    public function __construct($db)
-    {
+	/**
+	 *  Constructor
+	 *
+	 *  @param      DoliDB      $db      Database handler
+	 */
+	public function __construct($db)
+	{
 		global $conf, $langs, $mysoc, $user;
 
 		// Translations
@@ -172,12 +172,12 @@ class pdf_standard extends ModeleExpenseReport
 		$this->posxup=145;
 		$this->posxqty=168;
 		$this->postotalttc=178;
-        // if (empty($conf->projet->enabled)) {
-        //     $this->posxtva-=20;
-        //     $this->posxup-=20;
-        //     $this->posxqty-=20;
-        //     $this->postotalttc-=20;
-        // }
+		// if (empty($conf->projet->enabled)) {
+		//     $this->posxtva-=20;
+		//     $this->posxup-=20;
+		//     $this->posxqty-=20;
+		//     $this->postotalttc-=20;
+		// }
 		if ($this->page_largeur < 210) // To work with US executive format
 		{
 			$this->posxdate-=20;
@@ -196,19 +196,19 @@ class pdf_standard extends ModeleExpenseReport
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    /**
-     *  Function to build pdf onto disk
-     *
-     *  @param		Object		$object				Object to generate
-     *  @param		Translate	$outputlangs		Lang output object
-     *  @param		string		$srctemplatepath	Full path of source filename for generator using a template file
-     *  @param		int			$hidedetails		Do not show line details
-     *  @param		int			$hidedesc			Do not show desc
-     *  @param		int			$hideref			Do not show ref
-     *  @return     int             				1=OK, 0=KO
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Function to build pdf onto disk
+	 *
+	 *  @param		Object		$object				Object to generate
+	 *  @param		Translate	$outputlangs		Lang output object
+	 *  @param		string		$srctemplatepath	Full path of source filename for generator using a template file
+	 *  @param		int			$hidedetails		Do not show line details
+	 *  @param		int			$hidedesc			Do not show desc
+	 *  @param		int			$hideref			Do not show ref
+	 *  @return     int             				1=OK, 0=KO
 	 */
-    public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
+	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
         // phpcs:enable
 		global $user, $langs, $conf, $mysoc, $db, $hookmanager;
@@ -501,9 +501,9 @@ class pdf_standard extends ModeleExpenseReport
 					$posy=$this->tablePayments($pdf, $object, $posy_start_of_totals, $outputlangs);
 				}
 
-				// Pied de page
+				// Page footer
 				$this->_pagefoot($pdf, $object, $outputlangs);
-				if (method_exists($pdf, 'AliasNbPages')) $pdf->AliasNbPage();
+				if (method_exists($pdf, 'AliasNbPages')) $pdf->AliasNbPages();
 
 				$pdf->Close();
 
@@ -540,17 +540,17 @@ class pdf_standard extends ModeleExpenseReport
 		}
 	}
 
-    /**
-     * @param   TCPDF       $pdf                Object PDF
-     * @param   Object      $object             Object to show
-     * @param   int         $linenumber         line number
-     * @param   int         $curY               current y position
-     * @param   int         $default_font_size  default siez of font
-     * @param   Translate   $outputlangs        Object lang for output
-     * @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
-     * @return  void
-     */
-    private function printLine(&$pdf, $object, $linenumber, $curY, $default_font_size, $outputlangs, $hidedetails = 0)
+	/**
+	 * @param   TCPDF       $pdf                Object PDF
+	 * @param   Object      $object             Object to show
+	 * @param   int         $linenumber         line number
+	 * @param   int         $curY               current y position
+	 * @param   int         $default_font_size  default siez of font
+	 * @param   Translate   $outputlangs        Object lang for output
+	 * @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
+	 * @return  void
+	 */
+	private function printLine(&$pdf, $object, $linenumber, $curY, $default_font_size, $outputlangs, $hidedetails = 0)
 	{
         global $conf;
         $pdf->SetFont('', '', $default_font_size - 1);
@@ -618,7 +618,7 @@ class pdf_standard extends ModeleExpenseReport
         }
         $comment .= $object->lines[$linenumber]->comments;
         $pdf->writeHTMLCell($this->posxtva-$this->posxcomment-0.8, 4, $this->posxcomment-1, $curY, $comment, 0, 1);
-    }
+	}
 
     /**
 	 *  Show top header of page.
@@ -846,7 +846,7 @@ class pdf_standard extends ModeleExpenseReport
 				}
 			}
 		}
-   	}
+	}
 
 	/**
 	 *   Show table for lines
@@ -1024,6 +1024,7 @@ class pdf_standard extends ModeleExpenseReport
 		if ($resql)
 		{
 			$num = $this->db->num_rows($resql);
+			$totalpaid = 0;
 			$i=0;
 			while ($i < $num) {
 				$y+=$tab3_height;

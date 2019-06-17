@@ -136,8 +136,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
  */
 if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 {
-    $sql = "SELECT f.ref";
-    $sql.= ", f.rowid, f.total as total_ht, f.tva as total_tva, f.total_ttc, f.ref_client";
+    $sql = "SELECT f.rowid, f.ref, f.datef as date, f.total as total_ht, f.tva as total_tva, f.total_ttc, f.ref_client";
     $sql.= ", f.type";
     $sql.= ", s.nom as name";
     $sql.= ", s.rowid as socid, s.email";
@@ -177,13 +176,14 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 			{
 				$obj = $db->fetch_object($resql);
 
-				$facturestatic->ref=$obj->ref;
 				$facturestatic->id=$obj->rowid;
+				$facturestatic->ref=$obj->ref;
+				$facturestatic->date=$db->jdate($obj->date);
+				$facturestatic->type=$obj->type;
 				$facturestatic->total_ht=$obj->total_ht;
 				$facturestatic->total_tva=$obj->total_tva;
 				$facturestatic->total_ttc=$obj->total_ttc;
 				$facturestatic->ref_client=$obj->ref_client;
-				$facturestatic->type=$obj->type;
 
 				$companystatic->id=$obj->socid;
 				$companystatic->name=$obj->name;
@@ -351,6 +351,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 		$num = $db->num_rows($resql);
 		$i = 0;
 
+        print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("BoxTitleLastCustomerBills", $max).'</th>';
 		if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<th class="right">'.$langs->trans("AmountHT").'</th>';
@@ -428,7 +429,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 			if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) $colspan++;
 			print '<tr class="oddeven"><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoInvoice").'</td></tr>';
 		}
-		print '</table><br>';
+		print '</table></div><br>';
 		$db->free($resql);
 	}
 	else
@@ -472,6 +473,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 	{
 		$num = $db->num_rows($resql);
 
+        print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("BoxTitleLastSupplierBills", $max).'</th>';
 		if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<th class="right">'.$langs->trans("AmountHT").'</th>';
@@ -524,7 +526,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 			if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) $colspan++;
 			print '<tr class="oddeven"><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoInvoice").'</td></tr>';
 		}
-		print '</table><br>';
+		print '</table></div><br>';
 	}
 	else
 	{
@@ -561,6 +563,7 @@ if (! empty($conf->don->enabled) && $user->rights->societe->lire)
 
 		$i = 0;
 
+        print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<th>'.$langs->trans("BoxTitleLastModifiedDonations", $max).'</th>';
@@ -600,7 +603,7 @@ if (! empty($conf->don->enabled) && $user->rights->societe->lire)
 		{
 			print '<tr class="oddeven"><td colspan="4" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 		}
-		print '</table><br>';
+		print '</table></div><br>';
 	}
 	else dol_print_error($db);
 }
@@ -634,6 +637,7 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 		{
 			$num = $db->num_rows($resql);
 
+            print '<div class="div-table-responsive-no-min">';
 			print '<table class="noborder" width="100%">';
 			print '<tr class="liste_titre">';
 			print '<th>'.$langs->trans("ContributionsToPay").($num?' <a href="'.DOL_URL_ROOT.'/compta/sociales/list.php?status=0"><span class="badge">'.$num.'</span></a>':'').'</th>';
@@ -676,7 +680,7 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 			{
 				print '<tr class="oddeven"><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 			}
-			print "</table><br>";
+			print "</table></div><br>";
 			$db->free($resql);
 		}
 		else
@@ -726,6 +730,8 @@ if (! empty($conf->facture->enabled) && ! empty($conf->commande->enabled) && $us
 		if ($num)
 		{
 			$i = 0;
+
+            print '<div class="div-table-responsive-no-min">';
 			print '<table class="noborder" width="100%">';
 			print "<tr class=\"liste_titre\">";
 			print '<th colspan="2">'.$langs->trans("OrdersDeliveredToBill").' <a href="'.DOL_URL_ROOT.'/commande/list.php?viewstatut=3&amp;billed=0"><span class="badge">'.$num.'</span></a></th>';
@@ -795,7 +801,7 @@ if (! empty($conf->facture->enabled) && ! empty($conf->commande->enabled) && $us
 			print '<td class="right">'.price($tot_tobill).'</td>';
 			print '<td>&nbsp;</td>';
 			print '</tr>';
-			print '</table><br>';
+			print '</table></div><br>';
 		}
 		$db->free($resql);
 	}
@@ -1053,6 +1059,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 $resql = 0;
 if ($resql)
 {
+    print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><thcolspan="2">'.$langs->trans("TasksToDo").'</th>';
 	print "</tr>\n";
@@ -1067,7 +1074,7 @@ if ($resql)
 		$i++;
 	}
 	$db->free($resql);
-	print "</table><br>";
+	print "</table></div><br>";
 }
 
 

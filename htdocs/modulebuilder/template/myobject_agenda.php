@@ -209,7 +209,7 @@ if ($object->id > 0)
     $objthirdparty=$object;
     $objcon=new stdClass();
 
-    $out='';
+    $out='&origin='.$object->element.'&originid='.$object->id;
     $permok=$user->rights->agenda->myactions->create;
     if ((! empty($objthirdparty->id) || ! empty($objcon->id)) && $permok)
     {
@@ -240,19 +240,19 @@ if ($object->id > 0)
 
     if (! empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read) ))
     {
-        $param='&socid='.$socid;
-        if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-        if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+        $param='&id='.$object->id.'&socid='.$socid;
+        if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
+        if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
 
 
-		print load_fiche_titre($langs->trans("ActionsOnMyObject"), '', '');
+		//print load_fiche_titre($langs->trans("ActionsOnMyObject"), '', '');
 
         // List of all actions
 		$filters=array();
         $filters['search_agenda_label']=$search_agenda_label;
 
         // TODO Replace this with same code than into list.php
-        //show_actions_done($conf,$langs,$db,$object,null,0,$actioncode, '', $filters, $sortfield, $sortorder);
+        //show_actions_done($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder);
     }
 }
 

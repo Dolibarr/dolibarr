@@ -1647,7 +1647,7 @@ class Contrat extends CommonObject
 		// if buy price not defined, define buyprice as configured in margin admin
 		if ($this->pa_ht == 0)
 		{
-			if (($result = $this->defineBuyPrice($pu_ht, $remise_percent)) < 0)
+			if (($result = $this->defineBuyPrice($pu, $remise_percent)) < 0)
 			{
 				return $result;
 			}
@@ -1752,7 +1752,6 @@ class Contrat extends CommonObject
 
 		if ($this->statut >= 0)
 		{
-
 		    // Call trigger
 		    $result=$this->call_trigger('LINECONTRACT_DELETE', $user);
 		    if ($result < 0) return -1;
@@ -1760,10 +1759,10 @@ class Contrat extends CommonObject
 
 		    $this->db->begin();
 
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."contratdet";
+		    $sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element_line;
 			$sql.= " WHERE rowid=".$idline;
 
-			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+			dol_syslog(get_class($this)."::deleteline", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (! $resql)
 			{
@@ -1781,7 +1780,7 @@ class Contrat extends CommonObject
 					if ($result < 0)
 					{
 						$error++;
-						$this->error="Error ".get_class($this)."::delete deleteExtraFields error -4 ".$contractline->error;
+						$this->error="Error ".get_class($this)."::deleteline deleteExtraFields error -4 ".$contractline->error;
 					}
 				}
 			}
@@ -1790,7 +1789,7 @@ class Contrat extends CommonObject
 				$this->db->commit();
 				return 1;
 			} else {
-				dol_syslog(get_class($this)."::delete ERROR:".$this->error, LOG_ERR);
+				dol_syslog(get_class($this)."::deleteline ERROR:".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -1;
 			}

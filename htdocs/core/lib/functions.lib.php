@@ -5274,10 +5274,10 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart)
 /**
  *	Creation of a directory (this can create recursive subdir)
  *
- *	@param	string	$dir		Directory to create (Separator must be '/'. Example: '/mydir/mysubdir')
- *	@param	string	$dataroot	Data root directory (To avoid having the data root in the loop. Using this will also lost the warning on first dir PHP has no permission when open_basedir is used)
- *  @param	int		$newmask	Mask for new file (Defaults to $conf->global->MAIN_UMASK or 0755 if unavailable). Example: '0444'
- *	@return int         		< 0 if KO, 0 = already exists, > 0 if OK
+ *	@param	string		$dir		Directory to create (Separator must be '/'. Example: '/mydir/mysubdir')
+ *	@param	string		$dataroot	Data root directory (To avoid having the data root in the loop. Using this will also lost the warning on first dir PHP has no permission when open_basedir is used)
+ *  @param	string|null	$newmask	Mask for new file (Defaults to $conf->global->MAIN_UMASK or 0755 if unavailable). Example: '0444'
+ *	@return int         			< 0 if KO, 0 = already exists, > 0 if OK
  */
 function dol_mkdir($dir, $dataroot = '', $newmask = null)
 {
@@ -8123,14 +8123,22 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
         $attr['href'] = '';
     }
 
-    if(empty($id)){
+    if(!empty($id)){
         $attr['id'] = $id;
     }
 
     // Override attr
     if(!empty($params['attr']) && is_array($params['attr'])){
         foreach($params['attr'] as $key => $value){
-            $attr[$key] = $value;
+            if($key == 'class'){
+                $attr['class'].= ' '.$value;
+            }
+            elseif($key == 'classOverride'){
+                $attr['class'] = $value;
+            }
+            else{
+                $attr[$key] = $value;
+            }
         }
     }
 
@@ -8202,10 +8210,10 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
 
         $attr['href'] = '';
 
-        if($status == -1){ // Not enough permissions
+        if($status == -1){ // disable
             $attr['title'] = dol_escape_htmltag($langs->transnoentitiesnoconv("FeatureDisabled"));
         }
-        elseif($status == 0){ // disable
+        elseif($status == 0){ // Not enough permissions
             $attr['title'] = dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions"));
         }
     }
