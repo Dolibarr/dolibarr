@@ -106,7 +106,7 @@ if(($action=="searchfiles" || $action=="dl" ) && $date_start && $date_stop) {
     $sql.=" AND entity IN (".($entity==1?'0,1':$entity).')';
     $sql.=" AND fk_statut <> ".ExpenseReport::STATUS_DRAFT;
     $sql.=" UNION ALL";
-    $sql.=" SELECT rowid as id, ref,paid,amount as total_ttc, '0' as fk_soc, datedon as date, 'Donation' as item FROM ".MAIN_DB_PREFIX."don";
+    $sql.=" SELECT rowid as id, ref, paid, amount as total_ttc, '0' as fk_soc, datedon as date, 'Donation' as item FROM ".MAIN_DB_PREFIX."don";
     $sql.=" WHERE datedon between ".$wheretail;
     $sql.=" AND entity IN (".($entity==1?'0,1':$entity).')';
     $sql.=" AND fk_statut <> ".Don::STATUS_DRAFT;
@@ -143,56 +143,63 @@ if(($action=="searchfiles" || $action=="dl" ) && $date_start && $date_stop) {
             switch($objd->item)
             {
                 case "Invoice":
-                    $subdir=dol_sanitizeFileName($objd->ref);
+                	$subdir = '';
+                	$subdir.=($subdir ? '/' : '').dol_sanitizeFileName($objd->ref);
                     $upload_dir = $conf->facture->dir_output.'/'.$subdir;
                     $link="document.php?modulepart=facture&file=".str_replace('/', '%2F', $subdir).'%2F';
                     break;
                 case "SupplierInvoice":
-                    $tmpinvoicesupplier->fetch($objd->id);
-                    $subdir=get_exdir($tmpinvoicesupplier->id, 2, 0, 0, $tmpinvoicesupplier, 'invoice_supplier').'/'.dol_sanitizeFileName($objd->ref);
+                	$tmpinvoicesupplier->fetch($objd->id);
+                	$subdir = get_exdir($tmpinvoicesupplier->id, 2, 0, 1, $tmpinvoicesupplier, 'invoice_supplier');		// TODO Use first file
+                    $subdir.=($subdir ? '/' : '').dol_sanitizeFileName($objd->ref);
                     $upload_dir = $conf->fournisseur->facture->dir_output.'/'.$subdir;
                     $link="document.php?modulepart=facture_fournisseur&file=".str_replace('/', '%2F', $subdir).'%2F';
                     break;
                 case "ExpenseReport":
-                    $subdir=dol_sanitizeFileName($objd->ref);
+                	$subdir = '';
+                	$subdir.=($subdir ? '/' : '').dol_sanitizeFileName($objd->ref);
                     $upload_dir = $conf->expensereport->dir_output.'/'.$subdir;
                     $link="document.php?modulepart=expensereport&file=".str_replace('/', '%2F', $subdir).'%2F';
                     break;
                 case "SalaryPayment":
-                    $subdir=dol_sanitizeFileName($objd->id);
+                	$subdir = '';
+                	$subdir.=($subdir ? '/' : '').dol_sanitizeFileName($objd->id);
                     $upload_dir = $conf->salaries->dir_output.'/'.$subdir;
                     $link="document.php?modulepart=salaries&file=".str_replace('/', '%2F', $subdir).'%2F';
                     break;
                 case "Donation":
                     $tmpdonation->fetch($objp->id);
-                    $subdir=get_exdir(0, 0, 0, 1, $tmpdonation, 'donation'). '/'. dol_sanitizeFileName($objd->id);
+                    $subdir=get_exdir(0, 0, 0, 0, $tmpdonation, 'donation');
+                    $subdir.=($subdir ? '/' : '').dol_sanitizeFileName($objd->id);
                     $upload_dir = $conf->don->dir_output . '/' . $subdir;
                     $link="document.php?modulepart=don&file=".str_replace('/', '%2F', $subdir).'%2F';
                     break;
                 case "SocialContributions":
-                    $subdir=dol_sanitizeFileName($objd->id);
+                	$subdir = '';
+                	$subdir.=($subdir ? '/' : '').dol_sanitizeFileName($objd->id);
                     $upload_dir = $conf->tax->dir_output . '/' . $subdir;
                     $link="document.php?modulepart=tax&file=".str_replace('/', '%2F', $subdir).'%2F';
                     break;
                 default:
-                    $subdir='';
-                    $upload_dir='';
-                    $link='';
+                	$subdir = '';
+                    $upload_dir = '';
+                    $link = '';
                     break;
             }
 
             if (!empty($upload_dir))
             {
                 $result=true;
+
                 $files=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview\.png)$', '', SORT_ASC, 1);
-                //var_dump($upload_dir);
+
                 if (count($files) < 1)
                 {
                     $nofile['id']=$objd->id;
                     $nofile['date']=$db->idate($objd->date);
                     $nofile['paid']=$objd->paid;
                     $nofile['amount']=$objd->total_ttc;
-                    $nofile['ref']=$objd->ref;
+                    $nofile['ref']=($objd->ref ? $objd->ref : $objd->id);
                     $nofile['fk']=$objd->fk_soc;
                     $nofile['item']=$objd->item;
 
@@ -206,7 +213,7 @@ if(($action=="searchfiles" || $action=="dl" ) && $date_start && $date_stop) {
                         $file['date']=$db->idate($objd->date);
                         $file['paid']=$objd->paid;
                         $file['amount']=$objd->total_ttc;
-                        $file['ref']=$objd->ref;
+                        $file['ref']=($objd->ref ? $objd->ref : $objd->id);
                         $file['fk']=$objd->fk_soc;
                         $file['item']=$objd->item;
                         $file['link']=$link.$file['name'];
@@ -300,42 +307,15 @@ print '<form name="searchfiles" action="?action=searchfiles'.$tail.'" method="PO
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print $langs->trans("ReportPeriod").': '.$form->selectDate($date_start, 'date_start', 0, 0, 0, "", 1, 1, 0);
 print ' - '.$form->selectDate($date_stop, 'date_stop', 0, 0, 0, "", 1, 1, 0)."\n</a>";
-// Multicompany
-/*if (! empty($conf->multicompany->enabled) && is_object($mc))
- {
- print '<br>';
- // This is now done with hook formObjectOptions. Keep this code for backward compatibility with old multicompany module
- if (method_exists($mc, 'formObjectOptions'))
- {
- if (empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)	// condition must be same for create and edit mode
- {
- print "<tr>".'<td>'.$langs->trans("Entity").'</td>';
- print "<td>".$mc->select_entities($entity);
- print "</td></tr>\n";
- }
- else
- {
- print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
- }
- }
 
- $object = new stdClass();
- // Other attributes
- $parameters=array('objectsrc' => null, 'colspan' => ' colspan="3"');
- $reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
- print $hookmanager->resPrint;
- if (empty($reshook))
- {
- print $object->showOptionals($extrafields, 'edit');
- }
- }*/
+// Export is for current company only !
 if (! empty($conf->multicompany->enabled) && is_object($mc))
 {
-    print ' &nbsp; - &nbsp; '.$langs->trans("Entity").' : ';
+    print '<span class="marginleftonly marginrightonly">('.$langs->trans("Entity").' : ';
     $mc->dao->getEntities();
     $mc->dao->fetch($conf->entity);
     print $mc->dao->label;
-    print "<br>\n";
+    print ")</span>\n";
 }
 
 print '<input class="button" type="submit" value="'.$langs->trans("Refresh").'" /></form>'."\n";
@@ -376,10 +356,10 @@ if (!empty($date_start) && !empty($date_stop))
     print '<div class="div-table-responsive">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
-    print_liste_field_titre($arrayfields['date']['label'], $_SERVER["PHP_SELF"], "date", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
+    print_liste_field_titre($arrayfields['date']['label'], $_SERVER["PHP_SELF"], "date", "", $param, 'class="nowrap"', $sortfield, $sortorder);
     print '<td>'.$langs->trans("Type").'</td>';
     print '<td>'.$langs->trans("Ref").'</td>';
-    print '<td>'.$langs->trans("Link").'</td>';
+    print '<td>'.$langs->trans("Document").'</td>';
     print '<td>'.$langs->trans("Paid").'</td>';
     print '<td class="right">'.$langs->trans("Debit").'</td>';
     print '<td class="right">'.$langs->trans("Credit").'</td>';
@@ -402,11 +382,9 @@ if (!empty($date_start) && !empty($date_stop))
             // Balance calculation
             $balance = 0;
             foreach($TData as &$data1) {
-                if ($data1['item']!='Invoice'&& $data1['item']!='Donation' ){
+                if ($data1['item']!='Invoice' && $data1['item']!='Donation')
+                {
                     $data1['amount']=-$data1['amount'];
-                }
-                if ($data1['amount']>0){
-                }else{
                 }
                 $balance += $data1['amount'];
                 $data1['balance'] = $balance;
@@ -419,14 +397,19 @@ if (!empty($date_start) && !empty($date_stop))
                 //if (!empty($data['fk_facture'])) $html_class = 'facid-'.$data['fk_facture'];
                 //elseif (!empty($data['fk_paiement'])) $html_class = 'payid-'.$data['fk_paiement'];
                 print '<tr class="oddeven '.$html_class.'">';
-                print "<td class=\"center\">";
+                print "<td>";
                 print dol_print_date($data['date'], 'day');
                 print "</td>\n";
                 print '<td class="left">'.$langs->trans($data['item']).'</td>';
                 print '<td class="left">'.$data['ref'].'</td>';
 
                 // File link
-                print '<td><a href='.DOL_URL_ROOT.'/'.$data['link'].">".$data['name']."</a></td>\n";
+                print '<td>';
+                if ($data['link'])
+                {
+                	print '<a href='.DOL_URL_ROOT.'/'.$data['link'].' target="_blank">'.($data['name'] ? $data['name'] : $data['ref']).'</a>';
+                }
+				print "</td>\n";
 
                 print '<td class="left">'.$data['paid'].'</td>';
                 print '<td class="right">'.(($data['amount'] > 0) ? price(abs($data['amount'])) : '')."</td>\n";
