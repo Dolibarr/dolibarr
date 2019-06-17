@@ -27,7 +27,7 @@
 
 /**
  * \file		htdocs/accountancy/class/accountancyexport.class.php
- * \ingroup		Advanced accountancy
+ * \ingroup		Accountancy (Double entries)
  * \brief 		Class accountancy export
  */
 
@@ -585,19 +585,19 @@ class AccountancyExport
 			$date = dol_print_date($line->doc_date, '%d%m%Y');
 
 			print $line->piece_num . $separator;
-			print $line->label_operation . $separator;
+			print self::toAnsi($line->label_operation) . $separator;
 			print $date . $separator;
-			print $line->label_operation . $separator;
+			print self::toAnsi($line->label_operation) . $separator;
 
 			if (empty($line->subledger_account)) {
 				print length_accountg($line->numero_compte) . $separator;
-				print $line->label_compte . $separator;
+				print self::toAnsi($line->label_compte) . $separator;
 			} else {
 				print length_accounta($line->subledger_account) . $separator;
-				print $line->subledger_label . $separator;
+				print self::toAnsi($line->subledger_label) . $separator;
 			}
 
-			print $line->doc_ref . $separator;
+			print self::toAnsi($line->doc_ref) . $separator;
 			print price($line->debit) . $separator;
 			print price($line->credit) . $separator;
 			print price($line->montant) . $separator;
@@ -767,156 +767,155 @@ class AccountancyExport
 		}
 	}
 
-        /**
-	 * Export format : SAGE50SWISS
-	 *
-         *
-         * https://onlinehelp.sageschweiz.ch/default.aspx?tabid=19984
-         * http://media.topal.ch/Public/Schnittstellen/TAF/Specification/Sage50-TAF-format.pdf
-         *
-	 * @param array $objectLines data
-	 *
-	 * @return void
-	 */
-	public function exportSAGE50SWISS($objectLines)
+    /**
+     * Export format : SAGE50SWISS
+     *
+     * https://onlinehelp.sageschweiz.ch/default.aspx?tabid=19984
+     * http://media.topal.ch/Public/Schnittstellen/TAF/Specification/Sage50-TAF-format.pdf
+     *
+     * @param array $objectLines data
+     *
+     * @return void
+     */
+    public function exportSAGE50SWISS($objectLines)
     {
-		// SAGE50SWISS
-		$this->separator = ',';
-                $this->end_line = "\r\n";
+        // SAGE50SWISS
+        $this->separator = ',';
+        $this->end_line = "\r\n";
 
-                // Print header line
-                print "Blg,Datum,Kto,S/H,Grp,GKto,SId,SIdx,KIdx,BTyp,MTyp,Code,Netto,Steuer,FW-Betrag,Tx1,Tx2,PkKey,OpId,Flag";
-                print $this->end_line;
-                $thisPieceNum= "";
-                $thisPieceAccountNr= "";
-                $aSize= count($objectLines);
-		foreach ($objectLines as $aIndex=>$line)
+        // Print header line
+        print "Blg,Datum,Kto,S/H,Grp,GKto,SId,SIdx,KIdx,BTyp,MTyp,Code,Netto,Steuer,FW-Betrag,Tx1,Tx2,PkKey,OpId,Flag";
+        print $this->end_line;
+        $thisPieceNum= "";
+        $thisPieceAccountNr= "";
+        $aSize= count($objectLines);
+        foreach ($objectLines as $aIndex=>$line)
+		{
+            $sammelBuchung= false;
+            if ($aIndex-2 >= 0 && $objectLines[$aIndex-2]->piece_num == $line->piece_num)
+            {
+                $sammelBuchung= true;
+            }
+            elseif ($aIndex+2 < $aSize && $objectLines[$aIndex+2]->piece_num == $line->piece_num)
+            {
+                $sammelBuchung= true;
+            }
+            elseif ($aIndex+1 < $aSize
+                    && $objectLines[$aIndex+1]->piece_num == $line->piece_num
+                    && $aIndex-1 < $aSize
+                    && $objectLines[$aIndex-1]->piece_num == $line->piece_num
+                    )
+            {
+                $sammelBuchung= true;
+            }
+
+            //Blg
+            print $line->piece_num . $this->separator;
+
+            // Datum
+            $date = dol_print_date($line->doc_date, '%d.%m.%Y');
+            print $date . $this->separator;
+
+            // Kto
+            print length_accountg($line->numero_compte) . $this->separator;
+            // S/H
+            if ($line->sens == 'D')
+            {
+                print 'S' . $this->separator;
+            }
+            else
+            {
+                print 'H' . $this->separator;
+            }
+            //Grp
+            print self::trunc($line->code_journal, 1) . $this->separator;
+            // GKto
+            if (empty($line->code_tiers))
+            {
+                if ($line->piece_num == $thisPieceNum)
                 {
-                        $sammelBuchung= false;
-                        if ($aIndex-2 >= 0 && $objectLines[$aIndex-2]->piece_num == $line->piece_num)
-                        {
-                            $sammelBuchung= true;
-                        }
-                        elseif ($aIndex+2 < $aSize && $objectLines[$aIndex+2]->piece_num == $line->piece_num)
-                        {
-                            $sammelBuchung= true;
-                        }
-                        elseif ($aIndex+1 < $aSize
-                                && $objectLines[$aIndex+1]->piece_num == $line->piece_num
-                                && $aIndex-1 < $aSize
-                                && $objectLines[$aIndex-1]->piece_num == $line->piece_num
-                                )
-                        {
-                            $sammelBuchung= true;
-                        }
+                    print length_accounta($thisPieceAccountNr) . $this->separator;
+                }
+                else
+                {
+                    print "div" . $this->separator;
+                }
+            }
+            else
+            {
+                print length_accounta($line->code_tiers) . $this->separator;
+            }
+            //SId
+            print $this->separator;
+            //SIdx
+            print "0" . $this->separator;
+            //KIdx
+            print "0" . $this->separator;
+            //BTyp
+            print "0" . $this->separator;
 
-                        //Blg
-			print $line->piece_num . $this->separator;
+            //MTyp 1=Fibu Einzelbuchung 2=Sammebuchung
+            if ($sammelBuchung)
+            {
+                print "2" . $this->separator;
+            }
+            else
+            {
+                print "1" . $this->separator;
+            }
+            // Code
+            print '""' . $this->separator;
+            // Netto
+            if ($line->montant >= 0)
+            {
+                print $line->montant . $this->separator;
+            }
+            else
+            {
+                print $line->montant*-1 . $this->separator;
+            }
+            // Steuer
+            print "0.00" . $this->separator;
+            // FW-Betrag
+            print "0.00" . $this->separator;
+            // Tx1
+            $line1= self::toAnsi($line->label_compte, 29);
+            if ($line1 == "LIQ" || $line1 == "LIQ Beleg ok" || strlen($line1) <= 3)
+            {
+                $line1= "";
+            }
+            $line2= self::toAnsi($line->doc_ref, 29);
+            if (strlen($line1) == 0)
+            {
+                $line1= $line2;
+                $line2= "";
+            }
+            if (strlen($line1) > 0 && strlen($line2) > 0 && (strlen($line1) + strlen($line2)) < 27)
+            {
+                $line1= $line1 . ' / ' . $line2;
+                $line2= "";
+            }
 
-                        // Datum
-			$date = dol_print_date($line->doc_date, '%d.%m.%Y');
-			print $date . $this->separator;
+            print '"' . self::toAnsi($line1). '"' . $this->separator;
+            // Tx2
+            print '"' . self::toAnsi($line2). '"' . $this->separator;
+            //PkKey
+            print "0" . $this->separator;
+            //OpId
+            print $this->separator;
 
-                        // Kto
-			print length_accountg($line->numero_compte) . $this->separator;
-                        // S/H
-                        if ($line->sens == 'D')
-                        {
-                            print 'S' . $this->separator;
-                        }
-                        else
-                        {
-                            print 'H' . $this->separator;
-                        }
-                        //Grp
-                        print self::trunc($line->code_journal, 1) . $this->separator;
-                        // GKto
-                        if (empty($line->code_tiers))
-                        {
-                            if ($line->piece_num == $thisPieceNum)
-                            {
-                                print length_accounta($thisPieceAccountNr) . $this->separator;
-                            }
-                            else
-                            {
-                                print "div" . $this->separator;
-                            }
-                        }
-                        else
-                        {
-                            print length_accounta($line->code_tiers) . $this->separator;
-                        }
-                        //SId
-                        print $this->separator;
-                        //SIdx
-                        print "0" . $this->separator;
-                        //KIdx
-                        print "0" . $this->separator;
-                        //BTyp
-                        print "0" . $this->separator;
+            // Flag
+            print "0";
 
-                        //MTyp 1=Fibu Einzelbuchung 2=Sammebuchung
-                        if ($sammelBuchung)
-                        {
-                            print "2" . $this->separator;
-                        }
-                        else
-                        {
-                            print "1" . $this->separator;
-                        }
-                        // Code
-                        print '""' . $this->separator;
-                        // Netto
-                        if ($line->montant >= 0)
-                        {
-                            print $line->montant . $this->separator;
-                        }
-                        else
-                        {
-                            print $line->montant*-1 . $this->separator;
-                        }
-                        // Steuer
-                        print "0.00" . $this->separator;
-                        // FW-Betrag
-                        print "0.00" . $this->separator;
-                        // Tx1
-                        $line1= self::toAnsi($line->label_compte, 29);
-                        if ($line1 == "LIQ" || $line1 == "LIQ Beleg ok" || strlen($line1) <= 3)
-                        {
-                            $line1= "";
-                        }
-                        $line2= self::toAnsi($line->doc_ref, 29);
-                        if (strlen($line1) == 0)
-                        {
-                            $line1= $line2;
-                            $line2= "";
-                        }
-                        if (strlen($line1) > 0 && strlen($line2) > 0 && (strlen($line1) + strlen($line2)) < 27)
-                        {
-                            $line1= $line1 . ' / ' . $line2;
-                            $line2= "";
-                        }
+            print $this->end_line;
 
-			print '"' . self::toAnsi($line1). '"' . $this->separator;
-                        // Tx2
-			print '"' . self::toAnsi($line2). '"' . $this->separator;
-                        //PkKey
-                        print "0" . $this->separator;
-                        //OpId
-                        print $this->separator;
-
-                        // Flag
-			print "0";
-
-			print $this->end_line;
-
-                        if ($line->piece_num !== $thisPieceNum)
-                        {
-                            $thisPieceNum= $line->piece_num;
-                            $thisPieceAccountNr= $line->numero_compte;
-                        }
+            if ($line->piece_num !== $thisPieceNum)
+            {
+                $thisPieceNum= $line->piece_num;
+                $thisPieceAccountNr= $line->numero_compte;
+            }
         }
-	}
+    }
 
 	/**
 	 *
@@ -932,8 +931,8 @@ class AccountancyExport
 	/**
 	 *
 	 * @param unknown $str Original string to encode and optionaly truncate
-	 * @param integer $size trucate string after $size characters
-         * @return string String encoded in Windows-1251 charset
+	 * @param integer $size truncate string after $size characters
+     * @return string String encoded in Windows-1251 charset
 	 */
 	public static function toAnsi($str, $size = -1)
     {

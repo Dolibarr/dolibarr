@@ -161,7 +161,7 @@ if ($action == 'setremise' && $user->rights->societe->creer)
 		$error=0;
 		if (empty($desc))
 		{
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("ReasonDiscount")), null, 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ReasonDiscount")), null, 'errors');
 			$error++;
 		}
 
@@ -193,7 +193,7 @@ if ($action == 'setremise' && $user->rights->societe->creer)
 	}
 	else
 	{
-		setEventMessages($langs->trans("ErrorFieldFormat", $langs->trans("NewGlobalDiscount")), null, 'errors');
+		setEventMessages($langs->trans("ErrorFieldFormat", $langs->transnoentitiesnoconv("NewGlobalDiscount")), null, 'errors');
 	}
 }
 

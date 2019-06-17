@@ -137,7 +137,7 @@ class ImportCsv extends ModeleImports
 	 *
 	 * 	@param	Translate	$outputlangs		Output language
 	 *  @param	array		$headerlinefields	Array of fields name
-	 * 	@return	string
+	 * 	@return	string$limittoachartaccount
 	 */
     public function write_title_example($outputlangs, $headerlinefields)
 	{

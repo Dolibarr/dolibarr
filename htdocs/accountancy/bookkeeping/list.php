@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2016  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2013-2016  Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2018  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2019  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2016-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
@@ -21,7 +21,7 @@
 
 /**
  * \file		htdocs/accountancy/bookkeeping/list.php
- * \ingroup		Advanced accountancy
+ * \ingroup		Accountancy (Double entries)
  * \brief 		List operation of book keeping
  */
 require '../../main.inc.php';
@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("accountancy"));
@@ -47,6 +48,9 @@ $search_date_creation_start = dol_mktime(0, 0, 0, GETPOST('date_creation_startmo
 $search_date_creation_end = dol_mktime(0, 0, 0, GETPOST('date_creation_endmonth', 'int'), GETPOST('date_creation_endday', 'int'), GETPOST('date_creation_endyear', 'int'));
 $search_date_modification_start = dol_mktime(0, 0, 0, GETPOST('date_modification_startmonth', 'int'), GETPOST('date_modification_startday', 'int'), GETPOST('date_modification_startyear', 'int'));
 $search_date_modification_end = dol_mktime(0, 0, 0, GETPOST('date_modification_endmonth', 'int'), GETPOST('date_modification_endday', 'int'), GETPOST('date_modification_endyear', 'int'));
+$search_date_export_start = dol_mktime(0, 0, 0, GETPOST('date_export_startmonth', 'int'), GETPOST('date_export_startday', 'int'), GETPOST('date_export_startyear', 'int'));
+$search_date_export_end = dol_mktime(0, 0, 0, GETPOST('date_export_endmonth', 'int'), GETPOST('date_export_endday', 'int'), GETPOST('date_export_endyear', 'int'));
+
 //var_dump($search_date_start);exit;
 if (GETPOST("button_delmvt_x") || GETPOST("button_delmvt.x") || GETPOST("button_delmvt")) {
 	$action = 'delbookkeepingyear';
@@ -143,6 +147,7 @@ $arrayfields=array(
 	't.code_journal'=>array('label'=>$langs->trans("Codejournal"), 'checked'=>1),
 	't.date_creation'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0),
 	't.tms'=>array('label'=>$langs->trans("DateModification"), 'checked'=>0),
+    't.date_export'=>array('label'=>$langs->trans("DateExport"), 'checked'=>1),
 );
 
 if (empty($conf->global->ACCOUNTING_ENABLE_LETTERING)) unset($arrayfields['t.lettering_code']);
@@ -178,6 +183,8 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_date_creation_end = '';
 	$search_date_modification_start = '';
 	$search_date_modification_end = '';
+    $search_date_export_start = '';
+    $search_date_export_end = '';
 	$search_debit = '';
 	$search_credit = '';
 	$search_lettering_code = '';
@@ -269,6 +276,16 @@ if (! empty($search_date_modification_end)) {
 	$tmp=dol_getdate($search_date_modification_end);
 	$param .= '&date_modification_endmonth=' . $tmp['mon'] . '&date_modification_endday=' . $tmp['mday'] . '&date_modification_endyear=' . $tmp['year'];
 }
+if (! empty($search_date_export_start)) {
+    $filter['t.date_export>='] = $search_date_export_start;
+    $tmp=dol_getdate($search_date_export_start);
+    $param .= '&date_export_startmonth=' . $tmp['mon'] . '&date_export_startday=' . $tmp['mday'] . '&date_export_startyear=' . $tmp['year'];
+}
+if (! empty($search_date_export_end)) {
+    $filter['t.date_export<='] = $search_date_export_end;
+    $tmp=dol_getdate($search_date_export_end);
+    $param .= '&date_export_endmonth=' . $tmp['mon'] . '&date_export_endday=' . $tmp['mday'] . '&date_export_endyear=' . $tmp['year'];
+}
 if (! empty($search_debit)) {
 	$filter['t.debit'] = $search_debit;
 	$param .= '&search_debit=' . urlencode($search_debit);
@@ -348,8 +365,7 @@ if ($action == 'delmouvconfirm') {
 
 // Export into a file with format defined into setup (FEC, CSV, ...)
 if ($action == 'export_file') {
-
-	$result = $object->fetchAll($sortorder, $sortfield, 0, 0, $filter);
+	$result = $object->fetchAll($sortorder, $sortfield, 0, 0, $filter, 'AND', $conf->global->ACCOUNTING_REEXPORT);
 
 	if ($result < 0)
 	{
@@ -357,17 +373,57 @@ if ($action == 'export_file') {
 	}
 	else
 	{
+	    // Export files
 		$accountancyexport = new AccountancyExport($db);
 		$accountancyexport->export($object->lines);
 
-		if (!empty($accountancyexport->errors))
-		{
-			setEventMessages('', $accountancyexport->errors, 'errors');
-		}
+        if (! empty($accountancyexport->errors))
+        {
+            setEventMessages('', $accountancyexport->errors, 'errors');
+        } else {
+            // Specify as export : update field date_export
+            // TODO Move in class bookKeeping
+            $error=0;
+            $db->begin();
+
+            if (is_array($object->lines)) {
+                foreach ($object->lines as $movement) {
+                    $now = dol_now();
+                    $sql = " UPDATE " . MAIN_DB_PREFIX . "accounting_bookkeeping";
+                    $sql .= " SET date_export = '" . $db->idate($now) . "'";
+                    $sql .= " WHERE rowid = " . $movement->id;
+
+                    dol_syslog("/accountancy/bookeeping/list.php Function export_file Specify movements as exported sql=" . $sql, LOG_DEBUG);
+                    $result = $db->query($sql);
+                    if ($result) {
+                        $db->commit();
+                        // setEventMessages($langs->trans("AllExportedMovementsWereRecordedAsExported"), null, 'mesgs');
+                    } else {
+                        $db->rollback();
+                        // setEventMessages($langs->trans("NotAllExportedMovementsCouldBeRecordedAsExported"), null, 'errors');
+                    }
+                }
+            }
+        }
 		exit;
 	}
 }
 
+if ($action == 'setreexport') {
+    $export = 0;
+    $setreexport = GETPOST('value', 'int');
+    if (! dolibarr_set_const($db, "ACCOUNTING_REEXPORT", $setreexport, 'yesno', 0, '', $conf->entity)) $error++;
+
+    if (! $error) {
+        if ($conf->global->ACCOUNTING_REEXPORT == 1) {
+            setEventMessages($langs->trans("ExportOfPiecesAlreadyExportedIsEnable"), null, 'mesgs');
+        } else {
+            setEventMessages($langs->trans("ExportOfPiecesAlreadyExportedIsDisable"), null, 'mesgs');
+        }
+    } else {
+        setEventMessages($langs->trans("Error"), null, 'errors');
+    }
+}
 
 /*
  * View
@@ -380,14 +436,14 @@ llxHeader('', $title_page);
 // List
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-	$nbtotalofrecords = $object->fetchAll($sortorder, $sortfield, 0, 0, $filter);
+	$nbtotalofrecords = $object->fetchAll($sortorder, $sortfield, 0, 0, $filter, 'AND', $conf->global->ACCOUNTING_REEXPORT);
 	if ($nbtotalofrecords < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
 
 // TODO Do not use this
-$result = $object->fetchAll($sortorder, $sortfield, $limit, $offset, $filter);
+$result = $object->fetchAll($sortorder, $sortfield, $limit, $offset, $filter, 'AND', $conf->global->ACCOUNTING_REEXPORT);
 if ($result < 0) {
 	setEventMessages($object->error, $object->errors, 'errors');
 }
@@ -442,17 +498,25 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 
-$listofformat=AccountancyExport::getType();
+$button .= '<a class="butAction" title="" name="button_export_file" href="'.$_SERVER["PHP_SELF"].'?action=export_file'.($param?'&'.$param:'').'">';
 
+$listofformat=AccountancyExport::getType();
 if (count($filter)) $buttonLabel = $langs->trans("ExportFilteredList");
 else $buttonLabel = $langs->trans("ExportList");
 
-$newcardbutton = dolGetButtonTitle($buttonLabel, '', 'fa fa-file-export', $_SERVER["PHP_SELF"].'?action=export_file'.($param?'&'.$param:''));
+// Button re-export
+if (! empty($conf->global->ACCOUNTING_REEXPORT)) {
+    $newcardbutton ='<a href="'.$_SERVER['PHP_SELF'].'?action=setreexport&value=0'.($param?'&'.$param:'').'">'.img_picto($langs->trans("Activated"), 'switch_on').'</a> ';
+} else {
+    $newcardbutton ='<a href="'.$_SERVER['PHP_SELF'].'?action=setreexport&value=1'.($param?'&'.$param:'').'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a> ';
+}
+$newcardbutton.= $langs->trans("IncludeDocsAlreadyExported");
 
-$newcardbutton.= dolGetButtonTitle($langs->trans('GroupByAccountAccounting'), '', 'fa fa-object-group', DOL_URL_ROOT.'/accountancy/bookkeeping/listbyaccount.php?'.$param);
+$newcardbutton.= dolGetButtonTitle($buttonLabel, $langs->trans("ExportFilteredList").' ('.$listofformat[$conf->global->ACCOUNTING_EXPORT_MODELCSV].')', 'fa fa-file-export paddingleft', $_SERVER["PHP_SELF"].'?action=export_file'.($param?'&'.$param:''));
 
-$newcardbutton.= dolGetButtonTitle($langs->trans('NewAccountingMvt'), '', 'fa fa-plus-circle', './card.php?action=create');
+$newcardbutton.= dolGetButtonTitle($langs->trans('GroupByAccountAccounting'), '', 'fa fa-stream paddingleft', DOL_URL_ROOT.'/accountancy/bookkeeping/listbyaccount.php?'.$param);
 
+$newcardbutton.= dolGetButtonTitle($langs->trans('NewAccountingMvt'), '', 'fa fa-plus-circle paddingleft', './card.php?action=create');
 
 print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $result, $nbtotalofrecords, 'title_accountancy', 0, $newcardbutton, '', $limit);
 
@@ -596,6 +660,20 @@ if (! empty($arrayfields['t.tms']['checked']))
 	print '</div>';
 	print '</td>';
 }
+// Date export
+if (! empty($arrayfields['t.date_export']['checked']))
+{
+    print '<td class="liste_titre center">';
+    print '<div class="nowrap">';
+    print $langs->trans('From') . ' ';
+    print $form->selectDate($search_date_export_start, 'date_export_start', 0, 0, 1);
+    print '</div>';
+    print '<div class="nowrap">';
+    print $langs->trans('to') . ' ';
+    print $form->selectDate($search_date_export_end, 'date_export_end', 0, 0, 1);
+    print '</div>';
+    print '</td>';
+}
 // Action column
 print '<td class="liste_titre center">';
 $searchpicto=$form->showFilterButtons();
@@ -616,6 +694,7 @@ if (! empty($arrayfields['t.lettering_code']['checked']))		print_liste_field_tit
 if (! empty($arrayfields['t.code_journal']['checked']))			print_liste_field_titre($arrayfields['t.code_journal']['label'], $_SERVER['PHP_SELF'], "t.code_journal", "", $param, '', $sortfield, $sortorder, 'center ');
 if (! empty($arrayfields['t.date_creation']['checked']))		print_liste_field_titre($arrayfields['t.date_creation']['label'], $_SERVER['PHP_SELF'], "t.date_creation", "", $param, '', $sortfield, $sortorder, 'center ');
 if (! empty($arrayfields['t.tms']['checked']))					print_liste_field_titre($arrayfields['t.tms']['label'], $_SERVER['PHP_SELF'], "t.tms", "", $param, '', $sortfield, $sortorder, 'center ');
+if (! empty($arrayfields['t.date_export']['checked']))          print_liste_field_titre($arrayfields['t.date_export']['label'], $_SERVER['PHP_SELF'], "t.date_export", "", $param, '', $sortfield, $sortorder, 'center ');
 print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 print "</tr>\n";
 
@@ -728,11 +807,20 @@ if ($num > 0)
 			if (! $i) $totalarray['nbfield']++;
 		}
 
+        // Exported operation date
+        if (! empty($arrayfields['t.date_export']['checked']))
+        {
+            print '<td align="center">' . dol_print_date($line->date_export, 'dayhour') . '</td>';
+            if (! $i) $totalarray['nbfield']++;
+        }
+
 		// Action column
 		print '<td class="nowraponall center">';
-		print '<a href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?piece_num=' . $line->piece_num . $param . '&page=' . $page . ($sortfield ? '&sortfield='.$sortfield : '') . ($sortorder ? '&sortorder='.$sortorder : '') . '">' . img_edit() . '</a>&nbsp;';
-		print '<a href="' . $_SERVER['PHP_SELF'] . '?action=delmouv&mvt_num=' . $line->piece_num . $param . '&page=' . $page . ($sortfield ? '&sortfield='.$sortfield : '') . ($sortorder ? '&sortorder='.$sortorder : '') . '">' . img_delete() . '</a>';
-		print '</td>';
+        if(empty($line->date_export)) {
+		    print '<a href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?piece_num=' . $line->piece_num . $param . '&page=' . $page . ($sortfield ? '&sortfield='.$sortfield : '') . ($sortorder ? '&sortorder='.$sortorder : '') . '">' . img_edit() . '</a>&nbsp;';
+		    print '<a href="' . $_SERVER['PHP_SELF'] . '?action=delmouv&mvt_num=' . $line->piece_num . $param . '&page=' . $page . ($sortfield ? '&sortfield='.$sortfield : '') . ($sortorder ? '&sortorder='.$sortorder : '') . '">' . img_delete() . '</a>';
+        }
+        print '</td>';
 		if (! $i) $totalarray['nbfield']++;
 
 		print "</tr>\n";

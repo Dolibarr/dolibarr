@@ -163,7 +163,7 @@ class MouvementStock extends CommonObject
 
 		$this->db->begin();
 
-		$product->load_stock();
+		$product->load_stock('novirtual');
 
 		// Test if product require batch data. If yes, and there is not, we throw an error.
 		if (! empty($conf->productbatch->enabled) && $product->hasbatch() && ! $skip_batch)

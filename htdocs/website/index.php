@@ -56,6 +56,7 @@ $type_container=GETPOST('WEBSITE_TYPE_CONTAINER', 'alpha');
 
 $section_dir = GETPOST('section_dir', 'alpha');
 $file_manager = GETPOST('file_manager', 'alpha');
+$replacesite = GETPOST('replacesite', 'alpha');
 
 if (GETPOST('deletesite', 'alpha')) { $action='deletesite'; }
 if (GETPOST('delete', 'alpha')) { $action='delete'; }
@@ -73,6 +74,7 @@ if (GETPOST('importsite', 'alpha')) { $action='importsite'; }
 if (GETPOST('createfromclone', 'alpha')) { $action='createfromclone'; }
 if (GETPOST('createpagefromclone', 'alpha')) { $action='createpagefromclone'; }
 if (empty($action) && $file_manager) $action='file_manager';
+if (empty($action) && $replacesite) $action='replacesite';
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
@@ -797,13 +799,13 @@ if ($action == 'addcontainer')
 }
 
 // Delete site
-if ($action == 'deletesite')
+if ($action == 'confirm_deletesite' && $confirm == 'yes')
 {
 	$error = 0;
 
 	$db->begin();
 
-	$res = $object->fetch(0, $websitekey);
+	$res = $object->fetch(GETPOST('id', 'int'));
 	$website = $object;
 
 	if ($res > 0)
@@ -815,13 +817,28 @@ if ($action == 'deletesite')
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
+	if (! $error)
+	{
+		if (GETPOST('delete_also_js', 'alpha') == 'on')
+		{
+			$pathofwebsitejs=DOL_DATA_ROOT.'/medias/js/'.$object->ref;
+
+			dol_delete_dir_recursive($pathofwebsitejs);
+		}
+		if (GETPOST('delete_also_medias', 'alpha') == 'on')
+		{
+			$pathofwebsitemedias=DOL_DATA_ROOT.'/medias/image/'.$object->ref;
+
+			dol_delete_dir_recursive($pathofwebsitemedias);
+		}
+	}
 
 	if (! $error)
 	{
 		$db->commit();
-		setEventMessages($langs->trans("SiteDeleted", $object->ref, $websitekey), null, 'mesgs');
+		setEventMessages($langs->trans("SiteDeleted", $object->ref), null, 'mesgs');
 
-		header("Location: ".$_SERVER["PHP_SELF"]);
+		header("Location: ".$_SERVER["PHP_SELF"].'?id='.$object->id);
 		exit;
 	}
 	else
@@ -1745,6 +1762,10 @@ if ($action == 'file_manager')
 {
 	print '<input type="hidden" name="action" value="file_manager">';
 }
+if ($action == 'replacesite')
+{
+	print '<input type="hidden" name="action" value="replacesite">';
+}
 
 print '<div>';
 
@@ -1809,7 +1830,7 @@ if (! GETPOST('hide_websitemenu'))
 	if (! is_array($array) && $array < 0) dol_print_error('', $objectpage->error, $objectpage->errors);
 	$atleastonepage=(is_array($array) && count($array) > 0);
 
-	if ($websitekey && $websitekey != '-1' && ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone'))
+	if ($websitekey && $websitekey != '-1' && ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone' || $action == 'deletesite'))
 	{
 		$disabled='';
 		if (empty($user->rights->website->write)) $disabled=' disabled="disabled"';
@@ -1817,9 +1838,7 @@ if (! GETPOST('hide_websitemenu'))
 		print ' &nbsp; ';
 
 		print '<input type="submit" class="button nobordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditCss")).'" name="editcss">';
-		//print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditMenu")).'" name="editmenu">';
-		print '<input type="submit" class="button nobordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("CloneSite")).'" name="createfromclone">';
-		print '<input type="submit" class="button nobordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("ExportSite")).'" name="exportsite">';
+
 		if (! $atleastonepage)
 		{
 			print '<input type="submit" class="button nobordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("ImportSite")).'" name="importsite">';
@@ -1829,11 +1848,16 @@ if (! GETPOST('hide_websitemenu'))
 			print '<input type="submit" class="button nobordertransp" disabled="disabled" value="'.dol_escape_htmltag($langs->trans("ImportSite")).'" name="importsite">';
 		}
 
+		//print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditMenu")).'" name="editmenu">';
+		print '<input type="submit" class="button nobordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("CloneSite")).'" name="createfromclone">';
+		print '<input type="submit" class="button nobordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("ExportSite")).'" name="exportsite">';
+
 		print '<input type="submit" class="buttonDelete" name="deletesite" value="'.$langs->trans("Delete").'"'.($atleastonepage?' disabled="disabled"':'').'>';
 
 		print ' &nbsp; ';
 
-		print '<input type="submit" class="button nobordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("MediaFiles")).'" name="file_manager">';
+		print '<a href="'.$_SERVER["PHP_SEFL"].'?action=file_manager&website='.$website->ref.'" class="button nobordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("MediaFiles")).'"><span class="fa fa-image"><span></a>';
+		//print '<input type="submit" class="button nobordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("MediaFiles")).'" name="file_manager">';
 		/*print '<a class="button button_file_manager"'.$disabled.'>'.dol_escape_htmltag($langs->trans("MediaFiles")).'</a>';
 		print '<script language="javascript">
 			jQuery(document).ready(function () {
@@ -1851,6 +1875,9 @@ if (! GETPOST('hide_websitemenu'))
 			});
 			</script>';
 		*/
+
+		//print '<input type="submit" class="button nobordertransp"'.$disabled.' value="<span class="fa fa-globe"><span>'.dol_escape_htmltag($langs->trans("Replace")).'" name="replacesite">';
+		print '<a href="'.$_SERVER["PHP_SEFL"].'?action=replacesite&website='.$website->ref.'" class="button nobordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("ReplaceWebsiteContent")).'"><span class="fa fa-file-code"><span></a>';
 	}
 
 	print '</div>';
@@ -1860,7 +1887,7 @@ if (! GETPOST('hide_websitemenu'))
 
 	print '<div class="websitetools websiteselection">';
 
-	if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone')
+	if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone' || $action == 'deletesite')
 	{
 		$urlext=$virtualurl;
 		$urlint=$urlwithroot.'/public/website/index.php?website='.$websitekey;
@@ -1900,10 +1927,10 @@ if (! GETPOST('hide_websitemenu'))
 		print '</div>';
 	}
 
-	if (in_array($action, array('editcss','editmenu','file_manager')))
+	if (in_array($action, array('editcss','editmenu','file_manager','replacesite')))
 	{
-		if (preg_match('/^create/', $action) && $action != 'file_manager') print '<input type="submit" id="savefile" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
-		if (preg_match('/^edit/', $action) && $action != 'file_manager') print '<input type="submit" id="savefile" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
+		if (preg_match('/^create/', $action) && $action != 'file_manager' && $action != 'replacesite') print '<input type="submit" id="savefile" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
+		if (preg_match('/^edit/', $action) && $action != 'file_manager' && $action != 'replacesite') print '<input type="submit" id="savefile" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
 		if ($action != 'preview') print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" name="preview">';
 	}
 
@@ -2026,10 +2053,25 @@ if (! GETPOST('hide_websitemenu'))
 			$websitepage->fetch($pageid);
 		}
 
-		if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone')
+		if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone' || $action == 'deletesite')
 		{
 			$disabled='';
 			if (empty($user->rights->website->write)) $disabled=' disabled="disabled"';
+
+			// Confirmation delete site
+			if ($action == 'deletesite') {
+				// Create an array for form
+				$formquestion = array(
+					array('type' => 'checkbox', 'name' => 'delete_also_js', 'label' => $langs->trans("DeleteAlsoJs"), 'value' => 0),
+					array('type' => 'checkbox', 'name' => 'delete_also_medias', 'label' => $langs->trans("DeleteAlsoMedias"), 'value' => 0),
+					//array('type' => 'other','name' => 'newlang','label' => $langs->trans("Language"), 'value' => $formadmin->select_language(GETPOST('newlang', 'az09')?GETPOST('newlang', 'az09'):$langs->defaultlang, 'newlang', 0, null, '', 0, 0, 'minwidth200')),
+					//array('type' => 'other','name' => 'newwebsite','label' => $langs->trans("WebSite"), 'value' => $formwebsite->selectWebsite($object->id, 'newwebsite', 0))
+				);
+
+				$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id='.$object->id, $langs->trans('DeleteWebsite'), '', 'confirm_deletesite', $formquestion, 0, 1, 200);
+
+				print $formconfirm;
+			}
 
 			// Confirmation to clone
 			if ($action == 'createfromclone') {
@@ -2046,7 +2088,7 @@ if (! GETPOST('hide_websitemenu'))
 				print $formconfirm;
 			}
 
-			if ($pageid > 0 && $atleastonepage)		// pageid can be set without pages, if homepage of site is set and all page were removed
+			if ($pageid > 0 && $atleastonepage)		// pageid can be set without pages, if homepage of site is set and all pages were removed
 			{
 				// Confirmation to clone
 				if ($action == 'createpagefromclone') {
@@ -2113,8 +2155,19 @@ if (! GETPOST('hide_websitemenu'))
 				print '</div>';
 				print '</div>';
 
-				if ($object->fk_default_home > 0 && $pageid == $object->fk_default_home) print '<input type="submit" class="button nobordertransp" disabled="disabled" value="'.dol_escape_htmltag($langs->trans("SetAsHomePage")).'" name="setashome">';
-				else print '<input type="submit" class="button nobordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("SetAsHomePage")).'" name="setashome">';
+				// @TODO Move this action into a combo list
+				if ($object->fk_default_home > 0 && $pageid == $object->fk_default_home)
+				{
+					//$disabled=' disabled="disabled"';
+					//print '<span class="button nobordertransp disabled"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("SetAsHomePage")).'"><span class="fa fa-home"></span></span>';
+					print '<input type="submit" class="button nobordertransp" disabled="disabled" value="'.dol_escape_htmltag($langs->trans("SetAsHomePage")).'" name="setashome">';
+				}
+				else
+				{
+					//$disabled='';
+					//print '<a href="'.$_SERVER["PHP_SEFL"].'?action=setashome&website='.$website->ref.'" class="button nobordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("SetAsHomePage")).'"><span class="fa fa-home"><span></a>';
+					print '<input type="submit" class="button nobordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("SetAsHomePage")).'" name="setashome">';
+				}
 				print '<input type="submit" class="button nobordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("ClonePage")).'" name="createpagefromclone">';
 				print '<input type="submit" class="buttonDelete" name="delete" value="'.$langs->trans("Delete").'"'.($atleastonepage?'':' disabled="disabled"').'>';
 			}
@@ -2124,7 +2177,7 @@ if (! GETPOST('hide_websitemenu'))
 
 		print '<div class="websitetools">';
 
-		if (($pageid > 0 && $atleastonepage) && ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone'))
+		if (($pageid > 0 && $atleastonepage) && ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone' || $action == 'deletesite'))
 		{
 			$realpage=$urlwithroot.'/public/website/index.php?website='.$websitekey.'&pageref='.$websitepage->pageurl;
 			$pagealias = $websitepage->pageurl;
@@ -2155,7 +2208,7 @@ if (! GETPOST('hide_websitemenu'))
 
 			// TODO Add js to save alias like we save virtual host name and use dynamic virtual host for url of id=previewpageext
 		}
-		if (! in_array($action, array('editcss','editmenu','file_manager','createsite','createcontainer','createpagefromclone')))
+		if (! in_array($action, array('editcss','editmenu','file_manager','replacesite','createsite','createcontainer','createfromclone','createpagefromclone','deletesite')))
 		{
 			if (preg_match('/^create/', $action)) print '<input type="submit" id="savefile" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
 			if (preg_match('/^edit/', $action)) print '<input type="submit" id="savefile" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
@@ -2815,12 +2868,24 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 if ($action == 'editfile' || $action == 'file_manager')
 {
 	print '<!-- Edit Media -->'."\n";
-	print '<div class="fiche"><br><br>';
+	print '<div class="fiche"><br>';
 	//print '<div class="center">'.$langs->trans("FeatureNotYetAvailable").'</center>';
 
 	$module = 'medias';
 	if (empty($url)) $url=DOL_URL_ROOT.'/website/index.php';	// Must be an url without param
 	include DOL_DOCUMENT_ROOT.'/core/tpl/filemanager.tpl.php';
+
+	print '</div>';
+}
+
+if ($action == 'replacesite')
+{
+	print '<!-- Edit Media -->'."\n";
+	print '<div class="fiche"><br>';
+
+	print load_fiche_titre($langs->trans("ReplaceWebsiteContent"));
+
+	print '<div class="center">'.$langs->trans("FeatureNotYetAvailable").'</center>';
 
 	print '</div>';
 }

@@ -21,7 +21,7 @@
 
 /**
  * \file		htdocs/accountancy/bookkeeping/card.php
- * \ingroup		Advanced accountancy
+ * \ingroup		Accountancy (Double entries)
  * \brief		Page to show book-entry
  */
 
@@ -373,7 +373,7 @@ if ($action == 'create')
 
 	print '<tr>';
 	print '<td>' . $langs->trans("Piece") . '</td>';
-	print '<td><input type="text" class="minwidth200" name="doc_ref" value=""/></td>';
+	print '<td><input type="text" class="minwidth200" name="doc_ref" value="'.GETPOST('doc_ref', 'alpha').'"></td>';
 	print '</tr>';
 
 	/*
@@ -615,23 +615,23 @@ if ($action == 'create')
 
 					if ($action == 'update' && $line->id == $id) {
 						print '<td>';
-						print $formaccounting->select_account($line->numero_compte, 'accountingaccount_number', 1, array (), 1, 1, '');
+						print $formaccounting->select_account((GETPOSTISSET("accountingaccount_number") ? GETPOST("accountingaccount_number", "alpha") : $line->numero_compte), 'accountingaccount_number', 1, array (), 1, 1, '');
 						print '</td>';
 						print '<td>';
 						// TODO For the moment we keep a free input text instead of a combo. The select_auxaccount has problem because it does not
 						// use setup of keypress to select thirdparty and this hang browser on large database.
 						if (! empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX))
 						{
-							print $formaccounting->select_auxaccount($line->subledger_account, 'subledger_account', 1);
+							print $formaccounting->select_auxaccount((GETPOSTISSET("subledger_account") ? GETPOST("subledger_account", "alpha") : $line->subledger_account), 'subledger_account', 1);
 						}
 						else
 						{
-							print '<input type="text" name="subledger_account" value="'.$line->subledger_account.'">';
+							print '<input type="text" name="subledger_account" value="'.(GETPOSTISSET("subledger_account") ? GETPOST("subledger_account", "alpha") : $line->subledger_account).'">';
 						}
 						print '</td>';
-						print '<td><input type="text" class="minwidth200" name="label_operation" value="' . $line->label_operation. '"/></td>';
-						print '<td class="right"><input type="text" size="6" class="right" name="debit" value="' . price($line->debit) . '"/></td>';
-						print '<td class="right"><input type="text" size="6" class="right" name="credit" value="' . price($line->credit) . '"/></td>';
+						print '<td><input type="text" class="minwidth200" name="label_operation" value="' . (GETPOSTISSET("label_operation") ? GETPOST("label_operation", "alpha") : $line->label_operation). '"></td>';
+						print '<td class="right"><input type="text" size="6" class="right" name="debit" value="' . (GETPOSTISSET("debit") ? GETPOST("debit", "alpha") : price($line->debit)) . '"></td>';
+						print '<td class="right"><input type="text" size="6" class="right" name="credit" value="' . (GETPOSTISSET("credit") ? GETPOST("credit", "alpha") : price($line->credit)) . '"></td>';
 						print '<td>';
 						print '<input type="hidden" name="id" value="' . $line->id . '">' . "\n";
 						print '<input type="submit" class="button" name="update" value="' . $langs->trans("Update") . '">';
@@ -672,21 +672,21 @@ if ($action == 'create')
 				if ($action == "" || $action == 'add') {
 					print '<tr class="oddeven">';
 					print '<td>';
-					print $formaccounting->select_account($accountingaccount_number, 'accountingaccount_number', 1, array (), 1, 1, '');
+					print $formaccounting->select_account('', 'accountingaccount_number', 1, array (), 1, 1, '');
 					print '</td>';
 					print '<td>';
 					// TODO For the moment we keep a fre input text instead of a combo. The select_auxaccount has problem because it does not
 					// use setup of keypress to select thirdparty and this hang browser on large database.
 					if (! empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX))
 					{
-						print $formaccounting->select_auxaccount($subledger_account, 'subledger_account', 1);
+						print $formaccounting->select_auxaccount('', 'subledger_account', 1);
 					}
 					else
 					{
 						print '<input type="text" name="subledger_account" value="">';
 					}
 					print '</td>';
-					print '<td><input type="text" class="minwidth200" name="label_operation" value=""/></td>';
+					print '<td><input type="text" class="minwidth200" name="label_operation" value="'.$label_operation.'"/></td>';
 					print '<td class="right"><input type="text" size="6" class="right" name="debit" value=""/></td>';
 					print '<td class="right"><input type="text" size="6" class="right" name="credit" value=""/></td>';
 					print '<td><input type="submit" class="button" name="save" value="' . $langs->trans("Add") . '"></td>';

@@ -48,7 +48,7 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'societe', '', '');
 
 $id=GETPOST("id", "int");
-$source=GETPOST("source", "alpha");
+$source=GETPOST("source", "alpha");		// source can be a source or a paymentmode
 $ribid=GETPOST("ribid", "int");
 $action=GETPOST("action", 'alpha', 3);
 $cancel=GETPOST('cancel', 'alpha');
@@ -419,6 +419,15 @@ if (empty($reshook))
 		$companypaymentmode = new CompanyPaymentMode($db);
 		if ($companypaymentmode->fetch($ribid?$ribid:$id))
 		{
+			/*if ($companypaymentmode->stripe_card_ref && preg_match('/pm_/', $companypaymentmode->stripe_card_ref))
+			{
+				$payment_method = \Stripe\PaymentMethod::retrieve($companypaymentmode->stripe_card_ref);
+				if ($payment_method)
+				{
+					$payment_method->detach();
+				}
+			}*/
+
 			$result = $companypaymentmode->delete($user);
 			if ($result > 0)
 			{
@@ -586,7 +595,7 @@ if (empty($reshook))
 				$db->rollback();
 			}
 		}
-		if ($action == 'setlocalassourcedefault')
+		if ($action == 'setlocalassourcedefault')	// Set as default when payment mode defined locally (and may be also remotely)
 		{
 			try {
 				$companypaymentmode->setAsDefault($id);
@@ -601,11 +610,18 @@ if (empty($reshook))
 				setEventMessages($e->getMessage(), null, 'errors');
 			}
 		}
-		elseif ($action == 'setassourcedefault')
+		elseif ($action == 'setassourcedefault')	// Set as default when payment mode defined remotely only
 		{
 			try {
 				$cu=$stripe->customerStripe($object, $stripeacc, $servicestatus);
-				$cu->default_source = (string) $source;
+				if (preg_match('/pm_/', $source))
+				{
+					$cu->invoice_settings->default_payment_method = (string) $source;	// New
+				}
+				else
+				{
+					$cu->default_source = (string) $source;								// Old
+				}
 				$result = $cu->save();
 
 				$url=DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id;
@@ -1113,7 +1129,8 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				print '</td>';
 				// Default
 				print '<td class="center" width="50">';
-				if (($customerstripe->default_source != $src->id))
+				if ((empty($customerstripe->invoice_settings) && $customerstripe->default_source != $src->id) ||
+					(! empty($customerstripe->invoice_settings) && $customerstripe->invoice_settings->default_payment_method != $src->id))
 				{
 					print '<a href="' . DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&source='.$src->id.'&action=setassourcedefault">';
 					print img_picto($langs->trans("Default"), 'off');
