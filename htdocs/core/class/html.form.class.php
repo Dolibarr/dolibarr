@@ -6480,7 +6480,7 @@ class Form
     public function showLinkedObjectBlock($object, $morehtmlright = '', $compatibleImportElementsList = false)
 	{
 		global $conf,$langs,$hookmanager;
-		global $bc;
+		global $bc, $action;
 
 		$object->fetchObjectLinked();
 
@@ -6525,6 +6525,7 @@ class Form
 				    $showImportButton=true;
 				}
 
+				$regs = array();
 				if ($objecttype != 'supplier_proposal' && preg_match('/^([^_]+)_([^_]+)/i', $objecttype, $regs))
 				{
 					$element = $regs[1];
@@ -6628,7 +6629,7 @@ class Form
     public function showLinkToObjectBlock($object, $restrictlinksto = array(), $excludelinksto = array())
 	{
 		global $conf, $langs, $hookmanager;
-		global $bc;
+		global $bc, $action;
 
 		$linktoelem='';
 		$linktoelemlist='';
@@ -6662,8 +6663,6 @@ class Form
 				'invoice_supplier'=>array('enabled'=>$conf->supplier_invoice->enabled , 'perms'=>1, 'label'=>'LinkToSupplierInvoice', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_supplier, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_fourn as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$listofidcompanytoscan.') AND t.entity IN ('.getEntity('facture_fourn').')')
 			);
 		}
-
-		global $action;
 
 		// Can complete the possiblelink array
 		$hookmanager->initHooks(array('commonobject'));
