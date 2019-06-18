@@ -5,7 +5,7 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 
 
 /* ============================================================================== */
-/* Boutons actions                                                                */
+/* Buttons for actions                                                            */
 /* ============================================================================== */
 
 div.divButAction {

@@ -320,7 +320,7 @@ class SocieteAccount extends CommonObject
 	* @param	string	$id			Id of customer in external system (example: 'cu_xxxxxxxxxxxxx', ...)
 	* @param	string	$site		Site (example: 'stripe', '...')
 	* @param	int		$status		Status (0=test, 1=live)
-	* @return	string				Id of third party
+	* @return	int					Id of third party
 	* @see getCustomerAccount()
 	*/
 	public function getThirdPartyID($id, $site, $status = 0)

@@ -1391,9 +1391,10 @@ else
 
                 if (! $edit)
                 {
-		            print '<div class="tabsAction">';
+                	// Buttons for actions
 
-                    // Boutons d'actions
+                	print '<div class="tabsAction">';
+
 		            if ($cancreate && $object->statut == Holiday::STATUS_DRAFT)
                     {
                         print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit" class="butAction">'.$langs->trans("EditCP").'</a>';

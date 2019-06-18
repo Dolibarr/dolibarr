@@ -53,11 +53,11 @@ if( (array) $linked_resources && count($linked_resources) > 0)
 		}
 		else
 		{
-			$style='';
+			$class='';
 			if ($linked_resource['rowid'] == GETPOST('lineid'))
-				$style='style="background: orange;"';
+				$class='highlight';
 
-			print '<div class="tagtr oddeven" '.$style.'>';
+			print '<div class="tagtr oddeven'.($class?' '.$class:'').'">';
 
 			print '<div class="tagtd">';
 			print $object_resource->getNomUrl(1);
@@ -81,7 +81,7 @@ if( (array) $linked_resources && count($linked_resources) > 0)
 			print '</a>';
 			print '&nbsp;';
 			print '<a href="'.$_SERVER['PHP_SELF'].'?action=delete_resource&id='.$linked_resource['resource_id'].'&element='.$element.'&element_id='.$element_id.'&lineid='.$linked_resource['rowid'].'">';
-			print img_delete();
+			print img_picto($langs->trans("Unlink"), 'unlink');
 			print '</a>';
 			print '</div>';
 

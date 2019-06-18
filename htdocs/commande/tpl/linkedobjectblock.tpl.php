@@ -39,6 +39,8 @@ $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 // Load translation files required by the page
 $langs->load("orders");
 
+$linkedObjectBlock = dol_sort_array($linkedObjectBlock, 'date', 'desc');
+
 $total=0; $ilink=0;
 foreach($linkedObjectBlock as $key => $objectlink)
 {
