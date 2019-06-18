@@ -867,7 +867,6 @@ class UserGroup extends CommonObject
 		if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && $withpicto) $withpicto=0;
 
 		$result=''; $label='';
-		$link=''; $linkstart=''; $linkend='';
 
 		$label.= '<div class="centpercent">';
 		$label.= '<u>' . $langs->trans("Group") . '</u><br>';
@@ -957,7 +956,7 @@ class UserGroup extends CommonObject
     public function _load_ldap_info()
 	{
         // phpcs:enable
-		global $conf,$langs;
+		global $conf;
 
 		$info=array();
 
