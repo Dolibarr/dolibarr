@@ -58,8 +58,8 @@ if ($id > 0)
 {
     $canread=0;
     if ($id == $user->id) $canread=1;
-    if (! empty($user->rights->holiday->read_all)) $canread=1;
-    if (! empty($user->rights->holiday->read) && in_array($id, $childids)) $canread=1;
+    if (! empty($user->rights->expensereport->readall)) $canread=1;
+    if (! empty($user->rights->expensereport->lire) && in_array($id, $childids)) $canread=1;
     if (! $canread)
     {
         accessforbidden();
