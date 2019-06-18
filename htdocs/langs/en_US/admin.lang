@@ -804,6 +804,7 @@ Permission401=Read discounts
 Permission402=Create/modify discounts
 Permission403=Validate discounts
 Permission404=Delete discounts
+Permission430=Use Debug Bar
 Permission511=Read payments of salaries
 Permission512=Create/modify payments of salaries
 Permission514=Delete payments of salaries
