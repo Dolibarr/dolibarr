@@ -294,7 +294,7 @@ if ($result && $action == "dl" && ! $error)
 
     dol_mkdir($dirfortmpfile);
 
-    $log=$langs->transnoentitiesnoconv("Type").','.$langs->transnoentitiesnoconv("Date").','.$langs->transnoentitiesnoconv("Ref").','.$langs->transnoentitiesnoconv("TotalHT").','.$langs->transnoentitiesnoconv("TotalTTC").','.$langs->transnoentitiesnoconv("TotalVAT").','.$langs->transnoentitiesnoconv("Paid").',filename,item_id,'.$langs->trans("ThirdParty").','.$langs->trans("Code").','.$langs->trans("Country").','.$langs->trans("VATIntra")."\n";
+    $log=$langs->transnoentitiesnoconv("Type").','.$langs->transnoentitiesnoconv("Date").','.$langs->transnoentitiesnoconv("Ref").','.$langs->transnoentitiesnoconv("TotalHT").','.$langs->transnoentitiesnoconv("TotalTTC").','.$langs->transnoentitiesnoconv("TotalVAT").','.$langs->transnoentitiesnoconv("Paid").',filename,item_id,'.$langs->transnoentitiesnoconv("ThirdParty").','.$langs->transnoentitiesnoconv("Code").','.$langs->transnoentitiesnoconv("Country").','.$langs->transnoentitiesnoconv("VATIntra")."\n";
     $zipname = $dirfortmpfile.'/'.dol_print_date($date_start, 'dayrfc')."-".dol_print_date($date_stop, 'dayrfc').'_export.zip';
 
     dol_delete_file($zipname);
