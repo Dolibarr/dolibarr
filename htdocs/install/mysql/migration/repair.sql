@@ -400,6 +400,7 @@ ALTER TABLE llx_accounting_account ADD UNIQUE INDEX uk_accounting_account (accou
 -- p.tva_tx = 0
 -- where price = 17.5
 
+UPDATE llx_chargesociales SET date_creation = tms WHERE date_creation IS NULL;
 
 -- VMYSQL4.1 SET sql_mode = 'ALLOW_INVALID_DATES';
 -- VMYSQL4.1 update llx_accounting_account set tms = datec where DATE(STR_TO_DATE(tms, '%Y-%m-%d')) IS NULL;
