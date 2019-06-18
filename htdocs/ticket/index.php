@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) - 2013-2016     Jean-François FERRY    <hello@librethic.io>
+/* Copyright (C) - 2013-2016    Jean-François FERRY     <hello@librethic.io>
+ * Copyright (C) - 2019         Nicolas ZABOURI         <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +25,11 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/ticket/class/actions_ticket.class.php';
 require_once DOL_DOCUMENT_ROOT . '/ticket/class/ticketstats.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/dolgraph.class.php';
+
+$hookmanager = new HookManager($db);
+
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('ticketsindex'));
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'other', 'ticket'));
@@ -370,6 +376,9 @@ if ($result) {
 
 print '</div></div></div>';
 print '<div style="clear:both"></div>';
+
+$parameters = array('user' => $user);
+$reshook = $hookmanager->executeHooks('dashboardTickets', $parameters, $object); // Note that $action and $object may have been modified by hook
 
 // End of page
 llxFooter('');
