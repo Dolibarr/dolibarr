@@ -73,16 +73,17 @@ $arrayfields=array(
 if (empty($conf->comptabilite->enabled) && empty($conf->accounting->enabled)) {
     accessforbidden();
 }
-if ($user->societe_id > 0)
+if ($user->societe_id > 0) {
     accessforbidden();
+}
 
+$entity = GETPOST('entity', 'int')?GETPOST('entity', 'int'):$conf->entity;
 
 
 /*
  * Actions
  */
 
-$entity = GETPOST('entity','int')?GETPOST('entity','int'):$conf->entity;
 
 //$parameters = array('socid' => $id);
 //$reshook = $hookmanager->executeHooks('doActions', $parameters, $object); // Note that $object may have been modified by some hooks
