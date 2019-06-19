@@ -353,11 +353,17 @@ class pdf_strato extends ModelePDFContract
 						$desc=dol_htmlentitiesbr($objectligne->desc, 1);   // Desc (not empty for free lines)
 						$txt='';
 						$txt.=$outputlangs->transnoentities("Quantity").' : <strong>'.$objectligne->qty.'</strong> - '.$outputlangs->transnoentities("UnitPrice").' : <strong>'.price($objectligne->subprice).'</strong>';   // Desc (not empty for free lines)
-						$txt.='<br>';
-						$txt.=$outputlangs->transnoentities("DateStartPlannedShort")." : <strong>".$datei."</strong> - ".$outputlangs->transnoentities("DateEndPlanned")." : <strong>".$datee.'</strong>';
-						$txt.='<br>';
-                        $txt.=$outputlangs->transnoentities("DateStartRealShort")." : <strong>".$daters.'</strong>';
-						if ($objectligne->date_cloture) $txt.=" - ".$outputlangs->transnoentities("DateEndRealShort")." : '<strong>'".$datere.'</strong>';
+						if (empty($conf->global->CONTRACT_HIDE_PLANNED_DATE_ON_PDF))
+						{
+							$txt.='<br>';
+							$txt.=$outputlangs->transnoentities("DateStartPlannedShort")." : <strong>".$datei."</strong> - ".$outputlangs->transnoentities("DateEndPlanned")." : <strong>".$datee.'</strong>';
+						}
+						if (empty($conf->global->CONTRACT_HIDE_REAL_DATE_ON_PDF))
+						{
+							$txt.='<br>';
+	                        $txt.=$outputlangs->transnoentities("DateStartRealShort")." : <strong>".$daters.'</strong>';
+							if ($objectligne->date_cloture) $txt.=" - ".$outputlangs->transnoentities("DateEndRealShort")." : '<strong>'".$datere.'</strong>';
+						}
 
 						$pdf->startTransaction();
 						$pdf->writeHTMLCell(0, 0, $curX, $curY, dol_concatdesc($txtpredefinedservice, dol_concatdesc($txt, $desc)), 0, 1, 0);

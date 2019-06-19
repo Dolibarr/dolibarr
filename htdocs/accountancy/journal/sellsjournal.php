@@ -26,7 +26,7 @@
 
 /**
  * \file		htdocs/accountancy/journal/sellsjournal.php
- * \ingroup		Advanced accountancy
+ * \ingroup		Accountancy (Double entries)
  * \brief		Page with sells journal
  */
 
@@ -680,6 +680,7 @@ if (empty($action) || $action == 'view') {
 
 	// Button to write into Ledger
 	if (empty($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER) || $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == '-1') {
+		print '<br>';
 		print img_warning().' '.$langs->trans("SomeMandatoryStepsOfSetupWereNotDone");
 		print ' : '.$langs->trans("AccountancyAreaDescMisc", 4, '<strong>'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("MenuDefaultAccounts").'</strong>');
 	}
@@ -719,14 +720,13 @@ if (empty($action) || $action == 'view') {
 	print '<div class="div-table-responsive">';
 	print "<table class=\"noborder\" width=\"100%\">";
 	print "<tr class=\"liste_titre\">";
-	print "<td></td>";
 	print "<td>" . $langs->trans("Date") . "</td>";
 	print "<td>" . $langs->trans("Piece") . ' (' . $langs->trans("InvoiceRef") . ")</td>";
 	print "<td>" . $langs->trans("AccountAccounting") . "</td>";
 	print "<td>" . $langs->trans("SubledgerAccount") . "</td>";
 	print "<td>" . $langs->trans("LabelOperation") . "</td>";
-	print "<td class='right'>" . $langs->trans("Debit") . "</td>";
-	print "<td class='right'>" . $langs->trans("Credit") . "</td>";
+	print '<td class="center">' . $langs->trans("Debit") . "</td>";
+	print '<td class="center">' . $langs->trans("Credit") . "</td>";
 	print "</tr>\n";
 
 	$r = '';
@@ -764,7 +764,7 @@ if (empty($action) || $action == 'view') {
 		if ($replacedinvoice == 1)
 		{
 			print '<tr class="oddeven">';
-			print "<td><!-- Replaced invoice --></td>";
+			print "<!-- Replaced invoice -->";
 			print "<td>" . $date . "</td>";
 			print "<td><strike>" . $invoicestatic->getNomUrl(1) . "</strike></td>";
 			// Account
@@ -785,7 +785,7 @@ if (empty($action) || $action == 'view') {
 		if ($errorforinvoice[$key] == 'somelinesarenotbound')
 		{
 			print '<tr class="oddeven">';
-			print "<td><!-- Some lines are not bound --></td>";
+			print "<!-- Some lines are not bound -->";
 			print "<td>" . $date . "</td>";
 			print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
 			// Account
@@ -807,7 +807,7 @@ if (empty($action) || $action == 'view') {
 		{
 			//if ($mt) {
 				print '<tr class="oddeven">';
-				print "<td><!-- Thirdparty --></td>";
+				print "<!-- Thirdparty -->";
 				print "<td>" . $date . "</td>";
 				print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
 				// Account
@@ -829,8 +829,8 @@ if (empty($action) || $action == 'view') {
 				else print $accountoshow;
 				print '</td>';
 				print "<td>" . $companystatic->getNomUrl(0, 'customer', 16) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("SubledgerAccount") . "</td>";
-				print '<td class="right">' . ($mt >= 0 ? price($mt) : '') . "</td>";
-				print '<td class="right">' . ($mt < 0 ? price(- $mt) : '') . "</td>";
+				print '<td class="right nowraponall">' . ($mt >= 0 ? price($mt) : '') . "</td>";
+				print '<td class="right nowraponall">' . ($mt < 0 ? price(- $mt) : '') . "</td>";
 				print "</tr>";
 			//}
 		}
@@ -843,7 +843,7 @@ if (empty($action) || $action == 'view') {
 
 			//if ($mt) {
 				print '<tr class="oddeven">';
-				print "<td><!-- Product --></td>";
+				print "<!-- Product -->";
 				print "<td>" . $date . "</td>";
 				print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
 				// Account
@@ -861,8 +861,8 @@ if (empty($action) || $action == 'view') {
 				$companystatic->id = $tabcompany[$key]['id'];
 				$companystatic->name = $tabcompany[$key]['name'];
 				print "<td>" . $companystatic->getNomUrl(0, 'customer', 16) . ' - ' . $invoicestatic->ref . ' - ' . $accountingaccount->label . "</td>";
-				print "<td class='right'>" . ($mt < 0 ? price(- $mt) : '') . "</td>";
-				print "<td class='right'>" . ($mt >= 0 ? price($mt) : '') . "</td>";
+				print '<td class="right nowraponall">' . ($mt < 0 ? price(- $mt) : '') . "</td>";
+				print '<td class="right nowraponall">' . ($mt >= 0 ? price($mt) : '') . "</td>";
 				print "</tr>";
 			//}
 		}
@@ -878,7 +878,7 @@ if (empty($action) || $action == 'view') {
 			foreach ($arrayofvat[$key] as $k => $mt) {
 				if ($mt) {
 					print '<tr class="oddeven">';
-					print "<td><!-- VAT --></td>";
+					print "<!-- VAT -->";
 					print "<td>" . $date . "</td>";
 					print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
 					// Account
@@ -895,8 +895,8 @@ if (empty($action) || $action == 'view') {
 					print '</td>';
 					print "<td>" . $companystatic->getNomUrl(0, 'customer', 16) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("VAT"). ' '.join(', ', $def_tva[$key][$k]).' %'.($numtax?' - Localtax '.$numtax:'');
 					print "</td>";
-					print '<td class="right">' . ($mt < 0 ? price(- $mt) : '') . "</td>";
-					print '<td class="right">' . ($mt >= 0 ? price($mt) : '') . "</td>";
+					print '<td class="right nowraponall">' . ($mt < 0 ? price(- $mt) : '') . "</td>";
+					print '<td class="right nowraponall">' . ($mt >= 0 ? price($mt) : '') . "</td>";
 					print "</tr>";
 				}
 			}

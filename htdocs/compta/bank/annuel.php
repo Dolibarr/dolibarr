@@ -217,7 +217,7 @@ for ($mois = 1 ; $mois < 13 ; $mois++)
 		}
 		print "</td>";
 
-		print '<td class="right" class="borderrightlight" width="10%">&nbsp;';
+		print '<td class="right borderrightlight" width="10%">&nbsp;';
 		if ($encaiss[$case]>0)
 		{
 			print price($encaiss[$case]);
@@ -232,7 +232,7 @@ for ($mois = 1 ; $mois < 13 ; $mois++)
 print '<tr class="liste_total"><td><b>'.$langs->trans("Total")."</b></td>";
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
-	print '<td class="right"><b>'.price($totsorties[$annee]).'</b></td><td class="right"><b>'.price($totentrees[$annee]).'</b></td>';
+	print '<td class="right nowraponall"><b>'.price($totsorties[$annee]).'</b></td><td class="right nowraponall"><b>'.price($totentrees[$annee]).'</b></td>';
 }
 print "</tr>\n";
 

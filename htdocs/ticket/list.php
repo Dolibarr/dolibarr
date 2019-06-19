@@ -34,7 +34,7 @@ include_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
 include_once DOL_DOCUMENT_ROOT . '/core/lib/project.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("ticket","companies","other","projects"));
+$langs->loadLangs(array("ticket", "companies", "other", "projects"));
 
 
 // Get parameters
@@ -314,7 +314,7 @@ if ($socid && !$projectid && $user->rights->societe->lire) {
         print '<div class="fichecenter">';
 
         print '<div class="underbanner clearboth"></div>';
-        print '<table class="border centpercent">';
+        print '<table class="border centpercent tableforfield">';
 
         // Customer code
         if ($socstat->client && !empty($socstat->code_client)) {
@@ -608,7 +608,7 @@ while ($i < min($num, $limit))
 	$object->id = $obj->rowid;
 	foreach($object->fields as $key => $val)
 	{
-		if (isset($obj->$key)) $object->$key = $obj->$key;
+		if (property_exists($obj, $key)) $object->$key = $obj->$key;
 	}
 	$langs->load("ticket");
 

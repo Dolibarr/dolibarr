@@ -169,21 +169,21 @@ class CompanyPaymentMode extends CommonObject
 
 	public $starting_date;
 	public $ending_date;
-	
+
 	/**
      * Date creation record (datec)
      *
      * @var integer
      */
     public $datec;
-	
+
 	/**
      * Date modification record (tms)
      *
      * @var integer
      */
     public $tms;
-    
+
 	public $import_key;
 	// END MODULEBUILDER PROPERTIES
 
@@ -297,15 +297,15 @@ class CompanyPaymentMode extends CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param 	int    	$id   	Id object
-	 * @param 	string 	$ref  	Ref
-	 * @param	int		$socid	Id of company to get first default payment mode
-	 * @param	string	$type	Filter on type ('ban', 'card', ...)
-	 * @return 	int         	<0 if KO, 0 if not found, >0 if OK
+	 * @param 	int    	$id   			Id object
+	 * @param 	string 	$ref  			Ref
+	 * @param	int		$socid			Id of company to get first default payment mode
+	 * @param	string	$type			Filter on type ('ban', 'card', ...)
+	 * @param	string	$morewhere		More SQL filters (' AND ...')
+	 * @return 	int         			<0 if KO, 0 if not found, >0 if OK
 	 */
-	public function fetch($id, $ref = null, $socid = 0, $type = '')
+	public function fetch($id, $ref = null, $socid = 0, $type = '', $morewhere = '')
 	{
-		$morewhere = '';
 		if ($socid) $morewhere.= " AND fk_soc  = ".$this->db->escape($socid)." AND default_rib = 1";
 		if ($type)  $morewhere.= " AND type = '".$this->db->escape($type)."'";
 

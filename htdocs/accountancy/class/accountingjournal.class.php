@@ -17,7 +17,7 @@
 
 /**
  * \file		htdocs/accountancy/class/accountingjournal.class.php
- * \ingroup		Advanced accountancy
+ * \ingroup		Accountancy (Double entries)
  * \brief		File of class to manage accounting journals
  */
 

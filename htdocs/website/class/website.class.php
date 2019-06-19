@@ -489,8 +489,7 @@ class Website extends CommonObject
 
 		if (! $error && ! empty($this->ref))
 		{
-			global $dolibarr_main_data_root;
-			$pathofwebsite=$dolibarr_main_data_root.'/website/'.$this->ref;
+			$pathofwebsite=DOL_DATA_ROOT.'/website/'.$this->ref;
 
 			dol_delete_dir_recursive($pathofwebsite);
 		}
@@ -519,7 +518,7 @@ class Website extends CommonObject
 	 */
 	public function createFromClone($user, $fromid, $newref, $newlang = '')
 	{
-        global $conf, $hookmanager;
+        global $conf;
 		global $dolibarr_main_data_root;
 
 		$now = dol_now();
@@ -542,8 +541,9 @@ class Website extends CommonObject
 		$object->fetch($fromid);
 
 		$oldidforhome=$object->fk_default_home;
+		$oldref=$object->ref;
 
-		$pathofwebsiteold=$dolibarr_main_data_root.'/website/'.$object->ref;
+		$pathofwebsiteold=$dolibarr_main_data_root.'/website/'.$oldref;
 		$pathofwebsitenew=$dolibarr_main_data_root.'/website/'.$newref;
 		dol_delete_dir_recursive($pathofwebsitenew);
 
@@ -575,14 +575,23 @@ class Website extends CommonObject
 			dolCopyDir($pathofwebsiteold, $pathofwebsitenew, $conf->global->MAIN_UMASK, 0);
 
 			// Check symlink to medias and restore it if ko
-			$pathtomedias=DOL_DATA_ROOT.'/medias';
-			$pathtomediasinwebsite=$pathofwebsitenew.'/medias';
+			$pathtomedias=DOL_DATA_ROOT.'/medias';					// Target
+			$pathtomediasinwebsite=$pathofwebsitenew.'/medias';		// Source / Link name
 			if (! is_link(dol_osencode($pathtomediasinwebsite)))
 			{
 				dol_syslog("Create symlink for ".$pathtomedias." into name ".$pathtomediasinwebsite);
 				dol_mkdir(dirname($pathtomediasinwebsite));     // To be sure dir for website exists
 				$result = symlink($pathtomedias, $pathtomediasinwebsite);
 			}
+
+			// Copy images and js dir
+			$pathofmediasjsold=DOL_DATA_ROOT.'/medias/js/'.$oldref;
+			$pathofmediasjsnew=DOL_DATA_ROOT.'/medias/js/'.$newref;
+			dolCopyDir($pathofmediasjsold, $pathofmediasjsnew, $conf->global->MAIN_UMASK, 0);
+
+			$pathofmediasimageold=DOL_DATA_ROOT.'/medias/image/'.$oldref;
+			$pathofmediasimagenew=DOL_DATA_ROOT.'/medias/image/'.$newref;
+			dolCopyDir($pathofmediasimageold, $pathofmediasimagenew, $conf->global->MAIN_UMASK, 0);
 
 			$newidforhome=0;
 
@@ -883,6 +892,7 @@ class Website extends CommonObject
 
 			// Warning: We must keep llx_ here. It is a generic SQL.
 			$line = 'INSERT INTO llx_website_page(rowid, fk_page, fk_website, pageurl, aliasalt, title, description, image, keywords, status, date_creation, tms, lang, import_key, grabbed_from, type_container, htmlheader, content)';
+
 			$line.= " VALUES(";
 			$line.= $objectpageold->newid."__+MAX_llx_website_page__, ";
 			$line.= ($objectpageold->newfk_page ? $this->db->escape($objectpageold->newfk_page)."__+MAX_llx_website_page__" : "null").", ";
@@ -930,7 +940,8 @@ class Website extends CommonObject
 			//var_dump($this->fk_default_home.' - '.$objectpageold->id.' - '.$objectpageold->newid);exit;
 			if ($this->fk_default_home > 0 && ($objectpageold->id == $this->fk_default_home) && ($objectpageold->newid > 0))	// This is the record with home page
 			{
-				$line = "UPDATE llx_website SET fk_default_home = ".($objectpageold->newid > 0 ? $this->db->escape($objectpageold->newid)."__+MAX_llx_website_page__" : "null")." WHERE rowid = __WEBSITE_ID__;";
+			    // Warning: We must keep llx_ here. It is a generic SQL.
+			    $line = "UPDATE llx_website SET fk_default_home = ".($objectpageold->newid > 0 ? $this->db->escape($objectpageold->newid)."__+MAX_llx_website_page__" : "null")." WHERE rowid = __WEBSITE_ID__;";
 				$line.= "\n";
 				fputs($fp, $line);
 			}

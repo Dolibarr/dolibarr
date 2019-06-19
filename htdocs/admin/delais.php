@@ -268,8 +268,8 @@ print $langs->trans("DescWeather").'<br>';
 
 if($action == 'edit') {
 
-	$str_mode_std = $langs->trans('MeteoStdModEnabled').' : '.$langs->trans('MeteoUseMod', $langs->trans('MeteoPercentageMod'));
-	$str_mode_percentage = $langs->trans('MeteoPercentageModEnabled').' : '.$langs->trans('MeteoUseMod', $langs->trans('MeteoStdMod'));
+	$str_mode_std = $langs->trans('MeteoStdModEnabled').' : '.$langs->trans('MeteoUseMod', $langs->transnoentitiesnoconv('MeteoPercentageMod'));
+	$str_mode_percentage = $langs->trans('MeteoPercentageModEnabled').' : '.$langs->trans('MeteoUseMod', $langs->transnoentitiesnoconv('MeteoStdMod'));
 	if(empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) $str_mode_enabled = $str_mode_std;
 	else $str_mode_enabled = $str_mode_percentage;
 	print '<a href="#" onclick="return false;" id="change_mode">'.$str_mode_enabled.'</a>';
@@ -418,7 +418,6 @@ if($action == 'edit') {
 	print '<br></form>';
 } else {
 
-	// Boutons d'action
 	print '<br><div class="tabsAction">';
 	print '<a class="butAction" href="delais.php?action=edit">'.$langs->trans("Modify").'</a></div>';
 }
