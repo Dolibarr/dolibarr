@@ -2221,6 +2221,7 @@ else
 			elseif($object->type == FactureFournisseur::TYPE_CREDIT_NOTE) $type_fac = 'CreditNote';
 			elseif($object->type == FactureFournisseur::TYPE_DEPOSIT) $type_fac = 'Deposit';
 			$text = $langs->trans('ConfirmConvertToReducSupplier', strtolower($langs->transnoentities($type_fac)));
+			$text .= '<br>'.$langs->trans('ConfirmConvertToReducSupplier2');
 			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $langs->trans('ConvertToReduc'), $text, 'confirm_converttoreduc', '', "yes", 2);
 		}
 
@@ -3107,7 +3108,7 @@ else
 					}
 					// For credit note
 					if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE && $object->statut == 1 && $object->paye == 0 && $user->rights->fournisseur->facture->creer && $object->getSommePaiement() == 0) {
-						print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?facid=' . $object->id . '&amp;action=converttoreduc">' . $langs->trans('ConvertToReduc') . '</a></div>';
+						print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?facid=' . $object->id . '&amp;action=converttoreduc" title="'.dol_escape_htmltag($langs->trans("ConfirmConvertToReducSupplier2")).'">' . $langs->trans('ConvertToReduc') . '</a></div>';
 					}
 					// For deposit invoice
 					if ($object->type == FactureFournisseur::TYPE_DEPOSIT && $object->paye == 1 && $resteapayer == 0 && $user->rights->fournisseur->facture->creer && empty($discount->id))
