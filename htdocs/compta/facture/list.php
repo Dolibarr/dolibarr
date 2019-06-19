@@ -959,11 +959,11 @@ if ($resql)
 			$totalcreditnotes = $facturestatic->getSumCreditNotesUsed();
 			$totaldeposits = $facturestatic->getSumDepositsUsed();
 			$totalpay = $paiement + $totalcreditnotes + $totaldeposits;
-			$remaintopay = $facturestatic->total_ttc - $totalpay;
+			$remaintopay = price2num($facturestatic->total_ttc - $totalpay);
 			if ($facturestatic->type == Facture::TYPE_CREDIT_NOTE && $obj->paye == 1) {
 				$remaincreditnote = $discount->getAvailableDiscounts($obj->fk_soc, '', 'rc.fk_facture_source='.$facturestatic->id);
 				$remaintopay = -$remaincreditnote;
-				$totalpay = $facturestatic->total_ttc - $remaintopay;
+				$totalpay = price2num($facturestatic->total_ttc - $remaintopay);
 			}
 
             print '<tr class="oddeven"';

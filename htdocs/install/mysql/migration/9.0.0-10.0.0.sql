@@ -60,6 +60,8 @@ CREATE TABLE llx_pos_cash_fence(
 
 -- For 10.0
 
+UPDATE llx_chargesociales SET date_creation = tms WHERE date_creation IS NULL;
+
 DROP TABLE llx_cotisation;
 ALTER TABLE llx_accounting_bookkeeping DROP COLUMN validated;
 ALTER TABLE llx_accounting_bookkeeping_tmp DROP COLUMN validated;

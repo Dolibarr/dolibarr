@@ -525,7 +525,7 @@ class Contact extends CommonObject
 	 *
 	 *	@return		array		Tableau info des attributs
 	 */
-	private function _load_ldap_info()
+	public function _load_ldap_info()
 	{
         // phpcs:enable
 		global $conf, $langs;

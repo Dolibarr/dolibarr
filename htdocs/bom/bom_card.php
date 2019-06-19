@@ -173,7 +173,6 @@ if (empty($reshook))
 			$action = '';
 		}
 	}
-
 }
 
 
