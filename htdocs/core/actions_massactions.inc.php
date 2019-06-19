@@ -209,7 +209,7 @@ if (! $error && $massaction == 'confirm_presend')
 					$resaction.='<div class="error">'.$langs->trans('ErrorOnlyProposalNotDraftCanBeSentInMassAction',$objectobj->ref).'</div><br>';
 					continue; // Payment done or started or canceled
 				}
-				if ($objectclass == 'Commande' && $objectoj->statut == Commande::STATUS_DRAFT)
+				if ($objectclass == 'Commande' && $objectobj->statut == Commande::STATUS_DRAFT)
 				{
 					$langs->load("errors");
 					$nbignored++;
