@@ -293,9 +293,9 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 					}else print "<td></td>";
 				}
     			print "<td>".$refcomp."</td>";
-    			if ($obj->total_ttc < 0) { print "<td class=\"right\">".price(abs($total_ttc))."</td><td>&nbsp;</td>"; };
-    			if ($obj->total_ttc >= 0) { print "<td>&nbsp;</td><td class=\"right\">".price($total_ttc)."</td>"; };
-    			print '<td class="right">'.price($solde).'</td>';
+    			if ($obj->total_ttc < 0) { print "<td class='nowrap right'>".price(abs($total_ttc))."</td><td>&nbsp;</td>"; };
+    			if ($obj->total_ttc >= 0) { print "<td>&nbsp;</td><td class='nowrap right'>".price($total_ttc)."</td>"; };
+    			print '<td class="nowrap right">'.price($solde).'</td>';
     			print "</tr>";
 			}
 
