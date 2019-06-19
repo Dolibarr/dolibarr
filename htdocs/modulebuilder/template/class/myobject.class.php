@@ -73,8 +73,13 @@ class MyObject extends CommonObject
 	 *  'type' if the field format ('integer', 'integer:Class:pathtoclass', 'varchar(x)', 'double(24,8)', 'text', 'html', 'datetime', 'timestamp', 'float')
 	 *  'label' the translation key.
 	 *  'enabled' is a condition when the field must be managed.
-	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). Using a negative value means field is not shown by default on list but can be selected for viewing)
-	 *  'noteditable' says if field is not editable (1 or 0)
+	 *  'visible' says if field is visible in list (Examples:
+     *      * 0=Not visible,
+     * 1=Visible on list and create/update/view forms,
+     * 2=Visible on list only.
+     * Using a negative value means field is not shown by default on list but can be selected for viewing)
+     * -1=Visible on create/update/view forms and can be selected for viewing On lists
+     * -2= can be selected for viewing On lists)
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'default' is a default value for creation (can still be replaced by the global setup of default values)
 	 *  'index' if we want an index in database.
