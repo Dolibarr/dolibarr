@@ -504,7 +504,7 @@ class FactureFournisseur extends CommonInvoice
      */
     public function fetch($id='',$ref='')
     {
-        global $langs, $conf;
+        global $langs;
 
         $sql = "SELECT";
         $sql.= " t.rowid,";
@@ -555,7 +555,7 @@ class FactureFournisseur extends CommonInvoice
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as p ON t.fk_mode_reglement = p.id";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON t.fk_incoterms = i.rowid';
         if ($id)  $sql.= " WHERE t.rowid=".$id;
-        if ($ref) $sql.= " WHERE t.ref='".$this->db->escape($ref)."' AND t.entity = ".$conf->entity;
+        if ($ref) $sql.= " WHERE t.ref='".$this->db->escape($ref)."' AND t.entity IN (".getEntity('supplier_invoice').")";
 
         dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
         $resql=$this->db->query($sql);
