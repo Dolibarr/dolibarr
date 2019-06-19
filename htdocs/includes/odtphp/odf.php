@@ -745,7 +745,7 @@ IMG;
 	private function _rrmdir($dir)
 	{
 		if ($handle = opendir($dir)) {
-			while (($file = readdir($handle))!==false) {
+			while (($file = readdir($handle)) !== false) {
 				if ($file != '.' && $file != '..') {
 					if (is_dir($dir . '/' . $file)) {
 						$this->_rrmdir($dir . '/' . $file);

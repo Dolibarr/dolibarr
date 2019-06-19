@@ -133,6 +133,7 @@ TicketsIndex=Ticket - home
 TicketList=List of tickets
 TicketAssignedToMeInfos=This page display ticket list created by or assigned to current user
 NoTicketsFound=No ticket found
+NoUnreadTicketsFound=No unread ticket found
 TicketViewAllTickets=View all tickets
 TicketViewNonClosedOnly=View only open tickets
 TicketStatByStatus=Tickets by status
