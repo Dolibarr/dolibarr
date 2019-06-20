@@ -3,6 +3,7 @@
  * Copyright (C) 2013-2015	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012-2014	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2015-2016	Alexandre Spangaro	<aspangaro@open-dsi.fr>
+ * Copyright (C) 2019           Nicolas ZABOURI         <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +36,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 if ($conf->deplacement->enabled) require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
 if ($conf->expensereport->enabled) require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
+
+$hookmanager = new HookManager($db);
+$hookmanager->initHooks('hrmindex');
 
 // Load translation files required by the page
 $langs->loadLangs(array('users', 'holidays', 'trips', 'boxes'));
@@ -391,6 +395,10 @@ if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire
 
 
 print '</div></div></div>';
+
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+$parameters = array('user' => $user);
+$reshook = $hookmanager->executeHooks('dashboardHRM', $parameters, $object); // Note that $action and $object may have been modified by hook
 
 // End of page
 llxFooter();

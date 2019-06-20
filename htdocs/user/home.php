@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2005-2018	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2018	Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2019           Nicolas ZABOURI         <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -285,6 +286,10 @@ if ($canreadperms)
 
 //print '</td></tr></table>';
 print '</div></div></div>';
+
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+$parameters = array('user' => $user);
+$reshook = $hookmanager->executeHooks('dashboardUsersGroups', $parameters, $object); // Note that $action and $object may have been modified by hook
 
 // End of page
 llxFooter();
