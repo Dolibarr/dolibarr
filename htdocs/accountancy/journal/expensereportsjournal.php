@@ -444,10 +444,10 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 
 	foreach ($taber as $key => $val) {
 	  $date = dol_print_date($val["date"], 'day');
-	  
+
 	  $userstatic->id = $tabuser[$key]['id'];
 	  $userstatic->name = $tabuser[$key]['name'];
-	  
+
 	  // Fees
 	  foreach ($tabht[$key] as $k => $mt) {
 	    $accountingaccount = new AccountingAccount($db);
@@ -474,7 +474,7 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 	      print "\n";
 	    }
 	  }
-	  
+
 	  // Third party
 	  foreach ($tabttc[$key] as $k => $mt) {
 	    print '"' . $date . '"' . $sep;
@@ -585,7 +585,7 @@ if (empty($action) || $action == 'view') {
 				// Account
 				print "<td>";
 				$accountoshow = length_accountg($k);
-				if (empty($accountoshow) || $accountoshow == 'NotDefined')
+				if (($accountoshow == "") || $accountoshow == 'NotDefined')
 				{
 					print '<span class="error">'.$langs->trans("FeeAccountNotDefined").'</span>';
 				}
@@ -615,7 +615,7 @@ if (empty($action) || $action == 'view') {
 			// Account
 			print "<td>";
 			$accountoshow = length_accounta($conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT);
-			if (empty($accountoshow) || $accountoshow == 'NotDefined')
+			if (($accountoshow == "") || $accountoshow == 'NotDefined')
 			{
 				print '<span class="error">'.$langs->trans("MainAccountForUsersNotDefined").'</span>';
 			}
@@ -624,7 +624,7 @@ if (empty($action) || $action == 'view') {
 			// Subledger account
 			print "<td>";
 			$accountoshow = length_accounta($k);
-			if (empty($accountoshow) || $accountoshow == 'NotDefined')
+			if (($accountoshow == "") || $accountoshow == 'NotDefined')
 			{
 				print '<span class="error">'.$langs->trans("UserAccountNotDefined").'</span>';
 			}
@@ -652,7 +652,7 @@ if (empty($action) || $action == 'view') {
 				// Account
 				print "<td>";
 				$accountoshow = length_accountg($k);
-				if (empty($accountoshow) || $accountoshow == 'NotDefined')
+				if (($accountoshow == "") || $accountoshow == 'NotDefined')
 				{
 					print '<span class="error">'.$langs->trans("VATAccountNotDefined").'</span>';
 				}

@@ -928,7 +928,7 @@ class Societe extends CommonObject
 		if (! empty($allowmodcodefournisseur) && ! empty($this->fournisseur))
 		{
 			// Attention get_codecompta peut modifier le code suivant le module utilise
-			if (empty($this->code_compta_fournisseur))
+			if ($this->code_compta_fournisseur == "")
 			{
 				$ret=$this->get_codecompta('supplier');
 				if ($ret < 0) return -1;
@@ -1085,7 +1085,7 @@ class Societe extends CommonObject
 			if ($supplier)
 			{
 				$sql .= ", code_fournisseur = ".(! empty($this->code_fournisseur)?"'".$this->db->escape($this->code_fournisseur)."'":"null");
-				$sql .= ", code_compta_fournisseur = ".(! empty($this->code_compta_fournisseur)?"'".$this->db->escape($this->code_compta_fournisseur)."'":"null");
+				$sql .= ", code_compta_fournisseur = ".(($this->code_compta_fournisseur != "")?"'".$this->db->escape($this->code_compta_fournisseur)."'":"null");
 			}
 			$sql .= ", fk_user_modif = ".($user->id > 0 ? $user->id:"null");
 			$sql .= ", fk_multicurrency = ".(int) $this->fk_multicurrency;
