@@ -165,7 +165,7 @@ class BOM extends CommonObject
 	 */
 	public function __construct(DoliDB $db)
 	{
-		global $conf, $langs, $user;
+		global $conf, $langs;
 
 		$this->db = $db;
 
@@ -184,11 +184,11 @@ class BOM extends CommonObject
 		// Translate some data of arrayofkeyval
 		foreach($this->fields as $key => $val)
 		{
-			if (is_array($this->fields['status']['arrayofkeyval']))
+			if (is_array($this->fields[$key]['arrayofkeyval']))
 			{
-				foreach($this->fields['status']['arrayofkeyval'] as $key2 => $val2)
+				foreach($this->fields[$key]['arrayofkeyval'] as $key2 => $val2)
 				{
-					$this->fields['status']['arrayofkeyval'][$key2]=$langs->trans($val2);
+					$this->fields[$key]['arrayofkeyval'][$key2]=$langs->trans($val2);
 				}
 			}
 		}
@@ -1066,7 +1066,7 @@ class BOMLine extends CommonObject
 	 */
 	public function __construct(DoliDB $db)
 	{
-		global $conf, $langs, $user;
+		global $conf, $langs;
 
 		$this->db = $db;
 
@@ -1085,11 +1085,11 @@ class BOMLine extends CommonObject
 		// Translate some data of arrayofkeyval
 		foreach($this->fields as $key => $val)
 		{
-			if (is_array($this->fields['status']['arrayofkeyval']))
+			if (is_array($this->fields[$key]['arrayofkeyval']))
 			{
-				foreach($this->fields['status']['arrayofkeyval'] as $key2 => $val2)
+				foreach($this->fields[$key]['arrayofkeyval'] as $key2 => $val2)
 				{
-					$this->fields['status']['arrayofkeyval'][$key2]=$langs->trans($val2);
+					$this->fields[$key]['arrayofkeyval'][$key2]=$langs->trans($val2);
 				}
 			}
 		}
