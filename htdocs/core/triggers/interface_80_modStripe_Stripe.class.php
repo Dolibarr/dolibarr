@@ -190,8 +190,8 @@ class InterfaceStripe
 						$customer->description = $desccleaned;
 						$customer->preferred_locales = $langcleaned;
 						$customer->tax_exempt = $taxexemptcleaned;
-						if (! empty($vatcleaned)) $customer->tax_ids = array('object'=>'list', 'data'=>array('value'=>$vatcleaned));
-						else $customer->tax_ids = null;
+						//if (! empty($vatcleaned)) $customer->tax_ids = array('object'=>'list', 'data'=>array('value'=>$vatcleaned));
+						//else $customer->tax_ids = null;
 
 						$customer->save();
 					}
