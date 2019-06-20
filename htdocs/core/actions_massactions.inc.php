@@ -377,9 +377,11 @@ if (! $error && $massaction == 'confirm_presend')
                     $subjectreplaced=make_substitutions($subject, $substitutionarray);
                     $messagereplaced=make_substitutions($message, $substitutionarray);
 
+
                     $attachedfiles=array('paths'=>array(), 'names'=>array(), 'mimes'=>array());
 					if($oneemailperrecipient)
 					{
+						// if "one email per recipient" isn't check we must collate $attachedfiles by thirdparty
 						if(is_array($attachedfilesThirdpartyObj[$thirdparty->id]) && count($attachedfilesThirdpartyObj[$thirdparty->id]))
 						{
 							foreach ($attachedfilesThirdpartyObj[$thirdparty->id] as $keyObjId =>  $objAttachedFiles){
@@ -394,6 +396,7 @@ if (! $error && $massaction == 'confirm_presend')
 					}
 					elseif(!empty($attachedfilesThirdpartyObj[$thirdparty->id][$objectid])){
 						// Create form object
+						// if "one email per recipient" isn't check we must separate $attachedfiles by object
 						$attachedfiles=$attachedfilesThirdpartyObj[$thirdparty->id][$objectid];
 					}
 
