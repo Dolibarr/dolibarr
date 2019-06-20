@@ -78,7 +78,6 @@ $list_account = array (
 
 $accounting_mode = empty($conf->global->ACCOUNTING_MODE) ? 'RECETTES-DEPENSES' : $conf->global->ACCOUNTING_MODE;
 
-
 if (GETPOST('change_chart', 'alpha'))
 {
     $chartofaccounts = GETPOST('chartofaccounts', 'int');
@@ -132,7 +131,7 @@ llxHeader();
 $linkback = '';
 print load_fiche_titre($langs->trans('MenuDefaultAccounts'), $linkback, 'title_accountancy');
 
-print $langs->trans("DefaultBindingDesc").'<br>';
+print '<span class="opacitymedium">'.$langs->trans("DefaultBindingDesc").'</span><br>';
 print '<br>';
 
 print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">';
