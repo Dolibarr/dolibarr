@@ -92,9 +92,6 @@ if (! $user->rights->accounting->bind->write)
 $hookmanager->initHooks(array('accountancycustomerlist'));
 
 $formaccounting = new FormAccounting($db);
-$accounting = new AccountingAccount($db);
-$aarowid_s = $accounting->fetch('', $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT, 1);
-$aarowid_p = $accounting->fetch('', $conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT, 1);
 
 $chartaccountcode = dol_getIdFromCode($db, $conf->global->CHARTOFACCOUNTS, 'accounting_system', 'rowid', 'pcg_version');
 
@@ -384,11 +381,11 @@ if ($result) {
 	print '</td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_ref" value="' . dol_escape_htmltag($search_ref) . '"></td>';
 	//print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_label" value="' . dol_escape_htmltag($search_label) . '"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat maxwidthonsmartphone" name="search_desc" value="' . dol_escape_htmltag($search_desc) . '"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_desc" value="' . dol_escape_htmltag($search_desc) . '"></td>';
 	print '<td class="liste_titre right"><input type="text" class="flat maxwidth50 right" name="search_amount" value="' . dol_escape_htmltag($search_amount) . '"></td>';
 	print '<td class="liste_titre right"><input type="text" class="flat maxwidth50 right" name="search_vat" placeholder="%" size="1" value="' . dol_escape_htmltag($search_vat) . '"></td>';
 	print '<td class="liste_titre">';
-	print $form->select_country($search_country, 'search_country', '', 0, 'maxwidth200', 'code2', 1, 0, 1);
+	print $form->select_country($search_country, 'search_country', '', 0, 'maxwidth150', 'code2', 1, 0, 1);
 	//print '<input type="text" class="flat maxwidth50" name="search_country" value="' . dol_escape_htmltag($search_country) . '">';
 	print '</td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_tvaintra" value="' . dol_escape_htmltag($search_tvaintra) . '"></td>';
@@ -444,29 +441,50 @@ if ($result) {
 
         $isBuyerInEEC = isInEEC($objp);
 
+        $suggestedaccountingaccountbydefaultfor = '';
     	if ($objp->type_l == 1) {
-			$objp->code_sell_l = (! empty($conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT : '');
-			if ($objp->aarowid == '') {
-				$objp->aarowid_suggest = $aarowid_s;
-			}
+    		if ($objp->country_code == $mysoc->country_code || empty($objp->country_code)) {  // If buyer in same country than seller (if not defined, we assume it is same country)
+    			$objp->code_sell_l = (! empty($conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT : '');
+    			$suggestedaccountingaccountbydefaultfor = '';
+    		} else {
+    			if ($isSellerInEEC && $isBuyerInEEC) {          // European intravat sale
+    				$objp->code_sell_l = (! empty($conf->global->ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT : '');
+    				$suggestedaccountingaccountbydefaultfor = 'eec';
+	    		} else {                                        // Foreign sale
+	    			$objp->code_sell_l = (! empty($conf->global->ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT : '');
+	    			$suggestedaccountingaccountbydefaultfor = 'export';
+	    		}
+    		}
 		} elseif ($objp->type_l == 0) {
-			$objp->code_sell_l = (! empty($conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT : '');
-			if ($objp->aarowid == '') {
-				$objp->aarowid_suggest = $aarowid_p;
+			if ($objp->country_code == $mysoc->country_code || empty($objp->country_code)) {  // If buyer in same country than seller (if not defined, we assume it is same country)
+				$objp->code_sell_l = (! empty($conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT : '');
+				$suggestedaccountingaccountbydefaultfor = '';
+			} else {
+				if ($isSellerInEEC && $isBuyerInEEC) {          // European intravat sale
+					$objp->code_sell_l = (! empty($conf->global->ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT : '');
+					$suggestedaccountingaccountbydefaultfor = 'eec';
+				} else {
+					$objp->code_sell_l = (! empty($conf->global->ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT : '');
+					$suggestedaccountingaccountbydefaultfor = 'export';
+				}
 			}
 		}
 		if ($objp->code_sell_l == -1) $objp->code_sell_l='';
 
+		$suggestedaccountingaccountfor = '';
 		if ($objp->country_code == $mysoc->country_code || empty($objp->country_code)) {  // If buyer in same country than seller (if not defined, we assume it is same country)
             $objp->code_sell_p = $objp->code_sell;
             $objp->aarowid_suggest = $objp->aarowid;
+            $suggestedaccountingaccountfor = '';
         } else {
             if ($isSellerInEEC && $isBuyerInEEC) {          // European intravat sale
                 $objp->code_sell_p = $objp->code_sell_intra;
                 $objp->aarowid_suggest = $objp->aarowid_intra;
+                $suggestedaccountingaccountfor = 'eec';
             } else {                                        // Foreign sale
                 $objp->code_sell_p = $objp->code_sell_export;
                 $objp->aarowid_suggest = $objp->aarowid_export;
+                $suggestedaccountingaccountfor = 'export';
             }
         }
 
@@ -477,8 +495,8 @@ if ($result) {
 		}
 		if (empty($objp->code_sell_l) && empty($objp->code_sell_p)) $code_sell_p_notset = 'color:red';
 
-		// $objp->code_sell_p is now code of product/service
 		// $objp->code_sell_l is now default code of product/service
+		// $objp->code_sell_p is now code of product/service
 
 		print '<tr class="oddeven">';
 
@@ -492,7 +510,7 @@ if ($result) {
 
 		// Ref Product
 		print '<td>';
-		if ($product_static->id)
+		if ($product_static->id > 0)
 			print $product_static->getNomUrl(1);
 		if ($objp->product_label) print '<br>'.$objp->product_label;
 		print '</td>';
@@ -514,7 +532,7 @@ if ($result) {
 		print vatrate($objp->tva_tx_line.($objp->vat_src_code?' ('.$objp->vat_src_code.')':''));
 		print '</td>';
 
-        print '<td class="center">';
+        print '<td>';
         $labelcountry=($objp->country_code && ($langs->trans("Country".$objp->country_code)!="Country".$objp->country_code))?$langs->trans("Country".$objp->country_code):$objp->country_label;
         print $labelcountry;
         print '</td>';
@@ -523,17 +541,27 @@ if ($result) {
 
 		// Current account
 		print '<td class="center" style="' . $code_sell_p_notset . '">';
-	    print (($objp->type_l == 1)?$langs->trans("DefaultForService"):$langs->trans("DefaultForProduct")) . ' = ' . ($objp->code_sell_l > 0 ? length_accountg($objp->code_sell_l) : $langs->trans("Unknown"));
-		if ($objp->product_id > 0)
+	    $s = (($objp->type_l == 1)?$langs->trans("DefaultForService"):$langs->trans("DefaultForProduct")).': ';
+	    $shelp = '';
+	    if ($suggestedaccountingaccountbydefaultfor == 'eec') $shelp.= $langs->trans("SaleEEC");
+	    elseif ($suggestedaccountingaccountbydefaultfor == 'export') $shelp.= $langs->trans("SaleExport");
+	    $s.= ($objp->code_sell_l > 0 ? length_accountg($objp->code_sell_l) : $langs->trans("NotDefined"));
+	    print $form->textwithpicto($s, $shelp, 1, 'help', '', 0, 2, '', 1);
+	    if ($objp->product_id > 0)
 		{
 		    print '<br>';
-		    print (($objp->type_l == 1)?$langs->trans("ThisService"):$langs->trans("ThisProduct")) . ' = ' . (empty($objp->code_sell_p) ? $langs->trans("Unknown") : length_accountg($objp->code_sell_p));
+		    $s = (($objp->type_l == 1)?$langs->trans("ThisService"):$langs->trans("ThisProduct")).': ';
+		    $shelp = '';
+		    if ($suggestedaccountingaccountfor == 'eec') $shelp = $langs->trans("SaleEEC");
+		    elseif ($suggestedaccountingaccountfor == 'export') $shelp = $langs->trans("SaleExport");
+		    $s.= (empty($objp->code_sell_p) ? $langs->trans("NotDefined") : length_accountg($objp->code_sell_p));
+		    print $form->textwithpicto($s, $shelp, 1, 'help', '', 0, 2, '', 1);
 		}
 		print '</td>';
 
 		// Suggested accounting account
 		print '<td>';
-		print $formaccounting->select_account($objp->aarowid_suggest, 'codeventil'.$objp->rowid, 1, array(), 0, 0, 'codeventil maxwidth300 maxwidthonsmartphone', 'cachewithshowemptyone');
+		print $formaccounting->select_account($objp->aarowid_suggest, 'codeventil'.$objp->rowid, 1, array(), 0, 0, 'codeventil maxwidth200 maxwidthonsmartphone', 'cachewithshowemptyone');
 		print '</td>';
 
 		// Column with checkbox

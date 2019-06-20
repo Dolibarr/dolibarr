@@ -4059,16 +4059,18 @@ class Product extends CommonObject
             }
         }
 
-        $linkstart = '<a href="'.$url.'"';
+        $linkstart = '<a class="nowraponall" href="'.$url.'"';
         $linkstart.=$linkclose.'>';
         $linkend='</a>';
 
         $result.=$linkstart;
         if ($withpicto)
         {
-            if ($this->type == Product::TYPE_PRODUCT) { $result.=(img_object(($notooltip?'':$label), 'product', ($notooltip?'class="paddingright"':'class="paddingright classfortooltip"'), 0, 0, $notooltip?0:1));
+            if ($this->type == Product::TYPE_PRODUCT) {
+            	$result.=(img_object(($notooltip?'':$label), 'product', ($notooltip?'class="paddingright"':'class="paddingright classfortooltip"'), 0, 0, $notooltip?0:1));
             }
-            if ($this->type == Product::TYPE_SERVICE) { $result.=(img_object(($notooltip?'':$label), 'service', ($notooltip?'class="paddinright"':'class="paddingright classfortooltip"'), 0, 0, $notooltip?0:1));
+            if ($this->type == Product::TYPE_SERVICE) {
+            	$result.=(img_object(($notooltip?'':$label), 'service', ($notooltip?'class="paddinright"':'class="paddingright classfortooltip"'), 0, 0, $notooltip?0:1));
             }
         }
         $result.= $newref;
@@ -4078,8 +4080,10 @@ class Product extends CommonObject
         $hookmanager->initHooks(array('productdao'));
         $parameters=array('id'=>$this->id, 'getnomurl'=>$result);
         $reshook=$hookmanager->executeHooks('getNomUrl', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
-        if ($reshook > 0) { $result = $hookmanager->resPrint;
-        } else { $result .= $hookmanager->resPrint;
+        if ($reshook > 0) {
+        	$result = $hookmanager->resPrint;
+        } else {
+        	$result .= $hookmanager->resPrint;
         }
 
         return $result;

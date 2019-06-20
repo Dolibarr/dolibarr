@@ -1009,7 +1009,8 @@ class ProductFournisseur extends Product
 
 
     /**
-     *  Return a link to the object card (with optionaly the picto)
+     *  Return a link to the object card (with optionaly the picto).
+     *  Used getNomUrl of ProductFournisseur if a specific supplier ref is loaded. Otherwise use Product->getNomUrl().
      *
      *	@param	int		$withpicto					Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
      *	@param	string	$option						On what the link point to ('nolink', ...)
@@ -1025,11 +1026,10 @@ class ProductFournisseur extends Product
         if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
 
         $result = '';
-        $companylink = '';
 
         $label = '<u>' . $langs->trans("SupplierRef") . '</u>';
         $label.= '<br>';
-        $label.= '<b>' . $langs->trans('Ref') . ':</b> ' . $this->fourn_ref;
+        $label.= '<b>' . $langs->trans('Ref') . ':</b> ' . $this->ref_supplier;
 
         $logPrices = $this->listProductFournisseurPriceLog($this->product_fourn_price_id, 'pfpl.datec', 'DESC'); // set sort order here
         if (is_array($logPrices) && count($logPrices) > 0) {
