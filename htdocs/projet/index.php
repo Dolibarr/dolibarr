@@ -179,6 +179,7 @@ $sql.= $db->plimit($max, 0);
 $resql=$db->query($sql);
 if ($resql)
 {
+    print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<th colspan="4">'.$langs->trans("LatestModifiedProjects", $max).'</th></tr>';
@@ -242,7 +243,7 @@ if ($resql)
 			$i++;
 		}
 	}
-	print "</table><br>";
+	print "</table></div><br>";
 }
 else dol_print_error($db);
 
