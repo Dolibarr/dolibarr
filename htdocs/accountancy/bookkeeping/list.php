@@ -309,8 +309,10 @@ if ($action == 'delbookkeeping') {
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-		Header("Location: list.php");
-		exit();
+
+		// Make a redirect to avoid to launch the delete later after a back button
+		header("Location: list.php".($param?'?'.$param:''));
+		exit;
 	}
 }
 if ($action == 'delbookkeepingyearconfirm') {
@@ -334,14 +336,14 @@ if ($action == 'delbookkeepingyearconfirm') {
 		{
 			setEventMessages("RecordDeleted", null, 'mesgs');
 		}
-		Header("Location: list.php");
+
+		// Make a redirect to avoid to launch the delete later after a back button
+		header("Location: list.php".($param?'?'.$param:''));
 		exit;
 	}
 	else
 	{
 		setEventMessages("NoRecordDeleted", null, 'warnings');
-		Header("Location: list.php");
-		exit;
 	}
 }
 if ($action == 'delmouvconfirm') {
@@ -358,7 +360,7 @@ if ($action == 'delmouvconfirm') {
 			setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
 		}
 
-		Header("Location: list.php?noreset=1".($param?'&'.$param:''));
+		header("Location: list.php?noreset=1".($param?'&'.$param:''));
 		exit;
 	}
 }
@@ -481,7 +483,7 @@ if ($action == 'delbookkeepingyear') {
 			'default' => $deljournal
 	);
 
-	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvt'), 'delbookkeepingyearconfirm', $form_question, 0, 1, 250);
+	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?'.$param, $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvt'), 'delbookkeepingyearconfirm', $form_question, 0, 1, 250);
 	print $formconfirm;
 }
 
@@ -817,8 +819,8 @@ if ($num > 0)
 		// Action column
 		print '<td class="nowraponall center">';
         if(empty($line->date_export)) {
-		    print '<a href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?piece_num=' . $line->piece_num . $param . '&page=' . $page . ($sortfield ? '&sortfield='.$sortfield : '') . ($sortorder ? '&sortorder='.$sortorder : '') . '">' . img_edit() . '</a>&nbsp;';
-		    print '<a href="' . $_SERVER['PHP_SELF'] . '?action=delmouv&mvt_num=' . $line->piece_num . $param . '&page=' . $page . ($sortfield ? '&sortfield='.$sortfield : '') . ($sortorder ? '&sortorder='.$sortorder : '') . '">' . img_delete() . '</a>';
+		    print '<a href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?piece_num=' . urlencode($line->piece_num) . $param . '&page=' . $page . ($sortfield ? '&sortfield='.$sortfield : '') . ($sortorder ? '&sortorder='.$sortorder : '') . '">' . img_edit() . '</a>&nbsp;';
+		    print '<a href="' . $_SERVER['PHP_SELF'] . '?action=delmouv&mvt_num=' . urlencode($line->piece_num) . $param . '&page=' . $page . ($sortfield ? '&sortfield='.$sortfield : '') . ($sortorder ? '&sortorder='.$sortorder : '') . '">' . img_delete() . '</a>';
         }
         print '</td>';
 		if (! $i) $totalarray['nbfield']++;
