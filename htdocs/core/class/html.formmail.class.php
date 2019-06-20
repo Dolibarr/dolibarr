@@ -908,7 +908,6 @@ class FormMail extends Form
 					$defaultmessage=preg_replace("/^(<br>)+/","",$defaultmessage);
 					$defaultmessage=preg_replace("/^\n+/","",$defaultmessage);
 				}
-
 				$out.= '<tr>';
 				$out.= '<td valign="top">'.$langs->trans("MailText").'</td>';
 				$out.= '<td>';
