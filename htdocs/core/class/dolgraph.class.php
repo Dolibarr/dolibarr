@@ -91,7 +91,7 @@ class DolGraph
 	public function __construct($library = 'jflot')
 	{
 		global $conf;
-		global $theme_bordercolor, $theme_datacolor, $theme_bgcolor, $theme_bgcoloronglet;
+		global $theme_bordercolor, $theme_datacolor, $theme_bgcolor;
 
 		// To use old feature
 		if ($library == 'artichow')
@@ -229,7 +229,7 @@ class DolGraph
 	/**
 	 * Set width
 	 *
-	 * @param 	int		$w			Width
+	 * @param 	int|string		$w			Width (Example: 320 or '100%')
 	 * @return	boolean|null				True
 	 */
 	public function SetWidth($w)
@@ -883,7 +883,6 @@ class DolGraph
 	private function draw_jflot($file, $fileurl)
 	{
         // phpcs:enable
-		global $artichow_defaultfont;
 
 		dol_syslog(get_class($this)."::draw_jflot this->type=".join(',', $this->type)." this->MaxValue=".$this->MaxValue);
 

@@ -1545,7 +1545,7 @@ if ($action=='create')
 	}
 	else
 	{
-		print $form->select_company((empty($socid)?'':$socid), 'socid', 's.fournisseur = 1', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300');
+		print $form->select_company((empty($socid)?'':$socid), 'socid', 's.fournisseur=1', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300');
 		// reload page to retrieve customer informations
 		if (!empty($conf->global->RELOAD_PAGE_ON_SUPPLIER_CHANGE))
 		{
@@ -1895,7 +1895,7 @@ elseif (! empty($object->id))
         $morehtmlref .= '<form method="post" action="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '">';
         $morehtmlref .= '<input type="hidden" name="action" value="set_thirdparty">';
         $morehtmlref .= '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
-        $morehtmlref .= $form->select_company($object->thirdparty->id, 'new_socid', 's.fournisseur = 1', '', 0, 0, array(), 0, 'minwidth300');
+        $morehtmlref .= $form->select_company($object->thirdparty->id, 'new_socid', 's.fournisseur=1', '', 0, 0, array(), 0, 'minwidth300');
         $morehtmlref .= '<input type="submit" class="button valignmiddle" value="' . $langs->trans("Modify") . '">';
         $morehtmlref .= '</form>';
     }
@@ -1958,7 +1958,7 @@ elseif (! empty($object->id))
 		print '<tr><td class="titlefield">'.$langs->trans("Date").'</td><td>';
 		if ($object->date_commande)
 		{
-			print dol_print_date($object->date_commande, "dayhourtext")."\n";
+			print dol_print_date($object->date_commande, "dayhour")."\n";
 		}
 		print "</td></tr>";
 

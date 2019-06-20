@@ -33,6 +33,7 @@
 // $permtoread, $permtocreate and $permtodelete may be defined
 // $uploaddir may be defined (example to $conf->projet->dir_output."/";)
 // $toselect may be defined
+// $diroutputmassaction may be defined
 
 
 // Protection
@@ -45,7 +46,7 @@ if (empty($objectclass) || empty($uploaddir))
 
 // Mass actions. Controls on number of lines checked.
 $maxformassaction=(empty($conf->global->MAIN_LIMIT_FOR_MASS_ACTIONS)?1000:$conf->global->MAIN_LIMIT_FOR_MASS_ACTIONS);
-if (! empty($massaction) && count($toselect) < 1)
+if (! empty($massaction) && is_array($toselect) && count($toselect) < 1)
 {
     $error++;
     setEventMessages($langs->trans("NoRecordSelected"), null, "warnings");
@@ -268,11 +269,22 @@ if (! $error && $massaction == 'confirm_presend')
 
                 if ($_POST['addmaindocfile'])
                 {
-                    // TODO Use future field $objectobj->fullpathdoc to know where is stored default file
-                    // TODO If not defined, use $objectobj->modelpdf (or defaut invoice config) to know what is template to use to regenerate doc.
-                    $filename=dol_sanitizeFileName($objectobj->ref).'.pdf';
-                    $filedir=$uploaddir . '/' . dol_sanitizeFileName($objectobj->ref);
-                    $file = $filedir . '/' . $filename;
+					// TODO Use future field $objectobj->fullpathdoc to know where is stored default file
+					// TODO If not defined, use $objectobj->modelpdf (or defaut invoice config) to know what is template to use to regenerate doc.
+					$filename = dol_sanitizeFileName($objectobj->ref).'.pdf';
+					$subdir = '';
+					// TODO Set subdir to be compatible with multi levels dir trees
+					// $subdir = get_exdir($objectobj->id, 2, 0, 0, $objectobj, $objectobj->element)
+					$filedir = $uploaddir . '/' . $subdir . dol_sanitizeFileName($objectobj->ref);
+					$file = $filedir . '/' . $filename;
+
+					// For supplier invoices, we use the file provided by supplier, not the one we generate
+					if ($objectobj->element == 'invoice_supplier')
+					{
+						$fileparams = dol_most_recent_file($uploaddir.'/'.get_exdir($objectobj->id, 2, 0, 0, $objectobj, $objectobj->element).$objectobj->ref, preg_quote($objectobj->ref, '/').'([^\-])+');
+						$file = $fileparams['fullname'];
+					}
+
                     $mime = dol_mimetype($file);
 
                     if (dol_is_file($file))
@@ -366,8 +378,8 @@ if (! $error && $massaction == 'confirm_presend')
                     $looparray[0]=$objectforloop;
                 }
                 //var_dump($looparray);exit;
-                dol_syslog("We have set an array of ".count($looparray)." emails to send");
-
+                dol_syslog("We have set an array of ".count($looparray)." emails to send. oneemailperrecipient=".$oneemailperrecipient);
+                //var_dump($oneemailperrecipient); var_dump($listofqualifiedobj); var_dump($listofqualifiedref);
                 foreach ($looparray as $objectid => $objecttmp)		// $objecttmp is a real object or an empty object if we choose to send one email per thirdparty instead of one per object
                 {
                     // Make substitution in email content
@@ -388,8 +400,8 @@ if (! $error && $massaction == 'confirm_presend')
 
                     complete_substitutions_array($substitutionarray, $langs, $objecttmp, $parameters);
 
-                    $subject=make_substitutions($subject, $substitutionarray);
-                    $message=make_substitutions($message, $substitutionarray);
+                    $subjectreplaced=make_substitutions($subject, $substitutionarray);
+                    $messagereplaced=make_substitutions($message, $substitutionarray);
 
                     $filepath = $attachedfiles['paths'];
                     $filename = $attachedfiles['names'];
@@ -417,10 +429,11 @@ if (! $error && $massaction == 'confirm_presend')
                     }
                     //var_dump($filepath);
                     //var_dump($trackid);exit;
+                    //var_dump($subjectreplaced);
 
                     // Send mail (substitutionarray must be done just before this)
                     require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-                    $mailfile = new CMailFile($subject, $sendto, $from, $message, $filepath, $mimetype, $filename, $sendtocc, $sendtobcc, $deliveryreceipt, -1, '', '', $trackid);
+                    $mailfile = new CMailFile($subjectreplaced, $sendto, $from, $messagereplaced, $filepath, $mimetype, $filename, $sendtocc, $sendtobcc, $deliveryreceipt, -1, '', '', $trackid);
                     if ($mailfile->error)
                     {
                         $resaction.='<div class="error">'.$mailfile->error.'</div>';
@@ -452,9 +465,9 @@ if (! $error && $massaction == 'confirm_presend')
                                 if ($message)
                                 {
                                     if ($sendtocc) $actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('Bcc') . ": " . $sendtocc);
-                                    $actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('MailTopic') . ": " . $subject);
+                                    $actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('MailTopic') . ": " . $subjectreplaced);
                                     $actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('TextUsedInTheMessageBody') . ":");
-                                    $actionmsg = dol_concatdesc($actionmsg, $message);
+                                    $actionmsg = dol_concatdesc($actionmsg, $messagereplaced);
                                 }
                                 $actionmsg2='';
 
@@ -562,14 +575,16 @@ if ($massaction == 'confirm_createbills')   // Create bills from orders
 
             $objecttmp->socid = $cmd->socid;
             $objecttmp->type = Facture::TYPE_STANDARD;
-            $objecttmp->cond_reglement_id = $cmd->cond_reglement_id;
-            $objecttmp->mode_reglement_id = $cmd->mode_reglement_id;
-            $objecttmp->fk_project = $cmd->fk_project;
+            $objecttmp->cond_reglement_id	= $cmd->cond_reglement_id;
+            $objecttmp->mode_reglement_id	= $cmd->mode_reglement_id;
+            $objecttmp->fk_project			= $cmd->fk_project;
+            $objecttmp->multicurrency_code  = $cmd->multicurrency_code;
+            if (empty($createbills_onebythird)) $objecttmp->ref_client = $cmd->ref_client;
 
-            $datefacture = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+            $datefacture = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
             if (empty($datefacture))
             {
-                $datefacture = dol_mktime(date("h"), date("M"), 0, date("m"), date("d"), date("Y"));
+                $datefacture = dol_now();
             }
 
             $objecttmp->date = $datefacture;
@@ -1265,6 +1280,8 @@ if (! $error && $massaction == 'generate_doc' && $permtoread)
 
 $parameters['toselect']=$toselect;
 $parameters['uploaddir']=$uploaddir;
+$parameters['massaction']=$massaction;
+$parameters['diroutputmassaction']=$diroutputmassaction;
 
 $reshook=$hookmanager->executeHooks('doMassActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');

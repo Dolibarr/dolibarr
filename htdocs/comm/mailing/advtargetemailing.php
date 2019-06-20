@@ -267,7 +267,7 @@ if ($action == 'savefilter' || $action == 'createfilter') {
 	$error = 0;
 
 	if ($action == 'createfilter' && empty($template_name)) {
-		setEventMessages($langs->trans('ErrorFieldRequired', $langs->trans('AdvTgtOrCreateNewFilter')), null, 'errors');
+		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('AdvTgtOrCreateNewFilter')), null, 'errors');
 		$error ++;
 	}
 

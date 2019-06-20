@@ -40,7 +40,7 @@ if (empty($object) || ! is_object($object)) {
 
 
 $usemargins=0;
-if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($object->element, array('facture','propal','commande')))
+if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($object->element, array('facture','facturerec','propal','commande')))
 {
     $usemargins=1;
 }
@@ -55,7 +55,7 @@ if (empty($senderissupplier)) $senderissupplier=0;
 if (empty($inputalsopricewithtax)) $inputalsopricewithtax=0;
 
 
-// Define colspan for button Add
+// Define colspan for the button 'Add'
 $colspan = 3;	// Columns: total ht + col edit + col delete
 if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) $colspan++;//Add column for Total (currency) if required
 if (in_array($object->element, array('propal','commande','order','facture','facturerec','invoice','supplier_proposal','order_supplier','invoice_supplier'))) $colspan++;	// With this, there is a column move button

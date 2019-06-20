@@ -283,8 +283,8 @@ if (GETPOST('update') && GETPOST('id') && $user->rights->ticket->write) {
     if (!$error) {
         $db->begin();
 
-        $object->label = GETPOST("label");
-        $object->description = GETPOST("description");
+        $object->label = GETPOST("label", 'alphanohtml');
+        $object->description = GETPOST("description", 'none');
 
         //...
         $ret = $object->update($user);
@@ -302,6 +302,7 @@ if (GETPOST('update') && GETPOST('id') && $user->rights->ticket->write) {
     }
 }
 
+// Mark as Read
 if ($action == "mark_ticket_read" && $user->rights->ticket->write) {
     $object->fetch('', '', GETPOST("track_id", 'alpha'));
 
@@ -317,6 +318,7 @@ if ($action == "mark_ticket_read" && $user->rights->ticket->write) {
     $action = 'view';
 }
 
+// Assign to someone
 if ($action == "assign_user" && GETPOST('btn_assign_user', 'aplha') && $user->rights->ticket->write) {
     $object->fetch('', '', GETPOST("track_id", 'alpha'));
     $useroriginassign = $object->fk_user_assign;
@@ -645,7 +647,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
     {
         // or for unauthorized internals users
         if (!$user->societe_id && ($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY && $object->fk_user_assign != $user->id) && !$user->rights->ticket->manage) {
-            accessforbidden('', 0);
+            accessforbidden('', 0, 1);
         }
 
         // Confirmation close

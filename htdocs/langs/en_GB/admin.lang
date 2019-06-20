@@ -9,7 +9,6 @@ ErrorModuleRequireDolibarrVersion=Error: This module requires Dolibarr version %
 ErrorDecimalLargerThanAreForbidden=Error: A precision higher than <b>%s</b> is not supported.
 ErrorReservedTypeSystemSystemAuto=Entry of 'system' and 'systemauto' for this type is reserved. You can use 'user' as a value to add your own record
 ErrorCodeCantContainZero=Code can't contain value 0 (zero)
-NumberOfKeyToSearch=Number of characters to trigger search: %s
 MaxSizeForUploadedFiles=Maximum size for uploaded files (0 to prevent any uploads)
 CurrentValueSeparatorThousand=Thousands separator
 PositionByDefault=Default position

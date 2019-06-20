@@ -142,7 +142,7 @@ if ($id > 0 || ! empty($ref))
 
 		if ($showmessage && $nboflines > 1)
 		{
-			print $langs->trans("ClinkOnALinkOfColumn", $langs->transnoentitiesnoconv("Referers"));
+			print '<span class="opacitymedium">'.$langs->trans("ClinkOnALinkOfColumn", $langs->transnoentitiesnoconv("Referers")).'</span>';
 		}
         elseif ($user->rights->facture->lire)
         {

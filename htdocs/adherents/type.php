@@ -236,10 +236,8 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 		$newcardbutton='';
 		if ($user->rights->adherent->configurer)
 		{
-			$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/adherents/type.php?action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans('NewMemberType').'</span>';
-			$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-			$newcardbutton.= '</a>';
-		}
+            $newcardbutton.= dolGetButtonTitle($langs->trans('NewMemberType'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/adherents/type.php?action=create');
+        }
 
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 		if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -283,9 +281,9 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 			print '</td>';
 			print '<td>'.dol_escape_htmltag($objp->label).'</td>';
             print '<td class="center">';
-		if ($objp->morphy == 'phy') { print $langs->trans("Physical"); }
-		elseif ($objp->morphy == 'mor') { print $langs->trans("Moral"); }
-        else print $langs->trans("Physical & Morale");
+			if ($objp->morphy == 'phy') { print $langs->trans("Physical"); }
+			elseif ($objp->morphy == 'mor') { print $langs->trans("Moral"); }
+			else print $langs->trans("Physical & Morale");
             print '</td>';
 			print '<td class="center">'.yn($objp->subscription).'</td>';
 			print '<td class="center">'.yn($objp->vote).'</td>';

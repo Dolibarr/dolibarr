@@ -11,6 +11,7 @@
  * Copyright (C) 2015		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2018-2019  Thibault FOUCART		<support@ptibogxiv.net>
+ * Copyright (C) 2019       Nicolas ZABOURI 		<info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -183,14 +184,14 @@ class Adherent extends CommonObject
      * @var integer
      */
     public $datec;
-    
+
 	/**
      * Date modification record (tms)
      *
      * @var integer
      */
     public $datem;
-    
+
 	public $datevalid;
 
 	public $gender;
@@ -596,7 +597,7 @@ class Adherent extends CommonObject
 			{
 			    while ($obj=$this->db->fetch_object($resql2))
 			    {
-				$this->type=$obj->label;
+					$this->type=$obj->label;
 			    }
 			}
 		}
@@ -1268,7 +1269,7 @@ class Adherent extends CommonObject
 				$this->ref				= $obj->rowid;
 				$this->id				= $obj->rowid;
 				$this->ref_ext			= $obj->ref_ext;
-        
+
 				$this->civility_id      = $obj->civility_code;  // Bad. Kept for backard compatibility
 				$this->civility_code    = $obj->civility_code;
 				$this->civility	        = $obj->civility_code?($langs->trans("Civility".$obj->civility_code) != ("Civility".$obj->civility_code) ? $langs->trans("Civility".$obj->civility_code) : $obj->civility_code):'';
@@ -1279,7 +1280,8 @@ class Adherent extends CommonObject
 				$this->login			= $obj->login;
 				$this->societe			= $obj->company;
 				$this->company			= $obj->company;
-				$this->fk_soc			= $obj->fk_soc;
+				$this->socid			= $obj->fk_soc;
+				$this->fk_soc			= $obj->fk_soc;     // For backward comaptibility
 				$this->address			= $obj->address;
 				$this->zip				= $obj->zip;
 				$this->town				= $obj->town;
@@ -2459,12 +2461,13 @@ class Adherent extends CommonObject
 
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+   /**
 	 *	Initialise tableau info (tableau des attributs LDAP)
 	 *
 	 *	@return		array		Tableau info des attributs
 	 */
-	private function _load_ldap_info()
+	public function _load_ldap_info()
 	{
         // phpcs:enable
 		global $conf,$langs;

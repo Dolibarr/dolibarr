@@ -27,7 +27,7 @@
 
 /**
  *  \file       htdocs/accountancy/journal/bankjournal.php
- *  \ingroup    Advanced accountancy
+ *  \ingroup    Accountancy (Double entries)
  *  \brief      Page with bank journal
  */
 require '../../main.inc.php';
@@ -171,8 +171,8 @@ if ($result) {
 	//print $sql;
 
 	// Variables
-	$account_supplier			= (! empty($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER) ? $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER : 'NotDefined');	// NotDefined is a reserved word
-	$account_customer			= (! empty($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER) ? $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER : 'NotDefined');	// NotDefined is a reserved word
+	$account_supplier			= (($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER != "") ? $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER : 'NotDefined');	// NotDefined is a reserved word
+	$account_customer			= ($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER != "") ? $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER : 'NotDefined');	// NotDefined is a reserved word
 	$account_employee			= (! empty($conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT) ? $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT : 'NotDefined');	// NotDefined is a reserved word
 	$account_pay_vat			= (! empty($conf->global->ACCOUNTING_VAT_PAY_ACCOUNT) ? $conf->global->ACCOUNTING_VAT_PAY_ACCOUNT : 'NotDefined');	// NotDefined is a reserved word
 	$account_pay_donation		= (! empty($conf->global->DONATION_ACCOUNTINGACCOUNT) ? $conf->global->DONATION_ACCOUNTINGACCOUNT : 'NotDefined');	// NotDefined is a reserved word
@@ -218,7 +218,7 @@ if ($result) {
 		// Set accountancy code for thirdparty
 		$compta_soc = 'NotDefined';
 		if ($lineisapurchase > 0)
-			$compta_soc = (! empty($obj->code_compta_fournisseur) ? $obj->code_compta_fournisseur : $account_supplier);
+			$compta_soc = (($obj->code_compta_fournisseur != "") ? $obj->code_compta_fournisseur : $account_supplier);
 		if ($lineisasale > 0)
 			$compta_soc = (! empty($obj->code_compta) ? $obj->code_compta : $account_customer);
 
@@ -938,8 +938,8 @@ if (empty($action) || $action == 'view') {
 
 
 	// Button to write into Ledger
-	if (empty($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER) || $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == '-1'
-		|| empty($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER) || $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == '-1'
+	if (($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == "") || $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == '-1'
+		|| ($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == "") || $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == '-1'
 		|| empty($conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT) || $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT == '-1') {
 		print '<br>'.img_warning().' '.$langs->trans("SomeMandatoryStepsOfSetupWereNotDone");
 		print ' : '.$langs->trans("AccountancyAreaDescMisc", 4, '<strong>'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("MenuDefaultAccounts").'</strong>');
@@ -950,8 +950,8 @@ if (empty($action) || $action == 'view') {
 
 	if (! empty($conf->global->ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL)) print '<input type="button" class="butAction" name="exportcsv" value="' . $langs->trans("ExportDraftJournal") . '" onclick="launch_export();" />';
 
-	if (empty($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER) || $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == '-1'
-	    || empty($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER) || $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == '-1') {
+	if (($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == "") || $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == '-1'
+	    || ($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == "") || $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == '-1') {
 	   print '<input type="button" class="butActionRefused classfortooltip" title="'.dol_escape_htmltag($langs->trans("SomeMandatoryStepsOfSetupWereNotDone")).'" value="' . $langs->trans("WriteBookKeeping") . '" />';
 	}
 	else {
@@ -987,15 +987,14 @@ if (empty($action) || $action == 'view') {
 	print '<div class="div-table-responsive">';
 	print "<table class=\"noborder\" width=\"100%\">";
 	print "<tr class=\"liste_titre\">";
-	print "<td></td>";
 	print "<td>" . $langs->trans("Date") . "</td>";
 	print "<td>" . $langs->trans("Piece") . ' (' . $langs->trans("ObjectsRef") . ")</td>";
 	print "<td>" . $langs->trans("AccountAccounting") . "</td>";
 	print "<td>" . $langs->trans("SubledgerAccount") . "</td>";
 	print "<td>" . $langs->trans("LabelOperation") . "</td>";
-	print "<td>" . $langs->trans("PaymentMode") . "</td>";
-	print "<td class='right'>" . $langs->trans("Debit") . "</td>";
-	print "<td class='right'>" . $langs->trans("Credit") . "</td>";
+	print '<td class="center">' . $langs->trans("PaymentMode") . "</td>";
+	print '<td class="right">' . $langs->trans("Debit") . "</td>";
+	print '<td class="right">' . $langs->trans("Credit") . "</td>";
 	print "</tr>\n";
 
 	$r = '';
@@ -1019,7 +1018,6 @@ if (empty($action) || $action == 'view') {
 				//var_dump($tabpay[$key]);
 				print '<!-- Bank bank.rowid='.$key.' type='.$tabpay[$key]['type'].' ref='.$tabpay[$key]['ref'].'-->';
 				print '<tr class="oddeven">';
-				print "<td></td>";
 				print "<td>" . $date . "</td>";
 				print "<td>" . $ref . "</td>";
 				// Ledger account
@@ -1043,9 +1041,9 @@ if (empty($action) || $action == 'view') {
 				print "<td>";
 				print $reflabel;
 				print "</td>";
-				print "<td>" . $val["type_payment"] . "</td>";
-				print "<td class='right'>" . ($mt >= 0 ? price($mt) : '') . "</td>";
-				print "<td class='right'>" . ($mt < 0 ? price(- $mt) : '') . "</td>";
+				print '<td class="center">' . $val["type_payment"] . "</td>";
+				print '<td class="right nowraponall">' . ($mt >= 0 ? price($mt) : '') . "</td>";
+				print '<td class="right nowraponall">' . ($mt < 0 ? price(- $mt) : '') . "</td>";
 				print "</tr>";
 			}
 		}
@@ -1061,7 +1059,6 @@ if (empty($action) || $action == 'view') {
 
 					print '<!-- Thirdparty bank.rowid='.$key.' -->';
 					print '<tr class="oddeven">';
-					print "<td></td>";
 					print "<td>" . $date . "</td>";
 					print "<td>" . $ref . "</td>";
 					// Ledger account
@@ -1125,9 +1122,9 @@ if (empty($action) || $action == 'view') {
 					}
 					print "</td>";
 					print "<td>" . $reflabel . "</td>";
-					print "<td>" . $val["type_payment"] . "</td>";
-					print "<td class='right'>" . ($mt < 0 ? price(- $mt) : '') . "</td>";
-					print "<td class='right'>" . ($mt >= 0 ? price($mt) : '') . "</td>";
+					print '<td class="center">' . $val["type_payment"] . "</td>";
+					print '<td class="right nowraponall">' . ($mt < 0 ? price(- $mt) : '') . "</td>";
+					print '<td class="right nowraponall">' . ($mt >= 0 ? price($mt) : '') . "</td>";
 					print "</tr>";
 				}
 			}
@@ -1141,7 +1138,6 @@ if (empty($action) || $action == 'view') {
 
 					print '<!-- Wait bank.rowid='.$key.' -->';
 					print '<tr class="oddeven">';
-					print "<td></td>";
 					print "<td>" . $date . "</td>";
 					print "<td>" . $ref . "</td>";
 					// Ledger account
@@ -1162,9 +1158,9 @@ if (empty($action) || $action == 'view') {
 					*/
 					print "</td>";
 					print "<td>" . $reflabel . "</td>";
-					print "<td>" . $val["type_payment"] . "</td>";
-					print "<td class='right'>" . ($mt < 0 ? price(- $mt) : '') . "</td>";
-					print "<td class='right'>" . ($mt >= 0 ? price($mt) : '') . "</td>";
+					print '<td class="center">' . $val["type_payment"] . "</td>";
+					print '<td class="right nowraponall">' . ($mt < 0 ? price(- $mt) : '') . "</td>";
+					print '<td class="right nowraponall">' . ($mt >= 0 ? price($mt) : '') . "</td>";
 					print "</tr>";
 				}
 			}

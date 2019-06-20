@@ -273,7 +273,7 @@ if (empty($reshook))
 		{
 			if (empty($login)) {
 				$error++;
-				setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("Login")), null, 'errors');
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Login")), null, 'errors');
 			}
 		}
 		// Create new object
@@ -509,7 +509,7 @@ if (empty($reshook))
 		{
 			if (empty($login)) {
 				$error++;
-				setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("Login")), null, 'errors');
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Login")), null, 'errors');
 			}
 			else {
 				$sql = "SELECT login FROM ".MAIN_DB_PREFIX."adherent WHERE login='".$db->escape($login)."'";
@@ -1567,7 +1567,7 @@ else
 			$formquestion=array();
 			if ($object->email) $formquestion[]=array('type' => 'checkbox', 'name' => 'send_mail', 'label' => $label, 'value' => (! empty($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL)?'true':'false'));
 			if ($backtopage)    $formquestion[]=array('type' => 'hidden', 'name' => 'backtopage', 'value' => ($backtopage != '1' ? $backtopage : $_SERVER["HTTP_REFERER"]));
-			print $form->formconfirm("card.php?rowid=".$id, $langs->trans("ResiliateMember"), $langs->trans("ConfirmResiliateMember"), "confirm_resign", $formquestion, 'no', 1, 220);
+			print $form->formconfirm("card.php?rowid=".$id, $langs->trans("ResiliateMember"), $langs->trans("ConfirmResiliateMember"), "confirm_resign", $formquestion, 'no', 1, 240);
 		}
 
 		// Confirm remove member

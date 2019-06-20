@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2001-2007	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2018	Laurent Destailleur		<eldy@users.sourceforge.net>
+/* Copyright (C) 2001-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2019	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2011-2017	Philippe Grand			<philippe.grand@atoo-net.com>
@@ -271,7 +271,7 @@ if ($action == 'addthumb')  // Regenerate thumbs
 			$error++;
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorBadImageFormat"), null, 'errors');
-			dol_syslog($langs->transnoentities("ErrorBadImageFormat"), LOG_WARNING);
+			dol_syslog($langs->transnoentities("ErrorBadImageFormat"), LOG_INFO);
 		}
 	}
 	else
@@ -412,9 +412,9 @@ if ($action == 'edit' || $action == 'updateedit')
 	}
 
 	// Logo
-	print '<tr class="oddeven hideonsmartphone"><td><label for="logo">'.$langs->trans("Logo").' (png,jpg)</label></td><td>';
+	print '<tr class="oddeven"><td><label for="logo">'.$langs->trans("Logo").' (png,jpg)</label></td><td>';
 	print '<table width="100%" class="nobordernopadding"><tr class="nocellnopadd"><td valign="middle" class="nocellnopadd">';
-	print '<input type="file" class="flat class=minwidth200" name="logo" id="logo">';
+	print '<input type="file" class="flat class=minwidth200" name="logo" id="logo" accept="image/*">';
 	print '</td><td class="nocellnopadd right" valign="middle">';
 	if (! empty($mysoc->logo_mini)) {
 		print '<a href="'.$_SERVER["PHP_SELF"].'?action=removelogo">'.img_delete($langs->trans("Delete")).'</a>';
@@ -588,9 +588,8 @@ if ($action == 'edit' || $action == 'updateedit')
 	print '<td class="titlefield">'.$langs->trans("FiscalYearInformation").'</td><td>'.$langs->trans("Value").'</td>';
 	print "</tr>\n";
 
-
 	print '<tr class="oddeven"><td><label for="SOCIETE_FISCAL_MONTH_START">'.$langs->trans("FiscalMonthStart").'</label></td><td>';
-	print $formother->select_month($conf->global->SOCIETE_FISCAL_MONTH_START, 'SOCIETE_FISCAL_MONTH_START', 0, 1) . '</td></tr>';
+	print $formother->select_month($conf->global->SOCIETE_FISCAL_MONTH_START, 'SOCIETE_FISCAL_MONTH_START', 0, 1, 'maxwidth100') . '</td></tr>';
 
 	print "</table>";
 
@@ -798,9 +797,9 @@ else
 	print '</td></tr>';
 
 	// Barcode
+
 	if (! empty($conf->barcode->enabled))
 	{
-
 		print '<tr class="oddeven"><td>'.$langs->trans("Gencod").'</td><td>' . $conf->global->MAIN_INFO_SOCIETE_GENCOD . '</td></tr>';
 	}
 
@@ -987,7 +986,7 @@ else
 				print '</script>';
 				print "\n";
 				$s.='<a href="#" onClick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
-				$s = $form->textwithpicto($s, $langs->trans("VATIntraCheckDesc", $langs->trans("VATIntraCheck")), 1);
+				$s = $form->textwithpicto($s, $langs->trans("VATIntraCheckDesc", $langs->transnoentitiesnoconv("VATIntraCheck")), 1);
 			}
 			else
 			{

@@ -196,7 +196,7 @@ if ($object->id)
 }
 else
 {
-    accessforbidden('', 0, 0);
+    accessforbidden('', 0, 1);
 }
 
 // End of page

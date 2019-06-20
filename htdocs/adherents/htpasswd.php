@@ -43,13 +43,13 @@ if (empty($sortorder)) {  $sortorder="ASC"; }
 if (empty($sortfield)) {  $sortfield="d.login"; }
 if (! isset($statut))
 {
-  $statut = 1 ;
+	$statut = 1 ;
 }
 
 if (! isset($cotis))
 {
-  // by default, members must be up to date of subscription
-  $cotis=1;
+	// by default, members must be up to date of subscription
+	$cotis=1;
 }
 
 

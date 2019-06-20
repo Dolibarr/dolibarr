@@ -520,8 +520,8 @@ class User extends CommonObject
 	 *  Add a right to the user
 	 *
 	 * 	@param	int		$rid			Id of permission to add or 0 to add several permissions
-	 *  @param  string	$allmodule		Add all permissions of module $allmodule
-	 *  @param  string	$allperms		Add all permissions of module $allmodule, subperms $allperms only
+	 *  @param  string	$allmodule		Add all permissions of module $allmodule or 'allmodules' to include all modules.
+	 *  @param  string	$allperms		Add all permissions of module $allmodule, subperms $allperms only or '' to include all permissions.
 	 *  @param	int		$entity			Entity to use
 	 *  @param  int	    $notrigger		1=Does not execute triggers, 0=Execute triggers
 	 *  @return int						> 0 if OK, < 0 if KO
@@ -774,7 +774,7 @@ class User extends CommonObject
 		dol_syslog(get_class($this)."::clearrights reset user->rights");
 		$this->rights='';
 		$this->nb_rights=0;
-		$this->all_permissions_are_loaded=false;
+		$this->all_permissions_are_loaded=0;
 		$this->_tab_loaded=array();
 	}
 
@@ -799,16 +799,16 @@ class User extends CommonObject
 				return;
 			}
 
-			if ($this->all_permissions_are_loaded)
+			if (! empty($this->all_permissions_are_loaded))
 			{
 				// We already loaded all rights for this user, so we leave
 				return;
 			}
 		}
 
-		// Recuperation des droits utilisateurs + recuperation des droits groupes
+		// Get permission of users + Get permissions of groups
 
-		// D'abord les droits utilisateurs
+		// First user permissions
 		$sql = "SELECT DISTINCT r.module, r.perms, r.subperms";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user_rights as ur";
 		$sql.= ", ".MAIN_DB_PREFIX."rights_def as r";
@@ -862,7 +862,7 @@ class User extends CommonObject
 			$this->db->free($resql);
 		}
 
-		// Maintenant les droits groupes
+		// Now permissions of groups
 		$sql = "SELECT DISTINCT r.module, r.perms, r.subperms";
 		$sql.= " FROM ".MAIN_DB_PREFIX."usergroup_rights as gr,";
 		$sql.= " ".MAIN_DB_PREFIX."usergroup_user as gu,";
@@ -933,7 +933,7 @@ class User extends CommonObject
 		}
 		else
 		{
-			// Si module defini, on le marque comme charge en cache
+			// If module defined, we flag it as loaded into cache
 			$this->_tab_loaded[$moduletag]=1;
 		}
 	}
@@ -1961,17 +1961,21 @@ class User extends CommonObject
 		$mesg = '';
 
 		$outputlangs=new Translate("", $conf);
+
 		if (isset($this->conf->MAIN_LANG_DEFAULT)
 		&& $this->conf->MAIN_LANG_DEFAULT != 'auto')
 		{	// If user has defined its own language (rare because in most cases, auto is used)
 			$outputlangs->getDefaultLang($this->conf->MAIN_LANG_DEFAULT);
 		}
+		if($user->conf->MAIN_LANG_DEFAULT){
+            $outputlangs->setDefaultLang($user->conf->MAIN_LANG_DEFAULT);
+        }
 		else
 		{	// If user has not defined its own language, we used current language
 			$outputlangs=$langs;
 		}
 
-		// Load translation files required by the page
+        // Load translation files required by the page
 		$outputlangs->loadLangs(array("main", "errors", "users", "other"));
 
 		$appli=constant('DOL_APPLICATION_TITLE');
@@ -1986,7 +1990,6 @@ class User extends CommonObject
 		if (! $changelater)
 		{
 			$url = $urlwithroot.'/';
-
 			$mesg.= $outputlangs->transnoentitiesnoconv("RequestToResetPasswordReceived").".\n";
 			$mesg.= $outputlangs->transnoentitiesnoconv("NewKeyIs")." :\n\n";
 			$mesg.= $outputlangs->transnoentitiesnoconv("Login")." = ".$this->login."\n";
@@ -2297,7 +2300,6 @@ class User extends CommonObject
 		if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && $withpictoimg) $withpictoimg=0;
 
 		$result=''; $label='';
-		$link=''; $linkstart=''; $linkend='';
 
 		if (! empty($this->photo))
 		{
@@ -2512,7 +2514,8 @@ class User extends CommonObject
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
 	 *
@@ -2522,7 +2525,7 @@ class User extends CommonObject
 	 *								2=Return key only (RDN) (uid=qqq)
 	 *	@return	string				DN
 	 */
-	private function _load_ldap_dn($info, $mode = 0)
+	public function _load_ldap_dn($info, $mode = 0)
 	{
         // phpcs:enable
 		global $conf;
@@ -2533,13 +2536,14 @@ class User extends CommonObject
 		return $dn;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Initialize the info array (array of LDAP values) that will be used to call LDAP functions
 	 *
 	 *	@return		array		Tableau info des attributs
 	 */
-	private function _load_ldap_info()
+	public function _load_ldap_info()
 	{
         // phpcs:enable
 		global $conf,$langs;

@@ -321,7 +321,7 @@ if (empty($reshook))
 
 		$datep = dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
 		$date_delivery = dol_mktime(12, 0, 0, GETPOST('date_livraisonmonth'), GETPOST('date_livraisonday'), GETPOST('date_livraisonyear'));
-		$duration = GETPOST('duree_validite');
+		$duration = GETPOST('duree_validite', 'int');
 
 		if (empty($datep)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
@@ -1622,7 +1622,7 @@ if ($action == 'create')
 	print '</td></tr>';
 
 	// Validaty duration
-	print '<tr><td class="fieldrequired">' . $langs->trans("ValidityDuration") . '</td><td><input name="duree_validite" size="5" value="' . $conf->global->PROPALE_VALIDITY_DURATION . '"> ' . $langs->trans("days") . '</td></tr>';
+	print '<tr><td class="fieldrequired">' . $langs->trans("ValidityDuration") . '</td><td><input name="duree_validite" class="width50" value="' . (GETPOST('duree_validite', 'int') ? GETPOST('duree_validite', 'int') : $conf->global->PROPALE_VALIDITY_DURATION) . '"> ' . $langs->trans("days") . '</td></tr>';
 
 	// Terms of payment
 	print '<tr><td class="nowrap">' . $langs->trans('PaymentConditionsShort') . '</td><td>';
@@ -1679,7 +1679,7 @@ if ($action == 'create')
 		print '<tr>';
 		print '<td>' . $langs->trans("Project") . '</td><td>';
 		$numprojet = $formproject->select_projects(($soc->id > 0 ? $soc->id : -1), $projectid, 'projectid', 0, 0, 1, 1);
-		print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid=' . $soc->id . '&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id).'"><span class="valignmiddle text-plus-circle">' . $langs->trans("AddProject") . '</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
+		print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid=' . $soc->id . '&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id).'"><span class="valignmiddle text-plus-circle">' . $langs->trans("AddProject") . '</span><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
 		print '</td>';
 		print '</tr>';
 	}
@@ -2421,10 +2421,15 @@ $formquestion = array_merge($formquestion, array(
 	}
 
 	print '<div class="div-table-responsive-no-min">';
-	print '<table id="tablelines" class="noborder noshadow" width="100%">';
+	if (! empty($object->lines) || ($object->statut == Propal::STATUS_DRAFT && $usercancreate && $action != 'selectlines' && $action != 'editline'))
+	{
+	    print '<table id="tablelines" class="noborder noshadow" width="100%">';
+	}
 
 	if (! empty($object->lines))
+	{
 		$ret = $object->printObjectLines($action, $mysoc, $soc, $lineid, 1);
+	}
 
 	// Form to add new line
 	if ($object->statut == Propal::STATUS_DRAFT && $usercancreate && $action != 'selectlines')
@@ -2439,16 +2444,21 @@ $formquestion = array_merge($formquestion, array(
 		}
 	}
 
-	print '</table>';
+	if (! empty($object->lines) || ($object->statut == Propal::STATUS_DRAFT && $usercancreate && $action != 'selectlines' && $action != 'editline'))
+	{
+	    print '</table>';
+	}
 	print '</div>';
 
 	print "</form>\n";
 
 	dol_fiche_end();
 
+
 	/*
-	 * Boutons Actions
+	 * Button Actions
 	 */
+
 	if ($action != 'presend') {
 		print '<div class="tabsAction">';
 

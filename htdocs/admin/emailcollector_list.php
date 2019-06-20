@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
 dol_include_once('/emailcollector/class/emailcollector.class.php');
 
 if (!$user->admin) accessforbidden();
+if (empty($conf->emailcollector->enabled)) accessforbidden();
 
 // Load traductions files requiredby by page
 $langs->loadLangs(array("admin", "other"));
@@ -321,9 +322,7 @@ print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 $newcardbutton='';
 //if ($user->rights->emailcollector->creer)
 //{
-$newcardbutton='<a class="butActionNew" href="emailcollector_card.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']).'"><span class="valignmiddle text-plus-circle">'.$langs->trans('New').'</span>';
-$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-$newcardbutton.= '</a>';
+$newcardbutton.= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', 'emailcollector_card.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']));
 //}
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_companies', 0, $newcardbutton, '', $limit);
@@ -385,7 +384,7 @@ $parameters=array('arrayfields'=>$arrayfields);
 $reshook=$hookmanager->executeHooks('printFieldListOption', $parameters, $object);    // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Action column
-print '<td class="liste_titre right">';
+print '<td class="liste_titre maxwidthsearch">';
 $searchpicto=$form->showFilterButtons();
 print $searchpicto;
 print '</td>';
@@ -440,7 +439,7 @@ while ($i < min($num, $limit))
 	$object->id = $obj->rowid;
 	foreach($object->fields as $key => $val)
 	{
-		if (isset($obj->$key)) $object->$key = $obj->$key;
+		if (property_exists($obj, $key)) $object->$key = $obj->$key;
 	}
 
 	// Show here line of result

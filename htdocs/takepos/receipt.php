@@ -31,7 +31,6 @@ include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 $langs->loadLangs(array("main", "cashdesk"));
 
 $place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0);   // $place is id of table for Ba or Restaurant
-$posnb = (GETPOST('posnb', 'int') > 0 ? GETPOST('posnb', 'int') : 0);   // $posnb is id of POS
 
 $facid=GETPOST('facid', 'int');
 
@@ -44,7 +43,7 @@ top_httphead('text/html');
 
 if ($place > 0)
 {
-    $sql="SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS-".$place.")'";
+    $sql="SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
     $resql = $db->query($sql);
     $obj = $db->fetch_object($resql);
     if ($obj)

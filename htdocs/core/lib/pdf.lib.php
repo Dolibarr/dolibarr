@@ -175,18 +175,29 @@ function pdf_getInstance($format = '', $metric = 'mm', $pagetype = 'P')
 /**
  * Return if pdf file is protected/encrypted
  *
- * @param	TCPDF		$pdf			PDF initialized object
  * @param   string		$pathoffile		Path of file
  * @return  boolean     			    True or false
  */
-function pdf_getEncryption(&$pdf, $pathoffile)
+function pdf_getEncryption($pathoffile)
 {
+	require_once TCPDF_PATH.'tcpdf_parser.php';
+
 	$isencrypted = false;
 
-	$pdfparser = $pdf->_getPdfParser($pathoffile);
-	$data = $pdfparser->getParsedData();
-	if (isset($data[0]['trailer'][1]['/Encrypt'])) {
-		$isencrypted = true;
+	$content = file_get_contents($pathoffile);
+
+	//ob_start();
+	@($parser = new \TCPDF_PARSER(ltrim($content)));
+	list($xref, $data) = $parser->getParsedData();
+	unset($parser);
+	//ob_end_clean();
+
+	if (isset($xref['trailer']['encrypt'])) {
+		$isencrypted = true;	// Secured pdf file are currently not supported
+	}
+
+	if (empty($data)) {
+		$isencrypted = true;	// Object list not found. Possible secured file
 	}
 
 	return $isencrypted;
@@ -1374,6 +1385,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 	if (! empty($object->lines[$i]->date_start) || ! empty($object->lines[$i]->date_end))
 	{
 		$format='day';
+        $period = '';
 		// Show duration if exists
 		if ($object->lines[$i]->date_start && $object->lines[$i]->date_end)
 		{
