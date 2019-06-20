@@ -262,6 +262,10 @@ class Entrepot extends CommonObject
 	 */
 	public function delete($user, $notrigger = 0)
 	{
+		$error = 0;
+
+		dol_syslog(get_class($this)."::delete id=".$this->id, LOG_DEBUG);
+
 		$this->db->begin();
 
 		if (! $error && empty($notrigger))
@@ -279,7 +283,7 @@ class Entrepot extends CommonObject
 			{
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX.$table;
 				$sql.= " WHERE fk_entrepot = " . $this->id;
-				dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+
 				$result=$this->db->query($sql);
 				if (! $result)
 				{
@@ -294,31 +298,35 @@ class Entrepot extends CommonObject
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."entrepot";
 			$sql.= " WHERE rowid = " . $this->id;
 
-			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql1=$this->db->query($sql);
+			if (! $resql1)
+			{
+				$error++;
+				$this->errors[] = $this->db->lasterror();
+			}
+		}
 
+		if (! $error)
+		{
 			// Update denormalized fields because we change content of produt_stock. Warning: Do not use "SET p.stock", does not works with pgsql
 			$sql = "UPDATE ".MAIN_DB_PREFIX."product as p SET stock = (SELECT SUM(ps.reel) FROM ".MAIN_DB_PREFIX."product_stock as ps WHERE ps.fk_product = p.rowid)";
 
-			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql2=$this->db->query($sql);
+			if (! $resql2)
+			{
+				$error++;
+				$this->errors[] = $this->db->lasterror();
+			}
+		}
 
-			if ($resql1 && $resql2)
-			{
-				$this->db->commit();
-				return 1;
-			}
-			else
-			{
-				$this->db->rollback();
-				$this->error=$this->db->lasterror();
-				return -2;
-			}
+		if (! $error)
+		{
+			$this->db->commit();
+			return 1;
 		}
 		else
 		{
 			$this->db->rollback();
-			$this->error=$this->db->lasterror();
 			return -1;
 		}
 	}
