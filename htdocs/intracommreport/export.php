@@ -31,6 +31,7 @@ $action = GETPOST('action');
 $exporttype = GETPOST('exporttype'); // DEB ou DES
 if (empty($exporttype)) $exporttype = 'deb';
 
+$form = new Form($db);
 $formother = new FormOther($db);
 $year = GETPOST('year');
 $month = GETPOST('month');
@@ -58,7 +59,7 @@ switch($action) {
 
 function _print_form_deb() {
 	
-	global $langs, $formother, $year, $month, $type_declaration;
+	global $langs, $form, $formother, $year, $month, $type, $type_declaration;
 
     $title = $langs->trans("IntracommReportDEBTitle");
 	llxHeader("", $title);
@@ -83,7 +84,8 @@ function _print_form_deb() {
 	$TabMonth = array();
 	for($i=1;$i<=12;$i++) $TabMonth[$i] = $langs->trans('Month'.str_pad($i, 2, 0, STR_PAD_LEFT));
 	//print $ATMform->combo('','month', $TabMonth, empty($month) ? date('m') : $month);
-	print $formother->selectyear(empty($year) ? date('Y') : $year,'year',0, 20, 5);
+	print $formother->select_month(empty($month) ? date('M') : $month,'month',0, 1);
+    print $formother->select_year(empty($year) ? date('Y') : $year,'year',0, 3, 3);
 	print '</td>';
 	print '</tr>';
 	print '<tr>';
@@ -92,7 +94,8 @@ function _print_form_deb() {
 	print '</td>';
 	print '<td>';
 	//print $ATMform->combo('','type', array('introduction'=>'Introduction', 'expedition'=>'Expédition'), $type_declaration);
-	print '</td>';
+    print $form->selectarray('type', $type, $type_declaration);
+    print '</td>';
 	print '</tr>';
 	
 	print '</table>';
@@ -120,13 +123,13 @@ function _print_form_des()
 	print '<input type="hidden" name="action" value="export" />';
 	print '<input type="hidden" name="exporttype" value="des" />';
 	print '<input type="hidden" name="type" value="expedition" />'; // Permet d'utiliser le bon select de la requête sql
-	
-	print '<table width="100%" class="noborder" style="background-color: #fff;">';
-	
+
+	print '<table width="100%" class="noborder">';
+
 	print '<tr class="liste_titre"><td colspan="2">';
 	print 'Paramètres de l\'export';
 	print '</td></tr>';
-	
+
 	print '<tr>';
 	print '<td>Période d\'analyse</td>';
 	print '<td>';
@@ -136,22 +139,21 @@ function _print_form_des()
 	print $formother->selectyear(empty($year) ? date('Y') : $year,'year',0, 20, 5);
 	print '</td>';
 	print '</tr>';
-	
+
 	print '</table>';
-	
+
 	print '<div class="tabsAction">';
 	print '<input class="butAction" type="submit" value="Exporter XML" />';
 	print '</div>';
-	
+
 	print '</form>';
-	
 }
 
 function _export_xml_deb($type_declaration, $period_year, $period_month) {
-	
-	global $PDOdb, $conf;
-	
-	$obj = new TDebProdouane($PDOdb);
+
+	global $db, $conf;
+
+	$obj = new TDebProdouane($db);
 	$obj->entity = $conf->entity;
 	$obj->mode = 'O';
 	$obj->periode = $period_year.'-'.$period_month;
@@ -163,13 +165,12 @@ function _export_xml_deb($type_declaration, $period_year, $period_month) {
 		$obj->generateXMLFile();
 	}
 	else setEventMessage($obj->errors, 'warnings');
-	
 }
 
 function _export_xml_des($type_declaration, $period_year, $period_month) {
-	
+
 	global $PDOdb, $conf;
-	
+
 	$obj = new TDebProdouane($PDOdb);
 	$obj->entity = $conf->entity;
 	$obj->periode = $period_year.'-'.$period_month;
@@ -182,49 +183,6 @@ function _export_xml_des($type_declaration, $period_year, $period_month) {
 		$obj->generateXMLFile();
 	}
 	else setEventMessage($obj->errors, 'warnings');
-	
-}
-
-function _liste($exporttype='deb') {
-	
-	global $db, $conf, $PDOdb, $langs;
-	
-	$langs->load('intracommreport');
-	
-	llxHeader();
-	$l = new TListviewTBS('intracommreport');
-	
-	$sql = 'SELECT numero_declaration, type_declaration, periode, rowid as dl
-			FROM '.MAIN_DB_PREFIX.'intracommreport
-			WHERE entity = '.$conf->entity.' AND exporttype = '.$PDOdb->quote($exporttype);
-	
-	print $l->render($PDOdb, $sql, array(
-		'type'=>array(
-			//'date_cre'=>'date'
-		)
-		,'link'=>array(
-			'dl'=>'<a href="'.dol_buildpath('/intracommreport/export.php', 1).'?action=generateXML&id_declaration=@dl@">'.img_picto('', 'file.png').'</a>'
-		)
-		,'eval'=>array(
-			'numero_declaration'=>'TDebProdouane::getNumeroDeclaration("@val@")'
-			,'type_declaration'=>'TDebProdouane::$TType["@val@"]'
-		)
-		,'liste'=>array(
-			'titre'=>$langs->trans('intracommreportList'.$exporttype)
-			,'image'=>img_picto('','title.png', '', 0)
-			,'picto_precedent'=>img_picto('','back.png', '', 0)
-			,'picto_suivant'=>img_picto('','next.png', '', 0)
-			,'messageNothing'=>"Il n'y a aucune déclaration à afficher"
-			,'picto_search'=>img_picto('','search.png', '', 0)
-		)
-		,'title'=>array(
-			'numero_declaration'=>$langs->trans('intracommreportNumber')
-			,'type_declaration'=>$langs->trans('intracommreportTypeDeclaration')
-			,'periode'=>$langs->trans('intracommreportPeriod')
-			,'dl'=>$langs->trans('intracommreportDownload')
-		)
-	));
-	
 }
 
 llxFooter();

@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2019       Open-DSI       <support@open-dsi.fr>
+/* Copyright (C) 2015       ATM Consulting          <support@atm-consulting.fr>
+ * Copyright (C) 2019       Open-DSI                <support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,17 +21,48 @@
  *  \ingroup    Intracomm report
  *  \brief      File of class to manage intracomm report
  */
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 
 /**
  * Class to manage intracomm report
  */
 class IntracommReport extends CommonObject
 {
-	
+    /**
+     * @var string ID to identify managed object
+     */
+    public $element='intracommreport';
+
+    /**
+     * @var string Name of table without prefix where object is stored
+     */
+    public $table_element='intracommreport';
+
+    /**
+     * @var int Field with ID of parent key if this field has a parent
+     */
+    public $fk_element='fk_intracommreport';
+
+    /**
+     * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+     *
+     * @var int
+     */
+    public $ismultientitymanaged = 1;
+
+    /**
+     * DEB - Product
+     */
+    const TYPE_DEB = 0;
+    /**
+     * DES - Service
+     */
+    const TYPE_DES = 1;
+
 	static $type = array(
-							'introduction'=>'Introduction'
-							,'expedition'=>'Expédition'
-						);
+	    'introduction'=>'Introduction'
+		,'expedition'=>'Expédition'
+    );
 
     /**
      * Constructor
@@ -52,11 +84,10 @@ class IntracommReport extends CommonObject
 		parent::start();
 		parent::_init_vars();
 		*/
-		
+
 		$this->exporttype = 'deb';
 	}
-	
-	
+
 	/**
 	 * @param $mode O pour création, R pour régénération (apparemment toujours 0 dans la cadre des échanges XML selon la doc)
 	 * @param $type introduction ou expedition
@@ -64,16 +95,16 @@ class IntracommReport extends CommonObject
 	function getXML($mode='O', $type='introduction', $periode_reference='') {
 
 		global $db, $conf, $mysoc;
-		
+
 		/**************Construction de quelques variables********************/
 		$party_id = substr(strtr($mysoc->tva_intra, array(' '=>'')), 0, 4).$mysoc->idprof2;
 		$declarant = substr($mysoc->managers, 0, 14);
 		$id_declaration = self::getNumeroDeclaration($this->numero_declaration);
 		/********************************************************************/
-		
+
 		/**************Construction du fichier XML***************************/
 		$e = new SimpleXMLElement('<?xml version="1.0" encoding="utf-8" standalone="yes"?><INSTAT></INSTAT>');
-		
+
 		$enveloppe = $e->addChild('Envelope');
 		$enveloppe->addChild('envelopeId', $conf->global->INTRACOMMREPORT_NUM_AGREMENT);
 		$date_time = $enveloppe->addChild('DateTime');
@@ -97,69 +128,66 @@ class IntracommReport extends CommonObject
 		$declaration->addChild('flowCode', ($type == 'introduction' ? 'A' : 'D'));
 		$declaration->addChild('currencyCode', $conf->global->MAIN_MONNAIE);
 		/********************************************************************/
-		
+
 		/**************Ajout des lignes de factures**************************/
 		$res = self::addItemsFact($declaration, $type, $periode_reference);
 		/********************************************************************/
-		
+
 		$this->errors = array_unique($this->errors);
 
 		if(!empty($res)) return $e->asXML();
 		else return 0;
-		
 	}
 	
 	// $type_declaration tjrs = "expedition" à voir si ça évolue
 	function getXMLDes($period_year, $period_month, $type_declaration='expedition')
 	{
 		global $db, $conf, $mysoc;
-		
-		
+
 		$e = new SimpleXMLElement('<?xml version="1.0" encoding="utf-8" ?><fichier_des></fichier_des>');
-		
+
 		$declaration_des = $e->addChild('declaration_des');
 		$declaration_des->addChild('num_des', self::getNumeroDeclaration($this->numero_declaration));
 		$declaration_des->addChild('num_tvaFr', $mysoc->tva_intra); // /^FR[a-Z0-9]{2}[0-9]{9}$/  // Doit faire 13 caractères
 		$declaration_des->addChild('mois_des', $period_month);
 		$declaration_des->addChild('an_des', $period_year);
-		
-		
+
 		/**************Ajout des lignes de factures**************************/
 		$res = self::addItemsFact($declaration_des, $type_declaration, $period_year.'-'.$period_month, 'des');
 		/********************************************************************/
-		
+
 		$this->errors = array_unique($this->errors);
 
 		if(!empty($res)) return $e->asXML();
 		else return 0;
 	}
-	
+
 	function addItemsFact(&$declaration, $type, $periode_reference, $exporttype='deb') {
-		
+
 		global $db, $conf;
-		
+
 		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
-		
+
 		$sql = $this->getSQLFactLines($type, $periode_reference, $exporttype);
-		
+
 		$resql = $db->query($sql);
-		
+
 		if($resql) {
 			$i=1;
-			
+
 			if(empty($resql->num_rows)) {
 				$this->errors[] = 'Aucune donnée pour cette période';
 				return 0;
 			}
-			
+
 			if($exporttype == 'deb' && $conf->global->INTRACOMMREPORT_CATEG_FRAISDEPORT > 0) {
 				$categ_fraisdeport = new Categorie($db);
 				$categ_fraisdeport->fetch($conf->global->INTRACOMMREPORT_CATEG_FRAISDEPORT);
 				$TLinesFraisDePort = array();
 			}
-			
+
 			while($res = $db->fetch_object($resql)) {
-				
+
 				if ($exporttype == 'des')
 				{
 					$this->addItemXMlDes($declaration, $res, '', $i);
@@ -175,25 +203,25 @@ class IntracommReport extends CommonObject
 						} else $this->addItemXMl($declaration, $res, '', $i);
 					}	
 				}
-				
+
 				$i++;
-				
+
 			}
-			
+
 			if(!empty($TLinesFraisDePort)) $this->addItemFraisDePort($declaration, $TLinesFraisDePort, $type, $categ_fraisdeport, $i);
 
 			if(count($this->errors) > 0) return 0;
-			
+
 		}
-		
+
 		return 1;
-		
+
 	}
 
 	function getSQLFactLines($type, $periode_reference, $exporttype='deb') {
-		
+
 		global $mysoc, $conf;
-		
+
 		if($type=='expedition' || $exporttype=='des') {
 			$sql = 'SELECT f.facnumber, f.total as total_ht';
 			$table = 'facture';
@@ -224,13 +252,13 @@ class IntracommReport extends CommonObject
 				AND f.entity = '.$conf->entity.'
 				AND (s.fk_pays <> '.$mysoc->country_id.' OR s.fk_pays IS NULL)
 				AND f.datef BETWEEN "'.$periode_reference.'-01" AND "'.$periode_reference.'-'.date('t').'"';
-		
+
 		return $sql;
-		
+
 	}
-	
+
 	function addItemXMl(&$declaration, &$res, $code_douane_spe='', $i) {
-		
+
 		$item = $declaration->addChild('Item');
 		$item->addChild('ItemNumber', $i);
 		$cn8 = $item->addChild('CN8');
@@ -249,7 +277,7 @@ class IntracommReport extends CommonObject
 		$nature_of_transaction->addChild('natureOfTransactionBCode', 1);
 		$item->addChild('modeOfTransportCode', $res->mode_transport);
 		$item->addChild('regionCode', substr($res->zip, 0, 2));
-		
+
 	}
 
 	function addItemXMlDes($declaration, &$res, $code_douane_spe='', $i)
@@ -259,14 +287,14 @@ class IntracommReport extends CommonObject
 		$item->addChild('valeur', round($res->total_ht)); // Montant total ht de la facture (entier attendu)
 		$item->addChild('partner_des', $res->tva_intra); // Représente le numéro TVA du client étranger
 	}
-	
+
 	/**
 	 * Cette fonction ajoute un item en récupérant le code douane du produit ayant le plus haut montant dans la facture
 	 */
 	function addItemFraisDePort(&$declaration, &$TLinesFraisDePort, $type, &$categ_fraisdeport, $i) {
-		
+
 		global $db, $conf;
-		
+
 		if($type=='expedition') {
 			$table = 'facture';
 			$tabledet = 'facturedet';
@@ -279,9 +307,9 @@ class IntracommReport extends CommonObject
 			$field_link = 'fk_facture_fourn';
 			$more_sql = 'f.ref_supplier';
 		}
-		
+
 		foreach($TLinesFraisDePort as $res) {
-			
+
 			$sql = 'SELECT p.customcode
 					FROM '.MAIN_DB_PREFIX.$tabledet.' d
 					INNER JOIN '.MAIN_DB_PREFIX.$table.' f ON (f.rowid = d.'.$field_link.')
@@ -303,43 +331,40 @@ class IntracommReport extends CommonObject
 							WHERE fk_categorie = '.$categ_fraisdeport->id.'
 						) 
 					)';
-			
+
 			$resql = $db->query($sql);
 			$ress = $db->fetch_object($resql);
-			
+
 			$this->addItemXMl($declaration, $res, $ress->customcode, $i);
-			
+
 			$i++;
 
 		}
-		
 	}
 
 	function getNextNumeroDeclaration() {
-		
+
 		global $db;
 		$resql = $db->query('SELECT MAX(numero_declaration) as max_numero_declaration FROM '.$this->get_table().' WHERE exporttype="'.$this->exporttype.'"');
 		if($resql) $res = $db->fetch_object($resql);
-		
+
 		return ($res->max_numero_declaration + 1);
-		
 	}
 
 	// La doc impose que le numéro soit un entier positif d'un maximum de 6 caractères
 	static function getNumeroDeclaration($numero) {
-	
+
 		return str_pad($numero, 6, 0, STR_PAD_LEFT);
-		
 	}
 
 	function generateXMLFile() {
-		
+
 		$name = $this->periode.'.xml';
 		$fname = sys_get_temp_dir().'/'.$name;
 		$f = fopen($fname, 'w+');
 		fwrite($f, $this->content_xml);
 		fclose($f);
-		
+
 		header('Content-Description: File Transfer');
 	    header('Content-Type: application/xml');
 	    header('Content-Disposition: attachment; filename="'.$name.'"');
@@ -349,7 +374,6 @@ class IntracommReport extends CommonObject
 	    header('Content-Length: ' . filesize($fname));
 	    readfile($fname);
 		exit;
-		
+
 	}
-	
 }

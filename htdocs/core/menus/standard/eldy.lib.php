@@ -312,9 +312,9 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 
 	// Accounting
 	$tmpentry = array(
-	    'enabled'=>(! empty($conf->comptabilite->enabled) || ! empty($conf->accounting->enabled) || ! empty($conf->asset->enabled)),
-	    'perms'=>(! empty($user->rights->compta->resultat->lire) || ! empty($user->rights->accounting->mouvements->lire) || ! empty($user->rights->asset->read)),
-        'module'=>'comptabilite|accounting|asset'
+	    'enabled'=>(! empty($conf->comptabilite->enabled) || ! empty($conf->accounting->enabled) || ! empty($conf->asset->enabled) || ! empty($conf->intracommreport->enabled)),
+	    'perms'=>(! empty($user->rights->compta->resultat->lire) || ! empty($user->rights->accounting->mouvements->lire) || ! empty($user->rights->asset->read) || ! empty($user->rights->intracommreport->read)),
+        'module'=>'comptabilite|accounting|asset|intracommreport'
 	);
 	$menu_arr[] = array(
 		'name' => 'Accounting',
@@ -333,7 +333,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 
 		'session' => ( ( $_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "accountancy" ) ? 0 : 1 ),
 
-		'loadLangs' => array("compta","accountancy","assets"),
+		'loadLangs' => array("compta","accountancy","assets","intracommreport"),
 		'submenus' => array(),
 	);
 

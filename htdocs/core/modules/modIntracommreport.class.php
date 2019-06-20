@@ -112,6 +112,13 @@ class modIntracommreport extends DolibarrModules
         $this->rights[$r][3] = 0;
         $this->rights[$r][4] = 'write';
 
+        $this->rights[$r][0] = 68004;
+        $this->rights[$r][1] = 'Delete intracomm report';
+        $this->rights[$r][2] = 'd';
+        $this->rights[$r][3] = 0;
+        $this->rights[$r][4] = 'delete';
+        $r++;
+
 		// Main menu entries
 		$this->menu = array();			// List of menus to add
 		$r=0;

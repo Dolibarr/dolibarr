@@ -14,22 +14,22 @@ INTRACOMMREPORT_CATEG_FRAISDEPORT=Catégorie de services de type "Frais de port"
 INTRACOMMREPORT_NUM_DECLARATION=Numéro de déclarant
 
 #Menu
-exportprodebDouane=Export Pro-Douane
-exportprodebDEB=Export DEB
-exportprodebNew=Nouvelle déclaration
-exportprodebList=Liste des déclarations
-exportprodebDES=Export DES
-exportprodesNew=Nouvelle déclaration
-exportprodesList=Liste des déclarations
+MenuDeclaration=Export Pro-Douane
+MenuDeclarationDEB=Export DEB
+MenuDeclarationDEBNew=Nouvelle déclaration
+MenuDeclarationDEBList=Liste des déclarations
+MenuDeclarationDES=Export DES
+MenuDeclarationDESNew=Nouvelle déclaration
+MenuDeclarationDESList=Liste des déclarations
 
 #page d'export
-exportprodebTitle=Export d'un fichier XML au format ProDouane - DEB
-exportprodesTitle=Export d'un fichier XML au format ProDouane - DES
+IntracommReportDEBTitle=Export d'un fichier XML au format ProDouane - DEB
+IntracommReportDESTitle=Export d'un fichier XML au format ProDouane - DES
 
 #Liste
-exportprodebListdeb=Liste des déclarations générées (DEB)
-exportprodebListdes=Liste des déclarations générées (DES)
-exportprodebNumber=Numéro déclaration
-exportprodebPeriod=Période d'analyse
-exportprodebTypeDeclaration=Type de déclaration
-exportprodebDownload=Télécharger fichier XML
+IntracommReportListDEB=Liste des déclarations générées (DEB)
+IntracommReportListDES=Liste des déclarations générées (DES)
+IntracommReportNumber=Numéro déclaration
+IntracommReportPeriod=Période d'analyse
+IntracommReportTypeDeclaration=Type de déclaration
+IntracommReportDownload=Télécharger fichier XML

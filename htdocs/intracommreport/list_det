@@ -1,0 +1,40 @@
+function _liste($exporttype='deb') {
+
+global $db, $conf, $langs;
+
+$langs->load('intracommreport');
+
+llxHeader();
+$l = new TListviewTBS('intracommreport');
+
+$sql = 'SELECT numero_declaration, type_declaration, periode, rowid as dl
+FROM '.MAIN_DB_PREFIX.'intracommreport
+WHERE entity = '.$conf->entity.' AND exporttype = '.$PDOdb->quote($exporttype);
+
+print $l->render($PDOdb, $sql, array(
+'type'=>array(
+//'date_cre'=>'date'
+)
+,'link'=>array(
+'dl'=>'<a href="'.dol_buildpath('/intracommreport/export.php', 1).'?action=generateXML&id_declaration=@dl@">'.img_picto('', 'file.png').'</a>'
+)
+,'eval'=>array(
+'numero_declaration'=>'TDebProdouane::getNumeroDeclaration("@val@")'
+,'type_declaration'=>'TDebProdouane::$TType["@val@"]'
+)
+,'liste'=>array(
+'titre'=>$langs->trans('IntracommReportList'.$exporttype)
+,'image'=>img_picto('','title.png', '', 0)
+,'picto_precedent'=>img_picto('','back.png', '', 0)
+,'picto_suivant'=>img_picto('','next.png', '', 0)
+,'messageNothing'=>"Il n'y a aucune déclaration à afficher"
+,'picto_search'=>img_picto('','search.png', '', 0)
+)
+,'title'=>array(
+'numero_declaration'=>$langs->trans('IntracommReportNumber')
+,'type_declaration'=>$langs->trans('IntracommReportTypeDeclaration')
+,'periode'=>$langs->trans('IntracommReportPeriod')
+,'dl'=>$langs->trans('IntracommReportDownload')
+)
+));
+}
