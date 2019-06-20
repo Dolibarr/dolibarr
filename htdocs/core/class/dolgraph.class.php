@@ -229,7 +229,7 @@ class DolGraph
 	/**
 	 * Set width
 	 *
-	 * @param 	int		$w			Width
+	 * @param 	int|string		$w			Width (Example: 320 or '100%')
 	 * @return	boolean|null				True
 	 */
 	public function SetWidth($w)

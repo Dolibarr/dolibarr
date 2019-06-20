@@ -1075,7 +1075,7 @@ if ($resql)
 			// Town
 			if (! empty($arrayfields['s.town']['checked']))
 			{
-				print '<td class="nocellnopadd">';
+				print '<td>';
 				print $obj->town;
 				print '</td>';
 				if (! $i) $totalarray['nbfield']++;
@@ -1083,7 +1083,7 @@ if ($resql)
 			// Zip
 			if (! empty($arrayfields['s.zip']['checked']))
 			{
-				print '<td class="nocellnopadd">';
+				print '<td>';
 				print $obj->zip;
 				print '</td>';
 				if (! $i) $totalarray['nbfield']++;
