@@ -155,7 +155,7 @@ print '<input type="hidden" name="action" value="setvalue">';
 
 dol_fiche_head($head, 'stripeaccount', '', -1);
 
-$stripearrayofwebhookevents=array('payout.created','payout.paid','charge.pending','charge.refunded','charge.succeeded','charge.failed','payment_intent.succeeded','payment_intent.payment_failed','source.chargeable','customer.deleted');
+$stripearrayofwebhookevents=array('payout.created','payout.paid','charge.pending','charge.refunded','charge.succeeded','charge.failed','payment_intent.succeeded','payment_intent.payment_failed','payment_method.attached','payment_method.updated','payment_method.card_automatically_updated','payment_method.detached','source.chargeable','customer.deleted');
 
 print $langs->trans("StripeDesc")."<br>\n";
 
@@ -225,12 +225,12 @@ if (empty($conf->stripeconnect->enabled))
             $endpoint->save();
             if ($endpoint->status == 'enabled')
             {
-            	print '<a href="'.$_SERVER['PHP_SELF'].'?action=ipn&webhook='.$endpoint->id.'&status=0">';
+            	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=ipn&webhook='.$endpoint->id.'&status=0">';
             	print img_picto($langs->trans("Activated"), 'switch_on');
             }
             else
             {
-            	print '<a href="'.$_SERVER['PHP_SELF'].'?action=ipn&webhook='.$endpoint->id.'&status=1">';
+            	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=ipn&webhook='.$endpoint->id.'&status=1">';
             	print img_picto($langs->trans("Disabled"), 'switch_off');
             }
         //print $endpoint;
@@ -298,12 +298,12 @@ if (empty($conf->stripeconnect->enabled))
             $endpoint->save();
             if ($endpoint->status == 'enabled')
             {
-                print '<a href="'.$_SERVER['PHP_SELF'].'?action=ipn&webhook='.$endpoint->id.'&status=0">';
+                print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=ipn&webhook='.$endpoint->id.'&status=0">';
                 print img_picto($langs->trans("Activated"), 'switch_on');
             }
             else
             {
-                print '<a href="'.$_SERVER['PHP_SELF'].'?action=ipn&webhook='.$endpoint->id.'&status=1">';
+                print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=ipn&webhook='.$endpoint->id.'&status=1">';
                 print img_picto($langs->trans("Disabled"), 'switch_off');
             }
         //print $endpoint;

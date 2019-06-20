@@ -224,8 +224,8 @@ class Ticket extends CommonObject
     {
         $this->db = $db;
 
-        $this->statuts_short = array(self::STATUS_NOT_READ => 'Unread', self::STATUS_READ => 'Read', self::STATUS_ASSIGNED => 'Assigned', self::STATUS_IN_PROGRESS => 'InProgress', self::STATUS_NEED_MORE_INFO => 'NeedMoreInformation', self::STATUS_WAITING => 'Waiting', self::STATUS_CLOSED => 'Closed', self::STATUS_CANCELED => 'Canceled');
-        $this->statuts       = array(self::STATUS_NOT_READ => 'Unread', self::STATUS_READ => 'Read', self::STATUS_ASSIGNED => 'Assigned', self::STATUS_IN_PROGRESS => 'InProgress', self::STATUS_NEED_MORE_INFO => 'NeedMoreInformation', self::STATUS_WAITING => 'Waiting', self::STATUS_CLOSED => 'Closed', self::STATUS_CANCELED => 'Canceled');
+        $this->statuts_short = array(self::STATUS_NOT_READ => 'Unread', self::STATUS_READ => 'Read', self::STATUS_ASSIGNED => 'Assigned', self::STATUS_IN_PROGRESS => 'InProgress', self::STATUS_NEED_MORE_INFO => 'NeedMoreInformation', self::STATUS_WAITING => 'Suspended', self::STATUS_CLOSED => 'Closed', self::STATUS_CANCELED => 'Canceled');
+        $this->statuts       = array(self::STATUS_NOT_READ => 'Unread', self::STATUS_READ => 'Read', self::STATUS_ASSIGNED => 'Assigned', self::STATUS_IN_PROGRESS => 'InProgress', self::STATUS_NEED_MORE_INFO => 'NeedMoreInformation', self::STATUS_WAITING => 'Suspended', self::STATUS_CLOSED => 'Closed', self::STATUS_CANCELED => 'Canceled');
     }
 
     /**
@@ -1370,7 +1370,7 @@ class Ticket extends CommonObject
             $this->db->begin();
 
             $sql = "UPDATE " . MAIN_DB_PREFIX . "ticket";
-            $sql .= " SET fk_statut = 1, date_read='" . $this->db->idate(dol_now()) . "'";
+            $sql .= " SET fk_statut = ".Ticket::STATUS_READ.", date_read='" . $this->db->idate(dol_now()) . "'";
             $sql .= " WHERE rowid = " . $this->id;
 
             dol_syslog(get_class($this) . "::markAsRead");
@@ -1387,7 +1387,6 @@ class Ticket extends CommonObject
                     }
                     // End call triggers
                 }
-
 
                 if (!$error) {
                     $this->db->commit();
@@ -1421,20 +1420,23 @@ class Ticket extends CommonObject
 
         $this->db->begin();
 
+        $this->oldcopy = dol_clone($this);
+
         $sql = "UPDATE " . MAIN_DB_PREFIX . "ticket";
         if ($id_assign_user > 0)
         {
-            $sql .= " SET fk_user_assign=".$id_assign_user.", fk_statut=4";
+            $sql .= " SET fk_user_assign=".$id_assign_user.", fk_statut = ".Ticket::STATUS_ASSIGNED;
         }
         else
         {
-            $sql .= " SET fk_user_assign=null, fk_statut=1";
+            $sql .= " SET fk_user_assign=null, fk_statut = ".Ticket::STATUS_READ;
         }
         $sql .= " WHERE rowid = " . $this->id;
 
         dol_syslog(get_class($this) . "::assignUser sql=" . $sql);
         $resql = $this->db->query($sql);
-        if ($resql) {
+        if ($resql)
+        {
             $this->fk_user_assign = $id_assign_user; // May be used by trigger
 
             if (! $notrigger) {
@@ -1710,11 +1712,11 @@ class Ticket extends CommonObject
     {
         global $conf, $langs;
 
-        if ($this->fk_statut != 9) { // not closed
+        if ($this->fk_statut != Ticket::STATUS_CLOSED) { // not closed
             $this->db->begin();
 
             $sql = "UPDATE " . MAIN_DB_PREFIX . "ticket";
-            $sql .= " SET fk_statut=8, progress=100, date_close='" . $this->db->idate(dol_now()) . "'";
+            $sql .= " SET fk_statut=".Ticket::STATUS_CLOSED.", progress=100, date_close='" . $this->db->idate(dol_now()) . "'";
             $sql .= " WHERE rowid = " . $this->id;
 
             dol_syslog(get_class($this) . "::close sql=" . $sql);
@@ -2372,7 +2374,7 @@ class Ticket extends CommonObject
         if (file_exists($dir_osencoded)) {
             $handle = opendir($dir_osencoded);
             if (is_resource($handle)) {
-                while (($file = readdir($handle)) != false) {
+                while (($file = readdir($handle)) !== false) {
                     if (!utf8_check($file)) {
                         $file = utf8_encode($file);
                     }

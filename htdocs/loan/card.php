@@ -302,7 +302,7 @@ if ($action == 'create')
 	// Rate
 	print '<tr><td class="fieldrequired">'.$langs->trans("Rate").'</td><td><input name="rate" size="5" value="' . dol_escape_htmltag(GETPOST("rate")) . '"> %</td></tr>';
 
-	// insurance amount
+	// Insurance amount
 	print '<tr><td>'.$langs->trans("Insurance").'</td><td><input name="insurance_amount" size="10" value="' . dol_escape_htmltag(GETPOST("insurance_amount")) . '" placeholder="'.$langs->trans('Amount').'"></td></tr>';
 
 	// Project
@@ -707,7 +707,9 @@ if ($id > 0)
 			$total_insurance = 0;
 			$total_interest = 0;
 			$total_capital = 0;
-			print '<table class="noborder">';
+
+			print '<div class="div-table-responsive-no-min">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
+			print '<table class="noborder paymenttable">';
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("RefPayment").'</td>';
 			print '<td>'.$langs->trans("Date").'</td>';
@@ -748,6 +750,8 @@ if ($id > 0)
 				print '</td></tr>';
 			}
 			print "</table>";
+			print '</div>';
+
 			$db->free($resql);
 		}
 		else

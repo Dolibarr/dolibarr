@@ -39,15 +39,12 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 
 $place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0);   // $place is id of table for Ba or Restaurant
-$posnb = (GETPOST('posnb', 'int') > 0 ? GETPOST('posnb', 'int') : 0);   // $posnb is id of POS
 $action = GETPOST('action', 'alpha');
 $setterminal = GETPOST('setterminal', 'int');
 
 if ($setterminal>0)
 {
 	$_SESSION["takeposterminal"]=$setterminal;
-	if ($setterminal==1) $_SESSION["takepostermvar"]="";
-	else $_SESSION["takepostermvar"]=$setterminal;
 }
 
 $langs->loadLangs(array("bills","orders","commercial","cashdesk","receiptprinter"));
@@ -60,6 +57,13 @@ if ($conf->browser->layout == 'phone')
 {
     $maxcategbydefaultforthisdevice=8;
     $maxproductbydefaultforthisdevice=16;
+	//REDIRECT TO BASIC LAYOUT IF TERMINAL SELECTED AND BASIC MOBILE LAYOUT ENABLED
+	if ($_SESSION["takeposterminal"]!="" && $conf->global->TAKEPOS_PHONE_BASIC_LAYOUT==1)
+	{
+		$_SESSION["basiclayout"]=1;
+		header("Location: invoice.php?mobilepage=invoice");
+		exit;
+	}
 }
 $MAXCATEG = (empty($conf->global->TAKEPOS_NB_MAXCATEG)?$maxcategbydefaultforthisdevice:$conf->global->TAKEPOS_NB_MAXCATEG);
 $MAXPRODUCT = (empty($conf->global->TAKEPOS_NB_MAXPRODUCT)?$maxproductbydefaultforthisdevice:$conf->global->TAKEPOS_NB_MAXPRODUCT);
@@ -576,8 +580,12 @@ $( document ).ready(function() {
 	LoadProducts(0);
 	Refresh();
 	<?php
-	//IF THERE ARE MORE THAN 1 TERMINAL AND NO SELECTED
-	if ($conf->global->TAKEPOS_NUM_TERMINALS!="1" && $_SESSION["takeposterminal"]=="") print "TerminalsDialog();";
+	//IF NO TERMINAL SELECTED
+	if ($_SESSION["takeposterminal"]=="")
+	{
+		if ($conf->global->TAKEPOS_NUM_TERMINALS=="1") $_SESSION["takeposterminal"]=1;
+		else print "TerminalsDialog();";
+	}
 	?>
 });
 </script>
@@ -627,7 +635,7 @@ if ($resql){
         if ($paycode == 'CB')  $paycode = 'CARD';
         if ($paycode == 'CHQ') $paycode = 'CHEQUE';
 
-		$accountname="CASHDESK_ID_BANKACCOUNT_".$paycode;
+		$accountname="CASHDESK_ID_BANKACCOUNT_".$paycode.$_SESSION["takeposterminal"];
 		if (! empty($conf->global->$accountname) && $conf->global->$accountname > 0) array_push($paiementsModes, $obj);
 	}
 }

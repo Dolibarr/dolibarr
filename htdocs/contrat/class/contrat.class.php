@@ -878,14 +878,14 @@ class Contrat extends CommonObject
 		if ($this->commercial_signature_id <= 0)
 		{
 			$langs->load("commercial");
-			$this->error.=$langs->trans("ErrorFieldRequired", $langs->trans("SalesRepresentativeSignature"));
+			$this->error.=$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("SalesRepresentativeSignature"));
 			$paramsok=0;
 		}
 		if ($this->commercial_suivi_id <= 0)
 		{
 			$langs->load("commercial");
 			$this->error.=($this->error?"<br>":'');
-			$this->error.=$langs->trans("ErrorFieldRequired", $langs->trans("SalesRepresentativeFollowUp"));
+			$this->error.=$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("SalesRepresentativeFollowUp"));
 			$paramsok=0;
 		}
 		if (! $paramsok) return -1;
@@ -1647,7 +1647,7 @@ class Contrat extends CommonObject
 		// if buy price not defined, define buyprice as configured in margin admin
 		if ($this->pa_ht == 0)
 		{
-			if (($result = $this->defineBuyPrice($pu_ht, $remise_percent)) < 0)
+			if (($result = $this->defineBuyPrice($pu, $remise_percent)) < 0)
 			{
 				return $result;
 			}
@@ -1752,7 +1752,6 @@ class Contrat extends CommonObject
 
 		if ($this->statut >= 0)
 		{
-
 		    // Call trigger
 		    $result=$this->call_trigger('LINECONTRACT_DELETE', $user);
 		    if ($result < 0) return -1;
@@ -1760,10 +1759,10 @@ class Contrat extends CommonObject
 
 		    $this->db->begin();
 
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."contratdet";
+		    $sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element_line;
 			$sql.= " WHERE rowid=".$idline;
 
-			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+			dol_syslog(get_class($this)."::deleteline", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (! $resql)
 			{
@@ -1781,7 +1780,7 @@ class Contrat extends CommonObject
 					if ($result < 0)
 					{
 						$error++;
-						$this->error="Error ".get_class($this)."::delete deleteExtraFields error -4 ".$contractline->error;
+						$this->error="Error ".get_class($this)."::deleteline deleteExtraFields error -4 ".$contractline->error;
 					}
 				}
 			}
@@ -1790,7 +1789,7 @@ class Contrat extends CommonObject
 				$this->db->commit();
 				return 1;
 			} else {
-				dol_syslog(get_class($this)."::delete ERROR:".$this->error, LOG_ERR);
+				dol_syslog(get_class($this)."::deleteline ERROR:".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -1;
 			}

@@ -446,7 +446,9 @@ class Expedition extends CommonObject
 	 */
 	public function create_line($entrepot_id, $origin_line_id, $qty, $array_options = 0)
 	{
-        //phpcs:enable
+		//phpcs:enable
+		global $user;
+
 		$expeditionline = new ExpeditionLigne($this->db);
 		$expeditionline->fk_expedition = $this->id;
 		$expeditionline->entrepot_id = $entrepot_id;
@@ -454,7 +456,7 @@ class Expedition extends CommonObject
 		$expeditionline->qty = $qty;
 		$expeditionline->array_options = $array_options;
 
-		if (($lineId = $expeditionline->insert()) < 0)
+		if (($lineId = $expeditionline->insert($user)) < 0)
 		{
 			$this->errors[]=$expeditionline->error;
 		}
@@ -528,6 +530,7 @@ class Expedition extends CommonObject
 		if (empty($id) && empty($ref) && empty($ref_ext) && empty($ref_int)) return -1;
 
 		$sql = "SELECT e.rowid, e.ref, e.fk_soc as socid, e.date_creation, e.ref_customer, e.ref_ext, e.ref_int, e.fk_user_author, e.fk_statut, e.fk_projet as fk_project, e.billed";
+        $sql.= ", e.date_valid";
 		$sql.= ", e.weight, e.weight_units, e.size, e.size_units, e.width, e.height";
 		$sql.= ", e.date_expedition as date_expedition, e.model_pdf, e.fk_address, e.date_delivery";
 		$sql.= ", e.fk_shipping_method, e.tracking_number";
@@ -563,6 +566,7 @@ class Expedition extends CommonObject
 				$this->statut               = $obj->fk_statut;
 				$this->user_author_id       = $obj->fk_user_author;
 				$this->date_creation        = $this->db->jdate($obj->date_creation);
+                $this->date_valid           = $this->db->jdate($obj->date_valid);
 				$this->date                 = $this->db->jdate($obj->date_expedition);	// TODO deprecated
 				$this->date_expedition      = $this->db->jdate($obj->date_expedition);	// TODO deprecated
 				$this->date_shipping        = $this->db->jdate($obj->date_expedition);	// Date real
@@ -1145,9 +1149,10 @@ class Expedition extends CommonObject
 	 * 	Delete shipment.
 	 * 	Warning, do not delete a shipment if a delivery is linked to (with table llx_element_element)
 	 *
+	 *  @param  int  $notrigger Disable triggers
 	 * 	@return	int		>0 if OK, 0 if deletion done but failed to delete files, <0 if KO
 	 */
-	public function delete()
+	public function delete($notrigger = 0)
 	{
 		global $conf, $langs, $user;
 
@@ -1396,6 +1401,8 @@ class Expedition extends CommonObject
 			$this->total_ttc = 0;
 			$this->total_localtax1 = 0;
 			$this->total_localtax2 = 0;
+
+			$line = new ExpeditionLigne($this->db);
 
 			while ($i < $num)
 			{
@@ -2549,7 +2556,7 @@ class ExpeditionLigne extends CommonObjectLine
 	 *	@param      int		$notrigger		1 = disable triggers
 	 *	@return     int						<0 if KO, line id >0 if OK
 	 */
-	public function insert($user = null, $notrigger = 0)
+	public function insert($user, $notrigger = 0)
 	{
 		global $langs, $conf;
 
@@ -2561,8 +2568,6 @@ class ExpeditionLigne extends CommonObjectLine
 			$this->error = 'ErrorMandatoryParametersNotProvided';
 			return -1;
 		}
-		// Clean parameters
-		if (empty($this->entrepot_id)) $this->entrepot_id='null';
 
 		$this->db->begin();
 
@@ -2573,7 +2578,7 @@ class ExpeditionLigne extends CommonObjectLine
 		$sql.= ", qty";
 		$sql.= ") VALUES (";
 		$sql.= $this->fk_expedition;
-		$sql.= ", ".$this->entrepot_id;
+		$sql.= ", ".(empty($this->entrepot_id) ? 'NULL' : $this->entrepot_id);
 		$sql.= ", ".$this->fk_origin_line;
 		$sql.= ", ".$this->qty;
 		$sql.= ")";

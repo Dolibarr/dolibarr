@@ -60,7 +60,11 @@ CREATE TABLE llx_pos_cash_fence(
 
 -- For 10.0
 
+UPDATE llx_chargesociales SET date_creation = tms WHERE date_creation IS NULL;
+
 DROP TABLE llx_cotisation;
+ALTER TABLE llx_accounting_bookkeeping DROP COLUMN validated;
+ALTER TABLE llx_accounting_bookkeeping_tmp DROP COLUMN validated;
 
 ALTER TABLE llx_loan ADD COLUMN insurance_amount double(24,8) DEFAULT 0;
 
@@ -70,7 +74,10 @@ ALTER TABLE llx_facture ADD UNIQUE INDEX uk_facture_ref (ref, entity);
 
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('TICKET_CREATE','Ticket created','Executed when a ticket is created','ticket',161);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('TICKET_MODIFY','Ticket modified','Executed when a ticket is modified','ticket',163);
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('TICKET_DELETE','Ticket deleted','Executed when a ticket is deleted','ticket',164);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('TICKET_ASSIGNED','Ticket assigned','Executed when a ticket is assigned to another user','ticket',164);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('TICKET_CLOSE','Ticket closed','Executed when a ticket is closed','ticket',165);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('TICKET_SENTBYMAIL','Ticket message sent by email','Executed when a message is sent from the ticket record','ticket',166);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('TICKET_DELETE','Ticket deleted','Executed when a ticket is deleted','ticket',167);
 
 create table llx_mailing_unsubscribe
 (
@@ -207,18 +214,23 @@ CREATE TABLE llx_bom_bom(
 	description text, 
 	note_public text, 
 	note_private text, 
+	fk_product integer, 
+	qty double(24,8),
+	efficiency double(8,4),
 	date_creation datetime NOT NULL, 
-	tms timestamp NOT NULL, 
+	tms timestamp, 
 	date_valid datetime, 
 	fk_user_creat integer NOT NULL, 
 	fk_user_modif integer, 
 	fk_user_valid integer, 
 	import_key varchar(14), 
-	status integer NOT NULL, 
-	fk_product integer, 
-	qty double(24,8)
+	status integer NOT NULL 
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;
+
+ALTER TABLE llx_bom_bom ADD COLUMN efficiency double(8,4) DEFAULT 1;
+ALTER TABLE llx_bom_bom ADD COLUMN entity integer DEFAULT 1 NOT NULL;
+ALTER TABLE llx_bom_bom ADD COLUMN date_valid datetime;
 
 create table llx_bom_bom_extrafields
 (
@@ -231,14 +243,19 @@ create table llx_bom_bom_extrafields
 CREATE TABLE llx_bom_bomline(
 	-- BEGIN MODULEBUILDER FIELDS
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
+	fk_bom integer NOT NULL, 
+	fk_product integer NOT NULL,
+	fk_bom_child integer NULL, 
 	description text, 
 	import_key varchar(14), 
-	qty double(24,8), 
-	fk_product integer, 
-	fk_bom integer, 
+	qty double(24,8) NOT NULL, 
+	efficiency double(8,4) NOT NULL DEFAULT 1,
 	rank integer NOT NULL
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;
+
+ALTER TABLE llx_bom_bomline ADD COLUMN efficiency double(8,4) DEFAULT 1;
+ALTER TABLE llx_bom_bomline ADD COLUMN fk_bom_child integer NULL;
 
 create table llx_bom_bomline_extrafields
 (
@@ -257,6 +274,10 @@ ALTER TABLE llx_bom_bom ADD INDEX idx_bom_bom_fk_product (fk_product);
 ALTER TABLE llx_bom_bomline ADD INDEX idx_bom_bomline_rowid (rowid);
 ALTER TABLE llx_bom_bomline ADD INDEX idx_bom_bomline_fk_product (fk_product);
 ALTER TABLE llx_bom_bomline ADD INDEX idx_bom_bomline_fk_bom (fk_bom);
+
+ALTER TABLE llx_bom_bom ADD UNIQUE INDEX uk_bom_bom_ref(ref, entity);
+ALTER TABLE llx_bom_bomline ADD CONSTRAINT llx_bom_bomline_fk_bom FOREIGN KEY (fk_bom) REFERENCES llx_bom_bom(rowid);
+
 
 ALTER TABLE llx_product_fournisseur_price ADD COLUMN barcode varchar(180) DEFAULT NULL;
 ALTER TABLE llx_product_fournisseur_price ADD COLUMN fk_barcode_type integer DEFAULT NULL;
@@ -290,11 +311,8 @@ ALTER TABLE llx_actioncomm ADD COLUMN calling_duration integer;
 ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN datelastok datetime;
 ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN maxemailpercollect integer DEFAULT 100;
 
-DELETE FROM llx_const WHERE name = 'THEME_ELDY_USE_HOVER' AND value = '0';
-DELETE FROM llx_const WHERE name = 'THEME_ELDY_USE_CHECKED' AND value = '0';
-
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('TICKET_CLOSE','Ticket closed','Executed when a ticket is closed','ticket',164);
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('TICKET_SENTBYMAIL','Ticket message sent by email','Executed when a message is sent from the ticket record','ticket',166);
+DELETE FROM llx_const WHERE name = __ENCRYPT('THEME_ELDY_USE_HOVER')__ AND value = __ENCRYPT('0')__;
+DELETE FROM llx_const WHERE name = __ENCRYPT('THEME_ELDY_USE_CHECKED')__ AND value = __ENCRYPT('0')__;
 
 ALTER TABLE llx_inventorydet DROP COLUMN pmp; 
 ALTER TABLE llx_inventorydet DROP COLUMN pa; 
@@ -366,4 +384,11 @@ ALTER TABLE llx_reception_extrafields ADD INDEX idx_reception_extrafields (fk_ob
 ALTER TABLE llx_commande_fournisseur_dispatch ADD COLUMN fk_projet integer DEFAULT NULL;
 ALTER TABLE llx_commande_fournisseur_dispatch ADD COLUMN fk_reception integer DEFAULT NULL;
 
-  
+ALTER TABLE llx_accounting_bookkeeping ADD COLUMN date_export datetime DEFAULT NULL after date_validated;
+
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (110, 'supplier_proposal', 'internal', 'SALESREPFOLL',  'Responsable suivi de la demande', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (111, 'supplier_proposal', 'external', 'BILLING',       'Contact fournisseur facturation', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (112, 'supplier_proposal', 'external', 'SHIPPING',      'Contact fournisseur livraison', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (113, 'supplier_proposal', 'external', 'SERVICE',       'Contact fournisseur prestation', 1);
+
+ALTER TABLE llx_ticket_extrafields ADD INDEX idx_ticket_extrafields (fk_object);

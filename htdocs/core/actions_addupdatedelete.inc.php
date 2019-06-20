@@ -195,8 +195,45 @@ if ($action == 'confirm_delete' && ! empty($permissiontodelete))
 	}
 }
 
+// Remove a line
+if ($action == 'confirm_deleteline' && $confirm == 'yes' && ! empty($permissiontoadd))
+{
+	$result = $object->deleteline($user, $lineid);
+	if ($result > 0)
+	{
+		// Define output language
+		$outputlangs = $langs;
+		$newlang = '';
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09'))
+		{
+			$newlang = GETPOST('lang_id', 'aZ09');
+		}
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && is_object($object->thirdparty))
+		{
+			$newlang = $object->thirdparty->default_lang;
+		}
+		if (! empty($newlang)) {
+			$outputlangs = new Translate("", $conf);
+			$outputlangs->setDefaultLang($newlang);
+		}
+		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+			$ret = $object->fetch($object->id); // Reload to get new records
+			$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		}
+
+		setEventMessages($langs->trans('RecordDeleted'), null, 'mesgs');
+		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+		exit;
+	}
+	else
+	{
+		setEventMessages($object->error, $object->errors, 'errors');
+	}
+}
+
+
 // Action clone object
-if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontoadd)
+if ($action == 'confirm_clone' && $confirm == 'yes' && ! empty($permissiontoadd))
 {
 	if (1==0 && ! GETPOST('clone_content') && ! GETPOST('clone_receivers'))
 	{
@@ -207,7 +244,6 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontoadd)
 	    $objectutil = dol_clone($object, 1);   // To avoid to denaturate loaded object when setting some properties for clone or if createFromClone modifies the object. We use native clone to keep this->db valid.
 		//$objectutil->date = dol_mktime(12, 0, 0, GETPOST('newdatemonth', 'int'), GETPOST('newdateday', 'int'), GETPOST('newdateyear', 'int'));
         // ...
-
 	    $result=$objectutil->createFromClone($user, (($object->id > 0) ? $object->id : $id));
 	    if (is_object($result) || $result > 0)
 		{

@@ -477,7 +477,7 @@ if (empty($reshook))
 
 		// Check parameters
 
-		// Check for mandatory fields defined into setup
+		// Check for mandatory fields in thirdparty (defined into setup)
 		$array_to_check=array('IDPROF1','IDPROF2','IDPROF3','IDPROF4','IDPROF5','IDPROF6','EMAIL');
 		foreach($array_to_check as $key)
 		{
@@ -518,20 +518,40 @@ if (empty($reshook))
 			}
 		}
 
-		$qualified_for_stock_change = 0;
-		if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
-			$qualified_for_stock_change = $object->hasProductsOrServices(2);
-		} else {
-			$qualified_for_stock_change = $object->hasProductsOrServices(1);
+		// Check for mandatory fields in invoice
+		$array_to_check=array('REF_CUSTOMER'=>'RefCustomer');
+		foreach($array_to_check as $key => $val)
+		{
+			$keymin=strtolower($key);
+			$vallabel=$object->$keymin;
+
+			// Check for mandatory
+			$keymandatory ='INVOICE_'.$key.'_MANDATORY_FOR_VALIDATION';
+			if (! $vallabel && ! empty($conf->global->$keymandatory))
+			{
+				$langs->load("errors");
+				$error++;
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv($val)), null, 'errors');
+			}
 		}
 
 		// Check for warehouse
-		if ($object->type != Facture::TYPE_DEPOSIT && ! empty($conf->global->STOCK_CALCULATE_ON_BILL) && $qualified_for_stock_change)
+		if ($object->type != Facture::TYPE_DEPOSIT && ! empty($conf->global->STOCK_CALCULATE_ON_BILL))
 		{
-			if (! $idwarehouse || $idwarehouse == - 1) {
-				$error++;
-				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
-				$action = '';
+			$qualified_for_stock_change = 0;
+			if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+				$qualified_for_stock_change = $object->hasProductsOrServices(2);
+			} else {
+				$qualified_for_stock_change = $object->hasProductsOrServices(1);
+			}
+
+			if ($qualified_for_stock_change)
+			{
+				if (! $idwarehouse || $idwarehouse == - 1) {
+					$error++;
+					setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
+					$action = '';
+				}
 			}
 		}
 
@@ -575,20 +595,23 @@ if (empty($reshook))
 		$object->fetch($id);
 		$object->fetch_thirdparty();
 
-		$qualified_for_stock_change = 0;
-		if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
-			$qualified_for_stock_change = $object->hasProductsOrServices(2);
-		} else {
-			$qualified_for_stock_change = $object->hasProductsOrServices(1);
-		}
-
 		// Check parameters
-		if ($object->type != Facture::TYPE_DEPOSIT && ! empty($conf->global->STOCK_CALCULATE_ON_BILL) && $qualified_for_stock_change)
+		if ($object->type != Facture::TYPE_DEPOSIT && ! empty($conf->global->STOCK_CALCULATE_ON_BILL))
 		{
-			if (! $idwarehouse || $idwarehouse == - 1) {
-				$error++;
-				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
-				$action = '';
+			$qualified_for_stock_change = 0;
+			if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+				$qualified_for_stock_change = $object->hasProductsOrServices(2);
+			} else {
+				$qualified_for_stock_change = $object->hasProductsOrServices(1);
+			}
+
+			if ($qualified_for_stock_change)
+			{
+				if (! $idwarehouse || $idwarehouse == - 1) {
+					$error++;
+					setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
+					$action = '';
+				}
 			}
 		}
 
@@ -916,7 +939,7 @@ if (empty($reshook))
 			if (empty($dateinvoice))
 			{
 				$error++;
-				setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("Date")), null, 'errors');
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
 			}
 
 			$date_pointoftax = dol_mktime(12, 0, 0, $_POST['date_pointoftaxmonth'], $_POST['date_pointoftaxday'], $_POST['date_pointoftaxyear']);
@@ -1385,8 +1408,9 @@ if (empty($reshook))
 								{
 									// Don't add lines with qty 0 when coming from a shipment including all order lines
 									if($srcobject->element == 'shipping' && $conf->global->SHIPMENT_GETS_ALL_ORDER_PRODUCTS && $lines[$i]->qty == 0) continue;
-									// Don't add closed lines when coming from a contract
-									if($srcobject->element == 'contrat' && $lines[$i]->statut == 5) continue;
+									// Don't add closed lines when coming from a contract (Set constant to '0,5' to exclude also inactive lines)
+									if (! isset($conf->global->CONTRACT_EXCLUDE_SERVICES_STATUS_FOR_INVOICE)) $conf->global->CONTRACT_EXCLUDE_SERVICES_STATUS_FOR_INVOICE = '5';
+									if ($srcobject->element == 'contrat' && in_array($lines[$i]->statut, explode(',', $conf->global->CONTRACT_EXCLUDE_SERVICES_STATUS_FOR_INVOICE))) continue;
 
 									$label=(! empty($lines[$i]->label)?$lines[$i]->label:'');
 									$desc=(! empty($lines[$i]->desc)?$lines[$i]->desc:$lines[$i]->libelle);
@@ -1543,7 +1567,7 @@ if (empty($reshook))
 			$datefacture = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 			if (empty($datefacture)) {
 				$error++;
-				$mesg = $langs->trans("ErrorFieldRequired", $langs->trans("Date"));
+				$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date"));
                 setEventMessages($mesg, null, 'errors');
 			}
 
@@ -1551,7 +1575,7 @@ if (empty($reshook))
 
 			if (!($_POST['situations'] > 0)) {
 				$error++;
-				$mesg = $langs->trans("ErrorFieldRequired", $langs->trans("InvoiceSituation"));
+				$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("InvoiceSituation"));
                 setEventMessages($mesg, null, 'errors');
 			}
 
@@ -1920,7 +1944,7 @@ if (empty($reshook))
 
 				if ($result > 0)
 				{
-					// Define output language
+					// Define output language and generate document
 					if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
 					{
 						$outputlangs = $langs;
@@ -2032,7 +2056,7 @@ if (empty($reshook))
 		$line->fetch(GETPOST('lineid'));
 		$percent = $line->get_prev_progress($object->id);
 
-		if($object->type == Facture::TYPE_CREDIT_NOTE && $object->situation_cycle_ref>0)
+		if ($object->type == Facture::TYPE_CREDIT_NOTE && $object->situation_cycle_ref>0)
 		{
 		    // in case of situation credit note
 		    if(GETPOST('progress') >= 0 )
@@ -2124,7 +2148,7 @@ if (empty($reshook))
 				}
 			}
 
-$result = $object->updateline(GETPOST('lineid'), $description, $pu_ht, $qty, GETPOST('remise_percent'),
+			$result = $object->updateline(GETPOST('lineid'), $description, $pu_ht, $qty, GETPOST('remise_percent'),
 				$date_start, $date_end, $vat_rate, $localtax1_rate, $localtax2_rate, 'HT', $info_bits, $type,
 				GETPOST('fk_parent_line'), 0, $fournprice, $buyingprice, $label, $special_code, $array_options, GETPOST('progress'),
 				$_POST['units'], $pu_ht_devise);
@@ -2713,7 +2737,7 @@ if ($action == 'create')
 	else
 	{
 		print '<td colspan="2">';
-		print $form->select_company($soc->id, 'socid', '(s.client = 1 OR s.client = 3) AND status=1', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300');
+		print $form->select_company($soc->id, 'socid', '((s.client = 1 OR s.client = 3) AND s.status=1)', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300');
 		// Option to reload page to retrieve customer informations. Note, this clear other input
 		if (!empty($conf->global->RELOAD_PAGE_ON_CUSTOMER_CHANGE))
 		{
@@ -3359,7 +3383,9 @@ elseif ($id > 0 || ! empty($ref))
 	$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 
 	if ($user->societe_id > 0 && $user->societe_id != $object->socid)
-		accessforbidden('', 0);
+	{
+		accessforbidden('', 0, 1);
+	}
 
 	$result = $object->fetch_thirdparty();
 
@@ -3418,6 +3444,7 @@ elseif ($id > 0 || ! empty($ref))
 		elseif($object->type == Facture::TYPE_CREDIT_NOTE) $type_fac = 'CreditNote';
 		elseif($object->type == Facture::TYPE_DEPOSIT) $type_fac = 'Deposit';
 		$text = $langs->trans('ConfirmConvertToReduc', strtolower($langs->transnoentities($type_fac)));
+		$text.='<br>'.$langs->trans('ConfirmConvertToReduc2');
 		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $langs->trans('ConvertToReduc'), $text, 'confirm_converttoreduc', '', "yes", 2);
 	}
 
@@ -3426,28 +3453,35 @@ elseif ($id > 0 || ! empty($ref))
 		$text = $langs->trans('ConfirmDeleteBill', $object->ref);
 		$formquestion = array();
 
-		$qualified_for_stock_change = 0;
-		if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
-			$qualified_for_stock_change = $object->hasProductsOrServices(2);
-		} else {
-			$qualified_for_stock_change = $object->hasProductsOrServices(1);
-		}
-
-		if ($object->type != Facture::TYPE_DEPOSIT && ! empty($conf->global->STOCK_CALCULATE_ON_BILL) && $qualified_for_stock_change && $object->statut >= 1)
+		if ($object->type != Facture::TYPE_DEPOSIT && ! empty($conf->global->STOCK_CALCULATE_ON_BILL) && $object->statut >= 1)
 		{
-			$langs->load("stocks");
-			require_once DOL_DOCUMENT_ROOT . '/product/class/html.formproduct.class.php';
-			$formproduct = new FormProduct($db);
-			$label = $object->type == Facture::TYPE_CREDIT_NOTE ? $langs->trans("SelectWarehouseForStockDecrease") : $langs->trans("SelectWarehouseForStockIncrease");
-			$forcecombo=0;
-			if ($conf->browser->name == 'ie') $forcecombo = 1;	// There is a bug in IE10 that make combo inside popup crazy
-			$formquestion = array(
-				// 'text' => $langs->trans("ConfirmClone"),
-				// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
-				// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),
-				array('type' => 'other','name' => 'idwarehouse','label' => $label,'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone', 'idwarehouse', '', 1, 0, 0, $langs->trans("NoStockAction"), 0, $forcecombo))
-			);
-			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $langs->trans('DeleteBill'), $text, 'confirm_delete', $formquestion, "yes", 1);
+			$qualified_for_stock_change = 0;
+			if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+				$qualified_for_stock_change = $object->hasProductsOrServices(2);
+			} else {
+				$qualified_for_stock_change = $object->hasProductsOrServices(1);
+			}
+
+			if ($qualified_for_stock_change)
+			{
+				$langs->load("stocks");
+				require_once DOL_DOCUMENT_ROOT . '/product/class/html.formproduct.class.php';
+				$formproduct = new FormProduct($db);
+				$label = $object->type == Facture::TYPE_CREDIT_NOTE ? $langs->trans("SelectWarehouseForStockDecrease") : $langs->trans("SelectWarehouseForStockIncrease");
+				$forcecombo=0;
+				if ($conf->browser->name == 'ie') $forcecombo = 1;	// There is a bug in IE10 that make combo inside popup crazy
+				$formquestion = array(
+					// 'text' => $langs->trans("ConfirmClone"),
+					// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
+					// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),
+					array('type' => 'other','name' => 'idwarehouse','label' => $label,'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone', 'idwarehouse', '', 1, 0, 0, $langs->trans("NoStockAction"), 0, $forcecombo))
+				);
+				$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $langs->trans('DeleteBill'), $text, 'confirm_delete', $formquestion, "yes", 1);
+			}
+			else
+			{
+				$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $langs->trans('DeleteBill'), $text, 'confirm_delete', '', 'no', 1);
+			}
 		} else {
 			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $langs->trans('DeleteBill'), $text, 'confirm_delete', '', 'no', 1);
 		}
@@ -3496,35 +3530,38 @@ elseif ($id > 0 || ! empty($ref))
 		}
 		$formquestion = array();
 
-		$qualified_for_stock_change = 0;
-		if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
-			$qualified_for_stock_change = $object->hasProductsOrServices(2);
-		} else {
-			$qualified_for_stock_change = $object->hasProductsOrServices(1);
-		}
-
-		if ($object->type != Facture::TYPE_DEPOSIT && ! empty($conf->global->STOCK_CALCULATE_ON_BILL) && $qualified_for_stock_change)
+		if ($object->type != Facture::TYPE_DEPOSIT && ! empty($conf->global->STOCK_CALCULATE_ON_BILL))
 		{
-			$langs->load("stocks");
-			require_once DOL_DOCUMENT_ROOT . '/product/class/html.formproduct.class.php';
-			require_once DOL_DOCUMENT_ROOT . '/product/stock/class/entrepot.class.php';
-			$formproduct = new FormProduct($db);
-			$warehouse = new Entrepot($db);
-			$warehouse_array = $warehouse->list_array();
-			if (count($warehouse_array) == 1) {
-				$label = $object->type == Facture::TYPE_CREDIT_NOTE ? $langs->trans("WarehouseForStockIncrease", current($warehouse_array)) : $langs->trans("WarehouseForStockDecrease", current($warehouse_array));
-				$value = '<input type="hidden" id="idwarehouse" name="idwarehouse" value="' . key($warehouse_array) . '">';
+			$qualified_for_stock_change = 0;
+			if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+				$qualified_for_stock_change = $object->hasProductsOrServices(2);
 			} else {
-				$label = $object->type == Facture::TYPE_CREDIT_NOTE ? $langs->trans("SelectWarehouseForStockIncrease") : $langs->trans("SelectWarehouseForStockDecrease");
-				$value = $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone', 'idwarehouse', '', 1);
+				$qualified_for_stock_change = $object->hasProductsOrServices(1);
 			}
-			$formquestion = array(
-								// 'text' => $langs->trans("ConfirmClone"),
-								// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' =>
-								// 1),
-								// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value'
-								// => 1),
-								array('type' => 'other','name' => 'idwarehouse','label' => $label,'value' => $value));
+
+			if ($qualified_for_stock_change)
+			{
+				$langs->load("stocks");
+				require_once DOL_DOCUMENT_ROOT . '/product/class/html.formproduct.class.php';
+				require_once DOL_DOCUMENT_ROOT . '/product/stock/class/entrepot.class.php';
+				$formproduct = new FormProduct($db);
+				$warehouse = new Entrepot($db);
+				$warehouse_array = $warehouse->list_array();
+				if (count($warehouse_array) == 1) {
+					$label = $object->type == Facture::TYPE_CREDIT_NOTE ? $langs->trans("WarehouseForStockIncrease", current($warehouse_array)) : $langs->trans("WarehouseForStockDecrease", current($warehouse_array));
+					$value = '<input type="hidden" id="idwarehouse" name="idwarehouse" value="' . key($warehouse_array) . '">';
+				} else {
+					$label = $object->type == Facture::TYPE_CREDIT_NOTE ? $langs->trans("SelectWarehouseForStockIncrease") : $langs->trans("SelectWarehouseForStockDecrease");
+					$value = $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone', 'idwarehouse', '', 1);
+				}
+				$formquestion = array(
+									// 'text' => $langs->trans("ConfirmClone"),
+									// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' =>
+									// 1),
+									// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value'
+									// => 1),
+									array('type' => 'other','name' => 'idwarehouse','label' => $label,'value' => $value));
+			}
 		}
 		if ($object->type != Facture::TYPE_CREDIT_NOTE && $object->total_ttc < 0) 		// Can happen only if $conf->global->FACTURE_ENABLE_NEGATIVE is on
 		{
@@ -3538,33 +3575,38 @@ elseif ($id > 0 || ! empty($ref))
 		$text = $langs->trans('ConfirmUnvalidateBill', $object->ref);
 		$formquestion = array();
 
-		$qualified_for_stock_change = 0;
-		if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
-			$qualified_for_stock_change = $object->hasProductsOrServices(2);
-		} else {
-			$qualified_for_stock_change = $object->hasProductsOrServices(1);
-		}
-		if ($object->type != Facture::TYPE_DEPOSIT && ! empty($conf->global->STOCK_CALCULATE_ON_BILL) && $qualified_for_stock_change) {
-			$langs->load("stocks");
-			require_once DOL_DOCUMENT_ROOT . '/product/class/html.formproduct.class.php';
-			require_once DOL_DOCUMENT_ROOT . '/product/stock/class/entrepot.class.php';
-			$formproduct = new FormProduct($db);
-			$warehouse = new Entrepot($db);
-			$warehouse_array = $warehouse->list_array();
-			if (count($warehouse_array) == 1) {
-				$label = $object->type == Facture::TYPE_CREDIT_NOTE ? $langs->trans("WarehouseForStockDecrease", current($warehouse_array)) : $langs->trans("WarehouseForStockIncrease", current($warehouse_array));
-				$value = '<input type="hidden" id="idwarehouse" name="idwarehouse" value="' . key($warehouse_array) . '">';
+		if ($object->type != Facture::TYPE_DEPOSIT && ! empty($conf->global->STOCK_CALCULATE_ON_BILL))
+		{
+			$qualified_for_stock_change = 0;
+			if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+				$qualified_for_stock_change = $object->hasProductsOrServices(2);
 			} else {
-				$label = $object->type == Facture::TYPE_CREDIT_NOTE ? $langs->trans("SelectWarehouseForStockDecrease") : $langs->trans("SelectWarehouseForStockIncrease");
-				$value = $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone', 'idwarehouse', '', 1);
+				$qualified_for_stock_change = $object->hasProductsOrServices(1);
 			}
-			$formquestion = array(
-								// 'text' => $langs->trans("ConfirmClone"),
-								// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' =>
-								// 1),
-								// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value'
-								// => 1),
-								array('type' => 'other','name' => 'idwarehouse','label' => $label,'value' => $value));
+
+			if ($qualified_for_stock_change)
+			{
+				$langs->load("stocks");
+				require_once DOL_DOCUMENT_ROOT . '/product/class/html.formproduct.class.php';
+				require_once DOL_DOCUMENT_ROOT . '/product/stock/class/entrepot.class.php';
+				$formproduct = new FormProduct($db);
+				$warehouse = new Entrepot($db);
+				$warehouse_array = $warehouse->list_array();
+				if (count($warehouse_array) == 1) {
+					$label = $object->type == Facture::TYPE_CREDIT_NOTE ? $langs->trans("WarehouseForStockDecrease", current($warehouse_array)) : $langs->trans("WarehouseForStockIncrease", current($warehouse_array));
+					$value = '<input type="hidden" id="idwarehouse" name="idwarehouse" value="' . key($warehouse_array) . '">';
+				} else {
+					$label = $object->type == Facture::TYPE_CREDIT_NOTE ? $langs->trans("SelectWarehouseForStockDecrease") : $langs->trans("SelectWarehouseForStockIncrease");
+					$value = $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone', 'idwarehouse', '', 1);
+				}
+				$formquestion = array(
+									// 'text' => $langs->trans("ConfirmClone"),
+									// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' =>
+									// 1),
+									// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value'
+									// => 1),
+									array('type' => 'other','name' => 'idwarehouse','label' => $label,'value' => $value));
+			}
 		}
 
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?facid=' . $object->id, $langs->trans('UnvalidateBill'), $text, 'confirm_modif', $formquestion, "yes", 1);
@@ -3764,6 +3806,13 @@ elseif ($id > 0 || ! empty($ref))
 		if ($result > 0){
 			print '. '.$langs->trans("CreditNoteConvertedIntoDiscount", $object->getLibType(1), $discount->getNomUrl(1, 'discount')).'<br>';
 		}
+	}
+
+	if ($object->fk_fac_rec_source > 0)
+	{
+	    $tmptemplate = new FactureRec($db);
+	    $result = $tmptemplate->fetch($object->fk_fac_rec_source);
+	    if ($result > 0) print '. '.$langs->trans("GeneratedFromTemplate", $tmptemplate->ref);
 	}
 	print '</td></tr>';
 
@@ -3977,9 +4026,8 @@ elseif ($id > 0 || ! empty($ref))
 	print '</div>';
 	print '<div class="fichehalfright">';
 	print '<div class="ficheaddleft">';
-	print '<div class="underbanner clearboth"></div>';
 
-	print '<table class="border tableforfield centpercent">';
+	print '<table class="border bordertop tableforfield centpercent">';
 
 	if (!empty($conf->multicurrency->enabled) && ($object->multicurrency_code != $conf->currency))
 	{
@@ -4656,6 +4704,14 @@ elseif ($id > 0 || ! empty($ref))
 				}
 			}
 
+			// POS Ticket
+			if (! empty($conf->takepos->enabled) && $object->module_source == 'takepos')
+			{
+			    $langs->load("cashdesk");
+			    $receipt_url=DOL_URL_ROOT."/takepos/receipt.php";
+			    print '<div class="inline-block divButAction"><a target="_blank" class="butAction" href="' . $receipt_url . '?facid=' . $object->id.'">' . $langs->trans('POSTicket') .'</a></div>';
+			}
+
 			// Create payment
 			if ($object->type != Facture::TYPE_CREDIT_NOTE && $object->statut == 1 && $object->paye == 0 && $usercanissuepayment) {
 				if ($objectidnext) {
@@ -4691,20 +4747,13 @@ elseif ($id > 0 || ! empty($ref))
 				}
 				// For credit note
 				if ($object->type == Facture::TYPE_CREDIT_NOTE && $object->statut == 1 && $object->paye == 0 && $usercancreate && $object->getSommePaiement() == 0) {
-					print '<div class="inline-block divButAction"><a class="butAction'.($conf->use_javascript_ajax?' reposition':'').'" href="' . $_SERVER["PHP_SELF"] . '?facid=' . $object->id . '&amp;action=converttoreduc">' . $langs->trans('ConvertToReduc') . '</a></div>';
+					print '<div class="inline-block divButAction"><a class="butAction'.($conf->use_javascript_ajax?' reposition':'').'" href="' . $_SERVER["PHP_SELF"] . '?facid=' . $object->id . '&amp;action=converttoreduc" title="'.dol_escape_htmltag($langs->trans("ConfirmConvertToReduc2")).'">' . $langs->trans('ConvertToReduc') . '</a></div>';
 				}
 				// For deposit invoice
 				if ($object->type == Facture::TYPE_DEPOSIT && $usercancreate && $object->statut > 0 && empty($discount->id))
 				{
 					print '<div class="inline-block divButAction"><a class="butAction'.($conf->use_javascript_ajax?' reposition':'').'" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc">'.$langs->trans('ConvertToReduc').'</a></div>';
 				}
-			}
-
-			// POS Ticket
-			if (! empty($conf->takepos->enabled) && $object->module_source != '')
-			{
-                $receipt_url=DOL_URL_ROOT."/takepos/receipt.php";
-                print '<div class="inline-block divButAction"><a target="_blank" class="butAction" href="' . $receipt_url . '?facid=' . $object->id.'">' . $langs->trans('POSTicket') .'</a></div>';
 			}
 
 			// Classify paid

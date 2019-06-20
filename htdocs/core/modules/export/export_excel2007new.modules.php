@@ -78,7 +78,7 @@ class ExportExcel2007new extends ModeleExports
 		$this->db = $db;
 
 		$this->id='excel2007new';                  // Same value then xxx in file name export_xxx.modules.php
-		$this->label='Excel 2007 by PHPSpreadSheet';             // Label of driver
+		$this->label='Excel 2007';             // Label of driver
 		$this->desc = $langs->trans('Excel2007FormatDesc');
 		$this->extension='xlsx';             // Extension for generated file by this driver
         $this->picto='mime/xls';					// Picto

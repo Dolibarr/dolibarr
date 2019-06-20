@@ -18,7 +18,7 @@
 
 /**
  * \file		htdocs/accountancy/admin/journals_list.php
- * \ingroup		Advanced accountancy
+ * \ingroup		Accountancy (Double entries)
  * \brief		Setup page to configure journals
  */
 

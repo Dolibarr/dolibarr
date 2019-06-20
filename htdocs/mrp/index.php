@@ -1,8 +1,9 @@
 <?php
 /* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2003		Jean-Louis Bergamo		<jlb@j1b.org>
- * Copyright (C) 2004-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2003		Jean-Louis Bergamo	<jlb@j1b.org>
+ * Copyright (C) 2004-2017	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2019           Nicolas ZABOURI         <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +27,11 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
+
+$hookmanager = new HookManager($db);
+
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('mrpindex'));
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies","mrp"));
@@ -121,6 +127,9 @@ else
 
 
 print '</div></div></div>';
+
+$parameters = array('type' => $type, 'user' => $user);
+$reshook = $hookmanager->executeHooks('dashboardMRP', $parameters, $object); // Note that $action and $object may have been modified by hook
 
 // End of page
 llxFooter();

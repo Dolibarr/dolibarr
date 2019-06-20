@@ -568,7 +568,7 @@ function isValidUrl($url, $http = 0, $pass = 0, $port = 0, $path = 0, $query = 0
  *	Check if VAT numero is valid (check done on syntax only, no database or remote access)
  *
  *	@param	Societe   $company       VAT number
- *	@return int					                 1=Check is OK, 0=Check is KO
+ *	@return int					     1=Check is OK, 0=Check is KO
  */
 function isValidVATID($company)
 {
@@ -577,7 +577,7 @@ function isValidVATID($company)
         $vatprefix = $company->country_code;
         if ($vatprefix == 'GR') $vatprefix = '(EL|GR)';
         else $vatprefix = preg_quote($vatprefix, '/');
-        if (! preg_match('/^'.$vatprefix.'[a-zA-Z0-9\-\.]{5,10}$/', $company->tva_intra))
+        if (! preg_match('/^'.$vatprefix.'[a-zA-Z0-9\-\.]{5,14}$/i', str_replace(' ', '', $company->tva_intra)))
         {
             return 0;
         }
@@ -739,8 +739,8 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
     global $conf,$user;
 
     if (! is_object($objsoc)) $valueforccc=$objsoc;
-    elseif ($table == "commande_fournisseur" || $table == "facture_fourn" ) $valueforccc=$objsoc->code_fournisseur;
-    else $valueforccc=$objsoc->code_client;
+    elseif ($table == "commande_fournisseur" || $table == "facture_fourn" ) $valueforccc=dol_string_unaccent($objsoc->code_fournisseur);
+    else $valueforccc=dol_string_unaccent($objsoc->code_client);
 
     $sharetable = $table;
     if ($table == 'facture' || $table == 'invoice') $sharetable = 'invoicenumber'; // for getEntity function
@@ -988,6 +988,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
     // Define $maskLike
     $maskLike = dol_string_nospecial($mask);
     $maskLike = str_replace("%", "_", $maskLike);
+
     // Replace protected special codes with matching number of _ as wild card caracter
     $maskLike = preg_replace('/\{yyyy\}/i', '____', $maskLike);
     $maskLike = preg_replace('/\{yy\}/i', '__', $maskLike);
@@ -1163,7 +1164,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
         // Now we replace the refclient
         if ($maskrefclient)
         {
-            //print "maskrefclient=".$maskrefclient." maskwithonlyymcode=".$maskwithonlyymcode." maskwithnocode=".$maskwithnocode."\n<br>";
+            //print "maskrefclient=".$maskrefclient." maskwithonlyymcode=".$maskwithonlyymcode." maskwithnocode=".$maskwithnocode." maskrefclient_clientcode=".$maskrefclient_clientcode."\n<br>";exit;
             $maskrefclient_maskbefore='{'.$maskrefclient.'}';
             $maskrefclient_maskafter=$maskrefclient_clientcode.str_pad($maskrefclient_counter, dol_strlen($maskrefclient_maskcounter), "0", STR_PAD_LEFT);
             $numFinal = str_replace($maskrefclient_maskbefore, $maskrefclient_maskafter, $numFinal);
@@ -1282,6 +1283,10 @@ function check_value($mask, $value)
     if (! empty($reg[3]) && preg_match('/^@/', $reg[3]))  $maskraz=preg_replace('/^@/', '', $reg[3]);
     if ($maskraz >= 0)
     {
+        if ($maskraz == 99) {
+            $maskraz = date('m');
+            $resetEveryMonth = true;
+        }
         if ($maskraz > 12) return 'ErrorBadMaskBadRazMonth';
 
         // Define reg

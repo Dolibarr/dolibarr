@@ -1645,7 +1645,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 	// Contact of order
 	if ($socid > 0) {
 		print "<tr><td>" . $langs->trans("DefaultContact") . '</td><td>';
-		$form->select_contacts($soc->id, $setcontact, 'contactid', 1, $srccontactslist);
+		$form->select_contacts($soc->id, $setcontact, 'contactid', 1, $srccontactslist, '', 1);
 		print '</td></tr>';
 
 		// Ligne info remises tiers
