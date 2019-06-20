@@ -95,6 +95,10 @@ input.button.massactionconfirmed {
     margin: 4px;
 }
 
+input:invalid, select:invalid {
+    border-color: #ea1212;
+}
+
 /* Focus definitions must be after standard definition */
 textarea:focus {
     /* v6 box-shadow: 0 0 4px #8091BF; */
