@@ -1432,24 +1432,37 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 
 			if (! $phototoshow)      // Show No photo link (picto of pbject)
 			{
-			    $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">';
-				if ($object->element == 'action')
-				{
-					$width=80;
-					$cssclass='photorefcenter';
-					$nophoto=img_picto('', 'title_agenda', '', false, 1);
-				}
-				else
-				{
-					$width=14; $cssclass='photorefcenter';
-					$picto = $object->picto;
-					if ($object->element == 'project' && ! $object->public) $picto = 'project'; // instead of projectpub
-					$nophoto=img_picto('', 'object_'.$picto, '', false, 1);
-				}
-				$morehtmlleft.='<!-- No photo to show -->';
-				$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo"'.($width?' style="width: '.$width.'px"':'').' src="'.$nophoto.'"></div></div>';
+                                list($class, $module) = explode('@', $object->picto);
+                                $upload_dir = $conf->$module->multidir_output[$conf->entity] . "/$class/" . dol_sanitizeFileName($object->ref);
+                                $filearray = dol_dir_list($upload_dir, "files");
+                                $filename = $filearray[0]['name'];
+                                if(!empty($filename)){
+                                    $pospoint = strpos($filearray[0]['name'], '.');
 
-				$morehtmlleft.='</div>';
+                                    $pathtophoto = $class . '/' . $object->ref . '/thumbs/' . substr($filename, 0, $pospoint) . '_small' . substr($filename, $pospoint);
+                                    $morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo' . $module . '" alt="No photo" border="0" src="' . DOL_URL_ROOT . '/viewimage.php?modulepart=' . $module . '&entity=' . $conf->entity . '&file=' . urlencode($pathtophoto) . '"></div></div>';
+
+                                    $morehtmlleft .= '</div>';
+                                }
+                                else {
+                                    $morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref">';
+                                    if($object->element == 'action'){
+                                        $width = 80;
+                                        $cssclass = 'photorefcenter';
+                                        $nophoto = img_picto('', 'title_agenda', '', false, 1);
+                                    }
+                                    else{
+                                        $width = 14;
+                                        $cssclass = 'photorefcenter';
+                                        $picto = $object->picto;
+                                        if($object->element == 'project' && !$object->public) $picto = 'project'; // instead of projectpub
+                                        $nophoto = img_picto('', 'object_' . $picto, '', false, 1);
+                                    }
+                                    $morehtmlleft .= '<!-- No photo to show -->';
+                                    $morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo' . $modulepart . ($cssclass ? ' ' . $cssclass : '') . '" alt="No photo" border="0"' . ($width ? ' width="' . $width . '"' : '') . ' src="' . $nophoto . '"></div></div>';
+
+                                    $morehtmlleft .= '</div>';
+                                }
 			}
 		}
 	}
