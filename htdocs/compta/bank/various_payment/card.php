@@ -382,7 +382,7 @@ if ($action == 'create')
         }
         else
         {
-            print '<input type="text" name="subledger_account" value="'.$subledger_account.'">';
+            print '<input type="text" class="maxwidth200" name="subledger_account" value="'.$subledger_account.'">';
         }
         print '</td></tr>';
     }

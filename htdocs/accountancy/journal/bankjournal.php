@@ -298,8 +298,6 @@ if ($result) {
 					$paymentstatic->ref = $links[$key]['url_id'];
 					$tabpay[$obj->rowid]["lib"] .= ' ' . $paymentstatic->getNomUrl(2, '', '');		// TODO Do not include list of invoice in tooltip, the dol_string_nohtmltag is ko with this
 					$tabpay[$obj->rowid]["paymentid"] = $paymentstatic->id;
-
-
 				} elseif ($links[$key]['type'] == 'payment_supplier') {
 					$paymentsupplierstatic->id = $links[$key]['url_id'];
 					$paymentsupplierstatic->ref = $links[$key]['url_id'];
@@ -473,11 +471,12 @@ if ($result) {
 	dol_print_error($db);
 }
 
-/*
-var_dump($tabpay);
+
+/*var_dump($tabpay);
+var_dump($tabcompany);
 var_dump($tabbq);
 var_dump($tabtp);
-*/
+var_dump($tabtype);*/
 
 // Write bookkeeping
 if (! $error && $action == 'writebookkeeping') {
@@ -593,15 +592,15 @@ if (! $error && $action == 'writebookkeeping') {
 						$bookkeeping->date_create = $now;
 
 						if ($tabtype[$key] == 'payment') {	// If payment is payment of customer invoice, we get ref of invoice
-							$bookkeeping->subledger_account = $tabcompany[$key]['code_compta'];
-							$bookkeeping->subledger_label = $tabcompany[$key]['name'];
+							$bookkeeping->subledger_account = $k;							// For payment, the subledger account is stored as $key of $tabtp
+							$bookkeeping->subledger_label = $tabcompany[$key]['name'];		// $tabcompany is defined only if we are sure there is 1 thirdparty for the bank transaction
 							$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER;
 
 							$accountingaccount->fetch(null, $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER, true);
 							$bookkeeping->label_compte = $accountingaccount->label;
-						} elseif ($tabtype[$key] == 'payment_supplier') {		   // If payment is payment of supplier invoice, we get ref of invoice
-							$bookkeeping->subledger_account = $tabcompany[$key]['code_compta'];
-							$bookkeeping->subledger_label = $tabcompany[$key]['name'];
+						} elseif ($tabtype[$key] == 'payment_supplier') {	// If payment is payment of supplier invoice, we get ref of invoice
+							$bookkeeping->subledger_account = $k;				   			// For payment, the subledger account is stored as $key of $tabtp
+							$bookkeeping->subledger_label = $tabcompany[$key]['name'];		// $tabcompany is defined only if we are sure there is 1 thirdparty for the bank transaction
 							$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER;
 
 							$accountingaccount->fetch(null, $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER, true);

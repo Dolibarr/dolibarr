@@ -512,7 +512,7 @@ if (! empty($conf->global->ACCOUNTING_REEXPORT)) {
 } else {
     $newcardbutton ='<a href="'.$_SERVER['PHP_SELF'].'?action=setreexport&value=1'.($param?'&'.$param:'').'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a> ';
 }
-$newcardbutton.= $langs->trans("IncludeDocsAlreadyExported");
+$newcardbutton.= '<span class="valignmiddle marginrightonly">'.$langs->trans("IncludeDocsAlreadyExported").'</span>';
 
 $newcardbutton.= dolGetButtonTitle($buttonLabel, $langs->trans("ExportFilteredList").' ('.$listofformat[$conf->global->ACCOUNTING_EXPORT_MODELCSV].')', 'fa fa-file-export paddingleft', $_SERVER["PHP_SELF"].'?action=export_file'.($param?'&'.$param:''));
 
@@ -583,7 +583,7 @@ if (! empty($arrayfields['t.subledger_account']['checked']))
 	}
 	else
 	{
-		print '<input type="text" name="search_accountancy_aux_code_start" value="'.$search_accountancy_aux_code_start.'">';
+		print '<input type="text" class="maxwidth100" name="search_accountancy_aux_code_start" value="'.$search_accountancy_aux_code_start.'">';
 	}
 	print '</div>';
 	print '<div class="nowrap">';
@@ -596,7 +596,7 @@ if (! empty($arrayfields['t.subledger_account']['checked']))
 	}
 	else
 	{
-		print '<input type="text" name="search_accountancy_aux_code_end" value="'.$search_accountancy_aux_code_end.'">';
+		print '<input type="text" class="maxwidth100" name="search_accountancy_aux_code_end" value="'.$search_accountancy_aux_code_end.'">';
 	}
 	print '</div>';
 	print '</td>';
