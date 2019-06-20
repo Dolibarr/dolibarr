@@ -392,22 +392,3 @@ insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) v
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (113, 'supplier_proposal', 'external', 'SERVICE',       'Contact fournisseur prestation', 1);
 
 ALTER TABLE llx_ticket_extrafields ADD INDEX idx_ticket_extrafields (fk_object);
-
-CREATE TABLE llx_c_transport_mode (
-  rowid integer AUTO_INCREMENT PRIMARY KEY,
-  code varchar(3) NOT NULL,
-  libelle varchar(255) NOT NULL,
-  active tinyint DEFAULT 1  NOT NULL
-) ENGINE=innodb;
-
-INSERT INTO llx_c_transport_mode (code, libelle, active) VALUES ('MAR', 'Transport maritime (y compris camions ou wagons sur bateau)', 1);
-INSERT INTO llx_c_transport_mode (code, libelle, active) VALUES ('TRA', 'Transport par chemin de fer (y compris camions sur wagon)', 1);
-INSERT INTO llx_c_transport_mode (code, libelle, active) VALUES ('ROU', 'Transport par route', 1);
-INSERT INTO llx_c_transport_mode (code, libelle, active) VALUES ('AIR', 'Transport par air', 1);
-INSERT INTO llx_c_transport_mode (code, libelle, active) VALUES ('POS', 'Envois postaux', 1);
-INSERT INTO llx_c_transport_mode (code, libelle, active) VALUES ('OLE', 'Installations de transport fixe (oléoduc)', 1);
-INSERT INTO llx_c_transport_mode (code, libelle, active) VALUES ('NAV', 'Transport par navigation intérieure', 1);
-INSERT INTO llx_c_transport_mode (code, libelle, active) VALUES ('PRO', 'Propulsion propre', 1);
-
-ALTER TABLE llx_facture ADD COLUMN fk_mode_transport integer after location_incoterms;
-ALTER TABLE llx_facture_fourn ADD COLUMN fk_mode_transport integer after location_incoterms;
