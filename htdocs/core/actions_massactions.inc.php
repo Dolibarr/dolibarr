@@ -93,7 +93,7 @@ if (! $error && $massaction == 'confirm_presend')
 	}
 
 	// Check mandatory parameters
-	if (empty($user->email))
+	if (GETPOST('fromtype','alpha') === 'user' && empty($user->email))
 	{
 		$error++;
 		setEventMessages($langs->trans("NoSenderEmailDefined"), null, 'warnings');
@@ -208,7 +208,7 @@ if (! $error && $massaction == 'confirm_presend')
 					$resaction.='<div class="error">'.$langs->trans('ErrorOnlyProposalNotDraftCanBeSentInMassAction',$objectobj->ref).'</div><br>';
 					continue; // Payment done or started or canceled
 				}
-				if ($objectclass == 'Commande' && $objectoj->statut == Commande::STATUS_DRAFT)
+				if ($objectclass == 'Commande' && $objectobj->statut == Commande::STATUS_DRAFT)
 				{
 					$langs->load("errors");
 					$nbignored++;
@@ -333,12 +333,16 @@ if (! $error && $massaction == 'confirm_presend')
 				if ($objectclass == 'CommandeFournisseur')	$sendtobcc .= (empty($conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_ORDER_TO) ? '' : (($sendtobcc?", ":"").$conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_ORDER_TO));
 				if ($objectclass == 'FactureFournisseur')	$sendtobcc .= (empty($conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO) ? '' : (($sendtobcc?", ":"").$conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO));
 
-				// $listofqualifiedobj is array with key = object id of qualified objects for the current thirdparty
+				// $listofqualifiedobj is array with key = object id and value is instance of qualified objects, for the current thirdparty (but thirdparty property is not loaded yet)
 				$oneemailperrecipient=(GETPOST('oneemailperrecipient')=='on'?1:0);
 				$looparray=array();
 				if (! $oneemailperrecipient)
 				{
 					$looparray = $listofqualifiedobj;
+					foreach ($looparray as $key => $objecttmp)
+					{
+						$looparray[$key]->thirdparty = $thirdparty;
+					}
 				}
 				else
 				{
@@ -347,8 +351,9 @@ if (! $error && $massaction == 'confirm_presend')
 					$looparray[0]=$objectforloop;
 				}
 				//var_dump($looparray);exit;
-
-				foreach ($looparray as $objecttmp)		// $objecttmp is a real object or an empty if we choose to send one email per thirdparty instead of per record
+                dol_syslog("We have set an array of ".count($looparray)." emails to send. oneemailperrecipient=".$oneemailperrecipient);
+                //var_dump($oneemailperrecipient); var_dump($listofqualifiedobj); var_dump($listofqualifiedref);
+                foreach ($looparray as $objectid => $objecttmp)		// $objecttmp is a real object or an empty object if we choose to send one email per thirdparty instead of one per object
 				{
 					// Make substitution in email content
 					$substitutionarray=getCommonSubstitutionArray($langs, 0, null, $objecttmp);
@@ -358,10 +363,18 @@ if (! $error && $massaction == 'confirm_presend')
 					$substitutionarray['__CHECK_READ__'] = '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$thirdparty->tag.'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>';
 
 					$parameters=array('mode'=>'formemail');
+
+					if ( ! empty( $listofobjectthirdparties ) ) {
+						$parameters['listofobjectthirdparties'] = $listofobjectthirdparties;
+					}
+					if ( ! empty( $listofobjectref ) ) {
+						$parameters['listofobjectref'] = $listofobjectref;
+					}
+
 					complete_substitutions_array($substitutionarray, $langs, $objecttmp, $parameters);
 
-					$subject=make_substitutions($subject, $substitutionarray);
-					$message=make_substitutions($message, $substitutionarray);
+                    $subjectreplaced=make_substitutions($subject, $substitutionarray);
+                    $messagereplaced=make_substitutions($message, $substitutionarray);
 
 					$filepath = $attachedfiles['paths'];
 					$filename = $attachedfiles['names'];
@@ -370,8 +383,8 @@ if (! $error && $massaction == 'confirm_presend')
 					//var_dump($filepath);
 
 					// Send mail (substitutionarray must be done just before this)
-					require_once(DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php');
-					$mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,$sendtobcc,$deliveryreceipt,-1);
+                    require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+                    $mailfile = new CMailFile($subjectreplaced, $sendto, $from, $messagereplaced, $filepath, $mimetype, $filename, $sendtocc, $sendtobcc, $deliveryreceipt, -1);
 					if ($mailfile->error)
 					{
 						$resaction.='<div class="error">'.$mailfile->error.'</div>';
@@ -386,8 +399,12 @@ if (! $error && $massaction == 'confirm_presend')
 							$error=0;
 
 							// Insert logs into agenda
-							foreach($listofqualifiedobj as $objid => $objectobj)
+                            foreach($listofqualifiedobj as $objid2 => $objectobj2)
 							{
+                                if ((! $oneemailperrecipient) && $objid2 != $objectid) continue;  // We discard this pass to avoid duplicate with other pass in looparray at higher level
+
+                                dol_syslog("Try to insert email event into agenda for objid=".$objid2." => objectobj=".get_class($objectobj2));
+
 								/*if ($objectclass == 'Propale') $actiontypecode='AC_PROP';
 	                            if ($objectclass == 'Commande') $actiontypecode='AC_COM';
 	                            if ($objectclass == 'Facture') $actiontypecode='AC_FAC';
@@ -399,18 +416,18 @@ if (! $error && $massaction == 'confirm_presend')
 								if ($message)
 								{
 									if ($sendtocc) $actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('Bcc') . ": " . $sendtocc);
-									$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('MailTopic') . ": " . $subject);
+                                    $actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('MailTopic') . ": " . $subjectreplaced);
 									$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('TextUsedInTheMessageBody') . ":");
-									$actionmsg = dol_concatdesc($actionmsg, $message);
+                                    $actionmsg = dol_concatdesc($actionmsg, $messagereplaced);
 								}
 								$actionmsg2='';
 
 								// Initialisation donnees
-								$objectobj->sendtoid		= 0;
-								$objectobj->actionmsg		= $actionmsg;  // Long text
-								$objectobj->actionmsg2		= $actionmsg2; // Short text
-								$objectobj->fk_element		= $objid;
-								$objectobj->elementtype	= $objectobj->element;
+                                $objectobj2->sendtoid		= 0;
+                                $objectobj2->actionmsg		= $actionmsg;  // Long text
+                                $objectobj2->actionmsg2		= $actionmsg2; // Short text
+                                $objectobj2->fk_element		= $objid2;
+                                $objectobj2->elementtype	= $objectobj2->element;
 
 								$triggername = strtoupper(get_class($objectobj)) .'_SENTBYMAIL';
 								if ($triggername == 'SOCIETE_SENTBYMAIL')    $triggername = 'COMPANY_SENTBYEMAIL';
@@ -425,9 +442,9 @@ if (! $error && $massaction == 'confirm_presend')
 								if (! empty($triggername))
 								{
 									// Appel des triggers
-									include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+                                    include_once DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php";
 									$interface=new Interfaces($db);
-									$result=$interface->run_triggers($triggername, $objectobj, $user, $langs, $conf);
+                                    $result=$interface->run_triggers($triggername, $objectobj2, $user, $langs, $conf);
 									if ($result < 0) { $error++; $errors=$interface->errors; }
 									// Fin appel triggers
 
@@ -437,9 +454,9 @@ if (! $error && $massaction == 'confirm_presend')
 										dol_syslog("Error in trigger ".$triggername.' '.$db->lasterror(), LOG_ERR);
 									}
 								}
-
-								$nbsent++;
 							}
+
+                            $nbsent++;   // Nb of email sent (may be lower than number of record selected if we group thirdparties)
 						}
 						else
 						{
@@ -504,6 +521,8 @@ if ($massaction == 'confirm_createbills')
 		$objecttmp = new Facture($db);
 		if (!empty($createbills_onebythird) && !empty($TFactThird[$cmd->socid])) $objecttmp = $TFactThird[$cmd->socid]; // If option "one bill per third" is set, we use already created order.
 		else {
+			// Load extrafields of order
+			$cmd->fetch_optionals();
 
 			$objecttmp->socid = $cmd->socid;
 			$objecttmp->type = Facture::TYPE_STANDARD;
@@ -520,6 +539,8 @@ if ($massaction == 'confirm_createbills')
 			$objecttmp->date = $datefacture;
 			$objecttmp->origin    = 'commande';
 			$objecttmp->origin_id = $id_order;
+
+			$objecttmp->array_options = $cmd->array_options;	// Copy extrafields
 
 			$res = $objecttmp->create($user);
 
@@ -560,6 +581,12 @@ if ($massaction == 'confirm_createbills')
 				for ($i=0;$i<$num;$i++)
 				{
 					$desc=($lines[$i]->desc?$lines[$i]->desc:$lines[$i]->libelle);
+					// If we build one invoice for several order, we must put the invoice of order on the line
+					if (! empty($createbills_onebythird))
+					{
+					    $desc=dol_concatdesc($desc, $langs->trans("Order").' '.$cmd->ref.' - '.dol_print_date($cmd->date, 'day', $langs));
+					}
+
 					if ($lines[$i]->subprice < 0)
 					{
 						// Negative line, we create a discount line
@@ -670,6 +697,7 @@ if ($massaction == 'confirm_createbills')
 	if (! $error && $validate_invoices)
 	{
 		$massaction = $action = 'builddoc';
+
 		foreach($TAllFact as &$objecttmp)
 		{
 			$result = $objecttmp->validate($user);
@@ -687,7 +715,12 @@ if ($massaction == 'confirm_createbills')
 			$donotredirect = 1;
 			$upload_dir = $conf->facture->dir_output;
 			$permissioncreate=$user->rights->facture->creer;
+
+			// Call action to build doc
+			$savobject = $object;
+      			$object = $objecttmp;
 			include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
+			$object = $savobject;
 		}
 
 		$massaction = $action = 'confirm_createbills';
@@ -696,7 +729,7 @@ if ($massaction == 'confirm_createbills')
 	if (! $error)
 	{
 		$db->commit();
-		setEventMessage($langs->trans('BillCreated', $nb_bills_created));
+        setEventMessages($langs->trans('BillCreated', $nb_bills_created), null, 'mesgs');
 
 		// Make a redirect to avoid to bill twice if we make a refresh or back
 		$param='';
