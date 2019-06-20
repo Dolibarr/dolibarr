@@ -30,7 +30,7 @@
 /**
  * 	Class to manage dictionary Countries (used by imports)
  */
-class Ccountry  extends CommonObject
+class Ccountry//  extends CommonObject
 {
 	/**
      * @var DoliDB Database handler.
