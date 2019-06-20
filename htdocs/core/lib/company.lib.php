@@ -649,6 +649,8 @@ function getFormeJuridiqueLabel($code)
  */
 function getCountriesInEEC()
 {
+	global $conf;
+
 	// List of all country codes that are in europe for european vat rules
 	// List found on http://ec.europa.eu/taxation_customs/common/faq/faq_1179_en.htm#9
 	$country_code_in_EEC=array(
@@ -686,6 +688,12 @@ function getCountriesInEEC()
 		'UK',	// United Kingdom
 		//'CH',	// Switzerland - No. Swizerland in not in EEC
 	);
+
+	if (! empty($conf->global->MAIN_COUNTRIES_IN_EEC))
+	{
+		// For example MAIN_COUNTRIES_IN_EEC = 'AT,BE,BG,CY,CZ,DE,DK,EE,ES,FI,FR,GB,GR,HR,NL,HU,IE,IM,IT,LT,LU,LV,MC,MT,PL,PT,RO,SE,SK,SI,UK'
+		$country_code_in_EEC = explode(',', $conf->global->MAIN_COUNTRIES_IN_EEC);
+	}
 
 	return $country_code_in_EEC;
 }
