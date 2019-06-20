@@ -1030,9 +1030,8 @@ if ($id)
     if ($id == 10 && empty($conf->global->FACTURE_TVAOPTION))
     {
     	print info_admin($langs->trans("VATIsUsedIsOff", $langs->transnoentities("Setup"), $langs->transnoentities("CompanyFoundation")));
+    	print "<br>\n";
     }
-
-    print "<br>\n";
 
     // Form to add a new line
     if ($tabname[$id])
