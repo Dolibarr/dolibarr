@@ -107,8 +107,6 @@ if (! GETPOSTISSET('date_startmonth') && (empty($date_start) || empty($date_end)
 	$date_end = dol_get_last_day($pastmonthyear, $pastmonth, false);
 }
 
-$idpays = $mysoc->country_id;
-
 $sql  = "SELECT b.rowid, b.dateo as do, b.datev as dv, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type, b.fk_account,";
 $sql .= " ba.courant, ba.ref as baref, ba.account_number, ba.fk_accountancy_journal,";
 $sql .= " soc.code_compta, soc.code_compta_fournisseur, soc.rowid as socid, soc.nom as name, soc.email as email, bu1.type as typeop_company,";
@@ -154,6 +152,9 @@ $paymentloanstatic = new PaymentLoan($db);
 $accountLinestatic=new AccountLine($db);
 $paymentsubscriptionstatic = new Subscription($db);
 
+$tmppayment = new Paiement($db);
+$tmpinvoice = new Facture($db);
+
 $accountingaccount = new AccountingAccount($db);
 
 // Get code of finance journal
@@ -185,13 +186,14 @@ if ($result) {
 	$tabbq = array ();
 	$tabtp = array ();
 	$tabtype = array ();
+	$tabmoreinfo = array();
 
 	// Loop on each line into llx_bank table. For each line, we should get:
 	// one line tabpay = line into bank
 	// one line for bank record = tabbq
 	// one line for thirdparty record = tabtp
 	$i = 0;
-	while ( $i < $num )
+	while ($i < $num)
 	{
 		$obj = $db->fetch_object($result);
 
@@ -215,7 +217,7 @@ if ($result) {
 		// Set accountancy code for bank
 		$compta_bank = $obj->account_number;
 
-		// Set accountancy code for thirdparty
+		// Set accountancy code for thirdparty (example: '411CU...' or '411' if no subledger account defined on customer)
 		$compta_soc = 'NotDefined';
 		if ($lineisapurchase > 0)
 			$compta_soc = (($obj->code_compta_fournisseur != "") ? $obj->code_compta_fournisseur : $account_supplier);
@@ -257,10 +259,12 @@ if ($result) {
 
 		//var_dump($i);
 		//var_dump($tabpay);
+		//var_dump($tabcompany);
 
 		// By default
 		$tabpay[$obj->rowid]['type'] = 'unknown';	// Can be SOLD, miscellaneous entry, payment of patient, or any old record with no links in bank_url.
 		$tabtype[$obj->rowid] = 'unknown';
+		$tabmoreinfo[$obj->rowid] = array();
 
 		// get_url may return -1 which is not traversable
 		if (is_array($links) && count($links) > 0) {
@@ -285,11 +289,17 @@ if ($result) {
 					}
 				}
 
+				if ($links[$key]['type'] == 'withdraw') {
+					$tabmoreinfo[$obj->rowid]['withdraw']=1;
+				}
+
 				if ($links[$key]['type'] == 'payment') {
 					$paymentstatic->id = $links[$key]['url_id'];
 					$paymentstatic->ref = $links[$key]['url_id'];
 					$tabpay[$obj->rowid]["lib"] .= ' ' . $paymentstatic->getNomUrl(2, '', '');		// TODO Do not include list of invoice in tooltip, the dol_string_nohtmltag is ko with this
 					$tabpay[$obj->rowid]["paymentid"] = $paymentstatic->id;
+
+
 				} elseif ($links[$key]['type'] == 'payment_supplier') {
 					$paymentsupplierstatic->id = $links[$key]['url_id'];
 					$paymentsupplierstatic->ref = $links[$key]['url_id'];
@@ -411,8 +421,30 @@ if ($result) {
 
 		$tabbq[$obj->rowid][$compta_bank] += $obj->amount;
 
-		// If not links were found to know amount on thirdparty, we init it.
-		if (empty($tabtp[$obj->rowid])) $tabtp[$obj->rowid]['NotDefined']= $tabbq[$obj->rowid][$compta_bank];
+		// If no links were found to know the amount on thirdparty, we try to guess it.
+		// This may happens on bank entries without the links lines to 'company'.
+		if (empty($tabtp[$obj->rowid]) && ! empty($tabmoreinfo[$obj->rowid]['withdraw']))	// If we dont find 'company' link because it is an old 'withdraw' record
+		{
+			foreach ($links as $key => $val) {
+				if ($links[$key]['type'] == 'payment') {
+					// Get thirdparty
+					$tmppayment->fetch($links[$key]['url_id']);
+					$arrayofamounts = $tmppayment->getAmountsArray();
+					foreach($arrayofamounts as $invoiceid => $amount)
+					{
+						$tmpinvoice->fetch($invoiceid);
+						$tmpinvoice->fetch_thirdparty();
+						if ($tmpinvoice->thirdparty->code_compta)
+						{
+							$tabtp[$obj->rowid][$tmpinvoice->thirdparty->code_compta] += $amount;
+						}
+					}
+				}
+			}
+		}
+
+		// If no links were found to know the amount on thirdparty, we init it to account 'NotDefined'.
+		if (empty($tabtp[$obj->rowid])) $tabtp[$obj->rowid]['NotDefined'] = $tabbq[$obj->rowid][$compta_bank];
 
 		// Check account number is ok
 		/*if ($action == 'writebookkeeping')		// Make test now in such a case
@@ -701,6 +733,7 @@ if (! $error && $action == 'writebookkeeping') {
 						$totalcredit += $bookkeeping->credit;
 
 						$result = $bookkeeping->create($user);
+
 						if ($result < 0) {
 							if ($bookkeeping->error == 'BookkeepingRecordAlreadyExists')	// Already exists
 							{
@@ -1071,7 +1104,6 @@ if (empty($action) || $action == 'view') {
 					if ($tabtype[$key] == 'payment_salary')			$account_ledger = $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT;
 					if ($tabtype[$key] == 'payment_vat')			$account_ledger = $conf->global->ACCOUNTING_VAT_PAY_ACCOUNT;
 					if ($tabtype[$key] == 'member')					$account_ledger = $conf->global->ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT;
-
 					$accounttoshow = length_accounta($account_ledger);
 					if (empty($accounttoshow) || $accounttoshow == 'NotDefined')
 					{
@@ -1104,6 +1136,7 @@ if (empty($action) || $action == 'view') {
 					print "</td>";
 					// Subledger account
 					print "<td>";
+
 					if (in_array($tabtype[$key], array('payment', 'payment_supplier', 'payment_expensereport', 'payment_salary')))	// Type of payment with subledger
 					{
 						$accounttoshowsubledger = length_accounta($k);
@@ -1115,7 +1148,14 @@ if (empty($action) || $action == 'view') {
 								var_dump($tabtype[$key]);
 								var_dump($tabbq[$key]);*/
 								//print '<span class="error">'.$langs->trans("ThirdpartyAccountNotDefined").'</span>';
-								print '<span class="error">'.$langs->trans("ThirdpartyAccountNotDefinedOrThirdPartyUnknown").'</span>';
+								if (! empty($tabcompany[$key]['code_compta']))
+								{
+									print '<span class="warning">'.$langs->trans("ThirdpartyAccountNotDefinedOrThirdPartyUnknown", $tabcompany[$key]['code_compta']).'</span>';
+								}
+								else
+								{
+									print '<span class="error">'.$langs->trans("ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking").'</span>';
+								}
 							}
 							else print $accounttoshowsubledger;
 						}
