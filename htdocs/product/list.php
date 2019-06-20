@@ -1002,7 +1002,7 @@ if ($resql)
         if (! empty($arrayfields['p.tva_tx']['checked']))
         {
             print '<td class="right">';
-            print vatrate($obj->tva_tx,true);
+            print vatrate($obj->tva_tx, true);
             print '</td>';
             if (! $i) $totalarray['nbfield']++;
         }
