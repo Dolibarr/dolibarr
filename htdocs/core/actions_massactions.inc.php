@@ -69,6 +69,8 @@ if (! $error && $massaction == 'confirm_presend')
 	$listofobjectid=array();
 	$listofobjectthirdparties=array();
 	$listofobjectref=array();
+	$attachedfilesThirdpartyObj=array();
+	$oneemailperrecipient=(GETPOST('oneemailperrecipient')=='on'?1:0);
 
 	if (! $error)
 	{
@@ -193,7 +195,6 @@ if (! $error && $massaction == 'confirm_presend')
 			$sendtocc=implode(',',$tmparray);
 
 			//var_dump($listofobjectref);exit;
-			$attachedfiles=array('paths'=>array(), 'names'=>array(), 'mimes'=>array());
 			$listofqualifiedobj=array();
 			$listofqualifiedref=array();
 			$thirdpartywithoutemail=array();
@@ -263,12 +264,12 @@ if (! $error && $massaction == 'confirm_presend')
 
 	   				if (dol_is_file($file))
 					{
-							// Create form object
-							$attachedfiles=array(
-							'paths'=>array_merge($attachedfiles['paths'],array($file)),
-							'names'=>array_merge($attachedfiles['names'],array($filename)),
-							'mimes'=>array_merge($attachedfiles['mimes'],array($mime))
-							);
+						// Create form object
+						$attachedfilesThirdpartyObj[$thirdpartyid][$objectid]=array(
+							'paths'=>array($file),
+							'names'=>array($filename),
+							'mimes'=>array($mime)
+						);
 					}
 					else
 					{
@@ -334,7 +335,7 @@ if (! $error && $massaction == 'confirm_presend')
 				if ($objectclass == 'FactureFournisseur')	$sendtobcc .= (empty($conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO) ? '' : (($sendtobcc?", ":"").$conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO));
 
 				// $listofqualifiedobj is array with key = object id and value is instance of qualified objects, for the current thirdparty (but thirdparty property is not loaded yet)
-				$oneemailperrecipient=(GETPOST('oneemailperrecipient')=='on'?1:0);
+
 				$looparray=array();
 				if (! $oneemailperrecipient)
 				{
@@ -376,9 +377,32 @@ if (! $error && $massaction == 'confirm_presend')
                     $subjectreplaced=make_substitutions($subject, $substitutionarray);
                     $messagereplaced=make_substitutions($message, $substitutionarray);
 
+                    $attachedfiles=array('paths'=>array(), 'names'=>array(), 'mimes'=>array());
+					if($oneemailperrecipient)
+					{
+						if(is_array($attachedfilesThirdpartyObj[$thirdparty->id]) && count($attachedfilesThirdpartyObj[$thirdparty->id]))
+						{
+							foreach ($attachedfilesThirdpartyObj[$thirdparty->id] as $keyObjId =>  $objAttachedFiles){
+								// Create form object
+								$attachedfiles=array(
+									'paths'=>array_merge($attachedfiles['paths'], $objAttachedFiles['paths']),
+									'names'=>array_merge($attachedfiles['names'], $objAttachedFiles['names']),
+									'mimes'=>array_merge($attachedfiles['mimes'], $objAttachedFiles['mimes'])
+								);
+							}
+						}
+					}
+					elseif(!empty($attachedfilesThirdpartyObj[$thirdparty->id][$objectid])){
+						// Create form object
+						$attachedfiles=$attachedfilesThirdpartyObj[$thirdparty->id][$objectid];
+					}
+
 					$filepath = $attachedfiles['paths'];
 					$filename = $attachedfiles['names'];
 					$mimetype = $attachedfiles['mimes'];
+
+
+
 
 					//var_dump($filepath);
 
