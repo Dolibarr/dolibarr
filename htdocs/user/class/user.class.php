@@ -520,8 +520,8 @@ class User extends CommonObject
 	 *  Add a right to the user
 	 *
 	 * 	@param	int		$rid			Id of permission to add or 0 to add several permissions
-	 *  @param  string	$allmodule		Add all permissions of module $allmodule
-	 *  @param  string	$allperms		Add all permissions of module $allmodule, subperms $allperms only
+	 *  @param  string	$allmodule		Add all permissions of module $allmodule or 'allmodules' to include all modules.
+	 *  @param  string	$allperms		Add all permissions of module $allmodule, subperms $allperms only or '' to include all permissions.
 	 *  @param	int		$entity			Entity to use
 	 *  @param  int	    $notrigger		1=Does not execute triggers, 0=Execute triggers
 	 *  @return int						> 0 if OK, < 0 if KO
