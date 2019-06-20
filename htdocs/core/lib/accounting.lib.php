@@ -24,21 +24,22 @@
  * 	\brief		Library of accountancy functions
  */
 
+
  /**
   *	Check if a value is empty with some options
   *
-	*	@param	allow_false : setting this to true will make the function consider a boolean value of false as NOT empty. This parameter is false by default.
-	*	@param	allow_ws :    setting this to true will make the function consider a string with nothing but white space as NOT empty. This parameter is false by default.
+  *	@param	allow_false : setting this to true will make the function consider a boolean value of false as NOT empty. This parameter is false by default.
+  *	@param	allow_ws :    setting this to true will make the function consider a string with nothing but white space as NOT empty. This parameter is false by default.
   *	@return	array				  Bool
-	* @author Michael - https://www.php.net/manual/fr/function.empty.php#90767
+  * @author Michael - https://www.php.net/manual/fr/function.empty.php#90767
   */
-	function is_empty($var, $allow_false = false, $allow_ws = false) {
-		if (!isset($var) || is_null($var) || ($allow_ws == false && trim($var) == "" && !is_bool($var)) || ($allow_false === false && is_bool($var) && $var === false) || (is_array($var) && empty($var))) {
-			return true;
-		} else {
-			return false;
-		}
+function is_empty($var, $allow_false = false, $allow_ws = false)
+{
+	if (!isset($var) || is_null($var) || ($allow_ws == false && trim($var) == "" && !is_bool($var)) || ($allow_false === false && is_bool($var) && $var === false) || (is_array($var) && empty($var))) {
+		return true;
 	}
+	return false;
+}
 
 /**
  *	Prepare array with list of tabs
