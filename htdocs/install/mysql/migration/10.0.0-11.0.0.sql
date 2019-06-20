@@ -39,6 +39,7 @@ create table llx_entrepot_extrafields
 ALTER TABLE llx_entrepot_extrafields ADD INDEX idx_entrepot_extrafields (fk_object);
 
 
-ALTER TABLE llx_c_shipment_mode ADD COLUMN entity integer DEFAULT 1;
+ALTER TABLE llx_c_shipment_mode ADD COLUMN entity integer DEFAULT 1 NOT NULL;
+
 ALTER TABLE llx_c_shipment_mode DROP INDEX uk_c_shipment_mode;
 ALTER TABLE llx_c_shipment_mode ADD UNIQUE INDEX uk_c_shipment_mode (code, entity);
