@@ -57,6 +57,13 @@ if ($conf->browser->layout == 'phone')
 {
     $maxcategbydefaultforthisdevice=8;
     $maxproductbydefaultforthisdevice=16;
+	//REDIRECT TO BASIC LAYOUT IF TERMINAL SELECTED AND BASIC MOBILE LAYOUT ENABLED
+	if ($_SESSION["takeposterminal"]!="" && $conf->global->TAKEPOS_PHONE_BASIC_LAYOUT==1)
+	{
+		$_SESSION["basiclayout"]=1;
+		header("Location: invoice.php?mobilepage=invoice");
+		exit;
+	}
 }
 $MAXCATEG = (empty($conf->global->TAKEPOS_NB_MAXCATEG)?$maxcategbydefaultforthisdevice:$conf->global->TAKEPOS_NB_MAXCATEG);
 $MAXPRODUCT = (empty($conf->global->TAKEPOS_NB_MAXPRODUCT)?$maxproductbydefaultforthisdevice:$conf->global->TAKEPOS_NB_MAXPRODUCT);
