@@ -292,7 +292,9 @@ class Entrepot extends CommonObject
 	{
 	    global $conf;
 
-	    $error = 0;
+		$error = 0;
+
+		dol_syslog(get_class($this)."::delete id=".$this->id, LOG_DEBUG);
 
 		$this->db->begin();
 
@@ -311,7 +313,7 @@ class Entrepot extends CommonObject
 			{
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX.$table;
 				$sql.= " WHERE fk_entrepot = " . $this->id;
-				dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+
 				$result=$this->db->query($sql);
 				if (! $result)
 				{
@@ -321,49 +323,52 @@ class Entrepot extends CommonObject
 			}
 		}
 
+		// Removed extrafields
+		if (! $error)
+		{
+			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			{
+				$result=$this->deleteExtraFields();
+				if ($result < 0)
+				{
+					$error++;
+					dol_syslog(get_class($this)."::delete Error ".$this->error, LOG_ERR);
+				}
+			}
+		}
+
 		if (! $error)
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."entrepot";
 			$sql.= " WHERE rowid = " . $this->id;
-			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql1=$this->db->query($sql);
-            if (!$resql1)   $error++;
+			if (! $resql1)
+			{
+				$error++;
+				$this->errors[] = $this->db->lasterror();
+			}
+		}
 
+		if (! $error)
+		{
 			// Update denormalized fields because we change content of produt_stock. Warning: Do not use "SET p.stock", does not works with pgsql
 			$sql = "UPDATE ".MAIN_DB_PREFIX."product as p SET stock = (SELECT SUM(ps.reel) FROM ".MAIN_DB_PREFIX."product_stock as ps WHERE ps.fk_product = p.rowid)";
-			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql2=$this->db->query($sql);
-            if (!$resql2)   $error++;
-
-            // Removed extrafields
-            if (! $error) {
-                if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-                {
-                    $result=$this->deleteExtraFields();
-                    if ($result < 0) {
-                        $error++;
-                        $errorflag=-4;
-                        dol_syslog(get_class($this)."::delete erreur ".$errorflag." ".$this->error, LOG_ERR);
-                    }
-                }
-            }
-
-			if (!$error)
+			if (! $resql2)
 			{
-				$this->db->commit();
-				return 1;
+				$error++;
+				$this->errors[] = $this->db->lasterror();
 			}
-			else
-			{
-				$this->db->rollback();
-				$this->error=$this->db->lasterror();
-				return -2;
-			}
+		}
+
+		if (! $error)
+		{
+			$this->db->commit();
+			return 1;
 		}
 		else
 		{
 			$this->db->rollback();
-			$this->error=$this->db->lasterror();
 			return -1;
 		}
 	}

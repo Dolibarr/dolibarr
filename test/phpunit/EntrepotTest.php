@@ -211,6 +211,7 @@ class EntrepotTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
+		//$this->assertLessThan(1, 0);
 
         return $localobject->id;
     }
@@ -256,6 +257,8 @@ class EntrepotTest extends PHPUnit_Framework_TestCase
         $db=$this->savdb;
 
         $localobject=new Entrepot($db);
+
+        //$this->assertLessThan(1, 0);
 
         return;
     }

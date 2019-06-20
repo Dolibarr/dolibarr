@@ -92,8 +92,6 @@ if (! GETPOSTISSET('date_startmonth') && (empty($date_start) || empty($date_end)
 	$date_end = dol_get_last_day($pastmonthyear, $pastmonth, false);
 }
 
-$idpays = $mysoc->country_id;
-
 $sql = "SELECT f.rowid, f.ref as ref, f.type, f.datef as df, f.libelle,f.ref_supplier, f.date_lim_reglement as dlf, f.close_code,";
 $sql .= " fd.rowid as fdid, fd.description, fd.product_type, fd.total_ht, fd.tva as total_tva, fd.total_localtax1, fd.total_localtax2, fd.tva_tx, fd.total_ttc, fd.vat_src_code,";
 $sql .= " s.rowid as socid, s.nom as name, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,";
