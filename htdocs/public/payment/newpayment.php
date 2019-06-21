@@ -430,6 +430,7 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
     			'dol_version' => DOL_VERSION,
     			'dol_entity'  => $conf->entity,
     			'dol_company' => $mysoc->name,		// Usefull when using multicompany
+    			'dol_tax_num' => $taxinfo,
     		    'ipaddress'=> getUserRemoteIP()
     		);
 
@@ -501,23 +502,39 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
     		{
     			$vatcleaned = $vatnumber ? $vatnumber : null;
 
-    			$taxinfo = array('type'=>'vat');
+    			/*$taxinfo = array('type'=>'vat');
     			if ($vatcleaned)
     			{
     				$taxinfo["tax_id"] = $vatcleaned;
     			}
     			// We force data to "null" if not defined as expected by Stripe
     			if (empty($vatcleaned)) $taxinfo=null;
+    			*/
 
     			dol_syslog("Create anonymous customer card profile", LOG_DEBUG, 0, '_stripe');
+
                 $customer = \Stripe\Customer::create(array(
     				'email' => $email,
     				'description' => ($email?'Anonymous customer for '.$email:'Anonymous customer'),
     				'metadata' => $metadata,
-    				'tax_info' => $taxinfo,
     				'source'  => $stripeToken           // source can be a token OR array('object'=>'card', 'exp_month'=>xx, 'exp_year'=>xxxx, 'number'=>xxxxxxx, 'cvc'=>xxx, 'name'=>'Cardholder's full name', zip ?)
     			));
     			// Return $customer = array('id'=>'cus_XXXX', ...)
+
+                // Create the VAT record in Stripe
+                /* We don't know country of customer, so we can't create tax
+                if (! empty($conf->global->STRIPE_SAVE_TAX_IDS))	// We setup to save Tax info on Stripe side. Warning: This may result in error when saving customer
+                {
+                	if (! empty($vatcleaned))
+                	{
+                		$isineec=isInEEC($object);
+                		if ($object->country_code && $isineec)
+                		{
+                			//$taxids = $customer->allTaxIds($customer->id);
+                			$customer->createTaxId($customer->id, array('type'=>'eu_vat', 'value'=>$vatcleaned));
+                		}
+                	}
+                }*/
 
     			if (! empty($FULLTAG))       $metadata["FULLTAG"] = $FULLTAG;
     			if (! empty($dol_id))        $metadata["dol_id"] = $dol_id;
