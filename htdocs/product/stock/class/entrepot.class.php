@@ -346,6 +346,7 @@ class Entrepot extends CommonObject
 			{
 				$error++;
 				$this->errors[] = $this->db->lasterror();
+				dol_syslog(get_class($this)."::delete Error ".$this->db->lasterror(), LOG_ERR);
 			}
 		}
 
@@ -358,6 +359,7 @@ class Entrepot extends CommonObject
 			{
 				$error++;
 				$this->errors[] = $this->db->lasterror();
+				dol_syslog(get_class($this)."::delete Error ".$this->db->lasterror(), LOG_ERR);
 			}
 		}
 
