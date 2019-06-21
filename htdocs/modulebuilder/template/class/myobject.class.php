@@ -534,7 +534,7 @@ class MyObject extends CommonObject
             }
             $linkclose.=' title="'.dol_escape_htmltag($label, 1).'"';
             $linkclose.=' class="classfortooltip'.($morecss?' '.$morecss:'').'"';
-.'_'.$class
+            
             /*
              $hookmanager->initHooks(array('myobjectdao'));
              $parameters=array('id'=>$this->id);
