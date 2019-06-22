@@ -205,8 +205,6 @@ CREATE TABLE tmp_user as (select * from llx_user);
 UPDATE llx_user SET fk_user = NULL where fk_user NOT IN (select rowid from tmp_user);
 
 
-update llx_user set fk_user = null where fk_user not in (select rowid from llx_user);
-
 
 UPDATE llx_product SET canvas = NULL where canvas = 'default@product';
 UPDATE llx_product SET canvas = NULL where canvas = 'service@product';
