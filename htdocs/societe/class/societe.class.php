@@ -3438,7 +3438,6 @@ class Societe extends CommonObject
 		$this->address=empty($conf->global->MAIN_INFO_SOCIETE_ADDRESS)?'':$conf->global->MAIN_INFO_SOCIETE_ADDRESS;
 		$this->zip=empty($conf->global->MAIN_INFO_SOCIETE_ZIP)?'':$conf->global->MAIN_INFO_SOCIETE_ZIP;
 		$this->town=empty($conf->global->MAIN_INFO_SOCIETE_TOWN)?'':$conf->global->MAIN_INFO_SOCIETE_TOWN;
-		$this->state_id=empty($conf->global->MAIN_INFO_SOCIETE_STATE)?'':$conf->global->MAIN_INFO_SOCIETE_STATE;
 		$this->region_code=empty($conf->global->MAIN_INFO_SOCIETE_REGION)?'':$conf->global->MAIN_INFO_SOCIETE_REGION;
 		$this->object=empty($conf->global->MAIN_INFO_SOCIETE_OBJECT)?'':$conf->global->MAIN_INFO_SOCIETE_OBJECT;
 
@@ -3472,7 +3471,7 @@ class Societe extends CommonObject
 
 		//TODO This could be replicated for region but function `getRegion` didn't exist, so I didn't added it.
 		// We define state_id, state_code and state
-		$state_id=$state_code=$state_label='';
+		$state_id=0;$state_code=$state_label='';
 		if (! empty($conf->global->MAIN_INFO_SOCIETE_STATE))
 		{
 			$tmp=explode(':',$conf->global->MAIN_INFO_SOCIETE_STATE);

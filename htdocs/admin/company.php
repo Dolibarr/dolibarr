@@ -83,7 +83,11 @@ if ( ($action == 'update' && ! GETPOST("cancel", 'alpha'))
 		$mysoc->state_label=$tmparray['label'];
 
 		$s=$mysoc->state_id.':'.$mysoc->state_code.':'.$mysoc->state_label;
-		dolibarr_set_const($db, "MAIN_INFO_SOCIETE_STATE", $s,'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "MAIN_INFO_SOCIETE_STATE", $s, 'chaine', 0, '', $conf->entity);
+	}
+	else
+	{
+		dolibarr_del_const($db, "MAIN_INFO_SOCIETE_STATE", $conf->entity);
 	}
 
     $db->begin();
@@ -385,7 +389,13 @@ if ($action == 'edit' || $action == 'updateedit')
 
 
 	print '<tr class="oddeven"><td><label for="state_id">'.$langs->trans("State").'</label></td><td class="maxwidthonsmartphone">';
-	$formcompany->select_departement($conf->global->MAIN_INFO_SOCIETE_STATE, $mysoc->country_code, 'state_id');
+	$state_id=0;
+	if (! empty($conf->global->MAIN_INFO_SOCIETE_STATE))
+	{
+		$tmp=explode(':',$conf->global->MAIN_INFO_SOCIETE_STATE);
+		$state_id=$tmp[0];
+	}
+	$formcompany->select_departement($state_id, $mysoc->country_code, 'state_id');
 	print '</td></tr>'."\n";
 
 
@@ -774,8 +784,12 @@ else
 
 	if (! empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT)) print '<tr class="oddeven"><td>'.$langs->trans("Region-State").'</td><td>';
 	else print '<tr class="oddeven"><td>'.$langs->trans("State").'</td><td>';
-	if (! empty($conf->global->MAIN_INFO_SOCIETE_STATE)) print getState($conf->global->MAIN_INFO_SOCIETE_STATE, $conf->global->MAIN_SHOW_STATE_CODE, 0, $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT);
-	else print '&nbsp;';
+	if (! empty($conf->global->MAIN_INFO_SOCIETE_STATE))
+	{
+		$tmp=explode(':',$conf->global->MAIN_INFO_SOCIETE_STATE);
+		$state_id=$tmp[0];
+		print getState($state_id, $conf->global->MAIN_SHOW_STATE_CODE, 0, $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT);
+	}
 	print '</td></tr>';
 
 

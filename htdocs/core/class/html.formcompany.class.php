@@ -211,13 +211,13 @@ class FormCompany
      *   The key of the list is the code (there can be several entries for a given code but in this case, the country field differs).
      *   Thus the links with the departments are done on a department independently of its name.
 	 *
-	 *    @param	string	$selected        	Code state preselected (mus be state id)
+	 *    @param	int		$selected        	Code state preselected (mus be state id)
 	 *    @param    integer	$country_codeid    	Country code or id: 0=list for all countries, otherwise country code or country rowid to show
 	 *    @param    string	$htmlname			Id of department. If '', we want only the string with <option>
 	 * 	  @return	string						String with HTML select
 	 *    @see select_country()
 	 */
-	public function select_state($selected = '', $country_codeid = 0, $htmlname = 'state_id')
+	public function select_state($selected = 0, $country_codeid = 0, $htmlname = 'state_id')
 	{
         // phpcs:enable
 		global $conf,$langs,$user;
