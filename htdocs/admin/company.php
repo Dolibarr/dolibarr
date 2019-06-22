@@ -75,7 +75,7 @@ if ( ($action == 'update' && ! GETPOST("cancel", 'alpha'))
 		activateModulesRequiredByCountry($mysoc->country_code);
 	}
 
-	$tmparray=getState(GETPOST('state_id','int'),'all',$db,$langs,0);
+	$tmparray=getState(GETPOST('state_id','int'), 'all', $db, $langs, 0);
 	if (! empty($tmparray['id']))
 	{
 		$mysoc->state_id   =$tmparray['id'];
