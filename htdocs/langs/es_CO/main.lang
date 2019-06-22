@@ -208,7 +208,6 @@ DirectDownloadLink=Enlace de descarga directa (público / externo)
 DirectDownloadInternalLink=Enlace de descarga directa (necesita ser registrado y necesita permisos)
 DownloadDocument=Descargar documento
 ActualizeCurrency=Tasa de cambio de moneda
-ModuleBuilder=Generador de módulos
 ClickToShowHelp=Haga clic para mostrar la ayuda de ayuda.
 ExpenseReport=Informe de gastos
 ExpenseReports=Reporte de gastos

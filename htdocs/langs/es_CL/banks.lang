@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - banks
-MenuBankCash=Banco | Efectivo
 MenuVariousPayment=Pagos diversos
 MenuNewVariousPayment=Nuevo pago misceláneo
 BankAccount=cuenta bancaria
@@ -65,7 +64,6 @@ AddBankRecord=Añadir entrada
 AddBankRecordLong=Agregar entrada manualmente
 DateConciliating=Fecha de conciliación
 BankLineConciliated=Entrada reconciliada
-SupplierInvoicePayment=Pago del proveedor
 WithdrawalPayment=Pago de retiros
 SocialContributionPayment=Pago de impuestos sociales/fiscales
 BankTransfer=transferencia bancaria
@@ -106,10 +104,6 @@ ConfirmRejectCheck=¿Seguro que quieres marcar este cheque como rechazado?
 RejectCheckDate=Fecha en que se devolvió el cheque
 BankAccountModelModule=Plantillas de documentos para cuentas bancarias
 DocumentModelBan=Plantilla para imprimir una página con información de BAN.
-NewVariousPayment=Nuevos pagos misceláneos
-VariousPayment=Pagos diversos
 VariousPayments=Pagos diversos
-ShowVariousPayment=Mostrar pagos diversos
-AddVariousPayment=Agregar pagos diversos
 SEPAMandate=Mandato de la SEPA
 YourSEPAMandate=Su mandato de SEPA

@@ -2389,7 +2389,7 @@ class User extends CommonObject
 		if ($withpictoimg)
 		{
 		  	$paddafterimage='';
-			if (abs($withpictoimg) == 1) $paddafterimage='style="margin-right: 3px;"';
+		  	if (abs($withpictoimg) == 1) $paddafterimage='style="margin-'.($langs->trans("DIRECTION")=='rtl'?'left':'right').': 3px;"';
 			// Only picto
 			if ($withpictoimg > 0) $picto='<!-- picto user --><div class="inline-block nopadding userimg'.($morecss?' '.$morecss:'').'">'.img_object('', 'user', $paddafterimage.' '.($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).'</div>';
 			// Picto must be a photo

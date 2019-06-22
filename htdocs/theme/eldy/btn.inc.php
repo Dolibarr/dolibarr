@@ -68,7 +68,7 @@ a.butActionNew>span.fa-list-alt, a.butActionNew>span.fa-list-alt:hover,
 span.butActionNew>span.fa-list-alt, span.butActionNew>span.fa-list-alt:hover,
 a.butActionNewRefused>span.fa-list-alt, a.butActionNewRefused>span.fa-list-alt:hover,
 span.butActionNewRefused>span.fa-list-alt, span.butActionNewRefused>span.fa-list-alt:hover {
-	padding-left: 6px; font-size: 1.5em; border: none; box-shadow: none; webkit-box-shadow: none;
+	padding-<?php echo $left; ?>: 6px; font-size: 1.5em; border: none; box-shadow: none; webkit-box-shadow: none;
 }
 
 .butAction:hover   {
