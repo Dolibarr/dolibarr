@@ -59,7 +59,10 @@ class Product extends CommonObject
      */
     public $fk_element='fk_product';
 
-    protected $childtables=array('supplier_proposaldet', 'propaldet','commandedet','facturedet','contratdet','facture_fourn_det','commande_fournisseurdet');    // To test if we can delete object
+    /**
+     * @var array	List of child tables. To test if we can delete object.
+     */
+    protected $childtables=array('supplier_proposaldet', 'propaldet', 'commandedet', 'facturedet', 'contratdet', 'facture_fourn_det', 'commande_fournisseurdet');
 
     /**
      * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe

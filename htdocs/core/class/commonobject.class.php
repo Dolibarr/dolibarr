@@ -7490,7 +7490,7 @@ abstract class CommonObject
 
 		$this->db->begin();
 
-		if ($forcechilddeletion)
+		if ($forcechilddeletion)	// Force also delete of childtables that should lock deletion in standard case when option force is off
 		{
 			foreach($this->childtables as $table)
 			{
@@ -7515,6 +7515,20 @@ abstract class CommonObject
 				$this->errors[]=$this->error;
 				$this->db->rollback();
 				return 0;
+			}
+		}
+
+		// Delete cascade first
+		foreach($this->childtablesoncascade as $table)
+		{
+			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$table.' WHERE '.$this->fk_element.' = '.$this->id;
+			$resql = $this->db->query($sql);
+			if (! $resql)
+			{
+				$this->error=$this->db->lasterror();
+				$this->errors[]=$this->error;
+				$this->db->rollback();
+				return -1;
 			}
 		}
 

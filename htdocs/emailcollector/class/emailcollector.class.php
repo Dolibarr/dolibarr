@@ -62,9 +62,13 @@ class EmailCollector extends CommonObject
     public $fk_element = 'fk_emailcollector';
 
     /**
-     * @var array  Array of child tables (child tables to delete before deleting a record)
+	 * @var array	List of child tables. To test if we can delete object.
      */
-    protected $childtables=array('emailcollector_emailcollectorfilter', 'emailcollector_emailcollectoraction');
+    protected $childtables=array();
+    /**
+     * @var array	List of child tables. To know object to delete on cascade.
+     */
+    protected $childtablesoncascade=array('emailcollector_emailcollectorfilter','emailcollector_emailcollectoraction');
 
 
     /**

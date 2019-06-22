@@ -42,12 +42,6 @@ class BOM extends CommonObject
 	public $table_element = 'bom_bom';
 
 	/**
-	 * @var string Name of subtable if this object has sub lines
-	 */
-	public $table_element_line = 'bom_bomline';
-	public $fk_element = 'fk_bom';
-
-	/**
 	 * @var int  Does bom support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 */
 	public $ismultientitymanaged = 1;
@@ -134,27 +128,32 @@ class BOM extends CommonObject
 	/**
 	 * @var int    Name of subtable line
 	 */
-	//public $table_element_line = 'bomdet';
+	public $table_element_line = 'bom_bomline';
 
 	/**
 	 * @var int    Field with ID of parent key if this field has a parent
 	 */
-	//public $fk_element = 'fk_bom';
+	public $fk_element = 'fk_bom';
 
 	/**
 	 * @var int    Name of subtable class that manage subtable lines
 	 */
-	//public $class_element_line = 'BillOfMaterialsline';
+	public $class_element_line = 'BOMLine';
 
 	/**
-	 * @var array  Array of child tables (child tables to delete before deleting a record)
+	 * @var array	List of child tables. To test if we can delete object.
 	 */
-	//protected $childtables=array('bomdet');
+	//protected $childtables=array();
 
 	/**
-	 * @var BillOfMaterialsLine[]     Array of subtable lines
+	 * @var array	List of child tables. To know object to delete on cascade.
 	 */
-	//public $lines = array();
+	protected $childtablesoncascade=array('bom_bomline');
+
+	/**
+	 * @var BOMLine[]     Array of subtable lines
+	 */
+	public $lines = array();
 
 
 

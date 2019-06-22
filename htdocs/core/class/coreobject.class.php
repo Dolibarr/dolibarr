@@ -175,7 +175,7 @@ class CoreObject extends CommonObject
      */
     public function fetchChild()
     {
-        if($this->withChild && !empty($this->childtables) && !empty($this->fk_element))
+        if ($this->withChild && !empty($this->childtables) && !empty($this->fk_element))
         {
             foreach($this->childtables as &$childTable)
             {
