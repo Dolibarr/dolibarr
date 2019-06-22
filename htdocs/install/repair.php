@@ -389,11 +389,80 @@ if ($ok && GETPOST('standard', 'alpha'))
 							{
 								$db->query($sqldelete);
 
-								print '<tr><td>Constant '.$obj->name.' set in entity '.$obj->entity.' with value '.$obj->value.' -> Module not enabled in entity '.$obj->entity.', we delete record</td></tr>';
+								print '<tr><td>Widget '.$obj->name.' set in entity '.$obj->entity.' with value '.$obj->value.' -> Module not enabled in entity '.$obj->entity.', we delete record</td></tr>';
 							}
 							else
 							{
-								print '<tr><td>Constant '.$obj->name.' set in entity '.$obj->entity.' with value '.$obj->value.' -> Module not enabled in entity '.$obj->entity.', we should delete record (not done, mode test)</td></tr>';
+								print '<tr><td>Widget '.$obj->name.' set in entity '.$obj->entity.' with value '.$obj->value.' -> Module not enabled in entity '.$obj->entity.', we should delete record (not done, mode test)</td></tr>';
+							}
+						}
+						else
+						{
+							//print '<tr><td>Constant '.$obj->name.' set in entity '.$obj->entity.' with value '.$obj->value.' -> Module found in entity '.$obj->entity.', we keep record</td></tr>';
+						}
+					}
+				}
+
+				$i++;
+			}
+
+			$db->commit();
+		}
+	}
+}
+
+
+// clean box of not enabled modules
+if ($ok && GETPOST('standard', 'alpha'))
+{
+	print '<tr><td colspan="2"><br>*** Clean definition of boxes of modules not enabled</td></tr>';
+
+	$sql ="SELECT file, entity FROM ".MAIN_DB_PREFIX."boxes_def";
+	$sql.=" WHERE file like '%@%'";
+
+	$resql = $db->query($sql);
+	if ($resql)
+	{
+		$num = $db->num_rows($resql);
+
+		if ($num)
+		{
+			$db->begin();
+
+			$i = 0;
+			while ($i < $num)
+			{
+				$obj=$db->fetch_object($resql);
+
+				$reg = array();
+				if (preg_match('/^(.+)@(.+)$/i', $obj->file, $reg))
+				{
+					$name=$reg[1];
+					$module=$reg[2];
+
+					$sql2 ="SELECT COUNT(*) as nb";
+					$sql2.=" FROM ".MAIN_DB_PREFIX."const as c";
+					$sql2.=" WHERE name = 'MAIN_MODULE_".strtoupper($module)."'";
+					$sql2.=" AND entity = ".$obj->entity;
+					$sql2.=" AND value <> 0";
+					$resql2 = $db->query($sql2);
+					if ($resql2)
+					{
+						$obj2 = $db->fetch_object($resql2);
+						if ($obj2 && $obj2->nb == 0)
+						{
+							// Module not found, so we canremove entry
+							$sqldelete = "DELETE FROM ".MAIN_DB_PREFIX."boxes_def WHERE file = '".$obj->file."' AND entity = ".$obj->entity;
+
+							if (GETPOST('standard', 'alpha') == 'confirmed')
+							{
+								$db->query($sqldelete);
+
+								print '<tr><td>Constant '.$obj->file.' set in llx_boxes for entity '.$obj->entity.' but MAIN_MODULE_'.strtoupper($module).' not defined in entity '.$obj->entity.', we delete record</td></tr>';
+							}
+							else
+							{
+								print '<tr><td>Constant '.$obj->file.' set in llx_boxes for entity '.$obj->entity.' but MAIN_MODULE_'.strtoupper($module).' not defined in entity '.$obj->entity.', we should delete record (not done, mode test)</td></tr>';
 							}
 						}
 						else
