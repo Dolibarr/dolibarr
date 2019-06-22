@@ -97,15 +97,13 @@ if ($page == -1 || $page == null) { $page = 0 ; }
 $offset = $limit * $page ;
 if (! $sortorder)
 {
-	$sortorder="DESC";
-	if ($status == 'todo') $sortorder="DESC";
-	//if ($status == 'done') $sortorder="DESC";
+	$sortorder="DESC,DESC";
+	if ($status == 'todo') $sortorder="DESC,DESC";
 }
 if (! $sortfield)
 {
-	$sortfield="a.datep";
-	if ($status == 'todo') $sortfield="a.datep";
-	//if ($status == 'done') $sortfield="a.datep2";
+	$sortfield="a.datep,a.id";
+	if ($status == 'todo') $sortfield="a.datep,a.id";
 }
 
 // Security check
@@ -500,7 +498,7 @@ if ($resql)
 	if (! empty($arrayfields['a.label']['checked']))	  print_liste_field_titre($arrayfields['a.label']['label'], $_SERVER["PHP_SELF"], "a.label", $param, "", "", $sortfield, $sortorder);
 	if (! empty($arrayfields['a.note']['checked']))		  print_liste_field_titre($arrayfields['a.note']['label'], $_SERVER["PHP_SELF"], "a.note", $param, "", "", $sortfield, $sortorder);
 	//if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
-	if (! empty($arrayfields['a.datep']['checked']))	  print_liste_field_titre($arrayfields['a.datep']['label'], $_SERVER["PHP_SELF"], "a.datep", $param, '', 'align="center"', $sortfield, $sortorder);
+	if (! empty($arrayfields['a.datep']['checked']))	  print_liste_field_titre($arrayfields['a.datep']['label'], $_SERVER["PHP_SELF"], "a.datep,a.id", $param, '', 'align="center"', $sortfield, $sortorder);
 	if (! empty($arrayfields['a.datep2']['checked']))	  print_liste_field_titre($arrayfields['a.datep2']['label'], $_SERVER["PHP_SELF"], "a.datep2", $param, '', 'align="center"', $sortfield, $sortorder);
 	if (! empty($arrayfields['s.nom']['checked']))	      print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], "s.nom", $param, "", "", $sortfield, $sortorder);
 	if (! empty($arrayfields['a.fk_contact']['checked'])) print_liste_field_titre($arrayfields['a.fk_contact']['label'], $_SERVER["PHP_SELF"], "a.fk_contact", $param, "", "", $sortfield, $sortorder);
