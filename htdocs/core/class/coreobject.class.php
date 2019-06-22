@@ -25,6 +25,7 @@
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 
+// TODO Remove this class (used in Expensereportik and ExpenseReportRule
 class CoreObject extends CommonObject
 {
     public $withChild = true;
