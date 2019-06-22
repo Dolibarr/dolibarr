@@ -24,6 +24,7 @@ class DolQueryCollector extends DataCollector implements Renderable, AssetProvid
 	{
 		global $db;
 
+		// Replace $db handler with new handler override by TraceableDB
 		$db = new TraceableDB($db);
 
 		$this->db = $db;

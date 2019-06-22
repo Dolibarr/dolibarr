@@ -7,7 +7,6 @@ require_once DOL_DOCUMENT_ROOT .'/core/db/DoliDB.class.php';
  *
  * Used to log queries into DebugBar
  */
-
 class TraceableDB extends DoliDB
 {
 	/**
