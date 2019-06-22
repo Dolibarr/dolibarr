@@ -888,6 +888,7 @@ class DolGraph
 	private function draw_jflot($file, $fileurl)
 	{
         // phpcs:enable
+		global $langs;
 
 		dol_syslog(get_class($this)."::draw_jflot this->type=".join(',', $this->type)." this->MaxValue=".$this->MaxValue);
 
