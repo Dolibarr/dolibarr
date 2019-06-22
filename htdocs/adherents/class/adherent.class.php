@@ -2403,7 +2403,7 @@ class Adherent extends CommonObject
 		$this->country_id = 1;
 		$this->country_code = 'FR';
 		$this->country = 'France';
-		$this->morphy = 1;
+		$this->morphy = 'mor';
 		$this->email = 'specimen@specimen.com';
 		$this->skype = 'skypepseudo';
 		$this->twitter = 'twitterpseudo';
