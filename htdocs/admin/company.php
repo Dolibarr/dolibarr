@@ -75,7 +75,7 @@ if ( ($action == 'update' && ! GETPOST("cancel", 'alpha'))
 		activateModulesRequiredByCountry($mysoc->country_code);
 	}
 
-	$tmparray=getState(GETPOST('state_id','int'), 'all', $db, $langs, 0);
+	$tmparray=getState(GETPOST('state_id', 'int'), 'all', $db, $langs, 0);
 	if (! empty($tmparray['id']))
 	{
 		$mysoc->state_id   =$tmparray['id'];
@@ -92,18 +92,18 @@ if ( ($action == 'update' && ! GETPOST("cancel", 'alpha'))
 
     $db->begin();
 
-    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_NOM", GETPOST("nom",'nohtml'),'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_ADDRESS", GETPOST("MAIN_INFO_SOCIETE_ADDRESS",'nohtml'),'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_TOWN", GETPOST("MAIN_INFO_SOCIETE_TOWN",'nohtml'),'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_ZIP", GETPOST("MAIN_INFO_SOCIETE_ZIP",'alpha'),'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_REGION", GETPOST("region_code",'alpha'),'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_MONNAIE", GETPOST("currency",'aZ09'),'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_TEL", GETPOST("tel",'alpha'),'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_FAX", GETPOST("fax",'alpha'),'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_MAIL", GETPOST("mail",'alpha'),'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_WEB", GETPOST("web",'alpha'),'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_NOTE", GETPOST("note",'none'),'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_GENCOD", GETPOST("barcode",'alpha'),'chaine',0,'',$conf->entity);
+    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_NOM", GETPOST("nom", 'nohtml'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_ADDRESS", GETPOST("MAIN_INFO_SOCIETE_ADDRESS", 'nohtml'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_TOWN", GETPOST("MAIN_INFO_SOCIETE_TOWN", 'nohtml'), 'chaine', 0, '' ,$conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_ZIP", GETPOST("MAIN_INFO_SOCIETE_ZIP", 'alpha'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_REGION", GETPOST("region_code", 'alpha'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_MONNAIE", GETPOST("currency",'aZ09'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_TEL", GETPOST("tel",'alpha'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_FAX", GETPOST("fax",'alpha'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_MAIL", GETPOST("mail",'alpha'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_WEB", GETPOST("web",'alpha'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_NOTE", GETPOST("note",'none'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_GENCOD", GETPOST("barcode", 'alpha'), 'chaine', 0, '', $conf->entity);
 
 	$varforimage='logo'; $dirforimage=$conf->mycompany->dir_output.'/logos/';
 	if ($_FILES[$varforimage]["tmp_name"])
@@ -392,7 +392,7 @@ if ($action == 'edit' || $action == 'updateedit')
 	$state_id=0;
 	if (! empty($conf->global->MAIN_INFO_SOCIETE_STATE))
 	{
-		$tmp=explode(':',$conf->global->MAIN_INFO_SOCIETE_STATE);
+		$tmp=explode(':', $conf->global->MAIN_INFO_SOCIETE_STATE);
 		$state_id=$tmp[0];
 	}
 	$formcompany->select_departement($state_id, $mysoc->country_code, 'state_id');
@@ -786,7 +786,7 @@ else
 	else print '<tr class="oddeven"><td>'.$langs->trans("State").'</td><td>';
 	if (! empty($conf->global->MAIN_INFO_SOCIETE_STATE))
 	{
-		$tmp=explode(':',$conf->global->MAIN_INFO_SOCIETE_STATE);
+		$tmp=explode(':', $conf->global->MAIN_INFO_SOCIETE_STATE);
 		$state_id=$tmp[0];
 		print getState($state_id, $conf->global->MAIN_SHOW_STATE_CODE, 0, $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT);
 	}
