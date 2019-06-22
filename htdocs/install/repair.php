@@ -452,17 +452,19 @@ if ($ok && GETPOST('standard', 'alpha'))
 						if ($obj2 && $obj2->nb == 0)
 						{
 							// Module not found, so we canremove entry
-							$sqldelete = "DELETE FROM ".MAIN_DB_PREFIX."boxes_def WHERE file = '".$obj->file."' AND entity = ".$obj->entity;
+							$sqldeletea = "DELETE FROM ".MAIN_DB_PREFIX."boxes WHERE entity = ".$obj->entity." AND box_id IN (SELECT rowid FROM ".MAIN_DB_PREFIX."boxes_def WHERE file = '".$obj->file."' AND entity = ".$obj->entity.")";
+							$sqldeleteb = "DELETE FROM ".MAIN_DB_PREFIX."boxes_def WHERE file = '".$obj->file."' AND entity = ".$obj->entity;
 
 							if (GETPOST('standard', 'alpha') == 'confirmed')
 							{
-								$db->query($sqldelete);
+								$db->query($sqldeletea);
+								$db->query($sqldeleteb);
 
-								print '<tr><td>Constant '.$obj->file.' set in llx_boxes for entity '.$obj->entity.' but MAIN_MODULE_'.strtoupper($module).' not defined in entity '.$obj->entity.', we delete record</td></tr>';
+								print '<tr><td>Constant '.$obj->file.' set in boxes_def for entity '.$obj->entity.' but MAIN_MODULE_'.strtoupper($module).' not defined in entity '.$obj->entity.', we delete record</td></tr>';
 							}
 							else
 							{
-								print '<tr><td>Constant '.$obj->file.' set in llx_boxes for entity '.$obj->entity.' but MAIN_MODULE_'.strtoupper($module).' not defined in entity '.$obj->entity.', we should delete record (not done, mode test)</td></tr>';
+								print '<tr><td>Constant '.$obj->file.' set in boxes_def for entity '.$obj->entity.' but MAIN_MODULE_'.strtoupper($module).' not defined in entity '.$obj->entity.', we should delete record (not done, mode test)</td></tr>';
 							}
 						}
 						else
