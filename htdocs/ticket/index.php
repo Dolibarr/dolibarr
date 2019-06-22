@@ -231,7 +231,6 @@ if (! empty($dataseries) && count($dataseries) > 1) {
     if (!$mesg) {
         $px1->SetData($data);
         unset($data1);
-        $px1->SetPrecisionY(0);
         $i = $startyear;
         $legend = array();
         while ($i <= $endyear) {
@@ -246,7 +245,6 @@ if (! empty($dataseries) && count($dataseries) > 1) {
         $px1->SetYLabel($langs->trans("TicketStatByStatus"));
         $px1->SetShading(3);
         $px1->SetHorizTickIncrement(1);
-        $px1->SetPrecisionY(0);
         $px1->SetCssPrefix("cssboxes");
         $px1->mode = 'depth';
         //$px1->SetTitle($langs->trans("TicketStatByStatus"));
