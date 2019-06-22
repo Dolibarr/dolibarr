@@ -59,8 +59,16 @@ class Societe extends CommonObject
 	public $fk_element='fk_soc';
 
 	public $fieldsforcombobox='nom,name_alias';
-	protected $childtables=array("supplier_proposal"=>'SupplierProposal',"propal"=>'Proposal',"commande"=>'Order',"facture"=>'Invoice',"facture_rec"=>'RecurringInvoiceTemplate',"contrat"=>'Contract',"fichinter"=>'Fichinter',"facture_fourn"=>'SupplierInvoice',"commande_fournisseur"=>'SupplierOrder',"projet"=>'Project',"expedition"=>'Shipment',"prelevement_lignes"=>'DirectDebitRecord');    // To test if we can delete object
+
+	/**
+	 * @var array	List of child tables. To test if we can delete object.
+	 */
+	protected $childtables=array("supplier_proposal"=>'SupplierProposal',"propal"=>'Proposal',"commande"=>'Order',"facture"=>'Invoice',"facture_rec"=>'RecurringInvoiceTemplate',"contrat"=>'Contract',"fichinter"=>'Fichinter',"facture_fourn"=>'SupplierInvoice',"commande_fournisseur"=>'SupplierOrder',"projet"=>'Project',"expedition"=>'Shipment',"prelevement_lignes"=>'DirectDebitRecord');
+	/**
+	 * @var array	List of child tables. To know object to delete on cascade.
+	 */
 	protected $childtablesoncascade=array("societe_prices", "societe_log", "societe_address", "product_fournisseur_price", "product_customer_price_log", "product_customer_price", "socpeople", "adherent", "societe_account", "societe_rib", "societe_remise", "societe_remise_except", "societe_commerciaux", "categorie", "notify", "notify_def", "actioncomm");
+
 	public $picto = 'company';
 
 	/**
