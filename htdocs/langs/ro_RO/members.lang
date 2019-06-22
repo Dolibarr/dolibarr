@@ -197,3 +197,4 @@ SendReminderForExpiredSubscriptionTitle=Trimiteți un memento prin email pentru 
 SendReminderForExpiredSubscription=Trimiteți un memento prin email membrilor când abonamentul este pe cale să expire (parametrul este numărul de zile înainte de încheierea abonamentului pentru a trimite o reamintire. Poate fi o listă de zile separate prin punct și virgulă, de exemplu '10; 5; 0; -5 „)
 MembershipPaid=Abonament plătit pentru perioada curentă (până la %s)
 YouMayFindYourInvoiceInThisEmail=Găsiți factura dvs. atașată acestui email
+XMembersClosed=%s member(s) closed
