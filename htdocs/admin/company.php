@@ -86,7 +86,9 @@ if ( ($action == 'update' && ! GETPOST("cancel", 'alpha'))
 		dolibarr_set_const($db, "MAIN_INFO_SOCIETE_STATE", $s,'chaine', 0, '', $conf->entity);
 	}
 
-	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_NOM", GETPOST("nom",'nohtml'),'chaine',0,'',$conf->entity);
+    $db->begin();
+
+    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_NOM", GETPOST("nom",'nohtml'),'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_ADDRESS", GETPOST("MAIN_INFO_SOCIETE_ADDRESS",'nohtml'),'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_TOWN", GETPOST("MAIN_INFO_SOCIETE_TOWN",'nohtml'),'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_ZIP", GETPOST("MAIN_INFO_SOCIETE_ZIP",'alpha'),'chaine',0,'',$conf->entity);
