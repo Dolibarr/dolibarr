@@ -67,3 +67,18 @@ CREATE TABLE llx_intracommreport
   tms               timestamp
 )ENGINE=innodb;
 
+create table llx_entrepot_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                          		-- import key
+) ENGINE=innodb;
+
+ALTER TABLE llx_entrepot_extrafields ADD INDEX idx_entrepot_extrafields (fk_object);
+
+
+ALTER TABLE llx_c_shipment_mode ADD COLUMN entity integer DEFAULT 1 NOT NULL;
+
+ALTER TABLE llx_c_shipment_mode DROP INDEX uk_c_shipment_mode;
+ALTER TABLE llx_c_shipment_mode ADD UNIQUE INDEX uk_c_shipment_mode (code, entity);

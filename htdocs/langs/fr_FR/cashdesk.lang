@@ -67,3 +67,4 @@ ValidateAndClose=Valider et fermer
 Terminal=Terminal
 NumberOfTerminals=Nombre de terminaux
 TerminalSelect=Sélectionnez le terminal que vous souhaitez utiliser:
+POSTicket=Ticket POS

@@ -334,6 +334,7 @@ DocumentModelStandardPDF=Plantilla PDF estándar
 PrintContentArea=Mostrar página para imprimir área de contenido principal
 MenuManager=Administrador de menú
 CoreErrorMessage=Disculpe, ocurrió un error. Póngase en contacto con el administrador del sistema para verificar los registros o deshabilitar $ dolibarr_main_prod = 1 para obtener más información.
+ValidatePayment=Validar el pago
 FieldsWithAreMandatory=Campos con <b>%s</b> son obligatorios
 RequiredField=campo requerido
 ToTest=Prueba
@@ -398,7 +399,6 @@ DirectDownloadLink=Enlace de descarga directa (público / externo)
 DirectDownloadInternalLink=Enlace de descarga directa (debe registrarse y necesita permisos)
 DownloadDocument=Descargar documento
 ActualizeCurrency=Actualizar la tasa de cambio
-ModuleBuilder=Constructor de módulos
 ClickToShowHelp=Haga clic para mostrar la ayuda de información sobre herramientas
 ExpenseReport=Informe de gastos
 ExpenseReports=Reporte de gastos

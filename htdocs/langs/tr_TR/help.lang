@@ -4,7 +4,7 @@ EMailSupport=E-posta desteği
 RemoteControlSupport=Çevrimiçi gerçek zamanlı/uzaktan destek
 OtherSupport=Diğer destek
 ToSeeListOfAvailableRessources=İletişim için/mevcut kaynaklara bakın:
-HelpCenter=Yardım merkezi
+HelpCenter=Yardım Merkezi
 DolibarrHelpCenter=Dolibarr Yardım ve Destek Merkezi
 ToGoBackToDolibarr=Aksi takdirde, <a href="%s">Dolibarr'ı kullanmaya devam etmek için buraya tıklayın</a>.
 TypeOfSupport=Destek türü
@@ -16,8 +16,8 @@ Efficiency=Verim
 TypeHelpOnly=Yalnızca yardım
 TypeHelpDev=Yardım+Geliştirme
 TypeHelpDevForm=Yardım + Geliştirme + Eğitim
-BackToHelpCenter=Otherwise, <a href="%s">go back to Help center home page</a>.
-LinkToGoldMember=You can call one of the trainers preselected by Dolibarr for your language (%s) by clicking their Widget (status and maximum price are automatically updated):
+BackToHelpCenter=Aksi takdirde, <a href="%s">Yardım Merkezi ana sayfasına geri dönün</a>.
+LinkToGoldMember=Dolibar tarafından diliniz için (%s) önceden belirlenmiş eğitmenlerden birini onların Widget'lerine tıklayarak arayabilirsiniz (durum ve maksimum fiyat otomatik olarak güncellenir):
 PossibleLanguages=Desteklenen diller
-SubscribeToFoundation=Help the Dolibarr project, subscribe to the foundation
+SubscribeToFoundation=Dolibarr projesine yardımcı olun, vakfa abone olun
 SeeOfficalSupport=Kendi dilinizde Dolibarr desteği için: <br><b><a href="%s" target="_blank">%s</a></b>

@@ -323,7 +323,7 @@ if ($result)
     print load_fiche_titre($langs->trans("ProductsBinding"), '', 'title_accountancy');
 	print '<br>';
 
-	print $langs->trans("InitAccountancyDesc") . '<br>';
+	print '<span class="opacitymedium">'.$langs->trans("InitAccountancyDesc") . '</span><br>';
 	print '<br>';
 
     // Select mode

@@ -47,13 +47,19 @@ class DolGraph
 	public $data;				// Data of graph: array(array('abs1',valA1,valB1), array('abs2',valA2,valB2), ...)
 	public $title;				// Title of graph
 	public $cssprefix='';		// To add into css styles
+
+	/**
+	 * @var int|string 		Width of graph. It can be a numeric for pixels or a string like '100%'
+	 */
 	public $width=380;
+	/**
+	 * @var int 			Height of graph
+	 */
 	public $height=200;
+
 	public $MaxValue=0;
 	public $MinValue=0;
 	public $SetShading=0;
-
-	public $PrecisionY=-1;
 
 	public $horizTickIncrement=-1;
 	public $SetNumXTicks=-1;
@@ -108,7 +114,6 @@ class DolGraph
 			if (! $isgdinstalled)
 			{
 				$this->error="Error: PHP GD module is not available. It is required to build graphics.";
-				return -1;
 			}
 		}
 
@@ -134,11 +139,11 @@ class DolGraph
 	 *
 	 * @param 	float	$which_prec		Precision
 	 * @return 	boolean
+	 * @deprecated
 	 */
 	public function SetPrecisionY($which_prec)
 	{
         // phpcs:enable
-		$this->PrecisionY = $which_prec;
 		return true;
 	}
 
@@ -883,6 +888,7 @@ class DolGraph
 	private function draw_jflot($file, $fileurl)
 	{
         // phpcs:enable
+		global $langs;
 
 		dol_syslog(get_class($this)."::draw_jflot this->type=".join(',', $this->type)." this->MaxValue=".$this->MaxValue);
 

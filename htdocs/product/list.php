@@ -56,6 +56,7 @@ $search_barcode=GETPOST("search_barcode", 'alpha');
 $search_label=GETPOST("search_label", 'alpha');
 $search_type = GETPOST("search_type", 'int');
 $search_sale = GETPOST("search_sale", 'int');
+$search_vatrate=GETPOST("search_vatrate", 'alpha');
 $search_categ = GETPOST("search_categ", 'int');
 $search_tosell = GETPOST("search_tosell", 'int');
 $search_tobuy = GETPOST("search_tobuy", 'int');
@@ -174,7 +175,8 @@ $arrayfields=array(
     'p.sellprice'=>array('label'=>$langs->trans("SellingPrice"), 'checked'=>1, 'enabled'=>empty($conf->global->PRODUIT_MULTIPRICES)),
 	'p.minbuyprice'=>array('label'=>$langs->trans("BuyingPriceMinShort"), 'checked'=>1, 'enabled'=>(! empty($user->rights->fournisseur->lire))),
 	'p.numbuyprice'=>array('label'=>$langs->trans("BuyingPriceNumShort"), 'checked'=>0, 'enabled'=>(! empty($user->rights->fournisseur->lire))),
-	'p.pmp'=>array('label'=>$langs->trans("PMPValueShort"), 'checked'=>0, 'enabled'=>(! empty($user->rights->fournisseur->lire))),
+    'p.tva_tx'=>array('label'=>$langs->trans("VATRate"), 'checked'=>0, 'enabled'=>(! empty($user->rights->fournisseur->lire))),
+    'p.pmp'=>array('label'=>$langs->trans("PMPValueShort"), 'checked'=>0, 'enabled'=>(! empty($user->rights->fournisseur->lire))),
 	'p.seuil_stock_alerte'=>array('label'=>$langs->trans("StockLimit"), 'checked'=>0, 'enabled'=>(! empty($conf->stock->enabled) && $user->rights->stock->lire && $contextpage != 'service')),
 	'p.desiredstock'=>array('label'=>$langs->trans("DesiredStock"), 'checked'=>1, 'enabled'=>(! empty($conf->stock->enabled) && $user->rights->stock->lire && $contextpage != 'service')),
 	'p.stock'=>array('label'=>$langs->trans("PhysicalStock"), 'checked'=>1, 'enabled'=>(! empty($conf->stock->enabled) && $user->rights->stock->lire && $contextpage != 'service')),
@@ -229,6 +231,7 @@ if (empty($reshook))
 		$search_categ=0;
 		$search_tosell="";
 		$search_tobuy="";
+		$search_vatrate="";
 		$search_tobatch='';
 		//$search_type='';						// There is 2 types of list: a list of product and a list of services. No list with both. So when we clear search criteria, we must keep the filter on type.
 
@@ -276,7 +279,7 @@ else
 	$texte = $langs->trans("ProductsAndServices");
 }
 
-$sql = 'SELECT DISTINCT p.rowid, p.ref, p.label, p.fk_product_type, p.barcode, p.price, p.price_ttc, p.price_base_type, p.entity,';
+$sql = 'SELECT DISTINCT p.rowid, p.ref, p.label, p.fk_product_type, p.barcode, p.price, p.tva_tx, p.price_ttc, p.price_base_type, p.entity,';
 $sql.= ' p.fk_product_type, p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock,';
 $sql.= ' p.tobatch, p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export, p.accountancy_code_buy,';
 $sql.= ' p.datec as date_creation, p.tms as date_update, p.pmp, p.stock,';
@@ -323,6 +326,7 @@ if ($search_label)   $sql .= natural_search('p.label', $search_label);
 if ($search_barcode) $sql .= natural_search('p.barcode', $search_barcode);
 if (isset($search_tosell) && dol_strlen($search_tosell) > 0  && $search_tosell!=-1) $sql.= " AND p.tosell = ".$db->escape($search_tosell);
 if (isset($search_tobuy) && dol_strlen($search_tobuy) > 0  && $search_tobuy!=-1)   $sql.= " AND p.tobuy = ".$db->escape($search_tobuy);
+if ($search_vatrate) $sql .= natural_search('p.tva_tx', $search_vatrate);
 if (dol_strlen($canvas) > 0)                    $sql.= " AND p.canvas = '".$db->escape($canvas)."'";
 if ($catid > 0)     $sql.= " AND cp.fk_categorie = ".$catid;
 if ($catid == -2)   $sql.= " AND cp.fk_categorie IS NULL";
@@ -341,7 +345,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListWhere', $parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
-$sql.= " GROUP BY p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type,";
+$sql.= " GROUP BY p.rowid, p.ref, p.label, p.barcode, p.price, p.tva_tx, p.price_ttc, p.price_base_type,";
 $sql.= " p.fk_product_type, p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock,";
 $sql.= ' p.datec, p.tms, p.entity, p.tobatch, p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export, p.accountancy_code_buy, p.pmp, p.stock,';
 $sql.= ' p.weight, p.weight_units, p.length, p.length_units, p.surface, p.surface_units, p.volume, p.volume_units, p.width, p.width_units, p.height, p.height_units';
@@ -421,6 +425,7 @@ if ($resql)
 	if ($search_label) $param.="&search_label=".urlencode($search_label);
 	if ($search_tosell != '') $param.="&search_tosell=".urlencode($search_tosell);
 	if ($search_tobuy != '') $param.="&search_tobuy=".urlencode($search_tobuy);
+    if ($search_vatrate) $sql .= natural_search('p.tva_tx', $search_vatrate);
 	if ($fourn_id > 0) $param.=($fourn_id?"&fourn_id=".$fourn_id:"");
 	if ($seach_categ) $param.=($search_categ?"&search_categ=".urlencode($search_categ):"");
 	if ($show_childproducts) $param.=($show_childproducts?"&search_show_childproducts=".urlencode($show_childproducts):"");
@@ -613,6 +618,13 @@ if ($resql)
 		print '&nbsp;';
 		print '</td>';
 	}
+    // Sell price
+    if (! empty($arrayfields['p.tva_tx']['checked']))
+    {
+        print '<td class="liste_titre right">';
+        print '<input class="right flat maxwidth50" placeholder="%" type="text" name="search_vatrate" size="1" value="'.dol_escape_htmltag($search_vatrate).'">';
+        print '</td>';
+    }
 	// WAP
 	if (! empty($arrayfields['p.pmp']['checked']))
 	{
@@ -714,6 +726,9 @@ if ($resql)
     }
     if (! empty($arrayfields['p.numbuyprice']['checked'])) {
         print_liste_field_titre($arrayfields['p.numbuyprice']['label'], $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'right ');
+    }
+    if (! empty($arrayfields['p.tva_tx']['checked'])) {
+        print_liste_field_titre($arrayfields['p.tva_tx']['label'], $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'right ');
     }
     if (! empty($arrayfields['p.pmp']['checked'])) {
         print_liste_field_titre($arrayfields['p.pmp']['label'], $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'right ');
@@ -982,6 +997,15 @@ if ($resql)
 			}
 			print '</td>';
 		}
+
+        // Sell Tax Rate
+        if (! empty($arrayfields['p.tva_tx']['checked']))
+        {
+            print '<td class="right">';
+            print vatrate($obj->tva_tx, true);
+            print '</td>';
+            if (! $i) $totalarray['nbfield']++;
+        }
 
 		// WAP
 		if (! empty($arrayfields['p.pmp']['checked']))

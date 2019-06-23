@@ -192,6 +192,7 @@ class Stripe extends CommonObject
 
 				$vatcleaned = $object->tva_intra ? $object->tva_intra : null;
 
+				/*
 				$taxinfo = array('type'=>'vat');
 				if ($vatcleaned)
 				{
@@ -199,8 +200,8 @@ class Stripe extends CommonObject
 				}
 				// We force data to "null" if not defined as expected by Stripe
 				if (empty($vatcleaned)) $taxinfo=null;
-
 				$dataforcustomer["tax_info"] = $taxinfo;
+				*/
 
 				//$a = \Stripe\Stripe::getApiKey();
 				//var_dump($a);var_dump($key);exit;
@@ -215,6 +216,21 @@ class Stripe extends CommonObject
 						$customer = \Stripe\Customer::create($dataforcustomer, array("stripe_account" => $key));
 					}
 
+					// Create the VAT record in Stripe
+					if (! empty($conf->global->STRIPE_SAVE_TAX_IDS))	// We setup to save Tax info on Stripe side. Warning: This may result in error when saving customer
+					{
+						if (! empty($vatcleaned))
+						{
+							$isineec=isInEEC($object);
+							if ($object->country_code && $isineec)
+							{
+								//$taxids = $customer->allTaxIds($customer->id);
+								$customer->createTaxId($customer->id, array('type'=>'eu_vat', 'value'=>$vatcleaned));
+							}
+						}
+					}
+
+					// Create customer in Dolibarr
 					$sql = "INSERT INTO " . MAIN_DB_PREFIX . "societe_account (fk_soc, login, key_account, site, status, entity, date_creation, fk_user_creat)";
 					$sql .= " VALUES (".$object->id.", '', '".$this->db->escape($customer->id)."', 'stripe', " . $status . ", " . $conf->entity . ", '".$this->db->idate(dol_now())."', ".$user->id.")";
 					$resql = $this->db->query($sql);

@@ -332,8 +332,8 @@ if ($result) {
 	if ($search_desc)        $param.='&search_desc='.urlencode($search_desc);
 	if ($search_amount)      $param.='&search_amount='.urlencode($search_amount);
 	if ($search_vat)         $param.='&search_vat='.urlencode($search_vat);
-	if ($search_country) 	$param .= "&search_country=" . urlencode($search_country);
-	if ($search_tvaintra)	$param .= "&search_tvaintra=" . urlencode($search_tvaintra);
+	if ($search_country) 	 $param.="&search_country=".urlencode($search_country);
+	if ($search_tvaintra)	 $param.="&search_tvaintra=".urlencode($search_tvaintra);
 
 	$arrayofmassactions =  array(
 	    'ventil'=>$langs->trans("Ventilate")
@@ -382,11 +382,11 @@ if ($result) {
 	print '</td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_ref" value="' . dol_escape_htmltag($search_ref) . '"></td>';
 	//print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_label" value="' . dol_escape_htmltag($search_label) . '"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_desc" value="' . dol_escape_htmltag($search_desc) . '"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_desc" value="' . dol_escape_htmltag($search_desc) . '"></td>';
 	print '<td class="liste_titre right"><input type="text" class="right flat maxwidth50" name="search_amount" value="' . dol_escape_htmltag($search_amount) . '"></td>';
 	print '<td class="liste_titre right"><input type="text" class="right flat maxwidth50" name="search_vat" placeholder="%" size="1" value="' . dol_escape_htmltag($search_vat) . '"></td>';
 	print '<td class="liste_titre">';
-	print $form->select_country($search_country, 'search_country', '', 0, 'maxwidth200', 'code2', 1, 0, 1);
+	print $form->select_country($search_country, 'search_country', '', 0, 'maxwidth150', 'code2', 1, 0, 1);
 	//print '<input type="text" class="flat maxwidth50" name="search_country" value="' . dol_escape_htmltag($search_country) . '">';
 	print '</td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_tvaintra" value="' . dol_escape_htmltag($search_tvaintra) . '"></td>';
@@ -418,7 +418,7 @@ if ($result) {
 	print "</tr>\n";
 
 	$facturefourn_static = new FactureFournisseur($db);
-	$productfourn_static = new ProductFournisseur($db);
+	$product_static = new Product($db);
 
 	while ($i < min($num_lines, $limit)) {
 		$objp = $db->fetch_object($result);
@@ -430,10 +430,10 @@ if ($result) {
 		$objp->code_buy_p = '';
 		$objp->aarowid_suggest = '';
 
-		$productfourn_static->ref = $objp->product_ref;
-		$productfourn_static->id = $objp->product_id;
-		$productfourn_static->type = $objp->type;
-		$productfourn_static->label = $objp->product_label;
+		$product_static->ref = $objp->product_ref;
+		$product_static->id = $objp->product_id;
+		$product_static->type = $objp->type;
+		$product_static->label = $objp->product_label;
 
 		$facturefourn_static->ref = $objp->ref;
 		$facturefourn_static->id = $objp->facid;
@@ -479,8 +479,8 @@ if ($result) {
 
 		// Ref product
 		print '<td>';
-		if ($productfourn_static->id)
-			print $productfourn_static->getNomUrl(1);
+		if ($product_static->id > 0)
+			print $product_static->getNomUrl(1);
 		if ($objp->product_label) print '<br>'.$objp->product_label;
 		print '</td>';
 
@@ -491,7 +491,7 @@ if ($result) {
 		print $form->textwithtooltip(dol_trunc($text, $trunclength), $objp->description);
 		print '</td>';
 
-		print '<td class="right">';
+		print '<td class="nowrap right">';
 		print price($objp->total_ht);
 		print '</td>';
 
@@ -502,26 +502,38 @@ if ($result) {
 		print vatrate($objp->tva_tx_line.($objp->vat_src_code?' ('.$objp->vat_src_code.')':''));
 		print '</td>';
 
-        print '<td class="center">';
+		// Country
+        print '<td>';
         $labelcountry=($objp->country_code && ($langs->trans("Country".$objp->country_code)!="Country".$objp->country_code))?$langs->trans("Country".$objp->country_code):$objp->country_label;
         print $labelcountry;
         print '</td>';
 
+        // VAT Num
 		print '<td>' . $objp->tva_intra . '</td>';
 
 		// Current account
 		print '<td class="center" style="' . $code_buy_p_notset . '">';
-		print (($objp->type_l == 1)?$langs->trans("DefaultForService"):$langs->trans("DefaultForProduct")) . ' = ' . ($objp->code_buy_l > 0 ? length_accountg($objp->code_buy_l) : $langs->trans("Unknown"));
+		$s = (($objp->type_l == 1)?$langs->trans("DefaultForService"):$langs->trans("DefaultForProduct")).': ';
+		$shelp = '';
+		if ($suggestedaccountingaccountbydefaultfor == 'eec') $shelp.= $langs->trans("SaleEEC");
+		elseif ($suggestedaccountingaccountbydefaultfor == 'export') $shelp.= $langs->trans("SaleExport");
+		$s.= ($objp->code_buy_l > 0 ? length_accountg($objp->code_buy_l) : $langs->trans("NotDefined"));
+		print $form->textwithpicto($s, $shelp, 1, 'help', '', 0, 2, '', 1);
 		if ($objp->product_id > 0)
 		{
-		    print '<br>';
-		    print (($objp->type_l == 1)?$langs->trans("ThisService"):$langs->trans("ThisProduct")) . ' = ' . (empty($objp->code_buy_p) ? $langs->trans("Unknown") : length_accountg($objp->code_buy_p));
+			print '<br>';
+			$s = (($objp->type_l == 1)?$langs->trans("ThisService"):$langs->trans("ThisProduct")).': ';
+			$shelp = '';
+			if ($suggestedaccountingaccountfor == 'eec') $shelp = $langs->trans("SaleEEC");
+			elseif ($suggestedaccountingaccountfor == 'export') $shelp = $langs->trans("SaleExport");
+			$s.= (empty($objp->code_buy_p) ? $langs->trans("NotDefined") : length_accountg($objp->code_buy_p));
+			print $form->textwithpicto($s, $shelp, 1, 'help', '', 0, 2, '', 1);
 		}
 		print '</td>';
 
 		// Suggested accounting account
 		print '<td>';
-		print $formaccounting->select_account($objp->aarowid_suggest, 'codeventil'.$objp->rowid, 1, array(), 0, 0, 'codeventil maxwidth300 maxwidthonsmartphone', 'cachewithshowemptyone');
+		print $formaccounting->select_account($objp->aarowid_suggest, 'codeventil'.$objp->rowid, 1, array(), 0, 0, 'codeventil maxwidth200 maxwidthonsmartphone', 'cachewithshowemptyone');
 		print '</td>';
 
 		// Column with checkbox

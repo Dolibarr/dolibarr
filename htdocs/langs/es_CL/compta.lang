@@ -169,7 +169,6 @@ ToDispatch=Para despachar
 ThirdPartyMustBeEditAsCustomer=El tercero debe definirse como un cliente
 SellsJournal=Libro de Ventas
 DescSellsJournal=Libro de Ventas
-InvoiceRef=Factura ref.
 CodeNotDef=No definida
 WarningDepositsNotIncluded=Las facturas de anticipo no están incluidas en esta versión con este módulo contable.
 DatePaymentTermCantBeLowerThanObjectDate=La fecha del plazo de pago no puede ser menor que la fecha del objeto.
