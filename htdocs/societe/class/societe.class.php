@@ -3482,7 +3482,7 @@ class Societe extends CommonObject
 		$state_id=0;$state_code=$state_label='';
 		if (! empty($conf->global->MAIN_INFO_SOCIETE_STATE))
 		{
-			$tmp=explode(':',$conf->global->MAIN_INFO_SOCIETE_STATE);
+			$tmp=explode(':', $conf->global->MAIN_INFO_SOCIETE_STATE);
 			$state_id=$tmp[0];
 			if (! empty($tmp[1]))   // If $conf->global->MAIN_INFO_SOCIETE_STATE is "id:code:label"
 			{
@@ -3493,8 +3493,8 @@ class Societe extends CommonObject
 			{
 				dol_syslog("Your state setup use an old syntax. Reedit it using setup area.", LOG_ERR);
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-				$state_code=getState($state_id,2,$this->db);  // This need a SQL request, but it's the old feature that should not be used anymore
-				$state_label=getState($state_id,0,$this->db);  // This need a SQL request, but it's the old feature that should not be used anymore
+				$state_code=getState($state_id, 2, $this->db);  // This need a SQL request, but it's the old feature that should not be used anymore
+				$state_label=getState($state_id, 0, $this->db);  // This need a SQL request, but it's the old feature that should not be used anymore
 			}
 		}
 		$this->state_id=$state_id;
