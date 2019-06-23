@@ -2275,4 +2275,287 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
     {
         return $this->_remove(array(), $options);
     }
+
+    /**
+     * Create tables and keys required by module.
+     * Files module.sql and module.key.sql with create table and create keys
+     * commands must be stored in directory reldir='/module/sql/'
+     * This function is called by this->init
+     *
+     * @param  string $reldir Relative directory where to scan files
+     * @return int             <=0 if KO, >0 if OK
+     */
+    function _load_demo_data($reldir)
+    {
+        // phpcs:enable
+        global $conf,$langs;
+        $error=0;
+        $dirfound=0;
+
+        if (empty($reldir)) { return 1;}
+
+        include_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
+
+        $ok = 1;
+        foreach($conf->file->dol_document_root as $dirroot)
+        {
+            if ($ok) {
+                $dir = $dirroot.$reldir;
+                $ok = 0;
+
+                $handle = @opendir($dir);         // Dir may not exists
+                if(is_resource($handle)){
+                    $dirfound++;
+                    // Run data_xxx.sql files (Must be done after llx_mytable.key.sql)
+                    $files = array();
+                    while (($file = readdir($handle)) !== false) {
+                        $files[] = $file;
+                    }
+                    sort($files);
+                    foreach ($files as $file) {
+                        if(preg_match('/\.sql$/i', $file) && !preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 4) == 'load'){
+                            $result = run_sql($dir . $file, empty($conf->global->MAIN_DISPLAY_SQL_INSTALL_LOG) ? 1 : 0, '', 1);
+                            if($result <= 0){
+                                $error++;
+                            }
+                        }
+                    }
+                    closedir($handle);
+
+                    //read csv records
+                    $arrayphotos = [];
+                    if((!$error && $handle = fopen($dir . "photos.csv", "r")) !== FALSE){
+                        while (($data = fgetcsv($handle, 200, ",")) !== FALSE) {
+                            $arrayphotos[] = $data;
+                        };
+                        fclose($handle);
+                        $record = array_shift($arrayphotos);//Enlever le premier élément.
+                        foreach($record as $key=>$value){
+                            $index[$value]=$key;
+                        }
+                    }
+                    else {
+                        $error++;
+                    }
+                    if(!$error){
+                        $nbok = 0;
+                        $nbfiles=count($arrayphotos);
+                        while (!empty($arrayphotos)) {
+                            $record = array_shift($arrayphotos);
+                            $module=$record[$index['module']];
+                            $class=$record[$index['model']];
+                            $rowid=$record[$index['rowid']];
+                            $srcfile=$record[$index['srcfile']];
+                            dol_include_once("/$module/class/$class.class.php");
+                            $object =new $class($this->db);
+                            $object->fetch($rowid);
+                            $dest_dir = $conf->$module->multidir_output[$conf->entity] ."/$class/". dol_sanitizeFileName($object->ref);
+                            $allowoverwrite = 0;
+                            $donotupdatesession = 1;
+                            $generatethumbs = 1;
+
+                            dol_syslog('file copy from_dir=' . $dest_dir . ' allowoverwrite=' . $allowoverwrite . ' donotupdatesession=' . $donotupdatesession ,LOG_DEBUG);
+                            if(dol_mkdir($dest_dir) >= 0){
+                                // Define $destfull (path to file including filename) and $destfile (only filename)
+                                $info = pathinfo($srcfile);
+                                $destfile = $info['basename'];
+                                $destfull = "$dest_dir/$destfile";
+
+                                $rescopy = copy(dol_buildpath($srcfile), $destfull);
+
+                                if($rescopy > 0)   // $rescopy can be 'ErrorFileAlreadyExists'
+                                {
+                                    global $maxwidthsmall, $maxheightsmall, $maxwidthmini, $maxheightmini;
+
+                                    include_once DOL_DOCUMENT_ROOT . '/core/lib/images.lib.php';
+
+                                    // Generate thumbs.
+                                    if($generatethumbs){
+                                        if(image_format_supported($destfull) == 1){
+                                            // Create thumbs
+                                            // We can't use $object->addThumbs here because there is no $object known
+
+                                            // Used on logon for example
+                                            $imgThumbSmall = vignette($destfull, $maxwidthsmall, $maxheightsmall, '_small', 50, "thumbs");
+                                            // Create mini thumbs for image (Ratio is near 16/9)
+                                            // Used on menu or for setup page for example
+                                            $imgThumbMini = vignette($destfull, $maxwidthmini, $maxheightmini, '_mini', 50, "thumbs");
+                                        }
+                                    }
+
+                                    // Update table of files
+                                    $result = addFileIntoDatabaseIndex($dest_dir, basename($destfile), dol_buildpath($srcfile), 'uploaded', 0);
+                                    if($result < 0){
+                                        setEventMessages('FailedToAddFileIntoDatabaseIndex', '', 'warnings');
+                                    }
+
+                                    $nbok++;
+                                }
+                                else{
+                                    $langs->load("errors");
+                                    if($rescopy < 0)    // Unknown error
+                                    {
+                                        setEventMessages($langs->trans("ErrorFileNotUploaded"), null, 'errors');
+                                    }
+                                    else    // Known error
+                                    {
+                                        setEventMessages($langs->trans($rescopy), null, 'errors');
+                                    }
+                                }
+
+                            }
+                        }
+                        if($nbok == $nbfiles){
+                            $res = 1;
+                            setEventMessages($langs->trans("FileTransferComplete"), null, 'mesgs');
+                        }
+                    }
+                }
+                if(!$error){
+                    $ok = 1;
+                }
+            }
+        }
+        if(!$dirfound){
+            dol_syslog("A module ask to load sql files into " . $reldir . " but this directory was not found.", LOG_WARNING);
+        }
+
+        if (!$error && $ok) {
+            $modulename=strtoupper($this->name);
+            dolibarr_set_const($this->db, "{$modulename}_DEMODATALOADED", 1, 'chaine', 0,'Charger les données de démo');
+        }
+        return $ok;
+    }
+    /**
+     * Unload demo data
+     *
+     * @param  string $reldir Relative directory where to scan files
+     * @return int             <=0 if KO, >0 if OK
+     */
+    function _unload_demo_data($reldir)
+    {
+        function delete_files($target)
+        {
+            if(is_dir($target)){
+                $files = glob($target . '*', GLOB_MARK); //GLOB_MARK adds a slash to directories returned
+
+                foreach ($files as $file) {
+                    delete_files($file);
+                }
+
+                if(file_exists($target)) rmdir($target);
+            }
+            elseif(is_file($target)){
+                unlink($target);
+            }
+        }
+
+        global $conf,$langs;
+        $error=0;
+        $dirfound=0;
+
+        if (empty($reldir)) { return 1;}
+
+        include_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
+
+        $ok = 1;
+        foreach($conf->file->dol_document_root as $dirroot)
+        {
+            if ($ok) {
+                $dir = $dirroot.$reldir;
+                $ok = 0;
+
+                $handle=@opendir($dir);         // Dir may not exists
+                if (is_resource($handle)) {
+                    $dirfound++;
+                    //read csv records
+                    $arrayphotos=[];
+                    if((!$error && $handle2 = fopen($dir."photos.csv", "r")) !== FALSE){
+                        while (($data = fgetcsv($handle2, 200, ",")) !== FALSE){
+                            $arrayphotos[]=$data;
+                        };
+                        fclose($handle2);
+                        $record=array_shift($arrayphotos);//Enlever le premier élément.
+                        foreach($record as $key=>$value){
+                            $index[$value]=$key;
+                        }
+                    }
+                    else {
+                        $error++;
+                    }
+                    if(!$error){
+                        $nbok = 0;
+                        $nbfiles=count($arrayphotos);
+                        while (!empty($arrayphotos)) {
+                            $record = array_shift($arrayphotos);
+                            $module=$record[$index['module']];
+                            $class=$record[$index['model']];
+                            $rowid=$record[$index['rowid']];
+                            $srcfile=$record[$index['srcfile']];
+                            dol_include_once("/$module/class/$class.class.php");
+                            $object =new $class($this->db);
+                            $object->fetch($rowid);
+                            $dest_dir = $conf->$module->multidir_output[$conf->entity] ."/$class/". dol_sanitizeFileName($object->ref);
+                            $allowoverwrite = 0;
+                            $donotupdatesession = 1;
+
+                            dol_syslog('file copy from_dir=' . $dest_dir . ' allowoverwrite=' . $allowoverwrite . ' donotupdatesession=' . $donotupdatesession, LOG_DEBUG);
+                            if(dol_mkdir($dest_dir) >= 0){
+                                // Define $destfull (path to file including filename) and $destfile (only filename)
+                                $info = pathinfo($srcfile);
+                                $destfile = $info['basename'];
+                                $destfull = "$dest_dir/$destfile";
+
+                                if($this->name == $module){//Delete images of this module only
+                                    $rescopy = delete_files($dest_dir);
+                                    if(!$rescopy){
+                                        $error++;
+                                    }
+                                }
+                                $nbok++;
+                                $filepath = substr($dest_dir, strlen(DOL_DATA_ROOT) + 1);
+                                $sql = 'DELETE FROM ' . MAIN_DB_PREFIX . "ecm_files WHERE filename='$destfile' AND filepath = '$filepath'";
+                                $resql = $this->db->query($sql);
+                                if(!$resql){
+                                    $error++;
+                                    $this->errors[] = 'Error ' . $this->db->lasterror();
+                                    dol_syslog(__METHOD__ . ' ' . implode(',', $this->errors), LOG_ERR);
+                                }
+                            }
+                        }
+                        if($nbok == $nbfiles){
+                            $res = 1;
+                            setEventMessages($langs->trans("FileTransferComplete"), null, 'mesgs');
+                        }
+                    }
+                    // Run data_xxx.sql files (Must be done after llx_mytable.key.sql)
+                    $files = array();
+                    while (($file = readdir($handle)) !== false) {
+                        $files[] = $file;
+                    }
+                    sort($files);
+                    foreach ($files as $file) {
+                        if(preg_match('/\.sql$/i', $file) && !preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 4) == 'drop'){
+                            $result = run_sql($dir . $file, empty($conf->global->MAIN_DISPLAY_SQL_INSTALL_LOG) ? 1 : 0, '', 1);
+                            if($result <= 0){
+                                $error++;
+                            }
+                        }
+                    }
+                    closedir($handle);
+
+                }
+                if(!$error){
+                    $ok = 1;
+                }
+            }
+        }
+        if(!$dirfound){
+            dol_syslog("A module ask to load sql files into " . $reldir . " but this directory was not found.", LOG_WARNING);
+        }
+        $modulename=strtoupper($this->name);
+        dolibarr_set_const($this->db, "{$modulename}_DEMODATALOADED", 0, 'chaine', 0,'Charger les données de démo');
+        return $ok;
+    }
+
 }
