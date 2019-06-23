@@ -25,7 +25,7 @@ EnterNameOfModuleToDeleteDesc=Vous pouvez supprimer votre module. ATTENTION: Tou
 EnterNameOfObjectToDeleteDesc=Vous pouvez effacer un objet. ATTENTION : Tous les fichiers (générés ou créés manuellement) en rapport avec cet objet seront définitivement effacés !
 DangerZone=Zone de danger
 BuildPackage=Construire le package
-BuildPackageDesc=Vous pouvez générer un package zip de votre application afin que vous soyez prêt à le distribuer sur n’importe quel Dolibarr. Vous pouvez également le distribuer ou le vendre sur une place de marché, comme <a href="https://www.dolistore.com">DoliStore.com</a> .
+BuildPackageDesc=Vous pouvez générer un package zip de votre application afin d'être prêt à le distribuer sur n’importe quel Dolibarr. Vous pouvez également le distribuer ou le vendre sur une place de marché, comme <a href="https://www.dolistore.com">DoliStore.com</a> .
 BuildDocumentation=Générez la documentation
 ModuleIsNotActive=Le module n'est pas encore activé. Aller à %s pour l'activer ou cliquer ici :
 ModuleIsLive=Ce module a été activé. Tout changement dessus pourrait casser une fonctionnalité actuellement en ligne.
@@ -68,6 +68,7 @@ PageForLib=Fichier pour la librairie PHP
 PageForObjLib=Fichier pour la librairie PHP dédiée à l'objet
 SqlFileExtraFields=Fichier SQL pour les attributs complémentaires
 SqlFileKey=Fichier SQL pour les clés et index
+SqlFileKeyExtraFields=Fichier SQL pour les clés d'attributs complémentaires
 AnObjectAlreadyExistWithThisNameAndDiffCase=Un objet existe déjà avec ce nom dans une casse différente
 UseAsciiDocFormat=Vous pouvez utiliser le format Markdown, mais il est recommandé d'utiliser le format Asciidoc (Comparaison entre .md et .asciidoc: http://asciidoctor.org/docs/user-manual/#compared-to-markdown)
 IsAMeasure=Est une mesure

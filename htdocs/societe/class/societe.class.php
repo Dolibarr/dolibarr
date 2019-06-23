@@ -59,8 +59,16 @@ class Societe extends CommonObject
 	public $fk_element='fk_soc';
 
 	public $fieldsforcombobox='nom,name_alias';
-	protected $childtables=array("supplier_proposal"=>'SupplierProposal',"propal"=>'Proposal',"commande"=>'Order',"facture"=>'Invoice',"facture_rec"=>'RecurringInvoiceTemplate',"contrat"=>'Contract',"fichinter"=>'Fichinter',"facture_fourn"=>'SupplierInvoice',"commande_fournisseur"=>'SupplierOrder',"projet"=>'Project',"expedition"=>'Shipment',"prelevement_lignes"=>'DirectDebitRecord');    // To test if we can delete object
+
+	/**
+	 * @var array	List of child tables. To test if we can delete object.
+	 */
+	protected $childtables=array("supplier_proposal"=>'SupplierProposal',"propal"=>'Proposal',"commande"=>'Order',"facture"=>'Invoice',"facture_rec"=>'RecurringInvoiceTemplate',"contrat"=>'Contract',"fichinter"=>'Fichinter',"facture_fourn"=>'SupplierInvoice',"commande_fournisseur"=>'SupplierOrder',"projet"=>'Project',"expedition"=>'Shipment',"prelevement_lignes"=>'DirectDebitRecord');
+	/**
+	 * @var array	List of child tables. To know object to delete on cascade.
+	 */
 	protected $childtablesoncascade=array("societe_prices", "societe_log", "societe_address", "product_fournisseur_price", "product_customer_price_log", "product_customer_price", "socpeople", "adherent", "societe_account", "societe_rib", "societe_remise", "societe_remise_except", "societe_commerciaux", "categorie", "notify", "notify_def", "actioncomm");
+
 	public $picto = 'company';
 
 	/**
@@ -3438,7 +3446,6 @@ class Societe extends CommonObject
 		$this->address=empty($conf->global->MAIN_INFO_SOCIETE_ADDRESS)?'':$conf->global->MAIN_INFO_SOCIETE_ADDRESS;
 		$this->zip=empty($conf->global->MAIN_INFO_SOCIETE_ZIP)?'':$conf->global->MAIN_INFO_SOCIETE_ZIP;
 		$this->town=empty($conf->global->MAIN_INFO_SOCIETE_TOWN)?'':$conf->global->MAIN_INFO_SOCIETE_TOWN;
-		$this->state_id=empty($conf->global->MAIN_INFO_SOCIETE_STATE)?'':$conf->global->MAIN_INFO_SOCIETE_STATE;
 		$this->region_code=empty($conf->global->MAIN_INFO_SOCIETE_REGION)?'':$conf->global->MAIN_INFO_SOCIETE_REGION;
 		$this->object=empty($conf->global->MAIN_INFO_SOCIETE_OBJECT)?'':$conf->global->MAIN_INFO_SOCIETE_OBJECT;
 
@@ -3472,7 +3479,7 @@ class Societe extends CommonObject
 
 		//TODO This could be replicated for region but function `getRegion` didn't exist, so I didn't added it.
 		// We define state_id, state_code and state
-		$state_id=$state_code=$state_label='';
+		$state_id=0;$state_code=$state_label='';
 		if (! empty($conf->global->MAIN_INFO_SOCIETE_STATE))
 		{
 			$tmp=explode(':',$conf->global->MAIN_INFO_SOCIETE_STATE);

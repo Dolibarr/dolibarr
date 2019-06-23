@@ -197,3 +197,4 @@ SendReminderForExpiredSubscriptionTitle=Nosūtiet atgādinājumu pa e-pastu, kad
 SendReminderForExpiredSubscription=Sūtīt atgādinājumu pa e-pastu dalībniekiem, kad abonements beigsies (parametrs ir dienu skaits pirms abonementa beigām, lai nosūtītu atgādinājumu. Tas var būt dienu saraksts, kas atdalīti ar semikolu, piemēram, '10; 5; 0; -5 ")
 MembershipPaid=Dalība, kas samaksāta par kārtējo periodu (līdz %s)
 YouMayFindYourInvoiceInThisEmail=Jūsu rēķinu varat atrast šī e-pasta pielikumā
+XMembersClosed=%s dalībnieks (-i) slēgts

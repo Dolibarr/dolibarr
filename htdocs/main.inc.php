@@ -47,27 +47,6 @@ if (! empty($_SERVER['MAIN_SHOW_TUNING_INFO']))
 	}
 }
 
-// Removed magic_quotes
-if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* deprecated in PHP 5.0 and removed in PHP 5.5
-{
-	if (get_magic_quotes_gpc())
-	{
-		// Forcing parameter setting magic_quotes_gpc and cleaning parameters
-		// (Otherwise he would have for each position, condition
-		// Reading stripslashes variable according to state get_magic_quotes_gpc).
-		// Off mode recommended (just do $db->escape for insert / update).
-		function stripslashes_deep($value)
-		{
-			return (is_array($value) ? array_map('stripslashes_deep', $value) : stripslashes($value));
-		}
-		$_GET     = array_map('stripslashes_deep', $_GET);
-		$_POST    = array_map('stripslashes_deep', $_POST);
-		$_FILES   = array_map('stripslashes_deep', $_FILES);
-		//$_COOKIE  = array_map('stripslashes_deep', $_COOKIE); // Useless because a cookie should never be outputed on screen nor used into sql
-		@set_magic_quotes_runtime(0);
-	}
-}
-
 /**
  * Security: SQL Injection and XSS Injection (scripts) protection (Filters on GET, POST, PHP_SELF).
  *
