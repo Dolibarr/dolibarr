@@ -170,15 +170,23 @@ class modAccounting extends DolibarrModules
 		$this->rights = array(); // Permission array used by this module
 		$r = 0;
 
-		$this->rights[$r][0] = 50440;
-		$this->rights[$r][1] = 'Manage chart of accounts, setup of accountancy';
+        $this->rights[$r][0] = 50440;
+        $this->rights[$r][1] = 'Manage chart of accounts, setup of accountancy';
+        $this->rights[$r][2] = 'r';
+        $this->rights[$r][3] = 0;
+        $this->rights[$r][4] = 'chartofaccount';
+        $this->rights[$r][5] = '';
+        $r++;
+
+		$this->rights[$r][0] = 50430;
+		$this->rights[$r][1] = 'Define and close a fiscal year';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'chartofaccount';
+		$this->rights[$r][4] = 'fiscalyear';
 		$this->rights[$r][5] = '';
 		$r++;
 
-		$this->rights[$r][0] = 50401;
+        $this->rights[$r][0] = 50401;
 		$this->rights[$r][1] = 'Bind products and invoices with accounting accounts';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
@@ -212,20 +220,36 @@ class modAccounting extends DolibarrModules
 		$this->rights[$r][5] = 'creer';
 		$r++;
 
+        $this->rights[$r][0] = 50414;
+        $this->rights[$r][1] = 'Delete operations in Ledger';
+        $this->rights[$r][2] = 'd';
+        $this->rights[$r][3] = 0;
+        $this->rights[$r][4] = 'mouvements';
+        $this->rights[$r][5] = 'supprimer';
+        $r++;
+
+        $this->rights[$r][0] = 50415;
+        $this->rights[$r][1] = 'Delete all operations by year and journal in Ledger';
+        $this->rights[$r][2] = 'd';
+        $this->rights[$r][3] = 0;
+        $this->rights[$r][4] = 'mouvements';
+        $this->rights[$r][5] = 'supprimer_tous';
+        $r++;
+
+        $this->rights[$r][0] = 50418;
+        $this->rights[$r][1] = 'Export operations of the Ledger';
+        $this->rights[$r][2] = 'r';
+        $this->rights[$r][3] = 0;
+        $this->rights[$r][4] = 'mouvements';
+        $this->rights[$r][5] = 'export';
+        $r++;
+
 		$this->rights[$r][0] = 50420;
 		$this->rights[$r][1] = 'Report and export reports (turnover, balance, journals, ledger)';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'comptarapport';
 		$this->rights[$r][5] = 'lire';
-		$r++;
-
-		$this->rights[$r][0] = 50430;
-		$this->rights[$r][1] = 'Define and close a fiscal year';
-		$this->rights[$r][2] = 'r';
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'fiscalyear';
-		$this->rights[$r][5] = '';
 		$r++;
 
 
