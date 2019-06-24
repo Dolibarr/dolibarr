@@ -2417,6 +2417,10 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 	margin: 0px 0px 0px 0px;
 }
 
+table.tableforemailform tr td {
+    padding-top: 3px;
+    padding-bottom: 3px;
+}
 
 table.border, table.bordernooddeven, table.dataTable, .table-border, .table-border-col, .table-key-border-col, .table-val-border-col, div.border {
 	border-collapse: collapse !important;
