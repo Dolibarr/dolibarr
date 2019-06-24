@@ -230,6 +230,7 @@ class DiscountAbsolute
         $userid = $user->id;
 		if (! ($userid > 0))		// For example when record is saved into an anonymous context with a not loaded object $user.
 		{
+			include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 			$tmpinvoice = new Facture($this->db);
 			$tmpinvoice->fetch($this->fk_facture_source);
 			$userid = $tmpinvoice->fk_user_author;	// We use the author of invoice
