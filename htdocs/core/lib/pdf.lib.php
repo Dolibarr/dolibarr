@@ -41,7 +41,9 @@
  */
 function pdf_getFormat(Translate $outputlangs = null)
 {
-	global $conf,$db;
+	global $conf, $db, $langs;
+
+	dol_syslog("pdf_getFormat Get paper format with outputlangs->defaultlang=".(is_object($outputlangs) ? $outputlangs->defaultlang : 'null')." and langs->defaultlang=".(is_object($langs) ? $langs->defaultlang : 'null'));
 
 	// Default value if setup was not done and/or entry into c_paper_format not defined
 	$width=210; $height=297; $unit='mm';
