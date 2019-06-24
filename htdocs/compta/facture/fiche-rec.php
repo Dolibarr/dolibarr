@@ -275,7 +275,7 @@ if (empty($reshook))
 	{
 		$object->setProject(GETPOST('projectid', 'int'));
 	}
-	// Set titre
+	// Set title/label of template invoice
 	elseif ($action == 'setref' && $user->rights->facture->creer)
 	{
 		//var_dump(GETPOST('ref', 'alpha'));exit;
