@@ -80,7 +80,7 @@ if (! $error && $massaction == 'confirm_presend')
 		$objecttmp=new $objectclass($db);
 		if ($objecttmp->element == 'expensereport') $thirdparty=new User($db);
 		if ($objecttmp->element == 'holiday')       $thirdparty=new User($db);
-		
+
 		foreach($toselect as $toselectid)
 		{
 			$objecttmp=new $objectclass($db);	// we must create new instance because instance is saved into $listofobjectref array for future use
@@ -88,13 +88,13 @@ if (! $error && $massaction == 'confirm_presend')
 			if ($result > 0)
 			{
 				$listofobjectid[$toselectid]=$toselectid;
-				
+
 				$thirdpartyid=($objecttmp->fk_soc?$objecttmp->fk_soc:$objecttmp->socid);
 				if ($objecttmp->element == 'societe') $thirdpartyid=$objecttmp->id;
 				if ($objecttmp->element == 'expensereport') $thirdpartyid=$objecttmp->fk_user_author;
 				if ($objecttmp->element == 'holiday')       $thirdpartyid=$objecttmp->fk_user;
 				if (empty($thirdpartyid)) $thirdpartyid=0;
-				
+
 				$listofobjectthirdparties[$thirdpartyid]=$thirdpartyid;
 				$listofobjectref[$thirdpartyid][$toselectid]=$objecttmp;
 			}
@@ -358,7 +358,7 @@ if (! $error && $massaction == 'confirm_presend')
 				if ($objectclass == 'CommandeFournisseur')	$sendtobcc .= (empty($conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_ORDER_TO) ? '' : (($sendtobcc?", ":"").$conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_ORDER_TO));
 				if ($objectclass == 'FactureFournisseur')	$sendtobcc .= (empty($conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO) ? '' : (($sendtobcc?", ":"").$conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO));
 				if ($objectclass == 'Project') 			    $sendtobcc .= (empty($conf->global->MAIN_MAIL_AUTOCOPY_PROJECT_TO) ? '' : (($sendtobcc?", ":"").$conf->global->MAIN_MAIL_AUTOCOPY_PROJECT_TO));
-				
+
 				// $listofqualifiedobj is array with key = object id and value is instance of qualified objects, for the current thirdparty (but thirdparty property is not loaded yet)
 				// $looparray will be an array with number of email to send for the current thirdparty (so 1 or n if n object for same thirdparty)
 				$looparray=array();
@@ -445,13 +445,13 @@ if (! $error && $massaction == 'confirm_presend')
 					    if (get_class($objecttmp)=='Supplier_Proposal')   $trackid='spr';
 					    if (get_class($objecttmp)=='CommandeFournisseur') $trackid='sor';
 					    if (get_class($objecttmp)=='FactureFournisseur')  $trackid='sin';
-					    
+
 					    $trackid.=$objecttmp->id;
 					}
 					//var_dump($filepath);
 					//var_dump($trackid);exit;
 					//var_dump($subjectreplaced);
-					
+
 					// Send mail (substitutionarray must be done just before this)
                     require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
                     $mailfile = new CMailFile($subjectreplaced, $sendto, $from, $messagereplaced, $filepath, $mimetype, $filename, $sendtocc, $sendtobcc, $deliveryreceipt, -1, '', '', $trackid);
@@ -508,7 +508,7 @@ if (! $error && $massaction == 'confirm_presend')
 								if ($triggername == 'COMMANDEFOURNISSEUR_SENTBYMAIL') $triggername = 'ORDER_SUPPLIER_SENTBYMAIL';
 								if ($triggername == 'FACTUREFOURNISSEUR_SENTBYMAIL') $triggername = 'BILL_SUPPLIER_SENTBYMAIL';
 								if ($triggername == 'SUPPLIERPROPOSAL_SENTBYMAIL') $triggername = 'PROPOSAL_SUPPLIER_SENTBYMAIL';
-								
+
 								if (! empty($triggername))
 								{
 									// Appel des triggers
@@ -524,9 +524,9 @@ if (! $error && $massaction == 'confirm_presend')
 										dol_syslog("Error in trigger ".$triggername.' '.$db->lasterror(), LOG_ERR);
 									}
 								}
-							}
 
-                            $nbsent++;   // Nb of email sent (may be lower than number of record selected if we group thirdparties)
+								$nbsent++;   // Nb of object sent
+							}
 						}
 						else
 						{
@@ -601,7 +601,7 @@ if ($massaction == 'confirm_createbills')
 			$objecttmp->fk_project			= $cmd->fk_project;
             $objecttmp->multicurrency_code  = $cmd->multicurrency_code;
             if (empty($createbills_onebythird)) $objecttmp->ref_client = $cmd->ref_client;
-            
+
             $datefacture = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
             if (empty($datefacture))
 			{
@@ -1245,7 +1245,7 @@ if (! $error && ($massaction == 'delete' || ($action == 'delete' && $confirm == 
 if (! $error && $massaction == 'generate_doc' && $permtoread)
 {
     $db->begin();
-    
+
     $objecttmp=new $objectclass($db);
     $nbok = 0;
     foreach($toselect as $toselectid)
@@ -1255,7 +1255,7 @@ if (! $error && $massaction == 'generate_doc' && $permtoread)
         {
             $outputlangs = $langs;
             $newlang='';
-            
+
             if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang=GETPOST('lang_id','aZ09');
             if ($conf->global->MAIN_MULTILANGS && empty($newlang) && isset($objecttmp->thirdparty->default_lang)) $newlang=$objecttmp->thirdparty->default_lang;  // for proposal, order, invoice, ...
             if ($conf->global->MAIN_MULTILANGS && empty($newlang) && isset($objecttmp->default_lang)) $newlang=$objecttmp->default_lang;                  // for thirdparty
@@ -1264,15 +1264,15 @@ if (! $error && $massaction == 'generate_doc' && $permtoread)
                 $outputlangs = new Translate("",$conf);
                 $outputlangs->setDefaultLang($newlang);
             }
-            
+
             // To be sure vars is defined
             if (empty($hidedetails)) $hidedetails=0;
             if (empty($hidedesc)) $hidedesc=0;
             if (empty($hideref)) $hideref=0;
             if (empty($moreparams)) $moreparams=null;
-            
+
             $result= $objecttmp->generateDocument($objecttmp->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
-            
+
             if ($result <= 0)
             {
                 setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
@@ -1288,7 +1288,7 @@ if (! $error && $massaction == 'generate_doc' && $permtoread)
             break;
         }
     }
-    
+
     if (! $error)
     {
         if ($nbok > 1) setEventMessages($langs->trans("RecordsGenerated", $nbok), null, 'mesgs');
