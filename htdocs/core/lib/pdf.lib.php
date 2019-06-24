@@ -2216,8 +2216,7 @@ function pdf_getSizeForImage($realpath)
  *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
  * 	@return	string							Return total of line excl tax
  */
-
-function pdfGetLineTotalDiscountAmount($object, $i, $outputlangs, $hidedetails=0)
+function pdfGetLineTotalDiscountAmount($object, $i, $outputlangs, $hidedetails = 0)
 {
 	global $conf, $hookmanager;
 	$sign=1;
@@ -2243,7 +2242,7 @@ function pdfGetLineTotalDiscountAmount($object, $i, $outputlangs, $hidedetails=0
 
 			$action='';
 
-			if( $hookmanager->executeHooks('getlinetotalremise',$parameters,$object,$action)>0)
+			if( $hookmanager->executeHooks('getlinetotalremise', $parameters, $object, $action)>0)
 			{
 				return $hookmanager->resPrint;    // Note that $action and $object may have been modified by some hooks
 			}

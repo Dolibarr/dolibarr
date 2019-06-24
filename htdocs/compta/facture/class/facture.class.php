@@ -4387,8 +4387,8 @@ class Facture extends CommonInvoice
 	/**
 	 * @return number or -1 if not available
 	 */
-	function getRetainedWarrantyAmount() {
-	    
+	public function getRetainedWarrantyAmount()
+	{
 	    if(empty($this->retained_warranty) ){
 	        return -1;
 	    }
@@ -4401,11 +4401,11 @@ class Facture extends CommonInvoice
 	        $displayWarranty = true;
 	        // Check if this situation invoice is 100% for real
 	        if(!empty($this->lines)){
-	            foreach( $this->lines as $i => $line ){
+	            foreach($this->lines as $i => $line ){
 	                if($line->product_type < 2 && $line->situation_percent < 100){
 	                    $displayWarranty = false;
 	                    break;
-	                }
+	            	}
 	            }
 	        }
 	        
@@ -4425,7 +4425,6 @@ class Facture extends CommonInvoice
 	        else{
 	            return -1;
 	        }
-	        
 	    }
 	    else
 	    {
@@ -4442,7 +4441,7 @@ class Facture extends CommonInvoice
 	 *  @param		float		$value		value of retained warranty
 	 *  @return		int				>0 if OK, <0 if KO
 	 */
-	function setRetainedWarranty($value)
+	public function setRetainedWarranty($value)
 	{
 	    dol_syslog(get_class($this).'::setRetainedWarranty('.$value.')');
 	    if ($this->statut >= 0)
@@ -4476,17 +4475,18 @@ class Facture extends CommonInvoice
 	/**
 	 *  Change the retained_warranty_date_limit
 	 *
-	 *  @param		timestamp		$value		value of retained warranty
+	 *  @param		int		$timestamp		date limit of retained warranty in timestamp format
+	 *  @param		string	$dateYmd		date limit of retained warranty in Y m d format
 	 *  @return		int				>0 if OK, <0 if KO
 	 */
-	function setRetainedWarrantyDateLimit($timestamp,$dateYmd=false)
+	public function setRetainedWarrantyDateLimit($timestamp, $dateYmd = false)
 	{
 	    if(!$timestamp && $dateYmd){
 	        $timestamp = $this->db->jdate($dateYmd);
 	    }
 	    
 	    
-	    dol_syslog(get_class($this).'::setRetainedWarrantyDateLimit('.$value.')');
+	    dol_syslog(get_class($this).'::setRetainedWarrantyDateLimit('.$timestamp.')');
 	    if ($this->statut >= 0)
 	    {
 	        $fieldname = 'retained_warranty_date_limit';

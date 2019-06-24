@@ -4102,7 +4102,7 @@ elseif ($id > 0 || ! empty($ref))
 	    // Check if this situation invoice is 100% for real
 	    if(!empty($object->situation_final) &&  !empty($object->lines)){
 	        $displayWarranty = true;
-	        foreach( $object->lines as $i => $line ){
+	        foreach($object->lines as $i => $line){
 	            if($line->product_type < 2 && $line->situation_percent < 100){
 	                $displayWarranty = false;
 	                break;
@@ -4136,7 +4136,7 @@ elseif ($id > 0 || ! empty($ref))
         {
             print price($object->retained_warranty).'%';
         }
-        print '</td></tr>'; 
+        print '</td></tr>';
         
         // Retained warranty payment term
         print '<tr class="retained-warranty-lines"  ><td>';
@@ -4174,7 +4174,7 @@ elseif ($id > 0 || ! empty($ref))
                 print img_picto($langs->trans('RetainedWarrantyNeed100Percent'), 'warning.png', 'class="pictowarning valignmiddle" ');
             }
         }
-        print '</td></tr>'; 
+        print '</td></tr>';
         
         
         
@@ -4203,7 +4203,7 @@ elseif ($id > 0 || ! empty($ref))
                 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'">';
                 print '<input type="hidden" name="action" value="setretainedwarrantydatelimit">';
                 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-                print '<input name="retained_warranty_date_limit" type="date" step="1" min="'.dol_print_date($object->date,'%Y-%m-%d' ).'" value="'.dol_print_date($defaultDate,'%Y-%m-%d' ).'" >';
+                print '<input name="retained_warranty_date_limit" type="date" step="1" min="'.dol_print_date($object->date, '%Y-%m-%d').'" value="'.dol_print_date($defaultDate, '%Y-%m-%d').'" >';
                 print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
                 print '</form>';
             }
@@ -4213,7 +4213,6 @@ elseif ($id > 0 || ! empty($ref))
             }
             print '</td></tr>';
         }
-        
 	}
 	
 	

@@ -2059,7 +2059,7 @@ abstract class CommonObject
 	 *  @param		int		$id		Id of new payment terms
 	 *  @return		int				>0 if OK, <0 if KO
 	 */
-	function setRetainedWarrantyPaymentTerms($id)
+	public function setRetainedWarrantyPaymentTerms($id)
 	{
 	    dol_syslog(get_class($this).'::setRetainedWarrantyPaymentTerms('.$id.')');
 	    if ($this->statut >= 0 || $this->element == 'societe')

@@ -1349,10 +1349,12 @@ class pdf_crabe extends ModelePDFFactures
 				// Retained warranty
 				if( !empty($object->situation_final) &&  ( $object->type == Facture::TYPE_SITUATION && (!empty($object->retained_warranty) ) ) )
 				{
+					$displayWarranty = false;
+
 				    // Check if this situation invoice is 100% for real
 				    if(!empty($object->lines)){
 				        $displayWarranty = true;
-				        foreach( $object->lines as $i => $line ){
+				        foreach($object->lines as $i => $line ){
 				            if($line->product_type < 2 && $line->situation_percent < 100){
 				                $displayWarranty = false;
 				                break;
@@ -1361,8 +1363,8 @@ class pdf_crabe extends ModelePDFFactures
 				    }
 				    
 				    if($displayWarranty){
-    				    $pdf->SetTextColor(40,40,40);
-    				    $pdf->SetFillColor(255,255,255);
+    				    $pdf->SetTextColor(40, 40, 40);
+    				    $pdf->SetFillColor(255, 255, 255);
     				    
     				    $retainedWarranty = $object->total_ttc * $object->retained_warranty / 100;
     				    $billedWithRetainedWarranty = $object->total_ttc - $retainedWarranty ;
@@ -1373,7 +1375,7 @@ class pdf_crabe extends ModelePDFFactures
     				    $pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("ToPayOn", dol_print_date($object->date_lim_reglement, 'day')), $useborder, 'L', 1);
     				    
     				    $pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-    				    $pdf->MultiCell($largcol2, $tab2_hl, price($billedWithRetainedWarranty) , $useborder, 'R', 1);
+    				    $pdf->MultiCell($largcol2, $tab2_hl, price($billedWithRetainedWarranty), $useborder, 'R', 1);
     				    
     				    // retained warranty
     				    $index++;
@@ -1384,7 +1386,7 @@ class pdf_crabe extends ModelePDFFactures
     				    
     				    $pdf->MultiCell($col2x-$col1x, $tab2_hl, $retainedWarrantyToPayOn, $useborder, 'L', 1);
     				    $pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-    				    $pdf->MultiCell($largcol2, $tab2_hl, price($retainedWarranty) , $useborder, 'R', 1);
+    				    $pdf->MultiCell($largcol2, $tab2_hl, price($retainedWarranty), $useborder, 'R', 1);
 				    }
 				}
 				
