@@ -1920,7 +1920,7 @@ class Contrat extends CommonObject
 	 */
     public function getNomUrl($withpicto = 0, $maxlength = 0, $notooltip = 0, $save_lastsearch_value = -1)
 	{
-		global $conf, $langs, $user, $hookmanager, $action;
+		global $conf, $langs, $user, $hookmanager;
 
 		$result='';
 
@@ -1962,14 +1962,6 @@ class Contrat extends CommonObject
             }
             $linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
             $linkclose.=' class="classfortooltip"';
-
-            if (is_object($hookmanager))
-            {
-            	$hookmanager->initHooks(array('contractdao'));
-            	$parameters=array('id'=>$this->id);
-            	$reshook=$hookmanager->executeHooks('getnomurltooltip', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
-            	if ($reshook > 0) $linkclose = $hookmanager->resPrint;
-            }
         }
 
 		$linkstart = '<a href="'.$url.'"';
@@ -1980,6 +1972,16 @@ class Contrat extends CommonObject
 		if ($withpicto) $result.=img_object(($notooltip?'':$label), $this->picto, ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
 		if ($withpicto != 2) $result.= ($this->ref?$this->ref:$this->id);
 		$result .= $linkend;
+
+		global $action;
+		$hookmanager->initHooks(array('contractdao'));
+		$parameters=array('id'=>$this->id, 'getnomurl'=>$result);
+		$reshook=$hookmanager->executeHooks('getNomUrl', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
 
 		return $result;
 	}
