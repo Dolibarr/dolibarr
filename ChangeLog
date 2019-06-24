@@ -3,6 +3,19 @@ English Dolibarr ChangeLog
 --------------------------------------------------------------
 
 
+***** ChangeLog for 11.0.0 compared to 10.0.0 *****
+For Users:
+
+
+For Developers:
+
+
+WARNING:
+
+Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
+...
+
+
 ***** ChangeLog for 10.0.0 compared to 9.0.0 *****
 For Users:
 NEW: Module "Ticket" is available as a stable module.
