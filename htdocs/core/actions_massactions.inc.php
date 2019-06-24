@@ -493,9 +493,9 @@ if (! $error && $massaction == 'confirm_presend')
 										dol_syslog("Error in trigger ".$triggername.' '.$db->lasterror(), LOG_ERR);
 									}
 								}
-							}
 
-                            $nbsent++;   // Nb of email sent (may be lower than number of record selected if we group thirdparties)
+								$nbsent++;   // Nb of record sent
+							}
 						}
 						else
 						{
