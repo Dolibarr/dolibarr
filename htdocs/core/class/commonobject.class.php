@@ -4450,7 +4450,7 @@ abstract class CommonObject
 	 * Common function for all objects extending CommonObject for generating documents
 	 *
 	 * @param 	string 		$modelspath 	Relative folder where generators are placed
-	 * @param 	string 		$modele 		Generator to use. Caller must set it to obj->modelpdf or GETPOST('modelpdf') for example.
+	 * @param 	string 		$modele 		Generator to use. Caller must set it to obj->modelpdf or GETPOST('modelpdf','alpha') for example.
 	 * @param 	Translate 	$outputlangs 	Output language to use
 	 * @param 	int 		$hidedetails 	1 to hide details. 0 by default
 	 * @param 	int 		$hidedesc 		1 to hide product description. 0 by default
@@ -4464,6 +4464,8 @@ abstract class CommonObject
 		global $conf, $langs, $user;
 
 		$srctemplatepath='';
+
+		dol_syslog("commonGenerateDocument modele=".$modele." outputlangs->defaultlang=".(is_object($outputlangs)?$outputlangs->defaultlang:'null'));
 
 		// Increase limit for PDF build
 		$err=error_reporting();
@@ -4505,7 +4507,7 @@ abstract class CommonObject
 		// If generator was found
 		if ($filefound)
 		{
-			global $db;  // Required to solve a conception default in commonstickergenerator.class.php making an include of code using $db
+			global $db;  // Required to solve a conception default making an include of code using $db instead of $this->db just after.
 
 			require_once $file;
 
