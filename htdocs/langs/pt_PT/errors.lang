@@ -217,6 +217,7 @@ ErrorBadSyntaxForParamKeyForContent=Bad syntax for param keyforcontent. Must hav
 ErrorVariableKeyForContentMustBeSet=Error, the constant with name %s (with text content to show) or %s (with external url to show) must be set.
 ErrorURLMustStartWithHttp=URL %s must start with http:// or https://
 ErrorNewRefIsAlreadyUsed=Error, the new reference is already used
+ErrorDeletePaymentLinkedToAClosedInvoiceNotPossible=Error, delete payment linked to a closed invoice is not possible.
 # Warnings
 WarningPasswordSetWithNoAccount=Uma senha foi definida para este membro. No entanto, nenhuma conta de usuário foi criada. Portanto, essa senha é armazenada, mas não pode ser usada para fazer login no Dolibarr. Pode ser usado por um módulo externo / interface, mas se você não precisa definir nenhum login nem senha para um membro, você pode desativar a opção "Gerenciar um login para cada membro" da configuração do módulo de membro. Se você precisar gerenciar um login, mas não precisar de nenhuma senha, poderá manter esse campo vazio para evitar esse aviso. Nota: O email também pode ser usado como um login se o membro estiver vinculado a um usuário.
 WarningMandatorySetupNotComplete=Click here to setup mandatory parameters

@@ -1030,9 +1030,8 @@ if ($id)
     if ($id == 10 && empty($conf->global->FACTURE_TVAOPTION))
     {
     	print info_admin($langs->trans("VATIsUsedIsOff", $langs->transnoentities("Setup"), $langs->transnoentities("CompanyFoundation")));
+    	print "<br>\n";
     }
-
-    print "<br>\n";
 
     // Form to add a new line
     if ($tabname[$id])
@@ -1993,7 +1992,7 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 			}
 			if (! $transfound)
 			{
-                print '<input type="text" class="flat'.($class?' '.$class:'').'" value="'.(isset($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:'').'" name="'.$fieldlist[$field].'">';
+                print '<input type="text" class="flat'.($class?' '.$class:'').'" value="'.dol_escape_htmltag(isset($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:'').'" name="'.$fieldlist[$field].'">';
 			}
 			print '</td>';
 		}

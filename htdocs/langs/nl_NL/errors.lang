@@ -37,7 +37,7 @@ ErrorSupplierCodeRequired=Vendor code vereist
 ErrorSupplierCodeAlreadyUsed=Vendor code already used
 ErrorBadParameters=Verkeerde parameters
 ErrorBadValueForParameter=Verkeerde waarde '%s' voor parameter '%s'
-ErrorBadImageFormat=Image file has not a supported format (Your PHP does not support functions to convert images of this format)
+ErrorBadImageFormat=Afbeeldingsbestand heeft geen ondersteunde indeling (uw PHP ondersteunt geen functies om afbeeldingen van dit formaat te converteren)
 ErrorBadDateFormat=Waarde %s heeft verkeerde datum formaat
 ErrorWrongDate=Datum is niet correct!
 ErrorFailedToWriteInDir=Schrijven in de map %s mislukt
@@ -217,6 +217,7 @@ ErrorBadSyntaxForParamKeyForContent=Bad syntax for param keyforcontent. Must hav
 ErrorVariableKeyForContentMustBeSet=Error, the constant with name %s (with text content to show) or %s (with external url to show) must be set.
 ErrorURLMustStartWithHttp=URL %s must start with http:// or https://
 ErrorNewRefIsAlreadyUsed=Error, the new reference is already used
+ErrorDeletePaymentLinkedToAClosedInvoiceNotPossible=Error, delete payment linked to a closed invoice is not possible.
 # Warnings
 WarningPasswordSetWithNoAccount=Er is een wachtwoord ingesteld voor dit lid. Er is echter geen gebruikersaccount gemaakt. Dus dit wachtwoord is opgeslagen maar kan niet worden gebruikt om in te loggen bij Dolibarr. Het kan worden gebruikt door een externe module / interface, maar als u geen gebruikersnaam of wachtwoord voor een lid hoeft aan te maken, kunt u de optie "Beheer een login voor elk lid" in de module-setup van Member uitschakelen. Als u een login moet beheren maar geen wachtwoord nodig heeft, kunt u dit veld leeg houden om deze waarschuwing te voorkomen. Opmerking: e-mail kan ook worden gebruikt als login als het lid aan een gebruiker is gekoppeld.
 WarningMandatorySetupNotComplete=Click here to setup mandatory parameters

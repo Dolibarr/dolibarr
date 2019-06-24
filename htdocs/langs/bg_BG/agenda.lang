@@ -38,6 +38,7 @@ ActionsEvents=Събития, за които Dolibarr ще създаде де�
 EventRemindersByEmailNotEnabled=Напомнянията за събития по имейл не са активирани в настройката на модула %s.
 ##### Agenda event labels #####
 NewCompanyToDolibarr=Контрагент %s е създаден
+COMPANY_DELETEInDolibarr=Контрагент %s е изтрит
 ContractValidatedInDolibarr=Контакт %s е валидиран
 CONTRACT_DELETEInDolibarr=Договор %s е изтрит
 PropalClosedSignedInDolibarr=Предложение %s е подписано
@@ -95,7 +96,8 @@ PROJECT_MODIFYInDolibarr=Проект %s е променен
 PROJECT_DELETEInDolibarr=Проект %s е изтрит
 TICKET_CREATEInDolibarr=Тикет %s е създаден
 TICKET_MODIFYInDolibarr=Тикет %s е променен
-TICKET_CLOSEInDolibarr=Ticket %s closed
+TICKET_ASSIGNEDInDolibarr=Тикет %s е възложен
+TICKET_CLOSEInDolibarr=Тикет %s е затворен
 TICKET_DELETEInDolibarr=Тикет %s е изтрит
 ##### End agenda events #####
 AgendaModelModule=Шаблони на документи за събитие

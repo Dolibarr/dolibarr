@@ -2374,7 +2374,7 @@ class Ticket extends CommonObject
         if (file_exists($dir_osencoded)) {
             $handle = opendir($dir_osencoded);
             if (is_resource($handle)) {
-                while (($file = readdir($handle)) != false) {
+                while (($file = readdir($handle)) !== false) {
                     if (!utf8_check($file)) {
                         $file = utf8_encode($file);
                     }

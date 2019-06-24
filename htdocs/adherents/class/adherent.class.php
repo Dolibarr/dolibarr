@@ -11,6 +11,7 @@
  * Copyright (C) 2015		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2018-2019  Thibault FOUCART		<support@ptibogxiv.net>
+ * Copyright (C) 2019       Nicolas ZABOURI 		<info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -183,14 +184,14 @@ class Adherent extends CommonObject
      * @var integer
      */
     public $datec;
-    
+
 	/**
      * Date modification record (tms)
      *
      * @var integer
      */
     public $datem;
-    
+
 	public $datevalid;
 
 	public $gender;
@@ -1268,7 +1269,7 @@ class Adherent extends CommonObject
 				$this->ref				= $obj->rowid;
 				$this->id				= $obj->rowid;
 				$this->ref_ext			= $obj->ref_ext;
-        
+
 				$this->civility_id      = $obj->civility_code;  // Bad. Kept for backard compatibility
 				$this->civility_code    = $obj->civility_code;
 				$this->civility	        = $obj->civility_code?($langs->trans("Civility".$obj->civility_code) != ("Civility".$obj->civility_code) ? $langs->trans("Civility".$obj->civility_code) : $obj->civility_code):'';
@@ -2403,7 +2404,7 @@ class Adherent extends CommonObject
 		$this->country_id = 1;
 		$this->country_code = 'FR';
 		$this->country = 'France';
-		$this->morphy = 1;
+		$this->morphy = 'mor';
 		$this->email = 'specimen@specimen.com';
 		$this->skype = 'skypepseudo';
 		$this->twitter = 'twitterpseudo';
@@ -2460,12 +2461,13 @@ class Adherent extends CommonObject
 
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+   /**
 	 *	Initialise tableau info (tableau des attributs LDAP)
 	 *
 	 *	@return		array		Tableau info des attributs
 	 */
-	private function _load_ldap_info()
+	public function _load_ldap_info()
 	{
         // phpcs:enable
 		global $conf,$langs;

@@ -130,6 +130,7 @@ $arrayfields=array(
 	'd.note_private'=>array('label'=>$langs->trans("NotePrivate"), 'checked'=>0),*/
 	'd.datefin'=>array('label'=>$langs->trans("EndSubscription"), 'checked'=>1, 'position'=>500),
 	'd.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
+	'd.birth'=>array('label'=>$langs->trans("Birthday"), 'checked'=>0, 'position'=>500),
 	'd.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
 	'd.statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000)
 );
@@ -591,6 +592,12 @@ if (! empty($arrayfields['d.datec']['checked']))
 	print '<td class="liste_titre">';
 	print '</td>';
 }
+//Birthday
+if (! empty($arrayfields['d.birth']['checked']))
+{
+	print '<td class="liste_titre">';
+	print '</td>';
+}
 // Date modification
 if (! empty($arrayfields['d.tms']['checked']))
 {
@@ -646,6 +653,7 @@ $parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sort
 $reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters);    // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 if (! empty($arrayfields['d.datec']['checked']))     print_liste_field_titre($arrayfields['d.datec']['label'], $_SERVER["PHP_SELF"], "d.datec", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
+if (! empty($arrayfields['d.birth']['checked']))     print_liste_field_titre($arrayfields['d.birth']['label'], $_SERVER["PHP_SELF"], "d.birth", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
 if (! empty($arrayfields['d.tms']['checked']))       print_liste_field_titre($arrayfields['d.tms']['label'], $_SERVER["PHP_SELF"], "d.tms", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
 if (! empty($arrayfields['d.statut']['checked']))    print_liste_field_titre($arrayfields['d.statut']['label'], $_SERVER["PHP_SELF"], "d.statut", "", $param, 'class="right"', $sortfield, $sortorder);
 print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
@@ -862,6 +870,14 @@ while ($i < min($num, $limit))
 	{
 		print '<td class="nowrap center">';
 		print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
+		print '</td>';
+		if (! $i) $totalarray['nbfield']++;
+	}
+	// Birth
+	if (! empty($arrayfields['d.birth']['checked']))
+	{
+		print '<td class="nowrap center">';
+		print dol_print_date($db->jdate($obj->birth), 'day', 'tzuser');
 		print '</td>';
 		if (! $i) $totalarray['nbfield']++;
 	}

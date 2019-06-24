@@ -138,7 +138,6 @@ MinSupplierPrice=Prix minimum d'achat
 DynamicPriceConfiguration=Configuration de prix dynamique
 AddVariable=Ajouter une variable
 AddUpdater=Ajouter une mise à jour
-GlobalVariableUpdaters=Mises à jour variables globales
 UpdateInterval=Intervalle de mise à jour (minutes)
 CorrectlyUpdated=Correctement mis à jour
 PropalMergePdfProductActualFile=Les fichiers utilisés pour ajouter au PDF Azur sont / sont

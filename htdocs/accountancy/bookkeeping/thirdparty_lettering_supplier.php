@@ -22,7 +22,7 @@
 
 /**
  * \file    	htdocs/accountancy/bookkeeping/thirdparty_lettrage_supplier.php
- * \ingroup 	Advanced accountancy
+ * \ingroup 	Accountancy (Double entries)
  * \brief 		Tab to setup lettering
  */
 require '../../main.inc.php';

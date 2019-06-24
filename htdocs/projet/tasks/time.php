@@ -467,7 +467,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		$object->project = clone $projectstatic;
     }
 
-    $userWrite = $projectstatic->restrictedProjectArea($user, 'write');
+    $userRead = $projectstatic->restrictedProjectArea($user, 'read');
     $linktocreatetime = '';
 
 	if ($projectstatic->id > 0)
@@ -582,9 +582,9 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
         $linktocreatetimeBtnStatus = 0;
         $linktocreatetimeUrl = '';
         $linktocreatetimeHelpText = '';
-		if ($user->rights->projet->all->creer || $user->rights->projet->creer)
+        if ($user->rights->projet->all->lire || $user->rights->projet->lire)	// To enter time, read permission is enough
 		{
-			if ($projectstatic->public || $userWrite > 0)
+			if ($projectstatic->public || $userRead > 0)
 		    {
                 $linktocreatetimeBtnStatus = 1;
 
@@ -1017,7 +1017,12 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 
 			// Duration - Time spent
 			print '<td>';
-			print $form->select_duration('timespent_duration', ($_POST['timespent_duration']?$_POST['timespent_duration']:''), 0, 'text');
+			$durationtouse = ($_POST['timespent_duration']?$_POST['timespent_duration']:'');
+			if (GETPOSTISSET('timespent_durationhour') || GETPOSTISSET('timespent_durationmin'))
+			{
+				$durationtouse = (GETPOST('timespent_durationhour') * 3600 + GETPOST('timespent_durationmin') * 60);
+			}
+			print $form->select_duration('timespent_duration', $durationtouse, 0, 'text');
 			print '</td>';
 
 			// Progress declared

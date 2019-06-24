@@ -95,6 +95,10 @@ input.button.massactionconfirmed {
     margin: 4px;
 }
 
+input:invalid, select:invalid {
+    border-color: #ea1212;
+}
+
 /* Focus definitions must be after standard definition */
 textarea:focus {
     /* v6 box-shadow: 0 0 4px #8091BF; */
@@ -133,7 +137,7 @@ input.buttongen {
 	vertical-align: middle;
 }
 input.buttonpayment, button.buttonpayment, div.buttonpayment {
-	min-width: 320px;
+	min-width: 290px;
 	margin-bottom: 15px;
 	background-image: none;
 	line-height: 24px;
@@ -146,6 +150,11 @@ input.buttonpayment, button.buttonpayment, div.buttonpayment {
 	box-shadow: 1px 1px 4px #bbb;
 	color: #fff;
 	border-radius: 4px;
+}
+.buttonpaymentsmall {
+	font-size: 0.65em;
+	padding-left: 5px;
+	padding-right: 5px;
 }
 div.buttonpayment input {
     background-color: unset;
@@ -547,13 +556,13 @@ select.flat.selectlimit {
 	margin-right: 10px !important;
 }
 .marginleftonly {
-	margin-left: 10px !important;
+	margin-<?php echo $left; ?>: 10px !important;
 }
 .marginleftonlyshort {
-	margin-left: 4px !important;
+	margin-<?php echo $left; ?>: 4px !important;
 }
 .nomarginleft {
-	margin-left: 0px !important;
+	margin-<?php echo $left; ?>: 0px !important;
 }
 .margintoponly {
 	margin-top: 10px !important;
@@ -906,7 +915,7 @@ select.selectarrowonleft option {
 	}
 
 	div.divphotoref {
-		padding-right: 5px;
+		padding-<?php echo $right; ?>: 5px;
 	    padding-bottom: 5px;
 	}
     img.photoref, div.photoref {
@@ -1003,7 +1012,7 @@ td.showDragHandle {
 
 .side-nav {
 	display: table-cell;
-	border-right: 1px solid #d0d0d0;
+	border-<?php echo $right; ?>: 1px solid #d0d0d0;
 	box-shadow: 3px 0 6px -2px #eee;
 	background: rgb(<?php echo $colorbackvmenu1; ?>);
 	transition: left 0.5s ease;
@@ -1281,7 +1290,7 @@ div.heightref {
 	min-height: 80px;
 }
 div.divphotoref {
-	padding-right: 20px;
+	padding-<?php echo $right; ?>: 20px;
 }
 div.paginationref {
 	padding-bottom: 10px;
@@ -2357,7 +2366,7 @@ span.tabspan {
 }
 
 /* ============================================================================== */
-/* Boutons actions                                                                */
+/* Buttons for actions                                                            */
 /* ============================================================================== */
 <?php include dol_buildpath($path.'/theme/'.$theme.'/btn.inc.php', 0); ?>
 

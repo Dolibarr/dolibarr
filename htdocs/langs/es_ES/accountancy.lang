@@ -165,8 +165,8 @@ ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Cuenta contable para registrar subscripc
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Cuenta contable predeterminada para los productos comprados (si no se define en el producto)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Cuenta contable predeterminada para los productos vendidos (si no se define en el producto)
-ACCOUNTING_PRODUCT_SOLD_ACCOUNT_INTRA=Cuenta contable predeterminada para los productos vendidos en la CEE (si no se define en el producto)
-ACCOUNTING_PRODUCT_SOLD_ACCOUNT_EXPORT=Cuenta contable predeterminada para los productos vendidos fuera de la CEE (si no se define en el producto)
+ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Cuenta contable predeterminada para los productos vendidos en la CEE (si no se define en el producto)
+ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Cuenta contable predeterminada para los productos vendidos fuera de la CEE (si no se define en el producto)
 ACCOUNTING_SERVICE_BUY_ACCOUNT=Cuenta contable predeterminada para los servicios comprados (si no se define en el servicio)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=Cuenta contable predeterminada para los servicios vendidos (si no se define en el servico)
 
@@ -177,6 +177,7 @@ LabelAccount=Descripción
 LabelOperation=Etiqueta operación
 Sens=Sentido
 LetteringCode=Cogido de letras
+Lettering=Letras
 Codejournal=Diario
 JournalLabel=Etiqueta del diario
 NumPiece=Apunte
@@ -288,8 +289,10 @@ Modelcsv_quadratus=Exportar a Quadratus QuadraCompta
 Modelcsv_ebp=Exportar a EBP
 Modelcsv_cogilog=Eportar a Cogilog
 Modelcsv_agiris=Exportar a Agiris
+Modelcsv_openconcerto=Exportar a OpenConcerto (En pruebas)
 Modelcsv_configurable=Exportación CSV Configurable
-Modelcsv_FEC=Exportación FEC (Art. L47 A) (Prueba)
+Modelcsv_FEC=Exportación FEC (Art. L47 A)
+Modelcsv_Sage50_Swiss=Exportación a Sage 50 Suiza
 ChartofaccountsId=Id plan contable
 
 ## Tools - Init accounting account on product / service
@@ -299,8 +302,12 @@ DefaultBindingDesc=Esta página puede usarse para establecer una cuenta predeter
 DefaultClosureDesc=Esta página se puede usar para configurar los parámetros que se usarán para incluir un balance general.
 Options=Opciones
 OptionModeProductSell=Modo ventas
+OptionModeProductSellIntra=Modo Ventas exportación CEE
+OptionModeProductSellExport=Modo ventas exportación otros paises
 OptionModeProductBuy=Modo compras
 OptionModeProductSellDesc=Mostrar todos los productos con cuenta contable de ventas
+OptionModeProductSellIntraDesc=Mostrar todos los productos con cuenta contable para ventas en CEE.
+OptionModeProductSellExportDesc=Mostrar todos los productos con cuenta contable para otras ventas al exterior.
 OptionModeProductBuyDesc=Mostrar todos los productos con cuenta contable de compras
 CleanFixHistory=Eliminar código contable de las líneas que no existen en el plan contable
 CleanHistory=Resetear todos los vínculos del año seleccionado

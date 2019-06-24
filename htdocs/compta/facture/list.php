@@ -985,11 +985,11 @@ if ($resql)
 			$totalcreditnotes = $facturestatic->getSumCreditNotesUsed();
 			$totaldeposits = $facturestatic->getSumDepositsUsed();
 			$totalpay = $paiement + $totalcreditnotes + $totaldeposits;
-			$remaintopay = $facturestatic->total_ttc - $totalpay;
+			$remaintopay = price2num($facturestatic->total_ttc - $totalpay);
 			if ($facturestatic->type == Facture::TYPE_CREDIT_NOTE && $obj->paye == 1) {
 				$remaincreditnote = $discount->getAvailableDiscounts($obj->fk_soc, '', 'rc.fk_facture_source='.$facturestatic->id);
 				$remaintopay = -$remaincreditnote;
-				$totalpay = $facturestatic->total_ttc - $remaintopay;
+				$totalpay = price2num($facturestatic->total_ttc - $remaintopay);
 			}
 
             print '<tr class="oddeven"';
@@ -1101,7 +1101,7 @@ if ($resql)
 			// Town
 			if (! empty($arrayfields['s.town']['checked']))
 			{
-				print '<td class="nocellnopadd">';
+				print '<td>';
 				print $obj->town;
 				print '</td>';
 				if (! $i) $totalarray['nbfield']++;
@@ -1109,7 +1109,7 @@ if ($resql)
 			// Zip
 			if (! empty($arrayfields['s.zip']['checked']))
 			{
-				print '<td class="nocellnopadd">';
+				print '<td>';
 				print $obj->zip;
 				print '</td>';
 				if (! $i) $totalarray['nbfield']++;
@@ -1329,6 +1329,7 @@ if ($resql)
 	$filedir=$diroutputmassaction;
 	$genallowed=$user->rights->facture->lire;
 	$delallowed=$user->rights->facture->creer;
+	$title = '';
 
 	print $formfile->showdocuments('massfilesarea_invoices', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
 }

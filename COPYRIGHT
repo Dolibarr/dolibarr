@@ -14,15 +14,14 @@ Component              Version       License                     GPL Compatible 
 PHP libraries:
 AdoDb-Date             0.36          Modified BSD License        Yes             Date convertion (not into rpm package)
 CKEditor               4.11.4        LGPL-2.1+                   Yes             Editor WYSIWYG
-PHPDebugBar			   1.15.0		 MIT License	             Yes             Used only by the module "debugbar" for developers
 EvalMath               1.0           BSD                         Yes             Safe math expressions evaluation
 Escpos-php             ?             MIT License                 Yes             Thermal receipt printer library, for use with ESC/POS compatible printers
 GeoIP                  1.4           LGPL-2.1+                   Yes             Sample code to make geoip convert (not into deb package)
 Mobiledetect           2.8.83        MIT License                 Yes             Detect mobile devices browsers
 NuSoap                 0.9.5         LGPL 2.1+                   Yes             Library to develop SOAP Web services (not into rpm and deb package)
 PEAR Mail_MIME         1.8.9         BSD                         Yes             NuSoap dependency
-odtPHP                 1.0.1         GPL-2+                      Yes             Library to build/edit ODT files
 ParseDown              1.6           MIT License                 Yes             Markdown parser
+PHPDebugBar			   1.15.0		 MIT License	             Yes             Used only by the module "debugbar" for developers
 PHPExcel               1.8.1         LGPL-2.1+                   Yes             Read/Write XLS files, read ODS files
 PHPSpreadSheet         ?             LGPL-2.1+                   Yes             Read/Write XLS files, read ODS files
 php-iban               1.4.7         LGPL-3+                     Yes             Parse and validate IBAN (and IIBAN) bank account information in PHP

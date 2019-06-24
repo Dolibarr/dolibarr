@@ -44,7 +44,6 @@ ErrorReservedTypeSystemSystemAuto=Los valores de tipo 'system' y 'systemauto' es
 UseSearchToSelectCompanyTooltip=Asi mismo si tu tienes un gran número de terceras partes (> 100 000), puedes incrementar la velocidad al establecer la constante COMPANY_DONOTSEARCH_ANYWHERE to 1 en Configuración->Otro. La búsqueda entonces será limitada al inicio de la cadena.
 DelaiedFullListToSelectCompany=Esperar hasta que una tecla sea presionada antes de cargar contenido del listado desplegable de terceros.<br>Esto podria incrementar el desempeño si tu tienes un gran numero de terceros, pero no se recomienda.
 DelaiedFullListToSelectContact=Esperar hasta que una tecla sea presionada antes de cargar contenido del listado desplegable de contactos.<br>Esto podria incrementar el desempeño si tu tienes un gran numero de contactos, pero no se recomienda)
-NumberOfKeyToSearch=N° de caracteres para activar la búsqueda: %s
 NotAvailableWhenAjaxDisabled=No disponible cuando Ajax está desactivado
 JavascriptDisabled=JavaScript desactivado
 UsePreviewTabs=Utilizar pestañas de vista previa
@@ -131,9 +130,9 @@ Module30Name=Facturas
 DictionaryAccountancyJournal=Diarios de contabilidad
 DictionaryProspectStatus=Estatus del cliente potencial
 Upgrade=Actualizar
-CreditNote=Nota de crédito
 LDAPFieldFirstName=Nombre(s)
 AGENDA_SHOW_LINKED_OBJECT=Mostrar objeto vinculado en la vista de agenda
 ConfFileMustContainCustom=Instalar o construir un módulo externo desde la aplicación necesita guardar los archivos del módulo en el directorio <strong> %s </strong>. Para que este directorio sea procesado por Dolibarr, debe configurar su <strong> conf/conf.php </strong> para agregar las 2 líneas de directiva: <strong> $dolibarr_main_url_root_alt='/custom'; </strong> <br> <strong> $dolibarr_main_document_root_alt='%s/custom'; </strong>
 MailToSendProposal=Propuestas de clientes
 MailToSendInvoice=Facturas de clientes
+OperationParamDesc=Define values to use for action, or how to extract values. For example:<br>objproperty1=SET:abc<br>objproperty1=SET:a value with replacement of __objproperty1__<br>objproperty3=SETIFEMPTY:abc<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey.*[^\\s]+(.*)<br>options_myextrafield=EXTRACT:SUBJECT:([^\\s]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a ; char as separator to extract or set several properties.

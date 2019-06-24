@@ -57,9 +57,6 @@ class BOM extends CommonObject
 	public $picto = 'bom';
 
 
-	public $table_element_line = 'bom_bomline';
-
-
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
 	const STATUS_CANCELED = 9;
@@ -131,27 +128,32 @@ class BOM extends CommonObject
 	/**
 	 * @var int    Name of subtable line
 	 */
-	//public $table_element_line = 'bomdet';
+	public $table_element_line = 'bom_bomline';
 
 	/**
 	 * @var int    Field with ID of parent key if this field has a parent
 	 */
-	//public $fk_element = 'fk_bom';
+	public $fk_element = 'fk_bom';
 
 	/**
 	 * @var int    Name of subtable class that manage subtable lines
 	 */
-	//public $class_element_line = 'BillOfMaterialsline';
+	public $class_element_line = 'BOMLine';
 
 	/**
-	 * @var array  Array of child tables (child tables to delete before deleting a record)
+	 * @var array	List of child tables. To test if we can delete object.
 	 */
-	//protected $childtables=array('bomdet');
+	//protected $childtables=array();
 
 	/**
-	 * @var BillOfMaterialsLine[]     Array of subtable lines
+	 * @var array	List of child tables. To know object to delete on cascade.
 	 */
-	//public $lines = array();
+	protected $childtablesoncascade=array('bom_bomline');
+
+	/**
+	 * @var BOMLine[]     Array of subtable lines
+	 */
+	public $lines = array();
 
 
 
@@ -162,7 +164,7 @@ class BOM extends CommonObject
 	 */
 	public function __construct(DoliDB $db)
 	{
-		global $conf, $langs, $user;
+		global $conf, $langs;
 
 		$this->db = $db;
 
@@ -181,11 +183,11 @@ class BOM extends CommonObject
 		// Translate some data of arrayofkeyval
 		foreach($this->fields as $key => $val)
 		{
-			if (is_array($this->fields['status']['arrayofkeyval']))
+			if (is_array($this->fields[$key]['arrayofkeyval']))
 			{
-				foreach($this->fields['status']['arrayofkeyval'] as $key2 => $val2)
+				foreach($this->fields[$key]['arrayofkeyval'] as $key2 => $val2)
 				{
-					$this->fields['status']['arrayofkeyval'][$key2]=$langs->trans($val2);
+					$this->fields[$key]['arrayofkeyval'][$key2]=$langs->trans($val2);
 				}
 			}
 		}
@@ -200,6 +202,8 @@ class BOM extends CommonObject
 	 */
 	public function create(User $user, $notrigger = false)
 	{
+		if ($this->efficiency < 0 || $this->efficiency > 1) $this->efficiency = 1;
+
 		return $this->createCommon($user, $notrigger);
 	}
 
@@ -222,7 +226,13 @@ class BOM extends CommonObject
 	    $this->db->begin();
 
 	    // Load source object
-	    $object->fetchCommon($fromid);
+	    $result = $object->fetchCommon($fromid);
+	    if ($result > 0 && ! empty($object->table_element_line)) $object->fetchLines();
+
+	    // Get lines so they will be clone
+	    //foreach($object->lines as $line)
+	    //	$line->fetch_optionals();
+
 	    // Reset some properties
 	    unset($object->id);
 	    unset($object->fk_user_creat);
@@ -231,7 +241,7 @@ class BOM extends CommonObject
 	    // Clear fields
 	    $object->ref = "copy_of_".$object->ref;
 	    $object->title = $langs->trans("CopyOf")." ".$object->title;
-	    // ...
+
 	    // Clear extrafields that are unique
 	    if (is_array($object->array_options) && count($object->array_options) > 0)
 	    {
@@ -255,6 +265,29 @@ class BOM extends CommonObject
 	        $this->error = $object->error;
 	        $this->errors = $object->errors;
 	    }
+
+	    if (! $error)
+	    {
+	    	// copy internal contacts
+	    	if ($this->copy_linked_contact($object, 'internal') < 0)
+	    	{
+	    		$error++;
+	    	}
+	    }
+
+	    if (! $error)
+	    {
+	    	// copy external contacts if same company
+	    	if (property_exists($this, 'socid') && $this->socid == $object->socid)
+	    	{
+	    		if ($this->copy_linked_contact($object, 'external') < 0)
+	    			$error++;
+	    	}
+	    }
+
+	    // If there is lines, create lines too
+
+
 
 	    unset($object->context['createfromclone']);
 
@@ -379,6 +412,8 @@ class BOM extends CommonObject
 	 */
 	public function update(User $user, $notrigger = false)
 	{
+		if ($this->efficiency < 0 || $this->efficiency > 1) $this->efficiency = 1;
+
 		return $this->updateCommon($user, $notrigger);
 	}
 
@@ -854,7 +889,7 @@ class BOM extends CommonObject
 	    $this->lines=array();
 
 	    $objectline = new BOMLine($this->db);
-	    $result = $objectline->fetchAll('', '', 0, 0, array('customsql'=>'fk_bom = '.$this->id));
+	    $result = $objectline->fetchAll('ASC', 'rank', 0, 0, array('customsql'=>'fk_bom = '.$this->id));
 
 	    if (is_numeric($result))
 	    {
@@ -1030,7 +1065,7 @@ class BOMLine extends CommonObject
 	 */
 	public function __construct(DoliDB $db)
 	{
-		global $conf, $langs, $user;
+		global $conf, $langs;
 
 		$this->db = $db;
 
@@ -1049,11 +1084,11 @@ class BOMLine extends CommonObject
 		// Translate some data of arrayofkeyval
 		foreach($this->fields as $key => $val)
 		{
-			if (is_array($this->fields['status']['arrayofkeyval']))
+			if (is_array($this->fields[$key]['arrayofkeyval']))
 			{
-				foreach($this->fields['status']['arrayofkeyval'] as $key2 => $val2)
+				foreach($this->fields[$key]['arrayofkeyval'] as $key2 => $val2)
 				{
-					$this->fields['status']['arrayofkeyval'][$key2]=$langs->trans($val2);
+					$this->fields[$key]['arrayofkeyval'][$key2]=$langs->trans($val2);
 				}
 			}
 		}
@@ -1068,72 +1103,9 @@ class BOMLine extends CommonObject
 	 */
 	public function create(User $user, $notrigger = false)
 	{
+		if ($this->efficiency < 0 || $this->efficiency > 1) $this->efficiency = 1;
+
 		return $this->createCommon($user, $notrigger);
-	}
-
-	/**
-	 * Clone an object into another one
-	 *
-	 * @param  	User 	$user      	User that creates
-	 * @param  	int 	$fromid     Id of object to clone
-	 * @return 	mixed 				New object created, <0 if KO
-	 */
-	public function createFromClone(User $user, $fromid)
-	{
-		global $langs, $hookmanager, $extrafields;
-	    $error = 0;
-
-	    dol_syslog(__METHOD__, LOG_DEBUG);
-
-	    $object = new self($this->db);
-
-	    $this->db->begin();
-
-	    // Load source object
-	    $object->fetchCommon($fromid);
-	    // Reset some properties
-	    unset($object->id);
-	    unset($object->fk_user_creat);
-	    unset($object->import_key);
-
-	    // Clear fields
-	    $object->ref = "copy_of_".$object->ref;
-	    $object->title = $langs->trans("CopyOf")." ".$object->title;
-	    // ...
-	    // Clear extrafields that are unique
-	    if (is_array($object->array_options) && count($object->array_options) > 0)
-	    {
-	    	$extrafields->fetch_name_optionals_label($this->element);
-	    	foreach($object->array_options as $key => $option)
-	    	{
-	    		$shortkey = preg_replace('/options_/', '', $key);
-	    		if (! empty($extrafields->attributes[$this->element]['unique'][$shortkey]))
-	    		{
-	    			//var_dump($key); var_dump($clonedObj->array_options[$key]); exit;
-	    			unset($object->array_options[$key]);
-	    		}
-	    	}
-	    }
-
-	    // Create clone
-		$object->context['createfromclone'] = 'createfromclone';
-	    $result = $object->createCommon($user);
-	    if ($result < 0) {
-	        $error++;
-	        $this->error = $object->error;
-	        $this->errors = $object->errors;
-	    }
-
-	    unset($object->context['createfromclone']);
-
-	    // End
-	    if (!$error) {
-	        $this->db->commit();
-	        return $object;
-	    } else {
-	        $this->db->rollback();
-	        return -1;
-	    }
 	}
 
 	/**
@@ -1234,6 +1206,8 @@ class BOMLine extends CommonObject
 	 */
 	public function update(User $user, $notrigger = false)
 	{
+		if ($this->efficiency < 0 || $this->efficiency > 1) $this->efficiency = 1;
+
 		return $this->updateCommon($user, $notrigger);
 	}
 
@@ -1263,8 +1237,6 @@ class BOMLine extends CommonObject
     public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
     {
         global $db, $conf, $langs, $hookmanager;
-        global $dolibarr_main_authentication, $dolibarr_main_demo;
-        global $menumanager;
 
         if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
 

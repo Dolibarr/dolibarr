@@ -21,7 +21,7 @@
 
 /**
  * \file 		htdocs/accountancy/bookkeeping/listbyaccount.php
- * \ingroup 	Advanced accountancy
+ * \ingroup 	Accountancy (Double entries)
  * \brief 		List operation of book keeping ordered by account number
  */
 
@@ -256,8 +256,8 @@ if ($action == 'delbookkeepingyear') {
 
 print '<form method="POST" id="searchFormList" action="' . $_SERVER["PHP_SELF"] . '">';
 
-$newcardbutton.= dolGetButtonTitle($langs->trans('ViewFlatList'), '', 'fa fa-list', DOL_URL_ROOT.'/accountancy/bookkeeping/list.php?'.$param);
-$newcardbutton.= dolGetButtonTitle($langs->trans('NewAccountingMvt'), '', 'fa fa-plus-circle', './card.php?action=create');
+$newcardbutton.= dolGetButtonTitle($langs->trans('ViewFlatList'), '', 'fa fa-list paddingleft', DOL_URL_ROOT.'/accountancy/bookkeeping/list.php?'.$param);
+$newcardbutton.= dolGetButtonTitle($langs->trans('NewAccountingMvt'), '', 'fa fa-plus-circle paddingleft', './card.php?action=create');
 
 if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
 if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
@@ -348,7 +348,7 @@ while ($i < min($num, $limit))
 		$colspan = 9;
 		print "<tr>";
 		print '<td colspan="'.$colspan.'" style="font-weight:bold; border-bottom: 1pt solid black;">';
-		if (! empty($line->numero_compte) && $line->numero_compte != '-1') print length_accountg($line->numero_compte) . ' : ' . $object->get_compte_desc($line->numero_compte);
+		if ($line->numero_compte != "" && $line->numero_compte != '-1') print length_accountg($line->numero_compte) . ' : ' . $object->get_compte_desc($line->numero_compte);
 		else print '<span class="error">'.$langs->trans("Unknown").'</span>';
 		print '</td>';
 		print '</tr>';

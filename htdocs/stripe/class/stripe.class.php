@@ -192,6 +192,7 @@ class Stripe extends CommonObject
 
 				$vatcleaned = $object->tva_intra ? $object->tva_intra : null;
 
+				/*
 				$taxinfo = array('type'=>'vat');
 				if ($vatcleaned)
 				{
@@ -199,8 +200,8 @@ class Stripe extends CommonObject
 				}
 				// We force data to "null" if not defined as expected by Stripe
 				if (empty($vatcleaned)) $taxinfo=null;
-
 				$dataforcustomer["tax_info"] = $taxinfo;
+				*/
 
 				//$a = \Stripe\Stripe::getApiKey();
 				//var_dump($a);var_dump($key);exit;
@@ -215,6 +216,21 @@ class Stripe extends CommonObject
 						$customer = \Stripe\Customer::create($dataforcustomer, array("stripe_account" => $key));
 					}
 
+					// Create the VAT record in Stripe
+					if (! empty($conf->global->STRIPE_SAVE_TAX_IDS))	// We setup to save Tax info on Stripe side. Warning: This may result in error when saving customer
+					{
+						if (! empty($vatcleaned))
+						{
+							$isineec=isInEEC($object);
+							if ($object->country_code && $isineec)
+							{
+								//$taxids = $customer->allTaxIds($customer->id);
+								$customer->createTaxId($customer->id, array('type'=>'eu_vat', 'value'=>$vatcleaned));
+							}
+						}
+					}
+
+					// Create customer in Dolibarr
 					$sql = "INSERT INTO " . MAIN_DB_PREFIX . "societe_account (fk_soc, login, key_account, site, status, entity, date_creation, fk_user_creat)";
 					$sql .= " VALUES (".$object->id.", '', '".$this->db->escape($customer->id)."', 'stripe', " . $status . ", " . $conf->entity . ", '".$this->db->idate(dol_now())."', ".$user->id.")";
 					$resql = $this->db->query($sql);
@@ -237,12 +253,42 @@ class Stripe extends CommonObject
 		return $customer;
 	}
 
+	/**
+	 * Get the Stripe payment method Object from its ID
+	 *
+	 * @param	string	$paymentmethod	   			Payment Method ID
+	 * @param	string	$key						''=Use common API. If not '', it is the Stripe connect account 'acc_....' to use Stripe connect
+	 * @param	int		$status						Status (0=test, 1=live)
+	 * @return 	\Stripe\PaymentMethod|null 			Stripe PaymentMethod or null if not found
+	 */
+	public function getPaymentMethodStripe($paymentmethod, $key = '', $status = 0)
+	{
+		$stripepaymentmethod = null;
+
+		try {
+			// Force to use the correct API key
+			global $stripearrayofkeysbyenv;
+			\Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$status]['secret_key']);
+			if (empty($key)) {				// If the Stripe connect account not set, we use common API usage
+				$stripepaymentmethod = \Stripe\PaymentMethod::retrieve(''.$paymentmethod->id.'');
+			} else {
+				$stripepaymentmethod = \Stripe\PaymentMethod::retrieve(''.$paymentmethod->id.'', array("stripe_account" => $key));
+			}
+		}
+		catch(Exception $e)
+		{
+			$this->error = $e->getMessage();
+		}
+
+		return $stripepaymentmethod;
+	}
+
     /**
 	 * Get the Stripe payment intent. Create it with confirm=false
      * Warning. If a payment was tried and failed, a payment intent was created.
 	 * But if we change someting on object to pay (amount or other), reusing same payment intent is not allowed.
 	 * Recommanded solution is to recreate a new payment intent each time we need one (old one will be automatically closed after a delay),
-	 * that's why i comment the part of code to retreive a payment intent with object id (never mind if we cumulate payment intent with old that will not be used)
+	 * that's why i comment the part of code to retreive a payment intent with object id (never mind if we cumulate payment intent with old ones that will not be used)
 	 *
 	 * @param   double  $amount                             Amount
 	 * @param   string  $currency_code                      Currency code
@@ -259,7 +305,7 @@ class Stripe extends CommonObject
 	 */
 	public function getPaymentIntent($amount, $currency_code, $tag, $description = '', $object = null, $customer = null, $key = null, $status = 0, $usethirdpartyemailforreceiptemail = 0, $mode = 'automatic', $confirmnow = false)
 	{
-		global $conf, $user, $mysoc;
+		global $conf;
 
 		dol_syslog("getPaymentIntent");
 
@@ -272,12 +318,14 @@ class Stripe extends CommonObject
 		if (! in_array($currency_code, $arrayzerounitcurrency)) $stripeamount = $amount * 100;
 		else $stripeamount = $amount;
 
-		$fee = round(($$stripeamount * ($conf->global->STRIPE_APPLICATION_FEE_PERCENT / 100) + $conf->global->STRIPE_APPLICATION_FEE) * 100);
-		if ($fee >= ($conf->global->STRIPE_APPLICATION_FEE_MAXIMAL * 100) && $conf->global->STRIPE_APPLICATION_FEE_MAXIMAL>$conf->global->STRIPE_APPLICATION_FEE_MINIMAL) {
-		    $fee = round($conf->global->STRIPE_APPLICATION_FEE_MAXIMAL * 100);
-		} elseif ($fee < ($conf->global->STRIPE_APPLICATION_FEE_MINIMAL * 100)) {
-		    $fee = round($conf->global->STRIPE_APPLICATION_FEE_MINIMAL * 100);
+		$fee = round($amount * ($conf->global->STRIPE_APPLICATION_FEE_PERCENT / 100) + $conf->global->STRIPE_APPLICATION_FEE);
+		if ($fee >= $conf->global->STRIPE_APPLICATION_FEE_MAXIMAL && $conf->global->STRIPE_APPLICATION_FEE_MAXIMAL > $conf->global->STRIPE_APPLICATION_FEE_MINIMAL) {
+		    $fee = round($conf->global->STRIPE_APPLICATION_FEE_MAXIMAL);
+		} elseif ($fee < $conf->global->STRIPE_APPLICATION_FEE_MINIMAL) {
+		    $fee = round($conf->global->STRIPE_APPLICATION_FEE_MINIMAL);
 		}
+		if (! in_array($currency_code, $arrayzerounitcurrency)) $stripefee = $fee * 100;
+		else $stripefee = $fee;
 
 		$paymentintent = null;
 
@@ -352,9 +400,9 @@ class Stripe extends CommonObject
     		// payment_method_types = array('card')
             //var_dump($dataforintent);
 
-    		if ($conf->entity!=$conf->global->STRIPECONNECT_PRINCIPAL && $fee>0)
+    		if ($conf->entity!=$conf->global->STRIPECONNECT_PRINCIPAL && $stripefee > 0)
     		{
-    			$dataforintent["application_fee"] = $fee;
+    			$dataforintent["application_fee"] = $stripefee;
     		}
     		if ($usethirdpartyemailforreceiptemail && is_object($object) && $object->thirdparty->email)
     		{
@@ -366,6 +414,7 @@ class Stripe extends CommonObject
     			global $stripearrayofkeysbyenv;
     			\Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$status]['secret_key']);
 
+    			// Note: If all data for payment intent are same than a previous on, even if we use 'create', Stripe will return ID of the old existing payment intent.
     			if (empty($key)) {				// If the Stripe connect account not set, we use common API usage
     				$paymentintent = \Stripe\PaymentIntent::create($dataforintent, array("idempotency_key" => "$description"));
     			    //$paymentintent = \Stripe\PaymentIntent::create($dataforintent, array());
@@ -373,7 +422,7 @@ class Stripe extends CommonObject
     				$paymentintent = \Stripe\PaymentIntent::create($dataforintent, array("idempotency_key" => "$description", "stripe_account" => $key));
     			    //$paymentintent = \Stripe\PaymentIntent::create($dataforintent, array("stripe_account" => $key));
     			}
-    			//var_dump($paymentintent);
+    			//var_dump($paymentintent->id);
 
     			// Store the payment intent
     			if (is_object($object))
@@ -460,8 +509,7 @@ class Stripe extends CommonObject
 
 		$sql = "SELECT sa.stripe_card_ref, sa.proprio, sa.exp_date_month, sa.exp_date_year, sa.number, sa.cvn";			// stripe_card_ref is card_....
 		$sql.= " FROM " . MAIN_DB_PREFIX . "societe_rib as sa";
-		$sql.= " WHERE sa.rowid = " . $object->id;
-		//$sql.= " AND sa.entity IN (".getEntity('societe').")";
+		$sql.= " WHERE sa.rowid = " . $object->id;		// We get record from ID, no need for filter on entity
 		$sql.= " AND sa.type = 'card'";
 
 		dol_syslog(get_class($this) . "::fetch search stripe card id for paymentmode id=".$object->id.", stripeacc=".$stripeacc.", status=".$status.", createifnotlinkedtostripe=".$createifnotlinkedtostripe, LOG_DEBUG);
@@ -504,7 +552,7 @@ class Stripe extends CommonObject
 
 					//$a = \Stripe\Stripe::getApiKey();
 					//var_dump($a);var_dump($stripeacc);exit;
-					dol_syslog("Try to create card dataforcard = ".dol_json_encode($dataforcard));
+					dol_syslog("Try to create card dataforcard = ".json_encode($dataforcard));
 					try {
 						if (empty($stripeacc)) {				// If the Stripe connect account not set, we use common API usage
 							$card = $cu->sources->create($dataforcard);
@@ -659,13 +707,15 @@ class Stripe extends CommonObject
 					$charge = \Stripe\Charge::create($paymentarray, array("idempotency_key" => "$description"));
 				}
 			} else {
-                $fee = round(($object->total_ttc * ($conf->global->STRIPE_APPLICATION_FEE_PERCENT / 100) + $conf->global->STRIPE_APPLICATION_FEE) * 100);
-			    if ($fee >= ($conf->global->STRIPE_APPLICATION_FEE_MAXIMAL * 100) && $conf->global->STRIPE_APPLICATION_FEE_MAXIMAL>$conf->global->STRIPE_APPLICATION_FEE_MINIMAL) {
-					$fee = round($conf->global->STRIPE_APPLICATION_FEE_MAXIMAL * 100);
+				$fee = round($amount * ($conf->global->STRIPE_APPLICATION_FEE_PERCENT / 100) + $conf->global->STRIPE_APPLICATION_FEE);
+			    if ($fee >= $conf->global->STRIPE_APPLICATION_FEE_MAXIMAL && $conf->global->STRIPE_APPLICATION_FEE_MAXIMAL > $conf->global->STRIPE_APPLICATION_FEE_MINIMAL) {
+					$fee = round($conf->global->STRIPE_APPLICATION_FEE_MAXIMAL);
 				}
-                elseif ($fee < ($conf->global->STRIPE_APPLICATION_FEE_MINIMAL * 100)) {
-					$fee = round($conf->global->STRIPE_APPLICATION_FEE_MINIMAL * 100);
+                elseif ($fee < $conf->global->STRIPE_APPLICATION_FEE_MINIMAL) {
+					$fee = round($conf->global->STRIPE_APPLICATION_FEE_MINIMAL);
 				}
+				if (! in_array($currency, $arrayzerounitcurrency)) $stripefee = $fee * 100;
+				else $stripefee = $fee;
 
         		$paymentarray = array(
 					"amount" => "$stripeamount",
@@ -677,9 +727,9 @@ class Stripe extends CommonObject
 					"source" => "$source",
 					"customer" => "$customer"
 				);
-				if ($conf->entity!=$conf->global->STRIPECONNECT_PRINCIPAL && $fee>0)
+				if ($conf->entity!=$conf->global->STRIPECONNECT_PRINCIPAL && $stripefee > 0)
 				{
-					$paymentarray["application_fee"] = $fee;
+					$paymentarray["application_fee"] = $stripefee;
 				}
 				if ($societe->email && $usethirdpartyemailforreceiptemail)
 				{
