@@ -2217,7 +2217,7 @@ function pdf_getSizeForImage($realpath)
  * 	@return	string							Return total of line excl tax
  */
 
-function pdf_getLineTotalDiscountAmount($object, $i, $outputlangs, $hidedetails=0)
+function pdfGetLineTotalDiscountAmount($object, $i, $outputlangs, $hidedetails=0)
 {
 	global $conf, $hookmanager;
 	$sign=1;

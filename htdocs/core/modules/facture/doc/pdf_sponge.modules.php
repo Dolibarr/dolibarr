@@ -1361,7 +1361,7 @@ class pdf_sponge extends ModelePDFFactures
 		// Total remise
 		$total_line_remise=0;
 		foreach($object->lines as $i => $line) {
-		    $total_line_remise+= pdf_getLineTotalDiscountAmount($object,$i,$outputlangs,2); // TODO: add this methode to core/lib/pdf.lib
+		    $total_line_remise+= pdfGetLineTotalDiscountAmount($object,$i,$outputlangs,2); // TODO: add this methode to core/lib/pdf.lib
 		    // Gestion remise sous forme de ligne négative
 		    if($line->total_ht < 0) $total_line_remise += -$line->total_ht;
 		}
