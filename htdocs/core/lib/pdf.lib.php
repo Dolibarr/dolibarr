@@ -36,25 +36,31 @@
 /**
  *	Return array with format properties of default PDF format
  *
- *	@param		Translate	$outputlangs		Output lang to use to autodetect output format if setup not done
+ *	@param		Translate	$outputlangs		Output lang to use to autodetect output format if we need 'auto' detection
+ *  @param		string		$mode				'setup' = Use setup, 'auto' = Force autodetection whatever is setup
  *  @return     array							Array('width'=>w,'height'=>h,'unit'=>u);
  */
-function pdf_getFormat(Translate $outputlangs = null)
+function pdf_getFormat(Translate $outputlangs = null, $mode = 'setup')
 {
-	global $conf,$db;
+	global $conf, $db, $langs;
+
+	dol_syslog("pdf_getFormat Get paper format with mode=".$mode." MAIN_PDF_FORMAT=".(empty($conf->global->MAIN_PDF_FORMAT)?'null':$conf->global->MAIN_PDF_FORMAT)." outputlangs->defaultlang=".(is_object($outputlangs) ? $outputlangs->defaultlang : 'null')." and langs->defaultlang=".(is_object($langs) ? $langs->defaultlang : 'null'));
 
 	// Default value if setup was not done and/or entry into c_paper_format not defined
 	$width=210; $height=297; $unit='mm';
 
-	if (empty($conf->global->MAIN_PDF_FORMAT))
+	if ($mode == 'auto' || empty($conf->global->MAIN_PDF_FORMAT) || $conf->global->MAIN_PDF_FORMAT == 'auto')
 	{
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 		$pdfformat=dol_getDefaultFormat($outputlangs);
 	}
-	else $pdfformat=$conf->global->MAIN_PDF_FORMAT;
+	else
+	{
+		$pdfformat=$conf->global->MAIN_PDF_FORMAT;
+	}
 
 	$sql="SELECT code, label, width, height, unit FROM ".MAIN_DB_PREFIX."c_paper_format";
-	$sql.=" WHERE code = '".$pdfformat."'";
+	$sql.=" WHERE code = '".$db->escape($pdfformat)."'";
 	$resql=$db->query($sql);
 	if ($resql)
 	{
@@ -175,18 +181,29 @@ function pdf_getInstance($format = '', $metric = 'mm', $pagetype = 'P')
 /**
  * Return if pdf file is protected/encrypted
  *
- * @param	TCPDF		$pdf			PDF initialized object
  * @param   string		$pathoffile		Path of file
  * @return  boolean     			    True or false
  */
-function pdf_getEncryption(&$pdf, $pathoffile)
+function pdf_getEncryption($pathoffile)
 {
+	require_once TCPDF_PATH.'tcpdf_parser.php';
+
 	$isencrypted = false;
 
-	$pdfparser = $pdf->_getPdfParser($pathoffile);
-	$data = $pdfparser->getParsedData();
-	if (isset($data[0]['trailer'][1]['/Encrypt'])) {
-		$isencrypted = true;
+	$content = file_get_contents($pathoffile);
+
+	//ob_start();
+	@($parser = new \TCPDF_PARSER(ltrim($content)));
+	list($xref, $data) = $parser->getParsedData();
+	unset($parser);
+	//ob_end_clean();
+
+	if (isset($xref['trailer']['encrypt'])) {
+		$isencrypted = true;	// Secured pdf file are currently not supported
+	}
+
+	if (empty($data)) {
+		$isencrypted = true;	// Object list not found. Possible secured file
 	}
 
 	return $isencrypted;
@@ -341,14 +358,14 @@ function pdfBuildThirdpartyName($thirdparty, Translate $outputlangs, $includeali
 /**
  *   	Return a string with full address formated for output on documents
  *
- * 		@param	Translate	      $outputlangs		    Output langs object
- *   	@param  Societe		      $sourcecompany		Source company object
- *   	@param  Societe|string    $targetcompany		Target company object
- *      @param  Contact|string	  $targetcontact	    Target contact object
- * 		@param	int			      $usecontact		    Use contact instead of company
- * 		@param	string  	      $mode				    Address type ('source', 'target', 'targetwithdetails', 'targetwithdetails_xxx': target but include also phone/fax/email/url)
- *      @param  Object            $object               Object we want to build document for
- * 		@return	string							        String with full address
+ * 		@param	Translate	          $outputlangs		    Output langs object
+ *   	@param  Societe		          $sourcecompany		Source company object
+ *   	@param  Societe|string|null   $targetcompany		Target company object
+ *      @param  Contact|string|null	  $targetcontact	    Target contact object
+ * 		@param	int			          $usecontact		    Use contact instead of company
+ * 		@param	string  	          $mode				    Address type ('source', 'target', 'targetwithdetails', 'targetwithdetails_xxx': target but include also phone/fax/email/url)
+ *      @param  Object                $object               Object we want to build document for
+ * 		@return	string					    		        String with full address
  */
 function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $targetcontact = '', $usecontact = 0, $mode = 'source', $object = null)
 {
@@ -364,7 +381,7 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 	$stringaddress = '';
 	if (is_object($hookmanager))
 	{
-		$parameters = array('sourcecompany'=>&$sourcecompany,'targetcompany'=>&$targetcompany,'targetcontact'=>$targetcontact,'outputlangs'=>$outputlangs,'mode'=>$mode,'usecontact'=>$usecontact);
+		$parameters = array('sourcecompany'=>&$sourcecompany, 'targetcompany'=>&$targetcompany, 'targetcontact'=>&$targetcontact, 'outputlangs'=>$outputlangs, 'mode'=>$mode, 'usecontact'=>$usecontact);
 		$action='';
 		$reshook = $hookmanager->executeHooks('pdf_build_address', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 		$stringaddress.=$hookmanager->resPrint;
@@ -1374,6 +1391,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 	if (! empty($object->lines[$i]->date_start) || ! empty($object->lines[$i]->date_end))
 	{
 		$format='day';
+        $period = '';
 		// Show duration if exists
 		if ($object->lines[$i]->date_start && $object->lines[$i]->date_end)
 		{
@@ -1954,6 +1972,7 @@ function pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails = 0)
         	$total_ht = ($conf->multicurrency->enabled && $object->multicurrency_tx != 1 ? $object->lines[$i]->multicurrency_total_ht : $object->lines[$i]->total_ht);
         	if ($object->lines[$i]->situation_percent > 0)
         	{
+        	    // TODO Remove this. The total should be saved correctly in database instead of being modified here.
         		$prev_progress = 0;
         		$progress = 1;
         		if (method_exists($object->lines[$i], 'get_prev_progress'))
@@ -1964,7 +1983,9 @@ function pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails = 0)
 				$result.=price($sign * ($total_ht/($object->lines[$i]->situation_percent/100)) * $progress, 0, $outputlangs);
         	}
         	else
-			$result.=price($sign * $total_ht, 0, $outputlangs);
+        	{
+                $result.=price($sign * $total_ht, 0, $outputlangs);
+        	}
         }
     }
     return $result;

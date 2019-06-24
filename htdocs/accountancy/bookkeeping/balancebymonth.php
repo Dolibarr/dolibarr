@@ -21,7 +21,7 @@
 
 /**
  * \file		htdocs/accountancy/bookkeeping/balancebymonth.php
- * \ingroup		Advanced accountancy
+ * \ingroup		Accountancy (Double entries)
  * \brief		Balance by month
  */
 require '../../main.inc.php';

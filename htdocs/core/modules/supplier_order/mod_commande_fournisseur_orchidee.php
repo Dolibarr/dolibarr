@@ -34,7 +34,7 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 {
 	/**
      * Dolibarr version of the loaded document
-     * @public string
+     * @var string
      */
 	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
 
@@ -57,7 +57,7 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 
 
     /**
-     *  Renvoi la description du modele de numerotation
+     *  Returns the description of the numbering model
      *
      * 	@return     string      Texte descripif
      */

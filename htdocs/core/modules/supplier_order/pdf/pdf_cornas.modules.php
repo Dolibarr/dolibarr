@@ -375,6 +375,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 				    $substitutionarray=pdf_getSubstitutionArray($outputlangs, null, $object);
 				    complete_substitutions_array($substitutionarray, $outputlangs, $object);
 				    $notetoshow = make_substitutions($notetoshow, $substitutionarray, $outputlangs);
+				    $notetoshow = convertBackOfficeMediasLinksToPublicLinks($notetoshow);
 
 				    $tab_top -= 2;
 
@@ -1550,22 +1551,6 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 	    );
 
 	    $rank = $rank + 10;
-	    $this->cols['progress'] = array(
-	        'rank' => $rank,
-	        'width' => 19, // in mm
-	        'status' => false,
-	        'title' => array(
-	            'textkey' => 'Progress'
-	        ),
-	        'border-left' => false, // add left line separator
-	    );
-
-	    if($this->situationinvoice)
-	    {
-	        $this->cols['progress']['status'] = true;
-	    }
-
-	    $rank = $rank + 10;
 	    $this->cols['unit'] = array(
 	        'rank' => $rank,
 	        'width' => 11, // in mm
@@ -1825,7 +1810,6 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 	    global $hookmanager;
 
 	    $parameters=array(
-	        'object' => $object,
 	        'curY' =>& $curY,
 	        'columnText' => $columnText,
 	        'colKey' => $colKey

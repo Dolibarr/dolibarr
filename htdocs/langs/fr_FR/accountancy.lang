@@ -165,8 +165,8 @@ ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Compte comptable pour enregistrer les ad
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Compte comptable par défaut pour les produits achetés (utilisé si non défini dans la fiche produit)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Compte comptable par défaut pour les produits vendus (utilisé si non défini dans la fiche produit)
-ACCOUNTING_PRODUCT_SOLD_ACCOUNT_INTRA=Code comptable par défaut pour les produits vendus dans la CEE (utilisé si non définie dans la fiche produit)
-ACCOUNTING_PRODUCT_SOLD_ACCOUNT_EXPORT=Code comptable par défaut pour les produits vendus exportés hors de la CEE (utilisé si non définie dans la fiche produit)
+ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Code comptable par défaut pour les produits vendus dans la CEE (utilisé si non définie dans la fiche produit)
+ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Code comptable par défaut pour les produits vendus exportés hors de la CEE (utilisé si non définie dans la fiche produit)
 ACCOUNTING_SERVICE_BUY_ACCOUNT=Compte comptable par défaut pour les services achetés (utilisé si non défini dans la fiche service)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=Compte comptable par défaut pour les services vendus (utilisé si non défini dans la fiche service)
 
@@ -177,6 +177,7 @@ LabelAccount=Libellé du compte
 LabelOperation=Libellé opération
 Sens=Sens
 LetteringCode=Code de lettrage
+Lettering=Lettrage
 Codejournal=Journal
 JournalLabel=Libellé journal
 NumPiece=Numéro de pièce
@@ -288,8 +289,10 @@ Modelcsv_quadratus=Export vers Quadratus QuadraCompta
 Modelcsv_ebp=Export vers EBP
 Modelcsv_cogilog=Export vers Cogilog
 Modelcsv_agiris=Export vers Agiris
+Modelcsv_openconcerto=Export pour OpenConcerto (Test)
 Modelcsv_configurable=Export configurable
-Modelcsv_FEC=Exportation FEC (Art. L47 A) (Test)
+Modelcsv_FEC=Exportation FEC (Test)
+Modelcsv_Sage50_Swiss=Export pour Sage 50 Suisse
 ChartofaccountsId=Id plan comptable
 
 ## Tools - Init accounting account on product / service
@@ -299,8 +302,12 @@ DefaultBindingDesc=Cette page peut être utilisée pour définir un compte par d
 DefaultClosureDesc=Cette page peut être utilisée pour définir les paramètres pour clore un bilan.
 Options=Options
 OptionModeProductSell=Mode ventes
+OptionModeProductSellIntra=Mode ventes exportées dans la CEE
+OptionModeProductSellExport=Mode ventes exportées dans d'autres pays
 OptionModeProductBuy=Mode achats
 OptionModeProductSellDesc=Afficher tous les produits/services avec le compte comptable pour les ventes.
+OptionModeProductSellIntraDesc=Afficher tous les produits avec un compte comptabilité pour les ventes dans la CEE.
+OptionModeProductSellExportDesc=Afficher tous les produits avec un compte comptable pour les autres ventes à les autres pays.
 OptionModeProductBuyDesc=Afficher tous les produits/services avec le compte comptable pour les achats.
 CleanFixHistory=Effacer les données comptables des lignes qui n'existent pas dans le plan comptable
 CleanHistory=Réinitialiser tous les liens pour l'année sélectionnée

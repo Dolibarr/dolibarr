@@ -27,7 +27,7 @@
 /**
  *	\file       htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
  *	\ingroup    commande
- *	\brief      Fichier de la classe permettant de generer les commandes au modele Eratosthène
+ *	\brief      File of the class allowing to generate the orders to the Eratosthene model
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/commande/modules_commande.php';
@@ -38,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 
 
 /**
- *	Classe to generate PDF orders with template Eratosthene
+ *	Class to generate PDF orders with template Eratosthene
  */
 class pdf_eratosthene extends ModelePDFCommandes
 {
@@ -356,15 +356,6 @@ class pdf_eratosthene extends ModelePDFCommandes
 				    }
 				}
 
-				if (empty($this->atleastonediscount) && empty($conf->global->PRODUCT_USE_UNITS))
-				{
-					$this->posxpicture+=($this->postotalht - $this->posxdiscount);
-					$this->posxtva+=($this->postotalht - $this->posxdiscount);
-					$this->posxup+=($this->postotalht - $this->posxdiscount);
-					$this->posxqty+=($this->postotalht - $this->posxdiscount);
-					$this->posxdiscount+=($this->postotalht - $this->posxdiscount);
-					//$this->postotalht;
-				}
 
 				// New page
 				$pdf->AddPage();
@@ -423,6 +414,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 				    $substitutionarray=pdf_getSubstitutionArray($outputlangs, null, $object);
 				    complete_substitutions_array($substitutionarray, $outputlangs, $object);
 				    $notetoshow = make_substitutions($notetoshow, $substitutionarray, $outputlangs);
+				    $notetoshow = convertBackOfficeMediasLinksToPublicLinks($notetoshow);
 
 					$tab_top -= 2;
 
@@ -1709,22 +1701,6 @@ class pdf_eratosthene extends ModelePDFCommandes
 	        ),
 	        'border-left' => true, // add left line separator
 	    );
-
-	    $rank = $rank + 10;
-	    $this->cols['progress'] = array(
-	        'rank' => $rank,
-	        'width' => 19, // in mm
-	        'status' => false,
-	        'title' => array(
-	            'textkey' => 'Progress'
-	        ),
-	        'border-left' => false, // add left line separator
-	    );
-
-	    if($this->situationinvoice)
-	    {
-	        $this->cols['progress']['status'] = true;
-	    }
 
 	    $rank = $rank + 10;
 	    $this->cols['unit'] = array(

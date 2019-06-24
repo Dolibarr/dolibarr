@@ -483,7 +483,7 @@ function show_stats_for_company($product, $socid)
 /**
  *	Return translation label of a unit key
  *
- *	@param	int		$unit                Unit key (-3,0,3,98,99...)
+ *	@param	int		$unit                ID of unit (rowid in llx_c_units table)
  *	@param  string	$measuring_style     Style of unit: weight, volume,...
  *	@return	string	   			         Unit string
  * 	@see	formproduct->selectMeasuringUnits
@@ -494,7 +494,7 @@ function measuring_units_string($unit, $measuring_style = '')
 	require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
 	$measuringUnits= new CUnits($db);
 	$result = $measuringUnits->fetchAll('', '', 0, 0, array(
-			't.code' => $unit,
+			't.rowid' => $unit,
 			't.unit_type' => $measuring_style,
 			't.active' => 1
 	));

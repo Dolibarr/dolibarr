@@ -94,6 +94,8 @@ class AntiVir
 		// Run CLI command. If run of Windows, you can get return with echo %ERRORLEVEL%
 		$lastline=exec($fullcommand, $output, $return_var);
 
+		if (is_null($output)) $output=array();
+
         //print "x".$lastline." - ".join(',',$output)." - ".$return_var."y";exit;
 
 		/*

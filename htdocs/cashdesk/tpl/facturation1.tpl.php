@@ -55,17 +55,6 @@ $langs->loadLangs(array("main","bills","cashdesk"));
 				onfocus="javascript: this.select();" />
 			</td>
 			<td class="select_design maxwidthonsmartphone">
-            <?php /*
-            $selected='';
-            $htmlname='idprod';
-            $status=-1;
-            $rice_level=$company->price_level;
-            print ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/product/ajax/products.php', 'outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=1&status='.$status.'&finished='.$finished, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT);
-            if (! $hidelabel) print $langs->trans("RefOrLabel").' : ';
-            print '<input type="text" size="4" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'" />';
-            */
-            ?>
-
 				<select id="selProduit" class="maxwidthonsmartphone" name="selProduit" onchange="javascript: setSource('LISTE');">
 					<?php
                         print '<option value="0">'.$top_liste_produits.'</option>'."\n";

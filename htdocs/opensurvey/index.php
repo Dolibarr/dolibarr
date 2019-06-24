@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2013-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +32,12 @@ if (!$user->rights->opensurvey->read) accessforbidden();
 /*
  * View
  */
+
+
+$hookmanager = new HookManager($db);
+
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('opensurveyindex'));
 
  // Load translation files required by the page
 $langs->load("opensurvey");
@@ -77,6 +84,9 @@ print '</table>';
 
 
 print '</div></div></div>';
+
+$parameters = array('user' => $user);
+$reshook = $hookmanager->executeHooks('dashboardOpenSurvey', $parameters, $object); // Note that $action and $object may have been modified by hook
 
 // End of page
 llxFooter();

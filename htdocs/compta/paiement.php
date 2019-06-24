@@ -222,19 +222,26 @@ if (empty($reshook))
 	    if ($socid > 0) $thirdparty->fetch($socid);
 
 	    // Clean parameters amount if payment is for a credit note
-	    if (GETPOST('type') == Facture::TYPE_CREDIT_NOTE)
+	    foreach ($amounts as $key => $value)	// How payment is dispatched
 	    {
-		    foreach ($amounts as $key => $value)	// How payment is dispatch
-		    {
-		    	$newvalue = price2num($value, 'MT');
-		    	$amounts[$key] = -$newvalue;
-		    }
+	        $tmpinvoice = new Facture($db);
+	        $tmpinvoice->fetch($key);
+	        if ($tmpinvoice->type == Facture::TYPE_CREDIT_NOTE)
+	        {
+	            $newvalue = price2num($value, 'MT');
+	            $amounts[$key] = - abs($newvalue);
+	        }
+	    }
 
-			foreach ($multicurrency_amounts as $key => $value)	// How payment is dispatch
-		    {
-		    	$newvalue = price2num($value, 'MT');
-		    	$multicurrency_amounts[$key] = -$newvalue;
-		    }
+	    foreach ($multicurrency_amounts as $key => $value)	// How payment is dispatched
+	    {
+	        $tmpinvoice = new Facture($db);
+	        $tmpinvoice->fetch($key);
+	        if ($tmpinvoice->type == Facture::TYPE_CREDIT_NOTE)
+	        {
+	            $newvalue = price2num($value, 'MT');
+	            $multicurrency_amounts[$key] = - abs($newvalue);
+	        }
 	    }
 
 	    if (! empty($conf->banque->enabled))
@@ -544,7 +551,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 		}
         $sql.= ') AND f.paye = 0';
         $sql.= ' AND f.fk_statut = 1'; // Statut=0 => not validated, Statut=2 => canceled
-        if ($facture->type != 2)
+        if ($facture->type != Facture::TYPE_CREDIT_NOTE)
         {
             $sql .= ' AND type IN (0,1,3,5)';	// Standard invoice, replacement, deposit, situation
         }
@@ -552,7 +559,6 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
         {
             $sql .= ' AND type = 2';		// If paying back a credit note, we show all credit notes
         }
-
         // Sort invoices by date and serial number: the older one comes first
         $sql.=' ORDER BY f.datef ASC, f.ref ASC';
 
@@ -562,9 +568,6 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             $num = $db->num_rows($resql);
             if ($num > 0)
             {
-            	$sign=1;
-            	if ($facture->type == 2) $sign=-1;
-
 				$arraytitle=$langs->trans('Invoice');
 				if ($facture->type == 2) $arraytitle=$langs->trans("CreditNotes");
 				$alreadypayedlabel=$langs->trans('Received');
@@ -606,6 +609,9 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                 {
                     $objp = $db->fetch_object($resql);
 
+                    $sign=1;
+                    if ($facture->type == Facture::TYPE_CREDIT_NOTE) $sign=-1;
+
 					$soc = new Societe($db);
 					$soc->fetch($objp->socid);
 
@@ -631,7 +637,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 					print '<td>';
                     print $invoice->getNomUrl(1, '');
-                    if($objp->socid != $facture->thirdparty->id) print ' - '.$soc->getNomUrl(1).' ';
+                    if ($objp->socid != $facture->thirdparty->id) print ' - '.$soc->getNomUrl(1).' ';
                     print "</td>\n";
 
                     // Date
@@ -842,7 +848,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
  */
 if (! GETPOST('action', 'aZ09'))
 {
-    if ($page == -1) $page = 0 ;
+    if (empty($page) || $page == -1) $page = 0;
     $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
     $offset = $limit * $page ;
 

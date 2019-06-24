@@ -37,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('companies', 'other', 'compta'));
+$langs->loadLangs(array('companies', 'other', 'bills', 'compta'));
 
 $date_startmonth=GETPOST('date_startmonth');
 $date_startday=GETPOST('date_startday');
@@ -146,7 +146,7 @@ if ($result)
    	{
    	    $obj = $db->fetch_object($result);
    	    // les variables
-   	    $cptcli = (! empty($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER)?$conf->global->ACCOUNTING_ACCOUNT_CUSTOMER:$langs->trans("CodeNotDef"));
+   	    $cptcli = (($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER != "")?$conf->global->ACCOUNTING_ACCOUNT_CUSTOMER:$langs->trans("CodeNotDef"));
    	    $compta_soc = (! empty($obj->code_compta)?$obj->code_compta:$cptcli);
 		$compta_prod = $obj->accountancy_code_sell;
 		if (empty($compta_prod))

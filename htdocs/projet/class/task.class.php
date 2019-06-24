@@ -48,7 +48,11 @@ class Task extends CommonObject
 	public $fk_element='fk_task';
 
 	public $picto = 'task';
-	protected $childtables=array('projet_task_time');    // To test if we can delete object
+
+	/**
+	 * @var array	List of child tables. To test if we can delete object.
+	 */
+	protected $childtables=array('projet_task_time');
 
 	/**
      * @var int ID parent task
@@ -1587,6 +1591,7 @@ class Task extends CommonObject
 
     /**	Load an object from its id and create a new one in database
      *
+	 *  @param	User	$user		            User making the clone
 	 *  @param	int		$fromid     			Id of object to clone
 	 *  @param	int		$project_id				Id of project to attach clone task
 	 *  @param	int		$parent_task_id			Id of task to attach clone task
@@ -1598,9 +1603,9 @@ class Task extends CommonObject
 	 *  @param	bool	$clone_prog				clone progress of project
 	 *  @return	int								New id of clone
      */
-	public function createFromClone($fromid, $project_id, $parent_task_id, $clone_change_dt = false, $clone_affectation = false, $clone_time = false, $clone_file = false, $clone_note = false, $clone_prog = false)
+	public function createFromClone(User $user, $fromid, $project_id, $parent_task_id, $clone_change_dt = false, $clone_affectation = false, $clone_time = false, $clone_file = false, $clone_note = false, $clone_prog = false)
 	{
-		global $user,$langs,$conf;
+		global $langs,$conf;
 
 		$error=0;
 

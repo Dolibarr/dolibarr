@@ -667,7 +667,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
                     array(
                         'doc/' => dol_buildpath(strtolower($this->name).'/doc/', 1),
                         'img/' => dol_buildpath(strtolower($this->name).'/img/', 1),
-                        'images/' => dol_buildpath(strtolower($this->name).'/imgages/', 1),
+                        'images/' => dol_buildpath(strtolower($this->name).'/images/', 1),
                     )
                 );
             }
@@ -746,7 +746,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
         $filefound= false;
 
         // Define path to file README.md.
-        // First check README-la_LA.md then README.md
+        // First check ChangeLog-la_LA.md then ChangeLog.md
         $pathoffile = dol_buildpath(strtolower($this->name).'/ChangeLog-'.$langs->defaultlang.'.md', 0);
         if (dol_is_file($pathoffile)) {
             $filefound = true;
@@ -1740,8 +1740,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
                     $r_subperms = isset($this->rights[$key][5])?$this->rights[$key][5]:'';
                     $r_modul = empty($this->rights_class)?strtolower($this->name):$this->rights_class;
 
-                    if (empty($r_type)) { $r_type='w';
-                    }
+                    if (empty($r_type)) { $r_type='w'; }
+                    if (empty($r_def)) { $r_def=0; }
 
                     // Search if perm already present
                     $sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."rights_def";

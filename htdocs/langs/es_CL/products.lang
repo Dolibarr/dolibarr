@@ -123,7 +123,6 @@ DynamicPriceConfiguration=Configuración dinámica de precios
 AddVariable=Agregar variable
 AddUpdater=Agregar actualización
 VariableToUpdate=Variable para actualizar
-GlobalVariableUpdaters=Actualizadores variables globales
 GlobalVariableUpdaterType0=Datos JSON
 GlobalVariableUpdaterHelp0=Analiza los datos JSON de la URL especificada, VALOR especifica la ubicación del valor relevante,
 GlobalVariableUpdaterHelpFormat0=Formato para la solicitud {"URL": "http://example.com/urlofjson", "VALOR": "array1, array2, targetvalue"}

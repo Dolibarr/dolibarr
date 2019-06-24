@@ -47,27 +47,6 @@ if (! empty($_SERVER['MAIN_SHOW_TUNING_INFO']))
 	}
 }
 
-// Removed magic_quotes
-if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* deprecated in PHP 5.0 and removed in PHP 5.5
-{
-	if (get_magic_quotes_gpc())
-	{
-		// Forcing parameter setting magic_quotes_gpc and cleaning parameters
-		// (Otherwise he would have for each position, condition
-		// Reading stripslashes variable according to state get_magic_quotes_gpc).
-		// Off mode recommended (just do $db->escape for insert / update).
-		function stripslashes_deep($value)
-		{
-			return (is_array($value) ? array_map('stripslashes_deep', $value) : stripslashes($value));
-		}
-		$_GET     = array_map('stripslashes_deep', $_GET);
-		$_POST    = array_map('stripslashes_deep', $_POST);
-		$_FILES   = array_map('stripslashes_deep', $_FILES);
-		//$_COOKIE  = array_map('stripslashes_deep', $_COOKIE); // Useless because a cookie should never be outputed on screen nor used into sql
-		@set_magic_quotes_runtime(0);
-	}
-}
-
 /**
  * Security: SQL Injection and XSS Injection (scripts) protection (Filters on GET, POST, PHP_SELF).
  *
@@ -91,7 +70,7 @@ function testSqlAndScriptInject($val, $type)
 	}
 	if ($type == 3)
 	{
-		$inj += preg_match('/select|update|delete|replace|group\s+by|concat|count|from/i', $val);
+		$inj += preg_match('/select|update|delete|truncate|replace|group\s+by|concat|count|from|union/i', $val);
 	}
 	if ($type != 2)	// Not common key strings, so we can check them both on GET and POST
 	{
@@ -401,13 +380,19 @@ if ((! defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && ! empty($conf->
 if (GETPOSTISSET('disablemodules'))  $_SESSION["disablemodules"]=GETPOST('disablemodules', 'alpha');
 if (! empty($_SESSION["disablemodules"]))
 {
+    $modulepartkeys = array('css', 'js', 'tabs', 'triggers', 'login', 'substitutions', 'menus', 'theme', 'sms', 'tpl', 'barcode', 'models', 'societe', 'hooks', 'dir', 'syslog', 'tpllinkable', 'contactelement', 'moduleforexternal');
+
 	$disabled_modules=explode(',', $_SESSION["disablemodules"]);
 	foreach($disabled_modules as $module)
 	{
 		if ($module)
 		{
-			if (empty($conf->$module)) $conf->$module=new stdClass();
+			if (empty($conf->$module)) $conf->$module=new stdClass();    // To avoid warnings
 			$conf->$module->enabled=false;
+			foreach($modulepartkeys as $modulepartkey)
+			{
+			    unset($conf->modules_parts[$modulepartkey][$module]);
+			}
 			if ($module == 'fournisseur')		// Special case
 			{
 				$conf->supplier_order->enabled=0;
@@ -1152,7 +1137,7 @@ function top_httphead($contenttype = 'text/html', $forcenocache = 0)
 		$contentsecuritypolicy = $conf->global->MAIN_HTTP_CONTENT_SECURITY_POLICY;
 
 		if (! is_object($hookmanager)) $hookmanager = new HookManager($db);
-		$hookmanager->initHooks("main");
+		$hookmanager->initHooks(array("main"));
 
 		$parameters=array('contentsecuritypolicy'=>$contentsecuritypolicy);
 		$result=$hookmanager->executeHooks('setContentSecurityPolicy', $parameters);    // Note that $action and $object may have been modified by some hooks
@@ -1212,7 +1197,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 	if (empty($disablehead))
 	{
 	    if (! is_object($hookmanager)) $hookmanager = new HookManager($db);
-	    $hookmanager->initHooks("main");
+	    $hookmanager->initHooks(array("main"));
 
 	    $ext='layout='.$conf->browser->layout.'&version='.urlencode(DOL_VERSION);
 
@@ -1689,12 +1674,8 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 				if ($mode == 'wiki') $text.=sprintf($helpbaseurl, urlencode(html_entity_decode($helppage)));
 				else $text.=sprintf($helpbaseurl, $helppage);
 				$text.='">';
-				//$text.=img_picto('', 'helpdoc_top').' ';
 				$text.='<span class="fa fa-question-circle atoplogin valignmiddle"></span>';
-				//$toprightmenu.=$langs->trans($mode == 'wiki' ? 'OnlineHelp': 'Help');
-				//if ($mode == 'wiki') $text.=' ('.dol_trunc(strtr($helppage,'_',' '),8).')';
 				$text.='</a>';
-				//$toprightmenu.='</div>'."\n";
 				$toprightmenu.=@Form::textwithtooltip('', $title, 2, 1, $text, 'login_block_elem', 2);
 			}
 		}
@@ -1740,8 +1721,8 @@ function top_menu_user(User $user, Translate $langs)
     }
     else{
         $nophoto='/public/theme/common/user_anonymous.png';
-        if ($object->gender == 'man') $nophoto='/public/theme/common/user_man.png';
-        if ($object->gender == 'woman') $nophoto='/public/theme/common/user_woman.png';
+        if ($user->gender == 'man') $nophoto='/public/theme/common/user_man.png';
+        if ($user->gender == 'woman') $nophoto='/public/theme/common/user_woman.png';
 
         $userImage = '<img class="photo photouserphoto userphoto" alt="No photo" src="'.DOL_URL_ROOT.$nophoto.'">';
         $userDropDownImage = '<img class="photo dropdown-user-image" alt="No photo" src="'.DOL_URL_ROOT.$nophoto.'">';
@@ -1809,13 +1790,26 @@ function top_menu_user(User $user, Translate $langs)
         $profilName = '<i class="far fa-star classfortooltip" title="'.$langs->trans("Administrator").'" ></i> '.$profilName;
     }
 
+    // Define version to show
+    $appli=constant('DOL_APPLICATION_TITLE');
+    if (! empty($conf->global->MAIN_APPLICATION_TITLE))
+    {
+    	$appli=$conf->global->MAIN_APPLICATION_TITLE;
+    	if (preg_match('/\d\.\d/', $appli))
+    	{
+    		if (! preg_match('/'.preg_quote(DOL_VERSION).'/', $appli)) $appli.=" (".DOL_VERSION.")";	// If new title contains a version that is different than core
+    	}
+    	else $appli.=" ".DOL_VERSION;
+    }
+    else $appli.=" ".DOL_VERSION;
+
     $btnUser = '
     <div id="topmenu-login-dropdown" class="userimg atoplogin dropdown user user-menu">
-        <a href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'" class="dropdown-toggle" data-toggle="dropdown">
+        <a href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'" class="dropdown-toggle login-dropdown-a" data-toggle="dropdown">
             '.$userImage.'
-            <span class="hidden-xs maxwidth200 atoploginusername">'.dol_trunc($user->firstname ? $user->firstname : $user->login, 11).'</span>
-            <span class="fa fa-chevron-down" id="dropdown-icon-down"></span>
-            <span class="fa fa-chevron-up hidden" id="dropdown-icon-up"></span>
+            <span class="hidden-xs maxwidth200 atoploginusername">'.dol_trunc($user->firstname ? $user->firstname : $user->login, 10).'</span>
+            <span class="fa fa-chevron-down login-dropdown-btn" id="dropdown-icon-down"></span>
+            <span class="fa fa-chevron-up login-dropdown-btn hidden" id="dropdown-icon-up"></span>
         </a>
         <div class="dropdown-menu">
             <!-- User image -->
@@ -1823,8 +1817,9 @@ function top_menu_user(User $user, Translate $langs)
                 '.$userDropDownImage.'
 
                 <p>
-                    '.$profilName.'
-                    <br/><small class="classfortooltip" title="'.$langs->trans("PreviousConnexion").'" ><i class="fa fa-user-clock"></i> '.dol_print_date($user->datepreviouslogin, "dayhour", 'tzuser').'</small>
+                    '.$profilName.'<br>
+					<small class="classfortooltip" title="'.$langs->trans("PreviousConnexion").'" ><i class="fa fa-user-clock"></i> '.dol_print_date($user->datepreviouslogin, "dayhour", 'tzuser').'</small><br>
+					<small class="classfortooltip"><i class="fa fa-cog"></i> '.$langs->trans("Version").' '.$appli.'</small>
                 </p>
             </div>
 
@@ -1920,7 +1915,7 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 		}
 		else
 		{
-		    if (is_array(arrayresult))
+		    if (is_array($arrayresult))
 		    {
     			foreach($arrayresult as $key => $val)
     			{
@@ -2030,6 +2025,16 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 			$bugbaseurl.= urlencode("- **PHP**: " . php_sapi_name() . ' ' . phpversion() . "\n");
 			$bugbaseurl.= urlencode("- **Database**: " . $db::LABEL . ' ' . $db->getVersion() . "\n");
 			$bugbaseurl.= urlencode("- **URL**: " . $_SERVER["REQUEST_URI"] . "\n");
+
+			// Execute hook printBugtrackInfo
+			$parameters=array('bugbaseurl'=>$bugbaseurl);
+			$reshook=$hookmanager->executeHooks('printBugtrackInfo', $parameters);    // Note that $action and $object may have been modified by some hooks
+			if (empty($reshook))
+			{
+				$bugbaseurl.=$hookmanager->resPrint;
+			}
+			else $bugbaseurl=$hookmanager->resPrint;
+
 			$bugbaseurl.= urlencode("\n");
 			$bugbaseurl.= urlencode("## Report\n");
 			print '<div id="blockvmenuhelpbugreport" class="blockvmenuhelp">';

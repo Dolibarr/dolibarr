@@ -57,7 +57,7 @@ if (! $sortfield) $sortfield="name";
 $object = new PaymentVarious($db);
 $object->fetch($id, $ref);
 
-$upload_dir = $conf->banque->dir_output.'/'.dol_sanitizeFileName($object->id);
+$upload_dir = $conf->bank->dir_output.'/'.dol_sanitizeFileName($object->id);
 $modulepart='banque';
 
 
@@ -82,7 +82,7 @@ if ($object->id)
 {
 	$head=various_payment_prepare_head($object);
 
-	dol_fiche_head($head, 'documents', $langs->trans("VariousPayment"), -1, 'payment');
+	dol_fiche_head($head, 'documents', $langs->trans("VariousPayment"), -1, $object->picto);
 
 	$morehtmlref='<div class="refidno">';
 	// Project

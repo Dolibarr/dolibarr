@@ -448,8 +448,8 @@ class pdf_sponge extends ModelePDFFactures
 	                $substitutionarray=pdf_getSubstitutionArray($outputlangs, null, $object);
 	                complete_substitutions_array($substitutionarray, $outputlangs, $object);
 	                $notetoshow = make_substitutions($notetoshow, $substitutionarray, $outputlangs);
-
-
+	                $notetoshow = convertBackOfficeMediasLinksToPublicLinks($notetoshow);
+	                
 	                $pdf->startTransaction();
 
 	                $pdf->SetFont('', '', $default_font_size - 1);

@@ -1117,12 +1117,13 @@ class SupplierProposal extends CommonObject
     /**
      *		Load an object from its id and create a new one in database
      *
-     *		@param		int				$socid			Id of thirdparty
-     * 	 	@return		int								New id of clone
+	 *      @param	    User	$user		    User making the clone
+     *		@param		int		$fromid			Id of thirdparty
+     * 	 	@return		int						New id of clone
      */
-    public function createFromClone($socid = 0)
+    public function createFromClone(User $user, $fromid = 0)
     {
-        global $user,$langs,$conf,$hookmanager;
+        global $conf,$hookmanager;
 
         $error=0;
         $now=dol_now();
@@ -1139,9 +1140,9 @@ class SupplierProposal extends CommonObject
         $objsoc=new Societe($this->db);
 
         // Change socid if needed
-        if (! empty($socid) && $socid != $this->socid)
+        if (! empty($fromid) && $fromid != $this->socid)
         {
-            if ($objsoc->fetch($socid) > 0)
+            if ($objsoc->fetch($fromid) > 0)
             {
                 $this->socid 				= $objsoc->id;
                 $this->cond_reglement_id	= (! empty($objsoc->cond_reglement_id) ? $objsoc->cond_reglement_id : 0);

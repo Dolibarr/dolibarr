@@ -44,7 +44,7 @@ class modExpenseReport extends DolibarrModules
 		$this->numero = 770;
 
 		$this->family = "hr";
-		$this->module_position = '40';
+		$this->module_position = '42';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
@@ -150,7 +150,7 @@ class modExpenseReport extends DolibarrModules
 		$this->rights[$r][0] = 777;
 		$this->rights[$r][1] = 'Read expense reports of everybody';
 		$this->rights[$r][2] = 'r';
-		$this->rights[$r][3] = 1;
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'readall';
 		$r++;
 

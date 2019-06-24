@@ -52,6 +52,9 @@ ALTER TABLE llx_actioncomm ADD COLUMN email_subject varchar(255) after email_msg
 ALTER TABLE llx_actioncomm ADD COLUMN email_tocc varchar(255) after email_to;
 ALTER TABLE llx_actioncomm ADD COLUMN email_tobcc varchar(255) after email_tocc;
 
+ALTER TABLE llx_actioncomm MODIFY COLUMN code varchar(50);
+
+
 -- For 9.0
 ALTER TABLE llx_extrafields ADD COLUMN help text NULL;
 ALTER TABLE llx_extrafields ADD COLUMN totalizable boolean DEFAULT FALSE after list;
@@ -267,8 +270,8 @@ CREATE TABLE llx_pos_cash_fence(
 
 
 -- Withdrawals / Prelevements
-UPDATE llx_const set name = 'PRELEVEMENT_END_TO_END' where name = 'END_TO_END';
-UPDATE llx_const set name = 'PRELEVEMENT_USTRD' where name = 'USTRD';
+UPDATE llx_const set name = __ENCRYPT('PRELEVEMENT_END_TO_END')__ where name = __ENCRYPT('END_TO_END')__;
+UPDATE llx_const set name = __ENCRYPT('PRELEVEMENT_USTRD')__ where name = __ENCRYPT('USTRD')__;
 
 
 -- Delete duplicate accounting account, but only if not used

@@ -30,6 +30,7 @@
  * $permtoedit  (used to replace test $user->rights->$element->creer)
  * $senderissupplier (0 by default, 1 for supplier invoices/orders)
  * $inputalsopricewithtax (0 by default, 1 to also show column with unit price including tax)
+ * $outputalsopricetotalwithtax
  * $usemargins (0 to disable all margins columns, 1 to show according to margin setup)
  * $object_rights->creer initialized from = $object->getRights()
  * $disableedit, $disablemove, $disableremove
@@ -48,7 +49,7 @@ if (empty($object) || ! is_object($object))
 global $forceall, $senderissupplier, $inputalsopricewithtax, $outputalsopricetotalwithtax;
 
 $usemargins=0;
-if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($object->element, array('facture','propal','commande'))) $usemargins=1;
+if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($object->element, array('facture','facturerec','propal','commande'))) $usemargins=1;
 
 if (empty($dateSelector)) $dateSelector=0;
 if (empty($forceall)) $forceall=0;
@@ -237,27 +238,33 @@ $domData .= ' data-product_type="'.$line->product_type.'"';
 	<td class="linecoldiscount"><?php $coldisplay++; ?>&nbsp;</td>
 	<?php }
 
-	if ($this->situation_cycle_ref) {
+	$rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT, $conf->global->MAIN_MAX_DECIMALS_TOT);
+
+	// Fields for situation invoices
+	if ($this->situation_cycle_ref)
+	{
+	    include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 		$coldisplay++;
 		print '<td class="linecolcycleref nowrap right">' . $line->situation_percent . '%</td>';
+		$coldisplay++;
+		$locataxes_array = getLocalTaxesFromRate($line->tva.($line->vat_src_code ? ' ('.$line->vat_src_code.')' : ''), 0, ($senderissupplier?$mysoc:$object->thirdparty), ($senderissupplier?$object->thirdparty:$mysoc));
+		$tmp = calcul_price_total($line->qty, $line->pu, $line->remise_percent, $line->txtva, -1, -1, 0, 'HT', $line->info_bits, $line->type, ($senderissupplier?$object->thirdparty:$mysoc), $locataxes_array, 100, $object->multicurrency_tx, $line->multicurrency_subprice);
+		print '<td align="right" class="linecolcycleref2 nowrap">' . price($tmp[0]) . '</td>';
 	}
 
   	if ($usemargins && ! empty($conf->margin->enabled) && empty($user->societe_id))
   	{
-		$rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT, $conf->global->MAIN_MAX_DECIMALS_TOT);
-  		?>
-
-  	<?php if (!empty($user->rights->margins->creer)) { ?>
-  	<td class="linecolmargin1 nowrap margininfos right"><?php $coldisplay++; ?><?php echo price($line->pa_ht); ?></td>
-  	<?php } ?>
-  	<?php if (! empty($conf->global->DISPLAY_MARGIN_RATES) && $user->rights->margins->liretous) { ?>
-  	  <td class="linecolmargin2 nowrap margininfos right"><?php $coldisplay++; ?><?php echo (($line->pa_ht == 0)?'n/a':price($line->marge_tx, null, null, null, null, $rounding).'%'); ?></td>
-  	<?php }
-    if (! empty($conf->global->DISPLAY_MARK_RATES) && $user->rights->margins->liretous) {?>
-  	  <td class="linecolmargin2 nowrap margininfos right"><?php $coldisplay++; ?><?php echo price($line->marque_tx, null, null, null, null, $rounding).'%'; ?></td>
-    <?php }
-  	}
-  	?>
+  		if (!empty($user->rights->margins->creer)) { ?>
+	  	  <td class="linecolmargin1 nowrap margininfos right"><?php $coldisplay++; ?><?php echo price($line->pa_ht); ?></td>
+	  	<?php } ?>
+	  	<?php if (! empty($conf->global->DISPLAY_MARGIN_RATES) && $user->rights->margins->liretous) { ?>
+	  	  <td class="linecolmargin2 nowrap margininfos right"><?php $coldisplay++; ?><?php echo (($line->pa_ht == 0)?'n/a':price($line->marge_tx, null, null, null, null, $rounding).'%'); ?></td>
+	  	<?php }
+	    if (! empty($conf->global->DISPLAY_MARK_RATES) && $user->rights->margins->liretous) {?>
+	  	  <td class="linecolmargin2 nowrap margininfos right"><?php $coldisplay++; ?><?php echo price($line->marque_tx, null, null, null, null, $rounding).'%'; ?></td>
+	    <?php }
+	}
+	?>
 
 	<?php if ($line->special_code == 3)	{ ?>
 		<td class="linecoloption nowrap right"><?php $coldisplay++; ?><?php echo $langs->trans('Option'); ?></td>
@@ -292,51 +299,51 @@ $domData .= ' data-product_type="'.$line->product_type.'"';
 
 	<?php
 	if ($this->statut == 0  && ($object_rights->creer) && $action != 'selectlines' ) { ?>
-	<td class="linecoledit center"><?php $coldisplay++; ?>
-		<?php if (($line->info_bits & 2) == 2 || ! empty($disableedit)) { ?>
-		<?php } else { ?>
-		<a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=editline&amp;lineid='.$line->id.'#line_'.$line->id; ?>">
-		<?php echo img_edit(); ?>
-		</a>
-		<?php } ?>
-	</td>
+		<td class="linecoledit center"><?php $coldisplay++; ?>
+			<?php if (($line->info_bits & 2) == 2 || ! empty($disableedit)) { ?>
+			<?php } else { ?>
+			<a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=editline&amp;lineid='.$line->id.'#line_'.$line->id; ?>">
+			<?php echo img_edit(); ?>
+			</a>
+			<?php } ?>
+		</td>
 
-	<td class="linecoldelete center"><?php $coldisplay++; ?>
+		<td class="linecoldelete center"><?php $coldisplay++; ?>
+			<?php
+			if (($line->fk_prev_id == null ) && empty($disableremove)) { //La suppression n'est autorisée que si il n'y a pas de ligne dans une précédente situation
+				print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $this->id . '&amp;action=ask_deleteline&amp;lineid=' . $line->id . '">';
+				print img_delete();
+				print '</a>';
+			}
+			?>
+		</td>
+
 		<?php
-		if (($line->fk_prev_id == null ) && empty($disableremove)) { //La suppression n'est autorisée que si il n'y a pas de ligne dans une précédente situation
-			print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $this->id . '&amp;action=ask_deleteline&amp;lineid=' . $line->id . '">';
-			print img_delete();
-			print '</a>';
-		}
-		?>
-	</td>
-
+		if ($num > 1 && $conf->browser->layout != 'phone' && ($this->situation_counter == 1 || !$this->situation_cycle_ref) && empty($disablemove)) { ?>
+		<td class="linecolmove tdlineupdown center"><?php $coldisplay++; ?>
+			<?php if ($i > 0) { ?>
+			<a class="lineupdown" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=up&amp;rowid='.$line->id; ?>">
+			<?php echo img_up('default', 0, 'imgupforline'); ?>
+			</a>
+			<?php } ?>
+			<?php if ($i < $num-1) { ?>
+			<a class="lineupdown" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=down&amp;rowid='.$line->id; ?>">
+			<?php echo img_down('default', 0, 'imgdownforline'); ?>
+			</a>
+			<?php } ?>
+		</td>
+	    <?php } else { ?>
+	    <td <?php echo (($conf->browser->layout != 'phone' && empty($disablemove)) ?' class="linecolmove tdlineupdown center"':' class="linecolmove center"'); ?>><?php $coldisplay++; ?></td>
+		<?php } ?>
 	<?php
-	if ($num > 1 && $conf->browser->layout != 'phone' && ($this->situation_counter == 1 || !$this->situation_cycle_ref) && empty($disablemove)) { ?>
-	<td class="linecolmove tdlineupdown center"><?php $coldisplay++; ?>
-		<?php if ($i > 0) { ?>
-		<a class="lineupdown" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=up&amp;rowid='.$line->id; ?>">
-		<?php echo img_up('default', 0, 'imgupforline'); ?>
-		</a>
-		<?php } ?>
-		<?php if ($i < $num-1) { ?>
-		<a class="lineupdown" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=down&amp;rowid='.$line->id; ?>">
-		<?php echo img_down('default', 0, 'imgdownforline'); ?>
-		</a>
-		<?php } ?>
-	</td>
-    <?php } else { ?>
-    <td <?php echo (($conf->browser->layout != 'phone' && empty($disablemove)) ?' class="linecolmove tdlineupdown center"':' class="linecolmove center"'); ?>><?php $coldisplay++; ?></td>
-	<?php } ?>
-<?php
     } else {
-?>
-	<td colspan="3"><?php $coldisplay=$coldisplay+3; ?></td>
-<?php
+	?>
+		<td colspan="3"><?php $coldisplay=$coldisplay+3; ?></td>
+	<?php
     }
-?>
-	<?php  if($action == 'selectlines'){ ?>
-	<td class="linecolcheck center"><input type="checkbox" class="linecheckbox" name="line_checkbox[<?php echo $i+1; ?>]" value="<?php echo $line->id; ?>" ></td>
+
+    if($action == 'selectlines'){ ?>
+		<td class="linecolcheck center"><input type="checkbox" class="linecheckbox" name="line_checkbox[<?php echo $i+1; ?>]" value="<?php echo $line->id; ?>" ></td>
 	<?php } ?>
 
 </tr>

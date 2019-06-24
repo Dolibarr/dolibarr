@@ -1,10 +1,10 @@
 <?php
 /* Copyright (C) 2004       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2019  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2016  Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2011-2018  Philippe Grand          <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2019  Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2011       Remy Younes             <ryounes@gmail.com>
  * Copyright (C) 2012-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2012       Christophe Battarel     <christophe.battarel@ltairis.fr>
@@ -28,7 +28,7 @@
 
 /**
  *	    \file       htdocs/accountancy/admin/accountmodel.php
- *		\ingroup    Advanced accountancy
+ *		\ingroup    Accountancy (Double entries)
  *		\brief      Page to administer model of chart of accounts
  */
 
@@ -462,8 +462,6 @@ $linkback='';
 
 print load_fiche_titre($titre, $linkback, 'title_accountancy');
 
-print "<br>\n";
-
 
 // Confirmation de la suppression de la ligne
 if ($action == 'delete')
@@ -522,7 +520,6 @@ if ($id)
 			if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label')
 			{
 				$valuetoshow=$langs->trans("Label");
-				if ($id != 25) $valuetoshow.="*";
 			}
 			if ($fieldlist[$field]=='country')         {
 				if (in_array('region_id', $fieldlist)) { print '<td>&nbsp;</td>'; continue; }		// For region page, we do not show the country input
@@ -583,10 +580,6 @@ if ($id)
 
 		$colspan=count($fieldlist)+3;
 
-		if (! empty($alabelisused))  // If there is one label among fields, we show legend of *
-		{
-			print '<tr><td colspan="'.$colspan.'">* '.$langs->trans("LabelUsedByDefault").'.</td></tr>';
-		}
 		print '<tr><td colspan="'.$colspan.'">&nbsp;</td></tr>';	// Keep &nbsp; to have a line with enough height
 	}
 
@@ -667,7 +660,6 @@ if ($id)
             }
             if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label') {
                 $valuetoshow=$langs->trans("Label");
-                if ($id != 25) $valuetoshow.="*";
             }
             if ($fieldlist[$field]=='country') {
                 $valuetoshow=$langs->trans("Country");
