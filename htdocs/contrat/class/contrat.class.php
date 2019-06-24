@@ -1920,7 +1920,7 @@ class Contrat extends CommonObject
 	 */
     public function getNomUrl($withpicto = 0, $maxlength = 0, $notooltip = 0, $save_lastsearch_value = -1)
 	{
-		global $conf, $langs, $user;
+		global $conf, $langs, $user, $hookmanager, $action;
 
 		$result='';
 
@@ -1962,6 +1962,14 @@ class Contrat extends CommonObject
             }
             $linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
             $linkclose.=' class="classfortooltip"';
+
+            if (is_object($hookmanager))
+            {
+            	$hookmanager->initHooks(array('contractdao'));
+            	$parameters=array('id'=>$this->id);
+            	$reshook=$hookmanager->executeHooks('getnomurltooltip', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
+            	if ($reshook > 0) $linkclose = $hookmanager->resPrint;
+            }
         }
 
 		$linkstart = '<a href="'.$url.'"';
