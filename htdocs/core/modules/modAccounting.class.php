@@ -170,7 +170,23 @@ class modAccounting extends DolibarrModules
 		$this->rights = array(); // Permission array used by this module
 		$r = 0;
 
-		$this->rights[$r][0] = 50401;
+        $this->rights[$r][0] = 50440;
+        $this->rights[$r][1] = 'Manage chart of accounts, setup of accountancy';
+        $this->rights[$r][2] = 'r';
+        $this->rights[$r][3] = 0;
+        $this->rights[$r][4] = 'chartofaccount';
+        $this->rights[$r][5] = '';
+        $r++;
+
+		$this->rights[$r][0] = 50430;
+		$this->rights[$r][1] = 'Define and close a fiscal year';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'fiscalyear';
+		$this->rights[$r][5] = '';
+		$r++;
+
+        $this->rights[$r][0] = 50401;
 		$this->rights[$r][1] = 'Bind products and invoices with accounting accounts';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
@@ -236,21 +252,6 @@ class modAccounting extends DolibarrModules
 		$this->rights[$r][5] = 'lire';
 		$r++;
 
-		$this->rights[$r][0] = 50430;
-		$this->rights[$r][1] = 'Define and close a fiscal year';
-		$this->rights[$r][2] = 'r';
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'fiscalyear';
-		$this->rights[$r][5] = '';
-		$r++;
-
-        $this->rights[$r][0] = 50440;
-        $this->rights[$r][1] = 'Manage chart of accounts, setup of accountancy';
-        $this->rights[$r][2] = 'r';
-        $this->rights[$r][3] = 0;
-        $this->rights[$r][4] = 'chartofaccount';
-        $this->rights[$r][5] = '';
-        $r++;
 
 		// Menus
 		//-------
