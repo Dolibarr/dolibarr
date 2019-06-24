@@ -1698,7 +1698,7 @@ class Facture extends CommonInvoice
 		$sql.= " import_key=".(isset($this->import_key)?"'".$this->db->escape($this->import_key)."'":"null").",";
 		$sql.= " situation_cycle_ref=".(empty($this->situation_cycle_ref)?"null":$this->db->escape($this->situation_cycle_ref)).",";
 		$sql.= " situation_counter=".(empty($this->situation_counter)?"null":$this->db->escape($this->situation_counter)).",";
-		$sql.= " situation_final=".(empty($this->situation_final)?"0":$this->db->escape($this->situation_final));
+		$sql.= " situation_final=".(empty($this->situation_final)?"0":$this->db->escape($this->situation_final)).",";
 		$sql.= " retained_warranty=".(empty($this->retained_warranty)?"0":$this->db->escape($this->retained_warranty)).",";
 		$sql.= " retained_warranty_date_limit=".(strval($this->retained_warranty_date_limit)!='' ? "'".$this->db->idate($this->retained_warranty_date_limit)."'" : 'null').",";
 		$sql.= " retained_warranty_fk_cond_reglement=".(isset($this->retained_warranty_fk_cond_reglement)?intval($this->retained_warranty_fk_cond_reglement):"null");
