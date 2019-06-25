@@ -343,7 +343,7 @@ class FactureFournisseur extends CommonInvoice
         $sql.= ", '".$this->db->escape($this->ref_supplier)."'";
         $sql.= ", ".$conf->entity;
         $sql.= ", '".$this->db->escape($this->type)."'";
-        $sql.= ", '".$this->db->escape($this->libelle)."'";
+        $sql.= ", '".$this->db->escape($this->label?$this->label:$this->libelle)."'";
         $sql.= ", ".$this->socid;
         $sql.= ", '".$this->db->idate($now)."'";
         $sql.= ", '".$this->db->idate($this->date)."'";
@@ -484,7 +484,7 @@ class FactureFournisseur extends CommonInvoice
 			        {
 			            $idligne = $this->db->last_insert_id(MAIN_DB_PREFIX.'facture_fourn_det');
 
-            $this->updateline(
+            			$this->updateline(
 			                $idligne,
 			                $line->description,
 			                $line->pu_ht,
@@ -511,8 +511,6 @@ class FactureFournisseur extends CommonInvoice
             $result=$this->update_price();
             if ($result > 0)
             {
-            	$action='create';
-
 				// Actions on extra fields
             	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 				{
@@ -587,7 +585,7 @@ class FactureFournisseur extends CommonInvoice
         $sql.= " t.datec,";
         $sql.= " t.datef,";
         $sql.= " t.tms,";
-        $sql.= " t.libelle,";
+        $sql.= " t.libelle as label,";
         $sql.= " t.paye,";
         $sql.= " t.amount,";
         $sql.= " t.remise,";
@@ -646,8 +644,8 @@ class FactureFournisseur extends CommonInvoice
                 $this->date					= $this->db->jdate($obj->datef);
                 $this->datep				= $this->db->jdate($obj->datef);
                 $this->tms					= $this->db->jdate($obj->tms);
-                $this->libelle				= $obj->libelle;		// deprecated
-                $this->label				= $obj->libelle;
+                $this->libelle				= $obj->label;		// deprecated
+                $this->label				= $obj->label;
                 $this->paye					= $obj->paye;
                 $this->amount				= $obj->amount;
                 $this->remise				= $obj->remise;
@@ -2847,7 +2845,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 	 */
 	public function fetch($rowid)
 	{
-		$sql = 'SELECT f.rowid, f.ref as ref_supplier, f.libelle as label, f.description, f.date_start, f.date_end, f.pu_ht, f.pu_ttc, f.qty, f.remise_percent, f.tva_tx';
+		$sql = 'SELECT f.rowid, f.ref as ref_supplier, f.description, f.date_start, f.date_end, f.pu_ht, f.pu_ttc, f.qty, f.remise_percent, f.tva_tx';
 		$sql.= ', f.localtax1_type, f.localtax2_type, f.localtax1_tx, f.localtax2_tx, f.total_localtax1, f.total_localtax2 ';
 		$sql.= ', f.total_ht, f.tva as total_tva, f.total_ttc, f.fk_facture_fourn, f.fk_product, f.product_type, f.info_bits, f.rang, f.special_code, f.fk_parent_line, f.fk_unit';
 		$sql.= ', p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.description as product_desc';
