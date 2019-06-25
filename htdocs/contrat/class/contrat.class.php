@@ -716,6 +716,9 @@ class Contrat extends CommonObject
 	 *  Load lines array into this->lines.
 	 *  This set also nbofserviceswait, nbofservicesopened, nbofservicesexpired and nbofservicesclosed
 	 *
+	 *	@param		int		$only_product	Return only physical products 
+	 *	@param		int		$loadalsotranslation	Return translation for products
+	 *
 	 *  @return ContratLigne[]   Return array of contract lines
 	 */
 	public function fetch_lines($only_product = 0, $loadalsotranslation = 0)
