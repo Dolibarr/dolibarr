@@ -616,6 +616,7 @@ class Contrat extends CommonObject
 	 */
 	public function fetch($id, $ref = '', $ref_customer = '', $ref_supplier = '')
 	{
+		
 		$sql = "SELECT rowid, statut, ref, fk_soc, mise_en_service as datemise,";
 		$sql.= " ref_supplier, ref_customer,";
 		$sql.= " ref_ext,";
@@ -720,7 +721,8 @@ class Contrat extends CommonObject
 	 */
 	public function fetch_lines()
 	{
-        // phpcs:enable
+        global $langs, $conf;
+		// phpcs:enable
 		$this->nbofserviceswait=0;
 		$this->nbofservicesopened=0;
 		$this->nbofservicesexpired=0;
@@ -828,6 +830,13 @@ class Contrat extends CommonObject
 				// Retreive all extrafields for contract
 				// fetch optionals attributes and labels
 				$line->fetch_optionals();
+				
+				// multilangs
+        		if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($objp->fk_product)) {
+        		$line=New Product($this->db);
+        		$line->fetch($objp->fk_product);
+        		$line->getMultiLangs();
+       			}
 
 				$this->lines[$pos] = $line;
 				$this->lines_id_index_mapper[$line->id] = $pos;
