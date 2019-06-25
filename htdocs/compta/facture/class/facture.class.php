@@ -1566,7 +1566,7 @@ class Facture extends CommonInvoice
         		$line=New Product($this->db);
         		$line->fetch($objp->fk_product);
         		$line->getMultiLangs();
-        		}				
+        		}
 
 				$this->lines[$i] = $line;
 
