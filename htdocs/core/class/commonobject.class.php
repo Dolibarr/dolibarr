@@ -391,7 +391,7 @@ abstract class CommonObject
 	 * @var string
 	 * @see SetIncoterms()
 	 */
-	public $libelle_incoterms;
+	public $label_incoterms;
 
 	/**
 	 * @var string
@@ -3762,7 +3762,7 @@ abstract class CommonObject
 	{
         // phpcs:enable
 		$out = '';
-		$this->libelle_incoterms = '';
+		$this->label_incoterms = '';
 		if (!empty($this->fk_incoterms))
 		{
 			$sql = 'SELECT code FROM '.MAIN_DB_PREFIX.'c_incoterms WHERE rowid = '.(int) $this->fk_incoterms;
@@ -3835,7 +3835,7 @@ abstract class CommonObject
 				if ($res)
 				{
 					$obj = $this->db->fetch_object($res);
-					$this->libelle_incoterms = $obj->libelle;
+					$this->label_incoterms = $obj->libelle;
 				}
 				return 1;
 			}

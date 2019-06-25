@@ -192,7 +192,7 @@ class FactureFournisseur extends CommonInvoice
     public $fk_incoterms;
 
     public $location_incoterms;
-    public $libelle_incoterms;  //Used into tooltip
+    public $label_incoterms;  //Used into tooltip
 
     public $extraparams=array();
 
@@ -618,7 +618,7 @@ class FactureFournisseur extends CommonInvoice
         $sql.= " p.code as mode_reglement_code, p.libelle as mode_reglement_libelle,";
         $sql.= ' s.nom as socnom, s.rowid as socid,';
         $sql.= ' t.fk_incoterms, t.location_incoterms,';
-        $sql.= " i.libelle as libelle_incoterms,";
+        $sql.= " i.libelle as label_incoterms,";
         $sql.= ' t.fk_multicurrency, t.multicurrency_code, t.multicurrency_tx, t.multicurrency_total_ht, t.multicurrency_total_tva, t.multicurrency_total_ttc';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as t';
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON (t.fk_soc = s.rowid)";
@@ -687,7 +687,7 @@ class FactureFournisseur extends CommonInvoice
 				//Incoterms
 				$this->fk_incoterms = $obj->fk_incoterms;
 				$this->location_incoterms = $obj->location_incoterms;
-				$this->libelle_incoterms = $obj->libelle_incoterms;
+				$this->label_incoterms = $obj->label_incoterms;
 
 				// Multicurrency
 				$this->fk_multicurrency 		= $obj->fk_multicurrency;

@@ -475,7 +475,7 @@ class Societe extends CommonObject
 	public $fk_incoterms;
 
 	public $location_incoterms;
-	public $libelle_incoterms;  //Used into tooltip
+	public $label_incoterms;  //Used into tooltip
 
 	// Multicurrency
 	/**
@@ -1276,7 +1276,7 @@ class Societe extends CommonObject
 		$sql .= ', d.code_departement as state_code, d.nom as state';
 		$sql .= ', st.libelle as stcomm';
 		$sql .= ', te.code as typent_code';
-		$sql .= ', i.libelle as libelle_incoterms';
+		$sql .= ', i.libelle as label_incoterms';
 		$sql .= ', sr.remise_client';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_effectif as e ON s.fk_effectif = e.id';
@@ -1435,7 +1435,7 @@ class Societe extends CommonObject
 				//Incoterms
 				$this->fk_incoterms = $obj->fk_incoterms;
 				$this->location_incoterms = $obj->location_incoterms;
-				$this->libelle_incoterms = $obj->libelle_incoterms;
+				$this->label_incoterms = $obj->label_incoterms;
 
 				// multicurrency
 				$this->fk_multicurrency = $obj->fk_multicurrency;
