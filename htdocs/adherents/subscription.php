@@ -713,12 +713,12 @@ if ($rowid > 0)
                 $objp = $db->fetch_object($result);
 
                 $adh->id = $objp->rowid;
-                $adh->type = $obj->type;
+                $adh->typeid = $obj->type;
 
                 $subscriptionstatic->ref=$objp->crowid;
                 $subscriptionstatic->id=$objp->crowid;
 
-                $typeid = ($objp->cfk_type > 0 ? $objp->cfk_type : $adh->typeid);
+                $typeid = ($objp->cfk_type > 0 ? $objp->cfk_type : $objp->typeid);
                 if ($typeid > 0)
                 {
                     $adht->fetch($typeid);
