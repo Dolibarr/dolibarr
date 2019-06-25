@@ -2727,12 +2727,6 @@ class SupplierInvoiceLine extends CommonObjectLine
 	public $ref_supplier;
 
 	/**
-	 * @deprecated
-	 * @see $label
-	 */
-	public $libelle;
-
-	/**
 	 * Product description
 	 * @var string
 	 */
@@ -2746,6 +2740,10 @@ class SupplierInvoiceLine extends CommonObjectLine
 	 */
 	public $pu_ht;
 
+	/**
+	 * Unit price excluded taxes
+	 * @var float
+	 */
 	public $subprice;
 
 	/**
@@ -2754,15 +2752,6 @@ class SupplierInvoiceLine extends CommonObjectLine
 	 */
 	public $pu_ttc;
 
-	/**
-	 * Total VAT amount
-	 * @var float
-	 * @deprecated Use $total_tva instead
-	 * @see $total_tva
-	 */
-	public $tva;
-
-	public $total_tva;
 
 	/**
 	 * Id of the corresponding supplier invoice
@@ -2805,6 +2794,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 	public $remise_percent;
 	public $total_ht;
 	public $total_ttc;
+	public $total_tva;
 	public $total_localtax1;
 	public $total_localtax2;
 
@@ -2901,7 +2891,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$this->localtax2_type		= $obj->localtax2_type;
 		$this->qty				= $obj->qty;
 		$this->remise_percent    = $obj->remise_percent;
-		$this->tva				= $obj->total_tva;
+		$this->tva				= $obj->total_tva;			// deprecated
 		$this->total_ht			= $obj->total_ht;
 		$this->total_tva			= $obj->total_tva;
 		$this->total_localtax1	= $obj->total_localtax1;
@@ -3112,6 +3102,7 @@ class SupplierInvoiceLine extends CommonObjectLine
         if (empty($this->localtax2_tx)) $this->localtax2_tx=0;
         if (empty($this->localtax1_type)) $this->localtax1_type='0';
         if (empty($this->localtax2_type)) $this->localtax2_type='0';
+        if (empty($this->total_tva)) $this->total_tva=0;
         if (empty($this->total_localtax1)) $this->total_localtax1=0;
         if (empty($this->total_localtax2)) $this->total_localtax2=0;
         if (empty($this->rang)) $this->rang=0;
