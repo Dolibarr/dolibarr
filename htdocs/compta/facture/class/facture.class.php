@@ -1471,7 +1471,8 @@ class Facture extends CommonInvoice
 	 */
     public function fetch_lines()
 	{
-        // phpcs:enable
+    global $langs, $conf;
+		// phpcs:enable
 		$this->lines=array();
 
 		$sql = 'SELECT l.rowid, l.fk_facture, l.fk_product, l.fk_parent_line, l.label as custom_label, l.description, l.product_type, l.price, l.qty, l.vat_src_code, l.tva_tx,';
@@ -1559,6 +1560,13 @@ class Facture extends CommonInvoice
 				$line->multicurrency_total_ttc 	= $objp->multicurrency_total_ttc;
 
                 $line->fetch_optionals();
+
+        		// multilangs
+        		if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($objp->fk_product)) {
+        		$line=New Product($this->db);
+        		$line->fetch($objp->fk_product);
+        		$line->getMultiLangs();
+        		}				
 
 				$this->lines[$i] = $line;
 
