@@ -171,7 +171,7 @@ if (! $error && $massaction == 'confirm_presend')
 					}
 				}
 			}
-			$sendto=implode(',',$tmparray);
+			$sendto=implode(',', $tmparray);
 
 			// Define $sendtocc
 			$receivercc=$_POST['receivercc'];
@@ -196,7 +196,7 @@ if (! $error && $massaction == 'confirm_presend')
 					}
 					elseif ($val)	// Id du contact
 					{
-						$tmparray[] = $thirdparty->contact_get_property((int) $val,'email');
+						$tmparray[] = $thirdparty->contact_get_property((int) $val, 'email');
 						//$sendtoid[] = $val;  TODO Add also id of contact in CC ?
 					}
 				}
@@ -385,8 +385,8 @@ if (! $error && $massaction == 'confirm_presend')
 				{
 					// Make substitution in email content
 					$substitutionarray=getCommonSubstitutionArray($langs, 0, null, $objecttmp);
-					$substitutionarray['__ID__']    = ($oneemailperrecipient ? join(', ',array_keys($listofqualifiedobj)) : $objecttmp->id);
-					$substitutionarray['__REF__']   = ($oneemailperrecipient ? join(', ',$listofqualifiedref) : $objecttmp->ref);
+					$substitutionarray['__ID__']    = ($oneemailperrecipient ? join(', ', array_keys($listofqualifiedobj)) : $objecttmp->id);
+					$substitutionarray['__REF__']   = ($oneemailperrecipient ? join(', ', $listofqualifiedref) : $objecttmp->ref);
 					$substitutionarray['__EMAIL__'] = $thirdparty->email;
 					$substitutionarray['__CHECK_READ__'] = '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$thirdparty->tag.'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>';
 
@@ -466,7 +466,7 @@ if (! $error && $massaction == 'confirm_presend')
 						$result=$mailfile->sendfile();
 						if ($result)
 						{
-							$resaction.=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2)).'<br>';		// Must not contain "
+							$resaction.=$langs->trans('MailSuccessfulySent', $mailfile->getValidAddress($from, 2), $mailfile->getValidAddress($sendto, 2)).'<br>';		// Must not contain "
 
 							$error=0;
 
@@ -574,7 +574,7 @@ if (! $error && $massaction == 'confirm_presend')
 
 if ($massaction == 'confirm_createbills')   // Create bills from orders
 {
-	$orders = GETPOST('toselect','array');
+	$orders = GETPOST('toselect', 'array');
 	$createbills_onebythird = GETPOST('createbills_onebythird', 'int');
 	$validate_invoices = GETPOST('validate_invoices', 'int');
 
@@ -936,7 +936,7 @@ if (! $error && $massaction == "builddoc" && $permtoread && ! GETPOST('button_se
 		$basename = dol_sanitizeFileName($basename);
 		foreach($listoffiles as $filefound)
 		{
-			if (strstr($filefound["name"],$basename))
+			if (strstr($filefound["name"], $basename))
 			{
 				$files[] = $uploaddir.'/'.$basename.'/'.$filefound["name"];
 				break;
@@ -950,7 +950,7 @@ if (! $error && $massaction == "builddoc" && $permtoread && ! GETPOST('button_se
 	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang=GETPOST('lang_id', 'aZ09');
 	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$objecttmp->thirdparty->default_lang;
 	if (! empty($newlang)) {
-		$outputlangs = new Translate("",$conf);
+		$outputlangs = new Translate("", $conf);
 		$outputlangs->setDefaultLang($newlang);
 	}
 
@@ -961,7 +961,7 @@ if (! $error && $massaction == "builddoc" && $permtoread && ! GETPOST('button_se
 
 		// Defined name of merged file
 		$filename=strtolower(dol_sanitizeFileName($langs->transnoentities($objectlabel)));
-		$filename=preg_replace('/\s/','_',$filename);
+		$filename=preg_replace('/\s/', '_', $filename);
 
 		// Save merged file
 		if (in_array($objecttmp->element, array('facture', 'facture_fournisseur')) && $search_status == Facture::STATUS_VALIDATED)
@@ -975,7 +975,7 @@ if (! $error && $massaction == "builddoc" && $permtoread && ! GETPOST('button_se
 		if (count($files)>0)
 		{
 			$now=dol_now();
-			$file=$diroutputmassaction.'/'.$filename.'_'.dol_print_date($now,'dayhourlog').'.pdf';
+			$file=$diroutputmassaction.'/'.$filename.'_'.dol_print_date($now, 'dayhourlog').'.pdf';
 
 			$input_files = '';
 			foreach($files as $f) {
@@ -989,7 +989,7 @@ if (! $error && $massaction == "builddoc" && $permtoread && ! GETPOST('button_se
 				@chmod($file, octdec($conf->global->MAIN_UMASK));
 
 			$langs->load("exports");
-			setEventMessages($langs->trans('FileSuccessfullyBuilt', $filename.'_'.dol_print_date($now,'dayhourlog')), null, 'mesgs');
+			setEventMessages($langs->trans('FileSuccessfullyBuilt', $filename.'_'.dol_print_date($now, 'dayhourlog')), null, 'mesgs');
 		}
 		else
 		{
@@ -1046,13 +1046,13 @@ if (! $error && $massaction == "builddoc" && $permtoread && ! GETPOST('button_se
 		if ($pagecount)
 		{
 			$now=dol_now();
-			$file=$diroutputmassaction.'/'.$filename.'_'.dol_print_date($now,'dayhourlog').'.pdf';
+			$file=$diroutputmassaction.'/'.$filename.'_'.dol_print_date($now, 'dayhourlog').'.pdf';
 			$pdf->Output($file, 'F');
 			if (! empty($conf->global->MAIN_UMASK))
 				@chmod($file, octdec($conf->global->MAIN_UMASK));
 
 			$langs->load("exports");
-			setEventMessages($langs->trans('FileSuccessfullyBuilt', $filename.'_'.dol_print_date($now,'dayhourlog')), null, 'mesgs');
+			setEventMessages($langs->trans('FileSuccessfullyBuilt', $filename.'_'.dol_print_date($now, 'dayhourlog')), null, 'mesgs');
 		}
 		else
 		{
@@ -1262,7 +1262,7 @@ if (! $error && $massaction == 'generate_doc' && $permtoread)
             if ($conf->global->MAIN_MULTILANGS && empty($newlang) && isset($objecttmp->default_lang)) $newlang=$objecttmp->default_lang;                  // for thirdparty
             if (! empty($newlang))
             {
-                $outputlangs = new Translate("",$conf);
+                $outputlangs = new Translate("", $conf);
                 $outputlangs->setDefaultLang($newlang);
             }
 
@@ -1307,5 +1307,5 @@ $parameters['uploaddir']=$uploaddir;
 $parameters['massaction']=$massaction;
 $parameters['diroutputmassaction']=$diroutputmassaction;
 
-$reshook=$hookmanager->executeHooks('doMassActions',$parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('doMassActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
