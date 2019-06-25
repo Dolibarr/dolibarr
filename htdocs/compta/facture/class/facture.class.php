@@ -1467,6 +1467,9 @@ class Facture extends CommonInvoice
 	/**
 	 *	Load all detailed lines into this->lines
 	 *
+	 *	@param		int		$only_product	Return only physical products
+	 *	@param		int		$loadalsotranslation	Return translation for products
+	 *
 	 *	@return     int         1 if OK, < 0 if KO
 	 */
 	public function fetch_lines($only_product = 0, $loadalsotranslation = 0)
