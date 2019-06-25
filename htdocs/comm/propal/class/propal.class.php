@@ -1620,6 +1620,7 @@ class Propal extends CommonObject
 	 */
     public function fetch_lines($only_product = 0)
 	{
+		global $langs, $conf;
         // phpcs:enable
 		$this->lines=array();
 
@@ -1712,6 +1713,13 @@ class Propal extends CommonObject
 				$line->multicurrency_total_ttc 	= $objp->multicurrency_total_ttc;
 
 				$line->fetch_optionals();
+
+				// multilangs
+				if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($objp->fk_product)) {
+        		$line=New Product($this->db);
+        		$line->fetch($objp->fk_product);
+        		$line->getMultiLangs();
+        		}
 
 				$this->lines[$i]        = $line;
 				//dol_syslog("1 ".$line->fk_product);
