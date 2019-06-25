@@ -142,7 +142,7 @@ $accountstatic=new Account($db);
 $now=dol_now();
 
 // List of subscriptions
-$sql = "SELECT d.rowid, d.login, d.firstname, d.lastname, d.societe, d.photo,";
+$sql = "SELECT d.rowid, d.login, d.firstname, d.lastname, d.societe, d.photo, d.statut,";
 $sql.= " c.rowid as crowid, c.fk_type, c.subscription,";
 $sql.= " c.dateadh, c.datef, c.datec as date_creation, c.tms as date_update,";
 $sql.= " c.fk_bank as bank, c.note,";
