@@ -165,6 +165,12 @@ class Utils
 		}
 		else $this->output=$langs->trans("PurgeNothingToDelete").($choice == 'tempfilesold' ? ' (older than 24h)':'');
 
+		// Recreate temp dir that are not automatically recreated for performance purpose
+		if (! empty($conf->api->enabled))
+		{
+		    dol_mkdir($conf->api->dir_temp);
+		}
+
 		//return $count;
 		return 0;     // This function can be called by cron so must return 0 if OK
 	}
