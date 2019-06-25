@@ -142,7 +142,7 @@ $accountstatic=new Account($db);
 $now=dol_now();
 
 // List of subscriptions
-$sql = "SELECT d.rowid, d.login, d.firstname, d.lastname, d.societe, d.photo, d.statut,";
+$sql = "SELECT d.rowid, d.login, d.firstname, d.lastname, d.societe, d.photo, d.statut, d.fk_adherent_type as type,";
 $sql.= " c.rowid as crowid, c.fk_type, c.subscription,";
 $sql.= " c.dateadh, c.datef, c.datec as date_creation, c.tms as date_update,";
 $sql.= " c.fk_bank as bank, c.note,";
@@ -225,7 +225,7 @@ $param='';
 if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
 if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
 if ($statut != '')    $param.="&statut=".urlencode($statut);
-if ($search_type) $param.="&search_type=".urlencode($search_type);
+if ($search_type)     $param.="&search_type=".urlencode($search_type);
 if ($date_select)     $param.="&date_select=".urlencode($date_select);
 if ($search_lastname) $param.="&search_lastname=".urlencode($search_lastname);
 if ($search_login)    $param.="&search_login=".urlencode($search_login);
@@ -457,9 +457,11 @@ while ($i < min($num, $limit))
 	$adherent->statut=$obj->statut;
 	$adherent->login=$obj->login;
 	$adherent->photo=$obj->photo;
+	$adherent->typeid=$obj->type;
 
+	$typeid = ($obj->fk_type > 0 ? $obj->fk_type : $adherent->typeid);
     $adht = new AdherentType($db);
-	$adht->fetch($obj->fk_type);
+    $adht->fetch($typeid);
 
 	print '<tr class="oddeven">';
 
@@ -473,7 +475,10 @@ while ($i < min($num, $limit))
     if (! empty($arrayfields['d.fk_type']['checked']))
 	{
         print '<td>';
-        if ( ! empty($obj->fk_type) ) print $adht->getNomUrl(1);
+        if ($typeid > 0)
+        {
+        	print $adht->getNomUrl(1);
+        }
         print '</td>';
         if (! $i) $totalarray['nbfield']++;
 	}
