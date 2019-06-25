@@ -85,9 +85,9 @@ _updateBtn();
 print '<table class="noborder" width="100%">';
 
 
-_print_on_off('INVOICE_USE_SITUATION',$langs->trans('UseSituationInvoices'));
-_print_on_off('INVOICE_USE_SITUATION_CREDIT_NOTE',$langs->trans('UseSituationInvoicesCreditNote'));
-_print_on_off('INVOICE_USE_SITUATION_RETAINED_WARRANTY',$langs->trans('Retainedwarranty'));
+_printOnOff('INVOICE_USE_SITUATION',$langs->trans('UseSituationInvoices'));
+_printOnOff('INVOICE_USE_SITUATION_CREDIT_NOTE',$langs->trans('UseSituationInvoicesCreditNote'));
+_printOnOff('INVOICE_USE_SITUATION_RETAINED_WARRANTY',$langs->trans('Retainedwarranty'));
 
 $metas = array(
     'type' => 'number',
@@ -95,7 +95,7 @@ $metas = array(
     'min' => 0,
     'max' => 100
 );
-_print_input_form_part('INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_PERCENT',$langs->trans('RetainedwarrantyDefaultPercent'),'',$metas);
+_printInputFormPart('INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_PERCENT',$langs->trans('RetainedwarrantyDefaultPercent'),'',$metas);
 
 
 
@@ -123,6 +123,10 @@ dol_fiche_end();
 llxFooter();
 $db->close();
 
+/**
+ * print an update button
+ * @return void
+ */
 function _updateBtn(){
     global $langs;
     print '<div style="text-align: right;" >';
@@ -130,7 +134,14 @@ function _updateBtn(){
     print '</div>';
 }
 
-function _print_on_off($confkey, $title = false, $desc ='')
+/**
+ * Print a On/Off button
+ * @param $confkey
+ * @param bool $title
+ * @param string $desc
+ * @return void
+ */
+function _printOnOff($confkey, $title = false, $desc ='')
 {
     global $var, $bc, $langs;
     $var=!$var;
@@ -148,7 +159,17 @@ function _print_on_off($confkey, $title = false, $desc ='')
 }
 
 
-function _print_input_form_part($confkey, $title = false, $desc ='', $metas = array(), $type='input', $help = false)
+/**
+ * Print a form part
+ * @param $confkey
+ * @param bool $title
+ * @param string $desc
+ * @param array $metas
+ * @param string $type
+ * @param bool $help
+ * @return void
+ */
+function _printInputFormPart($confkey, $title = false, $desc ='', $metas = array(), $type='input', $help = false)
 {
     global $var, $bc, $langs, $conf, $db, $inputCount;
     $var=!$var;
