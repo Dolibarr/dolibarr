@@ -13,7 +13,7 @@ For Developers:
 WARNING:
 
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
-...
+* Properties ->libelle_incoterms were renamed into ->label_incoterms
 
 
 ***** ChangeLog for 10.0.0 compared to 9.0.0 *****
@@ -71,7 +71,7 @@ NEW: Can generate invoices from the timespent entered on a project
 NEW: Can update product supplier price ref
 NEW: Can upload files from the edit page of expense report
 NEW: Color for hover and for checked line is on by default
-NEW: Column of parent company is available in list of third parties
+NEW: Column of p...arent company is available in list of third parties
 NEW: conditionnal add member button by statut
 NEW: constant KEEP_DISCOUNT_LINES_FROM_ORIGIN
 NEW: Contact related items tab
