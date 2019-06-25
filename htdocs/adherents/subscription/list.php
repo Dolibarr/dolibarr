@@ -409,23 +409,23 @@ if (! empty($arrayfields['d.login']['checked']))
 }
 if (! empty($arrayfields['t.libelle']['checked']))
 {
-	print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "c.note", $param, "", 'align="left"', $sortfield, $sortorder);
+	print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "c.note", $param, "", '', $sortfield, $sortorder);
 }
 if (! empty($arrayfields['d.bank']['checked']))
 {
-	print_liste_field_titre("Account", $_SERVER["PHP_SELF"], "b.fk_account", $pram, "", "", $sortfield, $sortorder);
+	print_liste_field_titre("Account", $_SERVER["PHP_SELF"], "b.fk_account", $param, "", "", $sortfield, $sortorder);
 }
 if (! empty($arrayfields['c.dateadh']['checked']))
 {
-	print_liste_field_titre("DateStart", $_SERVER["PHP_SELF"], "c.dateadh", $param, "", 'align="center"', $sortfield, $sortorder);
+	print_liste_field_titre("DateStart", $_SERVER["PHP_SELF"], "c.dateadh", $param, "", '', $sortfield, $sortorder, 'center nowraponall ');
 }
 if (! empty($arrayfields['c.datef']['checked']))
 {
-	print_liste_field_titre("DateEnd", $_SERVER["PHP_SELF"], "c.datef", $param, "", 'align="center"', $sortfield, $sortorder);
+	print_liste_field_titre("DateEnd", $_SERVER["PHP_SELF"], "c.datef", $param, "", '', $sortfield, $sortorder, 'center nowraponall ');
 }
 if (! empty($arrayfields['d.amount']['checked']))
 {
-	print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "c.subscription", $param, "", 'class="right"', $sortfield, $sortorder);
+	print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "c.subscription", $param, "", '', $sortfield, $sortorder, 'right ');
 }
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
