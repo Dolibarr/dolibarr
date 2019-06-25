@@ -22,7 +22,7 @@ CREATE TABLE llx_accounting_bookkeeping
   rowid                 integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
   entity                integer DEFAULT 1 NOT NULL,	-- 					| multi company id
   doc_date              date NOT NULL,				-- FEC:PieceDate
-  doc_type              varchar(30) NOT NULL,		-- 					| facture_client/reglement_client/facture_fournisseur/reglement_fournisseur
+  doc_type              varchar(30) NOT NULL,		-- 					| facture_client/reglement_client/facture_fournisseur/reglement_fournisseur/import
   doc_ref               varchar(300) NOT NULL,		-- FEC:PieceRef		| facture_client/reglement_client/... reference number
   fk_doc                integer NOT NULL,			-- 					| facture_client/reglement_client/... rowid
   fk_docdet             integer NOT NULL,			-- 					| facture_client/reglement_client/... line rowid
