@@ -5,6 +5,7 @@
  * Copyright (C) 2013	   Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2014-2017 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2017      Ferran Marcet        <fmarcet@2byte.es>
+ * Copyright (C) 2019      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -694,6 +695,27 @@ class Project extends CommonObject
 		// Delete tasks
 		$ret = $this->deleteTasks($user);
 		if ($ret < 0) $error++;
+
+
+		// Delete all child tables
+		if (! $error) {
+			$elements = array('categorie_project');  // elements to delete. TODO Make goodway to delete
+			foreach($elements as $table)
+			{
+				if (! $error) {
+					$sql = "DELETE FROM ".MAIN_DB_PREFIX.$table;
+					$sql.= " WHERE fk_project = ".$this->id;
+
+					$result = $this->db->query($sql);
+					if (! $result) {
+						$error++;
+						$this->errors[] = $this->db->lasterror();
+					}
+				}
+			}
+		}
+
+
 
         // Delete project
         if (! $error)
