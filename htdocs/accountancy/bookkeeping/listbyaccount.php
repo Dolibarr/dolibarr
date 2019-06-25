@@ -348,7 +348,7 @@ while ($i < min($num, $limit))
 		$colspan = 9;
 		print "<tr>";
 		print '<td colspan="'.$colspan.'" style="font-weight:bold; border-bottom: 1pt solid black;">';
-		if (! empty($line->numero_compte) && $line->numero_compte != '-1') print length_accountg($line->numero_compte) . ' : ' . $object->get_compte_desc($line->numero_compte);
+		if ($line->numero_compte != "" && $line->numero_compte != '-1') print length_accountg($line->numero_compte) . ' : ' . $object->get_compte_desc($line->numero_compte);
 		else print '<span class="error">'.$langs->trans("Unknown").'</span>';
 		print '</td>';
 		print '</tr>';

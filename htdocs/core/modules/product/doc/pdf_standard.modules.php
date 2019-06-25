@@ -174,18 +174,18 @@ class pdf_standard extends ModelePDFProduct
 
 		$nblignes = count($object->lines);
 
-		if ($conf->produit->dir_output)
+		if ($conf->product->dir_output)
 		{
 		    // Definition of $dir and $file
 			if ($object->specimen)
 			{
-				$dir = $conf->produit->dir_output;
+				$dir = $conf->product->dir_output;
 				$file = $dir . "/SPECIMEN.pdf";
 			}
 			else
 			{
 				$objectref = dol_sanitizeFileName($object->ref);
-				$dir = $conf->produit->dir_output . "/" . $objectref;
+				$dir = $conf->product->dir_output . "/" . $objectref;
 				$file = $dir . "/" . $objectref . ".pdf";
 			}
 

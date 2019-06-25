@@ -336,7 +336,6 @@ if ($result || empty($id))
 					$px->SetWidth($WIDTH);
 					$px->SetHeight($HEIGHT);
 					$px->SetHorizTickIncrement(1);
-					$px->SetPrecisionY(0);
 					$px->SetShading(3);
 					//print 'x '.$key.' '.$graphfiles[$key]['file'];
 

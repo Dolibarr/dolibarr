@@ -384,7 +384,6 @@ else
 	$px1->setBgColor('onglet');
 	$px1->setBgColorGrid(array(255,255,255));
 	$px1->SetHorizTickIncrement(1);
-	$px1->SetPrecisionY(0);
 	$px1->draw($file, $fileurl);
 
 	$show1 = $px1->show();
@@ -471,7 +470,6 @@ else
 	$px2->setBgColor('onglet');
 	$px2->setBgColorGrid(array(255,255,255));
 	$px2->SetHorizTickIncrement(1);
-	$px2->SetPrecisionY(0);
 	$px2->draw($file, $fileurl);
 
 	$show2 = $px2->show();

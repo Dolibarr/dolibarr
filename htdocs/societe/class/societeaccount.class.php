@@ -164,9 +164,9 @@ class SocieteAccount extends CommonObject
 	 */
 	//public $class_element_line = 'societeAccountline';
 	/**
-	 * @var array  Array of child tables (child tables to delete before deleting a record)
+     * @var array	List of child tables. To test if we can delete object.
 	 */
-	//protected $childtables=array('societe_accountdet');
+	//protected $childtables=array();
 	/**
 	 * @var societeAccountLine[]     Array of subtable lines
 	 */
@@ -320,7 +320,7 @@ class SocieteAccount extends CommonObject
 	* @param	string	$id			Id of customer in external system (example: 'cu_xxxxxxxxxxxxx', ...)
 	* @param	string	$site		Site (example: 'stripe', '...')
 	* @param	int		$status		Status (0=test, 1=live)
-	* @return	string				Id of third party
+	* @return	int					Id of third party
 	* @see getCustomerAccount()
 	*/
 	public function getThirdPartyID($id, $site, $status = 0)
