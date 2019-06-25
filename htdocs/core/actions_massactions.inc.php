@@ -53,7 +53,7 @@ if (! empty($massaction) && is_array($toselect) && count($toselect) < 1)
 }
 if (! $error && is_array($toselect) && count($toselect) > $maxformassaction)
 {
-	setEventMessages($langs->trans('TooManyRecordForMassAction',$maxformassaction), null, 'errors');
+	setEventMessages($langs->trans('TooManyRecordForMassAction', $maxformassaction), null, 'errors');
 	$error++;
 }
 
@@ -104,7 +104,7 @@ if (! $error && $massaction == 'confirm_presend')
 	}
 
 	// Check mandatory parameters
-	if (GETPOST('fromtype','alpha') === 'user' && empty($user->email))
+	if (GETPOST('fromtype', 'alpha') === 'user' && empty($user->email))
 	{
 		$error++;
 		setEventMessages($langs->trans("NoSenderEmailDefined"), null, 'warnings');
@@ -124,7 +124,7 @@ if (! $error && $massaction == 'confirm_presend')
 	   	$massaction='presend';
 	}
 
-	if (! GETPOST('subject','none'))
+	if (! GETPOST('subject', 'none'))
 	{
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("MailTopic")), null, 'warnings');
@@ -166,7 +166,7 @@ if (! $error && $massaction == 'confirm_presend')
 					}
 					elseif ($val && method_exists($thirdparty, 'contact_get_property'))		// Id of contact
 					{
-						$tmparray[] = $thirdparty->contact_get_property((int) $val,'email');
+						$tmparray[] = $thirdparty->contact_get_property((int) $val, 'email');
 						$sendtoid[] = $val;
 					}
 				}
@@ -201,7 +201,7 @@ if (! $error && $massaction == 'confirm_presend')
 					}
 				}
 			}
-			$sendtocc=implode(',',$tmparray);
+			$sendtocc=implode(',', $tmparray);
 
 			//var_dump($listofobjectref);exit;
 			$listofqualifiedobj=array();
@@ -215,21 +215,21 @@ if (! $error && $massaction == 'confirm_presend')
 				{
 					$langs->load("errors");
 					$nbignored++;
-					$resaction.='<div class="error">'.$langs->trans('ErrorOnlyProposalNotDraftCanBeSentInMassAction',$objectobj->ref).'</div><br>';
+					$resaction.='<div class="error">'.$langs->trans('ErrorOnlyProposalNotDraftCanBeSentInMassAction', $objectobj->ref).'</div><br>';
 					continue; // Payment done or started or canceled
 				}
 				if ($objectclass == 'Commande' && $objectobj->statut == Commande::STATUS_DRAFT)
 				{
 					$langs->load("errors");
 					$nbignored++;
-					$resaction.='<div class="error">'.$langs->trans('ErrorOnlyOrderNotDraftCanBeSentInMassAction',$objectobj->ref).'</div><br>';
+					$resaction.='<div class="error">'.$langs->trans('ErrorOnlyOrderNotDraftCanBeSentInMassAction', $objectobj->ref).'</div><br>';
 					continue;
 				}
 				if ($objectclass == 'Facture' && $objectobj->statut == Facture::STATUS_DRAFT)
 				{
 					$langs->load("errors");
 					$nbignored++;
-					$resaction.='<div class="error">'.$langs->trans('ErrorOnlyInvoiceValidatedCanBeSentInMassAction',$objectobj->ref).'</div><br>';
+					$resaction.='<div class="error">'.$langs->trans('ErrorOnlyInvoiceValidatedCanBeSentInMassAction', $objectobj->ref).'</div><br>';
 					continue; // Payment done or started or canceled
 				}
 
@@ -261,7 +261,7 @@ if (! $error && $massaction == 'confirm_presend')
 				   	$nbignored++;
 				   	if (empty($thirdpartywithoutemail[$objectobj->thirdparty->id]))
 					{
-						$resaction.='<div class="error">'.$langs->trans('NoRecipientEmail',$objectobj->thirdparty->name).'</div><br>';
+						$resaction.='<div class="error">'.$langs->trans('NoRecipientEmail', $objectobj->thirdparty->name).'</div><br>';
 					}
 					dol_syslog('No recipient for thirdparty: '.$objectobj->thirdparty->name, LOG_WARNING);
 					$thirdpartywithoutemail[$objectobj->thirdparty->id]=1;
@@ -282,7 +282,7 @@ if (! $error && $massaction == 'confirm_presend')
 					// For supplier invoices, we use the file provided by supplier, not the one we generate
 					if ($objectobj->element == 'invoice_supplier')
 					{
-						$fileparams = dol_most_recent_file($uploaddir . '/' . get_exdir($objectobj->id,2,0,0,$objectobj,$objectobj->element).$objectobj->ref, preg_quote($objectobj->ref,'/').'([^\-])+');
+						$fileparams = dol_most_recent_file($uploaddir . '/' . get_exdir($objectobj->id, 2, 0, 0, $objectobj, $objectobj->element).$objectobj->ref, preg_quote($objectobj->ref, '/').'([^\-])+');
 						$file = $fileparams['fullname'];
 					}
 
@@ -301,7 +301,7 @@ if (! $error && $massaction == 'confirm_presend')
 					{
 							$nbignored++;
 							$langs->load("errors");
-							$resaction.='<div class="error">'.$langs->trans('ErrorCantReadFile',$file).'</div><br>';
+							$resaction.='<div class="error">'.$langs->trans('ErrorCantReadFile', $file).'</div><br>';
 							dol_syslog('Failed to read file: '.$file, LOG_WARNING);
 							continue;
 					}
@@ -349,8 +349,8 @@ if (! $error && $massaction == 'confirm_presend')
 				}
 
 				$replyto = $from;
-				$subject = GETPOST('subject','none');
-				$message = GETPOST('message','none');
+				$subject = GETPOST('subject', 'none');
+				$message = GETPOST('message', 'none');
 
 				$sendtobcc = GETPOST('sendtoccc');
 				if ($objectclass == 'Propal') 				$sendtobcc .= (empty($conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO) ? '' : (($sendtobcc?", ":"").$conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO));
@@ -535,7 +535,7 @@ if (! $error && $massaction == 'confirm_presend')
 							$langs->load("other");
 							if ($mailfile->error)
 							{
-								$resaction.=$langs->trans('ErrorFailedToSendMail',$from,$sendto);
+								$resaction.=$langs->trans('ErrorFailedToSendMail', $from, $sendto);
 								$resaction.='<br><div class="error">'.$mailfile->error.'</div>';
 							}
 							else
@@ -925,9 +925,9 @@ if (! $error && $massaction == "builddoc" && $permtoread && ! GETPOST('button_se
 	}
 
 	$arrayofinclusion=array();
-	foreach($listofobjectref as $tmppdf) $arrayofinclusion[]='^'.preg_quote(dol_sanitizeFileName($tmppdf),'/').'\.pdf$';
-	foreach($listofobjectref as $tmppdf) $arrayofinclusion[]='^'.preg_quote(dol_sanitizeFileName($tmppdf),'/').'_[a-zA-Z0-9-_]+\.pdf$';	// To include PDF generated from ODX files
-	$listoffiles = dol_dir_list($uploaddir,'all',1,implode('|',$arrayofinclusion),'\.meta$|\.png','date',SORT_DESC,0,true);
+	foreach($listofobjectref as $tmppdf) $arrayofinclusion[]='^'.preg_quote(dol_sanitizeFileName($tmppdf), '/').'\.pdf$';
+	foreach($listofobjectref as $tmppdf) $arrayofinclusion[]='^'.preg_quote(dol_sanitizeFileName($tmppdf), '/').'_[a-zA-Z0-9-_]+\.pdf$';	// To include PDF generated from ODX files
+	$listoffiles = dol_dir_list($uploaddir, 'all', 1, implode('|', $arrayofinclusion), '\.meta$|\.png', 'date', SORT_DESC, 0, true);
 
 	// build list of files with full path
 	$files = array();
@@ -947,7 +947,7 @@ if (! $error && $massaction == "builddoc" && $permtoread && ! GETPOST('button_se
 	// Define output language (Here it is not used because we do only merging existing PDF)
 	$outputlangs = $langs;
 	$newlang='';
-	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang=GETPOST('lang_id','aZ09');
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang=GETPOST('lang_id', 'aZ09');
 	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$objecttmp->thirdparty->default_lang;
 	if (! empty($newlang)) {
 		$outputlangs = new Translate("",$conf);
@@ -989,7 +989,7 @@ if (! $error && $massaction == "builddoc" && $permtoread && ! GETPOST('button_se
 				@chmod($file, octdec($conf->global->MAIN_UMASK));
 
 			$langs->load("exports");
-			setEventMessages($langs->trans('FileSuccessfullyBuilt',$filename.'_'.dol_print_date($now,'dayhourlog')), null, 'mesgs');
+			setEventMessages($langs->trans('FileSuccessfullyBuilt', $filename.'_'.dol_print_date($now,'dayhourlog')), null, 'mesgs');
 		}
 		else
 		{
@@ -1001,7 +1001,7 @@ if (! $error && $massaction == "builddoc" && $permtoread && ! GETPOST('button_se
 		$formatarray=pdf_getFormat();
 		$page_largeur = $formatarray['width'];
 		$page_hauteur = $formatarray['height'];
-		$format = array($page_largeur,$page_hauteur);
+		$format = array($page_largeur, $page_hauteur);
 
 		$pdf=pdf_getInstance($format);
 
@@ -1033,7 +1033,7 @@ if (! $error && $massaction == "builddoc" && $permtoread && ! GETPOST('button_se
 
 		// Defined name of merged file
 		$filename=strtolower(dol_sanitizeFileName($langs->transnoentities($objectlabel)));
-		$filename=preg_replace('/\s/','_',$filename);
+		$filename=preg_replace('/\s/', '_', $filename);
 
 		// Save merged file
 		if (in_array($objecttmp->element, array('facture', 'facture_fournisseur')) && $search_status == Facture::STATUS_VALIDATED)
@@ -1047,12 +1047,12 @@ if (! $error && $massaction == "builddoc" && $permtoread && ! GETPOST('button_se
 		{
 			$now=dol_now();
 			$file=$diroutputmassaction.'/'.$filename.'_'.dol_print_date($now,'dayhourlog').'.pdf';
-			$pdf->Output($file,'F');
+			$pdf->Output($file, 'F');
 			if (! empty($conf->global->MAIN_UMASK))
 				@chmod($file, octdec($conf->global->MAIN_UMASK));
 
 			$langs->load("exports");
-			setEventMessages($langs->trans('FileSuccessfullyBuilt',$filename.'_'.dol_print_date($now,'dayhourlog')), null, 'mesgs');
+			setEventMessages($langs->trans('FileSuccessfullyBuilt', $filename.'_'.dol_print_date($now,'dayhourlog')), null, 'mesgs');
 		}
 		else
 		{
@@ -1193,7 +1193,7 @@ if (! $error && ($massaction == 'delete' || ($action == 'delete' && $confirm == 
 			{
 				$langs->load("errors");
 				$nbignored++;
-				$resaction.='<div class="error">'.$langs->trans('ErrorOnlyDraftStatusCanBeDeletedInMassAction',$objecttmp->ref).'</div><br>';
+				$resaction.='<div class="error">'.$langs->trans('ErrorOnlyDraftStatusCanBeDeletedInMassAction', $objecttmp->ref).'</div><br>';
 				continue;
 			}
 
@@ -1257,7 +1257,7 @@ if (! $error && $massaction == 'generate_doc' && $permtoread)
             $outputlangs = $langs;
             $newlang='';
 
-            if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang=GETPOST('lang_id','aZ09');
+            if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang=GETPOST('lang_id', 'aZ09');
             if ($conf->global->MAIN_MULTILANGS && empty($newlang) && isset($objecttmp->thirdparty->default_lang)) $newlang=$objecttmp->thirdparty->default_lang;  // for proposal, order, invoice, ...
             if ($conf->global->MAIN_MULTILANGS && empty($newlang) && isset($objecttmp->default_lang)) $newlang=$objecttmp->default_lang;                  // for thirdparty
             if (! empty($newlang))
@@ -1309,6 +1309,3 @@ $parameters['diroutputmassaction']=$diroutputmassaction;
 
 $reshook=$hookmanager->executeHooks('doMassActions',$parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-
-
-
