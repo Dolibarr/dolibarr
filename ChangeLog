@@ -229,6 +229,7 @@ FIX: Use of cron with multicompany
 FIX: var name
 FIX: we need to fetch fourn invoice with ref in current entity
 FIX: Wrong stock movement on supplier credit notes
+FIX: Import of record in ledger
 
 ***** ChangeLog for 9.0.3 compared to 9.0.2 *****
 FIX: #11013
