@@ -713,7 +713,7 @@ if ($rowid > 0)
                 $objp = $db->fetch_object($result);
 
                 $adh->id = $objp->rowid;
-                $adh->typeid = $obj->type;
+                $adh->typeid = $objp->type;
 
                 $subscriptionstatic->ref=$objp->crowid;
                 $subscriptionstatic->id=$objp->crowid;
