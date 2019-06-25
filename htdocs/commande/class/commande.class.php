@@ -1892,7 +1892,7 @@ class Commande extends CommonOrder
 	 */
 	public function fetch_lines($only_product = 0)
 	{
-    global $langs, $conf;  
+    global $langs, $conf;
         // phpcs:enable
 		$this->lines=array();
 
