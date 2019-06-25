@@ -1888,6 +1888,7 @@ class Commande extends CommonOrder
 	 *	Load array lines
 	 *
 	 *	@param		int		$only_product	Return only physical products
+	 *	@param		int		$loadalsotranslation	Return translation for products
 	 *	@return		int						<0 if KO, >0 if OK
 	 */
 	public function fetch_lines($only_product = 0, $loadalsotranslation = 0)
