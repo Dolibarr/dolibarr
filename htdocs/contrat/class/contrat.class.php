@@ -718,8 +718,9 @@ class Contrat extends CommonObject
 	 *
 	 *  @return ContratLigne[]   Return array of contract lines
 	 */
-	public function fetch_lines()
+	public function fetch_lines($loadalsotranslation = 0)
 	{
+		global $langs, $conf;
         // phpcs:enable
 		$this->nbofserviceswait=0;
 		$this->nbofservicesopened=0;
@@ -828,6 +829,13 @@ class Contrat extends CommonObject
 				// Retreive all extrafields for contract
 				// fetch optionals attributes and labels
 				$line->fetch_optionals();
+				
+				// multilangs
+        		if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($objp->fk_product) && ! empty($loadalsotranslation)) {
+        		$line = new Product($this->db);
+        		$line->fetch($objp->fk_product);
+        		$line->getMultiLangs();
+        		}
 
 				$this->lines[$pos] = $line;
 				$this->lines_id_index_mapper[$line->id] = $pos;
