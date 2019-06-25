@@ -374,6 +374,7 @@ div.buttonpayment input {
     font-weight: bold;
     text-transform: uppercase;
 	color: #333;
+	cursor: pointer;
 }
 input.buttonpaymentcb {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/common/credit_card.png', 1) ?>);
