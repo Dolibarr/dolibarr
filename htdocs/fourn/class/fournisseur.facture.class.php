@@ -91,6 +91,9 @@ class FactureFournisseur extends CommonInvoice
 	 */
 	public $ref;
 
+	public $label;
+	public $libelle;		// @deprecated
+
     public $product_ref;
     public $ref_supplier;
     public $socid;
@@ -112,7 +115,6 @@ class FactureFournisseur extends CommonInvoice
     public $paye;
 
     public $author;
-    public $libelle;
 
     /**
      * Date creation record (datec)
@@ -645,7 +647,7 @@ class FactureFournisseur extends CommonInvoice
                 $this->date					= $this->db->jdate($obj->datef);
                 $this->datep				= $this->db->jdate($obj->datef);
                 $this->tms					= $this->db->jdate($obj->tms);
-                $this->libelle				= $obj->libelle;
+                $this->libelle				= $obj->libelle;		// deprecated
                 $this->label				= $obj->libelle;
                 $this->paye					= $obj->paye;
                 $this->amount				= $obj->amount;
@@ -849,7 +851,8 @@ class FactureFournisseur extends CommonInvoice
         if (isset($this->entity)) $this->entity=trim($this->entity);
         if (isset($this->type)) $this->type=trim($this->type);
         if (isset($this->fk_soc)) $this->fk_soc=trim($this->fk_soc);
-        if (isset($this->libelle)) $this->libelle=trim($this->libelle);
+        if (isset($this->label)) $this->label=trim($this->label);
+        if (isset($this->libelle)) $this->libelle=trim($this->libelle);	// deprecated
         if (isset($this->paye)) $this->paye=trim($this->paye);
         if (isset($this->amount)) $this->amount=trim($this->amount);
         if (isset($this->remise)) $this->remise=trim($this->remise);
@@ -2280,8 +2283,8 @@ class FactureFournisseur extends CommonInvoice
             $label .= '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
         if (! empty($this->ref_supplier))
             $label.= '<br><b>' . $langs->trans('RefSupplier') . ':</b> ' . $this->ref_supplier;
-        if (! empty($this->libelle))
-        	$label.= '<br><b>' . $langs->trans('Label') . ':</b> ' . $this->libelle;
+        if (! empty($this->label))
+        	$label.= '<br><b>' . $langs->trans('Label') . ':</b> ' . $this->label;
         if (! empty($this->date))
         	$label .= '<br><b>' . $langs->trans('Date') . ':</b> ' . dol_print_date($this->date, 'day');
         if (! empty($this->total_ht))
@@ -2847,10 +2850,10 @@ class SupplierInvoiceLine extends CommonObjectLine
 	 */
 	public function fetch($rowid)
 	{
-		$sql = 'SELECT f.rowid, f.ref as ref_supplier, f.description, f.date_start, f.date_end, f.pu_ht, f.pu_ttc, f.qty, f.remise_percent, f.tva_tx';
+		$sql = 'SELECT f.rowid, f.ref as ref_supplier, f.libelle as label, f.description, f.date_start, f.date_end, f.pu_ht, f.pu_ttc, f.qty, f.remise_percent, f.tva_tx,';
 		$sql.= ', f.localtax1_type, f.localtax2_type, f.localtax1_tx, f.localtax2_tx, f.total_localtax1, f.total_localtax2 ';
 		$sql.= ', f.total_ht, f.tva as total_tva, f.total_ttc, f.fk_facture_fourn, f.fk_product, f.product_type, f.info_bits, f.rang, f.special_code, f.fk_parent_line, f.fk_unit';
-		$sql.= ', p.rowid as product_id, p.ref as product_ref, p.label as label, p.description as product_desc';
+		$sql.= ', p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.description as product_desc';
 		$sql.= ', f.multicurrency_subprice, f.multicurrency_total_ht, f.multicurrency_total_tva, multicurrency_total_ttc';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn_det as f';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON f.fk_product = p.rowid';
@@ -2899,7 +2902,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$this->total_ttc			= $obj->total_ttc;
 		$this->fk_product		= $obj->fk_product;
 		$this->product_type		= $obj->product_type;
-		$this->product_label		= $obj->label;
+		$this->product_label		= $obj->product_label;
 		$this->info_bits		    = $obj->info_bits;
 		$this->tva_npr              = ($obj->info_bits & 1 == 1) ? 1 : 0;
 		$this->fk_parent_line    = $obj->fk_parent_line;
