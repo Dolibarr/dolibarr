@@ -1469,8 +1469,9 @@ class Facture extends CommonInvoice
 	 *
 	 *	@return     int         1 if OK, < 0 if KO
 	 */
-    public function fetch_lines()
+	public function fetch_lines($only_product = 0, $loadalsotranslation = 0)
 	{
+		global $langs, $conf;
         // phpcs:enable
 		$this->lines=array();
 
@@ -1559,6 +1560,13 @@ class Facture extends CommonInvoice
 				$line->multicurrency_total_ttc 	= $objp->multicurrency_total_ttc;
 
                 $line->fetch_optionals();
+				
+				// multilangs
+        		if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($objp->fk_product) && ! empty($loadalsotranslation)) {
+        		$line = new Product($this->db);
+        		$line->fetch($objp->fk_product);
+        		$line->getMultiLangs();
+        		}
 
 				$this->lines[$i] = $line;
 
