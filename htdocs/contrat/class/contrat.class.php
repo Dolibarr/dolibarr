@@ -718,7 +718,7 @@ class Contrat extends CommonObject
 	 *
 	 *  @return ContratLigne[]   Return array of contract lines
 	 */
-	public function fetch_lines($loadalsotranslation = 0)
+	public function fetch_lines($only_product = 0, $loadalsotranslation = 0)
 	{
 		global $langs, $conf;
         // phpcs:enable
