@@ -37,6 +37,58 @@ $year = GETPOST('year');
 $month = GETPOST('month');
 $type_declaration = GETPOST('type');
 
+// Mode creation
+if ($action == 'create')
+{
+    $title = $langs->trans("IntracommReportDEBTitle");
+    llxHeader("", $title);
+    print load_fiche_titre($langs->trans("IntracommReportDEBTitle"));
+
+    print '<form name="charge" method="post" action="'.$_SERVER["PHP_SELF"].'">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="action" value="export" />';
+
+    dol_fiche_head();
+
+    print '<table class="border" width="100%">';
+
+    // Analysis period
+    print '<tr>';
+    print '<td class="titlefieldcreate fieldrequired">';
+    print $langs->trans("AnalysisPeriod");
+    print '</td>';
+    print '<td>';
+    $TabMonth = array();
+    for($i=1;$i<=12;$i++) $TabMonth[$i] = $langs->trans('Month'.str_pad($i, 2, 0, STR_PAD_LEFT));
+    //print $ATMform->combo('','month', $TabMonth, empty($month) ? date('m') : $month);
+    print $formother->select_month(empty($month) ? date('M') : $month,'month',0, 1);
+    print $formother->select_year(empty($year) ? date('Y') : $year,'year',0, 3, 3);
+    print '</td>';
+    print '</tr>';
+
+    // Type of declaration
+    print '<tr>';
+    print '<td>';
+    print $langs->trans("TypeOfDeclaration");
+    print '</td>';
+    print '<td>';
+    //print $ATMform->combo('','type', array('introduction'=>'Introduction', 'expedition'=>'Expédition'), $type_declaration);
+    print $form->selectarray('type', $type, $type_declaration);
+    print '</td>';
+    print '</tr>';
+
+    print '</table>';
+
+    dol_fiche_end();
+
+    print '<div class="center">';
+    print '<input type="submit" class="button" value="'.$langs->trans("ExportXML").'">';
+    print '</div>';
+
+    print '</form>';
+}
+
+/*
 switch($action) {
 	case 'generateXML':
 		$obj = new TDebProdouane($PDOdb);
@@ -53,59 +105,6 @@ switch($action) {
 		if ($exporttype == 'deb') _print_form_deb();
 		else _print_form_des();
 		break;
-}
-
-
-
-function _print_form_deb() {
-	
-	global $langs, $form, $formother, $year, $month, $type, $type_declaration;
-
-    $title = $langs->trans("IntracommReportDEBTitle");
-	llxHeader("", $title);
-    print load_fiche_titre($langs->trans("IntracommReportDEBTitle"));
-
-    dol_fiche_head();
-
-	print '<form action="'.$_SERVER['PHP_SELF'].'" name="save" method="POST">';
-	print '<input type="hidden" name="action" value="export" />';
-	
-	print '<table width="100%" class="noborder">';
-	print '<tr class="liste_titre">';
-	print '<td colspan="2">';
-	print 'Paramètres de l\'export';
-	print '</td>';
-	print '</tr>';
-	print '<tr>';
-	print '<td>';
-	print 'Période d\'analyse';
-	print '</td>';
-	print '<td>';
-	$TabMonth = array();
-	for($i=1;$i<=12;$i++) $TabMonth[$i] = $langs->trans('Month'.str_pad($i, 2, 0, STR_PAD_LEFT));
-	//print $ATMform->combo('','month', $TabMonth, empty($month) ? date('m') : $month);
-	print $formother->select_month(empty($month) ? date('M') : $month,'month',0, 1);
-    print $formother->select_year(empty($year) ? date('Y') : $year,'year',0, 3, 3);
-	print '</td>';
-	print '</tr>';
-	print '<tr>';
-	print '<td>';
-	print 'Type de déclaration';
-	print '</td>';
-	print '<td>';
-	//print $ATMform->combo('','type', array('introduction'=>'Introduction', 'expedition'=>'Expédition'), $type_declaration);
-    print $form->selectarray('type', $type, $type_declaration);
-    print '</td>';
-	print '</tr>';
-	
-	print '</table>';
-	
-	print '<div class="tabsAction">';
-	print '<input class="butAction" type="SUBMIT" name="subFormExport" value="Exporter XML" />';
-	print '</div>';
-	
-	print '</form>';
-	
 }
 
 function _print_form_des()
@@ -184,5 +183,6 @@ function _export_xml_des($type_declaration, $period_year, $period_month) {
 	}
 	else setEventMessage($obj->errors, 'warnings');
 }
+*/
 
 llxFooter();

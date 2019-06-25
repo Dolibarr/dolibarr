@@ -15,14 +15,14 @@ INTRACOMMREPORT_NUM_DECLARATION=Numéro de déclarant
 
 #Menu
 MenuDeclaration=Export Pro-Douane
-MenuDeclarationDEB=Export DEB
-MenuDeclarationDEBNew=Nouvelle déclaration
-MenuDeclarationDEBList=Liste des déclarations
-MenuDeclarationDES=Export DES
-MenuDeclarationDESNew=Nouvelle déclaration
-MenuDeclarationDESList=Liste des déclarations
+MenuDeclarationNew=Nouvelle déclaration
+MenuDeclarationList=Liste
 
-#page d'export
+# View
+AnalysisPeriod=Analysis period
+TypeOfDeclaration=Type of declaration
+
+#Page d'export
 IntracommReportDEBTitle=Export d'un fichier XML au format ProDouane - DEB
 IntracommReportDESTitle=Export d'un fichier XML au format ProDouane - DES
 
