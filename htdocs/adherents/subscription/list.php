@@ -298,33 +298,33 @@ if (! empty($conf->global->MAIN_SHOW_TECHNICAL_ID))
 if (! empty($arrayfields['d.ref']['checked']))
 {
 	print '<td class="liste_titre left">';
-	print '<input class="flat" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'" size="4"></td>';
+	print '<input class="flat maxwidth50" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'"></td>';
 }
 
 // Type
 if (! empty($arrayfields['d.fk_type']['checked']))
 {
 	print '<td class="liste_titre left">';
-	print '<input class="flat" type="text" name="search_type" value="'.dol_escape_htmltag($search_type).'" size="7">';
+	print '<input class="flat maxwidth50" type="text" name="search_type" value="'.dol_escape_htmltag($search_type).'">';
 	print'</td>';
 }
 
 if (! empty($arrayfields['d.lastname']['checked']))
 {
 	print '<td class="liste_titre left">';
-	print '<input class="flat" type="text" name="search_lastname" value="'.dol_escape_htmltag($search_lastname).'" size="7"></td>';
+	print '<input class="flat maxwidth75" type="text" name="search_lastname" value="'.dol_escape_htmltag($search_lastname).'"></td>';
 }
 
 if (! empty($arrayfields['d.firstname']['checked']))
 {
 	print '<td class="liste_titre left">';
-	print '<input class="flat" type="text" name="search_firstname" value="'.dol_escape_htmltag($search_firstname).'" size="12"></td>';
+	print '<input class="flat maxwidth75" type="text" name="search_firstname" value="'.dol_escape_htmltag($search_firstname).'"></td>';
 }
 
 if (! empty($arrayfields['d.login']['checked']))
 {
 	print '<td class="liste_titre left">';
-	print '<input class="flat" type="text" name="search_login" value="'.dol_escape_htmltag($search_login).'" size="7"></td>';
+	print '<input class="flat maxwidth75" type="text" name="search_login" value="'.dol_escape_htmltag($search_login).'"></td>';
 }
 
 if (! empty($arrayfields['t.libelle']['checked']))
