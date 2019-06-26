@@ -1956,9 +1956,43 @@ class ExtraFields
 	{
 		global $langs;
 
-		$out = '<tr class="trextrafieldseparator trextrafieldseparator'.$key.'"><td colspan="2"><strong>';
+		$out = '<tr id="trextrafieldseparator'.$key.'" class="trextrafieldseparator trextrafieldseparator'.$key.'"><td colspan="2"><strong>';
 		$out.= $langs->trans($this->attributes[$object->table_element]['label'][$key]);
 		$out.= '</strong></td></tr>';
+
+        $extrafield_param = $this->attributes[$object->table_element]['param'][$key];
+        if (!empty($extrafield_param) && is_array($extrafield_param)) {
+            $extrafield_param_list = array_keys($extrafield_param['options']);
+
+            if (count($extrafield_param_list) > 0) {
+                $extrafield_collapse_display_value = intval($extrafield_param_list[0]);
+                if ($extrafield_collapse_display_value == 1 || $extrafield_collapse_display_value == 2) {
+                    $collapse_display = ($extrafield_collapse_display_value == 2 ? false : true);
+                    $extrafields_collapse_num = $this->attributes[$object->table_element]['pos'][$key];
+
+                    $out .= '<script type="text/javascript">';
+                    $out .= 'jQuery(document).ready(function(){';
+                    if ($collapse_display === false) {
+                        $out .= '   jQuery("#trextrafieldseparator' . $key . ' td").prepend("<span class=\"cursorpointer fa fa-plus-square\"></span>&nbsp;");';
+                        $out .= '   jQuery(".trextrafields_collapse' . $extrafields_collapse_num . '").hide();';
+                    } else {
+                        $out .= '   jQuery("#trextrafieldseparator' . $key . ' td").prepend("<span class=\"cursorpointer fa fa-minus-square\"></span>&nbsp;");';
+                    }
+                    $out .= '   jQuery("#trextrafieldseparator' . $key . '").click(function(){';
+                    $out .= '       jQuery(".trextrafields_collapse' . $extrafields_collapse_num . '").toggle("slow", function(){';
+                    $out .= '           if (jQuery(".trextrafields_collapse' . $extrafields_collapse_num . '").is(":hidden")) {';
+                    $out .= '               jQuery("#trextrafieldseparator' . $key . ' td span").addClass("fa-plus-square").removeClass("fa-minus-square");';
+                    $out .= '           } else {';
+                    $out .= '               jQuery("#trextrafieldseparator' . $key . ' td span").addClass("fa-minus-square").removeClass("fa-plus-square");';
+                    $out .= '           }';
+                    $out .= '       });';
+                    $out .= '   });';
+                    $out .= '});';
+                    $out .= '</script>';
+                }
+            }
+        }
+
 		return $out;
 	}
 

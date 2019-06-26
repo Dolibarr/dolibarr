@@ -230,7 +230,7 @@ class modCategorie extends DolibarrModules
 		$this->export_code[$r]='category_'.$r;
 		$this->export_label[$r]='CatProdList';
 		$this->export_icon[$r]='category';
-        $this->export_enabled[$r]='$conf->produit->enabled';
+        $this->export_enabled[$r]='$conf->product->enabled || $conf->service->enabled';
 		$this->export_permission[$r]=array(array("categorie","lire"),array("produit","lire"));
 		$this->export_fields_array[$r]=array('u.rowid'=>"CategId",'u.label'=>"Label",'u.description'=>"Description",'p.rowid'=>'ProductId','p.ref'=>'Ref');
 		$this->export_TypeFields_array[$r]=array('u.label'=>"Text",'u.description'=>"Text",'p.ref'=>'Text');

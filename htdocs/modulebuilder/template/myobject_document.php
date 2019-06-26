@@ -81,8 +81,8 @@ $extralabels = $extrafields->fetch_name_optionals_label('myobject');
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
 
-//if ($id > 0 || ! empty($ref)) $upload_dir = $conf->mymodule->multidir_output[$object->entity?$object->entity:1] . "/myobject/" . dol_sanitizeFileName($object->id);
-if ($id > 0 || ! empty($ref)) $upload_dir = $conf->mymodule->multidir_output[$object->entity?$object->entity:1] . "/myobject/" . dol_sanitizeFileName($object->ref);
+//if ($id > 0 || ! empty($ref)) $upload_dir = $conf->mymodule->multidir_output[$object->entity?$object->entity:$conf->entity] . "/myobject/" . dol_sanitizeFileName($object->id);
+if ($id > 0 || ! empty($ref)) $upload_dir = $conf->mymodule->multidir_output[$object->entity?$object->entity:$conf->entity] . "/myobject/" . dol_sanitizeFileName($object->ref);
 
 
 /*

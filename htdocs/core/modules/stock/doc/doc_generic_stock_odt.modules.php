@@ -244,7 +244,7 @@ class doc_generic_stock_odt extends ModelePDFStock
 		// Load translation files required by the page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills"));
 
-		if ($conf->produit->dir_output)
+		if ($conf->product->dir_output)
 		{
 			// If $object is id instead of object
 			if (! is_object($object))
@@ -262,7 +262,7 @@ class doc_generic_stock_odt extends ModelePDFStock
 			$supplierprices = $stockFournisseur->list_stock_fournisseur_price($object->id);
 			$object->supplierprices = $supplierprices;
 
-			$dir = $conf->produit->dir_output;
+			$dir = $conf->product->dir_output;
 			$objectref = dol_sanitizeFileName($object->ref);
 			if (! preg_match('/specimen/i', $objectref)) $dir.= "/" . $objectref;
 			$file = $dir . "/" . $objectref . ".odt";
@@ -302,9 +302,9 @@ class doc_generic_stock_odt extends ModelePDFStock
 				//print "newdir=".$dir;
 				//print "newfile=".$newfile;
 				//print "file=".$file;
-				//print "conf->produit->dir_temp=".$conf->produit->dir_temp;
+				//print "conf->product->dir_temp=".$conf->product->dir_temp;
 
-				dol_mkdir($conf->produit->dir_temp);
+				dol_mkdir($conf->product->dir_temp);
 
 
 				// If CUSTOMER contact defined on stock, we use it
@@ -360,7 +360,7 @@ class doc_generic_stock_odt extends ModelePDFStock
                     $odfHandler = new odf(
                         $srctemplatepath,
 					    array(
-						    'PATH_TO_TMP'	  => $conf->produit->dir_temp,
+						    'PATH_TO_TMP'	  => $conf->product->dir_temp,
 						    'ZIP_PROXY'		  => 'PclZipProxy',	// PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
 						    'DELIMITER_LEFT'  => '{',
 						    'DELIMITER_RIGHT' => '}'

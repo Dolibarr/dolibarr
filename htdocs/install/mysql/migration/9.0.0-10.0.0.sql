@@ -96,6 +96,8 @@ ALTER TABLE llx_adherent ADD gender VARCHAR(10);
 ALTER TABLE llx_adherent_type ADD morphy VARCHAR(3);
 ALTER TABLE llx_subscription ADD fk_type integer;
 
+UPDATE llx_subscription as s SET fk_type = (SELECT fk_adherent_type FROM llx_adherent as a where a.rowid = s.fk_adherent) where fk_type IS NULL; 
+
 -- Add url_id into unique index of bank_url
 ALTER TABLE llx_bank_url DROP INDEX uk_bank_url;
 ALTER TABLE llx_bank_url ADD UNIQUE INDEX uk_bank_url (fk_bank, url_id, type);

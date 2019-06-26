@@ -106,13 +106,13 @@ if (empty($reshook))
 
 	// Visible
 	$alwayscheckedmodules=array('barcode','bookmark','categorie','externalrss','fckeditor','geoipmaxmind','gravatar','memcached','syslog','user','webservices');  // Technical module we always want
-	$alwaysuncheckedmodules=array('dynamicprices','incoterm','loan','multicurrency','paybox','paypal','stripe','google','printing','scanner','skype','workflow');  // Module we dont want by default
+	$alwaysuncheckedmodules=array('dav','dynamicprices','incoterm','loan','multicurrency','paybox','paypal','stripe','google','printing','scanner','skype','takepos','workflow','website');  // Module we dont want by default
 	// Not visible
 	$alwayshiddencheckedmodules=array('accounting','api','barcode','blockedlog','bookmark','clicktodial','comptabilite','cron','document','domain','externalrss','externalsite','fckeditor','geoipmaxmind','gravatar','label','ldap',
 									'mailmanspip','notification','oauth','syslog','user','webservices',
 	                                // Extended modules
 	                                'memcached','numberwords','zipautofillfr');
-	$alwayshiddenuncheckedmodules=array('ftp','hrm','webservicesclient','websites',
+	$alwayshiddenuncheckedmodules=array('debugbar','emailcollector','ftp','hrm','modulebuilder','webservicesclient','websites',
 	                                // Extended modules
 	                                'awstats','bittorrent','bootstrap','cabinetmed','cmcic','concatpdf','customfield','deplacement','dolicloud','filemanager','lightbox','mantis','monitoring','moretemplates','multicompany','nltechno','numberingpack','openstreetmap',
 	                                'ovh','phenix','phpsysinfo','pibarcode','postnuke','selectbank','skincoloreditor','submiteverywhere','survey','thomsonphonebook','topten','tvacerfa','voyage','webcalendar','webmail');

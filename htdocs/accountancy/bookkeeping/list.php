@@ -104,7 +104,7 @@ $formaccounting = new FormAccounting($db);
 $formother = new FormOther($db);
 $form = new Form($db);
 
-if (! in_array($action, array('export_file', 'delmouv', 'delmouvconfirm')) && ! isset($_POST['begin']) && ! isset($_GET['begin']) && ! isset($_POST['formfilteraction']) && GETPOST('page', 'int') == '' && ! GETPOST('noreset', 'int'))
+if (! in_array($action, array('export_file', 'delmouv', 'delmouvconfirm')) && ! isset($_POST['begin']) && ! isset($_GET['begin']) && ! isset($_POST['formfilteraction']) && GETPOST('page', 'int') == '' && ! GETPOST('noreset', 'int') && $user->rights->accounting->mouvements->export)
 {
 	if (empty($search_date_start) && empty($search_date_end) && ! GETPOSTISSET('restore_lastsearch_values'))
 	{
@@ -300,7 +300,7 @@ if (! empty($search_lettering_code)) {
 }
 
 
-if ($action == 'delbookkeeping') {
+if ($action == 'delbookkeeping' && $user->rights->accounting->mouvements->supprimer) {
 
 	$import_key = GETPOST('importkey', 'alpha');
 
@@ -315,7 +315,7 @@ if ($action == 'delbookkeeping') {
 		exit;
 	}
 }
-if ($action == 'delbookkeepingyearconfirm') {
+if ($action == 'delbookkeepingyearconfirm' && $user->rights->accounting->mouvements->supprimer_tous) {
 
 	$delyear = GETPOST('delyear', 'int');
 	if ($delyear==-1) {
@@ -346,7 +346,7 @@ if ($action == 'delbookkeepingyearconfirm') {
 		setEventMessages("NoRecordDeleted", null, 'warnings');
 	}
 }
-if ($action == 'delmouvconfirm') {
+if ($action == 'delmouvconfirm' && $user->rights->accounting->mouvements->supprimer) {
 
 	$mvt_num = GETPOST('mvt_num', 'int');
 
@@ -366,7 +366,8 @@ if ($action == 'delmouvconfirm') {
 }
 
 // Export into a file with format defined into setup (FEC, CSV, ...)
-if ($action == 'export_file') {
+if ($action == 'export_file' && $user->rights->accounting->mouvements->export) {
+
 	$result = $object->fetchAll($sortorder, $sortfield, 0, 0, $filter, 'AND', $conf->global->ACCOUNTING_REEXPORT);
 
 	if ($result < 0)
@@ -514,11 +515,11 @@ if (! empty($conf->global->ACCOUNTING_REEXPORT)) {
 }
 $newcardbutton.= '<span class="valignmiddle marginrightonly">'.$langs->trans("IncludeDocsAlreadyExported").'</span>';
 
-$newcardbutton.= dolGetButtonTitle($buttonLabel, $langs->trans("ExportFilteredList").' ('.$listofformat[$conf->global->ACCOUNTING_EXPORT_MODELCSV].')', 'fa fa-file-export paddingleft', $_SERVER["PHP_SELF"].'?action=export_file'.($param?'&'.$param:''));
+$newcardbutton.= dolGetButtonTitle($buttonLabel, $langs->trans("ExportFilteredList").' ('.$listofformat[$conf->global->ACCOUNTING_EXPORT_MODELCSV].')', 'fa fa-file-export paddingleft', $_SERVER["PHP_SELF"].'?action=export_file'.($param?'&'.$param:''), $user->rights->accounting->mouvements->export);
 
 $newcardbutton.= dolGetButtonTitle($langs->trans('GroupByAccountAccounting'), '', 'fa fa-stream paddingleft', DOL_URL_ROOT.'/accountancy/bookkeeping/listbyaccount.php?'.$param);
 
-$newcardbutton.= dolGetButtonTitle($langs->trans('NewAccountingMvt'), '', 'fa fa-plus-circle paddingleft', './card.php?action=create');
+$newcardbutton.= dolGetButtonTitle($langs->trans('NewAccountingMvt'), '', 'fa fa-plus-circle paddingleft', './card.php?action=create', '', $user->rights->accounting->mouvements->creer);
 
 print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $result, $nbtotalofrecords, 'title_accountancy', 0, $newcardbutton, '', $limit);
 
@@ -818,12 +819,17 @@ if ($num > 0)
 
 		// Action column
 		print '<td class="nowraponall center">';
-        if(empty($line->date_export)) {
-		    print '<a href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?piece_num=' . urlencode($line->piece_num) . $param . '&page=' . $page . ($sortfield ? '&sortfield='.$sortfield : '') . ($sortorder ? '&sortorder='.$sortorder : '') . '">' . img_edit() . '</a>&nbsp;';
-		    print '<a href="' . $_SERVER['PHP_SELF'] . '?action=delmouv&mvt_num=' . urlencode($line->piece_num) . $param . '&page=' . $page . ($sortfield ? '&sortfield='.$sortfield : '') . ($sortorder ? '&sortorder='.$sortorder : '') . '">' . img_delete() . '</a>';
+        if (empty($line->date_export)) {
+          if ($user->rights->accounting->mouvements->creer) {
+              print '<a href="' . DOL_URL_ROOT . '/accountancy/bookkeeping/card.php?piece_num=' . $line->piece_num . $param . '&page=' . $page . ($sortfield ? '&sortfield=' . $sortfield : '') . ($sortorder ? '&sortorder=' . $sortorder : '') . '">' . img_edit() . '</a>';
+          }
+          if ($user->rights->accounting->mouvements->supprimer) {
+              print '&nbsp;<a href="' . $_SERVER['PHP_SELF'] . '?action=delmouv&mvt_num=' . $line->piece_num . $param . '&page=' . $page . ($sortfield ? '&sortfield=' . $sortfield : '') . ($sortorder ? '&sortorder=' . $sortorder : '') . '">' . img_delete() . '</a>';
+          }
         }
-        print '</td>';
-		if (! $i) $totalarray['nbfield']++;
+		print '</td>';
+
+    if (! $i) $totalarray['nbfield']++;
 
 		print "</tr>\n";
 
@@ -855,10 +861,11 @@ print "</table>";
 print '</div>';
 
 // TODO Replace this with mass delete action
-print '<div class="tabsAction tabsActionNoBottom">' . "\n";
-print '<a class="butActionDelete" name="button_delmvt" href="'.$_SERVER["PHP_SELF"].'?action=delbookkeepingyear'.($param?'&'.$param:'').'">' . $langs->trans("DeleteMvt") . '</a>';
-print '</div>';
-
+if ($user->rights->accounting->mouvements->supprimer_tous) {
+    print '<div class="tabsAction tabsActionNoBottom">' . "\n";
+    print '<a class="butActionDelete" name="button_delmvt" href="' . $_SERVER["PHP_SELF"] . '?action=delbookkeepingyear' . ($param ? '&' . $param : '') . '">' . $langs->trans("DeleteMvt") . '</a>';
+    print '</div>';
+}
 
 print '</form>';
 

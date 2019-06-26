@@ -536,7 +536,7 @@ class Expedition extends CommonObject
 		$sql.= ", e.fk_shipping_method, e.tracking_number";
 		$sql.= ", e.note_private, e.note_public";
 		$sql.= ', e.fk_incoterms, e.location_incoterms';
-		$sql.= ', i.libelle as libelle_incoterms';
+		$sql.= ', i.libelle as label_incoterms';
 		$sql.= ', s.libelle as shipping_method';
 		$sql.= ", el.fk_source as origin_id, el.sourcetype as origin";
 		$sql.= " FROM ".MAIN_DB_PREFIX."expedition as e";
@@ -601,7 +601,7 @@ class Expedition extends CommonObject
 				//Incoterms
 				$this->fk_incoterms         = $obj->fk_incoterms;
 				$this->location_incoterms   = $obj->location_incoterms;
-				$this->libelle_incoterms    = $obj->libelle_incoterms;
+				$this->label_incoterms    = $obj->label_incoterms;
 
 				$this->db->free($result);
 

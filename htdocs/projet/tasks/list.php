@@ -773,7 +773,7 @@ while ($i < min($num, $limit))
 			}
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
-			if (! $i) $totalarray['totalprogress_calculated']=$totalarray['nbfield'];
+			if (! $i) $totalarray['totalprogress_calculatedfield']=$totalarray['nbfield'];
 		}
 		// Declared progress
 		if (! empty($arrayfields['t.progress']['checked']))
@@ -785,6 +785,8 @@ while ($i < min($num, $limit))
 			}
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
+            if (! $i) $totalarray['totalprogress_declaredfield']=$totalarray['nbfield'];
+            $totalarray['totaldurationdeclared'] += $obj->planned_workload * $obj->progress / 100;
 		}
 		// Time not billed
 		if (! empty($arrayfields['t.tobill']['checked']))
@@ -883,6 +885,7 @@ if (isset($totalarray['totaldurationeffectivefield']) || isset($totalarray['tota
 		elseif ($totalarray['totalplannedworkloadfield'] == $i) print '<td class="center">'.convertSecondToTime($totalarray['totalplannedworkload'], $plannedworkloadoutputformat).'</td>';
 		elseif ($totalarray['totaldurationeffectivefield'] == $i) print '<td class="center">'.convertSecondToTime($totalarray['totaldurationeffective'], $timespentoutputformat).'</td>';
 		elseif ($totalarray['totalprogress_calculatedfield'] == $i) print '<td class="center">'.($totalarray['totalplannedworkload'] > 0 ? round(100 * $totalarray['totaldurationeffective'] / $totalarray['totalplannedworkload'], 2).' %' : '').'</td>';
+		elseif ($totalarray['totalprogress_declaredfield'] == $i) print '<td class="center">'.($totalarray['totalplannedworkload'] > 0 ? round(100 * $totalarray['totaldurationdeclared'] / $totalarray['totalplannedworkload'], 2).' %' : '').'</td>';
 		elseif ($totalarray['totaltobillfield'] == $i) print '<td class="center">'.convertSecondToTime($totalarray['totaltobill'], $plannedworkloadoutputformat).'</td>';
 		elseif ($totalarray['totalbilledfield'] == $i) print '<td class="center">'.convertSecondToTime($totalarray['totalbilled'], $plannedworkloadoutputformat).'</td>';
 		else print '<td></td>';

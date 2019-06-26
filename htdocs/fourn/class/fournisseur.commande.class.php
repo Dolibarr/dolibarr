@@ -154,7 +154,7 @@ class CommandeFournisseur extends CommonOrder
 	//Incoterms
     public $fk_incoterms;
     public $location_incoterms;
-    public $libelle_incoterms;  //Used into tooltip
+    public $label_incoterms;  //Used into tooltip
 
     public $extraparams=array();
 
@@ -267,7 +267,7 @@ class CommandeFournisseur extends CommonOrder
         $sql.= " cr.code as cond_reglement_code, cr.libelle as cond_reglement_libelle, cr.libelle_facture as cond_reglement_libelle_doc,";
         $sql.= " p.code as mode_reglement_code, p.libelle as mode_reglement_libelle";
         $sql.= ', c.fk_incoterms, c.location_incoterms';
-        $sql.= ', i.libelle as libelle_incoterms';
+        $sql.= ', i.libelle as label_incoterms';
         $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_payment_term as cr ON c.fk_cond_reglement = cr.rowid";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as p ON c.fk_mode_reglement = p.id";
@@ -335,7 +335,7 @@ class CommandeFournisseur extends CommonOrder
 			//Incoterms
 			$this->fk_incoterms = $obj->fk_incoterms;
 			$this->location_incoterms = $obj->location_incoterms;
-			$this->libelle_incoterms = $obj->libelle_incoterms;
+			$this->label_incoterms = $obj->label_incoterms;
 
 			// Multicurrency
 			$this->fk_multicurrency 		= $obj->fk_multicurrency;
