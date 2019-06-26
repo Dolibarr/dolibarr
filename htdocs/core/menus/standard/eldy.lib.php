@@ -1369,11 +1369,11 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
             // Intracomm report
             if (! empty($conf->intracommreport->enabled))
             {
-                $newmenu->add("/intracommreport/list.php?leftmenu=intracommreport", $langs->trans("MenuDeclaration"), 0, $user->rights->intracommreport->read, '', $mainmenu, 'intracommreport', 1);
+                $newmenu->add("/intracommreport/list.php?leftmenu=intracommreport", $langs->trans("MenuIntracommReport"), 0, $user->rights->intracommreport->read, '', $mainmenu, 'intracommreport', 1);
                 if ($usemenuhider || empty($leftmenu) || preg_match('/intracommreport/', $leftmenu)) {
                     // DEB / DES
-                    $newmenu->add("/intracommreport/card.php?action=create&leftmenu=intracommreport", $langs->trans("MenuDeclarationNew"), 1, $user->rights->intracommreport->write, '', $mainmenu, 'intracommreport', 1);
-                    $newmenu->add("/intracommreport/list.php?leftmenu=intracommreport", $langs->trans("MenuDeclarationList"), 1, $user->rights->intracommreport->read, '', $mainmenu, 'intracommreport', 1);
+                    $newmenu->add("/intracommreport/card.php?action=create&leftmenu=intracommreport", $langs->trans("MenuIntracommReportNew"), 1, $user->rights->intracommreport->write, '', $mainmenu, 'intracommreport', 1);
+                    $newmenu->add("/intracommreport/list.php?leftmenu=intracommreport", $langs->trans("MenuIntracommReportList"), 1, $user->rights->intracommreport->read, '', $mainmenu, 'intracommreport', 1);
                 }
             }
 

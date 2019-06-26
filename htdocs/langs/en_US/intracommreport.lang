@@ -7,28 +7,29 @@ IntracommReportAbout = About intracommreport
 INTRACOMMREPORT_NUM_AGREMENT=Numéro d'agrément (délivré par le CISD de rattachement)
 INTRACOMMREPORT_TYPE_ACTEUR=Type d'acteur
 INTRACOMMREPORT_ROLE_ACTEUR=Rôle joué par l'acteur
-INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Niveau d'oligation sur les introductions
+INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Niveau d'obligation sur les introductions
 INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Niveau d'obligation sur les expéditions
 INTRACOMMREPORT_CATEG_FRAISDEPORT=Catégorie de services de type "Frais de port"
 
 INTRACOMMREPORT_NUM_DECLARATION=Numéro de déclarant
 
 #Menu
-MenuDeclaration=Export Pro-Douane
-MenuDeclarationNew=Nouvelle déclaration
-MenuDeclarationList=Liste
+MenuIntracommReport=Intracomm report
+MenuIntracommReportNew=New declaration
+MenuIntracommReportList=List
 
 # View
+Declaration=Declaration
 AnalysisPeriod=Analysis period
 TypeOfDeclaration=Type of declaration
+DEB=Goods exchange declaration (DEB)
+DES=Services exchange declaration (DES)
 
 #Page d'export
-IntracommReportDEBTitle=Export d'un fichier XML au format ProDouane - DEB
-IntracommReportDESTitle=Export d'un fichier XML au format ProDouane - DES
+IntracommReportTitle=Preparation of an XML file in ProDouane format
 
 #Liste
-IntracommReportListDEB=Liste des déclarations générées (DEB)
-IntracommReportListDES=Liste des déclarations générées (DES)
+IntracommReportList=List of generated declarations
 IntracommReportNumber=Numéro déclaration
 IntracommReportPeriod=Période d'analyse
 IntracommReportTypeDeclaration=Type de déclaration
