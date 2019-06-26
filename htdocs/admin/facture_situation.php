@@ -38,10 +38,10 @@ $langs->loadLangs(array('admin', 'errors', 'other', 'bills'));
 
 if (! $user->admin) accessforbidden();
 
-$action = GETPOST('action','alpha');
-$value = GETPOST('value','alpha');
-$label = GETPOST('label','alpha');
-$scandir = GETPOST('scan_dir','alpha');
+$action = GETPOST('action', 'alpha');
+$value = GETPOST('value', 'alpha');
+$label = GETPOST('label', 'alpha');
+$scandir = GETPOST('scan_dir', 'alpha');
 $type='invoice';
 
 
@@ -57,15 +57,15 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
  * View
  */
 
-$dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
+$dirmodels=array_merge(array('/'), (array) $conf->modules_parts['models']);
 
-llxHeader("",$langs->trans("BillsSetup"),'EN:Invoice_Configuration|FR:Configuration_module_facture|ES:ConfiguracionFactura');
+llxHeader("", $langs->trans("BillsSetup"), 'EN:Invoice_Configuration|FR:Configuration_module_facture|ES:ConfiguracionFactura');
 
 $form=new Form($db);
 
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans("BillsSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("BillsSetup"), $linkback, 'title_setup');
 
 $head = invoice_admin_prepare_head();
 dol_fiche_head($head, 'situation', $langs->trans("InvoiceSituation"), -1, 'invoice');
@@ -74,7 +74,7 @@ dol_fiche_head($head, 'situation', $langs->trans("InvoiceSituation"), -1, 'invoi
  *  Numbering module
  */
 
-print load_fiche_titre($langs->trans("InvoiceSituation"),'','');
+print load_fiche_titre($langs->trans("InvoiceSituation"), '', '');
 $var=0;
 
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
@@ -85,9 +85,9 @@ _updateBtn();
 print '<table class="noborder" width="100%">';
 
 
-_printOnOff('INVOICE_USE_SITUATION',$langs->trans('UseSituationInvoices'));
-_printOnOff('INVOICE_USE_SITUATION_CREDIT_NOTE',$langs->trans('UseSituationInvoicesCreditNote'));
-_printOnOff('INVOICE_USE_SITUATION_RETAINED_WARRANTY',$langs->trans('Retainedwarranty'));
+_printOnOff('INVOICE_USE_SITUATION', $langs->trans('UseSituationInvoices'));
+_printOnOff('INVOICE_USE_SITUATION_CREDIT_NOTE', $langs->trans('UseSituationInvoicesCreditNote'));
+_printOnOff('INVOICE_USE_SITUATION_RETAINED_WARRANTY', $langs->trans('Retainedwarranty'));
 
 $metas = array(
     'type' => 'number',
@@ -95,7 +95,7 @@ $metas = array(
     'min' => 0,
     'max' => 100
 );
-_printInputFormPart('INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_PERCENT',$langs->trans('RetainedwarrantyDefaultPercent'),'',$metas);
+_printInputFormPart('INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_PERCENT', $langs->trans('RetainedwarrantyDefaultPercent'), '', $metas);
 
 
 
@@ -136,12 +136,12 @@ function _updateBtn(){
 
 /**
  * Print a On/Off button
- * @param $confkey
- * @param bool $title
- * @param string $desc
+ * @param string $confkey the conf key
+ * @param bool $title Title of conf
+ * @param string $desc Description of
  * @return void
  */
-function _printOnOff($confkey, $title = false, $desc ='')
+function _printOnOff($confkey, $title = false, $desc = '')
 {
     global $var, $bc, $langs;
     $var=!$var;
@@ -161,11 +161,11 @@ function _printOnOff($confkey, $title = false, $desc ='')
 
 /**
  * Print a form part
- * @param $confkey
- * @param bool $title
- * @param string $desc
- * @param array $metas
- * @param string $type
+ * @param string $confkey the conf key
+ * @param bool $title Title of conf
+ * @param string $desc Description of
+ * @param array $metas html meta
+ * @param string $type type of input textarea or input
  * @param bool $help
  * @return void
  */
@@ -186,7 +186,7 @@ function _printInputFormPart($confkey, $title = false, $desc ='', $metas = array
     }
     
     
-    $metas = array_merge ($defaultMetas, $metas);
+    $metas = array_merge($defaultMetas, $metas);
     $metascompil = '';
     foreach ($metas as $key => $values)
     {
@@ -197,7 +197,7 @@ function _printInputFormPart($confkey, $title = false, $desc ='', $metas = array
     print '<td>';
     
     if(!empty($help)){
-        print $form->textwithtooltip( ($title?$title:$langs->trans($confkey)) , $langs->trans($help),2,1,img_help(1,''));
+        print $form->textwithtooltip(($title?$title:$langs->trans($confkey)), $langs->trans($help), 2, 1, img_help(1, ''));
     }
     else {
         print $title?$title:$langs->trans($confkey);

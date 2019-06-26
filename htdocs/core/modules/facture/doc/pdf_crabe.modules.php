@@ -1354,7 +1354,7 @@ class pdf_crabe extends ModelePDFFactures
 				    // Check if this situation invoice is 100% for real
 				    if(!empty($object->lines)){
 				        $displayWarranty = true;
-				        foreach($object->lines as $i => $line ){
+				        foreach($object->lines as $i => $line){
 				            if($line->product_type < 2 && $line->situation_percent < 100){
 				                $displayWarranty = false;
 				                break;

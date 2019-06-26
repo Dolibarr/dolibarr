@@ -4684,7 +4684,6 @@ elseif ($id > 0 || ! empty($ref))
 		    print $langs->trans("RetainedWarranty") . ' ('.$object->retained_warranty.'%)';
 		    print !empty($object->retained_warranty_date_limit)?' '.$langs->trans("ToPayOn", dol_print_date($object->retained_warranty_date_limit, 'day')):'';
 		    print ' :</td><td align="right">' . price($retainedWarranty) . '</td><td>&nbsp;</td></tr>';
-		    
 		}
 	}
 	else // Credit note
