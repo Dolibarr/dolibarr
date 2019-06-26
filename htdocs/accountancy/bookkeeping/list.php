@@ -536,6 +536,11 @@ $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
 $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
 if ($massactionbutton) $selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
 
+$parameters=array();
+$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+if (empty($reshook)) $moreforfilter .= $hookmanager->resPrint;
+else $moreforfilter = $hookmanager->resPrint;
+
 print '<div class="div-table-responsive">';
 print '<table class="tagtable liste" width="100%">';
 
@@ -644,6 +649,13 @@ if (! empty($arrayfields['t.code_journal']['checked']))
 {
 	print '<td class="liste_titre center"><input type="text" name="search_ledger_code" size="3" value="' . $search_ledger_code . '"></td>';
 }
+
+
+// Fields from hook
+$parameters=array('arrayfields'=>$arrayfields);
+$reshook=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
+print $hookmanager->resPrint;
+
 // Date creation
 if (! empty($arrayfields['t.date_creation']['checked']))
 {
@@ -871,13 +883,14 @@ if ($num > 0)
 				elseif ($totalarray['totalcreditfield'] == $i) print '<td class="right">'.price($totalarray['totalcredit']).'</td>';
 				else print '<td></td>';
 		}
+        $parameters=array('arrayfields'=>$arrayfields, 'sql'=>$sql);
+        $reshook=$hookmanager->executeHooks('printFieldListFooter', $parameters);    // Note that $action and $object may have been modified by hook
+        print $hookmanager->resPrint;
+
 		print '</tr>';
 	}
 }
 
-$parameters=array('arrayfields'=>$arrayfields, 'sql'=>$sql);
-$reshook=$hookmanager->executeHooks('printFieldListFooter', $parameters);    // Note that $action and $object may have been modified by hook
-print $hookmanager->resPrint;
 
 print "</table>";
 print '</div>';
