@@ -107,8 +107,8 @@ _printInputFormPart('INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_PERCENT', $lang
 $inputCount = empty($inputCount)?1:($inputCount+1);
 print '<tr class="impair">';
 print '<td>'.$langs->trans('PaymentConditionsShortRetainedWarranty').'</td>';
-print '<td align="center" width="20">&nbsp;</td>';
-print '<td align="right" width="300">';
+print '<td class="center" width="20">&nbsp;</td>';
+print '<td class="right" width="300">';
 print '<input type="hidden" name="param'.$inputCount.'" value="INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID">';
 $form->select_conditions_paiements($conf->global->INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID, 'value'.$inputCount, -1, 1);
 print '</td></tr>';
@@ -154,12 +154,12 @@ function _printOnOff($confkey, $title = false, $desc = '')
     $var=!$var;
     print '<tr '.$bc[$var].'>';
     print '<td>'.($title?$title:$langs->trans($confkey));
-    if(!empty($desc)){
+    if (!empty($desc)) {
         print '<br><small>'.$langs->trans($desc).'</small>';
     }
     print '</td>';
-    print '<td align="center" width="20">&nbsp;</td>';
-    print '<td align="right" width="300">';
+    print '<td class="center" width="20">&nbsp;</td>';
+    print '<td class="right" width="300">';
     print ajax_constantonoff($confkey);
     print '</td></tr>';
 }
@@ -188,7 +188,7 @@ function _printInputFormPart($confkey, $title = false, $desc ='', $metas = array
         'name' => 'value'.$inputCount
     );
     
-    if($type!='textarea'){
+    if ($type!='textarea') {
         $defaultMetas['type']   = 'text';
         $defaultMetas['value']  = $conf->global->{$confkey};
     }
@@ -196,32 +196,32 @@ function _printInputFormPart($confkey, $title = false, $desc ='', $metas = array
     
     $metas = array_merge($defaultMetas, $metas);
     $metascompil = '';
-    foreach ($metas as $key => $values){
+    foreach ($metas as $key => $values) {
         $metascompil .= ' '.$key.'="'.$values.'" ';
     }
     
     print '<tr '.$bc[$var].'>';
     print '<td>';
     
-    if(!empty($help)){
+    if (!empty($help)) {
         print $form->textwithtooltip(($title?$title:$langs->trans($confkey)), $langs->trans($help), 2, 1, img_help(1, ''));
-    }else{
+    } else {
         print $title?$title:$langs->trans($confkey);
     }
     
-    if(!empty($desc)){
+    if (!empty($desc)) {
         print '<br><small>'.$langs->trans($desc).'</small>';
     }
     
     print '</td>';
-    print '<td align="center" width="20">&nbsp;</td>';
-    print '<td align="right" width="300">';
+    print '<td class="center" width="20">&nbsp;</td>';
+    print '<td class="right" width="300">';
     print '<input type="hidden" name="param'.$inputCount.'" value="'.$confkey.'">';
     
     print '<input type="hidden" name="action" value="setModuleOptions">';
-    if($type=='textarea'){
+    if ($type=='textarea') {
         print '<textarea '.$metascompil.'  >'.dol_htmlentities($conf->global->{$confkey}).'</textarea>';
-    }else{
+    } else {
         print '<input '.$metascompil.'  />';
     }
     print '</td></tr>';
