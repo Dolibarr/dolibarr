@@ -1359,7 +1359,7 @@ class pdf_crabe extends ModelePDFFactures
 				                $displayWarranty = false;
 				                break;
 				            }
-				        }
+						}
 				    }
 				    
 				    if($displayWarranty){
@@ -1389,7 +1389,6 @@ class pdf_crabe extends ModelePDFFactures
     				    $pdf->MultiCell($largcol2, $tab2_hl, price($retainedWarranty), $useborder, 'R', 1);
 				    }
 				}
-				
 			}
 		}
 
