@@ -449,6 +449,7 @@ class Setup extends DolibarrApi
     /**
      * Get the list of currencies.
      *
+     * @param int       $multicurrency  Multicurrency rates (0: no multicurrency, 1: last rate, 2: all rates) {@min 0} {@max 2}
      * @param string    $sortfield  Sort field
      * @param string    $sortorder  Sort order
      * @param int       $limit      Number of items per page
@@ -461,13 +462,22 @@ class Setup extends DolibarrApi
      *
      * @throws RestException
      */
-    public function getListOfCurrencies($sortfield = "code_iso", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
+    public function getListOfCurrencies($multicurrency = 0, $sortfield = "code_iso", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
     {
         $list = array();
-        //TODO link with multicurrency module
         $sql = "SELECT t.code_iso, t.label, t.unicode";
+        if (!empty($multicurrency)) $sql.= " , cr.date_sync, cr.rate ";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_currencies as t";
+        if (!empty($multicurrency)) {
+        $sql.= " JOIN ".MAIN_DB_PREFIX."multicurrency as m ON m.code=t.code_iso";
+        $sql.= " JOIN ".MAIN_DB_PREFIX."multicurrency_rate as cr ON (m.rowid = cr.fk_multicurrency)";
+        }
         $sql.= " WHERE t.active = ".$active;
+        if (!empty($multicurrency)) {
+        $sql.= " AND m.entity IN (".getEntity('multicurrency').")";
+        if (!empty($multicurrency) && $multicurrency != 2) $sql.= " AND cr.date_sync = (SELECT MAX(cr2.date_sync) FROM ".MAIN_DB_PREFIX."multicurrency_rate AS cr2 WHERE cr2.fk_multicurrency = m.rowid)";
+        }
+        
         // Add sql filters
         if ($sqlfilters)
         {

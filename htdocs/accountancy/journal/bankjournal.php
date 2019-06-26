@@ -8,8 +8,8 @@
  * Copyright (C) 2013-2014  Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2014  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2017-2018  Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2018		Ferran Marcet	    <fmarcet@2byte.es>
- * Copyright (C) 2018		Eric Seigne	    <eric.seigne@cap-rel.fr>
+ * Copyright (C) 2018		Ferran Marcet	        <fmarcet@2byte.es>
+ * Copyright (C) 2018		Eric Seigne	            <eric.seigne@cap-rel.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

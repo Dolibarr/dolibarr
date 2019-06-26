@@ -672,6 +672,7 @@ class Conf
 		if (isset($this->commande))  $this->order=$this->commande;
 		if (isset($this->contrat))   $this->contract=$this->contrat;
 		if (isset($this->categorie)) $this->category=$this->categorie;
+		if (isset($this->project))   $this->project=$this->projet;
 
         // Object $mc
         if (! defined('NOREQUIREMC') && ! empty($this->multicompany->enabled))

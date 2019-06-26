@@ -688,20 +688,32 @@ class ImportXlsx extends ModeleImports
     				// Loop on each hidden fields to add them into listfields/listvalues
 				    foreach($objimport->array_import_fieldshidden[0] as $key => $val)
     				{
-    				    if (! preg_match('/^'.preg_quote($alias).'\./', $key)) continue;    // Not a field of current table
+    				    if (! preg_match('/^'.preg_quote($alias, '/').'\./', $key)) continue;    // Not a field of current table
     				    if ($val == 'user->id')
     				    {
-    				        $listfields[] = preg_replace('/^'.preg_quote($alias).'\./', '', $key);
+    				        $listfields[] = preg_replace('/^'.preg_quote($alias, '/').'\./', '', $key);
     				        $listvalues[] = $user->id;
     				    }
     				    elseif (preg_match('/^lastrowid-/', $val))
     				    {
     				        $tmp=explode('-', $val);
     				        $lastinsertid=(isset($last_insert_id_array[$tmp[1]]))?$last_insert_id_array[$tmp[1]]:0;
-							$keyfield = preg_replace('/^'.preg_quote($alias).'\./', '', $key);
+							$keyfield = preg_replace('/^'.preg_quote($alias, '/').'\./', '', $key);
     				        $listfields[] = $keyfield;
                             $listvalues[] = $lastinsertid;
     				        //print $key."-".$val."-".$listfields."-".$listvalues."<br>";exit;
+    				    }
+    				    elseif (preg_match('/^const-/', $val))
+    				    {
+    				    	$tmp=explode('-', $val, 2);
+    				    	$listfields[] = preg_replace('/^'.preg_quote($alias, '/').'\./', '', $key);
+    				    	$listvalues[] = "'".$tmp[1]."'";
+    				    }
+    				    else
+    				    {
+    				    	$this->errors[$error]['lib']='Bad value of profile setup '.$val.' for array_import_fieldshidden';
+    				    	$this->errors[$error]['type']='Import profile setup';
+    				    	$error++;
     				    }
     				}
 				}

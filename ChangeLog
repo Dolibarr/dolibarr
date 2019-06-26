@@ -3,6 +3,20 @@ English Dolibarr ChangeLog
 --------------------------------------------------------------
 
 
+***** ChangeLog for 11.0.0 compared to 10.0.0 *****
+For Users:
+
+
+For Developers:
+
+
+WARNING:
+
+Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
+* Properties ->libelle_incoterms were renamed into ->label_incoterms
+
+
+
 ***** ChangeLog for 10.0.0 compared to 9.0.0 *****
 For Users:
 NEW: Module "Ticket" is available as a stable module.
@@ -58,7 +72,7 @@ NEW: Can generate invoices from the timespent entered on a project
 NEW: Can update product supplier price ref
 NEW: Can upload files from the edit page of expense report
 NEW: Color for hover and for checked line is on by default
-NEW: Column of parent company is available in list of third parties
+NEW: Column of p...arent company is available in list of third parties
 NEW: conditionnal add member button by statut
 NEW: constant KEEP_DISCOUNT_LINES_FROM_ORIGIN
 NEW: Contact related items tab
@@ -182,6 +196,55 @@ Following changes may create regressions for some external modules, but were nec
   called $dolibarr_main_instance_unique_id is now generated at each installation. It will be used by some future features.
 
 
+***** ChangeLog for 9.0.4 compared to 9.0.3 *****
+FIX: #5249
+FIX: #11025
+FIX: #11032
+FIX: #11097
+FIX: #11169
+FIX: #11202
+FIX: #11244
+FIX: #11296
+FIX: #11316
+FIX: #11335
+FIX: Add missing end date of subscription in export
+FIX: A user may read holiday and expense report without permissions
+FIX: better syntax
+FIX: condition
+FIX: confirmation of mass email sending + option MAILING_NO_USING_PHPMAIL
+FIX: crabe pdf: bad detailed VAT for situation invoices, in situations S2 and above
+FIX: default value for duration of validity can be set from generic
+FIX: do not include tpl from disabled modules
+FIX: Error management when MAILING_NO_USING_PHPMAIL is set
+FIX: Even with permission, can't validate leave once validator defined.
+FIX: extrafield list search: SQL error when field is multiselect
+FIX: if last char of customercode is accent making the truncate of first
+FIX: Import of chart of account
+FIX: in edit mode, dictionary inputs do not escape the string inside the 'value' attribute, causing errors if there are any double quotes
+FIX: invalid link on user.fk_user
+FIX: invoice class: bad SQL request if product type not set
+FIX: javascript error when ckeditor module not enabled
+FIX: mail presend: can overwrite a file previously uploaded (Issue #11056)
+FIX: mass send mail
+FIX: missing compatibility with multicompany transverse mode
+FIX: missing llx_const encrypt
+FIX: modulebuilder: hardcoded llx_
+FIX: Not showing Contract and Project columns on ficheinter list
+FIX: only profid1 to 4 were editable for pdf option to show. Not 5 and 6.
+FIX: productaccount buylist with pages
+FIX: remove isolated transaction commit
+FIX: security (a user can read leave or holiday of other without perm.
+FIX: situation invoices: bad detailed VAT in situations following the first one
+FIX: situation invoices: block progress percentage change for discount lines
+FIX: syntax error
+FIX: the id was not loaded in fetch of accounting system
+FIX: try to use WHERE EXISTS instead of DISTINCT
+FIX: use dol_sanitizeFileName() function to remove double spaces in filenames, as well as done on document.php when we want to download pdf
+FIX: Use of cron with multicompany
+FIX: var name
+FIX: we need to fetch fourn invoice with ref in current entity
+FIX: Wrong stock movement on supplier credit notes
+FIX: Import of record in ledger
 
 ***** ChangeLog for 9.0.3 compared to 9.0.2 *****
 FIX: #11013

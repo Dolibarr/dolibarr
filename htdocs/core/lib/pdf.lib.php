@@ -36,25 +36,31 @@
 /**
  *	Return array with format properties of default PDF format
  *
- *	@param		Translate	$outputlangs		Output lang to use to autodetect output format if setup not done
+ *	@param		Translate	$outputlangs		Output lang to use to autodetect output format if we need 'auto' detection
+ *  @param		string		$mode				'setup' = Use setup, 'auto' = Force autodetection whatever is setup
  *  @return     array							Array('width'=>w,'height'=>h,'unit'=>u);
  */
-function pdf_getFormat(Translate $outputlangs = null)
+function pdf_getFormat(Translate $outputlangs = null, $mode = 'setup')
 {
-	global $conf,$db;
+	global $conf, $db, $langs;
+
+	dol_syslog("pdf_getFormat Get paper format with mode=".$mode." MAIN_PDF_FORMAT=".(empty($conf->global->MAIN_PDF_FORMAT)?'null':$conf->global->MAIN_PDF_FORMAT)." outputlangs->defaultlang=".(is_object($outputlangs) ? $outputlangs->defaultlang : 'null')." and langs->defaultlang=".(is_object($langs) ? $langs->defaultlang : 'null'));
 
 	// Default value if setup was not done and/or entry into c_paper_format not defined
 	$width=210; $height=297; $unit='mm';
 
-	if (empty($conf->global->MAIN_PDF_FORMAT))
+	if ($mode == 'auto' || empty($conf->global->MAIN_PDF_FORMAT) || $conf->global->MAIN_PDF_FORMAT == 'auto')
 	{
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 		$pdfformat=dol_getDefaultFormat($outputlangs);
 	}
-	else $pdfformat=$conf->global->MAIN_PDF_FORMAT;
+	else
+	{
+		$pdfformat=$conf->global->MAIN_PDF_FORMAT;
+	}
 
 	$sql="SELECT code, label, width, height, unit FROM ".MAIN_DB_PREFIX."c_paper_format";
-	$sql.=" WHERE code = '".$pdfformat."'";
+	$sql.=" WHERE code = '".$db->escape($pdfformat)."'";
 	$resql=$db->query($sql);
 	if ($resql)
 	{

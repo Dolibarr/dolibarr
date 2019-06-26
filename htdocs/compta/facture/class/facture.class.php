@@ -206,11 +206,19 @@ class Facture extends CommonInvoice
 
 	public $oldcopy;
 
-	
+	/**
+	 * @var double percentage of retainage
+	 */
 	public $retained_warranty;
 	
+	/**
+	 * @var int timestamp of date limit of retainage
+	 */
 	public $retained_warranty_date_limit;
 	
+	/**
+	 * @var int Code in llx_c_paiement
+	 */
 	public $retained_warranty_fk_cond_reglement;
 
     /**
@@ -1349,7 +1357,7 @@ class Facture extends CommonInvoice
 		$sql.= ', c.code as cond_reglement_code, c.libelle as cond_reglement_libelle, c.libelle_facture as cond_reglement_libelle_doc';
         $sql.= ', f.fk_incoterms, f.location_incoterms';
         $sql.= ', f.module_source, f.pos_source';
-        $sql.= ", i.libelle as libelle_incoterms";
+        $sql.= ", i.libelle as label_incoterms";
         $sql.= ", f.retained_warranty as retained_warranty, f.retained_warranty_date_limit as retained_warranty_date_limit, f.retained_warranty_fk_cond_reglement as retained_warranty_fk_cond_reglement";
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture as f';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as c ON f.fk_cond_reglement = c.rowid';
@@ -1429,7 +1437,7 @@ class Facture extends CommonInvoice
 				//Incoterms
 				$this->fk_incoterms         = $obj->fk_incoterms;
 				$this->location_incoterms   = $obj->location_incoterms;
-				$this->libelle_incoterms    = $obj->libelle_incoterms;
+				$this->label_incoterms    = $obj->label_incoterms;
 
   				$this->module_source        = $obj->module_source;
 				$this->pos_source           = $obj->pos_source;
@@ -4165,7 +4173,7 @@ class Facture extends CommonInvoice
 	/**
 	 *  Create a document onto disk according to template module.
 	 *
-	 *	@param	string		$modele			Generator to use. Caller must set it to obj->modelpdf or GETPOST('modelpdf') for example.
+	 *	@param	string		$modele			Generator to use. Caller must set it to obj->modelpdf or GETPOST('modelpdf','alpha') for example.
 	 *	@param	Translate	$outputlangs	objet lang a utiliser pour traduction
 	 *  @param  int			$hidedetails    Hide details of lines
 	 *  @param  int			$hidedesc       Hide description
