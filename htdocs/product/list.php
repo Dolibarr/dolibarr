@@ -142,6 +142,7 @@ if (! empty($conf->global->MAIN_MULTILANGS))
 }
 if (! empty($conf->barcode->enabled)) {
 	$fieldstosearchall['p.barcode']='Gencod';
+    $fieldstosearchall['pfp.barcode']='GencodBuyPrice';
 }
 
 if (empty($conf->global->PRODUIT_MULTIPRICES))

@@ -142,6 +142,8 @@ $fieldstosearchall = array(
 	'p.email'=>'EMail',
 	's.nom'=>"ThirdParty",
 	'p.phone'=>"Phone",
+    'p.note_public'=>"NotePublic",
+    'p.note_private'=>"NotePrivate",
 );
 
 // Definition of fields for list
