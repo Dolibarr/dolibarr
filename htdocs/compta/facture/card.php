@@ -3008,21 +3008,24 @@ if ($action == 'create')
 	}
 	else
 	{
-	    print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
-	    $tmp='<input type="radio" name="type" id="radio_situation" value="0" disabled> ';
-	    $text = '<label>'.$tmp.$langs->trans("InvoiceFirstSituationAsk") . '</label> ';
-	    $text.= '('.$langs->trans("YouMustCreateInvoiceFromThird").') ';
-	    $desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceFirstSituationDesc"), 1, 'help', '', 0, 3);
-	    print $desc;
-	    print '</div></div>';
+	    if (! empty($conf->global->INVOICE_USE_SITUATION))
+	    {
+    	    print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
+    	    $tmp='<input type="radio" name="type" id="radio_situation" value="0" disabled> ';
+    	    $text = '<label>'.$tmp.$langs->trans("InvoiceFirstSituationAsk") . '</label> ';
+    	    $text.= '('.$langs->trans("YouMustCreateInvoiceFromThird").') ';
+    	    $desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceFirstSituationDesc"), 1, 'help', '', 0, 3);
+    	    print $desc;
+    	    print '</div></div>';
 
-	    print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
-	    $tmp='<input type="radio" name="type" id="radio_situation" value="0" disabled> ';
-	    $text = '<label>'.$tmp.$langs->trans("InvoiceSituationAsk") . '</label> ';
-	    $text.= '('.$langs->trans("YouMustCreateInvoiceFromThird").') ';
-	    $desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceFirstSituationDesc"), 1, 'help', '', 0, 3);
-	    print $desc;
-	    print '</div></div>';
+    	    print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
+    	    $tmp='<input type="radio" name="type" id="radio_situation" value="0" disabled> ';
+    	    $text = '<label>'.$tmp.$langs->trans("InvoiceSituationAsk") . '</label> ';
+    	    $text.= '('.$langs->trans("YouMustCreateInvoiceFromThird").') ';
+    	    $desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceFirstSituationDesc"), 1, 'help', '', 0, 3);
+    	    print $desc;
+    	    print '</div></div>';
+	    }
 
 	    print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
 		$tmp='<input type="radio" name="type" id="radio_replacement" value="0" disabled> ';
