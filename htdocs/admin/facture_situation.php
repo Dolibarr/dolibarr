@@ -59,7 +59,10 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 $dirmodels=array_merge(array('/'), (array) $conf->modules_parts['models']);
 
-llxHeader("", $langs->trans("BillsSetup"), 'EN:Invoice_Configuration|FR:Configuration_module_facture|ES:ConfiguracionFactura');
+llxHeader(
+    "", $langs->trans("BillsSetup"),
+    'EN:Invoice_Configuration|FR:Configuration_module_facture|ES:ConfiguracionFactura'
+);
 
 $form=new Form($db);
 
@@ -124,10 +127,12 @@ llxFooter();
 $db->close();
 
 /**
- * print an update button
+ * Print an update button
+ *
  * @return void
  */
-function _updateBtn(){
+function _updateBtn()
+{
     global $langs;
     print '<div style="text-align: right;" >';
     print '<input type="submit" class="butAction" value="'.$langs->trans("Save").'">';
@@ -136,9 +141,11 @@ function _updateBtn(){
 
 /**
  * Print a On/Off button
+ *
  * @param string $confkey the conf key
- * @param bool $title Title of conf
- * @param string $desc Description of
+ * @param bool   $title   Title of conf
+ * @param string $desc    Description
+ *
  * @return void
  */
 function _printOnOff($confkey, $title = false, $desc = '')
@@ -147,8 +154,7 @@ function _printOnOff($confkey, $title = false, $desc = '')
     $var=!$var;
     print '<tr '.$bc[$var].'>';
     print '<td>'.($title?$title:$langs->trans($confkey));
-    if(!empty($desc))
-    {
+    if(!empty($desc)){
         print '<br><small>'.$langs->trans($desc).'</small>';
     }
     print '</td>';
@@ -161,12 +167,14 @@ function _printOnOff($confkey, $title = false, $desc = '')
 
 /**
  * Print a form part
+ *
  * @param string $confkey the conf key
- * @param bool $title Title of conf
- * @param string $desc Description of
- * @param array $metas html meta
- * @param string $type type of input textarea or input
- * @param bool $help
+ * @param bool   $title   Title of conf
+ * @param string $desc    Description of
+ * @param array  $metas   html meta
+ * @param string $type    type of input textarea or input
+ * @param bool   $help    help description
+ *
  * @return void
  */
 function _printInputFormPart($confkey, $title = false, $desc ='', $metas = array(), $type='input', $help = false)
@@ -188,8 +196,7 @@ function _printInputFormPart($confkey, $title = false, $desc ='', $metas = array
     
     $metas = array_merge($defaultMetas, $metas);
     $metascompil = '';
-    foreach ($metas as $key => $values)
-    {
+    foreach ($metas as $key => $values){
         $metascompil .= ' '.$key.'="'.$values.'" ';
     }
     
@@ -198,13 +205,11 @@ function _printInputFormPart($confkey, $title = false, $desc ='', $metas = array
     
     if(!empty($help)){
         print $form->textwithtooltip(($title?$title:$langs->trans($confkey)), $langs->trans($help), 2, 1, img_help(1, ''));
-    }
-    else {
+    }else{
         print $title?$title:$langs->trans($confkey);
     }
     
-    if(!empty($desc))
-    {
+    if(!empty($desc)){
         print '<br><small>'.$langs->trans($desc).'</small>';
     }
     
@@ -216,8 +221,7 @@ function _printInputFormPart($confkey, $title = false, $desc ='', $metas = array
     print '<input type="hidden" name="action" value="setModuleOptions">';
     if($type=='textarea'){
         print '<textarea '.$metascompil.'  >'.dol_htmlentities($conf->global->{$confkey}).'</textarea>';
-    }
-    else {
+    }else{
         print '<input '.$metascompil.'  />';
     }
     print '</td></tr>';
