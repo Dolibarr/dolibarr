@@ -4711,7 +4711,11 @@ div.dataTables_length select {
     background-color: unset;
 }
 .select2-container--default .select2-selection--single .select2-selection__rendered {
-    color: unset;
+	/* we must unactivate this behaviour because :
+	select2 are often in table headers
+	And when we define a color:white for header texts ($conf->global->THEME_ELDY_TEXTTITLE),
+	the select2 inherit this property and we get select text writen in white on white  */
+	/*color: unset;*/
 }
 .select2-default {
     color: #999 !important;
