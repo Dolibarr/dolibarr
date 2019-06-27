@@ -7,7 +7,7 @@
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2014      Cedric GROSS         <c.gross@kreiz-it.fr>
  * Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -238,8 +238,8 @@ if ($action == 'add')
 		$object->fulldayevent = (! empty($fulldayevent)?1:0);
 		$object->location = GETPOST("location");
 		$object->label = trim(GETPOST('label'));
-		$object->fk_element = GETPOST("fk_element");
-		$object->elementtype = GETPOST("elementtype");
+		$object->fk_element = GETPOST("fk_element", 'int');
+		$object->elementtype = GETPOST("elementtype", 'alpha');
 		if (! GETPOST('label'))
 		{
 			if (GETPOST('actioncode') == 'AC_RDV' && $contact->getFullName($langs))
@@ -272,7 +272,7 @@ if ($action == 'add')
 		$object->datep = $datep;
 		$object->datef = $datef;
 		$object->percentage = $percentage;
-		$object->duree=((float) (GETPOST('dureehour') * 60) + (float) GETPOST('dureemin')) * 60;
+		$object->duree=(((int) GETPOST('dureehour') * 60) + (int) GETPOST('dureemin')) * 60;
 
 		$transparency=(GETPOST("transparency")=='on'?1:0);
 
@@ -349,7 +349,7 @@ if ($action == 'add')
 	{
 		$db->begin();
 
-		// On cree l'action
+		// Creation of action/event
 		$idaction=$object->create($user);
 
 		if ($idaction > 0)
@@ -690,7 +690,7 @@ if ($action == 'create')
 
 	dol_fiche_head();
 
-	print '<table class="border tableforfield" width="100%">';
+	print '<table class="border centpercent">';
 
 	// Type of event
 	if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
@@ -857,7 +857,7 @@ if ($action == 'create')
 	print '<br><hr><br>';
 
 
-	print '<table class="border tableforfield" width="100%">';
+	print '<table class="border centpercent">';
 
 	if ($conf->societe->enabled)
 	{

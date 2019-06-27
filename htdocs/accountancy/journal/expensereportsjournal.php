@@ -25,7 +25,7 @@
 
 /**
  * \file		htdocs/accountancy/journal/expensereportsjournal.php
- * \ingroup		Advanced accountancy
+ * \ingroup		Accountancy (Double entries)
  * \brief		Page with expense reports journal
  */
 require '../../main.inc.php';
@@ -549,14 +549,13 @@ if (empty($action) || $action == 'view') {
 	print '<div class="div-table-responsive">';
 	print "<table class=\"noborder\" width=\"100%\">";
 	print "<tr class=\"liste_titre\">";
-	print "<td></td>";
 	print "<td>" . $langs->trans("Date") . "</td>";
 	print "<td>" . $langs->trans("Piece") . ' (' . $langs->trans("ExpenseReportRef") . ")</td>";
 	print "<td>" . $langs->trans("AccountAccounting") . "</td>";
 	print "<td>" . $langs->trans("SubledgerAccount") . "</td>";
 	print "<td>" . $langs->trans("LabelOperation") . "</td>";
-	print "<td class='right'>" . $langs->trans("Debit") . "</td>";
-	print "<td class='right'>" . $langs->trans("Credit") . "</td>";
+	print '<td class="right">' . $langs->trans("Debit") . "</td>";
+	print '<td class="right">' . $langs->trans("Credit") . "</td>";
 	print "</tr>\n";
 
 	$r = '';
@@ -578,7 +577,7 @@ if (empty($action) || $action == 'view') {
 
 			if ($mt) {
 				print '<tr class="oddeven">';
-				print "<td><!-- Fees --></td>";
+				print "<!-- Fees -->";
 				print "<td>" . $date . "</td>";
 				print "<td>" . $expensereportstatic->getNomUrl(1) . "</td>";
 				$userstatic->id = $tabuser[$key]['id'];
@@ -598,20 +597,21 @@ if (empty($action) || $action == 'view') {
 				$userstatic->id = $tabuser[$key]['id'];
 				$userstatic->name = $tabuser[$key]['name'];
 				print "<td>" . $userstatic->getNomUrl(0, 'user', 16) . ' - ' . $accountingaccount->label . "</td>";
-				print '<td class="right">' . ($mt >= 0 ? price($mt) : '') . "</td>";
-				print '<td class="right">' . ($mt < 0 ? price(- $mt) : '') . "</td>";
+				print '<td class="right nowraponall">' . ($mt >= 0 ? price($mt) : '') . "</td>";
+				print '<td class="right nowraponall">' . ($mt < 0 ? price(- $mt) : '') . "</td>";
 				print "</tr>";
 			}
 		}
 
 		// Third party
 		foreach ($tabttc[$key] as $k => $mt) {
-			print '<tr class="oddeven">';
-			print "<td><!-- Thirdparty --></td>";
-			print "<td>" . $date . "</td>";
-			print "<td>" . $expensereportstatic->getNomUrl(1) . "</td>";
 			$userstatic->id = $tabuser[$key]['id'];
 			$userstatic->name = $tabuser[$key]['name'];
+
+			print '<tr class="oddeven">';
+			print "<!-- Thirdparty -->";
+			print "<td>" . $date . "</td>";
+			print "<td>" . $expensereportstatic->getNomUrl(1) . "</td>";
 			// Account
 			print "<td>";
 			$accountoshow = length_accounta($conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT);
@@ -631,8 +631,8 @@ if (empty($action) || $action == 'view') {
 			else print $accountoshow;
 			print '</td>';
 			print "<td>" . $userstatic->getNomUrl(0, 'user', 16) . ' - ' . $langs->trans("SubledgerAccount") . "</td>";
-			print '<td class="right">' . ($mt < 0 ? - price(- $mt) : '') . "</td>";
-			print '<td class="right">' . ($mt >= 0 ? price($mt) : '') . "</td>";
+			print '<td class="right nowraponall">' . ($mt < 0 ? - price(- $mt) : '') . "</td>";
+			print '<td class="right nowraponall">' . ($mt >= 0 ? price($mt) : '') . "</td>";
 			print "</tr>";
 		}
 
@@ -646,7 +646,7 @@ if (empty($action) || $action == 'view') {
 			foreach ($arrayofvat[$key] as $k => $mt) {
 			if ($mt) {
 				print '<tr class="oddeven">';
-				print "<td><!-- VAT --></td>";
+				print "<!-- VAT -->";
 				print "<td>" . $date . "</td>";
 				print "<td>" . $expensereportstatic->getNomUrl(1) . "</td>";
 				// Account
@@ -663,8 +663,8 @@ if (empty($action) || $action == 'view') {
 				print '</td>';
 				print "<td>" . $userstatic->getNomUrl(0, 'user', 16) . ' - ' . $langs->trans("VAT"). ' '.join(', ', $def_tva[$key][$k]).' %'.($numtax?' - Localtax '.$numtax:'');
 				print "</td>";
-				print '<td class="right">' . ($mt >= 0 ? price($mt) : '') . "</td>";
-				print '<td class="right">' . ($mt < 0 ? price(- $mt) : '') . "</td>";
+				print '<td class="right nowraponall">' . ($mt >= 0 ? price($mt) : '') . "</td>";
+				print '<td class="right nowraponall">' . ($mt < 0 ? price(- $mt) : '') . "</td>";
 				print "</tr>";
 			}
 			}

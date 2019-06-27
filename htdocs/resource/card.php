@@ -237,8 +237,7 @@ if ($action == 'create' || $object->fetch($id) > 0)
 
 	if ($action == 'create' || $action == 'edit')
 	{
-		if ( ! $user->rights->resource->write )
-			accessforbidden('', 0);
+		if (! $user->rights->resource->write) accessforbidden('', 0, 1);
 
 		// Create/Edit object
 
@@ -324,7 +323,7 @@ if ($action == 'create' || $object->fetch($id) > 0)
 		/*---------------------------------------
 		 * View object
 		 */
-		print '<table width="100%" class="border">';
+		print '<table class="border tableforfield centpercent">';
 
 		// Resource type
 		print '<tr>';

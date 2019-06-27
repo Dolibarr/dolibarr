@@ -242,7 +242,7 @@ class Stripe extends CommonObject
      * Warning. If a payment was tried and failed, a payment intent was created.
 	 * But if we change someting on object to pay (amount or other), reusing same payment intent is not allowed.
 	 * Recommanded solution is to recreate a new payment intent each time we need one (old one will be automatically closed after a delay),
-	 * that's why i comment the part of code to retreive a payment intent with object id (never mind if we cumulate payment intent with old that will not be used)
+	 * that's why i comment the part of code to retreive a payment intent with object id (never mind if we cumulate payment intent with old ones that will not be used)
 	 *
 	 * @param   double  $amount                             Amount
 	 * @param   string  $currency_code                      Currency code
@@ -366,6 +366,7 @@ class Stripe extends CommonObject
     			global $stripearrayofkeysbyenv;
     			\Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$status]['secret_key']);
 
+    			// Note: If all data for payment intent are same than a previous on, even if we use 'create', Stripe will return ID of the old existing payment intent.
     			if (empty($key)) {				// If the Stripe connect account not set, we use common API usage
     				$paymentintent = \Stripe\PaymentIntent::create($dataforintent, array("idempotency_key" => "$description"));
     			    //$paymentintent = \Stripe\PaymentIntent::create($dataforintent, array());
@@ -373,7 +374,7 @@ class Stripe extends CommonObject
     				$paymentintent = \Stripe\PaymentIntent::create($dataforintent, array("idempotency_key" => "$description", "stripe_account" => $key));
     			    //$paymentintent = \Stripe\PaymentIntent::create($dataforintent, array("stripe_account" => $key));
     			}
-    			//var_dump($paymentintent);
+    			//var_dump($paymentintent->id);
 
     			// Store the payment intent
     			if (is_object($object))

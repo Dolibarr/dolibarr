@@ -116,7 +116,6 @@ class modTcpdfbarcode extends ModeleBarCode
 
 		$_GET["code"]=$code;
 		$_GET["type"]=$encoding;
-		$_GET["height"]=$height;
 		$_GET["readable"]=$readable;
 
 		if ($code) {
@@ -166,7 +165,6 @@ class modTcpdfbarcode extends ModeleBarCode
 
 		$_GET["code"]=$code;
 		$_GET["type"]=$encoding;
-		$_GET["height"]=$height;
 		$_GET["readable"]=$readable;
 
 		if ($code) {

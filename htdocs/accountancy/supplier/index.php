@@ -20,7 +20,7 @@
 
 /**
  * \file		htdocs/accountancy/supplier/index.php
- * \ingroup		Advanced accountancy
+ * \ingroup		Accountancy (Double entries)
  * \brief		Home supplier journalization page
  */
 
@@ -140,9 +140,9 @@ $textnextyear = '&nbsp;<a href="' . $_SERVER["PHP_SELF"] . '?year=' . ($year_cur
 
 print load_fiche_titre($langs->trans("SuppliersVentilation") . " " . $textprevyear . "&nbsp;" . $langs->trans("Year") . "&nbsp;" . $year_start . "&nbsp;" . $textnextyear, '', 'title_accountancy');
 
-print $langs->trans("DescVentilSupplier") . '<br>';
+print '<span class="opacitymedium">'.$langs->trans("DescVentilSupplier") . '<br>';
 print $langs->trans("DescVentilMore", $langs->transnoentitiesnoconv("ValidateHistory"), $langs->transnoentitiesnoconv("ToBind")) . '<br>';
-print '<br>';
+print '</span><br>';
 
 $y = $year_current;
 

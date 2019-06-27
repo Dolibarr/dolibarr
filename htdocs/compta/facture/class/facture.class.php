@@ -349,7 +349,7 @@ class Facture extends CommonInvoice
 			require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
 			$_facrec = new FactureRec($this->db);
 			$result=$_facrec->fetch($this->fac_rec);
-			$result=$_facrec->fetchObjectLinked();       // This load $_facrec->linkedObjectsIds
+			$result=$_facrec->fetchObjectLinked(null, '', null, '', 'OR', 1, 'sourcetype', 0);       // This load $_facrec->linkedObjectsIds
 
 			// Define some dates
 			$originaldatewhen = $_facrec->date_when;
@@ -392,6 +392,8 @@ class Facture extends CommonInvoice
 			$this->brouillon = 1;
 
 			$this->linked_objects = $_facrec->linkedObjectsIds;
+			// We do not add link to template invoice or next invoice will be linked to all generated invoices
+			//$this->linked_objects['facturerec'][0] = $this->fac_rec;
 
 			$forceduedate = $this->calculate_date_lim_reglement();
 
@@ -436,7 +438,6 @@ class Facture extends CommonInvoice
 
 			//var_dump($substitutionarray);exit;
 
-			$substitutionisok=true;
 			complete_substitutions_array($substitutionarray, $outputlangs);
 
 			$this->note_public=make_substitutions($this->note_public, $substitutionarray);
@@ -564,7 +565,7 @@ class Facture extends CommonInvoice
 				    require_once DOL_DOCUMENT_ROOT . '/expedition/class/expedition.class.php';
 				    $exp = new Expedition($this->db);
 				    $exp->fetch($this->origin_id);
-				    $exp->fetchObjectLinked();
+				    $exp->fetchObjectLinked(null, '', null, '', 'OR', 1, 'sourcetype', 0);
 				    if (count($exp->linkedObjectsIds['commande']) > 0)
 				    {
 				        foreach ($exp->linkedObjectsIds['commande'] as $key => $value)
@@ -1202,7 +1203,7 @@ class Facture extends CommonInvoice
 	 */
     public function getNomUrl($withpicto = 0, $option = '', $max = 0, $short = 0, $moretitle = '', $notooltip = 0, $addlinktonotes = 0, $save_lastsearch_value = -1, $target = '')
 	{
-		global $langs, $conf, $user, $form;
+		global $langs, $conf, $user;
 
 		if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
 
@@ -1224,7 +1225,7 @@ class Facture extends CommonInvoice
 
 		if ($short) return $url;
 
-		$picto='bill';
+		$picto=$this->picto;
 		if ($this->type == self::TYPE_REPLACEMENT) $picto.='r';	// Replacement invoice
 		if ($this->type == self::TYPE_CREDIT_NOTE) $picto.='a';	// Credit note
 		if ($this->type == self::TYPE_DEPOSIT) $picto.='d';	// Deposit invoice
@@ -1240,6 +1241,8 @@ class Facture extends CommonInvoice
                 $label .= '<br><b>'.$langs->trans('Ref') . ':</b> ' . $this->ref;
             if (! empty($this->ref_client))
                 $label .= '<br><b>' . $langs->trans('RefCustomer') . ':</b> ' . $this->ref_client;
+            if (! empty($this->date))
+              	$label .= '<br><b>' . $langs->trans('Date') . ':</b> ' . dol_print_date($this->date, 'day');
             if (! empty($this->total_ht))
                 $label.= '<br><b>' . $langs->trans('AmountHT') . ':</b> ' . price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
             if (! empty($this->total_tva))
@@ -1323,7 +1326,7 @@ class Facture extends CommonInvoice
 		$sql.= ', f.date_valid as datev';
 		$sql.= ', f.tms as datem';
 		$sql.= ', f.note_private, f.note_public, f.fk_statut, f.paye, f.close_code, f.close_note, f.fk_user_author, f.fk_user_valid, f.model_pdf, f.last_main_doc';
-		$sql.= ', f.fk_facture_source';
+		$sql.= ', f.fk_facture_source, f.fk_fac_rec_source';
 		$sql.= ', f.fk_mode_reglement, f.fk_cond_reglement, f.fk_projet as fk_project, f.extraparams';
 		$sql.= ', f.situation_cycle_ref, f.situation_counter, f.situation_final';
 		$sql.= ', f.fk_account';
@@ -1391,6 +1394,7 @@ class Facture extends CommonInvoice
 				$this->fk_account           = ($obj->fk_account>0)?$obj->fk_account:null;
 				$this->fk_project			= $obj->fk_project;
 				$this->fk_facture_source	= $obj->fk_facture_source;
+				$this->fk_fac_rec_source	= $obj->fk_fac_rec_source;
 				$this->note					= $obj->note_private;	// deprecated
 				$this->note_private			= $obj->note_private;
 				$this->note_public			= $obj->note_public;

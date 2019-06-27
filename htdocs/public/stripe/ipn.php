@@ -106,7 +106,7 @@ catch(\UnexpectedValueException $e) {
 
 $langs->load("main");
 
-// TODO Do we really need a user in setup just to have an name to fill an email topic when it is a technical system notification email
+// TODO Do we really need a user in setup just to have a name to fill an email topic when it is a technical system notification email
 $user = new User($db);
 $user->fetch($conf->global->STRIPE_USER_ACCOUNT_FOR_ACTIONS);
 $user->getrights();
@@ -297,11 +297,17 @@ elseif ($event->type == 'customer.deleted') {
     $db->query($sql);
     $db->commit();
 }
-elseif ($event->type == 'payment_intent.succeeded') {
-    // TODO: Redirect to paymentok.php
+elseif ($event->type == 'payment_intent.succeeded') {		// Called when making payment with PaymentIntent method ($conf->global->STRIPE_USE_NEW_CHECKOUT is on).
+	// TODO: create fees
+	// TODO: Redirect to paymentok.php
 }
 elseif ($event->type == 'payment_intent.payment_failed') {
     // TODO: Redirect to paymentko.php
+}
+elseif ($event->type == 'checkout.session.completed')		// Called when making payment with new Checkout method ($conf->global->STRIPE_USE_NEW_CHECKOUT is on).
+{
+	// TODO: create fees
+	// TODO: Redirect to paymentok.php
 }
 elseif ($event->type == 'charge.succeeded') {
     // TODO: create fees

@@ -26,10 +26,7 @@
  * $object (invoice, order, ...)
  * $conf
  * $langs
- * $dateSelector
  * $forceall (0 by default, 1 for supplier invoices/orders)
- * $senderissupplier (0 by default, 1 or 2 for supplier invoices/orders)
- * $inputalsopricewithtax (0 by default, 1 to also show column with unit price including tax)
  */
 
 // Protection to avoid direct call of template
@@ -39,20 +36,13 @@ if (empty($object) || ! is_object($object)) {
 }
 
 
-if (! isset($dateSelector)) global $dateSelector;	// Take global var only if not already defined into function calling (for example formAddObjectLine)
-global $forceall, $forcetoshowtitlelines, $senderissupplier, $inputalsopricewithtax;
+global $forceall, $forcetoshowtitlelines;
 
-if (! isset($dateSelector)) $dateSelector=1;    // For backward compatibility
-elseif (empty($dateSelector)) $dateSelector=0;
 if (empty($forceall)) $forceall=0;
-if (empty($senderissupplier)) $senderissupplier=0;
-if (empty($inputalsopricewithtax)) $inputalsopricewithtax=0;
 
 
 // Define colspan for the button 'Add'
 $colspan = 3;	// Columns: total ht + col edit + col delete
-if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) $colspan++;//Add column for Total (currency) if required
-if (in_array($object->element, array('propal','commande','order','facture','facturerec','invoice','supplier_proposal','order_supplier','invoice_supplier'))) $colspan++;	// With this, there is a column move button
 //print $object->element;
 
 // Lines for extrafield
@@ -107,7 +97,6 @@ if ($nolinesbefore) {
 	{
 		if ($forceall >= 0 && $freelines) echo '<br>';
 		echo '<span class="prod_entry_mode_predef">';
-
 		$filtertype='';
 		if (! empty($object->element) && $object->element == 'contrat' && empty($conf->global->CONTRACT_SUPPORT_PRODUCTS)) $filtertype='1';
 
@@ -135,11 +124,6 @@ if ($nolinesbefore) {
 		print '<td class="nobottom linecoluseunit left">';
 		print $form->selectUnits($line->fk_unit, "units");
 		print '</td>';
-	}
-	$remise_percent = $buyer->remise_percent;
-	if($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier')
-	{
-		$remise_percent = $seller->remise_supplier_percent;
 	}
 
 	$coldisplay++;
