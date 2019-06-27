@@ -216,7 +216,8 @@ DescThirdPartyReport=Zde naleznete seznam zákazníků a prodejců subjektů a j
 ListAccounts=Seznam účetních účtů
 UnknownAccountForThirdparty=Neznámý účet subjektu. Použijeme %s
 UnknownAccountForThirdpartyBlocking=Neznámý účet subjektu. Chyba blokování
-ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Účet subjektu není definován nebo neznámý subjekt. Chyba blokování.
+ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Third-party account not defined or third party unknown. We will use %s
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Účet subjektu není definován nebo neznámý subjekt. Chyba blokování.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Neznámý účet subjektu a účet čekání není definován. Chyba blokování
 PaymentsNotLinkedToProduct=Platba není spojena s žádným produktem / službou
 
@@ -291,7 +292,7 @@ Modelcsv_cogilog=Export pro Cogilog
 Modelcsv_agiris=Export pro Agiris
 Modelcsv_openconcerto=Export for OpenConcerto (Test)
 Modelcsv_configurable=Export CSV konfigurovatelný
-Modelcsv_FEC=Export FEC (Art. L47 A)
+Modelcsv_FEC=Export FEC
 Modelcsv_Sage50_Swiss=Export for Sage 50 Switzerland
 ChartofaccountsId=Schéma Id účtů
 
@@ -316,6 +317,9 @@ WithoutValidAccount=Bez platného zvláštním účtu
 WithValidAccount=S platným zvláštním účtu
 ValueNotIntoChartOfAccount=Tato hodnota účetního účtu neexistuje v účtu
 AccountRemovedFromGroup=Účet byl odstraněn ze skupiny
+SaleLocal=Local sale
+SaleExport=Export sale
+SaleEEC=Sale in EEC
 
 ## Dictionary
 Range=Řada účetních účtu
@@ -336,7 +340,7 @@ UseMenuToSetBindindManualy=Řádky, které ještě nejsou vázány, použijte na
 
 ## Import
 ImportAccountingEntries=Účetní zápisy
-
+DateExport=Date export
 WarningReportNotReliable=Upozornění: Tento přehled není založen na záznamníku, takže neobsahuje transakci upravenou ručně v Knihovně. Je-li vaše deník aktuální, zobrazení účetnictví je přesnější.
 ExpenseReportJournal=Účet výkazů výdajů
 InventoryJournal=Inventářový věstník

@@ -101,3 +101,5 @@ NotAllowedToAddDynamicContent=No tiene permiso para agregar o editar contenido d
 ReplaceWebsiteContent=Reemplazar el contenido del sitio web
 DeleteAlsoJs=¿Eliminar también todos los archivos javascript específicos de este sitio web?
 DeleteAlsoMedias=¿Eliminar también todos los archivos de medios específicos de este sitio web?
+# Export
+MyWebsitePages=My website pages

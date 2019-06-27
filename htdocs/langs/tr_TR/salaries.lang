@@ -17,3 +17,5 @@ TJMDescription=Bu değer şu anda yalnızca bilgi amaçlıdır ve herhangi bir h
 LastSalaries=Son %s maaş ödemeleri
 AllSalaries=Tüm maaş ödemeleri
 SalariesStatistics=Maaş istatistikleri
+# Export
+SalariesAndPayments=Salaries and payments

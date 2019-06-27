@@ -1,0 +1,65 @@
+# Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+Assets = 资产
+NewAsset = 新资产
+AccountancyCodeAsset = 科目代码（资产）
+AccountancyCodeDepreciationAsset = 科目代码（折旧资产帐户）
+AccountancyCodeDepreciationExpense = 科目代码（折旧费用帐户）
+NewAssetType=新资产类型
+AssetsTypeSetup=Asset type setup
+AssetTypeModified=Asset type modified
+AssetType=Asset type
+AssetsLines=资产
+DeleteType=删除
+DeleteAnAssetType=Delete an asset type
+ConfirmDeleteAssetType=Are you sure you want to delete this asset type?
+ShowTypeCard=显示类型'%s'
+
+# Module label 'ModuleAssetsName'
+ModuleAssetsName = 资产
+# Module description 'ModuleAssetsDesc'
+ModuleAssetsDesc = 资产说明
+
+#
+# Admin page
+#
+AssetsSetup = 资产设置
+Settings = 设置
+AssetsSetupPage = 资产设置页面
+ExtraFieldsAssetsType = Complementary attributes (Asset type)
+AssetsType=资产类型
+AssetsTypeId=资产类型ID
+AssetsTypeLabel=资产类型标签
+AssetsTypes=资产类型
+
+#
+# Menu
+#
+MenuAssets = 资产
+MenuNewAsset = 新资产
+MenuTypeAssets = 输入资产
+MenuListAssets = 名单
+MenuNewTypeAssets = 新建
+MenuListTypeAssets = 名单
+
+#
+# Module
+#
+NewAssetType=新资产类型
+NewAsset=新资产

@@ -210,7 +210,6 @@ CloseWindow=Fenster schliessen
 SendByMail=Per E-Mail versenden
 SendAcknowledgementByMail=Bestätigungsemail senden
 AlreadyRead=Gelesen
-NotRead=Ungelesen
 NoMobilePhone=Kein Mobiltelefon
 ValueIsNotValid=Der Wert ist leider ungültig.
 RecordCreatedSuccessfully=Eintrag erfolgreich erstellt

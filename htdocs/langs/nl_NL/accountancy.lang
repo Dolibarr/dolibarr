@@ -177,7 +177,7 @@ LabelAccount=Label account
 LabelOperation=Werking label
 Sens=D/C
 LetteringCode=Belettering code
-Lettering=Lettering
+Lettering=Afletteren
 Codejournal=Journaal
 JournalLabel=Journaal label
 NumPiece=Boekingstuk
@@ -193,7 +193,7 @@ NotMatch=Niet ingesteld
 DeleteMvt=Verwijder boekingsregels
 DelYear=Te verwijderen jaar
 DelJournal=Te verwijderen journaal
-ConfirmDeleteMvt=This will delete all lines of the Ledger for year and/or from a specific journal. At least one criterion is required.
+ConfirmDeleteMvt=Hiermee worden alle regels van het grootboek voor het jaar en/of uit een specifiek journaal verwijderd. Ten minste één criterium is vereist.
 ConfirmDeleteMvtPartial=Dit zal de boeking verwijderen uit de boekhouding (tevens ook alle regels die met deze boeking verbonden zijn)
 FinanceJournal=Finance journal
 ExpenseReportsJournal=Overzicht resultaatrekening
@@ -212,11 +212,12 @@ ListeMvts=Omzet
 ErrorDebitCredit=Debet en Credit mogen niet gelijktijdig worden opgegeven.
 AddCompteFromBK=Grootboekrekeningen aan groep toevoegen
 ReportThirdParty=Geef account van derden weer
-DescThirdPartyReport=Consult here the list of third-party customers and vendors and their accounting accounts
+DescThirdPartyReport=Raadpleeg hier de lijst met externe klanten en leveranciers met tevens hun boekhoudaccounts
 ListAccounts=List of the accounting accounts
 UnknownAccountForThirdparty=Onbekende relatie-rekening. Gebruikt wordt 1%s
 UnknownAccountForThirdpartyBlocking=Blokkeringsfout. Onbekende relatierekening. 
-ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Tegenrekening relatie niet gedefinieerd of relatie onbekend. Blokkeringsfout.
+ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Third-party account not defined or third party unknown. We will use %s
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Tegenrekening relatie niet gedefinieerd of relatie onbekend. Blokkeringsfout.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Unknown third-party account and waiting account not defined. Blocking error
 PaymentsNotLinkedToProduct=Betaling niet gekoppeld aan een product / dienst
 
@@ -291,7 +292,7 @@ Modelcsv_cogilog=Exporteren naar Cogilog
 Modelcsv_agiris=Exporteren naar Agiris
 Modelcsv_openconcerto=Export for OpenConcerto (Test)
 Modelcsv_configurable=Configureerbare CSV export
-Modelcsv_FEC=Export FEC (Art. L47 A)
+Modelcsv_FEC=Export FEC
 Modelcsv_Sage50_Swiss=Export for Sage 50 Switzerland
 ChartofaccountsId=Rekeningschema Id
 
@@ -316,6 +317,9 @@ WithoutValidAccount=Zonder geldig toegewezen grootboekrekening
 WithValidAccount=Met geldig toegewezen grootboekrekening
 ValueNotIntoChartOfAccount=Deze grootboekrekening is niet aanwezig in het rekeningschema
 AccountRemovedFromGroup=Rekening uit groep verwijderd.
+SaleLocal=Local sale
+SaleExport=Export sale
+SaleEEC=Sale in EEC
 
 ## Dictionary
 Range=Grootboeknummer van/tot
@@ -336,7 +340,7 @@ UseMenuToSetBindindManualy=Regels die nog niet zijn gebonden, gebruik het menu <
 
 ## Import
 ImportAccountingEntries=Boekingen
-
+DateExport=Date export
 WarningReportNotReliable=Waarschuwing, dit rapport is niet gebaseerd op het grootboek, dus bevat het niet de transactie die handmatig in het grootboek is gewijzigd. Als uw journalisatie up-to-date is, is de weergave van de boekhouding nauwkeuriger.
 ExpenseReportJournal=Kostenoverzicht
 InventoryJournal=Inventarisatie

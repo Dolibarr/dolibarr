@@ -171,7 +171,7 @@ MembersStatisticsDesc=Kies de statistieken die u wilt lezen ...
 MenuMembersStats=Statistiek
 LastMemberDate=Laatste liddatum
 LatestSubscriptionDate=Laatste abonnementsdatum
-Nature=Natuur
+MemberNature=Nature of member
 Public=Informatie zijn openbaar (no = prive)
 NewMemberbyWeb=Nieuw lid toegevoegd. In afwachting van goedkeuring
 NewMemberForm=Nieuw lid formulier

@@ -216,7 +216,8 @@ DescThirdPartyReport=Liste over tredjeparts kunder og leverandører og deres reg
 ListAccounts=Liste over regnskapskontoer
 UnknownAccountForThirdparty=Ukjent tredjepartskonto. Vi vil bruke %s
 UnknownAccountForThirdpartyBlocking=Ukjent tredjepartskonto. Blokkeringsfeil
-ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Tredjepartskonto ikke definert eller tredjepart ukjent. Blokkeringsfeil.
+ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Third-party account not defined or third party unknown. We will use %s
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Tredjepartskonto ikke definert eller tredjepart ukjent. Blokkeringsfeil.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Ukjent tredjepartskonto og ventekonto ikke definert. Blokkeringsfeil
 PaymentsNotLinkedToProduct=Betaling ikke knyttet til noen vare/tjeneste
 
@@ -291,7 +292,7 @@ Modelcsv_cogilog=Eksport til Cogilog
 Modelcsv_agiris=Eksport til Agiris
 Modelcsv_openconcerto=Eksport for OpenConcerto (Test)
 Modelcsv_configurable=Eksport CSV Konfigurerbar
-Modelcsv_FEC=Eksport FEC (Art. L47 A)
+Modelcsv_FEC=Export FEC
 Modelcsv_Sage50_Swiss=Eksport for Sage 50 Switzerland
 ChartofaccountsId=Kontoplan ID
 
@@ -316,6 +317,9 @@ WithoutValidAccount=Uten gyldig dedikert konto
 WithValidAccount=Med gyldig dedikert konto
 ValueNotIntoChartOfAccount=Denne verdien av regnskapskonto eksisterer ikke i kontoplanen
 AccountRemovedFromGroup=Kontoen er fjernet fra gruppen
+SaleLocal=Local sale
+SaleExport=Export sale
+SaleEEC=Sale in EEC
 
 ## Dictionary
 Range= Oversikt over regnskapskonto
@@ -336,7 +340,7 @@ UseMenuToSetBindindManualy=Linjer som ennå ikke er bundet, bruk menyen <a href=
 
 ## Import
 ImportAccountingEntries=Regnskapsposter
-
+DateExport=Date export
 WarningReportNotReliable=Advarsel, denne rapporten er ikke basert på hovedboken, så den inneholder ikke transaksjoner endret manuelt i hovedboken. Hvis journaliseringen din er oppdatert, er bokføringsvisningen mer nøyaktig.
 ExpenseReportJournal=Utgiftsrapport-journal
 InventoryJournal=Inventar-journal

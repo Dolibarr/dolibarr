@@ -101,3 +101,5 @@ NotAllowedToAddDynamicContent=No teniu permís per afegir o editar contingut din
 ReplaceWebsiteContent=Substituïu el contingut del lloc web
 DeleteAlsoJs=Voleu suprimir també tots els fitxers javascript específics d'aquest lloc web?
 DeleteAlsoMedias=Voleu suprimir també tots els fitxers de mitjans específics d’aquest lloc web?
+# Export
+MyWebsitePages=My website pages

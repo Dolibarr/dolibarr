@@ -1,0 +1,17 @@
+MRPArea=Área MRP
+MenuBOM=Lista de material
+LatestBOMModified=Últimas %s listas de materiales modificadas
+BillOfMaterials=Lista de material
+BOMsSetup=Configuración del módulo BOM
+ListOfBOMs=Lista de facturas de materiales - BOM
+NewBOM=Nueva lista de materiales
+ProductBOMHelp=Producto a crear con estos materiales.
+BOMsNumberingModules=Modelos de numeración BOM
+BOMsModelModule=Plantillas de documentos BOMS
+FreeLegalTextOnBOMs=Texto libre en el documento BOM
+WatermarkOnDraftBOMs=Marca de agua en el proyecto BOM
+ConfirmCloneBillOfMaterials=¿Está seguro de que quiere clonar esta lista de materiales?
+ManufacturingEfficiency=Eficiencia de fabricación
+ValueOfMeansLoss=El valor de 0.95 significa un promedio de 5%% de pérdida durante la producción
+DeleteBillOfMaterials=Eliminar Lista de material
+ConfirmDeleteBillOfMaterials=¿Está seguro de que quiere eliminar esta lista de materiales?

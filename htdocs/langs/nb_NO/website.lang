@@ -101,3 +101,5 @@ NotAllowedToAddDynamicContent=Du har ikke tillatelse til å legge til eller redi
 ReplaceWebsiteContent=Erstatt nettsideinnhold
 DeleteAlsoJs=Slett også alle javascript-filer som er spesifikke for denne nettsiden?
 DeleteAlsoMedias=Slett også alle mediefiler som er spesifikke for denne nettsiden?
+# Export
+MyWebsitePages=My website pages
