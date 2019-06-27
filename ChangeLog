@@ -315,7 +315,6 @@ FIX: condition
 FIX: confirmation of mass email sending + option MAILING_NO_USING_PHPMAIL
 FIX: crabe pdf: bad detailed VAT for situation invoices, in situations S2 and above
 FIX: default value for duration of validity can be set from generic
-FIX: do not include disabled modules tpl
 FIX: do not include tpl from disabled modules
 FIX: Error management when MAILING_NO_USING_PHPMAIL is set
 FIX: Even with permission, can't validate leave once validator defined.
