@@ -101,3 +101,5 @@ NotAllowedToAddDynamicContent=You don't have permission to add or edit PHP dynam
 ReplaceWebsiteContent=Web sitesi içeriğini değiştir
 DeleteAlsoJs=Bu web sitesine özgü tüm javascript dosyaları da silinsin mi?
 DeleteAlsoMedias=Bu web sitesine özgü tüm medya dosyaları da silinsin mi?
+# Export
+MyWebsitePages=My website pages

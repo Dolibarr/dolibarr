@@ -216,7 +216,8 @@ DescThirdPartyReport=اینجا فهرست مشتری‌ها و تامین‌ک�
 ListAccounts=فهرست حساب‌های حسابداری
 UnknownAccountForThirdparty=حساب‌ شخص‌سوم ناشناخته. از %s استفاده می‌شود.
 UnknownAccountForThirdpartyBlocking=حساب شخص‌سوم ناشناخته. خطای انسدادی
-ThirdpartyAccountNotDefinedOrThirdPartyUnknown=حساب شخص‌سوم تعریف نشده یا شخص سوم ناشناخته است. خطای انسدادی
+ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Third-party account not defined or third party unknown. We will use %s
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=حساب شخص‌سوم تعریف نشده یا شخص سوم ناشناخته است. خطای انسدادی
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=حساب شخص‌سوم ناشناخته و حساب انتظار تعریف نشده است. خطای انسدادی
 PaymentsNotLinkedToProduct=پرداخت به هیچ محصول/خدمتی وصل نشده است
 
@@ -291,7 +292,7 @@ Modelcsv_cogilog=صدور برای Cogilog
 Modelcsv_agiris=صدور برای Agiris
 Modelcsv_openconcerto=صادرکردن برای OpenConcerto  (آزمایشی)
 Modelcsv_configurable= صدور قابل پیکربندی CSV 
-Modelcsv_FEC=صادرکردن برای FEC (Art. L47 A)
+Modelcsv_FEC=Export FEC
 Modelcsv_Sage50_Swiss=صادرکردن برای Sage 50 Switzerland
 ChartofaccountsId=ساختار شناسۀ حساب‌‌ها
 
@@ -316,6 +317,9 @@ WithoutValidAccount=بدون حساب اختصاصی معتبر
 WithValidAccount=با حساب اختصاصی معتبر
 ValueNotIntoChartOfAccount=مقدار حساب حساب‌داری در نمودار حساب وجود ندارد
 AccountRemovedFromGroup=حساب از گروه حذف شده‌است
+SaleLocal=Local sale
+SaleExport=Export sale
+SaleEEC=Sale in EEC
 
 ## Dictionary
 Range=بازۀ حساب حساب‌داری
@@ -336,7 +340,7 @@ UseMenuToSetBindindManualy=سطوری که هنوز بند نشده‌اند، �
 
 ## Import
 ImportAccountingEntries=ورودی‌های حساب‌داری
-
+DateExport=Date export
 WarningReportNotReliable=هشدار! این گزارش بر مبنای دفتر کل نمی‌باشد، بنابراین دربردارندۀ تراکنش‌هائی که به شکل دستی در دفترکل ویرایش شده‌اند نیست. در صورتی که دفترنویسی شما روزآمد باشد، نمای «دفترنویسی» دقیق‌تر است.
 ExpenseReportJournal=دفتر گزارش هزینه‌ها
 InventoryJournal=دفتر انبار

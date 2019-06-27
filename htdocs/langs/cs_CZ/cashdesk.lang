@@ -68,3 +68,4 @@ Terminal=Terminál
 NumberOfTerminals=Počet terminálů
 TerminalSelect=Vyberte terminál, který chcete použít:
 POSTicket=POS Ticket
+BasicPhoneLayout=Use basic layout for phones

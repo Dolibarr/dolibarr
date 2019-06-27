@@ -171,7 +171,7 @@ MembersStatisticsDesc=Выберите статистику вы хотите п
 MenuMembersStats=Статистика
 LastMemberDate=Latest member date
 LatestSubscriptionDate=Latest subscription date
-Nature=Природа
+MemberNature=Nature of member
 Public=Информационные общественности (нет = частных)
 NewMemberbyWeb=Новый участник добавил. В ожидании утверждения
 NewMemberForm=Новая форма члена

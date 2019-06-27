@@ -216,7 +216,8 @@ DescThirdPartyReport=Consult here the list of third-party customers and vendors 
 ListAccounts=Liste over regnskabskonti
 UnknownAccountForThirdparty=Unknown third-party account. We will use %s
 UnknownAccountForThirdpartyBlocking=Unknown third-party account. Blocking error
-ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Third-party account not defined or third party unknown. Blocking error.
+ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Third-party account not defined or third party unknown. We will use %s
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Third-party account not defined or third party unknown. Blocking error.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Unknown third-party account and waiting account not defined. Blocking error
 PaymentsNotLinkedToProduct=Betaling er ikke knyttet til noget produkt / tjeneste
 
@@ -291,7 +292,7 @@ Modelcsv_cogilog=Export for Cogilog
 Modelcsv_agiris=Export for Agiris
 Modelcsv_openconcerto=Export for OpenConcerto (Test)
 Modelcsv_configurable=Eksporter CSV Konfigurerbar
-Modelcsv_FEC=Export FEC (Art. L47 A)
+Modelcsv_FEC=Export FEC
 Modelcsv_Sage50_Swiss=Export for Sage 50 Switzerland
 ChartofaccountsId=ID for kontoplan
 
@@ -316,6 +317,9 @@ WithoutValidAccount=Uden gyldig tildelt konto
 WithValidAccount=Med gyldig tildelt konto
 ValueNotIntoChartOfAccount=Den angivne regnskabskonto eksisterer ikke i kontoplanen
 AccountRemovedFromGroup=Account removed from group
+SaleLocal=Local sale
+SaleExport=Export sale
+SaleEEC=Sale in EEC
 
 ## Dictionary
 Range=Interval for regnskabskonto
@@ -336,7 +340,7 @@ UseMenuToSetBindindManualy=Linjer endnu ikke bundet, brug menuen <a href="%s"> %
 
 ## Import
 ImportAccountingEntries=Regnskabsposter
-
+DateExport=Date export
 WarningReportNotReliable=Advarsel, denne rapport er ikke baseret på Ledger, så indeholder ikke transaktion ændret manuelt i Ledger. Hvis din journalisering er opdateret, er bogføringsvisningen mere præcis.
 ExpenseReportJournal=Udgifts Journal
 InventoryJournal=Opgørelse Journal
