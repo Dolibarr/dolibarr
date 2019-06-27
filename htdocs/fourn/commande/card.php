@@ -902,6 +902,17 @@ $result	= $object->updateline(
 		}
 	}
 
+	// Open DSI -- Force mandatory order method -- Begin
+    if ($action == 'commande') {
+        $methodecommande = GETPOST('methodecommande');
+
+        if ($methodecommande <= 0) {
+            setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("OrderMode")), null, 'errors');
+            $action = 'makeorder';
+        }
+    }
+    // Open DSI -- Force mandatory order method -- End
+
 	if ($action == 'confirm_commande' && $confirm	== 'yes' &&	$user->rights->fournisseur->commande->commander)
 	{
 		$result = $object->commande($user, $_REQUEST["datecommande"], $_REQUEST["methode"], $_REQUEST['comment']);
@@ -2543,7 +2554,10 @@ elseif (! empty($object->id))
 			print $form->selectDate($date_com, '', 1, 1, '', "commande", 1, 1);
 			print '</td></tr>';
 
-			print '<tr><td>'.$langs->trans("OrderMode").'</td><td>';
+            // Open DSI -- Force mandatory order method -- Begin
+			//print '<tr><td>'.$langs->trans("OrderMode").'</td><td>';
+            print '<tr><td class="fieldrequired">'.$langs->trans("OrderMode").'</td><td>';
+            // Open DSI -- Force mandatory order method -- End
 			$formorder->selectInputMethod(GETPOST('methodecommande'), "methodecommande", 1);
 			print '</td></tr>';
 
