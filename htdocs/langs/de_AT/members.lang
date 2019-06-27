@@ -13,7 +13,6 @@ MemberStatusActiveLateShort=abgelaufen
 SubscriptionEndDate=Abonnementauslaufdatum
 SubscriptionLate=Versätet
 NewMemberType=Neues Mitgliedsrt
-DeleteType=Löschen
 Physical=Physisch
 Moral=Rechtlich
 MorPhy=Physisch/Rechtlich

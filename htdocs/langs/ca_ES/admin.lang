@@ -169,7 +169,7 @@ NoBackupFileAvailable=Cap còpia disponible
 ExportMethod=Mètode d'exportació
 ImportMethod=Mètode d'importació
 ToBuildBackupFileClickHere=Per crear una còpia, feu clic <a href="%s">aquí</a>.
-ImportMySqlDesc=Per a importar una còpia de seguretat MySQL, podeu utilitzar phpMyAdmin a través del vostre hosting o utilitzar les ordres mysql del "Command line". <br> Per exemple:
+ImportMySqlDesc=Per a importar una còpia de seguretat MySQL, podeu utilitzar phpMyAdmin a través del vostre hosting o utilitzar les ordres mysql de la línia de comandes. <br> Per exemple:
 ImportPostgreSqlDesc=Per a importar una còpia de seguretat, useu l'ordre pg_restore des de la línia de comandes:
 ImportMySqlCommand=%s %s < elmeuarxiubackup.sql
 ImportPostgreSqlCommand=%s %s elmeuarxiubackup.sql

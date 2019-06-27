@@ -1,7 +1,7 @@
 # Dolibarr language file - en_US - Accounting Expert
 Accounting=Muhasebe
-ACCOUNTING_EXPORT_SEPARATORCSV=Dışaaktarma dosyası için sütun ayırıcısı
-ACCOUNTING_EXPORT_DATE=Dışaaktarma dosyası için tarih biçimi
+ACCOUNTING_EXPORT_SEPARATORCSV=Dışa aktarma dosyası için sütun ayırıcısı
+ACCOUNTING_EXPORT_DATE=Dışa aktarma dosyası için tarih biçimi
 ACCOUNTING_EXPORT_PIECE=Parça sayısını dışaaktar
 ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Genel hesapla birlikte dışaaktar
 ACCOUNTING_EXPORT_LABEL=Etiket dışa aktar
@@ -190,7 +190,7 @@ ByPredefinedAccountGroups=By predefined groups
 ByPersonalizedAccountGroups=By personalized groups
 ByYear=Yıla göre
 NotMatch=Ayarlanmamış
-DeleteMvt=Delete Ledger lines
+DeleteMvt=Büyük defter satırlarını sil
 DelYear=Silinecek yıl
 DelJournal=Silinecek günlük
 ConfirmDeleteMvt=This will delete all lines of the Ledger for year and/or from a specific journal. At least one criterion is required.
@@ -251,7 +251,7 @@ GeneralLedgerIsWritten=Transactions are written in the Ledger
 GeneralLedgerSomeRecordWasNotRecorded=Some of the transactions could not be journalized. If there is no other error message, this is probably because they were already journalized.
 NoNewRecordSaved=No more record to journalize
 ListOfProductsWithoutAccountingAccount=List of products not bound to any accounting account
-ChangeBinding=Change the binding
+ChangeBinding=Bağlamayı değiştir
 Accounted=Accounted in ledger
 NotYetAccounted=Büyük defterde henüz muhasebeleştirilmemiş
 

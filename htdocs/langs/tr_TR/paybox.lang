@@ -37,4 +37,4 @@ PAYBOX_PAYONLINE_SENDEMAIL=Ödeme denemesinden sonra e-posta bildirimi (başarı
 PAYBOX_PBX_SITE=PBX SITE için değer
 PAYBOX_PBX_RANG=PBX Rang için değer
 PAYBOX_PBX_IDENTIFIANT=PBX ID için değer
-PAYBOX_HMAC_KEY=HMAC key
+PAYBOX_HMAC_KEY=HMAC anahtarı

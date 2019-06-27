@@ -38,7 +38,7 @@ ActionsEvents=Esdeveniments per a què Dolibarr crei una acció de forma automà
 EventRemindersByEmailNotEnabled=Els recordatoris d'esdeveniments per correu electrònic no estaven habilitats en la configuració del mòdul %s.
 ##### Agenda event labels #####
 NewCompanyToDolibarr=Tercer %s creat
-COMPANY_DELETEInDolibarr=Third party %s deleted
+COMPANY_DELETEInDolibarr=Tercer %s suprimit
 ContractValidatedInDolibarr=Contracte %s validat
 CONTRACT_DELETEInDolibarr=Contracte %s eliminat
 PropalClosedSignedInDolibarr=Pressupost %s firmat

@@ -103,7 +103,7 @@ RefOrder=Sipariş ref.
 RefCustomerOrder=Müşterinin sipariş ref.
 RefOrderSupplier=Satıcı için referans siparişi
 RefOrderSupplierShort=Ref. order vendor
-SendOrderByMail=Siparişi postayla gönder
+SendOrderByMail=Siparişi e-posta ile gönder
 ActionsOnOrder=Sipariş etkinlikleri
 NoArticleOfTypeProduct='ürün' türünde herhangi bir madde olmadığından bu sipariş için sevkedilebilir madde yok
 OrderMode=Sipariş yöntemi
@@ -135,7 +135,7 @@ Error_OrderNotChecked=Faturalanacak seçilmiş sipariş yok
 # Order modes (how we receive order). Not the "why" are keys stored into dict.lang
 OrderByMail=Posta
 OrderByFax=Faks
-OrderByEMail=Eposta
+OrderByEMail=E-posta
 OrderByWWW=Çevrimiçi
 OrderByPhone=Telefon
 # Documents models

@@ -1,0 +1,65 @@
+# Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+Assets = Tillgångar
+NewAsset = Ny tillgång
+AccountancyCodeAsset = Redovisningskod (tillgång)
+AccountancyCodeDepreciationAsset = Redovisningskod (avskrivningstillgångskonto)
+AccountancyCodeDepreciationExpense = Redovisningskod (avskrivningskostnadskonto)
+NewAssetType=Ny tillgångstyp
+AssetsTypeSetup=Inställning av tillgångstyp
+AssetTypeModified=Asset typ modifierad
+AssetType=Tillgångstyp
+AssetsLines=Tillgångar
+DeleteType=Radera
+DeleteAnAssetType=Ta bort en tillgångstyp
+ConfirmDeleteAssetType=Är du säker på att du vill ta bort denna tillgångstyp?
+ShowTypeCard=Visa typ '%s'
+
+# Module label 'ModuleAssetsName'
+ModuleAssetsName = Tillgångar
+# Module description 'ModuleAssetsDesc'
+ModuleAssetsDesc = Tillgångsbeskrivning
+
+#
+# Admin page
+#
+AssetsSetup = Inställning av tillgångar
+Settings = inställningar
+AssetsSetupPage = Inställningssidan för tillgångar
+ExtraFieldsAssetsType = Kompletterande attribut (tillgångstyp)
+AssetsType=Tillgångstyp
+AssetsTypeId=Tillgångstyp id
+AssetsTypeLabel=Typ av tillgångstyp
+AssetsTypes=Tillgångstyper
+
+#
+# Menu
+#
+MenuAssets = Tillgångar
+MenuNewAsset = Ny tillgång
+MenuTypeAssets = Skriv tillgångar
+MenuListAssets = Lista
+MenuNewTypeAssets = Ny
+MenuListTypeAssets = Lista
+
+#
+# Module
+#
+NewAssetType=Ny tillgångstyp
+NewAsset=Ny tillgång

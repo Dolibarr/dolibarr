@@ -4,7 +4,7 @@
 NoErrorCommitIsDone=Hata yok, taahüt ediyoruz
 # Errors
 ErrorButCommitIsDone=Hatalar bulundu, buna rağmen doğruluyoruz
-ErrorBadEMail=%s e-postası yanlış
+ErrorBadEMail=%s e-postası hatalı
 ErrorBadUrl=URL %s yanlış
 ErrorBadValueForParamNotAString=Parametreniz için hatalı değer. Genellikle çeviri eksik olduğunda eklenir.
 ErrorLoginAlreadyExists=%s kullanıcı adı zaten var.
@@ -41,7 +41,7 @@ ErrorBadImageFormat=Resim dosyası desteklenen biçimde değil (PHP niz bu biçi
 ErrorBadDateFormat=%s değeri yanlış tarih biçiminde
 ErrorWrongDate=Tarih doğru değil!
 ErrorFailedToWriteInDir=%s dizinine yazılamadı
-ErrorFoundBadEmailInFile=Dosyada %s satır hatalı e-posta sözdizimi bulundu (örneğin eposta=%s teki satır %s)
+ErrorFoundBadEmailInFile=Dosyadaki %s satırları için hatalı e-posta sözdizimi bulundu (örneğin e-posta=%s ile satır %s)
 ErrorUserCannotBeDelete=Kullanıcı silinemiyor. Dolibarr varlıklarıyla ilişkili olabilir.
 ErrorFieldsRequired=Bazı gerekli alanlar doldurulmamış.
 ErrorSubjectIsRequired=E-posta konusu zorunludur
@@ -69,7 +69,7 @@ ErrorFieldCanNotContainSpecialCharacters=<b>%s</b> alanı özel karakterler içe
 ErrorFieldCanNotContainSpecialNorUpperCharacters=The field <b>%s</b> must not contain special characters, nor upper case characters and cannot contain only numbers.
 ErrorFieldMustHaveXChar=The field <b>%s</b> must have at least %s characters.
 ErrorNoAccountancyModuleLoaded=Etkinleştirilmiş muhasebe modülü yok
-ErrorExportDuplicateProfil=Bu profil adı bu dışaaktarma seti için zaten var.
+ErrorExportDuplicateProfil=Bu profil adı, bu dışa aktarma grubu için zaten mevcut.
 ErrorLDAPSetupNotComplete=Dolibarr-LDAP eşleşmesi tamamlanmamış.
 ErrorLDAPMakeManualTest=A. Ldif dosyası %s dizininde oluşturuldu. Hatalar hakkında daha fazla bilgi almak için komut satırından elle yüklemeyi deneyin.
 ErrorCantSaveADoneUserWithZeroPercentage=Can't save an action with "status not started" if field "done by" is also filled.
@@ -130,10 +130,10 @@ ErrorFailedToAddToMailmanList=Mailman listesine ya da SPIP tabanına kayıt ekle
 ErrorFailedToRemoveToMailmanList=%s kaydının Mailman %s listesine ya da SPIP tabanına taşınmasında hata
 ErrorNewValueCantMatchOldValue=Yeni değer eskisine eşit olamaz
 ErrorFailedToValidatePasswordReset=Parola yenilenemiyor. Belki yenileme zaten yapılmış olabilir (bu bağlantı yalnızca bir kez kullanılabilir). Aksi durumda yenileme işlemi tekrar başlatın.
-ErrorToConnectToMysqlCheckInstance=Connect to database fails. Check database server is running (for example, with mysql/mariadb, you can launch it from command line with 'sudo service mysql start').
+ErrorToConnectToMysqlCheckInstance=Veri tabanına bağlanılamıyor. Veritabanı sunucusunun çalıştığını kontrol edin (örneğin mysql/mariadb için, 'sudo service mysql start' ile komut satırından başlatabilirsiniz).
 ErrorFailedToAddContact=Kişi eklenmesinde hata
 ErrorDateMustBeBeforeToday=Tarih bugünden büyük olamaz
-ErrorPaymentModeDefinedToWithoutSetup=Bir ödeme biçimi %s türüne ayarlanmış, ancak fatura modülü ayarı bu ödeme biçimi için tanımlanan bilgiyi gösterecek tamamlanmamış.
+ErrorPaymentModeDefinedToWithoutSetup=Bir ödeme biçimi %s türüne ayarlanmış, ancak fatura modülü kurulumu bu ödeme biçimi için tanımlanan bilgiyi gösterecek tamamlanmamış.
 ErrorPHPNeedModule=Hata, bu özelliği kulanmak için PHP nizde <b>%s</b> modülü kurulu olmalıdır.
 ErrorOpenIDSetupNotComplete=Dolibarr yapılandırma dosyasını OpenID kimlik doğrulamaya izin verecek şekilde ayarladınız, ancak OpenID hizmetine ait URL, %s değişmezine tanımlanmamıştır
 ErrorWarehouseMustDiffers=Kaynak ve hedef depo farklı olmalıdır
@@ -186,7 +186,7 @@ ErrorStockIsNotEnoughToAddProductOnOrder=Stock is not enough for product %s to a
 ErrorStockIsNotEnoughToAddProductOnInvoice=Stock is not enough for product %s to add it into a new invoice.
 ErrorStockIsNotEnoughToAddProductOnShipment=Stock is not enough for product %s to add it into a new shipment.
 ErrorStockIsNotEnoughToAddProductOnProposal=Stock is not enough for product %s to add it into a new proposal.
-ErrorFailedToLoadLoginFileForMode=Failed to get the login key for mode '%s'.
+ErrorFailedToLoadLoginFileForMode='%s'  modu için oturum açma anahtarı alınamadı.
 ErrorModuleNotFound=Modül dosyası bulunamadı.
 ErrorFieldAccountNotDefinedForBankLine=Value for Accounting account not defined for source line id %s (%s)
 ErrorFieldAccountNotDefinedForInvoiceLine=Value for Accounting account not defined for invoice id %s (%s)
@@ -219,7 +219,7 @@ ErrorURLMustStartWithHttp=URL %s must start with http:// or https://
 ErrorNewRefIsAlreadyUsed=Error, the new reference is already used
 ErrorDeletePaymentLinkedToAClosedInvoiceNotPossible=Error, delete payment linked to a closed invoice is not possible.
 # Warnings
-WarningPasswordSetWithNoAccount=Bu üye için bir parola ayarlıdır. Ancak, hiçbir kullanıcı hesabı oluşturulmamıştır. Yani bu şifre saklanır ama Dolibarr'a giriş için kullanılamaz. Dış bir modül/arayüz tarafından kullanılıyor olabilir, ama bir üye için ne bir kullanıcı adı ne de parola tanımlamanız gerekmiyorsa "Her üye için bir kullanıcı adı yönet" seçeneğini devre dışı bırakabilirsiniz. Bir kullanıcı adı yönetmeniz gerekiyorsa ama herhangi bir parolaya gereksinim duymuyorsanız bu uyarıyı engellemek için bu alanı boş bırakabilirsiniz. Not: Eğer bir üye bir kullanıcıya bağlıysa kullanıcı adı olarak eposta adresi de kullanılabilir.
+WarningPasswordSetWithNoAccount=Bu üye için bir parola ayarlıdır. Ancak, hiçbir kullanıcı hesabı oluşturulmamıştır. Yani bu şifre saklanır ama Dolibarr'a giriş için kullanılamaz. Dış bir modül/arayüz tarafından kullanılıyor olabilir, ama bir üye için ne bir kullanıcı adı ne de parola tanımlamanız gerekmiyorsa "Her üye için bir kullanıcı adı yönet" seçeneğini devre dışı bırakabilirsiniz. Bir kullanıcı adı yönetmeniz gerekiyorsa ama herhangi bir parolaya gereksinim duymuyorsanız bu uyarıyı engellemek için bu alanı boş bırakabilirsiniz. Not: Eğer bir üye bir kullanıcıya bağlıysa kullanıcı adı olarak e-posta adresi de kullanılabilir.
 WarningMandatorySetupNotComplete=Zorunlu parametreleri ayarlamak için buraya tıklayın
 WarningEnableYourModulesApplications=Click here to enable your modules and applications
 WarningSafeModeOnCheckExecDir=Uyarı, PHP seçeneği <b>güvenli_mode</b> açıktır, böylece komut php parametresi <b>güvenli_mode_exec_dir</b> tarafından bildirilen bir dizine saklanabilir.

@@ -330,7 +330,7 @@ ErrorInvoiceContainsLinesNotYetBoundedShort=发票上的某些行未绑定到会
 ExportNotSupported=本页不支持设置导出格式
 BookeppingLineAlreayExists=已经存在于簿记中的行
 NoJournalDefined=没有定义日常报表
-Binded=线条约束
+Binded=已绑定的行
 ToBind=要绑定的行
 UseMenuToSetBindindManualy=Lines not yet bound, use menu <a href="%s">%s</a> to make the binding manually
 
