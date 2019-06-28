@@ -23,7 +23,7 @@
 /**
  *	\file       htdocs/core/modules/expedition/doc/pdf_rouget.modules.php
  *	\ingroup    expedition
- *	\brief      Fichier de la classe permettant de generer les bordereaux envoi au modele Rouget
+ *	\brief      Class file used to generate the dispatch slips for the Rouget model
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/expedition/modules_expedition.php';
@@ -133,7 +133,7 @@ class pdf_rouget extends ModelePdfExpedition
 		$this->marge_haute =isset($conf->global->MAIN_PDF_MARGIN_TOP)?$conf->global->MAIN_PDF_MARGIN_TOP:10;
 		$this->marge_basse =isset($conf->global->MAIN_PDF_MARGIN_BOTTOM)?$conf->global->MAIN_PDF_MARGIN_BOTTOM:10;
 
-		$this->option_logo = 1;
+		$this->option_logo = 1;    // Display logo
 
 		// Get source company
 		$this->emetteur=$mysoc;
