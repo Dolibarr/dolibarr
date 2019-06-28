@@ -27,7 +27,7 @@ $maxsizestring=255;
 $maxsizeint=10;
 $mesg=array();
 
-$extrasize=GETPOST('size', 'int');
+$extrasize=GETPOST('size','intcomma');
 $type=GETPOST('type', 'alpha');
 $param=GETPOST('param', 'alpha');
 
