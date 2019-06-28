@@ -177,7 +177,7 @@ function _printOnOff($confkey, $title = false, $desc = '')
  *
  * @return void
  */
-function _printInputFormPart($confkey, $title = false, $desc ='', $metas = array(), $type='input', $help = false)
+function _printInputFormPart($confkey, $title = false, $desc = '', $metas = array(), $type = 'input', $help = false)
 {
     global $var, $bc, $langs, $conf, $db, $inputCount;
     $var=!$var;

@@ -308,7 +308,7 @@ if (empty($reshook))
 			dol_print_error($db, $object->error);
 	}
 
-	else if ($action == 'setretainedwarrantyconditions' && $user->rights->facture->creer)
+	elseif ($action == 'setretainedwarrantyconditions' && $user->rights->facture->creer)
 	{
 	    $object->fetch($id);
 	    $object->retained_warranty_fk_cond_reglement = 0; // To clean property
@@ -323,7 +323,7 @@ if (empty($reshook))
 	    if ($result < 0) dol_print_error($db, $object->error);
 	}
 	
-	else if ($action == 'setretainedwarranty' && $user->rights->facture->creer)
+	elseif ($action == 'setretainedwarranty' && $user->rights->facture->creer)
 	{
 	    $object->fetch($id);
 	    $result = $object->setRetainedWarranty(GETPOST('retained_warranty', 'float'));
@@ -331,7 +331,7 @@ if (empty($reshook))
 	        dol_print_error($db, $object->error);
 	}
 	
-	else if ($action == 'setretainedwarrantydatelimit' && $user->rights->facture->creer)
+	elseif ($action == 'setretainedwarrantydatelimit' && $user->rights->facture->creer)
 	{
 	    $object->fetch($id);
 	    $result = $object->setRetainedWarrantyDateLimit(GETPOST('retained_warranty_date_limit', 'float'));
