@@ -375,6 +375,26 @@ if (empty($reshook))
             $error++;
 
         }
+        if(GETPOST('idprof1', 'alpha') === '' && ! empty($conf->global->SOCIETE_IDPROF1_MANDATORY)) {
+            setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ProfId1")), null, 'errors');
+            $error++;
+        }
+        if(GETPOST('idprof2', 'alpha') === '' && ! empty($conf->global->SOCIETE_IDPROF2_MANDATORY)) {
+            setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ProfId2")), null, 'errors');
+            $error++;
+        }
+        if(GETPOST('idprof3', 'alpha') === '' && ! empty($conf->global->SOCIETE_IDPROF3_MANDATORY)) {
+            setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ProfId3")), null, 'errors');
+            $error++;
+        }
+        if(GETPOST('idprof4', 'alpha') === '' && ! empty($conf->global->SOCIETE_IDPROF4_MANDATORY)) {
+            setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ProfId4")), null, 'errors');
+            $error++;
+        }
+        if(GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL) === '' && ! empty($conf->global->SOCIETE_EMAIL_MANDATORY)) {
+            setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Email")), null, 'errors');
+            $error++;
+        }
 
         if (! $error)
         {
