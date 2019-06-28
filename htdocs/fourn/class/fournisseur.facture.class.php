@@ -192,7 +192,7 @@ class FactureFournisseur extends CommonInvoice
     public $fk_incoterms;
 
     public $location_incoterms;
-    public $libelle_incoterms;  //Used into tooltip
+    public $label_incoterms;  //Used into tooltip
 
     public $extraparams=array();
 
@@ -615,7 +615,7 @@ class FactureFournisseur extends CommonInvoice
         $sql.= " p.code as mode_reglement_code, p.libelle as mode_reglement_libelle,";
         $sql.= ' s.nom as socnom, s.rowid as socid,';
         $sql.= ' t.fk_incoterms, t.location_incoterms,';
-        $sql.= " i.libelle as libelle_incoterms,";
+        $sql.= " i.libelle as label_incoterms,";
         $sql.= ' t.fk_multicurrency, t.multicurrency_code, t.multicurrency_tx, t.multicurrency_total_ht, t.multicurrency_total_tva, t.multicurrency_total_ttc';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as t';
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON (t.fk_soc = s.rowid)";
@@ -654,7 +654,6 @@ class FactureFournisseur extends CommonInvoice
                 $this->tva					= $obj->tva;
                 $this->total_localtax1		= $obj->localtax1;
                 $this->total_localtax2		= $obj->localtax2;
-                //$this->total				= $obj->total;
                 $this->total_ht				= $obj->total_ht;
                 $this->total_tva			= $obj->total_tva;
                 $this->total_ttc			= $obj->total_ttc;
@@ -684,7 +683,7 @@ class FactureFournisseur extends CommonInvoice
 				//Incoterms
 				$this->fk_incoterms = $obj->fk_incoterms;
 				$this->location_incoterms = $obj->location_incoterms;
-				$this->libelle_incoterms = $obj->libelle_incoterms;
+				$this->label_incoterms = $obj->label_incoterms;
 
 				// Multicurrency
 				$this->fk_multicurrency 		= $obj->fk_multicurrency;
@@ -789,13 +788,13 @@ class FactureFournisseur extends CommonInvoice
                     $line->localtax2_type	= $obj->localtax2_type;
                     $line->qty				= $obj->qty;
                     $line->remise_percent   = $obj->remise_percent;
-                    $line->tva				= $obj->total_tva;
+                    $line->tva				= $obj->total_tva;			// deprecated
                     $line->total_ht			= $obj->total_ht;
+                    $line->total_ttc		= $obj->total_ttc;
                     $line->total_tva		= $obj->total_tva;
                     $line->total_localtax1	= $obj->total_localtax1;
                     $line->total_localtax2	= $obj->total_localtax2;
                     $line->fk_facture_fourn     = $obj->fk_facture_fourn;
-                    $line->total_ttc		= $obj->total_ttc;
                     $line->fk_product		= $obj->fk_product;
                     $line->product_type		= $obj->product_type;
                     $line->product_label	= $obj->label;
@@ -897,7 +896,6 @@ class FactureFournisseur extends CommonInvoice
         $sql.= " tva=".(isset($this->tva)?$this->tva:"null").",";
         $sql.= " localtax1=".(isset($this->localtax1)?$this->localtax1:"null").",";
         $sql.= " localtax2=".(isset($this->localtax2)?$this->localtax2:"null").",";
-        //$sql.= " total=".(isset($this->total)?$this->total:"null").",";
         $sql.= " total_ht=".(isset($this->total_ht)?$this->total_ht:"null").",";
         $sql.= " total_tva=".(isset($this->total_tva)?$this->total_tva:"null").",";
         $sql.= " total_ttc=".(isset($this->total_ttc)?$this->total_ttc:"null").",";
@@ -2727,12 +2725,6 @@ class SupplierInvoiceLine extends CommonObjectLine
 	public $ref_supplier;
 
 	/**
-	 * @deprecated
-	 * @see $label
-	 */
-	public $libelle;
-
-	/**
 	 * Product description
 	 * @var string
 	 */
@@ -2746,6 +2738,10 @@ class SupplierInvoiceLine extends CommonObjectLine
 	 */
 	public $pu_ht;
 
+	/**
+	 * Unit price excluded taxes
+	 * @var float
+	 */
 	public $subprice;
 
 	/**
@@ -2754,15 +2750,6 @@ class SupplierInvoiceLine extends CommonObjectLine
 	 */
 	public $pu_ttc;
 
-	/**
-	 * Total VAT amount
-	 * @var float
-	 * @deprecated Use $total_tva instead
-	 * @see $total_tva
-	 */
-	public $tva;
-
-	public $total_tva;
 
 	/**
 	 * Id of the corresponding supplier invoice
@@ -2805,6 +2792,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 	public $remise_percent;
 	public $total_ht;
 	public $total_ttc;
+	public $total_tva;
 	public $total_localtax1;
 	public $total_localtax2;
 
@@ -2901,7 +2889,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$this->localtax2_type		= $obj->localtax2_type;
 		$this->qty				= $obj->qty;
 		$this->remise_percent    = $obj->remise_percent;
-		$this->tva				= $obj->total_tva;
+		$this->tva				= $obj->total_tva;			// deprecated
 		$this->total_ht			= $obj->total_ht;
 		$this->total_tva			= $obj->total_tva;
 		$this->total_localtax1	= $obj->total_localtax1;
@@ -3112,6 +3100,7 @@ class SupplierInvoiceLine extends CommonObjectLine
         if (empty($this->localtax2_tx)) $this->localtax2_tx=0;
         if (empty($this->localtax1_type)) $this->localtax1_type='0';
         if (empty($this->localtax2_type)) $this->localtax2_type='0';
+        if (empty($this->total_tva)) $this->total_tva=0;
         if (empty($this->total_localtax1)) $this->total_localtax1=0;
         if (empty($this->total_localtax2)) $this->total_localtax2=0;
         if (empty($this->rang)) $this->rang=0;

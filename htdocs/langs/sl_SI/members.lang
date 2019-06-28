@@ -171,7 +171,7 @@ MembersStatisticsDesc=Izberite statistiko, ki jo želite prebrati...
 MenuMembersStats=Statistika
 LastMemberDate=Latest member date
 LatestSubscriptionDate=Latest subscription date
-Nature=Narava
+MemberNature=Nature of member
 Public=Informacija je javna (ne=zasebno)
 NewMemberbyWeb=Dodan je nov član. Čaka potrditev.
 NewMemberForm=Obrazec za nove člane

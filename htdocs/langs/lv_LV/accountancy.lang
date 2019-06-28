@@ -216,7 +216,8 @@ DescThirdPartyReport=Konsultējieties ar trešo pušu klientu un pārdevēju sar
 ListAccounts=Grāmatvedības kontu saraksts
 UnknownAccountForThirdparty=Nezināmas trešās puses konts. Mēs izmantosim %s
 UnknownAccountForThirdpartyBlocking=Nezināms trešās puses konts. Bloķēšanas kļūda
-ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Trešās puses konts nav definēts vai trešā persona nav zināma. Bloķēšanas kļūda.
+ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Third-party account not defined or third party unknown. We will use %s
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Trešās puses konts nav definēts vai trešā persona nav zināma. Bloķēšanas kļūda.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Nav noteikts nezināms trešās puses konts un gaidīšanas konts. Bloķēšanas kļūda
 PaymentsNotLinkedToProduct=Maksājums nav saistīts ar kādu produktu / pakalpojumu
 
@@ -291,7 +292,7 @@ Modelcsv_cogilog=Eksportēt uz Cogilog
 Modelcsv_agiris=Eksports uz Agiris
 Modelcsv_openconcerto=Eksportēt OpenConcerto (tests)
 Modelcsv_configurable=Eksportēt CSV konfigurējamu
-Modelcsv_FEC=Eksporta FEC (L47 A pants)
+Modelcsv_FEC=Export FEC
 Modelcsv_Sage50_Swiss=Eksports uz Sage 50 Šveici
 ChartofaccountsId=Kontu konts. Id
 
@@ -316,6 +317,9 @@ WithoutValidAccount=Bez derīga veltīta konta
 WithValidAccount=Izmantojot derīgu veltītu kontu
 ValueNotIntoChartOfAccount=Šī grāmatvedības konta vērtība konta diagrammā nepastāv
 AccountRemovedFromGroup=Konts ir noņemts no grupas
+SaleLocal=Local sale
+SaleExport=Export sale
+SaleEEC=Sale in EEC
 
 ## Dictionary
 Range=Range of accounting account
@@ -336,7 +340,7 @@ UseMenuToSetBindindManualy=Līnijas, kas vēl nav saistītas, izmantojiet izvēl
 
 ## Import
 ImportAccountingEntries=Grāmatvedības ieraksti
-
+DateExport=Date export
 WarningReportNotReliable=Brīdinājums. Šis pārskats nav balstīts uz grāmatvedi, tādēļ tajā nav darījumu, kas Manuāli ir manuāli modificēts. Ja žurnāls ir atjaunināts, grāmatvedības skats ir precīzāks.
 ExpenseReportJournal=Izdevumu atskaites žurnāls
 InventoryJournal=Inventāra žurnāls

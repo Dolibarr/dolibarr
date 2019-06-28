@@ -216,7 +216,8 @@ DescThirdPartyReport=Consulte aquí el listado de clientes y proveedores y sus c
 ListAccounts=Listado de cuentas contables
 UnknownAccountForThirdparty=Cuenta contable de tercero desconocida, usaremos %s
 UnknownAccountForThirdpartyBlocking=Cuenta contable de tercero desconocida. Error de bloqueo
-ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Cuenta del tercero desconocida o tercero desconocido. Error de bloqueo
+ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Third-party account not defined or third party unknown. We will use %s
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Cuenta del tercero desconocida o tercero desconocido. Error de bloqueo
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Cuenta del tercero desconocida y cuenta de espera no definida. Error de bloqueo
 PaymentsNotLinkedToProduct=Pagos no vinculados a un producto/servicio
 
@@ -291,7 +292,7 @@ Modelcsv_cogilog=Eportar a Cogilog
 Modelcsv_agiris=Exportar a Agiris
 Modelcsv_openconcerto=Exportar a OpenConcerto (En pruebas)
 Modelcsv_configurable=Exportación CSV Configurable
-Modelcsv_FEC=Exportación FEC (Art. L47 A)
+Modelcsv_FEC=Export FEC
 Modelcsv_Sage50_Swiss=Exportación a Sage 50 Suiza
 ChartofaccountsId=Id plan contable
 
@@ -316,6 +317,9 @@ WithoutValidAccount=Sin cuenta dedicada válida
 WithValidAccount=Con cuenta dedicada válida
 ValueNotIntoChartOfAccount=Este valor de cuenta contable no existe en el plan general contable
 AccountRemovedFromGroup=Cuenta eliminada del grupo
+SaleLocal=Local sale
+SaleExport=Export sale
+SaleEEC=Sale in EEC
 
 ## Dictionary
 Range=Rango de cuenta contable
@@ -336,7 +340,7 @@ UseMenuToSetBindindManualy=No es posible autodetectar, utilice el menú <a href=
 
 ## Import
 ImportAccountingEntries=Entradas contables
-
+DateExport=Date export
 WarningReportNotReliable=Advertencia, este informe no se basa en el Libro mayor, por lo que no contiene modificaciones manualmente modificadas en el Libro mayor.. Si su diario está actualizado, la vista contable es más precisa.
 ExpenseReportJournal=Informe de gastos diario
 InventoryJournal=Inventario

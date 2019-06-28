@@ -475,7 +475,7 @@ class Societe extends CommonObject
 	public $fk_incoterms;
 
 	public $location_incoterms;
-	public $libelle_incoterms;  //Used into tooltip
+	public $label_incoterms;  //Used into tooltip
 
 	// Multicurrency
 	/**
@@ -1276,7 +1276,7 @@ class Societe extends CommonObject
 		$sql .= ', d.code_departement as state_code, d.nom as state';
 		$sql .= ', st.libelle as stcomm';
 		$sql .= ', te.code as typent_code';
-		$sql .= ', i.libelle as libelle_incoterms';
+		$sql .= ', i.libelle as label_incoterms';
 		$sql .= ', sr.remise_client';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_effectif as e ON s.fk_effectif = e.id';
@@ -1435,7 +1435,7 @@ class Societe extends CommonObject
 				//Incoterms
 				$this->fk_incoterms = $obj->fk_incoterms;
 				$this->location_incoterms = $obj->location_incoterms;
-				$this->libelle_incoterms = $obj->libelle_incoterms;
+				$this->label_incoterms = $obj->label_incoterms;
 
 				// multicurrency
 				$this->fk_multicurrency = $obj->fk_multicurrency;
@@ -3446,7 +3446,6 @@ class Societe extends CommonObject
 		$this->address=empty($conf->global->MAIN_INFO_SOCIETE_ADDRESS)?'':$conf->global->MAIN_INFO_SOCIETE_ADDRESS;
 		$this->zip=empty($conf->global->MAIN_INFO_SOCIETE_ZIP)?'':$conf->global->MAIN_INFO_SOCIETE_ZIP;
 		$this->town=empty($conf->global->MAIN_INFO_SOCIETE_TOWN)?'':$conf->global->MAIN_INFO_SOCIETE_TOWN;
-		$this->state_id=empty($conf->global->MAIN_INFO_SOCIETE_STATE)?'':$conf->global->MAIN_INFO_SOCIETE_STATE;
 		$this->region_code=empty($conf->global->MAIN_INFO_SOCIETE_REGION)?'':$conf->global->MAIN_INFO_SOCIETE_REGION;
 		$this->object=empty($conf->global->MAIN_INFO_SOCIETE_OBJECT)?'':$conf->global->MAIN_INFO_SOCIETE_OBJECT;
 
@@ -3467,7 +3466,7 @@ class Societe extends CommonObject
 			}
 			else                    // For backward compatibility
 			{
-				dol_syslog("Your country setup use an old syntax. Reedit it using setup area.", LOG_ERR);
+				dol_syslog("Your country setup use an old syntax. Reedit it using setup area.", LOG_WARNING);
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 				$country_code=getCountry($country_id, 2, $this->db);  // This need a SQL request, but it's the old feature that should not be used anymore
 				$country_label=getCountry($country_id, 0, $this->db);  // This need a SQL request, but it's the old feature that should not be used anymore
@@ -3477,6 +3476,31 @@ class Societe extends CommonObject
 		$this->country_code=$country_code;
 		$this->country=$country_label;
 		if (is_object($langs)) $this->country=($langs->trans('Country'.$country_code)!='Country'.$country_code)?$langs->trans('Country'.$country_code):$country_label;
+
+		//TODO This could be replicated for region but function `getRegion` didn't exist, so I didn't added it.
+		// We define state_id, state_code and state
+		$state_id=0;$state_code=$state_label='';
+		if (! empty($conf->global->MAIN_INFO_SOCIETE_STATE))
+		{
+			$tmp=explode(':', $conf->global->MAIN_INFO_SOCIETE_STATE);
+			$state_id=$tmp[0];
+			if (! empty($tmp[1]))   // If $conf->global->MAIN_INFO_SOCIETE_STATE is "id:code:label"
+			{
+				$state_code=$tmp[1];
+				$state_label=$tmp[2];
+			}
+			else                    // For backward compatibility
+			{
+				dol_syslog("Your state setup use an old syntax. Reedit it using setup area.", LOG_ERR);
+				include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+				$state_code=getState($state_id, 2, $this->db);  // This need a SQL request, but it's the old feature that should not be used anymore
+				$state_label=getState($state_id, 0, $this->db);  // This need a SQL request, but it's the old feature that should not be used anymore
+			}
+		}
+		$this->state_id=$state_id;
+		$this->state_code=$state_code;
+		$this->state=$state_label;
+		if (is_object($langs)) $this->state=($langs->trans('State'.$state_code)!='State'.$state_code)?$langs->trans('State'.$state_code):$state_label;
 
 		$this->phone=empty($conf->global->MAIN_INFO_SOCIETE_TEL)?'':$conf->global->MAIN_INFO_SOCIETE_TEL;
 		$this->fax=empty($conf->global->MAIN_INFO_SOCIETE_FAX)?'':$conf->global->MAIN_INFO_SOCIETE_FAX;
@@ -3993,7 +4017,7 @@ class Societe extends CommonObject
 	/**
 	 *  Create a document onto disk according to template module.
 	 *
-	 *	@param	string		$modele			Generator to use. Caller must set it to obj->modelpdf or GETPOST('modelpdf') for example.
+	 *	@param	string		$modele			Generator to use. Caller must set it to obj->modelpdf or GETPOST('modelpdf','alpha') for example.
 	 *	@param	Translate	$outputlangs	objet lang a utiliser pour traduction
 	 *  @param  int			$hidedetails    Hide details of lines
 	 *  @param  int			$hidedesc       Hide description

@@ -31,7 +31,7 @@ MARGIN_TYPE=Kaufpreis / Kosten standardmäßig vorgeschlagen für Standardmargen
 MargeType1=Marge beim günstigsten Einkaufspreis
 MargeType2=gewichtete Durchschnittspreis (WAP)
 MargeType3=Marge auf Herstellkosten
-MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Price (WAP) = Selling price - Product Weighted Average Price (WAP) or best vendor price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAP if cost price not defined, or best vendor price if WAP not yet defined
+MarginTypeDesc=* Marge auf den günstigsten EK-Preis : Verkaufspreis - günstigster EK-Preis aus den Artikeldaten<br>* Marge auf den gleitenden Durchschnittspreis (GLD) : Verkaufspreis - gleitender Durchschnittspreis (GLD) oder günstigster EK-Preis falls der GLD nicht definiert ist<br>* Marge auf Herstellkosten = Verkaufspreis - Herstellkosten aus den Artikeldaten oder GLD, wenn die Herstellkosten nicht definiert sind oder günstigster EK-Preis, wenn der GLD nicht definiert ist
 CostPrice=Selbstkostenpreis
 UnitCharges=Einheit Kosten
 Charges=Kosten

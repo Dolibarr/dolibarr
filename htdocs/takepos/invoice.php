@@ -44,6 +44,31 @@ $action = GETPOST('action', 'alpha');
 $idproduct = GETPOST('idproduct', 'int');
 $place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0);   // $place is id of table for Ba or Restaurant
 
+if ($conf->global->TAKEPOS_PHONE_BASIC_LAYOUT==1 && $conf->browser->layout == 'phone')
+{
+	// DIRECT LINK TO THIS PAGE FROM MOBILE AND NO TERMINAL SELECTED
+	if ($_SESSION["takeposterminal"]=="")
+	{
+		if ($conf->global->TAKEPOS_NUM_TERMINALS=="1") $_SESSION["takeposterminal"]=1;
+		else
+		{
+			header("Location: takepos.php");
+			exit;
+		}
+	}
+	$mobilepage = GETPOST('mobilepage', 'alpha');
+	$title='TakePOS - Dolibarr '.DOL_VERSION;
+	if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $title='TakePOS - '.$conf->global->MAIN_APPLICATION_TITLE;
+	$head='<meta name="apple-mobile-web-app-title" content="TakePOS"/>
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="mobile-web-app-capable" content="yes">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>';
+	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
+	print '<link rel="stylesheet" href="css/pos.css">
+	<link rel="stylesheet" href="css/colorbox.css" type="text/css" media="screen" />
+	<script type="text/javascript" src="js/jquery.colorbox-min.js"></script>';
+}
+
 /**
  * Abort invoice creationg with a given error message
  *
@@ -497,13 +522,88 @@ print $langs->trans('TotalTTC');
 print ' : <b>'.price($invoice->total_ttc, 1, '', 1, - 1, - 1, $conf->currency).'</b></span>';
 print '<br>'.$sectionwithinvoicelink;
 print '</td>';
-print '<td class="linecolqty right">' . $langs->trans('ReductionShort') . '</td>';
-print '<td class="linecolqty right">' . $langs->trans('Qty') . '</td>';
-print '<td class="linecolht right nowraponall">' . $langs->trans('TotalHTShort') . '</td>';
+if ($_SESSION["basiclayout"]!=1)
+{
+	print '<td class="linecolqty right">' . $langs->trans('ReductionShort') . '</td>';
+	print '<td class="linecolqty right">' . $langs->trans('Qty') . '</td>';
+	print '<td class="linecolht right nowraponall">' . $langs->trans('TotalHTShort') . '</td>';
+}
 print "</tr>\n";
+
+if ($_SESSION["basiclayout"]==1)
+{
+	if ($mobilepage=="cats")
+	{
+		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+		$categorie = new Categorie($db);
+        $categories = $categorie->get_full_arbo('product');
+		$htmlforlines = '';
+        foreach ($categories as $row){
+			$htmlforlines.= '<tr class="drag drop oddeven posinvoiceline';
+			$htmlforlines.= '" onclick="location.href=\'invoice.php?mobilepage=products&place=' . $place . '&catid=' . $row['id'] . '\'">';
+			$htmlforlines.= '<td class="left">';
+			$htmlforlines.= $row['label'];
+			$htmlforlines.= '</td>';
+			$htmlforlines.= '</tr>'."\n";
+		}
+		$htmlforlines.= '</table>';
+		$htmlforlines.= '<div class="tabsAction">';
+		$htmlforlines.= '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?mobilepage=places&place=' . $place. '">'.$langs->trans("Floors").'</a>';
+		$htmlforlines.= '</div>';
+		print $htmlforlines;
+	}
+	
+	if ($mobilepage=="products")
+	{
+		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+		$object = new Categorie($db);
+		$catid = GETPOST('catid', 'int');
+		$result=$object->fetch($catid);
+		$prods = $object->getObjectsInCateg("product");
+		$htmlforlines = '';
+		foreach ($prods as $row) {
+			$htmlforlines.= '<tr class="drag drop oddeven posinvoiceline';
+			$htmlforlines.= '" onclick="location.href=\'invoice.php?mobilepage=invoice&action=addline&place=' . $place . '&idproduct=' . $row->id . '\'">';
+			$htmlforlines.= '<td class="left">';
+			$htmlforlines.= $row->label;
+			$htmlforlines.= '</td>';
+			$htmlforlines.= '</tr>'."\n";
+		}
+		$htmlforlines.= '</table>';
+		$htmlforlines.= '<div class="tabsAction">';
+		$htmlforlines.= '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?mobilepage=cats&place=' . $place. '">'.$langs->trans("Categories").'</a>';
+		$htmlforlines.= '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?mobilepage=places&place=' . $place. '">'.$langs->trans("Floors").'</a>';
+		$htmlforlines.= '</div>';
+		print $htmlforlines;
+	}
+	
+	if ($mobilepage=="places")
+	{
+		$sql="SELECT rowid, entity, label, leftpos, toppos, floor FROM ".MAIN_DB_PREFIX."takepos_floor_tables";
+		$resql = $db->query($sql);
+		$rows = array();
+		$htmlforlines = '';
+		while($row = $db->fetch_array($resql)){
+			$rows[] = $row;
+			$htmlforlines.= '<tr class="drag drop oddeven posinvoiceline';
+			$htmlforlines.= '" onclick="location.href=\'invoice.php?mobilepage=invoice&place=' . $row['label'] . '\'">';
+			$htmlforlines.= '<td class="left">';
+			$htmlforlines.= $row['label'];
+			$htmlforlines.= '</td>';
+			$htmlforlines.= '</tr>'."\n";
+		}
+		$htmlforlines.= '</table>';
+		$htmlforlines.= '<div class="tabsAction">';
+		$htmlforlines.= '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?mobilepage=cats&place=' . $place. '">'.$langs->trans("Categories").'</a>';
+		$htmlforlines.= '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?mobilepage=places&place=' . $place. '">'.$langs->trans("Floors").'</a>';
+		$htmlforlines.= '</div>';
+		print $htmlforlines;
+	}
+}
 
 if ($placeid > 0)
 {
+	if ($_SESSION["basiclayout"]==1 && $mobilepage!="invoice") return;
     if (is_array($invoice->lines) && count($invoice->lines))
     {
         $tmplines = array_reverse($invoice->lines);
@@ -538,11 +638,14 @@ if ($placeid > 0)
                 }
             }
             if (!empty($line->array_options['options_order_notes'])) $htmlforlines.= "<br>(".$line->array_options['options_order_notes'].")";
-            $htmlforlines.= '</td>';
-            $htmlforlines.= '<td class="right">' . vatrate($line->remise_percent, true) . '</td>';
-            $htmlforlines.= '<td class="right">' . $line->qty . '</td>';
-            $htmlforlines.= '<td class="right">' . price($line->total_ttc) . '</td>';
-            $htmlforlines.= '</tr>'."\n";
+            if ($_SESSION["basiclayout"]!=1)
+			{
+				$htmlforlines.= '</td>';
+				$htmlforlines.= '<td class="right">' . vatrate($line->remise_percent, true) . '</td>';
+				$htmlforlines.= '<td class="right">' . $line->qty . '</td>';
+				$htmlforlines.= '<td class="right">' . price($line->total_ttc) . '</td>';
+			}
+			$htmlforlines.= '</tr>'."\n";
 
             print $htmlforlines;
         }
@@ -557,6 +660,14 @@ else {      // No invoice generated yet
 }
 
 print '</table>';
+
+if ($_SESSION["basiclayout"]==1 && $mobilepage=="invoice")
+{
+	print '<div class="tabsAction">';
+	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?mobilepage=cats&place=' . $place. '">'.$langs->trans("Categories").'</a>';
+	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?mobilepage=places&place=' . $place. '">'.$langs->trans("Floors").'</a>';
+	print '</div>';
+}
 
 if ($invoice->socid != $conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"]})
 {

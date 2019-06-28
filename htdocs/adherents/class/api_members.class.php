@@ -304,7 +304,7 @@ class Members extends DolibarrApi
         // Remove the subscriptions because they are handled as a subresource.
         unset($object->subscriptions);
         unset($object->fk_incoterms);
-        unset($object->libelle_incoterms);
+        unset($object->label_incoterms);
         unset($object->location_incoterms);
         unset($object->fk_delivery_address);
         unset($object->shipping_method_id);

@@ -163,6 +163,19 @@ class Entrepot extends CommonObject
 					}
 				}
 
+                // Actions on extra fields
+                if (! $error)
+                {
+                    if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+                    {
+                        $result=$this->insertExtraFields();
+                        if ($result < 0)
+                        {
+                            $error++;
+                        }
+                    }
+                }
+
 				if (! $error)
 				{
 					$this->db->commit();
@@ -199,6 +212,10 @@ class Entrepot extends CommonObject
 	 */
 	public function update($id, $user)
 	{
+	    global $conf;
+
+        $error=0;
+
 	    if (empty($id)) $id = $this->id;
 
 		// Check if new parent is already a child of current warehouse
@@ -239,13 +256,24 @@ class Entrepot extends CommonObject
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql=$this->db->query($sql);
-		if ($resql)
-		{
+
+        if (! $resql) {
+            $error++;
+            $this->errors[]="Error ".$this->db->lasterror();
+        }
+
+        if (! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($this->array_options) && count($this->array_options)>0) {
+            $result=$this->insertExtraFields();
+            if ($result < 0)
+            {
+                $error++;
+            }
+        }
+
+		if (!$error) {
 			$this->db->commit();
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			$this->error=$this->db->lasterror();
 			return -1;
@@ -262,6 +290,8 @@ class Entrepot extends CommonObject
 	 */
 	public function delete($user, $notrigger = 0)
 	{
+	    global $conf;
+
 		$error = 0;
 
 		dol_syslog(get_class($this)."::delete id=".$this->id, LOG_DEBUG);
@@ -293,16 +323,30 @@ class Entrepot extends CommonObject
 			}
 		}
 
+		// Removed extrafields
+		if (! $error)
+		{
+			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			{
+				$result=$this->deleteExtraFields();
+				if ($result < 0)
+				{
+					$error++;
+					dol_syslog(get_class($this)."::delete Error ".$this->error, LOG_ERR);
+				}
+			}
+		}
+
 		if (! $error)
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."entrepot";
 			$sql.= " WHERE rowid = " . $this->id;
-
 			$resql1=$this->db->query($sql);
 			if (! $resql1)
 			{
 				$error++;
 				$this->errors[] = $this->db->lasterror();
+				dol_syslog(get_class($this)."::delete Error ".$this->db->lasterror(), LOG_ERR);
 			}
 		}
 
@@ -310,12 +354,12 @@ class Entrepot extends CommonObject
 		{
 			// Update denormalized fields because we change content of produt_stock. Warning: Do not use "SET p.stock", does not works with pgsql
 			$sql = "UPDATE ".MAIN_DB_PREFIX."product as p SET stock = (SELECT SUM(ps.reel) FROM ".MAIN_DB_PREFIX."product_stock as ps WHERE ps.fk_product = p.rowid)";
-
 			$resql2=$this->db->query($sql);
 			if (! $resql2)
 			{
 				$error++;
 				$this->errors[] = $this->db->lasterror();
+				dol_syslog(get_class($this)."::delete Error ".$this->db->lasterror(), LOG_ERR);
 			}
 		}
 
@@ -385,6 +429,10 @@ class Entrepot extends CommonObject
 				$this->town           = $obj->town;
 				$this->country_id     = $obj->country_id;
 
+                // Retreive all extrafield
+                // fetch optionals attributes and labels
+                $this->fetch_optionals();
+
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 	            $tmp=getCountry($this->country_id, 'all');
 				$this->country=$tmp['label'];
@@ -394,6 +442,7 @@ class Entrepot extends CommonObject
 			}
 			else
 			{
+                $this->error="Record Not Found";
 				return 0;
 			}
 		}

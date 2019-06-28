@@ -2540,7 +2540,7 @@ else
         	print '<td colspan="3">';
         	if ($action != 'editincoterm')
         	{
-        		print $form->textwithpicto($object->display_incoterms(), $object->libelle_incoterms, 1);
+        		print $form->textwithpicto($object->display_incoterms(), $object->label_incoterms, 1);
         	}
         	else
         	{
