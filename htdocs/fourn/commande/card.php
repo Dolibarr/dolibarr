@@ -902,7 +902,7 @@ $result	= $object->updateline(
 		}
 	}
 
-	// Open DSI -- Force mandatory order method -- Begin
+	// Force mandatory order method
     if ($action == 'commande') {
         $methodecommande = GETPOST('methodecommande');
 
@@ -911,7 +911,6 @@ $result	= $object->updateline(
             $action = 'makeorder';
         }
     }
-    // Open DSI -- Force mandatory order method -- End
 
 	if ($action == 'confirm_commande' && $confirm	== 'yes' &&	$user->rights->fournisseur->commande->commander)
 	{
@@ -2554,10 +2553,8 @@ elseif (! empty($object->id))
 			print $form->selectDate($date_com, '', 1, 1, '', "commande", 1, 1);
 			print '</td></tr>';
 
-            // Open DSI -- Force mandatory order method -- Begin
-			//print '<tr><td>'.$langs->trans("OrderMode").'</td><td>';
+            // Force mandatory order method
             print '<tr><td class="fieldrequired">'.$langs->trans("OrderMode").'</td><td>';
-            // Open DSI -- Force mandatory order method -- End
 			$formorder->selectInputMethod(GETPOST('methodecommande'), "methodecommande", 1);
 			print '</td></tr>';
 
