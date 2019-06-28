@@ -209,9 +209,9 @@ class EmailCollector extends CommonObject
         // Translate some data of arrayofkeyval
         foreach($this->fields as $key => $val)
         {
-        	if (is_array($this->fields[$key]['arrayofkeyval']))
+        	if (is_array($val['arrayofkeyval']))
             {
-            	foreach($this->fields[$key]['arrayofkeyval'] as $key2 => $val2)
+            	foreach($val['arrayofkeyval'] as $key2 => $val2)
                 {
                 	$this->fields[$key]['arrayofkeyval'][$key2]=$langs->trans($val2);
                 }
