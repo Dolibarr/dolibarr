@@ -4084,7 +4084,11 @@ class Product extends CommonObject
             }
 
             $linkclose.= ' title="'.dol_escape_htmltag($label, 1, 1).'"';
-            $linkclose.= ' class="classfortooltip"';
+            $linkclose.= ' class="nowraponall classfortooltip"';
+        }
+        else
+        {
+        	$linkclose = ' class="nowraponall"';
         }
 
         if ($option == 'supplier' || $option == 'category') {
@@ -4106,7 +4110,7 @@ class Product extends CommonObject
             }
         }
 
-        $linkstart = '<a class="nowraponall" href="'.$url.'"';
+        $linkstart = '<a href="'.$url.'"';
         $linkstart.=$linkclose.'>';
         $linkend='</a>';
 

@@ -448,7 +448,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @return	void
 	 */
-	private function _tableau_info(&$pdf, $object, $posy, $outputlangs)
+	protected function _tableau_info(&$pdf, $object, $posy, $outputlangs)
 	{
         // phpcs:enable
         global $conf, $mysoc;
@@ -485,7 +485,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	 *	@param	Translate	$outputlangs	Objet langs
 	 *	@return int							Position pour suite
 	 */
-	private function _signature_area(&$pdf, $object, $posy, $outputlangs)
+	protected function _signature_area(&$pdf, $object, $posy, $outputlangs)
 	{
         // phpcs:enable
 	    $default_font_size = pdf_getPDFFontSize($outputlangs);
@@ -526,7 +526,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @return	void
 	 */
-	private function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
+	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
 		global $langs,$conf,$mysoc;
 
@@ -618,7 +618,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	 *      @param	int			$hidefreetext		1=Hide free text
 	 *      @return	integer
 	 */
-	private function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
+	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
 		global $conf;
 		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
