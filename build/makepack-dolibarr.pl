@@ -382,11 +382,14 @@ if ($nboftargetok) {
 			}
 		}
 	}
-		
+
 	# Build xml check file
 	#-----------------------
 	if ($CHOOSEDTARGET{'-CHKSUM'})
 	{
+		print "Go to directory $SOURCE\n";
+		$olddir=getcwd();
+		chdir("$SOURCE");
 		$ret=`git ls-files . --exclude-standard --others`;
 		if ($ret)
 		{
