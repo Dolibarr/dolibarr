@@ -2045,10 +2045,10 @@ function pdf_getTotalQty($object, $type, $outputlangs)
 	global $hookmanager;
 
 	$total=0;
-	$nblignes=count($object->lines);
+	$nblines=count($object->lines);
 
 	// Loop on each lines
-	for ($i = 0 ; $i < $nblignes ; $i++)
+	for ($i = 0 ; $i < $nblines ; $i++)
 	{
 		if ($object->lines[$i]->special_code != 3)
 		{

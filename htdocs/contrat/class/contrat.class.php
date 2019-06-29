@@ -832,7 +832,7 @@ class Contrat extends CommonObject
 				// Retreive all extrafields for contract
 				// fetch optionals attributes and labels
 				$line->fetch_optionals();
-				
+
 				// multilangs
         		if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($objp->fk_product) && ! empty($loadalsotranslation)) {
         		$line = new Product($this->db);
@@ -1361,7 +1361,7 @@ class Contrat extends CommonObject
 	 *  @param  int			$date_end        	Date de fin prevue
 	 *	@param	string		$price_base_type	HT or TTC
 	 * 	@param  float		$pu_ttc             Prix unitaire TTC
-	 * 	@param  int			$info_bits			Bits de type de lignes
+	 * 	@param  int			$info_bits			Bits of type of lines
 	 * 	@param  int			$fk_fournprice		Fourn price id
 	 *  @param  int			$pa_ht				Buying price HT
 	 *  @param	array		$array_options		extrafields array
@@ -1579,7 +1579,7 @@ class Contrat extends CommonObject
 	 *  @param  int|string	$date_debut_reel  	Date de debut reelle
 	 *  @param  int|string	$date_fin_reel    	Date de fin reelle
 	 *	@param	string		$price_base_type	HT or TTC
-	 * 	@param  int			$info_bits			Bits de type de lignes
+	 * 	@param  int			$info_bits			Bits of type of lines
 	 * 	@param  int			$fk_fournprice		Fourn price id
 	 *  @param  int			$pa_ht				Buying price HT
 	 *  @param	array		$array_options		extrafields array
@@ -2542,7 +2542,7 @@ class Contrat extends CommonObject
 
 
 /**
- *	Classe permettant la gestion des lignes de contrats
+ *	Class to manage lines of contracts
  */
 class ContratLigne extends CommonObjectLine
 {

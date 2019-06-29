@@ -197,7 +197,7 @@ class pdf_rouget extends ModelePdfExpedition
 		// Load traductions files requiredby by page
 		$outputlangs->loadLangs(array("main", "bills", "products", "dict", "companies", "propal", "deliveries", "sendings", "productbatch"));
 
-		$nblignes = count($object->lines);
+		$nblines = count($object->lines);
 
         // Loop on each lines to detect if there is at least one image to show
         $realpatharray=array();
@@ -205,7 +205,7 @@ class pdf_rouget extends ModelePdfExpedition
         {
             $objphoto = new Product($this->db);
 
-            for ($i = 0 ; $i < $nblignes ; $i++)
+            for ($i = 0 ; $i < $nblines ; $i++)
             {
                 if (empty($object->lines[$i]->fk_product)) continue;
 
@@ -283,7 +283,7 @@ class pdf_rouget extends ModelePdfExpedition
 				$reshook=$hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 
 				// Set nblignes with the new facture lines content after hook
-				$nblignes = count($object->lines);
+				$nblines = count($object->lines);
 
 				$pdf=pdf_getInstance($this->format);
 				$default_font_size = pdf_getPDFFontSize($outputlangs);
@@ -423,7 +423,7 @@ class pdf_rouget extends ModelePdfExpedition
 				$nexY = $tab_top + 7;
 
 				// Loop on each lines
-				for ($i = 0; $i < $nblignes; $i++)
+				for ($i = 0; $i < $nblines; $i++)
 				{
 					$curY = $nexY;
 					$pdf->SetFont('', '', $default_font_size - 1);   // Into loop to work with multipage
@@ -481,7 +481,7 @@ class pdf_rouget extends ModelePdfExpedition
 						//var_dump($posyafter); var_dump(($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot))); exit;
 						if ($posyafter > ($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot)))	// There is no space left for total+free text
 						{
-							if ($i == ($nblignes-1))	// No more lines, and no space left to show total, so we create a new page
+							if ($i == ($nblines-1))	// No more lines, and no space left to show total, so we create a new page
 							{
 								$pdf->AddPage('', '', true);
 								if (! empty($tplidx)) $pdf->useTemplate($tplidx);
@@ -563,7 +563,7 @@ class pdf_rouget extends ModelePdfExpedition
 					if ($weighttxt && $voltxt) $nexY+=2;
 
 					// Add line
-					if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblignes - 1))
+					if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblines - 1))
 					{
 						$pdf->setPage($pageposafter);
 						$pdf->SetLineStyle(array('dash'=>'1,1','color'=>array(80,80,80)));

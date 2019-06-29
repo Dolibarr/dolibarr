@@ -917,7 +917,7 @@ class Facture extends CommonInvoice
 		$facture->origin                        = $this->origin;
 		$facture->origin_id                     = $this->origin_id;
 
-		$facture->lines		    	= $this->lines;	// Tableau des lignes de factures
+		$facture->lines		    	= $this->lines;	// Array of lines of invoice
 		$facture->products		    = $this->lines;	// Tant que products encore utilise
 		$facture->situation_counter = $this->situation_counter;
 		$facture->situation_cycle_ref=$this->situation_cycle_ref;
@@ -1563,7 +1563,7 @@ class Facture extends CommonInvoice
 				$line->multicurrency_total_ttc 	= $objp->multicurrency_total_ttc;
 
                 $line->fetch_optionals();
-				
+
 				// multilangs
         		if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($objp->fk_product) && ! empty($loadalsotranslation)) {
         		$line = new Product($this->db);
@@ -2661,7 +2661,7 @@ class Facture extends CommonInvoice
 	 * 		@param    	int			$date_start      	Date start of service
 	 * 		@param    	int			$date_end        	Date end of service
 	 * 		@param    	int			$ventil          	Code of dispatching into accountancy
-	 * 		@param    	int			$info_bits			Bits de type de lignes
+	 * 		@param    	int			$info_bits			Bits of type of lines
 	 *		@param    	int			$fk_remise_except	Id discount used
 	 *		@param		string		$price_base_type	'HT' or 'TTC'
 	 * 		@param    	double		$pu_ttc             Unit price with tax (> 0 even for credit note)
