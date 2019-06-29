@@ -220,7 +220,7 @@ class pdf_standard extends ModeleExpenseReport
 		// Load traductions files requiredby by page
 		$outputlangs->loadLangs(array("main", "trips", "projects", "dict", "bills", "banks"));
 
-		$nblignes = count($object->lines);
+		$nblines = count($object->lines);
 
 		if ($conf->expensereport->dir_output) {
 			// Definition of $dir and $file
@@ -351,7 +351,7 @@ class pdf_standard extends ModeleExpenseReport
 				$nexY = $tab_top + 7;
 
 				// Loop on each lines
-				for ($i = 0 ; $i < $nblignes ; $i++) {
+				for ($i = 0 ; $i < $nblines ; $i++) {
 					$pdf->SetFont('', '', $default_font_size - 2);   // Into loop to work with multipage
 					$pdf->SetTextColor(0, 0, 0);
 
@@ -374,7 +374,7 @@ class pdf_standard extends ModeleExpenseReport
 						//var_dump($posyafter); var_dump(($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot))); exit;
 						if ($posyafter > ($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot))) {
                             // There is no space left for total+free text
-							if ($i == ($nblignes-1)) {
+							if ($i == ($nblines-1)) {
                                 // No more lines, and no space left to show total, so we create a new page
 								$pdf->AddPage('', '', true);
 								if (! empty($tplidx)) $pdf->useTemplate($tplidx);
@@ -401,7 +401,7 @@ class pdf_standard extends ModeleExpenseReport
 
                     //$nblineFollowComment = 1;
                     // Cherche nombre de lignes a venir pour savoir si place suffisante
-					// if ($i < ($nblignes - 1))	// If it's not last line
+					// if ($i < ($nblines - 1))	// If it's not last line
 					// {
 					//     //Fetch current description to know on which line the next one should be placed
 					// 	$follow_comment = $object->lines[$i]->comments;

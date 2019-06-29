@@ -114,7 +114,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 
 		if (! empty($conf->bank->dir_output))
 		{
-			//$nblignes = count($object->lines);  // This is set later with array of tasks
+			//$nblines = count($object->lines);  // This is set later with array of tasks
 
 		    // Definition of $dir and $file
 		    if ($object->specimen)
@@ -430,7 +430,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	 *   @param		int			$hidebottom		Hide bottom bar of array
 	 *   @return	void
 	 */
-    private function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0)
+    protected function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0)
 	{
 		global $conf,$mysoc;
 

@@ -942,7 +942,7 @@ class Livraison extends CommonObject
 			{
 				$objSourceLine = $this->db->fetch_object($resultSourceLine);
 
-				// Recupere les lignes de la source deja livrees
+				// Get lines of sources alread delivered
 				$sql = "SELECT ld.fk_origin_line, sum(ld.qty) as qty";
 				$sql.= " FROM ".MAIN_DB_PREFIX."livraisondet as ld, ".MAIN_DB_PREFIX."livraison as l,";
 				$sql.= " ".MAIN_DB_PREFIX.$this->linked_object[0]['type']." as c";
