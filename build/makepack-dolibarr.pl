@@ -570,10 +570,6 @@ if ($nboftargetok) {
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/timesheet*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/webmail*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/workstation*`;
-<<<<<<< HEAD
-=======
-		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/accountingexport*`;
->>>>>>> branch '8.0' of git@github.com:Dolibarr/dolibarr.git
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/themes/oblyon*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/themes/allscreen*`;
 		# Removed other test files
