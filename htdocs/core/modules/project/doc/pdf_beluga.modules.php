@@ -104,11 +104,11 @@ class pdf_beluga extends ModelePDFProjects
 		$this->option_tva = 1;                     // Manage the vat option FACTURE_TVAOPTION
 		$this->option_codeproduitservice = 1;      // Display product-service code
 
-		// Recupere emmetteur
+		// Get source company
 		$this->emetteur=$mysoc;
 		if (! $this->emetteur->country_code) $this->emetteur->country_code=substr($langs->defaultlang, -2);    // By default if not defined
 
-        // Defini position des colonnes
+        // Define position of columns
         if ($this->orientation == 'L' || $this->orientation == 'Landscape') {
             $this->posxref=$this->marge_gauche+1;
             $this->posxdate=$this->marge_gauche+105;
