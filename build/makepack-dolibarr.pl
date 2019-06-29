@@ -387,7 +387,8 @@ if ($nboftargetok) {
 	#-----------------------
 	if ($CHOOSEDTARGET{'-CHKSUM'})
 	{
-<<<<<<< HEAD
+		chdir("$SOURCE");
+
 		$ret=`git ls-files . --exclude-standard --others`;
 		if ($ret)
 		{
@@ -397,9 +398,6 @@ if ($nboftargetok) {
 				exit;
 		}
 		
-=======
-		chdir("$SOURCE");
->>>>>>> branch '8.0' of git@github.com:Dolibarr/dolibarr.git
 	   	print 'Create xml check file with md5 checksum with command php '.$SOURCE.'/build/generate_filelist_xml.php release='.$MAJOR.'.'.$MINOR.'.'.$BUILD."\n";
 	  	$ret=`php $SOURCE/build/generate_filelist_xml.php release=$MAJOR.$MINOR.$BUILD`;
 	  	print $ret."\n";
