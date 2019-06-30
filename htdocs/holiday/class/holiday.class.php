@@ -1899,8 +1899,8 @@ class Holiday extends CommonObject
 		$result = $this->db->query($sql);
 		if($result)
 		{
-			$num_lignes = $this->db->num_rows($result); $i = 0;
-			while ($i < $num_lignes)
+			$num_rows = $this->db->num_rows($result); $i = 0;
+			while ($i < $num_rows)
 			{
 				$objp = $this->db->fetch_object($result);
 				array_push($users_validator, $objp->fk_user);

@@ -510,7 +510,7 @@ class FactureRec extends CommonInvoice
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Recupere les lignes de factures predefinies dans this->lines
+	 *	Get lines of template invoices into this->lines
 	 *
 	 *  @return     int         1 if OK, < 0 if KO
      */
@@ -876,7 +876,7 @@ class FactureRec extends CommonInvoice
 	 *	@param    	int			$fk_product      	Product/Service ID predefined
 	 *	@param    	double		$remise_percent  	Percentage discount of the line
 	 *	@param		string		$price_base_type	HT or TTC
-	 *	@param    	int			$info_bits			Bits de type de lignes
+	 *	@param    	int			$info_bits			Bits of type of lines
 	 *	@param    	int			$fk_remise_except	Id remise
 	 *	@param    	double		$pu_ttc             Prix unitaire TTC (> 0 even for credit note)
 	 *	@param		int			$type				Type of line (0=product, 1=service)
@@ -1807,7 +1807,7 @@ class FactureLigneRec extends CommonInvoiceLine
 
 
     /**
-     *	Recupere les lignes de factures predefinies dans this->lines
+     *	Get line of template invoice
      *
      *	@param		int 	$rowid		Id of invoice
      *	@return     int         		1 if OK, < 0 if KO

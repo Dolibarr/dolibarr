@@ -183,7 +183,7 @@ if ($action == 'add') {
 	$newfichinterid = $newinter->create($user);
 
 	if ($newfichinterid > 0) {
-		// on ajoute les lignes de détail ensuite
+		// Now we add line of details
 		foreach ($object->lines as $ficheinterligne)
 			$newinter->addline($user, $newfichinterid, $ficheinterligne->desc, "", $ficheinterligne->duree, '');
 

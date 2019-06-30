@@ -734,7 +734,7 @@ if ($socid > 0)
 			print load_fiche_titre($langs->trans("CustomerDiscounts"), '', '');
 		}
 
-		// Remises liees a lignes de factures
+		// Discount linked to invoice lines
 		$sql = "SELECT rc.rowid, rc.amount_ht, rc.amount_tva, rc.amount_ttc, rc.tva_tx, rc.multicurrency_amount_ht, rc.multicurrency_amount_tva, rc.multicurrency_amount_ttc,";
 		$sql.= " rc.datec as dc, rc.description, rc.fk_facture_line, rc.fk_facture,";
 		$sql.= " rc.fk_facture_source,";
@@ -904,7 +904,7 @@ if ($socid > 0)
 			print load_fiche_titre($langs->trans("SupplierDiscounts"), '', '');
 		}
 
-		// Remises liees a lignes de factures
+		// Discount linked to invoice lines
 		$sql = "SELECT rc.rowid, rc.amount_ht, rc.amount_tva, rc.amount_ttc, rc.tva_tx, rc.multicurrency_amount_ht, rc.multicurrency_amount_tva, rc.multicurrency_amount_ttc,";
 		$sql.= " rc.datec as dc, rc.description, rc.fk_invoice_supplier_line, rc.fk_invoice_supplier,";
 		$sql.= " rc.fk_invoice_supplier_source,";

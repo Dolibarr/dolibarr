@@ -415,7 +415,7 @@ class Propal extends CommonObject
      * 		@param    	float		$remise_percent  	Pourcentage de remise de la ligne
      * 		@param    	string		$price_base_type	HT or TTC
      * 		@param    	float		$pu_ttc             Prix unitaire TTC
-     * 		@param    	int			$info_bits			Bits de type de lignes
+     * 		@param    	int			$info_bits			Bits for type of lines
      *      @param      int			$type               Type of line (0=product, 1=service). Not used if fk_product is defined, the type of product is used.
      *      @param      int			$rang               Position of line
      *      @param		int			$special_code		Special code (also used by externals modules!)
@@ -1715,7 +1715,7 @@ class Propal extends CommonObject
 				$line->multicurrency_total_ttc 	= $objp->multicurrency_total_ttc;
 
 				$line->fetch_optionals();
-				
+
 				// multilangs
         		if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($objp->fk_product) && ! empty($loadalsotranslation)) {
         		$line = new Product($this->db);

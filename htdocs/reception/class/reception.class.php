@@ -259,7 +259,7 @@ class Reception extends CommonObject
 			dol_syslog(get_class($this)."::create", LOG_DEBUG);
 			if ($this->db->query($sql))
 			{
-				// Insertion des lignes
+				// Insert of lines
 				$num=count($this->lines);
 				for ($i = 0; $i < $num; $i++)
 				{

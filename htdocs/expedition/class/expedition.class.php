@@ -347,7 +347,7 @@ class Expedition extends CommonObject
 			dol_syslog(get_class($this)."::create", LOG_DEBUG);
 			if ($this->db->query($sql))
 			{
-				// Insertion des lignes
+				// Insert of lines
 				$num=count($this->lines);
 				for ($i = 0; $i < $num; $i++)
 				{
@@ -2355,7 +2355,7 @@ class Expedition extends CommonObject
 
 
 /**
- * Classe de gestion des lignes de bons d'expedition
+ * Classe to manage lines of shipment
  */
 class ExpeditionLigne extends CommonObjectLine
 {
