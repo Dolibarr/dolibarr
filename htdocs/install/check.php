@@ -161,18 +161,20 @@ else
 }
 
 
-// Check if UTF8 supported
-if (! function_exists("locale_get_primary_language") || ! function_exists("locale_get_region"))
+// Check if intl methods are supported
+if (empty($force_install_type) || $force_install_type != 'doliwamp')
 {
-    $langs->load("errors");
-    print '<img src="../theme/eldy/img/warning.png" alt="Error"> '.$langs->trans("ErrorPHPDoesNotSupportIntl")."<br>\n";
-    // $checksok=0;		// If ko, just warning. So check must still be 1 (otherwise no way to install)
+	if (! function_exists("locale_get_primary_language") || ! function_exists("locale_get_region"))
+	{
+	    $langs->load("errors");
+	    print '<img src="../theme/eldy/img/warning.png" alt="Error"> '.$langs->trans("ErrorPHPDoesNotSupportIntl")."<br>\n";
+	    // $checksok=0;		// If ko, just warning. So check must still be 1 (otherwise no way to install)
+	}
+	else
+	{
+	    print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPSupportIntl")."<br>\n";
+	}
 }
-else
-{
-    print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPSupportIntl")."<br>\n";
-}
-
 
 
 // Check memory
