@@ -772,5 +772,5 @@ SSLCertificateKeyFile "WAMPROOT/myserver.key"
 #</Location>
 
 
-# Declare alias for Dolibarr, PHPMyAdmin and other softwares
+# Declare alias for Dolibarr, PHPMyAdmin and other software
 Include "WAMPROOT/alias/*.conf"
