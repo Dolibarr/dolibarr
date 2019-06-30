@@ -665,6 +665,7 @@ extension=php_gd2.dll
 ;extension=php_ifx.dll
 ;extension=php_imap.dll
 ;extension=php_interbase.dll
+extension=php_intl.dll
 extension=php_ldap.dll
 extension=php_mbstring.dll
 ;extension=php_mcrypt.dll
