@@ -162,7 +162,7 @@ else
 
 
 // Check if intl methods are supported
-if (empty($force_install_type) || $force_install_type != 'doliwamp')
+if (empty($_SERVER["SERVER_ADMIN"]) || $_SERVER["SERVER_ADMIN"] != 'doliwamp@localhost')
 {
 	if (! function_exists("locale_get_primary_language") || ! function_exists("locale_get_region"))
 	{
