@@ -46,3 +46,5 @@ ALTER TABLE llx_c_shipment_mode ADD UNIQUE INDEX uk_c_shipment_mode (code, entit
 
 ALTER TABLE llx_facture_fourn DROP COLUMN total;
 
+ALTER TABLE llx_user ADD COLUMN iplastlogin         varchar(250);
+ALTER TABLE llx_user ADD COLUMN ippreviouslogin     varchar(250);
