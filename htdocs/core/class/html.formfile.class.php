@@ -764,7 +764,7 @@ class FormFile
 
 					// Show file name with link to download
 					$out.= '<td class="minwidth200">';
-					$out.= '<a class="documentdownload paddingright" href="'.$documenturl.'?modulepart='.$modulepart.'&amp;file='.urlencode(dol_sanitizePathName($relativepath)).($param?'&'.$param:'').'"';
+					$out.= '<a class="documentdownload paddingright" href="'.$documenturl.'?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).($param?'&'.$param:'').'"';
 					$mime=dol_mimetype($relativepath,'',0);
 					if (preg_match('/text/',$mime)) $out.= ' target="_blank"';
 					$out.= '>';
