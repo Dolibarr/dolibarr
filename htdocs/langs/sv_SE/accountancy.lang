@@ -216,7 +216,8 @@ DescThirdPartyReport=Här kan du se listan över tredje partskunder och säljare
 ListAccounts=Förteckning över redovisningskonton
 UnknownAccountForThirdparty=Okänt tredje part konto. Vi använder %s
 UnknownAccountForThirdpartyBlocking=Okänt tredje part konto. Blockeringsfel
-ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Tredjepartskonto ej definierat eller tredjepart okänt. Blockeringsfel.
+ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Third-party account not defined or third party unknown. We will use %s
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Third-party account not defined or third party unknown. Blocking error.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Okänt tredje part konto och väntande konto inte definierat. Blockeringsfel
 PaymentsNotLinkedToProduct=Betalning som inte är kopplad till någon produkt / tjänst
 
@@ -291,7 +292,7 @@ Modelcsv_cogilog=Exportera till Cogilog
 Modelcsv_agiris=Exportera till Agiris
 Modelcsv_openconcerto=Export for OpenConcerto (Test)
 Modelcsv_configurable=Exportera CSV konfigurerbar
-Modelcsv_FEC=Export FEC (Art. L47 A)
+Modelcsv_FEC=Export FEC
 Modelcsv_Sage50_Swiss=Export for Sage 50 Switzerland
 ChartofaccountsId=Diagram över konton Id
 
@@ -316,6 +317,9 @@ WithoutValidAccount=Utan giltigt dedikerat konto
 WithValidAccount=Med giltigt dedikerat konto
 ValueNotIntoChartOfAccount=Detta värde på bokföringskonto finns inte i kontoplan
 AccountRemovedFromGroup=Konto borttaget från grupp
+SaleLocal=Local sale
+SaleExport=Export sale
+SaleEEC=Sale in EEC
 
 ## Dictionary
 Range=Räckvidd av bokföringskonto
@@ -336,7 +340,7 @@ UseMenuToSetBindindManualy=Linjer som ännu inte är bundna, använd menyn <a hr
 
 ## Import
 ImportAccountingEntries=Redovisningsposter
-
+DateExport=Date export
 WarningReportNotReliable=Varning, den här rapporten är inte baserad på huvudboken-modulen, så den innehåller inte transaktioner modifierad manuellt i huvudboken. Om din bokföring är uppdaterad är bokföringsvisningen mer exakt.
 ExpenseReportJournal=Kostnadsrapportsloggbok
 InventoryJournal=Inventarieloggbok

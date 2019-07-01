@@ -68,3 +68,4 @@ Terminal=پایانه
 NumberOfTerminals=تعداد پایانه‌ها
 TerminalSelect=پایانه‌ای که می‌خواهید استفاده کنید را انتخاب نمائید:
 POSTicket=برگۀ صندوق
+BasicPhoneLayout=Use basic layout for phones

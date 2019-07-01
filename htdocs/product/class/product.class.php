@@ -3251,6 +3251,57 @@ class Product extends CommonObject
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
+     *  Return nb of units or orders in which product is included
+     *
+     * @param  int    $socid               Limit count on a particular third party id
+     * @param  string $mode                'byunit'=number of unit, 'bynumber'=nb of entities
+     * @param  int    $filteronproducttype 0=To filter on product only, 1=To filter on services only
+     * @param  int    $year                Year (0=last 12 month)
+     * @param  string $morefilter          More sql filters
+     * @return array                            <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
+     */
+    public function get_nb_contract($socid, $mode, $filteronproducttype = -1, $year = 0, $morefilter = '')
+    {
+    	// phpcs:enable
+    	global $conf, $user;
+
+    	$sql = "SELECT sum(d.qty), date_format(c.date_contrat, '%Y%m')";
+    	if ($mode == 'bynumber') {
+    		$sql.= ", count(DISTINCT c.rowid)";
+    	}
+    	$sql.= " FROM ".MAIN_DB_PREFIX."contratdet as d, ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."societe as s";
+    	if ($filteronproducttype >= 0) {
+    		$sql.=", ".MAIN_DB_PREFIX."product as p";
+    	}
+    	if (!$user->rights->societe->client->voir && !$socid) {
+    		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+    	}
+    	$sql.= " WHERE c.rowid = d.fk_contrat";
+    	if ($this->id > 0) {
+    		$sql.= " AND d.fk_product =".$this->id;
+    	} else {
+    		$sql.=" AND d.fk_product > 0";
+    	}
+    	if ($filteronproducttype >= 0) {
+    		$sql.= " AND p.rowid = d.fk_product AND p.fk_product_type =".$filteronproducttype;
+    	}
+    	$sql.= " AND c.fk_soc = s.rowid";
+    	$sql.= " AND c.entity IN (".getEntity('contract').")";
+    	if (!$user->rights->societe->client->voir && !$socid) {
+    		$sql.= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
+    	}
+    	if ($socid > 0) {
+    		$sql.= " AND c.fk_soc = ".$socid;
+    	}
+    	$sql.=$morefilter;
+    	$sql.= " GROUP BY date_format(c.date_contrat,'%Y%m')";
+    	$sql.= " ORDER BY date_format(c.date_contrat,'%Y%m') DESC";
+
+    	return $this->_get_stats($sql, $mode, $year);
+    }
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    /**
      *  Link a product/service to a parent product/service
      *
      * @param  int $id_pere Id of parent product/service
@@ -4033,7 +4084,11 @@ class Product extends CommonObject
             }
 
             $linkclose.= ' title="'.dol_escape_htmltag($label, 1, 1).'"';
-            $linkclose.= ' class="classfortooltip"';
+            $linkclose.= ' class="nowraponall classfortooltip"';
+        }
+        else
+        {
+        	$linkclose = ' class="nowraponall"';
         }
 
         if ($option == 'supplier' || $option == 'category') {
@@ -4055,7 +4110,7 @@ class Product extends CommonObject
             }
         }
 
-        $linkstart = '<a class="nowraponall" href="'.$url.'"';
+        $linkstart = '<a href="'.$url.'"';
         $linkstart.=$linkclose.'>';
         $linkend='</a>';
 
