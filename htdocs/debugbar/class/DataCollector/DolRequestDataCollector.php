@@ -8,6 +8,11 @@ use \DebugBar\DataCollector\RequestDataCollector;
 
 class DolRequestDataCollector extends RequestDataCollector
 {
+	/**
+	 * Collects the data from the collectors
+	 *
+	 * @return array
+	 */
 	public function collect()
 	{
 		$vars = array('_GET', '_POST', '_SESSION', '_COOKIE', '_SERVER');
