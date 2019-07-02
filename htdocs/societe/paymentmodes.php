@@ -637,6 +637,16 @@ if (empty($reshook))
 		elseif ($action == 'deletecard' && $source)
 		{
 			try {
+				if (preg_match('/pm_/', $source))
+					{
+            		$payment_method = \Stripe\PaymentMethod::retrieve($source);
+					if ($payment_method)
+				    {
+					  $payment_method->detach();
+				    }
+				}
+				else
+				{
 				$cu=$stripe->customerStripe($object, $stripeacc, $servicestatus);
 				$card=$cu->sources->retrieve("$source");
 				if ($card)
@@ -644,6 +654,7 @@ if (empty($reshook))
 					// $card->detach();  Does not work with card_, only with src_
 					if (method_exists($card, 'detach')) $card->detach();
 					else $card->delete();
+				}
 				}
 
 				$url=DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id;
