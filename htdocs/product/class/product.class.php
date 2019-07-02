@@ -3374,6 +3374,7 @@ class Product extends CommonObject
 	 */
 	function get_arbo_each_prod($multiply=1)
 	{
+		$product_id_backup = $this->id;
 		$this->res = array();
 		if (isset($this->sousprods) && is_array($this->sousprods))
 		{
@@ -3381,6 +3382,9 @@ class Product extends CommonObject
 			{
 				if (is_array($desc_product)) $this->fetch_prod_arbo($desc_product,"",$multiply,1,$this->id);
 			}
+		}
+		if ($product_id_backup) {
+			$this->fetch($product_id_backup);
 		}
 		//var_dump($this->res);
 		return $this->res;
