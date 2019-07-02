@@ -1554,12 +1554,12 @@ if ((empty($conf->global->PRODUIT_CUSTOMER_PRICES) || $action=='showlog_default_
     			{
     				print '<td align="right">';
     				if (empty($objp->price_by_qty)) {
-    					print ($objp->price_base_type != 'TTC' ? price($objp->price) : '');
+    					print price($objp->price);
     				}
     				print "</td>";
     				print '<td align="right">';
     				if (empty($objp->price_by_qty)) {
-    					print ($objp->price_base_type == 'TTC' ? price($objp->price_ttc) : '');
+    					print price($objp->price_ttc);
     				}
     				print "</td>";
     				if (! empty($conf->dynamicprices->enabled)) { //Only if module is enabled
@@ -1569,13 +1569,13 @@ if ((empty($conf->global->PRODUIT_CUSTOMER_PRICES) || $action=='showlog_default_
 
     			print '<td align="right">';
     			if (empty($objp->price_by_qty)) {
-    				print ($objp->price_base_type != 'TTC' ? price($objp->price_min) : '');
+    				print price($objp->price_min);
     			}
     			print '</td>';
 
     			print '<td align="right">';
     			if (empty($objp->price_by_qty)) {
-    				print ($objp->price_base_type == 'TTC' ? price($objp->price_min_ttc) : '');
+    				print price($objp->price_min_ttc);
     			}
     			print '</td>';
 
