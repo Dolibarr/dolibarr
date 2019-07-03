@@ -5029,7 +5029,7 @@ abstract class CommonObject
 				
 				if (!empty($attrfieldcomputed))
 				{
-					if (!empty($conf->global->MAIN_STORE_COMPUTED_EXTRAFIELDS)) 
+					if (!empty($conf->global->MAIN_STORE_COMPUTED_EXTRAFIELDS))
 					{
 						$value = dol_eval($attrfieldcomputed, 1, 0);
 					    dol_syslog($langs->trans("Extrafieldcomputed")." sur ".$attributeLabel."(".$value.")", LOG_DEBUG);
