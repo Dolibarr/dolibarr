@@ -181,6 +181,7 @@ else
     print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NoInvoiceToWithdraw", $langs->transnoentitiesnoconv("StandingOrders"))).'">'.$langs->trans("CreateAll")."</a>\n";
 }
 
+print "</form>\n";
 print "</div>\n";
 print '<br>';
 
