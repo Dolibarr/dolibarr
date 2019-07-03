@@ -7,6 +7,7 @@
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2014      Cedric GROSS         <c.gross@kreiz-it.fr>
  * Copyright (C) 2015	   Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2019	   Ferran Marcet	    <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -246,7 +247,10 @@ if ($action == 'add')
 				{
 					$object->label = $langs->transnoentitiesnoconv("Action".$object->type_code)."\n";
 				}
-				else $object->label = $cactioncomm->libelle;
+				else {
+					$cactioncomm->fetch($object->type_code);
+					$object->label = $cactioncomm->label;
+				}
 			}
 		}
 		$object->fk_project = isset($_POST["projectid"])?$_POST["projectid"]:0;
