@@ -5026,7 +5026,7 @@ abstract class CommonObject
 
 				//dol_syslog("attributeLabel=".$attributeLabel, LOG_DEBUG);
 				//dol_syslog("attributeType=".$attributeType, LOG_DEBUG);
-				if ((!empty($attrfieldcomputed) && (! empty($conf->global->MAIN_STORE_COMPUTED_EXTRAFIELDS)))
+				if ((!empty($attrfieldcomputed)) && (!empty($conf->global->MAIN_STORE_COMPUTED_EXTRAFIELDS)))
 				{
 						$value = dol_eval($attrfieldcomputed, 1, 0);
 					    $new_array_options[$key] = $value;
