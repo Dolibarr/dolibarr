@@ -2536,11 +2536,11 @@ elseif (! empty($object->id))
 
 
 
-		if ($user->rights->fournisseur->commande->commander && $object->statut == 2 && $action == 'makeorder')
+		if ($user->rights->fournisseur->commande->commander && $object->statut == CommandeFournisseur::STATUS_ACCEPTED && $action == 'makeorder')
 		{
 			// Set status to ordered (action=commande)
 			print '<!-- form to record supplier order -->'."\n";
-			print '<form name="commande" id="makeorder" action="card.php?id='.$object->id.'&amp;action=commande" method="post">';
+			print '<form name="commande" id="makeorder" action="card.php?id='.$object->id.'&amp;action=commande" method="POST">';
 
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden"	name="action" value="commande">';
@@ -2574,9 +2574,7 @@ elseif (! empty($object->id))
 		{
 			print '<div class="fichecenter"><div class="fichehalfleft">';
 
-			/*
-    		 * Documents generes
-    		 */
+			// Generated documents
 			$comfournref = dol_sanitizeFileName($object->ref);
 			$file =	$conf->fournisseur->dir_output . '/commande/' . $comfournref .	'/'	. $comfournref . '.pdf';
 			$relativepath =	$comfournref.'/'.$comfournref.'.pdf';
@@ -2594,10 +2592,10 @@ elseif (! empty($object->id))
 
 			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
-			if ($user->rights->fournisseur->commande->receptionner	&& ($object->statut == 3 || $object->statut == 4))
+			if ($user->rights->fournisseur->commande->receptionner	&& ($object->statut == CommandeFournisseur::STATUS_ORDERSENT || $object->statut == CommandeFournisseur::STATUS_RECEIVED_PARTIALLY))
 			{
 				// Set status to received (action=livraison)
-				print '<!-- form to record supplier order received -->'."\n";
+				print '<!-- form to record purchase order received -->'."\n";
 				print '<form action="card.php?id='.$object->id.'" method="post">';
 				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 				print '<input type="hidden"	name="action" value="livraison">';
@@ -2610,7 +2608,7 @@ elseif (! empty($object->id))
 				print $form->selectDate($datepreselected, '', 1, 1, '', "commande", 1, 1);
 				print "</td></tr>\n";
 
-				print "<tr><td class=\"fieldrequired\">".$langs->trans("Delivery")."</td><td>\n";
+				print '<tr><td class="fieldrequired">'.$langs->trans("Delivery")."</td><td>\n";
 				$liv = array();
 				$liv[''] = '&nbsp;';
 				$liv['tot']	= $langs->trans("CompleteOrNoMoreReceptionExpected");
