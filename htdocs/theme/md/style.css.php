@@ -1562,6 +1562,10 @@ img.photorefnoborder {
 .underbanner {
 	border-bottom: <?php echo $borderwidth; ?>px solid rgb(<?php echo $colortopbordertitle1 ?>);
 }
+
+.trextrafieldseparator td {
+    border-bottom: 1px solid rgb(<?php echo $colortopbordertitle1 ?>) !important;
+}
 .tdhrthin {
 	margin: 0;
 	padding-bottom: 0 !important;
