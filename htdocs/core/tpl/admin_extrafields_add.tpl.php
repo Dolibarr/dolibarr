@@ -180,9 +180,9 @@ $langs->load("modulebuilder");
 <!-- Language file -->
 <tr><td class="titlefield"><?php echo $langs->trans("LanguageFile"); ?></td><td class="valeur"><input type="text" id="langfile" name="langfile" class="minwidth200" value="<?php echo dol_escape_htmltag(GETPOST('langfile', 'alpha')); ?>"></td></tr>
 <!-- Computed Value -->
-<?php if (empty($conf->global->MAIN_STORE_COMPUTED_EXTRAFIELDS)) { >
+<?php if (empty($conf->global->MAIN_STORE_COMPUTED_EXTRAFIELDS)) { ?>
 	<tr class="extra_computed_value"><td><?php echo $form->textwithpicto($langs->trans("ComputedFormula"), $langs->trans("ComputedFormulaDesc"), 1, 'help', '', 0, 2, 'tooltipcompute'); ?></td><td class="valeur"><input id="computed_value" type="text" name="computed_value" class="quatrevingtpercent" value="<?php echo (GETPOST('computed_value', 'none')?GETPOST('computed_value', 'none'):''); ?>"></td></tr>
-<?php } else { >
+<?php } else { ?>
 	<tr class="extra_computed_value"><td><?php echo $form->textwithpicto($langs->trans("ComputedFormula"), $langs->trans("ComputedFormulaDesc")).$form->textwithpicto($langs->trans("Computedpersistent"), $langs->trans("ComputedpersistentDesc"), 1, 'warning'); ?></td><td class="valeur"><input id="computed_value" class="quatrevingtpercent" type="text" name="computed_value" value="<?php echo dol_escape_htmltag($computed); ?>"></td></tr>
 <?php } ?>
 <!-- Default Value (at sql setup level) -->
