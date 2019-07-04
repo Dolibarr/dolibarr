@@ -2516,7 +2516,7 @@ elseif (! empty($object->id))
 			}
 
 			// Delete
-			if ($user->rights->fournisseur->commande->supprimer)
+			if (! empty($user->rights->fournisseur->commande->supprimer) || ($object->statut == CommandeFournisseur::STATUS_DRAFT && ! empty($user->rights->fournisseur->commande->creer)))
 			{
 				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
 			}
