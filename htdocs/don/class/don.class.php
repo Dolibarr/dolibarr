@@ -396,7 +396,7 @@ class Don extends CommonObject
         $sql.= ", ".$conf->entity;
         $sql.= ", ".price2num($this->amount);
         $sql.= ", ".($this->modepaymentid?$this->modepaymentid:"null");
-        $sql.= ", ".($this->socid?$this->socid:"null");
+        $sql.= ", ".($this->socid > 0 ? $this->socid : "null");
         $sql.= ", '".$this->db->escape($this->firstname)."'";
         $sql.= ", '".$this->db->escape($this->lastname)."'";
         $sql.= ", '".$this->db->escape($this->societe)."'";
