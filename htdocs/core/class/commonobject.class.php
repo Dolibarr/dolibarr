@@ -5008,6 +5008,8 @@ abstract class CommonObject
 			   	$attributeLabel    = $extrafields->attributes[$this->table_element]['label'][$attributeKey];
 			   	$attributeParam    = $extrafields->attributes[$this->table_element]['param'][$attributeKey];
 			   	$attributeRequired = $extrafields->attributes[$this->table_element]['required'][$attributeKey];
+				$attrfieldcomputed = $extrafields->attributes[$this->table_element]['computed'][$attributeKey];
+
 
 			   	if ($attributeRequired)
 			   	{
@@ -5024,6 +5026,21 @@ abstract class CommonObject
 
 				//dol_syslog("attributeLabel=".$attributeLabel, LOG_DEBUG);
 				//dol_syslog("attributeType=".$attributeType, LOG_DEBUG);
+				
+				if (!empty($attrfieldcomputed))
+				{
+					if (!empty($conf->global->MAIN_STORE_COMPUTED_EXTRAFIELDS))
+					{
+						$value = dol_eval($attrfieldcomputed, 1, 0);
+					    dol_syslog($langs->trans("Extrafieldcomputed")." sur ".$attributeLabel."(".$value.")", LOG_DEBUG);
+					    $new_array_options[$key] = $value;
+					}
+					else
+					{
+						$new_array_options[$key] = null;
+					}
+				}
+
 
 			   	switch ($attributeType)
 			   	{
