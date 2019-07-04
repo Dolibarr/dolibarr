@@ -1079,7 +1079,7 @@ class Expedition extends CommonObject
 	 *
 	 * 	@return	int		>0 if OK, 0 if deletion done but failed to delete files, <0 if KO
 	 */
-	function delete()
+	function delete($also_update_stock = false)
 	{
 		global $conf, $langs, $user;
 
@@ -1113,7 +1113,7 @@ class Expedition extends CommonObject
 		// Stock control
 		if (! $error && $conf->stock->enabled &&
 			(($conf->global->STOCK_CALCULATE_ON_SHIPMENT && $this->statut > self::STATUS_DRAFT) ||
-			 ($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE && $this->statut == 2)))
+			 ($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE && $this->statut == self::STATUS_CLOSED && $also_update_stock)))
 		{
 			require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
 

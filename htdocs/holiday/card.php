@@ -62,6 +62,22 @@ if (! empty($user->rights->holiday->delete)) $candelete=1;
 $morefilter = 'AND employee = 1';
 if (! empty($conf->global->HOLIDAY_FOR_NON_SALARIES_TOO)) $morefilter = '';
 
+$object = new Holiday($db);
+if ($id > 0)
+{
+    $object->fetch($id);
+
+    // Check current user can read this leave request
+    $canread = 0;
+    if (! empty($user->rights->holiday->read_all)) $canread=1;
+    if (! empty($user->rights->holiday->read) && in_array($object->fk_user, $childids)) $canread=1;
+    if (! $canread)
+    {
+        accessforbidden();
+    }
+}
+
+
 
 /*
  * Actions
@@ -75,7 +91,6 @@ if (GETPOST('cancel', 'alpha'))
 // If create a request
 if ($action == 'create')
 {
-	$object = new Holiday($db);
 
     // If no right to create a request
     if (! $cancreate)
@@ -87,6 +102,8 @@ if ($action == 'create')
 
     if (! $error)
     {
+        $object = new Holiday($db);
+
     	$db->begin();
 
 	    $date_debut = dol_mktime(0, 0, 0, GETPOST('date_debut_month'), GETPOST('date_debut_day'), GETPOST('date_debut_year'));
@@ -196,7 +213,6 @@ if ($action == 'create')
 
 if ($action == 'update' && GETPOSTISSET('savevalidator') && ! empty($user->rights->holiday->approve))
 {
-    $object = new Holiday($db);
     $object->fetch($id);
 
     $object->oldcopy = dol_clone($object);
@@ -242,7 +258,6 @@ if ($action == 'update' && ! GETPOSTISSET('savevalidator'))
         exit;
     }
 
-    $object = new Holiday($db);
     $object->fetch($id);
 
 	// If under validation
@@ -326,7 +341,6 @@ if ($action == 'confirm_delete' && GETPOST('confirm') == 'yes' && $user->rights-
 
 	$db->begin();
 
-	$object = new Holiday($db);
 	$object->fetch($id);
 
     // If this is a rough draft, approved, canceled or refused
@@ -360,7 +374,6 @@ if ($action == 'confirm_delete' && GETPOST('confirm') == 'yes' && $user->rights-
 // Si envoi de la demande
 if ($action == 'confirm_send')
 {
-    $object = new Holiday($db);
     $object->fetch($id);
 
     // Si brouillon et créateur
@@ -463,7 +476,6 @@ if ($action == 'confirm_send')
 // Si Validation de la demande
 if ($action == 'confirm_valid')
 {
-    $object = new Holiday($db);
     $object->fetch($id);
 
     // Si statut en attente de validation et valideur = utilisateur
@@ -558,7 +570,6 @@ if ($action == 'confirm_refuse' && GETPOST('confirm','alpha') == 'yes')
 {
 	if (! empty($_POST['detail_refuse']))
     {
-        $object = new Holiday($db);
         $object->fetch($id);
 
         // Si statut en attente de validation et valideur = utilisateur
@@ -643,7 +654,6 @@ if ($action == 'confirm_draft' && GETPOST('confirm') == 'yes')
 {
 	$error = 0;
 
-    $object = new Holiday($db);
     $object->fetch($id);
 
     $oldstatus = $object->statut;
@@ -674,7 +684,6 @@ if ($action == 'confirm_cancel' && GETPOST('confirm') == 'yes')
 {
 	$error = 0;
 
-    $object = new Holiday($db);
     $object->fetch($id);
 
     // Si statut en attente de validation et valideur = valideur ou utilisateur, ou droits de faire pour les autres

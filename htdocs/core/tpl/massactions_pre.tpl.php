@@ -44,7 +44,7 @@ if ($massaction == 'presend')
 	$listofselectedid = array();
 	$listofselectedthirdparties = array();
 	$listofselectedref = array();
-	
+
 	if (! GETPOST('cancel', 'alpha'))
 	{
 		foreach ($arrayofselected as $toselectid)
@@ -111,8 +111,9 @@ if ($massaction == 'presend')
 	} else {
 		$formmail->withtoreadonly = 1;
 	}
-	
-	$formmail->withoptiononeemailperrecipient = (count($listofselectedref) == 1 || empty($liste))? 0 : ((GETPOST('oneemailperrecipient')=='on')?1:-1);
+
+	$formmail->withoptiononeemailperrecipient = ((count($listofselectedref) == 1 && count(reset($listofselectedref)) == 1) || empty($liste)) ? 0 : ((GETPOST('oneemailperrecipient')=='on')?1:-1);
+
 	$formmail->withto = empty($liste)?(GETPOST('sendto','alpha')?GETPOST('sendto','alpha'):array()):$liste;
 	$formmail->withtofree = empty($liste)?1:0;
 	$formmail->withtocc = 1;
@@ -131,6 +132,7 @@ if ($massaction == 'presend')
 
 	// Make substitution in email content
 	$substitutionarray = getCommonSubstitutionArray($langs, 0, null, $object);
+
 	$substitutionarray['__EMAIL__'] = $sendto;
 	$substitutionarray['__CHECK_READ__'] = (is_object($object) && is_object($object->thirdparty)) ? '<img src="' . DOL_MAIN_URL_ROOT . '/public/emailing/mailing-read.php?tag=' . $object->thirdparty->tag . '&securitykey=' . urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY) . '" width="1" height="1" style="width:1px;height:1px" border="0"/>' : '';
 	$substitutionarray['__PERSONALIZED__'] = '';	// deprecated
