@@ -114,6 +114,7 @@ elseif (! empty($socid) && $socid > 0)
 $permissionnote=$user->rights->fournisseur->commande->creer;	// Used by the include of actions_setnotes.inc.php
 $permissiondellink=$user->rights->fournisseur->commande->creer;	// Used by the include of actions_dellink.inc.php
 $permissiontoedit=$user->rights->fournisseur->commande->creer;	// Used by the include of actions_lineupdown.inc.php
+$permissiontoadd=$user->rights->fournisseur->commande->creer; // Used by the include of actions_addupdatedelete.inc.php
 
 
 /*
@@ -432,7 +433,7 @@ if (empty($reshook))
 			if (preg_match('/^idprod_([0-9]+)$/', GETPOST('idprodfournprice', 'alpha'), $reg))
 			{
 				$idprod=$reg[1];
-				$res=$productsupplier->fetch($idprod);	// Load product from its ID
+				$res=$productsupplier->fetch($idprod);	// Load product from its id
 				// Call to init some price properties of $productsupplier
 				// So if a supplier price already exists for another thirdparty (first one found), we use it as reference price
 				if (! empty($conf->global->SUPPLIER_TAKE_FIRST_PRICE_IF_NO_PRICE_FOR_CURRENT_SUPPLIER))
@@ -494,7 +495,7 @@ if (empty($reshook))
 					0,							// We already have the $idprod always defined
 					$ref_supplier,
 					$remise_percent,
-					'HT',
+					$price_base_type,
 					$pu_ttc,
 					$type,
 					$tva_npr,
@@ -511,7 +512,7 @@ if (empty($reshook))
 				// Product not selected
 				$error++;
 				$langs->load("errors");
-				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ProductOrService")).' '.$langs->trans("or").' '.$langs->trans("NoPriceDefinedForThisSupplier"), null, 'errors');
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ProductOrService")), null, 'errors');
 			}
 			if ($idprod == -1)
 			{
@@ -523,8 +524,6 @@ if (empty($reshook))
 		}
 		elseif (empty($error)) // $price_ht is already set
 		{
-			$pu_ht = price2num($price_ht, 'MU');
-			$pu_ttc = price2num(GETPOST('price_ttc'), 'MU');
 			$tva_npr = (preg_match('/\*/', $tva_tx) ? 1 : 0);
 			$tva_tx = str_replace('*', '', $tva_tx);
 			$label = (GETPOST('product_label') ? GETPOST('product_label') : '');
@@ -552,7 +551,7 @@ if (empty($reshook))
 			$price_base_type = 'HT';
 			$pu_ht_devise = price2num($price_ht_devise, 'MU');
 
-			$result=$object->addline($desc, $pu_ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, $ref_supplier, $remise_percent, $price_base_type, $pu_ttc, $type, '', '', $date_start, $date_end, $array_options, $fk_unit, $pu_ht_devise);
+			$result = $object->addline($desc, $pu_ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, $ref_supplier, $remise_percent, $price_base_type, $pu_ttc, $type, '', '', $date_start, $date_end, $array_options, $fk_unit, $pu_ht_devise);
 		}
 
 		//print "xx".$tva_tx; exit;
@@ -652,28 +651,28 @@ if (empty($reshook))
 		if (preg_match('/\*/', $vat_rate))
 				$info_bits |= 0x01;
 
-	   	 // Define vat_rate
+	   	// Define vat_rate
 			$vat_rate = str_replace('*', '', $vat_rate);
 			$localtax1_rate = get_localtax($vat_rate, 1, $mysoc, $object->thirdparty);
 			$localtax2_rate = get_localtax($vat_rate, 2, $mysoc, $object->thirdparty);
 
 			if (GETPOST('price_ht') != '')
 			{
-			$price_base_type = 'HT';
-			$ht = price2num(GETPOST('price_ht'));
+				$price_base_type = 'HT';
+				$ht = price2num(GETPOST('price_ht'));
 			}
 			else
 			{
-			$vatratecleaned = $vat_rate;
-			if (preg_match('/^(.*)\s*\((.*)\)$/', $vat_rate, $reg))      // If vat is "xx (yy)"
-			{
-				$vatratecleaned = trim($reg[1]);
-				$vatratecode = $reg[2];
-			}
+				$vatratecleaned = $vat_rate;
+				if (preg_match('/^(.*)\s*\((.*)\)$/', $vat_rate, $reg))      // If vat is "xx (yy)"
+				{
+					$vatratecleaned = trim($reg[1]);
+					$vatratecode = $reg[2];
+				}
 
-			$ttc = price2num(GETPOST('price_ttc'));
-			$ht = $ttc / (1 + ($vatratecleaned / 100));
-			$price_base_type = 'HT';
+				$ttc = price2num(GETPOST('price_ttc'));
+				$ht = $ttc / (1 + ($vatratecleaned / 100));
+				$price_base_type = 'HT';
 			}
 
 			$pu_ht_devise = GETPOST('multicurrency_subprice');
@@ -689,7 +688,7 @@ if (empty($reshook))
 				}
 			}
 
-$result	= $object->updateline(
+			$result	= $object->updateline(
 				$lineid,
 				$_POST['product_desc'],
 				$ht,
@@ -2282,7 +2281,7 @@ elseif (! empty($object->id))
 
 	// Add free products/services form
 	global $forceall, $senderissupplier, $dateSelector, $inputalsopricewithtax;
-	$forceall=1; $dateSelector=0; $inputalsopricewithtax=0;
+	$forceall=1; $dateSelector=0; $inputalsopricewithtax=1;
 	$senderissupplier=2;	// $senderissupplier=2 is same than 1 but disable test on minimum qty and disable autofill qty with minimum.
 	//if (! empty($conf->global->SUPPLIER_ORDER_WITH_NOPRICEDEFINED)) $senderissupplier=2;
 	if (! empty($conf->global->SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY)) $senderissupplier=1;
