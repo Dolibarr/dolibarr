@@ -274,7 +274,7 @@ if ($resql)
     print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">';
 
-	// Lignes des champs de filtre
+	// Fields title search
 	print '<tr class="liste_titre_filter">';
 	print '<td class="liste_titre">';
 	print '<input class="flat" type="text" name="sref" size="6" value="'.$sref.'">';

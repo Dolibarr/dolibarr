@@ -228,7 +228,7 @@ if ($resql)
 
 	print '<table class="liste" width="100%">';
 
-	// Lignes des champs de filtre
+	// Fields title search
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre">';
 	print '<input class="flat" type="text" name="sref" value="'.$sref.'" size="12">';
