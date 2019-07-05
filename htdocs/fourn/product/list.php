@@ -249,7 +249,7 @@ if ($resql)
 	print '</td>';
 	print '</tr>';
 
-	// Lignes des titres
+	// Line for title
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "p.ref", $param, "", "", $sortfield, $sortorder);
 	print_liste_field_titre("RefSupplierShort", $_SERVER["PHP_SELF"], "ppf.ref_fourn", $param, "", "", $sortfield, $sortorder);

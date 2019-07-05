@@ -414,8 +414,8 @@ class pdf_standard extends ModeleExpenseReport
                     //     $nblineFollowComment = max($nbLineCommentNeed, $nbLineTypeNeed);
 					// }
 
-                    //$nexY+=$nblineFollowComment*($pdf->getFontSize()*1.3);    // Passe espace entre les lignes
-                    $nexY += ($pdf->getFontSize()*1.3);    // Passe espace entre les lignes
+                    //$nexY+=$nblineFollowComment*($pdf->getFontSize()*1.3);    // Add space between lines
+                    $nexY += ($pdf->getFontSize()*1.3);    // Add space between lines
 
 					// Detect if some page were added automatically and output _tableau for past pages
 					while ($pagenb < $pageposafter)
