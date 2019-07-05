@@ -5252,6 +5252,9 @@ div.tabsElem a.tab {
 /* Ticket module                                                                  */
 /* ============================================================================== */
 
+.publicnewticketform {
+	margin-top: 25px !important;
+}
 #cd-timeline {
   position: relative;
   padding: 2em 0;
