@@ -298,7 +298,7 @@ if ($action == "view_ticket" || $action == "add_message" || $action == "close" |
         print '<div class="error">Not Allowed<br><a href="' . $_SERVER['PHP_SELF'] . '?track_id=' . $object->dao->track_id . '">' . $langs->trans('Back') . '</a></div>';
     }
 } else {
-    print '<p style="text-align: center">' . $langs->trans("TicketPublicMsgViewLogIn") . '</p>';
+    print '<p class="center">' . $langs->trans("TicketPublicMsgViewLogIn") . '</p>';
 
     print '<div id="form_view_ticket">';
     print '<form method="post" name="form_view_ticket"  enctype="multipart/form-data" action="' . $_SERVER['PHP_SELF'] . '">';
