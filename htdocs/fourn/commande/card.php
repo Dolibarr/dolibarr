@@ -392,7 +392,7 @@ if (empty($reshook))
 		}
 		if ($prod_entry_mode =='free' && GETPOST('price_ht')==='' && GETPOST('price_ttc')==='' && $price_ht_devise === '') // Unit price can be 0 but not ''
 		{
-			setEventMessages($langs->trans($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('UnitPrice'))), null, 'errors');
+			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('UnitPrice')), null, 'errors');
 			$error++;
 		}
 		if ($prod_entry_mode =='free' && ! GETPOST('dp_desc'))
@@ -2281,14 +2281,13 @@ elseif (! empty($object->id))
 	print '<table id="tablelines" class="noborder noshadow centpercent">';
 
 	// Add free products/services form
-	global $forceall, $senderissupplier, $dateSelector;
-	$forceall=1; $dateSelector=0;
+	global $forceall, $senderissupplier, $dateSelector, $inputalsopricewithtax;
+	$forceall=1; $dateSelector=0; $inputalsopricewithtax=0;
 	$senderissupplier=2;	// $senderissupplier=2 is same than 1 but disable test on minimum qty and disable autofill qty with minimum.
 	//if (! empty($conf->global->SUPPLIER_ORDER_WITH_NOPRICEDEFINED)) $senderissupplier=2;
 	if (! empty($conf->global->SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY)) $senderissupplier=1;
 
 	// Show object lines
-	$inputalsopricewithtax=0;
 	if (! empty($object->lines))
 		$ret = $object->printObjectLines($action, $societe, $mysoc, $lineid, 1);
 
