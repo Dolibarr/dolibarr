@@ -175,7 +175,7 @@ function journalHead($nom, $variante, $period, $periodlink, $description, $build
 {
     global $langs;
 
-    print "\n\n<!-- debut cartouche journal -->\n";
+    print "\n\n<!-- start banner journal -->\n";
 
     if(! is_empty($varlink)) $varlink = '?'.$varlink;
 
@@ -186,6 +186,7 @@ function journalHead($nom, $variante, $period, $periodlink, $description, $build
     $head[$h][2] = 'journal';
 
     print '<form method="POST" action="'.$_SERVER["PHP_SELF"].$varlink.'">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
     dol_fiche_head($head, 'journal');
 
@@ -240,5 +241,5 @@ function journalHead($nom, $variante, $period, $periodlink, $description, $build
 
     print '</form>';
 
-    print "\n<!-- fin cartouche journal -->\n\n";
+    print "\n<!-- end banner journal -->\n\n";
 }
