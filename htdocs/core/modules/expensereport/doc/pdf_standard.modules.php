@@ -400,7 +400,7 @@ class pdf_standard extends ModeleExpenseReport
                     $pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
 
                     //$nblineFollowComment = 1;
-                    // Cherche nombre de lignes a venir pour savoir si place suffisante
+                    // Search number of lines coming to know if there is enough room
 					// if ($i < ($nblines - 1))	// If it's not last line
 					// {
 					//     //Fetch current description to know on which line the next one should be placed
