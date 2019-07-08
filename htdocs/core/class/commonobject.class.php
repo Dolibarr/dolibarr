@@ -4145,7 +4145,7 @@ abstract class CommonObject
 	 */
 	public function printOriginLinesList($restrictlist = '')
 	{
-		global $langs, $hookmanager, $conf;
+		global $langs, $hookmanager, $conf, $form;
 
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans('Ref').'</td>';
@@ -4158,8 +4158,9 @@ abstract class CommonObject
 		{
 			print '<td class="left">'.$langs->trans('Unit').'</td>';
 		}
-		print '<td class="right">'.$langs->trans('ReductionShort').'</td></tr>';
-
+		print '<td class="right">'.$langs->trans('ReductionShort').'</td>';
+        print '<td class="center">'.$form->showCheckAddButtons('checkforselect', 1).'</td>';
+        print '</tr>';
 		$var = true;
 		$i	 = 0;
 
@@ -4200,7 +4201,7 @@ abstract class CommonObject
 	 */
 	public function printOriginLine($line, $var, $restrictlist = '', $defaulttpldir = '/core/tpl')
 	{
-		global $langs, $conf;
+		global $langs, $conf, $selectedLines;
 
 		//var_dump($line);
 		if (!empty($line->date_start))
@@ -4221,6 +4222,8 @@ abstract class CommonObject
 			$date_end=$line->date_fin_prevue;
 			if ($line->date_fin_reel) $date_end=$line->date_fin_reel;
 		}
+
+        $this->tpl['id'] = $line->id;
 
 		$this->tpl['label'] = '';
 		if (! empty($line->fk_parent_line)) $this->tpl['label'].= img_picto('', 'rightarrow');
