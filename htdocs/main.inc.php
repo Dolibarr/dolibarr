@@ -1200,7 +1200,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 	    if (! is_object($hookmanager)) $hookmanager = new HookManager($db);
 	    $hookmanager->initHooks(array("main"));
 
-	    $ext='layout='.$conf->browser->layout.'&version='.urlencode(DOL_VERSION);
+	    $ext='layout='.$conf->browser->layout.'&amp;version='.urlencode(DOL_VERSION);
 
 		print "<head>\n";
 
@@ -1246,7 +1246,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		if (GETPOST('version', 'int')) $ext='version='.GETPOST('version', 'int');	// usefull to force no cache on css/js
 
 		$themeparam='?lang='.$langs->defaultlang.'&amp;theme='.$conf->theme.(GETPOST('optioncss', 'aZ09')?'&amp;optioncss='.GETPOST('optioncss', 'aZ09', 1):'').'&amp;userid='.$user->id.'&amp;entity='.$conf->entity;
-		$themeparam.=($ext?'&amp;'.$ext:'');
+		$themeparam.=($ext?'&amp;'.$ext:'').'&amp;revision='.$conf->global->MAIN_IHM_PARAMS_REV;
 		if (! empty($_SESSION['dol_resetcache'])) $themeparam.='&amp;dol_resetcache='.$_SESSION['dol_resetcache'];
 		if (GETPOST('dol_hide_topmenu', 'int'))           { $themeparam.='&amp;dol_hide_topmenu='.GETPOST('dol_hide_topmenu', 'int'); }
 		if (GETPOST('dol_hide_leftmenu', 'int'))          { $themeparam.='&amp;dol_hide_leftmenu='.GETPOST('dol_hide_leftmenu', 'int'); }
