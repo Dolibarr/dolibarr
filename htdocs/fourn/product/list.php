@@ -75,7 +75,12 @@ if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
 if (! GETPOST('confirmmassaction','alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
 
 $parameters=array();
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks(
+    'doActions',
+    $parameters,
+    $object,
+    $action
+);
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
@@ -128,6 +133,17 @@ $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 $sql = "SELECT p.rowid, p.label, p.ref, p.fk_product_type, p.entity,";
 $sql.= " ppf.fk_soc, ppf.ref_fourn, ppf.price as price, ppf.quantity as qty, ppf.unitprice,";
 $sql.= " s.rowid as socid, s.nom as name";
+
+// Add fields to SELECT from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks(
+    'printFieldListSelect',
+    $parameters,
+    $object,
+    $action
+);
+$sql .= $hookmanager->resPrint;
+
 $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 if ($catid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as ppf ON p.rowid = ppf.fk_product";
@@ -157,6 +173,14 @@ if ($fourn_id > 0)
 {
 	$sql .= " AND ppf.fk_soc = ".$fourn_id;
 }
+
+// Add WHERE filters from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks(
+    'printFieldListWhere',
+     $parameters
+);
+$sql .= $hookmanager->resPrint;
 
 $sql .= $db->order($sortfield,$sortorder);
 
@@ -242,6 +266,17 @@ if ($resql)
 	print '<td></td>';
 	print '<td></td>';
 	print '<td></td>';
+
+    // add filters from hooks
+    $parameters = array();
+    $reshook = $hookmanager->executeHooks(
+        'printFieldPreListTitle',
+        $parameters,
+        $object,
+        $action
+    );
+    if (!empty($reshook)) print $hookmanager->resPrint;
+
 	print '<td class="liste_titre" align="right">';
 	$searchpicto=$form->showFilterButtons();
 	print $searchpicto;
@@ -257,6 +292,16 @@ if ($resql)
 	print_liste_field_titre("BuyingPrice",$_SERVER["PHP_SELF"], "ppf.price",$param,"",'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre("QtyMin",$_SERVER["PHP_SELF"], "ppf.quantity",$param,"",'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre("UnitPrice",$_SERVER["PHP_SELF"], "ppf.unitprice",$param,"",'align="right"',$sortfield,$sortorder);
+
+	// add header cells from hooks
+    $parameters = array();
+    $reshook = $hookmanager->executeHooks(
+        'printFieldListTitle',
+        $parameters,
+        $object,
+        $action
+    );
+    if (!empty($reshook)) print $hookmanager->resPrint;
 	print_liste_field_titre('',$_SERVER["PHP_SELF"]);
 	print "</tr>\n";
 
@@ -291,6 +336,16 @@ if ($resql)
 		print '<td align="right">'.$objp->qty.'</td>';
 
 		print '<td align="right">'.(isset($objp->unitprice) ? price($objp->unitprice) : '').'</td>';
+
+		// add additional columns from hooks
+        $parameters = array();
+        $reshook = $hookmanager->executeHooks(
+            'printFieldListValue',
+            $parameters,
+            $objp,
+            $action
+        );
+        if (!empty($reshook)) print $hookmanager->resPrint;
 
 		print '<td align="right"></td>';
 
