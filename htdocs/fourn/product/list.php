@@ -142,6 +142,7 @@ $reshook = $hookmanager->executeHooks(
     $object,
     $action
 );
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 $sql .= $hookmanager->resPrint;
 
 $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
@@ -180,6 +181,7 @@ $reshook = $hookmanager->executeHooks(
     'printFieldListWhere',
      $parameters
 );
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 $sql .= $hookmanager->resPrint;
 
 $sql .= $db->order($sortfield,$sortorder);
@@ -275,7 +277,8 @@ if ($resql)
         $object,
         $action
     );
-    if (!empty($reshook)) print $hookmanager->resPrint;
+    if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+    print $hookmanager->resPrint;
 
 	print '<td class="liste_titre" align="right">';
 	$searchpicto=$form->showFilterButtons();
@@ -301,7 +304,8 @@ if ($resql)
         $object,
         $action
     );
-    if (!empty($reshook)) print $hookmanager->resPrint;
+    if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+    print $hookmanager->resPrint;
 	print_liste_field_titre('',$_SERVER["PHP_SELF"]);
 	print "</tr>\n";
 
@@ -345,7 +349,8 @@ if ($resql)
             $objp,
             $action
         );
-        if (!empty($reshook)) print $hookmanager->resPrint;
+        if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+        print $hookmanager->resPrint;
 
 		print '<td align="right"></td>';
 
