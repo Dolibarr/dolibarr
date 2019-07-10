@@ -1,23 +1,22 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=Configuració mòdul PayPal
-PaypalDesc=Aquest mòdul ofereix una pàgina de pagament a través del proveïdor <a href="http://www.paypal.com" target="_blank">Paypal</a> per realitzar qualsevol pagament o un pagament en relació amb un objecte Dolibarr (factures, comandes ...)
-PaypalOrCBDoPayment=Pagament amb Paypal (Targeta de crèdit o Paypal)
-PaypalDoPayment=Continuar el pagament mitjançant Paypal
+PaypalDesc=Aquest mòdul permet el pagament per part dels clients a través de <a href="http://www.paypal.com" target="_blank"> PayPal </a>. Això es pot utilitzar per a un pagament ad hoc o per un pagament relacionat amb un objecte Dolibarr (factura, comanda ...)
+PaypalOrCBDoPayment=Paga amb PayPal (targeta de crèdit o PayPal)
+PaypalDoPayment=Paga amb PayPal
 PAYPAL_API_SANDBOX=Mode de proves(sandbox)
 PAYPAL_API_USER=Nom usuari API
 PAYPAL_API_PASSWORD=Contrasenya usuari API
 PAYPAL_API_SIGNATURE=Signatura API
 PAYPAL_SSLVERSION=Versió Curl SSL
-PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Proposar pagament integral (Targeta+Paypal) o només Paypal
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Oferir un pagament "integral" (Targeta de crèdit + PayPal) o "PayPal" només
 PaypalModeIntegral=Integral
 PaypalModeOnlyPaypal=Només PayPal
-ONLINE_PAYMENT_CSS_URL=URL opcional del full d'estil CSS a la pàgina de pagament en línia
+ONLINE_PAYMENT_CSS_URL=URL opcional del full d'estils CSS a la pàgina de pagament en línia
 ThisIsTransactionId=Identificador de la transacció: <b>%s</b>
-PAYPAL_ADD_PAYMENT_URL=Afegir la url del pagament Paypal en enviar un document per e-mail
-YouAreCurrentlyInSandboxMode=Actualment esteu en el mode %s "sandbox"
+PAYPAL_ADD_PAYMENT_URL=Incloeu l'adreça de pagament de PayPal quan envieu un document per correu electrònic
 NewOnlinePaymentReceived=Nou pagament online rebut
 NewOnlinePaymentFailed=S'ha intentat el nou pagament online però ha fallat
-ONLINE_PAYMENT_SENDEMAIL=E-Mail a avisar en cas de pagament (amb èxit o no)
+ONLINE_PAYMENT_SENDEMAIL=Adreça de correu electrònic per a les notificacions després de cada intent de pagament (per a l'èxit i el fracàs)
 ReturnURLAfterPayment=URL de retorn després del pagament
 ValidationOfOnlinePaymentFailed=Ha fallat la validació del pagament online
 PaymentSystemConfirmPaymentPageWasCalledButFailed=La pàgina de confirmació de pagament sol·licitada pel sistema de pagament ha retornat un error
@@ -28,7 +27,10 @@ ShortErrorMessage=Missatge d'error curt
 ErrorCode=Codi d'error
 ErrorSeverityCode=Codi sever d'error
 OnlinePaymentSystem=Sistema de pagament online
-PaypalLiveEnabled=Paypal live actiu (d'una altra forma en mode prova/sandbox)
-PaypalImportPayment=Importar els pagaments Paypal
+PaypalLiveEnabled=El mode "en viu" de PayPal habilitat (en cas contrari, el mode prova / sandbox)
+PaypalImportPayment=Importeu els pagaments de PayPal
 PostActionAfterPayment=Accions posteriors desprès dels pagaments
 ARollbackWasPerformedOnPostActions=S'ha produït una tornada endarrere en totes les accions "post". Heu de completar les accions "post" manualment si són necessàries.
+ValidationOfPaymentFailed=La validació del pagament ha fallat
+CardOwner=Titular de targeta
+PayPalBalance=Crèdit Paypal

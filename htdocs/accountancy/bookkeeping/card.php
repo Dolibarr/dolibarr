@@ -626,7 +626,7 @@ if ($action == 'create')
 						}
 						else
 						{
-							print '<input type="text" name="subledger_account" value="'.(GETPOSTISSET("subledger_account") ? GETPOST("subledger_account", "alpha") : $line->subledger_account).'">';
+							print '<input type="text" class="maxwidth150" name="subledger_account" value="'.(GETPOSTISSET("subledger_account") ? GETPOST("subledger_account", "alpha") : $line->subledger_account).'">';
 						}
 						print '</td>';
 						print '<td><input type="text" class="minwidth200" name="label_operation" value="' . (GETPOSTISSET("label_operation") ? GETPOST("label_operation", "alpha") : $line->label_operation). '"></td>';
@@ -683,7 +683,7 @@ if ($action == 'create')
 					}
 					else
 					{
-						print '<input type="text" name="subledger_account" value="">';
+						print '<input type="text" class="maxwidth150" name="subledger_account" value="">';
 					}
 					print '</td>';
 					print '<td><input type="text" class="minwidth200" name="label_operation" value="'.$label_operation.'"/></td>';

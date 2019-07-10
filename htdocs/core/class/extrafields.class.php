@@ -972,7 +972,10 @@ class ExtraFields
 
 		$out='';
 
-		$keyprefix = $keyprefix.'options_';		// Because we work on extrafields
+		if (! preg_match('/options_$/', $keyprefix))	// Because we work on extrafields, we add 'options_' to prefix if not already added
+		{
+			$keyprefix = $keyprefix.'options_';
+		}
 
 		if (! empty($extrafieldsobjectkey))
 		{

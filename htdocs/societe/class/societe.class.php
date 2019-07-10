@@ -59,8 +59,16 @@ class Societe extends CommonObject
 	public $fk_element='fk_soc';
 
 	public $fieldsforcombobox='nom,name_alias';
-	protected $childtables=array("supplier_proposal"=>'SupplierProposal',"propal"=>'Proposal',"commande"=>'Order',"facture"=>'Invoice',"facture_rec"=>'RecurringInvoiceTemplate',"contrat"=>'Contract',"fichinter"=>'Fichinter',"facture_fourn"=>'SupplierInvoice',"commande_fournisseur"=>'SupplierOrder',"projet"=>'Project',"expedition"=>'Shipment',"prelevement_lignes"=>'DirectDebitRecord');    // To test if we can delete object
+
+	/**
+	 * @var array	List of child tables. To test if we can delete object.
+	 */
+	protected $childtables=array("supplier_proposal"=>'SupplierProposal',"propal"=>'Proposal',"commande"=>'Order',"facture"=>'Invoice',"facture_rec"=>'RecurringInvoiceTemplate',"contrat"=>'Contract',"fichinter"=>'Fichinter',"facture_fourn"=>'SupplierInvoice',"commande_fournisseur"=>'SupplierOrder',"projet"=>'Project',"expedition"=>'Shipment',"prelevement_lignes"=>'DirectDebitRecord');
+	/**
+	 * @var array	List of child tables. To know object to delete on cascade.
+	 */
 	protected $childtablesoncascade=array("societe_prices", "societe_log", "societe_address", "product_fournisseur_price", "product_customer_price_log", "product_customer_price", "socpeople", "adherent", "societe_account", "societe_rib", "societe_remise", "societe_remise_except", "societe_commerciaux", "categorie", "notify", "notify_def", "actioncomm");
+
 	public $picto = 'company';
 
 	/**
@@ -928,7 +936,7 @@ class Societe extends CommonObject
 		if (! empty($allowmodcodefournisseur) && ! empty($this->fournisseur))
 		{
 			// Attention get_codecompta peut modifier le code suivant le module utilise
-			if (empty($this->code_compta_fournisseur))
+			if ($this->code_compta_fournisseur == "")
 			{
 				$ret=$this->get_codecompta('supplier');
 				if ($ret < 0) return -1;
@@ -1085,7 +1093,7 @@ class Societe extends CommonObject
 			if ($supplier)
 			{
 				$sql .= ", code_fournisseur = ".(! empty($this->code_fournisseur)?"'".$this->db->escape($this->code_fournisseur)."'":"null");
-				$sql .= ", code_compta_fournisseur = ".(! empty($this->code_compta_fournisseur)?"'".$this->db->escape($this->code_compta_fournisseur)."'":"null");
+				$sql .= ", code_compta_fournisseur = ".(($this->code_compta_fournisseur != "")?"'".$this->db->escape($this->code_compta_fournisseur)."'":"null");
 			}
 			$sql .= ", fk_user_modif = ".($user->id > 0 ? $user->id:"null");
 			$sql .= ", fk_multicurrency = ".(int) $this->fk_multicurrency;
@@ -1330,7 +1338,7 @@ class Societe extends CommonObject
 
 				$this->country_id   = $obj->country_id;
 				$this->country_code = $obj->country_id?$obj->country_code:'';
-				$this->country 		= $obj->country_id?($langs->trans('Country'.$obj->country_code)!='Country'.$obj->country_code?$langs->transnoentities('Country'.$obj->country_code):$obj->country):'';
+				$this->country 		= $obj->country_id?($langs->transnoentities('Country'.$obj->country_code)!='Country'.$obj->country_code?$langs->transnoentities('Country'.$obj->country_code):$obj->country):'';
 
 				$this->state_id     = $obj->state_id;
 				$this->state_code   = $obj->state_code;

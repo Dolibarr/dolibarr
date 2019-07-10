@@ -240,7 +240,7 @@ class modAccounting extends DolibarrModules
 		$r++;
 		$this->export_code[$r]=$this->rights_class.'_'.$r;
 		$this->export_label[$r]='Chartofaccounts';
-		$this->export_icon[$r]='Accounting';
+		$this->export_icon[$r]='accounting';
 		$this->export_permission[$r]=array(array("accounting","chartofaccount"));
 		$this->export_fields_array[$r]=array('ac.rowid'=>'ChartofaccountsId','ac.pcg_version'=>'Chartofaccounts','aa.rowid'=>'Id','aa.account_number'=>"AccountAccounting",'aa.label'=>"Label",'aa.account_parent'=>"Accountparent",'aa.pcg_type'=>"Pcgtype",'aa.pcg_subtype'=>'Pcgsubtype','aa.active'=>'Status');
 		$this->export_TypeFields_array[$r]=array('ac.rowid'=>'List:accounting_system:pcg_version','aa.account_number'=>"Text",'aa.label'=>"Text",'aa.account_parent'=>"Text",'aa.pcg_type'=>'Text','aa.pcg_subtype'=>'Text','aa.active'=>'Status');
@@ -264,32 +264,36 @@ class modAccounting extends DolibarrModules
 		$this->import_entities_array[$r]=array();	// We define here only fields that use another icon that the one defined into import_icon
 		$this->import_tables_array[$r]=array('b'=>MAIN_DB_PREFIX.'accounting_bookkeeping');	// List of tables to insert into (insert done in same order)
 		$this->import_fields_array[$r]=array(
-		    'b.doc_date'=>"Docdate",
-            'b.piece_num'=>"TransactionNumShort",
+			'b.piece_num'=>"TransactionNumShort",
+			'b.doc_date'=>"Docdate",
+			//'b.doc_type'=>'Doctype',
+			'b.doc_ref'=>'Piece',
             'b.code_journal'=>'Codejournal',
-            'b.journal_label'=>'JournalLabel',
+            //'b.journal_label'=>'JournalLabel',
             'b.numero_compte'=>'AccountAccounting',
-            'b.label_compte'=>'LabelAccount',
+            //'b.label_compte'=>'LabelAccount',
             'b.subledger_account'=>'SubledgerAccount',
             'b.subledger_label'=>'SubledgerAccountLabel',
             'b.label_operation'=>'LabelOperation',
             'b.debit'=>"Debit",
             'b.credit'=>"Credit"
         );
-		$this->import_fieldshidden_array[$r]=array('b.fk_user_author'=>'user->id');    // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
+		$this->import_fieldshidden_array[$r]=array('b.doc_type'=>'const-import_from_external', 'b.fk_doc'=>'const-0', 'b.fk_docdet'=>'const-0', 'b.fk_user_author'=>'user->id', 'b.date_creation'=>'const-'.dol_print_date(dol_now(), 'standard'));    // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
 		$this->import_regex_array[$r]=array('b.doc_date'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$');
 		$this->import_examplevalues_array[$r]=array(
-		    'b.doc_date'=>'formatted as \'.dol_print_date(dol_now(),\'%Y-%m-%d\')',
-            'b.piece_num'=>'1',
+		    'b.piece_num'=>'123 (!!! use next value not already used)',
+			'b.doc_date'=>dol_print_date(dol_now(), "%Y-%m-%d"),
+			//'b.doc_type'=>'import',
+			'b.doc_ref'=>'My document ABC',
             'b.code_journal'=>"VTE",
-            'b.journal_label'=>"Journal des ventes",
+            //'b.journal_label'=>"Sale journal",
             'b.numero_compte'=>"707",
-            'b.label_compte'=>'Ventes',
+            //'b.label_compte'=>'Product account 707',
             'b.subledger_account'=>'',
             'b.subledger_label'=>'',
-            'b.label_operation'=>"Ventes services",
-            'b.debit'=>"0,00",
-            'b.credit'=>"100,00"
+            'b.label_operation'=>"Sale of ABC",
+            'b.debit'=>"0",
+            'b.credit'=>"100"
         );
 
 		// Chart of accounts

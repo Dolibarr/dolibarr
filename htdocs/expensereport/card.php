@@ -64,6 +64,8 @@ $comments=GETPOST('comments', 'none');
 $fk_c_type_fees=GETPOST('fk_c_type_fees', 'int');
 $socid = GETPOST('socid', 'int')?GETPOST('socid', 'int'):GETPOST('socid_id', 'int');
 
+$childids = $user->getAllChildIds(1);
+
 // Security check
 $id=GETPOST("id", 'int');
 if ($user->societe_id) $socid=$user->societe_id;
@@ -110,6 +112,18 @@ $permissionedit = $user->rights->expensereport->creer; 		// Used by the include 
 
 $upload_dir = $conf->expensereport->dir_output.'/'.dol_sanitizeFileName($object->ref);
 
+
+if ($object->id > 0)
+{
+    // Check current user can read this expense report
+    $canread = 0;
+    if (! empty($user->rights->expensereport->readall)) $canread=1;
+    if (! empty($user->rights->expensereport->lire) && in_array($object->fk_user_author, $childids)) $canread=1;
+    if (! $canread)
+    {
+        accessforbidden();
+    }
+}
 
 
 /*

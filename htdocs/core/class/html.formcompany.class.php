@@ -908,7 +908,7 @@ class FormCompany
 
     	$out = '<select class="flat '.$morecss.'" name="'.$htmlname.'" id="'.$htmlidname.'">';
     	if ($typeinput=='form') {
-	    	if ($selected == '') $out .= '<option value="-1">&nbsp;</option>';
+    		if ($selected == '' || $selected == '-1') $out .= '<option value="-1">&nbsp;</option>';
 	    	if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) {
 	    		$out .= '<option value="2"'.($selected==2?' selected':'').'>'.$langs->trans('Prospect').'</option>';
 	    	}
@@ -920,7 +920,7 @@ class FormCompany
 	    	}
 	    	$out .= '<option value="0"'.((string) $selected == '0'?' selected':'').'>'.$langs->trans('NorProspectNorCustomer').'</option>';
     	} elseif ($typeinput=='list') {
-    		$out .=  '<option value="-1"'.($selected==''?' selected':'').'>&nbsp;</option>';
+    		$out .=  '<option value="-1"'.(($selected=='' || $selected == '-1')?' selected':'').'>&nbsp;</option>';
     		if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) {
     			$out .=  '<option value="1,3"'.($selected=='1,3'?' selected':'').'>'.$langs->trans('Customer').'</option>';
     		}

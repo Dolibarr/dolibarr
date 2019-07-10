@@ -19,7 +19,6 @@ AccountStatementShort=Kontenauszug
 AccountStatements=Kontoauszug
 LastAccountStatements=letzter Kontoauszug
 IOMonthlyReporting=monatlicher Report
-BankAccountDomiciliation=Konto-Adresse
 LabelBankCashAccount=Bank- oder Kassabezeichnung
 BankType0=Sparkonto\n
 BankType2=Kassa

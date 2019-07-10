@@ -59,7 +59,10 @@ class Product extends CommonObject
      */
     public $fk_element='fk_product';
 
-    protected $childtables=array('supplier_proposaldet', 'propaldet','commandedet','facturedet','contratdet','facture_fourn_det','commande_fournisseurdet');    // To test if we can delete object
+    /**
+     * @var array	List of child tables. To test if we can delete object.
+     */
+    protected $childtables=array('supplier_proposaldet', 'propaldet', 'commandedet', 'facturedet', 'contratdet', 'facture_fourn_det', 'commande_fournisseurdet');
 
     /**
      * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
@@ -4030,7 +4033,7 @@ class Product extends CommonObject
             }
 
             $linkclose.= ' title="'.dol_escape_htmltag($label, 1, 1).'"';
-            $linkclose.= ' class="classfortooltip"';
+            $linkclose.= ' class="nowraponall classfortooltip"';
 
             /*
             $hookmanager->initHooks(array('productdao'));
@@ -4038,6 +4041,10 @@ class Product extends CommonObject
             $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
             if ($reshook > 0) $linkclose = $hookmanager->resPrint;
             */
+        }
+        else
+        {
+        	$linkclose = ' class="nowraponall"';
         }
 
         if ($option == 'supplier' || $option == 'category') {
@@ -4066,9 +4073,11 @@ class Product extends CommonObject
         $result.=$linkstart;
         if ($withpicto)
         {
-            if ($this->type == Product::TYPE_PRODUCT) { $result.=(img_object(($notooltip?'':$label), 'product', ($notooltip?'class="paddingright"':'class="paddingright classfortooltip"'), 0, 0, $notooltip?0:1));
+            if ($this->type == Product::TYPE_PRODUCT) {
+            	$result.=(img_object(($notooltip?'':$label), 'product', ($notooltip?'class="paddingright"':'class="paddingright classfortooltip"'), 0, 0, $notooltip?0:1));
             }
-            if ($this->type == Product::TYPE_SERVICE) { $result.=(img_object(($notooltip?'':$label), 'service', ($notooltip?'class="paddinright"':'class="paddingright classfortooltip"'), 0, 0, $notooltip?0:1));
+            if ($this->type == Product::TYPE_SERVICE) {
+            	$result.=(img_object(($notooltip?'':$label), 'service', ($notooltip?'class="paddinright"':'class="paddingright classfortooltip"'), 0, 0, $notooltip?0:1));
             }
         }
         $result.= $newref;
@@ -4078,8 +4087,10 @@ class Product extends CommonObject
         $hookmanager->initHooks(array('productdao'));
         $parameters=array('id'=>$this->id, 'getnomurl'=>$result);
         $reshook=$hookmanager->executeHooks('getNomUrl', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
-        if ($reshook > 0) { $result = $hookmanager->resPrint;
-        } else { $result .= $hookmanager->resPrint;
+        if ($reshook > 0) {
+        	$result = $hookmanager->resPrint;
+        } else {
+        	$result .= $hookmanager->resPrint;
         }
 
         return $result;

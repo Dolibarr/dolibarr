@@ -2443,9 +2443,9 @@ abstract class CommonObject
 	 */
 	public function updateRangOfLine($rowid, $rang)
 	{
-		$fieldposition = 'rang';	// @TODO Rename 'rang' and 'position' into 'rank'
+		$fieldposition = 'rang';	// @TODO Rename 'rang' into 'position'
 		if (in_array($this->table_element_line, array('ecm_files', 'emailcollector_emailcollectoraction'))) $fieldposition = 'position';
-		if (in_array($this->table_element_line, array('bom_bomline'))) $fieldposition = 'rank';
+		if (in_array($this->table_element_line, array('bom_bomline'))) $fieldposition = 'position';
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET '.$fieldposition.' = '.$rang;
 		$sql.= ' WHERE rowid = '.$rowid;
@@ -6519,7 +6519,7 @@ abstract class CommonObject
 				    jQuery(document).ready(function() {
 				    	function showOptions(child_list, parent_list)
 				    	{
-				    		var val = $("select[name=\"options_"+parent_list+"\"]").val();
+				    		var val = $("select[name=\""+parent_list+"\"]").val();
 				    		var parentVal = parent_list + ":" + val;
 							if(val > 0) {
 					    		$("select[name=\""+child_list+"\"] option[parent]").hide();
@@ -7490,7 +7490,7 @@ abstract class CommonObject
 
 		$this->db->begin();
 
-		if ($forcechilddeletion)
+		if ($forcechilddeletion)	// Force also delete of childtables that should lock deletion in standard case when option force is off
 		{
 			foreach($this->childtables as $table)
 			{
@@ -7515,6 +7515,20 @@ abstract class CommonObject
 				$this->errors[]=$this->error;
 				$this->db->rollback();
 				return 0;
+			}
+		}
+
+		// Delete cascade first
+		foreach($this->childtablesoncascade as $table)
+		{
+			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$table.' WHERE '.$this->fk_element.' = '.$this->id;
+			$resql = $this->db->query($sql);
+			if (! $resql)
+			{
+				$this->error=$this->db->lasterror();
+				$this->errors[]=$this->error;
+				$this->db->rollback();
+				return -1;
 			}
 		}
 
