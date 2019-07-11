@@ -1903,6 +1903,9 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 		    {
 		        print '<textarea cols="30" rows="'.ROWS_2.'" class="flat" name="'.$fieldlist[$field].'">'.(! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:'').'</textarea>';
 		    }
+            else{
+                print '<input type="hidden" name="'.$fieldlist[$field].'" value="'.$transkey.'">';
+            }
 		    print '</td>';
 		}
 		elseif ($fieldlist[$field] == 'price' || preg_match('/^amount/i', $fieldlist[$field])) {
@@ -1965,7 +1968,13 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 		}
 		else
 		{
-			if ($fieldlist[$field]=='sortorder') $fieldlist[$field]='position';
+
+            $fieldValue = isset($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:'';
+
+			if ($fieldlist[$field]=='sortorder')
+            {
+                $fieldlist[$field]='position';
+            }
 
 			$classtd=''; $class='';
 			if ($fieldlist[$field]=='code') $classtd='width100';
@@ -1982,7 +1991,7 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 			    }
 			    if ($tabname == MAIN_DB_PREFIX.'c_payment_term') {
 			        $langs->load("bills");
-			        $transkey="PaymentCondition".strtoupper($obj->code);
+			        $transkey="PaymentConditionShort".strtoupper($obj->code);
 			    }
 			    if ($transkey && $langs->trans($transkey) != $transkey)
 			    {
@@ -1992,8 +2001,11 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 			}
 			if (! $transfound)
 			{
-                print '<input type="text" class="flat'.($class?' '.$class:'').'" value="'.dol_escape_htmltag(isset($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:'').'" name="'.$fieldlist[$field].'">';
+                print '<input type="text" class="flat'.($class?' '.$class:'').'" value="'.dol_escape_htmltag($fieldValue).'" name="'.$fieldlist[$field].'">';
 			}
+            else{
+                print '<input type="hidden" name="'.$fieldlist[$field].'" value="'.$transkey.'">';
+            }
 			print '</td>';
 		}
 	}

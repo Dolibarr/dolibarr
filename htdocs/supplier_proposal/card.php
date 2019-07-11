@@ -77,6 +77,9 @@ $NBLINES = 4;
 if (! empty($user->societe_id)) $socid = $user->societe_id;
 $result = restrictedArea($user, 'supplier_proposal', $id);
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('supplier_proposalcard','globalcard'));
+
 $object = new SupplierProposal($db);
 $extrafields = new ExtraFields($db);
 
@@ -91,9 +94,6 @@ if ($id > 0 || ! empty($ref)) {
 	if ($ret < 0)
 		dol_print_error('', $object->error);
 }
-
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('supplier_proposalcard','globalcard'));
 
 $permissionnote = $user->rights->supplier_proposal->creer; // Used by the include of actions_setnotes.inc.php
 $permissiondellink=$user->rights->supplier_proposal->creer;	// Used by the include of actions_dellink.inc.php
@@ -565,9 +565,9 @@ if (empty($reshook))
 			$error ++;
 		}
 
-		if ($prod_entry_mode == 'free' && empty($idprod) && $price_ht == '') 	// Unit price can be 0 but not ''. Also price can be negative for proposal.
+		if ($prod_entry_mode == 'free' && empty($idprod) && GETPOST('price_ht')==='' && GETPOST('price_ttc')==='' && $price_ht_devise === '') 	// Unit price can be 0 but not ''. Also price can be negative for proposal.
 		{
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("UnitPriceHT")), null, 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("UnitPrice")), null, 'errors');
 			$error ++;
 		}
 		if ($prod_entry_mode == 'free' && empty($idprod) && empty($product_desc)) {
@@ -585,7 +585,7 @@ if (empty($reshook))
 			// Ecrase $pu par celui du produit
 			// Ecrase $desc par celui du produit
 			// Ecrase $txtva par celui du produit
-			if ($prod_entry_mode != 'free' && empty($error))	// With combolist mode idprodfournprice is > 0 or -1. With autocomplete, idprodfournprice is > 0 or ''
+			if (($prod_entry_mode != 'free') && empty($error))	// With combolist mode idprodfournprice is > 0 or -1. With autocomplete, idprodfournprice is > 0 or ''
 			{
 				$productsupplier = new ProductFournisseur($db);
 
@@ -595,7 +595,7 @@ if (empty($reshook))
 				if (preg_match('/^idprod_([0-9]+)$/', GETPOST('idprodfournprice', 'alpha'), $reg))
 				{
 					$idprod=$reg[1];
-					$res=$productsupplier->fetch($idprod);
+					$res=$productsupplier->fetch($idprod);	// Load product from its ID
 					// Call to init some price properties of $productsupplier
 					// So if a supplier price already exists for another thirdparty (first one found), we use it as reference price
 					if (! empty($conf->global->SUPPLIER_TAKE_FIRST_PRICE_IF_NO_PRICE_FOR_CURRENT_SUPPLIER))
@@ -632,23 +632,21 @@ if (empty($reshook))
 
 					if (trim($product_desc) != trim($desc)) $desc = dol_concatdesc($desc, $product_desc, '', !empty($conf->global->MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION));
 
-					$pu_ht = $productsupplier->fourn_pu;
-
 					$type = $productsupplier->type;
 					$price_base_type = ($productsupplier->fourn_price_base_type?$productsupplier->fourn_price_base_type:'HT');
 
 					$ref_supplier = $productsupplier->ref_supplier;
 
-					$fk_unit = $productsupplier->fk_unit;
-
 					$tva_tx	= get_default_tva($object->thirdparty, $mysoc, $productsupplier->id, GETPOST('idprodfournprice', 'alpha'));
 					$tva_npr = get_default_npr($object->thirdparty, $mysoc, $productsupplier->id, GETPOST('idprodfournprice', 'alpha'));
-
 					if (empty($tva_tx)) $tva_npr=0;
 					$localtax1_tx= get_localtax($tva_tx, 1, $mysoc, $object->thirdparty, $tva_npr);
 					$localtax2_tx= get_localtax($tva_tx, 2, $mysoc, $object->thirdparty, $tva_npr);
 
-    $result=$object->addline(
+					$pu_ht = $productsupplier->fourn_pu;
+					if (empty($pu_ht)) $pu_ht = 0;	// If pu is '' or null, we force to have a numeric value
+
+					$result=$object->addline(
 						$desc,
 						$pu_ht,
 						$qty,
@@ -669,7 +667,7 @@ if (empty($reshook))
 						$label,
 						$array_options,
 						$ref_supplier,
-						$fk_unit,
+						$productsupplier->fk_unit,
 						'',
 						0,
 						$productsupplier->fourn_multicurrency_unitprice
@@ -729,6 +727,8 @@ if (empty($reshook))
 			if (! $error && $result > 0)
 			{
 					$db->commit();
+
+					$ret=$object->fetch($object->id);    // Reload to get new records
 
 					// Define output language
 					if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
@@ -798,32 +798,52 @@ if (empty($reshook))
 	// Mise a jour d'une ligne dans la demande de prix
 	elseif ($action == 'updateline' && $user->rights->supplier_proposal->creer && GETPOST('save') == $langs->trans("Save")) {
 
+		$vat_rate=(GETPOST('tva_tx')?GETPOST('tva_tx'):0);
+
 		// Define info_bits
 		$info_bits = 0;
-		if (preg_match('/\*/', GETPOST('tva_tx')))
+		if (preg_match('/\*/', $vat_rate))
 			$info_bits |= 0x01;
 
-			// Clean parameters
+		// Clean parameters
 		$description = dol_htmlcleanlastbr(GETPOST('product_desc', 'none'));
 
 		// Define vat_rate
-		$vat_rate = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
 		$vat_rate = str_replace('*', '', $vat_rate);
-		$localtax1_rate = get_localtax($vat_rate, 1, $object->thirdparty);
-		$localtax2_rate = get_localtax($vat_rate, 2, $object->thirdparty);
-		$pu_ht = GETPOST('price_ht') ? GETPOST('price_ht') : 0;
+		$localtax1_rate = get_localtax($vat_rate, 1, $mysoc, $object->thirdparty);
+		$localtax2_rate = get_localtax($vat_rate, 2, $mysoc, $object->thirdparty);
+
+		if (GETPOST('price_ht') != '')
+		{
+			$price_base_type = 'HT';
+			$ht = price2num(GETPOST('price_ht'));
+		}
+		else
+		{
+			$vatratecleaned = $vat_rate;
+			if (preg_match('/^(.*)\s*\((.*)\)$/', $vat_rate, $reg))      // If vat is "xx (yy)"
+			{
+				$vatratecleaned = trim($reg[1]);
+				$vatratecode = $reg[2];
+			}
+
+			$ttc = price2num(GETPOST('price_ttc'));
+			$ht = $ttc / (1 + ($vatratecleaned / 100));
+			$price_base_type = 'HT';
+		}
+
+		$pu_ht_devise = GETPOST('multicurrency_subprice');
 
 		// Add buying price
 		$fournprice = (GETPOST('fournprice') ? GETPOST('fournprice') : '');
 		$buyingprice = (GETPOST('buying_price') != '' ? GETPOST('buying_price') : '');    // If buying_price is '0', we muste keep this value
 
-		// Extrafields
+		// Extrafields Lines
 		$extrafieldsline = new ExtraFields($db);
 		$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
 		$array_options = $extrafieldsline->getOptionalsFromPost($object->table_element_line);
-		// Unset extrafield
+		// Unset extrafield POST Data
 		if (is_array($extralabelsline)) {
-			// Get extra fields
 			foreach ($extralabelsline as $key => $value) {
 				unset($_POST["options_" . $key]);
 			}
@@ -869,9 +889,33 @@ if (empty($reshook))
 
 		if (! $error) {
 			$db->begin();
+
 			$ref_supplier = GETPOST('fourn_ref', 'alpha');
 			$fk_unit = GETPOST('units');
-			$result = $object->updateline(GETPOST('lineid'), $pu_ht, GETPOST('qty'), GETPOST('remise_percent'), $vat_rate, $localtax1_rate, $localtax2_rate, $description, 'HT', $info_bits, $special_code, GETPOST('fk_parent_line'), 0, $fournprice, $buyingprice, $label, $type, $array_options, $ref_supplier, $fk_unit);
+
+			$result = $object->updateline(
+				GETPOST('lineid'),
+				$ht,
+				GETPOST('qty'),
+				GETPOST('remise_percent'),
+				$vat_rate,
+				$localtax1_rate,
+				$localtax2_rate,
+				$description,
+				$price_base_type,
+				$info_bits,
+				$special_code,
+				GETPOST('fk_parent_line'),
+				0,
+				$fournprice,
+				$buyingprice,
+				$label,
+				$type,
+				$array_options,
+				$ref_supplier,
+				$fk_unit,
+				$pu_ht_devise
+			);
 
 			if ($result >= 0) {
 				$db->commit();
@@ -1705,8 +1749,8 @@ if ($action == 'create')
 	print '<table id="tablelines" class="noborder noshadow" width="100%">';
 
 	// Add free products/services form
-	global $forceall, $senderissupplier, $dateSelector;
-	$forceall=1; $dateSelector=0;
+	global $forceall, $senderissupplier, $dateSelector, $inputalsopricewithtax;
+	$forceall=1; $dateSelector=0; $inputalsopricewithtax=1;
 	$senderissupplier=2;	// $senderissupplier=2 is same than 1 but disable test on minimum qty.
 	if (! empty($conf->global->SUPPLIER_PROPOSAL_WITH_PREDEFINED_PRICES_ONLY)) $senderissupplier=1;
 

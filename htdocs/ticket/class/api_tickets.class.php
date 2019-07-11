@@ -555,7 +555,7 @@ class Tickets extends DolibarrApi
             "total_localtax2",
             "total_ttc",
             "fk_incoterms",
-            "libelle_incoterms",
+            "label_incoterms",
             "location_incoterms",
             "name",
             "lastname",

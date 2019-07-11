@@ -166,7 +166,7 @@ RulesAmountOnInOutBookkeepingRecord=Beinhaltet Datensätze aus dem Hauptbuch mit
 RulesResultBookkeepingPredefined=Beinhaltet Datensätze aus dem Hauptbuch mit den Gruppen "Aufwand" oder "Ertrag"
 RulesResultBookkeepingPersonalized=Zeigt die Buchungen im Hauptbuch mit Konten <b>gruppiert nach Kontengruppen</b>
 SeePageForSetup=Siehe Menü <a href="%s"> %s </a> für die Einrichtung
-DepositsAreNotIncluded=- Down payment invoices are not included
+DepositsAreNotIncluded=- Anzahlungsrechnungen sind nicht enthalten 
 DepositsAreIncluded=- Inklusive Anzahlungsrechnungen
 LT1ReportByCustomers=Auswertung Steuer 2 pro Partner
 LT2ReportByCustomers=Auswertung Steuer 3 pro Partner

@@ -679,9 +679,8 @@ if (empty($reshook))
 	}
 
 	/*
-	 * Ordonnancement des lignes
-	*/
-
+	 * Set position of lines
+	 */
 	elseif ($action == 'up' && $user->rights->ficheinter->creer)
 	{
 		$object->line_up($lineid);

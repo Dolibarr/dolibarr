@@ -1096,8 +1096,6 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 if (! empty($conf->projet->enabled)) $formproject = new FormProjets($db);
 
-$objectlignestatic=new ContratLigne($db);
-
 // Load object modContract
 $module=(! empty($conf->global->CONTRACT_ADDON)?$conf->global->CONTRACT_ADDON:'mod_contract_serpis');
 if (substr($module, 0, 13) == 'mod_contract_' && substr($module, -3) == 'php')

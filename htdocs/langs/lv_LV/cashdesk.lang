@@ -68,3 +68,4 @@ Terminal=Terminal
 NumberOfTerminals=Termināļu skaits
 TerminalSelect=Atlasiet termināli, kuru vēlaties izmantot:
 POSTicket=POS biļete
+BasicPhoneLayout=Use basic layout for phones

@@ -217,7 +217,7 @@ ErrorBadSyntaxForParamKeyForContent=Sintaxi incorrecta per a la clau de contingu
 ErrorVariableKeyForContentMustBeSet=Error, s'ha d'establir la constant amb el nom %s (amb contingut de text per mostrar) o %s (amb url extern per mostrar).
 ErrorURLMustStartWithHttp=L'URL %s ha de començar amb http: // o https: //
 ErrorNewRefIsAlreadyUsed=Error, la nova referència ja s’està utilitzant
-ErrorDeletePaymentLinkedToAClosedInvoiceNotPossible=Error, delete payment linked to a closed invoice is not possible.
+ErrorDeletePaymentLinkedToAClosedInvoiceNotPossible=Error, l’eliminació del pagament vinculat a una factura tancada no és possible.
 # Warnings
 WarningPasswordSetWithNoAccount=S'ha indicat una contrasenya per aquest soci. En canvi, no s'ha creat cap compte d'usuari, de manera que aquesta contrasenya s'ha desat però no pot ser utilitzada per entrar a Dolibarr. Es pot utilitzar per un mòdul/interfície extern, però si no cal definir cap usuari i contrasenya per un soci, pots deshabilitar la opció "Gestiona l'entrada per tots els socis" des de la configuració del mòdul Socis. Si necessites gestionar una entrada sense contrasenya, pots mantenir aquest camp buit i permetre aquest avís. Nota: El correu electrònic es pot utilitzar per entrar si el soci està enllaçat a un usuarí
 WarningMandatorySetupNotComplete=Feu clic aquí per configurar els paràmetres obligatoris

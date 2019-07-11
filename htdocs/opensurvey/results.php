@@ -42,7 +42,7 @@ $object=new Opensurveysondage($db);
 $result=$object->fetch(0, $numsondage);
 if ($result <= 0) dol_print_error('', 'Failed to get survey id '.$numsondage);
 
-$nblignes=$object->fetch_lines();
+$nblines=$object->fetch_lines();
 
 
 /*
@@ -108,7 +108,7 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x"))		// bout
 $testmodifier = false;
 $testligneamodifier = false;
 $ligneamodifier = -1;
-for ($i=0; $i<$nblignes; $i++)
+for ($i=0; $i<$nblines; $i++)
 {
 	if (isset($_POST['modifierligne'.$i]))
 	{
@@ -271,7 +271,7 @@ if (isset($_POST["ajoutercolonne"]) && $object->format == "D")
 }
 
 // Delete line
-for ($i = 0; $i < $nblignes; $i++)
+for ($i = 0; $i < $nblines; $i++)
 {
 	if (GETPOST("effaceligne".$i) || GETPOST("effaceligne".$i."_x") || GETPOST("effaceligne".$i.".x"))	// effacelignei for chrome, effacelignei_x for firefox
 	{
@@ -916,7 +916,7 @@ while ($compteur < $num)
 	}
 
 	//demande de confirmation pour modification de ligne
-	for ($i=0; $i<$nblignes; $i++)
+	for ($i=0; $i<$nblines; $i++)
 	{
 		if (isset($_POST["modifierligne".$i]))
 		{

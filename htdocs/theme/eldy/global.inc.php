@@ -162,6 +162,7 @@ div.buttonpayment input {
     border-bottom: unset;
     font-weight: bold;
     text-transform: uppercase;
+    cursor: pointer;
 }
 input.buttonpaymentcb {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/common/credit_card.png', 1) ?>);
@@ -631,20 +632,20 @@ select.flat.selectlimit {
 .amountpaymentcomplete {
 	color: #008800;
 	font-weight: bold;
-	font-size: 1.4em;
+	font-size: 1.2em;
 }
 .amountremaintopay {
 	color: #880000;
 	font-weight: bold;
-	font-size: 1.4em;
+	font-size: 1.2em;
 }
 .amountremaintopayback {
 	font-weight: bold;
-	font-size: 1.4em;
+	font-size: 1.2em;
 }
 .amountpaymentneutral {
 	font-weight: bold;
-	font-size: 1.4em;
+	font-size: 1.2em;
 }
 .savingdocmask {
 	margin-top: 6px;
@@ -1352,7 +1353,7 @@ img.photorefnoborder {
 }
 .trextrafieldseparator td {
     /* border-bottom: 2px solid rgb(<?php echo $colorbackhmenu1 ?>) !important; */
-    border-bottom: 2px solid rgb(<?php echo $colortopbordertitle1 ?>) !important;
+    border-bottom: 2px dashed rgb(<?php echo $colortopbordertitle1 ?>) !important;
 }
 
 .tdhrthin {
@@ -5251,6 +5252,9 @@ div.tabsElem a.tab {
 /* Ticket module                                                                  */
 /* ============================================================================== */
 
+.publicnewticketform {
+	margin-top: 25px !important;
+}
 #cd-timeline {
   position: relative;
   padding: 2em 0;

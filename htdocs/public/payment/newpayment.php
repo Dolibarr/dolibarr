@@ -1715,7 +1715,8 @@ if ($action != 'dopayment')
 				}
 				if ($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY == 'paypalonly')
 				{
-					//print '<br><span class="buttonpaymentsmall">'.$langs->trans("PaypalAccount").'"></span>';
+					//print '<br>';
+					//print '<span class="buttonpaymentsmall">'.$langs->trans("PayPalBalance").'"></span>';
 				}
 				print '</div>';
 			}

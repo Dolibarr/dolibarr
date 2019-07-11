@@ -304,7 +304,7 @@ print '<input type="hidden" name="mode" value="'.$mode.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 
-$morehtmlright.= dolGetButtonTitle($langs->trans("HierarchicView"), '', 'fa fa-sitemap', DOL_URL_ROOT.'/user/hierarchy.php'.(($search_statut != '' && $search_statut >= 0) ?'?search_statut='.$search_statut:''));
+$morehtmlright.= dolGetButtonTitle($langs->trans("HierarchicView"), '', 'fa fa-sitemap paddingleft', DOL_URL_ROOT.'/user/hierarchy.php'.(($search_statut != '' && $search_statut >= 0) ?'?search_statut='.$search_statut:''));
 
 
 print_barre_liste($text, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, "", $num, $nbtotalofrecords, 'title_generic', 0, $morehtmlright.' '.$newcardbutton, '', $limit);
