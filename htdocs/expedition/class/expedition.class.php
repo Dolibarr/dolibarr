@@ -1073,12 +1073,14 @@ class Expedition extends CommonObject
 		}
 	}
 
-	/**
-	 * 	Delete shipment.
-	 * 	Warning, do not delete a shipment if a delivery is linked to (with table llx_element_element)
-	 *
-	 * 	@return	int		>0 if OK, 0 if deletion done but failed to delete files, <0 if KO
-	 */
+    /**
+     * 	Delete shipment.
+     * 	Warning, do not delete a shipment if a delivery is linked to (with table llx_element_element)
+     *
+     * @param bool $also_update_stock  true if the stock should be increased back (false by default)
+     * @return int >0 if OK, 0 if deletion done but failed to delete files, <0 if KO
+     * @throws Exception
+     */
 	function delete($also_update_stock = false)
 	{
 		global $conf, $langs, $user;
