@@ -18,6 +18,9 @@ if (! empty($extrafieldsobjectkey))	// $extrafieldsobject is the $object->table_
 		{
 			if (! empty($arrayfields["ef.".$key]['checked']))
 			{
+				// Load language if required
+				if (! empty($extrafields->attributes[$extrafieldsobjectkey]['langfile'][$key])) $langs->load($extrafields->attributes[$extrafieldsobjectkey]['langfile'][$key]);
+
 				$align=$extrafields->getAlignFlag($key);
 				$sortonfield = "ef.".$key;
 				if (! empty($extrafields->attributes[$extrafieldsobjectkey]['computed'][$key])) $sortonfield='';
