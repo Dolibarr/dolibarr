@@ -1891,9 +1891,10 @@ class Form
 	 *										            'warehouseclosed' = select products from closed warehouses,
 	 *										            'warehouseinternal' = select products from warehouses for internal correct/transfer only
 	 *  @param 		array 		$selected_combinations 	Selected combinations. Format: array([attrid] => attrval, [...])
+	 *  @param  	int 		$autoselect         	Activate autoselect for Ajax Call
 	 *  @return		void
 	 */
-    public function select_produits($selected = '', $htmlname = 'productid', $filtertype = '', $limit = 20, $price_level = 0, $status = 1, $finished = 2, $selected_input_value = '', $hidelabel = 0, $ajaxoptions = array(), $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $hidepriceinlabel = 0, $warehouseStatus = '', $selected_combinations = array())
+    public function select_produits($selected = '', $htmlname = 'productid', $filtertype = '', $limit = 20, $price_level = 0, $status = 1, $finished = 2, $selected_input_value = '', $hidelabel = 0, $ajaxoptions = array(), $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $hidepriceinlabel = 0, $warehouseStatus = '', $selected_combinations = array(), $autoselect = 0)
 	{
         // phpcs:enable
 		global $langs,$conf;
@@ -1930,7 +1931,7 @@ class Form
 			if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES) && !empty($socid)) {
 				$urloption.='&socid='.$socid;
 			}
-			print ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/product/ajax/products.php', $urloption, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT, 0, $ajaxoptions);
+			print ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/product/ajax/products.php', $urloption, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT, $autoselect, $ajaxoptions);
 
 			if (!empty($conf->variants->enabled)) {
 				?>
@@ -2609,9 +2610,10 @@ class Form
 	 *  @param	int		$hidelabel		Hide label (0=no, 1=yes)
 	 *  @param  int     $alsoproductwithnosupplierprice    1=Add also product without supplier prices
 	 *  @param	string	$morecss		More CSS
+	 *  @param 	int 	$autoselect		Activate autoselect for Ajax Call
 	 *	@return	void
 	 */
-    public function select_produits_fournisseurs($socid, $selected = '', $htmlname = 'productid', $filtertype = '', $filtre = '', $ajaxoptions = array(), $hidelabel = 0, $alsoproductwithnosupplierprice = 0, $morecss = '')
+    public function select_produits_fournisseurs($socid, $selected = '', $htmlname = 'productid', $filtertype = '', $filtre = '', $ajaxoptions = array(), $hidelabel = 0, $alsoproductwithnosupplierprice = 0, $morecss = '', $autoselect = 0)
 	{
         // phpcs:enable
 		global $langs,$conf;
@@ -2631,7 +2633,7 @@ class Form
 
 			// mode=2 means suppliers products
 			$urloption=($socid > 0?'socid='.$socid.'&':'').'htmlname='.$htmlname.'&outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=2&status='.$status.'&finished='.$finished.'&alsoproductwithnosupplierprice='.$alsoproductwithnosupplierprice;
-			print ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/product/ajax/products.php', $urloption, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT, 0, $ajaxoptions);
+			print ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/product/ajax/products.php', $urloption, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT, $autoselect, $ajaxoptions);
 			print ($hidelabel?'':$langs->trans("RefOrLabel").' : ').'<input type="text" size="20" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'">';
 		}
 		else
