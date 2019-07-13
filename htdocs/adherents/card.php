@@ -734,7 +734,7 @@ if (empty($reshook))
 
 					if (empty($labeltouse) || (int) $labeltouse === -1) {
 						//fallback on the old configuration.
-						setEventMessages('WarningMandatorySetupNotComplete', [], 'errors');
+						setEventMessages('WarningMandatorySetupNotComplete', null, 'errors');
 						$error++;
 					}
 					else {
