@@ -1424,7 +1424,7 @@ else
             $list = array();
             $models = ModelePDFFactures::liste_modeles($db);
             foreach ($models as $k => $model) {
-                $list[] = $k . ':' . $model;
+                $list[] = str_replace(':', '|', $k) . ':' . $model;
             }
             $select = 'select;'.implode(',', $list);
             print $form->editfieldval($langs->trans("Model"), 'modelpdf', $object->modelpdf, $object, $user->rights->facture->creer, $select);
