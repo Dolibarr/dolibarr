@@ -2615,7 +2615,7 @@ abstract class CommonObject
 		$MODULE = "";
 		if ($this->element == 'propal')
 			$MODULE = "MODULE_DISALLOW_UPDATE_PRICE_PROPOSAL";
-		elseif ($this->element == 'commande')
+		elseif ($this->element == 'commande' || $this->element == 'order')
 			$MODULE = "MODULE_DISALLOW_UPDATE_PRICE_ORDER";
 		elseif ($this->element == 'facture')
 			$MODULE = "MODULE_DISALLOW_UPDATE_PRICE_INVOICE";
