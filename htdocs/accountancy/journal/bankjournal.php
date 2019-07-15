@@ -964,7 +964,7 @@ if (empty($action) || $action == 'view') {
 
 	$varlink = 'id_journal=' . $id_journal;
 
-	journalHead($nom, $nomlink, $period, $periodlink, $description, $builddate, $exportlink, array('action' => ''), '', $varlink);
+	journalHead($nom, '', $period, $periodlink, $description, $builddate, $exportlink, array('action' => ''), '', $varlink);
 
 
 	// Test that setup is complete
