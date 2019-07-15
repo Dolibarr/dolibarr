@@ -144,9 +144,11 @@ class Escpos {
 	
 	/**
 	 * @var PrintConnector
+	 * @CHANGE
 	 */
-	private $connector;
-
+	protected $connector;
+	// private $connector;
+	
 	/**
 	 * @var AbstractCapabilityProfile
 	 */
