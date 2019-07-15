@@ -162,7 +162,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha'))
 	{
 		if ($fieldnamekey == 'libelle' || ($fieldnamekey == 'label'))  $fieldnamekey='Label';
 		if ($fieldnamekey == 'code') $fieldnamekey = 'Code';
-		if ($fieldnamekey == 'nature') $fieldnamekey = 'Nature';
+		if ($fieldnamekey == 'nature') $fieldnamekey = 'NatureOfJournal';
 	}
 	// Other checks
 	if (isset($_POST["code"]))
@@ -437,7 +437,7 @@ if ($id)
 				$valuetoshow=$langs->trans("Label");
 			}
             if ($fieldlist[$field]=='nature') {
-                $valuetoshow=$langs->trans("Nature");
+                $valuetoshow=$langs->trans("NatureOfJournal");
             }
 
 			if ($valuetoshow != '') {
@@ -516,7 +516,7 @@ if ($id)
 		}
 
 		// Title line with search boxes
-		print '<tr class="liste_titre_filter liste_titre_add">';
+		/*print '<tr class="liste_titre_filter liste_titre_add">';
 		print '<td class="liste_titre"></td>';
 		print '<td class="liste_titre"></td>';
 		print '<td class="liste_titre"></td>';
@@ -524,16 +524,14 @@ if ($id)
 		print '<td class="liste_titre"></td>';
 		print '<td class="liste_titre"></td>';
 		print '<td class="liste_titre center">';
-		if ($filterfound)
-		{
-			$searchpicto=$form->showFilterAndCheckAddButtons(0);
-			print $searchpicto;
-		}
+		$searchpicto=$form->showFilterButtons();
+		print $searchpicto;
 		print '</td>';
 		print '</tr>';
-
+		*/
+		
 		// Title of lines
-		print '<tr class="liste_titre">';
+		print '<tr class="liste_titre liste_titre_add">';
 		foreach ($fieldlist as $field => $value)
 		{
 			// Determine le nom du champ par rapport aux noms possibles
@@ -558,7 +556,7 @@ if ($id)
                 $valuetoshow=$langs->trans("Label");
             }
 			if ($fieldlist[$field]=='nature') {
-                $valuetoshow=$langs->trans("Nature");
+                $valuetoshow=$langs->trans("NatureOfJournal");
             }
 
 			// Affiche nom du champ
