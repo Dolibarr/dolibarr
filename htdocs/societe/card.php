@@ -949,12 +949,13 @@ else
         if(empty($duplicate_code_error)) {
 	        $object->code_client		= GETPOST('customer_code', 'alpha');
 	        $object->fournisseur		= GETPOST('fournisseur')?GETPOST('fournisseur'):$object->fournisseur;
+            $object->code_fournisseur	= GETPOST('supplier_code', 'alpha');
         }
 		else {
 			setEventMessages($langs->trans('NewCustomerSupplierCodeProposed'),'', 'warnings');
 		}
 
-        $object->code_fournisseur	= GETPOST('supplier_code', 'alpha');
+
         $object->address			= GETPOST('address', 'alpha');
         $object->zip				= GETPOST('zipcode', 'alpha');
         $object->town				= GETPOST('town', 'alpha');
