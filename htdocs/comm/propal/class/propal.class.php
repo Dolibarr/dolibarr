@@ -1316,9 +1316,9 @@ class Propal extends CommonObject
 			// Hook of thirdparty module
 			if (is_object($hookmanager))
 			{
-				$parameters=array('objFrom'=>$this,'clonedObj'=>$clonedObj);
+				$parameters=array('objFrom'=>$this,'clonedObj'=>$object);
 				$action='';
-				$reshook=$hookmanager->executeHooks('createFrom',$parameters,$clonedObj,$action);    // Note that $action and $object may have been modified by some hooks
+				$reshook=$hookmanager->executeHooks('createFrom',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) $error++;
 			}
 		}
