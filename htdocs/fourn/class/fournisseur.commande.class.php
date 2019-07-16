@@ -1485,7 +1485,7 @@ class CommandeFournisseur extends CommonOrder
 			$desc=trim($desc);
 
 			// Check parameters
-			if ($qty < 1 && ! $fk_product)
+			if ($qty < 0 && ! $fk_product)
 			{
 				$this->error=$langs->trans("ErrorFieldRequired",$langs->trans("Product"));
 				return -1;
