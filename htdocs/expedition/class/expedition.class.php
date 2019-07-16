@@ -1073,13 +1073,15 @@ class Expedition extends CommonObject
 		}
 	}
 
-	/**
-	 * 	Delete shipment.
-	 * 	Warning, do not delete a shipment if a delivery is linked to (with table llx_element_element)
-	 *
-	 * 	@return	int		>0 if OK, 0 if deletion done but failed to delete files, <0 if KO
-	 */
-	function delete()
+    /**
+     * 	Delete shipment.
+     * 	Warning, do not delete a shipment if a delivery is linked to (with table llx_element_element)
+     *
+     * @param bool $also_update_stock  true if the stock should be increased back (false by default)
+     * @return int >0 if OK, 0 if deletion done but failed to delete files, <0 if KO
+     * @throws Exception
+     */
+	function delete($also_update_stock = false)
 	{
 		global $conf, $langs, $user;
 
@@ -1111,7 +1113,9 @@ class Expedition extends CommonObject
 		}
 
 		// Stock control
-		if (! $error && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SHIPMENT && $this->statut > self::STATUS_DRAFT)
+		if (! $error && $conf->stock->enabled &&
+			(($conf->global->STOCK_CALCULATE_ON_SHIPMENT && $this->statut > self::STATUS_DRAFT) ||
+			 ($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE && $this->statut == self::STATUS_CLOSED && $also_update_stock)))
 		{
 			require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
 
