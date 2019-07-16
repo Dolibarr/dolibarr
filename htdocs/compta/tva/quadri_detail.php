@@ -118,7 +118,7 @@ foreach ($listofparams as $param)
 }
 
 $title = $langs->trans("VATReport") . " " . dol_print_date($date_start) . " -> " . dol_print_date($date_end);
-llxHeader('',$title,'','',0,0,'','',$morequerystring);
+llxHeader('', $title, '', '', 0, 0, '', '', $morequerystring);
 
 
 //print load_fiche_titre($langs->trans("VAT"),"");
