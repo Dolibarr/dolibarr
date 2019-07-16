@@ -127,7 +127,7 @@ if (!$user->rights->societe->client->voir && !$socid) {
     $sql .= ", " . MAIN_DB_PREFIX . "societe_commerciaux as sc";
 }
 
-$sql .= ' WHERE t.entity IN (' . getEntity('ticket', 1) . ')';
+$sql .= ' WHERE t.entity IN (' . getEntity('ticket') . ')';
 $sql .= " AND t.fk_statut IS NOT NULL";
 $sql .= " AND date_format(datec,'%Y') = '" . $endyear . "'";
 if (!$user->rights->societe->client->voir && !$socid) {
@@ -271,7 +271,7 @@ if (!$user->rights->societe->client->voir && !$socid) {
     $sql .= ", " . MAIN_DB_PREFIX . "societe_commerciaux as sc";
 }
 
-$sql .= ' WHERE t.entity IN (' . getEntity('ticket', 1) . ')';
+$sql .= ' WHERE t.entity IN (' . getEntity('ticket') . ')';
 $sql .= " AND t.fk_statut=0";
 if (!$user->rights->societe->client->voir && !$socid) {
     $sql .= " AND t.fk_soc = sc.fk_soc AND sc.fk_user = " . $user->id;
