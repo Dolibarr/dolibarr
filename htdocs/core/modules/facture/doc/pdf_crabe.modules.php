@@ -318,7 +318,7 @@ class pdf_crabe extends ModelePDFFactures
 				global $action;
 				$reshook=$hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 
-				// Set nblignes with the new facture lines content after hook
+				// Set nblines with the new facture lines content after hook
 				$nblines = count($object->lines);
 				$nbpayments = count($object->getListOfPayments());
 

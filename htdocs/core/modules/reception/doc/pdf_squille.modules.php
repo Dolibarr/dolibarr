@@ -216,7 +216,7 @@ class pdf_squille extends ModelePdfReception
 				global $action;
 				$reshook=$hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 
-				// Set nblignes with the new facture lines content after hook
+				// Set nblines with the new facture lines content after hook
 				$nblines = count($object->lines);
 
 				$pdf=pdf_getInstance($this->format);

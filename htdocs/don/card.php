@@ -154,7 +154,7 @@ if ($action == 'add')
 
 	if (! $error)
 	{
-    $object->socid = GETPOST("socid", 'int');
+        $object->socid = GETPOST("socid", 'int');
 		$object->firstname = GETPOST("firstname", 'alpha');
 		$object->lastname = GETPOST("lastname", 'alpha');
 		$object->societe = GETPOST("societe", 'alpha');
@@ -164,7 +164,7 @@ if ($action == 'add')
 		$object->town = GETPOST("town", 'alpha');
 		$object->country_id = GETPOST('country_id', 'int');
 		$object->email = GETPOST('email', 'alpha');
-    $object->date = $donation_date;
+        $object->date = $donation_date;
 		$object->note_private = GETPOST("note_private", 'none');
 		$object->note_public = GETPOST("note_public", 'none');
 		$object->public = GETPOST("public", 'alpha');

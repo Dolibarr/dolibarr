@@ -573,7 +573,14 @@ if (! $error && $action == 'writebookkeeping') {
 					{
 						$reflabel = '';
 						if (! empty($val['lib'])) $reflabel .= dol_string_nohtmltag($val['lib']) . ($val['soclib']?" - ":"");
-						$reflabel.= dol_string_nohtmltag($val['soclib']);
+						if ($tabtype[$key] == 'banktransfert')
+						{
+							$reflabel.= dol_string_nohtmltag($langs->transnoentitiesnoconv('TransitionalAccount').' '.$account_transfer);
+						}
+						else
+						{
+							$reflabel.= dol_string_nohtmltag($val['soclib']);
+						}
 
 						$bookkeeping = new BookKeeping($db);
 						$bookkeeping->doc_date = $val["date"];
@@ -702,7 +709,7 @@ if (! $error && $action == 'writebookkeeping') {
 					}
 				}
 			}
-			else {	// If thirdparty unkown, output the waiting account
+			else {	// If thirdparty unknown, output the waiting account
 				foreach ($tabbq[$key] as $k => $mt) {
 					if ($mt)
 					{
@@ -831,7 +838,6 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 	print '"' . $langs->transnoentitiesnoconv("Note")  . '"' . $sep;
 	print "\n";
 
-
 	foreach ($tabpay as $key => $val)
 	{
 		$date = dol_print_date($db->jdate($val["date"]), 'day');
@@ -869,7 +875,14 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 				{
 					$reflabel = '';
 					if (! empty($val['lib'])) $reflabel .= dol_string_nohtmltag($val['lib']) . ($val['soclib']?" - ":"");
-					$reflabel.= dol_string_nohtmltag($val['soclib']);
+					if ($tabtype[$key] == 'banktransfert')
+					{
+						$reflabel.= dol_string_nohtmltag($langs->transnoentitiesnoconv('TransitionalAccount').' '.$account_transfer);
+					}
+					else
+					{
+						$reflabel.= dol_string_nohtmltag($val['soclib']);
+					}
 
 					print '"' . $key . '"' . $sep;
 					print '"' . $date . '"' . $sep;
@@ -951,7 +964,7 @@ if (empty($action) || $action == 'view') {
 
 	$varlink = 'id_journal=' . $id_journal;
 
-	journalHead($nom, $nomlink, $period, $periodlink, $description, $builddate, $exportlink, array('action' => ''), '', $varlink);
+	journalHead($nom, '', $period, $periodlink, $description, $builddate, $exportlink, array('action' => ''), '', $varlink);
 
 
 	// Test that setup is complete
@@ -1087,7 +1100,14 @@ if (empty($action) || $action == 'view') {
 				{
 					$reflabel = '';
 					if (! empty($val['lib'])) $reflabel .= $val['lib'] . ($val['soclib']?" - ":"");
-					$reflabel.= $val['soclib'];
+					if ($tabtype[$key] == 'banktransfert')
+					{
+						$reflabel.= $langs->trans('TransitionalAccount').' '.$account_transfer;
+					}
+					else
+					{
+						$reflabel.= $val['soclib'];
+					}
 
 					print '<!-- Thirdparty bank.rowid='.$key.' -->';
 					print '<tr class="oddeven">';
@@ -1115,7 +1135,7 @@ if (empty($action) || $action == 'view') {
 							}
 							else
 							{
-								print '<span class="warning">'.$langs->trans('UnknownAccountForThirdparty', length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE)).'</span>';	// We will a waiting account
+								print '<span class="warning">'.$langs->trans('UnknownAccountForThirdparty', length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE)).'</span>';	// We will use a waiting account
 							}
 						}
 						else

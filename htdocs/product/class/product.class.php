@@ -272,13 +272,26 @@ class Product extends CommonObject
     public $accountancy_code_buy;
 
     /**
-     * Main barcode
-     * barcode value
+     * Main Barcode value
      *
      * @var string
      */
     public $barcode;
 
+    /**
+     * Main Barcode type ID
+     *
+     * @var int
+     */
+    public $barcode_type;
+    
+    /**
+     * Main Barcode type code
+     *
+     * @var string
+     */
+    public $barcode_type_code;
+    
     /**
      * Additional barcodes (Some products have different barcodes according to the country of origin of manufacture)
      *
@@ -294,7 +307,7 @@ class Product extends CommonObject
 
     public $multilangs=array();
 
-    //! Taille de l'image
+    //! Size of image
     public $imgWidth;
     public $imgHeight;
 
@@ -348,16 +361,7 @@ class Product extends CommonObject
 
 
     public $fields = array(
-        'rowid' => array(
-            'type'=>'integer',
-            'label'=>'TechnicalID',
-            'enabled'=>1,
-            'visible'=>-2,
-            'notnull'=>1,
-            'index'=>1,
-            'position'=>1,
-            'comment'=>'Id',
-        ),
+        'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'index'=>1, 'position'=>1, 'comment'=>'Id'),
         'ref'           =>array('type'=>'varchar(128)', 'label'=>'Ref',              'enabled'=>1, 'visible'=>1,  'notnull'=>1,  'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Reference of object'),
         'entity'        =>array('type'=>'integer',      'label'=>'Entity',           'enabled'=>1, 'visible'=>0,  'default'=>1, 'notnull'=>1,  'index'=>1, 'position'=>20),
         'note_public'   =>array('type'=>'html',            'label'=>'NotePublic',         'enabled'=>1, 'visible'=>0,  'position'=>61),
@@ -3716,7 +3720,7 @@ class Product extends CommonObject
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Fonction recursive uniquement utilisee par get_arbo_each_prod, recompose l'arborescence des sousproduits
-     *     Define value of this->res
+     *  Define value of this->res
      *
      * @param  array  $prod       Products array
      * @param  string $compl_path Directory path of parents to add before
@@ -3730,7 +3734,7 @@ class Product extends CommonObject
         // phpcs:enable
         global $conf,$langs;
 
-        $product = new Product($this->db);
+        $tmpproduct = null;
         //var_dump($prod);
         foreach($prod as $id_product => $desc_pere)    // $id_product is 0 (first call starting with root top) or an id of a sub_product
         {
@@ -3746,23 +3750,26 @@ class Product extends CommonObject
                 }
 
                 //print "XXX We add id=".$id." - label=".$label." - nb=".$nb." - multiply=".$multiply." fullpath=".$compl_path.$label."\n";
-                $this->fetch($id);        // Load product
-                $this->load_stock('nobatch,novirtual');    // Load stock to get true this->stock_reel
+                if (is_null($tmpproduct)) $tmpproduct = new Product($this->db);		// So we initialize tmpproduct only once for all loop.
+                $tmpproduct->fetch($id);        				 // Load product to get ->ref
+                $tmpproduct->load_stock('nobatch,novirtual');    // Load stock to get true ->stock_reel
+                //$this->fetch($id);        				   // Load product to get ->ref
+                //$this->load_stock('nobatch,novirtual');    // Load stock to get true ->stock_reel
                 $this->res[]= array(
-                 'id'=>$id,                    // Id product
-                 'id_parent'=>$id_parent,
-                 'ref'=>$this->ref,            // Ref product
-                 'nb'=>$nb,                    // Nb of units that compose parent product
-                 'nb_total'=>$nb*$multiply,    // Nb of units for all nb of product
-                 'stock'=>$this->stock_reel,    // Stock
-                 'stock_alert'=>$this->seuil_stock_alerte,    // Stock alert
-                 'label'=>$label,
-                 'fullpath'=>$compl_path.$label,            // Label
-                 'type'=>$type,                // Nb of units that compose parent product
-                 'desiredstock'=>$this->desiredstock,
-                 'level'=>$level,
-                 'incdec'=>$incdec,
-                 'entity'=>$this->entity
+	                'id'=>$id,                    // Id product
+	                'id_parent'=>$id_parent,
+                	'ref'=>$tmpproduct->ref,            // Ref product
+	                'nb'=>$nb,                    // Nb of units that compose parent product
+	                'nb_total'=>$nb*$multiply,    // Nb of units for all nb of product
+                	'stock'=>$tmpproduct->stock_reel,    // Stock
+                	'stock_alert'=>$tmpproduct->seuil_stock_alerte,    // Stock alert
+	                'label'=>$label,
+	                'fullpath'=>$compl_path.$label,            // Label
+	                'type'=>$type,                // Nb of units that compose parent product
+                	'desiredstock'=>$tmpproduct->desiredstock,
+	                'level'=>$level,
+	                'incdec'=>$incdec,
+                	'entity'=>$tmpproduct->entity
                 );
 
                 // Recursive call if there is childs to child
