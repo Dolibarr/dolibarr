@@ -5,7 +5,7 @@
  * Copyright (C) 2004		Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012	Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2014		Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2014		Alexandre Spangaro	 <aspangaro@open-dsi.fr>
+ * Copyright (C) 2014-2019  Alexandre Spangaro	 <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,8 +68,7 @@ class modSalaries extends DolibarrModules
 		$this->dirs = array("/salaries/temp");
 
 		// Config pages
-		//$this->config_page_url = array('salaries.php');
-		$this->config_page_url = array();
+		$this->config_page_url = array('salaries.php');
 
 		// Dependencies
 		$this->hidden = false;			// A condition to hide module
