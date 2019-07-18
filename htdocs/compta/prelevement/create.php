@@ -51,43 +51,54 @@ $page = GETPOST("page",'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 
+$hookmanager->initHooks(array('directdebitcreatecard','globalcard'));
+
+
 /*
  * Actions
  */
 
-// Change customer bank information to withdraw
-if ($action == 'modify')
+$parameters = array('mode' => $mode, 'format' => $format, 'limit' => $limit, 'page' => $page, 'offset' => $offset);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+
+
+if (empty($reshook))
 {
-	for ($i = 1 ; $i < 9 ; $i++)
-	{
-		dolibarr_set_const($db, GETPOST("nom$i"), GETPOST("value$i"),'chaine',0,'',$conf->entity);
-	}
-}
-if ($action == 'create')
-{
-	// $conf->global->PRELEVEMENT_CODE_BANQUE and $conf->global->PRELEVEMENT_CODE_GUICHET should be empty
-	$bprev = new BonPrelevement($db);
+    // Change customer bank information to withdraw
+    if ($action == 'modify')
+    {
+        for ($i = 1 ; $i < 9 ; $i++)
+        {
+            dolibarr_set_const($db, GETPOST("nom$i"), GETPOST("value$i"),'chaine',0,'',$conf->entity);
+        }
+    }
+    if ($action == 'create')
+    {
+        // $conf->global->PRELEVEMENT_CODE_BANQUE and $conf->global->PRELEVEMENT_CODE_GUICHET should be empty
+        $bprev = new BonPrelevement($db);
         $executiondate = dol_mktime(0, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
 
         $result = $bprev->create($conf->global->PRELEVEMENT_CODE_BANQUE, $conf->global->PRELEVEMENT_CODE_GUICHET, $mode, $format,$executiondate);
-	if ($result < 0)
-	{
-		setEventMessages($bprev->error, $bprev->errors, 'errors');
-	}
-	elseif ($result == 0)
-	{
-		$mesg=$langs->trans("NoInvoiceCouldBeWithdrawed", $format);
-		setEventMessages($mesg, null, 'errors');
-		$mesg.='<br>'."\n";
-		foreach($bprev->invoice_in_error as $key => $val)
-		{
-			$mesg.='<span class="warning">'.$val."</span><br>\n";
-		}
-	}
-	else
-	{
-		setEventMessages($langs->trans("DirectDebitOrderCreated", $bprev->getNomUrl(1)), null);
-	}
+        if ($result < 0)
+        {
+            setEventMessages($bprev->error, $bprev->errors, 'errors');
+        }
+        elseif ($result == 0)
+        {
+            $mesg=$langs->trans("NoInvoiceCouldBeWithdrawed", $format);
+            setEventMessages($mesg, null, 'errors');
+            $mesg.='<br>'."\n";
+            foreach($bprev->invoice_in_error as $key => $val)
+            {
+                $mesg.='<span class="warning">'.$val."</span><br>\n";
+            }
+        }
+        else
+        {
+            setEventMessages($langs->trans("DirectDebitOrderCreated", $bprev->getNomUrl(1)), null);
+        }
+    }
 }
 
 
