@@ -436,7 +436,7 @@ print "</tr>\n";
 // free text
 $freetexttitle = $langs->trans("FreeLegalTextOnDeliveryReceipts");
 $freetextvar = "DELIVERY_FREE_TEXT";
-require_once(DOL_DOCUMENT_ROOT.'/core/tpl/admin_freetext.tpl.php');
+require_once DOL_DOCUMENT_ROOT.'/core/tpl/admin_freetext.tpl.php';
 
 print '</table>';
 

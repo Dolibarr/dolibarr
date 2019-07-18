@@ -473,7 +473,7 @@ print "</tr>\n";
 // free text
 $freetexttitle = $langs->trans("FreeLegalTextOnExpenseReports");
 $freetextvar = "EXPENSEREPORT_FREE_TEXT";
-require_once(DOL_DOCUMENT_ROOT.'/core/tpl/admin_freetext.tpl.php');
+require_once DOL_DOCUMENT_ROOT.'/core/tpl/admin_freetext.tpl.php';
 
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';

@@ -478,7 +478,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 	// free text
 	$freetexttitle = $langs->trans("FreeLegalTextOnBOMs");
 	$freetextvar = "BOM_FREE_TEXT";
-	require_once(DOL_DOCUMENT_ROOT.'/core/tpl/admin_freetext.tpl.php');
+	require_once DOL_DOCUMENT_ROOT.'/core/tpl/admin_freetext.tpl.php';
 
     //Use draft Watermark
     print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";

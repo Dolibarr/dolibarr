@@ -468,7 +468,7 @@ print "</tr>\n";
 $freetexttitle = $langs->trans("FreeLegalTextOnContracts");
 $freetextvar = "CONTRACT_FREE_TEXT";
 $freetextsubstitutionexclude = array('objectamount');
-require_once(DOL_DOCUMENT_ROOT.'/core/tpl/admin_freetext.tpl.php');
+require_once DOL_DOCUMENT_ROOT.'/core/tpl/admin_freetext.tpl.php';
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';

@@ -455,7 +455,7 @@ print "</tr>\n";
 // free text
 $freetexttitle = $langs->trans("FreeLegalTextOnInvoices");
 $freetextvar = "SUPPLIER_INVOICE_FREE_TEXT";
-require_once(DOL_DOCUMENT_ROOT.'/core/tpl/admin_freetext.tpl.php');
+require_once DOL_DOCUMENT_ROOT.'/core/tpl/admin_freetext.tpl.php';
 
 /*
  * Notifications

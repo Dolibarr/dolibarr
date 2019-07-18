@@ -546,7 +546,7 @@ print '</form>';
 // free text
 $freetexttitle = $langs->trans("FreeLegalTextOnOrders");
 $freetextvar = "SUPPLIER_ORDER_FREE_TEXT";
-require_once(DOL_DOCUMENT_ROOT.'/core/tpl/admin_freetext.tpl.php');
+require_once DOL_DOCUMENT_ROOT.'/core/tpl/admin_freetext.tpl.php';
 
 /*
  * Notifications
