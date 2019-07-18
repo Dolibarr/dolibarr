@@ -144,6 +144,22 @@ if (! empty($conf->barcode->enabled)) {
 	$fieldstosearchall['p.barcode']='Gencod';
     $fieldstosearchall['pfp.barcode']='GencodBuyPrice';
 }
+//global search on extrafields
+if(!empty($conf->global->PRODUIT_GLOBAL_SEARCH_ON_EXTRAFIELD) && !empty($extralabels)) {
+    foreach($extralabels as $codeExtra => $labelExtra) {
+        $TExtraTypeNotHandled=array(
+            'boolean',
+            'select',
+            'sellist',
+            'radio',
+            'checkbox',
+            'chkbxlst',
+            'link',
+            'separate',
+        );
+        if(!in_array($extrafields->attribute_type[$codeExtra], $TExtraTypeNotHandled)) $fieldstosearchall['ef.' . $codeExtra] = $labelExtra;
+    }
+}
 
 if (empty($conf->global->PRODUIT_MULTIPRICES))
 {

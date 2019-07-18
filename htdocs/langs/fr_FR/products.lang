@@ -337,3 +337,4 @@ CloneDestinationReference=Référence du produit cible
 ErrorCopyProductCombinations=Une erreur s'est produite lors de la copie des variantes de produit
 ErrorDestinationProductNotFound=Produit destination non trouvé
 ErrorProductCombinationNotFound=Variante du produit non trouvé
+GlobalSearchOnExtrafield=Recherche globale : Appliquer la recherche sur les extrafields (Attention : les dates sont au format YYYY-MM-DD)
