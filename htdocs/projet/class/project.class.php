@@ -440,7 +440,7 @@ class Project extends CommonObject
 
         $sql = "SELECT rowid, ref, title, description, public, datec, opp_amount, budget_amount,";
         $sql.= " tms, dateo, datee, date_close, fk_soc, fk_user_creat, fk_user_modif, fk_user_close, fk_statut, fk_opp_status, opp_percent,";
-        $sql.= " note_private, note_public, model_pdf, bill_time";
+        $sql.= " note_private, note_public, model_pdf, bill_time, entity";
         $sql.= " FROM " . MAIN_DB_PREFIX . "projet";
         if (! empty($id))
         {
@@ -488,6 +488,7 @@ class Project extends CommonObject
                 $this->budget_amount	= $obj->budget_amount;
                 $this->modelpdf	= $obj->model_pdf;
                 $this->bill_time = (int) $obj->bill_time;
+                $this->entity = $obj->entity;
 
                 $this->db->free($resql);
 
