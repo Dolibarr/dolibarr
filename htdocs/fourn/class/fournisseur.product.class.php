@@ -439,7 +439,7 @@ class ProductFournisseur extends Product
 
                 $resql = $this->db->query($sql);
                 if ($resql) {
-                    $idinserted = $this->db->last_insert_id(MAIN_DB_PREFIX . "product_fournisseur_price");
+                    $this->product_fourn_price_id = $this->db->last_insert_id(MAIN_DB_PREFIX . "product_fournisseur_price");
                 }
                 else {
                     $error++;
@@ -462,7 +462,7 @@ class ProductFournisseur extends Product
 
                     if (empty($error)) {
                         $this->db->commit();
-                        return $idinserted;
+                        return $this->product_fourn_price_id;
                     } else {
                         $this->db->rollback();
                         return -1;
