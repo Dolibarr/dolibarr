@@ -52,7 +52,7 @@ foreach($object->fields as $key => $val)
 	if ($val['notnull'] > 0) print ' fieldrequired';
 	if ($val['type'] == 'text' || $val['type'] == 'html') print ' tdtop';
 	print '">';
-	if (! empty($val['help'])) print $form->textwithpicto($langs->trans($val['label']), $val['help']);
+	if (! empty($val['help'])) print $form->textwithpicto($langs->trans($val['label']), $langs->trans($val['help']));
 	else print $langs->trans($val['label']);
 	print '</td>';
 	print '<td>';
@@ -91,7 +91,7 @@ foreach($object->fields as $key => $val)
 	if ($val['notnull'] > 0) print ' fieldrequired';
 	if ($val['type'] == 'text' || $val['type'] == 'html') print ' tdtop';
 	print '">';
-	if (! empty($val['help'])) print $form->textwithpicto($langs->trans($val['label']), $val['help']);
+	if (! empty($val['help'])) print $form->textwithpicto($langs->trans($val['label']), $langs->trans($val['help']));
 	else print $langs->trans($val['label']);
 	print '</td>';
 	print '<td>';
