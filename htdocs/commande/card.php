@@ -1436,11 +1436,11 @@ if ($action == 'create' && $user->rights->commande->creer)
 			if ($element == 'order' || $element == 'commande') {
 				$element = $subelement = 'commande';
 			}
-			if ($element == 'propal') {
+			elseif ($element == 'propal') {
 				$element = 'comm/propal';
 				$subelement = 'propal';
 			}
-			if ($element == 'contract') {
+			elseif ($element == 'contract') {
 				$element = $subelement = 'contrat';
 			}
 
