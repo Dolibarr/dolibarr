@@ -10,7 +10,7 @@
  * Copyright (C) 2015      Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2016      Bahfir abbes         <dolipar@dolipar.org>
  * Copyright (C) 2017      ATM Consulting       <support@atm-consulting.fr>
- * Copyright (C) 2017      Nicolas ZABOURI      <info@inovea-conseil.com>
+ * Copyright (C) 2017-2019 Nicolas ZABOURI      <info@inovea-conseil.com>
  * Copyright (C) 2017      Rui Strecht          <rui.strecht@aliartalentos.com>
  * Copyright (C) 2018      Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2018      Josep Lluís Amador   <joseplluis@lliuretic.cat>
@@ -2443,9 +2443,9 @@ abstract class CommonObject
 	 */
 	public function updateRangOfLine($rowid, $rang)
 	{
-		$fieldposition = 'rang';	// @TODO Rename 'rang' and 'position' into 'rank'
+		$fieldposition = 'rang';	// @TODO Rename 'rang' into 'position'
 		if (in_array($this->table_element_line, array('ecm_files', 'emailcollector_emailcollectoraction'))) $fieldposition = 'position';
-		if (in_array($this->table_element_line, array('bom_bomline'))) $fieldposition = 'rank';
+		if (in_array($this->table_element_line, array('bom_bomline'))) $fieldposition = 'position';
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET '.$fieldposition.' = '.$rang;
 		$sql.= ' WHERE rowid = '.$rowid;
@@ -2749,7 +2749,7 @@ abstract class CommonObject
 		$MODULE = "";
 		if ($this->element == 'propal')
 			$MODULE = "MODULE_DISALLOW_UPDATE_PRICE_PROPOSAL";
-		elseif ($this->element == 'order')
+		elseif ($this->element == 'commande' || $this->element == 'order')
 			$MODULE = "MODULE_DISALLOW_UPDATE_PRICE_ORDER";
 		elseif ($this->element == 'facture')
 			$MODULE = "MODULE_DISALLOW_UPDATE_PRICE_INVOICE";

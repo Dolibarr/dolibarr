@@ -696,7 +696,7 @@ class MyObject extends CommonObject
 	    $this->lines=array();
 
 	    $objectline = new MyObjectLine($this->db);
-	    $result = $objectline->fetchAll('ASC', 'rank', 0, 0, array('customsql'=>'fk_myobject = '.$this->id));
+	    $result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_myobject = '.$this->id));
 
 	    if (is_numeric($result))
 	    {
@@ -781,5 +781,5 @@ class MyObject extends CommonObject
 class MyObjectLine
 {
 	// To complete with content of an object MyObjectLine
-	// We should have a field rowid, fk_myobject and rank
+	// We should have a field rowid, fk_myobject and position
 }
