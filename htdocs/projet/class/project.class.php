@@ -511,49 +511,6 @@ class Project extends CommonObject
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
-     * 	Return list of projects
-     *
-     * 	@param		int		$socid		To filter on a particular third party
-     * 	@return		array				List of projects
-     */
-    public function liste_array($socid = '')
-    {
-        // phpcs:enable
-        global $conf;
-
-        $projects = array();
-
-        $sql = "SELECT rowid, title";
-        $sql.= " FROM " . MAIN_DB_PREFIX . "projet";
-        $sql.= " WHERE entity = " . $conf->entity;
-        if (! empty($socid)) $sql.= " AND fk_soc = " . $socid;
-
-        $resql = $this->db->query($sql);
-        if ($resql)
-        {
-            $nump = $this->db->num_rows($resql);
-
-            if ($nump)
-            {
-                $i = 0;
-                while ($i < $nump)
-                {
-                    $obj = $this->db->fetch_object($resql);
-
-                    $projects[$obj->rowid] = $obj->title;
-                    $i++;
-                }
-            }
-            return $projects;
-        }
-        else
-        {
-            print $this->db->lasterror();
-        }
-    }
-
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    /**
      * 	Return list of elements for type, linked to a project
      *
      * 	@param		string		$type			'propal','order','invoice','order_supplier','invoice_supplier',...

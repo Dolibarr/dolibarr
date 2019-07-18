@@ -14,7 +14,7 @@ WARNING:
 
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
 * Properties ->libelle_incoterms were renamed into ->label_incoterms
-
+* Removed the method liste_array() of project class. It was not used by core code.
 
 
 ***** ChangeLog for 10.0.0 compared to 9.0.0 *****
