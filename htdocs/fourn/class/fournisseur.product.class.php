@@ -430,8 +430,8 @@ class ProductFournisseur extends Product
                 $sql .= " " . $newnpr . ",";
                 $sql .= $conf->entity . ",";
                 $sql .= $delivery_time_days . ",";
-                $sql .= (empty($supplier_reputation) ? 'NULL' : "'" . $this->db->escape($supplier_reputation) . "'");
-                $sql .= (empty($barcode) ? 'NULL' : "'" . $this->db->escape($barcode) . "'");
+                $sql .= (empty($supplier_reputation) ? 'NULL' : "'" . $this->db->escape($supplier_reputation) . "'") . ",";
+                $sql .= (empty($barcode) ? 'NULL' : "'" . $this->db->escape($barcode) . "'") . ",";
                 $sql .= (empty($fk_barcode_type) ? 'NULL' : "'" . $this->db->escape($fk_barcode_type) . "'");
                 $sql .= ")";
 
