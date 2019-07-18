@@ -399,7 +399,7 @@ class Stripe extends CommonObject
     		// payment_method =
     		// payment_method_types = array('card')
             //var_dump($dataforintent);
-			
+
     		if ($conf->entity!=$conf->global->STRIPECONNECT_PRINCIPAL && $stripefee > 0)
     		{
     			$dataforintent["application_fee"] = $stripefee;
