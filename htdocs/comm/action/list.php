@@ -660,8 +660,8 @@ if ($resql)
                         $contact = new Contact($db);
                         if($contact->fetch($socpeopleassigned['id'])>0)
                         {
-                            $contactListCache[$socpeopleassigned['id']] = $contact->getNomUrl(1,'',28);
-                            $contactList[] = $contact->getNomUrl(1,'',28);
+                            $contactListCache[$socpeopleassigned['id']] = $contact->getNomUrl(1, '', 28);
+                            $contactList[] = $contact->getNomUrl(1, '', 28);
                         }
                     }
                     else{
