@@ -61,7 +61,7 @@ if ($id > 0 || ! empty($ref))
 	}
 }
 
-$hookmanager->initHooks(array('levycard','globalcard'));
+$hookmanager->initHooks(array('directdebitcard','globalcard'));
 
 
 
