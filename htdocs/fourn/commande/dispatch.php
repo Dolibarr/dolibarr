@@ -556,7 +556,7 @@ if ($id > 0 || ! empty($ref)) {
 						print '<!-- Line to dispatch ' . $suffix . ' -->' . "\n";
 						// hidden fields for js function
 						print '<input id="qty_ordered' . $suffix . '" type="hidden" value="' . $objp->qty . '">';
-                        print '<input id="qty_dispatched' . $suffix . '" type="hidden" value="' . ( float ) $products_dispatched[$objp->fk_product] . '">';
+						print '<input id="qty_dispatched' . $suffix . '" type="hidden" value="' . ( float ) $products_dispatched[$objp->rowid] . '">';
 						print '<tr class="oddeven">';
 
 						$linktoprod = '<a href="' . DOL_URL_ROOT . '/product/fournisseurs.php?id=' . $objp->fk_product . '">' . img_object($langs->trans("ShowProduct"), 'product') . ' ' . $objp->ref . '</a>';
@@ -598,7 +598,7 @@ if ($id > 0 || ! empty($ref)) {
 						print '<td align="right">' . $objp->qty . '</td>';
 
 						// Already dispatched
-						print '<td align="right">' . (float) $products_dispatched[$objp->fk_product] . '</td>';
+						print '<td align="right">' . $products_dispatched[$objp->rowid] . '</td>';
 
 						if (! empty($conf->productbatch->enabled) && $objp->tobatch == 1) {
 							$type = 'batch';
