@@ -389,7 +389,7 @@ class Stripe extends CommonObject
     		    "confirmation_method" => $mode,
     		    "amount" => $stripeamount,
     			"currency" => $currency_code,
-    		    "payment_method_types" => ["card"],
+    		    "payment_method_types" => array("card"),
     		    "description" => $description,
     		    "statement_descriptor" => dol_trunc($tag, 10, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt (company + description)
     			//"save_payment_method" => true,

@@ -378,6 +378,48 @@ class Contacts extends DolibarrApi
 		return $result;
     }
 
+    /**
+     * Add a category to a contact
+     *
+     * @url POST {id}/categories/{category_id}
+     *
+     * @param   int		$id             Id of contact
+     * @param   int     $category_id    Id of category
+     *
+     * @return  mixed
+     *
+     * @throws  401     RestException   Insufficient rights
+     * @throws  401     RestException   Access not allowed for login
+     * @throws  404     RestException   Category not found
+     * @throws  404     RestException   Contact not found
+     */
+    public function addCategory($id, $category_id)
+    {
+        if(! DolibarrApiAccess::$user->rights->societe->contact->creer) {
+            throw new RestException(401, 'Insufficient rights');
+        }
+
+        $result = $this->contact->fetch($id);
+        if (! $result) {
+            throw new RestException(404, 'Contact not found');
+        }
+        $category = new Categorie($this->db);
+        $result = $category->fetch($category_id);
+        if (! $result) {
+            throw new RestException(404, 'category not found');
+        }
+
+        if (! DolibarrApi::_checkAccessToResource('contact', $this->contact->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+        if (! DolibarrApi::_checkAccessToResource('category', $category->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+
+        $category->add_type($this->contact, 'contact');
+
+        return $this->_cleanObjectDatas($this->contact);
+    }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     /**

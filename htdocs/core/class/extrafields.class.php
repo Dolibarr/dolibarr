@@ -1627,6 +1627,8 @@ class ExtraFields
 
 		if ($hidden) return '';		// This is a protection. If field is hidden, we should just not call this method.
 
+		//if ($computed) $value =		// $value is already calculated into $value before calling this method
+		
 		$showsize=0;
 		if ($type == 'date')
 		{
