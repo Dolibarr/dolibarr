@@ -44,7 +44,6 @@ $value = GETPOST('value', 'alpha');
 if (empty($conf->global->CHEQUERECEIPTS_ADDON)) $conf->global->CHEQUERECEIPTS_ADDON = 'mod_chequereceipts_mint.php';
 
 
-include DOL_DOCUMENT_ROOT.'/core/actions_setfreetext.inc.php';
 
 /*
  * Actions
@@ -73,6 +72,23 @@ if ($action == 'setmod')
 	dolibarr_set_const($db, "CHEQUERECEIPTS_ADDON", $value, 'chaine', 0, '', $conf->entity);
 }
 
+if ($action == 'set_BANK_CHEQUERECEIPT_FREE_TEXT')
+{
+	$freetext = GETPOST('BANK_CHEQUERECEIPT_FREE_TEXT', 'none');	// No alpha here, we want exact string
+
+    $res = dolibarr_set_const($db, "BANK_CHEQUERECEIPT_FREE_TEXT", $freetext, 'chaine', 0, '', $conf->entity);
+
+	if (! $res > 0) $error++;
+
+ 	if (! $error)
+    {
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    }
+    else
+    {
+        setEventMessages($langs->trans("Error"), null, 'errors');
+    }
+}
 
 /*
  * view
@@ -221,6 +237,10 @@ print '<br>';
  */
 print load_fiche_titre($langs->trans("OtherOptions"), '', '');
 
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="set_BANK_CHEQUERECEIPT_FREE_TEXT">';
+
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameters").'</td>';
@@ -228,14 +248,36 @@ print '<td class="center" width="60">&nbsp;</td>';
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
 
-// free text
-$freetexttitle = $langs->trans("FreeLegalTextOnChequeReceipts");
-$freetextvar = "BANK_CHEQUERECEIPT_FREE_TEXT";
-require_once(DOL_DOCUMENT_ROOT.'/core/tpl/admin_freetext.tpl.php');
+$substitutionarray=pdf_getSubstitutionArray($langs, null, null, 2);
+$substitutionarray['__(AnyTranslationKey)__']=$langs->trans("Translation");
+$htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
+foreach($substitutionarray as $key => $val)	$htmltext.=$key.'<br>';
+$htmltext.='</i>';
+
+print '<tr class="oddeven"><td colspan="2">';
+print $form->textwithpicto($langs->trans("FreeLegalTextOnChequeReceipts"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
+$variablename='BANK_CHEQUERECEIPT_FREE_TEXT';
+if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
+{
+    print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->$variablename.'</textarea>';
+}
+else
+{
+    include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+    $doleditor=new DolEditor($variablename, $conf->global->$variablename, '', 80, 'dolibarr_notes');
+    print $doleditor->Create();
+}
+print '</td><td class="right">';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print "</td></tr>\n";
+print '</table>';
+print "<br>";
 
 print '</table>'."\n";
 
 dol_fiche_end();
+
+print '</form>';
 
 // End of page
 llxFooter();

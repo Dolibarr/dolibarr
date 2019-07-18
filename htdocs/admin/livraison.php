@@ -51,13 +51,29 @@ $type='delivery';
  */
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
-include DOL_DOCUMENT_ROOT.'/core/actions_setfreetext.inc.php';
 
 if ($action == 'updateMask')
 {
     $maskconstdelivery=GETPOST('maskconstdelivery', 'alpha');
     $maskdelivery=GETPOST('maskdelivery', 'alpha');
     if ($maskconstdelivery)  $res = dolibarr_set_const($db, $maskconstdelivery, $maskdelivery, 'chaine', 0, '', $conf->entity);
+
+    if (! $res > 0) $error++;
+
+ 	if (! $error)
+    {
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    }
+    else
+    {
+        setEventMessages($langs->trans("Error"), null, 'errors');
+    }
+}
+
+if ($action == 'set_DELIVERY_FREE_TEXT')
+{
+    $free=GETPOST('DELIVERY_FREE_TEXT', 'none');	// No alpha here, we want exact string
+    $res=dolibarr_set_const($db, "DELIVERY_FREE_TEXT", $free, 'chaine', 0, '', $conf->entity);
 
     if (! $res > 0) $error++;
 
@@ -433,10 +449,32 @@ print '<td align="center" width="60">'.$langs->trans("Value").'</td>';
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
 
-// free text
-$freetexttitle = $langs->trans("FreeLegalTextOnDeliveryReceipts");
-$freetextvar = "DELIVERY_FREE_TEXT";
-require_once(DOL_DOCUMENT_ROOT.'/core/tpl/admin_freetext.tpl.php');
+$substitutionarray=pdf_getSubstitutionArray($langs, null, null, 2);
+$substitutionarray['__(AnyTranslationKey)__']=$langs->trans("Translation");
+$htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
+foreach($substitutionarray as $key => $val)	$htmltext.=$key.'<br>';
+$htmltext.='</i>';
+
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="set_DELIVERY_FREE_TEXT">';
+print '<tr class="oddeven"><td colspan="2">';
+print $form->textwithpicto($langs->trans("FreeLegalTextOnDeliveryReceipts"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
+$variablename='DELIVERY_FREE_TEXT';
+if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
+{
+    print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->$variablename.'</textarea>';
+}
+else
+{
+    include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+    $doleditor=new DolEditor($variablename, $conf->global->$variablename, '', 80, 'dolibarr_notes');
+    print $doleditor->Create();
+}
+print '</td><td class="right">';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print "</td></tr>\n";
+print '</form>';
 
 print '</table>';
 

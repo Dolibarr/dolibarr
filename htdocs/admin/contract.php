@@ -50,7 +50,6 @@ if (empty($conf->global->CONTRACT_ADDON))
  */
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
-include DOL_DOCUMENT_ROOT.'/core/actions_setfreetext.inc.php';
 
 if ($action == 'updateMask')
 {
@@ -158,10 +157,13 @@ elseif ($action == 'setmod')
 
 elseif ($action == 'set_other')
 {
-	$draft= GETPOST('CONTRACT_DRAFT_WATERMARK', 'alpha');
-	$res = dolibarr_set_const($db, "CONTRACT_DRAFT_WATERMARK", trim($draft), 'chaine', 0, '', $conf->entity);
+	$freetext= GETPOST('CONTRACT_FREE_TEXT', 'none');	// No alpha here, we want exact string
+	$res1 = dolibarr_set_const($db, "CONTRACT_FREE_TEXT", $freetext, 'chaine', 0, '', $conf->entity);
 
-	if (! $res > 0) $error++;
+	$draft= GETPOST('CONTRACT_DRAFT_WATERMARK', 'alpha');
+	$res2 = dolibarr_set_const($db, "CONTRACT_DRAFT_WATERMARK", trim($draft), 'chaine', 0, '', $conf->entity);
+
+	if (! $res1 > 0 || ! $res2 > 0) $error++;
 
  	if (! $error)
     {
@@ -456,36 +458,54 @@ print "<br>";
  *
  */
 
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="set_other">';
+
 print load_fiche_titre($langs->trans("OtherOptions"), '', '');
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td class="center" width="60">'.$langs->trans("Value").'</td>';
-print "<td>&nbsp;</td>\n";
 print "</tr>\n";
 
-// free text
-$freetexttitle = $langs->trans("FreeLegalTextOnContracts");
-$freetextvar = "CONTRACT_FREE_TEXT";
-$freetextsubstitutionexclude = array('objectamount');
-require_once(DOL_DOCUMENT_ROOT.'/core/tpl/admin_freetext.tpl.php');
+$substitutionarray=pdf_getSubstitutionArray($langs, array('objectamount'), null, 2);
+$substitutionarray['__(AnyTranslationKey)__']=$langs->trans("Translation");
+$htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
+foreach($substitutionarray as $key => $val)	$htmltext.=$key.'<br>';
+$htmltext.='</i>';
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="action" value="set_other">';
+print '<tr class="oddeven"><td colspan="2">';
+print $form->textwithpicto($langs->trans("FreeLegalTextOnContracts"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'tooltiphelp');
+print '<br>';
+$variablename='CONTRACT_FREE_TEXT';
+if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
+{
+    print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->$variablename.'</textarea>';
+}
+else
+{
+    include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+    $doleditor=new DolEditor($variablename, $conf->global->$variablename, '', 80, 'dolibarr_notes');
+    print $doleditor->Create();
+}
+print '</td></tr>'."\n";
 
 //Use draft Watermark
+
 print '<tr class="oddeven"><td>';
 print $form->textwithpicto($langs->trans("WatermarkOnDraftContractCards"), $htmltext, 1, 'help', '', 0, 2, 'watermarktooltip').'<br>';
 print '</td><td>';
 print '<input size="50" class="flat" type="text" name="CONTRACT_DRAFT_WATERMARK" value="'.$conf->global->CONTRACT_DRAFT_WATERMARK.'">';
-print '</td><td class="right">';
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print '</td></tr>'."\n";
 
-print '</form>';
-
 print '</table>';
+
+print '<div class="center">';
+print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+print '</div>';
+
+print '</form>';
 
 dol_fiche_end();
 

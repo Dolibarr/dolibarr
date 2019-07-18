@@ -47,12 +47,12 @@ $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'order';
 
+
 /*
  * Actions
  */
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
-include DOL_DOCUMENT_ROOT.'/core/actions_setfreetext.inc.php';
 
 if ($action == 'updateMask')
 {
@@ -176,8 +176,23 @@ elseif ($action == 'set_COMMANDE_DRAFT_WATERMARK')
     }
 }
 
-elseif ($action=="setshippableiconinlist")
+elseif ($action == 'set_ORDER_FREE_TEXT')
 {
+	$freetext = GETPOST("ORDER_FREE_TEXT", 'none');	// No alpha here, we want exact string
+
+	$res = dolibarr_set_const($db, "ORDER_FREE_TEXT", $freetext, 'chaine', 0, '', $conf->entity);
+
+	if (! $res > 0) $error++;
+
+ 	if (! $error)
+    {
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    }
+    else
+    {
+        setEventMessages($langs->trans("Error"), null, 'errors');
+    }
+} elseif ($action=="setshippableiconinlist") {
     // Activate Set Shippable Icon In List
     $setshippableiconinlist = GETPOST('value', 'int');
     $res = dolibarr_set_const($db, "SHIPPABLE_ORDER_ICON_IN_LIST", $setshippableiconinlist, 'yesno', 0, '', $conf->entity);
@@ -517,12 +532,35 @@ print '<td class="center" width="60">'.$langs->trans("Value").'</td>';
 print "<td>&nbsp;</td>\n";
 print "</tr>\n";
 
-// free text
-$freetexttitle = $langs->trans("FreeLegalTextOnOrders");
-$freetextvar = "ORDER_FREE_TEXT";
-require_once(DOL_DOCUMENT_ROOT.'/core/tpl/admin_freetext.tpl.php');
+$substitutionarray=pdf_getSubstitutionArray($langs, null, null, 2);
+$substitutionarray['__(AnyTranslationKey)__']=$langs->trans("Translation");
+$htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
+foreach($substitutionarray as $key => $val)	$htmltext.=$key.'<br>';
+$htmltext.='</i>';
+
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="set_ORDER_FREE_TEXT">';
+print '<tr class="oddeven"><td colspan="2">';
+print $form->textwithpicto($langs->trans("FreeLegalTextOnOrders"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
+$variablename='ORDER_FREE_TEXT';
+if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
+{
+    print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->$variablename.'</textarea>';
+}
+else
+{
+    include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+    $doleditor=new DolEditor($variablename, $conf->global->$variablename, '', 80, 'dolibarr_notes');
+    print $doleditor->Create();
+}
+print '</td><td class="right">';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print "</td></tr>\n";
+print '</form>';
 
 //Use draft Watermark
+
 print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print "<input type=\"hidden\" name=\"action\" value=\"set_COMMANDE_DRAFT_WATERMARK\">";
