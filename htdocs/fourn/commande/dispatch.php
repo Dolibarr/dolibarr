@@ -482,7 +482,7 @@ if ($id > 0 || ! empty($ref)) {
 			if ($num) {
 				while ( $i < $num ) {
 					$objd = $db->fetch_object($resql);
-					$products_dispatched[$objd->fk_product] = price2num($objd->qty, 5);
+					$products_dispatched[$objd->rowid] = price2num($objd->qty, 5);
 					$i++;
 				}
 			}
@@ -540,7 +540,7 @@ if ($id > 0 || ! empty($ref)) {
 				if (! $objp->fk_product > 0) {
 					$nbfreeproduct++;
 				} else {
-					$remaintodispatch = price2num($objp->qty - (( float ) $products_dispatched[$objp->fk_product]), 5); // Calculation of dispatched
+					$remaintodispatch = price2num($objp->qty - (( float ) $products_dispatched[$objp->rowid]), 5); // Calculation of dispatched
 					if ($remaintodispatch < 0)
 						$remaintodispatch = 0;
 
