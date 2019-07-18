@@ -392,7 +392,7 @@ class Stripe extends CommonObject
     		    "payment_method_types" => array("card"),
     		    "description" => $description,
     		    "statement_descriptor" => dol_trunc($tag, 10, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt (company + description)
-    			"setup_future_usage" => "off_session",
+    			"setup_future_usage" => "on_session",
     			"metadata" => $metadata
     		);
     		if (! is_null($customer)) $dataforintent["customer"]=$customer;
