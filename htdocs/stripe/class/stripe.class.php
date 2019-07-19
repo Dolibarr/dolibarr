@@ -286,9 +286,11 @@ class Stripe extends CommonObject
     /**
 	 * Get the Stripe payment intent. Create it with confirm=false
      * Warning. If a payment was tried and failed, a payment intent was created.
-	 * But if we change someting on object to pay (amount or other), reusing same payment intent is not allowed.
+	 * But if we change something on object to pay (amount or other), reusing same payment intent is not allowed.
 	 * Recommanded solution is to recreate a new payment intent each time we need one (old one will be automatically closed after a delay),
 	 * that's why i comment the part of code to retreive a payment intent with object id (never mind if we cumulate payment intent with old ones that will not be used)
+	 * Note: This is used when option STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION is on when making a payment from the public/payment/newpayment.php page
+	 * but not when using the STRIPE_USE_NEW_CHECKOUT.
 	 *
 	 * @param   double  $amount                             Amount
 	 * @param   string  $currency_code                      Currency code
@@ -307,7 +309,7 @@ class Stripe extends CommonObject
 	{
 		global $conf;
 
-		dol_syslog("getPaymentIntent");
+		dol_syslog("getPaymentIntent", LOG_INFO, 1);
 
 		$error = 0;
 
@@ -479,7 +481,7 @@ class Stripe extends CommonObject
     		}
 		}
 
-		dol_syslog("getPaymentIntent return error=".$error);
+		dol_syslog("getPaymentIntent return error=".$error, LOG_INFO, -1);
 
 		if (! $error)
 		{
