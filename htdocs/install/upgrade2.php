@@ -1432,7 +1432,7 @@ function migrate_paiementfourn_facturefourn($db, $langs, $conf)
 }
 
 /**
- * Mise a jour des totaux lignes de facture
+ * Update total of invoice lines
  *
  * @param	DoliDB		$db		Database handler
  * @param	Translate	$langs	Object langs
@@ -1453,7 +1453,7 @@ function migrate_price_facture($db, $langs, $conf)
     print '<br>';
     print '<b>'.$langs->trans('MigrationInvoice')."</b><br>\n";
 
-    // Liste des lignes facture non a jour
+    // List of invoice lines not up to date
     $sql = "SELECT fd.rowid, fd.qty, fd.subprice, fd.remise_percent, fd.tva_tx as vatrate, fd.total_ttc, fd.info_bits,";
     $sql.= " f.rowid as facid, f.remise_percent as remise_percent_global, f.total_ttc as total_ttc_f";
     $sql.= " FROM ".MAIN_DB_PREFIX."facturedet as fd, ".MAIN_DB_PREFIX."facture as f";
@@ -1551,7 +1551,7 @@ function migrate_price_facture($db, $langs, $conf)
 }
 
 /**
- * Mise a jour des totaux lignes de propal
+ * Update total of proposal lines
  *
  * @param	DoliDB		$db		Database handler
  * @param	Translate	$langs	Object langs
@@ -1570,7 +1570,7 @@ function migrate_price_propal($db, $langs, $conf)
     print '<br>';
     print '<b>'.$langs->trans('MigrationProposal')."</b><br>\n";
 
-    // Liste des lignes propal non a jour
+    // List of proposal lines not up to date
     $sql = "SELECT pd.rowid, pd.qty, pd.subprice, pd.remise_percent, pd.tva_tx as vatrate, pd.info_bits,";
     $sql.= " p.rowid as propalid, p.remise_percent as remise_percent_global";
     $sql.= " FROM ".MAIN_DB_PREFIX."propaldet as pd, ".MAIN_DB_PREFIX."propal as p";
@@ -1679,7 +1679,7 @@ function migrate_price_contrat($db, $langs, $conf)
     print '<br>';
     print '<b>'.$langs->trans('MigrationContract')."</b><br>\n";
 
-    // Liste des lignes contrat non a jour
+    // List of contract lines not up to date
     $sql = "SELECT cd.rowid, cd.qty, cd.subprice, cd.remise_percent, cd.tva_tx as vatrate, cd.info_bits,";
     $sql.= " c.rowid as contratid";
     $sql.= " FROM ".MAIN_DB_PREFIX."contratdet as cd, ".MAIN_DB_PREFIX."contrat as c";
@@ -1748,7 +1748,7 @@ function migrate_price_contrat($db, $langs, $conf)
 }
 
 /**
- * Mise a jour des totaux lignes de commande
+ * Update total of sales order lines
  *
  * @param	DoliDB		$db		Database handler
  * @param	Translate	$langs	Object langs
@@ -1767,7 +1767,7 @@ function migrate_price_commande($db, $langs, $conf)
     print '<br>';
     print '<b>'.$langs->trans('MigrationOrder')."</b><br>\n";
 
-    // Liste des lignes commande non a jour
+    // List of sales orders lines not up to date
     $sql = "SELECT cd.rowid, cd.qty, cd.subprice, cd.remise_percent, cd.tva_tx as vatrate, cd.info_bits,";
     $sql.= " c.rowid as commandeid, c.remise_percent as remise_percent_global";
     $sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd, ".MAIN_DB_PREFIX."commande as c";
@@ -1865,7 +1865,7 @@ function migrate_price_commande($db, $langs, $conf)
 }
 
 /**
- * Mise a jour des totaux lignes de commande fournisseur
+ * Update total of purchase order lines
  *
  * @param	DoliDB		$db		Database handler
  * @param	Translate	$langs	Object langs
@@ -1884,7 +1884,7 @@ function migrate_price_commande_fournisseur($db, $langs, $conf)
     print '<br>';
     print '<b>'.$langs->trans('MigrationSupplierOrder')."</b><br>\n";
 
-    // Liste des lignes commande non a jour
+    // List of purchase order lines not up to date
     $sql = "SELECT cd.rowid, cd.qty, cd.subprice, cd.remise_percent, cd.tva_tx as vatrate, cd.info_bits,";
     $sql.= " c.rowid as commandeid, c.remise_percent as remise_percent_global";
     $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd, ".MAIN_DB_PREFIX."commande_fournisseur as c";

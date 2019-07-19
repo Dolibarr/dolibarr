@@ -11,6 +11,7 @@
  * Copyright (C) 2015		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2018-2019  Thibault FOUCART		<support@ptibogxiv.net>
+ * Copyright (C) 2019       Nicolas ZABOURI 		<info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -183,14 +184,14 @@ class Adherent extends CommonObject
      * @var integer
      */
     public $datec;
-    
+
 	/**
      * Date modification record (tms)
      *
      * @var integer
      */
     public $datem;
-    
+
 	public $datevalid;
 
 	public $gender;
@@ -1268,7 +1269,7 @@ class Adherent extends CommonObject
 				$this->ref				= $obj->rowid;
 				$this->id				= $obj->rowid;
 				$this->ref_ext			= $obj->ref_ext;
-        
+
 				$this->civility_id      = $obj->civility_code;  // Bad. Kept for backard compatibility
 				$this->civility_code    = $obj->civility_code;
 				$this->civility	        = $obj->civility_code?($langs->trans("Civility".$obj->civility_code) != ("Civility".$obj->civility_code) ? $langs->trans("Civility".$obj->civility_code) : $obj->civility_code):'';
@@ -2123,28 +2124,28 @@ class Adherent extends CommonObject
 		$link.=$linkclose.'>';
 		$linkend='</a>';
 
-		//if ($withpictoimg == -1) $result.='<div class="nowrap">';
 		$result.=$link;
+		if ($withpictoimg) $result.='<div class="inline-block nopadding valignmiddle">';
 		if ($withpictoimg)
 		{
 			$paddafterimage='';
 			if (abs($withpictoimg) == 1) $paddafterimage='style="margin-right: 3px;"';
 			// Only picto
-			if ($withpictoimg > 0) $picto='<div class="inline-block nopadding valignmiddle'.($morecss?' userimg'.$morecss:'').'">'.img_object('', 'user', $paddafterimage.' '.($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).'</div>';
+			if ($withpictoimg > 0) $picto='<span class="nopadding'.($morecss?' userimg'.$morecss:'').'">'.img_object('', 'user', $paddafterimage.' '.($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).'</span>';
 			// Picto must be a photo
-			else $picto='<div class="inline-block nopadding valignmiddle'.($morecss?' userimg'.$morecss:'').'"'.($paddafterimage?' '.$paddafterimage:'').'>'.Form::showphoto('memberphoto', $this, 0, 0, 0, 'userphoto'.($withpictoimg==-3?'small':''), 'mini', 0, 1).'</div>';
+			else $picto='<span class="nopadding'.($morecss?' userimg'.$morecss:'').'"'.($paddafterimage?' '.$paddafterimage:'').'>'.Form::showphoto('memberphoto', $this, 0, 0, 0, 'userphoto'.($withpictoimg==-3?'small':''), 'mini', 0, 1).'</span>';
 			$result.=$picto;
 		}
 		if ($withpictoimg > -2 && $withpictoimg != 2)
 		{
-			if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $result.='<div class="inline-block nopadding valignmiddle'.((! isset($this->statut) || $this->statut)?'':' strikefordisabled').($morecss?' usertext'.$morecss:'').'">';
+			if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $result.='<span class="nopadding valignmiddle'.((! isset($this->statut) || $this->statut)?'':' strikefordisabled').($morecss?' usertext'.$morecss:'').'">';
 			if ($mode == 'login') $result.=dol_trunc($this->login, $maxlen);
 			elseif ($mode == 'ref') $result.=$this->id;
 			else $result.=$this->getFullName($langs, '', ($mode == 'firstname' ? 2 : -1), $maxlen);
-			if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $result.='</div>';
+			if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $result.='</span>';
 		}
+		if ($withpictoimg) $result.='</div>';
 		$result.=$linkend;
-		//if ($withpictoimg == -1) $result.='</div>';
 
 		return $result;
 	}
@@ -2403,7 +2404,7 @@ class Adherent extends CommonObject
 		$this->country_id = 1;
 		$this->country_code = 'FR';
 		$this->country = 'France';
-		$this->morphy = 1;
+		$this->morphy = 'mor';
 		$this->email = 'specimen@specimen.com';
 		$this->skype = 'skypepseudo';
 		$this->twitter = 'twitterpseudo';
@@ -2438,6 +2439,7 @@ class Adherent extends CommonObject
 
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *	Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
 	 *
@@ -2447,7 +2449,7 @@ class Adherent extends CommonObject
 	 *								2=Return key only (uid=qqq)
 	 *	@return	string				DN
 	 */
-	private function _load_ldap_dn($info, $mode = 0)
+	public function _load_ldap_dn($info, $mode = 0)
 	{
         // phpcs:enable
 		global $conf;
@@ -2460,12 +2462,13 @@ class Adherent extends CommonObject
 
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+   /**
 	 *	Initialise tableau info (tableau des attributs LDAP)
 	 *
 	 *	@return		array		Tableau info des attributs
 	 */
-	private function _load_ldap_info()
+	public function _load_ldap_info()
 	{
         // phpcs:enable
 		global $conf,$langs;

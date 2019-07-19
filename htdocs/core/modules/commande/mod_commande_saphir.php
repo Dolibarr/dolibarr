@@ -52,7 +52,7 @@ class mod_commande_saphir extends ModeleNumRefCommandes
 
 
     /**
-     *  Renvoi la description du modele de numerotation
+     *  Returns the description of the numbering model
      *
      *  @return     string      Texte descripif
      */

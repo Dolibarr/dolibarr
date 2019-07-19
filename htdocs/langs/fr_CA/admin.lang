@@ -113,9 +113,9 @@ Permission167=Exportation de contacts
 Permission171=Lire les déplacements et les dépenses (le vôtre et vos subordonnés )
 Permission771=Lire les rapports de dépenses (le vôtre et vos subordonnés )
 Permission1322=Réouvrir une facture payée
+Permission2414=Exportation d'actions/tâches des autres
 Permission20006=Administration des demandes de congé (balance de configuration et de mise à jour )
 Permission23004=Exécuté Travail planifié
-Permission2414=Exportation d'actions/tâches des autres
 Permission59001=Consulter les propositions commerciales
 Permission63002=Créer / modifier des ressources
 Permission63004=Relier les ressources aux événements de l'agenda
@@ -247,5 +247,5 @@ LandingPage=Page d'atterrissage
 ModuleEnabledAdminMustCheckRights=Le module a été activé. Les autorisations pour les modules activés ont été données uniquement aux utilisateurs administratifs. Vous devrez peut-être accorder des autorisations aux autres utilisateurs ou groupes manuellement si nécessaire.
 BaseCurrency=Monnaie de référence de la société (entrer dans la configuration de l'entreprise pour modifier cela)
 FormatZip=Code postal
-OperationParamDesc=Define values to use for action, or how to extract values. For example:<br>objproperty1=SET:abc<br>objproperty2=EXTRACT:HEADER:X-Myheaderkey.*[^\\s]+(.*)<br>options_myextrafield=EXTRACT:SUBJECT:([^\\s]*)<br>object.objproperty4=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a ; char as separator to extract or set several properties.
+OperationParamDesc=Define values to use for action, or how to extract values. For example:<br>objproperty1=SET:abc<br>objproperty1=SET:a value with replacement of __objproperty1__<br>objproperty3=SETIFEMPTY:abc<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey.*[^\\s]+(.*)<br>options_myextrafield=EXTRACT:SUBJECT:([^\\s]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a ; char as separator to extract or set several properties.
 UseSearchToSelectResource=Utilisez un formulaire de recherche pour choisir une ressource (plutôt qu'une liste déroulante).

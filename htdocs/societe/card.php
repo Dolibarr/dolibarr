@@ -952,18 +952,19 @@ else
         $object->name				= GETPOST('name', 'alpha');
         $object->firstname			= GETPOST('firstname', 'alpha');
         $object->particulier		= $private;
-        $object->prefix_comm		= GETPOST('prefix_comm');
-        $object->client				= GETPOST('client')?GETPOST('client'):$object->client;
+        $object->prefix_comm		= GETPOST('prefix_comm', 'alpha');
+        $object->client				= GETPOST('client', 'int')?GETPOST('client', 'int'):$object->client;
 
-        if(empty($duplicate_code_error)) {
+        if (empty($duplicate_code_error)) {
 	        $object->code_client		= GETPOST('customer_code', 'alpha');
 	        $object->fournisseur		= GETPOST('fournisseur')?GETPOST('fournisseur'):$object->fournisseur;
+            $object->code_fournisseur	= GETPOST('supplier_code', 'alpha');
         }
 		else {
 			setEventMessages($langs->trans('NewCustomerSupplierCodeProposed'), '', 'warnings');
 		}
 
-        $object->code_fournisseur	= GETPOST('supplier_code', 'alpha');
+
         $object->address			= GETPOST('address', 'alpha');
         $object->zip				= GETPOST('zipcode', 'alpha');
         $object->town				= GETPOST('town', 'alpha');
@@ -1187,7 +1188,7 @@ else
         // Prospect/Customer
         print '<tr><td class="titlefieldcreate">'.$form->editfieldkey('ProspectCustomer', 'customerprospect', '', $object, 0, 'string', '', 1).'</td>';
 	    print '<td class="maxwidthonsmartphone">';
-	    $selected=GETPOST('client', 'int')!=''?GETPOST('client', 'int'):$object->client;
+	    $selected=(GETPOSTISSET('client', 'int')?GETPOST('client', 'int'):$object->client);
 	    print $formcompany->selectProspectCustomerType($selected);
 	    print '</td>';
 
@@ -2540,7 +2541,7 @@ else
         	print '<td colspan="3">';
         	if ($action != 'editincoterm')
         	{
-        		print $form->textwithpicto($object->display_incoterms(), $object->libelle_incoterms, 1);
+        		print $form->textwithpicto($object->display_incoterms(), $object->label_incoterms, 1);
         	}
         	else
         	{

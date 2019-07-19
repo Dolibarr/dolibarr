@@ -352,20 +352,19 @@ if ($step == 1 || ! $datatoimport)
 	print '<td>'.$langs->trans("ImportableDatas").'</td>';
 	print '<td>&nbsp;</td>';
 	print '</tr>';
-	$val=true;
-	if (count($objimport->array_import_code))
+
+	if (count($objimport->array_import_module))
 	{
-		foreach ($objimport->array_import_code as $key => $value)
+		$sortedarrayofmodules = dol_sort_array($objimport->array_import_module, 'module_position', 'asc', 0, 0, 1);
+		foreach ($sortedarrayofmodules as $key => $value)
 		{
 			//var_dump($objimport->array_import_code[$key]);
-			$val=!$val;
-			print '<tr '.$bc[$val].'><td>';
+			print '<tr class="oddeven"><td>';
 			$titleofmodule=$objimport->array_import_module[$key]->getName();
 			// Special cas for import common to module/services
 			if (in_array($objimport->array_import_code[$key], array('produit_supplierprices','produit_multiprice','produit_languages'))) $titleofmodule=$langs->trans("ProductOrService");
 			print $titleofmodule;
 			print '</td><td>';
-			//print $value;
 			print img_object($objimport->array_import_module[$key]->getName(), $objimport->array_import_icon[$key]).' ';
 			print $objimport->array_import_label[$key];
             print '</td><td style="text-align: right">';
@@ -382,7 +381,7 @@ if ($step == 1 || ! $datatoimport)
 	}
 	else
 	{
-		print '<tr><td '.$bc[false].' colspan="3">'.$langs->trans("NoImportableData").'</td></tr>';
+		print '<tr><td class="oddeven" colspan="3">'.$langs->trans("NoImportableData").'</td></tr>';
 	}
 	print '</table>';
     print '</div>';

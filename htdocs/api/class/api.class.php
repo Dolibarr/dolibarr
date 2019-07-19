@@ -106,8 +106,6 @@ class DolibarrApi
         // Remove linkedObjects. We should already have linkedObjectIds that avoid huge responses
         unset($object->linkedObjects);
 
-        unset($object->lignes); // we don't want lignes, we want only ->lines
-
         unset($object->fields);
         unset($object->oldline);
 
@@ -188,7 +186,7 @@ class DolibarrApi
                 unset($object->lines[$i]->note_public);
                 unset($object->lines[$i]->note_private);
                 unset($object->lines[$i]->fk_incoterms);
-                unset($object->lines[$i]->libelle_incoterms);
+                unset($object->lines[$i]->label_incoterms);
                 unset($object->lines[$i]->location_incoterms);
                 unset($object->lines[$i]->name);
                 unset($object->lines[$i]->lastname);

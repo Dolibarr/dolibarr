@@ -916,7 +916,7 @@ class Facture extends CommonInvoice
 		$facture->origin            = $this->origin;
 		$facture->origin_id         = $this->origin_id;
 
-		$facture->lines		    	= $this->lines;	// Tableau des lignes de factures
+		$facture->lines		    	= $this->lines;	// Array of lines of invoice
 		$facture->products		    = $this->lines;	// Tant que products encore utilise
 		$facture->situation_counter = $this->situation_counter;
 		$facture->situation_cycle_ref=$this->situation_cycle_ref;
@@ -1334,7 +1334,7 @@ class Facture extends CommonInvoice
 		$sql.= ', c.code as cond_reglement_code, c.libelle as cond_reglement_libelle, c.libelle_facture as cond_reglement_libelle_doc';
         $sql.= ', f.fk_incoterms, f.location_incoterms';
         $sql.= ', f.module_source, f.pos_source';
-        $sql.= ", i.libelle as libelle_incoterms";
+        $sql.= ", i.libelle as label_incoterms";
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture as f';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as c ON f.fk_cond_reglement = c.rowid';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON f.fk_mode_reglement = p.id';
@@ -1409,7 +1409,7 @@ class Facture extends CommonInvoice
 				//Incoterms
 				$this->fk_incoterms         = $obj->fk_incoterms;
 				$this->location_incoterms   = $obj->location_incoterms;
-				$this->libelle_incoterms    = $obj->libelle_incoterms;
+				$this->label_incoterms    = $obj->label_incoterms;
 
   				$this->module_source        = $obj->module_source;
 				$this->pos_source           = $obj->pos_source;
@@ -1466,10 +1466,14 @@ class Facture extends CommonInvoice
 	/**
 	 *	Load all detailed lines into this->lines
 	 *
+	 *	@param		int		$only_product	Return only physical products
+	 *	@param		int		$loadalsotranslation	Return translation for products
+	 *
 	 *	@return     int         1 if OK, < 0 if KO
 	 */
-    public function fetch_lines()
+	public function fetch_lines($only_product = 0, $loadalsotranslation = 0)
 	{
+		global $langs, $conf;
         // phpcs:enable
 		$this->lines=array();
 
@@ -1558,6 +1562,13 @@ class Facture extends CommonInvoice
 				$line->multicurrency_total_ttc 	= $objp->multicurrency_total_ttc;
 
                 $line->fetch_optionals();
+
+				// multilangs
+        		if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($objp->fk_product) && ! empty($loadalsotranslation)) {
+        		$line = new Product($this->db);
+        		$line->fetch($objp->fk_product);
+        		$line->getMultiLangs();
+        		}
 
 				$this->lines[$i] = $line;
 
@@ -2653,7 +2664,7 @@ class Facture extends CommonInvoice
 	 * 		@param    	int			$date_start      	Date start of service
 	 * 		@param    	int			$date_end        	Date end of service
 	 * 		@param    	int			$ventil          	Code of dispatching into accountancy
-	 * 		@param    	int			$info_bits			Bits de type de lignes
+	 * 		@param    	int			$info_bits			Bits of type of lines
 	 *		@param    	int			$fk_remise_except	Id discount used
 	 *		@param		string		$price_base_type	'HT' or 'TTC'
 	 * 		@param    	double		$pu_ttc             Unit price with tax (> 0 even for credit note)
@@ -4144,7 +4155,7 @@ class Facture extends CommonInvoice
 	/**
 	 *  Create a document onto disk according to template module.
 	 *
-	 *	@param	string		$modele			Generator to use. Caller must set it to obj->modelpdf or GETPOST('modelpdf') for example.
+	 *	@param	string		$modele			Generator to use. Caller must set it to obj->modelpdf or GETPOST('modelpdf','alpha') for example.
 	 *	@param	Translate	$outputlangs	objet lang a utiliser pour traduction
 	 *  @param  int			$hidedetails    Hide details of lines
 	 *  @param  int			$hidedesc       Hide description

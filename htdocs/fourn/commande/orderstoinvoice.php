@@ -509,7 +509,7 @@ if (($action != 'create' && $action != 'add') && !$error) {
 		print_liste_field_titre('GenerateBill', '', '', '', '', '', '', '', 'center ');
 		print "</tr>\n";
 
-		// Lignes des champs de filtre
+		// Fields title search
 		print '<tr class="liste_titre">';
 		print '<td class="liste_titre">';
 		// REF

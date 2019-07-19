@@ -192,6 +192,7 @@ class Stripe extends CommonObject
 
 				$vatcleaned = $object->tva_intra ? $object->tva_intra : null;
 
+				/*
 				$taxinfo = array('type'=>'vat');
 				if ($vatcleaned)
 				{
@@ -199,8 +200,8 @@ class Stripe extends CommonObject
 				}
 				// We force data to "null" if not defined as expected by Stripe
 				if (empty($vatcleaned)) $taxinfo=null;
-
 				$dataforcustomer["tax_info"] = $taxinfo;
+				*/
 
 				//$a = \Stripe\Stripe::getApiKey();
 				//var_dump($a);var_dump($key);exit;
@@ -215,6 +216,21 @@ class Stripe extends CommonObject
 						$customer = \Stripe\Customer::create($dataforcustomer, array("stripe_account" => $key));
 					}
 
+					// Create the VAT record in Stripe
+					if (! empty($conf->global->STRIPE_SAVE_TAX_IDS))	// We setup to save Tax info on Stripe side. Warning: This may result in error when saving customer
+					{
+						if (! empty($vatcleaned))
+						{
+							$isineec=isInEEC($object);
+							if ($object->country_code && $isineec)
+							{
+								//$taxids = $customer->allTaxIds($customer->id);
+								$customer->createTaxId($customer->id, array('type'=>'eu_vat', 'value'=>$vatcleaned));
+							}
+						}
+					}
+
+					// Create customer in Dolibarr
 					$sql = "INSERT INTO " . MAIN_DB_PREFIX . "societe_account (fk_soc, login, key_account, site, status, entity, date_creation, fk_user_creat)";
 					$sql .= " VALUES (".$object->id.", '', '".$this->db->escape($customer->id)."', 'stripe', " . $status . ", " . $conf->entity . ", '".$this->db->idate(dol_now())."', ".$user->id.")";
 					$resql = $this->db->query($sql);
@@ -247,6 +263,8 @@ class Stripe extends CommonObject
 	 */
 	public function getPaymentMethodStripe($paymentmethod, $key = '', $status = 0)
 	{
+		$stripepaymentmethod = null;
+
 		try {
 			// Force to use the correct API key
 			global $stripearrayofkeysbyenv;
@@ -261,15 +279,18 @@ class Stripe extends CommonObject
 		{
 			$this->error = $e->getMessage();
 		}
+
 		return $stripepaymentmethod;
 	}
 
     /**
 	 * Get the Stripe payment intent. Create it with confirm=false
      * Warning. If a payment was tried and failed, a payment intent was created.
-	 * But if we change someting on object to pay (amount or other), reusing same payment intent is not allowed.
+	 * But if we change something on object to pay (amount or other), reusing same payment intent is not allowed.
 	 * Recommanded solution is to recreate a new payment intent each time we need one (old one will be automatically closed after a delay),
 	 * that's why i comment the part of code to retreive a payment intent with object id (never mind if we cumulate payment intent with old ones that will not be used)
+	 * Note: This is used when option STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION is on when making a payment from the public/payment/newpayment.php page
+	 * but not when using the STRIPE_USE_NEW_CHECKOUT.
 	 *
 	 * @param   double  $amount                             Amount
 	 * @param   string  $currency_code                      Currency code
@@ -288,7 +309,7 @@ class Stripe extends CommonObject
 	{
 		global $conf;
 
-		dol_syslog("getPaymentIntent");
+		dol_syslog("getPaymentIntent", LOG_INFO, 1);
 
 		$error = 0;
 
@@ -370,10 +391,10 @@ class Stripe extends CommonObject
     		    "confirmation_method" => $mode,
     		    "amount" => $stripeamount,
     			"currency" => $currency_code,
-    		    "payment_method_types" => ["card"],
+    		    "payment_method_types" => array("card"),
     		    "description" => $description,
     		    "statement_descriptor" => dol_trunc($tag, 10, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt (company + description)
-    			//"save_payment_method" => true,
+				"setup_future_usage" => "on_session",
     			"metadata" => $metadata
     		);
     		if (! is_null($customer)) $dataforintent["customer"]=$customer;
@@ -460,7 +481,7 @@ class Stripe extends CommonObject
     		}
 		}
 
-		dol_syslog("getPaymentIntent return error=".$error);
+		dol_syslog("getPaymentIntent return error=".$error, LOG_INFO, -1);
 
 		if (! $error)
 		{
@@ -533,7 +554,7 @@ class Stripe extends CommonObject
 
 					//$a = \Stripe\Stripe::getApiKey();
 					//var_dump($a);var_dump($stripeacc);exit;
-					dol_syslog("Try to create card dataforcard = ".dol_json_encode($dataforcard));
+					dol_syslog("Try to create card dataforcard = ".json_encode($dataforcard));
 					try {
 						if (empty($stripeacc)) {				// If the Stripe connect account not set, we use common API usage
 							$card = $cu->sources->create($dataforcard);

@@ -495,7 +495,7 @@ if (is_array($blocks))
 		   	print '<td'.(preg_match('/<a/', $object_link) ? ' class="nowrap"' : '').'><!-- object_link -->'.$object_link.'</td>';
 
 		   	// Amount
-		   	print '<td class="right">'.price($block->amounts).'</td>';
+		   	print '<td class="right nowraponall">'.price($block->amounts).'</td>';
 
 		   	// Details link
 		   	print '<td align="center"><a href="#" data-blockid="'.$block->id.'" rel="show-info">'.img_info($langs->trans('ShowDetails')).'</a></td>';

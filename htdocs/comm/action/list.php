@@ -97,15 +97,13 @@ if ($page == -1 || $page == null) { $page = 0 ; }
 $offset = $limit * $page ;
 if (! $sortorder)
 {
-	$sortorder="DESC";
-	if ($status == 'todo') $sortorder="DESC";
-	//if ($status == 'done') $sortorder="DESC";
+	$sortorder="DESC,DESC";
+	if ($status == 'todo') $sortorder="DESC,DESC";
 }
 if (! $sortfield)
 {
-	$sortfield="a.datep";
-	if ($status == 'todo') $sortfield="a.datep";
-	//if ($status == 'done') $sortfield="a.datep2";
+	$sortfield="a.datep,a.id";
+	if ($status == 'todo') $sortfield="a.datep,a.id";
 }
 
 // Security check
@@ -500,7 +498,7 @@ if ($resql)
 	if (! empty($arrayfields['a.label']['checked']))	  print_liste_field_titre($arrayfields['a.label']['label'], $_SERVER["PHP_SELF"], "a.label", $param, "", "", $sortfield, $sortorder);
 	if (! empty($arrayfields['a.note']['checked']))		  print_liste_field_titre($arrayfields['a.note']['label'], $_SERVER["PHP_SELF"], "a.note", $param, "", "", $sortfield, $sortorder);
 	//if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
-	if (! empty($arrayfields['a.datep']['checked']))	  print_liste_field_titre($arrayfields['a.datep']['label'], $_SERVER["PHP_SELF"], "a.datep", $param, '', 'align="center"', $sortfield, $sortorder);
+	if (! empty($arrayfields['a.datep']['checked']))	  print_liste_field_titre($arrayfields['a.datep']['label'], $_SERVER["PHP_SELF"], "a.datep,a.id", $param, '', 'align="center"', $sortfield, $sortorder);
 	if (! empty($arrayfields['a.datep2']['checked']))	  print_liste_field_titre($arrayfields['a.datep2']['label'], $_SERVER["PHP_SELF"], "a.datep2", $param, '', 'align="center"', $sortfield, $sortorder);
 	if (! empty($arrayfields['s.nom']['checked']))	      print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], "s.nom", $param, "", "", $sortfield, $sortorder);
 	if (! empty($arrayfields['a.fk_contact']['checked'])) print_liste_field_titre($arrayfields['a.fk_contact']['label'], $_SERVER["PHP_SELF"], "a.fk_contact", $param, "", "", $sortfield, $sortorder);
@@ -528,6 +526,7 @@ if ($resql)
 	require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
 	$caction=new CActionComm($db);
 	$arraylist=$caction->liste_array(1, 'code', '', (empty($conf->global->AGENDA_USE_EVENT_TYPE)?1:0), '', 1);
+    $contactListCache = array();
 
 	while ($i < min($num, $limit))
 	{
@@ -647,7 +646,34 @@ if ($resql)
 		// Contact
 		if (! empty($arrayfields['a.fk_contact']['checked'])) {
 			print '<td>';
-			if ($obj->fk_contact > 0)
+
+
+            $actionstatic->fetchResources();
+            if(!empty($actionstatic->socpeopleassigned))
+            {
+                $contactList = array();
+                foreach ($actionstatic->socpeopleassigned as $socpeopleId => $socpeopleassigned)
+                {
+                    if(!isset($contactListCache[$socpeopleassigned['id']]))
+                    {
+                        // if no cache found we fetch it
+                        $contact = new Contact($db);
+                        if($contact->fetch($socpeopleassigned['id'])>0)
+                        {
+                            $contactListCache[$socpeopleassigned['id']] = $contact->getNomUrl(1, '', 28);
+                            $contactList[] = $contact->getNomUrl(1, '', 28);
+                        }
+                    }
+                    else{
+                        // use cache
+                        $contactList[] = $contactListCache[$socpeopleassigned['id']];
+                    }
+                }
+                if(!empty($contactList)){
+                    print implode(', ', $contactList);
+                }
+            }
+            elseif ($obj->fk_contact > 0) //keep for retrocompatibility with faraway event
 			{
 				$contactstatic->id=$obj->fk_contact;
 				$contactstatic->email=$obj->email;

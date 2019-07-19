@@ -6,6 +6,7 @@
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2019       Pierre Ardoin           <mapiolca@me.com>
  * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -396,6 +397,9 @@ if (! empty($conf->global->MAIN_SHOW_PRODUCT_ACTIVITY_TRIM))
 
 
 print '</div></div></div>';
+
+$parameters = array('type' => $type, 'user' => $user);
+$reshook = $hookmanager->executeHooks('dashboardProductsServices', $parameters, $object); // Note that $action and $object may have been modified by hook
 
 // End of page
 llxFooter();

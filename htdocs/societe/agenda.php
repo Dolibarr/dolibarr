@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-$langs->load("companies");
+$langs->loadLangs(array("companies", "bills", "propal", "orders"));
 
 if (GETPOST('actioncode', 'array'))
 {

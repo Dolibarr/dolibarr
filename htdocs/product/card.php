@@ -148,7 +148,7 @@ if (empty($reshook))
     }
 
     // Actions to build doc
-    $upload_dir = $conf->produit->dir_output;
+    $upload_dir = $conf->product->dir_output;
     $permissioncreate = $usercancreate;
     include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
@@ -1601,7 +1601,7 @@ else
             print '<table class="border tableforfield" width="100%">';
 
 			// Type
-			if (! empty($conf->produit->enabled) && ! empty($conf->service->enabled))
+			if (! empty($conf->product->enabled) && ! empty($conf->service->enabled))
 			{
 				// TODO change for compatibility with edit in place
 				$typeformat='select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
@@ -2158,7 +2158,7 @@ if ($action != 'create' && $action != 'edit' && $action != 'delete')
     // Documents
     $objectref = dol_sanitizeFileName($object->ref);
     $relativepath = $comref . '/' . $objectref . '.pdf';
-    $filedir = $conf->produit->dir_output . '/' . $objectref;
+    $filedir = $conf->product->dir_output . '/' . $objectref;
     $urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
     $genallowed=$usercanread;
     $delallowed=$usercancreate;

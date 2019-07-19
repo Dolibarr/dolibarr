@@ -347,7 +347,7 @@ class Expedition extends CommonObject
 			dol_syslog(get_class($this)."::create", LOG_DEBUG);
 			if ($this->db->query($sql))
 			{
-				// Insertion des lignes
+				// Insert of lines
 				$num=count($this->lines);
 				for ($i = 0; $i < $num; $i++)
 				{
@@ -536,7 +536,7 @@ class Expedition extends CommonObject
 		$sql.= ", e.fk_shipping_method, e.tracking_number";
 		$sql.= ", e.note_private, e.note_public";
 		$sql.= ', e.fk_incoterms, e.location_incoterms';
-		$sql.= ', i.libelle as libelle_incoterms';
+		$sql.= ', i.libelle as label_incoterms';
 		$sql.= ', s.libelle as shipping_method';
 		$sql.= ", el.fk_source as origin_id, el.sourcetype as origin";
 		$sql.= " FROM ".MAIN_DB_PREFIX."expedition as e";
@@ -601,7 +601,7 @@ class Expedition extends CommonObject
 				//Incoterms
 				$this->fk_incoterms         = $obj->fk_incoterms;
 				$this->location_incoterms   = $obj->location_incoterms;
-				$this->libelle_incoterms    = $obj->libelle_incoterms;
+				$this->label_incoterms    = $obj->label_incoterms;
 
 				$this->db->free($result);
 
@@ -1149,10 +1149,11 @@ class Expedition extends CommonObject
 	 * 	Delete shipment.
 	 * 	Warning, do not delete a shipment if a delivery is linked to (with table llx_element_element)
 	 *
-	 *  @param  int  $notrigger Disable triggers
-	 * 	@return	int		>0 if OK, 0 if deletion done but failed to delete files, <0 if KO
+	 *  @param  int  $notrigger 			Disable triggers
+     *  @param  bool $also_update_stock  	true if the stock should be increased back (false by default)
+	 * 	@return	int							>0 if OK, 0 if deletion done but failed to delete files, <0 if KO
 	 */
-	public function delete($notrigger = 0)
+	public function delete($notrigger = 0, $also_update_stock = false)
 	{
 		global $conf, $langs, $user;
 
@@ -1184,7 +1185,9 @@ class Expedition extends CommonObject
 		}
 
 		// Stock control
-		if (! $error && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SHIPMENT && $this->statut > self::STATUS_DRAFT)
+		if (! $error && $conf->stock->enabled &&
+			(($conf->global->STOCK_CALCULATE_ON_SHIPMENT && $this->statut > self::STATUS_DRAFT) ||
+			 ($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE && $this->statut == self::STATUS_CLOSED && $also_update_stock)))
 		{
 			require_once DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php";
 
@@ -2355,7 +2358,7 @@ class Expedition extends CommonObject
 
 
 /**
- * Classe de gestion des lignes de bons d'expedition
+ * Classe to manage lines of shipment
  */
 class ExpeditionLigne extends CommonObjectLine
 {

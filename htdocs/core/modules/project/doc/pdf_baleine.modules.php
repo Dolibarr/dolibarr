@@ -188,7 +188,7 @@ class pdf_baleine extends ModelePDFProjects
 
 		if ($conf->projet->dir_output)
 		{
-			//$nblignes = count($object->lines);  // This is set later with array of tasks
+			//$nblines = count($object->lines);  // This is set later with array of tasks
 
 			$objectref = dol_sanitizeFileName($object->ref);
 			$dir = $conf->projet->dir_output;
@@ -250,7 +250,7 @@ class pdf_baleine extends ModelePDFProjects
 				}
 
 				$object->lines=$tasksarray;
-				$nblignes=count($object->lines);
+				$nblines=count($object->lines);
 
 				$pdf->Open();
 				$pagenb=0;
@@ -287,7 +287,7 @@ class pdf_baleine extends ModelePDFProjects
 					complete_substitutions_array($substitutionarray, $outputlangs, $object);
 					$notetoshow = make_substitutions($notetoshow, $substitutionarray, $outputlangs);
 					$notetoshow = convertBackOfficeMediasLinksToPublicLinks($notetoshow);
-					
+
 					$tab_top -= 2;
 
 					$pdf->SetFont('', '', $default_font_size - 1);
@@ -313,7 +313,7 @@ class pdf_baleine extends ModelePDFProjects
 				$nexY = $tab_top + $heightoftitleline + 1;
 
 				// Loop on each lines
-				for ($i = 0 ; $i < $nblignes ; $i++)
+				for ($i = 0 ; $i < $nblines ; $i++)
 				{
 					$curY = $nexY;
 					$pdf->SetFont('', '', $default_font_size - 1);   // Into loop to work with multipage
@@ -352,7 +352,7 @@ class pdf_baleine extends ModelePDFProjects
 						$posyafter=$pdf->GetY();
 						if ($posyafter > ($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot)))	// There is no space left for total+free text
 						{
-							if ($i == ($nblignes-1))	// No more lines, and no space left to show total, so we create a new page
+							if ($i == ($nblines-1))	// No more lines, and no space left to show total, so we create a new page
 							{
 								$pdf->AddPage('', '', true);
 								if (! empty($tplidx)) $pdf->useTemplate($tplidx);
@@ -428,7 +428,7 @@ class pdf_baleine extends ModelePDFProjects
 					$pdf->MultiCell($this->page_largeur-$this->marge_droite-$this->posxdateend, 3, $dateend, 0, 'C');
 
 					// Add line
-					if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblignes - 1))
+					if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblines - 1))
 					{
 						$pdf->setPage($pageposafter);
 						$pdf->SetLineStyle(array('dash'=>'1,1','color'=>array(80,80,80)));
@@ -437,7 +437,7 @@ class pdf_baleine extends ModelePDFProjects
 						$pdf->SetLineStyle(array('dash'=>0));
 					}
 
-					$nexY+=2;    // Passe espace entre les lignes
+					$nexY+=2;    // Add space between lines
 
 					// Detect if some page were added automatically and output _tableau for past pages
 					while ($pagenb < $pageposafter)

@@ -181,7 +181,8 @@ if (empty($reshook))
 	// Change status of invoice
 	elseif ($action == 'reopen' && $usercancreate) {
 		$result = $object->fetch($id);
-		if ($object->statut == 2 || ($object->statut == 3 && $object->close_code != 'replaced') || ($object->statut == 1 && $object->paye == 1)) {    // ($object->statut == 1 && $object->paye == 1) should not happened but can be found when data are corrupted
+
+		if ($object->statut == Facture::STATUS_CLOSED || ($object->statut == Facture::STATUS_ABANDONED && ($object->close_code != 'replaced' || $object->getIdReplacingInvoice() == 0)) || ($object->statut == Facture::STATUS_VALIDATED && $object->paye == 1)) {    // ($object->statut == 1 && $object->paye == 1) should not happened but can be found when data are corrupted
 			$result = $object->set_unpaid($user);
 			if ($result > 0) {
 				header('Location: ' . $_SERVER["PHP_SELF"] . '?facid=' . $id);
@@ -637,7 +638,7 @@ if (empty($reshook))
 
 			$resteapayer = $object->total_ttc - $totalpaye;
 
-			// On verifie si les lignes de factures ont ete exportees en compta et/ou ventilees
+			// We check that invlice lines are transferred into accountancy
 			$ventilExportCompta = $object->getVentilExportCompta();
 
 			// On verifie si aucun paiement n'a ete effectue
@@ -1291,7 +1292,6 @@ if (empty($reshook))
 									$TTotalByTva[$line->tva_tx] += $line->total_ttc ;
 								}
 
-								$amount_to_diff = 0;
 								foreach ($TTotalByTva as $tva => &$total)
 								{
 									$coef = $total / $srcobject->total_ttc; // Calc coef
@@ -2969,21 +2969,24 @@ if ($action == 'create')
 	}
 	else
 	{
-	    print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
-	    $tmp='<input type="radio" name="type" id="radio_situation" value="0" disabled> ';
-	    $text = '<label>'.$tmp.$langs->trans("InvoiceFirstSituationAsk") . '</label> ';
-	    $text.= '('.$langs->trans("YouMustCreateInvoiceFromThird").') ';
-	    $desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceFirstSituationDesc"), 1, 'help', '', 0, 3);
-	    print $desc;
-	    print '</div></div>';
+	    if (! empty($conf->global->INVOICE_USE_SITUATION))
+	    {
+    	    print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
+    	    $tmp='<input type="radio" name="type" id="radio_situation" value="0" disabled> ';
+    	    $text = '<label>'.$tmp.$langs->trans("InvoiceFirstSituationAsk") . '</label> ';
+    	    $text.= '('.$langs->trans("YouMustCreateInvoiceFromThird").') ';
+    	    $desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceFirstSituationDesc"), 1, 'help', '', 0, 3);
+    	    print $desc;
+    	    print '</div></div>';
 
-	    print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
-	    $tmp='<input type="radio" name="type" id="radio_situation" value="0" disabled> ';
-	    $text = '<label>'.$tmp.$langs->trans("InvoiceSituationAsk") . '</label> ';
-	    $text.= '('.$langs->trans("YouMustCreateInvoiceFromThird").') ';
-	    $desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceFirstSituationDesc"), 1, 'help', '', 0, 3);
-	    print $desc;
-	    print '</div></div>';
+    	    print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
+    	    $tmp='<input type="radio" name="type" id="radio_situation" value="0" disabled> ';
+    	    $text = '<label>'.$tmp.$langs->trans("InvoiceSituationAsk") . '</label> ';
+    	    $text.= '('.$langs->trans("YouMustCreateInvoiceFromThird").') ';
+    	    $desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceFirstSituationDesc"), 1, 'help', '', 0, 3);
+    	    print $desc;
+    	    print '</div></div>';
+	    }
 
 	    print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
 		$tmp='<input type="radio" name="type" id="radio_replacement" value="0" disabled> ';
@@ -3168,7 +3171,7 @@ if ($action == 'create')
 	if (!empty($conf->incoterm->enabled))
 	{
 		print '<tr>';
-		print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), $objectsrc->libelle_incoterms, 1).'</label></td>';
+		print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), $objectsrc->label_incoterms, 1).'</label></td>';
 		print '<td colspan="2" class="maxwidthonsmartphone">';
 		$incoterm_id = GETPOST('incoterm_id');
 		$incoterm_location = GETPOST('location_incoterms');
@@ -3440,6 +3443,7 @@ elseif ($id > 0 || ! empty($ref))
 		elseif($object->type == Facture::TYPE_CREDIT_NOTE) $type_fac = 'CreditNote';
 		elseif($object->type == Facture::TYPE_DEPOSIT) $type_fac = 'Deposit';
 		$text = $langs->trans('ConfirmConvertToReduc', strtolower($langs->transnoentities($type_fac)));
+		$text.='<br>'.$langs->trans('ConfirmConvertToReduc2');
 		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $langs->trans('ConvertToReduc'), $text, 'confirm_converttoreduc', '', "yes", 2);
 	}
 
@@ -4003,7 +4007,7 @@ elseif ($id > 0 || ! empty($ref))
 		print '<td>';
 		if ($action != 'editincoterm')
 		{
-			print $form->textwithpicto($object->display_incoterms(), $object->libelle_incoterms, 1);
+			print $form->textwithpicto($object->display_incoterms(), $object->label_incoterms, 1);
 		}
 		else
 		{
@@ -4608,7 +4612,7 @@ elseif ($id > 0 || ! empty($ref))
 			// Editer une facture deja validee, sans paiement effectue et pas exporte en compta
 			if ($object->statut == Facture::STATUS_VALIDATED)
 			{
-				// On verifie si les lignes de factures ont ete exportees en compta et/ou ventilees
+				// We check that invlice lines are transferred into accountancy
 				$ventilExportCompta = $object->getVentilExportCompta();
 
 				if ($ventilExportCompta == 0)
@@ -4646,7 +4650,7 @@ elseif ($id > 0 || ! empty($ref))
 				&& ($object->statut == 2 || $object->statut == 3 || ($object->statut == 1 && $object->paye == 1))   // Condition ($object->statut == 1 && $object->paye == 1) should not happened but can be found due to corrupted data
 				&& ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $usercancreate) || $usercanreopen))				// A paid invoice (partially or completely)
 			{
-				if (! $objectidnext && $object->close_code != 'replaced') 				// Not replaced by another invoice
+			    if ($object->close_code != 'replaced' || (! $objectidnext)) 				// Not replaced by another invoice or replaced but the replacement invoice has been deleted
 				{
 					print '<div class="inline-block divButAction"><a class="butAction'.($conf->use_javascript_ajax?' reposition':'').'" href="' . $_SERVER['PHP_SELF'] . '?facid=' . $object->id . '&amp;action=reopen">' . $langs->trans('ReOpen') . '</a></div>';
 				} else {
@@ -4742,7 +4746,7 @@ elseif ($id > 0 || ! empty($ref))
 				}
 				// For credit note
 				if ($object->type == Facture::TYPE_CREDIT_NOTE && $object->statut == 1 && $object->paye == 0 && $usercancreate && $object->getSommePaiement() == 0) {
-					print '<div class="inline-block divButAction"><a class="butAction'.($conf->use_javascript_ajax?' reposition':'').'" href="' . $_SERVER["PHP_SELF"] . '?facid=' . $object->id . '&amp;action=converttoreduc">' . $langs->trans('ConvertToReduc') . '</a></div>';
+					print '<div class="inline-block divButAction"><a class="butAction'.($conf->use_javascript_ajax?' reposition':'').'" href="' . $_SERVER["PHP_SELF"] . '?facid=' . $object->id . '&amp;action=converttoreduc" title="'.dol_escape_htmltag($langs->trans("ConfirmConvertToReduc2")).'">' . $langs->trans('ConvertToReduc') . '</a></div>';
 				}
 				// For deposit invoice
 				if ($object->type == Facture::TYPE_DEPOSIT && $usercancreate && $object->statut > 0 && empty($discount->id))

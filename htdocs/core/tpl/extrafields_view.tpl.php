@@ -48,8 +48,8 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 //var_dump($extrafields->attributes[$object->table_element]);
 if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]['label']))
-
 {
+    $extrafields_collapse_num = '';
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $label)
 	{
 		// Discard if extrafield is a hidden field on form
@@ -86,11 +86,25 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 		}
 		if ($extrafields->attributes[$object->table_element]['type'][$key] == 'separate')
 		{
+            $extrafields_collapse_num = '';
+            $extrafield_param = $extrafields->attributes[$object->table_element]['param'][$key];
+            if (!empty($extrafield_param) && is_array($extrafield_param)) {
+                $extrafield_param_list = array_keys($extrafield_param['options']);
+
+                if (count($extrafield_param_list)>0) {
+                    $extrafield_collapse_display_value = intval($extrafield_param_list[0]);
+
+                    if ($extrafield_collapse_display_value==1 || $extrafield_collapse_display_value==2) {
+                        $extrafields_collapse_num = $extrafields->attributes[$object->table_element]['pos'][$key];
+                    }
+                }
+            }
+
 			print $extrafields->showSeparator($key, $object);
 		}
 		else
 		{
-			print '<tr>';
+            print '<tr class="trextrafields_collapse'.$extrafields_collapse_num.'">';
 			print '<td class="titlefield">';
 			print '<table width="100%" class="nobordernopadding">';
 			print '<tr>';

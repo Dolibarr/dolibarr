@@ -2,6 +2,7 @@
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +31,11 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 require_once DOL_DOCUMENT_ROOT .'/commande/class/commande.class.php';
 
 if (!$user->rights->commande->lire) accessforbidden();
+
+$hookmanager = new HookManager($db);
+
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('ordersindex'));
 
 // Load translation files required by the page
 $langs->loadLangs(array('orders', 'bills'));
@@ -478,6 +484,8 @@ if (! empty($conf->commande->enabled))
 
 print '</div></div></div>';
 
+$parameters = array('user' => $user);
+$reshook = $hookmanager->executeHooks('dashboardOrders', $parameters, $object); // Note that $action and $object may have been modified by hook
 
 // End of page
 llxFooter();

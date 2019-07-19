@@ -592,7 +592,7 @@ if (! empty($arrayfields['c.tms']['checked'])){
     print_liste_field_titre($arrayfields['c.tms']['label'], $_SERVER["PHP_SELF"], "c.tms", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 }
 if (! empty($arrayfields['lower_planned_end_date']['checked'])) {
-    print_liste_field_titre($arrayfields['lower_planned_end_date']['label'], $_SERVER["PHP_SELF"], "lower_planned_end_date", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+    print_liste_field_titre($arrayfields['lower_planned_end_date']['label'], $_SERVER["PHP_SELF"], "lower_planned_end_date", "", $param, '', $sortfield, $sortorder, 'center ');
 }
 if (! empty($arrayfields['status']['checked'])) {
 	print_liste_field_titre($staticcontratligne->LibStatut(0, 3), '', '', '', '', 'width="16"');

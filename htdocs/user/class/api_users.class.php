@@ -378,7 +378,7 @@ class Users extends DolibarrApi
 	    unset($object->total_localtax2);
 	    unset($object->total_ttc);
 
-	    unset($object->libelle_incoterms);
+	    unset($object->label_incoterms);
 	    unset($object->location_incoterms);
 
 	    unset($object->fk_delivery_address);

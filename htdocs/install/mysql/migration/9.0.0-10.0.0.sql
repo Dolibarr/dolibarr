@@ -60,6 +60,8 @@ CREATE TABLE llx_pos_cash_fence(
 
 -- For 10.0
 
+UPDATE llx_chargesociales SET date_creation = tms WHERE date_creation IS NULL;
+
 DROP TABLE llx_cotisation;
 ALTER TABLE llx_accounting_bookkeeping DROP COLUMN validated;
 ALTER TABLE llx_accounting_bookkeeping_tmp DROP COLUMN validated;
@@ -93,6 +95,8 @@ ALTER TABLE llx_mailing_unsubscribe ADD UNIQUE uk_mailing_unsubscribe(email, ent
 ALTER TABLE llx_adherent ADD gender VARCHAR(10);
 ALTER TABLE llx_adherent_type ADD morphy VARCHAR(3);
 ALTER TABLE llx_subscription ADD fk_type integer;
+
+UPDATE llx_subscription as s SET fk_type = (SELECT fk_adherent_type FROM llx_adherent as a where a.rowid = s.fk_adherent) where fk_type IS NULL; 
 
 -- Add url_id into unique index of bank_url
 ALTER TABLE llx_bank_url DROP INDEX uk_bank_url;
@@ -248,12 +252,13 @@ CREATE TABLE llx_bom_bomline(
 	import_key varchar(14), 
 	qty double(24,8) NOT NULL, 
 	efficiency double(8,4) NOT NULL DEFAULT 1,
-	rank integer NOT NULL
+	position integer NOT NULL
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;
 
 ALTER TABLE llx_bom_bomline ADD COLUMN efficiency double(8,4) DEFAULT 1;
 ALTER TABLE llx_bom_bomline ADD COLUMN fk_bom_child integer NULL;
+ALTER TABLE llx_bom_bomline ADD COLUMN position integer NOT NULL;
 
 create table llx_bom_bomline_extrafields
 (

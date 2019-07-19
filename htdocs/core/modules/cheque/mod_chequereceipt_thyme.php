@@ -46,7 +46,7 @@ class mod_chequereceipt_thyme extends ModeleNumRefChequeReceipts
 
 
     /**
-     *  Renvoi la description du modele de numerotation
+     *  Returns the description of the numbering model
      *
      *  @return     string      Texte descripif
      */

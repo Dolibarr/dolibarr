@@ -144,6 +144,21 @@ if (! $foundcache && $test)
 if (! $foundcache) print $langs->trans("NoOPCodeCacheFound");
 print '<br>';
 
+// Use of preload bootstrap
+if (ini_get('opcache.preload'))
+{
+	print '<br>';
+	print '<strong>'.$langs->trans("PreloadOPCode").'</strong>: ';
+	print ini_get('opcache.preload');
+}
+else
+{
+	print '<br>';
+	print '<strong>'.$langs->trans("PreloadOPCode").'</strong>: ';
+	print $langs->trans("No");
+}
+print '<br>';
+
 // HTTPCacheStaticResources
 print '<script type="text/javascript" language="javascript">
 jQuery(document).ready(function() {
@@ -467,16 +482,46 @@ if ($resql)
 	{
 		if (empty($conf->global->PRODUCT_DONOTSEARCH_ANYWHERE))
 		{
-			print img_picto('', 'warning.png').' '.$langs->trans("YouHaveXProductUseSearchOptim", $nb);
+			print img_picto('', 'warning.png').' '.$langs->trans("YouHaveXObjectUseSearchOptim", $nb, $langs->transnoentitiesnoconv("ProductsOrServices"), 'PRODUCT_DONOTSEARCH_ANYWHERE');
 		}
 		else
 		{
-			print img_picto('', 'tick.png').' '.$langs->trans("YouHaveXProductAndSearchOptimOn", $nb);
+			print img_picto('', 'tick.png').' '.$langs->trans("YouHaveXObjectAndSearchOptimOn", $nb, $langs->transnoentitiesnoconv("ProductsOrServices"));
 		}
 	}
 	else
 	{
-		print img_picto('', 'tick.png').' '.$langs->trans("NbOfProductIsLowerThanNoPb", $nb);
+		print img_picto('', 'tick.png').' '.$langs->trans("NbOfObjectIsLowerThanNoPb", $nb, $langs->transnoentitiesnoconv("ProductsOrServices"));
+	}
+	print '<br>';
+	$db->free($resql);
+}
+
+// Thirdparty search
+$tab = array();
+$sql = "SELECT COUNT(*) as nb";
+$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+$resql=$db->query($sql);
+if ($resql)
+{
+	$limitforoptim=10000;
+	$num=$db->num_rows($resql);
+	$obj=$db->fetch_object($resql);
+	$nb=$obj->nb;
+	if ($nb > $limitforoptim)
+	{
+		if (empty($conf->global->THIRDPARTY_DONOTSEARCH_ANYWHERE))
+		{
+			print img_picto('', 'warning.png').' '.$langs->trans("YouHaveXObjectUseSearchOptim", $nb, $langs->transnoentitiesnoconv("ThirdParties"), 'THIRDPARTY_DONOTSEARCH_ANYWHERE');
+		}
+		else
+		{
+			print img_picto('', 'tick.png').' '.$langs->trans("YouHaveXObjectAndSearchOptimOn", $nb, $langs->transnoentitiesnoconv("ThirdParties"));
+		}
+	}
+	else
+	{
+		print img_picto('', 'tick.png').' '.$langs->trans("NbOfObjectIsLowerThanNoPb", $nb, $langs->transnoentitiesnoconv("ThirdParties"));
 	}
 	print '<br>';
 	$db->free($resql);

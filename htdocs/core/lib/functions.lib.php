@@ -1350,10 +1350,10 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 				$nophoto='';
 				$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"></div>';
 			}
-			//elseif ($conf->browser->layout != 'phone') {    // Show no photo link
+			else {    // Show no photo link
 				$nophoto='/public/theme/common/nophoto.png';
 				$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"><img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo"'.($width?' style="width: '.$width.'px"':'').' src="'.DOL_URL_ROOT.$nophoto.'"></div>';
-			//}
+			}
 		}
 	}
 	elseif ($object->element == 'ticket')
@@ -1369,10 +1369,10 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 				$nophoto='';
 				$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"></div>';
 			}
-			//elseif ($conf->browser->layout != 'phone') {    // Show no photo link
-			$nophoto='/public/theme/common/nophoto.png';
-			$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"><img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo" border="0"'.($width?' style="width: '.$width.'px"':'').' src="'.DOL_URL_ROOT.$nophoto.'"></div>';
-			//}
+			else {    // Show no photo link
+				$nophoto='/public/theme/common/nophoto.png';
+				$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"><img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo" border="0"'.($width?' style="width: '.$width.'px"':'').' src="'.DOL_URL_ROOT.$nophoto.'"></div>';
+			}
 		}
 	}
 	else
@@ -5280,7 +5280,7 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart)
 		// Here, object->id, object->ref and modulepart are required.
 		//var_dump($modulepart);
         if (in_array($modulepart, array('thirdparty','contact','member','propal','proposal','commande','order','facture','invoice',
-			'supplier_order','supplier_proposal','shipment','contract','expensereport')))
+			'supplier_order','supplier_proposal','shipment','contract','expensereport','ficheinter')))
 		{
 			$path=($object->ref?$object->ref:$object->id);
 		}
@@ -7057,7 +7057,7 @@ function getLanguageCodeFromCountryCode($countrycode)
 	$buildprimarykeytotest = strtolower($countrycode).'-'.strtoupper($countrycode);
 	if (in_array($buildprimarykeytotest, $locales)) return strtolower($countrycode).'_'.strtoupper($countrycode);
 
-	if (function_exists('locale_get_primary_language'))    // Need extension php-intl
+	if (function_exists('locale_get_primary_language') && function_exists('locale_get_region'))    // Need extension php-intl
 	{
 	    foreach ($locales as $locale)
     	{

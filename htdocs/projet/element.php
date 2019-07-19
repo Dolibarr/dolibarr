@@ -605,6 +605,7 @@ foreach ($listofreferent as $key => $value)
 				if ($key == 'invoice')
 				{
 				    if (! empty($element->close_code) && $element->close_code == 'replaced') $qualifiedfortotal=false;	// Replacement invoice, do not include into total
+				    if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS) && $element->type == Facture::TYPE_DEPOSIT) $qualifiedfortotal=false;	// If hidden option to use deposits as payment (deprecated, not recommended to use this), deposits are not included
 				}
 				if ($key == 'propal')
 				{
@@ -776,7 +777,7 @@ foreach ($listofreferent as $key => $value)
 		if (empty($conf->global->PROJECT_CREATE_ON_OVERVIEW_DISABLED) && $urlnew)
 		{
 			$addform.='<div class="inline-block valignmiddle">';
-			if ($testnew) $addform.='<a class="buttonxxx" href="'.$urlnew.'"><span class="valignmiddle text-plus-circle">'.($buttonnew?$langs->trans($buttonnew):$langs->trans("Create")).'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
+			if ($testnew) $addform.='<a class="buttonxxx" href="'.$urlnew.'"><span class="valignmiddle text-plus-circle">'.($buttonnew?$langs->trans($buttonnew):$langs->trans("Create")).'</span><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
 			elseif (empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED)) {
 				$addform.='<a class="buttonxxx buttonRefused" disabled="disabled" href="#"><span class="valignmiddle text-plus-circle">'.($buttonnew?$langs->trans($buttonnew):$langs->trans("Create")).'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
 			}

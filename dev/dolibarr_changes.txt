@@ -27,6 +27,15 @@ With
 
 
 
+ESCPOS:
+-------
+Replace
+	private $connector;
+With
+	protected $connector;
+
+
+
 NUSOAP:
 -------
 * In file nusoap.php, to avoid a warning,

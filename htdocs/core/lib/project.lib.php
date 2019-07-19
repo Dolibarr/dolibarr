@@ -371,12 +371,13 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 	$numlines=count($lines);
 
 	// We declare counter as global because we want to edit them into recursive call
-	global $total_projectlinesa_spent,$total_projectlinesa_planned,$total_projectlinesa_spent_if_planned,$total_projectlinesa_tobill,$total_projectlinesa_billed;
+	global $total_projectlinesa_spent,$total_projectlinesa_planned,$total_projectlinesa_spent_if_planned,$total_projectlinesa_declared_if_planned,$total_projectlinesa_tobill,$total_projectlinesa_billed;
 	if ($level == 0)
 	{
 		$total_projectlinesa_spent=0;
 		$total_projectlinesa_planned=0;
 		$total_projectlinesa_spent_if_planned=0;
+        $total_projectlinesa_declared_if_planned=0;
 		$total_projectlinesa_tobill=0;
 		$total_projectlinesa_billed=0;
 	}
@@ -624,6 +625,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				$total_projectlinesa_spent += $lines[$i]->duration;
 				$total_projectlinesa_planned += $lines[$i]->planned_workload;
 				if ($lines[$i]->planned_workload) $total_projectlinesa_spent_if_planned += $lines[$i]->duration;
+                if ($lines[$i]->planned_workload) $total_projectlinesa_declared_if_planned += $lines[$i]->planned_workload * $lines[$i]->progress / 100;
 			}
 		}
 		else
@@ -652,7 +654,9 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 		print '<td class="nowrap liste_total right">';
 		if ($total_projectlinesa_planned) print round(100 * $total_projectlinesa_spent / $total_projectlinesa_planned, 2).' %';
 		print '</td>';
-		print '<td></td>';
+		print '<td class="nowrap liste_total right">';
+        if ($total_projectlinesa_planned) print round(100 * $total_projectlinesa_declared_if_planned / $total_projectlinesa_planned, 2).' %';
+		print '</td>';
 		if ($showbilltime)
 		{
     		print '<td class="nowrap liste_total right">';

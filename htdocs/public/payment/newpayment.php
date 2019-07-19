@@ -21,6 +21,11 @@
  * For Paypal test: https://developer.paypal.com/
  * For Paybox test: ???
  * For Stripe test: Use credit card 4242424242424242 .More example on https://stripe.com/docs/testing
+ *
+ * Variants:
+ * - When option STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION is on, we use the new checkout API
+ * - When option STRIPE_USE_NEW_CHECKOUT is on, we use the new checkout API
+ * - If no option set, we use old APIS (charge)
  */
 
 /**
@@ -430,6 +435,7 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
     			'dol_version' => DOL_VERSION,
     			'dol_entity'  => $conf->entity,
     			'dol_company' => $mysoc->name,		// Usefull when using multicompany
+    			'dol_tax_num' => $taxinfo,
     		    'ipaddress'=> getUserRemoteIP()
     		);
 
@@ -501,23 +507,39 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
     		{
     			$vatcleaned = $vatnumber ? $vatnumber : null;
 
-    			$taxinfo = array('type'=>'vat');
+    			/*$taxinfo = array('type'=>'vat');
     			if ($vatcleaned)
     			{
     				$taxinfo["tax_id"] = $vatcleaned;
     			}
     			// We force data to "null" if not defined as expected by Stripe
     			if (empty($vatcleaned)) $taxinfo=null;
+    			*/
 
     			dol_syslog("Create anonymous customer card profile", LOG_DEBUG, 0, '_stripe');
+
                 $customer = \Stripe\Customer::create(array(
     				'email' => $email,
     				'description' => ($email?'Anonymous customer for '.$email:'Anonymous customer'),
     				'metadata' => $metadata,
-    				'tax_info' => $taxinfo,
     				'source'  => $stripeToken           // source can be a token OR array('object'=>'card', 'exp_month'=>xx, 'exp_year'=>xxxx, 'number'=>xxxxxxx, 'cvc'=>xxx, 'name'=>'Cardholder's full name', zip ?)
     			));
     			// Return $customer = array('id'=>'cus_XXXX', ...)
+
+                // Create the VAT record in Stripe
+                /* We don't know country of customer, so we can't create tax
+                if (! empty($conf->global->STRIPE_SAVE_TAX_IDS))	// We setup to save Tax info on Stripe side. Warning: This may result in error when saving customer
+                {
+                	if (! empty($vatcleaned))
+                	{
+                		$isineec=isInEEC($object);
+                		if ($object->country_code && $isineec)
+                		{
+                			//$taxids = $customer->allTaxIds($customer->id);
+                			$customer->createTaxId($customer->id, array('type'=>'eu_vat', 'value'=>$vatcleaned));
+                		}
+                	}
+                }*/
 
     			if (! empty($FULLTAG))       $metadata["FULLTAG"] = $FULLTAG;
     			if (! empty($dol_id))        $metadata["dol_id"] = $dol_id;
@@ -1698,7 +1720,8 @@ if ($action != 'dopayment')
 				}
 				if ($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY == 'paypalonly')
 				{
-					//print '<br><span class="buttonpaymentsmall">'.$langs->trans("PaypalAccount").'"></span>';
+					//print '<br>';
+					//print '<span class="buttonpaymentsmall">'.$langs->trans("PayPalBalance").'"></span>';
 				}
 				print '</div>';
 			}
@@ -2081,7 +2104,7 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
     		else
     		{
     		?>
-    		// Code for payment with option STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION off and STRIPE_USE_NEW_CHECKOUT off
+    		// Old code for payment with option STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION off and STRIPE_USE_NEW_CHECKOUT off
 
     	    // Create a Stripe client.
     	    var stripe = Stripe('<?php echo $stripearrayofkeys['publishable_key']; // Defined into config.php ?>');

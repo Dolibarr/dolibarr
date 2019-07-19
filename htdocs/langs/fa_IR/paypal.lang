@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=راه اندازی ماژول پی پال
 PaypalDesc=This module allows payment by customers via <a href="http://www.paypal.com" target="_blank">PayPal</a>. This can be used for a ad-hoc payment or for a payment related to a Dolibarr object (invoice, order, ...)
-PaypalOrCBDoPayment=Pay with PayPal (Credit Card or PayPal)
+PaypalOrCBDoPayment=Pay with PayPal (Card or PayPal)
 PaypalDoPayment=Pay with PayPal
 PAYPAL_API_SANDBOX=تست حالت / گودال ماسهبازی
 PAYPAL_API_USER=نام کاربری API
@@ -14,7 +14,6 @@ PaypalModeOnlyPaypal=پی پال تنها
 ONLINE_PAYMENT_CSS_URL=Optional URL of CSS stylesheet on online payment page
 ThisIsTransactionId=این شناسه از معامله <b>است:٪ s</b>
 PAYPAL_ADD_PAYMENT_URL=Include the PayPal payment url when you send a document by email
-YouAreCurrentlyInSandboxMode=شما فعلا در حالت "شن‌بازی" %s قرار دارید
 NewOnlinePaymentReceived=New online payment received
 NewOnlinePaymentFailed=New online payment tried but failed
 ONLINE_PAYMENT_SENDEMAIL=Email address for notifications after each payment attempt (for success and fail)
@@ -33,3 +32,5 @@ PaypalImportPayment=Import PayPal payments
 PostActionAfterPayment=Post actions after payments
 ARollbackWasPerformedOnPostActions=A rollback was performed on all Post actions. You must complete post actions manually if they are necessary.
 ValidationOfPaymentFailed=Validation of payment has failed
+CardOwner=Card holder
+PayPalBalance=Paypal credit

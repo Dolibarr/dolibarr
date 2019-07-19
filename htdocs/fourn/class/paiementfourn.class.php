@@ -312,7 +312,7 @@ class PaiementFourn extends Paiement
 
 
 	/**
-	 *	Supprime un paiement ainsi que les lignes qu'il a genere dans comptes
+	 *	Delete a payment and lines generated into accounts
 	 *	Si le paiement porte sur un ecriture compte qui est rapprochee, on refuse
 	 *	Si le paiement porte sur au moins une facture a "payee", on refuse
 	 *

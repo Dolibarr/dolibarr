@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -20,13 +20,7 @@
  *      \file       htdocs/core/class/events.class.php
  *      \ingroup    core
  *		\brief      File of class to manage security events.
- *		\author		Laurent Destailleur
  */
-
-// Put here all includes required by your class file
-//require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
-//require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
-//require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 
 /**
@@ -133,7 +127,7 @@ class Events // extends CommonObject
 	 */
 	public function create($user)
 	{
-		global $conf, $langs;
+		global $conf;
 
 		// Clean parameters
 		$this->description=trim($this->description);
@@ -185,8 +179,6 @@ class Events // extends CommonObject
 	 */
     public function update($user = null, $notrigger = 0)
 	{
-		global $conf, $langs;
-
 		// Clean parameters
 		$this->id=trim($this->id);
 		$this->type=trim($this->type);
@@ -222,8 +214,6 @@ class Events // extends CommonObject
 	 */
     public function fetch($id, $user = null)
 	{
-		global $langs;
-
 		$sql = "SELECT";
 		$sql.= " t.rowid,";
 		$sql.= " t.tms,";
@@ -273,8 +263,6 @@ class Events // extends CommonObject
 	 */
     public function delete($user)
 	{
-		global $conf, $langs;
-
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."events";
 		$sql.= " WHERE rowid=".$this->id;
 
