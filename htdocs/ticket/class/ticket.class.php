@@ -1660,20 +1660,19 @@ class Ticket extends CommonObject
     }
 
     /**
-     *      Charge la liste des messages sur le ticket
+     *      Load the list of event on ticket into ->cache_msgs_ticket
      *
-     *      @return int             Nb lignes chargees, 0 si deja chargees, <0 si ko
+     *      @return int             Nb of lines loaded, 0 if already loaded, <0 if KO
      */
     public function loadCacheMsgsTicket()
     {
-        global $langs;
-
         if (is_array($this->cache_msgs_ticket) && count($this->cache_msgs_ticket)) {
             return 0;
         }
-        // Cache deja charge
 
-        $sql = "SELECT rowid, fk_user_author, datec, label, message, visibility";
+        // Cache already loaded
+
+        $sql = "SELECT id as rowid, fk_user_author, datec, label, note as message, visibility";
         $sql .= " FROM " . MAIN_DB_PREFIX . "actioncomm";
         $sql .= " WHERE fk_element = " . (int) $this->id;
         $sql .= " AND elementtype = 'ticket'";
@@ -1687,7 +1686,7 @@ class Ticket extends CommonObject
             while ($i < $num) {
                 $obj = $this->db->fetch_object($resql);
                 $this->cache_msgs_ticket[$i]['id'] = $obj->rowid;
-                $this->cache_msgs_ticket[$i]['fk_user_action'] = $obj->fk_user_action;
+                $this->cache_msgs_ticket[$i]['fk_user_author'] = $obj->fk_user_author;
                 $this->cache_msgs_ticket[$i]['datec'] = $this->db->jdate($obj->datec);
                 $this->cache_msgs_ticket[$i]['subject'] = $obj->label;
                 $this->cache_msgs_ticket[$i]['message'] = $obj->message;

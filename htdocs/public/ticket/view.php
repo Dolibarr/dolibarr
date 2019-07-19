@@ -150,7 +150,7 @@ if ($action == "view_ticket" || $action == "add_message" || $action == "close" |
     if ($display_ticket) {
         // Confirmation close
         if ($action == 'close') {
-            print $form->form_confirm($_SERVER["PHP_SELF"] . "?track_id=" . $track_id, $langs->trans("CloseATicket"), $langs->trans("ConfirmCloseAticket"), "confirm_public_close", '', '', 1);
+            print $form->formconfirm($_SERVER["PHP_SELF"] . "?track_id=" . $track_id, $langs->trans("CloseATicket"), $langs->trans("ConfirmCloseAticket"), "confirm_public_close", '', '', 1);
         }
 
         print '<div id="form_view_ticket">';
@@ -287,13 +287,7 @@ if ($action == "view_ticket" || $action == "add_message" || $action == "close" |
 
         // Message list
         print load_fiche_titre($langs->trans('TicketMessagesList'), '', 'messages@ticket');
-        $object->viewTicketMessages(false);
-
-        print '<br>';
-
-        // Logs list
-        print load_fiche_titre($langs->trans('TicketHistory'), '', 'history@ticket');
-        $object->viewTicketLogs(false);
+        $object->viewTicketMessages(false, true, $object->dao);
     } else {
         print '<div class="error">Not Allowed<br><a href="' . $_SERVER['PHP_SELF'] . '?track_id=' . $object->dao->track_id . '">' . $langs->trans('Back') . '</a></div>';
     }
