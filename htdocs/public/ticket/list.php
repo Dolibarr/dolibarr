@@ -706,7 +706,7 @@ if ($action == "view_ticketlist")
 print "</div>";
 
 // End of page
-htmlPrintOnlinePaymentFooter($mysoc, $langs, 1, $suffix, $object);
+htmlPrintOnlinePaymentFooter($mysoc, $langs, 0, $suffix, $object);
 
 llxFooter('', 'public');
 

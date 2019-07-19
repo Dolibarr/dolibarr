@@ -75,7 +75,7 @@ if (empty($action) && empty($id) && empty($ref)) $action='view';
 
 //Select mail models is same action as add_message
 if (GETPOST('modelselected', 'alpha')) {
-    $action = 'create_message';
+	$action = 'presend';
 }
 
 // Load object
@@ -255,17 +255,17 @@ if (GETPOST('add', 'alpha') && $user->rights->ticket->write) {
 if ($action == 'edit' && $user->rights->ticket->write) {
     $error = 0;
 
-    if ($object->fetch(GETPOST('id')) < 0) {
+    if ($object->fetch(GETPOST('id', 'int')) < 0) {
         $error++;
         array_push($object->errors, $langs->trans("ErrorTicketIsNotValid"));
         $_GET["action"] = $_POST["action"] = '';
     }
 }
 
-if (GETPOST('update') && GETPOST('id') && $user->rights->ticket->write) {
+if (GETPOST('update', 'alpha') && GETPOST('id', 'int') && $user->rights->ticket->write) {
     $error = 0;
 
-    $ret = $object->fetch(GETPOST('id'));
+    $ret = $object->fetch(GETPOST('id', 'int'));
     if ($ret < 0) {
         $error++;
         array_push($object->errors, $langs->trans("ErrorTicketIsNotValid"));
@@ -385,7 +385,7 @@ if ($action == "add_message" && GETPOST('btn_add_message') && $user->rights->tic
         exit;
     } else {
         setEventMessages($object->error, null, 'errors');
-        $action = 'create_message';
+        $action = 'presend';
     }
 }
 
@@ -476,7 +476,6 @@ if ($action == 'setsubject') {
         }
     }
 }
-
 
 if ($action == 'confirm_reopen' && $user->rights->ticket->manage && !GETPOST('cancel')) {
     if ($object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha')) >= 0) {
@@ -601,6 +600,8 @@ $autocopy='MAIN_MAIL_AUTOCOPY_TICKET_TO';		// used to know the automatic BCC to 
 $trackid='tic'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
+// Set $action to correct value for the case we used presend action to add a message
+if (GETPOSTISSET('actionbis') && $action == 'presend') $action = 'presend_addmessage';
 
 
 /*
@@ -640,7 +641,7 @@ if ($action == 'create' || $action == 'presend')
     $formticket->showForm(1);
 }
 
-if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'dellink' || $action == 'create_message' || $action == 'close' || $action == 'delete' || $action == 'editcustomer' || $action == 'progression' || $action == 'reopen'
+if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'dellink' || $action == 'presend' || $action == 'presend_addmessage' || $action == 'close' || $action == 'delete' || $action == 'editcustomer' || $action == 'progression' || $action == 'reopen'
 	|| $action == 'editsubject' || $action == 'edit_extras' || $action == 'update_extras' || $action == 'edit_extrafields' || $action == 'set_extrafields' || $action == 'classify' || $action == 'sel_contract' || $action == 'edit_message_init' || $action == 'set_status' || $action == 'dellink')
 {
     if ($res > 0)
@@ -1155,7 +1156,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 
 
 		// Buttons for actions
-		if ($action != 'presend' && $action != 'editline') {
+		if ($action != 'presend' && $action != 'presend_addmessage' && $action != 'editline') {
 			print '<div class="tabsAction">'."\n";
 			$parameters=array();
 			$reshook=$hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
@@ -1164,8 +1165,8 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 			if (empty($reshook))
 			{
 				// Show link to add a message (if read and not closed)
-			    if ($object->fk_statut < Ticket::STATUS_CLOSED && $action != "create_message") {
-		            print '<div class="inline-block divButAction"><a class="butAction" href="card.php?track_id=' . $object->track_id . '&action=create_message">' . $langs->trans('TicketAddMessage') . '</a></div>';
+				if ($object->fk_statut < Ticket::STATUS_CLOSED && $action != "presend" && $action != "presend_addmessage") {
+		            print '<div class="inline-block divButAction"><a class="butAction" href="card.php?track_id=' . $object->track_id . '&action=presend_addmessage&mode=init">' . $langs->trans('TicketAddMessage') . '</a></div>';
 		        }
 
 		        // Link to create an intervention
@@ -1200,8 +1201,10 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 		if (GETPOST('modelselected')) {
 			$action = 'presend';
 		}
+		// Set $action to correct value for the case we used presend action to add a message
+		if (GETPOSTISSET('actionbis') && $action == 'presend') $action = 'presend_addmessage';
 
-		if ($action != 'create_message')
+		if ($action != 'presend' && $action != 'presend_addmessage')
 		{
 			print '<div class="fichecenter"><div class="fichehalfleft">';
 			print '<a name="builddoc"></a>'; // ancre
@@ -1233,23 +1236,23 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 		        $substitutionarray['__THIRDPARTY_NAME__'] = $object->thirdparty->name;
 		    }
 		    $substitutionarray['__SIGNATURE__'] = $user->signature;
-		    $substitutionarray['__TICKETSUP_TRACKID__'] = $object->track_id;
-		    $substitutionarray['__TICKETSUP_REF__'] = $object->ref;
-		    $substitutionarray['__TICKETSUP_SUBJECT__'] = $object->subject;
-		    $substitutionarray['__TICKETSUP_TYPE__'] = $object->type_code;
-		    $substitutionarray['__TICKETSUP_SEVERITY__'] = $object->severity_code;
-		    $substitutionarray['__TICKETSUP_CATEGORY__'] = $object->category_code;         // For backward compatibility
-		    $substitutionarray['__TICKETSUP_ANALYTIC_CODE__'] = $object->category_code;
-		    $substitutionarray['__TICKETSUP_MESSAGE__'] = $object->message;
-		    $substitutionarray['__TICKETSUP_PROGRESSION__'] = $object->progress;
+		    $substitutionarray['__TICKET_TRACKID__'] = $object->track_id;
+		    $substitutionarray['__TICKET_REF__'] = $object->ref;
+		    $substitutionarray['__TICKET_SUBJECT__'] = $object->subject;
+		    $substitutionarray['__TICKET_TYPE__'] = $object->type_code;
+		    $substitutionarray['__TICKET_SEVERITY__'] = $object->severity_code;
+		    $substitutionarray['__TICKET_CATEGORY__'] = $object->category_code;         // For backward compatibility
+		    $substitutionarray['__TICKET_ANALYTIC_CODE__'] = $object->category_code;
+		    $substitutionarray['__TICKET_MESSAGE__'] = $object->message;
+		    $substitutionarray['__TICKET_PROGRESSION__'] = $object->progress;
 		    if ($object->fk_user_assign > 0) {
 		        $userstat->fetch($object->fk_user_assign);
-		        $substitutionarray['__TICKETSUP_USER_ASSIGN__'] = dolGetFirstLastname($userstat->firstname, $userstat->lastname);
+		        $substitutionarray['__TICKET_USER_ASSIGN__'] = dolGetFirstLastname($userstat->firstname, $userstat->lastname);
 		    }
 
 		    if ($object->fk_user_create > 0) {
 		        $userstat->fetch($object->fk_user_create);
-		        $substitutionarray['__TICKETSUP_USER_CREATE__'] = dolGetFirstLastname($userstat->firstname, $userstat->lastname);
+		        $substitutionarray['__TICKET_USER_CREATE__'] = dolGetFirstLastname($userstat->firstname, $userstat->lastname);
 		    }
 		    foreach ($substitutionarray as $key => $val) {
 		        $help.=$key.' -> '.$langs->trans($val).'<br>';

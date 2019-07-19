@@ -48,8 +48,9 @@ $langs->loadLangs(array("companies","other","ticket"));
 
 // Get parameters
 $track_id = GETPOST('track_id', 'alpha');
-$action = GETPOST('action', 'aZ09');
-$email = GETPOST('email', 'alpha');
+$cancel   = GETPOST('cancel', 'alpha');
+$action   = GETPOST('action', 'aZ09');
+$email    = GETPOST('email', 'alpha');
 
 if (GETPOST('btn_view_ticket')) {
     unset($_SESSION['email_customer']);
@@ -65,7 +66,17 @@ $object = new ActionsTicket($db);
  * Actions
  */
 
-if ($action == "view_ticket" || $action == "add_message" || $action == "close" || $action == "confirm_public_close" || $action == "add_public_message") {
+if ($cancel)
+{
+	if (! empty($backtopage))
+	{
+		header("Location: ".$backtopage);
+		exit;
+	}
+	$action='view_ticket';
+}
+
+if ($action == "view_ticket" || $action == "presend" || $action == "close" || $action == "confirm_public_close" || $action == "add_message") {
     $error = 0;
     $display_ticket = false;
     if (!strlen($track_id)) {
@@ -108,12 +119,33 @@ if ($action == "view_ticket" || $action == "add_message" || $action == "close" |
 	                }
 	            }
         	}
-            if ($object->dao->fk_soc > 0) {
+        	// Check email of thirdparty of ticket
+        	if ($object->dao->fk_soc > 0 || $object->dao->socid > 0) {
                 $object->dao->fetch_thirdparty();
+	            if ($email == $object->dao->thirdparty->email) {
+	                $display_ticket = true;
+	                $_SESSION['email_customer'] = $email;
+	            }
             }
-            if ($email == $object->dao->origin_email || $email == $object->dao->thirdparty->email) {
-                $display_ticket = true;
-                $_SESSION['email_customer'] = $email;
+            // Check if email is email of creator
+            if ($object->dao->fk_user_create > 0)
+            {
+            	$tmpuser = new User($db);
+            	$tmpuser->fetch($object->dao->fk_user_create);
+            	if ($email == $tmpuser->email) {
+            		$display_ticket = true;
+            		$_SESSION['email_customer'] = $email;
+            	}
+            }
+            // Check if email is email of creator
+            if ($object->dao->fk_user_assign > 0 && $object->dao->fk_user_assign != $object->dao->fk_user_create)
+            {
+            	$tmpuser = new User($db);
+            	$tmpuser->fetch($object->dao->fk_user_assign);
+            	if ($email == $tmpuser->email) {
+            		$display_ticket = true;
+            		$_SESSION['email_customer'] = $email;
+            	}
             }
         } else {
             $error++;
@@ -122,9 +154,11 @@ if ($action == "view_ticket" || $action == "add_message" || $action == "close" |
         }
     }
 
-    if ($action == "add_public_message")
+    if (! $error && $action == "add_message" && $display_ticket)
     {
     	// TODO Add message...
+    	$ret = $object->dao->newMessage($user, $action, 0);
+
 
 
 
@@ -137,9 +171,9 @@ if ($action == "view_ticket" || $action == "add_message" || $action == "close" |
 
     if ($error || $errors) {
         setEventMessages($object->error, $object->errors, 'errors');
-        if ($action == "add_public_message")
+        if ($action == "add_message")
         {
-        	$action = 'add_message';
+        	$action = 'presend';
         }
         else
         {
@@ -172,7 +206,7 @@ llxHeaderTicket($langs->trans("Tickets"), "", 0, 0, $arrayofjs, $arrayofcss);
 
 print '<div style="margin: 0 auto; width:60%" class="ticketpublicarea">';
 
-if ($action == "view_ticket" || $action == "add_message" || $action == "close" || $action == "confirm_public_close") {
+if ($action == "view_ticket" || $action == "presend" || $action == "close" || $action == "confirm_public_close") {
     if ($display_ticket) {
         // Confirmation close
         if ($action == 'close') {
@@ -272,22 +306,24 @@ if ($action == "view_ticket" || $action == "add_message" || $action == "close" |
 
         print '<div style="clear: both; margin-top: 1.5em;"></div>';
 
-        if ($action == 'add_message') {
+        if ($action == 'presend') {
             print load_fiche_titre($langs->trans('TicketAddMessage'), '', 'messages@ticket');
 
             $formticket = new FormTicket($db);
 
-            $formticket->action = "add_public_message";
+            $formticket->action = "add_message";
             $formticket->track_id = $object->dao->track_id;
             $formticket->id = $object->dao->id;
 
             $formticket->param = array('track_id' => $object->dao->track_id, 'fk_user_create' => '-1', 'returnurl' => DOL_URL_ROOT.'/public/ticket/view.php');
 
             $formticket->withfile = 2;
+            $formticket->withcancel = 1;
+
             $formticket->showMessageForm('100%');
         }
 
-        if ($action != 'add_message') {
+        if ($action != 'presend') {
             print '<form method="post" id="form_view_ticket_list" name="form_view_ticket_list" enctype="multipart/form-data" action="'.DOL_URL_ROOT.'/public/ticket/list.php">';
             print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
             print '<input type="hidden" name="action" value="view_ticketlist">';
@@ -302,7 +338,7 @@ if ($action == "view_ticket" || $action == "add_message" || $action == "close" |
 
             if ($object->dao->fk_statut < 8) {
                 // New message
-                print '<div class="inline-block divButAction"><a  class="butAction" href="' . $_SERVER['PHP_SELF'] . '?action=add_message&track_id=' . $object->dao->track_id . '">' . $langs->trans('AddMessage') . '</a></div>';
+                print '<div class="inline-block divButAction"><a  class="butAction" href="' . $_SERVER['PHP_SELF'] . '?action=presend&mode=init&track_id=' . $object->dao->track_id . '">' . $langs->trans('AddMessage') . '</a></div>';
 
                 // Close ticket
                 if ($object->dao->fk_statut > 0 && $object->dao->fk_statut < 8) {
@@ -346,7 +382,7 @@ if ($action == "view_ticket" || $action == "add_message" || $action == "close" |
 print "</div>";
 
 // End of page
-htmlPrintOnlinePaymentFooter($mysoc, $langs, 1, $suffix, $object);
+htmlPrintOnlinePaymentFooter($mysoc, $langs, 0, $suffix, $object);
 
 llxFooter('', 'public');
 
