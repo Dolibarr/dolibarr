@@ -166,7 +166,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
     	}
     }
 
-    if (! $error && $action == "add_message" && $display_ticket)
+    if (! $error && $action == "add_message" && $display_ticket && GETPOSTISSET('btn_add_message'))
     {
     	// TODO Add message...
     	$ret = $object->dao->newMessage($user, $action, 0);
@@ -195,6 +195,13 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 }
 //var_dump($action);
 //$object->doActions($action);
+
+// Actions to send emails (for ticket, we need to manage the addfile and removefile only)
+$trigger_name='TICKET_SENTBYMAIL';
+$paramname='id';
+$autocopy='MAIN_MAIL_AUTOCOPY_TICKET_TO';		// used to know the automatic BCC to add
+$trackid='tic'.$object->id;
+include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 
 
