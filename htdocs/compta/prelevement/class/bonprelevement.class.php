@@ -1133,24 +1133,24 @@ class BonPrelevement extends CommonObject
 
 
 	/**
-	 *	Get object and lines from database
+	 *  Get object and lines from database
 	 *
 	 *  @param	User	$user		Object user that delete
-	 *  @param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
-	 *	@return	int					>0 if OK, <0 if KO
+	 *  @param	int	$notrigger	1=Does not execute triggers, 0= execute triggers
+	 *  @return	int			>0 if OK, <0 if KO
 	 */
-	function delete($user=null, $notrigger = 0)
+	function delete($user = null, $notrigger = 0)
 	{
 		$this->db->begin();
 
-        $error = 0;
-        if (! $notrigger)
-        {
-            // Call trigger
-            $result=$this->call_trigger('BON_PRELEVEMENT_DELETE', $user);
-            if ($result < 0) $error++;
-            // End call triggers
-        }
+		$error = 0;
+		if (! $notrigger)
+		{
+		    // Call trigger
+		    $result=$this->call_trigger('BON_PRELEVEMENT_DELETE', $user);
+		    if ($result < 0) $error++;
+		    // End call triggers
+		}
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."prelevement_facture WHERE fk_prelevement_lignes IN (SELECT rowid FROM ".MAIN_DB_PREFIX."prelevement_lignes WHERE fk_prelevement_bons = ".$this->id.")";
 		$resql1=$this->db->query($sql);
