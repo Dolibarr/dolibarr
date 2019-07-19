@@ -1622,7 +1622,11 @@ if ($id)
                     	elseif ($obj->code == 'RECEP') { $iserasable = 0; $canbedisabled = 0; }
                     	elseif ($obj->code == 'EF0')   { $iserasable = 0; $canbedisabled = 0; }
                     }
-
+					if ($id == 25 && in_array($obj->code, array('banner', 'blogpost', 'other', 'page')))
+					{
+						$iserasable = 0; $canbedisabled = 0;
+						if (in_array($obj->code, array('banner'))) $canbedisabled = 1;
+					}
                     if (isset($obj->type) && in_array($obj->type, array('system', 'systemauto'))) { $iserasable=0; }
                     if (in_array($obj->code, array('AC_OTH','AC_OTH_AUTO')) || in_array($obj->type, array('systemauto'))) { $canbedisabled=0; $canbedisabled = 0; }
                     $canbemodified=$iserasable;
