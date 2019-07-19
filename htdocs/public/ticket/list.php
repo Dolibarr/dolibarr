@@ -237,37 +237,37 @@ if ($action == "view_ticketlist")
         }
         if (!empty($search_subject)) {
             $filter['t.subject'] = $search_subject;
-            $param .= '&search_subject=' . $search_subject;
+            $param .= '&search_subject=' .urlencode($search_subject);
         }
         if (!empty($search_type)) {
             $filter['t.type_code'] = $search_type;
-            $param .= '&search_type=' . $search_type;
+            $param .= '&search_type=' . urlencode($search_type);
         }
         if (!empty($search_category)) {
             $filter['t.category_code'] = $search_category;
-            $param .= '&search_category=' . $search_category;
+            $param .= '&search_category=' . urlencode($search_category);
         }
         if (!empty($search_severity)) {
             $filter['t.severity_code'] = $search_severity;
-            $param .= '&search_severity=' . $search_severity;
+            $param .= '&search_severity=' . urlencode($search_severity);
         }
         if (!empty($search_fk_user_assign)) {
             // -1 value = all so no filter
             if ($search_fk_user_assign > 0) {
                 $filter['t.fk_user_assign'] = $search_fk_user_assign;
-                $param .= '&search_fk_user_assign=' . $search_fk_user_assign;
+                $param .= '&search_fk_user_assign=' . urlencode($search_fk_user_assign);
             }
         }
         if (!empty($search_fk_user_create)) {
             // -1 value = all so no filter
             if ($search_fk_user_create > 0) {
                 $filter['t.fk_user_create'] = $search_fk_user_create;
-                $param .= '&search_fk_user_create=' . $search_fk_user_create;
+                $param .= '&search_fk_user_create=' . urlencode($search_fk_user_create);
             }
         }
         if ((isset($search_fk_status) && $search_fk_status != '') && $search_fk_status != '-1' && $search_fk_status != 'non_closed') {
             $filter['t.fk_statut'] = $search_fk_status;
-            $param .= '&search_fk_status=' . $search_fk_status;
+            $param .= '&search_fk_status=' . urlencode($search_fk_status);
         }
         if (isset($search_fk_status) && $search_fk_status == 'non_closed') {
             $filter['t.fk_statut'] = array(0, 1, 3, 4, 5, 6);
@@ -388,62 +388,7 @@ if ($action == "view_ticketlist")
 
                 print '<table class="liste ' . ($moreforfilter ? "listwithfilterbefore" : "") . '">';
 
-                print '<tr class="liste_titre">';
-                if (!empty($arrayfields['t.datec']['checked'])) {
-                    print_liste_field_titre($arrayfields['t.datec']['label'], $url_page_current, 't.datec', '', $param, '', $sortfield, $sortorder);
-                }
-                if (!empty($arrayfields['t.date_read']['checked'])) {
-                    print_liste_field_titre($arrayfields['t.date_read']['label'], $url_page_current, 't.date_read', '', $param, '', $sortfield, $sortorder);
-                }
-                if (!empty($arrayfields['t.date_close']['checked'])) {
-                    print_liste_field_titre($arrayfields['t.date_close']['label'], $url_page_current, 't.date_close', '', $param, '', $sortfield, $sortorder);
-                }
-                if (!empty($arrayfields['t.ref']['checked'])) {
-                    print_liste_field_titre($arrayfields['t.ref']['label'], $url_page_current, 't.ref', '', $param, '', $sortfield, $sortorder);
-                }
-                if (!empty($arrayfields['t.subject']['checked'])) {
-                    print_liste_field_titre($arrayfields['t.subject']['label']);
-                }
-                if (!empty($arrayfields['type.code']['checked'])) {
-                    print_liste_field_titre($arrayfields['type.code']['label'], $url_page_current, 'type.code', '', $param, '', $sortfield, $sortorder);
-                }
-                if (!empty($arrayfields['category.code']['checked'])) {
-                    print_liste_field_titre($arrayfields['category.code']['label'], $url_page_current, 'category.code', '', $param, '', $sortfield, $sortorder);
-                }
-                if (!empty($arrayfields['severity.code']['checked'])) {
-                    print_liste_field_titre($arrayfields['severity.code']['label'], $url_page_current, 'severity.code', '', $param, '', $sortfield, $sortorder);
-                }
-                if (!empty($arrayfields['t.progress']['checked'])) {
-                    print_liste_field_titre($arrayfields['t.progress']['label'], $url_page_current, 't.progress', '', $param, '', $sortfield, $sortorder);
-                }
-                if (!empty($arrayfields['t.fk_user_create']['checked'])) {
-                    print_liste_field_titre($arrayfields['t.fk_user_create']['label'], $url_page_current, 't.fk_user_create', '', $param, '', $sortfield, $sortorder);
-                }
-                if (!empty($arrayfields['t.fk_user_assign']['checked'])) {
-                    print_liste_field_titre($arrayfields['t.fk_user_assign']['label'], $url_page_current, 't.fk_user_assign', '', $param, '', $sortfield, $sortorder);
-                }
-                if (!empty($arrayfields['t.tms']['checked'])) {
-                    print_liste_field_titre($arrayfields['t.tms']['label'], $url_page_current, 't.tms', '', $param, '', $sortfield, $sortorder);
-                }
-                // Extra fields
-                if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
-                	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-                        if (!empty($arrayfields["ef." . $key]['checked'])) {
-                            $align = $extrafields->getAlignFlag($key);
-                            print_liste_field_titre($extralabels[$key], $url_page_current, "ef." . $key, "", $param, ($align ? 'align="' . $align . '"' : ''), $sortfield, $sortorder);
-                        }
-                    }
-                }
-                if (!empty($arrayfields['t.fk_statut']['checked'])) {
-                    print_liste_field_titre($arrayfields['t.fk_statut']['label'], $url_page_current, 't.fk_statut', '', $param, '', $sortfield, $sortorder);
-                }
-                print_liste_field_titre($selectedfields, $url_page_current, "", '', '', 'align="right"', $sortfield, $sortorder, 'maxwidthsearch ');
-                print '</tr>';
-
-                /*
-                 * Filter bar
-                 */
-
+                // Filter bar
                 print '<tr class="liste_titre">';
 
                 if (!empty($arrayfields['t.datec']['checked'])) {
@@ -463,13 +408,13 @@ if ($action == "view_ticketlist")
 
                 if (!empty($arrayfields['t.subject']['checked'])) {
                     print '<td class="liste_titre">';
-                    print '<input type="text" class="flat" name="search_subject" value="' . $search_subject . '" size="20">';
+                    print '<input type="text" class="flat maxwidth100" name="search_subject" value="' . $search_subject . '">';
                     print '</td>';
                 }
 
                 if (!empty($arrayfields['type.code']['checked'])) {
                     print '<td class="liste_titre">';
-                    $formTicket->selectTypesTickets($search_type, 'search_type', '', 2, 1, 1);
+                    $formTicket->selectTypesTickets($search_type, 'search_type', '', 2, 1, 1, 0, 'maxwidth150');
                     print '</td>';
                 }
 
@@ -524,6 +469,59 @@ if ($action == "view_ticketlist")
                 print '</td>';
                 print '</tr>';
 
+                // Field title
+                print '<tr class="liste_titre">';
+                if (!empty($arrayfields['t.datec']['checked'])) {
+                	print_liste_field_titre($arrayfields['t.datec']['label'], $url_page_current, 't.datec', '', $param, '', $sortfield, $sortorder);
+                }
+                if (!empty($arrayfields['t.date_read']['checked'])) {
+                	print_liste_field_titre($arrayfields['t.date_read']['label'], $url_page_current, 't.date_read', '', $param, '', $sortfield, $sortorder);
+                }
+                if (!empty($arrayfields['t.date_close']['checked'])) {
+                	print_liste_field_titre($arrayfields['t.date_close']['label'], $url_page_current, 't.date_close', '', $param, '', $sortfield, $sortorder);
+                }
+                if (!empty($arrayfields['t.ref']['checked'])) {
+                	print_liste_field_titre($arrayfields['t.ref']['label'], $url_page_current, 't.ref', '', $param, '', $sortfield, $sortorder);
+                }
+                if (!empty($arrayfields['t.subject']['checked'])) {
+                	print_liste_field_titre($arrayfields['t.subject']['label']);
+                }
+                if (!empty($arrayfields['type.code']['checked'])) {
+                	print_liste_field_titre($arrayfields['type.code']['label'], $url_page_current, 'type.code', '', $param, '', $sortfield, $sortorder);
+                }
+                if (!empty($arrayfields['category.code']['checked'])) {
+                	print_liste_field_titre($arrayfields['category.code']['label'], $url_page_current, 'category.code', '', $param, '', $sortfield, $sortorder);
+                }
+                if (!empty($arrayfields['severity.code']['checked'])) {
+                	print_liste_field_titre($arrayfields['severity.code']['label'], $url_page_current, 'severity.code', '', $param, '', $sortfield, $sortorder);
+                }
+                if (!empty($arrayfields['t.progress']['checked'])) {
+                	print_liste_field_titre($arrayfields['t.progress']['label'], $url_page_current, 't.progress', '', $param, '', $sortfield, $sortorder);
+                }
+                if (!empty($arrayfields['t.fk_user_create']['checked'])) {
+                	print_liste_field_titre($arrayfields['t.fk_user_create']['label'], $url_page_current, 't.fk_user_create', '', $param, '', $sortfield, $sortorder);
+                }
+                if (!empty($arrayfields['t.fk_user_assign']['checked'])) {
+                	print_liste_field_titre($arrayfields['t.fk_user_assign']['label'], $url_page_current, 't.fk_user_assign', '', $param, '', $sortfield, $sortorder);
+                }
+                if (!empty($arrayfields['t.tms']['checked'])) {
+                	print_liste_field_titre($arrayfields['t.tms']['label'], $url_page_current, 't.tms', '', $param, '', $sortfield, $sortorder);
+                }
+                // Extra fields
+                if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+                	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
+                		if (!empty($arrayfields["ef." . $key]['checked'])) {
+                			$align = $extrafields->getAlignFlag($key);
+                			print_liste_field_titre($extralabels[$key], $url_page_current, "ef." . $key, "", $param, ($align ? 'align="' . $align . '"' : ''), $sortfield, $sortorder);
+                		}
+                	}
+                }
+                if (!empty($arrayfields['t.fk_statut']['checked'])) {
+                	print_liste_field_titre($arrayfields['t.fk_statut']['label'], $url_page_current, 't.fk_statut', '', $param, '', $sortfield, $sortorder);
+                }
+                print_liste_field_titre($selectedfields, $url_page_current, "", '', '', 'align="right"', $sortfield, $sortorder, 'maxwidthsearch ');
+                print '</tr>';
+
                 while ($obj = $db->fetch_object($resql))
                 {
                     print '<tr class="oddeven">';
@@ -551,7 +549,7 @@ if ($action == "view_ticketlist")
 
                     // Ref
                     if (!empty($arrayfields['t.ref']['checked'])) {
-                        print '<td>';
+                        print '<td class="nowraponall">';
                         print $obj->ref;
                         print '</td>';
                     }

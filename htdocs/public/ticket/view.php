@@ -84,7 +84,6 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
         array_push($object->errors, $langs->trans("ErrorFieldRequired", $langs->transnoentities("TicketTrackId")));
         $action = '';
     }
-
     if (!strlen($email)) {
         $error++;
         array_push($object->errors, $langs->trans("ErrorFieldRequired", $langs->transnoentities("Email")));
@@ -152,6 +151,19 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
             array_push($object->errors, $langs->trans("ErrorTicketNotFound", $track_id));
             $action = '';
         }
+    }
+
+    if (! $error && $action == 'confirm_public_close' && $display_ticket)
+    {
+    	if ($object->dao->close($user)) {
+    		setEventMessages($langs->trans('TicketMarkedAsClosed'), null, 'mesgs');
+
+    		$url = 'view.php?action=view_ticket&track_id=' . GETPOST('track_id', 'alpha');
+    		header("Location: " . $url);
+    	} else {
+    		$action = '';
+    		setEventMessages($object->error, $object->errors, 'errors');
+    	}
     }
 
     if (! $error && $action == "add_message" && $display_ticket)
@@ -290,8 +302,6 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
             $fuser = new User($db);
             $fuser->fetch($object->dao->fk_user_assign);
             print $fuser->getFullName($langs, 1);
-        } else {
-            print $langs->trans('None');
         }
         print '</td></tr>';
 
@@ -336,12 +346,12 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
             // List ticket
             print '<div class="inline-block divButAction"><a  class="butAction" href="javascript:$(\'#form_view_ticket_list\').submit();">' . $langs->trans('ViewMyTicketList') . '</a></div>';
 
-            if ($object->dao->fk_statut < 8) {
+            if ($object->dao->fk_statut < Ticket::STATUS_CLOSED) {
                 // New message
                 print '<div class="inline-block divButAction"><a  class="butAction" href="' . $_SERVER['PHP_SELF'] . '?action=presend&mode=init&track_id=' . $object->dao->track_id . '">' . $langs->trans('AddMessage') . '</a></div>';
 
                 // Close ticket
-                if ($object->dao->fk_statut > 0 && $object->dao->fk_statut < 8) {
+                if ($object->dao->fk_statut >= Ticket::STATUS_NOT_READ && $object->dao->fk_statut < Ticket::STATUS_CLOSED) {
                     print '<div class="inline-block divButAction"><a  class="butAction" href="' . $_SERVER['PHP_SELF'] . '?action=close&track_id=' . $object->dao->track_id . '">' . $langs->trans('CloseTicket') . '</a></div>';
                 }
             }

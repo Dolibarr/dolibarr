@@ -394,9 +394,6 @@ if ($action == "confirm_close" && GETPOST('confirm', 'alpha') == 'yes' && $user-
     $object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha'));
 
     if ($object->close($user)) {
-        // Log action in ticket logs table
-        $log_action = $langs->trans('TicketLogClosedBy', $user->getFullName($langs));
-
         setEventMessages($langs->trans('TicketMarkedAsClosed'), null, 'mesgs');
 
         $url = 'card.php?action=view&track_id=' . GETPOST('track_id', 'alpha');
@@ -409,13 +406,15 @@ if ($action == "confirm_close" && GETPOST('confirm', 'alpha') == 'yes' && $user-
 
 if ($action == "confirm_public_close" && GETPOST('confirm', 'alpha') == 'yes') {
     $object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha'));
-    if (($_SESSION['email_customer'] == $object->origin_email || $_SESSION['email_customer'] == $object->thirdparty->email) && $object->close()) {
+    if ($_SESSION['email_customer'] == $object->origin_email || $_SESSION['email_customer'] == $object->thirdparty->email) {
+    	$object->close($user);
+
         // Log action in ticket logs table
         $log_action = $langs->trans('TicketLogClosedBy', $_SESSION['email_customer']);
 
         setEventMessages('<div class="confirm">' . $langs->trans('TicketMarkedAsClosed') . '</div>', null, 'mesgs');
 
-        $url = 'view.php?action=view_ticket&track_id=' . GETPOST('track_id', 'alpha');
+        $url = 'card.php?action=view_ticket&track_id=' . GETPOST('track_id', 'alpha');
         header("Location: " . $url);
     } else {
         setEventMessages($object->error, $object->errors, 'errors');
