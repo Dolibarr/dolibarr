@@ -50,3 +50,15 @@ ALTER TABLE llx_user ADD COLUMN iplastlogin         varchar(250);
 ALTER TABLE llx_user ADD COLUMN ippreviouslogin     varchar(250);
 
 ALTER TABLE llx_events ADD COLUMN prefix_session varchar(255) NULL;
+
+create table llx_payment_salary_extrafields
+(
+  rowid            integer AUTO_INCREMENT PRIMARY KEY,
+  tms              timestamp,
+  fk_object        integer NOT NULL,    -- salary payment id
+  import_key       varchar(14)      	-- import key
+)ENGINE=innodb;
+
+ALTER TABLE llx_payment_salary_extrafields ADD INDEX idx_payment_salary_extrafields (fk_object);
+
+UPDATE llx_bank_url set url = REPLACE( url, 'compta/salaries/', 'salaries/');

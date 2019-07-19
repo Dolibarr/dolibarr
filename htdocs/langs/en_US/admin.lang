@@ -1193,6 +1193,7 @@ ExtraFieldsSupplierOrders=Complementary attributes (orders)
 ExtraFieldsSupplierInvoices=Complementary attributes (invoices)
 ExtraFieldsProject=Complementary attributes (projects)
 ExtraFieldsProjectTask=Complementary attributes (tasks)
+ExtraFieldsSalaries=Complementary attributes (salaries)
 ExtraFieldHasWrongValue=Attribute %s has a wrong value.
 AlphaNumOnlyLowerCharsAndNoSpace=only alphanumericals and lower case characters without space
 SendmailOptionNotComplete=Warning, on some Linux systems, to send email from your email, sendmail execution setup must contains option -ba (parameter mail.force_extra_parameters into your php.ini file). If some recipients never receive emails, try to edit this PHP parameter with mail.force_extra_parameters = -ba).

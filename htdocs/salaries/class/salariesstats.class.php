@@ -17,12 +17,12 @@
  */
 
 /**
- *  \file       htdocs/compta/salaries/class/salariesstats.class.php
+ *  \file       htdocs/salaries/class/salariesstats.class.php
  *  \ingroup    salaries
  *  \brief      Fichier de la classe de gestion des stats des salaires
  */
 include_once DOL_DOCUMENT_ROOT . '/core/class/stats.class.php';
-include_once DOL_DOCUMENT_ROOT . '/compta/salaries/class/paymentsalary.class.php';
+include_once DOL_DOCUMENT_ROOT . '/salaries/class/paymentsalary.class.php';
 
 /**
  *	Classe permettant la gestion des stats des salaires

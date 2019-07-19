@@ -1,7 +1,5 @@
 -- ===================================================================
--- Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
--- Copyright (C) 2009      Regis Houssin        <regis.houssin@inodbox.com>
+-- Copyright (C) 2019      Alexandre Spangaro	<aspangaro@open-dsi.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -18,10 +16,10 @@
 --
 -- ===================================================================
 
-create table llx_adherent_extrafields
+create table llx_payment_salary_extrafields
 (
   rowid            integer AUTO_INCREMENT PRIMARY KEY,
   tms              timestamp,
-  fk_object        integer NOT NULL,    -- member id
+  fk_object        integer NOT NULL,    -- salary payment id
   import_key       varchar(14)      	-- import key
 )ENGINE=innodb;
