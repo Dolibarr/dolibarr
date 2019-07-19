@@ -185,7 +185,7 @@ function dolWebsiteOutput($content)
 	global $db, $langs, $conf, $user;
 	global $dolibarr_main_url_root, $dolibarr_main_data_root;
 
-	dol_syslog("dolWebsiteOutput start (USEDOLIBARRSERVER=".(defined('USEDOLIBARRSERVER')?'1':'')." (USEDOLIBARREDITOR=".(defined('USEDOLIBARREDITOR')?'1':'').')');
+	dol_syslog("dolWebsiteOutput start (USEDOLIBARRSERVER=".(defined('USEDOLIBARRSERVER')?'1':'')." USEDOLIBARREDITOR=".(defined('USEDOLIBARREDITOR')?'1':'').')');
 
 	// Define $urlwithroot
 	$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
