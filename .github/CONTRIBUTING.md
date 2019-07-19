@@ -113,13 +113,11 @@ Also, some code changes need a prior approbation:
 
 * if you add a new table, you must first create a page on http://wiki.dolibarr.org/index.php/Category:Table_SQL (copy an existing page changing its name to see it into this index page). Than ask the project manager (@eldy) if the new data model you plan to add can be accepted as you suggest.
 
-Once a PR has been submitted, you may need to wait for its integration. It is common that the project leader let the PR open for a long delay to allow 
-every developer discuss about the PR.
+Once a PR has been submitted, you may need to wait for its integration. It is common that the project leader let the PR open for a long delay to allow every developer discuss about the PR.
 If your PR has errors reported by the Continuous Integration Platform, it means your PR is not valid and nothing will be done with it. It will be kept open to allow developers to fix this, or it may be closed several month later.
-If the PR is valid, and is kept open for a long time, a tag will also be added on the PR to describe the status of your PR.
+If the PR is valid, and is kept open for a long time, a tag will also be added on the PR to describe the status of your PR and why the PR is kept open.
 By putting your mouse on the tag, you will get a full explanation of the tag/status that explain why your PR has not been integrated yet.
-Around 95% of submitted PR are reviewed and tagged. Even if this is one of the most important ratio in Open Source world, don't expect the core team 
-to reach the 100%. With the increasing popularity of Dolibarr, this ratio will probably decrease in future.
+Around 95% of submitted PR are reviewed and tagged. Even if this is one of the most important ratio of answered PR in Open Source world, don't expect the core team to reach the 100%. With the increasing popularity of Dolibarr, this ratio will probably decrease in future.
 
 
 ### Resources
