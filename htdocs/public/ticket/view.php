@@ -223,7 +223,7 @@ $arrayofcss = array('/ticket/css/styles.css.php');
 
 llxHeaderTicket($langs->trans("Tickets"), "", 0, 0, $arrayofjs, $arrayofcss);
 
-print '<div style="margin: 0 auto; width:60%" class="ticketpublicarea">';
+print '<div style="margin: 0 auto;" class="ticketpublicarea">';
 
 if ($action == "view_ticket" || $action == "presend" || $action == "close" || $action == "confirm_public_close") {
     if ($display_ticket) {
@@ -350,8 +350,9 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
             print "</form>\n";
 
             print '<div class="tabsAction">';
+
             // List ticket
-            print '<div class="inline-block divButAction"><a  class="butAction" href="javascript:$(\'#form_view_ticket_list\').submit();">' . $langs->trans('ViewMyTicketList') . '</a></div>';
+            print '<div class="inline-block divButAction"><a class="left" style="padding-right: 50px" href="javascript:$(\'#form_view_ticket_list\').submit();">' . $langs->trans('ViewMyTicketList') . '</a></div>';
 
             if ($object->dao->fk_statut < Ticket::STATUS_CLOSED) {
                 // New message

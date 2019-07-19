@@ -5247,10 +5247,26 @@ div.tabsElem a.tab {
 /* ============================================================================== */
 /* Ticket module                                                                  */
 /* ============================================================================== */
-
+.ticketpublicarea {
+	width: 70%;
+}
 .publicnewticketform {
 	margin-top: 25px !important;
 }
+.ticketlargemargin {
+	padding-left: 50px;
+	padding-right: 50px;
+}
+@media only screen and (max-width: 767px)
+{
+	.ticketlargemargin {
+		padding-left: 5px; padding-right: 5px;
+	}
+	.ticketpublicarea {
+		width: 100%;
+	}
+}
+
 #cd-timeline {
   position: relative;
   padding: 2em 0;
