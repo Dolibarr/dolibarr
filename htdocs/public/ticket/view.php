@@ -17,7 +17,7 @@
  */
 
 /**
- *       \file       htdocs/public/ticket/index.php
+ *       \file       htdocs/public/ticket/view.php
  *       \ingroup    ticket
  *       \brief      Public file to add and manage ticket
  */
@@ -65,7 +65,7 @@ $object = new ActionsTicket($db);
  * Actions
  */
 
-if ($action == "view_ticket" || $action == "add_message" || $action == "close" || $action == "confirm_public_close" || $action == "new_public_message") {
+if ($action == "view_ticket" || $action == "add_message" || $action == "close" || $action == "confirm_public_close" || $action == "add_public_message") {
     $error = 0;
     $display_ticket = false;
     if (!strlen($track_id)) {
@@ -89,22 +89,28 @@ if ($action == "view_ticket" || $action == "add_message" || $action == "close" |
     if (!$error) {
         $ret = $object->fetch('', '', $track_id);
         if ($ret && $object->dao->id > 0) {
-            // vérifie si l'adresse email est bien dans les contacts du ticket
-            $contacts = $object->dao->liste_contact(-1, 'external');
-            foreach ($contacts as $contact) {
-                if ($contact['email'] == $email) {
-                    $display_ticket = true;
-                    $_SESSION['email_customer'] = $email;
-                    break;
-                } else {
-                    $display_ticket = false;
-                }
-            }
-
+        	// Check if emails provided is the one of author
+        	if ($object->dao->origin_email == $email)
+        	{
+        		$display_ticket = true;
+        		$_SESSION['email_customer'] = $email;
+        	}
+        	// Check if emails provided is inside list of contacts
+        	else {
+	        	$contacts = $object->dao->liste_contact(-1, 'external');
+	            foreach ($contacts as $contact) {
+	                if ($contact['email'] == $email) {
+	                    $display_ticket = true;
+	                    $_SESSION['email_customer'] = $email;
+	                    break;
+	                } else {
+	                    $display_ticket = false;
+	                }
+	            }
+        	}
             if ($object->dao->fk_soc > 0) {
                 $object->dao->fetch_thirdparty();
             }
-
             if ($email == $object->dao->origin_email || $email == $object->dao->thirdparty->email) {
                 $display_ticket = true;
                 $_SESSION['email_customer'] = $email;
@@ -116,12 +122,32 @@ if ($action == "view_ticket" || $action == "add_message" || $action == "close" |
         }
     }
 
+    if ($action == "add_public_message")
+    {
+    	// TODO Add message...
+
+
+
+
+    	if (! $error)
+    	{
+    		$action = 'view_ticket';
+    	}
+    }
+
     if ($error || $errors) {
         setEventMessages($object->error, $object->errors, 'errors');
-        $action = '';
+        if ($action == "add_public_message")
+        {
+        	$action = 'add_message';
+        }
+        else
+        {
+        	$action = '';
+        }
     }
 }
-
+//var_dump($action);
 //$object->doActions($action);
 
 
@@ -251,16 +277,18 @@ if ($action == "view_ticket" || $action == "add_message" || $action == "close" |
 
             $formticket = new FormTicket($db);
 
-            $formticket->action = "new_public_message";
+            $formticket->action = "add_public_message";
             $formticket->track_id = $object->dao->track_id;
             $formticket->id = $object->dao->id;
 
-            $formticket->param = array('fk_user_create' => '-1');
+            $formticket->param = array('track_id' => $object->dao->track_id, 'fk_user_create' => '-1', 'returnurl' => DOL_URL_ROOT.'/public/ticket/view.php');
 
             $formticket->withfile = 2;
             $formticket->showMessageForm('100%');
-        } else {
-            print '<form method="post" id="form_view_ticket_list" name="form_view_ticket_list" enctype="multipart/form-data" action="' . dol_buildpath('/public/ticket/list.php', 1) . '">';
+        }
+
+        if ($action != 'add_message') {
+            print '<form method="post" id="form_view_ticket_list" name="form_view_ticket_list" enctype="multipart/form-data" action="'.DOL_URL_ROOT.'/public/ticket/list.php">';
             print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
             print '<input type="hidden" name="action" value="view_ticketlist">';
             print '<input type="hidden" name="track_id" value="'.$object->dao->track_id.'">';
