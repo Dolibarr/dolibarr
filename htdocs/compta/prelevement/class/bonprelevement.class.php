@@ -1133,32 +1133,56 @@ class BonPrelevement extends CommonObject
 
 
 	/**
-	 *	Get object and lines from database
+	 *  Get object and lines from database
 	 *
 	 *  @param	User	$user		Object user that delete
-	 *	@return	int					>0 if OK, <0 if KO
+	 *  @param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
+	 *  @return	int					>0 if OK, <0 if KO
 	 */
-	public function delete($user = null)
+	public function delete($user = null, $notrigger = 0)
 	{
 		$this->db->begin();
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."prelevement_facture WHERE fk_prelevement_lignes IN (SELECT rowid FROM ".MAIN_DB_PREFIX."prelevement_lignes WHERE fk_prelevement_bons = ".$this->id.")";
-		$resql1=$this->db->query($sql);
-		if (! $resql1) dol_print_error($this->db);
+		$error = 0;
+		$resql1 = $resql2 = $resql3 = $resql4 = 0;
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."prelevement_lignes WHERE fk_prelevement_bons = ".$this->id;
-		$resql2=$this->db->query($sql);
-		if (! $resql2) dol_print_error($this->db);
+		if (! $notrigger)
+		{
+		    // Call trigger
+		    $result=$this->call_trigger('BON_PRELEVEMENT_DELETE', $user);
+		    if ($result < 0) $error++;
+		    // End call triggers
+		}
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."prelevement_bons WHERE rowid = ".$this->id;
-		$resql3=$this->db->query($sql);
-		if (! $resql3) dol_print_error($this->db);
+		if (! $error)
+		{
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."prelevement_facture WHERE fk_prelevement_lignes IN (SELECT rowid FROM ".MAIN_DB_PREFIX."prelevement_lignes WHERE fk_prelevement_bons = ".$this->id.")";
+			$resql1=$this->db->query($sql);
+			if (! $resql1) dol_print_error($this->db);
+		}
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."prelevement_facture_demande SET fk_prelevement_bons = NULL, traite = 0 WHERE fk_prelevement_bons = ".$this->id;
-		$resql4=$this->db->query($sql);
-		if (! $resql4) dol_print_error($this->db);
+		if (! $error)
+		{
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."prelevement_lignes WHERE fk_prelevement_bons = ".$this->id;
+			$resql2=$this->db->query($sql);
+			if (! $resql2) dol_print_error($this->db);
+		}
 
-		if ($resql1 && $resql2 && $resql3)
+		if (! $error)
+		{
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."prelevement_bons WHERE rowid = ".$this->id;
+			$resql3=$this->db->query($sql);
+			if (! $resql3) dol_print_error($this->db);
+		}
+
+		if (! $error)
+		{
+			$sql = "UPDATE ".MAIN_DB_PREFIX."prelevement_facture_demande SET fk_prelevement_bons = NULL, traite = 0 WHERE fk_prelevement_bons = ".$this->id;
+			$resql4=$this->db->query($sql);
+			if (! $resql4) dol_print_error($this->db);
+		}
+
+		if ($resql1 && $resql2 && $resql3 && $resql4 && ! $error)
 		{
 			$this->db->commit();
 			return 1;

@@ -74,12 +74,9 @@ class Project extends CommonObject
 
 	/**
 	 * @var string
-	 * @deprecated
-	 * @see $title
 	 */
-	public $titre;
-
     public $title;
+
     public $date_start;
     public $date_end;
     public $date_close;
@@ -440,7 +437,7 @@ class Project extends CommonObject
 
         $sql = "SELECT rowid, ref, title, description, public, datec, opp_amount, budget_amount,";
         $sql.= " tms, dateo, datee, date_close, fk_soc, fk_user_creat, fk_user_modif, fk_user_close, fk_statut, fk_opp_status, opp_percent,";
-        $sql.= " note_private, note_public, model_pdf, bill_time";
+        $sql.= " note_private, note_public, model_pdf, bill_time, entity";
         $sql.= " FROM " . MAIN_DB_PREFIX . "projet";
         if (! empty($id))
         {
@@ -465,7 +462,6 @@ class Project extends CommonObject
                 $this->id = $obj->rowid;
                 $this->ref = $obj->ref;
                 $this->title = $obj->title;
-                $this->titre = $obj->title; // TODO deprecated
                 $this->description = $obj->description;
                 $this->date_c = $this->db->jdate($obj->datec);
                 $this->datec = $this->db->jdate($obj->datec); // TODO deprecated
@@ -488,6 +484,7 @@ class Project extends CommonObject
                 $this->budget_amount	= $obj->budget_amount;
                 $this->modelpdf	= $obj->model_pdf;
                 $this->bill_time = (int) $obj->bill_time;
+                $this->entity = $obj->entity;
 
                 $this->db->free($resql);
 
@@ -506,49 +503,6 @@ class Project extends CommonObject
         {
             $this->error = $this->db->lasterror();
             return -1;
-        }
-    }
-
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    /**
-     * 	Return list of projects
-     *
-     * 	@param		int		$socid		To filter on a particular third party
-     * 	@return		array				List of projects
-     */
-    public function liste_array($socid = '')
-    {
-        // phpcs:enable
-        global $conf;
-
-        $projects = array();
-
-        $sql = "SELECT rowid, title";
-        $sql.= " FROM " . MAIN_DB_PREFIX . "projet";
-        $sql.= " WHERE entity = " . $conf->entity;
-        if (! empty($socid)) $sql.= " AND fk_soc = " . $socid;
-
-        $resql = $this->db->query($sql);
-        if ($resql)
-        {
-            $nump = $this->db->num_rows($resql);
-
-            if ($nump)
-            {
-                $i = 0;
-                while ($i < $nump)
-                {
-                    $obj = $this->db->fetch_object($resql);
-
-                    $projects[$obj->rowid] = $obj->title;
-                    $i++;
-                }
-            }
-            return $projects;
-        }
-        else
-        {
-            print $this->db->lasterror();
         }
     }
 

@@ -87,7 +87,8 @@ if ($action == 'update')
         $result=$menu->fetch(GETPOST('menuId', 'int'));
         if ($result > 0)
         {
-            $menu->titre=GETPOST('titre', 'alpha');
+            $menu->titre=GETPOST('titre', 'alpha');		// deprecated
+            $menu->title=GETPOST('titre', 'alpha');
             $menu->leftmenu=GETPOST('leftmenu', 'aZ09');
             $menu->url=GETPOST('url', 'alpha');
             $menu->langs=GETPOST('langs', 'alpha');
@@ -205,7 +206,8 @@ if ($action == 'add')
         $menu = new Menubase($db);
         $menu->menu_handler=preg_replace('/_menu$/', '', GETPOST('menu_handler', 'aZ09'));
         $menu->type=GETPOST('type', 'alpha');
-        $menu->titre=GETPOST('titre', 'alpha');
+        $menu->titre=GETPOST('titre', 'alpha');		// deprecated
+        $menu->title=GETPOST('titre', 'alpha');
         $menu->url=GETPOST('url', 'alpha');
         $menu->langs=GETPOST('langs', 'alpha');
         $menu->position=GETPOST('position', 'int');
@@ -494,7 +496,7 @@ elseif ($action == 'edit')
     //print '<tr><td>'.$langs->trans('Level').'</td><td>'.$menu->level.'</td><td>'.$langs->trans('DetailLevel').'</td></tr>';
 
     // Title
-    print '<tr><td class="fieldrequired">'.$langs->trans('Title').'</td><td><input type="text" class="minwidth300" name="titre" value="'.dol_escape_htmltag($menu->titre).'"></td><td>'.$langs->trans('DetailTitre').'</td></tr>';
+    print '<tr><td class="fieldrequired">'.$langs->trans('Title').'</td><td><input type="text" class="minwidth300" name="titre" value="'.dol_escape_htmltag($menu->titre ? $menu->titre : $menu->title).'"></td><td>'.$langs->trans('DetailTitre').'</td></tr>';
 
     // Url
     print '<tr><td class="fieldrequired">'.$langs->trans('URL').'</td><td><input type="text" class="quatrevingtpercent" name="url" value="'.$menu->url.'"></td><td>'.$langs->trans('DetailUrl').'</td></tr>';

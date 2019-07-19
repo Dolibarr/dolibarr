@@ -28,6 +28,10 @@
 -- Note: fields with type BLOB/TEXT can't have default value.
 
 
+-- Missing in v10
+ALTER TABLE llx_account_bookkeeping ADD COLUMN date_export datetime DEFAULT NULL;
+
+
 create table llx_entrepot_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,

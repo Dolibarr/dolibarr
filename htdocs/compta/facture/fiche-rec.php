@@ -187,7 +187,8 @@ if (empty($reshook))
 
 		if (! $error)
 		{
-			$object->titre = GETPOST('titre', 'alpha');
+			$object->titre = GETPOST('titre', 'alpha');	// deprecated
+			$object->title = GETPOST('titre', 'alpha');
 			$object->note_private = GETPOST('note_private', 'none');
             $object->note_public  = GETPOST('note_public', 'none');
             $object->modelpdf = GETPOST('modelpdf', 'alpha');
@@ -295,8 +296,9 @@ if (empty($reshook))
 		$result=$object->setValueFrom('titre', GETPOST('ref', 'alpha'), '', null, 'text', '', $user, 'BILLREC_MODIFY');
 		if ($result > 0)
 		{
-			$object->titre = GETPOST('ref', 'alpha');
-			$object->ref = $object->titre;
+			$object->titre = GETPOST('ref', 'alpha');	// deprecated
+			$object->title = GETPOST('ref', 'alpha');
+			$object->ref = $object->title;
 		}
 		else dol_print_error($db, $object->error, $object->errors);
 	}
