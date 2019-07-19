@@ -824,9 +824,11 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 
         dol_banner_tab($object, 'ref', $linkback, ($user->societe_id ? 0 : 1), 'ref', 'ref', $morehtmlref);
 
-        print '<div class="fichecenter"><div class="fichehalfleft">';
+        print '<div class="fichecenter">';
+        print '<div class="fichehalfleft">';
         print '<div class="underbanner clearboth"></div>';
-        print '<table class="border centpercent">';
+
+        print '<table class="border tableforfield centpercent">';
 
         // Track ID
         print '<tr><td class="titlefield">' . $langs->trans("TicketTrackId") . '</td><td>';
@@ -956,7 +958,6 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
         // View Original message
         $actionobject->viewTicketOriginalMessage($user, $action, $object);
 
-
         // Classification of ticket
         print '<form method="post" name="formticketproperties" action="' . $url_page_current . '">';
         print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
@@ -1011,29 +1012,20 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
             // Type
             print '<tr><td class="titlefield">' . $langs->trans("Type") . '</td><td>';
             print $langs->getLabelFromKey($db, $object->type_code, 'c_ticket_type', 'code', 'label');
-            /*if ($user->admin && !$noadmininfo) {
-                print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
-            }*/
             print '</td></tr>';
             // Group
             print '<tr><td>' . $langs->trans("TicketGroup") . '</td><td>';
             print $langs->getLabelFromKey($db, $object->category_code, 'c_ticket_category', 'code', 'label');
-            /*if ($user->admin && !$noadmininfo) {
-             print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
-             }*/
             print '</td></tr>';
             // Severity
             print '<tr><td>' . $langs->trans("TicketSeverity") . '</td><td>';
             print $langs->getLabelFromKey($db, $object->severity_code, 'c_ticket_severity', 'code', 'label');
-            /*if ($user->admin && !$noadmininfo) {
-             print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
-             }*/
             print '</td></tr>';
         }
         print '</table>'; // End table actions
+        print '</div>';
 
         print '</form>';
-        print '</div>';
 
         // Display navbar with links to change ticket status
         print '<!-- navbar with status -->';
@@ -1225,9 +1217,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 			$formactions = new FormActions($db);
 			$somethingshown = $formactions->showactions($object, 'ticket', $socid, 1);
 
-			print '</div></div>';
-			print '</div><!-- fichecenter -->';
-			print '<br style="clear: both">';
+			print '</div></div></div>';
 		}
 		else
 		{

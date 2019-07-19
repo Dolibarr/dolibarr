@@ -280,7 +280,7 @@ class ActionsTicket
 
             //print '<div>' . $object->message . '</div>';
         }
-        if ($user->rights->ticket->manage && $action == 'edit_message_init') {
+        if (!empty($user->rights->ticket->manage) && $action == 'edit_message_init') {
             print '<div class="center">';
             print ' <input type="submit" class="button" value="' . $langs->trans('Modify') . '">';
             print ' <input type="submit" class="button" name="cancel" value="' . $langs->trans('Cancel') . '">';
@@ -289,7 +289,14 @@ class ActionsTicket
         print '</td>';
         print '</tr>';
         print '</table>';
+        print '</div>';
+
+        if (!empty($user->rights->ticket->manage) && $action == 'edit_message_init') {
+        	// MESSAGE
+        	print '</form>';
+        }
     }
+
     /**
      * View html list of message for ticket
      *
