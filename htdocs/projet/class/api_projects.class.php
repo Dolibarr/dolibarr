@@ -546,7 +546,6 @@ class Projects extends DolibarrApi
         // phpcs:enable
         $object = parent::_cleanObjectDatas($object);
 
-        unset($object->titre);
         unset($object->datec);
         unset($object->datem);
         unset($object->barcode_type);
