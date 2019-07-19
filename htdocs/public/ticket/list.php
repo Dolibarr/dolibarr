@@ -219,7 +219,7 @@ if ($action == "view_ticketlist")
             't.progress' => array('label' => $langs->trans("Progression"), 'checked' => 0),
             //'t.fk_contract' => array('label' => $langs->trans("Contract"), 'checked' => 0),
             't.fk_user_create' => array('label' => $langs->trans("Author"), 'checked' => 1),
-            't.fk_user_assign' => array('label' => $langs->trans("AuthorAssign"), 'checked' => 0),
+            't.fk_user_assign' => array('label' => $langs->trans("AssignedTo"), 'checked' => 0),
 
             //'t.entity'=>array('label'=>$langs->trans("Entity"), 'checked'=>1, 'enabled'=>(! empty($conf->multicompany->enabled) && empty($conf->multicompany->transverse_mode))),
             //'t.datec' => array('label' => $langs->trans("DateCreation"), 'checked' => 0, 'position' => 500),
@@ -611,8 +611,6 @@ if ($action == "view_ticketlist")
                             $user_assign->lastname = (!empty($obj->user_assign_lastname) ? $obj->user_assign_lastname : '');
                             $user_assign->id = (!empty($obj->fk_user_assign) ? $obj->fk_user_assign : '');
                             print $user_assign->getFullName($langs);
-                        } else {
-                            print $langs->trans('None');
                         }
                         print '</td>';
                     }
