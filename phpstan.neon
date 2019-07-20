@@ -112,6 +112,51 @@ parameters:
 		- %currentWorkingDirectory%/htdocs/core/lib/fourn.lib.php
 		- %currentWorkingDirectory%/htdocs/core/lib/functions.lib.php
 		- %currentWorkingDirectory%/htdocs/core/lib/functions2.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/geturl.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/holiday.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/hrm.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/images.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/import.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/invoice.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/invoice2.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/json.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/ldap.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/loan.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/mailmanspip.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/member.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/memory.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/modulebuilder.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/multicurrency.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/oauth.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/order.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/parsemd.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/payments.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/pdf.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/prelevement.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/price.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/product.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/project.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/propal.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/reception.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/report.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/resource.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/salaries.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/security.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/security2.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/sendings.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/signature.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/stock.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/supplier_proposal.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/takepos.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/tax.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/ticket.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/treeview.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/trip.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/usergroups.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/vat.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/website.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/ws.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/xcal.lib.php
 	featureToggles:
 		subtractableTypes: false
 		validateParameters: false
@@ -147,6 +192,7 @@ parameters:
 		- '#Undefined variable: \$mysoc#'
 		- '#Undefined variable: \$error#'
 		- '#Undefined variable: \$errors#'
+		- '#Undefined variable: \$form#'
 		- message: '#Undefined variable: \$object#'
 		  path: %currentWorkingDirectory%/htdocs/societe/tpl
 	internalErrorsCountLimit: 50
