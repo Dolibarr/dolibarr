@@ -4172,8 +4172,8 @@ class Societe extends CommonObject
 			if ($result < 0)
 			{
 				$error++;
-				$this->error = $c->error;
-				$this->errors = $c->errors;
+				$this->error = $this->error;
+				$this->errors = $this->errors;
 				break;
 			}
 		}
