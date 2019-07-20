@@ -1194,14 +1194,14 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 
 		if ($h == $begin_h) echo '<td class="'.$style.'_peruserleft cal_peruser'.($var?' cal_impair '.$style.'_impair':'').'">';
 		else echo '<td class="'.$style.' cal_peruser'.($var?' cal_impair '.$style.'_impair':'').'">';
-		if (count($cases1[$h]) == 1)	// only 1 event
+		if (is_array($cases1[$h]) && count($cases1[$h]) == 1)	// only 1 event
 		{
 			$output = array_slice($cases1[$h], 0, 1);
 			$title1=$langs->trans("Ref").' '.$ids1.($title1?' - '.$title1:'');
 			if ($output[0]['string']) $title1.=($title1?' - ':'').$output[0]['string'];
 			if ($output[0]['color']) $color1 = $output[0]['color'];
 		}
-		else if (count($cases1[$h]) > 1)
+		else if (is_array($cases1[$h]) && count($cases1[$h]) > 1)
 		{
 			$title1=$langs->trans("Ref").' '.$ids1.($title1?' - '.$title1:'');
 			$color1='222222';
