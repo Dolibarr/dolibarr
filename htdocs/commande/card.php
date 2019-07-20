@@ -2116,7 +2116,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 		print '<div class="fichehalfleft">';
 		print '<div class="underbanner clearboth"></div>';
 
-		print '<table class="border tableforfield" width="100%">';
+		print '<table class="border tableforfield centpercent">';
 
 		if ($soc->outstanding_limit)
 		{
@@ -2454,7 +2454,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 
 		print '</div>';
 		print '</div>';
-		print '</div>';
+		print '</div>';	// Close fichecenter
 
 		print '<div class="clearboth"></div><br>';
 

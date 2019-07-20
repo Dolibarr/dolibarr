@@ -567,25 +567,46 @@ if ($step == 3 && $datatoimport)
 	//print '<tr class="liste_titre"><td colspan="6">'.$langs->trans("FileWithDataToImport").'</td></tr>';
 
 	// Input file name box
-	print '<tr class="oddeven"><td colspan="6">';
-	print '<input type="file"   name="userfile" size="20" maxlength="80"> &nbsp; &nbsp; ';
+	print '<tr class="oddeven nohover"><td colspan="6">';
+	print '<input type="file" name="userfile" size="20" maxlength="80"> &nbsp; &nbsp; ';
 	$out = (empty($conf->global->MAIN_UPLOAD_DOC)?' disabled':'');
 	print '<input type="submit" class="button" value="'.$langs->trans("AddFile").'"'.$out.' name="sendit">';
 	$out='';
 	if (! empty($conf->global->MAIN_UPLOAD_DOC))
 	{
-	    $max=$conf->global->MAIN_UPLOAD_DOC;		// En Kb
-	    $maxphp=@ini_get('upload_max_filesize');	// En inconnu
-	    if (preg_match('/k$/i', $maxphp)) $maxphp=$maxphp*1;
-	    if (preg_match('/m$/i', $maxphp)) $maxphp=$maxphp*1024;
-	    if (preg_match('/g$/i', $maxphp)) $maxphp=$maxphp*1024*1024;
-	    if (preg_match('/t$/i', $maxphp)) $maxphp=$maxphp*1024*1024*1024;
-	    // Now $max and $maxphp are in Kb
-	    if ($maxphp > 0) $max=min($max, $maxphp);
+		$max=$conf->global->MAIN_UPLOAD_DOC;		// In Kb
+		$maxphp=@ini_get('upload_max_filesize');	// In unknown
+		if (preg_match('/k$/i', $maxphp)) $maxphp=$maxphp*1;
+		if (preg_match('/m$/i', $maxphp)) $maxphp=$maxphp*1024;
+		if (preg_match('/g$/i', $maxphp)) $maxphp=$maxphp*1024*1024;
+		if (preg_match('/t$/i', $maxphp)) $maxphp=$maxphp*1024*1024*1024;
+		$maxphp2=@ini_get('post_max_size');			// In unknown
+		if (preg_match('/k$/i', $maxphp2)) $maxphp2=$maxphp2*1;
+		if (preg_match('/m$/i', $maxphp2)) $maxphp2=$maxphp2*1024;
+		if (preg_match('/g$/i', $maxphp2)) $maxphp2=$maxphp2*1024*1024;
+		if (preg_match('/t$/i', $maxphp2)) $maxphp2=$maxphp2*1024*1024*1024;
+		// Now $max and $maxphp and $maxphp2 are in Kb
+		$maxmin = $max;
+		$maxphptoshow = $maxphptoshowparam = '';
+		if ($maxphp > 0)
+		{
+			$maxmin=min($max, $maxphp);
+			$maxphptoshow = $maxphp;
+			$maxphptoshowparam = 'upload_max_filesize';
+		}
+		if ($maxphp2 > 0)
+		{
+			$maxmin=min($max, $maxphp2);
+			if ($maxphp2 < $maxphp)
+			{
+				$maxphptoshow = $maxphp2;
+				$maxphptoshowparam = 'post_max_size';
+			}
+		}
 
         $langs->load('other');
         $out .= ' ';
-        $out.=info_admin($langs->trans("ThisLimitIsDefinedInSetup", $max, $maxphp), 1);
+        $out .= info_admin($langs->trans("ThisLimitIsDefinedInSetup", $max, $maxphptoshow), 1);
 	}
 	else
 	{
@@ -846,7 +867,7 @@ if ($step == 4 && $datatoimport)
     print '<input type="hidden" name="enclosure" value="'.dol_escape_htmltag($enclosure).'">';
 
     print '<div class="marginbottomonly opacitymedium">';
-    print $langs->trans("SelectImportFields", img_picto('', 'grip_title', '')).' ';
+    print $langs->trans("SelectImportFields", img_picto('', 'grip_title', '', false, 0, 0, '', '', 0)).' ';
     $htmlother->select_import_model($importmodelid, 'importmodelid', $datatoimport, 1);
     print '<input type="submit" class="button" value="'.$langs->trans("Select").'">';
     print '</div>';
