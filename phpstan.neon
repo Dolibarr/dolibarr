@@ -139,9 +139,6 @@ parameters:
 	reportMagicMethods: false
 	reportMagicProperties: false
 	ignoreErrors:
-		- 
-			message: '#Call to an undefined method abcdef#'
-			path: %currentWorkingDirectory%/dirtoignoreerror/*
 		- '#Undefined variable: \$langs#'
 		- '#Undefined variable: \$user#'
 		- '#Undefined variable: \$db#'
@@ -150,6 +147,8 @@ parameters:
 		- '#Undefined variable: \$mysoc#'
 		- '#Undefined variable: \$error#'
 		- '#Undefined variable: \$errors#'
+		- message: '#Undefined variable: \$object#'
+		  path: %currentWorkingDirectory%/htdocs/societe/tpl
 	internalErrorsCountLimit: 50
 	cache:
 	    nodesByFileCountMax: 512
