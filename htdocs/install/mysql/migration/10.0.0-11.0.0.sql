@@ -30,7 +30,8 @@
 
 -- Missing in v10
 ALTER TABLE llx_account_bookkeeping ADD COLUMN date_export datetime DEFAULT NULL;
-
+ALTER TABLE llx_expensereport ADD COLUMN paid smallint default 0 NOT NULL;
+UPDATE llx_expensereport set paid = 1 WHERE fk_statut = 6 and paid = 0;
 
 create table llx_entrepot_extrafields
 (
