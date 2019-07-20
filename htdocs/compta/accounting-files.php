@@ -503,9 +503,9 @@ if (!empty($date_start) && !empty($date_stop))
             print '<td></td>';
             print '<td></td>';
             print '<td></td>';
-            print '<td align="right">'.price($totalET).'</td>';
-            print '<td align="right">'.price($totalIT).'</td>';
-            print '<td align="right">'.price($totalVAT).'</td>';
+            print '<td align="right">'.price(price2num($totalET, 'MT')).'</td>';
+            print '<td align="right">'.price(price2num($totalIT, 'MT')).'</td>';
+            print '<td align="right">'.price(price2num($totalVAT, 'MT')).'</td>';
             print '<td></td>';
             print '<td></td>';
             print '<td></td>';
