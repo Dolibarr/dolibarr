@@ -1207,14 +1207,14 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 			$color1='222222';
 		}
 
-		if (count($cases2[$h]) == 1)	// only 1 event
+		if (is_array($cases2[$h]) && count($cases2[$h]) == 1)	// only 1 event
 		{
 			$output = array_slice($cases2[$h], 0, 1);
 			$title2=$langs->trans("Ref").' '.$ids2.($title2?' - '.$title2:'');
 			if ($output[0]['string']) $title2.=($title2?' - ':'').$output[0]['string'];
 			if ($output[0]['color']) $color2 = $output[0]['color'];
 		}
-		else if (count($cases2[$h]) > 1)
+		else if (is_array($cases2[$h]) && count($cases2[$h]) > 1)
 		{
 			$title2=$langs->trans("Ref").' '.$ids2.($title2?' - '.$title2:'');
 			$color2='222222';
