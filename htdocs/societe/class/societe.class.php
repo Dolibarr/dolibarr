@@ -3024,7 +3024,7 @@ class Societe extends CommonObject
 
 			for ($index = 0; $index < 9; $index ++)
 			{
-				$number = (int) $siren[$index];
+				$number = (int) $chaine[$index];
 				if (($index % 2) != 0) { if (($number *= 2) > 9) $number -= 9; }
 				$sum += $number;
 			}
@@ -3066,12 +3066,15 @@ class Societe extends CommonObject
 			$string=preg_replace('/(\s)/', '', $string);
 			$string = strtoupper($string);
 
-			for ($i = 0; $i < 9; $i ++)
-			$num[$i] = substr($string, $i, 1);
-
 			//Check format
 			if (!preg_match('/((^[A-Z]{1}[0-9]{7}[A-Z0-9]{1}$|^[T]{1}[A-Z0-9]{8}$)|^[0-9]{8}[A-Z]{1}$)/', $string))
 			return 0;
+
+			$num = array();
+			for ($i = 0; $i < 9; $i ++)
+			{
+				$num[$i] = substr($string, $i, 1);
+			}
 
 			//Check NIF
 			if (preg_match('/(^[0-9]{8}[A-Z]{1}$)/', $string))
@@ -4172,8 +4175,6 @@ class Societe extends CommonObject
 			if ($result < 0)
 			{
 				$error++;
-				$this->error = $this->error;
-				$this->errors = $this->errors;
 				break;
 			}
 		}
