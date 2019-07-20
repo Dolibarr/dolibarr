@@ -17,30 +17,26 @@
 
 //if (! defined('NOREQUIREUSER'))	define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
 //if (! defined('NOREQUIREDB'))		define('NOREQUIREDB','1');		// Not disabled cause need to load personalized language
-if (! defined('NOREQUIRESOC'))		define('NOREQUIRESOC','1');
+if (! defined('NOREQUIRESOC'))		define('NOREQUIRESOC', '1');
 //if (! defined('NOREQUIRETRAN'))		define('NOREQUIRETRAN','1');
-if (! defined('NOCSRFCHECK'))		define('NOCSRFCHECK','1');
-if (! defined('NOTOKENRENEWAL'))	define('NOTOKENRENEWAL','1');
-if (! defined('NOREQUIREMENU'))		define('NOREQUIREMENU','1');
-if (! defined('NOREQUIREHTML'))		define('NOREQUIREHTML','1');
-if (! defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX','1');
+if (! defined('NOCSRFCHECK'))		define('NOCSRFCHECK', '1');
+if (! defined('NOTOKENRENEWAL'))	define('NOTOKENRENEWAL', '1');
+if (! defined('NOREQUIREMENU'))		define('NOREQUIREMENU', '1');
+if (! defined('NOREQUIREHTML'))		define('NOREQUIREHTML', '1');
+if (! defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX', '1');
 
 require '../../main.inc.php';	// Load $user and permissions
 
-$id= GETPOST('id');
-$w= GETPOST('w');
-$h= GETPOST('h');
-$query= GETPOST('query');
+$id = GETPOST('id', 'int');
+$w = GETPOST('w', 'int');
+$h = GETPOST('h', 'int');
+$query= GETPOST('query', 'alpha');
 
 
 
 /*
  * View
  */
-
-header('Content-Type: image/jpeg');
-header('Cache-Control: max-age=604800, public, must-revalidate');
-header('Pragma: cache');
 
 if ($query=="cat")
 {
@@ -49,82 +45,44 @@ if ($query=="cat")
 
 	$object = new Categorie($db);
 	$result = $object->fetch($id);
+
 	$upload_dir = $conf->categorie->multidir_output[$object->entity];
-	$pdir = get_exdir($object->id,2,0,0,$object,'category') . $object->id ."/photos/";
+	$pdir = get_exdir($object->id, 2, 0, 0, $object, 'category') . $object->id ."/photos/";
 	$dir = $upload_dir.'/'.$pdir;
+
 	foreach ($object->liste_photos($dir) as $key => $obj)
 	{
-		$filename=$obj['photo'];
+		if ($obj['photo_vignette'])
+		{
+			$filename=$obj['photo_vignette'];
+		}
+		else
+		{
+			$filename=$obj['photo'];
+		}
+		$file=DOL_URL_ROOT.'/viewimage.php?cache=1&modulepart=category&entity='.$object->entity.'&file='.urlencode($pdir.$filename);
+		header('Location: '.$file);
+		exit;
 	}
-
-	// The file
-	$filename = $dir.$filename;
-	if (!file_exists($filename)) $filename="empty.jpg";
-
-	// Dimensions
-	list($width, $height) = getimagesize($filename);
-	$new_width = $w;
-	$new_height = $h;
-
-	// Resample
-	$image_p = imagecreatetruecolor($new_width, $new_height);
-	$image = imagecreatefromjpeg($filename);
-	imagecopyresampled($image_p, $image, 0, 0, 0, 0, $new_width, $new_height, $width, $height);
-
-	// Add icon
-	$icon = imagecreatefromjpeg('add.jpg');
-	list($width, $height) = getimagesize('add.jpg');
-	$new_width = $w*0.3;
-	$new_height = $h*0.3;
-	$icon_p = imagecreatetruecolor($new_width, $new_height);
-	imagecopyresampled($icon_p, $icon, 0, 0, 0, 0, $new_width, $new_height, $width, $height);
-	imagecopymerge($image_p, $icon_p,  0, 0, 0, 0, $new_width, $new_height, 100);
-
-	// Output
-	imagejpeg($image_p, null, 100);
+	header('Location: ../../public/theme/common/nophoto.png');
 }
-else if ($query=="pro")
+elseif ($query=="pro")
 {
 	require_once DOL_DOCUMENT_ROOT."/product/class/product.class.php";
 
 	$objProd = new Product($db);
 	$objProd->fetch($id);
+	$image=$objProd->show_photos('product', $conf->product->multidir_output[$entity], 'small', 1);
 
-	$dir .= get_exdir(0,0,0,0,$objProd,'product').$objProd->ref.'/';
-	$pdir .= get_exdir(0,0,0,0,$objProd,'product').$objProd->ref.'/';
-
-	foreach ($objProd->liste_photos($dir) as $key => $obj)
-	{
-		$filename=$obj['photo'];
-	}
-	$filename = $dir.$filename;
-
-	if (!file_exists($filename)){
-		$dir = $conf->product->multidir_output[$objProd->entity].'/'.$pdir;
-		foreach ($objProd->liste_photos($dir) as $key => $obj)
-		{
-		$filename=$obj['photo'];
-		}
-		$filename = $dir.$filename;
-	}
-
-	if (!file_exists($filename)) $filename="empty.jpg";
-
-	// Dimensions
-	list($width, $height) = getimagesize($filename);
-	$new_width = $w;
-	$new_height = $h;
-
-	// Resample
-	$image_p = imagecreatetruecolor($new_width, $new_height);
-	$image = imagecreatefromjpeg($filename);
-	imagecopyresampled($image_p, $image, 0, 0, 0, 0, $new_width, $new_height, $width, $height);
-
-	// Output
-	imagejpeg($image_p, null, 100);
+	preg_match('@src="([^"]+)"@', $image, $match);
+	$file = array_pop($match);
+	if ($file=="") header('Location: ../../public/theme/common/nophoto.png');
+	else header('Location: '.$file.'&cache=1');
 }
 else
 {
+    // TODO We don't need this. Size of image must be defined on HTML page, image must NOT be resize when downloaded.
+
 	// The file
 	$filename = $query.".jpg";
 

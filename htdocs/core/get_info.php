@@ -27,10 +27,10 @@
 //if (! defined('NOREQUIREDB'))   define('NOREQUIREDB','1');		// Not disabled cause need to load personalized language
 //if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC','1');
 //if (! defined('NOREQUIRETRAN')) define('NOREQUIRETRAN','1');		// Not disabled cause need to do translations
-if (! defined('NOCSRFCHECK'))     define('NOCSRFCHECK',1);
-if (! defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL',1);
+if (! defined('NOCSRFCHECK'))     define('NOCSRFCHECK', 1);
+if (! defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL', 1);
 //if (! defined('NOLOGIN')) define('NOLOGIN',1);					// Not disabled cause need to load personalized language
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU',1);
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', 1);
 
 require_once '../main.inc.php';
 
@@ -92,7 +92,7 @@ if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
 	}
 	else
 	{
-		$logouthtmltext.=$langs->trans("NoLogoutProcessWithAuthMode",$_SESSION["dol_authmode"]);
+		$logouthtmltext.=$langs->trans("NoLogoutProcessWithAuthMode", $_SESSION["dol_authmode"]);
 		$logouttext .= img_picto($langs->trans('Logout').":".$langs->trans('Logout'), 'logout_top.png', 'class="login"', 0, 0, 1);
 	}
 }
@@ -105,7 +105,7 @@ $toprightmenu.='<div class="login_block_user">';
 // Login name with photo and tooltip
 $mode=-1;
 $toprightmenu.='<div class="inline-block nowrap"><div class="inline-block login_block_elem login_block_elem_name" style="padding: 0px;">';
-$toprightmenu.=$user->getNomUrl($mode, '', -1, 0, 11, 0, ($user->firstname ? 'firstname' : -1),'atoplogin');
+$toprightmenu.=$user->getNomUrl($mode, '', -1, 0, 11, 0, ($user->firstname ? 'firstname' : -1), 'atoplogin');
 $toprightmenu.='</div></div>';
 
 $toprightmenu.='</div>'."\n";
@@ -114,7 +114,7 @@ $toprightmenu.='<div class="login_block_other">';
 
 // Execute hook printTopRightMenu (hooks should output string like '<div class="login"><a href="">mylink</a></div>')
 $parameters=array();
-$result=$hookmanager->executeHooks('printTopRightMenu',$parameters);    // Note that $action and $object may have been modified by some hooks
+$result=$hookmanager->executeHooks('printTopRightMenu', $parameters);    // Note that $action and $object may have been modified by some hooks
 if (is_numeric($result))
 {
 	if (empty($result)) $toprightmenu.=$hookmanager->resPrint;		// add
@@ -129,7 +129,7 @@ if (! empty($conf->modulebuilder->enabled))
 	//$text.= img_picto(":".$langs->trans("ModuleBuilder"), 'printer_top.png', 'class="printer"');
 	$text.='<span class="fa fa-bug atoplogin"></span>';
 	$text.='</a>';
-	$toprightmenu.=@Form::textwithtooltip('',$langs->trans("ModuleBuilder"),2,1,$text,'login_block_elem',2);
+	$toprightmenu.=@Form::textwithtooltip('', $langs->trans("ModuleBuilder"), 2, 1, $text, 'login_block_elem', 2);
 }
 
 // Link to print main content area
@@ -194,7 +194,7 @@ if (empty($conf->global->MAIN_HELP_DISABLELINK) && empty($conf->global->MAIN_OPT
 */
 
 // Logout link
-if (GETPOST('withlogout','int')) $toprightmenu.=@Form::textwithtooltip('',$logouthtmltext,2,1,$logouttext,'login_block_elem',2);
+if (GETPOST('withlogout', 'int')) $toprightmenu.=@Form::textwithtooltip('', $logouthtmltext, 2, 1, $logouttext, 'login_block_elem', 2);
 
 $toprightmenu.='</div>';
 

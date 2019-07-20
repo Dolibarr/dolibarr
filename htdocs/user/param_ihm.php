@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2010-2015 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2010-2015 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013	   Florian Henry        <florian.henry@open-concept.pro.com>
  * Copyright (C) 2018      Ferran Marcet        <fmarcet@2byte.es>
  *
@@ -34,9 +34,9 @@ $langs->loadLangs(array('companies', 'products', 'admin', 'users', 'languages', 
 // Defini si peux lire/modifier permisssions
 $canreaduser=($user->admin || $user->rights->user->user->lire);
 
-$id = GETPOST('id','int');
-$action = GETPOST('action','alpha');
-$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'userihm';   // To manage different context of search
+$id = GETPOST('id', 'int');
+$action = GETPOST('action', 'alpha');
+$contextpage=GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'userihm';   // To manage different context of search
 
 if ($id)
 {
@@ -49,11 +49,7 @@ if ($id)
 $socid=0;
 if ($user->societe_id > 0) $socid = $user->societe_id;
 $feature2 = (($socid && $user->rights->user->self->creer)?'':'user');
-if ($user->id == $id)	// A user can always read its own card
-{
-    $feature2='';
-    $canreaduser=1;
-}
+
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 if ($user->id <> $id && ! $canreaduser) accessforbidden();
 
@@ -84,7 +80,7 @@ $hookmanager->initHooks(array('usercard','userihm','globalcard'));
  */
 
 $parameters=array('id'=>$socid);
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook)) {
@@ -150,6 +146,12 @@ if (empty($reshook)) {
 				$tabparam["THEME_ELDY_USE_CHECKED"] = 0;
 			}
 
+			if (GETPOST('MAIN_OPTIMIZEFORTEXTBROWSER')) {
+			    $tabparam["MAIN_OPTIMIZEFORTEXTBROWSER"] = 1;
+			} else {
+			    $tabparam["MAIN_OPTIMIZEFORTEXTBROWSER"] = 0;
+			}
+
 			$result = dol_set_user_param($db, $conf, $object, $tabparam);
 
 			header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $id);
@@ -171,7 +173,7 @@ if (! empty($conf->projet->enabled)) $tmparray['projet/index.php?mainmenu=projec
 if (! empty($conf->holiday->enabled) || ! empty($conf->expensereport->enabled)) $tmparray['hrm/index.php?mainmenu=hrm&leftmenu=']='HRMArea';   // TODO Complete list with first level of menus
 if (! empty($conf->product->enabled) || ! empty($conf->service->enabled)) $tmparray['product/index.php?mainmenu=products&leftmenu=']='ProductsAndServicesArea';
 if (! empty($conf->propal->enabled) || ! empty($conf->commande->enabled) || ! empty($conf->ficheinter->enabled) || ! empty($conf->contrat->enabled)) $tmparray['comm/index.php?mainmenu=commercial&leftmenu=']='CommercialArea';
-if (! empty($conf->compta->enabled) || ! empty($conf->accounting->enabled)) $tmparray['compta/index.php?mainmenu=compta&leftmenu=']='AccountancyTreasuryArea';
+if (! empty($conf->comptabilite->enabled) || ! empty($conf->accounting->enabled)) $tmparray['compta/index.php?mainmenu=compta&leftmenu=']='AccountancyTreasuryArea';
 if (! empty($conf->adherent->enabled)) $tmparray['adherents/index.php?mainmenu=members&leftmenu=']='MembersArea';
 if (! empty($conf->agenda->enabled)) $tmparray['comm/action/index.php?mainmenu=agenda&leftmenu=']='Agenda';
 
@@ -195,10 +197,10 @@ if ($action == 'edit')
 	$linkback = '';
 
 	if ($user->rights->user->user->lire || $user->admin) {
-		$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php">'.$langs->trans("BackToList").'</a>';
+		$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 	}
 
-    dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
+    dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
 
     if (! empty($conf->use_javascript_ajax))
     {/*
@@ -280,7 +282,7 @@ if ($action == 'edit')
     print empty($dolibarr_main_demo)?'':' disabled="disabled"';	// Disabled for demo
     print '> '.$langs->trans("UsePersonalValue").'</td>';
     print '<td>';
-    print $formadmin->select_language((! empty($object->conf->MAIN_LANG_DEFAULT)?$object->conf->MAIN_LANG_DEFAULT:''),'main_lang_default',1,null,0,0,(! empty($dolibarr_main_demo)));
+    print $formadmin->select_language((! empty($object->conf->MAIN_LANG_DEFAULT)?$object->conf->MAIN_LANG_DEFAULT:''), 'main_lang_default', 1, null, 0, 0, (! empty($dolibarr_main_demo)));
     print '</td></tr>';
 
     // Max size of lists
@@ -294,7 +296,7 @@ if ($action == 'edit')
     // AGENDA_DEFAULT_VIEW
     print '<tr class="oddeven">'."\n";
     print '<td>'.$langs->trans("AGENDA_DEFAULT_VIEW").'</td>'."\n";
-    print '<td align="center">&nbsp;</td>'."\n";
+    print '<td class="center">&nbsp;</td>'."\n";
     print '<td class="nowrap" width="20%"><input class="oddeven" name="check_AGENDA_DEFAULT_VIEW" id="check_AGENDA_DEFAULT_VIEW" type="checkbox" '.(! empty($object->conf->AGENDA_DEFAULT_VIEW)?" checked":"");
     print empty($dolibarr_main_demo)?'':' disabled="disabled"';	// Disabled for demo
     print '> '.$langs->trans("UsePersonalValue").'</td>';
@@ -316,7 +318,6 @@ if ($action == 'edit')
     print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
     print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
     print '</div>';
-
 }
 else
 {
@@ -324,7 +325,7 @@ else
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php">'.$langs->trans("BackToList").'</a>';
 
-    dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
+    dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
 
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><td width="25%">'.$langs->trans("Parameter").'</td><td width="25%">'.$langs->trans("DefaultValue").'</td><td>&nbsp;</td><td>'.$langs->trans("PersonalValue").'</td></tr>';
@@ -369,7 +370,7 @@ else
     // AGENDA_DEFAULT_VIEW
     print '<tr class="oddeven">'."\n";
     print '<td>'.$langs->trans("AGENDA_DEFAULT_VIEW").'</td>'."\n";
-    print '<td align="center">&nbsp;</td>'."\n";
+    print '<td class="center">&nbsp;</td>'."\n";
     print '<td class="nowrap" width="20%"><input class="oddeven" type="checkbox" disabled '.(! empty($object->conf->AGENDA_DEFAULT_VIEW)?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
     print '<td>'."\n";
     $tmplist=array(''=>'&nbsp;', 'show_list'=>$langs->trans("ViewList"), 'show_month'=>$langs->trans("ViewCal"), 'show_week'=>$langs->trans("ViewWeek"), 'show_day'=>$langs->trans("ViewDay"), 'show_peruser'=>$langs->trans("ViewPerUser"));
@@ -380,7 +381,7 @@ else
 
 
     // Skin
-    show_theme($object,0,true);
+    show_theme($object, 0, true);
 
     dol_fiche_end();
 
@@ -388,7 +389,7 @@ else
     print '<div class="tabsAction">';
     if (empty($user->admin) && ! empty($dolibarr_main_demo))
     {
-        print "<a class=\"butActionRefused\" title=\"".$langs->trans("FeatureDisabledInDemo")."\" href=\"#\">".$langs->trans("Modify")."</a>";
+        print "<a class=\"butActionRefused classfortooltip\" title=\"".$langs->trans("FeatureDisabledInDemo")."\" href=\"#\">".$langs->trans("Modify")."</a>";
     }
     else
     {
@@ -398,12 +399,11 @@ else
         }
         else
         {
-            print "<a class=\"butActionRefused\" title=\"".$langs->trans("NotEnoughPermissions")."\" href=\"#\">".$langs->trans("Modify")."</a>";
+            print "<a class=\"butActionRefused classfortooltip\" title=\"".$langs->trans("NotEnoughPermissions")."\" href=\"#\">".$langs->trans("Modify")."</a>";
         }
     }
 
     print '</div>';
-
 }
 
 if ($action == 'edit')

@@ -22,19 +22,19 @@
  */
 
 /**
- * Function get content from an URL (use proxy if proxy defined)
+ * Function to get a content from an URL (use proxy if proxy defined)
  *
  * @param	string	  $url 				    URL to call.
- * @param	string    $postorget		    'POST', 'GET', 'HEAD', 'PUT', 'PUTALREADYFORMATED', 'DELETE'
+ * @param	string    $postorget		    'POST', 'GET', 'HEAD', 'PUT', 'PUTALREADYFORMATED', 'POSTALREADYFORMATED', 'DELETE'
  * @param	string    $param			    Parameters of URL (x=value1&y=value2) or may be a formated content with PUTALREADYFORMATED
  * @param	integer   $followlocation		1=Follow location, 0=Do not follow
  * @param	string[]  $addheaders			Array of string to add into header. Example: ('Accept: application/xrds+xml', ....)
  * @return	array						    Returns an associative array containing the response from the server array('content'=>response,'curl_error_no'=>errno,'curl_error_msg'=>errmsg...)
  */
-function getURLContent($url,$postorget='GET',$param='',$followlocation=1,$addheaders=array())
+function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 1, $addheaders = array())
 {
     //declaring of global variables
-    global $conf, $langs;
+    global $conf;
     $USE_PROXY=empty($conf->global->MAIN_PROXY_USE)?0:$conf->global->MAIN_PROXY_USE;
     $PROXY_HOST=empty($conf->global->MAIN_PROXY_HOST)?0:$conf->global->MAIN_PROXY_HOST;
     $PROXY_PORT=empty($conf->global->MAIN_PROXY_PORT)?0:$conf->global->MAIN_PROXY_PORT;
@@ -72,14 +72,20 @@ function getURLContent($url,$postorget='GET',$param='',$followlocation=1,$addhea
     curl_setopt($ch, CURLOPT_TIMEOUT, empty($conf->global->MAIN_USE_RESPONSE_TIMEOUT)?30:$conf->global->MAIN_USE_RESPONSE_TIMEOUT);
 
     //curl_setopt($ch, CURLOPT_SAFE_UPLOAD, true);	// PHP 5.5
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);		// We want response
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);		// We want response
     if ($postorget == 'POST')
     {
     	curl_setopt($ch, CURLOPT_POST, 1);	// POST
     	curl_setopt($ch, CURLOPT_POSTFIELDS, $param);	// Setting param x=a&y=z as POST fields
     }
-    else if ($postorget == 'PUT')
+    elseif ($postorget == 'POSTALREADYFORMATED')
     {
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST'); // HTTP request is 'POST' but param string is taken as it is
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $param);	// param = content of post, like a xml string
+    }
+    elseif ($postorget == 'PUT')
+    {
+        $array_param=null;
     	curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT'); // HTTP request is 'PUT'
     	if (! is_array($param)) parse_str($param, $array_param);
     	else
@@ -89,17 +95,17 @@ function getURLContent($url,$postorget='GET',$param='',$followlocation=1,$addhea
     	}
     	curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($array_param));	// Setting param x=a&y=z as PUT fields
     }
-    else if ($postorget == 'PUTALREADYFORMATED')
+    elseif ($postorget == 'PUTALREADYFORMATED')
     {
     	curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT'); // HTTP request is 'PUT'
     	curl_setopt($ch, CURLOPT_POSTFIELDS, $param);	// param = content of post, like a xml string
     }
-    else if ($postorget == 'HEAD')
+    elseif ($postorget == 'HEAD')
     {
     	curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'HEAD'); // HTTP request is 'HEAD'
     	curl_setopt($ch, CURLOPT_NOBODY, true);
     }
-    else if ($postorget == 'DELETE')
+    elseif ($postorget == 'DELETE')
     {
     	curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');	// POST
     }
@@ -136,7 +142,7 @@ function getURLContent($url,$postorget='GET',$param='',$followlocation=1,$addhea
 		$rep['curl_error_no']=curl_errno($ch);
         $rep['curl_error_msg']=curl_error($ch);
 
-		dol_syslog("getURLContent response array is ".join(',',$rep));
+		dol_syslog("getURLContent response array is ".join(',', $rep));
     }
     else
     {
@@ -166,14 +172,25 @@ function getURLContent($url,$postorget='GET',$param='',$followlocation=1,$addhea
  * For example: https://www.abc.mydomain.com/dir/page.html return 'mydomain'
  *
  * @param	string	  $url 				    Full URL.
+ * @param	int	 	  $mode					0=return 'mydomain', 1=return 'mydomain.com', 2=return 'abc.mydomain.com'
  * @return	string						    Returns domaine name
  */
-function getDomainFromURL($url)
+function getDomainFromURL($url, $mode = 0)
 {
 	$tmpdomain = preg_replace('/^https?:\/\//i', '', $url);				// Remove http(s)://
 	$tmpdomain = preg_replace('/\/.*$/i', '', $tmpdomain);				// Remove part after domain
-	$tmpdomain = preg_replace('/\.[^\.]+$/', '', $tmpdomain);			// Remove first level domain (.com, .net, ...)
-	$tmpdomain = preg_replace('/^[^\.]+\./', '', $tmpdomain);			// Remove part www. before domain name
+	if ($mode == 2)
+	{
+		$tmpdomain = preg_replace('/^.*\.([^\.]+)\.([^\.]+)\.([^\.]+)$/', '\1.\2.\3', $tmpdomain);	// Remove part 'www.' before 'abc.mydomain.com'
+	}
+	else
+	{
+		$tmpdomain = preg_replace('/^.*\.([^\.]+)\.([^\.]+)$/', '\1.\2', $tmpdomain);				// Remove part 'www.abc.' before 'mydomain.com'
+	}
+	if (empty($mode))
+	{
+		$tmpdomain = preg_replace('/\.[^\.]+$/', '', $tmpdomain);			// Remove first level domain (.com, .net, ...)
+	}
 
 	return $tmpdomain;
 }
@@ -190,6 +207,7 @@ function getRootURLFromURL($url)
 {
 	$prefix='';
 	$tmpurl = $url;
+	$reg = null;
 	if (preg_match('/^(https?:\/\/)/i', $tmpurl, $reg)) $prefix = $reg[1];
 	$tmpurl = preg_replace('/^https?:\/\//i', '', $tmpurl);				// Remove http(s)://
 	$tmpurl = preg_replace('/\/.*$/i', '', $tmpurl);					// Remove part after domain
@@ -208,4 +226,3 @@ function removeHtmlComment($content)
 	$content = preg_replace('/<!--[^\-]+-->/', '', $content);
 	return $content;
 }
-

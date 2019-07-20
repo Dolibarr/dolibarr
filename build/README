@@ -16,18 +16,20 @@ Note: Prerequisites to build tgz, debian, rpm package
 > apt-get install tar dpkg dpatch p7zip-full rpm zip
 
 Note: Prerequisites to build autoexe DoliWamp package:
+> apt-get install wine q4wine
+> Launch "wine cmd" to check a drive Z: pointing to / exists.
 > Install InnoSetup
    For example by running isetup-5.3.9.exe (http://www.jrsoftware.org)
 > Install WampServer into "C:\Program Files\Wamp"
-   For example by running wampserver2.2e-php5.4.3-httpd-2.4.2-mysql5.5.24-x64.exe (http://www.wampserver.com)
-> Install WampServer addon to have versions: Apache2.2.11, Mysql5.0.45, Php5.3.0
-   For example by running WampServer2-APACHE2211.exe (http://www.wampserver.com)
+   For example by running wampserver2.5-Apache-2.4.9-Mysql-5.6.17-php5.5.12-32b.exe (http://www.wampserver.com)
+> Install WampServer addon to have versions: Mysql5.0.45
    For example by running WampServer2-MYSQL5045.exe (http://www.wampserver.com)
-   For example by running WampServer2-PHP530.exe (http://www.wampserver.com)
 > To build from Windows (running from makepack-dolibarr.pl script is however
   recommanded), open file build/exe/doliwamp.iss and click on button "Compile".
   The .exe file will be build into directory build.
-
+> Add path to ISCC into PATH windows var:
+  Launch wine cmd, then regedit and add entry int HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment\PATH
+  
 - To build a theme package, launch the script
 > perl makepack-dolibarrtheme.pl
 
@@ -45,9 +47,6 @@ generated packages will not contains this "build" directory.
 
 
 We can find in "build", following sub-directories:
-
-* aps:
-To build APS package.
 
 * debian:
 To build Debian package.

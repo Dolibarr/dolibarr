@@ -31,14 +31,16 @@ ViewWeek=Pokaż tydzień
 ViewPerUser=Za wglądem użytkownika
 ViewPerType=Wyświetl po typie
 AutoActions= Automatyczne wypełnianie
-AgendaAutoActionDesc= Zdefiniuj tutaj zdarzenia, które chcesz aby Dolibarr automatycznie dodawał do agendy. Jeżeli nic nie zaznaczysz, tylko akcje ręcznie dołączone będą zarejestrowane i widoczne w agendzie. Automatyczne śledzenie zdarzeń biznesowych na obiektach (zatwierdzenie, zmiana statusu) nie będą zapisane.
-AgendaSetupOtherDesc= Ta strona zawiera opcje, pozwalające eksportować Twoje zdarzenia Dolibarr'a do zewnętrznego kalendarza (Thunderbird, Google Calendar, ...)
+AgendaAutoActionDesc= Here you may define events which you want Dolibarr to create automatically  in Agenda. If nothing is checked, only manual actions will be included in logs and displayed in Agenda. Automatic tracking of business actions done on objects (validation, status change) will not be saved.
+AgendaSetupOtherDesc= This page provides options to allow the export of your Dolibarr events into an external calendar (Thunderbird, Google Calendar etc...)
 AgendaExtSitesDesc=Ta strona pozwala zdefiniować zewnętrzne źródła kalendarzy, aby zobaczyć uwzględnić zapisane tam zdarzenia w agendzie Dolibarr'a.
 ActionsEvents=Zdarzenia, dla których Dolibarr stworzy automatycznie zadania w agendzie
-EventRemindersByEmailNotEnabled=Przypomnienie o zdarzeniach przez wiadomość email jest nie włączone w ustawieniach modułu Agenda
+EventRemindersByEmailNotEnabled=Event reminders by email was not enabled into %s module setup.
 ##### Agenda event labels #####
 NewCompanyToDolibarr=Kontrahent %s utworzony
+COMPANY_DELETEInDolibarr=Third party %s deleted
 ContractValidatedInDolibarr=Umowa  %s potwierdzona
+CONTRACT_DELETEInDolibarr=Kontrakt %s usunięty
 PropalClosedSignedInDolibarr=Propozycja %s podpisana
 PropalClosedRefusedInDolibarr=Propozycja %s odrzucona
 PropalValidatedInDolibarr=Zatwierdzenie oferty %s
@@ -59,6 +61,7 @@ MemberSubscriptionDeletedInDolibarr=Subskrypcja %s dla członka %s usunięta
 ShipmentValidatedInDolibarr=Przesyłka %s potwierdzona
 ShipmentClassifyClosedInDolibarr=Wysyłka %s sklasyfikowana jako rozliczona
 ShipmentUnClassifyCloseddInDolibarr=Wysyłka %s sklasyfikowana jako ponownie otwarta
+ShipmentBackToDraftInDolibarr=Shipment %s go back to draft status
 ShipmentDeletedInDolibarr=Przesyłka %s usunięta
 OrderCreatedInDolibarr=Zamówienie %s utworzone
 OrderValidatedInDolibarr=Zatwierdzenie zamówienia %s
@@ -68,15 +71,15 @@ OrderBilledInDolibarr=Zamówienie %s sklasyfikowanego obciążonego
 OrderApprovedInDolibarr=Akceptacja zamówienia %s
 OrderRefusedInDolibarr=Zamówienie %s odmówione
 OrderBackToDraftInDolibarr=Zmiana statusu zamówienia %s na draft
-ProposalSentByEMail=Oferta %s wysłana e-mailem
-ContractSentByEMail=Kontrakt %s wysłany za pomocą wiadomości email
-OrderSentByEMail=Zamówienie klienta %s wysłane e-mailem
-InvoiceSentByEMail=Faktura %s wysłana e-mailem
-SupplierOrderSentByEMail=Zamówienie dostawcy %s wysłane e-mailem
-SupplierInvoiceSentByEMail=Faktura dostawcy %s wysłana e-mailem
-ShippingSentByEMail=Przesyłka %s wysłana e-mailem
+ProposalSentByEMail=Commercial proposal %s sent by email
+ContractSentByEMail=Contract %s sent by email
+OrderSentByEMail=Sales order %s sent by email
+InvoiceSentByEMail=Customer invoice %s sent by email
+SupplierOrderSentByEMail=Purchase order %s sent by email
+SupplierInvoiceSentByEMail=Vendor invoice %s sent by email
+ShippingSentByEMail=Shipment %s sent by email
 ShippingValidated= Przesyłka %s potwierdzona
-InterventionSentByEMail=Interwencja %s wysłana mailem
+InterventionSentByEMail=Intervention %s sent by email
 ProposalDeleted=Oferta usunięta
 OrderDeleted=Zamówienie usunięte
 InvoiceDeleted=Faktura usunięta
@@ -91,6 +94,11 @@ EXPENSE_REPORT_REFUSEDInDolibarr=Raport kosztów %s odrzucony
 PROJECT_CREATEInDolibarr=Projekt %s utworzony
 PROJECT_MODIFYInDolibarr=Projekt %s zmodyfikowany
 PROJECT_DELETEInDolibarr=Projekt %s usunięty
+TICKET_CREATEInDolibarr=Ticket %s created
+TICKET_MODIFYInDolibarr=Ticket %s modified
+TICKET_ASSIGNEDInDolibarr=Ticket %s assigned
+TICKET_CLOSEInDolibarr=Ticket %s closed
+TICKET_DELETEInDolibarr=Ticket %s deleted
 ##### End agenda events #####
 AgendaModelModule=Szablon dokumentu dla zdarzenia
 DateActionStart=Data rozpoczęcia
@@ -100,7 +108,7 @@ AgendaUrlOptions3=<b>logina =%s</b>, aby ograniczyć wyjścia do działań będ�
 AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> to restrict output to actions not owned by user <b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
-AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> to exclude automatic event.
+AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> to exclude automatic events.
 AgendaShowBirthdayEvents=Wyświetlaj urodziny kontaktów
 AgendaHideBirthdayEvents=Ukryj urodziny kontaktów
 Busy=Zajęty
@@ -110,9 +118,9 @@ DefaultWorkingHours=Domyślnie zakres godzin pracy w dniu (przykład: 9-18)
 # External Sites ical
 ExportCal=Eksport kalendarza
 ExtSites=Import zewnętrznych kalendarzy
-ExtSitesEnableThisTool=Pokaż zewnętrzne kalendarze (zdefiniowane w globalnej konfiguracji) do agendy Nie ma wpływu na zewnętrzne kalendarze zdefiniowane przez użytkowników.
+ExtSitesEnableThisTool=Show external calendars (defined in global setup) in Agenda. Does not affect external calendars defined by users.
 ExtSitesNbOfAgenda=Ilość kalendarzy
-AgendaExtNb=Calendar no. %s
+AgendaExtNb=Kalendarz nr %s
 ExtSiteUrlAgenda=URL dostępu do pliku .ical
 ExtSiteNoLabel=Brak opisu
 VisibleTimeRange=Widoczny zakres czasu
@@ -121,7 +129,6 @@ AddEvent=Utwórz wydarzenie
 MyAvailability=Moja dostępność
 ActionType=Typ wydarzenia
 DateActionBegin=Data startu wydarzenia
-CloneAction=Zamknij wydarzenie
 ConfirmCloneEvent=Czy jesteś pewien, że chcesz powielić zdarzenie <b>%s</b>?
 RepeatEvent=Powtórz wydarzenie
 EveryWeek=Każdego tygodnia

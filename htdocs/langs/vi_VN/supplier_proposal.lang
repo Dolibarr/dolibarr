@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - supplier_proposal
 SupplierProposal=Vendor commercial proposals
-supplier_proposalDESC=Manage price requests to vendors
+supplier_proposalDESC=Manage price requests to suppliers
 SupplierProposalNew=New price request
 CommRequest=Price request
 CommRequests=Price requests
@@ -34,7 +34,6 @@ SupplierProposalStatusSignedShort=Accepted
 SupplierProposalStatusNotSignedShort=Đã từ chối
 CopyAskFrom=Create price request by copying existing a request
 CreateEmptyAsk=Create blank request
-CloneAsk=Clone price request
 ConfirmCloneAsk=Are you sure you want to clone the price request <b>%s</b>?
 ConfirmReOpenAsk=Are you sure you want to open back the price request <b>%s</b>?
 SendAskByMail=Send price request by mail

@@ -45,7 +45,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class TicketTest extends PHPUnit_Framework_TestCase
+class TicketTest extends PHPUnit\Framework\TestCase
 {
 	protected $savconf;
 	protected $savuser;
@@ -333,33 +333,6 @@ class TicketTest extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * testTicketcreateTicketLog
-	 *
-	 * @param	Ticket		$localobject		Ticket
-	 * @return	int
-	 *
-	 * @depends	testTicketFetch
-	 * The depends says test is run only if previous is ok
-	 */
-	public function testTicketcreateTicketLog($localobject)
-	{
-		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
-
-
-		$message = 'Test ticket log';
-		$noemail = 1;
-		$result=$localobject->createTicketLog($user, $message, $noemail);
-		print __METHOD__." id=".$localobject->id." result=".$result."\n";
-
-		$this->assertGreaterThan(0, $result);
-		return $localobject;
-	}
-
-	/**
 	 * testTicketclose
 	 *
 	 * @param	Ticket		$localobject		Ticket
@@ -376,7 +349,7 @@ class TicketTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$result=$localobject->close();
+		$result=$localobject->close($user);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 
 		$this->assertGreaterThan(0, $result);

@@ -29,25 +29,25 @@
  */
 class PriceExpression
 {
-	/**
+    /**
      * @var DoliDB Database handler.
      */
     public $db;
 
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error='';
-
-	/**
-	 * @var string[] Error codes (or messages)
-	 */
-	public $errors = array();
+    /**
+     * @var string Error code (or message)
+     */
+    public $error='';
 
     /**
-	 * @var int ID
-	 */
-	public $id;
+     * @var string[] Error codes (or messages)
+     */
+    public $errors = array();
+
+    /**
+     * @var int ID
+     */
+    public $id;
 
     public $title;
     public $expression;
@@ -62,7 +62,7 @@ class PriceExpression
      *
      *  @param	DoliDb		$db      Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
     }
@@ -75,60 +75,60 @@ class PriceExpression
      *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
      *  @return int      		   	 <0 if KO, Id of created object if OK
      */
-    function create($user, $notrigger=0)
+    public function create($user, $notrigger = 0)
     {
         $error=0;
 
-		// Clean parameters
-		if (isset($this->title)) $this->title=trim($this->title);
-		if (isset($this->expression)) $this->expression=trim($this->expression);
+        // Clean parameters
+        if (isset($this->title)) $this->title=trim($this->title);
+        if (isset($this->expression)) $this->expression=trim($this->expression);
 
         // Insert request
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element." (";
-		$sql.= "title, expression";
-		$sql.= ") VALUES (";
-		$sql.= " ".(isset($this->title)?"'".$this->db->escape($this->title)."'":"''").",";
-		$sql.= " ".(isset($this->expression)?"'".$this->db->escape($this->expression)."'":"''");
-		$sql.= ")";
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element." (";
+        $sql.= "title, expression";
+        $sql.= ") VALUES (";
+        $sql.= " ".(isset($this->title)?"'".$this->db->escape($this->title)."'":"''").",";
+        $sql.= " ".(isset($this->expression)?"'".$this->db->escape($this->expression)."'":"''");
+        $sql.= ")";
 
-		$this->db->begin();
+        $this->db->begin();
 
-		dol_syslog(__METHOD__, LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);
-    	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+        if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
-		if (! $error)
+        if (! $error)
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
 
-			if (! $notrigger)
-			{
-	            // Uncomment this and change MYOBJECT to your own tag if you
-	            // want this action calls a trigger.
+            //if (! $notrigger)
+            //{
+                // Uncomment this and change MYOBJECT to your own tag if you
+                // want this action calls a trigger.
 
-	            //// Call triggers
-	            //$result=$this->call_trigger('MYOBJECT_CREATE',$user);
-	            //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-	            //// End call triggers
-			}
+                //// Call triggers
+                //$result=$this->call_trigger('MYOBJECT_CREATE',$user);
+                //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
+                //// End call triggers
+            //}
         }
 
         // Commit or rollback
         if ($error)
-		{
-			foreach($this->errors as $errmsg)
-			{
-	            dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
-	            $this->error.=($this->error?', '.$errmsg:$errmsg);
-			}
-			$this->db->rollback();
-			return -1*$error;
-		}
-		else
-		{
-			$this->db->commit();
+        {
+            foreach($this->errors as $errmsg)
+            {
+                dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
+                $this->error.=($this->error?', '.$errmsg:$errmsg);
+            }
+            $this->db->rollback();
+            return -1*$error;
+        }
+        else
+        {
+            $this->db->commit();
             return $this->id;
-		}
+        }
     }
 
 
@@ -138,7 +138,7 @@ class PriceExpression
      *  @param		int		$id    	Id object
      *  @return		int			    < 0 if KO, 0 if OK but not found, > 0 if OK
      */
-    function fetch($id)
+    public function fetch($id)
     {
         // Check parameters
         if (empty($id))
@@ -151,7 +151,7 @@ class PriceExpression
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
         $sql.= " WHERE rowid = ".$id;
 
-    	dol_syslog(__METHOD__);
+        dol_syslog(__METHOD__);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -170,18 +170,18 @@ class PriceExpression
         }
         else
         {
-      	    $this->error="Error ".$this->db->lasterror();
+              $this->error="Error ".$this->db->lasterror();
             return -1;
         }
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *    List all price expressions
      *
      *    @return	array				Array of price expressions
      */
-    function list_price_expression()
+    public function list_price_expression()
     {
         // phpcs:enable
         $sql = "SELECT rowid, title, expression";
@@ -199,7 +199,7 @@ class PriceExpression
                 $price_expression_obj = new PriceExpression($this->db);
                 $price_expression_obj->id			= $record["rowid"];
                 $price_expression_obj->title		= $record["title"];
-				$price_expression_obj->expression	= $record["expression"];
+                $price_expression_obj->expression	= $record["expression"];
                 $retarray[]=$price_expression_obj;
             }
 
@@ -214,28 +214,28 @@ class PriceExpression
     }
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Returns any existing rowid with specified title
      *
      *  @param		String	$title  Title of expression
      *  @return		int			    < 0 if KO, 0 if OK but not found, > 0 rowid
      */
-    function find_title($title)
+    public function find_title($title)
     {
         // phpcs:enable
         $sql = "SELECT rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
         $sql.= " WHERE title = '".$this->db->escape($title)."'";
 
-    	dol_syslog(__METHOD__, LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
             $obj = $this->db->fetch_object($resql);
             if ($obj)
             {
-            	return (int) $obj->rowid;
+                return (int) $obj->rowid;
             }
             else
             {
@@ -244,7 +244,7 @@ class PriceExpression
         }
         else
         {
-      	    $this->error="Error ".$this->db->lasterror();
+              $this->error="Error ".$this->db->lasterror();
             return -1;
         }
     }
@@ -257,125 +257,125 @@ class PriceExpression
      *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
      *  @return int     		   	 <0 if KO, >0 if OK
      */
-    function update($user=0, $notrigger=0)
+    public function update($user = 0, $notrigger = 0)
     {
-		$error=0;
+        $error=0;
 
-		// Clean parameters
-		if (isset($this->title)) $this->title=trim($this->title);
-		if (isset($this->expression)) $this->expression=trim($this->expression);
+        // Clean parameters
+        if (isset($this->title)) $this->title=trim($this->title);
+        if (isset($this->expression)) $this->expression=trim($this->expression);
 
         // Update request
         $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
-		$sql.= " title = ".(isset($this->title)?"'".$this->db->escape($this->title)."'":"''").",";
-		$sql.= " expression = ".(isset($this->expression)?"'".$this->db->escape($this->expression)."'":"''")."";
+        $sql.= " title = ".(isset($this->title)?"'".$this->db->escape($this->title)."'":"''").",";
+        $sql.= " expression = ".(isset($this->expression)?"'".$this->db->escape($this->expression)."'":"''")."";
         $sql.= " WHERE rowid = ".$this->id;
 
-		$this->db->begin();
+        $this->db->begin();
 
-    	dol_syslog(__METHOD__);
+        dol_syslog(__METHOD__);
         $resql = $this->db->query($sql);
-    	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+        if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
-		if (! $error)
-		{
-			if (! $notrigger)
-			{
-	            // Uncomment this and change MYOBJECT to your own tag if you
-	            // want this action calls a trigger.
+        // if (! $error)
+        // {
+        //     if (! $notrigger)
+        //     {
+        //         // Uncomment this and change MYOBJECT to your own tag if you
+        //         // want this action calls a trigger.
 
-	            //// Call triggers
-	            //$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
-	            //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-	            //// End call triggers
-			 }
-		}
+        //         //// Call triggers
+        //         //$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
+        //         //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
+        //         //// End call triggers
+        //     }
+        // }
 
         // Commit or rollback
-		if ($error)
-		{
-			foreach($this->errors as $errmsg)
-			{
-	            dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
-	            $this->error.=($this->error?', '.$errmsg:$errmsg);
-			}
-			$this->db->rollback();
-			return -1*$error;
-		}
-		else
-		{
-			$this->db->commit();
-			return 1;
-		}
+        if ($error)
+        {
+            foreach($this->errors as $errmsg)
+            {
+                dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
+                $this->error.=($this->error?', '.$errmsg:$errmsg);
+            }
+            $this->db->rollback();
+            return -1*$error;
+        }
+        else
+        {
+            $this->db->commit();
+            return 1;
+        }
     }
 
 
- 	/**
-	 *  Delete object in database
-	 *
+     /**
+     *  Delete object in database
+     *
      *	@param  User	$user        User that deletes
      *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return	int					 <0 if KO, >0 if OK
-	 */
-	function delete(User $user, $notrigger=0)
-	{
-		$error=0;
+     *  @return	int					 <0 if KO, >0 if OK
+     */
+    public function delete(User $user, $notrigger = 0)
+    {
+        $error=0;
 
-		$rowid = $this->id;
+        $rowid = $this->id;
 
-		$this->db->begin();
+        $this->db->begin();
 
-		if (! $error)
-		{
-			if (! $notrigger)
-			{
-				// Uncomment this and change MYOBJECT to your own tag if you
-		        // want this action calls a trigger.
+        //if (! $error)
+        //{
+        //    if (! $notrigger)
+        //    {
+                // Uncomment this and change MYOBJECT to your own tag if you
+                // want this action calls a trigger.
 
-	            //// Call triggers
-	            //$result=$this->call_trigger('MYOBJECT_DELETE',$user);
-	            //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-	            //// End call triggers
-			}
-		}
+                //// Call triggers
+                //$result=$this->call_trigger('MYOBJECT_DELETE',$user);
+                //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
+                //// End call triggers
+        //    }
+        //}
 
-		if (! $error)
-		{
-    		$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
-    		$sql.= " WHERE rowid = ".$rowid;
+        if (! $error)
+        {
+            $sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
+            $sql.= " WHERE rowid = ".$rowid;
 
-	        dol_syslog(__METHOD__);
-    		$resql = $this->db->query($sql);
-        	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
-		}
+            dol_syslog(__METHOD__);
+            $resql = $this->db->query($sql);
+            if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+        }
 
         // Commit or rollback
-		if ($error)
-		{
-			foreach($this->errors as $errmsg)
-			{
-	        	dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
-	            $this->error.=($this->error?', '.$errmsg:$errmsg);
-			}
-			$this->db->rollback();
-			return -1*$error;
-		}
-		else
-		{
-			$this->db->commit();
-			return 1;
-		}
-	}
+        if ($error)
+        {
+            foreach($this->errors as $errmsg)
+            {
+                dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
+                $this->error.=($this->error?', '.$errmsg:$errmsg);
+            }
+            $this->db->rollback();
+            return -1*$error;
+        }
+        else
+        {
+            $this->db->commit();
+            return 1;
+        }
+    }
 
-	/**
-	 *	Initialise object with example values
-	 *	Id must be 0 if object instance is a specimen
-	 *
-	 *	@return	void
-	 */
-	function initAsSpecimen()
-	{
-		$this->id=0;
-		$this->expression='';
-	}
+    /**
+     *  Initialise object with example values
+     *  Id must be 0 if object instance is a specimen
+     *
+     *  @return	void
+     */
+    public function initAsSpecimen()
+    {
+        $this->id=0;
+        $this->expression='';
+    }
 }

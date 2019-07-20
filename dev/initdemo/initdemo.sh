@@ -6,11 +6,11 @@
 # WARNING: This script erase all data of database
 # with data into dump file
 #
-# Regis Houssin       - regis.houssin@capnetworks.com
+# Regis Houssin       - regis.houssin@inodbox.com
 # Laurent Destailleur - eldy@users.sourceforge.net
 #------------------------------------------------------
-# Usage: initdemo.sh
-# usage: initdemo.sh mysqldump_dolibarr_x.x.x.sql database port login pass
+# Usage: initdemo.sh confirm 
+# usage: initdemo.sh confirm mysqldump_dolibarr_x.x.x.sql database port login pass
 #------------------------------------------------------
 
 
@@ -31,11 +31,20 @@ fi
 
 
 # ----------------------------- command line params
-dumpfile=$1;
-base=$2;
-port=$3;
-admin=$4;
-passwd=$5;
+confirm=$1;
+dumpfile=$2;
+base=$3;
+port=$4;
+admin=$5;
+passwd=$6;
+
+# ----------------------------- check params
+if [ "x$confirm" != "xconfirm" ]
+then
+	echo "----- $0 -----"
+	echo "Usage: initdemo.sh confirm [mysqldump_dolibarr_x.x.x.sql database port login pass]"
+	exit
+fi
 
 
 # ----------------------------- if no params on command line
@@ -132,11 +141,14 @@ then
 	exit;;
 	esac
 	
+	
+	export documentdir=`cat $mydir/../../htdocs/conf/conf.php | grep '^\$dolibarr_main_data_root' | sed -e 's/$dolibarr_main_data_root=//' | sed -e 's/;//' | sed -e "s/'//g" | sed -e 's/"//g' `
+
 
 	# ---------------------------- confirmation
 	DIALOG=${DIALOG=dialog}
 	$DIALOG --title "Init Dolibarr with demo values" --clear \
-	        --yesno "Do you confirm ? \n Dump file : '$dumpfile' \n Dump dir : '$mydir' \n Mysql database : '$base' \n Mysql port : '$port' \n Mysql login: '$admin' \n Mysql password : '$passwd'" 15 55
+	        --yesno "Do you confirm ? \n Dump file : '$dumpfile' \n Dump dir : '$mydir' \n Document dir : '$documentdir' \n Mysql database : '$base' \n Mysql port : '$port' \n Mysql login: '$admin' \n Mysql password : '$passwd'" 15 55
 	
 	case $? in
 	        0)      echo "Ok, start process...";;
@@ -165,15 +177,44 @@ export res=$?
 export documentdir=`cat $mydir/../../htdocs/conf/conf.php | grep '^\$dolibarr_main_data_root' | sed -e 's/$dolibarr_main_data_root=//' | sed -e 's/;//' | sed -e "s/'//g" | sed -e 's/"//g' `
 if [ "x$documentdir" != "x" ]
 then
+	$DIALOG --title "Reset document directory tpp" --clear \
+	        --inputbox "Delete and recreate document directory $documentdir/:" 16 55 n 2> $fichtemp
+	
+	valret=$?
+	
+	case $valret in
+	  0)
+	rep=`cat $fichtemp`;;
+	  1)
+	exit;;
+	  255)
+	exit;;
+	esac
+	
+	echo "rep=$rep"
+	if [ "x$rep" = "xy" ]; then
+		echo rm -fr "$documentdir/*"
+		rm -fr $documentdir/*
+	fi
+		
 	echo cp -pr $mydir/documents_demo/* "$documentdir/"
 	cp -pr $mydir/documents_demo/* "$documentdir/"
+	
+	mkdir "$documentdir/doctemplates/" 2>/dev/null
 	echo cp -pr $mydir/../../htdocs/install/doctemplates/* "$documentdir/doctemplates/"
 	cp -pr $mydir/../../htdocs/install/doctemplates/* "$documentdir/doctemplates/"
-	mkdir -p "$documentdir/ecm/Administrative documents"
-	mkdir -p "$documentdir/ecm/Images"
+	
+	echo cp -pr $mydir/../../htdocs/install/medias/* "$documentdir/medias/image/"
+	cp -pr $mydir/../../htdocs/install/medias/* "$documentdir/medias/image/"
+
+	mkdir -p "$documentdir/ecm/Administrative documents" 2>/dev/null
+	mkdir -p "$documentdir/ecm/Images" 2>/dev/null
 	rm -f "$documentdir/doctemplates/"*/index.html
 	echo cp -pr $mydir/../../doc/images/* "$documentdir/ecm/Images"
 	cp -pr $mydir/../../doc/images/* "$documentdir/ecm/Images"
+	
+	chmod -R u+w "$documentdir/"
+	chown -R www-data "$documentdir/"
 else
 	echo Detection of documents directory from $mydir failed so demo files were not copied. 
 fi

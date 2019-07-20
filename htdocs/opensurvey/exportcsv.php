@@ -28,16 +28,16 @@ require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
 require_once DOL_DOCUMENT_ROOT."/opensurvey/class/opensurveysondage.class.php";
 
-$action=GETPOST('action','aZ09');
+$action=GETPOST('action', 'aZ09');
 $numsondage = '';
 if (GETPOST('id'))
 {
-	$numsondage=GETPOST("id",'alpha');
+	$numsondage=GETPOST("id", 'alpha');
 }
 
 $object=new Opensurveysondage($db);
-$result=$object->fetch(0,$numsondage);
-if ($result <= 0) dol_print_error('','Failed to get survey id '.$numsondage);
+$result=$object->fetch(0, $numsondage);
+if ($result <= 0) dol_print_error('', 'Failed to get survey id '.$numsondage);
 
 
 /*
@@ -52,8 +52,8 @@ if ($result <= 0) dol_print_error('','Failed to get survey id '.$numsondage);
 
 $now=dol_now();
 
-$nbcolonnes=substr_count($object->sujet,',')+1;
-$toutsujet=explode(",",$object->sujet);
+$nbcolonnes=substr_count($object->sujet, ',')+1;
+$toutsujet=explode(",", $object->sujet);
 
 // affichage des sujets du sondage
 $input.=$langs->trans("Name").";";
@@ -61,7 +61,7 @@ for ($i=0;$toutsujet[$i];$i++)
 {
 	if ($object->format=="D")
 	{
-		$input.=''.dol_print_date($toutsujet[$i],'dayhour').';';
+		$input.=''.dol_print_date($toutsujet[$i], 'dayhour').';';
 	} else {
 		$input.=''.$toutsujet[$i].';';
 	}
@@ -69,12 +69,12 @@ for ($i=0;$toutsujet[$i];$i++)
 
 $input.="\r\n";
 
-if (strpos($object->sujet,'@') !== false)
+if (strpos($object->sujet, '@') !== false)
 {
 	$input.=";";
 	for ($i=0;$toutsujet[$i];$i++)
 	{
-		$heures=explode("@",$toutsujet[$i]);
+		$heures=explode("@", $toutsujet[$i]);
 		$input.=''.$heures[1].';';
 	}
 
@@ -96,20 +96,20 @@ if ($resql)
 		$obj=$db->fetch_object($resql);
 
 		// Le name de l'utilisateur
-		$nombase=str_replace("°","'",$obj->name);
+		$nombase=str_replace("°", "'", $obj->name);
 		$input.=$nombase.';';
 
 		//affichage des resultats
 		$ensemblereponses=$obj->reponses;
 		for ($k=0;$k<$nbcolonnes;$k++)
 		{
-			$car=substr($ensemblereponses,$k,1);
+			$car=substr($ensemblereponses, $k, 1);
 			if ($car == "1")
 			{
 				$input.='OK;';
 				$somme[$k]++;
 			}
-			else if ($car == "2")
+			elseif ($car == "2")
 			{
 				$input.='KO;';
 				$somme[$k]++;
@@ -128,7 +128,7 @@ else dol_print_error($db);
 
 
 $filesize = strlen($input);
-$filename=$numsondage."_".dol_print_date($now,'%Y%m%d%H%M').".csv";
+$filename=$numsondage."_".dol_print_date($now, '%Y%m%d%H%M').".csv";
 
 
 

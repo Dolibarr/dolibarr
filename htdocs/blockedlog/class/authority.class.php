@@ -53,7 +53,7 @@ class BlockedLogAuthority
     public function __construct($db)
     {
     	$this->db = $db;
-	}
+    }
 
 	/**
 	 *	Get the blockchain
@@ -73,11 +73,10 @@ class BlockedLogAuthority
 
 		foreach($blocks as &$b) {
 			$this->blockchain.=$b->signature;
-
 		}
 
 		return $this->blockchain;
-	}
+    }
 
 	/**
 	 *	Get hash of the block chain to check
@@ -88,7 +87,7 @@ class BlockedLogAuthority
     {
 
 		return md5($this->signature.$this->blockchain);
-	}
+    }
 
 	/**
 	 *	Get hash of the block chain to check
@@ -100,7 +99,7 @@ class BlockedLogAuthority
     {
 
 		return ($hash === $this->getBlockchainHash() );
-	}
+    }
 
 	/**
 	 *	Add a new block to the chain
@@ -112,7 +111,7 @@ class BlockedLogAuthority
     {
 
 		$this->blockchain.=$block;
-	}
+    }
 
 	/**
 	 *	hash already exist into chain ?
@@ -125,15 +124,15 @@ class BlockedLogAuthority
 
 		if(strlen($block)!=64) return false;
 
-		$blocks = str_split($this->blockchain,64);
+		$blocks = str_split($this->blockchain, 64);
 
-		if(!in_array($block,$blocks)) {
+		if(!in_array($block, $blocks)) {
 			return true;
 		}
 		else{
 			return false;
 		}
-	}
+    }
 
 
 	/**
@@ -143,7 +142,7 @@ class BlockedLogAuthority
 	 *	@param      string		$signature		Signature of object to load
 	 *	@return     int         				>0 if OK, <0 if KO, 0 if not found
 	 */
-    public function fetch($id, $signature='')
+    public function fetch($id, $signature = '')
     {
 
 		global $langs;
@@ -162,7 +161,7 @@ class BlockedLogAuthority
 		$sql.= " FROM ".MAIN_DB_PREFIX."blockedlog_authority as b";
 
 		if ($id) $sql.= " WHERE b.rowid = ". $id;
-		else if($signature)$sql.= " WHERE b.signature = '". $this->db->escape( $signature ) ."'" ;
+		elseif($signature)$sql.= " WHERE b.signature = '". $this->db->escape($signature) ."'" ;
 
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -192,7 +191,7 @@ class BlockedLogAuthority
 			$this->error=$this->db->error();
 			return -1;
 		}
-	}
+    }
 
 	/**
 	 *	Create authority in database.
@@ -246,7 +245,7 @@ class BlockedLogAuthority
 			$this->db->rollback();
 			return -1;
 		}
-	}
+    }
 
 	/**
 	 *	Create authority in database.
@@ -284,7 +283,7 @@ class BlockedLogAuthority
 			$this->db->rollback();
 			return -1;
 		}
-	}
+    }
 
 	/**
 	 *	For cron to sync to authority.
@@ -319,17 +318,14 @@ class BlockedLogAuthority
 			if($res === 'blockalreadyadded' || $res === 'blockadded') {
 
 				$block->setCertified();
-
 			}
 			else {
 
-				$this->error = $langs->trans('ImpossibleToContactAuthority ',$url);
+				$this->error = $langs->trans('ImpossibleToContactAuthority ', $url);
 				return -1;
 			}
-
-
 		}
 
-		return 1;
-	}
+        return 1;
+    }
 }

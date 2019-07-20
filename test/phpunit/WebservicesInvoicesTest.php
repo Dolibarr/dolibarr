@@ -49,7 +49,7 @@ $conf->global->MAIN_UMASK='0666';
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
+class WebservicesInvoicesTest extends PHPUnit\Framework\TestCase
 {
 	protected $savconf;
 	protected $savuser;
@@ -67,7 +67,7 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
 	 *
 	 * @return DateLibTest
 	 */
-	function __construct()
+	public function __construct()
 	{
 		parent::__construct();
 
@@ -248,7 +248,7 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
     	$parameters = array('authentication'=>$authentication,'invoice'=>$body);
     	print __METHOD__." call method ".$WS_METHOD."\n";
     	try {
-    		$result = $this->soapclient->call($WS_METHOD,$parameters,$this->ns,'');
+    		$result = $this->soapclient->call($WS_METHOD, $parameters, $this->ns, '');
     	}
     	catch(SoapFault $exception)
     	{
@@ -267,7 +267,7 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
     	}
 
     	print __METHOD__." result=".$result['result']['result_code']."\n";
-    	$this->assertEquals('OK',$result['result']['result_code']);
+    	$this->assertEquals('OK', $result['result']['result_code']);
     	$this->assertEquals('ref-phpunit-2', $result['ref_ext']);
 
 
@@ -306,7 +306,7 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
     	$parameters = array('authentication'=>$authentication, 'id'=>null, 'ref'=>null, 'ref_ext'=>'ref-phpunit-2');
     	print __METHOD__." call method ".$WS_METHOD."\n";
     	try {
-    		$result = $this->soapclient->call($WS_METHOD,$parameters,$this->ns,'');
+    		$result = $this->soapclient->call($WS_METHOD, $parameters, $this->ns, '');
     	}
     	catch(SoapFault $exception)
     	{
@@ -323,7 +323,7 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
     		print "\n";
     	}
     	print __METHOD__." result=".$result['result']['result_code']."\n";
-    	$this->assertEquals('OK',$result['result']['result_code']);
+    	$this->assertEquals('OK', $result['result']['result_code']);
     	$this->assertEquals('ref-phpunit-2', $result['invoice']['ref_ext']);
 
 
@@ -406,7 +406,7 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
     	$parameters = array('authentication'=>$authentication,'invoice'=>$body);
     	print __METHOD__." call method ".$WS_METHOD."\n";
     	try {
-    		$result = $this->soapclient->call($WS_METHOD,$parameters,$this->ns,'');
+    		$result = $this->soapclient->call($WS_METHOD, $parameters, $this->ns, '');
     	}
     	catch(SoapFault $exception)
     	{
@@ -424,7 +424,7 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
     	}
 
     	print __METHOD__." result=".$result['result']['result_code'].$result['result']['result_label']."\n";
-    	$this->assertEquals('OK',$result['result']['result_code']);
+    	$this->assertEquals('OK', $result['result']['result_code']);
     	$this->assertEquals('ref-phpunit-2', $result['ref_ext']);
 
 

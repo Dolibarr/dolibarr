@@ -1,5 +1,5 @@
 // Copyright (C) 2011-2014	Laurent Destailleur	<eldy@users.sourceforge.net>
-// Copyright (C) 2011-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+// Copyright (C) 2011-2012	Regis Houssin		<regis.houssin@inodbox.com>
 // Copyright (C) 2015       Marcos García       <marcosgdf@gmail.com>
 //
 // This program is free software; you can redistribute it and/or modify

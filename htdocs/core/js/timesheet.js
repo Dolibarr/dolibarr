@@ -90,24 +90,20 @@ function pad(n) {
 
 
 /* function from http://www.timlabonne.com/2013/07/parsing-a-time-string-with-javascript/ */
+/* timeStr must be a duration with format XX:YY (AM/PM not supported) */
 function parseTime(timeStr, dt)
 {
     if (!dt) {
         dt = new Date();
     }
 
-    var time = timeStr.match(/(\d+)(?::(\d\d))?\s*(p?)/i);
+    //var time = timeStr.match(/(\d+)(?::(\d\d))?\s*(p?)/i);
+    var time = timeStr.match(/(\d+)(?::(\d\d))?/i);
     if (!time) {
         return -1;
     }
     var hours = parseInt(time[1], 10);
-    if (hours == 12 && !time[3]) {
-        hours = 0;
-    }
-    else {
-        hours += (hours < 12 && time[3]) ? 12 : 0;
-    }
-
+ 
     dt.setHours(hours);
     dt.setMinutes(parseInt(time[2], 10) || 0);
     dt.setSeconds(0, 0);
@@ -222,20 +218,21 @@ function updateTotal(days,mode)
         else jQuery('.totalDay'+days).removeClass("bold");
     	jQuery('.totalDay'+days).text(pad(total.getHours())+':'+pad(total.getMinutes()));
 
-    	var total = new Date(0);
-        total.setHours(0);
-        total.setMinutes(0);
+    	var totalhour = 0;
+    	var totalmin = 0;
         for (var i=0; i<7; i++)
         {
         	var taskTime= new Date(0);
         	result=parseTime(jQuery('.totalDay'+i).text(),taskTime);
         	if (result >= 0)
         	{
-        		total.setHours(total.getHours()+taskTime.getHours());
-        		total.setMinutes(total.getMinutes()+taskTime.getMinutes());
+        		totalhour = totalhour + taskTime.getHours();
+        		totalmin = totalmin + taskTime.getMinutes();
         	}
         }
-    	jQuery('.totalDayAll').text(pad(total.getHours())+':'+pad(total.getMinutes()));
+        morehours = Math.floor(totalmin / 60);
+        totalmin = totalmin % 60;
+    	jQuery('.totalDayAll').text(pad(morehours + totalhour)+':'+pad(totalmin));
     }
     else
     {

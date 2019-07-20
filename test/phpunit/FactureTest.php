@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2010 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2018 Frédéric France       <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +45,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class FactureTest extends PHPUnit_Framework_TestCase
+class FactureTest extends PHPUnit\Framework\TestCase
 {
     protected $savconf;
     protected $savuser;
@@ -57,7 +58,7 @@ class FactureTest extends PHPUnit_Framework_TestCase
      *
      * @return FactureTest
      */
-    function __construct()
+    public function __construct()
     {
     	parent::__construct();
 
@@ -228,8 +229,8 @@ class FactureTest extends PHPUnit_Framework_TestCase
 			$newlocalobject,
 			true,
 			array(
-				'newref','oldref','id','lines','client','thirdparty','brouillon','user_author','date_creation','date_validation','datem',
-				'ref','statut','paye','specimen','facnumber','actiontypecode','actionmsg2','actionmsg','mode_reglement','cond_reglement',
+				'newref','oldref','id','lines','client','thirdparty','brouillon','user_author','date_creation','date_validation','datem','date_modification',
+				'ref','statut','paye','specimen','ref','actiontypecode','actionmsg2','actionmsg','mode_reglement','cond_reglement',
 				'cond_reglement_doc','situation_cycle_ref','situation_counter','situation_final','multicurrency_total_ht','multicurrency_total_tva',
 				'multicurrency_total_ttc','fk_multicurrency','multicurrency_code','multicurrency_tx'
 			)
@@ -348,7 +349,7 @@ class FactureTest extends PHPUnit_Framework_TestCase
      * @param   array $fieldstoignorearray      Array of fields to ignore in diff
      * @return  array                           Array with differences
      */
-    public function objCompare($oA,$oB,$ignoretype=true,$fieldstoignorearray=array('id'))
+    public function objCompare($oA, $oB, $ignoretype = true, $fieldstoignorearray = array('id'))
     {
         $retAr=array();
 
@@ -363,7 +364,7 @@ class FactureTest extends PHPUnit_Framework_TestCase
             $aKeys=array_keys($oVarsA);
             foreach($aKeys as $sKey)
             {
-                if (in_array($sKey,$fieldstoignorearray)) continue;
+                if (in_array($sKey, $fieldstoignorearray)) continue;
                 if (! $ignoretype && $oVarsA[$sKey] !== $oVarsB[$sKey])
                 {
                     $retAr[]=$sKey.' : '.(is_object($oVarsA[$sKey])?get_class($oVarsA[$sKey]):$oVarsA[$sKey]).' <> '.(is_object($oVarsB[$sKey])?get_class($oVarsB[$sKey]):$oVarsB[$sKey]);

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007-2008 Jeremie Ollivier      <jeremie.o@laposte.net>
  * Copyright (C) 2008-2010 Laurent Destailleur   <eldy@uers.sourceforge.net>
- * Copyright (C) 2009      Regis Houssin         <regis.houssin@capnetworks.com>
+ * Copyright (C) 2009      Regis Houssin         <regis.houssin@inodbox.com>
  * Copyright (C) 2011      Juanjo Menent         <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -49,7 +49,7 @@ $form = new Form($db);
 $arrayofjs=array();
 $arrayofcss=array('/cashdesk/css/style.css');
 
-top_htmlhead($head,$langs->trans("CashDesk"),0,0,$arrayofjs,$arrayofcss);
+top_htmlhead($head, $langs->trans("CashDesk"), 0, 0, $arrayofjs, $arrayofcss);
 
 print '<body>'."\n";
 

@@ -1,7 +1,7 @@
 Example fo recurring event, 1 week, no end, exported by Google
 
 # The recurring event were recorded every monday the 20150518. This is the Recurrence-id, but then
-# first occurence was moved on tuesday. So this record were added.
+# first occurrence was moved on tuesday. So this record were added.
 BEGIN:VEVENT
 DTSTART;TZID=Europe/Paris:20150519T100000
 DTEND;TZID=Europe/Paris:20150519T110000

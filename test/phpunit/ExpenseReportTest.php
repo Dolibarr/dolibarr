@@ -45,7 +45,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class ExpenseReportTest extends PHPUnit_Framework_TestCase
+class ExpenseReportTest extends PHPUnit\Framework\TestCase
 {
     protected $savconf;
     protected $savuser;
@@ -58,7 +58,7 @@ class ExpenseReportTest extends PHPUnit_Framework_TestCase
      *
      * @return ExpenseReportTest
      */
-    function __construct()
+    public function __construct()
     {
     	parent::__construct();
 
@@ -131,32 +131,29 @@ class ExpenseReportTest extends PHPUnit_Framework_TestCase
         $langs=$this->savlangs;
         $db=$this->savdb;
 
-        // Set supplier and product to use
-        $socid=1;
-
         // Create supplier order with a too low quantity
         $localobject=new ExpenseReport($db);
-        $localobject->initAsSpecimen();         // Init a speciment with lines
+        $localobject->initAsSpecimen();         // Init a specimen with lines
         $localobject->status = 0;
         $localobject->fk_statut = 0;
         $localobject->date_fin = null;  // Force bad value
 
         $result=$localobject->create($user);
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals(-1, $result);       // must be -1 because of missing mandatory fields
+        $this->assertEquals(-1, $result, "Error on test ExpenseReport create 1 : ".$localobject->error);       // must be -1 because of missing mandatory fields
 
         $sql="DELETE FROM ".MAIN_DB_PREFIX."expensereport where ref=''";
         $db->query($sql);
 
         // Create supplier order
         $localobject2=new ExpenseReport($db);
-        $localobject2->initAsSpecimen();        // Init a speciment with lines
+        $localobject2->initAsSpecimen();        // Init a specimen with lines
         $localobject2->status = 0;
         $localobject2->fk_statut = 0;
 
         $result=$localobject2->create($user);
         print __METHOD__." result=".$result."\n";
-        $this->assertGreaterThanOrEqual(0, $result);
+        $this->assertGreaterThanOrEqual(0, $result, "Error on test ExpenseReport create 2 : ".$localobject2->error);
 
         return $result;
     }

@@ -31,14 +31,16 @@ ViewWeek=มุมมองสัปดาห์
 ViewPerUser=ต่อมุมมองของผู้ใช้
 ViewPerType=Per type view
 AutoActions= บรรจุอัตโนมัติ
-AgendaAutoActionDesc= Define here events for which you want Dolibarr to create automatically an event in agenda. If nothing is checked, only manual actions will be included in logged and visible into agenda. Automatic tracking of business actions done on objects (validation, status change) will not be saved.
-AgendaSetupOtherDesc= หน้านี้มีตัวเลือกที่จะช่วยให้การส่งออกของเหตุการณ์ Dolibarr ของคุณลงในปฏิทินภายนอก (Thunderbird ปฏิทิน google, ... )
+AgendaAutoActionDesc= Here you may define events which you want Dolibarr to create automatically  in Agenda. If nothing is checked, only manual actions will be included in logs and displayed in Agenda. Automatic tracking of business actions done on objects (validation, status change) will not be saved.
+AgendaSetupOtherDesc= This page provides options to allow the export of your Dolibarr events into an external calendar (Thunderbird, Google Calendar etc...)
 AgendaExtSitesDesc=หน้านี้จะช่วยให้การประกาศแหล่งภายนอกของปฏิทินเพื่อดูกิจกรรมของพวกเขาเข้าสู่วาระการประชุม Dolibarr
 ActionsEvents=กิจกรรมสำหรับ Dolibarr ซึ่งจะสร้างการดำเนินการในวาระการประชุมโดยอัตโนมัติ
-EventRemindersByEmailNotEnabled=Event reminders by email was not enabled into Agenda module setup.
+EventRemindersByEmailNotEnabled=Event reminders by email was not enabled into %s module setup.
 ##### Agenda event labels #####
 NewCompanyToDolibarr=Third party %s created
+COMPANY_DELETEInDolibarr=Third party %s deleted
 ContractValidatedInDolibarr=สัญญา% ผ่านการตรวจสอบ
+CONTRACT_DELETEInDolibarr=Contract %s deleted
 PropalClosedSignedInDolibarr=ข้อเสนอ% s ลงนาม
 PropalClosedRefusedInDolibarr=ข้อเสนอ% s ปฏิเสธ
 PropalValidatedInDolibarr=s% ข้อเสนอการตรวจสอบ
@@ -59,6 +61,7 @@ MemberSubscriptionDeletedInDolibarr=Subscription %s for member %s deleted
 ShipmentValidatedInDolibarr=% s การตรวจสอบการจัดส่ง
 ShipmentClassifyClosedInDolibarr=Shipment %s classified billed
 ShipmentUnClassifyCloseddInDolibarr=Shipment %s classified reopened
+ShipmentBackToDraftInDolibarr=Shipment %s go back to draft status
 ShipmentDeletedInDolibarr=% s การจัดส่งที่ถูกลบ
 OrderCreatedInDolibarr=Order %s created
 OrderValidatedInDolibarr=สั่งซื้อ% s ตรวจสอบ
@@ -68,15 +71,15 @@ OrderBilledInDolibarr=สั่งซื้อ% s แยกการเรีย
 OrderApprovedInDolibarr=s% สั่งซื้อได้รับการอนุมัติ
 OrderRefusedInDolibarr=สั่งซื้อ% s ปฏิเสธ
 OrderBackToDraftInDolibarr=สั่งซื้อ% s กลับไปที่ร่างสถานะ
-ProposalSentByEMail=ข้อเสนอเชิงพาณิชย์% s ส่งทางอีเมล
-ContractSentByEMail=Contract %s sent by EMail
-OrderSentByEMail=ลูกค้า% s เพื่อส่งทางอีเมล
-InvoiceSentByEMail=ใบแจ้งหนี้ของลูกค้า% ส่งทางอีเมล
-SupplierOrderSentByEMail=คำสั่งผู้ผลิต% ส่งทางอีเมล
-SupplierInvoiceSentByEMail=ใบแจ้งหนี้ของผู้ผลิต% ส่งทางอีเมล
-ShippingSentByEMail=การจัดส่ง% s ส่งทางอีเมล
+ProposalSentByEMail=Commercial proposal %s sent by email
+ContractSentByEMail=Contract %s sent by email
+OrderSentByEMail=Sales order %s sent by email
+InvoiceSentByEMail=Customer invoice %s sent by email
+SupplierOrderSentByEMail=Purchase order %s sent by email
+SupplierInvoiceSentByEMail=Vendor invoice %s sent by email
+ShippingSentByEMail=Shipment %s sent by email
 ShippingValidated= % s การตรวจสอบการจัดส่ง
-InterventionSentByEMail=การแทรกแซง% s ส่งทางอีเมล
+InterventionSentByEMail=Intervention %s sent by email
 ProposalDeleted=Proposal deleted
 OrderDeleted=Order deleted
 InvoiceDeleted=Invoice deleted
@@ -91,6 +94,11 @@ EXPENSE_REPORT_REFUSEDInDolibarr=Expense report %s refused
 PROJECT_CREATEInDolibarr=โครงการสร้าง% s
 PROJECT_MODIFYInDolibarr=Project %s modified
 PROJECT_DELETEInDolibarr=Project %s deleted
+TICKET_CREATEInDolibarr=Ticket %s created
+TICKET_MODIFYInDolibarr=Ticket %s modified
+TICKET_ASSIGNEDInDolibarr=Ticket %s assigned
+TICKET_CLOSEInDolibarr=Ticket %s closed
+TICKET_DELETEInDolibarr=Ticket %s deleted
 ##### End agenda events #####
 AgendaModelModule=Document templates for event
 DateActionStart=วันที่เริ่มต้น
@@ -100,7 +108,7 @@ AgendaUrlOptions3=<b>Logina =% s</b> ​​ที่จะ จำกัด <b>�
 AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> to restrict output to actions not owned by user <b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
-AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> to exclude automatic event.
+AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> to exclude automatic events.
 AgendaShowBirthdayEvents=Show birthdays of contacts
 AgendaHideBirthdayEvents=Hide birthdays of contacts
 Busy=ไม่ว่าง
@@ -110,7 +118,7 @@ DefaultWorkingHours=ชั่วโมงการทำงานเริ่ม
 # External Sites ical
 ExportCal=ส่งออกปฏิทิน
 ExtSites=นำเข้าปฏิทินภายนอก
-ExtSitesEnableThisTool=แสดงปฏิทินภายนอก (เข้าสู่การตั้งค่าที่กำหนดไว้ทั่วโลก) เข้าสู่วาระการประชุม ไม่ส่งผลกระทบต่อปฏิทินภายนอกที่กำหนดโดยผู้ใช้
+ExtSitesEnableThisTool=Show external calendars (defined in global setup) in Agenda. Does not affect external calendars defined by users.
 ExtSitesNbOfAgenda=จำนวนปฏิทิน
 AgendaExtNb=Calendar no. %s
 ExtSiteUrlAgenda=URL ที่เข้าถึงไฟล์ .ical
@@ -121,7 +129,6 @@ AddEvent=สร้างกิจกรรม
 MyAvailability=ความพร้อมใช้งานของฉัน
 ActionType=ประเภทเหตุการณ์
 DateActionBegin=วันที่เริ่มต้นเหตุการณ์
-CloneAction=เหตุการณ์โคลน
 ConfirmCloneEvent=Are you sure you want to clone the event <b>%s</b>?
 RepeatEvent=เหตุการณ์ซ้ำ
 EveryWeek=ทุกสัปดาห์

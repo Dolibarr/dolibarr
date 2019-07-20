@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014-2016  Alexandre Spangaro  <aspangaro@zendsi.com>
+/* Copyright (C) 2014-2016  Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 
 /**
  * \file        htdocs/accountancy/admin/fiscalyear_card.php
- * \ingroup     Advanced accountancy
+ * \ingroup     Accountancy (Double entries)
  * \brief       Page to show a fiscal year
  */
 
@@ -38,7 +38,7 @@ if (empty($user->rights->accounting->fiscalyear))
 
 $error = 0;
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $id = GETPOST('id', 'int');
 
@@ -50,7 +50,7 @@ static $tmpstatut2label = array (
 $statut2label = array (
 		''
 );
-foreach ( $tmpstatut2label as $key => $val )
+foreach ($tmpstatut2label as $key => $val)
 	$statut2label[$key] = $langs->trans($val);
 
 $object = new Fiscalyear($db);
@@ -73,7 +73,7 @@ if ($action == 'confirm_delete' && $confirm == "yes") {
 	}
 }
 
-else if ($action == 'add') {
+elseif ($action == 'add') {
 	if (! GETPOST('cancel', 'alpha')) {
 		$error = 0;
 
@@ -118,7 +118,7 @@ else if ($action == 'add') {
 }
 
 // Update record
-else if ($action == 'update') {
+elseif ($action == 'update') {
 	if (! GETPOST('cancel', 'alpha')) {
 		$result = $object->fetch($id);
 
@@ -151,7 +151,7 @@ $form = new Form($db);
 
 $title = $langs->trans("Fiscalyear") . " - " . $langs->trans("Card");
 $helpurl = "";
-llxHeader("",$title,$helpurl);
+llxHeader("", $title, $helpurl);
 
 if ($action == 'create')
 {
@@ -166,7 +166,7 @@ if ($action == 'create')
 	print '<table class="border" width="100%">';
 
 	// Label
-	print '<tr><td class="titlefieldcreate fieldrequired">' . $langs->trans("Label") . '</td><td><input name="label" size="32" value="' . GETPOST("label") . '"></td></tr>';
+	print '<tr><td class="titlefieldcreate fieldrequired">' . $langs->trans("Label") . '</td><td><input name="label" size="32" value="' . GETPOST('label', 'alpha') . '"></td></tr>';
 
 	// Date start
 	print '<tr><td class="fieldrequired">' . $langs->trans("DateStart") . '</td><td>';
@@ -183,7 +183,7 @@ if ($action == 'create')
 	print '<tr>';
 	print '<td class="fieldrequired">' . $langs->trans("Status") . '</td>';
 	print '<td class="valeur">';
-	print $form->selectarray('statut', $statut2label, GETPOST('statut'));
+	print $form->selectarray('statut', $statut2label, GETPOST('statut', 'int'));
 	print '</td></tr>';
 	*/
 
@@ -198,7 +198,7 @@ if ($action == 'create')
 	print '</div>';
 
 	print '</form>';
-} else if ($id) {
+} elseif ($id) {
 	$result = $object->fetch($id);
 	if ($result > 0) {
 		$head = fiscalyear_prepare_head($object);

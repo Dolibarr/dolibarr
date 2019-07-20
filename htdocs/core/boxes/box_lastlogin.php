@@ -30,21 +30,21 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_lastlogin extends ModeleBoxes
 {
-    var $boxcode="lastlogin";
-    var $boximg="object_user";
-    var $boxlabel='BoxLoginInformation';
-    var $depends = array("user");
+    public $boxcode="lastlogin";
+    public $boximg="object_user";
+    public $boxlabel='BoxLoginInformation';
+    public $depends = array("user");
 
     /**
      * @var DoliDB Database handler.
      */
     public $db;
-    
-    var $param;
-    var $enabled = 1;
 
-    var $info_box_head = array();
-    var $info_box_contents = array();
+    public $param;
+    public $enabled = 1;
+
+    public $info_box_head = array();
+    public $info_box_contents = array();
 
 
     /**
@@ -53,7 +53,7 @@ class box_lastlogin extends ModeleBoxes
      *  @param  DoliDB  $db         Database handler
      *  @param  string  $param      More parameters
      */
-    function __construct($db,$param)
+    public function __construct($db, $param)
     {
         global $conf;
 
@@ -66,7 +66,7 @@ class box_lastlogin extends ModeleBoxes
      *  @param  int     $max        Maximum number of records to load
      *  @return void
      */
-    function loadBox($max=5)
+    public function loadBox($max = 5)
     {
         global $conf, $user, $langs, $db;
 
@@ -75,7 +75,7 @@ class box_lastlogin extends ModeleBoxes
             'text' => $textHead,
             'limit'=> dol_strlen($textHead),
         );
-        
+
         $line=0;
         $this->info_box_contents[$line][0] = array(
             'td' => '',
@@ -86,13 +86,13 @@ class box_lastlogin extends ModeleBoxes
             'text' => $user->getNomUrl(-1),
             'asis' => 1
         );
-        
+
         $line=1;
         $this->info_box_contents[$line][0] = array(
             'td' => '',
             'text' => $langs->trans("PreviousConnexion"),
         );
-        if ($user->datepreviouslogin) $tmp= dol_print_date($user->datepreviouslogin,"dayhour",'tzuser');
+        if ($user->datepreviouslogin) $tmp= dol_print_date($user->datepreviouslogin, "dayhour", 'tzuser');
         else $tmp= $langs->trans("Unknown");
         $this->info_box_contents[$line][1] = array(
             'td' => '',
@@ -102,14 +102,14 @@ class box_lastlogin extends ModeleBoxes
 
 
 	/**
-	 *	Method to show box
+	 *  Method to show box
 	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
+	 *  @param	array	$head       Array with properties of box title
+	 *  @param  array	$contents   Array with properties of box lines
 	 *  @param	int		$nooutput	No print, only return string
-	 *	@return	void
+	 *  @return	void
 	 */
-    function showBox($head = null, $contents = null, $nooutput=0)
+    public function showBox($head = null, $contents = null, $nooutput = 0)
     {
 		parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}

@@ -3,7 +3,7 @@
  * Copyright (C) 2005       Eric Seigne         <eric.seigne@ryxeo.com>
  * Copyright (C) 2006-2016  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2007       Patrick Raguin      <patrick.raguin@gmail.com>
- * Copyright (C) 2005-2012  Regis Houssin       <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012  Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -32,32 +32,28 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
-$langs->load("main");
-$langs->load("categories");
-$langs->load("takepos");
-$langs->load("printing");
+$langs->loadLangs(array("main"), "categories", "takepos", "printing");
 
 if (! $user->rights->categorie->lire) accessforbidden();
 
-$id=GETPOST('id','int');
-$type=(GETPOST('type','aZ09') ? GETPOST('type','aZ09') : Categorie::TYPE_PRODUCT);
-$catname=GETPOST('catname','alpha');
-$action=GETPOST('action','alpha');
-$printer1=GETPOST('printer1','alpha');
-$printer2=GETPOST('printer2','alpha');
+$id=GETPOST('id', 'int');
+$type=(GETPOST('type', 'aZ09') ? GETPOST('type', 'aZ09') : Categorie::TYPE_PRODUCT);
+$catname=GETPOST('catname', 'alpha');
+$action=GETPOST('action', 'alpha');
+$printer1=GETPOST('printer1', 'alpha');
+$printer2=GETPOST('printer2', 'alpha');
 
 if (is_numeric($type)) $type=Categorie::$MAP_ID_TO_CODE[$type];	// For backward compatibility
 
 /*
  * Actions
  */
-print $action;
 if ($action=="SavePrinter1"){
 	$printedcategories=";";
 	if (is_array($printer1)) foreach ($printer1 as $cat){
 		$printedcategories=$printedcategories.$cat.";";
 	}
-	dolibarr_set_const($db,"TAKEPOS_PRINTED_CATEGORIES_1", $printedcategories,'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "TAKEPOS_PRINTED_CATEGORIES_1", $printedcategories, 'chaine', 0, '', $conf->entity);
 }
 
 if ($action=="SavePrinter2"){
@@ -65,7 +61,7 @@ if ($action=="SavePrinter2"){
 	if (is_array($printer2)) foreach ($printer2 as $cat){
 		$printedcategories=$printedcategories.$cat.";";
 	}
-	dolibarr_set_const($db,"TAKEPOS_PRINTED_CATEGORIES_2", $printedcategories,'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "TAKEPOS_PRINTED_CATEGORIES_2", $printedcategories, 'chaine', 0, '', $conf->entity);
 }
 
 
@@ -89,7 +85,7 @@ else                                        { $title=$langs->trans("CategoriesAr
 $arrayofjs=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.js', '/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js');
 $arrayofcss=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
 
-llxHeader('',$title,'','',0,0,$arrayofjs,$arrayofcss);
+llxHeader('', $title, '', '', 0, 0, $arrayofjs, $arrayofcss);
 
 
 print load_fiche_titre($langs->trans("OrderPrinters"));
@@ -124,7 +120,7 @@ foreach($fulltree as $key => $val)
 	$categstatic->ref=$val['label'];
 	$categstatic->color=$val['color'];
 	$categstatic->type=$type;
-	$li=$categstatic->getNomUrl(1,'',60);
+	$li=$categstatic->getNomUrl(1, '', 60);
 	$desc=dol_htmlcleanlastbr($val['description']);
 
 	$data[] = array(
@@ -137,7 +133,7 @@ foreach($fulltree as $key => $val)
 
 //Printer1
 print '<table class="liste nohover" width="100%">';
-print '<tr class="liste_titre"><td>'.$langs->trans("Printer").' 1</td><td></td><td align="right">';
+print '<tr class="liste_titre"><td>'.$langs->trans("Printer").' 1</td><td></td><td class="right">';
 print '</td></tr>';
 $nbofentries=(count($data) - 1);
 print '<form action="orderprinters.php">';
@@ -154,7 +150,7 @@ if ($nbofentries > 0)
 else
 {
 	print '<tr class="pair">';
-	print '<td colspan="3"><table class="nobordernopadding"><tr class="nobordernopadding"><td>'.img_picto_common('','treemenu/branchbottom.gif').'</td>';
+	print '<td colspan="3"><table class="nobordernopadding"><tr class="nobordernopadding"><td>'.img_picto_common('', 'treemenu/branchbottom.gif').'</td>';
 	print '<td valign="middle">';
 	print $langs->trans("NoCategoryYet");
 	print '</td>';
@@ -167,7 +163,7 @@ print '<input type="submit" value="'.$langs->trans("Save").'"></form><br><br>';
 
 //Printer2
 print '<table class="liste nohover" width="100%">';
-print '<tr class="liste_titre"><td>'.$langs->trans("Printer").' 2</td><td></td><td align="right">';
+print '<tr class="liste_titre"><td>'.$langs->trans("Printer").' 2</td><td></td><td class="right">';
 print '</td></tr>';
 $nbofentries=(count($data) - 1);
 print '<form action="orderprinters.php">';
@@ -184,7 +180,7 @@ if ($nbofentries > 0)
 else
 {
 	print '<tr class="pair">';
-	print '<td colspan="3"><table class="nobordernopadding"><tr class="nobordernopadding"><td>'.img_picto_common('','treemenu/branchbottom.gif').'</td>';
+	print '<td colspan="3"><table class="nobordernopadding"><tr class="nobordernopadding"><td>'.img_picto_common('', 'treemenu/branchbottom.gif').'</td>';
 	print '<td valign="middle">';
 	print $langs->trans("NoCategoryYet");
 	print '</td>';

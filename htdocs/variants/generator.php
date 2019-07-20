@@ -24,8 +24,7 @@ require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttributeValue.class.php'
 require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
 require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination2ValuePair.class.php';
 
-$langs->load("products");
-$langs->load('other');
+$langs->loadLangs(array("products", "other"));
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref');
@@ -34,13 +33,20 @@ $form = new Form($db);
 // Security check
 $fieldvalue = (! empty($id) ? $id : $ref);
 $fieldtype = (! empty($ref) ? 'ref' : 'rowid');
-$result=restrictedArea($user,'produit|service',$fieldvalue,'product&product','','',$fieldtype);
+$result=restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 
 $prodattr = new ProductAttribute($db);
 $prodattrval = new ProductAttributeValue($db);
 $product = new Product($db);
 
 $product->fetch($id);
+
+$error = 0;
+
+
+/*
+ * Actions
+ */
 
 if (!$product->isProduct()) {
 	header('Location: '.dol_buildpath('/product/card.php?id='.$product->id, 2));
@@ -60,8 +66,8 @@ $combinations = GETPOST('combinations', 'array');
 $price_var_percent = (bool) GETPOST('price_var_percent');
 $donotremove = true;
 
-if ($_POST) {
-
+if ($_POST)
+{
 	$donotremove = (bool) GETPOST('donotremove');
 
 	//We must check if all those given combinations actually exist
@@ -103,7 +109,8 @@ if ($_POST) {
 
 			$res = 1;
 
-			foreach (cartesianArray($adapted_values) as $currcomb)
+			$cartesianarray = cartesianArray($adapted_values);
+			foreach ($cartesianarray as $currcomb)
 			{
 				$res = $combination->createProductCombination($product, $currcomb, $sanitized_values, $price_var_percent);
 				if ($res < 0) {
@@ -124,7 +131,6 @@ if ($_POST) {
 		}
 
 		$db->rollback();
-
 	} else {
 		setEventMessages($langs->trans('ErrorFieldsRequired'), null, 'errors');
 	}
@@ -325,7 +331,7 @@ if (! empty($id) || ! empty($ref)) {
 
 			<form method="post" id="combinationsform">
 
-					<p><?php echo $langs->trans('TooMuchCombinationsWarning', $langs->trans('DoNotRemovePreviousCombinations')) ?></p>
+					<p><?php echo $langs->trans('TooMuchCombinationsWarning', $langs->transnoentitiesnoconv('DoNotRemovePreviousCombinations')) ?></p>
 					<input type="checkbox" name="price_var_percent"
 					       id="price_var_percent"<?php echo $price_var_percent ? ' checked' : '' ?>> <label
 						for="price_var_percent"><?php echo $langs->trans('UsePercentageVariations') ?></label>

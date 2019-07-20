@@ -16,29 +16,29 @@ MarginDetails=Marginaldetaljer
 ProductMargins=Produktmarginaler
 CustomerMargins=Kundmarginaler
 SalesRepresentativeMargins=Återförsäljares marginaler
-UserMargins=User margins
+UserMargins=Användarmarginaler
 ProductService=Produkt eller tjänst
 AllProducts=Alla produkter och tjänster
 ChooseProduct/Service=Välj produkt eller tjänst
-ForceBuyingPriceIfNull=Force buying/cost price to selling price if not defined
-ForceBuyingPriceIfNullDetails=If buying/cost price not defined, and this option "ON", margin will be zero on line (buying/cost price = selling price), otherwise ("OFF"), marge will be equal to suggested default.
+ForceBuyingPriceIfNull=Tvinga köp / kostpris till försäljningspris om det inte är definierat
+ForceBuyingPriceIfNullDetails=Om köp- / kostnadskursen inte definieras, och detta alternativ "ON" kommer marginalen att vara noll på raden (köp / kostnadskurs = försäljningspris), annars ("OFF"), marginal motsvarar föreslagen standard.
 MARGIN_METHODE_FOR_DISCOUNT=Marginalmetod för globala rabatter
 UseDiscountAsProduct=Som produkt
 UseDiscountAsService=Som tjänst
 UseDiscountOnTotal=På delsumma
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Definierar om en global rabatt behandlas som en produkt, en tjänst, eller bara på delsumman för beräkning marginal.
-MARGIN_TYPE=Buying/Cost price suggested by default for margin calculation
-MargeType1=Margin on Best vendor price
-MargeType2=Margin on Weighted Average Price (WAP)
-MargeType3=Margin on Cost Price
-MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Price (WAP) = Selling price - Product Weighted Average Price (WAP) or best supplier price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAP if cost price not defined, or best supplier price if WAP not yet defined
+MARGIN_TYPE=Köp / Kostnadspris som föreslagits som standard för marginalberäkning
+MargeType1=Marginal på Bästa leverantörspriset
+MargeType2=Marginal på vägt genomsnittligt pris (WAP)
+MargeType3=Marginal på kostpris
+MarginTypeDesc=* Marginal på bästa köpkurs = Försäljningspris - Bästa försäljningspriset definierat på produktkort <br> * Marginal på vägt genomsnittligt pris (WAP) = Försäljningspris - Produktviktat genomsnittspris (WAP) eller bäst försäljningspris om WAP ännu inte definierats <br> * Marginal på kostnadskurs = Försäljningspris - Kostnadspris definierat på produktkort eller WAP om kostnadspris ej definierat eller bästa försäljningspris om WAP ännu inte definierats
 CostPrice=Kostnadspris
-UnitCharges=Enhetsladdningar
+UnitCharges=Enhetspris
 Charges=Avgifter
-AgentContactType=Handelsagent kontakttyp
+AgentContactType=Handelsagentens kontakttyp
 AgentContactTypeDetails=Definiera vad kontakttyp (länkad på fakturor) kommer att användas för marginalrapport per försäljning representant
 rateMustBeNumeric=Betyg måste vara ett numeriskt värde
 markRateShouldBeLesserThan100=Mark takt bör vara lägre än 100
 ShowMarginInfos=Visa marginal information
-CheckMargins=Margins detail
-MarginPerSaleRepresentativeWarning=The report of margin per user use the link between third parties and sale representatives to calculate the margin of each sale representative. Because some thirdparties may not have any ddiated sale representative and some thirdparties may be linked to several, some amounts may not be included into this report (if there is no sale representative) and some may appear on different lines (for each sale representative).
+CheckMargins=Marginaldetaljer
+MarginPerSaleRepresentativeWarning=Rapporten för marginal per användare använder länken mellan tredje part och försäljningsrepresentanter för att beräkna marginalen för varje försäljningsrepresentant. Eftersom vissa tredje parter kanske inte har någon dedikerad försäljningsrepresentant och vissa tredje parter kan kopplas till flera, kan vissa belopp inte inkluderas i denna rapport (om det inte finns någon försäljningsrepresentant) och vissa kan förekomma på olika sätt (för varje försäljningsrepresentant) .

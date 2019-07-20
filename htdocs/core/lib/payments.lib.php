@@ -1,6 +1,7 @@
 <?php
 /**
- * Copyright (C) 2013	Marcos García	<marcosgdf@gmail.com>
+ * Copyright (C) 2013	    Marcos García	        <marcosgdf@gmail.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,14 +42,14 @@ function payment_prepare_head(Paiement $object)
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname);   												to remove a tab
-    complete_head_from_modules($conf,$langs,$object,$head,$h,'payment');
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'payment');
 
 	$head[$h][0] = DOL_URL_ROOT.'/compta/paiement/info.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Info");
 	$head[$h][2] = 'info';
 	$h++;
 
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'payment', 'remove');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'payment', 'remove');
 
 	return $head;
 }
@@ -76,14 +77,14 @@ function payment_supplier_prepare_head(Paiement $object)
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname);   												to remove a tab
-    complete_head_from_modules($conf,$langs,$object,$head,$h,'payment_supplier');
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'payment_supplier');
 
 	$head[$h][0] = DOL_URL_ROOT.'/fourn/paiement/info.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Info');
 	$head[$h][2] = 'info';
 	$h++;
 
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'payment_supplier', 'remove');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'payment_supplier', 'remove');
 
 	return $head;
 }
@@ -94,7 +95,7 @@ function payment_supplier_prepare_head(Paiement $object)
  * @param	string	$paymentmethod		Filter on this payment method (''=none, 'paypal', ...)
  * @return	array						Array of valid payment method
  */
-function getValidOnlinePaymentMethods($paymentmethod='')
+function getValidOnlinePaymentMethods($paymentmethod = '')
 {
 	global $conf;
 
@@ -122,7 +123,7 @@ function getValidOnlinePaymentMethods($paymentmethod='')
  * @param	string	$ref		Ref of object
  * @return	string				Url string
  */
-function showOnlinePaymentUrl($type,$ref)
+function showOnlinePaymentUrl($type, $ref)
 {
 	global $conf, $langs;
 
@@ -131,8 +132,8 @@ function showOnlinePaymentUrl($type,$ref)
 
 	$servicename='Online';
 
-	$out = img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePayment",$servicename).'<br>';
-	$url = getOnlinePaymentUrl(0,$type,$ref);
+	$out = img_picto('', 'object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePayment", $servicename).'<br>';
+	$url = getOnlinePaymentUrl(0, $type, $ref);
 	$out.= '<input type="text" id="onlinepaymenturl" class="quatrevingtpercent" value="'.$url.'">';
 	$out.= ajax_autoselect("onlinepaymenturl", 0);
 	return $out;
@@ -141,32 +142,41 @@ function showOnlinePaymentUrl($type,$ref)
 /**
  * Return string with full Url
  *
- * @param   int		$mode		0=True url, 1=Url formated with colors
- * @param   string	$type		Type of URL ('free', 'order', 'invoice', 'contractline', 'membersubscription' ...)
- * @param	string	$ref		Ref of object
- * @param	int		$amount		Amount (required for $type='free' only)
- * @param	string	$freetag	Free tag
- * @return	string				Url string
+ * @param   int		$mode		      0=True url, 1=Url formated with colors
+ * @param   string	$type		      Type of URL ('free', 'order', 'invoice', 'contractline', 'membersubscription' ...)
+ * @param	string	$ref		      Ref of object
+ * @param	int		$amount		      Amount (required for $type='free' only)
+ * @param	string	$freetag	      Free tag
+ * @param   string  $localorexternal  0=Url for browser, 1=Url for external access
+ * @return	string				      Url string
  */
-function getOnlinePaymentUrl($mode, $type, $ref='', $amount='9.99', $freetag='your_free_tag')
+function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag = 'your_tag', $localorexternal = 0)
 {
-	global $conf;
+    global $conf, $dolibarr_main_url_root;
 
-	$ref=str_replace(' ','',$ref);
+	$ref=str_replace(' ', '', $ref);
 	$out='';
+
+	// Define $urlwithroot
+	$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+	$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
+	//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+
+	$urltouse = DOL_MAIN_URL_ROOT;
+	if ($localorexternal) $urltouse = $urlwithroot;
 
 	if ($type == 'free')
 	{
-		$out=DOL_MAIN_URL_ROOT.'/public/payment/newpayment.php?amount='.($mode?'<font color="#666666">':'').$amount.($mode?'</font>':'').'&tag='.($mode?'<font color="#666666">':'').$freetag.($mode?'</font>':'');
+	    $out=$urltouse.'/public/payment/newpayment.php?amount='.($mode?'<font color="#666666">':'').$amount.($mode?'</font>':'').'&tag='.($mode?'<font color="#666666">':'').$freetag.($mode?'</font>':'');
 		if (! empty($conf->global->PAYMENT_SECURITY_TOKEN))
 		{
 			if (empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) $out.='&securekey='.$conf->global->PAYMENT_SECURITY_TOKEN;
 			else $out.='&securekey='.dol_hash($conf->global->PAYMENT_SECURITY_TOKEN, 2);
 		}
 	}
-	if ($type == 'order')
+	elseif ($type == 'order')
 	{
-		$out=DOL_MAIN_URL_ROOT.'/public/payment/newpayment.php?source=order&ref='.($mode?'<font color="#666666">':'');
+	    $out=$urltouse.'/public/payment/newpayment.php?source=order&ref='.($mode?'<font color="#666666">':'');
 		if ($mode == 1) $out.='order_ref';
 		if ($mode == 0) $out.=urlencode($ref);
 		$out.=($mode?'</font>':'');
@@ -182,9 +192,9 @@ function getOnlinePaymentUrl($mode, $type, $ref='', $amount='9.99', $freetag='yo
 			}
 		}
 	}
-	if ($type == 'invoice')
+	elseif ($type == 'invoice')
 	{
-		$out=DOL_MAIN_URL_ROOT.'/public/payment/newpayment.php?source=invoice&ref='.($mode?'<font color="#666666">':'');
+	    $out=$urltouse.'/public/payment/newpayment.php?source=invoice&ref='.($mode?'<font color="#666666">':'');
 		if ($mode == 1) $out.='invoice_ref';
 		if ($mode == 0) $out.=urlencode($ref);
 		$out.=($mode?'</font>':'');
@@ -200,9 +210,9 @@ function getOnlinePaymentUrl($mode, $type, $ref='', $amount='9.99', $freetag='yo
 			}
 		}
 	}
-	if ($type == 'contractline')
+	elseif ($type == 'contractline')
 	{
-		$out=DOL_MAIN_URL_ROOT.'/public/payment/newpayment.php?source=contractline&ref='.($mode?'<font color="#666666">':'');
+	    $out=$urltouse.'/public/payment/newpayment.php?source=contractline&ref='.($mode?'<font color="#666666">':'');
 		if ($mode == 1) $out.='contractline_ref';
 		if ($mode == 0) $out.=urlencode($ref);
 		$out.=($mode?'</font>':'');
@@ -218,9 +228,9 @@ function getOnlinePaymentUrl($mode, $type, $ref='', $amount='9.99', $freetag='yo
 			}
 		}
 	}
-	if ($type == 'member' || $type == 'membersubscription')
+	elseif ($type == 'member' || $type == 'membersubscription')
 	{
-		$out=DOL_MAIN_URL_ROOT.'/public/payment/newpayment.php?source=membersubscription&ref='.($mode?'<font color="#666666">':'');
+	    $out=$urltouse.'/public/payment/newpayment.php?source=membersubscription&ref='.($mode?'<font color="#666666">':'');
 		if ($mode == 1) $out.='member_ref';
 		if ($mode == 0) $out.=urlencode($ref);
 		$out.=($mode?'</font>':'');
@@ -238,7 +248,7 @@ function getOnlinePaymentUrl($mode, $type, $ref='', $amount='9.99', $freetag='yo
 	}
 	if ($type == 'donation')
 	{
-		$out=DOL_MAIN_URL_ROOT.'/public/payment/newpayment.php?source=donation&ref='.($mode?'<font color="#666666">':'');
+	    $out=$urltouse.'/public/payment/newpayment.php?source=donation&ref='.($mode?'<font color="#666666">':'');
 		if ($mode == 1) $out.='donation_ref';
 		if ($mode == 0) $out.=urlencode($ref);
 		$out.=($mode?'</font>':'');
@@ -273,7 +283,7 @@ function getOnlinePaymentUrl($mode, $type, $ref='', $amount='9.99', $freetag='yo
  * @param	Object		$object			Object related to payment
  * @return	void
  */
-function htmlPrintOnlinePaymentFooter($fromcompany, $langs, $addformmessage=0, $suffix='', $object=null)
+function htmlPrintOnlinePaymentFooter($fromcompany, $langs, $addformmessage = 0, $suffix = '', $object = null)
 {
     global $conf;
 
@@ -286,20 +296,20 @@ function htmlPrintOnlinePaymentFooter($fromcompany, $langs, $addformmessage=0, $
     // Capital
     if ($fromcompany->capital)
     {
-        $line1.=($line1?" - ":"").$langs->transnoentities("CapitalOf",$fromcompany->capital)." ".$langs->transnoentities("Currency".$conf->currency);
+        $line1.=($line1?" - ":"").$langs->transnoentities("CapitalOf", $fromcompany->capital)." ".$langs->transnoentities("Currency".$conf->currency);
     }
     // Prof Id 1
     if ($fromcompany->idprof1 && ($fromcompany->country_code != 'FR' || ! $fromcompany->idprof2))
     {
-        $field=$langs->transcountrynoentities("ProfId1",$fromcompany->country_code);
-        if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
+        $field=$langs->transcountrynoentities("ProfId1", $fromcompany->country_code);
+        if (preg_match('/\((.*)\)/i', $field, $reg)) $field=$reg[1];
         $line1.=($line1?" - ":"").$field.": ".$fromcompany->idprof1;
     }
     // Prof Id 2
     if ($fromcompany->idprof2)
     {
-        $field=$langs->transcountrynoentities("ProfId2",$fromcompany->country_code);
-        if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
+        $field=$langs->transcountrynoentities("ProfId2", $fromcompany->country_code);
+        if (preg_match('/\((.*)\)/i', $field, $reg)) $field=$reg[1];
         $line1.=($line1?" - ":"").$field.": ".$fromcompany->idprof2;
     }
 
@@ -308,15 +318,15 @@ function htmlPrintOnlinePaymentFooter($fromcompany, $langs, $addformmessage=0, $
     // Prof Id 3
     if ($fromcompany->idprof3)
     {
-        $field=$langs->transcountrynoentities("ProfId3",$fromcompany->country_code);
-        if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
+        $field=$langs->transcountrynoentities("ProfId3", $fromcompany->country_code);
+        if (preg_match('/\((.*)\)/i', $field, $reg)) $field=$reg[1];
         $line2.=($line2?" - ":"").$field.": ".$fromcompany->idprof3;
     }
     // Prof Id 4
     if ($fromcompany->idprof4)
     {
-        $field=$langs->transcountrynoentities("ProfId4",$fromcompany->country_code);
-        if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
+        $field=$langs->transcountrynoentities("ProfId4", $fromcompany->country_code);
+        if (preg_match('/\((.*)\)/i', $field, $reg)) $field=$reg[1];
         $line2.=($line2?" - ":"").$field.": ".$fromcompany->idprof4;
     }
     // IntraCommunautary VAT
@@ -335,14 +345,14 @@ function htmlPrintOnlinePaymentFooter($fromcompany, $langs, $addformmessage=0, $
 
     	$parammessageform='ONLINE_PAYMENT_MESSAGE_FORM_'.$suffix;
     	if (! empty($conf->global->$parammessageform)) print $langs->transnoentities($conf->global->$parammessageform);
-    	else if (! empty($conf->global->ONLINE_PAYMENT_MESSAGE_FORM)) print $langs->transnoentities($conf->global->ONLINE_PAYMENT_MESSAGE_FORM);
+    	elseif (! empty($conf->global->ONLINE_PAYMENT_MESSAGE_FORM)) print $langs->transnoentities($conf->global->ONLINE_PAYMENT_MESSAGE_FORM);
 
     	// Add other message if VAT exists
     	if ($object->total_vat != 0 || $object->total_tva != 0)
     	{
     		$parammessageform='ONLINE_PAYMENT_MESSAGE_FORMIFVAT_'.$suffix;
     		if (! empty($conf->global->$parammessageform)) print $langs->transnoentities($conf->global->$parammessageform);
-    		else if (! empty($conf->global->ONLINE_PAYMENT_MESSAGE_FORMIFVAT)) print $langs->transnoentities($conf->global->ONLINE_PAYMENT_MESSAGE_FORMIFVAT);
+    		elseif (! empty($conf->global->ONLINE_PAYMENT_MESSAGE_FORMIFVAT)) print $langs->transnoentities($conf->global->ONLINE_PAYMENT_MESSAGE_FORMIFVAT);
     	}
     }
 

@@ -36,7 +36,7 @@ if(!defined('CDAV_URI_KEY'))
 	if(isset($conf->global->CDAV_URI_KEY))
 		define('CDAV_URI_KEY', $conf->global->CDAV_URI_KEY);
 		else
-			define('CDAV_URI_KEY', substr(md5($_SERVER['HTTP_HOST']),0,8));
+			define('CDAV_URI_KEY', substr(md5($_SERVER['HTTP_HOST']), 0, 8));
 }
 
 
@@ -63,10 +63,9 @@ function dav_admin_prepare_head()
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'admindav');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'admindav');
 
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'admindav','remove');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'admindav', 'remove');
 
 	return $head;
 }
-

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014-2018  Alexandre Spangaro   <aspangaro@zendsi.com>
+/* Copyright (C) 2014-2018  Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2015-2018  Frédéric France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -51,7 +51,7 @@ class Loan extends CommonObject
 	public $datestart;
 	public $dateend;
 
-	/**
+    /**
      * @var string Loan label
      */
     public $label;
@@ -66,9 +66,27 @@ class Loan extends CommonObject
 	public $date_creation;
 	public $date_modification;
 	public $date_validation;
+
+	public $insurance_amount;
+
+	/**
+     * @var int Bank ID
+     */
 	public $fk_bank;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_creat;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_modif;
+
+	/**
+     * @var int ID
+     */
 	public $fk_project;
 
 
@@ -77,7 +95,7 @@ class Loan extends CommonObject
 	 *
 	 * @param	DoliDB		$db		Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		$this->db = $db;
 	}
@@ -88,9 +106,9 @@ class Loan extends CommonObject
 	 *  @param	int		$id		 id object
 	 *  @return int				 <0 error , >=0 no error
 	 */
-	function fetch($id)
+	public function fetch($id)
 	{
-		$sql = "SELECT l.rowid, l.label, l.capital, l.datestart, l.dateend, l.nbterm, l.rate, l.note_private, l.note_public,";
+		$sql = "SELECT l.rowid, l.label, l.capital, l.datestart, l.dateend, l.nbterm, l.rate, l.note_private, l.note_public, l.insurance_amount,";
 		$sql.= " l.paid, l.accountancy_account_capital, l.accountancy_account_insurance, l.accountancy_account_interest, l.fk_projet as fk_project";
 		$sql.= " FROM ".MAIN_DB_PREFIX."loan as l";
 		$sql.= " WHERE l.rowid = ".$id;
@@ -113,6 +131,7 @@ class Loan extends CommonObject
 				$this->rate					= $obj->rate;
 				$this->note_private			= $obj->note_private;
 				$this->note_public			= $obj->note_public;
+				$this->insurance_amount     = $obj->insurance_amount;
 				$this->paid					= $obj->paid;
 
 				$this->account_capital		= $obj->accountancy_account_capital;
@@ -143,7 +162,7 @@ class Loan extends CommonObject
 	 *  @param	User	$user	User making creation
 	 *  @return int				<0 if KO, id if OK
 	 */
-	function create($user)
+	public function create($user)
 	{
 		global $conf, $langs;
 
@@ -152,16 +171,18 @@ class Loan extends CommonObject
 		$now=dol_now();
 
 		// clean parameters
-		$newcapital=price2num($this->capital,'MT');
+		$newcapital=price2num($this->capital, 'MT');
+		if (empty($this->insurance_amount)) $this->insurance_amount = 0;
+		$newinsuranceamount=price2num($this->insurance_amount, 'MT');
 		if (isset($this->note_private)) $this->note_private = trim($this->note_private);
 		if (isset($this->note_public)) $this->note_public = trim($this->note_public);
 		if (isset($this->account_capital)) $this->account_capital = trim($this->account_capital);
 		if (isset($this->account_insurance)) $this->account_insurance = trim($this->account_insurance);
 		if (isset($this->account_interest)) $this->account_interest = trim($this->account_interest);
-		if (isset($this->fk_bank)) $this->fk_bank=trim($this->fk_bank);
-		if (isset($this->fk_user_creat)) $this->fk_user_creat=trim($this->fk_user_creat);
-		if (isset($this->fk_user_modif)) $this->fk_user_modif=trim($this->fk_user_modif);
-		if (isset($this->fk_project)) $this->fk_project=trim($this->fk_project);
+		if (isset($this->fk_bank)) $this->fk_bank = (int) $this->fk_bank;
+		if (isset($this->fk_user_creat)) $this->fk_user_creat = (int) $this->fk_user_creat;
+		if (isset($this->fk_user_modif)) $this->fk_user_modif = (int) $this->fk_user_modif;
+		if (isset($this->fk_project)) $this->fk_project = (int) $this->fk_project;
 
 		// Check parameters
 		if (! $newcapital > 0 || empty($this->datestart) || empty($this->dateend))
@@ -189,7 +210,7 @@ class Loan extends CommonObject
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."loan (label, fk_bank, capital, datestart, dateend, nbterm, rate, note_private, note_public,";
 		$sql.= " accountancy_account_capital, accountancy_account_insurance, accountancy_account_interest, entity,";
-		$sql.= " datec, fk_projet, fk_user_author)";
+		$sql.= " datec, fk_projet, fk_user_author, insurance_amount)";
 		$sql.= " VALUES ('".$this->db->escape($this->label)."',";
 		$sql.= " '".$this->db->escape($this->fk_bank)."',";
 		$sql.= " '".price2num($newcapital)."',";
@@ -205,7 +226,8 @@ class Loan extends CommonObject
 		$sql.= " ".$conf->entity.",";
 		$sql.= " '".$this->db->idate($now)."',";
 		$sql.= " ".(empty($this->fk_project)?'NULL':$this->fk_project).",";
-		$sql.= " ".$user->id;
+		$sql.= " ".$user->id.",";
+		$sql.= " '".price2num($newinsuranceamount)."'";
 		$sql.= ")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -233,7 +255,7 @@ class Loan extends CommonObject
 	 *  @param	User	$user	Object user making delete
 	 *  @return int 			<0 if KO, >0 if OK
 	 */
-	function delete($user)
+	public function delete($user)
 	{
 		$error=0;
 
@@ -242,7 +264,7 @@ class Loan extends CommonObject
 		// Get bank transaction lines for this loan
 		include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 		$account=new Account($this->db);
-		$lines_url=$account->get_url('',$this->id,'loan');
+		$lines_url=$account->get_url('', $this->id, 'loan');
 
 		// Delete bank urls
 		foreach ($lines_url as $line_url)
@@ -303,7 +325,7 @@ class Loan extends CommonObject
 	 *  @param	User	$user	User who modified
 	 *  @return int				<0 if error, >0 if ok
 	 */
-	function update($user)
+	public function update($user)
 	{
 		$this->db->begin();
 
@@ -323,7 +345,8 @@ class Loan extends CommonObject
 		$sql.= " accountancy_account_insurance = '".$this->db->escape($this->account_insurance)."',";
 		$sql.= " accountancy_account_interest = '".$this->db->escape($this->account_interest)."',";
 		$sql.= " fk_projet=".(empty($this->fk_project)?'NULL':$this->fk_project).",";
-		$sql.= " fk_user_modif = ".$user->id;
+		$sql.= " fk_user_modif = ".$user->id.",";
+		$sql.= " insurance_amount = '".price2num($this->db->escape($this->insurance_amount))."'";
 		$sql.= " WHERE rowid=".$this->id;
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
@@ -341,14 +364,14 @@ class Loan extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Tag loan as payed completely
 	 *
 	 *  @param	User	$user	Object user making change
 	 *  @return	int				<0 if KO, >0 if OK
 	 */
-	function set_paid($user)
+	public function set_paid($user)
 	{
         // phpcs:enable
 		$sql = "UPDATE ".MAIN_DB_PREFIX."loan SET";
@@ -370,12 +393,12 @@ class Loan extends CommonObject
 	 *  @param  integer	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
 	 *  @return string					Label
 	 */
-	function getLibStatut($mode=0,$alreadypaid=-1)
+	public function getLibStatut($mode = 0, $alreadypaid = -1)
 	{
-		return $this->LibStatut($this->paid,$mode,$alreadypaid);
+		return $this->LibStatut($this->paid, $mode, $alreadypaid);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return label for given status
 	 *
@@ -384,7 +407,7 @@ class Loan extends CommonObject
 	 *  @param  integer	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
 	 *  @return string					Label
 	 */
-	function LibStatut($statut,$mode=0,$alreadypaid=-1)
+	public function LibStatut($statut, $mode = 0, $alreadypaid = -1)
 	{
         // phpcs:enable
 		global $langs;
@@ -437,7 +460,7 @@ class Loan extends CommonObject
 	 *  @param	int		$maxlen			Label max length
 	 *  @return	string					Chaine with URL
 	 */
-	function getNomUrl($withpicto=0,$maxlen=0)
+	public function getNomUrl($withpicto = 0, $maxlen = 0)
 	{
 		global $langs;
 
@@ -445,16 +468,16 @@ class Loan extends CommonObject
 
 		$tooltip = '<u>' . $langs->trans("ShowLoan") . '</u>';
 		if (! empty($this->ref))
-			$tooltip .= '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
+			$tooltip .= '<br><strong>' . $langs->trans('Ref') . ':</strong> ' . $this->ref;
 		if (! empty($this->label))
-			$tooltip .= '<br><b>' . $langs->trans('Label') . ':</b> ' . $this->label;
+			$tooltip .= '<br><strong>' . $langs->trans('Label') . ':</strong> ' . $this->label;
 
 		$linkstart = '<a href="'.DOL_URL_ROOT.'/loan/card.php?id='.$this->id.'" title="'.str_replace('\n', '', dol_escape_htmltag($tooltip, 1)).'" class="classfortooltip">';
 		$linkend = '</a>';
 
 		$result .= $linkstart;
 		if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
-		if ($withpicto != 2) $result.= ($maxlen?dol_trunc($this->ref,$maxlen):$this->ref);
+		if ($withpicto != 2) $result.= ($maxlen?dol_trunc($this->ref, $maxlen):$this->ref);
 		$result .= $linkend;
 
 		return $result;
@@ -467,7 +490,7 @@ class Loan extends CommonObject
 	 *
 	 *  @return	void
 	 */
-	function initAsSpecimen()
+	public function initAsSpecimen()
 	{
 	    global $user, $langs, $conf;
 
@@ -495,7 +518,7 @@ class Loan extends CommonObject
 	 *
 	 *  @return		int		Amount of payment already done, <0 if KO
 	 */
-	function getSumPayment()
+	public function getSumPayment()
 	{
 		$table='payment_loan';
 		$field='fk_loan';
@@ -529,11 +552,10 @@ class Loan extends CommonObject
 	 *  @param	int			$id		Id of record
 	 *  @return	integer|null
 	 */
-	function info($id)
+	public function info($id)
 	{
 		$sql = 'SELECT l.rowid, l.datec, l.fk_user_author, l.fk_user_modif,';
 		$sql.= ' l.tms';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.'loan as l';
 		$sql.= ' WHERE l.rowid = '.$id;
 
 		dol_syslog(get_class($this).'::info', LOG_DEBUG);
@@ -575,5 +597,5 @@ class Loan extends CommonObject
 			$this->error=$this->db->lasterror();
 			return -1;
 		}
-	}
+    }
 }

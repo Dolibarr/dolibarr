@@ -236,6 +236,12 @@ source_file = htdocs/langs/en_US/modulebuilder.lang
 source_lang = en_US
 type = MOZILLAPROPERTIES
 
+[dolibarr.mrp]
+file_filter = htdocs/langs/<lang>/mrp.lang
+source_file = htdocs/langs/en_US/mrp.lang
+source_lang = en_US
+type = MOZILLAPROPERTIES
+
 [dolibarr.multicurrency]
 file_filter = htdocs/langs/<lang>/multicurrency.lang
 source_file = htdocs/langs/en_US/multicurrency.lang
@@ -311,6 +317,12 @@ type = MOZILLAPROPERTIES
 [dolibarr.receiptprinter]
 file_filter = htdocs/langs/<lang>/receiptprinter.lang
 source_file = htdocs/langs/en_US/receiptprinter.lang
+source_lang = en_US
+type = MOZILLAPROPERTIES
+
+[dolibarr.receptions]
+file_filter = htdocs/langs/<lang>/receptions.lang
+source_file = htdocs/langs/en_US/receptions.lang
 source_lang = en_US
 type = MOZILLAPROPERTIES
 
@@ -397,3 +409,4 @@ file_filter = htdocs/langs/<lang>/workflow.lang
 source_file = htdocs/langs/en_US/workflow.lang
 source_lang = en_US
 type = MOZILLAPROPERTIES
+

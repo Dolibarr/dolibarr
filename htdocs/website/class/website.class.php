@@ -79,16 +79,13 @@ class Website extends CommonObject
 	 * @var mixed
 	 */
 	public $date_creation;
-
-	/**
-	 * @var mixed
-	 */
-	public $tms = '';
+	public $date_modification;
 
 	/**
 	 * @var integer
 	 */
 	public $fk_default_home;
+	public $fk_user_creat;
 
 	/**
 	 * @var string
@@ -126,7 +123,7 @@ class Website extends CommonObject
 
 		// Clean parameters
 		if (isset($this->entity)) {
-			 $this->entity = trim($this->entity);
+			 $this->entity = (int) $this->entity;
 		}
 		if (isset($this->ref)) {
 			 $this->ref = trim($this->ref);
@@ -135,17 +132,17 @@ class Website extends CommonObject
 			 $this->description = trim($this->description);
 		}
 		if (isset($this->status)) {
-			 $this->status = trim($this->status);
+			 $this->status = (int) $this->status;
 		}
-		if (empty($this->date_creation)) {
+        if (empty($this->date_creation)) {
             $this->date_creation = $now;
         }
-		if (empty($this->date_modification)) {
+        if (empty($this->date_modification)) {
             $this->date_modification = $now;
         }
 
-		// Check parameters
-		if (empty($this->entity)) {
+        // Check parameters
+        if (empty($this->entity)) {
             $this->entity = $conf->entity;
         }
 
@@ -169,7 +166,7 @@ class Website extends CommonObject
 		$sql .= ' '.(! isset($this->virtualhost)?'NULL':"'".$this->db->escape($this->virtualhost)."'").",";
 		$sql .= ' '.(! isset($this->fk_user_creat)?$user->id:$this->fk_user_creat).',';
 		$sql .= ' '.(! isset($this->date_creation) || dol_strlen($this->date_creation)==0?'NULL':"'".$this->db->idate($this->date_creation)."'").",";
-		$sql .= ' '.(! isset($this->date_modification) || dol_strlen($this->date_modification)==0?'NULL':"'".$this->db->idate($this->date_creation)."'");
+		$sql .= ' '.(! isset($this->date_modification) || dol_strlen($this->date_modification)==0?'NULL':"'".$this->db->idate($this->date_modification)."'");
 		$sql .= ')';
 
 		$this->db->begin();
@@ -304,7 +301,7 @@ class Website extends CommonObject
 	 *
 	 * @return int <0 if KO, >0 if OK
 	 */
-	public function fetchAll($sortorder='', $sortfield='', $limit=0, $offset=0, array $filter = array(), $filtermode='AND')
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
@@ -334,7 +331,7 @@ class Website extends CommonObject
 		}
 
 		if (!empty($sortfield)) {
-			$sql .= $this->db->order($sortfield,$sortorder);
+			$sql .= $this->db->order($sortfield, $sortorder);
 		}
 		if (!empty($limit)) {
 		 $sql .=  ' ' . $this->db->plimit($limit, $offset);
@@ -391,7 +388,7 @@ class Website extends CommonObject
 		// Clean parameters
 
 		if (isset($this->entity)) {
-			 $this->entity = trim($this->entity);
+			 $this->entity = (int) $this->entity;
 		}
 		if (isset($this->ref)) {
 			 $this->ref = trim($this->ref);
@@ -400,7 +397,7 @@ class Website extends CommonObject
 			 $this->description = trim($this->description);
 		}
 		if (isset($this->status)) {
-			 $this->status = trim($this->status);
+			 $this->status = (int) $this->status;
 		}
 
 		// Check parameters
@@ -492,8 +489,7 @@ class Website extends CommonObject
 
 		if (! $error && ! empty($this->ref))
 		{
-			global $dolibarr_main_data_root;
-			$pathofwebsite=$dolibarr_main_data_root.'/website/'.$this->ref;
+			$pathofwebsite=DOL_DATA_ROOT.'/website/'.$this->ref;
 
 			dol_delete_dir_recursive($pathofwebsite);
 		}
@@ -520,11 +516,12 @@ class Website extends CommonObject
 	 * @param	string	$newlang	New language
 	 * @return 	mixed 				New object created, <0 if KO
 	 */
-	public function createFromClone($user, $fromid, $newref, $newlang='')
+	public function createFromClone($user, $fromid, $newref, $newlang = '')
 	{
-        global $hookmanager, $langs;
+        global $conf;
 		global $dolibarr_main_data_root;
 
+		$now = dol_now();
 		$error=0;
 
         dol_syslog(__METHOD__, LOG_DEBUG);
@@ -534,7 +531,7 @@ class Website extends CommonObject
         // Check no site with ref exists
 		if ($object->fetch(0, $newref) > 0)
 		{
-			$this->error='NewRefIsAlreadyUsed';
+			$this->error='ErrorNewRefIsAlreadyUsed';
 			return -1;
 		}
 
@@ -544,8 +541,9 @@ class Website extends CommonObject
 		$object->fetch($fromid);
 
 		$oldidforhome=$object->fk_default_home;
+		$oldref=$object->ref;
 
-		$pathofwebsiteold=$dolibarr_main_data_root.'/website/'.$object->ref;
+		$pathofwebsiteold=$dolibarr_main_data_root.'/website/'.$oldref;
 		$pathofwebsitenew=$dolibarr_main_data_root.'/website/'.$newref;
 		dol_delete_dir_recursive($pathofwebsitenew);
 
@@ -560,6 +558,8 @@ class Website extends CommonObject
 		$object->ref=$newref;
 		$object->fk_default_home=0;
 		$object->virtualhost='';
+		$object->date_creation = $now;
+		$object->fk_user_creat = $user->id;
 
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';
@@ -575,14 +575,23 @@ class Website extends CommonObject
 			dolCopyDir($pathofwebsiteold, $pathofwebsitenew, $conf->global->MAIN_UMASK, 0);
 
 			// Check symlink to medias and restore it if ko
-			$pathtomedias=DOL_DATA_ROOT.'/medias';
-			$pathtomediasinwebsite=$pathofwebsitenew.'/medias';
+			$pathtomedias=DOL_DATA_ROOT.'/medias';					// Target
+			$pathtomediasinwebsite=$pathofwebsitenew.'/medias';		// Source / Link name
 			if (! is_link(dol_osencode($pathtomediasinwebsite)))
 			{
 				dol_syslog("Create symlink for ".$pathtomedias." into name ".$pathtomediasinwebsite);
 				dol_mkdir(dirname($pathtomediasinwebsite));     // To be sure dir for website exists
 				$result = symlink($pathtomedias, $pathtomediasinwebsite);
 			}
+
+			// Copy images and js dir
+			$pathofmediasjsold=DOL_DATA_ROOT.'/medias/js/'.$oldref;
+			$pathofmediasjsnew=DOL_DATA_ROOT.'/medias/js/'.$newref;
+			dolCopyDir($pathofmediasjsold, $pathofmediasjsnew, $conf->global->MAIN_UMASK, 0);
+
+			$pathofmediasimageold=DOL_DATA_ROOT.'/medias/image/'.$oldref;
+			$pathofmediasimagenew=DOL_DATA_ROOT.'/medias/image/'.$newref;
+			dolCopyDir($pathofmediasimageold, $pathofmediasimagenew, $conf->global->MAIN_UMASK, 0);
 
 			$newidforhome=0;
 
@@ -593,11 +602,11 @@ class Website extends CommonObject
 			{
 				// Delete old file
 				$filetplold=$pathofwebsitenew.'/page'.$pageid.'.tpl.php';
-				dol_syslog("We regenerate alias page new name=".$filealias.", old name=".$fileoldalias);
 				dol_delete_file($filetplold);
 
 				// Create new file
 				$objectpagenew = $objectpageold->createFromClone($user, $pageid, $objectpageold->pageurl, '', 0, $object->id, 1);
+
 				//print $pageid.' = '.$objectpageold->pageurl.' -> '.$objectpagenew->id.' = '.$objectpagenew->pageurl.'<br>';
 				if (is_object($objectpagenew) && $objectpagenew->pageurl)
 				{
@@ -632,7 +641,7 @@ class Website extends CommonObject
 		    if (! $res > 0)
 		    {
 		        $error++;
-		        setEventMessages($objectpage->error, $objectpage->errors, 'errors');
+		        setEventMessages($object->error, $object->errors, 'errors');
 		    }
 
 		    if (! $error)
@@ -645,6 +654,8 @@ class Website extends CommonObject
 		    	$result = dolSaveIndexPage($pathofwebsitenew, $fileindex, $filetpl, $filewrapper);
 		    }
 		}
+
+		unset($object->context['createfromclone']);
 
 		// End
 		if (!$error) {
@@ -659,7 +670,7 @@ class Website extends CommonObject
 	}
 
 	/**
-	 *  Return a link to the user card (with optionaly the picto)
+	 *  Return a link to the user card (with optionally the picto)
 	 * 	Use this->id,this->lastname, this->firstname
 	 *
 	 *	@param	int		$withpicto			Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
@@ -669,7 +680,7 @@ class Website extends CommonObject
      *  @param  string  $morecss            Add more css on link
 	 *	@return	string						String with URL
 	 */
-	function getNomUrl($withpicto=0, $option='', $notooltip=0, $maxlen=24, $morecss='')
+	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $maxlen = 24, $morecss = '')
 	{
 		global $langs, $conf, $db;
         global $dolibarr_main_authentication, $dolibarr_main_demo;
@@ -705,12 +716,12 @@ class Website extends CommonObject
 	 *  @param	int		$mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return	string 			       Label of status
 	 */
-	function getLibStatut($mode=0)
+	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->status,$mode);
+		return $this->LibStatut($this->status, $mode);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Renvoi le libelle d'un status donne
 	 *
@@ -718,7 +729,7 @@ class Website extends CommonObject
 	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return string 			       	Label of status
 	 */
-	function LibStatut($status,$mode=0)
+	public function LibStatut($status, $mode = 0)
 	{
         // phpcs:enable
 		global $langs;
@@ -726,27 +737,27 @@ class Website extends CommonObject
 		if ($mode == 0 || $mode == 1)
 		{
 			if ($status == 1) return $langs->trans('Enabled');
-			if ($status == 0) return $langs->trans('Disabled');
+			elseif ($status == 0) return $langs->trans('Disabled');
 		}
 		elseif ($mode == 2)
 		{
-			if ($status == 1) return img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
-			if ($status == 0) return img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('Disabled');
+			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
+			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
 		}
 		elseif ($mode == 3)
 		{
-			if ($status == 1) return img_picto($langs->trans('Enabled'),'statut4');
-			if ($status == 0) return img_picto($langs->trans('Disabled'),'statut5');
+			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4');
+			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5');
 		}
 		elseif ($mode == 4)
 		{
-			if ($status == 1) return img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
-			if ($status == 0) return img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('Disabled');
+			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
+			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
 		}
 		elseif ($mode == 5)
 		{
-			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'),'statut4');
-			if ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'),'statut5');
+			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'), 'statut4');
+			elseif ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'), 'statut5');
 		}
 	}
 
@@ -781,7 +792,7 @@ class Website extends CommonObject
 	 *
 	 * @return  string						Path to file with zip
 	 */
-	function exportWebSite()
+	public function exportWebSite()
 	{
 		global $conf, $mysoc;
 
@@ -837,7 +848,7 @@ class Website extends CommonObject
 		dol_mkdir($conf->website->dir_temp.'/'.$website->ref.'/containers');
 
 		$filesql = $conf->website->dir_temp.'/'.$website->ref.'/website_pages.sql';
-		$fp = fopen($filesql,"w");
+		$fp = fopen($filesql, "w");
 		if (empty($fp))
 		{
 			setEventMessages("Failed to create file ".$filesql, null, 'errors');
@@ -880,7 +891,8 @@ class Website extends CommonObject
 			fputs($fp, $line);
 
 			// Warning: We must keep llx_ here. It is a generic SQL.
-			$line = 'INSERT INTO llx_website_page(rowid, fk_page, fk_website, pageurl, aliasalt, title, description, keywords, status, date_creation, tms, lang, import_key, grabbed_from, type_container, htmlheader, content)';
+			$line = 'INSERT INTO llx_website_page(rowid, fk_page, fk_website, pageurl, aliasalt, title, description, image, keywords, status, date_creation, tms, lang, import_key, grabbed_from, type_container, htmlheader, content)';
+
 			$line.= " VALUES(";
 			$line.= $objectpageold->newid."__+MAX_llx_website_page__, ";
 			$line.= ($objectpageold->newfk_page ? $this->db->escape($objectpageold->newfk_page)."__+MAX_llx_website_page__" : "null").", ";
@@ -889,6 +901,7 @@ class Website extends CommonObject
 			$line.= "'".$this->db->escape($objectpageold->aliasalt)."', ";
 			$line.= "'".$this->db->escape($objectpageold->title)."', ";
 			$line.= "'".$this->db->escape($objectpageold->description)."', ";
+			$line.= "'".$this->db->escape($objectpageold->image)."', ";
 			$line.= "'".$this->db->escape($objectpageold->keywords)."', ";
 			$line.= "'".$this->db->escape($objectpageold->status)."', ";
 			$line.= "'".$this->db->idate($objectpageold->date_creation)."', ";
@@ -927,7 +940,8 @@ class Website extends CommonObject
 			//var_dump($this->fk_default_home.' - '.$objectpageold->id.' - '.$objectpageold->newid);exit;
 			if ($this->fk_default_home > 0 && ($objectpageold->id == $this->fk_default_home) && ($objectpageold->newid > 0))	// This is the record with home page
 			{
-				$line = "UPDATE llx_website SET fk_default_home = ".($objectpageold->newid > 0 ? $this->db->escape($objectpageold->newid)."__+MAX_llx_website_page__" : "null")." WHERE rowid = __WEBSITE_ID__;";
+			    // Warning: We must keep llx_ here. It is a generic SQL.
+			    $line = "UPDATE llx_website SET fk_default_home = ".($objectpageold->newid > 0 ? $this->db->escape($objectpageold->newid)."__+MAX_llx_website_page__" : "null")." WHERE rowid = __WEBSITE_ID__;";
 				$line.= "\n";
 				fputs($fp, $line);
 			}
@@ -940,7 +954,7 @@ class Website extends CommonObject
 		// Build zip file
 		$filedir  = $conf->website->dir_temp.'/'.$website->ref.'/.';
 		$fileglob = $conf->website->dir_temp.'/'.$website->ref.'/website_'.$website->ref.'-*.zip';
-		$filename = $conf->website->dir_temp.'/'.$website->ref.'/website_'.$website->ref.'-'.dol_print_date(dol_now(),'dayhourlog').'.zip';
+		$filename = $conf->website->dir_temp.'/'.$website->ref.'/website_'.$website->ref.'-'.dol_print_date(dol_now(), 'dayhourlog').'.zip';
 
 		dol_delete_file($fileglob, 0);
 		dol_compress_file($filedir, $filename, 'zip');
@@ -955,7 +969,7 @@ class Website extends CommonObject
 	 * @param 	string		$pathtofile		Path of zip file
 	 * @return  int							<0 if KO, Id of new website if OK
 	 */
-	function importWebSite($pathtofile)
+	public function importWebSite($pathtofile)
 	{
 		global $conf, $mysoc;
 
@@ -998,7 +1012,7 @@ class Website extends CommonObject
 		}
 
 		dolCopyDir($conf->website->dir_temp.'/'.$object->ref.'/medias/image/websitekey', $conf->website->dir_output.'/'.$object->ref.'/medias/image/'.$object->ref, 0, 1);	// Medias can be shared, do not overwrite if exists
-		dolCopyDir($conf->website->dir_temp.'/'.$object->ref.'/medias/js/websitekey',    $conf->website->dir_output.'/'.$object->ref.'/medias/js/'.$object->ref, 0, 1);	    // Medias can be shared, do not overwrite if exists
+		dolCopyDir($conf->website->dir_temp.'/'.$object->ref.'/medias/js/websitekey', $conf->website->dir_output.'/'.$object->ref.'/medias/js/'.$object->ref, 0, 1);	    // Medias can be shared, do not overwrite if exists
 
 		$sqlfile = $conf->website->dir_temp.'/'.$object->ref.'/website_pages.sql';
 
@@ -1033,7 +1047,7 @@ class Website extends CommonObject
 		$objectpagestatic = new WebsitePage($this->db);
 
 		// Make replacement of IDs
-		$fp = fopen($sqlfile,"r");
+		$fp = fopen($sqlfile, "r");
 		if ($fp)
 		{
 			while (! feof($fp))
@@ -1066,6 +1080,10 @@ class Website extends CommonObject
 			}
 		}
 
+		// Regenerate index page to point to new index page
+		$pathofwebsite = $conf->website->dir_output.'/'.$object->ref;
+		dolSaveIndexPage($pathofwebsite, $pathofwebsite.'/index.php', $pathofwebsite.'/page'.$object->fk_default_home.'.tpl.php', $pathofwebsite.'/wrapper.php');
+
 		if ($error)
 		{
 			$this->db->rollback();
@@ -1077,4 +1095,135 @@ class Website extends CommonObject
 			return $object->id;
 		}
 	}
+
+	/**
+	 * Component to select language inside a container (Full CSS Only)
+	 *
+	 * @param	array|string	$languagecodes			'auto' to show all languages available for page, or language codes array like array('en_US','fr_FR','de_DE','es_ES')
+	 * @param	Translate		$weblangs				Language Object
+	 * @param	string			$morecss				More CSS class on component
+	 * @param	string			$htmlname				Suffix for HTML name
+	 * @return 	string									HTML select component
+	 */
+	public function componentSelectLang($languagecodes, $weblangs, $morecss = '', $htmlname = '')
+	{
+		global $websitepagefile, $website;
+
+		if (! is_object($weblangs)) return 'ERROR componentSelectLang called with parameter $weblangs not defined';
+
+		// Load tmppage if we have $websitepagefile defined
+		$tmppage=new WebsitePage($this->db);
+
+		$pageid = 0;
+		if (! empty($websitepagefile))
+		{
+		    $websitepagefileshort=basename($websitepagefile);
+		    if ($websitepagefileshort == 'index.php') $pageid = $website->fk_default_home;
+		    else $pageid = str_replace(array('.tpl.php', 'page'), array('', ''), $websitepagefileshort);
+			if ($pageid > 0)
+			{
+				$tmppage->fetch($pageid);
+			}
+		}
+
+		// Fill with existing translation, nothing if none
+		if (! is_array($languagecodes) && $pageid > 0)
+		{
+			$languagecodes = array();
+
+			$sql ="SELECT wp.rowid, wp.lang, wp.pageurl, wp.fk_page";
+			$sql.=" FROM ".MAIN_DB_PREFIX."website_page as wp";
+			$sql.=" WHERE wp.fk_website = ".$website->id;
+			$sql.=" AND (wp.fk_page = ".$pageid." OR wp.rowid  = ".$pageid;
+			if ($tmppage->fk_page > 0) $sql.=" OR wp.fk_page = ".$tmppage->fk_page." OR wp.rowid = ".$tmppage->fk_page;
+			$sql.=")";
+
+			$resql = $this->db->query($sql);
+			if ($resql)
+			{
+				while ($obj = $this->db->fetch_object($resql))
+				{
+					$newlang = $obj->lang;
+					if ($obj->rowid == $pageid) $newlang = $obj->lang;
+					if (! in_array($newlang, $languagecodes)) $languagecodes[]=$newlang;
+				}
+			}
+		}
+		// Now $languagecodes is always an array
+
+		$languagecodeselected= $weblangs->defaultlang;	// Because we must init with a value, but real value is the lang of main parent container
+		if (! empty($websitepagefile))
+		{
+			$pageid = str_replace(array('.tpl.php', 'page'), array('', ''), basename($websitepagefile));
+			if ($pageid > 0)
+			{
+
+				$languagecodeselected=$tmppage->lang;
+				if (! in_array($tmppage->lang, $languagecodes)) $languagecodes[]=$tmppage->lang;	// We add language code of page into combo list
+			}
+		}
+
+		$weblangs->load('languages');
+		//var_dump($weblangs->defaultlang);
+
+		$url = $_SERVER["REQUEST_URI"];
+		$url = preg_replace('/(\?|&)l=([a-zA-Z_]*)/', '', $url);	// We remove param l from url
+		//$url = preg_replace('/(\?|&)lang=([a-zA-Z_]*)/', '', $url);	// We remove param lang from url
+		$url.= (preg_match('/\?/', $url) ? '&' : '?').'l=';
+
+		$HEIGHTOPTION=40;
+		$MAXHEIGHT = 4 * $HEIGHTOPTION;
+		$nboflanguage = count($languagecodes);
+
+		$out ='<!-- componentSelectLang'.$htmlname.' -->'."\n";
+
+		$out.= '<style>';
+		$out.= '.componentSelectLang'.$htmlname.':hover { height: '.min($MAXHEIGHT, ($HEIGHTOPTION * $nboflanguage)).'px; overflow-x: hidden; overflow-y: '.((($HEIGHTOPTION * $nboflanguage) > $MAXHEIGHT) ? ' scroll' : 'hidden').'; }'."\n";
+		$out.= '.componentSelectLang'.$htmlname.' li { line-height: '.$HEIGHTOPTION.'px; }'."\n";
+		$out.= '.componentSelectLang'.$htmlname.' {
+			display: inline-block;
+			padding: 0;
+			height: '.$HEIGHTOPTION.'px;
+			overflow: hidden;
+			transition: all .3s ease;
+			margin: 0 0 0 0;
+			vertical-align: top;
+		}
+		.componentSelectLang'.$htmlname.':hover, .componentSelectLang'.$htmlname.':hover a { background-color: #fff; color: #000 !important; }
+		ul.componentSelectLang'.$htmlname.' { width: 150px; }
+		ul.componentSelectLang'.$htmlname.':hover .fa { visibility: hidden; }
+		.componentSelectLang'.$htmlname.' a { text-decoration: none; width: 100%; }
+		.componentSelectLang'.$htmlname.' li { display: block; padding: 0px 20px; }
+		.componentSelectLang'.$htmlname.' li:hover { background-color: #EEE; }
+		';
+		$out.= '</style>';
+		$out.= '<ul class="componentSelectLang'.$htmlname.($morecss?' '.$morecss:'').'">';
+		if ($languagecodeselected)
+		{
+			$shortcode = strtolower(substr($languagecodeselected, -2));
+			$label = $weblangs->trans("Language_".$languagecodeselected);
+			if ($shortcode == 'us') $label = preg_replace('/\s*\(.*\)/', '', $label);
+			$out.= '<a href="'.$url.$languagecodeselected.'"><li><img height="12px" src="medias/image/common/flags/'.$shortcode.'.png" style="margin-right: 5px;"/>'.$label;
+			$out.= '<span class="fa fa-caret-down" style="padding-left: 5px;" />';
+			$out.= '</li></a>';
+		}
+		$i=0;
+        if (is_array($languagecodes))
+        {
+            foreach($languagecodes as $languagecode)
+            {
+                if ($languagecode == $languagecodeselected) continue;	// Already output
+                $shortcode = strtolower(substr($languagecode, -2));
+                $label = $weblangs->trans("Language_".$languagecode);
+                if ($shortcode == 'us') $label = preg_replace('/\s*\(.*\)/', '', $label);
+                $out.= '<a href="'.$url.$languagecode.'"><li><img height="12px" src="medias/image/common/flags/'.$shortcode.'.png" style="margin-right: 5px;"/>'.$label;
+                if (empty($i) && empty($languagecodeselected)) $out.= '<span class="fa fa-caret-down" style="padding-left: 5px;" />';
+                $out.= '</li></a>';
+                $i++;
+            }
+        }
+        $out.= '</ul>';
+
+        return $out;
+    }
 }

@@ -3,8 +3,8 @@
 require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/inventory/class/inventory.class.php';
 
-$get = GETPOST('get');
-$put = GETPOST('put');
+$get = GETPOST('get', 'alpha');
+$put = GETPOST('put', 'alpha');
 
     switch ($put)
     {
@@ -13,8 +13,8 @@ $put = GETPOST('put');
 
             $fk_det_inventory = GETPOST('fk_det_inventory');
 
-            $det = new Inventorydet($db);
-            if( $det->fetch( $fk_det_inventory))
+            $det = new InventoryLine($db);
+            if( $det->fetch($fk_det_inventory))
             {
                 $det->qty_view+=GETPOST('qty');
                 $res = $det->update($user);
@@ -33,8 +33,8 @@ $put = GETPOST('put');
 
             $fk_det_inventory = GETPOST('fk_det_inventory');
 
-            $det = new Inventorydet($db);
-            if( $det->fetch( $fk_det_inventory))
+            $det = new InventoryLine($db);
+            if( $det->fetch($fk_det_inventory))
             {
                 $det->new_pmp=price2num(GETPOST('pmp'));
                 $det->update($user);

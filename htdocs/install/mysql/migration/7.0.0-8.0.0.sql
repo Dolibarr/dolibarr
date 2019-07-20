@@ -60,6 +60,7 @@ DROP TABLE llx_c_accountancy_category;
 DROP TABLE llx_c_accountingaccount;
 
 -- drop old postgresql unique key
+-- VPGSQL8.2 ALTER TABLE llx_usergroup_rights DROP CONSTRAINT llx_usergroup_rights_fk_usergroup_fk_id_key;
 -- VPGSQL8.2 DROP INDEX llx_usergroup_rights_fk_usergroup_fk_id_key;
 
 update llx_propal set fk_statut = 1 where fk_statut = -1;
@@ -217,7 +218,9 @@ UPDATE llx_societe_rib set type = 'ban' where type = '' OR type IS NULL;
 -- VMYSQL4.3 ALTER TABLE llx_societe_rib MODIFY COLUMN type varchar(32) NOT NULL;
 -- VPGSQL8.2 ALTER TABLE llx_societe_rib ALTER COLUMN type SET NOT NULL;
    
-   
+
+ALTER TABLE llx_ticket_msg DROP FOREIGN KEY fk_ticket_msg_fk_track_id;
+
 -- Module ticket
 CREATE TABLE llx_ticket
 (
@@ -264,17 +267,6 @@ CREATE TABLE llx_ticket_msg
 
 ALTER TABLE llx_ticket_msg ADD CONSTRAINT fk_ticket_msg_fk_track_id FOREIGN KEY (fk_track_id) REFERENCES llx_ticket (track_id);
 
-CREATE TABLE llx_ticket_logs
-(
-	rowid       integer AUTO_INCREMENT PRIMARY KEY,
-	entity		integer DEFAULT 1,
-	fk_track_id   varchar(128),
-	fk_user_create	integer,
-	datec datetime,
-	message	text
-)ENGINE=innodb;
-
-ALTER TABLE llx_ticket_logs ADD CONSTRAINT fk_ticket_logs_fk_track_id FOREIGN KEY (fk_track_id) REFERENCES llx_ticket (track_id);
 
 CREATE TABLE llx_ticket_extrafields
 (
@@ -418,12 +410,12 @@ ALTER TABLE llx_societe_rib MODIFY COLUMN max_total_amount_of_all_payments doubl
 ALTER TABLE llx_societe_rib MODIFY COLUMN total_amount_of_all_payments double(24,8);
 
 
-INSERT INTO llx_c_email_templates (entity,module,type_template,lang,private,fk_user,datec,label,position,enabled,active,topic,content,content_lines,joinfiles) VALUES (0,'adherent','member','',0,null,null,'(SendingEmailOnAutoSubscription)'       ,10,1,1,'[__[MAIN_INFO_SOCIETE_NOM]__] __(YourMembershipRequestWasReceived)__','__(Hello)__ __MEMBER_FULLNAME__,<br><br>\n\n__(ThisIsContentOfYourMembershipRequestWasReceived)__<br>\n<br>__ONLINE_PAYMENT_TEXT_AND_URL__<br>\n<br><br>\n__(Sincerely)__<br>__USER_SIGNATURE__',null, 1);
-INSERT INTO llx_c_email_templates (entity,module,type_template,lang,private,fk_user,datec,label,position,enabled,active,topic,content,content_lines,joinfiles) VALUES (0,'adherent','member','',0,null,null,'(SendingEmailOnMemberValidation)'       ,20,1,1,'[__[MAIN_INFO_SOCIETE_NOM]__] __(YourMembershipWasValidated)__',      '__(Hello)__ __MEMBER_FULLNAME__,<br><br>\n\n__(ThisIsContentOfYourMembershipWasValidated)__<br>\n<br>__ONLINE_PAYMENT_TEXT_AND_URL__<br>\n<br><br>\n__(Sincerely)__<br>__USER_SIGNATURE__',null, 1);
+INSERT INTO llx_c_email_templates (entity,module,type_template,lang,private,fk_user,datec,label,position,enabled,active,topic,content,content_lines,joinfiles) VALUES (0,'adherent','member','',0,null,null,'(SendingEmailOnAutoSubscription)'       ,10,1,1,'[__[MAIN_INFO_SOCIETE_NOM]__] __(YourMembershipRequestWasReceived)__','__(Hello)__ __MEMBER_FULLNAME__,<br><br>\n\n__(ThisIsContentOfYourMembershipRequestWasReceived)__<br>\n<br>__ONLINE_PAYMENT_TEXT_AND_URL__<br>\n<br><br>\n__(Sincerely)__<br>__USER_SIGNATURE__',null, 0);
+INSERT INTO llx_c_email_templates (entity,module,type_template,lang,private,fk_user,datec,label,position,enabled,active,topic,content,content_lines,joinfiles) VALUES (0,'adherent','member','',0,null,null,'(SendingEmailOnMemberValidation)'       ,20,1,1,'[__[MAIN_INFO_SOCIETE_NOM]__] __(YourMembershipWasValidated)__',      '__(Hello)__ __MEMBER_FULLNAME__,<br><br>\n\n__(ThisIsContentOfYourMembershipWasValidated)__<br>\n<br>__ONLINE_PAYMENT_TEXT_AND_URL__<br>\n<br><br>\n__(Sincerely)__<br>__USER_SIGNATURE__',null, 0);
 INSERT INTO llx_c_email_templates (entity,module,type_template,lang,private,fk_user,datec,label,position,enabled,active,topic,content,content_lines,joinfiles) VALUES (0,'adherent','member','',0,null,null,'(SendingEmailOnNewSubscription)'        ,30,1,1,'[__[MAIN_INFO_SOCIETE_NOM]__] __(YourSubscriptionWasRecorded)__',     '__(Hello)__ __MEMBER_FULLNAME__,<br><br>\n\n__(ThisIsContentOfYourSubscriptionWasRecorded)__<br>\n\n<br><br>\n__(Sincerely)__<br>__USER_SIGNATURE__',null, 1);
-INSERT INTO llx_c_email_templates (entity,module,type_template,lang,private,fk_user,datec,label,position,enabled,active,topic,content,content_lines,joinfiles) VALUES (0,'adherent','member','',0,null,null,'(SendingReminderForExpiredSubscription)',40,1,1,'[__[MAIN_INFO_SOCIETE_NOM]__] __(SubscriptionReminderEmail)__',       '__(Hello)__ __MEMBER_FULLNAME__,<br><br>\n\n__(ThisIsContentOfSubscriptionReminderEmail)__<br>\n<br>__ONLINE_PAYMENT_TEXT_AND_URL__<br>\n<br><br>\n__(Sincerely)__<br>__USER_SIGNATURE__',null, 1);
-INSERT INTO llx_c_email_templates (entity,module,type_template,lang,private,fk_user,datec,label,position,enabled,active,topic,content,content_lines,joinfiles) VALUES (0,'adherent','member','',0,null,null,'(SendingEmailOnCancelation)'            ,50,1,1,'[__[MAIN_INFO_SOCIETE_NOM]__] __(YourMembershipWasCanceled)__',       '__(Hello)__ __MEMBER_FULLNAME__,<br><br>\n\n__(YourMembershipWasCanceled)__<br>\n<br><br>\n__(Sincerely)__<br>__USER_SIGNATURE__',null, 1);
-INSERT INTO llx_c_email_templates (entity,module,type_template,lang,private,fk_user,datec,label,position,enabled,active,topic,content,content_lines,joinfiles) VALUES (0,'adherent','member','',0,null,null,'(SendingAnEMailToMember)'               ,60,1,1,'[__[MAIN_INFO_SOCIETE_NOM]__] __(CardContent)__',                     '__(Hello)__,<br><br>\n\n__(ThisIsContentOfYourCard)__<br>\n__(ID)__ : __ID__<br>\n__(Civiliyty)__ : __MEMBER_CIVILITY__<br>\n__(Firstname)__ : __MEMBER_FIRSTNAME__<br>\n__(Lastname)__ : __MEMBER_LASTNAME__<br>\n__(Fullname)__ : __MEMBER_FULLNAME__<br>\n__(Company)__ : __MEMBER_COMPANY__<br>\n__(Address)__ : __MEMBER_ADDRESS__<br>\n__(Zip)__ : __MEMBER_ZIP__<br>\n__(Town)__ : __MEMBER_TOWN__<br>\n__(Country)__ : __MEMBER_COUNTRY__<br>\n__(Email)__ : __MEMBER_EMAIL__<br>\n__(Birthday)__ : __MEMBER_BIRTH__<br>\n__(Photo)__ : __MEMBER_PHOTO__<br>\n__(Login)__ : __MEMBER_LOGIN__<br>\n__(Password)__ : __MEMBER_PASSWORD__<br>\n__(Phone)__ : __MEMBER_PHONE__<br>\n__(PhonePerso)__ : __MEMBER_PHONEPRO__<br>\n__(PhoneMobile)__ : __MEMBER_PHONEMOBILE__<br><br>\n__(Sincerely)__<br>__USER_SIGNATURE__',null, 1);
+INSERT INTO llx_c_email_templates (entity,module,type_template,lang,private,fk_user,datec,label,position,enabled,active,topic,content,content_lines,joinfiles) VALUES (0,'adherent','member','',0,null,null,'(SendingReminderForExpiredSubscription)',40,1,1,'[__[MAIN_INFO_SOCIETE_NOM]__] __(SubscriptionReminderEmail)__',       '__(Hello)__ __MEMBER_FULLNAME__,<br><br>\n\n__(ThisIsContentOfSubscriptionReminderEmail)__<br>\n<br>__ONLINE_PAYMENT_TEXT_AND_URL__<br>\n<br><br>\n__(Sincerely)__<br>__USER_SIGNATURE__',null, 0);
+INSERT INTO llx_c_email_templates (entity,module,type_template,lang,private,fk_user,datec,label,position,enabled,active,topic,content,content_lines,joinfiles) VALUES (0,'adherent','member','',0,null,null,'(SendingEmailOnCancelation)'            ,50,1,1,'[__[MAIN_INFO_SOCIETE_NOM]__] __(YourMembershipWasCanceled)__',       '__(Hello)__ __MEMBER_FULLNAME__,<br><br>\n\n__(YourMembershipWasCanceled)__<br>\n<br><br>\n__(Sincerely)__<br>__USER_SIGNATURE__',null, 0);
+INSERT INTO llx_c_email_templates (entity,module,type_template,lang,private,fk_user,datec,label,position,enabled,active,topic,content,content_lines,joinfiles) VALUES (0,'adherent','member','',0,null,null,'(SendingAnEMailToMember)'               ,60,1,1,'[__[MAIN_INFO_SOCIETE_NOM]__] __(CardContent)__',                     '__(Hello)__,<br><br>\n\n__(ThisIsContentOfYourCard)__<br>\n__(ID)__ : __ID__<br>\n__(Civiliyty)__ : __MEMBER_CIVILITY__<br>\n__(Firstname)__ : __MEMBER_FIRSTNAME__<br>\n__(Lastname)__ : __MEMBER_LASTNAME__<br>\n__(Fullname)__ : __MEMBER_FULLNAME__<br>\n__(Company)__ : __MEMBER_COMPANY__<br>\n__(Address)__ : __MEMBER_ADDRESS__<br>\n__(Zip)__ : __MEMBER_ZIP__<br>\n__(Town)__ : __MEMBER_TOWN__<br>\n__(Country)__ : __MEMBER_COUNTRY__<br>\n__(Email)__ : __MEMBER_EMAIL__<br>\n__(Birthday)__ : __MEMBER_BIRTH__<br>\n__(Photo)__ : __MEMBER_PHOTO__<br>\n__(Login)__ : __MEMBER_LOGIN__<br>\n__(Password)__ : __MEMBER_PASSWORD__<br>\n__(Phone)__ : __MEMBER_PHONE__<br>\n__(PhonePerso)__ : __MEMBER_PHONEPRO__<br>\n__(PhoneMobile)__ : __MEMBER_PHONEMOBILE__<br><br>\n__(Sincerely)__<br>__USER_SIGNATURE__',null, 0);
 
 ALTER TABLE llx_product ADD COLUMN fk_default_warehouse integer DEFAULT NULL;
 ALTER TABLE llx_product ADD CONSTRAINT fk_product_default_warehouse FOREIGN KEY (fk_default_warehouse) REFERENCES llx_entrepot (rowid);
@@ -567,3 +559,6 @@ ALTER TABLE llx_advtargetemailing ADD COLUMN type_element varchar(180) NOT NULL;
 UPDATE llx_advtargetemailing SET fk_element = fk_mailing, type_element='mailing';
 ALTER TABLE llx_advtargetemailing DROP COLUMN fk_mailing;
 
+DROP TABLE llx_ticket_logs;
+
+ALTER TABLE llx_actioncomm MODIFY COLUMN code varchar(50);

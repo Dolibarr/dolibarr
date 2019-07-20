@@ -47,7 +47,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class PgsqlTest extends PHPUnit_Framework_TestCase
+class PgsqlTest extends PHPUnit\Framework\TestCase
 {
 	protected $savconf;
 	protected $savuser;
@@ -60,7 +60,7 @@ class PgsqlTest extends PHPUnit_Framework_TestCase
 	 *
 	 * @return ContactTest
 	 */
-	function __construct()
+	public function __construct()
 	{
 		parent::__construct();
 
@@ -76,8 +76,8 @@ class PgsqlTest extends PHPUnit_Framework_TestCase
 		print "\n";
 	}
 
-	// Static methods
-  	public static function setUpBeforeClass()
+    // Static methods
+    public static function setUpBeforeClass()
     {
     	global $conf,$user,$langs,$db;
 

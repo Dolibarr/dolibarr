@@ -4,7 +4,7 @@
  * Copyright (C) 2004-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
  * Copyright (C) 2004       Sebastien DiCintio      <sdicintio@ressource-toi.org>
- * Copyright (C) 2005-2011  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2011  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -33,11 +33,10 @@ global $langs;
 
 $err=0;
 
-$setuplang=GETPOST("selectlang",'',3)?GETPOST("selectlang",'',3):(isset($_GET["lang"])?$_GET["lang"]:'auto');
+$setuplang=GETPOST("selectlang", '', 3)?GETPOST("selectlang", '', 3):(isset($_GET["lang"])?$_GET["lang"]:'auto');
 $langs->setDefaultLang($setuplang);
 
-$langs->load("install");
-$langs->load("errors");
+$langs->loadLangs(array("install", "errors"));
 
 dolibarr_install_syslog("- fileconf: entering fileconf.php page");
 
@@ -61,8 +60,8 @@ $useforcedwizard=false;
 $forcedfile="./install.forced.php";
 if ($conffile == "/etc/dolibarr/conf.php") $forcedfile="/etc/dolibarr/install.forced.php";	// Must be after inc.php
 if (@file_exists($forcedfile)) {
-	$useforcedwizard = true;
-	include_once $forcedfile;
+    $useforcedwizard = true;
+    include_once $forcedfile;
 }
 
 
@@ -79,9 +78,9 @@ pHeader($langs->trans("ConfigurationFile"), "step1", "set", "", (empty($force_do
 if (! is_writable($conffile))
 {
     print $langs->trans("ConfFileIsNotWritable", $conffiletoshow);
-	dolibarr_install_syslog("fileconf: config file is not writable", LOG_WARNING);
+    dolibarr_install_syslog("fileconf: config file is not writable", LOG_WARNING);
     dolibarr_install_syslog("- fileconf: end");
-    pFooter(1,$setuplang,'jscheckparam');
+    pFooter(1, $setuplang, 'jscheckparam');
     exit;
 }
 
@@ -281,7 +280,7 @@ if (! empty($force_install_message))
 		{
 		    while (($file = readdir($handle))!==false)
 		    {
-		        if (is_readable($dir."/".$file) && preg_match('/^(.*)\.class\.php$/i',$file,$reg))
+		        if (is_readable($dir."/".$file) && preg_match('/^(.*)\.class\.php$/i', $file, $reg))
 		        {
 		            $type=$reg[1];
                     if ($type === 'DoliDB') continue; // Skip abstract class
@@ -292,7 +291,7 @@ if (! empty($force_install_message))
                     if ($type == 'sqlite3') continue;   // We hide sqlite3 because support can't be complete until sqlite does not manage foreign key creation after table creation (ALTER TABLE child ADD CONSTRAINT not supported)
 
 		            // Version min of database
-                    $versionbasemin=explode('.',$class::VERSIONMIN);
+                    $versionbasemin=explode('.', $class::VERSIONMIN);
                     $note='('.$class::LABEL.' >= '.$class::VERSIONMIN.')';
 
 		            // Switch to mysql if mysqli is not present
@@ -510,7 +509,7 @@ if (! empty($force_install_message))
 				        $autofill = '';
 			        }
 				    // Do not autofill password if instance is a production instance
-			        if (!empty($_SERVER["SERVER_NAME"]) && !in_array($_SERVER["SERVER_NAME"],
+                    if (!empty($_SERVER["SERVER_NAME"]) && !in_array($_SERVER["SERVER_NAME"],
 					    array('127.0.0.1', 'localhost', 'localhostgit'))
 			        ) {
 				        $autofill = '';
@@ -597,32 +596,32 @@ function jscheckparam()
 	if (document.forminstall.main_dir.value == '')
 	{
 		ok=false;
-		alert('<?php echo dol_escape_js($langs->transnoentities("ErrorFieldRequired",$langs->transnoentitiesnoconv("WebPagesDirectory"))); ?>');
+		alert('<?php echo dol_escape_js($langs->transnoentities("ErrorFieldRequired", $langs->transnoentitiesnoconv("WebPagesDirectory"))); ?>');
 	}
 	else if (document.forminstall.main_data_dir.value == '')
 	{
 		ok=false;
-		alert('<?php echo dol_escape_js($langs->transnoentities("ErrorFieldRequired",$langs->transnoentitiesnoconv("DocumentsDirectory"))); ?>');
+		alert('<?php echo dol_escape_js($langs->transnoentities("ErrorFieldRequired", $langs->transnoentitiesnoconv("DocumentsDirectory"))); ?>');
 	}
 	else if (document.forminstall.main_url.value == '')
 	{
 		ok=false;
-		alert('<?php echo dol_escape_js($langs->transnoentities("ErrorFieldRequired",$langs->transnoentitiesnoconv("URLRoot"))); ?>');
+		alert('<?php echo dol_escape_js($langs->transnoentities("ErrorFieldRequired", $langs->transnoentitiesnoconv("URLRoot"))); ?>');
 	}
 	else if (document.forminstall.db_host.value == '')
 	{
 		ok=false;
-		alert('<?php echo dol_escape_js($langs->transnoentities("ErrorFieldRequired",$langs->transnoentitiesnoconv("Server"))); ?>');
+		alert('<?php echo dol_escape_js($langs->transnoentities("ErrorFieldRequired", $langs->transnoentitiesnoconv("Server"))); ?>');
 	}
 	else if (document.forminstall.db_name.value == '')
 	{
 		ok=false;
-		alert('<?php echo dol_escape_js($langs->transnoentities("ErrorFieldRequired",$langs->transnoentitiesnoconv("DatabaseName"))); ?>');
+		alert('<?php echo dol_escape_js($langs->transnoentities("ErrorFieldRequired", $langs->transnoentitiesnoconv("DatabaseName"))); ?>');
 	}
 	else if (! checkDatabaseName(document.forminstall.db_name.value))
 	{
 		ok=false;
-		alert('<?php echo dol_escape_js($langs->transnoentities("ErrorSpecialCharNotAllowedForField",$langs->transnoentitiesnoconv("DatabaseName"))); ?>');
+		alert('<?php echo dol_escape_js($langs->transnoentities("ErrorSpecialCharNotAllowedForField", $langs->transnoentitiesnoconv("DatabaseName"))); ?>');
 	}
 	// If create database asked
 	else if (document.forminstall.db_create_database.checked == true && (document.forminstall.db_user_root.value == ''))
@@ -647,4 +646,4 @@ function jscheckparam()
 // $db->close();	Not database connexion yet
 
 dolibarr_install_syslog("- fileconf: end");
-pFooter($err,$setuplang,'jscheckparam');
+pFooter($err, $setuplang, 'jscheckparam');

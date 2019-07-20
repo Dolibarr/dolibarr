@@ -43,7 +43,7 @@ function holiday_prepare_head($object)
     require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
     require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
     $upload_dir = $conf->holiday->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
-    $nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview.*\.png)$'));
+    $nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
     $nbLinks=Link::count($db, $object->element, $object->id);
     $head[$h][0] = DOL_URL_ROOT.'/holiday/document.php?id='.$object->id;
     $head[$h][1] = $langs->trans('Documents');
@@ -55,9 +55,9 @@ function holiday_prepare_head($object)
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname);   												to remove a tab
-    complete_head_from_modules($conf,$langs,$object,$head,$h,'holiday');
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'holiday');
 
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'holiday','remove');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'holiday', 'remove');
 
 	return $head;
 }
@@ -84,9 +84,9 @@ function holiday_admin_prepare_head()
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname);   												to remove a tab
-    complete_head_from_modules($conf,$langs,null,$head,$h,'holiday_admin');
+    complete_head_from_modules($conf, $langs, null, $head, $h, 'holiday_admin');
 
-	complete_head_from_modules($conf,$langs,null,$head,$h,'holiday_admin','remove');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'holiday_admin', 'remove');
 
 	return $head;
 }
