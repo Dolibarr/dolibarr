@@ -1435,16 +1435,16 @@ function dol_meta_create($object)
 
 		if (is_dir($dir))
 		{
-			$nblignes = count($object->lines);
+			$nblines = count($object->lines);
 			$client = $object->thirdparty->name . " " . $object->thirdparty->address . " " . $object->thirdparty->zip . " " . $object->thirdparty->town;
 			$meta = "REFERENCE=\"" . $object->ref . "\"
 			DATE=\"" . dol_print_date($object->date, '') . "\"
-			NB_ITEMS=\"" . $nblignes . "\"
+			NB_ITEMS=\"" . $nblines . "\"
 			CLIENT=\"" . $client . "\"
 			AMOUNT_EXCL_TAX=\"" . $object->total_ht . "\"
 			AMOUNT=\"" . $object->total_ttc . "\"\n";
 
-			for ($i = 0 ; $i < $nblignes ; $i++)
+			for ($i = 0 ; $i < $nblines ; $i++)
 			{
 				//Pour les articles
 				$meta .= "ITEM_" . $i . "_QUANTITY=\"" . $object->lines[$i]->qty . "\"
@@ -2568,7 +2568,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$accessallowed=1;
 		}
 		$original_file=$conf->fournisseur->facture->dir_output.'/'.$original_file;
-		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."facture_fourn WHERE facnumber='".$db->escape($refname)."' AND entity=".$conf->entity;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."facture_fourn WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
 	}
 	// Wrapping pour les rapport de paiements
 	elseif ($modulepart == 'supplier_payment')

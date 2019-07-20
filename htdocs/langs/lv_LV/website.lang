@@ -101,3 +101,5 @@ NotAllowedToAddDynamicContent=Jums nav atļaujas pievienot vai rediģēt PHP din
 ReplaceWebsiteContent=Nomainiet vietnes saturu
 DeleteAlsoJs=Vai arī dzēst visus šajā tīmekļa vietnē raksturīgos javascript failus?
 DeleteAlsoMedias=Vai arī dzēst visus šajā tīmekļa vietnē esošos mediju failus?
+# Export
+MyWebsitePages=My website pages

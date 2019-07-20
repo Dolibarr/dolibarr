@@ -225,9 +225,9 @@ class MyObject extends CommonObject
 		// Translate some data of arrayofkeyval
 		foreach($this->fields as $key => $val)
 		{
-			if (is_array($this->fields[$key]['arrayofkeyval']))
+			if (is_array($val['arrayofkeyval']))
 			{
-				foreach($this->fields[$key]['arrayofkeyval'] as $key2 => $val2)
+				foreach($val['arrayofkeyval'] as $key2 => $val2)
 				{
 					$this->fields[$key]['arrayofkeyval'][$key2]=$langs->trans($val2);
 				}
@@ -689,7 +689,7 @@ class MyObject extends CommonObject
 	    $this->lines=array();
 
 	    $objectline = new MyObjectLine($this->db);
-	    $result = $objectline->fetchAll('ASC', 'rank', 0, 0, array('customsql'=>'fk_myobject = '.$this->id));
+	    $result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_myobject = '.$this->id));
 
 	    if (is_numeric($result))
 	    {
@@ -774,5 +774,5 @@ class MyObject extends CommonObject
 class MyObjectLine
 {
 	// To complete with content of an object MyObjectLine
-	// We should have a field rowid, fk_myobject and rank
+	// We should have a field rowid, fk_myobject and position
 }

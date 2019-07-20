@@ -783,10 +783,9 @@ SCRIPT;
 				// Suppliers list title
 				print '<div class="div-table-responsive">';
 				print '<table class="noborder" width="100%">';
-				if ($object->isProduct()) $nblignefour=4;
-				else $nblignefour=4;
 
 				$param="&id=".$object->id;
+
 				print '<tr class="liste_titre">';
 				print_liste_field_titre("AppliedPricesFrom", $_SERVER["PHP_SELF"], "pfp.datec", "", $param, "", $sortfield, $sortorder);
 				print_liste_field_titre("Suppliers", $_SERVER["PHP_SELF"], "s.nom", "", $param, "", $sortfield, $sortorder);

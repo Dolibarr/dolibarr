@@ -216,7 +216,8 @@ DescThirdPartyReport=Consulteu aquí la llista dels clients i proveïdors de ter
 ListAccounts=Llistat dels comptes comptables
 UnknownAccountForThirdparty=Compte comptable de tercer desconeguda, utilitzarem %s
 UnknownAccountForThirdpartyBlocking=Compte comptable de tercer desconegut. Error de bloqueig
-ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Compte de tercers no definit o tercer desconegut. Error de bloqueig.
+ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Third-party account not defined or third party unknown. We will use %s
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Third-party account not defined or third party unknown. Blocking error.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Compte de tercers desconegut i compte d'espera no definit. Error de bloqueig
 PaymentsNotLinkedToProduct=Pagament no vinculat a cap producte / servei
 
@@ -291,7 +292,7 @@ Modelcsv_cogilog=Exporta a Cogilog
 Modelcsv_agiris=Exporta a Agiris
 Modelcsv_openconcerto=Exporta per a OpenConcerto (Test)
 Modelcsv_configurable=Exporta CSV configurable
-Modelcsv_FEC=Exporta FEC (art. L47 A)
+Modelcsv_FEC=Export FEC
 Modelcsv_Sage50_Swiss=Exportació per Sage 50 Switzerland
 ChartofaccountsId=Id pla comptable
 
@@ -316,6 +317,9 @@ WithoutValidAccount=Sense compte dedicada vàlida
 WithValidAccount=Amb compte dedicada vàlida
 ValueNotIntoChartOfAccount=Aquest compte comptable no existeix al pla comptable
 AccountRemovedFromGroup=S'ha eliminat el compte del grup
+SaleLocal=Local sale
+SaleExport=Export sale
+SaleEEC=Sale in EEC
 
 ## Dictionary
 Range=Rang de compte comptable
@@ -336,7 +340,7 @@ UseMenuToSetBindindManualy=Línies encara no enllaçades, utilitzeu el menú <a 
 
 ## Import
 ImportAccountingEntries=Entrades de comptabilitat
-
+DateExport=Date export
 WarningReportNotReliable=Avís, aquest informe no està basat en el Llibre Major, de manera que no conté assentaments modificats manualment en el Llibre Major. Si el registre diari està actualitzat, la vista de comptes és més precisa.
 ExpenseReportJournal=Diari d'informe de despeses
 InventoryJournal=Diari d'inventari

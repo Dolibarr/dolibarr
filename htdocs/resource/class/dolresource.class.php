@@ -899,7 +899,7 @@ class Dolresource extends CommonObject
     /**
      *      Load in cache resource type code (setup in dictionary)
      *
-     *      @return     int             Nb lignes chargees, 0 si deja chargees, <0 si ko
+     *      @return     int             Number of lines loaded, 0 if already loaded, <0 if KO
      */
     public function load_cache_code_type_resource()
     {

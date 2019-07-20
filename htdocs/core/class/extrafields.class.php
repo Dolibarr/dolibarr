@@ -1627,6 +1627,8 @@ class ExtraFields
 
 		if ($hidden) return '';		// This is a protection. If field is hidden, we should just not call this method.
 
+		//if ($computed) $value =		// $value is already calculated into $value before calling this method
+		
 		$showsize=0;
 		if ($type == 'date')
 		{
@@ -1645,7 +1647,10 @@ class ExtraFields
 		elseif ($type == 'double')
 		{
 			if (!empty($value)) {
-				$value=price($value);
+				//$value=price($value);
+				$sizeparts = explode(",", $size);
+				$number_decimals = $sizeparts[1];
+				$value=price($value, 0, $langs, 0, 0, $number_decimals, '');
 			}
 		}
 		elseif ($type == 'boolean')

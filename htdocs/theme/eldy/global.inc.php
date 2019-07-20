@@ -1353,7 +1353,7 @@ img.photorefnoborder {
 }
 .trextrafieldseparator td {
     /* border-bottom: 2px solid rgb(<?php echo $colorbackhmenu1 ?>) !important; */
-    border-bottom: 2px solid rgb(<?php echo $colortopbordertitle1 ?>) !important;
+    border-bottom: 2px dashed rgb(<?php echo $colortopbordertitle1 ?>) !important;
 }
 
 .tdhrthin {
@@ -5252,6 +5252,9 @@ div.tabsElem a.tab {
 /* Ticket module                                                                  */
 /* ============================================================================== */
 
+.publicnewticketform {
+	margin-top: 25px !important;
+}
 #cd-timeline {
   position: relative;
   padding: 2em 0;

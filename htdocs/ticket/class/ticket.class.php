@@ -1034,7 +1034,7 @@ class Ticket extends CommonObject
     /**
      *      Charge dans cache la liste des types de tickets (paramétrable dans dictionnaire)
      *
-     *      @return int             Nb lignes chargees, 0 si deja chargees, <0 si ko
+     *      @return int             Number of lines loaded, 0 if already loaded, <0 if KO
      */
     public function loadCacheTypesTickets()
     {
@@ -1074,7 +1074,7 @@ class Ticket extends CommonObject
     /**
      *      Charge dans cache la liste des catégories de tickets (paramétrable dans dictionnaire)
      *
-     *      @return int             Nb lignes chargees, 0 si deja chargees, <0 si ko
+     *      @return int             Number of lines loaded, 0 if already loaded, <0 if KO
      */
     public function loadCacheCategoriesTickets()
     {
@@ -1114,7 +1114,7 @@ class Ticket extends CommonObject
     /**
      *      Charge dans cache la liste des sévérité de tickets (paramétrable dans dictionnaire)
      *
-     *      @return int             Nb lignes chargees, 0 si deja chargees, <0 si ko
+     *      @return int             Number of lines loaded, 0 if already loaded, <0 if KO
      */
     public function loadCacheSeveritiesTickets()
     {
@@ -1561,7 +1561,7 @@ class Ticket extends CommonObject
     /**
      *      Charge la liste des actions sur le ticket
      *
-     *      @return int             Nb lignes chargees, 0 si deja chargees, <0 si ko
+     *      @return int             Number of lines loaded, 0 if already loaded, <0 if KO
      */
     public function loadCacheLogsTicket()
     {
@@ -1662,7 +1662,7 @@ class Ticket extends CommonObject
     /**
      *      Charge la liste des messages sur le ticket
      *
-     *      @return int             Nb lignes chargees, 0 si deja chargees, <0 si ko
+     *      @return int             Number of lines loaded, 0 if already loaded, <0 if KO
      */
     public function loadCacheMsgsTicket()
     {

@@ -49,6 +49,6 @@ DirectPrintingJobsDesc=Bu sayfa geçerli yazıcılar için yazdırma işlerini l
 GoogleAuthNotConfigured=Google OAuth has not been setup. Enable module OAuth and set a Google ID/Secret.
 GoogleAuthConfigured=Google OAuth kimlik bilgileri OAuth modülünün kurulumunda bulundu.
 PrintingDriverDescprintgcp=Google Bulut Yazdırma yazıcı sürücüsü yapılandırma değişkenleri.
-PrintingDriverDescprintipp=Configuration variables for printing driver Cups.
+PrintingDriverDescprintipp=Yazdırma sürücüsü Cups'ları için yapılandırma değişkenleri
 PrintTestDescprintgcp=Google Bulut Yazdırma Yazıcı Listesi.
 PrintTestDescprintipp=Cups için Yazıcıların Listesi

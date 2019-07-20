@@ -311,7 +311,7 @@ if ($action == "set")
                 {
                     $buf = fgets($fp, 4096);
 
-                    // Cas special de lignes autorisees pour certaines versions uniquement
+                    // Special case of lines allowed for some version only
                     if ($choix == 1 && preg_match('/^--\sV([0-9\.]+)/i', $buf, $reg))
                     {
                         $versioncommande=explode('.', $reg[1]);

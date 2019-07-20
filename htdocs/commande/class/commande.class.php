@@ -1312,7 +1312,7 @@ class Commande extends CommonOrder
 	 * 	@param		float			$txlocaltax2		Local tax 2 rate (deprecated, use instead txtva with code inside)
 	 *	@param      int				$fk_product      	Id of product
 	 *	@param      float			$remise_percent  	Percentage discount of the line
-	 *	@param      int				$info_bits			Bits de type de lignes
+	 *	@param      int				$info_bits			Bits of type of lines
 	 *	@param      int				$fk_remise_except	Id remise
 	 *	@param      string			$price_base_type	HT or TTC
 	 *	@param      float			$pu_ttc    		    Prix unitaire TTC
@@ -1888,10 +1888,12 @@ class Commande extends CommonOrder
 	 *	Load array lines
 	 *
 	 *	@param		int		$only_product	Return only physical products
+	 *	@param		int		$loadalsotranslation	Return translation for products
 	 *	@return		int						<0 if KO, >0 if OK
 	 */
-	public function fetch_lines($only_product = 0)
+	public function fetch_lines($only_product = 0, $loadalsotranslation = 0)
 	{
+		global $langs, $conf;
         // phpcs:enable
 		$this->lines=array();
 
@@ -1983,6 +1985,13 @@ class Commande extends CommonOrder
 				$line->multicurrency_total_ttc 	= $objp->multicurrency_total_ttc;
 
 				$line->fetch_optionals();
+
+				// multilangs
+        		if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($objp->fk_product) && ! empty($loadalsotranslation)) {
+        		$line = new Product($this->db);
+        		$line->fetch($objp->fk_product);
+        		$line->getMultiLangs();
+        		}
 
                 $this->lines[$i] = $line;
 

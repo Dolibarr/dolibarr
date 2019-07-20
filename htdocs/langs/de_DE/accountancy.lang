@@ -216,7 +216,8 @@ DescThirdPartyReport=Consult here the list of third-party customers and vendors 
 ListAccounts=Liste der Abrechnungskonten
 UnknownAccountForThirdparty=Unknown third-party account. We will use %s
 UnknownAccountForThirdpartyBlocking=Unknown third-party account. Blocking error
-ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Third-party account not defined or third party unknown. Blocking error.
+ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Third-party account not defined or third party unknown. We will use %s
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Third-party account not defined or third party unknown. Blocking error.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Unknown third-party account and waiting account not defined. Blocking error
 PaymentsNotLinkedToProduct=Zahlung ist keinem Produkt oder Dienstleistung zugewisen
 
@@ -291,7 +292,7 @@ Modelcsv_cogilog=Export for Cogilog
 Modelcsv_agiris=Export for Agiris
 Modelcsv_openconcerto=Export for OpenConcerto (Test)
 Modelcsv_configurable=Konfigurierbarer CSV Export
-Modelcsv_FEC=Export FEC (Art. L47 A)
+Modelcsv_FEC=Export FEC
 Modelcsv_Sage50_Swiss=Export for Sage 50 Switzerland
 ChartofaccountsId=Kontenplan ID
 
@@ -316,6 +317,9 @@ WithoutValidAccount=Mit keinem gültigen dedizierten Konto
 WithValidAccount=Mit gültigen dedizierten Konto
 ValueNotIntoChartOfAccount=Dieser Wert für das Buchhaltungs-Konto existiert nicht im Kontenplan
 AccountRemovedFromGroup=Account removed from group
+SaleLocal=Local sale
+SaleExport=Export sale
+SaleEEC=Sale in EEC
 
 ## Dictionary
 Range=Bereich von Sachkonten
@@ -336,7 +340,7 @@ UseMenuToSetBindindManualy=Zeilen noch nicht zugeordnet, verwende das Menu <a hr
 
 ## Import
 ImportAccountingEntries=Buchaltungseinträge
-
+DateExport=Date export
 WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contains transaction modified manually in the Ledger. If your journalization is up to date, the bookkeeping view is more accurate.
 ExpenseReportJournal=Spesenabrechnung Journal
 InventoryJournal=Inventarjournal

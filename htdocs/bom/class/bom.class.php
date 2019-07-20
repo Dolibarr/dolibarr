@@ -183,9 +183,9 @@ class BOM extends CommonObject
 		// Translate some data of arrayofkeyval
 		foreach($this->fields as $key => $val)
 		{
-			if (is_array($this->fields[$key]['arrayofkeyval']))
+			if (is_array($val['arrayofkeyval']))
 			{
-				foreach($this->fields[$key]['arrayofkeyval'] as $key2 => $val2)
+				foreach($val['arrayofkeyval'] as $key2 => $val2)
 				{
 					$this->fields[$key]['arrayofkeyval'][$key2]=$langs->trans($val2);
 				}
@@ -889,7 +889,7 @@ class BOM extends CommonObject
 	    $this->lines=array();
 
 	    $objectline = new BOMLine($this->db);
-	    $result = $objectline->fetchAll('ASC', 'rank', 0, 0, array('customsql'=>'fk_bom = '.$this->id));
+	    $result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_bom = '.$this->id));
 
 	    if (is_numeric($result))
 	    {
@@ -1044,7 +1044,7 @@ class BOMLine extends CommonObject
 		'description' => array('type'=>'text', 'label'=>'Description', 'enabled'=>1, 'visible'=>-1, 'position'=>60, 'notnull'=>-1,),
 		'qty' => array('type'=>'double(24,8)', 'label'=>'Quantity', 'enabled'=>1, 'visible'=>1, 'position'=>100, 'notnull'=>1, 'isameasure'=>'1',),
 		'efficiency' => array('type'=>'double(8,4)', 'label'=>'ManufacturingEfficiency', 'enabled'=>1, 'visible'=>1, 'default'=>1, 'position'=>110, 'notnull'=>1, 'css'=>'maxwidth50imp', 'help'=>'ValueOfMeansLoss'),
-		'rank' => array('type'=>'integer', 'label'=>'Rank', 'enabled'=>1, 'visible'=>0, 'position'=>200, 'notnull'=>1,),
+		'position' => array('type'=>'integer', 'label'=>'Rank', 'enabled'=>1, 'visible'=>0, 'position'=>200, 'notnull'=>1,),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>1000, 'notnull'=>-1,),
 	);
 	public $rowid;
@@ -1053,7 +1053,7 @@ class BOMLine extends CommonObject
 	public $description;
 	public $qty;
 	public $efficiency;
-	public $rank;
+	public $position;
 	public $import_key;
 	// END MODULEBUILDER PROPERTIES
 
@@ -1084,9 +1084,9 @@ class BOMLine extends CommonObject
 		// Translate some data of arrayofkeyval
 		foreach($this->fields as $key => $val)
 		{
-			if (is_array($this->fields[$key]['arrayofkeyval']))
+			if (is_array($val['arrayofkeyval']))
 			{
-				foreach($this->fields[$key]['arrayofkeyval'] as $key2 => $val2)
+				foreach($val['arrayofkeyval'] as $key2 => $val2)
 				{
 					$this->fields[$key]['arrayofkeyval'][$key2]=$langs->trans($val2);
 				}

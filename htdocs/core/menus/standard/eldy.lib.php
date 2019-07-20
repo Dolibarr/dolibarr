@@ -1590,7 +1590,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 		    {
 		        $langs->load("mrp");
 
-		        $newmenu->add("", $langs->trans("MenuBOM"), 0, $user->rights->service->lire, '', $mainmenu, 'service');
+		        $newmenu->add("", $langs->trans("MenuBOM"), 0, $user->rights->bom->read, '', $mainmenu, 'bom');
 		        $newmenu->add("/bom/bom_card.php?leftmenu=bom&amp;action=create", $langs->trans("NewBOM"), 1, $user->rights->bom->write);
 		        $newmenu->add("/bom/bom_list.php?leftmenu=bom", $langs->trans("List"), 1, $user->rights->bom->read);
 		    }

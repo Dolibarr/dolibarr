@@ -1386,7 +1386,7 @@ class Fichinter extends CommonObject
 }
 
 /**
- *	Classe permettant la gestion des lignes d'intervention
+ *	Class to manage intervention lines
  */
 class FichinterLigne extends CommonObjectLine
 {

@@ -101,3 +101,5 @@ NotAllowedToAddDynamicContent=Nemáte oprávnění přidávat nebo upravovat dyn
 ReplaceWebsiteContent=Replace website content
 DeleteAlsoJs=Delete also all javascript files specific to this website?
 DeleteAlsoMedias=Delete also all medias files specific to this website?
+# Export
+MyWebsitePages=My website pages

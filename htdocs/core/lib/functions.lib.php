@@ -7037,7 +7037,7 @@ function getLanguageCodeFromCountryCode($countrycode)
 	$buildprimarykeytotest = strtolower($countrycode).'-'.strtoupper($countrycode);
 	if (in_array($buildprimarykeytotest, $locales)) return strtolower($countrycode).'_'.strtoupper($countrycode);
 
-	if (function_exists('locale_get_primary_language'))    // Need extension php-intl
+	if (function_exists('locale_get_primary_language') && function_exists('locale_get_region'))    // Need extension php-intl
 	{
 	    foreach ($locales as $locale)
     	{
