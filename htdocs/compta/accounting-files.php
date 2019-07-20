@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 
-$langs->loadLangs(array("accountancy", "bills", "companies", "salaries"));
+$langs->loadLangs(array("accountancy", "bills", "companies", "salaries", "compta"));
 
 $date_start =GETPOST('date_start', 'alpha');
 $date_startDay= GETPOST('date_startday', 'int');
