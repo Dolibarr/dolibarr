@@ -130,15 +130,35 @@ class FormFile
 
 			$out .= '<td class="valignmiddle nowrap">';
 
-			$max=$conf->global->MAIN_UPLOAD_DOC;		// En Kb
-			$maxphp=@ini_get('upload_max_filesize');	// En inconnu
+			$max=$conf->global->MAIN_UPLOAD_DOC;		// In Kb
+			$maxphp=@ini_get('upload_max_filesize');	// In unknown
 			if (preg_match('/k$/i', $maxphp)) $maxphp=$maxphp*1;
 			if (preg_match('/m$/i', $maxphp)) $maxphp=$maxphp*1024;
 			if (preg_match('/g$/i', $maxphp)) $maxphp=$maxphp*1024*1024;
 			if (preg_match('/t$/i', $maxphp)) $maxphp=$maxphp*1024*1024*1024;
-			// Now $max and $maxphp are in Kb
+			$maxphp2=@ini_get('post_max_size');			// In unknown
+			if (preg_match('/k$/i', $maxphp2)) $maxphp2=$maxphp2*1;
+			if (preg_match('/m$/i', $maxphp2)) $maxphp2=$maxphp2*1024;
+			if (preg_match('/g$/i', $maxphp2)) $maxphp2=$maxphp2*1024*1024;
+			if (preg_match('/t$/i', $maxphp2)) $maxphp2=$maxphp2*1024*1024*1024;
+			// Now $max and $maxphp and $maxphp2 are in Kb
 			$maxmin = $max;
-			if ($maxphp > 0) $maxmin=min($max, $maxphp);
+			$maxphptoshow = $maxphptoshowparam = '';
+			if ($maxphp > 0)
+			{
+				$maxmin=min($max, $maxphp);
+				$maxphptoshow = $maxphp;
+				$maxphptoshowparam = 'upload_max_filesize';
+			}
+			if ($maxphp2 > 0)
+			{
+				$maxmin=min($max, $maxphp2);
+				if ($maxphp2 < $maxphp)
+				{
+					$maxphptoshow = $maxphp2;
+					$maxphptoshowparam = 'post_max_size';
+				}
+			}
 
 			if ($maxmin > 0)
 			{
@@ -168,7 +188,7 @@ class FormFile
 				{
 					$langs->load('other');
 					$out .= ' ';
-					$out .= info_admin($langs->trans("ThisLimitIsDefinedInSetup", $max, $maxphp), 1);
+					$out .= info_admin($langs->trans("ThisLimitIsDefinedInSetup", $max, $maxphptoshow), 1);
 				}
 			}
 			else
