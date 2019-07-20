@@ -741,7 +741,7 @@ if (empty($reshook))
                                 {
                                 	require_once DOL_DOCUMENT_ROOT .'/core/lib/files.lib.php';
                                 	// the dir dirname($newfile) is directory of logo, so we should have only one file at once into index, so we delete indexes for the dir
-                                	deleteFilesIntoDatabaseIndex(dirname($newfile), '', '', 'uploaded', 1);
+                                	deleteFilesIntoDatabaseIndex(dirname($newfile), '', '');
                                 	// now we index the uploaded logo file
                                 	addFileIntoDatabaseIndex(dirname($newfile), basename($newfile), '', 'uploaded', 1);
                                 }
