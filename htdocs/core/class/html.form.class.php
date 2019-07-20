@@ -6618,7 +6618,7 @@ class Form
 
 			print '</table>';
 
-			if(!empty($compatibleImportElementsList))
+			if (!empty($compatibleImportElementsList))
 			{
 			    $res=@include dol_buildpath('core/tpl/ajax/objectlinked_lineimport.tpl.php');
 			}
