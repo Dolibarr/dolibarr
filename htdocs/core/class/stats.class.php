@@ -88,7 +88,7 @@ abstract class Stats
 		else
 		{
 			$year=$startyear;
-			if (!empty($conf->global->GRAPH_USE_FISCAL_YEAR)) {
+			if (empty($conf->global->GRAPH_USE_FISCAL_YEAR)) {
 				$startmonth = 0;
 			}
 			if ($startmonth != 0) $year = $year - 1;
@@ -143,11 +143,7 @@ abstract class Stats
 	 * @param   int 	$startmonth		month of the fiscal year start minus 1; 0=january
 	 * @return 	array					Array of values
 	 */
-<<<<<<< HEAD
-	function getAmountByMonthWithPrevYear($endyear, $startyear, $cachedelay=0, $format=0, $startmonth=0)
-=======
-	public function getAmountByMonthWithPrevYear($endyear, $startyear, $cachedelay = 0, $format = 0)
->>>>>>> upstream/develop
+	public function getAmountByMonthWithPrevYear($endyear, $startyear, $cachedelay = 0, $format = 0, $startmonth=0)
 	{
 		global $conf,$user,$langs;
 
@@ -192,6 +188,9 @@ abstract class Stats
         else
 		{
 			$year=$startyear;
+			if (empty($conf->global->GRAPH_USE_FISCAL_YEAR)) {
+				$startmonth = 0;
+			}
 			if ($startmonth != 0) $year = $year - 1;
 			while($year <= $endyear)
 			{
