@@ -776,7 +776,7 @@ if (empty($reshook))
 		$array_options = $extrafieldsline->getOptionalsFromPost($object->table_element_line);
 
 		$objectline = new FactureLigneRec($db);
-		if ($objectline->fetch(GETPOST('lineid')))
+		if ($objectline->fetch(GETPOST('lineid', 'int')))
 		{
 			$objectline->array_options=$array_options;
 			$result=$objectline->insertExtraFields();
@@ -785,6 +785,8 @@ if (empty($reshook))
 				setEventMessages($langs->trans('Error').$result, null, 'errors');
 			}
 		}
+
+		$position = ($objectline->rang >= 0 ? $objectline->rang : 0);
 
 		// Unset extrafield
 		if (is_array($extralabelsline))
@@ -797,8 +799,8 @@ if (empty($reshook))
 		}
 
 		// Define special_code for special lines
-		$special_code=GETPOST('special_code');
-		if (! GETPOST('qty')) $special_code=3;
+		$special_code=GETPOST('special_code', 'int');
+		if (! GETPOST('qty', 'alpha')) $special_code=3;
 
 		/*$line = new FactureLigne($db);
         $line->fetch(GETPOST('lineid'));
@@ -834,11 +836,11 @@ if (empty($reshook))
 				$error ++;
 			}
 		} else {
-			$type = GETPOST('type');
+			$type = GETPOST('type', 'int');
 			$label = (GETPOST('product_label') ? GETPOST('product_label') : '');
 
 			// Check parameters
-			if (GETPOST('type') < 0) {
+			if (GETPOST('type', 'int') < 0) {
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
 				$error ++;
 			}
@@ -870,7 +872,7 @@ if (empty($reshook))
 				0,
 				0,
 				$type,
-				0,
+				$position,
 				$special_code,
 				$label,
 				GETPOST('units'),
