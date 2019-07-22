@@ -52,7 +52,7 @@ if (! empty($conf->loan->enabled))			require_once DOL_DOCUMENT_ROOT.'/loan/class
 if (! empty($conf->stock->enabled))			require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 if (! empty($conf->tax->enabled))			require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 if (! empty($conf->banque->enabled))		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
-if (! empty($conf->salaries->enabled))		require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/paymentsalary.class.php';
+if (! empty($conf->salaries->enabled))		require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'companies', 'suppliers', 'compta'));
@@ -457,7 +457,7 @@ $listofreferent=array(
 	'datefieldname'=>'datev',
 	'margin'=>'minus',
 	'disableamount'=>0,
-	'urlnew'=>DOL_URL_ROOT.'/compta/salaries/card.php?action=create&projectid='.$id,
+	'urlnew'=>DOL_URL_ROOT.'/salaries/card.php?action=create&projectid='.$id,
 	'lang'=>'salaries',
 	'buttonnew'=>'AddSalaryPayment',
 	'testnew'=>$user->rights->salaries->write,

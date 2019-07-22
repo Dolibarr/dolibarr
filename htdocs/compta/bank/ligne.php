@@ -386,7 +386,7 @@ if ($result)
                     print '</a>';
                 }
                 elseif ($links[$key]['type']=='payment_salary') {
-                    print '<a href="'.DOL_URL_ROOT.'/compta/salaries/card.php?id='.$links[$key]['url_id'].'">';
+                    print '<a href="'.DOL_URL_ROOT.'/salaries/card.php?id='.$links[$key]['url_id'].'">';
                     print img_object($langs->trans('ShowPaymentSalary'), 'payment').' ';
                     print $langs->trans("SalaryPayment");
                     print '</a>';
