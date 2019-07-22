@@ -6306,6 +6306,8 @@ abstract class CommonObject
 			$out .= '<!-- showOptionalsInput --> ';
 			$out .= "\n";
 
+			$out .= '<table id="tableoptionals" class="" width="100%">';
+
 			$e = 0;
 			foreach($extrafields->attributes[$this->table_element]['label'] as $key=>$label)
 			{
@@ -6420,7 +6422,7 @@ abstract class CommonObject
 					$out .= '</td>';
 
 					$html_id = !empty($this->id) ? $this->element.'_extras_'.$key.'_'.$this->id : '';
-					$out .='<td id="'.$html_id.'" class="'.$this->element.'_extras_'.$key.'" '.($colspan?' colspan="'.$colspan.'"':'').'>';
+					$out .='<td id="'.$html_id.'" class="'.$this->element.'_extras_'.$key.'">';
 
 					switch($mode) {
 						case "view":
@@ -6437,6 +6439,8 @@ abstract class CommonObject
 					else $out .= '</tr>';
 					$e++;
 				}
+
+				$out .= "</table>";
 			}
 			$out .= "\n";
 			// Add code to manage list depending on others

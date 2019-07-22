@@ -251,7 +251,9 @@ $coldisplay=-1; // We remove first td
 //Line extrafield
 if (!empty($extrafieldsline))
 {
+	print '<tr><td colspan="'.($coldisplay).'">';
 	print $line->showOptionals($extrafieldsline, 'edit', array('style'=>$bc[$var],'colspan'=>$coldisplay), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD)?0:1);
+	print '</td></tr>';
 }
 ?>
 

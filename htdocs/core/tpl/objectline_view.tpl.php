@@ -321,7 +321,9 @@ $domData .= ' data-product_type="'.$line->product_type.'"';
 //Line extrafield
 if (!empty($extrafieldsline))
 {
+	print '<tr><td colspan="'.($coldisplay).'">';
 	print $line->showOptionals($extrafieldsline, 'view', array('style'=>'class="drag drop oddeven"','colspan'=>$coldisplay), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD)?0:1);
+	print '</td></tr>';
 }
 ?>
 

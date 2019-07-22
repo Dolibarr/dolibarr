@@ -423,7 +423,9 @@ else {
 
 <?php
 if (is_object($objectline)) {
+	print '<tr><td colspan="'.($coldisplay+8).'">';
 	print $objectline->showOptionals($extrafieldsline, 'edit', array('style'=>$bcnd[$var], 'colspan'=>$coldisplay+8), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD)?0:1);
+	print '</td></tr>';
 }
 ?>
 
