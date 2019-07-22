@@ -395,3 +395,6 @@ insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) v
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (113, 'supplier_proposal', 'external', 'SERVICE',       'Contact fournisseur prestation', 1);
 
 ALTER TABLE llx_ticket_extrafields ADD INDEX idx_ticket_extrafields (fk_object);
+
+-- Use special_code=3 in Takepos
+UPDATE llx_facturedet AS fd LEFT JOIN llx_facture AS f ON f.rowid = fd.fk_facture SET  fd.special_code = 4 WHERE f.module_source = 'takepos' AND fd.special_code = 3
