@@ -43,7 +43,7 @@ $action=GETPOST('action','alpha');
 $contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'actioncommlist';   // To manage different context of search
 $resourceid=GETPOST("search_resourceid","int")?GETPOST("search_resourceid","int"):GETPOST("resourceid","int");
 $pid=GETPOST("search_projectid",'int',3)?GETPOST("search_projectid",'int',3):GETPOST("projectid",'int',3);
-$status=GETPOST("search_status",'alpha')?GETPOST("search_status",'alpha'):GETPOST("status",'alpha');
+$status=(GETPOST("search_status",'alpha') != '')?GETPOST("search_status",'alpha'):GETPOST("status",'alpha');
 $type=GETPOST('search_type','alphanohtml')?GETPOST('search_type','alphanohtml'):GETPOST('type','alphanohtml');
 $optioncss = GETPOST('optioncss','alpha');
 $year=GETPOST("year",'int');
