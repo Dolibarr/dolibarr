@@ -86,7 +86,7 @@ if (empty($reshook))
     }
 
     // Seems to no be used and replaced with $action == 'infocredit'
-    if ( $action == 'confirm_credite' && GETPOST('confirm','alpha') == 'yes')
+    if ( $action == 'confirm_credite' && GETPOST('confirm', 'alpha') == 'yes')
     {
         $res=$object->set_credite();
         if ($res >= 0)
