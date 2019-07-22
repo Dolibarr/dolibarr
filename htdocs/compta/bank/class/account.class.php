@@ -2277,7 +2277,7 @@ class AccountLine extends CommonObject
 
 		$result='';
 		$label=$langs->trans("ShowTransaction").': '.$this->rowid;
-		$linkstart = '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$this->rowid.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		$linkstart = '<a href="'.DOL_URL_ROOT.'/compta/bank/line.php?rowid='.$this->rowid.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend='</a>';
 
 		$result .= $linkstart;

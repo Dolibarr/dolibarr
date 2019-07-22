@@ -20,7 +20,7 @@
  */
 
 /**
- *	\file       htdocs/compta/prelevement/ligne.php
+ *	\file       htdocs/compta/prelevement/line.php
  *	\ingroup    prelevement
  *	\brief      card of withdraw line
  */
@@ -86,7 +86,7 @@ if ($action == 'confirm_rejet')
 
 				$rej->create($user, $id, GETPOST('motif', 'alpha'), $daterej, $lipre->bon_rowid, GETPOST('facturer', 'int'));
 
-				header("Location: ligne.php?id=".$id);
+				header("Location: line.php?id=".$id);
 				exit;
 			}
 		}
@@ -97,7 +97,7 @@ if ($action == 'confirm_rejet')
 	}
 	else
 	{
-		header("Location: ligne.php?id=".$id);
+		header("Location: line.php?id=".$id);
 		exit;
 	}
 }
@@ -112,7 +112,7 @@ $invoicestatic=new Facture($db);
 llxHeader('', $langs->trans("StandingOrder"));
 
 $h = 0;
-$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/ligne.php?id='.$id;
+$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/line.php?id='.$id;
 $head[$h][1] = $langs->trans("Card");
 $hselected = $h;
 $h++;
@@ -179,7 +179,7 @@ if ($id)
 
 		$rej = new RejetPrelevement($db, $user);
 
-		print '<form name="confirm_rejet" method="post" action="ligne.php?id='.$id.'">';
+		print '<form name="confirm_rejet" method="post" action="line.php?id='.$id.'">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="confirm_rejet">';
 		print '<table class="border" width="100%">';
@@ -231,7 +231,7 @@ if ($id)
 		{
 			if ($user->rights->prelevement->bons->credit)
 			{
-	  			print "<a class=\"butAction\" href=\"ligne.php?action=rejet&amp;id=$lipre->id\">".$langs->trans("StandingOrderReject")."</a>";
+	  			print "<a class=\"butAction\" href=\"line.php?action=rejet&amp;id=$lipre->id\">".$langs->trans("StandingOrderReject")."</a>";
 			}
 			else
 			{
