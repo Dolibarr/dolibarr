@@ -42,7 +42,7 @@
 // Dolibarr environment
 $path_dir = '../../';
 $main_inc_file = 'main.inc.php';
-while ((false == @include($path_dir . $main_inc_file)) && 3*10 > strlen($path_dir)) {
+while ((false == (@include $path_dir . $main_inc_file)) && 3*10 > strlen($path_dir)) {
     $path_dir = '../' . $path_dir;
     if (strlen($path_dir) > 20) {
         echo 'Error: unable to include "' . $main_inc_file . '" from any of the parent directories.';
@@ -141,7 +141,6 @@ if ($resql_dispatch) {
             flush();
             ob_flush();
         }
-
     }
 } else {
     echo 'Unable to find any dispatch without an fk_commandefourndet.' . "\n";
