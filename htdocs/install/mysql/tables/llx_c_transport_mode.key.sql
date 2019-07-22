@@ -1,4 +1,4 @@
--- ========================================================================
+-- ===================================================================
 -- Copyright (C) 2019      Open-DSI			<support@open-dsi.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -14,13 +14,6 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
--- ========================================================================
+-- ===================================================================
 
-CREATE TABLE llx_c_transport_mode (
-  rowid     integer AUTO_INCREMENT PRIMARY KEY,
-  entity    integer	DEFAULT 1 NOT NULL,	-- multi company id
-  code      varchar(3) NOT NULL,
-  label     varchar(255) NOT NULL,
-  active    tinyint DEFAULT 1  NOT NULL
-) ENGINE=innodb;
-
+ALTER TABLE llx_c_transport_mode ADD UNIQUE INDEX uk_c_transport_mode (code, entity);

@@ -296,6 +296,7 @@ class Societe extends CommonObject
 	public $remise_supplier_percent;
 	public $mode_reglement_supplier_id;
 	public $cond_reglement_supplier_id;
+    public $transport_mode_supplier_id;
 
 	/**
      * @var int ID
@@ -1063,8 +1064,10 @@ class Societe extends CommonObject
 
 			$sql .= ",mode_reglement = ".(! empty($this->mode_reglement_id)?"'".$this->db->escape($this->mode_reglement_id)."'":"null");
 			$sql .= ",cond_reglement = ".(! empty($this->cond_reglement_id)?"'".$this->db->escape($this->cond_reglement_id)."'":"null");
-			$sql .= ",mode_reglement_supplier = ".(! empty($this->mode_reglement_supplier_id)?"'".$this->db->escape($this->mode_reglement_supplier_id)."'":"null");
+            $sql .= ",transport_mode = ".(! empty($this->transport_mode_id)?"'".$this->db->escape($this->transport_mode_id)."'":"null");
+            $sql .= ",mode_reglement_supplier = ".(! empty($this->mode_reglement_supplier_id)?"'".$this->db->escape($this->mode_reglement_supplier_id)."'":"null");
 			$sql .= ",cond_reglement_supplier = ".(! empty($this->cond_reglement_supplier_id)?"'".$this->db->escape($this->cond_reglement_supplier_id)."'":"null");
+			$sql .= ",transport_mode_supplier = ".(! empty($this->transport_mode_supplier_id)?"'".$this->db->escape($this->transport_mode_supplier_id)."'":"null");
 			$sql .= ",fk_shipping_method = ".(! empty($this->shipping_method_id)?"'".$this->db->escape($this->shipping_method_id)."'":"null");
 
 			$sql .= ",client = " . (! empty($this->client)?$this->client:0);
@@ -1405,8 +1408,10 @@ class Societe extends CommonObject
 				$this->remise_supplier_percent		= $obj->remise_supplier;
 				$this->mode_reglement_id 	= $obj->mode_reglement;
 				$this->cond_reglement_id 	= $obj->cond_reglement;
+				$this->transport_mode_id 	= $obj->transport_mode;
 				$this->mode_reglement_supplier_id 	= $obj->mode_reglement_supplier;
 				$this->cond_reglement_supplier_id 	= $obj->cond_reglement_supplier;
+				$this->transport_mode_supplier_id 	= $obj->transport_mode_supplier;
 				$this->shipping_method_id   = ($obj->fk_shipping_method>0)?$obj->fk_shipping_method:null;
 				$this->fk_account			= $obj->fk_account;
 

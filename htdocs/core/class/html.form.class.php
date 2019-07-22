@@ -71,6 +71,7 @@ class Form
 	// Cache arrays
 	public $cache_types_paiements=array();
 	public $cache_conditions_paiements=array();
+	public $cache_transport_mode=array();
 	public $cache_availability=array();
 	public $cache_demand_reason=array();
 	public $cache_types_fees=array();
@@ -3467,6 +3468,108 @@ class Form
 		return $return;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    /**
+     *      Load in cache list of transport mode
+     *
+     *      @return     int                 Nb of lines loaded, <0 if KO
+     */
+    public function load_cache_transport_mode()
+    {
+        // phpcs:enable
+        global $langs;
+
+        $num=count($this->cache_transport_mode);
+        if ($num > 0) return $num;    // Cache already loaded
+
+        dol_syslog(__METHOD__, LOG_DEBUG);
+
+        $this->cache_transport_mode = array();
+
+        $sql = "SELECT rowid, code, label, active";
+        $sql.= " FROM ".MAIN_DB_PREFIX."c_transport_mode";
+        $sql.= " WHERE entity IN (".getEntity('c_transport_mode').")";
+        //if ($active >= 0) $sql.= " AND active = ".$active;
+
+        $resql = $this->db->query($sql);
+        if ($resql)
+        {
+            $num = $this->db->num_rows($resql);
+            $i = 0;
+            while ($i < $num)
+            {
+                $obj = $this->db->fetch_object($resql);
+
+                // If traduction exist, we use it else we take the default label
+                $label=($langs->transnoentitiesnoconv("PaymentTypeShort".$obj->code)!=("PaymentTypeShort".$obj->code)?$langs->transnoentitiesnoconv("PaymentTypeShort".$obj->code):($obj->label!='-'?$obj->label:''));
+                $this->cache_transport_mode[$obj->rowid]['rowid'] = $obj->rowid;
+                $this->cache_transport_mode[$obj->rowid]['code'] = $obj->code;
+                $this->cache_transport_mode[$obj->rowid]['label']= $label;
+                $this->cache_transport_mode[$obj->rowid]['active'] = $obj->active;
+                $i++;
+            }
+
+            $this->cache_transport_mode = dol_sort_array($this->cache_transport_mode, 'label', 'asc', 0, 0, 1);
+
+            return $num;
+        }
+        else
+        {
+            dol_print_error($this->db);
+            return -1;
+        }
+    }
+
+    /**
+     *      Return list of transport mode for intracomm report
+     *
+     *      @param	string	$selected       Id of the transport mode pre-selected
+     *      @param  string	$htmlname       Name of the select field
+     *      @param  int		$format         0=id+label, 1=code+code, 2=code+label, 3=id+code
+     *      @param  int		$empty			1=can be empty, 0 else
+     * 		@param	int		$noadmininfo	0=Add admin info, 1=Disable admin info
+     *      @param  int		$maxlength      Max length of label
+     *      @param  int     $active         Active or not, -1 = all
+     *      @param  string  $morecss        Add more CSS on select tag
+     * 		@return	void
+     */
+    public function selectTransportMode($selected = '', $htmlname = 'transportmode', $format = 0, $empty = 1, $noadmininfo = 0, $maxlength = 0, $active = 1, $morecss = '')
+    {
+        global $langs,$user;
+
+        dol_syslog(__METHOD__." ".$selected.", ".$htmlname.", ".$format, LOG_DEBUG);
+
+        $this->load_cache_transport_mode();
+
+        print '<select id="select'.$htmlname.'" class="flat selectmodetransport'.($morecss?' '.$morecss:'').'" name="'.$htmlname.'">';
+        if ($empty) print '<option value="">&nbsp;</option>';
+        foreach($this->cache_transport_mode as $id => $arraytypes)
+        {
+            // If not good status
+            if ($active >= 0 && $arraytypes['active'] != $active) continue;
+
+            // We discard empty line if showempty is on because an empty line has already been output.
+            if ($empty && empty($arraytypes['code'])) continue;
+
+            if ($format == 0) print '<option value="'.$id.'"';
+            elseif ($format == 1) print '<option value="'.$arraytypes['code'].'"';
+            elseif ($format == 2) print '<option value="'.$arraytypes['code'].'"';
+            elseif ($format == 3) print '<option value="'.$id.'"';
+            // If text is selected, we compare with code, else with id
+            if (preg_match('/[a-z]/i', $selected) && $selected == $arraytypes['code']) print ' selected';
+            elseif ($selected == $id) print ' selected';
+            print '>';
+            if ($format == 0) $value=($maxlength?dol_trunc($arraytypes['label'], $maxlength):$arraytypes['label']);
+            elseif ($format == 1) $value=$arraytypes['code'];
+            elseif ($format == 2) $value=($maxlength?dol_trunc($arraytypes['label'], $maxlength):$arraytypes['label']);
+            elseif ($format == 3) $value=$arraytypes['code'];
+            print $value?$value:'&nbsp;';
+            print '</option>';
+        }
+        print '</select>';
+        if ($user->admin && ! $noadmininfo) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+    }
+
 	/**
 	 *  Return a HTML select list of shipping mode
 	 *
@@ -4530,6 +4633,40 @@ class Form
 			}
 		}
 	}
+
+    /**
+     *    Show form with transport mode
+     *
+     *    @param	string	$page        	Page
+     *    @param    int		$selected    	Id mode pre-select
+     *    @param    string	$htmlname    	Name of select html field
+     *    @param    int     $active         Active or not, -1 = all
+     *    @param    int     $addempty       1=Add empty entry
+     *    @return	void
+     */
+    public function formSelectTransportMode($page, $selected = '', $htmlname = 'transport_mode_id', $active = 1, $addempty = 0)
+    {
+        global $langs;
+        if ($htmlname != "none")
+        {
+            print '<form method="POST" action="'.$page.'">';
+            print '<input type="hidden" name="action" value="setmode">';
+            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            $this->selectTransportMode($selected, $htmlname, 2, $addempty, 0, 0, $active);
+            print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+            print '</form>';
+        }
+        else
+        {
+            if ($selected)
+            {
+                $this->load_cache_transport_mode();
+                print $this->cache_transport_mode[$selected]['label'];
+            } else {
+                print "&nbsp;";
+            }
+        }
+    }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**

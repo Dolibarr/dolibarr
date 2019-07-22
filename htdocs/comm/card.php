@@ -488,6 +488,28 @@ if ($object->id > 0)
         print '</tr>';
     }
 
+    if (! empty($conf->intracommreport->enabled))
+    {
+        // Transport mode by default
+        print '<tr><td class="nowrap">';
+        print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
+        print $langs->trans('IntracommReportTransportMode');
+        print '<td>';
+        if (($action != 'edittransportmode') && $user->rights->societe->creer) print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edittransportmode&amp;socid='.$object->id.'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
+        print '</tr></table>';
+        print '</td><td>';
+        if ($action == 'edittransportmode')
+        {
+            $form->formSelectTransportMode($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->fk_transport_mode, 'fk_transport_mode', 1);
+        }
+        else
+        {
+            $form->formSelectTransportMode($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->fk_transport_mode, 'none');
+        }
+        print "</td>";
+        print '</tr>';
+    }
+
 	// Categories
 	if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
 		$langs->load("categories");

@@ -34,23 +34,27 @@
 
 -- Intracomm Report
 CREATE TABLE llx_c_transport_mode (
-  rowid integer AUTO_INCREMENT PRIMARY KEY,
-  code varchar(3) NOT NULL,
-  label varchar(255) NOT NULL,
-  active tinyint DEFAULT 1  NOT NULL
+  rowid     integer AUTO_INCREMENT PRIMARY KEY,
+  entity    integer	DEFAULT 1 NOT NULL,	-- multi company id
+  code      varchar(3) NOT NULL,
+  label     varchar(255) NOT NULL,
+  active    tinyint DEFAULT 1  NOT NULL
 ) ENGINE=innodb;
 
-INSERT INTO llx_c_transport_mode (code, libelle, active) VALUES ('MAR', 'Transport maritime (y compris camions ou wagons sur bateau)', 1);
-INSERT INTO llx_c_transport_mode (code, libelle, active) VALUES ('TRA', 'Transport par chemin de fer (y compris camions sur wagon)', 1);
-INSERT INTO llx_c_transport_mode (code, libelle, active) VALUES ('ROU', 'Transport par route', 1);
-INSERT INTO llx_c_transport_mode (code, libelle, active) VALUES ('AIR', 'Transport par air', 1);
-INSERT INTO llx_c_transport_mode (code, libelle, active) VALUES ('POS', 'Envois postaux', 1);
-INSERT INTO llx_c_transport_mode (code, libelle, active) VALUES ('OLE', 'Installations de transport fixe (oléoduc)', 1);
-INSERT INTO llx_c_transport_mode (code, libelle, active) VALUES ('NAV', 'Transport par navigation intérieure', 1);
-INSERT INTO llx_c_transport_mode (code, libelle, active) VALUES ('PRO', 'Propulsion propre', 1);
+INSERT INTO llx_c_transport_mode (code, label, active) VALUES ('MAR', 'Transport maritime (y compris camions ou wagons sur bateau)', 1);
+INSERT INTO llx_c_transport_mode (code, label, active) VALUES ('TRA', 'Transport par chemin de fer (y compris camions sur wagon)', 1);
+INSERT INTO llx_c_transport_mode (code, label, active) VALUES ('ROU', 'Transport par route', 1);
+INSERT INTO llx_c_transport_mode (code, label, active) VALUES ('AIR', 'Transport par air', 1);
+INSERT INTO llx_c_transport_mode (code, label, active) VALUES ('POS', 'Envois postaux', 1);
+INSERT INTO llx_c_transport_mode (code, label, active) VALUES ('OLE', 'Installations de transport fixe (oléoduc)', 1);
+INSERT INTO llx_c_transport_mode (code, label, active) VALUES ('NAV', 'Transport par navigation intérieure', 1);
+INSERT INTO llx_c_transport_mode (code, label, active) VALUES ('PRO', 'Propulsion propre', 1);
 
-ALTER TABLE llx_facture ADD COLUMN fk_mode_transport integer after location_incoterms;
-ALTER TABLE llx_facture_fourn ADD COLUMN fk_mode_transport integer after location_incoterms;
+ALTER TABLE llx_facture ADD COLUMN fk_transport_mode integer after location_incoterms;
+ALTER TABLE llx_facture_fourn ADD COLUMN fk_transport_mode integer after location_incoterms;
+
+ALTER TABLE llx_societe ADD COLUMN transport_mode tinyint after cond_reglement;
+ALTER TABLE llx_societe ADD COLUMN transport_mode_supplier tinyint after cond_reglement_supplier;
 
 CREATE TABLE llx_intracommreport
 (
