@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2011-2018  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+/* Copyright (C) 2011-2019  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2014       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2015       Charlie BENKE           <charlie@patas-monkey.com>
@@ -20,20 +20,21 @@
  */
 
 /**
- *  \file       htdocs/compta/salaries/card.php
+ *  \file       htdocs/salaries/card.php
  *  \ingroup    salaries
  *  \brief      Page of salaries payments
  */
 
-require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/paymentsalary.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/salaries.lib.php';
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/salaries/class/paymentsalary.class.php';
+require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/salaries.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
 if (! empty($conf->projet->enabled))
 {
-	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+	require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
 }
 
 // Load translation files required by the page
@@ -51,11 +52,13 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'salaries', '', '', '');
 
 $object = new PaymentSalary($db);
+$extrafields = new ExtraFields($db);
+
+// fetch optionals attributes and labels
+$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('salarycard','globalcard'));
-
-
 
 /**
  * Actions
@@ -100,10 +103,14 @@ if ($action == 'add' && empty($cancel))
 	$object->fk_user_author=$user->id;
 	$object->fk_project= GETPOST('fk_project', 'int');
 
-	// Set user current salary as ref salaray for the payment
+	// Set user current salary as ref salary for the payment
 	$fuser=new User($db);
 	$fuser->fetch(GETPOST("fk_user", "int"));
 	$object->salary=$fuser->salary;
+
+    // Fill array 'array_options' with data from add form
+    $ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+    if ($ret < 0) $error++;
 
 	if (empty($datep) || empty($datev) || empty($datesp) || empty($dateep))
 	{
@@ -174,7 +181,7 @@ if ($action == 'delete')
 			if ($result >= 0)
 			{
 				$db->commit();
-				header("Location: ".DOL_URL_ROOT.'/compta/salaries/list.php');
+				header("Location: ".DOL_URL_ROOT.'/salaries/list.php');
 				exit;
 			}
 			else
@@ -333,10 +340,14 @@ if ($action == 'create')
 		print '<td><input name="num_payment" id="num_payment" type="text" value="'.GETPOST("num_payment").'"></td></tr>'."\n";
 	}
 
-	// Other attributes
-	$parameters=array();
-	$reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
-	print $hookmanager->resPrint;
+    // Other attributes
+    $parameters=array();
+    $reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
+    print $hookmanager->resPrint;
+    if (empty($reshook))
+    {
+        print $object->showOptionals($extrafields, 'edit', $parameters);
+    }
 
 	print '</table>';
 
@@ -365,7 +376,7 @@ if ($id)
 
 	dol_fiche_head($head, 'card', $langs->trans("SalaryPayment"), -1, 'payment');
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/salaries/list.php?restore_lastsearch_values=1'.(! empty($socid)?'&socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/salaries/list.php?restore_lastsearch_values=1'.(! empty($socid)?'&socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref='<div class="refidno">';
 
@@ -453,10 +464,8 @@ if ($id)
 		}
 	}
 
-	// Other attributes
-	$parameters=array();
-	$reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
-	print $hookmanager->resPrint;
+    // Other attributes
+    include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
 	print '</table>';
 
