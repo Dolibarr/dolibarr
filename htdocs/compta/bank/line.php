@@ -24,7 +24,7 @@
  */
 
 /**
- *	\file       htdocs/compta/bank/ligne.php
+ *	\file       htdocs/compta/bank/line.php
  *	\ingroup    bank
  *	\brief      Page to edit a bank transaction record
  */
@@ -223,7 +223,7 @@ if ($user->rights->banque->consolidate && ($action == 'num_releve' || $action ==
         else $sql.=", rappro = ".$rappro;
         $sql.= " WHERE rowid = ".$rowid;
 
-        dol_syslog("ligne.php", LOG_DEBUG);
+        dol_syslog("line.php", LOG_DEBUG);
         $result = $db->query($sql);
         if ($result)
         {
@@ -256,7 +256,7 @@ foreach ($cats as $cat) {
 
 $tabs = array(
     array(
-        DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$rowid,
+        DOL_URL_ROOT.'/compta/bank/line.php?rowid='.$rowid,
         $langs->trans('Card')
     ),
     array(
@@ -386,7 +386,7 @@ if ($result)
                     print '</a>';
                 }
                 elseif ($links[$key]['type']=='payment_salary') {
-                    print '<a href="'.DOL_URL_ROOT.'/salaries/card.php?id='.$links[$key]['url_id'].'">';
+                    print '<a href="'.DOL_URL_ROOT.'/compta/salaries/card.php?id='.$links[$key]['url_id'].'">';
                     print img_object($langs->trans('ShowPaymentSalary'), 'payment').' ';
                     print $langs->trans("SalaryPayment");
                     print '</a>';
@@ -416,7 +416,7 @@ if ($result)
                     print '</a>';
                 }
                 elseif ($links[$key]['type']=='banktransfert') {
-                    print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$links[$key]['url_id'].'">';
+                    print '<a href="'.DOL_URL_ROOT.'/compta/bank/line.php?rowid='.$links[$key]['url_id'].'">';
                     print img_object($langs->trans('ShowTransaction'), 'payment').' ';
                     print $langs->trans("TransactionOnTheOtherAccount");
                     print '</a>';
