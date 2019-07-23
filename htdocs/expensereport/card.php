@@ -2441,7 +2441,7 @@ else
 					print '<tr class="liste_titre">';
 					print '<td></td>';
 					print '<td class="center">'.$langs->trans('Date').'</td>';
-					if (! empty($conf->projet->enabled)) print '<td class="minwidth100imp">'.$langs->trans('Project').'</td>';
+					if (! empty($conf->projet->enabled)) print '<td class="minwidth100imp">'.$form->textwithpicto($langs->trans('Project'), $langs->trans("ClosedProjectsAreHidden")).'</td>';
 					if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) print '<td>'.$langs->trans('CarCategory').'</td>';
 					print '<td class="center">'.$langs->trans('Type').'</td>';
 					print '<td>'.$langs->trans('Description').'</td>';
@@ -2469,7 +2469,7 @@ else
 					if (! empty($conf->projet->enabled))
 					{
 						print '<td>';
-						$formproject->select_projects(-1, $fk_projet, 'fk_projet', 0, 0, 1, 1, 0, 0, 0, '', 0, 0, 'maxwidth300');
+						$formproject->select_projects(-1, $fk_projet, 'fk_projet', 0, 0, 1, -1, 0, 0, 0, '', 0, 0, 'maxwidth300');
 						print '</td>';
 					}
 

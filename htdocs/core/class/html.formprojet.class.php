@@ -60,7 +60,7 @@ class FormProjets
 	 *	@param	int		$maxlength		Maximum length of label
 	 *	@param	int		$option_only	Return only html options lines without the select tag
 	 *	@param	int		$show_empty		Add an empty line
-	 *  @param	int		$discard_closed Discard closed projects (0=Keep, 1=hide completely, 2=Disable)
+	 *  @param	int		$discard_closed Discard closed projects (0=Keep, 1=hide completely, 2=Disable). Use a negative value to not show the "discarded" tooltip.
 	 *  @param	int		$forcefocus		Force focus on field (works with javascript only)
 	 *  @param	int		$disabled		Disabled
 	 *  @param  int     $mode           0 for HTML mode and 1 for JSON mode
@@ -100,13 +100,13 @@ class FormProjets
 		}
 		else
 		{
-			$out.=$this->select_projects_list($socid, $selected, $htmlname, $maxlength, $option_only, $show_empty, $discard_closed, $forcefocus, $disabled, 0, $filterkey, 1, $forceaddid, $htmlid, $morecss);
+			$out.=$this->select_projects_list($socid, $selected, $htmlname, $maxlength, $option_only, $show_empty, abs($discard_closed), $forcefocus, $disabled, 0, $filterkey, 1, $forceaddid, $htmlid, $morecss);
 		}
-		if ($discard_closed)
+		if ($discard_closed > 0)
 		{
 			if (class_exists('Form'))
 			{
-				if (empty($form)) $form=new Form($this->db);
+				if (! is_object($form)) $form=new Form($this->db);
 				$out.=$form->textwithpicto('', $langs->trans("ClosedProjectsAreHidden"));
 			}
 		}
