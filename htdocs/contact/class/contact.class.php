@@ -345,7 +345,7 @@ class Contact extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET ";
 		if ($this->socid > 0) $sql .= " fk_soc='".$this->db->escape($this->socid)."',";
 		elseif ($this->socid == -1) $sql .= " fk_soc=null,";
-		$sql .= "  civility='".$this->db->escape($this->civility_id)."'";
+		$sql .= "  civility='".$this->db->escape($this->civility)."'";
 		$sql .= ", lastname='".$this->db->escape($this->lastname)."'";
 		$sql .= ", firstname='".$this->db->escape($this->firstname)."'";
 		$sql .= ", address='".$this->db->escape($this->address)."'";
@@ -1218,7 +1218,7 @@ class Contact extends CommonObject
 		global $langs;
 		$langs->load("dict");
 
-		$code=(! empty($this->civility_id)?$this->civility_id:(! empty($this->civilite_id)?$this->civilite_id:''));
+		$code=(! empty($this->civility_id)?$this->civility:(! empty($this->civilite)?$this->civilite:''));
 		if (empty($code)) return '';
         return $langs->getLabelFromKey($this->db, "Civility".$code, "c_civility", "code", "label", $code);
 	}
