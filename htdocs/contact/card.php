@@ -872,7 +872,7 @@ else
 
             // Civility
             print '<tr><td><label for="civility_id">'.$langs->trans("UserTitle").'</label></td><td colspan="3">';
-            print $formcompany->select_civility(isset($_POST["civility_id"])?GETPOST("civility_id"):$object->civility_id);
+            print $formcompany->select_civility(isset($_POST["civility"])?GETPOST("civility"):$object->civility_code);
             print '</td></tr>';
 
             print '<tr><td><label for="title">'.$langs->trans("PostOrFunction").'</label></td>';
