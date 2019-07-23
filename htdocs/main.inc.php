@@ -1862,34 +1862,38 @@ function top_menu_user(User $user, Translate $langs)
             </div>
 
         </div>
-    </div>
-    <!-- Code to show/hide the user drop-down -->
-    <script>
-    $( document ).ready(function() {
-        $(document).on("click", function(event) {
-            if (!$(event.target).closest("#topmenu-login-dropdown").length) {
-                // Hide the menus.
-                $("#topmenu-login-dropdown").removeClass("open");
-				$("#dropdown-icon-down").show();	// use show/hide instead toggle for avoid conflict
-				$("#dropdown-icon-up").hide();		// use show/hide instead toggle for avoid conflict
-            }
+    </div>';
+
+    if (! defined('JS_JQUERY_DISABLE_DROPDOWN'))    // This may be set by some pages that use different jquery version to avoid errors
+    {
+        $btnUser .= '
+        <!-- Code to show/hide the user drop-down -->
+        <script>
+        $( document ).ready(function() {
+            $(document).on("click", function(event) {
+                if (!$(event.target).closest("#topmenu-login-dropdown").length) {
+                    // Hide the menus.
+                    $("#topmenu-login-dropdown").removeClass("open");
+    				$("#dropdown-icon-down").show();	// use show/hide instead toggle for avoid conflict
+    				$("#dropdown-icon-up").hide();		// use show/hide instead toggle for avoid conflict
+                }
+            });
+
+            $("#topmenu-login-dropdown .dropdown-toggle").on("click", function(event) {
+                event.preventDefault();
+                $("#topmenu-login-dropdown").toggleClass("open");
+                $("#dropdown-icon-down").toggle();
+                $("#dropdown-icon-up").toggle();
+            });
+
+            $("#topmenuloginmoreinfo-btn").on("click", function() {
+                $("#topmenuloginmoreinfo").slideToggle();
+            });
+
         });
-
-        $("#topmenu-login-dropdown .dropdown-toggle").on("click", function(event) {
-            event.preventDefault();
-            $("#topmenu-login-dropdown").toggleClass("open");
-            $("#dropdown-icon-down").toggle();
-            $("#dropdown-icon-up").toggle();
-        });
-
-        $("#topmenuloginmoreinfo-btn").on("click", function() {
-            $("#topmenuloginmoreinfo").slideToggle();
-        });
-
-    });
-    </script>
-    ';
-
+        </script>
+        ';
+    }
 
     return $btnUser;
 }
