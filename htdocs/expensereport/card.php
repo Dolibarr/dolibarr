@@ -2258,7 +2258,7 @@ else
 						    print '<a href="" class="commonlink auploadnewfilenow reposition">'.$langs->trans("UploadANewFileNow");
 						    print img_picto($langs->trans("UploadANewFileNow"), 'chevron-down', '', false, 0, 0, '', 'marginleftonly');
 						    print '</a>';
-						    if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
+						    if (empty($conf->global->EXPENSEREPORT_DISABLE_ATTACHMENT_ON_LINES))
 						    {
 						        print ' &nbsp; - &nbsp; '.'<a href="" class="commonlink aattachtodoc reposition">'.$langs->trans("AttachTheNewLineToTheDocument");
 						        print img_picto($langs->trans("AttachTheNewLineToTheDocument"), 'chevron-down', '', false, 0, 0, '', 'marginleftonly');
@@ -2389,7 +2389,7 @@ else
 
 				    $nbFiles = $nbLinks = 0;
 				    $arrayoffiles = array();
-				    if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
+				    if (empty($conf->global->EXPENSEREPORT_DISABLE_ATTACHMENT_ON_LINES))
 				    {
 				        require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 				        require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
@@ -2406,7 +2406,7 @@ else
 				    print '<a href="" class="commonlink auploadnewfilenow reposition">'.$langs->trans("UploadANewFileNow");
 				    print img_picto($langs->trans("UploadANewFileNow"), 'chevron-down', '', false, 0, 0, '', 'marginleftonly');
 				    print '</a>';
-				    if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
+				    if (empty($conf->global->EXPENSEREPORT_DISABLE_ATTACHMENT_ON_LINES))
 				    {
 				        print ' &nbsp; - &nbsp; '.'<a href="" class="commonlink aattachtodoc reposition">'.$langs->trans("AttachTheNewLineToTheDocument");
 				        print img_picto($langs->trans("AttachTheNewLineToTheDocument"), 'chevron-down', '', false, 0, 0, '', 'marginleftonly');
