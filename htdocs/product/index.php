@@ -357,7 +357,7 @@ if ($result)
                         $objp->price = $price_result;
                     }
                 }
-				print '<td class="right">';
+				print '<td class="nowrap right">';
     			if (isset($objp->price_base_type) && $objp->price_base_type == 'TTC') print price($objp->price_ttc).' '.$langs->trans("TTC");
     			else print price($objp->price).' '.$langs->trans("HT");
     			print '</td>';
@@ -442,6 +442,7 @@ function activitytrim($product_type)
 
 		if ($num > 0 )
 		{
+            print '<div class="div-table-responsive-no-min">';
 			print '<table class="noborder" width="75%">';
 
 			if ($product_type==0)
@@ -465,11 +466,11 @@ function activitytrim($product_type)
 				if ($trim1+$trim2+$trim3+$trim4 > 0)
 				{
 					print '<tr class="oddeven"><td class=left>'.$tmpyear.'</td>';
-					print '<td class=right>'.price($trim1).'</td>';
-					print '<td class=right>'.price($trim2).'</td>';
-					print '<td class=right>'.price($trim3).'</td>';
-					print '<td class=right>'.price($trim4).'</td>';
-					print '<td class=right>'.price($trim1+$trim2+$trim3+$trim4).'</td>';
+					print '<td class="nowrap right">'.price($trim1).'</td>';
+					print '<td class="nowrap right">'.price($trim2).'</td>';
+					print '<td class="nowrap right">'.price($trim3).'</td>';
+					print '<td class="nowrap right">'.price($trim4).'</td>';
+					print '<td class="nowrap right">'.price($trim1+$trim2+$trim3+$trim4).'</td>';
 					print '</tr>';
 					$lgn++;
 				}
@@ -498,14 +499,14 @@ function activitytrim($product_type)
 		if ($trim1+$trim2+$trim3+$trim4 > 0)
 		{
 			print '<tr class="oddeven"><td class=left>'.$tmpyear.'</td>';
-			print '<td class=right>'.price($trim1).'</td>';
-			print '<td class=right>'.price($trim2).'</td>';
-			print '<td class=right>'.price($trim3).'</td>';
-			print '<td class=right>'.price($trim4).'</td>';
-			print '<td class=right>'.price($trim1+$trim2+$trim3+$trim4).'</td>';
+			print '<td class="nowrap right">'.price($trim1).'</td>';
+			print '<td class="nowrap right">'.price($trim2).'</td>';
+			print '<td class="nowrap right">'.price($trim3).'</td>';
+			print '<td class="nowrap right">'.price($trim4).'</td>';
+			print '<td class="nowrap right">'.price($trim1+$trim2+$trim3+$trim4).'</td>';
 			print '</tr>';
 		}
 		if ($num > 0 )
-			print '</table>';
+			print '</table></div>';
 	}
 }
