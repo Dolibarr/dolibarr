@@ -287,6 +287,7 @@ SupplierAbsoluteDiscountAllUsers=Descomptes absoluts de proveïdor (introduïts 
 SupplierAbsoluteDiscountMy=Descomptes absoluts del proveïdor (introduït per tu mateix)
 DiscountNone=Cap
 Vendor=Proveïdor
+Supplier=Proveïdor
 AddContact=Crear contacte
 AddContactAddress=Crear contacte/adreça
 EditContact=Editar contacte

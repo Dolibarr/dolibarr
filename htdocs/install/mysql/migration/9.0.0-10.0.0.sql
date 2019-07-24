@@ -206,6 +206,9 @@ ALTER TABLE llx_user ADD COLUMN linkedin  varchar(255) after whatsapp;
 
 ALTER TABLE llx_expensereport_det ADD COLUMN fk_ecm_files integer DEFAULT NULL;
 
+ALTER TABLE llx_expensereport ADD COLUMN paid smallint default 0 NOT NULL;
+UPDATE llx_expensereport set paid = 1 WHERE fk_statut = 6 and paid = 0;
+
 
 CREATE TABLE llx_bom_bom(
 	-- BEGIN MODULEBUILDER FIELDS
@@ -252,12 +255,13 @@ CREATE TABLE llx_bom_bomline(
 	import_key varchar(14), 
 	qty double(24,8) NOT NULL, 
 	efficiency double(8,4) NOT NULL DEFAULT 1,
-	rank integer NOT NULL
+	position integer NOT NULL
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;
 
 ALTER TABLE llx_bom_bomline ADD COLUMN efficiency double(8,4) DEFAULT 1;
 ALTER TABLE llx_bom_bomline ADD COLUMN fk_bom_child integer NULL;
+ALTER TABLE llx_bom_bomline ADD COLUMN position integer NOT NULL;
 
 create table llx_bom_bomline_extrafields
 (

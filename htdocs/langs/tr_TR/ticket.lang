@@ -268,7 +268,7 @@ SeeThisTicketIntomanagementInterface=Yönetim arayüzünde destek bildirimini g�
 TicketPublicInterfaceForbidden=Destek bildirimi için genel arayüz etkin değil
 ErrorEmailOrTrackingInvalid=Takip numarası veya e-posta için hatalı değer
 OldUser=Eski kullanıcı
-NewUser=Yeni kullanıcı
+NewUser=Yeni Kullanıcı
 NumberOfTicketsByMonth=Aylık destek bildirim sayısı
 NbOfTickets=Destek bildirim sayısı
 # notifications

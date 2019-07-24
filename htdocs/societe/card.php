@@ -741,7 +741,7 @@ if (empty($reshook))
                                 {
                                 	require_once DOL_DOCUMENT_ROOT .'/core/lib/files.lib.php';
                                 	// the dir dirname($newfile) is directory of logo, so we should have only one file at once into index, so we delete indexes for the dir
-                                	deleteFilesIntoDatabaseIndex(dirname($newfile), '', '', 'uploaded', 1);
+                                	deleteFilesIntoDatabaseIndex(dirname($newfile), '', '');
                                 	// now we index the uploaded logo file
                                 	addFileIntoDatabaseIndex(dirname($newfile), basename($newfile), '', 'uploaded', 1);
                                 }
@@ -958,12 +958,13 @@ else
         if (empty($duplicate_code_error)) {
 	        $object->code_client		= GETPOST('customer_code', 'alpha');
 	        $object->fournisseur		= GETPOST('fournisseur')?GETPOST('fournisseur'):$object->fournisseur;
+            $object->code_fournisseur	= GETPOST('supplier_code', 'alpha');
         }
 		else {
 			setEventMessages($langs->trans('NewCustomerSupplierCodeProposed'), '', 'warnings');
 		}
 
-        $object->code_fournisseur	= GETPOST('supplier_code', 'alpha');
+
         $object->address			= GETPOST('address', 'alpha');
         $object->zip				= GETPOST('zipcode', 'alpha');
         $object->town				= GETPOST('town', 'alpha');
@@ -2718,7 +2719,7 @@ else
 
 			$MAXEVENT = 10;
 
-            $morehtmlright.= dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-list-alt', DOL_URL_ROOT.'/societe/agenda.php?socid='.$object->id);
+            $morehtmlright = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-list-alt', DOL_URL_ROOT.'/societe/agenda.php?socid='.$object->id);
 
 			// List of actions on element
 			include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';

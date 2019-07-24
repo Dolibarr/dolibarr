@@ -229,7 +229,7 @@ if ($search_type)     $param.="&search_type=".urlencode($search_type);
 if ($date_select)     $param.="&date_select=".urlencode($date_select);
 if ($search_lastname) $param.="&search_lastname=".urlencode($search_lastname);
 if ($search_login)    $param.="&search_login=".urlencode($search_login);
-if ($search_acount)   $param.="&search_account=".urlencode($search_account);
+if ($search_account)  $param.="&search_account=".urlencode($search_account);
 if ($search_amount)   $param.="&search_amount=".urlencode($search_amount);
 if ($optioncss != '') $param.='&optioncss='.urlencode($optioncss);
 // Add $param from extra fields

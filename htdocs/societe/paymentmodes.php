@@ -637,6 +637,16 @@ if (empty($reshook))
 		elseif ($action == 'deletecard' && $source)
 		{
 			try {
+				if (preg_match('/pm_/', $source))
+					{
+            		$payment_method = \Stripe\PaymentMethod::retrieve($source, array("stripe_account" => $stripeacc));
+					if ($payment_method)
+				    {
+					  $payment_method->detach();
+				    }
+				}
+				else
+				{
 				$cu=$stripe->customerStripe($object, $stripeacc, $servicestatus);
 				$card=$cu->sources->retrieve("$source");
 				if ($card)
@@ -644,6 +654,7 @@ if (empty($reshook))
 					// $card->detach();  Does not work with card_, only with src_
 					if (method_exists($card, 'detach')) $card->detach();
 					else $card->delete();
+				}
 				}
 
 				$url=DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id;
@@ -1197,8 +1208,8 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		print_liste_field_titre("BIC");
 		if (! empty($conf->prelevement->enabled))
 		{
-			print print_liste_field_titre("RUM");
-			print print_liste_field_titre("WithdrawMode");
+			print_liste_field_titre("RUM");
+			print_liste_field_titre("WithdrawMode");
 		}
 		print_liste_field_titre("DefaultRIB", '', '', '', '', '', '', '', 'center ');
 		print_liste_field_titre('', '', '', '', '', '', '', '', 'center ');

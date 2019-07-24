@@ -287,6 +287,7 @@ SupplierAbsoluteDiscountAllUsers=Mutlak satıcı indirimleri (tüm kullanıcıla
 SupplierAbsoluteDiscountMy=Mutlak satıcı indirimleri (tarafınızdan girilen)
 DiscountNone=Hiçbiri
 Vendor=Tedarikçi
+Supplier=Tedarikçi
 AddContact=Kişi oluştur
 AddContactAddress=Kişi/adres oluştur
 EditContact=Kişi düzenle
