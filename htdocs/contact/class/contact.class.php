@@ -345,7 +345,7 @@ class Contact extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET ";
 		if ($this->socid > 0) $sql .= " fk_soc='".$this->db->escape($this->socid)."',";
 		elseif ($this->socid == -1) $sql .= " fk_soc=null,";
-		$sql .= "  civility='".$this->db->escape($this->civility)."'";
+		$sql .= "  civility='".$this->db->escape($this->civility_id)."'";
 		$sql .= ", lastname='".$this->db->escape($this->lastname)."'";
 		$sql .= ", firstname='".$this->db->escape($this->firstname)."'";
 		$sql .= ", address='".$this->db->escape($this->address)."'";
