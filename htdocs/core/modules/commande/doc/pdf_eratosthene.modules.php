@@ -855,7 +855,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 	 *	@param	Translate	$outputlangs	Object langs for output
 	 *	@return int							<0 if KO, >0 if OK
 	 */
-	private function drawPaymentsTable(&$pdf, $object, $posy, $outputlangs)
+	public function drawPaymentsTable(&$pdf, $object, $posy, $outputlangs)
 	{
 	}
 
@@ -868,7 +868,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @return	void
 	 */
-	private function drawInfoTable(&$pdf, $object, $posy, $outputlangs)
+	public function drawInfoTable(&$pdf, $object, $posy, $outputlangs)
 	{
 		global $conf;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
@@ -1054,7 +1054,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 	 *	@param	Translate	$outputlangs	Objet langs
 	 *	@return int							Position pour suite
 	 */
-	private function drawTotalTable(&$pdf, $object, $deja_regle, $posy, $outputlangs)
+	public function drawTotalTable(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
 	    global $conf,$mysoc;
 
@@ -1313,7 +1313,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 	 *   @param		string		$currency		Currency code
 	 *   @return	void
 	 */
-	private function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '')
+	public function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '')
 	{
 		global $conf;
 
@@ -1362,7 +1362,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 	 *  @param	string		$titlekey		Translation key to show as title of document
 	 *  @return	void
 	 */
-	private function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $titlekey = "PdfOrderTitle")
+	public function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $titlekey = "PdfOrderTitle")
 	{
 		global $conf,$langs,$hookmanager;
 
@@ -1573,7 +1573,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 	 *      @param	int			$hidefreetext		1=Hide free text
 	 *      @return	int								Return height of bottom margin including footer text
 	 */
-	private function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
+	public function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
 		global $conf;
 		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;

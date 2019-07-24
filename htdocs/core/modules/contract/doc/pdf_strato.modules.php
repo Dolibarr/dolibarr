@@ -519,7 +519,7 @@ class pdf_strato extends ModelePDFContract
 	 *   @param		int			$hidebottom		Hide bottom bar of array
 	 *   @return	void
 	 */
-	private function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0)
+	public function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0)
 	{
 		global $conf;
 
@@ -566,7 +566,7 @@ class pdf_strato extends ModelePDFContract
      * @param   Translate   $outputlangs    Object language for output
      * @return void
      */
-    private function tabSignature(&$pdf, $tab_top, $tab_height, $outputlangs)
+    public function tabSignature(&$pdf, $tab_top, $tab_height, $outputlangs)
     {
 		$pdf->SetDrawColor(128, 128, 128);
 		$posmiddle = $this->marge_gauche + round(($this->page_largeur - $this->marge_gauche - $this->marge_droite)/2);
@@ -594,7 +594,7 @@ class pdf_strato extends ModelePDFContract
      *  @param  Translate	$outputlangs	Object lang for output
      *  @return	void
      */
-    private function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
+    public function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
     {
 		global $conf,$langs;
 
@@ -773,7 +773,7 @@ class pdf_strato extends ModelePDFContract
 	 *      @param	int			$hidefreetext		1=Hide free text
 	 *      @return	integer
 	 */
-	private function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
+	public function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
 		global $conf;
 		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
