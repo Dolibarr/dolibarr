@@ -1,9 +1,7 @@
 # Dolibarr language file - Source file is en_US - members
-MembersArea=Mitgliederbereich
 MemberCard=Mitgliederkarte
 ShowMember=Mitgliederkarte anzeigen
 UserNotLinkedToMember=Benutzer nicht mit einem Mitglied verknüpft
-ThirdpartyNotLinkedToMember=Partner nicht mit einem Mitglied verknüpft
 FundationMembers=Gründungsmitglieder
 ListOfValidatedPublicMembers=Liste der verifizierten öffentlichen Mitglieder
 ErrorMemberIsAlreadyLinkedToThisThirdParty=Ein anderes Mitglied (Name: <b>%s</b>, login: <b>%s</b>) ist schon mit Partner <b>%s</b> verknüpft. Entfernen Sie zuerst die Verknüpfung, da immer nur ein Mitglied zugewiesen sein kann (und umgekehrt).
@@ -23,9 +21,7 @@ MemberStatusDraft=Entwürfe (benötigen Bestätigung)
 MemberStatusDraftShort=Entwurf
 Subscriptions=Abonnemente
 ListOfSubscriptions=Liste der Abonnemente
-SendCardByMail=Karte per E-Mail senden
 NewMemberType=Neue Mitgliederart
-WelcomeEMail=Begrüssungsemail
 SubscriptionRequired=Abonnement notwendig
 VoteAllowed=Abstimmen erlaubt
 ShowSubscription=Abonnement anzeigen
@@ -37,4 +33,5 @@ MembersStatisticsByCountries=Mitgliederstatistik nach Land
 MembersStatisticsByState=Mitgliederstatistik nach Kanton
 MembersStatisticsByTown=Mitgliederstatistik nach Ort
 NoValidatedMemberYet=Keine verifizierten Mitglieder gefunden
+LatestSubscriptionDate=Enddatum des Abonnementes
 Public=Informationen sind öffentlich

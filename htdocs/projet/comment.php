@@ -37,15 +37,15 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'companies'));
 
-$id=GETPOST('id','int');
-$idcomment=GETPOST('idcomment','int');
-$ref=GETPOST("ref",'alpha',1);          // task ref
-$objectref=GETPOST("taskref",'alpha');    // task ref
-$action=GETPOST('action','alpha');
-$confirm=GETPOST('confirm','alpha');
-$withproject=GETPOST('withproject','int');
-$project_ref=GETPOST('project_ref','alpha');
-$planned_workload=((GETPOST('planned_workloadhour','int')!='' || GETPOST('planned_workloadmin','int')!='') ? (GETPOST('planned_workloadhour','int')>0?GETPOST('planned_workloadhour','int')*3600:0) + (GETPOST('planned_workloadmin','int')>0?GETPOST('planned_workloadmin','int')*60:0) : '');
+$id=GETPOST('id', 'int');
+$idcomment=GETPOST('idcomment', 'int');
+$ref=GETPOST("ref", 'alpha', 1);          // task ref
+$objectref=GETPOST("taskref", 'alpha');    // task ref
+$action=GETPOST('action', 'alpha');
+$confirm=GETPOST('confirm', 'alpha');
+$withproject=GETPOST('withproject', 'int');
+$project_ref=GETPOST('project_ref', 'alpha');
+$planned_workload=((GETPOST('planned_workloadhour', 'int')!='' || GETPOST('planned_workloadmin', 'int')!='') ? (GETPOST('planned_workloadhour', 'int')>0?GETPOST('planned_workloadhour', 'int')*3600:0) + (GETPOST('planned_workloadmin', 'int')>0?GETPOST('planned_workloadmin', 'int')*60:0) : '');
 
 // Security check
 $socid=0;
@@ -64,7 +64,7 @@ $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 // Load object
 if ($id > 0 || ! empty($ref))
 {
-	$ret = $object->fetch($id,$ref);	// If we create project, ref may be defined into POST but record does not yet exists into database
+	$ret = $object->fetch($id, $ref);	// If we create project, ref may be defined into POST but record does not yet exists into database
 	if ($ret > 0) {
 		$object->fetch_thirdparty();
 		if(! empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($object, 'fetchComments') && empty($object->comments)) $object->fetchComments();
@@ -159,7 +159,7 @@ print '</td></tr>';
 
 // Categories
 if ($conf->categorie->enabled) {
-	print '<tr><td valign="middle">' . $langs->trans("Categories") . '</td><td>';
+	print '<tr><td class="valignmiddle">' . $langs->trans("Categories") . '</td><td>';
 	print $form->showCategories($object->id, 'project', 1);
 	print "</td></tr>";
 }

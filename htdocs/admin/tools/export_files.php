@@ -30,22 +30,22 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 $langs->load("admin");
 
-$action=GETPOST('action','alpha');
-$what=GETPOST('what','alpha');
-$export_type=GETPOST('export_type','alpha');
-$file=GETPOST('zipfilename_template','alpha');
+$action=GETPOST('action', 'alpha');
+$what=GETPOST('what', 'alpha');
+$export_type=GETPOST('export_type', 'alpha');
+$file=GETPOST('zipfilename_template', 'alpha');
 $compression = GETPOST('compression');
 
 $file = dol_sanitizeFileName($file);
 
-$sortfield = GETPOST('sortfield','alpha');
-$sortorder = GETPOST('sortorder','alpha');
-$page = GETPOST("page",'int');
+$sortfield = GETPOST('sortfield', 'alpha');
+$sortorder = GETPOST('sortorder', 'alpha');
+$page = GETPOST("page", 'int');
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="date";
 if ($page < 0) { $page = 0; }
 elseif (empty($page)) $page = 0;
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
 $offset = $limit * $page;
 
 if (! $user->admin) accessforbidden();
@@ -115,7 +115,7 @@ if ($compression == 'zip')
     $ret = dol_compress_dir(DOL_DATA_ROOT, $outputdir."/".$file, $compression);
     if ($ret < 0)
     {
-        $errormsg = $langs->trans("ErrorFailedToWriteInDir",$outputfile);
+        $errormsg = $langs->trans("ErrorFailedToWriteInDir", $outputfile);
     }
 }
 elseif (in_array($compression, array('gz', 'bz')))
@@ -125,7 +125,7 @@ elseif (in_array($compression, array('gz', 'bz')))
     $cmd = 'tar -cf '.$outputdir."/".$file." --exclude=documents/admin/documents -C ".DOL_DATA_ROOT." ".DOL_DATA_ROOT."/../documents/";
     exec($cmd, $out, $retval);
     //var_dump($cmd, DOL_DATA_ROOT);exit;
-
+    
     if ($retval != 0)
     {
         $langs->load("errors");
@@ -142,7 +142,7 @@ elseif (in_array($compression, array('gz', 'bz')))
         {
             $cmd = "bzip2 " . $outputdir."/".$file;
         }
-
+        
         exec($cmd, $out, $retval);
         if ($retval != 0)
         {
@@ -166,4 +166,3 @@ header("Location: dolibarr_export.php");
 $time_end = time();
 
 $db->close();
-

@@ -5,5 +5,4 @@ Permission93=Eliminar impuestos e IGV
 DictionaryVAT=Tasa de IGV (Impuesto sobre ventas en EEUU)
 UnitPriceOfProduct=Precio unitario sin IGV de un producto
 OptionVatMode=Opción de carga de IGV
-OptionVatDefaultDesc=La carga del IGV es: <br>-en el envío de los bienes (en la práctica se usa la fecha de la factura)<br>-sobre el pago por los servicios
-OptionVatDebitOptionDesc=La carga del IGV es: <br>-en el envío de los bienes (en la práctica se usa la fecha de la factura)<br>-sobre la facturación de los servicios
+OperationParamDesc=Define values to use for action, or how to extract values. For example:<br>objproperty1=SET:abc<br>objproperty1=SET:a value with replacement of __objproperty1__<br>objproperty3=SETIFEMPTY:abc<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey.*[^\\s]+(.*)<br>options_myextrafield=EXTRACT:SUBJECT:([^\\s]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a ; char as separator to extract or set several properties.

@@ -114,7 +114,7 @@ if ($massaction == 'presend')
 
 	$formmail->withoptiononeemailperrecipient = ((count($listofselectedref) == 1 && count(reset($listofselectedref)) == 1) || empty($liste)) ? 0 : ((GETPOST('oneemailperrecipient')=='on')?1:-1);
 
-	$formmail->withto = empty($liste)?(GETPOST('sendto','alpha')?GETPOST('sendto','alpha'):array()):$liste;
+	$formmail->withto = empty($liste)?(GETPOST('sendto', 'alpha')?GETPOST('sendto', 'alpha'):array()):$liste;
 	$formmail->withtofree = empty($liste)?1:0;
 	$formmail->withtocc = 1;
 	$formmail->withtoccc = $conf->global->MAIN_EMAIL_USECCC;

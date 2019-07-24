@@ -81,14 +81,14 @@ if ($filesToProcess == 'all')
 {
 	$dir = new DirectoryIterator('htdocs/langs/'.$lPrimary);
 	while($dir->valid()) {
-		if(!$dir->isDot() && $dir->isFile() && ! preg_match('/^\./',$dir->getFilename())) {
+		if(!$dir->isDot() && $dir->isFile() && ! preg_match('/^\./', $dir->getFilename())) {
 			$files[] =  $dir->getFilename();
 		}
 		$dir->next();
 	}
 	$filesToProcess=$files;
 }
-else $filesToProcess=explode(',',$filesToProcess);
+else $filesToProcess=explode(',', $filesToProcess);
 
 // Arguments should be OK here.
 
@@ -256,7 +256,7 @@ foreach($filesToProcess as $fileToProcess)
 
 		print "Read Primary File $lPrimaryFile and write ".$output.":\n";
 
-		fwrite($oh, "# Dolibarr language file - Source file is en_US - ".(preg_replace('/\.lang$/','',$fileToProcess))."\n");
+		fwrite($oh, "# Dolibarr language file - Source file is en_US - ".(preg_replace('/\.lang$/', '', $fileToProcess))."\n");
 
 		$cnt = 0;
 		while (($line = fgets($handle)) !== false)
@@ -306,11 +306,11 @@ foreach($filesToProcess as $fileToProcess)
 			//print "Found primary key = ".$key."\n";
 
 			// Key not in other file
-			if (in_array($key, $arrayofkeytoalwayskeep) || preg_match('/^FormatDate/',$key) || preg_match('/^FormatHour/',$key))
+			if (in_array($key, $arrayofkeytoalwayskeep) || preg_match('/^FormatDate/', $key) || preg_match('/^FormatHour/', $key))
 			{
 				//print "Key $key is a key we always want to see into secondary file (line: $cnt).\n";
 			}
-			else if ( ! array_key_exists($key, $aSecondary))
+			elseif ( ! array_key_exists($key, $aSecondary))
 			{
 				//print "Key $key does NOT exist in secondary language (line: $cnt).\n";
 				continue;
@@ -320,7 +320,7 @@ foreach($filesToProcess as $fileToProcess)
 			if (
 				(! empty($aSecondary[$key]) && $aSecondary[$key] != $aPrimary[$key]
 			    && ! empty($aEnglish[$key]) && $aSecondary[$key] != $aEnglish[$key])
-				|| in_array($key, $arrayofkeytoalwayskeep) || preg_match('/^FormatDate/',$key) || preg_match('/^FormatHour/',$key)
+				|| in_array($key, $arrayofkeytoalwayskeep) || preg_match('/^FormatDate/', $key) || preg_match('/^FormatHour/', $key)
 				)
 			{
 				//print "Key $key differs (aSecondary=".$aSecondary[$key].", aPrimary=".$aPrimary[$key].", aEnglish=".$aEnglish[$key].") so we add it into new secondary language (line: $cnt).\n";

@@ -69,7 +69,7 @@ class PaymentTerm // extends CommonObject
      *
 	 * 	@param	DoliDB		$db			Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
     }
@@ -82,7 +82,7 @@ class PaymentTerm // extends CommonObject
      *      @param      int		$notrigger	    0=launch triggers after, 1=disable triggers
      *      @return     int       			  	<0 if KO, Id of created object if OK
      */
-    function create($user, $notrigger=0)
+    public function create($user, $notrigger = 0)
     {
     	global $conf, $langs;
 		$error=0;
@@ -173,7 +173,7 @@ class PaymentTerm // extends CommonObject
      *    @param      int		$id     Id object
      *    @return     int         		<0 if KO, >0 if OK
      */
-    function fetch($id)
+    public function fetch($id)
     {
     	global $langs;
         $sql = "SELECT";
@@ -229,7 +229,7 @@ class PaymentTerm // extends CommonObject
      *
      *    @return     int         <0 if KO, >0 if OK
      */
-	function getDefaultId()
+	public function getDefaultId()
 	{
 		global $langs;
 
@@ -262,13 +262,13 @@ class PaymentTerm // extends CommonObject
 
 
 	/**
-     *      Update database
+     *  Update database
      *
-     *      @param      User	$user        	User that modify
-     *      @param      int		$notrigger	    0=launch triggers after, 1=disable triggers
-     *      @return     int       			  	<0 if KO, >0 if OK
+     *  @param      User	$user        	User that modify
+     *  @param      int		$notrigger	    0=launch triggers after, 1=disable triggers
+     *  @return     int       			  	<0 if KO, >0 if OK
      */
-	function update($user=null, $notrigger=0)
+	public function update($user = null, $notrigger = 0)
 	{
 		global $conf, $langs;
 
@@ -345,7 +345,7 @@ class PaymentTerm // extends CommonObject
 	 *  @param      int		$notrigger	0=launch triggers after, 1=disable triggers
 	 *	@return		int					<0 if KO, >0 if OK
 	 */
-	function delete($user, $notrigger=0)
+	public function delete($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error=0;
@@ -391,15 +391,14 @@ class PaymentTerm // extends CommonObject
 
 
 	/**
-	 *		Load an object from its id and create a new one in database
+	 *  Load an object from its id and create a new one in database
 	 *
-	 *		@param      int		$fromid     Id of object to clone
-	 * 	 	@return		int					New id of clone
+	 *  @param	    User	$user		User making the clone
+	 *  @param      int		$fromid     Id of object to clone
+	 *  @return		int					New id of clone
 	 */
-	function createFromClone($fromid)
+	public function createFromClone(User $user, $fromid)
 	{
-		global $user,$langs;
-
 		$error=0;
 
 		$object=new PaymentTerm($this->db);
@@ -425,10 +424,6 @@ class PaymentTerm // extends CommonObject
 			$error++;
 		}
 
-		//if (! $error)
-		//{
-		//}
-
 		unset($object->context['createfromclone']);
 
 		// End
@@ -445,15 +440,15 @@ class PaymentTerm // extends CommonObject
 	}
 
 
-	/**
+    /**
      *  Initialise an instance with random values.
      *  Used to build previews or test instances.
      *	id must be 0 if object instance is a specimen.
      *
      *  @return	void
-	 */
-	function initAsSpecimen()
-	{
+     */
+    public function initAsSpecimen()
+    {
 		$this->id=0;
 
 		$this->code='';

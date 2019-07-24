@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'users', 'other'));
 
-$action=GETPOST('action','aZ09');
+$action=GETPOST('action', 'aZ09');
 
 if (!$user->admin) accessforbidden();
 
@@ -43,7 +43,7 @@ if (!$user->admin) accessforbidden();
 if ($action == 'add')
 {
     $sql = "UPDATE ".MAIN_DB_PREFIX."rights_def SET bydefault=1";
-    $sql.= " WHERE id = ".GETPOST("pid",'int');
+    $sql.= " WHERE id = ".GETPOST("pid", 'int');
     $sql.= " AND entity = ".$conf->entity;
     $db->query($sql);
 }
@@ -51,7 +51,7 @@ if ($action == 'add')
 if ($action == 'remove')
 {
     $sql = "UPDATE ".MAIN_DB_PREFIX."rights_def SET bydefault=0";
-    $sql.= " WHERE id = ".GETPOST('pid','int');
+    $sql.= " WHERE id = ".GETPOST('pid', 'int');
     $sql.= " AND entity = ".$conf->entity;
     $db->query($sql);
 }
@@ -62,9 +62,9 @@ if ($action == 'remove')
  */
 
 $wikihelp='EN:Setup_Security|FR:Paramétrage_Sécurité|ES:Configuración_Seguridad';
-llxHeader('',$langs->trans("DefaultRights"), $wikihelp);
+llxHeader('', $langs->trans("DefaultRights"), $wikihelp);
 
-print load_fiche_titre($langs->trans("SecuritySetup"),'','title_setup');
+print load_fiche_titre($langs->trans("SecuritySetup"), '', 'title_setup');
 
 print $langs->trans("DefaultRightsDesc");
 print " ".$langs->trans("OnlyActiveElementsAreShown")."<br><br>\n";
@@ -187,7 +187,7 @@ if ($result)
 
         print '<tr class="oddeven">';
         print '<td>';
-        print img_object('',$picto,'class="pictoobjectwidth"').' '.$objMod->getName();
+        print img_object('', $picto, 'class="pictoobjectwidth"').' '.$objMod->getName();
         print '<a name="'.$objMod->getName().'">&nbsp;</a>';
 		print '</td>';
 
@@ -197,7 +197,7 @@ if ($result)
         print '<td align="center">';
         if ($obj->bydefault == 1)
         {
-            print img_picto($langs->trans("Active"),'tick');
+            print img_picto($langs->trans("Active"), 'tick');
             print '</td><td>';
             print '<a class="reposition" href="perms.php?pid='.$obj->id.'&amp;action=remove">'.img_edit_remove().'</a>';
         }

@@ -17,7 +17,7 @@
  */
 
 /**
- * \file    datapolicy/admin/setup.php
+ * \file    htdocs/datapolicy/admin/setup.php
  * \ingroup datapolicy
  * \brief   datapolicy setup page.
  */
@@ -30,11 +30,11 @@ if (!defined('NOREQUIREMENU'))
     define('NOREQUIREMENU', '1');
 
 require '../../main.inc.php';
-dol_include_once('/contact/class/contact.class.php');
-dol_include_once('/societe/class/societe.class.php');
-dol_include_once('/adherents/class/adherent.class.php');
-dol_include_once('/user/class/user.class.php');
-dol_include_once('/datapolicy/class/datapolicy.class.php');
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+require_once DOL_DOCUMENT_ROOT.'/datapolicy/class/datapolicy.class.php';
 
 $idc = GETPOST('c', 'int');
 $ids = GETPOST('s', 'int');
@@ -45,7 +45,7 @@ $code = GETPOST('key', 'alpha');
 
 $acc = "DATAPOLICIESACCEPT_" . $lang;
 $ref = "DATAPOLICIESREFUSE_" . $lang;
-$langs->load('datapolicy@datapolicy',0,0,$lang);
+$langs->load('datapolicy@datapolicy', 0, 0, $lang);
 
 if (empty($action) || (empty($idc) && empty($ids) && empty($ida))) {
     return 0;

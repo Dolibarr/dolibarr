@@ -34,7 +34,7 @@ class TaskStats extends Stats
      *
      * @param   DoliDb  $db     Database handler
      */
-	function __construct($db)
+	public function __construct($db)
 	{
 		$this->db = $db;
 
@@ -50,7 +50,7 @@ class TaskStats extends Stats
 	 * @return array|int       Array with value or -1 if error
 	 * @throws Exception
 	 */
-	function getAllTaskByStatus($limit = 5)
+	public function getAllTaskByStatus($limit = 5)
 	{
 		global $conf, $user, $langs;
 
@@ -107,7 +107,7 @@ class TaskStats extends Stats
 	 *
 	 * @return array of values
 	 */
-	function getAllByYear()
+	public function getAllByYear()
 	{
 		global $conf, $user, $langs;
 
@@ -166,7 +166,7 @@ class TaskStats extends Stats
      * @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
 	 * @return 	array 				Array of values
 	 */
-	function getNbByMonth($year, $format=0)
+	public function getNbByMonth($year, $format = 0)
 	{
 		global $user;
 

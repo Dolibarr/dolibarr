@@ -30,11 +30,11 @@ class MenuManager
      */
     public $db;
 
-	var $type_user=0;					// Put 0 for internal users, 1 for external users
-	var $atarget="";               		// To store default target to use onto links
+    public $type_user=0;					// Put 0 for internal users, 1 for external users
+    public $atarget="";               		// To store default target to use onto links
 
-	var $menu;
-	var $menu_array_after;
+    public $menu;
+    public $menu_array_after;
 
 
 	/**
@@ -43,7 +43,7 @@ class MenuManager
 	 *  @param	DoliDB		$db     		Database handler
      *  @param	int			$type_user		Type of user
 	 */
-	function __construct($db, $type_user)
+	public function __construct($db, $type_user)
 	{
 		$this->type_user=$type_user;
 		$this->db=$db;
@@ -55,7 +55,7 @@ class MenuManager
 	 *
 	 * @return	void
 	 */
-	function loadMenu()
+	public function loadMenu()
 	{
 	}
 
@@ -67,7 +67,7 @@ class MenuManager
      *  @param	array	$moredata		An array with more data to output
      *  @return int                     0 or nb of top menu entries if $mode = 'topnb'
 	 */
-	function showmenu($mode, $moredata=null)
+	public function showmenu($mode, $moredata = null)
 	{
 		global $user,$conf,$langs,$dolibarr_main_db_name;
 
@@ -90,7 +90,7 @@ class MenuManager
 		{
 			if (empty($noout)) print_start_menu_array_empty();
 
-			$usemenuhider = (GETPOST('testmenuhider','int') || ! empty($conf->global->MAIN_TESTMENUHIDER));
+            $usemenuhider = 1;
 
 			// Show/Hide vertical menu
 			if ($mode != 'jmobile' && $mode != 'topnb' && $usemenuhider &&  empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
@@ -116,13 +116,13 @@ class MenuManager
 			// Output menu entries
 			foreach($this->menu->liste as $menkey => $menuval)
 			{
-			    if (empty($noout)) print_start_menu_entry_empty($menuval['idsel'],$menuval['classname'],$menuval['enabled']);
+			    if (empty($noout)) print_start_menu_entry_empty($menuval['idsel'], $menuval['classname'], $menuval['enabled']);
 			    if (empty($noout)) print_text_menu_entry_empty($menuval['titre'], $menuval['enabled'], ($menuval['url']!='#'?DOL_URL_ROOT:'').$menuval['url'], $menuval['id'], $menuval['idsel'], $menuval['classname'], ($menuval['target']?$menuval['target']:$atarget));
 			    if (empty($noout)) print_end_menu_entry_empty($menuval['enabled']);
 			}
 
 			$showmode=1;
-			if (empty($noout)) print_start_menu_entry_empty('','class="tmenuend"',$showmode);
+			if (empty($noout)) print_start_menu_entry_empty('', 'class="tmenuend"', $showmode);
 			if (empty($noout)) print_end_menu_entry_empty($showmode);
 
 			if (empty($noout)) print_end_menu_array_empty();
@@ -159,8 +159,8 @@ class MenuManager
 
 		        if ($val['enabled'] == 1)
 		        {
-		            $relurl=dol_buildpath($val['url'],1);
-		            $canonurl=preg_replace('/\?.*$/','',$val['url']);
+		            $relurl=dol_buildpath($val['url'], 1);
+		            $canonurl=preg_replace('/\?.*$/', '', $val['url']);
 
 		            print '<a class="alilevel0" href="#">';
 
@@ -176,38 +176,38 @@ class MenuManager
 		            $submenu=new Menu();
 
 		            $langs->load("admin");  // Load translation file admin.lang
-		            $submenu->add("/admin/index.php?leftmenu=setup", $langs->trans("Setup"),0);
-		            $submenu->add("/admin/company.php", $langs->trans("MenuCompanySetup"),1);
-		            $submenu->add("/admin/modules.php", $langs->trans("Modules"),1);
-		            $submenu->add("/admin/menus.php", $langs->trans("Menus"),1);
-		            $submenu->add("/admin/ihm.php", $langs->trans("GUISetup"),1);
-		            $submenu->add("/admin/translation.php?mainmenu=home", $langs->trans("Translation"),1);
-		            $submenu->add("/admin/defaultvalues.php?mainmenu=home", $langs->trans("DefaultValues"),1);
+		            $submenu->add("/admin/index.php?leftmenu=setup", $langs->trans("Setup"), 0);
+		            $submenu->add("/admin/company.php", $langs->trans("MenuCompanySetup"), 1);
+		            $submenu->add("/admin/modules.php", $langs->trans("Modules"), 1);
+		            $submenu->add("/admin/menus.php", $langs->trans("Menus"), 1);
+		            $submenu->add("/admin/ihm.php", $langs->trans("GUISetup"), 1);
+		            $submenu->add("/admin/translation.php?mainmenu=home", $langs->trans("Translation"), 1);
+		            $submenu->add("/admin/defaultvalues.php?mainmenu=home", $langs->trans("DefaultValues"), 1);
 
-		            $submenu->add("/admin/boxes.php", $langs->trans("Boxes"),1);
-		            $submenu->add("/admin/delais.php",$langs->trans("Alerts"),1);
-		            $submenu->add("/admin/proxy.php?mainmenu=home", $langs->trans("Security"),1);
-		            $submenu->add("/admin/limits.php?mainmenu=home", $langs->trans("MenuLimits"),1);
-		            $submenu->add("/admin/pdf.php?mainmenu=home", $langs->trans("PDF"),1);
-		            $submenu->add("/admin/mails.php?mainmenu=home", $langs->trans("Emails"),1);
-		            $submenu->add("/admin/sms.php?mainmenu=home", $langs->trans("SMS"),1);
-		            $submenu->add("/admin/dict.php?mainmenu=home", $langs->trans("DictionarySetup"),1);
-		            $submenu->add("/admin/const.php?mainmenu=home", $langs->trans("OtherSetup"),1);
+		            $submenu->add("/admin/boxes.php", $langs->trans("Boxes"), 1);
+		            $submenu->add("/admin/delais.php", $langs->trans("Alerts"), 1);
+		            $submenu->add("/admin/proxy.php?mainmenu=home", $langs->trans("Security"), 1);
+		            $submenu->add("/admin/limits.php?mainmenu=home", $langs->trans("MenuLimits"), 1);
+		            $submenu->add("/admin/pdf.php?mainmenu=home", $langs->trans("PDF"), 1);
+		            $submenu->add("/admin/mails.php?mainmenu=home", $langs->trans("Emails"), 1);
+		            $submenu->add("/admin/sms.php?mainmenu=home", $langs->trans("SMS"), 1);
+		            $submenu->add("/admin/dict.php?mainmenu=home", $langs->trans("DictionarySetup"), 1);
+		            $submenu->add("/admin/const.php?mainmenu=home", $langs->trans("OtherSetup"), 1);
 
 		            //if ($tmpmainmenu.'-'.$tmpleftmenu == 'home-all') { var_dump($submenu); exit; }
 		            //if ($tmpmainmenu=='accountancy') { var_dump($submenu->liste); exit; }
-		            $nexturl=dol_buildpath($submenu->liste[0]['url'],1);
+		            $nexturl=dol_buildpath($submenu->liste[0]['url'], 1);
 
-		            $canonrelurl=preg_replace('/\?.*$/','',$relurl);
-		            $canonnexturl=preg_replace('/\?.*$/','',$nexturl);
+		            $canonrelurl=preg_replace('/\?.*$/', '', $relurl);
+		            $canonnexturl=preg_replace('/\?.*$/', '', $nexturl);
 		            //var_dump($canonrelurl);
 		            //var_dump($canonnexturl);
 		            print '<ul>'."\n";
-		            if (($canonrelurl != $canonnexturl && ! in_array($val['mainmenu'],array('tools')))
-		                || (strpos($canonrelurl,'/product/index.php') !== false || strpos($canonrelurl,'/compta/bank/list.php') !== false))
+		            if (($canonrelurl != $canonnexturl && ! in_array($val['mainmenu'], array('tools')))
+		                || (strpos($canonrelurl, '/product/index.php') !== false || strpos($canonrelurl, '/compta/bank/list.php') !== false))
 		            {
 		                // We add sub entry
-		                print str_pad('',1).'<li class="lilevel1 ui-btn-icon-right ui-btn">';	 // ui-btn to highlight on clic
+		                print str_pad('', 1).'<li class="lilevel1 ui-btn-icon-right ui-btn">';	 // ui-btn to highlight on clic
 		                print '<a href="'.$relurl.'">';
 		                if ($langs->trans(ucfirst($val['mainmenu'])."Dashboard") == ucfirst($val['mainmenu'])."Dashboard")  // No translation
 		                {
@@ -225,7 +225,7 @@ class MenuManager
 		                {
 		                    $lastlevel[0]='enabled';
 		                }
-		                else if ($showmenu)                 // Not enabled but visible (so greyed)
+		                elseif ($showmenu)                 // Not enabled but visible (so greyed)
 		                {
 		                    $lastlevel[0]='greyed';
 		                }
@@ -258,10 +258,10 @@ class MenuManager
 		                	$substitarray['__USERID__'] = $user->id;	// For backward compatibility
 		                	$val2['url'] = make_substitutions($val2['url'], $substitarray);
 
-		                    $relurl2=dol_buildpath($val2['url'],1);
-		                    $canonurl2=preg_replace('/\?.*$/','',$val2['url']);
+		                    $relurl2=dol_buildpath($val2['url'], 1);
+		                    $canonurl2=preg_replace('/\?.*$/', '', $val2['url']);
 		                    //var_dump($val2['url'].' - '.$canonurl2.' - '.$val2['level']);
-		                    if (in_array($canonurl2,array('/admin/index.php','/admin/tools/index.php','/core/tools.php'))) $relurl2='';
+		                    if (in_array($canonurl2, array('/admin/index.php','/admin/tools/index.php','/core/tools.php'))) $relurl2='';
 
 		                    $disabled='';
 		                    if (! $val2['enabled'])
@@ -269,7 +269,7 @@ class MenuManager
 		                        $disabled=" vsmenudisabled";
 		                    }
 
-		                    print str_pad('',$val2['level']+1);
+		                    print str_pad('', $val2['level']+1);
 		                    print '<li class="lilevel'.($val2['level']+1);
 		                    if ($val2['level']==0) print ' ui-btn-icon-right ui-btn';  // ui-btn to highlight on clic
 		                    print $disabled.'">';	 // ui-btn to highlight on clic
@@ -330,23 +330,23 @@ class MenuManager
 			// ***** START *****
 
 			$langs->load("admin");  // Load translation file admin.lang
-			$this->menu->add("/admin/index.php?leftmenu=setup", $langs->trans("Setup"),0);
-			$this->menu->add("/admin/company.php", $langs->trans("MenuCompanySetup"),1);
-			$this->menu->add("/admin/modules.php", $langs->trans("Modules"),1);
-			$this->menu->add("/admin/menus.php", $langs->trans("Menus"),1);
-			$this->menu->add("/admin/ihm.php", $langs->trans("GUISetup"),1);
-			$this->menu->add("/admin/translation.php?mainmenu=home", $langs->trans("Translation"),1);
-			$this->menu->add("/admin/defaultvalues.php?mainmenu=home", $langs->trans("DefaultValues"),1);
+			$this->menu->add("/admin/index.php?leftmenu=setup", $langs->trans("Setup"), 0);
+			$this->menu->add("/admin/company.php", $langs->trans("MenuCompanySetup"), 1);
+			$this->menu->add("/admin/modules.php", $langs->trans("Modules"), 1);
+			$this->menu->add("/admin/menus.php", $langs->trans("Menus"), 1);
+			$this->menu->add("/admin/ihm.php", $langs->trans("GUISetup"), 1);
+			$this->menu->add("/admin/translation.php?mainmenu=home", $langs->trans("Translation"), 1);
+			$this->menu->add("/admin/defaultvalues.php?mainmenu=home", $langs->trans("DefaultValues"), 1);
 
-		    $this->menu->add("/admin/boxes.php", $langs->trans("Boxes"),1);
-			$this->menu->add("/admin/delais.php",$langs->trans("Alerts"),1);
-			$this->menu->add("/admin/proxy.php?mainmenu=home", $langs->trans("Security"),1);
-			$this->menu->add("/admin/limits.php?mainmenu=home", $langs->trans("MenuLimits"),1);
-			$this->menu->add("/admin/pdf.php?mainmenu=home", $langs->trans("PDF"),1);
-			$this->menu->add("/admin/mails.php?mainmenu=home", $langs->trans("Emails"),1);
-			$this->menu->add("/admin/sms.php?mainmenu=home", $langs->trans("SMS"),1);
-			$this->menu->add("/admin/dict.php?mainmenu=home", $langs->trans("DictionarySetup"),1);
-			$this->menu->add("/admin/const.php?mainmenu=home", $langs->trans("OtherSetup"),1);
+		    $this->menu->add("/admin/boxes.php", $langs->trans("Boxes"), 1);
+			$this->menu->add("/admin/delais.php", $langs->trans("Alerts"), 1);
+			$this->menu->add("/admin/proxy.php?mainmenu=home", $langs->trans("Security"), 1);
+			$this->menu->add("/admin/limits.php?mainmenu=home", $langs->trans("MenuLimits"), 1);
+			$this->menu->add("/admin/pdf.php?mainmenu=home", $langs->trans("PDF"), 1);
+			$this->menu->add("/admin/mails.php?mainmenu=home", $langs->trans("Emails"), 1);
+			$this->menu->add("/admin/sms.php?mainmenu=home", $langs->trans("SMS"), 1);
+			$this->menu->add("/admin/dict.php?mainmenu=home", $langs->trans("DictionarySetup"), 1);
+			$this->menu->add("/admin/const.php?mainmenu=home", $langs->trans("OtherSetup"), 1);
 
 			// ***** END *****
 
@@ -394,7 +394,7 @@ class MenuManager
 					if ($this->menu->liste[$i]['level'] == 0) {
 						if ($this->menu->liste[$i]['enabled'])
 						{
-							print '<div class="menu_titre">'.$tabstring.'<a class="vmenu" href="'.dol_buildpath($this->menu->liste[$i]['url'],1).'"'.($this->menu->liste[$i]['target']?' target="'.$this->menu->liste[$i]['target'].'"':'').'>'.$this->menu->liste[$i]['titre'].'</a></div>'."\n";
+							print '<div class="menu_titre">'.$tabstring.'<a class="vmenu" href="'.dol_buildpath($this->menu->liste[$i]['url'], 1).'"'.($this->menu->liste[$i]['target']?' target="'.$this->menu->liste[$i]['target'].'"':'').'>'.$this->menu->liste[$i]['titre'].'</a></div>'."\n";
 						}
 						else
 						{
@@ -406,14 +406,14 @@ class MenuManager
 					if ($this->menu->liste[$i]['level'] > 0)
 					{
         				$cssmenu = '';
-        				if ($this->menu->liste[$i]['url']) $cssmenu = ' menu_contenu'.dol_string_nospecial(preg_replace('/\.php.*$/','',$this->menu->liste[$i]['url']));
+        				if ($this->menu->liste[$i]['url']) $cssmenu = ' menu_contenu'.dol_string_nospecial(preg_replace('/\.php.*$/', '', $this->menu->liste[$i]['url']));
 
 					    print '<div class="menu_contenu'.$cssmenu.'">';
 
 						if ($this->menu->liste[$i]['enabled'])
 						{
 							print $tabstring;
-							if ($this->menu->liste[$i]['url']) print '<a class="vsmenu" href="'.dol_buildpath($this->menu->liste[$i]['url'],1).'"'.($this->menu->liste[$i]['target']?' target="'.$this->menu->liste[$i]['target'].'"':'').'>';
+							if ($this->menu->liste[$i]['url']) print '<a class="vsmenu" href="'.dol_buildpath($this->menu->liste[$i]['url'], 1).'"'.($this->menu->liste[$i]['target']?' target="'.$this->menu->liste[$i]['target'].'"':'').'>';
 							else print '<span class="vsmenu">';
 							if ($this->menu->liste[$i]['url']) print $this->menu->liste[$i]['titre'].'</a>';
 							else print '</span>';
@@ -424,7 +424,7 @@ class MenuManager
 						}
 
 						// If title is not pure text and contains a table, no carriage return added
-						if (! strstr($this->menu->liste[$i]['titre'],'<table')) print '<br>';
+						if (! strstr($this->menu->liste[$i]['titre'], '<table')) print '<br>';
 						print '</div>'."\n";
 					}
 
@@ -532,7 +532,7 @@ function print_start_menu_array_empty()
  * @param	int		$showmode	0 = hide, 1 = allowed or 2 = not allowed
  * @return	void
  */
-function print_start_menu_entry_empty($idsel,$classname,$showmode)
+function print_start_menu_entry_empty($idsel, $classname, $showmode)
 {
 	if ($showmode)
 	{
@@ -602,4 +602,3 @@ function print_end_menu_array_empty()
 	print '</div>';
 	print "\n";
 }
-

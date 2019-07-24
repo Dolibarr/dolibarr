@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2014 Olivier Geffroy       <jeff@jeffinfo.com>
- * Copyright (C) 2013-2014 Alexandre Spangaro    <aspangaro@zendsi.com>
+ * Copyright (C) 2013-2014 Alexandre Spangaro    <aspangaro@open-dsi.fr>
  * Copyright (C) 2013-2014 Florian Henry		<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 
 /**
  * \file		htdocs/accountancy/class/accountancysystem.class.php
- * \ingroup		Advanced accountancy
+ * \ingroup		Accountancy (Double entries)
  * \brief		File of class to manage accountancy systems
  */
 
@@ -64,10 +64,10 @@ class AccountancySystem
 	 *
 	 * @param DoliDB $db handler
 	 */
-    function __construct($db)
+    public function __construct($db)
     {
 		$this->db = $db;
-	}
+    }
 
 
 	/**
@@ -77,7 +77,7 @@ class AccountancySystem
 	 * @param 	string 	$ref             	   ref
 	 * @return 	int                            <0 if KO, Id of record if OK and found
 	 */
-	function fetch($rowid = 0, $ref = '')
+	public function fetch($rowid = 0, $ref = '')
 	{
 	    global $conf;
 
@@ -124,7 +124,7 @@ class AccountancySystem
 	 * @param User $user making insert
 	 * @return int if KO, Id of line if OK
 	 */
-    function create($user)
+    public function create($user)
     {
 		$now = dol_now();
 
@@ -142,15 +142,15 @@ class AccountancySystem
 				$result = $this->rowid;
 			} else {
 				$result = - 2;
-				$this->error = "AccountancySystem::Create Erreur $result";
+				$this->error = "AccountancySystem::Create Error $result";
 				dol_syslog($this->error, LOG_ERR);
 			}
 		} else {
 			$result = - 1;
-			$this->error = "AccountancySystem::Create Erreur $result";
+			$this->error = "AccountancySystem::Create Error $result";
 			dol_syslog($this->error, LOG_ERR);
 		}
 
-		return $result;
-	}
+        return $result;
+    }
 }

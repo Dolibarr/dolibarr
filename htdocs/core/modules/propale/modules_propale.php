@@ -42,7 +42,7 @@ abstract class ModelePDFPropales extends CommonDocGenerator
 	public $error='';
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return list of active generation modules
 	 *
@@ -50,7 +50,7 @@ abstract class ModelePDFPropales extends CommonDocGenerator
      *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
 	 */
-	static function liste_modeles($db,$maxfilenamelength=0)
+	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
         // phpcs:enable
 		global $conf;
@@ -59,7 +59,7 @@ abstract class ModelePDFPropales extends CommonDocGenerator
 		$liste=array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste=getListOfModels($db,$type,$maxfilenamelength);
+		$liste=getListOfModels($db, $type, $maxfilenamelength);
 
 		return $liste;
 	}
@@ -81,7 +81,7 @@ abstract class ModeleNumRefPropales
 	 *
 	 * @return	boolean     true if module can be used
 	 */
-	function isEnabled()
+	public function isEnabled()
 	{
 		return true;
 	}
@@ -91,7 +91,7 @@ abstract class ModeleNumRefPropales
 	 *
 	 * 	@return     string      Texte descripif
 	 */
-	function info()
+	public function info()
 	{
 		global $langs;
 		$langs->load("propale");
@@ -103,7 +103,7 @@ abstract class ModeleNumRefPropales
 	 *
 	 *  @return     string      Example
 	 */
-	function getExample()
+	public function getExample()
 	{
 		global $langs;
 		$langs->load("propale");
@@ -116,7 +116,7 @@ abstract class ModeleNumRefPropales
 	 *
 	 *  @return     boolean     false si conflit, true si ok
 	 */
-	function canBeActivated()
+	public function canBeActivated()
 	{
 		return true;
 	}
@@ -128,7 +128,7 @@ abstract class ModeleNumRefPropales
 	 *	@param		Propal		$propal		Object commercial proposal
 	 *	@return     string      Valeur
 	 */
-	function getNextValue($objsoc,$propal)
+	public function getNextValue($objsoc, $propal)
 	{
 		global $langs;
 		return $langs->trans("NotAvailable");
@@ -139,7 +139,7 @@ abstract class ModeleNumRefPropales
 	 *
 	 *  @return     string      Valeur
 	 */
-	function getVersion()
+	public function getVersion()
 	{
 		global $langs;
 		$langs->load("admin");

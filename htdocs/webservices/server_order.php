@@ -22,7 +22,7 @@
  *       \brief      File that is entry point to call Dolibarr WebServices
  */
 
-if (! defined("NOCSRFCHECK")) define("NOCSRFCHECK",'1');
+if (! defined("NOCSRFCHECK")) define("NOCSRFCHECK", '1');
 
 require '../master.inc.php';
 require_once NUSOAP_PATH.'/nusoap.php';        // Include SOAP
@@ -40,7 +40,7 @@ if (empty($conf->global->MAIN_MODULE_WEBSERVICES))
 {
 	$langs->load("admin");
 	dol_syslog("Call Dolibarr webservices interfaces with module webservices disabled");
-	print $langs->trans("WarningModuleNotActive",'WebServices').'.<br><br>';
+	print $langs->trans("WarningModuleNotActive", 'WebServices').'.<br><br>';
 	print $langs->trans("ToActivateModule");
 	exit;
 }
@@ -50,7 +50,7 @@ $server = new nusoap_server();
 $server->soap_defencoding='UTF-8';
 $server->decode_utf8=false;
 $ns='http://www.dolibarr.org/ns/';
-$server->configureWSDL('WebServicesDolibarrOrder',$ns);
+$server->configureWSDL('WebServicesDolibarrOrder', $ns);
 $server->wsdl->schemaTargetNamespace=$ns;
 
 
@@ -114,7 +114,7 @@ $line_fields = array(
 //Retreive all extrafield for thirdsparty
 // fetch optionals attributes and labels
 $extrafields=new ExtraFields($db);
-$extralabels=$extrafields->fetch_name_optionals_label('commandedet',true);
+$extralabels=$extrafields->fetch_name_optionals_label('commandedet', true);
 $extrafield_line_array=null;
 if (is_array($extrafields) && count($extrafields)>0) {
 	$extrafield_line_array = array();
@@ -127,7 +127,7 @@ foreach($extrafields->attribute_label as $key=>$label)
 	else {$type='xsd:string';}
 	$extrafield_line_array['options_'.$key]=array('name'=>'options_'.$key,'type'=>$type);
 }
-if (is_array($extrafield_line_array)) $line_fields=array_merge($line_fields,$extrafield_line_array);
+if (is_array($extrafield_line_array)) $line_fields=array_merge($line_fields, $extrafield_line_array);
 
 // Define other specific objects
 $server->wsdl->addComplexType(
@@ -214,7 +214,7 @@ $order_fields = array(
 //Retreive all extrafield for thirdsparty
 // fetch optionals attributes and labels
 $extrafields=new ExtraFields($db);
-$extralabels=$extrafields->fetch_name_optionals_label('commande',true);
+$extralabels=$extrafields->fetch_name_optionals_label('commande', true);
 $extrafield_array=null;
 if (is_array($extrafields) && count($extrafields)>0) {
 	$extrafield_array = array();
@@ -227,7 +227,7 @@ foreach($extrafields->attribute_label as $key=>$label)
 	else {$type='xsd:string';}
 	$extrafield_array['options_'.$key]=array('name'=>'options_'.$key,'type'=>$type);
 }
-if (is_array($extrafield_array)) $order_fields=array_merge($order_fields,$extrafield_array);
+if (is_array($extrafield_array)) $order_fields=array_merge($order_fields, $extrafield_array);
 
 $server->wsdl->addComplexType(
 		'order',
@@ -344,7 +344,7 @@ $server->register(
  * @param	string		$ref_ext			Ref_ext
  * @return	array							Array result
  */
-function getOrder($authentication,$id='',$ref='',$ref_ext='')
+function getOrder($authentication, $id = '', $ref = '', $ref_ext = '')
 {
 	global $db,$conf,$langs;
 
@@ -357,7 +357,7 @@ function getOrder($authentication,$id='',$ref='',$ref_ext='')
 	$errorcode='';$errorlabel='';
 	$error=0;
 
-	$fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+	$fuser=check_authentication($authentication, $error, $errorcode, $errorlabel);
 
 	if ($fuser->societe_id) $socid=$fuser->societe_id;
 
@@ -375,7 +375,7 @@ function getOrder($authentication,$id='',$ref='',$ref_ext='')
 		if ($fuser->rights->commande->lire)
 		{
 			$order=new Commande($db);
-			$result=$order->fetch($id,$ref,$ref_ext);
+			$result=$order->fetch($id, $ref, $ref_ext);
 			if ($result > 0)
 			{
 				// Security for external user
@@ -437,10 +437,10 @@ function getOrder($authentication,$id='',$ref='',$ref_ext='')
 					'total' => $order->total_ttc,
 					'project_id' => $order->fk_project,
 
-					'date' => $order->date_commande?dol_print_date($order->date_commande,'dayrfc'):'',
-					'date_creation' => $invoice->date_creation?dol_print_date($invoice->date_creation,'dayhourrfc'):'',
-					'date_validation' => $invoice->date_validation?dol_print_date($invoice->date_creation,'dayhourrfc'):'',
-					'date_modification' => $invoice->datem?dol_print_date($invoice->datem,'dayhourrfc'):'',
+					'date' => $order->date_commande?dol_print_date($order->date_commande, 'dayrfc'):'',
+					'date_creation' => $invoice->date_creation?dol_print_date($invoice->date_creation, 'dayhourrfc'):'',
+					'date_validation' => $invoice->date_validation?dol_print_date($invoice->date_creation, 'dayhourrfc'):'',
+					'date_modification' => $invoice->datem?dol_print_date($invoice->datem, 'dayhourrfc'):'',
 
 					'remise' => $order->remise,
 					'remise_percent' => $order->remise_percent,
@@ -496,7 +496,7 @@ function getOrder($authentication,$id='',$ref='',$ref_ext='')
  * @param	int			$idthirdparty		Id of thirdparty
  * @return	array							Array result
  */
-function getOrdersForThirdParty($authentication,$idthirdparty)
+function getOrdersForThirdParty($authentication, $idthirdparty)
 {
 	global $db,$conf,$langs;
 
@@ -508,7 +508,7 @@ function getOrdersForThirdParty($authentication,$idthirdparty)
 	$objectresp=array();
 	$errorcode='';$errorlabel='';
 	$error=0;
-	$fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+	$fuser=check_authentication($authentication, $error, $errorcode, $errorlabel);
 
 	if ($fuser->societe_id) $socid=$fuser->societe_id;
 
@@ -597,7 +597,7 @@ function getOrdersForThirdParty($authentication,$idthirdparty)
 					'total' => $order->total_ttc,
 					'project_id' => $order->fk_project,
 
-					'date' => $order->date_commande?dol_print_date($order->date_commande,'dayrfc'):'',
+					'date' => $order->date_commande?dol_print_date($order->date_commande, 'dayrfc'):'',
 
 					'remise' => $order->remise,
 					'remise_percent' => $order->remise_percent,
@@ -655,7 +655,7 @@ function getOrdersForThirdParty($authentication,$idthirdparty)
  * @param	array		$order				Order info
  * @return	int								Id of new order
  */
-function createOrder($authentication,$order)
+function createOrder($authentication, $order)
 {
 	global $db,$conf,$langs;
 
@@ -671,7 +671,7 @@ function createOrder($authentication,$order)
 	$objectresp=array();
 	$errorcode='';$errorlabel='';
 	$error=0;
-	$fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+	$fuser=check_authentication($authentication, $error, $errorcode, $errorlabel);
 
 	// Check parameters
 
@@ -682,8 +682,8 @@ function createOrder($authentication,$order)
 		$newobject->socid=$order['thirdparty_id'];
 		$newobject->type=$order['type'];
 		$newobject->ref_ext=$order['ref_ext'];
-		$newobject->date=dol_stringtotime($order['date'],'dayrfc');
-		$newobject->date_lim_reglement=dol_stringtotime($order['date_due'],'dayrfc');
+		$newobject->date=dol_stringtotime($order['date'], 'dayrfc');
+		$newobject->date_lim_reglement=dol_stringtotime($order['date_due'], 'dayrfc');
 		$newobject->note_private=$order['note_private'];
 		$newobject->note_public=$order['note_public'];
 		$newobject->statut=Commande::STATUS_DRAFT;	// We start with status draft
@@ -697,7 +697,7 @@ function createOrder($authentication,$order)
 		// Retrieve all extrafield for order
 		// fetch optionals attributes and labels
 		$extrafields=new ExtraFields($db);
-		$extralabels=$extrafields->fetch_name_optionals_label('commandet',true);
+		$extralabels=$extrafields->fetch_name_optionals_label('commandet', true);
 		foreach($extrafields->attribute_label as $key=>$label)
 		{
 			$key='options_'.$key;
@@ -730,7 +730,7 @@ function createOrder($authentication,$order)
 			// Retrieve all extrafield for lines
 			// fetch optionals attributes and labels
 			$extrafields=new ExtraFields($db);
-			$extralabels=$extrafields->fetch_name_optionals_label('commandedet',true);
+			$extralabels=$extrafields->fetch_name_optionals_label('commandedet', true);
 			foreach($extrafields->attribute_label as $key=>$label)
 			{
 				$key='options_'.$key;
@@ -795,7 +795,7 @@ function createOrder($authentication,$order)
  * @param	int			$id_warehouse		Id of warehouse to use for stock decrease
  * @return	array							Array result
  */
-function validOrder($authentication,$id='',$id_warehouse=0)
+function validOrder($authentication, $id = '', $id_warehouse = 0)
 {
 	global $db,$conf,$langs;
 
@@ -806,7 +806,7 @@ function validOrder($authentication,$id='',$id_warehouse=0)
 	$errorcode='';$errorlabel='';
 	$error=0;
 	if ($authentication['entity']) $conf->entity=$authentication['entity'];
-	$fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+	$fuser=check_authentication($authentication, $error, $errorcode, $errorlabel);
 
 	if (! $error)
 	{
@@ -815,14 +815,14 @@ function validOrder($authentication,$id='',$id_warehouse=0)
 		if ($fuser->rights->commande->lire)
 		{
 			$order=new Commande($db);
-			$result=$order->fetch($id,$ref,$ref_ext);
+			$result=$order->fetch($id, $ref, $ref_ext);
 
 			$order->fetch_thirdparty();
 			$db->begin();
 			if ($result > 0)
 			{
 
-				$result=$order->valid($fuser,$id_warehouse);
+				$result=$order->valid($fuser, $id_warehouse);
 
 				if ($result	>= 0)
 				{
@@ -875,7 +875,7 @@ function validOrder($authentication,$id='',$id_warehouse=0)
  * @param	array		$order				Order info
  * @return	array							Array result
  */
-function updateOrder($authentication,$order)
+function updateOrder($authentication, $order)
 {
 	global $db,$conf,$langs;
 
@@ -889,7 +889,7 @@ function updateOrder($authentication,$order)
 	$objectresp=array();
 	$errorcode='';$errorlabel='';
 	$error=0;
-	$fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+	$fuser=check_authentication($authentication, $error, $errorcode, $errorlabel);
 	// Check parameters
 	if (empty($order['id']) && empty($order['ref']) && empty($order['ref_ext']))	{
 		$error++; $errorcode='KO'; $errorlabel="Order id or ref or ref_ext is mandatory.";
@@ -902,7 +902,7 @@ function updateOrder($authentication,$order)
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 		$object=new Commande($db);
-		$result=$object->fetch($order['id'],(empty($order['id'])?$order['ref']:''),(empty($order['id']) && empty($order['ref'])?$order['ref_ext']:''));
+		$result=$object->fetch($order['id'], (empty($order['id'])?$order['ref']:''), (empty($order['id']) && empty($order['ref'])?$order['ref_ext']:''));
 
 		if (!empty($object->id)) {
 
@@ -936,7 +936,7 @@ function updateOrder($authentication,$order)
 			//Retreive all extrafield for object
 			// fetch optionals attributes and labels
 			$extrafields=new ExtraFields($db);
-			$extralabels=$extrafields->fetch_name_optionals_label('commande',true);
+			$extralabels=$extrafields->fetch_name_optionals_label('commande', true);
 			foreach($extrafields->attribute_label as $key=>$label)
 			{
 				$key='options_'.$key;

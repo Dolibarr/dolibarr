@@ -166,7 +166,7 @@ class ProductStockEntrepot extends CommonObject
 	 * @param int    $fk_entrepot  		Id warehouse
 	 * @return int 						<0 if KO, 0 if not found, >0 if OK
 	 */
-	public function fetch($id, $fk_product=0, $fk_entrepot=0)
+	public function fetch($id, $fk_product = 0, $fk_entrepot = 0)
 	{
 		if(empty($id) && (empty($fk_product) || empty($fk_entrepot))) return -1;
 
@@ -237,7 +237,7 @@ class ProductStockEntrepot extends CommonObject
 	 *
 	 * @return int <0 if KO, >0 if OK
 	 */
-	public function fetchAll($fk_product='', $fk_entrepot='', $sortorder='', $sortfield='', $limit=0, $offset=0, array $filter = array(), $filtermode='AND')
+	public function fetchAll($fk_product = '', $fk_entrepot = '', $sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
@@ -269,7 +269,7 @@ class ProductStockEntrepot extends CommonObject
 		elseif(!empty($fk_entrepot)) $sql .= ' AND fk_entrepot = '.$fk_entrepot;
 		// "elseif" used instead of "if" because getting list with specified fk_product and specified fk_entrepot would be the same as doing a fetch
 
-		if (!empty($sortfield)) $sql .= $this->db->order($sortfield,$sortorder);
+		if (!empty($sortfield)) $sql .= $this->db->order($sortfield, $sortorder);
 		if (!empty($limit)) $sql .=  ' ' . $this->db->plimit($limit, $offset);
 
 		$lines = array();
@@ -420,15 +420,14 @@ class ProductStockEntrepot extends CommonObject
 	/**
 	 * Load an object from its id and create a new one in database
 	 *
-	 * @param int $fromid Id of object to clone
-	 *
-	 * @return int New id of clone
+	 * @param	User	$user	   User making the clone
+	 * @param   int     $fromid    Id of object to clone
+	 * @return  int                New id of clone
 	 */
-	public function createFromClone($fromid)
+	public function createFromClone(User $user, $fromid)
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		global $user;
 		$error = 0;
 		$object = new ProductStockEntrepot($this->db);
 
@@ -478,7 +477,7 @@ class ProductStockEntrepot extends CommonObject
      *  @param  string  $morecss            Add more css on link
 	 *	@return	string						String with URL
 	 */
-	function getNomUrl($withpicto=0, $option='', $notooltip=0, $maxlen=24, $morecss='')
+	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $maxlen = 24, $morecss = '')
 	{
 		global $langs, $conf, $db;
         global $dolibarr_main_authentication, $dolibarr_main_demo;
@@ -501,10 +500,10 @@ class ProductStockEntrepot extends CommonObject
         {
             $result.=($link.img_object(($notooltip?'':$label), 'label', ($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).$linkend);
             if ($withpicto != 2) $result.=' ';
-		}
-		$result.= $link . $this->ref . $linkend;
-		return $result;
-	}
+        }
+        $result.= $link . $this->ref . $linkend;
+        return $result;
+    }
 
 	/**
 	 *  Retourne le libelle du status d'un user (actif, inactif)
@@ -512,12 +511,12 @@ class ProductStockEntrepot extends CommonObject
 	 *  @param	int		$mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return	string 			       Label of status
 	 */
-	function getLibStatut($mode=0)
+	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->status,$mode);
+		return $this->LibStatut($this->status, $mode);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Renvoi le libelle d'un status donne
 	 *
@@ -525,7 +524,7 @@ class ProductStockEntrepot extends CommonObject
 	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return string 			       	Label of status
 	 */
-	function LibStatut($status,$mode=0)
+	public function LibStatut($status, $mode = 0)
 	{
         // phpcs:enable
 		global $langs;
@@ -542,23 +541,23 @@ class ProductStockEntrepot extends CommonObject
 		}
 		elseif ($mode == 2)
 		{
-			if ($status == 1) return img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
-			elseif ($status == 0) return img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('Disabled');
+			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
+			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
 		}
 		elseif ($mode == 3)
 		{
-			if ($status == 1) return img_picto($langs->trans('Enabled'),'statut4');
-			elseif ($status == 0) return img_picto($langs->trans('Disabled'),'statut5');
+			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4');
+			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5');
 		}
 		elseif ($mode == 4)
 		{
-			if ($status == 1) return img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
-			elseif ($status == 0) return img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('Disabled');
+			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
+			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
 		}
 		elseif ($mode == 5)
 		{
-			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'),'statut4');
-			elseif ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'),'statut5');
+			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'), 'statut4');
+			elseif ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'), 'statut5');
 		}
 	}
 

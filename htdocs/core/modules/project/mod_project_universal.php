@@ -32,7 +32,7 @@ class mod_project_universal extends ModeleNumRefProjects
 {
 	/**
      * Dolibarr version of the loaded document
-     * @public string
+     * @var string
      */
 	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
 
@@ -59,7 +59,7 @@ class mod_project_universal extends ModeleNumRefProjects
      *
      *  @return     string      Texte descripif
      */
-	function info()
+    public function info()
     {
     	global $conf, $langs;
 
@@ -75,17 +75,17 @@ class mod_project_universal extends ModeleNumRefProjects
 		$texte.= '<input type="hidden" name="maskconstproject" value="PROJECT_UNIVERSAL_MASK">';
 		$texte.= '<table class="nobordernopadding" width="100%">';
 
-		$tooltip=$langs->trans("GenericMaskCodes",$langs->transnoentities("Project"),$langs->transnoentities("Project"));
+		$tooltip=$langs->trans("GenericMaskCodes", $langs->transnoentities("Project"), $langs->transnoentities("Project"));
 		$tooltip.=$langs->trans("GenericMaskCodes2");
 		$tooltip.=$langs->trans("GenericMaskCodes3");
-		$tooltip.=$langs->trans("GenericMaskCodes4a",$langs->transnoentities("Project"),$langs->transnoentities("Project"));
+		$tooltip.=$langs->trans("GenericMaskCodes4a", $langs->transnoentities("Project"), $langs->transnoentities("Project"));
 		$tooltip.=$langs->trans("GenericMaskCodes5");
 
 		// Parametrage du prefix
 		$texte.= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskproject" value="'.$conf->global->PROJECT_UNIVERSAL_MASK.'">',$tooltip,1,1).'</td>';
+		$texte.= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskproject" value="'.$conf->global->PROJECT_UNIVERSAL_MASK.'">', $tooltip, 1, 1).'</td>';
 
-		$texte.= '<td align="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
+		$texte.= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
 
 		$texte.= '</tr>';
 
@@ -100,13 +100,13 @@ class mod_project_universal extends ModeleNumRefProjects
      *
      *  @return     string      Example
      */
-    function getExample()
+    public function getExample()
     {
     	global $conf,$langs,$mysoc;
 
     	$old_code_client=$mysoc->code_client;
     	$mysoc->code_client='CCCCCCCCCC';
-    	$numExample = $this->getNextValue($mysoc,'');
+    	$numExample = $this->getNextValue($mysoc, '');
 		$mysoc->code_client=$old_code_client;
 
 		if (! $numExample)
@@ -123,7 +123,7 @@ class mod_project_universal extends ModeleNumRefProjects
 	*  @param   Project		$project	Object project
 	*  @return  string					Value if OK, 0 if KO
 	*/
-    function getNextValue($objsoc, $project)
+    public function getNextValue($objsoc, $project)
     {
 		global $db,$conf;
 
@@ -145,7 +145,7 @@ class mod_project_universal extends ModeleNumRefProjects
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Return next reference not yet used as a reference
      *
@@ -153,7 +153,7 @@ class mod_project_universal extends ModeleNumRefProjects
      *  @param  Project		$project	Object project
      *  @return string      			Next not used reference
      */
-    function project_get_num($objsoc=0, $project='')
+    public function project_get_num($objsoc = 0, $project = '')
     {
         // phpcs:enable
         return $this->getNextValue($objsoc, $project);

@@ -26,17 +26,17 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/mailings/modules_mailings.php';
 class mailing_example extends MailingTargets
 {
     // CHANGE THIS: Put here a name not already used
-    var $name='example';
+    public $name='example';
     // CHANGE THIS: Put here a description of your selector module.
     // This label is used if no translation is found for key MailingModuleDescXXX where XXX=name is found
-    var $desc='Put here a description';
-	// CHANGE THIS: Set to 1 if selector is available for admin users only
-    var $require_admin=0;
+    public $desc='Put here a description';
+    // CHANGE THIS: Set to 1 if selector is available for admin users only
+    public $require_admin=0;
     // CHANGE THIS: Add a tooltip language key to add a tooltip help icon after the email target selector
-    var $tooltip='MyTooltipLangKey';
+    public $tooltip='MyTooltipLangKey';
 
-    var $require_module=array();
-    var $picto='';
+    public $require_module=array();
+    public $picto='';
 
     /**
      * @var DoliDB Database handler.
@@ -50,21 +50,20 @@ class mailing_example extends MailingTargets
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db=$db;
     }
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  This is the main function that returns the array of emails
      *
      *  @param	int		$mailing_id    	Id of mailing. No need to use it.
-     *  @param  array	$filtersarray   If you used the formFilter function. Empty otherwise.
      *  @return int           			<0 if error, number of emails added if ok
      */
-    function add_to_target($mailing_id,$filtersarray=array())
+    public function add_to_target($mailing_id)
     {
         // phpcs:enable
         $target = array();
@@ -93,7 +92,7 @@ class mailing_example extends MailingTargets
 	 *
 	 *	@return		array		Array with SQL requests
 	 */
-	function getSqlArrayForStats()
+    public function getSqlArrayForStats()
 	{
 	    // CHANGE THIS: Optionnal
 
@@ -104,14 +103,14 @@ class mailing_example extends MailingTargets
 
 
     /**
-     *	Return here number of distinct emails returned by your selector.
-     *	For example if this selector is used to extract 500 different
-     *	emails from a text file, this function must return 500.
+     *  Return here number of distinct emails returned by your selector.
+     *  For example if this selector is used to extract 500 different
+     *  emails from a text file, this function must return 500.
      *
      *  @param		string		$sql		Requete sql de comptage
-     *	@return		int|string				Number of recipient or '?'
+     *  @return		int|string				Number of recipient or '?'
      */
-    function getNbOfRecipients($sql='')
+    public function getNbOfRecipients($sql = '')
     {
         // CHANGE THIS: Optionnal
 
@@ -122,11 +121,11 @@ class mailing_example extends MailingTargets
 
     /**
      *  This is to add a form filter to provide variant of selector
-     *	If used, the HTML select must be called "filter"
+     *  If used, the HTML select must be called "filter"
      *
      *  @return     string      A html select zone
      */
-    function formFilter()
+    public function formFilter()
     {
         // CHANGE THIS: Optionnal
 
@@ -142,7 +141,7 @@ class mailing_example extends MailingTargets
      *  @param	int		$id		ID
      *  @return string      	Url link
      */
-    function url($id)
+    public function url($id)
     {
         // CHANGE THIS: Optionnal
 

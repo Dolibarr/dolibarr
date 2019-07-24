@@ -4,7 +4,7 @@
  * Copyright (C) 2013      Olivier Geffroy      <jeff@jeffinfo.com>
  * Copyright (C) 2013      Florian Henry	    <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2019 Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2018      Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2019 Frédéric France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,12 +18,11 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
  */
 
 /**
  * \file    	htdocs/accountancy/bookkeeping/thirdparty_lettrage_supplier.php
- * \ingroup 	Advanced accountancy
+ * \ingroup 	Accountancy (Double entries)
  * \brief 		Tab to setup lettering
  */
 require '../../main.inc.php';
@@ -42,7 +41,7 @@ $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOST('show_files', 'int');
 $confirm    = GETPOST('confirm', 'alpha');
 $toselect   = GETPOST('toselect', 'array');
-$socid      = GETPOST('socid','int')?GETPOST('socid','int'):GETPOST('id','int');
+$socid      = GETPOST('socid', 'int')?GETPOST('socid', 'int'):GETPOST('id', 'int');
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
@@ -130,7 +129,7 @@ $formaccounting = new FormAccounting($db);
 
 $title=$object->name." - ".$langs->trans('TabLetteringSupplier');
 $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
-llxHeader('',$title,$help_url);
+llxHeader('', $title, $help_url);
 
 $head = societe_prepare_head($object);
 
@@ -149,13 +148,11 @@ $sql .= " bk.subledger_account, bk.numero_compte , bk.label_compte, bk.debit, ";
 $sql .= " bk.credit, bk.montant , bk.sens , bk.code_journal , bk.piece_num, bk.lettering_code ";
 $sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as bk";
 $sql .= " WHERE (bk.subledger_account =  '" . $object->code_compta_fournisseur . "' AND bk.numero_compte = '" . $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER . "' )";
-
 if (dol_strlen($search_date_start) || dol_strlen($search_date_end)) {
 	$sql .= " AND (bk.doc_date BETWEEN '".$db->idate($search_date_start)."' AND  '".$db->idate($search_date_end)."' )";
 }
-
 $sql.= ' AND bk.entity IN ('.getEntity('accountingbookkeeping').')';
-$sql.= $db->order($sortfield,$sortorder);
+$sql.= $db->order($sortfield, $sortorder);
 
 $debit = 0;
 $credit = 0;
@@ -179,10 +176,9 @@ while ($obj = $db->fetch_object($resql)) {
 
 $sql.= $db->plimit($limit+1, $offset);
 
-dol_syslog ( "/accountancy/bookkeeping/thirdparty_lettering_supplier.php", LOG_DEBUG );
+dol_syslog("/accountancy/bookkeeping/thirdparty_lettering_supplier.php", LOG_DEBUG);
 $resql = $db->query($sql);
-if (! $resql)
-{
+if (! $resql) {
 		dol_print_error($db);
 		exit;
 }
@@ -192,7 +188,7 @@ $param.="&socid=".urlencode($socid);
 
 $num = $db->num_rows($resql);
 
-dol_syslog ( "/accountancy/bookkeeping/thirdparty_lettering_supplier.php", LOG_DEBUG );
+dol_syslog("/accountancy/bookkeeping/thirdparty_lettering_supplier.php", LOG_DEBUG);
 $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);
@@ -246,7 +242,7 @@ if ($resql) {
 	print_liste_field_titre("Balancing", $_SERVER["PHP_SELF"], "", "", $param, "", $sortfield, $sortorder);
 	print_liste_field_titre("Codejournal", $_SERVER["PHP_SELF"], "bk.code_journal", "", $param, "", $sortfield, $sortorder, 'center ');
 	print_liste_field_titre("LetteringCode", $_SERVER["PHP_SELF"], "bk.lettering_code", "", $param, "", $sortfield, $sortorder, 'center ');
-    print_liste_field_titre("", "","",'','',"",$sortfield,$sortorder,'maxwidthsearch center ');
+    print_liste_field_titre("", "", "", '', '', "", $sortfield, $sortorder, 'maxwidthsearch center ');
 	print "</tr>\n";
 
 	$solde = 0;
@@ -268,13 +264,13 @@ if ($resql) {
 
         // Journal
         $accountingjournal = new AccountingJournal($db);
-        $result = $accountingjournal->fetch('',$obj->code_journal);
-        $journaltoshow = (($result > 0)?$accountingjournal->getNomUrl(0,0,0,'',0) : $obj->code_journal);
+        $result = $accountingjournal->fetch('', $obj->code_journal);
+        $journaltoshow = (($result > 0)?$accountingjournal->getNomUrl(0, 0, 0, '', 0) : $obj->code_journal);
         print '<td class="center">' . $journaltoshow . '</td>';
 
 		if (empty($obj->lettering_code)) {
 			print '<td class="nowrap center"><input type="checkbox" class="flat checkforselect" name="toselect[]" id="toselect[]" value="' . $obj->rowid . '" /></td>';
-		    print '<td><a href="' . dol_buildpath('/accountancy/bookkeeping/card.php', 1) . '?piece_num=' . $obj->piece_num . '">';
+		    print '<td><a href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?piece_num=' . $obj->piece_num . '">';
 		    print img_edit();
             print '</a></td>' . "\n";
 		} else {

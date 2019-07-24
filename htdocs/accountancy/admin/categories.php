@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2016		Jamal Elbaz			<jamelbaz@gmail.pro>
- * Copyright (C) 2017		Alexandre Spangaro	<aspangaro@zendsi.com>
+ * Copyright (C) 2017		Alexandre Spangaro	<aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 /**
  * \file	htdocs/accountancy/admin/categories.php
- * \ingroup Advanced accountancy
+ * \ingroup Accountancy (Double entries)
  * \brief	Page to assign mass categories to accounts
  */
 
@@ -35,11 +35,11 @@ $langs->loadLangs(array("bills","accountancy"));
 $mesg = '';
 $id = GETPOST('id', 'int');
 $rowid = GETPOST('rowid', 'int');
-$cancel = GETPOST('cancel','alpha');
-$action = GETPOST('action','aZ09');
-$cat_id = GETPOST('account_category','int');
+$cancel = GETPOST('cancel', 'alpha');
+$action = GETPOST('action', 'aZ09');
+$cat_id = GETPOST('account_category', 'int');
 $selectcpt = GETPOST('cpt_bk', 'array');
-$cpt_id = GETPOST('cptid','int');
+$cpt_id = GETPOST('cptid', 'int');
 
 if ($cat_id == 0) {
 	$cat_id = null;
@@ -167,11 +167,11 @@ if ($action == 'display' || $action == 'delete') {
 		}
 
 		if (is_array($accountingcategory->lines_display) && count($accountingcategory->lines_display) > 0) {
-			foreach ( $accountingcategory->lines_display as $cpt ) {
+			foreach ($accountingcategory->lines_display as $cpt) {
 				print '<tr class="oddeven">';
 				print '<td>' . length_accountg($cpt->account_number) . '</td>';
 				print '<td>' . $cpt->label . '</td>';
-				print '<td align="right">';
+				print '<td class="right">';
 				print "<a href= '".$_SERVER['PHP_SELF']."?action=delete&account_category=" . $cat_id . "&cptid=" . $cpt->rowid."'>";
 				print $langs->trans("DeleteFromCat");
 				print img_picto($langs->trans("DeleteFromCat"), 'unlink');

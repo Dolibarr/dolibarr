@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2016	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012-2016	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2013		Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2017		Alexandre Spangaro	<aspangaro@zendsi.com>
+ * Copyright (C) 2017		Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2014-2017  Ferran Marcet		<fmarcet@2byte.es>
  * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  *
@@ -42,10 +42,11 @@ require_once DOL_DOCUMENT_ROOT.'/holiday/common.inc.php';
 $action=GETPOST('action', 'alpha');
 $id=GETPOST('id', 'int');
 $ref=GETPOST('ref', 'alpha');
-$fuserid = (GETPOST('fuserid','int')?GETPOST('fuserid','int'):$user->id);
+$fuserid = (GETPOST('fuserid', 'int')?GETPOST('fuserid', 'int'):$user->id);
 
 // Protection if external user
-if ($user->societe_id > 0) accessforbidden();
+if ($user->societe_id) $socid=$user->societe_id;
+$result = restrictedArea($user, 'holiday', $id, 'holiday');
 
 $now=dol_now();
 
@@ -66,6 +67,22 @@ if (! empty($conf->global->HOLIDAY_FOR_NON_SALARIES_TOO)) $morefilter = '';
 
 $error = 0;
 
+$object = new Holiday($db);
+if ($id > 0)
+{
+    $object->fetch($id);
+
+    // Check current user can read this leave request
+    $canread = 0;
+    if (! empty($user->rights->holiday->read_all)) $canread=1;
+    if (! empty($user->rights->holiday->read) && in_array($object->fk_user, $childids)) $canread=1;
+    if (! $canread)
+    {
+        accessforbidden();
+    }
+}
+
+
 /*
  * Actions
  */
@@ -78,7 +95,6 @@ if (GETPOST('cancel', 'alpha'))
 // If create a request
 if ($action == 'create')
 {
-	$object = new Holiday($db);
 
     // If no right to create a request
     if (! $cancreate)
@@ -90,6 +106,8 @@ if ($action == 'create')
 
     if (! $error)
     {
+        $object = new Holiday($db);
+
     	$db->begin();
 
 	    $date_debut = dol_mktime(0, 0, 0, GETPOST('date_debut_month'), GETPOST('date_debut_day'), GETPOST('date_debut_year'));
@@ -101,8 +119,8 @@ if ($action == 'create')
 	    $type=GETPOST('type');
 	    $halfday=0;
 	    if ($starthalfday == 'afternoon' && $endhalfday == 'morning') $halfday=2;
-	    else if ($starthalfday == 'afternoon') $halfday=-1;
-	    else if ($endhalfday == 'morning') $halfday=1;
+	    elseif ($starthalfday == 'afternoon') $halfday=-1;
+	    elseif ($endhalfday == 'morning') $halfday=1;
 
 	    $valideur = GETPOST('valideur');
 	    $description = trim(GETPOST('description'));
@@ -199,7 +217,6 @@ if ($action == 'create')
 
 if ($action == 'update' && GETPOSTISSET('savevalidator') && ! empty($user->rights->holiday->approve))
 {
-    $object = new Holiday($db);
     $object->fetch($id);
 
     $object->oldcopy = dol_clone($object);
@@ -235,8 +252,8 @@ if ($action == 'update' && ! GETPOSTISSET('savevalidator'))
 	$endhalfday=GETPOST('endhalfday');
 	$halfday=0;
 	if ($starthalfday == 'afternoon' && $endhalfday == 'morning') $halfday=2;
-	else if ($starthalfday == 'afternoon') $halfday=-1;
-	else if ($endhalfday == 'morning') $halfday=1;
+	elseif ($starthalfday == 'afternoon') $halfday=-1;
+	elseif ($endhalfday == 'morning') $halfday=1;
 
     // If no right to modify a request
     if (! $user->rights->holiday->write)
@@ -245,7 +262,6 @@ if ($action == 'update' && ! GETPOSTISSET('savevalidator'))
         exit;
     }
 
-    $object = new Holiday($db);
     $object->fetch($id);
 
 	// If under validation
@@ -329,7 +345,6 @@ if ($action == 'confirm_delete' && GETPOST('confirm') == 'yes' && $user->rights-
 
 	$db->begin();
 
-	$object = new Holiday($db);
 	$object->fetch($id);
 
     // If this is a rough draft, approved, canceled or refused
@@ -363,7 +378,6 @@ if ($action == 'confirm_delete' && GETPOST('confirm') == 'yes' && $user->rights-
 // Action validate (+ send email for approval)
 if ($action == 'confirm_send')
 {
-    $object = new Holiday($db);
     $object->fetch($id);
 
     // Si brouillon et créateur
@@ -417,14 +431,14 @@ if ($action == 'confirm_send')
                 if($object->date_debut < $nextMonth)
                 {
                     $message.= "\n";
-                    $message.= $langs->transnoentities("HolidaysToValidateDelay",$object->getConfCP('delayForRequest'))."\n";
+                    $message.= $langs->transnoentities("HolidaysToValidateDelay", $object->getConfCP('delayForRequest'))."\n";
                 }
             }
 
             // Si l'option pour avertir le valideur en cas de solde inférieur à la demande
             if ($object->getConfCP('AlertValidatorSolde'))
             {
-            	$nbopenedday=num_open_day($object->date_debut_gmt,$object->date_fin_gmt,0,1,$object->halfday);
+            	$nbopenedday=num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday);
                 if ($nbopenedday > $object->getCPforUser($object->fk_user, $object->fk_type))
                 {
                     $message.= "\n";
@@ -434,7 +448,7 @@ if ($action == 'confirm_send')
 
             $message.= "\n";
             $message.= "- ".$langs->transnoentitiesnoconv("Name")." : ".dolGetFirstLastname($expediteur->firstname, $expediteur->lastname)."\n";
-            $message.= "- ".$langs->transnoentitiesnoconv("Period")." : ".dol_print_date($object->date_debut,'day')." ".$langs->transnoentitiesnoconv("To")." ".dol_print_date($object->date_fin,'day')."\n";
+            $message.= "- ".$langs->transnoentitiesnoconv("Period")." : ".dol_print_date($object->date_debut, 'day')." ".$langs->transnoentitiesnoconv("To")." ".dol_print_date($object->date_fin, 'day')."\n";
             $message.= "- ".$langs->transnoentitiesnoconv("Link")." : ".$dolibarr_main_url_root."/holiday/card.php?id=".$object->id."\n\n";
             $message.= "\n";
 
@@ -468,7 +482,6 @@ if ($action == 'confirm_send')
 // Approve leave request
 if ($action == 'confirm_valid')
 {
-    $object = new Holiday($db);
     $object->fetch($id);
 
     // Si statut en attente de validation et valideur = utilisateur
@@ -578,11 +591,10 @@ if ($action == 'confirm_valid')
     }
 }
 
-if ($action == 'confirm_refuse' && GETPOST('confirm','alpha') == 'yes')
+if ($action == 'confirm_refuse' && GETPOST('confirm', 'alpha') == 'yes')
 {
 	if (! empty($_POST['detail_refuse']))
     {
-        $object = new Holiday($db);
         $object->fetch($id);
 
         // Si statut en attente de validation et valideur = utilisateur
@@ -591,7 +603,7 @@ if ($action == 'confirm_refuse' && GETPOST('confirm','alpha') == 'yes')
             $object->date_refuse = dol_print_date('dayhour', dol_now());
             $object->fk_user_refuse = $user->id;
             $object->statut = Holiday::STATUS_REFUSED;
-            $object->detail_refuse = GETPOST('detail_refuse','alphanohtml');
+            $object->detail_refuse = GETPOST('detail_refuse', 'alphanohtml');
 
             $db->begin();
 
@@ -631,7 +643,7 @@ if ($action == 'confirm_refuse' && GETPOST('confirm','alpha') == 'yes')
                 	$message = $langs->transnoentitiesnoconv("Hello")." ".$destinataire->firstname.",\n";
     	            $message.= "\n";
                     $message.= $langs->transnoentities("HolidaysRefusedBody", dol_print_date($object->date_debut, 'day'), dol_print_date($object->date_fin, 'day'))."\n";
-                    $message.= GETPOST('detail_refuse','alpha')."\n\n";
+                    $message.= GETPOST('detail_refuse', 'alpha')."\n\n";
 
     	            $message.= "- ".$langs->transnoentitiesnoconv("ModifiedBy")." : ".dolGetFirstLastname($expediteur->firstname, $expediteur->lastname)."\n";
 
@@ -682,7 +694,6 @@ if ($action == 'confirm_draft' && GETPOST('confirm') == 'yes')
 {
 	$error = 0;
 
-    $object = new Holiday($db);
     $object->fetch($id);
 
     $oldstatus = $object->statut;
@@ -713,7 +724,6 @@ if ($action == 'confirm_cancel' && GETPOST('confirm') == 'yes')
 {
 	$error = 0;
 
-    $object = new Holiday($db);
     $object->fetch($id);
 
     // Si statut en attente de validation et valideur = valideur ou utilisateur, ou droits de faire pour les autres
@@ -731,7 +741,7 @@ if ($action == 'confirm_cancel' && GETPOST('confirm') == 'yes')
         if ($result >= 0 && $oldstatus == Holiday::STATUS_APPROVED)	// holiday was already validated, status 3, so we must increase back the balance
         {
         	// Calculcate number of days consummed
-        	$nbopenedday=num_open_day($object->date_debut_gmt,$object->date_fin_gmt,0,1,$object->halfday);
+        	$nbopenedday=num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday);
 
         	$soldeActuel = $object->getCpforUser($object->fk_user, $object->fk_type);
         	$newSolde = ($soldeActuel + $nbopenedday);
@@ -787,7 +797,7 @@ if ($action == 'confirm_cancel' && GETPOST('confirm') == 'yes')
            	$message = $langs->transnoentitiesnoconv("Hello")." ".$destinataire->firstname.",\n";
             $message.= "\n";
 
-            $message.= $langs->transnoentities("HolidaysCanceledBody", dol_print_date($object->date_debut,'day'), dol_print_date($object->date_fin,'day'))."\n";
+            $message.= $langs->transnoentities("HolidaysCanceledBody", dol_print_date($object->date_debut, 'day'), dol_print_date($object->date_fin, 'day'))."\n";
             $message.= "- ".$langs->transnoentitiesnoconv("ModifiedBy")." : ".dolGetFirstLastname($expediteur->firstname, $expediteur->lastname)."\n";
 
             $message.= "- ".$langs->transnoentitiesnoconv("Link")." : ".$dolibarr_main_url_root."/holiday/card.php?id=".$object->id."\n\n";
@@ -917,14 +927,14 @@ if ((empty($id) && empty($ref)) || $action == 'add' || $action == 'request' || $
 	        dol_fiche_head('', '', '', -1);
 
 	        $out='';
-	        $typeleaves=$object->getTypes(1,1);
+	        $typeleaves=$object->getTypes(1, 1);
 	    	foreach($typeleaves as $key => $val)
 			{
 				$nb_type = $object->getCPforUser($user->id, $val['rowid']);
 				$nb_holiday += $nb_type;
 				$out .= ' - '.$val['label'].': <strong>'.($nb_type?price2num($nb_type):0).'</strong><br>';
 			}
-	        print $langs->trans('SoldeCPUser', round($nb_holiday,5)).'<br>';
+	        print $langs->trans('SoldeCPUser', round($nb_holiday, 5)).'<br>';
 			print $out;
 
 	        dol_fiche_end();
@@ -951,7 +961,7 @@ if ((empty($id) && empty($ref)) || $action == 'add' || $action == 'request' || $
         	print $form->select_dolusers(($fuserid?$fuserid:$user->id), 'fuserid', 0, '', 0, 'hierarchyme', '', '0,'.$conf->entity, 0, 0, $morefilter, 0, '', 'maxwidth300');
         	//print '<input type="hidden" name="fuserid" value="'.($fuserid?$fuserid:$user->id).'">';
         }
-        else print $form->select_dolusers(GETPOST('fuserid','int')?GETPOST('fuserid','int'):$user->id, 'fuserid', 0, '', 0, '', '', '0,'.$conf->entity, 0, 0, $morefilter, 0, '', 'maxwidth300');
+        else print $form->select_dolusers(GETPOST('fuserid', 'int')?GETPOST('fuserid', 'int'):$user->id, 'fuserid', 0, '', 0, '', '', '0,'.$conf->entity, 0, 0, $morefilter, 0, '', 'maxwidth300');
         print '</td>';
         print '</tr>';
 
@@ -959,7 +969,7 @@ if ((empty($id) && empty($ref)) || $action == 'add' || $action == 'request' || $
         print '<tr>';
         print '<td class="fieldrequired">'.$langs->trans("Type").'</td>';
         print '<td>';
-        $typeleaves=$object->getTypes(1,-1);
+        $typeleaves=$object->getTypes(1, -1);
         $arraytypeleaves=array();
         foreach($typeleaves as $key => $val)
         {
@@ -967,8 +977,8 @@ if ((empty($id) && empty($ref)) || $action == 'add' || $action == 'request' || $
         	$labeltoshow .= ($val['delay'] > 0 ? ' ('.$langs->trans("NoticePeriod").': '.$val['delay'].' '.$langs->trans("days").')':'');
 			$arraytypeleaves[$val['rowid']]=$labeltoshow;
         }
-        print $form->selectarray('type', $arraytypeleaves, (GETPOST('type','alpha')?GETPOST('type','alpha'):''), 1);
-        if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
+        print $form->selectarray('type', $arraytypeleaves, (GETPOST('type', 'alpha')?GETPOST('type', 'alpha'):''), 1);
+        if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
         print '</td>';
         print '</tr>';
 
@@ -983,11 +993,11 @@ if ((empty($id) && empty($ref)) || $action == 'add' || $action == 'request' || $
         if (! GETPOST('date_debut_')) {
             print $form->selectDate(-1, 'date_debut_', 0, 0, 0, '', 1, 1);
         } else {
-            $tmpdate = dol_mktime(0, 0, 0, GETPOST('date_debut_month','int'), GETPOST('date_debut_day','int'), GETPOST('date_debut_year','int'));
+            $tmpdate = dol_mktime(0, 0, 0, GETPOST('date_debut_month', 'int'), GETPOST('date_debut_day', 'int'), GETPOST('date_debut_year', 'int'));
             print $form->selectDate($tmpdate, 'date_debut_', 0, 0, 0, '', 1, 1);
         }
         print ' &nbsp; &nbsp; ';
-        print $form->selectarray('starthalfday', $listhalfday, (GETPOST('starthalfday','alpha')?GETPOST('starthalfday','alpha'):'morning'));
+        print $form->selectarray('starthalfday', $listhalfday, (GETPOST('starthalfday', 'alpha')?GETPOST('starthalfday', 'alpha'):'morning'));
         print '</td>';
         print '</tr>';
 
@@ -1002,11 +1012,11 @@ if ((empty($id) && empty($ref)) || $action == 'add' || $action == 'request' || $
         if (! GETPOST('date_fin_')) {
             print $form->selectDate(-1, 'date_fin_', 0, 0, 0, '', 1, 1);
         } else {
-            $tmpdate = dol_mktime(0, 0, 0, GETPOST('date_fin_month','int'), GETPOST('date_fin_day','int'), GETPOST('date_fin_year','int'));
+            $tmpdate = dol_mktime(0, 0, 0, GETPOST('date_fin_month', 'int'), GETPOST('date_fin_day', 'int'), GETPOST('date_fin_year', 'int'));
             print $form->selectDate($tmpdate, 'date_fin_', 0, 0, 0, '', 1, 1);
         }
         print ' &nbsp; &nbsp; ';
-        print $form->selectarray('endhalfday', $listhalfday, (GETPOST('endhalfday','alpha')?GETPOST('endhalfday','alpha'):'afternoon'));
+        print $form->selectarray('endhalfday', $listhalfday, (GETPOST('endhalfday', 'alpha')?GETPOST('endhalfday', 'alpha'):'afternoon'));
         print '</td>';
         print '</tr>';
 
@@ -1035,7 +1045,7 @@ if ((empty($id) && empty($ref)) || $action == 'add' || $action == 'request' || $
         print '<tr>';
         print '<td>'.$langs->trans("DescCP").'</td>';
         print '<td class="tdtop">';
-        $doleditor = new DolEditor('description', GETPOST('description','none'), '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
+        $doleditor = new DolEditor('description', GETPOST('description', 'none'), '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
         print $doleditor->Create(1);
         print '</td></tr>';
 
@@ -1119,9 +1129,10 @@ else
             {
                 $head=holiday_prepare_head($object);
 
-                if (($action == 'edit' && $object->statut == 1) || ($action == 'editvalidator'))
+                if (($action == 'edit' && $object->statut == Holiday::STATUS_DRAFT) || ($action == 'editvalidator'))
                 {
-                    if ($action == 'edit' && $object->statut == 1) $edit = true;
+                	if ($action == 'edit' && $object->statut == Holiday::STATUS_DRAFT) $edit = true;
+
                     print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">'."\n";
                     print '<input type="hidden" name="action" value="update"/>'."\n";
                     print '<input type="hidden" name="id" value="'.$object->id.'" />'."\n";
@@ -1138,7 +1149,7 @@ else
                 print '<div class="fichehalfleft">';
                 print '<div class="underbanner clearboth"></div>';
 
-                print '<table class="border centpercent">';
+                print '<table class="border tableforfield centpercent">';
                 print '<tbody>';
 
                 // User
@@ -1152,9 +1163,9 @@ else
 		        print '<tr>';
 		        print '<td>'.$langs->trans("Type").'</td>';
 		        print '<td>';
-		        $typeleaves=$object->getTypes(1,-1);
+		        $typeleaves=$object->getTypes(1, -1);
 		        $labeltoshow = (($typeleaves[$object->fk_type]['code'] && $langs->trans($typeleaves[$object->fk_type]['code'])!=$typeleaves[$object->fk_type]['code']) ? $langs->trans($typeleaves[$object->fk_type]['code']) : $typeleaves[$object->fk_type]['label']);
-		        print empty($labeltoshow) ? $langs->trans("TypeWasDisabledOrRemoved",$object->fk_type) : $labeltoshow;
+		        print empty($labeltoshow) ? $langs->trans("TypeWasDisabledOrRemoved", $object->fk_type) : $labeltoshow;
 		        print '</td>';
 		        print '</tr>';
 
@@ -1165,7 +1176,7 @@ else
                 {
                     print '<tr>';
                     print '<td class="nowrap">'.$langs->trans('DateDebCP').' ('.$langs->trans("FirstDayOfHoliday").')</td>';
-                    print '<td>'.dol_print_date($object->date_debut,'day');
+                    print '<td>'.dol_print_date($object->date_debut, 'day');
 			        print ' &nbsp; &nbsp; ';
 			        print '<span class="opacitymedium">'.$langs->trans($listhalfday[$starthalfday]).'</span>';
                     print '</td>';
@@ -1187,7 +1198,7 @@ else
                 {
                     print '<tr>';
                     print '<td class="nowrap">'.$langs->trans('DateFinCP').' ('.$langs->trans("LastDayOfHoliday").')</td>';
-                    print '<td>'.dol_print_date($object->date_fin,'day');
+                    print '<td>'.dol_print_date($object->date_fin, 'day');
                     print ' &nbsp; &nbsp; ';
                     print '<span class="opacitymedium">'.$langs->trans($listhalfday[$endhalfday]).'</span>';
                     print '</td>';
@@ -1210,7 +1221,7 @@ else
                 print '<td>'.num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday).'</td>';
                 print '</tr>';
 
-                if ($object->statut == 5)
+                if ($object->statut == Holiday::STATUS_REFUSED)
                 {
                 	print '<tr>';
                 	print '<td>'.$langs->trans('DetailRefusCP').'</td>';
@@ -1246,7 +1257,7 @@ else
                 print '<div class="underbanner clearboth"></div>';
 
 				// Info workflow
-                print '<table class="border centpercent">'."\n";
+                print '<table class="border tableforfield centpercent">'."\n";
                 print '<tbody>';
 
                 if (! empty($object->fk_user_create))
@@ -1263,12 +1274,12 @@ else
                 if (!$edit && $action != 'editvalidator') {
                     print '<tr>';
                     print '<td class="titlefield">';
-                    if ($object->statut == 3 || $object->statut == 4) print $langs->trans('ApprovedBy');
+                    if ($object->statut == Holiday::STATUS_APPROVED || $object->statut == Holiday::STATUS_CANCELED) print $langs->trans('ApprovedBy');
                     else print $langs->trans('ReviewedByCP');
                     print '</td>';
                     print '<td>'.$valideur->getNomUrl(-1);
                     $include_users = $object->fetch_users_approver_holiday();
-                    if (in_array($user->id, $include_users) && $object->statut == Holiday::STATUS_VALIDATED)
+                    if (is_array($include_users) && in_array($user->id, $include_users) && $object->statut == Holiday::STATUS_VALIDATED)
                     {
                         print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editvalidator">'.img_edit($langs->trans("Edit")).'</a>';
                     }
@@ -1300,24 +1311,24 @@ else
 
                 print '<tr>';
                 print '<td>'.$langs->trans('DateCreateCP').'</td>';
-                print '<td>'.dol_print_date($object->date_create,'dayhour').'</td>';
+                print '<td>'.dol_print_date($object->date_create, 'dayhour').'</td>';
                 print '</tr>';
-                if ($object->statut == 3 || $object->statut == 4) {
+                if ($object->statut == Holiday::STATUS_APPROVED || $object->statut == Holiday::STATUS_CANCELED) {
                     print '<tr>';
                     print '<td>'.$langs->trans('DateValidCP').'</td>';
-                    print '<td>'.dol_print_date($object->date_valid,'dayhour').'</td>';		// warning: date_valid is approval date on holiday module
+                    print '<td>'.dol_print_date($object->date_valid, 'dayhour').'</td>';		// warning: date_valid is approval date on holiday module
                     print '</tr>';
                 }
-                if ($object->statut == 4) {
+                if ($object->statut == Holiday::STATUS_CANCELED) {
                     print '<tr>';
                     print '<td>'.$langs->trans('DateCancelCP').'</td>';
-                    print '<td>'.dol_print_date($object->date_cancel,'dayhour').'</td>';
+                    print '<td>'.dol_print_date($object->date_cancel, 'dayhour').'</td>';
                     print '</tr>';
                 }
-                if ($object->statut == 5) {
+                if ($object->statut == Holiday::STATUS_REFUSED) {
                     print '<tr>';
                     print '<td>'.$langs->trans('DateRefusCP').'</td>';
-                    print '<td>'.dol_print_date($object->date_refuse,'dayhour').'</td>';
+                    print '<td>'.dol_print_date($object->date_refuse, 'dayhour').'</td>';
                     print '</tr>';
                 }
                 print '</tbody>';
@@ -1337,20 +1348,20 @@ else
                 {
                 	if ($user->rights->holiday->delete)
                 	{
-                		print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("TitleDeleteCP"),$langs->trans("ConfirmDeleteCP"),"confirm_delete", '', 0, 1);
+                		print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("TitleDeleteCP"), $langs->trans("ConfirmDeleteCP"), "confirm_delete", '', 0, 1);
                 	}
                 }
 
                 // Si envoi en validation
                 if ($action == 'sendToValidate' && $object->statut == Holiday::STATUS_DRAFT)
                 {
-                	print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("TitleToValidCP"),$langs->trans("ConfirmToValidCP"),"confirm_send", '', 1, 1);
+                	print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("TitleToValidCP"), $langs->trans("ConfirmToValidCP"), "confirm_send", '', 1, 1);
                 }
 
                 // Si validation de la demande
                 if ($action == 'valid')
                 {
-                	print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("TitleValidCP"),$langs->trans("ConfirmValidCP"),"confirm_valid", '', 1, 1);
+                	print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("TitleValidCP"), $langs->trans("ConfirmValidCP"), "confirm_valid", '', 1, 1);
                 }
 
                 // Si refus de la demande
@@ -1363,20 +1374,20 @@ else
                 // Si annulation de la demande
                 if ($action == 'cancel')
                 {
-                	print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("TitleCancelCP"),$langs->trans("ConfirmCancelCP"),"confirm_cancel", '', 1, 1);
+                	print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("TitleCancelCP"), $langs->trans("ConfirmCancelCP"), "confirm_cancel", '', 1, 1);
                 }
 
                 // Si back to draft
                 if ($action == 'backtodraft')
                 {
-                	print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("TitleSetToDraft"),$langs->trans("ConfirmSetToDraft"),"confirm_draft", '', 1, 1);
+                	print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("TitleSetToDraft"), $langs->trans("ConfirmSetToDraft"), "confirm_draft", '', 1, 1);
                 }
 
                 if (($action == 'edit' && $object->statut == Holiday::STATUS_DRAFT) || ($action == 'editvalidator'))
                 {
                     if ($action == 'edit' && $object->statut == Holiday::STATUS_DRAFT)
                     {
-                        print '<div align="center">';
+                        print '<div class="center">';
                         if ($cancreate && $object->statut == Holiday::STATUS_DRAFT)
                         {
                             print '<input type="submit" value="'.$langs->trans("Save").'" class="button">';
@@ -1389,9 +1400,10 @@ else
 
                 if (! $edit)
                 {
-		            print '<div class="tabsAction">';
+                	// Buttons for actions
 
-                    // Boutons d'actions
+                	print '<div class="tabsAction">';
+
 		            if ($cancreate && $object->statut == Holiday::STATUS_DRAFT)
                     {
                         print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit" class="butAction">'.$langs->trans("EditCP").'</a>';
@@ -1409,14 +1421,14 @@ else
                         }
                         else
                         {
-                            print '<a href="#" class="butActionRefused" title="'.$langs->trans("NotTheAssignedApprover").'">'.$langs->trans("Approve").'</a>';
-                            print '<a href="#" class="butActionRefused" title="'.$langs->trans("NotTheAssignedApprover").'">'.$langs->trans("ActionRefuseCP").'</a>';
+                            print '<a href="#" class="butActionRefused classfortooltip" title="'.$langs->trans("NotTheAssignedApprover").'">'.$langs->trans("Approve").'</a>';
+                            print '<a href="#" class="butActionRefused classfortooltip" title="'.$langs->trans("NotTheAssignedApprover").'">'.$langs->trans("ActionRefuseCP").'</a>';
                         }
                     }
                     if (($user->id == $object->fk_validator || in_array($object->fk_user, $childids) || ! empty($user->rights->holiday->write_all)) && ($object->statut == 2 || $object->statut == 3))	// Status validated or approved
                     {
                     	if (($object->date_debut > dol_now()) || $user->admin) print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=cancel" class="butAction">'.$langs->trans("ActionCancelCP").'</a>';
-                    	else print '<a href="#" class="butActionRefused" title="'.$langs->trans("HolidayStarted").'">'.$langs->trans("ActionCancelCP").'</a>';
+                    	else print '<a href="#" class="butActionRefused classfortooltip" title="'.$langs->trans("HolidayStarted").'">'.$langs->trans("ActionCancelCP").'</a>';
                     }
                     if ($cancreate && $object->statut == Holiday::STATUS_CANCELED)
                     {

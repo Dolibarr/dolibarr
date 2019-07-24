@@ -36,15 +36,15 @@ if (! empty($conf->projet->enabled)) {
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'bills'));
 
-$id=(GETPOST('id','int')?GETPOST('id','int'):GETPOST('facid','int'));  // For backward compatibility
-$ref=GETPOST('ref','alpha');
-$socid=GETPOST('socid','int');
-$action=GETPOST('action','alpha');
+$id=(GETPOST('id', 'int')?GETPOST('id', 'int'):GETPOST('facid', 'int'));  // For backward compatibility
+$ref=GETPOST('ref', 'alpha');
+$socid=GETPOST('socid', 'int');
+$action=GETPOST('action', 'alpha');
 
 // Security check
 $socid=0;
 if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user,'facture',$id,'');
+$result=restrictedArea($user, 'facture', $id, '');
 
 $object = new Facture($db);
 $object->fetch($id);
@@ -73,7 +73,7 @@ $form = new Form($db);
 if ($id > 0 || ! empty($ref))
 {
 	$object = new Facture($db);
-	$object->fetch($id,$ref);
+	$object->fetch($id, $ref);
 
 	$object->fetch_thirdparty();
 
@@ -92,7 +92,7 @@ if ($id > 0 || ! empty($ref))
     $morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', 0, 1);
     $morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', null, null, '', 1);
     // Thirdparty
-    $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1,'customer');
+    $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1, 'customer');
     // Project
     if (! empty($conf->projet->enabled))
     {
@@ -130,7 +130,7 @@ if ($id > 0 || ! empty($ref))
 
     $object->totalpaye = $totalpaye;   // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
-    dol_banner_tab($object, 'ref', $linkback, 1, 'facnumber', 'ref', $morehtmlref, '', 0);
+    dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0);
 
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';

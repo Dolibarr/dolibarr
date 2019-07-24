@@ -31,20 +31,20 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_contracts extends ModeleBoxes
 {
-    var $boxcode="lastcontracts";
-    var $boximg="object_contract";
-    var $boxlabel="BoxLastContracts";
-    var $depends = array("contrat");	// conf->contrat->enabled
+    public $boxcode="lastcontracts";
+    public $boximg="object_contract";
+    public $boxlabel="BoxLastContracts";
+    public $depends = array("contrat");	// conf->contrat->enabled
 
     /**
      * @var DoliDB Database handler.
      */
     public $db;
 
-    var $param;
+    public $param;
 
-    var $info_box_head = array();
-    var $info_box_contents = array();
+    public $info_box_head = array();
+    public $info_box_contents = array();
 
 
     /**
@@ -53,7 +53,7 @@ class box_contracts extends ModeleBoxes
      *  @param  DoliDB  $db         Database handler
      *  @param  string  $param      More parameters
      */
-    function __construct($db,$param)
+    public function __construct($db, $param)
     {
         global $user;
 
@@ -68,7 +68,7 @@ class box_contracts extends ModeleBoxes
      *  @param	int		$max        Maximum number of records to load
      *  @return	void
      */
-    function loadBox($max=5)
+    public function loadBox($max = 5)
     {
     	global $user, $langs, $db, $conf;
 
@@ -76,7 +76,7 @@ class box_contracts extends ModeleBoxes
 
     	include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 
-    	$this->info_box_head = array('text' => $langs->trans("BoxTitleLastContracts",$max));
+    	$this->info_box_head = array('text' => $langs->trans("BoxTitleLastContracts", $max));
 
     	if ($user->rights->contrat->lire)
     	{
@@ -147,11 +147,11 @@ class box_contracts extends ModeleBoxes
 
                     $this->info_box_contents[$line][] = array(
                         'td' => 'class="right"',
-                        'text' => dol_print_date($datec,'day'),
+                        'text' => dol_print_date($datec, 'day'),
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'class="nowrap right"',
+                        'td' => 'class="nowraponall right"',
                         'text' => $contractstatic->getLibStatut(7),
                         'asis'=>1,
                     );
@@ -161,7 +161,7 @@ class box_contracts extends ModeleBoxes
 
                 if ($num==0)
                     $this->info_box_contents[$line][0] = array(
-                        'td' => 'align="center opacitymedium"',
+                        'td' => 'class="center opacitymedium"',
                         'text'=>$langs->trans("NoRecordedContracts"),
                     );
 
@@ -175,7 +175,7 @@ class box_contracts extends ModeleBoxes
             }
         } else {
             $this->info_box_contents[0][0] = array(
-                'td' => 'align="left" class="nohover opacitymedium"',
+                'td' => 'class="nohover opacitymedium left"',
                 'text' => $langs->trans("ReadPermissionNotAllowed")
             );
         }
@@ -189,9 +189,8 @@ class box_contracts extends ModeleBoxes
 	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	string
 	 */
-    function showBox($head = null, $contents = null, $nooutput=0)
+    public function showBox($head = null, $contents = null, $nooutput = 0)
     {
         return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
     }
 }
-

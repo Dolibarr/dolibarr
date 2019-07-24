@@ -43,14 +43,14 @@ function printingAdminPrepareHead($mode)
     $h++;
 
     if ($mode == 'setup') {
-        $head[$h][0] = DOL_URL_ROOT."/printing/admin/printing.php?mode=setup&driver=".GETPOST('driver','alpha');
+        $head[$h][0] = DOL_URL_ROOT."/printing/admin/printing.php?mode=setup&driver=".GETPOST('driver', 'alpha');
         $head[$h][1] = $langs->trans("SetupDriver");
         $head[$h][2] = 'setup';
         $h++;
     }
 
     if ($mode == 'test') {
-        $head[$h][0] = DOL_URL_ROOT."/printing/admin/printing.php?mode=test&driver=".GETPOST('driver','alpha');
+        $head[$h][0] = DOL_URL_ROOT."/printing/admin/printing.php?mode=test&driver=".GETPOST('driver', 'alpha');
         $head[$h][1] = $langs->trans("TargetedPrinter");
         $head[$h][2] = 'test';
         $h++;

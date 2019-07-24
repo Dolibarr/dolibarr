@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2018      Alexandre Spangaro   <aspangaro@zendsi.com>
+/* Copyright (C) 2004-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,15 +39,13 @@ class modAsset extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $langs,$conf;
+		global $langs, $conf;
 
 		$this->db = $db;
 
 		// Id for module (must be unique).
 		// Use here a free id (See in Home -> System information -> Dolibarr for list of used modules id).
 		$this->numero = 51000;		// TODO Go on page https://wiki.dolibarr.org/index.php/List_of_modules_id to reserve id number for your module
-		// Key text used to identify module (for permissions, menus, etc...)
-		$this->rights_class = 'asset';
 
 		// Family can be 'crm','financial','hr','projects','products','ecm','technic','interface','other'
 		// It is used to group modules by family in module setup page
@@ -58,7 +56,7 @@ class modAsset extends DolibarrModules
 		//$this->familyinfo = array('myownfamily' => array('position' => '01', 'label' => $langs->trans("MyOwnFamily")));
 
 		// Module label (no space allowed), used if translation string 'ModuleAssetsName' not found (MyModue is name of module).
-		$this->name = preg_replace('/^mod/i','',get_class($this));
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		// Module description, used if translation string 'ModuleAssetsDesc' not found (MyModue is name of module).
 		$this->description = "Assets module";
 		// Used only if file README.md and README-LL.md not found.
@@ -147,20 +145,6 @@ class modAsset extends DolibarrModules
 
 		// Dictionaries
 		$this->dictionaries=array();
-		/* Example:
-		$this->dictionaries=array(
-			'langs'=>'mylangfile@assets',
-			'tabname'=>array(MAIN_DB_PREFIX."table1",MAIN_DB_PREFIX."table2",MAIN_DB_PREFIX."table3"),		// List of tables we want to see into dictonnary editor
-			'tablib'=>array("Table1","Table2","Table3"),													// Label of tables
-			'tabsql'=>array('SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table1 as f','SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table2 as f','SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table3 as f'),	// Request to select fields
-			'tabsqlsort'=>array("label ASC","label ASC","label ASC"),																					// Sort order
-			'tabfield'=>array("code,label","code,label","code,label"),																					// List of fields (result of select to show dictionary)
-			'tabfieldvalue'=>array("code,label","code,label","code,label"),																				// List of fields (list of fields to edit a record)
-			'tabfieldinsert'=>array("code,label","code,label","code,label"),																			// List of fields (list of fields for insert)
-			'tabrowid'=>array("rowid","rowid","rowid"),																									// Name of columns with primary key (try to always name it 'rowid')
-			'tabcond'=>array($conf->assets->enabled,$conf->assets->enabled,$conf->assets->enabled)												// Condition to show each dictionary
-		);
-		*/
 
 
 		// Boxes/Widgets
@@ -184,151 +168,61 @@ class modAsset extends DolibarrModules
 
 		// Permissions
 		$this->rights = array();		// Permission array used by this module
+        $this->rights_class = 'asset';
+        $r=0;
 
-		$r=0;
-		$this->rights[$r][0] = $this->numero + $r;	// Permission id (must not be already used)
+        $r++;
+        $this->rights[$r][0] = 51001;	            // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Read assets';		// Permission label
-		$this->rights[$r][3] = 1; 					// Permission by default for new user (0/1)
+        $this->rights[$r][2] = 'r';
+        $this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'read';				// In php code, permission will be checked by test if ($user->rights->asset->level1->level2)
 		$this->rights[$r][5] = '';					// In php code, permission will be checked by test if ($user->rights->asset->level1->level2)
 
 		$r++;
-		$this->rights[$r][0] = $this->numero + $r;	// Permission id (must not be already used)
+		$this->rights[$r][0] = 51002;               // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Create/Update assets';	// Permission label
-		$this->rights[$r][3] = 1; 					// Permission by default for new user (0/1)
+        $this->rights[$r][2] = 'w';
+        $this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'write';				// In php code, permission will be checked by test if ($user->rights->asset->level1->level2)
 		$this->rights[$r][5] = '';					// In php code, permission will be checked by test if ($user->rights->asset->level1->level2)
 
 		$r++;
-		$this->rights[$r][0] = $this->numero + $r;	// Permission id (must not be already used)
+		$this->rights[$r][0] = 51003;               // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Delete assets';		// Permission label
-		$this->rights[$r][3] = 1; 					// Permission by default for new user (0/1)
+        $this->rights[$r][2] = 'd';
+        $this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'delete';			// In php code, permission will be checked by test if ($user->rights->asset->level1->level2)
 		$this->rights[$r][5] = '';					// In php code, permission will be checked by test if ($user->rights->asset->level1->level2)
 
-
-		// Main menu entries
-		$this->menu = array();			// List of menus to add
-		$r=0;
-
-		// Add here entries to declare new menus
-		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
-
-		// Exports
-		//--------
-		$r=1;
-
-		// $this->export_code[$r]          Code unique identifiant l'export (tous modules confondus)
-		// $this->export_label[$r]         Libelle par defaut si traduction de cle "ExportXXX" non trouvee (XXX = Code)
-		// $this->export_permission[$r]    Liste des codes permissions requis pour faire l'export
-		// $this->export_fields_sql[$r]    Liste des champs exportables en codif sql
-		// $this->export_fields_name[$r]   Liste des champs exportables en codif traduction
-		// $this->export_sql[$r]           Requete sql qui offre les donnees a l'export
-
-		/*
-		$r++;
-		$this->export_code[$r]=$this->rights_class.'_'.$r;
-		$this->export_label[$r]='AssetsLines';
-		$this->export_permission[$r]=array(array("asset","export"));
-		$this->export_fields_array[$r]=array(
-			'a.rowid'=>'Id','a.civility'=>"UserTitle",'a.lastname'=>"Lastname",'a.firstname'=>"Firstname",'a.login'=>"Login",'a.morphy'=>'Nature',
-			'a.societe'=>'Company','a.address'=>"Address",'a.zip'=>"Zip",'a.town'=>"Town",'d.nom'=>"State",'co.code'=>"CountryCode",'co.label'=>"Country",
-			'a.phone'=>"PhonePro",'a.phone_perso'=>"PhonePerso",'a.phone_mobile'=>"PhoneMobile",'a.email'=>"Email",'a.birth'=>"Birthday",'a.statut'=>"Status",
-			'a.photo'=>"Photo",'a.note_public'=>"NotePublic",'a.note_private'=>"NotePrivate",'a.datec'=>'DateCreation','a.datevalid'=>'DateValidation',
-			'a.tms'=>'DateLastModification','a.datefin'=>'DateEndSubscription','ta.rowid'=>'AssetTypeId','ta.label'=>'AssetTypeLabel',
-			'ta.accountancy_code_asset'=>'AccountancyCodeAsset','ta.accountancy_code_depreciation_asset'=>'AccountancyCodeDepreciationAsset',
-			'ta.accountancy_code_depreciation_expense'=>'AccountancyCodeDepreciationExpense'
-		);
-		$this->export_TypeFields_array[$r]=array(
-			'a.civility'=>"Text",'a.lastname'=>"Text",'a.firstname'=>"Text",'a.login'=>"Text",'a.morphy'=>'Text','a.societe'=>'Text','a.address'=>"Text",
-			'a.zip'=>"Text",'a.town'=>"Text",'d.nom'=>"Text",'co.code'=>'Text','co.label'=>"Text",'a.phone'=>"Text",'a.phone_perso'=>"Text",'a.phone_mobile'=>"Text",
-			'a.email'=>"Text",'a.birth'=>"Date",'a.statut'=>"Status",'a.note_public'=>"Text",'a.note_private'=>"Text",'a.datec'=>'Date','a.datevalid'=>'Date',
-			'a.tms'=>'Date','a.datefin'=>'Date','ta.rowid'=>'List:asset_type:label','ta.label'=>'Text','ta.accountancy_code_asset'=>'Text','ta.accountancy_code_depreciation_asset'=>'Text',
-			'ta.accountancy_code_depreciation_expense'=>'Text'
-		);
-		$this->export_entities_array[$r]=array(
-			'a.rowid'=>'member','a.civility'=>"member",'a.lastname'=>"member",'a.firstname'=>"member",'a.login'=>"member",'a.morphy'=>'member',
-			'a.societe'=>'member','a.address'=>"member",'a.zip'=>"member",'a.town'=>"member",'d.nom'=>"member",'co.code'=>"member",'co.label'=>"member",
-			'a.phone'=>"member",'a.phone_perso'=>"member",'a.phone_mobile'=>"member",'a.email'=>"member",'a.birth'=>"member",'a.statut'=>"member",
-			'a.photo'=>"member",'a.note_public'=>"member",'a.note_private'=>"member",'a.datec'=>'member','a.datevalid'=>'member','a.tms'=>'member',
-			'a.datefin'=>'member','ta.rowid'=>'asset_type','ta.label'=>'asset_type','ta.accountancy_code_asset'=>'asset_type','ta.accountancy_code_depreciation_asset'=>'asset_type',
-			'ta.accountancy_code_depreciation_expense'=>'asset_type'
-		);
-		// Add extra fields
-		$keyforselect='asset'; $keyforelement='asset'; $keyforaliasextra='extra';
-		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-		// End add axtra fields
-		$this->export_sql_start[$r]='SELECT DISTINCT ';
-		$this->export_sql_end[$r]  =' FROM ('.MAIN_DB_PREFIX.'asset_type as ta, '.MAIN_DB_PREFIX.'asset as a)';
-		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'asset_extrafields as extra ON a.rowid = extra.fk_object';
-		$this->export_sql_end[$r] .=' WHERE a.fk_asset_type = ta.rowid AND ta.entity IN ('.getEntity('asset_type').') ';
-
-		// Imports
-		//--------
-		$r=0;
-
-		$now=dol_now();
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-
-		$r++;
-		$this->import_code[$r]=$this->rights_class.'_'.$r;
-		$this->import_label[$r]="Assets"; // Translation key
-		$this->import_icon[$r]=$this->picto;
-		$this->import_entities_array[$r]=array();		// We define here only fields that use another icon that the one defined into import_icon
-		$this->import_tables_array[$r]=array('a'=>MAIN_DB_PREFIX.'asset','extra'=>MAIN_DB_PREFIX.'asset_extrafields');
-		$this->import_tables_creator_array[$r]=array('a'=>'fk_user_author');    // Fields to store import user id
-		$this->import_fields_array[$r]=array(
-			'a.civility'=>"UserTitle",'a.lastname'=>"Lastname*",'a.firstname'=>"Firstname",'a.login'=>"Login*","a.pass"=>"Password",
-			"a.fk_adherent_type"=>"MemberType*",'a.morphy'=>'Nature*','a.societe'=>'Company','a.address'=>"Address",'a.zip'=>"Zip",'a.town'=>"Town",
-			'a.state_id'=>'StateId','a.country'=>"CountryId",'a.phone'=>"PhonePro",'a.phone_perso'=>"PhonePerso",'a.phone_mobile'=>"PhoneMobile",
-			'a.email'=>"Email",'a.birth'=>"Birthday",'a.statut'=>"Status*",'a.photo'=>"Photo",'a.note_public'=>"NotePublic",'a.note_private'=>"NotePrivate",
-			'a.datec'=>'DateCreation','a.datefin'=>'DateEndSubscription'
-		);
-		// Add extra fields
-		$sql="SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'asset' AND entity = ".$conf->entity;
-		$resql=$this->db->query($sql);
-		if ($resql)    // This can fail when class is used on old database (during migration for example)
-		{
-			while ($obj=$this->db->fetch_object($resql))
-			{
-				$fieldname='extra.'.$obj->name;
-				$fieldlabel=ucfirst($obj->label);
-				$this->import_fields_array[$r][$fieldname]=$fieldlabel.($obj->fieldrequired?'*':'');
-			}
-		}
-		// End add extra fields
-		$this->import_fieldshidden_array[$r]=array('extra.fk_object'=>'lastrowid-'.MAIN_DB_PREFIX.'asset');    // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
-		$this->import_regex_array[$r]=array(
-			'a.civility'=>'code@'.MAIN_DB_PREFIX.'c_civility','a.fk_adherent_type'=>'rowid@'.MAIN_DB_PREFIX.'adherent_type',
-			'a.morphy'=>'(phy|mor)','a.statut'=>'^[0|1]','a.datec'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$',
-			'a.datefin'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$'
-		);
-		$this->import_examplevalues_array[$r]=array(
-			'a.civility'=>"MR",'a.lastname'=>'Smith','a.firstname'=>'John','a.login'=>'jsmith','a.pass'=>'passofjsmith','a.fk_adherent_type'=>'1',
-			'a.morphy'=>'"mor" or "phy"','a.societe'=>'JS company','a.address'=>'21 jump street','a.zip'=>'55000','a.town'=>'New York','a.country'=>'1',
-			'a.email'=>'jsmith@example.com','a.birth'=>'1972-10-10','a.statut'=>"0 or 1",'a.note_public'=>"This is a public comment on member",
-			'a.note_private'=>"This is private comment on member",'a.datec'=>dol_print_date($now,'%Y-%m__%d'),'a.datefin'=>dol_print_date(dol_time_plus_duree($now, 1, 'y'),'%Y-%m-%d')
-		);
-		*/
+        $r++;
+        $this->rights[$r][0] = 51005;               // Permission id (must not be already used)
+        $this->rights[$r][1] = 'Setup types of asset';  // Permission label
+        $this->rights[$r][2] = 'w';
+        $this->rights[$r][3] = 0;                   // Permission by default for new user (0/1)
+        $this->rights[$r][4] = 'advanced_configurer';        // In php code, permission will be checked by test if ($user->rights->asset->level1->level2)
+        $this->rights[$r][5] = '';					// In php code, permission will be checked by test if ($user->rights->asset->level1->level2)
+        
+        // Menus
+        //-------
+        $this->menu = 1;        // This module add menu entries. They are coded into menu manager.
 	}
 
 	/**
-	 *	Function called when module is enabled.
-	 *	The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
-	 *	It also creates data directories
+	 *  Function called when module is enabled.
+	 *  The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+	 *  It also creates data directories
 	 *
-	 *	@param      string	$options    Options when enabling module ('', 'noboxes')
-	 *	@return     int             	1 if OK, 0 if KO
+	 *  @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *  @return     int             	1 if OK, 0 if KO
 	 */
-	function init($options='')
-	{
-		global $conf;
+    public function init($options = '')
+    {
+        // Permissions
+        $this->remove($options);
 
-		// Permissions
-		$this->remove($options);
+        $sql = array();
 
-		$sql = array();
-
-		return $this->_init($sql,$options);
-	}
+        return $this->_init($sql, $options);
+    }
 }

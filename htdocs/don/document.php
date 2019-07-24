@@ -6,7 +6,7 @@
  * Copyright (C) 2005      Simon TOSSER          <simon@kornog-computing.com>
  * Copyright (C) 2011-2012 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
- * Copyright (C) 2015      Alexandre Spangaro    <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015      Alexandre Spangaro    <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,10 +43,10 @@ if (! empty($conf->projet->enabled))
 // Load translation files required by the page
 $langs->loadLangs(array("companies","other","donations"));
 
-$id = GETPOST('id','int');
+$id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
-$action = GETPOST('action','alpha');
-$confirm = GETPOST('confirm','alpha');
+$action = GETPOST('action', 'alpha');
+$confirm = GETPOST('confirm', 'alpha');
 $projectid = (GETPOST('projectid') ? GETPOST('projectid', 'int') : 0);
 
 // Security check
@@ -55,9 +55,9 @@ $result = restrictedArea($user, 'don', $id, '');
 
 
 // Get parameters
-$sortfield = GETPOST('sortfield','alpha');
-$sortorder = GETPOST('sortorder','alpha');
-$page = GETPOST('page','int');
+$sortfield = GETPOST('sortfield', 'alpha');
+$sortorder = GETPOST('sortorder', 'alpha');
+$page = GETPOST('page', 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
@@ -69,7 +69,7 @@ if (! $sortfield) $sortfield="name";
 $object = new Don($db);
 $object->fetch($id, $ref);
 
-$upload_dir = $conf->don->dir_output . '/' . get_exdir($filename,0,0,0,$object,'donation'). '/'. dol_sanitizeFileName($object->ref);
+$upload_dir = $conf->don->dir_output . '/' . get_exdir($filename, 0, 0, 0, $object, 'donation'). '/'. dol_sanitizeFileName($object->ref);
 $modulepart='don';
 
 
@@ -103,11 +103,11 @@ if ($object->id)
 
 	$head=donation_prepare_head($object);
 
-	dol_fiche_head($head, 'documents',  $langs->trans("Donation"), -1, 'generic');
+	dol_fiche_head($head, 'documents', $langs->trans("Donation"), -1, 'generic');
 
 
 	// Build file list
-	$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+	$filearray=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);
 	$totalsize=0;
 	foreach($filearray as $key => $file)
 	{
@@ -157,7 +157,7 @@ if ($object->id)
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
 
-    print '<table class="border" width="100%">';
+    print '<table class="border tableforfield centpercent">';
 
 	// Ref
 	/*
@@ -170,7 +170,7 @@ if ($object->id)
 	//print "<tr><td>".$langs->trans("Company")."</td><td>".$object->client->getNomUrl(1)."</td></tr>";
 
     print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
-    print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize,1,1).'</td></tr>';
+    print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize, 1, 1).'</td></tr>';
     print '</table>';
 
     print '</div>';

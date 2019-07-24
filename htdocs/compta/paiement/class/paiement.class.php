@@ -58,13 +58,13 @@ class Paiement extends CommonObject
 
 	/**
 	 * @deprecated
-	 * @see amount, amounts
+	 * @see $amount, $amounts
 	 */
     public $total;
 
 	/**
 	 * @deprecated
-	 * @see amount, amounts
+	 * @see $amount, $amounts
 	 */
 	public $montant;
 
@@ -157,7 +157,7 @@ class Paiement extends CommonObject
 	 *    @param	int		$fk_bank	Id of bank line associated to payment
 	 *    @return   int		            <0 if KO, 0 if not found, >0 if OK
 	 */
-	public function fetch($id, $ref='', $fk_bank='')
+	public function fetch($id, $ref = '', $fk_bank = '')
 	{
 		$sql = 'SELECT p.rowid, p.ref, p.datep as dp, p.amount, p.statut, p.ext_payment_id, p.ext_payment_site, p.fk_bank,';
 		$sql.= ' c.code as type_code, c.libelle as type_libelle,';
@@ -165,12 +165,12 @@ class Paiement extends CommonObject
 		$sql.= ' b.fk_account';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'paiement as p LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as c ON p.fk_paiement = c.id';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
-		$sql.= ' WHERE p.entity IN (' . getEntity('facture').')';
+		$sql.= ' WHERE p.entity IN (' . getEntity('invoice').')';
 		if ($id > 0)
 			$sql.= ' AND p.rowid = '.$id;
-		else if ($ref)
+		elseif ($ref)
 			$sql.= " AND p.ref = '".$ref."'";
-		else if ($fk_bank)
+		elseif ($fk_bank)
 			$sql.= ' AND p.fk_bank = '.$fk_bank;
 
 		$resql = $this->db->query($sql);
@@ -216,15 +216,16 @@ class Paiement extends CommonObject
 	}
 
 	/**
-	 *    Create payment of invoices into database.
-	 *    Use this->amounts to have list of invoices for the payment.
-	 *    For payment of a customer invoice, amounts are positive, for payment of credit note, amounts are negative
+	 *  Create payment of invoices into database.
+	 *  Use this->amounts to have list of invoices for the payment.
+	 *  For payment of a customer invoice, amounts are positive, for payment of credit note, amounts are negative
 	 *
-	 *    @param	User	$user                	Object user
-	 *    @param    int		$closepaidinvoices   	1=Also close payed invoices to paid, 0=Do nothing more
-	 *    @return   int                 			id of created payment, < 0 if error
+	 *  @param	User	  $user                	Object user
+	 *  @param  int		  $closepaidinvoices   	1=Also close payed invoices to paid, 0=Do nothing more
+	 *  @param  Societe   $thirdparty           Thirdparty
+	 *  @return int                 			id of created payment, < 0 if error
 	 */
-	function create($user, $closepaidinvoices=0)
+    public function create($user, $closepaidinvoices = 0, $thirdparty = null)
 	{
 		global $conf, $langs;
 
@@ -255,7 +256,7 @@ class Paiement extends CommonObject
 			$totalamount_converted += $value_converted;
 			$amounts_to_update[$key] = price2num($value_converted, 'MT');
 
-			$newvalue = price2num($value,'MT');
+			$newvalue = price2num($value, 'MT');
 			$amounts[$key] = $newvalue;
 			$totalamount += $newvalue;
 			if (! empty($newvalue)) $atleastonepaymentnotnull++;
@@ -274,7 +275,7 @@ class Paiement extends CommonObject
 
 		$this->db->begin();
 
-		$this->ref = $this->getNextNumRef('');
+		$this->ref = $this->getNextNumRef(is_object($thirdparty)?$thirdparty:'');
 
 		if ($way == 'dolibarr')
 		{
@@ -320,8 +321,8 @@ class Paiement extends CommonObject
                             $paiement = $invoice->getSommePaiement();
                             $creditnotes=$invoice->getSumCreditNotesUsed();
                             $deposits=$invoice->getSumDepositsUsed();
-                            $alreadypayed=price2num($paiement + $creditnotes + $deposits,'MT');
-                            $remaintopay=price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits,'MT');
+                            $alreadypayed=price2num($paiement + $creditnotes + $deposits, 'MT');
+                            $remaintopay=price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits, 'MT');
 
 							//var_dump($invoice->total_ttc.' - '.$paiement.' -'.$creditnotes.' - '.$deposits.' - '.$remaintopay);exit;
 
@@ -357,7 +358,7 @@ class Paiement extends CommonObject
 							);
 
                             if (!in_array($invoice->type, $affected_types)) dol_syslog("Invoice ".$facid." is not a standard, nor replacement invoice, nor credit note, nor deposit invoice, nor situation invoice. We do nothing more.");
-                            else if ($remaintopay) dol_syslog("Remain to pay for invoice ".$facid." not null. We do nothing more.");
+                            elseif ($remaintopay) dol_syslog("Remain to pay for invoice ".$facid." not null. We do nothing more.");
                             //else if ($mustwait) dol_syslog("There is ".$mustwait." differed payment to process, we do nothing more.");
                             else
                             {
@@ -369,7 +370,7 @@ class Paiement extends CommonObject
 
 									// Insert one discount by VAT rate category
 									$discount = new DiscountAbsolute($this->db);
-									$discount->fetch('',$invoice->id);
+									$discount->fetch('', $invoice->id);
 									if (empty($discount->id)) {	// If the invoice was not yet converted into a discount (this may have been done manually before we come here)
 
 
@@ -418,7 +419,7 @@ class Paiement extends CommonObject
                                 // Set invoice to paid
                                 if (! $error)
                                 {
-                                    $result=$invoice->set_paid($user,'','');
+                                    $result=$invoice->set_paid($user, '', '');
                                     if ($result<0)
                                     {
                                         $this->error=$invoice->error;
@@ -431,6 +432,7 @@ class Paiement extends CommonObject
 					    // Regenerate documents of invoices
                         if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
                         {
+                            $newlang='';
                             $outputlangs = $langs;
                             if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $invoice->thirdparty->default_lang;
                             if (! empty($newlang)) {
@@ -457,7 +459,7 @@ class Paiement extends CommonObject
 				}
 			}
 
-			if (! $error)
+			if (! $error)    // All payments into $this->amounts were recorded without errors
 			{
 				// Appel des triggers
 				$result=$this->call_trigger('PAYMENT_CUSTOMER_CREATE', $user);
@@ -495,7 +497,7 @@ class Paiement extends CommonObject
 	 *  @param	int		$notrigger		No trigger
 	 *  @return int     				<0 si ko, >0 si ok
 	 */
-	function delete($notrigger=0)
+    public function delete($notrigger = 0)
 	{
 		global $conf, $user, $langs;
 
@@ -558,8 +560,8 @@ class Paiement extends CommonObject
 			{
 			    $this->db->rollback();
 			    return -1;
-			 }
-		    // End call triggers
+            }
+            // End call triggers
 		}
 
 		// Delete payment (into paiement_facture and paiement)
@@ -605,7 +607,7 @@ class Paiement extends CommonObject
      *      @param	int		$notrigger			No trigger
      *      @return int                 		<0 if KO, bank_line_id if OK
      */
-    function addPaymentToBank($user,$mode,$label,$accountid,$emetteur_nom,$emetteur_banque,$notrigger=0)
+    public function addPaymentToBank($user, $mode, $label, $accountid, $emetteur_nom, $emetteur_banque, $notrigger = 0)
     {
         global $conf,$langs,$user;
 
@@ -693,7 +695,7 @@ class Paiement extends CommonObject
                             $fac = new Facture($this->db);
                             $fac->fetch($key);
                             $fac->fetch_thirdparty();
-                            if (! in_array($fac->thirdparty->id,$linkaddedforthirdparty)) // Not yet done for this thirdparty
+                            if (! in_array($fac->thirdparty->id, $linkaddedforthirdparty)) // Not yet done for this thirdparty
                             {
                                 $result=$acc->add_url_line(
                                     $bank_line_id,
@@ -711,7 +713,7 @@ class Paiement extends CommonObject
                             $fac = new FactureFournisseur($this->db);
                             $fac->fetch($key);
                             $fac->fetch_thirdparty();
-                            if (! in_array($fac->thirdparty->id,$linkaddedforthirdparty)) // Not yet done for this thirdparty
+                            if (! in_array($fac->thirdparty->id, $linkaddedforthirdparty)) // Not yet done for this thirdparty
                             {
                                 $result=$acc->add_url_line(
                                     $bank_line_id,
@@ -728,9 +730,8 @@ class Paiement extends CommonObject
                 }
 
 				// Add link 'WithdrawalPayment' in bank_url
-				if (! $error && $label == '(WithdrawalPayment)')
-				{
-					$result=$acc->add_url_line(
+				if (! $error && $label == '(WithdrawalPayment)') {
+                    $result=$acc->add_url_line(
 						$bank_line_id,
 						$this->id_prelevement,
 						DOL_URL_ROOT.'/compta/prelevement/card.php?id=',
@@ -774,14 +775,14 @@ class Paiement extends CommonObject
     }
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *      Mise a jour du lien entre le paiement et la ligne generee dans llx_bank
 	 *
 	 *      @param	int		$id_bank    Id compte bancaire
 	 *      @return	int					<0 if KO, >0 if OK
 	 */
-	function update_fk_bank($id_bank)
+    public function update_fk_bank($id_bank)
 	{
         // phpcs:enable
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' set fk_bank = '.$id_bank;
@@ -799,16 +800,16 @@ class Paiement extends CommonObject
             dol_syslog(get_class($this).'::update_fk_bank '.$this->error);
 			return -1;
 		}
-	}
+    }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *	Updates the payment date
      *
      *  @param	int	$date   New date
      *  @return int					<0 if KO, 0 if OK
      */
-    function update_date($date)
+    public function update_date($date)
     {
         // phpcs:enable
         $error=0;
@@ -866,18 +867,17 @@ class Paiement extends CommonObject
         return -1; //no date given or already validated
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Updates the payment number
      *
      *  @param	string	$num		New num
      *  @return int					<0 if KO, 0 if OK
      */
-    function update_num($num)
+    public function update_num($num)
     {
         // phpcs:enable
-    	if(!empty($num) && $this->statut!=1)
-        {
+        if(!empty($num) && $this->statut!=1) {
             $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
             $sql.= " SET num_paiement = '".$this->db->escape($num)."'";
             $sql.= " WHERE rowid = ".$this->id;
@@ -904,8 +904,8 @@ class Paiement extends CommonObject
 	 *	  @param	User	$user		User making validation
 	 *    @return   int     			<0 if KO, >0 if OK
 	 */
-	function valide(User $user=null)
-	{
+    public function valide(User $user = null)
+    {
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET statut = 1 WHERE rowid = '.$this->id;
 
 		dol_syslog(get_class($this).'::valide', LOG_DEBUG);
@@ -920,7 +920,7 @@ class Paiement extends CommonObject
 			dol_syslog(get_class($this).'::valide '.$this->error);
 			return -1;
 		}
-	}
+    }
 
 	/**
 	 *    Reject payment
@@ -928,8 +928,8 @@ class Paiement extends CommonObject
 	 *	  @param	User	$user		User making reject
 	 *    @return   int     			<0 if KO, >0 if OK
 	 */
-	function reject(User $user=null)
-	{
+    public function reject(User $user = null)
+    {
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET statut = 2 WHERE rowid = '.$this->id;
 
 		dol_syslog(get_class($this).'::reject', LOG_DEBUG);
@@ -944,7 +944,7 @@ class Paiement extends CommonObject
 			dol_syslog(get_class($this).'::reject '.$this->error);
 			return -1;
 		}
-	}
+    }
 
 	/**
 	 *    Information sur l'objet
@@ -952,8 +952,8 @@ class Paiement extends CommonObject
 	 *    @param   int     $id      id du paiement dont il faut afficher les infos
 	 *    @return  void
 	 */
-	function info($id)
-	{
+    public function info($id)
+    {
 		$sql = 'SELECT p.rowid, p.datec, p.fk_user_creat, p.fk_user_modif, p.tms';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'paiement as p';
 		$sql.= ' WHERE p.rowid = '.$id;
@@ -988,19 +988,19 @@ class Paiement extends CommonObject
 		{
 			dol_print_error($this->db);
 		}
-	}
+    }
 
 	/**
-	 *  Retourne la liste des factures sur lesquels porte le paiement
+	 *  Return list of invoices the payment is related to.
 	 *
-	 *  @param	string	$filter         Critere de filtre
-	 *  @return array					Tableau des id de factures
+	 *  @param	string		$filter         Filter
+	 *  @return int|array					<0 if KO or array of invoice id
 	 */
-	function getBillsArray($filter='')
-	{
-		$sql = 'SELECT fk_facture';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf, '.MAIN_DB_PREFIX.'facture as f';
-		$sql.= ' WHERE pf.fk_facture = f.rowid AND fk_paiement = '.$this->id;
+    public function getBillsArray($filter = '')
+    {
+		$sql = 'SELECT pf.fk_facture';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf, '.MAIN_DB_PREFIX.'facture as f';	// We keep link on invoice to allow use of some filters on invoice
+		$sql.= ' WHERE pf.fk_facture = f.rowid AND pf.fk_paiement = '.$this->id;
 		if ($filter) $sql.= ' AND '.$filter;
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -1024,7 +1024,41 @@ class Paiement extends CommonObject
 			dol_syslog(get_class($this).'::getBillsArray Error '.$this->error.' -', LOG_DEBUG);
 			return -1;
 		}
-	}
+    }
+
+    /**
+     *  Return list of amounts of payments.
+     *
+     *  @return int|array					Array of amount of payments
+     */
+    public function getAmountsArray()
+    {
+    	$sql = 'SELECT pf.fk_facture, pf.amount';
+    	$sql.= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf';
+    	$sql.= ' WHERE pf.fk_paiement = '.$this->id;
+    	$resql = $this->db->query($sql);
+    	if ($resql)
+    	{
+    		$i=0;
+    		$num=$this->db->num_rows($resql);
+    		$amounts = array();
+
+    		while ($i < $num)
+    		{
+    			$obj = $this->db->fetch_object($resql);
+    			$amounts[$obj->fk_facture]=$obj->amount;
+    			$i++;
+    		}
+
+    		return $amounts;
+    	}
+    	else
+    	{
+    		$this->error=$this->db->error();
+    		dol_syslog(get_class($this).'::getAmountsArray Error '.$this->error.' -', LOG_DEBUG);
+    		return -1;
+    	}
+    }
 
 	/**
 	 *      Return next reference of customer invoice not already used (or last reference)
@@ -1034,15 +1068,15 @@ class Paiement extends CommonObject
 	 *      @param     string		$mode		'next' for next value or 'last' for last value
 	 *      @return    string					free ref or last ref
 	 */
-	function getNextNumRef($soc,$mode='next')
+    public function getNextNumRef($soc, $mode = 'next')
 	{
 		global $conf, $db, $langs;
 		$langs->load("bills");
 
 		// Clean parameters (if not defined or using deprecated value)
 		if (empty($conf->global->PAYMENT_ADDON)) $conf->global->PAYMENT_ADDON='mod_payment_cicada';
-		else if ($conf->global->PAYMENT_ADDON=='ant') $conf->global->PAYMENT_ADDON='mod_payment_ant';
-		else if ($conf->global->PAYMENT_ADDON=='cicada') $conf->global->PAYMENT_ADDON='mod_payment_cicada';
+		elseif ($conf->global->PAYMENT_ADDON=='ant') $conf->global->PAYMENT_ADDON='mod_payment_ant';
+		elseif ($conf->global->PAYMENT_ADDON=='cicada') $conf->global->PAYMENT_ADDON='mod_payment_cicada';
 
 		if (! empty($conf->global->PAYMENT_ADDON))
 		{
@@ -1070,7 +1104,7 @@ class Paiement extends CommonObject
 			{
 				$file = $conf->global->PAYMENT_ADDON.".php";
 				$classname = "mod_payment_".$conf->global->PAYMENT_ADDON;
-				$classname = preg_replace('/\-.*$/','',$classname);
+				$classname = preg_replace('/\-.*$/', '', $classname);
 				// Include file with class
 				foreach ($conf->file->dol_document_root as $dirroot)
 				{
@@ -1085,20 +1119,20 @@ class Paiement extends CommonObject
 
 			if (! $mybool)
 			{
-				dol_print_error('',"Failed to include file ".$file);
+				dol_print_error('', "Failed to include file ".$file);
 				return '';
 			}
 
 			$obj = new $classname();
 			$numref = "";
-			$numref = $obj->getNextValue($soc,$this);
+			$numref = $obj->getNextValue($soc, $this);
 
 			/**
 			 * $numref can be empty in case we ask for the last value because if there is no invoice created with the
 			 * set up mask.
 			 */
 			if ($mode != 'last' && !$numref) {
-				dol_print_error($db,"Payment::getNextNumRef ".$obj->error);
+				dol_print_error($db, "Payment::getNextNumRef ".$obj->error);
 				return "";
 			}
 
@@ -1117,7 +1151,7 @@ class Paiement extends CommonObject
 	 *
 	 * 	@return 	string 	'dolibarr' if standard comportment or paid in main currency, 'customer' if payment received from multicurrency inputs
 	 */
-	function getWay()
+    public function getWay()
 	{
 		global $conf;
 
@@ -1145,7 +1179,7 @@ class Paiement extends CommonObject
 	 *	@param	string		$option		''=Create a specimen invoice with lines, 'nolines'=No lines
 	 *  @return	void
 	 */
-	function initAsSpecimen($option='')
+    public function initAsSpecimen($option = '')
 	{
 		global $user,$langs,$conf;
 
@@ -1171,7 +1205,7 @@ class Paiement extends CommonObject
      *  @param	int  	$notooltip		1=Disable tooltip
 	 *	@return	string					Chaine avec URL
 	 */
-	function getNomUrl($withpicto=0, $option='', $mode='withlistofinvoices', $notooltip=0)
+    public function getNomUrl($withpicto = 0, $option = '', $mode = 'withlistofinvoices', $notooltip = 0)
 	{
 		global $conf, $langs;
 
@@ -1180,7 +1214,7 @@ class Paiement extends CommonObject
 		$result='';
         $label = '<u>'.$langs->trans("ShowPayment").'</u><br>';
         $label.= '<strong>'.$langs->trans("Ref").':</strong> '.$this->ref;
-        if ($this->date) $label.= '<br><strong>'.$langs->trans("Date").':</strong> '.dol_print_date($this->date, 'dayhour');
+        if ($this->datepaye ? $this->datepaye : $this->date) $label.= '<br><strong>'.$langs->trans("Date").':</strong> '.dol_print_date($this->datepaye ? $this->datepaye : $this->date, 'dayhour');
         if ($mode == 'withlistofinvoices')
         {
             $arraybill = $this->getBillsArray();
@@ -1191,7 +1225,7 @@ class Paiement extends CommonObject
             	foreach ($arraybill as $billid)
             	{
             		$facturestatic->fetch($billid);
-            		$label .='<br> '.$facturestatic->getNomUrl(1).' '.$facturestatic->getLibStatut(2,1);
+            		$label .='<br> '.$facturestatic->getNomUrl(1).' '.$facturestatic->getLibStatut(2, 1);
             	}
             }
         }
@@ -1229,12 +1263,12 @@ class Paiement extends CommonObject
 	 * @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 * @return  string				Libelle
 	 */
-	function getLibStatut($mode=0)
+    public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->statut,$mode);
+		return $this->LibStatut($this->statut, $mode);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Renvoi le libelle d'un statut donne
 	 *
@@ -1242,7 +1276,7 @@ class Paiement extends CommonObject
 	 * @param   int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 * @return	string  		    Libelle du statut
 	 */
-	function LibStatut($status,$mode=0)
+    public function LibStatut($status, $mode = 0)
 	{
         // phpcs:enable
 		global $langs;	// TODO Renvoyer le libelle anglais et faire traduction a affichage
@@ -1286,14 +1320,14 @@ class Paiement extends CommonObject
 		return '';
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Load the third party of object, from id into this->thirdparty
 	 *
 	 *	@param		int		$force_thirdparty_id	Force thirdparty id
 	 *	@return		int								<0 if KO, >0 if OK
 	 */
-	function fetch_thirdparty($force_thirdparty_id=0)
+    public function fetch_thirdparty($force_thirdparty_id = 0)
 	{
         // phpcs:enable
 		include_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';

@@ -32,11 +32,11 @@ if (!$user->admin)
 // Load translation files required by the page
 $langs->loadLangs(array("admin","other","agenda"));
 
-$action = GETPOST('action','alpha');
-$value = GETPOST('value','alpha');
-$param = GETPOST('param','alpha');
-$cancel = GETPOST('cancel','alpha');
-$scandir = GETPOST('scandir','alpha');
+$action = GETPOST('action', 'alpha');
+$value = GETPOST('value', 'alpha');
+$param = GETPOST('param', 'alpha');
+$cancel = GETPOST('cancel', 'alpha');
+$scandir = GETPOST('scandir', 'alpha');
 $type = 'action';
 
 
@@ -46,7 +46,7 @@ $type = 'action';
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
-if (preg_match('/set_([a-z0-9_\-]+)/i',$action,$reg))
+if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
 {
 	$code=$reg[1];
 	$value=(GETPOST($code, 'alpha') ? GETPOST($code, 'alpha') : 1);
@@ -61,7 +61,7 @@ if (preg_match('/set_([a-z0-9_\-]+)/i',$action,$reg))
 	}
 }
 
-if (preg_match('/del_([a-z0-9_\-]+)/i',$action,$reg))
+if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg))
 {
 	$code=$reg[1];
 	if (dolibarr_del_const($db, $code, $conf->entity) > 0)
@@ -81,9 +81,9 @@ if ($action == 'set')
     dolibarr_set_const($db, 'AGENDA_DEFAULT_FILTER_STATUS', GETPOST('AGENDA_DEFAULT_FILTER_STATUS'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, 'AGENDA_DEFAULT_VIEW', GETPOST('AGENDA_DEFAULT_VIEW'), 'chaine', 0, '', $conf->entity);
 }
-else if ($action == 'specimen')  // For orders
+elseif ($action == 'specimen')  // For orders
 {
-    $modele=GETPOST('module','alpha');
+    $modele=GETPOST('module', 'alpha');
 
     $commande = new CommandeFournisseur($db);
     $commande->initAsSpecimen();
@@ -91,10 +91,10 @@ else if ($action == 'specimen')  // For orders
 
     // Search template files
     $file=''; $classname=''; $filefound=0;
-    $dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
+    $dirmodels=array_merge(array('/'), (array) $conf->modules_parts['models']);
     foreach($dirmodels as $reldir)
     {
-    	$file=dol_buildpath($reldir."core/modules/action/doc/pdf_".$modele.".modules.php",0);
+    	$file=dol_buildpath($reldir."core/modules/action/doc/pdf_".$modele.".modules.php", 0);
     	if (file_exists($file))
     	{
     		$filefound=1;
@@ -107,9 +107,9 @@ else if ($action == 'specimen')  // For orders
     {
     	require_once $file;
 
-    	$module = new $classname($db,$commande);
+    	$module = new $classname($db, $commande);
 
-    	if ($module->write_file($commande,$langs) > 0)
+    	if ($module->write_file($commande, $langs) > 0)
     	{
     		header("Location: ".DOL_URL_ROOT."/document.php?modulepart=action&file=SPECIMEN.pdf");
     		return;
@@ -128,25 +128,25 @@ else if ($action == 'specimen')  // For orders
 }
 
 // Activate a model
-else if ($action == 'setmodel')
+elseif ($action == 'setmodel')
 {
 	//print "sssd".$value;
 	$ret = addDocumentModel($value, $type, $label, $scandir);
 }
 
-else if ($action == 'del')
+elseif ($action == 'del')
 {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0)
 	{
-        if ($conf->global->ACTION_EVENT_ADDON_PDF == "$value") dolibarr_del_const($db, 'ACTION_EVENT_ADDON_PDF',$conf->entity);
+        if ($conf->global->ACTION_EVENT_ADDON_PDF == "$value") dolibarr_del_const($db, 'ACTION_EVENT_ADDON_PDF', $conf->entity);
 	}
 }
 
 // Set default model
-else if ($action == 'setdoc')
+elseif ($action == 'setdoc')
 {
-	if (dolibarr_set_const($db, "ACTION_EVENT_ADDON_PDF",$value,'chaine',0,'',$conf->entity))
+	if (dolibarr_set_const($db, "ACTION_EVENT_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity))
 	{
 		// La constante qui a ete lue en avant du nouveau set
 		// on passe donc par une variable pour avoir un affichage coherent
@@ -167,11 +167,11 @@ else if ($action == 'setdoc')
  */
 
 $formactions=new FormActions($db);
-$dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
+$dirmodels=array_merge(array('/'), (array) $conf->modules_parts['models']);
 llxHeader();
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans("AgendaSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("AgendaSetup"), $linkback, 'title_setup');
 
 
 
@@ -185,8 +185,8 @@ print '<input type="hidden" name="action" value="set">';
 print '<table class="noborder allwidth">'."\n";
 print '<tr class="liste_titre">'."\n";
 print '<td>'.$langs->trans("Parameters").'</td>'."\n";
-print '<td align="center">&nbsp;</td>'."\n";
-print '<td align="right">'.$langs->trans("Value").'</td>'."\n";
+print '<td class="center">&nbsp;</td>'."\n";
+print '<td class="right">'.$langs->trans("Value").'</td>'."\n";
 print '</tr>'."\n";
 
 
@@ -195,14 +195,14 @@ if ($conf->global->MAIN_FEATURES_LEVEL == 2)
 {
 	print '<tr class="oddeven">'."\n";
 	print '<td>'.$langs->trans('AGENDA_REMINDER_EMAIL', $langs->transnoentities("Module2300Name")).'</td>'."\n";
-	print '<td align="center">&nbsp;</td>'."\n";
-	print '<td align="right">'."\n";
+	print '<td class="center">&nbsp;</td>'."\n";
+	print '<td class="right">'."\n";
 
 	if (empty($conf->global->AGENDA_REMINDER_EMAIL)) {
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_REMINDER_EMAIL">'.img_picto($langs->trans('Disabled'),'switch_off').'</a>';
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_REMINDER_EMAIL">'.img_picto($langs->trans('Disabled'), 'switch_off').'</a>';
 		print '</td></tr>'."\n";
 	} else {
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_REMINDER_EMAIL">'.img_picto($langs->trans('Enabled'),'switch_on').'</a>';
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_REMINDER_EMAIL">'.img_picto($langs->trans('Enabled'), 'switch_on').'</a>';
 		print '</td></tr>'."\n";
 	}
 }
@@ -212,25 +212,25 @@ if ($conf->global->MAIN_FEATURES_LEVEL == 2)
 {
     print '<tr class="oddeven">'."\n";
     print '<td>'.$langs->trans('AGENDA_REMINDER_BROWSER').'</td>'."\n";
-    print '<td align="center">&nbsp;</td>'."\n";
-    print '<td align="right">'."\n";
+    print '<td class="center">&nbsp;</td>'."\n";
+    print '<td class="right">'."\n";
 
     if (empty($conf->global->AGENDA_REMINDER_BROWSER)) {
-        print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_REMINDER_BROWSER">'.img_picto($langs->trans('Disabled'),'switch_off').'</a>';
+        print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_REMINDER_BROWSER">'.img_picto($langs->trans('Disabled'), 'switch_off').'</a>';
         print '</td></tr>'."\n";
     } else {
-        print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_REMINDER_BROWSER">'.img_picto($langs->trans('Enabled'),'switch_on').'</a>';
+        print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_REMINDER_BROWSER">'.img_picto($langs->trans('Enabled'), 'switch_on').'</a>';
         print '</td></tr>'."\n";
 
         print '<tr class="oddeven">'."\n";
         print '<td>'.$langs->trans('AGENDA_REMINDER_BROWSER_SOUND').'</td>'."\n";
-        print '<td align="center">&nbsp;</td>'."\n";
-        print '<td align="right">'."\n";
+        print '<td class="center">&nbsp;</td>'."\n";
+        print '<td class="right">'."\n";
 
         if (empty($conf->global->AGENDA_REMINDER_BROWSER_SOUND)) {
-            print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_REMINDER_BROWSER_SOUND">'.img_picto($langs->trans('Disabled'),'switch_off').'</a>';
+            print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_REMINDER_BROWSER_SOUND">'.img_picto($langs->trans('Disabled'), 'switch_off').'</a>';
         } else {
-            print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_REMINDER_BROWSER_SOUND">'.img_picto($langs->trans('Enabled'),'switch_on').'</a>';
+            print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_REMINDER_BROWSER_SOUND">'.img_picto($langs->trans('Enabled'), 'switch_on').'</a>';
         }
 
         print '</td></tr>'."\n";

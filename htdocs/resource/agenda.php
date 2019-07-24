@@ -37,19 +37,19 @@ require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
 // Load translation files required by the page
 $langs->load("companies");
 
-if (GETPOST('actioncode','array'))
+if (GETPOST('actioncode', 'array'))
 {
-    $actioncode=GETPOST('actioncode','array',3);
+    $actioncode=GETPOST('actioncode', 'array', 3);
     if (! count($actioncode)) $actioncode='0';
 }
 else
 {
-    $actioncode=GETPOST("actioncode","alpha",3)?GETPOST("actioncode","alpha",3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
+    $actioncode=GETPOST("actioncode", "alpha", 3)?GETPOST("actioncode", "alpha", 3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
 }
 $search_agenda_label=GETPOST('search_agenda_label');
 
 // Security check
-$id = GETPOST('id','int');
+$id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 if ($user->societe_id) $id=$user->societe_id;
 // Protection if external user
@@ -63,10 +63,10 @@ if( ! $user->rights->resource->read)
 	accessforbidden();
 }
 
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -83,20 +83,20 @@ $hookmanager->initHooks(array('agendaresource'));
  */
 
 $parameters=array('id'=>$id);
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
 {
     // Cancel
-    if (GETPOST('cancel','alpha') && ! empty($backtopage))
+    if (GETPOST('cancel', 'alpha') && ! empty($backtopage))
     {
         header("Location: ".$backtopage);
         exit;
     }
 
     // Purge search criteria
-    if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
+    if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
     {
         $actioncode='';
         $search_agenda_label='';
@@ -125,8 +125,8 @@ if ($id > 0 || $ref)
 	$result = $object->fetch($id);
 
 	$title=$langs->trans("Agenda");
-	if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/productnameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->ref." - ".$title;
-	llxHeader('',$title);
+	if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/productnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->ref." - ".$title;
+	llxHeader('', $title);
 
 	if (! empty($conf->notification->enabled)) $langs->load("mails");
 	$type = $langs->trans('ResourceSingular');
@@ -139,7 +139,7 @@ if ($id > 0 || $ref)
     $linkback = '<a href="'.DOL_URL_ROOT.'/resource/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
     $shownav = 1;
-    if ($user->societe_id && ! in_array('resource', explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+    if ($user->societe_id && ! in_array('resource', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
 
     dol_banner_tab($object, 'id', $linkback, $shownav, 'id');
 
@@ -166,7 +166,7 @@ if ($id > 0 || $ref)
         $filters['search_agenda_label']=$search_agenda_label;
 
         // TODO Replace this with same code than into list.php
-        show_actions_done($conf,$langs,$db,$object,null,0,$actioncode, '', $filters, $sortfield, $sortorder);
+        show_actions_done($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder);
     }
 }
 

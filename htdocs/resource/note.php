@@ -32,16 +32,16 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'interventions'));
 
-$id = GETPOST('id','int');
-$ref = GETPOST('ref','alpha');
-$action=GETPOST('action','alpha');
+$id = GETPOST('id', 'int');
+$ref = GETPOST('ref', 'alpha');
+$action=GETPOST('action', 'alpha');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'resource', $id, 'resource');
 
 $object = new DolResource($db);
-$object->fetch($id,$ref);
+$object->fetch($id, $ref);
 
 $permissionnote=$user->rights->resource->write;	// Used by the include of actions_setnotes.inc.php
 
@@ -79,7 +79,7 @@ if ($id > 0 || ! empty($ref))
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
 
-	print '<table class="border" width="100%">';
+	print '<table class="border tableforfield centpercent">';
 
 	// Resource type
 	print '<tr>';

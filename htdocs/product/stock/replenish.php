@@ -4,6 +4,7 @@
  * Copyright (C) 2014		Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2016		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2016		ATM Consulting		<support@atm-consulting.fr>
+ * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,34 +41,34 @@ $langs->loadLangs(array('products', 'stocks', 'orders'));
 if ($user->societe_id) {
     $socid = $user->societe_id;
 }
-$result=restrictedArea($user,'produit|service');
+$result=restrictedArea($user, 'produit|service');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('stockreplenishlist'));
 
 //checks if a product has been ordered
 
-$action = GETPOST('action','alpha');
+$action = GETPOST('action', 'alpha');
 $sref = GETPOST('sref', 'alpha');
 $snom = GETPOST('snom', 'alpha');
 $sall = trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
-$type = GETPOST('type','int');
+$type = GETPOST('type', 'int');
 $tobuy = GETPOST('tobuy', 'int');
 $salert = GETPOST('salert', 'alpha');
-$mode = GETPOST('mode','alpha');
-$draftorder = GETPOST('draftorder','alpha');
+$mode = GETPOST('mode', 'alpha');
+$draftorder = GETPOST('draftorder', 'alpha');
 
 
-$fourn_id = GETPOST('fourn_id','int');
-$fk_supplier = GETPOST('fk_supplier','int');
-$fk_entrepot = GETPOST('fk_entrepot','int');
+$fourn_id = GETPOST('fourn_id', 'int');
+$fk_supplier = GETPOST('fk_supplier', 'int');
+$fk_entrepot = GETPOST('fk_entrepot', 'int');
 $texte = '';
 
-$sortfield = GETPOST('sortfield','alpha');
-$sortorder = GETPOST('sortorder','alpha');
-$page = GETPOST('page','int');
+$sortfield = GETPOST('sortfield', 'alpha');
+$sortorder = GETPOST('sortorder', 'alpha');
+$page = GETPOST('page', 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
 $offset = $limit * $page ;
 
 if (!$sortfield) {
@@ -82,7 +83,9 @@ if (!$sortorder) {
 $virtualdiffersfromphysical=0;
 if (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)
 || ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)
-|| ! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE))
+|| ! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)
+|| !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION)
+|| !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE))
 {
     $virtualdiffersfromphysical=1;		// According to increase/decrease stock options, virtual and physical stock may differs.
 }
@@ -90,14 +93,14 @@ $usevirtualstock=0;
 if ($mode == 'virtual') $usevirtualstock=1;
 
 $parameters=array();
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 /*
  * Actions
  */
 
-if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha') || isset($_POST['valid'])) // Both test are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha') || isset($_POST['valid'])) // Both test are required to be compatible with all browsers
 {
     $sref = '';
     $snom = '';
@@ -304,7 +307,7 @@ $sql.= ' SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").') as stock_physique'
 
 // Add fields from hooks
 $parameters=array();
-$reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // Note that $action and $object may have been modified by hook
+$reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
 
 $sql.= ' FROM ' . MAIN_DB_PREFIX . 'product as p';
@@ -319,7 +322,7 @@ if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE) && $fk_entre
 
 // Add fields from hooks
 $parameters=array();
-$reshook=$hookmanager->executeHooks('printFieldListJoin',$parameters);    // Note that $action and $object may have been modified by hook
+$reshook=$hookmanager->executeHooks('printFieldListJoin', $parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
 
 $sql.= ' WHERE p.entity IN (' . getEntity('product') . ')';
@@ -404,10 +407,10 @@ if ($usevirtualstock)
 
 // Add where from hooks
 $parameters=array();
-$reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
+$reshook=$hookmanager->executeHooks('printFieldListWhere', $parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
 
-$sql.= $db->order($sortfield,$sortorder);
+$sql.= $db->order($sortfield, $sortorder);
 $sql.= $db->plimit($limit + 1, $offset);
 
 //print $sql;
@@ -472,7 +475,7 @@ print $langs->trans('Supplier').' '.$form->select_company($fk_supplier, 'fk_supp
 print '</div>';
 
 $parameters=array();
-$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+$reshook=$hookmanager->executeHooks('printFieldPreListTitle', $parameters);    // Note that $action and $object may have been modified by hook
 if (empty($reshook)) print $hookmanager->resPrint;
 
 print '<div class="inline-block valignmiddle">';
@@ -489,7 +492,7 @@ if ($sref || $snom || $sall || $salert || $draftorder || GETPOST('search', 'alph
 	$filters .= '&mode=' . $mode;
 	$filters .= '&fk_supplier=' . $fk_supplier;
 	$filters .= '&fk_entrepot=' . $fk_entrepot;
-	print_barre_liste(
+print_barre_liste(
 		$texte,
 		$page,
 		'replenish.php',
@@ -508,7 +511,7 @@ if ($sref || $snom || $sall || $salert || $draftorder || GETPOST('search', 'alph
 	$filters .= '&mode=' . $mode;
 	$filters .= '&fk_supplier=' . $fk_supplier;
 	$filters .= '&fk_entrepot=' . $fk_entrepot;
-	print_barre_liste(
+print_barre_liste(
 		$texte,
 		$page,
 		'replenish.php',
@@ -555,17 +558,16 @@ print '<td class="liste_titre"><input class="flat" type="text" name="sref" size=
 print '<td class="liste_titre"><input class="flat" type="text" name="snom" size="8" value="'.dol_escape_htmltag($snom).'"></td>';
 if (!empty($conf->service->enabled) && $type == 1) print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">&nbsp;</td>';
-print '<td class="liste_titre" align="right">&nbsp;</td>';
-print '<td class="liste_titre" align="right">' . $langs->trans('AlertOnly') . '&nbsp;<input type="checkbox" id="salert" name="salert" ' . (!empty($alertchecked)?$alertchecked:'') . '></td>';
-print '<td class="liste_titre" align="right">' . $langs->trans('IncludeAlsoDraftOrders') . '&nbsp;<input type="checkbox" id="draftorder" name="draftorder" ' . (!empty($draftchecked)?$draftchecked:'') . '></td>';
+print '<td class="liste_titre right">&nbsp;</td>';
+print '<td class="liste_titre right">' . $langs->trans('AlertOnly') . '&nbsp;<input type="checkbox" id="salert" name="salert" ' . (!empty($alertchecked)?$alertchecked:'') . '></td>';
+print '<td class="liste_titre right">' . $langs->trans('IncludeAlsoDraftOrders') . '&nbsp;<input type="checkbox" id="draftorder" name="draftorder" ' . (!empty($draftchecked)?$draftchecked:'') . '></td>';
 print '<td class="liste_titre">&nbsp;</td>';
-print '<td class="liste_titre" align="right">';
-
 // Fields from hook
 $parameters=array('param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
-$reshook=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
+$reshook=$hookmanager->executeHooks('printFieldListOption', $parameters);    // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
+print '<td class="liste_titre maxwidthsearch">';
 $searchpicto=$form->showFilterAndCheckAddButtons(0);
 print $searchpicto;
 print '</td>';
@@ -576,17 +578,17 @@ print '<tr class="liste_titre">';
 print_liste_field_titre('<input type="checkbox" onClick="toggle(this)" />', $_SERVER["PHP_SELF"], '');
 print_liste_field_titre('Ref', $_SERVER["PHP_SELF"], 'p.ref', $param, '', '', $sortfield, $sortorder);
 print_liste_field_titre('Label', $_SERVER["PHP_SELF"], 'p.label', $param, '', '', $sortfield, $sortorder);
-if (!empty($conf->service->enabled) && $type == 1) print_liste_field_titre('Duration', $_SERVER["PHP_SELF"], 'p.duration', $param, '', 'align="center"', $sortfield, $sortorder);
-print_liste_field_titre('DesiredStock', $_SERVER["PHP_SELF"], 'p.desiredstock', $param, '', 'align="right"', $sortfield, $sortorder);
-print_liste_field_titre('StockLimitShort', $_SERVER["PHP_SELF"], 'p.seuil_stock_alerte', $param, '', 'align="right"', $sortfield, $sortorder);
-print_liste_field_titre($stocklabel, $_SERVER["PHP_SELF"], 'stock_physique', $param, '', 'align="right"', $sortfield, $sortorder);
-print_liste_field_titre('Ordered', $_SERVER["PHP_SELF"], '', $param, '', 'align="right"', $sortfield, $sortorder);
-print_liste_field_titre('StockToBuy', $_SERVER["PHP_SELF"], '', $param, '', 'align="right"', $sortfield, $sortorder);
-print_liste_field_titre('SupplierRef', $_SERVER["PHP_SELF"], '', $param, '', 'align="right"', $sortfield, $sortorder);
+if (!empty($conf->service->enabled) && $type == 1) print_liste_field_titre('Duration', $_SERVER["PHP_SELF"], 'p.duration', $param, '', '', $sortfield, $sortorder, 'center ');
+print_liste_field_titre('DesiredStock', $_SERVER["PHP_SELF"], 'p.desiredstock', $param, '', '', $sortfield, $sortorder, 'right ');
+print_liste_field_titre('StockLimitShort', $_SERVER["PHP_SELF"], 'p.seuil_stock_alerte', $param, '', '', $sortfield, $sortorder, 'right ');
+print_liste_field_titre($stocklabel, $_SERVER["PHP_SELF"], 'stock_physique', $param, '', '', $sortfield, $sortorder, 'right ');
+print_liste_field_titre('Ordered', $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'right ');
+print_liste_field_titre('StockToBuy', $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'right ');
+print_liste_field_titre('SupplierRef', $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'right ');
 
 // Hook fields
 $parameters=array('param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
-$reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+$reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters);    // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
 print "</tr>\n";
@@ -630,12 +632,12 @@ while ($i < ($limit ? min($num, $limit) : $num))
 
 		// Force call prod->load_stats_xxx to choose status to count (otherwise it is loaded by load_stock function)
 		if(isset($draftchecked)){
-			$result=$prod->load_stats_commande_fournisseur(0,'0,1,2,3,4');
+			$result=$prod->load_stats_commande_fournisseur(0, '0,1,2,3,4');
 		}else {
-			$result=$prod->load_stats_commande_fournisseur(0,'1,2,3,4');
+			$result=$prod->load_stats_commande_fournisseur(0, '1,2,3,4');
 		}
 
-		$result=$prod->load_stats_reception(0,'4');
+		$result=$prod->load_stats_reception(0, '4');
 
 		//print $prod->stats_commande_fournisseur['qty'].'<br>'."\n";
 		//print $prod->stats_reception['qty'];
@@ -693,31 +695,31 @@ while ($i < ($limit ? min($num, $limit) : $num))
 			} else {
 				$duration = $objp->duration;
 			}
-			print '<td align="center">'.$duration.'</td>';
+			print '<td class="center">'.$duration.'</td>';
 		}
 
 		// Desired stock
-		print '<td align="right">' . $desiredstock . '</td>';
+		print '<td class="right">' . $desiredstock . '</td>';
 
 		// Limit stock for alert
-		print '<td align="right">' . $alertstock . '</td>';
+		print '<td class="right">' . $alertstock . '</td>';
 
 		// Current stock (all warehouses)
-		print '<td align="right">'. $warning . $stock. '</td>';
+		print '<td class="right">'. $warning . $stock. '</td>';
 
 		// Already ordered
-		print '<td align="right"><a href="replenishorders.php?sproduct=' . $prod->id . '">'. $ordered . '</a> ' . $picto. '</td>';
+		print '<td class="right"><a href="replenishorders.php?sproduct=' . $prod->id . '">'. $ordered . '</a> ' . $picto. '</td>';
 
 		// To order
-		//print '<td align="right"><input type="text" name="tobuy'.$i.'" value="'.$stocktobuy.'" '.$disabled.'></td>';
-		print '<td align="right"><input type="text" size="4" name="tobuy'.$i.'" value="'.$stocktobuy.'"></td>';
+		//print '<td class="right"><input type="text" name="tobuy'.$i.'" value="'.$stocktobuy.'" '.$disabled.'></td>';
+		print '<td class="right"><input type="text" size="4" name="tobuy'.$i.'" value="'.$stocktobuy.'"></td>';
 
 		// Supplier
-		print '<td align="right">'.	$form->select_product_fourn_price($prod->id, 'fourn'.$i, $fk_supplier).'</td>';
+		print '<td class="right">'.	$form->select_product_fourn_price($prod->id, 'fourn'.$i, $fk_supplier).'</td>';
 
 		// Fields from hook
 		$parameters=array( 'objp'=>$objp);
-		$reshook=$hookmanager->executeHooks('printFieldListValue',$parameters);    // Note that $action and $object may have been modified by hook
+		$reshook=$hookmanager->executeHooks('printFieldListValue', $parameters);    // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 
 		print '</tr>';
@@ -726,7 +728,7 @@ while ($i < ($limit ? min($num, $limit) : $num))
 }
 
 $parameters=array('sql'=>$sql);
-$reshook=$hookmanager->executeHooks('printFieldListFooter',$parameters);    // Note that $action and $object may have been modified by hook
+$reshook=$hookmanager->executeHooks('printFieldListFooter', $parameters);    // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
 print '</table>';

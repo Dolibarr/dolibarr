@@ -21,7 +21,7 @@
 
 /**
  *	\file       htdocs/admin/system/database-tables.php
- *	\brief      Page d'infos des tables de la base
+ *	\brief      Page with information on database tables
  */
 
 require '../../main.inc.php';
@@ -31,7 +31,7 @@ $langs->load("admin");
 if (! $user->admin)
 	accessforbidden();
 
-$action=GETPOST('action','alpha');
+$action=GETPOST('action', 'alpha');
 
 
 if ($action == 'convert')
@@ -52,27 +52,27 @@ if ($action == 'convertutf8')
 
 llxHeader();
 
-print load_fiche_titre($langs->trans("Tables")." ".ucfirst($conf->db->type),'','title_setup');
+print load_fiche_titre($langs->trans("Tables")." ".ucfirst($conf->db->type), '', 'title_setup');
 
 
 // Define request to get table description
 $base=0;
-if (preg_match('/mysql/i',$conf->db->type))
+if (preg_match('/mysql/i', $conf->db->type))
 {
 	$sql = "SHOW TABLE STATUS";
 	$base=1;
 }
-else if ($conf->db->type == 'pgsql')
+elseif ($conf->db->type == 'pgsql')
 {
 	$sql = "SELECT conname, contype FROM pg_constraint;";
 	$base=2;
 }
-else if ($conf->db->type == 'mssql')
+elseif ($conf->db->type == 'mssql')
 {
 	//$sqls[0] = "";
 	//$base=3;
 }
-else if ($conf->db->type == 'sqlite' || $conf->db->type == 'sqlite3')
+elseif ($conf->db->type == 'sqlite' || $conf->db->type == 'sqlite3')
 {
 	//$sql = "SELECT name, type FROM sqlite_master";
 	$base = 4;
@@ -93,14 +93,14 @@ else
 		print '<td>'.$langs->trans("TableName").'</td>';
 		print '<td colspan="2">'.$langs->trans("Type").'</td>';
 		print '<td>'.$langs->trans("Format").'</td>';
-		print '<td align="right">'.$langs->trans("NbOfRecord").'</td>';
-		print '<td align="right">Avg_row_length</td>';
-		print '<td align="right">Data_length</td>';
-		print '<td align="right">Max_Data_length</td>';
-		print '<td align="right">Index_length</td>';
-		print '<td align="right">Increment</td>';
-		print '<td align="right">Last check</td>';
-		print '<td align="right">Collation</td>';
+		print '<td class="right">'.$langs->trans("NbOfRecord").'</td>';
+		print '<td class="right">Avg_row_length</td>';
+		print '<td class="right">Data_length</td>';
+		print '<td class="right">Max_Data_length</td>';
+		print '<td class="right">Index_length</td>';
+		print '<td class="right">Increment</td>';
+		print '<td class="right">Last check</td>';
+		print '<td class="right">Collation</td>';
 		print "</tr>\n";
 
 		$sql = "SHOW TABLE STATUS";
@@ -134,7 +134,7 @@ else
 				print '<td align="right">'.$obj->Auto_increment.'</td>';
 				print '<td align="right">'.$obj->Check_time.'</td>';
 				print '<td align="right">'.$obj->Collation;
-				if (isset($obj->Collation) && ($obj->Collation == "utf8mb4_general_ci" || $obj->Collation == "utf8mb4_unicode_ci"))
+				if (isset($obj->Collation) && (in_array($obj->Collation, array("utf8mb4_general_ci", "utf8mb4_unicode_ci", "latin1_swedish_ci"))))
 				{
 				    print '<br><a class="reposition" href="database-tables.php?action=convertutf8&amp;table='.$obj->Name.'">'.$langs->trans("Convert").' UTF8</a>';
 				}
@@ -173,11 +173,11 @@ else
 				$row = $db->fetch_row($resql);
 				print '<tr class="oddeven">';
 				print '<td>'.$row[0].'</td>';
-				print '<td align="right">'.$row[1].'</td>';
-				print '<td align="right">'.$row[2].'</td>';
-				print '<td align="right">'.$row[3].'</td>';
-				print '<td align="right">'.$row[4].'</td>';
-				print '<td align="right">'.$row[5].'</td>';
+				print '<td class="right">'.$row[1].'</td>';
+				print '<td class="right">'.$row[2].'</td>';
+				print '<td class="right">'.$row[3].'</td>';
+				print '<td class="right">'.$row[4].'</td>';
+				print '<td class="right">'.$row[5].'</td>';
 				print '</tr>';
 				$i++;
 			}

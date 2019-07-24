@@ -32,24 +32,24 @@
 
 //if (! defined('NOREQUIREUSER'))	define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
 //if (! defined('NOREQUIREDB'))		define('NOREQUIREDB','1');		// Not disabled cause need to load personalized language
-if (! defined('NOTOKENRENEWAL'))	define('NOTOKENRENEWAL','1');
-if (! defined('NOREQUIREMENU'))		define('NOREQUIREMENU','1');
-if (! defined('NOREQUIREHTML'))		define('NOREQUIREHTML','1');
-if (! defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX','1');
+if (! defined('NOTOKENRENEWAL'))	define('NOTOKENRENEWAL', '1');
+if (! defined('NOREQUIREMENU'))		define('NOREQUIREMENU', '1');
+if (! defined('NOREQUIREHTML'))		define('NOREQUIREHTML', '1');
+if (! defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX', '1');
 
 // For direct external download link, we don't need to load/check we are into a login session
 if (isset($_GET["hashp"]) && ! defined("NOLOGIN"))
 {
-	if (! defined("NOLOGIN"))		define("NOLOGIN",1);
-	if (! defined("NOCSRFCHECK"))	define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
-	if (! defined("NOIPCHECK"))		define("NOIPCHECK",1);		// Do not check IP defined into conf $dolibarr_main_restrict_ip
+	if (! defined("NOLOGIN"))		define("NOLOGIN", 1);
+	if (! defined("NOCSRFCHECK"))	define("NOCSRFCHECK", 1);	// We accept to go on this page from external web site.
+	if (! defined("NOIPCHECK"))		define("NOIPCHECK", 1);		// Do not check IP defined into conf $dolibarr_main_restrict_ip
 }
 // Some value of modulepart can be used to get resources that are public so no login are required.
 if ((isset($_GET["modulepart"]) && $_GET["modulepart"] == 'medias'))
 {
-	if (! defined("NOLOGIN"))		define("NOLOGIN",1);
-	if (! defined("NOCSRFCHECK"))	define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
-	if (! defined("NOIPCHECK"))		define("NOIPCHECK",1);		// Do not check IP defined into conf $dolibarr_main_restrict_ip
+	if (! defined("NOLOGIN"))		define("NOLOGIN", 1);
+	if (! defined("NOCSRFCHECK"))	define("NOCSRFCHECK", 1);	// We accept to go on this page from external web site.
+	if (! defined("NOIPCHECK"))		define("NOIPCHECK", 1);		// Do not check IP defined into conf $dolibarr_main_restrict_ip
 }
 
 /**
@@ -73,16 +73,16 @@ require 'main.inc.php';	// Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 $encoding = '';
-$action=GETPOST('action','alpha');
-$original_file=GETPOST('file','alphanohtml');		// Do not use urldecode here ($_GET are already decoded by PHP).
-$hashp=GETPOST('hashp','aZ09');
-$modulepart=GETPOST('modulepart','alpha');
-$urlsource=GETPOST('urlsource','alpha');
-$entity=GETPOST('entity','int')?GETPOST('entity','int'):$conf->entity;
+$action=GETPOST('action', 'alpha');
+$original_file=GETPOST('file', 'alphanohtml');  // Do not use urldecode here ($_GET are already decoded by PHP).
+$hashp=GETPOST('hashp', 'aZ09');
+$modulepart=GETPOST('modulepart', 'alpha');
+$urlsource=GETPOST('urlsource', 'alpha');
+$entity=GETPOST('entity', 'int')?GETPOST('entity', 'int'):$conf->entity;
 
 // Security check
-if (empty($modulepart) && empty($hashp)) accessforbidden('Bad link. Bad value for parameter modulepart',0,0,1);
-if (empty($original_file) && empty($hashp)) accessforbidden('Bad link. Missing identification to find file (original_file or hashp)',0,0,1);
+if (empty($modulepart) && empty($hashp)) accessforbidden('Bad link. Bad value for parameter modulepart', 0, 0, 1);
+if (empty($original_file) && empty($hashp)) accessforbidden('Bad link. Missing identification to find file (original_file or hashp)', 0, 0, 1);
 if ($modulepart == 'fckeditor') $modulepart='medias';   // For backward compatibility
 
 $socid=0;
@@ -133,7 +133,7 @@ if (! empty($hashp))
 			}
 			else
 			{
-				accessforbidden('Bad link. File is from another module part.',0,0,1);
+				accessforbidden('Bad link. File is from another module part.', 0, 0, 1);
 			}
 		}
 		else
@@ -145,23 +145,23 @@ if (! empty($hashp))
 	else
 	{
 		$langs->load("errors");
-		accessforbidden($langs->trans("ErrorFileNotFoundWithSharedLink"),0,0,1);
+		accessforbidden($langs->trans("ErrorFileNotFoundWithSharedLink"), 0, 0, 1);
 	}
 }
 
 // Define attachment (attachment=true to force choice popup 'open'/'save as')
 $attachment = true;
-if (preg_match('/\.(html|htm)$/i',$original_file)) $attachment = false;
-if (isset($_GET["attachment"])) $attachment = GETPOST("attachment",'alpha')?true:false;
+if (preg_match('/\.(html|htm)$/i', $original_file)) $attachment = false;
+if (isset($_GET["attachment"])) $attachment = GETPOST("attachment", 'alpha')?true:false;
 if (! empty($conf->global->MAIN_DISABLE_FORCE_SAVEAS)) $attachment=false;
 
 // Define mime type
 $type = 'application/octet-stream';
-if (GETPOST('type','alpha')) $type=GETPOST('type','alpha');
+if (GETPOST('type', 'alpha')) $type=GETPOST('type', 'alpha');
 else $type=dol_mimetype($original_file);
 
 // Security: Delete string ../ into $original_file
-$original_file = str_replace("../","/", $original_file);
+$original_file = str_replace("../", "/", $original_file);
 
 // Find the subdirectory name as the reference
 $refname=basename(dirname($original_file)."/");
@@ -169,6 +169,7 @@ $refname=basename(dirname($original_file)."/");
 // Security check
 if (empty($modulepart)) accessforbidden('Bad value for parameter modulepart');
 
+// Check security and set return info with full path of file
 $check_access = dol_check_secure_access_document($modulepart, $original_file, $entity, $refname);
 $accessallowed              = $check_access['accessallowed'];
 $sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
@@ -215,7 +216,7 @@ if (! $accessallowed)
 
 // Security:
 // On interdit les remontees de repertoire ainsi que les pipe dans les noms de fichiers.
-if (preg_match('/\.\./',$fullpath_original_file) || preg_match('/[<>|]/',$fullpath_original_file))
+if (preg_match('/\.\./', $fullpath_original_file) || preg_match('/[<>|]/', $fullpath_original_file))
 {
 	dol_syslog("Refused to deliver file ".$fullpath_original_file);
 	print "ErrorFileNameInvalid: ".$original_file;

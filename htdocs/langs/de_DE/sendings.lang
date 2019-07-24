@@ -52,10 +52,10 @@ ActionsOnShipping=Hinweis zur Lieferung
 LinkToTrackYourPackage=Link zur Paket- bzw. Sendungsverfolgung
 ShipmentCreationIsDoneFromOrder=Lieferscheine müssen aus einer Bestellung generiert werden
 ShipmentLine=Zeilen Lieferschein
-ProductQtyInCustomersOrdersRunning=Product quantity into open customer orders
-ProductQtyInSuppliersOrdersRunning=Product quantity into open purchase orders
-ProductQtyInShipmentAlreadySent=Bereits gelieferte Produktmenge aus offenem Kundenauftrag
-ProductQtyInSuppliersShipmentAlreadyRecevied=Bereits erhaltene Produktmenge aus Lieferantenbestellung
+ProductQtyInCustomersOrdersRunning=Produktmenge in offenen Kundenaufträgen
+ProductQtyInSuppliersOrdersRunning=Produktmenge in offenen Lieferantenbestellungen
+ProductQtyInShipmentAlreadySent=Produktmenge von open sales order already gesendet
+ProductQtyInSuppliersShipmentAlreadyRecevied=Produktmenge aus offener Bestellung bereits erhalten
 NoProductToShipFoundIntoStock=Kein Artikel zum Versenden gefunden im Lager <b>%s</b>. Korrigieren Sie den Lagerbestand oder wählen Sie ein anderes Lager.
 WeightVolShort=Gew./Vol.
 ValidateOrderFirstBeforeShipment=Sie müssen den Auftrag erst bestätigen bevor Sie eine Lieferung machen können.
@@ -69,4 +69,4 @@ SumOfProductWeights=Summe der Produktgewichte
 
 # warehouse details
 DetailWarehouseNumber= Warenlagerdetails
-DetailWarehouseFormat= W:%s (Menge : %d)
+DetailWarehouseFormat= W:%s  (Menge: %d) 

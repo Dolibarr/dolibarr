@@ -1,7 +1,8 @@
 # Dolibarr language file - Source file is en_US - oauth
-ConfigOAuth=Configuração Oauth
+ConfigOAuth=Configuração do OAuth
+OAuthServices=Serviços OAuth
 ManualTokenGeneration=Geração manual do token
-TokenManager=Gerenciador de Token
+TokenManager=Gerenciador de tokens
 IsTokenGenerated=O token está gerado?
 NoAccessToken=Nenhum token de acesso guardado na base de dados local
 HasAccessToken=Um token foi gerado e salvo no banco de dados local
@@ -10,18 +11,16 @@ ToCheckDeleteTokenOnProvider=Clique aqui para verificar/apagar autorização sal
 TokenDeleted=Token excluído
 RequestAccess=Clique aqui para solicitar/renovar o acesso e receber um novo token para salvar
 DeleteAccess=Clique aqui para apagar o token
-UseTheFollowingUrlAsRedirectURI=Utilize o seguinte URL como o URI de redirecionamento ao criar a sua credencial de seu provedor de OAuth:
-ListOfSupportedOauthProviders=Forneça aqui a credencial fornecida pelo seu provedor OAuth2. Apenas provedores OAuth2 suportados estão visíveis aqui. Esta configuração talvez seja usada por outros módulos que necessitem de autenticação OAuth2.
+UseTheFollowingUrlAsRedirectURI=Use o URL a seguir como o URI de redirecionamento ao criar suas credenciais com seu provedor OAuth:
+ListOfSupportedOauthProviders=Insira as credenciais fornecidas pelo seu provedor do OAuth2. Apenas fornecedores suportados do OAuth2 são listados aqui. Esses serviços podem ser usados por outros módulos que precisam da autenticação OAuth2.
 SeePreviousTab=Ver aba anterior
 OAuthIDSecret=Identificação OAuth e Senha
 TOKEN_REFRESH=Token Atualizar Presente
 TOKEN_EXPIRED=Token vencido
 TOKEN_EXPIRE_AT=Token expira no
 TOKEN_DELETE=Excluir token salvo
-OAUTH_GOOGLE_NAME=Serviço Google Oauth
-OAUTH_GOOGLE_ID=ID do Google Oauth
-OAUTH_GOOGLE_SECRET=Chave secreta do Google Oauth
-OAUTH_GOOGLE_DESC=Ir para <a class="notasortlink" href="https://console.developers.google.com/" target="_blank">esta página</a> e então a "Credentials" para criar as credenciais Oauth
-OAUTH_GITHUB_ID=ID do Oauth GitHub
-OAUTH_GITHUB_SECRET=Chave secreta do Oauth GitHub
-OAUTH_GITHUB_DESC=Ir para <a class="notasortlink" href="https://github.com/settings/developers" target="_blank">esta página</a> e então "Register a new application" para criar as credenciais Oauth
+OAUTH_GOOGLE_NAME=Serviço do Google OAuth
+OAUTH_GOOGLE_DESC=Ir para <a class="notasortlink" href="https://console.developers.google.com/" target="_blank">esta página e</a> depois "Credenciais" para criar credenciais do OAuth
+OAUTH_GITHUB_NAME=Serviço OAuth GitHub
+OAUTH_GITHUB_SECRET=OAuth GitHub secreto
+OAUTH_GITHUB_DESC=Vá para <a class="notasortlink" href="https://github.com/settings/developers" target="_blank">esta página</a> e, em seguida, "Registrar um novo aplicativo" para criar credenciais do OAuth

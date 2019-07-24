@@ -46,7 +46,8 @@ create table llx_actioncomm
   transparency      integer,						-- transparency (ical standard). used to say if user assigned to event are busy or not by event. This field may be deprecated if we want to store transparency for each assigned user, moved into table llx_actioncomm_resources.
 
   priority			smallint,						-- priority (ical standard)
-  fulldayevent		smallint NOT NULL default 0,    -- priority (ical standard)
+  visibility		varchar(12) DEFAULT 'default',	-- visibility (ical standard) - 'default', 'public', 'private', 'confidential'
+  fulldayevent		smallint NOT NULL default 0,    -- full day (ical standard)
   punctual			smallint NOT NULL default 1,    -- deprecated. milestone is event with date start (datep) = date end (datep2)
   percent			smallint NOT NULL default 0,
   location			varchar(128),
@@ -54,6 +55,8 @@ create table llx_actioncomm
 
   label				varchar(255) NOT NULL,			-- label/title of event or topic of email
   note				text,							-- note of event or content of email
+  
+  calling_duration  integer,                        -- when event is a phone call, duration of phone call
   
   email_subject		varchar(255),					-- when event was an email, we store here the subject. content is stored into note.
   email_msgid		varchar(255),					-- when event was an email, we store here the msgid

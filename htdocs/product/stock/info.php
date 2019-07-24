@@ -29,12 +29,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/stock.lib.php';
 // Load translation files required by the page
 $langs->load("stocks");
 
-$id = GETPOST('id','int');
-$ref = GETPOST('ref','alpha');
+$id = GETPOST('id', 'int');
+$ref = GETPOST('ref', 'alpha');
 
 // Security check
 //$result=restrictedArea($user,'stock', $id, 'entrepot&stock');
-$result=restrictedArea($user,'stock');
+$result=restrictedArea($user, 'stock');
 
 
 /*
@@ -42,7 +42,7 @@ $result=restrictedArea($user,'stock');
  */
 
 $help_url='EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
-llxHeader("",$langs->trans("Stocks"),$help_url);
+llxHeader("", $langs->trans("Stocks"), $help_url);
 
 $object = new Entrepot($db);
 $object->fetch($id, $ref);
@@ -60,7 +60,7 @@ $morehtmlref.=$langs->trans("LocationSummary").' : '.$object->lieu;
 $morehtmlref.='</div>';
 
 $shownav = 1;
-if ($user->societe_id && ! in_array('stock', explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+if ($user->societe_id && ! in_array('stock', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
 
 dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref', 'ref', $morehtmlref);
 

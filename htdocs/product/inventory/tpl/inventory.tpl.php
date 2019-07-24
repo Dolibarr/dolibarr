@@ -123,51 +123,51 @@ if (empty($conf) || ! is_object($conf))
 			} // Fin IF principal
 	    	?>
 			<tr style="background-color:<?php echo ($k%2 == 0) ? '#fff':'#eee'; ?>;">
-				<td align="left">&nbsp;&nbsp;<?php echo $row['produit']; ?></td>
-				<td align="center"><?php echo $row['entrepot']; ?></td>
+				<td class="left">&nbsp;&nbsp;<?php echo $row['produit']; ?></td>
+				<td class="center"><?php echo $row['entrepot']; ?></td>
 				<?php if (! empty($conf->barcode->enabled)) { ?>
-					<td align="center"><?php echo $row['barcode']; ?></td>
+					<td class="center"><?php echo $row['barcode']; ?></td>
 				<?php } ?>
 				<?php if ($can_validate == 1) { ?>
-					<td align="center" style="background-color: #e8e8ff;"><?php echo $row['qty_stock']; ?></td>
-					<td align="right" style="background-color: #e8e8ff;"><?php echo price( $row['pmp_stock']); ?></td>
-					<td align="right" style="background-color: #e8e8ff;"><?php echo price( $row['pa_stock']); ?></td>
+					<td class="center" style="background-color: #e8e8ff;"><?php echo $row['qty_stock']; ?></td>
+					<td class="right" style="background-color: #e8e8ff;"><?php echo price($row['pmp_stock']); ?></td>
+					<td class="right" style="background-color: #e8e8ff;"><?php echo price($row['pa_stock']); ?></td>
 	               <?php
 	                 if(!empty($conf->global->INVENTORY_USE_MIN_PA_IF_NO_LAST_PA)){
-	                 	echo '<td align="right" style="background-color: #e8e8ff;">'.price($row['current_pa_stock']).'</td>';
+	                 	echo '<td class="right" style="background-color: #e8e8ff;">'.price($row['current_pa_stock']).'</td>';
 						 $total_current_pa+=$row['current_pa_stock'];
 	                 }
 
 	               ?>
 				<?php } ?>
-				<td align="center"><?php echo $row['qty']; ?>&nbsp;&nbsp;<span id="qty_view_<?php echo $row['k']; ?>"><?php echo $row['qty_view']; ?></span>
+				<td class="center"><?php echo $row['qty']; ?>&nbsp;&nbsp;<span id="qty_view_<?php echo $row['k']; ?>"><?php echo $row['qty_view']; ?></span>
                     <input type="hidden" name="det_id_<?php echo $row['k']; ?>" value="<?php echo $row['id']; ?>" />
                 </td>
                 <?php if ($can_validate == 1) { ?>
-                    <td align="right"><?php echo price($row['pmp_actual']); ?></td>
+                    <td class="right"><?php echo price($row['pmp_actual']); ?></td>
                     <?php
                     if(!empty($user->rights->stock->changePMP)) {
-                    	echo '<td align="right">'.$row['pmp_new'].'</td>';
+                    	echo '<td class="right">'.$row['pmp_new'].'</td>';
 					}
                     ?>
-                    <td align="right"><?php echo price($row['pa_actual']); ?></td>
+                    <td class="right"><?php echo price($row['pa_actual']); ?></td>
 		               <?php
 		                 if(!empty($conf->global->INVENTORY_USE_MIN_PA_IF_NO_LAST_PA)){
-		                 	echo '<td align="right">'.price($row['current_pa_actual']).'</td>';
+		                 	echo '<td class="right">'.price($row['current_pa_actual']).'</td>';
 							 $total_current_pa_actual+=$row['current_pa_actual'];
 		                 }
 
 		               ?>
-                    <td align="center"><?php echo $row['qty_regulated']; ?></td>
+                    <td class="center"><?php echo $row['qty_regulated']; ?></td>
 				<?php } ?>
 				<?php if ($view['is_already_validate'] != 1) { ?>
-					<td align="center" width="20%"><?php echo $row['action']; ?></td>
+					<td class="center" width="20%"><?php echo $row['action']; ?></td>
 				<?php } ?>
 			</tr>
 			<?php $i++;
         }
 
-		_footerList($view,$total_pmp,$total_pmp_actual,$total_pa,$total_pa_actual, $total_current_pa,$total_current_pa_actual);
+		_footerList($view, $total_pmp, $total_pmp_actual, $total_pa, $total_pa_actual, $total_current_pa, $total_current_pa_actual);
 
 		?>
 	</table>
@@ -201,7 +201,7 @@ if (empty($conf) || ! is_object($conf))
 			<?php if ($can_validate == 1) { ?>
 
 				<!-- <a href="<?php echo $view_url; ?>?id=<?php echo $object->id; ?>&action=exportCSV" class="butAction"><?php echo $langs->trans('ExportCSV') ?></a> -->
-				<a href="#" title="<?php echo $langs->trans('InventoryAlreadyValidated'); ?>" class="butActionRefused"><?php echo $langs->trans('Delete') ?></a>
+				<a href="#" title="<?php echo $langs->trans('InventoryAlreadyValidated'); ?>" class="butActionRefused classfortooltip"><?php echo $langs->trans('Delete') ?></a>
 
 			<?php } ?>
 		</div>

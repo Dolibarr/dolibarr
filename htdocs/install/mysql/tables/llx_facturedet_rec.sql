@@ -48,11 +48,18 @@ create table llx_facturedet_rec
   date_start_fill	integer DEFAULT 0,				-- 1=autofill the date_start of invoice with __INVOICE_DATE_NEXT_INVOICE_BEFORE_GEN__
   date_end_fill		integer DEFAULT 0,				-- 1=autofill the date_start of invoice with __INVOICE_PREVIOUS_DATE_NEXT_INVOICE_AFTER_GEN__
   info_bits			integer DEFAULT 0,				-- TVA NPR ou non
+
+  buy_price_ht					double(24,8) DEFAULT 0,				-- buying price. Note: this value is saved as an always positive value, even on credit notes (it is price we bought the product before selling it).
+  fk_product_fournisseur_price	integer      DEFAULT NULL,			-- reference of supplier price when line was added (may be used to update buy_price_ht current price when future invoice will be created)
+  
   special_code		integer UNSIGNED DEFAULT 0,	-- code pour les lignes speciales
   rang				integer DEFAULT 0,				-- ordre d'affichage
   fk_contract_line  integer NULL,					-- id of contract line when template invoice comes from contract lines
   fk_unit           integer    DEFAULT NULL,
   import_key		varchar(14),
+ 
+  fk_user_author	integer,                						-- user making creation
+  fk_user_modif     integer,                						-- user making last change
     
   fk_multicurrency          integer,
   multicurrency_code        varchar(255),

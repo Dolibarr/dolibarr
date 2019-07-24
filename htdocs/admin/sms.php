@@ -39,7 +39,7 @@ $substitutionarrayfortest=array(
 '__FIRSTNAME__' => 'TESTFirstname'
 );
 
-$action=GETPOST('action','aZ09');
+$action=GETPOST('action', 'aZ09');
 
 
 /*
@@ -94,13 +94,13 @@ if ($action == 'send' && ! $_POST['cancel'])
         $action='test';
         $error++;
     }
-	if (empty($smsfrom) || ! str_replace('+','',$smsfrom))
+	if (empty($smsfrom) || ! str_replace('+', '', $smsfrom))
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("SmsFrom")), null, 'errors');
         $action='test';
 		$error++;
 	}
-	if (empty($sendto) || ! str_replace('+','',$sendto))
+	if (empty($sendto) || ! str_replace('+', '', $sendto))
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("SmsTo")), null, 'errors');
         $action='test';
@@ -110,7 +110,7 @@ if ($action == 'send' && ! $_POST['cancel'])
 	{
 		// Make substitutions into message
         complete_substitutions_array($substitutionarrayfortest, $langs);
-	    $body=make_substitutions($body,$substitutionarrayfortest);
+	    $body=make_substitutions($body, $substitutionarrayfortest);
 
 		require_once DOL_DOCUMENT_ROOT.'/core/class/CSMSFile.class.php';
 
@@ -119,7 +119,7 @@ if ($action == 'send' && ! $_POST['cancel'])
 
 		if ($result)
 		{
-			setEventMessages($langs->trans("SmsSuccessfulySent",$smsfrom,$sendto), null, 'mesgs');
+			setEventMessages($langs->trans("SmsSuccessfulySent", $smsfrom, $sendto), null, 'mesgs');
 			setEventMessages($smsfile->error, $smsfile->errors, 'mesgs');
 		}
 		else
@@ -139,13 +139,13 @@ if ($action == 'send' && ! $_POST['cancel'])
  */
 
 $linuxlike=1;
-if (preg_match('/^win/i',PHP_OS)) $linuxlike=0;
-if (preg_match('/^mac/i',PHP_OS)) $linuxlike=0;
+if (preg_match('/^win/i', PHP_OS)) $linuxlike=0;
+if (preg_match('/^mac/i', PHP_OS)) $linuxlike=0;
 
 $wikihelp='EN:Setup Sms|FR:Paramétrage Sms|ES:Configuración Sms';
-llxHeader('',$langs->trans("Setup"),$wikihelp);
+llxHeader('', $langs->trans("Setup"), $wikihelp);
 
-print load_fiche_titre($langs->trans("SmsSetup"),'','title_setup');
+print load_fiche_titre($langs->trans("SmsSetup"), '', 'title_setup');
 
 print $langs->trans("SmsDesc")."<br>\n";
 print "<br>\n";
@@ -158,7 +158,7 @@ if ($action == 'edit')
 {
 	$form=new Form($db);
 
-	if (! count($listofmethods)) print '<div class="warning">'.$langs->trans("NoSmsEngine",'<a href="http://www.dolistore.com/search.php?orderby=position&orderway=desc&search_query=smsmanager">DoliStore</a>').'</div>';
+	if (! count($listofmethods)) print '<div class="warning">'.$langs->trans("NoSmsEngine", '<a href="http://www.dolistore.com/search.php?orderby=position&orderway=desc&search_query=smsmanager">DoliStore</a>').'</div>';
 
 	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -171,7 +171,7 @@ if ($action == 'edit')
 
 	// Disable
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_DISABLE_ALL_SMS").'</td><td>';
-	print $form->selectyesno('MAIN_DISABLE_ALL_SMS',$conf->global->MAIN_DISABLE_ALL_SMS,1);
+	print $form->selectyesno('MAIN_DISABLE_ALL_SMS', $conf->global->MAIN_DISABLE_ALL_SMS, 1);
 	print '</td></tr>';
 
 	// Separator
@@ -179,12 +179,12 @@ if ($action == 'edit')
 
 	// Method
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_SMS_SENDMODE").'</td><td>';
-	if (count($listofmethods)) print $form->selectarray('MAIN_SMS_SENDMODE',$listofmethods,$conf->global->MAIN_SMS_SENDMODE,1);
+	if (count($listofmethods)) print $form->selectarray('MAIN_SMS_SENDMODE', $listofmethods, $conf->global->MAIN_SMS_SENDMODE, 1);
 	else print '<font class="error">'.$langs->trans("None").'</font>';
     print '</td></tr>';
 
 	// From
-	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SMS_FROM",$langs->transnoentities("Undefined")).'</td>';
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SMS_FROM", $langs->transnoentities("Undefined")).'</td>';
 	print '<td><input class="flat" name="MAIN_MAIL_SMS_FROM" size="32" value="' . $conf->global->MAIN_MAIL_SMS_FROM;
 	print '"></td></tr>';
 
@@ -208,7 +208,7 @@ if ($action == 'edit')
 else
 {
 
-	if (! count($listofmethods)) print '<div class="warning">'.$langs->trans("NoSmsEngine",'<a target="_blank" href="http://www.dolistore.com/search.php?orderby=position&orderway=desc&search_query=smsmanager">DoliStore</a>').'</div>';
+	if (! count($listofmethods)) print '<div class="warning">'.$langs->trans("NoSmsEngine", '<a target="_blank" href="http://www.dolistore.com/search.php?orderby=position&orderway=desc&search_query=smsmanager">DoliStore</a>').'</div>';
 
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
@@ -227,7 +227,7 @@ else
 	print '</td></tr>';
 
 	// From
-	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SMS_FROM",$langs->transnoentities("Undefined")).'</td>';
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SMS_FROM", $langs->transnoentities("Undefined")).'</td>';
 	print '<td>'.$conf->global->MAIN_MAIL_SMS_FROM;
 	if (!empty($conf->global->MAIN_MAIL_SMS_FROM) && ! isValidPhone($conf->global->MAIN_MAIL_SMS_FROM)) print ' '.img_warning($langs->trans("ErrorBadPhone"));
 	print '</td></tr>';
@@ -243,7 +243,7 @@ else
 	print '</table>';
 
 
-	// Boutons actions
+	// Buttons for actions
 
 	print '<div class="tabsAction">';
 
@@ -258,7 +258,7 @@ else
 	}
 	else
 	{
-		print '<a class="butActionRefused" href="#" title="'.$langs->trans("FeatureNotAvailableOnLinux").'">'.$langs->trans("DoTestServerAvailability").'</a>';
+		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("FeatureNotAvailableOnLinux").'">'.$langs->trans("DoTestServerAvailability").'</a>';
 	}*/
 
 	if (count($listofmethods) && ! empty($conf->global->MAIN_SMS_SENDMODE))
@@ -267,7 +267,7 @@ else
 	}
 	else
 	{
-       print '<a class="butActionRefused" href="#">'.$langs->trans("DoTestSend").'</a>';
+       print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("DoTestSend").'</a>';
 	}
 	print '</div>';
 

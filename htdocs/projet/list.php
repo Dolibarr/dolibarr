@@ -37,12 +37,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'companies', 'commercial'));
 
-$action=GETPOST('action','alpha');
-$massaction=GETPOST('massaction','alpha');
-$show_files=GETPOST('show_files','int');
-$confirm=GETPOST('confirm','alpha');
+$action=GETPOST('action', 'alpha');
+$massaction=GETPOST('massaction', 'alpha');
+$show_files=GETPOST('show_files', 'int');
+$confirm=GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
-$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'projectlist';
+$contextpage=GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'projectlist';
 
 $title = $langs->trans("Projects");
 
@@ -59,8 +59,8 @@ if (!$user->rights->projet->lire) accessforbidden();
 
 $diroutputmassaction=$conf->projet->dir_output . '/temp/massgeneration/'.$user->id;
 
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
-$sortfield = GETPOST("sortfield","alpha");
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST("sortfield", "alpha");
 $sortorder = GETPOST("sortorder");
 $page = GETPOST("page");
 $page = is_numeric($page) ? $page : 0;
@@ -72,30 +72,30 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 $search_all=GETPOST('search_all', 'alphanohtml') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml');
-$search_categ=GETPOST("search_categ",'alpha');
-$search_ref=GETPOST("search_ref",'alpha');
-$search_label=GETPOST("search_label",'alpha');
-$search_societe=GETPOST("search_societe",'alpha');
-$search_year=GETPOST("search_year");
-$search_status=GETPOST("search_status",'int');
-$search_opp_status=GETPOST("search_opp_status",'alpha');
-$search_opp_percent=GETPOST("search_opp_percent",'alpha');
-$search_opp_amount=GETPOST("search_opp_amount",'alpha');
-$search_budget_amount=GETPOST("search_budget_amount",'alpha');
-$search_public=GETPOST("search_public",'int');
-$search_project_user=GETPOST('search_project_user','int');
-$search_sale=GETPOST('search_sale','int');
-$optioncss = GETPOST('optioncss','alpha');
+$search_categ=GETPOST("search_categ", 'alpha');
+$search_ref=GETPOST("search_ref", 'alpha');
+$search_label=GETPOST("search_label", 'alpha');
+$search_societe=GETPOST("search_societe", 'alpha');
+$search_year=GETPOST("search_year", 'int');
+$search_status=GETPOST("search_status", 'int');
+$search_opp_status=GETPOST("search_opp_status", 'alpha');
+$search_opp_percent=GETPOST("search_opp_percent", 'alpha');
+$search_opp_amount=GETPOST("search_opp_amount", 'alpha');
+$search_budget_amount=GETPOST("search_budget_amount", 'alpha');
+$search_public=GETPOST("search_public", 'int');
+$search_project_user=GETPOST('search_project_user', 'int');
+$search_sale=GETPOST('search_sale', 'int');
+$optioncss = GETPOST('optioncss', 'alpha');
 
 $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 if ($mine) { $search_project_user = $user->id; $mine=0; }
 
-$search_sday	= GETPOST('search_sday','int');
-$search_smonth	= GETPOST('search_smonth','int');
-$search_syear	= GETPOST('search_syear','int');
-$search_eday	= GETPOST('search_eday','int');
-$search_emonth	= GETPOST('search_emonth','int');
-$search_eyear	= GETPOST('search_eyear','int');
+$search_sday	= GETPOST('search_sday', 'int');
+$search_smonth	= GETPOST('search_smonth', 'int');
+$search_syear	= GETPOST('search_syear', 'int');
+$search_eday	= GETPOST('search_eday', 'int');
+$search_emonth	= GETPOST('search_emonth', 'int');
+$search_eyear	= GETPOST('search_eyear', 'int');
 
 if ($search_status == '') $search_status=-1;	// -1 or 1
 
@@ -106,7 +106,7 @@ $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('projet');
-$search_array_options=$extrafields->getOptionalsFromPost($object->table_element,'','search_');
+$search_array_options=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
@@ -129,6 +129,7 @@ $arrayfields=array(
 	'p.fk_opp_status'=>array('label'=>$langs->trans("OpportunityStatusShort"), 'checked'=>1, 'enabled'=>($conf->global->PROJECT_USE_OPPORTUNITIES?1:0), 'position'=>104),
 	'p.opp_percent'=>array('label'=>$langs->trans("OpportunityProbabilityShort"), 'checked'=>1, 'enabled'=>($conf->global->PROJECT_USE_OPPORTUNITIES?1:0), 'position'=>105),
 	'p.budget_amount'=>array('label'=>$langs->trans("Budget"), 'checked'=>0, 'position'=>110),
+	'p.bill_time'=>array('label'=>$langs->trans("BillTimeShort"), 'checked'=>0, 'position'=>115),
 	'p.datec'=>array('label'=>$langs->trans("DateCreationShort"), 'checked'=>0, 'position'=>500),
 	'p.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
 	'p.fk_statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
@@ -148,11 +149,11 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
  * Actions
  */
 
-if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction','alpha') && $massaction != 'presend' && $massaction != 'confirm_presend' && $massaction != 'confirm_createbills') { $massaction=''; }
+if (GETPOST('cancel', 'alpha')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend' && $massaction != 'confirm_createbills') { $massaction=''; }
 
 $parameters=array('socid'=>$socid);
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
@@ -161,7 +162,7 @@ if (empty($reshook))
 	include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
 	// Purge search criteria
-	if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
+	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
 	{
 		$search_all='';
 		$search_categ='';
@@ -208,7 +209,7 @@ if (empty($reshook))
             $result=$objecttmp->fetch($toselectid);
             if ($result > 0)
             {
-                $userWrite  = $object->restrictedProjectArea($user,'write');
+                $userWrite  = $object->restrictedProjectArea($user, 'write');
                 if ($userWrite > 0 && $objecttmp->statut == 1) {
                     $result = $objecttmp->setClose($user);
                     if ($result <= 0) {
@@ -254,12 +255,11 @@ $formother = new FormOther($db);
 $formproject = new FormProjets($db);
 
 $title=$langs->trans("Projects");
-//if ($search_project_user == $user->id) $title=$langs->trans("MyProjects");
 
 
 // Get list of project id allowed to user (in a string list separated by coma)
 $projectsListId='';
-if (! $user->rights->projet->all->lire) $projectsListId = $object->getProjectsAuthorizedForUser($user,0,1,$socid);
+if (! $user->rights->projet->all->lire) $projectsListId = $object->getProjectsAuthorizedForUser($user, 0, 1, $socid);
 
 // Get id of types of contacts for projects (This list never contains a lot of elements)
 $listofprojectcontacttype=array();
@@ -279,8 +279,8 @@ if (count($listofprojectcontacttype) == 0) $listofprojectcontacttype[0]='0';    
 
 $distinct='DISTINCT';   // We add distinct until we are added a protection to be sure a contact of a project and task is only once.
 $sql = "SELECT ".$distinct." p.rowid as id, p.ref, p.title, p.fk_statut, p.fk_opp_status, p.public, p.fk_user_creat";
-$sql.= ", p.datec as date_creation, p.dateo as date_start, p.datee as date_end, p.opp_amount, p.opp_percent, p.tms as date_update, p.budget_amount";
-$sql.= ", s.nom as name, s.rowid as socid";
+$sql.= ", p.datec as date_creation, p.dateo as date_start, p.datee as date_end, p.opp_amount, p.opp_percent, p.tms as date_update, p.budget_amount, p.bill_time";
+$sql.= ", s.rowid as socid, s.nom as name, s.email";
 $sql.= ", cls.code as opp_status_code";
 // We'll need these fields in order to filter by categ
 if ($search_categ) $sql .= ", cs.fk_categorie, cs.fk_project";
@@ -288,7 +288,7 @@ if ($search_categ) $sql .= ", cs.fk_categorie, cs.fk_project";
 foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
 // Add fields from hooks
 $parameters=array();
-$reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // Note that $action and $object may have been modified by hook
+$reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
 $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_extrafields as ef on (p.rowid = ef.fk_object)";
@@ -318,28 +318,28 @@ if ($search_opp_percent) $sql .= natural_search('p.opp_percent', $search_opp_per
 if ($search_smonth > 0)
 {
 	if ($search_syear > 0 && empty($search_sday))
-		$sql.= " AND p.dateo BETWEEN '".$db->idate(dol_get_first_day($search_syear,$search_smonth,false))."' AND '".$db->idate(dol_get_last_day($search_syear,$search_smonth,false))."'";
-	else if ($search_syear > 0 && ! empty($search_sday))
+		$sql.= " AND p.dateo BETWEEN '".$db->idate(dol_get_first_day($search_syear, $search_smonth, false))."' AND '".$db->idate(dol_get_last_day($search_syear, $search_smonth, false))."'";
+	elseif ($search_syear > 0 && ! empty($search_sday))
 		$sql.= " AND p.dateo BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_smonth, $search_sday, $search_syear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_smonth, $search_sday, $search_syear))."'";
 	else
 		$sql.= " AND date_format(p.dateo, '%m') = '".$search_smonth."'";
 }
-else if ($search_syear > 0)
+elseif ($search_syear > 0)
 {
-	$sql.= " AND p.dateo BETWEEN '".$db->idate(dol_get_first_day($search_syear,1,false))."' AND '".$db->idate(dol_get_last_day($search_syear,12,false))."'";
+	$sql.= " AND p.dateo BETWEEN '".$db->idate(dol_get_first_day($search_syear, 1, false))."' AND '".$db->idate(dol_get_last_day($search_syear, 12, false))."'";
 }
 if ($search_emonth > 0)
 {
 	if ($search_eyear > 0 && empty($search_eday))
-		$sql.= " AND p.datee BETWEEN '".$db->idate(dol_get_first_day($search_eyear,$search_emonth,false))."' AND '".$db->idate(dol_get_last_day($search_eyear,$search_emonth,false))."'";
-	else if ($search_eyear > 0 && ! empty($search_eday))
+		$sql.= " AND p.datee BETWEEN '".$db->idate(dol_get_first_day($search_eyear, $search_emonth, false))."' AND '".$db->idate(dol_get_last_day($search_eyear, $search_emonth, false))."'";
+	elseif ($search_eyear > 0 && ! empty($search_eday))
 		$sql.= " AND p.datee BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_emonth, $search_eday, $search_eyear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_emonth, $search_eday, $search_eyear))."'";
 	else
 		$sql.= " AND date_format(p.datee, '%m') = '".$search_emonth."'";
 }
-else if ($search_eyear > 0)
+elseif ($search_eyear > 0)
 {
-	$sql.= " AND p.datee BETWEEN '".$db->idate(dol_get_first_day($search_eyear,1,false))."' AND '".$db->idate(dol_get_last_day($search_eyear,12,false))."'";
+	$sql.= " AND p.datee BETWEEN '".$db->idate(dol_get_first_day($search_eyear, 1, false))."' AND '".$db->idate(dol_get_last_day($search_eyear, 12, false))."'";
 }
 if ($search_all) $sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 if ($search_status >= 0)
@@ -361,16 +361,16 @@ if ($search_public!='') $sql .= " AND p.public = ".$db->escape($search_public);
 if ($search_sale > 0) $sql.= " AND sc.fk_user = " .$search_sale;
 // No check is done on company permission because readability is managed by public status of project and assignement.
 //if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND ((s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id.") OR (s.rowid IS NULL))";
-if ($search_project_user > 0) $sql.= " AND ecp.fk_c_type_contact IN (".join(',',array_keys($listofprojectcontacttype)).") AND ecp.element_id = p.rowid AND ecp.fk_socpeople = ".$search_project_user;
+if ($search_project_user > 0) $sql.= " AND ecp.fk_c_type_contact IN (".join(',', array_keys($listofprojectcontacttype)).") AND ecp.element_id = p.rowid AND ecp.fk_socpeople = ".$search_project_user;
 if ($search_opp_amount != '') $sql .= natural_search('p.opp_amount', $search_opp_amount, 1);
 if ($search_budget_amount != '') $sql .= natural_search('p.budget_amount', $search_budget_amount, 1);
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks
 $parameters=array();
-$reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
+$reshook=$hookmanager->executeHooks('printFieldListWhere', $parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
-$sql.= $db->order($sortfield,$sortorder);
+$sql.= $db->order($sortfield, $sortorder);
 
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
@@ -384,7 +384,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	}
 }
 
-$sql.= $db->plimit($limit + 1,$offset);
+$sql.= $db->plimit($limit + 1, $offset);
 
 dol_syslog("list allowed project", LOG_DEBUG);
 
@@ -437,12 +437,13 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 // List of mass actions available
 $arrayofmassactions =  array(
-//    'presend'=>$langs->trans("SendByMail"),
-//    'builddoc'=>$langs->trans("PDFMerge"),
+	'generate_doc'=>$langs->trans("ReGeneratePDF"),
+    //'builddoc'=>$langs->trans("PDFMerge"),
+    //'presend'=>$langs->trans("SendByMail"),
 );
 //if($user->rights->societe->creer) $arrayofmassactions['createbills']=$langs->trans("CreateInvoiceForThisCustomer");
 if ($user->rights->projet->creer) $arrayofmassactions['close']=$langs->trans("Close");
-if ($user->rights->societe->supprimer) $arrayofmassactions['predelete']=$langs->trans("Delete");
+if ($user->rights->societe->supprimer) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 
 $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
@@ -450,9 +451,7 @@ $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 $newcardbutton='';
 if ($user->rights->projet->creer)
 {
-	$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/projet/card.php?action=create"><span class="valignmiddle">'.$langs->trans('NewProject').'</span>';
-	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-	$newcardbutton.= '</a>';
+    $newcardbutton.= dolGetButtonTitle($langs->trans('NewProject'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/card.php?action=create');
 }
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
@@ -466,17 +465,17 @@ print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="type" value="'.$type.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_project', 0, $newcardbutton, '', $limit);
-
 // Show description of content
-print '<div class="opacitymedium">';
-if ($search_project_user == $user->id) print $langs->trans("MyProjectsDesc").'<br><br>';
+$texthelp='';
+if ($search_project_user == $user->id) $texthelp.=$langs->trans("MyProjectsDesc");
 else
 {
-	if ($user->rights->projet->all->lire && ! $socid) print $langs->trans("ProjectsDesc").'<br><br>';
-	else print $langs->trans("ProjectsPublicDesc").'<br><br>';
+    if ($user->rights->projet->all->lire && ! $socid) $texthelp.=$langs->trans("ProjectsDesc");
+    else $texthelp.=$langs->trans("ProjectsPublicDesc");
 }
-print '</div>';
+
+print_barre_liste($form->textwithpicto($title, $texthelp), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_project', 0, $newcardbutton, '', $limit);
+
 
 $topicmail="Information";
 $modelmail="project";
@@ -487,7 +486,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 if ($search_all)
 {
 	foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all) . join(', ',$fieldstosearchall).'</div>';
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all) . join(', ', $fieldstosearchall).'</div>';
 }
 
 $moreforfilter='';
@@ -525,7 +524,7 @@ if (! empty($moreforfilter))
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
 	print $moreforfilter;
 	$parameters=array();
-	$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+	$reshook=$hookmanager->executeHooks('printFieldPreListTitle', $parameters);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	print '</div>';
 }
@@ -535,7 +534,7 @@ $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfiel
 if ($massactionbutton) $selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
 
 print '<div class="div-table-responsive">';
-print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+print '<table class="tagtable nobottomiftotal liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
 print '<tr class="liste_titre_filter">';
 // Project ref
@@ -576,7 +575,7 @@ if (! empty($arrayfields['p.dateo']['checked']))
 	print '<td class="liste_titre center nowraponall">';
 	if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_sday" value="'.dol_escape_htmltag($search_sday).'">';
 	print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_smonth" value="'.dol_escape_htmltag($search_smonth).'">';
-	$formother->select_year($search_syear?$search_syear:-1,'search_syear',1, 20, 5, 0, 0, '', 'widthauto valignmiddle');
+	$formother->select_year($search_syear?$search_syear:-1, 'search_syear', 1, 20, 5, 0, 0, '', 'widthauto valignmiddle');
 	print '</td>';
 }
 // End date
@@ -585,14 +584,14 @@ if (! empty($arrayfields['p.datee']['checked']))
 	print '<td class="liste_titre center nowraponall">';
 	if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_eday" value="'.dol_escape_htmltag($search_eday).'">';
 	print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_emonth" value="'.dol_escape_htmltag($search_emonth).'">';
-	$formother->select_year($search_eyear?$search_eyear:-1,'search_eyear',1, 20, 5, 0, 0, '', 'widthauto valignmiddle');
+	$formother->select_year($search_eyear?$search_eyear:-1, 'search_eyear', 1, 20, 5, 0, 0, '', 'widthauto valignmiddle');
 	print '</td>';
 }
 if (! empty($arrayfields['p.public']['checked']))
 {
 	print '<td class="liste_titre">';
 	$array=array(''=>'',0 => $langs->trans("PrivateProject"),1 => $langs->trans("SharedProject"));
-	print $form->selectarray('search_public',$array,$search_public);
+	print $form->selectarray('search_public', $array, $search_public);
 	print '</td>';
 }
 // Opp status
@@ -616,8 +615,14 @@ if (! empty($arrayfields['p.opp_percent']['checked']))
 }
 if (! empty($arrayfields['p.budget_amount']['checked']))
 {
-	print '<td class="liste_titre nowrap" align="right">';
+	print '<td class="liste_titre nowrap right">';
 	print '<input type="text" class="flat" name="search_budget_amount" size="4" value="'.$search_budget_amount.'">';
+	print '</td>';
+}
+if (! empty($arrayfields['p.bill_time']['checked']))
+{
+	print '<td class="liste_titre nowrap right">';
+	print '';
 	print '</td>';
 }
 // Extra fields
@@ -625,7 +630,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
 // Fields from hook
 $parameters=array('arrayfields'=>$arrayfields);
-$reshook=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
+$reshook=$hookmanager->executeHooks('printFieldListOption', $parameters);    // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 if (! empty($arrayfields['p.datec']['checked']))
 {
@@ -641,7 +646,7 @@ if (! empty($arrayfields['p.tms']['checked']))
 }
 if (! empty($arrayfields['p.fk_statut']['checked']))
 {
-	print '<td class="liste_titre nowrap" align="right">';
+	print '<td class="liste_titre nowrap right">';
 	$arrayofstatus = array();
 	foreach($object->statuts_short as $key => $val) $arrayofstatus[$key]=$langs->trans($val);
 	$arrayofstatus['99']=$langs->trans("NotClosed").' ('.$langs->trans('Draft').' + '.$langs->trans('Opened').')';
@@ -650,7 +655,7 @@ if (! empty($arrayfields['p.fk_statut']['checked']))
 	print '</td>';
 }
 // Action column
-print '<td class="liste_titre" align="right">';
+print '<td class="liste_titre maxwidthsearch">';
 $searchpicto=$form->showFilterButtons();
 print $searchpicto;
 print '</td>';
@@ -658,32 +663,33 @@ print '</td>';
 print '</tr>'."\n";
 
 print '<tr class="liste_titre">';
-if (! empty($arrayfields['p.ref']['checked']))           print_liste_field_titre($arrayfields['p.ref']['label'],$_SERVER["PHP_SELF"],"p.ref","",$param,"",$sortfield,$sortorder);
-if (! empty($arrayfields['p.title']['checked']))         print_liste_field_titre($arrayfields['p.title']['label'],$_SERVER["PHP_SELF"],"p.title","",$param,"",$sortfield,$sortorder);
-if (! empty($arrayfields['s.nom']['checked']))           print_liste_field_titre($arrayfields['s.nom']['label'],$_SERVER["PHP_SELF"],"s.nom","",$param,"",$sortfield,$sortorder);
-if (! empty($arrayfields['commercial']['checked']))      print_liste_field_titre($arrayfields['commercial']['label'],$_SERVER["PHP_SELF"],"","",$param,"",$sortfield,$sortorder);
-if (! empty($arrayfields['p.dateo']['checked']))         print_liste_field_titre($arrayfields['p.dateo']['label'],$_SERVER["PHP_SELF"],"p.dateo","",$param,'align="center"',$sortfield,$sortorder);
-if (! empty($arrayfields['p.datee']['checked']))         print_liste_field_titre($arrayfields['p.datee']['label'],$_SERVER["PHP_SELF"],"p.datee","",$param,'align="center"',$sortfield,$sortorder);
-if (! empty($arrayfields['p.public']['checked']))        print_liste_field_titre($arrayfields['p.public']['label'],$_SERVER["PHP_SELF"],"p.public","",$param,"",$sortfield,$sortorder);
-if (! empty($arrayfields['p.fk_opp_status']['checked'])) print_liste_field_titre($arrayfields['p.fk_opp_status']['label'],$_SERVER["PHP_SELF"],'p.fk_opp_status',"",$param,'align="center"',$sortfield,$sortorder);
-if (! empty($arrayfields['p.opp_amount']['checked']))    print_liste_field_titre($arrayfields['p.opp_amount']['label'],$_SERVER["PHP_SELF"],'p.opp_amount',"",$param,'align="right"',$sortfield,$sortorder);
-if (! empty($arrayfields['p.opp_percent']['checked']))   print_liste_field_titre($arrayfields['p.opp_percent']['label'],$_SERVER["PHP_SELF"],'p.opp_percent',"",$param,'align="right"',$sortfield,$sortorder);
-if (! empty($arrayfields['p.budget_amount']['checked'])) print_liste_field_titre($arrayfields['p.budget_amount']['label'],$_SERVER["PHP_SELF"],'p.budget_amount',"",$param,'align="right"',$sortfield,$sortorder);
+if (! empty($arrayfields['p.ref']['checked']))           print_liste_field_titre($arrayfields['p.ref']['label'], $_SERVER["PHP_SELF"], "p.ref", "", $param, "", $sortfield, $sortorder);
+if (! empty($arrayfields['p.title']['checked']))         print_liste_field_titre($arrayfields['p.title']['label'], $_SERVER["PHP_SELF"], "p.title", "", $param, "", $sortfield, $sortorder);
+if (! empty($arrayfields['s.nom']['checked']))           print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], "s.nom", "", $param, "", $sortfield, $sortorder);
+if (! empty($arrayfields['commercial']['checked']))      print_liste_field_titre($arrayfields['commercial']['label'], $_SERVER["PHP_SELF"], "", "", $param, "", $sortfield, $sortorder);
+if (! empty($arrayfields['p.dateo']['checked']))         print_liste_field_titre($arrayfields['p.dateo']['label'], $_SERVER["PHP_SELF"], "p.dateo", "", $param, '', $sortfield, $sortorder, 'center ');
+if (! empty($arrayfields['p.datee']['checked']))         print_liste_field_titre($arrayfields['p.datee']['label'], $_SERVER["PHP_SELF"], "p.datee", "", $param, '', $sortfield, $sortorder, 'center ');
+if (! empty($arrayfields['p.public']['checked']))        print_liste_field_titre($arrayfields['p.public']['label'], $_SERVER["PHP_SELF"], "p.public", "", $param, "", $sortfield, $sortorder);
+if (! empty($arrayfields['p.fk_opp_status']['checked'])) print_liste_field_titre($arrayfields['p.fk_opp_status']['label'], $_SERVER["PHP_SELF"], 'p.fk_opp_status', "", $param, '', $sortfield, $sortorder, 'center ');
+if (! empty($arrayfields['p.opp_amount']['checked']))    print_liste_field_titre($arrayfields['p.opp_amount']['label'], $_SERVER["PHP_SELF"], 'p.opp_amount', "", $param, '', $sortfield, $sortorder, 'right ');
+if (! empty($arrayfields['p.opp_percent']['checked']))   print_liste_field_titre($arrayfields['p.opp_percent']['label'], $_SERVER["PHP_SELF"], 'p.opp_percent', "", $param, '', $sortfield, $sortorder, 'right ');
+if (! empty($arrayfields['p.budget_amount']['checked'])) print_liste_field_titre($arrayfields['p.budget_amount']['label'], $_SERVER["PHP_SELF"], 'p.budget_amount', "", $param, '', $sortfield, $sortorder, 'right ');
+if (! empty($arrayfields['p.bill_time']['checked']))     print_liste_field_titre($arrayfields['p.bill_time']['label'], $_SERVER["PHP_SELF"], 'p.bill_time', "", $param, '', $sortfield, $sortorder, 'right ');
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
 $parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
-$reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+$reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters);    // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
-if (! empty($arrayfields['p.datec']['checked']))  print_liste_field_titre($arrayfields['p.datec']['label'],$_SERVER["PHP_SELF"],"p.datec","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
-if (! empty($arrayfields['p.tms']['checked']))    print_liste_field_titre($arrayfields['p.tms']['label'],$_SERVER["PHP_SELF"],"p.tms","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
-if (! empty($arrayfields['p.fk_statut']['checked'])) print_liste_field_titre($arrayfields['p.fk_statut']['label'],$_SERVER["PHP_SELF"],"p.fk_statut","",$param,'align="right"',$sortfield,$sortorder);
-print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ');
+if (! empty($arrayfields['p.datec']['checked']))  print_liste_field_titre($arrayfields['p.datec']['label'], $_SERVER["PHP_SELF"], "p.datec", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+if (! empty($arrayfields['p.tms']['checked']))    print_liste_field_titre($arrayfields['p.tms']['label'], $_SERVER["PHP_SELF"], "p.tms", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+if (! empty($arrayfields['p.fk_statut']['checked'])) print_liste_field_titre($arrayfields['p.fk_statut']['label'], $_SERVER["PHP_SELF"], "p.fk_statut", "", $param, '', $sortfield, $sortorder, 'right ');
+print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 print "</tr>\n";
 
 $i=0;
 $totalarray=array();
-while ($i < min($num,$limit))
+while ($i < min($num, $limit))
 {
 	$obj = $db->fetch_object($resql);
 
@@ -699,6 +705,10 @@ while ($i < min($num,$limit))
 	$userAccess = $object->restrictedProjectArea($user);    // why this ?
 	if ($userAccess >= 0)
 	{
+	    $socstatic->id=$obj->socid;
+	    $socstatic->name=$obj->name;
+	    $socstatic->email=$obj->email;
+
 		print '<tr class="oddeven">';
 
 		// Project url
@@ -724,8 +734,6 @@ while ($i < min($num,$limit))
 			print '<td class="tdoverflowmax100">';
 			if ($obj->socid)
 			{
-				$socstatic->id=$obj->socid;
-				$socstatic->name=$obj->name;
 				print $socstatic->getNomUrl(1);
 			}
 			else
@@ -751,7 +759,7 @@ while ($i < min($num,$limit))
 					print $nbofsalesrepresentative;
 					print '</a>';
 				}
-				else if ($nbofsalesrepresentative > 0)
+				elseif ($nbofsalesrepresentative > 0)
 				{
 					$userstatic=new User($db);
 					$j=0;
@@ -783,7 +791,7 @@ while ($i < min($num,$limit))
 		if (! empty($arrayfields['p.dateo']['checked']))
 		{
 			print '<td class="center">';
-			print dol_print_date($db->jdate($obj->date_start),'day');
+			print dol_print_date($db->jdate($obj->date_start), 'day');
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
 		}
@@ -791,14 +799,14 @@ while ($i < min($num,$limit))
 		if (! empty($arrayfields['p.datee']['checked']))
 		{
 			print '<td class="center">';
-			print dol_print_date($db->jdate($obj->date_end),'day');
+			print dol_print_date($db->jdate($obj->date_end), 'day');
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
 		}
 		// Visibility
 		if (! empty($arrayfields['p.public']['checked']))
 		{
-			print '<td align="left">';
+			print '<td class="left">';
 			if ($obj->public) print $langs->trans('SharedProject');
 			else print $langs->trans('PrivateProject');
 			print '</td>';
@@ -815,9 +823,9 @@ while ($i < min($num,$limit))
 		// Opp Amount
 		if (! empty($arrayfields['p.opp_amount']['checked']))
 		{
-			print '<td align="right">';
+			print '<td class="right">';
 			//if ($obj->opp_status_code)
-			if (strcmp($obj->opp_amount,''))
+			if (strcmp($obj->opp_amount, ''))
 			{
 				print price($obj->opp_amount, 1, $langs, 1, -1, -1, '');
 				$totalarray['totalopp'] += $obj->opp_amount;
@@ -829,7 +837,7 @@ while ($i < min($num,$limit))
 		// Opp percent
 		if (! empty($arrayfields['p.opp_percent']['checked']))
 		{
-			print '<td align="right">';
+			print '<td class="right">';
 			if ($obj->opp_percent) print price($obj->opp_percent, 1, $langs, 1, 0).'%';
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
@@ -837,7 +845,7 @@ while ($i < min($num,$limit))
 		// Budget
 		if (! empty($arrayfields['p.budget_amount']['checked']))
 		{
-			print '<td align="right">';
+			print '<td class="right">';
 			if ($obj->budget_amount != '')
 			{
 				print price($obj->budget_amount, 1, $langs, 1, -1, -1);
@@ -847,16 +855,27 @@ while ($i < min($num,$limit))
 			if (! $i) $totalarray['nbfield']++;
 			if (! $i) $totalarray['totalbudgetfield']=$totalarray['nbfield'];
 		}
+		// Bill time
+		if (! empty($arrayfields['p.bill_time']['checked']))
+		{
+			print '<td class="right">';
+			if ($obj->bill_time)
+			{
+				print yn($obj->bill_time);
+			}
+			print '</td>';
+			if (! $i) $totalarray['nbfield']++;
+		}
 		// Extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 		// Fields from hook
 		$parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj);
-		$reshook=$hookmanager->executeHooks('printFieldListValue',$parameters);    // Note that $action and $object may have been modified by hook
+		$reshook=$hookmanager->executeHooks('printFieldListValue', $parameters);    // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		// Date creation
 		if (! empty($arrayfields['p.datec']['checked']))
 		{
-			print '<td align="center">';
+			print '<td class="center">';
 			print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
@@ -864,7 +883,7 @@ while ($i < min($num,$limit))
 		// Date modification
 		if (! empty($arrayfields['p.tms']['checked']))
 		{
-			print '<td align="center">';
+			print '<td class="center">';
 			print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
@@ -872,11 +891,11 @@ while ($i < min($num,$limit))
 		// Status
 		if (! empty($arrayfields['p.fk_statut']['checked']))
 		{
-			print '<td align="right">'.$object->getLibStatut(5).'</td>';
+			print '<td class="right">'.$object->getLibStatut(5).'</td>';
 			if (! $i) $totalarray['nbfield']++;
 		}
 		// Action column
-		print '<td class="nowrap" align="center">';
+		print '<td class="nowrap center">';
 		if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 		{
 			$selected=0;
@@ -902,11 +921,11 @@ if (isset($totalarray['totaloppfield']) || isset($totalarray['totalbudgetfield']
 		$i++;
 		if ($i == 1)
 		{
-			if ($num < $limit && empty($offset)) print '<td align="left">'.$langs->trans("Total").'</td>';
-			else print '<td align="left">'.$langs->trans("Totalforthispage").'</td>';
+			if ($num < $limit && empty($offset)) print '<td class="left">'.$langs->trans("Total").'</td>';
+			else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
 		}
-		elseif ($totalarray['totaloppfield'] == $i) print '<td align="right">'.price($totalarray['totalopp'], 1, $langs, 1, -1, -1).'</td>';
-		elseif ($totalarray['totalbudgetfield'] == $i) print '<td align="right">'.price($totalarray['totalbudget'], 1, $langs, 1, -1, -1).'</td>';
+		elseif ($totalarray['totaloppfield'] == $i) print '<td class="right">'.price($totalarray['totalopp'], 1, $langs, 1, -1, -1).'</td>';
+		elseif ($totalarray['totalbudgetfield'] == $i) print '<td class="right">'.price($totalarray['totalbudget'], 1, $langs, 1, -1, -1).'</td>';
 		else print '<td></td>';
 	}
 	print '</tr>';
@@ -915,7 +934,7 @@ if (isset($totalarray['totaloppfield']) || isset($totalarray['totalbudgetfield']
 $db->free($resql);
 
 $parameters=array('sql' => $sql);
-$reshook=$hookmanager->executeHooks('printFieldListFooter',$parameters);    // Note that $action and $object may have been modified by hook
+$reshook=$hookmanager->executeHooks('printFieldListFooter', $parameters);    // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
 print "</table>\n";

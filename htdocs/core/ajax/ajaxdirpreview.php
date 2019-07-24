@@ -27,10 +27,10 @@
  * 				ajaxdirpreview.php?mode=nojs&action=preview&module=ecm&section=0&file=xxx
  */
 
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL',1); // Disables token renewal
-if (! defined('NOREQUIREMENU')) define('NOREQUIREMENU','1');
-if (! defined('NOREQUIREHTML')) define('NOREQUIREHTML','1');
-if (! defined('NOREQUIREAJAX')) define('NOREQUIREAJAX','1');
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', 1); // Disables token renewal
+if (! defined('NOREQUIREMENU')) define('NOREQUIREMENU', '1');
+if (! defined('NOREQUIREHTML')) define('NOREQUIREHTML', '1');
+if (! defined('NOREQUIREAJAX')) define('NOREQUIREAJAX', '1');
 
 if (! isset($mode) || $mode != 'noajax')    // For ajax call
 {
@@ -39,16 +39,16 @@ if (! isset($mode) || $mode != 'noajax')    // For ajax call
     require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
     require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 
-    $action=GETPOST('action','aZ09');
-    $file=urldecode(GETPOST('file','alpha'));
-    $section=GETPOST("section",'alpha');
-    $module=GETPOST("module",'alpha');
-    $urlsource=GETPOST("urlsource",'alpha');
-    $search_doc_ref=GETPOST('search_doc_ref','alpha');
+    $action=GETPOST('action', 'aZ09');
+    $file=urldecode(GETPOST('file', 'alpha'));
+    $section=GETPOST("section", 'alpha');
+    $module=GETPOST("module", 'alpha');
+    $urlsource=GETPOST("urlsource", 'alpha');
+    $search_doc_ref=GETPOST('search_doc_ref', 'alpha');
 
-    $sortfield = GETPOST("sortfield",'alpha');
-    $sortorder = GETPOST("sortorder",'alpha');
-    $page = GETPOST("page",'int');
+    $sortfield = GETPOST("sortfield", 'alpha');
+    $sortorder = GETPOST("sortorder", 'alpha');
+    $page = GETPOST("page", 'int');
     if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
     $offset = $conf->liste_limit * $page;
     $pageprev = $page - 1;
@@ -79,7 +79,7 @@ else    // For no ajax call
         $result=$ecmdir->fetch($section);
         if (! $result > 0)
         {
-            dol_print_error($db,$ecmdir->error);
+            dol_print_error($db, $ecmdir->error);
             exit;
         }
 
@@ -110,11 +110,11 @@ if ($user->societe_id > 0) $socid = $user->societe_id;
 
 // Security:
 // On interdit les remontees de repertoire ainsi que les pipe dans les noms de fichiers.
-if (preg_match('/\.\./',$upload_dir) || preg_match('/[<>|]/',$upload_dir))
+if (preg_match('/\.\./', $upload_dir) || preg_match('/[<>|]/', $upload_dir))
 {
     dol_syslog("Refused to deliver file ".$upload_dir);
     // Do no show plain path in shown error message
-    dol_print_error(0,$langs->trans("ErrorFileNameInvalid",$upload_dir));
+    dol_print_error(0, $langs->trans("ErrorFileNameInvalid", $upload_dir));
     exit;
 }
 
@@ -164,9 +164,9 @@ if (! dol_is_dir($upload_dir))
 print '<!-- ajaxdirpreview type='.$type.' -->'."\n";
 //print '<!-- Page called with mode='.dol_escape_htmltag(isset($mode)?$mode:'').' type='.dol_escape_htmltag($type).' module='.dol_escape_htmltag($module).' url='.dol_escape_htmltag($url).' '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
-$param=($sortfield?'&sortfield='.$sortfield:'').($sortorder?'&sortorder='.$sortorder:'');
-if (! empty($websitekey)) $param.='&website='.$websitekey;
-if (! empty($pageid))     $param.='&pageid='.$pageid;
+$param=($sortfield?'&sortfield='.urlencode($sortfield):'').($sortorder?'&sortorder='.urlencode($sortorder):'');
+if (! empty($websitekey)) $param.='&website='.urlencode($websitekey);
+if (! empty($pageid))     $param.='&pageid='.urlencode($pageid);
 
 
 // Dir scan
@@ -179,56 +179,58 @@ if ($type == 'directory')
     $sorting = (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC);
 
     // Right area. If module is defined here, we are in automatic ecm.
-    $automodules = array('company', 'invoice', 'invoice_supplier', 'propal', 'supplier_proposal', 'order', 'order_supplier', 'contract', 'product', 'tax', 'project', 'fichinter', 'user', 'expensereport', 'holiday');
+    $automodules = array('company', 'invoice', 'invoice_supplier', 'propal', 'supplier_proposal', 'order', 'order_supplier', 'contract', 'product', 'tax', 'project', 'fichinter', 'user', 'expensereport', 'holiday', 'banque');
 
     // TODO change for multicompany sharing
     // Auto area for suppliers invoices
     if ($module == 'company') $upload_dir = $conf->societe->dir_output;
     // Auto area for suppliers invoices
-    else if ($module == 'invoice') $upload_dir = $conf->facture->dir_output;
+    elseif ($module == 'invoice') $upload_dir = $conf->facture->dir_output;
     // Auto area for suppliers invoices
-    else if ($module == 'invoice_supplier') $upload_dir = $conf->fournisseur->facture->dir_output;
+    elseif ($module == 'invoice_supplier') $upload_dir = $conf->fournisseur->facture->dir_output;
     // Auto area for customers proposal
-    else if ($module == 'propal') $upload_dir = $conf->propal->dir_output;
+    elseif ($module == 'propal') $upload_dir = $conf->propal->dir_output;
     // Auto area for suppliers proposal
-    else if ($module == 'supplier_proposal') $upload_dir = $conf->supplier_proposal->dir_output;
+    elseif ($module == 'supplier_proposal') $upload_dir = $conf->supplier_proposal->dir_output;
     // Auto area for customers orders
-    else if ($module == 'order') $upload_dir = $conf->commande->dir_output;
+    elseif ($module == 'order') $upload_dir = $conf->commande->dir_output;
     // Auto area for suppliers orders
-    else if ($module == 'order_supplier') $upload_dir = $conf->fournisseur->commande->dir_output;
+    elseif ($module == 'order_supplier') $upload_dir = $conf->fournisseur->commande->dir_output;
     // Auto area for suppliers invoices
-    else if ($module == 'contract') $upload_dir = $conf->contrat->dir_output;
+    elseif ($module == 'contract') $upload_dir = $conf->contrat->dir_output;
     // Auto area for products
-    else if ($module == 'product') $upload_dir = $conf->product->dir_output;
+    elseif ($module == 'product') $upload_dir = $conf->product->dir_output;
     // Auto area for suppliers invoices
-    else if ($module == 'tax') $upload_dir = $conf->tax->dir_output;
+    elseif ($module == 'tax') $upload_dir = $conf->tax->dir_output;
     // Auto area for projects
-    else if ($module == 'project') $upload_dir = $conf->projet->dir_output;
+    elseif ($module == 'project') $upload_dir = $conf->projet->dir_output;
     // Auto area for interventions
-    else if ($module == 'fichinter') $upload_dir = $conf->ficheinter->dir_output;
+    elseif ($module == 'fichinter') $upload_dir = $conf->ficheinter->dir_output;
     // Auto area for users
-    else if ($module == 'user') $upload_dir = $conf->user->dir_output;
+    elseif ($module == 'user') $upload_dir = $conf->user->dir_output;
     // Auto area for expense report
-    else if ($module == 'expensereport') $upload_dir = $conf->expensereport->dir_output;
+    elseif ($module == 'expensereport') $upload_dir = $conf->expensereport->dir_output;
 	// Auto area for holiday
-    else if ($module == 'holiday') $upload_dir = $conf->holiday->dir_output;
+    elseif ($module == 'holiday') $upload_dir = $conf->holiday->dir_output;
+    // Auto area for holiday
+    elseif ($module == 'banque') $upload_dir = $conf->bank->dir_output;
 
     // Automatic list
     if (in_array($module, $automodules))
     {
         $param.='&module='.$module;
-        if (isset($search_doc_ref) && $search_doc_ref != '') $param.='&search_doc_ref='.$search_doc_ref;
+        if (isset($search_doc_ref) && $search_doc_ref != '') $param.='&search_doc_ref='.urlencode($search_doc_ref);
 
         $textifempty=($section?$langs->trans("NoFileFound"):($showonrightsize=='featurenotyetavailable'?$langs->trans("FeatureNotYetAvailable"):$langs->trans("NoFileFound")));
 
         if ($module == 'company') $excludefiles[]='^contact$';   // The subdir 'contact' contains files of contacts with no id of thirdparty.
 
         $filter=preg_quote($search_doc_ref, '/');
-        $filearray=dol_dir_list($upload_dir, "files", 1, $filter, $excludefiles, $sortfield, $sorting,1);
+        $filearray=dol_dir_list($upload_dir, "files", 1, $filter, $excludefiles, $sortfield, $sorting, 1);
 
         $perm=$user->rights->ecm->upload;
 
-        $formfile->list_of_autoecmfiles($upload_dir,$filearray,$module,$param,1,'',$perm,1,$textifempty,$maxlengthname,$url,1);
+        $formfile->list_of_autoecmfiles($upload_dir, $filearray, $module, $param, 1, '', $perm, 1, $textifempty, $maxlengthname, $url, 1);
     }
     // Manual list
     else
@@ -246,14 +248,14 @@ if ($type == 'directory')
 			  'max_file_size' => string '2097152' (length=7)
 			  'sendit' => string 'Envoyer fichier' (length=15)
     		 */
-    		$relativepath=GETPOST('file','alpha')?GETPOST('file','alpha'):GETPOST('section_dir','alpha');
+    		$relativepath=GETPOST('file', 'alpha')?GETPOST('file', 'alpha'):GETPOST('section_dir', 'alpha');
     		if ($relativepath && $relativepath!= '/') $relativepath.='/';
     		$upload_dir = $dolibarr_main_data_root.'/'.$module.'/'.$relativepath;
     		if (GETPOSTISSET('website') || GETPOSTISSET('file_manager'))
 	    	{
 	    		$param.='&file_manager=1';
-	    		if (!preg_match('/website=/',$param)) $param.='&website='.urlencode(GETPOST('website','alpha'));
-	    		if (!preg_match('/pageid=/',$param)) $param.='&pageid='.urlencode(GETPOST('pageid','int'));
+	    		if (!preg_match('/website=/', $param)) $param.='&website='.urlencode(GETPOST('website', 'alpha'));
+	    		if (!preg_match('/pageid=/', $param)) $param.='&pageid='.urlencode(GETPOST('pageid', 'int'));
 	    		//if (!preg_match('/backtopage=/',$param)) $param.='&backtopage='.urlencode($_SERVER["PHP_SELF"].'?file_manager=1&website='.$websitekey.'&pageid='.$pageid);
 	    	}
     	}
@@ -270,7 +272,7 @@ if ($type == 'directory')
         }
         else
         {
-        	$filearray=dol_dir_list($upload_dir,"files",0,'',array('^\.','(\.meta|_preview.*\.png)$','^temp$','^CVS$'),$sortfield, $sorting,1);
+        	$filearray=dol_dir_list($upload_dir, "files", 0, '', array('^\.','(\.meta|_preview.*\.png)$','^temp$','^CVS$'), $sortfield, $sorting, 1);
         }
 
         if ($section)
@@ -280,7 +282,7 @@ if ($type == 'directory')
 
             $textifempty = $langs->trans('NoFileFound');
         }
-        else if ($section === '0')
+        elseif ($section === '0')
         {
         	if ($module == 'ecm') $textifempty='<br><div align="center"><font class="warning">'.$langs->trans("DirNotSynchronizedSyncFirst").'</font></div><br>';
         	else $textifempty = $langs->trans('NoFileFound');
@@ -289,14 +291,14 @@ if ($type == 'directory')
 
     	if ($module == 'medias')
     	{
-    		$useinecm = 2;
+    		$useinecm = 6;
     		$modulepart='medias';
         	$perm=($user->rights->website->write || $user->rights->emailing->creer);
         	$title='none';
     	}
     	else
     	{
-    		$useinecm = 1;
+    		$useinecm = 5;
     		$modulepart='ecm';
         	$perm=$user->rights->ecm->upload;
         	$title='';	// Use default
@@ -322,9 +324,9 @@ if (! empty($conf->global->MAIN_ECM_DISABLE_JS)) $useajax=0;
 if ($useajax || $action == 'delete')
 {
 	$urlfile='';
-	if ($action == 'delete') $urlfile=GETPOST('urlfile','alpha');
+	if ($action == 'delete') $urlfile=GETPOST('urlfile', 'alpha');
 
-	if (empty($section_dir)) $section_dir=GETPOST("file","alpha");
+	if (empty($section_dir)) $section_dir=GETPOST("file", "alpha");
 	$section_id=$section;
 
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
@@ -335,10 +337,10 @@ if ($useajax || $action == 'delete')
 	$formquestion['section_id']=array('type'=>'hidden','value'=>$section_id,'name'=>'section_id');		// We must always put field, even if empty because it is fille by javascript later
 	$formquestion['section_dir']=array('type'=>'hidden','value'=>$section_dir,'name'=>'section_dir');	// We must always put field, even if empty because it is fille by javascript later
 	if (! empty($action) && $action == 'file_manager')	$formquestion['file_manager']=array('type'=>'hidden','value'=>1,'name'=>'file_manager');
-	if (! empty($websitekey))							$formquestion['website']=array('type'=>'hidden','value'=>$websitekey,'name'=>'website');
-	if (! empty($pageid) && $pageid > 0)				$formquestion['pageid']=array('type'=>'hidden','value'=>$pageid,'name'=>'pageid');
+	if (! empty($websitekey))							$formquestion['website']     =array('type'=>'hidden','value'=>$websitekey,'name'=>'website');
+	if (! empty($pageid) && $pageid > 0)				$formquestion['pageid']      =array('type'=>'hidden','value'=>$pageid,'name'=>'pageid');
 
-	print $form->formconfirm($url,$langs->trans("DeleteFile"),$langs->trans("ConfirmDeleteFile"),'confirm_deletefile',$formquestion,"no",($useajax?'deletefile':0));
+	print $form->formconfirm($url, $langs->trans("DeleteFile"), $langs->trans("ConfirmDeleteFile"), 'confirm_deletefile', $formquestion, "no", ($useajax?'deletefile':0));
 }
 
 if ($useajax)

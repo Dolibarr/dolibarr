@@ -42,8 +42,8 @@ CronModule=Module
 CronNoJobs=No jobs registered
 CronPriority=Priority
 CronLabel=Label
-CronNbRun=No. launches
-CronMaxRun=Max number launch
+CronNbRun=Number of launches
+CronMaxRun=Maximum number of launches
 CronEach=Every
 JobFinished=Job launched and finished
 #Page card

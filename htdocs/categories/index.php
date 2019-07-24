@@ -36,9 +36,9 @@ $langs->load("categories");
 
 if (! $user->rights->categorie->lire) accessforbidden();
 
-$id=GETPOST('id','int');
-$type=(GETPOST('type','aZ09') ? GETPOST('type','aZ09') : Categorie::TYPE_PRODUCT);
-$catname=GETPOST('catname','alpha');
+$id=GETPOST('id', 'int');
+$type=(GETPOST('type', 'aZ09') ? GETPOST('type', 'aZ09') : Categorie::TYPE_PRODUCT);
+$catname=GETPOST('catname', 'alpha');
 
 if (is_numeric($type)) $type=Categorie::$MAP_ID_TO_CODE[$type];	// For backward compatibility
 
@@ -63,13 +63,12 @@ else                                        { $title=$langs->trans("CategoriesAr
 $arrayofjs=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.js', '/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js');
 $arrayofcss=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
 
-llxHeader('',$title,'','',0,0,$arrayofjs,$arrayofcss);
+llxHeader('', $title, '', '', 0, 0, $arrayofjs, $arrayofcss);
+
 
 $newcardbutton='';
 if (! empty($user->rights->categorie->creer)) {
-    $newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/categories/card.php?action=create&type='.$type.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?type='.$type).'"><span class="valignmiddle">'.$langs->trans("NewCategory").'</span>';
-    $newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-    $newcardbutton.= '</a>';
+	$newcardbutton.= dolGetButtonTitle($langs->trans('NewCategory'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/categories/card.php?action=create&type='.$type.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?type='.$type));
 }
 
 print load_fiche_titre($title, $newcardbutton);
@@ -130,7 +129,7 @@ if ($catname || $id > 0)
 		$categstatic->type=$cat->type;
 		$categstatic->color=$cat->color;
 		print '<span class="noborderoncategories" '.($categstatic->color?' style="background: #'.$categstatic->color.';"':' style="background: #aaa"').'>';
-		print $categstatic->getNomUrl(1,'');
+		print $categstatic->getNomUrl(1, '');
 		print '</span>';
 		print "</td>\n";
 		print "\t\t<td>";
@@ -164,7 +163,7 @@ foreach($fulltree as $key => $val)
 	$categstatic->ref=$val['label'];
 	$categstatic->color=$val['color'];
 	$categstatic->type=$type;
-	$li=$categstatic->getNomUrl(1,'',60);
+	$li=$categstatic->getNomUrl(1, '', 60);
 	$desc=dol_htmlcleanlastbr($val['description']);
 
 	$data[] = array(
@@ -172,7 +171,7 @@ foreach($fulltree as $key => $val)
 	'fk_menu'=>$val['fk_parent'],
 	'entry'=>'<table class="nobordernopadding centpercent"><tr><td><span class="noborderoncategories" '.($categstatic->color?' style="background: #'.$categstatic->color.';"':' style="background: #aaa"').'>'.$li.'</span></td>'.
 	//'<td width="50%">'.dolGetFirstLineOfText($desc).'</td>'.
-	'<td align="right" width="20px;"><a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$val['id'].'&type='.$type.'">'.img_view().'</a></td>'.
+	'<td class="right" width="20px;"><a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$val['id'].'&type='.$type.'">'.img_view().'</a></td>'.
 	'</tr></table>'
 	);
 }
@@ -181,10 +180,10 @@ foreach($fulltree as $key => $val)
 //print_barre_liste('', 0, $_SERVER["PHP_SELF"], '', '', '', '', 0, 0, '', 0, $newcardbutton, '', 0, 1, 1);
 
 print '<table class="liste nohover" width="100%">';
-print '<tr class="liste_titre"><td>'.$langs->trans("Categories").'</td><td></td><td align="right">';
+print '<tr class="liste_titre"><td>'.$langs->trans("Categories").'</td><td></td><td class="right">';
 if (! empty($conf->use_javascript_ajax))
 {
-	print '<div id="iddivjstreecontrol"><a class="notasortlink" href="#">'.img_picto('','object_category').' '.$langs->trans("UndoExpandAll").'</a> | <a class="notasortlink" href="#">'.img_picto('','object_category-expanded').' '.$langs->trans("ExpandAll").'</a></div>';
+	print '<div id="iddivjstreecontrol"><a class="notasortlink" href="#">'.img_picto('', 'object_category').' '.$langs->trans("UndoExpandAll").'</a> | <a class="notasortlink" href="#">'.img_picto('', 'object_category-expanded').' '.$langs->trans("ExpandAll").'</a></div>';
 }
 print '</td></tr>';
 
@@ -193,13 +192,13 @@ $nbofentries=(count($data) - 1);
 if ($nbofentries > 0)
 {
 	print '<tr class="pair"><td colspan="3">';
-	tree_recur($data,$data[0],0);
+	tree_recur($data, $data[0], 0);
 	print '</td></tr>';
 }
 else
 {
 	print '<tr class="pair">';
-	print '<td colspan="3"><table class="nobordernopadding"><tr class="nobordernopadding"><td>'.img_picto_common('','treemenu/branchbottom.gif').'</td>';
+	print '<td colspan="3"><table class="nobordernopadding"><tr class="nobordernopadding"><td>'.img_picto_common('', 'treemenu/branchbottom.gif').'</td>';
 	print '<td valign="middle">';
 	print $langs->trans("NoCategoryYet");
 	print '</td>';

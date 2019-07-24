@@ -33,7 +33,7 @@ class modTcpdfbarcode extends ModeleBarCode
 {
 	/**
      * Dolibarr version of the loaded document
-     * @public string
+     * @var string
      */
 	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
 
@@ -49,7 +49,7 @@ class modTcpdfbarcode extends ModeleBarCode
 	 *
 	 *	@return		string		Text with description
 	 */
-	function info()
+	public function info()
 	{
 		global $langs;
 
@@ -61,7 +61,7 @@ class modTcpdfbarcode extends ModeleBarCode
 	 *
 	 *	@return		boolean		true if module can be used
 	 */
-	function isEnabled()
+	public function isEnabled()
 	{
 		return true;
 	}
@@ -72,7 +72,7 @@ class modTcpdfbarcode extends ModeleBarCode
 	 *
 	 *	@return		boolean		false si conflit, true si ok
 	 */
-	function canBeActivated()
+	public function canBeActivated()
 	{
 		global $langs;
 
@@ -85,7 +85,7 @@ class modTcpdfbarcode extends ModeleBarCode
 	 *	@param	string	$encoding		Encoding norm
 	 *	@return	int						>0 if supported, 0 if not
 	 */
-	function encodingIsSupported($encoding)
+	public function encodingIsSupported($encoding)
 	{
 		$tcpdfEncoding = $this->getTcpdfEncodingType($encoding);
 		if (empty($tcpdfEncoding)) {
@@ -105,7 +105,7 @@ class modTcpdfbarcode extends ModeleBarCode
 	 *  @param     integer      $nooutputiferror  No output if error (not used with this engine)
 	 *	@return	   int			                  <0 if KO, >0 if OK
 	 */
-	function buildBarCode($code,$encoding,$readable='Y',$scale=1,$nooutputiferror=0)
+	public function buildBarCode($code, $encoding, $readable = 'Y', $scale = 1, $nooutputiferror = 0)
 	{
 		global $_GET;
 
@@ -116,7 +116,6 @@ class modTcpdfbarcode extends ModeleBarCode
 
 		$_GET["code"]=$code;
 		$_GET["type"]=$encoding;
-		$_GET["height"]=$height;
 		$_GET["readable"]=$readable;
 
 		if ($code) {
@@ -152,7 +151,7 @@ class modTcpdfbarcode extends ModeleBarCode
 	 *  @param     integer      $nooutputiferror  No output if error (not used with this engine)
 	 *	@return	   int			                  <0 if KO, >0 if OK
 	 */
-	function writeBarCode($code,$encoding,$readable='Y',$scale=1,$nooutputiferror=0)
+	public function writeBarCode($code, $encoding, $readable = 'Y', $scale = 1, $nooutputiferror = 0)
 	{
 		global $conf,$_GET;
 
@@ -166,7 +165,6 @@ class modTcpdfbarcode extends ModeleBarCode
 
 		$_GET["code"]=$code;
 		$_GET["type"]=$encoding;
-		$_GET["height"]=$height;
 		$_GET["readable"]=$readable;
 
 		if ($code) {
@@ -255,7 +253,7 @@ class modTcpdfbarcode extends ModeleBarCode
 		if (array_key_exists($dolEncodingType, $tcpdf1dEncodingTypes)) {
 			$this->is2d = false;
 			return $tcpdf1dEncodingTypes[$dolEncodingType];
-		} else if (array_key_exists($dolEncodingType, $tcpdf2dEncodingTypes)) {
+		} elseif (array_key_exists($dolEncodingType, $tcpdf2dEncodingTypes)) {
 			$this->is2d = true;
 			return $tcpdf2dEncodingTypes[$dolEncodingType];
 		} else {

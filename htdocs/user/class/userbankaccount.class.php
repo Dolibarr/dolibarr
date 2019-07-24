@@ -3,7 +3,7 @@
  * Copyright (C) 2010-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2013   	Peter Fontaine          <contact@peterfontaine.fr>
- * Copyright (C) 2015	    Alexandre Spangaro	    <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015	    Alexandre Spangaro	    <aspangaro@open-dsi.fr>
  * Copyright (C) 2016       Marcos García           <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -34,16 +34,27 @@ require_once DOL_DOCUMENT_ROOT .'/compta/bank/class/account.class.php';
  */
 class UserBankAccount extends Account
 {
-    var $socid;
+    public $socid;
 
-    var $datec;
-    var $datem;
+    /**
+     * Date creation record (datec)
+     *
+     * @var integer
+     */
+    public $datec;
+
+    /**
+     * Date modification record (tms)
+     *
+     * @var integer
+     */
+    public $datem;
 
 
     /**
-	 *  Constructor
-	 *
-	 *  @param      DoliDB		$db      Database handler
+     *  Constructor
+     *
+     *  @param      DoliDB		$db      Database handler
      */
     public function __construct(DoliDB $db)
     {
@@ -62,7 +73,7 @@ class UserBankAccount extends Account
      * @param	int		$notrigger	1=Disable triggers
      * @return	int					<0 if KO, >= 0 if OK
      */
-    function create(User $user=null, $notrigger=0)
+    public function create(User $user = null, $notrigger = 0)
     {
         $now=dol_now();
 
@@ -92,9 +103,9 @@ class UserBankAccount extends Account
      *	@param	int		$notrigger	1=Disable triggers
      *	@return	int					<=0 if KO, >0 if OK
      */
-    function update(User $user=null, $notrigger=0)
+    public function update(User $user = null, $notrigger = 0)
     {
-    	global $conf;
+        global $conf;
 
         if (! $this->id)
         {
@@ -113,7 +124,7 @@ class UserBankAccount extends Account
         $sql.= ",proprio = '".$this->db->escape($this->proprio)."'";
         $sql.= ",owner_address = '".$this->db->escape($this->owner_address)."'";
 
-	    if (trim($this->label) != '')
+        if (trim($this->label) != '')
             $sql.= ",label = '".$this->db->escape($this->label)."'";
         else
             $sql.= ",label = NULL";
@@ -139,7 +150,7 @@ class UserBankAccount extends Account
      *  @param  int     $userid     User id
      * 	@return	int					<0 if KO, >0 if OK
      */
-    function fetch($id, $ref='', $userid=0)
+    public function fetch($id, $ref = '', $userid = 0)
     {
         if (empty($id) && empty($ref) && empty($userid)) return -1;
 
@@ -157,21 +168,21 @@ class UserBankAccount extends Account
             {
                 $obj = $this->db->fetch_object($resql);
 
-                $this->id			   = $obj->rowid;
-                $this->socid           = $obj->fk_soc;
-                $this->bank            = $obj->bank;
-                $this->code_banque     = $obj->code_banque;
-                $this->code_guichet    = $obj->code_guichet;
-                $this->number          = $obj->number;
-                $this->cle_rib         = $obj->cle_rib;
-                $this->bic             = $obj->bic;
-                $this->iban		       = $obj->iban;
-                $this->domiciliation   = $obj->domiciliation;
-                $this->proprio         = $obj->proprio;
-                $this->owner_address   = $obj->owner_address;
-                $this->label           = $obj->label;
-                $this->datec           = $this->db->jdate($obj->datec);
-                $this->datem           = $this->db->jdate($obj->datem);
+                $this->id = $obj->rowid;
+                $this->socid = $obj->fk_soc;
+                $this->bank = $obj->bank;
+                $this->code_banque = $obj->code_banque;
+                $this->code_guichet = $obj->code_guichet;
+                $this->number = $obj->number;
+                $this->cle_rib = $obj->cle_rib;
+                $this->bic = $obj->bic;
+                $this->iban = $obj->iban;
+                $this->domiciliation = $obj->domiciliation;
+                $this->proprio = $obj->proprio;
+                $this->owner_address = $obj->owner_address;
+                $this->label = $obj->label;
+                $this->datec = $this->db->jdate($obj->datec);
+                $this->datem = $this->db->jdate($obj->datem);
             }
             $this->db->free($resql);
 
@@ -184,25 +195,25 @@ class UserBankAccount extends Account
         }
     }
 
-	/**
-	 * Return RIB
-	 *
-	 * @param   boolean     $displayriblabel     Prepend or Hide Label
-	 * @return	string		RIB
-	 */
-	public function getRibLabel($displayriblabel = true)
-	{
-		$rib = '';
+    /**
+     * Return RIB
+     *
+     * @param   boolean     $displayriblabel     Prepend or Hide Label
+     * @return  string      RIB
+     */
+    public function getRibLabel($displayriblabel = true)
+    {
+        $rib = '';
 
-		if ($this->code_banque || $this->code_guichet || $this->number || $this->cle_rib) {
+        if ($this->code_banque || $this->code_guichet || $this->number || $this->cle_rib) {
 
-			if ($this->label && $displayriblabel) {
-				$rib = $this->label." : ";
-			}
+            if ($this->label && $displayriblabel) {
+                $rib = $this->label." : ";
+            }
 
-			$rib .= (string) $this;
-		}
+            $rib .= (string) $this;
+        }
 
-		return $rib;
-	}
+        return $rib;
+    }
 }

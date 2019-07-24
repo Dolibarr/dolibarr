@@ -3,6 +3,7 @@
  * Copyright (C) 2011      Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2012      Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2018      Andreu Bisquerra    <jove@bisquerra.com>
+ * Copyright (C) 2019      Josep Lluís Amador  <joseplluis@lliuretic.cat>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,10 +19,21 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ *	\file       htdocs/takepos/floors.php
+ *	\ingroup    takepos
+ *	\brief      Page to show a receipt.
+ */
+
 require '../main.inc.php';	// Load $user and permissions
 include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 $langs->loadLangs(array("main", "cashdesk"));
+
+$place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0);   // $place is id of table for Ba or Restaurant
+
+$facid=GETPOST('facid', 'int');
+
 
 /*
  * View
@@ -29,28 +41,41 @@ $langs->loadLangs(array("main", "cashdesk"));
 
 top_httphead('text/html');
 
-$facid=GETPOST('facid','int');
-$place=GETPOST('place','int');
-if ($place>0){
-    $sql="SELECT rowid FROM ".MAIN_DB_PREFIX."facture where facnumber='(PROV-POS-".$place.")'";
+if ($place > 0)
+{
+    $sql="SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
     $resql = $db->query($sql);
-    $row = $db->fetch_array ($resql);
-    $facid=$row[0];
+    $obj = $db->fetch_object($resql);
+    if ($obj)
+    {
+        $facid=$obj->rowid;
+    }
 }
 $object=new Facture($db);
 $object->fetch($facid);
 
-// IMPORTANT: This file is sended to 'Takepos Printing' application. Keep basic file. No external files as css, js... If you need images use absolut path.
+// IMPORTANT: This file is sended to 'Takepos Printing' application. Keep basic file. No external files as css, js... If you need images use absolute path.
 ?>
 <html>
 <body>
+<style>
+.right {
+    text-align: right;
+}
+.center {
+    text-align: center;
+}
+.left {
+    text-align: left;
+}
+</style>
 <center>
 <font size="4">
 <?php echo '<b>'.$mysoc->name.'</b>';?>
 </font>
 </center>
 <br>
-<p align="left">
+<p class="left">
 <?php
 $substitutionarray=getCommonSubstitutionArray($langs);
 if (! empty($conf->global->TAKEPOS_HEADER))
@@ -60,7 +85,7 @@ if (! empty($conf->global->TAKEPOS_HEADER))
 }
 ?>
 </p>
-<p align="right">
+<p class="right">
 <?php
 print $langs->trans('Date')." ".dol_print_date($object->date, 'day').'<br>';
 if ($mysoc->country_code == 'ES') print "Factura simplificada ";
@@ -72,10 +97,10 @@ print $object->ref;
 <table width="100%" style="border-top-style: double;">
     <thead>
 	<tr>
-        <th align="center"><?php print $langs->trans("Label"); ?></th>
-        <th align="right"><?php print $langs->trans("Qty"); ?></th>
-		<th align="right"><?php print $langs->trans("Price"); ?></th>
-        <th align="right"><?php print $langs->trans("TotalTTC"); ?></th>
+        <th class="center"><?php print $langs->trans("Label"); ?></th>
+        <th class="right"><?php print $langs->trans("Qty"); ?></th>
+        <th class="right"><?php print $langs->trans("Price"); ?></th>
+        <th class="right"><?php print $langs->trans("TotalTTC"); ?></th>
 	</tr>
     </thead>
     <tbody>
@@ -84,10 +109,12 @@ print $object->ref;
     {
     ?>
     <tr>
-        <td><?php echo $line->product_label;?></td>
-        <td align="right"><?php echo $line->qty;?></td>
-		<td align="right"><?php echo $line->total_ttc/$line->qty;?></td>
-        <td align="right"><?php echo price($line->total_ttc);?></td>
+        <td><?php if (!empty($line->product_label)) echo $line->product_label;
+                  else echo $line->description;?>
+        </td>
+        <td class="right"><?php echo $line->qty;?></td>
+        <td class="right"><?php echo $line->total_ttc/$line->qty;?></td>
+        <td class="right"><?php echo price($line->total_ttc);?></td>
     </tr>
     <?php
     }
@@ -95,16 +122,37 @@ print $object->ref;
     </tbody>
 </table>
 <br>
-<table align="right">
+<table class="right">
 <tr>
-    <th align="right"><?php echo $langs->trans("TotalHT");?></th>
-    <td align="right"><?php echo price($object->total_ht, 1, '', 1, - 1, - 1, $conf->currency)."\n";?></td>
+    <th class="right"><?php echo $langs->trans("TotalHT");?></th>
+    <td class="right"><?php echo price($object->total_ht, 1, '', 1, - 1, - 1, $conf->currency)."\n";?></td>
 </tr>
+<?php if($conf->global->TAKEPOS_TICKET_VAT_GROUPPED):?>
+<?php
+	$vat_groups = array();
+	foreach ($object->lines as $line)
+	{
+		if(!array_key_exists($line->tva_tx, $vat_groups)){
+			$vat_groups[$line->tva_tx] = 0;
+		}
+		$vat_groups[$line->tva_tx] += $line->total_tva;
+	}
+	foreach($vat_groups as $key => $val){
+	?>
+	<tr>
+		<th align="right"><?php echo $langs->trans("VAT").' '.vatrate($key, 1);?></th>
+		<td align="right"><?php echo price($val, 1, '', 1, - 1, - 1, $conf->currency)."\n";?></td>
+	</tr>
+<?php
+	}
+?>
+<?php else: ?>
 <tr>
-    <th align="right"><?php echo $langs->trans("TotalVAT").'</th><td align="right">'.price($object->total_tva, 1, '', 1, - 1, - 1, $conf->currency)."\n";?></td>
+	<th class="right"><?php echo $langs->trans("TotalVAT").'</th><td class="right">'.price($object->total_tva, 1, '', 1, - 1, - 1, $conf->currency)."\n";?></td>
 </tr>
+<?php endif ?>
 <tr>
-    <th align="right"><?php echo ''.$langs->trans("TotalTTC").'</th><td align="right">'.price($object->total_ttc, 1, '', 1, - 1, - 1, $conf->currency)."\n";?></td>
+	<th class="right"><?php echo ''.$langs->trans("TotalTTC").'</th><td class="right">'.price($object->total_ttc, 1, '', 1, - 1, - 1, $conf->currency)."\n";?></td>
 </tr>
 </table>
 <div style="border-top-style: double;">

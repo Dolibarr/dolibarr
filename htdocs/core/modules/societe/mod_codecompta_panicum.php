@@ -44,7 +44,7 @@ class mod_codecompta_panicum extends ModeleAccountancyCode
 
 	/**
      * Dolibarr version of the loaded document
-     * @public string
+     * @var string
      */
 	public $version = 'dolibarr';        // 'development', 'experimental', 'dolibarr'
 
@@ -52,7 +52,7 @@ class mod_codecompta_panicum extends ModeleAccountancyCode
 	/**
 	 * 	Constructor
 	 */
-	function __construct()
+	public function __construct()
 	{
 	}
 
@@ -63,7 +63,7 @@ class mod_codecompta_panicum extends ModeleAccountancyCode
 	 * @param	Translate	$langs	Object langs
 	 * @return 	string      		Description of module
 	 */
-	function info($langs)
+	public function info($langs)
 	{
 		return $langs->trans("ModuleCompanyCode".$this->name);
 	}
@@ -76,12 +76,12 @@ class mod_codecompta_panicum extends ModeleAccountancyCode
 	 *  @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
 	 *  @return	string					Example
 	 */
-	function getExample($langs,$objsoc=0,$type=-1)
+	public function getExample($langs, $objsoc = 0, $type = -1)
 	{
 		return '';
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Set accountancy account code for a third party into this->code
 	 *
@@ -90,14 +90,14 @@ class mod_codecompta_panicum extends ModeleAccountancyCode
 	 *  @param  int		$type			'customer' or 'supplier'
 	 *  @return	int						>=0 if OK, <0 if KO
 	 */
-	function get_code($db, $societe, $type='')
+	public function get_code($db, $societe, $type = '')
 	{
         // phpcs:enable
 		$this->code='';
 
 		if (is_object($societe)) {
-			if ($type == 'supplier') $this->code = (! empty($societe->code_compta_fournisseur)?$societe->code_compta_fournisseur:'');
-			else $this->code = (! empty($societe->code_compta)?$societe->code_compta:'');
+			if ($type == 'supplier') $this->code = (($societe->code_compta_fournisseur != "")?$societe->code_compta_fournisseur:'');
+			else $this->code = (($societe->code_compta != "")?$societe->code_compta:'');
 		}
 
 		return 0; // return ok

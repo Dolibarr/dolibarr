@@ -27,10 +27,9 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || ! is_object($conf))
-{
-	print "Error, template page can't be called as URL";
-	exit;
+if (empty($conf) || ! is_object($conf)) {
+    print "Error, template page can't be called as URL";
+    exit;
 }
 
 
@@ -51,7 +50,7 @@ if ($action == 'presend')
 		// Special case
 		if ($object->element == 'invoice_supplier')
 		{
-			$fileparams = dol_most_recent_file($diroutput . '/' . get_exdir($object->id,2,0,0,$object,$object->element).$ref, preg_quote($ref,'/').'([^\-])+');
+			$fileparams = dol_most_recent_file($diroutput . '/' . get_exdir($object->id, 2, 0, 0, $object, $object->element).$ref, preg_quote($ref, '/').'([^\-])+');
 		}
 		else
 		{
@@ -84,7 +83,7 @@ if ($action == 'presend')
 	$topicmail='';
 	if (empty($object->ref_client)) {
 		$topicmail = $outputlangs->trans($defaulttopic, '__REF__');
-	} else if (! empty($object->ref_client)) {
+	} elseif (! empty($object->ref_client)) {
 		$topicmail = $outputlangs->trans($defaulttopic, '__REF__ (__REFCLIENT__)');
 	}
 
@@ -103,7 +102,7 @@ if ($action == 'presend')
 			}
 			if ($object->element == 'invoice_supplier')
 			{
-			    $fileparams = dol_most_recent_file($diroutput . '/' . get_exdir($object->id,2,0,0,$object,$object->element).$ref, preg_quote($ref,'/').'([^\-])+');
+			    $fileparams = dol_most_recent_file($diroutput . '/' . get_exdir($object->id, 2, 0, 0, $object, $object->element).$ref, preg_quote($ref, '/').'([^\-])+');
 			}
 			else
 			{
@@ -146,7 +145,7 @@ if ($action == 'presend')
 	{
 		$fuser = new User($db);
 		$fuser->fetch($object->fk_user_author);
-		$liste['thirdparty'] = $fuser->getFullName($langs)." <".$fuser->email.">";
+		$liste['thirdparty'] = $fuser->getFullName($outputlangs)." <".$fuser->email.">";
 	}
 	elseif ($object->element == 'societe')
 	{
@@ -154,9 +153,13 @@ if ($action == 'presend')
 			$liste[$key] = $value;
 		}
 	}
+	elseif ($object->element == 'contact')
+	{
+		$liste['contact'] = $object->getFullName($outputlangs)." <".$object->email.">";
+	}
 	elseif ($object->element == 'user' || $object->element == 'member')
 	{
-		$liste['thirdparty'] = $object->getFullName($langs)." <".$object->email.">";
+		$liste['thirdparty'] = $object->getFullName($outputlangs)." <".$object->email.">";
 	}
 	else
 	{
@@ -174,10 +177,10 @@ if ($action == 'presend')
 		$result= $fuserdest->fetchAll('ASC', 't.lastname', 0, 0, array('customsql'=>'t.statut=1 AND t.employee=1 AND t.email IS NOT NULL AND t.email<>\'\''), 'AND', true);
 		if ($result>0 && is_array($fuserdest->users) && count($fuserdest->users)>0) {
 			foreach($fuserdest->users as $uuserdest) {
-				$listeuser[$uuserdest->id] = $uuserdest->user_get_property($uuserdest->id,'email');
+				$listeuser[$uuserdest->id] = $uuserdest->user_get_property($uuserdest->id, 'email');
 			}
 		} elseif ($result<0) {
-			setEventMessages(null, $fuserdest->errors,'errors');
+			setEventMessages(null, $fuserdest->errors, 'errors');
 		}
 		if (count($listeuser)>0) {
 			$formmail->withtouser = $listeuser;
@@ -207,10 +210,55 @@ if ($action == 'presend')
 	);
 	complete_substitutions_array($substitutionarray, $outputlangs, $object, $parameters);
 
-	// Find the good contact adress
+	// Find the good contact address
+    $tmpobject = $object;
+    if (($object->element == 'shipping'|| $object->element == 'reception')) {
+        $origin = $object->origin;
+        $origin_id = $object->origin_id;
+
+        if (!empty($origin) && !empty($origin_id)) {
+            $element = $subelement = $origin;
+            if (preg_match('/^([^_]+)_([^_]+)/i', $origin, $regs)) {
+                $element = $regs[1];
+                $subelement = $regs[2];
+            }
+            // For compatibility
+            if ($element == 'order')    {
+                $element = $subelement = 'commande';
+            }
+            if ($element == 'propal')   {
+                $element = 'comm/propal';
+                $subelement = 'propal';
+            }
+            if ($element == 'contract') {
+                $element = $subelement = 'contrat';
+            }
+            if ($element == 'inter') {
+                $element = $subelement = 'ficheinter';
+            }
+            if ($element == 'shipping') {
+                $element = $subelement = 'expedition';
+            }
+            if ($element == 'order_supplier') {
+                $element = 'fourn';
+                $subelement = 'fournisseur.commande';
+            }
+            if ($element == 'project') {
+                $element = 'projet';
+            }
+
+            dol_include_once('/' . $element . '/class/' . $subelement . '.class.php');
+            $classname = ucfirst($origin);
+            $objectsrc = new $classname($db);
+            $objectsrc->fetch($origin_id);
+
+            $tmpobject = $objectsrc;
+        }
+    }
+
 	$custcontact = '';
 	$contactarr = array();
-	$contactarr = $object->liste_contact(- 1, 'external');
+	$contactarr = $tmpobject->liste_contact(- 1, 'external');
 
 	if (is_array($contactarr) && count($contactarr) > 0) {
 		require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
@@ -218,7 +266,7 @@ if ($action == 'presend')
 
 		foreach ($contactarr as $contact) {
             $contactstatic->fetch($contact['id']);
-            $substitutionarray['__CONTACT_NAME_'.$contact['code'].'__'] = $contactstatic->getFullName($langs, 1);
+            $substitutionarray['__CONTACT_NAME_'.$contact['code'].'__'] = $contactstatic->getFullName($outputlangs, 1);
 		}
 	}
 
@@ -228,7 +276,7 @@ if ($action == 'presend')
 	// Tableau des parametres complementaires
 	$formmail->param['action'] = 'send';
 	$formmail->param['models'] = $modelmail;
-	$formmail->param['models_id']=GETPOST('modelmailselected','int');
+	$formmail->param['models_id']=GETPOST('modelmailselected', 'int');
 	$formmail->param['id'] = $object->id;
 	$formmail->param['returnurl'] = $_SERVER["PHP_SELF"] . '?id=' . $object->id;
 	$formmail->param['fileinit'] = array($file);
@@ -238,4 +286,3 @@ if ($action == 'presend')
 
 	dol_fiche_end();
 }
-

@@ -44,8 +44,8 @@ $forcereloadpage=empty($conf->global->MAIN_FORCE_RELOAD_PAGE)?0:1;
 $tagidfortablednd=(empty($tagidfortablednd)?'tablelines':$tagidfortablednd);
 $filepath=(empty($filepath)?'':$filepath);
 
-if (GETPOST('action','aZ09') != 'editline' && $nboflines > 1) { ?>
-<script type="text/javascript">
+if (GETPOST('action', 'aZ09') != 'editline' && $nboflines > 1) { ?>
+<script>
 $(document).ready(function(){
 	$(".imgupforline").hide();
 	$(".imgdownforline").hide();
@@ -77,8 +77,8 @@ $(document).ready(function(){
 					function() {
 						console.log("tableDND end of ajax call");
 						if (reloadpage == 1) {
-							//console.log('<?php echo dol_escape_js($_SERVER['QUERY_STRING']); ?>');
-							location.href = '<?php echo dol_escape_js($_SERVER['PHP_SELF']).'?'.dol_escape_js($_SERVER['QUERY_STRING']); ?>';
+							//console.log('<?php echo $urltorefreshaftermove.' - '.$_SERVER['PHP_SELF'].' - '.dol_escape_js($_SERVER['QUERY_STRING']); ?>');
+							location.href = '<?php echo dol_escape_js(empty($urltorefreshaftermove) ? ($_SERVER['PHP_SELF'].'?'.dol_escape_js($_SERVER['QUERY_STRING'])) : $urltorefreshaftermove); ?>';
 						} else {
 							$("#<?php echo $tagidfortablednd; ?> .drag").each(
 									function( intIndex ) {

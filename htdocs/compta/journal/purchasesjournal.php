@@ -3,7 +3,7 @@
  * Copyright (C) 2007-2010  Jean Heimburger         <jean@tiaris.info>
  * Copyright (C) 2011-2014  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2011-2012  Alexandre spangaro      <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2011-2012  Alexandre spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2013       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 
 // Load translation files required by the page
-$langs->loadlangs(array('companies', 'other', 'compta'));
+$langs->loadlangs(array('companies', 'other', 'bills', 'compta'));
 
 $date_startmonth=GETPOST('date_startmonth');
 $date_startday=GETPOST('date_startday');
@@ -46,8 +46,8 @@ $date_endyear=GETPOST('date_endyear');
 
 // Security check
 if ($user->societe_id > 0) $socid = $user->societe_id;
-if (! empty($conf->comptabilite->enabled)) $result=restrictedArea($user,'compta','','','resultat');
-if (! empty($conf->accounting->enabled)) $result=restrictedArea($user,'accounting','','','comptarapport');
+if (! empty($conf->comptabilite->enabled)) $result=restrictedArea($user, 'compta', '', '', 'resultat');
+if (! empty($conf->accounting->enabled)) $result=restrictedArea($user, 'accounting', '', '', 'comptarapport');
 
 
 /*
@@ -63,12 +63,12 @@ if (! empty($conf->accounting->enabled)) $result=restrictedArea($user,'accountin
 
 $morequery='&date_startyear='.$date_startyear.'&date_startmonth='.$date_startmonth.'&date_startday='.$date_startday.'&date_endyear='.$date_endyear.'&date_endmonth='.$date_endmonth.'&date_endday='.$date_endday;
 
-llxHeader('',$langs->trans("PurchasesJournal"),'','',0,0,'','',$morequery);
+llxHeader('', $langs->trans("PurchasesJournal"), '', '', 0, 0, '', '', $morequery);
 
 $form=new Form($db);
 
-$year_current = strftime("%Y",dol_now());
-$pastmonth = strftime("%m",dol_now()) - 1;
+$year_current = strftime("%Y", dol_now());
+$pastmonth = strftime("%m", dol_now()) - 1;
 $pastmonthyear = $year_current;
 if ($pastmonth == 0)
 {
@@ -81,8 +81,8 @@ $date_end=dol_mktime(23, 59, 59, $date_endmonth, $date_endday, $date_endyear);
 
 if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 {
-    $date_start=dol_get_first_day($pastmonthyear,$pastmonth,false);
-    $date_end=dol_get_last_day($pastmonthyear,$pastmonth,false);
+    $date_start=dol_get_first_day($pastmonthyear, $pastmonth, false);
+    $date_end=dol_get_last_day($pastmonthyear, $pastmonth, false);
 }
 
 $name=$langs->trans("PurchasesJournal");
@@ -94,7 +94,7 @@ if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $description.= $
 else  $description.= $langs->trans("DepositsAreIncluded");
 $period=$form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 
-report_header($name,'',$period,$periodlink,$description,$builddate,$exportlink);
+report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink);
 
 $p = explode(":", $conf->global->MAIN_INFO_SOCIETE_COUNTRY);
 $idpays = $p[0];
@@ -110,7 +110,7 @@ $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_tva as ct ON fd.tva_tx = ct.taux AND fd.i
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = fd.fk_product";
 $sql.= " JOIN ".MAIN_DB_PREFIX."facture_fourn as f ON f.rowid = fd.fk_facture_fourn";
 $sql.= " JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = f.fk_soc" ;
-$sql.= " WHERE f.fk_statut > 0 AND f.entity = ".$conf->entity;
+$sql.= " WHERE f.fk_statut > 0 AND f.entity IN (".getEntity('invoice').")";
 if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql.= " AND f.type IN (0,1,2)";
 else $sql.= " AND f.type IN (0,1,2,3)";
 if ($date_start && $date_end) $sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
@@ -123,7 +123,7 @@ if ($result)
 {
 	$num = $db->num_rows($result);
 	// les variables
-	$cptfour = (! empty($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER)?$conf->global->ACCOUNTING_ACCOUNT_SUPPLIER:$langs->trans("CodeNotDef"));
+	$cptfour = (($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER != "")?$conf->global->ACCOUNTING_ACCOUNT_SUPPLIER:$langs->trans("CodeNotDef"));
 	$cpttva = (! empty($conf->global->ACCOUNTING_VAT_BUY_ACCOUNT)?$conf->global->ACCOUNTING_VAT_BUY_ACCOUNT:$langs->trans("CodeNotDef"));
 
 	$tabfac = array();
@@ -139,7 +139,7 @@ if ($result)
 	{
 		$obj = $db->fetch_object($result);
 		// contrôles
-		$compta_soc = (! empty($obj->code_compta_fournisseur)?$obj->code_compta_fournisseur:$cptfour);
+		$compta_soc = (($obj->code_compta_fournisseur != "")?$obj->code_compta_fournisseur:$cptfour);
 		$compta_prod = $obj->accountancy_code_buy;
 		if (empty($compta_prod))
 		{
@@ -182,7 +182,7 @@ print "<tr class=\"liste_titre\">";
 print "<td>".$langs->trans("Date")."</td>";
 print "<td>".$langs->trans("Piece").' ('.$langs->trans("InvoiceRef").")</td>";
 print "<td>".$langs->trans("Account")."</td>";
-print "<td>".$langs->trans("Type")."</td><td align='right'>".$langs->trans("Debit")."</td><td align='right'>".$langs->trans("Credit")."</td>";
+print "<td>".$langs->trans("Type")."</td><td class='right'>".$langs->trans("Debit")."</td><td class='right'>".$langs->trans("Credit")."</td>";
 print "</tr>\n";
 
 
@@ -236,13 +236,13 @@ foreach ($tabfac as $key => $val)
 
 				if (isset($line['inv']))
 				{
-					print '<td align="right">'.($mt<0?price(-$mt):'')."</td>";
-	    			print '<td align="right">'.($mt>=0?price($mt):'')."</td>";
+					print '<td class="right">'.($mt<0?price(-$mt):'')."</td>";
+	    			print '<td class="right">'.($mt>=0?price($mt):'')."</td>";
 				}
 				else
 				{
-					print '<td align="right">'.($mt>=0?price($mt):'')."</td>";
-					print '<td align="right">'.($mt<0?price(-$mt):'')."</td>";
+					print '<td class="right">'.($mt>=0?price($mt):'')."</td>";
+					print '<td class="right">'.($mt<0?price(-$mt):'')."</td>";
 				}
 
 				print "</tr>";

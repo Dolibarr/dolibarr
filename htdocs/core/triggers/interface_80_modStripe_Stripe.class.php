@@ -147,35 +147,85 @@ class InterfaceStripe
 				if ($customer)
 				{
 					$namecleaned = $object->name ? $object->name : null;
-					$vatcleaned = $object->tva_intra ? $object->tva_intra : null;
-
-					$taxinfo = array('type'=>'vat');
+					$vatcleaned = $object->tva_intra ? $object->tva_intra : null;	// Example of valid numbers are 'FR12345678901' or 'FR12345678902'
+					$desccleaned = $object->name_alias ? $object->name_alias : null;
+					$taxexemptcleaned = $object->tva_assuj ? 'none' : 'exempt';
+					$langcleaned = $object->default_lang ? array(substr($object->default_lang, 0, 2)) : null;
+					/*$taxinfo = array('type'=>'vat');
 					if ($vatcleaned)
 					{
 						$taxinfo["tax_id"] = $vatcleaned;
 					}
 					// We force data to "null" if not defined as expected by Stripe
-					if (empty($vatcleaned)) $taxinfo=null;
+					if (empty($vatcleaned)) $taxinfo=null;*/
 
 					// Detect if we change a Stripe info (email, description, vat id)
 					$changerequested = 0;
 					if (! empty($object->email) && $object->email != $customer->email) $changerequested++;
-					if ($namecleaned != $customer->description) $changerequested++;
+					/* if ($namecleaned != $customer->description) $changerequested++;
 					if (! isset($customer->tax_info['tax_id']) && ! is_null($vatcleaned)) $changerequested++;
 					elseif (isset($customer->tax_info['tax_id']) && is_null($vatcleaned)) $changerequested++;
 					elseif (isset($customer->tax_info['tax_id']) && ! is_null($vatcleaned))
 					{
 						if ($vatcleaned != $customer->tax_info['tax_id']) $changerequested++;
+					} */
+					if ($namecleaned != $customer->name) $changerequested++;
+					if ($desccleaned != $customer->description) $changerequested++;
+					if (($customer->tax_exempt == 'exempt' && ! $object->tva_assuj) || (! $customer->tax_exempt == 'exempt' && empty($object->tva_assuj))) $changerequested++;
+					if (! isset($customer->tax_ids['data']) && ! is_null($vatcleaned)) $changerequested++;
+					elseif (isset($customer->tax_ids['data']))
+					{
+						$taxinfo = reset($customer->tax_ids['data']);
+						if (empty($taxinfo) && ! empty($vatcleaned)) $changerequested++;
+						if (isset($taxinfo->value) && $vatcleaned != $taxinfo->value) $changerequested++;
 					}
 
 					if ($changerequested)
 					{
-						if (! empty($object->email)) $customer->email = $object->email;
+						/*if (! empty($object->email)) $customer->email = $object->email;
 						$customer->description = $namecleaned;
 						if (empty($taxinfo)) $customer->tax_info = array('type'=>'vat', 'tax_id'=>null);
-						else $customer->tax_info = $taxinfo;
+						else $customer->tax_info = $taxinfo; */
+						$customer->name = $namecleaned;
+						$customer->description = $desccleaned;
+						$customer->preferred_locales = $langcleaned;
+						$customer->tax_exempt = $taxexemptcleaned;
 
-						$customer->save();
+						try {
+							// Update Tax info on Stripe
+							if (! empty($conf->global->STRIPE_SAVE_TAX_IDS))	// We setup to save Tax info on Stripe side. Warning: This may result in error when saving customer
+							{
+								if (! empty($vatcleaned))
+								{
+									$isineec=isInEEC($object);
+									if ($object->country_code && $isineec)
+									{
+										//$taxids = $customer->allTaxIds($customer->id);
+										$customer->createTaxId($customer->id, array('type'=>'eu_vat', 'value'=>$vatcleaned));
+									}
+								}
+								else
+								{
+									$taxids = $customer->allTaxIds($customer->id);
+									if (is_array($taxids->data))
+									{
+										foreach($taxids->data as $taxidobj)
+										{
+											$customer->deleteTaxId($customer->id, $taxidobj->id);
+										}
+									}
+								}
+							}
+
+							// Update Customer on Stripe
+							$customer->save();
+						}
+						catch(Exception $e)
+						{
+						    //var_dump(\Stripe\Stripe::getApiVersion());
+							$this->errors[] = $e->getMessage();
+							$ok = -1;
+						}
 					}
 				}
 			}
@@ -188,7 +238,13 @@ class InterfaceStripe
 			$customer = $stripe->customerStripe($object, $stripeacc, $servicestatus);
 			if ($customer)
 			{
-				$customer->delete();
+				try {
+					$customer->delete();
+				}
+				catch(Exception $e)
+				{
+					dol_syslog("Failed to delete Stripe customer ".$e->getMessage(), LOG_WARNING);
+				}
 			}
 
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_account";
@@ -224,7 +280,7 @@ class InterfaceStripe
 						if ($card) {
 							$card->metadata=array('dol_id'=>$object->id, 'dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>(empty($_SERVER['REMOTE_ADDR'])?'':$_SERVER['REMOTE_ADDR']));
 							try {
-								$card->save($dataforcard);
+								$card->save();
 							}
 							catch(Exception $e)
 							{

@@ -35,21 +35,21 @@ if (! $user->admin) accessforbidden();
 
 $dirstandard = array();
 $dirsmartphone = array();
-$dirmenus=array_merge(array("/core/menus/"),(array) $conf->modules_parts['menus']);
+$dirmenus=array_merge(array("/core/menus/"), (array) $conf->modules_parts['menus']);
 foreach($dirmenus as $dirmenu)
 {
     $dirstandard[]=$dirmenu.'standard';
     $dirsmartphone[]=$dirmenu.'smartphone';
 }
 
-$action=GETPOST('action','aZ09');
+$action=GETPOST('action', 'aZ09');
 
 $menu_handler_top=$conf->global->MAIN_MENU_STANDARD;
 $menu_handler_smartphone=$conf->global->MAIN_MENU_SMARTPHONE;
-$menu_handler_top=preg_replace('/_backoffice.php/i','',$menu_handler_top);
-$menu_handler_top=preg_replace('/_frontoffice.php/i','',$menu_handler_top);
-$menu_handler_smartphone=preg_replace('/_backoffice.php/i','',$menu_handler_smartphone);
-$menu_handler_smartphone=preg_replace('/_frontoffice.php/i','',$menu_handler_smartphone);
+$menu_handler_top=preg_replace('/_backoffice.php/i', '', $menu_handler_top);
+$menu_handler_top=preg_replace('/_frontoffice.php/i', '', $menu_handler_top);
+$menu_handler_smartphone=preg_replace('/_backoffice.php/i', '', $menu_handler_smartphone);
+$menu_handler_smartphone=preg_replace('/_frontoffice.php/i', '', $menu_handler_smartphone);
 
 $menu_handler=$menu_handler_top;
 
@@ -69,16 +69,16 @@ if ($action == 'update')
         $leftmenu=''; $mainmenu='';
         if (! empty($_POST['menuIdParent']) && ! is_numeric($_POST['menuIdParent']))
         {
-            $tmp=explode('&',$_POST['menuIdParent']);
+            $tmp=explode('&', $_POST['menuIdParent']);
             foreach($tmp as $s)
             {
-                if (preg_match('/fk_mainmenu=/',$s))
+                if (preg_match('/fk_mainmenu=/', $s))
                 {
-                    $mainmenu=preg_replace('/fk_mainmenu=/','',$s);
+                    $mainmenu=preg_replace('/fk_mainmenu=/', '', $s);
                 }
-                if (preg_match('/fk_leftmenu=/',$s))
+                if (preg_match('/fk_leftmenu=/', $s))
                 {
-                    $leftmenu=preg_replace('/fk_leftmenu=/','',$s);
+                    $leftmenu=preg_replace('/fk_leftmenu=/', '', $s);
                 }
             }
         }
@@ -89,21 +89,21 @@ if ($action == 'update')
         {
             $menu->titre=GETPOST('titre', 'alpha');
             $menu->leftmenu=GETPOST('leftmenu', 'aZ09');
-            $menu->url=GETPOST('url','alpha');
-            $menu->langs=GETPOST('langs','alpha');
-            $menu->position=GETPOST('position','int');
-            $menu->enabled=GETPOST('enabled','alpha');
-            $menu->perms=GETPOST('perms','alpha');
-            $menu->target=GETPOST('target','alpha');
-            $menu->user=GETPOST('user','alpha');
-            $menu->mainmenu=GETPOST('propertymainmenu','alpha');
-            if (is_numeric(GETPOST('menuIdParent','alpha')))
+            $menu->url=GETPOST('url', 'alpha');
+            $menu->langs=GETPOST('langs', 'alpha');
+            $menu->position=GETPOST('position', 'int');
+            $menu->enabled=GETPOST('enabled', 'alpha');
+            $menu->perms=GETPOST('perms', 'alpha');
+            $menu->target=GETPOST('target', 'alpha');
+            $menu->user=GETPOST('user', 'alpha');
+            $menu->mainmenu=GETPOST('propertymainmenu', 'alpha');
+            if (is_numeric(GETPOST('menuIdParent', 'alpha')))
             {
-            	$menu->fk_menu=GETPOST('menuIdParent','alpha');
+            	$menu->fk_menu=GETPOST('menuIdParent', 'alpha');
             }
             else
             {
-    	       	if (GETPOST('type','alpha') == 'top') $menu->fk_menu=0;
+    	       	if (GETPOST('type', 'alpha') == 'top') $menu->fk_menu=0;
     	       	else $menu->fk_menu=-1;
             	$menu->fk_mainmenu=$mainmenu;
             	$menu->fk_leftmenu=$leftmenu;
@@ -149,13 +149,13 @@ if ($action == 'add')
 	    $tmp=explode('&', GETPOST('menuId', 'alpha', 3));
 	    foreach($tmp as $s)
 	    {
-	    	if (preg_match('/fk_mainmenu=/',$s))
+	    	if (preg_match('/fk_mainmenu=/', $s))
 	    	{
-				$mainmenu=preg_replace('/fk_mainmenu=/','',$s);
+				$mainmenu=preg_replace('/fk_mainmenu=/', '', $s);
 	    	}
-	    	if (preg_match('/fk_leftmenu=/',$s))
+	    	if (preg_match('/fk_leftmenu=/', $s))
 	    	{
-	    		$leftmenu=preg_replace('/fk_leftmenu=/','',$s);
+	    		$leftmenu=preg_replace('/fk_leftmenu=/', '', $s);
 	    	}
 	    }
     }
@@ -177,13 +177,13 @@ if ($action == 'add')
     }
     if (! $error && ! $_POST['url'])
     {
-	    setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("URL")), null, 'errors');
+    	setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("URL")), null, 'errors');
         $action = 'create';
         $error++;
     }
     if (! $error && ! $_POST['titre'])
     {
-	    setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("Title")), null, 'errors');
+    	setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Title")), null, 'errors');
         $action = 'create';
         $error++;
     }
@@ -203,33 +203,33 @@ if ($action == 'add')
     if (! $error)
     {
         $menu = new Menubase($db);
-        $menu->menu_handler=preg_replace('/_menu$/','',GETPOST('menu_handler','aZ09'));
-        $menu->type=GETPOST('type','alpha');
-        $menu->titre=GETPOST('titre','alpha');
-        $menu->url=GETPOST('url','alpha');
-        $menu->langs=GETPOST('langs','alpha');
-        $menu->position=GETPOST('position','int');
-        $menu->enabled=GETPOST('enabled','alpha');
-        $menu->perms=GETPOST('perms','alpha');
-        $menu->target=GETPOST('target','alpha');
-        $menu->user=GETPOST('user','alpha');
-        $menu->mainmenu=GETPOST('propertymainmenu','alpha');
+        $menu->menu_handler=preg_replace('/_menu$/', '', GETPOST('menu_handler', 'aZ09'));
+        $menu->type=GETPOST('type', 'alpha');
+        $menu->titre=GETPOST('titre', 'alpha');
+        $menu->url=GETPOST('url', 'alpha');
+        $menu->langs=GETPOST('langs', 'alpha');
+        $menu->position=GETPOST('position', 'int');
+        $menu->enabled=GETPOST('enabled', 'alpha');
+        $menu->perms=GETPOST('perms', 'alpha');
+        $menu->target=GETPOST('target', 'alpha');
+        $menu->user=GETPOST('user', 'alpha');
+        $menu->mainmenu=GETPOST('propertymainmenu', 'alpha');
         if (is_numeric(GETPOST('menuId', 'alpha', 3)))
         {
         	$menu->fk_menu=GETPOST('menuId', 'alpha', 3);
         }
         else
-       {
-	       	if (GETPOST('type', 'alpha') == 'top') $menu->fk_menu=0;
-	       	else $menu->fk_menu=-1;
-        	$menu->fk_mainmenu=$mainmenu;
-        	$menu->fk_leftmenu=$leftmenu;
-       }
+        {
+            if (GETPOST('type', 'alpha') == 'top') $menu->fk_menu=0;
+            else $menu->fk_menu=-1;
+            $menu->fk_mainmenu=$mainmenu;
+            $menu->fk_leftmenu=$leftmenu;
+        }
 
         $result=$menu->create($user);
         if ($result > 0)
         {
-            header("Location: ".DOL_URL_ROOT."/admin/menus/index.php?menu_handler=".GETPOST('menu_handler','aZ09'));
+            header("Location: ".DOL_URL_ROOT."/admin/menus/index.php?menu_handler=".GETPOST('menu_handler', 'aZ09'));
             exit;
         }
         else
@@ -275,7 +275,7 @@ if ($action == 'confirm_delete' && $_POST["confirm"] == 'yes')
 $form=new Form($db);
 $formadmin=new FormAdmin($db);
 
-llxHeader('',$langs->trans("Menu"));
+llxHeader('', $langs->trans("Menu"));
 
 
 if ($action == 'create')
@@ -304,7 +304,7 @@ if ($action == 'create')
     });
     </script>';
 
-    print load_fiche_titre($langs->trans("NewMenu"),'','title_setup');
+    print load_fiche_titre($langs->trans("NewMenu"), '', 'title_setup');
 
     print '<form action="./edit.php?action=add&menuId='.GETPOST('menuId', 'int').'" method="post" name="formmenucreate">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -336,7 +336,7 @@ if ($action == 'create')
     // Handler
     print '<tr><td class="fieldrequired">'.$langs->trans('MenuHandler').'</td>';
     print '<td>';
-    $formadmin->select_menu_families($menu_handler.(preg_match('/_menu/',$menu_handler)?'':'_menu'),'menu_handler',array_merge($dirstandard,$dirsmartphone));
+    $formadmin->select_menu_families($menu_handler.(preg_match('/_menu/', $menu_handler)?'':'_menu'), 'menu_handler', array_merge($dirstandard, $dirsmartphone));
     print '</td>';
     print '<td>'.$langs->trans('DetailMenuHandler').'</td></tr>';
 
@@ -388,10 +388,10 @@ if ($action == 'create')
     print '</td></tr>';
 
     // Title
-    print '<tr><td class="fieldrequired">'.$langs->trans('Title').'</td><td><input type="text" class="minwidth300" name="titre" value="'.dol_escape_htmltag(GETPOST("titre",'alpha')).'"></td><td>'.$langs->trans('DetailTitre').'</td></tr>';
+    print '<tr><td class="fieldrequired">'.$langs->trans('Title').'</td><td><input type="text" class="minwidth300" name="titre" value="'.dol_escape_htmltag(GETPOST("titre", 'alpha')).'"></td><td>'.$langs->trans('DetailTitre').'</td></tr>';
 
     // URL
-    print '<tr><td class="fieldrequired">'.$langs->trans('URL').'</td><td><input type="text" class="minwidth500" name="url" value="'.GETPOST("url",'alpha').'"></td><td>'.$langs->trans('DetailUrl').'</td></tr>';
+    print '<tr><td class="fieldrequired">'.$langs->trans('URL').'</td><td><input type="text" class="minwidth500" name="url" value="'.GETPOST("url", 'alpha').'"></td><td>'.$langs->trans('DetailUrl').'</td></tr>';
 
     // Langs
     print '<tr><td>'.$langs->trans('LangFile').'</td><td><input type="text" class="minwidth300" name="langs" value="'.$parent_langs.'"></td><td>'.$langs->trans('DetailLangs').'</td></tr>';
@@ -406,16 +406,15 @@ if ($action == 'create')
     print '</select></td></td><td>'.$langs->trans('DetailTarget').'</td></tr>';
 
     // Enabled
-    print '<tr><td>'.$langs->trans('Enabled').'</td><td><input type="text" class="minwidth500" name="enabled" value="'.(GETPOSTISSET('enabled')?GETPOST("enabled",'alpha'):'1').'"></td><td>'.$langs->trans('DetailEnabled').'</td></tr>';
+    print '<tr><td>'.$langs->trans('Enabled').'</td><td><input type="text" class="minwidth500" name="enabled" value="'.(GETPOSTISSET('enabled')?GETPOST("enabled", 'alpha'):'1').'"></td><td>'.$langs->trans('DetailEnabled').'</td></tr>';
 
     // Perms
-    print '<tr><td>'.$langs->trans('Rights').'</td><td><input type="text" class="minwidth500" name="perms" value="'.(GETPOSTISSET('perms')?GETPOST('perms','alpha'):'1').'"></td><td>'.$langs->trans('DetailRight').'</td></tr>';
+    print '<tr><td>'.$langs->trans('Rights').'</td><td><input type="text" class="minwidth500" name="perms" value="'.(GETPOSTISSET('perms')?GETPOST('perms', 'alpha'):'1').'"></td><td>'.$langs->trans('DetailRight').'</td></tr>';
 
     print '</table>';
 
     dol_fiche_end();
 
-    // Boutons
     print '<div class="center">';
 	print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
     print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
@@ -426,7 +425,7 @@ if ($action == 'create')
 }
 elseif ($action == 'edit')
 {
-    print load_fiche_titre($langs->trans("ModifMenu"),'','title_setup');
+    print load_fiche_titre($langs->trans("ModifMenu"), '', 'title_setup');
     print '<br>';
 
     print '<form action="./edit.php?action=update" method="POST" name="formmenuedit">';
@@ -514,12 +513,12 @@ elseif ($action == 'edit')
 
     // Enabled
     print '<tr><td>'.$langs->trans('Enabled').'</td><td><input type="text" class="minwidth500" name="enabled" value="'.dol_escape_htmltag($menu->enabled).'"></td><td>'.$langs->trans('DetailEnabled');
-    if (! empty($menu->enabled)) print ' ('.$langs->trans("ConditionIsCurrently").': '.yn(dol_eval($menu->enabled,1)).')';
+    if (! empty($menu->enabled)) print ' ('.$langs->trans("ConditionIsCurrently").': '.yn(dol_eval($menu->enabled, 1)).')';
     print '</td></tr>';
 
     // Perms
     print '<tr><td>'.$langs->trans('Rights').'</td><td><input type="text" class="minwidth500" name="perms" value="'.dol_escape_htmltag($menu->perms).'"></td><td>'.$langs->trans('DetailRight');
-    if (! empty($menu->perms)) print ' ('.$langs->trans("ConditionIsCurrently").': '.yn(dol_eval($menu->perms,1)).')';
+    if (! empty($menu->perms)) print ' ('.$langs->trans("ConditionIsCurrently").': '.yn(dol_eval($menu->perms, 1)).')';
     print '</td></tr>';
 
     print '</table>';

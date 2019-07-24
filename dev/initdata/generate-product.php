@@ -49,7 +49,7 @@ include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 define(GEN_NUMBER_PRODUIT, 100000);
 
 
-$ret=$user->fetch('','admin');
+$ret=$user->fetch('', 'admin');
 if (! $ret > 0)
 {
 	print 'A user with login "admin" and all permissions must be created to use this script.'."\n";
@@ -85,16 +85,14 @@ for ($s = 0 ; $s < GEN_NUMBER_PRODUIT ; $s++)
 {
     print "Product ".$s;
     $produit = new Product($db);
-    $produit->type = mt_rand(0,1);
+    $produit->type = mt_rand(0, 1);
     $produit->status = 1;
     $produit->ref = ($produit->type?'S':'P').time().$s;
     $produit->label = 'Label '.time().$s;
     $produit->description = 'Description '.time().$s;
-    $produit->price = mt_rand(1,1000);
+    $produit->price = mt_rand(1, 1000);
     $produit->tva_tx = "19.6";
     $ret=$produit->create($user);
     if ($ret < 0) print "Error $ret - ".$produit->error."\n";
 	else print " OK with ref ".$produit->ref."\n";
 }
-
-

@@ -36,18 +36,18 @@ if (! empty($conf->projet->enabled)) {
 // Load translation files required by the page
 $langs->loadLangs(array("suppliers", "orders", "companies", "stocks"));
 
-$id=GETPOST('id','int');
-$ref=GETPOST('ref','alpha');
-$action = GETPOST('action','alpha');
+$id=GETPOST('id', 'int');
+$ref=GETPOST('ref', 'alpha');
+$action = GETPOST('action', 'alpha');
 
-if (GETPOST('actioncode','array'))
+if (GETPOST('actioncode', 'array'))
 {
-    $actioncode=GETPOST('actioncode','array',3);
+    $actioncode=GETPOST('actioncode', 'array', 3);
     if (! count($actioncode)) $actioncode='0';
 }
 else
 {
-    $actioncode=GETPOST("actioncode","alpha",3)?GETPOST("actioncode","alpha",3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECTS)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECTS));
+    $actioncode=GETPOST("actioncode", "alpha", 3)?GETPOST("actioncode", "alpha", 3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECTS)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECTS));
 }
 $search_agenda_label=GETPOST('search_agenda_label');
 
@@ -66,11 +66,11 @@ if (!$user->rights->fournisseur->commande->lire)	accessforbidden();
  */
 
 $parameters=array('id'=>$id);
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 // Purge search criteria
-if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All test are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All test are required to be compatible with all browsers
 {
     $actioncode='';
     $search_agenda_label='';
@@ -93,9 +93,9 @@ if ($id > 0 || ! empty($ref))
 }
 
 $title=$langs->trans("SupplierOrder").' - '.$object->ref.' '.$object->name;
-if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->ref.' '.$object->name.' - '.$langs->trans("Info");
+if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->ref.' '.$object->name.' - '.$langs->trans("Info");
 $help_url='EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedidos_a_proveedores';
-llxHeader('',$title,$help_url);
+llxHeader('', $title, $help_url);
 
 $now=dol_now();
 
@@ -187,7 +187,7 @@ if (! empty($conf->agenda->enabled))
     }
     else
     {
-        print '<a class="butActionRefused" href="#">'.$langs->trans("AddAction").'</a>';
+        print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("AddAction").'</a>';
     }
 }
 
@@ -200,7 +200,7 @@ if (!empty($object->id))
     if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
     if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 
-    print load_fiche_titre($langs->trans("ActionsOnOrder"),'','');
+    print load_fiche_titre($langs->trans("ActionsOnOrder"), '', '');
 
     // List of actions on element
     /*include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
@@ -216,7 +216,7 @@ if (!empty($object->id))
     // List of all actions
     $filters=array();
     $filters['search_agenda_label']=$search_agenda_label;
-    show_actions_done($conf,$langs,$db,$object,null,0,$actioncode, '', $filters);
+    show_actions_done($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters);
 }
 
 // End of page

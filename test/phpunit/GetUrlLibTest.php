@@ -32,9 +32,9 @@ require_once dirname(__FILE__).'/../../htdocs/core/lib/geturl.lib.php';
 
 if (empty($user->id))
 {
-	print "Load permissions for admin user nb 1\n";
-	$user->fetch(1);
-	$user->getrights();
+    print "Load permissions for admin user nb 1\n";
+    $user->fetch(1);
+    $user->getrights();
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 
@@ -46,127 +46,174 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class GetUrlLibTest extends PHPUnit_Framework_TestCase
+class GetUrlLibTest extends PHPUnit\Framework\TestCase
 {
-	protected $savconf;
-	protected $savuser;
-	protected $savlangs;
-	protected $savdb;
+    protected $savconf;
+    protected $savuser;
+    protected $savlangs;
+    protected $savdb;
 
-	/**
-	 * Constructor
-	 * We save global variables into local variables
-	 *
-	 * @return FilesLibTest
-	 */
-	function __construct()
-	{
-    	parent::__construct();
-
-		//$this->sharedFixture
-		global $conf,$user,$langs,$db;
-		$this->savconf=$conf;
-		$this->savuser=$user;
-		$this->savlangs=$langs;
-		$this->savdb=$db;
-
-		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-		//print " - db ".$db->db;
-		print "\n";
-	}
-
-	// Static methods
-  	public static function setUpBeforeClass()
+    /**
+     * Constructor
+     * We save global variables into local variables
+     *
+     * @return FilesLibTest
+     */
+    public function __construct()
     {
-    	global $conf,$user,$langs,$db;
-		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
+        parent::__construct();
 
-    	print __METHOD__."\n";
+        //$this->sharedFixture
+        global $conf,$user,$langs,$db;
+        $this->savconf=$conf;
+        $this->savuser=$user;
+        $this->savlangs=$langs;
+        $this->savdb=$db;
+
+        print __METHOD__." db->type=".$db->type." user->id=".$user->id;
+        //print " - db ".$db->db;
+        print "\n";
+    }
+
+    // Static methods
+    public static function setUpBeforeClass()
+    {
+        global $conf,$user,$langs,$db;
+        $db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
+
+        print __METHOD__."\n";
     }
 
     // tear down after class
     public static function tearDownAfterClass()
     {
-    	global $conf,$user,$langs,$db;
-		$db->rollback();
+        global $conf,$user,$langs,$db;
+        $db->rollback();
 
-		print __METHOD__."\n";
+        print __METHOD__."\n";
     }
 
-	/**
-	 * Init phpunit tests
-	 *
-	 * @return	void
-	 */
+    /**
+     * Init phpunit tests
+     *
+     * @return	void
+     */
     protected function setUp()
     {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-		print __METHOD__."\n";
+        print __METHOD__."\n";
     }
-	/**
-	 * End phpunit tests
-	 *
-	 * @return	void
-	 */
+    /**
+     * End phpunit tests
+     *
+     * @return	void
+     */
     protected function tearDown()
     {
-    	print __METHOD__."\n";
+        print __METHOD__."\n";
     }
 
 
-	/**
+    /**
      * testGetRootURLFromURL
      *
      * @return	int
      */
     public function testGetRootURLFromURL()
     {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-		$result=getRootURLFromURL('http://www.dolimed.com/screenshots/afile');
-    	print __METHOD__." result=".$result."\n";
-		$this->assertEquals('http://www.dolimed.com',$result,'Test 1');
+        $result=getRootURLFromURL('http://www.dolimed.com/screenshots/afile');
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals('http://www.dolimed.com', $result, 'Test 1');
 
-		$result=getRootURLFromURL('https://www.dolimed.com/screenshots/afile');
-		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('https://www.dolimed.com',$result,'Test 2');
+        $result=getRootURLFromURL('https://www.dolimed.com/screenshots/afile');
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals('https://www.dolimed.com', $result, 'Test 2');
 
-		$result=getRootURLFromURL('http://www.dolimed.com/screenshots');
-		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('http://www.dolimed.com',$result);
+        $result=getRootURLFromURL('http://www.dolimed.com/screenshots');
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals('http://www.dolimed.com', $result);
 
-		$result=getRootURLFromURL('https://www.dolimed.com/screenshots');
-		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('https://www.dolimed.com',$result);
+        $result=getRootURLFromURL('https://www.dolimed.com/screenshots');
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals('https://www.dolimed.com', $result);
 
-		$result=getRootURLFromURL('http://www.dolimed.com/');
-		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('http://www.dolimed.com',$result);
+        $result=getRootURLFromURL('http://www.dolimed.com/');
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals('http://www.dolimed.com', $result);
 
-		$result=getRootURLFromURL('https://www.dolimed.com/');
-		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('https://www.dolimed.com',$result);
+        $result=getRootURLFromURL('https://www.dolimed.com/');
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals('https://www.dolimed.com', $result);
 
-		$result=getRootURLFromURL('http://www.dolimed.com');
-		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('http://www.dolimed.com',$result);
+        $result=getRootURLFromURL('http://www.dolimed.com');
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals('http://www.dolimed.com', $result);
 
-		$result=getRootURLFromURL('https://www.dolimed.com');
-		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('https://www.dolimed.com',$result);
+        $result=getRootURLFromURL('https://www.dolimed.com');
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals('https://www.dolimed.com', $result);
 
-		return 1;
+        return 1;
     }
 
+    /**
+     * testGetDomainFromURL
+     *
+     * @return	int
+     */
+    public function testGetDomainFromURL()
+    {
+    	global $conf,$user,$langs,$db;
+    	$conf=$this->savconf;
+    	$user=$this->savuser;
+    	$langs=$this->savlangs;
+    	$db=$this->savdb;
+
+    	$result=getDomainFromURL('http://localhost');
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals('localhost', $result, 'Test 0a');
+
+    	$result=getDomainFromURL('http://localhost', 1);
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals('localhost', $result, 'Test 0b');
+
+    	$result=getDomainFromURL('https://dolimed.com');
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals('dolimed', $result, 'Test 1');
+
+    	$result=getDomainFromURL('http://www.dolimed.com/screenshots/afile');
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals('dolimed', $result, 'Test 2');
+
+    	$result=getDomainFromURL('http://www.with.dolimed.com/screenshots/afile');
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals('dolimed', $result, 'Test 3');
+
+    	$result=getDomainFromURL('https://dolimed.com', 1);
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals('dolimed.com', $result, 'Test 4');
+
+    	$result=getDomainFromURL('http://www.dolimed.com/screenshots/afile', 1);
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals('dolimed.com', $result, 'Test 5');
+
+    	$result=getDomainFromURL('http://www.with.dolimed.com/screenshots/afile', 1);
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals('dolimed.com', $result, 'Test 6');
+
+    	return 1;
+    }
 
     /**
      * testRemoveHtmlComment
@@ -175,20 +222,20 @@ class GetUrlLibTest extends PHPUnit_Framework_TestCase
      */
     public function testRemoveHtmlComment()
     {
-    	global $conf,$user,$langs,$db;
-    	$conf=$this->savconf;
-    	$user=$this->savuser;
-    	$langs=$this->savlangs;
-    	$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-    	$result=removeHtmlComment('abc<!--[if lt IE 8]>aaaa<![endif]-->def');
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('abcdef',$result,'Test 1');
+        $result=removeHtmlComment('abc<!--[if lt IE 8]>aaaa<![endif]-->def');
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals('abcdef', $result, 'Test 1');
 
-    	$result=removeHtmlComment('abc<!--[if lt IE 8]>aa-->bb<!--aa<![endif]-->def');
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('abcbbdef',$result,'Test 1');
+        $result=removeHtmlComment('abc<!--[if lt IE 8]>aa-->bb<!--aa<![endif]-->def');
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals('abcbbdef', $result, 'Test 1');
 
-    	return 1;
+        return 1;
     }
 }

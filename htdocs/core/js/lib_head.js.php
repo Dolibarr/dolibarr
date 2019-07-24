@@ -24,13 +24,13 @@
  * 				JQuery (providing object $) and JQuery-UI (providing $datepicker) libraries must be loaded before this file.
  */
 
-if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC','1');
-if (! defined('NOCSRFCHECK'))     define('NOCSRFCHECK',1);
-if (! defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL',1);
-if (! defined('NOLOGIN'))         define('NOLOGIN',1);
-if (! defined('NOREQUIREMENU'))   define('NOREQUIREMENU',1);
-if (! defined('NOREQUIREHTML'))   define('NOREQUIREHTML',1);
-if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX','1');
+if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC', '1');
+if (! defined('NOCSRFCHECK'))     define('NOCSRFCHECK', 1);
+if (! defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL', 1);
+if (! defined('NOLOGIN'))         define('NOLOGIN', 1);
+if (! defined('NOREQUIREMENU'))   define('NOREQUIREMENU', 1);
+if (! defined('NOREQUIREHTML'))   define('NOREQUIREHTML', 1);
+if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX', '1');
 
 session_cache_limiter('public');
 
@@ -841,10 +841,11 @@ function copyToClipboard(text,text2)
  * @return	boolean			False
  * @see document_preview
  */
-function newpopup(url,title) {
+function newpopup(url, title) {
 	var argv = newpopup.arguments;
 	var argc = newpopup.arguments.length;
 	tmp=url;
+	console.log("newpopup "+argv[2]+" "+argv[3]);
 	var l = (argc > 2) ? argv[2] : 600;
 	var h = (argc > 3) ? argv[3] : 400;
 	var left = (screen.width - l)/2;
@@ -1008,6 +1009,23 @@ function getParameterByName(name, valueifnotfound)
 // Another solution, easier, to build a javascript rounding function
 function dolroundjs(number, decimals) { return +(Math.round(number + "e+" + decimals) + "e-" + decimals); }
 
+
+/**
+ * Function similar to PHP price()
+ *
+ * @param  {number|string} amount    The amount to show
+ * @param  {string} mode             'MT' or 'MU'
+ * @return {string}                  The amount with digits
+ */
+function pricejs(amount, mode) {
+	var main_max_dec_shown = <?php echo (int) str_replace('.', '', $conf->global->MAIN_MAX_DECIMALS_SHOWN); ?>;
+	var main_rounding_unit = <?php echo (int) $conf->global->MAIN_MAX_DECIMALS_UNIT; ?>;
+	var main_rounding_tot = <?php echo (int) $conf->global->MAIN_MAX_DECIMALS_TOT; ?>;
+
+	if (mode == 'MU') return amount.toFixed(main_rounding_unit);
+	if (mode == 'MT') return amount.toFixed(main_rounding_tot);
+	return 'Bad value for parameter mode';
+}
 
 /**
  * Function similar to PHP price2num()

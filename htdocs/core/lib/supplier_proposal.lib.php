@@ -46,7 +46,7 @@ function supplier_proposal_prepare_head($object)
 
 	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 	{
-		$nbContact = count($object->liste_contact(-1,'internal')) + count($object->liste_contact(-1,'external'));
+		$nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
 		$head[$h][0] = DOL_URL_ROOT.'/supplier_proposal/contact.php?id='.$object->id;
 		$head[$h][1] = $langs->trans('ContactsAddresses');
 		if ($nbContact > 0) $head[$h][1].= ' <span class="badge">'.$nbContact.'</span>';
@@ -58,7 +58,7 @@ function supplier_proposal_prepare_head($object)
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname);   												to remove a tab
-    complete_head_from_modules($conf,$langs,$object,$head,$h,'supplier_proposal');
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'supplier_proposal');
 
     if (empty($conf->global->MAIN_DISABLE_NOTES_TAB))
     {
@@ -75,7 +75,7 @@ function supplier_proposal_prepare_head($object)
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
     require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 	$upload_dir = $conf->supplier_proposal->dir_output . "/" . dol_sanitizeFileName($object->ref);
-	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview.*\.png)$'));
+	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
     $nbLinks=Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT.'/supplier_proposal/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
@@ -88,7 +88,7 @@ function supplier_proposal_prepare_head($object)
 	$head[$h][2] = 'info';
 	$h++;
 
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'supplier_proposal','remove');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'supplier_proposal', 'remove');
 
 	return $head;
 }
@@ -114,7 +114,7 @@ function supplier_proposal_admin_prepare_head()
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
-	complete_head_from_modules($conf,$langs,null,$head,$h,'supplier_proposal_admin');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'supplier_proposal_admin');
 
 	$head[$h][0] = DOL_URL_ROOT.'/supplier_proposal/admin/supplier_proposal_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields");
@@ -126,9 +126,7 @@ function supplier_proposal_admin_prepare_head()
     $head[$h][2] = 'attributeslines';
     $h++;
 
-	complete_head_from_modules($conf,$langs,null,$head,$h,'supplier_proposal_admin','remove');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'supplier_proposal_admin', 'remove');
 
 	return $head;
 }
-
-

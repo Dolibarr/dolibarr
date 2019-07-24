@@ -35,9 +35,9 @@ if (! empty($conf->projet->enabled)) {
 // Load translation files required by the page
 $langs->loadLangs(array("suppliers", "orders", "companies", "stocks"));
 
-$id = GETPOST('facid','int')?GETPOST('facid','int'):GETPOST('id','int');
+$id = GETPOST('facid', 'int')?GETPOST('facid', 'int'):GETPOST('id', 'int');
 $ref = GETPOST('ref');
-$action = GETPOST('action','aZ09');
+$action = GETPOST('action', 'aZ09');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -60,7 +60,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, 
  * View
  */
 $help_url='EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedidos_a_proveedores';
-llxHeader('',$langs->trans("Order"),$help_url);
+llxHeader('', $langs->trans("Order"), $help_url);
 
 $form = new Form($db);
 

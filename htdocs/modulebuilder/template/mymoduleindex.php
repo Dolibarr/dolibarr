@@ -19,7 +19,7 @@
  */
 
 /**
- *	\file       htdocs/mymodule/template/mymoduleindex.php
+ *	\file       htdocs/modulebuilder/template/mymoduleindex.php
  *	\ingroup    mymodule
  *	\brief      Home page of mymodule top menu
  */
@@ -49,7 +49,7 @@ $action=GETPOST('action', 'alpha');
 
 // Securite acces client
 if (! $user->rights->mymodule->read) accessforbidden();
-$socid=GETPOST('socid','int');
+$socid=GETPOST('socid', 'int');
 if (isset($user->societe_id) && $user->societe_id > 0)
 {
 	$action = '';
@@ -74,9 +74,9 @@ $now=dol_now();
 $form = new Form($db);
 $formfile = new FormFile($db);
 
-llxHeader("",$langs->trans("MyModuleArea"));
+llxHeader("", $langs->trans("MyModuleArea"));
 
-print load_fiche_titre($langs->trans("MyModuleArea"),'','mymodule.png@mymodule');
+print load_fiche_titre($langs->trans("MyModuleArea"), '', 'mymodule.png@mymodule');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
@@ -134,14 +134,14 @@ if (! empty($conf->mymodule->enabled) && $user->rights->mymodule->read)
                 $companystatic->canvas=$obj->canvas;
 				print $companystatic->getNomUrl(1,'customer',16);
 				print '</td>';
-				print '<td align="right" class="nowrap">'.price($obj->total_ttc).'</td></tr>';
+				print '<td class="right" class="nowrap">'.price($obj->total_ttc).'</td></tr>';
 				$i++;
 				$total += $obj->total_ttc;
 			}
 			if ($total>0)
 			{
 
-				print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td colspan="2" align="right">'.price($total)."</td></tr>";
+				print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td colspan="2" class="right">'.price($total)."</td></tr>";
 			}
 		}
 		else
@@ -195,7 +195,7 @@ if (! empty($conf->mymodule->enabled) && $user->rights->mymodule->read)
         else if (! empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) print $langs->trans("BoxTitleLastModifiedProspects",$max);
 		else print $langs->trans("BoxTitleLastModifiedCustomers",$max);
 		print '</th>';
-		print '<th align="right">'.$langs->trans("DateModificationShort").'</th>';
+		print '<th class="right">'.$langs->trans("DateModificationShort").'</th>';
 		print '</tr>';
 		if ($num)
 		{
@@ -210,10 +210,10 @@ if (! empty($conf->mymodule->enabled) && $user->rights->mymodule->read)
                 $companystatic->canvas=$objp->canvas;
 				print '<tr class="oddeven">';
 				print '<td class="nowrap">'.$companystatic->getNomUrl(1,'customer',48).'</td>';
-				print '<td align="right" nowrap>';
+				print '<td class="right nowrap">';
 				print $companystatic->getLibCustProspStatut();
 				print "</td>";
-				print '<td align="right" nowrap>'.dol_print_date($db->jdate($objp->tms),'day')."</td>";
+				print '<td class="right nowrap">'.dol_print_date($db->jdate($objp->tms),'day')."</td>";
 				print '</tr>';
 				$i++;
 

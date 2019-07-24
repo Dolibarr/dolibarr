@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 
 /**
- *	Classe permettant de generer les projets au modele SEPAMandate
+ *	Class to generate SEPA mandate
  */
 
 class pdf_sepamandate extends ModeleBankAccountDoc
@@ -43,7 +43,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 
 	/**
      * Dolibarr version of the loaded document
-     * @public string
+     * @var string
      */
 	public $version = 'dolibarr';
 
@@ -52,7 +52,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+    public function __construct($db)
 	{
 		global $conf, $langs, $mysoc;
 
@@ -80,19 +80,14 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 
 		// Recupere emmetteur
 		$this->emetteur=$mysoc;
-		if (! $this->emetteur->country_code) $this->emetteur->country_code=substr($langs->defaultlang,-2);    // By default if not defined
+		if (! $this->emetteur->country_code) $this->emetteur->country_code=substr($langs->defaultlang, -2);    // By default if not defined
 
 		// Defini position des colonnes
-		$this->posxref=$this->marge_gauche+1;
-		$this->posxlabel=$this->marge_gauche+25;
-		$this->posxworkload=$this->marge_gauche+100;
-		$this->posxprogress=$this->marge_gauche+130;
-		$this->posxdatestart=$this->marge_gauche+150;
-		$this->posxdateend=$this->marge_gauche+170;
+		$this->posxref=$this->marge_gauche;
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
 	 *  Fonction generant le projet sur le disque
 	 *
@@ -105,7 +100,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
      *  @param      null|array  $moreparams         More parameters
 	 *	@return	    int         				    1 if OK, <=0 if KO
 	 */
-	function write_file($object, $outputlangs, $srctemplatepath='', $hidedetails=0, $hidedesc=0, $hideref=0, $moreparams=null)
+    public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
         // phpcs:enable
 		global $conf, $hookmanager, $langs, $user, $mysoc;
@@ -140,7 +135,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 			{
 				if (dol_mkdir($dir) < 0)
 				{
-					$this->error=$langs->transnoentities("ErrorCanNotCreateDir",$dir);
+					$this->error=$langs->transnoentities("ErrorCanNotCreateDir", $dir);
 					return 0;
 				}
 			}
@@ -156,7 +151,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				$hookmanager->initHooks(array('pdfgeneration'));
 				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
 				global $action;
-				$reshook=$hookmanager->executeHooks('beforePDFCreation',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+				$reshook=$hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 
                 $pdf=pdf_getInstance($this->format);
                 $default_font_size = pdf_getPDFFontSize($outputlangs);	// Must be after pdf_getInstance
@@ -164,7 +159,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 		        $heightforfreetext= (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT)?$conf->global->MAIN_PDF_FREETEXT_HEIGHT:5);	// Height reserved to output the free text on last page
 	            $heightforfooter = $this->marge_basse + 8;	// Height reserved to output the footer (value include bottom margin)
 	            if ($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS >0) $heightforfooter+= 6;
-                $pdf->SetAutoPageBreak(1,0);
+                $pdf->SetAutoPageBreak(1, 0);
 
                 if (class_exists('TCPDF'))
                 {
@@ -175,7 +170,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 
 				$pdf->Open();
 				$pagenb=0;
-				$pdf->SetDrawColor(128,128,128);
+				$pdf->SetDrawColor(128, 128, 128);
 
 				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("SepaMandate"));
@@ -190,9 +185,9 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				$pdf->AddPage();
 				$pagenb++;
 				$this->_pagehead($pdf, $object, 1, $outputlangs);
-				$pdf->SetFont('','', $default_font_size - 1);
+				$pdf->SetFont('', '', $default_font_size - 1);
 				$pdf->MultiCell(0, 3, '');		// Set interline to 3
-				$pdf->SetTextColor(0,0,0);
+				$pdf->SetTextColor(0, 0, 0);
 
 				$tab_top = 50;
 				$tab_height = 200;
@@ -202,13 +197,13 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				// Affiche notes
 				if (! empty($object->note_public))
 				{
-					$pdf->SetFont('','', $default_font_size - 1);
-					$pdf->writeHTMLCell(190, 3, $this->posxref-1, $tab_top-2, dol_htmlentitiesbr($object->note_public), 0, 1);
+					$pdf->SetFont('', '', $default_font_size - 1);
+					$pdf->writeHTMLCell(190, 3, $this->posxref, $tab_top-2, dol_htmlentitiesbr($object->note_public), 0, 1);
 					$nexY = $pdf->GetY();
 					$height_note=$nexY-($tab_top-2);
 
 					// Rect prend une longueur en 3eme param
-					$pdf->SetDrawColor(192,192,192);
+					$pdf->SetDrawColor(192, 192, 192);
 					$pdf->Rect($this->marge_gauche, $tab_top-3, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_note+1);
 
 					$tab_height = $tab_height - $height_note;
@@ -225,7 +220,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 
 				$posY = $curY;
 
-				$pdf->SetFont('','', $default_font_size);
+				$pdf->SetFont('', '', $default_font_size);
 
 				$pdf->line($this->marge_gauche, $posY, $this->page_largeur - $this->marge_droite, $posY);
 				$posY+=2;
@@ -256,7 +251,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 
 				$pdf->line($this->marge_gauche, $posY, $this->page_largeur - $this->marge_droite, $posY);
 
-				$pdf->SetFont('','', $default_font_size - 1);
+				$pdf->SetFont('', '', $default_font_size - 1);
 
 				$posY+=8;
 				$pdf->SetXY($this->marge_gauche, $posY);
@@ -268,7 +263,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				$pdf->line($this->marge_gauche, $posY, $this->page_largeur - $this->marge_droite, $posY);
 				$posY+=2;
 
-				$pdf->SetFont('','', $default_font_size);
+				$pdf->SetFont('', '', $default_font_size);
 
 				$pdf->SetXY($this->marge_gauche, $posY);
 				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $outputlangs->transnoentitiesnoconv("SEPAFillForm"), 0, 'C');
@@ -381,12 +376,12 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				/*
 				 * Pied de page
 				 */
-				$this->_pagefoot($pdf,$object,$outputlangs);
-				if (method_exists($pdf,'AliasNbPages')) $pdf->AliasNbPages();
+				$this->_pagefoot($pdf, $object, $outputlangs);
+				if (method_exists($pdf, 'AliasNbPages')) $pdf->AliasNbPages();
 
 				$pdf->Close();
 
-				$pdf->Output($file,'F');
+				$pdf->Output($file, 'F');
 
 				// Add pdfgeneration hook
 				if (! is_object($hookmanager))
@@ -397,7 +392,12 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				$hookmanager->initHooks(array('pdfgeneration'));
 				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
 				global $action;
-				$reshook=$hookmanager->executeHooks('afterPDFCreation',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+				$reshook=$hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
+				if ($reshook < 0)
+				{
+				    $this->error = $hookmanager->error;
+				    $this->errors = $hookmanager->errors;
+				}
 
 				if (! empty($conf->global->MAIN_UMASK))
 				@chmod($file, octdec($conf->global->MAIN_UMASK));
@@ -408,16 +408,17 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 			}
 			else
 			{
-				$this->error=$langs->transnoentities("ErrorCanNotCreateDir",$dir);
+				$this->error=$langs->transnoentities("ErrorCanNotCreateDir", $dir);
 				return 0;
 			}
 		}
 
-		$this->error=$langs->transnoentities("ErrorConstantNotDefined","LIVRAISON_OUTPUTDIR");
+		$this->error=$langs->transnoentities("ErrorConstantNotDefined", "LIVRAISON_OUTPUTDIR");
 		return 0;
 	}
 
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *   Show table for lines
 	 *
@@ -430,15 +431,17 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	 *   @param		int			$hidebottom		Hide bottom bar of array
 	 *   @return	void
 	 */
-	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop=0, $hidebottom=0)
+	protected function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0)
 	{
+		// phpcs:enable
 		global $conf,$mysoc;
 
         $default_font_size = pdf_getPDFFontSize($outputlangs);
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *   Show miscellaneous information (payment mode, payment term, ...)
 	 *
@@ -448,7 +451,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @return	void
 	 */
-	function _tableau_info(&$pdf, $object, $posy, $outputlangs)
+	protected function _tableau_info(&$pdf, $object, $posy, $outputlangs)
 	{
         // phpcs:enable
         global $conf, $mysoc;
@@ -460,12 +463,12 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	    $posy+=$this->_signature_area($pdf, $object, $posy, $outputlangs);
 
 	    $pdf->SetXY($this->marge_gauche, $posy);
-	    $pdf->SetFont('','', $default_font_size);
+	    $pdf->SetFont('', '', $default_font_size);
 	    $pdf->MultiCell(100, 3, $outputlangs->transnoentitiesnoconv("PleaseReturnMandate", $mysoc->email).':', 0, 'L', 0);
 	    $posy=$pdf->GetY()+2;
 
 	    $pdf->SetXY($this->marge_gauche, $posy);
-	    $pdf->SetFont('','', $default_font_size - $diffsizetitle);
+	    $pdf->SetFont('', '', $default_font_size - $diffsizetitle);
 	    $pdf->MultiCell(100, 6, $mysoc->name, 0, 'L', 0);
 		$pdf->MultiCell(100, 6, $outputlangs->convToOutputCharset($mysoc->getFullAddress()), 0, 'L', 0);
 		$posy=$pdf->GetY()+2;
@@ -475,7 +478,8 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Show area for the customer to sign
 	 *
@@ -485,7 +489,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	 *	@param	Translate	$outputlangs	Objet langs
 	 *	@return int							Position pour suite
 	 */
-	function _signature_area(&$pdf, $object, $posy, $outputlangs)
+	protected function _signature_area(&$pdf, $object, $posy, $outputlangs)
 	{
         // phpcs:enable
 	    $default_font_size = pdf_getPDFFontSize($outputlangs);
@@ -495,7 +499,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	    $posx = $this->marge_gauche;
 	    $pdf->SetXY($posx, $tab_top + 0);
 
-	    $pdf->SetFont('','', $default_font_size - 2);
+	    $pdf->SetFont('', '', $default_font_size - 2);
 
 	    $pdf->MultiCell(100, 3, $outputlangs->transnoentitiesnoconv("DateOfSignature"), 0, 'L', 0);
 	    $pdf->MultiCell(100, 3, ' ');
@@ -506,7 +510,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	    $useborder=0;
 	    $index = 0;
 	    // Total HT
-	    $pdf->SetFillColor(255,255,255);
+	    $pdf->SetFillColor(255, 255, 255);
 	    $pdf->SetXY($posx, $tab_top + 0);
 	    $pdf->MultiCell($largcol, $tab_hl, $outputlangs->transnoentitiesnoconv("Signature"), 0, 'L', 1);
 
@@ -517,6 +521,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	}
 
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *  Show top header of page.
 	 *
@@ -526,21 +531,22 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @return	void
 	 */
-	function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
+	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
+		// phpcs:enable
 		global $langs,$conf,$mysoc;
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
-		pdf_pagehead($pdf,$outputlangs,$this->page_hauteur);
+		pdf_pagehead($pdf, $outputlangs, $this->page_hauteur);
 
-		$pdf->SetTextColor(0,0,60);
-		$pdf->SetFont('','B', $default_font_size + 3);
+		$pdf->SetTextColor(0, 0, 60);
+		$pdf->SetFont('', 'B', $default_font_size + 3);
 
         $posx=$this->page_largeur-$this->marge_droite-100;
 		$posy=$this->marge_haute;
 
-		$pdf->SetXY($this->marge_gauche,$posy);
+		$pdf->SetXY($this->marge_gauche, $posy);
 
 		// Logo
 		$logo=$conf->mycompany->dir_output.'/logos/'.$mysoc->logo;
@@ -553,36 +559,36 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 			}
 			else
 			{
-				$pdf->SetTextColor(200,0,0);
-				$pdf->SetFont('','B', $default_font_size - 2);
-				$pdf->MultiCell(100, 3, $langs->transnoentities("ErrorLogoFileNotFound",$logo), 0, 'L');
+				$pdf->SetTextColor(200, 0, 0);
+				$pdf->SetFont('', 'B', $default_font_size - 2);
+				$pdf->MultiCell(100, 3, $langs->transnoentities("ErrorLogoFileNotFound", $logo), 0, 'L');
 				$pdf->MultiCell(100, 3, $langs->transnoentities("ErrorGoToModuleSetup"), 0, 'L');
 			}
 		}
 		else $pdf->MultiCell(100, 4, $outputlangs->transnoentities($this->emetteur->name), 0, 'L');
 
-		$pdf->SetFont('','B', $default_font_size + 3);
-		$pdf->SetXY($posx,$posy);
-		$pdf->SetTextColor(0,0,60);
+		$pdf->SetFont('', 'B', $default_font_size + 3);
+		$pdf->SetXY($posx, $posy);
+		$pdf->SetTextColor(0, 0, 60);
 		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("SepaMandate"), '', 'R');
-		$pdf->SetFont('','', $default_font_size + 2);
+		$pdf->SetFont('', '', $default_font_size + 2);
 
 		$posy+=6;
-		$pdf->SetXY($posx,$posy);
-		$pdf->SetTextColor(0,0,60);
+		$pdf->SetXY($posx, $posy);
+		$pdf->SetTextColor(0, 0, 60);
 		$daterum = '__________________';
 		if (! empty($object->date_rum))
 		{
-            $daterum = dol_print_date($object->date_rum,'day',false,$outputlangs,true);
+            $daterum = dol_print_date($object->date_rum, 'day', false, $outputlangs, true);
 		}
-		else $daterum = dol_print_date($object->datec,'day',false,$outputlangs,true);   // For old record, the date_rum was not saved.
+		else $daterum = dol_print_date($object->datec, 'day', false, $outputlangs, true);   // For old record, the date_rum was not saved.
 		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Date")." : " . $daterum, '', 'R');
 		/*$posy+=6;
 		$pdf->SetXY($posx,$posy);
 		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("DateEnd")." : " . dol_print_date($object->date_end,'day',false,$outputlangs,true), '', 'R');
 		*/
 
-		$pdf->SetTextColor(0,0,60);
+		$pdf->SetTextColor(0, 0, 60);
 
 		// Add list of linked objects
 		/* Removed: A project can have more than thousands linked objects (orders, invoices, proposals, etc....
@@ -609,6 +615,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
         */
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *   	Show footer of page. Need this->emetteur object
      *
@@ -618,10 +625,12 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	 *      @param	int			$hidefreetext		1=Hide free text
 	 *      @return	integer
 	 */
-	function _pagefoot(&$pdf,$object,$outputlangs,$hidefreetext=0)
+	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
+		// phpcs:enable
 		global $conf;
+
 		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
-		return pdf_pagefoot($pdf,$outputlangs,'PAYMENTORDER_FREE_TEXT',null,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
+		return pdf_pagefoot($pdf, $outputlangs, 'PAYMENTORDER_FREE_TEXT', null, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);
 	}
 }

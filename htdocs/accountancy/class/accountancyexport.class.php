@@ -5,11 +5,11 @@
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016       Pierre-Henry Favre  <phf@atm-consulting.fr>
- * Copyright (C) 2016-2018  Alexandre Spangaro  <aspangaro@zendsi.com>
+ * Copyright (C) 2016-2018  Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2013-2017  Olivier Geffroy     <jeff@jeffinfo.com>
  * Copyright (C) 2017       Elarifr. Ari Elbaz  <github@accedinfo.com>
- * Copyright (C) 2017       Frédéric France     <frederic.france@netlogic.fr>
-
+ * Copyright (C) 2017-2019  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2017       André Schild        <a.schild@aarboard.ch>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,34 +27,30 @@
 
 /**
  * \file		htdocs/accountancy/class/accountancyexport.class.php
- * \ingroup		Advanced accountancy
+ * \ingroup		Accountancy (Double entries)
  * \brief 		Class accountancy export
- */
-
-/**
- * Class AccountancyExport
- *
- * Manage the different format accountancy export
  */
 
 require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
 
+/**
+ * Manage the different format accountancy export
+ */
 class AccountancyExport
 {
-	/**
-	 * @var Type of export. Defined by $conf->global->ACCOUNTING_EXPORT_MODELCSV
-	 */
-	public static $EXPORT_TYPE_NORMAL = 1;	 			// CSV
-	public static $EXPORT_TYPE_CONFIGURABLE = 10;		// CSV
-	public static $EXPORT_TYPE_CEGID = 2;
-	public static $EXPORT_TYPE_COALA = 3;
-	public static $EXPORT_TYPE_BOB50 = 4;
-	public static $EXPORT_TYPE_CIEL = 5;
-	public static $EXPORT_TYPE_QUADRATUS = 6;
-	public static $EXPORT_TYPE_EBP = 7;
-	public static $EXPORT_TYPE_COGILOG = 8;
-	public static $EXPORT_TYPE_AGIRIS = 9;
-	public static $EXPORT_TYPE_FEC = 11;
+	// Type of export. Used into $conf->global->ACCOUNTING_EXPORT_MODELCSV
+	public static $EXPORT_TYPE_CONFIGURABLE = 1;		// CSV
+	public static $EXPORT_TYPE_AGIRIS = 10;
+	public static $EXPORT_TYPE_EBP = 15;
+	public static $EXPORT_TYPE_CEGID = 20;
+	public static $EXPORT_TYPE_COGILOG = 25;
+	public static $EXPORT_TYPE_COALA = 30;
+	public static $EXPORT_TYPE_BOB50 = 35;
+	public static $EXPORT_TYPE_CIEL = 40;
+	public static $EXPORT_TYPE_SAGE50_SWISS = 45;
+	public static $EXPORT_TYPE_QUADRATUS = 60;
+	public static $EXPORT_TYPE_OPENCONCERTO = 100;
+	public static $EXPORT_TYPE_FEC = 1000;
 
 
 	/**
@@ -97,19 +93,24 @@ class AccountancyExport
 	{
 		global $langs;
 
-		return array (
-				//self::$EXPORT_TYPE_NORMAL => $langs->trans('Modelcsv_normal'),
-				self::$EXPORT_TYPE_CONFIGURABLE => $langs->trans('Modelcsv_configurable'),
-				self::$EXPORT_TYPE_CEGID => $langs->trans('Modelcsv_CEGID'),
-				self::$EXPORT_TYPE_COALA => $langs->trans('Modelcsv_COALA'),
-				self::$EXPORT_TYPE_BOB50 => $langs->trans('Modelcsv_bob50'),
-				self::$EXPORT_TYPE_CIEL => $langs->trans('Modelcsv_ciel'),
-				self::$EXPORT_TYPE_QUADRATUS => $langs->trans('Modelcsv_quadratus'),
-				self::$EXPORT_TYPE_EBP => $langs->trans('Modelcsv_ebp'),
-				self::$EXPORT_TYPE_COGILOG => $langs->trans('Modelcsv_cogilog'),
-				self::$EXPORT_TYPE_AGIRIS => $langs->trans('Modelcsv_agiris'),
-				self::$EXPORT_TYPE_FEC => $langs->trans('Modelcsv_FEC'),
-			);
+		$listofexporttypes = array(
+			self::$EXPORT_TYPE_CONFIGURABLE => $langs->trans('Modelcsv_configurable'),
+			self::$EXPORT_TYPE_CEGID => $langs->trans('Modelcsv_CEGID'),
+			self::$EXPORT_TYPE_COALA => $langs->trans('Modelcsv_COALA'),
+			self::$EXPORT_TYPE_BOB50 => $langs->trans('Modelcsv_bob50'),
+			self::$EXPORT_TYPE_CIEL => $langs->trans('Modelcsv_ciel'),
+			self::$EXPORT_TYPE_QUADRATUS => $langs->trans('Modelcsv_quadratus'),
+			self::$EXPORT_TYPE_EBP => $langs->trans('Modelcsv_ebp'),
+			self::$EXPORT_TYPE_COGILOG => $langs->trans('Modelcsv_cogilog'),
+			self::$EXPORT_TYPE_AGIRIS => $langs->trans('Modelcsv_agiris'),
+            self::$EXPORT_TYPE_OPENCONCERTO => $langs->trans('Modelcsv_openconcerto'),
+			self::$EXPORT_TYPE_SAGE50_SWISS => $langs->trans('Modelcsv_Sage50_Swiss'),
+			self::$EXPORT_TYPE_FEC => $langs->trans('Modelcsv_FEC'),
+		);
+
+		ksort($listofexporttypes, SORT_NUMERIC);
+
+		return $listofexporttypes;
 	}
 
 	/**
@@ -121,7 +122,6 @@ class AccountancyExport
 	private static function getFormatCode($type)
 	{
 		$formatcode = array (
-			//self::$EXPORT_TYPE_NORMAL => 'csv',
 			self::$EXPORT_TYPE_CONFIGURABLE => 'csv',
 			self::$EXPORT_TYPE_CEGID => 'cegid',
 			self::$EXPORT_TYPE_COALA => 'coala',
@@ -131,6 +131,8 @@ class AccountancyExport
 			self::$EXPORT_TYPE_EBP => 'ebp',
 			self::$EXPORT_TYPE_COGILOG => 'cogilog',
 			self::$EXPORT_TYPE_AGIRIS => 'agiris',
+			self::$EXPORT_TYPE_OPENCONCERTO => 'openconcerto',
+            self::$EXPORT_TYPE_SAGE50_SWISS => 'sage50ch',
 			self::$EXPORT_TYPE_FEC => 'fec',
 		);
 
@@ -148,13 +150,13 @@ class AccountancyExport
 
 		return array (
 			'param' => array(
-				/*self::$EXPORT_TYPE_NORMAL => array(
-					'label' => $langs->trans('Modelcsv_normal'),
+				self::$EXPORT_TYPE_CONFIGURABLE => array(
+					'label' => $langs->trans('Modelcsv_configurable'),
 					'ACCOUNTING_EXPORT_FORMAT' => empty($conf->global->ACCOUNTING_EXPORT_FORMAT)?'txt':$conf->global->ACCOUNTING_EXPORT_FORMAT,
 					'ACCOUNTING_EXPORT_SEPARATORCSV' => empty($conf->global->ACCOUNTING_EXPORT_SEPARATORCSV)?',':$conf->global->ACCOUNTING_EXPORT_SEPARATORCSV,
 					'ACCOUNTING_EXPORT_ENDLINE' => empty($conf->global->ACCOUNTING_EXPORT_ENDLINE)?1:$conf->global->ACCOUNTING_EXPORT_ENDLINE,
 					'ACCOUNTING_EXPORT_DATE' => empty($conf->global->ACCOUNTING_EXPORT_DATE)?'%d%m%Y':$conf->global->ACCOUNTING_EXPORT_DATE,
-				),*/
+				),
 				self::$EXPORT_TYPE_CEGID => array(
 					'label' => $langs->trans('Modelcsv_CEGID'),
 				),
@@ -181,12 +183,13 @@ class AccountancyExport
 				self::$EXPORT_TYPE_AGIRIS => array(
 					'label' => $langs->trans('Modelcsv_agiris'),
 				),
-				self::$EXPORT_TYPE_CONFIGURABLE => array(
-					'label' => $langs->trans('Modelcsv_configurable'),
-					'ACCOUNTING_EXPORT_FORMAT' => empty($conf->global->ACCOUNTING_EXPORT_FORMAT)?'txt':$conf->global->ACCOUNTING_EXPORT_FORMAT,
-					'ACCOUNTING_EXPORT_SEPARATORCSV' => empty($conf->global->ACCOUNTING_EXPORT_SEPARATORCSV)?',':$conf->global->ACCOUNTING_EXPORT_SEPARATORCSV,
-					'ACCOUNTING_EXPORT_ENDLINE' => empty($conf->global->ACCOUNTING_EXPORT_ENDLINE)?1:$conf->global->ACCOUNTING_EXPORT_ENDLINE,
-					'ACCOUNTING_EXPORT_DATE' => empty($conf->global->ACCOUNTING_EXPORT_DATE)?'%d%m%Y':$conf->global->ACCOUNTING_EXPORT_DATE,
+                self::$EXPORT_TYPE_OPENCONCERTO => array(
+                    'label' => $langs->trans('Modelcsv_openconcerto'),
+                    'ACCOUNTING_EXPORT_FORMAT' => 'csv',
+                ),
+				self::$EXPORT_TYPE_SAGE50_SWISS => array(
+					'label' => $langs->trans('Modelcsv_Sage50_Swiss'),
+					'ACCOUNTING_EXPORT_FORMAT' => 'csv',
 				),
 				self::$EXPORT_TYPE_FEC => array(
 					'label' => $langs->trans('Modelcsv_FEC'),
@@ -224,11 +227,9 @@ class AccountancyExport
 
 
 		switch ($conf->global->ACCOUNTING_EXPORT_MODELCSV) {
-			case self::$EXPORT_TYPE_NORMAL :
 			case self::$EXPORT_TYPE_CONFIGURABLE :
 				$this->exportConfigurable($TData);
 				break;
-			case self::$EXPORT_TYPE_NORMAL :
 			case self::$EXPORT_TYPE_CEGID :
 				$this->exportCegid($TData);
 				break;
@@ -253,8 +254,14 @@ class AccountancyExport
 			case self::$EXPORT_TYPE_AGIRIS :
 				$this->exportAgiris($TData);
 				break;
+            case self::$EXPORT_TYPE_OPENCONCERTO :
+                $this->exportOpenConcerto($TData);
+                break;
 			case self::$EXPORT_TYPE_FEC :
 				$this->exportFEC($TData);
+				break;
+			case self::$EXPORT_TYPE_SAGE50_SWISS :
+				$this->exportSAGE50SWISS($TData);
 				break;
 			default:
 				$this->errors[] = $langs->trans('accountancy_error_modelnotfound');
@@ -272,7 +279,7 @@ class AccountancyExport
 	 */
 	public function exportCegid($objectLines)
 	{
-		foreach ( $objectLines as $line ) {
+		foreach ($objectLines as $line) {
 			$date = dol_print_date($line->doc_date, '%d%m%Y');
 			$separator = ";";
 			$end_line = "\n";
@@ -298,7 +305,7 @@ class AccountancyExport
 	 */
 	public function exportCogilog($objectLines)
 	{
-		foreach ( $objectLines as $line ) {
+		foreach ($objectLines as $line) {
 			$date = dol_print_date($line->doc_date, '%d%m%Y');
 			$separator = ";";
 			$end_line = "\n";
@@ -336,7 +343,7 @@ class AccountancyExport
 		$separator = ";";
 		$end_line = "\n";
 
-		foreach ( $objectLines as $line ) {
+		foreach ($objectLines as $line) {
 			$date = dol_print_date($line->doc_date, '%d/%m/%Y');
 			print $date . $separator;
 			print $line->code_journal . $separator;
@@ -365,7 +372,7 @@ class AccountancyExport
 		$separator = ";";
 		$end_line = "\n";
 
-		foreach ( $objectLines as $line ) {
+		foreach ($objectLines as $line) {
 			print $line->piece_num . $separator;
 			$date = dol_print_date($line->doc_date, '%d/%m/%Y');
 			print $date . $separator;
@@ -405,7 +412,7 @@ class AccountancyExport
 
 		$i = 1;
 		$date_ecriture = dol_print_date(dol_now(), $conf->global->ACCOUNTING_EXPORT_DATE); // format must be yyyymmdd
-		foreach ( $TData as $data ) {
+		foreach ($TData as $data) {
 			$code_compta = $data->numero_compte;
 			if (! empty($data->subledger_account))
 				$code_compta = $data->subledger_account;
@@ -447,7 +454,7 @@ class AccountancyExport
 		//We should use dol_now function not time however this is wrong date to transfert in accounting
 		//$date_ecriture = dol_print_date(dol_now(), $conf->global->ACCOUNTING_EXPORT_DATE); // format must be ddmmyy
 		//$date_ecriture = dol_print_date(time(), $conf->global->ACCOUNTING_EXPORT_DATE); // format must be ddmmyy
-		foreach ( $TData as $data ) {
+		foreach ($TData as $data) {
 			$code_compta = $data->numero_compte;
 			if (! empty($data->subledger_account))
 				$code_compta = $data->subledger_account;
@@ -475,7 +482,7 @@ class AccountancyExport
 			// elarifr:  date format must be fixed format : 6 char ddmmyy = %d%m%yand not defined by user / dolibarr setting
 			if (! empty($data->date_echeance))
 				//$Tab['date_echeance'] = dol_print_date($data->date_echeance, $conf->global->ACCOUNTING_EXPORT_DATE);
-				$Tab['date_echeance'] = dol_print_date($data->date_echeance,  '%d%m%y' );	 // elarifr:  format must be ddmmyy
+				$Tab['date_echeance'] = dol_print_date($data->date_echeance, '%d%m%y');	 // elarifr:  format must be ddmmyy
 			else
 				$Tab['date_echeance'] = '000000';
 
@@ -528,23 +535,22 @@ class AccountancyExport
 		$separator = ',';
 		$end_line = "\n";
 
-		foreach ( $objectLines as $line ) {
+		foreach ($objectLines as $line) {
 
 			$date = dol_print_date($line->doc_date, '%d%m%Y');
 
 			print $line->id . $separator;
 			print $date . $separator;
 			print $line->code_journal . $separator;
-
 			if (empty($line->subledger_account)) {
                 print $line->numero_compte . $separator;
             } else {
                 print $line->subledger_account . $separator;
             }
-			//print substr(length_accountg($line->numero_compte),0,2) . $separator;
-			print '"'.dol_trunc($line->label_operation,40,'right','UTF-8',1).'"' . $separator;
-			print '"'.dol_trunc($line->piece_num,15,'right','UTF-8',1).'"'.$separator;
-			print price2num($line->montant).$separator;
+			//print substr(length_accountg($line->numero_compte), 0, 2) . $separator;
+			print '"'.dol_trunc($line->label_operation, 40, 'right', 'UTF-8', 1).'"' . $separator;
+			print '"'.dol_trunc($line->piece_num, 15, 'right', 'UTF-8', 1).'"'.$separator;
+			print price2num(abs($line->montant)).$separator;
 			print $line->sens.$separator;
 			print $date . $separator;
 			//print 'EUR';
@@ -566,24 +572,24 @@ class AccountancyExport
 		$separator = ';';
 		$end_line = "\n";
 
-		foreach ( $objectLines as $line ) {
+		foreach ($objectLines as $line) {
 
 			$date = dol_print_date($line->doc_date, '%d%m%Y');
 
 			print $line->piece_num . $separator;
-			print $line->label_operation . $separator;
+			print self::toAnsi($line->label_operation) . $separator;
 			print $date . $separator;
-			print $line->label_operation . $separator;
+			print self::toAnsi($line->label_operation) . $separator;
 
 			if (empty($line->subledger_account)) {
 				print length_accountg($line->numero_compte) . $separator;
-				print $line->label_compte . $separator;
+				print self::toAnsi($line->label_compte) . $separator;
 			} else {
 				print length_accounta($line->subledger_account) . $separator;
-				print $line->subledger_label . $separator;
+				print self::toAnsi($line->subledger_label) . $separator;
 			}
 
-			print $line->doc_ref . $separator;
+			print self::toAnsi($line->doc_ref) . $separator;
 			print price($line->debit) . $separator;
 			print price($line->credit) . $separator;
 			print price($line->montant) . $separator;
@@ -593,6 +599,39 @@ class AccountancyExport
 			print $end_line;
 		}
 	}
+
+    /**
+     * Export format : OpenConcerto
+     *
+     * @param array $objectLines data
+     *
+     * @return void
+     */
+    public function exportOpenConcerto($objectLines)
+    {
+
+        $separator = ';';
+        $end_line = "\n";
+
+        foreach ($objectLines as $line) {
+
+            $date = dol_print_date($line->doc_date, '%d/%m/%Y');
+
+            print $date . $separator;
+            print $line->code_journal . $separator;
+            if (empty($line->subledger_account)) {
+                print length_accountg($line->numero_compte) . $separator;
+            } else {
+                print length_accounta($line->subledger_account) . $separator;
+            }
+            print $line->doc_ref . $separator;
+            print $line->label_operation . $separator;
+            print price($line->debit) . $separator;
+            print price($line->credit) . $separator;
+
+            print $end_line;
+        }
+    }
 
 	/**
 	 * Export format : Configurable
@@ -657,7 +696,7 @@ class AccountancyExport
 		print "Idevise";
 		print $end_line;
 
-		foreach ( $objectLines as $line ) {
+		foreach ($objectLines as $line) {
 			$date_creation = dol_print_date($line->date_creation, '%d%m%Y');
 			$date_doc = dol_print_date($line->doc_date, '%d%m%Y');
 			$date_valid = dol_print_date($line->date_validated, '%d%m%Y');
@@ -720,14 +759,182 @@ class AccountancyExport
 		}
 	}
 
+    /**
+     * Export format : SAGE50SWISS
+     *
+     * https://onlinehelp.sageschweiz.ch/default.aspx?tabid=19984
+     * http://media.topal.ch/Public/Schnittstellen/TAF/Specification/Sage50-TAF-format.pdf
+     *
+     * @param array $objectLines data
+     *
+     * @return void
+     */
+    public function exportSAGE50SWISS($objectLines)
+    {
+        // SAGE50SWISS
+        $this->separator = ',';
+        $this->end_line = "\r\n";
+
+        // Print header line
+        print "Blg,Datum,Kto,S/H,Grp,GKto,SId,SIdx,KIdx,BTyp,MTyp,Code,Netto,Steuer,FW-Betrag,Tx1,Tx2,PkKey,OpId,Flag";
+        print $this->end_line;
+        $thisPieceNum= "";
+        $thisPieceAccountNr= "";
+        $aSize= count($objectLines);
+        foreach ($objectLines as $aIndex=>$line)
+		{
+            $sammelBuchung= false;
+            if ($aIndex-2 >= 0 && $objectLines[$aIndex-2]->piece_num == $line->piece_num)
+            {
+                $sammelBuchung= true;
+            }
+            elseif ($aIndex+2 < $aSize && $objectLines[$aIndex+2]->piece_num == $line->piece_num)
+            {
+                $sammelBuchung= true;
+            }
+            elseif ($aIndex+1 < $aSize
+                    && $objectLines[$aIndex+1]->piece_num == $line->piece_num
+                    && $aIndex-1 < $aSize
+                    && $objectLines[$aIndex-1]->piece_num == $line->piece_num
+                    )
+            {
+                $sammelBuchung= true;
+            }
+
+            //Blg
+            print $line->piece_num . $this->separator;
+
+            // Datum
+            $date = dol_print_date($line->doc_date, '%d.%m.%Y');
+            print $date . $this->separator;
+
+            // Kto
+            print length_accountg($line->numero_compte) . $this->separator;
+            // S/H
+            if ($line->sens == 'D')
+            {
+                print 'S' . $this->separator;
+            }
+            else
+            {
+                print 'H' . $this->separator;
+            }
+            //Grp
+            print self::trunc($line->code_journal, 1) . $this->separator;
+            // GKto
+            if (empty($line->code_tiers))
+            {
+                if ($line->piece_num == $thisPieceNum)
+                {
+                    print length_accounta($thisPieceAccountNr) . $this->separator;
+                }
+                else
+                {
+                    print "div" . $this->separator;
+                }
+            }
+            else
+            {
+                print length_accounta($line->code_tiers) . $this->separator;
+            }
+            //SId
+            print $this->separator;
+            //SIdx
+            print "0" . $this->separator;
+            //KIdx
+            print "0" . $this->separator;
+            //BTyp
+            print "0" . $this->separator;
+
+            //MTyp 1=Fibu Einzelbuchung 2=Sammebuchung
+            if ($sammelBuchung)
+            {
+                print "2" . $this->separator;
+            }
+            else
+            {
+                print "1" . $this->separator;
+            }
+            // Code
+            print '""' . $this->separator;
+            // Netto
+            if ($line->montant >= 0)
+            {
+                print $line->montant . $this->separator;
+            }
+            else
+            {
+                print $line->montant*-1 . $this->separator;
+            }
+            // Steuer
+            print "0.00" . $this->separator;
+            // FW-Betrag
+            print "0.00" . $this->separator;
+            // Tx1
+            $line1= self::toAnsi($line->label_compte, 29);
+            if ($line1 == "LIQ" || $line1 == "LIQ Beleg ok" || strlen($line1) <= 3)
+            {
+                $line1= "";
+            }
+            $line2= self::toAnsi($line->doc_ref, 29);
+            if (strlen($line1) == 0)
+            {
+                $line1= $line2;
+                $line2= "";
+            }
+            if (strlen($line1) > 0 && strlen($line2) > 0 && (strlen($line1) + strlen($line2)) < 27)
+            {
+                $line1= $line1 . ' / ' . $line2;
+                $line2= "";
+            }
+
+            print '"' . self::toAnsi($line1). '"' . $this->separator;
+            // Tx2
+            print '"' . self::toAnsi($line2). '"' . $this->separator;
+            //PkKey
+            print "0" . $this->separator;
+            //OpId
+            print $this->separator;
+
+            // Flag
+            print "0";
+
+            print $this->end_line;
+
+            if ($line->piece_num !== $thisPieceNum)
+            {
+                $thisPieceNum= $line->piece_num;
+                $thisPieceAccountNr= $line->numero_compte;
+            }
+        }
+    }
+
 	/**
+	 * trunc
 	 *
-	 * @param string	$str 	data
-	 * @param integer 	$size 	data
+	 * @param string	$str 	String
+	 * @param integer 	$size 	Data to trunc
 	 * @return string
 	 */
 	public static function trunc($str, $size)
 	{
 		return dol_trunc($str, $size, 'right', 'UTF-8', 1);
+	}
+
+	/**
+	 * toAnsi
+	 *
+	 * @param string	$str 		Original string to encode and optionaly truncate
+	 * @param integer 	$size 		Truncate string after $size characters
+     * @return string 				String encoded in Windows-1251 charset
+	 */
+	public static function toAnsi($str, $size = -1)
+    {
+		$retVal= dol_string_nohtmltag($str, 1, 'Windows-1251');
+        if ($retVal >= 0 && $size >= 0)
+        {
+            $retVal= mb_substr($retVal, 0, $size, 'Windows-1251');
+        }
+        return $retVal;
 	}
 }

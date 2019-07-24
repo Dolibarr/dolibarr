@@ -30,24 +30,24 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
  */
 class mailing_xinputfile extends MailingTargets
 {
-	var $name='EmailsFromFile';              // Identifiant du module mailing
-	// This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
-	var $desc='EMails from a file';          // Libelle utilise si aucune traduction pour MailingModuleDescXXX ou XXX=name trouv�e
-	var $require_module=array();             // Module mailing actif si modules require_module actifs
-	var $require_admin=0;                    // Module mailing actif pour user admin ou non
-	var $picto='generic';
-	var $tooltip='UseFormatFileEmailToTarget';
+    public $name='EmailsFromFile';              // Identifiant du module mailing
+    // This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
+    public $desc='EMails from a file';          // Libelle utilise si aucune traduction pour MailingModuleDescXXX ou XXX=name trouv�e
+    public $require_module=array();             // Module mailing actif si modules require_module actifs
+    public $require_admin=0;                    // Module mailing actif pour user admin ou non
+    public $picto='generic';
+    public $tooltip='UseFormatFileEmailToTarget';
 
 
-	/**
-	 *	Constructor
-	 *
-	 *  @param		DoliDB		$db      Database handler
-	 */
-	function __construct($db)
-	{
-		$this->db=$db;
-	}
+    /**
+     *  Constructor
+     *
+     *  @param      DoliDB      $db      Database handler
+     */
+    public function __construct($db)
+    {
+        $this->db=$db;
+    }
 
 
     /**
@@ -58,7 +58,7 @@ class mailing_xinputfile extends MailingTargets
 	 *
 	 *	@return		array		Array with SQL requests
 	 */
-	function getSqlArrayForStats()
+    public function getSqlArrayForStats()
 	{
 		global $langs;
 		$langs->load("users");
@@ -76,7 +76,7 @@ class mailing_xinputfile extends MailingTargets
 	 *  @param      string	$sql        Sql request to count
 	 *	@return		string				'' means NA
 	 */
-	function getNbOfRecipients($sql='')
+    public function getNbOfRecipients($sql = '')
 	{
 		return '';
 	}
@@ -88,10 +88,10 @@ class mailing_xinputfile extends MailingTargets
      *  @param	int		$id		ID
 	 *  @return string      	Url lien
 	 */
-	function url($id)
+    public function url($id)
 	{
 		global $langs;
-		return $langs->trans('LineInFile',$id);
+		return $langs->trans('LineInFile', $id);
 		//' - '.$langs->trans("File").' '.dol_trunc(,12);
 	}
 
@@ -101,7 +101,7 @@ class mailing_xinputfile extends MailingTargets
 	 *
 	 *   @return     string      Retourne zone select
 	 */
-	function formFilter()
+    public function formFilter()
 	{
 		global $langs;
 
@@ -110,15 +110,14 @@ class mailing_xinputfile extends MailingTargets
 		return $s;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Ajoute destinataires dans table des cibles
 	 *
 	 *  @param	int		$mailing_id    	Id of emailing
-	 *  @param	array	$filtersarray   Requete sql de selection des destinataires
 	 *  @return int           			< 0 si erreur, nb ajout si ok
 	 */
-	function add_to_target($mailing_id,$filtersarray=array())
+    public function add_to_target($mailing_id)
 	{
         // phpcs:enable
 		global $conf,$langs,$_FILES;
@@ -151,7 +150,7 @@ class mailing_xinputfile extends MailingTargets
 					{
 						$cpt++;
 				        $buffer = trim(fgets($handle));
-			        	$tab=explode(';',$buffer,4);
+			        	$tab=explode(';', $buffer, 4);
 				        $email=$tab[0];
 				        $name=$tab[1];
 				        $firstname=$tab[2];
@@ -181,9 +180,9 @@ class mailing_xinputfile extends MailingTargets
 					        {
 					        	$i++;
 					        	$langs->load("errors");
-							$msg = $langs->trans("ErrorFoundBadEmailInFile", $i, $cpt, $email);
-					        	if (!empty($msg)) $this->error = $msg;
-							else $this->error = 'ErrorFoundBadEmailInFile '.$i.' '.$cpt.' '.$email;	// We experience case where $langs->trans return an empty string.
+                                $msg = $langs->trans("ErrorFoundBadEmailInFile", $i, $cpt, $email);
+					        	if (! empty($msg)) $this->error = $msg;
+                                else $this->error = 'ErrorFoundBadEmailInFile '.$i.' '.$cpt.' '.$email;	// We experience case where $langs->trans return an empty string.
 					        }
 				        }
 				    }
@@ -209,7 +208,7 @@ class mailing_xinputfile extends MailingTargets
 				{
 					$this->error = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
 				}
-				else if (preg_match('/ErrorFileIsInfectedWithAVirus/',$resupload))	// Files infected by a virus
+				elseif (preg_match('/ErrorFileIsInfectedWithAVirus/', $resupload))	// Files infected by a virus
 				{
 					$this->error = '<div class="error">'.$langs->trans("ErrorFileIsInfectedWithAVirus").'</div>';
 				}

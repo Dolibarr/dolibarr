@@ -24,4 +24,4 @@ MemberTypeSynchronized=Mitgliedsart synchronisiert
 ContactSynchronized=Kontakt synchronisiert
 ForceSynchronize=Erzwinge Synchronisation  Dolibarr -> LDAP
 ErrorFailedToReadLDAP=Fehler beim Lesen der LDAP-Datenbank. Überprüfen Sie die Verfügbarkeit der Datenbank sowie die entsprechenden Moduleinstellungen.
-PasswordOfUserInLDAP=Password of user in LDAP
+PasswordOfUserInLDAP=Passwort des Benutzers in LDAP

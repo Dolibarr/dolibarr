@@ -124,7 +124,7 @@ if (empty($conf->produit->enabled)) {
 llxHeader('', $langs->trans('MultipriceRules'));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($title,$linkback,'title_setup');
+print load_fiche_titre($title, $linkback, 'title_setup');
 
 
 
@@ -183,7 +183,7 @@ $genPriceOptions = function ($level) use ($price_options) {
 				</td>
 				<td style="text-align: center">
 					<input type="text" style="text-align: right" name="var_min_percent[<?php echo $i ?>]" size="5" value="<?php echo price(isset($rules[$i]) ? $rules[$i]->var_min_percent : 0, 2) ?>">
-					<?php echo $langs->trans('PercentDiscountOver', $langs->trans('SellingPrice').' '.$i) ?>
+					<?php echo $langs->trans('PercentDiscountOver', $langs->transnoentitiesnoconv('SellingPrice').' '.$i) ?>
 				</td>
 			</tr>
 		<?php endfor ?>

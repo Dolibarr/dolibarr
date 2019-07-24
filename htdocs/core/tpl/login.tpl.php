@@ -21,10 +21,9 @@
 
 
 // Protection to avoid direct call of template
-if (empty($conf) || ! is_object($conf))
-{
-	print "Error, template page can't be called as URL";
-	exit;
+if (empty($conf) || ! is_object($conf)) {
+    print "Error, template page can't be called as URL";
+    exit;
 }
 
 
@@ -44,7 +43,7 @@ if (! empty($conf->dol_use_jmobile)) $conf->use_javascript_ajax=1;
 
 $php_self = dol_escape_htmltag($_SERVER['PHP_SELF']);
 $php_self.= dol_escape_htmltag($_SERVER["QUERY_STRING"])?'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]):'';
-if (! preg_match('/mainmenu=/',$php_self)) $php_self.=(preg_match('/\?/',$php_self)?'&':'?').'mainmenu=home';
+if (! preg_match('/mainmenu=/', $php_self)) $php_self.=(preg_match('/\?/', $php_self)?'&':'?').'mainmenu=home';
 
 // Javascript code on logon page only to detect user tz, dst_observed, dst_first, dst_second
 $arrayofjs=array(
@@ -61,13 +60,24 @@ print top_htmlhead('', $titleofloginpage, 0, 0, $arrayofjs, array(), 0, $disable
 
 $colorbackhmenu1='60,70,100';      // topmenu
 if (! isset($conf->global->THEME_ELDY_TOPMENU_BACK1)) $conf->global->THEME_ELDY_TOPMENU_BACK1=$colorbackhmenu1;
-$colorbackhmenu1     =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_TOPMENU_BACK1)?$colorbackhmenu1:$conf->global->THEME_ELDY_TOPMENU_BACK1):(empty($user->conf->THEME_ELDY_TOPMENU_BACK1)?$colorbackhmenu1:$user->conf->THEME_ELDY_TOPMENU_BACK1);
-$colorbackhmenu1=join(',',colorStringToArray($colorbackhmenu1));    // Normalize value to 'x,y,z'
+$colorbackhmenu1 = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_TOPMENU_BACK1)?$colorbackhmenu1:$conf->global->THEME_ELDY_TOPMENU_BACK1):(empty($user->conf->THEME_ELDY_TOPMENU_BACK1)?$colorbackhmenu1:$user->conf->THEME_ELDY_TOPMENU_BACK1);
+$colorbackhmenu1 = join(',', colorStringToArray($colorbackhmenu1));    // Normalize value to 'x,y,z'
 
 ?>
 <!-- BEGIN PHP TEMPLATE LOGIN.TPL.PHP -->
 
-<body class="body bodylogin"<?php print empty($conf->global->MAIN_LOGIN_BACKGROUND)?'':' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; background-image: url(\''.DOL_URL_ROOT.'/viewimage.php?cache=1&noalt=1&modulepart=mycompany&file='.urlencode('logos/'.$conf->global->MAIN_LOGIN_BACKGROUND).'\')"'; ?>>
+<?php
+if (!empty($conf->global->ADD_UNSPLASH_LOGIN_BACKGROUND)) {
+	// For example $conf->global->ADD_UNSPLASH_LOGIN_BACKGROUND = 'https://source.unsplash.com/random'
+?>
+	<body class="body bodylogin" style="background-image: url('<?php echo dol_escape_htmltag($conf->global->ADD_UNSPLASH_LOGIN_BACKGROUND); ?>'); background-repeat: no-repeat; background-position: center center; background-attachment: fixed; background-size: cover; background-color: #ffffff;">
+<?php
+} else {
+?>
+	<body class="body bodylogin"<?php print empty($conf->global->MAIN_LOGIN_BACKGROUND)?'':' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; background-image: url(\''.DOL_URL_ROOT.'/viewimage.php?cache=1&noalt=1&modulepart=mycompany&file=logos/'.urlencode($conf->global->MAIN_LOGIN_BACKGROUND).'\')"'; ?>>
+<?php
+}
+?>
 
 <?php if (empty($conf->dol_use_jmobile)) { ?>
 <script type="text/javascript">
@@ -165,9 +175,9 @@ if (! empty($morelogincontent)) {
 
 if ($captcha) {
 	// Add a variable param to force not using cache (jmobile)
-	$php_self = preg_replace('/[&\?]time=(\d+)/','',$php_self);	// Remove param time
-	if (preg_match('/\?/',$php_self)) $php_self.='&time='.dol_print_date(dol_now(),'dayhourlog');
-	else $php_self.='?time='.dol_print_date(dol_now(),'dayhourlog');
+	$php_self = preg_replace('/[&\?]time=(\d+)/', '', $php_self);	// Remove param time
+	if (preg_match('/\?/', $php_self)) $php_self.='&time='.dol_print_date(dol_now(), 'dayhourlog');
+	else $php_self.='?time='.dol_print_date(dol_now(), 'dayhourlog');
 	// TODO: provide accessible captcha variants
 ?>
 	<!-- Captcha -->
@@ -205,10 +215,10 @@ if ($captcha) {
 if ($forgetpasslink || $helpcenterlink)
 {
 	$moreparam='';
-	if ($dol_hide_topmenu)   $moreparam.=(strpos($moreparam,'?')===false?'?':'&').'dol_hide_topmenu='.$dol_hide_topmenu;
-	if ($dol_hide_leftmenu)  $moreparam.=(strpos($moreparam,'?')===false?'?':'&').'dol_hide_leftmenu='.$dol_hide_leftmenu;
-	if ($dol_no_mouse_hover) $moreparam.=(strpos($moreparam,'?')===false?'?':'&').'dol_no_mouse_hover='.$dol_no_mouse_hover;
-	if ($dol_use_jmobile)    $moreparam.=(strpos($moreparam,'?')===false?'?':'&').'dol_use_jmobile='.$dol_use_jmobile;
+	if ($dol_hide_topmenu)   $moreparam.=(strpos($moreparam, '?')===false?'?':'&').'dol_hide_topmenu='.$dol_hide_topmenu;
+	if ($dol_hide_leftmenu)  $moreparam.=(strpos($moreparam, '?')===false?'?':'&').'dol_hide_leftmenu='.$dol_hide_leftmenu;
+	if ($dol_no_mouse_hover) $moreparam.=(strpos($moreparam, '?')===false?'?':'&').'dol_no_mouse_hover='.$dol_no_mouse_hover;
+	if ($dol_use_jmobile)    $moreparam.=(strpos($moreparam, '?')===false?'?':'&').'dol_use_jmobile='.$dol_use_jmobile;
 
 	echo '<br>';
 	echo '<div class="center" style="margin-top: 15px;">';
@@ -232,7 +242,7 @@ if ($forgetpasslink || $helpcenterlink)
 	echo '</div>';
 }
 
-if (isset($conf->file->main_authentication) && preg_match('/openid/',$conf->file->main_authentication))
+if (isset($conf->file->main_authentication) && preg_match('/openid/', $conf->file->main_authentication))
 {
 	$langs->load("users");
 
@@ -245,7 +255,7 @@ if (isset($conf->file->main_authentication) && preg_match('/openid/',$conf->file
 	else
 	{
 		$langs->load("errors");
-		print '<font class="warning">'.$langs->trans("ErrorOpenIDSetupNotComplete",'MAIN_AUTHENTICATION_OPENID_URL').'</font>';
+		print '<font class="warning">'.$langs->trans("ErrorOpenIDSetupNotComplete", 'MAIN_AUTHENTICATION_OPENID_URL').'</font>';
 	}
 
 	echo '</div>';
@@ -276,7 +286,7 @@ if (! empty($_SESSION['dol_loginmesg']))
 // Add commit strip
 if (!empty($conf->global->MAIN_EASTER_EGG_COMMITSTRIP)) {
     include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
-	if (substr($langs->defaultlang,0,2)=='fr') {
+	if (substr($langs->defaultlang, 0, 2)=='fr') {
 		$resgetcommitstrip = getURLContent("http://www.commitstrip.com/fr/feed/");
 	} else {
 		$resgetcommitstrip = getURLContent("http://www.commitstrip.com/en/feed/");
@@ -284,7 +294,7 @@ if (!empty($conf->global->MAIN_EASTER_EGG_COMMITSTRIP)) {
     if ($resgetcommitstrip && $resgetcommitstrip['http_code'] == '200')
     {
         $xml = simplexml_load_string($resgetcommitstrip['content']);
-        $little = $xml->channel->item[0]->children('content',true);
+        $little = $xml->channel->item[0]->children('content', true);
         print preg_replace('/width="650" height="658"/', '', $little->encoded);
     }
 }
@@ -319,7 +329,7 @@ if (! empty($morelogincontent) && is_array($morelogincontent)) {
 		}
 	}
 }
-else if (! empty($moreloginextracontent)) {
+elseif (! empty($moreloginextracontent)) {
 	echo '<!-- Javascript by hook -->';
 	echo $moreloginextracontent;
 }

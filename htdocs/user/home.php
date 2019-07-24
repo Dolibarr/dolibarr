@@ -24,7 +24,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 
-$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'userhome';   // To manage different context of search
+$contextpage=GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'userhome';   // To manage different context of search
 
 if (! $user->rights->user->user->lire && ! $user->admin)
 {
@@ -63,7 +63,7 @@ llxHeader();
 print load_fiche_titre($langs->trans("MenuUsersAndGroups"));
 
 
-//print '<table border="0" width="100%" class="notopnoleftnoright">';
+//print '<table class="noborder centpercent notopnoleftnoright">';
 //print '<tr><td valign="top" width="30%" class="notopnoleft">';
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
@@ -71,7 +71,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 // Search User
 print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<table class="noborder nohover" width="100%">';
+print '<table class="noborder nohover centpercent">';
 print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Search").'</td></tr>';
 print '<tr><td>';
 print $langs->trans("User").':</td><td><input class="flat inputsearch" type="text" name="search_user" size="18"></td></tr>';
@@ -109,22 +109,22 @@ $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON u.fk_soc = s.rowid";
 // Add fields from hooks
 $parameters=array();
-$reshook=$hookmanager->executeHooks('printUserListWhere',$parameters);    // Note that $action and $object may have been modified by hook
+$reshook=$hookmanager->executeHooks('printUserListWhere', $parameters);    // Note that $action and $object may have been modified by hook
 if ($reshook > 0) {
 	$sql.=$hookmanager->resPrint;
 } else {
 	$sql.= " WHERE u.entity IN (".getEntity('user').")";
 }
 if (!empty($socid)) $sql.= " AND u.fk_soc = ".$socid;
-$sql.= $db->order("u.datec","DESC");
+$sql.= $db->order("u.datec", "DESC");
 $sql.= $db->plimit($max);
 
 $resql=$db->query($sql);
 if ($resql)
 {
 	$num = $db->num_rows($resql);
-	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("LastUsersCreated",min($num,$max)).'</td>';
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("LastUsersCreated", min($num, $max)).'</td>';
 	print '<td class="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/user/list.php?sortfield=u.datec&sortorder=DESC">'.$langs->trans("FullList").'</td>';
 	print '</tr>';
 	$i = 0;
@@ -154,14 +154,14 @@ if ($resql)
         print $fuserstatic->getNomUrl(-1);
 		if (! empty($conf->multicompany->enabled) && $obj->admin && ! $obj->entity)
 		{
-			print img_picto($langs->trans("SuperAdministrator"),'redstar');
+			print img_picto($langs->trans("SuperAdministrator"), 'redstar');
 		}
-		else if ($obj->admin)
+		elseif ($obj->admin)
 		{
-			print img_picto($langs->trans("Administrator"),'star');
+			print img_picto($langs->trans("Administrator"), 'star');
 		}
 		print "</td>";
-		print '<td align="left">'.$obj->login.'</td>';
+		print '<td class="left">'.$obj->login.'</td>';
 		print "<td>";
 		if ($obj->fk_soc)
 		{
@@ -194,8 +194,8 @@ if ($resql)
         print ($entitystring?' ('.$entitystring.')':'');
 
 		print '</td>';
-		print '<td align="right">'.dol_print_date($db->jdate($obj->datec),'dayhour').'</td>';
-        print '<td align="right">';
+		print '<td class="right">'.dol_print_date($db->jdate($obj->datec), 'dayhour').'</td>';
+        print '<td class="right">';
         print $fuserstatic->getLibStatut(3);
         print '</td>';
 
@@ -229,7 +229,7 @@ if ($canreadperms)
 	{
 		$sql.= " WHERE g.entity IN (0,".$conf->entity.")";
 	}
-	$sql.= $db->order("g.datec","DESC");
+	$sql.= $db->order("g.datec", "DESC");
 	$sql.= $db->plimit($max);
 
 	$resql=$db->query($sql);
@@ -238,8 +238,8 @@ if ($canreadperms)
 		$colspan=1;
 		if (! empty($conf->multicompany->enabled)) $colspan++;
 		$num = $db->num_rows($resql);
-		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre"><td colspan="'.$colspan.'">'.$langs->trans("LastGroupsCreated",($num ? $num : $max)).'</td>';
+		print '<table class="noborder centpercent">';
+		print '<tr class="liste_titre"><td colspan="'.$colspan.'">'.$langs->trans("LastGroupsCreated", ($num ? $num : $max)).'</td>';
 		print '<td class="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/user/group/list.php?sortfield=g.datec&sortorder=DESC">'.$langs->trans("FullList").'</td>';
 		print '</tr>';
 		$i = 0;
@@ -259,7 +259,7 @@ if ($canreadperms)
 			print $grouptemp->getNomUrl(1);
 			if (! $obj->entity)
 			{
-				print img_picto($langs->trans("GlobalGroup"),'redstar');
+				print img_picto($langs->trans("GlobalGroup"), 'redstar');
 			}
 			print "</td>";
 			if (! empty($conf->multicompany->enabled) && is_object($mc))
@@ -269,7 +269,7 @@ if ($canreadperms)
 	        	print $mc->label;
 	        	print '</td>';
 			}
-			print '<td class="nowrap" align="right">'.dol_print_date($db->jdate($obj->datec),'dayhour').'</td>';
+			print '<td class="nowrap right">'.dol_print_date($db->jdate($obj->datec), 'dayhour').'</td>';
 			print "</tr>";
 			$i++;
 		}

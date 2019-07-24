@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2014 Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2017 Alexandre Spangaro	<aspangaro@zendsi.com>
+ * Copyright (C) 2013-2017 Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2014	   Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
@@ -23,7 +23,7 @@
 
 /**
  * \file 		htdocs/accountancy/admin/export.php
- * \ingroup 	Advanced accountancy
+ * \ingroup 	Accountancy (Double entries)
  * \brief 		Setup page to configure accounting expert module
  */
 require '../../main.inc.php';
@@ -76,6 +76,7 @@ $model_option = array (
     ),
 );
 
+
 /*
  * Actions
  */
@@ -96,7 +97,7 @@ if ($action == 'update') {
 		$error ++;
 	}
 
-	foreach ( $main_option as $constname ) {
+	foreach ($main_option as $constname) {
 		$constvalue = GETPOST($constname, 'alpha');
 
 		if (! dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
@@ -104,7 +105,7 @@ if ($action == 'update') {
 		}
 	}
 
-    foreach ($listparam[$modelcsv] as $key => $value ) {
+    foreach ($listparam[$modelcsv] as $key => $value) {
         $constante = $key;
 
         if (strpos($constante, 'ACCOUNTING')!==false) {
@@ -137,6 +138,7 @@ $form = new Form($db);
 
 // $linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php?restore_lastsearch_values=1">' . $langs->trans("BackToModuleList") . '</a>';
 print load_fiche_titre($langs->trans('ConfigAccountingExpert'), $linkback, 'title_setup');
+
 
 print "\n".'<script type="text/javascript" language="javascript">'."\n";
 print 'jQuery(document).ready(function () {'."\n";
@@ -195,10 +197,9 @@ print '<tr class="liste_titre">';
 print '<td colspan="3">' . $langs->trans('Options') . '</td>';
 print "</tr>\n";
 
-
 $num = count($main_option);
 if ($num) {
-	foreach ( $main_option as $key ) {
+	foreach ($main_option as $key) {
 
 		print '<tr class="oddeven value">';
 
@@ -236,7 +237,7 @@ if (! $conf->use_javascript_ajax) {
 } else {
 	print '<td>';
 	$listmodelcsv = AccountancyExport::getType();
-	print $form->selectarray("ACCOUNTING_EXPORT_MODELCSV", $listmodelcsv, $conf->global->ACCOUNTING_EXPORT_MODELCSV, 0);
+	print $form->selectarray("ACCOUNTING_EXPORT_MODELCSV", $listmodelcsv, $conf->global->ACCOUNTING_EXPORT_MODELCSV, 0, 0, 0, '', 0, 0, 0, '', '', 1);
 
 	print '</td>';
 }
@@ -256,7 +257,7 @@ if ($num2) {
 	print '<td colspan="3">' . $langs->trans('OtherOptions') . '</td>';
 	print "</tr>\n";
 
-	foreach ( $model_option as $key) {
+	foreach ($model_option as $key) {
 		print '<tr class="oddeven value">';
 
         // Param

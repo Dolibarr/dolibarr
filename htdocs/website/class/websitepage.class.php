@@ -148,12 +148,12 @@ class WebsitePage extends CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param int		$id				Id object.
-	 * 									- If this is 0, the value into $page will be used. If not found or $page not defined, the default page of website_id will be used or the first page found if not set.
-	 * 									- If value is < 0, we must exclude this ID.
-	 * @param string	$website_id 	Web site id (page name must also be filled if this parameter is used)
-	 * @param string	$page       	Page name (website id must also be filled if this parameter is used)
-	 * @param string	$aliasalt		Alternative alias to search page (slow)
+	 * @param int       $id             Id object.
+	 *                                  - If this is 0, the value into $page will be used. If not found or $page not defined, the default page of website_id will be used or the first page found if not set.
+	 *                                  - If value is < 0, we must exclude this ID.
+	 * @param string    $website_id     Web site id (page name must also be filled if this parameter is used)
+	 * @param string    $page           Page name (website id must also be filled if this parameter is used)
+	 * @param string    $aliasalt       Alternative alias to search page (slow)
 	 *
 	 * @return int <0 if KO, 0 if not found, >0 if OK
 	 */
@@ -256,7 +256,7 @@ class WebsitePage extends CommonObject
 	 * @param  string      $filtermode   Filter mode (AND or OR)
 	 * @return array|int                 int <0 if KO, array of pages if OK
 	 */
-	public function fetchAll($websiteid, $sortorder='', $sortfield='', $limit=0, $offset=0, array $filter=array(), $filtermode='AND')
+	public function fetchAll($websiteid, $sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
@@ -407,7 +407,7 @@ class WebsitePage extends CommonObject
 	 * @param	int		$keeptitleunchanged	1=Keep title unchanged
 	 * @return 	mixed 						New object created, <0 if KO
 	 */
-	public function createFromClone(User $user, $fromid, $newref, $newlang='', $istranslation=0, $newwebsite=0, $keeptitleunchanged=0)
+	public function createFromClone(User $user, $fromid, $newref, $newlang = '', $istranslation = 0, $newwebsite = 0, $keeptitleunchanged = 0)
 	{
 		global $hookmanager, $langs;
 
@@ -472,7 +472,7 @@ class WebsitePage extends CommonObject
      *  @param  string  $morecss            Add more css on link
 	 *	@return	string						String with URL
 	 */
-	function getNomUrl($withpicto=0, $option='', $notooltip=0, $maxlen=24, $morecss='')
+	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $maxlen = 24, $morecss = '')
 	{
 		global $langs, $conf, $db;
         global $dolibarr_main_authentication, $dolibarr_main_demo;
@@ -507,12 +507,12 @@ class WebsitePage extends CommonObject
 	 *  @param	int		$mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return	string 			       Label of status
 	 */
-	function getLibStatut($mode=0)
+	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->status,$mode);
+		return $this->LibStatut($this->status, $mode);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Renvoi le libelle d'un status donne
 	 *
@@ -520,7 +520,7 @@ class WebsitePage extends CommonObject
 	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return string 			       	Label of status
 	 */
-	function LibStatut($status,$mode=0)
+	public function LibStatut($status, $mode = 0)
 	{
         // phpcs:enable
 		global $langs;
@@ -529,32 +529,32 @@ class WebsitePage extends CommonObject
 		{
 			$prefix='';
 			if ($status == 1) return $langs->trans('Enabled');
-			if ($status == 0) return $langs->trans('Disabled');
+			elseif ($status == 0) return $langs->trans('Disabled');
 		}
 		elseif ($mode == 1)
 		{
 			if ($status == 1) return $langs->trans('Enabled');
-			if ($status == 0) return $langs->trans('Disabled');
+			elseif ($status == 0) return $langs->trans('Disabled');
 		}
 		elseif ($mode == 2)
 		{
-			if ($status == 1) return img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
-			if ($status == 0) return img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('Disabled');
+			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
+			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
 		}
 		elseif ($mode == 3)
 		{
-			if ($status == 1) return img_picto($langs->trans('Enabled'),'statut4');
-			if ($status == 0) return img_picto($langs->trans('Disabled'),'statut5');
+			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4');
+			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5');
 		}
 		elseif ($mode == 4)
 		{
-			if ($status == 1) return img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
-			if ($status == 0) return img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('Disabled');
+			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
+			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
 		}
 		elseif ($mode == 5)
 		{
-			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'),'statut4');
-			if ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'),'statut5');
+			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'), 'statut4');
+			elseif ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'), 'statut5');
 		}
 	}
 

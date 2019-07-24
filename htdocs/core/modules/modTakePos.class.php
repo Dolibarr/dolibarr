@@ -58,14 +58,14 @@ class modTakePos extends DolibarrModules
 		//$this->familyinfo = array('myownfamily' => array('position' => '01', 'label' => $langs->trans("MyOwnFamily")));
 
 		// Module label (no space allowed), used if translation string 'ModuleTakePosName' not found (MyModue is name of module).
-		$this->name = preg_replace('/^mod/i','',get_class($this));
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		// Module description, used if translation string 'ModuleTakePosDesc' not found (MyModue is name of module).
 		$this->description = "Point of sales module (Touch Screen POS)";
 		// Used only if file README.md and README-LL.md not found.
 		$this->descriptionlong = "Point Of Sales (compliant with touch screen)";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'
-		$this->version = 'experimental';
+		$this->version = 'dolibarr';
 		// Key used in llx_const table to save module status enabled/disabled (where TAKEPOS is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Name of image file used for this module.
@@ -86,7 +86,7 @@ class modTakePos extends DolibarrModules
 		                        	'tpl' => 0,                                      	// Set this to 1 if module overwrite template dir (core/tpl)
 									'barcode' => 0,                                  	// Set this to 1 if module has its own barcode directory (core/modules/barcode)
 									'models' => 0,                                   	// Set this to 1 if module has its own models directory (core/modules/xxx)
-									'hooks' => array('data'=>array('invoicecard'), 'entity'=>'0') 	// Set here all hooks context managed by module. To find available hook context, make a "grep -r '>initHooks(' *" on source code. You can also set hook context 'all'
+									'hooks' => array() 	                                // Set here all hooks context managed by module. To find available hook context, make a "grep -r '>initHooks(' *" on source code. You can also set hook context 'all'
 		                        );
 
 		// Data directories to create when module is enabled.
@@ -285,7 +285,7 @@ class modTakePos extends DolibarrModules
      *	@param      string	$options    Options when enabling module ('', 'noboxes')
 	 *	@return     int             	1 if OK, 0 if KO
 	 */
-	public function init($options='')
+	public function init($options = '')
 	{
 		$this->_load_tables('/takepos/sql/');
 

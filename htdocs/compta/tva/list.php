@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2011-2017 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2011-2017 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,21 +35,21 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 $langs->loadLangs(array('compta', 'bills'));
 
 // Security check
-$socid = GETPOST('socid','int');
+$socid = GETPOST('socid', 'int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 
-$search_ref = GETPOST('search_ref','int');
-$search_label = GETPOST('search_label','alpha');
-$search_amount = GETPOST('search_amount','alpha');
-$search_account = GETPOST('search_account','int');
-$month = GETPOST("month","int");
-$year = GETPOST("year","int");
+$search_ref = GETPOST('search_ref', 'int');
+$search_label = GETPOST('search_label', 'alpha');
+$search_amount = GETPOST('search_amount', 'alpha');
+$search_account = GETPOST('search_account', 'int');
+$month = GETPOST("month", "int");
+$year = GETPOST("year", "int");
 
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -61,11 +61,11 @@ $filtre=$_GET["filtre"];
 
 if (empty($_REQUEST['typeid']))
 {
-	$newfiltre=str_replace('filtre=','',$filtre);
-	$filterarray=explode('-',$newfiltre);
+	$newfiltre=str_replace('filtre=', '', $filtre);
+	$filterarray=explode('-', $newfiltre);
 	foreach($filterarray as $val)
 	{
-		$part=explode(':',$val);
+		$part=explode(':', $val);
 		if ($part[0] == 't.fk_typepayment') $typeid=$part[1];
 	}
 }
@@ -74,7 +74,7 @@ else
 	$typeid=$_REQUEST['typeid'];
 }
 
-if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // Both test are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // Both test are required to be compatible with all browsers
 {
 	$search_ref="";
 	$search_label="";
@@ -111,29 +111,29 @@ if ($search_account > 0) $sql .=" AND b.fk_account=".$search_account;
 if ($month > 0)
 {
 	if ($year > 0)
-	$sql.= " AND t.datev BETWEEN '".$db->idate(dol_get_first_day($year,$month,false))."' AND '".$db->idate(dol_get_last_day($year,$month,false))."'";
+	$sql.= " AND t.datev BETWEEN '".$db->idate(dol_get_first_day($year, $month, false))."' AND '".$db->idate(dol_get_last_day($year, $month, false))."'";
 	else
 	$sql.= " AND date_format(t.datev, '%m') = '$month'";
 }
-else if ($year > 0)
+elseif ($year > 0)
 {
-	$sql.= " AND t.datev BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
+	$sql.= " AND t.datev BETWEEN '".$db->idate(dol_get_first_day($year, 1, false))."' AND '".$db->idate(dol_get_last_day($year, 12, false))."'";
 }
 if ($filtre) {
-    $filtre=str_replace(":","=",$filtre);
+    $filtre=str_replace(":", "=", $filtre);
     $sql .= " AND ".$filtre;
 }
 if ($typeid) {
     $sql .= " AND t.fk_typepayment=".$typeid;
 }
-$sql.= $db->order($sortfield,$sortorder);
+$sql.= $db->order($sortfield, $sortorder);
 $totalnboflines=0;
 $result=$db->query($sql);
 if ($result)
 {
     $totalnboflines = $db->num_rows($result);
 }
-$sql.= $db->plimit($limit+1,$offset);
+$sql.= $db->plimit($limit+1, $offset);
 
 $result = $db->query($sql);
 if ($result)
@@ -150,10 +150,8 @@ if ($result)
 	$newcardbutton='';
 	if ($user->rights->tax->charges->creer)
 	{
-		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/compta/tva/card.php?action=create">'.$langs->trans('NewVATPayment');
-		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-		$newcardbutton.= '</a>';
-	}
+        $newcardbutton.= dolGetButtonTitle($langs->trans('NewVATPayment', ($ltt+1)), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/tva/card.php?action=create');
+    }
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -163,7 +161,7 @@ if ($result)
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="page" value="'.$page.'">';
 
-	print_barre_liste($langs->trans("VATPayments"),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$totalnboflines, 'title_accountancy', 0, $newcardbutton, '', $limit);
+	print_barre_liste($langs->trans("VATPayments"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'title_accountancy', 0, $newcardbutton, '', $limit);
 
 	print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
@@ -175,38 +173,38 @@ if ($result)
 	print '<td class="liste_titre" align="center">';
 	print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="month" value="'.dol_escape_htmltag($month).'">';
 	$syear = $year;
-	$formother->select_year($syear?$syear:-1,'year',1, 20, 5);
+	$formother->select_year($syear?$syear:-1, 'year', 1, 20, 5);
 	print '</td>';
 	// Type
 	print '<td class="liste_titre" align="left">';
-	$form->select_types_paiements($typeid,'typeid','',0,1,1,16);
+	$form->select_types_paiements($typeid, 'typeid', '', 0, 1, 1, 16);
 	print '</td>';
 	// Account
 	if (! empty($conf->banque->enabled))
     {
 	    print '<td class="liste_titre">';
-	    $form->select_comptes($search_account,'search_account',0,'',1);
+	    $form->select_comptes($search_account, 'search_account', 0, '', 1);
 	    print '</td>';
     }
-	print '<td class="liste_titre" align="right"><input name="search_amount" class="flat" type="text" size="8" value="'.$search_amount.'"></td>';
-    print '<td class="liste_titre" align="right">';
+	print '<td class="liste_titre right"><input name="search_amount" class="flat" type="text" size="8" value="'.$search_amount.'"></td>';
+    print '<td class="liste_titre maxwidthsearch">';
     $searchpicto=$form->showFilterAndCheckAddButtons(0);
     print $searchpicto;
     print '</td>';
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
-	print_liste_field_titre("Ref",$_SERVER["PHP_SELF"],"t.rowid","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre("Label",$_SERVER["PHP_SELF"],"t.label","",$param,'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre("PeriodEndDate",$_SERVER["PHP_SELF"],"t.datev","",$param,'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre("DatePayment",$_SERVER["PHP_SELF"],"t.datep","",$param,'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre("Type",$_SERVER["PHP_SELF"],"type","",$param,'align="left"',$sortfield,$sortorder);
-	if (! empty($conf->banque->enabled)) print_liste_field_titre("Account",$_SERVER["PHP_SELF"],"ba.label","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre("PayedByThisPayment",$_SERVER["PHP_SELF"],"t.amount","",$param,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
+	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "t.rowid", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "t.label", "", $param, 'align="left"', $sortfield, $sortorder);
+	print_liste_field_titre("PeriodEndDate", $_SERVER["PHP_SELF"], "t.datev", "", $param, 'align="center"', $sortfield, $sortorder);
+	print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "t.datep", "", $param, 'align="center"', $sortfield, $sortorder);
+	print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "type", "", $param, '', $sortfield, $sortorder, 'left ');
+	if (! empty($conf->banque->enabled)) print_liste_field_titre("Account", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre("PayedByThisPayment", $_SERVER["PHP_SELF"], "t.amount", "", $param, '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch ');
 	print "</tr>\n";
 
-	while ($i < min($num,$limit))
+	while ($i < min($num, $limit))
     {
         $obj = $db->fetch_object($result);
 
@@ -227,9 +225,9 @@ if ($result)
 		// Ref
 		print "<td>".$tva_static->getNomUrl(1)."</td>\n";
         // Label
-		print "<td>".dol_trunc($obj->label,40)."</td>\n";
-        print '<td align="center">'.dol_print_date($db->jdate($obj->datev),'day')."</td>\n";
-        print '<td align="center">'.dol_print_date($db->jdate($obj->datep),'day')."</td>\n";
+		print "<td>".dol_trunc($obj->label, 40)."</td>\n";
+        print '<td align="center">'.dol_print_date($db->jdate($obj->datev), 'day')."</td>\n";
+        print '<td align="center">'.dol_print_date($db->jdate($obj->datep), 'day')."</td>\n";
         // Type
 		print $type;
 		// Account
@@ -245,7 +243,7 @@ if ($result)
 
 				$accountingjournal = new AccountingJournal($db);
 				$accountingjournal->fetch($obj->fk_accountancy_journal);
-				$bankstatic->accountancy_journal = $accountingjournal->getNomUrl(0,1,1,'',1);
+				$bankstatic->accountancy_journal = $accountingjournal->getNomUrl(0, 1, 1, '', 1);
 
 				$bankstatic->label=$obj->blabel;
 				print $bankstatic->getNomUrl(1);
@@ -265,7 +263,7 @@ if ($result)
     $colspan=5;
     if (! empty($conf->banque->enabled)) $colspan++;
     print '<tr class="liste_total"><td colspan="'.$colspan.'">'.$langs->trans("Total").'</td>';
-    print '<td align="right">'.price($total).'</td>';
+    print '<td class="right">'.price($total).'</td>';
 	print "<td>&nbsp;</td></tr>";
 
     print "</table>";
@@ -280,7 +278,6 @@ else
     dol_print_error($db);
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

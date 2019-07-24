@@ -33,17 +33,17 @@ require_once DOL_DOCUMENT_ROOT.'/holiday/common.inc.php';
 // Load translation files required by the page
 $langs->loadlangs(array('users', 'hrm'));
 
-$action=GETPOST('action','aZ09');
-$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'defineholidaylist';
+$action=GETPOST('action', 'aZ09');
+$contextpage=GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'defineholidaylist';
 
 $search_name=GETPOST('search_name', 'alpha');
 $search_supervisor=GETPOST('search_supervisor', 'int');
 
 // Load variable for pagination
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
-$sortfield = GETPOST('sortfield','alpha');
-$sortorder = GETPOST('sortorder','alpha');
-$page = GETPOST('page','int');
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST('sortfield', 'alpha');
+$sortorder = GETPOST('sortorder', 'alpha');
+$page = GETPOST('page', 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -70,11 +70,11 @@ $holiday = new Holiday($db);
  * Actions
  */
 
-if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction','alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
+if (GETPOST('cancel', 'alpha')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
 
 $parameters=array();
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
@@ -83,7 +83,7 @@ if (empty($reshook))
     include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
     // Purge search criteria
-    if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') ||GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
+    if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') ||GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
     {
         $search_name='';
         $search_supervisor='';
@@ -106,7 +106,7 @@ if (empty($reshook))
     {
     	$error = 0;
 
-    	$typeleaves=$holiday->getTypes(1,1);
+    	$typeleaves=$holiday->getTypes(1, 1);
 
         $userID = array_keys($_POST['update_cp']);
         $userID = $userID[0];
@@ -118,7 +118,7 @@ if (empty($reshook))
 
     	    if (!empty($userValue) || (string) $userValue == '0')
     	    {
-    	        $userValue = price2num($userValue,5);
+    	        $userValue = price2num($userValue, 5);
     	    } else {
     	        $userValue = '';
     	    }
@@ -172,7 +172,7 @@ $userstatic=new User($db);
 llxHeader('', $langs->trans('CPTitreMenu'));
 
 
-$typeleaves=$holiday->getTypes(1,1);
+$typeleaves=$holiday->getTypes(1, 1);
 
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
@@ -193,7 +193,7 @@ if ($lastUpdate)
 {
     $monthLastUpdate = $lastUpdate[4].$lastUpdate[5];
     $yearLastUpdate = $lastUpdate[0].$lastUpdate[1].$lastUpdate[2].$lastUpdate[3];
-    print '<strong>'.dol_print_date($db->jdate($holiday->getConfCP('lastUpdate')),'dayhour','tzuser').'</strong>';
+    print '<strong>'.dol_print_date($db->jdate($holiday->getConfCP('lastUpdate')), 'dayhour', 'tzuser').'</strong>';
     print '<br>'.$langs->trans("MonthOfLastMonthlyUpdate").': <strong>'.$yearLastUpdate.'-'.$monthLastUpdate.'</strong>'."\n";
 }
 else print $langs->trans('None');
@@ -212,7 +212,7 @@ $userchilds=array();
 if (empty($user->rights->holiday->read_all))
 {
 	$userchilds=$user->getAllChildIds(1);
-	$filters.=' AND u.rowid IN ('.join(', ',$userchilds).')';
+	$filters.=' AND u.rowid IN ('.join(', ', $userchilds).')';
 }
 if (!empty($search_name)) {
 	$filters.=natural_search(array('u.firstname','u.lastname'), $search_name);
@@ -271,7 +271,7 @@ else
     print '<td class="liste_titre"></td>';
 
     // Action column
-    print '<td class="liste_titre" align="right">';
+    print '<td class="liste_titre maxwidthsearch">';
     $searchpicto=$form->showFilterButtons();
     print $searchpicto;
     print '</td>';
@@ -286,7 +286,7 @@ else
         foreach($typeleaves as $key => $val)
         {
         	$labeltype = ($langs->trans($val['code'])!=$val['code']) ? $langs->trans($val['code']) : $langs->trans($val['label']);
-        	print_liste_field_titre($labeltype, $_SERVER["PHP_SELF"], '', '', '', 'align="center"');
+        	print_liste_field_titre($labeltype, $_SERVER["PHP_SELF"], '', '', '', '', '', '', 'center ');
         }
     }
     else

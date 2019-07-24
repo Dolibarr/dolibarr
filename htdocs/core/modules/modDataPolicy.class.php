@@ -70,7 +70,7 @@ class modDataPolicy extends DolibarrModules {
         $this->descriptionlong = "";
 
         // Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'
-        $this->version = 'development';
+        $this->version = 'experimental';
         // Key used in llx_const table to save module status enabled/disabled (where datapolicy is value of property name of module in uppercase)
         $this->const_name = 'MAIN_MODULE_' . strtoupper($this->name);
         // Name of image file used for this module.
@@ -210,15 +210,15 @@ class modDataPolicy extends DolibarrModules {
      */
     public function init($options = '')
     {
-    	global $langs;
+        global $langs;
 
-    	$this->_load_tables('/datapolicy/sql/');
+        $this->_load_tables('/datapolicy/sql/');
 
         // Create extrafields
         include_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
         $extrafields = new ExtraFields($this->db);
 
-		/*
+        /*
         // Extrafield contact
         $result1 = $extrafields->addExtraField('datapolicy_consentement', $langs->trans("DATAPOLICY_consentement"), 'boolean', 101, 3, 'thirdparty', 0, 0, '', '', 1, '', '3', 0, '', '', 'datapolicy@datapolicy', '$conf->datapolicy->enabled');
         $result1 = $extrafields->addExtraField('datapolicy_opposition_traitement', $langs->trans("DATAPOLICY_opposition_traitement"), 'boolean', 102, 3, 'thirdparty', 0, 0, '', '', 1, '', '3', 0, '', '', 'datapolicy@datapolicy', '$conf->datapolicy->enabled');
@@ -239,7 +239,7 @@ class modDataPolicy extends DolibarrModules {
         $result1 = $extrafields->addExtraField('datapolicy_opposition_prospection', $langs->trans("DATAPOLICY_opposition_prospection"), 'boolean', 103, 3, 'adherent', 0, 0, '', '', 1, '', '3', 0, '', '', 'datapolicy@datapolicy', '$conf->datapolicy->enabled');
         $result1 = $extrafields->addExtraField('datapolicy_date', $langs->trans("DATAPOLICY_date"), 'date', 104, 3, 'adherent', 0, 0, '', '', 1, '', '3', 0);
         $result1 = $extrafields->addExtraField('datapolicy_send', $langs->trans("DATAPOLICY_send"), 'date', 105, 3, 'adherent', 0, 0, '', '', 0, '', '0', 0);
-		*/
+        */
 
         $sql = array();
 

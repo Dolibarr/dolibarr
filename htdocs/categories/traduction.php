@@ -37,9 +37,9 @@ $langs->loadLangs(array('categories', 'languages'));
 
 $id     = GETPOST('id', 'int');
 $ref    = GETPOST('ref', 'alpha');
-$action = GETPOST('action','alpha');
-$cancel = GETPOST('cancel','alpha');
-$type   = GETPOST('type','aZ09');
+$action = GETPOST('action', 'alpha');
+$cancel = GETPOST('cancel', 'alpha');
+$type   = GETPOST('type', 'aZ09');
 
 if (is_numeric($type)) $type=Categorie::$MAP_ID_TO_CODE[$type];	// For backward compatibility
 
@@ -49,7 +49,7 @@ $fieldtype = (! empty($ref) ? 'ref' : 'rowid');
 
 if ($id == "")
 {
-	dol_print_error('','Missing parameter id');
+	dol_print_error('', 'Missing parameter id');
 	exit();
 }
 
@@ -110,7 +110,7 @@ $cancel != $langs->trans("Cancel") &&
 	$object->fetch($id);
 	$current_lang = $langs->getDefaultLang();
 
-	foreach ( $object->multilangs as $key => $value ) // enregistrement des nouvelles valeurs dans l'objet
+	foreach ($object->multilangs as $key => $value) // enregistrement des nouvelles valeurs dans l'objet
 	{
 		if ( $key == $current_lang )
 		{
@@ -135,14 +135,14 @@ $cancel != $langs->trans("Cancel") &&
 	}
 }
 
-$result = $object->fetch($id,$ref);
+$result = $object->fetch($id, $ref);
 
 
 /*
  * View
  */
 
-llxHeader("","",$langs->trans("Translation"));
+llxHeader("", "", $langs->trans("Translation"));
 
 $form = new Form($db);
 $formadmin=new FormAdmin($db);
@@ -158,7 +158,7 @@ elseif ($type == Categorie::TYPE_PROJECT)   $title=$langs->trans("ProjectsCatego
 elseif ($type == Categorie::TYPE_USER)      $title=$langs->trans("UsersCategoriesShort");
 else                                        $title=$langs->trans("Category");
 
-$head = categories_prepare_head($object,$type);
+$head = categories_prepare_head($object, $type);
 
 // Calculate $cnt_trans
 $cnt_trans = 0;
@@ -251,7 +251,7 @@ if ($action == 'edit')
 			print '<table class="border" width="100%">';
 			print '<tr><td class="titlefield fieldrequired">'.$langs->trans('Label').'</td><td><input name="libelle-'.$key.'" size="40" value="'.$object->multilangs[$key]["label"].'"></td></tr>';
 			print '<tr><td class="tdtop">'.$langs->trans('Description').'</td><td>';
-			$doleditor = new DolEditor("desc-$key", $object->multilangs[$key]["description"], '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_3,'90%');
+			$doleditor = new DolEditor("desc-$key", $object->multilangs[$key]["description"], '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_3, '90%');
 			$doleditor->Create();
 			print '</td></tr>';
 
@@ -270,7 +270,7 @@ if ($action == 'edit')
 
 	print '</form>';
 }
-else if ($action != 'add')
+elseif ($action != 'add')
 {
     if ($cnt_trans) print '<div class="underbanner clearboth"></div>';
 
@@ -311,11 +311,11 @@ if ($action == 'add' && ($user->rights->produit->creer || $user->rights->service
 
 	print '<table class="border" width="100%">';
 	print '<tr><td class="titlefield fieldrequired">'.$langs->trans('Translation').'</td><td>';
-    print $formadmin->select_language('','forcelangprod',0,$object->multilangs);
+    print $formadmin->select_language('', 'forcelangprod', 0, $object->multilangs);
 	print '</td></tr>';
 	print '<tr><td class="fieldrequired">'.$langs->trans('Label').'</td><td><input name="libelle" size="40"></td></tr>';
 	print '<tr><td>'.$langs->trans('Description').'</td><td>';
-	$doleditor = new DolEditor('desc', '', '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_3,'90%');
+	$doleditor = new DolEditor('desc', '', '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_3, '90%');
 	$doleditor->Create();
 	print '</td></tr>';
 

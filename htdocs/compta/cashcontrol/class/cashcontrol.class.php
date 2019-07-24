@@ -55,20 +55,20 @@ class CashControl extends CommonObject
 	public $picto = 'account';
 
 	public $fields=array(
-	'rowid' =>array('type'=>'integer', 'label'=>'ID', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>10),
+	'rowid' =>array('type'=>'integer', 'label'=>'ID', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>10),
 	'entity' =>array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'notnull'=>1, 'position'=>15),
 	'ref' =>array('type'=>'varchar(64)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>18),
-	'posmodule' =>array('type'=>'varchar(30)', 'label'=>'Module', 'enabled'=>1, 'visible'=>1, 'notnul'=>1, 'position'=>19),
-	'posnumber' =>array('type'=>'varchar(30)', 'label'=>'CashDesk', 'enabled'=>1, 'visible'=>1, 'notnul'=>1, 'position'=>20),
+	'posmodule' =>array('type'=>'varchar(30)', 'label'=>'Module', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>19),
+	'posnumber' =>array('type'=>'varchar(30)', 'label'=>'CashDesk', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>20),
 	'label' =>array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>0, 'position'=>24),
-	'opening' =>array('type'=>'double(24,8)', 'label'=>'Opening', 'enabled'=>1, 'visible'=>1, 'position'=>25),
-	'cash' =>array('type'=>'double(24,8)', 'label'=>'Cash', 'enabled'=>1, 'visible'=>1, 'position'=>30),
-	'cheque' =>array('type'=>'double(24,8)', 'label'=>'Cheque', 'enabled'=>1, 'visible'=>1, 'position'=>33),
-	'card' =>array('type'=>'double(24,8)', 'label'=>'CreditCard', 'enabled'=>1, 'visible'=>1, 'position'=>36),
-	'year_close' =>array('type'=>'integer', 'label'=>'Year close', 'enabled'=>1, 'visible'=>1, 'notnul'=>1, 'position'=>50),
-	'month_close' =>array('type'=>'integer', 'label'=>'Month close', 'enabled'=>1, 'visible'=>1, 'position'=>55),
-	'day_close' =>array('type'=>'integer', 'label'=>'Day close', 'enabled'=>1, 'visible'=>1, 'position'=>60),
-	'date_valid' =>array('type'=>'datetime', 'label'=>'DateValid', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>490),
+	'opening' =>array('type'=>'price', 'label'=>'Opening', 'enabled'=>1, 'visible'=>1, 'position'=>25),
+	'cash' =>array('type'=>'price', 'label'=>'Cash', 'enabled'=>1, 'visible'=>1, 'position'=>30),
+	'cheque' =>array('type'=>'price', 'label'=>'Cheque', 'enabled'=>1, 'visible'=>1, 'position'=>33),
+	'card' =>array('type'=>'price', 'label'=>'CreditCard', 'enabled'=>1, 'visible'=>1, 'position'=>36),
+    'year_close' =>array('type'=>'integer', 'label'=>'Year close', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>50, 'css'=>'center'),
+    'month_close' =>array('type'=>'integer', 'label'=>'Month close', 'enabled'=>1, 'visible'=>1, 'position'=>55, 'css'=>'center'),
+	'day_close' =>array('type'=>'integer', 'label'=>'Day close', 'enabled'=>1, 'visible'=>1, 'position'=>60, 'css'=>'center'),
+	'date_valid' =>array('type'=>'datetime', 'label'=>'DateValidation', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>490),
 	'date_creation' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>500),
 	'tms' =>array('type'=>'timestamp', 'label'=>'Tms', 'enabled'=>1, 'visible'=>0, 'notnull'=>1, 'position'=>505),
 	'import_key' =>array('type'=>'varchar(14)', 'label'=>'Import key', 'enabled'=>1, 'visible'=>0, 'position'=>510),
@@ -295,7 +295,7 @@ class CashControl extends CommonObject
 	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *  @return	string 			       Label of status
 	 */
-	public function getLibStatut($mode=0)
+	public function getLibStatut($mode = 0)
 	{
 		return $this->LibStatut($this->status, $mode);
 	}
@@ -308,7 +308,7 @@ class CashControl extends CommonObject
 	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *  @return string 			       Label of status
 	 */
-	public function LibStatut($status, $mode=0)
+	public function LibStatut($status, $mode = 0)
 	{
 		// phpcs:enable
 		if (empty($this->labelstatus))
@@ -329,92 +329,94 @@ class CashControl extends CommonObject
 		}
 		elseif ($mode == 2)
 		{
-			if ($status == 1) return img_picto($this->labelstatus[$status],'statut6', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
-			elseif ($status == 0) return img_picto($this->labelstatus[$status],'statut0', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
+			if ($status == 1) return img_picto($this->labelstatus[$status], 'statut6', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
+			elseif ($status == 0) return img_picto($this->labelstatus[$status], 'statut0', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
 		}
 		elseif ($mode == 3)
 		{
-			if ($status == 1) return img_picto($this->labelstatus[$status],'statut6', '', false, 0, 0, '', 'valignmiddle');
-			elseif ($status == 0) return img_picto($this->labelstatus[$status],'statut0', '', false, 0, 0, '', 'valignmiddle');
+			if ($status == 1) return img_picto($this->labelstatus[$status], 'statut6', '', false, 0, 0, '', 'valignmiddle');
+			elseif ($status == 0) return img_picto($this->labelstatus[$status], 'statut0', '', false, 0, 0, '', 'valignmiddle');
 		}
 		elseif ($mode == 4)
 		{
-			if ($status == 1) return img_picto($this->labelstatus[$status],'statut6', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
-			elseif ($status == 0) return img_picto($this->labelstatus[$status],'statut0', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
+			if ($status == 1) return img_picto($this->labelstatus[$status], 'statut6', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
+			elseif ($status == 0) return img_picto($this->labelstatus[$status], 'statut0', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
 		}
 		elseif ($mode == 5)
 		{
-			if ($status == 1) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status],'statut6', '', false, 0, 0, '', 'valignmiddle');
-			elseif ($status == 0) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status],'statut0', '', false, 0, 0, '', 'valignmiddle');
+			if ($status == 1) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status], 'statut6', '', false, 0, 0, '', 'valignmiddle');
+			elseif ($status == 0) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status], 'statut0', '', false, 0, 0, '', 'valignmiddle');
 		}
 		elseif ($mode == 6)
 		{
-			if ($status == 1) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status],'statut6', '', false, 0, 0, '', 'valignmiddle');
-			elseif ($status == 0) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status],'statut0', '', false, 0, 0, '', 'valignmiddle');
+			if ($status == 1) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status], 'statut6', '', false, 0, 0, '', 'valignmiddle');
+			elseif ($status == 0) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status], 'statut0', '', false, 0, 0, '', 'valignmiddle');
 		}
 	}
 
 	/**
-	 *    Return clicable link of object (with eventually picto)
+	 *  Return clicable link of object (with eventually picto)
 	 *
-	 * @param  int    $withpicto             Add picto into link
-	 * @param  string $option                Where point the link ('stock', 'composition', 'category', 'supplier', '')
-	 * @param  int    $maxlength             Maxlength of ref
-	 * @param  int    $save_lastsearch_value -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-	 * @param  int    $notooltip			 No tooltip
-	 * @return string                                String with URL
+	 *  @param  int     $withpicto                  Add picto into link
+     *  @param  string  $option                     On what the link point to ('nolink', ...)
+     *  @param  int     $notooltip                  1=Disable tooltip
+     *  @param  string  $morecss                    Add more css on link
+     *  @param  int     $save_lastsearch_value      -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *  @return string                              String with URL
 	 */
-	public function getNomUrl($withpicto=0, $option='', $maxlength=0, $save_lastsearch_value=-1, $notooltip=0)
+	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
 		global $conf, $langs, $hookmanager;
-		include_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
+
+		if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
 
 		$result='';
+
 		$newref=($this->ref?$this->ref:$this->id);
-		if ($maxlength) { $newref=dol_trunc($newref, $maxlength, 'middle'); }
 
 		$label = '<u>' . $langs->trans("ShowCashFence") . '</u>';
-		$label .= '<br><b>' . $langs->trans('ProductRef') . ':</b> ' . ($this->ref?$this->ref:$this->id);
-
-		$linkclose='';
-		if (empty($notooltip)) {
-			if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
-				$label=$langs->trans("ShowCashFence");
-				$linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
-			}
-
-			$linkclose.= ' title="'.dol_escape_htmltag($label, 1, 1).'"';
-			$linkclose.= ' class="classfortooltip"';
-
-			/*
-			 $hookmanager->initHooks(array('productdao'));
-			 $parameters=array('id'=>$this->id);
-			 $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-			 if ($reshook > 0) $linkclose = $hookmanager->resPrint;
-			 */
-		}
+		$label.= '<br>';
+		$label.= '<b>' . $langs->trans('Ref') . ':</b> ' . ($this->ref?$this->ref:$this->id);
 
 		$url = DOL_URL_ROOT.'/compta/cashcontrol/cashcontrol_card.php?id='.$this->id;
 
-		if ($option !== 'nolink') {
-			// Add param to save lastsearch_values or not
-			$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) { $add_save_lastsearch_values=1;
-			}
-			if ($add_save_lastsearch_values) { $url.='&save_lastsearch_values=1';
-			}
+		if ($option != 'nolink')
+		{
+		    // Add param to save lastsearch_values or not
+		    $add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
+		    if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+		    if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
 		}
+
+		$linkclose='';
+		if (empty($notooltip))
+		{
+		    if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+		    {
+		        $label=$langs->trans("ShowMyObject");
+		        $linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+		    }
+		    $linkclose.=' title="'.dol_escape_htmltag($label, 1).'"';
+		    $linkclose.=' class="classfortooltip'.($morecss?' '.$morecss:'').'"';
+
+		    /*
+		     $hookmanager->initHooks(array('myobjectdao'));
+		     $parameters=array('id'=>$this->id);
+		     $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+		     if ($reshook > 0) $linkclose = $hookmanager->resPrint;
+		     */
+		}
+		else $linkclose = ($morecss?' class="'.$morecss.'"':'');
 
 		$linkstart = '<a href="'.$url.'"';
 		$linkstart.=$linkclose.'>';
 		$linkend='</a>';
 
-		$result.=$linkstart;
-		if ($withpicto) {
-			$result.=(img_object(($notooltip?'':$label), 'bank', ($notooltip?'class="paddingright"':'class="paddingright classfortooltip"'), 0, 0, $notooltip?0:1));
-		}
-		$result.= $newref;
-		$result.= $linkend;
+		$result .= $linkstart;
+		if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
+		if ($withpicto != 2) $result.= $this->ref;
+		$result .= $linkend;
+		//if ($withpicto != 2) $result.=(($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
 
 		global $action;
 		$hookmanager->initHooks(array('cashfencedao'));

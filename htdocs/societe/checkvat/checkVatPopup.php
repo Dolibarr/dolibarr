@@ -42,20 +42,21 @@ llxHeader('', $langs->trans("VATIntraCheckableOnEUSite"));
 
 print '<div class="vatcheckarea" style="margin-bottom: 10px">';
 
-print load_fiche_titre($langs->trans("VATIntraCheckableOnEUSite"),'','title_setup');
+print load_fiche_titre($langs->trans("VATIntraCheckableOnEUSite"), '', 'title_setup');
 
-$vatNumber = GETPOST("vatNumber",'alpha');
+$vatNumber = GETPOST("vatNumber", 'alpha');
 
 if (! $vatNumber)
 {
 	print '<br>';
-	print '<font class="error">'.$langs->transnoentities("ErrorFieldRequired",$langs->trans("VATIntraShort")).'</font><br>';
+	print '<font class="error">'.$langs->transnoentities("ErrorFieldRequired", $langs->trans("VATIntraShort")).'</font><br>';
 }
 else
 {
 	$vatNumber = preg_replace('/\^\w/', '', $vatNumber);
-	$countryCode=substr($vatNumber,0,2);
-	$vatNumber=substr($vatNumber,2);
+	$vatNumber = str_replace(array(' ', '.'), '', $vatNumber);
+	$countryCode=substr($vatNumber, 0, 2);
+	$vatNumber=substr($vatNumber, 2);
 
 	print '<b>'.$langs->trans("Country").'</b>: '.$countryCode.'<br>';
 	print '<b>'.$langs->trans("VATIntraShort").'</b>: '.$vatNumber.'<br>';
@@ -71,7 +72,7 @@ else
     $params=getSoapParams();
     //ini_set('default_socket_timeout', $params['response_timeout']);
     //$soapclient = new SoapClient($WS_DOL_URL_WSDL,$params);
-	$soapclient = new nusoap_client($WS_DOL_URL_WSDL,true,$params['proxy_host'],$params['proxy_port'],$params['proxy_login'],$params['proxy_password'],$params['connection_timeout'],$params['response_timeout']);
+	$soapclient = new nusoap_client($WS_DOL_URL_WSDL, true, $params['proxy_host'], $params['proxy_port'], $params['proxy_login'], $params['proxy_password'], $params['connection_timeout'], $params['response_timeout']);
 	$soapclient->soap_defencoding = 'utf-8';
 	$soapclient->xml_encoding = 'utf-8';
 	$soapclient->decode_utf8 = false;
@@ -85,7 +86,7 @@ else
 
 	// Call the WebService and store its result in $result.
 	dol_syslog("Call method ".$WS_METHOD);
-	$result = $soapclient->call($WS_METHOD,$parameters);
+	$result = $soapclient->call($WS_METHOD, $parameters);
 
 	//var_dump($parameters);
 	//var_dump($soapclient);
@@ -98,17 +99,17 @@ else
 	print '<b>'.$langs->trans("Response").'</b>:<br>';
 
 	// Service indisponible
-	if (! is_array($result) || preg_match('/SERVICE_UNAVAILABLE/i',$result['faultstring']))
+	if (! is_array($result) || preg_match('/SERVICE_UNAVAILABLE/i', $result['faultstring']))
 	{
 		print '<font class="error">'.$langs->trans("ErrorServiceUnavailableTryLater").'</font><br>';
 		$messagetoshow=$soapclient->response;
 	}
-	elseif (preg_match('/TIMEOUT/i',$result['faultstring']))
+	elseif (preg_match('/TIMEOUT/i', $result['faultstring']))
 	{
 		print '<font class="error">'.$langs->trans("ErrorServiceUnavailableTryLater").'</font><br>';
 		$messagetoshow=$soapclient->response;
 	}
-	elseif (preg_match('/SERVER_BUSY/i',$result['faultstring']))
+	elseif (preg_match('/SERVER_BUSY/i', $result['faultstring']))
 	{
 		print '<font class="error">'.$langs->trans("ErrorServiceUnavailableTryLater").'</font><br>';
 		$messagetoshow=$soapclient->response;
@@ -119,7 +120,7 @@ else
 		$messagetoshow=$result['faultstring'];
 	}
 	// Syntaxe ko
-	elseif (preg_match('/INVALID_INPUT/i',$result['faultstring'])
+	elseif (preg_match('/INVALID_INPUT/i', $result['faultstring'])
 	|| ($result['requestDate'] && ! $result['valid']))
 	{
 		if ($result['requestDate']) print $langs->trans("Date").': '.$result['requestDate'].'<br>';
@@ -133,9 +134,9 @@ else
 		if ($result['requestDate']) print $langs->trans("Date").': '.$result['requestDate'].'<br>';
 		print $langs->trans("VATIntraSyntaxIsValid").': <font class="ok">'.$langs->trans("Yes").'</font><br>';
 		print $langs->trans("ValueIsValid").': ';
-		if (preg_match('/MS_UNAVAILABLE/i',$result['faultstring']))
+		if (preg_match('/MS_UNAVAILABLE/i', $result['faultstring']))
 		{
-			print '<font class="error">'.$langs->trans("ErrorVATCheckMS_UNAVAILABLE",$countryCode).'</font><br>';
+			print '<font class="error">'.$langs->trans("ErrorVATCheckMS_UNAVAILABLE", $countryCode).'</font><br>';
 		}
 		else
 		{
@@ -162,7 +163,7 @@ else
 }
 
 print '<br>';
-print $langs->trans("VATIntraManualCheck",$langs->trans("VATIntraCheckURL"),$langs->trans("VATIntraCheckURL")).'<br>';
+print $langs->trans("VATIntraManualCheck", $langs->trans("VATIntraCheckURL"), $langs->transnoentitiesnoconv("VATIntraCheckURL")).'<br>';
 print '<br>';
 print '<div class="center"><input type="button" class="button" value="'.$langs->trans("CloseWindow").'" onclick="javascript: window.close()"></div>';
 

@@ -33,7 +33,7 @@
  * @param   int		$entitytotest   Number of instance (always 1 if module multicompany not enabled)
  * @return	string					Login if OK, '' if KO
  */
-function check_user_password_dolibarr($usertotest,$passwordtotest,$entitytotest=1)
+function check_user_password_dolibarr($usertotest, $passwordtotest, $entitytotest = 1)
 {
 	global $db,$conf,$langs;
 
@@ -45,7 +45,7 @@ function check_user_password_dolibarr($usertotest,$passwordtotest,$entitytotest=
 
 	if (! empty($usertotest))
 	{
-		dol_syslog("functions_dolibarr::check_user_password_dolibarr usertotest=".$usertotest." passwordtotest=".preg_replace('/./','*',$passwordtotest)." entitytotest=".$entitytotest);
+		dol_syslog("functions_dolibarr::check_user_password_dolibarr usertotest=".$usertotest." passwordtotest=".preg_replace('/./', '*', $passwordtotest)." entitytotest=".$entitytotest);
 
 		// If test username/password asked, we define $test=false if ko and $login var to login if ok, set also $_SESSION["dol_loginmesg"] if ko
 		$table = MAIN_DB_PREFIX."user";
@@ -56,7 +56,7 @@ function check_user_password_dolibarr($usertotest,$passwordtotest,$entitytotest=
 		$sql ='SELECT rowid, login, entity, pass, pass_crypted';
 		$sql.=' FROM '.$table;
 		$sql.=' WHERE ('.$usernamecol1." = '".$db->escape($usertotest)."'";
-		if (preg_match('/@/',$usertotest)) $sql.=' OR '.$usernamecol2." = '".$db->escape($usertotest)."'";
+		if (preg_match('/@/', $usertotest)) $sql.=' OR '.$usernamecol2." = '".$db->escape($usertotest)."'";
 		$sql.=') AND '.$entitycol." IN (0," . ($entity ? $entity : 1) . ")";
 		$sql.=' AND statut = 1';
 		// Required to first found the user into entity, then the superadmin.

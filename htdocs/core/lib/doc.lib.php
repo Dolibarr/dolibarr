@@ -31,14 +31,14 @@
 /**
  *  Return line description translated in outputlangs and encoded into UTF8
  *
- *  @param  Line		$line                Current line number (0 = first line, 1 = second line, ...)
+ *  @param  Object		$line                Object of line
  *  @param  Translate	$outputlangs         Object langs for output
  *  @param  int			$hideref             Hide reference
  *  @param  int			$hidedesc            Hide description
  *  @param  int			$issupplierline      Is it a line for a supplier object ?
  *  @return string       				     String with line
  */
-function doc_getlinedesc($line,$outputlangs,$hideref=0,$hidedesc=0,$issupplierline=0)
+function doc_getlinedesc($line, $outputlangs, $hideref = 0, $hidedesc = 0, $issupplierline = 0)
 {
 	global $db, $conf, $langs;
 
@@ -74,28 +74,28 @@ function doc_getlinedesc($line,$outputlangs,$hideref=0,$hidedesc=0,$issupplierli
 			$discount=new DiscountAbsolute($db);
 			$discount->fetch($line->fk_remise_except);
 			$sourceref=!empty($discount->discount_type)?$discount->ref_invoive_supplier_source:$discount->ref_facture_source;
-			$libelleproduitservice=$outputlangs->transnoentitiesnoconv("DiscountFromCreditNote",$sourceref);
+			$libelleproduitservice=$outputlangs->transnoentitiesnoconv("DiscountFromCreditNote", $sourceref);
 		}
 		elseif ($desc == '(DEPOSIT)' && $line->fk_remise_except)
 		{
 		    $discount=new DiscountAbsolute($db);
 		    $discount->fetch($line->fk_remise_except);
 		    $sourceref=!empty($discount->discount_type)?$discount->ref_invoive_supplier_source:$discount->ref_facture_source;
-		    $libelleproduitservice=$outputlangs->transnoentitiesnoconv("DiscountFromDeposit",$sourceref);
+		    $libelleproduitservice=$outputlangs->transnoentitiesnoconv("DiscountFromDeposit", $sourceref);
 		    // Add date of deposit
-		    if (! empty($conf->global->INVOICE_ADD_DEPOSIT_DATE)) $libelleproduitservice.=' ('.dol_print_date($discount->datec,'day','',$outputlangs).')';
+		    if (! empty($conf->global->INVOICE_ADD_DEPOSIT_DATE)) $libelleproduitservice.=' ('.dol_print_date($discount->datec, 'day', '', $outputlangs).')';
 		}
 		elseif ($desc == '(EXCESS RECEIVED)' && $line->fk_remise_except)
 		{
 			$discount=new DiscountAbsolute($db);
 			$discount->fetch($line->fk_remise_except);
-			$libelleproduitservice=$outputlangs->transnoentitiesnoconv("DiscountFromExcessReceived",$discount->ref_facture_source);
+			$libelleproduitservice=$outputlangs->transnoentitiesnoconv("DiscountFromExcessReceived", $discount->ref_facture_source);
 		}
 		elseif ($desc == '(EXCESS PAID)' && $line->fk_remise_except)
 		{
 			$discount=new DiscountAbsolute($db);
 			$discount->fetch($line->fk_remise_except);
-			$libelleproduitservice=$outputlangs->transnoentitiesnoconv("DiscountFromExcessPaid",$discount->ref_invoice_supplier_source);
+			$libelleproduitservice=$outputlangs->transnoentitiesnoconv("DiscountFromExcessPaid", $discount->ref_invoice_supplier_source);
 		}
 		else
 		{
@@ -148,15 +148,15 @@ function doc_getlinedesc($line,$outputlangs,$hideref=0,$hidedesc=0,$issupplierli
 		// Show duration if exists
 		if ($line->date_start && $line->date_end)
 		{
-			$period='('.$outputlangs->transnoentitiesnoconv('DateFromTo',dol_print_date($line->date_start, $format, false, $outputlangs),dol_print_date($line->date_end, $format, false, $outputlangs)).')';
+			$period='('.$outputlangs->transnoentitiesnoconv('DateFromTo', dol_print_date($line->date_start, $format, false, $outputlangs), dol_print_date($line->date_end, $format, false, $outputlangs)).')';
 		}
 		if ($line->date_start && ! $line->date_end)
 		{
-			$period='('.$outputlangs->transnoentitiesnoconv('DateFrom',dol_print_date($line->date_start, $format, false, $outputlangs)).')';
+			$period='('.$outputlangs->transnoentitiesnoconv('DateFrom', dol_print_date($line->date_start, $format, false, $outputlangs)).')';
 		}
 		if (! $line->date_start && $line->date_end)
 		{
-			$period='('.$outputlangs->transnoentitiesnoconv('DateUntil',dol_print_date($line->date_end, $format, false, $outputlangs)).')';
+			$period='('.$outputlangs->transnoentitiesnoconv('DateUntil', dol_print_date($line->date_end, $format, false, $outputlangs)).')';
 		}
 		//print '>'.$outputlangs->charset_output.','.$period;
 		$libelleproduitservice=dol_concatdesc($libelleproduitservice, $period);
@@ -165,4 +165,3 @@ function doc_getlinedesc($line,$outputlangs,$hideref=0,$hidedesc=0,$issupplierli
 
 	return $libelleproduitservice;
 }
-

@@ -36,7 +36,7 @@
  * @param   string	$TAG		Full tag
  * @return  int              	1 if OK, -1 if ERROR
  */
-function print_paybox_redirect($PRICE,$CURRENCY,$EMAIL,$urlok,$urlko,$TAG)
+function print_paybox_redirect($PRICE, $CURRENCY, $EMAIL, $urlok, $urlko, $TAG)
 {
 	global $conf, $langs, $db;
 
@@ -59,50 +59,52 @@ function print_paybox_redirect($PRICE,$CURRENCY,$EMAIL,$urlok,$urlko,$TAG)
 
 	if (empty($IBS_DEVISE))
 	{
-		dol_print_error('',"Paybox setup param PAYBOX_IBS_DEVISE not defined");
+		dol_print_error('', "Paybox setup param PAYBOX_IBS_DEVISE not defined");
 		return -1;
 	}
 	if (empty($URLPAYBOX))
 	{
-		dol_print_error('',"Paybox setup param PAYBOX_CGI_URL_V1 and PAYBOX_CGI_URL_V2 undefined");
+		dol_print_error('', "Paybox setup param PAYBOX_CGI_URL_V1 and PAYBOX_CGI_URL_V2 undefined");
 		return -1;
 	}
 	if (empty($IBS_SITE))
 	{
-		dol_print_error('',"Paybox setup param PAYBOX_IBS_SITE not defined");
+		dol_print_error('', "Paybox setup param PAYBOX_IBS_SITE not defined");
 		return -1;
 	}
 	if (empty($IBS_RANG))
 	{
-		dol_print_error('',"Paybox setup param PAYBOX_IBS_RANG not defined");
+		dol_print_error('', "Paybox setup param PAYBOX_IBS_RANG not defined");
 		return -1;
 	}
 
+	$conf->global->PAYBOX_HASH = 'sha512';
+
 	// Definition des parametres vente produit pour paybox
-    $IBS_CMD=$TAG;
+	$IBS_CMD=$TAG;
     $IBS_TOTAL=$PRICE*100;     	// En centimes
     $IBS_MODE=1;            	// Mode formulaire
     $IBS_PORTEUR=$EMAIL;
 	$IBS_RETOUR="montant:M;ref:R;auto:A;trans:T";   // Format des parametres du get de validation en reponse (url a definir sous paybox)
     $IBS_TXT=' ';	// Use a space
-    $IBS_BOUTPI=$langs->trans("Wait");
-    //$IBS_BOUTPI='';
     $IBS_EFFECTUE=$urlok;
     $IBS_ANNULE=$urlko;
     $IBS_REFUSE=$urlko;
     $IBS_BKGD="#FFFFFF";
     $IBS_WAIT="2000";
     $IBS_LANG="GBR"; 	// By default GBR=english (FRA, GBR, ESP, ITA et DEU...)
-    if (preg_match('/^FR/i',$langs->defaultlang)) $IBS_LANG="FRA";
-    if (preg_match('/^ES/i',$langs->defaultlang)) $IBS_LANG="ESP";
-    if (preg_match('/^IT/i',$langs->defaultlang)) $IBS_LANG="ITA";
-    if (preg_match('/^DE/i',$langs->defaultlang)) $IBS_LANG="DEU";
-    if (preg_match('/^NL/i',$langs->defaultlang)) $IBS_LANG="NLD";
-    if (preg_match('/^SE/i',$langs->defaultlang)) $IBS_LANG="SWE";
+    if (preg_match('/^FR/i', $langs->defaultlang)) $IBS_LANG="FRA";
+    if (preg_match('/^ES/i', $langs->defaultlang)) $IBS_LANG="ESP";
+    if (preg_match('/^IT/i', $langs->defaultlang)) $IBS_LANG="ITA";
+    if (preg_match('/^DE/i', $langs->defaultlang)) $IBS_LANG="DEU";
+    if (preg_match('/^NL/i', $langs->defaultlang)) $IBS_LANG="NLD";
+    if (preg_match('/^SE/i', $langs->defaultlang)) $IBS_LANG="SWE";
     $IBS_OUTPUT='E';
     $PBX_SOURCE='HTML';
     $PBX_TYPEPAIEMENT='CARTE';
-    
+    $PBX_HASH = $conf->global->PAYBOX_HASH;
+    $PBX_TIME = dol_print_date(dol_now(), 'dayhourrfc', 'gmt');
+
     $msg = "PBX_IDENTIFIANT=".$PBX_IDENTIFIANT.
            "&PBX_MODE=".$IBS_MODE.
            "&PBX_SITE=".$IBS_SITE.
@@ -122,11 +124,13 @@ function print_paybox_redirect($PRICE,$CURRENCY,$EMAIL,$urlok,$urlko,$TAG)
            "&PBX_OUTPUT=".$IBS_OUTPUT.
            "&PBX_SOURCE=".$PBX_SOURCE.
            "&PBX_TYPEPAIEMENT=".$PBX_TYPEPAIEMENT;
-    
+    	   "&PBX_HASH=".$PBX_HASH;
+    	   "&PBX_TIME=".$PBX_TIME;
+
     $binKey = pack("H*", dol_decode($conf->global->PAYBOX_HMAC_KEY));
-            
-    $hmac = strtoupper(hash_hmac('sha512', $msg, $binKey));
-           
+
+    $hmac = strtoupper(hash_hmac($PBX_HASH, $msg, $binKey));
+
 
     dol_syslog("Soumission Paybox", LOG_DEBUG);
     dol_syslog("IBS_MODE: $IBS_MODE", LOG_DEBUG);
@@ -147,10 +151,12 @@ function print_paybox_redirect($PRICE,$CURRENCY,$EMAIL,$urlok,$urlko,$TAG)
     dol_syslog("PBX_IDENTIFIANT: $PBX_IDENTIFIANT", LOG_DEBUG);
     dol_syslog("PBX_SOURCE: $PBX_SOURCE", LOG_DEBUG);
     dol_syslog("PBX_TYPEPAIEMENT: $PBX_TYPEPAIEMENT", LOG_DEBUG);
+    dol_syslog("PBX_HASH: $PBX_HASH", LOG_DEBUG);
+    dol_syslog("PBX_TIME: $PBX_TIME", LOG_DEBUG);
 
     header("Content-type: text/html; charset=".$conf->file->character_set_client);
     header("X-Content-Type-Options: nosniff");
-    
+
     print '<html>'."\n";
     print '<head>'."\n";
     print "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=".$conf->file->character_set_client."\">\n";
@@ -182,6 +188,9 @@ function print_paybox_redirect($PRICE,$CURRENCY,$EMAIL,$urlok,$urlko,$TAG)
     print '<input type="hidden" name="PBX_OUTPUT" value="'.$IBS_OUTPUT.'">'."\n";
     print '<input type="hidden" name="PBX_SOURCE" value="'.$PBX_SOURCE.'">'."\n";
     print '<input type="hidden" name="PBX_TYPEPAIEMENT" value="'.$PBX_TYPEPAIEMENT.'">'."\n";
+    print '<input type="hidden" name="PBX_HASH" value="'.$PBX_HASH.'">'."\n";
+    print '<input type="hidden" name="PBX_TIME" value="'.$PBX_TIME.'">'."\n";
+    // Footprint of parameters
     print '<input type="hidden" name="PBX_HMAC" value="'.$hmac.'">'."\n";
     print '</form>'."\n";
 
@@ -196,4 +205,3 @@ function print_paybox_redirect($PRICE,$CURRENCY,$EMAIL,$urlok,$urlko,$TAG)
 
 	return;
 }
-

@@ -39,12 +39,12 @@ class DonationStats extends Stats
 	 */
 	public $table_element;
 
-	var $socid;
-    var $userid;
+	public  $socid;
+    public $userid;
 
-    var $from;
-	var $field;
-    var $where;
+    public $from;
+	public $field;
+    public $where;
 
 
     /**
@@ -55,7 +55,7 @@ class DonationStats extends Stats
 	 * @param 	string	$mode	   	Option (not used)
 	 * @param   int		$userid    	Id user for filter (creation user)
      */
-    function __construct($db, $socid, $mode, $userid=0)
+    public function __construct($db, $socid, $mode, $userid = 0)
     {
 		global $user, $conf;
 
@@ -77,13 +77,13 @@ class DonationStats extends Stats
     }
 
     /**
-     * Return shipment number by month for a year
+     *  Return shipment number by month for a year
      *
-	 * @param	int		$year		Year to scan
-     *	@param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
-	 * @return	array				Array with number by month
+	 *  @param	int		$year		Year to scan
+     *  @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
+	 *  @return	array				Array with number by month
      */
-    function getNbByMonth($year, $format=0)
+    public function getNbByMonth($year, $format = 0)
     {
         global $user;
 
@@ -92,7 +92,7 @@ class DonationStats extends Stats
 		$sql.= " WHERE d.datedon BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
 		$sql.= " AND ".$this->where;
 		$sql.= " GROUP BY dm";
-        $sql.= $this->db->order('dm','DESC');
+        $sql.= $this->db->order('dm', 'DESC');
 
 		$res=$this->_getNbByMonth($year, $sql, $format);
 		return $res;
@@ -104,7 +104,7 @@ class DonationStats extends Stats
 	 * @return	array	Array with number by year
 	 *
 	 */
-	function getNbByYear()
+	public function getNbByYear()
 	{
 		global $user;
 
@@ -112,26 +112,26 @@ class DonationStats extends Stats
 		$sql.= " FROM ".$this->from;
 		$sql.= " WHERE ".$this->where;
 		$sql.= " GROUP BY dm";
-        $sql.= $this->db->order('dm','DESC');
+        $sql.= $this->db->order('dm', 'DESC');
 
 		return $this->_getNbByYear($sql);
 	}
 
-	/**
-	 *	Return nb, total and average
-	 *
-	 *	@return	array	Array of values
-	 */
-	function getAllByYear()
-	{
-		global $user;
+    /**
+     *  Return nb, total and average
+     *
+     *  @return	array	Array of values
+     */
+    public function getAllByYear()
+    {
+        global $user;
 
-		$sql = "SELECT date_format(d.datedon,'%Y') as year, COUNT(*) as nb, SUM(d.".$this->field.") as total, AVG(".$this->field.") as avg";
-		$sql.= " FROM ".$this->from;
-		$sql.= " WHERE ".$this->where;
-		$sql.= " GROUP BY year";
-        $sql.= $this->db->order('year','DESC');
+        $sql = "SELECT date_format(d.datedon,'%Y') as year, COUNT(*) as nb, SUM(d.".$this->field.") as total, AVG(".$this->field.") as avg";
+        $sql.= " FROM ".$this->from;
+        $sql.= " WHERE ".$this->where;
+        $sql.= " GROUP BY year";
+        $sql.= $this->db->order('year', 'DESC');
 
-		return $this->_getAllByYear($sql);
-	}
+        return $this->_getAllByYear($sql);
+    }
 }

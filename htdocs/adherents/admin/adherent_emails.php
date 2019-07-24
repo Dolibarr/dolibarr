@@ -41,7 +41,7 @@ if (! $user->admin) accessforbidden();
 
 $oldtypetonewone=array('texte'=>'text','chaine'=>'string');	// old type to new ones
 
-$action = GETPOST('action','alpha');
+$action = GETPOST('action', 'alpha');
 
 $error = 0;
 
@@ -85,8 +85,8 @@ if ($action == 'updateall')
 // Action mise a jour ou ajout d'une constante
 if ($action == 'update' || $action == 'add')
 {
-	$constlineid = GETPOST('rowid','int');
-	$constname=GETPOST('constname','alpha');
+	$constlineid = GETPOST('rowid', 'int');
+	$constname=GETPOST('constname', 'alpha');
 
 	$constvalue=(GETPOSTISSET('constvalue_'.$constname) ? GETPOST('constvalue_'.$constname, 'alpha') : GETPOST('constvalue'));
 	$consttype=(GETPOSTISSET('consttype_'.$constname) ? GETPOST('consttype_'.$constname, 'alphanohtml') : GETPOST('consttype'));
@@ -94,7 +94,7 @@ if ($action == 'update' || $action == 'add')
 
 	$typetouse = empty($oldtypetonewone[$consttype]) ? $consttype : $oldtypetonewone[$consttype];
 
-	$res=dolibarr_set_const($db,$constname, $constvalue, $typetouse, 0, $constnote, $conf->entity);
+	$res=dolibarr_set_const($db, $constname, $constvalue, $typetouse, 0, $constnote, $conf->entity);
 
 	if (! $res > 0) $error++;
 
@@ -111,7 +111,7 @@ if ($action == 'update' || $action == 'add')
 // Action activation d'un sous module du module adherent
 if ($action == 'set')
 {
-    $result=dolibarr_set_const($db, GETPOST('name','alpha'), GETPOST('value'), '', 0, '', $conf->entity);
+    $result=dolibarr_set_const($db, GETPOST('name', 'alpha'), GETPOST('value'), '', 0, '', $conf->entity);
     if ($result < 0)
     {
         print $db->error();
@@ -121,7 +121,7 @@ if ($action == 'set')
 // Action desactivation d'un sous module du module adherent
 if ($action == 'unset')
 {
-    $result=dolibarr_del_const($db,GETPOST('name','alpha'),$conf->entity);
+    $result=dolibarr_del_const($db, GETPOST('name', 'alpha'), $conf->entity);
     if ($result < 0)
     {
         print $db->error();
@@ -138,11 +138,11 @@ $form = new Form($db);
 
 $help_url='EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros';
 
-llxHeader('',$langs->trans("MembersSetup"),$help_url);
+llxHeader('', $langs->trans("MembersSetup"), $help_url);
 
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans("MembersSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("MembersSetup"), $linkback, 'title_setup');
 
 
 $head = member_admin_prepare_head();
@@ -161,7 +161,7 @@ $helptext.='__COMPANY__, __ADDRESS__, __ZIP__, __TOWN__, __COUNTRY__, __EMAIL__,
 
 form_constantes($constantes, 0, $helptext);
 
-//print '<div align="center"><input type="submit" class="button" value="'.$langs->trans("Update").'" name="update"></div>';
+//print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Update").'" name="update"></div>';
 //print '</form>';
 
 dol_fiche_end();

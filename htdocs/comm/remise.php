@@ -29,29 +29,29 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'orders', 'bills'));
 
-$id=GETPOST("id",'int');
+$id=GETPOST("id", 'int');
 
-$socid = GETPOST('id','int')?GETPOST('id','int'):GETPOST('socid','int');
+$socid = GETPOST('id', 'int')?GETPOST('id', 'int'):GETPOST('socid', 'int');
 // Security check
 if ($user->societe_id > 0)
 {
 	$socid = $user->societe_id;
 }
 
-$backtopage = GETPOST('backtopage','alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
 
 
 /*
  * Actions
  */
 
-if (GETPOST('cancel','alpha') && ! empty($backtopage))
+if (GETPOST('cancel', 'alpha') && ! empty($backtopage))
 {
      header("Location: ".$backtopage);
      exit;
 }
 
-if (GETPOST('action','aZ09') == 'setremise')
+if (GETPOST('action', 'aZ09') == 'setremise')
 {
 	$object = new Societe($db);
 	$object->fetch($id);
@@ -59,9 +59,9 @@ if (GETPOST('action','aZ09') == 'setremise')
 	$discount_type = GETPOST('discount_type', 'int');
 
 	if(! empty($discount_type)) {
-		$result=$object->set_remise_supplier(price2num(GETPOST("remise")),GETPOST("note"),$user);
+		$result=$object->set_remise_supplier(price2num(GETPOST("remise")), GETPOST("note"), $user);
 	} else {
-		$result=$object->set_remise_client(price2num(GETPOST("remise")),GETPOST("note"),$user);
+		$result=$object->set_remise_client(price2num(GETPOST("remise")), GETPOST("note"), $user);
 	}
 
 	if ($result > 0)
@@ -152,7 +152,7 @@ if ($socid > 0)
 	print '</table>';
 	print '<br>';
 
-	print load_fiche_titre($langs->trans("NewRelativeDiscount"),'','');
+	print load_fiche_titre($langs->trans("NewRelativeDiscount"), '', '');
 
 	print '<div class="underbanner clearboth"></div>';
 
@@ -234,7 +234,7 @@ if ($socid > 0)
 			print '<tr class="liste_titre">';
 			print '<td width="160">'.$langs->trans("Date").'</td>';
 			print '<td width="160" align="center">'.$langs->trans("CustomerRelativeDiscountShort").'</td>';
-			print '<td align="left">'.$langs->trans("NoteReason").'</td>';
+			print '<td class="left">'.$langs->trans("NoteReason").'</td>';
 			print '<td align="center">'.$langs->trans("User").'</td>';
 			print '</tr>';
 			$num = $db->num_rows($resql);
@@ -245,10 +245,10 @@ if ($socid > 0)
 	    		{
 	    			$obj = $db->fetch_object($resql);
 	    			print '<tr class="oddeven">';
-	    			print '<td>'.dol_print_date($db->jdate($obj->dc),"dayhour").'</td>';
+	    			print '<td>'.dol_print_date($db->jdate($obj->dc), "dayhour").'</td>';
 	    			print '<td align="center">'.price2num($obj->remise_percent).'%</td>';
-	    			print '<td align="left">'.$obj->note.'</td>';
-	    			print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a></td>';
+	    			print '<td class="left">'.$obj->note.'</td>';
+	    			print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"), 'user').' '.$obj->login.'</a></td>';
 	    			print '</tr>';
 	    			$i++;
 	    		}
@@ -293,7 +293,7 @@ if ($socid > 0)
 			print '<tr class="liste_titre">';
 			print '<td width="160">'.$langs->trans("Date").'</td>';
 			print '<td width="160" align="center">'.$langs->trans("CustomerRelativeDiscountShort").'</td>';
-			print '<td align="left">'.$langs->trans("NoteReason").'</td>';
+			print '<td class="left">'.$langs->trans("NoteReason").'</td>';
 			print '<td align="center">'.$langs->trans("User").'</td>';
 			print '</tr>';
 			$num = $db->num_rows($resql);
@@ -304,10 +304,10 @@ if ($socid > 0)
 				{
 					$obj = $db->fetch_object($resql);
 					print '<tr class="oddeven">';
-					print '<td>'.dol_print_date($db->jdate($obj->dc),"dayhour").'</td>';
+					print '<td>'.dol_print_date($db->jdate($obj->dc), "dayhour").'</td>';
 					print '<td align="center">'.price2num($obj->remise_percent).'%</td>';
-					print '<td align="left">'.$obj->note.'</td>';
-					print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a></td>';
+					print '<td class="left">'.$obj->note.'</td>';
+					print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"), 'user').' '.$obj->login.'</a></td>';
 					print '</tr>';
 					$i++;
 				}

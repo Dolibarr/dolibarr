@@ -1,0 +1,56 @@
+= MYMODULE =
+:subtitle: MYMODULE DOCUMENTATION
+:source-highlighter: rouge
+:companyname: __MYCOMPANY_NAME__
+:corpname: __MYCOMPANY_NAME__
+:orgname: __MYCOMPANY_NAME__
+:creator: __USER_FULLNAME__
+:title: Documentation of module MyModule
+:subject: This document is the document of module MyModule.
+:keywords: __KEYWORDS__
+// Date du document :
+:docdate: __YYYY-MM-DD__
+:toc: manual
+:toc-placement: preamble
+
+
+== TOPIC OF DOCUMENT
+
+This is the documentation of module MyModule
+
+
+*Log of versions of document*
+
+[options="header",format="csv"]
+|=== 
+Author, Date, Version
+--- __USER_FULLNAME__  __USER_EMAIL__ ---, __YYYY-MM-DD__, Version 1.0
+|===
+
+
+[NOTE]
+==============
+This document was generated using Dolibarr ERP CRM process
+==============
+
+
+:toc: manual
+:toc-placement: preamble
+
+<<<
+
+== INTRODUCTION
+
+//include::README.md[]
+__README__
+
+== DATA SPECIFICATIONS
+
+__DATA_SPECIFICATION__
+
+
+== CHANGELOG
+
+//include::ChangeLog.md[]
+__CHANGELOG__
+

@@ -46,17 +46,17 @@ DateDeliveryPlanned=Planned date of delivery
 RefDeliveryReceipt=Ref delivery receipt
 StatusReceipt=Status delivery receipt
 DateReceived=تاریخ تحویل
-SendShippingByEMail=ارسال محموله از طریق ایمیل
+SendShippingByEMail=Send shipment by email
 SendShippingRef=Submission of shipment %s
 ActionsOnShipping=رویدادهای در حمل و نقل
 LinkToTrackYourPackage=لینک به پیگیری بسته بندی خود را
 ShipmentCreationIsDoneFromOrder=برای لحظه ای، ایجاد یک محموله های جدید از کارت منظور انجام می شود.
 ShipmentLine=خط حمل و نقل
-ProductQtyInCustomersOrdersRunning=Product quantity into open customer orders
+ProductQtyInCustomersOrdersRunning=Product quantity into open sales orders
 ProductQtyInSuppliersOrdersRunning=Product quantity into open purchase orders
-ProductQtyInShipmentAlreadySent=Product quantity from open customer order already sent
-ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from open supplier order already received
-NoProductToShipFoundIntoStock=No product to ship found into warehouse <b>%s</b>. Correct stock or go back to choose another warehouse.
+ProductQtyInShipmentAlreadySent=این تعداد محصول از سفارش فروش باز قبلا ارسال شده است
+ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from open purchase order already received
+NoProductToShipFoundIntoStock=No product to ship found in warehouse <b>%s</b>. Correct stock or go back to choose another warehouse.
 WeightVolShort=Weight/Vol.
 ValidateOrderFirstBeforeShipment=You must first validate the order before being able to make shipments.
 
@@ -69,4 +69,4 @@ SumOfProductWeights=مجموع وزن محصول
 
 # warehouse details
 DetailWarehouseNumber= Warehouse details
-DetailWarehouseFormat= W:%s (Qty : %d)
+DetailWarehouseFormat= W:%s (Qty: %d)

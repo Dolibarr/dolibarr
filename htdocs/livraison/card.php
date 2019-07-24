@@ -52,12 +52,12 @@ if (!empty($conf->incoterm->enabled)) $langs->load('incoterm');
 
 $action=GETPOST('action', 'alpha');
 $confirm=GETPOST('confirm', 'alpha');
-$backtopage=GETPOST('backtopage','alpha');
+$backtopage=GETPOST('backtopage', 'alpha');
 
 // Security check
 $id = GETPOST('id', 'int');
 if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user,'expedition',$id,'livraison','livraison');
+$result=restrictedArea($user, 'expedition', $id, 'livraison', 'livraison');
 
 $object = new Livraison($db);
 $extrafields = new ExtraFields($db);
@@ -81,7 +81,7 @@ $hookmanager->initHooks(array('deliverycard','globalcard'));
  */
 
 $parameters=array();
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 
 if ($action == 'add')
 {
@@ -109,7 +109,7 @@ if ($action == 'add')
 		$idl = "idl".$i;
 		if ($_POST[$qty] > 0)
 		{
-			$object->addline($_POST[$idl],$_POST[$qty]);
+			$object->addline($_POST[$idl], $_POST[$qty]);
 		}
 	}
 
@@ -130,7 +130,7 @@ if ($action == 'add')
 	}
 }
 
-else if ($action == 'confirm_valid' && $confirm == 'yes' &&
+elseif ($action == 'confirm_valid' && $confirm == 'yes' &&
     ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->expedition->livraison->creer))
     || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->expedition->livraison_advance->validate)))
 )
@@ -142,7 +142,7 @@ else if ($action == 'confirm_valid' && $confirm == 'yes' &&
 	{
 		$outputlangs = $langs;
 		$newlang = '';
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang = GETPOST('lang_id','aZ09');
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
 		if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
 		if (! empty($newlang)) {
 			$outputlangs = new Translate("", $conf);
@@ -152,7 +152,7 @@ else if ($action == 'confirm_valid' && $confirm == 'yes' &&
 		$ret = $object->fetch($id); // Reload to get new records
 
 		$result=$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
-		if ($result < 0) dol_print_error($db,$result);
+		if ($result < 0) dol_print_error($db, $result);
 	}
 }
 
@@ -176,8 +176,8 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->expeditio
 
 if ($action == 'setdate_livraison' && $user->rights->expedition->livraison->creer)
 {
-    $datedelivery=dol_mktime(GETPOST('liv_hour','int'), GETPOST('liv_min','int'), 0, GETPOST('liv_month','int'), GETPOST('liv_day','int'), GETPOST('liv_year','int'));
-    $result=$object->set_date_livraison($user,$datedelivery);
+    $datedelivery=dol_mktime(GETPOST('liv_hour', 'int'), GETPOST('liv_min', 'int'), 0, GETPOST('liv_month', 'int'), GETPOST('liv_day', 'int'), GETPOST('liv_year', 'int'));
+    $result=$object->set_date_livraison($user, $datedelivery);
     if ($result < 0)
     {
         $mesg='<div class="error">'.$object->error.'</div>';
@@ -234,7 +234,7 @@ if ($action == 'update_extras_line')
 			}
 		}
 
-		$ret = $object->update_line($object->lines[$i]->id,$array_options[$i]);	// extrafields update
+		$ret = $object->update_line($object->lines[$i]->id, $array_options[$i]);	// extrafields update
 		if ($ret < 0)
 		{
 			$mesg='<div class="error">'.$object->error.'</div>';
@@ -297,7 +297,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
  *	View
  */
 
-llxHeader('',$langs->trans('Delivery'),'Livraison');
+llxHeader('', $langs->trans('Delivery'), 'Livraison');
 
 $form = new Form($db);
 $formfile = new FormFile($db);
@@ -355,7 +355,7 @@ else
 			if ($action == 'delete')
 			{
 				$expedition_id = GETPOST("expid");
-				print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id.'&expid='.$expedition_id.'&backtopage='.urlencode($backtopage),$langs->trans("DeleteDeliveryReceipt"),$langs->trans("DeleteDeliveryReceiptConfirm",$object->ref),'confirm_delete','','',1);
+				print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id.'&expid='.$expedition_id.'&backtopage='.urlencode($backtopage), $langs->trans("DeleteDeliveryReceipt"), $langs->trans("DeleteDeliveryReceiptConfirm", $object->ref), 'confirm_delete', '', '', 1);
 			}
 
 			/*
@@ -363,7 +363,7 @@ else
 			 */
 			if ($action == 'valid')
 			{
-				print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans("ValidateDeliveryReceipt"),$langs->trans("ValidateDeliveryReceiptConfirm",$object->ref),'confirm_valid','','',1);
+				print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans("ValidateDeliveryReceipt"), $langs->trans("ValidateDeliveryReceiptConfirm", $object->ref), 'confirm_valid', '', '', 1);
 			}
 
 
@@ -459,7 +459,7 @@ else
 
 			// Client
 			print '<tr><td width="20%">'.$langs->trans("Customer").'</td>';
-			print '<td align="3">'.$soc->getNomUrl(1).'</td>';
+			print '<td colspan="3">'.$soc->getNomUrl(1).'</td>';
 			print "</tr>";
             */
 
@@ -470,7 +470,7 @@ else
 				$order=new Commande($db);
 				$order->fetch($expedition->origin_id);
 				print '<td colspan="3">';
-				print $order->getNomUrl(1,'commande');
+				print $order->getNomUrl(1, 'commande');
 				print "</td>\n";
 				print '</tr>';
 			}
@@ -480,14 +480,14 @@ else
 				$propal->fetch($expedition->origin_id);
 				print '<tr><td class="titlefield">'.$langs->trans("RefProposal").'</td>';
 				print '<td colspan="3">';
-				print $propal->getNomUrl(1,'expedition');
+				print $propal->getNomUrl(1, 'expedition');
 				print "</td>\n";
 				print '</tr>';
 			}
 
 			// Date
 			print '<tr><td class="titlefield">'.$langs->trans("DateCreation").'</td>';
-			print '<td colspan="3">'.dol_print_date($object->date_creation,'dayhour')."</td>\n";
+			print '<td colspan="3">'.dol_print_date($object->date_creation, 'dayhour')."</td>\n";
 			print '</tr>';
 
 			// Date delivery real / Received
@@ -496,7 +496,7 @@ else
 			print $langs->trans('DateReceived');
 			print '</td>';
 
-			if ($action != 'editdate_livraison') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryDate'),1).'</a></td>';
+			if ($action != 'editdate_livraison') print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryDate'), 1).'</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="2">';
 			if ($action == 'editdate_livraison')
@@ -510,7 +510,7 @@ else
 			}
 			else
 			{
-				print $object->date_delivery ? dol_print_date($object->date_delivery,'dayhour') : '&nbsp;';
+				print $object->date_delivery ? dol_print_date($object->date_delivery, 'dayhour') : '&nbsp;';
 			}
 			print '</td>';
 			print '</tr>';
@@ -521,8 +521,8 @@ else
 				print '<tr><td>';
 		        print '<table width="100%" class="nobordernopadding"><tr><td>';
 		        print $langs->trans('IncotermLabel');
-		        print '<td><td align="right">';
-		        if ($user->rights->expedition->livraison->creer) print '<a href="'.DOL_URL_ROOT.'/livaison/card.php?id='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
+		        print '<td><td class="right">';
+		        if ($user->rights->expedition->livraison->creer) print '<a href="'.DOL_URL_ROOT.'/livraison/card.php?id='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
 		        else print '&nbsp;';
 		        print '</td></tr></table>';
 		        print '</td>';
@@ -598,8 +598,8 @@ else
 
 				print '<tr class="liste_titre">';
 				print '<td>'.$langs->trans("Products").'</td>';
-				print '<td align="center">'.$langs->trans("QtyOrdered").'</td>';
-				print '<td align="center">'.$langs->trans("QtyReceived").'</td>';
+				print '<td class="center">'.$langs->trans("QtyOrdered").'</td>';
+				print '<td class="center">'.$langs->trans("QtyReceived").'</td>';
 				print "</tr>\n";
 			}
 			while ($i < $num_prod)
@@ -670,8 +670,8 @@ else
 						print "</td>\n";
 					}
 
-					print '<td align="center">' . $object->lines[$i]->qty_asked . '</td>';
-					print '<td align="center">' . $object->lines[$i]->qty_shipped . '</td>';
+					print '<td class="center">' . $object->lines[$i]->qty_asked . '</td>';
+					print '<td class="center">' . $object->lines[$i]->qty_shipped . '</td>';
 
 					print "</tr>";
 
@@ -753,7 +753,7 @@ else
 			$genallowed=$user->rights->expedition->livraison->lire;
 			$delallowed=$user->rights->expedition->livraison->creer;
 
-			print $formfile->showdocuments('livraison',$objectref,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang);
+			print $formfile->showdocuments('livraison', $objectref, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
 
 			/*
 		 	 * Linked object block (of linked shipment)

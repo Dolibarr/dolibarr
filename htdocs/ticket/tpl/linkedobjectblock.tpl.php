@@ -32,14 +32,14 @@ $langs = $GLOBALS['langs'];
 $langs->load('ticket');
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 echo '<br>';
-print_titre($langs->trans('RelatedTickets'));
+print load_fiche_titre($langs->trans('RelatedTickets'));
 ?>
 <table class="noborder" width="100%">
 <tr class="liste_titre">
     <td><?php echo $langs->trans("Subject"); ?></td>
-    <td align="center"><?php echo $langs->trans("DateCreation"); ?></td>
-    <td align="center"><?php echo $langs->trans("Customer"); ?></td>
-    <td align="center"><?php echo $langs->trans("Status"); ?></td>
+    <td class="center"><?php echo $langs->trans("DateCreation"); ?></td>
+    <td class="center"><?php echo $langs->trans("Customer"); ?></td>
+    <td class="center"><?php echo $langs->trans("Status"); ?></td>
 </tr>
 <?php
 foreach ($linkedObjectBlock as $object) {
@@ -50,13 +50,13 @@ foreach ($linkedObjectBlock as $object) {
     <?php echo img_object($langs->trans("ShowTicket"), "ticket") . ' ' . (! empty($object->subject) ? ' '.$object->subject : ''); ?>
         </a>
     </td>
-    <td align="center"><?php echo dol_print_date($object->datec, 'day'); ?></td>
+    <td class="center"><?php echo dol_print_date($object->datec, 'day'); ?></td>
     <?php
     $object->socid = $object->fk_soc;
     $object->fetch_thirdparty();
     ?>
-    <td align="center"><?php echo $object->thirdparty->getNomUrl(1); ?></td>
-    <td align="center"><?php echo $object->getLibstatut(2); ?></td>
+    <td class="center"><?php echo $object->thirdparty->getNomUrl(1); ?></td>
+    <td class="center"><?php echo $object->getLibstatut(2); ?></td>
 </tr>
 <?php } ?>
 </table>

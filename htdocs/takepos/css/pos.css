@@ -18,7 +18,6 @@ button.calcbutton {
 	width:24%;
 	height:24%;
 	font-weight: bold;
-	color: #555555;
 }
 
 button.calcbutton2 {
@@ -33,7 +32,6 @@ button.calcbutton2 {
 	width:24%;
 	height:24%;
 	font-weight: bold;
-	color: #555555;
 }
 
 button.calcbutton3 {
@@ -46,7 +44,7 @@ button.calcbutton3 {
 	text-align: center;
 	font-size:120%;
 	overflow: visible; /* removes extra width in IE */
-	width:12%;
+	width:24%;
 	height:24%;
 }
 
@@ -60,7 +58,7 @@ button.actionbutton {
 	text-align: center;
 	overflow: visible; /* removes extra width in IE */
 	width:33%;
-	height:33%;
+	height:24%;
 }
 
 div.wrapper{
@@ -70,11 +68,11 @@ div.wrapper{
 	height:25%;
 	margin:0;
 	padding:1px;
-	border: 0.1em solid;
-	box-shadow: 3px 3px 2px #888;
+	border: 2px solid #D1D1D1;
+	/*box-shadow: 3px 3px 3px #bbb; */
 	text-align: center;
 	box-sizing: border-box;
-	background-color:#f0eeee;
+	background-color:#fff;
 }
 
 div.wrapper2{
@@ -83,12 +81,12 @@ div.wrapper2{
 	width:12.5%;
 	height:25%;
 	margin:0;
-	padding:1px;
-	border: 0.1em solid;
-	box-shadow: 2px 2px 1px #888;
+	/* padding:1px; */
+	border: 2px solid #D1D1D1;
+	/*box-shadow: 3px 3px 3px #bbb;*/
 	text-align: center;
 	box-sizing: border-box;
-	background-color:#f0eeee;
+	background-color:#fff;
 }
 
 button:active{
@@ -103,11 +101,32 @@ div.description{
 	width:100%;
 	/* styling below */
 	background-color:black;
-	font-family: 'tahoma';
 	color:white;
 	opacity:0.8; /* transparency */
 	filter:alpha(opacity=80); /* IE transparency */
 	text-align:center;
+}
+
+div.catwatermark{
+	position:absolute;
+	top:3%;
+	left:3%;
+	width:20%;
+	background-color:black;
+	color:white;
+	text-align:center;
+	font-size: 20px;
+	display: none;
+	opacity: 0.8;
+}
+
+table.postablelines tr td {
+	line-height: unset;
+    padding-top: 3px;
+    padding-bottom: 3px;
+}
+.posinvoiceline td {
+    height: 40px !important;
 }
 
 @media only screen and (max-aspect-ratio: 6/4) {
@@ -143,7 +162,11 @@ div.description{
 	text-align: center;
 	box-sizing: border-box;
 	overflow: auto;
-	background-color:white;
+	/* background-color:white; */
+	padding-top: 0;
+	padding-bottom: 10px;
+	padding-right: 5px;
+	padding-left: 5px;
 }
 
 .div2{
@@ -151,8 +174,11 @@ div.description{
 	width: 33%;
 	font-size: 0;
 	float: left;
-	padding-left: 10px;
 	box-sizing: border-box;
+	padding-top: 0;
+	padding-bottom: 10px;
+	padding-right: 5px;
+	padding-left: 5px;
 }
 
 .div3{
@@ -160,6 +186,10 @@ div.description{
 	width: 33%;
 	float: left;
 	box-sizing: border-box;
+	padding-top: 0;
+	padding-bottom: 10px;
+	padding-right: 5px;
+	padding-left: 5px;
 }
 
 .div4{
@@ -168,7 +198,10 @@ div.description{
 	float: left;
 	box-sizing: border-box;
 	font-size: 6px;
-	padding:3px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	padding-right: 5px;
+	padding-left: 5px;
 }
 
 .div5{
@@ -177,13 +210,53 @@ div.description{
 	float: left;
 	box-sizing: border-box;
 	font-size: 6px;
-	padding:10px;
+	padding-top:10px;
+	padding-bottom:10px;
+	padding-right: 5px;
+	padding-left: 5px;
+}
+
+tr.selected, tr.selected td {
+    /* font-weight: bold; */
+	background-color: rgb(240,230,210) !important;
+}
+.order {
+    color: limegreen;
+}
+
+.colorwhite {
+	color: white;
+}
+.colorred {
+	color: red;
+}
+.colorgreen {
+	color: green;
+}
+.poscolordelete {
+	color: #844;
+}
+.poscolorgreen {
+	color: #060;
+}
+.poscolorblue {
+	color: #006;
+}
+
+.centerinmiddle {
+	transform: translate(0,-50%);
+    position: relative;
+    top: 50%;
+}
+.trunc {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 p.description_content{
 	padding:10px;
 	margin:0px;
-
 }
 
 @media screen and (min-width: 892px) {
@@ -237,5 +310,14 @@ p.description_content{
 	}
 	.invoice{
 		font-size: 10px;
+	}
+}
+
+@media screen and (max-width: 767px){
+	div.wrapper {
+		width: 50%;
+	}
+	div.wrapper2 {
+		width: 25%;
 	}
 }

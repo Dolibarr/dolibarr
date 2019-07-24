@@ -37,7 +37,7 @@ class modDeplacement extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		global $conf, $user;
 
@@ -47,7 +47,7 @@ class modDeplacement extends DolibarrModules
 		$this->family = "hr";
 		$this->module_position = '41';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = preg_replace('/^mod/i','',get_class($this));
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "Gestion des notes de frais et deplacements";		// Si traduction Module75Desc non trouvee
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or 'dolibarr_deprecated' or version
@@ -139,7 +139,7 @@ class modDeplacement extends DolibarrModules
     		$childids = $user->getAllChildIds();
     		$childids[]=$user->id;
 
-    		if (empty($user->rights->deplacement->readall) && empty($user->rights->deplacement->lire_tous)) $this->export_sql_end[$r] .=' AND d.fk_user IN ('.join(',',$childids).')';
+    		if (empty($user->rights->deplacement->readall) && empty($user->rights->deplacement->lire_tous)) $this->export_sql_end[$r] .=' AND d.fk_user IN ('.join(',', $childids).')';
 		}
 	}
 
@@ -152,13 +152,13 @@ class modDeplacement extends DolibarrModules
      *      @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
 	 */
-	function init($options='')
+	public function init($options = '')
 	{
 		// Permissions
 		$this->remove($options);
 
 		$sql = array();
 
-		return $this->_init($sql,$options);
+		return $this->_init($sql, $options);
 	}
 }

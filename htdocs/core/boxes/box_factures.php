@@ -30,20 +30,20 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_factures extends ModeleBoxes
 {
-	var $boxcode="lastcustomerbills";
-	var $boximg="object_bill";
-	var $boxlabel="BoxLastCustomerBills";
-	var $depends = array("facture");
+    public $boxcode="lastcustomerbills";
+    public $boximg="object_bill";
+    public $boxlabel="BoxLastCustomerBills";
+    public $depends = array("facture");
 
 	/**
      * @var DoliDB Database handler.
      */
     public $db;
-    
-	var $param;
 
-	var $info_box_head = array();
-	var $info_box_contents = array();
+    public $param;
+
+    public $info_box_head = array();
+    public $info_box_contents = array();
 
 
 	/**
@@ -52,7 +52,7 @@ class box_factures extends ModeleBoxes
 	 *  @param  DoliDB  $db         Database handler
 	 *  @param  string  $param      More parameters
 	 */
-	function __construct($db,$param)
+	public function __construct($db, $param)
 	{
 	    global $user;
 
@@ -67,7 +67,7 @@ class box_factures extends ModeleBoxes
 	 *  @param	int		$max        Maximum number of records to load
      *  @return	void
 	 */
-	function loadBox($max=5)
+	public function loadBox($max = 5)
 	{
 		global $conf, $user, $langs, $db;
 
@@ -81,15 +81,15 @@ class box_factures extends ModeleBoxes
 
         $langs->load("bills");
 
-		$text = $langs->trans("BoxTitleLast".($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE?"":"Modified")."CustomerBills",$max);
+		$text = $langs->trans("BoxTitleLast".($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE?"":"Modified")."CustomerBills", $max);
 		$this->info_box_head = array(
-				'text' => $text,
-				'limit'=> dol_strlen($text)
+			'text' => $text,
+			'limit'=> dol_strlen($text)
 		);
 
         if ($user->rights->facture->lire) {
             $sql = "SELECT f.rowid as facid";
-            $sql.= ", f.facnumber, f.type, f.total as total_ht";
+            $sql.= ", f.ref, f.type, f.total as total_ht";
             $sql.= ", f.tva as total_tva";
             $sql.= ", f.total_ttc";
             $sql.= ", f.datef as df";
@@ -100,11 +100,11 @@ class box_factures extends ModeleBoxes
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			$sql.= ")";
 			$sql.= " WHERE f.fk_soc = s.rowid";
-			$sql.= " AND f.entity = ".$conf->entity;
+			$sql.= " AND f.entity IN (".getEntity('invoice').")";
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 			if($user->societe_id)	$sql.= " AND s.rowid = ".$user->societe_id;
-            if ($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) $sql.= " ORDER BY f.datef DESC, f.facnumber DESC ";
-            else $sql.= " ORDER BY f.tms DESC, f.facnumber DESC ";
+            if ($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) $sql.= " ORDER BY f.datef DESC, f.ref DESC ";
+            else $sql.= " ORDER BY f.tms DESC, f.ref DESC ";
 			$sql.= $db->plimit($max, 0);
 
 			$result = $db->query($sql);
@@ -123,7 +123,7 @@ class box_factures extends ModeleBoxes
                     $datem = $db->jdate($objp->tms);
 
                     $facturestatic->id = $objp->facid;
-                    $facturestatic->ref = $objp->facnumber;
+                    $facturestatic->ref = $objp->ref;
                     $facturestatic->type = $objp->type;
                     $facturestatic->total_ht = $objp->total_ht;
                     $facturestatic->total_tva = $objp->total_tva;
@@ -145,11 +145,11 @@ class box_factures extends ModeleBoxes
 
 					$late = '';
 					if ($facturestatic->hasDelay()) {
-                        $late = img_warning(sprintf($l_due_date, dol_print_date($datelimite,'day')));
+                        $late = img_warning(sprintf($l_due_date, dol_print_date($datelimite, 'day')));
                     }
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => '',
+                        'td' => 'class="nowraponall"',
                         'text' => $facturestatic->getNomUrl(1),
                         'text2'=> $late,
                         'asis' => 1,
@@ -162,18 +162,18 @@ class box_factures extends ModeleBoxes
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'class="right"',
+                        'td' => 'class="right nowraponall"',
                         'text' => price($objp->total_ht, 0, $langs, 0, -1, -1, $conf->currency),
                     );
 
                     $this->info_box_contents[$line][] = array(
                         'td' => 'class="right"',
-                        'text' => dol_print_date($date,'day'),
+                        'text' => dol_print_date($date, 'day'),
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="right" width="18"',
-                        'text' => $facturestatic->LibStatut($objp->paye,$objp->fk_statut,3),
+                        'td' => 'class="right" width="18"',
+                        'text' => $facturestatic->LibStatut($objp->paye, $objp->fk_statut, 3),
                     );
 
                     $line++;
@@ -181,7 +181,7 @@ class box_factures extends ModeleBoxes
 
                 if ($num==0)
                     $this->info_box_contents[$line][0] = array(
-                        'td' => 'align="center"',
+                        'td' => 'class="center"',
                         'text'=>$langs->trans("NoRecordedInvoices"),
                     );
 
@@ -195,7 +195,7 @@ class box_factures extends ModeleBoxes
             }
         } else {
             $this->info_box_contents[0][0] = array(
-                'td' => 'align="left" class="nohover opacitymedium"',
+                'td' => 'class="nohover opacitymedium left"',
                 'text' => $langs->trans("ReadPermissionNotAllowed")
             );
         }
@@ -209,7 +209,7 @@ class box_factures extends ModeleBoxes
 	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	string
 	 */
-    function showBox($head = null, $contents = null, $nooutput=0)
+    public function showBox($head = null, $contents = null, $nooutput = 0)
     {
 		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}

@@ -39,7 +39,7 @@ if (!$user->admin) accessforbidden();
 
 $def = array();
 $lastexternalrss=0;
-$action=GETPOST('action','aZ09');
+$action=GETPOST('action', 'aZ09');
 
 
 /*
@@ -55,7 +55,7 @@ if ($result)
 {
     while ($obj = $db->fetch_object($result))
     {
-        preg_match('/([0-9]+)$/i',$obj->name,$reg);
+        preg_match('/([0-9]+)$/i', $obj->name, $reg);
         if ($reg[1] && $reg[1] > $lastexternalrss) $lastexternalrss = $reg[1];
     }
 }
@@ -151,7 +151,7 @@ if ($_POST["delete"])
 				if (! $resql)
 				{
 					$db->rollback();
-					dol_print_error($db,"sql=".$sql);
+					dol_print_error($db, "sql=".$sql);
 					exit;
 				}
 
@@ -163,13 +163,13 @@ if ($_POST["delete"])
 		else
 		{
 			$db->rollback();
-			dol_print_error($db,"sql=".$sql);
+			dol_print_error($db, "sql=".$sql);
 			exit;
         }
 
 
-		$result1=dolibarr_del_const($db,"EXTERNAL_RSS_TITLE_" . GETPOST("norss", 'int'), $conf->entity);
-		if ($result1) $result2=dolibarr_del_const($db,"EXTERNAL_RSS_URLRSS_" . GETPOST("norss", 'int'), $conf->entity);
+		$result1=dolibarr_del_const($db, "EXTERNAL_RSS_TITLE_".GETPOST("norss", 'int'), $conf->entity);
+		if ($result1) $result2=dolibarr_del_const($db, "EXTERNAL_RSS_URLRSS_".GETPOST("norss", 'int'), $conf->entity);
 
         if ($result1 && $result2)
         {
@@ -190,7 +190,7 @@ if ($_POST["delete"])
  * View
  */
 
-llxHeader('',$langs->trans("ExternalRSSSetup"));
+llxHeader('', $langs->trans("ExternalRSSSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("ExternalRSSSetup"), $linkback, 'title_setup');
@@ -242,7 +242,7 @@ if ($resql)
 	{
 		$obj = $db->fetch_object($resql);
 
-		preg_match('/^([0-9]+)/i',$obj->note,$reg);
+		preg_match('/^([0-9]+)/i', $obj->note, $reg);
 		$idrss = $reg[1];
 		$keyrsstitle="EXTERNAL_RSS_TITLE_".$idrss;
 		$keyrssurl="EXTERNAL_RSS_URLRSS_".$idrss;
@@ -259,7 +259,7 @@ if ($resql)
 
 		print "<tr class=\"liste_titre\">";
 		print "<td>".$langs->trans("RSS")." ".($i+1)."</td>";
-        print '<td align="right">';
+        print '<td class="right">';
         print "<input type=\"submit\" class=\"button\" name=\"modify\" value=\"".$langs->trans("Modify")."\">";
 		print " &nbsp; ";
 		print "<input type=\"submit\" class=\"button\" name=\"delete\" value=\"".$langs->trans("Delete")."\">";

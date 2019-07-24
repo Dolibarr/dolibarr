@@ -51,9 +51,9 @@ function opensurvey_prepare_head(Opensurveysondage $object)
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname);   												to remove a tab
-    complete_head_from_modules($conf,$langs,$object,$head,$h,'opensurveypoll');
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'opensurveypoll');
 
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'opensurveypoll', 'remove');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'opensurveypoll', 'remove');
 
 	return $head;
 }
@@ -69,7 +69,7 @@ function opensurvey_prepare_head(Opensurveysondage $object)
  * @param 	array  		$arrayofcss			Array of complementary css files
  * @return	void
  */
-function llxHeaderSurvey($title, $head="", $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='')
+function llxHeaderSurvey($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '')
 {
 	global $conf, $mysoc;
 
@@ -121,11 +121,11 @@ function get_server_name()
 {
 	global $dolibarr_main_url_root;
 
-	$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+	$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
 	$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
 	//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
-	$url=$urlwithouturlroot.dol_buildpath('/opensurvey/',1);
+	$url=$urlwithouturlroot.dol_buildpath('/opensurvey/', 1);
 
 	if (!preg_match("|/$|", $url)) {
 		$url = $url."/";
@@ -207,6 +207,7 @@ function ajouter_sondage()
 	$opensurveysondage = new Opensurveysondage($db);
 	$opensurveysondage->id_sondage = $sondage;
 	$opensurveysondage->commentaires = $_SESSION['commentaires'];
+	$opensurveysondage->description = $_SESSION['commentaires'];
 	$opensurveysondage->mail_admin = $_SESSION['adresse'];
 	$opensurveysondage->nom_admin = $_SESSION['nom'];
 	$opensurveysondage->titre = $_SESSION['titre'];
@@ -234,7 +235,7 @@ function ajouter_sondage()
 	unset($_SESSION['totalchoixjour']);
 	unset($_SESSION['champdatefin']);
 
-	$urlback=dol_buildpath('/opensurvey/card.php',1).'?id='.$sondage;
+	$urlback=dol_buildpath('/opensurvey/card.php', 1).'?id='.$sondage;
 
 	header("Location: ".$urlback);
 	exit();

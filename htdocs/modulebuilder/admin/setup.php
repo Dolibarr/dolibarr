@@ -35,10 +35,17 @@ $backtopage = GETPOST('backtopage', 'alpha');
 /*
  * Actions
  */
-if($action=="update"){
-   $res1=dolibarr_set_const($db, 'MODULEBUILDER_SPECIFIC_README', GETPOST('MODULEBUILDER_SPECIFIC_README'), 'chaine', 0, '', $conf->entity);
-   if ($res1 < 0)
-    {
+if ($action=="update")
+{
+    $res1=dolibarr_set_const($db, 'MODULEBUILDER_SPECIFIC_README', GETPOST('MODULEBUILDER_SPECIFIC_README', 'none'), 'chaine', 0, '', $conf->entity);
+    $res2=dolibarr_set_const($db, 'MODULEBUILDER_ASCIIDOCTOR', GETPOST('MODULEBUILDER_ASCIIDOCTOR', 'nohtml'), 'chaine', 0, '', $conf->entity);
+    $res3=dolibarr_set_const($db, 'MODULEBUILDER_ASCIIDOCTORPDF', GETPOST('MODULEBUILDER_ASCIIDOCTORPDF', 'nohtml'), 'chaine', 0, '', $conf->entity);
+    $res4=dolibarr_set_const($db, 'MODULEBUILDER_SPECIFIC_EDITOR_NAME', GETPOST('MODULEBUILDER_SPECIFIC_EDITOR_NAME', 'nohtml'), 'chaine', 0, '', $conf->entity);
+    $res5=dolibarr_set_const($db, 'MODULEBUILDER_SPECIFIC_EDITOR_URL', GETPOST('MODULEBUILDER_SPECIFIC_EDITOR_URL', 'nohtml'), 'chaine', 0, '', $conf->entity);
+    $res6=dolibarr_set_const($db, 'MODULEBUILDER_SPECIFIC_FAMILY', GETPOST('MODULEBUILDER_SPECIFIC_FAMILY', 'nohtml'), 'chaine', 0, '', $conf->entity);
+    $res7=dolibarr_set_const($db, 'MODULEBUILDER_SPECIFIC_AUTHOR', GETPOST('MODULEBUILDER_SPECIFIC_AUTHOR', 'html'), 'chaine', 0, '', $conf->entity);
+    $res8=dolibarr_set_const($db, 'MODULEBUILDER_SPECIFIC_VERSION', GETPOST('MODULEBUILDER_SPECIFIC_VERSION', 'nohtml'), 'chaine', 0, '', $conf->entity);
+    if ($res1 < 0 || $res2 < 0 || $res3 < 0 || $res4 < 0 || $res5 < 0 || $res6 < 0 || $res7 < 0 || $res8 < 0) {
         setEventMessages('ErrorFailedToSaveDate', null, 'errors');
         $db->rollback();
     }
@@ -82,10 +89,7 @@ $form = new Form($db);
 
 llxHeader('', $langs->trans("ModulebuilderSetup"));
 
-$linkback = '';
-if (GETPOST('withtab', 'alpha')) {
-    $linkback = '<a href="' . ($backtopage ? $backtopage : DOL_URL_ROOT . '/admin/modules.php') . '">' . $langs->trans("BackToModuleList") . '</a>';
-}
+$linkback = '<a href="' . ($backtopage ? $backtopage : DOL_URL_ROOT . '/admin/modules.php') . '">' . $langs->trans("BackToModuleList") . '</a>';
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -104,7 +108,7 @@ print '<br>';
 print '<table class="noborder" width="100%">';
 
 print '<tr class="liste_titre">';
-print '<td>' . $langs->trans("Key") . '</td>';
+print '<td style="width: 30%">' . $langs->trans("Key") . '</td>';
 print '<td>' . $langs->trans("Value") . '</td>';
 print "</tr>\n";
 
@@ -115,7 +119,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 
 	print '<tr class="oddeven">';
 	print '<td>' . $langs->trans("UseAboutPage") . '</td>';
-	print '<td align="center">';
+	print '<td class="center">';
 	if ($conf->use_javascript_ajax) {
 	    print ajax_constantonoff('MODULEBUILDER_USE_ABOUT');
 	} else {
@@ -127,19 +131,40 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 	}
 	print '</td></tr>';
 
-	print '<tr class="oddeven">';
-	print '<td>' . $langs->trans("UseDocFolder") . '</td>';
-	print '<td align="center">';
-	if ($conf->use_javascript_ajax) {
-	    print ajax_constantonoff('MODULEBUILDER_USE_DOCFOLDER');
-	} else {
-	    if (empty($conf->global->MODULEBUILDER_USE_DOCFOLDER)) {
-	        print '<a href="' . $_SERVER['PHP_SELF'] . '?action=set_MODULEBUILDER_USE_DOCFOLDER">' . img_picto($langs->trans("Disabled"), 'off') . '</a>';
-	    } else {
-	        print '<a href="' . $_SERVER['PHP_SELF'] . '?action=del_MODULEBUILDER_USE_DOCFOLDER">' . img_picto($langs->trans("Enabled"), 'on') . '</a>';
-	    }
-	}
-	print '</td></tr>';
+    print '<tr class="oddeven">';
+    print '<td class="tdtop">' . $langs->trans("UseSpecificEditorName") . '</td>';
+    print '<td>';
+    print '<input type="text" name="MODULEBUILDER_SPECIFIC_EDITOR_NAME" value="'.$conf->global->MODULEBUILDER_SPECIFIC_EDITOR_NAME.'">';
+    print '</td>';
+    print '</tr>';
+
+    print '<tr class="oddeven">';
+    print '<td class="tdtop">' . $langs->trans("UseSpecificEditorURL") . '</td>';
+    print '<td>';
+    print '<input type="text" name="MODULEBUILDER_SPECIFIC_EDITOR_URL" value="'.$conf->global->MODULEBUILDER_SPECIFIC_EDITOR_URL.'">';
+    print '</td>';
+    print '</tr>';
+
+    print '<tr class="oddeven">';
+    print '<td class="tdtop">' . $langs->trans("UseSpecificFamily") . '</td>';
+    print '<td>';
+    print '<input type="text" name="MODULEBUILDER_SPECIFIC_FAMILY" value="'.$conf->global->MODULEBUILDER_SPECIFIC_FAMILY.'">';
+    print '</td>';
+    print '</tr>';
+
+    print '<tr class="oddeven">';
+    print '<td class="tdtop">' . $langs->trans("UseSpecificAuthor") . '</td>';
+    print '<td>';
+    print '<input type="text" name="MODULEBUILDER_SPECIFIC_AUTHOR" value="'.$conf->global->MODULEBUILDER_SPECIFIC_AUTHOR.'">';
+    print '</td>';
+    print '</tr>';
+
+    print '<tr class="oddeven">';
+    print '<td class="tdtop">' . $langs->trans("UseSpecificVersion") . '</td>';
+    print '<td>';
+    print '<input type="text" name="MODULEBUILDER_SPECIFIC_VERSION" value="'.$conf->global->MODULEBUILDER_SPECIFIC_VERSION.'">';
+    print '</td>';
+    print '</tr>';
 }
 
 print '<tr class="oddeven">';
@@ -148,6 +173,23 @@ print '<td>';
 print '<textarea class="centpercent" rows="20" name="MODULEBUILDER_SPECIFIC_README">'.$conf->global->MODULEBUILDER_SPECIFIC_README.'</textarea>';
 print '</td>';
 print '</tr>';
+
+print '<tr class="oddeven">';
+print '<td class="tdtop">' . $langs->trans("AsciiToHtmlConverter") . '</td>';
+print '<td>';
+print '<input type="text" name="MODULEBUILDER_ASCIIDOCTOR" value="'.$conf->global->MODULEBUILDER_ASCIIDOCTOR.'">';
+print ' '.$langs->trans("Example").': asciidoc, asciidoctor';
+print '</td>';
+print '</tr>';
+
+print '<tr class="oddeven">';
+print '<td class="tdtop">' . $langs->trans("AsciiToPdfConverter") . '</td>';
+print '<td>';
+print '<input type="text" name="MODULEBUILDER_ASCIIDOCTORPDF" value="'.$conf->global->MODULEBUILDER_ASCIIDOCTORPDF.'">';
+print ' '.$langs->trans("Example").': asciidoctor-pdf';
+print '</td>';
+print '</tr>';
+
 print '</table>';
 
 print '<center><input type="submit" class="button" value="'.$langs->trans("Save").'" name="Button"></center>';

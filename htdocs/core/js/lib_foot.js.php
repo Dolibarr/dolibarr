@@ -21,13 +21,13 @@
  * \brief      File that include javascript functions (included if option use_javascript activated)
  */
 
-if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC','1');
-if (! defined('NOCSRFCHECK'))     define('NOCSRFCHECK',1);
-if (! defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL',1);
-if (! defined('NOLOGIN'))         define('NOLOGIN',1);
-if (! defined('NOREQUIREMENU'))   define('NOREQUIREMENU',1);
-if (! defined('NOREQUIREHTML'))   define('NOREQUIREHTML',1);
-if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX','1');
+if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC', '1');
+if (! defined('NOCSRFCHECK'))     define('NOCSRFCHECK', 1);
+if (! defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL', 1);
+if (! defined('NOLOGIN'))         define('NOLOGIN', 1);
+if (! defined('NOREQUIREMENU'))   define('NOREQUIREMENU', 1);
+if (! defined('NOREQUIREHTML'))   define('NOREQUIREHTML', 1);
+if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX', '1');
 
 session_cache_limiter('public');
 
@@ -53,6 +53,7 @@ if (empty($conf->dol_no_mouse_hover))
 				hide: { delay: 50 },
 				tooltipClass: "mytooltip",
 				content: function () {
+                    console.log("Return title for popup");
             		return $(this).prop(\'title\');		/* To force to get title as is */
           		}
 			});'."\n";
@@ -162,4 +163,3 @@ print '
 					}
 				});
 			});'."\n";
-

@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (c) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018      Frédéric France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,9 +37,9 @@ $HEIGHT=DolGraph::getDefaultGraphSizeForStats('height');
 $mode=GETPOST("mode")?GETPOST("mode"):'customer';
 $object_status=GETPOST('object_status');
 
-$userid=GETPOST('userid','int');
-$socid=GETPOST('socid','int'); if ($socid < 0) $socid=0;
-$id = GETPOST('id','int');
+$userid=GETPOST('userid', 'int');
+$socid=GETPOST('socid', 'int'); if ($socid < 0) $socid=0;
+$id = GETPOST('id', 'int');
 
 // Security check
 if ($user->societe_id > 0)
@@ -48,7 +48,7 @@ if ($user->societe_id > 0)
 	$socid = $user->societe_id;
 }
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'expensereport', $id,'');
+$result = restrictedArea($user, 'expensereport', $id, '');
 
 $nowyear=strftime("%Y", dol_now());
 $year = GETPOST('year')>0?GETPOST('year'):$nowyear;
@@ -80,7 +80,7 @@ if ($object_status != '' && $object_status >= -1) $stats->where .= ' AND e.fk_st
 // Build graphic number of object
 // $data = array(array('Lib',val1,val2,val3),...)
 //print "$endyear, $startyear";
-$data = $stats->getNbByMonthWithPrevYear($endyear,$startyear);
+$data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
 //var_dump($data);
 
 $filenamenb = $dir."/tripsexpensesnbinyear-".$year.".png";
@@ -109,11 +109,11 @@ if (! $mesg)
 	$px1->mode='depth';
 	$px1->SetTitle($langs->trans("NumberByMonth"));
 
-	$px1->draw($filenamenb,$fileurlnb);
+	$px1->draw($filenamenb, $fileurlnb);
 }
 
 // Build graphic amount of object
-$data = $stats->getAmountByMonthWithPrevYear($endyear,$startyear);
+$data = $stats->getAmountByMonthWithPrevYear($endyear, $startyear);
 //var_dump($data);
 // $data = array(array('Lib',val1,val2,val3),...)
 
@@ -133,7 +133,7 @@ if (! $mesg)
 	}
 	$px2->SetLegend($legend);
 	$px2->SetMaxValue($px2->GetCeilMaxValue());
-	$px2->SetMinValue(min(0,$px2->GetFloorMinValue()));
+	$px2->SetMinValue(min(0, $px2->GetFloorMinValue()));
 	$px2->SetWidth($WIDTH);
 	$px2->SetHeight($HEIGHT);
 	$px2->SetYLabel($langs->trans("Amount"));
@@ -143,7 +143,7 @@ if (! $mesg)
 	$px2->mode='depth';
 	$px2->SetTitle($langs->trans("AmountTotal"));
 
-	$px2->draw($filenameamount,$fileurlamount);
+	$px2->draw($filenameamount, $fileurlamount);
 }
 
 
@@ -185,7 +185,7 @@ if (! $mesg)
     $px3->mode='depth';
     $px3->SetTitle($langs->trans("AmountAverage"));
 
-    $px3->draw($filename_avg,$fileurl_avg);
+    $px3->draw($filename_avg, $fileurl_avg);
 }
 
 
@@ -205,7 +205,7 @@ $head[$h][1] = $langs->trans("ByMonthYear");
 $head[$h][2] = 'byyear';
 $h++;
 
-complete_head_from_modules($conf,$langs,null,$head,$h,'trip_stats');
+complete_head_from_modules($conf, $langs, null, $head, $h, 'trip_stats');
 
 dol_fiche_head($head, 'byyear', $langs->trans("Statistics"), -1);
 
@@ -221,8 +221,7 @@ print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->tra
 // Company
 /*
 print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
-$filter='';
-print $form->select_company($socid,'socid',$filter,1,1,0,array(),0,'','style="width: 95%"');
+print $form->select_company($socid,'socid','',1,1,0,array(),0,'','style="width: 95%"');
 print '</td></tr>';
 */
 // User
@@ -232,17 +231,17 @@ if (empty($user->rights->expensereport->readall) && empty($user->rights->expense
 print $form->select_dolusers($userid, 'userid', 1, '', 0, $include, '', 0, 0, 0, '', 0, '', 'maxwidth300');
 print '</td></tr>';
 // Status
-print '<tr><td align="left">'.$langs->trans("Status").'</td><td align="left">';
+print '<tr><td class="left">'.$langs->trans("Status").'</td><td class="left">';
 $liststatus=$tmpexpensereport->statuts;
-print $form->selectarray('object_status', $liststatus, GETPOST('object_status'), -4, 0, 0, '', 1);
+print $form->selectarray('object_status', $liststatus, GETPOST('object_status', 'int'), -4, 0, 0, '', 1);
 print '</td></tr>';
 // Year
 print '<tr><td>'.$langs->trans("Year").'</td><td>';
-if (! in_array($year,$arrayyears)) $arrayyears[$year]=$year;
+if (! in_array($year, $arrayyears)) $arrayyears[$year]=$year;
 arsort($arrayyears);
-print $form->selectarray('year',$arrayyears,$year,0);
+print $form->selectarray('year', $arrayyears, $year, 0);
 print '</td></tr>';
-print '<tr><td align="center" colspan="2"><input type="submit" name="submit" class="button" value="'.$langs->trans("Refresh").'"></td></tr>';
+print '<tr><td class="center" colspan="2"><input type="submit" name="submit" class="button" value="'.$langs->trans("Refresh").'"></td></tr>';
 print '</table>';
 print '</form>';
 print '<br><br>';
@@ -250,10 +249,10 @@ print '<br><br>';
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre" height="24">';
-print '<td align="center">'.$langs->trans("Year").'</td>';
-print '<td align="right">'.$langs->trans("Number").'</td>';
-print '<td align="right">'.$langs->trans("AmountTotal").'</td>';
-print '<td align="right">'.$langs->trans("AmountAverage").'</td>';
+print '<td class="center">'.$langs->trans("Year").'</td>';
+print '<td class="right">'.$langs->trans("Number").'</td>';
+print '<td class="right">'.$langs->trans("AmountTotal").'</td>';
+print '<td class="right">'.$langs->trans("AmountAverage").'</td>';
 print '</tr>';
 
 $oldyear=0;
@@ -265,19 +264,19 @@ foreach ($data as $val)
 		$oldyear--;
 
 		print '<tr class="oddeven" height="24">';
-		print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.'">'.$oldyear.'</a></td>';
-		print '<td align="right">0</td>';
-		print '<td align="right">0</td>';
-		print '<td align="right">0</td>';
+		print '<td class="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.'">'.$oldyear.'</a></td>';
+		print '<td class="right">0</td>';
+		print '<td class="right">0</td>';
+		print '<td class="right">0</td>';
 		print '</tr>';
 	}
 
 
 	print '<tr class="oddeven" height="24">';
-	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.'">'.$year.'</a></td>';
-	print '<td align="right">'.$val['nb'].'</td>';
-	print '<td align="right">'.price(price2num($val['total'],'MT'),1).'</td>';
-	print '<td align="right">'.price(price2num($val['avg'],'MT'),1).'</td>';
+	print '<td class="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.'">'.$year.'</a></td>';
+	print '<td class="right">'.$val['nb'].'</td>';
+	print '<td class="right">'.price(price2num($val['total'], 'MT'), 1).'</td>';
+	print '<td class="right">'.price(price2num($val['avg'], 'MT'), 1).'</td>';
 	print '</tr>';
 	$oldyear=$year;
 }
@@ -289,7 +288,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 // Show graphs
-print '<table class="border" width="100%"><tr class="pair nohover"><td align="center">';
+print '<table class="border" width="100%"><tr class="pair nohover"><td class="center">';
 if ($mesg) { print $mesg; }
 else {
     print $px1->show();

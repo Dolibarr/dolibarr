@@ -36,14 +36,14 @@ $langs->loadLangs(array('products', 'languages'));
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
-$action=GETPOST('action','alpha');
-$cancel=GETPOST('cancel','alpha');
+$action=GETPOST('action', 'alpha');
+$cancel=GETPOST('cancel', 'alpha');
 
 // Security check
 $fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref : ''));
 $fieldtype = (! empty($ref) ? 'ref' : 'rowid');
 if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user,'produit|service',$fieldvalue,'product&product','','',$fieldtype);
+$result=restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 
 
 /*
@@ -56,11 +56,11 @@ if ($cancel == $langs->trans("Cancel"))
 	$action = '';
 }
 
-if ($action == 'delete' && GETPOST('langtodelete','alpha'))
+if ($action == 'delete' && GETPOST('langtodelete', 'alpha'))
 {
 	$object = new Product($db);
 	$object->fetch($id);
-	$object->delMultiLangs(GETPOST('langtodelete','alpha'), $user);
+	$object->delMultiLangs(GETPOST('langtodelete', 'alpha'), $user);
 }
 
 // Add translation
@@ -107,7 +107,7 @@ $cancel != $langs->trans("Cancel") &&
 	$object->fetch($id);
 	$current_lang = $langs->getDefaultLang();
 
-	foreach ( $object->multilangs as $key => $value ) // enregistrement des nouvelles valeurs dans l'objet
+	foreach ($object->multilangs as $key => $value) // enregistrement des nouvelles valeurs dans l'objet
 	{
 		if ( $key == $current_lang )
 		{
@@ -141,7 +141,7 @@ $cancel != $langs->trans("Cancel") &&
 {
 	$object = new Product($db);
 	$object->fetch($id);
-	$langtodelete=GETPOST('langdel','alpha');
+	$langtodelete=GETPOST('langdel', 'alpha');
 
 
 	if ( $object->delMultiLangs($langtodelete, $user) > 0 )
@@ -156,7 +156,7 @@ $cancel != $langs->trans("Cancel") &&
 }
 
 $object = new Product($db);
-$result = $object->fetch($id,$ref);
+$result = $object->fetch($id, $ref);
 
 
 /*
@@ -165,7 +165,7 @@ $result = $object->fetch($id,$ref);
 
 $title = $langs->trans('ProductServiceCard');
 $helpurl = '';
-$shortlabel = dol_trunc($object->label,16);
+$shortlabel = dol_trunc($object->label, 16);
 if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT))
 {
 	$title = $langs->trans('Product')." ". $shortlabel ." - ".$langs->trans('Translation');
@@ -203,7 +203,7 @@ dol_fiche_head($head, 'translation', $titre, 0, $picto);
 $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 $shownav = 1;
-if ($user->societe_id && ! in_array('product', explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+if ($user->societe_id && ! in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
 
 dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref', '', '', '', 0, '', '', 1);
 
@@ -277,7 +277,7 @@ if ($action == 'edit')
 
 	print '</form>';
 }
-else if ($action != 'add')
+elseif ($action != 'add')
 {
 	if (! empty($object->multilangs))
 	{
@@ -317,13 +317,13 @@ if ($action == 'add' && ($user->rights->produit->creer || $user->rights->service
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="vadd">';
-	print '<input type="hidden" name="id" value="'.GETPOST("id",'int').'">';
+	print '<input type="hidden" name="id" value="'.GETPOST("id", 'int').'">';
 
 	dol_fiche_head();
 
 	print '<table class="border" width="100%">';
 	print '<tr><td class="tdtop titlefieldcreate fieldrequired">'.$langs->trans('Language').'</td><td>';
-    print $formadmin->select_language('','forcelangprod',0,$object->multilangs,1);
+    print $formadmin->select_language('', 'forcelangprod', 0, $object->multilangs, 1);
 	print '</td></tr>';
 	print '<tr><td class="tdtop fieldrequired">'.$langs->trans('Label').'</td><td><input name="libelle" size="40"></td></tr>';
 	print '<tr><td class="tdtop">'.$langs->trans('Description').'</td><td>';

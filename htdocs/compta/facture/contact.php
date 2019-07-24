@@ -38,11 +38,11 @@ if (! empty($conf->projet->enabled)) {
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'companies'));
 
-$id     = (GETPOST('id')?GETPOST('id','int'):GETPOST('facid','int'));  // For backward compatibility
-$ref    = GETPOST('ref','alpha');
-$lineid = GETPOST('lineid','int');
-$socid  = GETPOST('socid','int');
-$action = GETPOST('action','alpha');
+$id     = (GETPOST('id')?GETPOST('id', 'int'):GETPOST('facid', 'int'));  // For backward compatibility
+$ref    = GETPOST('ref', 'alpha');
+$lineid = GETPOST('lineid', 'int');
+$socid  = GETPOST('socid', 'int');
+$action = GETPOST('action', 'alpha');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -61,7 +61,7 @@ if ($action == 'addcontact' && $user->rights->facture->creer)
 
     if ($result > 0 && $id > 0)
     {
-    	$contactid = (GETPOST('userid') ? GETPOST('userid','int') : GETPOST('contactid','int'));
+    	$contactid = (GETPOST('userid') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
   		$result = $object->add_contact($contactid, $_POST["type"], $_POST["source"]);
     }
 
@@ -85,7 +85,7 @@ if ($action == 'addcontact' && $user->rights->facture->creer)
 }
 
 // Toggle the status of a contact
-else if ($action == 'swapstatut' && $user->rights->facture->creer)
+elseif ($action == 'swapstatut' && $user->rights->facture->creer)
 {
 	if ($object->fetch($id))
 	{
@@ -98,7 +98,7 @@ else if ($action == 'swapstatut' && $user->rights->facture->creer)
 }
 
 // Deletes a contact
-else if ($action == 'deletecontact' && $user->rights->facture->creer)
+elseif ($action == 'deletecontact' && $user->rights->facture->creer)
 {
 	$object->fetch($id);
 	$result = $object->delete_contact($lineid);
@@ -155,7 +155,7 @@ if ($id > 0 || ! empty($ref))
 		$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', 0, 1);
 		$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', null, null, '', 1);
 		// Thirdparty
-		$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1,'customer');
+		$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1, 'customer');
 		// Project
 		if (! empty($conf->projet->enabled))
 		{
@@ -193,14 +193,14 @@ if ($id > 0 || ! empty($ref))
 
 		$object->totalpaye = $totalpaye;   // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
-		dol_banner_tab($object, 'ref', $linkback, 1, 'facnumber', 'ref', $morehtmlref, '', 0, '', '', 1);
+		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
 
 		dol_fiche_end();
 
 		print '<br>';
 
 		// Contacts lines (modules that overwrite templates must declare this into descriptor)
-		$dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl'));
+		$dirtpls=array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
 		foreach($dirtpls as $reldir)
 		{
 		    $res=@include dol_buildpath($reldir.'/contacts.tpl.php');

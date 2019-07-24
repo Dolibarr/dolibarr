@@ -1,6 +1,6 @@
 # DOLIBARR ERP & CRM
 
-![Downloads per day](https://img.shields.io/sourceforge/dm/dolibarr.svg)
+![Downloads per day](https://img.shields.io/sourceforge/dw/dolibarr.svg)
 [![Reviewed by Hound](https://img.shields.io/badge/Reviewed_by-Hound-8E64B0.svg)](https://houndci.com)
 
 |6|7|8|9|develop|
@@ -66,6 +66,11 @@ You can use a Web server and a supported database (MariaDB, MySQL or PostgreSQL)
     	http://yourdolibarrvirtualhost/install/
    
 - Follow the installer instructions
+
+### Saas/Cloud setup
+
+If you don't have time to install it yourself, you can try some commercial 'ready to use' Cloud offers (See https://saas.dolibarr.org). However, this third solution is not free.
+
 
 
 ## UPGRADING

@@ -43,7 +43,7 @@ class modAgenda extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		global $conf, $user;
 
@@ -53,7 +53,7 @@ class modAgenda extends DolibarrModules
 		$this->family = "projects";
 		$this->module_position = '15';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = preg_replace('/^mod/i','',get_class($this));
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "Follow events or rendez-vous. Record manual events into Agendas or let application record automatic events for log tracking.";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'dolibarr';
@@ -93,7 +93,7 @@ class modAgenda extends DolibarrModules
 		    while ($obj = $this->db->fetch_object($resql))
 		    {
 		        //if (preg_match('/_CREATE$/',$obj->code) && (! in_array($obj->code, array('COMPANY_CREATE','PRODUCT_CREATE','TASK_CREATE')))) continue;    // We don't track such events (*_CREATE) by default, we prefer validation (except thirdparty/product/task creation because there is no validation).
-		        if (preg_match('/^TASK_/',$obj->code)) continue;      // We don't track such events by default.
+		        if (preg_match('/^TASK_/', $obj->code)) continue;      // We don't track such events by default.
 		        //if (preg_match('/^_MODIFY/',$obj->code)) continue;    // We don't track such events by default.
 		        $this->const[] = array('MAIN_AGENDA_ACTIONAUTO_'.$obj->code, "chaine", "1", '', 0, 'current');
 		    }
@@ -204,18 +204,20 @@ class modAgenda extends DolibarrModules
 		//							'target'=>'',
 		//							'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both
 		// $r++;
-		$this->menu[$r]=array('fk_menu'=>0,
-													'type'=>'top',
-													'titre'=>'TMenuAgenda',
-													'mainmenu'=>'agenda',
-													'url'=>'/comm/action/index.php',
-													'langs'=>'agenda',
-													'position'=>86,
-													'perms'=>'$user->rights->agenda->myactions->read',
-													'enabled'=>'$conf->agenda->enabled',
-													'target'=>'',
-													'user'=>2);
-		$r++;
+		$this->menu[$r]=array(
+            'fk_menu'=>0,
+            'type'=>'top',
+            'titre'=>'TMenuAgenda',
+            'mainmenu'=>'agenda',
+            'url'=>'/comm/action/index.php',
+            'langs'=>'agenda',
+            'position'=>86,
+            'perms'=>'$user->rights->agenda->myactions->read',
+            'enabled'=>'$conf->agenda->enabled',
+            'target'=>'',
+            'user'=>2,
+        );
+        $r++;
 
 		$this->menu[$r]=array('fk_menu'=>'r=0',
 													'type'=>'left',
@@ -418,6 +420,6 @@ class modAgenda extends DolibarrModules
 		$this->export_sql_end[$r] .=' WHERE ac.entity IN ('.getEntity('agenda').')';
 		if (empty($user->rights->societe->client->voir)) $this->export_sql_end[$r] .=' AND (sc.fk_user = '.(empty($user)?0:$user->id).' OR ac.fk_soc IS NULL)';
 		if (empty($user->rights->agenda->allactions->read)) $this->export_sql_end[$r] .=' AND acr.fk_element = '.(empty($user)?0:$user->id);
-		$this->export_sql_order[$r] .=' ORDER BY ac.datep';
+		$this->export_sql_order[$r] =' ORDER BY ac.datep';
 	}
 }

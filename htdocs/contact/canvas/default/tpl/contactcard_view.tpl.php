@@ -30,7 +30,7 @@ $contact = $GLOBALS['objcanvas']->control->object;
 <?php echo $this->control->tpl['showhead']; ?>
 
 <?php
-dol_htmloutput_errors($this->control->tpl['error'],$this->control->tpl['errors']);
+dol_htmloutput_errors($this->control->tpl['error'], $this->control->tpl['errors']);
 ?>
 
 <?php if (! empty($this->control->tpl['action_create_user'])) echo $this->control->tpl['action_create_user']; ?>
@@ -108,11 +108,6 @@ dol_htmloutput_errors($this->control->tpl['error'],$this->control->tpl['errors']
 	<?php } else { ?>
 	<td colspan="2">&nbsp;</td>
 	<?php } ?>
-</tr>
-
-<tr>
-	<td><?php echo $langs->trans("IM"); ?></td>
-	<td colspan="3"><?php echo $this->control->tpl['jabberid']; ?></td>
 </tr>
 
 <tr>

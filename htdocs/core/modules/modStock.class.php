@@ -40,7 +40,7 @@ class modStock extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		global $conf, $langs;
 
@@ -50,7 +50,7 @@ class modStock extends DolibarrModules
 		$this->family = "products";
 		$this->module_position = '40';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = preg_replace('/^mod/i','',get_class($this));
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "Gestion des stocks";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
@@ -214,7 +214,7 @@ class modStock extends DolibarrModules
 		$this->export_dependencies_array[$r]=array('stock'=>array('p.rowid','e.rowid')); // We must keep this until the aggregate_array is used. To have a unique key, if we ask a field of a child, to avoid the DISTINCT to discard them.
 		$keyforselect='product'; $keyforelement='product'; $keyforaliasextra='extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-		$this->export_fields_array[$r]=array_merge($this->export_fields_array[$r],array('ps.reel'=>'Stock'));
+		$this->export_fields_array[$r]=array_merge($this->export_fields_array[$r], array('ps.reel'=>'Stock'));
 
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'product as p LEFT JOIN '.MAIN_DB_PREFIX.'product_extrafields as extra ON extra.fk_object = p.rowid, '.MAIN_DB_PREFIX.'product_stock as ps, '.MAIN_DB_PREFIX.'entrepot as e';
@@ -351,14 +351,14 @@ class modStock extends DolibarrModules
 
 
 	/**
-	 *		Function called when module is enabled.
-	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
-	 *		It also creates data directories
+	 *  Function called when module is enabled.
+	 *  The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+	 *  It also creates data directories
 	 *
-	 *      @param      string	$options    Options when enabling module ('', 'noboxes')
-	 *      @return     int             	1 if OK, 0 if KO
+	 *  @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *  @return     int             	1 if OK, 0 if KO
 	 */
-	function init($options='')
+	public function init($options = '')
 	{
 		global $conf,$langs;
 
@@ -374,11 +374,11 @@ class modStock extends DolibarrModules
 		{
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_mkdir($dirodt);
-			$result=dol_copy($src,$dest,0,0);
+			$result=dol_copy($src, $dest, 0, 0);
 			if ($result < 0)
 			{
 				$langs->load("errors");
-				$this->error=$langs->trans('ErrorFailToCopyFile',$src,$dest);
+				$this->error=$langs->trans('ErrorFailToCopyFile', $src, $dest);
 				return 0;
 			}
 		}
@@ -392,6 +392,6 @@ class modStock extends DolibarrModules
 			 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[2][2])."','mouvement',".$conf->entity.")",
 		);
 
-		return $this->_init($sql,$options);
+		return $this->_init($sql, $options);
 	}
 }

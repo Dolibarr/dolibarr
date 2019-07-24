@@ -156,6 +156,7 @@ CREATE TABLE llx_takepos_floor_tables(
 
 UPDATE llx_c_payment_term SET decalage = nbjour, nbjour = 0 where decalage IS NULL AND type_cdr = 2;
 
+
 UPDATE llx_holiday SET ref = rowid WHERE ref IS NULL;
 
 
@@ -289,5 +290,4 @@ ALTER TABLE llx_accounting_account DROP INDEX uk_accounting_account;
 ALTER TABLE llx_accounting_account ADD UNIQUE INDEX uk_accounting_account (account_number, entity, fk_pcg_version);
 
 UPDATE llx_projet SET fk_opp_status = NULL WHERE fk_opp_status = -1;
-
 

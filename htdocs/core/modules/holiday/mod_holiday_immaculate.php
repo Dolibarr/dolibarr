@@ -32,7 +32,7 @@ class mod_holiday_immaculate extends ModelNumRefHolidays
 {
 	/**
      * Dolibarr version of the loaded document
-     * @public string
+     * @var string
      */
 	public $version = 'dolibarr';
 
@@ -60,13 +60,13 @@ class mod_holiday_immaculate extends ModelNumRefHolidays
 	 *
 	 *	@return     string      text description
 	 */
-	function info()
+    public function info()
     {
-    	global $conf, $langs;
+        global $db, $conf, $langs;
 
 		$langs->load("bills");
 
-		$form = new Form($this->db);
+		$form = new Form($db);
 
 		$texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
 		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -75,15 +75,15 @@ class mod_holiday_immaculate extends ModelNumRefHolidays
 		$texte.= '<input type="hidden" name="maskconstholiday" value="HOLIDAY_IMMACULATE_MASK">';
 		$texte.= '<table class="nobordernopadding" width="100%">';
 
-		$tooltip=$langs->trans("GenericMaskCodes",$langs->transnoentities("Holiday"),$langs->transnoentities("Holiday"));
+		$tooltip=$langs->trans("GenericMaskCodes", $langs->transnoentities("Holiday"), $langs->transnoentities("Holiday"));
 		$tooltip.=$langs->trans("GenericMaskCodes2");
 		$tooltip.=$langs->trans("GenericMaskCodes3");
-		$tooltip.=$langs->trans("GenericMaskCodes4a",$langs->transnoentities("Holiday"),$langs->transnoentities("Holiday"));
+		$tooltip.=$langs->trans("GenericMaskCodes4a", $langs->transnoentities("Holiday"), $langs->transnoentities("Holiday"));
 		$tooltip.=$langs->trans("GenericMaskCodes5");
 
 		$texte.= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskholiday" value="'.$conf->global->HOLIDAY_IMMACULATE_MASK.'">',$tooltip,1,1).'</td>';
-		$texte.= '<td align="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
+		$texte.= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskholiday" value="'.$conf->global->HOLIDAY_IMMACULATE_MASK.'">', $tooltip, 1, 1).'</td>';
+		$texte.= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
 		$texte.= '</tr>';
 		$texte.= '</table>';
 		$texte.= '</form>';
@@ -96,7 +96,7 @@ class mod_holiday_immaculate extends ModelNumRefHolidays
 	 *
 	 *	@return     string      Example
 	 */
-    function getExample()
+    public function getExample()
     {
      	global $conf,$langs,$user;
 
@@ -119,7 +119,7 @@ class mod_holiday_immaculate extends ModelNumRefHolidays
 	 *	@param	Object		$holiday	holiday object
 	 *	@return string      			Value if OK, 0 if KO
 	 */
-    function getNextValue($user, $holiday)
+    public function getNextValue($user, $holiday)
     {
 		global $db,$conf;
 
@@ -133,12 +133,12 @@ class mod_holiday_immaculate extends ModelNumRefHolidays
 			return 0;
 		}
 
-		$numFinal=get_next_value($db,$mask,'holiday','ref','', $user, $holiday->date_create);
+		$numFinal=get_next_value($db, $mask, 'holiday', 'ref', '', $user, $holiday->date_create);
 
 		return  $numFinal;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return next value
 	 *
@@ -146,7 +146,7 @@ class mod_holiday_immaculate extends ModelNumRefHolidays
 	 *  @param  Object		$objforref	Holiday object
 	 *  @return string      			Value if OK, 0 if KO
 	 */
-    function holiday_get_num($fuser, $objforref)
+    public function holiday_get_num($fuser, $objforref)
     {
         // phpcs:enable
         return $this->getNextValue($fuser, $objforref);

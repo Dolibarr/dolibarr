@@ -56,7 +56,7 @@ class ModeleImports
 
 	/**
      * Dolibarr version of driver
-     * @public string
+     * @var string
      */
 	public $version = 'dolibarr';
 
@@ -79,7 +79,7 @@ class ModeleImports
 	/**
      *  Constructor
 	 */
-	function __construct()
+    public function __construct()
 	{
 	}
 
@@ -89,7 +89,7 @@ class ModeleImports
 	 *
 	 * @return string		Id
 	 */
-	function getDriverId()
+    public function getDriverId()
 	{
 	    return $this->id;
 	}
@@ -99,7 +99,7 @@ class ModeleImports
 	 *
 	 *	@return string	Label
 	 */
-	function getDriverLabel()
+    public function getDriverLabel()
 	{
 	    return $this->label;
 	}
@@ -109,7 +109,7 @@ class ModeleImports
 	 *
 	 *	@return string	Description
 	 */
-	function getDriverDesc()
+    public function getDriverDesc()
 	{
 	    return $this->desc;
 	}
@@ -119,7 +119,7 @@ class ModeleImports
 	 *
 	 * @return string	Driver suffix
 	 */
-	function getDriverExtension()
+    public function getDriverExtension()
 	{
 	    return $this->extension;
 	}
@@ -129,7 +129,7 @@ class ModeleImports
 	 *
 	 *	@return string	Driver version
 	 */
-	function getDriverVersion()
+    public function getDriverVersion()
 	{
 	    return $this->version;
 	}
@@ -139,7 +139,7 @@ class ModeleImports
 	 *
 	 *	@return string	Label of external lib
 	 */
-	function getLibLabel()
+    public function getLibLabel()
 	{
 	    return $this->label_lib;
 	}
@@ -149,13 +149,13 @@ class ModeleImports
 	 *
 	 *	@return string	Version of external lib
 	 */
-	function getLibVersion()
+    public function getLibVersion()
 	{
 	    return $this->version_lib;
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Charge en memoire et renvoie la liste des modeles actifs
      *
@@ -163,7 +163,7 @@ class ModeleImports
      *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
 	 */
-	function liste_modeles($db,$maxfilenamelength=0)
+    public function liste_modeles($db, $maxfilenamelength = 0)
 	{
         // phpcs:enable
 		dol_syslog(get_class($this)."::liste_modeles");
@@ -177,7 +177,7 @@ class ModeleImports
         {
     		while (($file = readdir($handle))!==false)
     		{
-    			if (preg_match("/^import_(.*)\.modules\.php/i",$file,$reg))
+    			if (preg_match("/^import_(.*)\.modules\.php/i", $file, $reg))
     			{
     				$moduleid=$reg[1];
 
@@ -186,7 +186,7 @@ class ModeleImports
     				$classname = "Import".ucfirst($moduleid);
 
     				require_once $file;
-    				$module = new $classname($db,'');
+    				$module = new $classname($db, '');
 
     				// Picto
     				$this->picto[$module->id]=$module->picto;
@@ -213,7 +213,7 @@ class ModeleImports
 	 *	@param	string	$key	Key
 	 *	@return	string
 	 */
-	function getPictoForKey($key)
+    public function getPictoForKey($key)
 	{
 		return $this->picto[$key];
 	}
@@ -224,7 +224,7 @@ class ModeleImports
 	 *	@param	string	$key	Key
 	 *	@return	string
 	 */
-	function getDriverLabelForKey($key)
+    public function getDriverLabelForKey($key)
 	{
 		return $this->driverlabel[$key];
 	}
@@ -235,7 +235,7 @@ class ModeleImports
 	 *	@param	string	$key	Key
 	 *	@return	string
 	 */
-	function getDriverDescForKey($key)
+    public function getDriverDescForKey($key)
 	{
 		return $this->driverdesc[$key];
 	}
@@ -246,7 +246,7 @@ class ModeleImports
 	 *	@param	string	$key	Key
 	 *	@return	string
 	 */
-	function getDriverVersionForKey($key)
+    public function getDriverVersionForKey($key)
 	{
 		return $this->driverversion[$key];
 	}
@@ -257,7 +257,7 @@ class ModeleImports
 	 *	@param	string	$key	Key
 	 *	@return	string
 	 */
-	function getLibLabelForKey($key)
+    public function getLibLabelForKey($key)
 	{
 		return $this->liblabel[$key];
 	}
@@ -268,7 +268,7 @@ class ModeleImports
 	 *	@param	string	$key	Key
 	 *	@return	string
 	 */
-	function getLibVersionForKey($key)
+    public function getLibVersionForKey($key)
 	{
 		return $this->libversion[$key];
 	}

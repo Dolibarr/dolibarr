@@ -32,12 +32,12 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/mailings/modules_mailings.php';
  */
 class mailing_contacts1 extends MailingTargets
 {
-	var $name='ContactCompanies';                     // Identifiant du module mailing
+	public $name='ContactCompanies';                     // Identifiant du module mailing
 	// This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
-	var $desc='Contacts of thirdparties (prospects, customers, suppliers...)';
-	var $require_module=array("societe");               // Module mailing actif si modules require_module actifs
-	var $require_admin=0;                               // Module mailing actif pour user admin ou non
-	var $picto='contact';
+	public $desc='Contacts of thirdparties (prospects, customers, suppliers...)';
+	public $require_module=array("societe");               // Module mailing actif si modules require_module actifs
+	public $require_admin=0;                               // Module mailing actif pour user admin ou non
+	public $picto='contact';
 
 	/**
      * @var DoliDB Database handler.
@@ -45,15 +45,15 @@ class mailing_contacts1 extends MailingTargets
     public $db;
 
 
-	/**
-	 *	Constructor
-	 *
-	 *  @param		DoliDB		$db      Database handler
-	 */
-	function __construct($db)
-	{
-		$this->db=$db;
-	}
+    /**
+     *  Constructor
+     *
+     *  @param      DoliDB      $db      Database handler
+     */
+    public function __construct($db)
+    {
+        $this->db=$db;
+    }
 
 
     /**
@@ -64,8 +64,8 @@ class mailing_contacts1 extends MailingTargets
 	 *
 	 *	@return		string[]		Array with SQL requests
 	 */
-	function getSqlArrayForStats()
-	{
+    public function getSqlArrayForStats()
+    {
 		global $conf, $langs;
 
 		$langs->load("commercial");
@@ -80,7 +80,7 @@ class mailing_contacts1 extends MailingTargets
 		$statssql[0].= " AND c.statut = 1";
 
 		return $statssql;
-	}
+    }
 
 
 	/**
@@ -91,8 +91,8 @@ class mailing_contacts1 extends MailingTargets
 	 *  @param		string	$sql		Requete sql de comptage
 	 *	@return		int
 	 */
-	function getNbOfRecipients($sql='')
-	{
+    public function getNbOfRecipients($sql = '')
+    {
 		global $conf;
 
 		$sql  = "SELECT count(distinct(c.email)) as nb";
@@ -105,7 +105,7 @@ class mailing_contacts1 extends MailingTargets
 
 		// The request must return a field called "nb" to be understandable by parent::getNbOfRecipients
 		return parent::getNbOfRecipients($sql);
-	}
+    }
 
 
 	/**
@@ -113,8 +113,8 @@ class mailing_contacts1 extends MailingTargets
 	 *
 	 *   @return     string      Retourne zone select
 	 */
-	function formFilter()
-	{
+    public function formFilter()
+    {
 		global $langs;
 
 		// Load translation files required by the page
@@ -311,7 +311,7 @@ class mailing_contacts1 extends MailingTargets
 		$s.='</select>';
 
 		return $s;
-	}
+    }
 
 
 	/**
@@ -320,30 +320,29 @@ class mailing_contacts1 extends MailingTargets
      *  @param	int		$id		ID
 	 *  @return string      	Url lien
 	 */
-	function url($id)
-	{
-		return '<a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$id.'">'.img_object('',"contact").'</a>';
-	}
+    public function url($id)
+    {
+        return '<a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$id.'">'.img_object('', "contact").'</a>';
+    }
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Ajoute destinataires dans table des cibles
 	 *
 	 *  @param  int		$mailing_id    	Id of emailing
-	 *  @param  array	$filtersarray   Optional filter data (deprecated)
 	 *  @return int           			<0 si erreur, nb ajout si ok
 	 */
-	function add_to_target($mailing_id,$filtersarray=array())
-	{
+    public function add_to_target($mailing_id)
+    {
         // phpcs:enable
 		global $conf, $langs;
 
-		$filter = GETPOST('filter','alpha');
-		$filter_jobposition = GETPOST('filter_jobposition','alpha');
-		$filter_category = GETPOST('filter_category','alpha');
-		$filter_category_customer = GETPOST('filter_category_customer','alpha');
-		$filter_category_supplier = GETPOST('filter_category_supplier','alpha');
+		$filter = GETPOST('filter', 'alpha');
+		$filter_jobposition = GETPOST('filter_jobposition', 'alpha');
+		$filter_category = GETPOST('filter_category', 'alpha');
+		$filter_category_customer = GETPOST('filter_category_customer', 'alpha');
+		$filter_category_supplier = GETPOST('filter_category_supplier', 'alpha');
 
 		$cibles = array();
 
@@ -449,5 +448,5 @@ class mailing_contacts1 extends MailingTargets
 		}
 
 		return parent::add_to_target($mailing_id, $cibles);
-	}
+    }
 }

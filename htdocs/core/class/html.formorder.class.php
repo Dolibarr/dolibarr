@@ -31,15 +31,15 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/html.form.class.php';
 class FormOrder extends Form
 {
 
-	/**
-     *    Return combo list of differents status of a orders
+    /**
+     *  Return combo list of differents status of a orders
      *
-     *    @param	string	$selected   Preselected value
-     *    @param	int		$short		Use short labels
-     *    @param	string	$hmlname	Name of HTML select element
-     *    @return	void
+     *  @param	string	$selected   Preselected value
+     *  @param	int		$short		Use short labels
+     *  @param	string	$hmlname	Name of HTML select element
+     *  @return	void
      */
-    public function selectSupplierOrderStatus($selected='', $short=0, $hmlname='order_status')
+    public function selectSupplierOrderStatus($selected = '', $short = 0, $hmlname = 'order_status')
     {
 	    $options = array();
 
@@ -74,7 +74,7 @@ class FormOrder extends Form
 	 *  @param  int		$addempty		0=list with no empty value, 1=list with empty value
 	 *  @return	array					Tableau des sources de commandes
 	 */
-	public function selectInputMethod($selected='',$htmlname='source_id',$addempty=0)
+	public function selectInputMethod($selected = '', $htmlname = 'source_id', $addempty = 0)
 	{
 		global $langs;
 
@@ -96,9 +96,8 @@ class FormOrder extends Form
 			$listofmethods[$obj->rowid] = $langs->trans($obj->code) != $obj->code ? $langs->trans($obj->code) : $obj->label;
 		}
 
-		print Form::selectarray($htmlname,$listofmethods,$selected,$addempty);
+		print Form::selectarray($htmlname, $listofmethods, $selected, $addempty);
 
 		return 1;
 	}
 }
-

@@ -35,7 +35,7 @@ class mod_facture_mercure extends ModeleNumRefFactures
 {
     /**
      * Dolibarr version of the loaded document
-     * @public string
+     * @var string
      */
 	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
 
@@ -50,13 +50,13 @@ class mod_facture_mercure extends ModeleNumRefFactures
      *
      *  @return     string      Texte descripif
      */
-    function info()
+    public function info()
     {
-        global $conf, $langs;
+        global $db, $conf, $langs;
 
         $langs->load("bills");
 
-        $form = new Form($this->db);
+        $form = new Form($db);
 
         $texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
         $texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -68,33 +68,33 @@ class mod_facture_mercure extends ModeleNumRefFactures
 		$texte.= '<input type="hidden" name="maskconstdeposit" value="FACTURE_MERCURE_MASK_DEPOSIT">';
         $texte.= '<table class="nobordernopadding" width="100%">';
 
-        $tooltip=$langs->trans("GenericMaskCodes",$langs->transnoentities("Invoice"),$langs->transnoentities("Invoice"));
+        $tooltip=$langs->trans("GenericMaskCodes", $langs->transnoentities("Invoice"), $langs->transnoentities("Invoice"));
         $tooltip.=$langs->trans("GenericMaskCodes2");
         $tooltip.=$langs->trans("GenericMaskCodes3");
-        $tooltip.=$langs->trans("GenericMaskCodes4a",$langs->transnoentities("Invoice"),$langs->transnoentities("Invoice"));
+        $tooltip.=$langs->trans("GenericMaskCodes4a", $langs->transnoentities("Invoice"), $langs->transnoentities("Invoice"));
         $tooltip.=$langs->trans("GenericMaskCodes5");
 
         // Parametrage du prefix
         $texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("InvoiceStandard").'):</td>';
-        $texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskinvoice" value="'.$conf->global->FACTURE_MERCURE_MASK_INVOICE.'">',$tooltip,1,1).'</td>';
+        $texte.= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskinvoice" value="'.$conf->global->FACTURE_MERCURE_MASK_INVOICE.'">', $tooltip, 1, 1).'</td>';
 
-        $texte.= '<td align="left" rowspan="3">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
+        $texte.= '<td class="left" rowspan="3">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
 
         $texte.= '</tr>';
 
         // Parametrage du prefix des replacement
         $texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("InvoiceReplacement").'):</td>';
-        $texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskreplacement" value="'.$conf->global->FACTURE_MERCURE_MASK_REPLACEMENT.'">',$tooltip,1,1).'</td>';
+        $texte.= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskreplacement" value="'.$conf->global->FACTURE_MERCURE_MASK_REPLACEMENT.'">', $tooltip, 1, 1).'</td>';
         $texte.= '</tr>';
 
         // Parametrage du prefix des avoirs
         $texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("InvoiceAvoir").'):</td>';
-        $texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskcredit" value="'.$conf->global->FACTURE_MERCURE_MASK_CREDIT.'">',$tooltip,1,1).'</td>';
+        $texte.= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskcredit" value="'.$conf->global->FACTURE_MERCURE_MASK_CREDIT.'">', $tooltip, 1, 1).'</td>';
         $texte.= '</tr>';
 
         // Parametrage du prefix des acomptes
         $texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("InvoiceDeposit").'):</td>';
-        $texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskdeposit" value="'.$conf->global->FACTURE_MERCURE_MASK_DEPOSIT.'">',$tooltip,1,1).'</td>';
+        $texte.= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskdeposit" value="'.$conf->global->FACTURE_MERCURE_MASK_DEPOSIT.'">', $tooltip, 1, 1).'</td>';
         $texte.= '</tr>';
 
         $texte.= '</table>';
@@ -108,7 +108,7 @@ class mod_facture_mercure extends ModeleNumRefFactures
      *
      *  @return     string      Example
      */
-    function getExample()
+    public function getExample()
     {
         global $conf,$langs,$mysoc;
 
@@ -116,7 +116,7 @@ class mod_facture_mercure extends ModeleNumRefFactures
         $old_code_type=$mysoc->typent_code;
         $mysoc->code_client='CCCCCCCCCC';
         $mysoc->typent_code='TTTTTTTTTT';
-        $numExample = $this->getNextValue($mysoc,'');
+        $numExample = $this->getNextValue($mysoc, '');
         $mysoc->code_client=$old_code_client;
         $mysoc->typent_code=$old_code_type;
 
@@ -135,7 +135,7 @@ class mod_facture_mercure extends ModeleNumRefFactures
      * @param   string		$mode       'next' for next value or 'last' for last value
      * @return  string      			Value if OK, 0 if KO
      */
-    function getNextValue($objsoc, $invoice, $mode='next')
+    public function getNextValue($objsoc, $invoice, $mode = 'next')
     {
     	global $db,$conf;
 
@@ -151,8 +151,8 @@ class mod_facture_mercure extends ModeleNumRefFactures
         		$mask=$conf->global->FACTURE_MERCURE_MASK_INVOICE;
         	}
         }
-        else if (is_object($invoice) && $invoice->type == 2) $mask=$conf->global->FACTURE_MERCURE_MASK_CREDIT;
-        else if (is_object($invoice) && $invoice->type == 3) $mask=$conf->global->FACTURE_MERCURE_MASK_DEPOSIT;
+        elseif (is_object($invoice) && $invoice->type == 2) $mask=$conf->global->FACTURE_MERCURE_MASK_CREDIT;
+        elseif (is_object($invoice) && $invoice->type == 3) $mask=$conf->global->FACTURE_MERCURE_MASK_DEPOSIT;
         else $mask=$conf->global->FACTURE_MERCURE_MASK_INVOICE;
         if (! $mask)
         {
@@ -167,8 +167,8 @@ class mod_facture_mercure extends ModeleNumRefFactures
     	// Get entities
     	$entity = getEntity('invoicenumber', 1, $invoice);
 
-    	$numFinal=get_next_value($db,$mask,'facture','facnumber',$where,$objsoc,$invoice->date,$mode,false,null,$entity);
-    	if (! preg_match('/([0-9])+/',$numFinal)) $this->error = $numFinal;
+    	$numFinal=get_next_value($db, $mask, 'facture', 'ref', $where, $objsoc, $invoice->date, $mode, false, null, $entity);
+    	if (! preg_match('/([0-9])+/', $numFinal)) $this->error = $numFinal;
 
     	return  $numFinal;
     }
@@ -182,8 +182,8 @@ class mod_facture_mercure extends ModeleNumRefFactures
      * @param   string		$mode       	'next' for next value or 'last' for last value
      * @return  string      				Next free value
      */
-    function getNumRef($objsoc,$objforref,$mode='next')
+    public function getNumRef($objsoc, $objforref, $mode = 'next')
     {
-        return $this->getNextValue($objsoc,$objforref,$mode);
+        return $this->getNextValue($objsoc, $objforref, $mode);
     }
 }

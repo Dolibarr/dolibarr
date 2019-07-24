@@ -27,15 +27,15 @@ require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
  */
 class FormEcm
 {
-	/**
+    /**
      * @var DoliDB Database handler.
      */
     public $db;
-	
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error='';
+
+    /**
+     * @var string Error code (or message)
+     */
+    public $error='';
 
 
 	/**
@@ -43,7 +43,7 @@ class FormEcm
 	 *
 	 * 	@param	DoliDB	$db		Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		$this->db = $db;
 	}
@@ -57,7 +57,7 @@ class FormEcm
 	 *  @param	string	$module				Module ('ecm', 'medias', ...)
 	 *  @return	string						String with HTML select
 	 */
-	function selectAllSections($selected=0, $select_name='', $module='ecm')
+	public function selectAllSections($selected = 0, $select_name = '', $module = 'ecm')
 	{
 		global $conf, $langs;
 		$langs->load("ecm");
@@ -70,7 +70,7 @@ class FormEcm
 			$cat = new EcmDirectory($this->db);
 			$cate_arbo = $cat->get_full_arbo();
 		}
-		if ($module == 'medias')
+		elseif ($module == 'medias')
 		{
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			$path = $conf->medias->multidir_output[$conf->entity];
@@ -105,4 +105,3 @@ class FormEcm
 		return $output;
 	}
 }
-

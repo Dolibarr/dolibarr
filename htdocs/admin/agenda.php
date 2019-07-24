@@ -34,8 +34,8 @@ if (!$user->admin)
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'other', 'agenda'));
 
-$action = GETPOST('action','alpha');
-$cancel = GETPOST('cancel','alpha');
+$action = GETPOST('action', 'alpha');
+$cancel = GETPOST('cancel', 'alpha');
 
 $search_event = GETPOST('search_event', 'alpha');
 
@@ -71,13 +71,13 @@ else
  */
 
 // Purge search criteria
-if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') ||GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') ||GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
 {
 	$search_event = '';
 	$action = '';
 }
 
-if (GETPOST('button_search_x','alpha') || GETPOST('button_search.x','alpha') ||GETPOST('button_search','alpha'))	// To avoid the save when we click on search
+if (GETPOST('button_search_x', 'alpha') || GETPOST('button_search.x', 'alpha') ||GETPOST('button_search', 'alpha'))	// To avoid the save when we click on search
 {
 	$action = '';
 }
@@ -92,9 +92,9 @@ if ($action == "save" && empty($cancel))
 	{
 		$keyparam='MAIN_AGENDA_ACTIONAUTO_'.$trigger['code'];
 		//print "param=".$param." - ".$_POST[$param];
-		if ($search_event === '' || preg_match('/'.preg_quote($search_event,'/').'/i', $keyparam))
+		if ($search_event === '' || preg_match('/'.preg_quote($search_event, '/').'/i', $keyparam))
 		{
-			$res = dolibarr_set_const($db,$keyparam,(GETPOST($keyparam,'alpha')?GETPOST($keyparam,'alpha'):''),'chaine',0,'',$conf->entity);
+			$res = dolibarr_set_const($db, $keyparam, (GETPOST($keyparam, 'alpha')?GETPOST($keyparam, 'alpha'):''), 'chaine', 0, '', $conf->entity);
 			if (! $res > 0) $error++;
 		}
 	}
@@ -106,7 +106,7 @@ if ($action == "save" && empty($cancel))
     }
     else
     {
-        setEventMessages($langs->trans("Error"),null, 'errors');
+        setEventMessages($langs->trans("Error"), null, 'errors');
         $db->rollback();
     }
 }
@@ -121,7 +121,7 @@ $wikihelp='EN:Module_Agenda_En|FR:Module_Agenda|ES:Módulo_Agenda';
 llxHeader('', $langs->trans("AgendaSetup"), $wikihelp);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans("AgendaSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("AgendaSetup"), $linkback, 'title_setup');
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -134,8 +134,7 @@ $head=agenda_prepare_head();
 
 dol_fiche_head($head, 'autoactions', $langs->trans("Agenda"), -1, 'action');
 
-print $langs->trans("AgendaAutoActionDesc")."<br>\n";
-print $langs->trans("OnlyActiveElementsAreShown", 'modules.php').'<br>';
+print '<span class="opacitymedium">'.$langs->trans("AgendaAutoActionDesc")." ".$langs->trans("OnlyActiveElementsAreShown", 'modules.php').'</span><br>';
 print "<br>\n";
 
 print '<div class="div-table-responsive">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
@@ -144,7 +143,7 @@ print '<tr class="liste_titre">';
 print '<td class="liste_titre"><input type="text" name="search_event" value="'.dol_escape_htmltag($search_event).'"></td>';
 print '<td class="liste_titre"></td>';
 // Action column
-print '<td class="liste_titre" align="right">';
+print '<td class="liste_titre maxwidthsearch">';
 $searchpicto=$form->showFilterButtons();
 print $searchpicto;
 print '</td>';
@@ -174,12 +173,12 @@ if (! empty($triggers))
 			if ($trigger['code'] == 'FICHINTER_CLASSIFY_BILLED' && empty($conf->global->FICHINTER_CLASSIFY_BILLED)) continue;
 			if ($trigger['code'] == 'FICHINTER_CLASSIFY_UNBILLED' && empty($conf->global->FICHINTER_CLASSIFY_BILLED)) continue;
 
-			if ($search_event === '' || preg_match('/'.preg_quote($search_event,'/').'/i', $trigger['code']))
+			if ($search_event === '' || preg_match('/'.preg_quote($search_event, '/').'/i', $trigger['code']))
 			{
 				print '<tr class="oddeven">';
 				print '<td>'.$trigger['code'].'</td>';
 				print '<td>'.$trigger['label'].'</td>';
-				print '<td align="right" width="40">';
+				print '<td class="right" width="40">';
 				$key='MAIN_AGENDA_ACTIONAUTO_'.$trigger['code'];
 				$value=$conf->global->$key;
 				print '<input class="oddeven" type="checkbox" name="'.$key.'" value="1"'.((($action=='selectall'||$value) && $action!="selectnone")?' checked':'').'>';
