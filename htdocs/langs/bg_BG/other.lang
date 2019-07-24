@@ -184,12 +184,14 @@ NumberOfCustomerInvoices=Брой клиентски фактури
 NumberOfSupplierProposals=Брой доставни фактури
 NumberOfSupplierOrders=Брой поръчки за покупка
 NumberOfSupplierInvoices=Брой доставни фактури
+NumberOfContracts=Брой договори
 NumberOfUnitsProposals=Брой единици по търговски предложения
 NumberOfUnitsCustomerOrders=Брой единици по клиентски поръчки
 NumberOfUnitsCustomerInvoices=Брой единици по клиентски фактури
 NumberOfUnitsSupplierProposals=Брой единици по запитвания към доставчици
 NumberOfUnitsSupplierOrders=Брой единици по поръчки за покупка
 NumberOfUnitsSupplierInvoices=Брой единици по доставни фактури
+NumberOfUnitsContracts=Брой единици по договори
 EMailTextInterventionAddedContact=Възложена ви е нова интервенция %s.
 EMailTextInterventionValidated=Интервенция %s е валидирана.
 EMailTextInvoiceValidated=Фактура %s е валидирана.
@@ -246,10 +248,10 @@ YourPasswordHasBeenReset=Вашата парола е успешно възст�
 ApplicantIpAddress=IP адрес на заявителя
 SMSSentTo=Изпратен е SMS на %s
 MissingIds=Липсват идентификатори
-ThirdPartyCreatedByEmailCollector=Third party created by email collector from email MSGID %s
-ContactCreatedByEmailCollector=Contact/address created by email collector from email MSGID %s
-ProjectCreatedByEmailCollector=Project created by email collector from email MSGID %s
-TicketCreatedByEmailCollector=Ticket created by email collector from email MSGID %s
+ThirdPartyCreatedByEmailCollector=Контрагент, създаден чрез имейл колектор от имейл MSGID %s
+ContactCreatedByEmailCollector=Контактът/адресът, създаден чрез имейл колектор от имейл MSGID %s
+ProjectCreatedByEmailCollector=Проект, създаден чрез имейл колектор от имейл MSGID %s
+TicketCreatedByEmailCollector=Тикет, създаден чрез имейл колектор от имейл MSGID %s
 
 ##### Export #####
 ExportsArea=Секция за експорт
@@ -268,5 +270,5 @@ WEBSITE_IMAGEDesc=Относителен път до изображението.
 WEBSITE_KEYWORDS=Ключови думи
 LinesToImport=Редове за импортиране
 
-MemoryUsage=Memory usage
-RequestDuration=Duration of request
+MemoryUsage=Използване на паметта
+RequestDuration=Продължителност на заявката

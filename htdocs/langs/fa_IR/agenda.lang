@@ -38,7 +38,7 @@ ActionsEvents=روی‌دادهائی که Dolibarr برای آن‌ها در ص
 EventRemindersByEmailNotEnabled=یادآورنده‌های روی‌داد توسط رایانامه در بخش برپاسازی واحد %s فعال نشده اند.
 ##### Agenda event labels #####
 NewCompanyToDolibarr=شخص‌سوم %s ساخته شد
-COMPANY_DELETEInDolibarr=Third party %s deleted
+COMPANY_DELETEInDolibarr=طرف‌سوم %s حذف شد
 ContractValidatedInDolibarr=قرارداد %s تائید شد
 CONTRACT_DELETEInDolibarr=قرارداد %s حذف شد
 PropalClosedSignedInDolibarr=پیشنهاد %s امضا شد
