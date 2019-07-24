@@ -43,7 +43,7 @@ $action=GETPOST('action','alpha');
 $contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'actioncommlist';   // To manage different context of search
 $resourceid=GETPOST("search_resourceid","int")?GETPOST("search_resourceid","int"):GETPOST("resourceid","int");
 $pid=GETPOST("search_projectid",'int',3)?GETPOST("search_projectid",'int',3):GETPOST("projectid",'int',3);
-$status=GETPOST("search_status",'alpha')?GETPOST("search_status",'alpha'):GETPOST("status",'alpha');
+$status=(GETPOST("search_status",'alpha') != '')?GETPOST("search_status",'alpha'):GETPOST("status",'alpha');
 $type=GETPOST('search_type','alphanohtml')?GETPOST('search_type','alphanohtml'):GETPOST('type','alphanohtml');
 $optioncss = GETPOST('optioncss','alpha');
 $year=GETPOST("year",'int');
@@ -524,6 +524,7 @@ if ($resql)
 	require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
 	$caction=new CActionComm($db);
 	$arraylist=$caction->liste_array(1, 'code', '', (empty($conf->global->AGENDA_USE_EVENT_TYPE)?1:0), '', 1);
+    $contactListCache = array();
 
 	while ($i < min($num,$limit))
 	{
@@ -634,7 +635,34 @@ if ($resql)
 		// Contact
 		if (! empty($arrayfields['a.fk_contact']['checked'])) {
 			print '<td>';
-			if ($obj->fk_contact > 0)
+
+
+            $actionstatic->fetchResources();
+            if(!empty($actionstatic->socpeopleassigned))
+            {
+                $contactList = array();
+                foreach ($actionstatic->socpeopleassigned as $socpeopleId => $socpeopleassigned)
+                {
+                    if(!isset($contactListCache[$socpeopleassigned['id']]))
+                    {
+                        // if no cache found we fetch it
+                        $contact = new Contact($db);
+                        if($contact->fetch($socpeopleassigned['id'])>0)
+                        {
+                            $contactListCache[$socpeopleassigned['id']] = $contact->getNomUrl(1,'',28);
+                            $contactList[] = $contact->getNomUrl(1,'',28);
+                        }
+                    }
+                    else{
+                        // use cache
+                        $contactList[] = $contactListCache[$socpeopleassigned['id']];
+                    }
+                }
+                if(!empty($contactList)){
+                    print implode(', ', $contactList);
+                }
+            }
+            elseif ($obj->fk_contact > 0) //keep for retrocompatibility with faraway event
 			{
 				$contactstatic->id=$obj->fk_contact;
 				$contactstatic->email=$obj->email;
