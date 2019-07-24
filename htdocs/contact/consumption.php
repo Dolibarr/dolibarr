@@ -38,7 +38,7 @@ $id = GETPOST('id', 'int');
 $result = restrictedArea($user, 'contact', $id, 'socpeople&societe');
 $object = new Contact($db);
 if ($id > 0) $object->fetch($id);
-if(empty($object->thirdparty)) $object->fetch_thirdparty();
+if (empty($object->thirdparty)) $object->fetch_thirdparty();
 $socid = $object->thirdparty->id;
 
 // Sort & Order fields
@@ -69,7 +69,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 }
 // Customer or supplier selected in drop box
 $thirdTypeSelect = GETPOST("third_select_id");
-$type_element = GETPOST('type_element')?GETPOST('type_element'):'';
+$type_element = GETPOSTISSET('type_element')?GETPOST('type_element'):'';
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "bills", "orders", "suppliers", "propal", "interventions", "contracts", "products"));
@@ -179,7 +179,7 @@ if ($type_element == 'fichinter')
 	$dateprint = 'f.datec';
 	$doc_number='f.ref';
 }
-if ($type_element == 'invoice')
+elseif ($type_element == 'invoice')
 { 	// Customer : show products from invoices
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 	$documentstatic=new Facture($db);
@@ -194,7 +194,7 @@ if ($type_element == 'invoice')
 	$doc_number='f.ref';
 	$thirdTypeSelect='customer';
 }
-if ($type_element == 'propal')
+elseif ($type_element == 'propal')
 {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 	$documentstatic=new Propal($db);
@@ -209,7 +209,7 @@ if ($type_element == 'propal')
 	$doc_number='c.ref';
 	$thirdTypeSelect='customer';
 }
-if ($type_element == 'order')
+elseif ($type_element == 'order')
 {
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 	$documentstatic=new Commande($db);
@@ -224,7 +224,7 @@ if ($type_element == 'order')
 	$doc_number='c.ref';
 	$thirdTypeSelect='customer';
 }
-if ($type_element == 'supplier_invoice')
+elseif ($type_element == 'supplier_invoice')
 { 	// Supplier : Show products from invoices.
 	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 	$documentstatic=new FactureFournisseur($db);
@@ -239,7 +239,7 @@ if ($type_element == 'supplier_invoice')
 	$doc_number='f.ref';
 	$thirdTypeSelect='supplier';
 }
-//if ($type_element == 'supplier_proposal')
+//elseif ($type_element == 'supplier_proposal')
 //{
 //    require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
 //    $documentstatic=new SupplierProposal($db);
@@ -252,7 +252,7 @@ if ($type_element == 'supplier_invoice')
 //    $doc_number='c.ref';
 //    $thirdTypeSelect='supplier';
 //}
-if ($type_element == 'supplier_order')
+elseif ($type_element == 'supplier_order')
 { 	// Supplier : Show products from orders.
 	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 	$documentstatic=new CommandeFournisseur($db);
@@ -267,7 +267,7 @@ if ($type_element == 'supplier_order')
 	$doc_number='c.ref';
 	$thirdTypeSelect='supplier';
 }
-if ($type_element == 'contract')
+elseif ($type_element == 'contract')
 { 	// Order
 	require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 	$documentstatic=new Contrat($db);
@@ -300,6 +300,7 @@ if (!empty($sql_select))
 	$sql.= " FROM "/*.MAIN_DB_PREFIX."societe as s, "*/.$tables_from;
 //	if ($type_element != 'fichinter') $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON d.fk_product = p.rowid ';
 	$sql.= $where;
+	$sql.= ' AND ec.fk_socpeople = '.$object->id;
 	if ($month > 0) {
 		if ($year > 0) {
 			$start = dol_mktime(0, 0, 0, $month, 1, $year);
