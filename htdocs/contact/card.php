@@ -179,7 +179,7 @@ if (empty($reshook))
         $object->socid			= GETPOST("socid", 'int');
         $object->lastname		= GETPOST("lastname", 'alpha');
         $object->firstname		= GETPOST("firstname", 'alpha');
-		$object->civility		= GETPOST("civility_id", 'alpha');
+		$object->civility_id	= GETPOST("civility_id", 'alpha');
         $object->poste			= GETPOST("poste", 'alpha');
         $object->address		= GETPOST("address", 'alpha');
         $object->zip			= GETPOST("zipcode", 'alpha');
@@ -349,7 +349,7 @@ if (empty($reshook))
             $object->socid			= GETPOST("socid", 'int');
             $object->lastname		= GETPOST("lastname", 'alpha');
             $object->firstname		= GETPOST("firstname", 'alpha');
-            $object->civility		= GETPOST("civility_id", 'alpha');
+            $object->civility_id	= GETPOST("civility_id", 'alpha');
             $object->poste			= GETPOST("poste", 'alpha');
 
             $object->address		= GETPOST("address", 'alpha');
