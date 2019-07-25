@@ -219,9 +219,9 @@ print '<div class="row0" ><table width="100%"><tr>';
 	echo '<td><b>'.date('d/m/Y').'</b></td>';
 	echo '<td><b> Terminal: '.$term.'</b></td>';
 	
-	$form = new Form($db); 
+	$form = new Form($db);
 	print '<td><b> Usuario: ';
-	print $form->select_dolusers($user->id,'userid" onchange="change_user()" style="background-color: black;color: lightcyan;font-weight: bold;',0,'',0,$include);
+	print $form->select_dolusers($user->id, 'userid" onchange="change_user()" style="background-color: black;color: lightcyan;font-weight: bold;', 0, '', 0, $include);
 	print '</b></td>';
 	
 	echo '<td align="right"><img id="fullscreen" src="img/expand.png" class="topbuttons" onclick="FullScreen();">&nbsp;&nbsp;  </img>';
@@ -234,4 +234,3 @@ print '</tr></table></div>';
 print '<div class="maincontainer" id="takepos">';
 print '</div>';
 print '</body>';
-?>
