@@ -479,14 +479,14 @@ function getStructuredData($type, WebsitePage $websitepage)
 					  "publisher": {
 					    "@type": "Organization",
 					    "name": "'.$mysoc->name.'"
+					      "logo": {
+					        "@type": "ImageObject",
+					        "url": "/viewimage.php?modulepart=mycompany&file=logos%2F'.urlencode($mysoc->logo).'"
+					      }
 					   },
 					  "description": "'.$websitepage->description.'"
 					}'."\n";
 					/*
-					      "logo": {
-					        "@type": "ImageObject",
-					        "url": "https://google.com/logo.jpg"
-					      }
 					*/
 				$ret .= '</script>'."\n";
 			}
