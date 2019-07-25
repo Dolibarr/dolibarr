@@ -552,7 +552,7 @@ print '<td width="80">&nbsp;</td></tr>'."\n";
  * Other parameters
  */
 
-$rowspan = 5;
+$rowspan = 4;
 if (! empty($conf->global->PRODUIT_MULTIPRICES) || ! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) $rowspan++;
 if (empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)) $rowspan++;
 if (! empty($conf->global->MAIN_MULTILANGS)) $rowspan++;
