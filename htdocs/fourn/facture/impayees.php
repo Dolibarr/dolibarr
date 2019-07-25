@@ -213,7 +213,7 @@ if ($user->rights->fournisseur->facture->lire)
 		print '</td><td class="liste_titre right">';
 		print '<input class="flat" type="text" size="8" name="search_amount_all_tax" value="'.$search_amount_all_tax.'">';
 		print '</td>';
-        print '<td class="liste_titre right">';
+        print '<td class="liste_titre maxwidthsearch">';
         $searchpicto=$form->showFilterAndCheckAddButtons(0);
         print $searchpicto;
         print '</td>';

@@ -153,7 +153,7 @@ if (empty($reshook))
 	    $db->begin();
 
 	    $resql = $object->update($object->id, $user);
-	    if (! $resql || $resql < 0)
+	    if ($resql <= 0)
 	    {
 	        $error++;
 	        setEventMessages($object->error, $object->errors, 'errors');
@@ -1557,12 +1557,12 @@ if ((empty($conf->global->PRODUIT_CUSTOMER_PRICES) || $action=='showlog_default_
     			{
     				print '<td class="right">';
     				if (empty($objp->price_by_qty)) {
-    					print ($objp->price_base_type != 'TTC' ? price($objp->price) : '');
+    					print price($objp->price);
     				}
     				print "</td>";
     				print '<td class="right">';
     				if (empty($objp->price_by_qty)) {
-    					print ($objp->price_base_type == 'TTC' ? price($objp->price_ttc) : '');
+    					print price($objp->price_ttc);
     				}
     				print "</td>";
     				if (! empty($conf->dynamicprices->enabled)) { //Only if module is enabled
@@ -1572,13 +1572,13 @@ if ((empty($conf->global->PRODUIT_CUSTOMER_PRICES) || $action=='showlog_default_
 
     			print '<td class="right">';
     			if (empty($objp->price_by_qty)) {
-    				print ($objp->price_base_type != 'TTC' ? price($objp->price_min) : '');
+    				print price($objp->price_min);
     			}
     			print '</td>';
 
     			print '<td class="right">';
     			if (empty($objp->price_by_qty)) {
-    				print ($objp->price_base_type == 'TTC' ? price($objp->price_min_ttc) : '');
+    				print price($objp->price_min_ttc);
     			}
     			print '</td>';
 
@@ -1666,7 +1666,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		print '<tr>';
 		print '<td class="fieldrequired">' . $langs->trans('ThirdParty') . '</td>';
 		print '<td>';
-		print $form->select_company('', 'socid', 's.client in (1,2,3)', 'SelectThirdParty', 0, 0, array(), 0, 'minwidth300');
+		print $form->select_company('', 'socid', 's.client IN (1,2,3)', 'SelectThirdParty', 0, 0, array(), 0, 'minwidth300');
 		print '</td>';
 		print '</tr>';
 
@@ -1711,20 +1711,18 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		}
 		print '</td></tr>';
 
-		// Update all child soc
-		print '<tr><td width="15%">';
-		print $langs->trans('ForceUpdateChildPriceSoc');
-		print '</td>';
-		print '<td>';
-		print '<input type="checkbox" name="updatechildprice" value="1">';
-		print '</td>';
-		print '</tr>';
-
 		print '</table>';
 
 		dol_fiche_end();
 
 		print '<div class="center">';
+
+				// Update all child soc
+		print '<div class="marginbottomonly">';
+		print '<input type="checkbox" name="updatechildprice" value="1"> ';
+		print $langs->trans('ForceUpdateChildPriceSoc');
+		print '</div>';
+		
 		print '<input type="submit" class="button" value="' . $langs->trans("Save") . '">';
 		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 		print '<input type="submit" class="button" name="cancel" value="' . $langs->trans("Cancel") . '">';
@@ -1804,10 +1802,8 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 
 		// Update all child soc
 		print '<tr><td>';
-		print $langs->trans('ForceUpdateChildPriceSoc');
 		print '</td>';
 		print '<td>';
-		print '<input type="checkbox" name="updatechildprice" value="1">';
 		print '</td>';
 		print '</tr>';
 
@@ -1816,6 +1812,11 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		dol_fiche_end();
 
 		print '<div class="center">';
+		print '<div class="marginbottomonly">';
+		print '<input type="checkbox" name="updatechildprice" value="1"> ';
+		print $langs->trans('ForceUpdateChildPriceSoc');
+		print "</div>";
+		
 		print '<input type="submit" class="button" value="' . $langs->trans("Save") . '">';
 		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 		print '<input type="submit" class="button" name="cancel" value="' . $langs->trans("Cancel") . '">';
@@ -1851,7 +1852,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 
 		$backbutton='<a class="justalink" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '">' . $langs->trans("Back") . '</a>';
 
-		print_barre_liste($title, $page, $_SERVEUR['PHP_SELF'], $option, $sortfield, $sortorder, $backbutton, count($prodcustprice->lines), $nbtotalofrecords, 'title_accountancy.png');
+		print_barre_liste($title, $page, $_SERVER['PHP_SELF'], $option, $sortfield, $sortorder, $backbutton, count($prodcustprice->lines), $nbtotalofrecords, 'title_accountancy.png');
 
 		if (count($prodcustprice->lines) > 0)
 		{
@@ -1973,7 +1974,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 
 		$option = '&search_soc=' . $search_soc . '&id=' . $object->id;
 
-		print_barre_liste($langs->trans('PriceByCustomer'), $page, $_SERVEUR ['PHP_SELF'], $option, $sortfield, $sortorder, '', count($prodcustprice->lines), $nbtotalofrecords, 'title_accountancy.png');
+		print_barre_liste($langs->trans('PriceByCustomer'), $page, $_SERVER ['PHP_SELF'], $option, $sortfield, $sortorder, '', count($prodcustprice->lines), $nbtotalofrecords, 'title_accountancy.png');
 
 		print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';
 		print '<input type="hidden" name="id" value="' . $object->id . '">';
@@ -1989,7 +1990,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
     		print '<td class="liste_titre"><input type="text" class="flat" name="search_soc" value="' . $search_soc . '" size="20"></td>';
     		print '<td class="liste_titre" colspan="'.$colspan.'">&nbsp;</td>';
     		// Print the search button
-            print '<td class="liste_titre right">';
+            print '<td class="liste_titre maxwidthsearch">';
             $searchpicto=$form->showFilterAndCheckAddButtons(0);
             print $searchpicto;
             print '</td>';
@@ -2162,7 +2163,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 				// Action
 				if ($user->rights->produit->supprimer || $user->rights->service->supprimer)
 				{
-					print '<td class="right">';
+					print '<td class="right nowraponall">';
 					print '<a href="' . $_SERVER["PHP_SELF"] . '?action=showlog_customer_price&amp;id=' . $object->id . '&amp;socid=' . $line->fk_soc . '">';
 					print img_info($langs->trans('PriceByCustomerLog'));
 					print '</a>';

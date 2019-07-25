@@ -972,7 +972,10 @@ class ExtraFields
 
 		$out='';
 
-		$keyprefix = $keyprefix.'options_';		// Because we work on extrafields
+		if (! preg_match('/options_$/', $keyprefix))	// Because we work on extrafields, we add 'options_' to prefix if not already added
+		{
+			$keyprefix = $keyprefix.'options_';
+		}
 
 		if (! empty($extrafieldsobjectkey))
 		{
@@ -1276,14 +1279,16 @@ class ExtraFields
                             $labeltoshow = dol_trunc($labeltoshow, 45);
 
                             if ($value == $obj->rowid) {
-                                foreach ($fields_label as $field_toshow) {
-                                    $translabel = $langs->trans($obj->$field_toshow);
-                                    if ($translabel != $obj->$field_toshow) {
-                                        $labeltoshow = dol_trunc($translabel, 18) . ' ';
-                                    } else {
-                                        $labeltoshow = dol_trunc($obj->$field_toshow, 18) . ' ';
-                                    }
-                                }
+                            	if (!$notrans) {
+	                                foreach ($fields_label as $field_toshow) {
+	                                    $translabel = $langs->trans($obj->$field_toshow);
+	                                    if ($translabel != $obj->$field_toshow) {
+	                                        $labeltoshow = dol_trunc($translabel, 18) . ' ';
+	                                    } else {
+	                                        $labeltoshow = dol_trunc($obj->$field_toshow, 18) . ' ';
+	                                    }
+	                                }
+                            	}
                                 $out .= '<option value="' . $obj->rowid . '" selected>' . $labeltoshow . '</option>';
                             } else {
                                 if (!$notrans) {
@@ -1622,6 +1627,8 @@ class ExtraFields
 
 		if ($hidden) return '';		// This is a protection. If field is hidden, we should just not call this method.
 
+		//if ($computed) $value =		// $value is already calculated into $value before calling this method
+		
 		$showsize=0;
 		if ($type == 'date')
 		{
@@ -1640,7 +1647,10 @@ class ExtraFields
 		elseif ($type == 'double')
 		{
 			if (!empty($value)) {
-				$value=price($value);
+				//$value=price($value);
+				$sizeparts = explode(",", $size);
+				$number_decimals = $sizeparts[1];
+				$value=price($value, 0, $langs, 0, 0, $number_decimals, '');
 			}
 		}
 		elseif ($type == 'boolean')
@@ -1951,9 +1961,43 @@ class ExtraFields
 	{
 		global $langs;
 
-		$out = '<tr class="trextrafieldseparator trextrafieldseparator'.$key.'"><td colspan="2"><strong>';
+		$out = '<tr id="trextrafieldseparator'.$key.'" class="trextrafieldseparator trextrafieldseparator'.$key.'"><td colspan="2"><strong>';
 		$out.= $langs->trans($this->attributes[$object->table_element]['label'][$key]);
 		$out.= '</strong></td></tr>';
+
+        $extrafield_param = $this->attributes[$object->table_element]['param'][$key];
+        if (!empty($extrafield_param) && is_array($extrafield_param)) {
+            $extrafield_param_list = array_keys($extrafield_param['options']);
+
+            if (count($extrafield_param_list) > 0) {
+                $extrafield_collapse_display_value = intval($extrafield_param_list[0]);
+                if ($extrafield_collapse_display_value == 1 || $extrafield_collapse_display_value == 2) {
+                    $collapse_display = ($extrafield_collapse_display_value == 2 ? false : true);
+                    $extrafields_collapse_num = $this->attributes[$object->table_element]['pos'][$key];
+
+                    $out .= '<script type="text/javascript">';
+                    $out .= 'jQuery(document).ready(function(){';
+                    if ($collapse_display === false) {
+                        $out .= '   jQuery("#trextrafieldseparator' . $key . ' td").prepend("<span class=\"cursorpointer fa fa-plus-square\"></span>&nbsp;");';
+                        $out .= '   jQuery(".trextrafields_collapse' . $extrafields_collapse_num . '").hide();';
+                    } else {
+                        $out .= '   jQuery("#trextrafieldseparator' . $key . ' td").prepend("<span class=\"cursorpointer fa fa-minus-square\"></span>&nbsp;");';
+                    }
+                    $out .= '   jQuery("#trextrafieldseparator' . $key . '").click(function(){';
+                    $out .= '       jQuery(".trextrafields_collapse' . $extrafields_collapse_num . '").toggle("slow", function(){';
+                    $out .= '           if (jQuery(".trextrafields_collapse' . $extrafields_collapse_num . '").is(":hidden")) {';
+                    $out .= '               jQuery("#trextrafieldseparator' . $key . ' td span").addClass("fa-plus-square").removeClass("fa-minus-square");';
+                    $out .= '           } else {';
+                    $out .= '               jQuery("#trextrafieldseparator' . $key . ' td span").addClass("fa-minus-square").removeClass("fa-plus-square");';
+                    $out .= '           }';
+                    $out .= '       });';
+                    $out .= '   });';
+                    $out .= '});';
+                    $out .= '</script>';
+                }
+            }
+        }
+
 		return $out;
 	}
 
@@ -1968,7 +2012,7 @@ class ExtraFields
 	public function setOptionalsFromPost($extralabels, &$object, $onlykey = '')
 	{
 		global $_POST, $langs;
-		$nofillrequired='';// For error when required field left blank
+		$nofillrequired=0;// For error when required field left blank
 		$error_field_required = array();
 
 		if (is_array($this->attributes[$object->table_element]['label'])) $extralabels=$this->attributes[$object->table_element]['label'];
@@ -1999,7 +2043,8 @@ class ExtraFields
 				if ($this->attributes[$object->table_element]['required'][$key])	// Value is required
 				{
 					// Check if empty without using GETPOST, value can be alpha, int, array, etc...
-					if ((! is_array($_POST["options_".$key]) && empty($_POST["options_".$key]) && $_POST["options_".$key] != '0')
+				    if ((! is_array($_POST["options_".$key]) && empty($_POST["options_".$key]) && $this->attributes[$object->table_element]['type'][$key] != 'select' && $_POST["options_".$key] != '0')
+				        || (! is_array($_POST["options_".$key]) && empty($_POST["options_".$key]) && $this->attributes[$object->table_element]['type'][$key] == 'select')
 						|| (is_array($_POST["options_".$key]) && empty($_POST["options_".$key])))
 					{
 						//print 'ccc'.$value.'-'.$this->attributes[$object->table_element]['required'][$key];

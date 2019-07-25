@@ -159,11 +159,11 @@ class Cronjob extends CommonObject
 		// Check parameters
 		// Put here code to add a control on parameters values
 		if (dol_strlen($this->datestart)==0) {
-			$this->errors[]=$langs->trans('CronFieldMandatory', $langs->trans('CronDtStart'));
+			$this->errors[]=$langs->trans('CronFieldMandatory', $langs->transnoentitiesnoconv('CronDtStart'));
 			$error++;
 		}
 		if (empty($this->label)) {
-			$this->errors[]=$langs->trans('CronFieldMandatory', $langs->trans('CronLabel'));
+			$this->errors[]=$langs->trans('CronFieldMandatory', $langs->transnoentitiesnoconv('CronLabel'));
 			$error++;
 		}
 		if ((dol_strlen($this->datestart)!=0) && (dol_strlen($this->dateend)!=0) && ($this->dateend<$this->datestart)) {
@@ -171,28 +171,27 @@ class Cronjob extends CommonObject
 			$error++;
 		}
 		if (empty($this->unitfrequency)) {
-			$this->errors[]=$langs->trans('CronFieldMandatory', $langs->trans('CronFrequency'));
+			$this->errors[]=$langs->trans('CronFieldMandatory', $langs->transnoentitiesnoconv('CronFrequency'));
 			$error++;
 		}
 		if (($this->jobtype=='command') && (empty($this->command))) {
-			$this->errors[]=$langs->trans('CronFieldMandatory', $langs->trans('CronCommand'));
+			$this->errors[]=$langs->trans('CronFieldMandatory', $langs->transnoentitiesnoconv('CronCommand'));
 			$error++;
 		}
 		if (($this->jobtype=='method') && (empty($this->classesname))) {
-			$this->errors[]=$langs->trans('CronFieldMandatory', $langs->trans('CronClass'));
+			$this->errors[]=$langs->trans('CronFieldMandatory', $langs->transnoentitiesnoconv('CronClass'));
 			$error++;
 		}
 		if (($this->jobtype=='method' || $this->jobtype == 'function') && (empty($this->methodename))) {
-			$this->errors[]=$langs->trans('CronFieldMandatory', $langs->trans('CronMethod'));
+			$this->errors[]=$langs->trans('CronFieldMandatory', $langs->transnoentitiesnoconv('CronMethod'));
 			$error++;
 		}
 		if (($this->jobtype=='method') && (empty($this->objectname))) {
-			$this->errors[]=$langs->trans('CronFieldMandatory', $langs->trans('CronObject'));
+			$this->errors[]=$langs->trans('CronFieldMandatory', $langs->transnoentitiesnoconv('CronObject'));
 			$error++;
 		}
-
 		if (($this->jobtype=='function') && (empty($this->libname))) {
-			$this->errors[]=$langs->trans('CronFieldMandatory', $langs->trans('CronLib'));
+			$this->errors[]=$langs->trans('CronFieldMandatory', $langs->transnoentitiesnoconv('CronLib'));
 			$error++;
 		}
 

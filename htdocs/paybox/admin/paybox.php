@@ -73,7 +73,7 @@ if ($action == 'setvalue' && $user->admin)
 	if (! $result > 0) $error++;
         $result=dolibarr_set_const($db, "PAYBOX_HMAC_KEY", dol_encode(GETPOST('PAYBOX_HMAC_KEY', 'alpha')), 'chaine', 0, '', $conf->entity);
 	if (! $result > 0) $error++;
-        
+
 
     if (! $error)
   	{
@@ -151,7 +151,7 @@ print '</td></tr>';
 print '<tr class="oddeven"><td>';
 print '<span class="fieldrequired">'.$langs->trans("PAYBOX_HMAC_KEY").'</span></td><td>';
 print '<input size="100" type="text" name="PAYBOX_HMAC_KEY" value="'.dol_decode($conf->global->PAYBOX_HMAC_KEY).'">';
-print '<br>'.$langs->trans("Example").': 2 ('.$langs->trans("Test").')';
+print '<br>'.$langs->trans("Example").': 1A2B3C4D5E6F';
 print '</td></tr>';
 
 print '<tr class="liste_titre">';
@@ -181,7 +181,8 @@ print '</td></tr>';
 print '<tr class="oddeven"><td>';
 print '<span class="fieldrequired">'.$langs->trans("PAYBOX_CGI_URL_V2").'</span></td><td>';
 print '<input size="64" type="text" name="PAYBOX_CGI_URL_V2" value="'.$conf->global->PAYBOX_CGI_URL_V2.'">';
-print '<br>'.$langs->trans("Example").': http://mysite/cgi-bin/modulev2_redhat72.cgi';
+print '<br>'.$langs->trans("Example").' (preprod): https://preprod-tpeweb.paybox.com/php/';
+print '<br>'.$langs->trans("Example").' (prod): https://tpeweb.paybox.com/php/';
 print '</td></tr>';
 
 

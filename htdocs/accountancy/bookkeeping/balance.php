@@ -21,7 +21,7 @@
 
 /**
  *  \file 		htdocs/accountancy/bookkeeping/balance.php
- *  \ingroup 	Advanced accountancy
+ *  \ingroup 	Accountancy (Double entries)
  *  \brief 		Balance of book keeping
  */
 

@@ -137,7 +137,7 @@ class ImportCsv extends ModeleImports
 	 *
 	 * 	@param	Translate	$outputlangs		Output language
 	 *  @param	array		$headerlinefields	Array of fields name
-	 * 	@return	string
+	 * 	@return	string$limittoachartaccount
 	 */
     public function write_title_example($outputlangs, $headerlinefields)
 	{
@@ -443,11 +443,29 @@ class ImportCsv extends ModeleImports
                                             }
                                             $classinstance=new $class($this->db);
                                             // Try the fetch from code or ref
-                                            call_user_func_array(array($classinstance, $method), array('', $newval));
+                                            $param_array = array('', $newval);
+                                            if ($class == 'AccountingAccount')
+                                            {
+                                                //var_dump($arrayrecord[0]['val']);
+                                                /*include_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancysystem.class.php';
+                                                 $tmpchartofaccount = new AccountancySystem($this->db);
+                                                 $tmpchartofaccount->fetch($conf->global->CHARTOFACCOUNTS);
+                                                 var_dump($tmpchartofaccount->ref.' - '.$arrayrecord[0]['val']);
+                                                 if ((! ($conf->global->CHARTOFACCOUNTS > 0)) || $tmpchartofaccount->ref != $arrayrecord[0]['val'])
+                                                 {
+                                                 $this->errors[$error]['lib']=$langs->trans('ErrorImportOfChartLimitedToCurrentChart', $tmpchartofaccount->ref);
+                                                 $this->errors[$error]['type']='RESTRICTONCURRENCTCHART';
+                                                 $errorforthistable++;
+                                                 $error++;
+                                                 }*/
+                                                $param_array = array('', $newval, 0, $arrayrecord[0]['val']);       // Param to fetch parent from account, in chart.
+                                            }
+                                            call_user_func_array(array($classinstance, $method), $param_array);
                                             // If not found, try the fetch from label
                                             if (! ($classinstance->id != '') && $objimport->array_import_convertvalue[0][$val]['rule']=='fetchidfromcodeorlabel')
                                             {
-												call_user_func_array(array($classinstance, $method), array('', '', $newval));
+                                                $param_array = array('', '', $newval);
+                                                call_user_func_array(array($classinstance, $method), $param_array);
                                             }
                                             $this->cacheconvert[$file.'_'.$class.'_'.$method.'_'][$newval]=$classinstance->id;
                                             //print 'We have made a '.$class.'->'.$method.' to get id from code '.$newval.'. ';
@@ -459,7 +477,7 @@ class ImportCsv extends ModeleImports
                                             {
                                                 if (!empty($objimport->array_import_convertvalue[0][$val]['dict'])) $this->errors[$error]['lib']=$langs->trans('ErrorFieldValueNotIn', $key, $newval, 'code', $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['dict']));
                                                 elseif (!empty($objimport->array_import_convertvalue[0][$val]['element'])) $this->errors[$error]['lib']=$langs->trans('ErrorFieldRefNotIn', $key, $newval, $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['element']));
-                                                else $this->errors[$error]['lib']='ErrorFieldValueNotIn';
+                                                else $this->errors[$error]['lib']='ErrorBadDefinitionOfImportProfile';
                                                 $this->errors[$error]['type']='FOREIGNKEY';
                                                 $errorforthistable++;
                                                 $error++;
@@ -651,17 +669,29 @@ class ImportCsv extends ModeleImports
     				    if (! preg_match('/^'.preg_quote($alias).'\./', $key)) continue;    // Not a field of current table
     				    if ($val == 'user->id')
     				    {
-    				        $listfields[] = preg_replace('/^'.preg_quote($alias).'\./', '', $key);
+    				        $listfields[] = preg_replace('/^'.preg_quote($alias, '/').'\./', '', $key);
     				        $listvalues[] = $user->id;
     				    }
     				    elseif (preg_match('/^lastrowid-/', $val))
     				    {
     				        $tmp=explode('-', $val);
     				        $lastinsertid=(isset($last_insert_id_array[$tmp[1]]))?$last_insert_id_array[$tmp[1]]:0;
-							$keyfield = preg_replace('/^'.preg_quote($alias).'\./', '', $key);
+							$keyfield = preg_replace('/^'.preg_quote($alias, '/').'\./', '', $key);
     				        $listfields[] = $keyfield;
                             $listvalues[] = $lastinsertid;
     				        //print $key."-".$val."-".$listfields."-".$listvalues."<br>";exit;
+    				    }
+    				    elseif (preg_match('/^const-/', $val))
+    				    {
+    				    	$tmp=explode('-', $val, 2);
+    				    	$listfields[] = preg_replace('/^'.preg_quote($alias, '/').'\./', '', $key);
+    				    	$listvalues[] = "'".$tmp[1]."'";
+    				    }
+    				    else
+    				    {
+    				    	$this->errors[$error]['lib']='Bad value of profile setup '.$val.' for array_import_fieldshidden';
+    				    	$this->errors[$error]['type']='Import profile setup';
+    				    	$error++;
     				    }
     				}
 				}

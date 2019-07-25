@@ -3,7 +3,7 @@
 # No errors
 NoErrorCommitIsDone=Nav kļūda, mēs apstiprinam
 # Errors
-ErrorButCommitIsDone=Kļūdas atrast, bet mēs apstiprinātu neskatoties uz to
+ErrorButCommitIsDone=Kļūdas atrasta, bet mēs apstiprinājām neskatoties uz to
 ErrorBadEMail=E-pasts %s ir nepareizs
 ErrorBadUrl=Url %s ir nepareizs
 ErrorBadValueForParamNotAString=Bad value for your parameter. It appends generally when translation is missing.
@@ -23,7 +23,7 @@ ErrorFailToGenerateFile=Neizdevās ģenerēt failu "<b> %s </b>".
 ErrorThisContactIsAlreadyDefinedAsThisType=Šī kontaktpersona jau ir definēts kā kontaktpersona šāda veida.
 ErrorCashAccountAcceptsOnlyCashMoney=Šis bankas konts ir naudas konts, lai tā pieņem maksājumus no veida tikai skaidrā naudā.
 ErrorFromToAccountsMustDiffers=Avota un mērķa banku kontiem jābūt atšķirīgiem.
-ErrorBadThirdPartyName=Slikta trešās puses nosaukuma vērtība
+ErrorBadThirdPartyName=Nepareiza trešās puses nosaukuma vērtība
 ErrorProdIdIsMandatory=%s ir obligāti
 ErrorBadCustomerCodeSyntax=Nepareiza klienta koda sintakse
 ErrorBadBarCodeSyntax=Slikta svītrkodu sintakse. Iespējams, jūs iestatāt sliktu svītrkodu tipu vai definējāt svītrkoda masku numurēšanai, kas neatbilst skenētajai vērtībai.
@@ -125,7 +125,7 @@ ErrUnzipFails=Neizdevās atarhivēt %s izmantojot ZipArchive
 ErrNoZipEngine=Nav dzinēja, lai zip / unzip %s failu šajā PHP
 ErrorFileMustBeADolibarrPackage=Failam %s jābūt Dolibarr zip
 ErrorModuleFileRequired=Jums ir jāizvēlas Dolibarr moduļa pakotnes fails
-ErrorPhpCurlNotInstalled=PHP CURL nav uzstādīts, tas ir svarīgi runāt ar Paypal
+ErrorPhpCurlNotInstalled=PHP CURL nav uzstādīts, tas ir svarīgi saziņai ar Paypal
 ErrorFailedToAddToMailmanList=Neizdevās pievienot ierakstu %s, lai pastnieks saraksta %s vai SPIP bāze
 ErrorFailedToRemoveToMailmanList=Neizdevās noņemt ierakstu %s, lai pastnieks saraksta %s vai SPIP bāze
 ErrorNewValueCantMatchOldValue=Jaunā vērtība nevar būt vienāds ar veco
@@ -217,6 +217,7 @@ ErrorBadSyntaxForParamKeyForContent=Slikta sintakse param keyforcontent. Jābūt
 ErrorVariableKeyForContentMustBeSet=Kļūda, ir jāiestata konstants ar nosaukumu %s (ar teksta saturu, kas jāparāda) vai %s (ar ārējo URL).
 ErrorURLMustStartWithHttp=URL %s jāsāk ar http: // vai https: //
 ErrorNewRefIsAlreadyUsed=Kļūda, jaunā atsauce jau ir izmantota
+ErrorDeletePaymentLinkedToAClosedInvoiceNotPossible=Kļūda, dzēšot maksājumu, kas sasaistīts ar slēgtu rēķinu.
 # Warnings
 WarningPasswordSetWithNoAccount=A password was set for this member. However, no user account was created. So this password is stored but can't be used to login to Dolibarr. It may be used by an external module/interface but if you don't need to define any login nor password for a member, you can disable option "Manage a login for each member" from Member module setup. If you need to manage a login but don't need any password, you can keep this field empty to avoid this warning. Note: Email can also be used as a login if the member is linked to a user.
 WarningMandatorySetupNotComplete=Noklikšķiniet šeit, lai iestatītu obligātos parametrus

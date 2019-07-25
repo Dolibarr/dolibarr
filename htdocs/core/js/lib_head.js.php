@@ -841,10 +841,11 @@ function copyToClipboard(text,text2)
  * @return	boolean			False
  * @see document_preview
  */
-function newpopup(url,title) {
+function newpopup(url, title) {
 	var argv = newpopup.arguments;
 	var argc = newpopup.arguments.length;
 	tmp=url;
+	console.log("newpopup "+argv[2]+" "+argv[3]);
 	var l = (argc > 2) ? argv[2] : 600;
 	var h = (argc > 3) ? argv[3] : 400;
 	var left = (screen.width - l)/2;

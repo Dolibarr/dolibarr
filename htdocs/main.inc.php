@@ -47,27 +47,6 @@ if (! empty($_SERVER['MAIN_SHOW_TUNING_INFO']))
 	}
 }
 
-// Removed magic_quotes
-if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* deprecated in PHP 5.0 and removed in PHP 5.5
-{
-	if (get_magic_quotes_gpc())
-	{
-		// Forcing parameter setting magic_quotes_gpc and cleaning parameters
-		// (Otherwise he would have for each position, condition
-		// Reading stripslashes variable according to state get_magic_quotes_gpc).
-		// Off mode recommended (just do $db->escape for insert / update).
-		function stripslashes_deep($value)
-		{
-			return (is_array($value) ? array_map('stripslashes_deep', $value) : stripslashes($value));
-		}
-		$_GET     = array_map('stripslashes_deep', $_GET);
-		$_POST    = array_map('stripslashes_deep', $_POST);
-		$_FILES   = array_map('stripslashes_deep', $_FILES);
-		//$_COOKIE  = array_map('stripslashes_deep', $_COOKIE); // Useless because a cookie should never be outputed on screen nor used into sql
-		@set_magic_quotes_runtime(0);
-	}
-}
-
 /**
  * Security: SQL Injection and XSS Injection (scripts) protection (Filters on GET, POST, PHP_SELF).
  *
@@ -91,7 +70,7 @@ function testSqlAndScriptInject($val, $type)
 	}
 	if ($type == 3)
 	{
-		$inj += preg_match('/select|update|delete|replace|group\s+by|concat|count|from/i', $val);
+		$inj += preg_match('/select|update|delete|truncate|replace|group\s+by|concat|count|from|union/i', $val);
 	}
 	if ($type != 2)	// Not common key strings, so we can check them both on GET and POST
 	{
@@ -273,6 +252,7 @@ if (isset($_SERVER["HTTP_USER_AGENT"]))
 	if ($conf->browser->layout == 'phone') $conf->dol_no_mouse_hover=1;
 }
 
+
 // Force HTTPS if required ($conf->file->main_force_https is 0/1 or https dolibarr root url)
 // $_SERVER["HTTPS"] is 'on' when link is https, otherwise $_SERVER["HTTPS"] is empty or 'off'
 if (! empty($conf->file->main_force_https) && (empty($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] != 'on'))
@@ -372,13 +352,15 @@ if (! defined('NOTOKENRENEWAL'))
 }
 
 //var_dump(GETPOST('token').' '.$_SESSION['token'].' - '.$_SESSION['newtoken'].' '.$_SERVER['SCRIPT_FILENAME']);
-
+//$dolibarr_nocsrfcheck=1;
 // Check token
+//var_dump((! defined('NOCSRFCHECK')).' '.empty($dolibarr_nocsrfcheck).' '.(! empty($conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN)).' '.$_SERVER['REQUEST_METHOD'].' '.(! GETPOSTISSET('token')));
 if ((! defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && ! empty($conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN))
 	|| defined('CSRFCHECK_WITH_TOKEN'))	// Check validity of token, only if option MAIN_SECURITY_CSRF_WITH_TOKEN enabled or if constant CSRFCHECK_WITH_TOKEN is set
 {
 	if ($_SERVER['REQUEST_METHOD'] == 'POST' && ! GETPOSTISSET('token')) // Note, offender can still send request by GET
 	{
+		dol_syslog("--- Access to ".$_SERVER["PHP_SELF"]." refused by CSRFCHECK_WITH_TOKEN protection. Token not provided.");
 		print "Access by POST method refused by CSRF protection in main.inc.php. Token not provided.\n";
 		print "If you access your server behind a proxy using url rewriting, you might check that all HTTP header is propagated (or add the line \$dolibarr_nocsrfcheck=1 into your conf.php file or MAIN_SECURITY_CSRF_WITH_TOKEN to 0 into setup).\n";
 		die;
@@ -388,9 +370,9 @@ if ((! defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && ! empty($conf->
 	//{
 	if (GETPOSTISSET('token') && GETPOST('token', 'alpha') != $_SESSION['token'])
 	{
-		dol_syslog("Invalid token, so we disable POST and some GET parameters - referer=".$_SERVER['HTTP_REFERER'].", action=".GETPOST('action', 'aZ09').", _GET|POST['token']=".GETPOST('token', 'alpha').", _SESSION['token']=".$_SESSION['token'], LOG_WARNING);
+		dol_syslog("--- Access to ".$_SERVER["PHP_SELF"]." refused due to invalid token, so we disable POST and some GET parameters - referer=".$_SERVER['HTTP_REFERER'].", action=".GETPOST('action', 'aZ09').", _GET|POST['token']=".GETPOST('token', 'alpha').", _SESSION['token']=".$_SESSION['token'], LOG_WARNING);
 		//print 'Unset POST by CSRF protection in main.inc.php.';	// Do not output anything because this create problems when using the BACK button on browsers.
-        if ($conf->global->MAIN_FEATURES_LEVEL>1) setEventMessages('Unset POST by CSRF protection in main.inc.php.', null, 'warnings');
+		if ($conf->global->MAIN_FEATURES_LEVEL>1) setEventMessages('Unset POST by CSRF protection in main.inc.php (POST was already done or was done by a not allowed web page).'."<br>\n".'$_SERVER[REQUEST_URI] = '.$_SERVER['REQUEST_URI'].' $_SERVER[REQUEST_METHOD] = '.$_SERVER['REQUEST_METHOD'].' GETPOST(token) = '.GETPOST('token', 'alpha').' $_SESSION[token] = '.$_SESSION['token'], null, 'warnings');
 		unset($_POST);
 		unset($_GET['confirm']);
 	}
@@ -401,13 +383,19 @@ if ((! defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && ! empty($conf->
 if (GETPOSTISSET('disablemodules'))  $_SESSION["disablemodules"]=GETPOST('disablemodules', 'alpha');
 if (! empty($_SESSION["disablemodules"]))
 {
+    $modulepartkeys = array('css', 'js', 'tabs', 'triggers', 'login', 'substitutions', 'menus', 'theme', 'sms', 'tpl', 'barcode', 'models', 'societe', 'hooks', 'dir', 'syslog', 'tpllinkable', 'contactelement', 'moduleforexternal');
+
 	$disabled_modules=explode(',', $_SESSION["disablemodules"]);
 	foreach($disabled_modules as $module)
 	{
 		if ($module)
 		{
-			if (empty($conf->$module)) $conf->$module=new stdClass();
+			if (empty($conf->$module)) $conf->$module=new stdClass();    // To avoid warnings
 			$conf->$module->enabled=false;
+			foreach($modulepartkeys as $modulepartkey)
+			{
+			    unset($conf->modules_parts[$modulepartkey][$module]);
+			}
 			if ($module == 'fournisseur')		// Special case
 			{
 				$conf->supplier_order->enabled=0;
@@ -1152,7 +1140,7 @@ function top_httphead($contenttype = 'text/html', $forcenocache = 0)
 		$contentsecuritypolicy = $conf->global->MAIN_HTTP_CONTENT_SECURITY_POLICY;
 
 		if (! is_object($hookmanager)) $hookmanager = new HookManager($db);
-		$hookmanager->initHooks("main");
+		$hookmanager->initHooks(array("main"));
 
 		$parameters=array('contentsecuritypolicy'=>$contentsecuritypolicy);
 		$result=$hookmanager->executeHooks('setContentSecurityPolicy', $parameters);    // Note that $action and $object may have been modified by some hooks
@@ -1212,9 +1200,9 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 	if (empty($disablehead))
 	{
 	    if (! is_object($hookmanager)) $hookmanager = new HookManager($db);
-	    $hookmanager->initHooks("main");
+	    $hookmanager->initHooks(array("main"));
 
-	    $ext='layout='.$conf->browser->layout.'&version='.urlencode(DOL_VERSION);
+	    $ext='layout='.$conf->browser->layout.'&amp;version='.urlencode(DOL_VERSION);
 
 		print "<head>\n";
 
@@ -1260,7 +1248,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		if (GETPOST('version', 'int')) $ext='version='.GETPOST('version', 'int');	// usefull to force no cache on css/js
 
 		$themeparam='?lang='.$langs->defaultlang.'&amp;theme='.$conf->theme.(GETPOST('optioncss', 'aZ09')?'&amp;optioncss='.GETPOST('optioncss', 'aZ09', 1):'').'&amp;userid='.$user->id.'&amp;entity='.$conf->entity;
-		$themeparam.=($ext?'&amp;'.$ext:'');
+		$themeparam.=($ext?'&amp;'.$ext:'').'&amp;revision='.$conf->global->MAIN_IHM_PARAMS_REV;
 		if (! empty($_SESSION['dol_resetcache'])) $themeparam.='&amp;dol_resetcache='.$_SESSION['dol_resetcache'];
 		if (GETPOST('dol_hide_topmenu', 'int'))           { $themeparam.='&amp;dol_hide_topmenu='.GETPOST('dol_hide_topmenu', 'int'); }
 		if (GETPOST('dol_hide_leftmenu', 'int'))          { $themeparam.='&amp;dol_hide_leftmenu='.GETPOST('dol_hide_leftmenu', 'int'); }
@@ -1689,12 +1677,8 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 				if ($mode == 'wiki') $text.=sprintf($helpbaseurl, urlencode(html_entity_decode($helppage)));
 				else $text.=sprintf($helpbaseurl, $helppage);
 				$text.='">';
-				//$text.=img_picto('', 'helpdoc_top').' ';
 				$text.='<span class="fa fa-question-circle atoplogin valignmiddle"></span>';
-				//$toprightmenu.=$langs->trans($mode == 'wiki' ? 'OnlineHelp': 'Help');
-				//if ($mode == 'wiki') $text.=' ('.dol_trunc(strtr($helppage,'_',' '),8).')';
 				$text.='</a>';
-				//$toprightmenu.='</div>'."\n";
 				$toprightmenu.=@Form::textwithtooltip('', $title, 2, 1, $text, 'login_block_elem', 2);
 			}
 		}
@@ -1738,10 +1722,10 @@ function top_menu_user(User $user, Translate $langs)
         $userImage          = Form::showphoto('userphoto', $user, 0, 0, 0, 'photouserphoto userphoto', 'small', 0, 1);
         $userDropDownImage  = Form::showphoto('userphoto', $user, 0, 0, 0, 'dropdown-user-image', 'small', 0, 1);
     }
-    else{
+    else {
         $nophoto='/public/theme/common/user_anonymous.png';
-        if ($object->gender == 'man') $nophoto='/public/theme/common/user_man.png';
-        if ($object->gender == 'woman') $nophoto='/public/theme/common/user_woman.png';
+        if ($user->gender == 'man') $nophoto='/public/theme/common/user_man.png';
+        if ($user->gender == 'woman') $nophoto='/public/theme/common/user_woman.png';
 
         $userImage = '<img class="photo photouserphoto userphoto" alt="No photo" src="'.DOL_URL_ROOT.$nophoto.'">';
         $userDropDownImage = '<img class="photo dropdown-user-image" alt="No photo" src="'.DOL_URL_ROOT.$nophoto.'">';
@@ -1752,7 +1736,7 @@ function top_menu_user(User $user, Translate $langs)
     $dropdownBody.= '<div id="topmenuloginmoreinfo" >';
 
     // login infos
-    if (!empty($user->admin)) {
+    if (! empty($user->admin)) {
         $dropdownBody.= '<br><b>' . $langs->trans("Administrator").'</b>: '.yn($user->admin);
     }
     if (! empty($user->socid))	// Add thirdparty for external users
@@ -1805,17 +1789,30 @@ function top_menu_user(User $user, Translate $langs)
 
     $profilName = $user->getFullName($langs).' ('.$user->login.')';
 
-    if($user->admin){
+    if (! empty($user->admin)) {
         $profilName = '<i class="far fa-star classfortooltip" title="'.$langs->trans("Administrator").'" ></i> '.$profilName;
     }
 
+    // Define version to show
+    $appli=constant('DOL_APPLICATION_TITLE');
+    if (! empty($conf->global->MAIN_APPLICATION_TITLE))
+    {
+    	$appli=$conf->global->MAIN_APPLICATION_TITLE;
+    	if (preg_match('/\d\.\d/', $appli))
+    	{
+    		if (! preg_match('/'.preg_quote(DOL_VERSION).'/', $appli)) $appli.=" (".DOL_VERSION.")";	// If new title contains a version that is different than core
+    	}
+    	else $appli.=" ".DOL_VERSION;
+    }
+    else $appli.=" ".DOL_VERSION;
+
     $btnUser = '
     <div id="topmenu-login-dropdown" class="userimg atoplogin dropdown user user-menu">
-        <a href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'" class="dropdown-toggle" data-toggle="dropdown">
+        <a href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'" class="dropdown-toggle login-dropdown-a" data-toggle="dropdown">
             '.$userImage.'
             <span class="hidden-xs maxwidth200 atoploginusername">'.dol_trunc($user->firstname ? $user->firstname : $user->login, 10).'</span>
-            <span class="fa fa-chevron-down" id="dropdown-icon-down"></span>
-            <span class="fa fa-chevron-up hidden" id="dropdown-icon-up"></span>
+            <span class="fa fa-chevron-down login-dropdown-btn" id="dropdown-icon-down"></span>
+            <span class="fa fa-chevron-up login-dropdown-btn hidden" id="dropdown-icon-up"></span>
         </a>
         <div class="dropdown-menu">
             <!-- User image -->
@@ -1823,8 +1820,9 @@ function top_menu_user(User $user, Translate $langs)
                 '.$userDropDownImage.'
 
                 <p>
-                    '.$profilName.'
-                    <br/><small class="classfortooltip" title="'.$langs->trans("PreviousConnexion").'" ><i class="fa fa-user-clock"></i> '.dol_print_date($user->datepreviouslogin, "dayhour", 'tzuser').'</small>
+                    '.$profilName.'<br>
+					<small class="classfortooltip" title="'.$langs->trans("PreviousConnexion").'" ><i class="fa fa-user-clock"></i> '.dol_print_date($user->datepreviouslogin, "dayhour", 'tzuser').'</small><br>
+					<small class="classfortooltip"><i class="fa fa-cog"></i> '.$langs->trans("Version").' '.$appli.'</small>
                 </p>
             </div>
 
@@ -1843,32 +1841,38 @@ function top_menu_user(User $user, Translate $langs)
             </div>
 
         </div>
-    </div>
-    <!-- Code to show/hide the user drop-down -->
-    <script>
-    $( document ).ready(function() {
-        $(document).on("click", function(event) {
-            if (!$(event.target).closest("#topmenu-login-dropdown").length) {
-                // Hide the menus.
-                $("#topmenu-login-dropdown").removeClass("open");
-            }
+    </div>';
+
+    if (! defined('JS_JQUERY_DISABLE_DROPDOWN'))    // This may be set by some pages that use different jquery version to avoid errors
+    {
+        $btnUser .= '
+        <!-- Code to show/hide the user drop-down -->
+        <script>
+        $( document ).ready(function() {
+            $(document).on("click", function(event) {
+                if (!$(event.target).closest("#topmenu-login-dropdown").length) {
+                    // Hide the menus.
+                    $("#topmenu-login-dropdown").removeClass("open");
+    				$("#dropdown-icon-down").show();	// use show/hide instead toggle for avoid conflict
+    				$("#dropdown-icon-up").hide();		// use show/hide instead toggle for avoid conflict
+                }
+            });
+
+            $("#topmenu-login-dropdown .dropdown-toggle").on("click", function(event) {
+                event.preventDefault();
+                $("#topmenu-login-dropdown").toggleClass("open");
+                $("#dropdown-icon-down").toggle();
+                $("#dropdown-icon-up").toggle();
+            });
+
+            $("#topmenuloginmoreinfo-btn").on("click", function() {
+                $("#topmenuloginmoreinfo").slideToggle();
+            });
+
         });
-
-        $("#topmenu-login-dropdown .dropdown-toggle").on("click", function(event) {
-            event.preventDefault();
-            $("#topmenu-login-dropdown").toggleClass("open");
-            $("#dropdown-icon-down").toggle();
-            $("#dropdown-icon-up").toggle();
-        });
-
-        $("#topmenuloginmoreinfo-btn").on("click", function() {
-            $("#topmenuloginmoreinfo").slideToggle();
-        });
-
-    });
-    </script>
-    ';
-
+        </script>
+        ';
+    }
 
     return $btnUser;
 }
@@ -2030,6 +2034,16 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 			$bugbaseurl.= urlencode("- **PHP**: " . php_sapi_name() . ' ' . phpversion() . "\n");
 			$bugbaseurl.= urlencode("- **Database**: " . $db::LABEL . ' ' . $db->getVersion() . "\n");
 			$bugbaseurl.= urlencode("- **URL**: " . $_SERVER["REQUEST_URI"] . "\n");
+
+			// Execute hook printBugtrackInfo
+			$parameters=array('bugbaseurl'=>$bugbaseurl);
+			$reshook=$hookmanager->executeHooks('printBugtrackInfo', $parameters);    // Note that $action and $object may have been modified by some hooks
+			if (empty($reshook))
+			{
+				$bugbaseurl.=$hookmanager->resPrint;
+			}
+			else $bugbaseurl=$hookmanager->resPrint;
+
 			$bugbaseurl.= urlencode("\n");
 			$bugbaseurl.= urlencode("## Report\n");
 			print '<div id="blockvmenuhelpbugreport" class="blockvmenuhelp">';

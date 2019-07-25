@@ -160,7 +160,7 @@ class pdf_beluga extends ModelePDFProjects
 
 		if ($conf->projet->dir_output)
 		{
-			//$nblignes = count($object->lines);  // This is set later with array of tasks
+			//$nblines = count($object->lines);  // This is set later with array of tasks
 
 			$objectref = dol_sanitizeFileName($object->ref);
 			$dir = $conf->projet->dir_output;
@@ -223,7 +223,7 @@ class pdf_beluga extends ModelePDFProjects
 				}
 
 				$object->lines=$tasksarray;
-				$nblignes=count($object->lines);
+				$nblines=count($object->lines);
 
 				$pdf->Open();
 				$pagenb=0;
@@ -260,7 +260,7 @@ class pdf_beluga extends ModelePDFProjects
 					complete_substitutions_array($substitutionarray, $outputlangs, $object);
 					$notetoshow = make_substitutions($notetoshow, $substitutionarray, $outputlangs);
 					$notetoshow = convertBackOfficeMediasLinksToPublicLinks($notetoshow);
-					
+
 					$tab_top -= 2;
 
 					$pdf->SetFont('', '', $default_font_size - 1);
@@ -301,7 +301,7 @@ class pdf_beluga extends ModelePDFProjects
                     	'table'=>'commande',
                     	'datefieldname'=>'date_commande',
                     	'test'=>$conf->commande->enabled && $user->rights->commande->lire,
-                        'lang'=>'order'),
+                        'lang'=>'orders'),
                     'invoice'=>array(
                     	'name'=>"CustomersInvoices",
                     	'title'=>"ListInvoicesAssociatedProject",
@@ -642,7 +642,7 @@ class pdf_beluga extends ModelePDFProjects
                         }
                     }
 
-					$nexY+=2;    // Passe espace entre les lignes
+                    $nexY+=2;    // Add space between lines
 
 					// Detect if some page were added automatically and output _tableau for past pages
 					while ($pagenb < $pageposafter)

@@ -141,12 +141,14 @@ class DoliDBMysqli extends DoliDB
             	// If client is old latin, we force utf8
             	$clientmustbe=empty($conf->db->dolibarr_main_db_character_set)?'utf8':$conf->db->dolibarr_main_db_character_set;
             	if (preg_match('/latin1/', $clientmustbe)) $clientmustbe='utf8';
+            	if (preg_match('/utf8mb4/', $clientmustbe)) $clientmustbe='utf8';
 
-				if ($this->db->character_set_name() != $clientmustbe) {
-					$this->db->set_charset($clientmustbe);	// This set utf8_general_ci
+            	if ($this->db->character_set_name() != $clientmustbe) {
+            		$this->db->set_charset($clientmustbe);	// This set utf8_unicode_ci
 
-					$collation = $conf->db->dolibarr_main_db_collation;
-					if (preg_match('/latin1/', $collation)) $collation='utf8_unicode_ci';
+            		$collation = $conf->db->dolibarr_main_db_collation;
+            		if (preg_match('/latin1/', $collation)) $collation='utf8_unicode_ci';
+            		if (preg_match('/utf8mb4/', $collation)) $collation='utf8_unicode_ci';
 
 					if (! preg_match('/general/', $collation)) $this->db->query("SET collation_connection = ".$collation);
 				}
@@ -361,10 +363,10 @@ class DoliDBMysqli extends DoliDB
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
-     *	Renvoie le nombre de lignes dans le resultat d'une requete INSERT, DELETE ou UPDATE
+     *	Return the number of lines in the result of a request INSERT, DELETE or UPDATE
      *
      *	@param	mysqli_result	$resultset	Curseur de la requete voulue
-     *	@return int							Nombre de lignes
+     *	@return int							Number of lines
      *	@see    num_rows()
      */
     public function affected_rows($resultset)
@@ -682,6 +684,7 @@ class DoliDBMysqli extends DoliDB
         // ex. : $fields['rowid'] = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
         $sql = "CREATE TABLE ".$table."(";
         $i=0;
+	    $sqlfields=array();
         foreach($fields as $field_name => $field_desc)
         {
         	$sqlfields[$i] = $field_name." ";
@@ -928,11 +931,17 @@ class DoliDBMysqli extends DoliDB
             	dol_syslog(get_class($this)."::DDLCreateUser sql=".$sql, LOG_WARNING);
             }
         }
+
+        // Redo with localhost forced (sometimes user is created on %)
+        $sql = "CREATE USER '".$this->escape($dolibarr_main_db_user)."'@'localhost'";
+        $resql=$this->query($sql);
+
         $sql = "GRANT ALL PRIVILEGES ON ".$this->escape($dolibarr_main_db_name).".* TO '".$this->escape($dolibarr_main_db_user)."'@'".$this->escape($dolibarr_main_db_host)."' IDENTIFIED BY '".$this->escape($dolibarr_main_db_pass)."'";
         dol_syslog(get_class($this)."::DDLCreateUser", LOG_DEBUG);	// No sql to avoid password in log
         $resql=$this->query($sql);
         if (! $resql)
         {
+            $this->error = "Connected user not allowed to GRANT ALL PRIVILEGES ON ".$this->escape($dolibarr_main_db_name).".* TO '".$this->escape($dolibarr_main_db_user)."'@'".$this->escape($dolibarr_main_db_host)."'  IDENTIFIED BY '*****'";
             return -1;
         }
 

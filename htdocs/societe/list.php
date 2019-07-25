@@ -35,6 +35,7 @@ require_once '../main.inc.php';
 include_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 
@@ -197,7 +198,7 @@ $arrayfields=array(
 	's.idprof4'=>array('label'=>"ProfId4Short", 'checked'=>$checkedprofid4),
 	's.idprof5'=>array('label'=>"ProfId5Short", 'checked'=>$checkedprofid5),
 	's.idprof6'=>array('label'=>"ProfId6Short", 'checked'=>$checkedprofid6),
-	's.tva_intra'=>array('label'=>"VATIntra", 'checked'=>0),
+	's.tva_intra'=>array('label'=>"VATIntraShort", 'checked'=>0),
 	'customerorsupplier'=>array('label'=>'Nature', 'checked'=>1),
 	's.fk_prospectlevel'=>array('label'=>"ProspectLevelShort", 'checked'=>$checkprospectlevel),
 	's.fk_stcomm'=>array('label'=>"StatusProsp", 'checked'=>$checkstcomm),
@@ -227,7 +228,6 @@ if ($action=="change")
 {
     $idcustomer = GETPOST('idcustomer', 'int');
     $place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0);   // $place is id of table for Ba or Restaurant
-    $posnb = (GETPOST('posnb', 'int') > 0 ? GETPOST('posnb', 'int') : 0);   // $posnb is id of POS
 
     $sql="UPDATE ".MAIN_DB_PREFIX."facture set fk_soc=".$idcustomer." where ref='(PROV-POS-".$place.")'";
     $resql = $db->query($sql);
@@ -374,7 +374,7 @@ $sql.= " s.code_compta, s.code_compta_fournisseur, s.parent as fk_parent,";
 $sql.= " s2.nom as name2,";
 $sql.= " typent.code as typent_code,";
 $sql.= " staff.code as staff_code,";
-$sql.= " country.code as country_code,";
+$sql.= " country.code as country_code, country.label as country_label,";
 $sql.= " state.code_departement as state_code, state.nom as state_name,";
 $sql.= " region.code_region as region_code, region.nom as region_name";
 // We'll need these fields in order to filter by sale (including the case where the user can only see his prospects)
@@ -582,9 +582,7 @@ if ($user->rights->societe->creer && $contextpage != 'poslist')
 		if($type == 'f') $label='NewSupplier';
 	}
 
-	$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/societe/card.php?action=create'.$typefilter.'"><span class="valignmiddle text-plus-circle">'.$langs->trans($label).'</span>';
-	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-	$newcardbutton.= '</a>';
+    $newcardbutton.= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/societe/card.php?action=create'.$typefilter);
 }
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'" name="formfilter" autocomplete="off">';
@@ -992,6 +990,8 @@ while ($i < min($num, $limit))
 	$companystatic->fournisseur=$obj->fournisseur;
 	$companystatic->code_client=$obj->code_client;
 	$companystatic->code_fournisseur=$obj->code_fournisseur;
+	$companystatic->tva_intra=$obj->tva_intra;
+	$companystatic->country_code=$obj->country_code;
 
 	$companystatic->code_compta_client=$obj->code_compta;
 	$companystatic->code_compta_fournisseur=$obj->code_compta_fournisseur;
@@ -1002,6 +1002,7 @@ while ($i < min($num, $limit))
 	print '<tr class="oddeven"';
 	if ($contextpage == 'poslist')
 	{
+		$place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0);   // $place is id of table for Ba or Restaurant
 	    print ' onclick="location.href=\'list.php?action=change&contextpage=poslist&idcustomer='.$obj->rowid.'&place='.$place.'\'"';
 	}
 	print '>';
@@ -1094,8 +1095,8 @@ while ($i < min($num, $limit))
 	if (! empty($arrayfields['country.code_iso']['checked']))
 	{
 		print '<td class="center">';
-		$tmparray=getCountry($obj->fk_pays, 'all');
-		print $tmparray['label'];
+		$labelcountry=($obj->country_code && ($langs->trans("Country".$obj->country_code)!="Country".$obj->country_code))?$langs->trans("Country".$obj->country_code):$obj->country_label;
+		print $labelcountry;
 		print '</td>';
 		if (! $i) $totalarray['nbfield']++;
 	}
@@ -1169,7 +1170,13 @@ while ($i < min($num, $limit))
 	}
 	if (! empty($arrayfields['s.tva_intra']['checked']))
 	{
-		print "<td>".$obj->tva_intra."</td>\n";
+		print "<td>";
+		print $obj->tva_intra;
+		if ($obj->tva_intra && ! isValidVATID($companystatic))
+		{
+			print img_warning("BadVATNumber", '', '');
+		}
+		print "</td>\n";
 		if (! $i) $totalarray['nbfield']++;
 	}
 	// Type

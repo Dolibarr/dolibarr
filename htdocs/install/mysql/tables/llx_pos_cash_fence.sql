@@ -33,6 +33,6 @@ CREATE TABLE llx_pos_cash_fence(
 	posnumber VARCHAR(30),
 	fk_user_creat integer,
 	fk_user_valid integer,
-	tms TIMESTAMP NOT NULL,
+	tms TIMESTAMP,
 	import_key VARCHAR(14)
 ) ENGINE=innodb;
