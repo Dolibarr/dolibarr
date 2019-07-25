@@ -372,7 +372,7 @@ if ((! defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && ! empty($conf->
 	{
 		dol_syslog("--- Access to ".$_SERVER["PHP_SELF"]." refused due to invalid token, so we disable POST and some GET parameters - referer=".$_SERVER['HTTP_REFERER'].", action=".GETPOST('action', 'aZ09').", _GET|POST['token']=".GETPOST('token', 'alpha').", _SESSION['token']=".$_SESSION['token'], LOG_WARNING);
 		//print 'Unset POST by CSRF protection in main.inc.php.';	// Do not output anything because this create problems when using the BACK button on browsers.
-		if ($conf->global->MAIN_FEATURES_LEVEL>1) setEventMessages('Unset POST by CSRF protection in main.inc.php.'."<br>\n".'$_SERVER[REQUEST_URI] = '.$_SERVER['REQUEST_URI'].' $_SERVER[REQUEST_METHOD] = '.$_SERVER['REQUEST_METHOD'].' GETPOST(token) = '.GETPOST('token', 'alpha').' $_SESSION[token] = '.$_SESSION['token'], null, 'warnings');
+		if ($conf->global->MAIN_FEATURES_LEVEL>1) setEventMessages('Unset POST by CSRF protection in main.inc.php (POST was already done or was done by a not allowed web page).'."<br>\n".'$_SERVER[REQUEST_URI] = '.$_SERVER['REQUEST_URI'].' $_SERVER[REQUEST_METHOD] = '.$_SERVER['REQUEST_METHOD'].' GETPOST(token) = '.GETPOST('token', 'alpha').' $_SESSION[token] = '.$_SESSION['token'], null, 'warnings');
 		unset($_POST);
 		unset($_GET['confirm']);
 	}
@@ -1841,34 +1841,38 @@ function top_menu_user(User $user, Translate $langs)
             </div>
 
         </div>
-    </div>
-    <!-- Code to show/hide the user drop-down -->
-    <script>
-    $( document ).ready(function() {
-        $(document).on("click", function(event) {
-            if (!$(event.target).closest("#topmenu-login-dropdown").length) {
-                // Hide the menus.
-                $("#topmenu-login-dropdown").removeClass("open");
-				$("#dropdown-icon-down").show();	// use show/hide instead toggle for avoid conflict
-				$("#dropdown-icon-up").hide();		// use show/hide instead toggle for avoid conflict
-            }
+    </div>';
+
+    if (! defined('JS_JQUERY_DISABLE_DROPDOWN'))    // This may be set by some pages that use different jquery version to avoid errors
+    {
+        $btnUser .= '
+        <!-- Code to show/hide the user drop-down -->
+        <script>
+        $( document ).ready(function() {
+            $(document).on("click", function(event) {
+                if (!$(event.target).closest("#topmenu-login-dropdown").length) {
+                    // Hide the menus.
+                    $("#topmenu-login-dropdown").removeClass("open");
+    				$("#dropdown-icon-down").show();	// use show/hide instead toggle for avoid conflict
+    				$("#dropdown-icon-up").hide();		// use show/hide instead toggle for avoid conflict
+                }
+            });
+
+            $("#topmenu-login-dropdown .dropdown-toggle").on("click", function(event) {
+                event.preventDefault();
+                $("#topmenu-login-dropdown").toggleClass("open");
+                $("#dropdown-icon-down").toggle();
+                $("#dropdown-icon-up").toggle();
+            });
+
+            $("#topmenuloginmoreinfo-btn").on("click", function() {
+                $("#topmenuloginmoreinfo").slideToggle();
+            });
+
         });
-
-        $("#topmenu-login-dropdown .dropdown-toggle").on("click", function(event) {
-            event.preventDefault();
-            $("#topmenu-login-dropdown").toggleClass("open");
-            $("#dropdown-icon-down").toggle();
-            $("#dropdown-icon-up").toggle();
-        });
-
-        $("#topmenuloginmoreinfo-btn").on("click", function() {
-            $("#topmenuloginmoreinfo").slideToggle();
-        });
-
-    });
-    </script>
-    ';
-
+        </script>
+        ';
+    }
 
     return $btnUser;
 }

@@ -78,7 +78,7 @@ MailToSendTicketMessage=To send email from ticket message
 # Admin page
 #
 TicketSetup=Ticket module setup
-TicketSettings=Settings
+TicketSettings=Seaded
 TicketSetupPage=
 TicketPublicAccess=A public interface requiring no identification is available at the following url
 TicketSetupDictionaries=The type of ticket, severity and analytic codes are configurable from dictionaries

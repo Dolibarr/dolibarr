@@ -287,6 +287,7 @@ SupplierAbsoluteDiscountAllUsers=Descuentos fijos de proveedores (acordado por t
 SupplierAbsoluteDiscountMy=Descuentos fijos de proveedores (acordados personalmente)
 DiscountNone=Ninguna
 Vendor=Proveedor
+Supplier=Proveedor
 AddContact=Crear contacto
 AddContactAddress=Crear contacto/dirección
 EditContact=Editar contacto

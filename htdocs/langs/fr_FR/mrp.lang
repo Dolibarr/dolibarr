@@ -1,6 +1,6 @@
 MRPArea=Espace MRP
 MenuBOM=Nomenclatures BOM
-LatestBOMModified=Le %sdernières BOMs modifiées
+LatestBOMModified=Le %s dernières BOMs modifiées
 BillOfMaterials=Nomenclature BOM
 BOMsSetup=Configuration du module BOM
 ListOfBOMs=Liste des BOMs

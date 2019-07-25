@@ -532,7 +532,8 @@ if (! $showdatefilter)
 {
 	print '<div class="center centpercent">';
     print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$projectid.'" method="post">';
-	print '<input type="hidden" name="tablename" value="'.$tablename.'">';
+    print '<input type="hidden" name="token" value="'.$_SESSION["newtoken"].'">';
+    print '<input type="hidden" name="tablename" value="'.$tablename.'">';
 	print '<input type="hidden" name="action" value="view">';
 	print '<table class="center"><tr>';
 	print '<td>'.$langs->trans("From").' ';
@@ -762,7 +763,8 @@ foreach ($listofreferent as $key => $value)
 				// Define form with the combo list of elements to link
 			    $addform.='<div class="inline-block valignmiddle">';
 			    $addform.='<form action="'.$_SERVER["PHP_SELF"].'?id='.$projectid.'" method="post">';
-				$addform.='<input type="hidden" name="tablename" value="'.$tablename.'">';
+			    $addform.='<input type="hidden" name="token" value="'.$_SESSION["newtoken"].'">';
+			    $addform.='<input type="hidden" name="tablename" value="'.$tablename.'">';
 				$addform.='<input type="hidden" name="action" value="addelement">';
 				$addform.='<input type="hidden" name="datesrfc" value="'.dol_print_date($dates, 'dayhourrfc').'">';
 				$addform.='<input type="hidden" name="dateerfc" value="'.dol_print_date($datee, 'dayhourrfc').'">';

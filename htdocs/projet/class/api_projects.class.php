@@ -581,6 +581,8 @@ class Projects extends DolibarrApi
         unset($object->total_localtax2);
         unset($object->total_ttc);
 
+        unset($object->comments);
+
         return $object;
     }
 

@@ -412,8 +412,8 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 				print '<td class="left">';
                 print $thirdpartystatic->getNomUrl(1, 'customer', 44);
 				print '</td>';
-				if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td class="right">'.price($obj->total_ht).'</td>';
-				print '<td class="right">'.price($obj->total_ttc).'</td>';
+				if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td class="nowrap right">'.price($obj->total_ht).'</td>';
+				print '<td class="nowrap right">'.price($obj->total_ttc).'</td>';
 				print '<td class="right">'.dol_print_date($db->jdate($obj->tms), 'day').'</td>';
 				print '<td>'.$facstatic->LibStatut($obj->paye, $obj->fk_statut, 3, $obj->am).'</td>';
 				print '</tr>';
@@ -512,7 +512,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 				print $thirdpartystatic->getNomUrl(1, 'supplier', 44);
 				print '</td>';
 				if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td class="right">'.price($obj->total_ht).'</td>';
-				print '<td class="right">'.price($obj->total_ttc).'</td>';
+				print '<td class="nowrap right">'.price($obj->total_ttc).'</td>';
 				print '<td class="right">'.dol_print_date($db->jdate($obj->tms), 'day').'</td>';
 				print '<td>'.$facstatic->LibStatut($obj->paye, $obj->fk_statut, 3).'</td>';
 				print '</tr>';
@@ -593,7 +593,7 @@ if (! empty($conf->don->enabled) && $user->rights->societe->lire)
 				print '<tr class="oddeven">';
 				print '<td>'.$donationstatic->getNomUrl(1).'</td>';
 				print '<td>'.$label.'</td>';
-				print '<td class="right">'.price($objp->amount).'</td>';
+				print '<td class="nowrap right">'.price($objp->amount).'</td>';
 				print '<td class="right">'.dol_print_date($db->jdate($objp->dm), 'day').'</td>';
                 print '<td>'.$donationstatic->LibStatut($objp->fk_statut, 3).'</td>';
 				print '</tr>';
@@ -664,8 +664,8 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 					print '<tr class="oddeven">';
 					print '<td>'.$chargestatic->getNomUrl(1).'</td>';
 					print '<td align="center">'.dol_print_date($db->jdate($obj->date_ech), 'day').'</td>';
-					print '<td class="right">'.price($obj->amount).'</td>';
-					print '<td class="right">'.price($obj->sumpaid).'</td>';
+					print '<td class="nowrap right">'.price($obj->amount).'</td>';
+					print '<td class="nowrap right">'.price($obj->sumpaid).'</td>';
 					print '<td align="center">'.$chargestatic->getLibStatut(3).'</td>';
 					print '</tr>';
 					$tot_ttc+=$obj->amount;
@@ -673,7 +673,7 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 				}
 
 				print '<tr class="liste_total"><td class="left" colspan="2">'.$langs->trans("Total").'</td>';
-				print '<td class="right">'.price($tot_ttc).'</td>';
+				print '<td class="nowrap right">'.price($tot_ttc).'</td>';
 				print '<td class="right"></td>';
 				print '<td class="right">&nbsp;</td>';
 				print '</tr>';
@@ -786,8 +786,8 @@ if (! empty($conf->facture->enabled) && ! empty($conf->commande->enabled) && $us
                 print $societestatic->getNomUrl(1, 'customer', 44);
 				print '</td>';
 				if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td class="right">'.price($obj->total_ht).'</td>';
-				print '<td class="right">'.price($obj->total_ttc).'</td>';
-				print '<td class="right">'.price($obj->total_ttc-$obj->tot_fttc).'</td>';
+				print '<td class="nowrap right">'.price($obj->total_ttc).'</td>';
+				print '<td class="nowrap right">'.price($obj->total_ttc-$obj->tot_fttc).'</td>';
 				print '<td>'.$commandestatic->LibStatut($obj->fk_statut, $obj->facture, 3).'</td>';
 				print '</tr>';
 				$tot_ht += $obj->total_ht;
@@ -799,8 +799,8 @@ if (! empty($conf->facture->enabled) && ! empty($conf->commande->enabled) && $us
 
 			print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").' &nbsp; <font style="font-weight: normal">('.$langs->trans("RemainderToBill").': '.price($tot_tobill).')</font> </td>';
 			if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td class="right">'.price($tot_ht).'</td>';
-			print '<td class="right">'.price($tot_ttc).'</td>';
-			print '<td class="right">'.price($tot_tobill).'</td>';
+			print '<td class="nowrap right">'.price($tot_ttc).'</td>';
+			print '<td class="nowrap right">'.price($tot_tobill).'</td>';
 			print '<td>&nbsp;</td>';
 			print '</tr>';
 			print '</table></div><br>';
@@ -911,8 +911,8 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 				print '</td>';
 				print '<td class="right">'.dol_print_date($db->jdate($obj->datelimite), 'day').'</td>';
 				if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td class="right">'.price($obj->total_ht).'</td>';
-				print '<td class="right">'.price($obj->total_ttc).'</td>';
-				print '<td class="right">'.price($obj->am).'</td>';
+				print '<td class="nowrap right">'.price($obj->total_ttc).'</td>';
+				print '<td class="nowrap right">'.price($obj->am).'</td>';
 				print '<td>'.$facstatic->LibStatut($obj->paye, $obj->fk_statut, 3, $obj->am).'</td>';
 				print '</tr>';
 
@@ -926,8 +926,8 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 			print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").' &nbsp; <font style="font-weight: normal">('.$langs->trans("RemainderToTake").': '.price($total_ttc-$totalam).')</font> </td>';
 			print '<td>&nbsp;</td>';
 			if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td class="right">'.price($total).'</td>';
-			print '<td class="right">'.price($total_ttc).'</td>';
-			print '<td class="right">'.price($totalam).'</td>';
+			print '<td class="nowrap right">'.price($total_ttc).'</td>';
+			print '<td class="nowrap right">'.price($totalam).'</td>';
 			print '<td>&nbsp;</td>';
 			print '</tr>';
 		}
@@ -1023,8 +1023,8 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 				print '<td>'.$societestatic->getNomUrl(1, 'supplier', 44).'</td>';
 				print '<td class="right">'.dol_print_date($db->jdate($obj->date_lim_reglement), 'day').'</td>';
 				if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td class="right">'.price($obj->total_ht).'</td>';
-				print '<td class="right">'.price($obj->total_ttc).'</td>';
-				print '<td class="right">'.price($obj->am).'</td>';
+				print '<td class="nowrap right">'.price($obj->total_ttc).'</td>';
+				print '<td class="nowrap right">'.price($obj->am).'</td>';
 				print '<td>'.$facstatic->LibStatut($obj->paye, $obj->fk_statut, 3).'</td>';
 				print '</tr>';
 				$total += $obj->total_ht;
@@ -1036,8 +1036,8 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 			print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").' &nbsp; <font style="font-weight: normal">('.$langs->trans("RemainderToPay").': '.price($total_ttc-$totalam).')</font> </td>';
 			print '<td>&nbsp;</td>';
 			if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td class="right">'.price($total).'</td>';
-			print '<td class="right">'.price($total_ttc).'</td>';
-			print '<td class="right">'.price($totalam).'</td>';
+			print '<td class="nowrap right">'.price($total_ttc).'</td>';
+			print '<td class="nowrap right">'.price($totalam).'</td>';
 			print '<td>&nbsp;</td>';
 			print '</tr>';
 		}
