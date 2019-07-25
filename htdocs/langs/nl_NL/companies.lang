@@ -287,6 +287,7 @@ SupplierAbsoluteDiscountAllUsers=Vastgelegde leverancier kortingen (toegekend do
 SupplierAbsoluteDiscountMy=Vastgelegde klant kortingen (toegekend door uzelf)
 DiscountNone=Geen
 Vendor=Verkoper
+Supplier=Verkoper
 AddContact=Nieuwe contactpersoon
 AddContactAddress=Nieuw contact/adres
 EditContact=Bewerk contact / adres

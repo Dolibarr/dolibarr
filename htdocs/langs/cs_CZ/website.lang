@@ -98,7 +98,7 @@ NoWebSiteCreateOneFirst=Dosud nebyla vytvořena žádná webová stránka. Nejpr
 GoTo=Jít do
 DynamicPHPCodeContainsAForbiddenInstruction=Přidáte dynamický PHP kód, který obsahuje instrukci PHP  '<strong>%s</strong>  ' která je implicitně zakázána jako dynamický obsah (viz skryté možnosti WEBSITE_PHP_ALLOW_xxx pro zvýšení seznamu povolených příkazů).
 NotAllowedToAddDynamicContent=Nemáte oprávnění přidávat nebo upravovat dynamický obsah PHP na webových stránkách. Požádejte o svolení nebo ponechte kód v tagech php beze změny.
-ReplaceWebsiteContent=Replace website content
+ReplaceWebsiteContent=Search or Replace website content
 DeleteAlsoJs=Delete also all javascript files specific to this website?
 DeleteAlsoMedias=Delete also all medias files specific to this website?
 # Export

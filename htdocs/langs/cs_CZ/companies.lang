@@ -287,6 +287,7 @@ SupplierAbsoluteDiscountAllUsers=Slevy pro absolutní prodejce (zadané všemi u
 SupplierAbsoluteDiscountMy=Slevy pro absolutní prodejce (zadané sami)
 DiscountNone=Nikdo
 Vendor=Prodejce
+Supplier=Prodejce
 AddContact=Vytvořit kontakt
 AddContactAddress=Vytvořit kontakt/adresu
 EditContact=Upravit kontakt
