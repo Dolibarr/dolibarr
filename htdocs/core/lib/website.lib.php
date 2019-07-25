@@ -441,7 +441,7 @@ function includeContainer($containerref)
  * @param 	WebsitePage	$websitepage		Website page object
  * @return  string							HTML content
  */
-function getStructuredData($type='blogpost', WebsitePage $websitepage)
+function getStructuredData($type, WebsitePage $websitepage)
 {
 	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $weblangs;	// Very important. Required to have var available when running inluded containers.
 	global $includehtmlcontentopened;
