@@ -23,7 +23,7 @@
  *	\brief      Head bar to start Takepos.
  */
 
-//v20: Spliting original takepos.php DIV we can refresh screen quickly. This is usefull for manage user, terminal, etc 
+//v20: Spliting original takepos.php DIV we can refresh screen quickly. This is usefull for manage user, terminal, etc
 
 //if (! defined('NOREQUIREUSER'))	define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
 //if (! defined('NOREQUIREDB'))		define('NOREQUIREDB','1');		// Not disabled cause need to load personalized language
@@ -63,7 +63,7 @@ if ($term>0)
 }else $term=$_SESSION['takeposterminal'];
 
 
-$userid=GETPOST('userid','int');
+$userid=GETPOST('userid', 'int');
 
 if($userid>0){
 	//V20: TODO: Could be a lack of security, but it's the faster way of change users.
@@ -221,7 +221,7 @@ print '<div class="row0" ><table width="100%"><tr>';
 	
 	echo '<td align="right"><img id="fullscreen" src="img/expand.png" class="topbuttons" onclick="FullScreen();">&nbsp;&nbsp;  </img>';
 	echo '<img src="img/shutdown.png" class="topbuttons" onclick="exit();"></img></td>';	//Cierra Navegador
-
+	
 	print '</form>';
 	
 print '</tr></table></div>';
