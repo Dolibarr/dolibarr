@@ -476,17 +476,17 @@ function getStructuredData($type, WebsitePage $websitepage)
 					    "@type": "Person",
 					    "name": "'.$tmpuser->getFullName($weblangs).'"
 					  },
+					  "publisher": {
+					    "@type": "Organization",
+					    "name": "'.$mysoc->name.'"
+					   },
 					  "description": "'.$websitepage->description.'"
 					}'."\n";
 					/*
-					"publisher": {
-					"@type": "Organization",
-					"name": "Google",
-					"logo": {
-					"@type": "ImageObject",
-					"url": "https://google.com/logo.jpg"
-					}
-					},
+					      "logo": {
+					        "@type": "ImageObject",
+					        "url": "https://google.com/logo.jpg"
+					      }
 					*/
 				$ret .= '</script>'."\n";
 			}
