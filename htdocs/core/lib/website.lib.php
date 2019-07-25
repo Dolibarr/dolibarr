@@ -464,11 +464,11 @@ function getStructuredData($type, WebsitePage $websitepage)
 					  "@type": "NewsArticle",
 					  "mainEntityOfPage": {
 					    "@type": "WebPage",
-					    "@id": "'.'/'.$websitepage->pageurl.'"
+					    "@id": "'.$websitepage->pageurl.'"
 					  },
 					  "headline": "'.$websitepage->title.'",
 					  "image": [
-					    "'."/".$websitepage->image.'",
+					    "'.$websitepage->image.'"
 					   ],
 					  "datePublished": "'.dol_print_date($websitepage->date_creation, 'dayhourrfc').'",
 					  "dateModified": "'.dol_print_date($websitepage->date_modification, 'dayhourrfc').'",
