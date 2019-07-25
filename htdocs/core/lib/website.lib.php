@@ -397,7 +397,7 @@ function redirectToContainer($containerref, $containeraliasalt = '', $containeri
  */
 function includeContainer($containerref)
 {
-	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs;	// Very important. Required to have var available when running inluded containers.
+	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs;	// Very important. Required to have var available when running included containers.
 	global $includehtmlcontentopened;
 	global $websitekey, $websitepagefile;
 
@@ -434,7 +434,67 @@ function includeContainer($containerref)
 	$includehtmlcontentopened--;
 }
 
+/**
+ * Return HTML content to add structured data for an article, news or Blog Post.
+ *
+ * @param 	string		$type				'blogpost', 'product', ...
+ * @param 	WebsitePage	$websitepage		Website page object
+ * @return  string							HTML content
+ */
+function getStructuredData($type='blogpost', WebsitePage $websitepage)
+{
+	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $weblangs;	// Very important. Required to have var available when running inluded containers.
+	global $includehtmlcontentopened;
+	global $websitekey, $websitepagefile;
 
+	if ($type == 'blogpost')
+	{
+		if ($websitepage->fk_user_creat > 0)
+		{
+			include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+			$tmpuser = new User($db);
+			$restmpuser = $tmpuser->fetch($websitepage->fk_user_creat);
+
+			if ($restmpuser > 0)
+			{
+				$ret = '<!-- Add structured data for blog post -->'."\n";
+				$ret .= '<script type="application/ld+json">'."\n";
+				$ret .= '{
+					  "@context": "https://schema.org",
+					  "@type": "NewsArticle",
+					  "mainEntityOfPage": {
+					    "@type": "WebPage",
+					    "@id": "'.'/'.$websitepage->pageurl.'"
+					  },
+					  "headline": "'.$websitepage->title.'",
+					  "image": [
+					    "'."/".$websitepage->image.'",
+					   ],
+					  "datePublished": "'.dol_print_date($websitepage->date_creation, 'dayhourrfc').'",
+					  "dateModified": "'.dol_print_date($websitepage->date_modification, 'dayhourrfc').'",
+					  "author": {
+					    "@type": "Person",
+					    "name": "'.$tmpuser->getFullName($weblangs).'"
+					  },
+					  "description": "'.$websitepage->description.'"
+					}'."\n";
+					/*
+					"publisher": {
+					"@type": "Organization",
+					"name": "Google",
+					"logo": {
+					"@type": "ImageObject",
+					"url": "https://google.com/logo.jpg"
+					}
+					},
+					*/
+				$ret .= '</script>'."\n";
+			}
+		}
+	}
+
+	return $ret;
+}
 
 /**
  * Download all images found into page content $tmp.
