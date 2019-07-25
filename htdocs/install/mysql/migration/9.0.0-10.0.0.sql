@@ -398,3 +398,6 @@ insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) v
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (113, 'supplier_proposal', 'external', 'SERVICE',       'Contact fournisseur prestation', 1);
 
 ALTER TABLE llx_ticket_extrafields ADD INDEX idx_ticket_extrafields (fk_object);
+
+UPDATE llx_website_page set fk_user_creat = fk_user_modif WHERE fk_user_creat IS NULL and fk_user_modif IS NOT NULL;
+
