@@ -173,7 +173,7 @@ if ($type_element == 'fichinter')
 	$sql_select = 'SELECT f.rowid as doc_id, f.ref as doc_number, \'1\' as doc_type, f.datec as dateprint, f.fk_statut as status, tc.libelle, ';
 	$tables_from = MAIN_DB_PREFIX.'fichinterdet d';
     $tables_from.= ' LEFT JOIN '.MAIN_DB_PREFIX.'fichinter as f ON d.fk_fichinter=f.rowid';
-    $tables_from.= ' INNER JOIN '.MAIN_DB_PREFIX.'element_contact ec ON ec.element_id=f.rowid';
+    $tables_from.= ' INNER JOIN '.MAIN_DB_PREFIX.'element_contact ec ON ec.element_id=f.rowid AND ec.fk_socpeople='.$object->id;
     $tables_from.= ' INNER JOIN '.MAIN_DB_PREFIX."c_type_contact tc ON (ec.fk_c_type_contact=tc.rowid and tc.element='fichinter' and tc.source='external' and tc.active=1)";
 	$where = ' WHERE f.entity IN ('.getEntity('ficheinter').')';
 	$dateprint = 'f.datec';
@@ -187,7 +187,7 @@ elseif ($type_element == 'invoice')
 	$tables_from = MAIN_DB_PREFIX.'facturedet d';
     $tables_from.= ' LEFT JOIN '.MAIN_DB_PREFIX.'facture as f ON d.fk_facture=f.rowid';
     $tables_from.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product p ON d.fk_product=p.rowid';
-    $tables_from.= ' INNER JOIN '.MAIN_DB_PREFIX.'element_contact ec ON ec.element_id=f.rowid';
+    $tables_from.= ' INNER JOIN '.MAIN_DB_PREFIX.'element_contact ec ON ec.element_id=f.rowid AND ec.fk_socpeople='.$object->id;
     $tables_from.= ' INNER JOIN '.MAIN_DB_PREFIX."c_type_contact tc ON (ec.fk_c_type_contact=tc.rowid and tc.element='facture' and tc.source='external' and tc.active=1)";
 	$where = " WHERE f.entity IN (".getEntity('invoice').")";
 	$dateprint = 'f.datef';
@@ -202,7 +202,7 @@ elseif ($type_element == 'propal')
 	$tables_from = MAIN_DB_PREFIX.'propaldet d';
     $tables_from.= ' LEFT JOIN '.MAIN_DB_PREFIX.'propal as c ON d.fk_propal=c.rowid';
     $tables_from.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product p ON d.fk_product=p.rowid';
-    $tables_from.= ' INNER JOIN '.MAIN_DB_PREFIX.'element_contact ec ON ec.element_id=c.rowid';
+    $tables_from.= ' INNER JOIN '.MAIN_DB_PREFIX.'element_contact ec ON ec.element_id=c.rowid AND ec.fk_socpeople='.$object->id;
     $tables_from.= ' INNER JOIN '.MAIN_DB_PREFIX."c_type_contact tc ON (ec.fk_c_type_contact=tc.rowid and tc.element='propal' and tc.source='external' and tc.active=1)";
 	$where = ' WHERE c.entity IN ('.getEntity('propal').')';
 	$datePrint = 'c.datep';
@@ -217,7 +217,7 @@ elseif ($type_element == 'order')
 	$tables_from = MAIN_DB_PREFIX.'commandedet d';
     $tables_from.= ' LEFT JOIN '.MAIN_DB_PREFIX.'commande as c ON d.fk_commande=c.rowid';
     $tables_from.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product p ON d.fk_product=p.rowid';
-    $tables_from.= ' INNER JOIN '.MAIN_DB_PREFIX.'element_contact ec ON ec.element_id=c.rowid';
+    $tables_from.= ' INNER JOIN '.MAIN_DB_PREFIX.'element_contact ec ON ec.element_id=c.rowid AND ec.fk_socpeople='.$object->id;
     $tables_from.= ' INNER JOIN '.MAIN_DB_PREFIX."c_type_contact tc ON (ec.fk_c_type_contact=tc.rowid and tc.element='commande' and tc.source='external' and tc.active=1)";
 	$where = ' WHERE c.entity IN ('.getEntity('order').')';
 	$dateprint = 'c.date_commande';
@@ -232,7 +232,7 @@ elseif ($type_element == 'supplier_invoice')
 	$tables_from = MAIN_DB_PREFIX.'facture_fourn_det d';
     $tables_from.= ' LEFT JOIN '.MAIN_DB_PREFIX.'facture_fourn as f ON d.fk_facture_fourn=f.rowid';
     $tables_from.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product p ON d.fk_product=p.rowid';
-    $tables_from.= ' INNER JOIN '.MAIN_DB_PREFIX.'element_contact ec ON ec.element_id=f.rowid';
+    $tables_from.= ' INNER JOIN '.MAIN_DB_PREFIX.'element_contact ec ON ec.element_id=f.rowid AND ec.fk_socpeople='.$object->id;
     $tables_from.= ' INNER JOIN '.MAIN_DB_PREFIX."c_type_contact tc ON (ec.fk_c_type_contact=tc.rowid and tc.element='invoice_supplier' and tc.source='external' and tc.active=1)";
 	$where = ' WHERE f.entity IN ('.getEntity($documentstatic->element).')';
 	$dateprint = 'f.datef';
@@ -260,7 +260,7 @@ elseif ($type_element == 'supplier_order')
 	$tables_from = MAIN_DB_PREFIX.'commande_fournisseurdet d';
     $tables_from.= ' LEFT JOIN '.MAIN_DB_PREFIX.'commande_fournisseur as c ON d.fk_commande=c.rowid';
     $tables_from.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product p ON d.fk_product=p.rowid';
-    $tables_from.= ' INNER JOIN '.MAIN_DB_PREFIX.'element_contact ec ON ec.element_id=c.rowid';
+    $tables_from.= ' INNER JOIN '.MAIN_DB_PREFIX.'element_contact ec ON ec.element_id=c.rowid AND ec.fk_socpeople='.$object->id;
     $tables_from.= ' INNER JOIN '.MAIN_DB_PREFIX."c_type_contact tc ON (ec.fk_c_type_contact=tc.rowid and tc.element='order_supplier' and tc.source='external' and tc.active=1)";
 	$where = ' WHERE c.entity IN ('.getEntity($documentstatic->element).')';
 	$dateprint = 'c.date_valid';
@@ -276,7 +276,7 @@ elseif ($type_element == 'contract')
 	$tables_from = MAIN_DB_PREFIX.'contratdet d';
     $tables_from.= ' LEFT JOIN '.MAIN_DB_PREFIX.'contrat as c ON d.fk_contrat=c.rowid';
     $tables_from.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product p ON d.fk_product=p.rowid';
-    $tables_from.= ' INNER JOIN '.MAIN_DB_PREFIX.'element_contact ec ON ec.element_id=c.rowid';
+    $tables_from.= ' INNER JOIN '.MAIN_DB_PREFIX.'element_contact ec ON ec.element_id=c.rowid AND ec.fk_socpeople='.$object->id;
     $tables_from.= ' INNER JOIN '.MAIN_DB_PREFIX."c_type_contact tc ON (ec.fk_c_type_contact=tc.rowid and tc.element='contrat' and tc.source='external' and tc.active=1)";
 	$where = ' WHERE c.entity IN ('.getEntity('contrat').')';
 	$dateprint = 'c.date_valid';
@@ -300,7 +300,6 @@ if (!empty($sql_select))
 	$sql.= " FROM "/*.MAIN_DB_PREFIX."societe as s, "*/.$tables_from;
 //	if ($type_element != 'fichinter') $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON d.fk_product = p.rowid ';
 	$sql.= $where;
-	$sql.= ' AND ec.fk_socpeople = '.$object->id;
 	if ($month > 0) {
 		if ($year > 0) {
 			$start = dol_mktime(0, 0, 0, $month, 1, $year);
