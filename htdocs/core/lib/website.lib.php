@@ -477,12 +477,12 @@ function getStructuredData($type, WebsitePage $websitepage)
 					    "name": "'.$tmpuser->getFullName($weblangs).'"
 					  },
 					  "publisher": {
-					    "@type": "Organization",
-					    "name": "'.$mysoc->name.'"
-					      "logo": {
+					     "@type": "Organization",
+					     "name": "'.$mysoc->name.'",
+					     "logo": {
 					        "@type": "ImageObject",
 					        "url": "/viewimage.php?modulepart=mycompany&file=logos%2F'.urlencode($mysoc->logo).'"
-					      }
+					     }
 					   },
 					  "description": "'.$websitepage->description.'"
 					}'."\n";
