@@ -306,14 +306,14 @@ if ($action == "order" and $placeid != 0)
     $catsprinter2 = explode(';', $conf->global->TAKEPOS_PRINTED_CATEGORIES_2);
     foreach($invoice->lines as $line)
     {
-        if ($line->special_code == "3") { continue;
+        if ($line->special_code == "4") { continue;
         }
         $c = new Categorie($db);
         $existing = $c->containing($line->fk_product, Categorie::TYPE_PRODUCT, 'id');
         $result = array_intersect($catsprinter1, $existing);
         $count = count($result);
         if ($count > 0) {
-            $sql = "UPDATE " . MAIN_DB_PREFIX . "facturedet set special_code='3' where rowid=$line->rowid";
+            $sql = "UPDATE " . MAIN_DB_PREFIX . "facturedet set special_code='4' where rowid=$line->rowid";
             $db->query($sql);
             $order_receipt_printer1.= '<tr>' . $line->product_label . '<td class="right">' . $line->qty;
 			if (!empty($line->array_options['options_order_notes'])) $order_receipt_printer1.="<br>(".$line->array_options['options_order_notes'].")";
@@ -323,14 +323,14 @@ if ($action == "order" and $placeid != 0)
 
     foreach($invoice->lines as $line)
     {
-        if ($line->special_code == "3") { continue;
+        if ($line->special_code == "4") { continue;
         }
         $c = new Categorie($db);
         $existing = $c->containing($line->fk_product, Categorie::TYPE_PRODUCT, 'id');
         $result = array_intersect($catsprinter2, $existing);
         $count = count($result);
         if ($count > 0) {
-            $sql = "UPDATE " . MAIN_DB_PREFIX . "facturedet set special_code='3' where rowid=$line->rowid";
+            $sql = "UPDATE " . MAIN_DB_PREFIX . "facturedet set special_code='4' where rowid=$line->rowid";
             $db->query($sql);
             $order_receipt_printer2.= '<tr>' . $line->product_label . '<td class="right">' . $line->qty;
 			if (!empty($line->array_options['options_order_notes'])) $order_receipt_printer2.="<br>(".$line->array_options['options_order_notes'].")";
@@ -512,7 +512,7 @@ if ($placeid > 0)
             $htmlforlines = '';
 
             $htmlforlines.= '<tr class="drag drop oddeven posinvoiceline';
-            if ($line->special_code == "3") {
+            if ($line->special_code == "4") {
                 $htmlforlines.= ' order';
             }
             $htmlforlines.= '" id="' . $line->id . '">';
