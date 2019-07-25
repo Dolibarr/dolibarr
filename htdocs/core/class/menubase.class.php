@@ -422,7 +422,8 @@ class Menubase
         $this->position='';
         $this->url='http://dummy';
         $this->target='';
-        $this->titre='Specimen menu';
+        $this->titre='Specimen menu';		// deprecated
+        $this->title='Specimen menu';
         $this->langs='';
         $this->level='';
         $this->leftmenu='';

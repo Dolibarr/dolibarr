@@ -178,7 +178,7 @@ elseif ($action == 'set_SUPPLIER_ORDER_OTHER')
     // TODO We add/delete permission here until permission can have a condition on a global var
     include_once DOL_DOCUMENT_ROOT.'/core/modules/modFournisseur.class.php';
     $newmodule=new modFournisseur($db);
-    
+
     if ($conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED)
     {
     	// clear default rights array
@@ -191,7 +191,7 @@ elseif ($action == 'set_SUPPLIER_ORDER_OTHER')
     	$newmodule->rights[$r][3] = 0;
     	$newmodule->rights[$r][4] = 'commande';
     	$newmodule->rights[$r][5] = 'approve2';
-    	
+
     	// Insert
     	$newmodule->insert_permissions(1);
     }
@@ -199,7 +199,7 @@ elseif ($action == 'set_SUPPLIER_ORDER_OTHER')
     {
     	// Remove all rights with Permission1190
     	$newmodule->delete_permissions();
-    	
+
     	// Add all right without Permission1190
     	$newmodule->insert_permissions(1);
     }
@@ -306,7 +306,7 @@ foreach ($dirmodels as $reldir)
                         }
                         else
                         {
-                            print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+                            print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
                         }
                         print '</td>';
 

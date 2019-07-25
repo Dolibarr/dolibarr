@@ -523,10 +523,10 @@ class DoliDBMssql extends DoliDB
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Renvoie le nombre de lignes dans le resultat d'une requete INSERT, DELETE ou UPDATE
+	 *	Return the number of lines in the result of a request INSERT, DELETE or UPDATE
 	 *
 	 *	@param	resource	$resultset   Curseur de la requete voulue
-	 *	@return int		    Nombre de lignes
+	 *	@return int		    Number of lines
 	 *	@see    num_rows()
 	 */
     public function affected_rows($resultset)

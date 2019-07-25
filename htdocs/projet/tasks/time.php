@@ -467,7 +467,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		$object->project = clone $projectstatic;
     }
 
-    $userWrite = $projectstatic->restrictedProjectArea($user, 'write');
+    $userRead = $projectstatic->restrictedProjectArea($user, 'read');
     $linktocreatetime = '';
 
 	if ($projectstatic->id > 0)
@@ -579,31 +579,35 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		}
 
 		// Link to create time
-		if ($user->rights->projet->all->creer || $user->rights->projet->creer)
+        $linktocreatetimeBtnStatus = 0;
+        $linktocreatetimeUrl = '';
+        $linktocreatetimeHelpText = '';
+        if ($user->rights->projet->all->lire || $user->rights->projet->lire)	// To enter time, read permission is enough
 		{
-			if ($projectstatic->public || $userWrite > 0)
+			if ($projectstatic->public || $userRead > 0)
 		    {
+                $linktocreatetimeBtnStatus = 1;
+
 		    	if (! empty($projectidforalltimes))		// We are on tab 'Time Spent' of project
 		    	{
 		    		$backtourl = $_SERVER['PHP_SELF'].'?projectid='.$projectstatic->id.($withproject?'&withproject=1':'');
-		    		$linktocreatetime = '<a class="butActionNew" href="'.$_SERVER['PHP_SELF'].'?'.($withproject?'withproject=1':'').'&projectid='.$projectstatic->id.'&action=createtime'.$param.'&backtopage='.urlencode($backtourl).'"><span class="valignmiddle text-plus-circle">'.$langs->trans('AddTimeSpent').'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
+                    $linktocreatetimeUrl = $_SERVER['PHP_SELF'].'?'.($withproject?'withproject=1':'').'&projectid='.$projectstatic->id.'&action=createtime'.$param.'&backtopage='.urlencode($backtourl);
 		    	}
 		    	else									// We are on tab 'Time Spent' of task
 		    	{
 		    		$backtourl = $_SERVER['PHP_SELF'].'?id='.$object->id.($withproject?'&withproject=1':'');
-		    		$linktocreatetime = '<a class="butActionNew" href="'.$_SERVER['PHP_SELF'].'?'.($withproject?'withproject=1':'').($object->id > 0 ? '&id='.$object->id : '&projectid='.$projectstatic->id).'&action=createtime'.$param.'&backtopage='.urlencode($backtourl).'"><span class="valignmiddle text-plus-circle">'.$langs->trans('AddTimeSpent').'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
+                    $linktocreatetimeUrl = $_SERVER['PHP_SELF'].'?'.($withproject?'withproject=1':'').($object->id > 0 ? '&id='.$object->id : '&projectid='.$projectstatic->id).'&action=createtime'.$param.'&backtopage='.urlencode($backtourl);
 		    	}
 		    }
 		    else
 		    {
-		    	$linktocreatetime = '<a class="butActionNewRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'"><span class="valignmiddle text-plus-circle">'.$langs->trans('AddTime').'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
+                $linktocreatetimeBtnStatus = -2;
+                $linktocreatetimeHelpText = $langs->trans("NotOwnerOfProject");
 		    }
 		}
-		else
-		{
-			$linktocreatetime = '<a class="butActionNewRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'"><span class="valignmiddle text-plus-circle">'.$langs->trans('AddTime').'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
-		}
-	}
+
+        $linktocreatetime = dolGetButtonTitle($langs->trans('AddTimeSpent'), $linktocreatetimeHelpText, 'fa fa-plus-circle', $linktocreatetimeUrl, '', $linktocreatetimeBtnStatus);
+    }
 
 	$massactionbutton = '';
 	if ($projectstatic->bill_time)
@@ -955,6 +959,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			print '<!-- table to add time spent -->'."\n";
             if (! empty($id)) print '<input type="hidden" name="taskid" value="'.$id.'">';
 
+            print '<div class="div-table-responsive-no-min">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
 			print '<table class="noborder nohover" width="100%">';
 
 			print '<tr class="liste_titre">';
@@ -998,7 +1003,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 				else $userid = $contactsofproject[0];
 
 				if ($projectstatic->public) $contactsofproject = array();
-				print $form->select_dolusers((GETPOST('userid')?GETPOST('userid'):$userid), 'userid', 0, '', 0, '', $contactsofproject, 0, 0, 0, '', 0, $langs->trans("ResourceNotAssignedToProject"), 'maxwidth200');
+				print $form->select_dolusers((GETPOST('userid', 'int')?GETPOST('userid', 'int'):$userid), 'userid', 0, '', 0, '', $contactsofproject, 0, 0, 0, '', 0, $langs->trans("ResourceNotAssignedToProject"), 'maxwidth200');
 			}
 			else
 			{
@@ -1013,7 +1018,12 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 
 			// Duration - Time spent
 			print '<td>';
-			print $form->select_duration('timespent_duration', ($_POST['timespent_duration']?$_POST['timespent_duration']:''), 0, 'text');
+			$durationtouse = ($_POST['timespent_duration']?$_POST['timespent_duration']:'');
+			if (GETPOSTISSET('timespent_durationhour') || GETPOSTISSET('timespent_durationmin'))
+			{
+				$durationtouse = (GETPOST('timespent_durationhour') * 3600 + GETPOST('timespent_durationmin') * 60);
+			}
+			print $form->select_duration('timespent_duration', $durationtouse, 0, 'text');
 			print '</td>';
 
 			// Progress declared
@@ -1035,6 +1045,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			print '</td></tr>';
 
 			print '</table>';
+			print '</div>';
 
 			print '<br>';
 		}

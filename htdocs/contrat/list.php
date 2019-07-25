@@ -48,17 +48,17 @@ $contextpage= GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'contrac
 
 $search_name=GETPOST('search_name', 'alpha');
 $search_email=GETPOST('search_email', 'alpha');
-$search_town=GETPOST('search_town','alpha');
-$search_zip=GETPOST('search_zip','alpha');
-$search_state=trim(GETPOST("search_state"));
+$search_town=GETPOST('search_town', 'alpha');
+$search_zip=GETPOST('search_zip', 'alpha');
+$search_state=trim(GETPOST("search_state", 'alpha'));
 $search_country=GETPOST("search_country", 'int');
 $search_type_thirdparty=GETPOST("search_type_thirdparty", 'int');
-$search_contract=GETPOST('search_contract');
+$search_contract=GETPOST('search_contract', 'alpha');
 $search_ref_customer=GETPOST('search_ref_customer', 'alpha');
 $search_ref_supplier=GETPOST('search_ref_supplier', 'alpha');
 $sall=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
-$search_status=GETPOST('search_status');
-$socid=GETPOST('socid');
+$search_status=GETPOST('search_status', 'alpha');
+$socid=GETPOST('socid', 'int');
 $search_user=GETPOST('search_user', 'int');
 $search_sale=GETPOST('search_sale', 'int');
 $search_product_category=GETPOST('search_product_category', 'int');
@@ -376,9 +376,7 @@ $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 $newcardbutton='';
 if ($user->rights->contrat->creer)
 {
-	$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/contrat/card.php?action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans('NewContractSubscription').'</span>';
-	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-	$newcardbutton.= '</a>';
+    $newcardbutton.= dolGetButtonTitle($langs->trans('NewContractSubscription'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/contrat/card.php?action=create');
 }
 
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
@@ -594,7 +592,7 @@ if (! empty($arrayfields['c.tms']['checked'])){
     print_liste_field_titre($arrayfields['c.tms']['label'], $_SERVER["PHP_SELF"], "c.tms", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 }
 if (! empty($arrayfields['lower_planned_end_date']['checked'])) {
-    print_liste_field_titre($arrayfields['lower_planned_end_date']['label'], $_SERVER["PHP_SELF"], "lower_planned_end_date", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+    print_liste_field_titre($arrayfields['lower_planned_end_date']['label'], $_SERVER["PHP_SELF"], "lower_planned_end_date", "", $param, '', $sortfield, $sortorder, 'center ');
 }
 if (! empty($arrayfields['status']['checked'])) {
 	print_liste_field_titre($staticcontratligne->LibStatut(0, 3), '', '', '', '', 'width="16"');
@@ -709,8 +707,8 @@ while ($i < min($num, $limit))
 			$listsalesrepresentatives=$socstatic->getSalesRepresentatives($user);
 			if ($listsalesrepresentatives < 0) dol_print_error($db);
 			$nbofsalesrepresentative=count($listsalesrepresentatives);
-            if ($nbofsalesrepresentative > 3) {
-                // We print only number
+			if ($nbofsalesrepresentative > 3) {
+				// We print only number
 				print '<a href="'.DOL_URL_ROOT.'/societe/commerciaux.php?socid='.$socstatic->id.'">';
 				print $nbofsalesrepresentative;
 				print '</a>';

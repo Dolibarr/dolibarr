@@ -233,7 +233,7 @@ if ($result)
 	print '<div class="div-table-responsive">';
 	print '<table class="liste" width="100%">';
 
-	// Lignes des champs de filtres
+	// Fields title search
 	print '<tr class="liste_titre">';
 
 	print '<td class="liste_titre" width="15%">'.$form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0).'</td>';
@@ -255,7 +255,7 @@ if ($result)
 	//print '<input class="flat" type="text" size="10" name="search_desc" value="'.$search_desc.'">';
 	print '</td>';
 
-	print '<td class="liste_titre right">';
+	print '<td class="liste_titre maxwidthsearch">';
 	$searchpicto=$form->showFilterAndCheckAddButtons(0);
 	print $searchpicto;
 	print '</td>';

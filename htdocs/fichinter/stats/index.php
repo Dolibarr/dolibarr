@@ -93,7 +93,6 @@ $mesg = $px1->isGraphKo();
 if (! $mesg)
 {
     $px1->SetData($data);
-    $px1->SetPrecisionY(0);
     $i=$startyear;$legend=array();
     while ($i <= $endyear)
     {
@@ -108,7 +107,6 @@ if (! $mesg)
     $px1->SetYLabel($langs->trans("NbOfIntervention"));
     $px1->SetShading(3);
     $px1->SetHorizTickIncrement(1);
-    $px1->SetPrecisionY(0);
     $px1->mode='depth';
     $px1->SetTitle($langs->trans("NumberOfInterventionsByMonth"));
 
@@ -149,7 +147,6 @@ if (! $mesg)
     $px2->SetYLabel($langs->trans("AmountOfinterventions"));
     $px2->SetShading(3);
     $px2->SetHorizTickIncrement(1);
-    $px2->SetPrecisionY(0);
     $px2->mode='depth';
     $px2->SetTitle($langs->trans("AmountOfinterventionsByMonthHT"));
 
@@ -189,7 +186,6 @@ if (! $mesg)
     $px3->SetHeight($HEIGHT);
     $px3->SetShading(3);
     $px3->SetHorizTickIncrement(1);
-    $px3->SetPrecisionY(0);
     $px3->mode='depth';
     $px3->SetTitle($langs->trans("AmountAverage"));
 
@@ -234,7 +230,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
 	// Company
 	print '<tr><td class="left">'.$langs->trans("ThirdParty").'</td><td class="left">';
-    $filter = 's.client in (1,2,3)';
+    $filter = 's.client IN (1,2,3)';
 	print $form->select_company($socid, 'socid', $filter, 1, 0, 0, array(), 0, '', 'style="width: 95%"');
 	print '</td></tr>';
 	// User

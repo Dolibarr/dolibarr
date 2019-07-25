@@ -71,7 +71,7 @@ Banner=Bandeau
 BlogPost=Article de Blog
 WebsiteAccount=Compte de site Web
 WebsiteAccounts=Comptes de site web
-AddWebsiteAccount=Créer un compte sur le site web
+AddWebsiteAccount=Créer un compte de site web
 BackToListOfThirdParty=Retour à la liste pour le Tiers
 DisableSiteFirst=Désactiver le site Web d'abord
 MyContainerTitle=Titre de mon site web
@@ -98,3 +98,8 @@ NoWebSiteCreateOneFirst=Aucun site Web n'a encore été créé. Créez-en un d'a
 GoTo=Aller à
 DynamicPHPCodeContainsAForbiddenInstruction=Vous ajoutez du code PHP dynamique contenant l'instruction PHP '<strong>%s</strong> ' qui est interdite par défaut en tant que contenu dynamique (voir les options masquées WEBSITE_PHP_ALLOW_xxx pour augmenter la liste des commandes autorisées).
 NotAllowedToAddDynamicContent=Vous n'êtes pas autorisé à ajouter ou modifier du contenu dynamique PHP sur des sites Web. Demandez la permission ou conservez simplement le code dans les balises php non modifié.
+ReplaceWebsiteContent=Rechercher ou remplacer un contenu du site
+DeleteAlsoJs=Supprimer également tous les fichiers javascript spécifiques à ce site?
+DeleteAlsoMedias=Supprimer également tous les fichiers médias spécifiques à ce site?
+# Export
+MyWebsitePages=Mes pages de site web

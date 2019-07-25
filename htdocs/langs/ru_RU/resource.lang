@@ -5,7 +5,7 @@ DeleteResource=Удалить ресурс
 ConfirmDeleteResourceElement=Подтвердите удаление ресурса для этого элемента
 NoResourceInDatabase=Нет ресурсов в базе данных
 NoResourceLinked=Нет связанных ресурсов
-
+ActionsOnResource=События из этого ресурсе
 ResourcePageIndex=Список ресурсов
 ResourceSingular=Ресурс
 ResourceCard=Карточка ресурса

@@ -570,7 +570,7 @@ class Tasks extends DolibarrApi
         unset($object->fk_account);
         unset($object->note);
         unset($object->fk_incoterms);
-        unset($object->libelle_incoterms);
+        unset($object->label_incoterms);
         unset($object->location_incoterms);
         unset($object->name);
         unset($object->lastname);
@@ -591,6 +591,8 @@ class Tasks extends DolibarrApi
         unset($object->total_localtax1);
         unset($object->total_localtax2);
         unset($object->total_ttc);
+
+        unset($object->comments);
 
         return $object;
     }

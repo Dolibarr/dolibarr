@@ -417,6 +417,7 @@ class MultiCurrency extends CommonObject
 		else
 		{
 			$this->rate = null;
+			$this->errors=$currencyRate->errors;
 			return -1;
 		}
 	}

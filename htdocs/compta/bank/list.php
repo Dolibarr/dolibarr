@@ -227,9 +227,7 @@ $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 $newcardbutton='';
 if ($user->rights->banque->configurer)
 {
-	$newcardbutton.='<a class="butActionNew" href="card.php?action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans("NewFinancialAccount").'</span>';
-	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-	$newcardbutton.= '</a>';
+    $newcardbutton.= dolGetButtonTitle($langs->trans('NewFinancialAccount'), '', 'fa fa-plus-circle', 'card.php?action=create');
 }
 
 
@@ -596,7 +594,7 @@ if (isset($totalarray['totalbalancefield']) && $lastcurrencycode != 'various')	/
             if ($num < $limit && empty($offset)) print '<td class="left">'.$langs->trans("Total").'</td>';
             else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
         }
-        elseif ($totalarray['totalbalancefield'] == $i) print '<td class="right">'.price($totalarray['totalbalance'], 0, $langs, 0, 0, -1, $lastcurrencycode).'</td>';
+        elseif ($totalarray['totalbalancefield'] == $i) print '<td class="right">'.price($totalarray['totalbalance'], 0, $langs, 0, -1, -1, $lastcurrencycode).'</td>';
         else print '<td></td>';
     }
     print '</tr>';

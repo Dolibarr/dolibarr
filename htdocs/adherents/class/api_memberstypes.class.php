@@ -307,7 +307,7 @@ class MembersTypes extends DolibarrApi
         unset($object->note_public);
         unset($object->note_private);
         unset($object->fk_incoterms);
-        unset($object->libelle_incoterms);
+        unset($object->label_incoterms);
         unset($object->location_incoterms);
         unset($object->name);
         unset($object->lastname);

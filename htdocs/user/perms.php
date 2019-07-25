@@ -331,7 +331,9 @@ if ($result)
     				print '</td>';
     			}
     			print '<td></td>';
-    		}
+    		}else {
+			    print '<td></td><td></td>';
+		    }
     		print '<td></td>';
     		print '</tr>'."\n";
         }

@@ -1,9 +1,9 @@
 <?php
 if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
-/* <style type="text/css" > */
+
 /*
- Dropdown
-*/
+ * Dropdown
+ */
 
 .open>.dropdown-menu{ /*, #topmenu-login-dropdown:hover .dropdown-menu*/
     display: block;
@@ -51,7 +51,7 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 .tmenu .dropdown-menu, .login_block .dropdown-menu {
     position: absolute;
     right: 0;
-    left: auto;
+    <?php echo $left; ?>: auto;
     line-height:1.3em;
 }
 .tmenu .dropdown-menu, .login_block  .dropdown-menu .user-body {

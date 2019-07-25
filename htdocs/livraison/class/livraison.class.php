@@ -278,7 +278,7 @@ class Livraison extends CommonObject
 		$sql.= ", l.date_delivery, l.fk_address, l.model_pdf";
 		$sql.= ", el.fk_source as origin_id, el.sourcetype as origin";
         $sql.= ', l.fk_incoterms, l.location_incoterms';
-        $sql.= ", i.libelle as libelle_incoterms";
+        $sql.= ", i.libelle as label_incoterms";
 		$sql.= " FROM ".MAIN_DB_PREFIX."livraison as l";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = l.rowid AND el.targettype = '".$this->db->escape($this->element)."'";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON l.fk_incoterms = i.rowid';
@@ -313,7 +313,7 @@ class Livraison extends CommonObject
 				//Incoterms
 				$this->fk_incoterms = $obj->fk_incoterms;
 				$this->location_incoterms = $obj->location_incoterms;
-				$this->libelle_incoterms = $obj->libelle_incoterms;
+				$this->label_incoterms = $obj->label_incoterms;
 				$this->db->free($result);
 
 				if ($this->statut == 0) $this->brouillon = 1;
@@ -322,9 +322,7 @@ class Livraison extends CommonObject
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
 
-				/*
-				 * Lignes
-				 */
+				// Load lines
 				$result=$this->fetch_lines();
 				if ($result < 0)
 				{
@@ -942,7 +940,7 @@ class Livraison extends CommonObject
 			{
 				$objSourceLine = $this->db->fetch_object($resultSourceLine);
 
-				// Recupere les lignes de la source deja livrees
+				// Get lines of sources alread delivered
 				$sql = "SELECT ld.fk_origin_line, sum(ld.qty) as qty";
 				$sql.= " FROM ".MAIN_DB_PREFIX."livraisondet as ld, ".MAIN_DB_PREFIX."livraison as l,";
 				$sql.= " ".MAIN_DB_PREFIX.$this->linked_object[0]['type']." as c";

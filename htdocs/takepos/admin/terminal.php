@@ -58,7 +58,6 @@ if($resql){
 }
 
 $terminaltouse = $terminal;
-if ($terminaltouse == '1') $terminaltouse = '';
 
 
 /*
@@ -129,7 +128,7 @@ print "</tr>\n";
 
 print '<tr class="oddeven"><td width=\"50%\">'.$langs->trans("CashDeskThirdPartyForSell").'</td>';
 print '<td colspan="2">';
-print $form->select_company($conf->global->{'CASHDESK_ID_THIRDPARTY'.$terminaltouse}, 'socid', 's.client in (1, 3) AND s.status = 1', 1, 0, 0, array(), 0);
+print $form->select_company($conf->global->{'CASHDESK_ID_THIRDPARTY'.$terminaltouse}, 'socid', '(s.client IN (1, 3) AND s.status = 1)', 1, 0, 0, array(), 0);
 print '</td></tr>';
 //V20: User group default
 print '<tr class="oddeven"><td>'.$langs->trans("POSGroup").'</td>';

@@ -82,6 +82,8 @@ create table llx_user
   model_pdf         varchar(255) DEFAULT NULL,
   datelastlogin     datetime,
   datepreviouslogin datetime,
+  iplastlogin       varchar(250),
+  ippreviouslogin   varchar(250),
   egroupware_id     integer,
   ldap_sid          varchar(255) DEFAULT NULL,
   openid            varchar(255),

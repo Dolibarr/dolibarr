@@ -37,3 +37,4 @@ DisabledInMonoUserMode=Im Wartungsmodus deaktiviert
 UserAccountancyCode=Buchhaltungskonto zum Benutzer
 DateEmployment=Datum der Anstellung
 DateEmploymentEnd=Datum des Austrittes
+CantDisableYourself=Du kannst dein eigenes Benutzerkonto nicht löschen.

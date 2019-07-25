@@ -799,7 +799,7 @@ if (empty($action) || $action == 'list')
     $sortfield = GETPOST("sortfield", 'alpha');
     $sortorder = GETPOST("sortorder", 'alpha');
     $page=GETPOST("page", 'int');
-    if ($page == -1 || $page == null) { $page = 0 ; }
+    if (empty($page) || $page == -1) { $page = 0; }
     $offset = $limit * $page ;
     $pageprev = $page - 1;
     $pagenext = $page + 1;
@@ -944,7 +944,7 @@ if (empty($action) || $action == 'list')
         print '<td class="liste_titre right">';
         print '<input class="flat" type="text" size="4" name="search_amount" value="'.dol_escape_htmltag($search_amount).'">';
         print '</td>';
-        print '<td class="liste_titre right">';
+        print '<td class="liste_titre maxwidthsearch">';
         $searchpicto=$form->showFilterAndCheckAddButtons(0);
         print $searchpicto;
         print '</td>';

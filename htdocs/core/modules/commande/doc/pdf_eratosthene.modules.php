@@ -7,7 +7,7 @@
  * Copyright (C) 2012       Cedric Salvador     <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015       Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2017       Ferran Marcet       <fmarcet@2byte.es>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@
 /**
  *	\file       htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
  *	\ingroup    commande
- *	\brief      Fichier de la classe permettant de generer les commandes au modele Eratosthène
+ *	\brief      File of Class to generate PDF orders with template Eratosthène
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/commande/modules_commande.php';
@@ -38,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 
 
 /**
- *	Classe to generate PDF orders with template Eratosthene
+ *	Class to generate PDF orders with template Eratosthene
  */
 class pdf_eratosthene extends ModelePDFCommandes
 {
@@ -149,13 +149,13 @@ class pdf_eratosthene extends ModelePDFCommandes
 		$this->marge_haute =isset($conf->global->MAIN_PDF_MARGIN_TOP)?$conf->global->MAIN_PDF_MARGIN_TOP:10;
 		$this->marge_basse =isset($conf->global->MAIN_PDF_MARGIN_BOTTOM)?$conf->global->MAIN_PDF_MARGIN_BOTTOM:10;
 
-		$this->option_logo = 1;                    // Affiche logo
-		$this->option_tva = 1;                     // Gere option tva FACTURE_TVAOPTION
-		$this->option_modereg = 1;                 // Affiche mode reglement
-		$this->option_condreg = 1;                 // Affiche conditions reglement
-		$this->option_codeproduitservice = 1;      // Affiche code produit-service
-		$this->option_multilang = 1;               // Dispo en plusieurs langues
-		$this->option_escompte = 0;                // Affiche si il y a eu escompte
+		$this->option_logo = 1;                    // Display logo
+		$this->option_tva = 1;                     // Manage the vat option FACTURE_TVAOPTION
+		$this->option_modereg = 1;                 // Display payment mode
+		$this->option_condreg = 1;                 // Display payment terms
+		$this->option_codeproduitservice = 1;      // Display product-service code
+		$this->option_multilang = 1;               // Available in several languages
+		$this->option_escompte = 0;                // Displays if there has been a discount
 		$this->option_credit_note = 0;             // Support credit notes
 		$this->option_freetext = 1;				   // Support add of a personalised text
 		$this->option_draft_watermark = 1;		   // Support add of a watermark on drafts
@@ -194,7 +194,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
 	    // phpcs:enable
-		global $user, $langs, $conf, $mysoc, $db, $hookmanager, $nblignes;
+		global $user, $langs, $conf, $mysoc, $db, $hookmanager, $nblines;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
@@ -203,7 +203,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 		// Translations
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products", "orders", "deliveries"));
 
-		$nblignes = count($object->lines);
+		$nblines = count($object->lines);
 
 		$hidetop=0;
 		if(!empty($conf->global->MAIN_PDF_DISABLE_COL_HEAD_TITLE)){
@@ -217,7 +217,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 		{
 		    $objphoto = new Product($this->db);
 
-		    for ($i = 0 ; $i < $nblignes ; $i++)
+		    for ($i = 0 ; $i < $nblines ; $i++)
 		    {
 		        if (empty($object->lines[$i]->fk_product)) continue;
 
@@ -541,7 +541,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 				// Loop on each lines
 				$pageposbeforeprintlines=$pdf->getPage();
 				$pagenb = $pageposbeforeprintlines;
-				for ($i = 0 ; $i < $nblignes ; $i++)
+				for ($i = 0 ; $i < $nblines ; $i++)
 				{
 					$curY = $nexY;
 					$pdf->SetFont('', '', $default_font_size - 1);   // Into loop to work with multipage
@@ -599,7 +599,7 @@ class pdf_eratosthene extends ModelePDFCommandes
     						$posyafter=$pdf->GetY();
     						if ($posyafter > ($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot)))	// There is no space left for total+free text
     						{
-    							if ($i == ($nblignes-1))	// No more lines, and no space left to show total, so we create a new page
+    							if ($i == ($nblines-1))	// No more lines, and no space left to show total, so we create a new page
     							{
     								$pdf->AddPage('', '', true);
     								if (! empty($tplidx)) $pdf->useTemplate($tplidx);
@@ -738,7 +738,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 					$this->tva[$vatrate] += $tvaligne;
 
 					// Add line
-					if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblignes - 1))
+					if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblines - 1))
 					{
 						$pdf->setPage($pageposafter);
 						$pdf->SetLineStyle(array('dash'=>'1,1','color'=>array(80,80,80)));
@@ -747,7 +747,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 						$pdf->SetLineStyle(array('dash'=>0));
 					}
 
-					$nexY+=2;    // Passe espace entre les lignes
+					$nexY+=2;    // Add space between lines
 
 					// Detect if some page were added automatically and output _tableau for past pages
 					while ($pagenb < $pageposafter)

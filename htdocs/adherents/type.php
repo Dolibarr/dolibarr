@@ -236,10 +236,8 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 		$newcardbutton='';
 		if ($user->rights->adherent->configurer)
 		{
-			$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/adherents/type.php?action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans('NewMemberType').'</span>';
-			$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-			$newcardbutton.= '</a>';
-		}
+            $newcardbutton.= dolGetButtonTitle($langs->trans('NewMemberType'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/adherents/type.php?action=create');
+        }
 
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 		if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -260,7 +258,7 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 		print '<tr class="liste_titre">';
 		print '<th>'.$langs->trans("Ref").'</th>';
 		print '<th>'.$langs->trans("Label").'</th>';
-        print '<th class="center">'.$langs->trans("Nature").'</th>';
+        print '<th class="center">'.$langs->trans("MemberNature").'</th>';
 		print '<th class="center">'.$langs->trans("SubscriptionRequired").'</th>';
 		print '<th class="center">'.$langs->trans("VoteAllowed").'</th>';
 		print '<th class="center">'.$langs->trans("Status").'</th>';
@@ -283,9 +281,9 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 			print '</td>';
 			print '<td>'.dol_escape_htmltag($objp->label).'</td>';
             print '<td class="center">';
-		if ($objp->morphy == 'phy') { print $langs->trans("Physical"); }
-		elseif ($objp->morphy == 'mor') { print $langs->trans("Moral"); }
-        else print $langs->trans("Physical & Morale");
+			if ($objp->morphy == 'phy') { print $langs->trans("Physical"); }
+			elseif ($objp->morphy == 'mor') { print $langs->trans("Moral"); }
+			else print $langs->trans("Physical & Morale");
             print '</td>';
 			print '<td class="center">'.yn($objp->subscription).'</td>';
 			print '<td class="center">'.yn($objp->vote).'</td>';
@@ -340,12 +338,12 @@ if ($action == 'create')
 	print '<tr><td>'.$langs->trans("Status").'</td><td>';
   	print $form->selectarray('statut', array('0'=>$langs->trans('ActivityCeased'),'1'=>$langs->trans('InActivity')), 1);
   	print '</td></tr>';
-    
+
     // Morphy
-    $morphys[""] = $langs->trans("Physical & Morale");
+    $morphys[""] = $langs->trans("MorPhy");
     $morphys["phy"] = $langs->trans("Physical");
 	$morphys["mor"] = $langs->trans("Morale");
-	print '<tr><td><span>'.$langs->trans("Nature").'</span></td><td>';
+	print '<tr><td><span>'.$langs->trans("MemberNature").'</span></td><td>';
 	print $form->selectarray("morphy", $morphys, isset($_POST["morphy"])?$_POST["morphy"]:$object->morphy);
 	print "</td></tr>";
 
@@ -429,9 +427,9 @@ if ($rowid > 0)
             print img_picto($langs->trans('TypeStatusInactive'), 'statut5').' '.$langs->trans("ActivityCeased");
         }
 		print '</tr>';
-        
+
         // Morphy
-		print '<tr><td>'.$langs->trans("Nature").'</td><td class="valeur" >'.$object->getmorphylib($object->morphy).'</td>';
+		print '<tr><td>'.$langs->trans("MemberNature").'</td><td class="valeur" >'.$object->getmorphylib($object->morphy).'</td>';
 		print '</tr>';
 
 		print '<tr><td class="titlefield">'.$langs->trans("SubscriptionRequired").'</td><td>';
@@ -605,7 +603,7 @@ if ($rowid > 0)
             print '<div class="div-table-responsive">';
             print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
-			// Lignes des champs de filtre
+            // Fields title search
 			print '<tr class="liste_titre_filter">';
 
 			print '<td class="liste_titre left">';
@@ -632,7 +630,7 @@ if ($rowid > 0)
 			print '<tr class="liste_titre">';
             print_liste_field_titre("NameSlashCompany", $_SERVER["PHP_SELF"], "d.lastname", $param, "", "", $sortfield, $sortorder);
 		    print_liste_field_titre("Login", $_SERVER["PHP_SELF"], "d.login", $param, "", "", $sortfield, $sortorder);
-		    print_liste_field_titre("Nature", $_SERVER["PHP_SELF"], "d.morphy", $param, "", "", $sortfield, $sortorder);
+		    print_liste_field_titre("MemberNature", $_SERVER["PHP_SELF"], "d.morphy", $param, "", "", $sortfield, $sortorder);
 		    print_liste_field_titre("EMail", $_SERVER["PHP_SELF"], "d.email", $param, "", "", $sortfield, $sortorder);
 		    print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "d.statut,d.datefin", $param, "", "", $sortfield, $sortorder);
 		    print_liste_field_titre("EndSubscription", $_SERVER["PHP_SELF"], "d.datefin", $param, "", 'align="center"', $sortfield, $sortorder);
@@ -773,12 +771,12 @@ if ($rowid > 0)
 		print '<tr><td>'.$langs->trans("Status").'</td><td>';
     	print $form->selectarray('statut', array('0'=>$langs->trans('ActivityCeased'),'1'=>$langs->trans('InActivity')), $object->statut);
     	print '</td></tr>';
-        
+
         // Morphy
-        $morphys[""] = $langs->trans("Physical & Morale");
+        $morphys[""] = $langs->trans("MorPhy");
         $morphys["phy"] = $langs->trans("Physical");
         $morphys["mor"] = $langs->trans("Morale");
-        print '<tr><td><span>'.$langs->trans("Nature").'</span></td><td>';
+        print '<tr><td><span>'.$langs->trans("MemberNature").'</span></td><td>';
         print $form->selectarray("morphy", $morphys, isset($_POST["morphy"])?$_POST["morphy"]:$object->morphy);
         print "</td></tr>";
 

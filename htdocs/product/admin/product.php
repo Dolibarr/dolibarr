@@ -143,7 +143,7 @@ if ($action == 'other')
 
 	$value = GETPOST('activate_usesearchtoselectproduct', 'alpha');
 	$res = dolibarr_set_const($db, "PRODUIT_USE_SEARCH_TO_SELECT", $value, 'chaine', 0, '', $conf->entity);
-	
+
 	$value = GETPOST('activate_useProdFournDesc', 'alpha');
 	$res = dolibarr_set_const($db, "PRODUIT_FOURN_TEXTS", $value, 'chaine', 0, '', $conf->entity);
 	if ($value) {
@@ -245,12 +245,12 @@ if ($action == 'set')
 	if (! $res > 0) $error++;
 }
 
-if ($action == 'other')
-{
-    $value = GETPOST('activate_units', 'alpha');
-    $res = dolibarr_set_const($db, "PRODUCT_USE_UNITS", $value, 'chaine', 0, '', $conf->entity);
-	if (! $res > 0) $error++;
-}
+//if ($action == 'other')
+//{
+//    $value = GETPOST('activate_units', 'alpha');
+//    $res = dolibarr_set_const($db, "PRODUCT_USE_UNITS", $value, 'chaine', 0, '', $conf->entity);
+//	if (! $res > 0) $error++;
+//}
 
 if ($action)
 {
@@ -272,7 +272,7 @@ $formbarcode=new FormBarCode($db);
 
 $title = $langs->trans('ProductServiceSetup');
 $tab = $langs->trans("ProductsAndServices");
-if (empty($conf->produit->enabled))
+if (empty($conf->product->enabled))
 {
 	$title = $langs->trans('ServiceSetup');
 	$tab = $langs->trans('Services');
@@ -354,7 +354,7 @@ foreach ($dirproduct as $dirroot)
     				$disabled = false;
     				if (! empty($conf->multicompany->enabled) && (is_object($mc) && ! empty($mc->sharings['referent']) && $mc->sharings['referent'] == $conf->entity) ? false : true);
     				print '<td class="center">';
-    				if (! $disabled) print '<a href="'.$_SERVER['PHP_SELF'].'?action=setcodeproduct&value='.$file.'">';
+    				if (! $disabled) print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setcodeproduct&value='.$file.'">';
     				print img_picto($langs->trans("Disabled"), 'switch_off');
     				if (! $disabled) print '</a>';
     				print '</td>';

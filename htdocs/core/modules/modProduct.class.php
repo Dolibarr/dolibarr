@@ -50,7 +50,7 @@ class modProduct extends DolibarrModules
 		$this->numero = 50;
 
 		$this->family = "products";
-		$this->module_position = '20';
+		$this->module_position = '25';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "Product management";
@@ -169,6 +169,7 @@ class modProduct extends DolibarrModules
 		$this->export_permission[$r]=array(array("produit","export"));
 		$this->export_fields_array[$r]=array(
 			'p.rowid'=>"Id",'p.ref'=>"Ref",'p.label'=>"Label",'p.description'=>"Description",'p.url'=>"PublicUrl",'p.accountancy_code_sell'=>"ProductAccountancySellCode",
+            'p.accountancy_code_sell_intra'=>"ProductAccountancySellIntraCode", 'p.accountancy_code_sell_export'=>"ProductAccountancySellExportCode",
 			'p.accountancy_code_buy'=>"ProductAccountancyBuyCode",'p.note'=>"Note",'p.length'=>"Length",'p.width'=>"Width",'p.height'=>"Height",'p.surface'=>"Surface",
 			'p.volume'=>"Volume",'p.weight'=>"Weight",'p.customcode'=>'CustomCode','p.price_base_type'=>"PriceBase",'p.price'=>"UnitPriceHT",'p.price_ttc'=>"UnitPriceTTC",
 			'p.tva_tx'=>'VATRate','p.tosell'=>"OnSell",'p.tobuy'=>"OnBuy",'p.datec'=>'DateCreation','p.tms'=>'DateModification'
@@ -184,7 +185,8 @@ class modProduct extends DolibarrModules
 		if (! empty($conf->global->MAIN_MULTILANGS)) $this->export_fields_array[$r]=array_merge($this->export_fields_array[$r], array('l.lang'=>'Language', 'l.label'=>'TranslatedLabel','l.description'=>'TranslatedDescription','l.note'=>'TranslatedNote'));
 		if (! empty($conf->global->PRODUCT_USE_UNITS)) $this->export_fields_array[$r]['p.fk_unit'] = 'Unit';
 		$this->export_TypeFields_array[$r]=array(
-			'p.ref'=>"Text",'p.label'=>"Text",'p.description'=>"Text",'p.url'=>"Text",'p.accountancy_code_sell'=>"Text",'p.accountancy_code_buy'=>"Text",
+			'p.ref'=>"Text",'p.label'=>"Text",'p.description'=>"Text",'p.url'=>"Text",'p.accountancy_code_sell'=>"Text",
+            'p.accountancy_code_sell_intra'=>"Text",'p.accountancy_code_sell_export'=>"Text",'p.accountancy_code_buy'=>"Text",
 			'p.note'=>"Text",'p.length'=>"Numeric",'p.width'=>"Numeric",'p.height'=>"Numeric",'p.surface'=>"Numeric",'p.volume'=>"Numeric",'p.weight'=>"Numeric",
 			'p.customcode'=>'Text','p.price_base_type'=>"Text",'p.price'=>"Numeric",'p.price_ttc'=>"Numeric",'p.tva_tx'=>'Numeric','p.tosell'=>"Boolean",
 			'p.tobuy'=>"Boolean",'p.datec'=>'Date','p.tms'=>'Date'
@@ -289,7 +291,8 @@ class modProduct extends DolibarrModules
     		$this->export_permission[$r]=array(array("produit","export"));
     		$this->export_fields_array[$r]=array(
 				'p.rowid'=>"Id",'p.ref'=>"Ref",'p.label'=>"Label",'p.description'=>"Description",'p.url'=>"PublicUrl",
-				'p.accountancy_code_sell'=>"ProductAccountancySellCode",'p.accountancy_code_buy'=>"ProductAccountancyBuyCode",'p.note'=>"Note",
+				'p.accountancy_code_sell'=>"ProductAccountancySellCode",'p.accountancy_code_sell_intra'=>"ProductAccountancySellIntraCode",
+                'p.accountancy_code_sell_export'=>"ProductAccountancySellExportCode",'p.accountancy_code_buy'=>"ProductAccountancyBuyCode",'p.note'=>"Note",
 				'p.length'=>"Length",'p.surface'=>"Surface",'p.volume'=>"Volume",'p.weight'=>"Weight",'p.customcode'=>'CustomCode',
 				'p.price_base_type'=>"PriceBase",'p.price'=>"UnitPriceHT",'p.price_ttc'=>"UnitPriceTTC",'p.tva_tx'=>'VATRate','p.tosell'=>"OnSell",
 				'p.tobuy'=>"OnBuy",'p.datec'=>'DateCreation','p.tms'=>'DateModification'
@@ -298,7 +301,8 @@ class modProduct extends DolibarrModules
     		if (! empty($conf->barcode->enabled)) $this->export_fields_array[$r]=array_merge($this->export_fields_array[$r], array('p.barcode'=>'BarCode'));
     		$this->export_fields_array[$r]=array_merge($this->export_fields_array[$r], array('pa.qty'=>'Qty','pa.incdec'=>'ComposedProductIncDecStock'));
     		$this->export_TypeFields_array[$r]=array(
-				'p.ref'=>"Text",'p.label'=>"Text",'p.description'=>"Text",'p.url'=>"Text",'p.accountancy_code_sell'=>"Text",'p.accountancy_code_buy'=>"Text",
+				'p.ref'=>"Text",'p.label'=>"Text",'p.description'=>"Text",'p.url'=>"Text",'p.accountancy_code_sell'=>"Text",
+                'p.accountancy_code_sell_intra'=>"Text",'p.accountancy_code_sell_export'=>"Text",'p.accountancy_code_buy'=>"Text",
 				'p.note'=>"Text",'p.length'=>"Numeric",'p.surface'=>"Numeric",'p.volume'=>"Numeric",'p.weight'=>"Numeric",'p.customcode'=>'Text',
 				'p.price_base_type'=>"Text",'p.price'=>"Numeric",'p.price_ttc'=>"Numeric",'p.tva_tx'=>'Numeric','p.tosell'=>"Boolean",'p.tobuy'=>"Boolean",
 				'p.datec'=>'Date','p.tms'=>'Date'
@@ -308,7 +312,8 @@ class modProduct extends DolibarrModules
     		$this->export_TypeFields_array[$r]=array_merge($this->export_TypeFields_array[$r], array('pa.qty'=>'Numeric'));
     		$this->export_entities_array[$r]=array(
 				'p.rowid'=>"virtualproduct",'p.ref'=>"virtualproduct",'p.label'=>"virtualproduct",'p.description'=>"virtualproduct",'p.url'=>"virtualproduct",
-				'p.accountancy_code_sell'=>'virtualproduct','p.accountancy_code_buy'=>'virtualproduct','p.note'=>"virtualproduct",'p.length'=>"virtualproduct",
+				'p.accountancy_code_sell'=>'virtualproduct','p.accountancy_code_sell_intra'=>'virtualproduct','p.accountancy_code_sell_export'=>'virtualproduct',
+                'p.accountancy_code_buy'=>'virtualproduct','p.note'=>"virtualproduct",'p.length'=>"virtualproduct",
 				'p.surface'=>"virtualproduct",'p.volume'=>"virtualproduct",'p.weight'=>"virtualproduct",'p.customcode'=>'virtualproduct',
 				'p.price_base_type'=>"virtualproduct",'p.price'=>"virtualproduct",'p.price_ttc'=>"virtualproduct",'p.tva_tx'=>"virtualproduct",
 				'p.tosell'=>"virtualproduct",'p.tobuy'=>"virtualproduct",'p.datec'=>"virtualproduct",'p.tms'=>"virtualproduct"
@@ -492,6 +497,8 @@ class modProduct extends DolibarrModules
             'p.duration' => "eg. 365d/12m/1y",
             'p.url' => 'link to product (no https)',
             'p.accountancy_code_sell' => "",
+            'p.accountancy_code_sell_intra' => "",
+            'p.accountancy_code_sell_export' => "",
             'p.accountancy_code_buy' => "",
             'p.weight' => "",
 			'p.weight_units' => 'use a unit of measure from the dictionary. g/Kg/T etc....matches field "Short Label" for unit type "weight" in table "' . MAIN_DB_PREFIX . 'c_units',

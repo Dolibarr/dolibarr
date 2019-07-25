@@ -52,7 +52,7 @@ if (! empty($conf->global->MAIN_ROUNDING_RULE_TOT))
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class PricesTest extends PHPUnit_Framework_TestCase
+class PricesTest extends PHPUnit\Framework\TestCase
 {
     protected $savconf;
     protected $savuser;

@@ -23,8 +23,8 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 }
 
 .badge-pill, .tabs .badge {
-    padding-right: .6em;
-    padding-left: .6em;
+    padding-right: .5em;
+    padding-left: .5em;
     border-radius: 0.25rem;
 }
 

@@ -64,7 +64,7 @@ print load_fiche_titre($langs->trans("SupplierProposalSetup"), $linkback, 'title
 
 $head = supplier_proposal_admin_prepare_head();
 
-dol_fiche_head($head, 'attributes', $langs->trans("CommRequests"), 0, 'supplier_proposal');
+dol_fiche_head($head, 'attributes', $langs->trans("CommRequests"), -1, 'supplier_proposal');
 
 
 print $langs->trans("DefineHereComplementaryAttributes", $textobject).'<br>'."\n";
