@@ -437,17 +437,41 @@ function includeContainer($containerref)
 /**
  * Return HTML content to add structured data for an article, news or Blog Post.
  *
- * @param 	string		$type				'blogpost', 'product', ...
+ * @param 	string		$type				'blogpost', 'product', 'software'...
  * @param 	WebsitePage	$websitepage		Website page object
+ * @param	array		$data				Array of data parameters for structured data
  * @return  string							HTML content
  */
-function getStructuredData($type, WebsitePage $websitepage)
+function getStructuredData($type, WebsitePage $websitepage, $data = array())
 {
 	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $weblangs;	// Very important. Required to have var available when running inluded containers.
 	global $includehtmlcontentopened;
 	global $websitekey, $websitepagefile;
 
-	if ($type == 'blogpost')
+	if ($type == 'software')
+	{
+		$ret = '<!-- Add structured data for blog post -->'."\n";
+		$ret .= '<script type="application/ld+json">'."\n";
+		$ret .= '{
+			"@context": "https://schema.org",
+			"@type": "SoftwareApplication",
+			"name": "'.$data['name'].'",
+			"operatingSystem": "'.$data['os'].'",
+			"applicationCategory": "https://schema.org/GameApplication",
+			"aggregateRating": {
+				"@type": "AggregateRating",
+				"ratingValue": "'.$data['ratingvalue'].'",
+				"ratingCount": "'.$data['ratingcount'].'"
+			},
+			"offers": {
+				"@type": "Offer",
+				"price": "'.$data['price'].'",
+				"priceCurrency": "'.($data['currency']?$data['currency']:$conf->currency).'"
+			}
+		}'."\n";
+		$ret .= '</script>'."\n";
+	}
+	elseif ($type == 'blogpost')
 	{
 		if ($websitepage->fk_user_creat > 0)
 		{
@@ -486,13 +510,47 @@ function getStructuredData($type, WebsitePage $websitepage)
 					   },
 					  "description": "'.$websitepage->description.'"
 					}'."\n";
-					/*
-					*/
 				$ret .= '</script>'."\n";
 			}
 		}
 	}
-
+	elseif ($type == 'product')
+	{
+		$ret = '<!-- Add structured data for blog post -->'."\n";
+		$ret.= '<script type="application/ld+json">'."\n";
+		$ret.= '{
+				"@context": "https://schema.org/",
+				"@type": "Product",
+				"name": "'.$data['label'].'",
+				"image": [
+					"'.$data['image'].'",
+				],
+				"description": "'.$data['description'].'",
+				"sku": "'.$data['ref'].'",
+				"brand": {
+					"@type": "Thing",
+					"name": "'.$data['brand'].'"
+				},
+				"author": {
+					"@type": "Person",
+					"name": "'.$data['author'].'"
+				}
+				},
+				"offers": {
+					"@type": "Offer",
+					"url": "https://example.com/anvil",
+					"priceCurrency": "'.($data['currency']?$data['currency']:$conf->currency).'",
+					"price": "'.$data['price'].'",
+					"itemCondition": "https://schema.org/UsedCondition",
+					"availability": "https://schema.org/InStock",
+					"seller": {
+						"@type": "Organization",
+						"name": "'.$mysoc->name.'"
+					}
+				}
+			}'."\n";
+		$ret.= '</script>'."\n";
+	}
 	return $ret;
 }
 
