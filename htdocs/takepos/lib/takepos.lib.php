@@ -67,12 +67,12 @@ function takeposAdminPrepareHead()
  * @param	int		$placelabel	Place name
  *  @return	int					ID of ticket if OK, <0 if KO
  */
-function create_ticket($place=0,$term=0, $placelabel='')
+function create_ticket($place = 0, $term = 0, $placelabel = '')
 {
 	global $user,$db,$langs,$conf;
 	
 	if(is_null($place)){
-		dol_syslog("TakePos::create_ticket. Place=NULL, changed to 0",LOG_WARNING);
+		dol_syslog("TakePos::create_ticket. Place=NULL, changed to 0", LOG_WARNING);
 		$place=0;
 	}
 	if($term==0)	$term=$_SESSION['takeposterminal'];
@@ -110,14 +110,14 @@ function create_ticket($place=0,$term=0, $placelabel='')
  */
 
 
-function load_ticket($place=0, $facid=0)
+function load_ticket($place = 0, $facid = 0)
 {
 	global $db,$langs,$conf;
 	
 	$term=$_SESSION['takeposterminal'];
 	
 	if(is_null($place)){
-		dol_syslog("TakePos::load_ticket. Place=NULL, changed to 0",LOG_WARNING);
+		dol_syslog("TakePos::load_ticket. Place=NULL, changed to 0", LOG_WARNING);
 		$place=0;
 	}
 	
@@ -126,7 +126,7 @@ function load_ticket($place=0, $facid=0)
 	$invoice = new Facture($db);
 	if($facid>0){
 		$invoice->fetch($facid);
-		$invoice->fetch(0,'(PROV-POS-'.$place.')');
+		$invoice->fetch(0, '(PROV-POS-'.$place.')');
 	}
 	
 	if(empty($invoice->id))		//Just load place. New ticket
@@ -157,7 +157,6 @@ function load_ticket($place=0, $facid=0)
 			$row = $db->fetch_array($resql);
 			$floor=$row['floor'];
 		}else	$floor=0;
-		
 	}
 	
 	if($floor==0) $floor=0;		//V20: Before: $floor=$term,
@@ -178,6 +177,3 @@ function load_ticket($place=0, $facid=0)
 	dol_syslog("TakePos::load_ticket. Terminal=".$term." Ticket:" .$_SESSION['ticket'], LOG_DEBUG);
 	return $ticket;
 }
-
-
-

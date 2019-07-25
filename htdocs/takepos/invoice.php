@@ -98,7 +98,7 @@ if ($ret > 0)
 }
 */
 $ticket=array();	//V20
-$ticket=json_decode($_SESSION['ticket'],true);
+$ticket=json_decode($_SESSION['ticket'], true);
 
 //TODO: Must be clear with variables !!! :  Please better use $facid for invoice ID
 //Now $place is id of PLACE and $placeid is id of invoice
@@ -210,7 +210,7 @@ if (($action=="addline" || $action=="freezone") && $placeid == 0)
 	if ($placeid==0)
 	{
 		
-		$facid=$placeid=create_ticket($place,$_SESSION["takeposterminal"],$placelabel);
+		$facid=$placeid=create_ticket($place, $_SESSION["takeposterminal"], $placelabel);
 		$invoice->fetch($facid);
 		//We update ticket SESSION
 		$ticket['facid']=$invoice->id;

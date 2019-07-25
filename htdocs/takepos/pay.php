@@ -69,7 +69,7 @@ else
 */
 
 $ticket=array();	//V20
-$ticket=json_decode($_SESSION['ticket'],true);
+$ticket=json_decode($_SESSION['ticket'], true);
 
 $diners=$ticket['diners'];	//V20
 $facid=$placeid=$ticket['facid'];
