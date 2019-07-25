@@ -22,7 +22,6 @@ EndProcessing=Verwerking beëindigd
 Lineofinvoice=Factuur lijn
 Docdate=Datum
 Docref=Artikelcode
-ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Third-party account not defined or third party unknown. Blocking error.
 TotalVente=Totaal omzet voor belastingen
 AccountingJournalType2=Verkoop
 AccountingJournalType3=Inkoop

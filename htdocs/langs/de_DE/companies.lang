@@ -287,6 +287,7 @@ SupplierAbsoluteDiscountAllUsers=Absolute Lieferantenrabatte (von allen Benutzer
 SupplierAbsoluteDiscountMy=Absolute Lieferantenrabatte (durch sie erfasst)
 DiscountNone=Keine
 Vendor=Lieferant
+Supplier=Lieferant
 AddContact=Kontakt anlegen
 AddContactAddress=Kontakt/Adresse anlegen
 EditContact=Kontakt bearbeiten

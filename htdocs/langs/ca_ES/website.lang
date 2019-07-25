@@ -98,8 +98,8 @@ NoWebSiteCreateOneFirst=Encara no s'ha creat cap lloc web. Creeu-ne un primer.
 GoTo=Ves a
 DynamicPHPCodeContainsAForbiddenInstruction=Afegiu un codi PHP dinàmic que conté la instrucció PHP ' <strong>%s</strong> ' prohibida per defecte com a contingut dinàmic (vegeu les opcions ocultes WEBSITE_PHP_ALLOW_xxx per augmentar la llista d’ordres permeses).
 NotAllowedToAddDynamicContent=No teniu permís per afegir o editar contingut dinàmic de PHP als llocs web. Demana permís o simplement guarda el codi en etiquetes php sense modificar.
-ReplaceWebsiteContent=Substituïu el contingut del lloc web
+ReplaceWebsiteContent=Cerqueu o substitueixi el contingut del lloc web
 DeleteAlsoJs=Voleu suprimir també tots els fitxers javascript específics d'aquest lloc web?
 DeleteAlsoMedias=Voleu suprimir també tots els fitxers de mitjans específics d’aquest lloc web?
 # Export
-MyWebsitePages=My website pages
+MyWebsitePages=Les meves pàgines web

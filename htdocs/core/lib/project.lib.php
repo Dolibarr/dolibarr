@@ -371,7 +371,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 	$numlines=count($lines);
 
 	// We declare counter as global because we want to edit them into recursive call
-	global $total_projectlinesa_spent,$total_projectlinesa_planned,$total_projectlinesa_spent_if_planned,$total_projectlinesa_tobill,$total_projectlinesa_billed;
+	global $total_projectlinesa_spent, $total_projectlinesa_planned, $total_projectlinesa_spent_if_planned, $total_projectlinesa_tobill, $total_projectlinesa_billed;
 	if ($level == 0)
 	{
 		$total_projectlinesa_spent=0;
@@ -491,9 +491,13 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				//else print '<a href="'.DOL_URL_ROOT.'/projet/tasks/task.php?id='.$lines[$i]->id.'&withproject=1">';
 				for ($k = 0 ; $k < $level ; $k++)
 				{
-					print "&nbsp; &nbsp; &nbsp;";
+					print '<div class="marginleftonly">';
 				}
 				print $lines[$i]->label;
+				for ($k = 0 ; $k < $level ; $k++)
+				{
+					print '</div>';
+				}
 				if ($showlineingray) print '</i>';
 				//else print '</a>';
 				print "</td>\n";

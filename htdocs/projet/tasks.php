@@ -709,7 +709,7 @@ elseif ($id > 0 || ! empty($ref))
 	$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
 
 	print '<div class="div-table-responsive">';
-	print '<table id="tablelines" class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'"">';
+	print '<table id="tablelines" class="tagtable nobottomiftotal liste'.($moreforfilter?" listwithfilterbefore":"").'"">';
 
 	// Fields title search
 	print '<tr class="liste_titre_filter">';

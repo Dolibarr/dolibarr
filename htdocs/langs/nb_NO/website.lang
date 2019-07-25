@@ -98,8 +98,8 @@ NoWebSiteCreateOneFirst=Ingen nettside er opprettet ennå. Opprett en først.
 GoTo=Gå til
 DynamicPHPCodeContainsAForbiddenInstruction=Du legger til dynamisk PHP-kode som inneholder PHP-instruksjonen '<strong>%s</strong>' som vanligvis er forbudt som dynamisk innhold (se skjulte alternativer WEBSITE_PHP_ALLOW_xxx for å øke listen over tillatte kommandoer).
 NotAllowedToAddDynamicContent=Du har ikke tillatelse til å legge til eller redigere PHP dynamisk innhold på nettsteder. Be om tillatelse eller behold koden i php-kodene uendret.
-ReplaceWebsiteContent=Erstatt nettsideinnhold
+ReplaceWebsiteContent=Søk eller erstatt nettstedsinnhold
 DeleteAlsoJs=Slett også alle javascript-filer som er spesifikke for denne nettsiden?
 DeleteAlsoMedias=Slett også alle mediefiler som er spesifikke for denne nettsiden?
 # Export
-MyWebsitePages=My website pages
+MyWebsitePages=Mine nettsider

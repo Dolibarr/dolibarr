@@ -120,7 +120,6 @@ SystemToolsAreaDesc=Essa área dispõem de funções administrativas. Use esse m
 Purge=Purgar (apagar tudo)
 PurgeAreaDesc=Esta página permite deletar todos os arquivos gerados ou armazenados pelo Dolibarr (arquivos temporários ou todos os arquivos no diretório <b>%s</b>). Este recurso é fornecido como uma solução alternativa aos usuários cujo a instalação esteja hospedado num servidor que impeça o acesso as pastas onde os arquivos gerados pelo Dolibarr são armazenados, para excluí-los.
 PurgeDeleteLogFile=Excluir os arquivos de registro, incluindo o <b>%s</b> definido pelo módulo Syslog (não há risco de perda de dados)
-PurgeDeleteTemporaryFiles=Excluir todos os arquivos temporários (sem risco de perca de dados)
 PurgeDeleteTemporaryFilesShort=Excluir arquivos temporários
 PurgeDeleteAllFilesInDocumentsDir=Eliminar todos os arquivos do diretório <b>%s</b>. Isto irá excluir todos documentos (Terceiros, faturas, ...), arquivos carregados no módulo ECM, Backups e arquivos temporários
 PurgeRunNow=Purgar(Apagar) Agora

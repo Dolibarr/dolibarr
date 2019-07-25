@@ -391,7 +391,7 @@ class FormCompany
 	/**
 	 *  Return combo list with people title
 	 *
-	 *  @param  string	$selected   	Title preselected
+	 *  @param  string	$selected   	Civility/Title code preselected
 	 * 	@param	string	$htmlname		Name of HTML select combo field
 	 *  @param  string  $morecss        Add more css on SELECT element
 	 *  @return	string					String with HTML select
