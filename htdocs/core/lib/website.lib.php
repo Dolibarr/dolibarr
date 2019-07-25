@@ -438,13 +438,12 @@ function includeContainer($containerref)
  * Return HTML content to add structured data for an article, news or Blog Post.
  *
  * @param 	string		$type				'blogpost', 'product', 'software'...
- * @param 	WebsitePage	$websitepage		Website page object
  * @param	array		$data				Array of data parameters for structured data
  * @return  string							HTML content
  */
-function getStructuredData($type, WebsitePage $websitepage, $data = array())
+function getStructuredData($type, $data = array())
 {
-	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $weblangs;	// Very important. Required to have var available when running inluded containers.
+	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs;	// Very important. Required to have var available when running inluded containers.
 	global $includehtmlcontentopened;
 	global $websitekey, $websitepagefile;
 
