@@ -147,9 +147,6 @@ if ($action == 'other')
 	$value = GETPOST('activate_useProdFournDesc', 'alpha');
 	$res = dolibarr_set_const($db, "PRODUIT_FOURN_TEXTS", $value, 'chaine', 0, '', $conf->entity);
 
-	//$value = GETPOST('activate_globalSearchOnExtrafield', 'alpha');
-	//$res = dolibarr_set_const($db, "PRODUIT_GLOBAL_SEARCH_ON_EXTRAFIELD", $value,'chaine',0,'',$conf->entity);
-
 	if ($value) {
 	    $sql_test = "SELECT count(desc_fourn) as cpt FROM ".MAIN_DB_PREFIX."product_fournisseur_price WHERE 1";
 	    $resql = $db->query($sql_test);
@@ -679,12 +676,6 @@ if (! empty($conf->fournisseur->enabled))
     print '</tr>';
 }
 
-/*print '<tr class="oddeven">';
-print '<td>'.$langs->trans("GlobalSearchOnExtrafield").'</td>';
-print '<td width="60" align="right">';
-print $form->selectyesno("activate_globalSearchOnExtrafield", (! empty($conf->global->PRODUIT_GLOBAL_SEARCH_ON_EXTRAFIELD)?$conf->global->PRODUIT_GLOBAL_SEARCH_ON_EXTRAFIELD:0), 1);
-print '</td>';
-print '</tr>';*/
 
 if (! empty($conf->global->PRODUCT_CANVAS_ABILITY))
 {

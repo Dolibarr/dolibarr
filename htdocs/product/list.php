@@ -136,10 +136,6 @@ $fieldstosearchall = array(
 	'p.label'=>"ProductLabel",
 	'p.description'=>"Description",
 	"p.note"=>"Note",
-	"p.note_public"=>"NotePublic",
-	"p.url"=>"PublicUrl",
-	"p.accountancy_code_sell"=>"AccountancyCodeSell",
-	"p.accountancy_code_buy"=>"AccountancyCodeBuy",
 
 );
 // multilang
@@ -153,23 +149,8 @@ if (! empty($conf->barcode->enabled)) {
 	$fieldstosearchall['p.barcode']='Gencod';
     $fieldstosearchall['pfp.barcode']='GencodBuyPrice';
 }
-
-//global search on extrafields
-if(!empty($conf->global->PRODUIT_GLOBAL_SEARCH_ON_EXTRAFIELD) && !empty($extralabels)) {
-    foreach($extralabels as $codeExtra => $labelExtra) {
-        $TExtraTypeNotHandled=array(
-            'boolean',
-            'select',
-            'sellist',
-            'radio',
-            'checkbox',
-            'chkbxlst',
-            'link',
-            'separate',
-        );
-        if(!in_array($extrafields->attribute_type[$codeExtra], $TExtraTypeNotHandled)) $fieldstosearchall['ef.' . $codeExtra] = $labelExtra;
-    }
-}
+// Personalized search criterias. Example: $conf->global->PRODUCT_QUICKSEARCH_ON_FIELDS = 'p.ref=ProductRef;p.label=ProductLabel'
+if (! empty($conf->global->PRODUCT_QUICKSEARCH_ON_FIELDS)) $fieldstosearchall=dolExplodeIntoArray($conf->global->PRODUCT_QUICKSEARCH_ON_FIELDS);
 
 if (empty($conf->global->PRODUIT_MULTIPRICES))
 {
