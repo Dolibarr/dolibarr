@@ -1144,41 +1144,6 @@ class ExpenseReport extends CommonObject
 
 			if (! $error)
 			{
-				$this->oldref = $this->ref;
-
-				// Rename directory if dir was a temporary ref
-				if (preg_match('/^[\(]?PROV/i', $this->ref))
-				{
-					// On renomme repertoire ($this->ref = ancienne ref, $num = nouvelle ref)
-					// in order not to lose the attachments
-					$oldref = dol_sanitizeFileName($this->ref);
-					$newref = dol_sanitizeFileName($num);
-					$dirsource = $conf->expensereport->dir_output.'/'.$oldref;
-					$dirdest = $conf->expensereport->dir_output.'/'.$newref;
-					if (file_exists($dirsource))
-					{
-						dol_syslog(get_class($this)."::setValidate() rename dir ".$dirsource." into ".$dirdest);
-
-						if (@rename($dirsource, $dirdest))
-						{
-							dol_syslog("Rename ok");
-							// Rename docs starting with $oldref with $newref
-							$listoffiles=dol_dir_list($conf->expensereport->dir_output.'/'.$newref, 'files', 1, '^'.preg_quote($oldref, '/'));
-							foreach($listoffiles as $fileentry)
-							{
-								$dirsource=$fileentry['name'];
-								$dirdest=preg_replace('/^'.preg_quote($oldref, '/').'/', $newref, $dirsource);
-								$dirsource=$fileentry['path'].'/'.$dirsource;
-								$dirdest=$fileentry['path'].'/'.$dirdest;
-								@rename($dirsource, $dirdest);
-							}
-						}
-					}
-				}
-			}
-
-			if (! $error)
-			{
 			    $this->oldref = $this->ref;
 
 			    // Rename directory if dir was a temporary ref
