@@ -38,6 +38,7 @@ ActionsEvents=События, за которые Dolibarr создадут де
 EventRemindersByEmailNotEnabled=Event reminders by email was not enabled into %s module setup.
 ##### Agenda event labels #####
 NewCompanyToDolibarr=Третья сторона %s создана
+COMPANY_DELETEInDolibarr=Third party %s deleted
 ContractValidatedInDolibarr=Контакт %s подтверждён
 CONTRACT_DELETEInDolibarr=Contract %s deleted
 PropalClosedSignedInDolibarr=Ком. предложение  %s подписано
@@ -95,6 +96,7 @@ PROJECT_MODIFYInDolibarr=Проект %s изменен
 PROJECT_DELETEInDolibarr=Проект %s удален
 TICKET_CREATEInDolibarr=Ticket %s created
 TICKET_MODIFYInDolibarr=Ticket %s modified
+TICKET_ASSIGNEDInDolibarr=Ticket %s assigned
 TICKET_CLOSEInDolibarr=Ticket %s closed
 TICKET_DELETEInDolibarr=Ticket %s deleted
 ##### End agenda events #####

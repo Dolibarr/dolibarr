@@ -353,8 +353,11 @@ input.buttongen {
 	vertical-align: middle;
 }
 input.buttonpayment, button.buttonpayment, div.buttonpayment {
-	min-width: 320px;
+	min-width: 290px;
 	margin-bottom: 15px;
+	margin-top: 0;
+    margin-left: 5px;
+    margin-right: 5px;
 	background-image: none;
 	line-height: 24px;
 	padding: 8px;
@@ -371,6 +374,7 @@ div.buttonpayment input {
     font-weight: bold;
     text-transform: uppercase;
 	color: #333;
+	cursor: pointer;
 }
 input.buttonpaymentcb {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/common/credit_card.png', 1) ?>);
@@ -540,7 +544,7 @@ hr { border: 0; border-top: 1px solid #ccc; }
 	-webkit-box-shadow: 0px 0px 6px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 	box-shadow: 0px 0px 6px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 }
-.button:disabled, .buttonDelete:disabled {
+.button:disabled, .buttonDelete:disabled, .button.disabled {
 	opacity: 0.4;
     box-shadow: none;
     -webkit-box-shadow: none;
@@ -1558,6 +1562,10 @@ img.photorefnoborder {
 .underbanner {
 	border-bottom: <?php echo $borderwidth; ?>px solid rgb(<?php echo $colortopbordertitle1 ?>);
 }
+
+.trextrafieldseparator td {
+    border-bottom: 1px solid rgb(<?php echo $colortopbordertitle1 ?>) !important;
+}
 .tdhrthin {
 	margin: 0;
 	padding-bottom: 0 !important;
@@ -1926,7 +1934,6 @@ a.tmenuimage {
 a.tmenuimage:focus {
     outline: none;
 }
-
 
 
 /* Login */
@@ -2397,7 +2404,7 @@ div.tabBar table.tableforservicepart2:last-child {
 }
 
 /* ============================================================================== */
-/* Boutons actions                                                                */
+/* Buttons for actions                                                            */
 /* ============================================================================== */
 
 div.divButAction {
@@ -2500,7 +2507,7 @@ span.tabspan {
 }
 
 /* ============================================================================== */
-/* Boutons actions                                                                */
+/* Buttons for actions                                                            */
 /* ============================================================================== */
 
 div.divButAction {
@@ -5380,7 +5387,6 @@ border-top-right-radius: 6px;
 }
 
 
-
 /* ============================================================================== */
 /*  Public                                                                        */
 /* ============================================================================== */
@@ -5394,25 +5400,29 @@ border-top-right-radius: 6px;
 }
 
 
-
-::-webkit-scrollbar {
-    width: 12px;
-}
-::-webkit-scrollbar-button {
-    background: #aaa
-}
-::-webkit-scrollbar-track-piece {
-    background: #fff
-}
-::-webkit-scrollbar-thumb {
-    background: #ddd
-}​
-
-
-
 /* ============================================================================== */
 /* Ticket module                                                                  */
 /* ============================================================================== */
+
+.ticketpublicarea {
+	width: 70%;
+}
+.publicnewticketform {
+	margin-top: 25px !important;
+}
+.ticketlargemargin {
+	padding-left: 50px;
+	padding-right: 50px;
+}
+@media only screen and (max-width: 767px)
+{
+	.ticketlargemargin {
+		padding-left: 5px; padding-right: 5px;
+	}
+	.ticketpublicarea {
+		width: 100%;
+	}
+}
 
 #cd-timeline {
   position: relative;
@@ -5822,6 +5832,22 @@ border-top-right-radius: 6px;
 		max-width: 100px;			/* but no more than 100px */
 	}
 }
+
+
+
+/* This must be at end */
+::-webkit-scrollbar {
+    width: 12px;
+}
+::-webkit-scrollbar-button {
+    background: #aaa;
+}
+::-webkit-scrollbar-track-piece {
+    background: #fff;
+}
+::-webkit-scrollbar-thumb {
+    background: #ddd;
+}​
 
 
 

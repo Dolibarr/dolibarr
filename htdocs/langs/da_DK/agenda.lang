@@ -38,6 +38,7 @@ ActionsEvents=Begivenheder, for hvilke Dolibarr vil skabe en indsats på dagsord
 EventRemindersByEmailNotEnabled=Hændelsesindkaldelser via e-mail blev ikke aktiveret til %s modulopsætning.
 ##### Agenda event labels #####
 NewCompanyToDolibarr=Tredjepart %s oprettet
+COMPANY_DELETEInDolibarr=Third party %s deleted
 ContractValidatedInDolibarr=Kontrakt %s bekræftet
 CONTRACT_DELETEInDolibarr=Kontrakt %s slettet
 PropalClosedSignedInDolibarr=Forslag %s underskrevet
@@ -95,6 +96,7 @@ PROJECT_MODIFYInDolibarr=Projekt %s ændret
 PROJECT_DELETEInDolibarr=Projekt %s slettet
 TICKET_CREATEInDolibarr=Sag %s oprettet
 TICKET_MODIFYInDolibarr=Billet %s modified
+TICKET_ASSIGNEDInDolibarr=Ticket %s assigned
 TICKET_CLOSEInDolibarr=Ticket %s closed
 TICKET_DELETEInDolibarr=Billet %s deleted
 ##### End agenda events #####

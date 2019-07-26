@@ -484,7 +484,7 @@ if ($resql)
 	print_barre_liste($langs->trans("BillsSuppliers").($socid?' '.$soc->name:''), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_accountancy', 0, $newcardbutton, '', $limit);
 
 	$topicmail="SendBillRef";
-	$modelmail="supplier_invoice_send";
+	$modelmail="invoice_supplier_send";
 	$objecttmp=new FactureFournisseur($db);
 	$trackid='sinv'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
@@ -986,7 +986,7 @@ if ($resql)
 			// Amount HT
 			if (! empty($arrayfields['f.total_ht']['checked']))
 			{
-				  print '<td class="right">'.price($obj->total_ht)."</td>\n";
+				  print '<td class="right nowrap">'.price($obj->total_ht)."</td>\n";
 				  if (! $i) $totalarray['nbfield']++;
 				  if (! $i) $totalarray['totalhtfield']=$totalarray['nbfield'];
 				  $totalarray['totalht'] += $obj->total_ht;
@@ -994,7 +994,7 @@ if ($resql)
 			// Amount VAT
 			if (! empty($arrayfields['f.total_vat']['checked']))
 			{
-				print '<td class="right">'.price($obj->total_vat)."</td>\n";
+				print '<td class="right nowrap">'.price($obj->total_vat)."</td>\n";
 				if (! $i) $totalarray['nbfield']++;
 				if (! $i) $totalarray['totalvatfield']=$totalarray['nbfield'];
 				$totalarray['totalvat'] += $obj->total_vat;
@@ -1002,7 +1002,7 @@ if ($resql)
 			// Amount LocalTax1
 			if (! empty($arrayfields['f.total_localtax1']['checked']))
 			{
-				print '<td class="right">'.price($obj->total_localtax1)."</td>\n";
+				print '<td class="right nowrap">'.price($obj->total_localtax1)."</td>\n";
 				if (! $i) $totalarray['nbfield']++;
 				if (! $i) $totalarray['totallocaltax1field']=$totalarray['nbfield'];
 				$totalarray['totallocaltax1'] += $obj->total_localtax1;
@@ -1010,7 +1010,7 @@ if ($resql)
 			// Amount LocalTax2
 			if (! empty($arrayfields['f.total_localtax2']['checked']))
 			{
-				print '<td class="right">'.price($obj->total_localtax2)."</td>\n";
+				print '<td class="right nowrap">'.price($obj->total_localtax2)."</td>\n";
 				if (! $i) $totalarray['nbfield']++;
 				if (! $i) $totalarray['totallocaltax2field']=$totalarray['nbfield'];
 				$totalarray['totallocaltax2'] += $obj->total_localtax2;
@@ -1018,7 +1018,7 @@ if ($resql)
 			// Amount TTC
 			if (! empty($arrayfields['f.total_ttc']['checked']))
 			{
-				print '<td class="right">'.price($obj->total_ttc)."</td>\n";
+				print '<td class="right nowrap">'.price($obj->total_ttc)."</td>\n";
 				if (! $i) $totalarray['nbfield']++;
 				if (! $i) $totalarray['totalttcfield']=$totalarray['nbfield'];
 				$totalarray['totalttc'] += $obj->total_ttc;
@@ -1026,7 +1026,7 @@ if ($resql)
 
 			if (! empty($arrayfields['dynamount_payed']['checked']))
 			{
-				print '<td class="right">'.(! empty($totalpay)?price($totalpay, 0, $langs):'&nbsp;').'</td>'; // TODO Use a denormalized field
+				print '<td class="right nowrap">'.(! empty($totalpay)?price($totalpay, 0, $langs):'&nbsp;').'</td>'; // TODO Use a denormalized field
 				if (! $i) $totalarray['nbfield']++;
 				if (! $i) $totalarray['totalamfield']=$totalarray['nbfield'];
 				$totalarray['totalam'] += $totalpay;
@@ -1034,7 +1034,7 @@ if ($resql)
 
 			if (! empty($arrayfields['rtp']['checked']))
 			{
-				print '<td class="right">'.(! empty($remaintopay)?price($remaintopay, 0, $langs):'&nbsp;').'</td>'; // TODO Use a denormalized field
+				print '<td class="right nowrap">'.(! empty($remaintopay)?price($remaintopay, 0, $langs):'&nbsp;').'</td>'; // TODO Use a denormalized field
 				if (! $i) $totalarray['nbfield']++;
 				if (! $i) $totalarray['totalrtpfield']=$totalarray['nbfield'];
 				$totalarray['totalrtp'] += $remaintopay;
@@ -1133,20 +1133,19 @@ if ($resql)
 
 	print "</form>\n";
 
-	/*
 	$hidegeneratedfilelistifempty=1;
 	if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) $hidegeneratedfilelistifempty=0;
 
     // Show list of available documents
     $urlsource=$_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
-    $urlsource.=str_replace('&amp;','&',$param);
+    $urlsource.=str_replace('&amp;', '&', $param);
 
     $filedir=$diroutputmassaction;
     $genallowed=$user->rights->facture->lire;
     $delallowed=$user->rights->facture->creer;
+    $title = '';
 
-    print $formfile->showdocuments('massfilesarea_invoices','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'','','',null,$hidegeneratedfilelistifempty);
-    */
+    print $formfile->showdocuments('massfilesarea_supplier_invoice', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
 }
 else
 {

@@ -1,18 +1,21 @@
 # Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Accounting account used for user third parties
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=The dedicated accounting account defined on user card will be used for Subledger accouting only. This one will be used for General Ledger and as default value of Subledger accounting if dedicated user accouting account on user is not defined.
-SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Accounting account by default for wage payments
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Счетоводна сметка, използвана за служители на контрагенти
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Специализираната счетоводна сметка, дефинирана в картата на потребителя, ще се използва само за вторично счетоводно отчитане. Тя ще бъде използвана в регистъра на главната счетоводна книга и като стойност по подразбиране за вторично счетоводно отчитане, ако не е дефинирана специализирана потребителска счетоводна сметка за потребителя.
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Счетоводна сметка по подразбиране за плащане на заплати
 Salary=Заплата
 Salaries=Заплати
-NewSalaryPayment=Ново заплащане на заплата
+NewSalaryPayment=Ново плащане на заплата
+AddSalaryPayment=Добавяне на плащане на заплата
 SalaryPayment=Плащане на заплата
-SalariesPayments=Заплащания заплати
-ShowSalaryPayment=Показване заплащане на заплата
-THM=Average hourly rate
-TJM=Average daily rate
-CurrentSalary=Сегашна заплата
-THMDescription=Тази стойност може да използва за изчисляване на отнето време по проект отделено от потребителите ако модул проект се използва
-TJMDescription=Тази стойност е само сега като информация и не се използва за никакво изчисление
-LastSalaries=Latest %s salary payments
-AllSalaries=All salary payments
-SalariesStatistics=Statistiques salaires
+SalariesPayments=Плащания на заплати
+ShowSalaryPayment=Показване на плащане на заплата
+THM=Средна почасова ставка
+TJM=Средна дневна ставка
+CurrentSalary=Текуща заплата
+THMDescription=Тази стойност може да се използва за изчисляване на разходите за времето, което е отделено по проект, ако модула проекти се използва.
+TJMDescription=Тази стойност понастоящем е информативна и  не се използва за изчисления
+LastSalaries=Плащания на заплати: %s последни
+AllSalaries=Всички плащания на заплати
+SalariesStatistics=Статистика на заплатите
+# Export
+SalariesAndPayments=Заплати и плащания

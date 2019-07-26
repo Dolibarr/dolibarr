@@ -167,11 +167,12 @@ if ($dirins && $action == 'initmodule' && $modulename)
 		dol_delete_file($destdir.'/test/phpunit/MyObjectTest.php');
 		dol_delete_file($destdir.'/test/phpunit');
 		dol_delete_file($destdir.'/test');
-		dol_delete_file($destdir.'/sql/llx'.strtolower($modulename).'_myobject.sql');
+		dol_delete_file($destdir.'/sql/llx_'.strtolower($modulename).'_myobject.sql');
 		dol_delete_file($destdir.'/sql/llx_'.strtolower($modulename).'_myobject_extrafields.sql');
 		dol_delete_file($destdir.'/sql/llx_'.strtolower($modulename).'_myobject.key.sql');
 		dol_delete_file($destdir.'/img/object_myobject.png');
 		dol_delete_file($destdir.'/class/myobject.class.php');
+		dol_delete_dir($destdir.'/sql');
 	}
 
 	// Edit PHP files

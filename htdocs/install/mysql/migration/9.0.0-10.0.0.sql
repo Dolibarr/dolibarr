@@ -60,6 +60,8 @@ CREATE TABLE llx_pos_cash_fence(
 
 -- For 10.0
 
+UPDATE llx_chargesociales SET date_creation = tms WHERE date_creation IS NULL;
+
 DROP TABLE llx_cotisation;
 ALTER TABLE llx_accounting_bookkeeping DROP COLUMN validated;
 ALTER TABLE llx_accounting_bookkeeping_tmp DROP COLUMN validated;
@@ -93,6 +95,8 @@ ALTER TABLE llx_mailing_unsubscribe ADD UNIQUE uk_mailing_unsubscribe(email, ent
 ALTER TABLE llx_adherent ADD gender VARCHAR(10);
 ALTER TABLE llx_adherent_type ADD morphy VARCHAR(3);
 ALTER TABLE llx_subscription ADD fk_type integer;
+
+UPDATE llx_subscription as s SET fk_type = (SELECT fk_adherent_type FROM llx_adherent as a where a.rowid = s.fk_adherent) where fk_type IS NULL; 
 
 -- Add url_id into unique index of bank_url
 ALTER TABLE llx_bank_url DROP INDEX uk_bank_url;
@@ -202,6 +206,9 @@ ALTER TABLE llx_user ADD COLUMN linkedin  varchar(255) after whatsapp;
 
 ALTER TABLE llx_expensereport_det ADD COLUMN fk_ecm_files integer DEFAULT NULL;
 
+ALTER TABLE llx_expensereport ADD COLUMN paid smallint default 0 NOT NULL;
+UPDATE llx_expensereport set paid = 1 WHERE fk_statut = 6 and paid = 0;
+
 
 CREATE TABLE llx_bom_bom(
 	-- BEGIN MODULEBUILDER FIELDS
@@ -227,6 +234,8 @@ CREATE TABLE llx_bom_bom(
 ) ENGINE=innodb;
 
 ALTER TABLE llx_bom_bom ADD COLUMN efficiency double(8,4) DEFAULT 1;
+ALTER TABLE llx_bom_bom ADD COLUMN entity integer DEFAULT 1 NOT NULL;
+ALTER TABLE llx_bom_bom ADD COLUMN date_valid datetime;
 
 create table llx_bom_bom_extrafields
 (
@@ -246,13 +255,13 @@ CREATE TABLE llx_bom_bomline(
 	import_key varchar(14), 
 	qty double(24,8) NOT NULL, 
 	efficiency double(8,4) NOT NULL DEFAULT 1,
-	rank integer NOT NULL
+	position integer NOT NULL
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;
 
 ALTER TABLE llx_bom_bomline ADD COLUMN efficiency double(8,4) DEFAULT 1;
 ALTER TABLE llx_bom_bomline ADD COLUMN fk_bom_child integer NULL;
-
+ALTER TABLE llx_bom_bomline ADD COLUMN position integer NOT NULL;
 
 create table llx_bom_bomline_extrafields
 (
@@ -271,6 +280,10 @@ ALTER TABLE llx_bom_bom ADD INDEX idx_bom_bom_fk_product (fk_product);
 ALTER TABLE llx_bom_bomline ADD INDEX idx_bom_bomline_rowid (rowid);
 ALTER TABLE llx_bom_bomline ADD INDEX idx_bom_bomline_fk_product (fk_product);
 ALTER TABLE llx_bom_bomline ADD INDEX idx_bom_bomline_fk_bom (fk_bom);
+
+ALTER TABLE llx_bom_bom ADD UNIQUE INDEX uk_bom_bom_ref(ref, entity);
+ALTER TABLE llx_bom_bomline ADD CONSTRAINT llx_bom_bomline_fk_bom FOREIGN KEY (fk_bom) REFERENCES llx_bom_bom(rowid);
+
 
 ALTER TABLE llx_product_fournisseur_price ADD COLUMN barcode varchar(180) DEFAULT NULL;
 ALTER TABLE llx_product_fournisseur_price ADD COLUMN fk_barcode_type integer DEFAULT NULL;
@@ -304,8 +317,8 @@ ALTER TABLE llx_actioncomm ADD COLUMN calling_duration integer;
 ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN datelastok datetime;
 ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN maxemailpercollect integer DEFAULT 100;
 
-DELETE FROM llx_const WHERE name = 'THEME_ELDY_USE_HOVER' AND value = '0';
-DELETE FROM llx_const WHERE name = 'THEME_ELDY_USE_CHECKED' AND value = '0';
+DELETE FROM llx_const WHERE name = __ENCRYPT('THEME_ELDY_USE_HOVER')__ AND value = __ENCRYPT('0')__;
+DELETE FROM llx_const WHERE name = __ENCRYPT('THEME_ELDY_USE_CHECKED')__ AND value = __ENCRYPT('0')__;
 
 ALTER TABLE llx_inventorydet DROP COLUMN pmp; 
 ALTER TABLE llx_inventorydet DROP COLUMN pa; 
@@ -377,7 +390,7 @@ ALTER TABLE llx_reception_extrafields ADD INDEX idx_reception_extrafields (fk_ob
 ALTER TABLE llx_commande_fournisseur_dispatch ADD COLUMN fk_projet integer DEFAULT NULL;
 ALTER TABLE llx_commande_fournisseur_dispatch ADD COLUMN fk_reception integer DEFAULT NULL;
 
-
+ALTER TABLE llx_accounting_bookkeeping ADD COLUMN date_export datetime DEFAULT NULL after date_validated;
 
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (110, 'supplier_proposal', 'internal', 'SALESREPFOLL',  'Responsable suivi de la demande', 1);
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (111, 'supplier_proposal', 'external', 'BILLING',       'Contact fournisseur facturation', 1);
@@ -385,3 +398,6 @@ insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) v
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (113, 'supplier_proposal', 'external', 'SERVICE',       'Contact fournisseur prestation', 1);
 
 ALTER TABLE llx_ticket_extrafields ADD INDEX idx_ticket_extrafields (fk_object);
+
+UPDATE llx_website_page set fk_user_creat = fk_user_modif WHERE fk_user_creat IS NULL and fk_user_modif IS NOT NULL;
+

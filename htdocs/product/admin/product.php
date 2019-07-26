@@ -245,12 +245,12 @@ if ($action == 'set')
 	if (! $res > 0) $error++;
 }
 
-if ($action == 'other')
-{
-    $value = GETPOST('activate_units', 'alpha');
-    $res = dolibarr_set_const($db, "PRODUCT_USE_UNITS", $value, 'chaine', 0, '', $conf->entity);
-	if (! $res > 0) $error++;
-}
+//if ($action == 'other')
+//{
+//    $value = GETPOST('activate_units', 'alpha');
+//    $res = dolibarr_set_const($db, "PRODUCT_USE_UNITS", $value, 'chaine', 0, '', $conf->entity);
+//	if (! $res > 0) $error++;
+//}
 
 if ($action)
 {
@@ -272,7 +272,7 @@ $formbarcode=new FormBarCode($db);
 
 $title = $langs->trans('ProductServiceSetup');
 $tab = $langs->trans("ProductsAndServices");
-if (empty($conf->produit->enabled))
+if (empty($conf->product->enabled))
 {
 	$title = $langs->trans('ServiceSetup');
 	$tab = $langs->trans('Services');

@@ -64,6 +64,8 @@ $comments=GETPOST('comments', 'none');
 $fk_c_type_fees=GETPOST('fk_c_type_fees', 'int');
 $socid = GETPOST('socid', 'int')?GETPOST('socid', 'int'):GETPOST('socid_id', 'int');
 
+$childids = $user->getAllChildIds(1);
+
 // Security check
 $id=GETPOST("id", 'int');
 if ($user->societe_id) $socid=$user->societe_id;
@@ -110,6 +112,18 @@ $permissionedit = $user->rights->expensereport->creer; 		// Used by the include 
 
 $upload_dir = $conf->expensereport->dir_output.'/'.dol_sanitizeFileName($object->ref);
 
+
+if ($object->id > 0)
+{
+    // Check current user can read this expense report
+    $canread = 0;
+    if (! empty($user->rights->expensereport->readall)) $canread=1;
+    if (! empty($user->rights->expensereport->lire) && in_array($object->fk_user_author, $childids)) $canread=1;
+    if (! $canread)
+    {
+        accessforbidden();
+    }
+}
 
 
 /*
@@ -2076,17 +2090,13 @@ else
 						if ($action != 'editline' || $line->rowid != GETPOST('rowid', 'int'))
 						{
 							print '<tr class="oddeven">';
-
+							// Num
 							print '<td class="center">';
 							print $numline;
 							print '</td>';
-
-							/*print '<td class="center">';
-							print img_picto($langs->trans("Document"), "object_generic");
-							print ' <span>'.$piece_comptable.'</span>';
-							print '</td>';*/
-
+							// Date
 							print '<td class="center">'.dol_print_date($db->jdate($line->date), 'day').'</td>';
+							// Project
 							if (! empty($conf->projet->enabled))
 							{
 								print '<td>';
@@ -2094,21 +2104,26 @@ else
 								{
 									$projecttmp->id=$line->fk_project;
 									$projecttmp->ref=$line->projet_ref;
+									$projecttmp->title=$line->projet_title;
 									print $projecttmp->getNomUrl(1);
 								}
 								print '</td>';
 							}
+							// IK
 							if (!empty($conf->global->MAIN_USE_EXPENSE_IK))
 							{
 								print '<td class="fk_c_exp_tax_cat">';
 								print dol_getIdFromCode($db, $line->fk_c_exp_tax_cat, 'c_exp_tax_cat', 'rowid', 'label');
 								print '</td>';
 							}
+							// Type of fee
 							print '<td class="center">';
 							$labeltype = ($langs->trans(($line->type_fees_code)) == $line->type_fees_code ? $line->type_fees_libelle : $langs->trans($line->type_fees_code));
 							print $labeltype;
 							print '</td>';
+							// Comment
 							print '<td class="left">'.dol_nl2br($line->comments).'</td>';
+							// VAT rate
 							print '<td class="right">'.vatrate($line->vatrate, true).'</td>';
                             // Unit price HT
 							print '<td class="right">';
@@ -2243,7 +2258,7 @@ else
 						    print '<a href="" class="commonlink auploadnewfilenow reposition">'.$langs->trans("UploadANewFileNow");
 						    print img_picto($langs->trans("UploadANewFileNow"), 'chevron-down', '', false, 0, 0, '', 'marginleftonly');
 						    print '</a>';
-						    if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
+						    if (empty($conf->global->EXPENSEREPORT_DISABLE_ATTACHMENT_ON_LINES))
 						    {
 						        print ' &nbsp; - &nbsp; '.'<a href="" class="commonlink aattachtodoc reposition">'.$langs->trans("AttachTheNewLineToTheDocument");
 						        print img_picto($langs->trans("AttachTheNewLineToTheDocument"), 'chevron-down', '', false, 0, 0, '', 'marginleftonly');
@@ -2374,7 +2389,7 @@ else
 
 				    $nbFiles = $nbLinks = 0;
 				    $arrayoffiles = array();
-				    if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
+				    if (empty($conf->global->EXPENSEREPORT_DISABLE_ATTACHMENT_ON_LINES))
 				    {
 				        require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 				        require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
@@ -2391,7 +2406,7 @@ else
 				    print '<a href="" class="commonlink auploadnewfilenow reposition">'.$langs->trans("UploadANewFileNow");
 				    print img_picto($langs->trans("UploadANewFileNow"), 'chevron-down', '', false, 0, 0, '', 'marginleftonly');
 				    print '</a>';
-				    if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
+				    if (empty($conf->global->EXPENSEREPORT_DISABLE_ATTACHMENT_ON_LINES))
 				    {
 				        print ' &nbsp; - &nbsp; '.'<a href="" class="commonlink aattachtodoc reposition">'.$langs->trans("AttachTheNewLineToTheDocument");
 				        print img_picto($langs->trans("AttachTheNewLineToTheDocument"), 'chevron-down', '', false, 0, 0, '', 'marginleftonly');
@@ -2426,7 +2441,7 @@ else
 					print '<tr class="liste_titre">';
 					print '<td></td>';
 					print '<td class="center">'.$langs->trans('Date').'</td>';
-					if (! empty($conf->projet->enabled)) print '<td class="minwidth100imp">'.$langs->trans('Project').'</td>';
+					if (! empty($conf->projet->enabled)) print '<td class="minwidth100imp">'.$form->textwithpicto($langs->trans('Project'), $langs->trans("ClosedProjectsAreHidden")).'</td>';
 					if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) print '<td>'.$langs->trans('CarCategory').'</td>';
 					print '<td class="center">'.$langs->trans('Type').'</td>';
 					print '<td>'.$langs->trans('Description').'</td>';
@@ -2454,7 +2469,7 @@ else
 					if (! empty($conf->projet->enabled))
 					{
 						print '<td>';
-						$formproject->select_projects(-1, $fk_projet, 'fk_projet', 0, 0, 1, 1, 0, 0, 0, '', 0, 0, 'maxwidth300');
+						$formproject->select_projects(-1, $fk_projet, 'fk_projet', 0, 0, 1, -1, 0, 0, 0, '', 0, 0, 'maxwidth300');
 						print '</td>';
 					}
 
@@ -2714,9 +2729,6 @@ if ($action != 'create' && $action != 'edit')
 }
 
 print '</div>';
-
-
-//$conf->global->DOL_URL_ROOT_DOCUMENT_PHP=dol_buildpath('/expensereport/documentwrapper.php',1);
 
 
 // Select mail models is same action as presend

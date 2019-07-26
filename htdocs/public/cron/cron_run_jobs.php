@@ -186,7 +186,7 @@ if (is_array($qualifiedjobs) && (count($qualifiedjobs)>0))
 		{
 		    echo " - qualified";
 
-		    dol_syslog("cron_run_jobs.php line->datenextrun:".dol_print_date($line->datenextrun,'dayhourrfc')." line->datestart:".dol_print_date($line->datestart,'dayhourrfc')." line->dateend:".dol_print_date($line->dateend,'dayhourrfc')." now:".dol_print_date($now,'dayhourrfc'));
+		    dol_syslog("cron_run_jobs.php line->datenextrun:".dol_print_date($line->datenextrun, 'dayhourrfc')." line->datestart:".dol_print_date($line->datestart, 'dayhourrfc')." line->dateend:".dol_print_date($line->dateend, 'dayhourrfc')." now:".dol_print_date($now, 'dayhourrfc'));
 
 			$cronjob=new Cronjob($db);
 			$result=$cronjob->fetch($line->id);
@@ -230,7 +230,7 @@ if (is_array($qualifiedjobs) && (count($qualifiedjobs)>0))
 		{
 		    echo " - not qualified\n";
 
-		    dol_syslog("cron_run_jobs.php job not qualified line->datenextrun:".dol_print_date($line->datenextrun,'dayhourrfc')." line->datestart:".dol_print_date($line->datestart,'dayhourrfc')." line->dateend:".dol_print_date($line->dateend,'dayhourrfc')." now:".dol_print_date($now,'dayhourrfc'));
+		    dol_syslog("cron_run_jobs.php job not qualified line->datenextrun:".dol_print_date($line->datenextrun, 'dayhourrfc')." line->datestart:".dol_print_date($line->datestart, 'dayhourrfc')." line->dateend:".dol_print_date($line->dateend, 'dayhourrfc')." now:".dol_print_date($now, 'dayhourrfc'));
 		}
 	}
 

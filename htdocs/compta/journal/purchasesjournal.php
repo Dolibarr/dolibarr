@@ -123,7 +123,7 @@ if ($result)
 {
 	$num = $db->num_rows($result);
 	// les variables
-	$cptfour = (! empty($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER)?$conf->global->ACCOUNTING_ACCOUNT_SUPPLIER:$langs->trans("CodeNotDef"));
+	$cptfour = (($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER != "")?$conf->global->ACCOUNTING_ACCOUNT_SUPPLIER:$langs->trans("CodeNotDef"));
 	$cpttva = (! empty($conf->global->ACCOUNTING_VAT_BUY_ACCOUNT)?$conf->global->ACCOUNTING_VAT_BUY_ACCOUNT:$langs->trans("CodeNotDef"));
 
 	$tabfac = array();
@@ -139,7 +139,7 @@ if ($result)
 	{
 		$obj = $db->fetch_object($result);
 		// contrôles
-		$compta_soc = (! empty($obj->code_compta_fournisseur)?$obj->code_compta_fournisseur:$cptfour);
+		$compta_soc = (($obj->code_compta_fournisseur != "")?$obj->code_compta_fournisseur:$cptfour);
 		$compta_prod = $obj->accountancy_code_buy;
 		if (empty($compta_prod))
 		{

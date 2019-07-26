@@ -25,11 +25,11 @@
  * \brief Execute pendings jobs
  */
 
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1'); // Disables token renewal
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
-if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
-if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
-if (! defined('NOLOGIN'))        define('NOLOGIN','1');
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Disables token renewal
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
+if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
+if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
+if (! defined('NOLOGIN'))        define('NOLOGIN', '1');
 
 
 $sapi_type = php_sapi_name();
@@ -174,9 +174,9 @@ if (is_array($qualifiedjobs) && (count($qualifiedjobs) > 0)) {
 		echo "cron_run_jobs.php cronjobid: ".$line->id." priority=".$line->priority." entity=".$line->entity." label=".$line->label;
 
 		// Force reload of setup for the current entity
-		if ($line->entity != $conf->entity)
+		if ((empty($line->entity)?1:$line->entity) != $conf->entity)
 		{
-		    dol_syslog("cron_run_jobs.php we work on another entity so we reload user and conf", LOG_DEBUG);
+			dol_syslog("cron_run_jobs.php we work on another entity conf than ".$conf->entity." so we reload user and conf", LOG_DEBUG);
 		    echo " -> we change entity so we reload user and conf";
 
 		    $conf->entity = (empty($line->entity)?1:$line->entity);

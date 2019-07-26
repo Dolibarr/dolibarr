@@ -3,6 +3,20 @@ English Dolibarr ChangeLog
 --------------------------------------------------------------
 
 
+***** ChangeLog for 11.0.0 compared to 10.0.0 *****
+For Users:
+
+
+For Developers:
+
+
+WARNING:
+
+Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
+* Properties ->libelle_incoterms were renamed into ->label_incoterms
+* Removed the method liste_array() of project class. It was not used by core code.
+
+
 ***** ChangeLog for 10.0.0 compared to 9.0.0 *****
 For Users:
 NEW: Module "Ticket" is available as a stable module.
@@ -58,7 +72,7 @@ NEW: Can generate invoices from the timespent entered on a project
 NEW: Can update product supplier price ref
 NEW: Can upload files from the edit page of expense report
 NEW: Color for hover and for checked line is on by default
-NEW: Column of parent company is available in list of third parties
+NEW: Column of p...arent company is available in list of third parties
 NEW: conditionnal add member button by statut
 NEW: constant KEEP_DISCOUNT_LINES_FROM_ORIGIN
 NEW: Contact related items tab
@@ -113,20 +127,23 @@ NEW: Widget birthdays of the month.
 NEW: Option in workflow module to set a reception billed on validate supplier bill.
 NEW: Autocompletion on lists should be available on mobile applications.
 NEW: Add mass action to close several members.
+NEW: Add hidden option ADD_UNSPLASH_LOGIN_BACKGROUND for random background
+NEW: Add hidden option to be ready for BREXIT
 
 For Developers:
 NEW: Module "DebugBar" is available as a stable module.
 NEW: Add API REST for donations
 NEW: Add a script 'purge-data.php' to purge data older than a defined creation date
 NEW: Add constant XFRAMEOPTIONS_ALLOWALL
-NEW: Add function isValidVATID()
-NEW: ADD document's product support in APIs
-NEW: REST API: get the list of objects in a category.
+NEW: Add function isValidVATID() to heck syntax of a VAT ID/number.
+NEW: Add document's product support in APIs
+NEW: Add REST API: get the list of objects in a category.
 NEW: Update Stripe library to 6.35
 NEW: Upgrade jquery lib to 3.3.1
 NEW: Add hook 'addHtmlHeader()'
 NEW: Add hook 'createRecurringInvoices()'
 NEW: Add hook 'afterSelectContactOptions'
+NEW: Add hook 'getAccessForbiddenMessage'
 NEW: Add hook support in accountancy index
 NEW: Add hook support in list of template invoices
 NEW: Add parameter 'replaceambiguouschars' on getRandomPassword function
@@ -135,22 +152,21 @@ NEW: Add the current modulepart into the Conf class object
 NEW: Add trigger FICHINTER_UNVALIDATE
 NEW: Add visibility with value 4 in framework to define fields to show
 NEW: More option to tune initialization of a new module with modulebuilder.
-NEW: API to list currencies
-NEW: API Proposal, Orders, Invoices: Add contact details
-NEW: hidden option to change concat desc order
+NEW: Add REST API to list currencies
+NEW: REST API Proposal, Orders, Invoices: Add contact details
+NEW: hidden option to change concat order of description/product label.
 NEW: Enhance management of webhooks
 NEW: Generation of doc by modulebuilder can include README and CHANGELOG
-NEW: massfilesarea feature for external modules
-NEW: Show enabled modules in dol_print_error()
+NEW: massfilesarea feature is possible for external modules
+NEW: Show list of enabled modules in dol_print_error().
 NEW: Simplification of CSS styles of default themes. 
 NEW: Clean code of a lot of deprecated code.
 NEW: Add hidden option to set a search entry to the top
 NEW: add hidden option DISPLAY_DISCOUNTED_SUPPLIER_PRICE
 NEW: add hidden option MAIN_DEFAULT_LANGUAGE_FILTER
 NEW: add hidden option NO_CONCAT_DESCRIPTION
-NEW: Add hidden option for ACCOUNTANCY_COMBO_FOR_AUX
-NEW: Add hidden option 'ADD_UNSPLASH_LOGIN_BACKGROUND'
-NEW: Add Hidden option 'OVERRIDE_VAT_FOR_EXPENSE_REPORT'
+NEW: Add hidden option ACCOUNTANCY_COMBO_FOR_AUX
+NEW: Add Hidden option OVERRIDE_VAT_FOR_EXPENSE_REPORT
 NEW: add hidden option MAIN_DOC_UPLOAD_NOT_RENAME_BY_DEFAULT
 NEW: Hidden conf to improve pdf desc item visibitity
 NEW: Look and feel v10 - Add CSS 'tabBarNoTop'
@@ -178,6 +194,57 @@ Following changes may create regressions for some external modules, but were nec
 * Column llx_facture.facnumber change to llx_facture.ref
 * Variable $dolibarr_main_cookie_cryptkey is no more created at install (it was not used by Dolibarr). A new variable 
   called $dolibarr_main_instance_unique_id is now generated at each installation. It will be used by some future features.
+
+
+***** ChangeLog for 9.0.4 compared to 9.0.3 *****
+FIX: #5249
+FIX: #11025
+FIX: #11032
+FIX: #11097
+FIX: #11169
+FIX: #11202
+FIX: #11244
+FIX: #11296
+FIX: #11316
+FIX: #11335
+FIX: Add missing end date of subscription in export
+FIX: A user may read holiday and expense report without permissions
+FIX: better syntax
+FIX: condition
+FIX: confirmation of mass email sending + option MAILING_NO_USING_PHPMAIL
+FIX: crabe pdf: bad detailed VAT for situation invoices, in situations S2 and above
+FIX: default value for duration of validity can be set from generic
+FIX: do not include tpl from disabled modules
+FIX: Error management when MAILING_NO_USING_PHPMAIL is set
+FIX: Even with permission, can't validate leave once validator defined.
+FIX: extrafield list search: SQL error when field is multiselect
+FIX: if last char of customercode is accent making the truncate of first
+FIX: Import of chart of account
+FIX: in edit mode, dictionary inputs do not escape the string inside the 'value' attribute, causing errors if there are any double quotes
+FIX: invalid link on user.fk_user
+FIX: invoice class: bad SQL request if product type not set
+FIX: javascript error when ckeditor module not enabled
+FIX: mail presend: can overwrite a file previously uploaded (Issue #11056)
+FIX: mass send mail
+FIX: missing compatibility with multicompany transverse mode
+FIX: missing llx_const encrypt
+FIX: modulebuilder: hardcoded llx_
+FIX: Not showing Contract and Project columns on ficheinter list
+FIX: only profid1 to 4 were editable for pdf option to show. Not 5 and 6.
+FIX: productaccount buylist with pages
+FIX: remove isolated transaction commit
+FIX: security (a user can read leave or holiday of other without perm.
+FIX: situation invoices: bad detailed VAT in situations following the first one
+FIX: situation invoices: block progress percentage change for discount lines
+FIX: syntax error
+FIX: the id was not loaded in fetch of accounting system
+FIX: try to use WHERE EXISTS instead of DISTINCT
+FIX: use dol_sanitizeFileName() function to remove double spaces in filenames, as well as done on document.php when we want to download pdf
+FIX: Use of cron with multicompany
+FIX: var name
+FIX: we need to fetch fourn invoice with ref in current entity
+FIX: Wrong stock movement on supplier credit notes
+FIX: Import of record in ledger
 
 ***** ChangeLog for 9.0.3 compared to 9.0.2 *****
 FIX: #11013
@@ -347,7 +414,7 @@ NEW: add option PROPOSAL_AUTO_ADD_AUTHOR_AS_CONTACT
 NEW: Add option to display thirdparty adress in combolist
 NEW: Add option to swap sender/recipient address on PDF
 NEW: Add option to display thirdparty adress in combolist
-NEW: Add project on pament of salaries
+NEW: Add project on payment of salaries
 NEW: Add SHIPPING_PDF_HIDE_WEIGHT_AND_VOLUME and
 NEW: Add somes hooks in bank planned entries
 NEW: Add supplier ref in item reception page
@@ -431,6 +498,41 @@ Following changes may create regressions for some external modules, but were nec
 * Hidden option MAIN_PDF_SHIPPING_DISPLAY_AMOUNT_HT has been renamed into SHIPPING_PDF_DISPLAY_AMOUNT_HT
 * Remove the no more used and deprecated dol_print_graph function
 
+
+***** ChangeLog for 8.0.6 compared to 8.0.5 *****
+FIX: #11244
+FIX: #11316
+FIX: Add missing end date of subscription in export
+FIX: A user may read holiday and expense report without permissions
+FIX: better syntax
+FIX: condition
+FIX: confirmation of mass email sending + option MAILING_NO_USING_PHPMAIL
+FIX: crabe pdf: bad detailed VAT for situation invoices, in situations S2 and above
+FIX: default value for duration of validity can be set from generic
+FIX: do not include tpl from disabled modules
+FIX: Error management when MAILING_NO_USING_PHPMAIL is set
+FIX: Even with permission, can't validate leave once validator defined.
+FIX: extrafield list search: SQL error when field is multiselect
+FIX: if last char of customercode is accent making the truncate of first
+FIX: in edit mode, dictionary inputs do not escape the string inside the 'value' attribute, causing errors if there are any double quotes
+FIX: invalid link on user.fk_user
+FIX: invoice class: bad SQL request if product type not set
+FIX: mail presend: can overwrite a file previously uploaded
+FIX: mail presend: can overwrite a file previously uploaded (Issue #11056)
+FIX: mass send mail
+FIX: missing compatibility with multicompany transverse mode
+FIX: modulebuilder: hardcoded llx_
+FIX: Not showing Contract and Project columns on ficheinter list
+FIX: remove isolated transaction commit
+FIX: security (a user can read leave or holiday of other without perm.
+FIX: situation invoices: bad detailed VAT in situations following the first one
+FIX: situation invoices: block progress percentage change for discount lines
+FIX: syntax error
+FIX: try to use WHERE EXISTS instead DISTINCT
+FIX: use dol_sanitizeFileName() function to remove double spaces in filenames, as well as done on document.php when we want to download pdf
+FIX: var name
+FIX: we need to fetch fourn invoice with ref in current entity
+FIX: Wrong stock movement on supplier credit notes
 
 ***** ChangeLog for 8.0.5 compared to 8.0.4 *****
 FIX: #10381

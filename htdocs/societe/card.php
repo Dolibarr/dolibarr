@@ -126,7 +126,7 @@ if (empty($reshook))
 		{
 			$langs->load('errors');
 			$langs->load('companies');
-			setEventMessages($langs->trans('ErrorThirdPartyIdIsMandatory', $langs->trans('MergeOriginThirdparty')), null, 'errors');
+			setEventMessages($langs->trans('ErrorThirdPartyIdIsMandatory', $langs->transnoentitiesnoconv('MergeOriginThirdparty')), null, 'errors');
 		}
 		else
 		{
@@ -251,10 +251,10 @@ if (empty($reshook))
 				// External modules should update their ones too
 				if (! $error)
 				{
-    $reshook = $hookmanager->executeHooks('replaceThirdparty', array(
+					$reshook = $hookmanager->executeHooks('replaceThirdparty', array(
 						'soc_origin' => $soc_origin->id,
 						'soc_dest' => $object->id
-					), $soc_dest, $action);
+					), $object, $action);
 
 					if ($reshook < 0)
 					{
@@ -741,7 +741,7 @@ if (empty($reshook))
                                 {
                                 	require_once DOL_DOCUMENT_ROOT .'/core/lib/files.lib.php';
                                 	// the dir dirname($newfile) is directory of logo, so we should have only one file at once into index, so we delete indexes for the dir
-                                	deleteFilesIntoDatabaseIndex(dirname($newfile), '', '', 'uploaded', 1);
+                                	deleteFilesIntoDatabaseIndex(dirname($newfile), '', '');
                                 	// now we index the uploaded logo file
                                 	addFileIntoDatabaseIndex(dirname($newfile), basename($newfile), '', 'uploaded', 1);
                                 }
@@ -952,18 +952,19 @@ else
         $object->name				= GETPOST('name', 'alpha');
         $object->firstname			= GETPOST('firstname', 'alpha');
         $object->particulier		= $private;
-        $object->prefix_comm		= GETPOST('prefix_comm');
-        $object->client				= GETPOST('client')?GETPOST('client'):$object->client;
+        $object->prefix_comm		= GETPOST('prefix_comm', 'alpha');
+        $object->client				= GETPOST('client', 'int')?GETPOST('client', 'int'):$object->client;
 
-        if(empty($duplicate_code_error)) {
+        if (empty($duplicate_code_error)) {
 	        $object->code_client		= GETPOST('customer_code', 'alpha');
 	        $object->fournisseur		= GETPOST('fournisseur')?GETPOST('fournisseur'):$object->fournisseur;
+            $object->code_fournisseur	= GETPOST('supplier_code', 'alpha');
         }
 		else {
 			setEventMessages($langs->trans('NewCustomerSupplierCodeProposed'), '', 'warnings');
 		}
 
-        $object->code_fournisseur	= GETPOST('supplier_code', 'alpha');
+
         $object->address			= GETPOST('address', 'alpha');
         $object->zip				= GETPOST('zipcode', 'alpha');
         $object->town				= GETPOST('town', 'alpha');
@@ -1187,7 +1188,7 @@ else
         // Prospect/Customer
         print '<tr><td class="titlefieldcreate">'.$form->editfieldkey('ProspectCustomer', 'customerprospect', '', $object, 0, 'string', '', 1).'</td>';
 	    print '<td class="maxwidthonsmartphone">';
-	    $selected=GETPOST('client', 'int')!=''?GETPOST('client', 'int'):$object->client;
+	    $selected=(GETPOSTISSET('client')?GETPOST('client', 'int'):$object->client);
 	    print $formcompany->selectProspectCustomerType($selected);
 	    print '</td>';
 
@@ -2042,7 +2043,7 @@ else
                     print '</script>';
                     print "\n";
                     $s.='<a href="#" class="hideonsmartphone" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
-                    $s = $form->textwithpicto($s, $langs->trans("VATIntraCheckDesc", $langs->trans("VATIntraCheck")), 1);
+                    $s = $form->textwithpicto($s, $langs->trans("VATIntraCheckDesc", $langs->transnoentitiesnoconv("VATIntraCheck")), 1);
                 }
                 else
                 {
@@ -2256,7 +2257,6 @@ else
         if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
         {
             print '<tr><td>'.$langs->trans('Prefix').'</td><td>'.$object->prefix_comm.'</td>';
-            print $htmllogobar; $htmllogobar='';
             print '</tr>';
         }
 
@@ -2268,7 +2268,6 @@ else
             print $object->code_client;
             if ($object->check_codeclient() <> 0) print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
             print '</td>';
-            print $htmllogobar; $htmllogobar='';
             print '</tr>';
         }
 
@@ -2280,7 +2279,6 @@ else
             print $object->code_fournisseur;
             if ($object->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
             print '</td>';
-            print $htmllogobar; $htmllogobar='';
             print '</tr>';
         }
 
@@ -2290,9 +2288,6 @@ else
             print '<tr><td>';
             print $langs->trans('Gencod').'</td><td>'.$object->barcode;
             print '</td>';
-			if ($htmllogobar) $htmllogobar.=$form->showbarcode($object);
-            print $htmllogobar;
-			$htmllogobar='';
             print '</tr>';
         }
 
@@ -2454,7 +2449,7 @@ else
                     print '</script>';
                     print "\n";
                     $s.='<a href="#" class="hideonsmartphone" onclick="javascript: CheckVAT( $(\'#tva_intra\').val() );">'.$langs->trans("VATIntraCheck").'</a>';
-                    $s = $form->textwithpicto($s, $langs->trans("VATIntraCheckDesc", $langs->trans("VATIntraCheck")), 1);
+                    $s = $form->textwithpicto($s, $langs->trans("VATIntraCheckDesc", $langs->transnoentitiesnoconv("VATIntraCheck")), 1);
                 }
                 else
                 {
@@ -2540,7 +2535,7 @@ else
         	print '<td colspan="3">';
         	if ($action != 'editincoterm')
         	{
-        		print $form->textwithpicto($object->display_incoterms(), $object->libelle_incoterms, 1);
+        		print $form->textwithpicto($object->display_incoterms(), $object->label_incoterms, 1);
         	}
         	else
         	{
@@ -2718,7 +2713,7 @@ else
 
 			$MAXEVENT = 10;
 
-            $morehtmlright.= dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-list-alt', DOL_URL_ROOT.'/societe/agenda.php?socid='.$object->id);
+            $morehtmlright = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-list-alt', DOL_URL_ROOT.'/societe/agenda.php?socid='.$object->id);
 
 			// List of actions on element
 			include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';

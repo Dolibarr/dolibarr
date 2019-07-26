@@ -347,7 +347,7 @@ class Expedition extends CommonObject
 			dol_syslog(get_class($this)."::create", LOG_DEBUG);
 			if ($this->db->query($sql))
 			{
-				// Insertion des lignes
+				// Insert of lines
 				$num=count($this->lines);
 				for ($i = 0; $i < $num; $i++)
 				{
@@ -446,7 +446,9 @@ class Expedition extends CommonObject
 	 */
 	public function create_line($entrepot_id, $origin_line_id, $qty, $array_options = 0)
 	{
-        //phpcs:enable
+		//phpcs:enable
+		global $user;
+
 		$expeditionline = new ExpeditionLigne($this->db);
 		$expeditionline->fk_expedition = $this->id;
 		$expeditionline->entrepot_id = $entrepot_id;
@@ -454,7 +456,7 @@ class Expedition extends CommonObject
 		$expeditionline->qty = $qty;
 		$expeditionline->array_options = $array_options;
 
-		if (($lineId = $expeditionline->insert()) < 0)
+		if (($lineId = $expeditionline->insert($user)) < 0)
 		{
 			$this->errors[]=$expeditionline->error;
 		}
@@ -528,12 +530,13 @@ class Expedition extends CommonObject
 		if (empty($id) && empty($ref) && empty($ref_ext) && empty($ref_int)) return -1;
 
 		$sql = "SELECT e.rowid, e.ref, e.fk_soc as socid, e.date_creation, e.ref_customer, e.ref_ext, e.ref_int, e.fk_user_author, e.fk_statut, e.fk_projet as fk_project, e.billed";
+        $sql.= ", e.date_valid";
 		$sql.= ", e.weight, e.weight_units, e.size, e.size_units, e.width, e.height";
 		$sql.= ", e.date_expedition as date_expedition, e.model_pdf, e.fk_address, e.date_delivery";
 		$sql.= ", e.fk_shipping_method, e.tracking_number";
 		$sql.= ", e.note_private, e.note_public";
 		$sql.= ', e.fk_incoterms, e.location_incoterms';
-		$sql.= ', i.libelle as libelle_incoterms';
+		$sql.= ', i.libelle as label_incoterms';
 		$sql.= ', s.libelle as shipping_method';
 		$sql.= ", el.fk_source as origin_id, el.sourcetype as origin";
 		$sql.= " FROM ".MAIN_DB_PREFIX."expedition as e";
@@ -563,6 +566,7 @@ class Expedition extends CommonObject
 				$this->statut               = $obj->fk_statut;
 				$this->user_author_id       = $obj->fk_user_author;
 				$this->date_creation        = $this->db->jdate($obj->date_creation);
+                $this->date_valid           = $this->db->jdate($obj->date_valid);
 				$this->date                 = $this->db->jdate($obj->date_expedition);	// TODO deprecated
 				$this->date_expedition      = $this->db->jdate($obj->date_expedition);	// TODO deprecated
 				$this->date_shipping        = $this->db->jdate($obj->date_expedition);	// Date real
@@ -597,7 +601,7 @@ class Expedition extends CommonObject
 				//Incoterms
 				$this->fk_incoterms         = $obj->fk_incoterms;
 				$this->location_incoterms   = $obj->location_incoterms;
-				$this->libelle_incoterms    = $obj->libelle_incoterms;
+				$this->label_incoterms    = $obj->label_incoterms;
 
 				$this->db->free($result);
 
@@ -1145,9 +1149,11 @@ class Expedition extends CommonObject
 	 * 	Delete shipment.
 	 * 	Warning, do not delete a shipment if a delivery is linked to (with table llx_element_element)
 	 *
-	 * 	@return	int		>0 if OK, 0 if deletion done but failed to delete files, <0 if KO
+	 *  @param  int  $notrigger 			Disable triggers
+     *  @param  bool $also_update_stock  	true if the stock should be increased back (false by default)
+	 * 	@return	int							>0 if OK, 0 if deletion done but failed to delete files, <0 if KO
 	 */
-	public function delete()
+	public function delete($notrigger = 0, $also_update_stock = false)
 	{
 		global $conf, $langs, $user;
 
@@ -1179,7 +1185,9 @@ class Expedition extends CommonObject
 		}
 
 		// Stock control
-		if (! $error && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SHIPMENT && $this->statut > self::STATUS_DRAFT)
+		if (! $error && $conf->stock->enabled &&
+			(($conf->global->STOCK_CALCULATE_ON_SHIPMENT && $this->statut > self::STATUS_DRAFT) ||
+			 ($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE && $this->statut == self::STATUS_CLOSED && $also_update_stock)))
 		{
 			require_once DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php";
 
@@ -1396,6 +1404,8 @@ class Expedition extends CommonObject
 			$this->total_ttc = 0;
 			$this->total_localtax1 = 0;
 			$this->total_localtax2 = 0;
+
+			$line = new ExpeditionLigne($this->db);
 
 			while ($i < $num)
 			{
@@ -2348,7 +2358,7 @@ class Expedition extends CommonObject
 
 
 /**
- * Classe de gestion des lignes de bons d'expedition
+ * Classe to manage lines of shipment
  */
 class ExpeditionLigne extends CommonObjectLine
 {
@@ -2549,7 +2559,7 @@ class ExpeditionLigne extends CommonObjectLine
 	 *	@param      int		$notrigger		1 = disable triggers
 	 *	@return     int						<0 if KO, line id >0 if OK
 	 */
-	public function insert($user = null, $notrigger = 0)
+	public function insert($user, $notrigger = 0)
 	{
 		global $langs, $conf;
 
@@ -2561,8 +2571,6 @@ class ExpeditionLigne extends CommonObjectLine
 			$this->error = 'ErrorMandatoryParametersNotProvided';
 			return -1;
 		}
-		// Clean parameters
-		if (empty($this->entrepot_id)) $this->entrepot_id='null';
 
 		$this->db->begin();
 
@@ -2573,7 +2581,7 @@ class ExpeditionLigne extends CommonObjectLine
 		$sql.= ", qty";
 		$sql.= ") VALUES (";
 		$sql.= $this->fk_expedition;
-		$sql.= ", ".$this->entrepot_id;
+		$sql.= ", ".(empty($this->entrepot_id) ? 'NULL' : $this->entrepot_id);
 		$sql.= ", ".$this->fk_origin_line;
 		$sql.= ", ".$this->qty;
 		$sql.= ")";

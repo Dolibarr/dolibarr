@@ -602,6 +602,8 @@ if ($id > 0)
 
 			$num = $db->num_rows($resql);
 			$i = 0; $total = 0;
+
+			print '<div class="div-table-responsive-no-min">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
 			print '<table class="noborder paymenttable">';
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("RefPayment").'</td>';
@@ -653,7 +655,7 @@ if ($id > 0)
 			else
 			{
 
-				print '<tr class="oddeven"><td class="opacitymedium">'.$langs->trans("None").'</td>';
+				print '<tr class="oddeven"><td><span class="opacitymedium">'.$langs->trans("None").'</span></td>';
 				print '<td></td><td></td><td></td><td></td>';
 				print '</tr>';
 			}
@@ -668,6 +670,8 @@ if ($id > 0)
 			print '<td class="right'.($resteapayer?' amountremaintopay':(' '.$cssforamountpaymentcomplete)).'">'.price($resteapayer)."</td></tr>\n";
 
 			print "</table>";
+			print '</div>';
+
 			$db->free($resql);
 		}
 		else

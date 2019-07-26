@@ -95,4 +95,11 @@ InternalURLOfPage=URL interna de la página
 ThisPageIsTranslationOf=Esta página/contenedor es traducción de
 ThisPageHasTranslationPages=Esta página/contenedor tiene traducción
 NoWebSiteCreateOneFirst=Todavía no se ha creado ningún sitio web. Cree uno primero.
-GoTo=Go to
+GoTo=Ir a
+DynamicPHPCodeContainsAForbiddenInstruction=Ha añadido código PHP dinámico que contiene la instrucción de PHP  '<strong>%s</strong>' que está prohibida por defecto como contenido dinámico (vea las opciones ocultas WEBSITE_PHP_ALLOW_xxx para aumentar la lista de comandos permitidos).
+NotAllowedToAddDynamicContent=No tiene permiso para agregar o editar contenido dinámico de PHP en sitios web. Pida permiso o simplemente mantenga el código en las etiquetas php sin modificar.
+ReplaceWebsiteContent=Buscar o reemplazar el contenido del sitio web
+DeleteAlsoJs=¿Eliminar también todos los archivos javascript específicos de este sitio web?
+DeleteAlsoMedias=¿Eliminar también todos los archivos de medios específicos de este sitio web?
+# Export
+MyWebsitePages=Mis páginas web

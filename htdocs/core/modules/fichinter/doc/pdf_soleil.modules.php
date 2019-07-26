@@ -216,7 +216,7 @@ class pdf_soleil extends ModelePDFFicheinter
 				global $action;
 				$reshook=$hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 
-				$nblignes = count($object->lines);
+				$nblines = count($object->lines);
 
 				// Create pdf instance
 				$pdf=pdf_getInstance($this->format);
@@ -274,7 +274,7 @@ class pdf_soleil extends ModelePDFFicheinter
 					complete_substitutions_array($substitutionarray, $outputlangs, $object);
 					$notetoshow = make_substitutions($notetoshow, $substitutionarray, $outputlangs);
 					$notetoshow = convertBackOfficeMediasLinksToPublicLinks($notetoshow);
-					
+
 					$tab_top = 88;
 
 					$pdf->SetFont('', '', $default_font_size - 1);

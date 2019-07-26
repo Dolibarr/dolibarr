@@ -198,7 +198,7 @@ $arrayfields=array(
 	's.idprof4'=>array('label'=>"ProfId4Short", 'checked'=>$checkedprofid4),
 	's.idprof5'=>array('label'=>"ProfId5Short", 'checked'=>$checkedprofid5),
 	's.idprof6'=>array('label'=>"ProfId6Short", 'checked'=>$checkedprofid6),
-	's.tva_intra'=>array('label'=>"VATIntra", 'checked'=>0),
+	's.tva_intra'=>array('label'=>"VATIntraShort", 'checked'=>0),
 	'customerorsupplier'=>array('label'=>'Nature', 'checked'=>1),
 	's.fk_prospectlevel'=>array('label'=>"ProspectLevelShort", 'checked'=>$checkprospectlevel),
 	's.fk_stcomm'=>array('label'=>"StatusProsp", 'checked'=>$checkstcomm),
@@ -1002,6 +1002,7 @@ while ($i < min($num, $limit))
 	print '<tr class="oddeven"';
 	if ($contextpage == 'poslist')
 	{
+		$place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0);   // $place is id of table for Ba or Restaurant
 	    print ' onclick="location.href=\'list.php?action=change&contextpage=poslist&idcustomer='.$obj->rowid.'&place='.$place.'\'"';
 	}
 	print '>';

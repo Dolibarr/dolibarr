@@ -154,7 +154,7 @@ class Form
 	 * @param	string	$value			Value to show/edit
 	 * @param	object	$object			Object
 	 * @param	boolean	$perm			Permission to allow button to edit parameter
-	 * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'amount:99', 'numeric:99', 'text' or 'textarea:rows:cols%', 'datepicker' ('day' do not work, don't know why), 'dayhour' or 'datepickerhour', 'ckeditor:dolibarr_zzz:width:height:savemethod:toolbarstartexpanded:rows:cols', 'select:xxx'...)
+	 * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'amount:99', 'numeric:99', 'text' or 'textarea:rows:cols%', 'datepicker' ('day' do not work, don't know why), 'dayhour' or 'datepickerhour', 'ckeditor:dolibarr_zzz:width:height:savemethod:toolbarstartexpanded:rows:cols', 'select;xkey:xval,ykey:yval,...')
 	 * @param	string	$editvalue		When in edit mode, use this value as $value instead of value (for example, you can provide here a formated price instead of value). Use '' to use same than $value
 	 * @param	object	$extObject		External object
 	 * @param	mixed	$custommsg		String or Array of custom messages : eg array('success' => 'MyMessage', 'error' => 'MyMessage')
@@ -174,7 +174,7 @@ class Form
 		if (empty($typeofdata)) return 'ErrorBadParameter';
 
 		// When option to edit inline is activated
-		if (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE) && ! preg_match('/^select;|datehourpicker/', $typeofdata)) // TODO add jquery timepicker
+		if (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE) && ! preg_match('/^select;|datehourpicker/', $typeofdata)) // TODO add jquery timepicker and support select
 		{
 			$ret.=$this->editInPlace($object, $value, $htmlname, $perm, $typeofdata, $editvalue, $extObject, $custommsg);
 		}
@@ -231,7 +231,8 @@ class Form
 					 foreach($arraydata as $val)
 					 {
 						 $tmp=explode(':', $val);
-						 $arraylist[$tmp[0]]=$tmp[1];
+						 $tmpkey=str_replace('|', ':', $tmp[0]);
+						 $arraylist[$tmpkey]=$tmp[1];
 					 }
 					 $ret.=$this->selectarray($htmlname, $arraylist, $value);
 				}
@@ -300,7 +301,7 @@ class Form
 	 * @param	string	$value			Value to show/edit
 	 * @param	string	$htmlname		DIV ID (field name)
 	 * @param	int		$condition		Condition to edit
-	 * @param	string	$inputType		Type of input ('string', 'numeric', 'datepicker' ('day' do not work, don't know why), 'textarea:rows:cols', 'ckeditor:dolibarr_zzz:width:height:?:1:rows:cols', 'select:xxx')
+	 * @param	string	$inputType		Type of input ('string', 'numeric', 'datepicker' ('day' do not work, don't know why), 'textarea:rows:cols', 'ckeditor:dolibarr_zzz:width:height:?:1:rows:cols', 'select:loadmethod:savemethod:buttononly')
 	 * @param	string	$editvalue		When in edit mode, use this value as $value instead of value
 	 * @param	object	$extObject		External object
 	 * @param	mixed	$custommsg		String or Array of custom messages : eg array('success' => 'MyMessage', 'error' => 'MyMessage')
@@ -1678,7 +1679,7 @@ class Form
 				$out .= ajax_combobox($htmlname);
 
 				// do not use maxwidthonsmartphone by default. Set it by caller so auto size to 100% will work when not defined
-				$out.= '<select class="flat'.($morecss?' minwidth100 '.$morecss:' minwidth200').'" id="'.$htmlname.'" name="'.$htmlname.($multiple ? '[]' : '').'" '.($multiple ? 'multiple' : '').' '.($disabled?' disabled':'').'>';
+				$out.= '<select class="flat'.($morecss?' minwidth100imp '.$morecss:' minwidth200').'" id="'.$htmlname.'" name="'.$htmlname.($multiple ? '[]' : '').'" '.($multiple ? 'multiple' : '').' '.($disabled?' disabled':'').'>';
 				if ($show_empty && !$multiple) $out.= '<option value="-1"'.((empty($selected) || in_array(-1, $selected))?' selected':'').'>&nbsp;</option>'."\n";
 				if ($show_every) $out.= '<option value="-2"'.((in_array(-2, $selected))?' selected':'').'>-- '.$langs->trans("Everybody").' --</option>'."\n";
 
@@ -1913,6 +1914,16 @@ class Form
 				$producttmpselect->fetch($selected);
 				$selected_input_value=$producttmpselect->ref;
 				unset($producttmpselect);
+			}
+			// handle case where product or service module is disabled + no filter specified
+			if ($filtertype == '')
+			{
+				if (empty($conf->product->enabled)) { // when product module is disabled, show services only
+					$filtertype = 1;
+				}
+				elseif (empty($conf->service->enabled)) { // when service module is disabled, show products only
+					$filtertype = 0;
+				}
 			}
 			// mode=1 means customers products
 			$urloption='htmlname='.$htmlname.'&outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=1&status='.$status.'&finished='.$finished.'&hidepriceinlabel='.$hidepriceinlabel.'&warehousestatus='.$warehouseStatus;
@@ -2165,7 +2176,14 @@ class Form
 		{
 			$sql.= " AND p.tosell = ".$status;
 		}
-		if (strval($filtertype) != '') $sql.=" AND p.fk_product_type=".$filtertype;
+		// Filter by product type
+		if (strval($filtertype) != '') $sql.= " AND p.fk_product_type = ".$filtertype;
+		elseif (empty($conf->product->enabled)) { // when product module is disabled, show services only
+			$sql.= " AND p.fk_product_type = 1";
+		}
+		elseif (empty($conf->service->enabled)) { // when service module is disabled, show products only
+			$sql.= " AND p.fk_product_type = 0";
+		}
 		// Add criteria on ref/label
 		if ($filterkey != '')
 		{
@@ -2576,7 +2594,7 @@ class Form
 		}
 
 		$opt.= "</option>\n";
-		$optJson = array('key'=>$outkey, 'value'=>$outref, 'label'=>$outval, 'label2'=>$outlabel, 'desc'=>$outdesc, 'type'=>$outtype, 'price_ht'=>$outprice_ht, 'price_ttc'=>$outprice_ttc, 'pricebasetype'=>$outpricebasetype, 'tva_tx'=>$outtva_tx, 'qty'=>$outqty, 'discount'=>$outdiscount, 'duration_value'=>$outdurationvalue, 'duration_unit'=>$outdurationunit);
+		$optJson = array('key'=>$outkey, 'value'=>$outref, 'label'=>$outval, 'label2'=>$outlabel, 'desc'=>$outdesc, 'type'=>$outtype, 'price_ht'=>price2num($outprice_ht), 'price_ttc'=>price2num($outprice_ttc), 'pricebasetype'=>$outpricebasetype, 'tva_tx'=>$outtva_tx, 'qty'=>$outqty, 'discount'=>$outdiscount, 'duration_value'=>$outdurationvalue, 'duration_unit'=>$outdurationunit);
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -5217,10 +5235,12 @@ class Form
 	 *  @param  int			$fullday        When a checkbox with this html name is on, hour and day are set with 00:00 or 23:59
 	 *  @param	string		$addplusone		Add a link "+1 hour". Value must be name of another selectDate field.
 	 *  @param  datetime    $adddateof      Add a link "Date of invoice" using the following date.
+     *  @param  string      $openinghours   Specify hour strat and hour end for the select ex 8,20
+     *  @param  int         $stepminutes    Specify step for minutes between 1 and 30
 	 * 	@return string                      Html for selectDate
 	 *  @see    form_date(), select_month(), select_year(), select_dayofweek()
 	 */
-    public function selectDate($set_time = '', $prefix = 're', $h = 0, $m = 0, $empty = 0, $form_name = "", $d = 1, $addnowlink = 0, $disabled = 0, $fullday = '', $addplusone = '', $adddateof = '')
+    public function selectDate($set_time = '', $prefix = 're', $h = 0, $m = 0, $empty = 0, $form_name = "", $d = 1, $addnowlink = 0, $disabled = 0, $fullday = '', $addplusone = '', $adddateof = '', $openinghours = '', $stepminutes = 1)
 	{
 		global $conf,$langs;
 
@@ -5231,6 +5251,7 @@ class Form
 		if ($m == '') $m=0;
 		$emptydate=0;
 		$emptyhours=0;
+        if ($stepminutes<=0 || $stepminutes>30) $stepminutes = 1;
 		if ($empty == 1) { $emptydate=1; $emptyhours=1; }
 		if ($empty == 2) { $emptydate=0; $emptyhours=1; }
 		$orig_set_time=$set_time;
@@ -5451,10 +5472,18 @@ class Form
 
 		if ($h)
 		{
+			$hourstart = 0;
+			$hourend = 24;
+			if ($openinghours != '') {
+				$openinghours = explode(',', $openinghours);
+				$hourstart = $openinghours[0];
+				$hourend = $openinghours[1];
+				if ($hourend<$hourstart) $hourend = $hourstart;
+			}
 			// Show hour
 			$retstring.='<select'.($disabled?' disabled':'').' class="flat valignmiddle maxwidth50 '.($fullday?$fullday.'hour':'').'" id="'.$prefix.'hour" name="'.$prefix.'hour">';
 			if ($emptyhours) $retstring.='<option value="-1">&nbsp;</option>';
-			for ($hour = 0; $hour < 24; $hour++)
+			for ($hour = $hourstart; $hour < $hourend; $hour++)
 			{
 				if (strlen($hour) < 2) $hour = "0" . $hour;
 				$retstring.='<option value="'.$hour.'"'.(($hour == $shour)?' selected':'').'>'.$hour.(empty($conf->dol_optimize_smallscreen)?'':'H').'</option>';
@@ -5468,7 +5497,7 @@ class Form
 			// Show minutes
 			$retstring.='<select'.($disabled?' disabled':'').' class="flat valignmiddle maxwidth50 '.($fullday?$fullday.'min':'').'" id="'.$prefix.'min" name="'.$prefix.'min">';
 			if ($emptyhours) $retstring.='<option value="-1">&nbsp;</option>';
-			for ($min = 0; $min < 60 ; $min++)
+			for ($min = 0; $min < 60 ; $min+=$stepminutes)
 			{
 				if (strlen($min) < 2) $min = "0" . $min;
 				$retstring.='<option value="'.$min.'"'.(($min == $smin)?' selected':'').'>'.$min.(empty($conf->dol_optimize_smallscreen)?'':'').'</option>';
@@ -6463,7 +6492,7 @@ class Form
     public function showLinkedObjectBlock($object, $morehtmlright = '', $compatibleImportElementsList = false)
 	{
 		global $conf,$langs,$hookmanager;
-		global $bc;
+		global $bc, $action;
 
 		$object->fetchObjectLinked();
 
@@ -6508,6 +6537,7 @@ class Form
 				    $showImportButton=true;
 				}
 
+				$regs = array();
 				if ($objecttype != 'supplier_proposal' && preg_match('/^([^_]+)_([^_]+)/i', $objecttype, $regs))
 				{
 					$element = $regs[1];
@@ -6588,7 +6618,7 @@ class Form
 
 			print '</table>';
 
-			if(!empty($compatibleImportElementsList))
+			if (!empty($compatibleImportElementsList))
 			{
 			    $res=@include dol_buildpath('core/tpl/ajax/objectlinked_lineimport.tpl.php');
 			}
@@ -6611,7 +6641,7 @@ class Form
     public function showLinkToObjectBlock($object, $restrictlinksto = array(), $excludelinksto = array())
 	{
 		global $conf, $langs, $hookmanager;
-		global $bc;
+		global $bc, $action;
 
 		$linktoelem='';
 		$linktoelemlist='';
@@ -6642,11 +6672,10 @@ class Form
 				'fichinter'=>array('enabled'=>$conf->ficheinter->enabled, 'perms'=>1, 'label'=>'LinkToIntervention', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."fichinter as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$listofidcompanytoscan.') AND t.entity IN ('.getEntity('intervention').')'),
 				'supplier_proposal'=>array('enabled'=>$conf->supplier_proposal->enabled , 'perms'=>1, 'label'=>'LinkToSupplierProposal', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, '' as ref_supplier, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."supplier_proposal as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$listofidcompanytoscan.') AND t.entity IN ('.getEntity('supplier_proposal').')'),
 				'order_supplier'=>array('enabled'=>$conf->supplier_order->enabled , 'perms'=>1, 'label'=>'LinkToSupplierOrder', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_supplier, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande_fournisseur as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$listofidcompanytoscan.') AND t.entity IN ('.getEntity('commande_fournisseur').')'),
-				'invoice_supplier'=>array('enabled'=>$conf->supplier_invoice->enabled , 'perms'=>1, 'label'=>'LinkToSupplierInvoice', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_supplier, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_fourn as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$listofidcompanytoscan.') AND t.entity IN ('.getEntity('facture_fourn').')')
+				'invoice_supplier'=>array('enabled'=>$conf->supplier_invoice->enabled , 'perms'=>1, 'label'=>'LinkToSupplierInvoice', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_supplier, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_fourn as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$listofidcompanytoscan.') AND t.entity IN ('.getEntity('facture_fourn').')'),
+				'ticket'=>array('enabled'=>$conf->ticket->enabled , 'perms'=>1, 'label'=>'LinkToTicket', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.track_id, '0' as total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."ticket as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$listofidcompanytoscan.') AND t.entity IN ('.getEntity('ticket').')')
 			);
 		}
-
-		global $action;
 
 		// Can complete the possiblelink array
 		$hookmanager->initHooks(array('commonobject'));

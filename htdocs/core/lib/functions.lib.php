@@ -649,7 +649,7 @@ function dol_include_once($relpath, $classname = '')
  *  @param	int		$returnemptyifnotfound		0:If $type==0 and if file was not found into alternate dir, return default path into main dir (no test on it)
  *  											1:If $type==0 and if file was not found into alternate dir, return empty string
  *  											2:If $type==0 and if file was not found into alternate dir, test into main dir, return default path if found, empty string if not found
- *  @return string								Full filesystem path (if path=0), Full url path (if mode=1)
+ *  @return string								Full filesystem path (if path=0) or '' if file not found, Full url path (if mode=1)
  */
 function dol_buildpath($path, $type = 0, $returnemptyifnotfound = 0)
 {
@@ -1330,10 +1330,10 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 				$nophoto='';
 				$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"></div>';
 			}
-			//elseif ($conf->browser->layout != 'phone') {    // Show no photo link
+			else {    // Show no photo link
 				$nophoto='/public/theme/common/nophoto.png';
 				$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"><img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo"'.($width?' style="width: '.$width.'px"':'').' src="'.DOL_URL_ROOT.$nophoto.'"></div>';
-			//}
+			}
 		}
 	}
 	elseif ($object->element == 'ticket')
@@ -1349,10 +1349,10 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 				$nophoto='';
 				$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"></div>';
 			}
-			//elseif ($conf->browser->layout != 'phone') {    // Show no photo link
-			$nophoto='/public/theme/common/nophoto.png';
-			$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"><img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo" border="0"'.($width?' style="width: '.$width.'px"':'').' src="'.DOL_URL_ROOT.$nophoto.'"></div>';
-			//}
+			else {    // Show no photo link
+				$nophoto='/public/theme/common/nophoto.png';
+				$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"><img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo" border="0"'.($width?' style="width: '.$width.'px"':'').' src="'.DOL_URL_ROOT.$nophoto.'"></div>';
+			}
 		}
 	}
 	else
@@ -1982,7 +1982,7 @@ function dol_mktime($hour, $minute, $second, $month, $day, $year, $gm = false, $
 		//var_dump($localtz);
 		//var_dump($year.'-'.$month.'-'.$day.'-'.$hour.'-'.$minute);
 		$dt = new DateTime(null, $localtz);
-		$dt->setDate($year, $month, $day);
+		$dt->setDate((int) $year, (int) $month, (int) $day);
 		$dt->setTime((int) $hour, (int) $minute, (int) $second);
 		$date=$dt->getTimestamp();	// should include daylight saving time
 		//var_dump($date);
@@ -2935,22 +2935,23 @@ function dol_trunc($string, $size = 40, $trunc = 'right', $stringencoding = 'UTF
 /**
  *	Show picto whatever it's its name (generic function)
  *
- *	@param      string		$titlealt         	Text on title tag for tooltip. Not used if param notitle is set to 1.
- *	@param      string		$picto       		Name of image file to show ('filenew', ...)
- *												If no extension provided, we use '.png'. Image must be stored into theme/xxx/img directory.
- *                                  			Example: picto.png                  if picto.png is stored into htdocs/theme/mytheme/img
- *                                  			Example: picto.png@mymodule         if picto.png is stored into htdocs/mymodule/img
- *                                  			Example: /mydir/mysubdir/picto.png  if picto.png is stored into htdocs/mydir/mysubdir (pictoisfullpath must be set to 1)
- *	@param		string		$moreatt			Add more attribute on img tag (For example 'style="float: right"')
- *	@param		boolean|int	$pictoisfullpath	If true or 1, image path is a full path
- *	@param		int			$srconly			Return only content of the src attribute of img.
- *  @param		int			$notitle			1=Disable tag title. Use it if you add js tooltip, to avoid duplicate tooltip.
- *  @param		string		$alt				Force alt for bind people
- *  @param		string		$morecss			Add more class css on img tag (For example 'myclascss'). Work only if $moreatt is empty.
- *  @return     string       				    Return img tag
+ *	@param      string		$titlealt         		Text on title tag for tooltip. Not used if param notitle is set to 1.
+ *	@param      string		$picto       			Name of image file to show ('filenew', ...)
+ *													If no extension provided, we use '.png'. Image must be stored into theme/xxx/img directory.
+ *                                  				Example: picto.png                  if picto.png is stored into htdocs/theme/mytheme/img
+ *                                  				Example: picto.png@mymodule         if picto.png is stored into htdocs/mymodule/img
+ *                                  				Example: /mydir/mysubdir/picto.png  if picto.png is stored into htdocs/mydir/mysubdir (pictoisfullpath must be set to 1)
+ *	@param		string		$moreatt				Add more attribute on img tag (For example 'style="float: right"')
+ *	@param		boolean|int	$pictoisfullpath		If true or 1, image path is a full path
+ *	@param		int			$srconly				Return only content of the src attribute of img.
+ *  @param		int			$notitle				1=Disable tag title. Use it if you add js tooltip, to avoid duplicate tooltip.
+ *  @param		string		$alt					Force alt for bind people
+ *  @param		string		$morecss				Add more class css on img tag (For example 'myclascss'). Work only if $moreatt is empty.
+ *  @param		string		$marginleftonlyshort	1 = Add a short left margin on picto, 2 = Add a larger left maring on picto, 0 = No margin left. Works for fontawesome picto only.
+ *  @return     string       				    	Return img tag
  *  @see        img_object(), img_picto_common()
  */
-function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $srconly = 0, $notitle = 0, $alt = '', $morecss = '')
+function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $srconly = 0, $notitle = 0, $alt = '', $morecss = '', $marginleftonlyshort = 2)
 {
 	global $conf, $langs;
 
@@ -2986,7 +2987,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		    if (empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5)) $fa='fas';
 		    $fakey = $pictowithoutext;
 			$facolor = ''; $fasize = '';
-			$marginleftonlyshort = 2;
+
 			if ($pictowithoutext == 'setup') {
 			    $fakey = 'fa-cog';
 			    $fasize = '1.4em';
@@ -3627,7 +3628,7 @@ function img_mime($file, $titlealt = '', $morecss = '')
 	if (empty($titlealt)) $titlealt = 'Mime type: '.$mimetype;
 
 	//return img_picto_common($titlealt, 'mime/'.$mimeimg, 'class="'.$morecss.'"');
-	return '<i class="fa fa-'.$mimefa.' paddingright"></i>';
+	return '<i class="fa fa-'.$mimefa.' paddingright"'.($titlealt ? ' title="'.$titlealt.'"' : '').'></i>';
 }
 
 
@@ -5260,7 +5261,7 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart)
 		// Here, object->id, object->ref and modulepart are required.
 		//var_dump($modulepart);
         if (in_array($modulepart, array('thirdparty','contact','member','propal','proposal','commande','order','facture','invoice',
-			'supplier_order','supplier_proposal','shipment','contract','expensereport')))
+			'supplier_order','supplier_proposal','shipment','contract','expensereport','ficheinter')))
 		{
 			$path=($object->ref?$object->ref:$object->id);
 		}
@@ -5274,10 +5275,10 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart)
 /**
  *	Creation of a directory (this can create recursive subdir)
  *
- *	@param	string	$dir		Directory to create (Separator must be '/'. Example: '/mydir/mysubdir')
- *	@param	string	$dataroot	Data root directory (To avoid having the data root in the loop. Using this will also lost the warning on first dir PHP has no permission when open_basedir is used)
- *  @param	int		$newmask	Mask for new file (Defaults to $conf->global->MAIN_UMASK or 0755 if unavailable). Example: '0444'
- *	@return int         		< 0 if KO, 0 = already exists, > 0 if OK
+ *	@param	string		$dir		Directory to create (Separator must be '/'. Example: '/mydir/mysubdir')
+ *	@param	string		$dataroot	Data root directory (To avoid having the data root in the loop. Using this will also lost the warning on first dir PHP has no permission when open_basedir is used)
+ *  @param	string|null	$newmask	Mask for new file (Defaults to $conf->global->MAIN_UMASK or 0755 if unavailable). Example: '0444'
+ *	@return int         			< 0 if KO, 0 = already exists, > 0 if OK
  */
 function dol_mkdir($dir, $dataroot = '', $newmask = null)
 {
@@ -7037,7 +7038,7 @@ function getLanguageCodeFromCountryCode($countrycode)
 	$buildprimarykeytotest = strtolower($countrycode).'-'.strtoupper($countrycode);
 	if (in_array($buildprimarykeytotest, $locales)) return strtolower($countrycode).'_'.strtoupper($countrycode);
 
-	if (function_exists('locale_get_primary_language'))    // Need extension php-intl
+	if (function_exists('locale_get_primary_language') && function_exists('locale_get_region'))    // Need extension php-intl
 	{
 	    foreach ($locales as $locale)
     	{
@@ -8123,14 +8124,22 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
         $attr['href'] = '';
     }
 
-    if(empty($id)){
+    if(!empty($id)){
         $attr['id'] = $id;
     }
 
     // Override attr
     if(!empty($params['attr']) && is_array($params['attr'])){
         foreach($params['attr'] as $key => $value){
-            $attr[$key] = $value;
+            if($key == 'class'){
+                $attr['class'].= ' '.$value;
+            }
+            elseif($key == 'classOverride'){
+                $attr['class'] = $value;
+            }
+            else{
+                $attr[$key] = $value;
+            }
         }
     }
 
@@ -8202,10 +8211,10 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
 
         $attr['href'] = '';
 
-        if($status == -1){ // Not enough permissions
+        if($status == -1){ // disable
             $attr['title'] = dol_escape_htmltag($langs->transnoentitiesnoconv("FeatureDisabled"));
         }
-        elseif($status == 0){ // disable
+        elseif($status == 0){ // Not enough permissions
             $attr['title'] = dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions"));
         }
     }
@@ -8275,7 +8284,7 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
  */
 function isAFileWithExecutableContent($filename)
 {
-    if (preg_match('/\.(htm|html|js|php|phtml|pl|py|cgi|ksh|sh|bash)$/i', $filename))
+    if (preg_match('/\.(htm|html|js|php|phtml|pl|py|cgi|ksh|sh|bash|bat|cmd|wpk|exe|dmg)$/i', $filename))
     {
         return true;
     }

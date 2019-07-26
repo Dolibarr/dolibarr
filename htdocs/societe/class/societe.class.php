@@ -59,8 +59,16 @@ class Societe extends CommonObject
 	public $fk_element='fk_soc';
 
 	public $fieldsforcombobox='nom,name_alias';
-	protected $childtables=array("supplier_proposal"=>'SupplierProposal',"propal"=>'Proposal',"commande"=>'Order',"facture"=>'Invoice',"facture_rec"=>'RecurringInvoiceTemplate',"contrat"=>'Contract',"fichinter"=>'Fichinter',"facture_fourn"=>'SupplierInvoice',"commande_fournisseur"=>'SupplierOrder',"projet"=>'Project',"expedition"=>'Shipment',"prelevement_lignes"=>'DirectDebitRecord');    // To test if we can delete object
+
+	/**
+	 * @var array	List of child tables. To test if we can delete object.
+	 */
+	protected $childtables=array("supplier_proposal"=>'SupplierProposal',"propal"=>'Proposal',"commande"=>'Order',"facture"=>'Invoice',"facture_rec"=>'RecurringInvoiceTemplate',"contrat"=>'Contract',"fichinter"=>'Fichinter',"facture_fourn"=>'SupplierInvoice',"commande_fournisseur"=>'SupplierOrder',"projet"=>'Project',"expedition"=>'Shipment',"prelevement_lignes"=>'DirectDebitRecord');
+	/**
+	 * @var array	List of child tables. To know object to delete on cascade.
+	 */
 	protected $childtablesoncascade=array("societe_prices", "societe_log", "societe_address", "product_fournisseur_price", "product_customer_price_log", "product_customer_price", "socpeople", "adherent", "societe_account", "societe_rib", "societe_remise", "societe_remise_except", "societe_commerciaux", "categorie", "notify", "notify_def", "actioncomm");
+
 	public $picto = 'company';
 
 	/**
@@ -467,7 +475,7 @@ class Societe extends CommonObject
 	public $fk_incoterms;
 
 	public $location_incoterms;
-	public $libelle_incoterms;  //Used into tooltip
+	public $label_incoterms;  //Used into tooltip
 
 	// Multicurrency
 	/**
@@ -928,7 +936,7 @@ class Societe extends CommonObject
 		if (! empty($allowmodcodefournisseur) && ! empty($this->fournisseur))
 		{
 			// Attention get_codecompta peut modifier le code suivant le module utilise
-			if (empty($this->code_compta_fournisseur))
+			if ($this->code_compta_fournisseur == "")
 			{
 				$ret=$this->get_codecompta('supplier');
 				if ($ret < 0) return -1;
@@ -1085,7 +1093,7 @@ class Societe extends CommonObject
 			if ($supplier)
 			{
 				$sql .= ", code_fournisseur = ".(! empty($this->code_fournisseur)?"'".$this->db->escape($this->code_fournisseur)."'":"null");
-				$sql .= ", code_compta_fournisseur = ".(! empty($this->code_compta_fournisseur)?"'".$this->db->escape($this->code_compta_fournisseur)."'":"null");
+				$sql .= ", code_compta_fournisseur = ".(($this->code_compta_fournisseur != "")?"'".$this->db->escape($this->code_compta_fournisseur)."'":"null");
 			}
 			$sql .= ", fk_user_modif = ".($user->id > 0 ? $user->id:"null");
 			$sql .= ", fk_multicurrency = ".(int) $this->fk_multicurrency;
@@ -1268,7 +1276,7 @@ class Societe extends CommonObject
 		$sql .= ', d.code_departement as state_code, d.nom as state';
 		$sql .= ', st.libelle as stcomm';
 		$sql .= ', te.code as typent_code';
-		$sql .= ', i.libelle as libelle_incoterms';
+		$sql .= ', i.libelle as label_incoterms';
 		$sql .= ', sr.remise_client';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_effectif as e ON s.fk_effectif = e.id';
@@ -1330,7 +1338,7 @@ class Societe extends CommonObject
 
 				$this->country_id   = $obj->country_id;
 				$this->country_code = $obj->country_id?$obj->country_code:'';
-				$this->country 		= $obj->country_id?($langs->trans('Country'.$obj->country_code)!='Country'.$obj->country_code?$langs->transnoentities('Country'.$obj->country_code):$obj->country):'';
+				$this->country 		= $obj->country_id?($langs->transnoentities('Country'.$obj->country_code)!='Country'.$obj->country_code?$langs->transnoentities('Country'.$obj->country_code):$obj->country):'';
 
 				$this->state_id     = $obj->state_id;
 				$this->state_code   = $obj->state_code;
@@ -1427,7 +1435,7 @@ class Societe extends CommonObject
 				//Incoterms
 				$this->fk_incoterms = $obj->fk_incoterms;
 				$this->location_incoterms = $obj->location_incoterms;
-				$this->libelle_incoterms = $obj->libelle_incoterms;
+				$this->label_incoterms = $obj->label_incoterms;
 
 				// multicurrency
 				$this->fk_multicurrency = $obj->fk_multicurrency;
@@ -1642,7 +1650,7 @@ class Societe extends CommonObject
 		$note=trim($note);
 		if (! $note)
 		{
-			$this->error=$langs->trans("ErrorFieldRequired", $langs->trans("NoteReason"));
+			$this->error=$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("NoteReason"));
 			return -2;
 		}
 
@@ -1705,7 +1713,7 @@ class Societe extends CommonObject
 		$note=trim($note);
 		if (! $note)
 		{
-			$this->error=$langs->trans("ErrorFieldRequired", $langs->trans("NoteReason"));
+			$this->error=$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("NoteReason"));
 			return -2;
 		}
 
@@ -3016,7 +3024,7 @@ class Societe extends CommonObject
 
 			for ($index = 0; $index < 9; $index ++)
 			{
-				$number = (int) $siren[$index];
+				$number = (int) $chaine[$index];
 				if (($index % 2) != 0) { if (($number *= 2) > 9) $number -= 9; }
 				$sum += $number;
 			}
@@ -3058,12 +3066,15 @@ class Societe extends CommonObject
 			$string=preg_replace('/(\s)/', '', $string);
 			$string = strtoupper($string);
 
-			for ($i = 0; $i < 9; $i ++)
-			$num[$i] = substr($string, $i, 1);
-
 			//Check format
 			if (!preg_match('/((^[A-Z]{1}[0-9]{7}[A-Z0-9]{1}$|^[T]{1}[A-Z0-9]{8}$)|^[0-9]{8}[A-Z]{1}$)/', $string))
 			return 0;
+
+			$num = array();
+			for ($i = 0; $i < 9; $i ++)
+			{
+				$num[$i] = substr($string, $i, 1);
+			}
 
 			//Check NIF
 			if (preg_match('/(^[0-9]{8}[A-Z]{1}$)/', $string))
@@ -3438,7 +3449,6 @@ class Societe extends CommonObject
 		$this->address=empty($conf->global->MAIN_INFO_SOCIETE_ADDRESS)?'':$conf->global->MAIN_INFO_SOCIETE_ADDRESS;
 		$this->zip=empty($conf->global->MAIN_INFO_SOCIETE_ZIP)?'':$conf->global->MAIN_INFO_SOCIETE_ZIP;
 		$this->town=empty($conf->global->MAIN_INFO_SOCIETE_TOWN)?'':$conf->global->MAIN_INFO_SOCIETE_TOWN;
-		$this->state_id=empty($conf->global->MAIN_INFO_SOCIETE_STATE)?'':$conf->global->MAIN_INFO_SOCIETE_STATE;
 		$this->region_code=empty($conf->global->MAIN_INFO_SOCIETE_REGION)?'':$conf->global->MAIN_INFO_SOCIETE_REGION;
 		$this->object=empty($conf->global->MAIN_INFO_SOCIETE_OBJECT)?'':$conf->global->MAIN_INFO_SOCIETE_OBJECT;
 
@@ -3459,7 +3469,7 @@ class Societe extends CommonObject
 			}
 			else                    // For backward compatibility
 			{
-				dol_syslog("Your country setup use an old syntax. Reedit it using setup area.", LOG_ERR);
+				dol_syslog("Your country setup use an old syntax. Reedit it using setup area.", LOG_WARNING);
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 				$country_code=getCountry($country_id, 2, $this->db);  // This need a SQL request, but it's the old feature that should not be used anymore
 				$country_label=getCountry($country_id, 0, $this->db);  // This need a SQL request, but it's the old feature that should not be used anymore
@@ -3469,6 +3479,31 @@ class Societe extends CommonObject
 		$this->country_code=$country_code;
 		$this->country=$country_label;
 		if (is_object($langs)) $this->country=($langs->trans('Country'.$country_code)!='Country'.$country_code)?$langs->trans('Country'.$country_code):$country_label;
+
+		//TODO This could be replicated for region but function `getRegion` didn't exist, so I didn't added it.
+		// We define state_id, state_code and state
+		$state_id=0;$state_code=$state_label='';
+		if (! empty($conf->global->MAIN_INFO_SOCIETE_STATE))
+		{
+			$tmp=explode(':', $conf->global->MAIN_INFO_SOCIETE_STATE);
+			$state_id=$tmp[0];
+			if (! empty($tmp[1]))   // If $conf->global->MAIN_INFO_SOCIETE_STATE is "id:code:label"
+			{
+				$state_code=$tmp[1];
+				$state_label=$tmp[2];
+			}
+			else                    // For backward compatibility
+			{
+				dol_syslog("Your state setup use an old syntax. Reedit it using setup area.", LOG_ERR);
+				include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+				$state_code=getState($state_id, 2, $this->db);  // This need a SQL request, but it's the old feature that should not be used anymore
+				$state_label=getState($state_id, 0, $this->db);  // This need a SQL request, but it's the old feature that should not be used anymore
+			}
+		}
+		$this->state_id=$state_id;
+		$this->state_code=$state_code;
+		$this->state=$state_label;
+		if (is_object($langs)) $this->state=($langs->trans('State'.$state_code)!='State'.$state_code)?$langs->trans('State'.$state_code):$state_label;
 
 		$this->phone=empty($conf->global->MAIN_INFO_SOCIETE_TEL)?'':$conf->global->MAIN_INFO_SOCIETE_TEL;
 		$this->fax=empty($conf->global->MAIN_INFO_SOCIETE_FAX)?'':$conf->global->MAIN_INFO_SOCIETE_FAX;
@@ -3985,7 +4020,7 @@ class Societe extends CommonObject
 	/**
 	 *  Create a document onto disk according to template module.
 	 *
-	 *	@param	string		$modele			Generator to use. Caller must set it to obj->modelpdf or GETPOST('modelpdf') for example.
+	 *	@param	string		$modele			Generator to use. Caller must set it to obj->modelpdf or GETPOST('modelpdf','alpha') for example.
 	 *	@param	Translate	$outputlangs	objet lang a utiliser pour traduction
 	 *  @param  int			$hidedetails    Hide details of lines
 	 *  @param  int			$hidedesc       Hide description
@@ -4140,8 +4175,6 @@ class Societe extends CommonObject
 			if ($result < 0)
 			{
 				$error++;
-				$this->error = $c->error;
-				$this->errors = $c->errors;
 				break;
 			}
 		}

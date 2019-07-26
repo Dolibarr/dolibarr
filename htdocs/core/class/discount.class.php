@@ -227,6 +227,15 @@ class DiscountAbsolute
             return -1;
         }
 
+        $userid = $user->id;
+		if (! ($userid > 0))		// For example when record is saved into an anonymous context with a not loaded object $user.
+		{
+			include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+			$tmpinvoice = new Facture($this->db);
+			$tmpinvoice->fetch($this->fk_facture_source);
+			$userid = $tmpinvoice->fk_user_author;	// We use the author of invoice
+		}
+
         // Insert request
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_remise_except";
         $sql.= " (entity, datec, fk_soc, discount_type, fk_user, description,";
@@ -234,7 +243,7 @@ class DiscountAbsolute
         $sql.= " multicurrency_amount_ht, multicurrency_amount_tva, multicurrency_amount_ttc,";
         $sql.= " fk_facture_source, fk_invoice_supplier_source";
         $sql.= ")";
-        $sql.= " VALUES (".$conf->entity.", '".$this->db->idate($this->datec!=''?$this->datec:dol_now())."', ".$this->fk_soc.", ".(empty($this->discount_type)?0:intval($this->discount_type)).", ".$user->id.", '".$this->db->escape($this->description)."',";
+        $sql.= " VALUES (".$conf->entity.", '".$this->db->idate($this->datec!=''?$this->datec:dol_now())."', ".$this->fk_soc.", ".(empty($this->discount_type)?0:intval($this->discount_type)).", ".$userid.", '".$this->db->escape($this->description)."',";
         $sql.= " ".$this->amount_ht.", ".$this->amount_tva.", ".$this->amount_ttc.", ".$this->tva_tx.",";
         $sql.= " ".$this->multicurrency_amount_ht.", ".$this->multicurrency_amount_tva.", ".$this->multicurrency_amount_ttc.", ";
         $sql.= " ".($this->fk_facture_source ? "'".$this->db->escape($this->fk_facture_source)."'":"null").",";
@@ -497,8 +506,9 @@ class DiscountAbsolute
     {
         global $conf;
 
+        dol_syslog(get_class($this)."::getAvailableDiscounts discount_type=".$discount_type, LOG_DEBUG);
+
         $sql  = "SELECT SUM(rc.amount_ttc) as amount";
-        //$sql  = "SELECT rc.amount_ttc as amount";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe_remise_except as rc";
         $sql.= " WHERE rc.entity = " . $conf->entity;
         $sql.= " AND rc.discount_type=".intval($discount_type);
@@ -512,7 +522,6 @@ class DiscountAbsolute
         if ($filter)   $sql.=' AND ('.$filter.')';
         if ($maxvalue) $sql.=' AND rc.amount_ttc <= '.price2num($maxvalue);
 
-        dol_syslog(get_class($this)."::getAvailableDiscounts", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
