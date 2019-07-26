@@ -123,7 +123,8 @@ class FactureRec extends CommonInvoice
 		$now=dol_now();
 
 		// Clean parameters
-		$this->titre=trim($this->titre);
+		$this->titre=trim($this->titre);	// deprecated
+		$this->title=trim($this->title);
 		$this->usenewprice=empty($this->usenewprice)?0:$this->usenewprice;
 		if (empty($this->suspended)) $this->suspended=0;
 
@@ -180,7 +181,7 @@ class FactureRec extends CommonInvoice
 			$sql.= ", multicurrency_tx";
 			$sql.= ", suspended";
 			$sql.= ") VALUES (";
-			$sql.= "'".$this->db->escape($this->titre)."'";
+			$sql.= "'".$this->db->escape($this->titre ? $this->titre : $this->title)."'";
 			$sql.= ", ".$facsrc->socid;
 			$sql.= ", ".$conf->entity;
 			$sql.= ", '".$this->db->idate($now)."'";
@@ -376,7 +377,7 @@ class FactureRec extends CommonInvoice
 	 */
 	public function fetch($rowid, $ref = '', $ref_ext = '', $ref_int = '')
 	{
-		$sql = 'SELECT f.rowid, f.entity, f.titre, f.suspended, f.fk_soc, f.amount, f.tva, f.localtax1, f.localtax2, f.total, f.total_ttc';
+		$sql = 'SELECT f.rowid, f.entity, f.titre as title, f.suspended, f.fk_soc, f.amount, f.tva, f.localtax1, f.localtax2, f.total, f.total_ttc';
 		$sql.= ', f.remise_percent, f.remise_absolue, f.remise';
 		$sql.= ', f.date_lim_reglement as dlr';
 		$sql.= ', f.note_private, f.note_public, f.fk_user_author';
@@ -410,8 +411,9 @@ class FactureRec extends CommonInvoice
 
 				$this->id                     = $obj->rowid;
 				$this->entity                 = $obj->entity;
-				$this->titre                  = $obj->titre;
-				$this->ref                    = $obj->titre;
+				$this->titre                  = $obj->title;	// deprecated
+				$this->title                  = $obj->title;
+				$this->ref                    = $obj->title;
 				$this->ref_client             = $obj->ref_client;
 				$this->suspended              = $obj->suspended;
 				$this->type                   = $obj->type;
@@ -510,7 +512,7 @@ class FactureRec extends CommonInvoice
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Recupere les lignes de factures predefinies dans this->lines
+	 *	Get lines of template invoices into this->lines
 	 *
 	 *  @return     int         1 if OK, < 0 if KO
      */
@@ -876,7 +878,7 @@ class FactureRec extends CommonInvoice
 	 *	@param    	int			$fk_product      	Product/Service ID predefined
 	 *	@param    	double		$remise_percent  	Percentage discount of the line
 	 *	@param		string		$price_base_type	HT or TTC
-	 *	@param    	int			$info_bits			Bits de type de lignes
+	 *	@param    	int			$info_bits			Bits of type of lines
 	 *	@param    	int			$fk_remise_except	Id remise
 	 *	@param    	double		$pu_ttc             Prix unitaire TTC (> 0 even for credit note)
 	 *	@param		int			$type				Type of line (0=product, 1=service)
@@ -1807,7 +1809,7 @@ class FactureLigneRec extends CommonInvoiceLine
 
 
     /**
-     *	Recupere les lignes de factures predefinies dans this->lines
+     *	Get line of template invoice
      *
      *	@param		int 	$rowid		Id of invoice
      *	@return     int         		1 if OK, < 0 if KO

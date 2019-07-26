@@ -1297,7 +1297,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
                 // For the moment, we manage this with hard coded exception
                 //print "Remove box ".$file.'<br>';
                 if ($file == 'box_graph_product_distribution.php') {
-                    if (! empty($conf->produit->enabled) || ! empty($conf->service->enabled)) {
+                    if (! empty($conf->product->enabled) || ! empty($conf->service->enabled)) {
                         dol_syslog("We discard disabling of module ".$file." because another module still active require it.");
                         continue;
                     }
@@ -1938,7 +1938,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
             $menu->type=$this->menu[$key]['type'];
             $menu->mainmenu=isset($this->menu[$key]['mainmenu'])?$this->menu[$key]['mainmenu']:(isset($menu->fk_mainmenu)?$menu->fk_mainmenu:'');
             $menu->leftmenu=isset($this->menu[$key]['leftmenu'])?$this->menu[$key]['leftmenu']:'';
-            $menu->titre=$this->menu[$key]['titre'];
+            $menu->titre=$this->menu[$key]['titre'];	// deprecated
+            $menu->title=$this->menu[$key]['titre'];
             $menu->url=$this->menu[$key]['url'];
             $menu->langs=$this->menu[$key]['langs'];
             $menu->position=$this->menu[$key]['position'];

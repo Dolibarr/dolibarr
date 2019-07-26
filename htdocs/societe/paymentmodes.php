@@ -48,7 +48,7 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'societe', '', '');
 
 $id=GETPOST("id", "int");
-$source=GETPOST("source", "alpha");
+$source=GETPOST("source", "alpha");		// source can be a source or a paymentmode
 $ribid=GETPOST("ribid", "int");
 $action=GETPOST("action", 'alpha', 3);
 $cancel=GETPOST('cancel', 'alpha');
@@ -419,6 +419,15 @@ if (empty($reshook))
 		$companypaymentmode = new CompanyPaymentMode($db);
 		if ($companypaymentmode->fetch($ribid?$ribid:$id))
 		{
+			/*if ($companypaymentmode->stripe_card_ref && preg_match('/pm_/', $companypaymentmode->stripe_card_ref))
+			{
+				$payment_method = \Stripe\PaymentMethod::retrieve($companypaymentmode->stripe_card_ref);
+				if ($payment_method)
+				{
+					$payment_method->detach();
+				}
+			}*/
+
 			$result = $companypaymentmode->delete($user);
 			if ($result > 0)
 			{
@@ -586,7 +595,7 @@ if (empty($reshook))
 				$db->rollback();
 			}
 		}
-		if ($action == 'setlocalassourcedefault')
+		if ($action == 'setlocalassourcedefault')	// Set as default when payment mode defined locally (and may be also remotely)
 		{
 			try {
 				$companypaymentmode->setAsDefault($id);
@@ -601,11 +610,18 @@ if (empty($reshook))
 				setEventMessages($e->getMessage(), null, 'errors');
 			}
 		}
-		elseif ($action == 'setassourcedefault')
+		elseif ($action == 'setassourcedefault')	// Set as default when payment mode defined remotely only
 		{
 			try {
 				$cu=$stripe->customerStripe($object, $stripeacc, $servicestatus);
-				$cu->default_source = (string) $source;
+				if (preg_match('/pm_/', $source))
+				{
+					$cu->invoice_settings->default_payment_method = (string) $source;	// New
+				}
+				else
+				{
+					$cu->default_source = (string) $source;								// Old
+				}
 				$result = $cu->save();
 
 				$url=DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id;
@@ -621,6 +637,16 @@ if (empty($reshook))
 		elseif ($action == 'deletecard' && $source)
 		{
 			try {
+				if (preg_match('/pm_/', $source))
+					{
+            		$payment_method = \Stripe\PaymentMethod::retrieve($source, array("stripe_account" => $stripeacc));
+					if ($payment_method)
+				    {
+					  $payment_method->detach();
+				    }
+				}
+				else
+				{
 				$cu=$stripe->customerStripe($object, $stripeacc, $servicestatus);
 				$card=$cu->sources->retrieve("$source");
 				if ($card)
@@ -628,6 +654,7 @@ if (empty($reshook))
 					// $card->detach();  Does not work with card_, only with src_
 					if (method_exists($card, 'detach')) $card->detach();
 					else $card->delete();
+				}
 				}
 
 				$url=DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id;
@@ -751,40 +778,39 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		if ($conf->facture->enabled && $user->rights->facture->lire) $elementTypeArray['invoice']=$langs->transnoentitiesnoconv('Invoices');
 		if ($conf->contrat->enabled && $user->rights->contrat->lire) $elementTypeArray['contract']=$langs->transnoentitiesnoconv('Contracts');
 
-	if (! empty($conf->stripe->enabled))
-	{
-		$permissiontowrite = $user->rights->societe->creer;
-		// Stripe customer key 'cu_....' stored into llx_societe_account
-		print '<tr><td class="titlefield">';
-		//print $langs->trans('StripeCustomerId');
-		print $form->editfieldkey("StripeCustomerId", 'key_account', $stripecu, $object, $permissiontowrite, 'string', '', 0, 2, 'socid');
-		print '</td><td>';
-		//print $stripecu;
-		print $form->editfieldval("StripeCustomerId", 'key_account', $stripecu, $object, $permissiontowrite, 'string', '', null, null, '', 2, '', 'socid');
-		if (! empty($conf->stripe->enabled) && $stripecu && $action != 'editkey_account')
+		if (! empty($conf->stripe->enabled))
 		{
-		    $connect='';
-			if (!empty($stripeacc)) $connect=$stripeacc.'/';
-			$url='https://dashboard.stripe.com/'.$connect.'test/customers/'.$stripecu;
-			if ($servicestatus)
+			$permissiontowrite = $user->rights->societe->creer;
+			// Stripe customer key 'cu_....' stored into llx_societe_account
+			print '<tr><td class="titlefield">';
+			//print $langs->trans('StripeCustomerId');
+			print $form->editfieldkey("StripeCustomerId", 'key_account', $stripecu, $object, $permissiontowrite, 'string', '', 0, 2, 'socid');
+			print '</td><td>';
+			//print $stripecu;
+			print $form->editfieldval("StripeCustomerId", 'key_account', $stripecu, $object, $permissiontowrite, 'string', '', null, null, '', 2, '', 'socid');
+			if (! empty($conf->stripe->enabled) && $stripecu && $action != 'editkey_account')
 			{
-				$url='https://dashboard.stripe.com/'.$connect.'customers/'.$stripecu;
+			    $connect='';
+				if (!empty($stripeacc)) $connect=$stripeacc.'/';
+				$url='https://dashboard.stripe.com/'.$connect.'test/customers/'.$stripecu;
+				if ($servicestatus)
+				{
+					$url='https://dashboard.stripe.com/'.$connect.'customers/'.$stripecu;
+				}
+				print ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe'), 'object_globe').'</a>';
 			}
-			print ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe'), 'object_globe').'</a>';
+			print '</td><td class="right">';
+			if (empty($stripecu))
+			{
+				print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+				print '<input type="hidden" name="action" value="synccustomertostripe">';
+				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				print '<input type="hidden" name="socid" value="'.$object->id.'">';
+				print '<input type="submit" class="button" name="syncstripecustomer" value="'.$langs->trans("CreateCustomerOnStripe").'">';
+				print '</form>';
+			}
+			print '</td></tr>';
 		}
-		print '</td><td class="right">';
-		if (empty($stripecu))
-		{
-			print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-			print '<input type="hidden" name="action" value="synccustomertostripe">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			print '<input type="hidden" name="socid" value="'.$object->id.'">';
-			print '<input type="hidden" name="companybankid" value="'.$rib->id.'">';
-			print '<input type="submit" class="button" name="syncstripecustomer" value="'.$langs->trans("CreateCustomerOnStripe").'">';
-			print '</form>';
-		}
-		print '</td></tr>';
-	}
     }
 
 	print '</table>';
@@ -1113,7 +1139,8 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				print '</td>';
 				// Default
 				print '<td class="center" width="50">';
-				if (($customerstripe->default_source != $src->id))
+				if ((empty($customerstripe->invoice_settings) && $customerstripe->default_source != $src->id) ||
+					(! empty($customerstripe->invoice_settings) && $customerstripe->invoice_settings->default_payment_method != $src->id))
 				{
 					print '<a href="' . DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&source='.$src->id.'&action=setassourcedefault">';
 					print img_picto($langs->trans("Default"), 'off');
@@ -1180,8 +1207,8 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		print_liste_field_titre("BIC");
 		if (! empty($conf->prelevement->enabled))
 		{
-			print print_liste_field_titre("RUM");
-			print print_liste_field_titre("WithdrawMode");
+			print_liste_field_titre("RUM");
+			print_liste_field_titre("WithdrawMode");
 		}
 		print_liste_field_titre("DefaultRIB", '', '', '', '', '', '', '', 'center ');
 		print_liste_field_titre('', '', '', '', '', '', '', '', 'center ');

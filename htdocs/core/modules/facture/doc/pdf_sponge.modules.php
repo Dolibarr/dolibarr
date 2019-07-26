@@ -160,13 +160,13 @@ class pdf_sponge extends ModelePDFFactures
 		$this->marge_haute =isset($conf->global->MAIN_PDF_MARGIN_TOP)?$conf->global->MAIN_PDF_MARGIN_TOP:10;
 		$this->marge_basse =isset($conf->global->MAIN_PDF_MARGIN_BOTTOM)?$conf->global->MAIN_PDF_MARGIN_BOTTOM:10;
 
-		$this->option_logo = 1;                    // Affiche logo
-		$this->option_tva = 1;                     // Gere option tva FACTURE_TVAOPTION
-		$this->option_modereg = 1;                 // Affiche mode reglement
-		$this->option_condreg = 1;                 // Affiche conditions reglement
-		$this->option_codeproduitservice = 1;      // Affiche code produit-service
-		$this->option_multilang = 1;               // Dispo en plusieurs langues
-		$this->option_escompte = 1;                // Affiche si il y a eu escompte
+		$this->option_logo = 1;                    // Display logo
+		$this->option_tva = 1;                     // Manage the vat option FACTURE_TVAOPTION
+		$this->option_modereg = 1;                 // Display payment mode
+		$this->option_condreg = 1;                 // Display payment terms
+		$this->option_codeproduitservice = 1;      // Display product-service code
+		$this->option_multilang = 1;               // Available in several languages
+		$this->option_escompte = 1;                // Displays if there has been a discount
 		$this->option_credit_note = 1;             // Support credit notes
 		$this->option_freetext = 1;				   // Support add of a personalised text
 		$this->option_draft_watermark = 1;		   // Support add of a watermark on drafts
@@ -209,7 +209,7 @@ class pdf_sponge extends ModelePDFFactures
 	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
 	    // phpcs:enable
-	    global $user,$langs,$conf,$mysoc,$db,$hookmanager,$nblignes;
+	    global $user,$langs,$conf,$mysoc,$db,$hookmanager,$nblines;
 
 	    if (! is_object($outputlangs)) $outputlangs=$langs;
 	    // For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
@@ -218,7 +218,7 @@ class pdf_sponge extends ModelePDFFactures
 	    // Translations
 	    $outputlangs->loadLangs(array("main", "bills", "products", "dict", "companies"));
 
-	    $nblignes = count($object->lines);
+	    $nblines = count($object->lines);
 
 	    $hidetop=0;
 	    if(!empty($conf->global->MAIN_PDF_DISABLE_COL_HEAD_TITLE)){
@@ -232,7 +232,7 @@ class pdf_sponge extends ModelePDFFactures
 	    {
 	        $objphoto = new Product($this->db);
 
-	        for ($i = 0 ; $i < $nblignes ; $i++)
+	        for ($i = 0 ; $i < $nblines ; $i++)
 	        {
 	            if (empty($object->lines[$i]->fk_product)) continue;
 
@@ -329,8 +329,8 @@ class pdf_sponge extends ModelePDFFactures
 	            global $action;
 	            $reshook=$hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 
-	            // Set nblignes with the new facture lines content after hook
-	            $nblignes = count($object->lines);
+	            // Set nblines with the new facture lines content after hook
+	            $nblines = count($object->lines);
 	            $nbpayments = count($object->getListOfPayments());
 
 	            // Create pdf instance
@@ -449,7 +449,7 @@ class pdf_sponge extends ModelePDFFactures
 	                complete_substitutions_array($substitutionarray, $outputlangs, $object);
 	                $notetoshow = make_substitutions($notetoshow, $substitutionarray, $outputlangs);
 	                $notetoshow = convertBackOfficeMediasLinksToPublicLinks($notetoshow);
-	                
+
 	                $pdf->startTransaction();
 
 	                $pdf->SetFont('', '', $default_font_size - 1);
@@ -572,7 +572,7 @@ class pdf_sponge extends ModelePDFFactures
 	            // Loop on each lines
 	            $pageposbeforeprintlines=$pdf->getPage();
 	            $pagenb = $pageposbeforeprintlines;
-	            for ($i = 0; $i < $nblignes; $i++)
+	            for ($i = 0; $i < $nblines; $i++)
 	            {
 
 	                $curY = $nexY;
@@ -630,7 +630,7 @@ class pdf_sponge extends ModelePDFFactures
     	                    //var_dump($posyafter); var_dump(($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot))); exit;
     	                    if ($posyafter > ($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot)))	// There is no space left for total+free text
     	                    {
-    	                        if ($i == ($nblignes-1))	// No more lines, and no space left to show total, so we create a new page
+    	                        if ($i == ($nblines-1))	// No more lines, and no space left to show total, so we create a new page
     	                        {
     	                            $pdf->AddPage('', '', true);
     	                            if (! empty($tplidx)) $pdf->useTemplate($tplidx);
@@ -782,7 +782,7 @@ class pdf_sponge extends ModelePDFFactures
 	                        $nexY = max($nexY, $posYAfterImage);
 
 	                        // Add line
-	                        if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblignes - 1))
+	                        if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblines - 1))
 	                        {
 	                            $pdf->setPage($pageposafter);
 	                            $pdf->SetLineStyle(array('dash'=>'1,1','color'=>array(80,80,80)));
@@ -791,7 +791,7 @@ class pdf_sponge extends ModelePDFFactures
 	                            $pdf->SetLineStyle(array('dash'=>0));
 	                        }
 
-	                        $nexY+=2;    // Passe espace entre les lignes
+	                        $nexY+=2;    // Add space between lines
 
 	                        // Detect if some page were added automatically and output _tableau for past pages
 	                        while ($pagenb < $pageposafter)

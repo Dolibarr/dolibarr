@@ -716,10 +716,14 @@ class Contrat extends CommonObject
 	 *  Load lines array into this->lines.
 	 *  This set also nbofserviceswait, nbofservicesopened, nbofservicesexpired and nbofservicesclosed
 	 *
+	 *	@param		int		$only_product	Return only physical products
+	 *	@param		int		$loadalsotranslation	Return translation for products
+	 *
 	 *  @return ContratLigne[]   Return array of contract lines
 	 */
-	public function fetch_lines()
+	public function fetch_lines($only_product = 0, $loadalsotranslation = 0)
 	{
+		global $langs, $conf;
         // phpcs:enable
 		$this->nbofserviceswait=0;
 		$this->nbofservicesopened=0;
@@ -829,6 +833,13 @@ class Contrat extends CommonObject
 				// fetch optionals attributes and labels
 				$line->fetch_optionals();
 
+				// multilangs
+        		if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($objp->fk_product) && ! empty($loadalsotranslation)) {
+        		$line = new Product($this->db);
+        		$line->fetch($objp->fk_product);
+        		$line->getMultiLangs();
+        		}
+
 				$this->lines[$pos] = $line;
 				$this->lines_id_index_mapper[$line->id] = $pos;
 
@@ -851,7 +862,7 @@ class Contrat extends CommonObject
 		}
 		else
 		{
-			dol_syslog(get_class($this)."::Fetch Erreur lecture des lignes de contrats liees aux produits");
+			dol_syslog(get_class($this)."::Fetch Error when reading lines of contracts linked to products");
 			return -3;
 		}
 
@@ -1350,7 +1361,7 @@ class Contrat extends CommonObject
 	 *  @param  int			$date_end        	Date de fin prevue
 	 *	@param	string		$price_base_type	HT or TTC
 	 * 	@param  float		$pu_ttc             Prix unitaire TTC
-	 * 	@param  int			$info_bits			Bits de type de lignes
+	 * 	@param  int			$info_bits			Bits of type of lines
 	 * 	@param  int			$fk_fournprice		Fourn price id
 	 *  @param  int			$pa_ht				Buying price HT
 	 *  @param	array		$array_options		extrafields array
@@ -1568,7 +1579,7 @@ class Contrat extends CommonObject
 	 *  @param  int|string	$date_debut_reel  	Date de debut reelle
 	 *  @param  int|string	$date_fin_reel    	Date de fin reelle
 	 *	@param	string		$price_base_type	HT or TTC
-	 * 	@param  int			$info_bits			Bits de type de lignes
+	 * 	@param  int			$info_bits			Bits of type of lines
 	 * 	@param  int			$fk_fournprice		Fourn price id
 	 *  @param  int			$pa_ht				Buying price HT
 	 *  @param	array		$array_options		extrafields array
@@ -1920,7 +1931,7 @@ class Contrat extends CommonObject
 	 */
     public function getNomUrl($withpicto = 0, $maxlength = 0, $notooltip = 0, $save_lastsearch_value = -1)
 	{
-		global $conf, $langs, $user;
+		global $conf, $langs, $user, $hookmanager;
 
 		$result='';
 
@@ -1972,6 +1983,16 @@ class Contrat extends CommonObject
 		if ($withpicto) $result.=img_object(($notooltip?'':$label), $this->picto, ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
 		if ($withpicto != 2) $result.= ($this->ref?$this->ref:$this->id);
 		$result .= $linkend;
+
+		global $action;
+		$hookmanager->initHooks(array('contractdao'));
+		$parameters=array('id'=>$this->id, 'getnomurl'=>$result);
+		$reshook=$hookmanager->executeHooks('getNomUrl', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
 
 		return $result;
 	}
@@ -2521,7 +2542,7 @@ class Contrat extends CommonObject
 
 
 /**
- *	Classe permettant la gestion des lignes de contrats
+ *	Class to manage lines of contracts
  */
 class ContratLigne extends CommonObjectLine
 {

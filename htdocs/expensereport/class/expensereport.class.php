@@ -572,8 +572,8 @@ class ExpenseReport extends CommonObject
 		$this->db->begin();
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."expensereport";
-        $sql.= " SET fk_statut = 6, paid=1";
-        $sql.= " WHERE rowid = ".$id." AND fk_statut = 5";
+        $sql.= " SET fk_statut = ".self::STATUS_CLOSED.", paid=1";
+        $sql.= " WHERE rowid = ".$id." AND fk_statut = ".self::STATUS_APPROVED;
 
         dol_syslog(get_class($this)."::set_paid sql=".$sql, LOG_DEBUG);
         $resql=$this->db->query($sql);
@@ -2112,16 +2112,16 @@ class ExpenseReport extends CommonObject
         dol_syslog(get_class($this)."::periode_existe sql=".$sql);
         $result = $this->db->query($sql);
         if ($result) {
-            $num_lignes = $this->db->num_rows($result); $i = 0;
+            $num_rows = $this->db->num_rows($result); $i = 0;
 
-            if ($num_lignes>0)
+            if ($num_rows > 0)
             {
                 $date_d_form = $date_debut;
                 $date_f_form = $date_fin;
 
                 $existe = false;
 
-                while ($i < $num_lignes)
+                while ($i < $num_rows)
                 {
                     $objp = $this->db->fetch_object($result);
 
@@ -2175,8 +2175,8 @@ class ExpenseReport extends CommonObject
         $result = $this->db->query($sql);
         if($result)
         {
-            $num_lignes = $this->db->num_rows($result); $i = 0;
-            while ($i < $num_lignes)
+            $num_rows = $this->db->num_rows($result); $i = 0;
+            while ($i < $num_rows)
             {
                 $objp = $this->db->fetch_object($result);
                 array_push($users_validator, $objp->fk_user);

@@ -1330,10 +1330,10 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 				$nophoto='';
 				$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"></div>';
 			}
-			//elseif ($conf->browser->layout != 'phone') {    // Show no photo link
+			else {    // Show no photo link
 				$nophoto='/public/theme/common/nophoto.png';
 				$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"><img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo"'.($width?' style="width: '.$width.'px"':'').' src="'.DOL_URL_ROOT.$nophoto.'"></div>';
-			//}
+			}
 		}
 	}
 	elseif ($object->element == 'ticket')
@@ -1349,10 +1349,10 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 				$nophoto='';
 				$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"></div>';
 			}
-			//elseif ($conf->browser->layout != 'phone') {    // Show no photo link
-			$nophoto='/public/theme/common/nophoto.png';
-			$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"><img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo" border="0"'.($width?' style="width: '.$width.'px"':'').' src="'.DOL_URL_ROOT.$nophoto.'"></div>';
-			//}
+			else {    // Show no photo link
+				$nophoto='/public/theme/common/nophoto.png';
+				$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"><img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo" border="0"'.($width?' style="width: '.$width.'px"':'').' src="'.DOL_URL_ROOT.$nophoto.'"></div>';
+			}
 		}
 	}
 	else
@@ -2935,22 +2935,23 @@ function dol_trunc($string, $size = 40, $trunc = 'right', $stringencoding = 'UTF
 /**
  *	Show picto whatever it's its name (generic function)
  *
- *	@param      string		$titlealt         	Text on title tag for tooltip. Not used if param notitle is set to 1.
- *	@param      string		$picto       		Name of image file to show ('filenew', ...)
- *												If no extension provided, we use '.png'. Image must be stored into theme/xxx/img directory.
- *                                  			Example: picto.png                  if picto.png is stored into htdocs/theme/mytheme/img
- *                                  			Example: picto.png@mymodule         if picto.png is stored into htdocs/mymodule/img
- *                                  			Example: /mydir/mysubdir/picto.png  if picto.png is stored into htdocs/mydir/mysubdir (pictoisfullpath must be set to 1)
- *	@param		string		$moreatt			Add more attribute on img tag (For example 'style="float: right"')
- *	@param		boolean|int	$pictoisfullpath	If true or 1, image path is a full path
- *	@param		int			$srconly			Return only content of the src attribute of img.
- *  @param		int			$notitle			1=Disable tag title. Use it if you add js tooltip, to avoid duplicate tooltip.
- *  @param		string		$alt				Force alt for bind people
- *  @param		string		$morecss			Add more class css on img tag (For example 'myclascss'). Work only if $moreatt is empty.
- *  @return     string       				    Return img tag
+ *	@param      string		$titlealt         		Text on title tag for tooltip. Not used if param notitle is set to 1.
+ *	@param      string		$picto       			Name of image file to show ('filenew', ...)
+ *													If no extension provided, we use '.png'. Image must be stored into theme/xxx/img directory.
+ *                                  				Example: picto.png                  if picto.png is stored into htdocs/theme/mytheme/img
+ *                                  				Example: picto.png@mymodule         if picto.png is stored into htdocs/mymodule/img
+ *                                  				Example: /mydir/mysubdir/picto.png  if picto.png is stored into htdocs/mydir/mysubdir (pictoisfullpath must be set to 1)
+ *	@param		string		$moreatt				Add more attribute on img tag (For example 'style="float: right"')
+ *	@param		boolean|int	$pictoisfullpath		If true or 1, image path is a full path
+ *	@param		int			$srconly				Return only content of the src attribute of img.
+ *  @param		int			$notitle				1=Disable tag title. Use it if you add js tooltip, to avoid duplicate tooltip.
+ *  @param		string		$alt					Force alt for bind people
+ *  @param		string		$morecss				Add more class css on img tag (For example 'myclascss'). Work only if $moreatt is empty.
+ *  @param		string		$marginleftonlyshort	1 = Add a short left margin on picto, 2 = Add a larger left maring on picto, 0 = No margin left. Works for fontawesome picto only.
+ *  @return     string       				    	Return img tag
  *  @see        img_object(), img_picto_common()
  */
-function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $srconly = 0, $notitle = 0, $alt = '', $morecss = '')
+function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $srconly = 0, $notitle = 0, $alt = '', $morecss = '', $marginleftonlyshort = 2)
 {
 	global $conf, $langs;
 
@@ -2986,7 +2987,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		    if (empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5)) $fa='fas';
 		    $fakey = $pictowithoutext;
 			$facolor = ''; $fasize = '';
-			$marginleftonlyshort = 2;
+
 			if ($pictowithoutext == 'setup') {
 			    $fakey = 'fa-cog';
 			    $fasize = '1.4em';
@@ -5260,7 +5261,7 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart)
 		// Here, object->id, object->ref and modulepart are required.
 		//var_dump($modulepart);
         if (in_array($modulepart, array('thirdparty','contact','member','propal','proposal','commande','order','facture','invoice',
-			'supplier_order','supplier_proposal','shipment','contract','expensereport')))
+			'supplier_order','supplier_proposal','shipment','contract','expensereport','ficheinter')))
 		{
 			$path=($object->ref?$object->ref:$object->id);
 		}
@@ -7037,7 +7038,7 @@ function getLanguageCodeFromCountryCode($countrycode)
 	$buildprimarykeytotest = strtolower($countrycode).'-'.strtoupper($countrycode);
 	if (in_array($buildprimarykeytotest, $locales)) return strtolower($countrycode).'_'.strtoupper($countrycode);
 
-	if (function_exists('locale_get_primary_language'))    // Need extension php-intl
+	if (function_exists('locale_get_primary_language') && function_exists('locale_get_region'))    // Need extension php-intl
 	{
 	    foreach ($locales as $locale)
     	{

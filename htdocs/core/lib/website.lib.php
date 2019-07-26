@@ -185,7 +185,7 @@ function dolWebsiteOutput($content)
 	global $db, $langs, $conf, $user;
 	global $dolibarr_main_url_root, $dolibarr_main_data_root;
 
-	dol_syslog("dolWebsiteOutput start (USEDOLIBARRSERVER=".(defined('USEDOLIBARRSERVER')?'1':'')." (USEDOLIBARREDITOR=".(defined('USEDOLIBARREDITOR')?'1':'').')');
+	dol_syslog("dolWebsiteOutput start (USEDOLIBARRSERVER=".(defined('USEDOLIBARRSERVER')?'1':'')." USEDOLIBARREDITOR=".(defined('USEDOLIBARREDITOR')?'1':'').')');
 
 	// Define $urlwithroot
 	$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
@@ -397,7 +397,7 @@ function redirectToContainer($containerref, $containeraliasalt = '', $containeri
  */
 function includeContainer($containerref)
 {
-	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs;	// Very important. Required to have var available when running inluded containers.
+	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs;	// Very important. Required to have var available when running included containers.
 	global $includehtmlcontentopened;
 	global $websitekey, $websitepagefile;
 
@@ -434,7 +434,124 @@ function includeContainer($containerref)
 	$includehtmlcontentopened--;
 }
 
+/**
+ * Return HTML content to add structured data for an article, news or Blog Post.
+ *
+ * @param 	string		$type				'blogpost', 'product', 'software'...
+ * @param	array		$data				Array of data parameters for structured data
+ * @return  string							HTML content
+ */
+function getStructuredData($type, $data = array())
+{
+	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs;	// Very important. Required to have var available when running inluded containers.
+	global $includehtmlcontentopened;
+	global $websitekey, $websitepagefile;
 
+	if ($type == 'software')
+	{
+		$ret = '<!-- Add structured data for blog post -->'."\n";
+		$ret .= '<script type="application/ld+json">'."\n";
+		$ret .= '{
+			"@context": "https://schema.org",
+			"@type": "SoftwareApplication",
+			"name": "'.$data['name'].'",
+			"operatingSystem": "'.$data['os'].'",
+			"applicationCategory": "https://schema.org/GameApplication",
+			"aggregateRating": {
+				"@type": "AggregateRating",
+				"ratingValue": "'.$data['ratingvalue'].'",
+				"ratingCount": "'.$data['ratingcount'].'"
+			},
+			"offers": {
+				"@type": "Offer",
+				"price": "'.$data['price'].'",
+				"priceCurrency": "'.($data['currency']?$data['currency']:$conf->currency).'"
+			}
+		}'."\n";
+		$ret .= '</script>'."\n";
+	}
+	elseif ($type == 'blogpost')
+	{
+		if ($websitepage->fk_user_creat > 0)
+		{
+			include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+			$tmpuser = new User($db);
+			$restmpuser = $tmpuser->fetch($websitepage->fk_user_creat);
+
+			if ($restmpuser > 0)
+			{
+				$ret = '<!-- Add structured data for blog post -->'."\n";
+				$ret .= '<script type="application/ld+json">'."\n";
+				$ret .= '{
+					  "@context": "https://schema.org",
+					  "@type": "NewsArticle",
+					  "mainEntityOfPage": {
+					    "@type": "WebPage",
+					    "@id": "'.$websitepage->pageurl.'"
+					  },
+					  "headline": "'.$websitepage->title.'",
+					  "image": [
+					    "'.$websitepage->image.'"
+					   ],
+					  "datePublished": "'.dol_print_date($websitepage->date_creation, 'dayhourrfc').'",
+					  "dateModified": "'.dol_print_date($websitepage->date_modification, 'dayhourrfc').'",
+					  "author": {
+					    "@type": "Person",
+					    "name": "'.$tmpuser->getFullName($weblangs).'"
+					  },
+					  "publisher": {
+					     "@type": "Organization",
+					     "name": "'.$mysoc->name.'",
+					     "logo": {
+					        "@type": "ImageObject",
+					        "url": "/viewimage.php?modulepart=mycompany&file=logos%2F'.urlencode($mysoc->logo).'"
+					     }
+					   },
+					  "description": "'.$websitepage->description.'"
+					}'."\n";
+				$ret .= '</script>'."\n";
+			}
+		}
+	}
+	elseif ($type == 'product')
+	{
+		$ret = '<!-- Add structured data for blog post -->'."\n";
+		$ret.= '<script type="application/ld+json">'."\n";
+		$ret.= '{
+				"@context": "https://schema.org/",
+				"@type": "Product",
+				"name": "'.$data['label'].'",
+				"image": [
+					"'.$data['image'].'",
+				],
+				"description": "'.$data['description'].'",
+				"sku": "'.$data['ref'].'",
+				"brand": {
+					"@type": "Thing",
+					"name": "'.$data['brand'].'"
+				},
+				"author": {
+					"@type": "Person",
+					"name": "'.$data['author'].'"
+				}
+				},
+				"offers": {
+					"@type": "Offer",
+					"url": "https://example.com/anvil",
+					"priceCurrency": "'.($data['currency']?$data['currency']:$conf->currency).'",
+					"price": "'.$data['price'].'",
+					"itemCondition": "https://schema.org/UsedCondition",
+					"availability": "https://schema.org/InStock",
+					"seller": {
+						"@type": "Organization",
+						"name": "'.$mysoc->name.'"
+					}
+				}
+			}'."\n";
+		$ret.= '</script>'."\n";
+	}
+	return $ret;
+}
 
 /**
  * Download all images found into page content $tmp.

@@ -49,7 +49,7 @@ class modFournisseur extends DolibarrModules
 		// Family can be 'crm','financial','hr','projects','product','ecm','technic','other'
 		// It is used to group modules in module setup page
 		$this->family = "srm";
-		$this->module_position = '10';
+		$this->module_position = '12';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "Gestion des fournisseurs";
@@ -276,7 +276,7 @@ class modFournisseur extends DolibarrModules
 
 		$r++;
 		$this->export_code[$r]=$this->rights_class.'_'.$r;
-		$this->export_label[$r]='Factures fournisseurs et lignes de facture';
+		$this->export_label[$r]='Vendor invoices and lines of invoices';
 		$this->export_icon[$r]='bill';
 		$this->export_permission[$r]=array(array("fournisseur","facture","export"));
 		$this->export_fields_array[$r]=array(
@@ -484,7 +484,7 @@ class modFournisseur extends DolibarrModules
 		// Order
 		$r++;
 		$this->export_code[$r]=$this->rights_class.'_'.$r;
-		$this->export_label[$r]='Commandes fournisseurs et lignes de commandes';
+		$this->export_label[$r]='Purchase Orders and lines of purchase orders';
 		$this->export_icon[$r]='order';
 		$this->export_permission[$r]=array(array("fournisseur","commande","export"));
 		$this->export_fields_array[$r]=array(

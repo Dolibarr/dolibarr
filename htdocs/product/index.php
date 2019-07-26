@@ -6,6 +6,7 @@
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2019       Pierre Ardoin           <mapiolca@me.com>
  * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -357,7 +358,7 @@ if ($result)
                         $objp->price = $price_result;
                     }
                 }
-				print '<td class="right">';
+				print '<td class="nowrap right">';
     			if (isset($objp->price_base_type) && $objp->price_base_type == 'TTC') print price($objp->price_ttc).' '.$langs->trans("TTC");
     			else print price($objp->price).' '.$langs->trans("HT");
     			print '</td>';
@@ -396,6 +397,9 @@ if (! empty($conf->global->MAIN_SHOW_PRODUCT_ACTIVITY_TRIM))
 
 
 print '</div></div></div>';
+
+$parameters = array('type' => $type, 'user' => $user);
+$reshook = $hookmanager->executeHooks('dashboardProductsServices', $parameters, $object); // Note that $action and $object may have been modified by hook
 
 // End of page
 llxFooter();
@@ -442,6 +446,7 @@ function activitytrim($product_type)
 
 		if ($num > 0 )
 		{
+            print '<div class="div-table-responsive-no-min">';
 			print '<table class="noborder" width="75%">';
 
 			if ($product_type==0)
@@ -465,11 +470,11 @@ function activitytrim($product_type)
 				if ($trim1+$trim2+$trim3+$trim4 > 0)
 				{
 					print '<tr class="oddeven"><td class=left>'.$tmpyear.'</td>';
-					print '<td class=right>'.price($trim1).'</td>';
-					print '<td class=right>'.price($trim2).'</td>';
-					print '<td class=right>'.price($trim3).'</td>';
-					print '<td class=right>'.price($trim4).'</td>';
-					print '<td class=right>'.price($trim1+$trim2+$trim3+$trim4).'</td>';
+					print '<td class="nowrap right">'.price($trim1).'</td>';
+					print '<td class="nowrap right">'.price($trim2).'</td>';
+					print '<td class="nowrap right">'.price($trim3).'</td>';
+					print '<td class="nowrap right">'.price($trim4).'</td>';
+					print '<td class="nowrap right">'.price($trim1+$trim2+$trim3+$trim4).'</td>';
 					print '</tr>';
 					$lgn++;
 				}
@@ -498,14 +503,14 @@ function activitytrim($product_type)
 		if ($trim1+$trim2+$trim3+$trim4 > 0)
 		{
 			print '<tr class="oddeven"><td class=left>'.$tmpyear.'</td>';
-			print '<td class=right>'.price($trim1).'</td>';
-			print '<td class=right>'.price($trim2).'</td>';
-			print '<td class=right>'.price($trim3).'</td>';
-			print '<td class=right>'.price($trim4).'</td>';
-			print '<td class=right>'.price($trim1+$trim2+$trim3+$trim4).'</td>';
+			print '<td class="nowrap right">'.price($trim1).'</td>';
+			print '<td class="nowrap right">'.price($trim2).'</td>';
+			print '<td class="nowrap right">'.price($trim3).'</td>';
+			print '<td class="nowrap right">'.price($trim4).'</td>';
+			print '<td class="nowrap right">'.price($trim1+$trim2+$trim3+$trim4).'</td>';
 			print '</tr>';
 		}
 		if ($num > 0 )
-			print '</table>';
+			print '</table></div>';
 	}
 }

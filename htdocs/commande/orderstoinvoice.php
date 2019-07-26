@@ -615,7 +615,7 @@ if (($action != 'create' && $action != 'add') || ($action == 'create' && $error)
 		print_liste_field_titre('GenerateBill', '', '', '', '', 'align="center"');
 		print '</tr>';
 
-		// Lignes des champs de filtre
+		// Fields title search
 		print '<form method="get" action="orderstoinvoice.php">';
 		print '<input type="hidden" name="socid" value="'.$socid.'">';
 		print '<tr class="liste_titre">';

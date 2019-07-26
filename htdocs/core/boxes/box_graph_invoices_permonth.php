@@ -143,7 +143,6 @@ class box_graph_invoices_permonth extends ModeleBoxes
 
 				    $px1->SetData($data1);
 					unset($data1);
-					$px1->SetPrecisionY(0);
 					$i=$startyear;$legend=array();
 					while ($i <= $endyear)
 					{
@@ -157,7 +156,6 @@ class box_graph_invoices_permonth extends ModeleBoxes
 					$px1->SetYLabel($langs->trans("NumberOfBills"));
 					$px1->SetShading(3);
 					$px1->SetHorizTickIncrement(1);
-					$px1->SetPrecisionY(0);
 					$px1->SetCssPrefix("cssboxes");
 					$px1->mode='depth';
 					$px1->SetTitle($langs->trans("NumberOfBillsByMonth"));
@@ -183,7 +181,6 @@ class box_graph_invoices_permonth extends ModeleBoxes
 
 					$px2->SetData($data2);
 					unset($data2);
-					$px2->SetPrecisionY(0);
 					$i=$startyear;$legend=array();
 					while ($i <= $endyear)
 					{
@@ -197,7 +194,6 @@ class box_graph_invoices_permonth extends ModeleBoxes
 					$px2->SetYLabel($langs->trans("AmountOfBillsHT"));
 					$px2->SetShading(3);
 					$px2->SetHorizTickIncrement(1);
-					$px2->SetPrecisionY(0);
 					$px2->SetCssPrefix("cssboxes");
 					$px2->mode='depth';
 					$px2->SetTitle($langs->trans("AmountOfBillsByMonthHT"));
@@ -224,6 +220,7 @@ class box_graph_invoices_permonth extends ModeleBoxes
 					</script>';
 				$stringtoshow.='<div class="center hideobject" id="idfilter'.$this->boxcode.'">';	// hideobject is to start hidden
 				$stringtoshow.='<form class="flat formboxfilter" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+				$stringtoshow.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 				$stringtoshow.='<input type="hidden" name="action" value="'.$refreshaction.'">';
 				$stringtoshow.='<input type="hidden" name="page_y" value="">';
 				$stringtoshow.='<input type="hidden" name="DOL_AUTOSET_COOKIE" value="DOLUSERCOOKIE_box_'.$this->boxcode.':year,shownb,showtot">';

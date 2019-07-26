@@ -286,8 +286,7 @@ class CMailFile
 			// We now define $this->headers and $this->message
 			$this->headers = $smtp_headers . $mime_headers;
 			// On nettoie le header pour qu'il ne se termine pas par un retour chariot.
-			// Ceci evite aussi les lignes vides en fin qui peuvent etre interpretees
-			// comme des injections mail par les serveurs de messagerie.
+			// This avoid also empty lines at end that can be interpreted as mail injection by email servers.
 			$this->headers = preg_replace("/([\r\n]+)$/i", "", $this->headers);
 
 			//$this->message = $this->eol.'This is a message with multiple parts in MIME format.'.$this->eol;

@@ -467,7 +467,8 @@ if (empty($reshook))
 
 	elseif ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->expedition->supprimer)
 	{
-	    $result = $object->delete();
+	    $also_update_stock = (GETPOST('alsoUpdateStock', 'alpha') ? 1 : 0);
+	    $result = $object->delete(0, $also_update_stock);
 	    if ($result > 0)
 	    {
 	        header("Location: ".DOL_URL_ROOT.'/expedition/index.php');
@@ -1046,7 +1047,7 @@ if ($action == 'create')
 			if (!empty($conf->incoterm->enabled))
 			{
 				print '<tr>';
-				print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), $object->libelle_incoterms, 1).'</label></td>';
+				print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), $object->label_incoterms, 1).'</label></td>';
 		        print '<td colspan="3" class="maxwidthonsmartphone">';
 		        print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms)?$object->location_incoterms:''));
 				print '</td></tr>';
@@ -1642,7 +1643,26 @@ elseif ($id || $ref)
 		// Confirm deleteion
 		if ($action == 'delete')
 		{
-			$formconfirm=$form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('DeleteSending'), $langs->trans("ConfirmDeleteSending", $object->ref), 'confirm_delete', '', 0, 1);
+		    $formquestion = array();
+		    if ($object->statut == Expedition::STATUS_CLOSED && !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)) {
+		        $formquestion = array(
+                        array(
+                            'label' => $langs->trans('ShipmentIncrementStockOnDelete'),
+                            'name' => 'alsoUpdateStock',
+                            'type' => 'checkbox',
+                            'value' => 0
+                        ),
+                    );
+            }
+		    $formconfirm=$form->formconfirm(
+			    $_SERVER['PHP_SELF'].'?id='.$object->id,
+                $langs->trans('DeleteSending'),
+                $langs->trans("ConfirmDeleteSending", $object->ref),
+                'confirm_delete',
+                $formquestion,
+                0,
+                1
+            );
 		}
 
 		// Confirmation validation
@@ -1973,7 +1993,7 @@ elseif ($id || $ref)
 	        print '<td colspan="3">';
 			if ($action != 'editincoterm')
 			{
-				print $form->textwithpicto($object->display_incoterms(), $object->libelle_incoterms, 1);
+				print $form->textwithpicto($object->display_incoterms(), $object->label_incoterms, 1);
 			}
 			else
 			{

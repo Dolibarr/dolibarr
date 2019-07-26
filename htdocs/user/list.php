@@ -81,8 +81,12 @@ $fieldstosearchall = array(
 	'u.firstname'=>"Firstname",
 	'u.accountancy_code'=>"AccountancyCode",
 	'u.email'=>"EMail",
-	'u.note'=>"Note"
+	'u.note'=>"Note",
 );
+if (! empty($conf->api->enabled))
+{
+	$fieldstosearchall['u.api_key']="ApiKey";
+}
 
 // Definition of fields for list
 $arrayfields=array(
@@ -93,6 +97,7 @@ $arrayfields=array(
 	'u.employee'=>array('label'=>$langs->trans("Employee"), 'checked'=>($mode=='employee'?1:0)),
 	'u.accountancy_code'=>array('label'=>$langs->trans("AccountancyCode"), 'checked'=>0),
 	'u.email'=>array('label'=>$langs->trans("EMail"), 'checked'=>1),
+	'u.api_key'=>array('label'=>$langs->trans("ApiKey"), 'checked'=>0, "enabled"=>($conf->api->enabled && $user->admin)),
 	'u.fk_soc'=>array('label'=>$langs->trans("Company"), 'checked'=>1),
 	'u.entity'=>array('label'=>$langs->trans("Entity"), 'checked'=>1, 'enabled'=>(! empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))),
 	'u.fk_user'=>array('label'=>$langs->trans("HierarchicalResponsible"), 'checked'=>1),
@@ -121,10 +126,10 @@ $search_gender=GETPOST('search_gender', 'alpha');
 $search_employee=GETPOST('search_employee', 'alpha');
 $search_accountancy_code=GETPOST('search_accountancy_code', 'alpha');
 $search_email=GETPOST('search_email', 'alpha');
+$search_api_key=GETPOST('search_api_key', 'alphanohtml');
 $search_statut=GETPOST('search_statut', 'intcomma');
 $search_thirdparty=GETPOST('search_thirdparty', 'alpha');
 $search_supervisor=GETPOST('search_supervisor', 'intcomma');
-$search_previousconn=GETPOST('search_previousconn', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
 $search_categ = GETPOST("search_categ", 'int');
 $catid = GETPOST('catid', 'int');
@@ -165,6 +170,7 @@ if (empty($reshook))
 		$search_statut="";
 		$search_thirdparty="";
 		$search_supervisor="";
+		$search_api_key="";
 		$search_datelastlogin="";
 		$search_datepreviouslogin="";
 		$search_date_creation="";
@@ -185,7 +191,7 @@ $user2=new User($db);
 
 $buttonviewhierarchy='<form action="'.DOL_URL_ROOT.'/user/hierarchy.php'.(($search_statut != '' && $search_statut >= 0) ? '?search_statut='.$search_statut : '').'" method="POST"><input type="submit" class="button" style="width:120px" name="viewcal" value="'.dol_escape_htmltag($langs->trans("HierarchicView")).'"></form>';
 
-$sql = "SELECT DISTINCT u.rowid, u.lastname, u.firstname, u.admin, u.fk_soc, u.login, u.email, u.accountancy_code, u.gender, u.employee, u.photo,";
+$sql = "SELECT DISTINCT u.rowid, u.lastname, u.firstname, u.admin, u.fk_soc, u.login, u.email, u.api_key, u.accountancy_code, u.gender, u.employee, u.photo,";
 $sql.= " u.datelastlogin, u.datepreviouslogin,";
 $sql.= " u.ldap_sid, u.statut, u.entity,";
 $sql.= " u.tms as date_update, u.datec as date_creation,";
@@ -223,6 +229,7 @@ if (is_numeric($search_employee) && $search_employee >= 0)    {
 }
 if ($search_accountancy_code != '')  $sql.= natural_search("u.accountancy_code", $search_accountancy_code);
 if ($search_email != '')             $sql.= natural_search("u.email", $search_email);
+if ($search_api_key != '')           $sql.= natural_search("u.api_key", $search_api_key);
 if ($search_statut != '' && $search_statut >= 0) $sql.= " AND u.statut IN (".$db->escape($search_statut).")";
 if ($sall)                           $sql.= natural_search(array_keys($fieldstosearchall), $sall);
 if ($catid > 0)     $sql.= " AND cu.fk_categorie = ".$catid;
@@ -277,6 +284,7 @@ if ($search_gender != '') $param.="&amp;search_gender=".urlencode($search_gender
 if ($search_employee != '') $param.="&amp;search_employee=".urlencode($search_employee);
 if ($search_accountancy_code != '') $param.="&amp;search_accountancy_code=".urlencode($search_accountancy_code);
 if ($search_email != '') $param.="&amp;search_email=".urlencode($search_email);
+if ($search_api_key != '') $param.="&amp;search_api_key=".urlencode($search_api_key);
 if ($search_supervisor > 0) $param.="&amp;search_supervisor=".urlencode($search_supervisor);
 if ($search_statut != '') $param.="&amp;search_statut=".urlencode($search_statut);
 if ($optioncss != '') $param.='&amp;optioncss='.urlencode($optioncss);
@@ -304,7 +312,7 @@ print '<input type="hidden" name="mode" value="'.$mode.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 
-$morehtmlright.= dolGetButtonTitle($langs->trans("HierarchicView"), '', 'fa fa-sitemap', DOL_URL_ROOT.'/user/hierarchy.php'.(($search_statut != '' && $search_statut >= 0) ?'?search_statut='.$search_statut:''));
+$morehtmlright.= dolGetButtonTitle($langs->trans("HierarchicView"), '', 'fa fa-sitemap paddingleft', DOL_URL_ROOT.'/user/hierarchy.php'.(($search_statut != '' && $search_statut >= 0) ?'?search_statut='.$search_statut:''));
 
 
 print_barre_liste($text, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, "", $num, $nbtotalofrecords, 'title_generic', 0, $morehtmlright.' '.$newcardbutton, '', $limit);
@@ -359,15 +367,15 @@ print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"")
 print '<tr class="liste_titre_filter">';
 if (! empty($arrayfields['u.login']['checked']))
 {
-	print '<td class="liste_titre"><input type="text" name="search_login" size="6" value="'.$search_login.'"></td>';
+	print '<td class="liste_titre"><input type="text" name="search_login" class="maxwidth50" value="'.$search_login.'"></td>';
 }
 if (! empty($arrayfields['u.lastname']['checked']))
 {
-	print '<td class="liste_titre"><input type="text" name="search_lastname" size="6" value="'.$search_lastname.'"></td>';
+	print '<td class="liste_titre"><input type="text" name="search_lastname" class="maxwidth50" value="'.$search_lastname.'"></td>';
 }
 if (! empty($arrayfields['u.firstname']['checked']))
 {
-	print '<td class="liste_titre"><input type="text" name="search_firstname" size="6" value="'.$search_firstname.'"></td>';
+	print '<td class="liste_titre"><input type="text" name="search_firstname" class="maxwidth50" value="'.$search_firstname.'"></td>';
 }
 if (! empty($arrayfields['u.gender']['checked']))
 {
@@ -384,15 +392,19 @@ if (! empty($arrayfields['u.employee']['checked']))
 }
 if (! empty($arrayfields['u.accountancy_code']['checked']))
 {
-	print '<td class="liste_titre"><input type="text" name="search_accountancy_code" size="4" value="'.$search_accountancy_code.'"></td>';
+	print '<td class="liste_titre"><input type="text" name="search_accountancy_code" class="maxwidth50" value="'.$search_accountancy_code.'"></td>';
 }
 if (! empty($arrayfields['u.email']['checked']))
 {
-	print '<td class="liste_titre"><input type="text" name="search_email" size="6" value="'.$search_email.'"></td>';
+	print '<td class="liste_titre"><input type="text" name="search_email" class="maxwidth75" value="'.$search_email.'"></td>';
+}
+if (! empty($arrayfields['u.api_key']['checked']))
+{
+	print '<td class="liste_titre"><input type="text" name="search_api_key" class="maxwidth50" value="'.$search_api_key.'"></td>';
 }
 if (! empty($arrayfields['u.fk_soc']['checked']))
 {
-	print '<td class="liste_titre"><input type="text" name="search_thirdparty" size="6" value="'.$search_thirdparty.'"></td>';
+	print '<td class="liste_titre"><input type="text" name="search_thirdparty" class="maxwidth75" value="'.$search_thirdparty.'"></td>';
 }
 if (! empty($arrayfields['u.entity']['checked']))
 {
@@ -455,6 +467,7 @@ if (! empty($arrayfields['u.gender']['checked']))         print_liste_field_titr
 if (! empty($arrayfields['u.employee']['checked']))       print_liste_field_titre("Employee", $_SERVER['PHP_SELF'], "u.employee", $param, "", "", $sortfield, $sortorder);
 if (! empty($arrayfields['u.accountancy_code']['checked'])) print_liste_field_titre("AccountancyCode", $_SERVER['PHP_SELF'], "u.accountancy_code", $param, "", "", $sortfield, $sortorder);
 if (! empty($arrayfields['u.email']['checked']))          print_liste_field_titre("EMail", $_SERVER['PHP_SELF'], "u.email", $param, "", "", $sortfield, $sortorder);
+if (! empty($arrayfields['u.api_key']['checked']))        print_liste_field_titre("ApiKey", $_SERVER['PHP_SELF'], "u.api_key", $param, "", "", $sortfield, $sortorder);
 if (! empty($arrayfields['u.fk_soc']['checked']))         print_liste_field_titre("Company", $_SERVER['PHP_SELF'], "u.fk_soc", $param, "", "", $sortfield, $sortorder);
 if (! empty($arrayfields['u.entity']['checked']))         print_liste_field_titre("Entity", $_SERVER['PHP_SELF'], "u.entity", $param, "", "", $sortfield, $sortorder);
 if (! empty($arrayfields['u.fk_user']['checked']))        print_liste_field_titre("HierarchicalResponsible", $_SERVER['PHP_SELF'], "u.fk_user", $param, "", "", $sortfield, $sortorder);
@@ -540,6 +553,11 @@ while ($i < min($num, $limit))
 	if (! empty($arrayfields['u.email']['checked']))
 	{
 	  print '<td>'.$obj->email.'</td>';
+		if (! $i) $totalarray['nbfield']++;
+	}
+	if (! empty($arrayfields['u.api_key']['checked']))
+	{
+		print '<td>'.$obj->api_key.'</td>';
 		if (! $i) $totalarray['nbfield']++;
 	}
 	if (! empty($arrayfields['u.fk_soc']['checked']))

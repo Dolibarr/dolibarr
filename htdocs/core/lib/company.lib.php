@@ -649,6 +649,8 @@ function getFormeJuridiqueLabel($code)
  */
 function getCountriesInEEC()
 {
+	global $conf;
+
 	// List of all country codes that are in europe for european vat rules
 	// List found on http://ec.europa.eu/taxation_customs/common/faq/faq_1179_en.htm#9
 	$country_code_in_EEC=array(
@@ -686,6 +688,12 @@ function getCountriesInEEC()
 		'UK',	// United Kingdom
 		//'CH',	// Switzerland - No. Swizerland in not in EEC
 	);
+
+	if (! empty($conf->global->MAIN_COUNTRIES_IN_EEC))
+	{
+		// For example MAIN_COUNTRIES_IN_EEC = 'AT,BE,BG,CY,CZ,DE,DK,EE,ES,FI,FR,GB,GR,HR,NL,HU,IE,IM,IT,LT,LU,LV,MC,MT,PL,PT,RO,SE,SK,SI,UK'
+		$country_code_in_EEC = explode(',', $conf->global->MAIN_COUNTRIES_IN_EEC);
+	}
 
 	return $country_code_in_EEC;
 }
@@ -1253,6 +1261,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
         elseif (is_object($filterobj) && get_class($filterobj) == 'Product')  $sql.= ", o.ref";
         elseif (is_object($filterobj) && get_class($filterobj) == 'Ticket')   $sql.= ", o.ref";
         elseif (is_object($filterobj) && get_class($filterobj) == 'BOM')      $sql.= ", o.ref";
+        elseif (is_object($filterobj) && get_class($filterobj) == 'Contrat')  $sql.= ", o.ref";
         $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on u.rowid = a.fk_user_action";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_actioncomm as c ON a.fk_action = c.id";
@@ -1276,6 +1285,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
         elseif (is_object($filterobj) && get_class($filterobj) == 'Product') $sql.= ", ".MAIN_DB_PREFIX."product as o";
         elseif (is_object($filterobj) && get_class($filterobj) == 'Ticket') $sql.= ", ".MAIN_DB_PREFIX."ticket as o";
         elseif (is_object($filterobj) && get_class($filterobj) == 'BOM') $sql.= ", ".MAIN_DB_PREFIX."bom_bom as o";
+        elseif (is_object($filterobj) && get_class($filterobj) == 'Contrat') $sql.= ", ".MAIN_DB_PREFIX."contrat as o";
 
         $sql.= " WHERE a.entity IN (".getEntity('agenda').")";
         if ($force_filter_contact === false) {
@@ -1304,6 +1314,11 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
             elseif (is_object($filterobj) && get_class($filterobj) == 'BOM')
             {
             	$sql.= " AND a.fk_element = o.rowid AND a.elementtype = 'bom'";
+            	if ($filterobj->id) $sql.= " AND a.fk_element = ".$filterobj->id;
+            }
+            elseif (is_object($filterobj) && get_class($filterobj) == 'Contrat')
+            {
+            	$sql.= " AND a.fk_element = o.rowid AND a.elementtype = 'contract'";
             	if ($filterobj->id) $sql.= " AND a.fk_element = ".$filterobj->id;
             }
         }
@@ -1360,6 +1375,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
     } elseif (empty($sql) && !empty($sql2)) {
         $sql = $sql2;
     }
+
     //TODO Add limit in nb of results
     $sql.= $db->order($sortfield_new, $sortorder);
     dol_syslog("company.lib::show_actions_done", LOG_DEBUG);
@@ -1513,7 +1529,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
         $out.=getTitleFieldOfList($langs->trans("Type"));
 		$out.=getTitleFieldOfList($langs->trans("Label"), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder);
         $out.=getTitleFieldOfList($langs->trans("Date"), 0, $_SERVER["PHP_SELF"], 'a.datep,a.id', '', $param, 'align="center"', $sortfield, $sortorder);
-		$out.=getTitleFieldOfList('');
+        $out.=getTitleFieldOfList($langs->trans("RelatedObjects"), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder);
 		$out.=getTitleFieldOfList($langs->trans("ActionOnContact"), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder);
 		$out.=getTitleFieldOfList($langs->trans("Status"), 0, $_SERVER["PHP_SELF"], 'a.percent', '', $param, 'align="center"', $sortfield, $sortorder);
 		$out.=getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'maxwidthsearch ');

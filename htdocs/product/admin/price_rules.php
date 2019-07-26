@@ -113,7 +113,7 @@ while ($result = $db->fetch_object($query)) {
 $title = $langs->trans('ProductServiceSetup');
 $tab = $langs->trans("ProductsAndServices");
 
-if (empty($conf->produit->enabled)) {
+if (empty($conf->product->enabled)) {
 	$title = $langs->trans('ServiceSetup');
 	$tab = $langs->trans('Services');
 } elseif (empty($conf->service->enabled)) {

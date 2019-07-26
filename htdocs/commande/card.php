@@ -1519,11 +1519,11 @@ if ($action == 'create' && $user->rights->commande->creer)
 			if ($element == 'order' || $element == 'commande') {
 				$element = $subelement = 'commande';
 			}
-			if ($element == 'propal') {
+			elseif ($element == 'propal') {
 				$element = 'comm/propal';
 				$subelement = 'propal';
 			}
-			if ($element == 'contract') {
+			elseif ($element == 'contract') {
 				$element = $subelement = 'contrat';
 			}
 
@@ -1737,7 +1737,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 	if (!empty($conf->incoterm->enabled))
 	{
 		print '<tr>';
-		print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), $objectsrc->libelle_incoterms, 1).'</label></td>';
+		print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), $objectsrc->label_incoterms, 1).'</label></td>';
 		print '<td class="maxwidthonsmartphone">';
 		$incoterm_id = GETPOST('incoterm_id');
 		$incoterm_location = GETPOST('location_incoterms');
@@ -2116,7 +2116,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 		print '<div class="fichehalfleft">';
 		print '<div class="underbanner clearboth"></div>';
 
-		print '<table class="border tableforfield" width="100%">';
+		print '<table class="border tableforfield centpercent">';
 
 		if ($soc->outstanding_limit)
 		{
@@ -2361,7 +2361,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 			print '<td>';
 			if ($action != 'editincoterm')
 			{
-				print $form->textwithpicto($object->display_incoterms(), $object->libelle_incoterms, 1);
+				print $form->textwithpicto($object->display_incoterms(), $object->label_incoterms, 1);
 			}
 			else
 			{
@@ -2454,7 +2454,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 
 		print '</div>';
 		print '</div>';
-		print '</div>';
+		print '</div>';	// Close fichecenter
 
 		print '<div class="clearboth"></div><br>';
 
