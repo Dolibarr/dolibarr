@@ -93,17 +93,15 @@ preg_match('/index\.php\/([^\/]+)(.*)$/', $_SERVER["PHP_SELF"], $reg);
 // .../index.php/categories?sortfield=t.rowid&sortorder=ASC
 
 
-// Set the flag to say to refresh (when we reload the explorer, production must be for API call only)
-/*$refreshcache=false;
+// When in production mode, a file api/temp/routes.php is created with the API available of current call.
+// But, if we set $refreshcache to false, so it may have only one API in the routes.php file if we make a call for one API without
+// using the explorer. And when we make another call for another API, the API is not into the api/temp/routes.php and a 404 is returned.
+// So we force refresh to each call.
+$refreshcache=(empty($conf->global->API_PRODUCTION_DO_NOT_ALWAYS_REFRESH_CACHE) ? true : false);
 if (! empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/swagger.json' || $reg[2] == '/swagger.json/root' || $reg[2] == '/resources.json' || $reg[2] == '/resources.json/root'))
 {
     $refreshcache=true;
-}*/
-// When in production mode, a file api/temp/routes.php is created with the API available of current call. 
-// But, if we set $refreshcache to false, so it may have only one API in the routes.php file if we make a call for one API without
-// using the explorer. And when we make another call for another API, the API is not into the api/temp/routes.php and a 404 is returned. 
-// So we force refresh to each call.
-$refreshcache=true;
+}
 
 $api = new DolibarrApi($db, '', $refreshcache);
 //var_dump($api->r->apiVersionMap);
