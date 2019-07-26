@@ -245,12 +245,12 @@ if ($action == 'set')
 	if (! $res > 0) $error++;
 }
 
-if ($action == 'other')
-{
-    $value = GETPOST('activate_units', 'alpha');
-    $res = dolibarr_set_const($db, "PRODUCT_USE_UNITS", $value, 'chaine', 0, '', $conf->entity);
-	if (! $res > 0) $error++;
-}
+//if ($action == 'other')
+//{
+//    $value = GETPOST('activate_units', 'alpha');
+//    $res = dolibarr_set_const($db, "PRODUCT_USE_UNITS", $value, 'chaine', 0, '', $conf->entity);
+//	if (! $res > 0) $error++;
+//}
 
 if ($action)
 {

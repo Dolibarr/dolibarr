@@ -862,7 +862,7 @@ class Contrat extends CommonObject
 		}
 		else
 		{
-			dol_syslog(get_class($this)."::Fetch Erreur lecture des lignes de contrats liees aux produits");
+			dol_syslog(get_class($this)."::Fetch Error when reading lines of contracts linked to products");
 			return -3;
 		}
 

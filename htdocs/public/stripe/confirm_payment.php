@@ -15,6 +15,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+// TODO Do we really need this page. We alread have a ipn.php page !
+
 define("NOLOGIN", 1);		// This means this output page does not require to be logged.
 define("NOCSRFCHECK", 1);	// We accept to go on this page from external web site.
 
@@ -105,13 +107,13 @@ $intent = null;
 try {
     if (isset($json_obj->payment_method_id)) {
         // Create the PaymentIntent
-        $intent = \Stripe\PaymentIntent::create([
+        $intent = \Stripe\PaymentIntent::create(array(
             'payment_method' => $json_obj->payment_method_id,
             'amount' => 1099,
             'currency' => 'eur',
             'confirmation_method' => 'manual',
             'confirm' => true,
-        ]);
+        ));
     }
     if (isset($json_obj->payment_intent_id)) {
         $intent = \Stripe\PaymentIntent::retrieve(
@@ -122,9 +124,9 @@ try {
     generatePaymentResponse($intent);
 } catch (\Stripe\Error\Base $e) {
     // Display error on client
-    echo json_encode([
+    echo json_encode(array(
         'error' => $e->getMessage()
-    ]);
+    ));
 }
 
 /*
@@ -138,22 +140,22 @@ function generatePaymentResponse($intent)
     if ($intent->status == 'requires_source_action' &&
         $intent->next_action->type == 'use_stripe_sdk') {
         // Tell the client to handle the action
-        echo json_encode([
+        echo json_encode(array(
             'requires_action' => true,
             'payment_intent_client_secret' => $intent->client_secret
-        ]);
+        ));
     } elseif ($intent->status == 'succeeded') {
         // The payment didn’t need any additional actions and completed!
         // Handle post-payment fulfillment
 
         // TODO
 
-        echo json_encode([
+        echo json_encode(array(
             "success" => true
-        ]);
+        ));
     } else {
         // Invalid status
         http_response_code(500);
-        echo json_encode(['error' => 'Invalid PaymentIntent status']);
+        echo json_encode(array('error' => 'Invalid PaymentIntent status'));
     }
 }

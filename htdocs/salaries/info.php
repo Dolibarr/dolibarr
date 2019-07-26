@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005-2015  Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Charlie BENKE        <charlie@patas-monkey.com>
- * Copyright (C) 2017       Alexandre Spangaro   <aspangaro@open-dsi.fr>
+ * Copyright (C) 2017-2019  Alexandre Spangaro   <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,13 +18,13 @@
  */
 
 /**
- *	\file       htdocs/compta/salaries/info.php
+ *	\file       htdocs/salaries/info.php
  *	\ingroup    salaries
  *	\brief      Page with info about salaries contribution
  */
 
-require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/paymentsalary.class.php';
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/salaries.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
@@ -54,7 +54,7 @@ $head = salaries_prepare_head($object);
 
 dol_fiche_head($head, 'info', $langs->trans("SalaryPayment"), -1, 'payment');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/compta/salaries/list.php?restore_lastsearch_values=1'.(! empty($socid)?'&socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/salaries/list.php?restore_lastsearch_values=1'.(! empty($socid)?'&socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
 $morehtmlref='<div class="refidno">';
 

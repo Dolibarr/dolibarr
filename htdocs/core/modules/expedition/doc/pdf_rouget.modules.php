@@ -29,6 +29,7 @@
 require_once DOL_DOCUMENT_ROOT.'/core/modules/expedition/modules_expedition.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 
 
 /**
@@ -282,7 +283,7 @@ class pdf_rouget extends ModelePdfExpedition
 				global $action;
 				$reshook=$hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 
-				// Set nblignes with the new facture lines content after hook
+				// Set nblines with the new facture lines content after hook
 				$nblines = count($object->lines);
 
 				$pdf=pdf_getInstance($this->format);

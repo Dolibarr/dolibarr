@@ -638,7 +638,7 @@ if (empty($reshook))
 
 			$resteapayer = $object->total_ttc - $totalpaye;
 
-			// On verifie si les lignes de factures ont ete exportees en compta et/ou ventilees
+			// We check that invlice lines are transferred into accountancy
 			$ventilExportCompta = $object->getVentilExportCompta();
 
 			// On verifie si aucun paiement n'a ete effectue
@@ -2773,7 +2773,7 @@ if ($action == 'create')
 		$note_public = $invoice_predefined->note_public;
 		$note_private = $invoice_predefined->note_private;
 
-		$sql = 'SELECT r.rowid, r.titre, r.total_ttc';
+		$sql = 'SELECT r.rowid, r.titre as title, r.total_ttc';
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . 'facture_rec as r';
 		$sql .= ' WHERE r.fk_soc = ' . $invoice_predefined->socid;
 
@@ -2797,7 +2797,7 @@ if ($action == 'create')
 						print ' selected';
 						$exampletemplateinvoice->fetch(GETPOST('fac_rec'));
 					}
-					print '>' . $objp->titre . ' (' . price($objp->total_ttc) . ' ' . $langs->trans("TTC") . ')</option>';
+					print '>' . $objp->title . ' (' . price($objp->total_ttc) . ' ' . $langs->trans("TTC") . ')</option>';
 					$i ++;
 				}
 				print '</select>';
@@ -4616,7 +4616,7 @@ elseif ($id > 0 || ! empty($ref))
 			// Editer une facture deja validee, sans paiement effectue et pas exporte en compta
 			if ($object->statut == Facture::STATUS_VALIDATED)
 			{
-				// On verifie si les lignes de factures ont ete exportees en compta et/ou ventilees
+				// We check that invlice lines are transferred into accountancy
 				$ventilExportCompta = $object->getVentilExportCompta();
 
 				if ($ventilExportCompta == 0)

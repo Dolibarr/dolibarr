@@ -364,6 +364,7 @@ class Conf
 		$this->livraison_bon->enabled=(! empty($this->global->MAIN_SUBMODULE_LIVRAISON)?$this->global->MAIN_SUBMODULE_LIVRAISON:0);
 
 		// Module fournisseur
+		// TODO To split into module supplier_invoice and supplier_order
 		if (! empty($this->fournisseur))
 		{
 			$this->fournisseur->commande=new stdClass();
@@ -376,11 +377,7 @@ class Conf
 			$this->fournisseur->facture->multidir_temp  =array($this->entity => $rootfordata."/fournisseur/facture/temp");
 			$this->fournisseur->facture->dir_output =$rootfordata."/fournisseur/facture";		// For backward compatibility
 			$this->fournisseur->facture->dir_temp   =$rootfordata."/fournisseur/facture/temp";	// For backward compatibility
-			$this->supplierproposal=new stdClass();
-			$this->supplierproposal->multidir_output=array($this->entity => $rootfordata."/supplier_proposal");
-			$this->supplierproposal->multidir_temp  =array($this->entity => $rootfordata."/supplier_proposal/temp");
-			$this->supplierproposal->dir_output=$rootfordata."/supplier_proposal";				// For backward compatibility
-			$this->supplierproposal->dir_temp=$rootfordata."/supplier_proposal/temp";			// For backward compatibility
+
 			$this->fournisseur->payment=new stdClass();
 			$this->fournisseur->payment->multidir_output=array($this->entity => $rootfordata."/fournisseur/payment");
 			$this->fournisseur->payment->multidir_temp  =array($this->entity => $rootfordata."/fournisseur/payment/temp");
@@ -408,15 +405,6 @@ class Conf
 	    			$this->supplier_invoice->multidir_temp  =array($this->entity => $rootfordata."/fournisseur/facture/temp");
 	    			$this->supplier_invoice->dir_output=$rootfordata."/fournisseur/facture";		// For backward compatibility
 	    			$this->supplier_invoice->dir_temp=$rootfordata."/fournisseur/facture/temp";		// For backward compatibility
-				}
-
-				if (empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD))	// This can be set to 1 once modules purchase order and supplier invoice exists
-				{
-					$this->supplier_proposal=new stdClass();
-	    			$this->supplier_proposal->multidir_output=array($this->entity => $rootfordata."/supplier_proposal");
-	    			$this->supplier_proposal->multidir_temp  =array($this->entity => $rootfordata."/supplier_proposal/temp");
-	    			$this->supplier_proposal->dir_output=$rootfordata."/supplier_proposal";				// For backward compatibility
-	    			$this->supplier_proposal->dir_temp=$rootfordata."/supplier_proposal/temp";			// For backward compatibility
 				}
 			}
 		}
@@ -501,7 +489,10 @@ class Conf
         if (empty($this->global->ACCOUNTING_MODE)) $this->global->ACCOUNTING_MODE='RECETTES-DEPENSES';  // By default. Can be 'RECETTES-DEPENSES' ou 'CREANCES-DETTES'
 
         // By default, suppliers objects can be linked to all projects
-        $this->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS = 1;
+        if (! isset($this->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS)) $this->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS = 1;
+
+        // By default we enable feature to bill time spent
+        if (! isset($this->global->PROJECT_BILL_TIME_SPENT)) $this->global->PROJECT_BILL_TIME_SPENT = 1;
 
         // MAIN_HTML_TITLE
         if (! isset($this->global->MAIN_HTML_TITLE)) $this->global->MAIN_HTML_TITLE='noapp,thirdpartynameonly,contactnameonly,projectnameonly';

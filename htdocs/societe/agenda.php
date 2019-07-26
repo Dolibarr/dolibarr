@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-$langs->load(array("companies", "bills", "propal", "orders"));
+$langs->loadLangs(array("companies", "bills", "propal", "orders"));
 
 if (GETPOST('actioncode', 'array'))
 {
@@ -102,9 +102,6 @@ if ($socid > 0)
 {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
-
-	$langs->load("companies");
-
 
 	$object = new Societe($db);
 	$result = $object->fetch($socid);

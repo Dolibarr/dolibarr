@@ -1353,7 +1353,7 @@ img.photorefnoborder {
 }
 .trextrafieldseparator td {
     /* border-bottom: 2px solid rgb(<?php echo $colorbackhmenu1 ?>) !important; */
-    border-bottom: 2px solid rgb(<?php echo $colortopbordertitle1 ?>) !important;
+    border-bottom: 2px dashed rgb(<?php echo $colortopbordertitle1 ?>) !important;
 }
 
 .tdhrthin {
@@ -5251,6 +5251,25 @@ div.tabsElem a.tab {
 /* ============================================================================== */
 /* Ticket module                                                                  */
 /* ============================================================================== */
+.ticketpublicarea {
+	width: 70%;
+}
+.publicnewticketform {
+	margin-top: 25px !important;
+}
+.ticketlargemargin {
+	padding-left: 50px;
+	padding-right: 50px;
+}
+@media only screen and (max-width: 767px)
+{
+	.ticketlargemargin {
+		padding-left: 5px; padding-right: 5px;
+	}
+	.ticketpublicarea {
+		width: 100%;
+	}
+}
 
 #cd-timeline {
   position: relative;

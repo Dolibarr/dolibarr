@@ -43,7 +43,7 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/paymentsalary.class.php';
+require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
@@ -603,12 +603,13 @@ if ($resql)
 	        print $langs->trans("EventualyAddCategory").': ';
 	        print Form::selectarray('cat', $options, GETPOST('cat'), 1);
 	    }
-	    print '<br>'.$langs->trans("ThenCheckLinesAndConciliate").' ';
+	    print '<br><div style="margin-top: 5px;">'.$langs->trans("ThenCheckLinesAndConciliate").' ';
 	    print '<input class="button" name="confirm_savestatement" type="submit" value="'.$langs->trans("SaveStatementOnly").'">';
 	    print ' '.$langs->trans("or").' ';
 	    print '<input class="button" name="confirm_reconcile" type="submit" value="'.$langs->trans("Conciliate").'">';
 	    print ' '.$langs->trans("or").' ';
 	    print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
+		print '</div>';
 
 	    // Show last bank statements
 	    $nbmax=15;      // We accept to show last 15 receipts (so we can have more than one year)
@@ -617,7 +618,7 @@ if ($resql)
 	    $sql.= " WHERE fk_account=".$object->id." AND num_releve IS NOT NULL";
 	    $sql.= $db->order("num_releve", "DESC");
 	    $sql.= $db->plimit($nbmax+1);
-	    print '<br><br>';
+	    print '<br>';
 	    print $langs->trans("LastAccountStatements").' : ';
 	    $resqlr=$db->query($sql);
 	    if ($resqlr)
@@ -1115,7 +1116,7 @@ if ($resql)
     	if (! empty($arrayfields['b.rowid']['checked']))
     	{
                 print '<td class="nowrap left">';
-                print "<a href=\"ligne.php?rowid=".$objp->rowid.'&save_lastsearch_values=1">'.img_object($langs->trans("ShowPayment").': '.$objp->rowid, 'account', 'class="classfortooltip"').' '.$objp->rowid."</a> &nbsp; ";
+                print "<a href=\"line.php?rowid=".$objp->rowid.'&save_lastsearch_values=1">'.img_object($langs->trans("ShowPayment").': '.$objp->rowid, 'account', 'class="classfortooltip"').' '.$objp->rowid."</a> &nbsp; ";
                 print '</td>';
                 if (! $i) $totalarray['nbfield']++;
     	}
@@ -1125,7 +1126,7 @@ if ($resql)
     	{
     	    print "<td>";
 
-    	    //print "<a href=\"ligne.php?rowid=".$objp->rowid."&amp;account=".$objp->fk_account."\">";
+    	    //print "<a href=\"line.php?rowid=".$objp->rowid."&amp;account=".$objp->fk_account."\">";
     	    $reg=array();
     	    preg_match('/\((.+)\)/i', $objp->label, $reg);	// Si texte entoure de parenthee on tente recherche de traduction
     	    if ($reg[1] && $langs->trans($reg[1])!=$reg[1]) print $langs->trans($reg[1]);
@@ -1458,7 +1459,7 @@ if ($resql)
     	// Transaction reconciliated or edit link
     	if ($objp->conciliated && $bankaccount->canBeConciliated() > 0)  // If line not conciliated and account can be conciliated
     	{
-    	    print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?save_lastsearch_values=1&amp;rowid='.$objp->rowid.'&amp;account='.$objp->bankid.'&amp;page='.$page.'">';
+    	    print '<a href="'.DOL_URL_ROOT.'/compta/bank/line.php?save_lastsearch_values=1&amp;rowid='.$objp->rowid.'&amp;account='.$objp->bankid.'&amp;page='.$page.'">';
     	    print img_edit();
     	    print '</a>';
     	}
@@ -1466,13 +1467,13 @@ if ($resql)
     	{
     	    if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
     	    {
-    	        print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?save_lastsearch_values=1&amp;rowid='.$objp->rowid.'&amp;account='.$objp->bankid.'&amp;page='.$page.'">';
+    	        print '<a href="'.DOL_URL_ROOT.'/compta/bank/line.php?save_lastsearch_values=1&amp;rowid='.$objp->rowid.'&amp;account='.$objp->bankid.'&amp;page='.$page.'">';
     	        print img_edit();
     	        print '</a>';
     	    }
     	    else
     	    {
-    	        print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?save_lastsearch_values=1&amp;rowid='.$objp->rowid.'&amp;account='.$objp->bankid.'&amp;page='.$page.'">';
+    	        print '<a href="'.DOL_URL_ROOT.'/compta/bank/line.php?save_lastsearch_values=1&amp;rowid='.$objp->rowid.'&amp;account='.$objp->bankid.'&amp;page='.$page.'">';
     	        print img_view();
     	        print '</a>';
     	    }

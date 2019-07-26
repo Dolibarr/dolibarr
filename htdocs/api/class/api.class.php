@@ -143,7 +143,6 @@ class DolibarrApi
         unset($object->picto);
 
         unset($object->fieldsforcombobox);
-		unset($object->comments);
 
         unset($object->skip_update_total);
         unset($object->context);

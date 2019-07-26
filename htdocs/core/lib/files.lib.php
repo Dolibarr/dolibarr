@@ -1559,6 +1559,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesess
 				$info = pathinfo($destfile);
 
 				$destfile = dol_sanitizeFileName($info['filename'].($info['extension']!='' ? ('.'.strtolower($info['extension'])) : ''));
+
 				// We apply dol_string_nohtmltag also to clean file names (this remove duplicate spaces) because
 				// this function is also applied when we make try to download file (by the GETPOST(filename, 'alphanohtml') call).
 				$destfile = dol_string_nohtmltag($destfile);
@@ -2568,7 +2569,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$accessallowed=1;
 		}
 		$original_file=$conf->fournisseur->facture->dir_output.'/'.$original_file;
-		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."facture_fourn WHERE facnumber='".$db->escape($refname)."' AND entity=".$conf->entity;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."facture_fourn WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
 	}
 	// Wrapping pour les rapport de paiements
 	elseif ($modulepart == 'supplier_payment')

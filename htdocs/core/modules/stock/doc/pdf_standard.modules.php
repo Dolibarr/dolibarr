@@ -461,7 +461,7 @@ class pdf_standard extends ModelePDFStock
 							$pdf->SetLineStyle(array('dash'=>0));
 						}
 
-						$nexY+=2;    // Passe espace entre les lignes
+						$nexY+=2;    // Add space between lines
 
 						// Detect if some page were added automatically and output _tableau for past pages
 						while ($pagenb < $pageposafter)

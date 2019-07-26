@@ -87,7 +87,7 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 	$date_start=dol_get_first_day($pastmonthyear, $pastmonth, false); $date_end=dol_get_last_day($pastmonthyear, $pastmonth, false);
 }
 
-$nom=$langs->trans("SellsJournal");
+$name=$langs->trans("SellsJournal");
 $periodlink='';
 $exportlink='';
 $builddate=dol_now();

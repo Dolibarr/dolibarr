@@ -400,7 +400,7 @@ class pdf_standard extends ModeleExpenseReport
                     $pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
 
                     //$nblineFollowComment = 1;
-                    // Cherche nombre de lignes a venir pour savoir si place suffisante
+                    // Search number of lines coming to know if there is enough room
 					// if ($i < ($nblines - 1))	// If it's not last line
 					// {
 					//     //Fetch current description to know on which line the next one should be placed
@@ -414,8 +414,8 @@ class pdf_standard extends ModeleExpenseReport
                     //     $nblineFollowComment = max($nbLineCommentNeed, $nbLineTypeNeed);
 					// }
 
-                    //$nexY+=$nblineFollowComment*($pdf->getFontSize()*1.3);    // Passe espace entre les lignes
-                    $nexY += ($pdf->getFontSize()*1.3);    // Passe espace entre les lignes
+                    //$nexY+=$nblineFollowComment*($pdf->getFontSize()*1.3);    // Add space between lines
+                    $nexY += ($pdf->getFontSize()*1.3);    // Add space between lines
 
 					// Detect if some page were added automatically and output _tableau for past pages
 					while ($pagenb < $pageposafter)

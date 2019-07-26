@@ -322,9 +322,7 @@ class Livraison extends CommonObject
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
 
-				/*
-				 * Lignes
-				 */
+				// Load lines
 				$result=$this->fetch_lines();
 				if ($result < 0)
 				{

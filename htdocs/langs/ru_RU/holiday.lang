@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - holiday
 HRM=Отдел кадров
-Holidays=Leave
-CPTitreMenu=Leave
+Holidays=Отпуск
+CPTitreMenu=Отпуск
 MenuReportMonth=Ежемесячная выписка
 MenuAddCP=New leave request
 NotActiveModCP=You must enable the module Leave to view this page.

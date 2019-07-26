@@ -655,9 +655,10 @@ class SupplierProposal extends CommonObject
      *  @param		array		$array_option		extrafields array
      * 	@param		string		$ref_supplier			Supplier price reference
      *	@param		int			$fk_unit			Id of the unit to use.
+	 * 	@param		double		$pu_ht_devise		Unit price in currency
      *  @return     int     		        		0 if OK, <0 if KO
      */
-    public function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $desc = '', $price_base_type = 'HT', $info_bits = 0, $special_code = 0, $fk_parent_line = 0, $skip_update_total = 0, $fk_fournprice = 0, $pa_ht = 0, $label = '', $type = 0, $array_option = 0, $ref_supplier = '', $fk_unit = '')
+    public function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $desc = '', $price_base_type = 'HT', $info_bits = 0, $special_code = 0, $fk_parent_line = 0, $skip_update_total = 0, $fk_fournprice = 0, $pa_ht = 0, $label = '', $type = 0, $array_option = 0, $ref_supplier = '', $fk_unit = '', $pu_ht_devise = 0)
     {
         global $conf,$user,$langs, $mysoc;
 
@@ -684,10 +685,17 @@ class SupplierProposal extends CommonObject
             // TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
             // la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
 
-            $localtaxes_type=getLocalTaxesFromRate($txtva, 0, $this->thirdparty, $mysoc);
-            $txtva = preg_replace('/\s*\(.*\)/', '', $txtva);  // Remove code into vatrate.
+            $localtaxes_type=getLocalTaxesFromRate($txtva, 0, $mysoc, $this->thirdparty);
 
-            $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty, $localtaxes_type, 100, $this->multicurrency_tx);
+            // Clean vat code
+            $vat_src_code='';
+            if (preg_match('/\((.*)\)/', $txtva, $reg))
+            {
+            	$vat_src_code = $reg[1];
+            	$txtva = preg_replace('/\s*\(.*\)/', '', $txtva);    // Remove code into vatrate.
+            }
+
+            $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty, $localtaxes_type, 100, $this->multicurrency_tx, $pu_ht_devise);
             $total_ht  = $tabprice[0];
             $total_tva = $tabprice[1];
             $total_ttc = $tabprice[2];
@@ -726,7 +734,9 @@ class SupplierProposal extends CommonObject
             $this->line->label				= $label;
             $this->line->desc				= $desc;
             $this->line->qty				= $qty;
-            $this->line->product_type			= $type;
+            $this->line->product_type		= $type;
+
+            $this->line->vat_src_code       = $vat_src_code;
             $this->line->tva_tx				= $txtva;
             $this->line->localtax1_tx		= $txlocaltax1;
             $this->line->localtax2_tx		= $txlocaltax2;
