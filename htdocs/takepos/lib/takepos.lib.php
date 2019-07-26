@@ -22,6 +22,7 @@
  * \brief   Library files with common functions for TakePos
  */
 
+
 /**
  * Prepare admin pages header
  *
@@ -108,8 +109,6 @@ function create_ticket($place = 0, $term = 0, $placelabel = '')
  * 	@param	int		$facid		Id of ticket =(id facture)
  *  @return	array				Data of ticket if OK, <0 if KO
  */
-
-
 function load_ticket($place = 0, $facid = 0)
 {
 	global $db,$langs,$conf;
