@@ -1880,7 +1880,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 
 		print '<table class="noborder" width="100%">';
 
-		$objectsrc->printOriginLinesList();
+		$objectsrc->printOriginLinesList('', $selectedLines);
 
 		print '</table>';
 	}
