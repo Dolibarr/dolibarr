@@ -450,8 +450,10 @@ if ($projectid) print '<input type="hidden" name="projectid" value="' . $project
 $newcardbutton='';
 $newcardbutton.= dolGetButtonTitle($langs->trans('NewTicket'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/ticket/card.php?action=create' . ($socid ? '&socid=' . $socid : '') . ($projectid ? '&origin=projet_project&originid=' . $projectid : ''), '', !empty($user->rights->ticket->write));
 
+$picto = 'title_ticket';
+if ($socid > 0) $picto = '';
 
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_ticket', 0, $newcardbutton, '', $limit);
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $picto, 0, $newcardbutton, '', $limit);
 
 if ($mode == 'mine') {
     print '<div class="opacitymedium">' . $langs->trans('TicketAssignedToMeInfos') . '</div><br>';

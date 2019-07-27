@@ -57,6 +57,8 @@ class pdf_proforma extends pdf_einstein
 	}
 
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *  Show top header of page.
 	 *
@@ -67,8 +69,9 @@ class pdf_proforma extends pdf_einstein
 	 *  @param	string		$titlekey		Translation key to show as title of document
 	 *  @return	void
 	 */
-	private function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $titlekey = "InvoiceProForma")
+	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $titlekey = "InvoiceProForma")
 	{
+		// phpcs:enable
 		global $conf,$langs,$hookmanager;
 
 		parent::_pagehead($pdf, $object, $showaddress, $outputlangs, $titlekey);

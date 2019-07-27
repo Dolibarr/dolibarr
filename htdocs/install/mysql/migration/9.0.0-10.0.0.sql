@@ -399,5 +399,8 @@ insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) v
 
 ALTER TABLE llx_ticket_extrafields ADD INDEX idx_ticket_extrafields (fk_object);
 
+-- Use special_code=3 in Takepos
+-- VMYSQL4.1 UPDATE llx_facturedet AS fd LEFT JOIN llx_facture AS f ON f.rowid = fd.fk_facture SET fd.special_code = 4 WHERE f.module_source = 'takepos' AND fd.special_code = 3;
+
 UPDATE llx_website_page set fk_user_creat = fk_user_modif WHERE fk_user_creat IS NULL and fk_user_modif IS NOT NULL;
 
