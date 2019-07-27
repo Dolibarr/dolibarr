@@ -1877,7 +1877,7 @@ class Form
 		// check parameters
 		$price_level = (! empty($price_level) ? $price_level : 0);
 		if (is_null($ajaxoptions)) $ajaxoptions=array();
-		
+
 		if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT))
 		{
 			$placeholder='';
@@ -2040,7 +2040,18 @@ class Form
 		}
 
 		$selectFields = " p.rowid, p.label, p.ref, p.description, p.barcode, p.fk_product_type, p.price, p.price_ttc, p.price_base_type, p.tva_tx, p.duration, p.fk_price_expression";
-		(count($warehouseStatusArray)) ? $selectFieldsGrouped = ", sum(ps.reel) as stock" : $selectFieldsGrouped = ", p.stock";
+		//(count($warehouseStatusArray)) ? $selectFieldsGrouped = ", sum(ps.reel) as stock" : $selectFieldsGrouped = ", p.stock";
+
+		if (count($warehouseStatusArray))
+		{
+			$selectFieldsGrouped = ", (SELECT sum(ps.reel) FROM ".MAIN_DB_PREFIX."product_stock as ps, ".MAIN_DB_PREFIX."entrepot as e";
+			$selectFieldsGrouped.= " WHERE ps.fk_product = p.rowid AND ps.fk_entrepot = e.rowid AND e.entity IN (".getEntity('stock').")";
+			$selectFieldsGrouped.= " AND (p.fk_product_type = 1 OR e.statut IN (".$this->db->escape(implode(',',$warehouseStatusArray))."))) as stock";
+		}
+		else
+		{
+			$selectFieldsGrouped = ", p.stock";
+		}
 
 		$sql = "SELECT ";
 		$sql.= $selectFields . $selectFieldsGrouped;
@@ -2072,11 +2083,11 @@ class Form
 			$selectFields.= ", price_rowid, price_by_qty";
 		}
 		$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
-		if (count($warehouseStatusArray))
+		/*if (count($warehouseStatusArray))
 		{
-			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps on ps.fk_product = p.rowid";
-			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."entrepot as e on ps.fk_entrepot = e.rowid";
-		}
+			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON ps.fk_product = p.rowid";
+			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."entrepot as e ON ps.fk_entrepot = e.rowid AND e.entity IN (".getEntity('stock').")";
+		}*/
 
 		// include search in supplier ref
 		if(!empty($conf->global->MAIN_SEARCH_PRODUCT_BY_FOURN_REF))
@@ -2099,10 +2110,10 @@ class Form
 		}
 
 		$sql.= ' WHERE p.entity IN ('.getEntity('product').')';
-		if (count($warehouseStatusArray))
+		/*if (count($warehouseStatusArray))
 		{
 			$sql.= ' AND (p.fk_product_type = 1 OR e.statut IN ('.$this->db->escape(implode(',',$warehouseStatusArray)).'))';
-		}
+		}*/
 
 		if (!empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD)) {
 			$sql .= " AND pac.rowid IS NULL";
@@ -2462,14 +2473,15 @@ class Form
 			$outtva_tx=$objp->tva_tx;
 		}
 
-		if (! empty($conf->stock->enabled) && isset($objp->stock) && $objp->fk_product_type == 0)
+		if (! empty($conf->stock->enabled) && $objp->fk_product_type == 0)
 		{
-			$opt.= ' - '.$langs->trans("Stock").':'.$objp->stock;
+			$stock = (isset($objp->stock) ? $objp->stock : 0);
+			$opt.= ' - '.$langs->trans("Stock").':'.$stock;
 
-			if ($objp->stock > 0) {
-				$outval.= ' - <span class="product_line_stock_ok">'.$langs->transnoentities("Stock").':'.$objp->stock.'</span>';
-			}elseif ($objp->stock <= 0) {
-				$outval.= ' - <span class="product_line_stock_too_low">'.$langs->transnoentities("Stock").':'.$objp->stock.'</span>';
+			if ($stock > 0) {
+				$outval.= ' - <span class="product_line_stock_ok">'.$langs->transnoentities("Stock").':'.$stock.'</span>';
+			}elseif ($stock <= 0) {
+				$outval.= ' - <span class="product_line_stock_too_low">'.$langs->transnoentities("Stock").':'.$stock.'</span>';
 			}
 		}
 
