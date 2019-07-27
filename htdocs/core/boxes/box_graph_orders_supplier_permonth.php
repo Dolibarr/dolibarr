@@ -146,7 +146,8 @@ class box_graph_orders_supplier_permonth extends ModeleBoxes
 					$i=$startyear;$legend=array();
 					while ($i <= $endyear)
 					{
-						if ($startmonth != 0) {
+						if ($startmonth != 0)
+						{
 							$legend[]=sprintf("%d/%d",$i-2001, $i-2000);
 						}
 						else
@@ -188,7 +189,8 @@ class box_graph_orders_supplier_permonth extends ModeleBoxes
 					$i=$startyear;$legend=array();
 					while ($i <= $endyear)
 					{
-						if ($startmonth != 0) {
+						if ($startmonth != 0)
+						{
 							$legend[]=sprintf("%d/%d",$i-2001, $i-2000);
 						}
 						else
