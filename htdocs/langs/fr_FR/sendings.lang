@@ -60,6 +60,8 @@ NoProductToShipFoundIntoStock=Aucun produit à expédier n'a été trouver dans 
 WeightVolShort=Poids/vol.
 ValidateOrderFirstBeforeShipment=Vous devez d'abord valider la commande pour pouvoir créer une expédition.
 
+ShipmentIncrementStockOnDelete=Remettre en stock les éléments de cette expédition
+
 # Sending methods
 # ModelDocument
 DocumentModelTyphon=Modèle de bon de réception/livraison complet (logo…)

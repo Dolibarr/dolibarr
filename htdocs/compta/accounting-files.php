@@ -26,13 +26,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/paymentsalary.class.php';
+require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 
-$langs->loadLangs(array("accountancy", "bills", "companies", "salaries"));
+$langs->loadLangs(array("accountancy", "bills", "companies", "salaries", "compta"));
 
 $date_start =GETPOST('date_start', 'alpha');
 $date_startDay= GETPOST('date_startday', 'int');
@@ -503,9 +503,9 @@ if (!empty($date_start) && !empty($date_stop))
             print '<td></td>';
             print '<td></td>';
             print '<td></td>';
-            print '<td align="right">'.price($totalET).'</td>';
-            print '<td align="right">'.price($totalIT).'</td>';
-            print '<td align="right">'.price($totalVAT).'</td>';
+            print '<td align="right">'.price(price2num($totalET, 'MT')).'</td>';
+            print '<td align="right">'.price(price2num($totalIT, 'MT')).'</td>';
+            print '<td align="right">'.price(price2num($totalVAT, 'MT')).'</td>';
             print '<td></td>';
             print '<td></td>';
             print '<td></td>';

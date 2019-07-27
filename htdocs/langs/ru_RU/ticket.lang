@@ -18,7 +18,7 @@
 # Generic
 #
 
-Module56000Name=Tickets
+Module56000Name=Заявки
 Module56000Desc=Ticket system for issue or request management
 
 Permission56001=See tickets
@@ -56,7 +56,7 @@ OriginEmail=Email source
 Notify_TICKET_SENTBYMAIL=Send ticket message by email
 
 # Status
-NotRead=Not read
+NotRead=Не прочитано
 Read=Читать
 Assigned=Assigned
 InProgress=Выполняется
@@ -68,7 +68,7 @@ Deleted=Deleted
 
 # Dict
 Type=Тип
-Category=Analytic code
+Category=Аналитический код
 Severity=Severity
 
 # Email templates
@@ -150,7 +150,7 @@ CreatedBy=Created by
 NewTicket=New Ticket
 SubjectAnswerToTicket=Ticket answer
 TicketTypeRequest=Request type
-TicketCategory=Analytic code
+TicketCategory=Аналитический код
 SeeTicket=See ticket
 TicketMarkedAsRead=Ticket has been marked as read
 TicketReadOn=Read on

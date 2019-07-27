@@ -572,8 +572,8 @@ class ExpenseReport extends CommonObject
 		$this->db->begin();
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."expensereport";
-        $sql.= " SET fk_statut = 6, paid=1";
-        $sql.= " WHERE rowid = ".$id." AND fk_statut = 5";
+        $sql.= " SET fk_statut = ".self::STATUS_CLOSED.", paid=1";
+        $sql.= " WHERE rowid = ".$id." AND fk_statut = ".self::STATUS_APPROVED;
 
         dol_syslog(get_class($this)."::set_paid sql=".$sql, LOG_DEBUG);
         $resql=$this->db->query($sql);
@@ -1132,11 +1132,10 @@ class ExpenseReport extends CommonObject
         $resql=$this->db->query($sql);
         if ($resql)
         {
-			if (!$notrigger)
+			if (! $error && ! $notrigger)
 			{
 				// Call trigger
 				$result=$this->call_trigger('EXPENSE_REPORT_VALIDATE', $fuser);
-
 				if ($result < 0) {
 					$error++;
 				}
@@ -1160,7 +1159,7 @@ class ExpenseReport extends CommonObject
 					$dirdest = $conf->expensereport->dir_output.'/'.$newref;
 					if (file_exists($dirsource))
 					{
-					    dol_syslog(get_class($this)."::valid() rename dir ".$dirsource." into ".$dirdest);
+					    dol_syslog(get_class($this)."::setValidate() rename dir ".$dirsource." into ".$dirdest);
 
 					    if (@rename($dirsource, $dirdest))
 					    {

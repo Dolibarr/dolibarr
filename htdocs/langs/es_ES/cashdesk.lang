@@ -68,4 +68,4 @@ Terminal=Terminal
 NumberOfTerminals=Número de terminales
 TerminalSelect=Seleccione el terminal que desea usar:
 POSTicket=Ticket POS
-BasicPhoneLayout=Use basic layout for phones
+BasicPhoneLayout=Utilizar diseño básico para teléfonos.

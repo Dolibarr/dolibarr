@@ -21,6 +21,11 @@
  * For Paypal test: https://developer.paypal.com/
  * For Paybox test: ???
  * For Stripe test: Use credit card 4242424242424242 .More example on https://stripe.com/docs/testing
+ *
+ * Variants:
+ * - When option STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION is on, we use the new checkout API
+ * - When option STRIPE_USE_NEW_CHECKOUT is on, we use the new checkout API
+ * - If no option set, we use old APIS (charge)
  */
 
 /**
@@ -2099,7 +2104,7 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
     		else
     		{
     		?>
-    		// Code for payment with option STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION off and STRIPE_USE_NEW_CHECKOUT off
+    		// Old code for payment with option STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION off and STRIPE_USE_NEW_CHECKOUT off
 
     	    // Create a Stripe client.
     	    var stripe = Stripe('<?php echo $stripearrayofkeys['publishable_key']; // Defined into config.php ?>');

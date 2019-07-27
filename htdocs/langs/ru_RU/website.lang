@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - website
 Shortname=Код
 WebsiteSetupDesc=Create here the websites you wish to use. Then go into menu Websites to edit them.
-DeleteWebsite=Delete website
+DeleteWebsite=Удалить сайт
 ConfirmDeleteWebsite=Are you sure you want to delete this web site? All its pages and content will also be removed.
 WEBSITE_TYPE_CONTAINER=Type of page/container
 WEBSITE_PAGE_EXAMPLE=Web page to use as example
@@ -70,7 +70,7 @@ IDOfPage=Id of page
 Banner=Banner
 BlogPost=Blog post
 WebsiteAccount=Website account
-WebsiteAccounts=Website accounts
+WebsiteAccounts=Аккаунты сайта
 AddWebsiteAccount=Create web site account
 BackToListOfThirdParty=Back to list for Third Party
 DisableSiteFirst=Disable website first
@@ -98,7 +98,7 @@ NoWebSiteCreateOneFirst=No website has been created yet. Create one first.
 GoTo=Go to
 DynamicPHPCodeContainsAForbiddenInstruction=You add dynamic PHP code that contains the PHP instruction '<strong>%s</strong>' that is forbidden by default as dynamic content (see hidden options WEBSITE_PHP_ALLOW_xxx to increase list of allowed commands).
 NotAllowedToAddDynamicContent=You don't have permission to add or edit PHP dynamic content in websites. Ask permission or just keep code into php tags unmodified.
-ReplaceWebsiteContent=Replace website content
+ReplaceWebsiteContent=Search or Replace website content
 DeleteAlsoJs=Delete also all javascript files specific to this website?
 DeleteAlsoMedias=Delete also all medias files specific to this website?
 # Export

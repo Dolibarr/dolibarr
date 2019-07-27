@@ -639,7 +639,7 @@ if (empty($reshook))
 			try {
 				if (preg_match('/pm_/', $source))
 					{
-            		$payment_method = \Stripe\PaymentMethod::retrieve($source, ["stripe_account" => $stripeacc]);
+            		$payment_method = \Stripe\PaymentMethod::retrieve($source, array("stripe_account" => $stripeacc));
 					if ($payment_method)
 				    {
 					  $payment_method->detach();
@@ -778,40 +778,39 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		if ($conf->facture->enabled && $user->rights->facture->lire) $elementTypeArray['invoice']=$langs->transnoentitiesnoconv('Invoices');
 		if ($conf->contrat->enabled && $user->rights->contrat->lire) $elementTypeArray['contract']=$langs->transnoentitiesnoconv('Contracts');
 
-	if (! empty($conf->stripe->enabled))
-	{
-		$permissiontowrite = $user->rights->societe->creer;
-		// Stripe customer key 'cu_....' stored into llx_societe_account
-		print '<tr><td class="titlefield">';
-		//print $langs->trans('StripeCustomerId');
-		print $form->editfieldkey("StripeCustomerId", 'key_account', $stripecu, $object, $permissiontowrite, 'string', '', 0, 2, 'socid');
-		print '</td><td>';
-		//print $stripecu;
-		print $form->editfieldval("StripeCustomerId", 'key_account', $stripecu, $object, $permissiontowrite, 'string', '', null, null, '', 2, '', 'socid');
-		if (! empty($conf->stripe->enabled) && $stripecu && $action != 'editkey_account')
+		if (! empty($conf->stripe->enabled))
 		{
-		    $connect='';
-			if (!empty($stripeacc)) $connect=$stripeacc.'/';
-			$url='https://dashboard.stripe.com/'.$connect.'test/customers/'.$stripecu;
-			if ($servicestatus)
+			$permissiontowrite = $user->rights->societe->creer;
+			// Stripe customer key 'cu_....' stored into llx_societe_account
+			print '<tr><td class="titlefield">';
+			//print $langs->trans('StripeCustomerId');
+			print $form->editfieldkey("StripeCustomerId", 'key_account', $stripecu, $object, $permissiontowrite, 'string', '', 0, 2, 'socid');
+			print '</td><td>';
+			//print $stripecu;
+			print $form->editfieldval("StripeCustomerId", 'key_account', $stripecu, $object, $permissiontowrite, 'string', '', null, null, '', 2, '', 'socid');
+			if (! empty($conf->stripe->enabled) && $stripecu && $action != 'editkey_account')
 			{
-				$url='https://dashboard.stripe.com/'.$connect.'customers/'.$stripecu;
+			    $connect='';
+				if (!empty($stripeacc)) $connect=$stripeacc.'/';
+				$url='https://dashboard.stripe.com/'.$connect.'test/customers/'.$stripecu;
+				if ($servicestatus)
+				{
+					$url='https://dashboard.stripe.com/'.$connect.'customers/'.$stripecu;
+				}
+				print ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe'), 'object_globe').'</a>';
 			}
-			print ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe'), 'object_globe').'</a>';
+			print '</td><td class="right">';
+			if (empty($stripecu))
+			{
+				print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+				print '<input type="hidden" name="action" value="synccustomertostripe">';
+				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				print '<input type="hidden" name="socid" value="'.$object->id.'">';
+				print '<input type="submit" class="button" name="syncstripecustomer" value="'.$langs->trans("CreateCustomerOnStripe").'">';
+				print '</form>';
+			}
+			print '</td></tr>';
 		}
-		print '</td><td class="right">';
-		if (empty($stripecu))
-		{
-			print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-			print '<input type="hidden" name="action" value="synccustomertostripe">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			print '<input type="hidden" name="socid" value="'.$object->id.'">';
-			print '<input type="hidden" name="companybankid" value="'.$rib->id.'">';
-			print '<input type="submit" class="button" name="syncstripecustomer" value="'.$langs->trans("CreateCustomerOnStripe").'">';
-			print '</form>';
-		}
-		print '</td></tr>';
-	}
     }
 
 	print '</table>';
@@ -1208,8 +1207,8 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		print_liste_field_titre("BIC");
 		if (! empty($conf->prelevement->enabled))
 		{
-			print print_liste_field_titre("RUM");
-			print print_liste_field_titre("WithdrawMode");
+			print_liste_field_titre("RUM");
+			print_liste_field_titre("WithdrawMode");
 		}
 		print_liste_field_titre("DefaultRIB", '', '', '', '', '', '', '', 'center ');
 		print_liste_field_titre('', '', '', '', '', '', '', '', 'center ');
