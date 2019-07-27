@@ -39,10 +39,12 @@ abstract class Stats
 	 * @param 	int		$endyear		Start year
 	 * @param 	int		$startyear		End year
 	 * @param	int		$cachedelay		Delay we accept for cache file (0=No read, no save of cache, -1=No read but save)
-     *	@param	int		$format			0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
-	 * @return 	array					Array of values
+     * @param	int		$format			0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
+	 * @param   int 		$startmonth		month of the fiscal year start minus 1; 0=january
+     * @return 	array					Array of values
+
 	 */
-	public function getNbByMonthWithPrevYear($endyear, $startyear, $cachedelay = 0, $format = 0)
+	public function getNbByMonthWithPrevYear($endyear, $startyear, $cachedelay = 0, $format = 0, $startmonth=0)
 	{
 		global $conf,$user,$langs;
 
@@ -86,6 +88,10 @@ abstract class Stats
 		else
 		{
 			$year=$startyear;
+			if (empty($conf->global->GRAPH_USE_FISCAL_YEAR)) {
+				$startmonth = 0;
+			}
+			if ($startmonth != 0) $year = $year - 1;
 			while ($year <= $endyear)
 			{
 				$datay[$year] = $this->getNbByMonth($year, $format);
@@ -96,11 +102,11 @@ abstract class Stats
 
 			for ($i = 0 ; $i < 12 ; $i++)
 			{
-				$data[$i][]=$datay[$endyear][$i][0];
+				$data[$i][]=$datay[$endyear][($i+$startmonth)%12][0];
 				$year=$startyear;
 				while($year <= $endyear)
 				{
-					$data[$i][]=$datay[$year][$i][1];
+					$data[$i][]=$datay[$year - (1 - (int)(($i+$startmonth)/12)) + ($startmonth == 0 ? 1 : 0)][($i+$startmonth)%12][1];
 					$year++;
 				}
 			}
@@ -134,9 +140,10 @@ abstract class Stats
 	 * @param	int		$startyear		End year
 	 * @param	int		$cachedelay		Delay we accept for cache file (0=No read, no save of cache, -1=No read but save)
      * @param	int		$format			0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
+	 * @param   int 	$startmonth		month of the fiscal year start minus 1; 0=january
 	 * @return 	array					Array of values
 	 */
-	public function getAmountByMonthWithPrevYear($endyear, $startyear, $cachedelay = 0, $format = 0)
+	public function getAmountByMonthWithPrevYear($endyear, $startyear, $cachedelay = 0, $format = 0, $startmonth=0)
 	{
 		global $conf,$user,$langs;
 
@@ -181,6 +188,10 @@ abstract class Stats
         else
 		{
 			$year=$startyear;
+			if (empty($conf->global->GRAPH_USE_FISCAL_YEAR)) {
+				$startmonth = 0;
+			}
+			if ($startmonth != 0) $year = $year - 1;
 			while($year <= $endyear)
 			{
 				$datay[$year] = $this->getAmountByMonth($year, $format);
@@ -191,11 +202,11 @@ abstract class Stats
 			// $data = array('xval'=>array(0=>xlabel,1=>yval1,2=>yval2...),...)
 			for ($i = 0 ; $i < 12 ; $i++)
 			{
-				$data[$i][]=$datay[$endyear][$i][0];	// set label
+				$data[$i][]=$datay[$endyear][($i+$startmonth)%12][0];	// set label
 				$year=$startyear;
 				while($year <= $endyear)
 				{
-					$data[$i][]=$datay[$year][$i][1];	// set yval for x=i
+					$data[$i][]=$datay[$year - (1 - (int)(($i+$startmonth)/12)) + ($startmonth == 0 ? 1 : 0)][($i+$startmonth)%12][1];	// set yval for x=i
 					$year++;
 				}
 			}
