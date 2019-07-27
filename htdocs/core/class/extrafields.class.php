@@ -1411,7 +1411,7 @@ class ExtraFields
                         // current object id can be use into filter
                         if (strpos($InfoFieldList[4], '$ID$') !== false && !empty($objectid)) {
                             $InfoFieldList[4] = str_replace('$ID$', $objectid, $InfoFieldList[4]);
-                        } elseif (preg_match("#^.*list.php$#", $_SERVER["DOCUMENT_URI"])) {
+                        } elseif (preg_match("#^.*list.php$#", $_SERVER["PHP_SELF"])) {
                             // Pattern for word=$ID$
                             $word = '\b[a-zA-Z0-9-\.-_]+\b=\$ID\$';
 
