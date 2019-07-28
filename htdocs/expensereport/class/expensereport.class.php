@@ -1181,7 +1181,6 @@ class ExpenseReport extends CommonObject
 					        }
 					    }
 					}
-
 				}
 			}
 
