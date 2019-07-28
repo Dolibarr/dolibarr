@@ -157,7 +157,7 @@ if (empty($reshook))
 			$companybankaccount->owner_address   = GETPOST('owner_address', 'alpha');
 			$companybankaccount->frstrecur       = GETPOST('frstrecur', 'alpha');
 			$companybankaccount->rum             = GETPOST('rum', 'alpha');
-			$companybankaccount->date_rum        = dol_mktime(0,0,0, GETPOST('date_rummonth'),GETPOST('date_rumday'),GETPOST('date_rumyear'));
+			$companybankaccount->date_rum        = dol_mktime(0, 0, 0, GETPOST('date_rummonth'), GETPOST('date_rumday'), GETPOST('date_rumyear'));
 			if (empty($companybankaccount->rum))
 			{
 				$companybankaccount->rum = $prelevement->buildRumNumber($object->code_client, $companybankaccount->datec, $companybankaccount->id);
@@ -272,7 +272,7 @@ if (empty($reshook))
 			$companybankaccount->owner_address   = GETPOST('owner_address', 'alpha');
 			$companybankaccount->frstrecur       = GETPOST('frstrecur');
 			$companybankaccount->rum             = GETPOST('rum', 'alpha');
-			$companybankaccount->date_rum        = dol_mktime(0,0,0, GETPOST('date_rummonth'),GETPOST('date_rumday'),GETPOST('date_rumyear'));
+			$companybankaccount->date_rum        = dol_mktime(0, 0, 0, GETPOST('date_rummonth'), GETPOST('date_rumday'), GETPOST('date_rumyear'));
 			$companybankaccount->datec			 = dol_now();
 			$companybankaccount->status          = 1;
 
@@ -1536,7 +1536,7 @@ if ($socid && $action == 'edit' && $user->rights->societe->creer)
 		print '<td><input class="minwidth300" type="text" name="rum" value="'.dol_escape_htmltag($companybankaccount->rum).'"></td></tr>';
 
 		print '<tr><td class="titlefield">'.$langs->trans("DateRUM").'</td>';
-		print '<td>'.$form->selectDate(GETPOST('date_rum')?GETPOST('date_rum'):$companybankaccount->date_rum, 'date_rum', 0,0,1, 'date_rum').'</td></tr>';
+		print '<td>'.$form->selectDate(GETPOST('date_rum')?GETPOST('date_rum'):$companybankaccount->date_rum, 'date_rum', 0, 0, 1, 'date_rum').'</td></tr>';
 
 		print '<tr><td>'.$langs->trans("WithdrawMode").'</td><td>';
 		$tblArraychoice = array("FRST" => $langs->trans("FRST"), "RECUR" => $langs->trans("RECUR"));
