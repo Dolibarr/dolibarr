@@ -1484,16 +1484,20 @@ class SupplierProposal extends CommonObject
                 // Rename directory if dir was a temporary ref
                 if (preg_match('/^[\(]?PROV/i', $this->ref))
                 {
-                    // Rename of propal directory ($this->ref = old ref, $num = new ref)
-                    // to  not lose the linked files
-                    $oldref = dol_sanitizeFileName($this->ref);
+                	// Now we rename also files into index
+                	$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->newref."', SUBSTR(filename, ".(strlen($this->ref)+1).")), filepath = 'supplier_proposal/".$this->newref."'";
+                	$sql.= " WHERE filename LIKE '".$this->ref."%' AND filepath = 'supplier_proposal/".$this->ref."' and entity = ".$conf->entity;
+                	$resql = $this->db->query($sql);
+                	if (! $resql) { $error++; $this->error = $this->db->lasterror(); }
+
+                	// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
+                	$oldref = dol_sanitizeFileName($this->ref);
                     $newref = dol_sanitizeFileName($num);
                     $dirsource = $conf->supplier_proposal->dir_output.'/'.$oldref;
                     $dirdest = $conf->supplier_proposal->dir_output.'/'.$newref;
-
-                    if (file_exists($dirsource))
+                    if (! $error && file_exists($dirsource))
                     {
-                        dol_syslog(get_class($this)."::validate rename dir ".$dirsource." into ".$dirdest);
+                        dol_syslog(get_class($this)."::valid rename dir ".$dirsource." into ".$dirdest);
                         if (@rename($dirsource, $dirdest))
                         {
                             dol_syslog("Rename ok");
