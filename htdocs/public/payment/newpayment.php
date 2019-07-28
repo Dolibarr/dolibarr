@@ -461,47 +461,51 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 					$error++;
 					dol_syslog('Failed to get/create stripe customer for thirdparty id = '.$thirdparty_id.' and servicestatus = '.$servicestatus.': '.$stripe->error, LOG_ERR, 0, '_stripe');
 					setEventMessages('Failed to get/create stripe customer for thirdparty id = '.$thirdparty_id.' and servicestatus = '.$servicestatus.': '.$stripe->error, null, 'errors');
+					$action='';
 				}
 
     			// Create Stripe card from Token
-    			if ($savesource) {
-    				$card = $customer->sources->create(array("source" => $stripeToken, "metadata" => $metadata));
-    			} else {
-    				$card = $stripeToken;
-    			}
-
-    			if (empty($card))
+    			if (! $error)
     			{
-    				$error++;
-    				dol_syslog('Failed to create card record', LOG_WARNING, 0, '_stripe');
-    				setEventMessages('Failed to create card record', null, 'errors');
-    				$action='';
-    			}
-    			else
-    			{
-    				if (! empty($FULLTAG))       $metadata["FULLTAG"] = $FULLTAG;
-    				if (! empty($dol_id))        $metadata["dol_id"] = $dol_id;
-    				if (! empty($dol_type))      $metadata["dol_type"] = $dol_type;
+	    			if ($savesource) {
+	    				$card = $customer->sources->create(array("source" => $stripeToken, "metadata" => $metadata));
+	    			} else {
+	    				$card = $stripeToken;
+	    			}
 
-    				dol_syslog("Create charge on card ".$card->id, LOG_DEBUG, 0, '_stripe');
-    				$charge = \Stripe\Charge::create(array(
-    					'amount'   => price2num($amountstripe, 'MU'),
-    					'currency' => $currency,
-    					'capture'  => true,							// Charge immediatly
-    					'description' => 'Stripe payment: '.$FULLTAG.' ref='.$ref,
-    					'metadata' => $metadata,
-    					'customer' => $customer->id,
-    					'source' => $card,
-    				    'statement_descriptor' => dol_trunc($FULLTAG, 10, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt (company + description)
-    				), array("idempotency_key" => "$FULLTAG", "stripe_account" => "$stripeacc"));
-    				// Return $charge = array('id'=>'ch_XXXX', 'status'=>'succeeded|pending|failed', 'failure_code'=>, 'failure_message'=>...)
-    				if (empty($charge))
-    				{
-    					$error++;
-    					dol_syslog('Failed to charge card', LOG_WARNING, 0, '_stripe');
-    					setEventMessages('Failed to charge card', null, 'errors');
-    					$action='';
-    				}
+	    			if (empty($card))
+	    			{
+	    				$error++;
+	    				dol_syslog('Failed to create card record', LOG_WARNING, 0, '_stripe');
+	    				setEventMessages('Failed to create card record', null, 'errors');
+	    				$action='';
+	    			}
+	    			else
+	    			{
+	    				if (! empty($FULLTAG))       $metadata["FULLTAG"] = $FULLTAG;
+	    				if (! empty($dol_id))        $metadata["dol_id"] = $dol_id;
+	    				if (! empty($dol_type))      $metadata["dol_type"] = $dol_type;
+
+	    				dol_syslog("Create charge on card ".$card->id, LOG_DEBUG, 0, '_stripe');
+	    				$charge = \Stripe\Charge::create(array(
+	    					'amount'   => price2num($amountstripe, 'MU'),
+	    					'currency' => $currency,
+	    					'capture'  => true,							// Charge immediatly
+	    					'description' => 'Stripe payment: '.$FULLTAG.' ref='.$ref,
+	    					'metadata' => $metadata,
+	    					'customer' => $customer->id,
+	    					'source' => $card,
+	    				    'statement_descriptor' => dol_trunc($FULLTAG, 10, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt (company + description)
+	    				), array("idempotency_key" => "$FULLTAG", "stripe_account" => "$stripeacc"));
+	    				// Return $charge = array('id'=>'ch_XXXX', 'status'=>'succeeded|pending|failed', 'failure_code'=>, 'failure_message'=>...)
+	    				if (empty($charge))
+	    				{
+	    					$error++;
+	    					dol_syslog('Failed to charge card', LOG_WARNING, 0, '_stripe');
+	    					setEventMessages('Failed to charge card', null, 'errors');
+	    					$action='';
+	    				}
+	    			}
     			}
     		}
     		else
