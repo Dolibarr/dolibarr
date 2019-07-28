@@ -278,6 +278,8 @@ if ($nolinesbefore) {
 
 		    $form->select_produits_fournisseurs($object->socid, GETPOST('idprodfournprice'), 'idprodfournprice', '', '', $ajaxoptions, 1, $alsoproductwithnosupplierprice, 'maxwidth300');
             ?>
+            <!-- FIXME -->
+            <!--
             <script type="text/javascript">
 
                 $(document).ready(function(){
@@ -291,6 +293,7 @@ if ($nolinesbefore) {
 
                 });
             </script>
+            -->
             <?php
 		}
 		echo '<input type="hidden" name="pbq" id="pbq" value="">';
