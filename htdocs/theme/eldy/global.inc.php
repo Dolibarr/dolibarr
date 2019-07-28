@@ -147,6 +147,9 @@ input.buttonpayment, button.buttonpayment, div.buttonpayment {
 	color: #fff;
 	border-radius: 4px;
 }
+div.buttonpayment input:focus {
+    color: #008;
+}
 .buttonpaymentsmall {
 	font-size: 0.65em;
 	padding-left: 5px;

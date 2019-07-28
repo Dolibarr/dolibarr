@@ -1687,26 +1687,51 @@ if ($action != 'dopayment')
 			if ((empty($paymentmethod) || $paymentmethod == 'paybox') && ! empty($conf->paybox->enabled))
 			{
 				// If STRIPE_PICTO_FOR_PAYMENT is 'cb' we show a picto of a crdit card instead of paybox
-				print '<br><div class="button buttonpayment"><span class="fa fa-credit-card"></span> <input class="" type="submit" name="dopayment_paybox" value="'.$langs->trans("PayBoxDoPayment").'">';
+				print '<br><div class="button buttonpayment" id="div_dopayment_paybox"><span class="fa fa-credit-card"></span> <input class="" type="submit" id="dopayment_paybox" name="dopayment_paybox" value="'.$langs->trans("PayBoxDoPayment").'">';
 				print '<br>';
 				print '<span class="buttonpaymentsmall">'.$langs->trans("CreditOrDebitCard").'</span>';
 				print '</div>';
+				print '<script>
+						$( document ).ready(function() {
+							$("#div_dopayment_paybox").click(function(){
+								$("#dopayment_paybox").click();
+							});
+							$("#dopayment_paybox").click(function(e){
+								$("#div_dopayment_paybox").css( \'cursor\', \'wait\' );
+							    e.stopPropagation();
+							});
+						});
+					  </script>
+				';
 			}
 
 			if ((empty($paymentmethod) || $paymentmethod == 'stripe') && ! empty($conf->stripe->enabled))
 			{
 				// If STRIPE_PICTO_FOR_PAYMENT is 'cb' we show a picto of a crdit card instead of stripe
-				print '<br><div class="button buttonpayment"><span class="fa fa-credit-card"></span> <input class="" type="submit" name="dopayment_stripe" value="'.$langs->trans("StripeDoPayment").'">';
+				print '<br><div class="button buttonpayment" id="div_dopayment_stripe"><span class="fa fa-credit-card"></span> <input class="" type="submit" id="dopayment_stripe" name="dopayment_stripe" value="'.$langs->trans("StripeDoPayment").'">';
 				print '<br>';
 				print '<span class="buttonpaymentsmall">'.$langs->trans("CreditOrDebitCard").'</span>';
 				print '</div>';
+				print '<script>
+						$( document ).ready(function() {
+							$("#div_dopayment_stripe").click(function(){
+								$("#dopayment_stripe").click();
+							});
+							$("#dopayment_stripe").click(function(e){
+								$("#div_dopayment_stripe").css( \'cursor\', \'wait\' );
+							    e.stopPropagation();
+								return true;
+							});
+						});
+					  </script>
+				';
 			}
 
 			if ((empty($paymentmethod) || $paymentmethod == 'paypal') && ! empty($conf->paypal->enabled))
 			{
 				if (empty($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY)) $conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY='integral';
 
-				print '<br><div class="button buttonpayment"><span class="fa fa-paypal"></span> <input class="" type="submit" name="dopayment_paypal" value="'.$langs->trans("PaypalDoPayment").'">';
+				print '<br><div class="button buttonpayment" id="div_dopayment_paypal"><span class="fa fa-paypal"></span> <input class="" type="submit" id="dopayment_paypal" name="dopayment_paypal" value="'.$langs->trans("PaypalDoPayment").'">';
 				if ($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY == 'integral')
 				{
 					print '<br>';
@@ -1718,6 +1743,19 @@ if ($action != 'dopayment')
 					//print '<br><span class="buttonpaymentsmall">'.$langs->trans("PaypalAccount").'"></span>';
 				}
 				print '</div>';
+				print '<script>
+						$( document ).ready(function() {
+							$("#div_dopayment_paypal").click(function(){
+								$("#dopayment_paypal").click();
+							});
+							$("#dopayment_paypal").click(function(e){
+								$("#div_dopayment_paypal").css( \'cursor\', \'wait\' );
+							    e.stopPropagation();
+								return true;
+							});
+						});
+					  </script>
+				';
 			}
 		}
 	}
