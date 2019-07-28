@@ -194,7 +194,7 @@ if (empty($conf->stripeconnect->enabled))
 	print '</td><td></td></tr>';
 
 	print '<tr class="oddeven"><td>';
-	print '<span class="titlefield fieldrequired">'.$langs->trans("STRIPE_TEST_WEBHOOK_KEY").'</span></td><td>';
+	print '<span class="titlefield">'.$langs->trans("STRIPE_TEST_WEBHOOK_KEY").'</span></td><td>';
 	if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 	    print '<input class="minwidth300" type="text" name="STRIPE_TEST_WEBHOOK_ID" value="'.$conf->global->STRIPE_TEST_WEBHOOK_ID.'">';
       print ' &nbsp; '.$langs->trans("Example").': we_xxxxxxxxxxxxxxxxxxxxxxxx<br>';
@@ -267,7 +267,7 @@ if (empty($conf->stripeconnect->enabled))
 	print '</td><td></td></tr>';
 
 	print '<tr class="oddeven"><td>';
-	print '<span class="titlefield fieldrequired">'.$langs->trans("STRIPE_LIVE_WEBHOOK_KEY").'</span></td><td>';
+	print '<span class="titlefield">'.$langs->trans("STRIPE_LIVE_WEBHOOK_KEY").'</span></td><td>';
 	if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
       print '<input class="minwidth300" type="text" name="STRIPE_LIVE_WEBHOOK_ID" value="'.$conf->global->STRIPE_LIVE_WEBHOOK_ID.'">';
       print ' &nbsp; '.$langs->trans("Example").': we_xxxxxxxxxxxxxxxxxxxxxxxx<br>';
