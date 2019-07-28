@@ -148,7 +148,7 @@ class box_graph_invoices_supplier_permonth extends ModeleBoxes
 					{
 						if ($startmonth != 0)
 						{
-							$legend[]=sprintf("%d/%d",$i-2001, $i-2000);
+							$legend[]=sprintf("%d/%d", $i-2001, $i-2000);
 						}
 						else
 						{
@@ -193,7 +193,7 @@ class box_graph_invoices_supplier_permonth extends ModeleBoxes
 					{
 						if ($startmonth != 0)
 						{
-							$legend[]=sprintf("%d/%d",$i-2001, $i-2000);
+							$legend[]=sprintf("%d/%d", $i-2001, $i-2000);
 						}
 						else
 						{

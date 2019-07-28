@@ -149,7 +149,7 @@ class box_graph_propales_permonth extends ModeleBoxes
 					{
 						if ($startmonth != 0)
 						{
-							$legend[]=sprintf("%d/%d",$i-2001, $i-2000);
+							$legend[]=sprintf("%d/%d", $i-2001, $i-2000);
 						}
 						else
 						{
