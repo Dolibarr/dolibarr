@@ -430,7 +430,7 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
     			'dol_version' => DOL_VERSION,
     			'dol_entity'  => $conf->entity,
     			'dol_company' => $mysoc->name,		// Usefull when using multicompany
-    			'dol_tax_num' => $taxinfo,
+    			'dol_tax_num' => $vatnumber,
     		    'ipaddress'=> getUserRemoteIP()
     		);
 
@@ -455,7 +455,13 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
     			include_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
     			$stripe = new Stripe($db);
                 $stripeacc = $stripe->getStripeAccount($service);
-    			$customer = $stripe->customerStripe($thirdparty, $stripeacc, $servicestatus, 1);
+                $customer = $stripe->customerStripe($thirdparty, $stripeacc, $servicestatus, 1);
+				if (empty($customer))
+				{
+					$error++;
+					dol_syslog('Failed to get/create stripe customer for thirdparty id = '.$thirdparty_id.' and servicestatus = '.$servicestatus.': '.$stripe->error, LOG_ERROR, 0, '_stripe');
+					setEventMessages('Failed to get/create stripe customer for thirdparty id = '.$thirdparty_id.' and servicestatus = '.$servicestatus.': '.$stripe->error, null, 'errors');
+				}
 
     			// Create Stripe card from Token
     			if ($savesource) {

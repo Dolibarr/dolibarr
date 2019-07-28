@@ -177,6 +177,7 @@ class Stripe extends CommonObject
 				}
 				catch(Exception $e)
 				{
+					// For exemple, we may have error: 'No such customer: cus_XXXXX; a similar object exists in live mode, but a test mode key was used to make this request.'
 					$this->error = $e->getMessage();
 				}
 			}
