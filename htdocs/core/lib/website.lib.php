@@ -339,6 +339,14 @@ function redirectToContainer($containerref, $containeraliasalt = '', $containeri
 		}
 	}
 
+	if (defined('USEDOLIBARREDITOR'))
+	{
+		print '<div class="margintoponly marginleftonly">';
+		print "This page contains dynamic code that make a redirect to '".$containerref."' in your current context. There is no preview for this page.";
+		print '</div>';
+		exit;
+	}
+
 	if (defined('USEDOLIBARRSERVER'))	// When page called from Dolibarr server
 	{
 		// Check new container exists
