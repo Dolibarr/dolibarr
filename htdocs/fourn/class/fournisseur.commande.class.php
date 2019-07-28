@@ -551,13 +551,18 @@ class CommandeFournisseur extends CommonOrder
                 // Rename directory if dir was a temporary ref
                 if (preg_match('/^[\(]?PROV/i', $this->ref))
                 {
-                    // We rename directory ($this->ref = ancienne ref, $num = nouvelle ref)
-                    // in order not to lose the attached files
+                	// Now we rename also files into index
+                	$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->newref."', SUBSTR(filename, ".(strlen($this->ref)+1).")), filepath = 'fournisseur/commande/".$this->newref."'";
+                	$sql.= " WHERE filename LIKE '".$this->ref."%' AND filepath = 'fournisseur/commande/".$this->ref."' and entity = ".$conf->entity;
+                	$resql = $this->db->query($sql);
+                	if (! $resql) { $error++; $this->error = $this->db->lasterror(); }
+
+                	// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
                     $oldref = dol_sanitizeFileName($this->ref);
                     $newref = dol_sanitizeFileName($num);
                     $dirsource = $conf->fournisseur->commande->dir_output.'/'.$oldref;
                     $dirdest = $conf->fournisseur->commande->dir_output.'/'.$newref;
-                    if (file_exists($dirsource))
+                    if (! $error && file_exists($dirsource))
                     {
                         dol_syslog(get_class($this)."::valid rename dir ".$dirsource." into ".$dirdest);
 

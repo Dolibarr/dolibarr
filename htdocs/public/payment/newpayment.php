@@ -435,7 +435,7 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
     			'dol_version' => DOL_VERSION,
     			'dol_entity'  => $conf->entity,
     			'dol_company' => $mysoc->name,		// Usefull when using multicompany
-    			'dol_tax_num' => $taxinfo,
+    			'dol_tax_num' => $vatnumber,
     		    'ipaddress'=> getUserRemoteIP()
     		);
 
@@ -460,47 +460,57 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
     			include_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
     			$stripe = new Stripe($db);
                 $stripeacc = $stripe->getStripeAccount($service);
-    			$customer = $stripe->customerStripe($thirdparty, $stripeacc, $servicestatus, 1);
+                $customer = $stripe->customerStripe($thirdparty, $stripeacc, $servicestatus, 1);
+				if (empty($customer))
+				{
+					$error++;
+					dol_syslog('Failed to get/create stripe customer for thirdparty id = '.$thirdparty_id.' and servicestatus = '.$servicestatus.': '.$stripe->error, LOG_ERR, 0, '_stripe');
+					setEventMessages('Failed to get/create stripe customer for thirdparty id = '.$thirdparty_id.' and servicestatus = '.$servicestatus.': '.$stripe->error, null, 'errors');
+					$action='';
+				}
 
     			// Create Stripe card from Token
-    			if ($savesource) {
-    				$card = $customer->sources->create(array("source" => $stripeToken, "metadata" => $metadata));
-    			} else {
-    				$card = $stripeToken;
-    			}
-
-    			if (empty($card))
+    			if (! $error)
     			{
-    				$error++;
-    				dol_syslog('Failed to create card record', LOG_WARNING, 0, '_stripe');
-    				setEventMessages('Failed to create card record', null, 'errors');
-    				$action='';
-    			}
-    			else
-    			{
-    				if (! empty($FULLTAG))       $metadata["FULLTAG"] = $FULLTAG;
-    				if (! empty($dol_id))        $metadata["dol_id"] = $dol_id;
-    				if (! empty($dol_type))      $metadata["dol_type"] = $dol_type;
+	    			if ($savesource) {
+	    				$card = $customer->sources->create(array("source" => $stripeToken, "metadata" => $metadata));
+	    			} else {
+	    				$card = $stripeToken;
+	    			}
 
-    				dol_syslog("Create charge on card ".$card->id, LOG_DEBUG, 0, '_stripe');
-    				$charge = \Stripe\Charge::create(array(
-    					'amount'   => price2num($amountstripe, 'MU'),
-    					'currency' => $currency,
-    					'capture'  => true,							// Charge immediatly
-    					'description' => 'Stripe payment: '.$FULLTAG.' ref='.$ref,
-    					'metadata' => $metadata,
-    					'customer' => $customer->id,
-    					'source' => $card,
-    				    'statement_descriptor' => dol_trunc($FULLTAG, 10, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt (company + description)
-    				), array("idempotency_key" => "$FULLTAG", "stripe_account" => "$stripeacc"));
-    				// Return $charge = array('id'=>'ch_XXXX', 'status'=>'succeeded|pending|failed', 'failure_code'=>, 'failure_message'=>...)
-    				if (empty($charge))
-    				{
-    					$error++;
-    					dol_syslog('Failed to charge card', LOG_WARNING, 0, '_stripe');
-    					setEventMessages('Failed to charge card', null, 'errors');
-    					$action='';
-    				}
+	    			if (empty($card))
+	    			{
+	    				$error++;
+	    				dol_syslog('Failed to create card record', LOG_WARNING, 0, '_stripe');
+	    				setEventMessages('Failed to create card record', null, 'errors');
+	    				$action='';
+	    			}
+	    			else
+	    			{
+	    				if (! empty($FULLTAG))       $metadata["FULLTAG"] = $FULLTAG;
+	    				if (! empty($dol_id))        $metadata["dol_id"] = $dol_id;
+	    				if (! empty($dol_type))      $metadata["dol_type"] = $dol_type;
+
+	    				dol_syslog("Create charge on card ".$card->id, LOG_DEBUG, 0, '_stripe');
+	    				$charge = \Stripe\Charge::create(array(
+	    					'amount'   => price2num($amountstripe, 'MU'),
+	    					'currency' => $currency,
+	    					'capture'  => true,							// Charge immediatly
+	    					'description' => 'Stripe payment: '.$FULLTAG.' ref='.$ref,
+	    					'metadata' => $metadata,
+	    					'customer' => $customer->id,
+	    					'source' => $card,
+	    				    'statement_descriptor' => dol_trunc($FULLTAG, 10, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt (company + description)
+	    				), array("idempotency_key" => "$FULLTAG", "stripe_account" => "$stripeacc"));
+	    				// Return $charge = array('id'=>'ch_XXXX', 'status'=>'succeeded|pending|failed', 'failure_code'=>, 'failure_message'=>...)
+	    				if (empty($charge))
+	    				{
+	    					$error++;
+	    					dol_syslog('Failed to charge card', LOG_WARNING, 0, '_stripe');
+	    					setEventMessages('Failed to charge card', null, 'errors');
+	    					$action='';
+	    				}
+	    			}
     			}
     		}
     		else
@@ -1692,26 +1702,51 @@ if ($action != 'dopayment')
 			if ((empty($paymentmethod) || $paymentmethod == 'paybox') && ! empty($conf->paybox->enabled))
 			{
 				// If STRIPE_PICTO_FOR_PAYMENT is 'cb' we show a picto of a crdit card instead of paybox
-				print '<br><div class="button buttonpayment"><span class="fa fa-credit-card"></span> <input class="" type="submit" name="dopayment_paybox" value="'.$langs->trans("PayBoxDoPayment").'">';
+				print '<br><div class="button buttonpayment" id="div_dopayment_paybox"><span class="fa fa-credit-card"></span> <input class="" type="submit" id="dopayment_paybox" name="dopayment_paybox" value="'.$langs->trans("PayBoxDoPayment").'">';
 				print '<br>';
 				print '<span class="buttonpaymentsmall">'.$langs->trans("CreditOrDebitCard").'</span>';
 				print '</div>';
+				print '<script>
+						$( document ).ready(function() {
+							$("#div_dopayment_paybox").click(function(){
+								$("#dopayment_paybox").click();
+							});
+							$("#dopayment_paybox").click(function(e){
+								$("#div_dopayment_paybox").css( \'cursor\', \'wait\' );
+							    e.stopPropagation();
+							});
+						});
+					  </script>
+				';
 			}
 
 			if ((empty($paymentmethod) || $paymentmethod == 'stripe') && ! empty($conf->stripe->enabled))
 			{
 				// If STRIPE_PICTO_FOR_PAYMENT is 'cb' we show a picto of a crdit card instead of stripe
-				print '<br><div class="button buttonpayment"><span class="fa fa-credit-card"></span> <input class="" type="submit" name="dopayment_stripe" value="'.$langs->trans("StripeDoPayment").'">';
+				print '<br><div class="button buttonpayment" id="div_dopayment_stripe"><span class="fa fa-credit-card"></span> <input class="" type="submit" id="dopayment_stripe" name="dopayment_stripe" value="'.$langs->trans("StripeDoPayment").'">';
 				print '<br>';
 				print '<span class="buttonpaymentsmall">'.$langs->trans("CreditOrDebitCard").'</span>';
 				print '</div>';
+				print '<script>
+						$( document ).ready(function() {
+							$("#div_dopayment_stripe").click(function(){
+								$("#dopayment_stripe").click();
+							});
+							$("#dopayment_stripe").click(function(e){
+								$("#div_dopayment_stripe").css( \'cursor\', \'wait\' );
+							    e.stopPropagation();
+								return true;
+							});
+						});
+					  </script>
+				';
 			}
 
 			if ((empty($paymentmethod) || $paymentmethod == 'paypal') && ! empty($conf->paypal->enabled))
 			{
 				if (empty($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY)) $conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY='integral';
 
-				print '<br><div class="button buttonpayment"><span class="fa fa-paypal"></span> <input class="" type="submit" name="dopayment_paypal" value="'.$langs->trans("PaypalDoPayment").'">';
+				print '<br><div class="button buttonpayment" id="div_dopayment_paypal"><span class="fa fa-paypal"></span> <input class="" type="submit" id="dopayment_paypal" name="dopayment_paypal" value="'.$langs->trans("PaypalDoPayment").'">';
 				if ($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY == 'integral')
 				{
 					print '<br>';
@@ -1724,6 +1759,19 @@ if ($action != 'dopayment')
 					//print '<span class="buttonpaymentsmall">'.$langs->trans("PayPalBalance").'"></span>';
 				}
 				print '</div>';
+				print '<script>
+						$( document ).ready(function() {
+							$("#div_dopayment_paypal").click(function(){
+								$("#dopayment_paypal").click();
+							});
+							$("#dopayment_paypal").click(function(e){
+								$("#div_dopayment_paypal").css( \'cursor\', \'wait\' );
+							    e.stopPropagation();
+								return true;
+							});
+						});
+					  </script>
+				';
 			}
 		}
 	}
