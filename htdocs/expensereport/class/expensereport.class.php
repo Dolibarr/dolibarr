@@ -1120,11 +1120,10 @@ class ExpenseReport extends CommonObject
         $resql=$this->db->query($sql);
         if ($resql)
         {
-			if (!$notrigger)
+			if (! $error && ! $notrigger)
 			{
 				// Call trigger
-				$result=$this->call_trigger('EXPENSE_REPORT_VALIDATE',$fuser);
-
+				$result=$this->call_trigger('EXPENSE_REPORT_VALIDATE', $fuser);
 				if ($result < 0) {
 					$error++;
 				}
@@ -1148,7 +1147,7 @@ class ExpenseReport extends CommonObject
 					$dirdest = $conf->expensereport->dir_output.'/'.$newref;
 					if (file_exists($dirsource))
 					{
-					    dol_syslog(get_class($this)."::valid() rename dir ".$dirsource." into ".$dirdest);
+					    dol_syslog(get_class($this)."::setValidate() rename dir ".$dirsource." into ".$dirdest);
 
 					    if (@rename($dirsource, $dirdest))
 					    {
