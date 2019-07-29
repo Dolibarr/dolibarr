@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2013-2018	Jean-François Ferry	<hello+jf@librethic.io>
  * Copyright (C) 2016		Gilles Poirier 		<glgpoirier@gmail.com>
+ * Copyright (C) 2019		Josep Lluís Amador	<joseplluis@lliuretic.cat>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -474,29 +475,46 @@ else
 
 			$linked_resources = $object->getElementResources($element, $element_id, $resource_obj);
 
-
-			// If we have a specific template we use it
-			if(file_exists(dol_buildpath($path.'/core/tpl/resource_'.$element_prop['element'].'_add.tpl.php')))
+			// Output template part (modules that overwrite templates must declare this into descriptor)
+			$defaulttpldir='/core/tpl';
+			$dirtpls=array_merge($conf->modules_parts['tpl'], array($defaulttpldir), array($path.$defaulttpldir));
+			
+			foreach($dirtpls as $module => $reldir)
 			{
-				$res=include dol_buildpath($path.'/core/tpl/resource_'.$element_prop['element'].'_add.tpl.php');
-			}
-			else
-			{
-				$res=include DOL_DOCUMENT_ROOT . '/core/tpl/resource_add.tpl.php';
+				if(file_exists(dol_buildpath($reldir.'/resource_'.$element_prop['element'].'_add.tpl.php')))
+				{
+					$tpl = dol_buildpath($reldir.'/resource_'.$element_prop['element'].'_add.tpl.php');
+				}
+				else
+				{
+					$tpl = DOL_DOCUMENT_ROOT.$reldir.'/resource_add.tpl.php';
+				}
+				if (empty($conf->file->strict_mode)) {
+					$res=@include $tpl;
+				} else {
+					$res=include $tpl; // for debug
+				}
+				if ($res) break;
 			}
 
 			if ($mode != 'add' || $resource_obj != $resource_type)
 			{
-				//print load_fiche_titre($langs->trans(ucfirst($element_prop['element']).'Singular'));
-
-				// If we have a specific template we use it
-				if(file_exists(dol_buildpath($path.'/core/tpl/resource_'.$element_prop['element'].'_view.tpl.php')))
+				foreach($dirtpls as $module => $reldir)
 				{
-					$res=@include dol_buildpath($path.'/core/tpl/resource_'.$element_prop['element'].'_view.tpl.php');
-				}
-				else
-				{
-					$res=include DOL_DOCUMENT_ROOT . '/core/tpl/resource_view.tpl.php';
+					if(file_exists(dol_buildpath($reldir.'/resource_'.$element_prop['element'].'_view.tpl.php')))
+					{
+						$tpl = dol_buildpath($reldir.'/resource_'.$element_prop['element'].'_view.tpl.php');
+					}
+					else
+					{
+						$tpl = DOL_DOCUMENT_ROOT.$reldir.'/resource_view.tpl.php';
+					}
+					if (empty($conf->file->strict_mode)) {
+						$res=@include $tpl;
+					} else {
+						$res=include $tpl; // for debug
+					}
+					if ($res) break;
 				}
 			}
 		}
