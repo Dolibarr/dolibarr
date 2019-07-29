@@ -63,10 +63,19 @@ class Events // extends CommonObject
 
 	public $dateevent;
 
+	public $ip;
+
+	public $user_agent;
+
 	/**
 	 * @var string description
 	 */
 	public $description;
+
+	/**
+	 * @var string	Prefix session obtained with method dol_getprefix()
+	 */
+	public $prefix_session;
 
 	// List of all Audit/Security events supported by triggers
 	public $eventstolog=array(
@@ -108,6 +117,18 @@ class Events // extends CommonObject
 	);
 
 
+	// BEGIN MODULEBUILDER PROPERTIES
+	/**
+	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 */
+	public $fields=array(
+		'rowid'         =>array('type'=>'integer',      'label'=>'TechnicalID',      'enabled'=>1, 'visible'=>-2, 'noteditable'=>1, 'notnull'=> 1, 'index'=>1, 'position'=>1, 'comment'=>'Id'),
+		'entity'        =>array('type'=>'integer',      'label'=>'Entity',           'enabled'=>1, 'visible'=>0,  'notnull'=> 1, 'default'=>1, 'index'=>1, 'position'=>20),
+		'prefix_session'=>array('type'=>'varchar(255)', 'label'=>'PrefixSession',    'enabled'=>1, 'visible'=>-1, 'notnull'=>-1, 'index'=>0,  'position'=>1000),
+		'user_agent'    =>array('type'=>'varchar(255)', 'label'=>'UserAgent',        'enabled'=>1, 'visible'=>-1, 'notnull'=> 1, 'default'=>0, 'index'=>1,  'position'=>1000),
+	);
+
+
 	/**
 	 *	Constructor
 	 *
@@ -144,7 +165,8 @@ class Events // extends CommonObject
 		$sql.= "user_agent,";
 		$sql.= "dateevent,";
 		$sql.= "fk_user,";
-		$sql.= "description";
+		$sql.= "description,";
+		$sql.= "prefix_session";
 		$sql.= ") VALUES (";
 		$sql.= " '".$this->db->escape($this->type)."',";
 		$sql.= " ".$conf->entity.",";
@@ -152,7 +174,8 @@ class Events // extends CommonObject
 		$sql.= " ".($this->user_agent ? "'".$this->db->escape(dol_trunc($this->user_agent, 250))."'" : 'NULL').",";
 		$sql.= " '".$this->db->idate($this->dateevent)."',";
 		$sql.= " ".($user->id?"'".$this->db->escape($user->id)."'":'NULL').",";
-		$sql.= " '".$this->db->escape(dol_trunc($this->description, 250))."'";
+		$sql.= " '".$this->db->escape(dol_trunc($this->description, 250))."',";
+		$sql.= " '".$this->db->escape(dol_getprefix())."'";
 		$sql.= ")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -222,7 +245,8 @@ class Events // extends CommonObject
 		$sql.= " t.dateevent,";
 		$sql.= " t.description,";
 		$sql.= " t.ip,";
-		$sql.= " t.user_agent";
+		$sql.= " t.user_agent,";
+		$sql.= " t.prefix_session";
 		$sql.= " FROM ".MAIN_DB_PREFIX."events as t";
 		$sql.= " WHERE t.rowid = ".$id;
 
@@ -242,6 +266,7 @@ class Events // extends CommonObject
 				$this->description = $obj->description;
 				$this->ip = $obj->ip;
 				$this->user_agent = $obj->user_agent;
+				$this->prefix_session = $obj->prefix_session;
 			}
 			$this->db->free($resql);
 
@@ -293,5 +318,8 @@ class Events // extends CommonObject
 		$this->type='';
 		$this->dateevent=time();
 		$this->description='This is a specimen event';
+		$this->ip = '1.2.3.4';
+		$this->user_agent = 'Mozilla specimen User Agent X.Y';
+		$this->prefix_session = dol_getprefix();
     }
 }
