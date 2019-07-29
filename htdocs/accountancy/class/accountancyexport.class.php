@@ -938,20 +938,14 @@ class AccountancyExport
             $date_document = dol_print_date($line->doc_date, '%Y%m%d');
             $date_creation = dol_print_date($line->date_creation,  '%Y%m%d');
 
-            if ($line->doc_type == 'supplier_invoice') {
-                $type_enregistrement = 'F';
-            } elseif ($line->doc_type == 'customer_invoice') {
-                $type_enregistrement = 'C';
-            } else {
-                $type_enregistrement = 'E';
-            }
+            $type_enregistrement = 'E'; // For write movement
             print $type_enregistrement . $separator;
-            print $line->code_journal . $separator;
+            print substr($line->code_journal, 0, 2) . $separator;
             print $line->id . $separator;
             print $line->piece_num . $separator;
             print $date_document . $separator;
             print $line->label_operation . $separator;
-            print $separator;
+            print $line->date_lim_reglement . $separator;
 
             if ($line->doc_type == 'supplier_invoice') {
                 if ($line->montant < 0) {
@@ -969,9 +963,18 @@ class AccountancyExport
                 $nature_piece = '';
             }
             print $nature_piece . $separator;
+
             if (! empty($line->subledger_account)) {
-                print $line->numero_compte . $separator;
+                if ($line->doc_type == 'supplier_invoice') {
+                    $racine_subledger_account = '40';
+                } elseif ($line->doc_type == 'customer_invoice') {
+                    $racine_subledger_account = '41';
+                } else {
+                    $nature_piece = '';
+                }
+                print $racine_subledger_account . $separator;
             }
+
             print price(abs($line->montant)) . $separator;
             print $line->sens . $separator;
             print length_accountg($line->numero_compte) . $separator;
@@ -984,11 +987,11 @@ class AccountancyExport
             }
 
             if ($line->doc_type == 'supplier_invoice' && ! empty($line->subledger_account)) {
-                print 'F' . $separator;
+                print 'F';
             } elseif ($line->doc_type == 'customer_invoice' && ! empty($line->subledger_account)) {
-                print 'C' . $separator;
+                print 'C';
             } else {
-                print $separator;
+                print '';
             }
             print $end_line;
         }
