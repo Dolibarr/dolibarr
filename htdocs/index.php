@@ -100,7 +100,7 @@ if (! empty($conf->global->MAIN_MOTD))
 }
 
 
-print '<div class="fichecenter"><div class="fichethirdleft">';
+
 
 
 /*
@@ -112,7 +112,7 @@ $boxstat='';
 // Load translation files required by page
 $langs->loadLangs(array('commercial', 'bills', 'orders', 'contracts'));
 
-if (empty($user->societe_id))
+if (empty($user->societe_id) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS))
 {
     $boxstat.='<div class="box">';
     $boxstat.='<table summary="'.dol_escape_htmltag($langs->trans("DolibarrStateBoard")).'" class="noborder boxtable boxtablenobottom nohover" width="100%">';
@@ -359,9 +359,8 @@ if (empty($user->societe_id))
     $boxstat.='</table>';
     $boxstat.='</div>';
 }
-//print $boxstat;
 
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+
 
 
 /*
@@ -636,7 +635,13 @@ $boxwork.='</td></tr>';
 $boxwork.='</table>';   // End table array of working board
 $boxwork.='</div>';
 
-print '</div></div></div><div class="clearboth"></div>';
+
+
+print '<div class="fichecenter">';
+print $boxwork;
+print '</div>';
+
+print '<div class="clearboth"></div>';
 
 print '<div class="fichecenter fichecenterbis">';
 
@@ -649,7 +654,7 @@ $boxlist.='<div class="twocolumns">';
 
 $boxlist.='<div class="firstcolumn fichehalfleft boxhalfleft" id="boxhalfleft">';
 
-$boxlist.=$boxwork;
+//$boxlist.=$boxwork;
 $boxlist.=$resultboxes['boxlista'];
 
 $boxlist.= '</div>';
