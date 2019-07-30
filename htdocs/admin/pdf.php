@@ -279,6 +279,12 @@ if ($action == 'edit')	// Edit
     print $form->selectyesno('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS', (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS))?$conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS:0, 1);
     print '</td></tr>';
 
+	//Invert send and recipient
+
+	print '<tr class="oddeven"><td>'.$langs->trans("HideDetailsOnPDF").'</td><td>';
+    print $form->selectyesno('MAIN_INVERT_SENDER_RECIPIENT', (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT))?$conf->global->MAIN_INVERT_SENDER_RECIPIENT:0, 1);
+    print '</td></tr>';
+
  	// Place customer adress to the ISO location
 
     print '<tr class="oddeven"><td>'.$langs->trans("PlaceCustomerAddressToIsoLocation").'</td><td>';
