@@ -1480,7 +1480,7 @@ class Holiday extends CommonObject
 
 							$obj = $this->db->fetch_object($resql);
 
-							$tab_result[$i]['rowid'] = $obj->rowid;
+							$tab_result[$i]['rowid'] = $obj->rowid;		// rowid of user
 							$tab_result[$i]['name'] = $obj->lastname;       // deprecated
 							$tab_result[$i]['lastname'] = $obj->lastname;
 							$tab_result[$i]['firstname'] = $obj->firstname;
@@ -1488,7 +1488,7 @@ class Holiday extends CommonObject
 							$tab_result[$i]['status'] = $obj->statut;
 							$tab_result[$i]['employee'] = $obj->employee;
 							$tab_result[$i]['photo'] = $obj->photo;
-							$tab_result[$i]['fk_user'] = $obj->fk_user;
+							$tab_result[$i]['fk_user'] = $obj->fk_user;	// rowid of manager
 							//$tab_result[$i]['type'] = $obj->type;
 							//$tab_result[$i]['nb_holiday'] = $obj->nb_holiday;
 
@@ -1507,7 +1507,7 @@ class Holiday extends CommonObject
 			else
 			{
 				// List of vacation balance users
-				$sql = "SELECT cpu.fk_user, cpu.fk_type, cpu.nb_holiday, u.lastname, u.firstname, u.gender, u.photo, u.employee, u.statut, u.fk_user as manager";
+				$sql = "SELECT cpu.fk_user as rowid, cpu.fk_type, cpu.nb_holiday, u.lastname, u.firstname, u.gender, u.photo, u.employee, u.statut, u.fk_user";
 				$sql.= " FROM ".MAIN_DB_PREFIX."holiday_users as cpu, ".MAIN_DB_PREFIX."user as u";
 				$sql.= " WHERE cpu.fk_user = u.rowid";
 				if ($filters) $sql.=$filters;
@@ -1526,7 +1526,7 @@ class Holiday extends CommonObject
 					{
 						$obj = $this->db->fetch_object($resql);
 
-						$tab_result[$i]['rowid'] = $obj->fk_user;
+						$tab_result[$i]['rowid'] = $obj->rowid;				// rowid of user
 						$tab_result[$i]['name'] = $obj->lastname;			// deprecated
 						$tab_result[$i]['lastname'] = $obj->lastname;
 						$tab_result[$i]['firstname'] = $obj->firstname;
@@ -1534,7 +1534,7 @@ class Holiday extends CommonObject
 						$tab_result[$i]['status'] = $obj->statut;
 						$tab_result[$i]['employee'] = $obj->employee;
 						$tab_result[$i]['photo'] = $obj->photo;
-						$tab_result[$i]['fk_user'] = $obj->manager;
+						$tab_result[$i]['fk_user'] = $obj->fk_user;			// rowid of manager
 
 						$tab_result[$i]['type'] = $obj->fk_type;
 						$tab_result[$i]['nb_holiday'] = $obj->nb_holiday;
