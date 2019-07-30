@@ -683,7 +683,7 @@ if ($num > 0)
 		// Amount debit
 		if (! empty($arrayfields['t.debit']['checked']))
 		{
-			print '<td align="right">' . ($line->debit ? price($line->debit) : ''). '</td>';
+			print '<td class="nowrap right">' . ($line->debit ? price($line->debit) : ''). '</td>';
 			if (! $i) $totalarray['nbfield']++;
 			if (! $i) $totalarray['totaldebitfield']=$totalarray['nbfield'];
 			$totalarray['totaldebit'] += $line->debit;
@@ -692,7 +692,7 @@ if ($num > 0)
 		// Amount credit
 		if (! empty($arrayfields['t.credit']['checked']))
 		{
-			print '<td align="right">' . ($line->credit ? price($line->credit) : '') . '</td>';
+			print '<td class="nowrap right">' . ($line->credit ? price($line->credit) : '') . '</td>';
 			if (! $i) $totalarray['nbfield']++;
 			if (! $i) $totalarray['totalcreditfield']=$totalarray['nbfield'];
 			$totalarray['totalcredit'] += $line->credit;
@@ -754,8 +754,8 @@ if ($num > 0)
 					if ($num < $limit && empty($offset)) print '<td align="left">'.$langs->trans("Total").'</td>';
 					else print '<td align="left">'.$langs->trans("Totalforthispage").'</td>';
 				}
-				elseif ($totalarray['totaldebitfield'] == $i)  print '<td align="right">'.price($totalarray['totaldebit']).'</td>';
-				elseif ($totalarray['totalcreditfield'] == $i) print '<td align="right">'.price($totalarray['totalcredit']).'</td>';
+				elseif ($totalarray['totaldebitfield'] == $i)  print '<td class="nowrap right">'.price($totalarray['totaldebit']).'</td>';
+				elseif ($totalarray['totalcreditfield'] == $i) print '<td class="nowrap right">'.price($totalarray['totalcredit']).'</td>';
 				else print '<td></td>';
 		}
 		print '</tr>';
