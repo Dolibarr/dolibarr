@@ -1225,13 +1225,172 @@ class pdf_sponge extends ModelePDFFactures
 		$useborder=0;
 		$index = 0;
 
+
+
+		// pourcentage global d'avancement
+		$percent = 0;
+		$i=0;
+		foreach ($object->lines as $line)
+		{
+		    if(!class_exists('TSubtotal') || !TSubtotal::isModSubtotalLine($line)){
+		        $percent += $line->situation_percent;
+		        $i++;
+		    }
+		}
+		if(!empty($i)){
+		    $avancementGlobal = $percent/$i;
+		}
+		else{
+		    $avancementGlobal = 0;
+		}
+
+		$object->fetchPreviousNextSituationInvoice();
+		$TPreviousIncoice = $object->tab_previous_situation_invoice;
+
+		$total_a_payer = 0;
+		$total_a_payer_ttc = 0;
+		foreach ($TPreviousIncoice as &$fac){
+		    $total_a_payer += $fac->total_ht;
+		    $total_a_payer_ttc += $fac->total_ttc;
+		}
+		$total_a_payer += $object->total_ht;
+		$total_a_payer_ttc += $object->total_ttc;
+
+		if(!empty($avancementGlobal)){
+		    $total_a_payer = $total_a_payer * 100 / $avancementGlobal;
+		    $total_a_payer_ttc = $total_a_payer_ttc  * 100 / $avancementGlobal;
+		}
+		else{
+		    $total_a_payer = 0;
+		    $total_a_payer_ttc = 0;
+		}
+
+		$deja_paye = 0;
+		$i = 1;
+		if(!empty($TPreviousIncoice)){
+
+		    $pdf->setY($tab2_top);
+		    $posy = $pdf->GetY();
+
+
+
+
+		    foreach ($TPreviousIncoice as &$fac){
+
+		        if($posy  > $this->page_hauteur - 4 ) {
+		            $this->_pagefoot($pdf, $object, $outputlangs, 1);
+		            $pdf->addPage();
+		            $pdf->setY($this->marge_haute);
+		            $posy = $pdf->GetY();
+		        }
+
+		        // cumul TVA précédent
+		        $index++;
+		        $pdf->SetFillColor(255, 255, 255);
+		        $pdf->SetXY($col1x, $posy);
+		        $pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("PDFSituationTitle", $fac->situation_counter).' '.$outputlangs->transnoentities("TotalHT"), 0, 'L', 1);
+
+		        $pdf->SetXY($col2x, $posy);
+
+		        $facSign = '';
+		        if($i>1){
+		          $facSign = $fac->total_ht>=0?'+':'';
+		        }
+
+		        $displayAmount = ' '.$facSign.' '.price($fac->total_ht, 0, $outputlangs);
+
+		        $pdf->MultiCell($largcol2, $tab2_hl, $displayAmount, 0, 'R', 1);
+
+		        $i++;
+		        $deja_paye += $fac->total_ht;
+		        $posy += $tab2_hl;
+
+		        $pdf->setY($posy);
+		    }
+
+		    // Display curent total
+		    $pdf->SetFillColor(255, 255, 255);
+		    $pdf->SetXY($col1x, $posy);
+		    $pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("PDFSituationTitle", $object->situation_counter).' '.$outputlangs->transnoentities("TotalHT"), 0, 'L', 1);
+
+		    $pdf->SetXY($col2x, $posy);
+		    $facSign = '';
+		    if($i>1){
+		        $facSign = $object->total_ht>=0?'+':''; // gestion d'un cas particulier client
+		    }
+
+		    if($fac->type === facture::TYPE_CREDIT_NOTE){
+		        $facSign = '-'; // les avoirs
+		    }
+
+
+		    $displayAmount = ' '.$facSign.' '.price($object->total_ht, 0, $outputlangs);
+		    $pdf->MultiCell($largcol2, $tab2_hl, $displayAmount, 0, 'R', 1);
+
+		    $posy += $tab2_hl;
+
+		    // Display all total
+		    $pdf->SetFont('', '', $default_font_size - 1);
+		    $pdf->SetFillColor(255, 255, 255);
+		    $pdf->SetXY($col1x, $posy);
+		    $pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("SituationTotalProgress", $avancementGlobal), 0, 'L', 1);
+
+		    $pdf->SetXY($col2x, $posy);
+		    $pdf->MultiCell($largcol2, $tab2_hl, price($total_a_payer*$avancementGlobal/100, 0, $outputlangs), 0, 'R', 1);
+		    $pdf->SetFont('', '', $default_font_size - 2);
+
+		    $posy += $tab2_hl;
+
+		    if($posy  > $this->page_hauteur - 4 ) {
+		        $pdf->addPage();
+		        $pdf->setY($this->marge_haute);
+		        $posy = $pdf->GetY();
+		    }
+
+		    $tab2_top = $posy;
+		    $index=0;
+		}
+
+		$tab2_top += 3;
+
+		// Get Total HT
+		$total_ht = ($conf->multicurrency->enabled && $object->mylticurrency_tx != 1 ? $object->multicurrency_total_ht : $object->total_ht);
+
+		// Total remise
+		$total_line_remise=0;
+		foreach($object->lines as $i => $line) {
+		    $total_line_remise+= pdfGetLineTotalDiscountAmount($object, $i, $outputlangs, 2); // TODO: add this methode to core/lib/pdf.lib
+		    // Gestion remise sous forme de ligne négative
+		    if($line->total_ht < 0) $total_line_remise += -$line->total_ht;
+		}
+		if($total_line_remise > 0) {
+		    if (! empty($conf->global->MAIN_SHOW_AMOUNT_DISCOUNT)) {
+		        $pdf->SetFillColor(255, 255, 255);
+		        $pdf->SetXY($col1x, $tab2_top + $tab2_hl);
+		        $pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalDiscount"), 0, 'L', 1);
+		        $pdf->SetXY($col2x, $tab2_top + $tab2_hl);
+		        $pdf->MultiCell($largcol2, $tab2_hl, price($total_line_remise, 0, $outputlangs), 0, 'R', 1);
+
+		        $index++;
+		    }
+		    // Show total NET before discount
+		    if (! empty($conf->global->MAIN_SHOW_AMOUNT_BEFORE_DISCOUNT)) {
+		        $pdf->SetFillColor(255, 255, 255);
+		        $pdf->SetXY($col1x, $tab2_top + 0);
+		        $pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalHTBeforeDiscount"), 0, 'L', 1);
+		$pdf->SetXY($col2x, $tab2_top + 0);
+		        $pdf->MultiCell($largcol2, $tab2_hl, price($total_line_remise + $total_ht, 0, $outputlangs), 0, 'R', 1);
+
+		        $index++;
+		    }
+		}
+
 		// Total HT
 		$pdf->SetFillColor(255, 255, 255);
-		$pdf->SetXY($col1x, $tab2_top + 0);
+		$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 		$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalHT"), 0, 'L', 1);
 
-		$total_ht = ($conf->multicurrency->enabled && $object->mylticurrency_tx != 1 ? $object->multicurrency_total_ht : $object->total_ht);
-		$pdf->SetXY($col2x, $tab2_top + 0);
+		$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 		$pdf->MultiCell($largcol2, $tab2_hl, price($sign * ($total_ht + (! empty($object->remise)?$object->remise:0)), 0, $outputlangs), 0, 'R', 1);
 
 		// Show VAT by rates and total
@@ -1256,7 +1415,7 @@ class pdf_sponge extends ModelePDFFactures
 				//{
 					foreach($this->localtax1 as $localtax_type => $localtax_rate)
 					{
-						if (in_array((string) $localtax_type, array('1','3','5'))) continue;
+						if (in_array((string) $localtax_type, array('1', '3', '5'))) continue;
 
 						foreach($localtax_rate as $tvakey => $tvaval)
 						{
@@ -1330,7 +1489,14 @@ class pdf_sponge extends ModelePDFFactures
 					}
 
 					if($sum_pdf_tva!=$object->total_tva) { // apply coef to recover the VAT object amount (the good one)
-						$coef_fix_tva = $object->total_tva / $sum_pdf_tva;
+					    if(!empty($sum_pdf_tva))
+					    {
+							$coef_fix_tva = $object->total_tva / $sum_pdf_tva;
+					    }
+					    else {
+					        $coef_fix_tva = 1;
+					    }
+
 
 						foreach($this->tva as $tvakey => $tvaval) {
 							$this->tva[$tvakey]=$tvaval * $coef_fix_tva;
@@ -1427,7 +1593,7 @@ class pdf_sponge extends ModelePDFFactures
 							}
 						}
 					}
-				//}
+
 
 				// Revenue stamp
 				if (price2num($object->revenuestamp) != 0)
@@ -1449,6 +1615,69 @@ class pdf_sponge extends ModelePDFFactures
 
 				$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 				$pdf->MultiCell($largcol2, $tab2_hl, price($sign * $total_ttc, 0, $outputlangs), $useborder, 'R', 1);
+
+
+				/*if($object->type == Facture::TYPE_SITUATION)
+				{
+				    // reste à payer total
+				    $index++;
+
+				    $pdf->SetFont('','', $default_font_size - 1);
+				    $pdf->SetFillColor(255,255,255);
+				    $pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
+				    $pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities('SituationTotalRayToRest'), 0, 'L', 1);
+				    $pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
+				    $pdf->MultiCell($largcol2, $tab2_hl, price($total_a_payer_ttc-$deja_paye, 0, $outputlangs), 0, 'R', 1);
+				}*/
+
+
+				// Retained warranty
+				if( !empty($object->situation_final) &&  ( $object->type == Facture::TYPE_SITUATION && (!empty($object->retained_warranty) ) ) )
+				{
+				    $displayWarranty = false;
+
+				    // Check if this situation invoice is 100% for real
+				    if(!empty($object->situation_final)){
+				        $displayWarranty = true;
+				    }
+				    elseif(!empty($object->lines) && $object->status == Facture::STATUS_DRAFT ){
+				        // $object->situation_final need validation to be done so this test is need for draft
+				        $displayWarranty = true;
+				        foreach($object->lines as $i => $line){
+				            if($line->product_type < 2 && $line->situation_percent < 100){
+				                $displayWarranty = false;
+				                break;
+							}
+						}
+					}
+
+				    if($displayWarranty){
+				        $pdf->SetTextColor(40, 40, 40);
+				        $pdf->SetFillColor(255, 255, 255);
+
+				        $retainedWarranty = $total_a_payer_ttc * $object->retained_warranty / 100;
+				        $billedWithRetainedWarranty = $object->total_ttc - $retainedWarranty ;
+
+				        // Billed - retained warranty
+				        $index++;
+				        $pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
+				        $pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("PDFEVOLToPayOn", dol_print_date($object->date_lim_reglement, 'day')), $useborder, 'L', 1);
+
+				        $pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
+				        $pdf->MultiCell($largcol2, $tab2_hl, price($billedWithRetainedWarranty), $useborder, 'R', 1);
+
+				        // retained warranty
+				        $index++;
+				        $pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
+
+				        $retainedWarrantyToPayOn = $outputlangs->transnoentities("PDFEVOLRetainedWarranty") . ' ('.$object->retained_warranty.'%)';
+				        $retainedWarrantyToPayOn.=  !empty($object->retained_warranty_date_limit)?' '.$outputlangs->transnoentities("PDFEVOLtoPayOn", dol_print_date($object->retained_warranty_date_limit, 'day')):'';
+
+				        $pdf->MultiCell($col2x-$col1x, $tab2_hl, $retainedWarrantyToPayOn, $useborder, 'L', 1);
+				        $pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
+				        $pdf->MultiCell($largcol2, $tab2_hl, price($retainedWarranty), $useborder, 'R', 1);
+				    }
+				}
 			}
 		}
 
@@ -1456,7 +1685,7 @@ class pdf_sponge extends ModelePDFFactures
 
 		$creditnoteamount=$object->getSumCreditNotesUsed(($conf->multicurrency->enabled && $object->multicurrency_tx != 1) ? 1 : 0);
 		$depositsamount=$object->getSumDepositsUsed(($conf->multicurrency->enabled && $object->multicurrency_tx != 1) ? 1 : 0);
-		//print "x".$creditnoteamount."-".$depositsamount;exit;
+
 		$resteapayer = price2num($total_ttc - $deja_regle - $creditnoteamount - $depositsamount, 'MT');
 		if ($object->paye) $resteapayer=0;
 
@@ -1507,6 +1736,20 @@ class pdf_sponge extends ModelePDFFactures
 
 		$index++;
 		return ($tab2_top + ($tab2_hl * $index));
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Return list of active generation modules
+	 *
+	 *  @param	DoliDB	$db     			Database handler
+	 *  @param  integer	$maxfilenamelength  Max length of value to show
+	 *  @return	array						List of templates
+	 */
+	public static function liste_modeles($db, $maxfilenamelength = 0)
+	{
+		// phpcs:enable
+		return parent::liste_modeles($db, $maxfilenamelength); // TODO: Change the autogenerated stub
 	}
 
 	/**
