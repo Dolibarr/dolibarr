@@ -1445,13 +1445,13 @@ class ExtraFields
                                     $InfoFieldList[4] = str_replace('$ID$', '0', $InfoFieldList[4]);
                                 } else {
                                     if (!empty($matchCondition[1])) {
-                                        $boolCond = (($matchCondition[1] == "AND") ? ' AND 1 ' : ' OR 0 ');
+                                        $boolCond = (($matchCondition[1] == "AND") ? ' AND TRUE ' : ' OR FALSE ');
                                         $InfoFieldList[4] = str_replace($matchCondition[0], $boolCond . $matchCondition[3], $InfoFieldList[4]);
                                     } elseif (!empty($matchCondition[3])) {
-                                        $boolCond = (($matchCondition[3] == "AND") ? ' 1 AND ' : ' 0 OR');
+                                        $boolCond = (($matchCondition[3] == "AND") ? ' TRUE AND ' : ' FALSE OR');
                                         $InfoFieldList[4] = str_replace($matchCondition[0], $boolCond, $InfoFieldList[4]);
                                     } else {
-                                        $InfoFieldList[4] = 1;
+                                        $InfoFieldList[4] = " TRUE ";
                                     }
                                 }
 
