@@ -497,7 +497,7 @@ class ImportCsv extends ModeleImports
 								{
 									$field=$reg[1];
 									$table=$reg[2];
-									$filter=substr($reg[3], 1);
+									$filter=!empty($reg[3])?substr($reg[3], 1):'';
 
 									$cachekey = $field.'@'.$table;
 									if(! empty($filter)) $cachekey.= ':'.$filter;
