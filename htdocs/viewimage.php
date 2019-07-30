@@ -170,7 +170,9 @@ if (GETPOST('type', 'alpha')) $type=GETPOST('type', 'alpha');
 else $type=dol_mimetype($original_file);
 
 // Security: This wrapper is for images. We do not allow type/html
-if (preg_match('/html/', $type)) accessforbidden('Error: Using the image wrapper to output a file with a mime type HTML is not possible.', 0, 0, 1);
+if (preg_match('/html/i', $type)) accessforbidden('Error: Using the image wrapper to output a file with a mime type HTML is not possible.', 0, 0, 1);
+// Security: This wrapper is for images. We do not allow files ending with .noexe
+if (preg_match('/\.noexe$/i', $original_file)) accessforbidden('Error: Using the image wrapper to output a file ending with .noexe is not allowed.', 0, 0, 1);
 
 // Security: Delete string ../ into $original_file
 $original_file = str_replace("../", "/", $original_file);

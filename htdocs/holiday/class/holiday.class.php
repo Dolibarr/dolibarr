@@ -1438,45 +1438,30 @@ class Holiday extends CommonObject
 				$result = $this->db->query($sql);
 
 				$typeleaves=$this->getTypes(1, 1);
-				foreach($typeleaves as $key => $val)
-				{
-					// On ajoute x jours à chaque utilisateurs
-					$nb_holiday = $val['newByMonth'];
-					if (empty($nb_holiday)) $nb_holiday=0;
 
-					if ($nb_holiday > 0)
+				// Update each user counter
+				foreach ($users as $userCounter) {
+					$nbDaysToAdd = $typeleaves[$userCounter['type']]['newByMonth'];
+					if(empty($nbDaysToAdd)) continue;
+
+					dol_syslog("We update leave type id ".$userCounter['type']." for user id ".$userCounter['rowid'], LOG_DEBUG);
+
+					$nowHoliday = $userCounter['nb_holiday'];
+					$newSolde = $nowHoliday + $nbDaysToAdd;
+
+					// We add a log for each user
+					$this->addLogCP($user->id, $userCounter['rowid'], $langs->trans('HolidaysMonthlyUpdate'), $newSolde, $userCounter['type']);
+
+					$result = $this->updateSoldeCP($userCounter['rowid'], $newSolde, $userCounter['type'], $langs->trans('HolidaysMonthlyUpdate'));
+
+					if ($result < 0)
 					{
-						dol_syslog("We update leavefor everybody for type ".$key, LOG_DEBUG);
-
-						$i = 0;
-						while ($i < $nbUser)
-						{
-							$now_holiday = $this->getCPforUser($users[$i]['rowid'], $val['rowid']);
-							$new_solde = $now_holiday + $nb_holiday;
-
-							// We add a log for each user
-							$this->addLogCP($user->id, $users[$i]['rowid'], $langs->trans('HolidaysMonthlyUpdate'), $new_solde, $val['rowid']);
-
-							$i++;
-						}
-
-						// Now we update counter for all users at once
-						$sql2 = "UPDATE ".MAIN_DB_PREFIX."holiday_users SET";
-						$sql2.= " nb_holiday = nb_holiday + ".$nb_holiday;
-						$sql2.= " WHERE fk_type = ".$val['rowid'];
-
-						$result= $this->db->query($sql2);
-
-						if (! $result)
-						{
-							dol_print_error($this->db);
-							break;
-						}
+						$error++;
+						break;
 					}
-					else dol_syslog("No change for leave of type ".$key, LOG_DEBUG);
 				}
 
-				if ($result)
+				if (! $error)
 				{
 					$this->db->commit();
 					return 1;
@@ -1635,8 +1620,8 @@ class Holiday extends CommonObject
 	{
 		$sql = "SELECT nb_holiday";
 		$sql.= " FROM ".MAIN_DB_PREFIX."holiday_users";
-		$sql.= " WHERE fk_user = '".$user_id."'";
-		if ($fk_type > 0) $sql.=" AND fk_type = ".$fk_type;
+		$sql.= " WHERE fk_user = ".(int) $user_id;
+		if ($fk_type > 0) $sql.=" AND fk_type = ".(int) $fk_type;
 
 		dol_syslog(get_class($this).'::getCPforUser user_id='.$user_id.' type_id='.$fk_type, LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -1799,7 +1784,7 @@ class Holiday extends CommonObject
 
 							$obj = $this->db->fetch_object($resql);
 
-							$tab_result[$i]['rowid'] = $obj->rowid;
+							$tab_result[$i]['rowid'] = $obj->rowid;		// rowid of user
 							$tab_result[$i]['name'] = $obj->lastname;       // deprecated
 							$tab_result[$i]['lastname'] = $obj->lastname;
 							$tab_result[$i]['firstname'] = $obj->firstname;
@@ -1807,7 +1792,7 @@ class Holiday extends CommonObject
 							$tab_result[$i]['status'] = $obj->statut;
 							$tab_result[$i]['employee'] = $obj->employee;
 							$tab_result[$i]['photo'] = $obj->photo;
-							$tab_result[$i]['fk_user'] = $obj->fk_user;
+							$tab_result[$i]['fk_user'] = $obj->fk_user;	// rowid of manager
 							//$tab_result[$i]['type'] = $obj->type;
 							//$tab_result[$i]['nb_holiday'] = $obj->nb_holiday;
 
@@ -1845,7 +1830,7 @@ class Holiday extends CommonObject
 					{
 						$obj = $this->db->fetch_object($resql);
 
-						$tab_result[$i]['rowid'] = $obj->rowid;
+						$tab_result[$i]['rowid'] = $obj->rowid;				// rowid of user
 						$tab_result[$i]['name'] = $obj->lastname;			// deprecated
 						$tab_result[$i]['lastname'] = $obj->lastname;
 						$tab_result[$i]['firstname'] = $obj->firstname;
@@ -1853,7 +1838,7 @@ class Holiday extends CommonObject
 						$tab_result[$i]['status'] = $obj->statut;
 						$tab_result[$i]['employee'] = $obj->employee;
 						$tab_result[$i]['photo'] = $obj->photo;
-						$tab_result[$i]['fk_user'] = $obj->fk_user;
+						$tab_result[$i]['fk_user'] = $obj->fk_user;			// rowid of manager
 
 						$tab_result[$i]['type'] = $obj->fk_type;
 						$tab_result[$i]['nb_holiday'] = $obj->nb_holiday;
