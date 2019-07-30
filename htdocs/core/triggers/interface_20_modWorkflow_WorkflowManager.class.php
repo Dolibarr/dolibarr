@@ -316,7 +316,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
      *                                      invoices linked to $object
      * @param float $object_total_ht        The total amount (excl VAT) of the object
      *                                      (an order, a proposal, a bill, etc.)
-     * @return bool  True if the amounts are equal (arithmetic errors within tolerance margin)
+     * @return bool  True if the amounts are equal (rounded on total amount)
      *               True if the module is configured to skip the amount equality check
      *               False otherwise.
      */
@@ -326,10 +326,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
         if (!empty($conf->global->WORKFLOW_CLASSIFY_IF_AMOUNTS_ARE_DIFFERENTS)) {
             return true;
         }
-        // if the rounded amount difference is zero, allow classification, else deny
-        return 0 == round(
-            $totalonlinkedelements - $object_total_ht,
-            $conf->global->MAIN_MAX_DECIMALS_UNIT
-        );
+        // if the amount are same, allow classification, else deny
+        return (price2num($totalonlinkedelements, 'MT') == price2num($object_total_ht, 'MT'));
     }
 }
