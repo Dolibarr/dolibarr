@@ -1638,7 +1638,7 @@ class Holiday extends CommonObject
 		$sql.= " WHERE fk_user = '".$user_id."'";
 		if ($fk_type > 0) $sql.=" AND fk_type = ".$fk_type;
 
-		dol_syslog(get_class($this).'::getCPforUser', LOG_DEBUG);
+		dol_syslog(get_class($this).'::getCPforUser user_id='.$user_id.' type_id='.$fk_type, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if($result)
 		{
@@ -1826,7 +1826,7 @@ class Holiday extends CommonObject
 			else
 			{
 				// List of vacation balance users
-				$sql = "SELECT cpu.fk_user as userid, cpu.fk_type, cpu.nb_holiday, u.lastname, u.firstname, u.gender, u.photo, u.employee, u.statut, u.fk_user";
+				$sql = "SELECT cpu.fk_type, cpu.nb_holiday, u.rowid, u.lastname, u.firstname, u.gender, u.photo, u.employee, u.statut, u.fk_user";
 				$sql.= " FROM ".MAIN_DB_PREFIX."holiday_users as cpu, ".MAIN_DB_PREFIX."user as u";
 				$sql.= " WHERE cpu.fk_user = u.rowid";
 				if ($filters) $sql.=$filters;
