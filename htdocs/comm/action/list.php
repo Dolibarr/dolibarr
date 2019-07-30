@@ -5,6 +5,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2017      Open-DSI             <support@open-dsi.fr>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019       Ferran Marcet       <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -452,6 +453,7 @@ if ($resql)
 	if (! empty($arrayfields['owner']['checked']))		print '<td class="liste_titre"></td>';
 	if (! empty($arrayfields['c.libelle']['checked']))	print '<td class="liste_titre"></td>';
 	if (! empty($arrayfields['a.label']['checked']))	print '<td class="liste_titre"><input type="text" class="maxwidth75" name="search_title" value="'.$search_title.'"></td>';
+	if (! empty($arrayfields['a.note']['checked']))		print '<td class="liste_titre"><input type="text" class="maxwidth75" name="search_note" value="'.$search_note.'"></td>';
 	if (! empty($arrayfields['a.datep']['checked']))	{
 		print '<td class="liste_titre nowraponall" align="center">';
 		print $form->selectDate($datestart, 'datestart', 0, 0, 1, '', 1, 0);
