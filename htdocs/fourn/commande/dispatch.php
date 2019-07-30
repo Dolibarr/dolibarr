@@ -239,7 +239,7 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 			$pu = "pu_" . $reg[1] . '_' . $reg[2]; // This is unit price including discount
 			$fk_commandefourndet = "fk_commandefourndet_" . $reg[1] . '_' . $reg[2];
 
-			if (! empty($conf->global->SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_DURING_RECEIPT )) {
+			if (! empty($conf->global->SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_DURING_RECEIPT)) {
 				if (empty($conf->multicurrency->enabled) && empty($conf->dynamicprices->enabled)) {
 					$dto = GETPOST("dto_" . $reg[1] . '_' . $reg[2]);
 					if (! empty($dto)) {
@@ -581,7 +581,7 @@ if ($id > 0 || ! empty($ref)) {
 				print '<td class="right">' . $langs->trans("QtyToDispatchShort") . '</td>';
 				print '<td width="32"></td>';
 
-				if (! empty($conf->global->SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_DURING_RECEIPT )) {
+				if (! empty($conf->global->SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_DURING_RECEIPT)) {
 					if (empty($conf->multicurrency->enabled) && empty($conf->dynamicprices->enabled)) {
 						print '<td class="right">' . $langs->trans("Price") . '</td>';
 						print '<td class="right">' . $langs->trans("ReductionShort") . ' (%)</td>';
