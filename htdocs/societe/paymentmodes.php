@@ -1683,7 +1683,7 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
 		print '<td colspan="4"><input type="text" class="minwidth300" name="rum" value="'.GETPOST('rum', 'alpha').'"> <div class="opacitymedium">'.$langs->trans("RUMWillBeGenerated").'</div></td></tr>';
 
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("DateRUM").'</td>';
-		print '<td colspan="4">'.$form->selectDate(GETPOST('date_rum'), 'date_rum', 0,0,1, 'date_rum').'</td></tr>';
+		print '<td colspan="4">'.$form->selectDate(GETPOST('date_rum'), 'date_rum', 0, 0, 1, 'date_rum').'</td></tr>';
 
 		print '<tr><td>'.$langs->trans("WithdrawMode").'</td><td>';
 		$tblArraychoice = array("FRST" => $langs->trans("FRST"), "RECUR" => $langs->trans("RECUR"));
