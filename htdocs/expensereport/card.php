@@ -1904,7 +1904,7 @@ else
 				if ($resql)
 				{
 				    $num = $db->num_rows($resql);
-				    $i = 0; $total = 0;
+				    $i = 0; $totalpaid = 0;
 				    while ($i < $num)
 				    {
 				        $objp = $db->fetch_object($resql);
