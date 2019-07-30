@@ -106,7 +106,7 @@ abstract class Stats
 				$year=$startyear;
 				while($year <= $endyear)
 				{
-					$data[$i][]=$datay[$year - (1 - (int)(($i+$startmonth)/12)) + ($startmonth == 0 ? 1 : 0 )][($i+$startmonth)%12][1];
+					$data[$i][]=$datay[$year - (1 - (int) (($i+$startmonth)/12)) + ($startmonth == 0 ? 1 : 0)][($i+$startmonth)%12][1];
 					$year++;
 				}
 			}
@@ -206,7 +206,7 @@ abstract class Stats
 				$year=$startyear;
 				while($year <= $endyear)
 				{
-					$data[$i][]=$datay[$year - (1 - (int)(($i+$startmonth)/12)) + ($startmonth == 0 ? 1 : 0 )][($i+$startmonth)%12][1];	// set yval for x=i
+					$data[$i][]=$datay[$year - (1 - (int) (($i+$startmonth)/12)) + ($startmonth == 0 ? 1 : 0)][($i+$startmonth)%12][1];	// set yval for x=i
 					$year++;
 				}
 			}
