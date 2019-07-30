@@ -1,6 +1,12 @@
 # .scrutinizer.yml
 #build:
 #    - php-scrutinizer-run
+build:
+    nodes:
+        analysis:
+            tests:
+                override:
+                    - php-scrutinizer-run
           
 imports:
     - javascript
