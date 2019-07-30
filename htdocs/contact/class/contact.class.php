@@ -1218,9 +1218,9 @@ class Contact extends CommonObject
 		global $langs;
 		$langs->load("dict");
 
-		$code=(! empty($this->civility_id)?$this->civility:(! empty($this->civilite)?$this->civilite:''));
-		if (empty($code)) return '';
-        return $langs->getLabelFromKey($this->db, "Civility".$code, "c_civility", "code", "label", $code);
+		if (! empty($this->civility)) return $this->civility; // civility is already defined in fetch
+		elseif (! empty($this->civility_code)) return $langs->getLabelFromKey($this->db, "Civility".$this->civility_code, "c_civility", "code", "label", $this->civility_code);
+		else return '';
 	}
 
 	/**
