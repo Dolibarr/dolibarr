@@ -218,8 +218,9 @@ class HookManager
                     if (! method_exists($actionclassinstance,$method)) continue;
 
                     $this->resNbOfHooks++;
+                    $tempResNbOfHooks = $this->resNbOfHooks; // because hooks can be call in hooks we need to save this info for this level of hook
 
-                    $modulealreadyexecuted[$module]=$module; // Use the $currentcontext in method to avoid running twice
+					$modulealreadyexecuted[$module]=$module; // Use the $currentcontext in method to avoid running twice
 
                     // Clean class (an error may have been set from a previous call of another method for same module/hook)
                     $actionclassinstance->error=0;
@@ -233,7 +234,8 @@ class HookManager
                     if ($hooktype == 'addreplace')
                     {
                     	$resaction += $actionclassinstance->$method($parameters, $object, $action, $this); // $object and $action can be changed by method ($object->id during creation for example or $action to go back to other action for example)
-                    	if ($resaction < 0 || ! empty($actionclassinstance->error) || (! empty($actionclassinstance->errors) && count($actionclassinstance->errors) > 0))
+						$this->resPrint=''; $this->resArray=array(); // Init return properties
+						if ($resaction < 0 || ! empty($actionclassinstance->error) || (! empty($actionclassinstance->errors) && count($actionclassinstance->errors) > 0))
                     	{
                     		$error++;
                     		$this->error=$actionclassinstance->error; $this->errors=array_merge($this->errors, (array) $actionclassinstance->errors);
@@ -251,6 +253,7 @@ class HookManager
 
                     	//dol_syslog("Call method ".$method." of class ".get_class($actionclassinstance).", module=".$module.", hooktype=".$hooktype, LOG_DEBUG);
                     	$resaction = $actionclassinstance->$method($parameters, $object, $action, $this); // $object and $action can be changed by method ($object->id during creation for example or $action to go back to other action for example)
+						$this->resPrint=''; $this->resArray=array(); // Init return properties
 
                     	if (! empty($actionclassinstance->results) && is_array($actionclassinstance->results)) $this->resArray =array_merge($this->resArray, $actionclassinstance->results);
                     	if (! empty($actionclassinstance->resprints)) $this->resPrint.=$actionclassinstance->resprints;
@@ -261,6 +264,9 @@ class HookManager
                     		if (empty($actionclassinstance->resprints)) { $this->resPrint.=$resaction; $resaction=0; }
                     	}
                     }
+
+					$this->resNbOfHooks = $tempResNbOfHooks; // because hooks can be call in hooks we need to restore this level of hook
+
 
                     //print "After hook  ".get_class($actionclassinstance)." method=".$method." hooktype=".$hooktype." results=".count($actionclassinstance->results)." resprints=".count($actionclassinstance->resprints)." resaction=".$resaction." result=".$result."<br>\n";
 
