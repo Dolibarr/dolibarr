@@ -158,6 +158,7 @@ ACCOUNTING_RESULT_LOSS=Compte de resultats comptable (pèrdua)
 ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=Revista de tancament
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Compte de comptabilitat de la transferència bancària de transició
+TransitionalAccount=Compte de transferència bancària transitòria
 
 ACCOUNTING_ACCOUNT_SUSPENSE=Compte comptable d'espera
 DONATION_ACCOUNTINGACCOUNT=Compte comptable per registrar les donacions
@@ -216,8 +217,8 @@ DescThirdPartyReport=Consulteu aquí la llista dels clients i proveïdors de ter
 ListAccounts=Llistat dels comptes comptables
 UnknownAccountForThirdparty=Compte comptable de tercer desconeguda, utilitzarem %s
 UnknownAccountForThirdpartyBlocking=Compte comptable de tercer desconegut. Error de bloqueig
-ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Third-party account not defined or third party unknown. We will use %s
-ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Third-party account not defined or third party unknown. Blocking error.
+ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Compte de tercers no definit o tercer desconegut. Utilitzarem %s
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Compte de tercers no definit o tercer desconegut. Error de bloqueig.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Compte de tercers desconegut i compte d'espera no definit. Error de bloqueig
 PaymentsNotLinkedToProduct=Pagament no vinculat a cap producte / servei
 
@@ -230,7 +231,7 @@ TotalMarge=Marge total de vendes
 
 DescVentilCustomer=Consulti aquí la llista de línies de factures de client vinculades (o no) a comptes comptables de producte
 DescVentilMore=En la majoria dels casos, si tu utilitzes productes o serveis predefinits i poses el número de compte a la fitxa de producte/servei, l'aplicació serà capaç de fer tots els vincles entre les línies de factura i els comptes comptables del teu pla comptable, només amb un clic mitjançant el botó <strong>"%s"</strong>. Si el compte no està col·locat  a la fitxa del producte/servei o si encara hi ha alguna línia no vinculada a cap compte, hauràs de fer una vinculació manual a partir del menú "<strong>%s</strong>".
-DescVentilDoneCustomer=Consulta aquí la llista de línies de factures de clients i els seus comptes comptables de producte
+DescVentilDoneCustomer=Consulta aquí la llista de línies de factures a clients i els seus comptes comptables de producte
 DescVentilTodoCustomer=Comptabilitza les línies de factura encara no comptabilitzades amb un compte comptable de producte
 ChangeAccount=Canvia el compte comptable de producte/servei per les línies seleccionades amb el següent compte comptable:
 Vide=-
@@ -292,7 +293,7 @@ Modelcsv_cogilog=Exporta a Cogilog
 Modelcsv_agiris=Exporta a Agiris
 Modelcsv_openconcerto=Exporta per a OpenConcerto (Test)
 Modelcsv_configurable=Exporta CSV configurable
-Modelcsv_FEC=Export FEC
+Modelcsv_FEC=Exporta FEC
 Modelcsv_Sage50_Swiss=Exportació per Sage 50 Switzerland
 ChartofaccountsId=Id pla comptable
 
@@ -317,9 +318,9 @@ WithoutValidAccount=Sense compte dedicada vàlida
 WithValidAccount=Amb compte dedicada vàlida
 ValueNotIntoChartOfAccount=Aquest compte comptable no existeix al pla comptable
 AccountRemovedFromGroup=S'ha eliminat el compte del grup
-SaleLocal=Local sale
-SaleExport=Export sale
-SaleEEC=Sale in EEC
+SaleLocal=Venda local
+SaleExport=Venda d’exportació
+SaleEEC=Venda en CEE
 
 ## Dictionary
 Range=Rang de compte comptable
@@ -340,7 +341,7 @@ UseMenuToSetBindindManualy=Línies encara no enllaçades, utilitzeu el menú <a 
 
 ## Import
 ImportAccountingEntries=Entrades de comptabilitat
-DateExport=Date export
+DateExport=Data d&#39;exportació
 WarningReportNotReliable=Avís, aquest informe no està basat en el Llibre Major, de manera que no conté assentaments modificats manualment en el Llibre Major. Si el registre diari està actualitzat, la vista de comptes és més precisa.
 ExpenseReportJournal=Diari d'informe de despeses
 InventoryJournal=Diari d'inventari

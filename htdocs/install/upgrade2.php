@@ -1089,7 +1089,7 @@ function migrate_links_transfert($db, $langs, $conf)
                 $sql.= "fk_bank, url_id, url, label, type";
                 $sql.= ")";
                 $sql.= " VALUES (";
-                $sql.= $obj->barowid.",".$obj->bbrowid.", '/compta/bank/ligne.php?rowid=', '(banktransfert)', 'banktransfert'";
+                $sql.= $obj->barowid.",".$obj->bbrowid.", '/compta/bank/line.php?rowid=', '(banktransfert)', 'banktransfert'";
                 $sql.= ")";
 
                 print $sql.'<br>';

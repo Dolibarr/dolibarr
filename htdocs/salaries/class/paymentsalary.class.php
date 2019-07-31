@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2011-2018 Alexandre Spangaro   <aspangaro@open-dsi.fr>
+/* Copyright (C) 2011-2019 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2014      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -17,7 +17,7 @@
  */
 
 /**
- *  \file       htdocs/compta/salaries/class/paymentsalary.class.php
+ *  \file       htdocs/salaries/class/paymentsalary.class.php
  *  \ingroup    salaries
  *  \brief      Class for salaries module payment
  */
@@ -157,6 +157,19 @@ class PaymentSalary extends CommonObject
             return -1;
         }
 
+        // Update extrafield
+        if (! $error)
+        {
+            if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+            {
+                $result=$this->insertExtraFields();
+                if ($result < 0)
+                {
+                    $error++;
+                }
+            }
+        }
+
         if (! $notrigger)
         {
             // Call trigger
@@ -242,6 +255,10 @@ class PaymentSalary extends CommonObject
                 $this->fk_account		= $obj->fk_account;
                 $this->fk_type			= $obj->fk_type;
                 $this->rappro			= $obj->rappro;
+
+                // Retreive all extrafield
+                // fetch optionals attributes and labels
+                $this->fetch_optionals();
             }
             $this->db->free($resql);
 
@@ -272,6 +289,19 @@ class PaymentSalary extends CommonObject
         if ($result < 0) return -1;
         // End call triggers
 
+        // Delete donation
+        if (! $error)
+        {
+            $sql = "DELETE FROM " . MAIN_DB_PREFIX . "payment_salary_extrafields";
+            $sql.= " WHERE fk_object=" . $this->id;
+
+            $resql = $this->db->query($sql);
+            if (! $resql)
+            {
+                $this->errors[] = $this->db->lasterror();
+                $error++;
+            }
+        }
 
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."payment_salary";
         $sql.= " WHERE rowid=".$this->id;
@@ -418,6 +448,18 @@ class PaymentSalary extends CommonObject
                     $result=$acc->fetch($this->accountid);
                     if ($result <= 0) dol_print_error($this->db);
 
+                    // Update extrafield
+                    if (! $error) {
+                        if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+                        {
+                            $result=$this->insertExtraFields();
+                            if ($result < 0)
+                            {
+                                $error++;
+                            }
+                        }
+                    }
+
                     // Insert payment into llx_bank
                     // Add link 'payment_salary' in bank_url between payment and bank transaction
                     $bank_line_id = $acc->addline(
@@ -449,7 +491,7 @@ class PaymentSalary extends CommonObject
                     if (! $error)
                     {
                         // Add link 'payment_salary' in bank_url between payment and bank transaction
-                        $url=DOL_URL_ROOT.'/compta/salaries/card.php?id=';
+                        $url=DOL_URL_ROOT.'/salaries/card.php?id=';
 
                         $result=$acc->add_url_line($bank_line_id, $this->id, $url, "(SalaryPayment)", "payment_salary");
                         if ($result <= 0)
@@ -554,7 +596,7 @@ class PaymentSalary extends CommonObject
         $label.= '<br>';
         $label.= '<b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
 
-        $url = DOL_URL_ROOT.'/compta/salaries/card.php?id='.$this->id;
+        $url = DOL_URL_ROOT.'/salaries/card.php?id='.$this->id;
 
         if ($option != 'nolink')
         {

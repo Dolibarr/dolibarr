@@ -17,7 +17,7 @@
  */
 
 /**
- *       \file       htdocs/public/ticket/index.php
+ *       \file       htdocs/public/ticket/create_ticket.php
  *       \ingroup    ticket
  *       \brief      Display public form to add new ticket
  */

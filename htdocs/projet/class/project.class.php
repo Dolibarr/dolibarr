@@ -74,12 +74,9 @@ class Project extends CommonObject
 
 	/**
 	 * @var string
-	 * @deprecated
-	 * @see $title
 	 */
-	public $titre;
-
     public $title;
+
     public $date_start;
     public $date_end;
     public $date_close;
@@ -465,7 +462,6 @@ class Project extends CommonObject
                 $this->id = $obj->rowid;
                 $this->ref = $obj->ref;
                 $this->title = $obj->title;
-                $this->titre = $obj->title; // TODO deprecated
                 $this->description = $obj->description;
                 $this->date_c = $this->db->jdate($obj->datec);
                 $this->datec = $this->db->jdate($obj->datec); // TODO deprecated
@@ -556,13 +552,13 @@ class Project extends CommonObject
             $sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . $tablename." WHERE ".$projectkey." IN (". $ids .") AND entity IN (".getEntity($type).")";
         }
 
-		if ($dates > 0)
+		if ($dates > 0 && ($type != 'project_task'))	// For table project_taks, we want the filter on date apply on project_time_spent table
 		{
 			if (empty($datefieldname) && ! empty($this->table_element_date)) $datefieldname=$this->table_element_date;
 			if (empty($datefieldname)) return 'Error this object has no date field defined';
 			$sql.=" AND (".$datefieldname." >= '".$this->db->idate($dates)."' OR ".$datefieldname." IS NULL)";
 		}
-    	if ($datee > 0)
+		if ($datee > 0 && ($type != 'project_task'))	// For table project_taks, we want the filter on date apply on project_time_spent table
 		{
 			if (empty($datefieldname) && ! empty($this->table_element_date)) $datefieldname=$this->table_element_date;
 			if (empty($datefieldname)) return 'Error this object has no date field defined';

@@ -28,6 +28,11 @@
 -- Note: fields with type BLOB/TEXT can't have default value.
 
 
+-- Missing in v10
+ALTER TABLE llx_account_bookkeeping ADD COLUMN date_export datetime DEFAULT NULL;
+ALTER TABLE llx_expensereport ADD COLUMN paid smallint default 0 NOT NULL;
+UPDATE llx_expensereport set paid = 1 WHERE fk_statut = 6 and paid = 0;
+
 create table llx_entrepot_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
@@ -50,3 +55,15 @@ ALTER TABLE llx_user ADD COLUMN iplastlogin         varchar(250);
 ALTER TABLE llx_user ADD COLUMN ippreviouslogin     varchar(250);
 
 ALTER TABLE llx_events ADD COLUMN prefix_session varchar(255) NULL;
+
+create table llx_payment_salary_extrafields
+(
+  rowid            integer AUTO_INCREMENT PRIMARY KEY,
+  tms              timestamp,
+  fk_object        integer NOT NULL,    -- salary payment id
+  import_key       varchar(14)      	-- import key
+)ENGINE=innodb;
+
+ALTER TABLE llx_payment_salary_extrafields ADD INDEX idx_payment_salary_extrafields (fk_object);
+
+UPDATE llx_bank_url set url = REPLACE( url, 'compta/salaries/', 'salaries/');

@@ -517,7 +517,7 @@ if ($resql)
 		$staticcompany->name=$obj->name;
 		print $staticcompany->getNomUrl(1, '', 20);
 		print '</td>';
-		print '<td width="16" class="right"><a href="ligne.php?id='.$obj->fk_contrat.'&ligne='.$obj->cid.'">';
+		print '<td width="16" class="right"><a href="line.php?id='.$obj->fk_contrat.'&ligne='.$obj->cid.'">';
 		print $staticcontratligne->LibStatut($obj->statut, 3);
 		print '</a></td>';
 		print "</tr>\n";
@@ -596,7 +596,7 @@ if ($resql)
 		$staticcompany->name=$obj->name;
 		print $staticcompany->getNomUrl(1, '', 20);
 		print '</td>';
-		print '<td width="16" class="right"><a href="ligne.php?id='.$obj->fk_contrat.'&ligne='.$obj->cid.'">';
+		print '<td width="16" class="right"><a href="line.php?id='.$obj->fk_contrat.'&ligne='.$obj->cid.'">';
 		print $staticcontratligne->LibStatut($obj->statut, 3, 1);
 		print '</a></td>';
 		print "</tr>\n";

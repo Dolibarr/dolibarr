@@ -185,5 +185,5 @@ function llxHeaderTicket($title, $head = "", $disablejs = 0, $disablehead = 0, $
     	print '</center><br>';
     }
 
-    print '<div style="margin-left: 50px; margin-right: 50px;">';
+    print '<div class="ticketlargemargin">';
 }

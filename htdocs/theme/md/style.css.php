@@ -376,6 +376,9 @@ div.buttonpayment input {
 	color: #333;
 	cursor: pointer;
 }
+div.buttonpayment input:focus {
+    color: #008;
+}
 input.buttonpaymentcb {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/common/credit_card.png', 1) ?>);
 	background-size: 26px;
@@ -5404,8 +5407,24 @@ border-top-right-radius: 6px;
 /* Ticket module                                                                  */
 /* ============================================================================== */
 
+.ticketpublicarea {
+	width: 70%;
+}
 .publicnewticketform {
 	margin-top: 25px !important;
+}
+.ticketlargemargin {
+	padding-left: 50px;
+	padding-right: 50px;
+}
+@media only screen and (max-width: 767px)
+{
+	.ticketlargemargin {
+		padding-left: 5px; padding-right: 5px;
+	}
+	.ticketpublicarea {
+		width: 100%;
+	}
 }
 
 #cd-timeline {

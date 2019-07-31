@@ -107,7 +107,7 @@ UpdateConfCPOK=Edukalt uuendatud.
 Module27130Name= Management of leave requests
 Module27130Desc= Management of leave requests
 ErrorMailNotSend=E-kirja saatmisel tekkis viga:
-NoticePeriod=Notice period
+NoticePeriod=Teavitamisperiood
 #Messages
 HolidaysToValidate=Validate leave requests
 HolidaysToValidateBody=Below is a leave request to validate

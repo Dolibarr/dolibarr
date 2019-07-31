@@ -182,6 +182,12 @@ $arrayfields=array(
 	'f.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500),
 	'f.fk_statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
 );
+
+if($conf->global->INVOICE_USE_SITUATION && $conf->global->INVOICE_USE_SITUATION_RETAINED_WARRANTY)
+{
+    $arrayfields['f.retained_warranty'] = array('label'=>$langs->trans("RetainedWarranty"), 'checked'=>0);
+}
+
 // Extra fields
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 {
@@ -373,6 +379,10 @@ $sql.= ' f.localtax1 as total_localtax1, f.localtax2 as total_localtax2,';
 $sql.= ' f.datef as df, f.date_lim_reglement as datelimite,';
 $sql.= ' f.paye as paye, f.fk_statut,';
 $sql.= ' f.datec as date_creation, f.tms as date_update,';
+if($conf->global->INVOICE_USE_SITUATION && $conf->global->INVOICE_USE_SITUATION_RETAINED_WARRANTY)
+{
+    $sql.= ' f.retained_warranty, f.retained_warranty_date_limit, f.situation_final,f.situation_cycle_ref,f.situation_counter,';
+}
 $sql.= ' s.rowid as socid, s.nom as name, s.email, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta as code_compta_client, s.code_compta_fournisseur,';
 $sql.= " typent.code as typent_code,";
 $sql.= " state.code_departement as state_code, state.nom as state_name,";
@@ -834,6 +844,13 @@ if ($resql)
 		print '<input class="flat" type="text" size="4" name="search_montant_ttc" value="'.dol_escape_htmltag($search_montant_ttc).'">';
 		print '</td>';
 	}
+	
+	if(! empty($arrayfields['f.retained_warranty']['checked']))
+	{
+	    print '<td class="liste_titre" align="right">';
+	    print '</td>';
+	}
+	
 	if (! empty($arrayfields['dynamount_payed']['checked']))
 	{
 		print '<td class="liste_titre right">';
@@ -899,6 +916,7 @@ if ($resql)
 	if (! empty($arrayfields['f.total_localtax1']['checked']))    print_liste_field_titre($arrayfields['f.total_localtax1']['label'], $_SERVER['PHP_SELF'], 'f.localtax1', '', $param, 'class="right"', $sortfield, $sortorder);
 	if (! empty($arrayfields['f.total_localtax2']['checked']))    print_liste_field_titre($arrayfields['f.total_localtax2']['label'], $_SERVER['PHP_SELF'], 'f.localtax2', '', $param, 'class="right"', $sortfield, $sortorder);
 	if (! empty($arrayfields['f.total_ttc']['checked']))          print_liste_field_titre($arrayfields['f.total_ttc']['label'], $_SERVER['PHP_SELF'], 'f.total_ttc', '', $param, 'class="right"', $sortfield, $sortorder);
+	if (! empty($arrayfields['f.retained_warranty']['checked']))  print_liste_field_titre($arrayfields['f.retained_warranty']['label'], $_SERVER['PHP_SELF'], '', '', $param, 'align="right"', $sortfield, $sortorder);
 	if (! empty($arrayfields['dynamount_payed']['checked']))      print_liste_field_titre($arrayfields['dynamount_payed']['label'], $_SERVER['PHP_SELF'], '', '', $param, 'class="right"', $sortfield, $sortorder);
 	if (! empty($arrayfields['rtp']['checked']))                  print_liste_field_titre($arrayfields['rtp']['label'], $_SERVER['PHP_SELF'], '', '', $param, 'class="right"', $sortfield, $sortorder);
 	// Extra fields
@@ -939,7 +957,15 @@ if ($resql)
 			$facturestatic->date_lim_reglement=$db->jdate($obj->datelimite);
 			$facturestatic->note_public=$obj->note_public;
 			$facturestatic->note_private=$obj->note_private;
-
+			if($conf->global->INVOICE_USE_SITUATION && $conf->global->INVOICE_USE_SITUATION_RETAINED_WARRANTY)
+			{
+			     $facturestatic->retained_warranty=$obj->retained_warranty;
+			     $facturestatic->retained_warranty_date_limit=$obj->retained_warranty_date_limit;
+			     $facturestatic->situation_final=$obj->retained_warranty_date_limit;
+			     $facturestatic->situation_final=$obj->retained_warranty_date_limit;
+			     $facturestatic->situation_cycle_ref=$obj->situation_cycle_ref;
+			     $facturestatic->situation_counter=$obj->situation_counter;
+			}
 			$thirdpartystatic->id=$obj->socid;
 			$thirdpartystatic->name=$obj->name;
 			$thirdpartystatic->client=$obj->client;
@@ -1179,6 +1205,11 @@ if ($resql)
 				if (! $i) $totalarray['nbfield']++;
 				if (! $i) $totalarray['totalttcfield']=$totalarray['nbfield'];
 				$totalarray['totalttc'] += $obj->total_ttc;
+			}
+
+			if(! empty($arrayfields['f.retained_warranty']['checked']))
+			{
+			    print '<td align="right">'.(! empty($obj->retained_warranty)?price($obj->retained_warranty).'%':'&nbsp;').'</td>';
 			}
 
 			if (! empty($arrayfields['dynamount_payed']['checked']))

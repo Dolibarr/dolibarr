@@ -6,7 +6,7 @@
  * Copyright (C) 2005      Simon TOSSER          <simon@kornog-computing.com>
  * Copyright (C) 2011-2012 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
- * Copyright (C) 2015-2017 Alexandre Spangaro    <aspangaro@open-dsi.fr>
+ * Copyright (C) 2015-2019 Alexandre Spangaro    <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,16 +24,16 @@
  */
 
 /**
- *       \file       htdocs/compta/salaries/document.php
+ *       \file       htdocs/salaries/document.php
  *       \ingroup    salaries
  *       \brief      Page of linked files onto salaries
  */
 
-require '../../main.inc.php';
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/salaries.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/paymentsalary.class.php';
+require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("compta","bills","users","salaries","hrm"));
@@ -99,7 +99,7 @@ if ($object->id)
 		$totalsize+=$file['size'];
 	}
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/salaries/list.php?restore_lastsearch_values=1'.(! empty($socid)?'&socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/salaries/list.php?restore_lastsearch_values=1'.(! empty($socid)?'&socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref='<div class="refidno">';
 

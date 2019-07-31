@@ -251,10 +251,10 @@ if (empty($reshook))
 				// External modules should update their ones too
 				if (! $error)
 				{
-    $reshook = $hookmanager->executeHooks('replaceThirdparty', array(
+					$reshook = $hookmanager->executeHooks('replaceThirdparty', array(
 						'soc_origin' => $soc_origin->id,
 						'soc_dest' => $object->id
-					), $soc_dest, $action);
+					), $object, $action);
 
 					if ($reshook < 0)
 					{
@@ -383,7 +383,7 @@ if (empty($reshook))
 	        }
 			else $object->canvas=$canvas;
 
-	        if (GETPOST("private") == 1)	// Ask to create a contact
+	        if (GETPOST("private", 'int') == 1)	// Ask to create a contact
 	        {
 	            $object->particulier		= GETPOST("private");
 
@@ -741,7 +741,7 @@ if (empty($reshook))
                                 {
                                 	require_once DOL_DOCUMENT_ROOT .'/core/lib/files.lib.php';
                                 	// the dir dirname($newfile) is directory of logo, so we should have only one file at once into index, so we delete indexes for the dir
-                                	deleteFilesIntoDatabaseIndex(dirname($newfile), '', '', 'uploaded', 1);
+                                	deleteFilesIntoDatabaseIndex(dirname($newfile), '', '');
                                 	// now we index the uploaded logo file
                                 	addFileIntoDatabaseIndex(dirname($newfile), basename($newfile), '', 'uploaded', 1);
                                 }
@@ -1172,13 +1172,18 @@ else
         // If javascript on, we show option individual
         if ($conf->use_javascript_ajax)
         {
-            print '<tr class="individualline"><td>'.$form->editfieldkey('FirstName', 'firstname', '', $object, 0).'</td>';
-	        print '<td colspan="3"><input type="text" class="minwidth300" maxlength="128" name="firstname" id="firstname" value="'.$object->firstname.'"></td>';
-            print '</tr>';
-            // Title
-            print '<tr class="individualline"><td>'.$form->editfieldkey('UserTitle', 'civility_id', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">';
-            print $formcompany->select_civility($object->civility_id, 'civility_id', 'maxwidth100').'</td>';
-            print '</tr>';
+        	if (! empty($conf->global->THIRDPARTY_SUGGEST_ALSO_ADDRESS_CREATION))
+        	{
+        		// Firstname
+	            print '<tr class="individualline"><td>'.$form->editfieldkey('FirstName', 'firstname', '', $object, 0).'</td>';
+		        print '<td colspan="3"><input type="text" class="minwidth300" maxlength="128" name="firstname" id="firstname" value="'.$object->firstname.'"></td>';
+	            print '</tr>';
+
+	            // Title
+	            print '<tr class="individualline"><td>'.$form->editfieldkey('UserTitle', 'civility_id', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">';
+	            print $formcompany->select_civility($object->civility_id, 'civility_id', 'maxwidth100').'</td>';
+	            print '</tr>';
+        	}
         }
 
         // Alias names (commercial, trademark or alias names)
@@ -1188,7 +1193,7 @@ else
         // Prospect/Customer
         print '<tr><td class="titlefieldcreate">'.$form->editfieldkey('ProspectCustomer', 'customerprospect', '', $object, 0, 'string', '', 1).'</td>';
 	    print '<td class="maxwidthonsmartphone">';
-	    $selected=(GETPOSTISSET('client', 'int')?GETPOST('client', 'int'):$object->client);
+	    $selected=(GETPOSTISSET('client')?GETPOST('client', 'int'):$object->client);
 	    print $formcompany->selectProspectCustomerType($selected);
 	    print '</td>';
 
@@ -2257,7 +2262,6 @@ else
         if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
         {
             print '<tr><td>'.$langs->trans('Prefix').'</td><td>'.$object->prefix_comm.'</td>';
-            print $htmllogobar; $htmllogobar='';
             print '</tr>';
         }
 
@@ -2269,7 +2273,6 @@ else
             print $object->code_client;
             if ($object->check_codeclient() <> 0) print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
             print '</td>';
-            print $htmllogobar; $htmllogobar='';
             print '</tr>';
         }
 
@@ -2281,7 +2284,6 @@ else
             print $object->code_fournisseur;
             if ($object->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
             print '</td>';
-            print $htmllogobar; $htmllogobar='';
             print '</tr>';
         }
 
@@ -2291,9 +2293,6 @@ else
             print '<tr><td>';
             print $langs->trans('Gencod').'</td><td>'.$object->barcode;
             print '</td>';
-			if ($htmllogobar) $htmllogobar.=$form->showbarcode($object);
-            print $htmllogobar;
-			$htmllogobar='';
             print '</tr>';
         }
 
@@ -2719,7 +2718,7 @@ else
 
 			$MAXEVENT = 10;
 
-            $morehtmlright.= dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-list-alt', DOL_URL_ROOT.'/societe/agenda.php?socid='.$object->id);
+            $morehtmlright = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-list-alt', DOL_URL_ROOT.'/societe/agenda.php?socid='.$object->id);
 
 			// List of actions on element
 			include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';

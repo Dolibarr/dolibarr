@@ -103,9 +103,6 @@ if ($socid > 0)
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
-	$langs->load("companies");
-
-
 	$object = new Societe($db);
 	$result = $object->fetch($socid);
 
