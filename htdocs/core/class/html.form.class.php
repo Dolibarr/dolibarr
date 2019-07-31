@@ -2571,9 +2571,9 @@ class Form
 
 			    $outval.=' - '.$langs->transnoentities("VirtualStock").':';
 			    if ($virtualstock > 0) {
-			        $outval.= ' - <span class="product_line_stock_ok">';
+			        $outval.= ' <span class="product_line_stock_ok">';
 			    }elseif ($virtualstock <= 0) {
-			        $outval.= ' - <span class="product_line_stock_too_low">';
+			        $outval.= ' <span class="product_line_stock_too_low">';
 			    }
 			    $outval.=$virtualstock;
 			    $outval.='</span>';
