@@ -281,7 +281,7 @@ if ($action == 'edit')	// Edit
 
 	//Invert send and recipient
 
-	print '<tr class="oddeven"><td>'.$langs->trans("HideDetailsOnPDF").'</td><td>';
+	print '<tr class="oddeven"><td>'.$langs->trans("SwapSenderAndRecipientOnPDF").'</td><td>';
     print $form->selectyesno('MAIN_INVERT_SENDER_RECIPIENT', (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT))?$conf->global->MAIN_INVERT_SENDER_RECIPIENT:0, 1);
     print '</td></tr>';
 
