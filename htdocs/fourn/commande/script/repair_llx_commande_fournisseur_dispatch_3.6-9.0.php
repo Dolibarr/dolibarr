@@ -59,12 +59,8 @@ echo '<h3>Repair llx_commande_fournisseur_dispatch.fk_commandefourndet</h3>';
 echo '<p>Repair in progress. This may take a while.</p>';
 
 echo '<pre>';
-//$sql = 'UPDATE ' . MAIN_DB_PREFIX . 'commande_fournisseur_dispatch AS dispatch SET dispatch.fk_commandefourndet =
-//           ( SELECT rowid FROM ' . MAIN_DB_PREFIX . 'commande_fournisseurdet AS line
-//            WHERE line.fk_commande = dispatch.fk_commande LIMIT 1) WHERE dispatch.fk_commandefourndet = 0;';
 
 $sql_dispatch = 'SELECT * FROM ' . MAIN_DB_PREFIX . 'commande_fournisseur_dispatch WHERE COALESCE(fk_commandefourndet, 0) = 0';
-//$sql_dispatch = 'SELECT * FROM ' . MAIN_DB_PREFIX . 'commande_fournisseur_dispatch WHERE fk_commandefourndet = 0 OR fk_commandefourndet IS NULL';
 $db->begin();
 $resql_dispatch = $db->query($sql_dispatch);
 $n_processed_rows = 0;
