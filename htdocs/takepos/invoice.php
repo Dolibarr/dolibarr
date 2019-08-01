@@ -42,7 +42,7 @@ $langs->loadLangs(array("bills", "cashdesk"));
 $id = GETPOST('id', 'int');
 $action = GETPOST('action', 'alpha');
 $idproduct = GETPOST('idproduct', 'int');
-$place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0);   // $place is id of table for Ba or Restaurant
+$place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0);   // $place is id of table for Bar or Restaurant
 
 if ($conf->global->TAKEPOS_PHONE_BASIC_LAYOUT==1 && $conf->browser->layout == 'phone')
 {
@@ -209,9 +209,21 @@ if (($action=="addline" || $action=="freezone") && $placeid == 0)
 	$invoice->module_source = 'takepos';
 	$invoice->pos_source = $_SESSION["takeposterminal"];
 
-	$placeid = $invoice->create($user);
-	$sql="UPDATE ".MAIN_DB_PREFIX."facture set ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")' where rowid=".$placeid;
-	$db->query($sql);
+	if ($invoice->socid <= 0)
+	{
+		$langs->load('errors');
+		dol_htmloutput_errors($langs->trans("ErrorModuleSetupNotComplete", "TakePos"), null, 1);
+	}
+	else
+	{
+		$placeid = $invoice->create($user);
+		if ($placeid < 0)
+		{
+			dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
+		}
+		$sql="UPDATE ".MAIN_DB_PREFIX."facture set ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")' where rowid=".$placeid;
+		$db->query($sql);
+	}
 }
 
 if ($action == "addline")
