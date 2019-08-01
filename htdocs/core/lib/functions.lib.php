@@ -2447,6 +2447,13 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 			$newphone = substr($newphone, 0, 4).$separ.substr($newphone, 4, 1).$separ.substr($newphone, 5, 3).$separ.substr($newphone, 7, 2).$separ.substr($newphone, 9, 2);
 		}
 	}
+	elseif (strtoupper($countrycode) == "JM")
+	{//Jamaïque
+		if(dol_strlen($newphone) == 12)
+		{//ex: +1867_ABC_DEFG
+			$newphone = substr($newphone,0,5).$separ.substr($newphone,5,3).$separ.substr($newphone,8,4);
+		}
+	}
 	elseif (strtoupper($countrycode) == "MG")
 	{//Madagascar
 		if(dol_strlen($phone) == 13)
