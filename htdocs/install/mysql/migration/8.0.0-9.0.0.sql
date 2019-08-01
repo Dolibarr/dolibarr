@@ -285,12 +285,6 @@ DELETE from llx_accounting_account where rowid in (select minid from tmp_llx_acc
 --update llx_facture_fourn_det set fk_code_ventilation = maxid WHERE fk_code_ventilation = minid;
 --update llx_expensereport_det set fk_code_ventilation = maxid WHERE fk_code_ventilation = minid;
 
-
-ALTER TABLE llx_facture ADD COLUMN retained_warranty real DEFAULT NULL after situation_final;
-ALTER TABLE llx_facture ADD COLUMN retained_warranty_date_limit	date DEFAULT NULL after retained_warranty;
-ALTER TABLE llx_facture ADD COLUMN retained_warranty_fk_cond_reglement	integer  DEFAULT NULL after retained_warranty_date_limit;
-
-
 ALTER TABLE llx_accounting_account DROP INDEX uk_accounting_account;
 ALTER TABLE llx_accounting_account ADD UNIQUE INDEX uk_accounting_account (account_number, entity, fk_pcg_version);
 
