@@ -11,7 +11,7 @@ if (! defined('ISLOADEDBYSTEELSHEET'))  die('Must be call by steelsheet'); ?>
 	min-height: 90px;
 	background: #fff;
 	width: 100%;
-	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+	box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.1), 0px 0px 2px rgba(0, 0, 0, 0.1);
 	border-radius: 2px;
 	margin-bottom: 15px;
 }
@@ -57,16 +57,23 @@ if (! defined('ISLOADEDBYSTEELSHEET'))  die('Must be call by steelsheet'); ?>
 	font-size: 18px;
 }
 .progress-description,
-.info-box-text {
+.info-box-text,
+.info-box-title{
 	display: block;
 	font-size: 12px;
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
-.info-box-text {
+
+.info-box-title{
 	text-transform: uppercase;
+	font-weight: bold;
 }
+.info-box-text:first-letter{text-transform: uppercase}
+a.info-box-text{ text-decoration: none;}
+
+
 .info-box-more {
 	display: block;
 }
@@ -157,10 +164,15 @@ if (! defined('ISLOADEDBYSTEELSHEET'))  die('Must be call by steelsheet'); ?>
 }
 
 .box-flex-item{
-	flex-grow : 2;
+	flex-grow : 1;
 	flex-shrink: 1;
 	flex-basis: auto;
 
 	width: 280px;
 	padding: 5px 10px;
+}
+.box-flex-item.filler{
+	margin: 0;
+	padding: 0px 10px !important;
+	height: 0;
 }

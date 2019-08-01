@@ -713,10 +713,15 @@ if (! empty($valid_dashboardlines))
 			$openedDashBoard.= '		<span class="info-box-icon bg-infoxbox-'.$groupKeyLowerCase.'"><i class="fa fa-dol-'.$groupKeyLowerCase.'"></i></span>'."\n";
 			$openedDashBoard.= '		<div class="info-box-content">'."\n";
 
-			$openedDashBoard .= '			<span class="info-box-text"><strong>'.$groupName.'</strong></span>' . "\n";
+			$openedDashBoard .= '			<span class="info-box-title">'.$groupName.'</span>' . "\n";
 
 			foreach($boards as $board) {
-				$infoName = !empty($board->labelShort) ? $board->labelShort : $board->label ;
+				if(!empty($board->labelShort)){
+					$infoName = '<span title="'.$board->label.'">'.$board->labelShort.'</span>';
+				}
+				else{
+					$infoName = $board->label ;
+				}
 
 				$textLateTitle = $langs->trans("NActionsLate", $board->nbtodolate);
 				$textLateTitle.= ' ('.$langs->trans("Late").' = '.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil($board->warning_delay) >= 0 ? '+' : '').ceil($board->warning_delay).' '.$langs->trans("days").')';
@@ -729,13 +734,16 @@ if (! empty($valid_dashboardlines))
 					$textLate .= '</span>';
 				}
 
-
 				$nbtodClass = '';
 				if($board->nbtodo>0){
 					$nbtodClass = 'badge badge-info';
 				}
 
-				$openedDashBoard .= '			<span class="info-box-text">'.$infoName.' : <span class="'.$nbtodClass.'">'.$board->nbtodo.'</span>'.$textLate.'</span>' . "\n";
+				$openedDashBoard .= '			<a href="'.$board->url.'" class="info-box-text">'.$infoName.' : <span class="'.$nbtodClass.' classfortooltip" title="'.$board->label.'" >'.$board->nbtodo.'</span>'.$textLate.'</a>' . "\n";
+
+				if ($board->total > 0 && ! empty($conf->global->MAIN_WORKBOARD_SHOW_TOTAL_WO_TAX) || $board->total > 0){
+					$openedDashBoard .=  '<a href="'.$board->url.'" class="info-box-text">'.$langs->trans('Total').' : '.price($board->total)	.'</a>';
+				}
 			}
 
 
@@ -746,6 +754,11 @@ if (! empty($valid_dashboardlines))
 		}
 
     }
+
+
+	for ($i = 1; $i <= 10; $i++) {
+		$openedDashBoard .= '<div class="box-flex-item filler"></div>';
+	}
 
 	$nbworkboardcount=0;
     foreach($valid_dashboardlines as $infoKey => $board)
