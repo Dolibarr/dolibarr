@@ -438,7 +438,7 @@ class pdf_beluga extends ModelePDFProjects
                             $pdf->MultiCell($this->posxstatut - $this->posxamountht, 3, "", 1, 'R');
                         }
                         $pdf->SetXY($this->posxstatut, $curY);
-                        $pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxstatut, 3, $outputlangs->transnoentities("Statut"), 1, 'R');
+                        $pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxstatut, 3, $outputlangs->transnoentities("Status"), 1, 'R');
 
                         if (is_array($elementarray) && count($elementarray) > 0)
                         {

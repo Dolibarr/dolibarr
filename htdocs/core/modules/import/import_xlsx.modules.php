@@ -622,7 +622,7 @@ class ImportXlsx extends ModeleImports
 							if (! empty($objimport->array_import_regex[0][$val]) && ($newval != ''))
 							{
 								// If test is "Must exist in a field@table or field@table:..."
-								if (preg_match('/^(.+)@([^:]+)(:.+)?$/',$objimport->array_import_regex[0][$val],$reg))
+								if (preg_match('/^(.+)@([^:]+)(:.+)?$/', $objimport->array_import_regex[0][$val], $reg))
 								{
 									$field=$reg[1];
 									$table=$reg[2];

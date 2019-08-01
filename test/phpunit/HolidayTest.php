@@ -365,5 +365,4 @@ class HolidayTest extends PHPUnit\Framework\TestCase
 
     	$localobjecta->updateBalance();
     }
-
 }

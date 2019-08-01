@@ -284,7 +284,6 @@ class AccountancyExport
 	 * Export format : CEGID
 	 *
 	 * @param array $objectLines data
-	 *
 	 * @return void
 	 */
 	public function exportCegid($objectLines)
@@ -310,7 +309,6 @@ class AccountancyExport
 	 * Export format : COGILOG
 	 *
 	 * @param array $objectLines data
-	 *
 	 * @return void
 	 */
 	public function exportCogilog($objectLines)
@@ -344,7 +342,6 @@ class AccountancyExport
 	 * Export format : COALA
 	 *
 	 * @param array $objectLines data
-	 *
 	 * @return void
 	 */
 	public function exportCoala($objectLines)
@@ -372,7 +369,6 @@ class AccountancyExport
 	 * Export format : BOB50
 	 *
 	 * @param array $objectLines data
-	 *
 	 * @return void
 	 */
 	public function exportBob50($objectLines)
@@ -411,7 +407,6 @@ class AccountancyExport
 	 * Export format : CIEL
 	 *
 	 * @param array $TData data
-	 *
 	 * @return void
 	 */
 	public function exportCiel(&$TData)
@@ -452,7 +447,6 @@ class AccountancyExport
 	 * Export format : Quadratus
 	 *
 	 * @param array $TData data
-	 *
 	 * @return void
 	 */
 	public function exportQuadratus(&$TData)
@@ -536,7 +530,6 @@ class AccountancyExport
 	 * Export format : EBP
 	 *
 	 * @param array $objectLines data
-	 *
 	 * @return void
 	 */
 	public function exportEbp($objectLines)
@@ -573,7 +566,6 @@ class AccountancyExport
 	 * Export format : Agiris Isacompta
 	 *
 	 * @param array $objectLines data
-	 *
 	 * @return void
 	 */
 	public function exportAgiris($objectLines)
@@ -614,7 +606,6 @@ class AccountancyExport
      * Export format : OpenConcerto
      *
      * @param array $objectLines data
-     *
      * @return void
      */
     public function exportOpenConcerto($objectLines)
@@ -644,15 +635,16 @@ class AccountancyExport
     }
 
 	/**
-	 * Export format : Configurable
+	 * Export format : Configurable CSV
 	 *
 	 * @param array $objectLines data
-	 *
 	 * @return void
 	 */
 	public function exportConfigurable($objectLines)
 	{
 		global $conf;
+
+		$separator = $this->separator;
 
 		foreach ($objectLines as $line) {
 			$tab = array();
@@ -661,15 +653,14 @@ class AccountancyExport
 			$tab[] = $line->piece_num;
 			$tab[] = $date;
 			$tab[] = $line->doc_ref;
-			$tab[] = $line->label_operation;
+			$tab[] = preg_match('/'.$separator.'/', $line->label_operation) ? "'".$line->label_operation."'" : $line->label_operation;
 			$tab[] = length_accountg($line->numero_compte);
 			$tab[] = length_accounta($line->subledger_account);
-			$tab[] = price($line->debit);
-			$tab[] = price($line->credit);
-			$tab[] = price($line->montant);
+			$tab[] = price2num($line->debit);
+			$tab[] = price2num($line->credit);
+			$tab[] = price2num($line->montant);
 			$tab[] = $line->code_journal;
 
-			$separator = $this->separator;
 			print implode($separator, $tab) . $this->end_line;
 		}
 	}
@@ -678,7 +669,6 @@ class AccountancyExport
 	 * Export format : FEC
 	 *
 	 * @param array $objectLines data
-	 *
 	 * @return void
 	 */
 	public function exportFEC($objectLines)
