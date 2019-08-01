@@ -177,6 +177,7 @@ class Stripe extends CommonObject
 				}
 				catch(Exception $e)
 				{
+					// For exemple, we may have error: 'No such customer: cus_XXXXX; a similar object exists in live mode, but a test mode key was used to make this request.'
 					$this->error = $e->getMessage();
 				}
 			}
@@ -404,7 +405,7 @@ class Stripe extends CommonObject
 
     		if ($conf->entity!=$conf->global->STRIPECONNECT_PRINCIPAL && $stripefee > 0)
     		{
-    			$dataforintent["application_fee"] = $stripefee;
+    			$dataforintent["application_fee_amount"] = $stripefee;
     		}
     		if ($usethirdpartyemailforreceiptemail && is_object($object) && $object->thirdparty->email)
     		{
@@ -731,7 +732,7 @@ class Stripe extends CommonObject
 				);
 				if ($conf->entity!=$conf->global->STRIPECONNECT_PRINCIPAL && $stripefee > 0)
 				{
-					$paymentarray["application_fee"] = $stripefee;
+					$paymentarray["application_fee_amount"] = $stripefee;
 				}
 				if ($societe->email && $usethirdpartyemailforreceiptemail)
 				{

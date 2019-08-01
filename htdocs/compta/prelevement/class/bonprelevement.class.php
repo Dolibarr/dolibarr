@@ -1417,7 +1417,7 @@ class BonPrelevement extends CommonObject
 
 			$sql = "SELECT soc.code_client as code, soc.address, soc.zip, soc.town, c.code as country_code,";
 			$sql.= " pl.client_nom as nom, pl.code_banque as cb, pl.code_guichet as cg, pl.number as cc, pl.amount as somme,";
-			$sql.= " f.ref as fac, pf.fk_facture as idfac, rib.datec, rib.iban_prefix as iban, rib.bic as bic, rib.rowid as drum, rib.rum";
+			$sql.= " f.ref as fac, pf.fk_facture as idfac, rib.datec, rib.iban_prefix as iban, rib.bic as bic, rib.rowid as drum, rib.rum, rib.date_rum";
 			$sql.= " FROM";
 			$sql.= " ".MAIN_DB_PREFIX."prelevement_lignes as pl,";
 			$sql.= " ".MAIN_DB_PREFIX."facture as f,";
@@ -1443,7 +1443,8 @@ class BonPrelevement extends CommonObject
 				while ($i < $num)
 				{
 					$obj = $this->db->fetch_object($resql);
-					$fileDebiteurSection .= $this->EnregDestinataireSEPA($obj->code, $obj->nom, $obj->address, $obj->zip, $obj->town, $obj->country_code, $obj->cb, $obj->cg, $obj->cc, $obj->somme, $obj->fac, $obj->idfac, $obj->iban, $obj->bic, $this->db->jdate($obj->datec), $obj->drum, $obj->rum);
+					$daterum = (!empty($obj->date_rum)) ? $this->db->jdate($obj->date_rum) : $this->db->jdate($obj->datec);
+					$fileDebiteurSection .= $this->EnregDestinataireSEPA($obj->code, $obj->nom, $obj->address, $obj->zip, $obj->town, $obj->country_code, $obj->cb, $obj->cg, $obj->cc, $obj->somme, $obj->fac, $obj->idfac, $obj->iban, $obj->bic, $daterum, $obj->drum, $obj->rum);
 					$this->total = $this->total + $obj->somme;
 					$i++;
 				}

@@ -1132,11 +1132,10 @@ class ExpenseReport extends CommonObject
         $resql=$this->db->query($sql);
         if ($resql)
         {
-			if (!$notrigger)
+			if (! $error && ! $notrigger)
 			{
 				// Call trigger
 				$result=$this->call_trigger('EXPENSE_REPORT_VALIDATE', $fuser);
-
 				if ($result < 0) {
 					$error++;
 				}
@@ -1152,15 +1151,20 @@ class ExpenseReport extends CommonObject
 			    {
 			    	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-			    	// On renomme repertoire ($this->ref = ancienne ref, $num = nouvelle ref)
-					// in order not to lose the attachments
+			    	// Now we rename also files into index
+			    	$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref)+1).")), filepath = 'expensereport/".$this->db->escape($this->newref)."'";
+			    	$sql.= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'expensereport/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+					$resql = $this->db->query($sql);
+					if (! $resql) { $error++; $this->error = $this->db->lasterror(); }
+
+			    	// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 					$oldref = dol_sanitizeFileName($this->ref);
 					$newref = dol_sanitizeFileName($num);
 					$dirsource = $conf->expensereport->dir_output.'/'.$oldref;
 					$dirdest = $conf->expensereport->dir_output.'/'.$newref;
-					if (file_exists($dirsource))
+					if (! $error && file_exists($dirsource))
 					{
-					    dol_syslog(get_class($this)."::valid() rename dir ".$dirsource." into ".$dirdest);
+					    dol_syslog(get_class($this)."::setValidate() rename dir ".$dirsource." into ".$dirdest);
 
 					    if (@rename($dirsource, $dirdest))
 					    {

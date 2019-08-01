@@ -5,7 +5,7 @@
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016       Pierre-Henry Favre  <phf@atm-consulting.fr>
- * Copyright (C) 2016-2018  Alexandre Spangaro  <aspangaro@open-dsi.fr>
+ * Copyright (C) 2016-2019  Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2013-2017  Olivier Geffroy     <jeff@jeffinfo.com>
  * Copyright (C) 2017       Elarifr. Ari Elbaz  <github@accedinfo.com>
  * Copyright (C) 2017-2019  Frédéric France     <frederic.france@netlogic.fr>
@@ -50,6 +50,7 @@ class AccountancyExport
 	public static $EXPORT_TYPE_SAGE50_SWISS = 45;
 	public static $EXPORT_TYPE_QUADRATUS = 60;
 	public static $EXPORT_TYPE_OPENCONCERTO = 100;
+    public static $EXPORT_TYPE_LDCOMPTA = 110;
 	public static $EXPORT_TYPE_FEC = 1000;
 
 
@@ -105,6 +106,7 @@ class AccountancyExport
 			self::$EXPORT_TYPE_AGIRIS => $langs->trans('Modelcsv_agiris'),
             self::$EXPORT_TYPE_OPENCONCERTO => $langs->trans('Modelcsv_openconcerto'),
 			self::$EXPORT_TYPE_SAGE50_SWISS => $langs->trans('Modelcsv_Sage50_Swiss'),
+			self::$EXPORT_TYPE_LDCOMPTA => $langs->trans('Modelcsv_LDCompta'),
 			self::$EXPORT_TYPE_FEC => $langs->trans('Modelcsv_FEC'),
 		);
 
@@ -133,6 +135,7 @@ class AccountancyExport
 			self::$EXPORT_TYPE_AGIRIS => 'agiris',
 			self::$EXPORT_TYPE_OPENCONCERTO => 'openconcerto',
             self::$EXPORT_TYPE_SAGE50_SWISS => 'sage50ch',
+            self::$EXPORT_TYPE_LDCOMPTA => 'ldcompta',
 			self::$EXPORT_TYPE_FEC => 'fec',
 		);
 
@@ -191,6 +194,10 @@ class AccountancyExport
 					'label' => $langs->trans('Modelcsv_Sage50_Swiss'),
 					'ACCOUNTING_EXPORT_FORMAT' => 'csv',
 				),
+                self::$EXPORT_TYPE_LDCOMPTA => array(
+                    'label' => $langs->trans('Modelcsv_LDCompta'),
+                    'ACCOUNTING_EXPORT_FORMAT' => 'csv',
+                ),
 				self::$EXPORT_TYPE_FEC => array(
 					'label' => $langs->trans('Modelcsv_FEC'),
 					'ACCOUNTING_EXPORT_FORMAT' => 'txt',
@@ -257,12 +264,15 @@ class AccountancyExport
             case self::$EXPORT_TYPE_OPENCONCERTO :
                 $this->exportOpenConcerto($TData);
                 break;
-			case self::$EXPORT_TYPE_FEC :
-				$this->exportFEC($TData);
-				break;
 			case self::$EXPORT_TYPE_SAGE50_SWISS :
 				$this->exportSAGE50SWISS($TData);
 				break;
+            case self::$EXPORT_TYPE_LDCOMPTA :
+                $this->exportLDCompta($TData);
+                break;
+            case self::$EXPORT_TYPE_FEC :
+                $this->exportFEC($TData);
+                break;
 			default:
 				$this->errors[] = $langs->trans('accountancy_error_modelnotfound');
 				break;
@@ -906,6 +916,100 @@ class AccountancyExport
                 $thisPieceNum= $line->piece_num;
                 $thisPieceAccountNr= $line->numero_compte;
             }
+        }
+    }
+
+    /**
+     * Export format : LD Compta version 9 & higher
+     * http://www.ldsysteme.fr/fileadmin/telechargement/np/ldcompta/Documentation/IntCptW10.pdf
+     *
+     * @param array $objectLines data
+     *
+     * @return void
+     */
+    public function exportLDCompta($objectLines)
+    {
+
+        $separator = ';';
+        $end_line = "\n";
+
+        foreach ($objectLines as $line) {
+
+            $date_document = dol_print_date($line->doc_date, '%Y%m%d');
+            $date_creation = dol_print_date($line->date_creation,  '%Y%m%d');
+
+            // TYPE
+            $type_enregistrement = 'E'; // For write movement
+            print $type_enregistrement . $separator;
+            // JNAL
+            print substr($line->code_journal, 0, 2) . $separator;
+            // NECR
+            print $line->id . $separator;
+            // NPIE
+            print $line->piece_num . $separator;
+            // DATP
+            print $date_document . $separator;
+            // LIBE
+            print $line->label_operation . $separator;
+            // DATH
+            print $line->date_lim_reglement . $separator;
+            // CNPI
+            if ($line->doc_type == 'supplier_invoice') {
+                if ($line->montant < 0) {
+                    $nature_piece = 'AF';
+                } else {
+                    $nature_piece = 'FF';
+                }
+            } elseif ($line->doc_type == 'customer_invoice') {
+                if ($line->montant < 0) {
+                    $nature_piece = 'AC';
+                } else {
+                    $nature_piece = 'FC';
+                }
+            } else {
+                $nature_piece = '';
+            }
+            print $nature_piece . $separator;
+            // RACI
+            /*
+            if (! empty($line->subledger_account)) {
+                if ($line->doc_type == 'supplier_invoice') {
+                    $racine_subledger_account = '40';
+                } elseif ($line->doc_type == 'customer_invoice') {
+                    $racine_subledger_account = '41';
+                } else {
+                    $nature_piece = '';
+                }
+                print $racine_subledger_account . $separator;
+            } else {
+                print $separator;
+            }
+            */
+            // MONT
+            print price(abs($line->montant)) . $separator;
+            // CODC
+            print $line->sens . $separator;
+            // CPTG
+            print length_accountg($line->numero_compte) . $separator;
+            // DATE
+            print $date_creation . $separator;
+            // CLET
+            print $line->lettering_code . $separator;
+            // DATL
+            print $line->date_lettering . $separator;
+            // CPTA
+            if (! empty($line->subledger_account)) {
+                print length_accounta($line->subledger_account) . $separator;
+            }
+            // CNAT
+            if ($line->doc_type == 'supplier_invoice' && ! empty($line->subledger_account)) {
+                print 'F';
+            } elseif ($line->doc_type == 'customer_invoice' && ! empty($line->subledger_account)) {
+                print 'C';
+            } else {
+                print '';
+            }
+            print $end_line;
         }
     }
 

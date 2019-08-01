@@ -342,7 +342,7 @@ if ($action == 'create')
     // Morphy
     $morphys[""] = $langs->trans("MorPhy");
     $morphys["phy"] = $langs->trans("Physical");
-	$morphys["mor"] = $langs->trans("Morale");
+	$morphys["mor"] = $langs->trans("Moral");
 	print '<tr><td><span>'.$langs->trans("MemberNature").'</span></td><td>';
 	print $form->selectarray("morphy", $morphys, isset($_POST["morphy"])?$_POST["morphy"]:$object->morphy);
 	print "</td></tr>";
@@ -775,7 +775,7 @@ if ($rowid > 0)
         // Morphy
         $morphys[""] = $langs->trans("MorPhy");
         $morphys["phy"] = $langs->trans("Physical");
-        $morphys["mor"] = $langs->trans("Morale");
+        $morphys["mor"] = $langs->trans("Moral");
         print '<tr><td><span>'.$langs->trans("MemberNature").'</span></td><td>';
         print $form->selectarray("morphy", $morphys, isset($_POST["morphy"])?$_POST["morphy"]:$object->morphy);
         print "</td></tr>";

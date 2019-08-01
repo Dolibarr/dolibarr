@@ -469,14 +469,15 @@ class BookKeeping extends CommonObject
 	 */
     public function createStd(User $user, $notrigger = false, $mode = '')
     {
-		global $conf;
+		global $conf, $langs;
+
+        $langs->loadLangs(array("accountancy", "bills", "compta"));
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$error = 0;
 
 		// Clean parameters
-
 		if (isset($this->doc_type)) {
 			$this->doc_type = trim($this->doc_type);
 		}
@@ -540,7 +541,7 @@ class BookKeeping extends CommonObject
 		$now = dol_now();
 
 		// Check parameters
-		// Put here code to add control on parameters values
+        $this->journal_label = $langs->trans($this->journal_label);
 
 		// Insert request
 		$sql = 'INSERT INTO ' . MAIN_DB_PREFIX . $this->table_element . $mode.' (';

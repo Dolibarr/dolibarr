@@ -2053,6 +2053,43 @@ abstract class CommonObject
 			return -2;
 		}
 	}
+	
+	/**
+	 *  Change the retained warranty payments terms
+	 *
+	 *  @param		int		$id		Id of new payment terms
+	 *  @return		int				>0 if OK, <0 if KO
+	 */
+	public function setRetainedWarrantyPaymentTerms($id)
+	{
+	    dol_syslog(get_class($this).'::setRetainedWarrantyPaymentTerms('.$id.')');
+	    if ($this->statut >= 0 || $this->element == 'societe')
+	    {
+	        $fieldname = 'retained_warranty_fk_cond_reglement';
+	        
+	        $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
+	        $sql .= ' SET '.$fieldname.' = '.$id;
+	        $sql .= ' WHERE rowid='.$this->id;
+	        
+	        if ($this->db->query($sql))
+	        {
+	            $this->retained_warranty_fk_cond_reglement = $id;
+	            return 1;
+	        }
+	        else
+	        {
+	            dol_syslog(get_class($this).'::setRetainedWarrantyPaymentTerms Erreur '.$sql.' - '.$this->db->error());
+	            $this->error=$this->db->error();
+	            return -1;
+	        }
+	    }
+	    else
+	    {
+	        dol_syslog(get_class($this).'::setRetainedWarrantyPaymentTerms, status of the object is incompatible');
+	        $this->error='Status of the object is incompatible '.$this->statut;
+	        return -2;
+	    }
+	}
 
 	/**
 	 *	Define delivery address
@@ -6382,7 +6419,7 @@ abstract class CommonObject
 	 * @param 	array       $params         Optional parameters. Example: array('style'=>'class="oddeven"', 'colspan'=>$colspan)
 	 * @param 	string      $keysuffix      Suffix string to add after name and id of field (can be used to avoid duplicate names)
 	 * @param 	string      $keyprefix      Prefix string to add before name and id of field (can be used to avoid duplicate names)
-	 * @param	string		$onetrtd		All fields in same tr td
+	 * @param	string		$onetrtd		All fields in same tr td (TODO field not used ?)
 	 * @return 	string
 	 */
 	public function showOptionals($extrafields, $mode = 'view', $params = null, $keysuffix = '', $keyprefix = '', $onetrtd = 0)
@@ -6494,10 +6531,7 @@ abstract class CommonObject
 
 					$out .= '<tr id="'.$html_id.'" '.$csstyle.' class="'.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$extrafields_collapse_num.'" '.$domData.' >';
 
-					if (! empty($conf->global->MAIN_EXTRAFIELDS_USE_TWO_COLUMS) && ($e % 2) == 0)
-					{
-						if (! empty($conf->global->MAIN_EXTRAFIELDS_USE_TWO_COLUMS) && ($e % 2) == 0) { $colspan='0'; }
-					}
+					if (! empty($conf->global->MAIN_EXTRAFIELDS_USE_TWO_COLUMS) && ($e % 2) == 0) { $colspan='0'; }
 
 					if ($action == 'selectlines') { $colspan++; }
 

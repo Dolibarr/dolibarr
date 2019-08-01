@@ -321,6 +321,7 @@ class Commande extends CommonOrder
 	public function valid($user, $idwarehouse = 0, $notrigger = 0)
 	{
 		global $conf,$langs;
+
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$error=0;
@@ -423,13 +424,18 @@ class Commande extends CommonOrder
 			// Rename directory if dir was a temporary ref
 			if (preg_match('/^[\(]?PROV/i', $this->ref))
 			{
-				// On renomme repertoire ($this->ref = ancienne ref, $num = nouvelle ref)
-				// in order not to lose the attachments
+				// Now we rename also files into index
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref)+1).")), filepath = 'commande/".$this->db->escape($this->newref)."'";
+				$sql.= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'commande/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$resql = $this->db->query($sql);
+				if (! $resql) { $error++; $this->error = $this->db->lasterror(); }
+
+				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 				$oldref = dol_sanitizeFileName($this->ref);
 				$newref = dol_sanitizeFileName($num);
 				$dirsource = $conf->commande->dir_output.'/'.$oldref;
 				$dirdest = $conf->commande->dir_output.'/'.$newref;
-				if (file_exists($dirsource))
+				if (! $error && file_exists($dirsource))
 				{
 					dol_syslog(get_class($this)."::valid() rename dir ".$dirsource." into ".$dirdest);
 

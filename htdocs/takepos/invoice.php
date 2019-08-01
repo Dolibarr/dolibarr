@@ -42,7 +42,7 @@ $langs->loadLangs(array("bills", "cashdesk"));
 $id = GETPOST('id', 'int');
 $action = GETPOST('action', 'alpha');
 $idproduct = GETPOST('idproduct', 'int');
-$place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0);   // $place is id of table for Ba or Restaurant
+$place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0);   // $place is id of table for Bar or Restaurant
 
 if ($conf->global->TAKEPOS_PHONE_BASIC_LAYOUT==1 && $conf->browser->layout == 'phone')
 {
@@ -209,9 +209,21 @@ if (($action=="addline" || $action=="freezone") && $placeid == 0)
 	$invoice->module_source = 'takepos';
 	$invoice->pos_source = $_SESSION["takeposterminal"];
 
-	$placeid = $invoice->create($user);
-	$sql="UPDATE ".MAIN_DB_PREFIX."facture set ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")' where rowid=".$placeid;
-	$db->query($sql);
+	if ($invoice->socid <= 0)
+	{
+		$langs->load('errors');
+		dol_htmloutput_errors($langs->trans("ErrorModuleSetupNotComplete", "TakePos"), null, 1);
+	}
+	else
+	{
+		$placeid = $invoice->create($user);
+		if ($placeid < 0)
+		{
+			dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
+		}
+		$sql="UPDATE ".MAIN_DB_PREFIX."facture set ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")' where rowid=".$placeid;
+		$db->query($sql);
+	}
 }
 
 if ($action == "addline")
@@ -331,14 +343,14 @@ if ($action == "order" and $placeid != 0)
     $catsprinter2 = explode(';', $conf->global->TAKEPOS_PRINTED_CATEGORIES_2);
     foreach($invoice->lines as $line)
     {
-        if ($line->special_code == "3") { continue;
+        if ($line->special_code == "4") { continue;
         }
         $c = new Categorie($db);
         $existing = $c->containing($line->fk_product, Categorie::TYPE_PRODUCT, 'id');
         $result = array_intersect($catsprinter1, $existing);
         $count = count($result);
         if ($count > 0) {
-            $sql = "UPDATE " . MAIN_DB_PREFIX . "facturedet set special_code='3' where rowid=$line->rowid";
+            $sql = "UPDATE " . MAIN_DB_PREFIX . "facturedet set special_code='4' where rowid=$line->rowid";
             $db->query($sql);
             $order_receipt_printer1.= '<tr>' . $line->product_label . '<td class="right">' . $line->qty;
 			if (!empty($line->array_options['options_order_notes'])) $order_receipt_printer1.="<br>(".$line->array_options['options_order_notes'].")";
@@ -348,14 +360,14 @@ if ($action == "order" and $placeid != 0)
 
     foreach($invoice->lines as $line)
     {
-        if ($line->special_code == "3") { continue;
+        if ($line->special_code == "4") { continue;
         }
         $c = new Categorie($db);
         $existing = $c->containing($line->fk_product, Categorie::TYPE_PRODUCT, 'id');
         $result = array_intersect($catsprinter2, $existing);
         $count = count($result);
         if ($count > 0) {
-            $sql = "UPDATE " . MAIN_DB_PREFIX . "facturedet set special_code='3' where rowid=$line->rowid";
+            $sql = "UPDATE " . MAIN_DB_PREFIX . "facturedet set special_code='4' where rowid=$line->rowid";
             $db->query($sql);
             $order_receipt_printer2.= '<tr>' . $line->product_label . '<td class="right">' . $line->qty;
 			if (!empty($line->array_options['options_order_notes'])) $order_receipt_printer2.="<br>(".$line->array_options['options_order_notes'].")";
@@ -612,7 +624,7 @@ if ($placeid > 0)
             $htmlforlines = '';
 
             $htmlforlines.= '<tr class="drag drop oddeven posinvoiceline';
-            if ($line->special_code == "3") {
+            if ($line->special_code == "4") {
                 $htmlforlines.= ' order';
             }
             $htmlforlines.= '" id="' . $line->id . '">';
