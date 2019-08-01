@@ -17,7 +17,7 @@
  */
 
 /**
- *	\file       htdocs/takepos/admin/setup.php
+ *	\file       htdocs/takepos/admin/terminal.php
  *	\ingroup    takepos
  *	\brief      Setup page for TakePos module
  */
@@ -129,6 +129,8 @@ print '<tr class="oddeven"><td width=\"50%\">'.$langs->trans("CashDeskThirdParty
 print '<td colspan="2">';
 print $form->select_company($conf->global->{'CASHDESK_ID_THIRDPARTY'.$terminaltouse}, 'socid', '(s.client IN (1, 3) AND s.status = 1)', 1, 0, 0, array(), 0);
 print '</td></tr>';
+
+$atleastonefound = 0;
 if (! empty($conf->banque->enabled))
 {
     print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountForSell").'</td>';
@@ -149,6 +151,7 @@ if (! empty($conf->banque->enabled))
         $name="CASHDESK_ID_BANKACCOUNT_".$modep->code.$terminaltouse;
 		print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountFor").' '.$langs->trans($modep->libelle).'</td>';
 		print '<td colspan="2">';
+		if (! empty($conf->global->$name)) $atleastonefound++;
 		$cour=preg_match('/^LIQ.*/', $modep->code)?2:1;
 		$form->select_comptes($conf->global->$name, $name, 0, "courant=".$cour, 1);
 		print '</td></tr>';
@@ -191,6 +194,12 @@ if (! empty($conf->stock->enabled))
 }
 
 print '</table>';
+
+if (empty($atleastonefound) && ! empty($conf->banque->enabled))
+{
+	print info_admin($langs->trans("AtLeastOneDefaultBankAccountMandatory"), 0, 0, 'error');
+}
+
 print '<br>';
 
 print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></div>';

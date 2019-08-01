@@ -17,7 +17,7 @@
  */
 
 /**
- *	\file       htdocs/takepos/floors.php
+ *	\file       htdocs/takepos/takepos.php
  *	\ingroup    takepos
  *	\brief      Main TakePOS screen
  */
@@ -619,6 +619,7 @@ $sql = "SELECT code, libelle FROM ".MAIN_DB_PREFIX."c_paiement";
 $sql.= " WHERE entity IN (".getEntity('c_paiement').")";
 $sql.= " AND active = 1";
 $sql.= " ORDER BY libelle";
+print $sql;
 $resql = $db->query($sql);
 $paiementsModes = array();
 if ($resql){
