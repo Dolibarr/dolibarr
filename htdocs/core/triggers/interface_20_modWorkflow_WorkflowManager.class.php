@@ -121,7 +121,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
         if ($action == 'BILL_VALIDATE')
         {
         	dol_syslog( "Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id );
-        	$ret = null;
+        	$ret = 0;
         	
 			// First classify billed the order to allow the proposal classify process
 			if (! empty($conf->commande->enabled) && ! empty($conf->workflow->enabled) && ! empty($conf->global->WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER))
