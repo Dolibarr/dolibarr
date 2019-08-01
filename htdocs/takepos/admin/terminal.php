@@ -125,8 +125,8 @@ print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 
-print '<tr class="oddeven"><td width=\"50%\">'.$langs->trans("CashDeskThirdPartyForSell").'</td>';
-print '<td colspan="2">';
+print '<tr class="oddeven"><td class="fieldrequired">'.$langs->trans("CashDeskThirdPartyForSell").'</td>';
+print '<td>';
 print $form->select_company($conf->global->{'CASHDESK_ID_THIRDPARTY'.$terminaltouse}, 'socid', '(s.client IN (1, 3) AND s.status = 1)', 1, 0, 0, array(), 0);
 print '</td></tr>';
 
@@ -134,23 +134,26 @@ $atleastonefound = 0;
 if (! empty($conf->banque->enabled))
 {
     print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountForSell").'</td>';
-	print '<td colspan="2">';
+	print '<td>';
 	$form->select_comptes($conf->global->{'CASHDESK_ID_BANKACCOUNT_CASH'.$terminaltouse}, 'CASHDESK_ID_BANKACCOUNT_CASH'.$terminaltouse, 0, "courant=2", 1);
+	if (! empty($conf->global->{'CASHDESK_ID_BANKACCOUNT_CASH'.$terminaltouse})) $atleastonefound++;
 	print '</td></tr>';
 	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountForCheque").'</td>';
-	print '<td colspan="2">';
+	print '<td>';
 	$form->select_comptes($conf->global->{'CASHDESK_ID_BANKACCOUNT_CHEQUE'.$terminaltouse}, 'CASHDESK_ID_BANKACCOUNT_CHEQUE'.$terminaltouse, 0, "courant=1", 1);
+	if (! empty($conf->global->{'CASHDESK_ID_BANKACCOUNT_CHEQUE'.$terminaltouse})) $atleastonefound++;
 	print '</td></tr>';
 	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountForCB").'</td>';
-	print '<td colspan="2">';
+	print '<td>';
 	$form->select_comptes($conf->global->{'CASHDESK_ID_BANKACCOUNT_CB'.$terminaltouse}, 'CASHDESK_ID_BANKACCOUNT_CB'.$terminaltouse, 0, "courant=1", 1);
+	if (! empty($conf->global->{'CASHDESK_ID_BANKACCOUNT_CB'.$terminaltouse})) $atleastonefound++;
 	print '</td></tr>';
 
 	foreach($paiements as $modep) {
-        if (in_array($modep->code, array('LIQ', 'CB', 'CHQ'))) continue;
+        if (in_array($modep->code, array('LIQ', 'CB', 'CHQ'))) continue;	// Already managed before
         $name="CASHDESK_ID_BANKACCOUNT_".$modep->code.$terminaltouse;
 		print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountFor").' '.$langs->trans($modep->libelle).'</td>';
-		print '<td colspan="2">';
+		print '<td>';
 		if (! empty($conf->global->$name)) $atleastonefound++;
 		$cour=preg_match('/^LIQ.*/', $modep->code)?2:1;
 		$form->select_comptes($conf->global->$name, $name, 0, "courant=".$cour, 1);
@@ -162,7 +165,7 @@ if (! empty($conf->stock->enabled))
 {
 
 	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskDoNotDecreaseStock").'</td>';	// Force warehouse (this is not a default value)
-	print '<td colspan="2">';
+	print '<td>';
 	if (empty($conf->productbatch->enabled)) {
 	   print $form->selectyesno('CASHDESK_NO_DECREASE_STOCK'.$terminal, $conf->global->{'CASHDESK_NO_DECREASE_STOCK'.$terminal}, 1);
 	}
@@ -180,7 +183,7 @@ if (! empty($conf->stock->enabled))
 
 
 	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskIdWareHouse").'</td>';	// Force warehouse (this is not a default value)
-	print '<td colspan="2">';
+	print '<td>';
 	if (! $disabled)
 	{
 		print $formproduct->selectWarehouses($conf->global->{'CASHDESK_ID_WAREHOUSE'.$terminal}, 'CASHDESK_ID_WAREHOUSE'.$terminal, '', 1, $disabled);
@@ -195,7 +198,7 @@ if (! empty($conf->stock->enabled))
 
 print '</table>';
 
-if (empty($atleastonefound) && ! empty($conf->banque->enabled))
+if ($atleastonefound == 0 && ! empty($conf->banque->enabled))
 {
 	print info_admin($langs->trans("AtLeastOneDefaultBankAccountMandatory"), 0, 0, 'error');
 }

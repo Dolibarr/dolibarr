@@ -224,21 +224,25 @@ $object = new Societe($db);
  * Actions
  */
 
-if ($action=="change")
+if ($action=="change")	// Change customer for TakePOS
 {
     $idcustomer = GETPOST('idcustomer', 'int');
     $place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0);   // $place is id of table for Ba or Restaurant
 
-    $sql="UPDATE ".MAIN_DB_PREFIX."facture set fk_soc=".$idcustomer." where ref='(PROV-POS-".$place.")'";
+    // @TODO Check if draft invoice already exists, if not create it or return a warning to ask to enter at least one line to have it created automatically
+    $sql="UPDATE ".MAIN_DB_PREFIX."facture set fk_soc=".$idcustomer." where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
     $resql = $db->query($sql);
-    ?>
-    <script>
-    parent.$("#poslines").load("invoice.php?place="+<?php print $place;?>, function() {
-        //parent.$("#poslines").scrollTop(parent.$("#poslines")[0].scrollHeight);
-        parent.$.colorbox.close();
-    });
-    </script>
-    <?php
+	    ?>
+	    <script>
+	    parent.$("#poslines").load("invoice.php?place="+<?php print $place;?>, function() {
+	        //parent.$("#poslines").scrollTop(parent.$("#poslines")[0].scrollHeight);
+			<?php if (! $resql) { ?>
+				alert('Error failed to update customer on draft invoice.');
+			<?php } ?>
+	        parent.$.colorbox.close(); /* Close the popup */
+	    });
+	    </script>
+	    <?php
     exit;
 }
 
