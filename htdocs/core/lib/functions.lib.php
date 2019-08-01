@@ -2451,7 +2451,7 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 	{//Jamaïque
 		if(dol_strlen($newphone) == 12)
 		{//ex: +1867_ABC_DEFG
-			$newphone = substr($newphone,0,5).$separ.substr($newphone,5,3).$separ.substr($newphone,8,4);
+			$newphone = substr($newphone, 0, 5).$separ.substr($newphone, 5, 3).$separ.substr($newphone, 8, 4);
 		}
 	}
 	elseif (strtoupper($countrycode) == "MG")
