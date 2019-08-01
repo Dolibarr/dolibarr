@@ -48,6 +48,7 @@ class AccountancyExport
 	public static $EXPORT_TYPE_BOB50 = 35;
 	public static $EXPORT_TYPE_CIEL = 40;
 	public static $EXPORT_TYPE_SAGE50_SWISS = 45;
+	public static $EXPORT_TYPE_CHARLEMAGNE = 50;
 	public static $EXPORT_TYPE_QUADRATUS = 60;
 	public static $EXPORT_TYPE_OPENCONCERTO = 100;
     public static $EXPORT_TYPE_LDCOMPTA = 110;
@@ -108,6 +109,7 @@ class AccountancyExport
 			self::$EXPORT_TYPE_SAGE50_SWISS => $langs->trans('Modelcsv_Sage50_Swiss'),
 			self::$EXPORT_TYPE_LDCOMPTA => $langs->trans('Modelcsv_LDCompta'),
 			self::$EXPORT_TYPE_FEC => $langs->trans('Modelcsv_FEC'),
+				self::$EXPORT_TYPE_CHARLEMAGNE => $langs->trans('Modelcsv_charlemagne'),
 		);
 
 		ksort($listofexporttypes, SORT_NUMERIC);
@@ -202,6 +204,10 @@ class AccountancyExport
 					'label' => $langs->trans('Modelcsv_FEC'),
 					'ACCOUNTING_EXPORT_FORMAT' => 'txt',
 				),
+				self::$EXPORT_TYPE_CHARLEMAGNE => array(
+					'label' => $langs->trans('Modelcsv_charlemagne'),
+					'ACCOUNTING_EXPORT_FORMAT' => 'txt',
+				),
 			),
 			'cr'=> array (
 				'1' => $langs->trans("Unix"),
@@ -273,6 +279,9 @@ class AccountancyExport
             case self::$EXPORT_TYPE_FEC :
                 $this->exportFEC($TData);
                 break;
+			case self::$EXPORT_TYPE_CHARLEMAGNE :
+				$this->exportCharlemagne($TData);
+				break;
 			default:
 				$this->errors[] = $langs->trans('accountancy_error_modelnotfound');
 				break;
@@ -1012,6 +1021,68 @@ class AccountancyExport
             print $end_line;
         }
     }
+
+	/**
+	 * Export format : Charlemagne
+	 *
+	 * @param array $objectLines data
+	 *
+	 * @return void
+	 */
+	public function exportCharlemagne($objectLines) 
+	{
+		global $langs;
+		$langs->load('compta');
+		
+		$separator = "\t";
+		$end_line = "\n";
+
+		/*
+		 * Charlemagne export need header
+		 */
+		print $langs->transnoentitiesnoconv('Date') . $separator;
+		print self::trunc($langs->transnoentitiesnoconv('Journal'), 6) . $separator;
+		print self::trunc($langs->transnoentitiesnoconv('Account'), 15) . $separator;
+		print self::trunc($langs->transnoentitiesnoconv('LabelAccount'), 60) . $separator;
+		print self::trunc($langs->transnoentitiesnoconv('Piece'), 20) . $separator;
+		print self::trunc($langs->transnoentitiesnoconv('LabelOperation'), 60) . $separator;
+		print $langs->transnoentitiesnoconv('Amount') . $separator;
+		print 'S' . $separator;
+		print self::trunc($langs->transnoentitiesnoconv('Analytic') . ' 1', 15) . $separator;
+		print self::trunc($langs->transnoentitiesnoconv('AnalyticLabel') . ' 1', 60) . $separator;
+		print self::trunc($langs->transnoentitiesnoconv('Analytic') . ' 2', 15) . $separator;
+		print self::trunc($langs->transnoentitiesnoconv('AnalyticLabel') . ' 2', 60) . $separator;
+		print self::trunc($langs->transnoentitiesnoconv('Analytic') . ' 3', 15) . $separator;
+		print self::trunc($langs->transnoentitiesnoconv('AnalyticLabel') . ' 3', 60) . $separator;
+		print $end_line;
+		
+		foreach($objectLines as $line) {
+			
+			$date = dol_print_date($line->doc_date, '%Y%m%d');
+			print $date . $separator; //Date
+
+			print self::trunc($line->code_journal, 6) . $separator; //Journal code
+
+			if(!empty($line->subledger_account)) $account = $line->subledger_account;
+			else  $account = $line->numero_compte;
+			print self::trunc($account, 15) . $separator;//Account number
+
+			print self::trunc($line->label_compte, 60) . $separator;//Account label
+			print self::trunc($line->doc_ref, 20) . $separator;//Piece
+			print self::trunc($line->label_operation, 60) . $separator;//Operation label
+			print price(abs($line->montant)) . $separator;//Amount
+			print $line->sens . $separator;//Direction
+			print $separator;//Analytic
+			print $separator;//Analytic
+			print $separator;//Analytic
+			print $separator;//Analytic
+			print $separator;//Analytic
+			print $separator;//Analytic
+			print $end_line;
+			
+		}
+	}
+
 
 	/**
 	 * trunc
