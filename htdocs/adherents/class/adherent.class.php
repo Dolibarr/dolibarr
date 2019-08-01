@@ -2315,6 +2315,7 @@ class Adherent extends CommonObject
 			$response = new WorkboardResponse();
 			$response->warning_delay=$conf->adherent->subscription->warning_delay/60/60/24;
 			$response->label=$langs->trans("MembersWithSubscriptionToReceive");
+			$response->labelShort=$langs->trans("MembersWithSubscriptionToReceiveShort");
 			$response->url=DOL_URL_ROOT.'/adherents/list.php?mainmenu=members&amp;statut=1&amp;filter=outofdate';
 			$response->img=img_object('', "user");
 

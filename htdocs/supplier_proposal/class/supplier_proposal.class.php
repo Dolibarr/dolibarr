@@ -2281,20 +2281,24 @@ class SupplierProposal extends CommonObject
         $resql=$this->db->query($sql);
         if ($resql)
         {
+			$label = $labelShort = '';
             if ($mode == 'opened') {
                 $delay_warning=$conf->supplier_proposal->cloture->warning_delay;
                 $statut = self::STATUS_VALIDATED;
                 $label = $langs->trans("SupplierProposalsToClose");
+                $labelShort = $langs->trans("ToClose");
             }
             if ($mode == 'signed') {
                 $delay_warning=$conf->supplier_proposal->facturation->warning_delay;
                 $statut = self::STATUS_SIGNED;
                 $label = $langs->trans("SupplierProposalsToProcess");      // May be billed or ordered
+				$labelShort = $langs->trans("ToProcess");
             }
 
             $response = new WorkboardResponse();
             $response->warning_delay = $delay_warning/60/60/24;
             $response->label = $label;
+            $response->labelShort = $labelShort;
             $response->url = DOL_URL_ROOT.'/supplier_proposal/list.php?viewstatut='.$statut;
             $response->img = img_object('', "propal");
 

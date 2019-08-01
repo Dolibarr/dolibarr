@@ -374,13 +374,15 @@ $dashboardlines=array();
 // Do not include sections without management permission
 require_once DOL_DOCUMENT_ROOT.'/core/class/workboardresponse.class.php';
 
+
+
 // Number of actions to do (late)
 if (! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->read)
 {
 	include_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 	$board=new ActionComm($db);
-
-	$dashboardlines[] = $board->load_board($user);
+	$workBoard = $board->load_board($user);
+	$dashboardlines[$board->element] = $workBoard; // deprecated
 }
 
 // Number of project opened
@@ -388,7 +390,8 @@ if (! empty($conf->projet->enabled) && $user->rights->projet->lire)
 {
 	include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	$board=new Project($db);
-	$dashboardlines[] = $board->load_board($user);
+	$workBoard = $board->load_board($user);
+	$dashboardlines[$board->element] = $workBoard;
 }
 
 // Number of tasks to do (late)
@@ -396,7 +399,8 @@ if (! empty($conf->projet->enabled) && empty($conf->global->PROJECT_HIDE_TASKS) 
 {
 	include_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 	$board=new Task($db);
-	$dashboardlines[] = $board->load_board($user);
+	$workBoard = $board->load_board($user);
+	$dashboardlines[$board->element] = $workBoard;
 }
 
 // Number of commercial proposals opened (expired)
@@ -404,9 +408,13 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 {
 	include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 	$board=new Propal($db);
-	$dashboardlines[] = $board->load_board($user, "opened");
-	// Number of commercial proposals CLOSED signed (billed)
-	$dashboardlines[] = $board->load_board($user, "signed");
+
+	$workBoard = $board->load_board($user, "opened");
+	$dashboardlines[$board->element.'_opened'] = $workBoard;
+
+	$workBoard = $board->load_board($user, "signed");
+	$dashboardlines[$board->element.'_signed'] = $workBoard;
+
 }
 
 // Number of commercial proposals opened (expired)
@@ -414,9 +422,13 @@ if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_propos
 {
 	include_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
 	$board=new SupplierProposal($db);
-	$dashboardlines[] = $board->load_board($user, "opened");
+
+	$workBoard = $board->load_board($user, "opened");
+	$dashboardlines[$board->element.'_opened'] = $workBoard;
+
 	// Number of commercial proposals CLOSED signed (billed)
-	$dashboardlines[] = $board->load_board($user, "signed");
+	$workBoard = $board->load_board($user, "signed");
+	$dashboardlines[$board->element.'_signed'] = $workBoard;
 }
 
 // Number of customer orders a deal
@@ -424,7 +436,8 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 {
 	include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 	$board=new Commande($db);
-	$dashboardlines[] = $board->load_board($user);
+	$workBoard = $board->load_board($user);
+	$dashboardlines[$board->element] = $workBoard;
 }
 
 // Number of suppliers orders a deal
@@ -432,7 +445,8 @@ if (! empty($conf->supplier_order->enabled) && $user->rights->fournisseur->comma
 {
 	include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 	$board=new CommandeFournisseur($db);
-	$dashboardlines[] = $board->load_board($user);
+	$workBoard = $board->load_board($user);
+	$dashboardlines[$board->element] = $workBoard;
 }
 
 // Number of services enabled (delayed)
@@ -440,16 +454,20 @@ if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
 {
 	include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 	$board=new Contrat($db);
-	$dashboardlines[] = $board->load_board($user, "inactive");
+	$workBoard = $board->load_board($user, "inactive");
+	$dashboardlines[$board->element.'_inactive'] = $workBoard;
+
 	// Number of active services (expired)
-	$dashboardlines[] = $board->load_board($user, "active");
+	$workBoard = $board->load_board($user, "active");
+	$dashboardlines[$board->element.'_active'] = $workBoard;
 }
 // Number of invoices customers (has paid)
 if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 {
 	include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 	$board=new Facture($db);
-	$dashboardlines[] = $board->load_board($user);
+	$workBoard = $board->load_board($user);
+	$dashboardlines[$board->element] = $workBoard;
 }
 
 // Number of supplier invoices (has paid)
@@ -457,7 +475,8 @@ if (! empty($conf->supplier_invoice->enabled) && ! empty($user->rights->fourniss
 {
 	include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 	$board=new FactureFournisseur($db);
-	$dashboardlines[] = $board->load_board($user);
+	$workBoard = $board->load_board($user);
+	$dashboardlines[$board->element] = $workBoard;
 }
 
 // Number of transactions to conciliate
@@ -468,7 +487,8 @@ if (! empty($conf->banque->enabled) && $user->rights->banque->lire && ! $user->s
 	$nb = $board::countAccountToReconcile();    // Get nb of account to reconciliate
 	if ($nb > 0)
 	{
-		$dashboardlines[] = $board->load_board($user);
+		$workBoard = $board->load_board($user);
+		$dashboardlines[$board->element] = $workBoard;
 	}
 }
 
@@ -477,7 +497,7 @@ if (! empty($conf->banque->enabled) && $user->rights->banque->lire && ! $user->s
 {
 	include_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
 	$board=new RemiseCheque($db);
-	$dashboardlines[] = $board->load_board($user);
+	$dashboardlines['RemiseCheque'] = $board->load_board($user);
 }
 
 // Number of foundation members
@@ -485,7 +505,7 @@ if (! empty($conf->adherent->enabled) && $user->rights->adherent->lire && ! $use
 {
 	include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 	$board=new Adherent($db);
-	$dashboardlines[] = $board->load_board($user);
+	$dashboardlines['Adherent'] = $board->load_board($user);
 }
 
 // Number of expense reports to approve
@@ -493,7 +513,7 @@ if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->appr
 {
 	include_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 	$board=new ExpenseReport($db);
-	$dashboardlines[] = $board->load_board($user, 'toapprove');
+	$dashboardlines['ExpenseReport'] = $board->load_board($user, 'toapprove');
 }
 
 // Number of expense reports to pay
@@ -501,7 +521,7 @@ if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->to_p
 {
 	include_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 	$board=new ExpenseReport($db);
-	$dashboardlines[] = $board->load_board($user, 'topay');
+	$dashboardlines['ExpenseReport'] = $board->load_board($user, 'topay');
 }
 
 // Number of holidays to approve
@@ -509,7 +529,7 @@ if (! empty($conf->holiday->enabled) && $user->rights->holiday->approve)
 {
     include_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
     $board=new Holiday($db);
-    $dashboardlines[] = $board->load_board($user);
+    $dashboardlines['Holiday'] = $board->load_board($user);
 }
 
 $object=new stdClass();
@@ -520,15 +540,103 @@ if ($reshook == 0) {
 	$dashboardlines = array_merge($dashboardlines, $hookmanager->resArray);
 }
 
+/* grouping dashboard stats */
+$dashboardgroup = array (
+	'action' =>
+		array (
+			'groupName' => 'Agenda',
+			'stats' => array ('action'),
+		),
+	'project' =>
+		array (
+			'groupName' => 'Projects',
+			'stats' => array ('project','project_task'),
+		),
+	'propal' =>
+		array (
+			'groupName' => 'Proposals',
+			'stats' =>
+				array ('propal_opened','propal_signed'),
+		),
+	'supplier_proposal' =>
+		array (
+			'groupName' => 'SupplierProposals',
+			'stats' =>
+				array ('supplier_proposal_opened','supplier_proposal_signed'),
+		),
+	'commande' =>
+		array (
+			'groupName' => 'Orders',
+			'stats' =>
+				array ('commande'),
+		),
+	'order_supplier' =>
+		array (
+			'groupName' => 'SuppliersOrders',
+			'stats' =>
+				array ('order_supplier'),
+		),
+	'contrat' =>
+		array (
+			'groupName' => 'Contracts',
+			'stats' =>
+				array ('contrat_inactive','contrat_active'),
+		),
+	'facture' =>
+		array (
+			'groupName' => 'Invoices',
+			'stats' =>
+				array ('facture'),
+		),
+	'invoice_supplier' =>
+		array (
+			'groupName' => 'SupplierInvoices',
+			'stats' =>
+				array ('invoice_supplier'),
+		),
+	'bank_account' =>
+		array (
+			'groupName' => 'BankAccount',
+			'stats' =>
+				array ('bank_account','RemiseCheque'),
+		),
+	/*'RemiseCheque' =>
+		array (
+			'groupName' => 'BankChecks',
+			'stats' =>
+				array ('RemiseCheque'),
+		),*/
+	'Adherent' =>
+		array (
+			'groupName' => 'Members',
+			'stats' =>
+				array ('Adherent'),
+		),
+	'ExpenseReport' =>
+		array (
+			'groupName' => 'ExpenseReport',
+			'stats' =>
+				array ('ExpenseReport'),
+		),
+	'Holiday' =>
+		array (
+			'groupName' => 'Holidays',
+			'stats' =>
+				array ('Holiday'),
+		),
+);
+
+
+
 // Calculate total nb of late
 $totallate=$totaltodo=0;
 
 //Remove any invalid response
 //load_board can return an integer if failed or WorkboardResponse if OK
 $valid_dashboardlines=array();
-foreach($dashboardlines as $tmp)
+foreach($dashboardlines as $infoKey => $tmp)
 {
-	if ($tmp instanceof WorkboardResponse) $valid_dashboardlines[] = $tmp;
+	if ($tmp instanceof WorkboardResponse) $valid_dashboardlines[$infoKey] = $tmp;
 }
 
 // We calculate $totallate. Must be defined before start of next loop because it is show in first fetch on next loop
@@ -578,14 +686,64 @@ $boxwork.='</tr>'."\n";
 $nbworkboardempty=0;
 if (! empty($valid_dashboardlines))
 {
+	$openedDashBoard = '';
+
     $boxwork.='<tr class="nobottom nohover"><td class="tdboxstats nohover flexcontainer centpercent"><div style="display: flex: flex-wrap: wrap">';
 
-    foreach($valid_dashboardlines as $board)
+	foreach($dashboardgroup as $groupKey => $groupElement) {
+
+		$boards = array();
+		foreach ($groupElement['stats'] as $infoKey)
+		{
+			if(!empty($valid_dashboardlines[$infoKey]))
+			{
+				$boards[] = $valid_dashboardlines[$infoKey];
+			}
+		}
+
+		if(!empty($boards))
+		{
+			$groupName = $langs->trans($groupElement['groupName']);
+			$groupKeyLowerCase = strtolower($groupKey);
+
+			$openedDashBoard.= '<div class="box-flex-item">'."\n";
+			$openedDashBoard.= '	<div class="info-box">'."\n";
+			$openedDashBoard.= '		<span class="info-box-icon bg-infoxbox-'.$groupKeyLowerCase.'"><i class="fa fa-dol-'.$groupKeyLowerCase.'"></i></span>'."\n";
+			$openedDashBoard.= '		<div class="info-box-content">'."\n";
+
+			$openedDashBoard .= '			<span class="info-box-text"><strong>'.$groupName.'</strong></span>' . "\n";
+
+			foreach($boards as $board) {
+				$infoName = !empty($board->labelShort) ? $board->labelShort : $board->label ;
+
+				$textLateTitle = $langs->trans("NActionsLate", $board->nbtodolate);
+				$textLateTitle.= ' ('.$langs->trans("Late").' = '.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil($board->warning_delay) >= 0 ? '+' : '').ceil($board->warning_delay).' '.$langs->trans("days").')';
+
+				$textLate = img_picto($textLateTitle, "warning_white", 'class="inline-block hideonsmartphone valigntextbottom"').'';
+				$textLate .= '<span class="dashboardlineindicatorlate'.($board->nbtodolate>0?' dashboardlineko':' dashboardlineok').'">';
+				$textLate .= $board->nbtodolate;
+				$textLate .= '</span>';
+
+				$openedDashBoard .= '			<span class="info-box-text">'.$infoName.' : <span class="label label-default">'.$board->nbtodo.'</span>'.$textLate.'</span>' . "\n";
+			}
+
+
+			$openedDashBoard.= '		</div><!-- /.info-box-content -->'."\n";
+			$openedDashBoard.= '	</div><!-- /.info-box -->'."\n";
+			$openedDashBoard.= '</div><!-- /.box-flex-item -->'."\n";
+			$openedDashBoard.="\n";
+		}
+
+    }
+
+
+    foreach($valid_dashboardlines as $infoKey => $board)
     {
         if (empty($board->nbtodo)) $nbworkboardempty++;
 
-        $textlate = $langs->trans("NActionsLate", $board->nbtodolate);
-        $textlate.= ' ('.$langs->trans("Late").' = '.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil($board->warning_delay) >= 0 ? '+' : '').ceil($board->warning_delay).' '.$langs->trans("days").')';
+
+
+
 
         $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"><div class="boxstats130 boxstatsborder">';
         $boxwork .= '<div class="boxstatscontent">';
@@ -611,6 +769,15 @@ if (! empty($valid_dashboardlines))
         }
         $boxwork.='</div></div>';
         $boxwork .="\n";
+
+
+
+
+
+
+
+
+
     }
 
     $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"><div class="boxstats150empty"></div></div>';
@@ -638,7 +805,7 @@ $boxwork.='</div>';
 
 
 print '<div class="fichecenter">';
-print $boxwork;
+print '<div class="box"><div class="box-flex-container">'.$openedDashBoard.'</div></div>';
 print '</div>';
 
 print '<div class="clearboth"></div>';
@@ -654,7 +821,7 @@ $boxlist.='<div class="twocolumns">';
 
 $boxlist.='<div class="firstcolumn fichehalfleft boxhalfleft" id="boxhalfleft">';
 
-//$boxlist.=$boxwork;
+$boxlist.=$boxwork;
 $boxlist.=$resultboxes['boxlista'];
 
 $boxlist.= '</div>';

@@ -3198,7 +3198,13 @@ span.boxstatsindicator {
 	font-size: 130%;
 	font-weight: normal;
 	line-height: 29px;
+	flex-grow: 1;
+
 }
+
+
+
+
 span.dashboardlineindicator, span.dashboardlineindicatorlate {
 	font-size: 130%;
 	font-weight: normal;
@@ -5750,3 +5756,5 @@ div.tabsElem a.tab {
 
 <?php
 include dol_buildpath($path.'/theme/'.$theme.'/dropdown.inc.php', 0);
+include dol_buildpath($path.'/theme/'.$theme.'/info-box.inc.php', 0);
+
