@@ -59,7 +59,7 @@ if (! defined('ISLOADEDBYSTEELSHEET'))  die('Must be call by steelsheet'); ?>
 .progress-description,
 .info-box-text {
 	display: block;
-	font-size: 14px;
+	font-size: 12px;
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -74,25 +74,77 @@ if (! defined('ISLOADEDBYSTEELSHEET'))  die('Must be call by steelsheet'); ?>
 	margin: 0;
 }
 
+/* ICONS */
 .info-box-icon {
 	color: #fff !important;
-}
-
-.bg-infoxbox-action{
-	background-color: #d81b60 !important;
-}
-.fa-dol-action:before {
-	content: "\f073";
 }
 
 .bg-infoxbox-project{
 	background-color: #605ca8 !important;
 }
-.fa-dol-project:before {
-	content: "\f0e8";
+.bg-infoxbox-action{
+	background-color: #d81b60 !important;
+}
+.bg-infoxbox-propal,
+.bg-infoxbox-facture,
+.bg-infoxbox-commande{
+	background-color: #dd4b39 !important;
+}
+.bg-infoxbox-supplier_proposal,
+.bg-infoxbox-invoice_supplier,
+.bg-infoxbox-order_supplier{
+	background-color: #00c0ef !important;
+}
+.bg-infoxbox-contrat{
+	background-color: #00a65a !important;
+}
+.bg-infoxbox-bank_account{
+	background-color: #f39c12 !important;
+}
+.bg-infoxbox-adherent{
+	//background-color: #f39c12 !important;
+}
+.bg-infoxbox-expensereport{
+	background-color: #a55114 !important;
+}
+.bg-infoxbox-holiday{
+	background-color: #cbd81b !important;
 }
 
 
+.fa-dol-action:before {
+	content: "\f073";
+}
+.fa-dol-propal:before,
+.fa-dol-supplier_proposal:before {
+	content: "\f2b5";
+}
+.fa-dol-facture:before,
+.fa-dol-invoice_supplier:before {
+	content: "\f571";
+}
+.fa-dol-project:before {
+	content: "\f0e8";
+}
+.fa-dol-commande:before,
+.fa-dol-order_supplier:before {
+	content: "\f570";
+}
+.fa-dol-contrat:before {
+	content: "\f1e6";
+}
+.fa-dol-bank_account:before {
+	content: "\f19c";
+}
+.fa-dol-adherent:before {
+	content: "\f0c0";
+}
+.fa-dol-expensereport:before {
+	content: "\f555";
+}
+.fa-dol-holiday:before {
+	content: "\f5ca";
+}
 
 
 

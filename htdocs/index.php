@@ -684,6 +684,7 @@ $boxwork.='</tr>'."\n";
 
 // Show dashboard
 $nbworkboardempty=0;
+$isIntopOpenedDashBoard = array();
 if (! empty($valid_dashboardlines))
 {
 	$openedDashBoard = '';
@@ -698,6 +699,7 @@ if (! empty($valid_dashboardlines))
 			if(!empty($valid_dashboardlines[$infoKey]))
 			{
 				$boards[] = $valid_dashboardlines[$infoKey];
+				$isIntopOpenedDashBoard[]=$infoKey;
 			}
 		}
 
@@ -719,12 +721,21 @@ if (! empty($valid_dashboardlines))
 				$textLateTitle = $langs->trans("NActionsLate", $board->nbtodolate);
 				$textLateTitle.= ' ('.$langs->trans("Late").' = '.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil($board->warning_delay) >= 0 ? '+' : '').ceil($board->warning_delay).' '.$langs->trans("days").')';
 
-				$textLate = img_picto($textLateTitle, "warning_white", 'class="inline-block hideonsmartphone valigntextbottom"').'';
-				$textLate .= '<span class="dashboardlineindicatorlate'.($board->nbtodolate>0?' dashboardlineko':' dashboardlineok').'">';
-				$textLate .= $board->nbtodolate;
-				$textLate .= '</span>';
+				$textLate = '';
+				if($board->nbtodolate>0)
+				{
+					$textLate .= ' <span title="'.dol_htmlentities($textLateTitle).'" class="classfortooltip badge badge-danger">';
+					$textLate .= '<i class="fa fa-exclamation-triangle"></i> '.$board->nbtodolate;
+					$textLate .= '</span>';
+				}
 
-				$openedDashBoard .= '			<span class="info-box-text">'.$infoName.' : <span class="label label-default">'.$board->nbtodo.'</span>'.$textLate.'</span>' . "\n";
+
+				$nbtodClass = '';
+				if($board->nbtodo>0){
+					$nbtodClass = 'badge badge-info';
+				}
+
+				$openedDashBoard .= '			<span class="info-box-text">'.$infoName.' : <span class="'.$nbtodClass.'">'.$board->nbtodo.'</span>'.$textLate.'</span>' . "\n";
 			}
 
 
@@ -736,10 +747,17 @@ if (! empty($valid_dashboardlines))
 
     }
 
-
+	$nbworkboardcount=0;
     foreach($valid_dashboardlines as $infoKey => $board)
     {
-        if (empty($board->nbtodo)) $nbworkboardempty++;
+    	if(in_array($infoKey, $isIntopOpenedDashBoard)){
+    		// skip if info is present on top
+			continue;
+		}
+
+
+		if (empty($board->nbtodo)) $nbworkboardempty++;
+		$nbworkboardcount++;
 
 
 
@@ -820,8 +838,11 @@ print '<div class="fichecenter fichecenterbis">';
 $boxlist.='<div class="twocolumns">';
 
 $boxlist.='<div class="firstcolumn fichehalfleft boxhalfleft" id="boxhalfleft">';
+if(!empty($nbworkboardcount))
+{
+	$boxlist.=$boxwork;
+}
 
-$boxlist.=$boxwork;
 $boxlist.=$resultboxes['boxlista'];
 
 $boxlist.= '</div>';
