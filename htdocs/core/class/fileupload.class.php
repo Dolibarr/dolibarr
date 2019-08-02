@@ -17,7 +17,7 @@
  */
 
 /**
- *       \file       htdocs/core/ajax/fileupload.php
+ *       \file       htdocs/core/ajax/fileupload.class.php
  *       \brief      File to return Ajax response on file upload
  */
 
