@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2019  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -205,17 +205,17 @@ if ($user->rights->adherent->cotisation->creer && $action == 'edit')
 	print $form->showrefnav($object, 'rowid', $linkback, 1);
 	print '</td></tr>';
 
-    // Type
+	// Member
+	$adh->ref=$adh->getFullName($langs);
+	print '<tr>';
+	print '<td>'.$langs->trans("Member").'</td><td class="valeur" colspan="3">'.$adh->getNomUrl(1, 0, 'subscription').'</td>';
+	print '</tr>';
+
+	// Type
 	print '<tr>';
 	print '<td>'.$langs->trans("Type").'</td><td class="valeur" colspan="3">';
 	print $form->selectarray("typeid", $adht->liste_array(), (isset($_POST["typeid"])?$_POST["typeid"]:$object->fk_type));
 	print'</td></tr>';
-
-    // Member
-	$adh->ref=$adh->getFullName($langs);
-    print '<tr>';
-	print '<td>'.$langs->trans("Member").'</td><td class="valeur" colspan="3">'.$adh->getNomUrl(1, 0, 'subscription').'</td>';
-    print '</tr>';
 
     // Date start subscription
     print '<tr><td>'.$langs->trans("DateSubscription").'</td><td class="valeur" colspan="2">';
@@ -309,6 +309,12 @@ if ($rowid && $action != 'edit')
 
     print '<table class="border" width="100%">';
 
+    // Member
+    $adh->ref=$adh->getFullName($langs);
+    print '<tr>';
+    print '<td class="titlefield">'.$langs->trans("Member").'</td><td class="valeur">'.$adh->getNomUrl(1, 0, 'subscription').'</td>';
+    print '</tr>';
+
     // Type
     print '<tr>';
     print '<td class="titlefield">'.$langs->trans("Type").'</td>';
@@ -321,17 +327,6 @@ if ($rowid && $action != 'edit')
         print $langs->trans("NoType");
     }
     print '</td></tr>';
-
-    // Member
-	$adh->ref=$adh->getFullName($langs);
-    print '<tr>';
-	print '<td class="titlefield">'.$langs->trans("Member").'</td><td class="valeur">'.$adh->getNomUrl(1, 0, 'subscription').'</td>';
-    print '</tr>';
-
-    // Date record
-    /*print '<tr>';
-	print '<td>'.$langs->trans("DateSubscription").'</td><td class="valeur">'.dol_print_date($object->datec,'dayhour').'</td>';
-    print '</tr>';*/
 
     // Date subscription
     print '<tr>';
