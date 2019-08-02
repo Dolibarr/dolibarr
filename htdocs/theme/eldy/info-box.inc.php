@@ -11,7 +11,7 @@ if (! defined('ISLOADEDBYSTEELSHEET'))  die('Must be call by steelsheet'); ?>
 	min-height: 90px;
 	background: #fff;
 	width: 100%;
-	box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.1), 0px 0px 2px rgba(0, 0, 0, 0.1);
+	box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2), 0px 0px 2px rgba(0, 0, 0, 0.1);
 	border-radius: 2px;
 	margin-bottom: 15px;
 }
@@ -27,8 +27,21 @@ if (! defined('ISLOADEDBYSTEELSHEET'))  die('Must be call by steelsheet'); ?>
 .info-box .progress .progress-bar {
 	border-radius: 0;
 }
+
 .info-box .progress .progress-bar {
-	background: #fff;
+		float: left;
+		width: 0;
+		height: 100%;
+		font-size: 12px;
+		line-height: 20px;
+		color: #fff;
+		text-align: center;
+		background-color: #337ab7;
+		-webkit-box-shadow: inset 0 -1px 0 rgba(0,0,0,.15);
+		box-shadow: inset 0 -1px 0 rgba(0,0,0,.15);
+		-webkit-transition: width .6s ease;
+		-o-transition: width .6s ease;
+		transition: width .6s ease;
 }
 .info-box-icon {
 	border-top-left-radius: 2px;
@@ -80,6 +93,8 @@ a.info-box-text{ text-decoration: none;}
 .progress-description {
 	margin: 0;
 }
+
+
 
 /* ICONS */
 .info-box-icon {
@@ -152,6 +167,62 @@ a.info-box-text{ text-decoration: none;}
 .fa-dol-holiday:before {
 	content: "\f5ca";
 }
+
+
+/* USING FONTAWESOME FOR WEATHER */
+.info-box-weather .info-box-icon{
+	background: rgba(0, 0, 0, 0); !important;
+}
+.fa-weather-level0:before{
+	content: "\f185";
+	color : #cccccc;
+}
+.fa-weather-level1:before{
+	content: "\f6c4";
+	color : #cccccc;
+}
+.fa-weather-level2:before{
+	content: "\f0c2";
+	color : #cccccc;
+}
+.fa-weather-level3:before{
+	content: "\f740";
+	color : #cccccc;
+}
+.fa-weather-level4:before{
+	content: "\f0e7";
+	color : #b91f1f;
+}
+
+/* USING IMAGES FOR WEATHER INTEAD OF FONT AWESOME */
+/* For other themes just uncomment this part */
+/*.info-box-weather-level0,
+.info-box-weather-level1,
+.info-box-weather-level2,
+.info-box-weather-level3,
+.info-box-weather-level4 {
+	background-position: 15px 50%;
+	background-repeat: no-repeat;
+}
+
+.info-box-weather .info-box-icon{
+	display: none !important;
+}
+.info-box-weather-level0 {
+	background-image: url("img/weather/weather-clear.png");
+}
+.info-box-weather-level1 {
+	background-image: url("img/weather/weather-few-clouds.png");
+}
+.info-box-weather-level2 {
+	background-image: url("img/weather/weather-clouds.png");
+}
+.info-box-weather-level3 {
+	background-image: url("img/weather/weather-many-clouds.png");
+}
+.info-box-weather-level4 {
+	background-image: url("img/weather/weather-storm.png");
+}*/
 
 
 

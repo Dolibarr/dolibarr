@@ -313,6 +313,7 @@ if (empty($user->societe_id) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTAT
 
 
 	    // Loop and displays each line of table
+		$boardloaded=array();
 	    foreach ($keys as $key=>$val)
 	    {
 	        if ($conditions[$key])
@@ -643,13 +644,15 @@ foreach($dashboardlines as $infoKey => $tmp)
 foreach($valid_dashboardlines as $board)
 {
     if ($board->nbtodolate > 0) {
-    	if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) $totaltodo += $board->nbtodo;
+    	$totaltodo += $board->nbtodo;
 	    $totallate += $board->nbtodolate;
     }
 }
-//var_dump($totallate, $totaltodo);
-if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE) && !empty($totaltodo)) $totallate = round($totallate / $totaltodo * 100, 2);
-//var_dump($totallate);
+
+$totalLateNumber = $totallate;
+$totallatePercentage = !empty($totaltodo) ? round($totallate / $totaltodo * 100, 2) : 0;
+if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) $totallate = $totallatePercentage;
+
 $boxwork='';
 $boxwork.='<div class="box">';
 $boxwork.='<table summary="'.dol_escape_htmltag($langs->trans("WorkingBoard")).'" class="noborder boxtable boxtablenobottom boxworkingboard" width="100%">'."\n";
@@ -685,7 +688,7 @@ $boxwork.='</tr>'."\n";
 // Show dashboard
 $nbworkboardempty=0;
 $isIntopOpenedDashBoard = array();
-if (! empty($valid_dashboardlines))
+if (!empty($valid_dashboardlines))
 {
 	$openedDashBoard = '';
 
@@ -746,14 +749,46 @@ if (! empty($valid_dashboardlines))
 				}
 			}
 
-
 			$openedDashBoard.= '		</div><!-- /.info-box-content -->'."\n";
 			$openedDashBoard.= '	</div><!-- /.info-box -->'."\n";
 			$openedDashBoard.= '</div><!-- /.box-flex-item -->'."\n";
 			$openedDashBoard.="\n";
 		}
+	}
 
-    }
+	if ($showweather && !empty($isIntopOpenedDashBoard))
+	{
+		$appendClass = $conf->global->MAIN_DISABLE_METEO == 2 ?' hideonsmartphone' : '';
+		$weather = getWeatherStatus($totallate);
+
+		$text='';
+		if ($totallate > 0) $text=$langs->transnoentitiesnoconv("WarningYouHaveAtLeastOneTaskLate").' ('.$langs->transnoentitiesnoconv("NActionsLate", $totallate.(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE) ? '%' : '')).')';
+		else $text=$langs->transnoentitiesnoconv("NoItemLate");
+		$text.='. '.$langs->transnoentitiesnoconv("LateDesc");
+
+
+
+		$weatherDashBoard= '<div class="box-flex-item '.$appendClass.'">'."\n";
+		$weatherDashBoard.= '	<div class="info-box info-box-weather info-box-weather-level'.$weather->level.'">'."\n";
+		$weatherDashBoard.= '		<span class="info-box-icon"><i class="fa fa-weather-level'.$weather->level.'"></i></span>'."\n";
+		$weatherDashBoard.= '		<div class="info-box-content">'."\n";
+		$weatherDashBoard.= '			<span class="info-box-title">'.$langs->trans('GlobalOpenedElemView').'</span>' . "\n";
+		$weatherDashBoard.= '			<span class="info-box-number">'.$langs->transnoentitiesnoconv("NActionsLate", $totalLateNumber).'</span>' . "\n";
+
+		/*if($totallatePercentage>0){
+			$weatherDashBoard.= '			<div class="progress"><div class="progress-bar" style="width: '.$totallatePercentage.'%"></div></div>';
+			$weatherDashBoard.= '			<span class="progress-description">'.$langs->trans('NActionsLate', price($totallatePercentage).'%').'</span>' . "\n";
+		}*/
+
+		$weatherDashBoard.= '		</div><!-- /.info-box-content -->'."\n";
+		$weatherDashBoard.= '	</div><!-- /.info-box -->'."\n";
+		$weatherDashBoard.= '</div><!-- /.box-flex-item -->'."\n";
+		$weatherDashBoard.="\n";
+
+		$openedDashBoard=$weatherDashBoard.$openedDashBoard;
+
+
+	}
 
 
 	for ($i = 1; $i <= 10; $i++) {
@@ -763,18 +798,13 @@ if (! empty($valid_dashboardlines))
 	$nbworkboardcount=0;
     foreach($valid_dashboardlines as $infoKey => $board)
     {
-    	if(in_array($infoKey, $isIntopOpenedDashBoard)){
+    	if(in_array($infoKey, $isIntopOpenedDashBoard)) {
     		// skip if info is present on top
-			continue;
-		}
-
+			//continue;
+    	}
 
 		if (empty($board->nbtodo)) $nbworkboardempty++;
 		$nbworkboardcount++;
-
-
-
-
 
         $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"><div class="boxstats130 boxstatsborder">';
         $boxwork .= '<div class="boxstatscontent">';
@@ -800,15 +830,6 @@ if (! empty($valid_dashboardlines))
         }
         $boxwork.='</div></div>';
         $boxwork .="\n";
-
-
-
-
-
-
-
-
-
     }
 
     $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"><div class="boxstats150empty"></div></div>';
@@ -932,33 +953,68 @@ function showWeather($totallate, $text, $options, $morecss = '')
 {
     global $conf;
 
-    $out='';
-    $offset=0;
-    $factor=10; // By default
+	$weather = getWeatherStatus($totallate);
+    return img_weather($text, $weather->picto, $options, 0, $morecss);
+}
 
-    $used_conf = !empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE) ? 'MAIN_METEO_PERCENTAGE_LEVEL' : 'MAIN_METEO_LEVEL';
 
-    $level0=$offset;
-    if (! empty($conf->global->{$used_conf.'0'})) {
-        $level0=$conf->global->{$used_conf.'0'};
-    }
-    $level1=$offset+1*$factor;
-    if (! empty($conf->global->{$used_conf.'1'})) {
-        $level1=$conf->global->{$used_conf.'1'};
-    }
-    $level2=$offset+2*$factor;
-    if (! empty($conf->global->{$used_conf.'2'})) {
-        $level2=$conf->global->{$used_conf.'2'};
-    }
-    $level3=$offset+3*$factor;
-    if (! empty($conf->global->{$used_conf.'3'})) {
-        $level3=$conf->global->{$used_conf.'3'};
-    }
+/**
+ *  get weather level
+ *  $conf->global->MAIN_METEO_LEVELx
+ *
+ *  @param      int     $totallate      Nb of element late
+ *  @return     string                  Return img tag of weather
+ */
+function getWeatherStatus($totallate)
+{
+	global $conf;
 
-    if ($totallate <= $level0) $out.=img_weather($text, 'weather-clear.png', $options, 0, $morecss);
-    elseif ($totallate > $level0 && $totallate <= $level1) $out.=img_weather($text, 'weather-few-clouds.png', $options, 0, $morecss);
-    elseif ($totallate > $level1 && $totallate <= $level2) $out.=img_weather($text, 'weather-clouds.png', $options, 0, $morecss);
-    elseif ($totallate > $level2 && $totallate <= $level3) $out.=img_weather($text, 'weather-many-clouds.png', $options, 0, $morecss);
-    elseif ($totallate > $level3) $out.=img_weather($text, 'weather-storm.png', $options, 0, $morecss);
-    return $out;
+	$weather = new stdClass();
+	$weather->picto = '';
+
+	$offset=0;
+	$factor=10; // By default
+
+	$used_conf = !empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE) ? 'MAIN_METEO_PERCENTAGE_LEVEL' : 'MAIN_METEO_LEVEL';
+
+	$level0=$offset;
+	$weather->level=0;
+	if (! empty($conf->global->{$used_conf.'0'})) {
+		$level0=$conf->global->{$used_conf.'0'};
+	}
+	$level1=$offset+1*$factor;
+	if (! empty($conf->global->{$used_conf.'1'})) {
+		$level1=$conf->global->{$used_conf.'1'};
+	}
+	$level2=$offset+2*$factor;
+	if (! empty($conf->global->{$used_conf.'2'})) {
+		$level2=$conf->global->{$used_conf.'2'};
+	}
+	$level3=$offset+3*$factor;
+	if (! empty($conf->global->{$used_conf.'3'})) {
+		$level3=$conf->global->{$used_conf.'3'};
+	}
+
+	if ($totallate <= $level0){
+		$weather->picto = 'weather-clear.png';
+		$weather->level=0;
+	}
+	elseif ($totallate <= $level1){
+		$weather->picto = 'weather-few-clouds.png';
+		$weather->level=1;
+	}
+	elseif ($totallate <= $level2){
+		$weather->picto = 'weather-clouds.png';
+		$weather->level=2;
+	}
+	elseif ($totallate <= $level3){
+		$weather->picto = 'weather-many-clouds.png';
+		$weather->level=3;
+	}
+	else{
+		$weather->picto = 'weather-storm.png';
+		$weather->level=4;
+	}
+
+	return $weather;
 }
