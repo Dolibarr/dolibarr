@@ -60,7 +60,7 @@ class MyObject extends CommonObject
 
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
-	const STATUS_DISABLED = 9;
+	const STATUS_CANCELED = 9;
 
 
 	/**
