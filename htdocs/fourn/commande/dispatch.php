@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2019 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2014      Cedric Gross         <c.gross@kreiz-it.fr>
  * Copyright (C) 2016      Florian Henry        <florian.henry@atm-consulting.fr>
  * Copyright (C) 2017      Ferran Marcet        <fmarcet@2byte.es>
@@ -239,6 +239,16 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 			$pu = "pu_" . $reg[1] . '_' . $reg[2]; // This is unit price including discount
 			$fk_commandefourndet = "fk_commandefourndet_" . $reg[1] . '_' . $reg[2];
 
+			if (! empty($conf->global->SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_DURING_RECEIPT)) {
+				if (empty($conf->multicurrency->enabled) && empty($conf->dynamicprices->enabled)) {
+					$dto = GETPOST("dto_" . $reg[1] . '_' . $reg[2]);
+					if (! empty($dto)) {
+						$unit_price = price2num(GETPOST("pu_" . $reg[1]) * (100 - $dto) / 100, 'MU');
+					}
+					$saveprice = "saveprice_" . $reg[1] . '_' . $reg[2];
+				}
+			}
+
 			// We ask to move a qty
 			if (GETPOST($qty) != 0) {
 				if (! (GETPOST($ent, 'int') > 0)) {
@@ -253,6 +263,24 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 					if ($result < 0) {
 						setEventMessages($object->error, $object->errors, 'errors');
 						$error ++;
+					}
+
+					if (! $error && ! empty($conf->global->SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_DURING_RECEIPT)) {
+						if (empty($conf->multicurrency->enabled) && empty($conf->dynamicprices->enabled)) {
+							$dto = GETPOST("dto_" . $reg[1] . '_' . $reg[2]);
+							//update supplier price
+							if (isset($_POST[$saveprice])) {
+								// TODO Use class
+								$sql = "UPDATE " . MAIN_DB_PREFIX . "product_fournisseur_price";
+								$sql .= " SET unitprice='" . GETPOST($pu) . "'";
+								$sql .= ", price=" . GETPOST($pu) . "*quantity";
+								$sql .= ", remise_percent='" . $dto . "'";
+								$sql .= " WHERE fk_soc=" . $object->socid;
+								$sql .= " AND fk_product=" . GETPOST($prod, 'int');
+
+								$resql = $db->query($sql);
+							}
+						}
 					}
 				}
 			}
@@ -552,6 +580,15 @@ if ($id > 0 || ! empty($ref)) {
 				print '<td class="right">' . $langs->trans("QtyDispatchedShort") . '</td>';
 				print '<td class="right">' . $langs->trans("QtyToDispatchShort") . '</td>';
 				print '<td width="32"></td>';
+
+				if (! empty($conf->global->SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_DURING_RECEIPT)) {
+					if (empty($conf->multicurrency->enabled) && empty($conf->dynamicprices->enabled)) {
+						print '<td class="right">' . $langs->trans("Price") . '</td>';
+						print '<td class="right">' . $langs->trans("ReductionShort") . ' (%)</td>';
+						print '<td class="right">' . $langs->trans("UpdatePrice") . '</td>';
+					}
+				}
+
 				print '<td align="right">' . $langs->trans("Warehouse") . '</td>';
 
                 // Enable hooks to append additional columns
@@ -759,6 +796,25 @@ if ($id > 0 || ! empty($ref)) {
 						}
 
 						print '</td>';
+
+						if (! empty($conf->global->SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_DURING_RECEIPT)) {
+							if (empty($conf->multicurrency->enabled) && empty($conf->dynamicprices->enabled)) {
+								// Price
+								print '<td class="right">';
+								print '<input id="pu' . $suffix . '" name="pu' . $suffix . '" type="text" size="8" value="' . price((GETPOST('pu' . $suffix) != '' ? GETPOST('pu' . $suffix) : $up_ht_disc)) . '">';
+								print '</td>';
+
+								// Discount
+								print '<td class="right">';
+								print '<input id="pu' . $suffix . '" name="dto' . $suffix . '" type="text" size="8" value="' . (GETPOST('dto' . $suffix) != '' ? GETPOST('dto' . $suffix) : '') . '">';
+								print '</td>';
+
+								// Save price
+								print '<td class="center">';
+								print '<input class="flat checkformerge" type="checkbox" name="saveprice' . $suffix . '" value="' . (GETPOST('saveprice' . $suffix) != '' ? GETPOST('saveprice' . $suffix) : '') . '">';
+								print '</td>';
+							}
+						}
 
 						// Warehouse
 						print '<td class="right">';

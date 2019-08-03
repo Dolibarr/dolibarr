@@ -376,6 +376,9 @@ div.buttonpayment input {
 	color: #333;
 	cursor: pointer;
 }
+div.buttonpayment input:focus {
+    color: #008;
+}
 input.buttonpaymentcb {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/common/credit_card.png', 1) ?>);
 	background-size: 26px;

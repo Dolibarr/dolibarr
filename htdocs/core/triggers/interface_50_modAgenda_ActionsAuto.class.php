@@ -649,12 +649,20 @@ class InterfaceActionsAuto extends DolibarrTriggers
             // Load translation files required by the page
             $langs->loadLangs(array("agenda","other","members"));
 
-            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("MemberSubscriptionAddedInDolibarr", $object->ref, $object->getFullName($langs));
-            $object->actionmsg=$langs->transnoentities("MemberSubscriptionAddedInDolibarr", $object->ref, $object->getFullName($langs));
-            $object->actionmsg.="\n".$langs->transnoentities("Member").': '.$object->getFullName($langs);
-            $object->actionmsg.="\n".$langs->transnoentities("Type").': '.$object->type;
-            $object->actionmsg.="\n".$langs->transnoentities("Amount").': '.$object->last_subscription_amount;
-            $object->actionmsg.="\n".$langs->transnoentities("Period").': '.dol_print_date($object->last_subscription_date_start, 'day').' - '.dol_print_date($object->last_subscription_date_end, 'day');
+            $member = $this->context['member'];
+            if (! is_object($member))	// This should not happen
+            {
+	            include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+	            $member = new Adherent($this->db);
+	            $member->fetch($this->fk_adherent);
+            }
+
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("MemberSubscriptionAddedInDolibarr", $object->id, $member->getFullName($langs));
+            $object->actionmsg=$langs->transnoentities("MemberSubscriptionAddedInDolibarr", $object->id, $member->getFullName($langs));
+            $object->actionmsg.="\n".$langs->transnoentities("Member").': '.$member->getFullName($langs);
+            $object->actionmsg.="\n".$langs->transnoentities("Type").': '.$object->fk_type;
+            $object->actionmsg.="\n".$langs->transnoentities("Amount").': '.$object->amount;
+            $object->actionmsg.="\n".$langs->transnoentities("Period").': '.dol_print_date($object->dateh, 'day').' - '.dol_print_date($object->datef, 'day');
 
 			$object->sendtoid=0;
 			if ($object->fk_soc > 0) $object->socid=$object->fk_soc;
@@ -664,12 +672,20 @@ class InterfaceActionsAuto extends DolibarrTriggers
         	// Load translation files required by the page
             $langs->loadLangs(array("agenda","other","members"));
 
-        	if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("MemberSubscriptionModifiedInDolibarr", $object->ref, $object->getFullName($langs));
-        	$object->actionmsg=$langs->transnoentities("MemberSubscriptionModifiedInDolibarr", $object->ref, $object->getFullName($langs));
-        	$object->actionmsg.="\n".$langs->transnoentities("Member").': '.$object->getFullName($langs);
-        	$object->actionmsg.="\n".$langs->transnoentities("Type").': '.$object->type;
-        	$object->actionmsg.="\n".$langs->transnoentities("Amount").': '.$object->last_subscription_amount;
-        	$object->actionmsg.="\n".$langs->transnoentities("Period").': '.dol_print_date($object->last_subscription_date_start, 'day').' - '.dol_print_date($object->last_subscription_date_end, 'day');
+            $member = $this->context['member'];
+            if (! is_object($member))	// This should not happen
+            {
+            	include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+            	$member = new Adherent($this->db);
+            	$member->fetch($this->fk_adherent);
+            }
+
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("MemberSubscriptionModifiedInDolibarr", $object->id, $member->getFullName($langs));
+        	$object->actionmsg=$langs->transnoentities("MemberSubscriptionModifiedInDolibarr", $object->id, $member->getFullName($langs));
+        	$object->actionmsg.="\n".$langs->transnoentities("Member").': '.$member->getFullName($langs);
+        	$object->actionmsg.="\n".$langs->transnoentities("Type").': '.$object->fk_type;
+        	$object->actionmsg.="\n".$langs->transnoentities("Amount").': '.$object->amount;
+        	$object->actionmsg.="\n".$langs->transnoentities("Period").': '.dol_print_date($object->dateh, 'day').' - '.dol_print_date($object->datef, 'day');
 
         	$object->sendtoid=0;
         	if ($object->fk_soc > 0) $object->socid=$object->fk_soc;
