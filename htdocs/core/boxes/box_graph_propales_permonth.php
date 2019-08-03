@@ -74,8 +74,8 @@ class box_graph_propales_permonth extends ModeleBoxes
 		//include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 		//$propalstatic=new Propal($db);
 
-		$startmonth = $conf->global->SOCIETE_FISCAL_MONTH_START?($conf->global->SOCIETE_FISCAL_MONTH_START-1):0;
-		if (empty($conf->global->GRAPH_USE_FISCAL_YEAR)) $startmonth = 0;
+		$startmonth = $conf->global->SOCIETE_FISCAL_MONTH_START?($conf->global->SOCIETE_FISCAL_MONTH_START) : 1;
+		if (empty($conf->global->GRAPH_USE_FISCAL_YEAR)) $startmonth = 1;
 
 		$langs->load("propal");
 
@@ -147,7 +147,7 @@ class box_graph_propales_permonth extends ModeleBoxes
 					$i=$startyear;$legend=array();
 					while ($i <= $endyear)
 					{
-						if ($startmonth != 0)
+						if ($startmonth != 1)
 						{
 							$legend[]=sprintf("%d/%d", $i-2001, $i-2000);
 						}
@@ -193,7 +193,7 @@ class box_graph_propales_permonth extends ModeleBoxes
 					$i=$startyear;$legend=array();
 					while ($i <= $endyear)
 					{
-						if ($startmonth != 0)
+						if ($startmonth != 1)
 						{
                             $legend[]=sprintf("%d/%d", $i-2001, $i-2000);
 						}
