@@ -130,16 +130,15 @@ if (!$rowid)
 	    	$label.="Réseau: ".$charge->outcome->network_status."<br>";
 	    	$label.="Statut: ".$langs->trans("".$charge->outcome->seller_message."");
 	    	$status = $form->textwithpicto(img_picto($langs->trans("".$charge->status.""), 'statut8'), $label, 1);
-	  } 
+	  }
     
       if ($charge->payment_method_details->type=='card')
 		{
 		    $type = $langs->trans("card");
-		}
-		elseif ($charge->source->type=='card'){
-		    $type = $langs->trans("card");
+		} elseif ($charge->source->type=='card'){
+			$type = $langs->trans("card");
 		} elseif ($charge->payment_method_details->type=='three_d_secure'){
-		    $type = $langs->trans("card3DS");
+			$type = $langs->trans("card3DS");
 		}
   
     if (! empty($charge->payment_intent)) {
