@@ -2053,7 +2053,7 @@ abstract class CommonObject
 			return -2;
 		}
 	}
-	
+
 	/**
 	 *  Change the retained warranty payments terms
 	 *
@@ -2066,11 +2066,11 @@ abstract class CommonObject
 	    if ($this->statut >= 0 || $this->element == 'societe')
 	    {
 	        $fieldname = 'retained_warranty_fk_cond_reglement';
-	        
+
 	        $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
 	        $sql .= ' SET '.$fieldname.' = '.$id;
 	        $sql .= ' WHERE rowid='.$this->id;
-	        
+
 	        if ($this->db->query($sql))
 	        {
 	            $this->retained_warranty_fk_cond_reglement = $id;
@@ -5064,7 +5064,7 @@ abstract class CommonObject
 
 				//dol_syslog("attributeLabel=".$attributeLabel, LOG_DEBUG);
 				//dol_syslog("attributeType=".$attributeType, LOG_DEBUG);
-				
+
 				if (!empty($attrfieldcomputed))
 				{
 					if (!empty($conf->global->MAIN_STORE_COMPUTED_EXTRAFIELDS))
@@ -7390,6 +7390,7 @@ abstract class CommonObject
 		if (!empty($id))  $sql.= ' WHERE rowid = '.$id;
 		elseif (!empty($ref)) $sql.= " WHERE ref = ".$this->quote($ref, $this->fields['ref']);
 		else $sql.=' WHERE 1 = 1';	// usage with empty id and empty ref is very rare
+		if (empty($id) && $this->ismultientitymanaged == 1) $sql.=' AND entity IN ('.getEntity($this->table_element).')';
 		if ($morewhere)   $sql.= $morewhere;
 		$sql.=' LIMIT 1';	// This is a fetch, to be sure to get only one record
 
