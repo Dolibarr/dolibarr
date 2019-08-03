@@ -822,7 +822,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 	print '<br>';
 
 	// List of Stripe payment modes
-	if (! (empty($conf->stripe->enabled)))
+	if (! (empty($conf->stripe->enabled)) && $object->client)
 	{
 		$morehtmlright='';
 		if (! empty($conf->global->STRIPE_ALLOW_LOCAL_CARD))
@@ -1184,11 +1184,10 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		}
 		print "</table>";
 		print "</div>";
+		print '<br>';
 	}
 
-
 	// List of bank accounts
-	print '<br>';
 
     $morehtmlright= dolGetButtonTitle($langs->trans('Add'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=create');
 
