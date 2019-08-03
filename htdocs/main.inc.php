@@ -2337,7 +2337,7 @@ if (! function_exists("llxFooter"))
 	    					  url: "https://ping.dolibarr.org/",
 	    					  timeout: 500,     // timeout milliseconds
 	    					  cache: false,
-	    					  data: { hash_algo: "md5", hash_unique_id: "<?php echo md5($conf->file->instance_unique_id); ?>", action: "dolibarrping", entity: <?php echo (int) $conf->entity; ?> },
+	    					  data: { hash_algo: "md5", hash_unique_id: "<?php echo md5($conf->file->instance_unique_id); ?>", action: "dolibarrping", version: "<?php echo (float) DOL_VERSION; ?>", entity: <?php echo (int) $conf->entity; ?> },
 	    					  success: function (data, status, xhr) {   // success callback function (data contains body of response)
 	      					    	console.log("Ping ok");
 	        	    				$.ajax({
@@ -2355,7 +2355,7 @@ if (! function_exists("llxFooter"))
 	        	    					  url: "<?php echo DOL_URL_ROOT.'/core/ajax/pingresult.php'; ?>",
 	        	    					  timeout: 500,     // timeout milliseconds
 	        	    					  cache: false,
-	        	        				  data: { hash_algo: "md5", hash_unique_id: "<?php echo md5($conf->file->instance_unique_id); ?>", action: "firstpingko" },
+	        	        				  data: { hash_algo: "md5", hash_unique_id: "<?php echo md5($conf->file->instance_unique_id); ?>", action: "firstpingko", version: "<?php echo (float) DOL_VERSION; ?>" },
 	      					  		});
 	    					  }
 	    				});
