@@ -286,7 +286,6 @@ else
 	dol_print_error($db);
 }
 
-print '</div>';
 
 
 /*
