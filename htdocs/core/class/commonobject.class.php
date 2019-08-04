@@ -6056,7 +6056,7 @@ abstract class CommonObject
 			{
 				$morecss = 'minwidth100imp';
 			}
-			elseif ($type == 'datetime')
+			elseif ($type == 'datetime' || $type == 'timestamp')
 			{
 				$morecss = 'minwidth200imp';
 			}
@@ -6100,7 +6100,7 @@ abstract class CommonObject
 				$value='';
 			}
 		}
-		elseif ($type == 'datetime')
+		elseif ($type == 'datetime' || $type == 'timestamp')
 		{
 			if(! empty($value)) {
 				$value=dol_print_date($value, 'dayhour');
