@@ -1016,14 +1016,13 @@ class AccountancyExport
 	 * Export format : Charlemagne
 	 *
 	 * @param array $objectLines data
-	 *
 	 * @return void
 	 */
-	public function exportCharlemagne($objectLines) 
+	public function exportCharlemagne($objectLines)
 	{
 		global $langs;
 		$langs->load('compta');
-		
+
 		$separator = "\t";
 		$end_line = "\n";
 
@@ -1045,9 +1044,9 @@ class AccountancyExport
 		print self::trunc($langs->transnoentitiesnoconv('Analytic') . ' 3', 15) . $separator;
 		print self::trunc($langs->transnoentitiesnoconv('AnalyticLabel') . ' 3', 60) . $separator;
 		print $end_line;
-		
+
 		foreach($objectLines as $line) {
-			
+
 			$date = dol_print_date($line->doc_date, '%Y%m%d');
 			print $date . $separator; //Date
 
@@ -1069,7 +1068,6 @@ class AccountancyExport
 			print $separator;//Analytic
 			print $separator;//Analytic
 			print $end_line;
-			
 		}
 	}
 
