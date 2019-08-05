@@ -570,7 +570,7 @@ else
 			}
 
 			// Other attributes
-			if ($action = 'create_delivery') {
+			if ($action == 'create_delivery') {
 				// copy from expedition
 				$expeditionExtrafields = new Extrafields($db);
 				$expeditionExtrafieldLabels = $expeditionExtrafields->fetch_name_optionals_label($expedition->table_element);
