@@ -868,7 +868,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		}
 		print '</td></tr>';
 	}
-  }    
+	}
 
 	print '</table>';
 	print '</div>';
@@ -1252,7 +1252,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans('Status').'</td>';
 		print '<td>'.$langs->trans('Amount').'</td>';
-		print '<td>'.$langs->trans('Currency').'</td>';  
+		print '<td>'.$langs->trans('Currency').'</td>';
     print '</tr>';
   
 		if (is_array($balance->available) && count($balance->available))
@@ -1260,19 +1260,19 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			foreach ($balance->available as $cpt)
 			{
       print '<tr><td>'.$langs->trans("Available").'</td><td>'.price($cpt->amount, 0, '', 1, - 1, - 1, strtoupper($cpt->currency)).' </td><td>'.$langs->trans("Currency".strtoupper($cpt->currency)).'</td></tr>';
-      }  
-    }
+			}
+		}
     
     if (is_array($balance->pending) && count($balance->pending))
 		{
 			foreach ($balance->pending as $cpt)
 			{
       print '<tr><td>'.$langs->trans("Pending").'</td><td>'.price($cpt->amount, 0, '', 1, - 1, - 1, strtoupper($cpt->currency)).' </td><td>'.$langs->trans("Currency".strtoupper($cpt->currency)).'</td></tr>';
-      }  
+			}
     }
     print '</table>';
     print '<br>';
-  }
+	}
 
 	// List of bank accounts
 
