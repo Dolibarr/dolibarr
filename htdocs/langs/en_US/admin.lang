@@ -395,6 +395,7 @@ ButtonHideUnauthorized=Hide buttons for non-admin users for unauthorized actions
 OldVATRates=Old VAT rate
 NewVATRates=New VAT rate
 PriceBaseTypeToChange=Modify on prices with base reference value defined on
+PriceFormatInCurrentLanguage=Price Format In Current Language
 MassConvert=Launch mass convert
 String=String
 TextLong=Long text
