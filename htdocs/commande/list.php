@@ -694,6 +694,12 @@ if ($resql)
 		print '<td class="liste_titre">';
 		print '</td>';
 	}
+	// Date cloture
+	if (! empty($arrayfields['c.date_cloture']['checked']))
+	{
+		print '<td class="liste_titre">';
+		print '</td>';
+	}
 	// Status
 	if (! empty($arrayfields['c.fk_statut']['checked']))
 	{
