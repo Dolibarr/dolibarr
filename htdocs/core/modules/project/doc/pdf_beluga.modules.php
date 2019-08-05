@@ -260,7 +260,7 @@ class pdf_beluga extends ModelePDFProjects
 					complete_substitutions_array($substitutionarray, $outputlangs, $object);
 					$notetoshow = make_substitutions($notetoshow, $substitutionarray, $outputlangs);
 					$notetoshow = convertBackOfficeMediasLinksToPublicLinks($notetoshow);
-					
+
 					$tab_top -= 2;
 
 					$pdf->SetFont('', '', $default_font_size - 1);
@@ -438,7 +438,7 @@ class pdf_beluga extends ModelePDFProjects
                             $pdf->MultiCell($this->posxstatut - $this->posxamountht, 3, "", 1, 'R');
                         }
                         $pdf->SetXY($this->posxstatut, $curY);
-                        $pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxstatut, 3, $outputlangs->transnoentities("Statut"), 1, 'R');
+                        $pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxstatut, 3, $outputlangs->transnoentities("Status"), 1, 'R');
 
                         if (is_array($elementarray) && count($elementarray) > 0)
                         {

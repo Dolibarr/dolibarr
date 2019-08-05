@@ -446,8 +446,10 @@ print "\n";
 
 
 <br>
-<div class="center"><input type="submit" class="button"
-	value="<?php echo $langs->trans("GenerateBackup") ?>" id="buttonGo" /><br>
+<div class="center">
+	<input type="submit" class="button reposition" value="<?php echo $langs->trans("GenerateBackup") ?>" id="buttonGo">
+	<input type="hidden" name="page_y" value="<?php echo GETPOST('page_y', 'int'); ?>">
+	<br>
 <br>
 
 <?php
@@ -459,7 +461,7 @@ if (! empty($_SESSION["commandbackuplastdone"]))
 
     //print $paramclear;
 
-    // Now run command and show result
+    // Now show result
     print '<b>'.$langs->trans("BackupResult").':</b> ';
 	print $_SESSION["commandbackupresult"];
 
@@ -597,9 +599,6 @@ print '<br>';
 
 </fieldset>
 </form>
-
-
-
 
 <?php
 

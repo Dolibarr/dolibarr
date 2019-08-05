@@ -1928,7 +1928,8 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
 		// JS Code for Stripe
 		if (empty($stripearrayofkeys['publishable_key']))
 		{
-		    print info_admin($langs->trans("ErrorModuleSetupNotComplete", "stripe"), 0, 0, 'error');
+			$langs->load("errors");
+			print info_admin($langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Stripe")), 0, 0, 'error');
 		}
 		else
 		{

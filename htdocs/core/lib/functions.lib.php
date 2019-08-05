@@ -4400,7 +4400,7 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 	{
 		if ($currency_code == 'auto') $currency_code=$conf->currency;
 
-		$listofcurrenciesbefore=array('USD','GBP','AUD','HKD','MXN','PEN','CNY');
+		$listofcurrenciesbefore=array('USD','GBP','AUD','HKD','MXN','PEN','CNY','CAD');
 		$listoflanguagesbefore=array('nl_NL');
 		if (in_array($currency_code, $listofcurrenciesbefore) || in_array($outlangs->defaultlang, $listoflanguagesbefore))
 		{
@@ -6554,10 +6554,17 @@ function dol_htmloutput_mesg($mesgstring = '', $mesgarray = array(), $style = 'o
 			$newmesgarray=array();
 			foreach($mesgarray as $val)
 			{
-				$tmpmesgstring=preg_replace('/<\/div><div class="(error|warning)">/', '<br>', $val);
-				$tmpmesgstring=preg_replace('/<div class="(error|warning)">/', '', $tmpmesgstring);
-				$tmpmesgstring=preg_replace('/<\/div>/', '', $tmpmesgstring);
-				$newmesgarray[]=$tmpmesgstring;
+				if (is_string($val))
+				{
+					$tmpmesgstring=preg_replace('/<\/div><div class="(error|warning)">/', '<br>', $val);
+					$tmpmesgstring=preg_replace('/<div class="(error|warning)">/', '', $tmpmesgstring);
+					$tmpmesgstring=preg_replace('/<\/div>/', '', $tmpmesgstring);
+					$newmesgarray[]=$tmpmesgstring;
+				}
+				else
+				{
+					dol_syslog("Error call of dol_htmloutput_mesg with an array with a value that is not a string", LOG_WARNING);
+				}
 			}
 			$mesgarray=$newmesgarray;
 		}
