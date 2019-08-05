@@ -2081,6 +2081,8 @@ class Facture extends CommonInvoice
 		if ($this->paye != 1)
 		{
 			$this->db->begin();
+			
+			$now=dol_now();
 
 			dol_syslog(get_class($this)."::set_paid rowid=".$this->id, LOG_DEBUG);
 
@@ -2089,6 +2091,8 @@ class Facture extends CommonInvoice
 			if (! $close_code) $sql.= ', paye=1';
 			if ($close_code) $sql.= ", close_code='".$this->db->escape($close_code)."'";
 			if ($close_note) $sql.= ", close_note='".$this->db->escape($close_note)."'";
+			$sql.= ', fk_user_cloture = '.$user->id;
+			$sql.= ", date_cloture = '".$this->db->idate($now)."'";
 			$sql.= ' WHERE rowid = '.$this->id;
 
 			$resql = $this->db->query($sql);
@@ -2138,9 +2142,13 @@ class Facture extends CommonInvoice
 		$error=0;
 
 		$this->db->begin();
-
+		
+		$now=dol_now();
+		
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
 		$sql.= ' SET paye=0, fk_statut='.self::STATUS_VALIDATED.', close_code=null, close_note=null';
+		$sql.= ', fk_user_cloture = '.$user->id;
+		$sql.= ", date_cloture = '".$this->db->idate($now)."'";
 		$sql.= ' WHERE rowid = '.$this->id;
 
 		dol_syslog(get_class($this)."::set_unpaid", LOG_DEBUG);
