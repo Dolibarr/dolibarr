@@ -133,13 +133,13 @@ if (!$rowid)
 	  }
     
       if ($charge->payment_method_details->type=='card')
-		{
+	  {
 		    $type = $langs->trans("card");
-		} elseif ($charge->source->type=='card'){
+	  } elseif ($charge->source->type=='card'){
 			$type = $langs->trans("card");
-		} elseif ($charge->payment_method_details->type=='three_d_secure'){
+	  } elseif ($charge->payment_method_details->type=='three_d_secure'){
 			$type = $langs->trans("card3DS");
-		}
+	  }
   
     if (! empty($charge->payment_intent)) {
     $charge = \Stripe\PaymentIntent::retrieve($charge->payment_intent);
