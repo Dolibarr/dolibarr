@@ -849,10 +849,10 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		{
 		    $connect='';
 			
-			$url='https://dashboard.stripe.com/test/'.$stripesupplieracc;
+			$url='https://dashboard.stripe.com/test/connect/accounts/'.$stripesupplieracc;
 			if ($servicestatus)
 			{
-				$url='https://dashboard.stripe.com/'.$stripesupplieracc;
+				$url='https://dashboard.stripe.com/connect/accounts/'.$stripesupplieracc;
 			}
 			print ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe'), 'object_globe').'</a>';
 		}
