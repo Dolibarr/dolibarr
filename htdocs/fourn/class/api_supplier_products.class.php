@@ -84,11 +84,11 @@ class SupplierProducts extends DolibarrApi
         $result = $this->product->fetch($id, $ref, $ref_ext, $barcode);
         if(! $result ) {
             throw new RestException(404, 'Product not found');
-        }         
+        }
         
         if(! DolibarrApi::_checkAccessToResource('product', $this->product->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-        }         
+        }
         
         if ($includestockdata) {
                $this->product->load_stock();
@@ -127,12 +127,12 @@ class SupplierProducts extends DolibarrApi
         $socid = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : '';
 
         $sql = "SELECT t.rowid, t.ref, t.ref_ext";
-        $sql.= " FROM ".MAIN_DB_PREFIX."product as t";          
+        $sql.= " FROM ".MAIN_DB_PREFIX."product as t";
 
         if ($category > 0) {
             $sql.= ", ".MAIN_DB_PREFIX."categorie_product as c";
-        }         
-        
+        }
+
         $sql.= ", ".MAIN_DB_PREFIX."product_fournisseur_price as s";
            
         $sql.= ' WHERE t.entity IN ('.getEntity('product').')';
