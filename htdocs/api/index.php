@@ -228,6 +228,8 @@ if (! empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/swagger.json' &&
 		$classfile = 'supplier_orders';
 	if ($module == 'supplierinvoices')
 		$classfile = 'supplier_invoices';
+	if ($module == 'supplierproducts')
+		$classfile = 'supplier_products';
 	if ($module == 'ficheinter')
 		$classfile = 'interventions';
 	if ($module == 'interventions')
