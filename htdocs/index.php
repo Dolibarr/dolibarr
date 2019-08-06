@@ -707,7 +707,7 @@ if (!empty($valid_dashboardlines))
 			$openedDashBoard.= '		<span class="info-box-icon bg-infoxbox-'.$groupKeyLowerCase.'"><i class="fa fa-dol-'.$groupKeyLowerCase.'"></i></span>'."\n";
 			$openedDashBoard.= '		<div class="info-box-content">'."\n";
 
-			$openedDashBoard .= '			<span class="info-box-title">'.$groupName.'</span>' . "\n";
+			$openedDashBoard .= '			<span class="info-box-title" title="'.strip_tags($groupName).'">'.$groupName.'</span>' . "\n";
 
 			foreach($boards as $board) {
 				if(!empty($board->labelShort)){
