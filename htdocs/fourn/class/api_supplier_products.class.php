@@ -96,7 +96,8 @@ class SupplierProducts extends DolibarrApi
         
         if($result) {
         $this->product = new ProductFournisseur($this->db);
-        $this->product->fetch_product_fournisseur_price($id, 1);
+        $this->product->fetch($id, $ref);
+        $this->product->list_product_fournisseur_price($id, $sortfield, $sortorder, 0, 0);
         }
 
         return $this->_cleanObjectDatas($this->product);
