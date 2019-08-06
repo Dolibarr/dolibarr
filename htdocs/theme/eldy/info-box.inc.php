@@ -231,6 +231,7 @@ a.info-box-text{ text-decoration: none;}
 	flex-direction: row;
 	flex-wrap: wrap;
 	width: 100%;
+	margin: 0 0 0 -15px;
 	/*justify-content: space-between;*/
 }
 
@@ -240,10 +241,13 @@ a.info-box-text{ text-decoration: none;}
 	flex-basis: auto;
 
 	width: 280px;
-	padding: 5px 10px;
+	margin: 5px 0px 0px 15px;
 }
 .box-flex-item.filler{
-	margin: 0;
-	padding: 0px 10px !important;
+	margin: 0px 0px 0px 15px !important;
 	height: 0;
+}
+
+.box{
+	overflow: visible;
 }
