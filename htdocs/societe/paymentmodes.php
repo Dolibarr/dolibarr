@@ -844,7 +844,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		print '<tr><td class="titlefield">';
 		print $form->editfieldkey("StripeSupplierId", 'key_account_supplier', $stripesupplieracc, $object, $permissiontowrite, 'string', '', 0, 2, 'socid');
 		print '</td><td>';
-		print $form->editfieldval("StripeSupplierId", 'key_account_supplier', $stripesupplieracc, $object, $permissiontowrite, 'string', '', null, null, '', 2, '', 'socid');
+		print $form->editfieldval("StripeConnectAccount", 'key_account_supplier', $stripesupplieracc, $object, $permissiontowrite, 'string', '', null, null, '', 2, '', 'socid');
 		if (! empty($conf->stripe->enabled) && $stripesupplieracc && $action != 'editkey_account')
 		{
 		    $connect='';
