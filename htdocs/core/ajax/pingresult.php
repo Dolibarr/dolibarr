@@ -1,5 +1,6 @@
 <?php
-/*
+/* Copyright (C) 2019		Laurent Destailleur	<eldy@users.sourceforge.net>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -15,9 +16,9 @@
  */
 
 /**
- *       \file       htdocs/core/ajax/objectonoff.php
- *       \brief      File to set status for an object
- *       			 This Ajax service is called when option MAIN_DIRECT_STATUS_UPDATE is set.
+ *       \file       htdocs/core/ajax/pingresult.php
+ *       \brief      File to save result of anonymous ping
+ *       			 Example:  captureserver/public/index.php?action=dolibarrping
  */
 
 if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Disables token renewal
@@ -28,20 +29,18 @@ if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
 if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN', '1');
 
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 $action=GETPOST('action', 'alpha');
-$id=GETPOST('id', 'int');
-$value=GETPOST('value', 'int');
-$field=GETPOST('field', 'alpha');
-$element=GETPOST('element', 'alpha');
+$hash_unique_id=GETPOST('hash_unique_id', 'alpha');
+$hash_algo=GETPOST('hash', 'alpha');
 
-$object = new GenericObject($db);
 
 // Security check
 if (! empty($user->societe_id))
 	$socid = $user->societe_id;
 
+$now = dol_now();
 
 
 /*
@@ -52,20 +51,22 @@ top_httphead();
 
 print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
-if ($element == 'societe' && in_array($field, array('status')))
+// If ok
+if ($action == 'firstpingok')
 {
-	$result = restrictedArea($user, 'societe', $id);
-}
-elseif ($element == 'product' && in_array($field, array('tosell', 'tobuy', 'tobatch')))
-{
-	$result = restrictedArea($user, 'produit|service', $id, 'product&product', '', '', 'rowid');
-}
-else
-{
-	accessforbidden("Bad value for combination of parameters element/field.", 0, 0, 1);
-	exit;
-}
+	// Note: pings are by entities
+	dolibarr_set_const($db, 'MAIN_FIRST_PING_OK_DATE', dol_print_date($now, 'dayhourlog', 'gmt'));
+	dolibarr_set_const($db, 'MAIN_FIRST_PING_OK_ID', $hash_unique_id);
 
-// Registering new values
-if (($action == 'set') && ! empty($id))
-    $object->setValueFrom($field, $value, $element, $id);
+	print 'First ping OK saved for entity '.$conf->entity;
+}
+// If ko
+elseif ($action == 'firstpingko')
+{
+	// Note: pings are by entities
+	dolibarr_set_const($db, 'MAIN_LAST_PING_KO_DATE', dol_print_date($now, 'dayhourlog'), 'gmt');
+	print 'First ping KO saved for entity '.$conf->entity;
+}
+else {
+	print 'Error action='.$action.' not supported';
+}

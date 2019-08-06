@@ -1397,12 +1397,12 @@ class ExpenseReport extends CommonObject
         // phpcs:enable
 		$error = 0;
 
-        if ($this->fk_c_deplacement_statuts != 5)
+		if ($this->paid)
         {
 			$this->db->begin();
 
             $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-            $sql.= " SET fk_statut = 5";
+            $sql.= " SET paid = 0";
             $sql.= ' WHERE rowid = '.$this->id;
 
             dol_syslog(get_class($this)."::set_unpaid sql=".$sql, LOG_DEBUG);

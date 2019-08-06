@@ -1124,6 +1124,7 @@ function top_httphead($contenttype = 'text/html', $forcenocache = 0)
 
 	if ($contenttype == 'text/html' ) header("Content-Type: text/html; charset=".$conf->file->character_set_client);
 	else header("Content-Type: ".$contenttype);
+
 	// Security options
 	header("X-Content-Type-Options: nosniff");  // With the nosniff option, if the server says the content is text/html, the browser will render it as text/html (note that most browsers now force this option to on)
 	if (! defined('XFRAMEOPTIONS_ALLOWALL')) header("X-Frame-Options: SAMEORIGIN");      // Frames allowed only if on same domain (stop some XSS attacks)
@@ -2318,6 +2319,51 @@ if (! function_exists("llxFooter"))
 		// A div for the address popup
 		print "\n<!-- A div to allow dialog popup -->\n";
 		print '<div id="dialogforpopup" style="display: none;"></div>'."\n";
+
+		// Add code for the asynchronous anonymous first ping (for telemetry)
+		if (($_SERVER["PHP_SELF"] == DOL_URL_ROOT.'/index.php') || GETPOST('forceping', 'alpha'))
+		{
+			if (empty($conf->global->MAIN_FIRST_PING_OK_DATE)
+			|| (! empty($conf->file->instance_unique_id) && (md5($conf->file->instance_unique_id) != $conf->global->MAIN_FIRST_PING_OK_ID))
+			|| GETPOST('forceping', 'alpha'))
+			{
+				print "\n".'<!-- Includes JS for Ping of Dolibarr MAIN_FIRST_PING_OK_DATE = '.$conf->global->MAIN_FIRST_PING_OK_DATE.' MAIN_FIRST_PING_OK_ID = '.$conf->global->MAIN_FIRST_PING_OK_ID.' -->'."\n";
+				print "\n<!-- JS CODE TO ENABLE the anonymous Ontime Ping -->\n";
+				?>
+	    			<script>
+	    			jQuery(document).ready(function (tmp) {
+	    				$.ajax({
+	    					  method: "POST",
+	    					  url: "https://ping.dolibarr.org/",
+	    					  timeout: 500,     // timeout milliseconds
+	    					  cache: false,
+	    					  data: { hash_algo: "md5", hash_unique_id: "<?php echo md5($conf->file->instance_unique_id); ?>", action: "dolibarrping", version: "<?php echo (float) DOL_VERSION; ?>", entity: <?php echo (int) $conf->entity; ?> },
+	    					  success: function (data, status, xhr) {   // success callback function (data contains body of response)
+	      					    	console.log("Ping ok");
+	        	    				$.ajax({
+	      	    					  method: "GET",
+	      	    					  url: "<?php echo DOL_URL_ROOT.'/core/ajax/pingresult.php'; ?>",
+	      	    					  timeout: 500,     // timeout milliseconds
+	      	    					  cache: false,
+	      	        				  data: { hash_algo: "md5", hash_unique_id: "<?php echo md5($conf->file->instance_unique_id); ?>", action: "firstpingok" },
+	    					  		});
+	    					  },
+	    					  error: function (data,status,xhr) {   // success callback function
+	        					    console.log("Ping ko: " + data);
+	        	    				$.ajax({
+	        	    					  method: "GET",
+	        	    					  url: "<?php echo DOL_URL_ROOT.'/core/ajax/pingresult.php'; ?>",
+	        	    					  timeout: 500,     // timeout milliseconds
+	        	    					  cache: false,
+	        	        				  data: { hash_algo: "md5", hash_unique_id: "<?php echo md5($conf->file->instance_unique_id); ?>", action: "firstpingko", version: "<?php echo (float) DOL_VERSION; ?>" },
+	      					  		});
+	    					  }
+	    				});
+	    			});
+	    			</script>
+				<?php
+			}
+		}
 
 		print "</body>\n";
 		print "</html>\n";
