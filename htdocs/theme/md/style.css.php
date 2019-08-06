@@ -691,20 +691,7 @@ textarea.centpercent {
 }
 
 /* Themes for badges */
-.badge {
-	display: inline-block;
-	min-width: 10px;
-	padding: 2px 5px;
-	font-size: 10px;
-	font-weight: 700;
-	line-height: 1em;
-	color: #fff;
-	text-align: center;
-	white-space: nowrap;
-	vertical-align: baseline;
-	background-color: #777;
-	border-radius: 10px;
-}
+<?php include dol_buildpath($path.'/theme/'.$theme.'/badges.inc.php', 0); ?>
 
 .borderrightlight
 {
@@ -5860,6 +5847,6 @@ border-top-right-radius: 6px;
 
 include dol_buildpath($path.'/theme/'.$theme.'/dropdown.inc.php', 0);
 
-
+include dol_buildpath($path.'/theme/'.$theme.'/info-box.inc.php', 0);
 
 if (is_object($db)) $db->close();

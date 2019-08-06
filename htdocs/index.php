@@ -606,6 +606,14 @@ $dashboardgroup = array (
 		),
 );
 
+$object=new stdClass();
+$parameters=array(
+	'dashboardgroup' => $dashboardgroup
+);
+$reshook=$hookmanager->executeHooks('addOpenElementsDashboardGroup', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook == 0) {
+	$dashboardgroup = array_merge($dashboardgroup, $hookmanager->resArray);
+}
 
 
 // Calculate total nb of late
@@ -677,7 +685,7 @@ if (!empty($valid_dashboardlines))
 	foreach($dashboardgroup as $groupKey => $groupElement) {
 		$boards = array();
 
-		if(!empty($conf->global->MAIN_DISPLAY_NEW_OPENED_DASH_BOARD))
+		if(!empty($conf->global->MAIN_DISPLAY_NEW_OPENED_DASH_BOARD) || !empty($conf->global->MAIN_FEATURES_LEVEL))
 		{
 			foreach ($groupElement['stats'] as $infoKey)
 			{
@@ -756,11 +764,16 @@ if (!empty($valid_dashboardlines))
 		$weatherDashBoard.= '		<span class="info-box-icon"><i class="fa fa-weather-level'.$weather->level.'"></i></span>'."\n";
 		$weatherDashBoard.= '		<div class="info-box-content">'."\n";
 		$weatherDashBoard.= '			<span class="info-box-title">'.$langs->trans('GlobalOpenedElemView').'</span>' . "\n";
-		$weatherDashBoard.= '			<span class="info-box-number">'.$langs->transnoentitiesnoconv("NActionsLate", $totalLateNumber).'</span>' . "\n";
 
 		if($totallatePercentage>0 && !empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)){
-			$weatherDashBoard.= '			<div class="progress"><div class="progress-bar" style="width: '.$totallatePercentage.'%"></div></div>';
-			$weatherDashBoard.= '			<span class="progress-description">'.$langs->trans('NActionsLate', price($totallatePercentage).'%').'</span>' . "\n";
+			$weatherDashBoard.= '			<span class="info-box-number">'.$langs->transnoentitiesnoconv("NActionsLate", price($totallatePercentage).'%').'</span>' . "\n";
+			$weatherDashBoard.= '			<span class="progress-description">'.$langs->trans('NActionsLate', $totalLateNumber).'</span>' . "\n";
+		}
+		else{
+			$weatherDashBoard.= '			<span class="info-box-number">'.$langs->transnoentitiesnoconv("NActionsLate", $totalLateNumber).'</span>' . "\n";
+			if($totallatePercentage>0){
+				$weatherDashBoard.= '			<span class="progress-description">'.$langs->trans('NActionsLate', price($totallatePercentage).'%').'</span>' . "\n";
+			}
 		}
 
 		$weatherDashBoard.= '		</div><!-- /.info-box-content -->'."\n";

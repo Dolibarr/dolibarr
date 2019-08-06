@@ -54,3 +54,28 @@ $colortext='0,0,0';
 $colortextlink='0,0,120';
 $fontsize='14';
 $fontsizesmaller='11';
+
+// Badges colors
+$badgePrimary   ='#007bff';
+$badgeSecondary ='#999999';
+$badgeSuccess   ='#28a745';
+$badgeDanger    ='#8c4446';
+$badgeWarning   ='#ffc107';
+$badgeInfo      ='#17a2b8';
+$badgeDark      ='#343a40';
+$badgeLight     ='#f8f9fa';
+
+/* default color for status : After a quick check, somme status can have oposite function according to objects
+*  So this badges status uses default value according to theme eldy status img
+*  TODO: use color definition vars above for define badges color status X -> expemple $badgeStatusValidate, $badgeStatusClosed, $badgeStatusActive ....
+*/
+$badgeStatus0='#cbd3d3';
+$badgeStatus1='#bc9526';
+$badgeStatus2='#e6f0f0';
+$badgeStatus3='#bca52b';
+$badgeStatus4='#277d1e';
+$badgeStatus5='#cad2d2';
+$badgeStatus6='#cad2d2';
+$badgeStatus7='#baa32b';
+$badgeStatus8='#be3013';
+$badgeStatus9='#e7f0f0';
