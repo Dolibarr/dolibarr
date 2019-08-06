@@ -782,8 +782,6 @@ if (!empty($valid_dashboardlines))
 		$weatherDashBoard.="\n";
 
 		$openedDashBoard=$weatherDashBoard.$openedDashBoard;
-
-
 	}
 
 	if(!empty($isIntopOpenedDashBoard))
