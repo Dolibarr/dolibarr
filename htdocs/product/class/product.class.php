@@ -2792,7 +2792,7 @@ class Product extends CommonObject
         global $user;
 
         $sql = "SELECT COUNT(DISTINCT f.fk_soc) as nb_customers, COUNT(DISTINCT f.rowid) as nb,";
-        $sql.= " COUNT(fd.rowid) as nb_rows, SUM(fd.qty) as qty";
+        $sql.= " COUNT(fd.rowid) as nb_rows, SUM(CASE WHEN type != 2 THEN fd.qty ELSE -(fd.qty) END) as qty";
         $sql.= " FROM ".MAIN_DB_PREFIX."facturedet as fd";
         $sql.= ", ".MAIN_DB_PREFIX."facture as f";
         $sql.= ", ".MAIN_DB_PREFIX."societe as s";
