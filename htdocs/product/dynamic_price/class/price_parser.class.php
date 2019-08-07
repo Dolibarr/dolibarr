@@ -261,7 +261,9 @@ class PriceParser
 
 		//Get the supplier min
 		$productFournisseur = new ProductFournisseur($this->db);
-		$supplier_min_price = $productFournisseur->find_min_price_product_fournisseur($product->id, 0, 0);
+		//$supplier_min_price = $productFournisseur->find_min_price_product_fournisseur($product->id, 0, 0);
+		if ($productFournisseur->find_min_price_product_fournisseur($product->id, 0, 0) > 0)
+                	$supplier_min_price = $productFournisseur->fourn_price;
 
 		//Accessible values by expressions
 		$extra_values = array_merge($extra_values, array(
