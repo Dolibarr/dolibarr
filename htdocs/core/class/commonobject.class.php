@@ -6656,16 +6656,37 @@ abstract class CommonObject
 	{
 		foreach ($tables as $table)
 		{
-			$sql = 'UPDATE '.MAIN_DB_PREFIX.$table.' SET fk_soc = '.$dest_id.' WHERE fk_soc = '.$origin_id;
-
-			if (! $db->query($sql))
-			{
-				if ($ignoreerrors) return true;		// TODO Not enough. If there is A-B on kept thirdarty and B-C on old one, we must get A-B-C after merge. Not A-B.
-				//$this->errors = $db->lasterror();
-				return false;
+			$sql = 'SELECT * FROM '.MAIN_DB_PREFIX.$table.' WHERE fk_soc = '.$origin_id;
+			$res = $db->query($sql);
+			// Query went bad
+			if  (! $res) return false;
+			
+			// We merge each entry
+			while ( $row = $db->fetch_object($res) ) {
+				// Init the WHERE clause 
+				$where = ' WHERE fk_soc = '.$origin_id;
+				// Add row-specific conditions
+				foreach ($row as $key => $val) {
+					// We don't want that
+					if ( $key == 'fk_soc' || $key == 'import_key' || $val == Null ) continue ;
+					// But we want the rest (and escaping when it's string)
+					$where .= ' AND '.$key.' = ' . (gettype($val)=='string'?"'":'') . $val . (gettype($val)=='string'?"'":'');
+				}
+				
+				// Merge query
+				$sql = 'UPDATE '.MAIN_DB_PREFIX.$table.' SET fk_soc = '.$dest_id ;
+				// Adding the Where clause
+				$sql .= $where;
+				// Merging (with savepoint enabled)
+				if (! $db->query($sql, 1)) 
+				// If it didn't work, it's not an error that is already exist but we will delete the entrie :
+				{ 
+					// If it don't work, that's an error we don't understand => rollback the entire transaction
+					if (! $db->query('DELETE FROM '.MAIN_DB_PREFIX.$table . $where)) return false ; 
+				}
 			}
 		}
-
+		// Everything went well
 		return true;
 	}
 
