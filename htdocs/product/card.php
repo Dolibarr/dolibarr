@@ -296,6 +296,7 @@ if (empty($reshook))
             $object->duration_value     	 = $duration_value;
             $object->duration_unit      	 = $duration_unit;
             $object->fk_default_warehouse	 = GETPOST('fk_default_warehouse');
+			$object->fk_default_warehouse_place   = GETPOST('fk_default_warehouse_place');
             $object->seuil_stock_alerte 	 = GETPOST('seuil_stock_alerte')?GETPOST('seuil_stock_alerte'):0;
             $object->desiredstock            = GETPOST('desiredstock')?GETPOST('desiredstock'):0;
             $object->canvas             	 = GETPOST('canvas');
@@ -395,6 +396,7 @@ if (empty($reshook))
                 $object->status_batch	        = GETPOST('status_batch', 'aZ09');
                 // removed from update view so GETPOST always empty
                 $object->fk_default_warehouse   = GETPOST('fk_default_warehouse');
+				$object->fk_default_warehouse_place   = GETPOST('fk_default_warehouse_place');
                 /*
                 $object->seuil_stock_alerte     = GETPOST('seuil_stock_alerte');
                 $object->desiredstock           = GETPOST('desiredstock');
