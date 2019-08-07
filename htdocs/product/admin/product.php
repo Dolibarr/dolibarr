@@ -564,7 +564,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY)) $current_rule='PRODUI
 if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) $current_rule='PRODUIT_CUSTOMER_PRICES';
 if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) $current_rule='PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES';
 print $form->selectarray("princingrule", $select_pricing_rules, $current_rule);
-if ( empty($conf->multicompany->enabled))
+if (! empty($conf->multicompany->enabled))
 {
     print $langs->trans("SamePriceAlsoForSharedCompanies");
 }
