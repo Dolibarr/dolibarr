@@ -1770,7 +1770,13 @@ else
 
                 print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
                 print (! empty($warehouse->id) ? $warehouse->getNomUrl(1) : '');
-                print '</td>';
+                print '</td></tr>';
+                if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
+				{
+                print '<tr><td>'.$langs->trans("WarehousePlace").'</td><td>';
+                print $object->fk_default_warehouse_place;
+                print '</td></tr>';
+				}
             }
 
             //Parent product.
