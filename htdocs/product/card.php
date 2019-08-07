@@ -1009,6 +1009,13 @@ else
             print $formproduct->selectWarehouses(GETPOST('fk_default_warehouse'), 'fk_default_warehouse', 'warehouseopen', 1);
             print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&amp;backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit').'">'.$langs->trans("AddWarehouse").'</a>';
             print '</td>';
+            if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
+            {
+			// Stock place
+            print '<tr><td>'.$langs->trans("WarehousePlace").'</td><td>';
+            print '<input type="text" name="url" class="maxwidth200" value="'.GETPOST('fk_default_warehouse_place').'">';
+            print '</td></tr>';
+            }
             // Stock min level
             print '<tr><td>'.$form->textwithpicto($langs->trans("StockLimit"), $langs->trans("StockLimitDesc"), 1).'</td><td>';
             print '<input name="seuil_stock_alerte" class="maxwidth50" value="'.GETPOST('seuil_stock_alerte').'">';
@@ -1381,6 +1388,14 @@ else
                 print $formproduct->selectWarehouses($object->fk_default_warehouse, 'fk_default_warehouse', 'warehouseopen', 1);
                 print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&amp;backtopage='.urlencode($_SERVER['PHP_SELF'].'?action=create&type='.GETPOST('type', 'int')).'">'.$langs->trans("AddWarehouse").'</a>';
                 print '</td>';
+				
+                if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
+                {
+				// Stock place
+                print '<tr><td>'.$langs->trans("WarehousePlace").'</td><td>';
+                print '<input type="text" name="url" class="maxwidth200" value="'.$object->fk_default_warehouse_place.'">';
+                print '</td></tr>';
+                }
                 /*
                 print "<tr>".'<td>'.$langs->trans("StockLimit").'</td><td>';
                 print '<input name="seuil_stock_alerte" size="4" value="'.$object->seuil_stock_alerte.'">';
@@ -1773,6 +1788,7 @@ else
                 print '</td></tr>';
                 if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 				{
+				// Stock place
                 print '<tr><td>'.$langs->trans("WarehousePlace").'</td><td>';
                 print $object->fk_default_warehouse_place;
                 print '</td></tr>';
