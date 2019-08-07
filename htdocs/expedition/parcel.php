@@ -30,3 +30,19 @@ require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/sendings.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/expedition/modules_expedition.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'other'));
+
+// Check variables
+$action		= GETPOST('action', 'aZ09');
+$confirm	= GETPOST('confirm');
+$id			= GETPOST('id', 'int');
+$ref		= GETPOST('ref');
+
+// Security check
+if ($user->societe_id)
+{
+	$socid = $user->societe_id;
+}
+$result=restrictedArea($user, 'expedition', $id, '');
