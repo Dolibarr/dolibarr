@@ -24,3 +24,9 @@
  *	\ingroup    expedition
  *	\brief      Parcel management page of an expedition.
  */
+
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/sendings.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/expedition/modules_expedition.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
