@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'other'));
 
-// Check variables
+// Check GET variables
 $action		= GETPOST('action', 'aZ09');
 $confirm	= GETPOST('confirm');
 $id			= GETPOST('id', 'int');
