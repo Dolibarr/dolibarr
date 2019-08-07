@@ -46,3 +46,25 @@ if ($user->societe_id)
 	$socid = $user->societe_id;
 }
 $result=restrictedArea($user, 'expedition', $id, '');
+
+$object = new Expedition($db);
+if ($id > 0 || ! empty($ref))
+{
+    $object->fetch($id, $ref);
+   
+}
+
+/*
+ * Actions
+ */
+
+//CRUD
+
+/*
+ * View
+ */
+llxHeader('', $langs->trans('Order'), 'EN:Customers_Orders|FR:expeditions_Clients|ES:Pedidos de clientes');
+
+// End of page
+llxFooter();
+$db->close();
