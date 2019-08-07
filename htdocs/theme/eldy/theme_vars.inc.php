@@ -77,6 +77,11 @@ $badgeInfo      ='#17a2b8';
 $badgeDark      ='#343a40';
 $badgeLight     ='#f8f9fa';
 
+// badge color ajustement for color blind
+$colorblind_deuteranopes_badgeSuccess   ='#37de5d';  //! text color black
+$colorblind_deuteranopes_badgeSuccess_textColor7='#000';
+$colorblind_deuteranopes_badgeWarning   ='#e4e411';
+
 /* default color for status : After a quick check, somme status can have oposite function according to objects
 *  So this badges status uses default value according to theme eldy status img
 *  TODO: use color definition vars above for define badges color status X -> expemple $badgeStatusValidate, $badgeStatusClosed, $badgeStatusActive ....
@@ -91,3 +96,9 @@ $badgeStatus6='#cad2d2';
 $badgeStatus7='#baa32b';
 $badgeStatus8='#be3013';
 $badgeStatus9='#e7f0f0';
+
+// status color ajustement for color blind
+$colorblind_deuteranopes_badgeStatus4=$colorblind_deuteranopes_badgeStatus7=$colorblind_deuteranopes_badgeSuccess;  //! text color black
+$colorblind_deuteranopes_badgeStatus_textColor4=$colorblind_deuteranopes_badgeStatus_textColor7='#000';
+$colorblind_deuteranopes_badgeStatus1=$colorblind_deuteranopes_badgeWarning;
+$colorblind_deuteranopes_badgeStatus_textColor1='#000';
