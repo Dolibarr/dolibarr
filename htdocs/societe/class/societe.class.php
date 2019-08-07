@@ -2167,6 +2167,8 @@ class Societe extends CommonObject
 		{
 			$label.= '<br><b>' . $langs->trans('Name') . ':</b> '. $this->name;
 			if (! empty($this->name_alias)) $label.=' ('.$this->name_alias.')';
+		}
+		if (! empty($this->email)) {
 			$label.= '<br><b>' . $langs->trans('Email') . ':</b> '. $this->email;
 		}
 		if (! empty($this->country_code))
