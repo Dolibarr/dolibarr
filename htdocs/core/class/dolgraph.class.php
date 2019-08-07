@@ -96,7 +96,7 @@ class DolGraph
 	 */
 	public function __construct($library = 'jflot')
 	{
-		global $conf;
+		global $conf, $user;
 		global $theme_bordercolor, $theme_datacolor, $theme_bgcolor;
 
 		// To use old feature

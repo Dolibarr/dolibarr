@@ -958,7 +958,7 @@ function show_theme($fuser, $edit = 0, $foruserprofile = false)
 		print '<td colspan="'.($colspan-1).'">';
 
 		$colorBlindOptions = array(
-			'none' => $langs->trans('No'),
+			0 => $langs->trans('No'),
 			'protanopia' => $langs->trans('Protanopia'),
 			'deuteranopes' => $langs->trans('Deuteranopes'),
 			'tritanopes' => $langs->trans('Tritanopes'),
