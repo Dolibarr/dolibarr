@@ -6658,7 +6658,7 @@ abstract class CommonObject
 		{
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$table.' SET fk_soc = '.$dest_id.' WHERE fk_soc = '.$origin_id;
 
-			if (! $db->query($sql))
+			if (! $db->query($sql, 1))
 			{
 				if ($ignoreerrors) return true;		// TODO Not enough. If there is A-B on kept thirdarty and B-C on old one, we must get A-B-C after merge. Not A-B.
 				//$this->errors = $db->lasterror();
