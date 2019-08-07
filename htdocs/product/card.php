@@ -1395,7 +1395,7 @@ else
                 {
 				// Stock place
                 print '<tr><td>'.$langs->trans("WarehousePlace").'</td><td>';
-                print '<input type="text" name="url" class="maxwidth200" value="'.$object->fk_default_warehouse_place.'">';
+                print '<input type="text" name="fk_default_warehouse_place" class="maxwidth200" value="'.$object->fk_default_warehouse_place.'">';
                 print '</td></tr>';
                 }
                 /*
