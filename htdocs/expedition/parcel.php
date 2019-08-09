@@ -50,8 +50,7 @@ $result=restrictedArea($user, 'expedition', $id, '');
 $object = new Expedition($db);
 if ($id > 0 || ! empty($ref))
 {
-    $object->fetch($id, $ref);
-   
+    $object->fetch($id, $ref);   
 }
 
 /*
