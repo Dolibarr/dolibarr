@@ -2593,11 +2593,11 @@ class ExpeditionLigne extends CommonObjectLine
 		if (empty($this->rang)) $this->rang = 0;
 
 		// Rank to use
-		$rangtouse = $this->rang;
-		if ($rangtouse == -1)
+		$ranktouse = $this->rang;
+		if ($ranktouse == -1)
 		{
 			$rangmax = $this->line_max($fk_expedition);
-			$rangtouse = $rangmax + 1;
+			$ranktouse = $rangmax + 1;
 		}
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."expeditiondet (";
@@ -2611,7 +2611,7 @@ class ExpeditionLigne extends CommonObjectLine
 		$sql.= ", ".(empty($this->entrepot_id) ? 'NULL' : $this->entrepot_id);
 		$sql.= ", ".$this->fk_origin_line;
 		$sql.= ", ".$this->qty;
-		$sql.= ", ".$rangtouse;
+		$sql.= ", ".$ranktouse;
 		$sql.= ")";
 
 		dol_syslog(get_class($this)."::insert", LOG_DEBUG);
