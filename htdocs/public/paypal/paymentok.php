@@ -25,8 +25,8 @@
  *                  This token can be used to get more informations.
  */
 
-define("NOLOGIN",1);		// This means this output page does not require to be logged.
-define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
+define("NOLOGIN", 1);		// This means this output page does not require to be logged.
+define("NOCSRFCHECK", 1);	// We accept to go on this page from external web site.
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
@@ -41,7 +41,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 
 // Security check
-if (empty($conf->paypal->enabled)) accessforbidden('',0,0,1);
+if (empty($conf->paypal->enabled)) accessforbidden('', 0, 0, 1);
 
 $langs->loadLangs(array("main","other","dict","bills","companies","paybox","paypal","stripe"));
 
@@ -60,17 +60,17 @@ $PAYPAL_API_KO="";
 if ($urlko) $PAYPAL_API_KO=$urlko;
 if (empty($PAYPAL_API_USER))
 {
-    dol_print_error('',"Paypal setup param PAYPAL_API_USER not defined");
+    dol_print_error('', "Paypal setup param PAYPAL_API_USER not defined");
     return -1;
 }
 if (empty($PAYPAL_API_PASSWORD))
 {
-    dol_print_error('',"Paypal setup param PAYPAL_API_PASSWORD not defined");
+    dol_print_error('', "Paypal setup param PAYPAL_API_PASSWORD not defined");
     return -1;
 }
 if (empty($PAYPAL_API_SIGNATURE))
 {
-    dol_print_error('',"Paypal setup param PAYPAL_API_SIGNATURE not defined");
+    dol_print_error('', "Paypal setup param PAYPAL_API_SIGNATURE not defined");
     return -1;
 }
 
@@ -162,7 +162,7 @@ if ($PAYPALTOKEN)
             $NOTE=urldecode($resArray["NOTE"]);
 
             print $langs->trans("YourPaymentHasBeenRecorded")."<br>\n";
-            print $langs->trans("ThisIsTransactionId",$TRANSACTIONID)."<br><br>\n";
+            print $langs->trans("ThisIsTransactionId", $TRANSACTIONID)."<br><br>\n";
 
 			$key='ONLINE_PAYMENT_MESSAGE_OK';
 			if (! empty($conf->global->$key)) print $conf->global->$key;
@@ -170,11 +170,11 @@ if ($PAYPALTOKEN)
             // Appel des triggers
             include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
             $interface=new Interfaces($db);
-            $result=$interface->run_triggers('PAYPAL_PAYMENT_OK',$object,$user,$langs,$conf);
+            $result=$interface->run_triggers('PAYPAL_PAYMENT_OK', $object, $user, $langs, $conf);
             if ($result < 0) { $error++; $errors=$interface->errors; }
             // Fin appel triggers
 
-            $tmptag=dolExplodeIntoArray($fulltag,'.','=');
+            $tmptag=dolExplodeIntoArray($fulltag, '.', '=');
 
         	// Send an email
 			if (! empty($conf->global->ONLINE_PAYMENT_SENDEMAIL))
@@ -182,7 +182,7 @@ if ($PAYPALTOKEN)
 				$sendto=$conf->global->ONLINE_PAYMENT_SENDEMAIL;
 				$from=$conf->global->MAILING_EMAIL_FROM;
 				// Define $urlwithroot
-				$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+				$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
 				$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
 				//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
@@ -241,7 +241,7 @@ if ($PAYPALTOKEN)
             // Appel des triggers
             include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
             $interface=new Interfaces($db);
-            $result=$interface->run_triggers('PAYPAL_PAYMENT_KO',$object,$user,$langs,$conf);
+            $result=$interface->run_triggers('PAYPAL_PAYMENT_KO', $object, $user, $langs, $conf);
             if ($result < 0) { $error++; $errors=$interface->errors; }
             // Fin appel triggers
 
@@ -259,7 +259,7 @@ if ($PAYPALTOKEN)
 
             if ($mysoc->email) echo "\nPlease, send a screenshot of this page to ".$mysoc->email."<br>\n";
 
-            $tmptag=dolExplodeIntoArray($fulltag,'.','=');
+            $tmptag=dolExplodeIntoArray($fulltag, '.', '=');
 
            	// Send an email
 			if (! empty($conf->global->ONLINE_PAYMENT_SENDEMAIL))
@@ -267,7 +267,7 @@ if ($PAYPALTOKEN)
 				$sendto=$conf->global->ONLINE_PAYMENT_SENDEMAIL;
 				$from=$conf->global->MAILING_EMAIL_FROM;
 				// Define $urlwithroot
-				$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+				$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
 				$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
 				//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
@@ -313,18 +313,18 @@ if ($PAYPALTOKEN)
     }
     else
     {
-        dol_print_error('','Session expired');
+        dol_print_error('', 'Session expired');
     }
 }
 else
 {
     // No TOKEN parameter in URL
-    dol_print_error('','No TOKEN parameter in URL');
+    dol_print_error('', 'No TOKEN parameter in URL');
 }
 
 print "\n</div>\n";
 
-htmlPrintOnlinePaymentFooter($mysoc,$langs,0,$suffix);
+htmlPrintOnlinePaymentFooter($mysoc, $langs, 0, $suffix);
 
 
 llxFooter('', 'public');

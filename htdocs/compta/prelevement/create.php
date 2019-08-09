@@ -44,50 +44,60 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'prelevement', '', '', 'bons');
 
 // Get supervariables
-$action = GETPOST('action','alpha');
-$mode = GETPOST('mode','alpha')?GETPOST('mode','alpha'):'real';
-$format = GETPOST('format','aZ09');
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
-$page = GETPOST("page",'int');
+$action = GETPOST('action', 'alpha');
+$mode = GETPOST('mode', 'alpha')?GETPOST('mode', 'alpha'):'real';
+$format = GETPOST('format', 'aZ09');
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$page = GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
+
+$hookmanager->initHooks(array('directdebitcreatecard','globalcard'));
+
 
 /*
  * Actions
  */
 
-// Change customer bank information to withdraw
-if ($action == 'modify')
-{
-	for ($i = 1 ; $i < 9 ; $i++)
-	{
-		dolibarr_set_const($db, GETPOST("nom$i"), GETPOST("value$i"),'chaine',0,'',$conf->entity);
-	}
-}
-if ($action == 'create')
-{
-	// $conf->global->PRELEVEMENT_CODE_BANQUE and $conf->global->PRELEVEMENT_CODE_GUICHET should be empty
-	$bprev = new BonPrelevement($db);
-        $executiondate = dol_mktime(0, 0, 0, GETPOST('remonth'), (GETPOST('reday')+$conf->global->PRELEVEMENT_ADDDAYS), GETPOST('reyear'));
+$parameters = array('mode' => $mode, 'format' => $format, 'limit' => $limit, 'page' => $page, 'offset' => $offset);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-        $result = $bprev->create($conf->global->PRELEVEMENT_CODE_BANQUE, $conf->global->PRELEVEMENT_CODE_GUICHET, $mode, $format,$executiondate);
-	if ($result < 0)
+if (empty($reshook))
+{
+	// Change customer bank information to withdraw
+	if ($action == 'modify')
 	{
-		setEventMessages($bprev->error, $bprev->errors, 'errors');
-	}
-	elseif ($result == 0)
-	{
-		$mesg=$langs->trans("NoInvoiceCouldBeWithdrawed", $format);
-		setEventMessages($mesg, null, 'errors');
-		$mesg.='<br>'."\n";
-		foreach($bprev->invoice_in_error as $key => $val)
+		for ($i = 1 ; $i < 9 ; $i++)
 		{
-			$mesg.='<span class="warning">'.$val."</span><br>\n";
+			dolibarr_set_const($db, GETPOST("nom$i"), GETPOST("value$i"), 'chaine', 0, '', $conf->entity);
 		}
 	}
-	else
+	if ($action == 'create')
 	{
-		setEventMessages($langs->trans("DirectDebitOrderCreated", $bprev->getNomUrl(1)), null);
+		// $conf->global->PRELEVEMENT_CODE_BANQUE and $conf->global->PRELEVEMENT_CODE_GUICHET should be empty
+		$bprev = new BonPrelevement($db);
+	    $executiondate = dol_mktime(0, 0, 0, GETPOST('remonth'), (GETPOST('reday')+$conf->global->PRELEVEMENT_ADDDAYS), GETPOST('reyear'));
+
+	    $result = $bprev->create($conf->global->PRELEVEMENT_CODE_BANQUE, $conf->global->PRELEVEMENT_CODE_GUICHET, $mode, $format, $executiondate);
+		if ($result < 0)
+		{
+			setEventMessages($bprev->error, $bprev->errors, 'errors');
+		}
+		elseif ($result == 0)
+		{
+			$mesg=$langs->trans("NoInvoiceCouldBeWithdrawed", $format);
+			setEventMessages($mesg, null, 'errors');
+			$mesg.='<br>'."\n";
+			foreach($bprev->invoice_in_error as $key => $val)
+			{
+				$mesg.='<span class="warning">'.$val."</span><br>\n";
+			}
+		}
+		else
+		{
+			setEventMessages($langs->trans("DirectDebitOrderCreated", $bprev->getNomUrl(1)), null);
+		}
 	}
 }
 
@@ -106,7 +116,7 @@ llxHeader('', $langs->trans("NewStandingOrder"));
 if (prelevement_check_config() < 0)
 {
 	$langs->load("errors");
-	setEventMessages($langs->trans("ErrorModuleSetupNotComplete"), null, 'errors');
+	setEventMessages($langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Withdraw")), null, 'errors');
 }
 
 /*$h=0;
@@ -125,7 +135,7 @@ dol_fiche_head();
 
 $nb=$bprev->NbFactureAPrelever();
 $nb1=$bprev->NbFactureAPrelever(1);
-$nb11=$bprev->NbFactureAPrelever(1,1);
+$nb11=$bprev->NbFactureAPrelever(1, 1);
 $pricetowithdraw=$bprev->SommeAPrelever();
 if ($nb < 0 || $nb1 < 0 || $nb11 < 0)
 {
@@ -162,9 +172,9 @@ if ($nb) {
         } else {
             print '<a class="butAction"  type="submit" href="create.php?action=create&format=ALL">' . $langs->trans("CreateAll") . "</a>\n";
 		}
-		}
-		else
-		{
+	}
+	else
+	{
 		if ($mysoc->isInEEC())
 		{
 			print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("CreateForSepaFRST")."</a>\n";
@@ -178,9 +188,10 @@ if ($nb) {
 }
 else
 {
-	print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NoInvoiceToWithdraw", $langs->transnoentitiesnoconv("StandingOrders"))).'">'.$langs->trans("CreateAll")."</a>\n";
+    print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NoInvoiceToWithdraw", $langs->transnoentitiesnoconv("StandingOrders"))).'">'.$langs->trans("CreateAll")."</a>\n";
 }
 
+print "</form>\n";
 print "</div>\n";
 print '<br>';
 
@@ -207,7 +218,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	$nbtotalofrecords = $db->num_rows($result);
 }
 
-$sql.= $db->plimit($limit+1,$offset);
+$sql.= $db->plimit($limit+1, $offset);
 
 $resql=$db->query($sql);
 if ($resql)
@@ -226,7 +237,7 @@ if ($resql)
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="page" value="'.$page.'">';
 
-    print_barre_liste($langs->trans("InvoiceWaitingWithdraw"),$page,$_SERVER['PHP_SELF'],$param,'','','',$num,$nbtotalofrecords,'title_accountancy.png',0,'','', $limit);
+    print_barre_liste($langs->trans("InvoiceWaitingWithdraw"), $page, $_SERVER['PHP_SELF'], $param, '', '', '', $num, $nbtotalofrecords, 'title_accountancy.png', 0, '', '', $limit);
 
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
@@ -234,8 +245,8 @@ if ($resql)
 	print '<td>'.$langs->trans("ThirdParty").'</td>';
 	print '<td>'.$langs->trans("RIB").'</td>';
 	print '<td>'.$langs->trans("RUM").'</td>';
-	print '<td align="right">'.$langs->trans("AmountTTC").'</td>';
-	print '<td align="right">'.$langs->trans("DateRequest").'</td>';
+	print '<td class="right">'.$langs->trans("AmountTTC").'</td>';
+	print '<td class="right">'.$langs->trans("DateRequest").'</td>';
 	print '</tr>';
 
 	if ($num)
@@ -251,12 +262,12 @@ if ($resql)
 			print '<td>';
 			$invoicestatic->id=$obj->rowid;
 			$invoicestatic->ref=$obj->ref;
-			print $invoicestatic->getNomUrl(1,'withdraw');
+			print $invoicestatic->getNomUrl(1, 'withdraw');
 			print '</td>';
 			// Thirdparty
 			print '<td>';
 			$thirdpartystatic->fetch($obj->socid);
-			print $thirdpartystatic->getNomUrl(1,'ban');
+			print $thirdpartystatic->getNomUrl(1, 'ban');
 			print '</td>';
 			// RIB
 			print '<td>';
@@ -271,12 +282,12 @@ if ($resql)
 			if ($format) print ' ('.$format.')';
 			print '</td>';
 			// Amount
-			print '<td align="right">';
-			print price($obj->amount,0,$langs,0,0,-1,$conf->currency);
+			print '<td class="right">';
+			print price($obj->amount, 0, $langs, 0, 0, -1, $conf->currency);
 			print '</td>';
 			// Date
-			print '<td align="right">';
-			print dol_print_date($db->jdate($obj->date_demande),'day');
+			print '<td class="right">';
+			print dol_print_date($db->jdate($obj->date_demande), 'day');
 			print '</td>';
 			print '</tr>';
 			$i++;
@@ -317,7 +328,7 @@ if ($result)
     print"\n<!-- debut table -->\n";
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><td>'.$langs->trans("Ref").'</td>';
-    print '<td align="center">'.$langs->trans("Date").'</td><td align="right">'.$langs->trans("Amount").'</td>';
+    print '<td align="center">'.$langs->trans("Date").'</td><td class="right">'.$langs->trans("Amount").'</td>';
     print '</tr>';
 
     while ($i < min($num,$limit))
@@ -335,7 +346,7 @@ if ($result)
 
         print '<td align="center">'.dol_print_date($db->jdate($obj->datec),'day')."</td>\n";
 
-        print '<td align="right">'.price($obj->amount,0,$langs,0,0,-1,$conf->currency)."</td>\n";
+        print '<td class="right">'.price($obj->amount,0,$langs,0,0,-1,$conf->currency)."</td>\n";
 
         print "</tr>\n";
         $i++;

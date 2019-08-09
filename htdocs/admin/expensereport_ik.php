@@ -39,10 +39,10 @@ if (!$user->admin) accessforbidden();
 $error = false;
 $message = false;
 
-$action = GETPOST('action','alpha');
-$id = GETPOST('id','int');
-$offset = GETPOST('offset','int');
-$coef = GETPOST('coef','int');
+$action = GETPOST('action', 'alpha');
+$id = GETPOST('id', 'int');
+$offset = GETPOST('offset', 'int');
+$coef = GETPOST('coef', 'int');
 
 $fk_c_exp_tax_cat = GETPOST('fk_c_exp_tax_cat');
 $fk_range = GETPOST('fk_range');
@@ -86,12 +86,12 @@ $rangesbycateg = ExpenseReportIk::getAllRanges();
  * View
  */
 
-llxHeader('',$langs->trans("ExpenseReportsSetup"));
+llxHeader('', $langs->trans("ExpenseReportsSetup"));
 
 $form=new Form($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans("ExpenseReportsIkSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("ExpenseReportsIkSetup"), $linkback, 'title_setup');
 
 $head=expensereport_admin_prepare_head();
 dol_fiche_head($head, 'expenseik', $langs->trans("ExpenseReportsIk"), -1, 'trip');

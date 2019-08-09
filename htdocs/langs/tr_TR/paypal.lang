@@ -1,22 +1,22 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=PayPal modülü kurulumu
-PaypalDesc=This module allows payment on <a href="http://www.paypal.com" target="_blank">PayPal</a> by customers. This can be used for a free payment or for a payment on a particular Dolibarr object (invoice, order, ...)
-PaypalOrCBDoPayment=PayPal ile öde (Kredi Kartı veya PayPal)
+PaypalDesc=This module allows payment by customers via <a href="http://www.paypal.com" target="_blank">PayPal</a>. This can be used for a ad-hoc payment or for a payment related to a Dolibarr object (invoice, order, ...)
+PaypalOrCBDoPayment=PayPal ile Öde (Kart veya PayPal)
 PaypalDoPayment=PayPal ile öde
 PAYPAL_API_SANDBOX=Test/sandbox modu
 PAYPAL_API_USER=API kullanıcı adı
 PAYPAL_API_PASSWORD=API parolası
 PAYPAL_API_SIGNATURE=API imzası
 PAYPAL_SSLVERSION=Curl SSL Sürümü
-PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Offer payment "integral" (Credit card+PayPal) or "PayPal" only
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Offer "integral" payment (Credit card+PayPal) or "PayPal" only
 PaypalModeIntegral=Tümlev
 PaypalModeOnlyPaypal=Yalnızca PayPal
 ONLINE_PAYMENT_CSS_URL=Optional URL of CSS stylesheet on online payment page
 ThisIsTransactionId=Bu işlem kimliğidir: <b>%s</b>
-PAYPAL_ADD_PAYMENT_URL=Add the url of PayPal payment when you send a document by mail
+PAYPAL_ADD_PAYMENT_URL=Include the PayPal payment url when you send a document by email
 NewOnlinePaymentReceived=Yeni online ödeme alındı
 NewOnlinePaymentFailed=Yeni online ödeme denendi ancak başarısız oldu
-ONLINE_PAYMENT_SENDEMAIL=Bir ödemeden sonra uyarı Epostası (başarılı ya da değil)
+ONLINE_PAYMENT_SENDEMAIL=Her ödeme denemesinden sonra bildirimler için e-posta adresi (başarılı veya başarısız olan)
 ReturnURLAfterPayment=Ödemen sonra URL ye dön
 ValidationOfOnlinePaymentFailed=Online ödemenin doğrulaması başarısız oldu
 PaymentSystemConfirmPaymentPageWasCalledButFailed=Ödeme sistemi tarafından çağrılan ödeme onay sayfası bir hata verdi
@@ -27,8 +27,10 @@ ShortErrorMessage=Kısa Hata Mesajı
 ErrorCode=Hata Kodu
 ErrorSeverityCode=Hata Önem Kodu
 OnlinePaymentSystem=Online ödeme sistemi
-PaypalLiveEnabled=PayPal live enabled (otherwise test/sandbox mode)
-PaypalImportPayment=Import PayPal payments
+PaypalLiveEnabled=PayPal "live" mode enabled (otherwise test/sandbox mode)
+PaypalImportPayment=PayPal ödemelerini içe aktar
 PostActionAfterPayment=Post actions after payments
 ARollbackWasPerformedOnPostActions=A rollback was performed on all Post actions. You must complete post actions manually if they are necessary.
 ValidationOfPaymentFailed=Validation of payment has failed
+CardOwner=Card holder
+PayPalBalance=Paypal credit

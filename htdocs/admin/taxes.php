@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2013 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2015-2018 Alexandre Spangaro   <aspangaro@zendsi.com>
+ * Copyright (C) 2015-2018 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ $langs->loadLangs(array('admin', 'objects', 'companies', 'products'));
 
 if (!$user->admin) accessforbidden();
 
-$action = GETPOST('action','alpha');
+$action = GETPOST('action', 'alpha');
 
 
 
@@ -60,11 +60,11 @@ if ($action == 'update') {
 	$error = 0;
 
 	// Tax mode
-	$tax_mode = GETPOST('tax_mode','alpha');
+	$tax_mode = GETPOST('tax_mode', 'alpha');
 
 	$db->begin();
 
-	$res = dolibarr_set_const($db, 'TAX_MODE', $tax_mode,'chaine',0,'',$conf->entity);
+	$res = dolibarr_set_const($db, 'TAX_MODE', $tax_mode, 'chaine', 0, '', $conf->entity);
 	if (! $res > 0) $error++;
 
 	switch ($tax_mode)
@@ -89,18 +89,18 @@ if ($action == 'update') {
 			break;
 	}
 
-	$res = dolibarr_set_const($db, 'TAX_MODE_SELL_PRODUCT', $valuesellproduct,'chaine',0,'',$conf->entity);
+	$res = dolibarr_set_const($db, 'TAX_MODE_SELL_PRODUCT', $valuesellproduct, 'chaine', 0, '', $conf->entity);
 	if (! $res > 0) $error++;
-	$res = dolibarr_set_const($db, 'TAX_MODE_BUY_PRODUCT', $valuebuyproduct,'chaine',0,'',$conf->entity);
+	$res = dolibarr_set_const($db, 'TAX_MODE_BUY_PRODUCT', $valuebuyproduct, 'chaine', 0, '', $conf->entity);
 	if (! $res > 0) $error++;
-	$res = dolibarr_set_const($db, 'TAX_MODE_SELL_SERVICE', $valuesellservice, 'chaine',0,'',$conf->entity);
+	$res = dolibarr_set_const($db, 'TAX_MODE_SELL_SERVICE', $valuesellservice, 'chaine', 0, '', $conf->entity);
 	if (! $res > 0) $error++;
-	$res = dolibarr_set_const($db, 'TAX_MODE_BUY_SERVICE', $valuebuyservice, 'chaine',0,'',$conf->entity);
+	$res = dolibarr_set_const($db, 'TAX_MODE_BUY_SERVICE', $valuebuyservice, 'chaine', 0, '', $conf->entity);
 	if (! $res > 0) $error++;
 
-	dolibarr_set_const($db, "MAIN_INFO_TVAINTRA", GETPOST("tva",'alpha'),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_TVAINTRA", GETPOST("tva", 'alpha'), 'chaine', 0, '', $conf->entity);
 
-	dolibarr_set_const($db, "MAIN_INFO_VAT_RETURN", GETPOST("MAIN_INFO_VAT_RETURN",'alpha'),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_VAT_RETURN", GETPOST("MAIN_INFO_VAT_RETURN", 'alpha'), 'chaine', 0, '', $conf->entity);
 
 	if (! $error) {
 		$db->commit();
@@ -123,7 +123,7 @@ $form=new Form($db);
 if (! empty($conf->accounting->enabled)) $formaccounting = new FormAccounting($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans('TaxSetup'),$linkback,'title_setup');
+print load_fiche_titre($langs->trans('TaxSetup'), $linkback, 'title_setup');
 
 //dol_fiche_head(null, '', '', -1);
 
@@ -147,7 +147,7 @@ else
 	print '<tr class="oddeven"><td><label for="activate_MAIN_INFO_VAT_RETURN">'.$langs->trans("VATReturn").'</label></td>';
 	if (! $conf->use_javascript_ajax)
 	{
-		print '<td class="nowrap" align="right">';
+		print '<td class="nowrap right">';
 		print $langs->trans("NotAvailableWhenAjaxDisabled");
 		print "</td>";
 	}

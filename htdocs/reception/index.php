@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2018	   Quentin Vial-Gouteyron    <quentin.vial-gouteyron@atm-consulting.fr>
+/* Copyright (C) 2003-2005 Rodolphe Quiedeville     <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2011 Laurent Destailleur      <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012 Regis Houssin            <regis.houssin@capnetworks.com>
+ * Copyright (C) 2018	   Quentin Vial-Gouteyron   <quentin.vial-gouteyron@atm-consulting.fr>
+ * Copyright (C) 2019      Nicolas ZABOURI          <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +29,11 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/reception/class/reception.class.php';
 
+$hookmanager = new HookManager($db);
+
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('receptionindex'));
+
 $langs->load("orders");
 $langs->load("receptions");
 
@@ -40,7 +46,7 @@ $companystatic=new Societe($db);
 $reception=new Reception($db);
 
 $helpurl='EN:Module_Receptions|FR:Module_Receptions|ES:M&oacute;dulo_Receptiones';
-llxHeader('',$langs->trans("Reception"),$helpurl);
+llxHeader('', $langs->trans("Reception"), $helpurl);
 
 print load_fiche_titre($langs->trans("ReceptionsArea"));
 
@@ -158,9 +164,9 @@ if ($resql)
 			print $orderstatic->getNomUrl(1);
 			print '</td>';
 			print '<td>';
-			print $companystatic->getNomUrl(1,'customer',32);
+			print $companystatic->getNomUrl(1, 'customer', 32);
 			print '</td>';
-			print '<td align="right">';
+			print '<td class="right">';
 			print $orderstatic->getLibStatut(3);
 			print '</td>';
 			print '</tr>';
@@ -217,9 +223,9 @@ if ( $resql )
 			print $orderstatic->getNomUrl(1);
 			print '</td>';
 			print '<td>';
-			print $companystatic->getNomUrl(1,'customer');
+			print $companystatic->getNomUrl(1, 'customer');
 			print '</td>';
-            print '<td align="right">';
+            print '<td class="right">';
             print $orderstatic->getLibStatut(3);
             print '</td>';
             print '</tr>';
@@ -271,7 +277,7 @@ if ($resql)
 			print '<tr class="oddeven"><td>';
 			print $reception->getNomUrl(1);
 			print '</td>';
-			print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->name.'</a></td>';
+			print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"), "company").' '.$obj->name.'</a></td>';
 			print '<td>';
 			if ($obj->commande_fournisseur_id > 0)
 			{
@@ -292,6 +298,8 @@ else dol_print_error($db);
 
 print '</div></div></div>';
 
+$parameters = array('user' => $user);
+$reshook = $hookmanager->executeHooks('dashboardWarehouseReceptions', $parameters, $object); // Note that $action and $object may have been modified by hook
 
 llxFooter();
 $db->close();

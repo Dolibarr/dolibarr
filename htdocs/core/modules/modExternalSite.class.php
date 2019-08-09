@@ -39,7 +39,7 @@ class modExternalSite extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
      */
-	function __construct($db)
+	public function __construct($db)
 	{
 		$this->db = $db;
 
@@ -51,7 +51,7 @@ class modExternalSite extends DolibarrModules
 		// It is used to sort modules in module setup page
 		$this->family = "interface";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = preg_replace('/^mod/i','',get_class($this));
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		// Module description used if translation string 'ModuleXXXDesc' not found (XXX is id value)
 		$this->description = "This module include an external web site or page into Dolibarr menus and view it into a Dolibarr frame.";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
@@ -115,4 +115,3 @@ class modExternalSite extends DolibarrModules
 		$r++;
 	}
 }
-

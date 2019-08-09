@@ -39,13 +39,13 @@ $sref = GETPOST('sref');
 $sRefSupplier = GETPOST('srefsupplier');
 $snom = GETPOST('snom');
 $type = GETPOST('type');
-$optioncss = GETPOST('optioncss','alpha');
+$optioncss = GETPOST('optioncss', 'alpha');
 
 // Load variable for pagination
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
-$sortfield = GETPOST('sortfield','alpha');
-$sortorder = GETPOST('sortorder','alpha');
-$page = GETPOST('page','int');
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST('sortfield', 'alpha');
+$sortorder = GETPOST('sortorder', 'alpha');
+$page = GETPOST('page', 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -71,11 +71,12 @@ $extrafields = new ExtraFields($db);
  * Put here all code to do according to value of "action" parameter
  */
 
-if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction','alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
+if (GETPOST('cancel', 'alpha')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
 
 $parameters=array();
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
@@ -84,7 +85,7 @@ if (empty($reshook))
     include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
     // Purge search criteria
-    if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') ||GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
+    if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') ||GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
     {
     	$sref = '';
     	$sRefSupplier = '';
@@ -117,11 +118,11 @@ if ($fourn_id)
 
 
 $arrayofmassactions =  array(
-	'generate_doc'=>$langs->trans("Generate"),
-    'presend'=>$langs->trans("SendByMail"),
+	'generate_doc'=>$langs->trans("ReGeneratePDF"),
     'builddoc'=>$langs->trans("PDFMerge"),
+    'presend'=>$langs->trans("SendByMail"),
 );
-if ($user->rights->mymodule->supprimer) $arrayofmassactions['predelete']=$langs->trans("Delete");
+if ($user->rights->mymodule->supprimer) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
@@ -129,6 +130,11 @@ $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 $sql = "SELECT p.rowid, p.label, p.ref, p.fk_product_type, p.entity,";
 $sql.= " ppf.fk_soc, ppf.ref_fourn, ppf.price as price, ppf.quantity as qty, ppf.unitprice,";
 $sql.= " s.rowid as socid, s.nom as name";
+// Add fields to SELECT from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object, $action);
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+$sql .= $hookmanager->resPrint;
 $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 if ($catid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as ppf ON p.rowid = ppf.fk_product";
@@ -140,7 +146,7 @@ if ($sRefSupplier)
 }
 if (GETPOST('type'))
 {
-	$sql .= " AND p.fk_product_type = " . GETPOST('type','int');
+	$sql .= " AND p.fk_product_type = " . GETPOST('type', 'int');
 }
 if ($sref)
 {
@@ -159,7 +165,13 @@ if ($fourn_id > 0)
 	$sql .= " AND ppf.fk_soc = ".$fourn_id;
 }
 
-$sql .= $db->order($sortfield,$sortorder);
+// Add WHERE filters from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters);
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+$sql .= $hookmanager->resPrint;
+
+$sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records without orderby and limit
 $nbtotalofrecords = '';
@@ -191,10 +203,10 @@ if ($resql)
 		exit;
 	}
 
-	if (! empty($supplier->id)) $texte = $langs->trans("ListOfSupplierProductForSupplier",$supplier->name);
+	if (! empty($supplier->id)) $texte = $langs->trans("ListOfSupplierProductForSupplier", $supplier->name);
 	else $texte = $langs->trans("List");
 
-	llxHeader("","",$texte);
+	llxHeader("", "", $texte);
 
 
 	$param="&tobuy=".$tobuy."&sref=".$sref."&snom=".$snom."&fourn_id=".$fourn_id.(isset($type)?"&amp;type=".$type:"").(empty($sRefSupplier)?"":"&amp;srefsupplier=".$sRefSupplier);
@@ -206,7 +218,7 @@ if ($resql)
 	{
 		print "<div id='ways'>";
 		$c = new Categorie($db);
-		$ways = $c->print_all_ways(' &gt; ','fourn/product/list.php');
+		$ways = $c->print_all_ways(' &gt; ', 'fourn/product/list.php');
 		print " &gt; ".$ways[0]."<br>\n";
 		print "</div><br>";
 	}
@@ -228,7 +240,7 @@ if ($resql)
 
 	print '<table class="liste" width="100%">';
 
-	// Lignes des champs de filtre
+	// Fields title search
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre">';
 	print '<input class="flat" type="text" name="sref" value="'.$sref.'" size="12">';
@@ -243,27 +255,37 @@ if ($resql)
 	print '<td></td>';
 	print '<td></td>';
 	print '<td></td>';
-	print '<td class="liste_titre" align="right">';
+    // add filters from hooks
+    $parameters = array();
+    $reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action);
+    if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+    print $hookmanager->resPrint;
+	print '<td class="liste_titre maxwidthsearch">';
 	$searchpicto=$form->showFilterButtons();
 	print $searchpicto;
 	print '</td>';
 	print '</tr>';
 
-	// Lignes des titres
+	// Line for title
 	print '<tr class="liste_titre">';
-	print_liste_field_titre("Ref",$_SERVER["PHP_SELF"], "p.ref",$param,"","",$sortfield,$sortorder);
-	print_liste_field_titre("RefSupplierShort",$_SERVER["PHP_SELF"], "ppf.ref_fourn",$param,"","",$sortfield,$sortorder);
-	print_liste_field_titre("Label",$_SERVER["PHP_SELF"], "p.label",$param,"","",$sortfield,$sortorder);
-	print_liste_field_titre("Supplier",$_SERVER["PHP_SELF"], "ppf.fk_soc",$param,"","",$sortfield,$sortorder);
-	print_liste_field_titre("BuyingPrice",$_SERVER["PHP_SELF"], "ppf.price",$param,"",'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre("QtyMin",$_SERVER["PHP_SELF"], "ppf.quantity",$param,"",'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre("UnitPrice",$_SERVER["PHP_SELF"], "ppf.unitprice",$param,"",'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre('',$_SERVER["PHP_SELF"]);
+	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "p.ref", $param, "", "", $sortfield, $sortorder);
+	print_liste_field_titre("RefSupplierShort", $_SERVER["PHP_SELF"], "ppf.ref_fourn", $param, "", "", $sortfield, $sortorder);
+	print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "p.label", $param, "", "", $sortfield, $sortorder);
+	print_liste_field_titre("Supplier", $_SERVER["PHP_SELF"], "ppf.fk_soc", $param, "", "", $sortfield, $sortorder);
+	print_liste_field_titre("BuyingPrice", $_SERVER["PHP_SELF"], "ppf.price", $param, "", '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre("QtyMin", $_SERVER["PHP_SELF"], "ppf.quantity", $param, "", '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre("UnitPrice", $_SERVER["PHP_SELF"], "ppf.unitprice", $param, "", '', $sortfield, $sortorder, 'right ');
+	// add header cells from hooks
+    $parameters = array();
+    $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action);
+    if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+    print $hookmanager->resPrint;
+	print_liste_field_titre('', $_SERVER["PHP_SELF"]);
 	print "</tr>\n";
 
 	$oldid = '';
 
-	while ($i < min($num,$limit))
+	while ($i < min($num, $limit))
 	{
 		$objp = $db->fetch_object($resql);
 
@@ -274,7 +296,7 @@ if ($resql)
 		$productstatic->ref=$objp->ref;
 		$productstatic->type=$objp->fk_product_type;
 		$productstatic->entity=$objp->entity;
-		print $productstatic->getNomUrl(1,'supplier');
+		print $productstatic->getNomUrl(1, 'supplier');
 		print '</td>';
 
 		print '<td>'.$objp->ref_fourn.'</td>';
@@ -284,16 +306,22 @@ if ($resql)
 		$companystatic->name=$objp->name;
 		$companystatic->id=$objp->socid;
 		print '<td>';
-		if ($companystatic->id > 0) print $companystatic->getNomUrl(1,'supplier');
+		if ($companystatic->id > 0) print $companystatic->getNomUrl(1, 'supplier');
 		print '</td>';
 
-		print '<td align="right">'.(isset($objp->price) ? price($objp->price) : '').'</td>';
+		print '<td class="right">'.(isset($objp->price) ? price($objp->price) : '').'</td>';
 
-		print '<td align="right">'.$objp->qty.'</td>';
+		print '<td class="right">'.$objp->qty.'</td>';
 
-		print '<td align="right">'.(isset($objp->unitprice) ? price($objp->unitprice) : '').'</td>';
+		print '<td class="right">'.(isset($objp->unitprice) ? price($objp->unitprice) : '').'</td>';
 
-		print '<td align="right"></td>';
+		// add additional columns from hooks
+        $parameters = array();
+        $reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $objp, $action);
+        if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+        print $hookmanager->resPrint;
+
+		print '<td class="right"></td>';
 
 		print "</tr>\n";
 		$i++;

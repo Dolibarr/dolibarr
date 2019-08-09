@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - paybox
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL um Ihren Kunden eine %s Online-Bezahlseite für Abonnements anzubieten
 YourPaymentHasBeenRecorded=Diese Seite wird bestätigt, dass Ihre Zahlung aufgezeichnet wurde. Danke.
-YourPaymentHasNotBeenRecorded=Sie Zahlung wurde nicht aufgezeichnet und Transaktion wurde abgebrochen. Danke.
 AccountParameter=Konto-Parameter

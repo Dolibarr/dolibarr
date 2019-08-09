@@ -48,14 +48,31 @@ if (isset($title))
 }
 
 
+// Check PHP setup is OK
+$maxphp=@ini_get('upload_max_filesize');	// In unknown
+if (preg_match('/k$/i', $maxphp)) $maxphp=$maxphp*1;
+if (preg_match('/m$/i', $maxphp)) $maxphp=$maxphp*1024;
+if (preg_match('/g$/i', $maxphp)) $maxphp=$maxphp*1024*1024;
+if (preg_match('/t$/i', $maxphp)) $maxphp=$maxphp*1024*1024*1024;
+$maxphp2=@ini_get('post_max_size');			// In unknown
+if (preg_match('/k$/i', $maxphp2)) $maxphp2=$maxphp2*1;
+if (preg_match('/m$/i', $maxphp2)) $maxphp2=$maxphp2*1024;
+if (preg_match('/g$/i', $maxphp2)) $maxphp2=$maxphp2*1024*1024;
+if (preg_match('/t$/i', $maxphp2)) $maxphp2=$maxphp2*1024*1024*1024;
+if ($maxphp > 0 && $maxphp2 > 0 && $maxphp > $maxphp2)
+{
+	$langs->load("errors");
+	print info_admin($langs->trans("WarningParamUploadMaxFileSizeHigherThanPostMaxSize", @ini_get('upload_max_filesize'), @ini_get('post_max_size')), 0, 0, 0, 'warning');
+	print '<br>';
+}
+
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 print "\n";
 
-$var=false;
 
-// Recupere la version de PHP
+// Get PHP version
 $phpversion=version_php();
 print '<tr class="oddeven"><td  width="220px">'.$langs->trans("Version")."</td><td>".$phpversion."</td></tr>\n";
 
@@ -84,11 +101,11 @@ foreach($phparray as $key => $value)
 			print '<tr class="oddeven">';
 			print '<td>'.$keyparam.'</td>';
 			$valtoshow=$keyvalue;
-			if ($keyparam == 'X-ChromePhp-Data') $valtoshow=dol_trunc($keyvalue,80);
+			if ($keyparam == 'X-ChromePhp-Data') $valtoshow=dol_trunc($keyvalue, 80);
 			print '<td colspan="2">';
-			if ($keyparam == 'Path') $valtoshow=implode('; ',explode(';',trim($valtoshow)));
-			if ($keyparam == 'PATH') $valtoshow=implode('; ',explode(';',trim($valtoshow)));
-			if ($keyparam == '_SERVER["PATH"]') $valtoshow=implode('; ',explode(';',trim($valtoshow)));
+			if ($keyparam == 'Path') $valtoshow=implode('; ', explode(';', trim($valtoshow)));
+			if ($keyparam == 'PATH') $valtoshow=implode('; ', explode(';', trim($valtoshow)));
+			if ($keyparam == '_SERVER["PATH"]') $valtoshow=implode('; ', explode(';', trim($valtoshow)));
 			print $valtoshow;
 			print '</td>';
 			print '</tr>';
@@ -102,7 +119,7 @@ foreach($phparray as $key => $value)
 			{
 				print '<td>';
 				$valtoshow=$keyvalue2;
-				if ($keyparam == 'disable_functions') $valtoshow=implode(', ',explode(',',trim($valtoshow)));
+				if ($keyparam == 'disable_functions') $valtoshow=implode(', ', explode(',', trim($valtoshow)));
 				//print $keyparam;
 				print $valtoshow;
 				$i++;

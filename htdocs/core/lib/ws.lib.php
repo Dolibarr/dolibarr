@@ -53,7 +53,7 @@ function check_authentication($authentication, &$error, &$errorcode, &$errorlabe
 
     if (! $error)
     {
-        $result=$fuser->fetch('',$authentication['login'],'',0);
+        $result=$fuser->fetch('', $authentication['login'], '', 0);
         if ($result < 0)
         {
             $error++;
@@ -81,10 +81,10 @@ function check_authentication($authentication, &$error, &$errorcode, &$errorlabe
         	// Authentication mode: forceuser
         	if ($dolibarr_main_authentication == 'forceuser' && empty($dolibarr_auto_user)) $dolibarr_auto_user='auto';
         	// Set authmode
-        	$authmode=explode(',',$dolibarr_main_authentication);
+        	$authmode=explode(',', $dolibarr_main_authentication);
 
             include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-        	$login = checkLoginPassEntity($authentication['login'],$authentication['password'],$authentication['entity'],$authmode);
+        	$login = checkLoginPassEntity($authentication['login'], $authentication['password'], $authentication['entity'], $authmode);
 			if (empty($login))
 			{
 			    $error++;
@@ -95,4 +95,3 @@ function check_authentication($authentication, &$error, &$errorcode, &$errorlabe
 
     return $fuser;
 }
-

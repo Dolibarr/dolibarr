@@ -29,16 +29,16 @@ global $conf,$user,$langs,$db;
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/functions2.lib.php';
 
-if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER','1');
-if (! defined('NOREQUIREDB'))    define('NOREQUIREDB','1');
-if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
-if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
-if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK','1');
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1');
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1'); // If there is no menu to show
-if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1'); // If we don't need to load the html.form.class.php
-if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
-if (! defined("NOLOGIN"))        define("NOLOGIN",'1');       // If this page is public (can be called outside logged session)
+if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER', '1');
+if (! defined('NOREQUIREDB'))    define('NOREQUIREDB', '1');
+if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
+if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN', '1');
+if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1'); // If there is no menu to show
+if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1'); // If we don't need to load the html.form.class.php
+if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
+if (! defined("NOLOGIN"))        define("NOLOGIN", '1');       // If this page is public (can be called outside logged session)
 
 
 /**
@@ -48,7 +48,7 @@ if (! defined("NOLOGIN"))        define("NOLOGIN",'1');       // If this page is
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class Functions2LibTest extends PHPUnit_Framework_TestCase
+class Functions2LibTest extends PHPUnit\Framework\TestCase
 {
     protected $savconf;
     protected $savuser;
@@ -61,7 +61,7 @@ class Functions2LibTest extends PHPUnit_Framework_TestCase
      *
      * @return CoreTest
      */
-    function __construct()
+    public function __construct()
     {
     	parent::__construct();
 
@@ -130,7 +130,7 @@ class Functions2LibTest extends PHPUnit_Framework_TestCase
     {
         $result=jsUnEscape('%u03BD%u03B5%u03BF');
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals('νεο',$result);
+        $this->assertEquals('νεο', $result);
     }
 
     /**
@@ -218,7 +218,7 @@ class Functions2LibTest extends PHPUnit_Framework_TestCase
     	$ip='a299.299.299.299';
     	$result=is_ip($ip);
         print __METHOD__." for ".$ip." result=".$result."\n";
-    	$this->assertEquals(0,$result,$ip);
+    	$this->assertEquals(0, $result, $ip);
 
     	// Reserved IP range (not checked by is_ip function)
     	$ip='169.254.0.0';
@@ -229,22 +229,22 @@ class Functions2LibTest extends PHPUnit_Framework_TestCase
     	$ip='1.2.3.4';
     	$result=is_ip($ip);
         print __METHOD__." for ".$ip." result=".$result."\n";
-    	$this->assertEquals(1,$result,$ip);
+    	$this->assertEquals(1, $result, $ip);
 
     	// Private IP ranges
     	$ip='10.0.0.0';
     	$result=is_ip($ip);
         print __METHOD__." for ".$ip." result=".$result."\n";
-    	$this->assertEquals(2,$result,$ip);
+    	$this->assertEquals(2, $result, $ip);
 
     	$ip='172.16.0.0';
     	$result=is_ip($ip);
         print __METHOD__." for ".$ip." result=".$result."\n";
-    	$this->assertEquals(2,$result,$ip);
+    	$this->assertEquals(2, $result, $ip);
 
         $ip='192.168.0.0';
         $result=is_ip($ip);
         print __METHOD__." for ".$ip." result=".$result."\n";
-        $this->assertEquals(2,$result,$ip);
+        $this->assertEquals(2, $result, $ip);
     }
 }

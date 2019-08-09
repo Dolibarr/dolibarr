@@ -93,7 +93,7 @@ function SendError($number, $text)
 	if ( $_GET['Command'] == 'FileUpload' )
 		SendUploadResults($number, "", "", $text);
 
-	if ( isset( $GLOBALS['HeaderSent'] ) && $GLOBALS['HeaderSent'] )
+	if ( isset($GLOBALS['HeaderSent']) && $GLOBALS['HeaderSent'] )
 	{
 		SendErrorNode($number, $text);
 		CreateXmlFooter();

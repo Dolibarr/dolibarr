@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2013-2018	Jean-François Ferry	<hello+jf@librethic.io>
  * Copyright (C) 2016		Gilles Poirier 		<glgpoirier@gmail.com>
+ * Copyright (C) 2019		Josep Lluís Amador	<joseplluis@lliuretic.cat>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +32,9 @@ if (! empty($conf->projet->enabled)) {
     require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
     require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
 }
+if (! empty($conf->product->enabled) || ! empty($conf->service->enabled)) {
+    require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array('resource', 'other', 'interventions'));
@@ -50,20 +54,20 @@ $hookmanager->initHooks(array('element_resource'));
 $object->available_resources = array('dolresource');
 
 // Get parameters
-$id                     = GETPOST('id','int');                          // resource id
-$element_id             = GETPOST('element_id','int');                  // element_id
-$element_ref            = GETPOST('ref','alpha');                       // element ref
-$element                = GETPOST('element','alpha');                   // element_type
-$action                 = GETPOST('action','alpha');
-$mode                   = GETPOST('mode','alpha');
-$lineid                 = GETPOST('lineid','int');
-$resource_id            = GETPOST('fk_resource','int');
-$resource_type          = GETPOST('resource_type','alpha');
-$busy                   = GETPOST('busy','int');
-$mandatory              = GETPOST('mandatory','int');
-$cancel                 = GETPOST('cancel','alpha');
-$confirm                = GETPOST('confirm','alpha');
-$socid                  = GETPOST('socid','int');
+$id                     = GETPOST('id', 'int');                          // resource id
+$element_id             = GETPOST('element_id', 'int');                  // element_id
+$element_ref            = GETPOST('ref', 'alpha');                       // element ref
+$element                = GETPOST('element', 'alpha');                   // element_type
+$action                 = GETPOST('action', 'alpha');
+$mode                   = GETPOST('mode', 'alpha');
+$lineid                 = GETPOST('lineid', 'int');
+$resource_id            = GETPOST('fk_resource', 'int');
+$resource_type          = GETPOST('resource_type', 'alpha');
+$busy                   = GETPOST('busy', 'int');
+$mandatory              = GETPOST('mandatory', 'int');
+$cancel                 = GETPOST('cancel', 'alpha');
+$confirm                = GETPOST('confirm', 'alpha');
+$socid                  = GETPOST('socid', 'int');
 
 if ($socid > 0) // Special for thirdparty
 {
@@ -77,44 +81,71 @@ if ($socid > 0) // Special for thirdparty
  * Actions
  */
 
-if ($action == 'add_element_resource' && ! $cancel)
-{
-	$error++;
-	$res = 0;
-	if (! ($resource_id > 0))
-	{
-		$error++;
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Resource")), null, 'errors');
-		$action='';
-	}
-	else
-	{
-		$objstat = fetchObjectByElement($element_id, $element);
-		$objstat->element = $element; // For externals module, we need to keep @xx
-		$res = $objstat->add_element_resource($resource_id, $resource_type, $busy, $mandatory);
-	}
-	if (! $error && $res > 0)
-	{
-		setEventMessages($langs->trans('ResourceLinkedWithSuccess'), null, 'mesgs');
-		header("Location: ".$_SERVER['PHP_SELF'].'?element='.$element.'&element_id='.$element_id);
-		exit;
-	}
-}
+$parameters = array('resource_id' => $resource_id);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-// Update ressource
-if ($action == 'update_linked_resource' && $user->rights->resource->write && !GETPOST('cancel','alpha') )
+if (empty($reshook))
 {
-	$res = $object->fetch_element_resource($lineid);
-	if($res)
+	if ($action == 'add_element_resource' && ! $cancel)
 	{
-		$object->busy = $busy;
-		$object->mandatory = $mandatory;
+		$res = 0;
+		if (! ($resource_id > 0))
+		{
+			$error++;
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Resource")), null, 'errors');
+			$action='';
+		}
+		else
+		{
+			$objstat = fetchObjectByElement($element_id, $element, $element_ref);
+			$objstat->element = $element; // For externals module, we need to keep @xx
+			$res = $objstat->add_element_resource($resource_id, $resource_type, $busy, $mandatory);
+		}
+		if (! $error && $res > 0)
+		{
+			setEventMessages($langs->trans('ResourceLinkedWithSuccess'), null, 'mesgs');
+			header("Location: ".$_SERVER['PHP_SELF'].'?element='.$element.'&element_id='.$objstat->id);
+			exit;
+		}
+		elseif ($objstat)
+		{
+			setEventMessages($objstat->error, $objstat->errors, 'errors');
+		}
+	}
 
-		$result = $object->update_element_resource($user);
+	// Update ressource
+	if ($action == 'update_linked_resource' && $user->rights->resource->write && !GETPOST('cancel', 'alpha') )
+	{
+		$res = $object->fetch_element_resource($lineid);
+		if($res)
+		{
+			$object->busy = $busy;
+			$object->mandatory = $mandatory;
+
+			$result = $object->update_element_resource($user);
+
+			if ($result >= 0)
+			{
+				setEventMessages($langs->trans('RessourceLineSuccessfullyUpdated'), null, 'mesgs');
+				header("Location: ".$_SERVER['PHP_SELF']."?element=".$element."&element_id=".$element_id);
+				exit;
+			}
+			else
+			{
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
+		}
+	}
+
+	// Delete a resource linked to an element
+	if ($action == 'confirm_delete_linked_resource' && $user->rights->resource->delete && $confirm === 'yes')
+	{
+		$result = $object->delete_resource($lineid, $element);
 
 		if ($result >= 0)
 		{
-			setEventMessages($langs->trans('RessourceLineSuccessfullyUpdated'), null, 'mesgs');
+			setEventMessages($langs->trans('RessourceLineSuccessfullyDeleted'), null, 'mesgs');
 			header("Location: ".$_SERVER['PHP_SELF']."?element=".$element."&element_id=".$element_id);
 			exit;
 		}
@@ -125,30 +156,8 @@ if ($action == 'update_linked_resource' && $user->rights->resource->write && !GE
 	}
 }
 
-// Delete a resource linked to an element
-if ($action == 'confirm_delete_linked_resource' && $user->rights->resource->delete && $confirm === 'yes')
-{
-    $result = $object->delete_resource($lineid,$element);
-
-    if ($result >= 0)
-    {
-        setEventMessages($langs->trans('RessourceLineSuccessfullyDeleted'), null, 'mesgs');
-        header("Location: ".$_SERVER['PHP_SELF']."?element=".$element."&element_id=".$element_id);
-        exit;
-    }
-    else
-    {
-        setEventMessages($object->error, $object->errors, 'errors');
-    }
-}
-
 $parameters=array('resource_id'=>$resource_id);
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-
-
-$parameters=array('resource_id'=>$resource_id);
-$reshook=$hookmanager->executeHooks('getElementResources',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('getElementResources', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 
@@ -160,13 +169,13 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 $form=new Form($db);
 
 $pagetitle=$langs->trans('ResourceElementPage');
-llxHeader('',$pagetitle,'');
+llxHeader('', $pagetitle, '');
 
 
 // Load available resource, declared by modules
 $ret = count($object->available_resources);
 if($ret == -1) {
-    dol_print_error($db,$object->error);
+    dol_print_error($db, $object->error);
     exit;
 }
 if (!$ret) {
@@ -177,7 +186,7 @@ else
 	// Confirmation suppression resource line
 	if ($action == 'delete_resource')
 	{
-		print $form->formconfirm("element_resource.php?element=".$element."&element_id=".$element_id."&id=".$id."&lineid=".$lineid,$langs->trans("DeleteResource"),$langs->trans("ConfirmDeleteResourceElement"),"confirm_delete_linked_resource",'','',1);
+		print $form->formconfirm("element_resource.php?element=".$element."&element_id=".$element_id."&id=".$id."&lineid=".$lineid, $langs->trans("DeleteResource"), $langs->trans("ConfirmDeleteResourceElement"), "confirm_delete_linked_resource", '', '', 1);
 	}
 
 
@@ -186,7 +195,7 @@ else
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 
-		$act = fetchObjectByElement($element_id,$element, $element_ref);
+		$act = fetchObjectByElement($element_id, $element, $element_ref);
 		if (is_object($act))
 		{
 
@@ -194,19 +203,19 @@ else
 
 			dol_fiche_head($head, 'resources', $langs->trans("Action"), -1, 'action');
 
-			$linkback =img_picto($langs->trans("BackToList"),'object_list','class="hideonsmartphone pictoactionview"');
+			$linkback =img_picto($langs->trans("BackToList"), 'object_list', 'class="hideonsmartphone pictoactionview"');
 			$linkback.= '<a href="'.DOL_URL_ROOT.'/comm/action/list.php">'.$langs->trans("BackToList").'</a>';
 
 			// Link to other agenda views
 			$out='';
-			$out.='</li><li class="noborder litext">'.img_picto($langs->trans("ViewPerUser"),'object_calendarperuser','class="hideonsmartphone pictoactionview"');
-			$out.='<a href="'.DOL_URL_ROOT.'/comm/action/peruser.php?action=show_peruser&year='.dol_print_date($act->datep,'%Y').'&month='.dol_print_date($act->datep,'%m').'&day='.dol_print_date($act->datep,'%d').'">'.$langs->trans("ViewPerUser").'</a>';
-			$out.='</li><li class="noborder litext">'.img_picto($langs->trans("ViewCal"),'object_calendar','class="hideonsmartphone pictoactionview"');
-			$out.='<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_month&year='.dol_print_date($act->datep,'%Y').'&month='.dol_print_date($act->datep,'%m').'&day='.dol_print_date($act->datep,'%d').'">'.$langs->trans("ViewCal").'</a>';
-			$out.='</li><li class="noborder litext">'.img_picto($langs->trans("ViewWeek"),'object_calendarweek','class="hideonsmartphone pictoactionview"');
-			$out.='<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_day&year='.dol_print_date($act->datep,'%Y').'&month='.dol_print_date($act->datep,'%m').'&day='.dol_print_date($act->datep,'%d').'">'.$langs->trans("ViewWeek").'</a>';
-			$out.='</li><li class="noborder litext">'.img_picto($langs->trans("ViewDay"),'object_calendarday','class="hideonsmartphone pictoactionview"');
-			$out.='<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_day&year='.dol_print_date($act->datep,'%Y').'&month='.dol_print_date($act->datep,'%m').'&day='.dol_print_date($act->datep,'%d').'">'.$langs->trans("ViewDay").'</a>';
+			$out.='</li><li class="noborder litext">'.img_picto($langs->trans("ViewPerUser"), 'object_calendarperuser', 'class="hideonsmartphone pictoactionview"');
+			$out.='<a href="'.DOL_URL_ROOT.'/comm/action/peruser.php?action=show_peruser&year='.dol_print_date($act->datep, '%Y').'&month='.dol_print_date($act->datep, '%m').'&day='.dol_print_date($act->datep, '%d').'">'.$langs->trans("ViewPerUser").'</a>';
+			$out.='</li><li class="noborder litext">'.img_picto($langs->trans("ViewCal"), 'object_calendar', 'class="hideonsmartphone pictoactionview"');
+			$out.='<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_month&year='.dol_print_date($act->datep, '%Y').'&month='.dol_print_date($act->datep, '%m').'&day='.dol_print_date($act->datep, '%d').'">'.$langs->trans("ViewCal").'</a>';
+			$out.='</li><li class="noborder litext">'.img_picto($langs->trans("ViewWeek"), 'object_calendarweek', 'class="hideonsmartphone pictoactionview"');
+			$out.='<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_day&year='.dol_print_date($act->datep, '%Y').'&month='.dol_print_date($act->datep, '%m').'&day='.dol_print_date($act->datep, '%d').'">'.$langs->trans("ViewWeek").'</a>';
+			$out.='</li><li class="noborder litext">'.img_picto($langs->trans("ViewDay"), 'object_calendarday', 'class="hideonsmartphone pictoactionview"');
+			$out.='<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_day&year='.dol_print_date($act->datep, '%Y').'&month='.dol_print_date($act->datep, '%m').'&day='.dol_print_date($act->datep, '%d').'">'.$langs->trans("ViewDay").'</a>';
 
 			$linkback.=$out;
 
@@ -238,7 +247,7 @@ else
 
 			print '<div class="underbanner clearboth"></div>';
 
-			print '<table class="border" width="100%">';
+			print '<table class="border tableforfield" width="100%">';
 
 			// Type
 			if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
@@ -251,16 +260,16 @@ else
 
 			// Date start
 			print '<tr><td>'.$langs->trans("DateActionStart").'</td><td colspan="3">';
-			if (! $act->fulldayevent) print dol_print_date($act->datep,'dayhour');
-			else print dol_print_date($act->datep,'day');
+			if (! $act->fulldayevent) print dol_print_date($act->datep, 'dayhour');
+			else print dol_print_date($act->datep, 'day');
 			if ($act->percentage == 0 && $act->datep && $act->datep < ($now - $delay_warning)) print img_warning($langs->trans("Late"));
 			print '</td>';
 			print '</tr>';
 
 			// Date end
 			print '<tr><td>'.$langs->trans("DateActionEnd").'</td><td colspan="3">';
-			if (! $act->fulldayevent) print dol_print_date($act->datef,'dayhour');
-			else print dol_print_date($act->datef,'day');
+			if (! $act->fulldayevent) print dol_print_date($act->datef, 'dayhour');
+			else print dol_print_date($act->datef, 'day');
 			if ($act->percentage > 0 && $act->percentage < 100 && $act->datef && $act->datef < ($now- $delay_warning)) print img_warning($langs->trans("Late"));
 			print '</td></tr>';
 
@@ -416,10 +425,35 @@ else
 		}
 	}
 
+	// Specific to product/service module
+	if (($element_id || $element_ref) && ($element == 'product' || $element == 'service'))
+	{
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
+
+        $product = new Product($db);
+        $product->fetch($element_id, $element_ref);
+
+		if (is_object($product))
+		{
+
+			$head = product_prepare_head($product);
+			$titre=$langs->trans("CardProduct".$product->type);
+			$picto=($product->type==Product::TYPE_SERVICE?'service':'product');
+
+			dol_fiche_head($head, 'resources', $titre, -1, $picto);
+
+            $shownav = 1;
+            if ($user->societe_id && ! in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+			dol_banner_tab($product, 'ref', '', $shownav, 'ref', 'ref', '', '&element='.$element);
+
+			dol_fiche_end();
+        }
+	}
+
 
 	// hook for other elements linked
 	$parameters=array('element'=>$element, 'element_id'=>$element_id, 'element_ref'=>$element_ref);
-	$reshook=$hookmanager->executeHooks('printElementTab',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+	$reshook=$hookmanager->executeHooks('printElementTab', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 
@@ -438,34 +472,51 @@ else
 			//print '/'.$modresources.'/class/'.$resource_obj.'.class.php<br>';
 
 			$path = '';
-			if(strpos($resource_obj,'@'))
+			if(strpos($resource_obj, '@'))
 				$path .= '/'.$element_prop['module'];
 
-			$linked_resources = $object->getElementResources($element,$element_id,$resource_obj);
+			$linked_resources = $object->getElementResources($element, $element_id, $resource_obj);
 
-
-			// If we have a specific template we use it
-			if(file_exists(dol_buildpath($path.'/core/tpl/resource_'.$element_prop['element'].'_add.tpl.php')))
+			// Output template part (modules that overwrite templates must declare this into descriptor)
+			$defaulttpldir='/core/tpl';
+			$dirtpls=array_merge($conf->modules_parts['tpl'], array($defaulttpldir), array($path.$defaulttpldir));
+			
+			foreach($dirtpls as $module => $reldir)
 			{
-				$res=include dol_buildpath($path.'/core/tpl/resource_'.$element_prop['element'].'_add.tpl.php');
-			}
-			else
-			{
-				$res=include DOL_DOCUMENT_ROOT . '/core/tpl/resource_add.tpl.php';
+				if(file_exists(dol_buildpath($reldir.'/resource_'.$element_prop['element'].'_add.tpl.php')))
+				{
+					$tpl = dol_buildpath($reldir.'/resource_'.$element_prop['element'].'_add.tpl.php');
+				}
+				else
+				{
+					$tpl = DOL_DOCUMENT_ROOT.$reldir.'/resource_add.tpl.php';
+				}
+				if (empty($conf->file->strict_mode)) {
+					$res=@include $tpl;
+				} else {
+					$res=include $tpl; // for debug
+				}
+				if ($res) break;
 			}
 
 			if ($mode != 'add' || $resource_obj != $resource_type)
 			{
-				//print load_fiche_titre($langs->trans(ucfirst($element_prop['element']).'Singular'));
-
-				// If we have a specific template we use it
-				if(file_exists(dol_buildpath($path.'/core/tpl/resource_'.$element_prop['element'].'_view.tpl.php')))
+				foreach($dirtpls as $module => $reldir)
 				{
-					$res=@include dol_buildpath($path.'/core/tpl/resource_'.$element_prop['element'].'_view.tpl.php');
-				}
-				else
-				{
-					$res=include DOL_DOCUMENT_ROOT . '/core/tpl/resource_view.tpl.php';
+					if(file_exists(dol_buildpath($reldir.'/resource_'.$element_prop['element'].'_view.tpl.php')))
+					{
+						$tpl = dol_buildpath($reldir.'/resource_'.$element_prop['element'].'_view.tpl.php');
+					}
+					else
+					{
+						$tpl = DOL_DOCUMENT_ROOT.$reldir.'/resource_view.tpl.php';
+					}
+					if (empty($conf->file->strict_mode)) {
+						$res=@include $tpl;
+					} else {
+						$res=include $tpl; // for debug
+					}
+					if ($res) break;
 				}
 			}
 		}

@@ -63,7 +63,7 @@ class ProductAttributeValue
 
 		$this->db = $db;
 		$this->entity = $conf->entity;
-	}
+    }
 
 	/**
 	 * Gets a product attribute value

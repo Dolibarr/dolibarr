@@ -150,4 +150,3 @@ function printBookmarksList($aDb, $aLangs)
 
 	return $ret;
 }
-

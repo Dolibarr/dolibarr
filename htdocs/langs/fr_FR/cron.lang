@@ -7,7 +7,7 @@ Permission23103 = Supprimer une tâche planifiée
 Permission23104 = Exécuter une tâche planifiée
 # Admin
 CronSetup=Page de configuration du module - Gestion des travaux programmés
-URLToLaunchCronJobs=Ou pour vérifier ou lancer les travaux planifiés qualifiés
+URLToLaunchCronJobs=URL pour vérifier ou lancer les travaux planifiés qualifiés
 OrToLaunchASpecificJob=Ou pour vérifier et lancer un travail programmé spécifique
 KeyForCronAccess=Clé de sécurité pour l'URL de lancement des travaux programmés
 FileToLaunchCronJobs=Ligne de commande pour vérifier et lancer les travaux programmés qualifiés
@@ -42,7 +42,7 @@ CronModule=Module
 CronNoJobs=Aucun travail enregistré
 CronPriority=Priorité
 CronLabel=Libellé
-CronNbRun=Nb. lancements
+CronNbRun=Nb. de lancements
 CronMaxRun=Nb max de lancement
 CronEach=Tous les
 JobFinished=Travail lancé et terminé

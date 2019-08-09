@@ -35,15 +35,15 @@ if (! $user->rights->bookmark->lire) {
     restrictedArea($user, 'bookmarks');
 }
 
-$id=GETPOST("id",'int');
-$action=GETPOST("action","alpha");
-$title=GETPOST("title","alpha");
-$url=GETPOST("url","alpha");
-$urlsource=GETPOST("urlsource","alpha");
-$target=GETPOST("target","alpha");
-$userid=GETPOST("userid","int");
-$position=GETPOST("position","int");
-$backtopage=GETPOST('backtopage','alpha');
+$id=GETPOST("id", 'int');
+$action=GETPOST("action", "alpha");
+$title=GETPOST("title", "alpha");
+$url=GETPOST("url", "alpha");
+$urlsource=GETPOST("urlsource", "alpha");
+$target=GETPOST("target", "alpha");
+$userid=GETPOST("userid", "int");
+$position=GETPOST("position", "int");
+$backtopage=GETPOST('backtopage', 'alpha');
 
 $object=new Bookmark($db);
 
@@ -63,14 +63,14 @@ if ($action == 'add' || $action == 'addproduct' || $action == 'update')
 
 	$error = 0;
 
-	if (GETPOST('cancel','alpha'))
+	if (GETPOST('cancel', 'alpha'))
 	{
 		if (empty($backtopage)) $backtopage=($urlsource?$urlsource:((! empty($url) && ! preg_match('/^http/i', $url))?$url:DOL_URL_ROOT.'/bookmarks/list.php'));
 		header("Location: ".$backtopage);
 		exit;
 	}
 
-	if ($action == 'update') $object->fetch(GETPOST("id",'int'));
+	if ($action == 'update') $object->fetch(GETPOST("id", 'int'));
 	// Check if null because user not admin can't set an user and send empty value here.
 	if(!empty($userid))
 		$object->fk_user=$userid;
@@ -81,12 +81,12 @@ if ($action == 'add' || $action == 'addproduct' || $action == 'update')
 
 	if (! $title) {
 		$error++;
-		setEventMessages($langs->transnoentities("ErrorFieldRequired",$langs->trans("BookmarkTitle")), null, 'errors');
+		setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->trans("BookmarkTitle")), null, 'errors');
 	}
 
 	if (! $url) {
 		$error++;
-		setEventMessages($langs->transnoentities("ErrorFieldRequired",$langs->trans("UrlOrLink")), null, 'errors');
+		setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->trans("UrlOrLink")), null, 'errors');
 	}
 
 	if (! $error)
@@ -168,7 +168,7 @@ if ($action == 'create')
 	// Target
 	print '<tr><td>'.$langs->trans("BehaviourOnClick").'</td><td>';
 	$liste=array(0=>$langs->trans("ReplaceWindow"),1=>$langs->trans("OpenANewWindow"));
-	print $form->selectarray('target',$liste,1);
+	print $form->selectarray('target', $liste, 1);
 	print '</td><td class="hideonsmartphone">'.$langs->trans("ChooseIfANewWindowMustBeOpenedOnClickOnBookmark").'</td></tr>';
 
 	// Owner
@@ -194,7 +194,7 @@ if ($action == 'create')
 }
 
 
-if ($id > 0 && ! preg_match('/^add/i',$action))
+if ($id > 0 && ! preg_match('/^add/i', $action))
 {
 	/*
 	 * Fact bookmark mode or visually edition
@@ -244,7 +244,7 @@ if ($id > 0 && ! preg_match('/^add/i',$action))
 	}
 
 	print '</td><td>';
-	if ($action == 'edit') print '<input class="flat minwidth200" name="title" value="'.(isset($_POST["title"])?GETPOST("title",'',2):$object->title).'">';
+	if ($action == 'edit') print '<input class="flat minwidth200" name="title" value="'.(isset($_POST["title"])?GETPOST("title", '', 2):$object->title).'">';
 	else print $object->title;
 	print '</td></tr>';
 
@@ -258,14 +258,14 @@ if ($id > 0 && ! preg_match('/^add/i',$action))
 	}
 	print '</td><td>';
 	if ($action == 'edit') print '<input class="flat" name="url" size="80" value="'.(isset($_POST["url"])?$_POST["url"]:$object->url).'">';
-	else print '<a href="'.(preg_match('/^http/i',$object->url)?$object->url:DOL_URL_ROOT.$object->url).'"'.($object->target?' target="_blank"':'').'>'.$object->url.'</a>';
+	else print '<a href="'.(preg_match('/^http/i', $object->url)?$object->url:DOL_URL_ROOT.$object->url).'"'.($object->target?' target="_blank"':'').'>'.$object->url.'</a>';
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("BehaviourOnClick").'</td><td>';
 	if ($action == 'edit')
 	{
 		$liste=array(1=>$langs->trans("OpenANewWindow"),0=>$langs->trans("ReplaceWindow"));
-		print $form->selectarray('target',$liste,isset($_POST["target"])?$_POST["target"]:$object->target);
+		print $form->selectarray('target', $liste, isset($_POST["target"])?$_POST["target"]:$object->target);
 	}
 	else
 	{
@@ -301,7 +301,7 @@ if ($id > 0 && ! preg_match('/^add/i',$action))
 	print '</td></tr>';
 
 	// Date creation
-	print '<tr><td>'.$langs->trans("DateCreation").'</td><td>'.dol_print_date($object->datec,'dayhour').'</td></tr>';
+	print '<tr><td>'.$langs->trans("DateCreation").'</td><td>'.dol_print_date($object->datec, 'dayhour').'</td></tr>';
 
 	print '</table>';
 

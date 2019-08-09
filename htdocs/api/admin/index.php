@@ -35,12 +35,12 @@ $langs->load("admin");
 if (! $user->admin)
 	accessforbidden();
 
-$action=GETPOST('action','aZ09');
+$action=GETPOST('action', 'aZ09');
 
 //Activate ProfId
 if ($action == 'setproductionmode')
 {
-	$status = GETPOST('status','alpha');
+	$status = GETPOST('status', 'alpha');
 
 	if (dolibarr_set_const($db, 'API_PRODUCTION_MODE', $status, 'chaine', 0, '', 0) > 0)
 	{
@@ -88,7 +88,7 @@ dol_mkdir(DOL_DATA_ROOT.'/api/temp');		// May have been deleted by a purge
 llxHeader();
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans("ApiSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("ApiSetup"), $linkback, 'title_setup');
 
 print $langs->trans("ApiDesc")."<br>\n";
 print "<br>\n";
@@ -108,14 +108,14 @@ print '<td>'.$langs->trans("ApiProductionMode").'</td>';
 $production_mode=(empty($conf->global->API_PRODUCTION_MODE)?false:true);
 if ($production_mode)
 {
-    print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setproductionmode&value='.($i+1).'&status=0">';
-    print img_picto($langs->trans("Activated"),'switch_on');
+    print '<td align="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setproductionmode&value='.($i+1).'&status=0">';
+    print img_picto($langs->trans("Activated"), 'switch_on');
     print '</a></td>';
 }
 else
 {
-    print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setproductionmode&value='.($i+1).'&status=1">';
-    print img_picto($langs->trans("Disabled"),'switch_off');
+    print '<td align="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setproductionmode&value='.($i+1).'&status=1">';
+    print img_picto($langs->trans("Disabled"), 'switch_off');
     print '</a></td>';
 }
 print '<td>&nbsp;</td>';
@@ -125,7 +125,7 @@ print '</table>';
 print '<br><br>';
 
 // Define $urlwithroot
-$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
 $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
 //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
@@ -133,7 +133,7 @@ $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain
 $message='';
 $url=$urlwithroot.'/api/index.php/login?login=<strong>auserlogin</strong>&password=<strong>thepassword</strong>[&reset=1]';
 $message.=$langs->trans("UrlToGetKeyToUseAPIs").':<br>';
-$message.=img_picto('','object_globe.png').' '.$url;
+$message.=img_picto('', 'object_globe.png').' '.$url;
 print $message;
 print '<br>';
 print '<br>';
@@ -143,7 +143,7 @@ print '<u>'.$langs->trans("ApiExporerIs").':</u><br>';
 if (dol_is_dir(DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/explorer'))
 {
     $url=DOL_MAIN_URL_ROOT.'/api/index.php/explorer';
-    print img_picto('','object_globe.png').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
+    print img_picto('', 'object_globe.png').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
 }
 else
 {

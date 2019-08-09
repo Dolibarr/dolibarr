@@ -20,13 +20,13 @@ require '../main.inc.php';
 require 'class/ProductAttribute.class.php';
 require 'class/ProductAttributeValue.class.php';
 
-$id = GETPOST('id','int');
-$valueid = GETPOST('valueid','alpha');
-$action = GETPOST('action','alpha');
-$label = GETPOST('label','alpha');
-$ref = GETPOST('ref','alpha');
-$confirm = GETPOST('confirm','alpha');
-$cancel = GETPOST('cancel','alpha');
+$id = GETPOST('id', 'int');
+$valueid = GETPOST('valueid', 'alpha');
+$action = GETPOST('action', 'alpha');
+$label = GETPOST('label', 'alpha');
+$ref = GETPOST('ref', 'alpha');
+$confirm = GETPOST('confirm', 'alpha');
+$cancel = GETPOST('cancel', 'alpha');
 
 $object = new ProductAttribute($db);
 $objectval = new ProductAttributeValue($db);
@@ -62,7 +62,7 @@ if ($_POST) {
 		if ($objectval->fetch($valueid) > 0) {
 
 			$objectval->ref = $ref;
-			$objectval->value = GETPOST('value','alpha');
+			$objectval->value = GETPOST('value', 'alpha');
 
 			if (empty($objectval->ref))
 			{
@@ -202,7 +202,7 @@ if ($action == 'edit') { ?>
 	if ($action == 'delete') {
 		$form = new Form($db);
 
-		print $form->formconfirm(
+print $form->formconfirm(
 			"card.php?id=".$object->id,
 			$langs->trans('Delete'),
 			$langs->trans('ProductAttributeDeleteDialog'),
@@ -217,7 +217,7 @@ if ($action == 'edit') { ?>
 
 			$form = new Form($db);
 
-			print $form->formconfirm(
+print $form->formconfirm(
 				"card.php?id=".$object->id."&valueid=".$objectval->id,
 				$langs->trans('Delete'),
 				$langs->trans('ProductAttributeValueDeleteDialog', dol_htmlentities($objectval->value), dol_htmlentities($objectval->ref)),
@@ -266,7 +266,7 @@ if ($action == 'edit') { ?>
 			<?php if ($action == 'edit_value' && ($valueid == $attrval->id)): ?>
 				<td><input type="text" name="ref" value="<?php echo $attrval->ref ?>"></td>
 				<td><input type="text" name="value" value="<?php echo $attrval->value ?>"></td>
-				<td style="text-align: right">
+				<td class="right">
 					<input type="submit" value="<?php echo $langs->trans('Save') ?>" class="button">
 					&nbsp; &nbsp;
 					<input type="submit" name="cancel" value="<?php echo $langs->trans('Cancel') ?>" class="button">
@@ -274,7 +274,7 @@ if ($action == 'edit') { ?>
 			<?php else: ?>
 				<td><?php echo dol_htmlentities($attrval->ref) ?></td>
 				<td><?php echo dol_htmlentities($attrval->value) ?></td>
-				<td style="text-align: right">
+				<td class="right">
 					<a href="card.php?id=<?php echo $object->id ?>&action=edit_value&valueid=<?php echo $attrval->id ?>"><?php echo img_edit() ?></a>
 					<a href="card.php?id=<?php echo $object->id ?>&action=delete_value&valueid=<?php echo $attrval->id ?>"><?php echo img_delete() ?></a>
 				</td>

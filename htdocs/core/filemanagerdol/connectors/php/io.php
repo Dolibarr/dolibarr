@@ -175,14 +175,14 @@ function CreateServerFolder($folderPath, $lastFolder = null)
 		// Enable error tracking to catch the error.
 		ini_set('track_errors', '1');
 
-		if ( isset( $Config['ChmodOnFolderCreate'] ) && !$Config['ChmodOnFolderCreate'] )
+		if ( isset($Config['ChmodOnFolderCreate']) && !$Config['ChmodOnFolderCreate'] )
 		{
 			mkdir($folderPath);
 		}
 		else
 		{
 			$permissions = '0777';
-			if ( isset( $Config['ChmodOnFolderCreate'] ) && $Config['ChmodOnFolderCreate'])
+			if ( isset($Config['ChmodOnFolderCreate']) && $Config['ChmodOnFolderCreate'])
 			{
 				$permissions = (string) $Config['ChmodOnFolderCreate'];
 			}
@@ -219,7 +219,7 @@ function GetRootPath()
     }
     $sRealPath = realpath('./');
     // #2124 ensure that no slash is at the end
-    $sRealPath = rtrim($sRealPath,"\\/");
+    $sRealPath = rtrim($sRealPath, "\\/");
 
     $sSelfPath = $_SERVER['PHP_SELF'] ;
     $sSelfPath = substr($sSelfPath, 0, strrpos($sSelfPath, '/'));
@@ -315,7 +315,7 @@ function GetCurrentFolder()
 	if (!isset($_GET)) {
 		global $_GET;
 	}
-	$sCurrentFolder	= isset( $_GET['CurrentFolder'] ) ? GETPOST('CurrentFolder', '', 1) : '/' ;
+	$sCurrentFolder	= isset($_GET['CurrentFolder']) ? GETPOST('CurrentFolder', '', 1) : '/' ;
 
 	// Check the current folder syntax (must begin and start with a slash).
 	if (!preg_match('|/$|', $sCurrentFolder))

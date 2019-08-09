@@ -45,7 +45,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class MarginsLibTest extends PHPUnit_Framework_TestCase
+class MarginsLibTest extends PHPUnit\Framework\TestCase
 {
 	protected $savconf;
 	protected $savuser;
@@ -58,7 +58,7 @@ class MarginsLibTest extends PHPUnit_Framework_TestCase
 	 *
 	 * @return DateLibTest
 	 */
-	function __construct()
+	public function __construct()
 	{
 		parent::__construct();
 
@@ -74,13 +74,13 @@ class MarginsLibTest extends PHPUnit_Framework_TestCase
 		print "\n";
 	}
 
-	// Static methods
-  	public static function setUpBeforeClass()
+    // Static methods
+    public static function setUpBeforeClass()
     {
-    	global $conf,$user,$langs,$db;
-		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
+        global $conf,$user,$langs,$db;
+        $db->begin();   // This is to have all actions inside a transaction even if test launched without suite.
 
-    	print __METHOD__."\n";
+        print __METHOD__."\n";
     }
 
     // tear down after class
@@ -133,19 +133,19 @@ class MarginsLibTest extends PHPUnit_Framework_TestCase
 		$result=getMarginInfos(10, 0, 19.6, 0, 0, 0, 8);
 		//var_dump($result);
 		print __METHOD__." result[0]=".$result[0]."\n";
-		$this->assertEquals(8,$result[0]);
+		$this->assertEquals(8, $result[0]);
 		print __METHOD__." result[1]=".$result[1]."\n";
-		$this->assertEquals(25,$result[1]);
+		$this->assertEquals(25, $result[1]);
 		print __METHOD__." result[2]=".$result[2]."\n";
-		$this->assertEquals(20,$result[2]);
+		$this->assertEquals(20, $result[2]);
 
 		$result=getMarginInfos(10, 10, 19.6, 0, 0, 0, 8);
 		print __METHOD__." result[0]=".$result[0]."\n";
-		$this->assertEquals(8,$result[0]);
+		$this->assertEquals(8, $result[0]);
 		print __METHOD__." result[1]=".$result[1]."\n";
-		$this->assertEquals(12.5,$result[1]);
+		$this->assertEquals(12.5, $result[1]);
 		print __METHOD__." result[2]=".$result[2]."\n";
-		$this->assertEquals(1/9*100,$result[2]);
+		$this->assertEquals(1/9*100, $result[2]);
 
 		return 0;
     }

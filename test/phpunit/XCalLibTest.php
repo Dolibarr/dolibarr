@@ -44,7 +44,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class XCalLibTest extends PHPUnit_Framework_TestCase
+class XCalLibTest extends PHPUnit\Framework\TestCase
 {
     protected $savconf;
     protected $savuser;
@@ -57,7 +57,7 @@ class XCalLibTest extends PHPUnit_Framework_TestCase
      *
      * @return FilesLibTest
      */
-    function __construct()
+    public function __construct()
     {
     	parent::__construct();
 
@@ -133,10 +133,10 @@ class XCalLibTest extends PHPUnit_Framework_TestCase
         $stringtoencode='ABCD=1234;';
         $result=quotedPrintEncode($stringtoencode);
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals('ABCD=3D1234;',$result);
+        $this->assertEquals('ABCD=3D1234;', $result);
 
         $resultback=quotedPrintDecode($result);
         print __METHOD__." result=".$resultback."\n";
-        $this->assertEquals($stringtoencode,$resultback);
+        $this->assertEquals($stringtoencode, $resultback);
     }
 }

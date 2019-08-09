@@ -44,7 +44,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class AdminLibTest extends PHPUnit_Framework_TestCase
+class AdminLibTest extends PHPUnit\Framework\TestCase
 {
     protected $savconf;
     protected $savuser;
@@ -57,7 +57,7 @@ class AdminLibTest extends PHPUnit_Framework_TestCase
      *
      * @return AdminLibTest
      */
-    function __construct()
+    public function __construct()
     {
     	parent::__construct();
 
@@ -129,18 +129,18 @@ class AdminLibTest extends PHPUnit_Framework_TestCase
         $langs=$this->savlangs;
         $db=$this->savdb;
 
-        $result=versioncompare(array(3,1,-4),array(3,1,1));
+        $result=versioncompare(array(3,1,-4), array(3,1,1));
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals(-3,$result);
-        $result=versioncompare(array(3,1,0),array(3,1,1));
+        $this->assertEquals(-3, $result);
+        $result=versioncompare(array(3,1,0), array(3,1,1));
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals(-3,$result);
-        $result=versioncompare(array(3,1,0),array(3,2,0));
+        $this->assertEquals(-3, $result);
+        $result=versioncompare(array(3,1,0), array(3,2,0));
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals(-2,$result);
-        $result=versioncompare(array(3,1,0),array(3,1,0));
+        $this->assertEquals(-2, $result);
+        $result=versioncompare(array(3,1,0), array(3,1,0));
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals(0,$result);
+        $this->assertEquals(0, $result);
 
         return $result;
     }

@@ -199,6 +199,13 @@ delete from llx_element_element where sourcetype='commande' and fk_source not in
 DELETE FROM llx_actioncomm_resources WHERE fk_actioncomm not in (select id from llx_actioncomm);
 
 
+-- Fix link on parent that were removed
+DROP table tmp_user;
+CREATE TABLE tmp_user as (select * from llx_user);
+UPDATE llx_user SET fk_user = NULL where fk_user NOT IN (select rowid from tmp_user);
+
+
+
 UPDATE llx_product SET canvas = NULL where canvas = 'default@product';
 UPDATE llx_product SET canvas = NULL where canvas = 'service@product';
 
@@ -376,6 +383,16 @@ update llx_bank_url as bu set url_id = (select e.fk_user_author from tmp_bank_ur
 drop table tmp_bank_url_expense_user;
 
 
+-- Delete duplicate accounting account, but only if not used
+DROP TABLE tmp_llx_accouting_account;
+CREATE TABLE tmp_llx_accouting_account AS SELECT MIN(rowid) as MINID, account_number, entity, fk_pcg_version, count(*) AS NB FROM llx_accounting_account group BY account_number, entity, fk_pcg_version HAVING count(*) >= 2 order by account_number, entity, fk_pcg_version;
+--SELECT * from tmp_llx_accouting_account;
+DELETE from llx_accounting_account where rowid in (select minid from tmp_llx_accouting_account where minid NOT IN (SELECT fk_code_ventilation from llx_facturedet) AND minid NOT IN (SELECT fk_code_ventilation from llx_facture_fourn_det) AND minid NOT IN (SELECT fk_code_ventilation from llx_expensereport_det));
+
+ALTER TABLE llx_accounting_account DROP INDEX uk_accounting_account;
+ALTER TABLE llx_accounting_account ADD UNIQUE INDEX uk_accounting_account (account_number, entity, fk_pcg_version);
+
+
 -- VMYSQL4.1 update llx_projet_task_time set task_datehour = task_date where task_datehour < task_date or task_datehour > DATE_ADD(task_date, interval 1 day);
 
 
@@ -390,6 +407,7 @@ drop table tmp_bank_url_expense_user;
 -- p.tva_tx = 0
 -- where price = 17.5
 
+UPDATE llx_chargesociales SET date_creation = tms WHERE date_creation IS NULL;
 
 -- VMYSQL4.1 SET sql_mode = 'ALLOW_INVALID_DATES';
 -- VMYSQL4.1 update llx_accounting_account set tms = datec where DATE(STR_TO_DATE(tms, '%Y-%m-%d')) IS NULL;

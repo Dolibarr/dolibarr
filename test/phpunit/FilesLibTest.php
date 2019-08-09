@@ -46,7 +46,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class FilesLibTest extends PHPUnit_Framework_TestCase
+class FilesLibTest extends PHPUnit\Framework\TestCase
 {
 	protected $savconf;
 	protected $savuser;
@@ -59,7 +59,7 @@ class FilesLibTest extends PHPUnit_Framework_TestCase
 	 *
 	 * @return FilesLibTest
 	 */
-	function __construct()
+	public function __construct()
 	{
 		parent::__construct();
 
@@ -75,8 +75,8 @@ class FilesLibTest extends PHPUnit_Framework_TestCase
 		print "\n";
 	}
 
-	// Static methods
-  	public static function setUpBeforeClass()
+    // Static methods
+    public static function setUpBeforeClass()
     {
     	global $conf,$user,$langs,$db;
 		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
@@ -134,19 +134,19 @@ class FilesLibTest extends PHPUnit_Framework_TestCase
 
         $result=dol_basename('adir/afile');
     	print __METHOD__." result=".$result."\n";
-		$this->assertEquals('afile',$result);
+		$this->assertEquals('afile', $result);
 
 		$result=dol_basename('adir/afile/');
     	print __METHOD__." result=".$result."\n";
-		$this->assertEquals('afile',$result);
+		$this->assertEquals('afile', $result);
 
 		$result=dol_basename('adir/νεο');    // With cyrillic data. Here basename fails to return correct value
     	print __METHOD__." result=".$result."\n";
-		$this->assertEquals('νεο',$result);
+		$this->assertEquals('νεο', $result);
 
 		$result=dol_basename('adir/νεο/');    // With cyrillic data. Here basename fails to return correct value
     	print __METHOD__." result=".$result."\n";
-		$this->assertEquals('νεο',$result);
+		$this->assertEquals('νεο', $result);
     }
 
 
@@ -166,7 +166,7 @@ class FilesLibTest extends PHPUnit_Framework_TestCase
 		$file=dirname(__FILE__).'/Example_import_company_1.csv';
 		$result=dol_count_nb_of_line($file);
     	print __METHOD__." result=".$result."\n";
-		$this->assertEquals(3,$result);
+		$this->assertEquals(3, $result);
 
 		return $result;
     }
@@ -242,35 +242,35 @@ class FilesLibTest extends PHPUnit_Framework_TestCase
     	$db=$this->savdb;
 
     	// file.png
-    	$result=dol_mimetype('file.png','',0);
-    	$this->assertEquals('image/png',$result);
-    	$result=dol_mimetype('file.png','',1);
-    	$this->assertEquals('png',$result);
-    	$result=dol_mimetype('file.png','',2);
-    	$this->assertEquals('image.png',$result);
-    	$result=dol_mimetype('file.png','',3);
-    	$this->assertEquals('',$result);
+    	$result=dol_mimetype('file.png', '', 0);
+    	$this->assertEquals('image/png', $result);
+    	$result=dol_mimetype('file.png', '', 1);
+    	$this->assertEquals('png', $result);
+    	$result=dol_mimetype('file.png', '', 2);
+    	$this->assertEquals('image.png', $result);
+    	$result=dol_mimetype('file.png', '', 3);
+    	$this->assertEquals('', $result);
     	// file.odt
-    	$result=dol_mimetype('file.odt','',0);
-    	$this->assertEquals('application/vnd.oasis.opendocument.text',$result);
-    	$result=dol_mimetype('file.odt','',1);
-    	$this->assertEquals('vnd.oasis.opendocument.text',$result);
-    	$result=dol_mimetype('file.odt','',2);
-    	$this->assertEquals('ooffice.png',$result);
-    	$result=dol_mimetype('file.odt','',3);
-    	$this->assertEquals('',$result);
+    	$result=dol_mimetype('file.odt', '', 0);
+    	$this->assertEquals('application/vnd.oasis.opendocument.text', $result);
+    	$result=dol_mimetype('file.odt', '', 1);
+    	$this->assertEquals('vnd.oasis.opendocument.text', $result);
+    	$result=dol_mimetype('file.odt', '', 2);
+    	$this->assertEquals('ooffice.png', $result);
+    	$result=dol_mimetype('file.odt', '', 3);
+    	$this->assertEquals('', $result);
     	// file.php
-    	$result=dol_mimetype('file.php','',0);
-    	$this->assertEquals('text/plain',$result);
-    	$result=dol_mimetype('file.php','',1);
-    	$this->assertEquals('plain',$result);
-    	$result=dol_mimetype('file.php','',2);
-    	$this->assertEquals('php.png',$result);
-    	$result=dol_mimetype('file.php','',3);
-    	$this->assertEquals('php',$result);
+    	$result=dol_mimetype('file.php', '', 0);
+    	$this->assertEquals('text/plain', $result);
+    	$result=dol_mimetype('file.php', '', 1);
+    	$this->assertEquals('plain', $result);
+    	$result=dol_mimetype('file.php', '', 2);
+    	$this->assertEquals('php.png', $result);
+    	$result=dol_mimetype('file.php', '', 3);
+    	$this->assertEquals('php', $result);
     	// file.php.noexe
-    	$result=dol_mimetype('file.php.noexe','',0);
-    	$this->assertEquals('text/plain',$result);
+    	$result=dol_mimetype('file.php.noexe', '', 0);
+    	$this->assertEquals('text/plain', $result);
     }
 
 
@@ -291,24 +291,24 @@ class FilesLibTest extends PHPUnit_Framework_TestCase
     	$dirout2=$conf->admin->dir_temp.'/test2';
 
     	$count=0;
-    	$result=dol_delete_dir_recursive($dirout,$count);	// If it has no permission to delete, it will fails as if dir does not exists, so we can't test it
+    	$result=dol_delete_dir_recursive($dirout, $count);	// If it has no permission to delete, it will fails as if dir does not exists, so we can't test it
     	print __METHOD__." result=".$result."\n";
-    	$this->assertGreaterThanOrEqual(0,$result);
+    	$this->assertGreaterThanOrEqual(0, $result);
 
     	$count=0;
     	$countdeleted=0;
-    	$result=dol_delete_dir_recursive($dirout,$count,1,0,$countdeleted);	// If it has no permission to delete, it will fails as if dir does not exists, so we can't test it
+    	$result=dol_delete_dir_recursive($dirout, $count, 1, 0, $countdeleted);	// If it has no permission to delete, it will fails as if dir does not exists, so we can't test it
     	print __METHOD__." result=".$result."\n";
-    	$this->assertGreaterThanOrEqual(0,$result);
-    	$this->assertGreaterThanOrEqual(0,$countdeleted);
+    	$this->assertGreaterThanOrEqual(0, $result);
+    	$this->assertGreaterThanOrEqual(0, $countdeleted);
 
     	dol_mkdir($dirout2);
     	$count=0;
     	$countdeleted=0;
-    	$result=dol_delete_dir_recursive($dirout2,$count,1,0,$countdeleted);	// If it has no permission to delete, it will fails as if dir does not exists, so we can't test it
+    	$result=dol_delete_dir_recursive($dirout2, $count, 1, 0, $countdeleted);	// If it has no permission to delete, it will fails as if dir does not exists, so we can't test it
     	print __METHOD__." result=".$result."\n";
-    	$this->assertGreaterThanOrEqual(1,$result);
-    	$this->assertGreaterThanOrEqual(1,$countdeleted);
+    	$this->assertGreaterThanOrEqual(1, $result);
+    	$this->assertGreaterThanOrEqual(1, $countdeleted);
     }
 
 
@@ -332,56 +332,56 @@ class FilesLibTest extends PHPUnit_Framework_TestCase
 
         $result=dol_copy($file, '/adir/that/does/not/exists/file.csv');
         print __METHOD__." result=".$result."\n";
-        $this->assertLessThan(0,$result,'copy dir that does not exists');    // We should have error
+        $this->assertLessThan(0, $result, 'copy dir that does not exists');    // We should have error
 
-        $result=dol_copy($file, $conf->admin->dir_temp.'/file.csv',0,1);
+        $result=dol_copy($file, $conf->admin->dir_temp.'/file.csv', 0, 1);
         print __METHOD__." result=".$result."\n";
-        $this->assertGreaterThanOrEqual(1,$result, 'copy file ('.$file.') into a dir that exists ('.$conf->admin->dir_temp.'/file.csv'.')');    // Should be 1
+        $this->assertGreaterThanOrEqual(1, $result, 'copy file ('.$file.') into a dir that exists ('.$conf->admin->dir_temp.'/file.csv'.')');    // Should be 1
 
         // Again to test with overwriting=0
-        $result=dol_copy($file, $conf->admin->dir_temp.'/file.csv',0,0);
+        $result=dol_copy($file, $conf->admin->dir_temp.'/file.csv', 0, 0);
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals(0,$result, 'copy destination already exists, no overwrite');    // Should be 0
+        $this->assertEquals(0, $result, 'copy destination already exists, no overwrite');    // Should be 0
 
         // Again to test with overwriting=1
-        $result=dol_copy($file, $conf->admin->dir_temp.'/file.csv',0,1);
+        $result=dol_copy($file, $conf->admin->dir_temp.'/file.csv', 0, 1);
         print __METHOD__." result=".$result."\n";
-        $this->assertGreaterThanOrEqual(1,$result,'copy destination already exists, overwrite');    // Should be 1
+        $this->assertGreaterThanOrEqual(1, $result, 'copy destination already exists, overwrite');    // Should be 1
 
         // To test a move that should work
-        $result=dol_move($conf->admin->dir_temp.'/file.csv',$conf->admin->dir_temp.'/file2.csv',0,1);
+        $result=dol_move($conf->admin->dir_temp.'/file.csv', $conf->admin->dir_temp.'/file2.csv', 0, 1);
         print __METHOD__." result=".$result."\n";
-        $this->assertTrue($result,'move with default mask');
+        $this->assertTrue($result, 'move with default mask');
 
         // To test a move that should work with forced mask
-        $result=dol_move($conf->admin->dir_temp.'/file2.csv',$conf->admin->dir_temp.'/file3.csv','0754',1); // file shoutld be rwxr-wr--
+        $result=dol_move($conf->admin->dir_temp.'/file2.csv', $conf->admin->dir_temp.'/file3.csv', '0754', 1); // file shoutld be rwxr-wr--
         print __METHOD__." result=".$result."\n";
-        $this->assertTrue($result,'move with forced mask');
+        $this->assertTrue($result, 'move with forced mask');
 
         // To test a delete that should success
         $result=dol_delete_file($conf->admin->dir_temp.'/file3.csv');
         print __METHOD__." result=".$result."\n";
-        $this->assertTrue($result,'delete file');
+        $this->assertTrue($result, 'delete file');
 
         // Again to test there is error when deleting a non existing file with option disableglob
-        $result=dol_delete_file($conf->admin->dir_temp.'/file3.csv',1,1);
+        $result=dol_delete_file($conf->admin->dir_temp.'/file3.csv', 1, 1);
         print __METHOD__." result=".$result."\n";
-        $this->assertFalse($result,'delete file that does not exists with disableglo must return ko');
+        $this->assertFalse($result, 'delete file that does not exists with disableglo must return ko');
 
         // Again to test there is no error when deleting a non existing file without option disableglob
-        $result=dol_delete_file($conf->admin->dir_temp.'/file3csv',0,1);
+        $result=dol_delete_file($conf->admin->dir_temp.'/file3csv', 0, 1);
         print __METHOD__." result=".$result."\n";
-        $this->assertTrue($result,'delete file that does not exists without disabling glob must return ok');
+        $this->assertTrue($result, 'delete file that does not exists without disabling glob must return ok');
 
         // Test copy with special char / delete with blob
-        $result=dol_copy($file, $conf->admin->dir_temp.'/file with [x] and é.csv',0,1);
+        $result=dol_copy($file, $conf->admin->dir_temp.'/file with [x] and é.csv', 0, 1);
         print __METHOD__." result=".$result."\n";
-        $this->assertGreaterThanOrEqual(1,$result,'copy file with special chars, overwrite');    // Should be 1
+        $this->assertGreaterThanOrEqual(1, $result, 'copy file with special chars, overwrite');    // Should be 1
 
         // Try to delete using a glob criteria
         $result=dol_delete_file($conf->admin->dir_temp.'/file with [x]*é.csv');
         print __METHOD__." result=".$result."\n";
-        $this->assertTrue($result,'delete file using glob');
+        $this->assertTrue($result, 'delete file using glob');
     }
 
     /**
@@ -407,15 +407,15 @@ class FilesLibTest extends PHPUnit_Framework_TestCase
 
         dol_delete_file($fileout);
         $count=0;
-        dol_delete_dir_recursive($dirout,$count,1);
+        dol_delete_dir_recursive($dirout, $count, 1);
 
         $result=dol_compress_file($filein, $fileout, $format);
         print __METHOD__." result=".$result."\n";
-        $this->assertGreaterThanOrEqual(1,$result);
+        $this->assertGreaterThanOrEqual(1, $result);
 
         $result=dol_uncompress($fileout, $dirout);
-        print __METHOD__." result=".join(',',$result)."\n";
-        $this->assertEquals(0,count($result));
+        print __METHOD__." result=".join(',', $result)."\n";
+        $this->assertEquals(0, count($result));
     }
 
     /**
@@ -433,7 +433,7 @@ class FilesLibTest extends PHPUnit_Framework_TestCase
         // Scan dir to guaruante we on't have library jquery twice (we accept exception of duplicte into ckeditor because all dir is removed for debian package, so there is no duplicate).
         $founddirs=dol_dir_list(DOL_DOCUMENT_ROOT.'/includes/', 'files', 1, '^jquery\.js', array('ckeditor'));
         print __METHOD__." count(founddirs)=".count($founddirs)."\n";
-        $this->assertEquals(1,count($founddirs));
+        $this->assertEquals(1, count($founddirs));
     }
 
 
@@ -464,7 +464,7 @@ class FilesLibTest extends PHPUnit_Framework_TestCase
         $user->rights->facture->creer = 0;
         $filename='SPECIMEN.pdf';             // Filename relative to module part
         $result=dol_check_secure_access_document('facture', $filename, 0, '', '', 'read');
-        $this->assertEquals(1,$result['accessallowed']);
+        $this->assertEquals(1, $result['accessallowed']);
 
 
         // Check read permission
@@ -472,32 +472,32 @@ class FilesLibTest extends PHPUnit_Framework_TestCase
         $user->rights->facture->creer = 1;
         $filename='FA010101/FA010101.pdf';    // Filename relative to module part
         $result=dol_check_secure_access_document('facture', $filename, 0, '', '', 'read');
-        $this->assertEquals(1,$result['accessallowed']);
+        $this->assertEquals(1, $result['accessallowed']);
 
         $user->rights->facture->lire = 0;
         $user->rights->facture->creer = 0;
         $filename='FA010101/FA010101.pdf';    // Filename relative to module part
         $result=dol_check_secure_access_document('facture', $filename, 0, '', '', 'read');
-        $this->assertEquals(0,$result['accessallowed']);
+        $this->assertEquals(0, $result['accessallowed']);
 
         // Check write permission
         $user->rights->facture->lire = 0;
         $user->rights->facture->creer = 0;
         $filename='FA010101/FA010101.pdf';    // Filename relative to module part
         $result=dol_check_secure_access_document('facture', $filename, 0, '', '', 'write');
-        $this->assertEquals(0,$result['accessallowed']);
+        $this->assertEquals(0, $result['accessallowed']);
 
         $user->rights->facture->lire = 1;
         $user->rights->facture->creer = 1;
         $filename='FA010101/FA010101.pdf';    // Filename relative to module part
         $result=dol_check_secure_access_document('facture', $filename, 0, '', '', 'write');
-        $this->assertEquals(1,$result['accessallowed']);
+        $this->assertEquals(1, $result['accessallowed']);
 
         $user->rights->facture->lire = 1;
         $user->rights->facture->creer = 0;
         $filename='FA010101/FA010101.pdf';    // Filename relative to module part
         $result=dol_check_secure_access_document('facture', $filename, 0, '', '', 'write');
-        $this->assertEquals(0,$result['accessallowed']);
+        $this->assertEquals(0, $result['accessallowed']);
 
 
         // We restore user properties

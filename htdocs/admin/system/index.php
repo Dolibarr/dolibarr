@@ -44,7 +44,7 @@ if (! $user->admin) accessforbidden();
 
 llxHeader();
 
-print load_fiche_titre($langs->trans("SummarySystem"),'','title_setup');
+print load_fiche_titre($langs->trans("SummarySystem"), '', 'title_setup');
 
 
 print '<table class="noborder" width="100%">';

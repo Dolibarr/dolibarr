@@ -44,13 +44,13 @@ foreach($linkedObjectBlock as $key => $objectlink)
 <tr class="oddeven" >
     <td><?php echo $langs->trans("Subscription"); ?></td>
     <td><?php echo $objectlink->getNomUrl(1); ?></td>
-	<td align="center"></td>
-	<td align="center"><?php echo dol_print_date($objectlink->dateh,'day'); ?></td>
+	<td class="center"></td>
+	<td class="center"><?php echo dol_print_date($objectlink->dateh, 'day'); ?></td>
 	<td class="right"><?php
-		if ($user->rights->adherent->lire) {
-			$total = $total + $objectlink->amount;
-			echo price($objectlink->amount);
-		} ?></td>
+	if ($user->rights->adherent->lire) {
+		$total = $total + $objectlink->amount;
+		echo price($objectlink->amount);
+	} ?></td>
 	<td class="right"></td>
 	<td class="right"><a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a></td>
 </tr>

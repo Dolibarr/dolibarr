@@ -33,15 +33,14 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($object) || ! is_object($object))
-{
-	print "Error: this template page cannot be called directly as an URL";
-	exit;
+if (empty($object) || ! is_object($object)) {
+    print "Error: this template page cannot be called directly as an URL";
+    exit;
 }
 
 
 $usemargins=0;
-if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($object->element,array('facture','propal','commande')))
+if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($object->element, array('facture','facturerec','propal','commande')))
 {
     $usemargins=1;
 }
@@ -56,10 +55,10 @@ if (empty($senderissupplier)) $senderissupplier=0;
 if (empty($inputalsopricewithtax)) $inputalsopricewithtax=0;
 
 
-// Define colspan for button Add
+// Define colspan for the button 'Add'
 $colspan = 3;	// Columns: total ht + col edit + col delete
 if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) $colspan++;//Add column for Total (currency) if required
-if (in_array($object->element,array('propal','commande','order','facture','facturerec','invoice','supplier_proposal','order_supplier','invoice_supplier'))) $colspan++;	// With this, there is a column move button
+if (in_array($object->element, array('propal','commande','order','facture','facturerec','invoice','supplier_proposal','order_supplier','invoice_supplier'))) $colspan++;	// With this, there is a column move button
 //print $object->element;
 
 // Lines for extrafield
@@ -132,10 +131,13 @@ if ($nolinesbefore) {
 	?>
 	<td class="linecoldiscount right"><?php echo $langs->trans('ReductionShort'); ?></td>
 	<?php
+	// Fields for situation invoice
 	if ($this->situation_cycle_ref) {
 		print '<td class="linecolcycleref right">' . $langs->trans('Progress') . '</td>';
+		print '<td class="linecolcycleref2 right"></td>';
 	}
-	if (! empty($usemargins))
+    if (! empty($usemargins))
+
 	{
 		if (!empty($user->rights->margins->creer)) {
 		?>
@@ -148,9 +150,7 @@ if ($nolinesbefore) {
 			echo $langs->trans('BuyingPrice');
 		else
 			echo $langs->trans('CostPrice');
-		?>
-		</td>
-		<?php
+		echo '</td>';
 		if ($user->rights->margins->creer && ! empty($conf->global->DISPLAY_MARGIN_RATES)) echo '<td class="margininfos linecolmargin2 right"><span class="np_marginRate">'.$langs->trans('MarginRate').'</span></td>';
 		if ($user->rights->margins->creer && ! empty($conf->global->DISPLAY_MARK_RATES)) echo '<td class="margininfos linecolmargin2 right"><span class="np_markRate">'.$langs->trans('MarkRate').'</span></td>';
 	}
@@ -162,18 +162,16 @@ if ($nolinesbefore) {
 ?>
 <tr class="pair nodrag nodrop nohoverpair<?php echo ($nolinesbefore || $object->element=='contrat')?'':' liste_titre_create'; ?>">
 <?php
-// Adds a line numbering column
-if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
-	$coldisplay=2;
-	?>
-	<td class="nobottom linecolnum center"></td>
-	<?php
-}
-else {
-	$coldisplay=0;
-}
-?>
+    $coldisplay=0;
 
+    // Adds a line numbering column
+    if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
+      $coldisplay++;
+      echo '<td class="nobottom linecolnum center"></td>';
+    }
+
+    $coldisplay++;
+    ?>
 	<td class="nobottom linecoldescription minwidth500imp">
 
 	<?php
@@ -216,7 +214,7 @@ else {
 			}
 		}
 
-		echo $form->select_type_of_lines(isset($_POST["type"])?GETPOST("type",'alpha',2):-1,'type',1,1,$forceall);
+		echo $form->select_type_of_lines(isset($_POST["type"])?GETPOST("type", 'alpha', 2):-1, 'type', 1, 1, $forceall);
 
 		echo '</span>';
 	}
@@ -257,6 +255,25 @@ else {
 			{
 				$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, 1, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth300', 0, '', GETPOST('combinations', 'array'));
 			}
+
+			if (! empty($conf->global->MAIN_AUTO_OPEN_SELECT2_ON_FOCUS_FOR_CUSTOMER_PRODUCTS))
+			{
+				?>
+	            <script type="text/javascript">
+	                $(document).ready(function(){
+		                	// On first focus on a select2 combo, auto open the menu (this allow to use the keyboard only)
+		                	$(document).on('focus', '.select2-selection.select2-selection--single', function (e) {
+								console.log('focus on a select2');
+								if ($(this).attr('aria-labelledby') == 'select2-idprod-container')
+								{
+									console.log('open combo');
+			                	  	$('#idprod').select2('open');
+								}
+		                	});
+	                });
+	            </script>
+	            <?php
+		    }
 		}
 		else
 		{
@@ -264,19 +281,39 @@ else {
 		    if ($senderissupplier != 2)
 		    {
     			$ajaxoptions=array(
-    					'update' => array('qty'=>'qty','remise_percent' => 'discount','idprod' => 'idprod'),	// html id tags that will be edited with which ajax json response key
-    					'option_disabled' => 'idthatdoesnotexists',					// html id to disable once select is done
-    					'warning' => $langs->trans("NoPriceDefinedForThisSupplier") // translation of an error saved into var 'warning' (for example shown we select a disabled option into combo)
+    				'update' => array('qty'=>'qty','remise_percent' => 'discount','idprod' => 'idprod'),	// html id tags that will be edited with which ajax json response key
+    				'option_disabled' => 'idthatdoesnotexists',					// html id to disable once select is done
+    				'warning' => $langs->trans("NoPriceDefinedForThisSupplier") // translation of an error saved into var 'warning' (for example shown we select a disabled option into combo)
     			);
     			$alsoproductwithnosupplierprice=0;
 		    }
 		    else
 		    {
-		        $ajaxoptions = array();
+		        $ajaxoptions = array(
+                    'update' => array('remise_percent' => 'discount')			// html id tags that will be edited with each ajax json response key
+    			);
 		        $alsoproductwithnosupplierprice=1;
 		    }
 
 		    $form->select_produits_fournisseurs($object->socid, GETPOST('idprodfournprice'), 'idprodfournprice', '', '', $ajaxoptions, 1, $alsoproductwithnosupplierprice, 'maxwidth300');
+
+		    if (! empty($conf->global->MAIN_AUTO_OPEN_SELECT2_ON_FOCUS_FOR_SUPPLIER_PRODUCTS))
+		    {
+			    ?>
+	            <script type="text/javascript">
+	                $(document).ready(function(){
+		                	// On first focus on a select2 combo, auto open the menu (this allow to use the keyboard only)
+		                	$(document).on('focus', '.select2-selection.select2-selection--single', function (e) {
+								//console.log('focus on a select2');
+								if ($(this).attr('aria-labelledby') == 'select2-idprodfournprice-container')
+								{
+			                	  	$('#idprodfournprice').select2('open');
+								}
+		                	});
+	                });
+	            </script>
+	            <?php
+		    }
 		}
 		echo '<input type="hidden" name="pbq" id="pbq" value="">';
 		echo '</span>';
@@ -284,8 +321,8 @@ else {
 
 	if (is_object($hookmanager) && empty($senderissupplier))
 	{
-        $parameters=array('fk_parent_line'=>GETPOST('fk_parent_line','int'));
-		$reshook=$hookmanager->executeHooks('formCreateProductOptions',$parameters,$object,$action);
+        $parameters=array('fk_parent_line'=>GETPOST('fk_parent_line', 'int'));
+		$reshook=$hookmanager->executeHooks('formCreateProductOptions', $parameters, $object, $action);
 		if (!empty($hookmanager->resPrint)) {
 			print $hookmanager->resPrint;
 		}
@@ -293,7 +330,7 @@ else {
 	if (is_object($hookmanager) && ! empty($senderissupplier))
 	{
 		$parameters=array('htmlname'=>'addproduct');
-		$reshook=$hookmanager->executeHooks('formCreateProductSupplierOptions',$parameters,$object,$action);
+		$reshook=$hookmanager->executeHooks('formCreateProductSupplierOptions', $parameters, $object, $action);
 		if (!empty($hookmanager->resPrint)) {
 			print $hookmanager->resPrint;
 		}
@@ -316,7 +353,7 @@ else {
 	if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
 	$toolbarname='dolibarr_details';
 	if (! empty($conf->global->FCKEDITOR_ENABLE_DETAILS_FULL)) $toolbarname='dolibarr_notes';
-	$doleditor=new DolEditor('dp_desc',GETPOST('dp_desc'),'',100,$toolbarname,'',false,true,$enabled,$nbrows,'98%');
+	$doleditor=new DolEditor('dp_desc', GETPOST('dp_desc', 'none'), '', (empty($conf->global->MAIN_DOLEDITOR_HEIGHT)?100:$conf->global->MAIN_DOLEDITOR_HEIGHT), $toolbarname, '', false, true, $enabled, $nbrows, '98%');
 	$doleditor->Create();
 
 	// Show autofill date for recurring invoices
@@ -330,59 +367,76 @@ else {
 		echo $form->selectyesno('date_end_fill', $line->date_end_fill, 1);
 		echo '</div>';
 	}
-	?>
-	</td>
+	echo '</td>';
 
-	<?php
 	if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier')	// We must have same test in printObjectLines
 	{
-	?>
-		<td class="nobottom linecolresupplier"><input id="fourn_ref" name="fourn_ref" class="flat maxwidth75" value="<?php echo (isset($_POST["fourn_ref"])?GETPOST("fourn_ref",'alpha',2):''); ?>"></td>
+		$coldisplay++;
+        ?>
+		<td class="nobottom linecolresupplier"><input id="fourn_ref" name="fourn_ref" class="flat maxwidth75" value="<?php echo (isset($_POST["fourn_ref"])?GETPOST("fourn_ref", 'alpha', 2):''); ?>"></td>
 	<?php } ?>
 
 	<td class="nobottom linecolvat right"><?php
+	$coldisplay++;
 	if ($seller->tva_assuj == "0") echo '<input type="hidden" name="tva_tx" id="tva_tx" value="0">'.vatrate(0, true);
-	else echo $form->load_tva('tva_tx', (isset($_POST["tva_tx"])?GETPOST("tva_tx",'alpha',2):-1), $seller, $buyer, 0, 0, '', false, 1);
+	else echo $form->load_tva('tva_tx', (isset($_POST["tva_tx"])?GETPOST("tva_tx", 'alpha', 2):-1), $seller, $buyer, 0, 0, '', false, 1);
 	?>
 	</td>
-	<td class="nobottom linecoluht right">
-	<input type="text" size="5" name="price_ht" id="price_ht" class="flat right" value="<?php echo (isset($_POST["price_ht"])?GETPOST("price_ht",'alpha',2):''); ?>">
+
+	<td class="nobottom linecoluht right"><?php $coldisplay++; ?>
+	<input type="text" size="5" name="price_ht" id="price_ht" class="flat right" value="<?php echo (isset($_POST["price_ht"])?GETPOST("price_ht", 'alpha', 2):''); ?>">
 	</td>
 
-	<?php if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) { ?>
+	<?php if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) {
+	    $coldisplay++;
+	?>
 	<td class="nobottom linecoluht_currency right">
-	<input type="text" size="5" name="multicurrency_price_ht" id="multicurrency_price_ht" class="flat right" value="<?php echo (isset($_POST["multicurrency_price_ht"])?GETPOST("multicurrency_price_ht",'alpha',2):''); ?>">
+	<input type="text" size="5" name="multicurrency_price_ht" id="multicurrency_price_ht" class="flat right" value="<?php echo (isset($_POST["multicurrency_price_ht"])?GETPOST("multicurrency_price_ht", 'alpha', 2):''); ?>">
 	</td>
 	<?php } ?>
 
-	<?php if (! empty($inputalsopricewithtax)) { ?>
+	<?php if (! empty($inputalsopricewithtax)) {
+	   $coldisplay++;
+	?>
 	<td class="nobottom linecoluttc right">
-	<input type="text" size="5" name="price_ttc" id="price_ttc" class="flat" value="<?php echo (isset($_POST["price_ttc"])?GETPOST("price_ttc",'alpha',2):''); ?>">
+	<input type="text" size="5" name="price_ttc" id="price_ttc" class="flat" value="<?php echo (isset($_POST["price_ttc"])?GETPOST("price_ttc", 'alpha', 2):''); ?>">
 	</td>
-	<?php } ?>
-	<td class="nobottom linecolqty right"><input type="text" size="2" name="qty" id="qty" class="flat right" value="<?php echo (isset($_POST["qty"])?GETPOST("qty",'alpha',2):1); ?>">
+	<?php }
+
+	$coldisplay++;
+	?>
+	<td class="nobottom linecolqty right"><input type="text" size="2" name="qty" id="qty" class="flat right" value="<?php echo (isset($_POST["qty"])?GETPOST("qty", 'alpha', 2):1); ?>">
 	</td>
 	<?php
 	if($conf->global->PRODUCT_USE_UNITS)
 	{
+	    $coldisplay++;
 		print '<td class="nobottom linecoluseunit left">';
 		print $form->selectUnits($line->fk_unit, "units");
 		print '</td>';
 	}
 	$remise_percent = $buyer->remise_percent;
-	if($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier') {
+	if($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier')
+	{
 		$remise_percent = $seller->remise_supplier_percent;
 	}
+
+	$coldisplay++;
 	?>
-	<td class="nobottom nowrap linecoldiscount right"><input type="text" size="1" name="remise_percent" id="remise_percent" class="flat right" value="<?php echo (isset($_POST["remise_percent"])?GETPOST("remise_percent",'alpha',2):$remise_percent); ?>"><span class="hideonsmartphone">%</span></td>
+	<td class="nobottom nowrap linecoldiscount right"><input type="text" size="1" name="remise_percent" id="remise_percent" class="flat right" value="<?php echo (isset($_POST["remise_percent"])?GETPOST("remise_percent", 'alpha', 2):$remise_percent); ?>"><span class="hideonsmartphone">%</span></td>
 	<?php
+
 	if ($this->situation_cycle_ref) {
 		$coldisplay++;
 		print '<td class="nobottom nowrap right"><input class="falt right" type="text" size="1" value="0" name="progress">%</td>';
+		$coldisplay++;
+		print '<td></td>';
 	}
+
 	if (! empty($usemargins))
 	{
 		if (!empty($user->rights->margins->creer)) {
+		    $coldisplay++;
 		?>
 		<td class="nobottom margininfos linecolmargin right">
 			<!-- For predef product -->
@@ -390,31 +444,27 @@ else {
 			<select id="fournprice_predef" name="fournprice_predef" class="flat" style="display: none;"></select>
 			<?php } ?>
 			<!-- For free product -->
-			<input type="text" size="5" id="buying_price" name="buying_price" class="flat right" value="<?php echo (isset($_POST["buying_price"])?GETPOST("buying_price",'alpha',2):''); ?>">
+			<input type="text" size="5" id="buying_price" name="buying_price" class="flat right" value="<?php echo (isset($_POST["buying_price"])?GETPOST("buying_price", 'alpha', 2):''); ?>">
 		</td>
 		<?php
-		$coldisplay++;
 		}
 
 		if ($user->rights->margins->creer)
 		{
 			if (! empty($conf->global->DISPLAY_MARGIN_RATES))
 			{
-				echo '<td class="nobottom nowrap margininfos right"><input class="flat right" type="text" size="2" id="np_marginRate" name="np_marginRate" value="'.(isset($_POST["np_marginRate"])?GETPOST("np_marginRate",'alpha',2):'').'"><span class="np_marginRate hideonsmartphone">%</span></td>';
+				echo '<td class="nobottom nowrap margininfos right"><input class="flat right" type="text" size="2" id="np_marginRate" name="np_marginRate" value="'.(isset($_POST["np_marginRate"])?GETPOST("np_marginRate", 'alpha', 2):'').'"><span class="np_marginRate hideonsmartphone">%</span></td>';
 				$coldisplay++;
 			}
 			if (! empty($conf->global->DISPLAY_MARK_RATES))
 			{
-				echo '<td class="nobottom nowrap margininfos right"><input class="flat right" type="text" size="2" id="np_markRate" name="np_markRate" value="'.(isset($_POST["np_markRate"])?GETPOST("np_markRate",'alpha',2):'').'"><span class="np_markRate hideonsmartphone">%</span></td>';
+				echo '<td class="nobottom nowrap margininfos right"><input class="flat right" type="text" size="2" id="np_markRate" name="np_markRate" value="'.(isset($_POST["np_markRate"])?GETPOST("np_markRate", 'alpha', 2):'').'"><span class="np_markRate hideonsmartphone">%</span></td>';
 				$coldisplay++;
 			}
 		}
-		else
-		{
-			if (! empty($conf->global->DISPLAY_MARGIN_RATES)) $coldisplay++;
-			if (! empty($conf->global->DISPLAY_MARK_RATES)) $coldisplay++;
-		}
 	}
+
+	$coldisplay+=$colspan;
 	?>
 	<td class="nobottom linecoledit center valignmiddle" colspan="<?php echo $colspan; ?>">
 		<input type="submit" class="button" value="<?php echo $langs->trans('Add'); ?>" name="addline" id="addline">
@@ -423,71 +473,25 @@ else {
 
 <?php
 if (is_object($objectline)) {
-	print $objectline->showOptionals($extrafieldsline, 'edit', array('style'=>$bcnd[$var], 'colspan'=>$coldisplay+8), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD)?0:1);
+	print $objectline->showOptionals($extrafieldsline, 'edit', array('style'=>$bcnd[$var], 'colspan'=>$coldisplay), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD)?0:1);
 }
-?>
 
-<?php
 if ((! empty($conf->service->enabled) || ($object->element == 'contrat')) && $dateSelector && GETPOST('type') != '0')	// We show date field if required
 {
-	$colspan = 6;
-
-	if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier')	// We must have same test in printObjectLines
-	{
-		$colspan++;
-	}
-	if ($this->situation_cycle_ref) {
-		$colspan++;
-	}
-	// We add 1 if col total ttc
-	if (!empty($inputalsopricewithtax)) {
-		$colspan++;
-	}
-	if ($conf->global->PRODUCT_USE_UNITS) {
-		$colspan++;
-	}
-	if (count($object->lines)) {
-		//There will be an edit and a delete button
-		$colspan += 2;
-
-		// With this, there is a column move button ONLY if lines > 1
-		if (in_array($object->element, array(
-			'propal',
-			'supplier_proposal',
-			'facture',
-		    'facturerec',
-			'invoice',
-			'commande',
-			'order',
-			'order_supplier',
-			'invoice_supplier'
-		))) {
-			$colspan++;
-		}
-	}
-
-	if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) $colspan+=2;
-
-	if (! empty($usemargins))
-	{
-		if (!empty($user->rights->margins->creer)) $colspan++; // For the buying price
-		if (! empty($conf->global->DISPLAY_MARGIN_RATES)) $colspan++;
-		if (! empty($conf->global->DISPLAY_MARK_RATES))   $colspan++;
-	}
 	?>
 
 	<tr id="trlinefordates" <?php echo $bcnd[$var]; ?>>
 	<?php if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { print '<td></td>'; } ?>
-	<td colspan="<?php echo $colspan; ?>">
+	<td colspan="<?php echo $coldisplay - (empty($conf->global->MAIN_VIEW_LINE_NUMBER)?0:1); ?>">
 	<?php
 	$date_start=dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), 0, GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
 	$date_end=dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), 0, GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
 	if (! empty($object->element) && $object->element == 'contrat')
 	{
 		print $langs->trans("DateStartPlanned").' ';
-		print $form->selectDate($date_start,"date_start",$usehm,$usehm,1,"addproduct");
+		print $form->selectDate($date_start, "date_start", $usehm, $usehm, 1, "addproduct");
 		print ' &nbsp; '.$langs->trans("DateEndPlanned").' ';
-		print $form->selectDate($date_end,"date_end",$usehm,$usehm,1,"addproduct");
+		print $form->selectDate($date_end, "date_end", $usehm, $usehm, 1, "addproduct");
 	}
 	else
 	{
@@ -597,6 +601,28 @@ if (! empty($usemargins) && $user->rights->margins->creer)
 
 /* JQuery for product free or predefined select */
 jQuery(document).ready(function() {
+	jQuery("#price_ht").keyup(function(event) {
+		// console.log(event.which);		// discard event tag and arrows
+		if (event.which != 9 && (event.which < 37 ||event.which > 40) && jQuery("#price_ht").val() != '') {
+			jQuery("#price_ttc").val('');
+			jQuery("#multicurrency_subprice").val('');
+		}
+	});
+	jQuery("#price_ttc").keyup(function(event) {
+		// console.log(event.which);		// discard event tag and arrows
+		if (event.which != 9 && (event.which < 37 || event.which > 40) && jQuery("#price_ttc").val() != '') {
+			jQuery("#price_ht").val('');
+			jQuery("#multicurrency_subprice").val('');
+		}
+	});
+	jQuery("#multicurrency_subprice").keyup(function(event) {
+		// console.log(event.which);		// discard event tag and arrows
+		if (event.which != 9 && (event.which < 37 || event.which > 40) && jQuery("#price_ttc").val() != '') {
+			jQuery("#price_ht").val('');
+			jQuery("#price_ttc").val('');
+		}
+	});
+
 	$("#prod_entry_mode_free").on( "click", function() {
 		setforfree();
 	});
@@ -663,10 +689,7 @@ jQuery(document).ready(function() {
       		$.post('<?php echo DOL_URL_ROOT; ?>/fourn/ajax/getSupplierPrices.php?bestpricefirst=1', { 'idprod': $(this).val() }, function(data) {
     	    	if (data && data.length > 0)
     	    	{
-        	  		var options = '';
-        	  		var defaultkey = '';
-        	  		var defaultprice = '';
-    	      		var bestpricefound = 0;
+        	  		var options = ''; var defaultkey = ''; var defaultprice = ''; var bestpricefound = 0;
 
     	      		var bestpriceid = 0; var bestpricevalue = 0;
     	      		var pmppriceid = 0; var pmppricevalue = 0;
@@ -797,61 +820,29 @@ jQuery(document).ready(function() {
 	<?php if (GETPOST('prod_entry_mode') == 'predef') { // When we submit with a predef product and it fails we must start with predef ?>
 		setforpredef();
 	<?php } ?>
-
 });
 
 /* Function to set fields from choice */
 function setforfree() {
 	console.log("Call setforfree. We show most fields");
-	jQuery("#search_idprod").val('');
-	jQuery("#idprod").val('');
 	jQuery("#idprodfournprice").val('0');	// Set cursor on not selected product
-	jQuery("#search_idprodfournprice").val('');
 	jQuery("#prod_entry_mode_free").prop('checked',true).change();
 	jQuery("#prod_entry_mode_predef").prop('checked',false).change();
-	jQuery("#price_ht").show();
-	jQuery("#multicurrency_price_ht").show();
-	jQuery("#price_ttc").show();	// May not exist
-	jQuery("#fourn_ref").show();
-	jQuery("#tva_tx").show();
-	jQuery("#buying_price").val('').show();
+	jQuery("#search_idprod, #idprod, #search_idprodfournprice, #buying_price").val('');
+	jQuery("#price_ht, #multicurrency_price_ht, #price_ttc, #price_ttc, #fourn_ref, #tva_tx, #buying_price, #title_vat, #title_up_ht, #title_up_ht_currency, #title_up_ttc, #title_up_ttc_currency").show();
+	jQuery("#np_marginRate, #np_markRate, .np_marginRate, .np_markRate, #units, #title_units").show();
 	jQuery("#fournprice_predef").hide();
-	jQuery("#title_vat").show();
-	jQuery("#title_up_ht").show();
-	jQuery("#title_up_ht_currency").show();
-	jQuery("#title_up_ttc").show();
-	jQuery("#title_up_ttc_currency").show();
-	jQuery("#np_marginRate").show();	// May not exist
-	jQuery("#np_markRate").show();	// May not exist
-	jQuery(".np_marginRate").show();	// May not exist
-	jQuery(".np_markRate").show();	// May not exist
-	jQuery("#units, #title_units").show();
 }
 function setforpredef() {
 	console.log("Call setforpredef. We hide some fields and show dates");
 	jQuery("#select_type").val(-1);
-
 	jQuery("#prod_entry_mode_free").prop('checked',false).change();
 	jQuery("#prod_entry_mode_predef").prop('checked',true).change();
-	jQuery("#price_ht").val('').hide();
-	jQuery("#multicurrency_price_ht").hide();
-	jQuery("#price_ttc").hide();	// May not exist
-	jQuery("#fourn_ref").hide();
-	jQuery("#tva_tx").hide();
+	jQuery("#price_ht").val('')
+	jQuery("#price_ht, #multicurrency_price_ht, #price_ttc, #fourn_ref, #tva_tx, #title_vat, #title_up_ht, #title_up_ht_currency, #title_up_ttc, #title_up_ttc_currency").hide();
+	jQuery("#np_marginRate, #np_markRate, .np_marginRate, .np_markRate, #units, #title_units").hide();
 	jQuery("#buying_price").show();
-	jQuery("#title_vat").hide();
-	jQuery("#title_up_ht").hide();
-	jQuery("#title_up_ht_currency").hide();
-	jQuery("#title_up_ttc").hide();
-	jQuery("#title_up_ttc_currency").hide();
-	jQuery("#np_marginRate").hide();	// May not exist
-	jQuery("#np_markRate").hide();	// May not exist
-	jQuery(".np_marginRate").hide();	// May not exist
-	jQuery(".np_markRate").hide();	// May not exist
-	jQuery("#units, #title_units").hide();
-
-	jQuery('#trlinefordates').show();
-	jQuery('.divlinefordates').show();
+	jQuery('#trlinefordates, .divlinefordates').show();
 }
 
 </script>

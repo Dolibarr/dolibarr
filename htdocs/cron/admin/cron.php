@@ -44,7 +44,7 @@ if (!empty($actionsave))
 
 	$db->begin();
 
-	$i+=dolibarr_set_const($db,'CRON_KEY',trim(GETPOST("CRON_KEY")),'chaine',0,'',0);
+	$i+=dolibarr_set_const($db, 'CRON_KEY', trim(GETPOST("CRON_KEY")), 'chaine', 0, '', 0);
 
 	if ($i >= 1)
 	{
@@ -66,7 +66,7 @@ if (!empty($actionsave))
 llxHeader();
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans("CronSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("CronSetup"), $linkback, 'title_setup');
 
 // Configuration header
 $head = cronadmin_prepare_head();
@@ -117,12 +117,12 @@ print '</div>';
 print '</form>';
 
 
-print '<br><br>';
+print '<br><br><br>';
 
 print $langs->trans("UseMenuModuleToolsToAddCronJobs").'<br>';
-if (! empty($conf->global->CRON_WARNING_DELAY_HOURS)) print info_admin($langs->trans("WarningCronDelayed", $conf->global->CRON_WARNING_DELAY_HOURS));
+if (! empty($conf->global->CRON_WARNING_DELAY_HOURS)) print info_admin($langs->trans("WarningCronDelayed", $conf->global->CRON_WARNING_DELAY_HOURS)).'<br>';
 
-print '<br><br>';
+print '<br>';
 
 dol_print_cron_urls();
 

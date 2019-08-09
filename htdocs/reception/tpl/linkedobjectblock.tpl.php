@@ -41,14 +41,14 @@ foreach($linkedObjectBlock as $key => $objectlink)
         <td><?php echo $langs->trans("Reception"); ?></td>
         <td><?php echo $objectlink->getNomUrl(1); ?></td>
         <td></td>
-    	<td align="center"><?php echo dol_print_date($objectlink->date_delivery,'day'); ?></td>
-    	<td align="right"><?php
+    	<td class="center"><?php echo dol_print_date($objectlink->date_delivery, 'day'); ?></td>
+    	<td class="right"><?php
     		if ($user->rights->reception->lire) {
     			$total = $total + $objectlink->total_ht;
     			echo price($objectlink->total_ht);
     		} ?></td>
-    	<td align="right"><?php echo $objectlink->getLibStatut(3); ?></td>
-    	<td align="right">
+    	<td class="right"><?php echo $objectlink->getLibStatut(3); ?></td>
+    	<td class="right">
     		<?php
     		// For now, receptions must stay linked to order, so link is not deletable
     		if($object->element != 'order_supplier') {
@@ -66,11 +66,11 @@ if (count($linkedObjectBlock) > 1)
     <tr class="liste_total <?php echo (empty($noMoreLinkedObjectBlockAfter)?'liste_sub_total':''); ?>">
         <td><?php echo $langs->trans("Total"); ?></td>
         <td></td>
-    	<td align="center"></td>
-    	<td align="center"></td>
-    	<td align="right"><?php echo price($total); ?></td>
-    	<td align="right"></td>
-    	<td align="right"></td>
+    	<td class="center"></td>
+    	<td class="center"></td>
+    	<td class="right"><?php echo price($total); ?></td>
+    	<td class="right"></td>
+    	<td class="right"></td>
     </tr>
     <?php
 }

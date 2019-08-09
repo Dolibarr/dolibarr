@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2008 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2016	   Francis Appels       <francis.appels@yahoo.com>
+ * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,6 +45,7 @@ class Entrepot extends CommonObject
 	public $table_element='entrepot';
 
 	public $picto='stock';
+	public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
 	/**
 	 * Warehouse closed, inactive
@@ -75,8 +77,14 @@ class Entrepot extends CommonObject
 	 */
 	public $address;
 
-	//! Code Postal
+	/**
+	 * @var string Zipcode
+	 */
 	public $zip;
+
+    /**
+	 * @var string Town
+	 */
 	public $town;
 
 	/**
@@ -92,7 +100,7 @@ class Entrepot extends CommonObject
 	 *
 	 *  @param      DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		global $conf;
 		$this->db = $db;
@@ -115,7 +123,7 @@ class Entrepot extends CommonObject
 	 *	@param		User	$user       Object user that create the warehouse
 	 *	@return		int					>0 if OK, =<0 if KO
 	 */
-	function create($user)
+	public function create($user)
 	{
 		global $conf;
 
@@ -155,6 +163,19 @@ class Entrepot extends CommonObject
 					}
 				}
 
+                // Actions on extra fields
+                if (! $error)
+                {
+                    if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+                    {
+                        $result=$this->insertExtraFields();
+                        if ($result < 0)
+                        {
+                            $error++;
+                        }
+                    }
+                }
+
 				if (! $error)
 				{
 					$this->db->commit();
@@ -189,8 +210,12 @@ class Entrepot extends CommonObject
 	 *	@param      User	$user	User object
 	 *	@return		int				>0 if OK, <0 if KO
 	 */
-	function update($id, $user)
+	public function update($id, $user)
 	{
+	    global $conf;
+
+        $error=0;
+
 	    if (empty($id)) $id = $this->id;
 
 		// Check if new parent is already a child of current warehouse
@@ -231,13 +256,24 @@ class Entrepot extends CommonObject
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql=$this->db->query($sql);
-		if ($resql)
-		{
+
+        if (! $resql) {
+            $error++;
+            $this->errors[]="Error ".$this->db->lasterror();
+        }
+
+        if (! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($this->array_options) && count($this->array_options)>0) {
+            $result=$this->insertExtraFields();
+            if ($result < 0)
+            {
+                $error++;
+            }
+        }
+
+		if (!$error) {
 			$this->db->commit();
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			$this->error=$this->db->lasterror();
 			return -1;
@@ -252,14 +288,20 @@ class Entrepot extends CommonObject
 	 *  @param      int     $notrigger     1=No trigger
 	 *	@return		int					   <0 if KO, >0 if OK
 	 */
-	function delete($user, $notrigger = 0)
+	public function delete($user, $notrigger = 0)
 	{
+	    global $conf;
+
+		$error = 0;
+
+		dol_syslog(get_class($this)."::delete id=".$this->id, LOG_DEBUG);
+
 		$this->db->begin();
 
 		if (! $error && empty($notrigger))
 		{
             // Call trigger
-            $result=$this->call_trigger('WAREHOUSE_DELETE',$user);
+            $result=$this->call_trigger('WAREHOUSE_DELETE', $user);
             if ($result < 0) { $error++; }
             // End call triggers
 		}
@@ -271,7 +313,7 @@ class Entrepot extends CommonObject
 			{
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX.$table;
 				$sql.= " WHERE fk_entrepot = " . $this->id;
-				dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+
 				$result=$this->db->query($sql);
 				if (! $result)
 				{
@@ -281,36 +323,54 @@ class Entrepot extends CommonObject
 			}
 		}
 
+		// Removed extrafields
+		if (! $error)
+		{
+			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			{
+				$result=$this->deleteExtraFields();
+				if ($result < 0)
+				{
+					$error++;
+					dol_syslog(get_class($this)."::delete Error ".$this->error, LOG_ERR);
+				}
+			}
+		}
+
 		if (! $error)
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."entrepot";
 			$sql.= " WHERE rowid = " . $this->id;
-
-			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql1=$this->db->query($sql);
+			if (! $resql1)
+			{
+				$error++;
+				$this->errors[] = $this->db->lasterror();
+				dol_syslog(get_class($this)."::delete Error ".$this->db->lasterror(), LOG_ERR);
+			}
+		}
 
+		if (! $error)
+		{
 			// Update denormalized fields because we change content of produt_stock. Warning: Do not use "SET p.stock", does not works with pgsql
 			$sql = "UPDATE ".MAIN_DB_PREFIX."product as p SET stock = (SELECT SUM(ps.reel) FROM ".MAIN_DB_PREFIX."product_stock as ps WHERE ps.fk_product = p.rowid)";
-
-			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql2=$this->db->query($sql);
+			if (! $resql2)
+			{
+				$error++;
+				$this->errors[] = $this->db->lasterror();
+				dol_syslog(get_class($this)."::delete Error ".$this->db->lasterror(), LOG_ERR);
+			}
+		}
 
-			if ($resql1 && $resql2)
-			{
-				$this->db->commit();
-				return 1;
-			}
-			else
-			{
-				$this->db->rollback();
-				$this->error=$this->db->lasterror();
-				return -2;
-			}
+		if (! $error)
+		{
+			$this->db->commit();
+			return 1;
 		}
 		else
 		{
 			$this->db->rollback();
-			$this->error=$this->db->lasterror();
 			return -1;
 		}
 	}
@@ -323,9 +383,19 @@ class Entrepot extends CommonObject
 	 *	@param		string	$ref	Warehouse label
 	 *	@return		int				>0 if OK, <0 if KO
 	 */
-	function fetch($id, $ref = '')
+	public function fetch($id, $ref = '')
 	{
 		global $conf;
+
+		dol_syslog(get_class($this)."::fetch id=".$id." ref=".$ref);
+
+		// Check parameters
+		if (! $id && ! $ref)
+		{
+			$this->error='ErrorWrongParameters';
+			dol_syslog(get_class($this)."::fetch ".$this->error);
+			return -1;
+		}
 
 		$sql  = "SELECT rowid, fk_parent, ref as label, description, statut, lieu, address, zip, town, fk_pays as country_id";
 		$sql .= " FROM ".MAIN_DB_PREFIX."entrepot";
@@ -339,7 +409,6 @@ class Entrepot extends CommonObject
 			if ($ref) $sql.= " AND ref = '".$this->db->escape($ref)."'";
 		}
 
-		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -360,8 +429,12 @@ class Entrepot extends CommonObject
 				$this->town           = $obj->town;
 				$this->country_id     = $obj->country_id;
 
+                // Retreive all extrafield
+                // fetch optionals attributes and labels
+                $this->fetch_optionals();
+
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-	            $tmp=getCountry($this->country_id,'all');
+	            $tmp=getCountry($this->country_id, 'all');
 				$this->country=$tmp['label'];
 				$this->country_code=$tmp['code'];
 
@@ -369,6 +442,7 @@ class Entrepot extends CommonObject
 			}
 			else
 			{
+                $this->error="Record Not Found";
 				return 0;
 			}
 		}
@@ -386,7 +460,7 @@ class Entrepot extends CommonObject
 	 *  @param	int		$id      warehouse id
 	 *  @return	void
 	 */
-	function info($id)
+	public function info($id)
 	{
 		$sql = "SELECT e.rowid, e.datec, e.tms as datem, e.fk_user_author";
 		$sql.= " FROM ".MAIN_DB_PREFIX."entrepot as e";
@@ -427,14 +501,14 @@ class Entrepot extends CommonObject
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return list of all warehouses
 	 *
 	 *	@param	int		$status		Status
 	 * 	@return array				Array list of warehouses
 	 */
-	function list_array($status = 1)
+	public function list_array($status = 1)
 	{
         // phpcs:enable
 		$liste = array();
@@ -460,13 +534,13 @@ class Entrepot extends CommonObject
 		return $liste;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Return number of unique different product into a warehouse
 	 *
 	 * 	@return		Array		Array('nb'=>Nb, 'value'=>Value)
 	 */
-	function nb_different_products()
+	public function nb_different_products()
 	{
         // phpcs:enable
 		$ret=array();
@@ -494,13 +568,13 @@ class Entrepot extends CommonObject
 		return $ret;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Return stock and value of warehosue
 	 *
 	 * 	@return		Array		Array('nb'=>Nb, 'value'=>Value)
 	 */
-	function nb_products()
+	public function nb_products()
 	{
         // phpcs:enable
 		$ret=array();
@@ -535,12 +609,12 @@ class Entrepot extends CommonObject
 	 *	@param      int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 *	@return     string      		Label of status
 	 */
-	function getLibStatut($mode = 0)
+	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->statut,$mode);
+		return $this->LibStatut($this->statut, $mode);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Return label of a given status
 	 *
@@ -548,7 +622,7 @@ class Entrepot extends CommonObject
 	 *	@param  int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 *	@return string      		Label of status
 	 */
-	function LibStatut($statut, $mode = 0)
+	public function LibStatut($statut, $mode = 0)
 	{
         // phpcs:enable
 		global $langs;
@@ -563,26 +637,26 @@ class Entrepot extends CommonObject
 		{
 			return $label;
 		}
-		if ($mode == 1)
+		elseif ($mode == 1)
 		{
 			return $label;
 		}
-		if ($mode == 2)
+		elseif ($mode == 2)
 		{
 			if ($statut > 0) $picto = 'statut4';
 			return img_picto($label, $picto).' '.$label;
 		}
-		if ($mode == 3)
+		elseif ($mode == 3)
 		{
 			if ($statut > 0) $picto = 'statut4';
 			return img_picto($label, $picto).' '.$label;
 		}
-		if ($mode == 4)
+		elseif ($mode == 4)
 		{
 			if ($statut > 0) $picto = 'statut4';
 			return img_picto($label, $picto).' '.$label;
 		}
-		if ($mode == 5)
+		elseif ($mode == 5)
 		{
 			if ($statut > 0) $picto = 'statut4';
 			return $label.' '.img_picto($label, $picto);
@@ -599,7 +673,7 @@ class Entrepot extends CommonObject
      *  @param	    int   	$notooltip		1=Disable tooltip
 	 *	@return		string					String with URL
 	 */
-	function getNomUrl($withpicto = 0, $option = '', $showfullpath = 0, $notooltip = 0)
+	public function getNomUrl($withpicto = 0, $option = '', $showfullpath = 0, $notooltip = 0)
 	{
 		global $conf, $langs;
 		$langs->load("stocks");
@@ -607,7 +681,6 @@ class Entrepot extends CommonObject
         if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
 
         $result='';
-        $label = '';
 
         $label = '<u>' . $langs->trans("ShowWarehouse").'</u>';
         $label.= '<br><b>' . $langs->trans('Ref') . ':</b> ' . (empty($this->ref)?(empty($this->label)?$this->libelle:$this->label):$this->ref);
@@ -647,7 +720,7 @@ class Entrepot extends CommonObject
      *
      *  @return	void
      */
-    function initAsSpecimen()
+    public function initAsSpecimen()
     {
         global $user,$langs,$conf,$mysoc;
 
@@ -656,7 +729,7 @@ class Entrepot extends CommonObject
         // Initialize parameters
         $this->id=0;
         $this->libelle = 'WAREHOUSE SPECIMEN';
-        $this->description = 'WAREHOUSE SPECIMEN '.dol_print_date($now,'dayhourlog');
+        $this->description = 'WAREHOUSE SPECIMEN '.dol_print_date($now, 'dayhourlog');
 		$this->statut=1;
         $this->specimen=1;
 
@@ -668,13 +741,13 @@ class Entrepot extends CommonObject
         $this->country_code='FR';
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Return full path to current warehouse
 	 *
 	 *	@return		string	String full path to current warehouse separated by " >> "
 	 */
-	function get_full_arbo()
+	public function get_full_arbo()
 	{
         // phpcs:enable
         global $user,$langs,$conf;
@@ -710,15 +783,15 @@ class Entrepot extends CommonObject
         return implode(' >> ', array_reverse($TArbo));
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Return array of children warehouses ids from $id warehouse (recursive function)
 	 *
-	 * @param	int		$id					id parent warehouse
-	 * @param	array	$TChildWarehouses	array which will contain all children (param by reference)
-	 * @return	array	$TChildWarehouses	array which will contain all children
+	 * @param   int         $id					id parent warehouse
+	 * @param   integer[]	$TChildWarehouses	array which will contain all children (param by reference)
+	 * @return  integer[]   $TChildWarehouses	array which will contain all children
 	 */
-    function get_children_warehouses($id, &$TChildWarehouses)
+    public function get_children_warehouses($id, &$TChildWarehouses)
     {
         // phpcs:enable
 
@@ -735,7 +808,7 @@ class Entrepot extends CommonObject
 		}
 
 		return $TChildWarehouses;
-	}
+    }
 
 	/**
 	 *	Create object on disk

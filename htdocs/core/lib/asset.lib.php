@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2018      Alexandre Spangaro  <aspangaro@zendsi.com>
+/* Copyright (C) 2018      Alexandre Spangaro  <aspangaro@open-dsi.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -96,8 +96,8 @@ function asset_prepare_head()
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-	$upload_dir = $conf->assets->dir_output . '/' . get_exdir($filename,2,0,1,$object,'assets'). '/'. dol_sanitizeFileName($object->ref);
-	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview.*\.png)$'));
+	$upload_dir = $conf->assets->dir_output . '/' . get_exdir($filename, 2, 0, 1, $object, 'assets'). '/'. dol_sanitizeFileName($object->ref);
+	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
 	$nbLinks=Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT.'/asset/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
@@ -146,9 +146,9 @@ function asset_type_prepare_head(AssetType $object)
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'assettype');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'assettype');
 
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'assettype','remove');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'assettype', 'remove');
 
 	return $head;
 }

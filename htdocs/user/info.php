@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 $langs->load("users");
 
 // Security check
-$id = GETPOST('id','int');
+$id = GETPOST('id', 'int');
 $object = new User($db);
 if ($id > 0 || ! empty($ref))
 {

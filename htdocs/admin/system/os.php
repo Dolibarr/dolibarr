@@ -35,7 +35,7 @@ if (!$user->admin)
 
 llxHeader();
 
-print load_fiche_titre($langs->trans("InfoOS"),'','title_setup');
+print load_fiche_titre($langs->trans("InfoOS"), '', 'title_setup');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';

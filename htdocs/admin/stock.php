@@ -27,6 +27,7 @@
  */
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/stock.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "stocks"));
@@ -34,13 +35,13 @@ $langs->loadLangs(array("admin", "stocks"));
 // Securit check
 if (!$user->admin) accessforbidden();
 
-$action = GETPOST('action','alpha');
+$action = GETPOST('action', 'alpha');
 
 
 /*
  * Action
  */
-if (preg_match('/set_([a-z0-9_\-]+)/i',$action,$reg))
+if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
 {
     $code=$reg[1];
     if (dolibarr_set_const($db, $code, 1, 'chaine', 0, '', $conf->entity) > 0)
@@ -54,7 +55,7 @@ if (preg_match('/set_([a-z0-9_\-]+)/i',$action,$reg))
     }
 }
 
-if (preg_match('/del_([a-z0-9_\-]+)/i',$action,$reg))
+if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg))
 {
     $code=$reg[1];
     if (dolibarr_del_const($db, $code, $conf->entity) > 0)
@@ -72,10 +73,14 @@ if (preg_match('/del_([a-z0-9_\-]+)/i',$action,$reg))
  * View
  */
 
-llxHeader('',$langs->trans("StockSetup"));
+llxHeader('', $langs->trans("StockSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans("StockSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("StockSetup"), $linkback, 'title_setup');
+
+$head = stock_admin_prepare_head();
+
+dol_fiche_head($head, 'general', $langs->trans("StockSetup"), -1, 'stock');
 
 $form=new Form($db);
 
@@ -385,7 +390,7 @@ if ($virtualdiffersfromphysical)
 {
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-	print "<td>".$langs->trans("RuleForStockReplenishment")." ".img_help('help',$langs->trans("VirtualDiffersFromPhysical"))."</td>\n";
+	print "<td>".$langs->trans("RuleForStockReplenishment")." ".img_help('help', $langs->trans("VirtualDiffersFromPhysical"))."</td>\n";
   print '<td align="center">'.$langs->trans("Status").'</td>'."\n";
 	print '</tr>'."\n";
 
@@ -409,12 +414,12 @@ print '<table class="noborder" width="100%">';
 
 print '<tr class="liste_titre">';
 print "<td>".$langs->trans("Other")."</td>\n";
-print '<td align="center">'.$langs->trans("Status").'</td>'."\n";
+print '<td class="center">'.$langs->trans("Status").'</td>'."\n";
 print '</tr>'."\n";
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("UserWarehouseAutoCreate").'</td>';
-print '<td align="center">';
+print '<td class="center">';
 if ($conf->use_javascript_ajax) {
     print ajax_constantonoff('STOCK_USERSTOCK_AUTOCREATE');
 } else {
@@ -428,7 +433,7 @@ print '<tr class="oddeven">';
 print '<td>';
 print $form->textwithpicto($langs->trans("StockSupportServices"), $langs->trans("StockSupportServicesDesc"));
 print '</td>';
-print '<td align="center">';
+print '<td class="center">';
 if ($conf->use_javascript_ajax) {
     print ajax_constantonoff('STOCK_SUPPORTS_SERVICES');
 } else {
@@ -440,7 +445,7 @@ print "</tr>\n";
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("AllowAddLimitStockByWarehouse").'</td>';
-print '<td align="center">';
+print '<td class="center">';
 if ($conf->use_javascript_ajax) {
     print ajax_constantonoff('STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE');
 } else {
@@ -451,10 +456,9 @@ print "</td>\n";
 print "</tr>\n";
 
 if (! empty($conf->fournisseur->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)) {
-
     print '<tr class="oddeven">';
     print '<td>'.$langs->trans("UseDispatchStatus").'</td>';
-    print '<td class="right">';
+    print '<td class="center">';
 if ($conf->use_javascript_ajax) {
     print ajax_constantonoff('SUPPLIER_ORDER_USE_DISPATCH_STATUS');
 } else {

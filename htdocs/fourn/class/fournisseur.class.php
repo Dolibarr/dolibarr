@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
  */
 class Fournisseur extends Societe
 {
-	var $next_prev_filter="te.fournisseur = 1";		// Used to add a filter in Form::showrefnav method
+	public $next_prev_filter="te.fournisseur = 1";		// Used to add a filter in Form::showrefnav method
 
 
 	/**
@@ -41,7 +41,7 @@ class Fournisseur extends Societe
 	 *
 	 *  @param	DoliDB	$db		Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		$this->db = $db;
 
@@ -55,7 +55,7 @@ class Fournisseur extends Societe
 	 *
 	 * @return 	int		Nb of orders
 	 */
-	function getNbOfOrders()
+	public function getNbOfOrders()
 	{
 		$sql = "SELECT rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as cf";
@@ -81,7 +81,7 @@ class Fournisseur extends Societe
 	 *
 	 * @return	int		Nb of ref prices, or <0 if error
 	 */
-	function nbOfProductRefs()
+	public function nbOfProductRefs()
 	{
 		global $conf;
 
@@ -102,13 +102,13 @@ class Fournisseur extends Societe
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Load statistics indicators
 	 *
 	 * @return     int         <0 if KO, >0 if OK
 	 */
-	function load_state_board()
+	public function load_state_board()
 	{
         // phpcs:enable
 		global $conf, $user;
@@ -145,7 +145,7 @@ class Fournisseur extends Societe
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Create a supplier category
 	 *
@@ -153,7 +153,7 @@ class Fournisseur extends Societe
 	 *	@param		string	$name		Category name
 	 *  @return     int         		<0 if KO, 0 if OK
 	 */
-	function CreateCategory($user, $name)
+	public function CreateCategory($user, $name)
 	{
         // phpcs:enable
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie (label,visible,type)";
@@ -175,13 +175,13 @@ class Fournisseur extends Societe
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * 	Return the suppliers list
 	 *
 	 *	@return		array		Array of suppliers
 	 */
-	function ListArray()
+	public function ListArray()
 	{
         // phpcs:enable
 		global $conf;

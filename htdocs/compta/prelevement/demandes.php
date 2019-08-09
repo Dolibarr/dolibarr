@@ -34,19 +34,19 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 $langs->loadLangs(array('banks', 'categories', 'withdrawals', 'companies'));
 
 // Security check
-$socid = GETPOST('socid','int');
+$socid = GETPOST('socid', 'int');
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'prelevement','','','bons');
+$result = restrictedArea($user, 'prelevement', '', '', 'bons');
 
 // Get supervariables
-$page =  GETPOST('page','int');
-$sortorder = GETPOST('sortorder','alpha');
-$sortfield = GETPOST('sortfield','alpha');
+$page =  GETPOST('page', 'int');
+$sortorder = GETPOST('sortorder', 'alpha');
+$sortfield = GETPOST('sortfield', 'alpha');
 
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -81,7 +81,7 @@ if ($socid) $sql.= " AND f.fk_soc = ".$socid;
 if (!$statut) $sql.= " AND pfd.traite = 0";
 if ($statut) $sql.= " AND pfd.traite = ".$statut;
 $sql.= " AND pfd.fk_facture = f.rowid";
-if (dol_strlen(trim(GETPOST('search_societe','alpha'))))
+if (dol_strlen(trim(GETPOST('search_societe', 'alpha'))))
 {
 	$sql.= natural_search("s.nom", 'search_societe');
 }
@@ -110,18 +110,18 @@ if ($resql)
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("Bill", $_SERVER["PHP_SELF"]);
 	print_liste_field_titre("Company", $_SERVER["PHP_SELF"]);
-    print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "", "", $param, 'align="right"');
-	print_liste_field_titre("DateRequest", $_SERVER["PHP_SELF"], "", "", $param, 'align="center"');
+    print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "", "", $param, 'class="right"');
+	print_liste_field_titre("DateRequest", $_SERVER["PHP_SELF"], "", "", $param, 'class="center"');
 	print_liste_field_titre('');
 	print '</tr>';
 
 	print '<tr class="liste_titre">';
-	print '<td class="liste_titre"><input type="text" class="flat" name="search_facture" size="12" value="'.dol_escape_htmltag(GETPOST('search_facture','alpha')).'"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" name="search_societe" size="18" value="'.dol_escape_htmltag(GETPOST('search_societe','alpha')).'"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" name="search_facture" size="12" value="'.dol_escape_htmltag(GETPOST('search_facture', 'alpha')).'"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" name="search_societe" size="18" value="'.dol_escape_htmltag(GETPOST('search_societe', 'alpha')).'"></td>';
 	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"></td>';
 	// Action column
-	print '<td class="liste_titre" align="middle">';
+	print '<td class="liste_titre" class="middle">';
 	$searchpicto=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
 	print $searchpicto;
 	print '</td>';
@@ -129,7 +129,7 @@ if ($resql)
 
 	$users = array();
 
-	while ($i < min($num,$limit))
+	while ($i < min($num, $limit))
 	{
 		$obj = $db->fetch_object($resql);
 
@@ -139,20 +139,20 @@ if ($resql)
 		print '<td>';
 		$invoicestatic->id=$obj->rowid;
 		$invoicestatic->ref=$obj->ref;
-		print $invoicestatic->getNomUrl(1,'withdraw');
+		print $invoicestatic->getNomUrl(1, 'withdraw');
 		print '</td>';
 
 		print '<td>';
 		$thirdpartystatic->id=$obj->socid;
 		$thirdpartystatic->name=$obj->name;
-		print $thirdpartystatic->getNomUrl(1,'customer');
+		print $thirdpartystatic->getNomUrl(1, 'customer');
 		print '</td>';
 
-        print '<td align="right">'.price($obj->total_ttc).'</td>';
+        print '<td class="right">'.price($obj->total_ttc).'</td>';
 
-        print '<td align="center">'.dol_print_date($db->jdate($obj->date_demande),'day').'</td>';
+        print '<td class="center">'.dol_print_date($db->jdate($obj->date_demande), 'day').'</td>';
 
-        print '<td align="right"></td>';
+        print '<td class="right"></td>';
 
 		print '</tr>';
 		$i++;

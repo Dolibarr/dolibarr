@@ -20,8 +20,7 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || ! is_object($conf))
-{
+if (empty($conf) || ! is_object($conf)) {
 	print "Error, template page can't be called as URL";
 	exit;
 }
@@ -37,7 +36,7 @@ if (empty($conf) || ! is_object($conf))
 
         if (empty($id)) $id = $object->id;
 
-        $pdluoid=GETPOST('pdluoid','int');
+        $pdluoid=GETPOST('pdluoid', 'int');
 
 	    $pdluo = new Productbatch($db);
 
@@ -50,11 +49,11 @@ if (empty($conf) || ! is_object($conf))
 	        }
 	        else
 	        {
-	            dol_print_error($db,$pdluo->error,$pdluo->errors);
+	            dol_print_error($db, $pdluo->error, $pdluo->errors);
 	        }
 	    }
 
-		print load_fiche_titre($langs->trans("StockTransfer"),'','title_generic.png');
+		print load_fiche_titre($langs->trans("StockTransfer"), '', 'title_generic.png');
 
 		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="post">'."\n";
 
@@ -75,14 +74,14 @@ if (empty($conf) || ! is_object($conf))
 		{
 		    print '<td class="fieldrequired">'.$langs->trans("WarehouseSource").'</td>';
 		    print '<td>';
-		    print $formproduct->selectWarehouses((GETPOST("dwid")?GETPOST("dwid",'int'):(GETPOST('id_entrepot')?GETPOST('id_entrepot','int'):($object->element=='product' && $object->fk_default_warehouse?$object->fk_default_warehouse:'ifone'))), 'id_entrepot', 'warehouseopen,warehouseinternal', 1);
+		    print $formproduct->selectWarehouses((GETPOST("dwid")?GETPOST("dwid", 'int'):(GETPOST('id_entrepot')?GETPOST('id_entrepot', 'int'):($object->element=='product' && $object->fk_default_warehouse?$object->fk_default_warehouse:'ifone'))), 'id_entrepot', 'warehouseopen,warehouseinternal', 1);
 		    print '</td>';
 		}
 		if ($object->element == 'stock')
 		{
 		    print '<td class="fieldrequired">'.$langs->trans("Product").'</td>';
 		    print '<td>';
-		    print $form->select_produits(GETPOST('product_id'), 'product_id', (empty($conf->global->STOCK_SUPPORTS_SERVICES)?'0':''), 20, 0, -1, 2, '', 0, null, 0, 1, 0, 'maxwidth500');
+		    print $form->select_produits(GETPOST('product_id', 'int'), 'product_id', (empty($conf->global->STOCK_SUPPORTS_SERVICES)?'0':''), 0, 0, -1, 2, '', 0, null, 0, 1, 0, 'maxwidth500');
 		    print '</td>';
 		}
 
@@ -115,10 +114,10 @@ if (empty($conf) || ! is_object($conf))
 
 			print '<tr>';
 			print '<td>'.$langs->trans("EatByDate").'</td><td>';
-			print $form->selectDate(($d_eatby?$d_eatby:$pdluo->eatby),'eatby','','',1,"", 1, 0, ($pdluoid > 0 ? 1 : 0));		// If form was opened for a specific pdluoid, field is disabled
+			print $form->selectDate(($d_eatby?$d_eatby:$pdluo->eatby), 'eatby', '', '', 1, "", 1, 0, ($pdluoid > 0 ? 1 : 0));		// If form was opened for a specific pdluoid, field is disabled
 			print '</td>';
 			print '<td>'.$langs->trans("SellByDate").'</td><td>';
-			print $form->selectDate(($d_sellby?$d_sellby:$pdluo->sellby),'sellby','','',1,"", 1, 0, ($pdluoid > 0 ? 1 : 0));		// If form was opened for a specific pdluoid, field is disabled
+			print $form->selectDate(($d_sellby?$d_sellby:$pdluo->sellby), 'sellby', '', '', 1, "", 1, 0, ($pdluoid > 0 ? 1 : 0));		// If form was opened for a specific pdluoid, field is disabled
 			print '</td>';
 			print '</tr>';
 		}
@@ -130,7 +129,7 @@ if (empty($conf) || ! is_object($conf))
 		print '<td>';
 		print '<input type="text" name="label" class="minwidth300" value="'.dol_escape_htmltag($valformovementlabel).'">';
 		print '</td>';
-		print '<td>'.$langs->trans("InventoryCode").'</td><td><input class="maxwidth100onsmartphone" name="inventorycode" id="inventorycode" value="'.(isset($_POST["inventorycode"])?GETPOST("inventorycode",'alpha'):dol_print_date(dol_now(),'%y%m%d%H%M%S')).'"></td>';
+		print '<td>'.$langs->trans("InventoryCode").'</td><td><input class="maxwidth100onsmartphone" name="inventorycode" id="inventorycode" value="'.(isset($_POST["inventorycode"])?GETPOST("inventorycode", 'alpha'):dol_print_date(dol_now(), '%y%m%d%H%M%S')).'"></td>';
 		print '</tr>';
 
 		print '</table>';

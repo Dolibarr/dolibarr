@@ -31,20 +31,11 @@ dol_include_once('/mymodule/class/myobject.class.php');
 /**
  * API class for mymodule myobject
  *
- * @smart-auto-routing false
  * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
  */
 class MyModuleApi extends DolibarrApi
 {
-    /**
-     * @var array   $FIELDS     Mandatory fields, checked when create and update object
-     */
-    static $FIELDS = array(
-        'name',
-    );
-
-
     /**
      * @var MyObject $myobject {@type MyObject}
      */
@@ -56,10 +47,10 @@ class MyModuleApi extends DolibarrApi
      * @url     GET /
      *
      */
-    function __construct()
+    public function __construct()
     {
-		global $db, $conf;
-		$this->db = $db;
+        global $db, $conf;
+        $this->db = $db;
         $this->myobject = new MyObject($this->db);
     }
 
@@ -70,26 +61,26 @@ class MyModuleApi extends DolibarrApi
      *
      * @param 	int 	$id ID of myobject
      * @return 	array|mixed data without useless information
-	 *
+     *
      * @url	GET myobjects/{id}
      * @throws 	RestException
      */
-    function get($id)
+    public function get($id)
     {
-		if(! DolibarrApiAccess::$user->rights->myobject->read) {
-			throw new RestException(401);
-		}
+        if (! DolibarrApiAccess::$user->rights->mymodule->read) {
+            throw new RestException(401);
+        }
 
         $result = $this->myobject->fetch($id);
-        if( ! $result ) {
+        if (! $result) {
             throw new RestException(404, 'MyObject not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('myobject',$this->myobject->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-		}
+        if (! DolibarrApi::_checkAccessToResource('myobject', $this->myobject->id, 'mymodule_myobject')) {
+            throw new RestException(401, 'Access to instance id='.$this->myobject->id.' of object not allowed for login '.DolibarrApiAccess::$user->login);
+        }
 
-		return $this->_cleanObjectDatas($this->myobject);
+        return $this->_cleanObjectDatas($this->myobject);
     }
 
 
@@ -109,55 +100,56 @@ class MyModuleApi extends DolibarrApi
      *
      * @url	GET /myobjects/
      */
-    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
+    public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
     {
         global $db, $conf;
 
         $obj_ret = array();
+        $tmpobject = new MyObject($db);
+
+        if(! DolibarrApiAccess::$user->rights->bbb->read) {
+            throw new RestException(401);
+        }
 
         $socid = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : '';
 
-        $restictonsocid = 0;	// Set to 1 if there is a field socid in table of object
+        $restrictonsocid = 0;	// Set to 1 if there is a field socid in table of object
 
         // If the internal user must only see his customers, force searching by him
         $search_sale = 0;
-        if ($restictonsocid && ! DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) $search_sale = DolibarrApiAccess::$user->id;
+        if ($restrictonsocid && ! DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) $search_sale = DolibarrApiAccess::$user->id;
 
         $sql = "SELECT t.rowid";
-        if ($restictonsocid && (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
-        $sql.= " FROM ".MAIN_DB_PREFIX."myobject_mytable as t";
+        if ($restrictonsocid && (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
+        $sql.= " FROM ".MAIN_DB_PREFIX.$tmpobject->table_element." as t";
 
-        if ($restictonsocid && (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
+        if ($restrictonsocid && (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
         $sql.= " WHERE 1 = 1";
 
         // Example of use $mode
         //if ($mode == 1) $sql.= " AND s.client IN (1, 3)";
         //if ($mode == 2) $sql.= " AND s.client IN (2, 3)";
 
-        $tmpobject = new MyObject($db);
         if ($tmpobject->ismultientitymanaged) $sql.= ' AND t.entity IN ('.getEntity('myobject').')';
-        if ($restictonsocid && (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql.= " AND t.fk_soc = sc.fk_soc";
-        if ($restictonsocid && $socid) $sql.= " AND t.fk_soc = ".$socid;
-        if ($restictonsocid && $search_sale > 0) $sql.= " AND t.rowid = sc.fk_soc";		// Join for the needed table to filter by sale
+        if ($restrictonsocid && (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql.= " AND t.fk_soc = sc.fk_soc";
+        if ($restrictonsocid && $socid) $sql.= " AND t.fk_soc = ".$socid;
+        if ($restrictonsocid && $search_sale > 0) $sql.= " AND t.rowid = sc.fk_soc";		// Join for the needed table to filter by sale
         // Insert sale filter
-        if ($restictonsocid && $search_sale > 0)
-        {
+        if ($restrictonsocid && $search_sale > 0) {
             $sql .= " AND sc.fk_user = ".$search_sale;
         }
         if ($sqlfilters)
         {
-            if (! DolibarrApi::_checkFilters($sqlfilters))
-            {
+            if (! DolibarrApi::_checkFilters($sqlfilters)) {
                 throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
             }
-	        $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
             $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
 
         $sql.= $db->order($sortfield, $sortorder);
         if ($limit)	{
-            if ($page < 0)
-            {
+            if ($page < 0) {
                 $page = 0;
             }
             $offset = $limit * $page;
@@ -180,12 +172,12 @@ class MyModuleApi extends DolibarrApi
             }
         }
         else {
-            throw new RestException(503, 'Error when retrieve myobject list');
+            throw new RestException(503, 'Error when retrieving myobject list: '.$db->lasterror());
         }
         if( ! count($obj_ret)) {
             throw new RestException(404, 'No myobject found');
         }
-		return $obj_ret;
+        return $obj_ret;
     }
 
     /**
@@ -196,9 +188,9 @@ class MyModuleApi extends DolibarrApi
      *
      * @url	POST myobjects/
      */
-    function post($request_data = null)
+    public function post($request_data = null)
     {
-        if(! DolibarrApiAccess::$user->rights->myobject->create) {
+        if(! DolibarrApiAccess::$user->rights->mymodule->write) {
             throw new RestException(401);
         }
         // Check mandatory fields
@@ -208,7 +200,7 @@ class MyModuleApi extends DolibarrApi
             $this->myobject->$field = $value;
         }
         if( ! $this->myobject->create(DolibarrApiAccess::$user)) {
-            throw new RestException(500);
+            throw new RestException(500, "Error creating MyObject", array_merge(array($this->myobject->error), $this->myobject->errors));
         }
         return $this->myobject->id;
     }
@@ -222,9 +214,9 @@ class MyModuleApi extends DolibarrApi
      *
      * @url	PUT myobjects/{id}
      */
-    function put($id, $request_data = null)
+    public function put($id, $request_data = null)
     {
-        if(! DolibarrApiAccess::$user->rights->myobject->create) {
+        if(! DolibarrApiAccess::$user->rights->mymodule->write) {
             throw new RestException(401);
         }
 
@@ -233,18 +225,23 @@ class MyModuleApi extends DolibarrApi
             throw new RestException(404, 'MyObject not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('myobject',$this->myobject->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-		}
+        if( ! DolibarrApi::_checkAccessToResource('myobject', $this->myobject->id, 'mymodule_myobject')) {
+            throw new RestException(401, 'Access to instance id='.$this->myobject->id.' of object not allowed for login '.DolibarrApiAccess::$user->login);
+        }
 
         foreach($request_data as $field => $value) {
+            if ($field == 'id') continue;
             $this->myobject->$field = $value;
         }
 
-        if($this->myobject->update($id, DolibarrApiAccess::$user))
+        if ($this->myobject->update($id, DolibarrApiAccess::$user) > 0)
+        {
             return $this->get($id);
-
-        return false;
+        }
+        else
+        {
+            throw new RestException(500, $this->myobject->error);
+        }
     }
 
     /**
@@ -253,25 +250,25 @@ class MyModuleApi extends DolibarrApi
      * @param   int     $id   MyObject ID
      * @return  array
      *
-     * @url	DELETE myobject/{id}
+     * @url	DELETE myobjects/{id}
      */
-    function delete($id)
+    public function delete($id)
     {
-    	if(! DolibarrApiAccess::$user->rights->myobject->delete) {
-			throw new RestException(401);
-		}
+        if (! DolibarrApiAccess::$user->rights->mymodule->delete) {
+            throw new RestException(401);
+        }
         $result = $this->myobject->fetch($id);
-        if( ! $result ) {
+        if (! $result) {
             throw new RestException(404, 'MyObject not found');
         }
 
-        if( ! DolibarrApi::_checkAccessToResource('myobject',$this->myobject->id)) {
-            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        if (! DolibarrApi::_checkAccessToResource('myobject', $this->myobject->id, 'mymodule_myobject')) {
+            throw new RestException(401, 'Access to instance id='.$this->myobject->id.' of object not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
-		if( !$this->myobject->delete(DolibarrApiAccess::$user, 0))
+        if (! $this->myobject->delete(DolibarrApiAccess::$user))
         {
-            throw new RestException(500);
+            throw new RestException(500, 'Error when deleting MyObject : '.$this->myobject->error);
         }
 
          return array(
@@ -283,38 +280,41 @@ class MyModuleApi extends DolibarrApi
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     /**
      * Clean sensible object datas
      *
      * @param   object  $object    Object to clean
      * @return    array    Array of cleaned object properties
      */
-    function _cleanObjectDatas($object)
+    protected function _cleanObjectDatas($object)
     {
-    	$object = parent::_cleanObjectDatas($object);
+        // phpcs:enable
+        $object = parent::_cleanObjectDatas($object);
 
-    	/*unset($object->note);
-    	unset($object->address);
-    	unset($object->barcode_type);
-    	unset($object->barcode_type_code);
-    	unset($object->barcode_type_label);
-    	unset($object->barcode_type_coder);*/
+        /*unset($object->note);
+        unset($object->address);
+        unset($object->barcode_type);
+        unset($object->barcode_type_code);
+        unset($object->barcode_type_label);
+        unset($object->barcode_type_coder);*/
 
-    	return $object;
+        return $object;
     }
 
     /**
      * Validate fields before create or update object
      *
-     * @param array $data   Data to validate
-     * @return array
+     * @param	array		$data   Array of data to validate
+     * @return	array
      *
-     * @throws RestException
+     * @throws	RestException
      */
-    function _validate($data)
+    private function _validate($data)
     {
         $myobject = array();
-        foreach (MyObjectApi::$FIELDS as $field) {
+        foreach ($this->myobject->fields as $field => $propfield) {
+            if (in_array($field, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat')) || $propfield['notnull'] != 1) continue;   // Not a mandatory field
             if (!isset($data[$field]))
                 throw new RestException(400, "$field field missing");
             $myobject[$field] = $data[$field];

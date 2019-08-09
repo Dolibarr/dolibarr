@@ -39,7 +39,7 @@ class ActionsAdherentCardDefault extends ActionsAdherentCardCommon
      *	@param	string	$canvas			Name of canvas
      *	@param	string	$card			Name of tab (sub-canvas)
 	 */
-	function __construct($db, $dirmodule, $targetmodule, $canvas, $card)
+	public function __construct($db, $dirmodule, $targetmodule, $canvas, $card)
 	{
         $this->db               = $db;
         $this->dirmodule		= $dirmodule;
@@ -67,7 +67,7 @@ class ActionsAdherentCardDefault extends ActionsAdherentCardCommon
 		return $out;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Assign custom values for canvas
 	 *
@@ -75,7 +75,7 @@ class ActionsAdherentCardDefault extends ActionsAdherentCardCommon
 	 *  @param	int			$id				Id
 	 *  @return	void
 	 */
-	function assign_values(&$action, $id)
+	public function assign_values(&$action, $id)
 	{
         // phpcs:enable
 		global $limit, $offset, $sortfield, $sortorder;
@@ -102,16 +102,16 @@ class ActionsAdherentCardDefault extends ActionsAdherentCardCommon
         	$objsoc = new Societe($db);
             $objsoc->fetch($this->object->socid);
 
-            $this->tpl['actionstodo']=show_actions_todo($conf,$langs,$db,$objsoc,$this->object,1);
+            $this->tpl['actionstodo']=show_actions_todo($conf, $langs, $db, $objsoc, $this->object, 1);
 
-            $this->tpl['actionsdone']=show_actions_done($conf,$langs,$db,$objsoc,$this->object,1);
+            $this->tpl['actionsdone']=show_actions_done($conf, $langs, $db, $objsoc, $this->object, 1);
 		}
 		else
 		{
 			// Confirm delete contact
         	if ($action == 'delete' && $user->rights->adherent->supprimer)
         	{
-        		$this->tpl['action_delete'] = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$this->object->id,$langs->trans("DeleteAdherent"),$langs->trans("ConfirmDeleteAdherent"),"confirm_delete",'',0,1);
+        		$this->tpl['action_delete'] = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$this->object->id, $langs->trans("DeleteAdherent"), $langs->trans("ConfirmDeleteAdherent"), "confirm_delete", '', 0, 1);
         	}
 		}
 
@@ -122,7 +122,7 @@ class ActionsAdherentCardDefault extends ActionsAdherentCardCommon
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * 	Fetch datas list and save into ->list_datas
 	 *
@@ -132,7 +132,7 @@ class ActionsAdherentCardDefault extends ActionsAdherentCardCommon
 	 *  @param	string	$sortorder	Sort order ('ASC' or 'DESC')
 	 *  @return	void
 	 */
-	function LoadListDatas($limit, $offset, $sortfield, $sortorder)
+	public function LoadListDatas($limit, $offset, $sortfield, $sortorder)
 	{
         // phpcs:enable
 		global $conf, $langs;

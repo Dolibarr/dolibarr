@@ -46,6 +46,7 @@ create table llx_socpeople
   skype				varchar(255),
   twitter			varchar(255),                        		--
   facebook			varchar(255),                        		--
+  linkedin            			varchar(255),                       		--
   instagram                varchar(255),                        		--
   snapchat                 varchar(255),                        		--
   googleplus               varchar(255),                        		--

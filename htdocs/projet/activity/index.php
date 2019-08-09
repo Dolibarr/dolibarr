@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,8 +30,8 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-$search_project_user = GETPOST('search_project_user','int');
-$mine = GETPOST('mode','aZ09')=='mine' ? 1 : 0;
+$search_project_user = GETPOST('search_project_user', 'int');
+$mine = GETPOST('mode', 'aZ09')=='mine' ? 1 : 0;
 if ($search_project_user == $user->id) $mine = 1;
 
 // Security check
@@ -38,6 +39,11 @@ $socid=0;
 if ($user->societe_id > 0) $socid=$user->societe_id;
 //$result = restrictedArea($user, 'projet', $projectid);
 if (!$user->rights->projet->lire) accessforbidden();
+
+$hookmanager = new HookManager($db);
+
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('activityindex'));
 
 // Load translation files required by the page
 $langs->load("projects");
@@ -55,14 +61,14 @@ $year=$tmp['year'];
 
 $projectstatic=new Project($db);
 $taskstatic=new Task($db);
-$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,1);  // Return all projects I have permission on because I want my tasks and some of my task may be on a public projet that is not my project
+$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1);  // Return all projects I have permission on because I want my tasks and some of my task may be on a public projet that is not my project
 $taskstatic=new Task($db);
 $tasktmp=new Task($db);
 
 $title=$langs->trans("Activities");
 //if ($mine) $title=$langs->trans("MyActivities");
 
-llxHeader("",$title);
+llxHeader("", $title);
 
 
 // Title for combo list see all projects
@@ -127,7 +133,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td width="50%">'.$langs->trans('ActivityOnProjectToday').'</td>';
-print '<td width="50%" align="right">'.$langs->trans("Time").'</td>';
+print '<td width="50%" class="right">'.$langs->trans("Time").'</td>';
 print "</tr>\n";
 
 $sql = "SELECT p.rowid, p.ref, p.title, p.public, SUM(tt.task_duration) as nb";
@@ -157,7 +163,7 @@ if ( $resql )
 		$projectstatic->public=$row->public;
 		print $projectstatic->getNomUrl(1, '', 1);
 		print '</td>';
-		print '<td align="right">'.convertSecondToTime($row->nb, 'allhourmin').'</td>';
+		print '<td class="right">'.convertSecondToTime($row->nb, 'allhourmin').'</td>';
 		print "</tr>\n";
 		$total += $row->nb;
 	}
@@ -170,7 +176,7 @@ else
 }
 print '<tr class="liste_total">';
 print '<td>'.$langs->trans('Total').'</td>';
-print '<td align="right">'.convertSecondToTime($total, 'allhourmin').'</td>';
+print '<td class="right">'.convertSecondToTime($total, 'allhourmin').'</td>';
 print "</tr>\n";
 print "</table>";
 
@@ -182,7 +188,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans('ActivityOnProjectYesterday').'</td>';
-print '<td align="right">'.$langs->trans("Time").'</td>';
+print '<td class="right">'.$langs->trans("Time").'</td>';
 print "</tr>\n";
 
 $sql = "SELECT p.rowid, p.ref, p.title, p.public, SUM(tt.task_duration) as nb";
@@ -212,7 +218,7 @@ if ( $resql )
 		$projectstatic->public=$row->public;
 		print $projectstatic->getNomUrl(1, '', 1);
 		print '</td>';
-		print '<td align="right">'.convertSecondToTime($row->nb, 'allhourmin').'</td>';
+		print '<td class="right">'.convertSecondToTime($row->nb, 'allhourmin').'</td>';
 		print "</tr>\n";
 		$total += $row->nb;
 	}
@@ -225,7 +231,7 @@ else
 }
 print '<tr class="liste_total">';
 print '<td>'.$langs->trans('Total').'</td>';
-print '<td align="right">'.convertSecondToTime($total, 'allhourmin').'</td>';
+print '<td class="right">'.convertSecondToTime($total, 'allhourmin').'</td>';
 print "</tr>\n";
 print "</table>";
 
@@ -240,7 +246,7 @@ if ($db->type != 'pgsql')
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
     print '<td>'.$langs->trans("ActivityOnProjectThisWeek").'</td>';
-    print '<td align="right">'.$langs->trans("Time").'</td>';
+    print '<td class="right">'.$langs->trans("Time").'</td>';
     print "</tr>\n";
 
     $sql = "SELECT p.rowid, p.ref, p.title, p.public, SUM(tt.task_duration) as nb";
@@ -270,7 +276,7 @@ if ($db->type != 'pgsql')
     		$projectstatic->public=$row->public;
     		print $projectstatic->getNomUrl(1, '', 1);
     		print '</td>';
-    		print '<td align="right">'.convertSecondToTime($row->nb, 'allhourmin').'</td>';
+    		print '<td class="right">'.convertSecondToTime($row->nb, 'allhourmin').'</td>';
     		print "</tr>\n";
     		$total += $row->nb;
     	}
@@ -283,7 +289,7 @@ if ($db->type != 'pgsql')
     }
     print '<tr class="liste_total">';
     print '<td>'.$langs->trans('Total').'</td>';
-    print '<td align="right">'.convertSecondToTime($total, 'allhourmin').'</td>';
+    print '<td class="right">'.convertSecondToTime($total, 'allhourmin').'</td>';
     print "</tr>\n";
     print "</table><br>";
 
@@ -295,8 +301,8 @@ if (! empty($conf->global->PROJECT_TASK_TIME_MONTH))
 {
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
-    print '<td>'.$langs->trans("ActivityOnProjectThisMonth").': '.dol_print_date($now,"%B %Y").'</td>';
-    print '<td align="right">'.$langs->trans("Time").'</td>';
+    print '<td>'.$langs->trans("ActivityOnProjectThisMonth").': '.dol_print_date($now, "%B %Y").'</td>';
+    print '<td class="right">'.$langs->trans("Time").'</td>';
     print "</tr>\n";
 
     $sql = "SELECT p.rowid, p.ref, p.title, p.public, SUM(tt.task_duration) as nb";
@@ -323,7 +329,7 @@ if (! empty($conf->global->PROJECT_TASK_TIME_MONTH))
     		$projectstatic->title=$row->title;
     		print $projectstatic->getNomUrl(1, '', 1);
     		print '</td>';
-    		print '<td align="right">'.convertSecondToTime($row->nb, 'allhourmin').'</td>';
+    		print '<td class="right">'.convertSecondToTime($row->nb, 'allhourmin').'</td>';
     		print "</tr>\n";
     	}
     	$db->free($resql);
@@ -334,7 +340,7 @@ if (! empty($conf->global->PROJECT_TASK_TIME_MONTH))
     }
     print '<tr class="liste_total">';
     print '<td>'.$langs->trans('Total').'</td>';
-    print '<td align="right">'.convertSecondToTime($total, 'allhourmin').'</td>';
+    print '<td class="right">'.convertSecondToTime($total, 'allhourmin').'</td>';
     print "</tr>\n";
     print "</table>";
 }
@@ -345,7 +351,7 @@ if (! empty($conf->global->PROJECT_TASK_TIME_YEAR))
 	print '<br><table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("ActivityOnProjectThisYear").': '.strftime("%Y", $now).'</td>';
-	print '<td align="right">'.$langs->trans("Time").'</td>';
+	print '<td class="right">'.$langs->trans("Time").'</td>';
 	print "</tr>\n";
 
 	$sql = "SELECT p.rowid, p.ref, p.title, p.public, SUM(tt.task_duration) as nb";
@@ -356,7 +362,7 @@ if (! empty($conf->global->PROJECT_TASK_TIME_YEAR))
 	$sql.= " AND p.entity = ".$conf->entity;
 	$sql.= " AND tt.fk_task = t.rowid";
 	$sql.= " AND tt.fk_user = ".$user->id;
-	$sql.= " AND YEAR(task_date) = '".strftime("%Y",$now)."'";
+	$sql.= " AND YEAR(task_date) = '".strftime("%Y", $now)."'";
 	$sql.= " AND p.rowid in (".$projectsListId.")";
 	$sql.= " GROUP BY p.rowid, p.ref, p.title, p.public";
 
@@ -373,7 +379,7 @@ if (! empty($conf->global->PROJECT_TASK_TIME_YEAR))
 			$projectstatic->public=$row->public;
 			print $projectstatic->getNomUrl(1, '', 1);
 			print '</td>';
-			print '<td align="right">'.convertSecondToTime($row->nb, 'allhourmin').'</td>';
+			print '<td class="right">'.convertSecondToTime($row->nb, 'allhourmin').'</td>';
 			print "</tr>\n";
 		}
 		$db->free($resql);
@@ -384,7 +390,7 @@ if (! empty($conf->global->PROJECT_TASK_TIME_YEAR))
 	}
 	print '<tr class="liste_total">';
 	print '<td>'.$langs->trans('Total').'</td>';
-	print '<td align="right">'.convertSecondToTime($total, 'allhourmin').'</td>';
+	print '<td class="right">'.convertSecondToTime($total, 'allhourmin').'</td>';
 	print "</tr>\n";
 	print "</table>";
 }
@@ -444,7 +450,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_S
 	if ($mine || empty($user->rights->projet->all->lire)) $sql.= " AND p.rowid IN (".$projectsListId.")";  // project i have permission on
 	if ($mine)     // this may duplicate record if we are contact twice
 	{
-        $sql.= " AND ect.fk_c_type_contact IN (".join(',',array_keys($listoftaskcontacttype)).") AND ect.element_id = t.rowid AND ect.fk_socpeople = ".$user->id;
+        $sql.= " AND ect.fk_c_type_contact IN (".join(',', array_keys($listoftaskcontacttype)).") AND ect.element_id = t.rowid AND ect.fk_socpeople = ".$user->id;
 	}
 	if ($socid)	$sql.= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
 	$sql.= " AND p.fk_statut=1";
@@ -467,17 +473,31 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_S
 		print '<th>'.$langs->trans('OpenedProjects').'</th>';
 		if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES)) print '<th>'.$langs->trans('OpportunityStatus').'</th>';
 		print '<th>'.$langs->trans('Task').'</th>';
-		print '<th align="center">'.$langs->trans('DateStart').'</th>';
-		print '<th align="center">'.$langs->trans('DateEnd').'</th>';
-		print '<th align="right">'.$langs->trans('PlannedWorkload').'</th>';
-		print '<th align="right">'.$langs->trans('TimeSpent').'</th>';
-		print '<th align="right">'.$langs->trans("ProgressCalculated").'</td>';
-		print '<th align="right">'.$langs->trans("ProgressDeclared").'</td>';
+		print '<th class="center">'.$langs->trans('DateStart').'</th>';
+		print '<th class="center">'.$langs->trans('DateEnd').'</th>';
+		print '<th class="right">'.$langs->trans('PlannedWorkload').'</th>';
+		print '<th class="right">'.$langs->trans('TimeSpent').'</th>';
+		print '<th class="right">'.$langs->trans("ProgressCalculated").'</td>';
+		print '<th class="right">'.$langs->trans("ProgressDeclared").'</td>';
 		print '</tr>';
 
 		while ($i < $num && $i < $max)
 		{
 			$obj = $db->fetch_object($resql);
+
+			$projectstatic->id = $obj->projectid;
+			$projectstatic->ref = $obj->ref;
+			$projectstatic->title = $obj->title;
+			$projectstatic->statut = $obj->status;
+			$projectstatic->public = $obj->public;
+			$projectstatic->dateo = $db->jdate($obj->projdateo);
+			$projectstatic->datee = $db->jdate($obj->projdatee);
+
+			$taskstatic->projectstatus = $obj->projectstatus;
+			$taskstatic->progress = $obj->progress;
+			$taskstatic->fk_statut = $obj->status;
+			$taskstatic->dateo = $db->jdate($obj->dateo);
+			$taskstatic->datee = $db->jdate($obj->datee);
 
 			$username='';
 			if ($obj->userid && $userstatic->id != $obj->userid)	// We have a user and it is not last loaded user
@@ -485,20 +505,12 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_S
 				$result=$userstatic->fetch($obj->userid);
 				if (! $result) $userstatic->id=0;
 			}
-			if ($userstatic->id) $username = $userstatic->getNomUrl(0,0);
+			if ($userstatic->id) $username = $userstatic->getNomUrl(0, 0);
 
 			print '<tr class="oddeven">';
 			//print '<td>'.$username.'</td>';
 			print '<td>';
-			$projectstatic->id=$obj->projectid;
-			$projectstatic->ref=$obj->ref;
-			$projectstatic->title=$obj->title;
-			$projectstatic->statut = $obj->status;
-			$projectstatic->public = $obj->public;
-			$projectstatic->dateo = $db->jdate($obj->projdateo);
-			$projectstatic->datee = $db->jdate($obj->projdatee);
-
-			print $projectstatic->getNomUrl(1,'',0,'','<br>');
+			print $projectstatic->getNomUrl(1, '', 0, '', '<br>');
 			print '</td>';
 			if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 			{
@@ -513,27 +525,21 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_S
 				$tasktmp->id = $obj->taskid;
 				$tasktmp->ref = $obj->ref;
 				$tasktmp->label = $obj->label;
-				print $tasktmp->getNomUrl(1,'withproject','task',1,'<br>');
+				print $tasktmp->getNomUrl(1, 'withproject', 'task', 1, '<br>');
 			}
 			else print $langs->trans("NoTasks");
 			print '</td>';
-			$taskstatic->projectstatus = $obj->projectstatus;
-			$taskstatic->progress = $obj->progress;
-			$taskstatic->fk_statut = $obj->status;
-			$taskstatic->dateo = $db->jdate($obj->dateo);
-			$taskstatic->datee = $db->jdate($obj->datee);
-			print '<td align="center">'.dol_print_date($db->jdate($obj->dateo),'day').'</td>';
-			print '<td align="center">'.dol_print_date($db->jdate($obj->datee),'day');
-			print dol_print_date($obj->date_end,'dayhour');
+			print '<td class="center">'.dol_print_date($db->jdate($obj->dateo), 'day').'</td>';
+			print '<td class="center">'.dol_print_date($db->jdate($obj->datee), 'day');
 			if ($taskstatic->hasDelay()) print img_warning($langs->trans("Late"));
 			print '</td>';
-			print '<td align="right"><a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$obj->taskid.'&withproject=1">';
+			print '<td class="right"><a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$obj->taskid.'&withproject=1">';
 			print convertSecondToTime($obj->planned_workload, 'allhourmin');
 			print '</a></td>';
-			print '<td align="right"><a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$obj->taskid.'&withproject=1">';
+			print '<td class="right"><a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$obj->taskid.'&withproject=1">';
 			print convertSecondToTime($obj->timespent, 'allhourmin');
 			print '</a></td>';
-			print '<td align="right">';
+			print '<td class="right">';
 			if (! empty($obj->taskid))
 			{
 				if (empty($obj->planned_workload) > 0) {
@@ -544,7 +550,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_S
 			}
 			print $percentcompletion;
 			print '</td>';
-			print '<td align="right">';
+			print '<td class="right">';
 			print ($obj->taskid>0)?$obj->progress.'%':'';
 			print '</td>';
 			print "</tr>\n";
@@ -572,6 +578,9 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_S
 
 
 print '</div></div></div>';
+
+$parameters = array('user' => $user);
+$reshook = $hookmanager->executeHooks('dashboardActivities', $parameters, $object); // Note that $action and $object may have been modified by hook
 
 // End of page
 llxFooter();
