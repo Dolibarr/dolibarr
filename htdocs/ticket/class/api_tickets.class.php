@@ -160,15 +160,15 @@ class Tickets extends DolibarrApi
             $num = count($this->ticket->cache_msgs_ticket);
             $i = 0;
             while ($i < $num) {
-                if ($this->ticket->cache_msgs_ticket[$i]['fk_user_action'] > 0) {
+                if ($this->ticket->cache_msgs_ticket[$i]['fk_user_author'] > 0) {
                     $user_action = new User($this->db);
-                    $user_action->fetch($this->ticket->cache_msgs_ticket[$i]['fk_user_action']);
+                    $user_action->fetch($this->ticket->cache_msgs_ticket[$i]['fk_user_author']);
                 }
 
                 // Now define messages
                 $messages[] = array(
                 'id' => $this->ticket->cache_msgs_ticket[$i]['id'],
-                'fk_user_action' => $this->ticket->cache_msgs_ticket[$i]['fk_user_action'],
+                'fk_user_action' => $this->ticket->cache_msgs_ticket[$i]['fk_user_author'],
                 'fk_user_action_socid' =>  $user_action->socid,
                 'fk_user_action_string' => dolGetFirstLastname($user_action->firstname, $user_action->lastname),
                 'message' => $this->ticket->cache_msgs_ticket[$i]['message'],
@@ -195,6 +195,7 @@ class Tickets extends DolibarrApi
                 // Now define messages
                 $history[] = array(
                 'id' => $this->ticket->cache_logs_ticket[$i]['id'],
+                'fk_user_author' => $this->ticket->cache_msgs_ticket[$i]['fk_user_author'],
                 'fk_user_action' => $this->ticket->cache_logs_ticket[$i]['fk_user_create'],
                 'fk_user_action_string' => dolGetFirstLastname($user_action->firstname, $user_action->lastname),
                 'message' => $this->ticket->cache_logs_ticket[$i]['message'],
