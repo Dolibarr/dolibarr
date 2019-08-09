@@ -143,7 +143,7 @@ class TraceableDB extends DoliDB
 	 */
 	public static function convertSQLFromMysql($line, $type = 'ddl')
 	{
-		return $this->db->convertSQLFromMysql($line);
+		return self::$db->convertSQLFromMysql($line);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
