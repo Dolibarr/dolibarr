@@ -1028,7 +1028,7 @@ else
         if ($type == 1)
         {
             print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="3">';
-            print '<input name="surface" size="4" value="'.GETPOST('duration_value', 'int').'">';
+            print '<input name="duration_value" size="4" value="'.GETPOST('duration_value', 'int').'">';
             print $formproduct->selectMeasuringUnits("duration_unit", "time", GETPOST('duration_value', 'alpha'), 0, 1);
             print '</td></tr>';
         }
