@@ -902,6 +902,9 @@ elseif (! empty($user->conf->MAIN_OPTIMIZEFORTEXTBROWSER))
 	$conf->global->MAIN_OPTIMIZEFORTEXTBROWSER=$user->conf->MAIN_OPTIMIZEFORTEXTBROWSER;
 }
 
+// set MAIN_OPTIMIZEFORCOLORBLIND
+$conf->global->MAIN_OPTIMIZEFORCOLORBLIND=$user->conf->MAIN_OPTIMIZEFORCOLORBLIND;
+
 // Set terminal output option according to conf->browser.
 if (GETPOST('dol_hide_leftmenu', 'int') || ! empty($_SESSION['dol_hide_leftmenu']))               $conf->dol_hide_leftmenu=1;
 if (GETPOST('dol_hide_topmenu', 'int') || ! empty($_SESSION['dol_hide_topmenu']))                 $conf->dol_hide_topmenu=1;
@@ -1085,6 +1088,10 @@ if (! function_exists("llxHeader"))
 		{
 		    global $mainmenu;
 		    if ($mainmenu != 'website') $tmpcsstouse=$morecssonbody;  // We do not use sidebar-collpase by default to have menuhider open by default.
+		}
+
+		if(!empty($conf->global->MAIN_OPTIMIZEFORCOLORBLIND)){
+			$tmpcsstouse.= ' colorblind-'.strip_tags($conf->global->MAIN_OPTIMIZEFORCOLORBLIND);
 		}
 
 		print '<body id="mainbody" class="'.$tmpcsstouse.'">' . "\n";
