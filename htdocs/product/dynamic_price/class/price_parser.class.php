@@ -271,7 +271,7 @@ class PriceParser
 		}
 		$supplier_min_price = $productFournisseur->fourn_unitprice;
 
-		//Accessible values by expressions
+        //Accessible values by expressions
 		$extra_values = array_merge($extra_values, array(
 			"supplier_min_price" => $supplier_min_price,
 		));
