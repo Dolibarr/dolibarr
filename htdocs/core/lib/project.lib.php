@@ -2048,7 +2048,7 @@ function getTaskProgressView($task, $label = true, $progressNumber = true, $hide
 
 
     $out.= '</span>';
-    $out.= '    <div class="progress sm classfortooltip" title="'.doubleval($task->progress).'%" >';
+    $out.= '    <div class="progress sm" title="'.doubleval($task->progress).'%" >';
     $out.= '        <div class="progress-bar '.$progressBarClass.'" style="width: '.doubleval($task->progress).'%"></div>';
     $out.= '    </div>';
     $out.= '</div>';
