@@ -1985,23 +1985,23 @@ function getTaskProgressView($task, $label = true, $progressNumber = true, $hide
         // this conf is actually hidden, by default we use 1% for "be carefull or warning"
         $warningRatio = !empty($conf->global->PROJECT_TIME_SPEND_WARNING_PERCENT) ? (1 + $conf->global->PROJECT_TIME_SPEND_WARNING_PERCENT / 100) : 1.01;
 
-        $diffTitle = '<br/>'.$langs->trans('ProgressDeclared').' : '.price($task->progress).'%';
-        $diffTitle.= '<br/>'.$langs->trans('ProgressCalculated').' : '.price($progressCalculated).'%';
+        $diffTitle = '<br/>'.$langs->trans('ProgressDeclared').' : '.$task->progress.'%';
+        $diffTitle.= '<br/>'.$langs->trans('ProgressCalculated').' : '.$progressCalculated.'%';
 
         if($progressCalculated > doubleval($task->progress)){
             $progressBarClass = 'progress-bar-danger';
-            $title = $langs->trans('TheReportedProgressIsLessThanTheCalculatedProgressionByX', price(abs($task->progress-$progressCalculated)).'%');
-            $diff = '<span class="text-danger classfortooltip"" title="'.dol_htmlentities($title.$diffTitle).'" ><i class="fa fa-caret-down"></i> '.price($task->progress-$progressCalculated).'%</span>';
+            $title = $langs->trans('TheReportedProgressIsLessThanTheCalculatedProgressionByX', abs($task->progress-$progressCalculated).'%');
+            $diff = '<span class="text-danger classfortooltip"" title="'.dol_htmlentities($title.$diffTitle).'" ><i class="fa fa-caret-down"></i> '.($task->progress-$progressCalculated).'%</span>';
         }
         elseif($progressCalculated * $warningRatio >= doubleval($task->progress)){ // warning if close at 1%
             $progressBarClass = 'progress-bar-warning';
-            $title = $langs->trans('TheReportedProgressIsLessThanTheCalculatedProgressionByX', price(abs($task->progress-$progressCalculated)).'%');
-            $diff = '<span class="text-warning classfortooltip" title="'.dol_htmlentities($title.$diffTitle).'" ><i class="fa fa-caret-left"></i> '.price($task->progress-$progressCalculated).'%</span>';
+            $title = $langs->trans('TheReportedProgressIsLessThanTheCalculatedProgressionByX', abs($task->progress-$progressCalculated).'%');
+            $diff = '<span class="text-warning classfortooltip" title="'.dol_htmlentities($title.$diffTitle).'" ><i class="fa fa-caret-left"></i> '.($task->progress-$progressCalculated).'%</span>';
         }
         else{
             $progressBarClass = 'progress-bar-success';
-            $title = $langs->trans('TheReportedProgressIsMoreThanTheCalculatedProgressionByX', price($task->progress-$progressCalculated).'%');
-            $diff = '<span class="text-success classfortooltip" title="'.dol_htmlentities($title.$diffTitle).'" ><i class="fa fa-caret-up"></i> '.price($task->progress-$progressCalculated).'%</span>';
+            $title = $langs->trans('TheReportedProgressIsMoreThanTheCalculatedProgressionByX', ($task->progress-$progressCalculated).'%');
+            $diff = '<span class="text-success classfortooltip" title="'.dol_htmlentities($title.$diffTitle).'" ><i class="fa fa-caret-up"></i> '.($task->progress-$progressCalculated).'%</span>';
         }
     }
 
@@ -2048,7 +2048,7 @@ function getTaskProgressView($task, $label = true, $progressNumber = true, $hide
 
 
     $out.= '</span>';
-    $out.= '    <div class="progress sm classfortooltip" title="'.price($task->progress).'%" >';
+    $out.= '    <div class="progress sm classfortooltip" title="'.doubleval($task->progress).'%" >';
     $out.= '        <div class="progress-bar '.$progressBarClass.'" style="width: '.doubleval($task->progress).'%"></div>';
     $out.= '    </div>';
     $out.= '</div>';
@@ -2095,7 +2095,7 @@ function getTaskProgressBadge($task, $label = '', $tooltip = '')
     }
 
     if(empty($label)){
-        $label = price($task->progress).' %';
+        $label = $task->progress.' %';
     }
 
     if(!empty($label)){
