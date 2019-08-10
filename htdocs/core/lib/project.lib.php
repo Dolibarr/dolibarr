@@ -2010,7 +2010,7 @@ function getTaskProgressView($task, $label = true, $progressNumber = true, $hide
     if($label !== false)
     {
         $out.= '    <span class="progress-text">';
-        if ($task->hasDelay()) $out.= img_warning($langs->trans("Late")).' ';
+
         if($label!==true){
             $out.= $label; // replace label by param
         }
@@ -2028,6 +2028,7 @@ function getTaskProgressView($task, $label = true, $progressNumber = true, $hide
             $out.= $progressNumber; // replace label by param
         }
         else{
+            if ($task->hasDelay()) $out.= img_warning($langs->trans("Late")).' ';
 
             $out.= !empty($diff) ? $diff.' ':'';
 
