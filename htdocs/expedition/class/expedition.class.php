@@ -353,7 +353,7 @@ class Expedition extends CommonObject
 				{
 					if (! isset($this->lines[$i]->detail_batch))
 					{	// no batch management
-						if (! $this->create_line($this->lines[$i]->entrepot_id, $this->lines[$i]->origin_line_id, $this->lines[$i]->qty, $this->lines[$i]->array_options) > 0)
+						if (! $this->create_line($this->lines[$i]->entrepot_id, $this->lines[$i]->origin_line_id, $this->lines[$i]->qty, $this->lines[$i]->rang, $this->lines[$i]->array_options) > 0)
 						{
 							$error++;
 						}
@@ -441,10 +441,11 @@ class Expedition extends CommonObject
 	 * @param 	int		$entrepot_id		Id of warehouse
 	 * @param 	int		$origin_line_id		Id of source line
 	 * @param 	int		$qty				Quantity
+	 * @param 	int		$rang				Rang
 	 * @param	array	$array_options		extrafields array
 	 * @return	int							<0 if KO, line_id if OK
 	 */
-	public function create_line($entrepot_id, $origin_line_id, $qty, $array_options = 0)
+	public function create_line($entrepot_id, $origin_line_id, $qty, $rang, $array_options = 0)
 	{
 		//phpcs:enable
 		global $user;
@@ -454,6 +455,7 @@ class Expedition extends CommonObject
 		$expeditionline->entrepot_id = $entrepot_id;
 		$expeditionline->fk_origin_line = $origin_line_id;
 		$expeditionline->qty = $qty;
+		$expeditionline->rang = $rang;
 		$expeditionline->array_options = $array_options;
 
 		if (($lineId = $expeditionline->insert($user)) < 0)
@@ -490,7 +492,7 @@ class Expedition extends CommonObject
 		// create shipment lines
 		foreach ($stockLocationQty as $stockLocation => $qty)
 		{
-			if (($line_id = $this->create_line($stockLocation, $line_ext->origin_line_id, $qty, $array_options)) < 0)
+			if (($line_id = $this->create_line($stockLocation, $line_ext->origin_line_id, $qty, $line_ext->rang, $array_options)) < 0)
 			{
 				$error++;
 			}
@@ -925,6 +927,9 @@ class Expedition extends CommonObject
 
 		$orderline = new OrderLine($this->db);
 		$orderline->fetch($id);
+
+		// Copy the rang of the order line to the expedition line
+		$line->rang = $orderline->rang;
 
 		if (! empty($conf->stock->enabled) && ! empty($orderline->fk_product))
 		{
@@ -1383,7 +1388,7 @@ class Expedition extends CommonObject
 		$sql = "SELECT cd.rowid, cd.fk_product, cd.label as custom_label, cd.description, cd.qty as qty_asked, cd.product_type";
 		$sql.= ", cd.total_ht, cd.total_localtax1, cd.total_localtax2, cd.total_ttc, cd.total_tva";
 		$sql.= ", cd.vat_src_code, cd.tva_tx, cd.localtax1_tx, cd.localtax2_tx, cd.localtax1_type, cd.localtax2_type, cd.info_bits, cd.price, cd.subprice, cd.remise_percent,cd.buy_price_ht as pa_ht";
-		$sql.= ", cd.fk_multicurrency, cd.multicurrency_code, cd.multicurrency_subprice, cd.multicurrency_total_ht, cd.multicurrency_total_tva, cd.multicurrency_total_ttc";
+		$sql.= ", cd.fk_multicurrency, cd.multicurrency_code, cd.multicurrency_subprice, cd.multicurrency_total_ht, cd.multicurrency_total_tva, cd.multicurrency_total_ttc, cd.rang";
 		$sql.= ", ed.rowid as line_id, ed.qty as qty_shipped, ed.fk_origin_line, ed.fk_entrepot";
 		$sql.= ", p.ref as product_ref, p.label as product_label, p.fk_product_type";
 		$sql.= ", p.weight, p.weight_units, p.length, p.length_units, p.surface, p.surface_units, p.volume, p.volume_units, p.tobatch as product_tobatch";
@@ -1452,6 +1457,7 @@ class Expedition extends CommonObject
 				$line->label			= $obj->custom_label;
 				$line->description    	= $obj->description;
 				$line->qty_asked      	= $obj->qty_asked;
+				$line->rang             = $obj->rang;
 				$line->weight         	= $obj->weight;
 				$line->weight_units   	= $obj->weight_units;
 				$line->length         	= $obj->length;
@@ -2460,6 +2466,11 @@ class ExpeditionLigne extends CommonObjectLine
 	public $product_desc;
 
     /**
+     * @var int rang of line
+     */
+    public $rang;
+
+    /**
      * @var float weight
      */
     public $weight;
@@ -2579,16 +2590,28 @@ class ExpeditionLigne extends CommonObjectLine
 
 		$this->db->begin();
 
+		if (empty($this->rang)) $this->rang = 0;
+
+		// Rank to use
+		$ranktouse = $this->rang;
+		if ($ranktouse == -1)
+		{
+			$rangmax = $this->line_max($fk_expedition);
+			$ranktouse = $rangmax + 1;
+		}
+
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."expeditiondet (";
 		$sql.= "fk_expedition";
 		$sql.= ", fk_entrepot";
 		$sql.= ", fk_origin_line";
 		$sql.= ", qty";
+		$sql.= ", rang";
 		$sql.= ") VALUES (";
 		$sql.= $this->fk_expedition;
 		$sql.= ", ".(empty($this->entrepot_id) ? 'NULL' : $this->entrepot_id);
 		$sql.= ", ".$this->fk_origin_line;
 		$sql.= ", ".$this->qty;
+		$sql.= ", ".$ranktouse;
 		$sql.= ")";
 
 		dol_syslog(get_class($this)."::insert", LOG_DEBUG);

@@ -152,6 +152,12 @@ if (empty($reshook)) {
 			    $tabparam["MAIN_OPTIMIZEFORTEXTBROWSER"] = 0;
 			}
 
+			if (GETPOST('MAIN_OPTIMIZEFORCOLORBLIND')) {
+				$tabparam["MAIN_OPTIMIZEFORCOLORBLIND"] = GETPOST('MAIN_OPTIMIZEFORCOLORBLIND');
+			} else {
+				$tabparam["MAIN_OPTIMIZEFORCOLORBLIND"] = 0;
+			}
+
 			$result = dol_set_user_param($db, $conf, $object, $tabparam);
 
 			header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $id);

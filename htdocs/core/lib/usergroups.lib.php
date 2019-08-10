@@ -947,5 +947,44 @@ function show_theme($fuser, $edit = 0, $foruserprofile = false)
 	    */
 	}
 
+
+	// Use MAIN_OPTIMIZEFORTEXTBROWSER
+	if ($foruserprofile)
+	{
+		//$default=yn($conf->global->MAIN_OPTIMIZEFORCOLORBLIND);
+		$default=$langs->trans('No');
+		print '<tr class="oddeven">';
+		print '<td>'.$langs->trans("MAIN_OPTIMIZEFORCOLORBLIND").'</td>';
+		print '<td colspan="'.($colspan-1).'">';
+
+		$colorBlindOptions = array(
+			0 => $langs->trans('No'),
+			'protanopia' => $langs->trans('Protanopia'),
+			'deuteranopes' => $langs->trans('Deuteranopes'),
+			'tritanopes' => $langs->trans('Tritanopes'),
+		);
+
+		if ($edit)
+		{
+			print $form->selectArray('MAIN_OPTIMIZEFORCOLORBLIND', $colorBlindOptions, $fuser->conf->MAIN_OPTIMIZEFORCOLORBLIND, 0);
+		}
+		else
+		{
+			if (!empty($fuser->conf->MAIN_OPTIMIZEFORCOLORBLIND) && isset($colorBlindOptions[$fuser->conf->MAIN_OPTIMIZEFORCOLORBLIND])){
+				print $colorBlindOptions[$fuser->conf->MAIN_OPTIMIZEFORCOLORBLIND];
+			}
+			else{
+				print yn(0);
+			}
+		}
+		print ' &nbsp; ('.$langs->trans("Default").': <strong>'.$default.'</strong>) ';
+		print $form->textwithpicto('', $langs->trans("MAIN_OPTIMIZEFORCOLORBLINDDesc"));
+		print '</td>';
+		print '</tr>';
+	}
+	else
+	{
+
+	}
 	print '</table>';
 }
