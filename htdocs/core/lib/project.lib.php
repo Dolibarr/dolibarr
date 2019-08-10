@@ -457,6 +457,9 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				$taskstatic->progress = $lines[$i]->progress;
 				$taskstatic->fk_statut = $lines[$i]->status;
 				$taskstatic->datee = $lines[$i]->date_end;
+                $taskstatic->planned_workload= $lines[$i]->planned_workload;
+                $taskstatic->duration_effective= $lines[$i]->duration;
+
 
 				if ($showproject)
 				{
@@ -556,9 +559,14 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				print '<td class="right">';
 				if ($lines[$i]->progress != '')
 				{
-					print $lines[$i]->progress.' %';
+					print getTaskProgressBadge($taskstatic);
 				}
 				print '</td>';
+
+				// resume
+                print '<td class="right">';
+                print getTaskProgressView($taskstatic, false, false);
+                print '</td>';
 
 				if ($showbilltime)
 				{
@@ -1942,4 +1950,142 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 		print "</tr>\n";
 		print '</table></form>';
 	}
+}
+
+/**
+ * @param $task             Task
+ * @param $label            string|bool  true = auto, false = dont display, string = replace output
+ * @param $progressNumber   string|bool  true = auto, false = dont display, string = replace output
+ * @return string
+ */
+function getTaskProgressView($task, $label = true, $progressNumber = true)
+{
+    global $langs, $conf;
+
+    $out = '';
+
+    $plannedworkloadoutputformat='allhourmin';
+    $timespentoutputformat='allhourmin';
+    if (! empty($conf->global->PROJECT_PLANNED_WORKLOAD_FORMAT)) $plannedworkloadoutputformat=$conf->global->PROJECT_PLANNED_WORKLOAD_FORMAT;
+    if (! empty($conf->global->PROJECT_TIMES_SPENT_FORMAT)) $timespentoutputformat=$conf->global->PROJECT_TIME_SPENT_FORMAT;
+
+
+
+    if ($task->progress != '')
+    {
+
+        // define progress color according to time spend vs workload
+        $progressBarClass = 'progress-bar-info';
+        if ($task->planned_workload){
+            $progressCalculated =  round(100 * doubleval($task->duration_effective) / doubleval($task->planned_workload), 2);
+
+            // this conf is actually hidden, by default we use 1% for "be carefull or warning"
+            $warningRatio = !empty($conf->global->PROJECT_TIME_SPEND_WARNING_PERCENT) ? (1 + $conf->global->PROJECT_TIME_SPEND_WARNING_PERCENT / 100) : 1.01;
+
+            if($progressCalculated > doubleval($task->progress)){
+                $progressBarClass = 'progress-bar-danger';
+            }
+            elseif($progressCalculated * $warningRatio >= doubleval($task->progress)){ // warning if close at 1%
+                $progressBarClass = 'progress-bar-warning';
+            }
+            else{
+                $progressBarClass = 'progress-bar-success';
+            }
+        }
+
+        $out.= '<div class="progress-group">';
+
+        if($label !== false)
+        {
+            $out.= '    <span class="progress-text">';
+            if ($task->hasDelay()) $out.= img_warning($langs->trans("Late")).' ';
+            if($label!==true){
+                $out.= $label; // replace label by param
+            }
+            else{
+                $out.= $task->label;
+            }
+            $out.= '    </span>';
+        }
+
+
+        if($progressNumber !== false)
+        {
+            $out.= '    <span class="progress-number">';
+
+            if($progressNumber!==true){
+                $out.= $progressNumber; // replace label by param
+            }
+            else{
+                $out.= '<b title="'.$langs->trans('TimeSpent').'" >';
+                if ($task->duration_effective) $out.= convertSecondToTime($task->duration_effective, $timespentoutputformat);
+                else $out.= '--:--';
+                $out.= '</b>';
+
+                $out.= '/';
+
+                $out.= '<span title="'.$langs->trans('PlannedWorkload').'" >';
+                if ($task->planned_workload) $out.= convertSecondToTime($task->planned_workload, $plannedworkloadoutputformat);
+                else $out.= '--:--';
+            }
+
+            $out.= '    </span>';
+        }
+
+
+
+        $out.= '</span>';
+        $out.= '    <div class="progress sm">';
+        $out.= '        <div title="'.price($task->progress).'%" class="progress-bar '.$progressBarClass.'" style="width: '.doubleval($task->progress).'%"></div>';
+        $out.= '    </div>';
+        $out.= '</div>';
+
+    }
+
+    return $out;
+}
+/**
+ * @param $task      Task
+ * @param $label     string  empty = auto (progress), string = replace output
+ * @param $tooltip   string  empty = auto , string = replace output
+ * @return string
+ */
+function getTaskProgressBadge($task, $label = '', $tooltip = '')
+{
+    global $conf;
+
+    $out = '';
+
+    $badgeColorClass = '';
+    if ($task->progress != '')
+    {
+        // define color according to time spend vs workload
+        $badgeColorClass = 'badge ';
+        if ($task->planned_workload){
+            $progressCalculated =  round(100 * doubleval($task->duration_effective) / doubleval($task->planned_workload), 2);
+
+            // this conf is actually hidden, by default we use 1% for "be carefull or warning"
+            $warningRatio = !empty($conf->global->PROJECT_TIME_SPEND_WARNING_PERCENT) ? (1 + $conf->global->PROJECT_TIME_SPEND_WARNING_PERCENT / 100) : 1.01;
+
+            if($progressCalculated > doubleval($task->progress)){
+                $badgeColorClass.= 'badge-danger';
+            }
+            elseif($progressCalculated * $warningRatio >= doubleval($task->progress)){ // warning if close at 1%
+                $badgeColorClass.= 'badge-warning';
+            }
+            else{
+                $badgeColorClass.= 'badge-success';
+            }
+        }
+    }
+
+    if(empty($label)){
+        $label = $task->progress.' %';
+    }
+
+    if(!empty($label)){
+        $out = '<span class="'.$badgeColorClass.'" >'.$label.'</span>';
+    }
+
+    return $out;
 }
