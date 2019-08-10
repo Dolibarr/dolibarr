@@ -129,6 +129,8 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
     float: right;
 }
 
+
+
 /* Remove margins from progress bars when put in a table */
 .table tr > td .progress {
     margin: 0;

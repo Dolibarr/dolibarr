@@ -42,7 +42,7 @@ class box_task extends ModeleBoxes
     public $db;
 
     public $param;
-    public $enabled = 0;		// Disabled because bugged.
+    public $enabled = 1;		// enable because fixed ;-).
 
     public $info_box_head = array();
     public $info_box_contents = array();
@@ -86,21 +86,31 @@ class box_task extends ModeleBoxes
 		$totaldurationtot=0;
 
 		include_once DOL_DOCUMENT_ROOT."/projet/class/task.class.php";
+		include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+        require_once DOL_DOCUMENT_ROOT."/core/lib/project.lib.php";
+        $projectstatic = new Project($this->db);
 		$taskstatic=new Task($db);
 
 
-		$textHead = $langs->trans("Tasks")."&nbsp;".date("Y");
+		$textHead = $langs->trans("CurentlyOpenedTasks");
 		$this->info_box_head = array('text' => $textHead, 'limit'=> dol_strlen($textHead));
 
 		// list the summary of the orders
 		if ($user->rights->projet->lire) {
-			// FIXME fk_statut on a task is not be used. We use the percent. This means this box is useless.
-			$sql = "SELECT pt.fk_statut, count(DISTINCT pt.rowid) as nb, sum(ptt.task_duration) as durationtot, sum(pt.planned_workload) as plannedtot";
-			$sql.= " FROM ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."projet_task_time as ptt";
-			$sql.= " WHERE pt.datec BETWEEN '".$this->db->idate(dol_get_first_day(date("Y"), 1))."' AND '".$this->db->idate(dol_get_last_day(date("Y"), 12))."'";
-			$sql.= " AND pt.rowid = ptt.fk_task";
-			$sql.= " GROUP BY pt.fk_statut ";
-			$sql.= " ORDER BY pt.fk_statut DESC";
+
+			$sql = "SELECT pt.rowid, pt.ref, pt.fk_projet, pt.fk_task_parent, pt.datec, pt.dateo, pt.datee, pt.datev, pt.label, pt.description, pt.duration_effective, pt.planned_workload, pt.progress";
+			$sql.= ", p.rowid project_id, p.ref project_ref, p.title project_title";
+
+
+			$sql.= " FROM ".MAIN_DB_PREFIX."projet_task as pt";
+			$sql.= " JOIN ".MAIN_DB_PREFIX."projet as p ON (pt.fk_projet = p.rowid)";
+
+			$sql.= " WHERE ";
+			$sql.= " pt.entity = ".$conf->entity;
+			$sql.= " AND p.fk_statut = ".Project::STATUS_VALIDATED;
+			$sql.= " AND (pt.progress < 100 OR pt.progress IS NULL ) "; // 100% is done and not displayed
+
+			$sql.= " ORDER BY pt.datee ASC, pt.dateo ASC";
 			$sql.= $db->plimit($max, 0);
 
 			$result = $db->query($sql);
@@ -109,23 +119,31 @@ class box_task extends ModeleBoxes
 				$num = $db->num_rows($result);
                 while ($i < $num) {
                     $objp = $db->fetch_object($result);
+
+                    $taskstatic->id=$objp->rowid;
+                    $taskstatic->ref=$objp->ref;
+                    $taskstatic->label=$objp->label;
+                    $taskstatic->progress = $objp->progress;
+                    $taskstatic->fk_statut = $objp->fk_statut;
+                    $taskstatic->date_end = $objp->datee;
+                    $taskstatic->planned_workload= $objp->planned_workload;
+                    $taskstatic->duration_effective= $objp->duration_effective;
+
+                    $projectstatic->id = $objp->project_id;
+                    $projectstatic->ref = $objp->project_ref;
+                    $projectstatic->title = $objp->project_title;
+
+                    $label = $projectstatic->getNomUrl(1).' '.$taskstatic->getNomUrl(1).' '.dol_htmlentities($taskstatic->label);
+
+
                     $this->info_box_contents[$i][] = array(
                         'td' => '',
-                        'text' =>$langs->trans("Task")." ".$taskstatic->LibStatut($objp->fk_statut, 0),
+                        'text' =>getTaskProgressView($taskstatic, $label),
                     );
 
-                    $this->info_box_contents[$i][] = array(
-                        'td' => 'class="right"',
-                        'text' => $objp->nb."&nbsp;".$langs->trans("Tasks"),
-                        'url' => DOL_URL_ROOT."/projet/tasks/list.php?leftmenu=projects&viewstatut=".$objp->fk_statut,
-                    );
-					$totalnb += $objp->nb;
-					$this->info_box_contents[$i][] = array('td' => 'class="right"', 'text' => ConvertSecondToTime($objp->plannedtot, 'all', 25200, 5));
-					$totalplannedtot += $objp->plannedtot;
-					$this->info_box_contents[$i][] = array('td' => 'class="right"', 'text' => ConvertSecondToTime($objp->durationtot, 'all', 25200, 5));
-					$totaldurationtot += $objp->durationtot;
 
-					$this->info_box_contents[$i][] = array('td' => 'class="right" width="18"', 'text' => $taskstatic->LibStatut($objp->fk_statut, 3));
+
+
 
 					$i++;
 				}
@@ -134,12 +152,7 @@ class box_task extends ModeleBoxes
             }
 		}
 
-		// Add the sum at the bottom of the boxes
-		$this->info_box_contents[$i][] = array('tr' => 'class="liste_total"', 'td' => '', 'text' => $langs->trans("Total")."&nbsp;".$textHead);
-		$this->info_box_contents[$i][] = array('td' => 'class="right" ', 'text' => number_format($totalnb, 0, ',', ' ')."&nbsp;".$langs->trans("Tasks"));
-		$this->info_box_contents[$i][] = array('td' => 'class="right" ', 'text' => ConvertSecondToTime($totalplannedtot, 'all', 25200, 5));
-		$this->info_box_contents[$i][] = array('td' => 'class="right" ', 'text' => ConvertSecondToTime($totaldurationtot, 'all', 25200, 5));
-		$this->info_box_contents[$i][] = array('td' => '', 'text' => "");
+
 	}
 
 	/**

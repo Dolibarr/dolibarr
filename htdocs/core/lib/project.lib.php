@@ -1956,9 +1956,10 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
  * @param $task             Task
  * @param $label            string|bool  true = auto, false = dont display, string = replace output
  * @param $progressNumber   string|bool  true = auto, false = dont display, string = replace output
+ * @param $hideOnProgressNull bool
  * @return string
  */
-function getTaskProgressView($task, $label = true, $progressNumber = true)
+function getTaskProgressView($task, $label = true, $progressNumber = true, $hideOnProgressNull = false, $showPercent = false)
 {
     global $langs, $conf;
 
@@ -1969,78 +1970,90 @@ function getTaskProgressView($task, $label = true, $progressNumber = true)
     if (! empty($conf->global->PROJECT_PLANNED_WORKLOAD_FORMAT)) $plannedworkloadoutputformat=$conf->global->PROJECT_PLANNED_WORKLOAD_FORMAT;
     if (! empty($conf->global->PROJECT_TIMES_SPENT_FORMAT)) $timespentoutputformat=$conf->global->PROJECT_TIME_SPENT_FORMAT;
 
-
-
-    if ($task->progress != '')
-    {
-
-        // define progress color according to time spend vs workload
-        $progressBarClass = 'progress-bar-info';
-        if ($task->planned_workload){
-            $progressCalculated =  round(100 * doubleval($task->duration_effective) / doubleval($task->planned_workload), 2);
-
-            // this conf is actually hidden, by default we use 1% for "be carefull or warning"
-            $warningRatio = !empty($conf->global->PROJECT_TIME_SPEND_WARNING_PERCENT) ? (1 + $conf->global->PROJECT_TIME_SPEND_WARNING_PERCENT / 100) : 1.01;
-
-            if($progressCalculated > doubleval($task->progress)){
-                $progressBarClass = 'progress-bar-danger';
-            }
-            elseif($progressCalculated * $warningRatio >= doubleval($task->progress)){ // warning if close at 1%
-                $progressBarClass = 'progress-bar-warning';
-            }
-            else{
-                $progressBarClass = 'progress-bar-success';
-            }
-        }
-
-        $out.= '<div class="progress-group">';
-
-        if($label !== false)
-        {
-            $out.= '    <span class="progress-text">';
-            if ($task->hasDelay()) $out.= img_warning($langs->trans("Late")).' ';
-            if($label!==true){
-                $out.= $label; // replace label by param
-            }
-            else{
-                $out.= $task->label;
-            }
-            $out.= '    </span>';
-        }
-
-
-        if($progressNumber !== false)
-        {
-            $out.= '    <span class="progress-number">';
-
-            if($progressNumber!==true){
-                $out.= $progressNumber; // replace label by param
-            }
-            else{
-                $out.= '<b title="'.$langs->trans('TimeSpent').'" >';
-                if ($task->duration_effective) $out.= convertSecondToTime($task->duration_effective, $timespentoutputformat);
-                else $out.= '--:--';
-                $out.= '</b>';
-
-                $out.= '/';
-
-                $out.= '<span title="'.$langs->trans('PlannedWorkload').'" >';
-                if ($task->planned_workload) $out.= convertSecondToTime($task->planned_workload, $plannedworkloadoutputformat);
-                else $out.= '--:--';
-            }
-
-            $out.= '    </span>';
-        }
-
-
-
-        $out.= '</span>';
-        $out.= '    <div class="progress sm">';
-        $out.= '        <div title="'.price($task->progress).'%" class="progress-bar '.$progressBarClass.'" style="width: '.doubleval($task->progress).'%"></div>';
-        $out.= '    </div>';
-        $out.= '</div>';
-
+    if(empty($task->progress) && !empty($hideOnProgressNull)){
+        return '';
     }
+
+
+    $diff = '';
+
+    // define progress color according to time spend vs workload
+    $progressBarClass = 'progress-bar-info';
+    if ($task->planned_workload){
+        $progressCalculated =  round(100 * doubleval($task->duration_effective) / doubleval($task->planned_workload), 2);
+
+        // this conf is actually hidden, by default we use 1% for "be carefull or warning"
+        $warningRatio = !empty($conf->global->PROJECT_TIME_SPEND_WARNING_PERCENT) ? (1 + $conf->global->PROJECT_TIME_SPEND_WARNING_PERCENT / 100) : 1.01;
+
+        $diffTitle = '<br/>'.$langs->trans('ProgressDeclared').' : '.price($task->progress).'%';
+        $diffTitle.= '<br/>'.$langs->trans('ProgressCalculated').' : '.price($progressCalculated).'%';
+
+        if($progressCalculated > doubleval($task->progress)){
+            $progressBarClass = 'progress-bar-danger';
+            $title = $langs->trans('TheReportedProgressIsLessThanTheCalculatedProgressionByX', price(abs($task->progress-$progressCalculated)).'%');
+            $diff = '<span class="text-danger classfortooltip"" title="'.dol_htmlentities($title.$diffTitle).'" ><i class="fa fa-caret-down"></i> '.price($task->progress-$progressCalculated).'%</span>';
+        }
+        elseif($progressCalculated * $warningRatio >= doubleval($task->progress)){ // warning if close at 1%
+            $progressBarClass = 'progress-bar-warning';
+            $title = $langs->trans('TheReportedProgressIsLessThanTheCalculatedProgressionByX', price(abs($task->progress-$progressCalculated)).'%');
+            $diff = '<span class="text-warning classfortooltip" title="'.dol_htmlentities($title.$diffTitle).'" ><i class="fa fa-caret-left"></i> '.price($task->progress-$progressCalculated).'%</span>';
+        }
+        else{
+            $progressBarClass = 'progress-bar-success';
+            $title = $langs->trans('TheReportedProgressIsMoreThanTheCalculatedProgressionByX', price($task->progress-$progressCalculated).'%');
+            $diff = '<span class="text-success classfortooltip" title="'.dol_htmlentities($title.$diffTitle).'" ><i class="fa fa-caret-up"></i> '.price($task->progress-$progressCalculated).'%</span>';
+        }
+    }
+
+    $out.= '<div class="progress-group">';
+
+    if($label !== false)
+    {
+        $out.= '    <span class="progress-text">';
+        if ($task->hasDelay()) $out.= img_warning($langs->trans("Late")).' ';
+        if($label!==true){
+            $out.= $label; // replace label by param
+        }
+        else{
+            $out.= $task->getNomUrl(1).' '.dol_htmlentities($task->label);
+        }
+        $out.= '    </span>';
+    }
+
+
+    if($progressNumber !== false)
+    {
+        $out.= '    <span class="progress-number">';
+        if($progressNumber!==true){
+            $out.= $progressNumber; // replace label by param
+        }
+        else{
+
+            $out.= !empty($diff) ? $diff.' ':'';
+
+            $out.= '<b title="'.$langs->trans('TimeSpent').'" >';
+            if ($task->duration_effective) $out.= convertSecondToTime($task->duration_effective, $timespentoutputformat);
+            else $out.= '--:--';
+            $out.= '</b>';
+
+            $out.= '/';
+
+            $out.= '<span title="'.$langs->trans('PlannedWorkload').'" >';
+            if ($task->planned_workload) $out.= convertSecondToTime($task->planned_workload, $plannedworkloadoutputformat);
+            else $out.= '--:--';
+        }
+        $out.= '    </span>';
+    }
+
+
+
+    $out.= '</span>';
+    $out.= '    <div class="progress sm classfortooltip" title="'.price($task->progress).'%" >';
+    $out.= '        <div class="progress-bar '.$progressBarClass.'" style="width: '.doubleval($task->progress).'%"></div>';
+    $out.= '    </div>';
+    $out.= '</div>';
+
+
 
     return $out;
 }
@@ -2055,10 +2068,12 @@ function getTaskProgressBadge($task, $label = '', $tooltip = '')
     global $conf;
 
     $out = '';
-
+    $label = '';
     $badgeColorClass = '';
     if ($task->progress != '')
     {
+        // TODO : manage 100%
+
         // define color according to time spend vs workload
         $badgeColorClass = 'badge ';
         if ($task->planned_workload){
@@ -2080,7 +2095,7 @@ function getTaskProgressBadge($task, $label = '', $tooltip = '')
     }
 
     if(empty($label)){
-        $label = $task->progress.' %';
+        $label = price($task->progress).' %';
     }
 
     if(!empty($label)){
