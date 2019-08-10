@@ -838,7 +838,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 	if (! empty($conf->stripe->enabled) && ! empty($conf->stripeconnect->enabled) && $conf->global->MAIN_FEATURES_LEVEL >= 2)
 	{
 		$permissiontowrite = $user->rights->societe->creer;
-    $stripesupplieracc = $stripe->getStripeAccount($service, $object->id);								// Get Stripe OAuth connect account (no network access here)
+		$stripesupplieracc = $stripe->getStripeAccount($service, $object->id);								// Get Stripe OAuth connect account (no network access here)
     
 		// Stripe customer key 'cu_....' stored into llx_societe_account
 		print '<tr><td class="titlefield">';
