@@ -2791,7 +2791,7 @@ class Product extends CommonObject
         global $db, $conf, $user;                                                             
 
         $sql = "SELECT COUNT(DISTINCT f.fk_soc) as nb_customers, COUNT(DISTINCT f.rowid) as nb,";
-        $sql.= " COUNT(fd.rowid) as nb_rows, sum(".$db->ifsql('f.type != 2', 'fd.qty', 'fd.qty * -1').") as qty";
+        $sql.= " COUNT(fd.rowid) as nb_rows, SUM(".$db->ifsql('f.type != 2', 'fd.qty', 'fd.qty * -1').") as qty";
         $sql.= " FROM ".MAIN_DB_PREFIX."facturedet as fd";
         $sql.= ", ".MAIN_DB_PREFIX."facture as f";
         $sql.= ", ".MAIN_DB_PREFIX."societe as s";
