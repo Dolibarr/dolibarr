@@ -31,10 +31,10 @@ require_once DOL_DOCUMENT_ROOT."/core/lib/date.lib.php";
  */
 class box_task extends ModeleBoxes
 {
-    public $boxcode="projet";
+    public $boxcode="projettask";
     public $boximg="object_projecttask";
     public $boxlabel;
-    //public $depends = array("projet");
+    public $depends = array("projet");
 
     /**
      * @var DoliDB Database handler.
@@ -78,25 +78,39 @@ class box_task extends ModeleBoxes
 		global $conf, $user, $langs, $db;
 
 		$this->max=$max;
-
-		$totalMnt = 0;
-		$totalnb = 0;
-		$totalDuree=0;
-		$totalplannedtot=0;
-		$totaldurationtot=0;
-
 		include_once DOL_DOCUMENT_ROOT."/projet/class/task.class.php";
 		include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
         require_once DOL_DOCUMENT_ROOT."/core/lib/project.lib.php";
         $projectstatic = new Project($this->db);
 		$taskstatic=new Task($db);
+        $cookie_name='boxfilter_task';
+
+        $textHead = $langs->trans("CurentlyOpenedTasks");
+
+        $filterValue='all';
+        if(in_array(GETPOST($cookie_name), array('all','im_project_contact','im_task_contact'))){
+            $filterValue = GETPOST($cookie_name);
+            $textHead.= ' : '.$langs->trans("WhichIamLinkedTo");
+        }
+        elseif(!empty($_COOKIE[$cookie_name])){
+            $filterValue = $_COOKIE[$cookie_name];
+            $textHead.= ' : '.$langs->trans("WhichIamLinkedToProject");
+        }
 
 
-		$textHead = $langs->trans("CurentlyOpenedTasks");
-		$this->info_box_head = array('text' => $textHead, 'limit'=> dol_strlen($textHead));
+		$this->info_box_head = array(
+		    'text' => $textHead,
+            'limit'=> dol_strlen($textHead),
+            'sublink'=>'',
+            'subtext'=>$langs->trans("Filter"),
+            'subpicto'=>'filter.png',
+            'subclass'=>'linkobject boxfilter',
+            'target'=>'none'	// Set '' to get target="_blank"
+        );
 
 		// list the summary of the orders
 		if ($user->rights->projet->lire) {
+
 
 			$sql = "SELECT pt.rowid, pt.ref, pt.fk_projet, pt.fk_task_parent, pt.datec, pt.dateo, pt.datee, pt.datev, pt.label, pt.description, pt.duration_effective, pt.planned_workload, pt.progress";
 			$sql.= ", p.rowid project_id, p.ref project_ref, p.title project_title";
@@ -104,6 +118,15 @@ class box_task extends ModeleBoxes
 
 			$sql.= " FROM ".MAIN_DB_PREFIX."projet_task as pt";
 			$sql.= " JOIN ".MAIN_DB_PREFIX."projet as p ON (pt.fk_projet = p.rowid)";
+
+            if($filterValue === 'im_task_contact') {
+                $sql .= " JOIN " . MAIN_DB_PREFIX . "element_contact as ec ON (ec.element_id = pt.rowid AND ec.fk_socpeople = '" . $user->id . "' )";
+                $sql .= " JOIN " . MAIN_DB_PREFIX . "c_type_contact  as tc ON (ec.fk_c_type_contact = tc.rowid AND tc.element = 'project_task' AND tc.source = 'internal' )";
+            }
+            elseif($filterValue === 'im_project_contact') {
+                $sql .= " JOIN " . MAIN_DB_PREFIX . "element_contact as ec ON (ec.element_id = p.rowid AND ec.fk_socpeople = '" . $user->id . "' )";
+                $sql .= " JOIN " . MAIN_DB_PREFIX . "c_type_contact  as tc ON (ec.fk_c_type_contact = tc.rowid AND tc.element = 'project' AND tc.source = 'internal' )";
+            }
 
 			$sql.= " WHERE ";
 			$sql.= " pt.entity = ".$conf->entity;
@@ -117,8 +140,7 @@ class box_task extends ModeleBoxes
 			$i = 0;
 			if ($result) {
 				$num = $db->num_rows($result);
-                while ($i < $num) {
-                    $objp = $db->fetch_object($result);
+                while ($objp = $db->fetch_object($result)) {
 
                     $taskstatic->id=$objp->rowid;
                     $taskstatic->ref=$objp->ref;
@@ -136,14 +158,18 @@ class box_task extends ModeleBoxes
                     $label = $projectstatic->getNomUrl(1).' '.$taskstatic->getNomUrl(1).' '.dol_htmlentities($taskstatic->label);
 
 
+                    $text = getTaskProgressView($taskstatic, $label);
+
+                    // set cookie by js
+                    if(empty($i)){
+                        $text.='<script >date = new Date(); date.setTime(date.getTime()+(30*86400000)); document.cookie = "'.$cookie_name.'='.$filterValue.'; expires= " + date.toGMTString() + "; path=/ "; </script>';
+                    }
+
+
                     $this->info_box_contents[$i][] = array(
                         'td' => '',
-                        'text' =>getTaskProgressView($taskstatic, $label),
+                        'text' => $text,
                     );
-
-
-
-
 
 					$i++;
 				}
@@ -151,8 +177,6 @@ class box_task extends ModeleBoxes
                 dol_print_error($this->db);
             }
 		}
-
-
 	}
 
 	/**
