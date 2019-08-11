@@ -690,6 +690,23 @@ textarea.centpercent {
     opacity: 0.7;
 }
 
+.text-warning{
+    color : <?php print $textWarning ; ?>
+}
+body[class*="colorblind-"] .text-warning{
+    color : <?php print $colorblind_deuteranopes_textWarning ; ?>
+}
+.text-success{
+    color : <?php print $textSuccess ; ?>
+}
+body[class*="colorblind-"] .text-success{
+    color : <?php print $colorblind_deuteranopes_textSuccess ; ?>
+}
+
+.text-danger{
+    color : <?php print $textDanger ; ?>
+}
+
 /* Themes for badges */
 .badge {
 	display: inline-block;
@@ -5859,6 +5876,8 @@ border-top-right-radius: 6px;
 <?php }
 
 include dol_buildpath($path.'/theme/'.$theme.'/dropdown.inc.php', 0);
+
+include dol_buildpath($path.'/theme/'.$theme.'/progress.inc.php', 0);
 
 
 
