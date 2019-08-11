@@ -1676,7 +1676,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 				$text='';
 	            if(!empty($conf->global->MAIN_SHOWDATABASENAMEINHELPPAGESLINK)) {
                     $langs->load('admin');
-                    $appli .= '<br>' . $langs->trans("Database") . ': ' . $db->database_name;
+                    $appli .= '<br>' . $langs->trans("Database") . ': ' . $db->db->database_name;
                 }
 				$title=$appli.'<br>';
 				$title.=$langs->trans($mode == 'wiki' ? 'GoToWikiHelpPage': 'GoToHelpPage');
