@@ -3277,21 +3277,24 @@ class Propal extends CommonObject
 
 			$delay_warning = 0;
 			$statut = 0;
-			$label = '';
+			$label = $labelShort = '';
 			if ($mode == 'opened') {
 				$delay_warning=$conf->propal->cloture->warning_delay;
 				$statut = self::STATUS_VALIDATED;
 				$label = $langs->trans("PropalsToClose");
+				$labelShort = $langs->trans("ToClose");
 			}
 			if ($mode == 'signed') {
 				$delay_warning=$conf->propal->facturation->warning_delay;
 				$statut = self::STATUS_SIGNED;
 				$label = $langs->trans("PropalsToBill");         // We set here bill but may be billed or ordered
+				$labelShort = $langs->trans("ToBill");
 			}
 
 			$response = new WorkboardResponse();
 			$response->warning_delay = $delay_warning/60/60/24;
 			$response->label = $label;
+			$response->labelShort = $labelShort;
 			$response->url = DOL_URL_ROOT.'/comm/propal/list.php?viewstatut='.$statut.'&mainmenu=commercial&leftmenu=propals';
 			$response->url_late = DOL_URL_ROOT.'/comm/propal/list.php?viewstatut='.$statut.'&mainmenu=commercial&leftmenu=propals&sortfield=p.datep&sortorder=asc';
 			$response->img = img_object('', "propal");

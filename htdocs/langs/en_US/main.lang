@@ -981,3 +981,7 @@ PaymentInformation=Payment information
 ValidFrom=Valid from
 ValidUntil=Valid until
 NoRecordedUsers=No users
+ToClose=To close
+ToProcess=To process
+ToApprove=To approve
+GlobalOpenedElemView=Global view

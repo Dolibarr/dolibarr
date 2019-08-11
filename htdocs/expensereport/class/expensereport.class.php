@@ -2333,12 +2333,14 @@ class ExpenseReport extends CommonObject
 	        {
 	           $response->warning_delay=$conf->expensereport->approve->warning_delay/60/60/24;
 	           $response->label=$langs->trans("ExpenseReportsToApprove");
+	           $response->labelShort=$langs->trans("ToApprove");
 	           $response->url=DOL_URL_ROOT.'/expensereport/list.php?mainmenu=hrm&amp;statut=2';
 	        }
 	        else
 	        {
 	            $response->warning_delay=$conf->expensereport->payment->warning_delay/60/60/24;
 	            $response->label=$langs->trans("ExpenseReportsToPay");
+	            $response->labelShort=$langs->trans("ToPay");
 	            $response->url=DOL_URL_ROOT.'/expensereport/list.php?mainmenu=hrm&amp;statut=5';
 	        }
 	        $response->img=img_object('', "trip");
