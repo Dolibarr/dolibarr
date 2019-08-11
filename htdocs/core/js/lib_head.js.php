@@ -109,11 +109,11 @@ $langs->trans("SaturdayMin")
 // Javascript libraries for Dolibarr ERP CRM (https://www.dolibarr.org)
 
 // For jQuery date picker
-var tradMonths = <?php echo json_encode($tradMonths) ?>;
-var tradMonthsShort = <?php echo json_encode($tradMonthsShort) ?>;
-var tradDays = <?php echo json_encode($tradDays) ?>;
-var tradDaysShort = <?php echo json_encode($tradDaysShort) ?>;
-var tradDaysMin = <?php echo json_encode($tradDaysMin) ?>;
+var tradMonths = '<?php echo json_encode($tradMonths) ?>';
+var tradMonthsShort = '<?php echo json_encode($tradMonthsShort) ?>';
+var tradDays = '<?php echo json_encode($tradDays) ?>';
+var tradDaysShort = '<?php echo json_encode($tradDaysShort) ?>';
+var tradDaysMin = '<?php echo json_encode($tradDaysMin) ?>';
 
 // For JQuery date picker
 $(document).ready(function() {
