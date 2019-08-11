@@ -6663,12 +6663,12 @@ abstract class CommonObject
 			
 			// We merge each entry
 			while ( $row = $db->fetch_object($res) ) {
-				// Init the WHERE clause 
+				// Init the WHERE clause
 				$where = ' WHERE fk_soc = '.$origin_id;
 				// Add row-specific conditions
 				foreach ($row as $key => $val) {
 					// We don't want that
-					if ( $key == 'fk_soc' || $key == 'import_key' || $val == Null ) continue ;
+					if ( $key == 'fk_soc' || $key == 'import_key' || $val == null ) continue ;
 					// But we want the rest (and escaping when it's string)
 					$where .= ' AND '.$key.' = ' . (gettype($val)=='string'?"'":'') . $val . (gettype($val)=='string'?"'":'');
 				}
@@ -6678,11 +6678,11 @@ abstract class CommonObject
 				// Adding the Where clause
 				$sql .= $where;
 				// Merging (with savepoint enabled)
-				if (! $db->query($sql, 1)) 
+				if (! $db->query($sql, 1))
 				// If it didn't work, it's not an error that is already exist but we will delete the entrie :
-				{ 
+				{
 					// If it don't work, that's an error we don't understand => rollback the entire transaction
-					if (! $db->query('DELETE FROM '.MAIN_DB_PREFIX.$table . $where)) return false ; 
+					if (! $db->query('DELETE FROM '.MAIN_DB_PREFIX.$table . $where)) return false ;
 				}
 			}
 		}
