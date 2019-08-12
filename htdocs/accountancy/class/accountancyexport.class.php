@@ -362,14 +362,14 @@ class AccountancyExport
 
 		// Build list of society names
 		$subledger_label_list = array();
-		foreach ( $objectLines as $line ) {
+		foreach ($objectLines as $line) {
 		    
 		    if ($line->subledger_label != '') {
 		        $subledger_label_list[$line->doc_ref] = $line->subledger_label;
 		    }
 		}
 
-		foreach ( $objectLines as $line ) {
+		foreach ($objectLines as $line) {
 			
 			print "\t";
 			$date = dol_print_date($line->doc_date, '%d/%m/%Y');
@@ -391,11 +391,11 @@ class AccountancyExport
 			
 			if ($line->sens=='D') {
 				print 'D' . $separator;
-				print str_replace(' ', '', price($line->debit,0,'',1,-1,3)) . $separator;
+				print str_replace(' ', '', price($line->debit, 0, '', 1, -1, 3)) . $separator;
 			}
 			if ($line->sens=='C') {
 				print 'C' . $separator;
-				print str_replace(' ', '', price($line->credit,0,'',1,-1,3)) . $separator;
+				print str_replace(' ', '', price($line->credit, 0, '', 1, -1, 3)) . $separator;
 			}
 			print 'E' . $separator;
 			if ($is_subledger_account) {
