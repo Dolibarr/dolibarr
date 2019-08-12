@@ -2799,7 +2799,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	if ($action != 'createcontainer')
 	{
 	    print '<tr><td>';
-	    print $langs->trans('LastModificationAuthor');
+	    print $langs->trans('UserModif');
 	    print '</td><td>';
 	    if ($pageusermodifid > 0)
 	    {
