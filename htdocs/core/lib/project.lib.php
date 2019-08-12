@@ -1957,9 +1957,11 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
  * @param $label            string|bool  true = auto, false = dont display, string = replace output
  * @param $progressNumber   string|bool  true = auto, false = dont display, string = replace output
  * @param $hideOnProgressNull bool
+ * @param $showPercent bool
+ * @param $spaced bool
  * @return string
  */
-function getTaskProgressView($task, $label = true, $progressNumber = true, $hideOnProgressNull = false, $showPercent = false)
+function getTaskProgressView($task, $label = true, $progressNumber = true, $hideOnProgressNull = false, $spaced = false)
 {
     global $langs, $conf;
 
@@ -1974,6 +1976,7 @@ function getTaskProgressView($task, $label = true, $progressNumber = true, $hide
         return '';
     }
 
+    $spaced = !empty($spaced)?'spaced':'';
 
     $diff = '';
 
@@ -2049,7 +2052,7 @@ function getTaskProgressView($task, $label = true, $progressNumber = true, $hide
 
 
     $out.= '</span>';
-    $out.= '    <div class="progress sm" title="'.doubleval($task->progress).'%" >';
+    $out.= '    <div class="progress sm '.$spaced.'" title="'.doubleval($task->progress).'%" >';
     $out.= '        <div class="progress-bar '.$progressBarClass.'" style="width: '.doubleval($task->progress).'%"></div>';
     $out.= '    </div>';
     $out.= '</div>';

@@ -83,17 +83,25 @@ class box_task extends ModeleBoxes
         require_once DOL_DOCUMENT_ROOT."/core/lib/project.lib.php";
         $projectstatic = new Project($this->db);
 		$taskstatic=new Task($db);
+		$form= new Form($db);
         $cookie_name='boxfilter_task';
+        $boxcontent='';
 
         $textHead = $langs->trans("CurentlyOpenedTasks");
 
         $filterValue='all';
         if(in_array(GETPOST($cookie_name), array('all','im_project_contact','im_task_contact'))){
             $filterValue = GETPOST($cookie_name);
-            $textHead.= ' : '.$langs->trans("WhichIamLinkedTo");
         }
         elseif(!empty($_COOKIE[$cookie_name])){
             $filterValue = $_COOKIE[$cookie_name];
+        }
+
+
+        if($filterValue == 'im_task_contact'){
+            $textHead.= ' : '.$langs->trans("WhichIamLinkedTo");
+        }
+        elseif($filterValue == 'im_project_contact'){
             $textHead.= ' : '.$langs->trans("WhichIamLinkedToProject");
         }
 
@@ -110,11 +118,27 @@ class box_task extends ModeleBoxes
 
 		// list the summary of the orders
 		if ($user->rights->projet->lire) {
+            $boxcontent.= '<div id="ancor-idfilter'.$this->boxcode.'" style="display: block; position: absolute; margin-top: -100px"></div>'."\n";
+            $boxcontent.= '<div id="idfilter'.$this->boxcode.'" class="hideobject center" >'."\n";
+            $boxcontent.= '<form class="flat " method="POST" action="'.$_SERVER["PHP_SELF"].'#ancor-idfilter'.$this->boxcode.'">'."\n";
+            $boxcontent.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
+            $selectArray = array('all' => $langs->trans("NoFilter"), 'im_task_contact' => $langs->trans("WhichIamLinkedTo"), 'im_project_contact' => $langs->trans("WhichIamLinkedToProject"));
+            $boxcontent.= $form->selectArray($cookie_name, $selectArray, $filterValue);
+            $boxcontent.= '<button type="submit" >'.$langs->trans("Change").'</button>';
+            $boxcontent.= '</form>'."\n";
+            $boxcontent.= '</div>'."\n";
+            $boxcontent.= '<script type="text/javascript" language="javascript">
+					jQuery(document).ready(function() {
+						jQuery("#idsubimg'.$this->boxcode.'").click(function() {
+							jQuery("#idfilter'.$this->boxcode.'").toggle();
+						});
+					});
+					</script>';
 
 
-			$sql = "SELECT pt.rowid, pt.ref, pt.fk_projet, pt.fk_task_parent, pt.datec, pt.dateo, pt.datee, pt.datev, pt.label, pt.description, pt.duration_effective, pt.planned_workload, pt.progress";
+
+            $sql = "SELECT pt.rowid, pt.ref, pt.fk_projet, pt.fk_task_parent, pt.datec, pt.dateo, pt.datee, pt.datev, pt.label, pt.description, pt.duration_effective, pt.planned_workload, pt.progress";
 			$sql.= ", p.rowid project_id, p.ref project_ref, p.title project_title";
-
 
 			$sql.= " FROM ".MAIN_DB_PREFIX."projet_task as pt";
 			$sql.= " JOIN ".MAIN_DB_PREFIX."projet as p ON (pt.fk_projet = p.rowid)";
@@ -157,19 +181,7 @@ class box_task extends ModeleBoxes
 
                     $label = $projectstatic->getNomUrl(1).' '.$taskstatic->getNomUrl(1).' '.dol_htmlentities($taskstatic->label);
 
-
-                    $text = getTaskProgressView($taskstatic, $label);
-
-                    // set cookie by js
-                    if(empty($i)){
-                        $text.='<script >date = new Date(); date.setTime(date.getTime()+(30*86400000)); document.cookie = "'.$cookie_name.'='.$filterValue.'; expires= " + date.toGMTString() + "; path=/ "; </script>';
-                    }
-
-
-                    $this->info_box_contents[$i][] = array(
-                        'td' => '',
-                        'text' => $text,
-                    );
+                    $boxcontent.= getTaskProgressView($taskstatic, $label, true, false, true);
 
 					$i++;
 				}
@@ -177,6 +189,16 @@ class box_task extends ModeleBoxes
                 dol_print_error($this->db);
             }
 		}
+
+        // set cookie by js
+        if(empty($i)){
+            $boxcontent.='<script >date = new Date(); date.setTime(date.getTime()+(30*86400000)); document.cookie = "'.$cookie_name.'='.$filterValue.'; expires= " + date.toGMTString() + "; path=/ "; </script>';
+        }
+
+        $this->info_box_contents[0][] = array(
+            'td' => '',
+            'text' => $boxcontent,
+        );
 	}
 
 	/**
