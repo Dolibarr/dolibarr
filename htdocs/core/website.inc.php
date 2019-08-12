@@ -93,6 +93,3 @@ if ($_SERVER['PHP_SELF'] != DOL_URL_ROOT.'/website/index.php')	// If we browsing
 		}
 	}
 }
-
-// Load websitepage class
-include_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
