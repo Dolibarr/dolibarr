@@ -90,7 +90,7 @@ ErrorSpecialCharNotAllowedForField=غير مسموح الأحرف الخاصة �
 ErrorNumRefModel=إشارة إلى وجود قاعدة بيانات (%s) ، وغير متوافق مع هذه القاعدة الترقيم. سجل إزالة أو إعادة تسميته اشارة الى تفعيل هذه الوحدة.
 ErrorQtyTooLowForThisSupplier=Quantity too low for this vendor or no price defined on this product for this vendor
 ErrorOrdersNotCreatedQtyTooLow=Some orders haven't been created because of too-low quantities
-ErrorModuleSetupNotComplete=Setup of module looks to be uncomplete. Go on Home - Setup - Modules to complete.
+ErrorModuleSetupNotComplete=Setup of module %s looks to be uncomplete. Go on Home - Setup - Modules to complete.
 ErrorBadMask=خطأ في قناع
 ErrorBadMaskFailedToLocatePosOfSequence=خطأ، من دون قناع رقم التسلسل
 ErrorBadMaskBadRazMonth=خطأ، قيمة إعادة سيئة
@@ -219,6 +219,7 @@ ErrorURLMustStartWithHttp=URL %s must start with http:// or https://
 ErrorNewRefIsAlreadyUsed=Error, the new reference is already used
 ErrorDeletePaymentLinkedToAClosedInvoiceNotPossible=Error, delete payment linked to a closed invoice is not possible.
 # Warnings
+WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.
 WarningPasswordSetWithNoAccount=تم تعيين كلمة مرور لهذا العضو. ومع ذلك، تم إنشاء أي حساب المستخدم. لذلك يتم تخزين كلمة المرور هذه ولكن لا يمكن استخدامها للدخول إلى Dolibarr. ويمكن استخدامه من قبل وحدة / واجهة خارجية ولكن إذا كنت لا تحتاج إلى تعريف أي تسجيل دخول أو كلمة المرور لأحد أفراد، يمكنك تعطيل خيار "إدارة تسجيل دخول لكل عضو" من إعداد وحدة الأعضاء. إذا كنت بحاجة إلى إدارة تسجيل الدخول ولكن لا تحتاج إلى أي كلمة المرور، يمكنك الحفاظ على هذا الحقل فارغا لتجنب هذا التحذير. ملاحظة: يمكن أيضا أن تستخدم البريد الإلكتروني لتسجيل الدخول إذا تم ربط عضو إلى المستخدم.
 WarningMandatorySetupNotComplete=Click here to setup mandatory parameters
 WarningEnableYourModulesApplications=Click here to enable your modules and applications

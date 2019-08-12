@@ -2,6 +2,7 @@
 ProductRef=Toote viide
 ProductLabel=Toote nimi
 ProductLabelTranslated=Translated product label
+ProductDescription=Product description
 ProductDescriptionTranslated=Translated product description
 ProductNoteTranslated=Translated product note
 ProductServiceCard=Toodete/teenuste kaart

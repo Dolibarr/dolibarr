@@ -65,3 +65,5 @@ StripeUserAccountForActions=Uživatelský účet, který se má používat pro e
 StripePayoutList=Seznam páskových výplat
 ToOfferALinkForTestWebhook=Odkaz na nastavení Stripe WebHook pro volání IPN (testovací režim)
 ToOfferALinkForLiveWebhook=Odkaz na nastavení Stripe WebHook pro volání IPN (provozní režim)
+PaymentWillBeRecordedForNextPeriod=Payment will be recorded for the next period.
+ClickHereToTryAgain=<a href="%s">Click here to try again...</a>

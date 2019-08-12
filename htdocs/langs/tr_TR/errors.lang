@@ -90,7 +90,7 @@ ErrorSpecialCharNotAllowedForField=%s alanında özel karakterlere izin verilmez
 ErrorNumRefModel=Veritabanına (%s) bir başvuru var ve bu numaralandırma kuralı ile uyumlu değildir. Kaydı kaldırın ya da bu modülü etkinleştirmek için başvurunun adını değiştirin.
 ErrorQtyTooLowForThisSupplier=Quantity too low for this vendor or no price defined on this product for this vendor
 ErrorOrdersNotCreatedQtyTooLow=Some orders haven't been created because of too-low quantities
-ErrorModuleSetupNotComplete=Modül ayarı tamamlanmamış gibi görünüyor. Tamamlamak için Giriş - Ayarlar - Modüller menüsüne git.
+ErrorModuleSetupNotComplete=Setup of module %s looks to be uncomplete. Go on Home - Setup - Modules to complete.
 ErrorBadMask=Maskede hata
 ErrorBadMaskFailedToLocatePosOfSequence=Hata, sıra numarasız  maske
 ErrorBadMaskBadRazMonth=Hata, kötü sıfırlama değeri
@@ -219,6 +219,7 @@ ErrorURLMustStartWithHttp=URL %s must start with http:// or https://
 ErrorNewRefIsAlreadyUsed=Error, the new reference is already used
 ErrorDeletePaymentLinkedToAClosedInvoiceNotPossible=Error, delete payment linked to a closed invoice is not possible.
 # Warnings
+WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.
 WarningPasswordSetWithNoAccount=Bu üye için bir parola ayarlıdır. Ancak, hiçbir kullanıcı hesabı oluşturulmamıştır. Yani bu şifre saklanır ama Dolibarr'a giriş için kullanılamaz. Dış bir modül/arayüz tarafından kullanılıyor olabilir, ama bir üye için ne bir kullanıcı adı ne de parola tanımlamanız gerekmiyorsa "Her üye için bir kullanıcı adı yönet" seçeneğini devre dışı bırakabilirsiniz. Bir kullanıcı adı yönetmeniz gerekiyorsa ama herhangi bir parolaya gereksinim duymuyorsanız bu uyarıyı engellemek için bu alanı boş bırakabilirsiniz. Not: Eğer bir üye bir kullanıcıya bağlıysa kullanıcı adı olarak e-posta adresi de kullanılabilir.
 WarningMandatorySetupNotComplete=Zorunlu parametreleri ayarlamak için buraya tıklayın
 WarningEnableYourModulesApplications=Click here to enable your modules and applications
