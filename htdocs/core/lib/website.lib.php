@@ -452,8 +452,6 @@ function includeContainer($containerref)
 function getStructuredData($type, $data = array())
 {
 	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs;	// Very important. Required to have var available when running inluded containers.
-	global $includehtmlcontentopened;
-	global $websitekey, $websitepagefile;
 
 	if ($type == 'software')
 	{
@@ -559,6 +557,83 @@ function getStructuredData($type, $data = array())
 		$ret.= '</script>'."\n";
 	}
 	return $ret;
+}
+
+/**
+ * Return list of containers object that match a criteria
+ *
+ * @param 	string		$type				Type of container to search into (Example: 'page')
+ * @param 	string		$algo				Algorithm used for search (Example: 'meta' is searching into meta information like title and description, 'metacontent')
+ * @param	string		$searchstring		Search string
+ * @param	int			$max				Max number of answers
+ * @return  string							HTML content
+ */
+function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25)
+{
+	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs;	// Very important. Required to have var available when running inluded containers.
+
+	$error = 0;
+	$arrayresult = array('code'=>'', 'list'=>array());
+
+	if (empty($searchstring))
+	{
+		$error++;
+		$arrayresult['code']='KO';
+		$arrayresult['message']=$weblangs->trans("EmptySearchString");
+	}
+	elseif (dol_strlen($searchstring) < 2)
+	{
+		$error++;
+		$arrayresult['code']='KO';
+		$arrayresult['message']=$weblangs->trans("SearchCriteriaTooSmall");
+	}
+	elseif (! in_array($type, array('page')))
+	{
+		$error++;
+		$arrayresult['code']='KO';
+		$arrayresult['message']='Bad value for parameter $type';
+	}
+
+	if (! $error && in_array($algo, array('meta', 'metacontent')))
+	{
+		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'website_page';
+		$sql.= " WHERE fk_website = ".$website->id." AND type_container = '".$db->escape($type)."'";
+		$sql.= " AND (title LIKE '%".$db->escape($searchstring)."%' OR description LIKE '%".$db->escape($searchstring)."%'";
+		if ($algo == 'metacontent') $sql.= " OR content LIKE '%".$db->escape($searchstring)."%'";
+		$sql.= " OR keywords LIKE '".$db->escape($searchstring).",%' OR keywords LIKE '% ".$db->escape($searchstring)."%')";		// TODO Use a better way to scan keywords
+		$sql.= $db->plimit($max);
+
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+			$i = 0;
+			while (($obj = $db->fetch_object($resql)) && ($i < $max || $max == 0))
+			{
+				if ($obj->rowid > 0)
+				{
+					$tmpwebsitepage = new WebsitePage($db);
+					$tmpwebsitepage->fetch($obj->rowid);
+					if ($tmpwebsitepage->id > 0) $arrayresult['list'][]=$tmpwebsitepage;
+				}
+				$i++;
+			}
+
+			$arrayresult['code']='OK';
+			if (empty($arrayresult['list']))
+			{
+				$arrayresult['code']='KO';
+				$arrayresult['message']=$weblangs->trans("NothingFound");
+			}
+		}
+		else
+		{
+			$error++;
+			$arrayresult['code']=$db->lasterrno();
+			$arrayresult['message']=$db->lasterror();
+		}
+	}
+
+	return $arrayresult;
 }
 
 /**
