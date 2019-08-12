@@ -342,9 +342,9 @@ function redirectToContainer($containerref, $containeraliasalt = '', $containeri
 	if (defined('USEDOLIBARREDITOR'))
 	{
 		print '<div class="margintoponly marginleftonly">';
-		print "This page contains dynamic code that make a redirect to '".$containerref."' in your current context. There is no preview for this page.";
+		print "This page contains dynamic code that make a redirect to '".$containerref."' in your current context. Redirect has been canceled as it is not supported in edition mode.";
 		print '</div>';
-		exit;
+		return;
 	}
 
 	if (defined('USEDOLIBARRSERVER'))	// When page called from Dolibarr server
