@@ -181,6 +181,7 @@ $filehtaccess=$pathofwebsite.'/.htaccess';
 $filetpl=$pathofwebsite.'/page'.$pageid.'.tpl.php';
 $fileindex=$pathofwebsite.'/index.php';
 $filewrapper=$pathofwebsite.'/wrapper.php';
+$filemanifestjson=$pathofwebsite.'/manifest.json.php';
 
 // Define $urlwithroot
 $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
@@ -206,6 +207,47 @@ $htmlheadercontentdefault.='<!--'."\n";
 $htmlheadercontentdefault.='<script src="/document.php?modulepart=medias&file=css/myfile.css"></script>'."\n";
 $htmlheadercontentdefault.='<script src="/document.php?modulepart=medias&file=js/myfile.js"></script>'."\n";
 $htmlheadercontentdefault.='-->'."\n";
+
+$manifestjsoncontentdefault = '';
+$manifestjsoncontentdefault.= '{
+	"name": "MyWebsite",
+	"short_name": "MyWebsite",
+	"start_url": "/",
+	"lang": "en-US",
+	"display": "standalone",
+	"background_color": "#fff",
+	"description": "A simple Web app.",
+	"icons": [{
+	"src": "images/'.$website->ref.'/homescreen48.png",
+	"sizes": "48x48",
+	"type": "image/png"
+	}, {
+		"src": "image/'.$website->ref.'/homescreen72.png",
+		"sizes": "72x72",
+		"type": "image/png"
+	}, {
+		"src": "image/'.$website->ref.'/homescreen96.png",
+		"sizes": "96x96",
+		"type": "image/png"
+	}, {
+		"src": "image/'.$website->ref.'/homescreen144.png",
+		"sizes": "144x144",
+		"type": "image/png"
+	}, {
+		"src": "image/'.$website->ref.'/homescreen168.png",
+		"sizes": "168x168",
+		"type": "image/png"
+	}, {
+		"src": "image/'.$website->ref.'/homescreen192.png",
+		"sizes": "192x192",
+		"type": "image/png"
+	}],
+	"related_applications": [{
+		"platform": "play",
+		"url": "https://play.google.com/store/apps/details?id=com.nltechno.dolidroidpro"
+	}]
+}';
+
 
 
 /*
@@ -794,6 +836,13 @@ if ($action == 'addcontainer')
 			$result=dolSaveHtaccessFile($filehtaccess, $htaccesscontent);
 		}
 
+		if (! dol_is_file($filemanifestjson))
+		{
+			$manifestjsoncontent = "";
+			$result=dolSaveManifestJson($filemanifestjson, $manifestjsoncontent);
+		}
+
+
 		$action = 'preview';
 	}
 }
@@ -940,7 +989,7 @@ if ($action == 'updatecss')
     		/* We disable php code since htmlheader is never executed as an include but only read by fgets_content.
     	    $htmlheadercontent.= "<?php // BEGIN PHP\n";
     	    $htmlheadercontent.= '$websitekey=basename(__DIR__);'."\n";
-    	    $htmlheadercontent.= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once './master.inc.php'; } // Not already loaded"."\n";
+    	    $htmlheadercontent.= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once './master.inc.php'; } // Load env if not already loaded"."\n";
     	    $htmlheadercontent.= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
     	    $htmlheadercontent.= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
     	    $htmlheadercontent.= "ob_start();\n";
@@ -963,7 +1012,7 @@ if ($action == 'updatecss')
 
     		$csscontent.= "<?php // BEGIN PHP\n";
     		$csscontent.= '$websitekey=basename(__DIR__);'."\n";
-    		$csscontent.= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once __DIR__.'/master.inc.php'; } // Not already loaded"."\n";	// For the css, we need to set path of master using the dirname of css file.
+    		$csscontent.= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once __DIR__.'/master.inc.php'; } // Load env if not already loaded"."\n";	// For the css, we need to set path of master using the dirname of css file.
     		$csscontent.= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
     		$csscontent.= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
     		$csscontent.= "ob_start();\n";
@@ -996,7 +1045,7 @@ if ($action == 'updatecss')
 
     		$jscontent.= "<?php // BEGIN PHP\n";
     		$jscontent.= '$websitekey=basename(__DIR__);'."\n";
-    		$jscontent.= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once __DIR__.'/master.inc.php'; } // Not already loaded"."\n";	// For the css, we need to set path of master using the dirname of css file.
+    		$jscontent.= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once __DIR__.'/master.inc.php'; } // Load env if not already loaded"."\n";	// For the css, we need to set path of master using the dirname of css file.
     		$jscontent.= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
     		$jscontent.= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
     		$jscontent.= "ob_start();\n";
@@ -1029,7 +1078,7 @@ if ($action == 'updatecss')
 
     		/*$robotcontent.= "<?php // BEGIN PHP\n";
     	    $robotcontent.= '$websitekey=basename(__DIR__);'."\n";
-    	    $robotcontent.= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once './master.inc.php'; } // Not already loaded"."\n";
+    	    $robotcontent.= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once './master.inc.php'; } // Load env if not already loaded"."\n";
     	    $robotcontent.= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
     	    $robotcontent.= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
     	    $robotcontent.= "ob_start();\n";
@@ -1057,24 +1106,9 @@ if ($action == 'updatecss')
     		}
 
 
-    		// Css file
+    		// Htaccess file
     		$htaccesscontent ='';
-
-    		/*$htaccesscontent.= "<?php // BEGIN PHP\n";
-        	$htaccesscontent.= '$websitekey=basename(__DIR__);'."\n";
-        	$htaccesscontent.= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once './master.inc.php'; } // Not already loaded"."\n";
-        	$htaccesscontent.= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
-        	$htaccesscontent.= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
-        	$htaccesscontent.= "ob_start();\n";
-    		$htaccesscontent.= "header('Cache-Control: max-age=3600, public, must-revalidate');\n";
-        	$htaccesscontent.= "header('Content-type: text/css');\n";
-        	$htaccesscontent.= "// END PHP ?>\n";*/
-
     		$htaccesscontent.= GETPOST('WEBSITE_HTACCESS', 'none');
-
-    		/*$htaccesscontent.= "\n".'<?php // BEGIN PHP'."\n";
-        	$htaccesscontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp);'."\n";
-        	$htaccesscontent.= "// END PHP ?>"."\n";*/
 
     		dol_syslog("Save file htaccess into ".$filehtaccess);
 
@@ -1088,6 +1122,38 @@ if ($action == 'updatecss')
        			$error++;
        			setEventMessages('Failed to write file '.$filehtaccess, null, 'errors');
        		}
+
+       		// manifest.json file
+       		$manifestjsoncontent ='';
+
+       		$manifestjsoncontent.= "<?php // BEGIN PHP\n";
+       		$manifestjsoncontent.= '$websitekey=basename(__DIR__);'."\n";
+       		$manifestjsoncontent.= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once __DIR__.'/master.inc.php'; } // Load env if not already loaded"."\n";	// For the css, we need to set path of master using the dirname of css file.
+       		$manifestjsoncontent.= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
+       		$manifestjsoncontent.= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
+       		$manifestjsoncontent.= "ob_start();\n";
+       		$manifestjsoncontent.= "header('Cache-Control: max-age=3600, public, must-revalidate');\n";
+       		$manifestjsoncontent.= "header('Content-type: application/manifest+json');\n";
+       		$manifestjsoncontent.= "// END PHP ?>\n";
+
+       		$manifestjsoncontent.= GETPOST('WEBSITE_MANIFEST_JSON', 'none');
+
+       		$manifestjsoncontent.= "\n".'<?php // BEGIN PHP'."\n";
+       		$manifestjsoncontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp);'."\n";
+       		$manifestjsoncontent.= "// END PHP ?>"."\n";
+
+       		dol_syslog("Save file manifest.json.php into ".$manifestjsoncontent);
+
+       		dol_mkdir($pathofwebsite);
+       		$result = file_put_contents($filemanifestjson, $manifestjsoncontent);
+       		if (! empty($conf->global->MAIN_UMASK))
+       			@chmod($filemanifestjson, octdec($conf->global->MAIN_UMASK));
+
+   			if ($result === false)
+   			{
+  				$error++;
+  				setEventMessages('Failed to write file '.$filemanifestjson, null, 'errors');
+  			}
 
 
     		// Message if no error
@@ -2382,7 +2448,22 @@ if ($action == 'editcss')
 		$htaccesscontent.="# Order allow,deny\n";
 		$htaccesscontent.="# Deny from all\n";
 	}
-	//else $htaccesscontent='<html>'."\n".$htaccesscontent."\n".'</html>';*/
+
+
+	if (GETPOST('editcss', 'alpha') || GETPOST('refreshpage', 'alpha'))
+	{
+		$manifestjsoncontent = @file_get_contents($filemanifestjson);
+		// Clean the manifestjson file to remove php code and get only html part
+		$manifestjsoncontent = preg_replace('/<\?php \/\/ BEGIN PHP[^\?]*END PHP \?>\n*/ims', '', $manifestjsoncontent);
+	}
+	else
+	{
+		$manifestjsoncontent = GETPOST('WEBSITE_MANIFEST_JSON');
+	}
+	if (! trim($manifestjsoncontent))
+	{
+		//$manifestjsoncontent.="";
+	}
 
 	dol_fiche_head();
 
@@ -2395,6 +2476,20 @@ if ($action == 'editcss')
 	print '</td><td>';
 	print $websitekey;
 	print '</td></tr>';
+
+	// VirtualHost
+	print '<tr><td class="tdtop">';
+
+	$htmltext = $langs->trans("SetHereVirtualHost", DOL_DATA_ROOT.'/website/<i>'.$websitekey.'</i>');
+	$htmltext.='<br>';
+	$htmltext.='<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("ReadPerm"), DOL_DOCUMENT_ROOT);
+	$htmltext.='<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("WritePerm"), DOL_DATA_ROOT.'/website<br>'.DOL_DATA_ROOT.'/medias');
+
+	print $form->textwithpicto($langs->trans('Virtualhost'), $htmltext, 1, 'help', '', 0, 2, 'virtualhosttooltip');
+	print '</td><td>';
+	print '<input type="text" class="flat" value="'.(GETPOSTISSET('virtualhost') ? GETPOST('virtualhost', 'alpha') : $virtualurl).'" name="virtualhost">';
+	print '</td>';
+	print '</tr>';
 
 	// CSS file
 	print '<tr><td class="tdtop">';
@@ -2448,18 +2543,17 @@ if ($action == 'editcss')
 
 	print '</td></tr>';
 
-	// VirtualHost
+	// Manifest.json
 	print '<tr><td class="tdtop">';
-
-	$htmltext = $langs->trans("SetHereVirtualHost", DOL_DATA_ROOT.'/website/<i>'.$websitekey.'</i>');
-	$htmltext.='<br>';
-	$htmltext.='<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("ReadPerm"), DOL_DOCUMENT_ROOT);
-	$htmltext.='<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("WritePerm"), DOL_DATA_ROOT.'/website<br>'.DOL_DATA_ROOT.'/medias');
-
-	print $form->textwithpicto($langs->trans('Virtualhost'), $htmltext, 1, 'help', '', 0, 2, 'virtualhosttooltip');
+	$htmlhelp=$langs->trans("Example").' :<br>';
+	$htmlhelp.=dol_htmlentitiesbr($manifestjsoncontentdefault);
+	print $form->textwithpicto($langs->trans('WEBSITE_MANIFEST_JSON'), $htmlhelp, 1, 'help', '', 0, 2, 'manifestjsontooltip');
 	print '</td><td>';
-	print '<input type="text" class="flat" value="'.(GETPOSTISSET('virtualhost') ? GETPOST('virtualhost', 'alpha') : $virtualurl).'" name="virtualhost">';
-    print '</td>';
+
+	$doleditor=new DolEditor('WEBSITE_MANIFEST_JSON', $manifestjsoncontent, '', '220', 'ace', 'In', true, false, 'ace', 0, '100%', '');
+	print $doleditor->Create(1, '', true, $langs->trans("File").' manifest.json', 'text');
+
+	print '</td></tr>';
 
 	print '</table>';
 
