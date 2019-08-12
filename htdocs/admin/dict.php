@@ -1602,7 +1602,6 @@ if ($id)
                             $class='tddict';
                             if ($fieldlist[$field] == 'note' && $id == 10) $class.=' tdoverflowmax200';
                             if ($fieldlist[$field] == 'tracking') $class.=' tdoverflowauto';
-                            if ($fieldlist[$field] == 'code') $class.=' maxwidth100';
                             if ($fieldlist[$field] == 'position') $class.=' right';
                             if ($fieldlist[$field] == 'localtax1_type') $class.=' nowrap';
                             if ($fieldlist[$field] == 'localtax2_type') $class.=' nowrap';
@@ -1780,7 +1779,6 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 	global $form;
 	global $region_id;
 	global $elementList,$sourceList,$localtax_typeList;
-	global $bc;
 
 	$formadmin = new FormAdmin($db);
 	$formcompany = new FormCompany($db);
@@ -1981,7 +1979,7 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
             }
 
 			$classtd=''; $class='';
-			if ($fieldlist[$field]=='code') $classtd='maxwidth100';
+			if ($fieldlist[$field]=='code') $class='maxwidth100';
 			if (in_array($fieldlist[$field], array('pos', 'use_default', 'affect', 'delay', 'position', 'sortorder', 'sens', 'category_type'))) $class='maxwidth50';
 			if (in_array($fieldlist[$field], array('libelle', 'label', 'tracking'))) $class='quatrevingtpercent';
 			print '<td class="'.$classtd.'">';
