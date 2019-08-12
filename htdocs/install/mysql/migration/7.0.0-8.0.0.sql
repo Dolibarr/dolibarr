@@ -562,5 +562,3 @@ ALTER TABLE llx_advtargetemailing DROP COLUMN fk_mailing;
 DROP TABLE llx_ticket_logs;
 
 ALTER TABLE llx_actioncomm MODIFY COLUMN code varchar(50);
-
-ALTER TABLE llx_stock_mouvement ADD COLUMN fk_projet INTEGER NOT NULL DEFAULT 0 AFTER model_pdf;
