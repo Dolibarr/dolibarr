@@ -6,7 +6,7 @@
  * Copyright (C) 2005-2013 Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2006      Andre Cianfarani			<acianfa@free.fr>
  * Copyright (C) 2008      Raphael Bertrand			<raphael.bertrand@resultic.fr>
- * Copyright (C) 2010-2014 Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2010-2019 Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2010-2017 Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2012-2014 Christophe Battarel  	<christophe.battarel@altairis.fr>
  * Copyright (C) 2012      Cedric Salvador          <csalvador@gpcsolutions.fr>
@@ -1054,14 +1054,6 @@ class Propal extends CommonObject
                 			}
                 		}
                 	}
-                }
-
-                // Add linked object (deprecated, use ->linkedObjectsIds instead)
-                if (! $error && $this->origin && $this->origin_id)
-                {
-                    dol_syslog('Deprecated use of linked object, use ->linkedObjectsIds instead', LOG_WARNING);
-                	$ret = $this->add_object_linked();
-                	if (! $ret)	dol_print_error($this->db);
                 }
 
                 /*
