@@ -355,21 +355,49 @@ class AccountancyExport
 	 */
 	public function exportCoala($objectLines)
 	{
-		// Coala export
-		$separator = ";";
-		$end_line = "\n";
+		// Build list of society names
+		$subledger_label_list = array();
+		foreach ( $objectLines as $line ) {
+		    
+		    if ($line->subledger_label != '') {
+		        $subledger_label_list[$line->doc_ref] = $line->subledger_label;
+		    }
+		}
 
-		foreach ($objectLines as $line) {
+		foreach ( $objectLines as $line ) {
+			
+			print "\t";
 			$date = dol_print_date($line->doc_date, '%d/%m/%Y');
 			print $date . $separator;
 			print $line->code_journal . $separator;
-			print length_accountg($line->numero_compte) . $separator;
-			print $line->piece_num . $separator;
-			print $line->doc_ref . $separator;
-			print price($line->debit) . $separator;
-			print price($line->credit) . $separator;
+			
+			$is_subledger_account = false;
+			$subledger_account = length_accountg($line->subledger_account);
+			if ($subledger_account != '') {
+				print length_accountg($line->subledger_account) . $separator;
+				$is_subledger_account = true;
+			}
+			else {
+				print length_accountg($line->numero_compte) . $separator;
+			}
+			print '"' . $line->doc_ref . '"' . $separator;
+			
+			print '"' . $subledger_label_list[$line->doc_ref] . '"' . $separator;
+			
+			if ($line->sens=='D') {
+				print 'D' . $separator;
+				print str_replace(' ', '', price($line->debit,0,'',1,-1,3)) . $separator;
+			}
+			if ($line->sens=='C') {
+				print 'C' . $separator;
+				print str_replace(' ', '', price($line->credit,0,'',1,-1,3)) . $separator;
+			}
 			print 'E' . $separator;
-			print length_accountg($line->subledger_account) . $separator;
+			if ($is_subledger_account) {
+				print 'A' . $separator;
+			}
+			
+			print $separator;
 			print $end_line;
 		}
 	}
