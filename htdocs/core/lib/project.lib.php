@@ -1953,12 +1953,11 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 }
 
 /**
- * @param $task             Task
- * @param $label            string|bool  true = auto, false = dont display, string = replace output
- * @param $progressNumber   string|bool  true = auto, false = dont display, string = replace output
- * @param $hideOnProgressNull bool
- * @param $showPercent bool
- * @param $spaced bool
+ * @param   task                $task               Task            the task object
+ * @param   label               $label              bool|string     true = auto, false = dont display, string = replace output
+ * @param   progressNumber      $progressNumber     bool|string     true = auto, false = dont display, string = replace output
+ * @param   hideOnProgressNull  $hideOnProgressNull bool            hide if progress is null
+ * @param   spaced              $spaced             bool            used to add space at bottom (made by css)
  * @return string
  */
 function getTaskProgressView($task, $label = true, $progressNumber = true, $hideOnProgressNull = false, $spaced = false)
@@ -2062,9 +2061,9 @@ function getTaskProgressView($task, $label = true, $progressNumber = true, $hide
     return $out;
 }
 /**
- * @param $task      Task
- * @param $label     string  empty = auto (progress), string = replace output
- * @param $tooltip   string  empty = auto , string = replace output
+ * @param task      $task      Task     the task object
+ * @param label     $label     string   empty = auto (progress), string = replace output
+ * @param tooltip   $tooltip   string   empty = auto , string = replace output
  * @return string
  */
 function getTaskProgressBadge($task, $label = '', $tooltip = '')
@@ -2072,14 +2071,13 @@ function getTaskProgressBadge($task, $label = '', $tooltip = '')
     global $conf;
 
     $out = '';
-    $label = '';
-    $badgeColorClass = '';
+    $badgeClass = '';
     if ($task->progress != '')
     {
         // TODO : manage 100%
 
         // define color according to time spend vs workload
-        $badgeColorClass = 'badge ';
+        $badgeClass = 'badge ';
         if ($task->planned_workload){
             $progressCalculated =  round(100 * doubleval($task->duration_effective) / doubleval($task->planned_workload), 2);
 
@@ -2087,15 +2085,21 @@ function getTaskProgressBadge($task, $label = '', $tooltip = '')
             $warningRatio = !empty($conf->global->PROJECT_TIME_SPEND_WARNING_PERCENT) ? (1 + $conf->global->PROJECT_TIME_SPEND_WARNING_PERCENT / 100) : 1.01;
 
             if($progressCalculated > doubleval($task->progress)){
-                $badgeColorClass.= 'badge-danger';
+                $badgeClass.= 'badge-danger';
             }
             elseif($progressCalculated * $warningRatio >= doubleval($task->progress)){ // warning if close at 1%
-                $badgeColorClass.= 'badge-warning';
+                $badgeClass.= 'badge-warning';
             }
             else{
-                $badgeColorClass.= 'badge-success';
+                $badgeClass.= 'badge-success';
             }
         }
+    }
+
+    $title = '';
+    if(!empty($tooltip)){
+        $badgeClass.= ' classfortooltip';
+        $title = 'title="'.dol_htmlentities($tooltip).'"';
     }
 
     if(empty($label)){
@@ -2103,7 +2107,7 @@ function getTaskProgressBadge($task, $label = '', $tooltip = '')
     }
 
     if(!empty($label)){
-        $out = '<span class="'.$badgeColorClass.'" >'.$label.'</span>';
+        $out = '<span class="'.$badgeClass.'" '.$title.' >'.$label.'</span>';
     }
 
     return $out;
