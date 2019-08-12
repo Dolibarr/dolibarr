@@ -355,6 +355,11 @@ class AccountancyExport
 	 */
 	public function exportCoala($objectLines)
 	{
+
+		$separator = ";";
+
+		$end_line = "\n";
+
 		// Build list of society names
 		$subledger_label_list = array();
 		foreach ( $objectLines as $line ) {
