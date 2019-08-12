@@ -1,5 +1,8 @@
 # Dolibarr language file - Source file is en_US - margins
 MARGIN_TYPE=Kaufpreis / Kosten standardmässig vorgeschlagen für Standardmargenkalkulation empfohlen\n
+MargeType1=Marge nach höchstem Lieferantenpreis
 MargeType3=Spanne vom Einstandspreis
+MarginTypeDesc=* Marge zum besten Einkaufspreis = Verkaufspreis - bester Einkaufspreis, gemäss Produktkarte.<br>* Marge zum gewichtetem Durchschnitts - Einkaufspreis = Verkaufspreis - gewichteter mittlerer Einkaufspreis (oder niedrigster Einkaufspreis, wenn der Durschnittspreis nicht vorhanden ist).<br>* Marge zum Selbstkostenpreis = Verkaufspreis - Selbstkostenpreis gemäss Produktkarte. (Oder Durchschnittspreis, falls Selbstkostenpreis nicht hinterlegt ist. Fehlt der auch, gilt der niedrigste Einkaufspreis als Bezug.
 ShowMarginInfos=Zeige Spannen-Informationen
 CheckMargins=Details zur Gewinnspanne
+MarginPerSaleRepresentativeWarning=Der Bericht Marge nach Benutzer zeigt die Verkaufsmarge der Einzelnen Verkäufer. Dazu zieht Dolibarr die Verknüpfung von Geschäftspartnern mit Verkaufsverantwortlichen bei.\nWeil manche Partner keinen oder mehrere Verantwortliche hinterlegt haben, können so Daten fehlen oder auf Verschiedene Einträge pro Verkäufer aufgeteilt erscheinen.

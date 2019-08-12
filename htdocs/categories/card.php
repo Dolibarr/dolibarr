@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005		Matthieu Valleton	<mv@seeschloss.org>
  * Copyright (C) 2006-2017	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2014	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2014	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2007		Patrick Raguin		<patrick.raguin@gmail.com>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
@@ -35,17 +35,18 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 $langs->load("categories");
 
 // Security check
-$socid=GETPOST('socid','int');
+$socid=GETPOST('socid', 'int');
 if (!$user->rights->categorie->lire) accessforbidden();
 
-$action		= GETPOST('action','alpha');
-$cancel		= GETPOST('cancel','alpha');
-$origin		= GETPOST('origin','alpha');
-$catorigin	= GETPOST('catorigin','int');
-$type 		= GETPOST('type','alpha');
-$urlfrom	= GETPOST('urlfrom','alpha');
+$action		= GETPOST('action', 'alpha');
+$cancel		= GETPOST('cancel', 'alpha');
+$origin		= GETPOST('origin', 'alpha');
+$catorigin	= GETPOST('catorigin', 'int');
+$type 		= GETPOST('type', 'alpha');
+$urlfrom	= GETPOST('urlfrom', 'alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
 
-$socid=GETPOST('socid','int');
+$socid=GETPOST('socid', 'int');
 $label=GETPOST('label');
 $description=GETPOST('description');
 $color=GETPOST('color');
@@ -88,32 +89,32 @@ if ($action == 'add' && $user->rights->categorie->creer)
 			header("Location: ".$urlfrom);
 			exit;
 		}
-		else if ($idProdOrigin)
+		elseif ($idProdOrigin)
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idProdOrigin.'&type='.$type);
 			exit;
 		}
-		else if ($idCompanyOrigin)
+		elseif ($idCompanyOrigin)
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idCompanyOrigin.'&type='.$type);
 			exit;
 		}
-		else if ($idSupplierOrigin)
+		elseif ($idSupplierOrigin)
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idSupplierOrigin.'&type='.$type);
 			exit;
 		}
-		else if ($idMemberOrigin)
+		elseif ($idMemberOrigin)
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idMemberOrigin.'&type='.$type);
 			exit;
 		}
-		else if ($idContactOrigin)
+		elseif ($idContactOrigin)
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idContactOrigin.'&type='.$type);
 			exit;
 		}
-		else if ($idProjectOrigin)
+		elseif ($idProjectOrigin)
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idProjectOrigin.'&type='.$type);
 			exit;
@@ -136,7 +137,7 @@ if ($action == 'add' && $user->rights->categorie->creer)
 
 	if ($parent != "-1") $object->fk_parent = $parent;
 
-	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+	$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
 	if ($ret < 0) $error++;
 
 	if (! $object->label)
@@ -173,32 +174,37 @@ if (($action == 'add' || $action == 'confirmed') && $user->rights->categorie->cr
 			header("Location: ".$urlfrom);
 			exit;
 		}
-		else if ($idProdOrigin)
+		elseif ($backtopage)
+		{
+			header("Location: ".$backtopage);
+			exit;
+		}
+		elseif ($idProdOrigin)
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idProdOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
 			exit;
 		}
-		else if ($idCompanyOrigin)
+		elseif ($idCompanyOrigin)
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idCompanyOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
 			exit;
 		}
-		else if ($idSupplierOrigin)
+		elseif ($idSupplierOrigin)
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idSupplierOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
 			exit;
 		}
-		else if ($idMemberOrigin)
+		elseif ($idMemberOrigin)
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idMemberOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
 			exit;
 		}
-		else if ($idContactOrigin)
+		elseif ($idContactOrigin)
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idContactOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
 			exit;
 		}
-		else if ($idProjectOrigin)
+		elseif ($idProjectOrigin)
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idProjectOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
 			exit;
@@ -218,7 +224,7 @@ $form = new Form($db);
 $formother = new FormOther($db);
 
 $helpurl='';
-llxHeader("",$langs->trans("Categories"),$helpurl);
+llxHeader("", $langs->trans("Categories"), $helpurl);
 
 if ($user->rights->categorie->creer)
 {
@@ -232,8 +238,9 @@ if ($user->rights->categorie->creer)
 		print '<input type="hidden" name="urlfrom" value="'.$urlfrom.'">';
 		print '<input type="hidden" name="action" value="add">';
 		print '<input type="hidden" name="addcat" value="addcat">';
-		print '<input type="hidden" name="id" value="'.GETPOST('origin').'">';
+		print '<input type="hidden" name="id" value="'.GETPOST('origin', 'alpha').'">';
 		print '<input type="hidden" name="type" value="'.$type.'">';
+		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 		if ($origin) print '<input type="hidden" name="origin" value="'.$origin.'">';
 		if ($catorigin)	print '<input type="hidden" name="catorigin" value="'.$catorigin.'">';
 
@@ -251,13 +258,13 @@ if ($user->rights->categorie->creer)
 		// Description
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$doleditor=new DolEditor('description',$description,'',200,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_PRODUCTDESC,ROWS_6,'90%');
+		$doleditor=new DolEditor('description', $description, '', 200, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_6, '90%');
 		$doleditor->Create();
 		print '</td></tr>';
 
 		// Color
 		print '<tr><td>'.$langs->trans("Color").'</td><td>';
-		print $formother->selectColor($color,'color');
+		print $formother->selectColor($color, 'color');
 		print '</td></tr>';
 
 		// Parent category
@@ -267,11 +274,11 @@ if ($user->rights->categorie->creer)
 		print '</td></tr>';
 
 		$parameters=array();
-		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+		$reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
         print $hookmanager->resPrint;
 		if (empty($reshook))
 		{
-			print $object->showOptionals($extrafields,'edit');
+			print $object->showOptionals($extrafields, 'edit');
 		}
 
 		print '</table>';
@@ -288,7 +295,6 @@ if ($user->rights->categorie->creer)
 	}
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

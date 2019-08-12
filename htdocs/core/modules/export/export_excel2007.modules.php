@@ -17,7 +17,7 @@
  */
 
 /**
- *	\file       htdocs/core/modules/export/export_excel.modules.php
+ *	\file       htdocs/core/modules/export/export_excel2007.modules.php
  *	\ingroup    export
  *	\brief      File of class to generate export file with Excel format
  *	\author	    Laurent Destailleur
@@ -33,39 +33,57 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
  */
 class ExportExcel2007 extends ExportExcel
 {
-	var $id;
-	var $label;
-	var $extension;
-	var $version;
+	/**
+	 * @var string ID
+	 */
+	public $id;
 
-	var $label_lib;
-	var $version_lib;
+	/**
+     * @var string label
+     */
+    public $label;
 
-	var $workbook;      // Handle fichier
-	var $worksheet;     // Handle onglet
-	var $row;
-	var $col;
-    var $file;          // To save filename
+	public $extension;
+
+	/**
+     * Dolibarr version of the loaded document
+     * @var string
+     */
+	public $version = 'dolibarr';
+
+	public $label_lib;
+
+	public $version_lib;
+
+	public $workbook;      // Handle fichier
+
+	public $worksheet;     // Handle onglet
+
+	public $row;
+
+	public $col;
+
+    public $file;          // To save filename
 
 	/**
 	 *	Constructor
 	 *
 	 *	@param	    DoliDB	$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		global $conf, $langs;
 		$this->db = $db;
 
 		$this->id='excel2007';                  // Same value then xxx in file name export_xxx.modules.php
-		$this->label='Excel 2007';               // Label of driver
+		$this->label='Excel 2007 (old library)';               // Label of driver
 		$this->desc = $langs->trans('Excel2007FormatDesc');
 		$this->extension='xlsx';             // Extension for generated file by this driver
         $this->picto='mime/xls';			// Picto
 		$this->version='1.30';             // Driver version
 
-		$this->disabled = (in_array(constant('PHPEXCEL_PATH'),array('disabled','disabled/'))?1:0);	// A condition to disable module (used for native debian packages)
-		
+		$this->disabled = (in_array(constant('PHPEXCEL_PATH'), array('disabled','disabled/'))?1:0);	// A condition to disable module (used for native debian packages)
+
 		if (empty($this->disabled))
 		{
     		// If driver use an external library, put its name here
@@ -85,34 +103,34 @@ class ExportExcel2007 extends ExportExcel
                 $this->version_lib='1.8.0';		// No way to get info from library
     		}
 		}
-		
+
 		$this->row=0;
 	}
 
 
-	/**
-     *	Close Excel file
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    /**
+     *  Close Excel file
      *
-	 * 	@return		int							<0 if KO, >0 if OK
+	 *  @return		int							<0 if KO, >0 if OK
      */
-	function close_file()
-	{
-		global $conf;
+    public function close_file()
+    {
+        // phpcs:enable
+        global $conf;
 
-		if (! empty($conf->global->MAIN_USE_PHP_WRITEEXCEL))
-    	{
-	        $this->workbook->close();
-    	}
-    	else
-    	{
+        if (! empty($conf->global->MAIN_USE_PHP_WRITEEXCEL))
+        {
+            $this->workbook->close();
+        }
+        else
+        {
             require_once PHPEXCEL_PATH.'PHPExcel/Writer/Excel5.php';
-    	    $objWriter = new PHPExcel_Writer_Excel2007($this->workbook);
+            $objWriter = new PHPExcel_Writer_Excel2007($this->workbook);
             $objWriter->save($this->file);
             $this->workbook->disconnectWorksheets();
             unset($this->workbook);
-    	}
-		return 1;
-	}
-
+        }
+        return 1;
+    }
 }
-

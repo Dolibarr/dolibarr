@@ -5,9 +5,9 @@ RemoteControlSupport=Online reaalaja/kaudtoe tugi
 OtherSupport=Muu tugi
 ToSeeListOfAvailableRessources=Kontakteerumiseks/saadaval olevate ressursside nägemiseks:
 HelpCenter=Abiinfo
-DolibarrHelpCenter=Dolibarri abi ja tugikeskus
-ToGoBackToDolibarr=Muul juhul klõpsa Dolibarri kasutamiseks <a href="%s">siia</a>
-TypeOfSupport=Toe allikas
+DolibarrHelpCenter=Dolibarr Help and Support Center
+ToGoBackToDolibarr=Otherwise, <a href="%s">click here to continue to use Dolibarr</a>.
+TypeOfSupport=Type of support
 TypeSupportCommunauty=Kogukond (tasuta)
 TypeSupportCommercial=Äriline
 TypeOfHelp=Liik
@@ -15,12 +15,9 @@ NeedHelpCenter=Need help or support?
 Efficiency=Tõhusus
 TypeHelpOnly=Ainult abi
 TypeHelpDev=Abi+Arendus
-TypeHelpDevForm=Abi+Arendus+Rakendamine
-ToGetHelpGoOnSparkAngels1=Mõned ettevõtted pakuvad kiiret (vahepeal kohest) ja tõhusat online abi arvutit juhtides. Neid ettevõtteid leiab  <b>%s</b> veebilehelt:
-ToGetHelpGoOnSparkAngels3=Samuti võid kasutada kõigi saadavalolevate Dolibarri koolitajate nimekirja, selleks klõpsa nupule
-ToGetHelpGoOnSparkAngels2=Vahepeal ei ole otsingu tegemise hetkel ühtki ettevõtet saadaval, seega võid kasutada filtrit "kõik saadval", et rohkemate ettevõtete järele pärida.
-BackToHelpCenter=Muul juhul klõpsa <a href="%s">siia, et minna tagasi abiinfo kodulehele</a>.
-LinkToGoldMember=Võid helistada ühele Dolibarri poolt eelvalitud koolitajale Sinu keele (%s) jaoks tema vidinal klõpsates (staatust ja maksimaalset hinda uuendatakse automaatselt):
+TypeHelpDevForm=Help+Development+Training
+BackToHelpCenter=Otherwise, <a href="%s">go back to Help center home page</a>.
+LinkToGoldMember=You can call one of the trainers preselected by Dolibarr for your language (%s) by clicking their Widget (status and maximum price are automatically updated):
 PossibleLanguages=Toetatud keeled
-SubscribeToFoundation=Aita Dolibarri projekti, liitu sihtasutusega
+SubscribeToFoundation=Help the Dolibarr project, subscribe to the foundation
 SeeOfficalSupport=Ametlikuks Dolibarri toeks Sinu keeles: <br><b><a href="%s" target="_blank">%s</a></b>

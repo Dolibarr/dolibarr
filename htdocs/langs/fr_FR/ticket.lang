@@ -25,11 +25,11 @@ Permission56001=Voir tickets
 Permission56002=Modifier des tickets
 Permission56003=Supprimer tickets
 Permission56004=Gérer les tickets
-Permission56005=Voir les tickets de tous les tiers (sauf pour les utilisateurs externes, toujours limité au tiers dont ils dépendent)
+Permission56005=Voir les tickets de tous les tiers (non effectif pour les utilisateurs externes, toujours limité au tiers dont ils dépendent)
 
-TicketDictType=Type de ticket
-TicketDictCategory=Catégories de tickets
-TicketDictSeverity=Sévérité des tickets
+TicketDictType=Ticket - Types
+TicketDictCategory=Ticket - Groupes
+TicketDictSeverity=Ticket - Sévérités
 TicketTypeShortBUGSOFT=Dysfonctionnement logiciel
 TicketTypeShortBUGHARD=Dysfonctionnement matériel
 TicketTypeShortCOM=Question commerciale
@@ -53,21 +53,22 @@ TypeContact_ticket_external_SUPPORTCLI=Contact client / suivi des tickets
 TypeContact_ticket_external_CONTRIBUTOR=Contributeur externe
 
 OriginEmail=E-mail source
-Notify_TICKETMESSAGE_SENTBYMAIL=Envoyer la réponse par email
+Notify_TICKET_SENTBYMAIL=Envoi d'un message du ticket par e-mail
 
 # Status
 NotRead=Non lu
 Read=Lu
-Answered=Répondu
 Assigned=Assigné
 InProgress=En cours
+NeedMoreInformation=En attente d'information
+Answered=Répondu
 Waiting=En attente
 Closed=Fermé
 Deleted=Supprimé
 
 # Dict
 Type=Type
-Category=Catégorie
+Category=Code analytique
 Severity=Sévérité
 
 # Email templates
@@ -80,21 +81,21 @@ TicketSetup=Configuration du module de ticket
 TicketSettings=Paramètres
 TicketSetupPage=
 TicketPublicAccess=Une interface publique ne nécessitant aucune identification est disponible à l'url suivante
-TicketSetupDictionaries=Le type de catégories d'application et le niveau de gravité sont configurables à partir de dictionnaires
+TicketSetupDictionaries=Les type de ticket, sévérité et codes analytiques sont paramétrables à partir des dictionnaires
 TicketParamModule=Configuration des variables du module
 TicketParamMail=Configuration de la messagerie
 TicketEmailNotificationFrom=Email from de notification
 TicketEmailNotificationFromHelp=Utilisé dans les messages de réponses des tickets par exemple
 TicketEmailNotificationTo=E-mail de notification à
 TicketEmailNotificationToHelp=Envoyer des notifications par e-mail à cette adresse.
-TicketNewEmailBodyLabel=Texte du message envoyé après la création d'un ticket (interface publique)
+TicketNewEmailBodyLabel=Texte du message envoyé après la création d'un ticket
 TicketNewEmailBodyHelp=Le texte spécifié ici sera inséré dans l'e-mail confirmant la création d'un nouveau ticket depuis l'interface publique. Les informations sur la consultation du ticket sont automatiquement ajoutées.
 TicketParamPublicInterface=Configuration de l'interface publique\n
 TicketsEmailMustExist=Une adresse e-mail existante est requise pour créer un ticket
 TicketsEmailMustExistHelp=Pour accéder à l'interface publique et créer un nouveau ticket, votre compte doit déjà être existant.
 PublicInterface=Interface publique
-TicketUrlPublicInterfaceLabelAdmin=URL interface publique
-TicketUrlPublicInterfaceHelpAdmin=Il est possible de définir un alias vers le serveur Web et de rendre ainsi l'interface publique accessible à une autre adresse IP.
+TicketUrlPublicInterfaceLabelAdmin=URL alternative pour l'interface publique
+TicketUrlPublicInterfaceHelpAdmin=Il est possible de définir un alias vers le serveur et de rendre ainsi l'interface publique accessible avec une autre URL (le serveur doit agir comme un proxy sur cette nouvelle URL)
 TicketPublicInterfaceTextHomeLabelAdmin=Texte de bienvenue dans l'interface publique
 TicketPublicInterfaceTextHome=Vous pouvez créer un ticket ou consulter à partir d'un ID de ticket existant.
 TicketPublicInterfaceTextHomeHelpAdmin=Le texte défini ici apparaîtra sur la page d'accueil de l'interface publique.
@@ -123,14 +124,16 @@ TicketsAutoAssignTicket=Affecter automatiquement l'utilisateur qui a créé le t
 TicketsAutoAssignTicketHelp=Lors de la création d'un ticket, l'utilisateur peut être automatiquement affecté au ticket.
 TicketNumberingModules=Module de numérotation des tickets
 TicketNotifyTiersAtCreation=Notifier le tiers à la création
-
+TicketGroup=Groupe
+TicketsDisableCustomerEmail=Toujours désactiver les courriels lorsqu'un ticket est créé depuis l'interface publique
 #
 # Index & list page
 #
-TicketsIndex=Accueil
+TicketsIndex=Espace tickets
 TicketList=Liste des tickets
-TicketAssignedToMeInfos=Cette page présente la liste des tickets assignés à l'utilisateur actuel
+TicketAssignedToMeInfos=Cette page affiche la liste de tickets créés par ou attribuées à l'utilisateur actuel.
 NoTicketsFound=Aucun ticket trouvé
+NoUnreadTicketsFound=Aucun ticket non lu trouvé
 TicketViewAllTickets=Voir tous les tickets
 TicketViewNonClosedOnly=Voir seulement les tickets ouverts
 TicketStatByStatus=Tickets par statut
@@ -147,18 +150,17 @@ CreatedBy=Créé par
 NewTicket=Nouveau ticket
 SubjectAnswerToTicket=Réponse ticket
 TicketTypeRequest=Type de demande
-TicketCategory=Catégorie
+TicketCategory=Code analytique
 SeeTicket=Voir le ticket
 TicketMarkedAsRead=Le ticket a été marqué comme lu
 TicketReadOn=Lu
-TicketCloseOn=Fermé le
+TicketCloseOn=Date clôture
 MarkAsRead=Marquer le ticket comme lu
-TicketMarkedAsReadButLogActionNotSaved=Ticket marqué comme Clos mais aucune action enregistrée
 TicketHistory=Historique des tickets
 AssignUser=Assigner à l'utilisateur
 TicketAssigned=Le ticket est à présent assigné
 TicketChangeType=Changer le type
-TicketChangeCategory=Changer la catégorie
+TicketChangeCategory=Changer le code analytique
 TicketChangeSeverity=Changer la sévérité
 TicketAddMessage=Ajouter un message
 AddMessage=Ajouter un message
@@ -178,7 +180,6 @@ ConfirmCloseAticket=Confirmer la fermeture du ticket
 ConfirmDeleteTicket=Confirmez la suppression du ticket
 TicketDeletedSuccess=Ticket supprimé avec succès
 TicketMarkedAsClosed=Ticket indiqué fermé
-TicketMarkedAsClosedButLogActionNotSaved=Ticket marqué comme fermé mais pas commenté !
 TicketDurationAuto=Durée calculée
 TicketDurationAutoInfos=Durée calculée automatiquement à partir de l'intervention liée
 TicketUpdated=Ticket mis à jour
@@ -188,8 +189,8 @@ ErrorMailRecipientIsEmptyForSendTicketMessage=Le destinataire est vide. Aucun e-
 TicketGoIntoContactTab=Rendez-vous dans le tableau "Contacts" pour les sélectionner
 TicketMessageMailIntro=Introduction
 TicketMessageMailIntroHelp=Ce texte est ajouté seulement au début de l'email et ne sera pas sauvegardé.
-TicketMessageMailIntroLabelAdmin=Introduction au message lors de l'envoi d'un e-mail
-TicketMessageMailIntroText=<p> Bonjour </ p> Une nouvelle réponse a été ajoutée à un ticket que vous suivez. Voici le message : </ p>
+TicketMessageMailIntroLabelAdmin=Introduction du message lors de l'envoi d'un e-mail
+TicketMessageMailIntroText=Bonjour <br> Une nouvelle réponse a été ajoutée à un ticket que vous suivez. Voici le message :<br>
 TicketMessageMailIntroHelpAdmin=Ce texte sera inséré après le message de réponse.
 TicketMessageMailSignature=Signature
 TicketMessageMailSignatureHelp=Ce texte est ajouté seulement à la fin de l'email et ne sera pas sauvegardé.
@@ -198,11 +199,12 @@ TicketMessageMailSignatureLabelAdmin=Signature de l'email de réponse
 TicketMessageMailSignatureHelpAdmin=Ce texte sera inséré après le message de réponse.
 TicketMessageHelp=Seul ce texte sera sauvegardé dans la liste des messages sur la fiche ticket.
 TicketMessageSubstitutionReplacedByGenericValues=Les variables de substitution sont remplacées par des valeurs génériques.
-TicketTimeToRead=Temps écoulé avant la lecture du ticket
+TimeElapsedSince=Temps écoulé depuis
+TicketTimeToRead=Temps écoulé avant la lecture
 TicketContacts=Contacts ticket
 TicketDocumentsLinked=Documents liés
 ConfirmReOpenTicket=Voulez-vous ré-ouvrir ce ticket ?
-TicketMessageMailIntroAutoNewPublicMessage=Un nouveau message a été posté sur le billet avec le sujet %s:
+TicketMessageMailIntroAutoNewPublicMessage=Un nouveau message a été posté sur le ticket avec le sujet %s:
 TicketAssignedToYou=Ticket attribué
 TicketAssignedEmailBody=Vous avez été assigné au ticket #%s par %s
 MarkMessageAsPrivate=Marquer message comme privé
@@ -217,21 +219,19 @@ TicketInitialMessageModified=Message initial modifié
 TicketMessageSuccesfullyUpdated=Message mis à jour avec succès
 TicketChangeStatus=Changer l'état
 TicketConfirmChangeStatus=Confirmez le changement d'état: %s?
-TicketLogStatusChanged=Statut changé: %s à %s
+TicketLogStatusChanged=Statut modifié: %s à %s
 TicketNotNotifyTiersAtCreate=Ne pas notifier l'entreprise à la création
 Unread=Non lu
 
 #
 # Logs
 #
-TicketLogMesgReadBy=Ticket lu par %s
+TicketLogMesgReadBy=Ticket %s lu par %s
 NoLogForThisTicket=Pas encore de log pour ce ticket
-TicketLogAssignedTo=Ticket attribué à %s
-TicketAssignedButLogActionNotSaved=Ticket assigné mais pas de log sauvegardé !
-TicketLogPropertyChanged=Changer la classification: de %s à %s
-TicketLogClosedBy=Ticket clôt par %s
-TicketLogProgressSetTo=Progression de %s pour-cent appliquée
-TicketLogReopen=Ticket ré-ouvert
+TicketLogAssignedTo=Ticket %s assigné à %s
+TicketLogPropertyChanged=Ticket %s modifié: classification de %s à %s
+TicketLogClosedBy=Ticket %s clôt par %s
+TicketLogReopen=Ticket %s ré-ouvert 
 
 #
 # Public pages
@@ -255,26 +255,31 @@ TicketEmailPleaseDoNotReplyToThisEmail=Merci de ne pas répondre directement à 
 TicketPublicInfoCreateTicket=Ce formulaire vous permet d'enregistrer un ticket dans notre système de gestion.
 TicketPublicPleaseBeAccuratelyDescribe=Veuillez décrire avec précision le problème. Fournissez le plus d'informations possibles pour nous permettre d'identifier correctement votre demande.
 TicketPublicMsgViewLogIn=Merci d'entrer le code de suivi du ticket
-TicketTrackId=Tracking ID
+TicketTrackId=ID de suivi publique
 OneOfTicketTrackId=Un de vos ID de suivi
-ErrorTicketNotFound=Ticket avec numéro de suivi %s non trouvé!
+ErrorTicketNotFound=Ticket avec ID de suivi %s introuvable!
 Subject=Sujet
 ViewTicket=Voir le ticket
 ViewMyTicketList=Voir la liste de mes tickets
-ErrorEmailMustExistToCreateTicket=Erreur : Email introuvable dans notre base de données
+ErrorEmailMustExistToCreateTicket=Erreur: adresse email introuvable dans notre base de données
 TicketNewEmailSubjectAdmin=Nouveau ticket créé
 TicketNewEmailBodyAdmin=<p> Le ticket vient d'être créé avec l'ID # %s, voir les informations: </p>
 SeeThisTicketIntomanagementInterface=Voir ticket dans l'interface de gestion
-TicketPublicInterfaceForbidden=Accès à cette partie : interdit
-
+TicketPublicInterfaceForbidden=L'interface publique pour les tickets n'a pas été activée
+ErrorEmailOrTrackingInvalid=Mauvaise valeur pour l'ID de suivi ou l'e-mail
+OldUser=Ancien utilisateur
+NewUser=Nouvel utilisateur
+NumberOfTicketsByMonth=Nombre de tickets par mois
+NbOfTickets=Nombre de tickets
 # notifications
 TicketNotificationEmailSubject=Ticket %s mis à jour
 TicketNotificationEmailBody=Ceci est un message automatique pour vous informer que le ticket %s vient d'être mis à jour
 TicketNotificationRecipient=Destinataire de la notification
 TicketNotificationLogMessage=Message de log
 TicketNotificationEmailBodyInfosTrackUrlinternal=Afficher le ticket dans l'interface
-TicketNotificationNumberEmailSent=Email de notification envoyé: %s
+TicketNotificationNumberEmailSent=Courriel de notification envoyé: %s
 
+ActionsOnTicket=Événements sur le ticket
 
 #
 # Boxes

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2017    	Ferran Marcet       	<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -35,9 +35,9 @@ if (! empty($conf->projet->enabled)) {
 // Load translation files required by the page
 $langs->loadLangs(array('propal', 'compta'));
 
-$id=GETPOST('id','int');
-$ref=GETPOST('ref','alpha');
-$socid=GETPOST('socid','int');
+$id=GETPOST('id', 'int');
+$ref=GETPOST('ref', 'alpha');
+$socid=GETPOST('socid', 'int');
 
 // Security check
 if (! empty($user->societe_id)) $socid=$user->societe_id;
@@ -58,7 +58,7 @@ if (! $object->fetch($id, $ref) > 0)
 
 $form = new Form($db);
 
-llxHeader('',$langs->trans('Proposal'),'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos');
+llxHeader('', $langs->trans('Proposal'), 'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos');
 
 $object->fetch_thirdparty();
 
@@ -127,5 +127,6 @@ print '</div>';
 
 dol_fiche_end();
 
+// End of page
 llxFooter();
 $db->close();

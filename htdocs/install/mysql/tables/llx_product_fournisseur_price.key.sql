@@ -1,7 +1,7 @@
 -- ============================================================================
 -- Copyright (C) 2003		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
 -- Copyright (C) 2005-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
--- Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+-- Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@inodbox.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -31,3 +31,8 @@ ALTER TABLE llx_product_fournisseur_price ADD INDEX idx_product_fourn_price_fk_p
 ALTER TABLE llx_product_fournisseur_price ADD INDEX idx_product_fourn_price_fk_soc (fk_soc, entity);
 
 ALTER TABLE llx_product_fournisseur_price ADD CONSTRAINT fk_product_fournisseur_price_fk_product FOREIGN KEY (fk_product) REFERENCES llx_product (rowid);
+
+ALTER TABLE llx_product_fournisseur_price ADD INDEX idx_product_barcode (barcode);
+ALTER TABLE llx_product_fournisseur_price ADD INDEX idx_product_fk_barcode_type (fk_barcode_type);
+ALTER TABLE llx_product_fournisseur_price ADD UNIQUE INDEX uk_product_barcode (barcode, fk_barcode_type, entity);
+ALTER TABLE llx_product_fournisseur_price ADD CONSTRAINT fk_product_fournisseur_price_barcode_type FOREIGN KEY (fk_barcode_type) REFERENCES  llx_c_barcode_type (rowid);

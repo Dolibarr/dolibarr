@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2008-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2008-2010 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2008-2010 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,15 +39,15 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'ecm', 0);
 
 // Get parameters
-$socid=GETPOST('socid','int');
-$action=GETPOST('action','aZ09');
-$section=GETPOST('section','int')?GETPOST('section','int'):GETPOST('section_id','int');
+$socid=GETPOST('socid', 'int');
+$action=GETPOST('action', 'aZ09');
+$section=GETPOST('section', 'int')?GETPOST('section', 'int'):GETPOST('section_id', 'int');
 if (! $section) $section=0;
-$section_dir=GETPOST('section_dir','alpha');
+$section_dir=GETPOST('section_dir', 'alpha');
 
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
@@ -61,7 +61,7 @@ if ($section)
 	$result=$ecmdir->fetch($section);
 	if (! $result > 0)
 	{
-		dol_print_error($db,$ecmdir->error);
+		dol_print_error($db, $ecmdir->error);
 		exit;
 	}
 }
@@ -77,8 +77,12 @@ $error=0;
  *	Actions
  */
 
+// TODO Replace sendit and confirm_deletefile with
+//$backtopage=$_SERVER["PHP_SELF"].'?file_manager=1&website='.$websitekey.'&pageid='.$pageid;	// used after a confirm_deletefile into actions_linkedfiles.inc.php
+//include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
+
 // Upload file (code similar but different than actions_linkedfiles.inc.php)
-if (GETPOST("sendit",'none') && ! empty($conf->global->MAIN_UPLOAD_DOC))
+if (GETPOST("sendit", 'none') && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
 	// Define relativepath and upload_dir
     $relativepath='';
@@ -105,12 +109,40 @@ if (GETPOST("sendit",'none') && ! empty($conf->global->MAIN_UPLOAD_DOC))
 
 	if (! $error)
 	{
-	    $res = dol_add_file_process($upload_dir, 0, 1, 'userfile', '', '', '', 0);
+		$generatethumbs = 0;
+		$res = dol_add_file_process($upload_dir, 0, 1, 'userfile', '', null, '', $generatethumbs);
 	    if ($res > 0)
 	    {
 	       $result=$ecmdir->changeNbOfFiles('+');
 	    }
 	}
+}
+
+// Remove file (code similar but different than actions_linkedfiles.inc.php)
+if ($action == 'confirm_deletefile')
+{
+	if (GETPOST('confirm') == 'yes')
+	{
+		// GETPOST('urlfile','alpha') is full relative URL from ecm root dir. Contains path of all sections.
+		//var_dump(GETPOST('urlfile'));exit;
+
+		$upload_dir = $conf->ecm->dir_output.($relativepath?'/'.$relativepath:'');
+		$file = $upload_dir . "/" . GETPOST('urlfile', 'alpha');
+
+		$ret=dol_delete_file($file);	// This include also the delete from file index in database.
+		if ($ret)
+		{
+			setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile', 'alpha')), null, 'mesgs');
+			$result=$ecmdir->changeNbOfFiles('-');
+		}
+		else
+		{
+			setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile', 'alpha')), null, 'errors');
+		}
+
+		clearstatcache();
+	}
+	$action='file_manager';
 }
 
 // Add directory
@@ -135,33 +167,6 @@ if ($action == 'add' && $user->rights->ecm->setup)
 	clearstatcache();
 }
 
-// Remove file (code similar but different than actions_linkedfiles.inc.php)
-if ($action == 'confirm_deletefile')
-{
-    if (GETPOST('confirm') == 'yes')
-    {
-    	// GETPOST('urlfile','alpha') is full relative URL from ecm root dir. Contains path of all sections.
-		//var_dump(GETPOST('urlfile'));exit;
-
-    	$upload_dir = $conf->ecm->dir_output.($relativepath?'/'.$relativepath:'');
-    	$file = $upload_dir . "/" . GETPOST('urlfile','alpha');	// Do not use urldecode here ($_GET and $_POST are already decoded by PHP).
-
-    	$ret=dol_delete_file($file);	// This include also the delete from file index in database.
-    	if ($ret)
-    	{
-    		setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile','alpha')), null, 'mesgs');
-    		$result=$ecmdir->changeNbOfFiles('-');
-    	}
-    	else
-    	{
-    		setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile','alpha')), null, 'errors');
-    	}
-
-    	clearstatcache();
-    }
-   	$action='file_manager';
-}
-
 // Remove directory
 if ($action == 'confirm_deletesection' && GETPOST('confirm') == 'yes')
 {
@@ -181,11 +186,11 @@ if ($action == 'refreshmanual')
 	// This part of code is same than into file ecm/ajax/ecmdatabase.php TODO Remove duplicate
 	clearstatcache();
 
-    $diroutputslash=str_replace('\\','/',$conf->ecm->dir_output);
+    $diroutputslash=str_replace('\\', '/', $conf->ecm->dir_output);
     $diroutputslash.='/';
 
     // Scan directory tree on disk
-    $disktree=dol_dir_list($conf->ecm->dir_output,'directories',1,'','^temp$','','',0);
+    $disktree=dol_dir_list($conf->ecm->dir_output, 'directories', 1, '', '^temp$', '', '', 0);
 
     // Scan directory tree in database
     $sqltree=$ecmdirstatic->get_full_arbo(0);
@@ -215,13 +220,13 @@ if ($action == 'refreshmanual')
 
             // We must first find the fk_parent of directory to create $dirdesc['fullname']
             $fk_parent=-1;
-            $relativepathmissing=str_replace($diroutputslash,'',$dirdesc['fullname']);
+            $relativepathmissing=str_replace($diroutputslash, '', $dirdesc['fullname']);
             $relativepathtosearchparent=$relativepathmissing;
             //dol_syslog("Try to find parent id for directory ".$relativepathtosearchparent);
-            if (preg_match('/\//',$relativepathtosearchparent))
+            if (preg_match('/\//', $relativepathtosearchparent))
             //while (preg_match('/\//',$relativepathtosearchparent))
             {
-                $relativepathtosearchparent=preg_replace('/\/[^\/]*$/','',$relativepathtosearchparent);
+                $relativepathtosearchparent=preg_replace('/\/[^\/]*$/', '', $relativepathtosearchparent);
                 $txt="Is relative parent path ".$relativepathtosearchparent." for ".$relativepathmissing." found in sql tree ?";
                 dol_syslog($txt);
                 //print $txt." -> ";
@@ -295,7 +300,7 @@ if ($action == 'refreshmanual')
 		if (! dol_is_dir($dirtotest))
 		{
 			$ecmdirtmp->id=$dirdesc['id'];
-			$ecmdirtmp->delete($user,'databaseonly');
+			$ecmdirtmp->delete($user, 'databaseonly');
 			//exit;
 		}
     }
@@ -330,7 +335,7 @@ $moreheadjs.='<script type="text/javascript">'."\n";
 $moreheadjs.='var indicatorBlockUI = \''.DOL_URL_ROOT."/theme/".$conf->theme."/img/working.gif".'\';'."\n";
 $moreheadjs.='</script>'."\n";
 
-llxHeader($moreheadcss.$moreheadjs,$langs->trans("ECMArea"),'','','','',$morejs,'',0,0);
+llxHeader($moreheadcss.$moreheadjs, $langs->trans("ECMArea"), '', '', '', '', $morejs, '', 0, 0);
 
 $head = ecm_prepare_dasboard_head('');
 dol_fiche_head($head, 'index', $langs->trans("ECMArea").' - '.$langs->trans("ECMFileManager"), -1, '');

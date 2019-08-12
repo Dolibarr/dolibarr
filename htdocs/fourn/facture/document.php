@@ -2,9 +2,9 @@
 /* Copyright (C) 2003-2004	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005		Marc Barilley / Ocebo	<marc@ocebo.com>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2013		Cédric Salvador			<csalvador@gpcsolutions.fr>
- * Copyright (C) 2016		Alexandre Spangaro		<aspangaro@zendsi.com>
+ * Copyright (C) 2016		Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -24,7 +24,7 @@
 /**
  *       \file       htdocs/fourn/facture/document.php
  *       \ingroup    facture, fournisseur
- *       \brief      Page de gestion des documents attaches a une facture fournisseur
+ *       \brief      Page to manage documents joined to vendor invoices
  */
 
 require '../../main.inc.php';
@@ -38,23 +38,21 @@ if (! empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 }
 
-$langs->load('bills');
-$langs->load('other');
-$langs->load("companies");
+$langs->loadLangs(array('bills', 'other', 'companies'));
 
-$id = GETPOST('facid','int')?GETPOST('facid','int'):GETPOST('id','int');
-$action=GETPOST('action','alpha');
-$confirm=GETPOST('confirm','alpha');
-$ref = GETPOST('ref','alpha');
+$id = GETPOST('facid', 'int')?GETPOST('facid', 'int'):GETPOST('id', 'int');
+$action=GETPOST('action', 'alpha');
+$confirm=GETPOST('confirm', 'alpha');
+$ref = GETPOST('ref', 'alpha');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture');
 
 // Get parameters
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
@@ -67,7 +65,7 @@ if ($object->fetch($id, $ref))
 {
 	$object->fetch_thirdparty();
 	$ref=dol_sanitizeFileName($object->ref);
-	$upload_dir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($object->id,2,0,0,$object,'invoice_supplier').$ref;
+	$upload_dir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier').$ref;
 }
 
 
@@ -103,6 +101,7 @@ if ($object->id > 0)
     $morehtmlref.=$form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', null, null, '', 1);
     // Thirdparty
     $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
+    if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) $morehtmlref.=' (<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php?socid='.$object->thirdparty->id.'&search_company='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherBills").'</a>)';
     // Project
     if (! empty($conf->projet->enabled))
     {
@@ -145,8 +144,8 @@ if ($object->id > 0)
     print '<div class="fichecenter">';
     print '<div class="underbanner clearboth"></div>';
 
-	// Construit liste des fichiers
-	$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+	// Build file list
+	$filearray=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);
 	$totalsize=0;
 	foreach($filearray as $key => $file)
 	{
@@ -159,10 +158,9 @@ if ($object->id > 0)
 	if ($action == 'delete')
 	{
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&urlfile='.urlencode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
-
 	}
 
-	print '<table class="border" width="100%">';
+	print '<table class="border tableforfield centpercent">';
 
 	// Type
 	print '<tr><td class="titlefield">'.$langs->trans('Type').'</td><td>';
@@ -171,13 +169,13 @@ if ($object->id > 0)
 	{
 		$facreplaced=new FactureFournisseur($db);
 		$facreplaced->fetch($object->fk_facture_source);
-		print ' ('.$langs->transnoentities("ReplaceInvoice",$facreplaced->getNomUrl(1)).')';
+		print ' ('.$langs->transnoentities("ReplaceInvoice", $facreplaced->getNomUrl(1)).')';
 	}
 	if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE)
 	{
 		$facusing=new FactureFournisseur($db);
 		$facusing->fetch($object->fk_facture_source);
-		print ' ('.$langs->transnoentities("CorrectInvoice",$facusing->getNomUrl(1)).')';
+		print ' ('.$langs->transnoentities("CorrectInvoice", $facusing->getNomUrl(1)).')';
 	}
 
 	$facidavoir=$object->getListIdAvoirFromInvoice();
@@ -206,40 +204,40 @@ if ($object->id > 0)
 	print '</td></tr>';
 
 	// Label
-	print '<tr><td>'.$form->editfieldkey("Label",'label',$object->label,$object,0).'</td><td>';
-	print $form->editfieldval("Label",'label',$object->label,$object,0);
+	print '<tr><td>'.$form->editfieldkey("Label", 'label', $object->label, $object, 0).'</td><td>';
+	print $form->editfieldval("Label", 'label', $object->label, $object, 0);
 	print '</td>';
 
 	// Amount
-	print '<tr><td>'.$langs->trans('AmountHT').'</td><td>'.price($object->total_ht,1,$langs,0,-1,-1,$conf->currency).'</td></tr>';
-	print '<tr><td>'.$langs->trans('AmountVAT').'</td><td>'.price($object->total_tva,1,$langs,0,-1,-1,$conf->currency).'</td></tr>';
+	print '<tr><td>'.$langs->trans('AmountHT').'</td><td>'.price($object->total_ht, 1, $langs, 0, -1, -1, $conf->currency).'</td></tr>';
+	print '<tr><td>'.$langs->trans('AmountVAT').'</td><td>'.price($object->total_tva, 1, $langs, 0, -1, -1, $conf->currency).'</td></tr>';
 
 	// Amount Local Taxes
 	//TODO: Place into a function to control showing by country or study better option
 	if ($societe->localtax1_assuj=="1") //Localtax1
 	{
-		print '<tr><td>'.$langs->transcountry("AmountLT1",$societe->country_code).'</td>';
-		print '<td>'.price($object->total_localtax1,1,$langs,0,-1,-1,$conf->currency).'</td>';
+		print '<tr><td>'.$langs->transcountry("AmountLT1", $societe->country_code).'</td>';
+		print '<td>'.price($object->total_localtax1, 1, $langs, 0, -1, -1, $conf->currency).'</td>';
 		print '</tr>';
 	}
 	if ($societe->localtax2_assuj=="1") //Localtax2
 	{
-		print '<tr><td>'.$langs->transcountry("AmountLT2",$societe->country_code).'</td>';
-		print '<td>'.price($object->total_localtax2,1,$langs,0,-1,-1,$conf->currency).'</td>';
+		print '<tr><td>'.$langs->transcountry("AmountLT2", $societe->country_code).'</td>';
+		print '<td>'.price($object->total_localtax2, 1, $langs, 0, -1, -1, $conf->currency).'</td>';
 		print '</tr>';
 	}
-	print '<tr><td>'.$langs->trans('AmountTTC').'</td><td>'.price($object->total_ttc,1,$langs,0,-1,-1,$conf->currency).'</td></tr>';
+	print '<tr><td>'.$langs->trans('AmountTTC').'</td><td>'.price($object->total_ttc, 1, $langs, 0, -1, -1, $conf->currency).'</td></tr>';
 
 	print '</table><br>';
 
 	print '<div class="underbanner clearboth"></div>';
 
-	print '<table class="border" width="100%">';
+	print '<table class="border tableforfield centpercent">';
 
 	// Nb of files
 	print '<tr><td class="titlefield nowrap">'.$langs->trans('NbOfAttachedFiles').'</td><td>'.count($filearray).'</td></tr>';
 
-	print '<tr><td>'.$langs->trans('TotalSizeOfAttachedFiles').'</td><td>'.dol_print_size($totalsize,1,1).'</td></tr>';
+	print '<tr><td>'.$langs->trans('TotalSizeOfAttachedFiles').'</td><td>'.dol_print_size($totalsize, 1, 1).'</td></tr>';
 
 	print '</table>';
 	print '</div>';
@@ -260,6 +258,6 @@ else
     print $langs->trans('ErrorUnknown');
 }
 
-
+// End of page
 llxFooter();
 $db->close();

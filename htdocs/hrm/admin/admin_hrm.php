@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2015 		Alexandre Spangaro <aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2015 		Alexandre Spangaro <aspangaro@open-dsi.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  * \ingroup HRM
  * \brief 	HRM module setup page
  */
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/hrm.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
@@ -85,7 +85,7 @@ print '<tr class="liste_titre">';
 print '<td colspan="3">' . $langs->trans('Journaux') . '</td>';
 print "</tr>\n";
 
-foreach ( $list as $key ) {
+foreach ($list as $key) {
 	$var = ! $var;
 	
 	print '<tr ' . $bc[$var] . ' class="value">';
@@ -108,5 +108,6 @@ print '<div class="center"><input type="submit" class="button" value="' . $langs
 
 print '</form>';
 
+// End of page
 llxFooter();
 $db->close();

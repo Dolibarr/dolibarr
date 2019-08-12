@@ -1,6 +1,6 @@
 -- ========================================================================
 -- Copyright (C) 2008      Laurent Destailleur  <eldy@users.sourceforge.net>
--- Copyright (C) 2009      Regis Houssin        <regis.houssin@capnetworks.com>
+-- Copyright (C) 2009      Regis Houssin        <regis.houssin@inodbox.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@ create table llx_events
   tms            timestamp,                   -- date creation/modification
   type           varchar(32)  NOT NULL,       -- action type
   entity         integer DEFAULT 1 NOT NULL,	-- multi company id
+  prefix_session varchar(255) NULL,				  -- prefix of session, obtained with dol_getprefix
   dateevent      datetime,                    -- date event
   fk_user        integer,                     -- id user
   description    varchar(250) NOT NULL,       -- full description of action

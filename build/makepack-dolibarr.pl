@@ -129,7 +129,7 @@ $BUILDROOT="$TEMP/buildroot";
 $result = open( IN, "<" . $SOURCE . "/htdocs/filefunc.inc.php" );
 if ( !$result ) { die "Error: Can't open descriptor file " . $SOURCE . "/htdocs/filefunc.inc.php\n"; }
 while (<IN>) {
-	if ( $_ =~ /define\('DOL_VERSION','([\d\.a-z\-]+)'\)/ ) { $PROJVERSION = $1; break; }
+	if ( $_ =~ /define\('DOL_VERSION',\s*'([\d\.a-z\-]+)'\)/ ) { $PROJVERSION = $1; break; }
 }
 close IN;
 ($MAJOR,$MINOR,$BUILD)=split(/\./,$PROJVERSION,3);
@@ -357,17 +357,16 @@ if ($nboftargetok) {
 		}
 		else
 		{
-			print "ChangeLog for $MAJOR.$MINOR\.$BUILD was found into '$SOURCE/ChangeLog. But you can regenerate it with command:\n";
+			print "ChangeLog for $MAJOR.$MINOR\.$BUILD was found into '$SOURCE/ChangeLog'. But you can regenerate it with command:\n";
 		}
 		if (! $BUILD || $BUILD eq '0-rc')	# For a major version
 		{
-			print 'cd ~/git/dolibarr_'.$MAJOR.'.'.$MINOR.'; git log `git rev-list --boundary '.$MAJOR.'.'.$MINOR.'..origin/develop | grep ^- | cut -c2- | head -n 1`.. --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //" | grep -e \'^FIX\|NEW\|CLOSE\' | sort -u | sed \'s/FIXED:/FIX:/g\' | sed \'s/FIXED :/FIX:/g\' | sed \'s/FIX :/FIX:/g\' | sed \'s/FIX /FIX: /g\' | sed \'s/NEW :/NEW:/g\' | sed \'s/NEW /NEW: /g\' > /tmp/aaa';
+			print 'cd ~/git/dolibarr_'.$MAJOR.'.'.$MINOR.'; git log `git rev-list --boundary '.$MAJOR.'.'.$MINOR.'..origin/develop | grep ^- | cut -c2- | head -n 1`.. --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //" | grep -e \'^FIX\|NEW\|CLOSE\' | sort -u | sed \'s/FIXED:/FIX:/g\' | sed \'s/FIXED :/FIX:/g\' | sed \'s/FIX :/FIX:/g\' | sed \'s/FIX /FIX: /g\' | sed \'s/CLOSE/NEW/g\' | sed \'s/NEW :/NEW:/g\' | sed \'s/NEW /NEW: /g\' > /tmp/aaa';
 		}
 		else			# For a maintenance release
 		{
-			#print 'cd ~/git/dolibarr_'.$MAJOR.'.'.$MINOR.'; git log '.$MAJOR.'.'.$MINOR.'.'.($BUILD-1).'.. --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //" | grep -e \'^FIX\|NEW\' | sort -u | sed \'s/FIXED:/FIX:/g\' | sed \'s/FIXED :/FIX:/g\' | sed \'s/FIX :/FIX:/g\' | sed \'s/FIX /FIX: /g\' | sed \'s/NEW :/NEW:/g\' | sed \'s/NEW /NEW: /g\' > /tmp/aaa';
-			print 'cd ~/git/dolibarr_'.$MAJOR.'.'.$MINOR.'; git log '.$MAJOR.'.'.$MINOR.'.'.($BUILD-1).'.. | grep -v "Merge branch" | grep -v "Merge pull" | grep "^ " | sed -e "s/^[0-9a-z]* *//" | grep -e \'^FIX\|NEW\|CLOSE\' | sort -u | sed \'s/FIXED:/FIX:/g\' | sed \'s/FIXED :/FIX:/g\' | sed \'s/FIX :/FIX:/g\' | sed \'s/FIX /FIX: /g\' | sed \'s/NEW :/NEW:/g\' | sed \'s/NEW /NEW: /g\' > /tmp/aaa';
-			
+			#print 'cd ~/git/dolibarr_'.$MAJOR.'.'.$MINOR.'; git log '.$MAJOR.'.'.$MINOR.'.'.($BUILD-1).'.. --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //" | grep -e \'^FIX\|NEW\' | sort -u | sed \'s/FIXED:/FIX:/g\' | sed \'s/FIXED :/FIX:/g\' | sed \'s/FIX :/FIX:/g\' | sed \'s/FIX /FIX: /g\' | sed \'s/CLOSE/NEW/g\'| sed \'s/NEW :/NEW:/g\' | sed \'s/NEW /NEW: /g\' > /tmp/aaa';
+			print 'cd ~/git/dolibarr_'.$MAJOR.'.'.$MINOR.'; git log '.$MAJOR.'.'.$MINOR.'.'.($BUILD-1).'.. | grep -v "Merge branch" | grep -v "Merge pull" | grep "^ " | sed -e "s/^[0-9a-z]* *//" | grep -e \'^FIX\|NEW\|CLOSE\' | sort -u | sed \'s/FIXED:/FIX:/g\' | sed \'s/FIXED :/FIX:/g\' | sed \'s/FIX :/FIX:/g\' | sed \'s/FIX /FIX: /g\' | sed \'s/CLOSE/NEW/g\' | sed \'s/NEW :/NEW:/g\' | sed \'s/NEW /NEW: /g\' > /tmp/aaa';
 		}
 		print "\n";
 		if (! $ret)
@@ -382,12 +381,24 @@ if ($nboftargetok) {
 			}
 		}
 	}
-		
+
 	# Build xml check file
 	#-----------------------
 	if ($CHOOSEDTARGET{'-CHKSUM'})
 	{
+		print "Go to directory $SOURCE\n";
+		$olddir=getcwd();
 		chdir("$SOURCE");
+		
+		$ret=`git ls-files . --exclude-standard --others`;
+		if ($ret)
+		{
+				print "Some files exists in source directory and are not indexed neither excluded in .gitignore.\n";
+				print $ret;
+				print "Canceled.\n";
+				exit;
+		}
+		
 	   	print 'Create xml check file with md5 checksum with command php '.$SOURCE.'/build/generate_filelist_xml.php release='.$MAJOR.'.'.$MINOR.'.'.$BUILD."\n";
 	  	$ret=`php $SOURCE/build/generate_filelist_xml.php release=$MAJOR.$MINOR.$BUILD`;
 	  	print $ret."\n";
@@ -560,7 +571,6 @@ if ($nboftargetok) {
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/timesheet*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/webmail*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/workstation*`;
-		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/accountingexport*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/themes/oblyon*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/themes/allscreen*`;
 		# Removed other test files
@@ -995,7 +1005,7 @@ if ($nboftargetok) {
 			$ret=`chmod -R 644 $BUILDROOT/$PROJECT.tmp/htdocs/modulebuilder/template/mymoduleindex.php`;
 			$ret=`chmod -R 644 $BUILDROOT/$PROJECT.tmp/htdocs/modulebuilder/template/myobject_card.php`;
 			$ret=`chmod -R 644 $BUILDROOT/$PROJECT.tmp/htdocs/modulebuilder/template/myobject_list.php`;
-			$ret=`chmod -R 755 $BUILDROOT/$PROJECT.tmp/htdocs/modulebuilder/template/scripts/myobject.php`;
+			$ret=`chmod -R 755 $BUILDROOT/$PROJECT.tmp/htdocs/modulebuilder/template/scripts/mymodule.php`;
 			$cmd="find $BUILDROOT/$PROJECT.tmp/scripts -name '*.php' -type f -exec chmod 755 {} \\; ";
 			$ret=`$cmd`;
 			$cmd="find $BUILDROOT/$PROJECT.tmp/scripts -name '*.sh' -type f -exec chmod 755 {} \\; ";
@@ -1040,92 +1050,6 @@ if ($nboftargetok) {
 			next;
 		}
 		
-		if ($target eq 'APS') 
-		{
-			$NEWDESTI=$DESTI;
-			if ($NEWDESTI =~ /stable/)
-			{
-				mkdir($DESTI.'/package_aps');
-				if (-d $DESTI.'/package_aps') { $NEWDESTI=$DESTI.'/package_aps'; }
-			} 
-			
-			$newbuild = $BUILD;
-			$newbuild =~ s/(dev|alpha)/0/gi;                # dev
-			$newbuild =~ s/beta/1/gi;                       # beta
-			$newbuild =~ s/rc./2/gi;                        # rc
-			if ($newbuild !~ /-/) { $newbuild.='-3'; }      # finale
-			# now newbuild is 0-0 or 0-3 for example
-			$REL1 = $newbuild; $REL1 =~ s/-.*$//gi;
-			if ($RPMSUBVERSION eq 'auto') { $RPMSUBVERSION = $newbuild; $RPMSUBVERSION =~ s/^.*-//gi; }
-			print "Version is $MAJOR.$MINOR.$REL1-$RPMSUBVERSION\n";
-			
-			print "Remove target $FILENAMEAPS.zip...\n";
-			unlink "$NEWDESTI/$FILENAMEAPS.zip";
-
-			#rmdir "$BUILDROOT/$PROJECT.tmp";
-			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp`;
-			print "Create directory $BUILDROOT/$PROJECT.tmp\n";
-			$ret=`mkdir -p "$BUILDROOT/$PROJECT.tmp"`;
-			print "Copy $BUILDROOT/$PROJECT to $BUILDROOT/$PROJECT.tmp\n";
-			$cmd="cp -pr \"$BUILDROOT/$PROJECT\" \"$BUILDROOT/$PROJECT.tmp\"";
-			$ret=`$cmd`;
-
-			print "Remove other files\n";
-			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/build/deb`;
-			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/build/dmg`;
-			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/build/doap`;
-			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/build/exe`;
-			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/build/live`;
-			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/build/patch`;
-			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/build/rpm`;
-			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/build/zip`;
-			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/build/perl`;
-
-            $APSVERSION="1.2";
-            print "Create APS files $BUILDROOT/$PROJECT.tmp/$PROJECT/APP-META.xml\n";
-            open (SPECFROM,"<$BUILDROOT/$PROJECT/build/aps/APP-META-$APSVERSION.xml") || die "Error";
-            open (SPECTO,">$BUILDROOT/$PROJECT.tmp/$PROJECT/APP-META.xml") || die "Error";
-            while (<SPECFROM>) {
-                $newbuild = $BUILD;
-                $newbuild =~ s/(dev|alpha)/0/gi;                # dev
-                $newbuild =~ s/beta/1/gi;                       # beta
-                $newbuild =~ s/rc./2/gi;                        # rc
-                if ($newbuild !~ /-/) { $newbuild.='-3'; }      # finale
-                # now newbuild is 0-0 or 0-3 for example
-                $_ =~ s/__VERSION__/$MAJOR.$MINOR.$REL1/;
-                $_ =~ s/__RELEASE__/$RPMSUBVERSION/;
-                print SPECTO $_;
-            }
-            close SPECFROM;
-            close SPECTO;
-            print "Version set to $MAJOR.$MINOR.$newbuild\n";
-            $cmd="cp -pr \"$BUILDROOT/$PROJECT/build/aps/configure.php\" \"$BUILDROOT/$PROJECT.tmp/$PROJECT/scripts/configure.php\"";
-            $ret=`$cmd`;
-            $cmd="cp -pr \"$BUILDROOT/$PROJECT/doc/images\" \"$BUILDROOT/$PROJECT.tmp/$PROJECT/images\"";
-            $ret=`$cmd`;
- 
-            print "Remove other files\n";
-            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/dev`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/doc`;
-            
-            print "Build APP-LIST.xml files\n";
-            
-            print "Compress $BUILDROOT/$PROJECT.tmp/$PROJECT into $FILENAMEAPS.zip...\n";
- 
-            print "Go to directory $BUILDROOT/$PROJECT.tmp\/$PROJECT\n";
-            $olddir=getcwd();
-            chdir("$BUILDROOT\/$PROJECT.tmp\/$PROJECT");
-            $cmd= "zip -9 -r $BUILDROOT/$FILENAMEAPS.zip \*";
-            print $cmd."\n";
-            $ret= `$cmd`;
-            chdir("$olddir");
-                        
-    		# Move to final dir
-            print "Move $BUILDROOT/$FILENAMEAPS.zip to $NEWDESTI/$FILENAMEAPS.zip\n";
-            $ret=`mv "$BUILDROOT/$FILENAMEAPS.zip" "$NEWDESTI/$FILENAMEAPS.zip"`;
-            next;
-    	}
-
 		if ($target eq 'EXEDOLIWAMP')
 		{
 			$NEWDESTI=$DESTI;

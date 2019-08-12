@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2016      Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -36,14 +36,17 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';   // Requ
  */
 abstract class ModeleNumRefChequeReceipts
 {
-	var $error='';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 	/**
 	 *	Return if a module can be used or not
 	 *
 	 *	@return		boolean     true if module can be used
 	 */
-	function isEnabled()
+	public function isEnabled()
 	{
 		return true;
 	}
@@ -53,7 +56,7 @@ abstract class ModeleNumRefChequeReceipts
 	 *
 	 *	@return     string      Texte descripif
 	 */
-	function info()
+	public function info()
 	{
 		global $langs;
 		$langs->load("bills");
@@ -65,7 +68,7 @@ abstract class ModeleNumRefChequeReceipts
 	 *
 	 *	@return     string      Example
 	 */
-	function getExample()
+	public function getExample()
 	{
 		global $langs;
 		$langs->load("bills");
@@ -77,7 +80,7 @@ abstract class ModeleNumRefChequeReceipts
 	 *
 	 *	@return     boolean     false si conflit, true si ok
 	 */
-	function canBeActivated()
+	public function canBeActivated()
 	{
 		return true;
 	}
@@ -89,7 +92,7 @@ abstract class ModeleNumRefChequeReceipts
 	 *	@param	Object		$object		Object we need next value for
 	 *	@return	string      Valeur
 	 */
-	function getNextValue($objsoc,$object)
+	public function getNextValue($objsoc, $object)
 	{
 		global $langs;
 		return $langs->trans("NotAvailable");
@@ -100,7 +103,7 @@ abstract class ModeleNumRefChequeReceipts
 	 *
 	 *	@return     string      Value
 	 */
-	function getVersion()
+	public function getVersion()
 	{
 		global $langs;
 		$langs->load("admin");
@@ -115,12 +118,16 @@ abstract class ModeleNumRefChequeReceipts
 
 /**
  *	\class      ModeleChequeReceipts
- *	\brief      Classe mere des modeles de 
+ *	\brief      Classe mere des modeles de
  */
 abstract class ModeleChequeReceipts extends CommonDocGenerator
 {
-	var $error='';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return list of active generation modules
 	 *
@@ -128,15 +135,16 @@ abstract class ModeleChequeReceipts extends CommonDocGenerator
      *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
 	 */
-	static function liste_modeles($db,$maxfilenamelength=0)
+	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
+        // phpcs:enable
 		global $conf;
 
 		$type='chequereceipt';
 		$liste=array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste=getListOfModels($db,$type,$maxfilenamelength);
+		$liste=getListOfModels($db, $type, $maxfilenamelength);
 		// TODO Remove this to use getListOfModels only
 		$liste = array('blochet'=>'blochet');
 
@@ -146,7 +154,7 @@ abstract class ModeleChequeReceipts extends CommonDocGenerator
 
 
 /**
- *	Cree un bordereau remise de cheque
+ *  Cree un bordereau remise de cheque
  *
  * 	@param	DoliDB		$db				Database handler
  *	@param	int			$id				Object invoice (or id of invoice)
@@ -198,15 +206,13 @@ function chequereceipt_pdf_create($db, $id, $message, $modele, $outputlangs)
 		else
 		{
 			$outputlangs->charset_output=$sav_charset_output;
-			dol_print_error($db,"chequereceipt_pdf_create Error: ".$obj->error);
+			dol_print_error($db, "chequereceipt_pdf_create Error: ".$obj->error);
 			return -1;
 		}
-
 	}
 	else
 	{
-		dol_print_error('',$langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$dir.$file));
+		dol_print_error('', $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists", $dir.$file));
 		return -1;
 	}
 }
-

@@ -45,7 +45,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class CommonObjectTest extends PHPUnit_Framework_TestCase
+class CommonObjectTest extends PHPUnit\Framework\TestCase
 {
     protected $savconf;
     protected $savuser;
@@ -58,7 +58,7 @@ class CommonObjectTest extends PHPUnit_Framework_TestCase
      *
      * @return CommonObjectTest
      */
-    function __construct()
+    public function __construct()
     {
     	parent::__construct();
 
@@ -159,7 +159,7 @@ class CommonObjectTest extends PHPUnit_Framework_TestCase
         $result=$localobject->fetch_projet();
 
         print __METHOD__." result=".$result."\n";
-        $this->assertLessThanOrEqual($result,0);
+        $this->assertLessThanOrEqual($result, 0);
         return $result;
     }
 
@@ -182,7 +182,7 @@ class CommonObjectTest extends PHPUnit_Framework_TestCase
         $result=$localobject->fetch_thirdparty();
 
         print __METHOD__." result=".$result."\n";
-        $this->assertLessThanOrEqual($result,0);
+        $this->assertLessThanOrEqual($result, 0);
         return $result;
     }
 }

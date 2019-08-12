@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -35,8 +35,8 @@ if (! empty($conf->projet->enabled)) {
 // Load translation files required by the page
 $langs->loadLangs(array('supplier_proposal', 'compta'));
 
-$id=GETPOST('id','int');
-$socid=GETPOST('socid','int');
+$id=GETPOST('id', 'int');
+$socid=GETPOST('socid', 'int');
 
 // Security check
 if (! empty($user->societe_id)) $socid=$user->societe_id;
@@ -49,7 +49,7 @@ $result = restrictedArea($user, 'supplier_proposal', $id);
 
 $form = new Form($db);
 
-llxHeader('',$langs->trans('CommRequest'),'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur');
+llxHeader('', $langs->trans('CommRequest'), 'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur');
 
 $object = new SupplierProposal($db);
 $object->fetch($id);
@@ -123,5 +123,6 @@ print '</div>';
 
 dol_fiche_end();
 
+// End of page
 llxFooter();
 $db->close();

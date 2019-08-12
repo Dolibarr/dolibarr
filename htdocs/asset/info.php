@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2018      Alexandre Spangaro   <aspangaro@zendsi.com>
+/* Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  */
 
 /**
- *  \file       info.php
+ *  \file       htdocs/asset/info.php
  *  \ingroup    asset
  *  \brief      Page to show an asset information
  */
@@ -29,9 +29,9 @@ require_once DOL_DOCUMENT_ROOT.'/asset/class/asset.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("asset"));
 
-$id = GETPOST('id','int');
-$ref=GETPOST('ref','alpha');
-$action=GETPOST('action','alpha');
+$id = GETPOST('id', 'int');
+$ref=GETPOST('ref', 'alpha');
+$action=GETPOST('action', 'alpha');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -55,7 +55,7 @@ $form = new Form($db);
 
 $object->info($id);
 
-$head = AssetsPrepareHead($object);
+$head = asset_prepare_head($object);
 
 dol_fiche_head($head, 'info', $langs->trans("Asset"), -1, 'generic');
 
@@ -79,5 +79,6 @@ print '</div>';
 
 dol_fiche_end();
 
+// End of page
 llxFooter();
 $db->close();

@@ -19,6 +19,7 @@
 create table llx_c_shipment_mode
 (
   rowid            integer AUTO_INCREMENT PRIMARY KEY,
+  entity				   integer	DEFAULT 1 NOT NULL,	-- multi company id
   tms              timestamp,
   code             varchar(30) NOT NULL,
   libelle          varchar(50) NOT NULL,

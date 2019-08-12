@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005      Patrick Rouillon     <patrick@rouillon.net>
  * Copyright (C) 2005-2009 Destailleur Laurent  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -33,10 +33,8 @@ if (! empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 }
 
-$langs->load("facture");
-$langs->load("orders");
-$langs->load("sendings");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array("facture","orders","sendings","companies"));
 
 $id		= GETPOST('id', 'int');
 $ref	= GETPOST('ref', 'alpha');
@@ -83,7 +81,7 @@ if ($action == 'addcontact' && $user->rights->fournisseur->commande->creer)
 }
 
 // Toggle the status of a contact
-else if ($action == 'swapstatut' && $user->rights->fournisseur->commande->creer)
+elseif ($action == 'swapstatut' && $user->rights->fournisseur->commande->creer)
 {
 	if ($object->fetch($id))
 	{
@@ -96,7 +94,7 @@ else if ($action == 'swapstatut' && $user->rights->fournisseur->commande->creer)
 }
 
 // Deleting a contact
-else if ($action == 'deletecontact' && $user->rights->fournisseur->commande->creer)
+elseif ($action == 'deletecontact' && $user->rights->fournisseur->commande->creer)
 {
 	$object->fetch($id);
 	$result = $object->delete_contact($_GET["lineid"]);
@@ -117,7 +115,7 @@ else if ($action == 'deletecontact' && $user->rights->fournisseur->commande->cre
  * View
  */
 $help_url='EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedidos_a_proveedores';
-llxHeader('',$langs->trans("Order"),$help_url);
+llxHeader('', $langs->trans("Order"), $help_url);
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);
@@ -194,7 +192,6 @@ if ($id > 0 || ! empty($ref))
 
 		// Contacts lines
 		include DOL_DOCUMENT_ROOT.'/core/tpl/contacts.tpl.php';
-
 	}
 	else
 	{
@@ -203,6 +200,6 @@ if ($id > 0 || ! empty($ref))
 	}
 }
 
-
+// End of page
 llxFooter();
 $db->close();

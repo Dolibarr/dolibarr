@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2012	Regis Houssin	<regis.houssin@capnetworks.com>
+/* Copyright (C) 2005-2012	Regis Houssin	<regis.houssin@inodbox.com>
  * Copyright (C) 2011-2012	Juanjo Menent	<jmenent@2byte.es>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
@@ -34,16 +34,16 @@ if (! empty($conf->projet->enabled)) {
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'interventions'));
 
-$id = GETPOST('id','int');
+$id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
-$action=GETPOST('action','alpha');
+$action=GETPOST('action', 'alpha');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'ficheinter', $id, 'fichinter');
 
 $object = new Fichinter($db);
-$object->fetch($id,$ref);
+$object->fetch($id, $ref);
 
 $permissionnote=$user->rights->ficheinter->creer;	// Used by the include of actions_setnotes.inc.php
 
@@ -58,7 +58,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, 
  * View
  */
 
-llxHeader('',$langs->trans("Intervention"));
+llxHeader('', $langs->trans("Intervention"));
 
 $form = new Form($db);
 

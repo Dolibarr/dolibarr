@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+/* Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2011		Laurent Destailleur	<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -29,17 +29,17 @@ include_once DOL_DOCUMENT_ROOT.'/contact/canvas/actions_contactcard_common.class
  */
 class ActionsContactCardDefault extends ActionsContactCardCommon
 {
-	/**
-     *	Constructor
+    /**
+     *  Constructor
      *
      *	@param	DoliDB	$db				Handler acces base de donnees
      *	@param	string	$dirmodule		Name of directory of module
      *	@param	string	$targetmodule	Name of directory of module where canvas is stored
      *	@param	string	$canvas			Name of canvas
      *	@param	string	$card			Name of tab (sub-canvas)
-	 */
-	function __construct($db, $dirmodule, $targetmodule, $canvas, $card)
-	{
+     */
+    public function __construct($db, $dirmodule, $targetmodule, $canvas, $card)
+    {
         $this->db               = $db;
         $this->dirmodule		= $dirmodule;
         $this->targetmodule     = $targetmodule;
@@ -66,6 +66,7 @@ class ActionsContactCardDefault extends ActionsContactCardCommon
 		return $out;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Assign custom values for canvas
 	 *
@@ -73,8 +74,9 @@ class ActionsContactCardDefault extends ActionsContactCardCommon
 	 *  @param	int			$id				Id
 	 *  @return	void
 	 */
-	function assign_values(&$action, $id)
+	public function assign_values(&$action, $id)
 	{
+        // phpcs:enable
 		global $limit, $offset, $sortfield, $sortorder;
 		global $conf, $db, $langs, $user;
 		global $form;
@@ -99,16 +101,16 @@ class ActionsContactCardDefault extends ActionsContactCardCommon
         	$objsoc = new Societe($db);
             $objsoc->fetch($this->object->socid);
 
-            $this->tpl['actionstodo']=show_actions_todo($conf,$langs,$db,$objsoc,$this->object,1);
+            $this->tpl['actionstodo']=show_actions_todo($conf, $langs, $db, $objsoc, $this->object, 1);
 
-            $this->tpl['actionsdone']=show_actions_done($conf,$langs,$db,$objsoc,$this->object,1);
+            $this->tpl['actionsdone']=show_actions_done($conf, $langs, $db, $objsoc, $this->object, 1);
 		}
 		else
 		{
 			// Confirm delete contact
         	if ($action == 'delete' && $user->rights->societe->contact->supprimer)
         	{
-        		$this->tpl['action_delete'] = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$this->object->id,$langs->trans("DeleteContact"),$langs->trans("ConfirmDeleteContact"),"confirm_delete",'',0,1);
+        		$this->tpl['action_delete'] = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$this->object->id, $langs->trans("DeleteContact"), $langs->trans("ConfirmDeleteContact"), "confirm_delete", '', 0, 1);
         	}
 		}
 
@@ -116,10 +118,10 @@ class ActionsContactCardDefault extends ActionsContactCardCommon
 		{
 	        $this->LoadListDatas($limit, $offset, $sortfield, $sortorder);
 		}
-
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * 	Fetch datas list and save into ->list_datas
 	 *
@@ -129,13 +131,13 @@ class ActionsContactCardDefault extends ActionsContactCardCommon
 	 *  @param	string	$sortorder	Sort order ('ASC' or 'DESC')
 	 *  @return	void
 	 */
-	function LoadListDatas($limit, $offset, $sortfield, $sortorder)
-	{
-		global $conf, $langs;
+    public function LoadListDatas($limit, $offset, $sortfield, $sortorder)
+    {
+        // phpcs:enable
+        global $conf, $langs;
 
         //$this->getFieldList();
 
         $this->list_datas = array();
-	}
+    }
 }
-

@@ -2,7 +2,8 @@
 /* Copyright (C) 2007-2008	Jeremie Ollivier	<jeremie.o@laposte.net>
  * Copyright (C) 2011		Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2011		Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2015		Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2015		Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,10 +27,8 @@ if (empty($langs) || ! is_object($langs))
 	exit;
 }
 
-
-$langs->load("main");
-$langs->load("bills");
-$langs->load("cashdesk");
+// Load translation files required by the page
+$langs->loadLangs(array("main","bills","cashdesk"));
 
 // Object $form must de defined
 
@@ -56,17 +55,6 @@ $langs->load("cashdesk");
 				onfocus="javascript: this.select();" />
 			</td>
 			<td class="select_design maxwidthonsmartphone">
-            <?php /*
-            $selected='';
-            $htmlname='idprod';
-            $status=-1;
-            $rice_level=$company->price_level;
-            print ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/product/ajax/products.php', 'outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=1&status='.$status.'&finished='.$finished, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT);
-            if (! $hidelabel) print $langs->trans("RefOrLabel").' : ';
-            print '<input type="text" size="4" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'" />';
-            */
-            ?>
-
 				<select id="selProduit" class="maxwidthonsmartphone" name="selProduit" onchange="javascript: setSource('LISTE');">
 					<?php
                         print '<option value="0">'.$top_liste_produits.'</option>'."\n";
@@ -87,10 +75,9 @@ $langs->load("cashdesk");
 
 							$label = $tab_designations[$i]['label'];
 
-							print '<option '.$selected.' value="'.$tab_designations[$i]['rowid'].'">'.dol_trunc($tab_designations[$i]['ref'],16).' - '.dol_trunc($label,35,'middle');
+							print '<option '.$selected.' value="'.$tab_designations[$i]['rowid'].'">'.dol_trunc($tab_designations[$i]['ref'], 16).' - '.dol_trunc($label, 35, 'middle');
 							if (! empty($conf->stock->enabled) && !empty($conf_fkentrepot) && $tab_designations[$i]['fk_product_type']==0) print ' ('.$langs->trans("CashDeskStock").': '.(empty($tab_designations[$i]['reel'])?0:$tab_designations[$i]['reel']).')';
 							print '</option>'."\n";
-
 						}
 					?>
 				</select>
@@ -127,7 +114,7 @@ $langs->load("cashdesk");
 
 					$buyer = new Societe($db);
 					if ($_SESSION["CASHDESK_ID_THIRDPARTY"] > 0) $buyer->fetch($_SESSION["CASHDESK_ID_THIRDPARTY"]);
-					echo $form->load_tva('selTva', (isset($_POST["selTva"])?GETPOST("selTva",'alpha',2):$vatrate), $mysoc, $buyer, 0, 0, '', false, -1);
+					echo $form->load_tva('selTva', (isset($_POST["selTva"])?GETPOST("selTva", 'alpha', 2):$vatrate), $mysoc, $buyer, 0, 0, '', false, -1);
 			    ?>
                 </td>
 				<td></td>
@@ -178,7 +165,7 @@ $langs->load("cashdesk");
 			if (empty($_SESSION['CASHDESK_ID_BANKACCOUNT_CASH']) || $_SESSION['CASHDESK_ID_BANKACCOUNT_CASH'] < 0)
 			{
 				$langs->load("errors");
-				print '<input class="bouton_mode_reglement_disabled" type="button" name="btnModeReglement" value="'.$langs->trans("Cash").'" title="'.dol_escape_htmltag($langs->trans("ErrorModuleSetupNotComplete")).'" />';
+				print '<input class="bouton_mode_reglement_disabled" type="button" name="btnModeReglement" value="'.$langs->trans("Cash").'" title="'.dol_escape_htmltag($langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("CashDesk"))).'" />';
 			}
 			else print '<input class="button bouton_mode_reglement" type="submit" name="btnModeReglement" value="'.$langs->trans("Cash").'" onclick="javascript: verifClic(\'ESP\');" />';
 			print '</div>';
@@ -186,7 +173,7 @@ $langs->load("cashdesk");
 			if (empty($_SESSION['CASHDESK_ID_BANKACCOUNT_CB']) || $_SESSION['CASHDESK_ID_BANKACCOUNT_CB'] < 0)
 			{
 				$langs->load("errors");
-				print '<input class="bouton_mode_reglement_disabled" type="button" name="btnModeReglement" value="'.$langs->trans("CreditCard").'" title="'.dol_escape_htmltag($langs->trans("ErrorModuleSetupNotComplete")).'" />';
+				print '<input class="bouton_mode_reglement_disabled" type="button" name="btnModeReglement" value="'.$langs->trans("CreditCard").'" title="'.dol_escape_htmltag($langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("CashDesk"))).'" />';
 			}
 			else print '<input class="button bouton_mode_reglement" type="submit" name="btnModeReglement" value="'.$langs->trans("CreditCard").'" onclick="javascript: verifClic(\'CB\');" />';
 			print '</div>';
@@ -194,7 +181,7 @@ $langs->load("cashdesk");
 			if (empty($_SESSION['CASHDESK_ID_BANKACCOUNT_CHEQUE']) || $_SESSION['CASHDESK_ID_BANKACCOUNT_CHEQUE'] < 0)
 			{
 				$langs->load("errors");
-				print '<input class="bouton_mode_reglement_disabled" type="button" name="btnModeReglement" value="'.$langs->trans("CheckBank").'" title="'.dol_escape_htmltag($langs->trans("ErrorModuleSetupNotComplete")).'" />';
+				print '<input class="bouton_mode_reglement_disabled" type="button" name="btnModeReglement" value="'.$langs->trans("CheckBank").'" title="'.dol_escape_htmltag($langs->trans("ErrorModuleSetupNotComplete"), $langs->transnoentitiesnoconv("CashDesk")).'" />';
 			}
 			else print '<input class="button bouton_mode_reglement" type="submit" name="btnModeReglement" value="'.$langs->trans("CheckBank").'" onclick="javascript: verifClic(\'CHQ\');" />';
 			print '</div>';
@@ -204,7 +191,7 @@ $langs->load("cashdesk");
 				<input class="button bouton_mode_reglement" type="submit" name="btnModeReglement" value="<?php echo $langs->trans("Reported"); ?>" onclick="javascript: verifClic('DIF');" />
 			<?php
 			print $langs->trans("DateDue").' :';
-			print $form->select_date(-1,'txtDatePaiement',0,0,0,'paymentmode',1,0,1);
+			print $form->selectDate(-1, 'txtDatePaiement', 0, 0, 0, 'paymentmode', 1, 0);
 			print '</div>';
 			?>
 		</div>

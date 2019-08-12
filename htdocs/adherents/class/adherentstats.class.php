@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (c) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,14 +32,17 @@ include_once DOL_DOCUMENT_ROOT . '/adherents/class/subscription.class.php';
  */
 class AdherentStats extends Stats
 {
+    /**
+     * @var string Name of table without prefix where object is stored
+     */
     public $table_element;
 
-    var $socid;
-    var $userid;
+    public $socid;
+    public $userid;
 
-    var $from;
-    var $field;
-    var $where;
+    public $from;
+    public $field;
+    public $where;
 
 
 	/**
@@ -49,7 +52,7 @@ class AdherentStats extends Stats
 	 * 	@param 		int			$socid	   	Id third party
      * 	@param   	int			$userid    	Id user for filter
 	 */
-	function __construct($db, $socid=0, $userid=0)
+	public function __construct($db, $socid = 0, $userid = 0)
 	{
 		global $user, $conf;
 
@@ -82,7 +85,7 @@ class AdherentStats extends Stats
      *	@param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
      * @return	array				Array of nb each month
 	 */
-	function getNbByMonth($year, $format=0)
+	public function getNbByMonth($year, $format = 0)
 	{
 		global $user;
 
@@ -92,7 +95,7 @@ class AdherentStats extends Stats
 		$sql.= " WHERE date_format(p.dateadh,'%Y') = '".$year."'";
 		$sql.= " AND ".$this->where;
 		$sql.= " GROUP BY dm";
-        $sql.= $this->db->order('dm','DESC');
+        $sql.= $this->db->order('dm', 'DESC');
 
 		return $this->_getNbByMonth($year, $sql, $format);
 	}
@@ -102,7 +105,7 @@ class AdherentStats extends Stats
 	 *
      * @return	array				Array of nb each year
 	 */
-	function getNbByYear()
+	public function getNbByYear()
 	{
 		global $user;
 
@@ -111,7 +114,7 @@ class AdherentStats extends Stats
 		//if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE ".$this->where;
 		$sql.= " GROUP BY dm";
-        $sql.= $this->db->order('dm','DESC');
+        $sql.= $this->db->order('dm', 'DESC');
 
 		return $this->_getNbByYear($sql);
 	}
@@ -123,7 +126,7 @@ class AdherentStats extends Stats
      * @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
      * @return	array				Array of amount each month
 	 */
-	function getAmountByMonth($year, $format=0)
+	public function getAmountByMonth($year, $format = 0)
 	{
 		global $user;
 
@@ -133,7 +136,7 @@ class AdherentStats extends Stats
 		$sql.= " WHERE date_format(p.dateadh,'%Y') = '".$year."'";
 		$sql.= " AND ".$this->where;
 		$sql.= " GROUP BY dm";
-        $sql.= $this->db->order('dm','DESC');
+        $sql.= $this->db->order('dm', 'DESC');
 
 		return $this->_getAmountByMonth($year, $sql, $format);
 	}
@@ -144,7 +147,7 @@ class AdherentStats extends Stats
      * @param   int		$year       Year
      * @return	array				Array of average each month
 	 */
-	function getAverageByMonth($year)
+	public function getAverageByMonth($year)
 	{
 		global $user;
 
@@ -154,7 +157,7 @@ class AdherentStats extends Stats
 		$sql.= " WHERE date_format(p.dateadh,'%Y') = '".$year."'";
 		$sql.= " AND ".$this->where;
 		$sql.= " GROUP BY dm";
-        $sql.= $this->db->order('dm','DESC');
+        $sql.= $this->db->order('dm', 'DESC');
 
 		return $this->_getAverageByMonth($year, $sql);
 	}
@@ -165,7 +168,7 @@ class AdherentStats extends Stats
 	 *
 	 * 	@return		array					Array with nb, total amount, average for each year
 	 */
-	function getAllByYear()
+	public function getAllByYear()
 	{
 		global $user;
 
@@ -174,9 +177,8 @@ class AdherentStats extends Stats
 		//if (!$user->rights->societe->client->voir && !$this->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE ".$this->where;
 		$sql.= " GROUP BY year";
-        $sql.= $this->db->order('year','DESC');
+        $sql.= $this->db->order('year', 'DESC');
 
 		return $this->_getAllByYear($sql);
 	}
-
 }

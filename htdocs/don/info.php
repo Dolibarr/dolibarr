@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2015-2016	Alexandre Spangaro		<aspangaro@zendsi.com>
+/* Copyright (C) 2015-2016	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,9 +33,9 @@ if (! empty($conf->projet->enabled))
 
 $langs->load("donations");
 
-$id = GETPOST('id','int');
-$ref=GETPOST('ref','alpha');
-$action=GETPOST('action','alpha');
+$id = GETPOST('id', 'int');
+$ref=GETPOST('ref', 'alpha');
+$action=GETPOST('action', 'alpha');
 $projectid = (GETPOST('projectid') ? GETPOST('projectid', 'int') : 0);
 
 // Security check

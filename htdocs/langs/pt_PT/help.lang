@@ -5,9 +5,9 @@ RemoteControlSupport=On-line em tempo real / suporte remoto
 OtherSupport=Outro apoio
 ToSeeListOfAvailableRessources=Para entrar em contato / ver recursos disponíveis:
 HelpCenter=Central de Ajuda
-DolibarrHelpCenter=Dolibarr Centro de Ajuda e Suporte
-ToGoBackToDolibarr=Caso contrário, clique <a href="%s">aqui para utilizar Dolibarr</a>
-TypeOfSupport=Fonte de apoio
+DolibarrHelpCenter=Centro de ajuda e suporte Dolibarr
+ToGoBackToDolibarr=Caso contrário, <a href="%s"> clique aqui para continuar a usar o Dolibarr </a>.
+TypeOfSupport=Tipo de suporte
 TypeSupportCommunauty=Comunidade (grátis)
 TypeSupportCommercial=Comercial
 TypeOfHelp=Tipo
@@ -15,12 +15,9 @@ NeedHelpCenter=Precisa de ajuda ou suporte?
 Efficiency=Eficiência
 TypeHelpOnly=Ajuda só
 TypeHelpDev=Ajuda + Desenvolvimento
-TypeHelpDevForm=Ajuda + Desenvolvimento + Formação
-ToGetHelpGoOnSparkAngels1=Algumas empresas podem fornecer uma forma mais rápida (por vezes imediata) e mais eficiente de suporte on-line, com acesso remoto ao seu computador. Tal ajuda pode ser encontrada <b>em %s</b> web site:
-ToGetHelpGoOnSparkAngels3=Você também pode ir para a lista de todas as ajudas disponíveis para Dolibarr, para este clique no botão
-ToGetHelpGoOnSparkAngels2=Às vezes, não há nenhuma empresa disponível no momento em que você faça a sua pesquisa, por isso acho que para mudar o filtro para procurar "todas as disponibilidade". Você será capaz de enviar mais pedidos.
-BackToHelpCenter=Caso contrário, clique aqui para ir <a href="%s">de volta ao centro de ajuda home page.</a>
-LinkToGoldMember=Você pode chamar um assistente selecionado pelo Dolibarr para o seu idioma ( %s) clicando em seu Widget (status e preço máximo são atualizadas automaticamente):
-PossibleLanguages=Línguas de apoio
-SubscribeToFoundation=Ajude o  projeto Dolibarr, inscreva-se na fundação
-SeeOfficalSupport=Para obter suporte oficial do Dolibarr na sua língua: <br><b><a href="%s" target="_blank">%s</a></b>
+TypeHelpDevForm=Ajuda + Desenvolvimento + Treinamento
+BackToHelpCenter=Caso contrário, <a href="%s"> volte para a página inicial da Central de Ajuda </a>.
+LinkToGoldMember=Você pode chamar um dos treinadores pré-selecionados pelo Dolibarr para o seu idioma (%s) clicando no Widget (status e preço máximo atualizados automaticamente):
+PossibleLanguages=Idiomas suportados
+SubscribeToFoundation=Ajude o projeto Dolibarr, assine a fundação
+SeeOfficalSupport=Para obter suporte oficial do Dolibarr no seu idioma: <br><b><a href="%s" target="_blank">%s</a></b>

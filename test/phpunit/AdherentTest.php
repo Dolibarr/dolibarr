@@ -46,7 +46,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class AdherentTest extends PHPUnit_Framework_TestCase
+class AdherentTest extends PHPUnit\Framework\TestCase
 {
     protected $savconf;
     protected $savuser;
@@ -59,7 +59,7 @@ class AdherentTest extends PHPUnit_Framework_TestCase
      *
      * @return AdherentTest
      */
-    function __construct()
+    public function __construct()
     {
     	parent::__construct();
 
@@ -252,6 +252,7 @@ class AdherentTest extends PHPUnit_Framework_TestCase
         //$localobject->note_public='New note public after update';
         $localobject->lastname='New name';
         $localobject->firstname='New firstname';
+        $localobject->gender='man';
         $localobject->address='New address';
         $localobject->zip='New zip';
         $localobject->town='New town';
@@ -266,10 +267,10 @@ class AdherentTest extends PHPUnit_Framework_TestCase
         $result=$localobject->update($user);
         print __METHOD__." id=".$localobject->id." result=".$result."\n";
         $this->assertLessThan($result, 0);
-        $result=$localobject->update_note($localobject->note,'_private');
+        $result=$localobject->update_note($localobject->note, '_private');
         print __METHOD__." id=".$localobject->id." result=".$result."\n";
         $this->assertLessThan($result, 0);
-		$result=$localobject->update_note($localobject->note,'_public');
+		$result=$localobject->update_note($localobject->note, '_public');
         print __METHOD__." id=".$localobject->id." result=".$result."\n";
         $this->assertLessThan($result, 0);
 
@@ -284,6 +285,7 @@ class AdherentTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($localobject->note_public, $newobject->note_public);
         $this->assertEquals($localobject->lastname, $newobject->lastname);
         $this->assertEquals($localobject->firstname, $newobject->firstname);
+        $this->assertEquals($localobject->gender, $newobject->gender);
         $this->assertEquals($localobject->address, $newobject->address);
         $this->assertEquals($localobject->zip, $newobject->zip);
         $this->assertEquals($localobject->town, $newobject->town);
@@ -326,7 +328,7 @@ class AdherentTest extends PHPUnit_Framework_TestCase
 
         // If option to store clear password has been set, we get 'dolibspec' into PASSWORD field.
         $expected = ',New firstname,New name,New firstname New name,'.
-                    'New company,New address,New zip,New town,Belgium,newemail@newemail.com,'.dol_print_date($localobject->birth,'day').',,'.
+                    'New company,New address,New zip,New town,Belgium,newemail@newemail.com,'.dol_print_date($localobject->birth, 'day').',,'.
                     'newlogin';
 
         $result = $localobject->makeSubstitution($template);
@@ -421,7 +423,7 @@ class AdherentTest extends PHPUnit_Framework_TestCase
         $this->assertNull($localobject->fk_soc);
 
         //Now we remove the third party
-        $result = $thirdparty->delete($thirdparty->id,$user);
+        $result = $thirdparty->delete($thirdparty->id, $user);
         $this->assertEquals($result, 1);
 
         return $localobject;

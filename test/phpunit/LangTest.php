@@ -30,16 +30,16 @@ require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/security.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/security2.lib.php';
 
-if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER','1');
-if (! defined('NOREQUIREDB'))    define('NOREQUIREDB','1');
-if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
-if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
-if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK','1');
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1');
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1'); // If there is no menu to show
-if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1'); // If we don't need to load the html.form.class.php
-if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
-if (! defined("NOLOGIN"))        define("NOLOGIN",'1');       // If this page is public (can be called outside logged session)
+if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER', '1');
+if (! defined('NOREQUIREDB'))    define('NOREQUIREDB', '1');
+if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
+if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN', '1');
+if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1'); // If there is no menu to show
+if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1'); // If we don't need to load the html.form.class.php
+if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
+if (! defined("NOLOGIN"))        define("NOLOGIN", '1');       // If this page is public (can be called outside logged session)
 
 if (empty($user->id))
 {
@@ -57,7 +57,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class LangTest extends PHPUnit_Framework_TestCase
+class LangTest extends PHPUnit\Framework\TestCase
 {
 	protected $savconf;
 	protected $savuser;
@@ -70,7 +70,7 @@ class LangTest extends PHPUnit_Framework_TestCase
 	 *
 	 * @return SecurityTest
 	 */
-	function __construct()
+	public function __construct()
 	{
 		parent::__construct();
 
@@ -87,7 +87,7 @@ class LangTest extends PHPUnit_Framework_TestCase
 	}
 
 	// Static methods
-  	public static function setUpBeforeClass()
+    public static function setUpBeforeClass()
     {
     	global $conf,$user,$langs,$db;
 		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
@@ -148,17 +148,17 @@ class LangTest extends PHPUnit_Framework_TestCase
 		$filesarray = scandir(DOL_DOCUMENT_ROOT.'/langs');
 		foreach($filesarray as $key => $code)
 		{
-			if (! preg_match('/^[a-z]+_[A-Z]+$/',$code)) continue;
+			if (! preg_match('/^[a-z]+_[A-Z]+$/', $code)) continue;
 
 			print 'Check language file for lang code='.$code."\n";
-			$tmplangs=new Translate('',$conf);
+			$tmplangs=new Translate('', $conf);
     		$langcode=$code;
         	$tmplangs->setDefaultLang($langcode);
 			$tmplangs->load("main");
 
 			$result=$tmplangs->transnoentitiesnoconv("SeparatorDecimal");
 			print __METHOD__." SeparatorDecimal=".$result."\n";
-			$this->assertContains($result,array('.',',','/',' ','','None'), 'Error for decimal separator for lang code '.$code);	// Note that ، that is coma for RTL languages is not supported
+			$this->assertContains($result, array('.',',','/',' ','','None'), 'Error for decimal separator for lang code '.$code);	// Note that ، that is coma for RTL languages is not supported
 
 			$result=$tmplangs->transnoentitiesnoconv("SeparatorThousand");
 			print __METHOD__." SeparatorThousand=".$result."\n";
@@ -167,10 +167,10 @@ class LangTest extends PHPUnit_Framework_TestCase
 			// Test java string contains only d,M,y,/,-,. and not m,...
 			$result=$tmplangs->transnoentitiesnoconv("FormatDateShortJava");
 			print __METHOD__." FormatDateShortJava=".$result."\n";
-			$this->assertRegExp('/^[dMy\/\-\.]+$/',$result,'FormatDateShortJava KO for lang code '.$code);
+			$this->assertRegExp('/^[dMy\/\-\.]+$/', $result, 'FormatDateShortJava KO for lang code '.$code);
 			$result=$tmplangs->trans("FormatDateShortJavaInput");
 			print __METHOD__." FormatDateShortJavaInput=".$result."\n";
-			$this->assertRegExp('/^[dMy\/\-\.]+$/',$result,'FormatDateShortJavaInput KO for lang code '.$code);
+			$this->assertRegExp('/^[dMy\/\-\.]+$/', $result, 'FormatDateShortJavaInput KO for lang code '.$code);
 
 			unset($tmplangs);
 		}

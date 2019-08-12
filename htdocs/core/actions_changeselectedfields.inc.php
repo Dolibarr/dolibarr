@@ -28,7 +28,7 @@
 // $object must be defined (object is loaded in this file with fetch)
 
 // Save selection
-if (GETPOST('formfilteraction') == 'listafterchangingselectedfields')
+if (GETPOST('formfilteraction', 'none') == 'listafterchangingselectedfields')
 {
     $tabparam=array();
 
@@ -44,5 +44,3 @@ if (GETPOST('formfilteraction') == 'listafterchangingselectedfields')
     //$action='list';
     //var_dump($tabparam);exit;
 }
-
-

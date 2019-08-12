@@ -1,4 +1,2 @@
 # Dolibarr language file - Source file is en_US - compta
-SeeReportInInputOutputMode=See %sanalysis of payments%s for a calculation on actual payments made even if they are not yet accounted in Ledger.
-SeeReportInDueDebtMode=See %sanalysis of invoices%s for a calculation based on known recorded invoices even if they are not yet accounted in Ledger.
 ProposalStats=Statistics on quotations

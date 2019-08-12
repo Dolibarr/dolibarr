@@ -55,8 +55,8 @@ print '<br><br><div class="center">';
 print '<table>';
 
 print '<tr>';
-print '<td>'.$langs->trans("DefaultLanguage").' : </td><td align="left">';
-print $formadmin->select_language('auto','selectlang',1,0,0,1);
+print '<td>'.$langs->trans("DefaultLanguage").' : </td><td>';
+print $formadmin->select_language('auto', 'selectlang', 1, 0, 0, 1);
 print '</td>';
 print '</tr>';
 
@@ -66,4 +66,3 @@ print '<br><br>'.$langs->trans("SomeTranslationAreUncomplete");
 
 // If there's no error, we display the next step button
 if ($err == 0) pFooter(0);
-

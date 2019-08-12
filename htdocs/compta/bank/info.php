@@ -21,7 +21,7 @@
  *     \brief      Onglet info d'une ecriture bancaire
  */
 
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -45,7 +45,7 @@ $object->info($id);
 
 $h=0;
 
-$head[$h][0] = DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$id;
+$head[$h][0] = DOL_URL_ROOT.'/compta/bank/line.php?rowid='.$id;
 $head[$h][1] = $langs->trans("Card");
 $h++;
 
@@ -71,5 +71,6 @@ print '</td></tr></table>';
 
 print '</div>';
 
+// End of page
 llxFooter();
 $db->close();

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013	   Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -30,10 +30,30 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/fichinter/modules_fichinter.php';
  */
 class mod_pacific extends ModeleNumRefFicheinter
 {
-    var $version='dolibarr';        // 'development', 'experimental', 'dolibarr'
-	var $prefix='FI';
-	var $error='';
-	var $nom = 'pacific';
+    /**
+     * Dolibarr version of the loaded document
+     * @var string
+     */
+	public $version = 'dolibarr';        // 'development', 'experimental', 'dolibarr'
+
+	public $prefix='FI';
+
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+	/**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='pacific';
+
+	/**
+	 * @var string model name
+	 */
+	public $name='pacific';
 
 
 	/**
@@ -41,10 +61,10 @@ class mod_pacific extends ModeleNumRefFicheinter
 	 *
      *  @return     string      Text with description
      */
-    function info()
+    public function info()
     {
     	global $langs;
-      	return $langs->trans("SimpleNumRefModelDesc",$this->prefix);
+      	return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
     }
 
 	/**
@@ -52,7 +72,7 @@ class mod_pacific extends ModeleNumRefFicheinter
 	 *
 	 *  @return     string      Example
 	 */
-	function getExample()
+	public function getExample()
 	{
 		return $this->prefix."0501-0001";
 	}
@@ -63,7 +83,7 @@ class mod_pacific extends ModeleNumRefFicheinter
 	 *
 	 *  @return     boolean     false si conflit, true si ok
 	 */
-	function canBeActivated()
+	public function canBeActivated()
 	{
 		global $langs,$conf,$db;
 
@@ -81,16 +101,16 @@ class mod_pacific extends ModeleNumRefFicheinter
 		if ($resql)
 		{
 			$row = $db->fetch_row($resql);
-			if ($row) { $fayymm = substr($row[0],0,6); $max=$row[0]; }
+			if ($row) { $fayymm = substr($row[0], 0, 6); $max=$row[0]; }
 		}
-		if (! $fayymm || preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i',$fayymm))
+		if (! $fayymm || preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $fayymm))
 		{
 			return true;
 		}
 		else
 		{
 			$langs->load("errors");
-			$this->error=$langs->trans('ErrorNumRefModel',$max);
+			$this->error=$langs->trans('ErrorNumRefModel', $max);
 			return false;
 		}
 	}
@@ -102,7 +122,7 @@ class mod_pacific extends ModeleNumRefFicheinter
 	 *  @param  Object		$object		Object we need next value for
 	 *  @return string      			Value if KO, <0 if KO
 	 */
-	function getNextValue($objsoc=0,$object='')
+	public function getNextValue($objsoc = 0, $object = '')
 	{
 		global $db,$conf;
 
@@ -123,10 +143,10 @@ class mod_pacific extends ModeleNumRefFicheinter
 
 		//$date=time();
 		$date=$object->datec;
-		$yymm = strftime("%y%m",$date);
+		$yymm = strftime("%y%m", $date);
 
     	if ($max >= (pow(10, 4) - 1)) $num=$max+1;	// If counter > 9999, we do not format on 4 chars, we take number as it is
-    	else $num = sprintf("%04s",$max+1);
+    	else $num = sprintf("%04s", $max+1);
 
 		return $this->prefix.$yymm."-".$num;
 	}
@@ -138,10 +158,8 @@ class mod_pacific extends ModeleNumRefFicheinter
 	 * 	@param	Object	$objforref	Object for number to search
 	 *  @return string      		Next free value
 	 */
-	function getNumRef($objsoc,$objforref)
+	public function getNumRef($objsoc, $objforref)
 	{
-		return $this->getNextValue($objsoc,$objforref);
+		return $this->getNextValue($objsoc, $objforref);
 	}
-
 }
-

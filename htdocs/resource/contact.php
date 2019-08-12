@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2005-2012  Regis Houssin        <regis.houssin@capnetworks.com>
+/* Copyright (C) 2005-2012  Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2007-2009  Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2012       Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2016		    Gilles Poirier		   <glgpoirier@gmail.com>
+ * Copyright (C) 2016		Gilles Poirier		 <glgpoirier@gmail.com>
 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -34,28 +34,28 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('resource', 'sendings', 'companies'));
 
-$id = GETPOST('id','int');
-$ref = GETPOST('ref','alpha');
-$action = GETPOST('action','alpha');
+$id = GETPOST('id', 'int');
+$ref = GETPOST('ref', 'alpha');
+$action = GETPOST('action', 'alpha');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'resource', $id, 'resource');
 
 $object = new DolResource($db);
-$result = $object->fetch($id,$ref);
+$result = $object->fetch($id, $ref);
 
 
 /*
- * Ajout d'un nouveau contact
+ * Add a new contact
  */
 
 if ($action == 'addcontact' && $user->rights->resource->write)
 {
     if ($result > 0 && $id > 0)
     {
-    	$contactid = (GETPOST('userid','int') ? GETPOST('userid','int') : GETPOST('contactid','int'));
-  		$result = $object->add_contact($contactid, GETPOST('type','int'), GETPOST('source','alpha'));
+    	$contactid = (GETPOST('userid', 'int') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
+  		$result = $object->add_contact($contactid, GETPOST('type', 'int'), GETPOST('source', 'alpha'));
     }
 
 	if ($result >= 0)
@@ -72,20 +72,20 @@ if ($action == 'addcontact' && $user->rights->resource->write)
 			$mesg = $object->error;
 		}
 
-		setEventMessage($mesg, 'errors');
+		setEventMessages($mesg, null, 'errors');
 	}
 }
 
-// bascule du statut d'un contact
-else if ($action == 'swapstatut' && $user->rights->resource->write)
+// Toggle the status of a contact
+elseif ($action == 'swapstatut' && $user->rights->resource->write)
 {
-    $result=$object->swapContactStatus(GETPOST('ligne','int'));
+    $result=$object->swapContactStatus(GETPOST('ligne', 'int'));
 }
 
-// Efface un contact
-else if ($action == 'deletecontact' && $user->rights->resource->write)
+// Erase a contact
+elseif ($action == 'deletecontact' && $user->rights->resource->write)
 {
-	$result = $object->delete_contact(GETPOST('lineid','int'));
+	$result = $object->delete_contact(GETPOST('lineid', 'int'));
 
 	if ($result >= 0)
 	{
@@ -107,7 +107,7 @@ $formcompany = new FormCompany($db);
 $contactstatic=new Contact($db);
 $userstatic=new User($db);
 
-llxHeader('',$langs->trans("Resource"));
+llxHeader('', $langs->trans("Resource"));
 
 // Mode vue et edition
 
@@ -137,7 +137,7 @@ if ($id > 0 || ! empty($ref))
 
 	// Object
 
-	print '<table width="100%" class="border">';
+	print '<table class="border tableforfield centpercent">';
 
 	// Resource type
 	print '<tr>';
@@ -162,6 +162,6 @@ if ($id > 0 || ! empty($ref))
 	include DOL_DOCUMENT_ROOT.'/core/tpl/contacts.tpl.php';
 }
 
-
+// End of page
 llxFooter();
 $db->close();

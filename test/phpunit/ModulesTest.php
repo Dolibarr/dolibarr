@@ -44,7 +44,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class ModulesTest extends PHPUnit_Framework_TestCase
+class ModulesTest extends PHPUnit\Framework\TestCase
 {
 	protected $savconf;
 	protected $savuser;
@@ -57,7 +57,7 @@ class ModulesTest extends PHPUnit_Framework_TestCase
 	 *
 	 * @return BuildDocTest
 	 */
-	function __construct()
+	public function __construct()
 	{
 		parent::__construct();
 
@@ -74,7 +74,7 @@ class ModulesTest extends PHPUnit_Framework_TestCase
 	}
 
 	// Static methods
-  	public static function setUpBeforeClass()
+    public static function setUpBeforeClass()
     {
     	global $conf,$user,$langs,$db;
 		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
@@ -129,16 +129,16 @@ class ModulesTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$modulelist=array('Accounting','Adherent','Agenda','Banque','Barcode','BlockedLog','Bookmark',
-		'CashDesk','Categorie','ClickToDial','Collab','Commande','Comptabilite','Contrat','Cron','Deplacement','DocumentGeneration','Don','DynamicPrices',
-		'ECM','Expedition','ExpenseReport','Export','ExternalRss','ExternalSite',
+		$modulelist=array('Accounting','Adherent','Agenda','Api','Asset','Banque','Barcode','BlockedLog','Bookmark',
+		'CashDesk','Categorie','ClickToDial','Collab','Commande','Comptabilite','Contrat','Cron','DataPolicy','Dav','Deplacement','DocumentGeneration','Don','DynamicPrices',
+		'ECM','EmailCollector','Expedition','ExpenseReport','Export','ExternalRss','ExternalSite',
 		'Facture','Fckeditor','Ficheinter','Fournisseur','FTP','GeoIPMaxmind','Gravatar','Holiday','HRM','Import','Incoterm','Label','Ldap','Loan',
 		'Mailing','MailmanSpip','Margin','ModuleBuilder','MultiCurrency',
 		'Notification','Oauth','OpenSurvey','Paybox','Paypal','Prelevement','Printing','Product','ProductBatch','Projet','Propale','ReceiptPrinter','Resource',
-		'Salaries','Service','Skype','Societe','Stock','Stripe','SupplierProposal','Syslog','Tax','Ticket','User','Variants','WebServices','WebServicesClient','Website','Workflow');
+		'Salaries','Service','SocialNetworks','Societe','Stock','Stripe','SupplierProposal','Syslog','TakePos','Tax','Ticket','User','Variants','WebServices','WebServicesClient','Website','Workflow');
 		foreach($modulelist as $modlabel)
 		{
-    		require_once(DOL_DOCUMENT_ROOT.'/core/modules/mod'.$modlabel.'.class.php');
+    		require_once DOL_DOCUMENT_ROOT.'/core/modules/mod'.$modlabel.'.class.php';
             $class='mod'.$modlabel;
     		$mod=new $class($db);
             $result=$mod->remove();
@@ -154,5 +154,4 @@ class ModulesTest extends PHPUnit_Framework_TestCase
 
         return 0;
     }
-
 }

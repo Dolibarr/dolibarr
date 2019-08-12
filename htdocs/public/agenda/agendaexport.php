@@ -28,12 +28,12 @@
  *              &id=..., &idfrom=..., &idto=...
  */
 
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1');
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1'); // If there is no menu to show
-if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1'); // If we don't need to load the html.form.class.php
-if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
-if (! defined('NOLOGIN'))        define("NOLOGIN",1);		// This means this output page does not require to be logged.
-if (! defined('NOCSRFCHECK'))    define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1'); // If there is no menu to show
+if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1'); // If we don't need to load the html.form.class.php
+if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
+if (! defined('NOLOGIN'))        define("NOLOGIN", 1);		// This means this output page does not require to be logged.
+if (! defined('NOCSRFCHECK'))    define("NOCSRFCHECK", 1);	// We accept to go on this page from external web site.
 
 // C'est un wrapper, donc header vierge
 
@@ -42,19 +42,25 @@ if (! defined('NOCSRFCHECK'))    define("NOCSRFCHECK",1);	// We accept to go on 
  *
  * @return	void
  */
-function llxHeaderVierge() { print '<html><title>Export agenda cal</title><body>'; }
+function llxHeaderVierge()
+{
+    print '<html><title>Export agenda cal</title><body>';
+}
 /**
  * Footer function
  *
  * @return	void
  */
-function llxFooterVierge() { print '</body></html>'; }
+function llxFooterVierge()
+{
+    print '</body></html>';
+}
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
 // Security check
-if (empty($conf->agenda->enabled)) accessforbidden('',0,0,1);
+if (empty($conf->agenda->enabled)) accessforbidden('', 0, 0, 1);
 
 // Not older than
 if (! isset($conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY)) $conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY=100;	// default limit
@@ -62,20 +68,20 @@ if (! isset($conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY)) $conf->global->MAIN_A
 // Define format, type and filter
 $format='ical';
 $type='event';
-if (GETPOST("format",'alpha')) $format=GETPOST("format",'apha');
-if (GETPOST("type",'apha'))   $type=GETPOST("type",'alpha');
+if (GETPOST("format", 'alpha')) $format=GETPOST("format", 'apha');
+if (GETPOST("type", 'apha'))   $type=GETPOST("type", 'alpha');
 
 $filters=array();
-if (GETPOST("year",'int')) 	         $filters['year']=GETPOST("year",'int');
-if (GETPOST("id",'int'))             $filters['id']=GETPOST("id",'int');
-if (GETPOST("idfrom",'int'))         $filters['idfrom']=GETPOST("idfrom",'int');
-if (GETPOST("idto",'int'))           $filters['idto']=GETPOST("idto",'int');
-if (GETPOST("project",'apha'))       $filters['project']=GETPOST("project",'apha');
-if (GETPOST("logina",'apha'))        $filters['logina']=GETPOST("logina",'apha');
-if (GETPOST("logint",'apha'))        $filters['logint']=GETPOST("logint",'apha');
-if (GETPOST("notactiontype",'apha')) $filters['notactiontype']=GETPOST("notactiontype",'apha');
-if (GETPOST("actiontype",'apha'))    $filters['actiontype']=GETPOST("actiontype",'apha');
-if (GETPOST("notolderthan",'int'))   $filters['notolderthan']=GETPOST("notolderthan","int");
+if (GETPOST("year", 'int')) 	         $filters['year']=GETPOST("year", 'int');
+if (GETPOST("id", 'int'))             $filters['id']=GETPOST("id", 'int');
+if (GETPOST("idfrom", 'int'))         $filters['idfrom']=GETPOST("idfrom", 'int');
+if (GETPOST("idto", 'int'))           $filters['idto']=GETPOST("idto", 'int');
+if (GETPOST("project", 'apha'))       $filters['project']=GETPOST("project", 'apha');
+if (GETPOST("logina", 'apha'))        $filters['logina']=GETPOST("logina", 'apha');
+if (GETPOST("logint", 'apha'))        $filters['logint']=GETPOST("logint", 'apha');
+if (GETPOST("notactiontype", 'apha')) $filters['notactiontype']=GETPOST("notactiontype", 'apha');
+if (GETPOST("actiontype", 'apha'))    $filters['actiontype']=GETPOST("actiontype", 'apha');
+if (GETPOST("notolderthan", 'int'))   $filters['notolderthan']=GETPOST("notolderthan", "int");
 else $filters['notolderthan']=$conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY;
 
 // Check config
@@ -100,6 +106,8 @@ if (empty($_GET["exportkey"]) || $conf->global->MAIN_AGENDA_XCAL_EXPORTKEY != $_
 	exit;
 }
 
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
+$hookmanager->initHooks(array('agendaexport'));
 
 // Define filename with prefix on filters predica (each predica set must have on cache file)
 $shortfilename='dolibarrcalendar';
@@ -127,7 +135,7 @@ if ($shortfilename=='dolibarrcalendar')
 	$langs->load("main");
 	$langs->load("errors");
 	llxHeaderVierge();
-    print '<div class="error">'.$langs->trans("ErrorWrongValueForParameterX",'format').'</div>';
+    print '<div class="error">'.$langs->trans("ErrorWrongValueForParameterX", 'format').'</div>';
 	llxFooterVierge();
 	exit;
 }
@@ -140,7 +148,7 @@ if (! empty($conf->global->MAIN_AGENDA_EXPORT_CACHE)) $cachedelay=$conf->global-
 // Build file
 if ($format == 'ical' || $format == 'vcal')
 {
-	$result=$agenda->build_exportfile($format,$type,$cachedelay,$filename,$filters);
+	$result=$agenda->build_exportfile($format, $type, $cachedelay, $filename, $filters);
 	if ($result >= 0)
 	{
 		$attachment = true;
@@ -175,7 +183,7 @@ if ($format == 'ical' || $format == 'vcal')
 
 if ($format == 'rss')
 {
-	$result=$agenda->build_exportfile($format,$type,$cachedelay,$filename,$filters);
+	$result=$agenda->build_exportfile($format, $type, $cachedelay, $filename, $filters);
 	if ($result >= 0)
 	{
 		$attachment = false;

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ class modUser extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		global $conf;
 
@@ -46,9 +46,9 @@ class modUser extends DolibarrModules
 		$this->numero = 0;
 
 		$this->family = "hr";		// Family for module (or "base" if core module)
-		$this->module_position = 10;
+		$this->module_position = '05';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = preg_replace('/^mod/i','',get_class($this));
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "Gestion des utilisateurs (requis)";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
@@ -63,9 +63,12 @@ class modUser extends DolibarrModules
 		// Config pages
 		$this->config_page_url = array("user.php");
 
-		// Dependancies
-		$this->depends = array();
-		$this->requiredby = array();
+		// Dependencies
+		$this->hidden = false;			// A condition to hide module
+		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array();	// List of module ids to disable if this one is disabled
+		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
+		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
 		$this->langfiles = array("main","users","companies","members",'salaries');
 		$this->always_enabled = true;	// Can't be disabled
 
@@ -75,6 +78,7 @@ class modUser extends DolibarrModules
 		// Boxes
 		$this->boxes = array(
 		    0=>array('file'=>'box_lastlogin.php','enabledbydefaulton'=>'Home'),
+            1=>array('file'=>'box_birthdays.php','enabledbydefaulton'=>'Home')
 		);
 
 		// Permissions
@@ -205,13 +209,10 @@ class modUser extends DolibarrModules
 
 
         // Menus
-        //-------
-
         $this->menu = 1;        // This module add menu entries. They are coded into menu manager.
 
 
 		// Exports
-		//--------
 		$r=0;
 
 		$r++;
@@ -264,7 +265,6 @@ class modUser extends DolibarrModules
 		$this->export_sql_end[$r] .=' WHERE u.entity IN ('.getEntity('user').')';
 
 		// Imports
-		//--------
 		$r=0;
 
 		// Import list of users attributes
@@ -314,14 +314,13 @@ class modUser extends DolibarrModules
             'u.birth'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$'
 		);
 		$this->import_examplevalues_array[$r]=array(
-			'u.lastname'=>"Doe",'u.firstname'=>'John','u.login'=>'jdoe','u.employee'=>'0 or 1',
-			'u.fk_soc'=>'0 (internal user) or company name (external user)','u.datec'=>dol_print_date(dol_now(),'%Y-%m-%d'),'u.address'=>"61 jump street",
+			'u.lastname'=>"Doe", 'u.firstname'=>'John', 'u.login'=>'jdoe', 'u.employee'=>'0 or 1',
+			'u.fk_soc'=>'0 (internal user) or company name (external user)', 'u.datec'=>dol_print_date(dol_now(), '%Y-%m-%d'), 'u.address'=>"61 jump street",
 			'u.zip'=>"123456",'u.town'=>"Big town",'u.fk_country'=>'US, FR, DE...','u.office_phone'=>"0101010101",'u.office_fax'=>"0101010102",
 			'u.email'=>"test@mycompany.com",'u.salary'=>"10000",'u.note'=>"This is an example of note for record",'u.datec'=>"2015-01-01 or 2015-01-01 12:30:00",
 		    'u.statut'=>"0 (closed) or 1 (active)",
 		);
 		$this->import_updatekeys_array[$r]=array('u.lastname'=>'Lastname','u.firstname'=>'Firstname','u.login'=>'Login');
-
 	}
 
 
@@ -333,8 +332,8 @@ class modUser extends DolibarrModules
      *      @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
      */
-	function init($options='')
-	{
+    public function init($options = '')
+    {
 		global $conf;
 
 		// Permissions
@@ -342,6 +341,6 @@ class modUser extends DolibarrModules
 
 		$sql = array();
 
-		return $this->_init($sql,$options);
-	}
+		return $this->_init($sql, $options);
+    }
 }

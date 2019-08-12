@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2004-2011	Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +37,7 @@ if(!$user->rights->expensereport->export_csv) {
 // Security check
 $socid = $_GET["socid"]?$_GET["socid"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'expensereport','','');
+$result = restrictedArea($user, 'expensereport', '', '');
 
 $req = "SELECT * FROM ".MAIN_DB_PREFIX."rights_def WHERE id = '178'";
 $result = $db->query($req);
@@ -59,7 +60,6 @@ if($num < 1) {
    $insert.= ")";
 
    $req = $db->query($insert);
-
 }
 
 
@@ -114,7 +114,7 @@ if (isset($_POST['action']))
 {
 	if($_POST['action'] == 'export')
 	{
-		$select_date = $_POST['annee'].'-'.$_POST['mois'];
+		$dateselected = $_POST['annee'].'-'.$_POST['mois'];
 
 		//var_dump($conf->expensereport->dir_output.'/export/');
 		if (!file_exists($conf->expensereport->dir_output.'/export/'))
@@ -122,7 +122,7 @@ if (isset($_POST['action']))
 			dol_mkdir($conf->expensereport->dir_output.'/export/');
 		}
 
-		$dir = $conf->expensereport->dir_output.'/export/expensereport-'.$select_date.'.csv';
+		$dir = $conf->expensereport->dir_output.'/export/expensereport-'.$dateselected.'.csv';
 		$outputlangs = $langs;
 		$outputlangs->charset_output = 'UTF-8';
 
@@ -135,16 +135,16 @@ if (isset($_POST['action']))
 		$num = $db->num_rows($result);
 		if ($num)
 		{
-			$open = fopen($dir,"w+");
+			$open = fopen($dir, "w+");
 
 			$ligne = "ID, Référence, ----, Date paiement, Montant HT, TVA, Montant TTC\n";
 			for ($i = 0; $i < $num; $i++)
 			{
 				$ligne.= "----, ----, ----, ----, ----, ----, ----\n";
 				$objet = $db->fetch_object($result);
-				$objet->total_ht = number_format($objet->total_ht,2);
-				$objet->total_tva = number_format($objet->total_tva,2);
-				$objet->total_ttc = number_format($objet->total_ttc,2);
+				$objet->total_ht = number_format($objet->total_ht, 2);
+				$objet->total_tva = number_format($objet->total_tva, 2);
+				$objet->total_ttc = number_format($objet->total_ttc, 2);
 				$objet->ref = trim($objet->ref);
 				$ligne.= "{$objet->rowid}, {$objet->ref}, ----, {$objet->total_ht}, {$objet->total_tva}, {$objet->total_ttc}\n";
 
@@ -165,36 +165,33 @@ if (isset($_POST['action']))
 					for ($a = 0; $a < $num2; $a++)
 					{
 						$objet2 = $db->fetch_object($result2);
-						$objet2->total_ht = number_format($objet2->total_ht,2);
-						$objet2->total_tva = number_format($objet2->total_tva,2);
-						$objet2->total_ttc = number_format($objet2->total_ttc,2);
-						$objet2->comments = str_replace(',',';',$objet2->comments);
-						$objet2->comments = str_replace("\r\n",' ',$objet2->comments);
-						$objet2->comments = str_replace("\n",' ',$objet2->comments);
+						$objet2->total_ht = number_format($objet2->total_ht, 2);
+						$objet2->total_tva = number_format($objet2->total_tva, 2);
+						$objet2->total_ttc = number_format($objet2->total_ttc, 2);
+						$objet2->comments = str_replace(',', ';', $objet2->comments);
+						$objet2->comments = str_replace("\r\n", ' ', $objet2->comments);
+						$objet2->comments = str_replace("\n", ' ', $objet2->comments);
 
 						$ligne.= "--->, {$objet2->rowid}, {$objet2->libelle}, {$objet2->comments}, {$objet2->total_ht}, {$objet2->total_tva}, {$objet2->total_ttc}\n";
 					}
 				}
-
 			}
 
 			$ligne = $outputlangs->convToOutputCharset($ligne);
 
-			fwrite($open,$ligne);
+			fwrite($open, $ligne);
 			fclose($open);
 
-			print '<a href="'.DOL_URL_ROOT.'/document.php?modulepart=expensereport&file=export%2Fexpensereport-'.$select_date.'.csv" target="_blank">Télécharger le fichier expensereport-'.$select_date.'.csv</a>';
-
+			print '<a href="'.DOL_URL_ROOT.'/document.php?modulepart=expensereport&file=export%2Fexpensereport-'.$dateselected.'.csv" target="_blank">Télécharger le fichier expensereport-'.$dateselected.'.csv</a>';
 		} else {
 
 			print '<b>'.$langs->trans('NoTripsToExportCSV').'</b>';
-
 		}
 	}
 }
 
 print '</div>';
 
+// End of page
 llxFooter();
-
 $db->close();

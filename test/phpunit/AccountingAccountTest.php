@@ -44,7 +44,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class AccountingAccountTest extends PHPUnit_Framework_TestCase
+class AccountingAccountTest extends PHPUnit\Framework\TestCase
 {
     protected $savconf;
     protected $savuser;
@@ -57,9 +57,9 @@ class AccountingAccountTest extends PHPUnit_Framework_TestCase
      *
      * @return AccountingAccountTest
      */
-    function __construct()
+    public function __construct()
     {
-    	parent::__construct();
+        parent::__construct();
 
         //$this->sharedFixture
         global $conf,$user,$langs,$db;
@@ -79,7 +79,7 @@ class AccountingAccountTest extends PHPUnit_Framework_TestCase
         global $conf,$user,$langs,$db;
         $db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
 
-        if (empty($conf->accounting->enabled)) { print __METHOD__." module accouting must be enabled.\n"; die(); }
+        if (empty($conf->accounting->enabled)) { print __METHOD__." module accouting must be enabled.\n"; exit(-1); }
 
         print __METHOD__."\n";
     }
@@ -138,13 +138,15 @@ class AccountingAccountTest extends PHPUnit_Framework_TestCase
         $localobject->account_category = 0;
         $localobject->pcg_type = 'XXXXX';
         $localobject->pcg_subtype = 'XXXXX';
+        $localobject->account_number = '411123456';
         $localobject->account_parent = 0;
         $localobject->label = 'Account specimen';
         $localobject->active = 0;
         $result=$localobject->create($user);
 
-        $this->assertLessThan($result, 0);
         print __METHOD__." result=".$result."\n";
+        $this->assertLessThan($result, 0);
+
         return $result;
     }
 
@@ -168,8 +170,9 @@ class AccountingAccountTest extends PHPUnit_Framework_TestCase
         $localobject=new AccountingAccount($this->savdb);
         $result=$localobject->fetch($id);
 
-        $this->assertLessThan($result, 0);
         print __METHOD__." id=".$id." result=".$result."\n";
+        $this->assertLessThan($result, 0);
+
         return $localobject;
     }
 
@@ -184,18 +187,19 @@ class AccountingAccountTest extends PHPUnit_Framework_TestCase
      */
     public function testAccountingAccountUpdate($localobject)
     {
-    	global $conf,$user,$langs,$db;
-    	$conf=$this->savconf;
-    	$user=$this->savuser;
-    	$langs=$this->savlangs;
-    	$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-    	$localobject->label='New label';
-    	$result=$localobject->update($user);
+        $localobject->label='New label';
+        $result=$localobject->update($user);
 
-    	$this->assertLessThan($result, 0);
-    	print __METHOD__." id=".$id." result=".$result."\n";
-    	return $localobject->id;
+        print __METHOD__." id=".$id." result=".$result."\n";
+        $this->assertLessThan($result, 0);
+
+        return $localobject->id;
     }
 
     /**
@@ -221,7 +225,7 @@ class AccountingAccountTest extends PHPUnit_Framework_TestCase
 
         print __METHOD__." id=".$id." result=".$result."\n";
         $this->assertLessThan($result, 0);
+
         return $result;
     }
-
 }

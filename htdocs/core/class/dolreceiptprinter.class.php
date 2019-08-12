@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2015       Frederic France     <frederic.france@free.fr>
+ * Copyright (C) 2015-2018  Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@
  * <dol_cut_paper_partial>                          Cut ticket partially
  * <dol_open_drawer>                                Open cash drawer
  * <dol_activate_buzzer>                            Activate buzzer
- * 
+ *
  * Code which can be placed everywhere
  * <dol_print_qrcode>                               Print QR Code
  * <dol_print_date>                                 Print date AAAA-MM-DD
@@ -94,7 +94,7 @@
 
 require_once DOL_DOCUMENT_ROOT .'/includes/mike42/escpos-php/Escpos.php';
 
- 
+
 /**
  * Class to manage Receipt Printers
  */
@@ -105,12 +105,25 @@ class dolReceiptPrinter extends Escpos
     const CONNECTOR_NETWORK_PRINT = 3;
     const CONNECTOR_WINDOWS_PRINT = 4;
     //const CONNECTOR_JAVA = 5;
-    var $db;
-    var $tags;
-    var $printer;
-    var $template;
-    var $error;
-    var $errors;
+
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+    public $tags;
+    public $printer;
+    public $template;
+
+    /**
+     * @var string Error code (or message)
+     */
+    public $error='';
+
+    /**
+     * @var string[] Error codes (or messages)
+     */
+    public $errors = array();
 
 
 
@@ -119,7 +132,7 @@ class dolReceiptPrinter extends Escpos
      *
      * @param   DoliDB      $db         database
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db=$db;
         $this->tags = array(
@@ -191,7 +204,6 @@ class dolReceiptPrinter extends Escpos
             'dol_print_if_customer_tax_number',
             'dol_print_if_customer_account_balance_positive',
         );
-
     }
 
     /**
@@ -199,11 +211,12 @@ class dolReceiptPrinter extends Escpos
      *
      * @return  int                     0 if OK; >0 if KO
      */
-    function listPrinters()
+    public function listPrinters()
     {
         global $conf;
         $error = 0;
         $line = 0;
+        $obj = array();
         $sql = 'SELECT rowid, name, fk_type, fk_profile, parameter';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'printer_receipt';
         $sql.= ' WHERE entity = '.$conf->entity;
@@ -266,11 +279,12 @@ class dolReceiptPrinter extends Escpos
      *
      * @return  int                     0 if OK; >0 if KO
      */
-    function listPrintersTemplates()
+    public function listPrintersTemplates()
     {
         global $conf;
         $error = 0;
         $line = 0;
+        $obj = array();
         $sql = 'SELECT rowid, name, template';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'printer_receipt_template';
         $sql.= ' WHERE entity = '.$conf->entity;
@@ -297,19 +311,19 @@ class dolReceiptPrinter extends Escpos
      *  @param    string    $htmlname       select html name
      *  @return  int                        0 if OK; >0 if KO
      */
-    function selectTypePrinter($selected='', $htmlname='printertypeid')
+    public function selectTypePrinter($selected = '', $htmlname = 'printertypeid')
     {
         global $langs;
-        
+
         $options = array(
             1 => $langs->trans('CONNECTOR_DUMMY'),
             2 => $langs->trans('CONNECTOR_FILE_PRINT'),
             3 => $langs->trans('CONNECTOR_NETWORK_PRINT'),
             4 => $langs->trans('CONNECTOR_WINDOWS_PRINT')
         );
-        
+
         $this->resprint = Form::selectarray($htmlname, $options, $selected);
-        
+
         return 0;
     }
 
@@ -321,10 +335,10 @@ class dolReceiptPrinter extends Escpos
      *  @param    string    $htmlname       select html name
      *  @return  int                        0 if OK; >0 if KO
      */
-    function selectProfilePrinter($selected='', $htmlname='printerprofileid')
+    public function selectProfilePrinter($selected = '', $htmlname = 'printerprofileid')
     {
         global $langs;
-        
+
         $options = array(
             0 => $langs->trans('PROFILE_DEFAULT'),
             1 => $langs->trans('PROFILE_SIMPLE'),
@@ -332,7 +346,7 @@ class dolReceiptPrinter extends Escpos
             3 => $langs->trans('PROFILE_P822D'),
             4 => $langs->trans('PROFILE_STAR')
         );
-        
+
         $this->profileresprint = Form::selectarray($htmlname, $options, $selected);
         return 0;
     }
@@ -347,7 +361,7 @@ class dolReceiptPrinter extends Escpos
      *  @param    string    $parameter      Printer parameter
      *  @return  int                        0 if OK; >0 if KO
      */
-    function AddPrinter($name, $type, $profile, $parameter)
+    public function addPrinter($name, $type, $profile, $parameter)
     {
         global $conf;
         $error = 0;
@@ -372,7 +386,7 @@ class dolReceiptPrinter extends Escpos
      *  @param    int       $printerid      Printer id
      *  @return  int                        0 if OK; >0 if KO
      */
-    function UpdatePrinter($name, $type, $profile, $parameter, $printerid)
+    public function updatePrinter($name, $type, $profile, $parameter, $printerid)
     {
         global $conf;
         $error = 0;
@@ -396,7 +410,7 @@ class dolReceiptPrinter extends Escpos
      *  @param    int       $printerid      Printer id
      *  @return  int                        0 if OK; >0 if KO
      */
-    function DeletePrinter($printerid)
+    public function deletePrinter($printerid)
     {
         global $conf;
         $error = 0;
@@ -418,7 +432,7 @@ class dolReceiptPrinter extends Escpos
      *  @param    int       $templateid     Template id
      *  @return   int                       0 if OK; >0 if KO
      */
-    function UpdateTemplate($name, $template, $templateid)
+    public function updateTemplate($name, $template, $templateid)
     {
         global $conf;
         $error = 0;
@@ -441,12 +455,12 @@ class dolReceiptPrinter extends Escpos
      *  @param    int       $printerid      Printer id
      *  @return  int                        0 if OK; >0 if KO
      */
-    function SendTestToPrinter($printerid)
+    public function sendTestToPrinter($printerid)
     {
         global $conf;
         $error = 0;
         $img = new EscposImage(DOL_DOCUMENT_ROOT .'/theme/common/dolibarr_logo_bw.png');
-        $ret = $this->InitPrinter($printerid);
+        $ret = $this->initPrinter($printerid);
         if ($ret>0) {
             setEventMessages($this->error, $this->errors, 'errors');
         } else {
@@ -460,7 +474,6 @@ class dolReceiptPrinter extends Escpos
                 $this->printer->cut();
                 //print '<pre>'.print_r($this->connector, true).'</pre>';
                 $this->printer->close();
-
             } catch (Exception $e) {
                 $this->errors[] = $e->getMessage();
                 $error++;
@@ -477,7 +490,7 @@ class dolReceiptPrinter extends Escpos
      *  @param   int       $printerid       Printer id
      *  @return  int                        0 if OK; >0 if KO
      */
-    function SendToPrinter($object, $templateid, $printerid)
+    public function sendToPrinter($object, $templateid, $printerid)
     {
         global $conf;
         $error = 0;
@@ -517,15 +530,12 @@ class dolReceiptPrinter extends Escpos
         // print ticket
         $level = 0;
         $html = '<table border="1" style="width:210px"><pre>';
-        $ret = $this->InitPrinter($printerid);
+        $ret = $this->initPrinter($printerid);
         if ($ret>0) {
             setEventMessages($this->error, $this->errors, 'errors');
-        } 
-        else 
-        {
+        } else {
             $nboflines = count($vals);
-            for ($line=0; $line < $nboflines; $line++) 
-            {
+            for ($line=0; $line < $nboflines; $line++) {
                 switch ($vals[$line]['tag']) {
                     case 'DOL_ALIGN_CENTER':
                         $this->printer->setJustification(Escpos::JUSTIFY_CENTER);
@@ -595,7 +605,6 @@ class dolReceiptPrinter extends Escpos
             // uncomment next line to see content sent to printer
             //print '<pre>'.print_r($this->connector, true).'</pre>';
             $this->printer->close();
-
         }
         return $error;
     }
@@ -603,10 +612,10 @@ class dolReceiptPrinter extends Escpos
     /**
      *  Function to load Template
      *
-     *  @param   int       $templateid        Template id
-     *  @return  int                        0 if OK; >0 if KO
+     *  @param   int       $templateid          Template id
+     *  @return  int                            0 if OK; >0 if KO
      */
-    function loadTemplate($templateid)
+    public function loadTemplate($templateid)
     {
         global $conf;
         $error = 0;
@@ -638,7 +647,7 @@ class dolReceiptPrinter extends Escpos
      *  @param   int       $printerid       Printer id
      *  @return  int                        0 if OK; >0 if KO
      */
-    function InitPrinter($printerid)
+    public function initPrinter($printerid)
     {
         global $conf;
         $error=0;

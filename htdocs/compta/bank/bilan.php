@@ -22,7 +22,7 @@
  *		\brief      Page de bilan
  */
 
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 // Load translation files required by the page
@@ -92,5 +92,6 @@ print "<tr class=\"oddeven\"><td>".$langs->trans("BankBalance")."</td><td align=
 
 print "</table>";
 
+// End of page
 llxFooter();
 $db->close();

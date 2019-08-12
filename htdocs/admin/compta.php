@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2013 Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2013-2017 Philippe Grand	    <philippe.grand@atoo-net.com>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
@@ -35,7 +35,7 @@ $langs->loadLangs(array('admin', 'compta', 'accountancy'));
 if (!$user->admin)
 accessforbidden();
 
-$action = GETPOST('action','alpha');
+$action = GETPOST('action', 'alpha');
 
 // Other parameters ACCOUNTING_*
 $list = array(
@@ -64,10 +64,10 @@ if ($action == 'update')
         'CREANCES-DETTES'
     );
 
-    $accounting_mode = GETPOST('accounting_mode','alpha');
+    $accounting_mode = GETPOST('accounting_mode', 'alpha');
 
 
-    if (in_array($accounting_mode,$accounting_modes)) {
+    if (in_array($accounting_mode, $accounting_modes)) {
 
         if (!dolibarr_set_const($db, 'ACCOUNTING_MODE', $accounting_mode, 'chaine', 0, '', $conf->entity)) {
             $error++;
@@ -103,7 +103,7 @@ llxHeader();
 $form=new Form($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans('ComptaSetup'),$linkback,'title_setup');
+print load_fiche_titre($langs->trans('ComptaSetup'), $linkback, 'title_setup');
 
 print '<br>';
 
@@ -164,5 +164,6 @@ print "</table>\n";
 print '<br><br><div style="text-align:center"><input type="submit" class="button" value="'.$langs->trans('Modify').'" name="button"></div>';
 print '</form>';
 
+// End of page
 llxFooter();
 $db->close();
