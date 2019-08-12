@@ -762,7 +762,8 @@ class pdf_crabe extends ModelePDFFactures
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *  Show payments table
 	 *
@@ -909,6 +910,7 @@ class pdf_crabe extends ModelePDFFactures
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Function _tableau_versements_header
 	 *
@@ -947,7 +949,8 @@ class pdf_crabe extends ModelePDFFactures
 		$pdf->line($tab3_posx, $tab3_top-1+$tab3_height, $tab3_posx+$tab3_width, $tab3_top-1+$tab3_height);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *   Show miscellaneous information (payment mode, payment term, ...)
 	 *
@@ -1106,7 +1109,8 @@ class pdf_crabe extends ModelePDFFactures
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *	Show total to pay
 	 *
@@ -1405,6 +1409,7 @@ class pdf_crabe extends ModelePDFFactures
 		return ($tab2_top + ($tab2_hl * $index));
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *   Show table for lines
 	 *
@@ -1526,6 +1531,7 @@ class pdf_crabe extends ModelePDFFactures
 		}
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *  Show top header of page.
 	 *
@@ -1801,6 +1807,7 @@ class pdf_crabe extends ModelePDFFactures
 		return $top_shift;
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *   	Show footer of page. Need this->emetteur object
      *

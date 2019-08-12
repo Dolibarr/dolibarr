@@ -637,6 +637,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		return 0;
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *   Show miscellaneous information (payment mode, payment term, ...)
@@ -666,6 +667,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		$pdf->MultiCell($larg_sign, 2, $outputlangs->trans("ForCustomer").':', '', 'L');
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *   Show table for lines
 	 *
@@ -731,6 +733,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		}
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *  Show top header of page.
 	 *
@@ -909,6 +912,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		$pdf->SetTextColor(0, 0, 60);
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *  Show footer of page. Need this->emetteur object
      *

@@ -1509,6 +1509,7 @@ class pdf_sponge extends ModelePDFFactures
 		return ($tab2_top + ($tab2_hl * $index));
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *   Show table for lines
 	 *
@@ -1561,6 +1562,7 @@ class pdf_sponge extends ModelePDFFactures
 		}
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *  Show top header of page.
 	 *
@@ -1834,6 +1836,7 @@ class pdf_sponge extends ModelePDFFactures
 		return $top_shift;
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *   	Show footer of page. Need this->emetteur object
      *

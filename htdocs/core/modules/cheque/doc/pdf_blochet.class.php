@@ -376,7 +376,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		}
 	}
 
-
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *  Show footer of page. Need this->emetteur object
      *

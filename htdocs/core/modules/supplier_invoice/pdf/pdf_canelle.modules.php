@@ -605,6 +605,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		}
     }
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Show total to pay
@@ -814,6 +815,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		return ($tab2_top + ($tab2_hl * $index));
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *   Show table for lines
 	 *
@@ -920,6 +922,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		}
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Show payments table
@@ -1013,6 +1016,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		}
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *  Show top header of page.
 	 *
@@ -1226,6 +1230,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		return $top_shift;
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     /**
      *  Show footer of page. Need this->emetteur object
      *

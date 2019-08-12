@@ -833,6 +833,7 @@ class pdf_azur extends ModelePDFPropales
 		}
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Show payments table
@@ -848,7 +849,7 @@ class pdf_azur extends ModelePDFPropales
         // phpcs:enable
 	}
 
-
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *   Show miscellaneous information (payment mode, payment term, ...)
@@ -1029,7 +1030,7 @@ class pdf_azur extends ModelePDFPropales
 		return $posy;
 	}
 
-
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Show total to pay
@@ -1306,6 +1307,7 @@ class pdf_azur extends ModelePDFPropales
 		return ($tab2_top + ($tab2_hl * $index));
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *   Show table for lines
 	 *
@@ -1422,6 +1424,7 @@ class pdf_azur extends ModelePDFPropales
 		}
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *  Show top header of page.
 	 *
@@ -1645,6 +1648,7 @@ class pdf_azur extends ModelePDFPropales
 		return $top_shift;
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *   	Show footer of page. Need this->emetteur object
      *
@@ -1661,6 +1665,7 @@ class pdf_azur extends ModelePDFPropales
 		return pdf_pagefoot($pdf, $outputlangs, 'PROPOSAL_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Show area for the customer to sign

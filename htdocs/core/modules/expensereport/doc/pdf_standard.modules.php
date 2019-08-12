@@ -620,6 +620,7 @@ class pdf_standard extends ModeleExpenseReport
         $pdf->writeHTMLCell($this->posxtva-$this->posxcomment-0.8, 4, $this->posxcomment-1, $curY, $comment, 0, 1);
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     /**
 	 *  Show top header of page.
 	 *
@@ -848,6 +849,7 @@ class pdf_standard extends ModeleExpenseReport
 		}
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *   Show table for lines
 	 *
@@ -1075,6 +1077,7 @@ class pdf_standard extends ModeleExpenseReport
 		}
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *  Show footer of page. Need this->emetteur object
      *

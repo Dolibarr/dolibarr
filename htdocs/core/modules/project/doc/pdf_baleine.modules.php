@@ -522,7 +522,7 @@ class pdf_baleine extends ModelePDFProjects
 		}
 	}
 
-
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *   Show table for lines
 	 *
@@ -573,6 +573,7 @@ class pdf_baleine extends ModelePDFProjects
 		$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxdatestart, 3, '', 0, 'C');
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *  Show top header of page.
 	 *
@@ -666,6 +667,7 @@ class pdf_baleine extends ModelePDFProjects
         */
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *  Show footer of page. Need this->emetteur object
      *

@@ -587,7 +587,7 @@ class pdf_standard extends ModelePDFProduct
 		}
     }
 
-
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *   Show table for lines
 	 *
@@ -694,6 +694,7 @@ class pdf_standard extends ModelePDFProduct
 	    }
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *  Show top header of page.
 	 *
@@ -844,6 +845,7 @@ class pdf_standard extends ModelePDFProduct
         $pdf->SetTextColor(0, 0, 0);
     }
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     /**
      *  Show footer of page. Need this->emetteur object
      *

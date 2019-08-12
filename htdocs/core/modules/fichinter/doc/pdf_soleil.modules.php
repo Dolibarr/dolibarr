@@ -483,6 +483,7 @@ class pdf_soleil extends ModelePDFFicheinter
 		}
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *   Show table for lines
 	 *
@@ -546,6 +547,7 @@ class pdf_soleil extends ModelePDFFicheinter
 		}
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *  Show top header of page.
 	 *
@@ -722,6 +724,7 @@ class pdf_soleil extends ModelePDFFicheinter
 		}
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *   	Show footer of page. Need this->emetteur object
 	 *

@@ -648,6 +648,7 @@ class pdf_einstein extends ModelePDFCommandes
 		}
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Show payments table
@@ -663,7 +664,7 @@ class pdf_einstein extends ModelePDFCommandes
         // phpcs:enable
 	}
 
-
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *   Show miscellaneous information (payment mode, payment term, ...)
@@ -850,7 +851,7 @@ class pdf_einstein extends ModelePDFCommandes
 		return $posy;
 	}
 
-
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Show total to pay
@@ -1112,6 +1113,7 @@ class pdf_einstein extends ModelePDFCommandes
 		return ($tab2_top + ($tab2_hl * $index));
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *   Show table for lines
 	 *

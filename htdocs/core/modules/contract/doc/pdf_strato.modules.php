@@ -507,6 +507,7 @@ class pdf_strato extends ModelePDFContract
 		}
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *   Show table for lines
 	 *
@@ -585,6 +586,7 @@ class pdf_strato extends ModelePDFContract
 		$pdf->MultiCell($this->page_largeur-$this->marge_droite - $posmiddle - 5, 20, '', 1);
     }
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     /**
      *  Show top header of page.
      *
@@ -764,6 +766,7 @@ class pdf_strato extends ModelePDFContract
 		}
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *   	Show footer of page. Need this->emetteur object
      *

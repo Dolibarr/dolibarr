@@ -700,6 +700,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 		}
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Show payments table
@@ -715,7 +716,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
         // phpcs:enable
 	}
 
-
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *   Show miscellaneous information (payment mode, payment term, ...)
@@ -883,7 +884,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 		return $posy;
 	}
 
-
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Show total to pay
@@ -1157,6 +1158,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 		return ($tab2_top + ($tab2_hl * $index));
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *   Show table for lines
 	 *
@@ -1262,6 +1264,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 		}
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *  Show top header of page.
 	 *
@@ -1479,6 +1482,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 		return $top_shift;
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     /**
      *  Show footer of page. Need this->emetteur object
      *

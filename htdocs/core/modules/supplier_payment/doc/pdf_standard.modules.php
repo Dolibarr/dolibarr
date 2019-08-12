@@ -517,7 +517,8 @@ class pdf_standard extends ModelePDFSuppliersPayments
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *	Show total to pay
 	 *
@@ -576,7 +577,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 		$pdf->MultiCell(150, 4, date("d").' '.$outputlangs->transnoentitiesnoconv(date("F")).' '.date("Y"), 0, 'L', 1);
 	}
 
-
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *   Show table for lines
 	 *
@@ -621,7 +622,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 		//$this->printRect($pdf,$this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height, $hidetop, $hidebottom);	// Rect prend une longueur en 3eme param et 4eme param
 	}
 
-
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *  Show top header of page.
 	 *
@@ -801,6 +802,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 		}
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *   	Show footer of page. Need this->emetteur object
      *

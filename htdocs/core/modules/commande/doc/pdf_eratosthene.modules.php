@@ -1300,6 +1300,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 		return ($tab2_top + ($tab2_hl * $index));
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *   Show table for lines
 	 *

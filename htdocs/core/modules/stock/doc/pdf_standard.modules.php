@@ -753,7 +753,7 @@ class pdf_standard extends ModelePDFStock
 		}
 	}
 
-
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *   Show table for lines
 	 *
@@ -860,6 +860,7 @@ class pdf_standard extends ModelePDFStock
 		$pdf->SetLineStyle(array('dash'=>0));
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *  Show top header of page.
 	 *
@@ -1089,6 +1090,7 @@ class pdf_standard extends ModelePDFStock
 	    $pdf->SetTextColor(0, 0, 0);
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *   	Show footer of page. Need this->emetteur object
 	 *

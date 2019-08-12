@@ -448,6 +448,7 @@ class pdf_merou extends ModelePdfExpedition
 		}
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *   Show table for lines
 	 *
@@ -489,6 +490,7 @@ class pdf_merou extends ModelePdfExpedition
 		$pdf->Rect(10, $tab_top, 190, $tab_height);
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *   	Show footer of page. Need this->emetteur object
      *
@@ -517,7 +519,7 @@ class pdf_merou extends ModelePdfExpedition
         //}
 	}
 
-
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *  Show top header of page.
 	 *

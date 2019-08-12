@@ -702,7 +702,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		}
 	}
 
-
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Show payments table
@@ -718,7 +718,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
         // phpcs:enable
 	}
 
-
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *   Show miscellaneous information (payment mode, payment term, ...)
@@ -784,6 +784,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		return $posy;
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Show total to pay
@@ -999,6 +1000,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		return ($tab2_top + ($tab2_hl * $index));
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     /**
 	 *   Show table for lines
 	 *
@@ -1104,6 +1106,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		}
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *  Show top header of page.
 	 *
@@ -1348,6 +1351,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		return $top_shift;
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *  Show footer of page. Need this->emetteur object
      *

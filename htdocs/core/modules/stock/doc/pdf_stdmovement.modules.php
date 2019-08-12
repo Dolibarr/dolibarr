@@ -809,7 +809,7 @@ class pdf_stdmovement extends ModelePDFMovement
 		}
 	}
 
-
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *   Show table for lines
 	 *
@@ -939,6 +939,7 @@ class pdf_stdmovement extends ModelePDFMovement
 		$pdf->SetLineStyle(array('dash'=>0));
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *  Show top header of page.
 	 *
@@ -1168,6 +1169,7 @@ class pdf_stdmovement extends ModelePDFMovement
 	    $pdf->SetTextColor(0, 0, 0);
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *  Show footer of page. Need this->emetteur object
 	 *
