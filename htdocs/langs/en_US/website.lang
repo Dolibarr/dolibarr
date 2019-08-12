@@ -104,3 +104,5 @@ ReplaceWebsiteContent=Search or Replace website content
 DeleteAlsoJs=Delete also all javascript files specific to this website?
 DeleteAlsoMedias=Delete also all medias files specific to this website?
 MyWebsitePages=My website pages
+SearchReplaceInto=Search | Replace into
+ReplaceString=New string

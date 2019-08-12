@@ -302,6 +302,12 @@ if ($action == 'unsetshowsubcontainers')
 	exit;
 }
 
+if (($action == 'replacesite' || $action == 'replacesiteconfirm') && empty(GETPOST('searchstring')))
+{
+	$action = 'replacesite';
+}
+
+
 // Add directory
 /*
 if ($action == 'adddir' && $permtouploadfile)
@@ -1793,9 +1799,10 @@ $moreheadjs.='</script>'."\n";
 
 llxHeader($moreheadcss.$moreheadjs, $langs->trans("WebsiteSetup"), $help_url, '', 0, 0, $arrayofjs, $arrayofcss, '', '', '<!-- Begin div class="fiche" -->'."\n".'<div class="fichebutwithotherclass">');
 
-print "\n".'<form action="'.$_SERVER["PHP_SELF"].'" method="POST" enctype="multipart/form-data">';
-
+print "\n";
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" enctype="multipart/form-data">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+
 if ($action == 'createsite')
 {
 	print '<input type="hidden" name="action" value="addsite">';
@@ -1842,7 +1849,11 @@ if ($action == 'file_manager')
 }
 if ($action == 'replacesite')
 {
-	print '<input type="hidden" name="action" value="replacesite">';
+	print '<input type="hidden" name="action" value="replacesiteconfirm">';
+}
+if ($action == 'replacesiteconfirm')
+{
+	print '<input type="hidden" name="action" value="replacesiteconfirm">';
 }
 
 print '<div>';
@@ -1954,7 +1965,6 @@ if (! GETPOST('hide_websitemenu'))
 			</script>';
 		*/
 
-		//print '<input type="submit" class="button nobordertransp"'.$disabled.' value="<span class="fa fa-globe"><span>'.dol_escape_htmltag($langs->trans("Replace")).'" name="replacesite">';
 		print '<a href="'.$_SERVER["PHP_SEFL"].'?action=replacesite&website='.$website->ref.'" class="button nobordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("ReplaceWebsiteContent")).'"><span class="fa fa-file-code"><span></a>';
 	}
 
@@ -2005,10 +2015,10 @@ if (! GETPOST('hide_websitemenu'))
 		print '</div>';
 	}
 
-	if (in_array($action, array('editcss','editmenu','file_manager','replacesite')))
+	if (in_array($action, array('editcss','editmenu','file_manager','replacesite','replacesiteconfirm')))
 	{
-		if (preg_match('/^create/', $action) && $action != 'file_manager' && $action != 'replacesite') print '<input type="submit" id="savefile" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
-		if (preg_match('/^edit/', $action) && $action != 'file_manager' && $action != 'replacesite') print '<input type="submit" id="savefile" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
+		if (preg_match('/^create/', $action) && $action != 'file_manager' && $action != 'replacesite' && $action != 'replacesiteconfirm') print '<input type="submit" id="savefile" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
+		if (preg_match('/^edit/', $action) && $action != 'file_manager' && $action != 'replacesite' && $action != 'replacesiteconfirm') print '<input type="submit" id="savefile" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
 		if ($action != 'preview') print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" name="preview">';
 	}
 
@@ -2286,7 +2296,7 @@ if (! GETPOST('hide_websitemenu'))
 
 			// TODO Add js to save alias like we save virtual host name and use dynamic virtual host for url of id=previewpageext
 		}
-		if (! in_array($action, array('editcss','editmenu','file_manager','replacesite','createsite','createcontainer','createfromclone','createpagefromclone','deletesite')))
+		if (! in_array($action, array('editcss','editmenu','file_manager','replacesite','replacesiteconfirm','createsite','createcontainer','createfromclone','createpagefromclone','deletesite')))
 		{
 			if (preg_match('/^create/', $action)) print '<input type="submit" id="savefile" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
 			if (preg_match('/^edit/', $action)) print '<input type="submit" id="savefile" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
@@ -2992,18 +3002,6 @@ if ($action == 'editfile' || $action == 'file_manager')
 	print '</div>';
 }
 
-if ($action == 'replacesite')
-{
-	print '<!-- Edit Media -->'."\n";
-	print '<div class="fiche"><br>';
-
-	print load_fiche_titre($langs->trans("ReplaceWebsiteContent"));
-
-	print '<div class="center">'.$langs->trans("FeatureNotYetAvailable").'</center>';
-
-	print '</div>';
-}
-
 if ($action == 'editmenu')
 {
 	print '<!-- Edit Menu -->'."\n";
@@ -3052,6 +3050,85 @@ if ($action == 'editsource')
 print "</div>\n";
 print "</form>\n";
 
+
+if ($action == 'replacesite' || $action == 'replacesiteconfirm')
+{
+	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="action" value="replacesiteconfirm">';
+
+
+	print '<!-- Edit Media -->'."\n";
+	print '<div class="fiche"><br>';
+
+	print load_fiche_titre($langs->trans("ReplaceWebsiteContent"));
+
+	print '<div class="tagtable">';
+
+	print '<div class="tagtr">';
+	print '<div class="tagtd paddingrightonly">';
+	print $langs->trans("SearchReplaceInto");
+	print '</div>';
+	print '<div class="tagtd">';
+	print '<input type="checkbox" name="optioncontent" value="content"'.((! GETPOSTISSET('buttonreplacesitesearch') || GETPOST('optioncontent', 'aZ09'))?' checked':'').'> '.$langs->trans("Content");
+	print '<input type="checkbox" class="marginleftonly" name="optionmeta" value="meta"'.(GETPOST('optionmeta', 'aZ09')?' checked':'').'> '.$langs->trans("Title").' | '.$langs->trans("Description").' | '.$langs->trans("Keywords");
+	print '</div>';
+	print '</div>';
+
+	print '<div class="tagtr">';
+	print '<div class="tagtd paddingrightonly">';
+	print $langs->trans("SearchString");
+	print '</div>';
+	print '<div class="tagtd">';
+	print '<input type="text" name="searchstring" value="'.dol_escape_htmltag(GETPOST('searchstring', 'none')).'">';
+	print '</div>';
+	print '</div>';
+
+	print '</div>';
+
+	print '<br>';
+
+	print '<input type="submit" class="button" name="buttonreplacesitesearch" value="'.$langs->trans("Search").'">';
+
+	if ($action == 'replacesiteconfirm')
+	{
+		$algo = '';
+		if (GETPOST('optionmeta')) $algo.='meta';
+		if (GETPOST('optioncontent')) $algo.='content';
+
+		$listofpages = getPagesFromSearchCriterias('', $algo, GETPOST('searchstring', 'none'), 1000);
+
+		print '<br>';
+		print '<br>';
+
+		if ($listofpages['code'] == 'OK')
+		{
+			foreach($listofpages['list'] as $websitepagefound)
+			{
+				print '<div class="rowsearchresult"><a href="'.$_SERVER["PHP_SELF"].'?website='.$website->ref.'&pageid='.$websitepagefound->id.'">'.$websitepagefound->title.'</a> - '.$websitepagefound->description.'</div>';
+			}
+		}
+		else
+		{
+			print $listofpages['message'];
+		}
+	}
+
+	if ($action == 'replacesiteconfirm')
+	{
+		print '<div class="tagtr">';
+		print '<div class="tagtd paddingrightonly">';
+		print $langs->trans("ReplaceString");
+		print '</div>';
+		print '<div class="tagtd">';
+		print '<input type="text" name="replacestring" value="'.dol_escape_htmltag(GETPOST('replacestring', 'none')).'">';
+		print '<input type="submit" disabled class="button" name="buttonreplacesitesearch" value="'.$langs->trans("Replace").'">';
+		print '</div>';
+		print '</div>';
+	}
+
+	print '</form>';
+}
 
 if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone')
 {

@@ -575,6 +575,8 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25)
 	$error = 0;
 	$arrayresult = array('code'=>'', 'list'=>array());
 
+	if (! is_object($weblangs)) $weblangs = $langs;
+
 	if (empty($searchstring))
 	{
 		$error++;
@@ -583,24 +585,38 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25)
 	}
 	elseif (dol_strlen($searchstring) < 2)
 	{
+		$weblangs->load("errors");
 		$error++;
 		$arrayresult['code']='KO';
-		$arrayresult['message']=$weblangs->trans("SearchCriteriaTooSmall");
+		$arrayresult['message']=$weblangs->trans("ErrorSearchCriteriaTooSmall");
 	}
-	elseif (! in_array($type, array('page')))
+	elseif (! in_array($type, array('', 'page')))
 	{
 		$error++;
 		$arrayresult['code']='KO';
 		$arrayresult['message']='Bad value for parameter $type';
 	}
 
-	if (! $error && in_array($algo, array('meta', 'metacontent')))
+	$searchdone = 0;
+
+	if (! $error && in_array($algo, array('meta', 'metacontent', 'content')))
 	{
 		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'website_page';
-		$sql.= " WHERE fk_website = ".$website->id." AND type_container = '".$db->escape($type)."'";
-		$sql.= " AND (title LIKE '%".$db->escape($searchstring)."%' OR description LIKE '%".$db->escape($searchstring)."%'";
-		if ($algo == 'metacontent') $sql.= " OR content LIKE '%".$db->escape($searchstring)."%'";
-		$sql.= " OR keywords LIKE '".$db->escape($searchstring).",%' OR keywords LIKE '% ".$db->escape($searchstring)."%')";		// TODO Use a better way to scan keywords
+		$sql.= " WHERE fk_website = ".$website->id;
+		if ($type) $sql.= " AND type_container = '".$db->escape($type)."'";
+		$sql.= " AND (";
+		$searchalgo = '';
+		if ($algo == 'meta' || $algo == 'metacontent')
+		{
+			$searchalgo.= ($searchalgo?' OR ':'')."title LIKE '%".$db->escape($searchstring)."%' OR description LIKE '%".$db->escape($searchstring)."%'";
+			$searchalgo.= ($searchalgo?' OR ':'')."keywords LIKE '".$db->escape($searchstring).",%' OR keywords LIKE '% ".$db->escape($searchstring)."%'";		// TODO Use a better way to scan keywords
+		}
+		if ($algo == 'metacontent' || $algo == 'content')
+		{
+			$searchalgo.= ($searchalgo?' OR ':'')."content LIKE '%".$db->escape($searchstring)."%'";
+		}
+		$sql.=$searchalgo;
+		$sql.= ")";
 		$sql.= $db->plimit($max);
 
 		$resql = $db->query($sql);
@@ -631,6 +647,15 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25)
 			$arrayresult['code']=$db->lasterrno();
 			$arrayresult['message']=$db->lasterror();
 		}
+
+		$searchdone = 1;
+	}
+
+	if (! $searchdone)
+	{
+		$error++;
+		$arrayresult['code']='KO';
+		$arrayresult['message']='No supported algorithm found';
 	}
 
 	return $arrayresult;
