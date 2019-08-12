@@ -7,4 +7,3 @@ ErrorDebitCredit=Débit et crédit ne peuvent pas être non-nuls en même temps
 TotalMarge=Marge de ventes totale
 Selectmodelcsv=Sélectionnez un modèle d'export
 Modelcsv_normal=Export classique
-DefaultClosureDesc=This page can be used to set parameters to use to enclose a balance sheet.

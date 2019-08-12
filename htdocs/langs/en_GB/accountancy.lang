@@ -117,7 +117,6 @@ Selectmodelcsv=Select an example of export
 ChartofaccountsId=Chart of accounts ID
 InitAccountancyDesc=This page can be used to create a financial account for products and services that do not have a financial account defined for sales and purchases.
 DefaultBindingDesc=This page can be used to set a default account for linking transaction records about payments, salaries, donations, taxes and vat when no specific finance account had already been set.
-DefaultClosureDesc=This page can be used to set parameters to use to enclose a balance sheet.
 OptionModeProductSell=Type of sale
 OptionModeProductBuy=Type of purchase
 OptionModeProductSellDesc=Show all products with finance accounts for sales.

@@ -2,6 +2,7 @@
 ProductRef=Produkto nuoroda
 ProductLabel=Produkto etiketė
 ProductLabelTranslated=Translated product label
+ProductDescription=Product description
 ProductDescriptionTranslated=Translated product description
 ProductNoteTranslated=Translated product note
 ProductServiceCard=Produkto / Paslaugos kortelė

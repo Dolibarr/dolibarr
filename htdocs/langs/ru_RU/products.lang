@@ -2,6 +2,7 @@
 ProductRef=Продукт исх.
 ProductLabel=Этикетка товара
 ProductLabelTranslated=Переведенная этикетка продукта
+ProductDescription=Product description
 ProductDescriptionTranslated=Переведенное описание продукта
 ProductNoteTranslated=Переведенная заметка о продукте
 ProductServiceCard=Карточка Товаров/Услуг
