@@ -555,6 +555,7 @@ function dol_count_nb_of_line($file)
  *
  * @param 	string		$pathoffile		Path of file
  * @return 	integer						File size
+ * @see dol_print_size()
  */
 function dol_filesize($pathoffile)
 {
@@ -2163,6 +2164,12 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	{
 		$accessallowed=($user->admin && basename($original_file) == $original_file && preg_match('/^dolibarr.*\.log$/', basename($original_file)));
 		$original_file=$dolibarr_main_data_root.'/'.$original_file;
+	}
+	// Wrapping for *.log files, like when used with url http://.../document.php?modulepart=logs&file=dolibarr.log
+	elseif ($modulepart == 'doctemplateswebsite' && !empty($dolibarr_main_data_root))
+	{
+		$accessallowed=($fuser->rights->website->write && preg_match('/\.jpg$/i', basename($original_file)));
+		$original_file=$dolibarr_main_data_root.'/doctemplates/websites/'.$original_file;
 	}
 	// Wrapping for *.zip files, like when used with url http://.../document.php?modulepart=packages&file=module_myfile.zip
 	elseif ($modulepart == 'packages' && !empty($dolibarr_main_data_root))

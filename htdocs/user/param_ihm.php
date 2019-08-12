@@ -314,7 +314,7 @@ if ($action == 'edit')
     print '</table><br>';
 
     // Theme
-    show_theme($object, (($user->admin || empty($dolibarr_main_demo))?1:0), true);
+    showSkins($object, (($user->admin || empty($dolibarr_main_demo))?1:0), true);
 
     dol_fiche_end();
 
@@ -387,7 +387,7 @@ else
 
 
     // Skin
-    show_theme($object, 0, true);
+    showSkins($object, 0, true);
 
     dol_fiche_end();
 

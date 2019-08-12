@@ -30,6 +30,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/website2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formwebsite.class.php';
@@ -1671,14 +1672,14 @@ if ($action == 'exportsite')
 // Import site
 if ($action == 'importsiteconfirm')
 {
-	if (empty($_FILES))
+	if (empty($_FILES) && ! GETPOSTISSET('templateuserfile'))
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("File")), null, 'errors');
 		$action = 'importsite';
 	}
 	else
 	{
-		if (! empty($_FILES))
+		if (! empty($_FILES) || GETPOSTISSET('templateuserfile'))
 		{
 			// Check symlink to medias and restore it if ko
 			$pathtomedias=DOL_DATA_ROOT.'/medias';
@@ -1695,29 +1696,37 @@ if ($action == 'importsiteconfirm')
 				}
 			}
 
-			if (is_array($_FILES['userfile']['tmp_name'])) $userfiles=$_FILES['userfile']['tmp_name'];
-			else $userfiles=array($_FILES['userfile']['tmp_name']);
-
-			foreach($userfiles as $key => $userfile)
+			$fileofzip = '';
+			if (GETPOSTISSET('templateuserfile'))
 			{
-				if (empty($_FILES['userfile']['tmp_name'][$key]))
+				$fileofzip = DOL_DATA_ROOT.'/doctemplates/websites/'.GETPOST('templateuserfile', 'alpha');
+			}
+			elseif (! empty($_FILES))
+			{
+				if (is_array($_FILES['userfile']['tmp_name'])) $userfiles=$_FILES['userfile']['tmp_name'];
+				else $userfiles=array($_FILES['userfile']['tmp_name']);
+
+				foreach($userfiles as $key => $userfile)
 				{
-					$error++;
-					if ($_FILES['userfile']['error'][$key] == 1 || $_FILES['userfile']['error'][$key] == 2){
-						setEventMessages($langs->trans('ErrorFileSizeTooLarge'), null, 'errors');
-						$action = 'importsite';
-					}
-					else {
-						setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("File")), null, 'errors');
-						$action = 'importsite';
+					if (empty($_FILES['userfile']['tmp_name'][$key]))
+					{
+						$error++;
+						if ($_FILES['userfile']['error'][$key] == 1 || $_FILES['userfile']['error'][$key] == 2){
+							setEventMessages($langs->trans('ErrorFileSizeTooLarge'), null, 'errors');
+							$action = 'importsite';
+						}
+						else {
+							setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("File")), null, 'errors');
+							$action = 'importsite';
+						}
 					}
 				}
-			}
 
-			if (! $error)
-			{
-				$upload_dir = $conf->website->dir_temp;
-				$result = dol_add_file_process($upload_dir, 1, -1, 'userfile', '');
+				if (! $error)
+				{
+					$upload_dir = $conf->website->dir_temp;
+					$result = dol_add_file_process($upload_dir, 1, -1, 'userfile', '');
+				}
 
 				// Get name of file (take last one if several name provided)
 				$fileofzip = $upload_dir.'/unknown';
@@ -1728,7 +1737,10 @@ if ($action == 'importsiteconfirm')
 						$fileofzip = $upload_dir . '/' .$ifile2;
 					}
 				}
+			}
 
+			if (! $error)
+			{
 				$result = $object->importWebSite($fileofzip);
 				if ($result < 0)
 				{
@@ -2648,11 +2660,19 @@ if ($action == 'importsite')
 
 	dol_fiche_head(array(), '0', '', -1);
 
-	print $langs->trans("ZipOfWebsitePackageToImport").'<br><br>';
+	print '<span class="opacitymedium">'.$langs->trans("ZipOfWebsitePackageToImport").'</span><br><br>';
 
 	print '<input class="flat minwidth400" type="file" name="userfile[]" accept=".zip">';
 	print '<input type="submit" class="button" name="buttonsubmitimportfile" value="'.dol_escape_htmltag($langs->trans("Upload")).'">';
 	print '<input type="submit" class="button" name="preview" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
+
+	print '<br><br><br>';
+
+
+	print '<span class="opacitymedium">'.$langs->trans("ZipOfWebsitePackageToLoad").'</span><br><br>';
+
+	showWebsiteTemplates($website);
+
 
 	dol_fiche_end();
 
