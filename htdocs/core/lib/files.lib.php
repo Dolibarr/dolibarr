@@ -1893,6 +1893,8 @@ function dol_compress_file($inputfile, $outputfile, $mode = "gz")
 
 	try
 	{
+		dol_syslog("dol_compress_file mode=".$mode." inputfile=".$inputfile." outputfile=".$outputfile);
+
 		$data = implode("", file(dol_osencode($inputfile)));
 		if ($mode == 'gz')     { $foundhandler=1; $compressdata = gzencode($data, 9); }
 		elseif ($mode == 'bz') { $foundhandler=1; $compressdata = bzcompress($data, 9); }
@@ -1904,9 +1906,25 @@ function dol_compress_file($inputfile, $outputfile, $mode = "gz")
 
 				include_once ODTPHP_PATHTOPCLZIP.'/pclzip.lib.php';
 				$archive = new PclZip($outputfile);
-				$archive->add($inputfile, PCLZIP_OPT_REMOVE_PATH, dirname($inputfile));
-				//$archive->add($inputfile);
-				return 1;
+				$result = $archive->add($inputfile, PCLZIP_OPT_REMOVE_PATH, dirname($inputfile));
+
+				if ($result === 0)
+				{
+					global $errormsg;
+					$errormsg=$archive->errorInfo(true);
+					dol_syslog("dol_compress_file failure - ".$errormsg, LOG_ERR);
+					if ($archive->errorCode() == PCLZIP_ERR_WRITE_OPEN_FAIL)
+					{
+						dol_syslog("dol_compress_file error PCLZIP_ERR_WRITE_OPEN_FAIL", LOG_ERR);
+						return -4;
+					}
+					return -3;
+				}
+				else
+				{
+					dol_syslog("dol_compress_file success - ".count($result)." files");
+					return 1;
+				}
 			}
 		}
 
