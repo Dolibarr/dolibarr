@@ -3057,9 +3057,10 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm')
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="replacesiteconfirm">';
+	print '<input type="hidden" name="website" value="'.$website->ref.'">';
 
 
-	print '<!-- Edit Media -->'."\n";
+	print '<!-- Replace string -->'."\n";
 	print '<div class="fiche"><br>';
 
 	print load_fiche_titre($langs->trans("ReplaceWebsiteContent"));

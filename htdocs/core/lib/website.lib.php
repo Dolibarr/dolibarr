@@ -93,6 +93,9 @@ function dolWebsiteReplacementOfLinks($website, $content, $removephppart = 0, $c
 	$content=preg_replace('/(href=")(\/?document\.php\?[^\"]*modulepart=[^\"]*)(\")/', '\1'.DOL_URL_ROOT.'\2\3', $content, -1, $nbrep);
 	$content=preg_replace('/(src=")(\/?document\.php\?[^\"]*modulepart=[^\"]*)(\")/', '\1'.DOL_URL_ROOT.'\2\3', $content, -1, $nbrep);
 
+	// Fix relative link /viewimage.php with correct URL after the DOL_URL_ROOT:  ...href="/viewimage.php?modulepart="
+	$content=preg_replace('/(url\(")(\/?viewimage\.php\?[^\"]*modulepart=[^\"]*)(\")/', '\1'.DOL_URL_ROOT.'\2\3', $content, -1, $nbrep);
+
 	dol_syslog('dolWebsiteReplacementOfLinks end', LOG_DEBUG);
 
 	return $content;
@@ -185,7 +188,7 @@ function dolKeepOnlyPhpCode($str)
  * @param	string	$contenttype	Content type
  * @param	int		$containerid 	Contenair id
  * @return  void
- * @see	dolWebsiteReplacementOfLinks()  for function used to replace content in the backoffice context when USEDOLIBARREDITOR is not on
+ * @see	dolWebsiteReplacementOfLinks()  for function used to replace content in the backoffice context.
  */
 function dolWebsiteOutput($content, $contenttype='html', $containerid='')
 {
@@ -228,6 +231,7 @@ function dolWebsiteOutput($content, $contenttype='html', $containerid='')
 		// Fix relative link /viewimage.php with correct URL after the DOL_URL_ROOT: href="/viewimage.php?modulepart=" => href="/dolibarr/viewimage.php?modulepart="
 		$content=preg_replace('/(href=")(\/?viewimage\.php\?[^\"]*modulepart=[^\"]*)(\")/', '\1'.DOL_URL_ROOT.'\2\3', $content, -1, $nbrep);
 		$content=preg_replace('/(src=")(\/?viewimage\.php\?[^\"]*modulepart=[^\"]*)(\")/', '\1'.DOL_URL_ROOT.'\2\3', $content, -1, $nbrep);
+		$content=preg_replace('/(url\(")(\/?viewimage\.php\?[^\"]*modulepart=[^\"]*)(\")/', '\1'.DOL_URL_ROOT.'\2\3', $content, -1, $nbrep);
 
 		// Fix relative link into medias with correct URL after the DOL_URL_ROOT: ../url("medias/
 		$content=preg_replace('/url\((["\']?)medias\//', 'url(\1'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file=', $content, -1, $nbrep);
