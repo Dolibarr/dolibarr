@@ -289,7 +289,7 @@ if ($action == 'addsite')
 {
 	$db->begin();
 
-    if (GETPOST('virtualhost', 'alpha') && ! preg_match('/^http/', GETPOST('virtualhost', 'alpha')))
+	if (GETPOST('virtualhost', 'alpha') && ! preg_match('/^http/', GETPOST('virtualhost', 'alpha')))
     {
         $error++;
         setEventMessages($langs->trans('ErrorURLMustStartWithHttp', $langs->transnoentitiesnoconv("VirtualHost")), null, 'errors');
@@ -365,6 +365,7 @@ if ($action == 'addcontainer')
 	{
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
+		//if (! preg_match('/^http/', $urltograb) && ! preg_match('/^file/', $urltograb))
 		if (! preg_match('/^http/', $urltograb))
 		{
 			$error++;
@@ -378,6 +379,7 @@ if ($action == 'addcontainer')
 			// Clean url to grab, so url can be
 			// http://www.example.com/ or http://www.example.com/dir1/ or http://www.example.com/dir1/aaa
 			$urltograbwithoutdomainandparam = preg_replace('/^https?:\/\/[^\/]+\/?/i', '', $urltograb);
+			//$urltograbwithoutdomainandparam = preg_replace('/^file:\/\/[^\/]+\/?/i', '', $urltograb);
 			$urltograbwithoutdomainandparam = preg_replace('/\?.*$/', '', $urltograbwithoutdomainandparam);
 			if (empty($urltograbwithoutdomainandparam) && ! preg_match('/\/$/', $urltograb))
 			{
@@ -1599,6 +1601,10 @@ if ($action == 'exportsite')
 
 		readfile($fileofzip);
 		exit;
+	}
+	else
+	{
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
 
@@ -2949,6 +2955,7 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
 
 		// Ouput page under the Dolibarr top menu
 		$objectpage->fetch($pageid);
+
 		$jscontent = @file_get_contents($filejs);
 
 		$out = '<!-- Page content '.$filetpl.' : Div with (Htmlheader/Style of page from database + CSS Of website from file + Page content from database or by include if WEBSITE_SUBCONTAINERSINLINE is on) -->'."\n";
@@ -2963,6 +2970,25 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
 		$out.="\n<html><head>\n";
 		$out.="<!-- htmlheader/style of page from database -->\n";
 		$out.=dolWebsiteReplacementOfLinks($object, $objectpage->htmlheader, 1);
+
+		$out.="<!-- htmlheader/style of website from files -->\n";
+		// TODO Keep only the <link> or the <script> tags
+		/*
+		$htmlheadercontent = @file_get_contents($filehtmlheader);
+		$dom = new DOMDocument;
+		@$dom->loadHTML($htmlheadercontent);
+		$styles = $dom->getElementsByTagName('link');
+		$scripts = $dom->getElementsByTagName('script');
+		foreach($styles as $stylescursor)
+		{
+			$out.=$stylescursor;
+		}
+		foreach($scripts as $scriptscursor)
+		{
+			$out.=$scriptscursor;
+		}
+		*/
+
 		$out.="</head>\n";
 		$out.="\n<body>";
 
