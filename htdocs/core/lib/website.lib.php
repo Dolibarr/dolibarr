@@ -33,7 +33,7 @@
  * @return	boolean							True if OK
  * @see dolWebsiteOutput() for function used to replace content in a web server context
  */
-function dolWebsiteReplacementOfLinks($website, $content, $removephppart = 0, $contenttype='html')
+function dolWebsiteReplacementOfLinks($website, $content, $removephppart = 0, $contenttype = 'html')
 {
 	$nbrep = 0;
 
@@ -187,7 +187,7 @@ function dolKeepOnlyPhpCode($str)
  * @return  void
  * @see	dolWebsiteReplacementOfLinks()  for function used to replace content in the backoffice context when USEDOLIBARREDITOR is not on
  */
-function dolWebsiteOutput($content, $contenttype='html', $containerid='')
+function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 {
 	global $db, $langs, $conf, $user;
 	global $dolibarr_main_url_root, $dolibarr_main_data_root;
