@@ -183,16 +183,16 @@ function dolKeepOnlyPhpCode($str)
  *
  * @param   string  $content    	Content string
  * @param	string	$contenttype	Content type
- * @param	string	$contentlabel	Content label
+ * @param	int		$containerid 	Contenair id
  * @return  void
  * @see	dolWebsiteReplacementOfLinks()  for function used to replace content in the backoffice context when USEDOLIBARREDITOR is not on
  */
-function dolWebsiteOutput($content, $contenttype='html', $contentlabel='')
+function dolWebsiteOutput($content, $contenttype='html', $containerid='')
 {
 	global $db, $langs, $conf, $user;
 	global $dolibarr_main_url_root, $dolibarr_main_data_root;
 
-	dol_syslog("dolWebsiteOutput start (contenttype=".$contenttype." contentlabel=".$contentlabel." USEDOLIBARRSERVER=".(defined('USEDOLIBARRSERVER')?'1':'')." USEDOLIBARREDITOR=".(defined('USEDOLIBARREDITOR')?'1':'').')');
+	dol_syslog("dolWebsiteOutput start (contenttype=".$contenttype." containerid=".$containerid." USEDOLIBARRSERVER=".(defined('USEDOLIBARRSERVER')?'1':'')." USEDOLIBARREDITOR=".(defined('USEDOLIBARREDITOR')?'1':'').')');
 
 	// Define $urlwithroot
 	$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
