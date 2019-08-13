@@ -1031,7 +1031,7 @@ if ($action == 'updatecss')
     		$csscontent.= GETPOST('WEBSITE_CSS_INLINE', 'none');
 
     		$csscontent.= "\n".'<?php // BEGIN PHP'."\n";
-    		$csscontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp);'."\n";
+    		$csscontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "css");'."\n";
     		$csscontent.= "// END PHP ?>"."\n";
 
     		dol_syslog("Save css content into ".$filecss);
@@ -1064,7 +1064,7 @@ if ($action == 'updatecss')
     		$jscontent.= GETPOST('WEBSITE_JS_INLINE', 'none');
 
     		$jscontent.= "\n".'<?php // BEGIN PHP'."\n";
-    		$jscontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp);'."\n";
+    		$jscontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "js");'."\n";
     		$jscontent.= "// END PHP ?>"."\n";
 
     		dol_syslog("Save js content into ".$filejs);
@@ -1097,7 +1097,7 @@ if ($action == 'updatecss')
     		$robotcontent.= GETPOST('WEBSITE_ROBOT', 'none');
 
     		/*$robotcontent.= "\n".'<?php // BEGIN PHP'."\n";
-    	    $robotcontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp);'."\n";
+    	    $robotcontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "robot");'."\n";
     	    $robotcontent.= "// END PHP ?>"."\n";*/
 
     		dol_syslog("Save file robot into ".$filerobot);
@@ -1147,7 +1147,7 @@ if ($action == 'updatecss')
        		$manifestjsoncontent.= GETPOST('WEBSITE_MANIFEST_JSON', 'none');
 
        		$manifestjsoncontent.= "\n".'<?php // BEGIN PHP'."\n";
-       		$manifestjsoncontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp);'."\n";
+       		$manifestjsoncontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "manifest");'."\n";
        		$manifestjsoncontent.= "// END PHP ?>"."\n";
 
        		dol_syslog("Save file manifest.json.php into ".$manifestjsoncontent);

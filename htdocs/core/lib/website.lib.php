@@ -36,6 +36,8 @@ function dolWebsiteReplacementOfLinks($website, $content, $removephppart = 0)
 {
 	$nbrep = 0;
 
+	dol_syslog('dolWebsiteReplacementOfLinks start', LOG_DEBUG);
+
 	// Replace php code. Note $content may come from database and does not contains body tags.
 	$replacewith='...php...';
 	if ($removephppart) $replacewith='';
@@ -89,6 +91,8 @@ function dolWebsiteReplacementOfLinks($website, $content, $removephppart = 0)
 	// Fix relative link /document.php with correct URL after the DOL_URL_ROOT:  ...href="/document.php?modulepart="
 	$content=preg_replace('/(href=")(\/?document\.php\?[^\"]*modulepart=[^\"]*)(\")/', '\1'.DOL_URL_ROOT.'\2\3', $content, -1, $nbrep);
 	$content=preg_replace('/(src=")(\/?document\.php\?[^\"]*modulepart=[^\"]*)(\")/', '\1'.DOL_URL_ROOT.'\2\3', $content, -1, $nbrep);
+
+	dol_syslog('dolWebsiteReplacementOfLinks end', LOG_DEBUG);
 
 	return $content;
 }
@@ -176,16 +180,17 @@ function dolKeepOnlyPhpCode($str)
  * Render a string of an HTML content and output it.
  * Used to ouput the page when viewed from server (Dolibarr or Apache).
  *
- * @param   string  $content    Content string
+ * @param   string  $content    	Content string
+ * @param	string	$contenttype	Content type
  * @return  void
  * @see	dolWebsiteReplacementOfLinks()  for function used to replace content in the backoffice context when USEDOLIBARREDITOR is not on
  */
-function dolWebsiteOutput($content)
+function dolWebsiteOutput($content, $contenttype='html')
 {
 	global $db, $langs, $conf, $user;
 	global $dolibarr_main_url_root, $dolibarr_main_data_root;
 
-	dol_syslog("dolWebsiteOutput start (USEDOLIBARRSERVER=".(defined('USEDOLIBARRSERVER')?'1':'')." USEDOLIBARREDITOR=".(defined('USEDOLIBARREDITOR')?'1':'').')');
+	dol_syslog("dolWebsiteOutput start (contenttype=".$contenttype." USEDOLIBARRSERVER=".(defined('USEDOLIBARRSERVER')?'1':'')." USEDOLIBARREDITOR=".(defined('USEDOLIBARREDITOR')?'1':'').')');
 
 	// Define $urlwithroot
 	$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
@@ -195,9 +200,12 @@ function dolWebsiteOutput($content)
 	if (defined('USEDOLIBARREDITOR'))		// REPLACEMENT OF LINKS When page called from Dolibarr editor
 	{
 		// We remove the <head> part of content
-		$content = preg_replace('/<head>.*<\/head>/ims', '', $content);
-		$content = preg_replace('/^.*<body(\s[^>]*)*>/ims', '', $content);
-		$content = preg_replace('/<\/body(\s[^>]*)*>.*$/ims', '', $content);
+		if ($contenttype == 'html')
+		{
+			$content = preg_replace('/<head>.*<\/head>/ims', '', $content);
+			$content = preg_replace('/^.*<body(\s[^>]*)*>/ims', '', $content);
+			$content = preg_replace('/<\/body(\s[^>]*)*>.*$/ims', '', $content);
+		}
 	}
 	elseif (defined('USEDOLIBARRSERVER'))	// REPLACEMENT OF LINKS When page called from Dolibarr server
 	{

@@ -98,6 +98,7 @@ if ($_SERVER['PHP_SELF'] != DOL_URL_ROOT.'/website/index.php')	// If we browsing
 if (! defined('USEDOLIBARREDITOR') && empty($website->status))
 {
 	$weblangs->load("website");
+	http_response_code(503);
 	print '<center><br><br>'.$weblangs->trans("SorryWebsiteIsCurrentlyOffLine").'</center>';
 	exit;
 }
