@@ -177,7 +177,7 @@ class Interventions extends DolibarrApi
             throw new RestException(503, 'Error when retrieve fichinter list : '.$db->lasterror());
         }
         if( ! count($obj_ret)) {
-            throw new RestException(404, 'No finchinter found');
+            throw new RestException(404, 'No intervention found');
         }
         return $obj_ret;
     }
