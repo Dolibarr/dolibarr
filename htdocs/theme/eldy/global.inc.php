@@ -3080,6 +3080,10 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 .box {
     overflow-x: auto;
     min-height: 40px;
+    padding-right: 0px;
+    padding-left: 0px;
+    /*padding-bottom: 25px;*/
+    padding-bottom: 10px;
 }
 .ficheaddleft div.boxstats, .ficheaddright div.boxstats {
     border: none;
@@ -3264,12 +3268,6 @@ table.noborder.boxtable tr td {
 }
 a.valignmiddle.dashboardlineindicator {
     line-height: 30px;
-}
-
-.box {
-    padding-right: 0px;
-    padding-left: 0px;
-    padding-bottom: 25px;
 }
 
 tr.box_titre {
