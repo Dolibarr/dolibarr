@@ -138,7 +138,7 @@ function dolSavePageContent($filetpl, $object, $objectpage)
 	$tplcontent.= '</html>'."\n";
 
 	$tplcontent.= '<?php // BEGIN PHP'."\n";
-	$tplcontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp);'."\n";
+	$tplcontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "html", '.$objectpage->id.');'."\n";
 	$tplcontent.= "// END PHP ?>"."\n";
 
 	//var_dump($filetpl);exit;
