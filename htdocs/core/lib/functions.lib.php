@@ -1130,7 +1130,7 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 		if ((is_numeric($active) && $i == $active) || (! empty($links[$i][2]) && ! is_numeric($active) && $active == $links[$i][2]))
 		{
 			// If active tab is already present
-			if ($i > $limittoshow) $limittoshow--;
+			if ($i >= $limittoshow) $limittoshow--;
 		}
 	}
 
