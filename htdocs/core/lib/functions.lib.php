@@ -1130,7 +1130,7 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 		if ((is_numeric($active) && $i == $active) || (! empty($links[$i][2]) && ! is_numeric($active) && $active == $links[$i][2]))
 		{
 			// If active tab is already present
-			if ($i >= $limittoshow) $limittoshow--;
+			if ($i > $limittoshow) $limittoshow--;
 		}
 	}
 
@@ -1146,7 +1146,7 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 			$isactive=false;
 		}
 
-		if ($i < $limittoshow || $isactive)
+		if ($i <= $limittoshow || $isactive)
 		{
 			$out.='<div class="inline-block tabsElem'.($isactive ? ' tabsElemActive' : '').((! $isactive && ! empty($conf->global->MAIN_HIDE_INACTIVETAB_ON_PRINT))?' hideonprint':'').'"><!-- id tab = '.(empty($links[$i][2])?'':$links[$i][2]).' -->';
 			if (isset($links[$i][2]) && $links[$i][2] == 'image')
