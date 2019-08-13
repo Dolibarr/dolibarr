@@ -640,6 +640,7 @@ $openedDashBoardSize = 'info-box-sm'; // use sm by default
 foreach ($dashboardgroup as $dashbordelement){
     if(is_array($dashbordelement['stats']) && count($dashbordelement['stats'])>2){
         $openedDashBoardSize = ''; // use default info box size : big
+        break;
     }
 }
 
