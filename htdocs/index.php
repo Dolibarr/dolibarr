@@ -570,7 +570,7 @@ $dashboardgroup = array (
 		),
 	'invoice_supplier' =>
 		array (
-			'groupName' => 'SupplierInvoices',
+			'groupName' => 'BillsSuppliers',
 			'stats' =>
 				array ('invoice_supplier'),
 		),
@@ -636,6 +636,13 @@ foreach($valid_dashboardlines as $board)
     }
 }
 
+$openedDashBoardSize = 'info-box-sm'; // use sm by default
+foreach ($dashboardgroup as $dashbordelement){
+    if(is_array($dashbordelement['stats']) && count($dashbordelement['stats'])>2){
+        $openedDashBoardSize = ''; // use default info box size : big
+    }
+}
+
 $totalLateNumber = $totallate;
 $totallatePercentage = !empty($totaltodo) ? round($totallate / $totaltodo * 100, 2) : 0;
 if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) $totallate = $totallatePercentage;
@@ -681,7 +688,6 @@ if (!empty($valid_dashboardlines))
 
     $boxwork.='<tr class="nobottom nohover"><td class="tdboxstats nohover flexcontainer centpercent"><div style="display: flex: flex-wrap: wrap">';
 
-
 	foreach($dashboardgroup as $groupKey => $groupElement) {
 		$boards = array();
 
@@ -703,7 +709,7 @@ if (!empty($valid_dashboardlines))
 			$groupKeyLowerCase = strtolower($groupKey);
 
 			$openedDashBoard.= '<div class="box-flex-item">'."\n";
-			$openedDashBoard.= '	<div class="info-box">'."\n";
+			$openedDashBoard.= '	<div class="info-box '.$openedDashBoardSize.'">'."\n";
 			$openedDashBoard.= '		<span class="info-box-icon bg-infoxbox-'.$groupKeyLowerCase.'"><i class="fa fa-dol-'.$groupKeyLowerCase.'"></i></span>'."\n";
 			$openedDashBoard.= '		<div class="info-box-content">'."\n";
 
@@ -760,7 +766,7 @@ if (!empty($valid_dashboardlines))
 
 
 		$weatherDashBoard= '<div class="box-flex-item '.$appendClass.'">'."\n";
-		$weatherDashBoard.= '	<div class="info-box info-box-weather info-box-weather-level'.$weather->level.'">'."\n";
+		$weatherDashBoard.= '	<div class="info-box '.$openedDashBoardSize.' info-box-weather info-box-weather-level'.$weather->level.'">'."\n";
 		$weatherDashBoard.= '		<span class="info-box-icon"><i class="fa fa-weather-level'.$weather->level.'"></i></span>'."\n";
 		$weatherDashBoard.= '		<div class="info-box-content">'."\n";
 		$weatherDashBoard.= '			<span class="info-box-title">'.$langs->trans('GlobalOpenedElemView').'</span>' . "\n";
@@ -858,7 +864,7 @@ $boxwork.='</div>';
 
 if(!empty($isIntopOpenedDashBoard)) {
 	print '<div class="fichecenter">';
-	print '<div class="box"><div class="box-flex-container">' . $openedDashBoard . '</div></div>';
+	print '<div class="opened-dash-board-wrap"><div class="box-flex-container">' . $openedDashBoard . '</div></div>';
 	print '</div>';
 }
 
