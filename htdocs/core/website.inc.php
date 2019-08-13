@@ -93,3 +93,11 @@ if ($_SERVER['PHP_SELF'] != DOL_URL_ROOT.'/website/index.php')	// If we browsing
 		}
 	}
 }
+
+// Show off line message
+if (! defined('USEDOLIBARREDITOR') && empty($website->status))
+{
+	$weblangs->load("website");
+	print '<center><br><br>'.$weblangs->trans("SorryWebsiteIsCurrentlyOffLine").'</center>';
+	exit;
+}

@@ -76,6 +76,7 @@ BackToListOfThirdParty=Back to list for Third Party
 DisableSiteFirst=Disable website first
 MyContainerTitle=My web site title
 AnotherContainer=Another container
+SorryWebsiteIsCurrentlyOffLine=Sorry, this website is currently off line. Please comme back later...
 WEBSITE_USE_WEBSITE_ACCOUNTS=Enable the web site account table
 WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=Enable the table to store web site accounts (login/pass) for each website / third party
 YouMustDefineTheHomePage=You must first define the default Home page
