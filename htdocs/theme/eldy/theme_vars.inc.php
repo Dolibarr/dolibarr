@@ -32,7 +32,13 @@
 
 global $theme_bordercolor, $theme_datacolor, $theme_bgcolor, $theme_bgcoloronglet;
 $theme_bordercolor = array(235,235,224);
-$theme_datacolor = array(array(136,102,136), array(0,130,110), array(140,140,220), array(190,120,120), array(190,190,100), array(115,125,150), array(100,170,20), array(250,190,30), array(150,135,125), array(85,135,150), array(150,135,80), array(150,80,150));
+$theme_datacolor = array(array(157, 56, 191), array(0, 147, 183), array(250,190,30), array(221, 75, 57), array(0,166,90), array(140,140,220), array(190,120,120), array(190,190,100), array(115,125,150), array(100,170,20), array(150,135,125), array(85,135,150), array(150,135,80), array(150,80,150));
+if(!empty($conf->global->MAIN_OPTIMIZEFORCOLORBLIND)) // user is loaded by dolgraph.class.php
+{
+	// for now we use the same configuration for all types of color blind
+	$theme_datacolor = array(array(248, 220, 1), array(9, 85, 187), array(42, 208, 255), array(0, 0, 0), array(169, 169, 169), array(253, 102, 136), array(120, 154, 190), array(146, 146, 55), array(0, 52, 251), array(196, 226, 161), array(222, 160, 41), array(85,135,150), array(150,135,80), array(150,80,150));
+}
+
 $theme_bgcolor = array(hexdec('F4'),hexdec('F4'),hexdec('F4'));
 $theme_bgcoloronglet = array(hexdec('DE'),hexdec('E7'),hexdec('EC'));
 
@@ -71,6 +77,11 @@ $badgeInfo      ='#17a2b8';
 $badgeDark      ='#343a40';
 $badgeLight     ='#f8f9fa';
 
+// badge color ajustement for color blind
+$colorblind_deuteranopes_badgeSuccess   ='#37de5d';  //! text color black
+$colorblind_deuteranopes_badgeSuccess_textColor7='#000';
+$colorblind_deuteranopes_badgeWarning   ='#e4e411';
+
 /* default color for status : After a quick check, somme status can have oposite function according to objects
 *  So this badges status uses default value according to theme eldy status img
 *  TODO: use color definition vars above for define badges color status X -> expemple $badgeStatusValidate, $badgeStatusClosed, $badgeStatusActive ....
@@ -85,3 +96,9 @@ $badgeStatus6='#cad2d2';
 $badgeStatus7='#baa32b';
 $badgeStatus8='#be3013';
 $badgeStatus9='#e7f0f0';
+
+// status color ajustement for color blind
+$colorblind_deuteranopes_badgeStatus4=$colorblind_deuteranopes_badgeStatus7=$colorblind_deuteranopes_badgeSuccess;  //! text color black
+$colorblind_deuteranopes_badgeStatus_textColor4=$colorblind_deuteranopes_badgeStatus_textColor7='#000';
+$colorblind_deuteranopes_badgeStatus1=$colorblind_deuteranopes_badgeWarning;
+$colorblind_deuteranopes_badgeStatus_textColor1='#000';

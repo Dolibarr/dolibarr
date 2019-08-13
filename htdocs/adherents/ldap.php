@@ -182,7 +182,7 @@ if ($result > 0)
 	if (empty($dn))
 	{
 	    $langs->load("errors");
-	    print '<tr '.$bc[false].'><td colspan="2"><font class="error">'.$langs->trans("ErrorModuleSetupNotComplete").'</font></td></tr>';
+	    print '<tr '.$bc[false].'><td colspan="2"><font class="error">'.$langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Member")).'</font></td></tr>';
 	}
     else
     {

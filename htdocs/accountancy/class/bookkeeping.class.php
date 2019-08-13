@@ -20,7 +20,7 @@
 
 /**
  * \file        htdocs/accountancy/class/bookkeeping.class.php
- * \ingroup     Advanced accountancy
+ * \ingroup     Accountancy (Double entries)
  * \brief       File of class to manage Ledger (General Ledger and Subledger)
  */
 
@@ -321,8 +321,8 @@ class BookKeeping extends CommonObject
 				$sql .= ", piece_num";
 				$sql .= ', entity';
 				$sql .= ") VALUES (";
-				$sql .= "'" . $this->db->idate($this->doc_date) . "'";
-				$sql .= ", ".(! isset($this->date_lim_reglement) || dol_strlen($this->date_lim_reglement) == 0 ? 'NULL' : "'" . $this->db->idate($this->date_lim_reglement) . "'");
+				$sql .= "'".$this->db->idate($this->doc_date)."'";
+				$sql .= ", ".(! isset($this->date_lim_reglement) || dol_strlen($this->date_lim_reglement) == 0 ? 'NULL' : "'".$this->db->idate($this->date_lim_reglement)."'");
 				$sql .= ",'" . $this->db->escape($this->doc_type) . "'";
 				$sql .= ",'" . $this->db->escape($this->doc_ref) . "'";
 				$sql .= "," . $this->fk_doc;
@@ -338,7 +338,7 @@ class BookKeeping extends CommonObject
 				$sql .= "," . $this->montant;
 				$sql .= ",'" . $this->db->escape($this->sens) . "'";
 				$sql .= ",'" . $this->db->escape($this->fk_user_author) . "'";
-				$sql .= ",'" . $this->db->idate($now). "'";
+				$sql .= ",'".$this->db->idate($now)."'";
 				$sql .= ",'" . $this->db->escape($this->code_journal) . "'";
 				$sql .= ",'" . $this->db->escape($this->journal_label) . "'";
 				$sql .= "," . $this->db->escape($this->piece_num);
@@ -469,14 +469,15 @@ class BookKeeping extends CommonObject
 	 */
     public function createStd(User $user, $notrigger = false, $mode = '')
     {
-		global $conf;
+		global $conf, $langs;
+
+        $langs->loadLangs(array("accountancy", "bills", "compta"));
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$error = 0;
 
 		// Clean parameters
-
 		if (isset($this->doc_type)) {
 			$this->doc_type = trim($this->doc_type);
 		}
@@ -540,10 +541,10 @@ class BookKeeping extends CommonObject
 		$now = dol_now();
 
 		// Check parameters
-		// Put here code to add control on parameters values
+        $this->journal_label = $langs->trans($this->journal_label);
 
 		// Insert request
-		$sql = 'INSERT INTO ' . MAIN_DB_PREFIX . $this->table_element . $mode.'(';
+		$sql = 'INSERT INTO ' . MAIN_DB_PREFIX . $this->table_element . $mode.' (';
 		$sql .= 'doc_date,';
 		$sql .= 'date_lim_reglement,';
 		$sql .= 'doc_type,';
@@ -567,7 +568,7 @@ class BookKeeping extends CommonObject
 		$sql .= 'piece_num,';
 		$sql .= 'entity';
 		$sql .= ') VALUES (';
-		$sql .= ' ' . (! isset($this->doc_date) || dol_strlen($this->doc_date) == 0 ? 'NULL' : "'" . $this->db->idate($this->doc_date) . "'") . ',';
+		$sql .= ' ' . (! isset($this->doc_date) || dol_strlen($this->doc_date) == 0 ? 'NULL' : "'".$this->db->idate($this->doc_date)."'") . ',';
 		$sql .= ' ' . (! isset($this->date_lim_reglement) || dol_strlen($this->date_lim_reglement) == 0 ? 'NULL' : "'" . $this->db->idate($this->date_lim_reglement) . "'") . ',';
 		$sql .= ' ' . (! isset($this->doc_type) ? 'NULL' : "'" . $this->db->escape($this->doc_type) . "'") . ',';
 		$sql .= ' ' . (! isset($this->doc_ref) ? 'NULL' : "'" . $this->db->escape($this->doc_ref) . "'") . ',';
@@ -584,7 +585,7 @@ class BookKeeping extends CommonObject
 		$sql .= ' ' . (! isset($this->montant) ? 'NULL' : $this->montant ). ',';
 		$sql .= ' ' . (! isset($this->sens) ? 'NULL' : "'" . $this->db->escape($this->sens) . "'") . ',';
 		$sql .= ' ' . $user->id . ',';
-		$sql .= ' ' . "'" . $this->db->idate($now) . "',";
+		$sql .= ' ' . "'".$this->db->idate($now)."',";
 		$sql .= ' ' . (empty($this->code_journal) ? 'NULL' : "'" . $this->db->escape($this->code_journal) . "'") . ',';
 		$sql .= ' ' . (empty($this->journal_label) ? 'NULL' : "'" . $this->db->escape($this->journal_label) . "'") . ',';
 		$sql .= ' ' . (empty($this->piece_num) ? 'NULL' : $this->db->escape($this->piece_num)).',';
@@ -860,15 +861,16 @@ class BookKeeping extends CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param string 		$sortorder 		Sort Order
-	 * @param string 		$sortfield 		Sort field
-	 * @param int 			$limit 			Offset limit
-	 * @param int 			$offset 		Offset limit
-	 * @param array 		$filter 		Filter array
-	 * @param string 		$filtermode 	Filter mode (AND or OR)
-	 * @return int 							<0 if KO, >0 if OK
+	 * @param string 		$sortorder                      Sort Order
+	 * @param string 		$sortfield                      Sort field
+	 * @param int 			$limit                          Offset limit
+	 * @param int 			$offset                         Offset limit
+	 * @param array 		$filter                         Filter array
+	 * @param string 		$filtermode                     Filter mode (AND or OR)
+     * @param int           $showAlreadyExportMovements     Show movements when field 'date_export' is not empty (0:No / 1:Yes (Default))
+	 * @return int                                          <0 if KO, >0 if OK
 	 */
-    public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
+    public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND', $showAlreadyExportMovements = 1)
     {
 		global $conf;
 
@@ -898,7 +900,8 @@ class BookKeeping extends CommonObject
 		$sql .= " t.journal_label,";
 		$sql .= " t.piece_num,";
 		$sql .= " t.date_creation,";
-		$sql .= " t.tms as date_modification";
+		$sql .= " t.tms as date_modification,";
+        $sql .= " t.date_export";
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
 		// Manage filter
 		$sqlwhere = array ();
@@ -918,6 +921,8 @@ class BookKeeping extends CommonObject
 					$sqlwhere[] = $key . '\'' . $this->db->idate($value) . '\'';
 				} elseif ($key == 't.tms>=' || $key == 't.tms<=') {
 					$sqlwhere[] = $key . '\'' . $this->db->idate($value) . '\'';
+                } elseif ($key == 't.date_export>=' || $key == 't.date_export<=') {
+                    $sqlwhere[] = $key . '\'' . $this->db->idate($value) . '\'';
 				} elseif ($key == 't.credit' || $key == 't.debit') {
 					$sqlwhere[] = natural_search($key, $value, 1, 1);
 				} else {
@@ -926,10 +931,12 @@ class BookKeeping extends CommonObject
 			}
 		}
 		$sql.= ' WHERE t.entity IN (' . getEntity('accountancy') . ')';
+        if ($showAlreadyExportMovements == 0) {
+            $sql .= " AND t.date_export IS NULL";
+        }
 		if (count($sqlwhere) > 0) {
 			$sql .= ' AND ' . implode(' ' . $filtermode . ' ', $sqlwhere);
 		}
-
 		if (! empty($sortfield)) {
 			$sql .= $this->db->order($sortfield, $sortorder);
 		}
@@ -972,6 +979,7 @@ class BookKeeping extends CommonObject
 				$line->piece_num = $obj->piece_num;
 				$line->date_creation = $this->db->jdate($obj->date_creation);
 				$line->date_modification = $this->db->jdate($obj->date_modification);
+                $line->date_export = $this->db->jdate($obj->date_export);
 
 				$this->lines[] = $line;
 
@@ -1154,7 +1162,7 @@ class BookKeeping extends CommonObject
 
 		// Update request
 		$sql = 'UPDATE ' . MAIN_DB_PREFIX . $this->table_element . $mode.' SET';
-		$sql .= ' doc_date = ' . (! isset($this->doc_date) || dol_strlen($this->doc_date) != 0 ? "'" . $this->db->idate($this->doc_date) . "'" : 'null') . ',';
+		$sql .= ' doc_date = ' . (! isset($this->doc_date) || dol_strlen($this->doc_date) != 0 ? "'".$this->db->idate($this->doc_date)."'" : 'null') . ',';
 		$sql .= ' doc_type = ' . (isset($this->doc_type) ? "'" . $this->db->escape($this->doc_type) . "'" : "null") . ',';
 		$sql .= ' doc_ref = ' . (isset($this->doc_ref) ? "'" . $this->db->escape($this->doc_ref) . "'" : "null") . ',';
 		$sql .= ' fk_doc = ' . (isset($this->fk_doc) ? $this->fk_doc : "null") . ',';
@@ -1682,28 +1690,30 @@ class BookKeeping extends CommonObject
 
 		$this->db->begin();
 
-		if ($direction==0)
+        if ($direction==0)
 		{
 			$next_piecenum=$this->getNextNumMvt();
+            $now = dol_now();
+
 			if ($next_piecenum < 0) {
 				$error++;
 			}
-			$sql = 'INSERT INTO ' . MAIN_DB_PREFIX . $this->table_element.'(doc_date, doc_type,';
+			$sql = 'INSERT INTO ' . MAIN_DB_PREFIX . $this->table_element . ' (doc_date, doc_type,';
 			$sql .= ' doc_ref, fk_doc, fk_docdet, entity, thirdparty_code, subledger_account, subledger_label,';
 			$sql .= ' numero_compte, label_compte, label_operation, debit, credit,';
-			$sql .= ' montant, sens, fk_user_author, import_key, code_journal, journal_label, piece_num)';
-			$sql .= 'SELECT doc_date, doc_type,';
+			$sql .= ' montant, sens, fk_user_author, import_key, code_journal, journal_label, piece_num, date_creation)';
+			$sql .= ' SELECT doc_date, doc_type,';
 			$sql .= ' doc_ref, fk_doc, fk_docdet, entity, thirdparty_code, subledger_account, subledger_label,';
 			$sql .= ' numero_compte, label_compte, label_operation, debit, credit,';
-			$sql .= ' montant, sens, fk_user_author, import_key, code_journal, journal_label, '.$next_piecenum.'';
-			$sql .= ' FROM '.MAIN_DB_PREFIX . $this->table_element.'_tmp WHERE piece_num = '.$piece_num;
+			$sql .= ' montant, sens, fk_user_author, import_key, code_journal, journal_label, ' . $next_piecenum . ", '".$this->db->idate($now)."'";
+			$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . '_tmp WHERE piece_num = ' . $this->db->escape($piece_num);
 			$resql = $this->db->query($sql);
 			if (! $resql) {
 				$error ++;
 				$this->errors[] = 'Error ' . $this->db->lasterror();
 				dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
 			}
-			$sql = 'DELETE FROM '.MAIN_DB_PREFIX . $this->table_element.'_tmp WHERE piece_num = '.$piece_num;
+			$sql = 'DELETE FROM ' . MAIN_DB_PREFIX . $this->table_element . '_tmp WHERE piece_num = ' . $this->db->escape($piece_num);
 			$resql = $this->db->query($sql);
 			if (! $resql) {
 				$error ++;
@@ -1711,29 +1721,29 @@ class BookKeeping extends CommonObject
 				dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
 			}
 		} elseif ($direction==1) {
-			$sql = 'DELETE FROM ' . MAIN_DB_PREFIX . $this->table_element.'_tmp WHERE piece_num = '.$piece_num;
+			$sql = 'DELETE FROM ' . MAIN_DB_PREFIX . $this->table_element . '_tmp WHERE piece_num = ' . $piece_num;
 			$resql = $this->db->query($sql);
 			if (! $resql) {
 				$error ++;
 				$this->errors[] = 'Error ' . $this->db->lasterror();
 				dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
 			}
-			$sql = 'INSERT INTO ' . MAIN_DB_PREFIX . $this->table_element.'_tmp(doc_date, doc_type,';
+			$sql = 'INSERT INTO ' . MAIN_DB_PREFIX . $this->table_element . '_tmp (doc_date, doc_type,';
 			$sql .= ' doc_ref, fk_doc, fk_docdet, thirdparty_code, subledger_account, subledger_label,';
 			$sql .= ' numero_compte, label_compte, label_operation, debit, credit,';
 			$sql .= ' montant, sens, fk_user_author, import_key, code_journal, journal_label, piece_num)';
-			$sql .= 'SELECT doc_date, doc_type,';
+			$sql .= ' SELECT doc_date, doc_type,';
 			$sql .= ' doc_ref, fk_doc, fk_docdet, thirdparty_code, subledger_account, subledger_label,';
 			$sql .= ' numero_compte, label_compte, label_operation, debit, credit,';
 			$sql .= ' montant, sens, fk_user_author, import_key, code_journal, journal_label, piece_num';
-			$sql .= ' FROM '.MAIN_DB_PREFIX . $this->table_element.' WHERE piece_num = '.$piece_num;
+			$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element.' WHERE piece_num = ' . $piece_num;
 			$resql = $this->db->query($sql);
 			if (! $resql) {
 				$error ++;
 				$this->errors[] = 'Error ' . $this->db->lasterror();
 				dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
 			}
-			$sql = 'DELETE FROM '.MAIN_DB_PREFIX . $this->table_element.'_tmp WHERE piece_num = '.$piece_num;
+			$sql = 'DELETE FROM ' . MAIN_DB_PREFIX . $this->table_element . '_tmp WHERE piece_num = ' . $piece_num;
 			$resql = $this->db->query($sql);
 			if (! $resql) {
 				$error ++;

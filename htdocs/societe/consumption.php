@@ -595,7 +595,7 @@ if ($sql_select)
 		print '</td>';
 
 		//print '<td class="left">'.$prodreftxt.'</td>';
-
+		if ($type_element == 'invoice' && $objp->doc_type == Facture::TYPE_CREDIT_NOTE) $objp->prod_qty=-($objp->prod_qty);
 		print '<td class="right">'.$objp->prod_qty.'</td>';
 		$total_qty+=$objp->prod_qty;
 

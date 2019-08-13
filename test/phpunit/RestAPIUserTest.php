@@ -47,7 +47,7 @@ $conf->global->MAIN_UMASK='0666';
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class RestAPIUserTest extends PHPUnit_Framework_TestCase
+class RestAPIUserTest extends PHPUnit\Framework\TestCase
 {
     protected $savconf;
     protected $savuser;

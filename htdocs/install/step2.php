@@ -311,7 +311,7 @@ if ($action == "set")
                 {
                     $buf = fgets($fp, 4096);
 
-                    // Cas special de lignes autorisees pour certaines versions uniquement
+                    // Special case of lines allowed for some version only
                     if ($choix == 1 && preg_match('/^--\sV([0-9\.]+)/i', $buf, $reg))
                     {
                         $versioncommande=explode('.', $reg[1]);
@@ -450,6 +450,11 @@ if ($action == "set")
                 $buffer=trim($buffer);
                 if ($buffer)
                 {
+                    // Replace the prefix in table names
+                    if ($dolibarr_main_db_prefix != 'llx_')
+                    {
+                        $buffer=preg_replace('/llx_/i', $dolibarr_main_db_prefix, $buffer);
+                    }
                     dolibarr_install_syslog("step2: request: " . $buffer);
                     print "<!-- Insert line : ".$buffer."<br>-->\n";
                     $resql=$db->query($buffer, 0, 'dml');

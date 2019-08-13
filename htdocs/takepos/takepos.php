@@ -17,7 +17,7 @@
  */
 
 /**
- *	\file       htdocs/takepos/floors.php
+ *	\file       htdocs/takepos/takepos.php
  *	\ingroup    takepos
  *	\brief      Main TakePOS screen
  */
@@ -57,6 +57,13 @@ if ($conf->browser->layout == 'phone')
 {
     $maxcategbydefaultforthisdevice=8;
     $maxproductbydefaultforthisdevice=16;
+	//REDIRECT TO BASIC LAYOUT IF TERMINAL SELECTED AND BASIC MOBILE LAYOUT ENABLED
+	if ($_SESSION["takeposterminal"]!="" && $conf->global->TAKEPOS_PHONE_BASIC_LAYOUT==1)
+	{
+		$_SESSION["basiclayout"]=1;
+		header("Location: invoice.php?mobilepage=invoice");
+		exit;
+	}
 }
 $MAXCATEG = (empty($conf->global->TAKEPOS_NB_MAXCATEG)?$maxcategbydefaultforthisdevice:$conf->global->TAKEPOS_NB_MAXCATEG);
 $MAXPRODUCT = (empty($conf->global->TAKEPOS_NB_MAXPRODUCT)?$maxproductbydefaultforthisdevice:$conf->global->TAKEPOS_NB_MAXPRODUCT);
@@ -352,7 +359,7 @@ function deleteline() {
 }
 
 function Customer() {
-	console.log("Open box to select the thirdparty");
+	console.log("Open box to select the thirdparty place="+place);
 	$.colorbox({href:"../societe/list.php?contextpage=poslist&nomassaction=1&place="+place, width:"90%", height:"80%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("Customer");?>"});
 }
 
@@ -619,6 +626,7 @@ $sql = "SELECT code, libelle FROM ".MAIN_DB_PREFIX."c_paiement";
 $sql.= " WHERE entity IN (".getEntity('c_paiement').")";
 $sql.= " AND active = 1";
 $sql.= " ORDER BY libelle";
+
 $resql = $db->query($sql);
 $paiementsModes = array();
 if ($resql){
@@ -633,7 +641,8 @@ if ($resql){
 	}
 }
 if (empty($paiementsModes)) {
-	setEventMessages($langs->trans("ErrorModuleSetupNotComplete"), null, 'errors');
+	$langs->load('errors');
+	setEventMessages($langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("TakePOS")), null, 'errors');
 }
 if (count($maincategories)==0) {
 	setEventMessages($langs->trans("TakeposNeedsCategories"), null, 'errors');

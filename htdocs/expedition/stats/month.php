@@ -61,7 +61,6 @@ if (! $mesg) {
     $px->SetYLabel($langs->trans("NbOfSendings"));
     $px->SetShading(3);
     $px->SetHorizTickIncrement(1);
-    $px->SetPrecisionY(0);
     $px->draw($filename, $fileurl);
 }
 

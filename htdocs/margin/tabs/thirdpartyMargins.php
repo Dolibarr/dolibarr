@@ -18,7 +18,7 @@
 /**
  *	\file       htdocs/margin/tabs/thirdpartyMargins.php
  *	\ingroup    product margins
- *	\brief      Page des marges des factures clients pour un tiers
+ *	\brief      Page for invoice margins of a thirdparty
  */
 
 require '../../main.inc.php';
@@ -170,7 +170,7 @@ if ($socid > 0)
     {
     	$num = $db->num_rows($result);
 
-    	print_barre_liste($langs->trans("MarginDetails"), $page, $_SERVER["PHP_SELF"], "&amp;socid=".$object->id, $sortfield, $sortorder, '', 0, 0, '');
+    	print_barre_liste($langs->trans("MarginDetails"), $page, $_SERVER["PHP_SELF"], "&amp;socid=".$object->id, $sortfield, $sortorder, '', $num, $num, '');
 
     	$i = 0;
     	print '<div class="div-table-responsive">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table

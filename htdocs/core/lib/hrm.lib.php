@@ -20,7 +20,6 @@
  * \ingroup HRM
  * \brief   Library for hrm
  */
-$langs->load('hrm');
 
 /**
  * Return head table for establishment tabs screen
@@ -31,6 +30,8 @@ $langs->load('hrm');
 function establishment_prepare_head($object)
 {
 	global $langs, $conf;
+
+	$langs->load('hrm');
 
 	$h = 0;
 	$head = array();
@@ -64,6 +65,8 @@ function establishment_prepare_head($object)
 function hrm_admin_prepare_head()
 {
     global $langs, $conf, $user;
+
+    $langs->load('hrm');
 
     $h = 0;
     $head = array();

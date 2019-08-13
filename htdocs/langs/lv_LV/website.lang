@@ -96,3 +96,10 @@ ThisPageIsTranslationOf=Šī lapa / konteiners ir tulkojums
 ThisPageHasTranslationPages=Šajā lapā / konteinerā ir tulkojums
 NoWebSiteCreateOneFirst=Vēl nav izveidota neviena vietne. Vispirms izveidojiet vienu.
 GoTo=Iet uz
+DynamicPHPCodeContainsAForbiddenInstruction=Jūs pievienojat dinamisku PHP kodu, kas satur PHP norādījumu &#39; <strong>%s</strong> &#39;, kas pēc noklusējuma ir aizliegta kā dinamisks saturs (skatiet slēptās opcijas WEBSITE_PHP_ALLOW_xxx, lai palielinātu atļauto komandu sarakstu).
+NotAllowedToAddDynamicContent=Jums nav atļaujas pievienot vai rediģēt PHP dinamisko saturu tīmekļa vietnēs. Uzdodiet atļauju vai vienkārši saglabājiet kodu php tagos nemainītā veidā.
+ReplaceWebsiteContent=Meklēt vai aizstāt vietnes saturu
+DeleteAlsoJs=Vai arī dzēst visus šajā tīmekļa vietnē raksturīgos javascript failus?
+DeleteAlsoMedias=Vai arī dzēst visus šajā tīmekļa vietnē esošos mediju failus?
+# Export
+MyWebsitePages=Manas vietnes lapas

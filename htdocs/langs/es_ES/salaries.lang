@@ -17,3 +17,5 @@ TJMDescription=Este valor actualmente es informativo y no se utiliza para realiz
 LastSalaries=Últimos %s pagos salariales
 AllSalaries=Todos los pagos salariales
 SalariesStatistics=Estadísticas salariales
+# Export
+SalariesAndPayments=Salarios y pagos
