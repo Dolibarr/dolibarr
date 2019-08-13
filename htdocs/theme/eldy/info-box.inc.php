@@ -15,6 +15,11 @@ if (! defined('ISLOADEDBYSTEELSHEET'))  die('Must be call by steelsheet'); ?>
 	border-radius: 2px;
 	margin-bottom: 15px;
 }
+.info-box.info-box-sm{
+    min-height: 70px;
+    margin-bottom: 10px;
+}
+
 .info-box small {
 	font-size: 14px;
 }
@@ -57,12 +62,22 @@ if (! defined('ISLOADEDBYSTEELSHEET'))  die('Must be call by steelsheet'); ?>
 	line-height: 90px;
 	background: rgba(0, 0, 0, 0.2);
 }
+.info-box-sm .info-box-icon{
+    height: 70px;
+    width: 70px;
+    font-size: 25px;
+    line-height: 70px;
+}
 .info-box-icon > img {
 	max-width: 100%;
 }
 .info-box-content {
 	padding: 5px 10px;
 	margin-left: 90px;
+}
+
+.info-box-sm .info-box-content{
+    margin-left: 70px;
 }
 .info-box-number {
 	display: block;
