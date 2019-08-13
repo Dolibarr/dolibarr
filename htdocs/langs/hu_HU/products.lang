@@ -2,6 +2,7 @@
 ProductRef=Termék ref#.
 ProductLabel=Termék neve
 ProductLabelTranslated=Translated product label
+ProductDescription=Product description
 ProductDescriptionTranslated=Translated product description
 ProductNoteTranslated=Translated product note
 ProductServiceCard=Termék/Szolgáltatás kártya

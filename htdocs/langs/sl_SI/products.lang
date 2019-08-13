@@ -2,6 +2,7 @@
 ProductRef=Referenca proizvoda
 ProductLabel=Naziv proizvoda
 ProductLabelTranslated=Translated product label
+ProductDescription=Product description
 ProductDescriptionTranslated=Translated product description
 ProductNoteTranslated=Translated product note
 ProductServiceCard=Kartica proizvoda/storitve

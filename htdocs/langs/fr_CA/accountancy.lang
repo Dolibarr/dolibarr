@@ -102,7 +102,6 @@ ErrorAccountingJournalIsAlreadyUse=Ce journal est déjà utilisé
 ChartofaccountsId=Carte comptable Id
 InitAccountancy=Compabilité initiale
 DefaultBindingDesc=Cette page peut être utilisée pour définir un compte par défaut à utiliser pour lier l'historique des transactions sur les salaires de paiement, le don, les taxes et la TVA lorsque aucun compte comptable spécifique n'a été défini.
-DefaultClosureDesc=This page can be used to set parameters to use to enclose a balance sheet.
 OptionModeProductSell=Mode de ventes
 OptionModeProductBuy=Mode d'achats
 OptionModeProductSellDesc=Afficher tous les produits avec compte comptable pour les ventes.

@@ -29,12 +29,15 @@
  * @param	Website		$website			Web site object
  * @param	string		$content			Content to replace
  * @param	int			$removephppart		0=Replace PHP sections with a PHP badge. 1=Remove completely PHP sections.
+ * @param	string		$contenttype		Content type
  * @return	boolean							True if OK
  * @see dolWebsiteOutput() for function used to replace content in a web server context
  */
-function dolWebsiteReplacementOfLinks($website, $content, $removephppart = 0)
+function dolWebsiteReplacementOfLinks($website, $content, $removephppart = 0, $contenttype='html')
 {
 	$nbrep = 0;
+
+	dol_syslog('dolWebsiteReplacementOfLinks start (contenttype='.$contenttype." USEDOLIBARRSERVER=".(defined('USEDOLIBARRSERVER')?'1':'')." USEDOLIBARREDITOR=".(defined('USEDOLIBARREDITOR')?'1':'').')', LOG_DEBUG);
 
 	// Replace php code. Note $content may come from database and does not contains body tags.
 	$replacewith='...php...';
@@ -89,6 +92,8 @@ function dolWebsiteReplacementOfLinks($website, $content, $removephppart = 0)
 	// Fix relative link /document.php with correct URL after the DOL_URL_ROOT:  ...href="/document.php?modulepart="
 	$content=preg_replace('/(href=")(\/?document\.php\?[^\"]*modulepart=[^\"]*)(\")/', '\1'.DOL_URL_ROOT.'\2\3', $content, -1, $nbrep);
 	$content=preg_replace('/(src=")(\/?document\.php\?[^\"]*modulepart=[^\"]*)(\")/', '\1'.DOL_URL_ROOT.'\2\3', $content, -1, $nbrep);
+
+	dol_syslog('dolWebsiteReplacementOfLinks end', LOG_DEBUG);
 
 	return $content;
 }
@@ -176,16 +181,18 @@ function dolKeepOnlyPhpCode($str)
  * Render a string of an HTML content and output it.
  * Used to ouput the page when viewed from server (Dolibarr or Apache).
  *
- * @param   string  $content    Content string
+ * @param   string  $content    	Content string
+ * @param	string	$contenttype	Content type
+ * @param	int		$containerid 	Contenair id
  * @return  void
  * @see	dolWebsiteReplacementOfLinks()  for function used to replace content in the backoffice context when USEDOLIBARREDITOR is not on
  */
-function dolWebsiteOutput($content)
+function dolWebsiteOutput($content, $contenttype='html', $containerid='')
 {
 	global $db, $langs, $conf, $user;
 	global $dolibarr_main_url_root, $dolibarr_main_data_root;
 
-	dol_syslog("dolWebsiteOutput start (USEDOLIBARRSERVER=".(defined('USEDOLIBARRSERVER')?'1':'')." USEDOLIBARREDITOR=".(defined('USEDOLIBARREDITOR')?'1':'').')');
+	dol_syslog("dolWebsiteOutput start (contenttype=".$contenttype." containerid=".$containerid." USEDOLIBARRSERVER=".(defined('USEDOLIBARRSERVER')?'1':'')." USEDOLIBARREDITOR=".(defined('USEDOLIBARREDITOR')?'1':'').')');
 
 	// Define $urlwithroot
 	$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
@@ -195,9 +202,12 @@ function dolWebsiteOutput($content)
 	if (defined('USEDOLIBARREDITOR'))		// REPLACEMENT OF LINKS When page called from Dolibarr editor
 	{
 		// We remove the <head> part of content
-		$content = preg_replace('/<head>.*<\/head>/ims', '', $content);
-		$content = preg_replace('/^.*<body(\s[^>]*)*>/ims', '', $content);
-		$content = preg_replace('/<\/body(\s[^>]*)*>.*$/ims', '', $content);
+		if ($contenttype == 'html')
+		{
+			$content = preg_replace('/<head>.*<\/head>/ims', '', $content);
+			$content = preg_replace('/^.*<body(\s[^>]*)*>/ims', '', $content);
+			$content = preg_replace('/<\/body(\s[^>]*)*>.*$/ims', '', $content);
+		}
 	}
 	elseif (defined('USEDOLIBARRSERVER'))	// REPLACEMENT OF LINKS When page called from Dolibarr server
 	{
@@ -285,7 +295,7 @@ function dolWebsiteOutput($content)
  *
  * @param   string  $content    Content string
  * @return  void
- * @see	dolWebsiteOutput
+ * @see	dolWebsiteOutput()
  */
 /*
 function dolWebsiteSaveContent($content)
@@ -342,9 +352,9 @@ function redirectToContainer($containerref, $containeraliasalt = '', $containeri
 	if (defined('USEDOLIBARREDITOR'))
 	{
 		print '<div class="margintoponly marginleftonly">';
-		print "This page contains dynamic code that make a redirect to '".$containerref."' in your current context. There is no preview for this page.";
+		print "This page contains dynamic code that make a redirect to '".$containerref."' in your current context. Redirect has been canceled as it is not supported in edition mode.";
 		print '</div>';
-		exit;
+		return;
 	}
 
 	if (defined('USEDOLIBARRSERVER'))	// When page called from Dolibarr server
@@ -452,8 +462,6 @@ function includeContainer($containerref)
 function getStructuredData($type, $data = array())
 {
 	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs;	// Very important. Required to have var available when running inluded containers.
-	global $includehtmlcontentopened;
-	global $websitekey, $websitepagefile;
 
 	if ($type == 'software')
 	{
@@ -559,6 +567,108 @@ function getStructuredData($type, $data = array())
 		$ret.= '</script>'."\n";
 	}
 	return $ret;
+}
+
+/**
+ * Return list of containers object that match a criteria
+ *
+ * @param 	string		$type				Type of container to search into (Example: 'page')
+ * @param 	string		$algo				Algorithm used for search (Example: 'meta' is searching into meta information like title and description, 'metacontent')
+ * @param	string		$searchstring		Search string
+ * @param	int			$max				Max number of answers
+ * @return  string							HTML content
+ */
+function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25)
+{
+	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs;	// Very important. Required to have var available when running inluded containers.
+
+	$error = 0;
+	$arrayresult = array('code'=>'', 'list'=>array());
+
+	if (! is_object($weblangs)) $weblangs = $langs;
+
+	if (empty($searchstring))
+	{
+		$error++;
+		$arrayresult['code']='KO';
+		$arrayresult['message']=$weblangs->trans("EmptySearchString");
+	}
+	elseif (dol_strlen($searchstring) < 2)
+	{
+		$weblangs->load("errors");
+		$error++;
+		$arrayresult['code']='KO';
+		$arrayresult['message']=$weblangs->trans("ErrorSearchCriteriaTooSmall");
+	}
+	elseif (! in_array($type, array('', 'page')))
+	{
+		$error++;
+		$arrayresult['code']='KO';
+		$arrayresult['message']='Bad value for parameter $type';
+	}
+
+	$searchdone = 0;
+
+	if (! $error && in_array($algo, array('meta', 'metacontent', 'content')))
+	{
+		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'website_page';
+		$sql.= " WHERE fk_website = ".$website->id;
+		if ($type) $sql.= " AND type_container = '".$db->escape($type)."'";
+		$sql.= " AND (";
+		$searchalgo = '';
+		if ($algo == 'meta' || $algo == 'metacontent')
+		{
+			$searchalgo.= ($searchalgo?' OR ':'')."title LIKE '%".$db->escape($searchstring)."%' OR description LIKE '%".$db->escape($searchstring)."%'";
+			$searchalgo.= ($searchalgo?' OR ':'')."keywords LIKE '".$db->escape($searchstring).",%' OR keywords LIKE '% ".$db->escape($searchstring)."%'";		// TODO Use a better way to scan keywords
+		}
+		if ($algo == 'metacontent' || $algo == 'content')
+		{
+			$searchalgo.= ($searchalgo?' OR ':'')."content LIKE '%".$db->escape($searchstring)."%'";
+		}
+		$sql.=$searchalgo;
+		$sql.= ")";
+		$sql.= $db->plimit($max);
+
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+			$i = 0;
+			while (($obj = $db->fetch_object($resql)) && ($i < $max || $max == 0))
+			{
+				if ($obj->rowid > 0)
+				{
+					$tmpwebsitepage = new WebsitePage($db);
+					$tmpwebsitepage->fetch($obj->rowid);
+					if ($tmpwebsitepage->id > 0) $arrayresult['list'][]=$tmpwebsitepage;
+				}
+				$i++;
+			}
+
+			$arrayresult['code']='OK';
+			if (empty($arrayresult['list']))
+			{
+				$arrayresult['code']='KO';
+				$arrayresult['message']=$weblangs->trans("NoRecordFound");
+			}
+		}
+		else
+		{
+			$error++;
+			$arrayresult['code']=$db->lasterrno();
+			$arrayresult['message']=$db->lasterror();
+		}
+
+		$searchdone = 1;
+	}
+
+	if (! $searchdone)
+	{
+		$error++;
+		$arrayresult['code']='KO';
+		$arrayresult['message']='No supported algorithm found';
+	}
+
+	return $arrayresult;
 }
 
 /**
@@ -743,314 +853,4 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 			$tmp = preg_replace('/'.preg_quote($regs[0][$key], '/').'/i', 'background'.$regs[1][$key].'url("'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file='.$filename.'")', $tmp);
 		}
 	}
-}
-
-
-
-/**
- * Save content of a page on disk
- *
- * @param	string		$filemaster			Full path of filename master.inc.php for website to generate
- * @return	boolean							True if OK
- */
-function dolSaveMasterFile($filemaster)
-{
-	global $conf;
-
-	// Now generate the master.inc.php page
-	dol_syslog("We regenerate the master file");
-	dol_delete_file($filemaster);
-
-	$mastercontent = '<?php'."\n";
-	$mastercontent.= '// File generated to link to the master file - DO NOT MODIFY - It is just an include'."\n";
-	$mastercontent.= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) require_once '".DOL_DOCUMENT_ROOT."/master.inc.php';\n";
-	$mastercontent.= '?>'."\n";
-	$result = file_put_contents($filemaster, $mastercontent);
-	if (! empty($conf->global->MAIN_UMASK))
-		@chmod($filemaster, octdec($conf->global->MAIN_UMASK));
-
-	return $result;
-}
-
-/**
- * Save content of a page on disk
- *
- * @param	string		$filealias			Full path of filename to generate
- * @param	Website		$object				Object website
- * @param	WebsitePage	$objectpage			Object websitepage
- * @return	boolean							True if OK
- */
-function dolSavePageAlias($filealias, $object, $objectpage)
-{
-	global $conf;
-
-	// Now create the .tpl file (duplicate code with actions updatesource or updatecontent but we need this to save new header)
-	dol_syslog("We regenerate the alias page filealias=".$filealias);
-
-	$aliascontent = '<?php'."\n";
-	$aliascontent.= "// File generated to wrap the alias page - DO NOT MODIFY - It is just a wrapper to real page\n";
-	$aliascontent.= 'global $dolibarr_main_data_root;'."\n";
-	$aliascontent.= 'if (empty($dolibarr_main_data_root)) require \'./page'.$objectpage->id.'.tpl.php\'; ';
-	$aliascontent.= 'else require $dolibarr_main_data_root.\'/website/\'.$website->ref.\'/page'.$objectpage->id.'.tpl.php\';'."\n";
-	$aliascontent.= '?>'."\n";
-	$result = file_put_contents($filealias, $aliascontent);
-	if (! empty($conf->global->MAIN_UMASK)) {
-        @chmod($filealias, octdec($conf->global->MAIN_UMASK));
-    }
-
-	return ($result?true:false);
-}
-
-
-/**
- * Save content of a page on disk
- *
- * @param	string		$filetpl			Full path of filename to generate
- * @param	Website		$object				Object website
- * @param	WebsitePage	$objectpage			Object websitepage
- * @return	boolean							True if OK
- */
-function dolSavePageContent($filetpl, $object, $objectpage)
-{
-	global $conf;
-
-	// Now create the .tpl file (duplicate code with actions updatesource or updatecontent but we need this to save new header)
-	dol_syslog("We regenerate the tpl page filetpl=".$filetpl);
-
-	dol_delete_file($filetpl);
-
-	$shortlangcode = '';
-	if ($objectpage->lang) $shortlangcode=preg_replace('/[_-].*$/', '', $objectpage->lang);		// en_US or en-US -> en
-
-	$tplcontent ='';
-	$tplcontent.= "<?php // BEGIN PHP\n";
-	$tplcontent.= '$websitekey=basename(__DIR__); if (empty($websitepagefile)) $websitepagefile=__FILE__;'."\n";
-	$tplcontent.= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once './master.inc.php'; } // Not already loaded"."\n";
-	$tplcontent.= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
-	$tplcontent.= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
-	$tplcontent.= "ob_start();\n";
-	$tplcontent.= "// END PHP ?>\n";
-	if (! empty($conf->global->WEBSITE_FORCE_DOCTYPE_HTML5))
-	{
-	   $tplcontent.= "<!DOCTYPE html>\n";
-	}
-	$tplcontent.= '<html'.($shortlangcode ? ' lang="'.$shortlangcode.'"':'').'>'."\n";
-	$tplcontent.= '<head>'."\n";
-	$tplcontent.= '<title>'.dol_string_nohtmltag($objectpage->title, 0, 'UTF-8').'</title>'."\n";
-	$tplcontent.= '<meta charset="UTF-8">'."\n";
-	$tplcontent.= '<meta http-equiv="content-type" content="text/html; charset=utf-8" />'."\n";
-	$tplcontent.= '<meta name="robots" content="index, follow" />'."\n";
-	$tplcontent.= '<meta name="viewport" content="width=device-width, initial-scale=1.0">'."\n";
-	$tplcontent.= '<meta name="keywords" content="'.dol_string_nohtmltag($objectpage->keywords).'" />'."\n";
-	$tplcontent.= '<meta name="title" content="'.dol_string_nohtmltag($objectpage->title, 0, 'UTF-8').'" />'."\n";
-	$tplcontent.= '<meta name="description" content="'.dol_string_nohtmltag($objectpage->description, 0, 'UTF-8').'" />'."\n";
-	$tplcontent.= '<meta name="generator" content="'.DOL_APPLICATION_TITLE.' '.DOL_VERSION.' (https://www.dolibarr.org)" />'."\n";
-	$tplcontent.= '<meta name="dolibarr:pageid" content="'.dol_string_nohtmltag($objectpage->id).'" />'."\n";
-	$tplcontent.= '<link href="/'.(($objectpage->id == $object->fk_default_home) ? '' : ($objectpage->pageurl.'.php')).'" rel="canonical" />'."\n";
-	$tplcontent.= '<!-- Include link to CSS file -->'."\n";
-	$tplcontent.= '<link rel="stylesheet" href="styles.css.php?website=<?php echo $websitekey; ?>" type="text/css" />'."\n";
-	$tplcontent.= '<!-- Include HTML header from common file -->'."\n";
-	$tplcontent.= '<?php print preg_replace(\'/<\/?html>/ims\', \'\', file_get_contents(DOL_DATA_ROOT."/website/".$websitekey."/htmlheader.html")); ?>'."\n";
-	$tplcontent.= '<!-- Include HTML header from page header block -->'."\n";
-	$tplcontent.= preg_replace('/<\/?html>/ims', '', $objectpage->htmlheader)."\n";
-	$tplcontent.= '</head>'."\n";
-
-	$tplcontent.= '<!-- File generated by Dolibarr website module editor -->'."\n";
-	$tplcontent.= '<body id="bodywebsite" class="bodywebsite">'."\n";
-	$tplcontent.= $objectpage->content."\n";
-	$tplcontent.= '</body>'."\n";
-	$tplcontent.= '</html>'."\n";
-
-	$tplcontent.= '<?php // BEGIN PHP'."\n";
-	$tplcontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp);'."\n";
-	$tplcontent.= "// END PHP ?>"."\n";
-
-	//var_dump($filetpl);exit;
-	$result = file_put_contents($filetpl, $tplcontent);
-	if (! empty($conf->global->MAIN_UMASK))
-		@chmod($filetpl, octdec($conf->global->MAIN_UMASK));
-
-		return $result;
-}
-
-
-/**
- * Save content of the index.php and wrapper.php page
- *
- * @param	string		$pathofwebsite			Path of website root
- * @param	string		$fileindex				Full path of file index.php
- * @param	string		$filetpl				File tpl to index.php page redirect to
- * @param	string		$filewrapper			Full path of file wrapper.php
- * @return	boolean								True if OK
- */
-function dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper)
-{
-	global $conf;
-
-	$result1=false;
-	$result2=false;
-
-	dol_mkdir($pathofwebsite);
-
-	dol_delete_file($fileindex);
-	$indexcontent = '<?php'."\n";
-	$indexcontent.= "// BEGIN PHP File generated to provide an index.php as Home Page or alias redirector - DO NOT MODIFY - It is just a generated wrapper.\n";
-	$indexcontent.= '$websitekey=basename(__DIR__); if (empty($websitepagefile)) $websitepagefile=__FILE__;'."\n";
-	$indexcontent.= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once './master.inc.php'; } // Load master if not already loaded\n";
-	$indexcontent.= 'if (! empty($_GET[\'pageref\']) || ! empty($_GET[\'pagealiasalt\']) || ! empty($_GET[\'pageid\'])) {'."\n";
-	$indexcontent.= "	require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
-	$indexcontent.= "	require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
-	$indexcontent.= '	redirectToContainer($_GET[\'pageref\'], $_GET[\'pagealiasalt\'], $_GET[\'pageid\']);'."\n";
-	$indexcontent.= "}\n";
-	$indexcontent.= "include_once './".basename($filetpl)."'\n";
-	$indexcontent.= '// END PHP ?>'."\n";
-	$result1 = file_put_contents($fileindex, $indexcontent);
-	if (! empty($conf->global->MAIN_UMASK))
-		@chmod($fileindex, octdec($conf->global->MAIN_UMASK));
-
-	dol_delete_file($filewrapper);
-
-	$wrappercontent=file_get_contents(DOL_DOCUMENT_ROOT.'/website/samples/wrapper.html');
-
-	$result2 = file_put_contents($filewrapper, $wrappercontent);
-	if (! empty($conf->global->MAIN_UMASK))
-		@chmod($filewrapper, octdec($conf->global->MAIN_UMASK));
-
-	return ($result1 && $result2);
-}
-
-
-/**
- * Save content of a page on disk
- *
- * @param	string		$filehtmlheader		Full path of filename to generate
- * @param	string		$htmlheadercontent	Content of file
- * @return	boolean							True if OK
- */
-function dolSaveHtmlHeader($filehtmlheader, $htmlheadercontent)
-{
-	global $conf, $pathofwebsite;
-
-	dol_syslog("Save html header into ".$filehtmlheader);
-
-	dol_mkdir($pathofwebsite);
-	$result = file_put_contents($filehtmlheader, $htmlheadercontent);
-	if (! empty($conf->global->MAIN_UMASK))
-		@chmod($filehtmlheader, octdec($conf->global->MAIN_UMASK));
-
-		if (! $result)
-		{
-			setEventMessages('Failed to write file '.$filehtmlheader, null, 'errors');
-			return false;
-		}
-
-		return true;
-}
-
-/**
- * Save content of a page on disk
- *
- * @param	string		$filecss			Full path of filename to generate
- * @param	string		$csscontent			Content of file
- * @return	boolean							True if OK
- */
-function dolSaveCssFile($filecss, $csscontent)
-{
-	global $conf, $pathofwebsite;
-
-	dol_syslog("Save css file into ".$filecss);
-
-	dol_mkdir($pathofwebsite);
-	$result = file_put_contents($filecss, $csscontent);
-	if (! empty($conf->global->MAIN_UMASK))
-		@chmod($filecss, octdec($conf->global->MAIN_UMASK));
-
-		if (! $result)
-		{
-			setEventMessages('Failed to write file '.$filecss, null, 'errors');
-			return false;
-		}
-
-		return true;
-}
-
-/**
- * Save content of a page on disk
- *
- * @param	string		$filejs				Full path of filename to generate
- * @param	string		$jscontent			Content of file
- * @return	boolean							True if OK
- */
-function dolSaveJsFile($filejs, $jscontent)
-{
-	global $conf, $pathofwebsite;
-
-	dol_syslog("Save js file into ".$filejs);
-
-	dol_mkdir($pathofwebsite);
-	$result = file_put_contents($filejs, $jscontent);
-	if (! empty($conf->global->MAIN_UMASK))
-		@chmod($filejs, octdec($conf->global->MAIN_UMASK));
-
-		if (! $result)
-		{
-			setEventMessages('Failed to write file '.$filejs, null, 'errors');
-			return false;
-		}
-
-		return true;
-}
-
-/**
- * Save content of a page on disk
- *
- * @param	string		$filerobot			Full path of filename to generate
- * @param	string		$robotcontent		Content of file
- * @return	boolean							True if OK
- */
-function dolSaveRobotFile($filerobot, $robotcontent)
-{
-	global $conf, $pathofwebsite;
-
-	dol_syslog("Save robot file into ".$filerobot);
-
-	dol_mkdir($pathofwebsite);
-	$result = file_put_contents($filerobot, $robotcontent);
-	if (! empty($conf->global->MAIN_UMASK))
-		@chmod($filerobot, octdec($conf->global->MAIN_UMASK));
-
-		if (! $result)
-		{
-			setEventMessages('Failed to write file '.$filerobot, null, 'errors');
-			return false;
-		}
-
-		return true;
-}
-
-/**
- * Save content of a page on disk
- *
- * @param	string		$filehtaccess		Full path of filename to generate
- * @param	string		$htaccess			Content of file
- * @return	boolean							True if OK
- */
-function dolSaveHtaccessFile($filehtaccess, $htaccess)
-{
-	global $conf, $pathofwebsite;
-
-	dol_syslog("Save htaccess file into ".$filehtaccess);
-
-	dol_mkdir($pathofwebsite);
-	$result = file_put_contents($filehtaccess, $htaccess);
-	if (! empty($conf->global->MAIN_UMASK))
-		@chmod($filehtaccess, octdec($conf->global->MAIN_UMASK));
-
-		if (! $result)
-		{
-			setEventMessages('Failed to write file '.$filehtaccess, null, 'errors');
-			return false;
-		}
-
-		return true;
 }

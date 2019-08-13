@@ -2,7 +2,7 @@
 ContractsArea=Секция за договори
 ListOfContracts=Списък на договори
 AllContracts=Всички договори
-ContractCard=Карта
+ContractCard=Договор
 ContractStatusNotRunning=Не се изпълнява
 ContractStatusDraft=Чернова
 ContractStatusValidated=Валидиран

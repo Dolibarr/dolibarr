@@ -412,8 +412,8 @@ class Website extends CommonObject
 		$sql .= ' fk_default_home = '.(($this->fk_default_home > 0)?$this->fk_default_home:"null").',';
 		$sql .= ' virtualhost = '.(($this->virtualhost != '')?"'".$this->db->escape($this->virtualhost)."'":"null").',';
 		$sql .= ' fk_user_modif = '.(! isset($this->fk_user_modif) ? $user->id : $this->fk_user_modif).',';
-		$sql .= ' date_creation = '.(! isset($this->date_creation) || dol_strlen($this->date_creation) != 0 ? "'".$this->db->idate($this->date_creation)."'" : 'null');
-		$sql .= ', tms = '.(dol_strlen($this->date_modification) != 0 ? "'".$this->db->idate($this->date_modification)."'" : "'".$this->db->idate(dol_now())."'");
+		$sql .= ' date_creation = '.(! isset($this->date_creation) || dol_strlen($this->date_creation) != 0 ? "'".$this->db->idate($this->date_creation)."'" : 'null').',';
+		$sql .= ' tms = '.(dol_strlen($this->date_modification) != 0 ? "'".$this->db->idate($this->date_modification)."'" : "'".$this->db->idate(dol_now())."'");
 		$sql .= ' WHERE rowid=' . $this->id;
 
 		$this->db->begin();

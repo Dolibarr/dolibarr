@@ -453,7 +453,7 @@ if ($action == "set")
                     // Replace the prefix in table names
                     if ($dolibarr_main_db_prefix != 'llx_')
                     {
-                        $buffer=preg_replace('/llx_/i',$dolibarr_main_db_prefix,$buffer);
+                        $buffer=preg_replace('/llx_/i', $dolibarr_main_db_prefix, $buffer);
                     }
                     dolibarr_install_syslog("step2: request: " . $buffer);
                     print "<!-- Insert line : ".$buffer."<br>-->\n";

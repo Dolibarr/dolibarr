@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - banks
-MenuBankCash=Banco | Dinheiro
+MenuBankCash=Banco | Dinheiro - Financeiro
 BankAccounts=Contas bancárias
 BankAccountsAndGateways=Contas Bancárias | Gateways
 ShowAccount=Mostrar conta
@@ -79,6 +79,7 @@ BankLineConciliated=Transação reconciliada
 Reconciled=Conciliada
 NotReconciled=Não conciliada
 SupplierInvoicePayment=Pagamento do fornecedores
+WithdrawalPayment=Pedido com pagamento por débito
 SocialContributionPayment=Pagamento de contribuição social
 BankTransfers=Transferências bancárias
 TransferDesc=Transferência de uma conta para outra, o Dolibarr vai escrever dois registros (um débito na conta de origem e um crédito na conta de destino). A mesma quantia (exceto sinal), rótulo e data serão usados para esta transação)
@@ -121,6 +122,10 @@ RejectCheckDate=Data que o cheque foi devolvido
 BankAccountModelModule=Temas de documentos para as contas bancárias.
 DocumentModelSepaMandate=Modelo de mandato SEPA. Uso somente em países da União Européia
 DocumentModelBan=Tema para imprimir a página com a informação BAN.
+NewVariousPayment=Novo pagamento diverso
+VariousPayment=Pagamento diverso
+ShowVariousPayment=Mostrar pagamento diverso
+AddVariousPayment=Adicionar pagamento diverso
 YourSEPAMandate=Seu mandato Área Única de Pagamentos em Euros
 AutoReportLastAccountStatement=Preencha automaticamente o campo 'número de extrato bancário' com o último número de extrato ao fazer a reconciliação
 CashControl=Caixa de dinheiro POS

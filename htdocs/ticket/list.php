@@ -533,7 +533,9 @@ foreach($object->fields as $key => $val)
 		    }
 		    print '<td class="liste_titre'.($cssforfield?' '.$cssforfield:'').'">';
 		    //var_dump($arrayofstatus);var_dump($search['fk_statut']);var_dump(array_values($search[$key]));
-			print Form::multiselectarray('search_fk_statut', $arrayofstatus, array_values($search[$key]), 0, 0, 'minwidth150', 1, 0, '', '', '');
+		    $selectedarray = null;
+		    if ($search[$key]) $selectedarray = array_values($search[$key]);
+			print Form::multiselectarray('search_fk_statut', $arrayofstatus, $selectedarray, 0, 0, 'minwidth150', 1, 0, '', '', '');
 			print '</td>';
 		}
 		elseif ($key == "fk_soc")

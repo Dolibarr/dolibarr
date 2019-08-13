@@ -2,6 +2,7 @@
 ProductRef=製品のref。
 ProductLabel=製品のラベル
 ProductLabelTranslated=Translated product label
+ProductDescription=Product description
 ProductDescriptionTranslated=Translated product description
 ProductNoteTranslated=Translated product note
 ProductServiceCard=製品/サービスカード

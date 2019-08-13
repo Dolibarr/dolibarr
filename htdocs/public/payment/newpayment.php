@@ -1695,6 +1695,7 @@ if ($action != 'dopayment')
 		    {
 		        $langs->load("members");
 		        print '<br><span class="amountpaymentcomplete">'.$langs->trans("MembershipPaid", dol_print_date($object->datefin, 'day')).'</span><br>';
+		        print '<span class="opacitymedium">'.$langs->trans("PaymentWillBeRecordedForNextPeriod").'</span><br>';
 		    }
 
 			// Buttons for all payments registration methods
@@ -1934,7 +1935,8 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
 		// JS Code for Stripe
 		if (empty($stripearrayofkeys['publishable_key']))
 		{
-		    print info_admin($langs->trans("ErrorModuleSetupNotComplete", "stripe"), 0, 0, 'error');
+			$langs->load("errors");
+			print info_admin($langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Stripe")), 0, 0, 'error');
 		}
 		else
 		{

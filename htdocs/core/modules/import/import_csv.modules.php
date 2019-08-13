@@ -581,8 +581,27 @@ class ImportCsv extends ModeleImports
                                     if (is_numeric($defaultref) && $defaultref <= 0) $defaultref='';
                                     $newval=$defaultref;
                                 }
-
-
+                                elseif ($objimport->array_import_convertvalue[0][$val]['rule']=='compute')
+                                {
+                                    $file=(empty($objimport->array_import_convertvalue[0][$val]['classfile'])?$objimport->array_import_convertvalue[0][$val]['file']:$objimport->array_import_convertvalue[0][$val]['classfile']);
+                                    $class=$objimport->array_import_convertvalue[0][$val]['class'];
+                                    $method=$objimport->array_import_convertvalue[0][$val]['method'];
+                                    $resultload = dol_include_once($file);
+                                    if (empty($resultload))
+                                    {
+                                        dol_print_error('', 'Error trying to call file='.$file.', class='.$class.', method='.$method);
+                                        break;
+                                    }
+                                    $classinstance=new $class($this->db);
+                                    $res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord));
+                                    if ($res<0) {
+                                        if (!empty($objimport->array_import_convertvalue[0][$val]['dict'])) $this->errors[$error]['lib']=$langs->trans('ErrorFieldValueNotIn', $key, $newval, 'code', $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['dict']));
+                                        else $this->errors[$error]['lib']='ErrorFieldValueNotIn';
+                                        $this->errors[$error]['type']='FOREIGNKEY';
+                                        $errorforthistable++;
+                                        $error++;
+                                    }
+                                }
                                 elseif ($objimport->array_import_convertvalue[0][$val]['rule']=='numeric')
                                 {
                                     $newval = price2num($newval);
