@@ -331,6 +331,33 @@ function dolSaveHtaccessFile($filehtaccess, $htaccess)
 		return true;
 }
 
+/**
+ * Save content of a page on disk
+ *
+ * @param	string		$file				Full path of filename to generate
+ * @param	string		$content			Content of file
+ * @return	boolean							True if OK
+ */
+function dolSaveManifestJson($file, $content)
+{
+	global $conf, $pathofwebsite;
+
+	dol_syslog("Save manifest.js.php file into ".$file);
+
+	dol_mkdir($pathofwebsite);
+	$result = file_put_contents($file, $content);
+	if (! empty($conf->global->MAIN_UMASK))
+		@chmod($file, octdec($conf->global->MAIN_UMASK));
+
+		if (! $result)
+		{
+			setEventMessages('Failed to write file '.$file, null, 'errors');
+			return false;
+		}
+
+		return true;
+}
+
 
 
 /**
