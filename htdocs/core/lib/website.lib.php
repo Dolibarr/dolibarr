@@ -185,7 +185,7 @@ function dolKeepOnlyPhpCode($str)
  * @return  void
  * @see	dolWebsiteReplacementOfLinks()  for function used to replace content in the backoffice context when USEDOLIBARREDITOR is not on
  */
-function dolWebsiteOutput($content, $contenttype='html')
+function dolWebsiteOutput($content, $contenttype = 'html')
 {
 	global $db, $langs, $conf, $user;
 	global $dolibarr_main_url_root, $dolibarr_main_data_root;
