@@ -23,6 +23,7 @@
 
 define('NOSCANPOSTFORINJECTION', 1);
 define('NOSTYLECHECK', 1);
+define('USEDOLIBARREDITOR', 1);
 
 header('X-XSS-Protection:0');
 
@@ -3200,7 +3201,6 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
 		// If mode WEBSITE_SUBCONTAINERSINLINE is on
 		if (! empty($conf->global->WEBSITE_SUBCONTAINERSINLINE))
 		{
-			define('USEDOLIBARREDITOR', 1);
 			//var_dump($filetpl);
 			$filephp = $filetpl;
 			ob_start();
