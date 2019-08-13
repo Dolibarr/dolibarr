@@ -3154,7 +3154,7 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
 		}*/
 		$out.="\n<html><head>\n";
 		$out.="<!-- htmlheader/style of page from database -->\n";
-		$out.=dolWebsiteReplacementOfLinks($object, $objectpage->htmlheader, 1);
+		$out.=dolWebsiteReplacementOfLinks($object, $objectpage->htmlheader, 1, 'htmlheader');
 		$out.="</head>\n";
 		$out.="\n<body>";
 
@@ -3172,7 +3172,7 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
 		include $filecss;
 		$csscontent = ob_get_contents();
 		ob_end_clean();
-		$tmpout.= dolWebsiteReplacementOfLinks($object, $csscontent, 1);
+		$tmpout.= dolWebsiteReplacementOfLinks($object, $csscontent, 1, 'css');
 		$tmpout.= '/* Include style from the HTML header of page */'."\n";
 		// Clean the html header of page to get only <style> content
 		$tmp = preg_split('(<style[^>]*>|</style>)', $objectpage->htmlheader);

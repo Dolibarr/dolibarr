@@ -29,14 +29,15 @@
  * @param	Website		$website			Web site object
  * @param	string		$content			Content to replace
  * @param	int			$removephppart		0=Replace PHP sections with a PHP badge. 1=Remove completely PHP sections.
+ * @param	string		$contenttype		Content type
  * @return	boolean							True if OK
  * @see dolWebsiteOutput() for function used to replace content in a web server context
  */
-function dolWebsiteReplacementOfLinks($website, $content, $removephppart = 0)
+function dolWebsiteReplacementOfLinks($website, $content, $removephppart = 0, $contenttype='html')
 {
 	$nbrep = 0;
 
-	dol_syslog('dolWebsiteReplacementOfLinks start', LOG_DEBUG);
+	dol_syslog('dolWebsiteReplacementOfLinks start (contenttype='.$contenttype." USEDOLIBARRSERVER=".(defined('USEDOLIBARRSERVER')?'1':'')." USEDOLIBARREDITOR=".(defined('USEDOLIBARREDITOR')?'1':'').')', LOG_DEBUG);
 
 	// Replace php code. Note $content may come from database and does not contains body tags.
 	$replacewith='...php...';
