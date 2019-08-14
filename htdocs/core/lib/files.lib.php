@@ -2005,9 +2005,9 @@ function dol_compress_file($inputfile, $outputfile, $mode = "gz")
  */
 function dol_uncompress($inputfile, $outputdir)
 {
-	global $langs;
+	global $conf, $langs;
 
-	if (defined('ODTPHP_PATHTOPCLZIP'))
+	if (defined('ODTPHP_PATHTOPCLZIP') && empty($conf->global->MAIN_USE_ZIPARCHIVE_FOR_ZIP_UNCOMPRESS))
 	{
 		dol_syslog("Constant ODTPHP_PATHTOPCLZIP for pclzip library is set to ".ODTPHP_PATHTOPCLZIP.", so we use Pclzip to unzip into ".$outputdir);
 		include_once ODTPHP_PATHTOPCLZIP.'/pclzip.lib.php';
