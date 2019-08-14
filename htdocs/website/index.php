@@ -1167,7 +1167,6 @@ if ($action == 'updatecss')
   				setEventMessages('Failed to write file '.$filemanifestjson, null, 'errors');
   			}
 
-
     		// Message if no error
     		if (! $error)
     		{
@@ -2933,7 +2932,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	if ($action != 'createcontainer')
 	{
 	    print '<tr><td>';
-	    print $langs->trans('LastModificationAuthor');
+	    print $langs->trans('UserModif');
 	    print '</td><td>';
 	    if ($pageusermodifid > 0)
 	    {
