@@ -2437,7 +2437,6 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$original_file=$conf->commande->dir_output.'/temp/massgeneration/'.$user->id.'/'.$original_file;
 	}
-    // Open-DSI -- NEW add mass actions -- Begin
     elseif ($modulepart == 'massfilesarea_sendings')
     {
         if ($fuser->rights->expedition->{$lire} || preg_match('/^specimen/i', $original_file))
@@ -2446,7 +2445,6 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
         }
         $original_file=$conf->expedition->dir_output.'/sending/temp/massgeneration/'.$user->id.'/'.$original_file;
     }
-    // Open-DSI -- NEW add mass actions -- End
 	elseif ($modulepart == 'massfilesarea_invoices')
 	{
 		if ($fuser->rights->facture->{$lire} || preg_match('/^specimen/i', $original_file))

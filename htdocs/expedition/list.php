@@ -27,9 +27,7 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
-// Open-DSI -- NEW add mass actions -- Begin
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-// Open-DSI -- NEW add mass actions -- End
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -41,19 +39,15 @@ $contextpage= GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'shipmen
 
 $socid=GETPOST('socid', 'int');
 
-// Open-DSI -- NEW add mass actions -- Begin
 $action     = GETPOST('action', 'alpha');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOST('show_files', 'int');
 $toselect   = GETPOST('toselect', 'array');
-// Open-DSI -- NEW add mass actions -- End
 
 // Security check
 $expeditionid = GETPOST('id', 'int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'expedition', $expeditionid, '');
-// Open-DSI -- NEW add mass actions -- Begin
-// Open-DSI -- NEW add mass actions -- End
 
 $search_ref_exp = GETPOST("search_ref_exp", 'alpha');
 $search_ref_liv = GETPOST('search_ref_liv', 'alpha');
@@ -74,18 +68,14 @@ $sortorder = GETPOST('sortorder', 'alpha');
 $page = GETPOST('page', 'int');
 if (! $sortfield) $sortfield="e.ref";
 if (! $sortorder) $sortorder="DESC";
-// Open-DSI -- NEW add mass actions -- Begin
 if (empty($page) || $page == -1 || (empty($toselect) && $massaction === '0')) { $page = 0; }     // If $page is not defined, or '' or -1
-// Open-DSI -- NEW add mass actions -- End
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 $viewstatut=GETPOST('viewstatut');
 
-// Open-DSI -- NEW add mass actions -- Begin
 $diroutputmassaction = $conf->expedition->dir_output.'/sending/temp/massgeneration/'.$user->id;
-// Open-DSI -- NEW add mass actions -- End
 
 $object = new Expedition($db);
 
@@ -137,14 +127,10 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 /*
  * Actions
  */
-// Open-DSI -- NEW add mass actions -- Begin
 $error = 0;
-// Open-DSI -- NEW add mass actions -- End
 
 if (GETPOST('cancel', 'alpha')) { $action='list'; $massaction=''; }
-// Open-DSI -- NEW add mass actions -- Begin
 if (! GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
-// Open-DSI -- NEW add mass actions -- End
 
 $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
@@ -167,15 +153,12 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_type_thirdparty='';
 	$search_billed='';
 	$viewstatut='';
-    // Open-DSI -- NEW add mass actions -- Begin
     $toselect = '';
-    // Open-DSI -- NEW add mass actions -- End
 	$search_array_options=array();
 }
 
 if (empty($reshook))
 {
-    // Open-DSI -- NEW add mass actions -- Begin
     $objectclass  = 'Expedition';
     $objectlabel  = 'Sendings';
     $permtoread   = $user->rights->expedition->lire;
@@ -183,7 +166,6 @@ if (empty($reshook))
     $permtodelete = $user->rights->expedition->supprimer;
     $uploaddir    = $conf->expedition->dir_output . '/sending';
     include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
-    // Open-DSI -- NEW add mass actions -- End
 }
 
 
@@ -192,9 +174,7 @@ if (empty($reshook))
  */
 
 $form=new Form($db);
-// Open-DSI -- NEW add mass actions -- Begin
 $formfile = new FormFile($db);
-// Open-DSI -- NEW add mass actions -- End
 $companystatic=new Societe($db);
 $shipment=new Expedition($db);
 $formcompany=new FormCompany($db);
@@ -280,9 +260,7 @@ if ($resql)
 {
 	$num = $db->num_rows($resql);
 
-    // Open-DSI -- NEW add mass actions -- Begin
     $arrayofselected = is_array($toselect) ? $toselect : array();
-    // Open-DSI -- NEW add mass actions -- End
 
 	$expedition = new Expedition($db);
 
@@ -301,14 +279,12 @@ if ($resql)
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
-    // Open-DSI -- NEW add mass actions -- Begin
     $arrayofmassactions =  array(
         'builddoc' => $langs->trans("PDFMerge"),
         'presend'  => $langs->trans("SendByMail"),
     );
     if (in_array($massaction, array('presend'))) $arrayofmassactions=array();
     $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
-    // Open-DSI -- NEW add mass actions -- End
 
 	$newcardbutton='';
 	if ($user->rights->expedition->creer)
@@ -326,7 +302,6 @@ if ($resql)
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
-    // Open-DSI -- NEW add mass actions -- Begin
 	print_barre_liste($langs->trans('ListOfSendings'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, '', 0, $newcardbutton, '', $limit);
 
     $topicmail = "SendShippingRef";
@@ -334,7 +309,6 @@ if ($resql)
     $objecttmp = new Expedition($db);
     $trackid = 'shi'.$object->id;
     include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
-	// Open-DSI -- NEW add mass actions -- End
 
 	if ($sall)
 	{
@@ -355,9 +329,7 @@ if ($resql)
 
 	$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
 	$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);
-    // Open-DSI -- NEW add mass actions -- Begin
 	if ($massactionbutton) $selectedfields.=$form->showCheckAddButtons('checkforselect', 1);// This also change content of $arrayfields
-    // Open-DSI -- NEW add mass actions -- End
 
 	print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
@@ -504,9 +476,7 @@ if ($resql)
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 	print "</tr>\n";
 
-    // Open-DSI -- FIX type ent array not defined -- Begin
     $typenArray = $formcompany->typent_array(1);
-    // Open-DSI -- FIX type ent array not defined -- End
 	$i=0;
 	$totalarray=array();
 	while ($i < min($num, $limit))
@@ -584,10 +554,7 @@ if ($resql)
 		if (! empty($arrayfields['typent.code']['checked']))
 		{
 			print '<td class="center">';
-            // Open-DSI -- FIX type ent array not defined -- Begin
-			//if (count($typenArray)==0) $typenArray = $formcompany->typent_array(1);
 			if (isset($typenArray[$obj->typent_code]))  print $typenArray[$obj->typent_code];
-            // Open-DSI -- FIX type ent array not defined -- End
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
 		}
@@ -662,7 +629,6 @@ if ($resql)
 			if (! $i) $totalarray['nbfield']++;
 		}
 
-        // Open-DSI -- NEW add mass actions -- Begin
         // Action column
         print '<td class="nowrap" align="center">';
         if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
@@ -672,16 +638,13 @@ if ($resql)
             print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected?' checked="checked"':'').'>';
         }
         print '</td>';
-        // Open-DSI -- NEW add mass actions -- End
 		if (! $i) $totalarray['nbfield']++;
 
 		print "</tr>\n";
 
 		$i++;
 	}
-    // Open-DSI -- NEW add mass actions -- Begin
     $db->free($resql);
-    // Open-DSI -- NEW add mass actions -- End
 
     $parameters=array('arrayfields'=>$arrayfields, 'sql'=>$sql);
     $reshook=$hookmanager->executeHooks('printFieldListFooter', $parameters);    // Note that $action and $object may have been modified by hook
@@ -691,7 +654,6 @@ if ($resql)
 	print "</div>";
 	print '</form>';
 
-    // Open-DSI -- NEW add mass actions -- Begin
     $hidegeneratedfilelistifempty = 1;
     if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files)   $hidegeneratedfilelistifempty = 0;
 
@@ -705,7 +667,6 @@ if ($resql)
     $title      = '';
 
     print $formfile->showdocuments('massfilesarea_sendings', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
-    // Open-DSI -- NEW add mass actions -- End
 }
 else
 {
