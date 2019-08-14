@@ -1889,6 +1889,8 @@ function dol_convert_file($fileinput, $ext = 'png', $fileoutput = '', $page = ''
  */
 function dol_compress_file($inputfile, $outputfile, $mode = "gz")
 {
+	global $conf;
+
 	$foundhandler=0;
 
 	try
@@ -1900,6 +1902,49 @@ function dol_compress_file($inputfile, $outputfile, $mode = "gz")
 		elseif ($mode == 'bz') { $foundhandler=1; $compressdata = bzcompress($data, 9); }
 		elseif ($mode == 'zip')
 		{
+			if (class_exists('ZipArchive') && ! empty($conf->global->MAIN_USE_ZIPARCHIVE_FOR_ZIP_COMPRESS))
+			{
+				$foundhandler=1;
+
+				$rootPath = realpath($inputfile);
+
+				dol_syslog("Class ZipArchive is set so we zip using ZipArchive to zip into ".$outputfile.' rootPath='.$rootPath);
+				$zip = new ZipArchive;
+
+				if ($zip->open($outputfile, ZipArchive::CREATE)!==TRUE) {
+					$errormsg="Failed to open file ".$outputfile."\n";
+					dol_syslog("dol_compress_file failure - ".$errormsg, LOG_ERR);
+					return -6;
+				}
+
+				// Create recursive directory iterator
+				/** @var SplFileInfo[] $files */
+				$files = new RecursiveIteratorIterator(
+					new RecursiveDirectoryIterator($rootPath),
+					RecursiveIteratorIterator::LEAVES_ONLY
+					);
+
+				foreach ($files as $name => $file)
+				{
+					// Skip directories (they would be added automatically)
+					if (!$file->isDir())
+					{
+						// Get real and relative path for current file
+						$filePath = $file->getRealPath();
+						$relativePath = substr($filePath, strlen($rootPath) + 1);
+
+						// Add current file to archive
+						$zip->addFile($filePath, $relativePath);
+					}
+				}
+
+				// Zip archive will be created only after closing object
+				$zip->close();
+
+				dol_syslog("dol_compress_file success - ".count($zip->numFiles)." files");
+				return 1;
+			}
+
 			if (defined('ODTPHP_PATHTOPCLZIP'))
 			{
 				$foundhandler=1;
