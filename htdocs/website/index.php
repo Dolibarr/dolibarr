@@ -772,7 +772,10 @@ if ($action == 'addcontainer')
 
 			// Save page alias
 			$result=dolSavePageAlias($filealias, $object, $objectpage);
-			if (! $result) setEventMessages('Failed to write file '.$filealias, null, 'errors');
+			if (! $result)
+			{
+				setEventMessages('Failed to write file '.$filealias, null, 'errors');
+			}
 
 			// Save page of content
 			$result=dolSavePageContent($filetpl, $object, $objectpage);
@@ -990,7 +993,11 @@ if ($action == 'updatecss')
 
     		// Now generate the master.inc.php page
     		$result = dolSaveMasterFile($filemaster);
-    		if (! $result) setEventMessages('Failed to write file '.$filemaster, null, 'errors');
+    		if (! $result)
+    		{
+    			$error++;
+    			setEventMessages('Failed to write file '.$filemaster, null, 'errors');
+    		}
 
 
     		// Html header file
@@ -1014,7 +1021,12 @@ if ($action == 'updatecss')
 
     		$htmlheadercontent = trim($htmlheadercontent)."\n";
 
-    		dolSaveHtmlHeader($filehtmlheader, $htmlheadercontent);
+    		$result = dolSaveHtmlHeader($filehtmlheader, $htmlheadercontent);
+    		if (! $result)
+    		{
+    			$error++;
+    			setEventMessages('Failed to write file '.$filehtmlheader, null, 'errors');
+    		}
 
 
     		// Css file
@@ -1032,19 +1044,15 @@ if ($action == 'updatecss')
     		$csscontent.= "}\n";
     		$csscontent.= "// END PHP ?>\n";
 
-    		$csscontent.= GETPOST('WEBSITE_CSS_INLINE', 'none');
+    		$csscontent.= trim(GETPOST('WEBSITE_CSS_INLINE', 'none'))."\n";
 
-    		$csscontent.= "\n".'<?php // BEGIN PHP'."\n";
+    		$csscontent.= '<?php // BEGIN PHP'."\n";
     		$csscontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "css");'."\n";
     		$csscontent.= "// END PHP ?>"."\n";
 
     		dol_syslog("Save css content into ".$filecss);
 
-    		dol_mkdir($pathofwebsite);
-    		$result = file_put_contents($filecss, $csscontent);
-    		if (! empty($conf->global->MAIN_UMASK))
-    			@chmod($filecss, octdec($conf->global->MAIN_UMASK));
-
+    		$result = dolSaveCssFile($filecss, $csscontent);
     		if (! $result)
     		{
     			$error++;
@@ -1065,19 +1073,13 @@ if ($action == 'updatecss')
     		$jscontent.= "header('Content-type: application/javascript');\n";
     		$jscontent.= "// END PHP ?>\n";
 
-    		$jscontent.= GETPOST('WEBSITE_JS_INLINE', 'none');
+    		$jscontent.= trim(GETPOST('WEBSITE_JS_INLINE', 'none'))."\n";
 
-    		$jscontent.= "\n".'<?php // BEGIN PHP'."\n";
+    		$jscontent.= '<?php // BEGIN PHP'."\n";
     		$jscontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "js");'."\n";
     		$jscontent.= "// END PHP ?>"."\n";
 
-    		dol_syslog("Save js content into ".$filejs);
-
-    		dol_mkdir($pathofwebsite);
-    		$result = file_put_contents($filejs, $jscontent);
-    		if (! empty($conf->global->MAIN_UMASK))
-    			@chmod($filejs, octdec($conf->global->MAIN_UMASK));
-
+    		$result = dolSaveJsFile($filejs, $jscontent);
     		if (! $result)
     		{
     			$error++;
@@ -1098,19 +1100,13 @@ if ($action == 'updatecss')
     	    $robotcontent.= "header('Content-type: text/css');\n";
     	    $robotcontent.= "// END PHP ?>\n";*/
 
-    		$robotcontent.= GETPOST('WEBSITE_ROBOT', 'none');
+    		$robotcontent.= trim(GETPOST('WEBSITE_ROBOT', 'none'))."\n";
 
     		/*$robotcontent.= "\n".'<?php // BEGIN PHP'."\n";
     	    $robotcontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "robot");'."\n";
     	    $robotcontent.= "// END PHP ?>"."\n";*/
 
-    		dol_syslog("Save file robot into ".$filerobot);
-
-    		dol_mkdir($pathofwebsite);
-    		$result = file_put_contents($filerobot, $robotcontent);
-    		if (! empty($conf->global->MAIN_UMASK))
-    			@chmod($filerobot, octdec($conf->global->MAIN_UMASK));
-
+    		$result = dolSaveRobotFile($filerobot, $robotcontent);
     		if (! $result)
     		{
     			$error++;
@@ -1120,20 +1116,15 @@ if ($action == 'updatecss')
 
     		// Htaccess file
     		$htaccesscontent ='';
-    		$htaccesscontent.= GETPOST('WEBSITE_HTACCESS', 'none');
+    		$htaccesscontent.= trim(GETPOST('WEBSITE_HTACCESS', 'none'))."\n";
 
-    		dol_syslog("Save file htaccess into ".$filehtaccess);
+    		$result = dolSaveHtaccessFile($filehtaccess, $htaccesscontent);
+    		if (! $result)
+    		{
+    			$error++;
+    			setEventMessages('Failed to write file '.$filehtaccess, null, 'errors');
+    		}
 
-    		dol_mkdir($pathofwebsite);
-    		$result = file_put_contents($filehtaccess, $htaccesscontent);
-    		if (! empty($conf->global->MAIN_UMASK))
-    			@chmod($filehtaccess, octdec($conf->global->MAIN_UMASK));
-
-       		if (! $result)
-       		{
-       			$error++;
-       			setEventMessages('Failed to write file '.$filehtaccess, null, 'errors');
-       		}
 
        		// manifest.json file
        		$manifestjsoncontent ='';
@@ -1148,24 +1139,19 @@ if ($action == 'updatecss')
        		$manifestjsoncontent.= "header('Content-type: application/manifest+json');\n";
        		$manifestjsoncontent.= "// END PHP ?>\n";
 
-       		$manifestjsoncontent.= GETPOST('WEBSITE_MANIFEST_JSON', 'none');
+       		$manifestjsoncontent.= trim(GETPOST('WEBSITE_MANIFEST_JSON', 'none'))."\n";
 
-       		$manifestjsoncontent.= "\n".'<?php // BEGIN PHP'."\n";
+       		$manifestjsoncontent.= '<?php // BEGIN PHP'."\n";
        		$manifestjsoncontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "manifest");'."\n";
        		$manifestjsoncontent.= "// END PHP ?>"."\n";
 
-       		dol_syslog("Save file manifest.json.php into ".$manifestjsoncontent);
+       		$result = dolSaveManifestJson($filemanifestjson, $manifestjsoncontent);
+       		if (! $result)
+       		{
+       			$error++;
+       			setEventMessages('Failed to write file '.$filemanifestjson, null, 'errors');
+       		}
 
-       		dol_mkdir($pathofwebsite);
-       		$result = file_put_contents($filemanifestjson, $manifestjsoncontent);
-       		if (! empty($conf->global->MAIN_UMASK))
-       			@chmod($filemanifestjson, octdec($conf->global->MAIN_UMASK));
-
-   			if ($result === false)
-   			{
-  				$error++;
-  				setEventMessages('Failed to write file '.$filemanifestjson, null, 'errors');
-  			}
 
     		// Message if no error
     		if (! $error)
