@@ -362,9 +362,9 @@ class SupplierInvoices extends DolibarrApi
             throw new RestException(400, 'Invoice ID is mandatory');
         }
 
-    if( ! DolibarrApi::_checkAccessToResource('fournisseur', $this->invoice->id, 'facture_fourn', 'facture')) {
-            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-        }
+		if( ! DolibarrApi::_checkAccessToResource('fournisseur', $this->invoice->id, 'facture_fourn', 'facture')) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
 
         $result = $this->invoice->fetch($id);
         if( ! $result ) {
