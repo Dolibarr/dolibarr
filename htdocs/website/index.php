@@ -2557,7 +2557,8 @@ if ($action == 'editcss')
 
 	// CSS file
 	print '<tr><td class="tdtop">';
-	print $langs->trans('WEBSITE_CSS_INLINE');
+	$htmlhelp=$langs->trans("CSSContentTooltipHelp");
+	print $form->textwithpicto($langs->trans('WEBSITE_CSS_INLINE'), $htmlhelp, 1, 'help', '', 0, 2, 'csstooltip');
 	print '</td><td>';
 
 	$doleditor=new DolEditor('WEBSITE_CSS_INLINE', $csscontent, '', '220', 'ace', 'In', true, false, 'ace', 0, '100%', '');

@@ -107,3 +107,4 @@ DeleteAlsoMedias=Delete also all medias files specific to this website?
 MyWebsitePages=My website pages
 SearchReplaceInto=Search | Replace into
 ReplaceString=New string
+CSSContentTooltipHelp=Enter here CSS content. To avoid any conflict with the CSS of the application, be sure to prepend all declaration with the .bodywebsite class. For example:<br><br>#mycssselector, input.myclass:hover { ... }<br>must be<br>.bodywebsite #mycssselector, .bodywebsite input.myclass:hover { ... }<br><br>Note: If you have a large file without this prefix, you can use 'lessc' to convert it to append the .bodywebsite prefix everywhere.  
