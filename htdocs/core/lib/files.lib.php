@@ -1889,24 +1889,87 @@ function dol_convert_file($fileinput, $ext = 'png', $fileoutput = '', $page = ''
  */
 function dol_compress_file($inputfile, $outputfile, $mode = "gz")
 {
+	global $conf;
+
 	$foundhandler=0;
 
 	try
 	{
+		dol_syslog("dol_compress_file mode=".$mode." inputfile=".$inputfile." outputfile=".$outputfile);
+
 		$data = implode("", file(dol_osencode($inputfile)));
 		if ($mode == 'gz')     { $foundhandler=1; $compressdata = gzencode($data, 9); }
 		elseif ($mode == 'bz') { $foundhandler=1; $compressdata = bzcompress($data, 9); }
 		elseif ($mode == 'zip')
 		{
+			if (class_exists('ZipArchive') && ! empty($conf->global->MAIN_USE_ZIPARCHIVE_FOR_ZIP_COMPRESS))
+			{
+				$foundhandler=1;
+
+				$rootPath = realpath($inputfile);
+
+				dol_syslog("Class ZipArchive is set so we zip using ZipArchive to zip into ".$outputfile.' rootPath='.$rootPath);
+				$zip = new ZipArchive;
+
+				if ($zip->open($outputfile, ZipArchive::CREATE)!==TRUE) {
+					$errormsg="Failed to open file ".$outputfile."\n";
+					dol_syslog("dol_compress_file failure - ".$errormsg, LOG_ERR);
+					return -6;
+				}
+
+				// Create recursive directory iterator
+				/** @var SplFileInfo[] $files */
+				$files = new RecursiveIteratorIterator(
+					new RecursiveDirectoryIterator($rootPath),
+					RecursiveIteratorIterator::LEAVES_ONLY
+					);
+
+				foreach ($files as $name => $file)
+				{
+					// Skip directories (they would be added automatically)
+					if (!$file->isDir())
+					{
+						// Get real and relative path for current file
+						$filePath = $file->getRealPath();
+						$relativePath = substr($filePath, strlen($rootPath) + 1);
+
+						// Add current file to archive
+						$zip->addFile($filePath, $relativePath);
+					}
+				}
+
+				// Zip archive will be created only after closing object
+				$zip->close();
+
+				dol_syslog("dol_compress_file success - ".count($zip->numFiles)." files");
+				return 1;
+			}
+
 			if (defined('ODTPHP_PATHTOPCLZIP'))
 			{
 				$foundhandler=1;
 
 				include_once ODTPHP_PATHTOPCLZIP.'/pclzip.lib.php';
 				$archive = new PclZip($outputfile);
-				$archive->add($inputfile, PCLZIP_OPT_REMOVE_PATH, dirname($inputfile));
-				//$archive->add($inputfile);
-				return 1;
+				$result = $archive->add($inputfile, PCLZIP_OPT_REMOVE_PATH, dirname($inputfile));
+
+				if ($result === 0)
+				{
+					global $errormsg;
+					$errormsg=$archive->errorInfo(true);
+					dol_syslog("dol_compress_file failure - ".$errormsg, LOG_ERR);
+					if ($archive->errorCode() == PCLZIP_ERR_WRITE_OPEN_FAIL)
+					{
+						dol_syslog("dol_compress_file error PCLZIP_ERR_WRITE_OPEN_FAIL", LOG_ERR);
+						return -4;
+					}
+					return -3;
+				}
+				else
+				{
+					dol_syslog("dol_compress_file success - ".count($result)." files");
+					return 1;
+				}
 			}
 		}
 
@@ -1942,9 +2005,9 @@ function dol_compress_file($inputfile, $outputfile, $mode = "gz")
  */
 function dol_uncompress($inputfile, $outputdir)
 {
-	global $langs;
+	global $conf, $langs;
 
-	if (defined('ODTPHP_PATHTOPCLZIP'))
+	if (defined('ODTPHP_PATHTOPCLZIP') && empty($conf->global->MAIN_USE_ZIPARCHIVE_FOR_ZIP_UNCOMPRESS))
 	{
 		dol_syslog("Constant ODTPHP_PATHTOPCLZIP for pclzip library is set to ".ODTPHP_PATHTOPCLZIP.", so we use Pclzip to unzip into ".$outputdir);
 		include_once ODTPHP_PATHTOPCLZIP.'/pclzip.lib.php';

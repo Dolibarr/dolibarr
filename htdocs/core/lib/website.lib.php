@@ -23,7 +23,7 @@
 
 
 /**
- * Convert a page content to have correct links (based on DOL_URL_ROOT) into an html content.
+ * Convert a page content to have correct links (based on DOL_URL_ROOT) into an html content. It replaces also dynamic content with '...php...'
  * Used to ouput the page on the Preview from backoffice.
  *
  * @param	Website		$website			Web site object
@@ -61,7 +61,7 @@ function dolWebsiteReplacementOfLinks($website, $content, $removephppart = 0, $c
 	$content = preg_replace('/href="<\?php((?!\?>).)*\?>\n*/ims', $replacewith, $content);
 
 	//$replacewith='<span class="phptag">...php...</span>';
-	$replacewith='<span class="phptag">...php...</span>';
+	$replacewith='...phpx...';
 	if ($removephppart) $replacewith='';
 	//$content = preg_replace('/<\?php((?!\?toremove>).)*\?toremove>\n*/ims', $replacewith, $content);
 	/*if ($content === null) {
@@ -92,6 +92,9 @@ function dolWebsiteReplacementOfLinks($website, $content, $removephppart = 0, $c
 	// Fix relative link /document.php with correct URL after the DOL_URL_ROOT:  ...href="/document.php?modulepart="
 	$content=preg_replace('/(href=")(\/?document\.php\?[^\"]*modulepart=[^\"]*)(\")/', '\1'.DOL_URL_ROOT.'\2\3', $content, -1, $nbrep);
 	$content=preg_replace('/(src=")(\/?document\.php\?[^\"]*modulepart=[^\"]*)(\")/', '\1'.DOL_URL_ROOT.'\2\3', $content, -1, $nbrep);
+
+	// Fix relative link /viewimage.php with correct URL after the DOL_URL_ROOT:  ...href="/viewimage.php?modulepart="
+	$content=preg_replace('/(url\(")(\/?viewimage\.php\?[^\"]*modulepart=[^\"]*)(\")/', '\1'.DOL_URL_ROOT.'\2\3', $content, -1, $nbrep);
 
 	dol_syslog('dolWebsiteReplacementOfLinks end', LOG_DEBUG);
 
@@ -124,14 +127,15 @@ function dolStripPhpCode($str, $replacewith = '')
 				$newstr .= $part;
 				continue;
 			}
-			//split on closing tag
+			// The second part is the php code. We split on closing tag
 			$partlings = explode('?>', $part);
 			if (!empty($partlings))
 			{
+				$phppart = $partlings[0];
 				//remove content before closing tag
-				if (count($partlings) > 1) $partlings[0] = '';
+				if (count($partlings) > 1) $partlings[0] = '';	// Todo why a count > 1 and not >= 1 ?
 				//append to out string
-				$newstr .= $replacewith.implode('', $partlings);
+				$newstr .= '<span class="phptag">'.$replacewith.'<!-- '.$phppart.' --></span>'.implode('', $partlings);
 			}
 		}
 	}
@@ -185,7 +189,7 @@ function dolKeepOnlyPhpCode($str)
  * @param	string	$contenttype	Content type
  * @param	int		$containerid 	Contenair id
  * @return  void
- * @see	dolWebsiteReplacementOfLinks()  for function used to replace content in the backoffice context when USEDOLIBARREDITOR is not on
+ * @see	dolWebsiteReplacementOfLinks()  for function used to replace content in the backoffice context.
  */
 function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 {
@@ -228,6 +232,7 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 		// Fix relative link /viewimage.php with correct URL after the DOL_URL_ROOT: href="/viewimage.php?modulepart=" => href="/dolibarr/viewimage.php?modulepart="
 		$content=preg_replace('/(href=")(\/?viewimage\.php\?[^\"]*modulepart=[^\"]*)(\")/', '\1'.DOL_URL_ROOT.'\2\3', $content, -1, $nbrep);
 		$content=preg_replace('/(src=")(\/?viewimage\.php\?[^\"]*modulepart=[^\"]*)(\")/', '\1'.DOL_URL_ROOT.'\2\3', $content, -1, $nbrep);
+		$content=preg_replace('/(url\(")(\/?viewimage\.php\?[^\"]*modulepart=[^\"]*)(\")/', '\1'.DOL_URL_ROOT.'\2\3', $content, -1, $nbrep);
 
 		// Fix relative link into medias with correct URL after the DOL_URL_ROOT: ../url("medias/
 		$content=preg_replace('/url\((["\']?)medias\//', 'url(\1'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file=', $content, -1, $nbrep);

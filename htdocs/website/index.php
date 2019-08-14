@@ -338,7 +338,7 @@ if ($action == 'addsite')
 {
 	$db->begin();
 
-    if (GETPOST('virtualhost', 'alpha') && ! preg_match('/^http/', GETPOST('virtualhost', 'alpha')))
+	if (GETPOST('virtualhost', 'alpha') && ! preg_match('/^http/', GETPOST('virtualhost', 'alpha')))
     {
         $error++;
         setEventMessages($langs->trans('ErrorURLMustStartWithHttp', $langs->transnoentitiesnoconv("VirtualHost")), null, 'errors');
@@ -414,6 +414,7 @@ if ($action == 'addcontainer')
 	{
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
+		//if (! preg_match('/^http/', $urltograb) && ! preg_match('/^file/', $urltograb))
 		if (! preg_match('/^http/', $urltograb))
 		{
 			$error++;
@@ -427,6 +428,7 @@ if ($action == 'addcontainer')
 			// Clean url to grab, so url can be
 			// http://www.example.com/ or http://www.example.com/dir1/ or http://www.example.com/dir1/aaa
 			$urltograbwithoutdomainandparam = preg_replace('/^https?:\/\/[^\/]+\/?/i', '', $urltograb);
+			//$urltograbwithoutdomainandparam = preg_replace('/^file:\/\/[^\/]+\/?/i', '', $urltograb);
 			$urltograbwithoutdomainandparam = preg_replace('/\?.*$/', '', $urltograbwithoutdomainandparam);
 			if (empty($urltograbwithoutdomainandparam) && ! preg_match('/\/$/', $urltograb))
 			{
@@ -770,7 +772,10 @@ if ($action == 'addcontainer')
 
 			// Save page alias
 			$result=dolSavePageAlias($filealias, $object, $objectpage);
-			if (! $result) setEventMessages('Failed to write file '.$filealias, null, 'errors');
+			if (! $result)
+			{
+				setEventMessages('Failed to write file '.$filealias, null, 'errors');
+			}
 
 			// Save page of content
 			$result=dolSavePageContent($filetpl, $object, $objectpage);
@@ -988,7 +993,11 @@ if ($action == 'updatecss')
 
     		// Now generate the master.inc.php page
     		$result = dolSaveMasterFile($filemaster);
-    		if (! $result) setEventMessages('Failed to write file '.$filemaster, null, 'errors');
+    		if (! $result)
+    		{
+    			$error++;
+    			setEventMessages('Failed to write file '.$filemaster, null, 'errors');
+    		}
 
 
     		// Html header file
@@ -1012,7 +1021,12 @@ if ($action == 'updatecss')
 
     		$htmlheadercontent = trim($htmlheadercontent)."\n";
 
-    		dolSaveHtmlHeader($filehtmlheader, $htmlheadercontent);
+    		$result = dolSaveHtmlHeader($filehtmlheader, $htmlheadercontent);
+    		if (! $result)
+    		{
+    			$error++;
+    			setEventMessages('Failed to write file '.$filehtmlheader, null, 'errors');
+    		}
 
 
     		// Css file
@@ -1024,23 +1038,21 @@ if ($action == 'updatecss')
     		$csscontent.= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
     		$csscontent.= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
     		$csscontent.= "ob_start();\n";
+    		$csscontent.= "if (! headers_sent()) {	/* because file is included inline when in edit mode and we don't want warning */ \n";
     		$csscontent.= "header('Cache-Control: max-age=3600, public, must-revalidate');\n";
     		$csscontent.= "header('Content-type: text/css');\n";
+    		$csscontent.= "}\n";
     		$csscontent.= "// END PHP ?>\n";
 
-    		$csscontent.= GETPOST('WEBSITE_CSS_INLINE', 'none');
+    		$csscontent.= trim(GETPOST('WEBSITE_CSS_INLINE', 'none'))."\n";
 
-    		$csscontent.= "\n".'<?php // BEGIN PHP'."\n";
+    		$csscontent.= '<?php // BEGIN PHP'."\n";
     		$csscontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "css");'."\n";
     		$csscontent.= "// END PHP ?>"."\n";
 
     		dol_syslog("Save css content into ".$filecss);
 
-    		dol_mkdir($pathofwebsite);
-    		$result = file_put_contents($filecss, $csscontent);
-    		if (! empty($conf->global->MAIN_UMASK))
-    			@chmod($filecss, octdec($conf->global->MAIN_UMASK));
-
+    		$result = dolSaveCssFile($filecss, $csscontent);
     		if (! $result)
     		{
     			$error++;
@@ -1061,19 +1073,13 @@ if ($action == 'updatecss')
     		$jscontent.= "header('Content-type: application/javascript');\n";
     		$jscontent.= "// END PHP ?>\n";
 
-    		$jscontent.= GETPOST('WEBSITE_JS_INLINE', 'none');
+    		$jscontent.= trim(GETPOST('WEBSITE_JS_INLINE', 'none'))."\n";
 
-    		$jscontent.= "\n".'<?php // BEGIN PHP'."\n";
+    		$jscontent.= '<?php // BEGIN PHP'."\n";
     		$jscontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "js");'."\n";
     		$jscontent.= "// END PHP ?>"."\n";
 
-    		dol_syslog("Save js content into ".$filejs);
-
-    		dol_mkdir($pathofwebsite);
-    		$result = file_put_contents($filejs, $jscontent);
-    		if (! empty($conf->global->MAIN_UMASK))
-    			@chmod($filejs, octdec($conf->global->MAIN_UMASK));
-
+    		$result = dolSaveJsFile($filejs, $jscontent);
     		if (! $result)
     		{
     			$error++;
@@ -1094,19 +1100,13 @@ if ($action == 'updatecss')
     	    $robotcontent.= "header('Content-type: text/css');\n";
     	    $robotcontent.= "// END PHP ?>\n";*/
 
-    		$robotcontent.= GETPOST('WEBSITE_ROBOT', 'none');
+    		$robotcontent.= trim(GETPOST('WEBSITE_ROBOT', 'none'))."\n";
 
     		/*$robotcontent.= "\n".'<?php // BEGIN PHP'."\n";
     	    $robotcontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "robot");'."\n";
     	    $robotcontent.= "// END PHP ?>"."\n";*/
 
-    		dol_syslog("Save file robot into ".$filerobot);
-
-    		dol_mkdir($pathofwebsite);
-    		$result = file_put_contents($filerobot, $robotcontent);
-    		if (! empty($conf->global->MAIN_UMASK))
-    			@chmod($filerobot, octdec($conf->global->MAIN_UMASK));
-
+    		$result = dolSaveRobotFile($filerobot, $robotcontent);
     		if (! $result)
     		{
     			$error++;
@@ -1116,20 +1116,15 @@ if ($action == 'updatecss')
 
     		// Htaccess file
     		$htaccesscontent ='';
-    		$htaccesscontent.= GETPOST('WEBSITE_HTACCESS', 'none');
+    		$htaccesscontent.= trim(GETPOST('WEBSITE_HTACCESS', 'none'))."\n";
 
-    		dol_syslog("Save file htaccess into ".$filehtaccess);
+    		$result = dolSaveHtaccessFile($filehtaccess, $htaccesscontent);
+    		if (! $result)
+    		{
+    			$error++;
+    			setEventMessages('Failed to write file '.$filehtaccess, null, 'errors');
+    		}
 
-    		dol_mkdir($pathofwebsite);
-    		$result = file_put_contents($filehtaccess, $htaccesscontent);
-    		if (! empty($conf->global->MAIN_UMASK))
-    			@chmod($filehtaccess, octdec($conf->global->MAIN_UMASK));
-
-       		if (! $result)
-       		{
-       			$error++;
-       			setEventMessages('Failed to write file '.$filehtaccess, null, 'errors');
-       		}
 
        		// manifest.json file
        		$manifestjsoncontent ='';
@@ -1144,24 +1139,18 @@ if ($action == 'updatecss')
        		$manifestjsoncontent.= "header('Content-type: application/manifest+json');\n";
        		$manifestjsoncontent.= "// END PHP ?>\n";
 
-       		$manifestjsoncontent.= GETPOST('WEBSITE_MANIFEST_JSON', 'none');
+       		$manifestjsoncontent.= trim(GETPOST('WEBSITE_MANIFEST_JSON', 'none'))."\n";
 
-       		$manifestjsoncontent.= "\n".'<?php // BEGIN PHP'."\n";
+       		$manifestjsoncontent.= '<?php // BEGIN PHP'."\n";
        		$manifestjsoncontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "manifest");'."\n";
        		$manifestjsoncontent.= "// END PHP ?>"."\n";
 
-       		dol_syslog("Save file manifest.json.php into ".$manifestjsoncontent);
-
-       		dol_mkdir($pathofwebsite);
-       		$result = file_put_contents($filemanifestjson, $manifestjsoncontent);
-       		if (! empty($conf->global->MAIN_UMASK))
-       			@chmod($filemanifestjson, octdec($conf->global->MAIN_UMASK));
-
-   			if ($result === false)
-   			{
-  				$error++;
-  				setEventMessages('Failed to write file '.$filemanifestjson, null, 'errors');
-  			}
+       		$result = dolSaveManifestJson($filemanifestjson, $manifestjsoncontent);
+       		if (! $result)
+       		{
+       			$error++;
+       			setEventMessages('Failed to write file '.$filemanifestjson, null, 'errors');
+       		}
 
 
     		// Message if no error
@@ -1673,6 +1662,11 @@ if ($action == 'exportsite')
 
 		readfile($fileofzip);
 		exit;
+	}
+	else
+	{
+		setEventMessages($object->error, $object->errors, 'errors');
+		$action = '';
 	}
 }
 
@@ -2205,7 +2199,53 @@ if (! GETPOST('hide_websitemenu'))
 				print '<!-- button EditInLine and ShowSubcontainers -->'."\n";
 				print '<div class="websiteselectionsection inline-block">';
 				print '<div class="inline-block">';
+
+				print '<span id="switchckeditorinline">';
+				print '<script type="text/javascript">
+						$(document).ready(function() {
+							var isEditingEnabled = '.($conf->global->WEBSITE_EDITINLINE?'true':'false').';
+							if (isEditingEnabled)
+							{
+								switchEditorOnline(true);
+							}
+
+							$( "#switchckeditorinline" ).click(function() {
+								switchEditorOnline();
+							});
+
+							function switchEditorOnline(forceenable)
+							{
+								if (! isEditingEnabled || forceenable)
+								{
+									console.log("Enable inline edit");
+									jQuery(\'section[contenteditable="true"]\').each(function(idx){
+										var idtouse = $(this).attr(\'id\');
+										console.log("Enable inline edit for "+idtouse);
+										CKEDITOR.inline(idtouse, {
+											// Allow some non-standard markup that we used in the introduction.
+											extraAllowedContent: \'span(*);cite(*);q(*);dl(*);dt(*);dd(*);ul(*);li(*);header(*);button(*);h1(*);h2(*);\',
+											removePlugins: \'stylescombo\',
+											// Show toolbar on startup (optional).
+											// startupFocus: true
+										});
+									})
+
+									isEditingEnabled = true;
+								}
+								else {
+									console.log("Disable inline edit");
+									for(name in CKEDITOR.instances)
+									{
+									    CKEDITOR.instances[name].destroy(true);
+									}
+									isEditingEnabled = false;
+								}
+							};
+						});
+						</script>';
 				print $langs->trans("EditInLine");
+				print '</span>';
+
 				if ($websitepage->grabbed_from)
 				{
 					//print '<input type="submit" class="button nobordertransp" disabled="disabled" title="'.dol_escape_htmltag($langs->trans("OnlyEditionOfSourceForGrabbedContent")).'" value="'.dol_escape_htmltag($langs->trans("EditWithEditor")).'" name="editcontent">';
@@ -2223,6 +2263,7 @@ if (! GETPOST('hide_websitemenu'))
 						print '<a class="button nobordertransp nohoverborder"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$websitepage->id.'&action=unseteditinline">'.img_picto($langs->trans("EditInLineOn"), 'switch_on', '', false, 0, 0, '', 'nomarginleft').'</a>';
 					}
 				}
+
 				print '</div>';
 				print '<div class="inline-block">';
 				print $langs->trans("ShowSubcontainers");
@@ -2924,7 +2965,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	if ($action != 'createcontainer')
 	{
 	    print '<tr><td>';
-	    print $langs->trans('LastModificationAuthor');
+	    print $langs->trans('UserModif');
 	    print '</td><td>';
 	    if ($pageusermodifid > 0)
 	    {
@@ -3057,9 +3098,10 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm')
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="replacesiteconfirm">';
+	print '<input type="hidden" name="website" value="'.$website->ref.'">';
 
 
-	print '<!-- Edit Media -->'."\n";
+	print '<!-- Replace string -->'."\n";
 	print '<div class="fiche"><br>';
 
 	print load_fiche_titre($langs->trans("ReplaceWebsiteContent"));
@@ -3141,6 +3183,7 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
 
 		// Ouput page under the Dolibarr top menu
 		$objectpage->fetch($pageid);
+
 		$jscontent = @file_get_contents($filejs);
 
 		$out = '<!-- Page content '.$filetpl.' : Div with (Htmlheader/Style of page from database + CSS Of website from file + Page content from database or by include if WEBSITE_SUBCONTAINERSINLINE is on) -->'."\n";
@@ -3155,6 +3198,25 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
 		$out.="\n<html><head>\n";
 		$out.="<!-- htmlheader/style of page from database -->\n";
 		$out.=dolWebsiteReplacementOfLinks($object, $objectpage->htmlheader, 1, 'htmlheader');
+
+		$out.="<!-- htmlheader/style of website from files -->\n";
+		// TODO Keep only the <link> or the <script> tags
+		/*
+		$htmlheadercontent = @file_get_contents($filehtmlheader);
+		$dom = new DOMDocument;
+		@$dom->loadHTML($htmlheadercontent);
+		$styles = $dom->getElementsByTagName('link');
+		$scripts = $dom->getElementsByTagName('script');
+		foreach($styles as $stylescursor)
+		{
+			$out.=$stylescursor;
+		}
+		foreach($scripts as $scriptscursor)
+		{
+			$out.=$scriptscursor;
+		}
+		*/
+
 		$out.="</head>\n";
 		$out.="\n<body>";
 
