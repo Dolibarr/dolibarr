@@ -970,8 +970,10 @@ if ($action == 'updatecss')
     		$csscontent.= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
     		$csscontent.= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
     		$csscontent.= "ob_start();\n";
+    		$csscontent.= "if (! headers_sent()) {	/* because file is included inline when in edit mode and we don't want warning */ \n";
     		$csscontent.= "header('Cache-Control: max-age=3600, public, must-revalidate');\n";
     		$csscontent.= "header('Content-type: text/css');\n";
+    		$csscontent.= "}\n";
     		$csscontent.= "// END PHP ?>\n";
 
     		$csscontent.= GETPOST('WEBSITE_CSS_INLINE', 'none');
@@ -1605,6 +1607,7 @@ if ($action == 'exportsite')
 	else
 	{
 		setEventMessages($object->error, $object->errors, 'errors');
+		$action = '';
 	}
 }
 
