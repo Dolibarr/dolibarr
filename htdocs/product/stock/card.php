@@ -69,76 +69,17 @@ $usercanread = (($user->rights->stock->lire));
 $usercancreate = (($user->rights->stock->creer));
 $usercandelete = (($user->rights->stock->supprimer));
 
+$parameters=array('id'=>$id, 'ref'=>$ref);
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+if (empty($reshook))
+{
 // Ajout entrepot
-if ($action == 'add' && $user->rights->stock->creer)
-{
-	$object->ref         = GETPOST("ref");
-	$object->fk_parent   = GETPOST("fk_parent");
-	$object->libelle     = GETPOST("libelle");
-	$object->description = GETPOST("desc");
-	$object->statut      = GETPOST("statut");
-	$object->lieu        = GETPOST("lieu");
-	$object->address     = GETPOST("address");
-	$object->zip         = GETPOST("zipcode");
-	$object->town        = GETPOST("town");
-	$object->country_id  = GETPOST("country_id");
-
-	if (! empty($object->libelle))
+	if ($action == 'add' && $user->rights->stock->creer)
 	{
-		$id = $object->create($user);
-		if ($id > 0)
-		{
-			setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
-
-			if (! empty($backtopage))
-			{
-				header("Location: ".$backtopage);
-				exit;
-			}
-			else
-			{
-				header("Location: card.php?id=".$id);
-				exit;
-			}
-		}
-		else
-		{
-			$action = 'create';
-			setEventMessages($object->error, $object->errors, 'errors');
-		}
-	}
-	else
-	{
-		setEventMessages($langs->trans("ErrorWarehouseRefRequired"), null, 'errors');
-		$action="create";   // Force retour sur page creation
-	}
-}
-
-// Delete warehouse
-if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->stock->supprimer)
-{
-	$object->fetch(GETPOST('id','int'));
-	$result=$object->delete($user);
-	if ($result > 0)
-	{
-	    setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
-		header("Location: ".DOL_URL_ROOT.'/product/stock/list.php?restore_lastsearch_values=1');
-		exit;
-	}
-	else
-	{
-		setEventMessages($object->error, $object->errors, 'errors');
-		$action='';
-	}
-}
-
-// Modification entrepot
-if ($action == 'update' && $cancel <> $langs->trans("Cancel"))
-{
-	if ($object->fetch($id))
-	{
-		$object->libelle     = GETPOST("libelle");
+		$object->ref         = GETPOST("ref");
 		$object->fk_parent   = GETPOST("fk_parent");
+		$object->libelle     = GETPOST("libelle");
 		$object->description = GETPOST("desc");
 		$object->statut      = GETPOST("statut");
 		$object->lieu        = GETPOST("lieu");
@@ -147,9 +88,79 @@ if ($action == 'update' && $cancel <> $langs->trans("Cancel"))
 		$object->town        = GETPOST("town");
 		$object->country_id  = GETPOST("country_id");
 
-		if ( $object->update($id, $user) > 0)
+		if (! empty($object->libelle))
 		{
-			$action = '';
+			$id = $object->create($user);
+			if ($id > 0)
+			{
+				setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
+
+				if (! empty($backtopage))
+				{
+					header("Location: ".$backtopage);
+					exit;
+				}
+				else
+				{
+					header("Location: card.php?id=".$id);
+					exit;
+				}
+			}
+			else
+			{
+				$action = 'create';
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
+		}
+		else
+		{
+			setEventMessages($langs->trans("ErrorWarehouseRefRequired"), null, 'errors');
+			$action="create";   // Force retour sur page creation
+		}
+	}
+
+	// Delete warehouse
+	if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->stock->supprimer)
+	{
+		$object->fetch(GETPOST('id','int'));
+		$result=$object->delete($user);
+		if ($result > 0)
+		{
+			setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
+			header("Location: ".DOL_URL_ROOT.'/product/stock/list.php?restore_lastsearch_values=1');
+			exit;
+		}
+		else
+		{
+			setEventMessages($object->error, $object->errors, 'errors');
+			$action='';
+		}
+	}
+
+	// Modification entrepot
+	if ($action == 'update' && $cancel <> $langs->trans("Cancel"))
+	{
+		if ($object->fetch($id))
+		{
+			$object->libelle     = GETPOST("libelle");
+			$object->fk_parent   = GETPOST("fk_parent");
+			$object->description = GETPOST("desc");
+			$object->statut      = GETPOST("statut");
+			$object->lieu        = GETPOST("lieu");
+			$object->address     = GETPOST("address");
+			$object->zip         = GETPOST("zipcode");
+			$object->town        = GETPOST("town");
+			$object->country_id  = GETPOST("country_id");
+
+			if ( $object->update($id, $user) > 0)
+			{
+				$action = '';
+			}
+			else
+			{
+				$action = 'edit';
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
 		}
 		else
 		{
@@ -157,24 +168,18 @@ if ($action == 'update' && $cancel <> $langs->trans("Cancel"))
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
-	else
+
+	if ($cancel == $langs->trans("Cancel"))
 	{
-		$action = 'edit';
-		setEventMessages($object->error, $object->errors, 'errors');
+		$action = '';
 	}
+
+
+	// Actions to build doc
+	$upload_dir = $conf->stock->dir_output;
+	$permissioncreate = $user->rights->stock->creer;
+	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
-
-if ($cancel == $langs->trans("Cancel"))
-{
-	$action = '';
-}
-
-
-// Actions to build doc
-$upload_dir = $conf->stock->dir_output;
-$permissioncreate = $user->rights->stock->creer;
-include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
-
 
 /*
  * View
@@ -256,6 +261,11 @@ if ($action == 'create')
 	}
 	print '</select>';
 	print '</td></tr>';
+
+	// other attributes
+	$parameters=array();
+	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
 
 	print '</table>';
 
@@ -393,6 +403,10 @@ else
 			    print $langs->trans("None");
 			}
 			print "</td></tr>";
+
+			$parameters=array();
+			$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+			print $hookmanager->resPrint;
 
 			print "</table>";
 
@@ -648,6 +662,10 @@ else
 			}
 			print '</select>';
 			print '</td></tr>';
+
+			$parameters=array();
+			$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+			print $hookmanager->resPrint;
 
 			print '</table>';
 
