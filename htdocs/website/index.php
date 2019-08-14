@@ -3281,7 +3281,7 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
 		{
 			// Keep the contenteditable="true" when mode Edit Inline is on
 		}
-		$out.=dolWebsiteReplacementOfLinks($object, $newcontent)."\n";
+		$out.=dolWebsiteReplacementOfLinks($object, $newcontent, 0, 'html', $objectpage->id)."\n";
 		//$out.=$newcontent;
 
 		$out.='</div>';
