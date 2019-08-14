@@ -23,7 +23,7 @@
 
 
 /**
- * Convert a page content to have correct links (based on DOL_URL_ROOT) into an html content.
+ * Convert a page content to have correct links (based on DOL_URL_ROOT) into an html content. It replaces also dynamic content with '...php...'
  * Used to ouput the page on the Preview from backoffice.
  *
  * @param	Website		$website			Web site object
@@ -61,7 +61,7 @@ function dolWebsiteReplacementOfLinks($website, $content, $removephppart = 0, $c
 	$content = preg_replace('/href="<\?php((?!\?>).)*\?>\n*/ims', $replacewith, $content);
 
 	//$replacewith='<span class="phptag">...php...</span>';
-	$replacewith='<span class="phptag">...php...</span>';
+	$replacewith='...phpx...';
 	if ($removephppart) $replacewith='';
 	//$content = preg_replace('/<\?php((?!\?toremove>).)*\?toremove>\n*/ims', $replacewith, $content);
 	/*if ($content === null) {
@@ -127,14 +127,15 @@ function dolStripPhpCode($str, $replacewith = '')
 				$newstr .= $part;
 				continue;
 			}
-			//split on closing tag
+			// The second part is the php code. We split on closing tag
 			$partlings = explode('?>', $part);
 			if (!empty($partlings))
 			{
+				$phppart = $partlings[0];
 				//remove content before closing tag
-				if (count($partlings) > 1) $partlings[0] = '';
+				if (count($partlings) > 1) $partlings[0] = '';	// Todo why a count > 1 and not >= 1 ?
 				//append to out string
-				$newstr .= $replacewith.implode('', $partlings);
+				$newstr .= '<span class="phptag">'.$replacewith.'<!-- '.$phppart.' --></span>'.implode('', $partlings);
 			}
 		}
 	}

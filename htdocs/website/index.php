@@ -2199,7 +2199,53 @@ if (! GETPOST('hide_websitemenu'))
 				print '<!-- button EditInLine and ShowSubcontainers -->'."\n";
 				print '<div class="websiteselectionsection inline-block">';
 				print '<div class="inline-block">';
+
+				print '<span id="switchckeditorinline">';
+				print '<script type="text/javascript">
+						$(document).ready(function() {
+							var isEditingEnabled = '.($conf->global->WEBSITE_EDITINLINE?'true':'false').';
+							if (isEditingEnabled)
+							{
+								switchEditorOnline(true);
+							}
+
+							$( "#switchckeditorinline" ).click(function() {
+								switchEditorOnline();
+							});
+
+							function switchEditorOnline(forceenable)
+							{
+								if (! isEditingEnabled || forceenable)
+								{
+									console.log("Enable inline edit");
+									jQuery(\'section[contenteditable="true"]\').each(function(idx){
+										var idtouse = $(this).attr(\'id\');
+										console.log("Enable inline edit for "+idtouse);
+										CKEDITOR.inline(idtouse, {
+											// Allow some non-standard markup that we used in the introduction.
+											extraAllowedContent: \'span(*);cite(*);q(*);dl(*);dt(*);dd(*);ul(*);li(*);header(*);button(*);h1(*);h2(*);\',
+											removePlugins: \'stylescombo\',
+											// Show toolbar on startup (optional).
+											// startupFocus: true
+										});
+									})
+
+									isEditingEnabled = true;
+								}
+								else {
+									console.log("Disable inline edit");
+									for(name in CKEDITOR.instances)
+									{
+									    CKEDITOR.instances[name].destroy(true);
+									}
+									isEditingEnabled = false;
+								}
+							};
+						});
+						</script>';
 				print $langs->trans("EditInLine");
+				print '</span>';
+
 				if ($websitepage->grabbed_from)
 				{
 					//print '<input type="submit" class="button nobordertransp" disabled="disabled" title="'.dol_escape_htmltag($langs->trans("OnlyEditionOfSourceForGrabbedContent")).'" value="'.dol_escape_htmltag($langs->trans("EditWithEditor")).'" name="editcontent">';
@@ -2217,6 +2263,7 @@ if (! GETPOST('hide_websitemenu'))
 						print '<a class="button nobordertransp nohoverborder"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$websitepage->id.'&action=unseteditinline">'.img_picto($langs->trans("EditInLineOn"), 'switch_on', '', false, 0, 0, '', 'nomarginleft').'</a>';
 					}
 				}
+
 				print '</div>';
 				print '<div class="inline-block">';
 				print $langs->trans("ShowSubcontainers");
