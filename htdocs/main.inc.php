@@ -624,7 +624,7 @@ if (! defined('NOLOGIN'))
 			session_destroy();
 			session_name($sessionname);
 			session_set_cookie_params(0, '/', null, false, true);   // Add tag httponly on session cookie
-			session_start();    // Fixing the bug of register_globals here is useless since session is empty
+			session_start();
 
 			if ($resultFetchUser == 0)
 			{
@@ -681,7 +681,7 @@ if (! defined('NOLOGIN'))
 			session_destroy();
 			session_name($sessionname);
 			session_set_cookie_params(0, '/', null, false, true);   // Add tag httponly on session cookie
-			session_start();    // Fixing the bug of register_globals here is useless since session is empty
+			session_start();
 
 			if ($resultFetchUser == 0)
 			{
