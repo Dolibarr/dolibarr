@@ -3020,10 +3020,14 @@ table.noborder.paymenttable {
 	height: 22px;
 }
 
-/* Disable shadows */
+/* Disable-Enable shadows */
 .noshadow {
 	-webkit-box-shadow: 0px 0px 0px #DDD !important;
 	box-shadow: 0px 0px 0px #DDD !important;
+}
+.shadow {
+	-webkit-box-shadow: 2px 2px 5px #CCC !important;
+	box-shadow: 2px 2px 5px #CCC !important;
 }
 
 div.tabBar .noborder {

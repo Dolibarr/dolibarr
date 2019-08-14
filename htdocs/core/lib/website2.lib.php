@@ -345,7 +345,7 @@ function dolSaveReadme($file, $content)
 
 
 /**
- * 	Show list of themes. Show all thumbs of themes
+ * 	Show list of themes. Show all thumbs of themes/skins
  *
  *	@param	Website		$website		Object website to load the tempalte into
  * 	@return	void
@@ -421,7 +421,7 @@ function showWebsiteTemplates(Website $website)
 						$url=DOL_URL_ROOT.'/viewimage.php?modulepart=doctemplateswebsite&file='.$subdirwithoutzip.".jpg";
 
 						if (! file_exists($file)) $url=DOL_URL_ROOT.'/public/theme/common/nophoto.png';
-						print '<img src="'.$url.'" border="0" width="80" height="60" alt="'.$title.'" title="'.$title.'" style="margin-bottom: 5px;">';
+						print '<img class="websiteskinthumb shadow" src="'.$url.'" border="0" width="80" height="60" alt="'.$title.'" title="'.$title.'" style="margin-bottom: 5px;">';
 						print '<br>';
 						print $subdir.' ('.dol_print_size(dol_filesize($dirtheme."/".$subdir), 1, 1).')';
 						print '<br><a href="'.$_SERVER["PHP_SELF"].'?action=importsiteconfirm&website='.$website->ref.'&templateuserfile='.$subdir.'" class="button">'.$langs->trans("Load").'</a>';
