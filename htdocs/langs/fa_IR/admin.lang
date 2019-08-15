@@ -574,7 +574,7 @@ Module510Name=حقوق
 Module510Desc=ثبت و پیگیری پرداخت‌های کارمندان
 Module520Name=وام‌ها
 Module520Desc=مدیریت وام‌ها
-Module600Name=اطلاعیه‌ها
+Module600Name=Notifications on business event
 Module600Desc=ارسال رایانامه‌های اطلاعیه مبتنی بر یک رخداد کاری: بر اساس کاربر (تنظیمات بر حسب هر کاربر)، بر اساس طرف‌سوم (تنظیمات بر اساس هر طرف سوم) یا بر اساس رایانامه‌های خاص
 Module600Long=به خاطر داشته باشید این واحد رایانامه‌را به صورت بلادرنگ در هنگام یک رخداد معین ارسال می‌نماید. در صورتی که به دنبال یک قابلیت برای ارسال یادآورنده‌های رخدادهائی مثل جلسات باشید، به واحد تنظیمات جلسات مراجعه کنید.
 Module610Name=انواع محصولات
@@ -1193,6 +1193,7 @@ ExtraFieldsSupplierOrders=ویژگی‌های تکمیلی (سفارش‌ها)
 ExtraFieldsSupplierInvoices=ویژگی‌های تکمیلی (صورت‌حساب‌ها)
 ExtraFieldsProject=ویژگی‌های تکمیلی (طرح‌ها)
 ExtraFieldsProjectTask=ویژگی‌های تکمیلی (وظایف)
+ExtraFieldsSalaries=Complementary attributes (salaries)
 ExtraFieldHasWrongValue=ویژگی %s مقدار نادرستی دارد.
 AlphaNumOnlyLowerCharsAndNoSpace=فقط حروف کوچک و اعداد انگلیسی بدون فاصله
 SendmailOptionNotComplete=هشدار، در برخی سامانه‌های لینوکس، برای ارسال رایانامه از شما، تنظیمات اجرای sendmail نیازمند گزینۀ -ba (در فایل php.ini ، مقدار mail.force_extra_parameters) است. در صورتی که برخی گیرندگان، هرگز رایانامه دریافت نکرده‌اند، این مؤلفۀ PHP را بدین شکل تغییر دهید: mail.force_extra_parameters = -ba ).
@@ -1220,13 +1221,14 @@ SuhosinSessionEncrypt=ذخیره‌سازی نشست کدبندی‌شدۀ Suhos
 ConditionIsCurrently=در حال حاضر وضعیت %s است
 YouUseBestDriver=شما از راه‌انداز %s استفاده می‌کنید که بهترین راه‌انداز دردسترس نیست.
 YouDoNotUseBestDriver=شما از راه‌انداز %s استفاده می‌کنید اما پیشنهاد ما استفادهاز %s است.
-NbOfProductIsLowerThanNoPb=در پایگاه داده شما فقط %s محصول/خدمات دارید. این دیگر نیاز به بهینه‌سازی خاصی ندارد.
+NbOfObjectIsLowerThanNoPb=You have only %s %s in the database. This does not require any particular optimization.
 SearchOptim=بهینه‌سازی جستجو
-YouHaveXProductUseSearchOptim=شما %s محصول در پایگاه داده دارید و نیاز است مقدار ثابت PRODUCT_DONOTSEARCH_ANYWHERE  را در خانه-برپاسازی-سایر به عدد 1 تغییر دهید. محدود کردن جستجو به ابتدای عبارت که به پایگاه داده امکان می‌دهد تا از شاخص‌ها استفاه نماید تا شما نتیجه‌را فوری دریافت نمائید.
+YouHaveXObjectUseSearchOptim=You have %s %s in the database. You should add the constant %s to 1 in Home-Setup-Other. Limit the search to the beginning of strings which makes it possible for the database to use indexes and you should get an immediate response.
+YouHaveXObjectAndSearchOptimOn=You have %s %s in the database and constant %s is set to 1 in Home-Setup-Other.
 BrowserIsOK=شما از مرورگر وب %s استفاده می‌نمائید. این مرورگر برای کارائی و امنیت مناسب است.
 BrowserIsKO=شما از مرورگر وب %s استفاده می‌نمائید. این مرورگر به‌عنوان یک انتخاب بد به نسبت امنیت، کارائی و اعتمادپذیری شناخته شده است. ما به شما پیشنهاد می‌کنیم از Firefox، Chrome، Opera و Safari استفاده نمائید.
-XDebugInstalled=XDebug بارگذاری شده است.
-XCacheInstalled=XCache بارگذاری شده است.
+PHPModuleLoaded=PHP component %s is loaded
+PreloadOPCode=Preloaded OPCode is used
 AddRefInList=نمایش فهرست اطلاعات مرجع -ref. فروشنده/مشتری (فهرست انتخابی یا ترکیبی) و اکثر ابَرپیوند. <br> نام طرف‌های سوم به شکل  " CC12345 - SC45678 - شرکت بزرگ سازمانی " به جای "شرکت بزرگ سازمانی" نمایش داده خواهد شد.
 AddAdressInList=نمایش فهرست اطلاعات نشانی‌های فروشنده/مشتری (فهرست انتخابی یا ترکیبی) <br>شخص سوم‌ها به شکل "شرکت بزرگ سازمانی - شمارۀ 21 خیابان 123456 شهر بزرگ ایران" به جای "شرکت بزرگ سازمانی" نمایش داده خواهند شد.
 AskForPreferredShippingMethod=پرسش برای روش ارسال ترجیحی برای اشخاص سوم
@@ -1734,9 +1736,9 @@ ExpenseReportsRulesSetup=برپاسازی واحد گزارش هزینه‌ها 
 ExpenseReportNumberingModules=واحد شماره‌گذاری گزارش هزینه‌ها
 NoModueToManageStockIncrease=هیچ واحدی که قادر به افزایش خودکار موجودی انبار باشد فعال نشده است. افزایش موجودی انبار تنها به صورت دستی انجام خواهد شد.
 YouMayFindNotificationsFeaturesIntoModuleNotification=شما می‌توانید برخی گزینه‌های مربوط به اطلاع‌رسانی از رایانامه را با فعال کردن و تنظیم واحد "آگاهی‌رسانی" تنظیم نمائید.
-ListOfNotificationsPerUser=فهرست آگاهی‌رسانی‌ها برحسب کاربر*
-ListOfNotificationsPerUserOrContact=فهرست آگاهی‌رسانی‌ها (رخدادها) ی موجود بر حسب کاربر * یا بر حسب طرف‌تماس**
-ListOfFixedNotifications=فهرست آگاهی‌رسانی‌های ثابت
+ListOfNotificationsPerUser=List of automatic notifications per user*
+ListOfNotificationsPerUserOrContact=List of possible automatic notifications (on business event) available per user* or per contact**
+ListOfFixedNotifications=List of automatic fixed notifications
 GoOntoUserCardToAddMore=به زبانۀ "آگاهی‌رسانی" یک کاربر رفته تا آگاهی‌رسانی‌های مربوط به کاربران را اضافه یا حذف نمائید
 GoOntoContactCardToAddMore=به زبانۀ "آگاهی رسانی" یک طرف‌سوم رفته تا آگاهی‌رسانی‌های مربوط به یک طرف تماس/نشانی‌ها را اضافه یا حذف نمائید
 Threshold=آستانه
@@ -1898,6 +1900,11 @@ OnMobileOnly=تنها روی صفحات کوچک (تلفن‌هوشمند)
 DisableProspectCustomerType=غیرفعال کردن نوع طرف سوم "مشتری احتمالی + مشتری" (بنابراین شخص‌سوم باید یک مشتری احتمالی یا یک مشتری باشد و نمی‌تواند هر دو با هم باشد)
 MAIN_OPTIMIZEFORTEXTBROWSER=ساده‌کردن رابط‌کاربری برای افراد نابینا
 MAIN_OPTIMIZEFORTEXTBROWSERDesc=این گزینه برای افراد نابینتا استفاده می‌شود یا این‌که از برنامه از یک مرورگر نوشتاری همانند Lynx یا Links استفاده می‌نمائید.
+MAIN_OPTIMIZEFORCOLORBLIND=Change  interface's color for color blind person
+MAIN_OPTIMIZEFORCOLORBLINDDesc=Enable this option if you are a color blind person, in some case interface will change color setup to increase contrast.
+Protanopia=Protanopia
+Deuteranopes=Deuteranopes
+Tritanopes=Tritanopes
 ThisValueCanOverwrittenOnUserLevel=این مقدار می‌تواند توسط هر کاربر از صفحۀ کاربری مربوطه و زبانۀ '%s' مورد بازنویسی قرار گیرد
 DefaultCustomerType=نوع پیش‌فرض شخص‌سوم در برگۀ ساخت "مشتری جدید"
 ABankAccountMustBeDefinedOnPaymentModeSetup=توجه: برای این‌که این قابلیت کار کند، حساب بانکی باید در تنظیمات هر واحد مربوط به پرداخت تعریف شود (Paypal، Stripe و غیره) 
@@ -1911,7 +1918,7 @@ LogsLinesNumber=تعداد سطور نمایش داده شده در زبانۀ �
 UseDebugBar=استفاده از نوار اشکال‌یابی
 DEBUGBAR_LOGS_LINES_NUMBER=تعداد آخرین سطور گزارش‌کار برای حفظ در کنسول
 WarningValueHigherSlowsDramaticalyOutput=هشدار! مقادیر بزرگ خروجی را به‌شدت کند می‌کند
-DebugBarModuleActivated=واحد نوار اشکال‌یابی فعال شده و رابط کاربری را به شدت کند می‌کند
+ModuleActivated=Module %s is activated and slows the interface
 EXPORTS_SHARE_MODELS=اشکال صادارات با همگان به اشتراک گذاشته شدند
 ExportSetup=برپاسازی واحد صادرات
 InstanceUniqueID=شناسۀ منحصر به‌فرد نمونه
@@ -1928,3 +1935,5 @@ YouWillFindItOnYourIFTTTAccount=شما آن را بر حساب IFTTT خود پی
 EndPointFor=نقطۀ آخر برای %s : %s
 DeleteEmailCollector=حذف جمع‌آورندۀ رایانامه
 ConfirmDeleteEmailCollector=آیا مطمئن هستید می‌خواهید این جمع‌آورندۀ رایانامه را حذف کنید؟
+RecipientEmailsWillBeReplacedWithThisValue=Recipient emails will be always replaced with this value
+AtLeastOneDefaultBankAccountMandatory=At least 1 default bank account must be defined

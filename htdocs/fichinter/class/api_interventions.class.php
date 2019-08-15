@@ -80,7 +80,7 @@ class Interventions extends DolibarrApi
 
         $result = $this->fichinter->fetch($id);
         if( ! $result ) {
-            throw new RestException(404, 'Intervention report not found');
+            throw new RestException(404, 'Intervention not found');
         }
 
         if( ! DolibarrApi::_checkAccessToResource('fichinter', $this->fichinter->id)) {
@@ -174,10 +174,10 @@ class Interventions extends DolibarrApi
             }
         }
         else {
-            throw new RestException(503, 'Error when retrieve fichinter list : '.$db->lasterror());
+            throw new RestException(503, 'Error when retrieve intervention list : '.$db->lasterror());
         }
         if( ! count($obj_ret)) {
-            throw new RestException(404, 'No finchinter found');
+            throw new RestException(404, 'No intervention found');
         }
         return $obj_ret;
     }
@@ -200,7 +200,7 @@ class Interventions extends DolibarrApi
         }
 
         if ($this->fichinter->create(DolibarrApiAccess::$user) < 0) {
-            throw new RestException(500, "Error creating fichinter", array_merge(array($this->fichinter->error), $this->fichinter->errors));
+            throw new RestException(500, "Error creating intervention", array_merge(array($this->fichinter->error), $this->fichinter->errors));
         }
 
         return $this->fichinter->id;
@@ -301,7 +301,7 @@ class Interventions extends DolibarrApi
             throw new RestException(404, 'Intervention not found');
         }
 
-        if( ! DolibarrApi::_checkAccessToResource('commande', $this->fichinter->id)) {
+        if( ! DolibarrApi::_checkAccessToResource('fichinter', $this->fichinter->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 

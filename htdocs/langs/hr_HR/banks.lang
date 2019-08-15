@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - banks
 Bank=Banka
-MenuBankCash=Banks | Cash
+MenuBankCash=Banke | Gotovina
 MenuVariousPayment=Miscellaneous payments
 MenuNewVariousPayment=New Miscellaneous payment
 BankName=Ime banke
@@ -47,13 +47,13 @@ BankAccountCountry=Država računa
 BankAccountOwner=Naziv vlasnika računa
 BankAccountOwnerAddress=Adresa vlasinka računa
 RIBControlError=Integrity check of values failed. This means the information for this account number is not complete or is incorrect (check country, numbers and IBAN).
-CreateAccount=Kreiraj račun
+CreateAccount=Izradi račun
 NewBankAccount=Novi račun
 NewFinancialAccount=Novi financijski račun
 MenuNewFinancialAccount=Novi financijski račun
 EditFinancialAccount=Uredi račun
 LabelBankCashAccount=Oznaka za banku ili gotovinu
-AccountType=Tip računa
+AccountType=Vrsta računa
 BankType0=Štedni račun
 BankType1=Tekući račun ili kreditna kartica
 BankType2=Gotovinski račun

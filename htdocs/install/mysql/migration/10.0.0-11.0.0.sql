@@ -71,4 +71,8 @@ create table llx_payment_salary_extrafields
 
 ALTER TABLE llx_payment_salary_extrafields ADD INDEX idx_payment_salary_extrafields (fk_object);
 
+ALTER TABLE llx_c_price_expression MODIFY COLUMN expression varchar(255) NOT NULL;
+
 UPDATE llx_bank_url set url = REPLACE( url, 'compta/salaries/', 'salaries/');
+
+ALTER TABLE llx_stock_mouvement ADD COLUMN fk_projet INTEGER NOT NULL DEFAULT 0 AFTER model_pdf;

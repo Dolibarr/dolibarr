@@ -2,6 +2,7 @@
 ProductRef=產品編號
 ProductLabel=產品標簽
 ProductLabelTranslated=Translated product label
+ProductDescription=Product description
 ProductDescriptionTranslated=Translated product description
 ProductNoteTranslated=Translated product note
 ProductServiceCard=產品服務卡

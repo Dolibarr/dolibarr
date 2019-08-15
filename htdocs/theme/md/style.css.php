@@ -3935,6 +3935,12 @@ tr.visible {
     color: #000 !important;
     text-shadow: none;
 }
+.bordertransp {
+    background-color: transparent;
+    background-image: none;
+    border: 1px solid #aaa;
+	font-weight: normal;
+}
 .websitebar {
 	border-bottom: 1px solid #ccc;
 	background: #eee;
