@@ -91,7 +91,7 @@ $id = (GETPOST('orderid')?GETPOST('orderid', 'int'):GETPOST('id', 'int'));
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'commande', $id, '');
 
-$diroutputmassaction=$conf->commande->dir_output . '/temp/massgeneration/'.$user->id;
+$diroutputmassaction=$conf->commande->multidir_output[$conf->entity] . '/temp/massgeneration/'.$user->id;
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
@@ -218,7 +218,7 @@ if (empty($reshook))
 	$objectlabel='Orders';
 	$permtoread = $user->rights->commande->lire;
 	$permtodelete = $user->rights->commande->supprimer;
-	$uploaddir = $conf->commande->dir_output;
+	$uploaddir = $conf->commande->multidir_output[$conf->entity];
 	$trigger_name='ORDER_SENTBYMAIL';
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
@@ -934,7 +934,7 @@ if ($resql)
 
 			print '<td width="16" class="nobordernopadding hideonsmartphone right">';
 			$filename=dol_sanitizeFileName($obj->ref);
-			$filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($obj->ref);
+			$filedir=$conf->commande->multidir_output[$conf->entity] . '/' . dol_sanitizeFileName($obj->ref);
 			$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
 			print $formfile->getDocumentsLink($generic_commande->element, $filename, $filedir);
 			print '</td>';
@@ -1081,7 +1081,7 @@ if ($resql)
 		// Extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 		// Fields from hook
-		$parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj);
+		$parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i);
 		$reshook=$hookmanager->executeHooks('printFieldListValue', $parameters);    // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		// Date creation
