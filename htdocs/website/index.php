@@ -2038,6 +2038,9 @@ if (! GETPOST('hide_websitemenu'))
     		$htmltext.='<br>';
     		$htmltext.='<br>';
     		$htmltext.=$langs->trans("YouCanAlsoTestWithPHPS", $dataroot);
+    		$htmltext.='<br>';
+    		$htmltext.='<br>';
+    		$htmltext.=$langs->trans("YouCanAlsoDeployToAnotherWHP");
 		}
 		print $form->textwithpicto($linktotestonwebserver, $htmltext, 1, 'none', 'valignmiddle', 0, 2, 'helpvirtualhost');
 		print '</div>';
