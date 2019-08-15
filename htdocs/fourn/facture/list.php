@@ -833,6 +833,7 @@ if ($resql)
 			$facturestatic->date_echeance = $db->jdate($obj->datelimite);
 			$facturestatic->statut = $obj->fk_statut;
 
+
 			$thirdparty->id=$obj->socid;
 			$thirdparty->name=$obj->name;
 			$thirdparty->client=$obj->client;
@@ -849,6 +850,14 @@ if ($resql)
 			$totaldeposits = $facturestatic->getSumDepositsUsed();
 			$totalpay = $paiement + $totalcreditnotes + $totaldeposits;
 			$remaintopay = $obj->total_ttc - $totalpay;
+
+            //If invoice has been converted and the conversion has been used, we dont have remain to pay on invoice
+            if($facturestatic->type == FactureFournisseur::TYPE_CREDIT_NOTE) {
+
+                if($facturestatic->isCreditNoteUsed()){
+                    $remaintopay=-$facturestatic->getSumFromThisCreditNotesNotUsed();
+                }
+            }
 
 			print '<tr class="oddeven">';
 			if (! empty($arrayfields['f.ref']['checked']))
