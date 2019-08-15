@@ -417,11 +417,25 @@ function showWebsiteTemplates(Website $website)
 
 						print '<div class="inline-block" style="margin-top: 10px; margin-bottom: 10px; margin-right: 20px; margin-left: 20px;">';
 
-						$file=$dirtheme."/".$subdirwithoutzip.".jpg";
+						$file = $dirtheme."/".$subdirwithoutzip.".jpg";
 						$url=DOL_URL_ROOT.'/viewimage.php?modulepart=doctemplateswebsite&file='.$subdirwithoutzip.".jpg";
 
 						if (! file_exists($file)) $url=DOL_URL_ROOT.'/public/theme/common/nophoto.png';
+
+						$originalfile = basename($file);
+						$entity = $conf->entity;
+						$modulepart = 'doctemplateswebsite';
+						$cache = '';
+						$title = $file;
+
+						$ret='';
+						$urladvanced=getAdvancedPreviewUrl($modulepart, $originalfile, 1, '&entity='.$entity);
+						if (! empty($urladvanced)) $ret.='<a class="'.$urladvanced['css'].'" target="'.$urladvanced['target'].'" mime="'.$urladvanced['mime'].'" href="'.$urladvanced['url'].'">';
+						else $ret.='<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($originalfile).'&cache='.$cache.'">';
+						print $ret;
 						print '<img class="websiteskinthumb shadow" src="'.$url.'" border="0" width="80" height="60" alt="'.$title.'" title="'.$title.'" style="margin-bottom: 5px;">';
+						print '</a>';
+
 						print '<br>';
 						print $subdir.' ('.dol_print_size(dol_filesize($dirtheme."/".$subdir), 1, 1).')';
 						print '<br><a href="'.$_SERVER["PHP_SELF"].'?action=importsiteconfirm&website='.$website->ref.'&templateuserfile='.$subdir.'" class="button">'.$langs->trans("Load").'</a>';
