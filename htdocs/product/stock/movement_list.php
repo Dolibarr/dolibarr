@@ -943,7 +943,7 @@ if ($resql)
         print_liste_field_titre($arrayfields['m.price']['label'], $_SERVER["PHP_SELF"], "m.price", "", $param, '', $sortfield, $sortorder, 'right ');
     }
     if (! empty($arrayfields['m.fk_projet']['checked'])) {
-	print_liste_field_titre($arrayfields['m.fk_projet']['label'],$_SERVER["PHP_SELF"], "m.fk_projet","",$param,'align="right"',$sortfield,$sortorder);
+        print_liste_field_titre($arrayfields['m.fk_projet']['label'], $_SERVER["PHP_SELF"], "m.fk_projet", "", $param, 'align="right"', $sortfield, $sortorder);
     }
 
     // Extra fields
