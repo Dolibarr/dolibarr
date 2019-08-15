@@ -624,7 +624,7 @@ if (! defined('NOLOGIN'))
 			session_destroy();
 			session_name($sessionname);
 			session_set_cookie_params(0, '/', null, false, true);   // Add tag httponly on session cookie
-			session_start();    // Fixing the bug of register_globals here is useless since session is empty
+			session_start();
 
 			if ($resultFetchUser == 0)
 			{
@@ -681,7 +681,7 @@ if (! defined('NOLOGIN'))
 			session_destroy();
 			session_name($sessionname);
 			session_set_cookie_params(0, '/', null, false, true);   // Add tag httponly on session cookie
-			session_start();    // Fixing the bug of register_globals here is useless since session is empty
+			session_start();
 
 			if ($resultFetchUser == 0)
 			{
@@ -1441,6 +1441,9 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
                 print 'var ckeditorFilebrowserImageBrowseUrl = \''.DOL_URL_ROOT.'/core/filemanagerdol/browser/default/browser.php?Type=Image&Connector='.DOL_URL_ROOT.'/core/filemanagerdol/connectors/php/connector.php\';'."\n";
                 print '</script>'."\n";
                 print '<script src="'.$pathckeditor.$jsckeditor.($ext?'?'.$ext:'').'"></script>'."\n";
+                print '<script>';
+                print 'CKEDITOR.disableAutoInline = true;'."\n";
+                print '</script>'."\n";
             }
 
             // Browser notifications

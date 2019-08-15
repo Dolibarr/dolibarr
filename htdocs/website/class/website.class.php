@@ -790,7 +790,7 @@ class Website extends CommonObject
 	/**
 	 * Generate a zip with all data of web site.
 	 *
-	 * @return  string						Path to file with zip
+	 * @return  string						Path to file with zip or '' if error
 	 */
 	public function exportWebSite()
 	{
@@ -931,6 +931,10 @@ class Website extends CommonObject
 			$stringtoexport = str_replace('file=logos%2Fthumbs%2F'.$mysoc->logo_small, "file=logos%2Fthumbs%2F__LOGO_SMALL_KEY__", $stringtoexport);
 			$stringtoexport = str_replace('file=logos%2Fthumbs%2F'.$mysoc->logo_mini, "file=logos%2Fthumbs%2F__LOGO_MINI_KEY__", $stringtoexport);
 			$stringtoexport = str_replace('file=logos%2Fthumbs%2F'.$mysoc->logo, "file=logos%2Fthumbs%2F__LOGO_KEY__", $stringtoexport);
+
+			// When we have a link src="image/websiteref/file.png" into html content
+			$stringtoexport = str_replace('="image/'.$website->ref.'/', '="image/__WEBSITE_KEY__/', $stringtoexport);
+
 			$line.= "'".$this->db->escape($stringtoexport)."'";		// Replace \r \n to have record on 1 line
 			$line.= ");";
 			$line.= "\n";
@@ -957,9 +961,18 @@ class Website extends CommonObject
 		$filename = $conf->website->dir_temp.'/'.$website->ref.'/website_'.$website->ref.'-'.dol_print_date(dol_now(), 'dayhourlog').'.zip';
 
 		dol_delete_file($fileglob, 0);
-		dol_compress_file($filedir, $filename, 'zip');
+		$result = dol_compress_file($filedir, $filename, 'zip');
 
-		return $filename;
+		if ($result > 0)
+		{
+			return $filename;
+		}
+		else
+		{
+			global $errormsg;
+			$this->error = $errormsg;
+			return '';
+		}
 	}
 
 
