@@ -517,7 +517,8 @@ class pdf_standard extends ModelePDFSuppliersPayments
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *	Show total to pay
 	 *
@@ -527,7 +528,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 	 *	@param	Translate		$outputlangs	Objet langs
 	 *	@return int								Position pour suite
 	 */
-	private function _tableau_cheque(&$pdf, $object, $posy, $outputlangs)
+	protected function _tableau_cheque(&$pdf, $object, $posy, $outputlangs)
 	{
         // phpcs:enable
 		global $conf,$mysoc;
@@ -576,7 +577,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 		$pdf->MultiCell(150, 4, date("d").' '.$outputlangs->transnoentitiesnoconv(date("F")).' '.date("Y"), 0, 'L', 1);
 	}
 
-
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *   Show table for lines
 	 *
@@ -590,7 +591,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 	 *   @param		string		$currency		Currency code
 	 *   @return	void
 	 */
-	private function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '')
+	protected function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '')
 	{
 		global $conf,$mysoc;
 
@@ -621,7 +622,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 		//$this->printRect($pdf,$this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height, $hidetop, $hidebottom);	// Rect prend une longueur en 3eme param et 4eme param
 	}
 
-
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *  Show top header of page.
 	 *
@@ -631,7 +632,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @return	void
 	 */
-	private function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
+	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
 		global $langs, $conf, $mysoc;
 
@@ -801,6 +802,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 		}
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *   	Show footer of page. Need this->emetteur object
      *
@@ -810,7 +812,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 	 *      @param	int			$hidefreetext		1=Hide free text
 	 *      @return	int								Return height of bottom margin including footer text
 	 */
-	private function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
+	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
 		global $conf;
 		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;

@@ -550,7 +550,7 @@ class pdf_standard extends ModelePDFStock
 					complete_substitutions_array($substitutionarray, $outputlangs, $object);
 					$notetoshow = make_substitutions($notetoshow, $substitutionarray, $outputlangs);
 					$notetoshow = convertBackOfficeMediasLinksToPublicLinks($notetoshow);
-					
+
 					$tab_top = 88;
 
 					$pdf->SetFont('', '', $default_font_size - 1);
@@ -753,7 +753,7 @@ class pdf_standard extends ModelePDFStock
 		}
 	}
 
-
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *   Show table for lines
 	 *
@@ -767,7 +767,7 @@ class pdf_standard extends ModelePDFStock
 	 *   @param     string		$currency		Currency code
 	 *   @return    void
 	 */
-	private function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '')
+	protected function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '')
 	{
 	    global $conf;
 
@@ -860,6 +860,7 @@ class pdf_standard extends ModelePDFStock
 		$pdf->SetLineStyle(array('dash'=>0));
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *  Show top header of page.
 	 *
@@ -870,7 +871,7 @@ class pdf_standard extends ModelePDFStock
 	 *  @param	string		$titlekey		Translation key to show as title of document
 	 *  @return	void
 	 */
-	private function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $titlekey = "")
+	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $titlekey = "")
 	{
 	    global $conf,$langs,$db,$hookmanager;
 
@@ -1089,6 +1090,7 @@ class pdf_standard extends ModelePDFStock
 	    $pdf->SetTextColor(0, 0, 0);
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *   	Show footer of page. Need this->emetteur object
 	 *
@@ -1098,7 +1100,7 @@ class pdf_standard extends ModelePDFStock
 	 *      @param	int			$hidefreetext		1=Hide free text
 	 *      @return	int								Return height of bottom margin including footer text
 	 */
-	private function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
+	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
 	    global $conf;
 	    $showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;

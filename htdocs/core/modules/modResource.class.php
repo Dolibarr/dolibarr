@@ -313,7 +313,7 @@ class modResource extends DolibarrModules
 	 *
 	 * 	@return		int		<=0 if KO, >0 if OK
 	 */
-	private function loadTables()
+	protected function loadTables()
 	{
 		return $this->_load_tables('/resource/sql/');
 	}
