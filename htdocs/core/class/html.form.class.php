@@ -523,7 +523,7 @@ class Form
 	 *  @param  string	$extracss           Add a CSS style to td, div or span tag
 	 *  @param  int		$noencodehtmltext   Do not encode into html entity the htmltext
 	 *  @param	int		$notabs				0=Include table and tr tags, 1=Do not include table and tr tags, 2=use div, 3=use span
-	 *  @param  string  $tooltiptrigger     ''=Tooltip on hover, 'abc'=Tooltip on click (abc is a unique key)
+	 *  @param  string  $tooltiptrigger     ''=Tooltip on hover, 'abc'=Tooltip on click (abc is a unique key, clickable link is on image or on link if param $type='none')
 	 *  @param	int		$forcenowrap		Force no wrap between text and picto (works with notabs=2 only)
 	 * 	@return	string						HTML code of text, picto, tooltip
 	 */

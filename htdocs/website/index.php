@@ -2393,7 +2393,8 @@ if (! GETPOST('hide_websitemenu'))
             }
             else
             {
-                print $form->textwithpicto($langs->trans("SyntaxHelp"), $htmltext, 1, 'help', 'inline-block', 1, 2, 'tooltipsubstitution');
+            	//img_help(($tooltiptrigger != '' ? 2 : 1), $alt)
+            	print $form->textwithpicto($langs->trans("SyntaxHelp").' '.img_help(2, $langs->trans("SyntaxHelp")), $htmltext, 1, 'none', 'inline-block', 1, 2, 'tooltipsubstitution');
             }
 		}
 		print '</div>';	// end websitehelp
