@@ -3073,7 +3073,10 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 				jQuery("#WEBSITE_TITLE").keyup(function() {
 					if (disableautofillofalias == 0)
 					{
-						var valnospecial = jQuery("#WEBSITE_TITLE").val().replace(/[^\w]/gi, \'-\').toLowerCase();
+						var valnospecial = jQuery("#WEBSITE_TITLE").val();
+						valnospecial = valnospecial.replace(/[éèê]/g, \'e\').replace(/[à]/g, \'a\').replace(/[ù]/g, \'u\').replace(/[î]/g, \'i\');
+						valnospecial = valnospecial.replace(/[ç]/g, \'c\').replace(/[ö]/g, \'o\');
+						valnospecial = valnospecial.replace(/[^\w]/gi, \'-\').toLowerCase();
 						valnospecial = valnospecial.replace(/\-+/g, \'-\').replace(/\-$/, \'\');
 						console.log("disableautofillofalias=0 so we replace WEBSITE_TITLE with "+valnospecial);
 						jQuery("#WEBSITE_PAGENAME").val(valnospecial);
