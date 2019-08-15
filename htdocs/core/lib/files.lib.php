@@ -2500,6 +2500,14 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$original_file=$conf->commande->dir_output.'/temp/massgeneration/'.$user->id.'/'.$original_file;
 	}
+    elseif ($modulepart == 'massfilesarea_sendings')
+    {
+        if ($fuser->rights->expedition->{$lire} || preg_match('/^specimen/i', $original_file))
+        {
+            $accessallowed=1;
+        }
+        $original_file=$conf->expedition->dir_output.'/sending/temp/massgeneration/'.$user->id.'/'.$original_file;
+    }
 	elseif ($modulepart == 'massfilesarea_invoices')
 	{
 		if ($fuser->rights->facture->{$lire} || preg_match('/^specimen/i', $original_file))
