@@ -23,90 +23,6 @@
 
 
 /**
- * Convert a page content to have correct links (based on DOL_URL_ROOT) into an html content. It replaces also dynamic content with '...php...'
- * Used to ouput the page on the Preview from backoffice.
- *
- * @param	Website		$website			Web site object
- * @param	string		$content			Content to replace
- * @param	int			$removephppart		0=Replace PHP sections with a PHP badge. 1=Remove completely PHP sections.
- * @param	string		$contenttype		Content type
- * @param	int			$containerid 		Contenair id
- * @return	boolean							True if OK
- * @see dolWebsiteOutput() for function used to replace content in a web server context
- */
-function dolWebsiteReplacementOfLinks($website, $content, $removephppart = 0, $contenttype='html', $containerid='')
-{
-	$nbrep = 0;
-
-	dol_syslog('dolWebsiteReplacementOfLinks start (contenttype='.$contenttype." containerid=".$containerid." USEDOLIBARREDITOR=".(defined('USEDOLIBARREDITOR')?'1':'')." USEDOLIBARRSERVER=".(defined('USEDOLIBARRSERVER')?'1':'').')', LOG_DEBUG);
-	//if ($contenttype == 'html') { print $content;exit; }
-
-	// Replace php code. Note $content may come from database and does not contains body tags.
-	$replacewith='...php...';
-	if ($removephppart) $replacewith='';
-	$content = preg_replace('/value="<\?php((?!\?>).)*\?>\n*/ims', 'value="'.$replacewith.'"', $content);
-
-	$replacewith='"callto=#';
-	if ($removephppart) $replacewith='';
-	$content = preg_replace('/"callto:<\?php((?!\?>).)*\?>\n*/ims', $replacewith, $content);
-
-	$replacewith='"mailto=#';
-	if ($removephppart) $replacewith='';
-	$content = preg_replace('/"mailto:<\?php((?!\?>).)*\?>\n*/ims', $replacewith, $content);
-
-	$replacewith='src="php';
-	if ($removephppart) $replacewith='';
-	$content = preg_replace('/src="<\?php((?!\?>).)*\?>\n*/ims', $replacewith, $content);
-
-	$replacewith='href="php';
-	if ($removephppart) $replacewith='';
-	$content = preg_replace('/href="<\?php((?!\?>).)*\?>\n*/ims', $replacewith, $content);
-
-	//$replacewith='<span class="phptag">...php...</span>';
-	$replacewith='...phpx...';
-	if ($removephppart) $replacewith='';
-	//$content = preg_replace('/<\?php((?!\?toremove>).)*\?toremove>\n*/ims', $replacewith, $content);
-	/*if ($content === null) {
-		if (preg_last_error() == PREG_JIT_STACKLIMIT_ERROR) $content = 'preg_replace error (when removing php tags) PREG_JIT_STACKLIMIT_ERROR';
-	}*/
-	$content = dolStripPhpCode($content, $replacewith);
-	//var_dump($content);
-
-	// Replace relative link / with dolibarr URL
-	$content = preg_replace('/(href=")\/\"/', '\1'.DOL_URL_ROOT.'/website/index.php?website='.$website->ref.'&pageid='.$website->fk_default_home.'"', $content, -1, $nbrep);
-	// Replace relative link /xxx.php#aaa or /xxx.php with dolibarr URL (we discard param ?...)
-	// TODO To support replacement of /xxx.php?bbb=ccc we must be able to replace only if link is not already DOL_URL_ROOT.'/website/index.php
-	$content = preg_replace('/(href=")\/?([^:\"]*)\.php(\?[^\"<>#]*)?(#[^\"<>]*)?\"/', '\1'.DOL_URL_ROOT.'/website/index.php?website='.$website->ref.'&pageref=\2\4"', $content, -1, $nbrep);
-
-	// Fix relative link into medias with correct URL after the DOL_URL_ROOT: ../url("medias/
-	$content = preg_replace('/url\((["\']?)medias\//', 'url(\1'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file=', $content, -1, $nbrep);
-	$content = preg_replace('/data-slide-bg=(["\']?)medias\//', 'data-slide-bg=\1'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file=', $content, -1, $nbrep);
-
-	// <img src="medias/image.png... => <img src="dolibarr/viewimage.php/modulepart=medias&file=image.png...
-	$content = preg_replace('/(<img[^>]*src=")(medias\/)/', '\1'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file=', $content, -1, $nbrep);
-	// <img src="image.png... => <img src="dolibarr/viewimage.php/modulepart=medias&file=image.png...
-	$content = preg_replace('/(<img[^>]*src=")(?!(http|\/?viewimage|'.preg_quote(DOL_URL_ROOT, '/').'\/viewimage))/', '\1'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file=', $content, -1, $nbrep);
-	// <img src="viewimage.php/modulepart=medias&file=image.png" => <img src="dolibarr/viewimage.php/modulepart=medias&file=image.png"
-	$content = preg_replace('/(<img[^>]*src=")(\/?viewimage\.php)/', '\1'.DOL_URL_ROOT.'/viewimage.php', $content, -1, $nbrep);
-
-	// action="newpage.php" => action="dolibarr/website/index.php?website=...&pageref=newpage
-	$content = preg_replace('/(action=")\/?([^:\"]*)(\.php\")/', '\1'.DOL_URL_ROOT.'/website/index.php?website='.$website->ref.'&pageref=\2"', $content, -1, $nbrep);
-
-	// Fix relative link /document.php with correct URL after the DOL_URL_ROOT:  ...href="/document.php?modulepart="
-	$content=preg_replace('/(href=")(\/?document\.php\?[^\"]*modulepart=[^\"]*)(\")/', '\1'.DOL_URL_ROOT.'\2\3', $content, -1, $nbrep);
-	$content=preg_replace('/(src=")(\/?document\.php\?[^\"]*modulepart=[^\"]*)(\")/', '\1'.DOL_URL_ROOT.'\2\3', $content, -1, $nbrep);
-
-	// Fix relative link /viewimage.php with correct URL after the DOL_URL_ROOT:  ...href="/viewimage.php?modulepart="
-	$content=preg_replace('/(url\(")(\/?viewimage\.php\?[^\"]*modulepart=[^\"]*)(\")/', '\1'.DOL_URL_ROOT.'\2\3', $content, -1, $nbrep);
-
-	dol_syslog('dolWebsiteReplacementOfLinks end', LOG_DEBUG);
-	//if ($contenttype == 'html') { print $content;exit; }
-
-	return $content;
-}
-
-
-/**
  * Remove PHP code part from a string.
  *
  * @param 	string	$str			String to clean
@@ -155,34 +71,124 @@ function dolStripPhpCode($str, $replacewith = '')
  */
 function dolKeepOnlyPhpCode($str)
 {
-    $newstr = '';
+	$newstr = '';
 
-    //split on each opening tag
-    $parts = explode('<?php', $str);
-    if (!empty($parts))
-    {
-        $i=0;
-        foreach($parts as $part)
-        {
-            if ($i == 0) 	// The first part is never php code
-            {
-                $i++;
-                continue;
-            }
-            $newstr.='<?php';
-            //split on closing tag
-            $partlings = explode('?>', $part, 2);
-            if (!empty($partlings))
-            {
-                $newstr .= $partlings[0].'?>';
-            }
-            else
-            {
-                $newstr .= $part.'?>';
-            }
-        }
-    }
-    return $newstr;
+	//split on each opening tag
+	$parts = explode('<?php', $str);
+	if (!empty($parts))
+	{
+		$i=0;
+		foreach($parts as $part)
+		{
+			if ($i == 0) 	// The first part is never php code
+			{
+				$i++;
+				continue;
+			}
+			$newstr.='<?php';
+			//split on closing tag
+			$partlings = explode('?>', $part, 2);
+			if (!empty($partlings))
+			{
+				$newstr .= $partlings[0].'?>';
+			}
+			else
+			{
+				$newstr .= $part.'?>';
+			}
+		}
+	}
+	return $newstr;
+}
+
+/**
+ * Convert a page content to have correct links (based on DOL_URL_ROOT) into an html content. It replaces also dynamic content with '...php...'
+ * Used to ouput the page on the Preview from backoffice.
+ *
+ * @param	Website		$website			Web site object
+ * @param	string		$content			Content to replace
+ * @param	int			$removephppart		0=Replace PHP sections with a PHP badge. 1=Remove completely PHP sections.
+ * @param	string		$contenttype		Content type
+ * @param	int			$containerid 		Contenair id
+ * @return	boolean							True if OK
+ * @see dolWebsiteOutput() for function used to replace content in a web server context
+ */
+function dolWebsiteReplacementOfLinks($website, $content, $removephppart = 0, $contenttype='html', $containerid='')
+{
+	$nbrep = 0;
+
+	dol_syslog('dolWebsiteReplacementOfLinks start (contenttype='.$contenttype." containerid=".$containerid." USEDOLIBARREDITOR=".(defined('USEDOLIBARREDITOR')?'1':'')." USEDOLIBARRSERVER=".(defined('USEDOLIBARRSERVER')?'1':'').')', LOG_DEBUG);
+	//if ($contenttype == 'html') { print $content;exit; }
+
+	// Replace php code. Note $content may come from database and does not contains body tags.
+	$replacewith='...php...';
+	if ($removephppart) $replacewith='';
+	$content = preg_replace('/value="<\?php((?!\?>).)*\?>\n*/ims', 'value="'.$replacewith.'"', $content);
+
+	$replacewith='"callto=#';
+	if ($removephppart) $replacewith='';
+	$content = preg_replace('/"callto:<\?php((?!\?>).)*\?>\n*/ims', $replacewith, $content);
+
+	$replacewith='"mailto=#';
+	if ($removephppart) $replacewith='';
+	$content = preg_replace('/"mailto:<\?php((?!\?>).)*\?>\n*/ims', $replacewith, $content);
+
+	$replacewith='src="php';
+	if ($removephppart) $replacewith='';
+	$content = preg_replace('/src="<\?php((?!\?>).)*\?>\n*/ims', $replacewith, $content);
+
+	$replacewith='href="php';
+	if ($removephppart) $replacewith='';
+	$content = preg_replace('/href="<\?php((?!\?>).)*\?>\n*/ims', $replacewith, $content);
+
+	//$replacewith='<span class="phptag">...php...</span>';
+	$replacewith='...php...';
+	if ($removephppart) $replacewith='';
+	//$content = preg_replace('/<\?php((?!\?toremove>).)*\?toremove>\n*/ims', $replacewith, $content);
+	/*if ($content === null) {
+		if (preg_last_error() == PREG_JIT_STACKLIMIT_ERROR) $content = 'preg_replace error (when removing php tags) PREG_JIT_STACKLIMIT_ERROR';
+	}*/
+	$content = dolStripPhpCode($content, $replacewith);
+	//var_dump($content);
+
+	// Protect the link styles.css.php to any replacement that we make after.
+	$content = str_replace('href="styles.css.php', 'href="!~!~!~styles.css.php', $content);
+
+	// Replace relative link / with dolibarr URL
+	$content = preg_replace('/(href=")\/\"/', '\1!~!~!~'.DOL_URL_ROOT.'/website/index.php?website='.$website->ref.'&pageid='.$website->fk_default_home.'"', $content, -1, $nbrep);
+	// Replace relative link /xxx.php#aaa or /xxx.php with dolibarr URL (we discard param ?...)
+	$content = preg_replace('/(href=")\/?([^:\"\!]*)\.php(#[^\"<>]*)?\"/', '\1!~!~!~'.DOL_URL_ROOT.'/website/index.php?website='.$website->ref.'&pageref=\2\4"', $content, -1, $nbrep);
+	// Replace relative link /xxx.php?a=b&c=d#aaa or /xxx.php?a=b&c=d with dolibarr URL
+	$content = preg_replace('/(href=")\/?([^:\"\!]*)\.php\?([^#\"<>]*)(#[^\"<>]*)?\"/', '\1!~!~!~'.DOL_URL_ROOT.'/public/website/index.php?website='.$website->ref.'&pageref=\2&\3\4"', $content, -1, $nbrep);
+
+	// Fix relative link into medias with correct URL after the DOL_URL_ROOT: ../url("medias/
+	$content = preg_replace('/url\((["\']?)medias\//', 'url(\1!~!~!~'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file=', $content, -1, $nbrep);
+	$content = preg_replace('/data-slide-bg=(["\']?)medias\//', 'data-slide-bg=\1!~!~!~'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file=', $content, -1, $nbrep);
+
+	// <img src="medias/image.png... => <img src="dolibarr/viewimage.php/modulepart=medias&file=image.png...
+	$content = preg_replace('/(<img[^>]*src=")(medias\/)/', '\1!~!~!~'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file=', $content, -1, $nbrep);
+	// <img src="image.png... => <img src="dolibarr/viewimage.php/modulepart=medias&file=image.png...
+	$content = preg_replace('/(<img[^>]*src=")(?!(http|\/?viewimage|'.preg_quote(DOL_URL_ROOT, '/').'\/viewimage))/', '\1!~!~!~'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file=', $content, -1, $nbrep);
+	// <img src="viewimage.php/modulepart=medias&file=image.png" => <img src="dolibarr/viewimage.php/modulepart=medias&file=image.png"
+	$content = preg_replace('/(<img[^>]*src=")(\/?viewimage\.php)/', '\1!~!~!~'.DOL_URL_ROOT.'/viewimage.php', $content, -1, $nbrep);
+
+	// action="newpage.php" => action="dolibarr/website/index.php?website=...&pageref=newpage
+	$content = preg_replace('/(action=")\/?([^:\"]*)(\.php\")/', '\1!~!~!~'.DOL_URL_ROOT.'/website/index.php?website='.$website->ref.'&pageref=\2"', $content, -1, $nbrep);
+
+	// Fix relative link /document.php with correct URL after the DOL_URL_ROOT:  ...href="/document.php?modulepart="
+	$content=preg_replace('/(href=")(\/?document\.php\?[^\"]*modulepart=[^\"]*)(\")/', '\1!~!~!~'.DOL_URL_ROOT.'\2\3', $content, -1, $nbrep);
+	$content=preg_replace('/(src=")(\/?document\.php\?[^\"]*modulepart=[^\"]*)(\")/', '\1!~!~!~'.DOL_URL_ROOT.'\2\3', $content, -1, $nbrep);
+
+	// Fix relative link /viewimage.php with correct URL after the DOL_URL_ROOT:  ...href="/viewimage.php?modulepart="
+	$content=preg_replace('/(url\(")(\/?viewimage\.php\?[^\"]*modulepart=[^\"]*)(\")/', '\1!~!~!~'.DOL_URL_ROOT.'\2\3', $content, -1, $nbrep);
+
+	// Remove the protection tag !~!~!~
+	$content = str_replace('!~!~!~', '', $content);
+
+	dol_syslog('dolWebsiteReplacementOfLinks end', LOG_DEBUG);
+	//if ($contenttype == 'html') { print $content;exit; }
+
+	return $content;
 }
 
 /**
@@ -221,36 +227,43 @@ function dolWebsiteOutput($content, $contenttype='html', $containerid='')
 	{
 		global $website;
 
+		// Protect the link styles.css.php to any replacement that we make after.
+		$content = str_replace('href="styles.css.php', 'href="!~!~!~styles.css.php', $content);
+
 		// Replace relative link / with dolibarr URL:  ...href="/"...
-		$content=preg_replace('/(href=")\/\"/', '\1'.DOL_URL_ROOT.'/public/website/index.php?website='.$website->ref.'"', $content, -1, $nbrep);
-		// Replace relative link /xxx.php with dolibarr URL:  ...href="....php"
-		$content=preg_replace('/(href=")\/?([^:\"]*)(\.php\")/', '\1'.DOL_URL_ROOT.'/public/website/index.php?website='.$website->ref.'&pageref=\2"', $content, -1, $nbrep);
-		// Replace relative link /xxx with dolibarr URL:  ...href="....php"
-		$content=preg_replace('/(href=")\/?([a-zA-Z0-9\-]+)(\")/', '\1'.DOL_URL_ROOT.'/public/website/index.php?website='.$website->ref.'&pageref=\2\3', $content, -1, $nbrep);
-		$content=preg_replace('/(href=")\/?([a-zA-Z0-9\-]+)(\?)/', '\1'.DOL_URL_ROOT.'/public/website/index.php?website='.$website->ref.'&pageref=\2\3', $content, -1, $nbrep);
+		$content = preg_replace('/(href=")\/\"/', '\1!~!~!~'.DOL_URL_ROOT.'/public/website/index.php?website='.$website->ref.'"', $content, -1, $nbrep);
+		// Replace relative link /xxx.php#aaa or /xxx.php with dolibarr URL:  ...href="....php" (we discard param ?...)
+		$content = preg_replace('/(href=")\/?([^:\"\!]*)\.php(#[^\"<>]*)?\"/', '\1!~!~!~'.DOL_URL_ROOT.'/public/website/index.php?website='.$website->ref.'&pageref=\2\3"', $content, -1, $nbrep);
+		// Replace relative link /xxx.php?a=b&c=d#aaa or /xxx.php?a=b&c=d with dolibarr URL
+		$content = preg_replace('/(href=")\/?([^:\"\!]*)\.php\?([^#\"<>]*)(#[^\"<>]*)?\"/', '\1!~!~!~'.DOL_URL_ROOT.'/public/website/index.php?website='.$website->ref.'&pageref=\2&\3\4"', $content, -1, $nbrep);
+		// Replace relative link without .php like /xxx#aaa or /xxx with dolibarr URL:  ...href="....php"
+		$content = preg_replace('/(href=")\/?([a-zA-Z0-9\-_#]+)(\"|\?)/', '\1!~!~!~'.DOL_URL_ROOT.'/public/website/index.php?website='.$website->ref.'&pageref=\2\3', $content, -1, $nbrep);
 
 		// Fix relative link /document.php with correct URL after the DOL_URL_ROOT:  href="/document.php?modulepart=" => href="/dolibarr/document.php?modulepart="
-		$content=preg_replace('/(href=")(\/?document\.php\?[^\"]*modulepart=[^\"]*)(\")/', '\1'.DOL_URL_ROOT.'\2\3', $content, -1, $nbrep);
-		$content=preg_replace('/(src=")(\/?document\.php\?[^\"]*modulepart=[^\"]*)(\")/', '\1'.DOL_URL_ROOT.'\2\3', $content, -1, $nbrep);
+		$content = preg_replace('/(href=")(\/?document\.php\?[^\"]*modulepart=[^\"]*)(\")/', '\1!~!~!~'.DOL_URL_ROOT.'\2\3', $content, -1, $nbrep);
+		$content = preg_replace('/(src=")(\/?document\.php\?[^\"]*modulepart=[^\"]*)(\")/', '\1!~!~!~'.DOL_URL_ROOT.'\2\3', $content, -1, $nbrep);
 
 		// Fix relative link /viewimage.php with correct URL after the DOL_URL_ROOT: href="/viewimage.php?modulepart=" => href="/dolibarr/viewimage.php?modulepart="
-		$content=preg_replace('/(href=")(\/?viewimage\.php\?[^\"]*modulepart=[^\"]*)(\")/', '\1'.DOL_URL_ROOT.'\2\3', $content, -1, $nbrep);
-		$content=preg_replace('/(src=")(\/?viewimage\.php\?[^\"]*modulepart=[^\"]*)(\")/', '\1'.DOL_URL_ROOT.'\2\3', $content, -1, $nbrep);
-		$content=preg_replace('/(url\(")(\/?viewimage\.php\?[^\"]*modulepart=[^\"]*)(\")/', '\1'.DOL_URL_ROOT.'\2\3', $content, -1, $nbrep);
+		$content = preg_replace('/(href=")(\/?viewimage\.php\?[^\"]*modulepart=[^\"]*)(\")/', '\1!~!~!~'.DOL_URL_ROOT.'\2\3', $content, -1, $nbrep);
+		$content = preg_replace('/(src=")(\/?viewimage\.php\?[^\"]*modulepart=[^\"]*)(\")/', '\1!~!~!~'.DOL_URL_ROOT.'\2\3', $content, -1, $nbrep);
+		$content = preg_replace('/(url\(")(\/?viewimage\.php\?[^\"]*modulepart=[^\"]*)(\")/', '\1!~!~!~'.DOL_URL_ROOT.'\2\3', $content, -1, $nbrep);
 
 		// Fix relative link into medias with correct URL after the DOL_URL_ROOT: ../url("medias/
-		$content=preg_replace('/url\((["\']?)medias\//', 'url(\1'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file=', $content, -1, $nbrep);
-		$content=preg_replace('/data-slide-bg=(["\']?)medias\//', 'data-slide-bg=\1'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file=', $content, -1, $nbrep);
+		$content = preg_replace('/url\((["\']?)medias\//', 'url(\1!~!~!~'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file=', $content, -1, $nbrep);
+		$content = preg_replace('/data-slide-bg=(["\']?)medias\//', 'data-slide-bg=\1!~!~!~'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file=', $content, -1, $nbrep);
 
 		// <img src="medias/image.png... => <img src="dolibarr/viewimage.php/modulepart=medias&file=image.png...
-		$content = preg_replace('/(<img[^>]*src=")(medias\/)/', '\1'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file=', $content, -1, $nbrep);
+		$content = preg_replace('/(<img[^>]*src=")(medias\/)/', '\1!~!~!~'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file=', $content, -1, $nbrep);
 		// <img src="image.png... => <img src="dolibarr/viewimage.php/modulepart=medias&file=image.png...
-		$content = preg_replace('/(<img[^>]*src=")(?!(http|\/?viewimage|'.preg_quote(DOL_URL_ROOT, '/').'\/viewimage))/', '\1'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file=', $content, -1, $nbrep);
+		$content = preg_replace('/(<img[^>]*src=")(?!(http|\/?viewimage|'.preg_quote(DOL_URL_ROOT, '/').'\/viewimage))/', '\1!~!~!~'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file=', $content, -1, $nbrep);
 		// <img src="viewimage.php/modulepart=medias&file=image.png" => <img src="dolibarr/viewimage.php/modulepart=medias&file=image.png"
-		$content = preg_replace('/(<img[^>]*src=")(\/?viewimage\.php)/', '\1'.DOL_URL_ROOT.'/viewimage.php', $content, -1, $nbrep);
+		$content = preg_replace('/(<img[^>]*src=")(\/?viewimage\.php)/', '\1!~!~!~'.DOL_URL_ROOT.'/viewimage.php', $content, -1, $nbrep);
 
 		// action="newpage.php" => action="dolibarr/website/index.php?website=...&pageref=newpage
-		$content = preg_replace('/(action=")\/?([^:\"]*)(\.php\")/', '\1'.DOL_URL_ROOT.'/public/website/index.php?website='.$website->ref.'&pageref=\2"', $content, -1, $nbrep);
+		$content = preg_replace('/(action=")\/?([^:\"]*)(\.php\")/', '\1!~!~!~'.DOL_URL_ROOT.'/public/website/index.php?website='.$website->ref.'&pageref=\2"', $content, -1, $nbrep);
+
+		// Remove the protection tag !~!~!~
+		$content = str_replace('!~!~!~', '', $content);
 	}
 	else									// REPLACEMENT OF LINKS When page called from virtual host
 	{

@@ -2923,7 +2923,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 		print '<tr><td class="titlefield fieldrequired">';
 		print $langs->trans('WEBSITE_PAGE_EXAMPLE');
 		print '</td><td>';
-		print $formwebsite->selectSampleOfContainer('sample', (GETPOST('sample', 'alpha')?GETPOST('sample', 'alpha'):'corporatehomepage'));
+		print $formwebsite->selectSampleOfContainer('sample', (GETPOSTISSET('sample')?GETPOST('sample', 'alpha'):'empty'));
 		print '</td></tr>';
 	}
 
