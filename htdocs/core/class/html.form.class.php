@@ -307,7 +307,7 @@ class Form
 	 * @param	mixed	$custommsg		String or Array of custom messages : eg array('success' => 'MyMessage', 'error' => 'MyMessage')
 	 * @return	string   		      	HTML edit in place
 	 */
-	private function editInPlace($object, $value, $htmlname, $condition, $inputType = 'textarea', $editvalue = null, $extObject = null, $custommsg = null)
+	protected function editInPlace($object, $value, $htmlname, $condition, $inputType = 'textarea', $editvalue = null, $extObject = null, $custommsg = null)
 	{
 		global $conf;
 
@@ -2362,7 +2362,7 @@ class Form
 	 * @param   string      $filterkey          Filter key to highlight
 	 * @return	void
 	 */
-	private function constructProductListOption(&$objp, &$opt, &$optJson, $price_level, $selected, $hidepriceinlabel = 0, $filterkey = '')
+	protected function constructProductListOption(&$objp, &$opt, &$optJson, $price_level, $selected, $hidepriceinlabel = 0, $filterkey = '')
 	{
 		global $langs, $conf, $user, $db;
 
