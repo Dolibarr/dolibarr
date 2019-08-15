@@ -283,7 +283,7 @@ if ($action == 'edit')	// Edit
 	//Invert sender and recipient
 
 	print '<tr class="oddeven"><td>'.$langs->trans("SwapSenderAndRecipientOnPDF").'</td><td>';
-	print $form->selectyesno('MAIN_INVERT_SENDER_RECIPIENT',(! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT))?$conf->global->MAIN_INVERT_SENDER_RECIPIENT:0,1);
+	print $form->selectyesno('MAIN_INVERT_SENDER_RECIPIENT', (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT))?$conf->global->MAIN_INVERT_SENDER_RECIPIENT:0, 1);
 	print '</td></tr>';
 
  	// Place customer adress to the ISO location
