@@ -1,23 +1,23 @@
 <!-- Enter here your HTML content. Add and if and tag contenteditable="true" if you want to use the inline editor for the content  -->
-<div id="div1" class="dolcontenteditable" style="text-align: center" contenteditable="true">
+<section id="div1" class="dolcontenteditable" style="text-align: center" contenteditable="true">
 <br>
 __(MyContainerTitle)__
 <br><br>
-</div>
+</section>
 
 
-<div id="divmycompany" style="text-align: center" contenteditable="true">
+<section id="divmycompany" style="text-align: center" contenteditable="true">
 This is example of dynamic content to get the name of your company (see source of page to see code):<br>
-</div>
+</section>
 <h1 style="text-align: center" >
 <?php echo $mysoc->name; ?>
 <br>
 </h1>
 
 
-<div id="divmetadata" style="text-align: center" contenteditable="true">
+<section id="divmetadata" style="text-align: center" contenteditable="true">
 This is another example of dynamic content to get meta data of a container/page (see source of page to see code):<br>
-</div>
+</section>
 <div style="text-align: center">
 __(Title)__ : <?php echo $websitepage->title; ?><br>
 __(Description)__ : <?php echo $websitepage->description; ?><br>
@@ -27,18 +27,18 @@ __(DateCreation)__ : <?php echo dol_print_date($websitepage->date_creation, 'day
 </div>
 
 
-<div id="divinclude" style="text-align: center" contenteditable="true">
+<section id="divinclude" style="text-align: center" contenteditable="true">
 __(AnotherContainer)__
-</div>
+</section>
 <div style="text-align: center">
 <?php includeContainer('alias_of_container_to_include'); ?>
 </div>
 
 
-<div id="div5" style="text-align: center" contenteditable="true">
+<section id="div5" style="text-align: center" contenteditable="true">
 <br><br>
 __(YouCanEditHtmlSource)__
 <br><br>
 Page created by __WEBSITE_CREATE_BY__
 <br>
-</div>
+</section>
