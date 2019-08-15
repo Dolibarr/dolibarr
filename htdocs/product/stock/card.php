@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2006	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005		Simon Tosser			<simon@kornog-computing.com>
- * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2016	    Francis Appels       	<francis.appels@yahoo.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -56,6 +56,9 @@ $backtopage=GETPOST('backtopage', 'alpha');
 //$result=restrictedArea($user,'stock', $id, 'entrepot&stock');
 $result=restrictedArea($user, 'stock');
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('warehousecard','globalcard'));
+
 $object = new Entrepot($db);
 $extrafields = new ExtraFields($db);
 
@@ -86,79 +89,30 @@ $usercanread = (($user->rights->stock->lire));
 $usercancreate = (($user->rights->stock->creer));
 $usercandelete = (($user->rights->stock->supprimer));
 
-// Ajout entrepot
-if ($action == 'add' && $user->rights->stock->creer)
+$parameters=array('id'=>$id, 'ref'=>$ref);
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+if (empty($reshook))
 {
-	$object->ref         = GETPOST("ref");
-	$object->fk_parent   = GETPOST("fk_parent");
-	$object->libelle     = GETPOST("libelle");
-	$object->description = GETPOST("desc");
-	$object->statut      = GETPOST("statut");
-	$object->lieu        = GETPOST("lieu");
-	$object->address     = GETPOST("address");
-	$object->zip         = GETPOST("zipcode");
-	$object->town        = GETPOST("town");
-	$object->country_id  = GETPOST("country_id");
+				 
+													
+ 
+	// Ajout entrepot
+	if ($action == 'add' && $user->rights->stock->creer)
+										   
+										
+										  
+										
+										   
+										   
+										
+											  
 
-	if (! empty($object->libelle))
+							   
 	{
-        // Fill array 'array_options' with data from add form
-        $ret = $extrafields->setOptionalsFromPost($extralabels, $object);
-        if ($ret < 0) {
-            $error++;
-            $action = 'create';
-        }
-
-        if (! $error) {
-            $id = $object->create($user);
-            if ($id > 0) {
-                setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
-
-                if (!empty($backtopage)) {
-                    header("Location: " . $backtopage);
-                    exit;
-                } else {
-                    header("Location: card.php?id=" . $id);
-                    exit;
-                }
-            } else {
-                $action = 'create';
-                setEventMessages($object->error, $object->errors, 'errors');
-            }
-        }
-	}
-	else
-	{
-		setEventMessages($langs->trans("ErrorWarehouseRefRequired"), null, 'errors');
-		$action="create";   // Force retour sur page creation
-	}
-}
-
-// Delete warehouse
-if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->stock->supprimer)
-{
-	$object->fetch(GETPOST('id', 'int'));
-	$result=$object->delete($user);
-	if ($result > 0)
-	{
-	    setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
-		header("Location: ".DOL_URL_ROOT.'/product/stock/list.php?restore_lastsearch_values=1');
-		exit;
-	}
-	else
-	{
-		setEventMessages($object->error, $object->errors, 'errors');
-		$action='';
-	}
-}
-
-// Modification entrepot
-if ($action == 'update' && $cancel <> $langs->trans("Cancel"))
-{
-	if ($object->fetch($id))
-	{
-		$object->libelle     = GETPOST("libelle");
+		$object->ref         = GETPOST("ref");
 		$object->fk_parent   = GETPOST("fk_parent");
+		$object->libelle     = GETPOST("libelle");
 		$object->description = GETPOST("desc");
 		$object->statut      = GETPOST("statut");
 		$object->lieu        = GETPOST("lieu");
@@ -167,55 +121,160 @@ if ($action == 'update' && $cancel <> $langs->trans("Cancel"))
 		$object->town        = GETPOST("town");
 		$object->country_id  = GETPOST("country_id");
 
-        // Fill array 'array_options' with data from add form
-        $ret = $extrafields->setOptionalsFromPost($extralabels, $object);
-        if ($ret < 0)   $error++;
+		if (! empty($object->libelle))
+		{
+			// Fill array 'array_options' with data from add form
+			$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+			if ($ret < 0) {
+				$error++;
+				$action = 'create';
+			}
 
-        if (! $error) {
-            $ret = $object->update($id, $user);
-            if ($ret < 0)   $error++;
-        }
+			if (! $error) {
+				$id = $object->create($user);
+				if ($id > 0) {
+					setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 
-		if ($error) {
+					if (!empty($backtopage)) {
+						header("Location: " . $backtopage);
+						exit;
+					} else {
+						header("Location: card.php?id=" . $id);
+						exit;
+					}
+				} else {
+					$action = 'create';
+					setEventMessages($object->error, $object->errors, 'errors');
+				}
+			}
+		}
+		else
+		{
+			setEventMessages($langs->trans("ErrorWarehouseRefRequired"), null, 'errors');
+			$action="create";   // Force retour sur page creation
+		}
+	}
+	 
+  
+																			   
+													   
+  
+ 
+
+	// Delete warehouse
+	if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->stock->supprimer)
+ 
+									  
+								
+				 
+  
+																	 
+																						  
+	   
+  
+	 
+	{
+		$object->fetch(GETPOST('id', 'int'));
+		$result=$object->delete($user);
+		if ($result > 0)
+		{
+			setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
+			header("Location: ".DOL_URL_ROOT.'/product/stock/list.php?restore_lastsearch_values=1');
+			exit;
+		}
+		else
+		{
+			setEventMessages($object->error, $object->errors, 'errors');
+			$action='';
+		}
+	}
+ 
+
+	// Modification entrepot
+	if ($action == 'update' && $cancel <> $langs->trans("Cancel"))
+ 
+						 
+	{
+											
+											  
+										 
+										   
+										 
+											
+											
+										 
+											   
+
+		if ($object->fetch($id))
+		{
+			$object->libelle     = GETPOST("libelle");
+			$object->fk_parent   = GETPOST("fk_parent");
+			$object->description = GETPOST("desc");
+			$object->statut      = GETPOST("statut");
+			$object->lieu        = GETPOST("lieu");
+			$object->address     = GETPOST("address");
+			$object->zip         = GETPOST("zipcode");
+			$object->town        = GETPOST("town");
+			$object->country_id  = GETPOST("country_id");
+
+			// Fill array 'array_options' with data from add form
+			$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+			if ($ret < 0)   $error++;
+
+			if (! $error) {
+				$ret = $object->update($id, $user);
+				if ($ret < 0)   $error++;
+			}
+
+			if ($error) {
+				$action = 'edit';
+				setEventMessages($object->error, $object->errors, 'errors');
+			} else {
+				$action = '';
+			}
+		}
+		else
+		{
 			$action = 'edit';
 			setEventMessages($object->error, $object->errors, 'errors');
-		} else {
-            $action = '';
-        }
+		}
 	}
-	else
+	 
+	elseif ($action == 'update_extras') {
+		$object->oldcopy = dol_clone($object);
+
+		// Fill array 'array_options' with data from update form
+		$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+		$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute', 'none'));
+		if ($ret < 0) $error++;
+		if (! $error) {
+			$result = $object->insertExtraFields();
+			if ($result < 0) {
+				setEventMessages($object->error, $object->errors, 'errors');
+				$error++;
+			}
+		}
+		if ($error) $action = 'edit_extras';
+	}
+ 
+
+	if ($cancel == $langs->trans("Cancel"))
 	{
-		$action = 'edit';
-		setEventMessages($object->error, $object->errors, 'errors');
+		$action = '';
 	}
-}
-elseif ($action == 'update_extras') {
-    $object->oldcopy = dol_clone($object);
 
-    // Fill array 'array_options' with data from update form
-    $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-    $ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute', 'none'));
-    if ($ret < 0) $error++;
-    if (! $error) {
-        $result = $object->insertExtraFields();
-        if ($result < 0) {
-            setEventMessages($object->error, $object->errors, 'errors');
-            $error++;
-        }
-    }
-    if ($error) $action = 'edit_extras';
-}
 
-if ($cancel == $langs->trans("Cancel"))
-{
-	$action = '';
+	// Actions to build doc
+	$upload_dir = $conf->stock->dir_output;
+	$permissioncreate = $user->rights->stock->creer;
+	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
 
 
-// Actions to build doc
-$upload_dir = $conf->stock->dir_output;
-$permissioncreate = $user->rights->stock->creer;
-include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
+					   
+									   
+												
+														   
 
 
 /*
@@ -301,6 +360,9 @@ if ($action == 'create')
 
     // Other attributes
     include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_add.tpl.php';
+	$parameters=array();
+	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
 
 	print '</table>';
 
@@ -345,10 +407,12 @@ else
 			}
 
 			// Call Hook formConfirm
-			$parameters = array();
-			$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-			if (empty($reshook)) $formconfirm.=$hookmanager->resPrint;
-			elseif ($reshook > 0) $formconfirm=$hookmanager->resPrint;
+			if (! $formconfirm) {
+				$parameters = array();
+				$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+				if (empty($reshook)) $formconfirm.=$hookmanager->resPrint;
+				elseif ($reshook > 0) $formconfirm=$hookmanager->resPrint;
+			}
 
 			// Print form confirm
 			print $formconfirm;
@@ -378,6 +442,7 @@ else
 				print '<tr><td>'.$langs->trans("ParentWarehouse").'</td><td>';
 				print $e->getNomUrl(3);
 				print '</td></tr>';
+
 			}
 
 			// Description
@@ -439,6 +504,9 @@ else
 
             // Other attributes
             include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
+			$parameters=array();
+			$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+			print $hookmanager->resPrint;
 
 			print "</table>";
 
