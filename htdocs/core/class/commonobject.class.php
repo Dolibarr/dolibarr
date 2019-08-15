@@ -1913,7 +1913,7 @@ abstract class CommonObject
 	 *  Change the multicurrency rate
 	 *
 	 *  @param		double	$rate	multicurrency rate
-	 *  @param		int		$mode	mode 1 : amounts in company currency will be recalculated, mode 2 : amounts in foreign currency
+	 *  @param		int		$mode	mode 1 : amounts in company currency will be recalculated, mode 2 : amounts in foreign currency will be recalculated
 	 *  @return		int				>0 if OK, <0 if KO
 	 */
 	public function setMulticurrencyRate($rate, $mode = 1)
@@ -1936,8 +1936,14 @@ abstract class CommonObject
 				{
 					foreach ($this->lines as &$line)
 					{
+						// Amounts in company currency will be recalculated
 						if($mode == 1) {
 							$line->subprice = 0;
+						}
+
+						// Amounts in foreign currency will be recalculated
+						if($mode == 2) {
+							$line->multicurrency_subprice = 0;
 						}
 
 						switch ($this->element) {

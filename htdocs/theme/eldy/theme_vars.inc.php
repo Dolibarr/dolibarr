@@ -44,9 +44,9 @@ $theme_bgcoloronglet = array(hexdec('DE'),hexdec('E7'),hexdec('EC'));
 
 // Colors
 $colorbackhmenu1='60,70,100';      // topmenu
-$colorbackvmenu1='248,248,248';      // vmenu
+$colorbackvmenu1='249,250,252';      // vmenu
 $colortopbordertitle1='200,200,200';    // top border of title
-$colorbacktitle1='220,220,223';      // title of tables,list
+$colorbacktitle1='233,234,238';      // title of tables,list
 $colorbacktabcard1='255,255,255';  // card
 $colorbacktabactive='234,234,234';
 $colorbacklineimpair1='255,255,255';    // line impair
