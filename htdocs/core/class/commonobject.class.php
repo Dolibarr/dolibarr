@@ -1913,7 +1913,7 @@ abstract class CommonObject
 	 *  Change the multicurrency rate
 	 *
 	 *  @param		double	$rate	multicurrency rate
-	 *  @param		int		$mode	mode 1 : amounts in company currency will be recalculated, mode 2 : amounts in foreign currency
+	 *  @param		int		$mode	mode 1 : amounts in company currency will be recalculated, mode 2 : amounts in foreign currency will be recalculated
 	 *  @return		int				>0 if OK, <0 if KO
 	 */
 	public function setMulticurrencyRate($rate, $mode = 1)
@@ -1936,8 +1936,14 @@ abstract class CommonObject
 				{
 					foreach ($this->lines as &$line)
 					{
+						// Amounts in company currency will be recalculated
 						if($mode == 1) {
 							$line->subprice = 0;
+						}
+
+						// Amounts in foreign currency will be recalculated
+						if($mode == 2) {
+							$line->multicurrency_subprice = 0;
 						}
 
 						switch ($this->element) {
@@ -2052,6 +2058,44 @@ abstract class CommonObject
 			$this->error='Status of the object is incompatible '.$this->statut;
 			return -2;
 		}
+	}
+
+
+	/**
+	 *  Change the retained warranty payments terms
+	 *
+	 *  @param		int		$id		Id of new payment terms
+	 *  @return		int				>0 if OK, <0 if KO
+	 */
+	public function setRetainedWarrantyPaymentTerms($id)
+	{
+	    dol_syslog(get_class($this).'::setRetainedWarrantyPaymentTerms('.$id.')');
+	    if ($this->statut >= 0 || $this->element == 'societe')
+	    {
+	        $fieldname = 'retained_warranty_fk_cond_reglement';
+
+	        $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
+	        $sql .= ' SET '.$fieldname.' = '.$id;
+	        $sql .= ' WHERE rowid='.$this->id;
+
+	        if ($this->db->query($sql))
+	        {
+	            $this->retained_warranty_fk_cond_reglement = $id;
+	            return 1;
+	        }
+	        else
+	        {
+	            dol_syslog(get_class($this).'::setRetainedWarrantyPaymentTerms Erreur '.$sql.' - '.$this->db->error());
+	            $this->error=$this->db->error();
+	            return -1;
+	        }
+	    }
+	    else
+	    {
+	        dol_syslog(get_class($this).'::setRetainedWarrantyPaymentTerms, status of the object is incompatible');
+	        $this->error='Status of the object is incompatible '.$this->statut;
+	        return -2;
+	    }
 	}
 
 	/**
@@ -5027,7 +5071,7 @@ abstract class CommonObject
 
 				//dol_syslog("attributeLabel=".$attributeLabel, LOG_DEBUG);
 				//dol_syslog("attributeType=".$attributeType, LOG_DEBUG);
-				
+
 				if (!empty($attrfieldcomputed))
 				{
 					if (!empty($conf->global->MAIN_STORE_COMPUTED_EXTRAFIELDS))
@@ -6047,6 +6091,12 @@ abstract class CommonObject
 			$type='link';
 			$param['options']=array($reg[1].':'.$reg[2]=>$reg[1].':'.$reg[2]);
 		}
+        elseif(preg_match('/^sellist:(.*):(.*):(.*):(.*)/i', $val['type'], $reg)) {
+            $param['options'] = array($reg[1] . ':' . $reg[2] . ':' . $reg[3] . ':' . $reg[4] => 'N');
+            $type = 'sellist';
+        }
+
+
 		$langfile=$val['langfile'];
 		$list=$val['list'];
 		$help=$val['help'];
@@ -6068,7 +6118,7 @@ abstract class CommonObject
 			{
 				$morecss = 'minwidth100imp';
 			}
-			elseif ($type == 'datetime')
+			elseif ($type == 'datetime' || $type == 'timestamp')
 			{
 				$morecss = 'minwidth200imp';
 			}
@@ -6112,7 +6162,7 @@ abstract class CommonObject
 				$value='';
 			}
 		}
-		elseif ($type == 'datetime')
+		elseif ($type == 'datetime' || $type == 'timestamp')
 		{
 			if(! empty($value)) {
 				$value=dol_print_date($value, 'dayhour');
@@ -6382,7 +6432,7 @@ abstract class CommonObject
 	 * @param 	array       $params         Optional parameters. Example: array('style'=>'class="oddeven"', 'colspan'=>$colspan)
 	 * @param 	string      $keysuffix      Suffix string to add after name and id of field (can be used to avoid duplicate names)
 	 * @param 	string      $keyprefix      Prefix string to add before name and id of field (can be used to avoid duplicate names)
-	 * @param	string		$onetrtd		All fields in same tr td
+	 * @param	string		$onetrtd		All fields in same tr td (TODO field not used ?)
 	 * @return 	string
 	 */
 	public function showOptionals($extrafields, $mode = 'view', $params = null, $keysuffix = '', $keyprefix = '', $onetrtd = 0)
@@ -6494,10 +6544,7 @@ abstract class CommonObject
 
 					$out .= '<tr id="'.$html_id.'" '.$csstyle.' class="'.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$extrafields_collapse_num.'" '.$domData.' >';
 
-					if (! empty($conf->global->MAIN_EXTRAFIELDS_USE_TWO_COLUMS) && ($e % 2) == 0)
-					{
-						if (! empty($conf->global->MAIN_EXTRAFIELDS_USE_TWO_COLUMS) && ($e % 2) == 0) { $colspan='0'; }
-					}
+					if (! empty($conf->global->MAIN_EXTRAFIELDS_USE_TWO_COLUMS) && ($e % 2) == 0) { $colspan='0'; }
 
 					if ($action == 'selectlines') { $colspan++; }
 
@@ -7350,6 +7397,7 @@ abstract class CommonObject
 		if (!empty($id))  $sql.= ' WHERE rowid = '.$id;
 		elseif (!empty($ref)) $sql.= " WHERE ref = ".$this->quote($ref, $this->fields['ref']);
 		else $sql.=' WHERE 1 = 1';	// usage with empty id and empty ref is very rare
+		if (empty($id) && isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) $sql.=' AND entity IN ('.getEntity($this->table_element).')';
 		if ($morewhere)   $sql.= $morewhere;
 		$sql.=' LIMIT 1';	// This is a fetch, to be sure to get only one record
 

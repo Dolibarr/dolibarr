@@ -383,7 +383,7 @@ if (empty($reshook))
 	        }
 			else $object->canvas=$canvas;
 
-	        if (GETPOST("private") == 1)	// Ask to create a contact
+	        if (GETPOST("private", 'int') == 1)	// Ask to create a contact
 	        {
 	            $object->particulier		= GETPOST("private");
 
@@ -1172,13 +1172,18 @@ else
         // If javascript on, we show option individual
         if ($conf->use_javascript_ajax)
         {
-            print '<tr class="individualline"><td>'.$form->editfieldkey('FirstName', 'firstname', '', $object, 0).'</td>';
-	        print '<td colspan="3"><input type="text" class="minwidth300" maxlength="128" name="firstname" id="firstname" value="'.$object->firstname.'"></td>';
-            print '</tr>';
-            // Title
-            print '<tr class="individualline"><td>'.$form->editfieldkey('UserTitle', 'civility_id', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">';
-            print $formcompany->select_civility($object->civility_id, 'civility_id', 'maxwidth100').'</td>';
-            print '</tr>';
+        	if (! empty($conf->global->THIRDPARTY_SUGGEST_ALSO_ADDRESS_CREATION))
+        	{
+        		// Firstname
+	            print '<tr class="individualline"><td>'.$form->editfieldkey('FirstName', 'firstname', '', $object, 0).'</td>';
+		        print '<td colspan="3"><input type="text" class="minwidth300" maxlength="128" name="firstname" id="firstname" value="'.$object->firstname.'"></td>';
+	            print '</tr>';
+
+	            // Title
+	            print '<tr class="individualline"><td>'.$form->editfieldkey('UserTitle', 'civility_id', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">';
+	            print $formcompany->select_civility($object->civility_id, 'civility_id', 'maxwidth100').'</td>';
+	            print '</tr>';
+        	}
         }
 
         // Alias names (commercial, trademark or alias names)

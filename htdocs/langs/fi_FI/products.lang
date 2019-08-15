@@ -2,6 +2,7 @@
 ProductRef=Tuote nro.
 ProductLabel=Tuotenimike
 ProductLabelTranslated=Translated product label
+ProductDescription=Product description
 ProductDescriptionTranslated=Translated product description
 ProductNoteTranslated=Translated product note
 ProductServiceCard=Tuotteet / Palvelut kortti

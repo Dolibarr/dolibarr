@@ -90,7 +90,7 @@ ErrorSpecialCharNotAllowedForField=Els caràcters especials no són admesos pel 
 ErrorNumRefModel=Hi ha una referència a la base de dades (%s) i és incompatible amb aquesta numeració. Elimineu la línia o renomeneu la referència per activar aquest mòdul.
 ErrorQtyTooLowForThisSupplier=Quantitat massa baixa per aquest proveïdor o sense un preu definit en aquest producte per aquest proveïdor
 ErrorOrdersNotCreatedQtyTooLow=Algunes ordres no s'han creat a causa de quantitats massa baixes
-ErrorModuleSetupNotComplete=La configuració de mòduls sembla incompleta. Ves a Inici - Configuració - Mòduls a completar.
+ErrorModuleSetupNotComplete=Setup of module %s looks to be uncomplete. Go on Home - Setup - Modules to complete.
 ErrorBadMask=Error en la màscara
 ErrorBadMaskFailedToLocatePosOfSequence=Error, sense número de seqüència en la màscara
 ErrorBadMaskBadRazMonth=Error, valor de tornada a 0 incorrecte
@@ -219,6 +219,7 @@ ErrorURLMustStartWithHttp=L'URL %s ha de començar amb http: // o https: //
 ErrorNewRefIsAlreadyUsed=Error, la nova referència ja s’està utilitzant
 ErrorDeletePaymentLinkedToAClosedInvoiceNotPossible=Error, l’eliminació del pagament vinculat a una factura tancada no és possible.
 # Warnings
+WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.
 WarningPasswordSetWithNoAccount=S'ha indicat una contrasenya per aquest soci. En canvi, no s'ha creat cap compte d'usuari, de manera que aquesta contrasenya s'ha desat però no pot ser utilitzada per entrar a Dolibarr. Es pot utilitzar per un mòdul/interfície extern, però si no cal definir cap usuari i contrasenya per un soci, pots deshabilitar la opció "Gestiona l'entrada per tots els socis" des de la configuració del mòdul Socis. Si necessites gestionar una entrada sense contrasenya, pots mantenir aquest camp buit i permetre aquest avís. Nota: El correu electrònic es pot utilitzar per entrar si el soci està enllaçat a un usuarí
 WarningMandatorySetupNotComplete=Feu clic aquí per configurar els paràmetres obligatoris
 WarningEnableYourModulesApplications=Feu clic aquí per activar els vostres mòduls i aplicacions

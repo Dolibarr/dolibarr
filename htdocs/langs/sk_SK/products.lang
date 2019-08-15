@@ -2,6 +2,7 @@
 ProductRef=Produkt čj.
 ProductLabel=Produkt štítok
 ProductLabelTranslated=Preložený názov produktu
+ProductDescription=Product description
 ProductDescriptionTranslated=Preložený popis produktu
 ProductNoteTranslated=Preložená poznámka produktu
 ProductServiceCard=Produkty / služby karty

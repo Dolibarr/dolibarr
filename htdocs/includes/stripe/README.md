@@ -6,7 +6,11 @@
 [![License](https://poser.pugx.org/stripe/stripe-php/license.svg)](https://packagist.org/packages/stripe/stripe-php)
 [![Code Coverage](https://coveralls.io/repos/stripe/stripe-php/badge.svg?branch=master)](https://coveralls.io/r/stripe/stripe-php?branch=master)
 
-You can sign up for a Stripe account at https://stripe.com.
+The Stripe PHP library provides convenient access to the Stripe API from
+applications written in the PHP language. It includes a pre-defined set of
+classes for API resources that initialize themselves dynamically from API
+responses which makes it compatible with a wide range of versions of the Stripe
+API.
 
 ## Requirements
 
@@ -56,7 +60,7 @@ echo $charge;
 
 ## Documentation
 
-Please see https://stripe.com/docs/api for up-to-date documentation.
+See the [PHP API docs](https://stripe.com/docs/api/php#intro).
 
 ## Legacy Version Support
 
@@ -178,6 +182,17 @@ an intermittent network problem:
 
 [Idempotency keys][idempotency-keys] are added to requests to guarantee that
 retries are safe.
+
+### Request latency telemetry
+
+By default, the library sends request latency telemetry to Stripe. These
+numbers help Stripe improve the overall latency of its API for all users.
+
+You can disable this behavior if you prefer:
+
+```php
+\Stripe\Stripe::setEnableTelemetry(false);
+```
 
 ## Development
 

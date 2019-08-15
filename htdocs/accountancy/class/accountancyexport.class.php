@@ -5,7 +5,7 @@
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016       Pierre-Henry Favre  <phf@atm-consulting.fr>
- * Copyright (C) 2016-2018  Alexandre Spangaro  <aspangaro@open-dsi.fr>
+ * Copyright (C) 2016-2019  Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2013-2017  Olivier Geffroy     <jeff@jeffinfo.com>
  * Copyright (C) 2017       Elarifr. Ari Elbaz  <github@accedinfo.com>
  * Copyright (C) 2017-2019  Frédéric France     <frederic.france@netlogic.fr>
@@ -48,8 +48,10 @@ class AccountancyExport
 	public static $EXPORT_TYPE_BOB50 = 35;
 	public static $EXPORT_TYPE_CIEL = 40;
 	public static $EXPORT_TYPE_SAGE50_SWISS = 45;
+	public static $EXPORT_TYPE_CHARLEMAGNE = 50;
 	public static $EXPORT_TYPE_QUADRATUS = 60;
 	public static $EXPORT_TYPE_OPENCONCERTO = 100;
+    public static $EXPORT_TYPE_LDCOMPTA = 110;
 	public static $EXPORT_TYPE_FEC = 1000;
 
 
@@ -105,7 +107,9 @@ class AccountancyExport
 			self::$EXPORT_TYPE_AGIRIS => $langs->trans('Modelcsv_agiris'),
             self::$EXPORT_TYPE_OPENCONCERTO => $langs->trans('Modelcsv_openconcerto'),
 			self::$EXPORT_TYPE_SAGE50_SWISS => $langs->trans('Modelcsv_Sage50_Swiss'),
+			self::$EXPORT_TYPE_LDCOMPTA => $langs->trans('Modelcsv_LDCompta'),
 			self::$EXPORT_TYPE_FEC => $langs->trans('Modelcsv_FEC'),
+				self::$EXPORT_TYPE_CHARLEMAGNE => $langs->trans('Modelcsv_charlemagne'),
 		);
 
 		ksort($listofexporttypes, SORT_NUMERIC);
@@ -133,6 +137,7 @@ class AccountancyExport
 			self::$EXPORT_TYPE_AGIRIS => 'agiris',
 			self::$EXPORT_TYPE_OPENCONCERTO => 'openconcerto',
             self::$EXPORT_TYPE_SAGE50_SWISS => 'sage50ch',
+            self::$EXPORT_TYPE_LDCOMPTA => 'ldcompta',
 			self::$EXPORT_TYPE_FEC => 'fec',
 		);
 
@@ -191,8 +196,16 @@ class AccountancyExport
 					'label' => $langs->trans('Modelcsv_Sage50_Swiss'),
 					'ACCOUNTING_EXPORT_FORMAT' => 'csv',
 				),
+                self::$EXPORT_TYPE_LDCOMPTA => array(
+                    'label' => $langs->trans('Modelcsv_LDCompta'),
+                    'ACCOUNTING_EXPORT_FORMAT' => 'csv',
+                ),
 				self::$EXPORT_TYPE_FEC => array(
 					'label' => $langs->trans('Modelcsv_FEC'),
+					'ACCOUNTING_EXPORT_FORMAT' => 'txt',
+				),
+				self::$EXPORT_TYPE_CHARLEMAGNE => array(
+					'label' => $langs->trans('Modelcsv_charlemagne'),
 					'ACCOUNTING_EXPORT_FORMAT' => 'txt',
 				),
 			),
@@ -257,11 +270,17 @@ class AccountancyExport
             case self::$EXPORT_TYPE_OPENCONCERTO :
                 $this->exportOpenConcerto($TData);
                 break;
-			case self::$EXPORT_TYPE_FEC :
-				$this->exportFEC($TData);
-				break;
 			case self::$EXPORT_TYPE_SAGE50_SWISS :
 				$this->exportSAGE50SWISS($TData);
+				break;
+            case self::$EXPORT_TYPE_LDCOMPTA :
+                $this->exportLDCompta($TData);
+                break;
+            case self::$EXPORT_TYPE_FEC :
+                $this->exportFEC($TData);
+                break;
+			case self::$EXPORT_TYPE_CHARLEMAGNE :
+				$this->exportCharlemagne($TData);
 				break;
 			default:
 				$this->errors[] = $langs->trans('accountancy_error_modelnotfound');
@@ -274,7 +293,6 @@ class AccountancyExport
 	 * Export format : CEGID
 	 *
 	 * @param array $objectLines data
-	 *
 	 * @return void
 	 */
 	public function exportCegid($objectLines)
@@ -300,7 +318,6 @@ class AccountancyExport
 	 * Export format : COGILOG
 	 *
 	 * @param array $objectLines data
-	 *
 	 * @return void
 	 */
 	public function exportCogilog($objectLines)
@@ -334,7 +351,6 @@ class AccountancyExport
 	 * Export format : COALA
 	 *
 	 * @param array $objectLines data
-	 *
 	 * @return void
 	 */
 	public function exportCoala($objectLines)
@@ -362,7 +378,6 @@ class AccountancyExport
 	 * Export format : BOB50
 	 *
 	 * @param array $objectLines data
-	 *
 	 * @return void
 	 */
 	public function exportBob50($objectLines)
@@ -401,7 +416,6 @@ class AccountancyExport
 	 * Export format : CIEL
 	 *
 	 * @param array $TData data
-	 *
 	 * @return void
 	 */
 	public function exportCiel(&$TData)
@@ -442,7 +456,6 @@ class AccountancyExport
 	 * Export format : Quadratus
 	 *
 	 * @param array $TData data
-	 *
 	 * @return void
 	 */
 	public function exportQuadratus(&$TData)
@@ -526,7 +539,6 @@ class AccountancyExport
 	 * Export format : EBP
 	 *
 	 * @param array $objectLines data
-	 *
 	 * @return void
 	 */
 	public function exportEbp($objectLines)
@@ -563,7 +575,6 @@ class AccountancyExport
 	 * Export format : Agiris Isacompta
 	 *
 	 * @param array $objectLines data
-	 *
 	 * @return void
 	 */
 	public function exportAgiris($objectLines)
@@ -604,7 +615,6 @@ class AccountancyExport
      * Export format : OpenConcerto
      *
      * @param array $objectLines data
-     *
      * @return void
      */
     public function exportOpenConcerto($objectLines)
@@ -634,15 +644,16 @@ class AccountancyExport
     }
 
 	/**
-	 * Export format : Configurable
+	 * Export format : Configurable CSV
 	 *
 	 * @param array $objectLines data
-	 *
 	 * @return void
 	 */
 	public function exportConfigurable($objectLines)
 	{
 		global $conf;
+
+		$separator = $this->separator;
 
 		foreach ($objectLines as $line) {
 			$tab = array();
@@ -651,15 +662,14 @@ class AccountancyExport
 			$tab[] = $line->piece_num;
 			$tab[] = $date;
 			$tab[] = $line->doc_ref;
-			$tab[] = $line->label_operation;
+			$tab[] = preg_match('/'.$separator.'/', $line->label_operation) ? "'".$line->label_operation."'" : $line->label_operation;
 			$tab[] = length_accountg($line->numero_compte);
 			$tab[] = length_accounta($line->subledger_account);
-			$tab[] = price($line->debit);
-			$tab[] = price($line->credit);
-			$tab[] = price($line->montant);
+			$tab[] = price2num($line->debit);
+			$tab[] = price2num($line->credit);
+			$tab[] = price2num($line->montant);
 			$tab[] = $line->code_journal;
 
-			$separator = $this->separator;
 			print implode($separator, $tab) . $this->end_line;
 		}
 	}
@@ -668,7 +678,6 @@ class AccountancyExport
 	 * Export format : FEC
 	 *
 	 * @param array $objectLines data
-	 *
 	 * @return void
 	 */
 	public function exportFEC($objectLines)
@@ -908,6 +917,160 @@ class AccountancyExport
             }
         }
     }
+
+    /**
+     * Export format : LD Compta version 9 & higher
+     * http://www.ldsysteme.fr/fileadmin/telechargement/np/ldcompta/Documentation/IntCptW10.pdf
+     *
+     * @param array $objectLines data
+     *
+     * @return void
+     */
+    public function exportLDCompta($objectLines)
+    {
+
+        $separator = ';';
+        $end_line = "\n";
+
+        foreach ($objectLines as $line) {
+
+            $date_document = dol_print_date($line->doc_date, '%Y%m%d');
+            $date_creation = dol_print_date($line->date_creation,  '%Y%m%d');
+
+            // TYPE
+            $type_enregistrement = 'E'; // For write movement
+            print $type_enregistrement . $separator;
+            // JNAL
+            print substr($line->code_journal, 0, 2) . $separator;
+            // NECR
+            print $line->id . $separator;
+            // NPIE
+            print $line->piece_num . $separator;
+            // DATP
+            print $date_document . $separator;
+            // LIBE
+            print $line->label_operation . $separator;
+            // DATH
+            print $line->date_lim_reglement . $separator;
+            // CNPI
+            if ($line->doc_type == 'supplier_invoice') {
+                if ($line->montant < 0) {
+                    $nature_piece = 'AF';
+                } else {
+                    $nature_piece = 'FF';
+                }
+            } elseif ($line->doc_type == 'customer_invoice') {
+                if ($line->montant < 0) {
+                    $nature_piece = 'AC';
+                } else {
+                    $nature_piece = 'FC';
+                }
+            } else {
+                $nature_piece = '';
+            }
+            print $nature_piece . $separator;
+            // RACI
+            /*
+            if (! empty($line->subledger_account)) {
+                if ($line->doc_type == 'supplier_invoice') {
+                    $racine_subledger_account = '40';
+                } elseif ($line->doc_type == 'customer_invoice') {
+                    $racine_subledger_account = '41';
+                } else {
+                    $nature_piece = '';
+                }
+                print $racine_subledger_account . $separator;
+            } else {
+                print $separator;
+            }
+            */
+            // MONT
+            print price(abs($line->montant)) . $separator;
+            // CODC
+            print $line->sens . $separator;
+            // CPTG
+            print length_accountg($line->numero_compte) . $separator;
+            // DATE
+            print $date_creation . $separator;
+            // CLET
+            print $line->lettering_code . $separator;
+            // DATL
+            print $line->date_lettering . $separator;
+            // CPTA
+            if (! empty($line->subledger_account)) {
+                print length_accounta($line->subledger_account) . $separator;
+            }
+            // CNAT
+            if ($line->doc_type == 'supplier_invoice' && ! empty($line->subledger_account)) {
+                print 'F';
+            } elseif ($line->doc_type == 'customer_invoice' && ! empty($line->subledger_account)) {
+                print 'C';
+            } else {
+                print '';
+            }
+            print $end_line;
+        }
+    }
+
+	/**
+	 * Export format : Charlemagne
+	 *
+	 * @param array $objectLines data
+	 * @return void
+	 */
+	public function exportCharlemagne($objectLines)
+	{
+		global $langs;
+		$langs->load('compta');
+
+		$separator = "\t";
+		$end_line = "\n";
+
+		/*
+		 * Charlemagne export need header
+		 */
+		print $langs->transnoentitiesnoconv('Date') . $separator;
+		print self::trunc($langs->transnoentitiesnoconv('Journal'), 6) . $separator;
+		print self::trunc($langs->transnoentitiesnoconv('Account'), 15) . $separator;
+		print self::trunc($langs->transnoentitiesnoconv('LabelAccount'), 60) . $separator;
+		print self::trunc($langs->transnoentitiesnoconv('Piece'), 20) . $separator;
+		print self::trunc($langs->transnoentitiesnoconv('LabelOperation'), 60) . $separator;
+		print $langs->transnoentitiesnoconv('Amount') . $separator;
+		print 'S' . $separator;
+		print self::trunc($langs->transnoentitiesnoconv('Analytic') . ' 1', 15) . $separator;
+		print self::trunc($langs->transnoentitiesnoconv('AnalyticLabel') . ' 1', 60) . $separator;
+		print self::trunc($langs->transnoentitiesnoconv('Analytic') . ' 2', 15) . $separator;
+		print self::trunc($langs->transnoentitiesnoconv('AnalyticLabel') . ' 2', 60) . $separator;
+		print self::trunc($langs->transnoentitiesnoconv('Analytic') . ' 3', 15) . $separator;
+		print self::trunc($langs->transnoentitiesnoconv('AnalyticLabel') . ' 3', 60) . $separator;
+		print $end_line;
+
+		foreach($objectLines as $line) {
+
+			$date = dol_print_date($line->doc_date, '%Y%m%d');
+			print $date . $separator; //Date
+
+			print self::trunc($line->code_journal, 6) . $separator; //Journal code
+
+			if(!empty($line->subledger_account)) $account = $line->subledger_account;
+			else  $account = $line->numero_compte;
+			print self::trunc($account, 15) . $separator;//Account number
+
+			print self::trunc($line->label_compte, 60) . $separator;//Account label
+			print self::trunc($line->doc_ref, 20) . $separator;//Piece
+			print self::trunc($line->label_operation, 60) . $separator;//Operation label
+			print price(abs($line->montant)) . $separator;//Amount
+			print $line->sens . $separator;//Direction
+			print $separator;//Analytic
+			print $separator;//Analytic
+			print $separator;//Analytic
+			print $separator;//Analytic
+			print $separator;//Analytic
+			print $separator;//Analytic
+			print $end_line;
+		}
+	}
+
 
 	/**
 	 * trunc

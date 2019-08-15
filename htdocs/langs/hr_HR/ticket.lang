@@ -67,7 +67,7 @@ Closed=Zatvoreno
 Deleted=Deleted
 
 # Dict
-Type=Tip
+Type=Vrsta
 Category=Analytic code
 Severity=Severity
 
@@ -173,7 +173,7 @@ LatestNewTickets=Latest %s newest tickets (not read)
 TicketSeverity=Severity
 ShowTicket=See ticket
 RelatedTickets=Related tickets
-TicketAddIntervention=Kreiraj intervenciju
+TicketAddIntervention=Izradi intervenciju
 CloseTicket=Close ticket
 CloseATicket=Close a ticket
 ConfirmCloseAticket=Confirm ticket closing

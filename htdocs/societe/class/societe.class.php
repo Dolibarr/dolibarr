@@ -2167,8 +2167,8 @@ class Societe extends CommonObject
 		{
 			$label.= '<br><b>' . $langs->trans('Name') . ':</b> '. $this->name;
 			if (! empty($this->name_alias)) $label.=' ('.$this->name_alias.')';
-			$label.= '<br><b>' . $langs->trans('Email') . ':</b> '. $this->email;
 		}
+		$label.= '<br><b>' . $langs->trans('Email') . ':</b> '. $this->email;
 		if (! empty($this->country_code))
 			$label.= '<br><b>' . $langs->trans('Country') . ':</b> '. $this->country_code;
 		if (! empty($this->tva_intra) || (! empty($conf->global->SOCIETE_SHOW_FIELD_IN_TOOLTIP) && strpos($conf->global->SOCIETE_SHOW_FIELD_IN_TOOLTIP, 'vatnumber') !== false))

@@ -1217,6 +1217,8 @@ class pdf_einstein extends ModelePDFCommandes
 		}
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *  Show top header of page.
 	 *
@@ -1225,10 +1227,11 @@ class pdf_einstein extends ModelePDFCommandes
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @param	string		$titlekey		Translation key to show as title of document
-	 *  @return	void
+	 *  @return	int                         Return topshift value
 	 */
-	private function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $titlekey = "PdfOrderTitle")
+	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $titlekey = "PdfOrderTitle")
 	{
+		// phpcs:enable
 		global $conf,$langs,$hookmanager;
 
 		// Load traductions files requiredby by page
@@ -1437,6 +1440,8 @@ class pdf_einstein extends ModelePDFCommandes
 		return $top_shift;
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *   	Show footer of page. Need this->emetteur object
      *
@@ -1446,8 +1451,9 @@ class pdf_einstein extends ModelePDFCommandes
 	 *      @param	int			$hidefreetext		1=Hide free text
 	 *      @return	int								Return height of bottom margin including footer text
 	 */
-	private function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
+	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
+		// phpcs:enable
 		global $conf;
 		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
 		return pdf_pagefoot($pdf, $outputlangs, 'ORDER_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);

@@ -56,7 +56,6 @@ AccountingJournalType5=Informe de gastos
 AccountingJournalType9=Tiene nuevo
 ErrorAccountingJournalIsAlreadyUse=Este diario ya está en uso
 ExportDraftJournal=Exportar borrador de diario
-DefaultClosureDesc=This page can be used to set parameters to use to enclose a balance sheet.
 SomeMandatoryStepsOfSetupWereNotDone=Algunos pasos obligatorios de la instalación no se realizaron, favor de completar
 ExportNotSupported=El formato de exportación configurado no se admite en esta página
 NoJournalDefined=Ningún diario definido

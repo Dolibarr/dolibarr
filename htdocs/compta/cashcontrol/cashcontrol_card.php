@@ -247,7 +247,7 @@ if ($action=="create" || $action=="start")
 			}
 
 			// Get the bank account dedicated to this point of sale module/terminal
-			$vartouse=CASHDESK_ID_BANKACCOUNT_CASH.$terminaltouse;
+			$vartouse='CASHDESK_ID_BANKACCOUNT_CASH'.$terminaltouse;
 			$bankid = $conf->global->$vartouse;			// This value is ok for 'Terminal 0' for module 'CashDesk' and 'TakePos' (they manage only 1 terminal)
 			// Hook to get the good bank id according to posmodule and posnumber.
 			// @TODO add hook here

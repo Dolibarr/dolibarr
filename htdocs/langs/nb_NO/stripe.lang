@@ -65,3 +65,5 @@ StripeUserAccountForActions=Brukerkonto til bruk for e-postvarsling av noen Stri
 StripePayoutList=Liste over Stripe utbetalinger
 ToOfferALinkForTestWebhook=Link til oppsett av Stripe WebHook for oppkall av IPN (test-modus)
 ToOfferALinkForLiveWebhook=Link til oppsett av Stripe WebHook for oppkall av IPN (live-modus)
+PaymentWillBeRecordedForNextPeriod=Payment will be recorded for the next period.
+ClickHereToTryAgain=<a href="%s">Click here to try again...</a>

@@ -65,3 +65,5 @@ StripeUserAccountForActions=Cont utilizator pe care să îl utilizați pentru no
 StripePayoutList=Listă de plăți Stripe
 ToOfferALinkForTestWebhook=Link to setup Stripe WebHook to call the IPN (test mode)
 ToOfferALinkForLiveWebhook=Link to setup Stripe WebHook to call the IPN (live mode)
+PaymentWillBeRecordedForNextPeriod=Payment will be recorded for the next period.
+ClickHereToTryAgain=<a href="%s">Click here to try again...</a>

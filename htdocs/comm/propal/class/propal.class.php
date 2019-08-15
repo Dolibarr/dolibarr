@@ -530,11 +530,11 @@ class Propal extends CommonObject
 			$pu_ht_devise = $tabprice[19];
 
 			// Rang to use
-			$rangtouse = $rang;
-			if ($rangtouse == -1)
+			$ranktouse = $rang;
+			if ($ranktouse == -1)
 			{
 				$rangmax = $this->line_max($fk_parent_line);
-				$rangtouse = $rangmax + 1;
+				$ranktouse = $rangmax + 1;
 			}
 
 			// TODO A virer
@@ -568,7 +568,7 @@ class Propal extends CommonObject
 			$this->line->fk_remise_except=$fk_remise_except;
 			$this->line->remise_percent=$remise_percent;
 			$this->line->subprice=$pu_ht;
-			$this->line->rang=$rangtouse;
+			$this->line->rang=$ranktouse;
 			$this->line->info_bits=$info_bits;
 			$this->line->total_ht=$total_ht;
 			$this->line->total_tva=$total_tva;
@@ -1054,14 +1054,6 @@ class Propal extends CommonObject
                 			}
                 		}
                 	}
-                }
-
-                // Add linked object (deprecated, use ->linkedObjectsIds instead)
-                if (! $error && $this->origin && $this->origin_id)
-                {
-                    dol_syslog('Deprecated use of linked object, use ->linkedObjectsIds instead', LOG_WARNING);
-                	$ret = $this->add_object_linked();
-                	if (! $ret)	dol_print_error($this->db);
                 }
 
                 /*
@@ -1749,9 +1741,9 @@ class Propal extends CommonObject
 	 */
     public function valid($user, $notrigger = 0)
 	{
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
 		global $conf;
+
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$error=0;
 
@@ -1818,14 +1810,18 @@ class Propal extends CommonObject
 			// Rename directory if dir was a temporary ref
 			if (preg_match('/^[\(]?PROV/i', $this->ref))
 			{
-				// Rename of propal directory ($this->ref = old ref, $num = new ref)
-				// to  not lose the linked files
+				// Now we rename also files into index
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref)+1).")), filepath = 'propale/".$this->db->escape($this->newref)."'";
+				$sql.= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'propale/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$resql = $this->db->query($sql);
+				if (! $resql) { $error++; $this->error = $this->db->lasterror(); }
+
+				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 				$oldref = dol_sanitizeFileName($this->ref);
 				$newref = dol_sanitizeFileName($num);
 				$dirsource = $conf->propal->multidir_output[$this->entity].'/'.$oldref;
 				$dirdest = $conf->propal->multidir_output[$this->entity].'/'.$newref;
-
-				if (file_exists($dirsource))
+				if (! $error && file_exists($dirsource))
 				{
 					dol_syslog(get_class($this)."::validate rename dir ".$dirsource." into ".$dirdest);
 					if (@rename($dirsource, $dirdest))
@@ -3512,7 +3508,7 @@ class Propal extends CommonObject
 		else
 		{
 			$langs->load("errors");
-			print $langs->trans("Error")." ".$langs->trans("ErrorModuleSetupNotComplete");
+			print $langs->trans("Error")." ".$langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Proposal"));
 			return "";
 		}
 	}

@@ -376,6 +376,9 @@ div.buttonpayment input {
 	color: #333;
 	cursor: pointer;
 }
+div.buttonpayment input:focus {
+    color: #008;
+}
 input.buttonpaymentcb {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/common/credit_card.png', 1) ?>);
 	background-size: 26px;
@@ -3931,6 +3934,12 @@ tr.visible {
     background-image: none;
     color: #000 !important;
     text-shadow: none;
+}
+.bordertransp {
+    background-color: transparent;
+    background-image: none;
+    border: 1px solid #aaa;
+	font-weight: normal;
 }
 .websitebar {
 	border-bottom: 1px solid #ccc;

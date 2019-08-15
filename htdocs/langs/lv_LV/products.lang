@@ -2,6 +2,7 @@
 ProductRef=Produkta ref.
 ProductLabel=Produkta marķējums
 ProductLabelTranslated=Tulkots produkta nosaukums
+ProductDescription=Product description
 ProductDescriptionTranslated=Tulkotā produkta apraksts
 ProductNoteTranslated=Tulkota produkta piezīme
 ProductServiceCard=Produktu / Pakalpojumu kartiņa
