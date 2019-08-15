@@ -1056,6 +1056,14 @@ class Propal extends CommonObject
                 	}
                 }
 
+                // Add linked object (deprecated, use ->linkedObjectsIds instead)
+                if (! $error && $this->origin && $this->origin_id)
+                {
+                    dol_syslog('Deprecated use of linked object, use ->linkedObjectsIds instead', LOG_WARNING);
+                	$ret = $this->add_object_linked();
+                	if (! $ret)	dol_print_error($this->db);
+                }
+				
                 /*
                  *  Insertion du detail des produits dans la base
                  *  Insert products detail in database
