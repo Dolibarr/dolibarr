@@ -986,13 +986,6 @@ class SupplierProposal extends CommonObject
                     }
                 }
 
-                // Add linked object (deprecated, use ->linkedObjectsIds instead)
-                if (! $error && $this->origin && $this->origin_id)
-                {
-                    $ret = $this->add_object_linked();
-                    if (! $ret)	dol_print_error($this->db);
-                }
-
                 /*
                  *  Insertion du detail des produits dans la base
                  */
