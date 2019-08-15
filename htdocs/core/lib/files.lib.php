@@ -2263,10 +2263,10 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file=$conf->adherent->dir_output.'/'.$original_file;
 	}
 	// Wrapping pour les apercu factures
-	elseif ($modulepart == 'apercufacture' && !empty($conf->facture->dir_output))
+	elseif ($modulepart == 'apercufacture' && !empty($conf->facture->multidir_output[$entity]))
 	{
 		if ($fuser->rights->facture->{$lire}) $accessallowed=1;
-		$original_file=$conf->facture->dir_output.'/'.$original_file;
+		$original_file=$conf->facture->multidir_output[$entity].'/'.$original_file;
 	}
 	// Wrapping pour les apercu propal
 	elseif ($modulepart == 'apercupropal' && !empty($conf->propal->multidir_output[$entity]))
@@ -2275,10 +2275,10 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file=$conf->propal->multidir_output[$entity].'/'.$original_file;
 	}
 	// Wrapping pour les apercu commande
-	elseif ($modulepart == 'apercucommande' && !empty($conf->commande->dir_output))
+	elseif ($modulepart == 'apercucommande' && !empty($conf->commande->multidir_output[$entity]))
 	{
 		if ($fuser->rights->commande->{$lire}) $accessallowed=1;
-		$original_file=$conf->commande->dir_output.'/'.$original_file;
+		$original_file=$conf->commande->multidir_output[$entity].'/'.$original_file;
 	}
 	// Wrapping pour les apercu intervention
 	elseif (($modulepart == 'apercufichinter' || $modulepart == 'apercuficheinter') && !empty($conf->ficheinter->dir_output))
@@ -2474,13 +2474,13 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	}
 
 	// Wrapping for invoices
-	elseif (($modulepart == 'facture' || $modulepart == 'invoice') && !empty($conf->facture->dir_output))
+	elseif (($modulepart == 'facture' || $modulepart == 'invoice') && !empty($conf->facture->multidir_output[$entity]))
 	{
 		if ($fuser->rights->facture->{$lire} || preg_match('/^specimen/i', $original_file))
 		{
 			$accessallowed=1;
 		}
-		$original_file=$conf->facture->dir_output.'/'.$original_file;
+		$original_file=$conf->facture->multidir_output[$entity].'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."facture WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
 	}
 	// Wrapping for mass actions
@@ -2498,7 +2498,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		{
 			$accessallowed=1;
 		}
-		$original_file=$conf->commande->dir_output.'/temp/massgeneration/'.$user->id.'/'.$original_file;
+		$original_file=$conf->commande->multidir_output[$entity].'/temp/massgeneration/'.$user->id.'/'.$original_file;
 	}
     elseif ($modulepart == 'massfilesarea_sendings')
     {
@@ -2514,7 +2514,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		{
 			$accessallowed=1;
 		}
-		$original_file=$conf->facture->dir_output.'/temp/massgeneration/'.$user->id.'/'.$original_file;
+		$original_file=$conf->facture->multidir_output[$entity].'/temp/massgeneration/'.$user->id.'/'.$original_file;
 	}
 	elseif ($modulepart == 'massfilesarea_expensereport')
 	{
@@ -2598,13 +2598,13 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	}
 
 	// Wrapping pour les commandes
-	elseif (($modulepart == 'commande' || $modulepart == 'order') && !empty($conf->commande->dir_output))
+	elseif (($modulepart == 'commande' || $modulepart == 'order') && !empty($conf->commande->multidir_output[$entity]))
 	{
 		if ($fuser->rights->commande->{$lire} || preg_match('/^specimen/i', $original_file))
 		{
 			$accessallowed=1;
 		}
-		$original_file=$conf->commande->dir_output.'/'.$original_file;
+		$original_file=$conf->commande->multidir_output[$entity].'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."commande WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
 	}
 

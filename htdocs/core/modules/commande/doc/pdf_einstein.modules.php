@@ -239,13 +239,13 @@ class pdf_einstein extends ModelePDFCommandes
             // Definition of $dir and $file
 			if ($object->specimen)
 			{
-				$dir = $conf->commande->dir_output;
+				$dir = $conf->commande->multidir_output[$conf->entity];
 				$file = $dir . "/SPECIMEN.pdf";
 			}
 			else
 			{
 				$objectref = dol_sanitizeFileName($object->ref);
-				$dir = $conf->commande->dir_output . "/" . $objectref;
+				$dir = $conf->commande->multidir_output[$object->entity] . "/" . $objectref;
 				$file = $dir . "/" . $objectref . ".pdf";
 			}
 
@@ -290,7 +290,7 @@ class pdf_einstein extends ModelePDFCommandes
                 // Set path to the background PDF File
                 if (! empty($conf->global->MAIN_ADD_PDF_BACKGROUND))
                 {
-                    $pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
+                	$pagecount = $pdf->setSourceFile($conf->mycompany->multidir_output[$object->entity].'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
                     $tplidx = $pdf->importPage(1);
                 }
 
@@ -1260,7 +1260,7 @@ class pdf_einstein extends ModelePDFCommandes
 		// Logo
 		if (empty($conf->global->PDF_DISABLE_MYCOMPANY_LOGO))
 		{
-			$logo=$conf->mycompany->dir_output.'/logos/'.$this->emetteur->logo;
+			$logo=$conf->mycompany->multidir_output[$object->entity].'/logos/'.$this->emetteur->logo;
 			if ($this->emetteur->logo)
 			{
 				if (is_readable($logo))

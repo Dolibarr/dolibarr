@@ -342,7 +342,7 @@ class pdf_crabe extends ModelePDFFactures
                 // Set path to the background PDF File
                 if (! empty($conf->global->MAIN_ADD_PDF_BACKGROUND))
                 {
-				    $pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
+                	$pagecount = $pdf->setSourceFile($conf->mycompany->multidir_output[$object->entity].'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
 				    $tplidx = $pdf->importPage(1);
                 }
 
@@ -1617,7 +1617,7 @@ class pdf_crabe extends ModelePDFFactures
 		// Logo
 		if (empty($conf->global->PDF_DISABLE_MYCOMPANY_LOGO))
 		{
-			$logo=$conf->mycompany->dir_output.'/logos/'.$this->emetteur->logo;
+			$logo=$conf->mycompany->multidir_output[$object->entity].'/logos/'.$this->emetteur->logo;
 			if ($this->emetteur->logo)
 			{
 				if (is_readable($logo))
