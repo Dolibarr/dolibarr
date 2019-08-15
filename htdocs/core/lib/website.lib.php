@@ -30,14 +30,16 @@
  * @param	string		$content			Content to replace
  * @param	int			$removephppart		0=Replace PHP sections with a PHP badge. 1=Remove completely PHP sections.
  * @param	string		$contenttype		Content type
+ * @param	int			$containerid 		Contenair id
  * @return	boolean							True if OK
  * @see dolWebsiteOutput() for function used to replace content in a web server context
  */
-function dolWebsiteReplacementOfLinks($website, $content, $removephppart = 0, $contenttype = 'html')
+function dolWebsiteReplacementOfLinks($website, $content, $removephppart = 0, $contenttype = 'html', $containerid = '')
 {
 	$nbrep = 0;
 
-	dol_syslog('dolWebsiteReplacementOfLinks start (contenttype='.$contenttype." USEDOLIBARRSERVER=".(defined('USEDOLIBARRSERVER')?'1':'')." USEDOLIBARREDITOR=".(defined('USEDOLIBARREDITOR')?'1':'').')', LOG_DEBUG);
+	dol_syslog('dolWebsiteReplacementOfLinks start (contenttype='.$contenttype." containerid=".$containerid." USEDOLIBARREDITOR=".(defined('USEDOLIBARREDITOR')?'1':'')." USEDOLIBARRSERVER=".(defined('USEDOLIBARRSERVER')?'1':'').')', LOG_DEBUG);
+	//if ($contenttype == 'html') { print $content;exit; }
 
 	// Replace php code. Note $content may come from database and does not contains body tags.
 	$replacewith='...php...';
@@ -72,8 +74,9 @@ function dolWebsiteReplacementOfLinks($website, $content, $removephppart = 0, $c
 
 	// Replace relative link / with dolibarr URL
 	$content = preg_replace('/(href=")\/\"/', '\1'.DOL_URL_ROOT.'/website/index.php?website='.$website->ref.'&pageid='.$website->fk_default_home.'"', $content, -1, $nbrep);
-	// Replace relative link /xxx.php with dolibarr URL
-	$content = preg_replace('/(href=")\/?([^:\"]*)(\.php\")/', '\1'.DOL_URL_ROOT.'/website/index.php?website='.$website->ref.'&pageref=\2"', $content, -1, $nbrep);
+	// Replace relative link /xxx.php#aaa or /xxx.php with dolibarr URL (we discard param ?...)
+	// TODO To support replacement of /xxx.php?bbb=ccc we must be able to replace only if link is not already DOL_URL_ROOT.'/website/index.php
+	$content = preg_replace('/(href=")\/?([^:\"]*)\.php(\?[^\"<>#]*)?(#[^\"<>]*)?\"/', '\1'.DOL_URL_ROOT.'/website/index.php?website='.$website->ref.'&pageref=\2\4"', $content, -1, $nbrep);
 
 	// Fix relative link into medias with correct URL after the DOL_URL_ROOT: ../url("medias/
 	$content = preg_replace('/url\((["\']?)medias\//', 'url(\1'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file=', $content, -1, $nbrep);
@@ -97,6 +100,7 @@ function dolWebsiteReplacementOfLinks($website, $content, $removephppart = 0, $c
 	$content=preg_replace('/(url\(")(\/?viewimage\.php\?[^\"]*modulepart=[^\"]*)(\")/', '\1'.DOL_URL_ROOT.'\2\3', $content, -1, $nbrep);
 
 	dol_syslog('dolWebsiteReplacementOfLinks end', LOG_DEBUG);
+	//if ($contenttype == 'html') { print $content;exit; }
 
 	return $content;
 }
@@ -196,7 +200,7 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 	global $db, $langs, $conf, $user;
 	global $dolibarr_main_url_root, $dolibarr_main_data_root;
 
-	dol_syslog("dolWebsiteOutput start (contenttype=".$contenttype." containerid=".$containerid." USEDOLIBARRSERVER=".(defined('USEDOLIBARRSERVER')?'1':'')." USEDOLIBARREDITOR=".(defined('USEDOLIBARREDITOR')?'1':'').')');
+	dol_syslog("dolWebsiteOutput start (contenttype=".$contenttype." containerid=".$containerid." USEDOLIBARREDITOR=".(defined('USEDOLIBARREDITOR')?'1':'')." USEDOLIBARRSERVER=".(defined('USEDOLIBARRSERVER')?'1':'').')');
 
 	// Define $urlwithroot
 	$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
