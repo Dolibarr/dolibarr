@@ -316,25 +316,33 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 			$content=preg_replace('/(url\(["\']?)[^\)]*viewimage\.php([^\)]*)hashp=([^\)]*)(["\']?\))/', '\1/wrapper.php\2hashp\3\4', $content, -1, $nbrep);
 
 			$content=preg_replace('/(<img[^>]*src=")[^\"]*viewimage\.php([^\"]*)modulepart=mycompany([^\"]*)file=([^\"]*)("[^>]*>)/', '\1/wrapper.php\2modulepart=mycompany\3file=\4\5', $content, -1, $nbrep);
+
+			// If some links to documents or viewimage remains, we replace with wrapper
+			$content=preg_replace('/(<img[^>]*src=")\/?viewimage\.php/', '\1/wrapper.php', $content, -1, $nbrep);
+			$content=preg_replace('/(<a[^>]*href=")\/?documents\.php/', '\1/wrapper.php', $content, -1, $nbrep);
 		}
 		else
 		{
 			// <img src="image.png... => <img src="medias/image.png...
-			$content=preg_replace('/(<img[^>]*src=")\/?image\//', '\1medias/image/', $content, -1, $nbrep);
-			$content=preg_replace('/(url\(["\']?)\/?image\//', '\1medias/image/', $content, -1, $nbrep);
+			$content=preg_replace('/(<img[^>]*src=")\/?image\//', '\1/medias/image/', $content, -1, $nbrep);
+			$content=preg_replace('/(url\(["\']?)\/?image\//', '\1/medias/image/', $content, -1, $nbrep);
 
-			$content=preg_replace('/(<script[^>]*src=")[^\"]*document\.php([^\"]*)modulepart=medias([^\"]*)file=([^\"]*)("[^>]*>)/', '\1medias/\4\5', $content, -1, $nbrep);
-			$content=preg_replace('/(<a[^>]*href=")[^\"]*document\.php([^\"]*)modulepart=medias([^\"]*)file=([^\"]*)("[^>]*>)/', '\1medias/\4\5', $content, -1, $nbrep);
+			$content=preg_replace('/(<script[^>]*src=")[^\"]*document\.php([^\"]*)modulepart=medias([^\"]*)file=([^\"]*)("[^>]*>)/', '\1/medias/\4\5', $content, -1, $nbrep);
+			$content=preg_replace('/(<a[^>]*href=")[^\"]*document\.php([^\"]*)modulepart=medias([^\"]*)file=([^\"]*)("[^>]*>)/', '\1/medias/\4\5', $content, -1, $nbrep);
 
-			$content=preg_replace('/(<a[^>]*href=")[^\"]*viewimage\.php([^\"]*)modulepart=medias([^\"]*)file=([^\"]*)("[^>]*>)/', '\1medias/\4\5', $content, -1, $nbrep);
-			$content=preg_replace('/(<img[^>]*src=")[^\"]*viewimage\.php([^\"]*)modulepart=medias([^\"]*)file=([^\"]*)("[^>]*>)/', '\1medias/\4\5', $content, -1, $nbrep);
-			$content=preg_replace('/(url\(["\']?)[^\)]*viewimage\.php([^\)]*)modulepart=medias([^\)]*)file=([^\)]*)(["\']?\))/', '\1medias/\4\5', $content, -1, $nbrep);
+			$content=preg_replace('/(<a[^>]*href=")[^\"]*viewimage\.php([^\"]*)modulepart=medias([^\"]*)file=([^\"]*)("[^>]*>)/', '\1/medias/\4\5', $content, -1, $nbrep);
+			$content=preg_replace('/(<img[^>]*src=")[^\"]*viewimage\.php([^\"]*)modulepart=medias([^\"]*)file=([^\"]*)("[^>]*>)/', '\1/medias/\4\5', $content, -1, $nbrep);
+			$content=preg_replace('/(url\(["\']?)[^\)]*viewimage\.php([^\)]*)modulepart=medias([^\)]*)file=([^\)]*)(["\']?\))/', '\1/medias/\4\5', $content, -1, $nbrep);
 
 			$content=preg_replace('/(<a[^>]*href=")[^\"]*viewimage\.php([^\"]*)hashp=([^\"]*)("[^>]*>)/', '\1/wrapper.php\2hashp=\3\4', $content, -1, $nbrep);
 			$content=preg_replace('/(<img[^>]*src=")[^\"]*viewimage\.php([^\"]*)hashp=([^\"]*)("[^>]*>)/', '\1/wrapper.php\2hashp=\3\4', $content, -1, $nbrep);
 			$content=preg_replace('/(url\(["\']?)[^\)]*viewimage\.php([^\)]*)hashp=([^\)]*)(["\']?\))/', '\1/wrapper.php\2hashp=\3\4', $content, -1, $nbrep);
 
 			$content=preg_replace('/(<img[^>]*src=")[^\"]*viewimage\.php([^\"]*)modulepart=mycompany([^\"]*)file=([^\"]*)("[^>]*>)/', '\1/wrapper.php\2modulepart=mycompany\3file=\4\5', $content, -1, $nbrep);
+
+			// If some links to documents or viewimage remains, we replace with wrapper
+			$content=preg_replace('/(<img[^>]*src=")\/?viewimage\.php/', '\1/wrapper.php', $content, -1, $nbrep);
+			$content=preg_replace('/(<a[^>]*href=")\/?documents\.php/', '\1/wrapper.php', $content, -1, $nbrep);
 		}
 	}
 
