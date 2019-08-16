@@ -314,7 +314,7 @@ if ($action == 'create')
     // Other attributes
     include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_add.tpl.php';
 	$parameters=array();
-	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters,$object, $action);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 
 	print '</table>';
@@ -391,11 +391,9 @@ else
 			// Parent entrepot
 			$e = new Entrepot($db);
 			if(!empty($object->fk_parent) && $e->fetch($object->fk_parent) > 0) {
-
 				print '<tr><td>'.$langs->trans("ParentWarehouse").'</td><td>';
 				print $e->getNomUrl(3);
 				print '</td></tr>';
-
 			}
 
 			// Description
@@ -457,8 +455,8 @@ else
 
             // Other attributes
             include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
-			$parameters=array();
-			$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
 
 			print "</table>";
