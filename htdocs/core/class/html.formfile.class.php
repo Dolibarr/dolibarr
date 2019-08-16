@@ -1839,7 +1839,7 @@ class FormFile
 				print $langs->trans('Link') . ': <input type="text" name="link" value="' . $link->url . '">';
 				print '</td>';
 				print '<td>';
-				print $langs->trans('Label') . ': <input type="text" name="label" value="' . $link->label . '">';
+				print $langs->trans('Label') . ': <input type="text" name="label" value="' . dol_escape_htmltag($link->label) . '">';
 				print '</td>';
 				print '<td class="center">' . dol_print_date(dol_now(), "dayhour", "tzuser") . '</td>';
 				print '<td class="right"></td>';
@@ -1853,7 +1853,7 @@ class FormFile
 				print '<td>';
 				print img_picto('', 'object_globe').' ';
 				print '<a data-ajax="false" href="' . $link->url . '" target="_blank">';
-				print $link->label;
+				print dol_escape_htmltag($link->label);
 				print '</a>';
 				print '</td>'."\n";
 				print '<td class="right"></td>';
