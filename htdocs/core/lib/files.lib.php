@@ -1910,7 +1910,7 @@ function dol_compress_file($inputfile, $outputfile, $mode = "gz")
 				dol_syslog("Class ZipArchive is set so we zip using ZipArchive to zip into ".$outputfile.' rootPath='.$rootPath);
 				$zip = new ZipArchive;
 
-				if ($zip->open($outputfile, ZipArchive::CREATE)!==TRUE) {
+				if ($zip->open($outputfile, ZipArchive::CREATE) !== true) {
 					$errormsg="Failed to open file ".$outputfile."\n";
 					dol_syslog("dol_compress_file failure - ".$errormsg, LOG_ERR);
 					return -6;
