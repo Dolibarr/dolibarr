@@ -2927,7 +2927,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		{
 			if (empty($conf->$modulepart->dir_output))	// modulepart not supported
 			{
-				dol_print_error('', 'Error call dol_check_secure_access_document with not supported value for modulepart parameter ('.$modulepart.')');
+				dol_print_error('', 'Error call dol_check_secure_access_document with not supported value for modulepart parameter ('.$modulepart.'). The module for this modulepart value may not be activated.');
 				exit;
 			}
 
