@@ -342,7 +342,7 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 
 			// If some links to documents or viewimage remains, we replace with wrapper
 			$content=preg_replace('/(<img[^>]*src=")\/?viewimage\.php/', '\1/wrapper.php', $content, -1, $nbrep);
-			$content=preg_replace('/(<a[^>]*href=")\/?documents\.php/', '\1/wrapper.php', $content, -1, $nbrep);
+			$content=preg_replace('/(<a[^>]*href=")\/?document\.php/', '\1/wrapper.php', $content, -1, $nbrep);
 		}
 	}
 
