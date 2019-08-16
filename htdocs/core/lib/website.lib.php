@@ -155,8 +155,12 @@ function dolWebsiteReplacementOfLinks($website, $content, $removephppart = 0, $c
 	$content = str_replace('href="styles.css.php', 'href="!~!~!~styles.css.php', $content);
 	$content = str_replace('href="http', 'href="!~!~!~http', $content);
 	$content = str_replace('href="//', 'href="!~!~!~//', $content);
+	$content = str_replace('src="viewimage.php', 'src="!~!~!~/viewimage.php', $content);
 	$content = str_replace('src="/viewimage.php', 'src="!~!~!~/viewimage.php', $content);
 	$content = str_replace('src="'.DOL_URL_ROOT.'/viewimage.php', 'src="!~!~!~'.DOL_URL_ROOT.'/viewimage.php', $content);
+	$content = str_replace('href="document.php', 'href="!~!~!~/document.php', $content);
+	$content = str_replace('href="/document.php', 'href="!~!~!~/document.php', $content);
+	$content = str_replace('href="'.DOL_URL_ROOT.'/document.php', 'href="!~!~!~'.DOL_URL_ROOT.'/document.php', $content);
 
 	// Replace relative link '/' with dolibarr URL
 	$content = preg_replace('/(href=")\/\"/', '\1!~!~!~'.DOL_URL_ROOT.'/website/index.php?website='.$website->ref.'&pageid='.$website->fk_default_home.'"', $content, -1, $nbrep);
@@ -189,6 +193,7 @@ function dolWebsiteReplacementOfLinks($website, $content, $removephppart = 0, $c
 
 	// Fix relative URL
 	$content = str_replace('src="!~!~!~/viewimage.php', 'src="!~!~!~'.DOL_URL_ROOT.'/viewimage.php', $content);
+	$content = str_replace('href="!~!~!~/document.php', 'href="!~!~!~'.DOL_URL_ROOT.'/document.php', $content);
 	// Remove the protection tag !~!~!~
 	$content = str_replace('!~!~!~', '', $content);
 
@@ -238,8 +243,12 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 		$content = str_replace('href="styles.css.php', 'href="!~!~!~styles.css.php', $content);
 		$content = str_replace('href="http', 'href="!~!~!~http', $content);
 		$content = str_replace('href="//', 'href="!~!~!~//', $content);
+		$content = str_replace('src="viewimage.php', 'src="!~!~!~/viewimage.php', $content);
 		$content = str_replace('src="/viewimage.php', 'src="!~!~!~/viewimage.php', $content);
 		$content = str_replace('src="'.DOL_URL_ROOT.'/viewimage.php', 'src="!~!~!~'.DOL_URL_ROOT.'/viewimage.php', $content);
+		$content = str_replace('href="document.php', 'href="!~!~!~/document.php', $content);
+		$content = str_replace('href="/document.php', 'href="!~!~!~/document.php', $content);
+		$content = str_replace('href="'.DOL_URL_ROOT.'/document.php', 'href="!~!~!~'.DOL_URL_ROOT.'/document.php', $content);
 
 		// Replace relative link / with dolibarr URL:  ...href="/"...
 		$content = preg_replace('/(href=")\/\"/', '\1!~!~!~'.DOL_URL_ROOT.'/public/website/index.php?website='.$website->ref.'"', $content, -1, $nbrep);
@@ -276,6 +285,7 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 
 		// Fix relative URL
 		$content = str_replace('src="!~!~!~/viewimage.php', 'src="!~!~!~'.DOL_URL_ROOT.'/viewimage.php', $content);
+		$content = str_replace('href="!~!~!~/document.php', 'href="!~!~!~'.DOL_URL_ROOT.'/document.php', $content);
 		// Remove the protection tag !~!~!~
 		$content = str_replace('!~!~!~', '', $content);
 	}
@@ -313,6 +323,7 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 			$content=preg_replace('/(url\(["\']?)\/?image\//', '\1medias/image/', $content, -1, $nbrep);
 
 			$content=preg_replace('/(<script[^>]*src=")[^\"]*document\.php([^\"]*)modulepart=medias([^\"]*)file=([^\"]*)("[^>]*>)/', '\1medias/\4\5', $content, -1, $nbrep);
+			$content=preg_replace('/(<a[^>]*href=")[^\"]*document\.php([^\"]*)modulepart=medias([^\"]*)file=([^\"]*)("[^>]*>)/', '\1medias/\4\5', $content, -1, $nbrep);
 
 			$content=preg_replace('/(<a[^>]*href=")[^\"]*viewimage\.php([^\"]*)modulepart=medias([^\"]*)file=([^\"]*)("[^>]*>)/', '\1medias/\4\5', $content, -1, $nbrep);
 			$content=preg_replace('/(<img[^>]*src=")[^\"]*viewimage\.php([^\"]*)modulepart=medias([^\"]*)file=([^\"]*)("[^>]*>)/', '\1medias/\4\5', $content, -1, $nbrep);
