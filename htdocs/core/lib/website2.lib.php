@@ -61,7 +61,7 @@ function dolSavePageAlias($filealias, $object, $objectpage)
 	global $conf;
 
 	// Now create the .tpl file (duplicate code with actions updatesource or updatecontent but we need this to save new header)
-	dol_syslog("We regenerate the alias page filealias=".$filealias);
+	dol_syslog("dolSavePageAlias We regenerate the alias page filealias=".$filealias);
 
 	$aliascontent = '<?php'."\n";
 	$aliascontent.= "// File generated to wrap the alias page - DO NOT MODIFY - It is just a wrapper to real page\n";

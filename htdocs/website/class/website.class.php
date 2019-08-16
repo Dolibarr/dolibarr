@@ -1086,12 +1086,15 @@ class Website extends CommonObject
 					dolSavePageContent($filetpl, $object, $objectpagestatic);
 
 					// Regenerate alternative aliases pages
-					foreach($aliasesarray as $aliasshortcuttocreate)
+					if (is_array($aliasesarray))
 					{
-						if (trim($aliasshortcuttocreate))
+						foreach($aliasesarray as $aliasshortcuttocreate)
 						{
-							$filealias=$conf->website->dir_output.'/'.$object->ref.'/'.trim($aliasshortcuttocreate).'.php';
-							dolSavePageAlias($filealias, $object, $objectpagestatic);
+							if (trim($aliasshortcuttocreate))
+							{
+								$filealias=$conf->website->dir_output.'/'.$object->ref.'/'.trim($aliasshortcuttocreate).'.php';
+								dolSavePageAlias($filealias, $object, $objectpagestatic);
+							}
 						}
 					}
 				}

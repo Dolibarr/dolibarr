@@ -1393,8 +1393,11 @@ if ($action == 'updatemeta')
 			{
 				foreach($tmpaltaliases as $tmpaliasalt)
 				{
-					$result=dolSavePageAlias($pathofwebsite.'/'.trim($tmpaliasalt).'.php', $object, $objectpage);
-					if (! $result) setEventMessages('Failed to write file '.$pathofwebsite.'/'.trim($tmpaliasalt).'.php', null, 'errors');
+					if (trim($tmpaliasalt))
+					{
+						$result=dolSavePageAlias($pathofwebsite.'/'.trim($tmpaliasalt).'.php', $object, $objectpage);
+						if (! $result) setEventMessages('Failed to write file '.$pathofwebsite.'/'.trim($tmpaliasalt).'.php', null, 'errors');
+					}
 				}
 			}
 		}
