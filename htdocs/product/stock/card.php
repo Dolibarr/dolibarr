@@ -90,25 +90,12 @@ $usercancreate = (($user->rights->stock->creer));
 $usercandelete = (($user->rights->stock->supprimer));
 
 $parameters=array('id'=>$id, 'ref'=>$ref);
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 if (empty($reshook))
 {
-				 
-													
- 
 	// Ajout entrepot
 	if ($action == 'add' && $user->rights->stock->creer)
-										   
-										
-										  
-										
-										   
-										   
-										
-											  
-
-							   
 	{
 		$object->ref         = GETPOST("ref");
 		$object->fk_parent   = GETPOST("fk_parent");
@@ -154,25 +141,9 @@ if (empty($reshook))
 			$action="create";   // Force retour sur page creation
 		}
 	}
-	 
-  
-																			   
-													   
-  
- 
 
 	// Delete warehouse
 	if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->stock->supprimer)
- 
-									  
-								
-				 
-  
-																	 
-																						  
-	   
-  
-	 
 	{
 		$object->fetch(GETPOST('id', 'int'));
 		$result=$object->delete($user);
@@ -192,19 +163,7 @@ if (empty($reshook))
 
 	// Modification entrepot
 	if ($action == 'update' && $cancel <> $langs->trans("Cancel"))
- 
-						 
 	{
-											
-											  
-										 
-										   
-										 
-											
-											
-										 
-											   
-
 		if ($object->fetch($id))
 		{
 			$object->libelle     = GETPOST("libelle");
@@ -256,7 +215,7 @@ if (empty($reshook))
 		}
 		if ($error) $action = 'edit_extras';
 	}
- 
+
 
 	if ($cancel == $langs->trans("Cancel"))
 	{
@@ -269,12 +228,6 @@ if (empty($reshook))
 	$permissioncreate = $user->rights->stock->creer;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
-
-
-					   
-									   
-												
-														   
 
 
 /*
