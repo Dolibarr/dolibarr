@@ -28,12 +28,12 @@
 
 global $theme_bordercolor, $theme_datacolor, $theme_bgcolor, $theme_bgcoloronglet;
 $theme_bordercolor = array(235,235,224);
-$theme_datacolor = array(array(0, 147, 183), array(136,102,136), array(0,130,110), array(140,140,220), array(190,120,120), array(190,190,100), array(115,125,150), array(100,170,20), array(250,190,30), array(150,135,125), array(85,135,150), array(150,135,80), array(150,80,150));
+$theme_datacolor = array(array(137, 56, 161), array(60, 147, 183), array(250, 190, 80), array(191, 75, 57), array(80, 166, 90), array(140,140,220), array(190,120,120), array(190,190,100), array(115,125,150), array(100,170,20), array(150,135,125), array(85,135,150), array(150,135,80), array(150,80,150));
 if (!empty($conf->global->MAIN_OPTIMIZEFORCOLORBLIND)) // user is loaded by dolgraph.class.php
 {
 	if ($conf->global->MAIN_OPTIMIZEFORCOLORBLIND == 'flashy')
 	{
-		$theme_datacolor = array(array(157, 56, 191), array(0, 147, 183), array(250,190,30), array(221, 75, 57), array(0,166,90), array(140,140,220), array(190,120,120), array(190,190,100), array(115,125,150), array(100,170,20), array(150,135,125), array(85,135,150), array(150,135,80), array(150,80,150));
+		$theme_datacolor = array(array(157, 56, 191), array(0, 147, 183), array(250,190,30), array(221, 75, 57), array(0, 166, 90), array(140,140,220), array(190,120,120), array(190,190,100), array(115,125,150), array(100,170,20), array(150,135,125), array(85,135,150), array(150,135,80), array(150,80,150));
 	}
 	else
 	{
