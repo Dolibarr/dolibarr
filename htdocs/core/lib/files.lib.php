@@ -985,6 +985,7 @@ function dolCheckVirus($src_file)
  *  - This function can be used only into a HTML page context. Use dol_move if you are outside.
  *  - Test on antivirus is always done (if antivirus set).
  *  - Database of files is NOT updated (this is done by dol_add_file_process() that calls this function).
+ *  - Extension .noexe may be added if file is executable and MAIN_DOCUMENT_IS_OUTSIDE_WEBROOT_SO_NOEXE_NOT_REQUIRED is not set.
  *
  *	@param	string	$src_file			Source full path filename ($_FILES['field']['tmp_name'])
  *	@param	string	$dest_file			Target full path filename  ($_FILES['field']['name'])
@@ -1063,15 +1064,15 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 
 		// Security:
 		// We refuse cache files/dirs, upload using .. and pipes into filenames.
-		if (preg_match('/^\./', $src_file) || preg_match('/\.\./', $src_file) || preg_match('/[<>|]/', $src_file))
+		if (preg_match('/^\./', basename($src_file)) || preg_match('/\.\./', $src_file) || preg_match('/[<>|]/', $src_file))
 		{
 			dol_syslog("Refused to deliver file ".$src_file, LOG_WARNING);
 			return -1;
 		}
 
 		// Security:
-		// On interdit fichiers caches, remontees de repertoire ainsi que les pipe dans les noms de fichiers.
-		if (preg_match('/^\./', $dest_file) || preg_match('/\.\./', $dest_file) || preg_match('/[<>|]/', $dest_file))
+		// We refuse cache files/dirs, upload using .. and pipes into filenames.
+		if (preg_match('/^\./', basename($dest_file)) || preg_match('/\.\./', $dest_file) || preg_match('/[<>|]/', $dest_file))
 		{
 			dol_syslog("Refused to deliver file ".$dest_file, LOG_WARNING);
 			return -2;
