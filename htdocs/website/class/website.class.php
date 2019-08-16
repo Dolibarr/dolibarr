@@ -1065,6 +1065,8 @@ class Website extends CommonObject
 		{
 			while (! feof($fp))
 			{
+				$reg = array();
+
 				// Warning fgets with second parameter that is null or 0 hang.
 				$buf = fgets($fp, 65000);
 				if (preg_match('/^-- Page ID (\d+)\s[^\s]+\s(\d+).*Aliases\s(.*)\s--;/i', $buf, $reg))
@@ -1086,8 +1088,11 @@ class Website extends CommonObject
 					// Regenerate alternative aliases pages
 					foreach($aliasesarray as $aliasshortcuttocreate)
 					{
-						$filealias=$conf->website->dir_output.'/'.$object->ref.'/'.$aliasshortcuttocreate.'.php';
-						dolSavePageAlias($filealias, $object, $objectpagestatic);
+						if (trim($aliasshortcuttocreate))
+						{
+							$filealias=$conf->website->dir_output.'/'.$object->ref.'/'.trim($aliasshortcuttocreate).'.php';
+							dolSavePageAlias($filealias, $object, $objectpagestatic);
+						}
 					}
 				}
 			}
