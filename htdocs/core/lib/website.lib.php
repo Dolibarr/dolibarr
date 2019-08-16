@@ -153,6 +153,10 @@ function dolWebsiteReplacementOfLinks($website, $content, $removephppart = 0, $c
 
 	// Protect the link styles.css.php to any replacement that we make after.
 	$content = str_replace('href="styles.css.php', 'href="!~!~!~styles.css.php', $content);
+	$content = str_replace('href="http', 'href="!~!~!~http', $content);
+	$content = str_replace('href="//', 'href="!~!~!~//', $content);
+	$content = str_replace('src="/viewimage.php', 'src="!~!~!~/viewimage.php', $content);
+	$content = str_replace('src="'.DOL_URL_ROOT.'/viewimage.php', 'src="!~!~!~'.DOL_URL_ROOT.'/viewimage.php', $content);
 
 	// Replace relative link '/' with dolibarr URL
 	$content = preg_replace('/(href=")\/\"/', '\1!~!~!~'.DOL_URL_ROOT.'/website/index.php?website='.$website->ref.'&pageid='.$website->fk_default_home.'"', $content, -1, $nbrep);
@@ -167,9 +171,9 @@ function dolWebsiteReplacementOfLinks($website, $content, $removephppart = 0, $c
 
 	// <img src="medias/...image.png... => <img src="dolibarr/viewimage.php/modulepart=medias&file=image.png...
 	// <img src="...image.png... => <img src="dolibarr/viewimage.php/modulepart=medias&file=image.png...
-	$content = preg_replace('/(<img[^>]*src=")(medias\/)/', '\1!~!~!~'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file=', $content, -1, $nbrep);
+	$content = preg_replace('/(<img[^>]*src=")\/?medias\//', '\1!~!~!~'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file=', $content, -1, $nbrep);
 	// <img src="image.png... => <img src="dolibarr/viewimage.php/modulepart=medias&file=image.png...
-	$content = preg_replace('/(<img[^>]*src=")(?!(http|\/?viewimage|'.preg_quote(DOL_URL_ROOT, '/').'\/viewimage))/', '\1!~!~!~'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file=', $content, -1, $nbrep);
+	$content = preg_replace('/(<img[^>]*src=")\/?([^:\"\!]+)\"/', '\1!~!~!~'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file=\2"', $content, -1, $nbrep);
 	// <img src="viewimage.php/modulepart=medias&file=image.png" => <img src="dolibarr/viewimage.php/modulepart=medias&file=image.png"
 	$content = preg_replace('/(<img[^>]*src=")(\/?viewimage\.php)/', '\1!~!~!~'.DOL_URL_ROOT.'/viewimage.php', $content, -1, $nbrep);
 
@@ -183,6 +187,8 @@ function dolWebsiteReplacementOfLinks($website, $content, $removephppart = 0, $c
 	// Fix relative link /viewimage.php with correct URL after the DOL_URL_ROOT:  ...href="/viewimage.php?modulepart="
 	$content=preg_replace('/(url\(")(\/?viewimage\.php\?[^\"]*modulepart=[^\"]*)(\")/', '\1!~!~!~'.DOL_URL_ROOT.'\2\3', $content, -1, $nbrep);
 
+	// Fix relative URL
+	$content = str_replace('src="!~!~!~/viewimage.php', 'src="!~!~!~'.DOL_URL_ROOT.'/viewimage.php', $content);
 	// Remove the protection tag !~!~!~
 	$content = str_replace('!~!~!~', '', $content);
 
@@ -230,6 +236,10 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 
 		// Protect the link styles.css.php to any replacement that we make after.
 		$content = str_replace('href="styles.css.php', 'href="!~!~!~styles.css.php', $content);
+		$content = str_replace('href="http', 'href="!~!~!~http', $content);
+		$content = str_replace('href="//', 'href="!~!~!~//', $content);
+		$content = str_replace('src="/viewimage.php', 'src="!~!~!~/viewimage.php', $content);
+		$content = str_replace('src="'.DOL_URL_ROOT.'/viewimage.php', 'src="!~!~!~'.DOL_URL_ROOT.'/viewimage.php', $content);
 
 		// Replace relative link / with dolibarr URL:  ...href="/"...
 		$content = preg_replace('/(href=")\/\"/', '\1!~!~!~'.DOL_URL_ROOT.'/public/website/index.php?website='.$website->ref.'"', $content, -1, $nbrep);
@@ -253,16 +263,19 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 		$content = preg_replace('/url\((["\']?)medias\//', 'url(\1!~!~!~'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file=', $content, -1, $nbrep);
 		$content = preg_replace('/data-slide-bg=(["\']?)medias\//', 'data-slide-bg=\1!~!~!~'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file=', $content, -1, $nbrep);
 
-		// <img src="medias/image.png... => <img src="dolibarr/viewimage.php/modulepart=medias&file=image.png...
-		$content = preg_replace('/(<img[^>]*src=")(medias\/)/', '\1!~!~!~'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file=', $content, -1, $nbrep);
+		// <img src="medias/...image.png... => <img src="dolibarr/viewimage.php/modulepart=medias&file=image.png...
+		// <img src="...image.png... => <img src="dolibarr/viewimage.php/modulepart=medias&file=image.png...
+		$content = preg_replace('/(<img[^>]*src=")\/?medias\//', '\1!~!~!~'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file=', $content, -1, $nbrep);
 		// <img src="image.png... => <img src="dolibarr/viewimage.php/modulepart=medias&file=image.png...
-		$content = preg_replace('/(<img[^>]*src=")(?!(http|\/?viewimage|'.preg_quote(DOL_URL_ROOT, '/').'\/viewimage))/', '\1!~!~!~'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file=', $content, -1, $nbrep);
+		$content = preg_replace('/(<img[^>]*src=")\/?([^:\"\!]+)\"/', '\1!~!~!~'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file=\2"', $content, -1, $nbrep);
 		// <img src="viewimage.php/modulepart=medias&file=image.png" => <img src="dolibarr/viewimage.php/modulepart=medias&file=image.png"
 		$content = preg_replace('/(<img[^>]*src=")(\/?viewimage\.php)/', '\1!~!~!~'.DOL_URL_ROOT.'/viewimage.php', $content, -1, $nbrep);
 
 		// action="newpage.php" => action="dolibarr/website/index.php?website=...&pageref=newpage
 		$content = preg_replace('/(action=")\/?([^:\"]*)(\.php\")/', '\1!~!~!~'.DOL_URL_ROOT.'/public/website/index.php?website='.$website->ref.'&pageref=\2"', $content, -1, $nbrep);
 
+		// Fix relative URL
+		$content = str_replace('src="!~!~!~/viewimage.php', 'src="!~!~!~'.DOL_URL_ROOT.'/viewimage.php', $content);
 		// Remove the protection tag !~!~!~
 		$content = str_replace('!~!~!~', '', $content);
 	}
@@ -277,7 +290,11 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 		$nbrep=0;
 		if (! $symlinktomediaexists)
 		{
-			$content=preg_replace('/(<script[^>]*src=")[^\"]*document\.php([^\"]*)modulepart=medias([^\"]*)file=([^\"]*)("[^>]*>)/', '\wrapper.php\2modulepart=medias\3file=\4\5', $content, -1, $nbrep);
+			// <img src="image.png... => <img src="medias/image.png...
+			$content=preg_replace('/(<img[^>]*src=")\/?image\//', '\1/wrapper.php?modulepart=medias&file=medias/image/', $content, -1, $nbrep);
+			$content=preg_replace('/(url\(["\']?)\/?image\//', '\1/wrapper.php?modulepart=medias&file=medias/image/', $content, -1, $nbrep);
+
+			$content=preg_replace('/(<script[^>]*src=")[^\"]*document\.php([^\"]*)modulepart=medias([^\"]*)file=([^\"]*)("[^>]*>)/', '\1/wrapper.php\2modulepart=medias\3file=\4\5', $content, -1, $nbrep);
 
 			$content=preg_replace('/(<a[^>]*href=")[^\"]*viewimage\.php([^\"]*)modulepart=medias([^\"]*)file=([^\"]*)("[^>]*>)/', '\1/wrapper.php\2modulepart=medias\3file=\4\5', $content, -1, $nbrep);
 			$content=preg_replace('/(<img[^>]*src=")[^\"]*viewimage\.php([^\"]*)modulepart=medias([^\"]*)file=([^\"]*)("[^>]*>)/', '\1/wrapper.php\2modulepart=medias\3file=\4\5', $content, -1, $nbrep);
@@ -291,6 +308,10 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 		}
 		else
 		{
+			// <img src="image.png... => <img src="medias/image.png...
+			$content=preg_replace('/(<img[^>]*src=")\/?image\//', '\1medias/image/', $content, -1, $nbrep);
+			$content=preg_replace('/(url\(["\']?)\/?image\//', '\1medias/image/', $content, -1, $nbrep);
+
 			$content=preg_replace('/(<script[^>]*src=")[^\"]*document\.php([^\"]*)modulepart=medias([^\"]*)file=([^\"]*)("[^>]*>)/', '\1medias/\4\5', $content, -1, $nbrep);
 
 			$content=preg_replace('/(<a[^>]*href=")[^\"]*viewimage\.php([^\"]*)modulepart=medias([^\"]*)file=([^\"]*)("[^>]*>)/', '\1medias/\4\5', $content, -1, $nbrep);
