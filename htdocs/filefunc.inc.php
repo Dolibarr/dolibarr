@@ -149,6 +149,7 @@ if (empty($dolibarr_strict_mode)) $dolibarr_strict_mode=0; // For debug in php s
 // This test check if referrer ($_SERVER['HTTP_REFERER']) is same web site than Dolibarr ($_SERVER['HTTP_HOST'])
 // when we post forms (we allow GET to allow direct link to access a particular page).
 // Note about $_SERVER[HTTP_HOST/SERVER_NAME]: http://shiflett.org/blog/2006/mar/server-name-versus-http-host
+// See also option $conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN for a stronger CSRF protection.
 if (! defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck))
 {
 	if (! empty($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] != 'GET' && ! empty($_SERVER['HTTP_HOST']))
