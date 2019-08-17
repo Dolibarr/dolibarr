@@ -175,6 +175,9 @@ if ($action == 'valid' && $user->rights->facture->creer)
 	$payment->datepaye = $now;
 	$payment->fk_account = $bankaccount;
 	$payment->amounts[$invoice->id] = $amountofpayment;
+	
+	// If user has not used change control, add total invoice payment
+	if ($amountofpayment == 0) $payment->amounts[$invoice->id] = $invoice->total_ttc;
 
 	$payment->paiementid=$paiementid;
 	$payment->num_payment=$invoice->ref;
