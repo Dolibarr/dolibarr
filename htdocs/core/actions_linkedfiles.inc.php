@@ -125,8 +125,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes')
         {
             require_once DOL_DOCUMENT_ROOT . '/core/class/link.class.php';
             $link = new Link($db);
-            $link->id = $linkid;
-            $link->fetch();
+            $link->fetch($linkid);
             $res = $link->delete($user);
 
             $langs->load('link');
@@ -160,8 +159,7 @@ elseif ($action == 'confirm_updateline' && GETPOST('save', 'alpha') && GETPOST('
     require_once DOL_DOCUMENT_ROOT . '/core/class/link.class.php';
     $langs->load('link');
     $link = new Link($db);
-    $link->id = GETPOST('linkid', 'int');
-    $f = $link->fetch();
+    $f = $link->fetch(GETPOST('linkid', 'int'));
     if ($f)
     {
         $link->url = GETPOST('link', 'alpha');
@@ -169,7 +167,7 @@ elseif ($action == 'confirm_updateline' && GETPOST('save', 'alpha') && GETPOST('
         {
             $link->url = 'http://' . $link->url;
         }
-        $link->label = GETPOST('label', 'alpha');
+        $link->label = GETPOST('label', 'alphanohtml');
         $res = $link->update($user);
         if (!$res)
         {

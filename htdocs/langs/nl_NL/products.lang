@@ -2,6 +2,7 @@
 ProductRef=Productreferentie
 ProductLabel=Naam
 ProductLabelTranslated=Vertaald product label
+ProductDescription=Product description
 ProductDescriptionTranslated=Vertaalde product beschrijving
 ProductNoteTranslated=Vertaalde product aantekening
 ProductServiceCard=Producten / Dienstendetailkaart

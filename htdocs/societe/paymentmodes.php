@@ -788,10 +788,8 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			$permissiontowrite = $user->rights->societe->creer;
 			// Stripe customer key 'cu_....' stored into llx_societe_account
 			print '<tr><td class="titlefield">';
-			//print $langs->trans('StripeCustomerId');
 			print $form->editfieldkey("StripeCustomerId", 'key_account', $stripecu, $object, $permissiontowrite, 'string', '', 0, 2, 'socid');
 			print '</td><td>';
-			//print $stripecu;
 			print $form->editfieldval("StripeCustomerId", 'key_account', $stripecu, $object, $permissiontowrite, 'string', '', null, null, '', 2, '', 'socid');
 			if (! empty($conf->stripe->enabled) && $stripecu && $action != 'editkey_account')
 			{
@@ -817,6 +815,60 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			print '</td></tr>';
 		}
     }
+    
+	if ($object->fournisseur)
+	{
+		print '<tr><td class="titlefield">';
+		print $langs->trans('SupplierCode').'</td><td colspan="2">';
+		print $object->code_fournisseur;
+		if ($object->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
+		print '</td></tr>';
+		$sql = "SELECT count(*) as nb from ".MAIN_DB_PREFIX."facture where fk_soc = ".$socid;
+		$resql=$db->query($sql);
+		if (!$resql) dol_print_error($db);
+		$obj = $db->fetch_object($resql);
+		$nbFactsClient = $obj->nb;
+		$thirdTypeArray['customer']=$langs->trans("customer");
+		if ($conf->propal->enabled && $user->rights->propal->lire) $elementTypeArray['propal']=$langs->transnoentitiesnoconv('Proposals');
+		if ($conf->commande->enabled && $user->rights->commande->lire) $elementTypeArray['order']=$langs->transnoentitiesnoconv('Orders');
+		if ($conf->facture->enabled && $user->rights->facture->lire) $elementTypeArray['invoice']=$langs->transnoentitiesnoconv('Invoices');
+		if ($conf->contrat->enabled && $user->rights->contrat->lire) $elementTypeArray['contract']=$langs->transnoentitiesnoconv('Contracts');
+	}
+	
+	if (! empty($conf->stripe->enabled) && ! empty($conf->stripeconnect->enabled) && $conf->global->MAIN_FEATURES_LEVEL >= 2)
+	{
+		$permissiontowrite = $user->rights->societe->creer;
+		$stripesupplieracc = $stripe->getStripeAccount($service, $object->id);								// Get Stripe OAuth connect account (no network access here)
+    
+		// Stripe customer key 'cu_....' stored into llx_societe_account
+		print '<tr><td class="titlefield">';
+		print $form->editfieldkey("StripeConnectAccount", 'key_account_supplier', $stripesupplieracc, $object, $permissiontowrite, 'string', '', 0, 2, 'socid');
+		print '</td><td>';
+		print $form->editfieldval("StripeConnectAccount", 'key_account_supplier', $stripesupplieracc, $object, $permissiontowrite, 'string', '', null, null, '', 2, '', 'socid');
+		if (! empty($conf->stripe->enabled) && $stripesupplieracc && $action != 'editkey_account')
+		{
+		    $connect='';
+			
+			$url='https://dashboard.stripe.com/test/connect/accounts/'.$stripesupplieracc;
+			if ($servicestatus)
+			{
+				$url='https://dashboard.stripe.com/connect/accounts/'.$stripesupplieracc;
+			}
+			print ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe'), 'object_globe').'</a>';
+		}
+		print '</td><td class="right">';
+		if (empty($stripesupplieracc))
+		{
+			print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+			print '<input type="hidden" name="action" value="syncsuppliertostripe">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="socid" value="'.$object->id.'">';
+			print '<input type="hidden" name="companybankid" value="'.$rib->id.'">';
+			//print '<input type="submit" class="button" name="syncstripecustomer" value="'.$langs->trans("CreateSupplierOnStripe").'">';
+			print '</form>';
+		}
+		print '</td></tr>';
+	}
 
 	print '</table>';
 	print '</div>';
@@ -826,7 +878,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 	print '<br>';
 
 	// List of Stripe payment modes
-	if (! (empty($conf->stripe->enabled)))
+	if (! (empty($conf->stripe->enabled)) && $object->client)
 	{
 		$morehtmlright='';
 		if (! empty($conf->global->STRIPE_ALLOW_LOCAL_CARD))
@@ -1188,11 +1240,41 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		}
 		print "</table>";
 		print "</div>";
+   	print '<br>';
+	}
+  
+  	// List of Stripe payment modes
+	if (! empty($conf->stripe->enabled) && ! empty($conf->stripeconnect->enabled) && $object->fournisseur && ! empty($stripesupplieracc))
+	{
+  print load_fiche_titre($langs->trans('StripeBalance').($stripesupplieracc?' (Stripe connection with StripeConnect account '.$stripesupplieracc.')':' (Stripe connection with keys from Stripe module setup)'), $morehtmlright, '');
+  $balance = \Stripe\Balance::retrieve(array("stripe_account" => $stripesupplieracc));
+		print '<table class="liste" width="100%">'."\n";
+		print '<tr class="liste_titre">';
+		print '<td>'.$langs->trans('Status').'</td>';
+		print '<td>'.$langs->trans('Amount').'</td>';
+		print '<td>'.$langs->trans('Currency').'</td>';
+    print '</tr>';
+  
+		if (is_array($balance->available) && count($balance->available))
+		{
+			foreach ($balance->available as $cpt)
+			{
+      print '<tr><td>'.$langs->trans("Available").'</td><td>'.price($cpt->amount, 0, '', 1, - 1, - 1, strtoupper($cpt->currency)).' </td><td>'.$langs->trans("Currency".strtoupper($cpt->currency)).'</td></tr>';
+			}
+		}
+    
+    if (is_array($balance->pending) && count($balance->pending))
+		{
+			foreach ($balance->pending as $cpt)
+			{
+      print '<tr><td>'.$langs->trans("Pending").'</td><td>'.price($cpt->amount, 0, '', 1, - 1, - 1, strtoupper($cpt->currency)).' </td><td>'.$langs->trans("Currency".strtoupper($cpt->currency)).'</td></tr>';
+			}
+    }
+    print '</table>';
+    print '<br>';
 	}
 
-
 	// List of bank accounts
-	print '<br>';
 
     $morehtmlright= dolGetButtonTitle($langs->trans('Add'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=create');
 

@@ -93,6 +93,5 @@ FreeLegalTextOnInterventions=Freier Rechtstext für Eingriffe
 WatermarkOnDraftInterventionCards=Wasserzeichen auf Intervention Karte Dokumente (alle, wenn leer)
 ClickToDialSetup=Click-to-Dial-Moduleinstellungen
 PathToGeoIPMaxmindCountryDataFile=Pfad zur Datei mit Maxmind IP to Country Übersetzung. <br> Beispiel: / usr / local / share / GeoIP / GeoIP.dat
-ListOfFixedNotifications=List of Fixed Notifications
 MailToSendShipment=Sendungen
 MailToSendIntervention=Eingriffe

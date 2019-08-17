@@ -433,8 +433,8 @@ class Commande extends CommonOrder
 				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 				$oldref = dol_sanitizeFileName($this->ref);
 				$newref = dol_sanitizeFileName($num);
-				$dirsource = $conf->commande->dir_output.'/'.$oldref;
-				$dirdest = $conf->commande->dir_output.'/'.$newref;
+				$dirsource = $conf->commande->multidir_output[$this->entity].'/'.$oldref;
+				$dirdest = $conf->commande->multidir_output[$this->entity].'/'.$newref;
 				if (! $error && file_exists($dirsource))
 				{
 					dol_syslog(get_class($this)."::valid() rename dir ".$dirsource." into ".$dirdest);
@@ -443,7 +443,7 @@ class Commande extends CommonOrder
 					{
 						dol_syslog("Rename ok");
 						// Rename docs starting with $oldref with $newref
-						$listoffiles=dol_dir_list($conf->commande->dir_output.'/'.$newref, 'files', 1, '^'.preg_quote($oldref, '/'));
+						$listoffiles=dol_dir_list($conf->commande->multidir_output[$this->entity].'/'.$newref, 'files', 1, '^'.preg_quote($oldref, '/'));
 						foreach($listoffiles as $fileentry)
 						{
 							$dirsource=$fileentry['name'];
@@ -865,7 +865,7 @@ class Commande extends CommonOrder
 		$sql.= ", ".($this->remise_percent>0?$this->db->escape($this->remise_percent):0);
 		$sql.= ", ".(int) $this->fk_incoterms;
 		$sql.= ", '".$this->db->escape($this->location_incoterms)."'";
-		$sql.= ", ".$conf->entity;
+		$sql.= ", ".setEntity($this);
         $sql.= ", ".($this->module_source ? "'".$this->db->escape($this->module_source)."'" : "null");
 		$sql.= ", ".($this->pos_source != '' ? "'".$this->db->escape($this->pos_source)."'" : "null");
 		$sql.= ", ".(int) $this->fk_multicurrency;
@@ -1238,6 +1238,7 @@ class Commande extends CommonOrder
 				$this->lines[$i] = $line;
 		}
 
+		$this->entity               = $object->entity;
 		$this->socid                = $object->socid;
 		$this->fk_project           = $object->fk_project;
 		$this->cond_reglement_id    = $object->cond_reglement_id;
@@ -1457,11 +1458,11 @@ class Commande extends CommonOrder
 			$pu_ht_devise = $tabprice[19];
 
 			// Rang to use
-			$rangtouse = $rang;
-			if ($rangtouse == -1)
+			$ranktouse = $rang;
+			if ($ranktouse == -1)
 			{
 				$rangmax = $this->line_max($fk_parent_line);
-				$rangtouse = $rangmax + 1;
+				$ranktouse = $rangmax + 1;
 			}
 
 			// TODO A virer
@@ -1495,7 +1496,7 @@ class Commande extends CommonOrder
 			$this->line->fk_remise_except=$fk_remise_except;
 			$this->line->remise_percent=$remise_percent;
 			$this->line->subprice=$pu_ht;
-			$this->line->rang=$rangtouse;
+			$this->line->rang=$ranktouse;
 			$this->line->info_bits=$info_bits;
 			$this->line->total_ht=$total_ht;
 			$this->line->total_tva=$total_tva;
@@ -3335,10 +3336,10 @@ class Commande extends CommonOrder
 		{
 			// Remove directory with files
 			$comref = dol_sanitizeFileName($this->ref);
-			if ($conf->commande->dir_output && !empty($this->ref))
+			if ($conf->commande->multidir_output[$this->entity] && !empty($this->ref))
 			{
-				$dir = $conf->commande->dir_output . "/" . $comref ;
-				$file = $conf->commande->dir_output . "/" . $comref . "/" . $comref . ".pdf";
+				$dir = $conf->commande->multidir_output[$this->entity] . "/" . $comref ;
+				$file = $conf->commande->multidir_output[$this->entity] . "/" . $comref . "/" . $comref . ".pdf";
 				if (file_exists($file))	// We must delete all files before deleting directory
 				{
 					dol_delete_preview($this);

@@ -176,7 +176,21 @@ class FormWebsite
 
     	$langs->load("admin");
 
-    	$arrayofsamples=array('empty'=>'EmptyPage', 'corporatehome'=>'CorporateHomePage');
+    	$listofsamples = dol_dir_list(DOL_DOCUMENT_ROOT.'/website/samples', 'files', 0, '^page-sample-.*\.html$');
+
+    	$arrayofsamples = array();
+    	$arrayofsamples['empty']='EmptyPage';	// Always this one first
+    	foreach($listofsamples as $sample)
+    	{
+    		$reg = array();
+    		if (preg_match('/^page-sample-(.*)\.html$/', $sample['name'], $reg))
+    		{
+    			$key = $reg[1];
+	    		$labelkey = ucfirst($key);
+    			if ($key == 'empty') $labelkey = 'EmptyPage';
+    			$arrayofsamples[$key] = $labelkey;
+    		}
+    	}
 
     	$out = '';
     	$out .= '<select id="select'.$htmlname.'" class="flat selectTypeOfContainer" name="'.$htmlname.'"'.($moreattrib?' '.$moreattrib:'').'>';

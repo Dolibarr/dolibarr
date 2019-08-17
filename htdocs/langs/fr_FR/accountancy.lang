@@ -246,7 +246,7 @@ ValidateHistory=Lier automatiquement
 AutomaticBindingDone=Liaison automatique faite
 
 ErrorAccountancyCodeIsAlreadyUse=Erreur, vous ne pouvez pas détruire de compte comptable car il est utilisé
-MvtNotCorrectlyBalanced=Mouvement non équilibré. Débit = %s| Crébit = %s
+MvtNotCorrectlyBalanced=Mouvement non équilibré. Débit = %s| Crédit = %s
 Balancing=Équilibrage
 FicheVentilation=Fiche lien
 GeneralLedgerIsWritten=Les transactions sont enregistrées dans le grand livre
@@ -265,7 +265,7 @@ AccountingJournals=Journaux comptables
 AccountingJournal=Journal comptable
 NewAccountingJournal=Nouveau journal comptable
 ShowAccoutingJournal=Afficher le journal
-Nature=Nature
+NatureOfJournal=Nature du journal
 AccountingJournalType1=Opérations diverses
 AccountingJournalType2=Ventes
 AccountingJournalType3=Achats
@@ -291,6 +291,7 @@ Modelcsv_quadratus=Export vers Quadratus QuadraCompta
 Modelcsv_ebp=Export vers EBP
 Modelcsv_cogilog=Export vers Cogilog
 Modelcsv_agiris=Export vers Agiris
+Modelcsv_LDCompta=Export pour LD Compta (v9 et supérieur) (Test)
 Modelcsv_openconcerto=Export pour OpenConcerto (Test)
 Modelcsv_configurable=Export configurable
 Modelcsv_FEC=Export FEC
@@ -302,7 +303,7 @@ ChartofaccountsId=Id plan comptable
 InitAccountancy=Initialisation comptabilité
 InitAccountancyDesc=Cette page peut être utilisée pour initialiser un compte comptable sur les produits et services qui ne disposent pas de compte comptable défini pour les ventes et les achats.
 DefaultBindingDesc=Cette page peut être utilisée pour définir un compte par défaut à utiliser pour la ventilation des transactions sur le paiement des salaires, les dons, les charges sociales et fiscales et la TVA lorsqu'aucun compte spécifique n'a été défini.
-DefaultClosureDesc=Cette page peut être utilisée pour définir les paramètres pour clore un bilan.
+DefaultClosureDesc=Cette page peut être utilisée pour définir les paramètres pour une cloture comptable.
 Options=Options
 OptionModeProductSell=Mode ventes
 OptionModeProductSellIntra=Mode ventes exportées dans la CEE

@@ -36,6 +36,7 @@
 
 include_once DOL_DOCUMENT_ROOT.'/core/class/commoninvoice.class.php';
 require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 /**
  *	Class to manage suppliers invoices
@@ -411,17 +412,6 @@ class FactureFournisseur extends CommonInvoice
 				    }
 				}
 			}
-
-			// Add linked object (deprecated, use ->linkedObjectsIds instead)
-            if (! $error && $this->id && ! empty($this->origin) && ! empty($this->origin_id))
-            {
-                $ret = $this->add_object_linked();
-                if (! $ret)
-                {
-                    dol_print_error($this->db);
-                    $error++;
-                }
-            }
 
 			if (count($this->lines) && is_object($this->lines[0]))	// If this->lines is array of InvoiceLines (preferred mode)
 			{

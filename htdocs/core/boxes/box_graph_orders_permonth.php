@@ -74,6 +74,9 @@ class box_graph_orders_permonth extends ModeleBoxes
 		//include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 		//$commandestatic=new Commande($db);
 
+		$startmonth = $conf->global->SOCIETE_FISCAL_MONTH_START?($conf->global->SOCIETE_FISCAL_MONTH_START) : 1;
+		if (empty($conf->global->GRAPH_USE_FISCAL_YEAR)) $startmonth = 1;
+
 		$text = $langs->trans("BoxCustomersOrdersPerMonth", $max);
 		$this->info_box_head = array(
 				'text' => $text,
@@ -129,7 +132,7 @@ class box_graph_orders_permonth extends ModeleBoxes
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($shownb)
 			{
-				$data1 = $stats->getNbByMonthWithPrevYear($endyear, $startyear, (GETPOST('action', 'aZ09')==$refreshaction?-1:(3600*24)), ($WIDTH<300?2:0));
+				$data1 = $stats->getNbByMonthWithPrevYear($endyear, $startyear, (GETPOST('action', 'aZ09')==$refreshaction?-1:(3600*24)), ($WIDTH<300?2:0), $startmonth);
 
 				$filenamenb = $dir."/".$prefix."ordersnbinyear-".$endyear.".png";
 				if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&amp;file=ordersnbinyear-'.$endyear.'.png';
@@ -144,7 +147,14 @@ class box_graph_orders_permonth extends ModeleBoxes
 					$i=$startyear;$legend=array();
 					while ($i <= $endyear)
 					{
-						$legend[]=$i;
+						if ($startmonth != 1)
+						{
+							$legend[]=sprintf("%d/%d", $i-2001, $i-2000);
+						}
+						else
+						{
+							$legend[]=$i;
+						}
 						$i++;
 					}
 					$px1->SetLegend($legend);
@@ -165,7 +175,7 @@ class box_graph_orders_permonth extends ModeleBoxes
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($showtot)
 			{
-				$data2 = $stats->getAmountByMonthWithPrevYear($endyear, $startyear, (GETPOST('action', 'aZ09')==$refreshaction?-1:(3600*24)), ($WIDTH<300?2:0));
+				$data2 = $stats->getAmountByMonthWithPrevYear($endyear, $startyear, (GETPOST('action', 'aZ09')==$refreshaction?-1:(3600*24)), ($WIDTH<300?2:0), $startmonth);
 
 				$filenamenb = $dir."/".$prefix."ordersamountinyear-".$endyear.".png";
 				if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&amp;file=ordersamountinyear-'.$endyear.'.png';
@@ -180,7 +190,14 @@ class box_graph_orders_permonth extends ModeleBoxes
 					$i=$startyear;$legend=array();
 					while ($i <= $endyear)
 					{
-						$legend[]=$i;
+						if ($startmonth != 1)
+						{
+							$legend[]=sprintf("%d/%d", $i-2001, $i-2000);
+						}
+						else
+						{
+							$legend[]=$i;
+						}
 						$i++;
 					}
 					$px2->SetLegend($legend);

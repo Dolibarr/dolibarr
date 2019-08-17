@@ -2,6 +2,7 @@
 ProductRef=Ürün ref.
 ProductLabel=Ürün etiketi
 ProductLabelTranslated=Çevirilmiş ürün etiketi
+ProductDescription=Product description
 ProductDescriptionTranslated=Çevirilmiş ürün tanımı
 ProductNoteTranslated=Çevirilmiş ürün notu
 ProductServiceCard=Ürün/Hizmet kartı

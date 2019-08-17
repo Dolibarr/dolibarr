@@ -1094,7 +1094,7 @@ class DolGraph
 				$i++;
 			}
 			// shadowSize: 0 -> Drawing is faster without shadows
-			$this->stringtoshow.="\n".' ], { series: { shadowSize: 0, stack: stack, lines: { fill: false, steps: steps }, bars: { barWidth: 0.6 } }'."\n";
+			$this->stringtoshow.="\n".' ], { series: { shadowSize: 0, stack: stack, lines: { fill: false, steps: steps }, bars: { barWidth: 0.6,  fillColor: { colors: [{opacity: 0.9 }, {opacity: 0.85}] }} }'."\n";
 
 			// Xaxis
 			$this->stringtoshow.=', xaxis: { ticks: ['."\n";

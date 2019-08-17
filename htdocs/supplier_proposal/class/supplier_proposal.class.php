@@ -524,11 +524,11 @@ class SupplierProposal extends CommonObject
             $pu_ht_devise = $tabprice[19];
 
             // Rang to use
-            $rangtouse = $rang;
-            if ($rangtouse == -1)
+            $ranktouse = $rang;
+            if ($ranktouse == -1)
             {
                 $rangmax = $this->line_max($fk_parent_line);
-                $rangtouse = $rangmax + 1;
+                $ranktouse = $rangmax + 1;
             }
 
             // TODO A virer
@@ -556,7 +556,7 @@ class SupplierProposal extends CommonObject
             $this->line->fk_product=$fk_product;
             $this->line->remise_percent=$remise_percent;
             $this->line->subprice=$pu_ht;
-            $this->line->rang=$rangtouse;
+            $this->line->rang=$ranktouse;
             $this->line->info_bits=$info_bits;
             $this->line->total_ht=$total_ht;
             $this->line->total_tva=$total_tva;
@@ -984,13 +984,6 @@ class SupplierProposal extends CommonObject
                             }
                         }
                     }
-                }
-
-                // Add linked object (deprecated, use ->linkedObjectsIds instead)
-                if (! $error && $this->origin && $this->origin_id)
-                {
-                    $ret = $this->add_object_linked();
-                    if (! $ret)	dol_print_error($this->db);
                 }
 
                 /*
