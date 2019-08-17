@@ -206,6 +206,21 @@ if (! empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/swagger.json' || 
 // Call one APIs or one definition of an API
 if (! empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/swagger.json' && $reg[2] != '/resources.json' && preg_match('/^\/(swagger|resources)\.json\/(.+)$/', $reg[2], $regbis) && $regbis[2] != 'root')))
 {
+	// Restrict API to some IPs
+	if (! empty($conf->global->API_RESTICT_ON_IP))
+	{
+		$allowedip=explode(' ', $conf->global->API_RESTICT_ON_IP);
+		$ipremote = getUserRemoteIP();
+		if (! in_array($ipremote, $allowedip))
+		{
+			dol_syslog('Remote ip is '.$ipremote.', not into list '.$conf->global->API_RESTICT_ON_IP);
+			print 'API not allowed from the IP '.$ipremote;
+			header('HTTP/1.1 503 API not allowed from your IP '.$ipremote);
+			//print $conf->global->API_RESTICT_ON_IP;
+			exit(0);
+		}
+	}
+
     $module = $reg[1];
     if ($module == 'explorer')  // If we call page to explore details of a service
     {
