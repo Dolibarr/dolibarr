@@ -312,8 +312,8 @@ if ($action == 'create')
 	print '</td></tr>';
 
     // Other attributes
-    include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_add.tpl.php';
-	$parameters=array();
+    include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
+	$parameters = array();
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters,$object, $action);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 
