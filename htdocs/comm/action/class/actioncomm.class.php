@@ -1262,10 +1262,12 @@ class ActionComm extends CommonObject
 
 		if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
 
-                if ((!$user->rights->agenda->allactions->read && $this->author->id != $user->id) || (!$user->rights->agenda->myactions->read && $this->author->id == $user->id))
-                    $option = 'nolink';
+		if ((!$user->rights->agenda->allactions->read && $this->authorid != $user->id) || (!$user->rights->agenda->myactions->read && $this->authorid == $user->id))
+		{
+            $option = 'nolink';
+		}
 
-                $label = $this->label;
+        $label = $this->label;
 		if (empty($label)) $label=$this->libelle;   // For backward compatibility
 
 		$result='';
