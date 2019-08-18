@@ -2345,10 +2345,10 @@ function colorLighten($hex, $percent)
 
 
 /**
- * @param string 	$hex 		color in hex
- * @param float 	$alpha 		0 to 1 to add alpha channel
- * @param bool 		$return		Array set to 1 to return an array instead of string
- * @return string|array			String or array
+ * @param string 	$hex 			color in hex
+ * @param float 	$alpha 			0 to 1 to add alpha channel
+ * @param bool 		$returnArray	Array set to 1 to return an array instead of string
+ * @return string|array				String or array
  */
 function colorHexToRgb($hex, $alpha = false, $returnArray = false)
 {
