@@ -2251,9 +2251,53 @@ function colorValidateHex($color, $allow_white = true)
 
 
 /**
- * @param string $hex color in hex
- * @param integer $steps Steps should be between -255 and 255. Negative = darker, positive = lighter
- * @return string
+ * Change color to make it less aggressive (ratio is negative) or more aggressive (ratio is positive)
+ *
+ * @param string 		$hex		Color in hex ('#AA1122' or 'AA1122' or '#a12' or 'a12')
+ * @param integer		$ratio		Default=-50. Note: 0=Component color is unchanged, -100=Component color become 88, +100=Component color become 00 or FF
+ * @return string		New string of color
+ * @see colorAdjustBrightness()
+ */
+function colorAgressivity($hex, $ratio = -50)
+{
+	// Steps should be between -255 and 255. Negative = darker, positive = lighter
+	$ratio = max(-100, min(100, $ratio));
+
+	// Normalize into a six character long hex string
+	$hex = str_replace('#', '', $hex);
+	if (strlen($hex) == 3) {
+		$hex = str_repeat(substr($hex, 0, 1), 2).str_repeat(substr($hex, 1, 1), 2).str_repeat(substr($hex, 2, 1), 2);
+	}
+
+	// Split into three parts: R, G and B
+	$color_parts = str_split($hex, 2);
+	$return = '#';
+
+	foreach ($color_parts as $color) {
+		$color   = hexdec($color); // Convert to decimal
+		if ($ratio > 0)	// We increase aggressivity
+		{
+			if ($color > 127) $color += ((255 - $color) * ($ratio / 100));
+			if ($color < 128) $color -= ($color * ($ratio / 100));
+		}
+		else			// We decrease agressivity
+		{
+			if ($color > 128) $color -= (($color - 128) * (abs($ratio) / 100));
+			if ($color < 127) $color += ((128 - $color) * (abs($ratio) / 100));
+		}
+		$color   = max(0, min(255, $color)); // Adjust color
+		$return .= str_pad(dechex($color), 2, '0', STR_PAD_LEFT); // Make two char hex code
+	}
+
+	//var_dump($hex.' '.$ratio.' -> '.$return);
+	return $return;
+}
+
+/**
+ * @param string 	$hex 		Color in hex ('#AA1122' or 'AA1122' or '#a12' or 'a12')
+ * @param integer 	$steps 		Step/offset added to each color component. It should be between -255 and 255. Negative = darker, positive = lighter
+ * @return string				New color with format '#AA1122'
+ * @see colorAgressivity()
  */
 function colorAdjustBrightness($hex, $steps)
 {
