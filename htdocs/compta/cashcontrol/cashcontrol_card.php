@@ -88,7 +88,7 @@ if (empty($backtopage)) $backtopage = dol_buildpath('/compta/cashcontrol/cashcon
 $backurlforlist = dol_buildpath('/compta/cashcontrol/cashcontrol_list.php', 1);
 $triggermodname = 'CACHCONTROL_MODIFY';	// Name of trigger action code to execute when we modify record
 
-if (empty($conf->global->CASHDESK_ID_BANKACCOUNT_CASH))
+if (empty($conf->global->CASHDESK_ID_BANKACCOUNT_CASH) && empty($conf->global->CASHDESK_ID_BANKACCOUNT_CASH1))
 {
 	setEventMessages($langs->trans("CashDesk")." - ".$langs->trans("NotConfigured"), null, 'errors');
 }
@@ -132,16 +132,7 @@ elseif ($action=="add")
 	$error=0;
 	foreach($arrayofpaymentmode as $key=>$val)
 	{
-		if (GETPOST($key.'_amount', 'alpha') == '')
-		{
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv($val)), null, 'errors');
-			$action='start';
-			$error++;
-		}
-		else
-		{
-			$object->$key = price2num(GETPOST($key.'_amount', 'alpha'));
-		}
+		$object->$key = price2num(GETPOST($key.'_amount', 'alpha'));
 	}
 
 	if (! $error)
@@ -235,7 +226,7 @@ if ($action=="create" || $action=="start")
 		$posmodule = GETPOST('posmodule', 'alpha');
 		$terminalid = GETPOST('posnumber', 'alpha');
 		$terminaltouse = $terminalid;
-		if ($terminaltouse == '1') $terminaltouse = '';
+		if ($terminaltouse == '1' && $posmodule=='cashdesk') $terminaltouse = '';
 
 		// Calculate $initialbalanceforterminal for terminal 0
 		foreach($arrayofpaymentmode as $key => $val)
