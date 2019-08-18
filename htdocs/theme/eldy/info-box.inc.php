@@ -268,6 +268,8 @@ if (GETPOSTISSET('THEME_AGRESSIVITY_RATIO')) $conf->global->THEME_AGRESSIVITY_RA
 	height: 0;
 }
 
+/* Disabled. This break the responsive on smartphone
 .box{
 	overflow: visible;
 }
+*/
