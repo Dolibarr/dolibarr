@@ -191,7 +191,7 @@ if (GETPOSTISSET('THEME_AGRESSIVITY_RATIO')) $conf->global->THEME_AGRESSIVITY_RA
 
 /* USING FONTAWESOME FOR WEATHER */
 .info-box-weather .info-box-icon{
-	background: rgba(0, 0, 0, 0); !important;
+	background: rgba(0, 0, 0, 0.08) !important;
 }
 .fa-weather-level0:before{
 	content: "\f185";
