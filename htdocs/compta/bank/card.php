@@ -236,8 +236,13 @@ if ($action == 'update')
 		$error++;
 	}
 
-	// Fill array 'array_options' with data from add form
-	$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+	$db->begin();
+
+	if (! $error)
+	{
+		// Fill array 'array_options' with data from add form
+		$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+	}
 
 	if (! $error)
 	{
@@ -252,9 +257,19 @@ if ($action == 'update')
 		}
 		else
 		{
+			$error++;
 			setEventMessages($object->error, $object->errors, 'errors');
 			$action='edit';     // Force chargement page edition
 		}
+	}
+
+	if (! $error)
+	{
+		$db->commit();
+	}
+	else
+	{
+		$db->rollback();
 	}
 }
 
@@ -412,7 +427,7 @@ if ($action == 'create')
 	$doleditor->Create();
 	print '</td></tr>';
 
- 	// Other attributes
+	// Other attributes
 	$parameters=array();
 	$reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
@@ -639,12 +654,12 @@ else
 			print '<tr><td>'.$langs->trans("AccountancyJournal").'</td>';
 			print '<td>';
 
-            if ($object->fk_accountancy_journal > 0) {
-                $accountingjournal = new AccountingJournal($db);
-                $accountingjournal->fetch($object->fk_accountancy_journal);
+			if ($object->fk_accountancy_journal > 0) {
+				$accountingjournal = new AccountingJournal($db);
+				$accountingjournal->fetch($object->fk_accountancy_journal);
 
-                print $accountingjournal->getNomUrl(0, 1, 1, '', 1);
-            }
+				print $accountingjournal->getNomUrl(0, 1, 1, '', 1);
+			}
 			print '</td></tr>';
 		}
 
