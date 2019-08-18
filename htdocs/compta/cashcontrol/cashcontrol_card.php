@@ -132,7 +132,16 @@ elseif ($action=="add")
 	$error=0;
 	foreach($arrayofpaymentmode as $key=>$val)
 	{
-		$object->$key = price2num(GETPOST($key.'_amount', 'alpha'));
+		if (GETPOST($key.'_amount', 'alpha') == '')
+		{
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv($val)), null, 'errors');
+			$action='start';
+			$error++;
+		}
+		else
+		{
+			$object->$key = price2num(GETPOST($key.'_amount', 'alpha'));
+		}
 	}
 
 	if (! $error)
