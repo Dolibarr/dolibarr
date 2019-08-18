@@ -768,7 +768,11 @@ if (!empty($valid_dashboardlines))
 
 		$weatherDashBoard= '<div class="box-flex-item '.$appendClass.'">'."\n";
 		$weatherDashBoard.= '	<div class="info-box '.$openedDashBoardSize.' info-box-weather info-box-weather-level'.$weather->level.'">'."\n";
-		$weatherDashBoard.= '		<span class="info-box-icon"><i class="fa fa-weather-level'.$weather->level.'"></i></span>'."\n";
+		$weatherDashBoard.= '		<span class="info-box-icon">';
+
+		$weatherDashBoard.= '		<i class="fa fa-weather-level'.$weather->level.'"></i>';
+
+		$weatherDashBoard.= '       </span>'."\n";
 		$weatherDashBoard.= '		<div class="info-box-content">'."\n";
 		$weatherDashBoard.= '			<span class="info-box-title">'.$langs->trans('GlobalOpenedElemView').'</span>' . "\n";
 

@@ -3449,6 +3449,10 @@ a.impayee:hover { font-weight: bold; color: #550000; }
  *  Other
  */
 
+.opened-dash-board-wrap {
+    margin-bottom: 25px;
+}
+
 div.boximport {
     min-height: unset;
 }

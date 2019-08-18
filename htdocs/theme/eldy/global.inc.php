@@ -3414,6 +3414,10 @@ a.impayee:hover { font-weight: bold; color: #550000; }
  *  Other
  */
 
+.opened-dash-board-wrap {
+    margin-bottom: 25px;
+}
+
 div.boximport {
     min-height: unset;
 }
@@ -5248,7 +5252,6 @@ div.tabsElem a.tab {
     	margin-right: 0 !important;
     }
 }
-
 
 
 /* ============================================================================== */

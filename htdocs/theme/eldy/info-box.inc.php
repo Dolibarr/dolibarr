@@ -120,32 +120,32 @@ a.info-box-text{ text-decoration: none;}
 	background-color: #605ca8 !important;
 }
 .bg-infoxbox-action{
-	background-color: #d81b60 !important;
+	background-color: #d84b80 !important;
 }
 .bg-infoxbox-propal,
 .bg-infoxbox-facture,
 .bg-infoxbox-commande{
-	background-color: #dd4b39 !important;
+	background-color: #abb87b !important;
 }
 .bg-infoxbox-supplier_proposal,
 .bg-infoxbox-invoice_supplier,
 .bg-infoxbox-order_supplier{
-	background-color: #00c0ef !important;
+	background-color: #40b0cf !important;
 }
 .bg-infoxbox-contrat{
-	background-color: #00a65a !important;
+	background-color: #20a68a !important;
 }
 .bg-infoxbox-bank_account{
-	background-color: #f39c12 !important;
+	background-color: #e39c42 !important;
 }
 .bg-infoxbox-adherent{
 	//background-color: #f39c12 !important;
 }
 .bg-infoxbox-expensereport{
-	background-color: #a55114 !important;
+	background-color: #755114 !important;
 }
 .bg-infoxbox-holiday{
-	background-color: #cbd81b !important;
+	background-color: #755114 !important;
 }
 
 

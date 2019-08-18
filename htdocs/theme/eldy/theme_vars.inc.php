@@ -78,9 +78,9 @@ $toolTipFontColor='#333';
 $badgePrimary   ='#007bff';
 $badgeSecondary ='#999999';
 $badgeSuccess   ='#28a745';
-$badgeDanger    ='#dc3545';
+$badgeDanger    ='#9f4705';
 $badgeWarning   ='#ffc107';
-$badgeInfo      ='#17a2b8';
+$badgeInfo      ='#aaaabb';
 $badgeDark      ='#343a40';
 $badgeLight     ='#f8f9fa';
 
