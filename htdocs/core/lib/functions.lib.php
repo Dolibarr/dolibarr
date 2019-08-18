@@ -6398,10 +6398,11 @@ function setEventMessage($mesgs, $style = 'mesgs')
  *	@param	string	$mesg			Message string
  *	@param	array	$mesgs			Message array
  *  @param  string	$style      	Which style to use ('mesgs' by default, 'warnings', 'errors')
+ *  @param	string	$messagekey		A key to be used to allow the feature "Never show this message again"
  *  @return	void
  *  @see	dol_htmloutput_events()
  */
-function setEventMessages($mesg, $mesgs, $style = 'mesgs')
+function setEventMessages($mesg, $mesgs, $style = 'mesgs', $messagekey = '')
 {
 	if (empty($mesg) && empty($mesgs))
 	{
@@ -6409,12 +6410,21 @@ function setEventMessages($mesg, $mesgs, $style = 'mesgs')
 	}
 	else
 	{
-		if (! in_array((string) $style, array('mesgs','warnings','errors'))) dol_print_error('', 'Bad parameter style='.$style.' for setEventMessages');
-		if (empty($mesgs)) setEventMessage($mesg, $style);
-		else
+		if ($messagekey)
 		{
-			if (! empty($mesg) && ! in_array($mesg, $mesgs)) setEventMessage($mesg, $style);	// Add message string if not already into array
-			setEventMessage($mesgs, $style);
+			// Complete message with a js link to set a cookie "DOLHIDEMESSAGE".$messagekey;
+			// TODO
+			$mesg.='';
+		}
+		if (empty($messagekey) || empty($_COOKIE["DOLHIDEMESSAGE".$messagekey]))
+		{
+			if (! in_array((string) $style, array('mesgs','warnings','errors'))) dol_print_error('', 'Bad parameter style='.$style.' for setEventMessages');
+			if (empty($mesgs)) setEventMessage($mesg, $style);
+			else
+			{
+				if (! empty($mesg) && ! in_array($mesg, $mesgs)) setEventMessage($mesg, $style);	// Add message string if not already into array
+				setEventMessage($mesgs, $style);
+			}
 		}
 	}
 }

@@ -415,9 +415,11 @@ function redirectToContainer($containerref, $containeraliasalt = '', $containeri
 
 	if (defined('USEDOLIBARREDITOR'))
 	{
-		print '<div class="margintoponly marginleftonly">';
+		/*print '<div class="margintoponly marginleftonly">';
 		print "This page contains dynamic code that make a redirect to '".$containerref."' in your current context. Redirect has been canceled as it is not supported in edition mode.";
-		print '</div>';
+		print '</div>';*/
+		$text = "This page contains dynamic code that make a redirect to '".$containerref."' in your current context. Redirect has been canceled as it is not supported in edition mode.";
+		setEventMessages($text, null, 'warnings', 'WEBSITEREDIRECTDISABLED'.$containerref);
 		return;
 	}
 
