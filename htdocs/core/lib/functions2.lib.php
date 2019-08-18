@@ -2199,7 +2199,7 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '')
  *  @param	array	$arraycolor			Array
  *  @param	string	$colorifnotfound	Color code to return if entry not defined or not a RGB format
  *  @return	string						RGB hex value (without # before). For example: 'FF00FF', '01FF02'
- *  @see	colorStringToArray()
+ *  @see	colorStringToArray(), colorHexToRgb()
  */
 function colorArrayToHex($arraycolor, $colorifnotfound = '888888')
 {
@@ -2216,7 +2216,7 @@ function colorArrayToHex($arraycolor, $colorifnotfound = '888888')
  *  @param	string	$stringcolor		String with hex (FFFFFF) or comma RGB ('255,255,255')
  *  @param	array	$colorifnotfound	Color code array to return if entry not defined
  *  @return	array   					RGB hex value (without # before). For example: FF00FF
- *  @see	colorArrayToHex()
+ *  @see	colorArrayToHex(), colorHexToRgb()
  */
 function colorStringToArray($stringcolor, $colorifnotfound = array(88,88,88))
 {
@@ -2233,13 +2233,12 @@ function colorStringToArray($stringcolor, $colorifnotfound = array(88,88,88))
 }
 
 /**
- * @param string $color the color you need to valid
- * @param boolean $allow_white in case of white isn't valid
+ * @param string 	$color 			the color you need to valid
+ * @param boolean 	$allow_white 	in case of white isn't valid
  * @return boolean
  */
 function colorValidateHex($color, $allow_white = true)
 {
-
     if(!$allow_white && ($color === '#fff' || $color === '#ffffff') ) return false;
 
     if(preg_match('/^#[a-f0-9]{6}$/i', $color)) //hex color is valid
@@ -2248,7 +2247,6 @@ function colorValidateHex($color, $allow_white = true)
     }
     return false;
 }
-
 
 /**
  * Change color to make it less aggressive (ratio is negative) or more aggressive (ratio is positive)
@@ -2347,10 +2345,10 @@ function colorLighten($hex, $percent)
 
 
 /**
- * @param string $hex color in hex
- * @param float $alpha 0 to 1
- * @param bool $returnArray set to 1 to return an array instead of string
- * @return string|array
+ * @param string 	$hex 		color in hex
+ * @param float 	$alpha 		0 to 1 to add alpha channel
+ * @param bool 		$return		Array set to 1 to return an array instead of string
+ * @return string|array			String or array
  */
 function colorHexToRgb($hex, $alpha = false, $returnArray = false)
 {

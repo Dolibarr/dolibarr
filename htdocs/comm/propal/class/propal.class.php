@@ -3273,7 +3273,7 @@ class Propal extends CommonObject
 				$delay_warning=$conf->propal->cloture->warning_delay;
 				$statut = self::STATUS_VALIDATED;
 				$label = $langs->trans("PropalsToClose");
-				$labelShort = $langs->trans("ToClose");
+				$labelShort = $langs->trans("ToAcceptRefuse");
 			}
 			if ($mode == 'signed') {
 				$delay_warning=$conf->propal->facturation->warning_delay;

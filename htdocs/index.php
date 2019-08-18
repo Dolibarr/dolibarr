@@ -538,35 +538,35 @@ $dashboardgroup = array (
 			'stats' =>
 				array ('propal_opened','propal_signed'),
 		),
-	'supplier_proposal' =>
-		array (
-			'groupName' => 'SupplierProposals',
-			'stats' =>
-				array ('supplier_proposal_opened','supplier_proposal_signed'),
-		),
 	'commande' =>
 		array (
 			'groupName' => 'Orders',
 			'stats' =>
 				array ('commande'),
 		),
-	'order_supplier' =>
-		array (
-			'groupName' => 'SuppliersOrders',
-			'stats' =>
-				array ('order_supplier'),
-		),
-	'contrat' =>
-		array (
-			'groupName' => 'Contracts',
-			'stats' =>
-				array ('contrat_inactive','contrat_active'),
-		),
 	'facture' =>
 		array (
 			'groupName' => 'Invoices',
 			'stats' =>
 				array ('facture'),
+		),
+	'contrat' =>
+		array (
+			'groupName' => 'Contracts',
+			'stats' =>
+			array ('contrat_inactive','contrat_active'),
+		),
+	'supplier_proposal' =>
+		array (
+			'groupName' => 'SupplierProposals',
+			'stats' =>
+			array ('supplier_proposal_opened','supplier_proposal_signed'),
+		),
+	'order_supplier' =>
+		array (
+			'groupName' => 'SuppliersOrders',
+			'stats' =>
+			array ('order_supplier'),
 		),
 	'invoice_supplier' =>
 		array (
@@ -580,12 +580,6 @@ $dashboardgroup = array (
 			'stats' =>
 				array ('bank_account','RemiseCheque'),
 		),
-	/*'RemiseCheque' =>
-		array (
-			'groupName' => 'BankChecks',
-			'stats' =>
-				array ('RemiseCheque'),
-		),*/
 	'Adherent' =>
 		array (
 			'groupName' => 'Members',
@@ -713,8 +707,7 @@ if (!empty($valid_dashboardlines))
 			$openedDashBoard.= '	<div class="info-box '.$openedDashBoardSize.'">'."\n";
 			$openedDashBoard.= '		<span class="info-box-icon bg-infoxbox-'.$groupKeyLowerCase.'"><i class="fa fa-dol-'.$groupKeyLowerCase.'"></i></span>'."\n";
 			$openedDashBoard.= '		<div class="info-box-content">'."\n";
-
-			$openedDashBoard .= '			<span class="info-box-title" title="'.strip_tags($groupName).'">'.$groupName.'</span>' . "\n";
+			$openedDashBoard .= '			<span class="info-box-title" title="'.dol_escape_htmltag($groupName).'">'.$groupName.'</span>' . "\n";
 
 			foreach($boards as $board) {
 				if(!empty($board->labelShort)){
@@ -764,8 +757,6 @@ if (!empty($valid_dashboardlines))
 		else $text=$langs->transnoentitiesnoconv("NoItemLate");
 		$text.='. '.$langs->transnoentitiesnoconv("LateDesc");
 
-
-
 		$weatherDashBoard= '<div class="box-flex-item '.$appendClass.'">'."\n";
 		$weatherDashBoard.= '	<div class="info-box '.$openedDashBoardSize.' info-box-weather info-box-weather-level'.$weather->level.'">'."\n";
 		$weatherDashBoard.= '		<span class="info-box-icon">';
@@ -774,13 +765,13 @@ if (!empty($valid_dashboardlines))
 		$weatherDashBoard.= '		<div class="info-box-content">'."\n";
 		$weatherDashBoard.= '			<span class="info-box-title">'.$langs->trans('GlobalOpenedElemView').'</span>' . "\n";
 
-		if($totallatePercentage>0 && !empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)){
+		if($totallatePercentage>0 && !empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) {
 			$weatherDashBoard.= '			<span class="info-box-number">'.$langs->transnoentitiesnoconv("NActionsLate", price($totallatePercentage).'%').'</span>' . "\n";
 			$weatherDashBoard.= '			<span class="progress-description">'.$langs->trans('NActionsLate', $totalLateNumber).'</span>' . "\n";
 		}
 		else{
 			$weatherDashBoard.= '			<span class="info-box-number">'.$langs->transnoentitiesnoconv("NActionsLate", $totalLateNumber).'</span>' . "\n";
-			if($totallatePercentage>0){
+			if($totallatePercentage>0) {
 				$weatherDashBoard.= '			<span class="progress-description">'.$langs->trans('NActionsLate', price($totallatePercentage).'%').'</span>' . "\n";
 			}
 		}

@@ -117,7 +117,7 @@ a.info-box-text{ text-decoration: none;}
 }
 
 <?php
-include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib/php';
+include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 if (! isset($conf->global->THEME_AGRESSIVITY_RATIO)) $conf->global->THEME_AGRESSIVITY_RATIO=-75;
 if (GETPOSTISSET('THEME_AGRESSIVITY_RATIO')) $conf->global->THEME_AGRESSIVITY_RATIO=GETPOST('THEME_AGRESSIVITY_RATIO', 'int');
 ?>

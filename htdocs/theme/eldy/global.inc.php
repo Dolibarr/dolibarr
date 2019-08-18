@@ -3255,7 +3255,7 @@ span.dashboardlineko {
 	vertical-align: middle;
 }
 .boxtable {
-    margin-bottom: 8px !important;
+    margin-bottom: 25px !important;
     border-bottom-width: 1px;
 
     border-top: <?php echo $borderwidth ?>px solid rgb(<?php echo $colortopbordertitle1 ?>);
