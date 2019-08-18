@@ -1827,11 +1827,11 @@ function top_menu_user(User $user, Translate $langs)
     }
     else $appli.=" ".DOL_VERSION;
 
-    $btnUser = '
+    $btnUser = '<!-- div for user link -->
     <div id="topmenu-login-dropdown" class="userimg atoplogin dropdown user user-menu">
         <a href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'" class="dropdown-toggle login-dropdown-a" data-toggle="dropdown">
             '.$userImage.'
-            <span class="hidden-xs maxwidth200 atoploginusername">'.dol_trunc($user->firstname ? $user->firstname : $user->login, 10).'</span>
+            <span class="hidden-xs maxwidth200 atoploginusername hideonsmartphone">'.dol_trunc($user->firstname ? $user->firstname : $user->login, 10).'</span>
             <span class="fa fa-chevron-down login-dropdown-btn" id="dropdown-icon-down"></span>
             <span class="fa fa-chevron-up login-dropdown-btn hidden" id="dropdown-icon-up"></span>
         </a>
