@@ -17,8 +17,7 @@
 
 /**
  *       \file       htdocs/core/ajax/pingresult.php
- *       \brief      File to save result of anonymous ping
- *       			 Example:  captureserver/public/index.php?action=dolibarrping
+ *       \brief      File to save result of an anonymous ping into database (1 ping is done per installation)
  */
 
 if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Disables token renewal

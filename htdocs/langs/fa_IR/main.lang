@@ -445,6 +445,7 @@ ContactsAddressesForCompany=طرف‌های‌تماس/نشانی‌های ای�
 AddressesForCompany=نشانی‌های این شخص‌سوم
 ActionsOnCompany=روی‌دادهای مربوط به این شخص سوم
 ActionsOnContact=روی‌دادهای مربوط به این طرف‌تماس/نشانی
+ActionsOnContract=Events for this contract
 ActionsOnMember=روی‌دادهای مربوط به این عضو
 ActionsOnProduct=روی‌دادهای مربوط به این محصول
 NActionsLate=%s دیرتر
@@ -759,6 +760,7 @@ LinkToSupplierProposal=پیوند به پیشنهاد فروشنده
 LinkToSupplierInvoice=پیوند به صورت‌حساب فروشنده
 LinkToContract=پیوند به قرارداد
 LinkToIntervention=پیوند به واسطه‌گری
+LinkToTicket=Link to ticket
 CreateDraft=ساخت پیش‌نویس
 SetToDraft=بازگشت به پیش‌نویس
 ClickToEdit=کلیک برای ویرایش

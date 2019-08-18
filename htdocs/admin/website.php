@@ -618,7 +618,7 @@ if ($id)
 
                     // Active
                     print '<td align="center" class="nowrap">';
-                    print '<a href="'.$url.'action='.$acts[$obj->status].'">'.$actl[$obj->status].'</a>';
+                    print '<a href="'.$url.'action='.$acts[($obj->status?1:0)].'">'.$actl[($obj->status?1:0)].'</a>';
                     print "</td>";
 
                     // Modify link

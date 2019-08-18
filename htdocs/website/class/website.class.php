@@ -412,8 +412,8 @@ class Website extends CommonObject
 		$sql .= ' fk_default_home = '.(($this->fk_default_home > 0)?$this->fk_default_home:"null").',';
 		$sql .= ' virtualhost = '.(($this->virtualhost != '')?"'".$this->db->escape($this->virtualhost)."'":"null").',';
 		$sql .= ' fk_user_modif = '.(! isset($this->fk_user_modif) ? $user->id : $this->fk_user_modif).',';
-		$sql .= ' date_creation = '.(! isset($this->date_creation) || dol_strlen($this->date_creation) != 0 ? "'".$this->db->idate($this->date_creation)."'" : 'null');
-		$sql .= ', tms = '.(dol_strlen($this->date_modification) != 0 ? "'".$this->db->idate($this->date_modification)."'" : "'".$this->db->idate(dol_now())."'");
+		$sql .= ' date_creation = '.(! isset($this->date_creation) || dol_strlen($this->date_creation) != 0 ? "'".$this->db->idate($this->date_creation)."'" : 'null').',';
+		$sql .= ' tms = '.(dol_strlen($this->date_modification) != 0 ? "'".$this->db->idate($this->date_modification)."'" : "'".$this->db->idate(dol_now())."'");
 		$sql .= ' WHERE rowid=' . $this->id;
 
 		$this->db->begin();
@@ -790,7 +790,7 @@ class Website extends CommonObject
 	/**
 	 * Generate a zip with all data of web site.
 	 *
-	 * @return  string						Path to file with zip
+	 * @return  string						Path to file with zip or '' if error
 	 */
 	public function exportWebSite()
 	{
@@ -931,6 +931,10 @@ class Website extends CommonObject
 			$stringtoexport = str_replace('file=logos%2Fthumbs%2F'.$mysoc->logo_small, "file=logos%2Fthumbs%2F__LOGO_SMALL_KEY__", $stringtoexport);
 			$stringtoexport = str_replace('file=logos%2Fthumbs%2F'.$mysoc->logo_mini, "file=logos%2Fthumbs%2F__LOGO_MINI_KEY__", $stringtoexport);
 			$stringtoexport = str_replace('file=logos%2Fthumbs%2F'.$mysoc->logo, "file=logos%2Fthumbs%2F__LOGO_KEY__", $stringtoexport);
+
+			// When we have a link src="image/websiteref/file.png" into html content
+			$stringtoexport = str_replace('="image/'.$website->ref.'/', '="image/__WEBSITE_KEY__/', $stringtoexport);
+
 			$line.= "'".$this->db->escape($stringtoexport)."'";		// Replace \r \n to have record on 1 line
 			$line.= ");";
 			$line.= "\n";
@@ -957,9 +961,18 @@ class Website extends CommonObject
 		$filename = $conf->website->dir_temp.'/'.$website->ref.'/website_'.$website->ref.'-'.dol_print_date(dol_now(), 'dayhourlog').'.zip';
 
 		dol_delete_file($fileglob, 0);
-		dol_compress_file($filedir, $filename, 'zip');
+		$result = dol_compress_file($filedir, $filename, 'zip');
 
-		return $filename;
+		if ($result > 0)
+		{
+			return $filename;
+		}
+		else
+		{
+			global $errormsg;
+			$this->error = $errormsg;
+			return '';
+		}
 	}
 
 
@@ -1052,6 +1065,8 @@ class Website extends CommonObject
 		{
 			while (! feof($fp))
 			{
+				$reg = array();
+
 				// Warning fgets with second parameter that is null or 0 hang.
 				$buf = fgets($fp, 65000);
 				if (preg_match('/^-- Page ID (\d+)\s[^\s]+\s(\d+).*Aliases\s(.*)\s--;/i', $buf, $reg))
@@ -1071,10 +1086,16 @@ class Website extends CommonObject
 					dolSavePageContent($filetpl, $object, $objectpagestatic);
 
 					// Regenerate alternative aliases pages
-					foreach($aliasesarray as $aliasshortcuttocreate)
+					if (is_array($aliasesarray))
 					{
-						$filealias=$conf->website->dir_output.'/'.$object->ref.'/'.$aliasshortcuttocreate.'.php';
-						dolSavePageAlias($filealias, $object, $objectpagestatic);
+						foreach($aliasesarray as $aliasshortcuttocreate)
+						{
+							if (trim($aliasshortcuttocreate))
+							{
+								$filealias=$conf->website->dir_output.'/'.$object->ref.'/'.trim($aliasshortcuttocreate).'.php';
+								dolSavePageAlias($filealias, $object, $objectpagestatic);
+							}
+						}
 					}
 				}
 			}

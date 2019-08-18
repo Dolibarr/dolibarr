@@ -2,6 +2,7 @@
 ProductRef=Réf. produit
 ProductLabel=Libellé produit
 ProductLabelTranslated=Libellé produit traduit
+ProductDescription=Description du produit
 ProductDescriptionTranslated=Description produit traduite
 ProductNoteTranslated=Traduire la note de produit
 ProductServiceCard=Fiche produit/service

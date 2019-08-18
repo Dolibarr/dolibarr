@@ -376,7 +376,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		}
 	}
 
-
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *  Show footer of page. Need this->emetteur object
      *
@@ -386,7 +386,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	 *  @param	int			$hidefreetext		1=Hide free text
 	 *  @return	void
 	 */
-	private function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
+	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
 		global $conf;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);

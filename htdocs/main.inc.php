@@ -624,7 +624,7 @@ if (! defined('NOLOGIN'))
 			session_destroy();
 			session_name($sessionname);
 			session_set_cookie_params(0, '/', null, false, true);   // Add tag httponly on session cookie
-			session_start();    // Fixing the bug of register_globals here is useless since session is empty
+			session_start();
 
 			if ($resultFetchUser == 0)
 			{
@@ -681,7 +681,7 @@ if (! defined('NOLOGIN'))
 			session_destroy();
 			session_name($sessionname);
 			session_set_cookie_params(0, '/', null, false, true);   // Add tag httponly on session cookie
-			session_start();    // Fixing the bug of register_globals here is useless since session is empty
+			session_start();
 
 			if ($resultFetchUser == 0)
 			{
@@ -1217,7 +1217,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		if (GETPOST('dol_basehref', 'alpha')) print '<base href="'.dol_escape_htmltag(GETPOST('dol_basehref', 'alpha')).'">'."\n";
 
 		// Displays meta
-		print '<meta charset="UTF-8">'."\n";
+		print '<meta charset="utf-8">'."\n";
 		print '<meta name="robots" content="noindex'.($disablenofollow?'':',nofollow').'">'."\n";	// Do not index
 		print '<meta name="viewport" content="width=device-width, initial-scale=1.0">'."\n";		// Scale for mobile device
 		print '<meta name="author" content="Dolibarr Development Team">'."\n";
@@ -1258,11 +1258,12 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		$themeparam='?lang='.$langs->defaultlang.'&amp;theme='.$conf->theme.(GETPOST('optioncss', 'aZ09')?'&amp;optioncss='.GETPOST('optioncss', 'aZ09', 1):'').'&amp;userid='.$user->id.'&amp;entity='.$conf->entity;
 		$themeparam.=($ext?'&amp;'.$ext:'').'&amp;revision='.$conf->global->MAIN_IHM_PARAMS_REV;
 		if (! empty($_SESSION['dol_resetcache'])) $themeparam.='&amp;dol_resetcache='.$_SESSION['dol_resetcache'];
-		if (GETPOST('dol_hide_topmenu', 'int'))           { $themeparam.='&amp;dol_hide_topmenu='.GETPOST('dol_hide_topmenu', 'int'); }
-		if (GETPOST('dol_hide_leftmenu', 'int'))          { $themeparam.='&amp;dol_hide_leftmenu='.GETPOST('dol_hide_leftmenu', 'int'); }
-		if (GETPOST('dol_optimize_smallscreen', 'int'))   { $themeparam.='&amp;dol_optimize_smallscreen='.GETPOST('dol_optimize_smallscreen', 'int'); }
-		if (GETPOST('dol_no_mouse_hover', 'int'))         { $themeparam.='&amp;dol_no_mouse_hover='.GETPOST('dol_no_mouse_hover', 'int'); }
-		if (GETPOST('dol_use_jmobile', 'int'))            { $themeparam.='&amp;dol_use_jmobile='.GETPOST('dol_use_jmobile', 'int'); $conf->dol_use_jmobile=GETPOST('dol_use_jmobile', 'int'); }
+		if (GETPOSTISSET('dol_hide_topmenu'))           { $themeparam.='&amp;dol_hide_topmenu='.GETPOST('dol_hide_topmenu', 'int'); }
+		if (GETPOSTISSET('dol_hide_leftmenu'))          { $themeparam.='&amp;dol_hide_leftmenu='.GETPOST('dol_hide_leftmenu', 'int'); }
+		if (GETPOSTISSET('dol_optimize_smallscreen'))   { $themeparam.='&amp;dol_optimize_smallscreen='.GETPOST('dol_optimize_smallscreen', 'int'); }
+		if (GETPOSTISSET('dol_no_mouse_hover'))         { $themeparam.='&amp;dol_no_mouse_hover='.GETPOST('dol_no_mouse_hover', 'int'); }
+		if (GETPOSTISSET('dol_use_jmobile'))            { $themeparam.='&amp;dol_use_jmobile='.GETPOST('dol_use_jmobile', 'int'); $conf->dol_use_jmobile=GETPOST('dol_use_jmobile', 'int'); }
+		if (GETPOSTISSET('THEME_AGRESSIVITY_RATIO'))    { $themeparam.='&amp;THEME_AGRESSIVITY_RATIO='.GETPOST('THEME_AGRESSIVITY_RATIO', 'int'); }
 
 		if (! defined('DISABLE_JQUERY') && ! $disablejs && $conf->use_javascript_ajax)
 		{
@@ -1441,6 +1442,9 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
                 print 'var ckeditorFilebrowserImageBrowseUrl = \''.DOL_URL_ROOT.'/core/filemanagerdol/browser/default/browser.php?Type=Image&Connector='.DOL_URL_ROOT.'/core/filemanagerdol/connectors/php/connector.php\';'."\n";
                 print '</script>'."\n";
                 print '<script src="'.$pathckeditor.$jsckeditor.($ext?'?'.$ext:'').'"></script>'."\n";
+                print '<script>';
+                print 'CKEDITOR.disableAutoInline = true;'."\n";
+                print '</script>'."\n";
             }
 
             // Browser notifications
@@ -2344,7 +2348,7 @@ if (! function_exists("llxFooter"))
 	    					  url: "https://ping.dolibarr.org/",
 	    					  timeout: 500,     // timeout milliseconds
 	    					  cache: false,
-	    					  data: { hash_algo: "md5", hash_unique_id: "<?php echo md5($conf->file->instance_unique_id); ?>", action: "dolibarrping", version: "<?php echo (float) DOL_VERSION; ?>", entity: <?php echo (int) $conf->entity; ?> },
+	    					  data: { hash_algo: "md5", hash_unique_id: "<?php echo md5('dolibarr'.$conf->file->instance_unique_id); ?>", action: "dolibarrping", version: "<?php echo (float) DOL_VERSION; ?>", entity: <?php echo (int) $conf->entity; ?> },
 	    					  success: function (data, status, xhr) {   // success callback function (data contains body of response)
 	      					    	console.log("Ping ok");
 	        	    				$.ajax({

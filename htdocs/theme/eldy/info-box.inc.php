@@ -116,36 +116,41 @@ a.info-box-text{ text-decoration: none;}
 	color: #fff !important;
 }
 
+<?php
+include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+if (! isset($conf->global->THEME_AGRESSIVITY_RATIO)) $conf->global->THEME_AGRESSIVITY_RATIO=-75;
+if (GETPOSTISSET('THEME_AGRESSIVITY_RATIO')) $conf->global->THEME_AGRESSIVITY_RATIO=GETPOST('THEME_AGRESSIVITY_RATIO', 'int');
+?>
 .bg-infoxbox-project{
-	background-color: #605ca8 !important;
+	background-color: <?php print colorAgressivity('#605ca8', $conf->global->THEME_AGRESSIVITY_RATIO); ?> !important;
 }
 .bg-infoxbox-action{
-	background-color: #d81b60 !important;
+	background-color: <?php print colorAgressivity('#d84b80', $conf->global->THEME_AGRESSIVITY_RATIO); ?>  !important;
 }
 .bg-infoxbox-propal,
 .bg-infoxbox-facture,
 .bg-infoxbox-commande{
-	background-color: #dd4b39 !important;
+	background-color: <?php print colorAgressivity('#abb87b', $conf->global->THEME_AGRESSIVITY_RATIO); ?>  !important;
 }
 .bg-infoxbox-supplier_proposal,
 .bg-infoxbox-invoice_supplier,
 .bg-infoxbox-order_supplier{
-	background-color: #00c0ef !important;
+	background-color: <?php print colorAgressivity('#40b0cf', $conf->global->THEME_AGRESSIVITY_RATIO); ?>  !important;
 }
 .bg-infoxbox-contrat{
-	background-color: #00a65a !important;
+	background-color: <?php print colorAgressivity('#20a68a', $conf->global->THEME_AGRESSIVITY_RATIO); ?>  !important;
 }
 .bg-infoxbox-bank_account{
-	background-color: #f39c12 !important;
+	background-color: <?php print colorAgressivity('#e39c42', $conf->global->THEME_AGRESSIVITY_RATIO); ?>  !important;
 }
 .bg-infoxbox-adherent{
-	//background-color: #f39c12 !important;
+	background-color: <?php print colorAgressivity('#f39c12', $conf->global->THEME_AGRESSIVITY_RATIO); ?>  !important;
 }
 .bg-infoxbox-expensereport{
-	background-color: #a55114 !important;
+	background-color: <?php print colorAgressivity('#755114', $conf->global->THEME_AGRESSIVITY_RATIO); ?>  !important;
 }
 .bg-infoxbox-holiday{
-	background-color: #cbd81b !important;
+	background-color: <?php print colorAgressivity('#755114', $conf->global->THEME_AGRESSIVITY_RATIO); ?>  !important;
 }
 
 
@@ -186,7 +191,7 @@ a.info-box-text{ text-decoration: none;}
 
 /* USING FONTAWESOME FOR WEATHER */
 .info-box-weather .info-box-icon{
-	background: rgba(0, 0, 0, 0); !important;
+	background: rgba(0, 0, 0, 0.08) !important;
 }
 .fa-weather-level0:before{
 	content: "\f185";
