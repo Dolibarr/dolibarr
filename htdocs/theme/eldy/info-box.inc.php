@@ -93,10 +93,12 @@ if (! defined('ISLOADEDBYSTEELSHEET'))  die('Must be call by steelsheet'); ?>
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
-
 .info-box-title{
 	text-transform: uppercase;
 	font-weight: bold;
+}
+.info-box-text{
+	font-size: 0.92em;
 }
 .info-box-text:first-letter{text-transform: uppercase}
 a.info-box-text{ text-decoration: none;}
