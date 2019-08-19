@@ -66,7 +66,7 @@ if (! defined('ISLOADEDBYSTEELSHEET'))  die('Must be call by steelsheet'); ?>
     height: 80px;
     width: 80px;
     font-size: 25px;
-    line-height: 70px;
+    line-height: 80px;
 }
 .info-box-icon > img {
 	max-width: 100%;
