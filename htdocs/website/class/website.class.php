@@ -823,30 +823,47 @@ class Website extends CommonObject
 			return '';
 		}
 
-		$arrayreplacement=array();
+		$arrayreplacementinfilename=array();
+		$arrayreplacementincss=array();
+		$arrayreplacementincss['modulepart=medias&file=image/'.$website->ref.'/'] = "file=image/__WEBSITE_KEY__/";
+		$arrayreplacementincss['modulepart=medias&file=js/'.$website->ref.'/'] = "file=js/__WEBSITE_KEY__/";
+		$arrayreplacementincss['medias/image/'.$website->ref.'/'] = "medias/image/__WEBSITE_KEY__/";
+		$arrayreplacementincss['medias/js/'.$website->ref.'/'] = "medias/js/__WEBSITE_KEY__/";
+		$arrayreplacementincss['file=logos%2Fthumbs%2F'.$mysoc->logo_small] = "file=logos%2Fthumbs%2F__LOGO_SMALL_KEY__";
+		$arrayreplacementincss['file=logos%2Fthumbs%2F'.$mysoc->logo_mini] = "file=logos%2Fthumbs%2F__LOGO_MINI_KEY__";
+		$arrayreplacementincss['file=logos%2Fthumbs%2F'.$mysoc->logo] = "file=logos%2Fthumbs%2F__LOGO_KEY__";
 
 		$srcdir = $conf->website->dir_output.'/'.$website->ref;
 		$destdir = $conf->website->dir_temp.'/'.$website->ref.'/containers';
 
+		// Create containers dir
+		dol_syslog("Create containers dir");
+		dol_mkdir($conf->website->dir_temp.'/'.$website->ref.'/containers');
+
+		// Copy files into medias
 		dol_syslog("Copy content from ".$srcdir." into ".$destdir);
-		dolCopyDir($srcdir, $destdir, 0, 1, $arrayreplacement);
+		dolCopyDir($srcdir, $destdir, 0, 1, $arrayreplacementinfilename);
 
 		$srcdir = DOL_DATA_ROOT.'/medias/image/'.$website->ref;
 		$destdir = $conf->website->dir_temp.'/'.$website->ref.'/medias/image/websitekey';
 
 		dol_syslog("Copy content from ".$srcdir." into ".$destdir);
-		dolCopyDir($srcdir, $destdir, 0, 1, $arrayreplacement);
+		dolCopyDir($srcdir, $destdir, 0, 1, $arrayreplacementinfilename);
 
 		$srcdir = DOL_DATA_ROOT.'/medias/js/'.$website->ref;
 		$destdir = $conf->website->dir_temp.'/'.$website->ref.'/medias/js/websitekey';
 
+		// Copy containers files
 		dol_syslog("Copy content from ".$srcdir." into ".$destdir);
-		dolCopyDir($srcdir, $destdir, 0, 1, $arrayreplacement);
+		dolCopyDir($srcdir, $destdir, 0, 1, $arrayreplacementinfilename);
+
+		$cssindestdir = $conf->website->dir_temp.'/'.$website->ref.'/containers/styles.css.php';
+		dolReplaceInFile($cssindestdir, $arrayreplacementincss, '', 0, 0, 0);
+
+		$htmldeaderindestdir = $conf->website->dir_temp.'/'.$website->ref.'/containers/htmlheader.html';
+		dolReplaceInFile($htmldeaderindestdir, $arrayreplacementincss, '', 0, 0, 0);
 
 		// Build sql file
-		dol_syslog("Create containers dir");
-		dol_mkdir($conf->website->dir_temp.'/'.$website->ref.'/containers');
-
 		$filesql = $conf->website->dir_temp.'/'.$website->ref.'/website_pages.sql';
 		$fp = fopen($filesql, "w");
 		if (empty($fp))
