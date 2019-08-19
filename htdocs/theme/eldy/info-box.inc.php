@@ -16,7 +16,7 @@ if (! defined('ISLOADEDBYSTEELSHEET'))  die('Must be call by steelsheet'); ?>
 	margin-bottom: 15px;
 }
 .info-box.info-box-sm{
-    min-height: 70px;
+    min-height: 80px;
     margin-bottom: 10px;
 }
 
@@ -63,8 +63,8 @@ if (! defined('ISLOADEDBYSTEELSHEET'))  die('Must be call by steelsheet'); ?>
 	background: rgba(0, 0, 0, 0.2);
 }
 .info-box-sm .info-box-icon{
-    height: 70px;
-    width: 70px;
+    height: 80px;
+    width: 80px;
     font-size: 25px;
     line-height: 70px;
 }
@@ -77,7 +77,7 @@ if (! defined('ISLOADEDBYSTEELSHEET'))  die('Must be call by steelsheet'); ?>
 }
 
 .info-box-sm .info-box-content{
-    margin-left: 70px;
+    margin-left: 80px;
 }
 .info-box-number {
 	display: block;

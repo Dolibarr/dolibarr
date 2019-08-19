@@ -78,7 +78,7 @@ if (! defined('ISLOADEDBYSTEELSHEET'))  die('Must be call by steelsheet'); ?>
 	font-weight: bold;
 }
 .info-box-text{
-	font-size: 0.92em;
+	font-size: 12px;
 }
 .info-box-text:first-letter{text-transform: uppercase}
 a.info-box-text{ text-decoration: none;}

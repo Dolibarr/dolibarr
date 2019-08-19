@@ -659,21 +659,6 @@ if ($showweather)
 $boxwork.='</th>';
 $boxwork.='</tr>'."\n";
 
-/*if ($showweather)
-{
-    $boxwork.='<tr class="nohover">';
-    $boxwork.='<td class="nohover'.($conf->global->MAIN_DISABLE_METEO == 2 ?' hideonsmartphone' : '').' center valignmiddle">';
-    $text='';
-    if ($totallate > 0) $text=$langs->transnoentitiesnoconv("WarningYouHaveAtLeastOneTaskLate").' ('.$langs->transnoentitiesnoconv("NActionsLate", $totallate.(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE) ? '%' : '')).')';
-    else $text=$langs->transnoentitiesnoconv("NoItemLate");
-    $text.='. '.$langs->transnoentitiesnoconv("LateDesc");
-    //$text.=$form->textwithpicto('',$langs->trans("LateDesc"));
-    $options='height="64px"';
-    $boxwork.=showWeather($totallate, $text, $options);
-    $boxwork.='</td>';
-    $boxwork.='</tr>';
-}*/
-
 // Show dashboard
 $nbworkboardempty=0;
 $isIntopOpenedDashBoard = array();
