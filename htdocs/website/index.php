@@ -656,7 +656,7 @@ if ($action == 'addcontainer')
 					elseif ($tmpgeturl['http_code'] != '200')
 					{
 						$errorforsubresource++;
-						setEventMessages('Error getting link tag url'.$urltograbbis.': '.$tmpgeturl['http_code'], null, 'errors');
+						setEventMessages('Error getting link tag url '.$urltograbbis.': '.$tmpgeturl['http_code'], null, 'errors');
 						dol_syslog('Error getting '.$urltograbbis.': '.$tmpgeturl['curl_error_msg']);
 						$action='createcontainer';
 					}
