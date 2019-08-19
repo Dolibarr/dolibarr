@@ -38,6 +38,7 @@ ActionsEvents=Gebeurtenissen waarvoor Dolibarr automatisch een item zal maken in
 EventRemindersByEmailNotEnabled=Gebeurtenisherinneringen per e-mail zijn niet ingeschakeld in %s-module setup.
 ##### Agenda event labels #####
 NewCompanyToDolibarr=Relatie %s aangemaakt
+COMPANY_DELETEInDolibarr=Third party %s deleted
 ContractValidatedInDolibarr=Contract %s gevalideerd
 CONTRACT_DELETEInDolibarr=Contract %s verwijderd
 PropalClosedSignedInDolibarr=Voorstel %s getekend
@@ -95,6 +96,7 @@ PROJECT_MODIFYInDolibarr=Project %s aangepast
 PROJECT_DELETEInDolibarr=Project %s verwijderd
 TICKET_CREATEInDolibarr=Ticket %s created
 TICKET_MODIFYInDolibarr=Ticket %s modified
+TICKET_ASSIGNEDInDolibarr=Ticket %s assigned
 TICKET_CLOSEInDolibarr=Ticket %s closed
 TICKET_DELETEInDolibarr=Ticket %s deleted
 ##### End agenda events #####

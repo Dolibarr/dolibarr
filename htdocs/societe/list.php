@@ -198,7 +198,7 @@ $arrayfields=array(
 	's.idprof4'=>array('label'=>"ProfId4Short", 'checked'=>$checkedprofid4),
 	's.idprof5'=>array('label'=>"ProfId5Short", 'checked'=>$checkedprofid5),
 	's.idprof6'=>array('label'=>"ProfId6Short", 'checked'=>$checkedprofid6),
-	's.tva_intra'=>array('label'=>"VATIntra", 'checked'=>0),
+	's.tva_intra'=>array('label'=>"VATIntraShort", 'checked'=>0),
 	'customerorsupplier'=>array('label'=>'Nature', 'checked'=>1),
 	's.fk_prospectlevel'=>array('label'=>"ProspectLevelShort", 'checked'=>$checkprospectlevel),
 	's.fk_stcomm'=>array('label'=>"StatusProsp", 'checked'=>$checkstcomm),
@@ -224,21 +224,25 @@ $object = new Societe($db);
  * Actions
  */
 
-if ($action=="change")
+if ($action=="change")	// Change customer for TakePOS
 {
     $idcustomer = GETPOST('idcustomer', 'int');
     $place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0);   // $place is id of table for Ba or Restaurant
 
-    $sql="UPDATE ".MAIN_DB_PREFIX."facture set fk_soc=".$idcustomer." where ref='(PROV-POS-".$place.")'";
+    // @TODO Check if draft invoice already exists, if not create it or return a warning to ask to enter at least one line to have it created automatically
+    $sql="UPDATE ".MAIN_DB_PREFIX."facture set fk_soc=".$idcustomer." where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
     $resql = $db->query($sql);
-    ?>
-    <script>
-    parent.$("#poslines").load("invoice.php?place="+<?php print $place;?>, function() {
-        //parent.$("#poslines").scrollTop(parent.$("#poslines")[0].scrollHeight);
-        parent.$.colorbox.close();
-    });
-    </script>
-    <?php
+	    ?>
+	    <script>
+	    parent.$("#poslines").load("invoice.php?place="+<?php print $place;?>, function() {
+	        //parent.$("#poslines").scrollTop(parent.$("#poslines")[0].scrollHeight);
+			<?php if (! $resql) { ?>
+				alert('Error failed to update customer on draft invoice.');
+			<?php } ?>
+	        parent.$.colorbox.close(); /* Close the popup */
+	    });
+	    </script>
+	    <?php
     exit;
 }
 
@@ -592,6 +596,7 @@ print '<input type="hidden" name="formfilteraction" id="formfilteraction" value=
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
+print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_companies', 0, $newcardbutton, '', $limit);
 
@@ -1002,6 +1007,7 @@ while ($i < min($num, $limit))
 	print '<tr class="oddeven"';
 	if ($contextpage == 'poslist')
 	{
+		$place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0);   // $place is id of table for Ba or Restaurant
 	    print ' onclick="location.href=\'list.php?action=change&contextpage=poslist&idcustomer='.$obj->rowid.'&place='.$place.'\'"';
 	}
 	print '>';

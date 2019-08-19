@@ -873,6 +873,7 @@ if ($resql)
                 // Status / Active
                 print '<td align="center" class="nowrap">';
                 if ($canbedisabled) print '<a href="'.$url.'action='.$acts[$obj->active].'">'.$actl[$obj->active].'</a>';
+                else print '<span class="opacitymedium">'.$actl[$obj->active].'</span>';
                 print "</td>";
 
                 // Modify link / Delete link

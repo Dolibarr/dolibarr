@@ -389,11 +389,82 @@ if ($ok && GETPOST('standard', 'alpha'))
 							{
 								$db->query($sqldelete);
 
-								print '<tr><td>Constant '.$obj->name.' set in entity '.$obj->entity.' with value '.$obj->value.' -> Module not enabled in entity '.$obj->entity.', we delete record</td></tr>';
+								print '<tr><td>Widget '.$obj->name.' set in entity '.$obj->entity.' with value '.$obj->value.' -> Module not enabled in entity '.$obj->entity.', we delete record</td></tr>';
 							}
 							else
 							{
-								print '<tr><td>Constant '.$obj->name.' set in entity '.$obj->entity.' with value '.$obj->value.' -> Module not enabled in entity '.$obj->entity.', we should delete record (not done, mode test)</td></tr>';
+								print '<tr><td>Widget '.$obj->name.' set in entity '.$obj->entity.' with value '.$obj->value.' -> Module not enabled in entity '.$obj->entity.', we should delete record (not done, mode test)</td></tr>';
+							}
+						}
+						else
+						{
+							//print '<tr><td>Constant '.$obj->name.' set in entity '.$obj->entity.' with value '.$obj->value.' -> Module found in entity '.$obj->entity.', we keep record</td></tr>';
+						}
+					}
+				}
+
+				$i++;
+			}
+
+			$db->commit();
+		}
+	}
+}
+
+
+// clean box of not enabled modules
+if ($ok && GETPOST('standard', 'alpha'))
+{
+	print '<tr><td colspan="2"><br>*** Clean definition of boxes of modules not enabled</td></tr>';
+
+	$sql ="SELECT file, entity FROM ".MAIN_DB_PREFIX."boxes_def";
+	$sql.=" WHERE file like '%@%'";
+
+	$resql = $db->query($sql);
+	if ($resql)
+	{
+		$num = $db->num_rows($resql);
+
+		if ($num)
+		{
+			$db->begin();
+
+			$i = 0;
+			while ($i < $num)
+			{
+				$obj=$db->fetch_object($resql);
+
+				$reg = array();
+				if (preg_match('/^(.+)@(.+)$/i', $obj->file, $reg))
+				{
+					$name=$reg[1];
+					$module=$reg[2];
+
+					$sql2 ="SELECT COUNT(*) as nb";
+					$sql2.=" FROM ".MAIN_DB_PREFIX."const as c";
+					$sql2.=" WHERE name = 'MAIN_MODULE_".strtoupper($module)."'";
+					$sql2.=" AND entity = ".$obj->entity;
+					$sql2.=" AND value <> 0";
+					$resql2 = $db->query($sql2);
+					if ($resql2)
+					{
+						$obj2 = $db->fetch_object($resql2);
+						if ($obj2 && $obj2->nb == 0)
+						{
+							// Module not found, so we canremove entry
+							$sqldeletea = "DELETE FROM ".MAIN_DB_PREFIX."boxes WHERE entity = ".$obj->entity." AND box_id IN (SELECT rowid FROM ".MAIN_DB_PREFIX."boxes_def WHERE file = '".$obj->file."' AND entity = ".$obj->entity.")";
+							$sqldeleteb = "DELETE FROM ".MAIN_DB_PREFIX."boxes_def WHERE file = '".$obj->file."' AND entity = ".$obj->entity;
+
+							if (GETPOST('standard', 'alpha') == 'confirmed')
+							{
+								$db->query($sqldeletea);
+								$db->query($sqldeleteb);
+
+								print '<tr><td>Constant '.$obj->file.' set in boxes_def for entity '.$obj->entity.' but MAIN_MODULE_'.strtoupper($module).' not defined in entity '.$obj->entity.', we delete record</td></tr>';
+							}
+							else
+							{
+								print '<tr><td>Constant '.$obj->file.' set in boxes_def for entity '.$obj->entity.' but MAIN_MODULE_'.strtoupper($module).' not defined in entity '.$obj->entity.', we should delete record (not done, mode test)</td></tr>';
 							}
 						}
 						else
@@ -847,7 +918,7 @@ if ($ok && GETPOST('clean_product_stock_batch', 'alpha'))
                             if ($resql2)
                             {
                                 // We update product_stock, so we must field stock into product too.
-                                $sql3='UPDATE llx_product p SET p.stock= (SELECT SUM(ps.reel) FROM llx_product_stock ps WHERE ps.fk_product = p.rowid)';
+                                $sql3='UPDATE '.MAIN_DB_PREFIX.'product p SET p.stock= (SELECT SUM(ps.reel) FROM '.MAIN_DB_PREFIX.'product_stock ps WHERE ps.fk_product = p.rowid)';
                                 $resql3=$db->query($sql3);
                                 if (! $resql3)
                                 {
@@ -1049,16 +1120,16 @@ if ($ok && GETPOST('force_disable_of_modules_not_found', 'alpha'))
 	                            print ' - File of '.$key.' ('.$reloffile.') NOT found, we disable the module.';
 	                            if (GETPOST('force_disable_of_modules_not_found') == 'confirmed')
 	                            {
-	                                $sql2 ="DELETE FROM ".MAIN_DB_PREFIX."const WHERE name 'MAIN_MODULE_".strtoupper($name)."_".strtoupper($key)."'";
+	                                $sql2 ="DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'MAIN_MODULE_".strtoupper($name)."_".strtoupper($key)."'";
 	                                $resql2=$db->query($sql2);
 	                                if (! $resql2)
 	                                {
 	                                    $error++;
 	                                    dol_print_error($db);
 	                                }
-	                                $sql2 ="DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'MAIN_MODULE_".strtoupper($name)."'";
-	                                $resql2=$db->query($sql2);
-	                                if (! $resql2)
+	                                $sql3 ="DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'MAIN_MODULE_".strtoupper($name)."'";
+	                                $resql3=$db->query($sql3);
+	                                if (! $resql3)
 	                                {
 	                                    $error++;
 	                                    dol_print_error($db);

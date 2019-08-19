@@ -107,7 +107,7 @@ ExpenseReportsVentilation=Raportul de cheltuieli obligatoriu
 CreateMvts=Creați o nouă tranzacție
 UpdateMvts=Modificarea unei tranzacții
 ValidTransaction=Tranzacție validată
-WriteBookKeeping=Introducerea tranzactiilor in Jurnalul Cartea mare
+WriteBookKeeping=Register transactions in Ledger
 Bookkeeping=Cartea mare
 AccountBalance=Sold cont
 ObjectsRef=Referinţă sursă obiect
@@ -158,6 +158,7 @@ ACCOUNTING_RESULT_LOSS=Contul contabil rezultat (pierdere)
 ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=Jurnal de închidere
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Contul contabil al transferului bancar în tranziție
+TransitionalAccount=Transitional bank transfer account
 
 ACCOUNTING_ACCOUNT_SUSPENSE=Contul contabil de așteptare
 DONATION_ACCOUNTINGACCOUNT=Contul contabil pentru a înregistra donații
@@ -165,8 +166,8 @@ ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Contul Contabilitate pentru a înregistr
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Cont contabil implicit pentru produsele achiziționate (utilizate dacă nu este definit în fișa produsului)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Cont contabil implicit pentru produsele vândute (utilizate dacă nu este definit în fișa produsului)
-ACCOUNTING_PRODUCT_SOLD_ACCOUNT_INTRA=Contul de contabilitate implicit pentru produsele vândute în CEE (utilizat dacă nu este definit în fișa produsului)
-ACCOUNTING_PRODUCT_SOLD_ACCOUNT_EXPORT=Contul de contabilitate implicit pentru exportul de produse vândute din CEE (utilizat dacă nu este definit în fișa produsului)
+ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Contul de contabilitate implicit pentru produsele vândute în CEE (utilizat dacă nu este definit în fișa produsului)
+ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Contul de contabilitate implicit pentru exportul de produse vândute din CEE (utilizat dacă nu este definit în fișa produsului)
 ACCOUNTING_SERVICE_BUY_ACCOUNT=Contul contabil implicit pentru serviciile cumpărate (utilizat dacă nu este definit în fișa serviciului)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=Contul contabil implicit pentru serviciile vândute (utilizat dacă nu este definit în fișa de servicii)
 
@@ -177,6 +178,7 @@ LabelAccount=Etichetă cont
 LabelOperation=Etichetarea operaţiei
 Sens=Sens
 LetteringCode=Codul de scriere
+Lettering=Lettering
 Codejournal=Journal
 JournalLabel=Eticheta jurnalului
 NumPiece=Număr nota contabila
@@ -215,7 +217,8 @@ DescThirdPartyReport=Consultați aici lista clienților și furnizorilor terți 
 ListAccounts=Lista conturilor contabile
 UnknownAccountForThirdparty=Cont terț necunoscut. Vom folosi %s
 UnknownAccountForThirdpartyBlocking=Cont terț necunoscut. Eroare de blocare
-ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Contul terț nu este definit sau este necunoscut. Eroare de blocare.
+ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Third-party account not defined or third party unknown. We will use %s
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Contul terț nu este definit sau este necunoscut. Eroare de blocare.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Conturile terț și de așteptare necunoscute nu sunt definite. Eroare de blocare
 PaymentsNotLinkedToProduct=Plata nu legată de vreun produs/serviciu
 
@@ -262,7 +265,7 @@ AccountingJournals=Jurnalele contabile
 AccountingJournal=Jurnalul contabil
 NewAccountingJournal=Jurnal contabil nou
 ShowAccoutingJournal=Arătați jurnalul contabil
-Nature=Personalitate juridică
+NatureOfJournal=Nature of Journal
 AccountingJournalType1=Operațiuni diverse
 AccountingJournalType2=Vânzări
 AccountingJournalType3=Achiziţii
@@ -288,19 +291,26 @@ Modelcsv_quadratus=Export pentru Quadratus QuadraCompta
 Modelcsv_ebp=Export pentru EBP
 Modelcsv_cogilog=Export pentru Cogilog
 Modelcsv_agiris=Export pentru Agiris
+Modelcsv_LDCompta=Export for LD Compta (v9 & higher) (Test)
+Modelcsv_openconcerto=Export for OpenConcerto (Test)
 Modelcsv_configurable=Exportați CSV configurabil
-Modelcsv_FEC=Export FEC (articolul L47 A) (test)
+Modelcsv_FEC=Export FEC
+Modelcsv_Sage50_Swiss=Export for Sage 50 Switzerland
 ChartofaccountsId=Id-ul listei de conturi
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=Init contabilitate
 InitAccountancyDesc=Această pagină poate fi utilizată pentru a inițializa un cont contabil pentru produse și servicii care nu au cont contabil definit pentru vânzări și achiziții.
 DefaultBindingDesc=Această pagină poate fi utilizată pentru a seta un cont implicit care să fie folosit pentru a lega înregistrarea tranzacțiilor cu privire la salariile de plată, donațiile, impozitele și taxe atunci când nu a fost deja stabilit niciun cont contabil.
-DefaultClosureDesc=Această pagină poate fi utilizată pentru a seta parametrii care trebuie utilizați pentru a închide un bilanț.
+DefaultClosureDesc=This page can be used to set parameters used for accounting closures.
 Options=Opţiuni
 OptionModeProductSell=Mod vanzari
+OptionModeProductSellIntra=Mode sales exported in EEC
+OptionModeProductSellExport=Mode sales exported in other countries
 OptionModeProductBuy=Mod cumparari
 OptionModeProductSellDesc=Afișați toate produsele ce au cont contabil pentru vânzări.
+OptionModeProductSellIntraDesc=Show all products with accounting account for sales in EEC.
+OptionModeProductSellExportDesc=Show all products with accounting account for other foreign sales.
 OptionModeProductBuyDesc=Afișați toate produsele ce au cont contabil pentru achiziții.
 CleanFixHistory=Eliminați codul contabil din linii care nu există în diagramele de cont
 CleanHistory=Resetați toate asocierile pentru anul selectat
@@ -309,6 +319,9 @@ WithoutValidAccount=Fără un cont dedicat valabil
 WithValidAccount=Cu un cont dedicat valabil
 ValueNotIntoChartOfAccount=Această valoare a contului contabil nu există în planul de conturi
 AccountRemovedFromGroup=Account removed from group
+SaleLocal=Local sale
+SaleExport=Export sale
+SaleEEC=Sale in EEC
 
 ## Dictionary
 Range=Rang cont contabil
@@ -329,7 +342,7 @@ UseMenuToSetBindindManualy=Linii care nu sunt încă legate, utilizați meniul <
 
 ## Import
 ImportAccountingEntries=Intrările contabile
-
+DateExport=Date export
 WarningReportNotReliable=Atenție, acest raport nu se bazează pe registrul contabil, deci nu conține o tranzacție modificată manual în registru contabil. Dacă jurnalele dvs. sunt actualizate, vizualizarea contabilă este mai precisă.
 ExpenseReportJournal=Jurnalul raportului de cheltuieli
 InventoryJournal=Jurnal inventar

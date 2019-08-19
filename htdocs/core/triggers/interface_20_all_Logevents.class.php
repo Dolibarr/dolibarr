@@ -27,7 +27,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
 
 
 /**
- *  Class of triggers for security events
+ *  Class of triggers for security audit events
  */
 class InterfaceLogevents extends DolibarrTriggers
 {
@@ -47,7 +47,7 @@ class InterfaceLogevents extends DolibarrTriggers
 	public $version = self::VERSION_DOLIBARR;
 
 	/**
-	 * Function called when a Dolibarrr business event is done.
+	 * Function called when a Dolibarrr security audit event is done.
 	 * All functions "runTrigger" are triggered if file is inside directory htdocs/core/triggers or htdocs/module/code/triggers (and declared)
 	 *
 	 * @param string		$action		Event action code

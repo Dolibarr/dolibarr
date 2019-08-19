@@ -10,7 +10,7 @@ LoanCapital=Capital
 Insurance=Seguro
 Interest=Interés
 Nbterms=Plazos
-Term=Term
+Term=Plazo
 LoanAccountancyCapitalCode=Cuenta contable capital
 LoanAccountancyInsuranceCode=Cuenta contable seguro
 LoanAccountancyInterestCode=Cuenta contable interés
@@ -22,7 +22,7 @@ ListLoanAssociatedProject=Listado de préstamos asociados al proyecto
 AddLoan=Crear crédito
 FinancialCommitment=Prestamo
 InterestAmount=Interés
-CapitalRemain=Capital remain
+CapitalRemain=Capital restante
 # Admin
 ConfigLoan=Configuración del módulo préstamos
 LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Cuenta contable por defecto para el capital

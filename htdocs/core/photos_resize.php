@@ -53,6 +53,12 @@ elseif ($modulepart == 'project')
 	if (! $user->rights->projet->lire) accessforbidden();
 	$accessallowed=1;
 }
+elseif ($modulepart == 'bom')
+{
+	$result=restrictedArea($user, 'bom', $id, 'bom_bom');
+	if (! $user->rights->bom->read) accessforbidden();
+	$accessallowed=1;
+}
 elseif ($modulepart == 'expensereport')
 {
 	$result=restrictedArea($user, 'expensereport', $id, 'expensereport');
@@ -205,8 +211,19 @@ elseif ($modulepart == 'ticket')
 		$dir=$conf->ticket->dir_output;	// By default
 	}
 }
+elseif ($modulepart == 'bom')
+{
+	require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
+	$object = new BOM($db);
+	if ($id > 0)
+	{
+		$result = $object->fetch($id);
+		if ($result <= 0) dol_print_error($db, 'Failed to load object');
+		$dir=$conf->bom->dir_output;	// By default
+	}
+}
 else {
-	print 'Action crop for module part '.$modulepart.' is not supported yet.';
+	print 'Action crop for modulepart = '.$modulepart.' is not supported yet.';
 }
 
 if (empty($backtourl))
@@ -220,6 +237,7 @@ if (empty($backtourl))
     elseif (in_array($modulepart, array('tax')))           $backtourl=DOL_URL_ROOT."/compta/sociales/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
     elseif (in_array($modulepart, array('ticket')))        $backtourl=DOL_URL_ROOT."/ticket/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
     elseif (in_array($modulepart, array('user')))          $backtourl=DOL_URL_ROOT."/user/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
+    else $backtourl=DOL_URL_ROOT."/".$modulepart."/".$modulepart."_document.php?id=".$id.'&file='.urldecode($_POST["file"]);
 }
 
 

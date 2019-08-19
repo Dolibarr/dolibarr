@@ -7,7 +7,6 @@ require_once DOL_DOCUMENT_ROOT .'/core/db/DoliDB.class.php';
  *
  * Used to log queries into DebugBar
  */
-
 class TraceableDB extends DoliDB
 {
 	/**
@@ -144,15 +143,15 @@ class TraceableDB extends DoliDB
 	 */
 	public static function convertSQLFromMysql($line, $type = 'ddl')
 	{
-		return $this->db->convertSQLFromMysql($line);
+		return self::$db->convertSQLFromMysql($line);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Renvoie le nombre de lignes dans le resultat d'une requete INSERT, DELETE ou UPDATE
+	 * Return the number o flines into the result of a request INSERT, DELETE or UPDATE
 	 *
 	 * @param   resource $resultset    Curseur de la requete voulue
-	 * @return 	int                    Nombre de lignes
+	 * @return 	int                    Number of lines
 	 * @see    	num_rows()
 	 */
 	public function affected_rows($resultset)
@@ -275,10 +274,10 @@ class TraceableDB extends DoliDB
 	}
 
 	/**
-	 * Annulation d'une transaction et retour aux anciennes valeurs
+	 *	Cancel a transaction and go back to initial data values
 	 *
-	 * @param	string $log Add more log to default log line
-	 * @return  int                1 si annulation ok ou transaction non ouverte, 0 en cas d'erreur
+	 * 	@param	string			$log		Add more log to default log line
+	 * 	@return	resource|int         		1 if cancelation is ok or transaction not open, 0 if error
 	 */
 	public function rollback($log = '')
 	{

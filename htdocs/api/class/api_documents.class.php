@@ -368,7 +368,7 @@ class Documents extends DolibarrApi
 				throw new RestException(404, 'Product not found');
 			}
 
-			$upload_dir = $conf->product->dir_output . "/" . get_exdir(0, 0, 0, 1, $object, 'product');
+			$upload_dir = $conf->product->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 0, $object, 'product').dol_sanitizeFileName($object->ref);
 		}
 		elseif ($modulepart == 'agenda' || $modulepart == 'action' || $modulepart == 'event')
 		{

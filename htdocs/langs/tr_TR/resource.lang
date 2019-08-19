@@ -1,11 +1,11 @@
 # Dolibarr language file - Source file is en_US - resource
 MenuResourceIndex=Kaynaklar
-MenuResourceAdd=Yeni kaynaklar
+MenuResourceAdd=Yeni Kaynaklar
 DeleteResource=Kaynak sil
 ConfirmDeleteResourceElement=Bu öğe için kaynağı silmeyi onayla
 NoResourceInDatabase=Veritabanında kaynak yok
 NoResourceLinked=Bağlantılı kaynak yok
-
+ActionsOnResource=Bu kaynakla ilgili etkinlikler
 ResourcePageIndex=Kaynak listesi
 ResourceSingular=Kaynak
 ResourceCard=Kaynak kartı

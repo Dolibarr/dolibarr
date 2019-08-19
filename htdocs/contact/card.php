@@ -179,7 +179,7 @@ if (empty($reshook))
         $object->socid			= GETPOST("socid", 'int');
         $object->lastname		= GETPOST("lastname", 'alpha');
         $object->firstname		= GETPOST("firstname", 'alpha');
-        $object->civility_id	= GETPOST("civility_id", 'alpha');
+		$object->civility_id	= GETPOST("civility_id", 'alpha');
         $object->poste			= GETPOST("poste", 'alpha');
         $object->address		= GETPOST("address", 'alpha');
         $object->zip			= GETPOST("zipcode", 'alpha');
@@ -573,7 +573,7 @@ else
 
             // Civility
             print '<tr><td><label for="civility_id">'.$langs->trans("UserTitle").'</label></td><td colspan="3">';
-            print $formcompany->select_civility(GETPOST("civility_id", 'alpha')?GETPOST("civility_id", 'alpha'):$object->civility_id);
+            print $formcompany->select_civility(GETPOST("civility", 'alpha')?GETPOST("civility", 'alpha'):$object->civility_code);
             print '</td></tr>';
 
             print '<tr><td><label for="title">'.$langs->trans("PostOrFunction").'</label></td>';
@@ -872,7 +872,7 @@ else
 
             // Civility
             print '<tr><td><label for="civility_id">'.$langs->trans("UserTitle").'</label></td><td colspan="3">';
-            print $formcompany->select_civility(isset($_POST["civility_id"])?GETPOST("civility_id"):$object->civility_id);
+            print $formcompany->select_civility(isset($_POST["civility"])?GETPOST("civility"):$object->civility_code);
             print '</td></tr>';
 
             print '<tr><td><label for="title">'.$langs->trans("PostOrFunction").'</label></td>';

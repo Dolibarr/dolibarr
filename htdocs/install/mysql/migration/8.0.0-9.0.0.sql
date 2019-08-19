@@ -285,7 +285,6 @@ DELETE from llx_accounting_account where rowid in (select minid from tmp_llx_acc
 --update llx_facture_fourn_det set fk_code_ventilation = maxid WHERE fk_code_ventilation = minid;
 --update llx_expensereport_det set fk_code_ventilation = maxid WHERE fk_code_ventilation = minid;
 
-
 ALTER TABLE llx_accounting_account DROP INDEX uk_accounting_account;
 ALTER TABLE llx_accounting_account ADD UNIQUE INDEX uk_accounting_account (account_number, entity, fk_pcg_version);
 

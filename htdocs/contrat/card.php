@@ -1096,8 +1096,6 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 if (! empty($conf->projet->enabled)) $formproject = new FormProjets($db);
 
-$objectlignestatic=new ContratLigne($db);
-
 // Load object modContract
 $module=(! empty($conf->global->CONTRACT_ADDON)?$conf->global->CONTRACT_ADDON:'mod_contract_serpis');
 if (substr($module, 0, 13) == 'mod_contract_' && substr($module, -3) == 'php')
@@ -2211,10 +2209,14 @@ else
 
 			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
+			$MAXEVENT = 10;
+
+			$morehtmlright = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-list-alt', DOL_URL_ROOT.'/contrat/agenda.php?id='.$object->id);
+
 			// List of actions on element
 			include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 			$formactions = new FormActions($db);
-			$somethingshown = $formactions->showactions($object, 'contract', $socid, 1);
+			$somethingshown = $formactions->showactions($object, 'contract', $socid, 1, 'listactions', $MAXEVENT, '', $morehtmlright);
 
 
 			print '</div></div></div>';
@@ -2239,14 +2241,18 @@ $db->close();
 <?php
 if (! empty($conf->margin->enabled) && $action == 'editline')
 {
+		// TODO Why this ? To manage margin on contracts ?
 ?>
-
 <script type="text/javascript">
 $(document).ready(function() {
   var idprod = $("input[name='idprod']").val();
   var fournprice = $("input[name='fournprice']").val();
+  var token = '<?php echo $_SESSION["token"]; ?>';		// For AJAX Call we use old 'token' and not 'newtoken'
   if (idprod > 0) {
-	  $.post('<?php echo DOL_URL_ROOT; ?>/fourn/ajax/getSupplierPrices.php', {'idprod': idprod}, function(data) {
+	  $.post('<?php echo DOL_URL_ROOT; ?>/fourn/ajax/getSupplierPrices.php', {
+		  'idprod': idprod,
+		  'token': token
+		  }, function(data) {
 	    if (data.length > 0) {
 	      var options = '';
 	      var trouve=false;
@@ -2291,6 +2297,5 @@ $(document).ready(function() {
     }
 });
 </script>
-
 <?php
 }
