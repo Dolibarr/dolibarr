@@ -77,6 +77,14 @@ $topMenuFontSize='1.2em';
 $toolTipBgColor='rgba(255, 255, 255, 0.96);';
 $toolTipFontColor='#333';
 
+// text color
+$textSuccess   ='#28a745';
+$colorblind_deuteranopes_textSuccess   ='#37de5d';
+$textDanger    ='#dc3545';
+$textWarning   ='#f39c12';
+$colorblind_deuteranopes_textWarning = $textWarning; // currently not tested with a color blind people so use default color
+
+
 // Badges colors
 $badgePrimary   ='#007bff';
 $badgeSecondary ='#999999';
@@ -94,7 +102,7 @@ $colorblind_deuteranopes_badgeWarning   ='#e4e411';
 
 /* default color for status : After a quick check, somme status can have oposite function according to objects
 *  So this badges status uses default value according to theme eldy status img
-*  TODO: use color definition vars above for define badges color status X -> expemple $badgeStatusValidate, $badgeStatusClosed, $badgeStatusActive ....
+*  TODO: use color definition vars above for define badges color status X -> exemple $badgeStatusValidate, $badgeStatusClosed, $badgeStatusActive ....
 */
 $badgeStatus0='#cbd3d3';
 $badgeStatus1='#bc9526';

@@ -746,9 +746,12 @@ elseif ($id > 0 || ! empty($ref))
 	print '<input class="flat" type="text" size="4" name="search_progresscalc" value="'.$search_progresscalc.'">';
 	print '</td>';
 
-	print '<td class="liste_titre right">';
-	print '<input class="flat" type="text" size="4" name="search_progressdeclare" value="'.$search_progressdeclare.'">';
-	print '</td>';
+    print '<td class="liste_titre right">';
+    print '<input class="flat" type="text" size="4" name="search_progressdeclare" value="'.$search_progressdeclare.'">';
+    print '</td>';
+
+    // progress resume not searchable
+    print '<td class="liste_titre right"></td>';
 
 	if ($object->bill_time)
 	{
@@ -778,6 +781,7 @@ elseif ($id > 0 || ! empty($ref))
 	print_liste_field_titre("TimeSpent", $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre("ProgressCalculated", $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre("ProgressDeclared", $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre("TaskProgressSummary", $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'right ');
 	if ($object->bill_time)
 	{
 	   print_liste_field_titre("TimeToBill", $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'right ');

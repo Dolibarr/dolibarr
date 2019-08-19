@@ -690,6 +690,23 @@ textarea.centpercent {
     opacity: 0.7;
 }
 
+.text-warning{
+    color : <?php print $textWarning ; ?>
+}
+body[class*="colorblind-"] .text-warning{
+    color : <?php print $colorblind_deuteranopes_textWarning ; ?>
+}
+.text-success{
+    color : <?php print $textSuccess ; ?>
+}
+body[class*="colorblind-"] .text-success{
+    color : <?php print $colorblind_deuteranopes_textSuccess ; ?>
+}
+
+.text-danger{
+    color : <?php print $textDanger ; ?>
+}
+
 /* Themes for badges */
 <?php include dol_buildpath($path.'/theme/'.$theme.'/badges.inc.php', 0); ?>
 
@@ -5717,7 +5734,9 @@ border-top-right-radius: 6px;
 <?php }
 
 include dol_buildpath($path.'/theme/'.$theme.'/dropdown.inc.php', 0);
-
 include dol_buildpath($path.'/theme/'.$theme.'/info-box.inc.php', 0);
+include dol_buildpath($path.'/theme/'.$theme.'/progress.inc.php', 0);
+
+
 
 if (is_object($db)) $db->close();

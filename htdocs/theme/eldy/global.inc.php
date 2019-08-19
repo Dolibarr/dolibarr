@@ -405,6 +405,16 @@ textarea.centpercent {
 .small, small {
     font-size: 85%;
 }
+
+.h1 .small, .h1 small, .h2 .small, .h2 small, .h3 .small, .h3 small, h1 .small, h1 small, h2 .small, h2 small, h3 .small, h3 small {
+    font-size: 65%;
+}
+.h1 .small, .h1 small, .h2 .small, .h2 small, .h3 .small, .h3 small, .h4 .small, .h4 small, .h5 .small, .h5 small, .h6 .small, .h6 small, h1 .small, h1 small, h2 .small, h2 small, h3 .small, h3 small, h4 .small, h4 small, h5 .small, h5 small, h6 .small, h6 small {
+    font-weight: 400;
+    line-height: 1;
+    color: #777;
+}
+
 .center {
     text-align: center;
     margin: 0px auto;
@@ -482,6 +492,24 @@ textarea.centpercent {
     font-size: 0.85em;
     opacity: 0.7;
 }
+
+.text-warning{
+    color : <?php print $textWarning ; ?>
+}
+body[class*="colorblind-"] .text-warning{
+    color : <?php print $colorblind_deuteranopes_textWarning ; ?>
+}
+.text-success{
+    color : <?php print $textSuccess ; ?>
+}
+body[class*="colorblind-"] .text-success{
+    color : <?php print $colorblind_deuteranopes_textSuccess ; ?>
+}
+
+.text-danger{
+    color : <?php print $textDanger ; ?>
+}
+
 
 /* Themes for badges */
 <?php include dol_buildpath($path.'/theme/'.$theme.'/badges.inc.php', 0); ?>
@@ -3209,10 +3237,6 @@ span.boxstatsindicator {
 	flex-grow: 1;
 
 }
-
-
-
-
 span.dashboardlineindicator, span.dashboardlineindicatorlate {
 	font-size: 130%;
 	font-weight: normal;
@@ -5773,4 +5797,4 @@ div.tabsElem a.tab {
 <?php
 include dol_buildpath($path.'/theme/'.$theme.'/dropdown.inc.php', 0);
 include dol_buildpath($path.'/theme/'.$theme.'/info-box.inc.php', 0);
-
+include dol_buildpath($path.'/theme/'.$theme.'/progress.inc.php', 0);
