@@ -1241,7 +1241,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
     if (! empty($conf->agenda->enabled))
     {
         // Recherche histo sur actioncomm
-        if (is_object($objcon) && $objcon->id) {
+        if (is_object($objcon) && $objcon->id > 0) {
             $sql = "SELECT DISTINCT a.id, a.label as label,";
         }
         else
@@ -1267,7 +1267,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_actioncomm as c ON a.fk_action = c.id";
 
         $force_filter_contact = false;
-        if (is_object($objcon) && $objcon->id) {
+        if (is_object($objcon) && $objcon->id > 0) {
             $force_filter_contact = true;
             $sql.= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm_resources as r ON a.id = r.fk_actioncomm";
             $sql.= " AND r.element_type = '" . $db->escape($objcon->table_element) . "' AND r.fk_element = " . $objcon->id;

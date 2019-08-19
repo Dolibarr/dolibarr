@@ -226,7 +226,14 @@ if ($action=="create" || $action=="start")
 		$posmodule = GETPOST('posmodule', 'alpha');
 		$terminalid = GETPOST('posnumber', 'alpha');
 		$terminaltouse = $terminalid;
+
 		if ($terminaltouse == '1' && $posmodule=='cashdesk') $terminaltouse = '';
+
+		if ($posmodule=='cashdesk' && $terminaltouse != '' && $terminaltouse != '1') {
+			$terminaltouse = '';
+			setEventMessages($langs->trans("OnlyTerminal1IsAvailableForCashDeskModule"), null, 'errors');
+			$error++;
+		}
 
 		// Calculate $initialbalanceforterminal for terminal 0
 		foreach($arrayofpaymentmode as $key => $val)
@@ -262,7 +269,7 @@ if ($action=="create" || $action=="start")
 			}
 			else
 			{
-			    setEventMessages($langs->trans("SetupOfTerminalNotComplete", $terminalid), null, 'errors');
+				setEventMessages($langs->trans("SetupOfTerminalNotComplete", $terminaltouse), null, 'errors');
 			    $error++;
 			}
 		}
