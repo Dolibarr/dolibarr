@@ -2058,7 +2058,8 @@ else
 				        $totalpaid += $objp->amount;
 				        $i++;
 				    }
-				    $totalpaid = price2num($totalpaid);		// Round $totalpaid to fix floating problem after addition into loop
+					if ( !is_null($totalpaid))
+				        $totalpaid = price2num($totalpaid);		// Round $totalpaid to fix floating problem after addition into loop
 
 				    $remaintopay = price2num($object->total_ttc - $totalpaid);
 				    $resteapayeraffiche = $remaintopay;
