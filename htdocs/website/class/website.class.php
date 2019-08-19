@@ -825,8 +825,8 @@ class Website extends CommonObject
 
 		$arrayreplacementinfilename=array();
 		$arrayreplacementincss=array();
-		$arrayreplacementincss['modulepart=medias&file=image/'.$website->ref.'/'] = "file=image/__WEBSITE_KEY__/";
-		$arrayreplacementincss['modulepart=medias&file=js/'.$website->ref.'/'] = "file=js/__WEBSITE_KEY__/";
+		$arrayreplacementincss['file=image/'.$website->ref.'/'] = "file=image/__WEBSITE_KEY__/";
+		$arrayreplacementincss['file=js/'.$website->ref.'/'] = "file=js/__WEBSITE_KEY__/";
 		$arrayreplacementincss['medias/image/'.$website->ref.'/'] = "medias/image/__WEBSITE_KEY__/";
 		$arrayreplacementincss['medias/js/'.$website->ref.'/'] = "medias/js/__WEBSITE_KEY__/";
 		$arrayreplacementincss['file=logos%2Fthumbs%2F'.$mysoc->logo_small] = "file=logos%2Fthumbs%2F__LOGO_SMALL_KEY__";
@@ -858,10 +858,10 @@ class Website extends CommonObject
 		dolCopyDir($srcdir, $destdir, 0, 1, $arrayreplacementinfilename);
 
 		$cssindestdir = $conf->website->dir_temp.'/'.$website->ref.'/containers/styles.css.php';
-		dolReplaceInFile($cssindestdir, $arrayreplacementincss, '', 0, 0, 0);
+		dolReplaceInFile($cssindestdir, $arrayreplacementincss);
 
 		$htmldeaderindestdir = $conf->website->dir_temp.'/'.$website->ref.'/containers/htmlheader.html';
-		dolReplaceInFile($htmldeaderindestdir, $arrayreplacementincss, '', 0, 0, 0);
+		dolReplaceInFile($htmldeaderindestdir, $arrayreplacementincss);
 
 		// Build sql file
 		$filesql = $conf->website->dir_temp.'/'.$website->ref.'/website_pages.sql';
@@ -1029,8 +1029,23 @@ class Website extends CommonObject
 			return -1;
 		}
 
+		$arrayreplacement = array();
+		$arrayreplacement['__WEBSITE_ID__'] = $object->id;
+		$arrayreplacement['__WEBSITE_KEY__'] = $object->ref;
+		$arrayreplacement['__N__'] = $this->db->escape("\n");			// Restore \n
+		$arrayreplacement['__LOGO_SMALL_KEY__'] = $this->db->escape($mysoc->logo_small);
+		$arrayreplacement['__LOGO_MINI_KEY__'] = $this->db->escape($mysoc->logo_mini);
+		$arrayreplacement['__LOGO_KEY__'] = $this->db->escape($mysoc->logo);
 
+		// Copy containers
 		dolCopyDir($conf->website->dir_temp.'/'.$object->ref.'/containers', $conf->website->dir_output.'/'.$object->ref, 0, 1);	// Overwrite if exists
+
+		// Make replacement into css and htmlheader file
+		$cssindestdir = $conf->website->dir_output.'/'.$object->ref.'/styles.css.php';
+		$result=dolReplaceInFile($cssindestdir, $arrayreplacement);
+
+		$htmldeaderindestdir = $conf->website->dir_output.'/'.$object->ref.'/htmlheader.html';
+		$result = dolReplaceInFile($htmldeaderindestdir, $arrayreplacement);
 
 		// Now generate the master.inc.php page
 		$filemaster=$conf->website->dir_output.'/'.$object->ref.'/master.inc.php';
@@ -1046,13 +1061,6 @@ class Website extends CommonObject
 
 		$sqlfile = $conf->website->dir_temp.'/'.$object->ref.'/website_pages.sql';
 
-		$arrayreplacement = array();
-		$arrayreplacement['__WEBSITE_ID__'] = $object->id;
-		$arrayreplacement['__WEBSITE_KEY__'] = $object->ref;
-		$arrayreplacement['__N__'] = $this->db->escape("\n");			// Restore \n
-		$arrayreplacement['__LOGO_SMALL_KEY__'] = $this->db->escape($mysoc->logo_small);
-		$arrayreplacement['__LOGO_MINI_KEY__'] = $this->db->escape($mysoc->logo_mini);
-		$arrayreplacement['__LOGO_KEY__'] = $this->db->escape($mysoc->logo);
 		$result = dolReplaceInFile($sqlfile, $arrayreplacement);
 
 		$this->db->begin();
