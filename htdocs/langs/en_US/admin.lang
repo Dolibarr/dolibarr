@@ -1933,3 +1933,4 @@ ConfirmDeleteEmailCollector=Are you sure you want to delete this email collector
 RecipientEmailsWillBeReplacedWithThisValue=Recipient emails will be always replaced with this value
 AtLeastOneDefaultBankAccountMandatory=At least 1 default bank account must be defined
 RestrictApiToIps=Allow available APIs to some host IP only (wildcard not allowed, use space between values). Empty means every hosts can use the available APIs.
+BaseOnSabeDavVersion=Based on the library SabreDAV version

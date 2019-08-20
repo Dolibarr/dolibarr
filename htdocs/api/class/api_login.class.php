@@ -57,12 +57,15 @@ class Login
 	 */
     public function index($login, $password, $entity = '', $reset = 0)
     {
-
 	    global $conf, $dolibarr_main_authentication, $dolibarr_auto_user;
 
-		// Authentication mode
+	    // TODO Remove the API login. The token must be generated from backoffice only.
+
+	    // Authentication mode
 		if (empty($dolibarr_main_authentication))
 			$dolibarr_main_authentication = 'http,dolibarr';
+		$dolibarr_main_authentication = preg_replace('/twoauth/', 'dolibarr', $dolibarr_main_authentication);
+
 		// Authentication mode: forceuser
 		if ($dolibarr_main_authentication == 'forceuser')
 		{
@@ -73,6 +76,7 @@ class Login
 				throw new RestException(403, "Your instance is set to use the automatic login '".$dolibarr_auto_user."' that is not the requested login. API usage is forbidden in this mode.");
 			}
 		}
+
 		// Set authmode
 		$authmode = explode(',', $dolibarr_main_authentication);
 
