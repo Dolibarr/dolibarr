@@ -35,7 +35,10 @@ if (!$user->admin)
 $action = GETPOST('action', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
+
+
 $arrayofparameters=array(
+	'DAV_RESTICT_ON_IP'=>array('css'=>'minwidth200', 'enabled'=>1),
     'DAV_ALLOW_PRIVATE_DIR'=>array('css'=>'minwidth200', 'enabled'=>2),
     'DAV_ALLOW_PUBLIC_DIR'=>array('css'=>'minwidth200', 'enabled'=>1),
 	'DAV_ALLOW_ECM_DIR'=>array('css'=>'minwidth200', 'enabled'=>$conf->ecm->enabled)
@@ -82,7 +85,8 @@ if ($action == 'edit')
 		if (isset($val['enabled']) && empty($val['enabled'])) continue;
 
 		print '<tr class="oddeven"><td>';
-		print $form->textwithpicto($langs->trans($key), $langs->trans($key.'Tooltip'));
+		$tooltiphelp = (($langs->trans($key.'Tooltip') != $key.'Tooltip') ? $langs->trans($key.'Tooltip') : '');
+		print $form->textwithpicto($langs->trans($key), $tooltiphelp);
 		print '</td><td>';
 		if ($key == 'DAV_ALLOW_PRIVATE_DIR')
 		{
@@ -116,7 +120,8 @@ else
 	foreach($arrayofparameters as $key => $val)
 	{
 		print '<tr class="oddeven"><td>';
-		print $form->textwithpicto($langs->trans($key), $langs->trans($key.'Tooltip'));
+		$tooltiphelp = (($langs->trans($key.'Tooltip') != $key.'Tooltip') ? $langs->trans($key.'Tooltip') : '');
+		print $form->textwithpicto($langs->trans($key), $tooltiphelp);
 		print '</td><td>';
 		if ($key == 'DAV_ALLOW_PRIVATE_DIR')
 		{
