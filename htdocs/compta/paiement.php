@@ -594,6 +594,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                 print '<td align="right">'.$remaindertopay.'</td>';
                 print '<td align="right">'.$langs->trans('PaymentAmount').'</td>';
 				$reshook=$hookmanager->executeHooks('printObjectLineTitle',$parameters,$objp,$action);
+
 				print '<td align="right">&nbsp;</td>';
                 print "</tr>\n";
 
@@ -737,7 +738,10 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                     }
                     print "</td>";
 
-                    // Warning
+					$reshook=$hookmanager->executeHooks('printObjectLine',$parameters,$objp,$action); // Note that $action and $object may have been modified by hook
+
+
+					// Warning
                     print '<td align="center" width="16">';
                     //print "xx".$amounts[$invoice->id]."-".$amountsresttopay[$invoice->id]."<br>";
                     if ($amounts[$invoice->id] && (abs($amounts[$invoice->id]) > abs($amountsresttopay[$invoice->id]))
@@ -748,8 +752,6 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                     print '</td>';
 
 					$parameters=array();
-					$reshook=$hookmanager->executeHooks('printObjectLine',$parameters,$objp,$action); // Note that $action and $object may have been modified by hook
-
                     print "</tr>\n";
 
                     $total+=$objp->total;
