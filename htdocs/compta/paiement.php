@@ -593,7 +593,8 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                 print '<td align="right">'.$alreadypayedlabel.'</td>';
                 print '<td align="right">'.$remaindertopay.'</td>';
                 print '<td align="right">'.$langs->trans('PaymentAmount').'</td>';
-                print '<td align="right">&nbsp;</td>';
+				$reshook=$hookmanager->executeHooks('printObjectLineTitle',$parameters,$objp,$action);
+				print '<td align="right">&nbsp;</td>';
                 print "</tr>\n";
 
                 $total=0;
