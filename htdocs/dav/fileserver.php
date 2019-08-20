@@ -56,16 +56,16 @@ if (empty($conf->dav->enabled))
 
 
 // Restrict API to some IPs
-if (! empty($conf->global->DAV_RESTICT_ON_IP))
+if (! empty($conf->global->DAV_RESTRICT_ON_IP))
 {
-	$allowedip=explode(' ', $conf->global->DAV_RESTICT_ON_IP);
+	$allowedip=explode(' ', $conf->global->DAV_RESTRICT_ON_IP);
 	$ipremote = getUserRemoteIP();
 	if (! in_array($ipremote, $allowedip))
 	{
-		dol_syslog('Remote ip is '.$ipremote.', not into list '.$conf->global->DAV_RESTICT_ON_IP);
+		dol_syslog('Remote ip is '.$ipremote.', not into list '.$conf->global->DAV_RESTRICT_ON_IP);
 		print 'DAV not allowed from the IP '.$ipremote;
 		header('HTTP/1.1 503 DAV not allowed from your IP '.$ipremote);
-		//print $conf->global->DAV_RESTICT_ON_IP;
+		//print $conf->global->DAV_RESTRICT_ON_IP;
 		exit(0);
 	}
 }

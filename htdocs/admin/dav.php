@@ -86,7 +86,9 @@ if ($action == 'edit')
 
 		print '<tr class="oddeven"><td>';
 		$tooltiphelp = (($langs->trans($key.'Tooltip') != $key.'Tooltip') ? $langs->trans($key.'Tooltip') : '');
-		print $form->textwithpicto($langs->trans($key), $tooltiphelp);
+		$label = $langs->trans($key);
+		if ($key == 'DAV_RESTICT_ON_IP') $label = $langs->trans("RESTRICT_ON_IP");
+		print $form->textwithpicto($label, $tooltiphelp);
 		print '</td><td>';
 		if ($key == 'DAV_ALLOW_PRIVATE_DIR')
 		{
