@@ -68,7 +68,6 @@ $head=dav_admin_prepare_head();
 
 dol_fiche_head($head, 'webdav', '', -1, 'action');
 
-
 if ($action == 'edit')
 {
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -76,7 +75,7 @@ if ($action == 'edit')
 	print '<input type="hidden" name="action" value="update">';
 
 	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 	foreach($arrayofparameters as $key => $val)
 	{
@@ -112,7 +111,7 @@ if ($action == 'edit')
 else
 {
 	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 	foreach($arrayofparameters as $key => $val)
 	{
@@ -176,6 +175,13 @@ if (! empty($conf->global->DAV_ALLOW_PUBLIC_DIR))
 	$message.='<br>';
 }
 print $message;
+
+print '<br><br><br>';
+
+require_once DOL_DOCUMENT_ROOT.'/includes/sabre/autoload.php';
+$version = Sabre\DAV\Version::VERSION;
+print '<span class="opacitymedium">'.$langs->trans("BaseOnSabeDavVersion").' : '.$version.'</span>';
+
 
 // End of page
 llxFooter();

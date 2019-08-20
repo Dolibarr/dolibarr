@@ -72,15 +72,25 @@ $authBackend = new \Sabre\DAV\Auth\Backend\BasicCallBack(function ($username, $p
 	global $dolibarr_main_authentication;
 
 	if (empty($user->login))
+	{
+		dol_syslog("Failed to authenticate to DAV, login is not provided", LOG_WARNING);
 		return false;
+	}
 	if ($user->socid > 0)
+	{
+		dol_syslog("Failed to authenticate to DAV, use is an external user", LOG_WARNING);
 		return false;
+	}
 	if ($user->login != $username)
+	{
+		dol_syslog("Failed to authenticate to DAV, login does not match the login of loaded user", LOG_WARNING);
 		return false;
+	}
 
 	// Authentication mode
-	if (empty($dolibarr_main_authentication))
-		$dolibarr_main_authentication='http,dolibarr';
+	if (empty($dolibarr_main_authentication)) $dolibarr_main_authentication='dolibarr';
+	$dolibarr_main_authentication = preg_replace('/twoauth/', 'dolibarr', $dolibarr_main_authentication);
+
 	$authmode = explode(',', $dolibarr_main_authentication);
 	$entity = (GETPOST('entity', 'int') ? GETPOST('entity', 'int') : (!empty($conf->entity) ? $conf->entity : 1));
 
