@@ -38,10 +38,10 @@
  * handling things like indentation.
  */
 class lessc {
-	static public $VERSION = "v0.5.0";
+	public static $VERSION = "v0.5.0";
 
-	static public $TRUE = array("keyword", "true");
-	static public $FALSE = array("keyword", "false");
+	public static $TRUE = array("keyword", "true");
+	public static $FALSE = array("keyword", "false");
 
 	protected $libFunctions = array();
 	protected $registeredVars = array();
@@ -63,7 +63,7 @@ class lessc {
 	protected $sourceParser = null;
 	protected $sourceLoc = null;
 
-	static protected $nextImportId = 0; // uniquely identify imports
+	protected static $nextImportId = 0; // uniquely identify imports
 
 	// attempts to find the path of an import url, returns null for css files
 	protected function findImport($url) {
@@ -2223,7 +2223,7 @@ class lessc {
 		return $less->cachedCompile($in, $force);
 	}
 
-	static protected $cssColors = array(
+	protected static $cssColors = array(
 		'aliceblue' => '240,248,255',
 		'antiquewhite' => '250,235,215',
 		'aqua' => '0,255,255',
@@ -2378,9 +2378,9 @@ class lessc {
 // responsible for taking a string of LESS code and converting it into a
 // syntax tree
 class lessc_parser {
-	static protected $nextBlockId = 0; // used to uniquely identify blocks
+	protected static $nextBlockId = 0; // used to uniquely identify blocks
 
-	static protected $precedence = array(
+	protected static $precedence = array(
 		'=<' => 0,
 		'>=' => 0,
 		'=' => 0,
@@ -2394,18 +2394,18 @@ class lessc_parser {
 		'%' => 2,
 	);
 
-	static protected $whitePattern;
-	static protected $commentMulti;
+	protected static $whitePattern;
+	protected static $commentMulti;
 
-	static protected $commentSingle = "//";
-	static protected $commentMultiLeft = "/*";
-	static protected $commentMultiRight = "*/";
+	protected static $commentSingle = "//";
+	protected static $commentMultiLeft = "/*";
+	protected static $commentMultiRight = "*/";
 
 	// regex string to match any of the operators
-	static protected $operatorString;
+	protected static $operatorString;
 
 	// these properties will supress division unless it's inside parenthases
-	static protected $supressDivisionProps =
+	protected static $supressDivisionProps =
 	array('/border-radius$/i', '/^font$/i');
 
 	protected $blockDirectives = array("font-face", "keyframes", "page", "-moz-document", "viewport", "-moz-viewport", "-o-viewport", "-ms-viewport");
@@ -2423,7 +2423,7 @@ class lessc_parser {
 	protected $inParens = false;
 
 	// caches preg escaped literals
-	static protected $literalCache = array();
+	protected static $literalCache = array();
 
 	public function __construct($lessc, $sourceName = null) {
 		$this->eatWhiteDefault = true;

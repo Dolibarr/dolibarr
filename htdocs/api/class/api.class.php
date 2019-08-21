@@ -32,7 +32,7 @@ class DolibarrApi
     /**
      * @var DoliDb        $db Database object
      */
-    static protected $db;
+    protected static $db;
 
     /**
      * @var Restler     $r	Restler object
