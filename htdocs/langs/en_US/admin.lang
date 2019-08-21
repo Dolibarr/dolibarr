@@ -1935,3 +1935,4 @@ AtLeastOneDefaultBankAccountMandatory=At least 1 default bank account must be de
 RESTRICT_API_ON_IP=Allow available APIs to some host IP only (wildcard not allowed, use space between values). Empty means every hosts can use the available APIs.
 RESTRICT_ON_IP=Allow access to some host IP only (wildcard not allowed, use space between values). Empty means every hosts can access.
 BaseOnSabeDavVersion=Based on the library SabreDAV version
+NotAPublicIp=Not a public IP

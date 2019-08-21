@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2009-2012	Laurent Destailleur	<eldy@users.sourceforge.org>
+/* Copyright (C) 2009-2019	Laurent Destailleur	<eldy@users.sourceforge.org>
  * Copyright (C) 2011-2013  Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -36,9 +36,11 @@ $langs->loadLangs(array("admin","errors"));
 
 $action = GETPOST('action', 'aZ09');
 
+
 /*
  * Actions
  */
+
 if ($action == 'set')
 {
 	$error=0;
@@ -104,7 +106,7 @@ print '<td class="right"><input type="submit" class="button" value="'.$langs->tr
 print "</tr>\n";
 
 // Lib version
-print '<tr class="oddeven"><td width=\"50%\">'.$langs->trans("GeoIPLibVersion").'</td>';
+print '<tr class="oddeven"><td width="50%">'.$langs->trans("GeoIPLibVersion").'</td>';
 print '<td colspan="2">';
 $arrayofvalues = array('php' => 'Native PHP functions', '1' => 'Embedded GeoIP v1', '2' => 'Embedded GeoIP v2');
 print $form->selectarray('geoipversion', $arrayofvalues, (isset($conf->global->GEOIP_VERSION) ? $conf->global->GEOIP_VERSION : '2'));
@@ -119,12 +121,12 @@ if ($conf->global->GEOIP_VERSION == 'php')
 print '</td></tr>';
 
 // Path to database file
-print '<tr class="oddeven"><td width=\"50%\">'.$langs->trans("PathToGeoIPMaxmindCountryDataFile").'</td>';
+print '<tr class="oddeven"><td>'.$langs->trans("PathToGeoIPMaxmindCountryDataFile").'</td>';
 print '<td colspan="2">';
 
 if ($conf->global->GEOIP_VERSION == 'php')
 {
-	print 'Using geoip PHP internal functions. Value must be '.geoip_db_filename(GEOIP_COUNTRY_EDITION).' or '.geoip_db_filename(GEOIP_CITY_EDITION_REV1).' or /usr/share/GeoIP/GeoLite2-Country.mmdb<br>';
+	print 'Using geoip PHP internal functions. Value must be '.geoip_db_filename(GEOIP_COUNTRY_EDITION).' or '.geoip_db_filename(GEOIP_CITY_EDITION_REV1).' or /pathtodatafile/GeoLite2-Country.mmdb<br>';
 }
 print '<input size="50" type="text" name="GEOIPMAXMIND_COUNTRY_DATAFILE" value="'.$conf->global->GEOIPMAXMIND_COUNTRY_DATAFILE.'">';
 print '</td></tr>';
