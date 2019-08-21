@@ -53,8 +53,11 @@ if ($action == 'set')
 
 	if (! $error)
 	{
-		$res = dolibarr_set_const($db, "GEOIPMAXMIND_COUNTRY_DATAFILE", $gimcdf, 'chaine', 0, '', $conf->entity);
-		if (! $res > 0) $error++;
+		$res1 = dolibarr_set_const($db, "GEOIP_VERSION", GETPOST('geoipversion', 'aZ09'), 'chaine', 0, '', $conf->entity);
+		if (! $res1 > 0) $error++;
+
+		$res2 = dolibarr_set_const($db, "GEOIPMAXMIND_COUNTRY_DATAFILE", $gimcdf, 'chaine', 0, '', $conf->entity);
+		if (! $res2 > 0) $error++;
 
 		if (! $error)
 		{
@@ -66,6 +69,8 @@ if ($action == 'set')
 		}
 	}
 }
+
+if (! isset($conf->global->GEOIP_VERSION)) $conf->global->GEOIP_VERSION = '2';
 
 
 /*
@@ -85,13 +90,6 @@ $geoip='';
 if (! empty($conf->global->GEOIPMAXMIND_COUNTRY_DATAFILE))
 {
 	$geoip=new DolGeoIP('country', $conf->global->GEOIPMAXMIND_COUNTRY_DATAFILE);
-	//if ($geoip->error) print dol_htmloutput_errors($geoip->errorlabel,'',1);
-	if ($geoip->gi == 'NOGI') $geointernal=true;
-	else $geointernal=false;
-}
-else
-{
-	if (function_exists('geoip_country_code_by_name')) 	$geointernal=true;
 }
 
 // Mode
@@ -105,16 +103,30 @@ print '<td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td
 print '<td class="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 print "</tr>\n";
 
+// Lib version
+print '<tr class="oddeven"><td width=\"50%\">'.$langs->trans("GeoIPLibVersion").'</td>';
+print '<td colspan="2">';
+$arrayofvalues = array('php' => 'Native PHP functions', '1' => 'Embedded GeoIP v1', '2' => 'Embedded GeoIP v2');
+print $form->selectarray('geoipversion', $arrayofvalues, (isset($conf->global->GEOIP_VERSION) ? $conf->global->GEOIP_VERSION : '2'));
+if ($conf->global->GEOIP_VERSION == 'php')
+{
+	if ($geoip) $version=$geoip->getVersion();
+	if ($version)
+	{
+		print '<br>'.$langs->trans("Version").': '.$version;
+	}
+}
+print '</td></tr>';
+
+// Path to database file
 print '<tr class="oddeven"><td width=\"50%\">'.$langs->trans("PathToGeoIPMaxmindCountryDataFile").'</td>';
 print '<td colspan="2">';
 
-if ($geointernal) print 'Using geoip PHP internal functions. Value must be '.geoip_db_filename(GEOIP_COUNTRY_EDITION).' or '.geoip_db_filename(GEOIP_CITY_EDITION_REV1).'<br>';
-print '<input size="50" type="text" name="GEOIPMAXMIND_COUNTRY_DATAFILE" value="'.$conf->global->GEOIPMAXMIND_COUNTRY_DATAFILE.'">';
-if ($geoip) $version=$geoip->getVersion();
-if ($version)
+if ($conf->global->GEOIP_VERSION == 'php')
 {
-	print '<br>'.$langs->trans("Version").': '.$version;
+	print 'Using geoip PHP internal functions. Value must be '.geoip_db_filename(GEOIP_COUNTRY_EDITION).' or '.geoip_db_filename(GEOIP_CITY_EDITION_REV1).' or /usr/share/GeoIP/GeoLite2-Country.mmdb<br>';
 }
+print '<input size="50" type="text" name="GEOIPMAXMIND_COUNTRY_DATAFILE" value="'.$conf->global->GEOIPMAXMIND_COUNTRY_DATAFILE.'">';
 print '</td></tr>';
 
 print '</table>';
