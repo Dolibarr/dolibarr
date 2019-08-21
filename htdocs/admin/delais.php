@@ -262,7 +262,7 @@ else
 print '<br>';
 
 // Show logo for weather
-print $langs->trans("DescWeather").'<br>';
+print '<span class="opacitymedium">'.$langs->trans("DescWeather").'</span> ';
 
 if($action == 'edit') {
 
