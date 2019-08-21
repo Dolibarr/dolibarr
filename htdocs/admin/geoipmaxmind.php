@@ -144,6 +144,13 @@ if ($geoip)
 	if ($result) print $result;
 	else print $langs->trans("Error");
 
+	$ip='2a01:e0a:7e:4a60:429a:23ff:f7b8:dc8a';		// should be France
+	print '<br>'.$ip.' -> ';
+	$result=dol_print_ip($ip, 1);
+	if ($result) print $result;
+	else print $langs->trans("Error");
+
+
 	/* We disable this test because dol_print_ip need an ip as input
 	$ip='www.google.com';
 	print '<br>'.$ip.' -> ';

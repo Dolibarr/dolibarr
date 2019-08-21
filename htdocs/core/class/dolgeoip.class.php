@@ -46,7 +46,10 @@ class DolGeoIP
 		if ($type == 'country')
 		{
 		    // geoip may have been already included with PEAR
-		    if (! function_exists('geoip_country_code_by_name')) $res=include_once GEOIP_PATH.'geoip.inc';
+		    if (! function_exists('geoip_country_code_by_name'))
+		    {
+		    	$res=include_once GEOIP_PATH.'geoip.inc';
+		    }
 		}
 		elseif ($type == 'city')
 		{
@@ -101,8 +104,16 @@ class DolGeoIP
 		}
 		else
 		{
-		    if (! function_exists('geoip_country_code_by_addr')) return strtolower(geoip_country_code_by_name($this->gi, $ip));
-		    return strtolower(geoip_country_code_by_addr($this->gi, $ip));
+			if (preg_match('/^[0-9]+.[0-9]+\.[0-9]+\.[0-9]+/', $ip))
+			{
+			    if (! function_exists('geoip_country_code_by_addr')) return strtolower(geoip_country_code_by_name($this->gi, $ip));
+			    return strtolower(geoip_country_code_by_addr($this->gi, $ip));
+			}
+			else
+			{
+				if (! function_exists('geoip_country_code_by_addr_v6')) return strtolower(geoip_country_code_by_name_v6($this->gi, $ip));
+				return strtolower(geoip_country_code_by_addr_v6($this->gi, $ip));
+			}
 		}
 	}
 
