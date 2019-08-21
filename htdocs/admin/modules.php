@@ -198,7 +198,6 @@ if ($action=='install')
                 if (! $error)
                 {
                 	// TODO Make more test
-
                 }
 
                 // Now we install the module
