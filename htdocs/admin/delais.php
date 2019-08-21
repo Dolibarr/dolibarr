@@ -319,7 +319,7 @@ if ($action == 'edit') {
 	print '<div>';
 	print '<div class="inline-block" style="padding-right: 20px">';
 	print img_weather($text, 0, $options);
-	print '= <input type="text" size="2" name="MAIN_METEO_PERCENTAGE_LEVEL0" value="'.$conf->global->MAIN_METEO_PERCENTAGE_LEVEL0.'"/>&nbsp;%</td>';
+	print '&lt;= <input type="text" size="2" name="MAIN_METEO_PERCENTAGE_LEVEL0" value="'.$conf->global->MAIN_METEO_PERCENTAGE_LEVEL0.'"/>&nbsp;%</td>';
 	print '</div><div class="inline-block" style="padding-right: 20px">';
 	print img_weather($text, 1, $options);
 	print '&lt;= <input type="text" size="2" name="MAIN_METEO_PERCENTAGE_LEVEL1" value="'.$conf->global->MAIN_METEO_PERCENTAGE_LEVEL1.'"/>&nbsp;%</td>';
