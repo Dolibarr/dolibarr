@@ -2653,6 +2653,10 @@ function dol_print_ip($ip, $mode = 0)
 			}
 			else $ret.=' ('.$countrycode.')';
 		}
+		else
+		{
+			// Nothing
+		}
 	}
 
 	return $ret;
