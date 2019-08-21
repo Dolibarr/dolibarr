@@ -521,7 +521,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 
 		dol_fiche_head('');
 
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent">';
 
 		$defaultref='';
 		$obj = empty($conf->global->PROJECT_TASK_ADDON)?'mod_task_simple':$conf->global->PROJECT_TASK_ADDON;
@@ -707,7 +707,7 @@ elseif ($id > 0 || ! empty($ref))
 	$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
 
 	print '<div class="div-table-responsive">';
-	print '<table id="tablelines" class="tagtable nobottomiftotal liste'.($moreforfilter?" listwithfilterbefore":"").'"">';
+	print '<table id="tablelines" class="tagtable nobottomiftotal liste'.($moreforfilter?" listwithfilterbefore":"").'">';
 
 	// Fields title search
 	print '<tr class="liste_titre_filter">';
@@ -799,7 +799,7 @@ elseif ($id > 0 || ! empty($ref))
 	{
 	    $colspan=10;
 	    if ($object->bill_time) $colspan+=2;
-		print '<tr class="oddeven"><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoTasks").'</td></tr>';
+		print '<tr class="oddeven nobottom"><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoTasks").'</span></td></tr>';
 	}
 
 	print "</table>";
