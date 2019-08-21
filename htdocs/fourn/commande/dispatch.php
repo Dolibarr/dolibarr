@@ -52,7 +52,7 @@ $id = GETPOST("id", 'int');
 $ref = GETPOST('ref');
 $lineid = GETPOST('lineid', 'int');
 $action = GETPOST('action', 'aZ09');
-$fk_default_warehouse = GETPOST('fk_default_warehouse','int');
+$fk_default_warehouse = GETPOST('fk_default_warehouse', 'int');
 
 if ($user->societe_id)
 	$socid = $user->societe_id;
