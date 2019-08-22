@@ -1147,7 +1147,7 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 			$isactive=false;
 		}
 
-		if ($i < $limittoshow || $isactive)
+		if ($i <= $limittoshow || $isactive)
 		{
 			$out.='<div class="inline-block tabsElem'.($isactive ? ' tabsElemActive' : '').((! $isactive && ! empty($conf->global->MAIN_HIDE_INACTIVETAB_ON_PRINT))?' hideonprint':'').'"><!-- id tab = '.(empty($links[$i][2])?'':$links[$i][2]).' -->';
 			if (isset($links[$i][2]) && $links[$i][2] == 'image')
