@@ -612,27 +612,38 @@ if (empty($reshook))
                 if (empty($newsup)) {
                         $sql  = "DELETE FROM ".MAIN_DB_PREFIX."oauth_token WHERE fk_soc = ".$object->id." AND service = ".$servicestatus." AND entity = ".$conf->entity;
                 } else {
-      try {
+      try {      
       $stripesup = \Stripe\Account::retrieve($db->escape(GETPOST('key_account_supplier', 'alpha')));
-
       $tokenstring['stripe_user_id'] = $stripesup->id;
-      $tokenstring['type'] = $stripesup->type;
+      $tokenstring['type'] = $stripesup->type;       
 			$sql = "UPDATE ".MAIN_DB_PREFIX."oauth_token";
 			$sql.= " SET tokenstring = '".dol_json_encode($tokenstring)."'";
 			$sql.= " WHERE fk_soc = ".$object->id." AND service = ".$servicestatus." AND entity = ".$conf->entity;	// Keep = here for entity. Only 1 record must be modified !
-			}
-			catch(Exception $e)
-			{
-				$error++;
-				setEventMessages($e->getMessage(), null, 'errors');
-			}  
-                }
+	  }
+					catch(Exception $e)
+					{
+						$error++;
+						setEventMessages($e->getMessage(), null, 'errors');
+					}
+				}
 
 			$resql = $db->query($sql);
 			$num = $db->num_rows($resql);
 			if (empty($num) && !empty($newsup))
 			{
-      //TODO CREATE ACCOUNT
+      try {     
+      $stripesup = \Stripe\Account::retrieve($db->escape(GETPOST('key_account_supplier', 'alpha')));          
+      $tokenstring['stripe_user_id'] = $stripesup->id;
+      $tokenstring['type'] = $stripesup->type;
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."oauth_token (service, fk_soc, entity, tokenstring)";
+			$sql .= " VALUES ('".$service."', ".$object->id.", ".$conf->entity.", '".dol_json_encode($tokenstring)."')";
+	  }
+				catch(Exception $e)
+				{
+					$error++;
+					setEventMessages($e->getMessage(), null, 'errors');
+				}
+				$resql = $db->query($sql);
 			}
 
 			if (! $error)
