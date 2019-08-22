@@ -105,7 +105,9 @@ $authBackend = new \Sabre\DAV\Auth\Backend\BasicCallBack(function ($username, $p
 
 	// Authentication mode
 	if (empty($dolibarr_main_authentication)) $dolibarr_main_authentication='dolibarr';
-	$dolibarr_main_authentication = preg_replace('/twofactor/', 'dolibarr', $dolibarr_main_authentication);
+
+	// this is manage directly in the module with $context parameters
+	//$dolibarr_main_authentication = preg_replace('/twofactor/', 'dolibarr', $dolibarr_main_authentication);
 
 	// Authentication mode: forceuser
 	if ($dolibarr_main_authentication == 'forceuser')
@@ -121,7 +123,7 @@ $authBackend = new \Sabre\DAV\Auth\Backend\BasicCallBack(function ($username, $p
 	$authmode = explode(',', $dolibarr_main_authentication);
 	$entity = (GETPOST('entity', 'int') ? GETPOST('entity', 'int') : (!empty($conf->entity) ? $conf->entity : 1));
 
-	if (checkLoginPassEntity($username, $password, $entity, $authmode) != $username)
+	if (checkLoginPassEntity($username, $password, $entity, $authmode, 'dav') != $username)
 		return false;
 
 	return true;
