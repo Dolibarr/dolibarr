@@ -64,7 +64,9 @@ class Login
 	    // Authentication mode
 		if (empty($dolibarr_main_authentication))
 			$dolibarr_main_authentication = 'http,dolibarr';
-		$dolibarr_main_authentication = preg_replace('/twofactor/', 'dolibarr', $dolibarr_main_authentication);
+
+		// this is manage directly in the module with $context parameters
+		//$dolibarr_main_authentication = preg_replace('/twofactor/', 'dolibarr', $dolibarr_main_authentication);
 
 		// Authentication mode: forceuser
 		if ($dolibarr_main_authentication == 'forceuser')
@@ -87,7 +89,7 @@ class Login
 		if ($entity == '') $entity=1;
 
 		include_once DOL_DOCUMENT_ROOT . '/core/lib/security2.lib.php';
-		$login = checkLoginPassEntity($login, $password, $entity, $authmode);
+		$login = checkLoginPassEntity($login, $password, $entity, $authmode, 'api');
 		if (empty($login))
 		{
 			throw new RestException(403, 'Access denied');
