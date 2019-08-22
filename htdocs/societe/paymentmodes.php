@@ -1457,7 +1457,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 
 		if (count($rib_list) == 0)
 		{
-			$colspan=8;
+			$colspan=9;
 			if (! empty($conf->prelevement->enabled)) $colspan+=2;
 			print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoBANRecord").'</td></tr>';
 		}
