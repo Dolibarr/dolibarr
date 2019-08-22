@@ -81,6 +81,19 @@ $authBackend = new \Sabre\DAV\Auth\Backend\BasicCallBack(function ($username, $p
 	// Authentication mode
 	if (empty($dolibarr_main_authentication))
 		$dolibarr_main_authentication='http,dolibarr';
+	$dolibarr_main_authentication = preg_replace('/twofactor/', 'dolibarr', $dolibarr_main_authentication);
+
+	// Authentication mode: forceuser
+	if ($dolibarr_main_authentication == 'forceuser')
+	{
+		if (empty($dolibarr_auto_user)) $dolibarr_auto_user='auto';
+		if ($dolibarr_auto_user != $username)
+		{
+			dol_syslog("Warning: your instance is set to use the automatic forced login '".$dolibarr_auto_user."' that is not the requested login. DAV usage is forbidden in this mode.");
+			return false;
+		}
+	}
+
 	$authmode = explode(',', $dolibarr_main_authentication);
 	$entity = (GETPOST('entity', 'int') ? GETPOST('entity', 'int') : (!empty($conf->entity) ? $conf->entity : 1));
 
