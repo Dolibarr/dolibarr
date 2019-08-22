@@ -65,7 +65,7 @@ $storage = new DoliStorage($db, $conf);
 
 // Setup the credentials for the requests
 $credentials = new Credentials(
-    $conf->global->OAUTH_STRIPE_TEST_ID,
+    $conf->global->OAUTH_STRIPE_LIVE_ID,
 	$conf->global->STRIPE_LIVE_SECRET_KEY,
     $currentUri->getAbsoluteUri()
 );
