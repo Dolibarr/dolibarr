@@ -811,12 +811,16 @@ SCRIPT;
                     print_liste_field_titre("BarcodeType", $_SERVER["PHP_SELF"], "pfp.fk_barcode_type", "", $param, '', $sortfield, $sortorder, 'center ');
                 }
 				print_liste_field_titre("DateModification", $_SERVER["PHP_SELF"], "pfp.tms", "", $param, '', $sortfield, $sortorder, 'right ');
+				if (is_object($hookmanager))
+				{
+				    $parameters=array('id_fourn'=>$id_fourn, 'prod_id'=>$object->id);
+				    $reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action);
+				}
 				print_liste_field_titre('');
 				print "</tr>\n";
 
 				if (is_array($product_fourn_list))
 				{
-
 					foreach($product_fourn_list as $productfourn)
 					{
 						print '<tr class="oddeven">';
@@ -924,7 +928,7 @@ SCRIPT;
 						if (is_object($hookmanager))
 						{
 							$parameters=array('id_pfp'=>$productfourn->product_fourn_price_id,'id_fourn'=>$id_fourn,'prod_id'=>$object->id);
-						    $reshook=$hookmanager->executeHooks('printObjectLine', $parameters, $object, $action);
+						    $reshook=$hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action);
 						}
 
 						// Modify-Remove
