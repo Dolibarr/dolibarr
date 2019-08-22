@@ -779,12 +779,16 @@ SCRIPT;
 				print_liste_field_titre("DiscountQtyMin",$_SERVER["PHP_SELF"],'','',$param,'align="right"',$sortfield,$sortorder);
 				print_liste_field_titre("NbDaysToDelivery",$_SERVER["PHP_SELF"],"pfp.delivery_time_days","",$param,'align="right"',$sortfield,$sortorder);
 				print_liste_field_titre("ReputationForThisProduct",$_SERVER["PHP_SELF"],"pfp.supplier_reputation","",$param,'align="center"',$sortfield,$sortorder);
+				if (is_object($hookmanager))
+				{
+				    $parameters=array('id_fourn'=>$id_fourn, 'prod_id'=>$object->id);
+				    $reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action);
+				}
 				print_liste_field_titre('');
 				print "</tr>\n";
 
 				if (is_array($product_fourn_list))
 				{
-
 					foreach($product_fourn_list as $productfourn)
 					{
 						print '<tr class="oddeven">';
@@ -866,7 +870,7 @@ SCRIPT;
 						if (is_object($hookmanager))
 						{
 							$parameters=array('id_pfp'=>$productfourn->product_fourn_price_id,'id_fourn'=>$id_fourn,'prod_id'=>$object->id);
-						    $reshook=$hookmanager->executeHooks('printObjectLine',$parameters,$object,$action);
+						    $reshook=$hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action);
 						}
 
 						// Modify-Remove

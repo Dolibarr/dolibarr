@@ -303,7 +303,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	$reshook = $hookmanager->executeHooks('printObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	if(empty($reshook)){
 		print $hookmanager->resPrint;
-    $solde = isset($hookmanager->resArray['solde']) ? $hookmanager->resArray['solde'] : $solde;
+        $solde = isset($hookmanager->resArray['solde']) ? $hookmanager->resArray['solde'] : $solde;
 	}
 
 	// solde
