@@ -106,9 +106,6 @@ $authBackend = new \Sabre\DAV\Auth\Backend\BasicCallBack(function ($username, $p
 	// Authentication mode
 	if (empty($dolibarr_main_authentication)) $dolibarr_main_authentication='dolibarr';
 
-	// this is manage directly in the module with $context parameters
-	//$dolibarr_main_authentication = preg_replace('/twofactor/', 'dolibarr', $dolibarr_main_authentication);
-
 	// Authentication mode: forceuser
 	if ($dolibarr_main_authentication == 'forceuser')
 	{

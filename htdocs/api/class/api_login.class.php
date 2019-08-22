@@ -62,11 +62,7 @@ class Login
 	    // TODO Remove the API login. The token must be generated from backoffice only.
 
 	    // Authentication mode
-		if (empty($dolibarr_main_authentication))
-			$dolibarr_main_authentication = 'http,dolibarr';
-
-		// this is manage directly in the module with $context parameters
-		//$dolibarr_main_authentication = preg_replace('/twofactor/', 'dolibarr', $dolibarr_main_authentication);
+		if (empty($dolibarr_main_authentication)) $dolibarr_main_authentication = 'dolibarr';
 
 		// Authentication mode: forceuser
 		if ($dolibarr_main_authentication == 'forceuser')
