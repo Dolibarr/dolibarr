@@ -96,6 +96,12 @@ class Contrat extends CommonObject
 	 */
 	public $ref_supplier;
 
+    /**
+     * Entity of the contract
+     * @var int
+     */
+    public $entity;
+
 	/**
 	 * Client id linked to the contract
 	 * @var int
@@ -624,6 +630,7 @@ class Contrat extends CommonObject
 		$sql = "SELECT rowid, statut, ref, fk_soc, mise_en_service as datemise,";
 		$sql.= " ref_supplier, ref_customer,";
 		$sql.= " ref_ext,";
+        $sql.= " entity,";
 		$sql.= " fk_user_mise_en_service, date_contrat as datecontrat,";
 		$sql.= " fk_user_author, fin_validite, date_cloture,";
 		$sql.= " fk_projet as fk_project,";
@@ -658,6 +665,7 @@ class Contrat extends CommonObject
 				$this->ref_customer				= $obj->ref_customer;
 				$this->ref_supplier				= $obj->ref_supplier;
 				$this->ref_ext					= $obj->ref_ext;
+                $this->entity                   = $obj->entity;
 				$this->statut					= $obj->statut;
 				$this->mise_en_service			= $this->db->jdate($obj->datemise);
 
