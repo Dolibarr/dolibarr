@@ -610,7 +610,7 @@ if (empty($reshook))
 			$db->begin();
 
                 if (empty($newsup)) {
-                        $sql  = "DELETE FROM ".MAIN_DB_PREFIX."oauth_token WHERE fk_soc = ".$object->id." AND service = ".$servicestatus." AND entity = ".$conf->entity;
+                        $sql  = "DELETE FROM ".MAIN_DB_PREFIX."oauth_token WHERE fk_soc = ".$object->id." AND service = '".$service."' AND entity = ".$conf->entity;
                 } else {
       try {
       $stripesup = \Stripe\Account::retrieve($db->escape(GETPOST('key_account_supplier', 'alpha')));
@@ -618,7 +618,7 @@ if (empty($reshook))
       $tokenstring['type'] = $stripesup->type;
 			$sql = "UPDATE ".MAIN_DB_PREFIX."oauth_token";
 			$sql.= " SET tokenstring = '".dol_json_encode($tokenstring)."'";
-			$sql.= " WHERE fk_soc = ".$object->id." AND service = ".$servicestatus." AND entity = ".$conf->entity;	// Keep = here for entity. Only 1 record must be modified !
+			$sql.= " WHERE fk_soc = ".$object->id." AND service = '".$service."' AND entity = ".$conf->entity;	// Keep = here for entity. Only 1 record must be modified !
 	  }
 					catch(Exception $e)
 					{
