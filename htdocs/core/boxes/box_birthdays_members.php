@@ -88,7 +88,7 @@ class box_birthdays_members extends ModeleBoxes
 			$sql.= " FROM ".MAIN_DB_PREFIX."adherent as u";
 			$sql.= " WHERE u.entity IN (".getEntity('adherent').")";
       $sql.= " AND u.statut = 1";
-      $sql.= " AND date_format(u.birth, '%m-%d') >= date_format(curdate(), '%m-%d')";      
+      $sql.= " AND date_format(u.birth, '%m-%d') >= date_format(curdate(), '%m-%d')";
 			$sql.= " ORDER BY date_format(u.birth, '%m-%d') ASC";
 			$sql.= $db->plimit($max, 0);
 
