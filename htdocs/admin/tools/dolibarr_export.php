@@ -67,7 +67,6 @@ if ($action == 'delete')
 	$action='';
 }
 
-
 /*
  * View
  */
