@@ -1936,3 +1936,4 @@ RESTRICT_API_ON_IP=Allow available APIs to some host IP only (wildcard not allow
 RESTRICT_ON_IP=Allow access to some host IP only (wildcard not allowed, use space between values). Empty means every hosts can access.
 BaseOnSabeDavVersion=Based on the library SabreDAV version
 NotAPublicIp=Not a public IP
+MakeAnonymousPing=Make an anonymous Ping '+1' to the Dolibarr foundation server (done 1 time only after installation) to allow the foundation to count the number of Dolibarr installation.

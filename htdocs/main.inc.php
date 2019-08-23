@@ -2205,7 +2205,7 @@ if (! function_exists("llxFooter"))
 	 */
 	function llxFooter($comment = '', $zone = 'private', $disabledoutputofmessages = 0)
 	{
-		global $conf, $langs, $user, $object;
+		global $conf, $db, $langs, $user, $object;
 		global $delayedhtmlcontent;
 		global $contextpage, $page, $limit;
 
@@ -2334,65 +2334,62 @@ if (! function_exists("llxFooter"))
 		// Add code for the asynchronous anonymous first ping (for telemetry)
 		if (($_SERVER["PHP_SELF"] == DOL_URL_ROOT.'/index.php') || GETPOST('forceping', 'alpha'))
 		{
+			//print '<!-- instance_unique_id='.$conf->file->instance_unique_id.' MAIN_FIRST_PING_OK_ID='.$conf->global->MAIN_FIRST_PING_OK_ID.' -->';
 			if (empty($conf->global->MAIN_FIRST_PING_OK_DATE)
-			|| (! empty($conf->file->instance_unique_id) && (md5($conf->file->instance_unique_id) != $conf->global->MAIN_FIRST_PING_OK_ID))
+			|| (! empty($conf->file->instance_unique_id) && (md5($conf->file->instance_unique_id) != $conf->global->MAIN_FIRST_PING_OK_ID) && ($conf->global->MAIN_FIRST_PING_OK_ID != 'disabled'))
 			|| GETPOST('forceping', 'alpha'))
 			{
-				print "\n".'<!-- Includes JS for Ping of Dolibarr MAIN_FIRST_PING_OK_DATE = '.$conf->global->MAIN_FIRST_PING_OK_DATE.' MAIN_FIRST_PING_OK_ID = '.$conf->global->MAIN_FIRST_PING_OK_ID.' -->'."\n";
-				print "\n<!-- JS CODE TO ENABLE the anonymous Ontime Ping -->\n";
-				?>
-	    			<script>
-	    			jQuery(document).ready(function (tmp) {
-	    				$.ajax({
-	    					  method: "POST",
-	    					  url: "https://ping.dolibarr.org/",
-	    					  timeout: 500,     // timeout milliseconds
-	    					  cache: false,
-	    					  data: { hash_algo: "md5", hash_unique_id: "<?php echo md5('dolibarr'.$conf->file->instance_unique_id); ?>", action: "dolibarrping", version: "<?php echo (float) DOL_VERSION; ?>", entity: <?php echo (int) $conf->entity; ?> },
-	    					  success: function (data, status, xhr) {   // success callback function (data contains body of response)
-	      					    	console.log("Ping ok");
-	        	    				$.ajax({
-	      	    					  method: "GET",
-	      	    					  url: "<?php echo DOL_URL_ROOT.'/core/ajax/pingresult.php'; ?>",
-	      	    					  timeout: 500,     // timeout milliseconds
-	      	    					  cache: false,
-	      	        				  data: { hash_algo: "md5", hash_unique_id: "<?php echo md5($conf->file->instance_unique_id); ?>", action: "firstpingok" },
-	    					  		});
-	    					  },
-	    					  error: function (data,status,xhr) {   // success callback function
-	        					    console.log("Ping ko: " + data);
-	        	    				$.ajax({
-	        	    					  method: "GET",
-	        	    					  url: "<?php echo DOL_URL_ROOT.'/core/ajax/pingresult.php'; ?>",
-	        	    					  timeout: 500,     // timeout milliseconds
-	        	    					  cache: false,
-	        	        				  data: { hash_algo: "md5", hash_unique_id: "<?php echo md5($conf->file->instance_unique_id); ?>", action: "firstpingko", version: "<?php echo (float) DOL_VERSION; ?>" },
-	      					  		});
-	    					  }
-	    				});
-	    			});
-	    			</script>
-				<?php
+				if (empty($_COOKIE['DOLINSTALLNOPING_'.md5($conf->file->instance_unique_id)]))
+				{
+					print "\n".'<!-- Includes JS for Ping of Dolibarr MAIN_FIRST_PING_OK_DATE = '.$conf->global->MAIN_FIRST_PING_OK_DATE.' MAIN_FIRST_PING_OK_ID = '.$conf->global->MAIN_FIRST_PING_OK_ID.' -->'."\n";
+					print "\n<!-- JS CODE TO ENABLE the anonymous Ontime Ping -->\n";
+					$hash_unique_id = md5('dolibarr'.$conf->file->instance_unique_id);
+					?>
+		    			<script>
+		    			jQuery(document).ready(function (tmp) {
+		    				$.ajax({
+		    					  method: "POST",
+		    					  url: "https://ping.dolibarr.org/",
+		    					  timeout: 500,     // timeout milliseconds
+		    					  cache: false,
+		    					  data: { hash_algo: "md5", hash_unique_id: "<?php echo $hash_unique_id; ?>", action: "dolibarrping", version: "<?php echo (float) DOL_VERSION; ?>", entity: <?php echo (int) $conf->entity; ?> },
+		    					  success: function (data, status, xhr) {   // success callback function (data contains body of response)
+		      					    	console.log("Ping ok");
+		        	    				$.ajax({
+		      	    					  method: "GET",
+		      	    					  url: "<?php echo DOL_URL_ROOT.'/core/ajax/pingresult.php'; ?>",
+		      	    					  timeout: 500,     // timeout milliseconds
+		      	    					  cache: false,
+		      	        				  data: { hash_algo: "md5", hash_unique_id: "<?php echo $hash_unique_id; ?>", action: "firstpingok" },
+		    					  		});
+		    					  },
+		    					  error: function (data,status,xhr) {   // success callback function
+		        					    console.log("Ping ko: " + data);
+		        	    				$.ajax({
+		        	    					  method: "GET",
+		        	    					  url: "<?php echo DOL_URL_ROOT.'/core/ajax/pingresult.php'; ?>",
+		        	    					  timeout: 500,     // timeout milliseconds
+		        	    					  cache: false,
+		        	        				  data: { hash_algo: "md5", hash_unique_id: "<?php echo $hash_unique_id; ?>", action: "firstpingko", version: "<?php echo (float) DOL_VERSION; ?>" },
+		      					  		});
+		    					  }
+		    				});
+		    			});
+		    			</script>
+					<?php
+				}
+				else
+				{
+					$now = dol_now();
+					print "\n<!-- NO JS CODE TO ENABLE the anonymous One time Ping. It was disabled -->\n";
+					include_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+					dolibarr_set_const($db, 'MAIN_FIRST_PING_OK_DATE', dol_print_date($now, 'dayhourlog', 'gmt'));
+					dolibarr_set_const($db, 'MAIN_FIRST_PING_OK_ID', 'disabled');
+				}
 			}
 		}
 
 		print "</body>\n";
 		print "</html>\n";
-
-        ?>
-
-		<!-- Disabled. This creates a lot of regression. A better solution is to add a protection on submitted page to avoid action to be done twice.
-        <script type="text/javascript">
-            //Prevent from multiple form sending
-            $(function() {
-                $('input[type=submit]').click(function(e) {
-                    e.preventDefault();
-                    $(this).prop('disabled', true);
-                    $(this).closest('form').submit();
-                });
-            });
-        </script>
-        -->
-        <?php
     }
 }
