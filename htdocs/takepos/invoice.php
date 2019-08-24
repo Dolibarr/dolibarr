@@ -493,7 +493,7 @@ if ($action == "search") {
 function PrintSend(id)
 {
     console.log("Open box to select the Print/Send form");
-    $.colorbox({href:"printsend.php?facid="+id, width:"90%", height:"80%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("PrintSend");?>"});
+    $.colorbox({href:"printsend.php?facid="+id, width:"90%", height:"50%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("PrintSend");?>"});
 }
 
 function Print(id){
