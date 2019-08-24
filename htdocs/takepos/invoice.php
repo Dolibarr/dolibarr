@@ -367,7 +367,7 @@ if ($action=="valid" || $action=="history")
     }
     else
     {
-        if ($invoice->paye) $sectionwithinvoicelink.='<span class="amountpaymentcomplete" style="font-size: unset">'.$langs->trans("Payed").'</span>';
+        if ($invoice->paye) $sectionwithinvoicelink.='<span class="amountpaymentcomplete" style="font-size: unset">'.$langs->trans("Paid").'</span>';
         else $sectionwithinvoicelink.=$langs->trans('BillShortStatusValidated');
     }
     $sectionwithinvoicelink.='</span>';
