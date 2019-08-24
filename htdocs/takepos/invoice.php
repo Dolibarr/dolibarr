@@ -403,9 +403,9 @@ if ($action=="valid" || $action=="history")
     if ($conf->global->TAKEPOSCONNECTOR) $sectionwithinvoicelink.=' <button id="buttonprint" type="button" onclick="TakeposPrinting('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
     else $sectionwithinvoicelink.=' <button id="buttonprint" type="button" onclick="Print('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
     $sectionwithinvoicelink.=' <button id="buttonprintsend" type="button" onclick="PrintSend('.$placeid.');">'.$langs->trans('PrintSendTicket').'</button>';
-    $sectionwithinvoicelink.='<script language="javascript">$("#buttonprint").click();</script>';
+    if ($invoice->paye) $sectionwithinvoicelink.='<script language="javascript">$("#buttonprint").click();</script>';
     } else { $sectionwithinvoicelink.=' <button id="buttonprintsend" type="button" onclick="PrintSend('.$placeid.');">'.$langs->trans('PrintSendTicket').'</button>';
-    $sectionwithinvoicelink.='<script language="javascript">$("#buttonprintsend").click();</script>';
+    if ($invoice->paye) $sectionwithinvoicelink.='<script language="javascript">$("#buttonprintsend").click();</script>';
     }
 
 /*
