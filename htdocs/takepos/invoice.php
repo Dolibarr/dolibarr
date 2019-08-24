@@ -692,6 +692,29 @@ if ($invoice->socid != $conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takep
     print '<p style="font-size:120%;" class="right">';
     print $langs->trans("Customer").': '.$soc->name;
     print '</p>';
+
+        // Module Adherent
+        if (! empty($conf->adherent->enabled))
+		{
+    require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+    $langs->load("members");
+    print '<p style="font-size:120%;" class="right">';
+    print $langs->trans("Member").': ';
+    $adh=new Adherent($db);
+    $result=$adh->fetch('', '', $invoice->socid);
+            if ($result > 0)
+			{
+    $adh->ref=$adh->getFullName($langs);
+    print $adh->getFullName($langs);
+    print '<br>'.$langs->trans("Type").': '.$adh->type;
+    print '<br>'.$langs->trans("SubscriptionEndDate").': '.dol_print_date($adh->datefin, 'day');
+			}
+			else
+			{
+    print '<span class="opacitymedium">'.$langs->trans("ThirdpartyNotLinkedToMember").'</span>';
+			}
+    print '</p>';
+		}    
 }
 
 if ($action == "search")
