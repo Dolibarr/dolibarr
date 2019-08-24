@@ -605,7 +605,7 @@ if ($resql)
 	$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
 	$newcardbutton='';
-	if($user->rights->facture->creer)
+	if($user->rights->facture->creer && $contextpage != 'poslist')
 	{
         $newcardbutton.= dolGetButtonTitle($langs->trans('NewBill'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/facture/card.php?action=create');
 	}
@@ -1068,7 +1068,14 @@ if ($resql)
 			if (! empty($arrayfields['s.nom']['checked']))
 			{
 				print '<td class="tdoverflowmax200">';
-				print $thirdpartystatic->getNomUrl(1, 'customer');
+        if ($contextpage == 'poslist')
+		{
+		    print $thirdpartystatic->name;
+		}
+		else
+		{
+		    print $thirdpartystatic->getNomUrl(1, 'customer');
+		}
 				print '</td>';
 				if (! $i) $totalarray['nbfield']++;
 			}
