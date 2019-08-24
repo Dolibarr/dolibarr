@@ -399,10 +399,12 @@ if ($action=="valid" || $action=="history")
         else $sectionwithinvoicelink.=$langs->trans('BillShortStatusValidated');
     }
     $sectionwithinvoicelink.='</span>';
+    if ($conf->global->TAKEPOS_AUTO_PRINT_TICKETS) {
     if ($conf->global->TAKEPOSCONNECTOR) $sectionwithinvoicelink.=' <button id="buttonprint" type="button" onclick="TakeposPrinting('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
     else $sectionwithinvoicelink.=' <button id="buttonprint" type="button" onclick="Print('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
-    if ($conf->global->TAKEPOS_AUTO_PRINT_TICKETS) $sectionwithinvoicelink.='<script language="javascript">$("#buttonprint").click();</script>';
-}
+    $sectionwithinvoicelink.=' <button id="buttonprintsend" type="button" onclick="PrintSend('.$placeid.');">'.$langs->trans('PrintSendTicket').'</button>';
+    $sectionwithinvoicelink.='<script language="javascript">$("#buttonprint").click();</script>';
+    } else $sectionwithinvoicelink.=' <button id="buttonprintsend" type="button" onclick="PrintSend('.$placeid.');">'.$langs->trans('PrintSendTicket').'</button>';}
 
 
 /*
