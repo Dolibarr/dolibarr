@@ -3288,7 +3288,8 @@ class Product extends CommonObject
     	if (!$user->rights->societe->client->voir && !$socid) {
     		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
     	}
-    	$sql.= " WHERE c.rowid = d.fk_contrat";
+		$sql.= " WHERE c.entity IN (".getEntity('contract').")";
+		$sql.= " AND c.rowid = d.fk_contrat";
     	if ($this->id > 0) {
     		$sql.= " AND d.fk_product =".$this->id;
     	} else {
@@ -3298,7 +3299,6 @@ class Product extends CommonObject
     		$sql.= " AND p.rowid = d.fk_product AND p.fk_product_type =".$filteronproducttype;
     	}
     	$sql.= " AND c.fk_soc = s.rowid";
-    	$sql.= " AND c.entity IN (".getEntity('contract').")";
     	if (!$user->rights->societe->client->voir && !$socid) {
     		$sql.= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
     	}
