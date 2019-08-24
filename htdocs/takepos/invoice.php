@@ -166,12 +166,12 @@ if ($action == 'valid' && $user->rights->facture->creer)
 		dol_syslog("Sale already validated");
 		dol_htmloutput_errors($langs->trans("InvoiceIsAlreadyValidated", "TakePos"), null, 1);
 	}
-	else if (count($invoice->lines)==0)
+	elseif (count($invoice->lines)==0)
 	{
 		dol_syslog("Sale without lines");
 		dol_htmloutput_errors($langs->trans("NoLinesToBill", "TakePos"), null, 1);
 	}
-	else if (! empty($conf->stock->enabled) && $conf->global->{'CASHDESK_NO_DECREASE_STOCK'.$_SESSION["takeposterminal"]} != "1")
+	elseif (! empty($conf->stock->enabled) && $conf->global->{'CASHDESK_NO_DECREASE_STOCK'.$_SESSION["takeposterminal"]} != "1")
 	{
 	    $invoice->validate($user, '', $conf->global->{'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"]});
 	}
