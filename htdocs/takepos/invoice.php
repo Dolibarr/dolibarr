@@ -707,7 +707,18 @@ if ($invoice->socid != $conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takep
     $adh->ref=$adh->getFullName($langs);
     print $adh->getFullName($langs);
     print '<br>'.$langs->trans("Type").': '.$adh->type;
-    print '<br>'.$langs->trans("SubscriptionEndDate").': '.dol_print_date($adh->datefin, 'day');
+		if ($adh->datefin)
+		{
+			print dol_print_date($adh->datefin, 'day');
+			if ($adh->hasDelay()) {
+				print " ".img_warning($langs->trans("Late"));
+			}
+		}
+		else
+		{
+				print $langs->trans("SubscriptionNotReceived");
+				if ($adh->statut > 0) print " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft and not terminated
+		}
 			}
 			else
 			{
