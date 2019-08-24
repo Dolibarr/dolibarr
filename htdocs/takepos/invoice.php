@@ -511,7 +511,7 @@ print '<br>'.$sectionwithinvoicelink;
 print '</td>';
 print '<td class="linecolqty right">' . $langs->trans('ReductionShort') . '</td>';
 print '<td class="linecolqty right">' . $langs->trans('Qty') . '</td>';
-print '<td class="linecolht right nowraponall">' . $langs->trans('TotalHTShort') . '</td>';
+print '<td class="linecolht right nowraponall">' . $langs->trans('Total') . '</td>';
 print "</tr>\n";
 
 if ($placeid > 0)
