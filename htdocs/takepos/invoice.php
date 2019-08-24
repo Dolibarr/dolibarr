@@ -725,7 +725,7 @@ if ($invoice->socid != $conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takep
     print '<span class="opacitymedium">'.$langs->trans("ThirdpartyNotLinkedToMember").'</span>';
 			}
     print '</p>';
-		}    
+		}
 }
 
 if ($action == "search")
