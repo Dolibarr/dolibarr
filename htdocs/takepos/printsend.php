@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2018	Andreu Bisquerra	<jove@bisquerra.com>
+/* Copyright (C) 2019	Thibault FOUCART <support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -131,6 +131,12 @@ else print "var received=0;";
 	    	}
     	}
 	}
+  
+function Print(id){
+    $.colorbox.close();
+    $.colorbox({href:"receipt.php?facid="+id, width:"40%", height:"90%", transition:"none", iframe:"true", title:"<?php
+    echo $langs->trans("PrintTicket"); ?>"});
+}
 
 </script>
 
@@ -140,11 +146,11 @@ else print "var received=0;";
 </center>
 </div>
 
-<div style="position:absolute; top:33%; left:5%; height:70%; width:91%;">
+<div style="position:absolute; top:33%; left:5%; height:60%; width:91%;">
 
 <button type="button" class="calcbutton" onclick="Print('.<?php echo $placeid; ?>.');"><?php print $langs->trans("PrintTicket"); ?></button>
-<button type="button" class="calcbutton" onclick="addreceived();"><?php print $langs->trans("SendTicket"); ?></button>
-<button type="button" class="calcbutton" onclick="addreceived();"><?php print $langs->trans("SaveSendTicket"); ?></button>
+<button type="button" class="calcbutton" onclick="addreceived();"><?php print $langs->trans("SendInvoice"); ?></button>
+<button type="button" class="calcbutton" onclick="addreceived();"><?php print $langs->trans("SaveSendInvoice"); ?></button>
 
 </div>
 
