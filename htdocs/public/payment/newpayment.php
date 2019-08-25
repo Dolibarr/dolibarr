@@ -1834,7 +1834,8 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
 
 		print '<br>';
 
-        print '<form action="'.$_SERVER['REQUEST_URI'].'" method="POST" id="payment-form">';
+		print '<!-- STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION = '.$conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION.' STRIPE_USE_NEW_CHECKOUT = '.$conf->global->STRIPE_USE_NEW_CHECKOUT.' -->'."\n";
+		print '<form action="'.$_SERVER['REQUEST_URI'].'" method="POST" id="payment-form">'."\n";
 
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
 		print '<input type="hidden" name="dopayment_stripe" value="1">'."\n";
@@ -1852,7 +1853,7 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
 		print '<input type="hidden" name="email" value="'.GETPOST('email', 'alpha').'" />';
 		print '<input type="hidden" name="thirdparty_id" value="'.GETPOST('thirdparty_id', 'int').'" />';
 
-		if (! empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION) || ! empty($conf->global->STRIPE_USE_NEW_CHECKOUT))
+		if (! empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION) || ! empty($conf->global->STRIPE_USE_NEW_CHECKOUT))	// Use a SCA ready method
 		{
 			require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 
@@ -1876,8 +1877,8 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
 			}
 		}
 
-		if (empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION) || ! empty($paymentintent))
-		{
+		//if (empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION) || ! empty($paymentintent))
+		//{
     		print '
             <table id="dolpaymenttable" summary="Payment form" class="center">
     	    <tbody><tr><td class="textpublicpayment">';
@@ -1914,7 +1915,7 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
     	    print '
     	    </td></tr></tbody>
             </table>';
-		}
+		//}
 
 		if (! empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION))
 		{
@@ -1942,6 +1943,8 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
 		{
 			print '<!-- JS Code for Stripe components -->';
     		print '<script src="https://js.stripe.com/v3/"></script>'."\n";
+    		$urllogofull = 'http://home.destailleur.fr:805/dolibarr_dev/htdocs/viewimage.php?modulepart=mycompany&entity=1&file=logos%2Fthumbs%2Ffbm+logo_small.png';
+    		print '<!-- urllogofull = '.$urllogofull.' -->'."\n";
 
     	    // Code to ask the credit card. This use the default "API version". No way to force API version when using JS code.
     		print '<script type="text/javascript" language="javascript">'."\n";
@@ -1961,11 +1964,13 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
     			{
     				$metadata['dol_type'] = $object->element;
     				$metadata['dol_id'] = $object->id;
+
+    				$ref = $object->ref;
     			}
 
     			try {
     				$arrayforpaymentintent = array(
-    					'description'=>'Stripe payment: '.$FULLTAG.(is_object($object)?' ref='.$object->ref:''),
+    					'description'=>'Stripe payment: '.$FULLTAG.($ref?' ref='.$ref:''),
     					"metadata" => $metadata
     				);
     				if ($TAG) $arrayforpaymentintent["statement_descriptor"] = dol_trunc($TAG, 10, 'right', 'UTF-8', 1);     // 22 chars that appears on bank receipt (company + description)
@@ -1973,11 +1978,11 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
     				$arrayforcheckout = array(
     					'payment_method_types' => array('card'),
     					'line_items' => array(array(
-    						'name' => $langs->transnoentitiesnoconv("Payment").' '.$FULLTAG.' ref='.$ref,
-    						'description' => 'Stripe payment: '.$FULLTAG.' ref='.$ref,
+    						'name' => $langs->transnoentitiesnoconv("Payment").' '.$TAG,			// Label of product line
+    						'description' => 'Stripe payment: '.$FULLTAG.($ref?' ref='.$ref:''),
     						'amount' => $amountstripe,
     						'currency' => $currency,
-    						'images' => array($urllogofull),
+    						//'images' => array($urllogofull),
     						'quantity' => 1,
     					)),
     					'client_reference_id' => $FULLTAG,
@@ -2033,6 +2038,7 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
 
     		var cardElement = elements.create('card', {style: style});
 
+			// Comment this to avoid the redirect
 			stripe.redirectToCheckout({
 			  // Make the id field from the Checkout Session creation API response
 			  // available to this file, so you can provide it as parameter here
@@ -2116,14 +2122,14 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
                     	payment_method_data: {
         			        billing_details: {
         			        	name: cardholderName.value
-        			        	<?php if (GETPOST('email', 'alpha')) { ?>, email: '<?php echo GETPOST('email', 'alpha'); ?>'<?php } ?>
-        			        	<?php if (is_object($object) && is_object($object->thirdparty) && is_object($object->thirdparty->phone)) { ?>, phone: '<?php echo $object->thirdparty->phone; ?>'<?php } ?>
+        			        	<?php if (GETPOST('email', 'alpha') || (is_object($object) && is_object($object->thirdparty) && ! empty($object->thirdparty->email))) { ?>, email: '<?php echo (GETPOST('email', 'alpha') ? GETPOST('email', 'alpha') : $object->thirdparty->email); ?>'<?php } ?>
+        			        	<?php if (is_object($object) && is_object($object->thirdparty) && ! empty($object->thirdparty->phone)) { ?>, phone: '<?php echo $object->thirdparty->phone; ?>'<?php } ?>
         			        	<?php if (is_object($object) && is_object($object->thirdparty)) { ?>, address: {
         			        	    city: '<?php echo $object->thirdparty->town; ?>',
         			        	    country: '<?php echo $object->thirdparty->country_code; ?>',
         			        	    line1: '<?php echo $object->thirdparty->address; ?>',
         			        	    postal_code: '<?php echo $object->thirdparty->zip; ?>'}<?php } ?>
-        			        }	/* TODO Add all other known data like emails, ... to be SCA compliant */
+        			        }
               			},
               			save_payment_method: <?php if ($stripecu) { print 'true'; } else { print 'false'; } ?>	/* true when a customer was provided when creating payment intent. true ask to save the card */
                     }
@@ -2151,7 +2157,7 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
 
     		<?php
     		}
-    		else
+    		else		// Old method (not SCA ready)
     		{
     		?>
     		// Old code for payment with option STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION off and STRIPE_USE_NEW_CHECKOUT off
