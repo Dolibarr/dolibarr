@@ -1765,7 +1765,6 @@ if ($action == 'create' && $usercancreate)
 					$object->array_options = array_merge($object->array_options, $soc->array_options);
 				}
 				print $object->showOptionals($extrafields, 'edit');
-
 	}
 
 	// Template to use by default
