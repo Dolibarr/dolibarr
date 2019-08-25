@@ -16,6 +16,7 @@ Following changes may create regressions for some external modules, but were nec
 * Properties ->libelle_incoterms were renamed into ->label_incoterms
 * Removed the method liste_array() of project class. It was not used by core code.
 * The function show_theme() hase been renamed into showSkins()
+* Rename 'module_part' parameter into 'modulepart' into document APIs, for consistency.
 
 
 ***** ChangeLog for 10.0.1 compared to 10.0.0 *****
