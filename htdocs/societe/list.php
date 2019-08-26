@@ -199,7 +199,7 @@ $arrayfields=array(
 	's.idprof5'=>array('label'=>"ProfId5Short", 'checked'=>$checkedprofid5),
 	's.idprof6'=>array('label'=>"ProfId6Short", 'checked'=>$checkedprofid6),
 	's.tva_intra'=>array('label'=>"VATIntraShort", 'checked'=>0),
-	'customerorsupplier'=>array('label'=>'Type', 'checked'=>1),
+	'customerorsupplier'=>array('label'=>'NatureOfThirdParty', 'checked'=>1),
 	's.fk_prospectlevel'=>array('label'=>"ProspectLevelShort", 'checked'=>$checkprospectlevel),
 	's.fk_stcomm'=>array('label'=>"StatusProsp", 'checked'=>$checkstcomm),
     's2.nom'=>array('label'=>'ParentCompany', 'checked'=>0),
