@@ -92,7 +92,7 @@ class Stripe extends CommonObject
 		if ($fk_soc > 0) {
 			$sql.= " AND fk_soc = ".$fk_soc;
 		}
-		else { 
+		else {
 			$sql.= " AND fk_soc IS NULL";
 		}
 		$sql.= " AND fk_user IS NULL AND fk_adherent IS NULL";
