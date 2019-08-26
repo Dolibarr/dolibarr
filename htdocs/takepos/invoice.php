@@ -367,7 +367,7 @@ if ($action=="valid" || $action=="history")
     }
     else
     {
-        if ($invoice->paye) $sectionwithinvoicelink.='<span class="amountpaymentcomplete" style="font-size: unset">'.$langs->trans("Payed").'</span>';
+        if ($invoice->paye) $sectionwithinvoicelink.='<span class="amountpaymentcomplete" style="font-size: unset">'.$langs->trans("Paid").'</span>';
         else $sectionwithinvoicelink.=$langs->trans('BillShortStatusValidated');
     }
     $sectionwithinvoicelink.='</span>';
@@ -511,7 +511,7 @@ print '<br>'.$sectionwithinvoicelink;
 print '</td>';
 print '<td class="linecolqty right">' . $langs->trans('ReductionShort') . '</td>';
 print '<td class="linecolqty right">' . $langs->trans('Qty') . '</td>';
-print '<td class="linecolht right nowraponall">' . $langs->trans('TotalHTShort') . '</td>';
+print '<td class="linecolht right nowraponall">' . $langs->trans('TotalTTCShort') . '</td>';
 print "</tr>\n";
 
 if ($placeid > 0)
