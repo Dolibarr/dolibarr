@@ -1796,6 +1796,7 @@ class Project extends CommonObject
             $response = new WorkboardResponse();
             $response->warning_delay = $conf->projet->warning_delay/60/60/24;
             $response->label = $langs->trans("OpenedProjects");
+            $response->labelShort = $langs->trans("Opened");
             if ($user->rights->projet->all->lire) $response->url = DOL_URL_ROOT.'/projet/list.php?search_status=1&mainmenu=project';
             else $response->url = DOL_URL_ROOT.'/projet/list.php?search_project_user=-1&search_status=1&mainmenu=project';
             $response->img = img_object('', "projectpub");

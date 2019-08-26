@@ -744,6 +744,9 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                     }
                     print "</td>";
 
+                    $parameters=array();
+                    $reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters, $objp, $action); // Note that $action and $object may have been modified by hook
+
                     // Warning
                     print '<td align="center" width="16">';
                     //print "xx".$amounts[$invoice->id]."-".$amountsresttopay[$invoice->id]."<br>";
@@ -753,9 +756,6 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                         print ' '.img_warning($langs->trans("PaymentHigherThanReminderToPay"));
                     }
                     print '</td>';
-
-					$parameters=array();
-					$reshook=$hookmanager->executeHooks('printObjectLine', $parameters, $objp, $action); // Note that $action and $object may have been modified by hook
 
                     print "</tr>\n";
 
@@ -893,12 +893,13 @@ if (! GETPOST('action', 'aZ09'))
             print '<td><a href="'.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$objp->facid.'">'.$objp->ref."</a></td>\n";
             print '<td>'.dol_print_date($db->jdate($objp->dp))."</td>\n";
             print '<td>'.$objp->paiement_type.' '.$objp->num_paiement."</td>\n";
-            print '<td class="right">'.price($objp->amount).'</td><td>&nbsp;</td>';
-
-			$parameters=array();
-			$reshook=$hookmanager->executeHooks('printObjectLine', $parameters, $objp, $action); // Note that $action and $object may have been modified by hook
-
+            print '<td class="right">'.price($objp->amount).'</td>';
+            print '<td>&nbsp;</td>';
             print '</tr>';
+
+            $parameters=array();
+            $reshook=$hookmanager->executeHooks('printObjectLine', $parameters, $objp, $action); // Note that $action and $object may have been modified by hook
+
             $i++;
         }
         print '</table>';

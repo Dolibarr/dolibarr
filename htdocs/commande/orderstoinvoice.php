@@ -548,7 +548,7 @@ if (($action != 'create' && $action != 'add') || ($action == 'create' && $error)
 	</script>
 	<?php
 
-	$sql = 'SELECT s.nom, s.rowid as socid, s.client, c.rowid, c.ref, c.total_ht, c.ref_client,';
+	$sql = 'SELECT s.nom, s.rowid as socid, s.client, c.rowid, c.entity, c.ref, c.total_ht, c.ref_client,';
 	$sql.= ' c.date_valid, c.date_commande, c.date_livraison, c.fk_statut, c.facture as billed';
 	$sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 	$sql.= ', '.MAIN_DB_PREFIX.'commande as c';
@@ -682,7 +682,7 @@ if (($action != 'create' && $action != 'add') || ($action == 'create' && $error)
 
 			print '<td width="16" class="nobordernopadding hideonsmartphone right">';
 			$filename=dol_sanitizeFileName($objp->ref);
-			$filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($objp->ref);
+			$filedir=$conf->commande->multidir_output[$objp->entity] . '/' . dol_sanitizeFileName($objp->ref);
 			$urlsource=$_SERVER['PHP_SELF'].'?id='.$objp->rowid;
 			print $formfile->getDocumentsLink($generic_commande->element, $filename, $filedir);
 			print '</td></tr></table>';

@@ -32,11 +32,21 @@
 
 global $theme_bordercolor, $theme_datacolor, $theme_bgcolor, $theme_bgcoloronglet;
 $theme_bordercolor = array(235,235,224);
-$theme_datacolor = array(array(157, 56, 191), array(0, 147, 183), array(250,190,30), array(221, 75, 57), array(0,166,90), array(140,140,220), array(190,120,120), array(190,190,100), array(115,125,150), array(100,170,20), array(150,135,125), array(85,135,150), array(150,135,80), array(150,80,150));
-if(!empty($conf->global->MAIN_OPTIMIZEFORCOLORBLIND)) // user is loaded by dolgraph.class.php
+$theme_datacolor = array(array(137, 86, 161), array(60, 147, 183), array(250, 190, 80), array(191, 75, 57), array(80, 166, 90), array(140,140,220), array(190,120,120), array(190,190,100), array(115,125,150), array(100,170,20), array(150,135,125), array(85,135,150), array(150,135,80), array(150,80,150));
+if (! defined('ISLOADEDBYSTEELSHEET'))	// File is run after an include of a php page, not by the style sheet, if the constant is not defined.
 {
-	// for now we use the same configuration for all types of color blind
-	$theme_datacolor = array(array(248, 220, 1), array(9, 85, 187), array(42, 208, 255), array(0, 0, 0), array(169, 169, 169), array(253, 102, 136), array(120, 154, 190), array(146, 146, 55), array(0, 52, 251), array(196, 226, 161), array(222, 160, 41), array(85,135,150), array(150,135,80), array(150,80,150));
+	if (!empty($conf->global->MAIN_OPTIMIZEFORCOLORBLIND)) // user is loaded by dolgraph.class.php
+	{
+		if ($conf->global->MAIN_OPTIMIZEFORCOLORBLIND == 'flashy')
+		{
+			$theme_datacolor = array(array(157, 56, 191), array(0, 147, 183), array(250, 190, 30), array(221, 75, 57), array(0,166,90), array(140,140,220), array(190,120,120), array(190,190,100), array(115,125,150), array(100,170,20), array(150,135,125), array(85,135,150), array(150,135,80), array(150,80,150));
+		}
+		else
+		{
+			// for now we use the same configuration for all types of color blind
+			$theme_datacolor = array(array(248, 220, 1), array(9, 85, 187), array(42, 208, 255), array(0, 0, 0), array(169, 169, 169), array(253, 102, 136), array(120, 154, 190), array(146, 146, 55), array(0, 52, 251), array(196, 226, 161), array(222, 160, 41), array(85,135,150), array(150,135,80), array(150,80,150));
+		}
+	}
 }
 
 $theme_bgcolor = array(hexdec('F4'),hexdec('F4'),hexdec('F4'));
@@ -44,9 +54,9 @@ $theme_bgcoloronglet = array(hexdec('DE'),hexdec('E7'),hexdec('EC'));
 
 // Colors
 $colorbackhmenu1='60,70,100';      // topmenu
-$colorbackvmenu1='248,248,248';      // vmenu
+$colorbackvmenu1='250,250,250';      // vmenu
 $colortopbordertitle1='200,200,200';    // top border of title
-$colorbacktitle1='220,220,223';      // title of tables,list
+$colorbacktitle1='233,234,237';      // title of tables,list
 $colorbacktabcard1='255,255,255';  // card
 $colorbacktabactive='234,234,234';
 $colorbacklineimpair1='255,255,255';    // line impair
@@ -67,13 +77,21 @@ $topMenuFontSize='1.2em';
 $toolTipBgColor='rgba(255, 255, 255, 0.96);';
 $toolTipFontColor='#333';
 
+// text color
+$textSuccess   ='#28a745';
+$colorblind_deuteranopes_textSuccess   ='#37de5d';
+$textDanger    ='#dc3545';
+$textWarning   ='#f39c12';
+$colorblind_deuteranopes_textWarning = $textWarning; // currently not tested with a color blind people so use default color
+
+
 // Badges colors
 $badgePrimary   ='#007bff';
 $badgeSecondary ='#999999';
 $badgeSuccess   ='#28a745';
-$badgeDanger    ='#dc3545';
+$badgeDanger    ='#9f4705';
 $badgeWarning   ='#ffc107';
-$badgeInfo      ='#17a2b8';
+$badgeInfo      ='#aaaabb';
 $badgeDark      ='#343a40';
 $badgeLight     ='#f8f9fa';
 
@@ -84,7 +102,7 @@ $colorblind_deuteranopes_badgeWarning   ='#e4e411';
 
 /* default color for status : After a quick check, somme status can have oposite function according to objects
 *  So this badges status uses default value according to theme eldy status img
-*  TODO: use color definition vars above for define badges color status X -> expemple $badgeStatusValidate, $badgeStatusClosed, $badgeStatusActive ....
+*  TODO: use color definition vars above for define badges color status X -> exemple $badgeStatusValidate, $badgeStatusClosed, $badgeStatusActive ....
 */
 $badgeStatus0='#cbd3d3';
 $badgeStatus1='#bc9526';

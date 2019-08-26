@@ -749,7 +749,6 @@ class Account extends CommonObject
 		$sql.= ",fk_pays = ".$this->country_id;
 
 		$sql.= " WHERE rowid = ".$this->id;
-		$sql.= " AND entity = ".$conf->entity;
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -1225,6 +1224,7 @@ class Account extends CommonObject
 			$response = new WorkboardResponse();
 			$response->warning_delay=$conf->bank->rappro->warning_delay/60/60/24;
 			$response->label=$langs->trans("TransactionsToConciliate");
+			$response->labelShort = $langs->trans("TransactionsToConciliateShort");
 			$response->url=DOL_URL_ROOT.'/compta/bank/list.php?leftmenu=bank&amp;mainmenu=bank';
 			$response->img=img_object('', "payment");
 
@@ -1276,7 +1276,6 @@ class Account extends CommonObject
 				$this->nb["banklines"]=$obj->nb;
 			}
 			$this->db->free($resql);
-			return 1;
 		}
 		else
 		{

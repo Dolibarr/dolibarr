@@ -318,7 +318,6 @@ class Facture extends CommonInvoice
 		if (! $this->cond_reglement_id) $this->cond_reglement_id = 0;
 		if (! $this->mode_reglement_id) $this->mode_reglement_id = 0;
 		$this->brouillon = 1;
-        if (empty($this->entity)) $this->entity = $conf->entity;
 
 		// Multicurrency (test on $this->multicurrency_tx because we should take the default rate only if not using origin rate)
 		if (!empty($this->multicurrency_code) && empty($this->multicurrency_tx)) list($this->fk_multicurrency,$this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code);
@@ -493,7 +492,7 @@ class Facture extends CommonInvoice
 		$sql.= ")";
 		$sql.= " VALUES (";
 		$sql.= "'(PROV)'";
-		$sql.= ", ".$this->entity;
+		$sql.= ", ".setEntity($this);
 		$sql.= ", ".($this->ref_ext?"'".$this->db->escape($this->ref_ext)."'":"null");
 		$sql.= ", '".$this->db->escape($this->type)."'";
 		$sql.= ", '".$socid."'";
@@ -936,8 +935,8 @@ class Facture extends CommonInvoice
 		$facture->remise_absolue    = $this->remise_absolue;
 		$facture->remise_percent    = $this->remise_percent;
 
-		$facture->origin                        = $this->origin;
-		$facture->origin_id                     = $this->origin_id;
+		$facture->origin            = $this->origin;
+		$facture->origin_id         = $this->origin_id;
 
 		$facture->lines		    	= $this->lines;	// Array of lines of invoice
 		$facture->products		    = $this->lines;	// Tant que products encore utilise
@@ -1624,7 +1623,11 @@ class Facture extends CommonInvoice
 		$this->tab_previous_situation_invoice = array();
 		$this->tab_next_situation_invoice = array();
 
-		$sql = 'SELECT rowid, situation_counter FROM '.MAIN_DB_PREFIX.'facture WHERE rowid <> '.$this->id.' AND entity = '.$conf->entity.' AND situation_cycle_ref = '.(int) $this->situation_cycle_ref.' ORDER BY situation_counter ASC';
+		$sql = 'SELECT rowid, situation_counter FROM '.MAIN_DB_PREFIX.'facture';
+		$sql.= ' WHERE rowid <> '.$this->id;
+		$sql.= ' AND entity = '.$this->entity;
+		$sql.= ' AND situation_cycle_ref = '.(int) $this->situation_cycle_ref;
+		$sql.= ' ORDER BY situation_counter ASC';
 
 		dol_syslog(get_class($this).'::fetchPreviousNextSituationInvoice ', LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -3700,11 +3703,11 @@ class Facture extends CommonInvoice
 		$sql.= " AND ff.type IS NULL";			// Renvoi vrai si pas facture de remplacement
 		$sql.= " AND f.type != ".self::TYPE_CREDIT_NOTE;				// Type non 2 si facture non avoir
 
-		if($conf->global->INVOICE_USE_SITUATION_CREDIT_NOTE){
+		if (! empty($conf->global->INVOICE_USE_SITUATION_CREDIT_NOTE)) {
 		    // Select the last situation invoice
 		    $sqlSit = 'SELECT MAX(fs.rowid)';
 		    $sqlSit.= " FROM ".MAIN_DB_PREFIX."facture as fs";
-		    $sqlSit.= " WHERE fs.entity = ".$conf->entity;
+		    $sqlSit.= " WHERE fs.entity IN (".getEntity('invoice').")";
 		    $sqlSit.= " AND fs.type = ".self::TYPE_SITUATION;
 		    $sqlSit.= " AND fs.fk_statut in (".self::STATUS_VALIDATED.",".self::STATUS_CLOSED.")";
 		    $sqlSit.= " GROUP BY fs.situation_cycle_ref";
@@ -3921,6 +3924,7 @@ class Facture extends CommonInvoice
 			$response = new WorkboardResponse();
 			$response->warning_delay=$conf->facture->client->warning_delay/60/60/24;
 			$response->label=$langs->trans("CustomerBillsUnpaid");
+			$response->labelShort=$langs->trans("Unpaid");
 			$response->url=DOL_URL_ROOT.'/compta/facture/list.php?search_status=1&mainmenu=billing&leftmenu=customers_bills';
 			$response->img=img_object('', "bill");
 
@@ -4230,7 +4234,7 @@ class Facture extends CommonInvoice
     public function newCycle()
 	{
 		$sql = 'SELECT max(situation_cycle_ref) FROM ' . MAIN_DB_PREFIX . 'facture as f';
-		$sql.= " WHERE f.entity in (".getEntity('invoice', 0).")";
+		$sql.= " WHERE f.entity IN (".getEntity('invoice', 0).")";
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			if ($resql->num_rows > 0)
@@ -4274,8 +4278,8 @@ class Facture extends CommonInvoice
 		global $conf;
 
 		$sql = 'SELECT rowid FROM ' . MAIN_DB_PREFIX . 'facture';
-		$sql .= ' where situation_cycle_ref = ' . $this->situation_cycle_ref;
-		$sql .= ' and situation_counter < ' . $this->situation_counter;
+		$sql .= ' WHERE situation_cycle_ref = ' . $this->situation_cycle_ref;
+		$sql .= ' AND situation_counter < ' . $this->situation_counter;
 		$sql .= ' AND entity = '. ($this->entity > 0 ? $this->entity : $conf->entity);
 		$resql = $this->db->query($sql);
 		$res = array();
@@ -4356,7 +4360,9 @@ class Facture extends CommonInvoice
 
 		if (!empty($this->situation_cycle_ref)) {
 			// No point in testing anything if we're not inside a cycle
-			$sql = 'SELECT max(situation_counter) FROM ' . MAIN_DB_PREFIX . 'facture WHERE situation_cycle_ref = ' . $this->situation_cycle_ref . ' AND entity = ' . ($this->entity > 0 ? $this->entity : $conf->entity);
+			$sql = 'SELECT max(situation_counter) FROM ' . MAIN_DB_PREFIX . 'facture';
+			$sql.= ' WHERE situation_cycle_ref = ' . $this->situation_cycle_ref;
+			$sql.= ' AND entity = ' . ($this->entity > 0 ? $this->entity : $conf->entity);
 			$resql = $this->db->query($sql);
 
 			if ($resql && $resql->num_rows > 0) {

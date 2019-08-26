@@ -856,7 +856,8 @@ function newpopup(url, title) {
 }
 
 /**
- * Function show document preview. Use the "dialog" function.
+ * Function show document preview. It uses the "dialog" function.
+ * The a tag around the img must have the src='', class='documentpreview', mime='image/xxx', target='_blank' from getAdvancedPreviewUrl().
  *
  * @param 	string file 		Url
  * @param 	string type 		Mime file type ("image/jpeg", "application/pdf", "text/html")

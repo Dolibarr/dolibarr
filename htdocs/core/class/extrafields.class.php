@@ -1628,7 +1628,7 @@ class ExtraFields
 		if ($hidden) return '';		// This is a protection. If field is hidden, we should just not call this method.
 
 		//if ($computed) $value =		// $value is already calculated into $value before calling this method
-		
+
 		$showsize=0;
 		if ($type == 'date')
 		{
@@ -1972,24 +1972,29 @@ class ExtraFields
             if (count($extrafield_param_list) > 0) {
                 $extrafield_collapse_display_value = intval($extrafield_param_list[0]);
                 if ($extrafield_collapse_display_value == 1 || $extrafield_collapse_display_value == 2) {
-                    $collapse_display = ($extrafield_collapse_display_value == 2 ? false : true);
+                	// Set the collapse_display status to cookie in priority or if ignorecollapsesetup is 1, if cookie and ignorecollapsesetup not defined, use the setup.
+                	$collapse_display = ((isset($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key]) || GETPOST('ignorecollapsesetup', 'int')) ? ($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key] ? true : false) : ($extrafield_collapse_display_value == 2 ? false : true));
                     $extrafields_collapse_num = $this->attributes[$object->table_element]['pos'][$key];
 
+                    $out .= '<!-- Add js script to manage the collpase/uncollapse of extrafields separators '.$key.' -->';
                     $out .= '<script type="text/javascript">';
                     $out .= 'jQuery(document).ready(function(){';
                     if ($collapse_display === false) {
-                        $out .= '   jQuery("#trextrafieldseparator' . $key . ' td").prepend("<span class=\"cursorpointer fa fa-plus-square\"></span>&nbsp;");';
-                        $out .= '   jQuery(".trextrafields_collapse' . $extrafields_collapse_num . '").hide();';
+                        $out .= '   jQuery("#trextrafieldseparator' . $key . ' td").prepend("<span class=\"cursorpointer fa fa-plus-square\"></span>&nbsp;");'."\n";
+                        $out .= '   jQuery(".trextrafields_collapse' . $extrafields_collapse_num . '").hide();'."\n";
                     } else {
-                        $out .= '   jQuery("#trextrafieldseparator' . $key . ' td").prepend("<span class=\"cursorpointer fa fa-minus-square\"></span>&nbsp;");';
+                    	$out .= '   jQuery("#trextrafieldseparator' . $key . ' td").prepend("<span class=\"cursorpointer fa fa-minus-square\"></span>&nbsp;");'."\n";
+                    	$out .= '   document.cookie = "DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.'=1; path='.$_SERVER["PHP_SELF"].'"'."\n";
                     }
-                    $out .= '   jQuery("#trextrafieldseparator' . $key . '").click(function(){';
-                    $out .= '       jQuery(".trextrafields_collapse' . $extrafields_collapse_num . '").toggle("slow", function(){';
-                    $out .= '           if (jQuery(".trextrafields_collapse' . $extrafields_collapse_num . '").is(":hidden")) {';
-                    $out .= '               jQuery("#trextrafieldseparator' . $key . ' td span").addClass("fa-plus-square").removeClass("fa-minus-square");';
-                    $out .= '           } else {';
-                    $out .= '               jQuery("#trextrafieldseparator' . $key . ' td span").addClass("fa-minus-square").removeClass("fa-plus-square");';
-                    $out .= '           }';
+                    $out .= '   jQuery("#trextrafieldseparator' . $key . '").click(function(){'."\n";
+                    $out .= '       jQuery(".trextrafields_collapse' . $extrafields_collapse_num . '").toggle(300, function(){'."\n";
+                    $out .= '           if (jQuery(".trextrafields_collapse' . $extrafields_collapse_num . '").is(":hidden")) {'."\n";
+                    $out .= '               jQuery("#trextrafieldseparator' . $key . ' td span").addClass("fa-plus-square").removeClass("fa-minus-square");'."\n";
+                    $out .= '               document.cookie = "DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.'=0; path='.$_SERVER["PHP_SELF"].'"'."\n";
+                    $out .= '           } else {'."\n";
+                    $out .= '               jQuery("#trextrafieldseparator' . $key . ' td span").addClass("fa-minus-square").removeClass("fa-plus-square");'."\n";
+                    $out .= '               document.cookie = "DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.'=1; path='.$_SERVER["PHP_SELF"].'"'."\n";
+                    $out .= '           }'."\n";
                     $out .= '       });';
                     $out .= '   });';
                     $out .= '});';
