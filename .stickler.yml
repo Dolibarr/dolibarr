@@ -5,3 +5,6 @@ linters:
       extensions: 'php'
       tab_width: 4
       fixer: true
+
+fixers:
+    enable: true
