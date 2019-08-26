@@ -986,13 +986,6 @@ class SupplierProposal extends CommonObject
                     }
                 }
 
-                // Add linked object (deprecated, use ->linkedObjectsIds instead)
-                if (! $error && $this->origin && $this->origin_id)
-                {
-                    $ret = $this->add_object_linked();
-                    if (! $ret)	dol_print_error($this->db);
-                }
-
                 /*
                  *  Insertion du detail des produits dans la base
                  */
@@ -2281,20 +2274,24 @@ class SupplierProposal extends CommonObject
         $resql=$this->db->query($sql);
         if ($resql)
         {
+			$label = $labelShort = '';
             if ($mode == 'opened') {
                 $delay_warning=$conf->supplier_proposal->cloture->warning_delay;
                 $statut = self::STATUS_VALIDATED;
                 $label = $langs->trans("SupplierProposalsToClose");
+                $labelShort = $langs->trans("ToAcceptRefuse");
             }
             if ($mode == 'signed') {
                 $delay_warning=$conf->supplier_proposal->facturation->warning_delay;
                 $statut = self::STATUS_SIGNED;
                 $label = $langs->trans("SupplierProposalsToProcess");      // May be billed or ordered
+				$labelShort = $langs->trans("ToClose");
             }
 
             $response = new WorkboardResponse();
             $response->warning_delay = $delay_warning/60/60/24;
             $response->label = $label;
+            $response->labelShort = $labelShort;
             $response->url = DOL_URL_ROOT.'/supplier_proposal/list.php?viewstatut='.$statut;
             $response->img = img_object('', "propal");
 

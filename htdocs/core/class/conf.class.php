@@ -327,6 +327,9 @@ class Conf
 		}
 
 		// For mycompany storage
+		$this->mycompany->multidir_output	= array($this->entity => $rootfordata."/mycompany");
+		$this->mycompany->multidir_temp		= array($this->entity => $rootfordata."/mycompany/temp");
+		// For backward compatibility
 		$this->mycompany->dir_output=$rootfordata."/mycompany";
 		$this->mycompany->dir_temp=$rootfordata."/mycompany/temp";
 
@@ -565,6 +568,9 @@ class Conf
 
 		// By default, we show state code in combo list
 		if (! isset($this->global->MAIN_SHOW_STATE_CODE)) $this->global->MAIN_SHOW_STATE_CODE=1;
+
+		// Use a SCA ready workflow with Stripe module (STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION by default if nothing defined)
+		if (! isset($this->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION) && empty($this->global->STRIPE_USE_NEW_CHECKOUT)) $this->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION=1;
 
 		// Define list of limited modules (value must be key found for "name" property of module, so for example 'supplierproposal' for Module "Supplier Proposal"
 		if (! isset($this->global->MAIN_MODULES_FOR_EXTERNAL)) $this->global->MAIN_MODULES_FOR_EXTERNAL='user,societe,propal,commande,facture,categorie,supplierproposal,fournisseur,contact,projet,contrat,ficheinter,expedition,agenda,resource,adherent,blockedlog';	// '' means 'all'. Note that contact is added here as it should be a module later.

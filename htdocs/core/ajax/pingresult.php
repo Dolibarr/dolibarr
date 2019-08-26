@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 $action=GETPOST('action', 'alpha');
 $hash_unique_id=GETPOST('hash_unique_id', 'alpha');
-$hash_algo=GETPOST('hash', 'alpha');
+$hash_algo=GETPOST('hash_algo', 'alpha');
 
 
 // Security check
@@ -53,7 +53,7 @@ print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"])
 // If ok
 if ($action == 'firstpingok')
 {
-	// Note: pings are by entities
+	// Note: pings are by installation, done on entity 1.
 	dolibarr_set_const($db, 'MAIN_FIRST_PING_OK_DATE', dol_print_date($now, 'dayhourlog', 'gmt'));
 	dolibarr_set_const($db, 'MAIN_FIRST_PING_OK_ID', $hash_unique_id);
 
@@ -62,7 +62,7 @@ if ($action == 'firstpingok')
 // If ko
 elseif ($action == 'firstpingko')
 {
-	// Note: pings are by entities
+	// Note: pings are by installation, done on entity 1.
 	dolibarr_set_const($db, 'MAIN_LAST_PING_KO_DATE', dol_print_date($now, 'dayhourlog'), 'gmt');
 	print 'First ping KO saved for entity '.$conf->entity;
 }

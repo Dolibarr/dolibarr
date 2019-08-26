@@ -618,14 +618,14 @@ if ($id)
 
                     // Active
                     print '<td align="center" class="nowrap">';
-                    print '<a href="'.$url.'action='.$acts[($obj->status?1:0)].'">'.$actl[($obj->status?1:0)].'</a>';
+                    print '<a class="reposition" href="'.$url.'action='.$acts[($obj->status?1:0)].'">'.$actl[($obj->status?1:0)].'</a>';
                     print "</td>";
 
                     // Modify link
                     print '<td align="center"><a class="reposition" href="'.$url.'action=edit">'.img_edit().'</a></td>';
 
                     // Delete link
-                    if ($iserasable) print '<td align="center"><a href="'.$url.'action=delete">'.img_delete().'</a></td>';
+                    if ($iserasable) print '<td align="center"><a class="reposition" href="'.$url.'action=delete">'.img_delete().'</a></td>';
                     else print '<td align="center">'.img_delete($langs->trans("DisableSiteFirst"), 'class="opacitymedium"').'</td>';
 
                     print "</tr>\n";

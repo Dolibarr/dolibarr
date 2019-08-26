@@ -136,6 +136,7 @@ $fieldstosearchall = array(
 	'p.label'=>"ProductLabel",
 	'p.description'=>"Description",
 	"p.note"=>"Note",
+
 );
 // multilang
 if (! empty($conf->global->MAIN_MULTILANGS))
@@ -148,6 +149,8 @@ if (! empty($conf->barcode->enabled)) {
 	$fieldstosearchall['p.barcode']='Gencod';
     $fieldstosearchall['pfp.barcode']='GencodBuyPrice';
 }
+// Personalized search criterias. Example: $conf->global->PRODUCT_QUICKSEARCH_ON_FIELDS = 'p.ref=ProductRef;p.label=ProductLabel'
+if (! empty($conf->global->PRODUCT_QUICKSEARCH_ON_FIELDS)) $fieldstosearchall=dolExplodeIntoArray($conf->global->PRODUCT_QUICKSEARCH_ON_FIELDS);
 
 if (empty($conf->global->PRODUIT_MULTIPRICES))
 {
@@ -455,6 +458,10 @@ if ($resql)
 	if($type == Product::TYPE_SERVICE) $rightskey='service';
 	if($user->rights->{$rightskey}->creer)
 	{
+		if ($type === "") {
+			$newcardbutton.= dolGetButtonTitle($langs->trans('NewProduct'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/card.php?action=create&amp;type=0');
+			$type = Product::TYPE_SERVICE;
+		}
 		$label='NewProduct';
 		if($type == Product::TYPE_SERVICE) $label='NewService';
         $newcardbutton.= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/card.php?action=create&amp;type='.$type);

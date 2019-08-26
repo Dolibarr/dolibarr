@@ -47,9 +47,10 @@ function dol_getwebuser($mode)
  *	@param		string	$passwordtotest		Password value to test
  *	@param		string	$entitytotest		Instance of data we must check
  *	@param		array	$authmode			Array list of selected authentication mode array('http', 'dolibarr', 'xxx'...)
+ *	@param		string	$context			Context checkLoginPassEntity was created for ('api', 'dav', '')
  *  @return		string						Login or ''
  */
-function checkLoginPassEntity($usertotest, $passwordtotest, $entitytotest, $authmode)
+function checkLoginPassEntity($usertotest, $passwordtotest, $entitytotest, $authmode, $context = '')
 {
 	global $conf,$langs;
     //global $dolauthmode;    // To return authentication finally used
@@ -90,7 +91,7 @@ function checkLoginPassEntity($usertotest, $passwordtotest, $entitytotest, $auth
     			{
     				// Call function to check user/password
     				$function='check_user_password_'.$mode;
-    				$login=call_user_func($function, $usertotest, $passwordtotest, $entitytotest);
+    				$login=call_user_func($function, $usertotest, $passwordtotest, $entitytotest, $context);
     				if ($login)	// Login is successfull
     				{
     					$test=false;            // To stop once at first login success

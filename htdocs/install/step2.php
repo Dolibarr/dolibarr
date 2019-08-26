@@ -632,6 +632,25 @@ dolibarr_install_syslog("Exit ".$ret);
 
 dolibarr_install_syslog("- step2: end");
 
+
+$out  = '<input type="checkbox" name="dolibarrpingno" id="dolibarrpingno" value="checked" checked="true"> ';
+$out .= $langs->trans("MakeAnonymousPing");
+
+$out .= '<!-- Add js script to manage the uncheck of option to not send the ping -->';
+$out .= '<script type="text/javascript">';
+$out .= 'jQuery(document).ready(function(){';
+$out .= '  document.cookie = "DOLINSTALLNOPING_'.md5($dolibarr_main_instance_unique_id).'=0; path=/"'."\n";
+$out .= '  jQuery("#dolibarrpingno").click(function() {';
+$out .= '    if (! $(this).is(\':checked\')) {';
+$out .= '      console.log("We uncheck anonymous ping");';
+$out .= '      document.cookie = "DOLINSTALLNOPING_'.md5($dolibarr_main_instance_unique_id).'=1; path=/"'."\n";
+$out .= '    }';
+$out .= '  });';
+$out .= '});';
+$out .= '</script>';
+
+print $out;
+
 pFooter($ok?0:1, $setuplang);
 
 if (isset($db) && is_object($db)) $db->close();

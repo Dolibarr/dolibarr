@@ -20,6 +20,7 @@ CREATE TABLE llx_oauth_token (
     service varchar(36),
     token text,						-- token in serialize() format, of an object StdOAuth2Token of library phpoauth2
     tokenstring text,				-- token in json format '{"access_token": "sk_test_cccc", "refresh_token": "rt_aaa", "token_type": "bearer", ..., "scope": "read_write"}
+    fk_soc integer,
     fk_user integer,
     fk_adherent integer,
     entity integer DEFAULT 1

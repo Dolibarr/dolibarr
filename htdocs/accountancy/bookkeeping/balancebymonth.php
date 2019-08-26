@@ -73,19 +73,11 @@ $y = $year_current;
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td width=150>' . $langs->trans("Label") . '</td>';
-print '<td class="center">' . $langs->trans("JanuaryMin") . '</td>';
-print '<td class="center">' . $langs->trans("FebruaryMin") . '</td>';
-print '<td class="center">' . $langs->trans("MarchMin") . '</td>';
-print '<td class="center">' . $langs->trans("AprilMin") . '</td>';
-print '<td class="center">' . $langs->trans("MayMin") . '</td>';
-print '<td class="center">' . $langs->trans("JuneMin") . '</td>';
-print '<td class="center">' . $langs->trans("JulyMin") . '</td>';
-print '<td class="center">' . $langs->trans("AugustMin") . '</td>';
-print '<td class="center">' . $langs->trans("SeptemberMin") . '</td>';
-print '<td class="center">' . $langs->trans("OctoberMin") . '</td>';
-print '<td class="center">' . $langs->trans("NovemberMin") . '</td>';
-print '<td class="center">' . $langs->trans("DecemberMin") . '</td>';
-print '<td class="center"><strong>Total</strong></td>';
+for($i = 1; $i <= 12; $i++)
+{
+	print '<td class="right">' . $langs->trans("MonthShort".sprintf("%02s", $i)) . '</td>';
+}
+print '<td class="center"><strong>'.$langs->trans("Total").'</strong></td>';
 print '</tr>';
 
 $sql = "SELECT bk.numero_compte AS 'compte',";

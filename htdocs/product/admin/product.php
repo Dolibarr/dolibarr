@@ -146,6 +146,7 @@ if ($action == 'other')
 
 	$value = GETPOST('activate_useProdFournDesc', 'alpha');
 	$res = dolibarr_set_const($db, "PRODUIT_FOURN_TEXTS", $value, 'chaine', 0, '', $conf->entity);
+
 	if ($value) {
 	    $sql_test = "SELECT count(desc_fourn) as cpt FROM ".MAIN_DB_PREFIX."product_fournisseur_price WHERE 1";
 	    $resql = $db->query($sql_test);
@@ -677,6 +678,7 @@ if (! empty($conf->fournisseur->enabled))
     print '</td>';
     print '</tr>';
 }
+
 
 if (! empty($conf->global->PRODUCT_CANVAS_ABILITY))
 {
