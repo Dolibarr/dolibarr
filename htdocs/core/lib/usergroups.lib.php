@@ -956,6 +956,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 
 		$colorBlindOptions = array(
 			0 => $langs->trans('No'),
+			'flashy' => $langs->trans('Flashy'),
 			'protanopia' => $langs->trans('Protanopia'),
 			'deuteranopes' => $langs->trans('Deuteranopes'),
 			'tritanopes' => $langs->trans('Tritanopes'),
