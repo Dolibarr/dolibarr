@@ -291,17 +291,17 @@ class ChargeSociales extends CommonObject
         $sql.= ", date_ech='".$this->db->idate($this->date_ech)."'";
         $sql.= ", periode='".$this->db->idate($this->periode)."'";
         $sql.= ", amount='".price2num($this->amount,'MT')."'";
-		$sql.= ", fk_projet='".$this->db->escape($this->fk_project)."'";
+        $sql.= ", fk_projet=".($this->fk_project>0?$this->db->escape($this->fk_project):"NULL");
         $sql.= ", fk_user_modif=".$user->id;
         $sql.= " WHERE rowid=".$this->id;
 
         dol_syslog(get_class($this)."::update", LOG_DEBUG);
         $resql=$this->db->query($sql);
-        
+
         if (! $resql) {
             $error++; $this->errors[]="Error ".$this->db->lasterror();
         }
-        
+
         if (! $error)
         {
             if (! $notrigger)
@@ -312,7 +312,7 @@ class ChargeSociales extends CommonObject
                 // End call triggers
             }
         }
-        
+
         // Commit or rollback
         if ($error)
         {
@@ -329,8 +329,8 @@ class ChargeSociales extends CommonObject
             $this->db->commit();
             return 1;
         }
-        
-        
+
+
     }
 
     /**
