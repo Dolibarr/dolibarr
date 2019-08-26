@@ -37,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.form.class.php';
 
-$langs->loadLangs(array("bills", "cashdesk"));
+$langs->loadLangs(array("companies", "commercial", "bills", "cashdesk"));
 
 $id = GETPOST('id', 'int');
 $action = GETPOST('action', 'alpha');
@@ -175,7 +175,7 @@ if ($action == 'valid' && $user->rights->facture->creer)
 	$payment->datepaye = $now;
 	$payment->fk_account = $bankaccount;
 	$payment->amounts[$invoice->id] = $amountofpayment;
-	
+
 	// If user has not used change control, add total invoice payment
 	if ($amountofpayment == 0) $payment->amounts[$invoice->id] = $invoice->total_ttc;
 
@@ -395,7 +395,7 @@ if ($action=="valid" || $action=="history")
     }
     else
     {
-        if ($invoice->paye) $sectionwithinvoicelink.='<span class="amountpaymentcomplete" style="font-size: unset">'.$langs->trans("Payed").'</span>';
+        if ($invoice->paye) $sectionwithinvoicelink.='<span class="amountpaymentcomplete" style="font-size: unset">'.$langs->trans("Paid").'</span>';
         else $sectionwithinvoicelink.=$langs->trans('BillShortStatusValidated');
     }
     $sectionwithinvoicelink.='</span>';
@@ -541,7 +541,7 @@ if ($_SESSION["basiclayout"]!=1)
 {
 	print '<td class="linecolqty right">' . $langs->trans('ReductionShort') . '</td>';
 	print '<td class="linecolqty right">' . $langs->trans('Qty') . '</td>';
-	print '<td class="linecolht right nowraponall">' . $langs->trans('TotalHTShort') . '</td>';
+	print '<td class="linecolht right nowraponall">' . $langs->trans('TotalTTCShort') . '</td>';
 }
 print "</tr>\n";
 
@@ -567,7 +567,7 @@ if ($_SESSION["basiclayout"]==1)
 		$htmlforlines.= '</div>';
 		print $htmlforlines;
 	}
-	
+
 	if ($mobilepage=="products")
 	{
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
@@ -591,7 +591,7 @@ if ($_SESSION["basiclayout"]==1)
 		$htmlforlines.= '</div>';
 		print $htmlforlines;
 	}
-	
+
 	if ($mobilepage=="places")
 	{
 		$sql="SELECT rowid, entity, label, leftpos, toppos, floor FROM ".MAIN_DB_PREFIX."takepos_floor_tables";
