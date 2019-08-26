@@ -597,7 +597,11 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                 print '<td class="right">'.$alreadypayedlabel.'</td>';
                 print '<td class="right">'.$remaindertopay.'</td>';
                 print '<td class="right">'.$langs->trans('PaymentAmount').'</td>';
-                print '<td class="right">&nbsp;</td>';
+
+                $parameters=array();
+                $reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters, $facture, $action); // Note that $action and $object may have been modified by hook
+
+                print '<td align="right">&nbsp;</td>';
                 print "</tr>\n";
 
                 $total=0;
@@ -745,7 +749,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                     print "</td>";
 
                     $parameters=array();
-                    $reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters, $objp, $action); // Note that $action and $object may have been modified by hook
+                    $reshook=$hookmanager->executeHooks('printFieldListValue', $parameters, $objp, $action); // Note that $action and $object may have been modified by hook
 
                     // Warning
                     print '<td align="center" width="16">';
