@@ -827,7 +827,7 @@ if (! $variants) {
 		print '</tr>';
 	}
 
-	$sql = "SELECT e.rowid, e.ref as label, e.lieu, ps.reel, ps.rowid as product_stock_id, p.pmp";
+	$sql = "SELECT e.rowid, e.ref as label, e.lieu, e.statut, ps.reel, ps.rowid as product_stock_id, p.pmp";
 	$sql .= " FROM " . MAIN_DB_PREFIX . "entrepot as e,";
 	$sql .= " " . MAIN_DB_PREFIX . "product_stock as ps";
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON p.rowid = ps.fk_product";
@@ -851,9 +851,12 @@ if (! $variants) {
 		$var = false;
 		while ($i < $num) {
 			$obj = $db->fetch_object($resql);
+
 			$entrepotstatic->id = $obj->rowid;
 			$entrepotstatic->libelle = $obj->label;
 			$entrepotstatic->lieu = $obj->lieu;
+			$entrepotstatic->statut = $obj->statut;
+
 			$stock_real = price2num($obj->reel, 'MS');
 			print '<tr class="oddeven">';
 			print '<td colspan="4">' . $entrepotstatic->getNomUrl(1) . '</td>';
