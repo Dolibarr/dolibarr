@@ -72,7 +72,7 @@ if ($action == 'add_prod' && ($user->rights->produit->creer || $user->rights->se
 	$error=0;
 	for ($i=0; $i<$_POST["max_prod"]; $i++)
 	{
-		if ($_POST["prod_qty_".$i] > 0)
+		if ($_POST["prod_qty_".$i] <> 0)
 		{
 			if ($object->add_sousproduit($id, $_POST["prod_id_".$i], $_POST["prod_qty_".$i], $_POST["prod_incdec_".$i]) > 0)
 			{
@@ -119,7 +119,7 @@ elseif($action==='save_composed_product')
 	{
 		foreach ($TProduct as $id_product => $row)
 		{
-			if ($row['qty'] > 0) $object->update_sousproduit($id, $id_product, $row['qty'], isset($row['incdec']) ? 1 : 0);
+			if ($row['qty'] <> 0) $object->update_sousproduit($id, $id_product, $row['qty'], isset($row['incdec']) ? 1 : 0);
 			else $object->del_sousproduit($id, $id_product);
 		}
 		setEventMessages('RecordSaved', null);
