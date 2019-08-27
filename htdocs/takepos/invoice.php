@@ -139,9 +139,14 @@ if ($action == 'valid' && $user->rights->facture->creer)
 	$constantforkey = 'CASHDESK_NO_DECREASE_STOCK'.$_SESSION["takeposterminal"];
 	if (! empty($conf->stock->enabled) && $conf->global->$constantforkey != "1")
 	{
+		$savconst = $conf->global->STOCK_CALCULATE_ON_BILL;
+		$conf->global->STOCK_CALCULATE_ON_BILL=1;
+
 		$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
-		dol_syslog("Validate invoice with stock change into warehouse id ".$constantforkey);
+		dol_syslog("Validate invoice with stock change into warehouse defined into constant ".$constantforkey." = ".$conf->global->$constantforkey);
 		$invoice->validate($user, '', $conf->global->$constantforkey);
+
+		$conf->global->STOCK_CALCULATE_ON_BILL = $savconst;
 	}
 	else
 	{
