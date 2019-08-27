@@ -5671,7 +5671,7 @@ function dol_string_is_good_iso($s)
 	$ok=1;
 	for($scursor=0;$scursor<$len;$scursor++)
 	{
-		$ordchar=ord($s{$scursor});
+		$ordchar=ord($s[$scursor]);
 		//print $scursor.'-'.$ordchar.'<br>';
 		if ($ordchar < 32 && $ordchar != 13 && $ordchar != 10) { $ok=0; break; }
 		if ($ordchar > 126 && $ordchar < 160) { $ok=0; break; }
