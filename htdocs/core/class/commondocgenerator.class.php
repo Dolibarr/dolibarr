@@ -496,8 +496,12 @@ abstract class CommonDocGenerator
 			// Note that this added fields correspond to nothing in Dolibarr (Dolibarr manage discount on lines not globally)
 			$resarray['object_total_up'] = $totalUp;
 			$resarray['object_total_up_locale'] = price($resarray['object_total_up'], 0, $outputlangs);
-			$totalDiscount=$object->getTotalDiscount();
-			if (method_exists($object, 'getTotalDiscount') && !empty($totalUp) && !empty($totalDiscount)) {
+			if (method_exists($object, 'getTotalDiscount')) {
+				$totalDiscount=$object->getTotalDiscount();
+			} else {
+				$totalDiscount=0;
+			}
+			if (!empty($totalUp) && !empty($totalDiscount)) {
 				$resarray['object_total_discount'] = round(100 / $totalUp * $totalDiscount, 2);
 				$resarray['object_total_discount_locale'] = price($resarray['object_total_discount'], 0, $outputlangs);
 			} else {
