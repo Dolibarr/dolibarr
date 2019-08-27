@@ -206,6 +206,12 @@ class modHoliday extends DolibarrModules
 			'd.date_valid'=>'DateApprove','d.fk_validator'=>"UserForApprovalID",'ua.lastname'=>"UserForApprovalLastname",'ua.firstname'=>"UserForApprovalFirstname",
 			'ua.login'=>"UserForApprovalLogin",'d.description'=>'Description','d.statut'=>'Status'
 		);
+		$this->export_TypeFields_array[$r]=array(
+			'd.rowid'=>"Numeric",'t.code'=>'Text', 't.label'=>'Text','d.fk_user'=>'Numeric',
+			'u.lastname'=>'Text','u.firstname'=>'Text','u.login'=>"Text",'d.date_debut'=>'Date','d.date_fin'=>'Date',
+			'd.date_valid'=>'Date','d.fk_validator'=>"Numeric",'ua.lastname'=>"Text",'ua.firstname'=>"Text",
+			'ua.login'=>"Text",'d.description'=>'Text','d.statut'=>'Numeric'
+		);
 		$this->export_entities_array[$r]=array(
 			'u.lastname'=>'user','u.firstname'=>'user','u.login'=>'user','ua.lastname'=>'user','ua.firstname'=>'user','ua.login'=>'user'
 		);
