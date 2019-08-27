@@ -201,7 +201,7 @@ abstract class CommonInvoice extends CommonObject
 	 * 		@param 		int 	$multicurrency 	Return multicurrency_amount instead of amount
 	 *		@return		int						<0 if KO, Sum of credit notes and deposits amount otherwise
 	 */
-	function getSumFromThisCreditNotesNotUsed($multicurrency=0)
+	public function getSumFromThisCreditNotesNotUsed($multicurrency = 0)
 	{
 	    require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 

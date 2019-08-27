@@ -636,7 +636,7 @@ class DiscountAbsolute
 	 *	@param		int			      $multicurrency	Return multicurrency_amount instead of amount
      *	@return		int					        		<0 if KO, Sum of credit notes and deposits amount otherwise
      */
-    function getSumFromThisCreditNotesNotUsed($invoice, $multicurrency=0)
+    public function getSumFromThisCreditNotesNotUsed($invoice, $multicurrency = 0)
     {
         dol_syslog(get_class($this)."::getSumCreditNotesUsed", LOG_DEBUG);
 
@@ -646,7 +646,7 @@ class DiscountAbsolute
             $sql.= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except as rc';
             $sql.= ' WHERE rc.fk_facture IS NULL AND rc.fk_facture_source = '.$invoice->id;
         }
-        else if ($invoice->element == 'invoice_supplier')
+        elseif ($invoice->element == 'invoice_supplier')
         {
             $sql = 'SELECT sum(rc.amount_ttc) as amount, sum(rc.multicurrency_amount_ttc) as multicurrency_amount';
             $sql.= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except as rc';
