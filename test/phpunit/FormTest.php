@@ -17,7 +17,7 @@
  */
 
 /**
- *      \file       test/phpunit/FormAdminTest.php
+ *      \file       test/phpunit/FormTest.php
  *		\ingroup    test
  *      \brief      PHPUnit test
  *		\remarks	To run this script as CLI:  phpunit filename.php
@@ -27,7 +27,7 @@ global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/../../htdocs/core/class/html.formadmin.class.php';
+require_once dirname(__FILE__).'/../../htdocs/core/class/html.form.class.php';
 
 if (empty($user->id))
 {
@@ -45,7 +45,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class FormAdminTest extends PHPUnit\Framework\TestCase
+class FormTest extends PHPUnit\Framework\TestCase
 {
 	protected $savconf;
 	protected $savuser;
@@ -75,7 +75,7 @@ class FormAdminTest extends PHPUnit\Framework\TestCase
 	}
 
 	// Static methods
-    public static function setUpBeforeClass()
+  	public static function setUpBeforeClass()
     {
     	global $conf,$user,$langs,$db;
 		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
@@ -111,19 +111,19 @@ class FormAdminTest extends PHPUnit\Framework\TestCase
 	/**
 	 * End phpunit tests
 	 *
-     * @return	void
-     */
-    protected function tearDown()
+	 * @return	void
+	 */
+	protected function tearDown()
     {
     	print __METHOD__."\n";
     }
 
     /**
-     * testSelectPaperFormat
+     * testSelectProduitsList
      *
      * @return int
      */
-    public function testSelectPaperFormat()
+    public function testSelectProduitsList()
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -131,11 +131,19 @@ class FormAdminTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new FormAdmin($this->savdb);
-    	$result=$localobject->select_paper_format('', 'paperformat_id', 'A4');
+		$localobject=new Form($this->savdb);
+		$result=$localobject->select_produits_list('', 'productid', '', 5, 0, '', 1, 2, 1);
 
-    	$this->assertEquals($result, '<select class="flat" id="paperformat_id" name="paperformat_id"><option value="EUA4">Format A4 - 210x297 mm</option></select>');
+    	$this->assertEquals(count($result), 5);
     	print __METHOD__." result=".$result."\n";
+
+    	$conf->global->ENTREPOT_EXTRA_STATUS = 1;
+
+    	// Exclude stock in warehouseinternal
+    	$result=$localobject->select_produits_list('', 'productid', '', 5, 0, '', 1, 2, 1, 0, '1', 0, '', 0, 'warehouseclosed,warehouseopen');
+    	$this->assertEquals(count($result), 5);
+    	print __METHOD__." result=".$result."\n";
+
     	return $result;
     }
 }
