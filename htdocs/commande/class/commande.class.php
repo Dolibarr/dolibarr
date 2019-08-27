@@ -365,7 +365,7 @@ class Commande extends CommonOrder
 
 		// Validate
 		$sql = "UPDATE ".MAIN_DB_PREFIX."commande";
-		$sql.= " SET ref = '".$num."',";
+		$sql.= " SET ref = '".$this->db->escape($num)."',";
 		$sql.= " fk_statut = ".self::STATUS_VALIDATED.",";
 		$sql.= " date_valid='".$this->db->idate($now)."',";
 		$sql.= " fk_user_valid = ".$user->id;
