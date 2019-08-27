@@ -136,9 +136,12 @@ if ($action == 'valid' && $user->rights->facture->creer)
 		$invoice->update($user);
 	}
 
-	if (! empty($conf->stock->enabled) && $conf->global->{'CASHDESK_NO_DECREASE_STOCK'.$_SESSION["takeposterminal"]} != "1")
+	$constantforkey = 'CASHDESK_NO_DECREASE_STOCK'.$_SESSION["takeposterminal"];
+	if (! empty($conf->stock->enabled) && $conf->global->$constantforkey != "1")
 	{
-	    $invoice->validate($user, '', $conf->global->{'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"]});
+		$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
+		dol_syslog("Validate invoice with stock change into warehouse id ".$constantforkey);
+		$invoice->validate($user, '', $conf->global->$constantforkey);
 	}
 	else
 	{
@@ -259,12 +262,28 @@ if ($action == "deleteline") {
 }
 
 if ($action == "delete") {
-    if ($placeid > 0) { //If invoice exists
+	// $placeid is the invoice id (it differs from place) and is defined if the place is set and the ref of invoice is '(PROV-POS'.$_SESSION["takeposterminal"].'-'.$place.')', so the fetch at begining of page works.
+	if ($placeid > 0) {
         $result = $invoice->fetch($placeid);
-        if ($result > 0)
+
+        if ($result > 0 && $invoice->statut == Facture::STATUS_DRAFT)
         {
-            $sql = "DELETE FROM " . MAIN_DB_PREFIX . "facturedet where fk_facture='".$placeid."'";
-            $resql = $db->query($sql);
+        	$db->begin();
+
+        	// We delete the lines
+        	$sql = "DELETE FROM " . MAIN_DB_PREFIX . "facturedet_extrafields where fk_object = ".$placeid;
+        	$resql1 = $db->query($sql);
+        	$sql = "DELETE FROM " . MAIN_DB_PREFIX . "facturedet where fk_facture = ".$placeid;
+            $resql2 = $db->query($sql);
+
+            if ($resql1 && $resql2)
+            {
+            	$db->commit();
+            }
+            else
+            {
+            	$db->rollback();
+            }
 
             $invoice->fetch($placeid);
         }
@@ -575,8 +594,17 @@ if ($invoice->socid != $conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takep
     $soc = new Societe($db);
     if ($invoice->socid > 0) $soc->fetch($invoice->socid);
     else $soc->fetch($conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"]});
-    print '<p style="font-size:120%;" class="right">';
+    print '<!-- Show customer --><p style="font-size:120%;" class="right">';
     print $langs->trans("Customer").': '.$soc->name;
+
+	$constantforkey = 'CASHDESK_NO_DECREASE_STOCK'.$_SESSION["takeposterminal"];
+	if (! empty($conf->stock->enabled) && $conf->global->$constantforkey != "1")
+	{
+		$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
+		$warehouse = new Entrepot($db);
+		$warehouse->fetch($conf->global->$constantforkey);
+		print '<br>'.$langs->trans("Warehouse").': '.$warehouse->ref;
+	}
     print '</p>';
 }
 
