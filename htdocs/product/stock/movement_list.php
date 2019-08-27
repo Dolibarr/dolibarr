@@ -420,7 +420,7 @@ $formproduct=new FormProduct($db);
 if (!empty($conf->projet->enabled)) $formproject=new FormProjets($db);
 
 $sql = "SELECT p.rowid, p.ref as product_ref, p.label as produit, p.tobatch, p.fk_product_type as type, p.entity,";
-$sql.= " e.ref as stock, e.rowid as entrepot_id, e.lieu,";
+$sql.= " e.ref as warehouse_ref, e.rowid as entrepot_id, e.lieu, e.fk_parent, e.statut,";
 $sql.= " m.rowid as mid, m.value as qty, m.datem, m.fk_user_author, m.label, m.inventorycode, m.fk_origin, m.origintype,";
 $sql.= " m.batch, m.price,";
 $sql.= " m.type_mouvement,";
@@ -988,8 +988,12 @@ if ($resql)
         $productlot->sellby= $objp->sellby;
 
         $warehousestatic->id=$objp->entrepot_id;
-        $warehousestatic->libelle=$objp->stock;
+        $warehousestatic->ref=$objp->warehouse_ref;
+        $warehousestatic->libelle=$objp->warehouse_ref;
+        $warehousestatic->label=$objp->warehouse_ref;
         $warehousestatic->lieu=$objp->lieu;
+        $warehousestatic->fk_parent = $objp->fk_parent;
+        $warehousestatic->statut = $objp->statut;
 
         $arrayofuniqueproduct[$objp->rowid]=$objp->produit;
 		if(!empty($objp->fk_origin)) {

@@ -240,6 +240,7 @@ if (empty($reshook))
 	{
 		$datecommande = dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
 		$datelivraison = dol_mktime(12, 0, 0, GETPOST('liv_month'), GETPOST('liv_day'), GETPOST('liv_year'));
+        $selectedLines = GETPOST('toselect', 'array');
 
 		if ($datecommande == '') {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('Date')), null, 'errors');
@@ -346,6 +347,8 @@ if (empty($reshook))
 
 							for($i = 0; $i < $num; $i ++)
 							{
+                                if(!in_array($lines[$i]->id, $selectedLines)) continue; // Skip unselected lines
+
 								$label = (! empty($lines[$i]->label) ? $lines[$i]->label : '');
 								$desc = (! empty($lines[$i]->desc) ? $lines[$i]->desc : '');
 								$product_type = (! empty($lines[$i]->product_type) ? $lines[$i]->product_type : 0);
@@ -1758,6 +1761,15 @@ if ($action == 'create' && $usercancreate)
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);
 	print $hookmanager->resPrint;
 	if (empty($reshook)) {
+		if (! empty($conf->global->THIRDPARTY_PROPAGATE_EXTRAFIELDS_TO_ORDER)) {
+			// copy from thirdparty
+			$tpExtrafields = new Extrafields($db);
+			$tpExtrafieldLabels = $tpExtrafields->fetch_name_optionals_label($soc->table_element);
+			if ($soc->fetch_optionals() > 0) {
+				$object->array_options = array_merge($object->array_options, $soc->array_options);
+			}
+		};
+
 		print $object->showOptionals($extrafields, 'edit');
 	}
 
@@ -1872,8 +1884,6 @@ if ($action == 'create' && $usercancreate)
 	print '<input type="button" class="button" name="cancel" value="' . $langs->trans("Cancel") . '" onclick="javascript:history.go(-1)">';
 	print '</div>';
 
-	print '</form>';
-
 	// Show origin lines
 	if (! empty($origin) && ! empty($originid) && is_object($objectsrc)) {
 		$title = $langs->trans('ProductsAndServices');
@@ -1881,10 +1891,12 @@ if ($action == 'create' && $usercancreate)
 
 		print '<table class="noborder" width="100%">';
 
-		$objectsrc->printOriginLinesList();
+		$objectsrc->printOriginLinesList('', $selectedLines);
 
 		print '</table>';
 	}
+
+    print '</form>';
 } else {
 	// Mode view
 	$now = dol_now();
