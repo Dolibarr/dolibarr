@@ -636,7 +636,7 @@ class DiscountAbsolute
 	 *	@param		int			      $multicurrency	Return multicurrency_amount instead of amount
      *	@return		int					        		<0 if KO, Sum of credit notes and deposits amount otherwise
      */
-    public function getSumFromThisCreditNotesNotUsed($invoice, $multicurrency=0)
+    public function getSumFromThisCreditNotesNotUsed($invoice, $multicurrency = 0)
     {
         dol_syslog(get_class($this)."::getSumCreditNotesUsed", LOG_DEBUG);
 
