@@ -376,6 +376,9 @@ div.buttonpayment input {
 	color: #333;
 	cursor: pointer;
 }
+div.buttonpayment input:focus {
+    color: #008;
+}
 input.buttonpaymentcb {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/common/credit_card.png', 1) ?>);
 	background-size: 26px;
@@ -687,21 +690,25 @@ textarea.centpercent {
     opacity: 0.7;
 }
 
-/* Themes for badges */
-.badge {
-	display: inline-block;
-	min-width: 10px;
-	padding: 2px 5px;
-	font-size: 10px;
-	font-weight: 700;
-	line-height: 1em;
-	color: #fff;
-	text-align: center;
-	white-space: nowrap;
-	vertical-align: baseline;
-	background-color: #777;
-	border-radius: 10px;
+.text-warning{
+    color : <?php print $textWarning ; ?>
 }
+body[class*="colorblind-"] .text-warning{
+    color : <?php print $colorblind_deuteranopes_textWarning ; ?>
+}
+.text-success{
+    color : <?php print $textSuccess ; ?>
+}
+body[class*="colorblind-"] .text-success{
+    color : <?php print $colorblind_deuteranopes_textSuccess ; ?>
+}
+
+.text-danger{
+    color : <?php print $textDanger ; ?>
+}
+
+/* Themes for badges */
+<?php include dol_buildpath($path.'/theme/'.$theme.'/badges.inc.php', 0); ?>
 
 .borderrightlight
 {
@@ -1756,6 +1763,9 @@ div.mainmenu {
 
 /* Do not load menu img if hidden to save bandwidth */
 <?php if (empty($dol_hide_topmenu)) { ?>
+    <?php if (! defined('DISABLE_FONT_AWSOME') && empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5)) { ?>
+        <?php include dol_buildpath($path.'/theme/'.$theme.'/main_menu_fa_icons.inc.php', 0); ?>
+    <?php } ?>
 
 div.mainmenu.home{
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/home.png', 1) ?>);
@@ -2509,150 +2519,7 @@ span.tabspan {
 /* ============================================================================== */
 /* Buttons for actions                                                            */
 /* ============================================================================== */
-
-div.divButAction {
-	margin-bottom: 1.4em;
-	vertical-align: top;
-}
-div.tabsAction > a.butAction, div.tabsAction > a.butActionRefused {
-	margin-bottom: 1.4em !important;
-}
-
-span.butAction, span.butActionDelete {
-	cursor: pointer;
-}
-
-
-.button, .butAction, .butActionDelete, .butActionRefused, .butActionNewRefused {
-	border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25);
-	display: inline-block;
-    padding: 0.4em <?php echo ($dol_optimize_smallscreen?'0.4':'0.7'); ?>em;
-    margin: 0em <?php echo ($dol_optimize_smallscreen?'0.7':'0.9'); ?>em;
-	line-height: 20px;
-	text-align: center;
-	vertical-align: middle;
-	cursor: pointer;
-	color: #333333 !important;
-	text-decoration: none !important;
-	text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
-	background-color: #f5f5f5;
-	background-image: -moz-linear-gradient(top, #ffffff, #e6e6e6);
-	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#e6e6e6));
-	background-image: -webkit-linear-gradient(top, #ffffff, #e6e6e6);
-	background-image: -o-linear-gradient(top, #ffffff, #e6e6e6);
-	background-image: linear-gradient(to bottom, #ffffff, #e6e6e6);
-	background-repeat: repeat-x;
-	border-color: #e6e6e6 #e6e6e6 #bfbfbf;
-	border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-	border: 1px solid #bbbbbb;
-	border-bottom-color: #a2a2a2;
-	-webkit-border-radius: 2px;
-	border-radius: 2px;
-	-webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
-	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
-}
-.butActionNew, .butActionNewRefused, .butActionNew:link, .butActionNew:visited, .butActionNew:hover, .butActionNew:active {
-	text-decoration: none;
-	/* border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25); */
-	display: inline-block;
-    padding: 0.2em <?php echo ($dol_optimize_smallscreen?'0.4':'0.7'); ?>em;
-    margin: 0em <?php echo ($dol_optimize_smallscreen?'0.7':'0.9'); ?>em;
-	line-height: 20px;
-	/* text-align: center;  New button are on right of screen */
-	vertical-align: middle;
-	cursor: pointer;
-	/* color: #ffffff !important; */
-	/* text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25); */
-	-webkit-border-radius: 2px;
-	border-radius: 2px;
-	/* -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
-	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05); */
-	/* background-color: #006dcc;
-	background-image: -moz-linear-gradient(top, #0088cc, #0044cc);
-	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#0088cc), to(#0044cc));
-	background-image: -webkit-linear-gradient(top, #0088cc, #0044cc);
-	background-image: -o-linear-gradient(top, #0088cc, #0044cc);
-	background-image: linear-gradient(to bottom, #0088cc, #0044cc);
-	background-repeat: repeat-x; */
-}
-a.butActionNew>span.fa-plus-circle { padding-left: 6px; font-size: 1.5em; }
-a.butActionNewRefused>span.fa-plus-circle { padding-left: 6px; font-size: 1.5em; }
-
-.button, .butAction {
-	color: #ffffff !important;
-	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
-	background-color: #006dcc;
-	background-image: -moz-linear-gradient(top, #0088cc, #0044cc);
-	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#0088cc), to(#0044cc));
-	background-image: -webkit-linear-gradient(top, #0088cc, #0044cc);
-	background-image: -o-linear-gradient(top, #0088cc, #0044cc);
-	background-image: linear-gradient(to bottom, #0088cc, #0044cc);
-	background-repeat: repeat-x;
-	border-color: #0044cc #0044cc #002a80;
-	border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-}
-.button:disabled, .butAction:disabled {
-    color: #666 !important;
-    text-shadow: none;
-    border-color: #555;
-    cursor: not-allowed;
-
-    background-color: #f5f5f5;
-    background-image: -moz-linear-gradient(top, #ffffff, #e6e6e6);
-    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#e6e6e6));
-    background-image: -webkit-linear-gradient(top, #ffffff, #e6e6e6);
-    background-image: -o-linear-gradient(top, #ffffff, #e6e6e6);
-    background-image: linear-gradient(to bottom, #ffffff, #e6e6e6);
-    background-repeat: repeat-x
-}
-
-button.ui-button {
-    padding-top: 5px;
-}
-
-.butActionDelete, .buttonDelete {
-	color: #ffffff !important;
-	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
-	background-color: #cc6d00;
-	background-image: -moz-linear-gradient(top, #cc8800, #cc4400);
-	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#cc8800), to(#cc4400));
-	background-image: -webkit-linear-gradient(top, #cc8800, #cc4400);
-	background-image: -o-linear-gradient(top, #cc8800, #cc4400);
-	background-image: linear-gradient(to bottom, #cc8800, #cc4400);
-	background-repeat: repeat-x;
-	border-color: #cc4400 #cc4400 #802a00;
-	border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-}
-a.butAction:link, a.butAction:visited, a.butAction:hover, a.butAction:active {
-	color: #FFFFFF;
-}
-
-.butActionRefused, .butActionNewRefused {
-	color: #AAAAAA !important;
-	cursor: not-allowed !important;
-}
-
-a.butAction:hover, a.butActionDelete:hover, a.butActionRefused:hover {
-    text-decoration: none;
-}
-a.butActionNewRefused:hover {
-	border-color: unset !important;
-	border: 1px solid #bbbbbb;
-}
-a.butAction:hover, a.butActionNew:hover, a.butActionDelete:hover {
-	opacity: 0.9;
-}
-
-.butActionTransparent {
-	color: #222 ! important;
-	background-color: transparent ! important;
-}
-
-<?php if (! empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED)) { ?>
-.butActionRefused, .butActionNewRefused {
-	display: none;
-}
-<?php } ?>
+<?php include dol_buildpath($path.'/theme/'.$theme.'/btn.inc.php', 0); ?>
 
 
 
@@ -3341,6 +3208,9 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 .box {
     overflow-x: auto;
     min-height: 40px;
+    padding-right: 0px;
+    padding-left: 0px;
+    padding-bottom: 12px;
 }
 .ficheaddleft div.boxstats, .ficheaddright div.boxstats {
     border: none;
@@ -3465,12 +3335,6 @@ span.dashboardlineko {
 }
 a.valignmiddle.dashboardlineindicator {
     line-height: 30px;
-}
-
-.box {
-    padding-right: 0px;
-    padding-left: 0px;
-    padding-bottom: 12px;
 }
 
 tr.box_titre {
@@ -3604,6 +3468,10 @@ a.impayee:hover { font-weight: bold; color: #550000; }
 /*
  *  Other
  */
+
+.opened-dash-board-wrap {
+    margin-bottom: 25px;
+}
 
 div.boximport {
     min-height: unset;
@@ -3931,6 +3799,12 @@ tr.visible {
     background-image: none;
     color: #000 !important;
     text-shadow: none;
+}
+.bordertransp {
+    background-color: transparent;
+    background-image: none;
+    border: 1px solid #aaa;
+	font-weight: normal;
 }
 .websitebar {
 	border-bottom: 1px solid #ccc;
@@ -5716,6 +5590,10 @@ border-top-right-radius: 6px;
         border-left: none;
     }
 
+	.box-flex-container {
+	    margin: 0 0 0 -8px !important;
+	}
+
 }
 
 @media only screen and (max-width: 1024px)
@@ -5856,6 +5734,8 @@ border-top-right-radius: 6px;
 <?php }
 
 include dol_buildpath($path.'/theme/'.$theme.'/dropdown.inc.php', 0);
+include dol_buildpath($path.'/theme/'.$theme.'/info-box.inc.php', 0);
+include dol_buildpath($path.'/theme/'.$theme.'/progress.inc.php', 0);
 
 
 

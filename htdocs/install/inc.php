@@ -258,9 +258,6 @@ $langs = new Translate('..', $conf);
 if (GETPOST('lang', 'aZ09')) $langs->setDefaultLang(GETPOST('lang', 'aZ09'));
 else $langs->setDefaultLang('auto');
 
-$bc[false]=' class="bg1"';
-$bc[true]=' class="bg2"';
-
 
 /**
  * Load conf file (file must exists)
@@ -412,7 +409,9 @@ function pHeader($subtitle, $next, $action = 'set', $param = '', $forcejqueryurl
     }
     print '</span>'."\n";
 
-    print '<form name="forminstall" style="width: 100%" action="'.$next.'.php'.($param?'?'.$param:'').'" method="POST">'."\n";
+    print '<form name="forminstall" style="width: 100%" action="'.$next.'.php'.($param?'?'.$param:'').'" method="POST"';
+    if ($next == 'step5') print ' autocomplete="off"';
+    print '>'."\n";
     print '<input type="hidden" name="testpost" value="ok">'."\n";
     print '<input type="hidden" name="action" value="'.$action.'">'."\n";
 

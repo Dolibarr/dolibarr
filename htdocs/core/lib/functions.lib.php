@@ -5,7 +5,7 @@
  * Copyright (C) 2004		Sebastien Di Cintio			<sdicintio@ressource-toi.org>
  * Copyright (C) 2004		Benoit Mortier				<benoit.mortier@opensides.be>
  * Copyright (C) 2004		Christophe Combelles			<ccomb@free.fr>
- * Copyright (C) 2005-2017	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2005-2019	Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2008		Raphael Bertrand (Resultic)	<raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2018	Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2013		Cédric Salvador				<csalvador@gpcsolutions.fr>
@@ -75,7 +75,7 @@ function getDoliDBInstance($type, $host, $user, $pass, $name, $port)
  * 	@param	int		$shared			0=Return id of current entity only,
  * 									1=Return id of current entity + shared entities (default)
  *  @param	object	$currentobject	Current object if needed
- * 	@return	mixed				Entity id(s) to use
+ * 	@return	mixed					Entity id(s) to use ( eg. entity IN ('.getEntity(elementname).')' )
  */
 function getEntity($element, $shared = 1, $currentobject = null)
 {
@@ -92,6 +92,26 @@ function getEntity($element, $shared = 1, $currentobject = null)
 		if (in_array($element, $addzero)) $out.= '0,';
 		$out.= $conf->entity;
 		return $out;
+	}
+}
+
+/**
+ * 	Set entity id to use when to create an object
+ *
+ * 	@param	object	$currentobject	Current object
+ * 	@return	mixed					Entity id to use ( eg. entity = '.setEntity($object) )
+ */
+function setEntity($currentobject)
+{
+	global $conf, $mc;
+
+	if (is_object($mc))
+	{
+		return $mc->setEntity($currentobject);
+	}
+	else
+	{
+		return ((is_object($currentobject) && $currentobject->id > 0 && $currentobject->entity > 0) ? $currentobject->entity : $conf->entity);
 	}
 }
 
@@ -796,7 +816,8 @@ function dol_size($size, $type = '')
  */
 function dol_sanitizeFileName($str, $newstr = '_', $unaccent = 1)
 {
-	$filesystem_forbidden_chars = array('<','>','/','\\','?','*','|','"','°');
+	// List of special chars for filenames are defined on page https://docs.microsoft.com/en-us/windows/win32/fileio/naming-a-file
+	$filesystem_forbidden_chars = array('<', '>', '/', '\\', '?', '*', '|', '"', ':', '°');
 	return dol_string_nospecial($unaccent?dol_string_unaccent($str):$str, $newstr, $filesystem_forbidden_chars);
 }
 
@@ -974,10 +995,11 @@ function dol_strtoupper($utf8_string)
  *												On Linux   LOG_ERR=3, LOG_WARNING=4, LOG_INFO=6, LOG_DEBUG=7
  *  @param	int			$ident					1=Increase ident of 1, -1=Decrease ident of 1
  *  @param	string		$suffixinfilename		When output is a file, append this suffix into default log filename.
- *  @param	string		$restricttologhandler	Output log only for this log handler
+ *  @param	string		$restricttologhandler	Force output of log only to this log handler
+ *  @param	array|null	$logcontext				If defined, an array with extra informations (can be used by some log handlers)
  *  @return	void
  */
-function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename = '', $restricttologhandler = '')
+function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename = '', $restricttologhandler = '', $logcontext = null)
 {
     global $conf, $user, $debugbar;
 
@@ -1208,7 +1230,7 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 	}
 	if ($popuptab) $outmore.='</div>';
 
-	if ($displaytab > $limittoshow)
+	if ($popuptab)	// If there is some tabs not shown
 	{
 		$left=($langs->trans("DIRECTION") == 'rtl'?'right':'left');
 		$right=($langs->trans("DIRECTION") == 'rtl'?'left':'right');
@@ -2447,6 +2469,13 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 			$newphone = substr($newphone, 0, 4).$separ.substr($newphone, 4, 1).$separ.substr($newphone, 5, 3).$separ.substr($newphone, 7, 2).$separ.substr($newphone, 9, 2);
 		}
 	}
+	elseif (strtoupper($countrycode) == "JM")
+	{//Jamaïque
+		if(dol_strlen($newphone) == 12)
+		{//ex: +1867_ABC_DEFG
+			$newphone = substr($newphone, 0, 5).$separ.substr($newphone, 5, 3).$separ.substr($newphone, 8, 4);
+		}
+	}
 	elseif (strtoupper($countrycode) == "MG")
 	{//Madagascar
 		if(dol_strlen($phone) == 13)
@@ -2624,6 +2653,10 @@ function dol_print_ip($ip, $mode = 0)
 			}
 			else $ret.=' ('.$countrycode.')';
 		}
+		else
+		{
+			// Nothing
+		}
 	}
 
 	return $ret;
@@ -2659,12 +2692,10 @@ function dolGetCountryCodeFromIp($ip)
 	{
 		$datafile=$conf->global->GEOIPMAXMIND_COUNTRY_DATAFILE;
 		//$ip='24.24.24.24';
-		//$datafile='E:\Mes Sites\Web\Admin1\awstats\maxmind\GeoIP.dat';    Note that this must be downloaded datafile (not same than datafile provided with ubuntu packages)
-
+		//$datafile='/usr/share/GeoIP/GeoIP.dat';    Note that this must be downloaded datafile (not same than datafile provided with ubuntu packages)
 		include_once DOL_DOCUMENT_ROOT.'/core/class/dolgeoip.class.php';
 		$geoip=new DolGeoIP('country', $datafile);
 		//print 'ip='.$ip.' databaseType='.$geoip->gi->databaseType." GEOIP_CITY_EDITION_REV1=".GEOIP_CITY_EDITION_REV1."\n";
-		//print "geoip_country_id_by_addr=".geoip_country_id_by_addr($geoip->gi,$ip)."\n";
 		$countrycode=$geoip->getCountryCodeFromIP($ip);
 	}
 
@@ -3197,7 +3228,7 @@ function img_object($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, 
  *	Show weather picto
  *
  *	@param      string		$titlealt         	Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
- *	@param      string		$picto       		Name of image file to show (If no extension provided, we use '.png'). Image must be stored into htdocs/theme/common directory.
+ *	@param      string|int	$picto       		Name of image file to show (If no extension provided, we use '.png'). Image must be stored into htdocs/theme/common directory. Or level of meteo image (0-4).
  *	@param		string		$moreatt			Add more attribute on img tag
  *	@param		int			$pictoisfullpath	If 1, image path is a full path
  *  @param      string      $morecss            More CSS
@@ -3208,7 +3239,13 @@ function img_weather($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $mo
 {
 	global $conf;
 
-	if (! preg_match('/(\.png|\.gif)$/i', $picto)) $picto .= '.png';
+	if (is_numeric($picto))
+	{
+		$leveltopicto=array(0=>'weather-clear.png', 1=>'weather-few-clouds.png', 2=>'weather-clouds.png', 3=>'weather-many-clouds.png', 4=>'weather-storm.png');
+		//return '<i class="fa fa-weather-level'.$picto.'"></i>';
+		$picto = $leveltopicto[$picto];
+	}
+	elseif (! preg_match('/(\.png|\.gif)$/i', $picto)) $picto .= '.png';
 
 	$path = DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/weather/'.$picto;
 
@@ -4400,7 +4437,7 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 	{
 		if ($currency_code == 'auto') $currency_code=$conf->currency;
 
-		$listofcurrenciesbefore=array('USD','GBP','AUD','HKD','MXN','PEN','CNY');
+		$listofcurrenciesbefore=array('USD','GBP','AUD','HKD','MXN','PEN','CNY','CAD');
 		$listoflanguagesbefore=array('nl_NL');
 		if (in_array($currency_code, $listofcurrenciesbefore) || in_array($outlangs->defaultlang, $listoflanguagesbefore))
 		{
@@ -5634,7 +5671,7 @@ function dol_string_is_good_iso($s)
 	$ok=1;
 	for($scursor=0;$scursor<$len;$scursor++)
 	{
-		$ordchar=ord($s{$scursor});
+		$ordchar=ord($s[$scursor]);
 		//print $scursor.'-'.$ordchar.'<br>';
 		if ($ordchar < 32 && $ordchar != 13 && $ordchar != 10) { $ok=0; break; }
 		if ($ordchar > 126 && $ordchar < 160) { $ok=0; break; }
@@ -6364,10 +6401,11 @@ function setEventMessage($mesgs, $style = 'mesgs')
  *	@param	string	$mesg			Message string
  *	@param	array	$mesgs			Message array
  *  @param  string	$style      	Which style to use ('mesgs' by default, 'warnings', 'errors')
+ *  @param	string	$messagekey		A key to be used to allow the feature "Never show this message again"
  *  @return	void
  *  @see	dol_htmloutput_events()
  */
-function setEventMessages($mesg, $mesgs, $style = 'mesgs')
+function setEventMessages($mesg, $mesgs, $style = 'mesgs', $messagekey = '')
 {
 	if (empty($mesg) && empty($mesgs))
 	{
@@ -6375,12 +6413,21 @@ function setEventMessages($mesg, $mesgs, $style = 'mesgs')
 	}
 	else
 	{
-		if (! in_array((string) $style, array('mesgs','warnings','errors'))) dol_print_error('', 'Bad parameter style='.$style.' for setEventMessages');
-		if (empty($mesgs)) setEventMessage($mesg, $style);
-		else
+		if ($messagekey)
 		{
-			if (! empty($mesg) && ! in_array($mesg, $mesgs)) setEventMessage($mesg, $style);	// Add message string if not already into array
-			setEventMessage($mesgs, $style);
+			// Complete message with a js link to set a cookie "DOLHIDEMESSAGE".$messagekey;
+			// TODO
+			$mesg.='';
+		}
+		if (empty($messagekey) || empty($_COOKIE["DOLHIDEMESSAGE".$messagekey]))
+		{
+			if (! in_array((string) $style, array('mesgs','warnings','errors'))) dol_print_error('', 'Bad parameter style='.$style.' for setEventMessages');
+			if (empty($mesgs)) setEventMessage($mesg, $style);
+			else
+			{
+				if (! empty($mesg) && ! in_array($mesg, $mesgs)) setEventMessage($mesg, $style);	// Add message string if not already into array
+				setEventMessage($mesgs, $style);
+			}
 		}
 	}
 }
@@ -6554,10 +6601,17 @@ function dol_htmloutput_mesg($mesgstring = '', $mesgarray = array(), $style = 'o
 			$newmesgarray=array();
 			foreach($mesgarray as $val)
 			{
-				$tmpmesgstring=preg_replace('/<\/div><div class="(error|warning)">/', '<br>', $val);
-				$tmpmesgstring=preg_replace('/<div class="(error|warning)">/', '', $tmpmesgstring);
-				$tmpmesgstring=preg_replace('/<\/div>/', '', $tmpmesgstring);
-				$newmesgarray[]=$tmpmesgstring;
+				if (is_string($val))
+				{
+					$tmpmesgstring=preg_replace('/<\/div><div class="(error|warning)">/', '<br>', $val);
+					$tmpmesgstring=preg_replace('/<div class="(error|warning)">/', '', $tmpmesgstring);
+					$tmpmesgstring=preg_replace('/<\/div>/', '', $tmpmesgstring);
+					$newmesgarray[]=$tmpmesgstring;
+				}
+				else
+				{
+					dol_syslog("Error call of dol_htmloutput_mesg with an array with a value that is not a string", LOG_WARNING);
+				}
 			}
 			$mesgarray=$newmesgarray;
 		}

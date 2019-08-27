@@ -1217,11 +1217,12 @@ class Contact extends CommonObject
 	public function getCivilityLabel()
 	{
 		global $langs;
-		$langs->load("dict");
 
-		$code=(! empty($this->civility_id)?$this->civility:(! empty($this->civilite)?$this->civilite:''));
+		$code=($this->civility_code ? $this->civility_code : (! empty($this->civility_id)?$this->civility:(! empty($this->civilite)?$this->civilite:'')));
 		if (empty($code)) return '';
-        return $langs->getLabelFromKey($this->db, "Civility".$code, "c_civility", "code", "label", $code);
+
+		$langs->load("dict");
+		return $langs->getLabelFromKey($this->db, "Civility".$code, "c_civility", "code", "label", $code);
 	}
 
 	/**

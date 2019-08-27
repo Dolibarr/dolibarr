@@ -259,7 +259,7 @@ if ($action == 'edit')	// Edit
 	print '</table><br>'."\n";
 
 	// Themes and themes options
-	show_theme(null, 1);
+	showSkins(null, 1);
 	print '<br>';
 
 	// Other
@@ -464,7 +464,7 @@ else	// Show
 
 
 	// Themes
-	show_theme(null, 0);
+	showSkins(null, 0);
 	print '<br>';
 
 

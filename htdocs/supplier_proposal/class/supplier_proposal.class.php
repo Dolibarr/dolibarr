@@ -524,11 +524,11 @@ class SupplierProposal extends CommonObject
             $pu_ht_devise = $tabprice[19];
 
             // Rang to use
-            $rangtouse = $rang;
-            if ($rangtouse == -1)
+            $ranktouse = $rang;
+            if ($ranktouse == -1)
             {
                 $rangmax = $this->line_max($fk_parent_line);
-                $rangtouse = $rangmax + 1;
+                $ranktouse = $rangmax + 1;
             }
 
             // TODO A virer
@@ -556,7 +556,7 @@ class SupplierProposal extends CommonObject
             $this->line->fk_product=$fk_product;
             $this->line->remise_percent=$remise_percent;
             $this->line->subprice=$pu_ht;
-            $this->line->rang=$rangtouse;
+            $this->line->rang=$ranktouse;
             $this->line->info_bits=$info_bits;
             $this->line->total_ht=$total_ht;
             $this->line->total_tva=$total_tva;
@@ -984,13 +984,6 @@ class SupplierProposal extends CommonObject
                             }
                         }
                     }
-                }
-
-                // Add linked object (deprecated, use ->linkedObjectsIds instead)
-                if (! $error && $this->origin && $this->origin_id)
-                {
-                    $ret = $this->add_object_linked();
-                    if (! $ret)	dol_print_error($this->db);
                 }
 
                 /*
@@ -1494,16 +1487,20 @@ class SupplierProposal extends CommonObject
                 // Rename directory if dir was a temporary ref
                 if (preg_match('/^[\(]?PROV/i', $this->ref))
                 {
-                    // Rename of propal directory ($this->ref = old ref, $num = new ref)
-                    // to  not lose the linked files
-                    $oldref = dol_sanitizeFileName($this->ref);
+                	// Now we rename also files into index
+                	$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref)+1).")), filepath = 'supplier_proposal/".$this->db->escape($this->newref)."'";
+                	$sql.= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'supplier_proposal/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+                	$resql = $this->db->query($sql);
+                	if (! $resql) { $error++; $this->error = $this->db->lasterror(); }
+
+                	// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
+                	$oldref = dol_sanitizeFileName($this->ref);
                     $newref = dol_sanitizeFileName($num);
                     $dirsource = $conf->supplier_proposal->dir_output.'/'.$oldref;
                     $dirdest = $conf->supplier_proposal->dir_output.'/'.$newref;
-
-                    if (file_exists($dirsource))
+                    if (! $error && file_exists($dirsource))
                     {
-                        dol_syslog(get_class($this)."::validate rename dir ".$dirsource." into ".$dirdest);
+                        dol_syslog(get_class($this)."::valid rename dir ".$dirsource." into ".$dirdest);
                         if (@rename($dirsource, $dirdest))
                         {
                             dol_syslog("Rename ok");
@@ -2277,20 +2274,24 @@ class SupplierProposal extends CommonObject
         $resql=$this->db->query($sql);
         if ($resql)
         {
+			$label = $labelShort = '';
             if ($mode == 'opened') {
                 $delay_warning=$conf->supplier_proposal->cloture->warning_delay;
                 $statut = self::STATUS_VALIDATED;
                 $label = $langs->trans("SupplierProposalsToClose");
+                $labelShort = $langs->trans("ToAcceptRefuse");
             }
             if ($mode == 'signed') {
                 $delay_warning=$conf->supplier_proposal->facturation->warning_delay;
                 $statut = self::STATUS_SIGNED;
                 $label = $langs->trans("SupplierProposalsToProcess");      // May be billed or ordered
+				$labelShort = $langs->trans("ToClose");
             }
 
             $response = new WorkboardResponse();
             $response->warning_delay = $delay_warning/60/60/24;
             $response->label = $label;
+            $response->labelShort = $labelShort;
             $response->url = DOL_URL_ROOT.'/supplier_proposal/list.php?viewstatut='.$statut;
             $response->img = img_object('', "propal");
 
@@ -2502,7 +2503,7 @@ class SupplierProposal extends CommonObject
         else
         {
             $langs->load("errors");
-            print $langs->trans("Error")." ".$langs->trans("ErrorModuleSetupNotComplete");
+            print $langs->trans("Error")." ".$langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("SupplierProposal"));
             return "";
         }
     }

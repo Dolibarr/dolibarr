@@ -581,8 +581,27 @@ class ImportCsv extends ModeleImports
                                     if (is_numeric($defaultref) && $defaultref <= 0) $defaultref='';
                                     $newval=$defaultref;
                                 }
-
-
+                                elseif ($objimport->array_import_convertvalue[0][$val]['rule']=='compute')
+                                {
+                                    $file=(empty($objimport->array_import_convertvalue[0][$val]['classfile'])?$objimport->array_import_convertvalue[0][$val]['file']:$objimport->array_import_convertvalue[0][$val]['classfile']);
+                                    $class=$objimport->array_import_convertvalue[0][$val]['class'];
+                                    $method=$objimport->array_import_convertvalue[0][$val]['method'];
+                                    $resultload = dol_include_once($file);
+                                    if (empty($resultload))
+                                    {
+                                        dol_print_error('', 'Error trying to call file='.$file.', class='.$class.', method='.$method);
+                                        break;
+                                    }
+                                    $classinstance=new $class($this->db);
+                                    $res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord));
+                                    if ($res<0) {
+                                        if (!empty($objimport->array_import_convertvalue[0][$val]['dict'])) $this->errors[$error]['lib']=$langs->trans('ErrorFieldValueNotIn', $key, $newval, 'code', $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['dict']));
+                                        else $this->errors[$error]['lib']='ErrorFieldValueNotIn';
+                                        $this->errors[$error]['type']='FOREIGNKEY';
+                                        $errorforthistable++;
+                                        $error++;
+                                    }
+                                }
                                 elseif ($objimport->array_import_convertvalue[0][$val]['rule']=='numeric')
                                 {
                                     $newval = price2num($newval);
@@ -594,16 +613,25 @@ class ImportCsv extends ModeleImports
 						    // Test regexp
 							if (! empty($objimport->array_import_regex[0][$val]) && ($newval != ''))
 							{
-								// If test is "Must exist in a field@table"
-								if (preg_match('/^(.*)@(.*)$/', $objimport->array_import_regex[0][$val], $reg))
+								// If test is "Must exist in a field@table or field@table:..."
+								if (preg_match('/^(.+)@([^:]+)(:.+)?$/', $objimport->array_import_regex[0][$val], $reg))
 								{
 									$field=$reg[1];
 									$table=$reg[2];
+									$filter=!empty($reg[3])?substr($reg[3], 1):'';
+
+									$cachekey = $field.'@'.$table;
+									if(! empty($filter)) $cachekey.= ':'.$filter;
 
 									// Load content of field@table into cache array
-									if (! is_array($this->cachefieldtable[$field.'@'.$table])) // If content of field@table not already loaded into cache
+									if (! is_array($this->cachefieldtable[$cachekey])) // If content of field@table not already loaded into cache
 									{
 										$sql="SELECT ".$field." as aliasfield FROM ".$table;
+										if(! empty($filter))
+										{
+											$sql.= ' WHERE ' . $filter;
+										}
+
 										$resql=$this->db->query($sql);
 										if ($resql)
 										{
@@ -612,7 +640,7 @@ class ImportCsv extends ModeleImports
 											while ($i < $num)
 											{
 												$obj=$this->db->fetch_object($resql);
-												if ($obj) $this->cachefieldtable[$field.'@'.$table][]=$obj->aliasfield;
+												if ($obj) $this->cachefieldtable[$cachekey][]=$obj->aliasfield;
 												$i++;
 											}
 										}
@@ -623,9 +651,11 @@ class ImportCsv extends ModeleImports
 									}
 
 									// Now we check cache is not empty (should not) and key is into cache
-									if (! is_array($this->cachefieldtable[$field.'@'.$table]) || ! in_array($newval, $this->cachefieldtable[$field.'@'.$table]))
+									if (! is_array($this->cachefieldtable[$cachekey]) || ! in_array($newval, $this->cachefieldtable[$cachekey]))
 									{
-										$this->errors[$error]['lib']=$langs->transnoentitiesnoconv('ErrorFieldValueNotIn', $key, $newval, $field, $table);
+										$tableforerror = $table;
+										if(! empty($filter)) $tableforerror.= ':'.$filter;
+										$this->errors[$error]['lib']=$langs->transnoentitiesnoconv('ErrorFieldValueNotIn', $key, $newval, $field, $tableforerror);
 										$this->errors[$error]['type']='FOREIGNKEY';
 									    $errorforthistable++;
 										$error++;

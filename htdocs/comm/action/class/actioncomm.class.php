@@ -1103,6 +1103,7 @@ class ActionComm extends CommonObject
 	    		$response = new WorkboardResponse();
 	    		$response->warning_delay = $conf->agenda->warning_delay/60/60/24;
 	    		$response->label = $langs->trans("ActionsToDo");
+	    		$response->labelShort = $langs->trans("ActionsToDoShort");
 	    		$response->url = DOL_URL_ROOT.'/comm/action/list.php?actioncode=0&amp;status=todo&amp;mainmenu=agenda';
 	    		if ($user->rights->agenda->allactions->read) $response->url.='&amp;filtert=-1';
 	    		$response->img = img_object('', "action", 'class="inline-block valigntextmiddle"');
@@ -1286,8 +1287,10 @@ class ActionComm extends CommonObject
 
         if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
 
-        if ((!$user->rights->agenda->allactions->read && $this->authorid != $user->id) || (!$user->rights->agenda->myactions->read && $this->authorid == $user->id))
+		if ((!$user->rights->agenda->allactions->read && $this->authorid != $user->id) || (!$user->rights->agenda->myactions->read && $this->authorid == $user->id))
+		{
             $option = 'nolink';
+		}
 
         $label = $this->label;
 		if (empty($label)) $label=$this->libelle;   // For backward compatibility

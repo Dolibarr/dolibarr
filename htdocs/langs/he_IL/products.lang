@@ -2,6 +2,7 @@
 ProductRef=Product ref.
 ProductLabel=Product label
 ProductLabelTranslated=Translated product label
+ProductDescription=Product description
 ProductDescriptionTranslated=Translated product description
 ProductNoteTranslated=Translated product note
 ProductServiceCard=Products/Services card

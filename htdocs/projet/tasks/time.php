@@ -1693,7 +1693,19 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		    print '</tr>';
 		}
 
-		print '</tr>';
+
+		if (! count($tasks))
+		{
+			$totalnboffields = 1;
+			foreach($arrayfields as $value)
+			{
+				if ($value['checked']) $totalnboffields++;
+			}
+			print '<tr class="oddeven"><td colspan="'.$totalnboffields.'">';
+			print '<span class="opacitymedium">'.$langs->trans("None").'</span>';
+			print '</td></tr>';
+		}
+
 
 		print "</table>";
 		print '</div>';

@@ -1151,13 +1151,18 @@ class ExpenseReport extends CommonObject
 			    {
 			    	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-			    	// On renomme repertoire ($this->ref = ancienne ref, $num = nouvelle ref)
-					// in order not to lose the attachments
+			    	// Now we rename also files into index
+			    	$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref)+1).")), filepath = 'expensereport/".$this->db->escape($this->newref)."'";
+			    	$sql.= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'expensereport/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+					$resql = $this->db->query($sql);
+					if (! $resql) { $error++; $this->error = $this->db->lasterror(); }
+
+			    	// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 					$oldref = dol_sanitizeFileName($this->ref);
 					$newref = dol_sanitizeFileName($num);
 					$dirsource = $conf->expensereport->dir_output.'/'.$oldref;
 					$dirdest = $conf->expensereport->dir_output.'/'.$newref;
-					if (file_exists($dirsource))
+					if (! $error && file_exists($dirsource))
 					{
 					    dol_syslog(get_class($this)."::setValidate() rename dir ".$dirsource." into ".$dirdest);
 
@@ -1392,12 +1397,12 @@ class ExpenseReport extends CommonObject
         // phpcs:enable
 		$error = 0;
 
-        if ($this->fk_c_deplacement_statuts != 5)
+		if ($this->paid)
         {
 			$this->db->begin();
 
             $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-            $sql.= " SET fk_statut = 5";
+            $sql.= " SET paid = 0";
             $sql.= ' WHERE rowid = '.$this->id;
 
             dol_syslog(get_class($this)."::set_unpaid sql=".$sql, LOG_DEBUG);
@@ -2328,12 +2333,14 @@ class ExpenseReport extends CommonObject
 	        {
 	           $response->warning_delay=$conf->expensereport->approve->warning_delay/60/60/24;
 	           $response->label=$langs->trans("ExpenseReportsToApprove");
+	           $response->labelShort=$langs->trans("ToApprove");
 	           $response->url=DOL_URL_ROOT.'/expensereport/list.php?mainmenu=hrm&amp;statut=2';
 	        }
 	        else
 	        {
 	            $response->warning_delay=$conf->expensereport->payment->warning_delay/60/60/24;
 	            $response->label=$langs->trans("ExpenseReportsToPay");
+	            $response->labelShort=$langs->trans("ToPay");
 	            $response->url=DOL_URL_ROOT.'/expensereport/list.php?mainmenu=hrm&amp;statut=5';
 	        }
 	        $response->img=img_object('', "trip");

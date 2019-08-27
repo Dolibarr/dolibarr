@@ -1584,9 +1584,9 @@ if ($action == 'create')
 						print $line->showOptionals($extrafieldsline, 'edit', array('style'=>$bc[$var], 'colspan'=>$colspan), $indiceAsked);
 						print '</tr>';
 					}
-
-                	$indiceAsked++;
                 }
+
+	            $indiceAsked++;
             }
 
             print "</table>";

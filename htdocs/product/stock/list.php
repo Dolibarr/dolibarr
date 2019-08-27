@@ -104,13 +104,19 @@ $form=new Form($db);
 $warehouse=new Entrepot($db);
 
 $sql = "SELECT e.rowid, e.ref, e.statut, e.lieu, e.address, e.zip, e.town, e.fk_pays, e.fk_parent,";
-$sql.= " SUM(p.pmp * ps.reel) as estimatedvalue, SUM(p.price * ps.reel) as sellvalue, SUM(ps.reel) as stockqty";
+$sql.= " SUM(p.pmp * ps.reel) as estimatedvalue, SUM(p.price * ps.reel) as sellvalue, SUM(ps.reel) as stockqty,";
 // Add fields from extrafields
-foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+if (! empty($extrafields->attributes[$object->table_element]['label']))
+	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? "ef.".$key.' as options_'.$key.', ' : '');
+// Add fields from hooks
+$parameters=array();
+$reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters, $object);    // Note that $action and $object may have been modified by hook
+$sql.=$hookmanager->resPrint;
+$sql=preg_replace('/, $/', '', $sql);
 $sql.= " FROM ".MAIN_DB_PREFIX."entrepot as e";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON e.rowid = ps.fk_entrepot";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON ps.fk_product = p.rowid";
-if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."entrepot_extrafields as ef on (e.rowid = ef.fk_object)";
+if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (e.rowid = ef.fk_object)";
 $sql.= " WHERE e.entity IN (".getEntity('stock').")";
 if ($search_ref) $sql.= natural_search("e.ref", $search_ref);			// ref
 if ($search_label) $sql.= natural_search("e.lieu", $search_label);		// label
@@ -118,6 +124,10 @@ if ($search_status != '' && $search_status >= 0) $sql.= " AND e.statut = ".$sear
 if ($sall) $sql .= natural_search(array_keys($fieldstosearchall), $sall);
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
+// Add where from hooks
+$parameters=array();
+$reshook=$hookmanager->executeHooks('printFieldListWhere', $parameters, $object);    // Note that $action and $object may have been modified by hook
+$sql.=$hookmanager->resPrint;
 $sql.= " GROUP BY e.rowid, e.ref, e.statut, e.lieu, e.address, e.zip, e.town, e.fk_pays, e.fk_parent";
 $totalnboflines=0;
 $result=$db->query($sql);
@@ -241,6 +251,7 @@ if ($result)
 			$warehouse->label = $obj->ref;
             $warehouse->lieu = $obj->lieu;
             $warehouse->fk_parent = $obj->fk_parent;
+            $warehouse->statut = $obj->statut;
 
             print '<tr class="oddeven">';
             print '<td>' . $warehouse->getNomUrl(1) . '</td>';

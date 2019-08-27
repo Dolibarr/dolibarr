@@ -157,9 +157,13 @@ if (empty($reshook))
 			$companybankaccount->owner_address   = GETPOST('owner_address', 'alpha');
 			$companybankaccount->frstrecur       = GETPOST('frstrecur', 'alpha');
 			$companybankaccount->rum             = GETPOST('rum', 'alpha');
+			$companybankaccount->date_rum        = dol_mktime(0, 0, 0, GETPOST('date_rummonth'), GETPOST('date_rumday'), GETPOST('date_rumyear'));
 			if (empty($companybankaccount->rum))
 			{
 				$companybankaccount->rum = $prelevement->buildRumNumber($object->code_client, $companybankaccount->datec, $companybankaccount->id);
+			}
+			if (empty($companybankaccount->date_rum))
+			{
 				$companybankaccount->date_rum = dol_now();
 			}
 
@@ -268,6 +272,7 @@ if (empty($reshook))
 			$companybankaccount->owner_address   = GETPOST('owner_address', 'alpha');
 			$companybankaccount->frstrecur       = GETPOST('frstrecur');
 			$companybankaccount->rum             = GETPOST('rum', 'alpha');
+			$companybankaccount->date_rum        = dol_mktime(0, 0, 0, GETPOST('date_rummonth'), GETPOST('date_rumday'), GETPOST('date_rumyear'));
 			$companybankaccount->datec			 = dol_now();
 			$companybankaccount->status          = 1;
 
@@ -595,6 +600,63 @@ if (empty($reshook))
 				$db->rollback();
 			}
 		}
+		
+		if ($action == 'setkey_account_supplier')
+		{
+			$error = 0;
+
+			$newsup = GETPOST('key_account_supplier', 'alpha');
+
+			$db->begin();
+
+                if (empty($newsup)) {
+                        $sql  = "DELETE FROM ".MAIN_DB_PREFIX."oauth_token WHERE fk_soc = ".$object->id." AND service = '".$service."' AND entity = ".$conf->entity;
+                } else {
+      try {
+      $stripesup = \Stripe\Account::retrieve($db->escape(GETPOST('key_account_supplier', 'alpha')));
+      $tokenstring['stripe_user_id'] = $stripesup->id;
+      $tokenstring['type'] = $stripesup->type;
+			$sql = "UPDATE ".MAIN_DB_PREFIX."oauth_token";
+			$sql.= " SET tokenstring = '".dol_json_encode($tokenstring)."'";
+			$sql.= " WHERE fk_soc = ".$object->id." AND service = '".$service."' AND entity = ".$conf->entity;	// Keep = here for entity. Only 1 record must be modified !
+	  }
+					catch(Exception $e)
+					{
+						$error++;
+						setEventMessages($e->getMessage(), null, 'errors');
+					}
+				}
+
+			$resql = $db->query($sql);
+			$num = $db->num_rows($resql);
+			if (empty($num) && !empty($newsup))
+			{
+      try {
+      $stripesup = \Stripe\Account::retrieve($db->escape(GETPOST('key_account_supplier', 'alpha')));
+      $tokenstring['stripe_user_id'] = $stripesup->id;
+      $tokenstring['type'] = $stripesup->type;
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."oauth_token (service, fk_soc, entity, tokenstring)";
+			$sql .= " VALUES ('".$service."', ".$object->id.", ".$conf->entity.", '".dol_json_encode($tokenstring)."')";
+	  }
+				catch(Exception $e)
+				{
+					$error++;
+					setEventMessages($e->getMessage(), null, 'errors');
+				}
+				$resql = $db->query($sql);
+			}
+
+			if (! $error)
+			{
+				$stripesupplieracc = $newsup;
+				$db->commit();
+			}
+			else
+			{
+				$db->rollback();
+			}
+		}
+
 		if ($action == 'setlocalassourcedefault')	// Set as default when payment mode defined locally (and may be also remotely)
 		{
 			try {
@@ -783,10 +845,8 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			$permissiontowrite = $user->rights->societe->creer;
 			// Stripe customer key 'cu_....' stored into llx_societe_account
 			print '<tr><td class="titlefield">';
-			//print $langs->trans('StripeCustomerId');
 			print $form->editfieldkey("StripeCustomerId", 'key_account', $stripecu, $object, $permissiontowrite, 'string', '', 0, 2, 'socid');
 			print '</td><td>';
-			//print $stripecu;
 			print $form->editfieldval("StripeCustomerId", 'key_account', $stripecu, $object, $permissiontowrite, 'string', '', null, null, '', 2, '', 'socid');
 			if (! empty($conf->stripe->enabled) && $stripecu && $action != 'editkey_account')
 			{
@@ -812,6 +872,60 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			print '</td></tr>';
 		}
     }
+    
+	if ($object->fournisseur)
+	{
+		print '<tr><td class="titlefield">';
+		print $langs->trans('SupplierCode').'</td><td colspan="2">';
+		print $object->code_fournisseur;
+		if ($object->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
+		print '</td></tr>';
+		$sql = "SELECT count(*) as nb from ".MAIN_DB_PREFIX."facture where fk_soc = ".$socid;
+		$resql=$db->query($sql);
+		if (!$resql) dol_print_error($db);
+		$obj = $db->fetch_object($resql);
+		$nbFactsClient = $obj->nb;
+		$thirdTypeArray['customer']=$langs->trans("customer");
+		if ($conf->propal->enabled && $user->rights->propal->lire) $elementTypeArray['propal']=$langs->transnoentitiesnoconv('Proposals');
+		if ($conf->commande->enabled && $user->rights->commande->lire) $elementTypeArray['order']=$langs->transnoentitiesnoconv('Orders');
+		if ($conf->facture->enabled && $user->rights->facture->lire) $elementTypeArray['invoice']=$langs->transnoentitiesnoconv('Invoices');
+		if ($conf->contrat->enabled && $user->rights->contrat->lire) $elementTypeArray['contract']=$langs->transnoentitiesnoconv('Contracts');
+	}
+	
+	if (! empty($conf->stripe->enabled) && ! empty($conf->stripeconnect->enabled) && $conf->global->MAIN_FEATURES_LEVEL >= 2)
+	{
+		$permissiontowrite = $user->rights->societe->creer;
+		$stripesupplieracc = $stripe->getStripeAccount($service, $object->id);								// Get Stripe OAuth connect account (no network access here)
+    
+		// Stripe customer key 'cu_....' stored into llx_societe_account
+		print '<tr><td class="titlefield">';
+		print $form->editfieldkey("StripeConnectAccount", 'key_account_supplier', $stripesupplieracc, $object, $permissiontowrite, 'string', '', 0, 2, 'socid');
+		print '</td><td>';
+		print $form->editfieldval("StripeConnectAccount", 'key_account_supplier', $stripesupplieracc, $object, $permissiontowrite, 'string', '', null, null, '', 2, '', 'socid');
+		if (! empty($conf->stripe->enabled) && $stripesupplieracc && $action != 'editkey_account_supplier')
+		{
+		    $connect='';
+			
+			$url='https://dashboard.stripe.com/test/connect/accounts/'.$stripesupplieracc;
+			if ($servicestatus)
+			{
+				$url='https://dashboard.stripe.com/connect/accounts/'.$stripesupplieracc;
+			}
+			print ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe'), 'object_globe').'</a>';
+		}
+		print '</td><td class="right">';
+		if (empty($stripesupplieracc))
+		{
+			print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+			print '<input type="hidden" name="action" value="syncsuppliertostripe">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="socid" value="'.$object->id.'">';
+			print '<input type="hidden" name="companybankid" value="'.$rib->id.'">';
+			//print '<input type="submit" class="button" name="syncstripecustomer" value="'.$langs->trans("CreateSupplierOnStripe").'">';
+			print '</form>';
+		}
+		print '</td></tr>';
+	}
 
 	print '</table>';
 	print '</div>';
@@ -821,7 +935,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 	print '<br>';
 
 	// List of Stripe payment modes
-	if (! (empty($conf->stripe->enabled)))
+	if (! (empty($conf->stripe->enabled)) && $object->client)
 	{
 		$morehtmlright='';
 		if (! empty($conf->global->STRIPE_ALLOW_LOCAL_CARD))
@@ -1183,11 +1297,47 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		}
 		print "</table>";
 		print "</div>";
+   	print '<br>';
+	}
+  
+  	// List of Stripe payment modes
+	if (! empty($conf->stripe->enabled) && ! empty($conf->stripeconnect->enabled) && $object->fournisseur && ! empty($stripesupplieracc))
+	{
+  print load_fiche_titre($langs->trans('StripeBalance').($stripesupplieracc?' (Stripe connection with StripeConnect account '.$stripesupplieracc.')':' (Stripe connection with keys from Stripe module setup)'), $morehtmlright, '');
+  $balance = \Stripe\Balance::retrieve(array("stripe_account" => $stripesupplieracc));
+		print '<table class="liste" width="100%">'."\n";
+		print '<tr class="liste_titre">';
+		print '<td>'.$langs->trans('Status').'</td>';
+		print '<td>'.$langs->trans('Amount').'</td>';
+		print '<td>'.$langs->trans('Currency').'</td>';
+    print '</tr>';
+  
+		if (is_array($balance->available) && count($balance->available))
+		{
+			foreach ($balance->available as $cpt)
+			{
+		$arrayzerounitcurrency=array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
+		if (! in_array($cpt->currency, $arrayzerounitcurrency)) $amount = $cpt->amount / 100;
+		else $amount = $cpt->amount;
+      print '<tr><td>'.$langs->trans("Available").'</td><td>'.price(amount, 0, '', 1, - 1, - 1, strtoupper($cpt->currency)).' </td><td>'.$langs->trans("Currency".strtoupper($cpt->currency)).'</td></tr>';
+			}
+		}
+    
+    if (is_array($balance->pending) && count($balance->pending))
+		{
+			foreach ($balance->pending as $cpt)
+			{
+		$arrayzerounitcurrency=array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
+		if (! in_array($cpt->currency, $arrayzerounitcurrency)) $amount = $cpt->amount / 100;
+		else $amount = $cpt->amount;
+      print '<tr><td>'.$langs->trans("Pending").'</td><td>'.price($amount, 0, '', 1, - 1, - 1, strtoupper($cpt->currency)).' </td><td>'.$langs->trans("Currency".strtoupper($cpt->currency)).'</td></tr>';
+			}
+    }
+    print '</table>';
+    print '<br>';
 	}
 
-
 	// List of bank accounts
-	print '<br>';
 
     $morehtmlright= dolGetButtonTitle($langs->trans('Add'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=create');
 
@@ -1208,6 +1358,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		if (! empty($conf->prelevement->enabled))
 		{
 			print_liste_field_titre("RUM");
+			print_liste_field_titre("DateRUM");
 			print_liste_field_titre("WithdrawMode");
 		}
 		print_liste_field_titre("DefaultRIB", '', '', '', '', '', '', '', 'center ');
@@ -1257,8 +1408,6 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
    			if (! empty($rib->iban)) {
 				if (! checkIbanForAccount($rib)) {
 					print ' '.img_picto($langs->trans("IbanNotValid"), 'warning');
-				} else {
-					print ' '.img_picto($langs->trans("IbanValid"), 'info');
 				}
 			}
 			print '</td>';
@@ -1267,8 +1416,6 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			if (! empty($rib->bic)) {
 				if (! checkSwiftForAccount($rib)) {
 					print ' '.img_picto($langs->trans("SwiftNotValid"), 'warning');
-				} else {
-					print ' '.img_picto($langs->trans("SwiftValid"), 'info');
 				}
 			}
 			print '</td>';
@@ -1278,6 +1425,8 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				// RUM
 				//print '<td>'.$prelevement->buildRumNumber($object->code_client, $rib->datec, $rib->id).'</td>';
 				print '<td>'.$rib->rum.'</td>';
+
+				print '<td>'.dol_print_date($rib->date_rum, 'day').'</td>';
 
 				// FRSTRECUR
 				print '<td>'.$rib->frstrecur.'</td>';
@@ -1371,7 +1520,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 
 		if (count($rib_list) == 0)
 		{
-			$colspan=8;
+			$colspan=9;
 			if (! empty($conf->prelevement->enabled)) $colspan+=2;
 			print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoBANRecord").'</td></tr>';
 		}
@@ -1531,6 +1680,9 @@ if ($socid && $action == 'edit' && $user->rights->societe->creer)
 		print '<tr><td class="titlefield">'.$langs->trans("RUM").'</td>';
 		print '<td><input class="minwidth300" type="text" name="rum" value="'.dol_escape_htmltag($companybankaccount->rum).'"></td></tr>';
 
+		print '<tr><td class="titlefield">'.$langs->trans("DateRUM").'</td>';
+		print '<td>'.$form->selectDate(GETPOST('date_rum')?GETPOST('date_rum'):$companybankaccount->date_rum, 'date_rum', 0, 0, 1, 'date_rum').'</td></tr>';
+
 		print '<tr><td>'.$langs->trans("WithdrawMode").'</td><td>';
 		$tblArraychoice = array("FRST" => $langs->trans("FRST"), "RECUR" => $langs->trans("RECUR"));
 		print $form->selectarray("frstrecur", $tblArraychoice, dol_escape_htmltag(GETPOST('frstrecur', 'alpha')?GETPOST('frstrecur', 'alpha'):$companybankaccount->frstrecur), 0);
@@ -1674,6 +1826,9 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
 		// RUM
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("RUM").'</td>';
 		print '<td colspan="4"><input type="text" class="minwidth300" name="rum" value="'.GETPOST('rum', 'alpha').'"> <div class="opacitymedium">'.$langs->trans("RUMWillBeGenerated").'</div></td></tr>';
+
+		print '<tr><td class="titlefieldcreate">'.$langs->trans("DateRUM").'</td>';
+		print '<td colspan="4">'.$form->selectDate(GETPOST('date_rum'), 'date_rum', 0, 0, 1, 'date_rum').'</td></tr>';
 
 		print '<tr><td>'.$langs->trans("WithdrawMode").'</td><td>';
 		$tblArraychoice = array("FRST" => $langs->trans("FRST"), "RECUR" => $langs->trans("RECUR"));
