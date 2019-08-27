@@ -719,7 +719,7 @@ if ($invoice->socid != $conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takep
     print '<br>'.$langs->trans("Type").': '.$adh->type;
 		if ($adh->datefin)
 		{
-			print dol_print_date($adh->datefin, 'day');
+			print '<br>'.$langs->trans("SubscriptionEndDate").': '.dol_print_date($adh->datefin, 'day');
 			if ($adh->hasDelay()) {
 				print " ".img_warning($langs->trans("Late"));
 			}
