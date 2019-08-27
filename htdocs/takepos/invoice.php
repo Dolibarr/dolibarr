@@ -267,9 +267,22 @@ if ($action == "delete") {
 
         if ($result > 0 && $invoice->statut == Facture::STATUS_DRAFT)
         {
+        	$db->begin();
+
         	// We delete the lines
-            $sql = "DELETE FROM " . MAIN_DB_PREFIX . "facturedet where fk_facture='".$placeid."'";
-            $resql = $db->query($sql);
+        	$sql = "DELETE FROM " . MAIN_DB_PREFIX . "facturedet_extrafields where fk_object = ".$placeid;
+        	$resql1 = $db->query($sql);
+        	$sql = "DELETE FROM " . MAIN_DB_PREFIX . "facturedet where fk_facture = ".$placeid;
+            $resql2 = $db->query($sql);
+
+            if ($resql1 && $resql2)
+            {
+            	$db->commit();
+            }
+            else
+            {
+            	$db->rollback();
+            }
 
             $invoice->fetch($placeid);
         }
