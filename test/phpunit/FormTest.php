@@ -58,7 +58,7 @@ class FormTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return FactureTest
 	 */
-	function __construct()
+	public function __construct()
 	{
 		parent::__construct();
 

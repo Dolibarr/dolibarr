@@ -119,7 +119,7 @@ class FormAdminTest extends PHPUnit\Framework\TestCase
     }
 
     /**
-     * testFactureCreate
+     * testSelectPaperFormat
      *
      * @return int
      */
