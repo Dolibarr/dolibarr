@@ -138,7 +138,9 @@ if ($action == 'valid' && $user->rights->facture->creer)
 
 	if (! empty($conf->stock->enabled) && $conf->global->{'CASHDESK_NO_DECREASE_STOCK'.$_SESSION["takeposterminal"]} != "1")
 	{
-	    $invoice->validate($user, '', $conf->global->{'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"]});
+		$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
+		dol_syslog("Validate invoice with stock change into warehouse id ".$constantforkey);
+	    $invoice->validate($user, '', $conf->global->$cosntantforkey);
 	}
 	else
 	{
@@ -259,10 +261,13 @@ if ($action == "deleteline") {
 }
 
 if ($action == "delete") {
-    if ($placeid > 0) { //If invoice exists
+	// $placeid is the invoice id (it differs from place) and is defined if the place is set and the ref of invoice is '(PROV-POS'.$_SESSION["takeposterminal"].'-'.$place.')', so the fetch at begining of page works.
+	if ($placeid > 0) {
         $result = $invoice->fetch($placeid);
-        if ($result > 0)
+
+        if ($result > 0 && $invoice->statut == Facture::STATUS_DRAFT)
         {
+        	// We delete the lines
             $sql = "DELETE FROM " . MAIN_DB_PREFIX . "facturedet where fk_facture='".$placeid."'";
             $resql = $db->query($sql);
 
