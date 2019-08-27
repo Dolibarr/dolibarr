@@ -136,11 +136,12 @@ if ($action == 'valid' && $user->rights->facture->creer)
 		$invoice->update($user);
 	}
 
-	if (! empty($conf->stock->enabled) && $conf->global->{'CASHDESK_NO_DECREASE_STOCK'.$_SESSION["takeposterminal"]} != "1")
+	$constantforkey = 'CASHDESK_NO_DECREASE_STOCK'.$_SESSION["takeposterminal"];
+	if (! empty($conf->stock->enabled) && $conf->global->$constantforkey != "1")
 	{
 		$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
 		dol_syslog("Validate invoice with stock change into warehouse id ".$constantforkey);
-	    $invoice->validate($user, '', $conf->global->$cosntantforkey);
+		$invoice->validate($user, '', $conf->global->$constantforkey);
 	}
 	else
 	{
@@ -593,8 +594,17 @@ if ($invoice->socid != $conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takep
     $soc = new Societe($db);
     if ($invoice->socid > 0) $soc->fetch($invoice->socid);
     else $soc->fetch($conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"]});
-    print '<p style="font-size:120%;" class="right">';
+    print '<!-- Show customer --><p style="font-size:120%;" class="right">';
     print $langs->trans("Customer").': '.$soc->name;
+
+	$constantforkey = 'CASHDESK_NO_DECREASE_STOCK'.$_SESSION["takeposterminal"];
+	if (! empty($conf->stock->enabled) && $conf->global->$constantforkey != "1")
+	{
+		$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
+		$warehouse = new Entrepot($db);
+		$warehouse->fetch($conf->global->$constantforkey);
+		print '<br>'.$langs->trans("Warehouse").': '.$warehouse->ref;
+	}
     print '</p>';
 }
 
