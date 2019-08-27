@@ -37,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.form.class.php';
 
-$langs->loadLangs(array("bills", "cashdesk"));
+$langs->loadLangs(array("companies", "commercial", "bills", "cashdesk"));
 
 $id = GETPOST('id', 'int');
 $action = GETPOST('action', 'alpha');
@@ -161,7 +161,17 @@ if ($action == 'valid' && $user->rights->facture->creer)
 		$invoice->update($user);
 	}
 
-	if (! empty($conf->stock->enabled) && $conf->global->{'CASHDESK_NO_DECREASE_STOCK'.$_SESSION["takeposterminal"]} != "1")
+	if ($invoice->statut != Facture::STATUS_DRAFT)
+	{
+		dol_syslog("Sale already validated");
+		dol_htmloutput_errors($langs->trans("InvoiceIsAlreadyValidated", "TakePos"), null, 1);
+	}
+	elseif (count($invoice->lines)==0)
+	{
+		dol_syslog("Sale without lines");
+		dol_htmloutput_errors($langs->trans("NoLinesToBill", "TakePos"), null, 1);
+	}
+	elseif (! empty($conf->stock->enabled) && $conf->global->{'CASHDESK_NO_DECREASE_STOCK'.$_SESSION["takeposterminal"]} != "1")
 	{
 	    $invoice->validate($user, '', $conf->global->{'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"]});
 	}
@@ -175,7 +185,7 @@ if ($action == 'valid' && $user->rights->facture->creer)
 	$payment->datepaye = $now;
 	$payment->fk_account = $bankaccount;
 	$payment->amounts[$invoice->id] = $amountofpayment;
-	
+
 	// If user has not used change control, add total invoice payment
 	if ($amountofpayment == 0) $payment->amounts[$invoice->id] = $invoice->total_ttc;
 
@@ -395,7 +405,7 @@ if ($action=="valid" || $action=="history")
     }
     else
     {
-        if ($invoice->paye) $sectionwithinvoicelink.='<span class="amountpaymentcomplete" style="font-size: unset">'.$langs->trans("Payed").'</span>';
+        if ($invoice->paye) $sectionwithinvoicelink.='<span class="amountpaymentcomplete" style="font-size: unset">'.$langs->trans("Paid").'</span>';
         else $sectionwithinvoicelink.=$langs->trans('BillShortStatusValidated');
     }
     $sectionwithinvoicelink.='</span>';
@@ -541,7 +551,7 @@ if ($_SESSION["basiclayout"]!=1)
 {
 	print '<td class="linecolqty right">' . $langs->trans('ReductionShort') . '</td>';
 	print '<td class="linecolqty right">' . $langs->trans('Qty') . '</td>';
-	print '<td class="linecolht right nowraponall">' . $langs->trans('TotalHTShort') . '</td>';
+	print '<td class="linecolht right nowraponall">' . $langs->trans('TotalTTCShort') . '</td>';
 }
 print "</tr>\n";
 
@@ -567,7 +577,7 @@ if ($_SESSION["basiclayout"]==1)
 		$htmlforlines.= '</div>';
 		print $htmlforlines;
 	}
-	
+
 	if ($mobilepage=="products")
 	{
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
@@ -591,7 +601,7 @@ if ($_SESSION["basiclayout"]==1)
 		$htmlforlines.= '</div>';
 		print $htmlforlines;
 	}
-	
+
 	if ($mobilepage=="places")
 	{
 		$sql="SELECT rowid, entity, label, leftpos, toppos, floor FROM ".MAIN_DB_PREFIX."takepos_floor_tables";
@@ -692,6 +702,40 @@ if ($invoice->socid != $conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takep
     print '<p style="font-size:120%;" class="right">';
     print $langs->trans("Customer").': '.$soc->name;
     print '</p>';
+
+        // Module Adherent
+        if (! empty($conf->adherent->enabled))
+		{
+    require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+    $langs->load("members");
+    print '<p style="font-size:120%;" class="right">';
+    print $langs->trans("Member").': ';
+    $adh=new Adherent($db);
+    $result=$adh->fetch('', '', $invoice->socid);
+            if ($result > 0)
+			{
+    $adh->ref=$adh->getFullName($langs);
+    print $adh->getFullName($langs);
+    print '<br>'.$langs->trans("Type").': '.$adh->type;
+		if ($adh->datefin)
+		{
+			print dol_print_date($adh->datefin, 'day');
+			if ($adh->hasDelay()) {
+				print " ".img_warning($langs->trans("Late"));
+			}
+		}
+		else
+		{
+				print $langs->trans("SubscriptionNotReceived");
+				if ($adh->statut > 0) print " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft and not terminated
+		}
+			}
+			else
+			{
+    print '<span class="opacitymedium">'.$langs->trans("ThirdpartyNotLinkedToMember").'</span>';
+			}
+    print '</p>';
+		}
 }
 
 if ($action == "search")

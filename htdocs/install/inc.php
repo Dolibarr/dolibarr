@@ -258,9 +258,6 @@ $langs = new Translate('..', $conf);
 if (GETPOST('lang', 'aZ09')) $langs->setDefaultLang(GETPOST('lang', 'aZ09'));
 else $langs->setDefaultLang('auto');
 
-$bc[false]=' class="bg1"';
-$bc[true]=' class="bg2"';
-
 
 /**
  * Load conf file (file must exists)

@@ -1260,4 +1260,25 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 
         return true;
     }
+
+    /**
+     * testDolStringIsGoodIso
+     *
+     * @return boolean
+     */
+    public function testDolStringIsGoodIso()
+    {
+    	global $conf, $langs;
+
+    	$chaine='This is an ISO string';
+    	$result = dol_string_is_good_iso($chaine);
+    	$this->assertEquals($result, 1);
+
+    	$chaine='This is a not ISO string '.chr(0);
+    	$result = dol_string_is_good_iso($chaine);
+    	$this->assertEquals($result, 0);
+
+    	return true;
+    }
+
 }

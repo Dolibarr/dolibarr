@@ -522,9 +522,9 @@ if ($resql)
 	$nb=$obj->nb;
 	if ($nb > $limitforoptim)
 	{
-		if (empty($conf->global->THIRDPARTY_DONOTSEARCH_ANYWHERE))
+		if (empty($conf->global->COMPANY_DONOTSEARCH_ANYWHERE))
 		{
-			print img_picto('', 'warning.png').' '.$langs->trans("YouHaveXObjectUseSearchOptim", $nb, $langs->transnoentitiesnoconv("ThirdParties"), 'THIRDPARTY_DONOTSEARCH_ANYWHERE');
+			print img_picto('', 'warning.png').' '.$langs->trans("YouHaveXObjectUseSearchOptim", $nb, $langs->transnoentitiesnoconv("ThirdParties"), 'COMPANY_DONOTSEARCH_ANYWHERE');
 		}
 		else
 		{

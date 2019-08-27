@@ -80,6 +80,7 @@ if (GETPOST('action', 'alpha') == 'set')
 	$res = dolibarr_set_const($db, "TAKEPOS_NUMPAD", GETPOST('TAKEPOS_NUMPAD', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_NUM_TERMINALS", GETPOST('TAKEPOS_NUM_TERMINALS', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_DIRECT_PAYMENT", GETPOST('TAKEPOS_DIRECT_PAYMENT', 'int'), 'int', 0, '', $conf->entity);
+  $res = dolibarr_set_const($db, "TAKEPOS_EMAIL_TEMPLATE_INVOICE", GETPOST('TAKEPOS_EMAIL_TEMPLATE_INVOICE', 'alpha'), 'chaine', 0, '', $conf->entity);
 
 	if ($conf->global->TAKEPOS_ORDER_NOTES==1)
 	{
@@ -229,6 +230,30 @@ print '<tr class="oddeven"><td>';
 print $langs->trans('DirectPaymentButton');
 print '<td colspan="2">';
 print $form->selectyesno("TAKEPOS_DIRECT_PAYMENT", $conf->global->TAKEPOS_DIRECT_PAYMENT, 1);
+print "</td></tr>\n";
+
+// Email template for send invoice
+print '<tr class="oddeven"><td>';
+print $langs->trans('EmailTemplate');
+print '<td colspan="2">';
+include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+$formmail = new FormMail($db);
+$nboftemplates = $formmail->fetchAllEMailTemplate('facture_send', $user, null, -1);	// We set lang=null to get in priority record with no lang
+//$arraydefaultmessage = $formmail->getEMailTemplate($db, $tmp[1], $user, null, 0, 1, '');
+$arrayofmessagename=array();
+if (is_array($formmail->lines_model))
+{
+	                	foreach($formmail->lines_model as $modelmail)
+	                	{
+	                		//var_dump($modelmail);
+	                		$moreonlabel='';
+	                		if (! empty($arrayofmessagename[$modelmail->label])) $moreonlabel=' <span class="opacitymedium">('.$langs->trans("SeveralLangugeVariatFound").')</span>';
+	                		$arrayofmessagename[$modelmail->label]=$langs->trans(preg_replace('/\(|\)/', '', $modelmail->label)).$moreonlabel;
+	                	}
+}
+//var_dump($arraydefaultmessage);
+//var_dump($arrayofmessagename);
+print $form->selectarray('TAKEPOS_EMAIL_TEMPLATE_INVOICE', $arrayofmessagename, $conf->global->TAKEPOS_EMAIL_TEMPLATE_INVOICE, 'None', 1, 0, '', 0, 0, 0, '', '', 1);
 print "</td></tr>\n";
 
 $substitutionarray=pdf_getSubstitutionArray($langs, null, null, 2);
