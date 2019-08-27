@@ -1316,7 +1316,10 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		{
 			foreach ($balance->available as $cpt)
 			{
-      print '<tr><td>'.$langs->trans("Available").'</td><td>'.price($cpt->amount, 0, '', 1, - 1, - 1, strtoupper($cpt->currency)).' </td><td>'.$langs->trans("Currency".strtoupper($cpt->currency)).'</td></tr>';
+		$arrayzerounitcurrency=array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
+		if (! in_array($cpt->currency, $arrayzerounitcurrency)) $amount = $cpt->amount / 100;
+		else $amount = $cpt->amount;
+      print '<tr><td>'.$langs->trans("Available").'</td><td>'.price(amount, 0, '', 1, - 1, - 1, strtoupper($cpt->currency)).' </td><td>'.$langs->trans("Currency".strtoupper($cpt->currency)).'</td></tr>';
 			}
 		}
     
@@ -1324,7 +1327,10 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		{
 			foreach ($balance->pending as $cpt)
 			{
-      print '<tr><td>'.$langs->trans("Pending").'</td><td>'.price($cpt->amount, 0, '', 1, - 1, - 1, strtoupper($cpt->currency)).' </td><td>'.$langs->trans("Currency".strtoupper($cpt->currency)).'</td></tr>';
+		$arrayzerounitcurrency=array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
+		if (! in_array($cpt->currency, $arrayzerounitcurrency)) $amount = $cpt->amount / 100;
+		else $amount = $cpt->amount;
+      print '<tr><td>'.$langs->trans("Pending").'</td><td>'.price($amount, 0, '', 1, - 1, - 1, strtoupper($cpt->currency)).' </td><td>'.$langs->trans("Currency".strtoupper($cpt->currency)).'</td></tr>';
 			}
     }
     print '</table>';
