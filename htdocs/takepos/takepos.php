@@ -47,6 +47,8 @@ if ($setterminal>0)
 	$_SESSION["takeposterminal"]=$setterminal;
 }
 
+$_SESSION["urlfrom"]='/takepos/takepos.php';
+
 $langs->loadLangs(array("bills","orders","commercial","cashdesk","receiptprinter"));
 
 $categorie = new Categorie($db);
