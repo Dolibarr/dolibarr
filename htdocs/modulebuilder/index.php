@@ -836,7 +836,10 @@ if ($dirins && $action == 'addproperty' && !empty($module) && ! empty($tabobj))
 	if (! $error)
 	{
 		$object=rebuildObjectClass($destdir, $module, $objectname, $newmask, $srcdir, $addfieldentry);
-		if (is_numeric($result) && $result <= 0) $error++;
+		if (is_numeric($object) && $object <= 0)
+		{
+			$error++;
+		}
 	}
 
 	// Edit sql with new properties
