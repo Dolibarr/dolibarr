@@ -469,7 +469,7 @@ if (! defined('NOLOGIN'))
 		$dol_hide_leftmenu=GETPOST('dol_hide_leftmenu', 'int', 3);
 		$dol_optimize_smallscreen=GETPOST('dol_optimize_smallscreen', 'int', 3);
 		$dol_no_mouse_hover=GETPOST('dol_no_mouse_hover', 'int', 3);
-		$dol_use_jmobile=GETPOST('dol_use_jmobile', 'int', 3);
+		$dol_use_jmobile=GETPOST('dol_use_jmobile', 'int', 3);			// 0=default, 1=to say we use app from a webview app, 2=to say we use app from a webview app and keep ajax
 		//dol_syslog("POST key=".join(array_keys($_POST),',').' value='.join($_POST,','));
 
 		// If in demo mode, we check we go to home page through the public/demo/index.php page
