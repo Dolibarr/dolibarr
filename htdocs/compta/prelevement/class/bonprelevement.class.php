@@ -775,12 +775,13 @@ class BonPrelevement extends CommonObject
 	 *	@param	string	$mode		real=do action, simu=test only
 	 *  @param	string	$format		FRST, RCUR or ALL
          * @param       string  $executiondate	Date to execute the transfer
+	 * @param	int	$notrigger		Disable triggers
 	 *	@return	int					<0 if KO, nbre of invoice withdrawed if OK
 	 */
-	function Create($banque=0, $agence=0, $mode='real', $format='ALL',$executiondate='')
+	function Create($banque=0, $agence=0, $mode='real', $format='ALL',$executiondate='', $notrigger = 0)
 	{
         // phpcs:enable
-		global $conf,$langs;
+		global $conf, $langs, $user;
 
 		dol_syslog(__METHOD__."::Bank=".$banque." Office=".$agence." mode=".$mode." format=".$format, LOG_DEBUG);
 
@@ -1091,6 +1092,7 @@ class BonPrelevement extends CommonObject
 					}
 
 					$this->factures = $factures_prev_id;
+					$this->factures_prev = $factures_prev;
 
 					// Generation of SEPA file $this->filename
 					$this->generate($format,$executiondate);
@@ -1113,6 +1115,14 @@ class BonPrelevement extends CommonObject
 				$error++;
 				dol_syslog(__METHOD__."::Error update total: ".$this->db->error(), LOG_ERR);
 			}
+
+            if (! $error && ! $notrigger)
+            {
+                // Call trigger
+                $result=$this->call_trigger('BON_PRELEVEMENT_CREATE', $user);
+                if ($result < 0) $error++;
+                // End call triggers
+            }
 
 			if (!$error)
 			{
