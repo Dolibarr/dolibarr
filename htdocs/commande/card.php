@@ -2138,7 +2138,8 @@ if ($action == 'create' && $usercancreate)
 			print '<tr><td class="titlefield">';
 			print $langs->trans('OutstandingBill');
 			print '</td><td>';
-			print price($soc->get_OutstandingBill()) . ' / ';
+			$arrayoutstandingbills = $soc->getOutstandingBills();
+			print price($arrayoutstandingbills['opened']) . ' / ';
 			print price($soc->outstanding_limit, 0, '', 1, - 1, - 1, $conf->currency);
 			print '</td>';
 			print '</tr>';

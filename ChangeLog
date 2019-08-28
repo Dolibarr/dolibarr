@@ -17,6 +17,9 @@ Following changes may create regressions for some external modules, but were nec
 * Removed the method liste_array() of project class. It was not used by core code.
 * The function show_theme() hase been renamed into showSkins()
 * Rename 'module_part' parameter into 'modulepart' into document APIs, for consistency.
+* The deprecated method get_OutstandingBill has been removed. You can use getOutstandingBills() instead.
+
+
 
 
 ***** ChangeLog for 10.0.1 compared to 10.0.0 *****

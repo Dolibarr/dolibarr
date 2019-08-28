@@ -1616,7 +1616,8 @@ if ($action == 'create')
 		print '<tr><td>';
 		print $langs->trans('OutstandingBill');
 		print '</td><td class=right colspan="3">';
-		print price($soc->get_OutstandingBill()) . ' / ';
+		$arrayoutstandingbills = $soc->getOutstandingBills('supplier');
+		$outstandingBills = $arrayoutstandingbills['opened'];
 		print price($soc->outstanding_limit, 0, '', 1, - 1, - 1, $conf->currency);
 		print '</td>';
 		print '</tr>';

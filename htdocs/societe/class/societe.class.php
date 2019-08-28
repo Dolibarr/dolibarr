@@ -3913,20 +3913,17 @@ class Societe extends CommonObject
 			while($obj=$this->db->fetch_object($resql)) {
                 $tmpobject->id=$obj->rowid;
 
-
-
-
-				if ($obj->fk_statut != 0                                           // Not a draft
-					&& ! ($obj->fk_statut == 3 && $obj->close_code == 'replaced')  // Not a replaced invoice
+				if ($obj->fk_statut != Facture::STATUS_DRAFT                                           // Not a draft
+					&& ! ($obj->fk_statut == Facture::STATUS_ABANDONED && $obj->close_code == 'replaced')  // Not a replaced invoice
 					)
 				{
 					$outstandingTotal+= $obj->total_ht;
 					$outstandingTotalIncTax+= $obj->total_ttc;
 				}
 				if ($obj->paye == 0
-					&& $obj->fk_statut != 0    // Not a draft
-					&& $obj->fk_statut != 3	   // Not abandonned
-					&& $obj->fk_statut != 2)   // Not classified as paid
+					&& $obj->fk_statut != Facture::STATUS_DRAFT    		// Not a draft
+					&& $obj->fk_statut != Facture::STATUS_ABANDONED	    // Not abandonned
+					&& $obj->fk_statut != Facture::STATUS_CLOSED)   	// Not classified as paid
 				//$sql .= " AND (fk_statut <> 3 OR close_code <> 'abandon')";		// Not abandonned for undefined reason
 				{
 					$paiement = $tmpobject->getSommePaiement();
@@ -3947,54 +3944,6 @@ class Societe extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    /**
-     *  Return amount of bill not paid
-     *
-     *  @return		int				Amount in debt for thirdparty
-     *  @deprecated
-     *  @see getOutstandingBills()
-     */
-    public function get_OutstandingBill()
-    {
-        // phpcs:enable
-		/* Accurate value of remain to pay is to sum remaintopay for each invoice
-	     $paiement = $invoice->getSommePaiement();
-	     $creditnotes=$invoice->getSumCreditNotesUsed();
-	     $deposits=$invoice->getSumDepositsUsed();
-	     $alreadypayed=price2num($paiement + $creditnotes + $deposits,'MT');
-	     $remaintopay=price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits,'MT');
-	     */
-		$sql  = "SELECT rowid, total_ttc FROM ".MAIN_DB_PREFIX."facture as f";
-		$sql .= " WHERE fk_soc = ". $this->id;
-		$sql .= " AND entity IN (".getEntity('invoice').")";
-		$sql .= " AND paye = 0";
-		$sql .= " AND fk_statut <> 0";	// Not a draft
-		$sql .= " AND entity IN (".getEntity('invoice').")";
-		//$sql .= " AND (fk_statut <> 3 OR close_code <> 'abandon')";		// Not abandonned for undefined reason
-		$sql .= " AND fk_statut <> 3";		// Not abandonned
-		$sql .= " AND fk_statut <> 2";		// Not clasified as paid
-
-		dol_syslog("get_OutstandingBill", LOG_DEBUG);
-		$resql=$this->db->query($sql);
-		if ($resql)
-		{
-			$outstandingAmount = 0;
-			require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-			$tmpobject=new Facture($this->db);
-			while($obj=$this->db->fetch_object($resql)) {
-				$tmpobject->id=$obj->rowid;
-				$paiement = $tmpobject->getSommePaiement();
-				$creditnotes = $tmpobject->getSumCreditNotesUsed();
-				$deposits = $tmpobject->getSumDepositsUsed();
-				$outstandingAmount+= $obj->total_ttc - $paiement - $creditnotes - $deposits;
-			}
-			return $outstandingAmount;
-		}
-		else
-			return 0;
-	}
-
 	/**
 	 * Return label of status customer is prospect/customer
 	 *
@@ -4007,7 +3956,7 @@ class Societe extends CommonObject
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Renvoi le libelle d'un statut donne
+	 *  Return the label of the customer/prospect status
 	 *
 	 *  @param	int		$statut         Id statut
 	 *  @return	string          		Libelle du statut
