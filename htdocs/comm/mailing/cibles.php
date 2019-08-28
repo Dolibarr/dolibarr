@@ -476,15 +476,15 @@ if ($object->fetch($id) >= 0)
 		print '<tr class="liste_titre_filter">';
 		// EMail
 		print '<td class="liste_titre">';
-		print '<input class="flat maxwidth100" type="text" name="search_email" value="'.dol_escape_htmltag($search_email).'">';
+		print '<input class="flat maxwidth75" type="text" name="search_email" value="'.dol_escape_htmltag($search_email).'">';
 		print '</td>';
 		// Name
 		print '<td class="liste_titre">';
-		print '<input class="flat maxwidth100" type="text" name="search_lastname" value="'.dol_escape_htmltag($search_lastname).'">';
+		print '<input class="flat maxwidth50" type="text" name="search_lastname" value="'.dol_escape_htmltag($search_lastname).'">';
 		print '</td>';
 		// Firstname
 		print '<td class="liste_titre">';
-		print '<input class="flat maxwidth100" type="text" name="search_firstname" value="'.dol_escape_htmltag($search_firstname).'">';
+		print '<input class="flat maxwidth50" type="text" name="search_firstname" value="'.dol_escape_htmltag($search_firstname).'">';
 		print '</td>';
 		// Other
 		print '<td class="liste_titre">';
