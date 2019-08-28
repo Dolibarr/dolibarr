@@ -7557,12 +7557,13 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 					$i2++;	// a criteria was added to string
 				}
 			}
-			elseif ($mode == 2)
+			elseif ($mode == 2 || $mode == -2)
 			{
-				$newres .= ($i2 > 0 ? ' OR ' : '') . $field . " IN (" . $db->escape(trim($crit)) . ")";
+				$newres .= ($i2 > 0 ? ' OR ' : '') . $field . " ".($mode == -2 ? 'NOT ' : '')."IN (" . $db->escape(trim($crit)) . ")";
+				if ($mode == -2) $newres .= ' OR '.$field.' IS NULL';
 				$i2++;	// a criteria was added to string
 			}
-			elseif ($mode == 3)
+			elseif ($mode == 3 || $mode == -3)
 			{
 				$tmparray=explode(',', trim($crit));
 				if (count($tmparray))
@@ -7576,9 +7577,10 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 							$listofcodes.="'".$db->escape(trim($val))."'";
 						}
 					}
-					$newres .= ($i2 > 0 ? ' OR ' : '') . $field . " IN (" . $listofcodes . ")";
+					$newres .= ($i2 > 0 ? ' OR ' : '') . $field . " ".($mode == -3 ? 'NOT ' : '')."IN (" . $listofcodes . ")";
 					$i2++;	// a criteria was added to string
 				}
+				if ($mode == -3) $newres .= ' OR '.$field.' IS NULL';
 			}
 			elseif ($mode == 4)
 			{
