@@ -808,9 +808,9 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
         if ($action != 'add_paiement')
         {
         	$checkboxlabel=$langs->trans("ClosePaidInvoicesAutomatically");
-        	if ($facture->type == 2) $checkboxlabel=$langs->trans("ClosePaidCreditNotesAutomatically");
+        	if ($facture->type == Facture::TYPE_CREDIT_NOTE) $checkboxlabel=$langs->trans("ClosePaidCreditNotesAutomatically");
         	$buttontitle=$langs->trans('ToMakePayment');
-        	if ($facture->type == 2) $buttontitle=$langs->trans('ToMakePaymentBack');
+        	if ($facture->type == Facture::TYPE_CREDIT_NOTE) $buttontitle=$langs->trans('ToMakePaymentBack');
 
         	print '<br><div class="center">';
         	print '<input type="checkbox" checked name="closepaidinvoices"> '.$checkboxlabel;
