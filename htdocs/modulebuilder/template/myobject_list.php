@@ -107,6 +107,7 @@ if (! $sortfield) $sortfield="t.".key($object->fields);   // Set here default se
 if (! $sortorder) $sortorder="ASC";
 
 // Security check
+if (empty($conf->mymodule->enabled)) accessforbidden('Module not enabled');
 $socid=0;
 if ($user->societe_id > 0)	// Protection if external user
 {

@@ -39,7 +39,7 @@
 // Protection
 if (empty($objectclass) || empty($uploaddir))
 {
-	dol_print_error(null, 'include of actions_massactions.inc.php is done but var $massaction or $objectclass or $uploaddir was not defined');
+	dol_print_error(null, 'include of actions_massactions.inc.php is done but var $objectclass or $uploaddir was not defined');
 	exit;
 }
 
