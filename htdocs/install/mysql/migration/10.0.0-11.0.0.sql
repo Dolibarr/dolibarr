@@ -78,3 +78,6 @@ UPDATE llx_bank_url set url = REPLACE( url, 'compta/salaries/', 'salaries/');
 ALTER TABLE llx_stock_mouvement ADD COLUMN fk_projet INTEGER NOT NULL DEFAULT 0 AFTER model_pdf;
 
 ALTER TABLE llx_oauth_token ADD COLUMN fk_soc integer DEFAULT NULL after token;
+
+ALTER TABLE llx_mailing_cibles ADD COLUMN tms timestamp;
+
