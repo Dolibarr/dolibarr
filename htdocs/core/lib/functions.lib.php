@@ -105,7 +105,7 @@ function setEntity($currentobject)
 {
 	global $conf, $mc;
 
-	if (is_object($mc))
+	if (is_object($mc) && method_exists($mc, 'setEntity'))
 	{
 		return $mc->setEntity($currentobject);
 	}
