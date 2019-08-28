@@ -338,7 +338,7 @@ if ($object->fetch($id) >= 0)
 
 					print '<div class="tagtd">';
 					if (empty($obj->picto)) $obj->picto='generic';
-					print img_object($langs->trans("EmailingTargetSelector").': '.get_class($obj), $obj->picto);
+					print img_object($langs->trans("EmailingTargetSelector").': '.get_class($obj), $obj->picto, 'class="valignmiddle pictomodule"');
 					print ' ';
 					print $obj->getDesc();
 					print '</div>';
