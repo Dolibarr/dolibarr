@@ -402,7 +402,8 @@ if ($object->fetch($id) >= 0)
 	}
 
 	// List of selected targets
-	$sql  = "SELECT mc.rowid, mc.lastname, mc.firstname, mc.email, mc.other, mc.statut, mc.date_envoi, mc.source_url, mc.source_id, mc.source_type, mc.error_text";
+	$sql  = "SELECT mc.rowid, mc.lastname, mc.firstname, mc.email, mc.other, mc.statut, mc.date_envoi, mc.tms,";
+	$sql .= " mc.source_url, mc.source_id, mc.source_type, mc.error_text";
 	$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
 	$sql .= " WHERE mc.fk_mailing=".$object->id;
 	if ($search_lastname)  $sql.= natural_search("mc.lastname", $search_lastname);
@@ -494,10 +495,16 @@ if ($object->fetch($id) >= 0)
 		print '&nbsp';
 		print '</td>';
 
+		// Date last update
+		print '<td class="liste_titre">';
+		print '&nbsp';
+		print '</td>';
+
 		// Date sending
 		print '<td class="liste_titre">';
 		print '&nbsp';
 		print '</td>';
+
 		//Statut
 		print '<td class="liste_titre right">';
 		print $formmailing->selectDestinariesStatus($search_dest_status, 'search_dest_status', 1);
@@ -515,14 +522,10 @@ if ($object->fetch($id) >= 0)
 		print_liste_field_titre("Firstname", $_SERVER["PHP_SELF"], "mc.firstname", $param, "", "", $sortfield, $sortorder);
 		print_liste_field_titre("OtherInformations", $_SERVER["PHP_SELF"], "", $param, "", "", $sortfield, $sortorder);
 		print_liste_field_titre("Source", $_SERVER["PHP_SELF"], "", $param, "", 'align="center"', $sortfield, $sortorder);
+		// Date last update
+		print_liste_field_titre("DateLastModification", $_SERVER["PHP_SELF"], "", $param, "", 'align="center"', $sortfield, $sortorder);
 		// Date sending
-		if ($object->statut < 2) {
-			print_liste_field_titre('');
-		}
-		else
-		{
-			print_liste_field_titre("DateSending", $_SERVER["PHP_SELF"], "mc.date_envoi", $param, '', 'align="center"', $sortfield, $sortorder);
-		}
+		print_liste_field_titre("DateSending", $_SERVER["PHP_SELF"], "mc.date_envoi", $param, '', 'align="center"', $sortfield, $sortorder);
 		print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "mc.statut", $param, '', 'class="right"', $sortfield, $sortorder);
 		print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch ');
 		print '</tr>';
@@ -583,16 +586,25 @@ if ($object->fetch($id) >= 0)
                 }
 				print '</td>';
 
+				// Date last update
+				print '<td class="center">';
+				print dol_print_date($obj->tms, 'dayhour');
+				print '</td>';
+
 				// Status of recipient sending email (Warning != status of emailing)
 				if ($obj->statut == 0)
 				{
+					// Date sent
 					print '<td align="center">&nbsp;</td>';
+
 					print '<td class="nowrap right">'.$langs->trans("MailingStatusNotSent");
 					print '</td>';
 				}
 				else
 				{
+					// Date sent
 					print '<td align="center">'.$obj->date_envoi.'</td>';
+
 					print '<td class="nowrap right">';
 					print $object::libStatutDest($obj->statut, 2, $obj->error_text);
 					print '</td>';
