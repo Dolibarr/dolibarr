@@ -523,7 +523,7 @@ if ($object->fetch($id) >= 0)
 		print_liste_field_titre("OtherInformations", $_SERVER["PHP_SELF"], "", $param, "", "", $sortfield, $sortorder);
 		print_liste_field_titre("Source", $_SERVER["PHP_SELF"], "", $param, "", 'align="center"', $sortfield, $sortorder);
 		// Date last update
-		print_liste_field_titre("DateLastModification", $_SERVER["PHP_SELF"], "", $param, "", 'align="center"', $sortfield, $sortorder);
+		print_liste_field_titre("DateLastModification", $_SERVER["PHP_SELF"], "mc.tms", $param, "", 'align="center"', $sortfield, $sortorder);
 		// Date sending
 		print_liste_field_titre("DateSending", $_SERVER["PHP_SELF"], "mc.date_envoi", $param, '', 'align="center"', $sortfield, $sortorder);
 		print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "mc.statut", $param, '', 'class="right"', $sortfield, $sortorder);
