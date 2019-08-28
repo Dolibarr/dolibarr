@@ -63,8 +63,8 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
     		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Label")), null, 'errors');
     		return -2;
     	}
-    	if (! preg_match('/^(price|sellist|date|varchar|double|text|html)/', $addfieldentry['type'])
-    		&& ! preg_match('/^(boolean|integer|real|timestamp)$/', $addfieldentry['type']))
+    	if (! preg_match('/^(integer|price|sellist|date|varchar|double|text|html)/', $addfieldentry['type'])
+    		&& ! preg_match('/^(boolean|real|timestamp)$/', $addfieldentry['type']))
     	{
     		setEventMessages($langs->trans('BadValueForType', $objectname), null, 'errors');
     		return -2;
