@@ -511,7 +511,8 @@ function print_submenu($db,&$tabMenu, $parentMenu)
 	print_start_menu_array();
 	$end_menu_to_close = 0;
 	$onlyLevel0 = false;//!$user->admin;
-	for($s = 0; $s < count($subMenu); $s++ )
+	$subMenuCount = count($subMenu);
+	for($s = 0; $s < $subMenuCount; $s++ )
 	{
 		$showMenu = (!empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED) AND $subMenu[$s]["enabled"]);
 		$sub = $subMenu[$s];
