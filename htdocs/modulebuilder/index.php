@@ -1542,7 +1542,7 @@ elseif (! empty($module))
 
 		if (realpath($dirread.'/'.$modulelowercase) != $dirread.'/'.$modulelowercase)
 		{
-			print $langs->trans("RealPathOfModule").' : <strong>'.realpath($dirread.'/'.$modulelowercase).'</strong><br>';
+			print '<span class="opacitymedium">'.$langs->trans("RealPathOfModule").' :</span> <strong>'.realpath($dirread.'/'.$modulelowercase).'</strong><br>';
 		}
 		print '<br>';
 
