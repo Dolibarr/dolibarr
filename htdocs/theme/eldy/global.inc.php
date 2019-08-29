@@ -1777,28 +1777,6 @@ a.tmenuimage:hover{
     <?php } ?>
 }
 
-#tmenu_tooltip>.tmenudiv>ul.tmenu {
-	display: inline-block !important;//to center top menu buttons
-}
-
-#tmenu_tooltip>.tmenudiv {
-	text-align: center;//to center top menu buttons
-}
-
-#id-right {
-	z-index: 1;
-}
-
-div#tmenu_tooltip {
-	box-shadow: 0 4px 8px -4px!important
-}
-
-body>div#id-container>.side-nav {
-	box-shadow: 2px 2px 4px 0px #aaa;
-	z-index: 2;
-	position: relative;
-}
-
 .disabledLink {
 	opacity: .3
 }
