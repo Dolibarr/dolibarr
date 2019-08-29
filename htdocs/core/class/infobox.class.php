@@ -35,7 +35,13 @@ class InfoBox
      */
     public static function getListOfPagesForBoxes()
     {
-        return array(0 => 'Home',
+		global $conf;
+		
+		if($conf->global->MAIN_FEATURES_LEVEL < 2)
+        	return array(0 => 'Home');
+		else
+			{ 
+			return array(0 => 'Home', 
 			1 => 'userhome',
 			2 => 'membersindex',
 			3 => 'thirdpartiesindex',
@@ -62,6 +68,7 @@ class InfoBox
 			24 => 'expensereportindex',
 			25 => 'mailingindex',
 			26 => 'opensurveyindex');
+			}
     }
 
     /**
