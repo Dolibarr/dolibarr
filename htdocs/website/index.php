@@ -214,11 +214,11 @@ $htmlheadercontentdefault.='-->'."\n";
  */
 
 // Protections
-if ($action == 'updatesource' && (GETPOST('refreshsite_x') || GETPOST('refreshsite.x') || GETPOST('refreshpage_x') || GETPOST('refreshpage.x')))
+if (GETPOST('refreshsite') || GETPOST('refreshsite_x') || GETPOST('refreshsite.x') ||  GETPOST('refreshpage') || GETPOST('refreshpage_x') || GETPOST('refreshpage.x'))
 {
-    $action = 'preview';    // To avoid to update another page or another site when we click on button to select another site or page.
+    $action = 'preview';    // To avoid to make an action on another page or another site when we click on button to select another site or page.
 }
-if (GETPOST('refreshsite', 'alpha'))		// If we change the site, we reset the pageid and cancel addsite action.
+if (GETPOST('refreshsite', 'alpha') || GETPOST('refreshsite.x', 'alpha') || GETPOST('refreshsite_x', 'alpha'))		// If we change the site, we reset the pageid and cancel addsite action.
 {
     $pageid=0;
     if ($action == 'addsite') $action = 'preview';
