@@ -1,0 +1,17 @@
+MRPArea=بخش برنامه‌ریزی مواد اولیه
+MenuBOM=صورت‌حساب‌های مواد
+LatestBOMModified=آخرین %s صورت‌حساب مواد تغییر یافته
+BillOfMaterials=صورت‌حساب مواد
+BOMsSetup=برپاسازی واحد صورت‌حساب مواد
+ListOfBOMs=فهرست صورت‌حساب‌های مواد - BOM
+NewBOM=یک صورت‌حساب مواد جدید
+ProductBOMHelp=محصول قابل ساخت با این صورت‌حساب موا
+BOMsNumberingModules=چگونگی عدددهی صورت‌حساب مواد
+BOMsModelModule=قالب‌های مستندات صورت‌حساب موا
+FreeLegalTextOnBOMs=متن آزاد روی سند صورت‌حساب مواد
+WatermarkOnDraftBOMs=نوشتۀ کم‌رنگ روی پیش‌نویس صورت‌حساب موا
+ConfirmCloneBillOfMaterials=آیا مطمئنید می‌خواهید این صورت‌حساب مواد را نسخه‌برداری کنید؟
+ManufacturingEfficiency=بازده تولید
+ValueOfMeansLoss=مقدار 0.95 به معنای یک میانگین 5 %% ضرر در طول تولید هست
+DeleteBillOfMaterials=Delete Bill Of Materials
+ConfirmDeleteBillOfMaterials=Are you sure you want to delete this Bill Of Material?

@@ -60,7 +60,7 @@ class MyObject extends CommonObject
 
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
-	const STATUS_DISABLED = -1;
+	const STATUS_CANCELED = 9;
 
 
 	/**
@@ -105,7 +105,7 @@ class MyObject extends CommonObject
 		'fk_user_modif' =>array('type'=>'integer',      'label'=>'UserModif',        'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>511),
 		//'fk_user_valid' =>array('type'=>'integer',      'label'=>'UserValidation',        'enabled'=>1, 'visible'=>-1, 'position'=>512),
 		'import_key'    =>array('type'=>'varchar(14)',  'label'=>'ImportId',         'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'index'=>0,  'position'=>1000),
-	    'status'        =>array('type'=>'integer',      'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'notnull'=> 1, 'default'=>0, 'index'=>1,  'position'=>1000, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Active', -1=>'Canceled')),
+	    'status'        =>array('type'=>'integer',      'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'notnull'=> 1, 'default'=>0, 'index'=>1,  'position'=>1000, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Active', 9=>'Canceled')),
 	);
 
 	/**
@@ -165,13 +165,12 @@ class MyObject extends CommonObject
 	// END MODULEBUILDER PROPERTIES
 
 
-
 	// If this object has a subtable with lines
 
 	/**
 	 * @var int    Name of subtable line
 	 */
-	//public $table_element_line = 'myobjectdet';
+	//public $table_element_line = 'mymodule_myobjectline';
 
 	/**
 	 * @var int    Field with ID of parent key if this field has a parent
@@ -184,9 +183,14 @@ class MyObject extends CommonObject
 	//public $class_element_line = 'MyObjectline';
 
 	/**
-	 * @var array  Array of child tables (child tables to delete before deleting a record)
+	 * @var array	List of child tables. To test if we can delete object.
 	 */
-	//protected $childtables=array('myobjectdet');
+	//protected $childtables=array();
+
+	/**
+	 * @var array	List of child tables. To know object to delete on cascade.
+	 */
+	//protected $childtablesoncascade=array('mymodule_myobjectdet');
 
 	/**
 	 * @var MyObjectLine[]     Array of subtable lines
@@ -221,11 +225,11 @@ class MyObject extends CommonObject
 		// Translate some data of arrayofkeyval
 		foreach($this->fields as $key => $val)
 		{
-			if (is_array($this->fields['status']['arrayofkeyval']))
+			if (is_array($val['arrayofkeyval']))
 			{
-				foreach($this->fields['status']['arrayofkeyval'] as $key2 => $val2)
+				foreach($val['arrayofkeyval'] as $key2 => $val2)
 				{
-					$this->fields['status']['arrayofkeyval'][$key2]=$langs->trans($val2);
+					$this->fields[$key]['arrayofkeyval'][$key2]=$langs->trans($val2);
 				}
 			}
 		}
@@ -262,11 +266,18 @@ class MyObject extends CommonObject
 	    $this->db->begin();
 
 	    // Load source object
-	    $object->fetchCommon($fromid);
+	    $result = $object->fetchCommon($fromid);
+	    if ($result > 0 && ! empty($object->table_element_line)) $object->fetchLines();
+
+	    // get lines so they will be clone
+	    //foreach($this->lines as $line)
+	    //	$line->fetch_optionals();
+
 	    // Reset some properties
 	    unset($object->id);
 	    unset($object->fk_user_creat);
 	    unset($object->import_key);
+
 
 	    // Clear fields
 	    $object->ref = "copy_of_".$object->ref;
@@ -294,6 +305,25 @@ class MyObject extends CommonObject
 	        $error++;
 	        $this->error = $object->error;
 	        $this->errors = $object->errors;
+	    }
+
+	    if (! $error)
+	    {
+	    	// copy internal contacts
+	    	if ($this->copy_linked_contact($object, 'internal') < 0)
+	    	{
+	    		$error++;
+	    	}
+	    }
+
+	    if (! $error)
+	    {
+	    	// copy external contacts if same company
+	    	if (property_exists($this, 'socid') && $this->socid == $object->socid)
+	    	{
+	    		if ($this->copy_linked_contact($object, 'external') < 0)
+	    			$error++;
+	    	}
 	    }
 
 	    unset($object->context['createfromclone']);
@@ -327,14 +357,14 @@ class MyObject extends CommonObject
 	 *
 	 * @return int         <0 if KO, 0 if not found, >0 if OK
 	 */
-	/*public function fetchLines()
+	public function fetchLines()
 	{
 		$this->lines=array();
 
-		// Load lines with object MyObjectLine
+		$result = $this->fetchLinesCommon();
+		return $result;
+	}
 
-		return count($this->lines)?1:0;
-	}*/
 
 	/**
 	 * Load list of objects in memory from the database.
@@ -355,11 +385,11 @@ class MyObject extends CommonObject
 
 		$records=array();
 
-		$sql = 'SELECT';
-		$sql .= ' t.rowid';
-		// TODO Get all fields
+		$sql = 'SELECT ';
+		$sql .= $this->getFieldList();
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element. ' as t';
-		$sql .= ' WHERE t.entity = '.$conf->entity;
+		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) $sql .= ' WHERE t.entity IN ('.getEntity($this->table_element).')';
+		else $sql .= ' WHERE 1 = 1';
 		// Manage filter
 		$sqlwhere = array();
 		if (count($filter) > 0) {
@@ -398,11 +428,8 @@ class MyObject extends CommonObject
 			    $obj = $this->db->fetch_object($resql);
 
 				$record = new self($this->db);
+				$record->setVarsFromFetchObj($obj);
 
-				$record->id = $obj->rowid;
-				// TODO Get other fields
-
-				//var_dump($record->id);
 				$records[$record->id] = $record;
 
 				$i++;
@@ -441,6 +468,25 @@ class MyObject extends CommonObject
 	{
 		return $this->deleteCommon($user, $notrigger);
 		//return $this->deleteCommon($user, $notrigger, 1);
+	}
+
+	/**
+	 *  Delete a line of object in database
+	 *
+	 *	@param  User	$user       User that delete
+	 *  @param	int		$idline		Id of line to delete
+	 *  @param 	bool 	$notrigger  false=launch triggers after, true=disable triggers
+	 *  @return int         		>0 if OK, <0 if KO
+	 */
+	public function deleteLine(User $user, $idline, $notrigger = false)
+	{
+		if ($this->status < 0)
+		{
+			$this->error = 'ErrorDeleteLineNotAllowedByObjectStatus';
+			return -2;
+		}
+
+		return $this->deleteLineCommon($user, $idline, $notrigger);
 	}
 
     /**
@@ -485,13 +531,6 @@ class MyObject extends CommonObject
             }
             $linkclose.=' title="'.dol_escape_htmltag($label, 1).'"';
             $linkclose.=' class="classfortooltip'.($morecss?' '.$morecss:'').'"';
-
-            /*
-             $hookmanager->initHooks(array('myobjectdao'));
-             $parameters=array('id'=>$this->id);
-             $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-             if ($reshook > 0) $linkclose = $hookmanager->resPrint;
-             */
         }
         else $linkclose = ($morecss?' class="'.$morecss.'"':'');
 
@@ -541,8 +580,9 @@ class MyObject extends CommonObject
 		{
 			global $langs;
 			//$langs->load("mymodule");
-			$this->labelstatus[1] = $langs->trans('Enabled');
-			$this->labelstatus[0] = $langs->trans('Disabled');
+			$this->labelstatus[self::STATUS_DRAFT] = $langs->trans('Draft');
+			$this->labelstatus[self::STATUS_VALIDATED] = $langs->trans('Enabled');
+			$this->labelstatus[self::STATUS_CANCELED] = $langs->trans('Disabled');
 		}
 
 		if ($mode == 0)
@@ -555,28 +595,23 @@ class MyObject extends CommonObject
 		}
 		elseif ($mode == 2)
 		{
-			if ($status == 1) return img_picto($this->labelstatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
-			elseif ($status == 0) return img_picto($this->labelstatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
+			return img_picto($this->labelstatus[$status], 'statut'.$status, '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
 		}
 		elseif ($mode == 3)
 		{
-			if ($status == 1) return img_picto($this->labelstatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle');
-			elseif ($status == 0) return img_picto($this->labelstatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle');
+			return img_picto($this->labelstatus[$status], 'statut'.$status, '', false, 0, 0, '', 'valignmiddle');
 		}
 		elseif ($mode == 4)
 		{
-			if ($status == 1) return img_picto($this->labelstatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
-			elseif ($status == 0) return img_picto($this->labelstatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
+			return img_picto($this->labelstatus[$status], 'statut'.$status, '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
 		}
 		elseif ($mode == 5)
 		{
-			if ($status == 1) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle');
-			elseif ($status == 0) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle');
+			return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status], 'statut'.$status, '', false, 0, 0, '', 'valignmiddle');
 		}
 		elseif ($mode == 6)
 		{
-			if ($status == 1) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle');
-			elseif ($status == 0) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle');
+			return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status], 'statut'.$status, '', false, 0, 0, '', 'valignmiddle');
 		}
 	}
 
@@ -653,8 +688,8 @@ class MyObject extends CommonObject
 	{
 	    $this->lines=array();
 
-	    $objectline = new BOMLine($this->db);
-	    $result = $objectline->fetchAll('', '', 0, 0, array('fk_myobject'=>$this->id));
+	    $objectline = new MyObjectLine($this->db);
+	    $result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_myobject = '.$this->id));
 
 	    if (is_numeric($result))
 	    {
@@ -665,8 +700,41 @@ class MyObject extends CommonObject
 	    else
 	    {
 	        $this->lines = $result;
-	        return $this->lines();
+	        return $this->lines;
 	    }
+	}
+
+	/**
+	 *  Create a document onto disk according to template module.
+	 *
+	 *  @param	    string		$modele			Force template to use ('' to not force)
+	 *  @param		Translate	$outputlangs	objet lang a utiliser pour traduction
+	 *  @param      int			$hidedetails    Hide details of lines
+	 *  @param      int			$hidedesc       Hide description
+	 *  @param      int			$hideref        Hide ref
+	 *  @param      null|array  $moreparams     Array to provide more information
+	 *  @return     int         				0 if KO, 1 if OK
+	 */
+	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
+	{
+		global $conf,$langs;
+
+		$langs->load("mymodule@mymodule");
+
+		if (! dol_strlen($modele)) {
+
+			$modele = 'standard';
+
+			if ($this->modelpdf) {
+				$modele = $this->modelpdf;
+			} elseif (! empty($conf->global->MYOBJECT_ADDON_PDF)) {
+				$modele = $conf->global->MYOBJECT_ADDON_PDF;
+			}
+		}
+
+		$modelpath = "core/modules/mymodule/doc/";
+
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 	}
 
 	/**
@@ -703,14 +771,8 @@ class MyObject extends CommonObject
 /**
  * Class MyObjectLine. You can also remove this and generate a CRUD class for lines objects.
  */
-/*
 class MyObjectLine
 {
-    // @var int ID
-    public $id;
-    // @var mixed Sample line property 1
-    public $prop1;
-    // @var mixed Sample line property 2
-    public $prop2;
+	// To complete with content of an object MyObjectLine
+	// We should have a field rowid, fk_myobject and position
 }
-*/

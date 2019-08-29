@@ -1030,9 +1030,8 @@ if ($id)
     if ($id == 10 && empty($conf->global->FACTURE_TVAOPTION))
     {
     	print info_admin($langs->trans("VATIsUsedIsOff", $langs->transnoentities("Setup"), $langs->transnoentities("CompanyFoundation")));
+    	print "<br>\n";
     }
-
-    print "<br>\n";
 
     // Form to add a new line
     if ($tabname[$id])
@@ -1059,7 +1058,7 @@ if ($id)
             $valuetoshow=$langs->trans($valuetoshow);   // try to translate
             $class='';
 
-            if ($fieldlist[$field]=='pos')             { $valuetoshow=$langs->trans("Position"); $class='width100'; }
+            if ($fieldlist[$field]=='pos')             { $valuetoshow=$langs->trans("Position"); $class='maxwidth100'; }
             if ($fieldlist[$field]=='source')          { $valuetoshow=$langs->trans("Contact"); }
             if ($fieldlist[$field]=='price')           { $valuetoshow=$langs->trans("PriceUHT"); }
             if ($fieldlist[$field]=='taux')            {
@@ -1077,7 +1076,7 @@ if ($id)
 				if ($tabname[$id] == MAIN_DB_PREFIX."c_paiement") $valuetoshow=$form->textwithtooltip($langs->trans("Type"), $langs->trans("TypePaymentDesc"), 2, 1, img_help(1, ''));
 				else $valuetoshow=$langs->trans("Type");
             }
-            if ($fieldlist[$field]=='code')            { $valuetoshow=$langs->trans("Code"); $class='width100'; }
+            if ($fieldlist[$field]=='code')            { $valuetoshow=$langs->trans("Code"); $class='maxwidth100'; }
             if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label')
             {
             	$valuetoshow=$form->textwithtooltip($langs->trans("Label"), $langs->trans("LabelUsedByDefault"), 2, 1, img_help(1, ''));
@@ -1603,7 +1602,6 @@ if ($id)
                             $class='tddict';
                             if ($fieldlist[$field] == 'note' && $id == 10) $class.=' tdoverflowmax200';
                             if ($fieldlist[$field] == 'tracking') $class.=' tdoverflowauto';
-                            if ($fieldlist[$field] == 'code') $class.=' width100';
                             if ($fieldlist[$field] == 'position') $class.=' right';
                             if ($fieldlist[$field] == 'localtax1_type') $class.=' nowrap';
                             if ($fieldlist[$field] == 'localtax2_type') $class.=' nowrap';
@@ -1623,7 +1621,11 @@ if ($id)
                     	elseif ($obj->code == 'RECEP') { $iserasable = 0; $canbedisabled = 0; }
                     	elseif ($obj->code == 'EF0')   { $iserasable = 0; $canbedisabled = 0; }
                     }
-
+					if ($id == 25 && in_array($obj->code, array('banner', 'blogpost', 'other', 'page')))
+					{
+						$iserasable = 0; $canbedisabled = 0;
+						if (in_array($obj->code, array('banner'))) $canbedisabled = 1;
+					}
                     if (isset($obj->type) && in_array($obj->type, array('system', 'systemauto'))) { $iserasable=0; }
                     if (in_array($obj->code, array('AC_OTH','AC_OTH_AUTO')) || in_array($obj->type, array('systemauto'))) { $canbedisabled=0; $canbedisabled = 0; }
                     $canbemodified=$iserasable;
@@ -1777,7 +1779,6 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 	global $form;
 	global $region_id;
 	global $elementList,$sourceList,$localtax_typeList;
-	global $bc;
 
 	$formadmin = new FormAdmin($db);
 	$formcompany = new FormCompany($db);
@@ -1904,6 +1905,9 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 		    {
 		        print '<textarea cols="30" rows="'.ROWS_2.'" class="flat" name="'.$fieldlist[$field].'">'.(! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:'').'</textarea>';
 		    }
+            else{
+                print '<input type="hidden" name="'.$fieldlist[$field].'" value="'.$transkey.'">';
+            }
 		    print '</td>';
 		}
 		elseif ($fieldlist[$field] == 'price' || preg_match('/^amount/i', $fieldlist[$field])) {
@@ -1966,10 +1970,16 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 		}
 		else
 		{
-			if ($fieldlist[$field]=='sortorder') $fieldlist[$field]='position';
+
+            $fieldValue = isset($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:'';
+
+			if ($fieldlist[$field]=='sortorder')
+            {
+                $fieldlist[$field]='position';
+            }
 
 			$classtd=''; $class='';
-			if ($fieldlist[$field]=='code') $classtd='width100';
+			if ($fieldlist[$field]=='code') $class='maxwidth100';
 			if (in_array($fieldlist[$field], array('pos', 'use_default', 'affect', 'delay', 'position', 'sortorder', 'sens', 'category_type'))) $class='maxwidth50';
 			if (in_array($fieldlist[$field], array('libelle', 'label', 'tracking'))) $class='quatrevingtpercent';
 			print '<td class="'.$classtd.'">';
@@ -1983,7 +1993,7 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 			    }
 			    if ($tabname == MAIN_DB_PREFIX.'c_payment_term') {
 			        $langs->load("bills");
-			        $transkey="PaymentCondition".strtoupper($obj->code);
+			        $transkey="PaymentConditionShort".strtoupper($obj->code);
 			    }
 			    if ($transkey && $langs->trans($transkey) != $transkey)
 			    {
@@ -1993,8 +2003,11 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 			}
 			if (! $transfound)
 			{
-                print '<input type="text" class="flat'.($class?' '.$class:'').'" value="'.(isset($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:'').'" name="'.$fieldlist[$field].'">';
+                print '<input type="text" class="flat'.($class?' '.$class:'').'" value="'.dol_escape_htmltag($fieldValue).'" name="'.$fieldlist[$field].'">';
 			}
+            else{
+                print '<input type="hidden" name="'.$fieldlist[$field].'" value="'.$transkey.'">';
+            }
 			print '</td>';
 		}
 	}

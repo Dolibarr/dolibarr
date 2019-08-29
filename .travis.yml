@@ -164,12 +164,6 @@ before_script:
     echo
     echo "Set timezone"
     echo 'date.timezone = "Europe/Paris"' >> ~/.phpenv/versions/$PHP_VERSION_NAME/etc/php.ini
-    if [ "$TRAVIS_PHP_VERSION" = '5.4' ]; then
-      # Documentation says it should be available for all PHP versions but it's not for 5.5 and 5.6, 7.0, 7.1, 7.2 and nightly!
-      echo
-      echo "Enabling Memcached for PHP <= 5.4"
-      echo 'extension = memcached.so' >> ~/.phpenv/versions/$PHP_VERSION_NAME/etc/php.ini
-    fi
     phpenv rehash
     echo
 
@@ -294,17 +288,17 @@ script:
   # Ensure we catch errors
   set -e
   #parallel-lint --exclude htdocs/includes --blame .
-  parallel-lint --exclude htdocs/includes/sabre --exclude htdocs/includes/phpoffice/phpexcel/Classes/PHPExcel/Shared --exclude htdocs/includes/phpoffice/PhpSpreadsheet --exclude htdocs/includes/sebastian --exclude htdocs/includes/squizlabs/php_codesniffer/tests --exclude htdocs/includes/jakub-onderka/php-parallel-lint/tests --exclude htdocs/includes/mike42/escpos-php/example --exclude htdocs/includes/phpunit/php-token-stream/tests --exclude htdocs/includes/composer/autoload_static.php --blame .
+  parallel-lint --exclude dev/namespacemig --exclude htdocs/includes/sabre --exclude htdocs/includes/phpoffice/phpexcel/Classes/PHPExcel/Shared --exclude htdocs/includes/phpoffice/PhpSpreadsheet --exclude htdocs/includes/sebastian --exclude htdocs/includes/squizlabs/php_codesniffer/tests --exclude htdocs/includes/jakub-onderka/php-parallel-lint/tests --exclude htdocs/includes/mike42/escpos-php/example --exclude htdocs/includes/phpunit/php-token-stream/tests --exclude htdocs/includes/composer/autoload_static.php --blame .
   set +e
   echo
 
 - |
-  echo "Checking coding style"
+  echo "Checking coding style (excluding Pull Requests builds)"
   # Ensure we catch errors
   set -e
   # Exclusions are defined in the ruleset.xml file
   #phpcs -s -n -p -d memory_limit=-1 --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 .
-  phpcs -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --runtime-set ignore_warnings_on_exit true .
+  if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then phpcs -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --runtime-set ignore_warnings_on_exit true .; fi
   set +e
   echo
 
@@ -350,6 +344,9 @@ script:
   php upgrade.php 9.0.0 10.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade9001000.log
   php upgrade2.php 9.0.0 10.0.0 > $TRAVIS_BUILD_DIR/upgrade9001000-2.log
   php step5.php 9.0.0 10.0.0 > $TRAVIS_BUILD_DIR/upgrade9001000-3.log
+  php upgrade.php 10.0.0 11.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade9001000.log
+  php upgrade2.php 10.0.0 11.0.0 > $TRAVIS_BUILD_DIR/upgrade9001000-2.log
+  php step5.php 10.0.0 11.0.0 > $TRAVIS_BUILD_DIR/upgrade9001000-3.log
   # Enable modules not enabled into original dump
   php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_API,MAIN_MODULE_SUPPLIERPROPOSAL,MAIN_MODULE_WEBSITE,MAIN_MODULE_TICKETSUP,MAIN_MODULE_ACCOUNTING > $TRAVIS_BUILD_DIR/enablemodule.log
   echo $?

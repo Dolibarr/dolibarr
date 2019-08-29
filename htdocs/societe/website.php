@@ -230,9 +230,9 @@ dol_fiche_end();
 $newcardbutton = '';
 if (! empty($conf->website->enabled)) {
 	if (! empty($user->rights->societe->lire)) {
-        $morehtmlright.= dolGetButtonTitle($langs->trans("AddWebsiteAccount"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/website/websiteaccount_card.php?action=create&fk_soc='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id));
+		$newcardbutton.= dolGetButtonTitle($langs->trans("AddWebsiteAccount"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/website/websiteaccount_card.php?action=create&fk_soc='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id));
     } else {
-        $morehtmlright.= dolGetButtonTitle($langs->trans("AddAction"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/website/websiteaccount_card.php?action=create&fk_soc='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id), '', 0);
+    	$newcardbutton.= dolGetButtonTitle($langs->trans("AddAction"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/website/websiteaccount_card.php?action=create&fk_soc='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id), '', 0);
 	}
 }
 
@@ -248,14 +248,15 @@ foreach($objectwebsiteaccount->fields as $key => $val)
 	$sql.='t.'.$key.', ';
 }
 // Add fields from extrafields
-foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+if (! empty($extrafields->attributes[$object->table_element]['label']))
+	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? "ef.".$key.' as options_'.$key.', ' : '');
 // Add fields from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters, $objectwebsiteaccount);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
 $sql=preg_replace('/, $/', '', $sql);
 $sql.= " FROM ".MAIN_DB_PREFIX."societe_account as t";
-if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_account_extrafields as ef on (t.rowid = ef.fk_object)";
+if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (t.rowid = ef.fk_object)";
 if ($objectwebsiteaccount->ismultientitymanaged == 1) $sql.= " WHERE t.entity IN (".getEntity('societeaccount').")";
 else $sql.=" WHERE 1 = 1";
 $sql.=" AND fk_soc = ".$object->id;
@@ -428,6 +429,16 @@ foreach ($extrafields->attribute_computed as $key => $val)
 }
 
 
+// Detect if we need a fetch on each output line
+$needToFetchEachLine=0;
+if (is_array($extrafields->attributes[$object->table_element]['computed']) && count($extrafields->attributes[$object->table_element]['computed']) > 0)
+{
+	foreach ($extrafields->attributes[$object->table_element]['computed'] as $key => $val)
+	{
+		if (preg_match('/\$object/', $val)) $needToFetchEachLine++;  // There is at least one compute field that use $object
+	}
+}
+
 // Loop on record
 // --------------------------------------------------------------------
 $i=0;
@@ -441,7 +452,7 @@ while ($i < min($num, $limit))
 	$objectwebsiteaccount->id = $obj->rowid;
 	foreach($objectwebsiteaccount->fields as $key => $val)
 	{
-		if (isset($obj->$key)) $objectwebsiteaccount->$key = $obj->$key;
+		if (property_exists($obj, $key)) $object->$key = $obj->$key;
 	}
 
 	// Show here line of result

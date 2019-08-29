@@ -329,12 +329,12 @@ if (empty($reshook)) {
 		{
 			$error = 0;
 
-			if (!$_POST["lastname"]) {
+			if (! GETPOST("lastname", 'alpha')) {
 				setEventMessages($langs->trans("NameNotDefined"), null, 'errors');
 				$action = "edit";       // Go back to create page
 				$error ++;
 			}
-			if (!$_POST["login"]) {
+			if (! GETPOST("login", 'alpha')) {
 				setEventMessages($langs->trans("LoginNotDefined"), null, 'errors');
 				$action = "edit";       // Go back to create page
 				$error ++;
@@ -1790,7 +1790,7 @@ else
 				if (! empty($object->email))
 				{
 					$langs->load("mails");
-					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=presend&amp;mode=init#presend">'.$langs->trans('SendMail').'</a></div>';
+					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=presend&amp;mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a></div>';
 				}
 				else
 				{

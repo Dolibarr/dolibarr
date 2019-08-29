@@ -151,7 +151,7 @@ if ($resql)
 	print_liste_field_titre("DateCreation", $_SERVER["PHP_SELF"], "datec", $addu, "", '', $sortfield, $sortorder, 'right ');
 	print "</tr>\n";
 
-	// Lignes des champs de filtre
+	// Fields title search
 	print '<tr class="liste_titre">';
 
 	print '<td class="liste_titre left">';

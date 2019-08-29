@@ -1041,7 +1041,7 @@ $reshook = $hookmanager->executeHooks('replaceThirdparty', array(
 
 		$i=0;
 
-		$accounts =[];
+		$accounts = array();
 
 		if ($result)
 		{
@@ -1061,12 +1061,12 @@ $reshook = $hookmanager->executeHooks('replaceThirdparty', array(
 		}
 
 
-		$fields = ['socid', 'default_rib', 'frstrecur', '1000110000001', 'datec', 'datem', 'label', 'bank', 'bic', 'iban', 'id', 'rum'];
+		$fields = array('socid', 'default_rib', 'frstrecur', '1000110000001', 'datec', 'datem', 'label', 'bank', 'bic', 'iban', 'id', 'rum');
 
-		$returnAccounts = [];
+		$returnAccounts = array();
 
 		foreach($accounts as $account){
-			$object= [];
+			$object= array();
 			foreach($account as $key => $value)
 				if(in_array($key, $fields)){
 					$object[$key] = $value;
@@ -1308,7 +1308,7 @@ $reshook = $hookmanager->executeHooks('replaceThirdparty', array(
 
 		$i=0;
 
-		$accounts =[];
+		$accounts = array();
 
 		$num = $db->num_rows($result);
 		while ($i < $num)
@@ -1322,12 +1322,12 @@ $reshook = $hookmanager->executeHooks('replaceThirdparty', array(
 			$i++;
 		}
 
-		$fields = ['id', 'fk_soc', 'key_account', 'site', 'date_creation', 'tms'];
+		$fields = array('id', 'fk_soc', 'key_account', 'site', 'date_creation', 'tms');
 
-		$returnAccounts = [];
+		$returnAccounts = array();
 
 		foreach($accounts as $account){
-			$object= [];
+			$object= array();
 			foreach($account as $key => $value)
 				if(in_array($key, $fields)){
 					$object[$key] = $value;

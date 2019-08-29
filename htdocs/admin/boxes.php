@@ -169,7 +169,7 @@ if ($action == 'delete')
 
 if ($action == 'switch')
 {
-	// On permute les valeur du champ box_order des 2 lignes de la table boxes
+	// We switch values of field box_order for the 2 lines of table boxes
 	$db->begin();
 
 	$objfrom=new ModeleBoxes($db);

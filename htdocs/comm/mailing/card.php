@@ -424,7 +424,7 @@ if (empty($reshook))
 		$object->sendto = $_POST["sendto"];
 		if (! $object->sendto)
 		{
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("MailTo")), null, 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("MailTo")), null, 'errors');
 			$error++;
 		}
 
@@ -870,7 +870,7 @@ else
                     }
 				    $text.=$langs->trans('ConfirmSendingEmailing').'<br>';
 					$text.=$langs->trans('LimitSendingEmailing', $conf->global->MAILING_LIMIT_SENDBYWEB);
-					print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('SendMailing'), $text, 'sendallconfirmed', $formquestion, '', 1, 300);
+					print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('SendMailing'), $text, 'sendallconfirmed', $formquestion, '', 1, 330, 600);
 				}
 			}
 

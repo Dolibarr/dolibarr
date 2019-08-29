@@ -365,7 +365,7 @@ print '<br>';
 
 
 // Select barcode numbering module
-if ($conf->produit->enabled)
+if ($conf->product->enabled)
 {
 	print load_fiche_titre($langs->trans("BarCodeNumberManager")." (".$langs->trans("Product").")", '', '');
 

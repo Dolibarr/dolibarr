@@ -95,6 +95,10 @@ input.button.massactionconfirmed {
     margin: 4px;
 }
 
+input:invalid, select:invalid {
+    border-color: #ea1212;
+}
+
 /* Focus definitions must be after standard definition */
 textarea:focus {
     /* v6 box-shadow: 0 0 4px #8091BF; */
@@ -133,7 +137,7 @@ input.buttongen {
 	vertical-align: middle;
 }
 input.buttonpayment, button.buttonpayment, div.buttonpayment {
-	min-width: 320px;
+	min-width: 290px;
 	margin-bottom: 15px;
 	background-image: none;
 	line-height: 24px;
@@ -147,12 +151,21 @@ input.buttonpayment, button.buttonpayment, div.buttonpayment {
 	color: #fff;
 	border-radius: 4px;
 }
+div.buttonpayment input:focus {
+    color: #008;
+}
+.buttonpaymentsmall {
+	font-size: 0.65em;
+	padding-left: 5px;
+	padding-right: 5px;
+}
 div.buttonpayment input {
     background-color: unset;
     color: #fff;
     border-bottom: unset;
     font-weight: bold;
     text-transform: uppercase;
+    cursor: pointer;
 }
 input.buttonpaymentcb {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/common/credit_card.png', 1) ?>);
@@ -313,7 +326,7 @@ hr { border: 0; border-top: 1px solid #ccc; }
 	-webkit-box-shadow: 0px 0px 1px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 	box-shadow: 0px 0px 1px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 }
-.button:disabled, .buttonDelete:disabled {
+.button:disabled, .buttonDelete:disabled, .button.disabled {
 	opacity: 0.4;
     box-shadow: none;
     -webkit-box-shadow: none;
@@ -392,6 +405,16 @@ textarea.centpercent {
 .small, small {
     font-size: 85%;
 }
+
+.h1 .small, .h1 small, .h2 .small, .h2 small, .h3 .small, .h3 small, h1 .small, h1 small, h2 .small, h2 small, h3 .small, h3 small {
+    font-size: 65%;
+}
+.h1 .small, .h1 small, .h2 .small, .h2 small, .h3 .small, .h3 small, .h4 .small, .h4 small, .h5 .small, .h5 small, .h6 .small, .h6 small, h1 .small, h1 small, h2 .small, h2 small, h3 .small, h3 small, h4 .small, h4 small, h5 .small, h5 small, h6 .small, h6 small {
+    font-weight: 400;
+    line-height: 1;
+    color: #777;
+}
+
 .center {
     text-align: center;
     margin: 0px auto;
@@ -470,6 +493,24 @@ textarea.centpercent {
     opacity: 0.7;
 }
 
+.text-warning{
+    color : <?php print $textWarning ; ?>
+}
+body[class*="colorblind-"] .text-warning{
+    color : <?php print $colorblind_deuteranopes_textWarning ; ?>
+}
+.text-success{
+    color : <?php print $textSuccess ; ?>
+}
+body[class*="colorblind-"] .text-success{
+    color : <?php print $colorblind_deuteranopes_textSuccess ; ?>
+}
+
+.text-danger{
+    color : <?php print $textDanger ; ?>
+}
+
+
 /* Themes for badges */
 <?php include dol_buildpath($path.'/theme/'.$theme.'/badges.inc.php', 0); ?>
 
@@ -547,13 +588,13 @@ select.flat.selectlimit {
 	margin-right: 10px !important;
 }
 .marginleftonly {
-	margin-left: 10px !important;
+	margin-<?php echo $left; ?>: 10px !important;
 }
 .marginleftonlyshort {
-	margin-left: 4px !important;
+	margin-<?php echo $left; ?>: 4px !important;
 }
 .nomarginleft {
-	margin-left: 0px !important;
+	margin-<?php echo $left; ?>: 0px !important;
 }
 .margintoponly {
 	margin-top: 10px !important;
@@ -622,20 +663,20 @@ select.flat.selectlimit {
 .amountpaymentcomplete {
 	color: #008800;
 	font-weight: bold;
-	font-size: 1.4em;
+	font-size: 1.2em;
 }
 .amountremaintopay {
 	color: #880000;
 	font-weight: bold;
-	font-size: 1.4em;
+	font-size: 1.2em;
 }
 .amountremaintopayback {
 	font-weight: bold;
-	font-size: 1.4em;
+	font-size: 1.2em;
 }
 .amountpaymentneutral {
 	font-weight: bold;
-	font-size: 1.4em;
+	font-size: 1.2em;
 }
 .savingdocmask {
 	margin-top: 6px;
@@ -699,7 +740,7 @@ div.fiche {
     justify-content: flex-start;
 }
 .thumbstat {
-    min-width: 150px;
+    min-width: 148px;
 }
 .thumbstat150 {
     min-width: 168px;
@@ -906,7 +947,7 @@ select.selectarrowonleft option {
 	}
 
 	div.divphotoref {
-		padding-right: 5px;
+		padding-<?php echo $right; ?>: 5px;
 	    padding-bottom: 5px;
 	}
     img.photoref, div.photoref {
@@ -1003,7 +1044,7 @@ td.showDragHandle {
 
 .side-nav {
 	display: table-cell;
-	border-right: 1px solid #d0d0d0;
+	border-<?php echo $right; ?>: 1px solid #d0d0d0;
 	box-shadow: 3px 0 6px -2px #eee;
 	background: rgb(<?php echo $colorbackvmenu1; ?>);
 	transition: left 0.5s ease;
@@ -1172,6 +1213,9 @@ div.secondcolumn div.box {
     	width: auto;
     	padding-bottom: 6px;
     }
+    div.fichetwothirdright div.ficheaddleft {
+    	padding-left: 0;
+	}
     div.fichehalfleft {
     	float: none;
     	width: auto;
@@ -1243,6 +1287,9 @@ div.nopadding {
 .pictowarning {
     vertical-align: text-bottom;
 }
+.pictomodule {
+	width: 14px;
+}
 .fiche .arearef img.pictoedit, .fiche .arearef span.pictoedit,
 .fiche .fichecenter img.pictoedit, .fiche .fichecenter span.pictoedit,
 .tagtdnote span.pictoedit {
@@ -1278,7 +1325,7 @@ div.heightref {
 	min-height: 80px;
 }
 div.divphotoref {
-	padding-right: 20px;
+	padding-<?php echo $right; ?>: 20px;
 }
 div.paginationref {
 	padding-bottom: 10px;
@@ -1340,7 +1387,7 @@ img.photorefnoborder {
 }
 .trextrafieldseparator td {
     /* border-bottom: 2px solid rgb(<?php echo $colorbackhmenu1 ?>) !important; */
-    border-bottom: 2px solid rgb(<?php echo $colortopbordertitle1 ?>) !important;
+    border-bottom: 2px dashed rgb(<?php echo $colortopbordertitle1 ?>) !important;
 }
 
 .tdhrthin {
@@ -1819,6 +1866,9 @@ if (! empty($conf->global->MAIN_LOGIN_BACKGROUND)) {
 }
 .login_table .tdinputlogin input#securitycode {
 	font-size: 1em;
+}
+.login_main_home {
+    word-break: break-word;
 }
 .login_main_message {
 	text-align: center;
@@ -2351,7 +2401,7 @@ span.tabspan {
 }
 
 /* ============================================================================== */
-/* Boutons actions                                                                */
+/* Buttons for actions                                                            */
 /* ============================================================================== */
 <?php include dol_buildpath($path.'/theme/'.$theme.'/btn.inc.php', 0); ?>
 
@@ -2406,6 +2456,10 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 	margin: 0px 0px 0px 0px;
 }
 
+table.tableforemailform tr td {
+    padding-top: 3px;
+    padding-bottom: 3px;
+}
 
 table.border, table.bordernooddeven, table.dataTable, .table-border, .table-border-col, .table-key-border-col, .table-val-border-col, div.border {
 	border-collapse: collapse !important;
@@ -2503,7 +2557,7 @@ table.liste tr:last-of-type td, table.noborder:not(#tablelines) tr:last-of-type 
 	border-bottom-color: rgb(<?php echo $colortopbordertitle1 ?>);
 	border-bottom-style: solid;
 }
-div.tabBar div.fichehalfright table.noborder:not(.margintable):not(.paymenttable):last-of-type {
+div.tabBar div.fichehalfright table.noborder:not(.margintable):not(.paymenttable):not(.lastrecordtable):last-of-type {
     border-bottom: 1px solid rgb(<?php echo $colortopbordertitle1 ?>);
 }
 div.tabBar table.border>tbody>tr:last-of-type>td {
@@ -2997,10 +3051,14 @@ table.noborder.paymenttable {
 	height: 22px;
 }
 
-/* Disable shadows */
+/* Disable-Enable shadows */
 .noshadow {
 	-webkit-box-shadow: 0px 0px 0px #DDD !important;
 	box-shadow: 0px 0px 0px #DDD !important;
+}
+.shadow {
+	-webkit-box-shadow: 2px 2px 5px #CCC !important;
+	box-shadow: 2px 2px 5px #CCC !important;
 }
 
 div.tabBar .noborder {
@@ -3061,6 +3119,10 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 .box {
     overflow-x: auto;
     min-height: 40px;
+    padding-right: 0px;
+    padding-left: 0px;
+    /*padding-bottom: 25px;*/
+    padding-bottom: 10px;
 }
 .ficheaddleft div.boxstats, .ficheaddright div.boxstats {
     border: none;
@@ -3070,7 +3132,8 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 }
 .boxstats, .boxstats130 {
     display: inline-block;
-    margin: 8px;
+    margin-left: 8px;
+    margin-right: 8px;
     margin-top: 5px;
     margin-bottom: 5px;
     text-align: center;
@@ -3087,7 +3150,7 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
     text-overflow: ellipsis;
 }
 .boxstats130 {
-    width: 158px;
+    width: 100%;
     height: 59px;
     /* padding: 3px; */
 }
@@ -3096,7 +3159,7 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
     padding-right: 3px;
     padding-top: 2px;
     padding-bottom: 2px;
-    width: 121px;
+    width: 118px;
 }
 .tabBar .fichehalfright .boxstats {
     padding-top: 8px;
@@ -3124,8 +3187,6 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 {
 	.boxstats, .boxstats130 {
 		margin: 3px;
-	    /*border: 1px solid #ccc;
-    	box-shadow: none; */
     }
     .boxstats130 {
     	text-align: <?php echo $left; ?>
@@ -3133,18 +3194,18 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 	.thumbstat {
 		flex: 1 1 110px;
 		margin-bottom: 8px;
+	    min-width: <?php echo isset($_SESSION['dol_screenwidth'])?min(160, round($_SESSION['dol_screenwidth']/2 - 20)):150; ?>px;	/* on screen < 320, we guaranty to have 2 columns */
 	}
 	.thumbstat150 {
 		flex: 1 1 110px;
 		margin-bottom: 8px;
-		width: 160px;
+	    min-width: <?php echo isset($_SESSION['dol_screenwidth'])?min(160, round($_SESSION['dol_screenwidth']/2 - 20)):160; ?>px;	/* on screen < 320, we guaranty to have 2 columns */
+	    max-width: <?php echo isset($_SESSION['dol_screenwidth'])?min(161, round($_SESSION['dol_screenwidth']/2 - 20)):161; ?>px;	/* on screen < 320, we guaranty to have 2 columns */
+    	/* width: ...px; If I use with, there is trouble on size of flex boxes solved with min + (max that is a little bit higer than min) */
 	}
     .dashboardlineindicator {
         float: left;
     	padding-left: 5px;
-    }
-    .boxstats130 {
-    	width: 148px;
     }
     .boxstats {
         width: 111px;
@@ -3176,6 +3237,8 @@ span.boxstatsindicator {
 	font-size: 130%;
 	font-weight: normal;
 	line-height: 29px;
+	flex-grow: 1;
+
 }
 span.dashboardlineindicator, span.dashboardlineindicatorlate {
 	font-size: 130%;
@@ -3219,7 +3282,7 @@ span.dashboardlineko {
 	vertical-align: middle;
 }
 .boxtable {
-    margin-bottom: 8px !important;
+    margin-bottom: 25px !important;
     border-bottom-width: 1px;
 
     border-top: <?php echo $borderwidth ?>px solid rgb(<?php echo $colortopbordertitle1 ?>);
@@ -3246,12 +3309,6 @@ table.noborder.boxtable tr td {
 }
 a.valignmiddle.dashboardlineindicator {
     line-height: 30px;
-}
-
-.box {
-    padding-right: 0px;
-    padding-left: 0px;
-    padding-bottom: 25px;
 }
 
 tr.box_titre {
@@ -3383,6 +3440,10 @@ a.impayee:hover { font-weight: bold; color: #550000; }
 /*
  *  Other
  */
+
+.opened-dash-board-wrap {
+    margin-bottom: 25px;
+}
 
 div.boximport {
     min-height: unset;
@@ -3712,6 +3773,12 @@ tr.visible {
     border: 0px;
     background-color: transparent;
     background-image: none;
+}
+.bordertransp {
+    background-color: transparent;
+    background-image: none;
+    border: 1px solid #aaa;
+	font-weight: normal;
 }
 .websitebar {
 	border-bottom: 1px solid #ccc;
@@ -5214,7 +5281,6 @@ div.tabsElem a.tab {
 }
 
 
-
 /* ============================================================================== */
 /*  Public                                                                        */
 /* ============================================================================== */
@@ -5232,6 +5298,25 @@ div.tabsElem a.tab {
 /* ============================================================================== */
 /* Ticket module                                                                  */
 /* ============================================================================== */
+.ticketpublicarea {
+	width: 70%;
+}
+.publicnewticketform {
+	margin-top: 25px !important;
+}
+.ticketlargemargin {
+	padding-left: 50px;
+	padding-right: 50px;
+}
+@media only screen and (max-width: 767px)
+{
+	.ticketlargemargin {
+		padding-left: 5px; padding-right: 5px;
+	}
+	.ticketpublicarea {
+		width: 100%;
+	}
+}
 
 #cd-timeline {
   position: relative;
@@ -5528,6 +5613,11 @@ div.tabsElem a.tab {
         border-right: none;
         border-left: none;
     }
+
+	.box-flex-container {
+	    margin: 0 0 0 -8px !important;
+	}
+
 }
 
 @media only screen and (max-width: 1024px)
@@ -5709,3 +5799,5 @@ div.tabsElem a.tab {
 
 <?php
 include dol_buildpath($path.'/theme/'.$theme.'/dropdown.inc.php', 0);
+include dol_buildpath($path.'/theme/'.$theme.'/info-box.inc.php', 0);
+include dol_buildpath($path.'/theme/'.$theme.'/progress.inc.php', 0);

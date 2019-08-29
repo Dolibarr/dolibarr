@@ -112,6 +112,7 @@ $arrayfields=array(
     'origin'=>array('label'=>$langs->trans("Origin"), 'checked'=>1),
 	'm.value'=>array('label'=>$langs->trans("Qty"), 'checked'=>1),
 	'm.price'=>array('label'=>$langs->trans("UnitPurchaseValue"), 'checked'=>0),
+	'm.fk_projet'=>array('label'=>$langs->trans('Project'), 'checked'=>0)
 		//'m.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
     //'m.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500)
 );
@@ -419,10 +420,11 @@ $formproduct=new FormProduct($db);
 if (!empty($conf->projet->enabled)) $formproject=new FormProjets($db);
 
 $sql = "SELECT p.rowid, p.ref as product_ref, p.label as produit, p.tobatch, p.fk_product_type as type, p.entity,";
-$sql.= " e.ref as stock, e.rowid as entrepot_id, e.lieu,";
+$sql.= " e.ref as warehouse_ref, e.rowid as entrepot_id, e.lieu, e.fk_parent, e.statut,";
 $sql.= " m.rowid as mid, m.value as qty, m.datem, m.fk_user_author, m.label, m.inventorycode, m.fk_origin, m.origintype,";
 $sql.= " m.batch, m.price,";
 $sql.= " m.type_mouvement,";
+$sql.= " m.fk_projet,";
 $sql.= " pl.rowid as lotid, pl.eatby, pl.sellby,";
 $sql.= " u.login, u.photo, u.lastname, u.firstname";
 // Add fields from extrafields
@@ -742,7 +744,7 @@ if ($resql)
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
-    // Lignes des champs de filtre
+    // Fields title search
     print '<tr class="liste_titre_filter">';
     if (! empty($arrayfields['m.rowid']['checked']))
     {
@@ -854,7 +856,14 @@ if ($resql)
     if (! empty($arrayfields['m.price']['checked']))
     {
     	// Price
-    	print '<td class="liste_titre left">';
+    	print '<td class="liste_titre" align="left">';
+    	print '&nbsp; ';
+    	print '</td>';
+    }
+    if (! empty($arrayfields['m.fk_projet']['checked']))
+    {
+    	// fk_projet
+    	print '<td class="liste_titre" align="left">';
     	print '&nbsp; ';
     	print '</td>';
     }
@@ -933,6 +942,9 @@ if ($resql)
     if (! empty($arrayfields['m.price']['checked'])) {
         print_liste_field_titre($arrayfields['m.price']['label'], $_SERVER["PHP_SELF"], "m.price", "", $param, '', $sortfield, $sortorder, 'right ');
     }
+    if (! empty($arrayfields['m.fk_projet']['checked'])) {
+        print_liste_field_titre($arrayfields['m.fk_projet']['label'], $_SERVER["PHP_SELF"], "m.fk_projet", "", $param, 'align="right"', $sortfield, $sortorder);
+    }
 
     // Extra fields
     include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
@@ -976,8 +988,12 @@ if ($resql)
         $productlot->sellby= $objp->sellby;
 
         $warehousestatic->id=$objp->entrepot_id;
-        $warehousestatic->libelle=$objp->stock;
+        $warehousestatic->ref=$objp->warehouse_ref;
+        $warehousestatic->libelle=$objp->warehouse_ref;
+        $warehousestatic->label=$objp->warehouse_ref;
         $warehousestatic->lieu=$objp->lieu;
+        $warehousestatic->fk_parent = $objp->fk_parent;
+        $warehousestatic->statut = $objp->statut;
 
         $arrayofuniqueproduct[$objp->rowid]=$objp->produit;
 		if(!empty($objp->fk_origin)) {
@@ -1098,6 +1114,13 @@ if ($resql)
         	// Price
         	print '<td class="right">';
         	if ($objp->price != 0) print price($objp->price);
+        	print '</td>';
+        }
+        if (! empty($arrayfields['m.fk_projet']['checked']))
+        {
+        	// fk_projet
+        	print '<td align="right">';
+        	if ($objp->fk_projet != 0) print $movement->get_origin($objp->fk_projet, 'project');
         	print '</td>';
         }
         // Action column

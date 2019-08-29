@@ -33,6 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/stock.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'stocks', 'companies', 'categories'));
@@ -56,14 +57,31 @@ $backtopage=GETPOST('backtopage', 'alpha');
 $result=restrictedArea($user, 'stock');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('warehousecard','globalcard'));
+$hookmanager->initHooks(array('warehousecard', 'globalcard'));
 
 $object = new Entrepot($db);
+$extrafields = new ExtraFields($db);
+
+// fetch optionals attributes and labels
+$extralabels = $extrafields->fetch_name_optionals_label('entrepot');
+
+// Load object
+if ($id > 0 || ! empty($ref)) {
+    $ret = $object->fetch($id, $ref);
+//    if ($ret > 0)
+//        $ret = $object->fetch_thirdparty();
+    if ($ret <= 0) {
+        setEventMessages($object->error, $object->errors, 'errors');
+        $action = '';
+    }
+}
 
 
 /*
  * Actions
  */
+
+$error = 0;
 
 $usercanread = (($user->rights->stock->lire));
 $usercancreate = (($user->rights->stock->creer));
@@ -85,27 +103,30 @@ if ($action == 'add' && $user->rights->stock->creer)
 
 	if (! empty($object->libelle))
 	{
-		$id = $object->create($user);
-		if ($id > 0)
-		{
-			setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
+        // Fill array 'array_options' with data from add form
+        $ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+        if ($ret < 0) {
+            $error++;
+            $action = 'create';
+        }
 
-			if (! empty($backtopage))
-			{
-				header("Location: ".$backtopage);
-				exit;
-			}
-			else
-			{
-				header("Location: card.php?id=".$id);
-				exit;
-			}
-		}
-		else
-		{
-			$action = 'create';
-			setEventMessages($object->error, $object->errors, 'errors');
-		}
+        if (! $error) {
+            $id = $object->create($user);
+            if ($id > 0) {
+                setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
+
+                if (!empty($backtopage)) {
+                    header("Location: " . $backtopage);
+                    exit;
+                } else {
+                    header("Location: card.php?id=" . $id);
+                    exit;
+                }
+            } else {
+                $action = 'create';
+                setEventMessages($object->error, $object->errors, 'errors');
+            }
+        }
 	}
 	else
 	{
@@ -147,21 +168,43 @@ if ($action == 'update' && $cancel <> $langs->trans("Cancel"))
 		$object->town        = GETPOST("town");
 		$object->country_id  = GETPOST("country_id");
 
-		if ( $object->update($id, $user) > 0)
-		{
-			$action = '';
-		}
-		else
-		{
+        // Fill array 'array_options' with data from add form
+        $ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+        if ($ret < 0)   $error++;
+
+        if (! $error) {
+            $ret = $object->update($id, $user);
+            if ($ret < 0)   $error++;
+        }
+
+		if ($error) {
 			$action = 'edit';
 			setEventMessages($object->error, $object->errors, 'errors');
-		}
+		} else {
+            $action = '';
+        }
 	}
 	else
 	{
 		$action = 'edit';
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
+}
+elseif ($action == 'update_extras') {
+    $object->oldcopy = dol_clone($object);
+
+    // Fill array 'array_options' with data from update form
+    $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+    $ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute', 'none'));
+    if ($ret < 0) $error++;
+    if (! $error) {
+        $result = $object->insertExtraFields();
+        if ($result < 0) {
+            setEventMessages($object->error, $object->errors, 'errors');
+            $error++;
+        }
+    }
+    if ($error) $action = 'edit_extras';
 }
 
 if ($cancel == $langs->trans("Cancel"))
@@ -256,6 +299,9 @@ if ($action == 'create')
 	}
 	print '</select>';
 	print '</td></tr>';
+
+    // Other attributes
+    include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_add.tpl.php';
 
 	print '</table>';
 
@@ -391,6 +437,9 @@ else
 			    print $langs->trans("None");
 			}
 			print "</td></tr>";
+
+            // Other attributes
+            include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
 			print "</table>";
 
@@ -638,6 +687,7 @@ else
 			if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 			print '</td></tr>';
 
+			// Status
 			print '<tr><td>'.$langs->trans("Status").'</td><td>';
 			print '<select name="statut" class="flat">';
 			foreach ($object->statuts as $key => $value)
@@ -653,6 +703,15 @@ else
 			}
 			print '</select>';
 			print '</td></tr>';
+
+            // Other attributes
+            $parameters=array('colspan' => ' colspan="3"', 'cols'=>3);
+            $reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
+            print $hookmanager->resPrint;
+            if (empty($reshook))
+            {
+                print $object->showOptionals($extrafields, 'edit');
+            }
 
 			print '</table>';
 

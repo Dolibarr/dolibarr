@@ -38,6 +38,7 @@ ActionsEvents=Dolibarr将为其自动创建一个动作的事件
 EventRemindersByEmailNotEnabled=通过电子邮件发送的事件提醒未启用到%s模块设置中。
 ##### Agenda event labels #####
 NewCompanyToDolibarr=合作方 %s 已创建
+COMPANY_DELETEInDolibarr=Third party %s deleted
 ContractValidatedInDolibarr=联系人 %s 已验证
 CONTRACT_DELETEInDolibarr=合同%s已删除
 PropalClosedSignedInDolibarr=建议 %s 已标记
@@ -95,6 +96,7 @@ PROJECT_MODIFYInDolibarr=项目%s修改
 PROJECT_DELETEInDolibarr=项目%s已删除
 TICKET_CREATEInDolibarr=Ticket %s created
 TICKET_MODIFYInDolibarr=Ticket %s modified
+TICKET_ASSIGNEDInDolibarr=Ticket %s assigned
 TICKET_CLOSEInDolibarr=Ticket %s closed
 TICKET_DELETEInDolibarr=Ticket %s deleted
 ##### End agenda events #####

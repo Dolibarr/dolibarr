@@ -274,7 +274,6 @@ function getActionComm($authentication, $id)
             $result=$actioncomm->fetch($id);
             if ($result > 0)
             {
-
             	$actioncomm_result_fields=array(
 						'id' => $actioncomm->id,
 						'ref'=> $actioncomm->ref,
@@ -299,19 +298,20 @@ function getActionComm($authentication, $id)
 			        	'contactid'=> $actioncomm->contactid,
 			        	'projectid'=> $actioncomm->fk_project,
 			        	'fk_element'=> $actioncomm->fk_element,
-			        	'elementtype'=> $actioncomm->elementtype);
+			        	'elementtype'=> $actioncomm->elementtype
+            	);
 
-			        	//Retreive all extrafield for actioncomm
-			        	// fetch optionals attributes and labels
-			        	$extrafields=new ExtraFields($db);
-			        	$extralabels=$extrafields->fetch_name_optionals_label('actioncomm', true);
-			        	//Get extrafield values
-			        	$actioncomm->fetch_optionals();
+	        	// Retreive all extrafield for actioncomm
+	        	// fetch optionals attributes and labels
+	        	$extrafields=new ExtraFields($db);
+	        	$extralabels=$extrafields->fetch_name_optionals_label('actioncomm', true);
+	        	//Get extrafield values
+	        	$actioncomm->fetch_optionals();
 
-			        	foreach($extrafields->attribute_label as $key=>$label)
-			        	{
-			        		$actioncomm_result_fields=array_merge($actioncomm_result_fields, array('options_'.$key => $actioncomm->array_options['options_'.$key]));
-			        	}
+	        	foreach($extrafields->attribute_label as $key=>$label)
+	        	{
+	        		$actioncomm_result_fields=array_merge($actioncomm_result_fields, array('options_'.$key => $actioncomm->array_options['options_'.$key]));
+	        	}
 
                 // Create
                 $objectresp = array(

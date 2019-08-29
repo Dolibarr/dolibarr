@@ -162,10 +162,13 @@ $arrayfields=array(
 	'p.total_ht'=>array('label'=>"AmountHT", 'checked'=>1),
 	'p.total_vat'=>array('label'=>"AmountVAT", 'checked'=>0),
 	'p.total_ttc'=>array('label'=>"AmountTTC", 'checked'=>0),
+	'p.total_ht_invoiced'=>array('label'=>$langs->trans("AmountInvoicedHT"), 'checked'=>0, 'enabled'=>$conf->global->PROPOSAL_SHOW_INVOICED_AMOUNT),
+	'p.total_invoiced'=>array('label'=>$langs->trans("AmountInvoicedTTC"), 'checked'=>0, 'enabled'=>$conf->global->PROPOSAL_SHOW_INVOICED_AMOUNT),
 	'u.login'=>array('label'=>"Author", 'checked'=>1, 'position'=>10),
 	'sale_representative'=>array('label'=>"SaleRepresentativesOfThirdParty", 'checked'=>1),
 	'p.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
 	'p.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500),
+  'p.date_cloture'=>array('label'=>"DateClosing", 'checked'=>0, 'position'=>500),
 	'p.fk_statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
 );
 // Extra fields
@@ -267,10 +270,10 @@ $sql.= " typent.code as typent_code,";
 $sql.= " ava.rowid as availability,";
 $sql.= " state.code_departement as state_code, state.nom as state_name,";
 $sql.= ' p.rowid, p.entity, p.note_private, p.total_ht, p.tva as total_vat, p.total as total_ttc, p.localtax1, p.localtax2, p.ref, p.ref_client, p.fk_statut, p.fk_user_author, p.datep as dp, p.fin_validite as dfv,p.date_livraison as ddelivery,';
-$sql.= ' p.datec as date_creation, p.tms as date_update,';
+$sql.= ' p.datec as date_creation, p.tms as date_update, p.date_cloture as date_cloture,';
 $sql.= " pr.rowid as project_id, pr.ref as project_ref, pr.title as project_label,";
 $sql.= ' u.login';
-if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", sc.fk_soc, sc.fk_user,";
+if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", sc.fk_soc, sc.fk_user";
 if ($search_categ_cus) $sql .= ", cc.fk_categorie, cc.fk_soc";
 // Add fields from extrafields
 foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
@@ -444,7 +447,7 @@ if ($resql)
         $newcardbutton.= dolGetButtonTitle($langs->trans('NewPropal'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/propal/card.php?action=create');
     }
 
-	// Lignes des champs de filtre
+	// Fields title search
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -644,6 +647,18 @@ if ($resql)
 		print '<input class="flat" type="text" size="5" name="search_montant_ttc" value="'.dol_escape_htmltag($search_montant_ttc).'">';
 		print '</td>';
 	}
+	if (! empty($arrayfields['p.total_ht_invoiced']['checked']))
+	{
+		// Amount invoiced
+		print '<td class="liste_titre right">';
+		print '</td>';
+	}
+	if (! empty($arrayfields['p.total_invoiced']['checked']))
+	{
+		// Amount invoiced
+		print '<td class="liste_titre right">';
+		print '</td>';
+	}
 	if (! empty($arrayfields['u.login']['checked']))
 	{
 		// Author
@@ -670,6 +685,12 @@ if ($resql)
 	}
 	// Date modification
 	if (! empty($arrayfields['p.tms']['checked']))
+	{
+		print '<td class="liste_titre">';
+		print '</td>';
+	}
+  // Date cloture
+	if (! empty($arrayfields['p.date_cloture']['checked']))
 	{
 		print '<td class="liste_titre">';
 		print '</td>';
@@ -709,6 +730,8 @@ if ($resql)
 	if (! empty($arrayfields['p.total_ht']['checked']))       print_liste_field_titre($arrayfields['p.total_ht']['label'], $_SERVER["PHP_SELF"], 'p.total_ht', '', $param, 'class="right"', $sortfield, $sortorder);
 	if (! empty($arrayfields['p.total_vat']['checked']))      print_liste_field_titre($arrayfields['p.total_vat']['label'], $_SERVER["PHP_SELF"], 'p.tva', '', $param, 'class="right"', $sortfield, $sortorder);
 	if (! empty($arrayfields['p.total_ttc']['checked']))      print_liste_field_titre($arrayfields['p.total_ttc']['label'], $_SERVER["PHP_SELF"], 'p.total', '', $param, 'class="right"', $sortfield, $sortorder);
+	if (! empty($arrayfields['p.total_ht_invoiced']['checked'])) print_liste_field_titre($arrayfields['p.total_ht_invoiced']['label'], $_SERVER["PHP_SELF"], '', '', $param, 'class="right"', $sortfield, $sortorder);
+	if (! empty($arrayfields['p.total_invoiced']['checked'])) print_liste_field_titre($arrayfields['p.total_invoiced']['label'], $_SERVER["PHP_SELF"], '', '', $param, 'class="right"', $sortfield, $sortorder);
 	if (! empty($arrayfields['u.login']['checked']))       	  print_liste_field_titre($arrayfields['u.login']['label'], $_SERVER["PHP_SELF"], 'u.login', '', $param, 'align="center"', $sortfield, $sortorder);
 	if (! empty($arrayfields['sale_representative']['checked'])) print_liste_field_titre($arrayfields['sale_representative']['label'], $_SERVER["PHP_SELF"], "", "", "$param", '', $sortfield, $sortorder);
 	// Extra fields
@@ -719,6 +742,7 @@ if ($resql)
 	print $hookmanager->resPrint;
 	if (! empty($arrayfields['p.datec']['checked']))     print_liste_field_titre($arrayfields['p.datec']['label'], $_SERVER["PHP_SELF"], "p.datec", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
 	if (! empty($arrayfields['p.tms']['checked']))       print_liste_field_titre($arrayfields['p.tms']['label'], $_SERVER["PHP_SELF"], "p.tms", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
+	if (! empty($arrayfields['p.date_cloture']['checked']))       print_liste_field_titre($arrayfields['p.date_cloture']['label'], $_SERVER["PHP_SELF"], "p.date_cloture", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
 	if (! empty($arrayfields['p.fk_statut']['checked'])) print_liste_field_titre($arrayfields['p.fk_statut']['label'], $_SERVER["PHP_SELF"], "p.fk_statut", "", $param, 'class="right"', $sortfield, $sortorder);
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
 	print '</tr>'."\n";
@@ -933,6 +957,48 @@ if ($resql)
 			if (! $i) $totalarray['totalttcfield']=$totalarray['nbfield'];
 			$totalarray['totalttc'] += $obj->total_ttc;
 		}
+		// Amount invoiced
+        if(! empty($arrayfields['p.total_ht_invoiced']['checked'])) {
+            $totalInvoiced = 0;
+            $p = new Propal($db);
+            $TInvoiceData = $p->InvoiceArrayList($obj->rowid);
+
+            if(! empty($TInvoiceData)) {
+                foreach($TInvoiceData as $invoiceData) {
+                    $invoice = new Facture($db);
+                    $invoice->fetch($invoiceData->facid);
+
+                    if(! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS) && $invoice->type == Facture::TYPE_DEPOSIT) continue;
+                    $totalInvoiced += $invoice->total_ht;
+                }
+            }
+
+            print '<td class="right">'.price($totalInvoiced)."</td>\n";
+            if (! $i) $totalarray['nbfield']++;
+            if (! $i) $totalarray['totalhtinvoicedfield']=$totalarray['nbfield'];
+            $totalarray['totalhtinvoiced'] += $totalInvoiced;
+        }
+        // Amount invoiced
+        if(! empty($arrayfields['p.total_invoiced']['checked'])) {
+            $totalInvoiced = 0;
+            $p = new Propal($db);
+            $TInvoiceData = $p->InvoiceArrayList($obj->rowid);
+
+            if(! empty($TInvoiceData)) {
+                foreach($TInvoiceData as $invoiceData) {
+                    $invoice = new Facture($db);
+                    $invoice->fetch($invoiceData->facid);
+
+                    if(! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS) && $invoice->type == Facture::TYPE_DEPOSIT) continue;
+                    $totalInvoiced += $invoice->total_ttc;
+                }
+            }
+
+            print '<td class="right">'.price($totalInvoiced)."</td>\n";
+            if (! $i) $totalarray['nbfield']++;
+            if (! $i) $totalarray['totalinvoicedfield']=$totalarray['nbfield'];
+            $totalarray['totalinvoiced'] += $totalInvoiced;
+        }
 
 		$userstatic->id=$obj->fk_user_author;
 		$userstatic->login=$obj->login;
@@ -996,7 +1062,7 @@ if ($resql)
 		// Extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 		// Fields from hook
-		$parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj);
+		$parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i);
 		$reshook=$hookmanager->executeHooks('printFieldListValue', $parameters);    // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		// Date creation
@@ -1012,6 +1078,14 @@ if ($resql)
 		{
 			print '<td align="center" class="nowrap">';
 			print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
+			print '</td>';
+			if (! $i) $totalarray['nbfield']++;
+		}
+    // Date cloture
+		if (! empty($arrayfields['p.date_cloture']['checked']))
+		{
+			print '<td align="center" class="nowrap">';
+			print dol_print_date($db->jdate($obj->date_cloture), 'dayhour', 'tzuser');
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
 		}
@@ -1059,6 +1133,8 @@ if ($resql)
 		    elseif ($totalarray['totalhtfield'] == $i) print '<td class="right">'.price($totalarray['totalht']).'</td>';
 		    elseif ($totalarray['totalvatfield'] == $i) print '<td class="right">'.price($totalarray['totalvat']).'</td>';
 		    elseif ($totalarray['totalttcfield'] == $i) print '<td class="right">'.price($totalarray['totalttc']).'</td>';
+		    elseif ($totalarray['totalhtinvoicedfield'] == $i) print '<td class="right">'.price($totalarray['totalhtinvoiced']).'</td>';
+		    elseif ($totalarray['totalinvoicedfield'] == $i) print '<td class="right">'.price($totalarray['totalinvoiced']).'</td>';
 		    elseif ($totalarray['totalizable']) {
                 $printed = false;
                 foreach ($totalarray['totalizable'] as $totalizable) {

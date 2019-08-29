@@ -273,7 +273,7 @@ if (empty($reshook))
 		{
 			if (empty($login)) {
 				$error++;
-				setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("Login")), null, 'errors');
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Login")), null, 'errors');
 			}
 		}
 		// Create new object
@@ -502,14 +502,14 @@ if (empty($reshook))
 		// Check parameters
 		if (empty($morphy) || $morphy == "-1") {
 			$error++;
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Nature")), null, 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("MemberNature")), null, 'errors');
 		}
 		// Tests if the login already exists
 		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
 		{
 			if (empty($login)) {
 				$error++;
-				setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("Login")), null, 'errors');
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Login")), null, 'errors');
 			}
 			else {
 				$sql = "SELECT login FROM ".MAIN_DB_PREFIX."adherent WHERE login='".$db->escape($login)."'";
@@ -653,7 +653,7 @@ if (empty($reshook))
 
 				if (empty($labeltouse) || (int) $labeltouse === -1) {
 					//fallback on the old configuration.
-					setEventMessages('WarningMandatorySetupNotComplete', [], 'errors');
+					setEventMessages('WarningMandatorySetupNotComplete', null, 'errors');
 					$error++;
 				}
 				else {
@@ -734,7 +734,7 @@ if (empty($reshook))
 
 					if (empty($labeltouse) || (int) $labeltouse === -1) {
 						//fallback on the old configuration.
-						setEventMessages('WarningMandatorySetupNotComplete', [], 'errors');
+						setEventMessages('WarningMandatorySetupNotComplete', null, 'errors');
 						$error++;
 					}
 					else {
@@ -941,7 +941,7 @@ else
 		// Morphy
 		$morphys["phy"] = $langs->trans("Physical");
 		$morphys["mor"] = $langs->trans("Moral");
-		print '<tr><td class="fieldrequired">'.$langs->trans("Nature")."</td><td>\n";
+		print '<tr><td class="fieldrequired">'.$langs->trans("MemberNature")."</td><td>\n";
 		print $form->selectarray("morphy", $morphys, GETPOST('morphy', 'alpha')?GETPOST('morphy', 'alpha'):$object->morphy, 1);
 		print "</td>\n";
 
@@ -1059,11 +1059,17 @@ else
 
 		// Other attributes
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
-
-        print '<tbody>';
+		//Hooks here
+		$reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
+		print $hookmanager->resPrint;
+		if (empty($reshook))
+		{
+      	    print $object->showOptionals($extrafields, 'edit');
+		}
+			
+		print '<tbody>';
 		print "</table>\n";
-
-        dol_fiche_end();
+		dol_fiche_end();
 
 		print '<div class="center">';
 		print '<input type="submit" name="button" class="button" value="'.$langs->trans("AddMember").'">';
@@ -1181,8 +1187,8 @@ else
 		}
 		// Morphy
 		$morphys["phy"] = $langs->trans("Physical");
-		$morphys["mor"] = $langs->trans("Morale");
-		print '<tr><td><span class="fieldrequired">'.$langs->trans("Nature").'</span></td><td>';
+		$morphys["mor"] = $langs->trans("Moral");
+		print '<tr><td><span class="fieldrequired">'.$langs->trans("MemberNature").'</span></td><td>';
 		print $form->selectarray("morphy", $morphys, (GETPOSTISSET("morphy")?GETPOST("morphy", 'alpha'):$object->morphy));
 		print "</td></tr>";
 
@@ -1357,9 +1363,15 @@ else
 
 		// Other attributes
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
-
+		//Hooks here
+		$reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
+		print $hookmanager->resPrint;
+		if (empty($reshook))
+		{
+      	    print $object->showOptionals($extrafields, 'edit');
+		}
+      
 		print '</table>';
-
 		dol_fiche_end();
 
 		print '<div class="center">';
@@ -1613,7 +1625,7 @@ else
 		print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td class="valeur">'.$adht->getNomUrl(1)."</td></tr>\n";
 
 		// Morphy
-		print '<tr><td>'.$langs->trans("Nature").'</td><td class="valeur" >'.$object->getmorphylib().'</td>';
+		print '<tr><td>'.$langs->trans("MemberNature").'</td><td class="valeur" >'.$object->getmorphylib().'</td>';
 		print '</tr>';
 
 		// Gender

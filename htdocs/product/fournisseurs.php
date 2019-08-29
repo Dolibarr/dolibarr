@@ -688,7 +688,7 @@ SCRIPT;
                     print '<tr>';
                     print '<td>' . $langs->trans('BarcodeType') . '</td>';
                     print '<td>';
-                    print $formbarcode->selectBarcodeType(($rowid ? $object->fourn_fk_barcode_type : ''), 'fk_barcode_type', 1);
+                    print $formbarcode->selectBarcodeType(($rowid ? $object->fourn_fk_barcode_type : $conf->global->PRODUIT_DEFAULT_BARCODE_TYPE), 'fk_barcode_type', 1);
                     print '</td>';
                     print '</tr>';
                 }
@@ -783,10 +783,9 @@ SCRIPT;
 				// Suppliers list title
 				print '<div class="div-table-responsive">';
 				print '<table class="noborder" width="100%">';
-				if ($object->isProduct()) $nblignefour=4;
-				else $nblignefour=4;
 
 				$param="&id=".$object->id;
+
 				print '<tr class="liste_titre">';
 				print_liste_field_titre("AppliedPricesFrom", $_SERVER["PHP_SELF"], "pfp.datec", "", $param, "", $sortfield, $sortorder);
 				print_liste_field_titre("Suppliers", $_SERVER["PHP_SELF"], "s.nom", "", $param, "", $sortfield, $sortorder);
@@ -811,12 +810,16 @@ SCRIPT;
                     print_liste_field_titre("BarcodeType", $_SERVER["PHP_SELF"], "pfp.fk_barcode_type", "", $param, '', $sortfield, $sortorder, 'center ');
                 }
 				print_liste_field_titre("DateModification", $_SERVER["PHP_SELF"], "pfp.tms", "", $param, '', $sortfield, $sortorder, 'right ');
+				if (is_object($hookmanager))
+				{
+				    $parameters=array('id_fourn'=>$id_fourn, 'prod_id'=>$object->id);
+				    $reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action);
+				}
 				print_liste_field_titre('');
 				print "</tr>\n";
 
 				if (is_array($product_fourn_list))
 				{
-
 					foreach($product_fourn_list as $productfourn)
 					{
 						print '<tr class="oddeven">';
@@ -924,7 +927,7 @@ SCRIPT;
 						if (is_object($hookmanager))
 						{
 							$parameters=array('id_pfp'=>$productfourn->product_fourn_price_id,'id_fourn'=>$id_fourn,'prod_id'=>$object->id);
-						    $reshook=$hookmanager->executeHooks('printObjectLine', $parameters, $object, $action);
+						    $reshook=$hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action);
 						}
 
 						// Modify-Remove

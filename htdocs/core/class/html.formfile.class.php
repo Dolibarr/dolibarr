@@ -130,15 +130,35 @@ class FormFile
 
 			$out .= '<td class="valignmiddle nowrap">';
 
-			$max=$conf->global->MAIN_UPLOAD_DOC;		// En Kb
-			$maxphp=@ini_get('upload_max_filesize');	// En inconnu
+			$max=$conf->global->MAIN_UPLOAD_DOC;		// In Kb
+			$maxphp=@ini_get('upload_max_filesize');	// In unknown
 			if (preg_match('/k$/i', $maxphp)) $maxphp=$maxphp*1;
 			if (preg_match('/m$/i', $maxphp)) $maxphp=$maxphp*1024;
 			if (preg_match('/g$/i', $maxphp)) $maxphp=$maxphp*1024*1024;
 			if (preg_match('/t$/i', $maxphp)) $maxphp=$maxphp*1024*1024*1024;
-			// Now $max and $maxphp are in Kb
+			$maxphp2=@ini_get('post_max_size');			// In unknown
+			if (preg_match('/k$/i', $maxphp2)) $maxphp2=$maxphp2*1;
+			if (preg_match('/m$/i', $maxphp2)) $maxphp2=$maxphp2*1024;
+			if (preg_match('/g$/i', $maxphp2)) $maxphp2=$maxphp2*1024*1024;
+			if (preg_match('/t$/i', $maxphp2)) $maxphp2=$maxphp2*1024*1024*1024;
+			// Now $max and $maxphp and $maxphp2 are in Kb
 			$maxmin = $max;
-			if ($maxphp > 0) $maxmin=min($max, $maxphp);
+			$maxphptoshow = $maxphptoshowparam = '';
+			if ($maxphp > 0)
+			{
+				$maxmin=min($max, $maxphp);
+				$maxphptoshow = $maxphp;
+				$maxphptoshowparam = 'upload_max_filesize';
+			}
+			if ($maxphp2 > 0)
+			{
+				$maxmin=min($max, $maxphp2);
+				if ($maxphp2 < $maxphp)
+				{
+					$maxphptoshow = $maxphp2;
+					$maxphptoshowparam = 'post_max_size';
+				}
+			}
 
 			if ($maxmin > 0)
 			{
@@ -168,7 +188,7 @@ class FormFile
 				{
 					$langs->load('other');
 					$out .= ' ';
-					$out .= info_admin($langs->trans("ThisLimitIsDefinedInSetup", $max, $maxphp), 1);
+					$out .= info_admin($langs->trans("ThisLimitIsDefinedInSetup", $max, $maxphptoshow), 1);
 				}
 			}
 			else
@@ -688,7 +708,9 @@ class FormFile
 			$out.= '<tr class="liste_titre">';
 
 			$addcolumforpicto=($delallowed || $printer || $morepicto);
-			$out.= '<th colspan="'.(3+($addcolumforpicto?1:0)).'" class="formdoc liste_titre maxwidthonsmartphone center">';
+			$colspan = (3+($addcolumforpicto?1:0)); $colspanmore = 0;
+
+			$out.= '<th colspan="'.$colspan.'" class="formdoc liste_titre maxwidthonsmartphone center">';
 
 			// Model
 			if (! empty($modellist))
@@ -745,13 +767,17 @@ class FormFile
 			{
 				foreach($hookmanager->hooks['formfile'] as $module)
 				{
-					if (method_exists($module, 'formBuilddocLineOptions')) $out .= '<th></th>';
+					if (method_exists($module, 'formBuilddocLineOptions'))
+					{
+						$colspanmore++;
+						$out .= '<th></th>';
+					}
 				}
 			}
 			$out.= '</tr>';
 
 			// Execute hooks
-			$parameters=array('socid'=>(isset($GLOBALS['socid'])?$GLOBALS['socid']:''),'id'=>(isset($GLOBALS['id'])?$GLOBALS['id']:''),'modulepart'=>$modulepart);
+			$parameters=array('colspan'=>($colspan+$colspanmore), 'socid'=>(isset($GLOBALS['socid'])?$GLOBALS['socid']:''), 'id'=>(isset($GLOBALS['id'])?$GLOBALS['id']:''), 'modulepart'=>$modulepart);
 			if (is_object($hookmanager))
 			{
 				$reshook = $hookmanager->executeHooks('formBuilddocOptions', $parameters, $GLOBALS['object']);
@@ -801,9 +827,10 @@ class FormFile
 					// Show file name with link to download
 					$out.= '<td class="minwidth200">';
 					$out.= '<a class="documentdownload paddingright" href="'.$documenturl.'?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).($param?'&'.$param:'').'"';
+
 					$mime=dol_mimetype($relativepath, '', 0);
 					if (preg_match('/text/', $mime)) $out.= ' target="_blank"';
-					$out.= ' target="_blank">';
+					$out.= '>';
 					$out.= img_mime($file["name"], $langs->trans("File").': '.$file["name"]);
 					$out.= dol_trunc($file["name"], 150);
 					$out.= '</a>'."\n";
@@ -847,14 +874,17 @@ class FormFile
 
 					if (is_object($hookmanager))
 					{
-						$parameters=array('socid'=>(isset($GLOBALS['socid'])?$GLOBALS['socid']:''),'id'=>(isset($GLOBALS['id'])?$GLOBALS['id']:''),'modulepart'=>$modulepart,'relativepath'=>$relativepath);
+						$parameters=array('colspan'=>($colspan+$colspanmore), 'socid'=>(isset($GLOBALS['socid'])?$GLOBALS['socid']:''),'id'=>(isset($GLOBALS['id'])?$GLOBALS['id']:''),'modulepart'=>$modulepart,'relativepath'=>$relativepath);
 						$res = $hookmanager->executeHooks('formBuilddocLineOptions', $parameters, $file);
 						if (empty($res))
 						{
 							$out.= $hookmanager->resPrint;		// Complete line
 							$out.= '</tr>';
 						}
-						else $out = $hookmanager->resPrint;		// Replace line
+						else
+						{
+							$out = $hookmanager->resPrint;		// Replace all $out
+						}
 			  		}
 				}
 
@@ -1030,9 +1060,9 @@ class FormFile
 	 * 	@param	 string	$relativepath		Relative path of docs (autodefined if not provided), relative to module dir, not to MAIN_DATA_ROOT.
 	 * 	@param	 int	$permonobject		Permission on object (so permission to delete or crop document)
 	 * 	@param	 int	$useinecm			Change output for use in ecm module:
-	 * 										0 or 6: Add a preview column. Show also a rename and crop button.
+	 * 										0 or 6: Add a preview column. Show also a rename button. Show also a crop button for some values of $modulepart (must be supported into hard coded list in this function + photos_resize.php + restrictedArea + checkUserAccessToObject)
 	 * 										1: Add link to edit ECM entry
-	 * 										2: Add rename and crop file
+	 * 										2: Add rename and crop link
 	 *                                      4: Add a preview column
 	 *                                      5: Add link to edit ECM entry and Add a preview column
 	 * 	@param	 string	$textifempty		Text to show if filearray is empty ('NoFileFound' if not defined)
@@ -1058,7 +1088,7 @@ class FormFile
 		global $form;
 
 		$disablecrop=1;
-		if (in_array($modulepart, array('expensereport','holiday','member','project','product','produit','service','societe','tax','ticket','user'))) $disablecrop=0;
+		if (in_array($modulepart, array('bom','expensereport','holiday','member','project','product','produit','service','societe','tax','ticket','user'))) $disablecrop=0;
 
 		// Define relative path used to store the file
 		if (empty($relativepath))
@@ -1228,7 +1258,7 @@ class FormFile
 						print '</a>';
 					}
 					// Preview link
-					if (! $editline) print $this->showPreview($file, $modulepart, $filepath);
+					if (! $editline) print $this->showPreview($file, $modulepart, $filepath, 0, '&entity='.(! empty($object->entity)?$object->entity:$conf->entity));
 
 					print "</td>\n";
 
@@ -1809,7 +1839,7 @@ class FormFile
 				print $langs->trans('Link') . ': <input type="text" name="link" value="' . $link->url . '">';
 				print '</td>';
 				print '<td>';
-				print $langs->trans('Label') . ': <input type="text" name="label" value="' . $link->label . '">';
+				print $langs->trans('Label') . ': <input type="text" name="label" value="' . dol_escape_htmltag($link->label) . '">';
 				print '</td>';
 				print '<td class="center">' . dol_print_date(dol_now(), "dayhour", "tzuser") . '</td>';
 				print '<td class="right"></td>';
@@ -1823,7 +1853,7 @@ class FormFile
 				print '<td>';
 				print img_picto('', 'object_globe').' ';
 				print '<a data-ajax="false" href="' . $link->url . '" target="_blank">';
-				print $link->label;
+				print dol_escape_htmltag($link->label);
 				print '</a>';
 				print '</td>'."\n";
 				print '<td class="right"></td>';

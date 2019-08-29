@@ -1,18 +1,21 @@
 # Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Accounting account used for user third parties
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=The dedicated accounting account defined on user card will be used for Subledger accouting only. This one will be used for General Ledger and as default value of Subledger accounting if dedicated user accouting account on user is not defined.
-SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Accounting account by default for wage payments
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Konto rachunkowe użyte dla użytkownika kontrahentów
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Dedykowane konto księgowe zdefiniowane na karcie użytkownika będzie używane wyłącznie do księgowania Subledger. Ten zostanie użyty w General Ledger i jako wartość domyślna księgowania Subledger, jeśli dedykowane konto rachunkowe użytkownika dla użytkownika nie zostanie zdefiniowane.
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Domyślne konto rachunkowe dla płatności wynagrodzenia
 Salary=Wypłata
 Salaries=Wypłaty
 NewSalaryPayment=Nowa wypłata
+AddSalaryPayment=Dodaj płatność wynagrodzenia
 SalaryPayment=Wypłata wynagrodzenia
 SalariesPayments=Wypłaty wynagordzeń
 ShowSalaryPayment=Pokaż wypłaty wynagrodzeń
 THM=Średnia stawka godzinowa
 TJM=Średnia stawka dzienna
 CurrentSalary=Aktualne wynagrodzenie
-THMDescription=Ta wartość może być użyta do obliczenia kosztów poniesionych przy projekcie do którego przystąpili użytkownicy jeżeli moduł projektów jest używany
-TJMDescription=Ta wartość jest aktualnie jedynie informacją i nie jest wykorzystywana do jakichkolwiek obliczeń
+THMDescription=This value may be used to calculate the cost of time consumed on a project entered by users if module project is used
+TJMDescription=This value is currently for information only and is not used for any calculation
 LastSalaries=Ostatnie %s płatności wynagrodzeń
 AllSalaries=Wszystkie płatności wynagrodzeń
-SalariesStatistics=Statistiques salaires
+SalariesStatistics=Statystyki wynagrodzeń
+# Export
+SalariesAndPayments=Salaries and payments
