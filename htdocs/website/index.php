@@ -476,8 +476,10 @@ if ($action == 'addcontainer')
 				// Remove comments
 				$tmp['content'] = removeHtmlComment($tmp['content']);
 
-				preg_match('/<head>(.*)<\/head>/ims', $tmp['content'], $reg);
-				$head = $reg[1];
+				$regs=array();
+
+				preg_match('/<head>(.*)<\/head>/ims', $tmp['content'], $regs);
+				$head = $regs[1];
 
 				$objectpage->type_container = 'page';
 	   			$objectpage->pageurl = $pageurl;
@@ -488,8 +490,10 @@ if ($action == 'addcontainer')
 	   			}
 
 	   			$objectpage->aliasalt = '';
-	   			if (preg_match('/^(\d+)\-/', basename($urltograb), $reg)) $objectpage->aliasalt = $reg[1];
 
+	   			if (preg_match('/^(\d+)\-/', basename($urltograb), $regs)) $objectpage->aliasalt = $regs[1];
+
+	   			$regtmp=array();
 				if (preg_match('/<title>(.*)<\/title>/ims', $head, $regtmp))
 				{
 					$objectpage->title = $regtmp[1];
@@ -548,7 +552,7 @@ if ($action == 'addcontainer')
 				$errorforsubresource = 0;
 				foreach ($regs[0] as $key => $val)
 				{
-					dol_syslog("We will grab the resource found into script tag ".$regs[2][$key]);
+					dol_syslog("We will grab the script resource found into script tag ".$regs[2][$key]);
 
 					$linkwithoutdomain = $regs[2][$key];
 					if (preg_match('/^\//', $regs[2][$key]))
@@ -617,7 +621,7 @@ if ($action == 'addcontainer')
 				$errorforsubresource = 0;
 				foreach ($regs[0] as $key => $val)
 				{
-					dol_syslog("We will grab the resources found into link tag ".$regs[2][$key]);
+					dol_syslog("We will grab the css resources found into link tag ".$regs[2][$key]);
 
 					$linkwithoutdomain = $regs[2][$key];
 					if (preg_match('/^\//', $regs[2][$key]))
@@ -662,6 +666,9 @@ if ($action == 'addcontainer')
 					}
 					else
 					{
+						// Clean some comment
+						$tmpgeturl['content'] = preg_replace('/\/\*\s+CSS content[a-z\s]*\s+\*\//', '', $tmpgeturl['content']);
+
 						//dol_mkdir(dirname($filetosave));
 
 						//$fp = fopen($filetosave, "w");
@@ -675,7 +682,21 @@ if ($action == 'addcontainer')
 
 						getAllImages($object, $objectpage, $urltograbbis, $tmpgeturl['content'], $action, 1, $grabimages, $grabimagesinto);
 
-						$pagecsscontent.=$tmpgeturl['content']."\n";
+						include_once DOL_DOCUMENT_ROOT.'/core/class/lessc.class.php';
+						$lesscobj = new lessc();
+						try {
+							$contentforlessc = ".bodywebsite {\n".$tmpgeturl['content']."\n}\n";
+							//print '<pre>'.$contentforlessc.'</pre>';
+							$contentforlessc = $lesscobj->compile($contentforlessc);
+							//var_dump($contentforlessc); exit;
+
+							$pagecsscontent.=$contentforlessc."\n";
+							//$pagecsscontent.=$tmpgeturl['content']."\n";
+						} catch (exception $e) {
+							//echo "failed to compile lessc";
+							dol_syslog("Failed to compile the CSS ".$urltograbbis." that we caught, with lessc: ".$e->getMessage(), LOG_WARNING);
+							$pagecsscontent.=$tmpgeturl['content']."\n";
+						}
 
 						$objectpage->htmlheader = preg_replace('/'.preg_quote($regs[0][$key], '/').'\n*/ims', '', $objectpage->htmlheader);
 					}

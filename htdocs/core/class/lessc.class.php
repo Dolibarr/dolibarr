@@ -1,5 +1,4 @@
 <?php
-
 /**
  * lessphp v0.5.0
  * http://leafo.net/lessphp
@@ -9,7 +8,6 @@
  * Copyright 2013, Leaf Corcoran <leafot@gmail.com>
  * Licensed under MIT or GPLv3, see LICENSE
  */
-
 
 /**
  * The LESS compiler and parser.
@@ -37,7 +35,7 @@
  * The `lessc_formatter` takes a CSS tree, and dumps it to a formatted string,
  * handling things like indentation.
  */
-class lessc {
+class Lessc {
 	public static $VERSION = "v0.5.0";
 
 	public static $TRUE = array("keyword", "true");
@@ -77,6 +75,12 @@ class lessc {
 		return null;
 	}
 
+	/**
+	 * fileExists
+	 *
+	 * @param 	string 	$name	Filename
+	 * @return 	boolean
+	 */
 	protected function fileExists($name) {
 		return is_file($name);
 	}
