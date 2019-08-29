@@ -667,6 +667,13 @@ if ($action == 'addcontainer')
 					else
 					{
 						// Clean some comment
+						//$tmpgeturl['content'] = dol_string_is_good_iso($tmpgeturl['content'], 1);
+						//$tmpgeturl['content'] = utf8_encode(utf8_decode($tmpgeturl['content']));
+						//$tmpgeturl['content'] = mb_convert_encoding($tmpgeturl['content'], 'UTF-8', 'UTF-8');
+						//$tmpgeturl['content'] = remove_bs($tmpgeturl['content']);
+						//$tmpgeturl['content'] = str_replace('$screen-md-max', 'auto', $tmpgeturl['content']);
+
+						//var_dump($tmpgeturl['content']);exit;
 						$tmpgeturl['content'] = preg_replace('/\/\*\s+CSS content[a-z\s]*\s+\*\//', '', $tmpgeturl['content']);
 
 						//dol_mkdir(dirname($filetosave));
@@ -694,7 +701,7 @@ if ($action == 'addcontainer')
 							//$pagecsscontent.=$tmpgeturl['content']."\n";
 						} catch (exception $e) {
 							//echo "failed to compile lessc";
-							dol_syslog("Failed to compile the CSS ".$urltograbbis." that we caught, with lessc: ".$e->getMessage(), LOG_WARNING);
+							dol_syslog("Failed to compile the CSS from URL ".$urltograbbis." with lessc: ".$e->getMessage(), LOG_WARNING);
 							$pagecsscontent.=$tmpgeturl['content']."\n";
 						}
 

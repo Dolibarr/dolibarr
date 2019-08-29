@@ -5662,23 +5662,28 @@ function dol_htmlentities($string, $flags = null, $encoding = 'UTF-8', $double_e
  *	If not, it will we considered not HTML encoded even if it is by FPDF.
  *	Example, if string contains euro symbol that has ascii code 128
  *
- *	@param	string	$s      String to check
- *	@return	int     		0 if bad iso, 1 if good iso
+ *	@param	string		$s      	String to check
+ *  @param	string		$clean		Clean if it is not an ISO. Warning, if file is utf8, you will get a bad formated file.
+ *	@return	int|string  	   		0 if bad iso, 1 if good iso, Or the clean string if $clean is 1
  */
-function dol_string_is_good_iso($s)
+function dol_string_is_good_iso($s, $clean = 0)
 {
 	$len=dol_strlen($s);
+	$out= '';
 	$ok=1;
-	for($scursor=0;$scursor<$len;$scursor++)
+	for($scursor = 0; $scursor < $len; $scursor++)
 	{
 		$ordchar=ord($s[$scursor]);
 		//print $scursor.'-'.$ordchar.'<br>';
 		if ($ordchar < 32 && $ordchar != 13 && $ordchar != 10) { $ok=0; break; }
-		if ($ordchar > 126 && $ordchar < 160) { $ok=0; break; }
+		elseif ($ordchar > 126 && $ordchar < 160) { $ok=0; break; }
+		elseif ($clean) {
+			$out.= $s[$scursor];
+		}
 	}
+	if ($clean) return $out;
 	return $ok;
 }
-
 
 /**
  *	Return nb of lines of a clear text

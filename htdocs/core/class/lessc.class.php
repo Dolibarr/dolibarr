@@ -2452,6 +2452,13 @@ class lessc_parser {
 		}
 	}
 
+	/**
+	 * Parse a string
+	 *
+	 * @param 	string	$buffer		String to parse
+	 * @throws exception
+	 * @return NULL|stdclass
+	 */
 	public function parse($buffer) {
 		$this->count = 0;
 		$this->line = 1;
@@ -2473,13 +2480,17 @@ class lessc_parser {
 			while (false !== $this->parseChunk());
 
 			if ($this->count != strlen($this->buffer))
-				$this->throwError();
+			{
+				$this->throwError('parse error count '.$this->count.' != len buffer '.strlen($this->buffer));
+			}
 
-				// TODO report where the block was opened
-				if ( !property_exists($this->env, 'parent') || !is_null($this->env->parent) )
-					throw new exception('parse error: unclosed block');
+			// TODO report where the block was opened
+			if (!property_exists($this->env, 'parent') || !is_null($this->env->parent))
+			{
+				throw new exception('parse error: unclosed block');
+			}
 
-					return $this->env;
+			return $this->env;
 		}
 
 		/**
