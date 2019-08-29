@@ -114,3 +114,5 @@ CSSContentTooltipHelp=Enter here CSS content. To avoid any conflict with the CSS
 LinkAndScriptsHereAreNotLoadedInEditor=Warning: This content is output only when site is accessed from a server. It is not used in Edit mode so if you need to load javascript files also in edit mode, just add your tag 'script src=...' into the page.
 Dynamiccontent=Sample of a page with dynamic content
 ImportSite=Import site
+EditInLineOnOff=Mode 'Edit inline' is %s
+ShowSubContainersOnOff=Mode to execute 'dynamic content' is %s
