@@ -499,7 +499,6 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
  * @param 	DoliDB	$db				Database handler
  * @param  	array	$tabMenu        	If array with menu entries already loaded, we put this array here (in most cases, it's empty)
  * @param	string	$parentMenu		parent menu id
-
  * @return	void
  */
 function print_submenu($db,&$tabMenu, $parentMenu)
