@@ -66,6 +66,7 @@ class mailing_thirdparties extends MailingTargets
 
 		$cibles = array();
 
+        $addDescription= "";
 		// Select the third parties from category
 		if (empty($_POST['filter']))
 		{
@@ -78,7 +79,6 @@ class mailing_thirdparties extends MailingTargets
 		else
 		{
             $addFilter ="";
-            $addDescription= "";
             if (isset($_POST["filter_client"]) && $_POST["filter_client"] <> '-1')
             {
                 $addFilter.= " AND s.client=" . $_POST["filter_client"];
