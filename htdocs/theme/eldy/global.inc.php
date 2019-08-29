@@ -1777,6 +1777,123 @@ a.tmenuimage:hover{
     <?php } ?>
 }
 
+#tmenu_tooltip>.tmenudiv>ul.tmenu {
+	display: inline-block !important;//to center top menu buttons
+}
+
+#tmenu_tooltip>.tmenudiv {
+	text-align: center;//to center top menu buttons
+}
+
+#id-right {
+	z-index: 1;
+}
+
+div#tmenu_tooltip {
+	box-shadow: 0 4px 8px -4px!important
+}
+
+body>div#id-container>.side-nav {
+	box-shadow: 2px 2px 4px 0px #aaa;
+	z-index: 2;
+	position: relative;
+}
+
+.disabledLink {
+	opacity: .3
+}
+
+li.tmenusel,
+li.tmenu:hover {
+	opacity: 1!important
+}
+
+a.hasSubmenu:after {
+	width: 0;
+	height: 0;
+	font-size: 0;
+	content: "";
+	border-top: 5px solid transparent;
+	border-bottom: 5px solid transparent;
+	border-left: 5px solid #fff;
+	position: absolute;
+	right: 5px;
+	margin-top: 3px
+}
+
+div.mainmenu {
+	position: relative;
+	background-repeat: no-repeat;
+	background-position: center top;
+	height: 29px;
+	margin-left: 0;
+	min-width: 40px
+}
+
+.tmenucenter:hover {
+	background: rgba(0, 0, 0, 0.2);
+}
+
+.tmenucenter ul.tmenu {
+	visibility: hidden;
+	-webkit-transition-delay: 0;
+	-moz-transition-delay: 0;
+	-ms-transition-delay: 0;
+	-o-transition-delay: 0;
+	transition-delay: 0;
+	position: absolute;
+	border: solid 1px #aaa;
+	z-index: 20;
+	box-shadow: 4px 4px 8px #777
+}
+
+.submenu0 .tmenucenter ul.tmenu {
+	left: 98%;
+	margin-top: -2.3em
+}
+
+@media screen and (min-width: 565px) {
+	ul>li:hover:not(.submenu0):not(.submenu1):not(.submenu2):not(.submenu3):not(.submenu4):not(.submenu5):not(.submenu6)>.tmenucenter>div.tmenudiv>ul.tmenu {
+		visibility: visible;
+		-webkit-transition-delay: .2s;
+		-moz-transition-delay: .2s;
+		-ms-transition-delay: .2s;
+		-o-transition-delay: .2s;
+		transition-delay: .2s
+	}
+	ul>li.submenu0>.tmenucenter:hover>div.tmenudiv>ul.tmenu,
+	ul>li.submenu1>.tmenucenter:hover>div.tmenudiv>ul.tmenu,
+	ul>li.submenu2>.tmenucenter:hover>div.tmenudiv>ul.tmenu,
+	ul>li.submenu3>.tmenucenter:hover>div.tmenudiv>ul.tmenu,
+	ul>li.submenu4>.tmenucenter:hover>div.tmenudiv>ul.tmenu,
+	ul>li.submenu5>.tmenucenter:hover>div.tmenudiv>ul.tmenu,
+	ul>li.submenu6>.tmenucenter:hover>div.tmenudiv>ul.tmenu {
+		visibility: visible
+	}
+}
+
+.tmenucenter ul.tmenu>li>div.tmenuleft {
+	height: auto
+}
+
+.tmenucenter ul.tmenu>li>div.tmenucenter {
+	height: auto
+}
+
+.tmenucenter ul.tmenu>li>div.tmenucenter a[id] {
+	width: 100%;
+	display: block;
+	color: #fff;
+	padding: 5px;
+	margin-right: 45px
+}
+
+ul.tmenu ul.tmenu {
+	background-color: rgb(".join(',',colorStringToArray($conf->global->THEME_ELDY_TOPMENU_BACK1)).");
+}
+
+
+	
 
 
 /* Login */
