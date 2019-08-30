@@ -135,13 +135,9 @@ while ($objp = $db->fetch_object($result))
 	if ($objp->tosell && ! $objp->tobuy) $status=1;     // On sale only
 	if (! $objp->tosell && $objp->tobuy) $status=2;     // On purchase only
 	$prodser[$objp->fk_product_type][$status]=$objp->total;
-	if ((! empty($conf->product->enabled) && empty($objp->fk_product_type))
-		|| (! empty($conf->product->enabled) && ! empty($objp->fk_product_type)))
-	{
-		if ($objp->tosell) $prodser[$objp->fk_product_type]['sell']+=$objp->total;
-		if ($objp->tobuy)  $prodser[$objp->fk_product_type]['buy']+=$objp->total;
-		if (! $objp->tosell && ! $objp->tobuy)  $prodser[$objp->fk_product_type]['none']+=$objp->total;
-	}
+	if ($objp->tosell) $prodser[$objp->fk_product_type]['sell']+=$objp->total;
+	if ($objp->tobuy)  $prodser[$objp->fk_product_type]['buy']+=$objp->total;
+	if (! $objp->tosell && ! $objp->tobuy)  $prodser[$objp->fk_product_type]['none']+=$objp->total;
 }
 
 if ($conf->use_javascript_ajax)
@@ -164,12 +160,18 @@ if ($conf->use_javascript_ajax)
 
 	$total = $SommeA + $SommeB + $SommeC + $SommeD + $SommeE + $SommeF;
 	$dataseries=array();
-	$dataseries[]=array($langs->trans("ProductsOnSale"), round($SommeA));
-	$dataseries[]=array($langs->trans("ProductsOnPurchase"), round($SommeB));
-	$dataseries[]=array($langs->trans("ProductsNotOnSell"), round($SommeC));
-	$dataseries[]=array($langs->trans("ServicesOnSale"), round($SommeD));
-	$dataseries[]=array($langs->trans("ServicesOnPurchase"), round($SommeE));
-	$dataseries[]=array($langs->trans("ServicesNotOnSell"), round($SommeF));
+	if (! empty($conf->product->enabled))
+	{
+		$dataseries[]=array($langs->trans("ProductsOnSale"), round($SommeA));
+		$dataseries[]=array($langs->trans("ProductsOnPurchase"), round($SommeB));
+		$dataseries[]=array($langs->trans("ProductsNotOnSell"), round($SommeC));
+	}
+	if (! empty($conf->service->enabled))
+	{
+		$dataseries[]=array($langs->trans("ServicesOnSale"), round($SommeD));
+		$dataseries[]=array($langs->trans("ServicesOnPurchase"), round($SommeE));
+		$dataseries[]=array($langs->trans("ServicesNotOnSell"), round($SommeF));
+	}
 
 	include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 	$dolgraph = new DolGraph();
