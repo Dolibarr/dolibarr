@@ -2,6 +2,7 @@
 ProductRef=Κωδ. Προϊόντος.
 ProductLabel=Ετικέτα Προϊόντος
 ProductLabelTranslated=Translated product label
+ProductDescription=Product description
 ProductDescriptionTranslated=Translated product description
 ProductNoteTranslated=Translated product note
 ProductServiceCard=Καρτέλα Προϊόντων/Υπηρεσιών

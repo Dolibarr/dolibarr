@@ -110,7 +110,9 @@ if ($nolinesbefore) {
 	{
 	?>
 		<td class="linecolrefsupplier"><span id="title_fourn_ref"><?php echo $langs->trans('SupplierRef'); ?></span></td>
-	<?php } ?>
+	<?php
+	}
+	?>
 	<td class="linecolvat right"><span id="title_vat"><?php echo $langs->trans('VAT'); ?></span></td>
 	<td class="linecoluht right"><span id="title_up_ht"><?php echo $langs->trans('PriceUHT'); ?></span></td>
 	<?php if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) { ?>
@@ -249,12 +251,31 @@ if ($nolinesbefore) {
 			if (! empty($conf->global->ENTREPOT_EXTRA_STATUS))
 			{
 				// hide products in closed warehouse, but show products for internal transfer
-				$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, 1, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth300', 0, 'warehouseopen,warehouseinternal', GETPOST('combinations', 'array'));
+				$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, -1, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth300', 0, 'warehouseopen,warehouseinternal', GETPOST('combinations', 'array'));
 			}
 			else
 			{
-				$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, 1, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth300', 0, '', GETPOST('combinations', 'array'));
+				$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, -1, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth300', 0, '', GETPOST('combinations', 'array'));
 			}
+
+			if (! empty($conf->global->MAIN_AUTO_OPEN_SELECT2_ON_FOCUS_FOR_CUSTOMER_PRODUCTS))
+			{
+				?>
+	            <script type="text/javascript">
+	                $(document).ready(function(){
+		                	// On first focus on a select2 combo, auto open the menu (this allow to use the keyboard only)
+		                	$(document).on('focus', '.select2-selection.select2-selection--single', function (e) {
+								console.log('focus on a select2');
+								if ($(this).attr('aria-labelledby') == 'select2-idprod-container')
+								{
+									console.log('open combo');
+			                	  	$('#idprod').select2('open');
+								}
+		                	});
+	                });
+	            </script>
+	            <?php
+		    }
 		}
 		else
 		{
@@ -277,21 +298,24 @@ if ($nolinesbefore) {
 		    }
 
 		    $form->select_produits_fournisseurs($object->socid, GETPOST('idprodfournprice'), 'idprodfournprice', '', '', $ajaxoptions, 1, $alsoproductwithnosupplierprice, 'maxwidth300');
-            ?>
-            <script type="text/javascript">
 
-                $(document).ready(function(){
-
-                        $(document).on('keypress',function(e) {
-                            if ($('input:focus').length == 0) {
-                                $('#idprodfournprice').select2('open');
-                            }
-                        });
-
-
-                });
-            </script>
-            <?php
+		    if (! empty($conf->global->MAIN_AUTO_OPEN_SELECT2_ON_FOCUS_FOR_SUPPLIER_PRODUCTS))
+		    {
+			    ?>
+	            <script type="text/javascript">
+	                $(document).ready(function(){
+		                	// On first focus on a select2 combo, auto open the menu (this allow to use the keyboard only)
+		                	$(document).on('focus', '.select2-selection.select2-selection--single', function (e) {
+								//console.log('focus on a select2');
+								if ($(this).attr('aria-labelledby') == 'select2-idprodfournprice-container')
+								{
+			                	  	$('#idprodfournprice').select2('open');
+								}
+		                	});
+	                });
+	            </script>
+	            <?php
+		    }
 		}
 		echo '<input type="hidden" name="pbq" id="pbq" value="">';
 		echo '</span>';

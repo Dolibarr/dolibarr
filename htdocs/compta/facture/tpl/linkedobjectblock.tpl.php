@@ -38,7 +38,7 @@ $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 
 $langs->load("bills");
 
-$linkedObjectBlock = dol_sort_array($linkedObjectBlock, 'date', 'desc');
+$linkedObjectBlock = dol_sort_array($linkedObjectBlock, 'date', 'desc', 0, 0, 1);
 
 $total=0; $ilink=0;
 foreach($linkedObjectBlock as $key => $objectlink)

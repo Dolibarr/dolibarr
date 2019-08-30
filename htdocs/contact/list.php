@@ -165,8 +165,8 @@ $arrayfields=array(
 	'p.fax'=>array('label'=>"Fax", 'checked'=>0),
 	'p.email'=>array('label'=>"EMail", 'checked'=>1),
 	'p.no_email'=>array('label'=>"No_Email", 'checked'=>0, 'enabled'=>(! empty($conf->mailing->enabled))),
-	'p.jabberid'=>array('label'=>"Jabber", 'checked'=>1, 'enabled'=>(! empty($conf->socialnetworks->enabled))),
 	'p.skype'=>array('label'=>"Skype", 'checked'=>1, 'enabled'=>(! empty($conf->socialnetworks->enabled))),
+	'p.jabberid'=>array('label'=>"Jabber", 'checked'=>1, 'enabled'=>(! empty($conf->socialnetworks->enabled))),
 	'p.twitter'=>array('label'=>"Twitter", 'checked'=>1, 'enabled'=>(! empty($conf->socialnetworks->enabled))),
 	'p.facebook'=>array('label'=>"Facebook", 'checked'=>1, 'enabled'=>(! empty($conf->socialnetworks->enabled))),
     'p.linkedin'=>array('label'=>"LinkedIn", 'checked'=>1, 'enabled'=>(! empty($conf->socialnetworks->enabled))),
@@ -427,7 +427,7 @@ if ($search_societe != '') $param.='&amp;search_societe='.urlencode($search_soci
 if ($search_zip != '') $param.='&amp;search_zip='.urlencode($search_zip);
 if ($search_town != '') $param.='&amp;search_town='.urlencode($search_town);
 if ($search_country != '') $param.= "&search_country=".urlencode($search_country);
-if ($search_job != '') $param.='&amp;search_job='.urlencode($search_job);
+if ($search_poste != '') $param.='&amp;search_poste='.urlencode($search_poste);
 if ($search_phone_pro != '') $param.='&amp;search_phone_pro='.urlencode($search_phone_pro);
 if ($search_phone_perso != '') $param.='&amp;search_phone_perso='.urlencode($search_phone_perso);
 if ($search_phone_mobile != '') $param.='&amp;search_phone_mobile='.urlencode($search_phone_mobile);
@@ -629,6 +629,12 @@ if (! empty($arrayfields['p.skype']['checked']))
 	print '<input class="flat" type="text" name="search_skype" size="6" value="'.dol_escape_htmltag($search_skype).'">';
 	print '</td>';
 }
+if (! empty($arrayfields['p.jabberid']['checked']))
+{
+	print '<td class="liste_titre">';
+	print '<input class="flat" type="text" name="search_jabberid" size="6" value="'.dol_escape_htmltag($search_jabberid).'">';
+	print '</td>';
+}
 if (! empty($arrayfields['p.twitter']['checked']))
 {
 	print '<td class="liste_titre">';
@@ -720,6 +726,7 @@ if (! empty($arrayfields['p.fax']['checked']))                 print_liste_field
 if (! empty($arrayfields['p.email']['checked']))               print_liste_field_titre($arrayfields['p.email']['label'], $_SERVER["PHP_SELF"], "p.email", $begin, $param, '', $sortfield, $sortorder);
 if (! empty($arrayfields['p.no_email']['checked']))            print_liste_field_titre($arrayfields['p.no_email']['label'], $_SERVER["PHP_SELF"], "p.no_email", $begin, $param, '', $sortfield, $sortorder, 'center ');
 if (! empty($arrayfields['p.skype']['checked']))               print_liste_field_titre($arrayfields['p.skype']['label'], $_SERVER["PHP_SELF"], "p.skype", $begin, $param, '', $sortfield, $sortorder);
+if (! empty($arrayfields['p.jabberid']['checked']))            print_liste_field_titre($arrayfields['p.jabberid']['label'], $_SERVER["PHP_SELF"], "p.jabberid", $begin, $param, '', $sortfield, $sortorder);
 if (! empty($arrayfields['p.twitter']['checked']))             print_liste_field_titre($arrayfields['p.twitter']['label'], $_SERVER["PHP_SELF"], "p.twitter", $begin, $param, '', $sortfield, $sortorder);
 if (! empty($arrayfields['p.facebook']['checked']))            print_liste_field_titre($arrayfields['p.facebook']['label'], $_SERVER["PHP_SELF"], "p.facebook", $begin, $param, '', $sortfield, $sortorder);
 if (! empty($arrayfields['p.linkedin']['checked']))            print_liste_field_titre($arrayfields['p.linkedin']['label'], $_SERVER["PHP_SELF"], "p.linkedin", $begin, $param, '', $sortfield, $sortorder);

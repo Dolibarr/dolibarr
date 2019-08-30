@@ -1,20 +1,20 @@
 # Dolibarr language file - Source file is en_US - workflow
-WorkflowSetup=Настройки на модул Workflow
-WorkflowDesc=Този модул е проектиран да редактира поведението на автоматичните действия в приложението. По подразбиране, работния процес е отворен (можете да правите неща в реда, в който желаете). Можете да активирате автоматичните действия, които ви интересуват.
+WorkflowSetup=Настройка на модула работен процес
+WorkflowDesc=Този модул осигурява някои автоматични действия. По подразбиране работният процес е отворен (можете да правите нещата в реда, по който искате), но тук можете да активирате някои автоматични действия.
 ThereIsNoWorkflowToModify=Няма налични промени на работния процес с активираните модули.
 # Autocreate
-descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Създай автоматично клиентска поръчка, след като предложението е подписано (новата поръчка че е на същатата стойност)
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Автоматично създа фактура, след като търговското предложение е подписано (новата фактура ще има същата стойност като предложението)
-descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Автоматично създаване на клиентска фактура след като договора е валидиран
-descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Автоматично създай фактура, след като клиентската поръчка е затворена (новата фактура ще има същата стойност като поръчката)
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Автоматично създаване на клиентска поръчка след подписване на търговско предложение (новата поръчка ще има същата стойност като на предложение)
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Автоматично създаване на клиентска фактура след подписване на търговско предложение (новата фактура ще има същата стойност като на предложението)
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Автоматично създаване на клиентска фактура след валидиране на договор
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Автоматично създаване на фактура за продажба след приключване на поръчка за продажба (новата фактура ще има същата стойност като на поръчката)
 # Autoclassify customer proposal or order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Класифицирай свържаното предложение/предложения като платени, когато клиентската поръчка е маркирана като платена (ако стойността на поръчката е същата, като на свързаното предложение)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Класифицирай вързаното предложение/я като платени, когато  фактурата е валидирана (ако стойността на фактурата е същата като на подписаното предложение)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Класифицирай вързаната клиенска поръчка/поръчки като платени, когато фактурата е валидирана (ако стойността на фактурата е същата, като на вързаната поръчка)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Класифицирай свързаната клиентска поръчка/поръчки като платена, когато фактурата е маркирана като платена (ако стойността на фактурата е същата, като на вързаната поръчка)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classify linked source customer order to shipped when a shipment is validated (and if quantity shipped by all shipments is the same as in the order to update)
-# Autoclassify supplier order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Classify linked source vendor proposal(s) to billed when vendor invoice is validated (and if amount of the invoice is same than total amount of linked proposals)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Classify linked source purchase order(s) to billed when vendor invoice is validated (and if amount of the invoice is same than total amount of linked orders)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Класифициране на свързано търговско предложение - първоизточник като фактурирано след класифициране на клиентска поръчка като фактурирана (и ако стойността на поръчката е същата като общата сума на подписаното свързано предложение)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Класифициране на свързано търговско предложение - първоизточник като фактурирано след валидиране на клиентска фактура (и ако стойността на фактурата е същата като общата сума на подписаното свързано предложение)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Класифициране на свързана клиентска поръчка - първоизточник като фактурирана след валидиране на клиентска фактура (и ако стойността на фактурата е същата като общата сума на свързаната поръчка)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Класифициране на свързана клиентска поръчка - първоизточник като фактурирана след плащане на клиентска фактура (и ако стойността на фактурата е същата като общата сума на свързаната поръчка)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Класифициране на свързана клиентска поръчка - първоизточник като изпратена след валидиране на доставка (и ако количеството, изпратено, чрез всички пратки е същото като в поръчката за актуализиране)
+# Autoclassify purchase order
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Класифициране на свързаното за запитване към доставчик - първоизточник като фактурираното след валидиране на доставната фактура (и ако стойността на фактурата е същата като общата сума на свързаното запитване)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Класифициране на свързаната поръчка за покупка - първоизточник като фактурирана след валидиране на доставна фактура (и ако стойността на фактурата е същата като общата сума на свързаната поръчка)
 AutomaticCreation=Автоматично създаване
 AutomaticClassification=Автоматично класифициране

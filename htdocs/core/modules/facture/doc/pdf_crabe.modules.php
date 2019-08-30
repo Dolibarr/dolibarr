@@ -342,7 +342,7 @@ class pdf_crabe extends ModelePDFFactures
                 // Set path to the background PDF File
                 if (! empty($conf->global->MAIN_ADD_PDF_BACKGROUND))
                 {
-				    $pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
+                	$pagecount = $pdf->setSourceFile($conf->mycompany->multidir_output[$object->entity].'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
 				    $tplidx = $pdf->importPage(1);
                 }
 
@@ -764,7 +764,8 @@ class pdf_crabe extends ModelePDFFactures
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *  Show payments table
 	 *
@@ -775,7 +776,7 @@ class pdf_crabe extends ModelePDFFactures
      *  @param  int			$heightforfooter height for footer
      *  @return int             			<0 if KO, >0 if OK
 	 */
-	private function _tableau_versements(&$pdf, $object, $posy, $outputlangs, $heightforfooter = 0)
+	protected function _tableau_versements(&$pdf, $object, $posy, $outputlangs, $heightforfooter = 0)
 	{
         // phpcs:enable
 		global $conf;
@@ -911,6 +912,7 @@ class pdf_crabe extends ModelePDFFactures
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Function _tableau_versements_header
 	 *
@@ -924,7 +926,7 @@ class pdf_crabe extends ModelePDFFactures
 	 * @param int 			$tab3_height		height
 	 * @return void
 	 */
-	private function _tableau_versements_header($pdf, $object, $outputlangs, $default_font_size, $tab3_posx, $tab3_top, $tab3_width, $tab3_height)
+	protected function _tableau_versements_header($pdf, $object, $outputlangs, $default_font_size, $tab3_posx, $tab3_top, $tab3_width, $tab3_height)
 	{
 	    // phpcs:enable
 	    $title=$outputlangs->transnoentities("PaymentsAlreadyDone");
@@ -949,7 +951,8 @@ class pdf_crabe extends ModelePDFFactures
 		$pdf->line($tab3_posx, $tab3_top-1+$tab3_height, $tab3_posx+$tab3_width, $tab3_top-1+$tab3_height);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *   Show miscellaneous information (payment mode, payment term, ...)
 	 *
@@ -959,7 +962,7 @@ class pdf_crabe extends ModelePDFFactures
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @return	void
 	 */
-	private function _tableau_info(&$pdf, $object, $posy, $outputlangs)
+	protected function _tableau_info(&$pdf, $object, $posy, $outputlangs)
 	{
         // phpcs:enable
 		global $conf;
@@ -1108,7 +1111,8 @@ class pdf_crabe extends ModelePDFFactures
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *	Show total to pay
 	 *
@@ -1119,7 +1123,7 @@ class pdf_crabe extends ModelePDFFactures
 	 *	@param	Translate	$outputlangs	Objet langs
 	 *	@return int							Position pour suite
 	 */
-	private function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
+	protected function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
         // phpcs:enable
 		global $conf,$mysoc;
@@ -1347,6 +1351,50 @@ class pdf_crabe extends ModelePDFFactures
 
 				$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 				$pdf->MultiCell($largcol2, $tab2_hl, price($sign * $total_ttc, 0, $outputlangs), $useborder, 'R', 1);
+				
+				// Retained warranty
+				if( !empty($object->situation_final) &&  ( $object->type == Facture::TYPE_SITUATION && (!empty($object->retained_warranty) ) ) )
+				{
+					$displayWarranty = false;
+
+				    // Check if this situation invoice is 100% for real
+				    if(!empty($object->lines)){
+				        $displayWarranty = true;
+				        foreach($object->lines as $i => $line){
+				            if($line->product_type < 2 && $line->situation_percent < 100){
+				                $displayWarranty = false;
+				                break;
+				            }
+						}
+				    }
+				    
+				    if($displayWarranty){
+    				    $pdf->SetTextColor(40, 40, 40);
+    				    $pdf->SetFillColor(255, 255, 255);
+    				    
+    				    $retainedWarranty = $object->total_ttc * $object->retained_warranty / 100;
+    				    $billedWithRetainedWarranty = $object->total_ttc - $retainedWarranty ;
+    				    
+    				    // Billed - retained warranty
+    				    $index++;
+    				    $pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
+    				    $pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("ToPayOn", dol_print_date($object->date_lim_reglement, 'day')), $useborder, 'L', 1);
+    				    
+    				    $pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
+    				    $pdf->MultiCell($largcol2, $tab2_hl, price($billedWithRetainedWarranty), $useborder, 'R', 1);
+    				    
+    				    // retained warranty
+    				    $index++;
+    				    $pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
+    				    
+    				    $retainedWarrantyToPayOn = $outputlangs->transnoentities("RetainedWarranty") . ' ('.$object->retained_warranty.'%)';
+    				    $retainedWarrantyToPayOn.=  !empty($object->retained_warranty_date_limit)?' '.$outputlangs->transnoentities("toPayOn", dol_print_date($object->retained_warranty_date_limit, 'day')):'';
+    				    
+    				    $pdf->MultiCell($col2x-$col1x, $tab2_hl, $retainedWarrantyToPayOn, $useborder, 'L', 1);
+    				    $pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
+    				    $pdf->MultiCell($largcol2, $tab2_hl, price($retainedWarranty), $useborder, 'R', 1);
+				    }
+				}
 			}
 		}
 
@@ -1407,6 +1455,7 @@ class pdf_crabe extends ModelePDFFactures
 		return ($tab2_top + ($tab2_hl * $index));
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *   Show table for lines
 	 *
@@ -1420,7 +1469,7 @@ class pdf_crabe extends ModelePDFFactures
 	 *   @param		string		$currency		Currency code
 	 *   @return	void
 	 */
-	private function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '')
+	protected function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '')
 	{
 		global $conf;
 
@@ -1528,6 +1577,7 @@ class pdf_crabe extends ModelePDFFactures
 		}
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *  Show top header of page.
 	 *
@@ -1537,7 +1587,7 @@ class pdf_crabe extends ModelePDFFactures
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @return	void
 	 */
-	private function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
+	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
 		global $conf, $langs;
 
@@ -1567,7 +1617,7 @@ class pdf_crabe extends ModelePDFFactures
 		// Logo
 		if (empty($conf->global->PDF_DISABLE_MYCOMPANY_LOGO))
 		{
-			$logo=$conf->mycompany->dir_output.'/logos/'.$this->emetteur->logo;
+			$logo=$conf->mycompany->multidir_output[$object->entity].'/logos/'.$this->emetteur->logo;
 			if ($this->emetteur->logo)
 			{
 				if (is_readable($logo))
@@ -1803,6 +1853,7 @@ class pdf_crabe extends ModelePDFFactures
 		return $top_shift;
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *   	Show footer of page. Need this->emetteur object
      *
@@ -1812,7 +1863,7 @@ class pdf_crabe extends ModelePDFFactures
 	 *      @param	int			$hidefreetext		1=Hide free text
 	 *      @return	int								Return height of bottom margin including footer text
 	 */
-	private function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
+	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
 		global $conf;
 		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;

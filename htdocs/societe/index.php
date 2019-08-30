@@ -63,41 +63,6 @@ print load_fiche_titre($transAreaType, $linkback, 'title_companies.png');
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
-if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
-{
-    // Search thirdparty
-    if (! empty($conf->societe->enabled) && $user->rights->societe->lire)
-    {
-    	$listofsearchfields['search_thirdparty']=array('text'=>'ThirdParty');
-    }
-    // Search contact/address
-    if (! empty($conf->societe->enabled) && $user->rights->societe->lire)
-    {
-    	$listofsearchfields['search_contact']=array('text'=>'Contact');
-    }
-
-    if (count($listofsearchfields))
-    {
-    	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
-    	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    	print '<table class="noborder nohover centpercent">';
-    	$i=0;
-    	foreach($listofsearchfields as $key => $value)
-    	{
-    		if ($i == 0) print '<tr class="liste_titre"><th colspan="3">'.$langs->trans("Search").'</th></tr>';
-    		print '<tr '.$bc[false].'>';
-    		print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label></td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'" size="18"></td>';
-    		if ($i == 0) print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
-    		print '</tr>';
-    		$i++;
-    	}
-    	print '</table>';
-    	print '</form>';
-    	print '<br>';
-    }
-}
-
-
 /*
  * Statistics area
  */
@@ -194,7 +159,7 @@ if (! empty($conf->categorie->enabled) && ! empty($conf->global->CATEGORY_GRAPHS
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder nohover" width="100%">';
 	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Categories").'</th></tr>';
-	print '<tr '.$bc[0].'><td class="center" colspan="2">';
+	print '<tr><td class="center" colspan="2">';
 	$sql = "SELECT c.label, count(*) as nb";
 	$sql.= " FROM ".MAIN_DB_PREFIX."categorie_societe as cs";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cs.fk_categorie = c.rowid";

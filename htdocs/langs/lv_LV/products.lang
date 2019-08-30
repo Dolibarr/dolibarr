@@ -2,6 +2,7 @@
 ProductRef=Produkta ref.
 ProductLabel=Produkta marķējums
 ProductLabelTranslated=Tulkots produkta nosaukums
+ProductDescription=Product description
 ProductDescriptionTranslated=Tulkotā produkta apraksts
 ProductNoteTranslated=Tulkota produkta piezīme
 ProductServiceCard=Produktu / Pakalpojumu kartiņa
@@ -159,7 +160,7 @@ SuppliersPrices=Pārdevēja cenas
 SuppliersPricesOfProductsOrServices=Pārdevēja cenas (produktiem vai pakalpojumiem)
 CustomCode=Muita / Prece / HS kods
 CountryOrigin=Izcelsmes valsts
-Nature=Nature of produt (material/finished)
+Nature=Izstrādājuma veids (materiāls/gatavs)
 ShortLabel=Īsais nosaukums
 Unit=Vienība
 p=u.

@@ -130,21 +130,6 @@ $AccCat = new AccountancyCategory($db);
  * View
  */
 
-$months = array(
-	$langs->trans("JanuaryMin"),
-	$langs->trans("FebruaryMin"),
-	$langs->trans("MarchMin"),
-	$langs->trans("AprilMin"),
-	$langs->trans("MayMin"),
-	$langs->trans("JuneMin"),
-	$langs->trans("JulyMin"),
-	$langs->trans("AugustMin"),
-	$langs->trans("SeptemberMin"),
-	$langs->trans("OctoberMin"),
-	$langs->trans("NovemberMin"),
-	$langs->trans("DecemberMin"),
-);
-
 llxHeader();
 
 $form=new Form($db);
@@ -773,7 +758,7 @@ else
 
 		            print '<tr class="oddeven"><td>&nbsp;</td>';
 
-		            print "<td>".$langs->trans("Salary")." <a href=\"".DOL_URL_ROOT."/compta/salaries/list.php?filtre=s.fk_user=".$obj->fk_user."\">".$obj->firstname." ".$obj->lastname."</a></td>\n";
+		            print "<td>".$langs->trans("Salary")." <a href=\"".DOL_URL_ROOT."/salaries/list.php?filtre=s.fk_user=".$obj->fk_user."\">".$obj->firstname." ".$obj->lastname."</a></td>\n";
 
 		            if ($modecompta == 'CREANCES-DETTES') print '<td class="right">'.price(-$obj->amount).'</td>';
 		            print '<td class="right">'.price(-$obj->amount).'</td>';

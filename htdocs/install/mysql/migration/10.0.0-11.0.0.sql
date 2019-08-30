@@ -28,6 +28,11 @@
 -- Note: fields with type BLOB/TEXT can't have default value.
 
 
+-- Missing in v10
+ALTER TABLE llx_account_bookkeeping ADD COLUMN date_export datetime DEFAULT NULL;
+ALTER TABLE llx_expensereport ADD COLUMN paid smallint default 0 NOT NULL;
+UPDATE llx_expensereport set paid = 1 WHERE fk_statut = 6 and paid = 0;
+
 create table llx_entrepot_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
@@ -39,6 +44,11 @@ create table llx_entrepot_extrafields
 ALTER TABLE llx_entrepot_extrafields ADD INDEX idx_entrepot_extrafields (fk_object);
 
 
+ALTER TABLE llx_facture ADD COLUMN retained_warranty real DEFAULT NULL after situation_final;
+ALTER TABLE llx_facture ADD COLUMN retained_warranty_date_limit	date DEFAULT NULL after retained_warranty;
+ALTER TABLE llx_facture ADD COLUMN retained_warranty_fk_cond_reglement	integer  DEFAULT NULL after retained_warranty_date_limit;
+
+
 ALTER TABLE llx_c_shipment_mode ADD COLUMN entity integer DEFAULT 1 NOT NULL;
 
 ALTER TABLE llx_c_shipment_mode DROP INDEX uk_c_shipment_mode;
@@ -48,3 +58,26 @@ ALTER TABLE llx_facture_fourn DROP COLUMN total;
 
 ALTER TABLE llx_user ADD COLUMN iplastlogin         varchar(250);
 ALTER TABLE llx_user ADD COLUMN ippreviouslogin     varchar(250);
+
+ALTER TABLE llx_events ADD COLUMN prefix_session varchar(255) NULL;
+
+create table llx_payment_salary_extrafields
+(
+  rowid            integer AUTO_INCREMENT PRIMARY KEY,
+  tms              timestamp,
+  fk_object        integer NOT NULL,    -- salary payment id
+  import_key       varchar(14)      	-- import key
+)ENGINE=innodb;
+
+ALTER TABLE llx_payment_salary_extrafields ADD INDEX idx_payment_salary_extrafields (fk_object);
+
+ALTER TABLE llx_c_price_expression MODIFY COLUMN expression varchar(255) NOT NULL;
+
+UPDATE llx_bank_url set url = REPLACE( url, 'compta/salaries/', 'salaries/');
+
+ALTER TABLE llx_stock_mouvement ADD COLUMN fk_projet INTEGER NOT NULL DEFAULT 0 AFTER model_pdf;
+
+ALTER TABLE llx_oauth_token ADD COLUMN fk_soc integer DEFAULT NULL after token;
+
+ALTER TABLE llx_mailing ADD COLUMN tms timestamp;
+ALTER TABLE llx_mailing_cibles ADD COLUMN tms timestamp;

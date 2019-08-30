@@ -2167,8 +2167,8 @@ class Societe extends CommonObject
 		{
 			$label.= '<br><b>' . $langs->trans('Name') . ':</b> '. $this->name;
 			if (! empty($this->name_alias)) $label.=' ('.$this->name_alias.')';
-			$label.= '<br><b>' . $langs->trans('Email') . ':</b> '. $this->email;
 		}
+		$label.= '<br><b>' . $langs->trans('Email') . ':</b> '. $this->email;
 		if (! empty($this->country_code))
 			$label.= '<br><b>' . $langs->trans('Country') . ':</b> '. $this->country_code;
 		if (! empty($this->tva_intra) || (! empty($conf->global->SOCIETE_SHOW_FIELD_IN_TOOLTIP) && strpos($conf->global->SOCIETE_SHOW_FIELD_IN_TOOLTIP, 'vatnumber') !== false))
@@ -3024,7 +3024,7 @@ class Societe extends CommonObject
 
 			for ($index = 0; $index < 9; $index ++)
 			{
-				$number = (int) $siren[$index];
+				$number = (int) $chaine[$index];
 				if (($index % 2) != 0) { if (($number *= 2) > 9) $number -= 9; }
 				$sum += $number;
 			}
@@ -3066,12 +3066,15 @@ class Societe extends CommonObject
 			$string=preg_replace('/(\s)/', '', $string);
 			$string = strtoupper($string);
 
-			for ($i = 0; $i < 9; $i ++)
-			$num[$i] = substr($string, $i, 1);
-
 			//Check format
 			if (!preg_match('/((^[A-Z]{1}[0-9]{7}[A-Z0-9]{1}$|^[T]{1}[A-Z0-9]{8}$)|^[0-9]{8}[A-Z]{1}$)/', $string))
 			return 0;
+
+			$num = array();
+			for ($i = 0; $i < 9; $i ++)
+			{
+				$num[$i] = substr($string, $i, 1);
+			}
 
 			//Check NIF
 			if (preg_match('/(^[0-9]{8}[A-Z]{1}$)/', $string))
@@ -3881,7 +3884,7 @@ class Societe extends CommonObject
 		 $alreadypayed=price2num($paiement + $creditnotes + $deposits,'MT');
 		 $remaintopay=price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits,'MT');
 		 */
-		if ($mode == 'supplier') $sql  = "SELECT rowid, total_ht as total_ht, total_ttc, paye, fk_statut, close_code FROM ".MAIN_DB_PREFIX.$table." as f";
+		if ($mode == 'supplier') $sql  = "SELECT rowid, total_ht as total_ht, total_ttc, paye, type, fk_statut, close_code FROM ".MAIN_DB_PREFIX.$table." as f";
 		else $sql  = "SELECT rowid, total as total_ht, total_ttc, paye, fk_statut, close_code FROM ".MAIN_DB_PREFIX.$table." as f";
 		$sql .= " WHERE fk_soc = ". $this->id;
 		if ($mode == 'supplier') {
@@ -3908,25 +3911,30 @@ class Societe extends CommonObject
 				$tmpobject=new Facture($this->db);
 			}
 			while($obj=$this->db->fetch_object($resql)) {
-				$tmpobject->id=$obj->rowid;
-				if ($obj->fk_statut != 0                                           // Not a draft
-					&& ! ($obj->fk_statut == 3 && $obj->close_code == 'replaced')  // Not a replaced invoice
+                $tmpobject->id=$obj->rowid;
+
+				if ($obj->fk_statut != Facture::STATUS_DRAFT                                           // Not a draft
+					&& ! ($obj->fk_statut == Facture::STATUS_ABANDONED && $obj->close_code == 'replaced')  // Not a replaced invoice
 					)
 				{
 					$outstandingTotal+= $obj->total_ht;
 					$outstandingTotalIncTax+= $obj->total_ttc;
 				}
 				if ($obj->paye == 0
-					&& $obj->fk_statut != 0    // Not a draft
-					&& $obj->fk_statut != 3	   // Not abandonned
-					&& $obj->fk_statut != 2)   // Not classified as paid
+					&& $obj->fk_statut != Facture::STATUS_DRAFT    		// Not a draft
+					&& $obj->fk_statut != Facture::STATUS_ABANDONED	    // Not abandonned
+					&& $obj->fk_statut != Facture::STATUS_CLOSED)   	// Not classified as paid
 				//$sql .= " AND (fk_statut <> 3 OR close_code <> 'abandon')";		// Not abandonned for undefined reason
 				{
 					$paiement = $tmpobject->getSommePaiement();
 					$creditnotes = $tmpobject->getSumCreditNotesUsed();
 					$deposits = $tmpobject->getSumDepositsUsed();
+
 					$outstandingOpened+=$obj->total_ttc - $paiement - $creditnotes - $deposits;
 				}
+
+                //if credit note is converted but not used
+                if($mode == 'supplier' && $obj->type == FactureFournisseur::TYPE_CREDIT_NOTE  && $tmpobject->isCreditNoteUsed())$outstandingOpened-=$tmpobject->getSumFromThisCreditNotesNotUsed();
 			}
 			return array('opened'=>$outstandingOpened, 'total_ht'=>$outstandingTotal, 'total_ttc'=>$outstandingTotalIncTax);	// 'opened' is 'incl taxes'
 		}
@@ -3934,54 +3942,6 @@ class Societe extends CommonObject
 		{
 			return array();
 		}
-	}
-
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    /**
-     *  Return amount of bill not paid
-     *
-     *  @return		int				Amount in debt for thirdparty
-     *  @deprecated
-     *  @see getOutstandingBills()
-     */
-    public function get_OutstandingBill()
-    {
-        // phpcs:enable
-		/* Accurate value of remain to pay is to sum remaintopay for each invoice
-	     $paiement = $invoice->getSommePaiement();
-	     $creditnotes=$invoice->getSumCreditNotesUsed();
-	     $deposits=$invoice->getSumDepositsUsed();
-	     $alreadypayed=price2num($paiement + $creditnotes + $deposits,'MT');
-	     $remaintopay=price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits,'MT');
-	     */
-		$sql  = "SELECT rowid, total_ttc FROM ".MAIN_DB_PREFIX."facture as f";
-		$sql .= " WHERE fk_soc = ". $this->id;
-		$sql .= " AND entity IN (".getEntity('invoice').")";
-		$sql .= " AND paye = 0";
-		$sql .= " AND fk_statut <> 0";	// Not a draft
-		$sql .= " AND entity IN (".getEntity('invoice').")";
-		//$sql .= " AND (fk_statut <> 3 OR close_code <> 'abandon')";		// Not abandonned for undefined reason
-		$sql .= " AND fk_statut <> 3";		// Not abandonned
-		$sql .= " AND fk_statut <> 2";		// Not clasified as paid
-
-		dol_syslog("get_OutstandingBill", LOG_DEBUG);
-		$resql=$this->db->query($sql);
-		if ($resql)
-		{
-			$outstandingAmount = 0;
-			require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-			$tmpobject=new Facture($this->db);
-			while($obj=$this->db->fetch_object($resql)) {
-				$tmpobject->id=$obj->rowid;
-				$paiement = $tmpobject->getSommePaiement();
-				$creditnotes = $tmpobject->getSumCreditNotesUsed();
-				$deposits = $tmpobject->getSumDepositsUsed();
-				$outstandingAmount+= $obj->total_ttc - $paiement - $creditnotes - $deposits;
-			}
-			return $outstandingAmount;
-		}
-		else
-			return 0;
 	}
 
 	/**
@@ -3996,7 +3956,7 @@ class Societe extends CommonObject
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Renvoi le libelle d'un statut donne
+	 *  Return the label of the customer/prospect status
 	 *
 	 *  @param	int		$statut         Id statut
 	 *  @return	string          		Libelle du statut
@@ -4172,8 +4132,6 @@ class Societe extends CommonObject
 			if ($result < 0)
 			{
 				$error++;
-				$this->error = $c->error;
-				$this->errors = $c->errors;
 				break;
 			}
 		}

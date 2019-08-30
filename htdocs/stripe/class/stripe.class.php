@@ -78,9 +78,10 @@ class Stripe extends CommonObject
 	 * Return main company OAuth Connect stripe account
 	 *
 	 * @param 	string	$mode		'StripeTest' or 'StripeLive'
+	 * @param	int		$fk_soc		Id of thirdparty
 	 * @return 	string				Stripe account 'acc_....' or '' if no OAuth token found
 	 */
-	public function getStripeAccount($mode = 'StripeTest')
+	public function getStripeAccount($mode = 'StripeTest', $fk_soc = 0)
 	{
 		global $conf;
 
@@ -88,6 +89,13 @@ class Stripe extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."oauth_token";
 		$sql.= " WHERE entity = ".$conf->entity;
 		$sql.= " AND service = '".$mode."'";
+		if ($fk_soc > 0) {
+			$sql.= " AND fk_soc = ".$fk_soc;
+		}
+		else {
+			$sql.= " AND fk_soc IS NULL";
+		}
+		$sql.= " AND fk_user IS NULL AND fk_adherent IS NULL";
 
 		dol_syslog(get_class($this) . "::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -177,6 +185,7 @@ class Stripe extends CommonObject
 				}
 				catch(Exception $e)
 				{
+					// For exemple, we may have error: 'No such customer: cus_XXXXX; a similar object exists in live mode, but a test mode key was used to make this request.'
 					$this->error = $e->getMessage();
 				}
 			}
@@ -286,9 +295,11 @@ class Stripe extends CommonObject
     /**
 	 * Get the Stripe payment intent. Create it with confirm=false
      * Warning. If a payment was tried and failed, a payment intent was created.
-	 * But if we change someting on object to pay (amount or other), reusing same payment intent is not allowed.
+	 * But if we change something on object to pay (amount or other), reusing same payment intent is not allowed.
 	 * Recommanded solution is to recreate a new payment intent each time we need one (old one will be automatically closed after a delay),
 	 * that's why i comment the part of code to retreive a payment intent with object id (never mind if we cumulate payment intent with old ones that will not be used)
+	 * Note: This is used when option STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION is on when making a payment from the public/payment/newpayment.php page
+	 * but not when using the STRIPE_USE_NEW_CHECKOUT.
 	 *
 	 * @param   double  $amount                             Amount
 	 * @param   string  $currency_code                      Currency code
@@ -307,7 +318,7 @@ class Stripe extends CommonObject
 	{
 		global $conf;
 
-		dol_syslog("getPaymentIntent");
+		dol_syslog("getPaymentIntent", LOG_INFO, 1);
 
 		$error = 0;
 
@@ -318,14 +329,14 @@ class Stripe extends CommonObject
 		if (! in_array($currency_code, $arrayzerounitcurrency)) $stripeamount = $amount * 100;
 		else $stripeamount = $amount;
 
-		$fee = round($amount * ($conf->global->STRIPE_APPLICATION_FEE_PERCENT / 100) + $conf->global->STRIPE_APPLICATION_FEE);
+		$fee = $amount * ($conf->global->STRIPE_APPLICATION_FEE_PERCENT / 100) + $conf->global->STRIPE_APPLICATION_FEE;
 		if ($fee >= $conf->global->STRIPE_APPLICATION_FEE_MAXIMAL && $conf->global->STRIPE_APPLICATION_FEE_MAXIMAL > $conf->global->STRIPE_APPLICATION_FEE_MINIMAL) {
-		    $fee = round($conf->global->STRIPE_APPLICATION_FEE_MAXIMAL);
+		    $fee = $conf->global->STRIPE_APPLICATION_FEE_MAXIMAL;
 		} elseif ($fee < $conf->global->STRIPE_APPLICATION_FEE_MINIMAL) {
-		    $fee = round($conf->global->STRIPE_APPLICATION_FEE_MINIMAL);
+		    $fee = $conf->global->STRIPE_APPLICATION_FEE_MINIMAL;
 		}
-		if (! in_array($currency_code, $arrayzerounitcurrency)) $stripefee = $fee * 100;
-		else $stripefee = $fee;
+				if (! in_array($currency, $arrayzerounitcurrency)) $stripefee = round($fee * 100);
+				else $stripefee = round($fee);
 
 		$paymentintent = null;
 
@@ -389,10 +400,10 @@ class Stripe extends CommonObject
     		    "confirmation_method" => $mode,
     		    "amount" => $stripeamount,
     			"currency" => $currency_code,
-    		    "payment_method_types" => ["card"],
+    		    "payment_method_types" => array("card"),
     		    "description" => $description,
     		    "statement_descriptor" => dol_trunc($tag, 10, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt (company + description)
-    			//"save_payment_method" => true,
+				"setup_future_usage" => "on_session",
     			"metadata" => $metadata
     		);
     		if (! is_null($customer)) $dataforintent["customer"]=$customer;
@@ -402,7 +413,7 @@ class Stripe extends CommonObject
 
     		if ($conf->entity!=$conf->global->STRIPECONNECT_PRINCIPAL && $stripefee > 0)
     		{
-    			$dataforintent["application_fee"] = $stripefee;
+    			$dataforintent["application_fee_amount"] = $stripefee;
     		}
     		if ($usethirdpartyemailforreceiptemail && is_object($object) && $object->thirdparty->email)
     		{
@@ -479,7 +490,7 @@ class Stripe extends CommonObject
     		}
 		}
 
-		dol_syslog("getPaymentIntent return error=".$error);
+		dol_syslog("getPaymentIntent return error=".$error, LOG_INFO, -1);
 
 		if (! $error)
 		{
@@ -707,15 +718,14 @@ class Stripe extends CommonObject
 					$charge = \Stripe\Charge::create($paymentarray, array("idempotency_key" => "$description"));
 				}
 			} else {
-				$fee = round($amount * ($conf->global->STRIPE_APPLICATION_FEE_PERCENT / 100) + $conf->global->STRIPE_APPLICATION_FEE);
-			    if ($fee >= $conf->global->STRIPE_APPLICATION_FEE_MAXIMAL && $conf->global->STRIPE_APPLICATION_FEE_MAXIMAL > $conf->global->STRIPE_APPLICATION_FEE_MINIMAL) {
-					$fee = round($conf->global->STRIPE_APPLICATION_FEE_MAXIMAL);
-				}
-                elseif ($fee < $conf->global->STRIPE_APPLICATION_FEE_MINIMAL) {
-					$fee = round($conf->global->STRIPE_APPLICATION_FEE_MINIMAL);
-				}
-				if (! in_array($currency, $arrayzerounitcurrency)) $stripefee = $fee * 100;
-				else $stripefee = $fee;
+		$fee = $amount * ($conf->global->STRIPE_APPLICATION_FEE_PERCENT / 100) + $conf->global->STRIPE_APPLICATION_FEE;
+		if ($fee >= $conf->global->STRIPE_APPLICATION_FEE_MAXIMAL && $conf->global->STRIPE_APPLICATION_FEE_MAXIMAL > $conf->global->STRIPE_APPLICATION_FEE_MINIMAL) {
+		    $fee = $conf->global->STRIPE_APPLICATION_FEE_MAXIMAL;
+		} elseif ($fee < $conf->global->STRIPE_APPLICATION_FEE_MINIMAL) {
+		    $fee = $conf->global->STRIPE_APPLICATION_FEE_MINIMAL;
+		}
+				if (! in_array($currency, $arrayzerounitcurrency)) $stripefee = round($fee * 100);
+				else $stripefee = round($fee);
 
         		$paymentarray = array(
 					"amount" => "$stripeamount",
@@ -729,7 +739,7 @@ class Stripe extends CommonObject
 				);
 				if ($conf->entity!=$conf->global->STRIPECONNECT_PRINCIPAL && $stripefee > 0)
 				{
-					$paymentarray["application_fee"] = $stripefee;
+					$paymentarray["application_fee_amount"] = $stripefee;
 				}
 				if ($societe->email && $usethirdpartyemailforreceiptemail)
 				{

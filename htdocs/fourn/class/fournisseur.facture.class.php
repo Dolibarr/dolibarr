@@ -36,6 +36,7 @@
 
 include_once DOL_DOCUMENT_ROOT.'/core/class/commoninvoice.class.php';
 require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 /**
  *	Class to manage suppliers invoices
@@ -411,17 +412,6 @@ class FactureFournisseur extends CommonInvoice
 				    }
 				}
 			}
-
-			// Add linked object (deprecated, use ->linkedObjectsIds instead)
-            if (! $error && $this->id && ! empty($this->origin) && ! empty($this->origin_id))
-            {
-                $ret = $this->add_object_linked();
-                if (! $ret)
-                {
-                    dol_print_error($this->db);
-                    $error++;
-                }
-            }
 
 			if (count($this->lines) && is_object($this->lines[0]))	// If this->lines is array of InvoiceLines (preferred mode)
 			{
@@ -1320,6 +1310,7 @@ class FactureFournisseur extends CommonInvoice
     public function validate($user, $force_number = '', $idwarehouse = 0, $notrigger = 0)
     {
         global $conf,$langs;
+
         require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
         $now=dol_now();
@@ -1416,14 +1407,18 @@ class FactureFournisseur extends CommonInvoice
             	// Rename directory if dir was a temporary ref
             	if (preg_match('/^[\(]?PROV/i', $this->ref))
             	{
-            		// On renomme repertoire facture ($this->ref = ancienne ref, $num = nouvelle ref)
-            		// in order not to lose the attached files
+            		// Now we rename also files into index
+            		$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref)+1).")), filepath = 'fournisseur/facture/".get_exdir($this->id, 2, 0, 0, $this, 'invoice_supplier').$this->db->escape($this->newref)."'";
+            		$sql.= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'fournisseur/facture/".get_exdir($this->id, 2, 0, 0, $this, 'invoice_supplier').$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+            		$resql = $this->db->query($sql);
+            		if (! $resql) { $error++; $this->error = $this->db->lasterror(); }
+
+            		// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
             		$oldref = dol_sanitizeFileName($this->ref);
             		$newref = dol_sanitizeFileName($num);
-
             		$dirsource = $conf->fournisseur->facture->dir_output.'/'.get_exdir($this->id, 2, 0, 0, $this, 'invoice_supplier').$oldref;
             		$dirdest = $conf->fournisseur->facture->dir_output.'/'.get_exdir($this->id, 2, 0, 0, $this, 'invoice_supplier').$newref;
-            		if (file_exists($dirsource))
+            		if (! $error && file_exists($dirsource))
             		{
             			dol_syslog(get_class($this)."::validate rename dir ".$dirsource." into ".$dirdest);
 
@@ -2208,6 +2203,7 @@ class FactureFournisseur extends CommonInvoice
 	        $response = new WorkboardResponse();
 	        $response->warning_delay=$conf->facture->fournisseur->warning_delay/60/60/24;
 	        $response->label=$langs->trans("SupplierBillsToPay");
+	        $response->labelShort=$langs->trans("ToPay");
 
 	        $response->url=DOL_URL_ROOT.'/fourn/facture/list.php?search_status=1&mainmenu=billing&leftmenu=suppliers_bills';
 	        $response->img=img_object($langs->trans("Bills"), "bill");
@@ -2683,6 +2679,27 @@ class FactureFournisseur extends CommonInvoice
         }
 
         return ($this->statut == self::STATUS_VALIDATED) && ($this->date_echeance < ($now - $conf->facture->fournisseur->warning_delay));
+    }
+
+    /**
+     * Is credit note used
+     *
+     * @return bool
+     */
+    public function isCreditNoteUsed()
+    {
+        global $db;
+
+        $isUsed = false;
+
+        $sql = "SELECT fk_invoice_supplier FROM ".MAIN_DB_PREFIX."societe_remise_except WHERE fk_invoice_supplier_source=".$this->id;
+        $resql = $db->query($sql);
+        if(!empty($resql)){
+            $obj = $db->fetch_object($resql);
+            if(!empty($obj->fk_invoice_supplier))$isUsed=true;
+        }
+
+        return $isUsed;
     }
 }
 

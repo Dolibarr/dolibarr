@@ -49,6 +49,7 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 //var_dump($extrafields->attributes[$object->table_element]);
 if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]['label']))
 {
+	$lastseparatorkeyfound = '';
     $extrafields_collapse_num = '';
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $label)
 	{
@@ -101,6 +102,8 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
             }
 
 			print $extrafields->showSeparator($key, $object);
+
+			$lastseparatorkeyfound=$key;
 		}
 		else
 		{
@@ -108,8 +111,7 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 			print '<td class="titlefield">';
 			print '<table width="100%" class="nobordernopadding">';
 			print '<tr>';
-			print '<td';
-			print ' class="';
+			print '<td class="';
 			//var_dump($action);exit;
 
 			if ((! empty($action) && ($action == 'create' || $action == 'edit')) && ! empty($extrafields->attributes[$object->table_element]['required'][$key])) print ' fieldrequired';
@@ -136,7 +138,7 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 			{
 			    $fieldid='id';
 			    if ($object->table_element == 'societe') $fieldid='socid';
-				print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?'.$fieldid.'=' . $object->id . '&action=edit_extras&attribute=' . $key . '">' . img_edit().'</a></td>';
+			    print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?'.$fieldid.'=' . $object->id . '&action=edit_extras&attribute=' . $key . '&ignorecollapsesetup=1">' . img_edit().'</a></td>';
 			}
 			print '</tr></table>';
 			print '</td>';

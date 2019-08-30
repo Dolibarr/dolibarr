@@ -107,6 +107,7 @@ if (! $sortfield) $sortfield="t.".key($object->fields);   // Set here default se
 if (! $sortorder) $sortorder="ASC";
 
 // Security check
+if (empty($conf->mymodule->enabled)) accessforbidden('Module not enabled');
 $socid=0;
 if ($user->societe_id > 0)	// Protection if external user
 {
@@ -135,7 +136,7 @@ $arrayfields=array();
 foreach($object->fields as $key => $val)
 {
 	// If $val['visible']==0, then we never show the field
-	if (! empty($val['visible'])) $arrayfields['t.'.$key]=array('label'=>$val['label'], 'checked'=>(($val['visible']<0)?0:1), 'enabled'=>$val['enabled'], 'position'=>$val['position']);
+	if (! empty($val['visible'])) $arrayfields['t.'.$key]=array('label'=>$val['label'], 'checked'=>(($val['visible']<0)?0:1), 'enabled'=>($val['enabled'] && ($val['visible'] != 3)), 'position'=>$val['position']);
 }
 // Extra fields
 if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
@@ -493,7 +494,7 @@ while ($i < min($num, $limit))
 	    if (in_array($val['type'], array('timestamp'))) $cssforfield.=($cssforfield?' ':'').'nowrap';
 	    elseif ($key == 'ref') $cssforfield.=($cssforfield?' ':'').'nowrap';
 
-	    if (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price'))) $cssforfield.=($cssforfield?' ':'').'right';
+	    if (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && $key != 'status') $cssforfield.=($cssforfield?' ':'').'right';
 
 	    if (! empty($arrayfields['t.'.$key]['checked']))
 		{

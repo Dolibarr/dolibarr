@@ -11,6 +11,7 @@ AgendaAutoActionDesc=Gib hier an, welche Ereignisse automatisch in den Kalender 
 AgendaSetupOtherDesc=Hier gibst Du die Exportoptionen zu externen Kalendern, wie Google Calendar oder Thunderbird an.
 EventRemindersByEmailNotEnabled=Benachrichtigungen sind in den Moduleinstellungen deaktiviert (%s).
 NewCompanyToDolibarr=Partner %s erzeugt
+COMPANY_DELETEInDolibarr=Partner %s gelöscht.
 MemberModifiedInDolibarr=Mitglied %s bearbeitet
 MemberResiliatedInDolibarr=Mitlglied %s geschlossen.
 MemberSubscriptionAddedInDolibarr=Abonnement %s für Mitlglied %s hinzugefügt
@@ -37,6 +38,7 @@ EXPENSE_REPORT_REFUSEDInDolibarr=Spesenabrechnung %s zurückgewiesen
 PROJECT_MODIFYInDolibarr=Projekt %s bearbeitet
 TICKET_CREATEInDolibarr=Ticket %s erzeugt
 TICKET_MODIFYInDolibarr=Ticket %s bearbeitet
+TICKET_CLOSEInDolibarr=Ticket %s geschlossen.
 TICKET_DELETEInDolibarr=Ticket %s gelöscht
 AgendaModelModule=Vorlagen zum Ereignis
 AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> ,zum Aktionen, die nicht vom Benutzer <b>%s</b> sind, anzuzeigen.

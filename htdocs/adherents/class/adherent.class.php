@@ -2315,6 +2315,7 @@ class Adherent extends CommonObject
 			$response = new WorkboardResponse();
 			$response->warning_delay=$conf->adherent->subscription->warning_delay/60/60/24;
 			$response->label=$langs->trans("MembersWithSubscriptionToReceive");
+			$response->labelShort=$langs->trans("MembersWithSubscriptionToReceiveShort");
 			$response->url=DOL_URL_ROOT.'/adherents/list.php?mainmenu=members&amp;statut=1&amp;filter=outofdate';
 			$response->img=img_object('', "user");
 
@@ -2439,6 +2440,7 @@ class Adherent extends CommonObject
 
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *	Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
 	 *
@@ -2448,7 +2450,7 @@ class Adherent extends CommonObject
 	 *								2=Return key only (uid=qqq)
 	 *	@return	string				DN
 	 */
-	private function _load_ldap_dn($info, $mode = 0)
+	public function _load_ldap_dn($info, $mode = 0)
 	{
         // phpcs:enable
 		global $conf;

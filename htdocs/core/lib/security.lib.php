@@ -279,7 +279,7 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 
 	// Check write permission from module (we need to know write permission to create but also to delete drafts record)
 	$createok=1; $nbko=0;
-	if (GETPOST('action', 'aZ09')  == 'create' || ((GETPOST("action", "aZ09")  == 'confirm_delete' && GETPOST("confirm", "aZ09") == 'yes') || GETPOST("action", "aZ09")  == 'delete'))
+	if (GETPOST('action', 'aZ09')  == 'create' || GETPOST('action', 'aZ09')  == 'update' || ((GETPOST("action", "aZ09")  == 'confirm_delete' && GETPOST("confirm", "aZ09") == 'yes') || GETPOST("action", "aZ09")  == 'delete'))
 	{
 		foreach ($featuresarray as $feature)
 		{
@@ -329,7 +329,7 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 		// If a or and at least one ok
 		if (preg_match('/\|/', $features) && $nbko < count($featuresarray)) $createok=1;
 
-		if (GETPOST('action', 'aZ09') == 'create' && ! $createok) accessforbidden();
+		if ((GETPOST('action', 'aZ09') == 'create' || GETPOST('action', 'aZ09') == 'update') && ! $createok) accessforbidden();
 		//print "Write access is ok";
 	}
 

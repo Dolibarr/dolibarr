@@ -10,8 +10,8 @@
  * Copyright (C) 2015      Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2016      Bahfir abbes         <dolipar@dolipar.org>
  * Copyright (C) 2017      ATM Consulting       <support@atm-consulting.fr>
- * Copyright (C) 2017      Nicolas ZABOURI      <info@inovea-conseil.com>
- * Copyright (C) 2017      Rui Strecht          <rui.strecht@aliartalentos.com>
+ * Copyright (C) 2017-2019 Nicolas ZABOURI      <info@inovea-conseil.com>
+ * Copyright (C) 2017      Rui Strecht		    <rui.strecht@aliartalentos.com>
  * Copyright (C) 2018      Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2018      Josep Lluís Amador   <joseplluis@lliuretic.cat>
  *
@@ -53,6 +53,7 @@ abstract class CommonObject
 
 	/**
 	 * @var string 		Error string
+	 * @see             $errors
 	 */
 	public $error;
 
@@ -1912,7 +1913,7 @@ abstract class CommonObject
 	 *  Change the multicurrency rate
 	 *
 	 *  @param		double	$rate	multicurrency rate
-	 *  @param		int		$mode	mode 1 : amounts in company currency will be recalculated, mode 2 : amounts in foreign currency
+	 *  @param		int		$mode	mode 1 : amounts in company currency will be recalculated, mode 2 : amounts in foreign currency will be recalculated
 	 *  @return		int				>0 if OK, <0 if KO
 	 */
 	public function setMulticurrencyRate($rate, $mode = 1)
@@ -1935,8 +1936,14 @@ abstract class CommonObject
 				{
 					foreach ($this->lines as &$line)
 					{
+						// Amounts in company currency will be recalculated
 						if($mode == 1) {
 							$line->subprice = 0;
+						}
+
+						// Amounts in foreign currency will be recalculated
+						if($mode == 2) {
+							$line->multicurrency_subprice = 0;
 						}
 
 						switch ($this->element) {
@@ -2051,6 +2058,44 @@ abstract class CommonObject
 			$this->error='Status of the object is incompatible '.$this->statut;
 			return -2;
 		}
+	}
+
+
+	/**
+	 *  Change the retained warranty payments terms
+	 *
+	 *  @param		int		$id		Id of new payment terms
+	 *  @return		int				>0 if OK, <0 if KO
+	 */
+	public function setRetainedWarrantyPaymentTerms($id)
+	{
+	    dol_syslog(get_class($this).'::setRetainedWarrantyPaymentTerms('.$id.')');
+	    if ($this->statut >= 0 || $this->element == 'societe')
+	    {
+	        $fieldname = 'retained_warranty_fk_cond_reglement';
+
+	        $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
+	        $sql .= ' SET '.$fieldname.' = '.$id;
+	        $sql .= ' WHERE rowid='.$this->id;
+
+	        if ($this->db->query($sql))
+	        {
+	            $this->retained_warranty_fk_cond_reglement = $id;
+	            return 1;
+	        }
+	        else
+	        {
+	            dol_syslog(get_class($this).'::setRetainedWarrantyPaymentTerms Erreur '.$sql.' - '.$this->db->error());
+	            $this->error=$this->db->error();
+	            return -1;
+	        }
+	    }
+	    else
+	    {
+	        dol_syslog(get_class($this).'::setRetainedWarrantyPaymentTerms, status of the object is incompatible');
+	        $this->error='Status of the object is incompatible '.$this->statut;
+	        return -2;
+	    }
 	}
 
 	/**
@@ -2443,9 +2488,9 @@ abstract class CommonObject
 	 */
 	public function updateRangOfLine($rowid, $rang)
 	{
-		$fieldposition = 'rang';	// @TODO Rename 'rang' and 'position' into 'rank'
+		$fieldposition = 'rang';	// @TODO Rename 'rang' into 'position'
 		if (in_array($this->table_element_line, array('ecm_files', 'emailcollector_emailcollectoraction'))) $fieldposition = 'position';
-		if (in_array($this->table_element_line, array('bom_bomline'))) $fieldposition = 'rank';
+		if (in_array($this->table_element_line, array('bom_bomline'))) $fieldposition = 'position';
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET '.$fieldposition.' = '.$rang;
 		$sql.= ' WHERE rowid = '.$rowid;
@@ -2749,7 +2794,7 @@ abstract class CommonObject
 		$MODULE = "";
 		if ($this->element == 'propal')
 			$MODULE = "MODULE_DISALLOW_UPDATE_PRICE_PROPOSAL";
-		elseif ($this->element == 'order')
+		elseif ($this->element == 'commande' || $this->element == 'order')
 			$MODULE = "MODULE_DISALLOW_UPDATE_PRICE_ORDER";
 		elseif ($this->element == 'facture')
 			$MODULE = "MODULE_DISALLOW_UPDATE_PRICE_INVOICE";
@@ -4141,11 +4186,12 @@ abstract class CommonObject
 	 *  But for the moment we don't know if it's possible, so we keep the method available on overloaded objects.
 	 *
 	 *	@param	string		$restrictlist		''=All lines, 'services'=Restrict to services only
+	 *  @param  array       $selectedLines      Array of lines id for selected lines
 	 *  @return	void
 	 */
-	public function printOriginLinesList($restrictlist = '')
+	public function printOriginLinesList($restrictlist = '', $selectedLines = array())
 	{
-		global $langs, $hookmanager, $conf;
+		global $langs, $hookmanager, $conf, $form;
 
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans('Ref').'</td>';
@@ -4158,8 +4204,9 @@ abstract class CommonObject
 		{
 			print '<td class="left">'.$langs->trans('Unit').'</td>';
 		}
-		print '<td class="right">'.$langs->trans('ReductionShort').'</td></tr>';
-
+		print '<td class="right">'.$langs->trans('ReductionShort').'</td>';
+        print '<td class="center">'.$form->showCheckAddButtons('checkforselect', 1).'</td>';
+        print '</tr>';
 		$var = true;
 		$i	 = 0;
 
@@ -4178,7 +4225,7 @@ abstract class CommonObject
 				}
 				else
 				{
-					$this->printOriginLine($line, $var, $restrictlist);
+					$this->printOriginLine($line, $var, $restrictlist, '/core/tpl', $selectedLines);
 				}
 
 				$i++;
@@ -4196,9 +4243,10 @@ abstract class CommonObject
 	 * 	@param	string				$var				Var
 	 *	@param	string				$restrictlist		''=All lines, 'services'=Restrict to services only (strike line if not)
 	 *  @param	string				$defaulttpldir		Directory where to find the template
+	 *  @param  array       		$selectedLines      Array of lines id for selected lines
 	 * 	@return	void
 	 */
-	public function printOriginLine($line, $var, $restrictlist = '', $defaulttpldir = '/core/tpl')
+	public function printOriginLine($line, $var, $restrictlist = '', $defaulttpldir = '/core/tpl', $selectedLines = array())
 	{
 		global $langs, $conf;
 
@@ -4221,6 +4269,8 @@ abstract class CommonObject
 			$date_end=$line->date_fin_prevue;
 			if ($line->date_fin_reel) $date_end=$line->date_fin_reel;
 		}
+
+        $this->tpl['id'] = $line->id;
 
 		$this->tpl['label'] = '';
 		if (! empty($line->fk_parent_line)) $this->tpl['label'].= img_picto('', 'rightarrow');
@@ -5026,7 +5076,7 @@ abstract class CommonObject
 
 				//dol_syslog("attributeLabel=".$attributeLabel, LOG_DEBUG);
 				//dol_syslog("attributeType=".$attributeType, LOG_DEBUG);
-				
+
 				if (!empty($attrfieldcomputed))
 				{
 					if (!empty($conf->global->MAIN_STORE_COMPUTED_EXTRAFIELDS))
@@ -6046,6 +6096,12 @@ abstract class CommonObject
 			$type='link';
 			$param['options']=array($reg[1].':'.$reg[2]=>$reg[1].':'.$reg[2]);
 		}
+        elseif(preg_match('/^sellist:(.*):(.*):(.*):(.*)/i', $val['type'], $reg)) {
+            $param['options'] = array($reg[1] . ':' . $reg[2] . ':' . $reg[3] . ':' . $reg[4] => 'N');
+            $type = 'sellist';
+        }
+
+
 		$langfile=$val['langfile'];
 		$list=$val['list'];
 		$help=$val['help'];
@@ -6067,7 +6123,7 @@ abstract class CommonObject
 			{
 				$morecss = 'minwidth100imp';
 			}
-			elseif ($type == 'datetime')
+			elseif ($type == 'datetime' || $type == 'timestamp')
 			{
 				$morecss = 'minwidth200imp';
 			}
@@ -6111,7 +6167,7 @@ abstract class CommonObject
 				$value='';
 			}
 		}
-		elseif ($type == 'datetime')
+		elseif ($type == 'datetime' || $type == 'timestamp')
 		{
 			if(! empty($value)) {
 				$value=dol_print_date($value, 'dayhour');
@@ -6381,7 +6437,7 @@ abstract class CommonObject
 	 * @param 	array       $params         Optional parameters. Example: array('style'=>'class="oddeven"', 'colspan'=>$colspan)
 	 * @param 	string      $keysuffix      Suffix string to add after name and id of field (can be used to avoid duplicate names)
 	 * @param 	string      $keyprefix      Prefix string to add before name and id of field (can be used to avoid duplicate names)
-	 * @param	string		$onetrtd		All fields in same tr td
+	 * @param	string		$onetrtd		All fields in same tr td (TODO field not used ?)
 	 * @return 	string
 	 */
 	public function showOptionals($extrafields, $mode = 'view', $params = null, $keysuffix = '', $keyprefix = '', $onetrtd = 0)
@@ -6493,10 +6549,7 @@ abstract class CommonObject
 
 					$out .= '<tr id="'.$html_id.'" '.$csstyle.' class="'.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$extrafields_collapse_num.'" '.$domData.' >';
 
-					if (! empty($conf->global->MAIN_EXTRAFIELDS_USE_TWO_COLUMS) && ($e % 2) == 0)
-					{
-						if (! empty($conf->global->MAIN_EXTRAFIELDS_USE_TWO_COLUMS) && ($e % 2) == 0) { $colspan='0'; }
-					}
+					if (! empty($conf->global->MAIN_EXTRAFIELDS_USE_TWO_COLUMS) && ($e % 2) == 0) { $colspan='0'; }
 
 					if ($action == 'selectlines') { $colspan++; }
 
@@ -7349,6 +7402,7 @@ abstract class CommonObject
 		if (!empty($id))  $sql.= ' WHERE rowid = '.$id;
 		elseif (!empty($ref)) $sql.= " WHERE ref = ".$this->quote($ref, $this->fields['ref']);
 		else $sql.=' WHERE 1 = 1';	// usage with empty id and empty ref is very rare
+		if (empty($id) && isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) $sql.=' AND entity IN ('.getEntity($this->table_element).')';
 		if ($morewhere)   $sql.= $morewhere;
 		$sql.=' LIMIT 1';	// This is a fetch, to be sure to get only one record
 

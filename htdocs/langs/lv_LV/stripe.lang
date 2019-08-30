@@ -65,3 +65,5 @@ StripeUserAccountForActions=Lietotāja konts, lai izmantotu e-pasta paziņojumu 
 StripePayoutList=Svītru izmaksu saraksts
 ToOfferALinkForTestWebhook=Saite uz iestatījumu Stripe WebHook, lai izsauktu IPN (testa režīms)
 ToOfferALinkForLiveWebhook=Saite uz iestatījumu Stripe WebHook, lai izsauktu IPN (tiešraides režīms)
+PaymentWillBeRecordedForNextPeriod=Payment will be recorded for the next period.
+ClickHereToTryAgain=<a href="%s">Click here to try again...</a>

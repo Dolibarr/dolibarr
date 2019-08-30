@@ -272,13 +272,26 @@ class Product extends CommonObject
     public $accountancy_code_buy;
 
     /**
-     * Main barcode
-     * barcode value
+     * Main Barcode value
      *
      * @var string
      */
     public $barcode;
 
+    /**
+     * Main Barcode type ID
+     *
+     * @var int
+     */
+    public $barcode_type;
+    
+    /**
+     * Main Barcode type code
+     *
+     * @var string
+     */
+    public $barcode_type_code;
+    
     /**
      * Additional barcodes (Some products have different barcodes according to the country of origin of manufacture)
      *
@@ -294,7 +307,7 @@ class Product extends CommonObject
 
     public $multilangs=array();
 
-    //! Taille de l'image
+    //! Size of image
     public $imgWidth;
     public $imgHeight;
 
@@ -348,16 +361,7 @@ class Product extends CommonObject
 
 
     public $fields = array(
-        'rowid' => array(
-            'type'=>'integer',
-            'label'=>'TechnicalID',
-            'enabled'=>1,
-            'visible'=>-2,
-            'notnull'=>1,
-            'index'=>1,
-            'position'=>1,
-            'comment'=>'Id',
-        ),
+        'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'index'=>1, 'position'=>1, 'comment'=>'Id'),
         'ref'           =>array('type'=>'varchar(128)', 'label'=>'Ref',              'enabled'=>1, 'visible'=>1,  'notnull'=>1,  'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Reference of object'),
         'entity'        =>array('type'=>'integer',      'label'=>'Entity',           'enabled'=>1, 'visible'=>0,  'default'=>1, 'notnull'=>1,  'index'=>1, 'position'=>20),
         'note_public'   =>array('type'=>'html',            'label'=>'NotePublic',         'enabled'=>1, 'visible'=>0,  'position'=>61),
@@ -2784,11 +2788,10 @@ class Product extends CommonObject
     public function load_stats_facture($socid = 0)
     {
         // phpcs:enable
-        global $conf;
-        global $user;
+        global $db, $conf, $user;
 
         $sql = "SELECT COUNT(DISTINCT f.fk_soc) as nb_customers, COUNT(DISTINCT f.rowid) as nb,";
-        $sql.= " COUNT(fd.rowid) as nb_rows, SUM(fd.qty) as qty";
+        $sql.= " COUNT(fd.rowid) as nb_rows, SUM(".$db->ifsql('f.type != 2', 'fd.qty', 'fd.qty * -1').") as qty";
         $sql.= " FROM ".MAIN_DB_PREFIX."facturedet as fd";
         $sql.= ", ".MAIN_DB_PREFIX."facture as f";
         $sql.= ", ".MAIN_DB_PREFIX."societe as s";

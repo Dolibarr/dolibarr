@@ -158,6 +158,7 @@ ACCOUNTING_RESULT_LOSS=Rezultātu uzskaites konts (zaudējumi)
 ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=Noslēguma žurnāls
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Grāmatvedības konts bankas pārskaitījuma starp konts
+TransitionalAccount=Pārejas bankas konta pārejas konts
 
 ACCOUNTING_ACCOUNT_SUSPENSE=Gaidīšanas grāmatvedības konts
 DONATION_ACCOUNTINGACCOUNT=Accounting account to register donations
@@ -216,7 +217,7 @@ DescThirdPartyReport=Konsultējieties ar trešo pušu klientu un pārdevēju sar
 ListAccounts=Grāmatvedības kontu saraksts
 UnknownAccountForThirdparty=Nezināmas trešās puses konts. Mēs izmantosim %s
 UnknownAccountForThirdpartyBlocking=Nezināms trešās puses konts. Bloķēšanas kļūda
-ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Third-party account not defined or third party unknown. We will use %s
+ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Trešās puses konts nav definēts vai trešā persona nav zināma. Mēs izmantosim %s
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Trešās puses konts nav definēts vai trešā persona nav zināma. Bloķēšanas kļūda.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Nav noteikts nezināms trešās puses konts un gaidīšanas konts. Bloķēšanas kļūda
 PaymentsNotLinkedToProduct=Maksājums nav saistīts ar kādu produktu / pakalpojumu
@@ -264,7 +265,7 @@ AccountingJournals=Grāmatvedības žurnāli
 AccountingJournal=Grāmatvedības žurnāls
 NewAccountingJournal=Jauns grāmatvedības žurnāls
 ShowAccoutingJournal=Rādīt grāmatvedības žurnālu
-Nature=Daba
+NatureOfJournal=Nature of Journal
 AccountingJournalType1=Dažādas darbības
 AccountingJournalType2=Pārdošanas
 AccountingJournalType3=Pirkumi
@@ -290,9 +291,10 @@ Modelcsv_quadratus=Eksportēt Quadratus QuadraCompta
 Modelcsv_ebp=Eksportēt uz EBP
 Modelcsv_cogilog=Eksportēt uz Cogilog
 Modelcsv_agiris=Eksports uz Agiris
+Modelcsv_LDCompta=Export for LD Compta (v9 & higher) (Test)
 Modelcsv_openconcerto=Eksportēt OpenConcerto (tests)
 Modelcsv_configurable=Eksportēt CSV konfigurējamu
-Modelcsv_FEC=Export FEC
+Modelcsv_FEC=Eksporta FEC
 Modelcsv_Sage50_Swiss=Eksports uz Sage 50 Šveici
 ChartofaccountsId=Kontu konts. Id
 
@@ -300,7 +302,7 @@ ChartofaccountsId=Kontu konts. Id
 InitAccountancy=Init grāmatvedība
 InitAccountancyDesc=Šo lapu var izmantot, lai inicializētu grāmatvedības kontu par produktiem un pakalpojumiem, kuriem nav noteikts grāmatvedības konts pārdošanai un pirkumiem.
 DefaultBindingDesc=Šo lapu var izmantot, lai iestatītu noklusēto kontu, ko izmantot, lai saistītu darījumu protokolu par algas, ziedojumiem, nodokļiem un PVN, ja neviens konkrēts grāmatvedības konts jau nav iestatīts.
-DefaultClosureDesc=Šo lapu var izmantot, lai iestatītu parametrus, kas jāizmanto bilances pievienošanai.
+DefaultClosureDesc=This page can be used to set parameters used for accounting closures.
 Options=Iespējas
 OptionModeProductSell=Mode pārdošana
 OptionModeProductSellIntra=Pārdošanas veids, ko eksportē EEK
@@ -317,9 +319,9 @@ WithoutValidAccount=Bez derīga veltīta konta
 WithValidAccount=Izmantojot derīgu veltītu kontu
 ValueNotIntoChartOfAccount=Šī grāmatvedības konta vērtība konta diagrammā nepastāv
 AccountRemovedFromGroup=Konts ir noņemts no grupas
-SaleLocal=Local sale
-SaleExport=Export sale
-SaleEEC=Sale in EEC
+SaleLocal=Vietējā pārdošana
+SaleExport=Eksporta pārdošana
+SaleEEC=Pārdošana EEK
 
 ## Dictionary
 Range=Range of accounting account
@@ -340,7 +342,7 @@ UseMenuToSetBindindManualy=Līnijas, kas vēl nav saistītas, izmantojiet izvēl
 
 ## Import
 ImportAccountingEntries=Grāmatvedības ieraksti
-DateExport=Date export
+DateExport=Eksporta datums
 WarningReportNotReliable=Brīdinājums. Šis pārskats nav balstīts uz grāmatvedi, tādēļ tajā nav darījumu, kas Manuāli ir manuāli modificēts. Ja žurnāls ir atjaunināts, grāmatvedības skats ir precīzāks.
 ExpenseReportJournal=Izdevumu atskaites žurnāls
 InventoryJournal=Inventāra žurnāls

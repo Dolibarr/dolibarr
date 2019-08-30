@@ -2,6 +2,7 @@
 ProductRef=Ref. producte
 ProductLabel=Etiqueta producte
 ProductLabelTranslated=Etiqueta de producte traduïda
+ProductDescription=Product description
 ProductDescriptionTranslated=Descripció de producte traduïda
 ProductNoteTranslated=Nota de producte traduïda
 ProductServiceCard=Fitxa producte/servei
@@ -159,7 +160,7 @@ SuppliersPrices=Preus del proveïdor
 SuppliersPricesOfProductsOrServices=Preus del venedor (de productes o serveis)
 CustomCode=Duana / mercaderia / codi HS
 CountryOrigin=País d'origen
-Nature=Nature of produt (material/finished)
+Nature=Naturalesa del producte (material / acabat)
 ShortLabel=Etiqueta curta
 Unit=Unitat
 p=u.

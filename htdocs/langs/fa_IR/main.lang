@@ -445,6 +445,7 @@ ContactsAddressesForCompany=طرف‌های‌تماس/نشانی‌های ای�
 AddressesForCompany=نشانی‌های این شخص‌سوم
 ActionsOnCompany=روی‌دادهای مربوط به این شخص سوم
 ActionsOnContact=روی‌دادهای مربوط به این طرف‌تماس/نشانی
+ActionsOnContract=Events for this contract
 ActionsOnMember=روی‌دادهای مربوط به این عضو
 ActionsOnProduct=روی‌دادهای مربوط به این محصول
 NActionsLate=%s دیرتر
@@ -759,6 +760,7 @@ LinkToSupplierProposal=پیوند به پیشنهاد فروشنده
 LinkToSupplierInvoice=پیوند به صورت‌حساب فروشنده
 LinkToContract=پیوند به قرارداد
 LinkToIntervention=پیوند به واسطه‌گری
+LinkToTicket=Link to ticket
 CreateDraft=ساخت پیش‌نویس
 SetToDraft=بازگشت به پیش‌نویس
 ClickToEdit=کلیک برای ویرایش
@@ -842,11 +844,11 @@ Exports=صادرات
 ExportFilteredList=فهرست گزینشی صادرا
 ExportList=فهرست صادرات
 ExportOptions=گزینه‌های صادرکردن
-IncludeDocsAlreadyExported=Include docs already exported
-ExportOfPiecesAlreadyExportedIsEnable=Export of pieces already exported is enable
-ExportOfPiecesAlreadyExportedIsDisable=Export of pieces already exported is disable
-AllExportedMovementsWereRecordedAsExported=All exported movements were recorded as exported
-NotAllExportedMovementsCouldBeRecordedAsExported=Not all exported movements could be recorded as exported
+IncludeDocsAlreadyExported=دربرگرفتن مستنداتی که قبلا صادر شده‌اند
+ExportOfPiecesAlreadyExportedIsEnable=دربرگیری بخش‌هائی که قبلا صادر شده‌اند فعال است
+ExportOfPiecesAlreadyExportedIsDisable=دربرگیری بخش‌هائی که قبلا صادر شده‌اند غیر فعال است
+AllExportedMovementsWereRecordedAsExported=همۀ جابه‌جائی‌های صادر شده به عنوان صادرشده ثبت شد
+NotAllExportedMovementsCouldBeRecordedAsExported=همۀ جابه‌جائی‌های صادرشده نمی‌توانند به‌عنوان صادرشده ثبت شوند
 Miscellaneous=متفرقه
 Calendar=تقویم
 GroupBy=گروه‌بندی توسط...
@@ -978,4 +980,4 @@ SeePrivateNote=ملاحظۀ یادداشت خصوصی
 PaymentInformation=اطلاعات پرداخت
 ValidFrom=معتبر از
 ValidUntil=معتبر تا
-NoRecordedUsers=No users
+NoRecordedUsers=کاربری نیست

@@ -287,6 +287,7 @@ SupplierAbsoluteDiscountAllUsers=Absolutte leverandørrabatter (oppgitt av alle 
 SupplierAbsoluteDiscountMy=Absolutt leverandørrabatter (oppgitt av deg selv)
 DiscountNone=Ingen
 Vendor=Leverandør
+Supplier=Leverandør
 AddContact=Opprett kontakt
 AddContactAddress=Opprett kontakt/adresse
 EditContact=Endre kontakt

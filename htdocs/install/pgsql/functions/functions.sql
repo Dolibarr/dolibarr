@@ -124,6 +124,8 @@ CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_fichinterdet_extrafi
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_livraison FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_loan FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_localtax FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
+CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_mailing FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
+CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_mailing_cibles FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_menu FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_notify FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_notify_def FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();

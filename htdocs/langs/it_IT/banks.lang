@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - banks
 Bank=Banca
-MenuBankCash=Banks | Cash
+MenuBankCash=Banche | Denaro
 MenuVariousPayment=Pagamenti vari
 MenuNewVariousPayment=Nuovo pagamento vario
 BankName=Nome della Banca
@@ -30,7 +30,7 @@ AllTime=Dall'inizio
 Reconciliation=Riconciliazione
 RIB=Coordinate bancarie
 IBAN=Codice IBAN
-BIC=BIC/SWIFT code
+BIC=Codice BIC/SWIFT
 SwiftValid=Il codice BIC/SWIFT è valido
 SwiftVNotalid=BIC/SWIFT non valido
 IbanValid=Il codice IBAN è valido

@@ -151,6 +151,9 @@ input.buttonpayment, button.buttonpayment, div.buttonpayment {
 	color: #fff;
 	border-radius: 4px;
 }
+div.buttonpayment input:focus {
+    color: #008;
+}
 .buttonpaymentsmall {
 	font-size: 0.65em;
 	padding-left: 5px;
@@ -402,6 +405,16 @@ textarea.centpercent {
 .small, small {
     font-size: 85%;
 }
+
+.h1 .small, .h1 small, .h2 .small, .h2 small, .h3 .small, .h3 small, h1 .small, h1 small, h2 .small, h2 small, h3 .small, h3 small {
+    font-size: 65%;
+}
+.h1 .small, .h1 small, .h2 .small, .h2 small, .h3 .small, .h3 small, .h4 .small, .h4 small, .h5 .small, .h5 small, .h6 .small, .h6 small, h1 .small, h1 small, h2 .small, h2 small, h3 .small, h3 small, h4 .small, h4 small, h5 .small, h5 small, h6 .small, h6 small {
+    font-weight: 400;
+    line-height: 1;
+    color: #777;
+}
+
 .center {
     text-align: center;
     margin: 0px auto;
@@ -479,6 +492,24 @@ textarea.centpercent {
     font-size: 0.85em;
     opacity: 0.7;
 }
+
+.text-warning{
+    color : <?php print $textWarning ; ?>
+}
+body[class*="colorblind-"] .text-warning{
+    color : <?php print $colorblind_deuteranopes_textWarning ; ?>
+}
+.text-success{
+    color : <?php print $textSuccess ; ?>
+}
+body[class*="colorblind-"] .text-success{
+    color : <?php print $colorblind_deuteranopes_textSuccess ; ?>
+}
+
+.text-danger{
+    color : <?php print $textDanger ; ?>
+}
+
 
 /* Themes for badges */
 <?php include dol_buildpath($path.'/theme/'.$theme.'/badges.inc.php', 0); ?>
@@ -1255,6 +1286,9 @@ div.nopadding {
 }
 .pictowarning {
     vertical-align: text-bottom;
+}
+.pictomodule {
+	width: 14px;
 }
 .fiche .arearef img.pictoedit, .fiche .arearef span.pictoedit,
 .fiche .fichecenter img.pictoedit, .fiche .fichecenter span.pictoedit,
@@ -2523,7 +2557,7 @@ table.liste tr:last-of-type td, table.noborder:not(#tablelines) tr:last-of-type 
 	border-bottom-color: rgb(<?php echo $colortopbordertitle1 ?>);
 	border-bottom-style: solid;
 }
-div.tabBar div.fichehalfright table.noborder:not(.margintable):not(.paymenttable):last-of-type {
+div.tabBar div.fichehalfright table.noborder:not(.margintable):not(.paymenttable):not(.lastrecordtable):last-of-type {
     border-bottom: 1px solid rgb(<?php echo $colortopbordertitle1 ?>);
 }
 div.tabBar table.border>tbody>tr:last-of-type>td {
@@ -3017,10 +3051,14 @@ table.noborder.paymenttable {
 	height: 22px;
 }
 
-/* Disable shadows */
+/* Disable-Enable shadows */
 .noshadow {
 	-webkit-box-shadow: 0px 0px 0px #DDD !important;
 	box-shadow: 0px 0px 0px #DDD !important;
+}
+.shadow {
+	-webkit-box-shadow: 2px 2px 5px #CCC !important;
+	box-shadow: 2px 2px 5px #CCC !important;
 }
 
 div.tabBar .noborder {
@@ -3081,6 +3119,10 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 .box {
     overflow-x: auto;
     min-height: 40px;
+    padding-right: 0px;
+    padding-left: 0px;
+    /*padding-bottom: 25px;*/
+    padding-bottom: 10px;
 }
 .ficheaddleft div.boxstats, .ficheaddright div.boxstats {
     border: none;
@@ -3195,6 +3237,8 @@ span.boxstatsindicator {
 	font-size: 130%;
 	font-weight: normal;
 	line-height: 29px;
+	flex-grow: 1;
+
 }
 span.dashboardlineindicator, span.dashboardlineindicatorlate {
 	font-size: 130%;
@@ -3238,7 +3282,7 @@ span.dashboardlineko {
 	vertical-align: middle;
 }
 .boxtable {
-    margin-bottom: 8px !important;
+    margin-bottom: 25px !important;
     border-bottom-width: 1px;
 
     border-top: <?php echo $borderwidth ?>px solid rgb(<?php echo $colortopbordertitle1 ?>);
@@ -3265,12 +3309,6 @@ table.noborder.boxtable tr td {
 }
 a.valignmiddle.dashboardlineindicator {
     line-height: 30px;
-}
-
-.box {
-    padding-right: 0px;
-    padding-left: 0px;
-    padding-bottom: 25px;
 }
 
 tr.box_titre {
@@ -3403,6 +3441,10 @@ a.impayee:hover { font-weight: bold; color: #550000; }
  *  Other
  */
 
+.opened-dash-board-wrap {
+    margin-bottom: 25px;
+}
+
 div.boximport {
     min-height: unset;
 }
@@ -3421,6 +3463,9 @@ div.dolgraph div.legend, div.dolgraph div.legend div { background-color: rgba(25
 div.dolgraph div.legend table tbody tr { height: auto; }
 td.legendColorBox { padding: 2px 2px 2px 0 !important; }
 td.legendLabel { padding: 2px 2px 2px 0 !important; }
+td.legendLabel {
+    text-align: <?php echo $left; ?>;
+}
 
 label.radioprivate {
     white-space: nowrap;
@@ -3731,6 +3776,12 @@ tr.visible {
     border: 0px;
     background-color: transparent;
     background-image: none;
+}
+.bordertransp {
+    background-color: transparent;
+    background-image: none;
+    border: 1px solid #aaa;
+	font-weight: normal;
 }
 .websitebar {
 	border-bottom: 1px solid #ccc;
@@ -5233,7 +5284,6 @@ div.tabsElem a.tab {
 }
 
 
-
 /* ============================================================================== */
 /*  Public                                                                        */
 /* ============================================================================== */
@@ -5251,10 +5301,26 @@ div.tabsElem a.tab {
 /* ============================================================================== */
 /* Ticket module                                                                  */
 /* ============================================================================== */
-
+.ticketpublicarea {
+	width: 70%;
+}
 .publicnewticketform {
 	margin-top: 25px !important;
 }
+.ticketlargemargin {
+	padding-left: 50px;
+	padding-right: 50px;
+}
+@media only screen and (max-width: 767px)
+{
+	.ticketlargemargin {
+		padding-left: 5px; padding-right: 5px;
+	}
+	.ticketpublicarea {
+		width: 100%;
+	}
+}
+
 #cd-timeline {
   position: relative;
   padding: 2em 0;
@@ -5550,6 +5616,11 @@ div.tabsElem a.tab {
         border-right: none;
         border-left: none;
     }
+
+	.box-flex-container {
+	    margin: 0 0 0 -8px !important;
+	}
+
 }
 
 @media only screen and (max-width: 1024px)
@@ -5731,3 +5802,5 @@ div.tabsElem a.tab {
 
 <?php
 include dol_buildpath($path.'/theme/'.$theme.'/dropdown.inc.php', 0);
+include dol_buildpath($path.'/theme/'.$theme.'/info-box.inc.php', 0);
+include dol_buildpath($path.'/theme/'.$theme.'/progress.inc.php', 0);
