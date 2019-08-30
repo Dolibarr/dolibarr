@@ -132,7 +132,7 @@ if (($id > 0 && is_numeric($id)) || ! empty($ref))
     print '<div class="fichehalfleft">';
     print '<div class="underbanner clearboth"></div>';
 
-    print '<table class="border" width="100%">';
+    print '<table class="border tableforfield centpercent">';
 
     // Visibility
     print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
@@ -166,7 +166,7 @@ if (($id > 0 && is_numeric($id)) || ! empty($ref))
     print '<div class="ficheaddleft">';
     print '<div class="underbanner clearboth"></div>';
 
-    print '<table class="border" width="100%">';
+    print '<table class="border tableforfield centpercent">';
 
     // Description
     print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
