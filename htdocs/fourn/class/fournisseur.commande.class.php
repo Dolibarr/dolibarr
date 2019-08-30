@@ -639,28 +639,28 @@ class CommandeFournisseur extends CommonOrder
     	{
 	        $langs->load('orders');
 
-	        $this->statuts[0] = 'StatusOrderDraft';
-	        $this->statuts[1] = 'StatusOrderValidated';
-	        $this->statuts[2] = 'StatusOrderApproved';
-	        if (empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS)) $this->statuts[3] = 'StatusOrderOnProcess';
-	        else $this->statuts[3] = 'StatusOrderOnProcessWithValidation';
-	        $this->statuts[4] = 'StatusOrderReceivedPartially';
-	        $this->statuts[5] = 'StatusOrderReceivedAll';
-	        $this->statuts[6] = 'StatusOrderCanceled';	// Approved->Canceled
-	        $this->statuts[7] = 'StatusOrderCanceled';	// Process running->canceled
-	        //$this->statuts[8] = 'StatusOrderBilled';	// Everything is finished, order received totally and bill received
-	        $this->statuts[9] = 'StatusOrderRefused';
+	        $this->statuts[0] = 'StatusSupplierOrderDraft';
+	        $this->statuts[1] = 'StatusSupplierOrderValidated';
+	        $this->statuts[2] = 'StatusSupplierOrderApproved';
+	        if (empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS)) $this->statuts[3] = 'StatusSupplierOrderOnProcess';
+	        else $this->statuts[3] = 'StatusSupplierOrderOnProcessWithValidation';
+	        $this->statuts[4] = 'StatusSupplierOrderReceivedPartially';
+	        $this->statuts[5] = 'StatusSupplierOrderReceivedAll';
+	        $this->statuts[6] = 'StatusSupplierOrderCanceled';	// Approved->Canceled
+	        $this->statuts[7] = 'StatusSupplierOrderCanceled';	// Process running->canceled
+	        //$this->statuts[8] = 'StatusSupplierOrderBilled';	// Everything is finished, order received totally and bill received
+	        $this->statuts[9] = 'StatusSupplierOrderRefused';
 
 	        // List of language codes for status
-	        $this->statutshort[0] = 'StatusOrderDraftShort';
-	        $this->statutshort[1] = 'StatusOrderValidatedShort';
-	        $this->statutshort[2] = 'StatusOrderApprovedShort';
-	        $this->statutshort[3] = 'StatusOrderOnProcessShort';
-	        $this->statutshort[4] = 'StatusOrderReceivedPartiallyShort';
-	        $this->statutshort[5] = 'StatusOrderReceivedAllShort';
-	        $this->statutshort[6] = 'StatusOrderCanceledShort';
-	        $this->statutshort[7] = 'StatusOrderCanceledShort';
-	        $this->statutshort[9] = 'StatusOrderRefusedShort';
+	        $this->statutshort[0] = 'StatusSupplierOrderDraftShort';
+	        $this->statutshort[1] = 'StatusSupplierOrderValidatedShort';
+	        $this->statutshort[2] = 'StatusSupplierOrderApprovedShort';
+	        $this->statutshort[3] = 'StatusSupplierOrderOnProcessShort';
+	        $this->statutshort[4] = 'StatusSupplierOrderReceivedPartiallyShort';
+	        $this->statutshort[5] = 'StatusSupplierOrderReceivedAllShort';
+	        $this->statutshort[6] = 'StatusSupplierOrderCanceledShort';
+	        $this->statutshort[7] = 'StatusSupplierOrderCanceledShort';
+	        $this->statutshort[9] = 'StatusSupplierOrderRefusedShort';
     	}
 
         $billedtext='';
