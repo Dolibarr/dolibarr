@@ -108,6 +108,7 @@ function testSqlAndScriptInject($val, $type)
 	$inj += preg_match('/<script/i', $val);
 	$inj += preg_match('/<iframe/i', $val);
 	$inj += preg_match('/<audio/i', $val);
+	$inj += (stripos('/<marquee/i', $val) === false ? 0 : 1);
 	$inj += preg_match('/Set\.constructor/i', $val);	// ECMA script 6
 	if (! defined('NOSTYLECHECK')) $inj += preg_match('/<style/i', $val);
 	$inj += preg_match('/base[\s]+href/si', $val);
