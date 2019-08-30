@@ -18,9 +18,7 @@ addons:
   apt:
     sources:
     # To use the last version of pgloader, we add repo of postgresql
-    - postgresql
-    - sourceline: 'deb http://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main'
-    - key_url: 'https://www.postgresql.org/media/keys/ACCC4CF8.asc'
+    - pgdg
     packages:
     # We need a webserver to test the webservices
     # Let's install Apache with.
