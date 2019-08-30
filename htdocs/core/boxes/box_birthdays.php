@@ -56,7 +56,7 @@ class box_birthdays extends ModeleBoxes
 	 */
 	public function __construct($db, $param = '')
 	{
-		global $conf, $user;
+		global $user;
 
 		$this->db = $db;
 
@@ -71,7 +71,7 @@ class box_birthdays extends ModeleBoxes
 	 */
 	public function loadBox($max = 20)
 	{
-		global $user, $langs, $db, $conf;
+		global $user, $langs, $db;
 		$langs->load("boxes");
 
 		$this->max=$max;

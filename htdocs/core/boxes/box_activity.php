@@ -57,12 +57,12 @@ class box_activity extends ModeleBoxes
     {
         global $conf, $user;
 
-        $this->db=$db;
+        $this->db = $db;
 
         // FIXME: Pb into some status
-        $this->enabled=($conf->global->MAIN_FEATURES_LEVEL);    // Not enabled by default due to bugs (see previous comments)
+        $this->enabled = ($conf->global->MAIN_FEATURES_LEVEL);    // Not enabled by default due to bugs (see previous comments)
 
-        $this->hidden= ! ((! empty($conf->facture->enabled) && $user->rights->facture->lire)
+        $this->hidden = ! ((! empty($conf->facture->enabled) && $user->rights->facture->lire)
             || (! empty($conf->commande->enabled) && $user->rights->commande->lire)
             || (! empty($conf->propal->enabled) && $user->rights->propale->lire)
             );
