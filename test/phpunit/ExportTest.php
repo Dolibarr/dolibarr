@@ -49,7 +49,7 @@ if (! defined("NOLOGIN"))        define("NOLOGIN", '1');       // If this page i
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class ExportTest extends PHPUnit_Framework_TestCase
+class ExportTest extends PHPUnit\Framework\TestCase
 {
 	protected $savconf;
 	protected $savuser;
