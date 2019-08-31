@@ -127,15 +127,17 @@ $extrafield_array=null;
 if (is_array($extrafields) && count($extrafields)>0) {
 	$extrafield_array = array();
 }
-foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 {
-	$type =$extrafields->attributes[$elementtype]['type'][$key];
-	if ($type=='date' || $type=='datetime') {$type='xsd:dateTime';}
-	else {$type='xsd:string';}
+	foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+	{
+		$type =$extrafields->attributes[$elementtype]['type'][$key];
+		if ($type=='date' || $type=='datetime') {$type='xsd:dateTime';}
+		else {$type='xsd:string';}
 
-	$extrafield_array['options_'.$key]=array('name'=>'options_'.$key,'type'=>$type);
+		$extrafield_array['options_'.$key]=array('name'=>'options_'.$key,'type'=>$type);
+	}
 }
-
 if (is_array($extrafield_array)) $contact_fields=array_merge($contact_fields, $extrafield_array);
 
 // Define other specific objects
@@ -308,6 +310,8 @@ function getContact($authentication, $id, $ref_ext)
             		'poste' => $contact->poste
             	);
 
+            	$elementtype = 'socpeople';
+
             	//Retreive all extrafield for thirdsparty
             	// fetch optionals attributes and labels
             	$extrafields=new ExtraFields($db);
@@ -315,11 +319,13 @@ function getContact($authentication, $id, $ref_ext)
             	//Get extrafield values
             	$contact->fetch_optionals();
 
-            	foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+            	if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
             	{
-            		$contact_result_fields=array_merge($contact_result_fields, array('options_'.$key => $contact->array_options['options_'.$key]));
+            		foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+	            	{
+	            		$contact_result_fields=array_merge($contact_result_fields, array('options_'.$key => $contact->array_options['options_'.$key]));
+	            	}
             	}
-
 
                 // Create
                 $objectresp = array(
@@ -416,16 +422,20 @@ function createContact($authentication, $contact)
 		$newobject->user_login=$contact['user_login'];
 		$newobject->poste=$contact['poste'];
 
+		$elementtype = 'socpeople';
+
 		//Retreive all extrafield for thirdsparty
 		// fetch optionals attributes and labels
 		$extrafields=new ExtraFields($db);
 		$extralabels=$extrafields->fetch_name_optionals_label('socpeople', true);
-		foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+		if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 		{
-			$key='options_'.$key;
-			$newobject->array_options[$key]=$contact[$key];
+			foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+			{
+				$key='options_'.$key;
+				$newobject->array_options[$key]=$contact[$key];
+			}
 		}
-
 
 
 		//...
@@ -662,15 +672,19 @@ function updateContact($authentication, $contact)
 
 			$object->statut=$contact['status'];
 
+			$elementtype = 'socpeople';
 
 			//Retreive all extrafield for contact
 			// fetch optionals attributes and labels
 			$extrafields=new ExtraFields($db);
 			$extralabels=$extrafields->fetch_name_optionals_label('socpeople', true);
-			foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+			if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 			{
-				$key='options_'.$key;
-				$object->array_options[$key]=$contact[$key];
+				foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+				{
+					$key='options_'.$key;
+					$object->array_options[$key]=$contact[$key];
+				}
 			}
 
 			$db->begin();

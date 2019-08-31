@@ -142,13 +142,16 @@ $extrafield_array=null;
 if (is_array($extrafields) && count($extrafields) > 0) {
 	$extrafield_array = array();
 }
-foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 {
-	$type =$extrafields->attributes[$elementtype]['type'][$key];
-	if ($type=='date' || $type=='datetime') {$type='xsd:dateTime';}
-	else {$type='xsd:string';}
+	foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+	{
+		$type =$extrafields->attributes[$elementtype]['type'][$key];
+		if ($type=='date' || $type=='datetime') {$type='xsd:dateTime';}
+		else {$type='xsd:string';}
 
-	$extrafield_array['options_'.$key]=array('name'=>'options_'.$key,'type'=>$type);
+		$extrafield_array['options_'.$key]=array('name'=>'options_'.$key,'type'=>$type);
+	}
 }
 
 if (is_array($extrafield_array)) $productorservice_fields=array_merge($productorservice_fields, $extrafield_array);
@@ -425,6 +428,8 @@ function getProductOrService($authentication, $id = '', $ref = '', $ref_ext = ''
             		'images' => $product->liste_photos($dir, $nbmax)
             	);
 
+            	$elementtype = 'product';
+
                 //Retreive all extrafield for thirdsparty
             	// fetch optionals attributes and labels
             	$extrafields=new ExtraFields($db);
@@ -432,9 +437,12 @@ function getProductOrService($authentication, $id = '', $ref = '', $ref_ext = ''
             	//Get extrafield values
             	$product->fetch_optionals();
 
-            	foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+            	if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
             	{
-            		$productorservice_result_fields=array_merge($productorservice_result_fields, array('options_'.$key => $product->array_options['options_'.$key]));
+            		foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+	            	{
+	            		$productorservice_result_fields=array_merge($productorservice_result_fields, array('options_'.$key => $product->array_options['options_'.$key]));
+	            	}
             	}
 
                 // Create
@@ -554,12 +562,17 @@ function createProductOrService($authentication, $product)
         //var_dump($product['ref_ext']);
         //var_dump($product['lines'][0]['type']);
 
+        $elementtype = 'product';
+
         $extrafields=new ExtraFields($db);
 		$extralabels=$extrafields->fetch_name_optionals_label('product', true);
-		foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+		if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 		{
-			$key='options_'.$key;
-			$newobject->array_options[$key]=$product[$key];
+			foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+			{
+				$key='options_'.$key;
+				$newobject->array_options[$key]=$product[$key];
+			}
 		}
 
         $db->begin();
@@ -723,12 +736,17 @@ function updateProductOrService($authentication, $product)
         //var_dump($product['ref_ext']);
         //var_dump($product['lines'][0]['type']);
 
+        $elementtype = 'product';
+
 		$extrafields=new ExtraFields($db);
 		$extralabels=$extrafields->fetch_name_optionals_label('product', true);
-		foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+		if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 		{
-			$key='options_'.$key;
-			$newobject->array_options[$key]=$product[$key];
+			foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+			{
+				$key='options_'.$key;
+				$newobject->array_options[$key]=$product[$key];
+			}
 		}
 
         $db->begin();
@@ -1096,6 +1114,8 @@ function getProductsForCategory($authentication, $id, $lang = '')
 								'images' => $tmpproduct->liste_photos($dir, $nbmax)
 							);
 
+							$elementtype = 'product';
+
 							//Retreive all extrafield for thirdsparty
 							// fetch optionals attributes and labels
 							$extrafields=new ExtraFields($db);
@@ -1103,9 +1123,12 @@ function getProductsForCategory($authentication, $id, $lang = '')
 							//Get extrafield values
 							$tmpproduct->fetch_optionals();
 
-							foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+							if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 							{
-								$products[$iProduct]=array_merge($products[$iProduct], array('options_'.$key => $tmpproduct->array_options['options_'.$key]));
+								foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+								{
+									$products[$iProduct]=array_merge($products[$iProduct], array('options_'.$key => $tmpproduct->array_options['options_'.$key]));
+								}
 							}
 
 							$iProduct++;

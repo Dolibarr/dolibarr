@@ -120,13 +120,16 @@ $extrafield_line_array=null;
 if (is_array($extrafields) && count($extrafields)>0) {
 	$extrafield_line_array = array();
 }
-foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 {
-	//$value=$object->array_options["options_".$key];
-	$type =$extrafields->attributes[$elementtype]['type'][$key];
-	if ($type=='date' || $type=='datetime') {$type='xsd:dateTime';}
-	else {$type='xsd:string';}
-	$extrafield_line_array['options_'.$key]=array('name'=>'options_'.$key,'type'=>$type);
+	foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+	{
+		//$value=$object->array_options["options_".$key];
+		$type =$extrafields->attributes[$elementtype]['type'][$key];
+		if ($type=='date' || $type=='datetime') {$type='xsd:dateTime';}
+		else {$type='xsd:string';}
+		$extrafield_line_array['options_'.$key]=array('name'=>'options_'.$key,'type'=>$type);
+	}
 }
 if (is_array($extrafield_line_array)) $line_fields=array_merge($line_fields, $extrafield_line_array);
 
@@ -222,13 +225,16 @@ $extrafield_array=null;
 if (is_array($extrafields) && count($extrafields)>0) {
 	$extrafield_array = array();
 }
-foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 {
-	//$value=$object->array_options["options_".$key];
-	$type =$extrafields->attributes[$elementtype]['type'][$key];
-	if ($type=='date' || $type=='datetime') {$type='xsd:dateTime';}
-	else {$type='xsd:string';}
-	$extrafield_array['options_'.$key]=array('name'=>'options_'.$key,'type'=>$type);
+	foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+	{
+		//$value=$object->array_options["options_".$key];
+		$type =$extrafields->attributes[$elementtype]['type'][$key];
+		if ($type=='date' || $type=='datetime') {$type='xsd:dateTime';}
+		else {$type='xsd:string';}
+		$extrafield_array['options_'.$key]=array('name'=>'options_'.$key,'type'=>$type);
+	}
 }
 if (is_array($extrafield_array)) $order_fields=array_merge($order_fields, $extrafield_array);
 
@@ -703,10 +709,13 @@ function createOrder($authentication, $order)
 		// fetch optionals attributes and labels
 		$extrafields=new ExtraFields($db);
 		$extralabels=$extrafields->fetch_name_optionals_label('commande', true);
-		foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+		if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 		{
-			$key='options_'.$key;
-			$newobject->array_options[$key]=$order[$key];
+			foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+			{
+				$key='options_'.$key;
+				$newobject->array_options[$key]=$order[$key];
+			}
 		}
 
 		// Trick because nusoap does not store data with same structure if there is one or several lines
@@ -738,10 +747,13 @@ function createOrder($authentication, $order)
 			// fetch optionals attributes and labels
 			$extrafields=new ExtraFields($db);
 			$extralabels=$extrafields->fetch_name_optionals_label('commandedet', true);
-			foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+			if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 			{
-				$key='options_'.$key;
-				$newline->array_options[$key]=$line[$key];
+				foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+				{
+					$key='options_'.$key;
+					$newline->array_options[$key]=$line[$key];
+				}
 			}
 
 			$newobject->lines[]=$newline;
@@ -946,12 +958,15 @@ function updateOrder($authentication, $order)
 			// fetch optionals attributes and labels
 			$extrafields=new ExtraFields($db);
 			$extralabels=$extrafields->fetch_name_optionals_label('commande', true);
-			foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+			if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 			{
-				$key='options_'.$key;
-				if (isset($order[$key]))
+				foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
 				{
-					$result=$object->setValueFrom($key, $order[$key], 'commande_extrafields');
+					$key='options_'.$key;
+					if (isset($order[$key]))
+					{
+						$result=$object->setValueFrom($key, $order[$key], 'commande_extrafields');
+					}
 				}
 			}
 

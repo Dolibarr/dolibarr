@@ -193,13 +193,16 @@ $extrafield_array=null;
 if (is_array($extrafields) && count($extrafields)>0) {
 	$extrafield_array = array();
 }
-foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 {
-	$type =$extrafields->attributes[$elementtype]['type'][$key];
-	if ($type=='date' || $type=='datetime') {$type='xsd:dateTime';}
-	else {$type='xsd:string';}
+	foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+	{
+		$type =$extrafields->attributes[$elementtype]['type'][$key];
+		if ($type=='date' || $type=='datetime') {$type='xsd:dateTime';}
+		else {$type='xsd:string';}
 
-	$extrafield_array['contact_options_'.$key]=array('name'=>'contact_options_'.$key,'type'=>$type);
+		$extrafield_array['contact_options_'.$key]=array('name'=>'contact_options_'.$key,'type'=>$type);
+	}
 }
 
 if (is_array($extrafield_array)) $thirdpartywithuser_fields=array_merge($thirdpartywithuser_fields, $extrafield_array);
@@ -596,15 +599,20 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 						$contact->country_id = $thirdparty->country_id;
 						$contact->country_code = $thirdparty->country_code;
 
+						$elementtype = 'socpeople';
+
 						//Retreive all extrafield for thirdsparty
 						// fetch optionals attributes and labels
 						$extrafields=new ExtraFields($db);
 						$extralabels=$extrafields->fetch_name_optionals_label('socpeople', true);
-						foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+						if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 						{
-							$key='contact_options_'.$key;
-							$key=substr($key, 8);   // Remove 'contact_' prefix
-							$contact->array_options[$key]=$thirdpartywithuser[$key];
+							foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+							{
+								$key='contact_options_'.$key;
+								$key=substr($key, 8);   // Remove 'contact_' prefix
+								$contact->array_options[$key]=$thirdpartywithuser[$key];
+							}
 						}
 
 						$contact_id =  $contact->create($fuser);
