@@ -1033,6 +1033,7 @@ class Lessc {
 					return $this->lib_e($items[0]);
 				}
 				$this->throwError("unrecognised input");
+				return null;
 			case "string":
 				$arg[1] = "";
 				return $arg;
@@ -1050,6 +1051,7 @@ class Lessc {
 		$template = $this->compileValue($this->lib_e($string));
 
 		$i = 0;
+		$m = array();
 		if (preg_match_all('/%[dsa]/', $template, $m)) {
 			foreach ($m[0] as $match) {
 				$val = isset($values[$i]) ?
