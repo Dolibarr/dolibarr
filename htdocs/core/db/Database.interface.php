@@ -223,7 +223,7 @@ interface Database
 	 * @param   string $name name of database (not used for mysql, used for pgsql)
 	 * @param   int    $port Port of database server
 	 * @return  resource            Database access handler
-	 * @see     close
+	 * @see     close()
 	 */
     public function connect($host, $login, $passwd, $name, $port = 0);
 
@@ -265,7 +265,7 @@ interface Database
 	 *
 	 * @param   resource $resultset Resulset of requests
 	 * @return 	int                        Nb of lines
-	 * @see    	affected_rows
+	 * @see    	affected_rows()
 	 */
     public function num_rows($resultset);
     // phpcs:enable
@@ -461,7 +461,7 @@ interface Database
 	 * Close database connexion
 	 *
 	 * @return  boolean     					True if disconnect successfull, false otherwise
-	 * @see     connect
+	 * @see     connect()
 	 */
     public function close();
 
