@@ -54,6 +54,7 @@ Firstname=이름
 PostOrFunction=직위
 UserTitle=제목
 NatureOfThirdParty=Nature of Third party
+NatureOfContact=Nature of Contact
 Address=주소
 State=시 /도
 StateShort=상태

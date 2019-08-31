@@ -54,6 +54,7 @@ Firstname=Imię
 PostOrFunction=Stanowisko
 UserTitle=Tytuł
 NatureOfThirdParty=Rodzaj kontrahenta
+NatureOfContact=Nature of Contact
 Address=Adres
 State=Województwo
 StateShort=Województwo
