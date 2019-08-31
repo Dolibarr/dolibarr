@@ -54,6 +54,7 @@ Firstname=ファーストネーム
 PostOrFunction=職位
 UserTitle=タイトル
 NatureOfThirdParty=Nature of Third party
+NatureOfContact=Nature of Contact
 Address=アドレス
 State=州/地方
 StateShort=State

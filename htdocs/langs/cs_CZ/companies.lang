@@ -54,6 +54,7 @@ Firstname=Křestní jméno
 PostOrFunction=Pracovní pozice
 UserTitle=Titul
 NatureOfThirdParty=Povaha subjektu
+NatureOfContact=Nature of Contact
 Address=Adresa
 State=Stát/Okres
 StateShort=Stát

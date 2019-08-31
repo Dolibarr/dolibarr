@@ -54,6 +54,7 @@ Firstname=Etunimi
 PostOrFunction=Asema
 UserTitle=Titteli
 NatureOfThirdParty=Sidosryhmän luonne
+NatureOfContact=Nature of Contact
 Address=Osoite
 State=Valtio / Lääni
 StateShort=Valtio
