@@ -631,15 +631,15 @@ foreach($valid_dashboardlines as $board)
 
 $openedDashBoardSize = 'info-box-sm'; // use sm by default
 foreach ($dashboardgroup as $dashbordelement){
-    if(is_array($dashbordelement['stats']) && count($dashbordelement['stats'])>2){
+    if (is_array($dashbordelement['stats']) && count($dashbordelement['stats'])>2){
         $openedDashBoardSize = ''; // use default info box size : big
         break;
     }
 }
 
 $totalLateNumber = $totallate;
-$totallatePercentage = !empty($totaltodo) ? round($totallate / $totaltodo * 100, 2) : 0;
-if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) $totallate = $totallatePercentage;
+$totallatePercentage = ((! empty($totaltodo)) ? round($totallate / $totaltodo * 100, 2) : 0);
+if(! empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) $totallate = $totallatePercentage;
 
 $boxwork='';
 $boxwork.='<div class="box">';
