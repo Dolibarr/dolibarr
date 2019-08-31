@@ -39,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("errors","admin","main","companies","resource","holiday","accountancy","hrm","orders","contracts","projects","propal","bills","interventions"));
@@ -1782,7 +1782,7 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 
 	$formadmin = new FormAdmin($db);
 	$formcompany = new FormCompany($db);
-	if (! empty($conf->accounting->enabled)) $formaccounting = new FormAccounting($db);
+	$formaccounting = new FormAccounting($db);
 
 	$withentity='';
 
@@ -1890,6 +1890,7 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 		elseif (in_array($fieldlist[$field], array('libelle_facture'))) {
 		    print '<td>';
 		    $transfound=0;
+		    $transkey='';
 	        // Special case for labels
 	        if ($tabname == MAIN_DB_PREFIX.'c_payment_term')
 	        {
