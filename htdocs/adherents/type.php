@@ -106,11 +106,11 @@ if ($cancel) {
 if ($action == 'add' && $user->rights->adherent->configurer) {
 	$object->label			= trim($label);
     $object->morphy         = trim($morphy);
-	$object->statut = (int) $statut;
-	$object->subscription = (int) $subscription;
+	$object->statut         = (int) $statut;
+	$object->subscription   = (int) $subscription;
 	$object->note			= trim($comment);
 	$object->mail_valid		= trim($mail_valid);
-	$object->vote			= (boolean) trim($vote);
+	$object->vote			= (int) $vote;
 
 	// Fill array 'array_options' with data from add form
 	$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
