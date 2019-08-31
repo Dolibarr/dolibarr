@@ -1633,7 +1633,7 @@ class Ticket extends CommonObject
         $actioncomm->code = 'TICKET_MSG';
         $actioncomm->socid = $this->socid;
         $actioncomm->label = $this->subject;
-        $actioncomm->note = $this->message;
+        $actioncomm->note_private = $this->message;
         $actioncomm->userassigned = array($user->id);
         $actioncomm->userownerid = $user->id;
         $actioncomm->datep = $now;

@@ -286,7 +286,7 @@ function getActionComm($authentication, $id)
 			        	'datef'=> dol_print_date($actioncomm->datef, 'dayhourrfc'),
 			        	'datec'=> dol_print_date($actioncomm->datec, 'dayhourrfc'),
 			        	'datem'=> dol_print_date($actioncomm->datem, 'dayhourrfc'),
-			        	'note'=> $actioncomm->note,
+			        	'note'=> $actioncomm->note_private,
 			        	'percentage'=> $actioncomm->percentage,
 			        	'author'=> $actioncomm->authorid,
 			        	'usermod'=> $actioncomm->usermodid,

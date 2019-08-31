@@ -1499,7 +1499,7 @@ class EmailCollector extends CommonObject
                         $actioncomm->type_code   = 'AC_OTH_AUTO';		// Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
                         $actioncomm->code        = 'AC_'.$actioncode;
                         $actioncomm->label       = $langs->trans("ActionAC_".$actioncode).' - '.$langs->trans("MailFrom").' '.$from;
-                        $actioncomm->note        = $descriptionfull;
+                        $actioncomm->note_private= $descriptionfull;
                         $actioncomm->fk_project  = $projectstatic->id;
                         $actioncomm->datep       = $date;
                         $actioncomm->datef       = $date;

@@ -2885,7 +2885,7 @@ class Adherent extends CommonObject
 	    						$actioncomm->type_code   = 'AC_OTH_AUTO';		// Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
 	    						$actioncomm->code        = 'AC_'.$actioncode;
 	    						$actioncomm->label       = $actionmsg2;
-	    						$actioncomm->note        = $actionmsg;
+	    						$actioncomm->note_private= $actionmsg;
 	    						$actioncomm->fk_project  = 0;
 	    						$actioncomm->datep       = $now;
 	    						$actioncomm->datef       = $now;
