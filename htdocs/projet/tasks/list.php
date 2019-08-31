@@ -255,7 +255,7 @@ else dol_print_error($db);
 if (count($listoftaskcontacttype) == 0) $listoftaskcontacttype[0]='0';         // To avoid sql syntax error if not found
 
 $distinct='DISTINCT';   // We add distinct until we are added a protection to be sure a contact of a project and task is assigned only once.
-$sql = "SELECT ".$distinct." p.rowid as projectid, p.ref as projectref, p.title as projecttitle, p.fk_statut as projectstatus, p.datee as projectdatee, p.fk_opp_status, p.public, p.fk_user_creat as projectusercreate, p.bill_time,";
+$sql = "SELECT ".$distinct." p.rowid as projectid, p.ref as projectref, p.title as projecttitle, p.fk_statut as projectstatus, p.datee as projectdatee, p.fk_opp_status, p.public, p.fk_user_creat as projectusercreate, p.usage_bill_time,";
 $sql.= " s.nom as name, s.rowid as socid,";
 $sql.= " t.datec as date_creation, t.dateo as date_start, t.datee as date_end, t.tms as date_update,";
 $sql.= " t.rowid as id, t.ref, t.label, t.planned_workload, t.duration_effective, t.progress, t.fk_statut";
@@ -792,7 +792,7 @@ while ($i < min($num, $limit))
 		if (! empty($arrayfields['t.tobill']['checked']))
 		{
 		    print '<td class="center">';
-		    if ($obj->bill_time)
+		    if ($obj->usage_bill_time)
 		    {
 		        print convertSecondToTime($obj->tobill, 'allhourmin');
 		        $totalarray['totaltobill'] += $obj->tobill;
@@ -809,7 +809,7 @@ while ($i < min($num, $limit))
 		if (! empty($arrayfields['t.billed']['checked']))
 		{
 		    print '<td class="center">';
-		    if ($obj->bill_time)
+		    if ($obj->usage_bill_time)
 		    {
 		        print convertSecondToTime($obj->billed, 'allhourmin');
 		        $totalarray['totalbilled'] += $obj->billed;
