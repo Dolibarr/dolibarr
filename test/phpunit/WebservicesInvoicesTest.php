@@ -129,9 +129,15 @@ class WebservicesInvoicesTest extends PHPUnit\Framework\TestCase
 		$societe->particulier=0;
 
 		$societe->create($user);
+		if (empty($societe->id))
+		{
+			// Create failed, may be the thirdparty already exists, we fetch it
+			$societe->fetch(0, 'name');
+		}
 
 		self::$socid = $societe->id;
-		print __METHOD__." societe created id=".$societe->id."\n";
+
+		print __METHOD__." societe created or found with id=".$societe->id."\n";
 
 		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
 
