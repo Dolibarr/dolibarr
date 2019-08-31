@@ -183,6 +183,8 @@ $thirdpartywithuser_fields = array(
 	'group_id' => array('name'=>'group_id','type'=>'xsd:string')
 );
 
+$elementtype = 'socpeople';
+
 //Retreive all extrafield for contact
 // fetch optionals attributes and labels
 $extrafields=new ExtraFields($db);
@@ -191,9 +193,9 @@ $extrafield_array=null;
 if (is_array($extrafields) && count($extrafields)>0) {
 	$extrafield_array = array();
 }
-foreach($extrafields->attribute_label as $key=>$label)
+foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
 {
-	$type =$extrafields->attribute_type[$key];
+	$type =$extrafields->attributes[$elementtype]['type'][$key];
 	if ($type=='date' || $type=='datetime') {$type='xsd:dateTime';}
 	else {$type='xsd:string';}
 
@@ -598,7 +600,7 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 						// fetch optionals attributes and labels
 						$extrafields=new ExtraFields($db);
 						$extralabels=$extrafields->fetch_name_optionals_label('socpeople', true);
-						foreach($extrafields->attribute_label as $key=>$label)
+						foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
 						{
 							$key='contact_options_'.$key;
 							$key=substr($key, 8);   // Remove 'contact_' prefix

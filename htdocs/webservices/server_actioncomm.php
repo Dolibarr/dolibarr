@@ -111,6 +111,9 @@ $actioncomm_fields= array(
 	'fk_element' => array('name'=>'fk_element','type'=>'xsd:string'),
 	'elementtype' => array('name'=>'elementtype','type'=>'xsd:string'));
 
+
+$elementtype = 'actioncomm';
+
 //Retreive all extrafield for actioncomm
 // fetch optionals attributes and labels
 $extrafields=new ExtraFields($db);
@@ -119,9 +122,9 @@ $extrafield_array=null;
 if (is_array($extrafields) && count($extrafields)>0) {
 	$extrafield_array = array();
 }
-foreach($extrafields->attribute_label as $key=>$label)
+foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
 {
-	$type =$extrafields->attribute_type[$key];
+	$type =$extrafields->attributes[$elementtype]['type'][$key];
 	if ($type=='date' || $type=='datetime') {$type='xsd:dateTime';}
 	else {$type='xsd:string';}
 
@@ -308,7 +311,7 @@ function getActionComm($authentication, $id)
 	        	//Get extrafield values
 	        	$actioncomm->fetch_optionals();
 
-	        	foreach($extrafields->attribute_label as $key=>$label)
+	        	foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
 	        	{
 	        		$actioncomm_result_fields=array_merge($actioncomm_result_fields, array('options_'.$key => $actioncomm->array_options['options_'.$key]));
 	        	}
@@ -448,7 +451,7 @@ function createActionComm($authentication, $actioncomm)
 		// fetch optionals attributes and labels
 		$extrafields=new ExtraFields($db);
 		$extralabels=$extrafields->fetch_name_optionals_label('actioncomm', true);
-		foreach($extrafields->attribute_label as $key=>$label)
+		foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
 		{
 			$key='options_'.$key;
 			$newobject->array_options[$key]=$actioncomm[$key];
@@ -542,7 +545,7 @@ function updateActionComm($authentication, $actioncomm)
 			// fetch optionals attributes and labels
 			$extrafields=new ExtraFields($db);
 			$extralabels=$extrafields->fetch_name_optionals_label('actioncomm', true);
-			foreach($extrafields->attribute_label as $key=>$label)
+			foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
 			{
 				$key='options_'.$key;
 				$object->array_options[$key]=$actioncomm[$key];

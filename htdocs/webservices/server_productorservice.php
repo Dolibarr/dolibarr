@@ -130,6 +130,10 @@ $productorservice_fields = array(
     'images' => array('name'=>'images','type'=>'tns:ImagesArray')
 );
 
+
+$elementtype = 'product';
+
+
 //Retreive all extrafield for product
 // fetch optionals attributes and labels
 $extrafields=new ExtraFields($db);
@@ -138,9 +142,9 @@ $extrafield_array=null;
 if (is_array($extrafields) && count($extrafields) > 0) {
 	$extrafield_array = array();
 }
-foreach($extrafields->attribute_label as $key=>$label)
+foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
 {
-	$type =$extrafields->attribute_type[$key];
+	$type =$extrafields->attributes[$elementtype]['type'][$key];
 	if ($type=='date' || $type=='datetime') {$type='xsd:dateTime';}
 	else {$type='xsd:string';}
 
@@ -428,7 +432,7 @@ function getProductOrService($authentication, $id = '', $ref = '', $ref_ext = ''
             	//Get extrafield values
             	$product->fetch_optionals();
 
-            	foreach($extrafields->attribute_label as $key=>$label)
+            	foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
             	{
             		$productorservice_result_fields=array_merge($productorservice_result_fields, array('options_'.$key => $product->array_options['options_'.$key]));
             	}
@@ -552,7 +556,7 @@ function createProductOrService($authentication, $product)
 
         $extrafields=new ExtraFields($db);
 		$extralabels=$extrafields->fetch_name_optionals_label('product', true);
-		foreach($extrafields->attribute_label as $key=>$label)
+		foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
 		{
 			$key='options_'.$key;
 			$newobject->array_options[$key]=$product[$key];
@@ -721,7 +725,7 @@ function updateProductOrService($authentication, $product)
 
 		$extrafields=new ExtraFields($db);
 		$extralabels=$extrafields->fetch_name_optionals_label('product', true);
-		foreach($extrafields->attribute_label as $key=>$label)
+		foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
 		{
 			$key='options_'.$key;
 			$newobject->array_options[$key]=$product[$key];
@@ -1099,7 +1103,7 @@ function getProductsForCategory($authentication, $id, $lang = '')
 							//Get extrafield values
 							$tmpproduct->fetch_optionals();
 
-							foreach($extrafields->attribute_label as $key=>$label)
+							foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
 							{
 								$products[$iProduct]=array_merge($products[$iProduct], array('options_'.$key => $tmpproduct->array_options['options_'.$key]));
 							}

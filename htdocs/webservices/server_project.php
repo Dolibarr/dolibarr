@@ -159,6 +159,8 @@ $project_fields = array(
     'elements' => array('name'=>'elements','type'=>'tns:elements')
 );
 
+$elementtype = 'project';
+
 //Retreive all extrafield for thirdsparty
 // fetch optionals attributes and labels
 $extrafields=new ExtraFields($db);
@@ -167,10 +169,10 @@ $extrafield_array=null;
 if (is_array($extrafields) && count($extrafields)>0) {
     $extrafield_array = array();
 }
-foreach($extrafields->attribute_label as $key=>$label)
+foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
 {
     //$value=$object->array_options["options_".$key];
-    $type =$extrafields->attribute_type[$key];
+    $type =$extrafields->attributes[$elementtype]['type'][$key];
     if ($type=='date' || $type=='datetime') {$type='xsd:dateTime';}
     else {$type='xsd:string';}
     $extrafield_array['options_'.$key]=array('name'=>'options_'.$key,'type'=>$type);
@@ -270,7 +272,7 @@ function createProject($authentication, $project)
             // fetch optionals attributes and labels
             $extrafields=new ExtraFields($db);
             $extralabels=$extrafields->fetch_name_optionals_label('project', true);
-            foreach($extrafields->attribute_label as $key=>$label)
+            foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
             {
                 $key='options_'.$key;
                 $newobject->array_options[$key]=$project[$key];
@@ -374,11 +376,11 @@ function getProject($authentication, $id = '', $ref = '')
 
                 //Retrieve all extrafields for project
                 $extrafields=new ExtraFields($db);
-                $extralabels=$extrafields->fetch_name_optionals_label('societe', true);
+                $extralabels=$extrafields->fetch_name_optionals_label('project', true);
 
                 //Get extrafield values
                 $project->fetch_optionals();
-                foreach($extrafields->attribute_label as $key=>$label)
+                foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
                 {
                     $project_result_fields=array_merge($project_result_fields, array('options_'.$key => $project->array_options['options_'.$key]));
                 }

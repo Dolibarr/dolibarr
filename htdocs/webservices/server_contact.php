@@ -115,6 +115,10 @@ $contact_fields = array(
 	'poste' => array('name'=>'poste','type'=>'xsd:string')
 	//...
 );
+
+$elementtype = 'socpeople';
+
+
 //Retreive all extrafield for contact
 // fetch optionals attributes and labels
 $extrafields=new ExtraFields($db);
@@ -123,9 +127,9 @@ $extrafield_array=null;
 if (is_array($extrafields) && count($extrafields)>0) {
 	$extrafield_array = array();
 }
-foreach($extrafields->attribute_label as $key=>$label)
+foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
 {
-	$type =$extrafields->attribute_type[$key];
+	$type =$extrafields->attributes[$elementtype]['type'][$key];
 	if ($type=='date' || $type=='datetime') {$type='xsd:dateTime';}
 	else {$type='xsd:string';}
 
@@ -311,7 +315,7 @@ function getContact($authentication, $id, $ref_ext)
             	//Get extrafield values
             	$contact->fetch_optionals();
 
-            	foreach($extrafields->attribute_label as $key=>$label)
+            	foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
             	{
             		$contact_result_fields=array_merge($contact_result_fields, array('options_'.$key => $contact->array_options['options_'.$key]));
             	}
@@ -416,7 +420,7 @@ function createContact($authentication, $contact)
 		// fetch optionals attributes and labels
 		$extrafields=new ExtraFields($db);
 		$extralabels=$extrafields->fetch_name_optionals_label('socpeople', true);
-		foreach($extrafields->attribute_label as $key=>$label)
+		foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
 		{
 			$key='options_'.$key;
 			$newobject->array_options[$key]=$contact[$key];
@@ -663,7 +667,7 @@ function updateContact($authentication, $contact)
 			// fetch optionals attributes and labels
 			$extrafields=new ExtraFields($db);
 			$extralabels=$extrafields->fetch_name_optionals_label('socpeople', true);
-			foreach($extrafields->attribute_label as $key=>$label)
+			foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
 			{
 				$key='options_'.$key;
 				$object->array_options[$key]=$contact[$key];
