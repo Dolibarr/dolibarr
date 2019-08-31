@@ -3865,6 +3865,8 @@ function dol_print_error($db = '', $error = '', $errors = null)
 	if (empty($dolibarr_main_prod)) print $out;
 	else
 	{
+		print 'This website is currently temporarly offline. This may be due to a maintenance operation. Current status of operation are on next line...<br><br>'."\n";
+		$langs->load("errors");
 		print $langs->trans("DolibarrHasDetectedError").'. ';
 		print $langs->trans("YouCanSetOptionDolibarrMainProdToZero");
 		define("MAIN_CORE_ERROR", 1);
