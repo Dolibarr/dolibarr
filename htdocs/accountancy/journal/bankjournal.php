@@ -533,7 +533,7 @@ if (! $error && $action == 'writebookkeeping') {
 					$bookkeeping->code_journal = $journal;
 					$bookkeeping->journal_label = $journal_label;
 					$bookkeeping->fk_user_author = $user->id;
-					$bookkeeping->date_create = $now;
+					$bookkeeping->date_creation = $now;
 
 					// No subledger_account value for the bank line but add a specific label_operation
 					$bookkeeping->subledger_account = '';
@@ -596,7 +596,7 @@ if (! $error && $action == 'writebookkeeping') {
 						$bookkeeping->code_journal = $journal;
 						$bookkeeping->journal_label = $journal_label;
 						$bookkeeping->fk_user_author = $user->id;
-						$bookkeeping->date_create = $now;
+						$bookkeeping->date_creation = $now;
 
 						if ($tabtype[$key] == 'payment') {	// If payment is payment of customer invoice, we get ref of invoice
 							$bookkeeping->subledger_account = $k;							// For payment, the subledger account is stored as $key of $tabtp
@@ -730,7 +730,7 @@ if (! $error && $action == 'writebookkeeping') {
 						$bookkeeping->code_journal = $journal;
 						$bookkeeping->journal_label = $journal_label;
 						$bookkeeping->fk_user_author = $user->id;
-						$bookkeeping->date_create = $now;
+						$bookkeeping->date_creation = $now;
 						$bookkeeping->label_compte = '';
 						$bookkeeping->label_operation = $reflabel;
 						$bookkeeping->entity = $conf->entity;
