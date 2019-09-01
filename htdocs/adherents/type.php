@@ -489,7 +489,7 @@ if ($rowid > 0)
 
 		$now=dol_now();
 
-		$sql = "SELECT d.rowid, d.login, d.firstname, d.lastname, d.societe, ";
+		$sql = "SELECT d.rowid, d.login, d.firstname, d.lastname, d.societe as company,";
 		$sql.= " d.datefin,";
 		$sql.= " d.email, d.fk_adherent_type as type_id, d.morphy, d.statut,";
 		$sql.= " t.libelle as type, t.subscription";
@@ -649,7 +649,7 @@ if ($rowid > 0)
 
 		        // Lastname
 		        print '<tr class="oddeven">';
-		        if ($objp->societe != '')
+		        if ($objp->company != '')
 		        {
 		            print '<td><a href="card.php?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowMember"), "user").' '.$adh->getFullName($langs, 0, -1, 20).' / '.dol_trunc($objp->societe, 12).'</a></td>'."\n";
 		        }

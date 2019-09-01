@@ -324,7 +324,7 @@ class Adherent extends CommonObject
 		$infos.= $langs->transnoentities("id").": ".$this->id."\n";
 		$infos.= $langs->transnoentities("Lastname").": ".$this->lastname."\n";
 		$infos.= $langs->transnoentities("Firstname").": ".$this->firstname."\n";
-		$infos.= $langs->transnoentities("Company").": ".$this->societe."\n";
+		$infos.= $langs->transnoentities("Company").": ".$this->company."\n";
 		$infos.= $langs->transnoentities("Address").": ".$this->address."\n";
 		$infos.= $langs->transnoentities("Zip").": ".$this->zip."\n";
 		$infos.= $langs->transnoentities("Town").": ".$this->town."\n";
@@ -350,7 +350,7 @@ class Adherent extends CommonObject
 			'__FIRSTNAME__'=>$msgishtml?dol_htmlentitiesbr($this->firstname):($this->firstname?$this->firstname:''),
 			'__LASTNAME__'=>$msgishtml?dol_htmlentitiesbr($this->lastname):($this->lastname?$this->lastname:''),
 			'__FULLNAME__'=>$msgishtml?dol_htmlentitiesbr($this->getFullName($langs)):$this->getFullName($langs),
-			'__COMPANY__'=>$msgishtml?dol_htmlentitiesbr($this->societe):($this->societe?$this->societe:''),
+			'__COMPANY__'=>$msgishtml?dol_htmlentitiesbr($this->company):($this->company?$this->company:''),
 			'__ADDRESS__'=>$msgishtml?dol_htmlentitiesbr($this->address):($this->address?$this->address:''),
 			'__ZIP__'=>$msgishtml?dol_htmlentitiesbr($this->zip):($this->zip?$this->zip:''),
 			'__TOWN__'=>$msgishtml?dol_htmlentitiesbr($this->town):($this->town?$this->town:''),
@@ -558,7 +558,7 @@ class Adherent extends CommonObject
 		$sql.= ", lastname = ".($this->lastname?"'".$this->db->escape($this->lastname)."'":"null");
 		$sql.= ", gender = ".($this->gender != -1 ? "'".$this->db->escape($this->gender)."'" : "null");	// 'man' or 'woman'
 		$sql.= ", login = ".($this->login?"'".$this->db->escape($this->login)."'":"null");
-		$sql.= ", societe = ".($this->societe?"'".$this->db->escape($this->societe)."'":"null");
+		$sql.= ", societe = ".($this->company?"'".$this->db->escape($this->company)."'":"null");
 		$sql.= ", fk_soc = ".($this->socid > 0?$this->db->escape($this->socid):"null");
 		$sql.= ", address = ".($this->address?"'".$this->db->escape($this->address)."'":"null");
 		$sql.= ", zip = ".($this->zip?"'".$this->db->escape($this->zip)."'":"null");
@@ -682,7 +682,7 @@ class Adherent extends CommonObject
 						$luser->lastname=$this->lastname;
 						$luser->gender=$this->gender;
 						$luser->pass=$this->pass;
-						$luser->societe_id=$this->societe;
+						//$luser->socid=$this->fk_soc;		// We do not enable this. This may transform a user into an external user.
 
 						$luser->birth=$this->birth;
 
@@ -1608,13 +1608,13 @@ class Adherent extends CommonObject
 
 						if ($this->morphy == 'mor')
 						{
-							$companyname=$this->societe;
+							$companyname=$this->company;
 							if (! empty($fullname)) $companyalias=$fullname;
 						}
 						else
 						{
 							$companyname=$fullname;
-							if (! empty($this->societe)) $companyalias=$this->societe;
+							if (! empty($this->company)) $companyalias=$this->company;
 						}
 
 						$result=$customer->create_from_member($this, $companyname, $companyalias);
@@ -2297,7 +2297,7 @@ class Adherent extends CommonObject
         // phpcs:enable
 		global $conf, $langs;
 
-		if ($user->societe_id) return -1;   // protection pour eviter appel par utilisateur externe
+		if ($user->socid) return -1;   // protection pour eviter appel par utilisateur externe
 
 		$now=dol_now();
 
@@ -2398,7 +2398,7 @@ class Adherent extends CommonObject
 		$this->gender='man';
 		$this->login='dolibspec';
 		$this->pass='dolibspec';
-		$this->societe = 'Societe ABC';
+		$this->company = 'Societe ABC';
 		$this->address = '61 jump street';
 		$this->zip = '75000';
 		$this->town = 'Paris';
@@ -2483,9 +2483,9 @@ class Adherent extends CommonObject
 		$this->fullname=$this->getFullName($langs);
 
 		// For avoid ldap error when firstname and lastname are empty
-		if ($this->morphy == 'mor' && (empty($this->fullname) || $this->fullname == $this->societe)) {
-			$this->fullname = $this->societe;
-			$this->lastname = $this->societe;
+		if ($this->morphy == 'mor' && (empty($this->fullname) || $this->fullname == $this->company)) {
+			$this->fullname = $this->company;
+			$this->lastname = $this->company;
 		}
 
 		// Possible LDAP KEY (constname => varname)
@@ -2513,7 +2513,7 @@ class Adherent extends CommonObject
 		}
 		if ($this->firstname && ! empty($conf->global->LDAP_MEMBER_FIELD_FIRSTNAME))			$info[$conf->global->LDAP_MEMBER_FIELD_FIRSTNAME] = $this->firstname;
 		if ($this->poste && ! empty($conf->global->LDAP_MEMBER_FIELD_TITLE))					$info[$conf->global->LDAP_MEMBER_FIELD_TITLE] = $this->poste;
-		if ($this->societe && ! empty($conf->global->LDAP_MEMBER_FIELD_COMPANY))				$info[$conf->global->LDAP_MEMBER_FIELD_COMPANY] = $this->societe;
+		if ($this->company && ! empty($conf->global->LDAP_MEMBER_FIELD_COMPANY))				$info[$conf->global->LDAP_MEMBER_FIELD_COMPANY] = $this->company;
 		if ($this->address && ! empty($conf->global->LDAP_MEMBER_FIELD_ADDRESS))				$info[$conf->global->LDAP_MEMBER_FIELD_ADDRESS] = $this->address;
 		if ($this->zip && ! empty($conf->global->LDAP_MEMBER_FIELD_ZIP))						$info[$conf->global->LDAP_MEMBER_FIELD_ZIP] = $this->zip;
 		if ($this->town && ! empty($conf->global->LDAP_MEMBER_FIELD_TOWN))						$info[$conf->global->LDAP_MEMBER_FIELD_TOWN] = $this->town;

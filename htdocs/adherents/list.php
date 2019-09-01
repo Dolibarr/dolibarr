@@ -686,7 +686,7 @@ while ($i < min($num, $limit))
 	} else {
 		$companyname=$obj->company;
 	}
-	$memberstatic->societe = $companyname;
+	$memberstatic->company = $companyname;
 
 	print '<tr class="oddeven">';
 

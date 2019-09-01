@@ -494,7 +494,7 @@ if ($rowid > 0)
 	print '</tr>';
 
 	// Company
-	print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$object->societe.'</td></tr>';
+	print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$object->company.'</td></tr>';
 
 	// Civility
 	print '<tr><td>'.$langs->trans("UserTitle").'</td><td class="valeur">'.$object->getCivilityLabel().'&nbsp;</td>';
@@ -862,13 +862,13 @@ if ($rowid > 0)
 
 			if ($object->morphy == 'mor')
 			{
-				$companyname=$object->societe;
+				$companyname=$object->company;
 				if (! empty($fullname)) $companyalias=$fullname;
 			}
 			else
 			{
 				$companyname=$fullname;
-				if (! empty($object->societe)) $companyalias=$object->societe;
+				if (! empty($object->company)) $companyalias=$object->company;
 			}
 
 			// Create a form array
