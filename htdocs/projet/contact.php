@@ -216,7 +216,7 @@ if ($id > 0 || ! empty($ref))
 	else print $langs->trans('PrivateProject');
 	print '</td></tr>';
 
-    if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES) && $object->oopp_status)
+    if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES) && $object->opp_status)
     {
     	// Opportunity status
     	print '<tr><td>'.$langs->trans("OpportunityStatus").'</td><td>';
