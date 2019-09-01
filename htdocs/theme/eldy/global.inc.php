@@ -1069,6 +1069,8 @@ body.sidebar-collapse .login_block {
 }
 
 .menuhider { display: block !important; }
+.dropdown-user-image { display: none; }
+.user-header { height: auto !important; color: rgb(<?php echo $colorbackbody; ?>); }
 
 #id-container {
 	width: 100%;
