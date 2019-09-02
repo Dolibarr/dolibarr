@@ -896,6 +896,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
     't.name'=>array('label'=>"Name", 'checked'=>1, 'position'=>10),
     't.poste'=>array('label'=>"PostOrFunction", 'checked'=>1, 'position'=>20),
     't.address'=>array('label'=>(empty($conf->dol_optimize_smallscreen) ? $langs->trans("Address").' / '.$langs->trans("Phone").' / '.$langs->trans("Email") : $langs->trans("Address")), 'checked'=>1, 'position'=>30),
+    't.address'=>array('label'=>(empty($conf->dol_optimize_smallscreen) ? $langs->trans("Address").' / '.$langs->trans("Phone").' / '.$langs->trans("Email") : $langs->trans("Address")), 'checked'=>1, 'position'=>30),
     't.statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>40, 'class'=>'center'),
     );
     // Extra fields
