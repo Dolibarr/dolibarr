@@ -899,8 +899,6 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		$actioncomm->durationp   = 0;
 		$actioncomm->punctual    = 1;
 		$actioncomm->percentage  = -1;   // Not applicable
-		$actioncomm->societe     = $societeforaction;
-		$actioncomm->contact     = $contactforaction;
 		$actioncomm->socid       = $societeforaction->id;
 		$actioncomm->contactid   = $contactforaction->id;
 		$actioncomm->authorid    = $user->id;   // User saving action
