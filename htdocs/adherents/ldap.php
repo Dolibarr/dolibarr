@@ -182,7 +182,7 @@ if ($result > 0)
 	if (empty($dn))
 	{
 	    $langs->load("errors");
-	    print '<tr '.$bc[false].'><td colspan="2"><font class="error">'.$langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Member")).'</font></td></tr>';
+	    print '<tr class="oddeven"><td colspan="2"><font class="error">'.$langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Member")).'</font></td></tr>';
 	}
     else
     {
@@ -190,12 +190,12 @@ if ($result > 0)
 
     	//print_r($records);
 
-    	// Affichage arbre
-    	if ((! is_numeric($records) || $records != 0) && (! isset($records['count']) || $records['count'] > 0))
+    	// Show tree
+    	if (((! is_numeric($records)) || $records != 0) && (! isset($records['count']) || $records['count'] > 0))
     	{
     		if (! is_array($records))
     		{
-    			print '<tr '.$bc[false].'><td colspan="2"><font class="error">'.$langs->trans("ErrorFailedToReadLDAP").'</font></td></tr>';
+    			print '<tr class="oddeven"><td colspan="2"><font class="error">'.$langs->trans("ErrorFailedToReadLDAP").'</font></td></tr>';
     		}
     		else
     		{
@@ -204,7 +204,7 @@ if ($result > 0)
     	}
     	else
     	{
-    		print '<tr '.$bc[false].'><td colspan="2">'.$langs->trans("LDAPRecordNotFound").' (dn='.$dn.' - search='.$search.')</td></tr>';
+    		print '<tr class="oddeven"><td colspan="2">'.$langs->trans("LDAPRecordNotFound").' (dn='.$dn.' - search='.$search.')</td></tr>';
     	}
     }
 
