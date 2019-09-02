@@ -812,21 +812,24 @@ if ($rowid > 0)
 		if (empty($reshook))
 		{
 			print '<br><br><table class="border" width="100%">';
-			foreach($extrafields->attribute_label as $key=>$label)
+			if (is_array($extrafields->attributes['adherent_type']['label']))
 			{
-				if (isset($_POST["options_" . $key])) {
-					if (is_array($_POST["options_" . $key])) {
-						// $_POST["options"] is an array but following code expects a comma separated string
-						$value = implode(",", $_POST["options_" . $key]);
+				foreach($extrafields->attributes['adherent_type']['label'] as $key=>$label)
+				{
+					if (isset($_POST["options_" . $key])) {
+						if (is_array($_POST["options_" . $key])) {
+							// $_POST["options"] is an array but following code expects a comma separated string
+							$value = implode(",", $_POST["options_" . $key]);
+						} else {
+							$value = $_POST["options_" . $key];
+						}
 					} else {
-						$value = $_POST["options_" . $key];
+						$value = $object->array_options["options_" . $key];
 					}
-				} else {
-					$value = $adht->array_options["options_" . $key];
+					print '<tr><td width="30%">'.$label.'</td><td>';
+					print $extrafields->showInputField($key, $value);
+					print "</td></tr>\n";
 				}
-				print '<tr><td width="30%">'.$label.'</td><td>';
-				print $extrafields->showInputField($key, $value);
-				print "</td></tr>\n";
 			}
 			print '</table><br><br>';
 		}
