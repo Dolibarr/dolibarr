@@ -16,7 +16,15 @@
 --
 -- ========================================================================
 
-ALTER TABLE llx_societe_contact ADD UNIQUE INDEX idx_societe_contact_idx1 (element_id, fk_c_type_contact, fk_socpeople);
-	
-ALTER TABLE llx_societe_contact ADD CONSTRAINT fk_societe_contact_fk_c_type_contact FOREIGN KEY (fk_c_type_contact)  REFERENCES llx_c_type_contact(rowid);
-ALTER TABLE llx_societe_contact ADD CONSTRAINT fk_societe_contact_fk_socpeople FOREIGN KEY (fk_socpeople)  REFERENCES llx_socpeople(rowid);
+
+create table llx_societe_contacts
+(
+    rowid           integer AUTO_INCREMENT PRIMARY KEY,
+    entity          integer DEFAULT 1 NOT NULL,
+    date_creation           datetime NOT NULL,
+    fk_soc		        integer NOT NULL,
+    fk_c_type_contact	int NOT NULL,
+    fk_socpeople        integer NOT NULL,
+    tms TIMESTAMP,
+    import_key VARCHAR(14)
+)ENGINE=innodb;

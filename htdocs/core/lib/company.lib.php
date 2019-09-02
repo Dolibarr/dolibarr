@@ -869,6 +869,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
     if ($search_status=='') $search_status=1; // always display active customer first
     $search_name = GETPOST("search_name", 'alpha');
     $search_addressphone = GETPOST("search_addressphone", 'alpha');
+    $search_role = GETPOST("search_role", 'array');
 
     if (! $sortorder) $sortorder="ASC";
     if (! $sortfield) $sortfield="t.lastname";
@@ -887,7 +888,8 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
     'name'      =>array('type'=>'varchar(128)', 'label'=>'Name',             'enabled'=>1, 'visible'=>1,  'notnull'=>1,  'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1),
     'poste'     =>array('type'=>'varchar(128)', 'label'=>'PostOfFunction',   'enabled'=>1, 'visible'=>1,  'notnull'=>1,  'showoncombobox'=>1, 'index'=>1, 'position'=>20),
     'address'   =>array('type'=>'varchar(128)', 'label'=>'Address',          'enabled'=>1, 'visible'=>1,  'notnull'=>1,  'showoncombobox'=>1, 'index'=>1, 'position'=>30),
-    'statut'    =>array('type'=>'integer',      'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'default'=>0, 'index'=>1,  'position'=>40, 'arrayofkeyval'=>array(0=>$contactstatic->LibStatut(0, 1), 1=>$contactstatic->LibStatut(1, 1))),
+    'role'      =>array('type'=>'checkbox',     'label'=>'Role',             'enabled'=>1, 'visible'=>1,  'notnull'=>1,  'showoncombobox'=>1, 'index'=>1, 'position'=>40),
+    'statut'    =>array('type'=>'integer',      'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'default'=>0, 'index'=>1,  'position'=>50, 'arrayofkeyval'=>array(0=>$contactstatic->LibStatut(0, 1), 1=>$contactstatic->LibStatut(1, 1))),
     );
 
     // Definition of fields for list
@@ -896,8 +898,8 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
     't.name'=>array('label'=>"Name", 'checked'=>1, 'position'=>10),
     't.poste'=>array('label'=>"PostOrFunction", 'checked'=>1, 'position'=>20),
     't.address'=>array('label'=>(empty($conf->dol_optimize_smallscreen) ? $langs->trans("Address").' / '.$langs->trans("Phone").' / '.$langs->trans("Email") : $langs->trans("Address")), 'checked'=>1, 'position'=>30),
-    't.address'=>array('label'=>(empty($conf->dol_optimize_smallscreen) ? $langs->trans("Address").' / '.$langs->trans("Phone").' / '.$langs->trans("Email") : $langs->trans("Address")), 'checked'=>1, 'position'=>30),
-    't.statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>40, 'class'=>'center'),
+    'sc.role'=>array('label'=>"Role", 'checked'=>1, 'position'=>40),
+    't.statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>50, 'class'=>'center'),
     );
     // Extra fields
     if (is_array($extrafields->attributes[$contactstatic->table_element]['label']) && count($extrafields->attributes[$contactstatic->table_element]['label']))
@@ -927,6 +929,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
     {
     	$search_status		 = '';
     	$search_name         = '';
+    	$search_role         = '';
     	$search_addressphone = '';
     	$search_array_options=array();
 
@@ -968,6 +971,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 
     $param="socid=".urlencode($object->id);
     if ($search_status != '') $param.='&search_status='.urlencode($search_status);
+    if (count($search_role)>0) $param.=implode('&search_role[]=', $search_role);
     if ($search_name != '')   $param.='&search_name='.urlencode($search_name);
     if ($optioncss != '')     $param.='&optioncss='.urlencode($optioncss);
     // Add $param from extra fields
@@ -978,9 +982,15 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
     $sql .= " t.civility as civility_id, t.address, t.zip, t.town";
     $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as t";
     $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople_extrafields as ef on (t.rowid = ef.fk_object)";
+    if (count($search_role)>0) {
+	    $sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_contacts as sc on (sc.fk_socpeople = t.rowid)";
+    }
     $sql .= " WHERE t.fk_soc = ".$object->id;
     if ($search_status!='' && $search_status != '-1') $sql .= " AND t.statut = ".$db->escape($search_status);
     if ($search_name) $sql .= natural_search(array('t.lastname', 't.firstname'), $search_name);
+	if (count($search_role)>0) {
+		$sql .= ' AND sc.fk_c_type_contact IN ('.implode(',',$search_role).')';
+	}
     // Add where from extra fields
     $extrafieldsobjectkey=$contactstatic->table_element;
     include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -993,6 +1003,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 
     $num = $db->num_rows($result);
 
+
     // Fields title search
     // --------------------------------------------------------------------
     print '<tr class="liste_titre">';
@@ -1002,11 +1013,16 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
     	if (in_array($val['type'], array('date','datetime','timestamp'))) $align.=($align?' ':'').'center';
     	if (in_array($val['type'], array('timestamp'))) $align.=($align?' ':'').'nowrap';
     	if ($key == 'status' || $key == 'statut') $align.=($align?' ':'').'center';
-    	if (! empty($arrayfields['t.'.$key]['checked']))
+    	if (! empty($arrayfields['t.'.$key]['checked']) || ! empty($arrayfields['sc.'.$key]['checked']))
     	{
+
     		print '<td class="liste_titre'.($align?' '.$align:'').'">';
     		if (in_array($key, array('lastname','name'))) print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'">';
     		elseif (in_array($key, array('statut'))) print $form->selectarray('search_status', array('-1'=>'','0'=>$contactstatic->LibStatut(0, 1),'1'=>$contactstatic->LibStatut(1, 1)), $search_status);
+    		elseif (in_array($key, array('role'))) {
+			    $contactType=$contactstatic->listeTypeContacts('external', '', 1);
+    			print $form->multiselectarray('search_role', $contactType, $search_role);
+		    }
     		print '</td>';
     	}
     }
@@ -1035,7 +1051,10 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
     	if (in_array($val['type'], array('date','datetime','timestamp'))) $align.=($align?' ':'').'center';
     	if (in_array($val['type'], array('timestamp'))) $align.=($align?' ':'').'nowrap';
     	if ($key == 'status' || $key == 'statut') $align.=($align?' ':'').'center';
-    	if (! empty($arrayfields['t.'.$key]['checked'])) print getTitleFieldOfList($arrayfields['t.'.$key]['label'], 0, $_SERVER['PHP_SELF'], 't.'.$key, '', $param, ($align?'class="'.$align.'"':''), $sortfield, $sortorder, $align.' ')."\n";
+    	if ($key == 'role') $align.=($align?' ':'').'center';
+    	if (! empty($arrayfields['t.'.$key]['checked']) || ! empty($arrayfields['sc.'.$key]['checked'])) {
+    		print getTitleFieldOfList($arrayfields['t.'.$key]['label'], 0, $_SERVER['PHP_SELF'], 't.'.$key, '', $param, ($align?'class="'.$align.'"':''), $sortfield, $sortorder, $align.' ')."\n";
+	    }
     }
     // Extra fields
     $extrafieldsobjectkey=$contactstatic->table_element;
@@ -1082,6 +1101,11 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
             $contactstatic->setGenderFromCivility();
             $contactstatic->fetch_optionals();
 
+	        $resultRole=$contactstatic->fetchRole();
+	        if ($resultRole<0) {
+	        	setEventMessages(null, $contactstatic->errors,'errors');
+	        }
+
             if (is_array($contactstatic->array_options))
             {
 	            foreach($contactstatic->array_options as $key => $val)
@@ -1122,6 +1146,16 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
             {
             	print '<td>';
 	            print $contactstatic->getBannerAddress('contact', $object);
+    	        print '</td>';
+            }
+
+            // Role
+            if (! empty($arrayfields['sc.role']['checked']))
+            {
+            	print '<td>';
+            	foreach($contactstatic->roles as $key=>$val) {
+		            print '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">'.implode(' ', $val['label']).'</ul></div>';
+	            }
     	        print '</td>';
             }
 

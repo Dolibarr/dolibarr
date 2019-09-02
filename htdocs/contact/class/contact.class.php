@@ -82,7 +82,7 @@ class Contact extends CommonObject
 
 	public $civility_id;      // In fact we store civility_code
 	public $civility_code;
-  public $civility;
+	public $civility;
 	public $address;
 	public $zip;
 	public $town;
@@ -138,6 +138,8 @@ class Contact extends CommonObject
 
 
 	public $oldcopy;				// To contains a clone of this when we need to save old properties of object
+
+	public $roles=array();
 
 
 	/**
@@ -1449,4 +1451,50 @@ class Contact extends CommonObject
 
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
 	}
+
+	/**
+	 * Fetch Role for a contact
+	 *
+	 * @return float|int
+	 * @throws Exception
+	 */
+	public function fetchRole()
+	{
+
+		global $langs;
+		$error= 0;
+		$num=0;
+
+		$sql ="SELECT tc.rowid, tc.element, tc.source, tc.code, tc.libelle";
+		$sql.=" FROM ".MAIN_DB_PREFIX."societe_contacts as sc ";
+		$sql.=" INNER JOIN ".MAIN_DB_PREFIX."c_type_contact as tc";
+		$sql.=" ON tc.rowid = sc.fk_c_type_contact";
+		$sql.=" AND sc.fk_socpeople = ". $this->id;
+		$sql.=" AND tc.source = 'external' AND tc.active=1";
+		$sql.=" AND sc.entity IN (".getEntity('societe').')';
+
+		dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
+
+		$this->roles=array();
+		$resql=$this->db->query($sql);
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+			if ($num > 0) {
+				while ($obj = $this->db->fetch_object($resql)) {
+					$transkey="TypeContact_".$obj->element."_".$obj->source."_".$obj->code;
+					$this->roles[$this->id]=array('id'=>$obj->rowid,'element'=>$obj->element,'source'=>$obj->source,'code'=>$obj->code,'label'=>($langs->trans($transkey)!=$transkey ? $langs->trans($transkey) : $obj->libelle));
+				}
+			}
+		} else {
+			$error++;
+			$this->errors[]=$this->db->lasterror();
+		}
+
+		if (empty($error)) {
+			return $num;
+		} else {
+			return $error * -1;
+		}
+	}
+
 }
