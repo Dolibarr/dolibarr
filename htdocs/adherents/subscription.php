@@ -478,7 +478,7 @@ if ($rowid > 0)
     print '<div class="fichehalfleft">';
 
     print '<div class="underbanner clearboth"></div>';
-    print '<table class="border" width="100%">';
+    print '<table class="border centpercent tableforfield">';
 
 	// Login
 	if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
