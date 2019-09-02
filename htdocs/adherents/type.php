@@ -822,7 +822,7 @@ if ($rowid > 0)
 						$value = $_POST["options_" . $key];
 					}
 				} else {
-					$value = $adht->array_options["options_" . $key];
+					$value = $object->array_options["options_" . $key];
 				}
 				print '<tr><td width="30%">'.$label.'</td><td>';
 				print $extrafields->showInputField($key, $value);

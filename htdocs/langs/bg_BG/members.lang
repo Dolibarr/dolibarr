@@ -29,6 +29,7 @@ MenuMembersUpToDate=С платен чл. внос
 MenuMembersNotUpToDate=С неплатен чл. внос
 MenuMembersResiliated=Terminated members
 MembersWithSubscriptionToReceive=Събиране на членски внос от членовете
+MembersWithSubscriptionToReceiveShort=Subscription to receive
 DateSubscription=Чл. внос от дата
 DateEndSubscription=Чл. внос до дата
 EndSubscription=Чл внос до

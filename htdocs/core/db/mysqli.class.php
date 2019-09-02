@@ -247,7 +247,7 @@ class DoliDBMysqli extends DoliDB
      * 	Execute a SQL request and return the resultset
      *
      * 	@param	string	$query			SQL query string
-     * 	@param	int		$usesavepoint	0=Default mode, 1=Run a savepoint before and a rollbock to savepoint if error (this allow to have some request with errors inside global transactions).
+     * 	@param	int		$usesavepoint	0=Default mode, 1=Run a savepoint before and a rollback to savepoint if error (this allow to have some request with errors inside global transactions).
      * 									Note that with Mysql, this parameter is not used as Myssql can already commit a transaction even if one request is in error, without using savepoints.
      *  @param  string	$type           Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
      *	@return	bool|mysqli_result		Resultset of answer
@@ -258,7 +258,11 @@ class DoliDBMysqli extends DoliDB
 
         $query = trim($query);
 
-	    if (! in_array($query, array('BEGIN','COMMIT','ROLLBACK'))) dol_syslog('sql='.$query, LOG_DEBUG);
+	    if (! in_array($query, array('BEGIN','COMMIT','ROLLBACK')))
+	    {
+	    	$SYSLOG_SQL_LIMIT = 10000;	// limit log to 10kb per line to limit DOS attacks
+	    	dol_syslog('sql='.substr($query, 0, $SYSLOG_SQL_LIMIT), LOG_DEBUG);
+	    }
         if (empty($query)) return false;    // Return false = error if empty request
 
         if (! $this->database_name)

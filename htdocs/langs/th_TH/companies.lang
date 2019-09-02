@@ -54,6 +54,7 @@ Firstname=ชื่อแรก
 PostOrFunction=Job position
 UserTitle=ชื่อเรื่อง
 NatureOfThirdParty=Nature of Third party
+NatureOfContact=Nature of Contact
 Address=ที่อยู่
 State=รัฐ / จังหวัด
 StateShort=State

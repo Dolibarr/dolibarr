@@ -54,6 +54,7 @@ Firstname=名字
 PostOrFunction=職稱
 UserTitle=稱呼
 NatureOfThirdParty=合作方的本質
+NatureOfContact=Nature of Contact
 Address=地址
 State=州/省
 StateShort=州
