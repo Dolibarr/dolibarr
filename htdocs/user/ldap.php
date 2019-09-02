@@ -86,9 +86,9 @@ if (empty($reshook))
  * View
  */
 
-llxHeader();
-
 $form = new Form($db);
+
+llxHeader();
 
 $head = user_prepare_head($object);
 
