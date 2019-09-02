@@ -611,8 +611,9 @@ if ($id > 0 || $ref)
         function update_price_from_multicurrency() {
             var multicurrency_price = $('input[name="multicurrency_price"]').val();
             var multicurrency_tx = $('input[name="multicurrency_tx"]').val();
-            $('input[name="price"]').val(multicurrency_price / multicurrency_tx);
-            $('input[name="disabled_price"]').val(multicurrency_price / multicurrency_tx);
+            var price=multicurrency_price.replace(",", ".") / multicurrency_tx.replace(",", ".");
+            $('input[name="price"]').val(price);
+            $('input[name="disabled_price"]').val(price);
         }
         jQuery(document).ready(function () {
             $('input[name="disabled_price"]').prop('disabled', true);
