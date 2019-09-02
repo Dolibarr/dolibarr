@@ -343,7 +343,8 @@ if ($action == 'create')
 			print $soc->getNomUrl(1);
 			print '<input type="hidden" name="socid" value="' . $soc->id . '">';
 			// Outstanding Bill
-			$outstandingBills = $soc->get_OutstandingBill();
+			$arrayoutstandingbills = $soc->getOutstandingBills();
+			$outstandingBills = $arrayoutstandingbills['opened'];
 			print ' (' . $langs->trans('CurrentOutstandingBill') . ': ';
 			print price($outstandingBills, '', $langs, 0, 0, -1, $conf->currency);
 			if ($soc->outstanding_limit != '')

@@ -4186,11 +4186,12 @@ abstract class CommonObject
 	 *  But for the moment we don't know if it's possible, so we keep the method available on overloaded objects.
 	 *
 	 *	@param	string		$restrictlist		''=All lines, 'services'=Restrict to services only
+	 *  @param  array       $selectedLines      Array of lines id for selected lines
 	 *  @return	void
 	 */
-	public function printOriginLinesList($restrictlist = '')
+	public function printOriginLinesList($restrictlist = '', $selectedLines = array())
 	{
-		global $langs, $hookmanager, $conf;
+		global $langs, $hookmanager, $conf, $form;
 
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans('Ref').'</td>';
@@ -4203,8 +4204,9 @@ abstract class CommonObject
 		{
 			print '<td class="left">'.$langs->trans('Unit').'</td>';
 		}
-		print '<td class="right">'.$langs->trans('ReductionShort').'</td></tr>';
-
+		print '<td class="right">'.$langs->trans('ReductionShort').'</td>';
+        print '<td class="center">'.$form->showCheckAddButtons('checkforselect', 1).'</td>';
+        print '</tr>';
 		$var = true;
 		$i	 = 0;
 
@@ -4223,7 +4225,7 @@ abstract class CommonObject
 				}
 				else
 				{
-					$this->printOriginLine($line, $var, $restrictlist);
+					$this->printOriginLine($line, $var, $restrictlist, '/core/tpl', $selectedLines);
 				}
 
 				$i++;
@@ -4241,9 +4243,10 @@ abstract class CommonObject
 	 * 	@param	string				$var				Var
 	 *	@param	string				$restrictlist		''=All lines, 'services'=Restrict to services only (strike line if not)
 	 *  @param	string				$defaulttpldir		Directory where to find the template
+	 *  @param  array       		$selectedLines      Array of lines id for selected lines
 	 * 	@return	void
 	 */
-	public function printOriginLine($line, $var, $restrictlist = '', $defaulttpldir = '/core/tpl')
+	public function printOriginLine($line, $var, $restrictlist = '', $defaulttpldir = '/core/tpl', $selectedLines = array())
 	{
 		global $langs, $conf;
 
@@ -4266,6 +4269,8 @@ abstract class CommonObject
 			$date_end=$line->date_fin_prevue;
 			if ($line->date_fin_reel) $date_end=$line->date_fin_reel;
 		}
+
+        $this->tpl['id'] = $line->id;
 
 		$this->tpl['label'] = '';
 		if (! empty($line->fk_parent_line)) $this->tpl['label'].= img_picto('', 'rightarrow');

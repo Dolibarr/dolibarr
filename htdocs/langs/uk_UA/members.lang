@@ -29,6 +29,7 @@ MenuMembersUpToDate=Up to date members
 MenuMembersNotUpToDate=Out of date members
 MenuMembersResiliated=Terminated members
 MembersWithSubscriptionToReceive=Members with subscription to receive
+MembersWithSubscriptionToReceiveShort=Subscription to receive
 DateSubscription=Subscription date
 DateEndSubscription=Subscription end date
 EndSubscription=End subscription

@@ -54,6 +54,7 @@ Firstname=Nome
 PostOrFunction=Posizione lavorativa
 UserTitle=Titolo
 NatureOfThirdParty=Natura
+NatureOfContact=Nature of Contact
 Address=Indirizzo
 State=Provincia/Cantone/Stato
 StateShort=Stato

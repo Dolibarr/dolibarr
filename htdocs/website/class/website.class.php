@@ -823,30 +823,47 @@ class Website extends CommonObject
 			return '';
 		}
 
-		$arrayreplacement=array();
+		$arrayreplacementinfilename=array();
+		$arrayreplacementincss=array();
+		$arrayreplacementincss['file=image/'.$website->ref.'/'] = "file=image/__WEBSITE_KEY__/";
+		$arrayreplacementincss['file=js/'.$website->ref.'/'] = "file=js/__WEBSITE_KEY__/";
+		$arrayreplacementincss['medias/image/'.$website->ref.'/'] = "medias/image/__WEBSITE_KEY__/";
+		$arrayreplacementincss['medias/js/'.$website->ref.'/'] = "medias/js/__WEBSITE_KEY__/";
+		$arrayreplacementincss['file=logos%2Fthumbs%2F'.$mysoc->logo_small] = "file=logos%2Fthumbs%2F__LOGO_SMALL_KEY__";
+		$arrayreplacementincss['file=logos%2Fthumbs%2F'.$mysoc->logo_mini] = "file=logos%2Fthumbs%2F__LOGO_MINI_KEY__";
+		$arrayreplacementincss['file=logos%2Fthumbs%2F'.$mysoc->logo] = "file=logos%2Fthumbs%2F__LOGO_KEY__";
 
 		$srcdir = $conf->website->dir_output.'/'.$website->ref;
 		$destdir = $conf->website->dir_temp.'/'.$website->ref.'/containers';
 
+		// Create containers dir
+		dol_syslog("Create containers dir");
+		dol_mkdir($conf->website->dir_temp.'/'.$website->ref.'/containers');
+
+		// Copy files into medias
 		dol_syslog("Copy content from ".$srcdir." into ".$destdir);
-		dolCopyDir($srcdir, $destdir, 0, 1, $arrayreplacement);
+		dolCopyDir($srcdir, $destdir, 0, 1, $arrayreplacementinfilename);
 
 		$srcdir = DOL_DATA_ROOT.'/medias/image/'.$website->ref;
 		$destdir = $conf->website->dir_temp.'/'.$website->ref.'/medias/image/websitekey';
 
 		dol_syslog("Copy content from ".$srcdir." into ".$destdir);
-		dolCopyDir($srcdir, $destdir, 0, 1, $arrayreplacement);
+		dolCopyDir($srcdir, $destdir, 0, 1, $arrayreplacementinfilename);
 
 		$srcdir = DOL_DATA_ROOT.'/medias/js/'.$website->ref;
 		$destdir = $conf->website->dir_temp.'/'.$website->ref.'/medias/js/websitekey';
 
+		// Copy containers files
 		dol_syslog("Copy content from ".$srcdir." into ".$destdir);
-		dolCopyDir($srcdir, $destdir, 0, 1, $arrayreplacement);
+		dolCopyDir($srcdir, $destdir, 0, 1, $arrayreplacementinfilename);
+
+		$cssindestdir = $conf->website->dir_temp.'/'.$website->ref.'/containers/styles.css.php';
+		dolReplaceInFile($cssindestdir, $arrayreplacementincss);
+
+		$htmldeaderindestdir = $conf->website->dir_temp.'/'.$website->ref.'/containers/htmlheader.html';
+		dolReplaceInFile($htmldeaderindestdir, $arrayreplacementincss);
 
 		// Build sql file
-		dol_syslog("Create containers dir");
-		dol_mkdir($conf->website->dir_temp.'/'.$website->ref.'/containers');
-
 		$filesql = $conf->website->dir_temp.'/'.$website->ref.'/website_pages.sql';
 		$fp = fopen($filesql, "w");
 		if (empty($fp))
@@ -1012,8 +1029,23 @@ class Website extends CommonObject
 			return -1;
 		}
 
+		$arrayreplacement = array();
+		$arrayreplacement['__WEBSITE_ID__'] = $object->id;
+		$arrayreplacement['__WEBSITE_KEY__'] = $object->ref;
+		$arrayreplacement['__N__'] = $this->db->escape("\n");			// Restore \n
+		$arrayreplacement['__LOGO_SMALL_KEY__'] = $this->db->escape($mysoc->logo_small);
+		$arrayreplacement['__LOGO_MINI_KEY__'] = $this->db->escape($mysoc->logo_mini);
+		$arrayreplacement['__LOGO_KEY__'] = $this->db->escape($mysoc->logo);
 
+		// Copy containers
 		dolCopyDir($conf->website->dir_temp.'/'.$object->ref.'/containers', $conf->website->dir_output.'/'.$object->ref, 0, 1);	// Overwrite if exists
+
+		// Make replacement into css and htmlheader file
+		$cssindestdir = $conf->website->dir_output.'/'.$object->ref.'/styles.css.php';
+		$result=dolReplaceInFile($cssindestdir, $arrayreplacement);
+
+		$htmldeaderindestdir = $conf->website->dir_output.'/'.$object->ref.'/htmlheader.html';
+		$result = dolReplaceInFile($htmldeaderindestdir, $arrayreplacement);
 
 		// Now generate the master.inc.php page
 		$filemaster=$conf->website->dir_output.'/'.$object->ref.'/master.inc.php';
@@ -1029,13 +1061,6 @@ class Website extends CommonObject
 
 		$sqlfile = $conf->website->dir_temp.'/'.$object->ref.'/website_pages.sql';
 
-		$arrayreplacement = array();
-		$arrayreplacement['__WEBSITE_ID__'] = $object->id;
-		$arrayreplacement['__WEBSITE_KEY__'] = $object->ref;
-		$arrayreplacement['__N__'] = $this->db->escape("\n");			// Restore \n
-		$arrayreplacement['__LOGO_SMALL_KEY__'] = $this->db->escape($mysoc->logo_small);
-		$arrayreplacement['__LOGO_MINI_KEY__'] = $this->db->escape($mysoc->logo_mini);
-		$arrayreplacement['__LOGO_KEY__'] = $this->db->escape($mysoc->logo);
 		$result = dolReplaceInFile($sqlfile, $arrayreplacement);
 
 		$this->db->begin();

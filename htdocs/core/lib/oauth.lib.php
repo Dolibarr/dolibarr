@@ -271,7 +271,7 @@ $list = array (
  */
 function oauthadmin_prepare_head()
 {
-    global $langs, $conf, $user;
+    global $langs, $conf;
     $h = 0;
     $head = array();
 

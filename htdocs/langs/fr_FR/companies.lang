@@ -54,6 +54,7 @@ Firstname=Prénom
 PostOrFunction=Poste/fonction
 UserTitle=Titre civilité
 NatureOfThirdParty=Nature de tiers
+NatureOfContact=Nature du contact
 Address=Adresse
 State=Département / Canton
 StateShort=Département

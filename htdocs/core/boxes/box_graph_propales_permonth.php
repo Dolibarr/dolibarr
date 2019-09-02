@@ -52,9 +52,9 @@ class box_graph_propales_permonth extends ModeleBoxes
 	{
 		global $user;
 
-		$this->db=$db;
+		$this->db = $db;
 
-		$this->hidden=! ($user->rights->propale->lire);
+		$this->hidden = ! ($user->rights->propale->lire);
 	}
 
 	/**

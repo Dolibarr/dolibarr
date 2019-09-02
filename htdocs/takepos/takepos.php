@@ -398,8 +398,9 @@ function Refresh() {
 }
 
 function New() {
-	console.log("New");
-	var r = confirm('<?php echo $langs->trans("ConfirmDeletionOfThisPOSSale"); ?>');
+	// If we go here,it means $conf->global->TAKEPOS_BAR_RESTAURANT is not defined
+	console.log("New with place = <?php echo $place; ?>, js place="+place);
+	var r = confirm('<?php echo ($place > 0 ? $langs->trans("ConfirmDeletionOfThisPOSSale") : $langs->trans("ConfirmDiscardOfThisPOSSale")); ?>');
 	if (r == true) {
     	$("#poslines").load("invoice.php?action=delete&place="+place, function() {
     		//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
@@ -575,6 +576,12 @@ function TerminalsDialog()
 	});
 }
 
+function DirectPayment(){
+	console.log("DirectPayment");
+	$("#poslines").load("invoice.php?place"+place+"&action=valid&pay=<?php echo $langs->trans("cash");?>", function() {
+	});
+}
+
 $( document ).ready(function() {
     PrintCategories(0);
 	LoadProducts(0);
@@ -658,13 +665,17 @@ if (empty($conf->global->TAKEPOS_BAR_RESTAURANT))
 else
 {
     // BAR RESTAURANT specific menu
-    $menus[$r++]=array('title'=>'<span class="fa fa-layer-group paddingrightonly"></span><div class="trunc">'.$langs->trans("Floors").'</div>', 'action'=>'Floors();');
+    $menus[$r++]=array('title'=>'<span class="fa fa-layer-group paddingrightonly"></span><div class="trunc">'.$langs->trans("Place").'</div>', 'action'=>'Floors();');
 }
 
 $menus[$r++]=array('title'=>'<span class="far fa-building paddingrightonly"></span><div class="trunc">'.$langs->trans("Customer").'</div>', 'action'=>'Customer();');
 $menus[$r++]=array('title'=>'<span class="fa fa-history paddingrightonly"></span><div class="trunc">'.$langs->trans("History").'</div>', 'action'=>'History();');
 $menus[$r++]=array('title'=>'<span class="fa fa-cube paddingrightonly"></span><div class="trunc">'.$langs->trans("FreeZone").'</div>', 'action'=>'FreeZone();');
 $menus[$r++]=array('title'=>'<span class="far fa-money-bill-alt paddingrightonly"></span><div class="trunc">'.$langs->trans("Payment").'</div>', 'action'=>'CloseBill();');
+
+if ($conf->global->TAKEPOS_DIRECT_PAYMENT){
+	$menus[$r++]=array('title'=>'<span class="far fa-money-bill-alt paddingrightonly"></span><div class="trunc">'.$langs->trans("DirectPayment").'</div>', 'action'=>'DirectPayment();');
+}
 
 // BAR RESTAURANT specific menu
 if ($conf->global->TAKEPOS_BAR_RESTAURANT)

@@ -509,7 +509,35 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
             print '<div class="fichehalfleft">';
             print '<div class="underbanner clearboth"></div>';
 
-            print '<table class="border tableforfield" width="100%">';
+            print '<table class="border tableforfield centpercent">';
+
+            // Usage
+            print '<tr><td class="tdtop">';
+            print $langs->trans("Usage");
+            print '</td>';
+            print '<td>';
+            if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
+            {
+            	print '<input type="checkbox" disabled name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha')!=''?' checked="checked"':'') : ($projectstatic->usage_opportunity ? ' checked="checked"' : '')).'"> ';
+            	$htmltext = $langs->trans("ProjectFollowOpportunity");
+            	print $form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext);
+            	print '<br>';
+            }
+            if (empty($conf->global->PROJECT_HIDE_TASKS))
+            {
+            	print '<input type="checkbox" disabled name="usage_task"'.(GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha')!=''?' checked="checked"':'') : ($projectstatic->usage_task ? ' checked="checked"' : '')).'"> ';
+            	$htmltext = $langs->trans("ProjectFollowTasks");
+            	print $form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext);
+            	print '<br>';
+            }
+            if (! empty($conf->global->PROJECT_BILL_TIME_SPENT))
+            {
+            	print '<input type="checkbox" disabled name="usage_bill_time"'.(GETPOSTISSET('usage_bill_time') ? (GETPOST('usage_bill_time', 'alpha')!=''?' checked="checked"':'') : ($projectstatic->usage_bill_time ? ' checked="checked"' : '')).'"> ';
+            	$htmltext = $langs->trans("ProjectBillTimeDescription");
+            	print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
+            	print '<br>';
+            }
+            print '</td></tr>';
 
             // Visibility
             print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
@@ -554,7 +582,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
             if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_BILL_TIME_SPENT))
             {
 	            print '<tr><td>'.$langs->trans("BillTime").'</td><td>';
-	            print yn($projectstatic->bill_time);
+	            print yn($projectstatic->usage_bill_time);
 	            print '</td></tr>';
             }
 
@@ -610,7 +638,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
     }
 
 	$massactionbutton = '';
-	if ($projectstatic->bill_time)
+	if ($projectstatic->usage_bill_time)
 	{
 	    $arrayofmassactions =  array(
 	        'generateinvoice'=>$langs->trans("GenerateBill"),
@@ -747,7 +775,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 	    $arrayfields['t.note']=array('label'=>$langs->trans("Note"), 'checked'=>1);
 	    $arrayfields['t.task_duration']=array('label'=>$langs->trans("Duration"), 'checked'=>1);
 	    $arrayfields['value'] =array('label'=>$langs->trans("Value"), 'checked'=>1, 'enabled'=>(empty($conf->salaries->enabled)?0:1));
-	    $arrayfields['valuebilled'] =array('label'=>$langs->trans("Billed"), 'checked'=>1, 'enabled'=>(((! empty($conf->global->PROJECT_HIDE_TASKS) || empty($conf->global->PROJECT_BILL_TIME_SPENT))?0:1) && $projectstatic->bill_time));
+	    $arrayfields['valuebilled'] =array('label'=>$langs->trans("Billed"), 'checked'=>1, 'enabled'=>(((! empty($conf->global->PROJECT_HIDE_TASKS) || empty($conf->global->PROJECT_BILL_TIME_SPENT))?0:1) && $projectstatic->usage_bill_time));
 	    // Extra fields
 	    if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 	    {
@@ -1290,7 +1318,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
                 print '<td class="center">';    // invoice_id and invoice_line_id
                 if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_BILL_TIME_SPENT))
                 {
-                    if ($projectstatic->bill_time)
+                    if ($projectstatic->usage_bill_time)
                     {
                         if ($task_time->invoice_id)
                         {
@@ -1693,7 +1721,19 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		    print '</tr>';
 		}
 
-		print '</tr>';
+
+		if (! count($tasks))
+		{
+			$totalnboffields = 1;
+			foreach($arrayfields as $value)
+			{
+				if ($value['checked']) $totalnboffields++;
+			}
+			print '<tr class="oddeven"><td colspan="'.$totalnboffields.'">';
+			print '<span class="opacitymedium">'.$langs->trans("None").'</span>';
+			print '</td></tr>';
+		}
+
 
 		print "</table>";
 		print '</div>';

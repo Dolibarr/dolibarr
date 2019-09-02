@@ -105,6 +105,7 @@ InitStructureFromExistingTable=Build the structure array string of an existing t
 UseAboutPage=Disable the about page
 UseDocFolder=Disable the documentation folder
 UseSpecificReadme=Use a specific ReadMe
+ContentOfREADMECustomized=Note: The content of the README.md file has been replaced with the specific value defined into setup of ModuleBuilder.
 RealPathOfModule=Real path of module
 ContentCantBeEmpty=Content of file can't be empty
 WidgetDesc=You can generate and edit here the widgets that will be embedded with your module.

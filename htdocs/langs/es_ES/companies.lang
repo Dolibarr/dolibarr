@@ -54,6 +54,7 @@ Firstname=Nombre
 PostOrFunction=Puesto de trabajo
 UserTitle=Título de cortesía
 NatureOfThirdParty=Naturaleza del tercero
+NatureOfContact=Nature of Contact
 Address=Dirección
 State=Provincia
 StateShort=Estado

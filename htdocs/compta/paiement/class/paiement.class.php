@@ -72,9 +72,8 @@ class Paiement extends CommonObject
 	public $amounts=array();   // Array of amounts
 	public $multicurrency_amounts=array();   // Array of amounts
 	public $author;
-	public $paiementid;	// Type de paiement. Stocke dans fk_paiement
-	// de llx_paiement qui est lie aux types de
-    //paiement de llx_c_paiement
+	public $paiementid;			// Type of payment. Id saved into fields fk_paiement on llx_paiement
+	public $paiementcode;		// Code of payment.
 
     /**
      * @var string type libelle
@@ -89,14 +88,14 @@ class Paiement extends CommonObject
     /**
      * @var string Numero du CHQ, VIR, etc...
      * @deprecated
-     * @see num_payment
+     * @see $num_payment
      */
     public $numero;
 
     /**
      * @var string Numero du CHQ, VIR, etc...
      * @deprecated
-     * @see num_payment
+     * @see $num_payment
      */
     public $num_paiement;
 

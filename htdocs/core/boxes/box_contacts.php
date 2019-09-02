@@ -60,9 +60,9 @@ class box_contacts extends ModeleBoxes
 	{
 	    global $user;
 
-	    $this->db=$db;
+	    $this->db = $db;
 
-	    $this->hidden=! ($user->rights->societe->lire && $user->rights->societe->contact->lire);
+	    $this->hidden = ! ($user->rights->societe->lire && $user->rights->societe->contact->lire);
 	}
 
 	/**

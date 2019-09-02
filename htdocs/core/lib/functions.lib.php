@@ -105,7 +105,7 @@ function setEntity($currentobject)
 {
 	global $conf, $mc;
 
-	if (is_object($mc))
+	if (is_object($mc) && method_exists($mc, 'setEntity'))
 	{
 		return $mc->setEntity($currentobject);
 	}
@@ -942,11 +942,15 @@ function dol_escape_js($stringtoescape, $mode = 0, $noescapebackslashn = 0)
  *  @param      string		$stringtoescape		String to escape
  *  @param		int			$keepb				1=Preserve b tags (otherwise, remove them)
  *  @param      int         $keepn              1=Preserve \r\n strings (otherwise, replace them with escaped value). Set to 1 when escaping for a <textarea>.
+ *  @param		string		$keepmoretags		'' or 'common' or list of tags
  *  @return     string     				 		Escaped string
  *  @see		dol_string_nohtmltag(), dol_string_nospecial(), dol_string_unaccent()
  */
-function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0)
+function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $keepmoretags = '')
 {
+	if ($keepmoretags == 'common') $keepmoretags = 'html,body,a,em,i,u,ul,li,br,div,img,font,p,span,strong,table,tr,td,th,tbody';
+	// TODO Implement $keepmoretags
+
 	// escape quotes and backslashes, newlines, etc.
 	$tmp=html_entity_decode($stringtoescape, ENT_COMPAT, 'UTF-8');		// TODO Use htmlspecialchars_decode instead, that make only required change for html tags
 	if (! $keepb) $tmp=strtr($tmp, array("<b>"=>'','</b>'=>''));
@@ -995,10 +999,11 @@ function dol_strtoupper($utf8_string)
  *												On Linux   LOG_ERR=3, LOG_WARNING=4, LOG_INFO=6, LOG_DEBUG=7
  *  @param	int			$ident					1=Increase ident of 1, -1=Decrease ident of 1
  *  @param	string		$suffixinfilename		When output is a file, append this suffix into default log filename.
- *  @param	string		$restricttologhandler	Output log only for this log handler
+ *  @param	string		$restricttologhandler	Force output of log only to this log handler
+ *  @param	array|null	$logcontext				If defined, an array with extra informations (can be used by some log handlers)
  *  @return	void
  */
-function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename = '', $restricttologhandler = '')
+function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename = '', $restricttologhandler = '', $logcontext = null)
 {
     global $conf, $user, $debugbar;
 
@@ -1229,7 +1234,7 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 	}
 	if ($popuptab) $outmore.='</div>';
 
-	if ($displaytab > $limittoshow)
+	if ($popuptab)	// If there is some tabs not shown
 	{
 		$left=($langs->trans("DIRECTION") == 'rtl'?'right':'left');
 		$right=($langs->trans("DIRECTION") == 'rtl'?'left':'right');
@@ -1583,12 +1588,12 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
  */
 function fieldLabel($langkey, $fieldkey, $fieldrequired = 0)
 {
-	global $conf, $langs;
+	global $langs;
 	$ret='';
 	if ($fieldrequired) $ret.='<span class="fieldrequired">';
-	if (($conf->dol_use_jmobile != 4)) $ret.='<label for="'.$fieldkey.'">';
+	$ret.='<label for="'.$fieldkey.'">';
 	$ret.=$langs->trans($langkey);
-	if (($conf->dol_use_jmobile != 4)) $ret.='</label>';
+	$ret.='</label>';
 	if ($fieldrequired) $ret.='</span>';
 	return $ret;
 }
@@ -2652,6 +2657,10 @@ function dol_print_ip($ip, $mode = 0)
 			}
 			else $ret.=' ('.$countrycode.')';
 		}
+		else
+		{
+			// Nothing
+		}
 	}
 
 	return $ret;
@@ -2687,12 +2696,10 @@ function dolGetCountryCodeFromIp($ip)
 	{
 		$datafile=$conf->global->GEOIPMAXMIND_COUNTRY_DATAFILE;
 		//$ip='24.24.24.24';
-		//$datafile='E:\Mes Sites\Web\Admin1\awstats\maxmind\GeoIP.dat';    Note that this must be downloaded datafile (not same than datafile provided with ubuntu packages)
-
+		//$datafile='/usr/share/GeoIP/GeoIP.dat';    Note that this must be downloaded datafile (not same than datafile provided with ubuntu packages)
 		include_once DOL_DOCUMENT_ROOT.'/core/class/dolgeoip.class.php';
 		$geoip=new DolGeoIP('country', $datafile);
 		//print 'ip='.$ip.' databaseType='.$geoip->gi->databaseType." GEOIP_CITY_EDITION_REV1=".GEOIP_CITY_EDITION_REV1."\n";
-		//print "geoip_country_id_by_addr=".geoip_country_id_by_addr($geoip->gi,$ip)."\n";
 		$countrycode=$geoip->getCountryCodeFromIP($ip);
 	}
 
@@ -3858,6 +3865,8 @@ function dol_print_error($db = '', $error = '', $errors = null)
 	if (empty($dolibarr_main_prod)) print $out;
 	else
 	{
+		print 'This website is currently temporarly offline. This may be due to a maintenance operation. Current status of operation are on next line...<br><br>'."\n";
+		$langs->load("errors");
 		print $langs->trans("DolibarrHasDetectedError").'. ';
 		print $langs->trans("YouCanSetOptionDolibarrMainProdToZero");
 		define("MAIN_CORE_ERROR", 1);
@@ -4187,20 +4196,20 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 
 			if ($cpt>=1)
 			{
-				$pagelist.= '<li'.(($conf->dol_use_jmobile != 4)?' class="pagination"':'').'><a href="'.$file.'?page=0'.$options.'">1</a></li>';
-				if ($cpt > 2) $pagelist.='<li'.(($conf->dol_use_jmobile != 4)?' class="pagination"':'').'><span '.(($conf->dol_use_jmobile != 4)?'class="inactive"':'').'>...</span></li>';
-				elseif ($cpt == 2) $pagelist.='<li'.(($conf->dol_use_jmobile != 4)?' class="pagination"':'').'><a href="'.$file.'?page=1'.$options.'">2</a></li>';
+				$pagelist.= '<li class="pagination"><a href="'.$file.'?page=0'.$options.'">1</a></li>';
+				if ($cpt > 2) $pagelist.='<li class="pagination"><span class="inactive">...</span></li>';
+				elseif ($cpt == 2) $pagelist.='<li class="pagination"><a href="'.$file.'?page=1'.$options.'">2</a></li>';
 			}
 
 			do
 			{
 				if ($cpt==$page)
 				{
-					$pagelist.= '<li'.(($conf->dol_use_jmobile != 4)?' class="pagination"':'').'><span '.(($conf->dol_use_jmobile != 4)?'class="active"':'').'>'.($page+1).'</span></li>';
+					$pagelist.= '<li class="pagination"><span class="active">'.($page+1).'</span></li>';
 				}
 				else
 				{
-					$pagelist.= '<li'.(($conf->dol_use_jmobile != 4)?' class="pagination"':'').'><a href="'.$file.'?page='.$cpt.$options.'">'.($cpt+1).'</a></li>';
+					$pagelist.= '<li class="pagination"><a href="'.$file.'?page='.$cpt.$options.'">'.($cpt+1).'</a></li>';
 				}
 				$cpt++;
 			}
@@ -4208,14 +4217,14 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 
 			if ($cpt<$nbpages)
 			{
-				if ($cpt<$nbpages-2) $pagelist.= '<li'.(($conf->dol_use_jmobile != 4)?' class="pagination"':'').'><span '.(($conf->dol_use_jmobile != 4)?'class="inactive"':'').'>...</span></li>';
-				elseif ($cpt == $nbpages-2) $pagelist.= '<li'.(($conf->dol_use_jmobile != 4)?' class="pagination"':'').'><a href="'.$file.'?page='.($nbpages-2).$options.'">'.($nbpages - 1).'</a></li>';
-				$pagelist.= '<li'.(($conf->dol_use_jmobile != 4)?' class="pagination"':'').'><a href="'.$file.'?page='.($nbpages-1).$options.'">'.$nbpages.'</a></li>';
+				if ($cpt<$nbpages-2) $pagelist.= '<li class="pagination"><span class="inactive">...</span></li>';
+				elseif ($cpt == $nbpages-2) $pagelist.= '<li class="pagination"><a href="'.$file.'?page='.($nbpages-2).$options.'">'.($nbpages - 1).'</a></li>';
+				$pagelist.= '<li class="pagination"><a href="'.$file.'?page='.($nbpages-1).$options.'">'.$nbpages.'</a></li>';
 			}
 		}
 		else
 		{
-			$pagelist.= '<li'.(($conf->dol_use_jmobile != 4)?' class="pagination"':'').'><span '.(($conf->dol_use_jmobile != 4)?'class="active"':'').'>'.($page+1)."</li>";
+			$pagelist.= '<li class="pagination"><span class="active">'.($page+1)."</li>";
 		}
 	}
 
@@ -5561,7 +5570,7 @@ function dol_nl2br($stringtoencode, $nl2brmode = 0, $forxml = false)
 
 /**
  *	This function is called to encode a string into a HTML string but differs from htmlentities because
- * 	a detection is done before to see if text is already HTML or not. Also, all entities but &,<,> are converted.
+ * 	a detection is done before to see if text is already HTML or not. Also, all entities but &,<,>," are converted.
  *  This permits to encode special chars to entities with no double encoding for already encoded HTML strings.
  * 	This function also remove last EOL or BR if $removelasteolbr=1 (default).
  *  For PDF usage, you can show text by 2 ways:
@@ -5659,23 +5668,28 @@ function dol_htmlentities($string, $flags = null, $encoding = 'UTF-8', $double_e
  *	If not, it will we considered not HTML encoded even if it is by FPDF.
  *	Example, if string contains euro symbol that has ascii code 128
  *
- *	@param	string	$s      String to check
- *	@return	int     		0 if bad iso, 1 if good iso
+ *	@param	string		$s      	String to check
+ *  @param	string		$clean		Clean if it is not an ISO. Warning, if file is utf8, you will get a bad formated file.
+ *	@return	int|string  	   		0 if bad iso, 1 if good iso, Or the clean string if $clean is 1
  */
-function dol_string_is_good_iso($s)
+function dol_string_is_good_iso($s, $clean = 0)
 {
 	$len=dol_strlen($s);
+	$out= '';
 	$ok=1;
-	for($scursor=0;$scursor<$len;$scursor++)
+	for($scursor = 0; $scursor < $len; $scursor++)
 	{
-		$ordchar=ord($s{$scursor});
+		$ordchar=ord($s[$scursor]);
 		//print $scursor.'-'.$ordchar.'<br>';
 		if ($ordchar < 32 && $ordchar != 13 && $ordchar != 10) { $ok=0; break; }
-		if ($ordchar > 126 && $ordchar < 160) { $ok=0; break; }
+		elseif ($ordchar > 126 && $ordchar < 160) { $ok=0; break; }
+		elseif ($clean) {
+			$out.= $s[$scursor];
+		}
 	}
+	if ($clean) return $out;
 	return $ok;
 }
-
 
 /**
  *	Return nb of lines of a clear text
@@ -7348,20 +7362,17 @@ function printCommonFooter($zone = 'private')
 			// TODO Add a hook here
 			if (! empty($conf->google->enabled) && ! empty($conf->global->MAIN_GOOGLE_AN_ID))
 			{
-				if (($conf->dol_use_jmobile != 4))
-				{
-					print "\n";
-					print "/* JS CODE TO ENABLE for google analtics tag */\n";
-					print '  var _gaq = _gaq || [];'."\n";
-					print '  _gaq.push([\'_setAccount\', \''.$conf->global->MAIN_GOOGLE_AN_ID.'\']);'."\n";
-					print '  _gaq.push([\'_trackPageview\']);'."\n";
-					print ''."\n";
-					print '  (function() {'."\n";
-					print '    var ga = document.createElement(\'script\'); ga.type = \'text/javascript\'; ga.async = true;'."\n";
-					print '    ga.src = (\'https:\' == document.location.protocol ? \'https://ssl\' : \'http://www\') + \'.google-analytics.com/ga.js\';'."\n";
-					print '    var s = document.getElementsByTagName(\'script\')[0]; s.parentNode.insertBefore(ga, s);'."\n";
-					print '  })();'."\n";
-				}
+				print "\n";
+				print "/* JS CODE TO ENABLE for google analtics tag */\n";
+				print '  var _gaq = _gaq || [];'."\n";
+				print '  _gaq.push([\'_setAccount\', \''.$conf->global->MAIN_GOOGLE_AN_ID.'\']);'."\n";
+				print '  _gaq.push([\'_trackPageview\']);'."\n";
+				print ''."\n";
+				print '  (function() {'."\n";
+				print '    var ga = document.createElement(\'script\'); ga.type = \'text/javascript\'; ga.async = true;'."\n";
+				print '    ga.src = (\'https:\' == document.location.protocol ? \'https://ssl\' : \'http://www\') + \'.google-analytics.com/ga.js\';'."\n";
+				print '    var s = document.getElementsByTagName(\'script\')[0]; s.parentNode.insertBefore(ga, s);'."\n";
+				print '  })();'."\n";
 			}
 
 			// End of tuning
@@ -7554,12 +7565,13 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 					$i2++;	// a criteria was added to string
 				}
 			}
-			elseif ($mode == 2)
+			elseif ($mode == 2 || $mode == -2)
 			{
-				$newres .= ($i2 > 0 ? ' OR ' : '') . $field . " IN (" . $db->escape(trim($crit)) . ")";
+				$newres .= ($i2 > 0 ? ' OR ' : '') . $field . " ".($mode == -2 ? 'NOT ' : '')."IN (" . $db->escape(trim($crit)) . ")";
+				if ($mode == -2) $newres .= ' OR '.$field.' IS NULL';
 				$i2++;	// a criteria was added to string
 			}
-			elseif ($mode == 3)
+			elseif ($mode == 3 || $mode == -3)
 			{
 				$tmparray=explode(',', trim($crit));
 				if (count($tmparray))
@@ -7573,9 +7585,10 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 							$listofcodes.="'".$db->escape(trim($val))."'";
 						}
 					}
-					$newres .= ($i2 > 0 ? ' OR ' : '') . $field . " IN (" . $listofcodes . ")";
+					$newres .= ($i2 > 0 ? ' OR ' : '') . $field . " ".($mode == -3 ? 'NOT ' : '')."IN (" . $listofcodes . ")";
 					$i2++;	// a criteria was added to string
 				}
+				if ($mode == -3) $newres .= ' OR '.$field.' IS NULL';
 			}
 			elseif ($mode == 4)
 			{

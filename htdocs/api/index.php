@@ -24,6 +24,8 @@
  *  \file       htdocs/api/index.php
  */
 
+use Luracast\Restler\Format\UploadFormat;
+
 if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');			// Do not check anti CSRF attack test
 if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');		// Do not check anti POST attack test
 if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');		// If there is no need to load and show top and left menu
@@ -117,6 +119,21 @@ $api->r->addAuthenticationClass('DolibarrApiAccess', '');
 UploadFormat::$allowedMimeTypes = array('image/jpeg', 'image/png', 'text/plain', 'application/octet-stream');
 
 
+// Restrict API to some IPs
+if (! empty($conf->global->API_RESTRICT_ON_IP))
+{
+	$allowedip=explode(' ', $conf->global->API_RESTRICT_ON_IP);
+	$ipremote = getUserRemoteIP();
+	if (! in_array($ipremote, $allowedip))
+	{
+		dol_syslog('Remote ip is '.$ipremote.', not into list '.$conf->global->API_RESTRICT_ON_IP);
+		print 'APIs are not allowed from the IP '.$ipremote;
+		header('HTTP/1.1 503 API not allowed from your IP '.$ipremote);
+		//print $conf->global->API_RESTRICT_ON_IP;
+		exit(0);
+	}
+}
+
 
 // Call Explorer file for all APIs definitions (this part is slow)
 if (! empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/swagger.json' || $reg[2] == '/swagger.json/root' || $reg[2] == '/resources.json' || $reg[2] == '/resources.json/root'))
@@ -136,6 +153,7 @@ if (! empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/swagger.json' || 
         {
             while (($file = readdir($handle))!==false)
             {
+            	$regmod=array();
                 if (is_readable($dir.$file) && preg_match("/^mod(.*)\.class\.php$/i", $file, $regmod))
                 {
                     $module = strtolower($regmod[1]);
@@ -165,6 +183,7 @@ if (! empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/swagger.json' || 
                             {
                                 if ($file_searched == 'api_access.class.php') continue;
 
+                                $regapi = array();
                                 if (is_readable($dir_part.$file_searched) && preg_match("/^api_(.*)\.class\.php$/i", $file_searched, $regapi))
                                 {
                                     $classname = ucwords($regapi[1]);
@@ -204,23 +223,9 @@ if (! empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/swagger.json' || 
 }
 
 // Call one APIs or one definition of an API
+$regbis = array();
 if (! empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/swagger.json' && $reg[2] != '/resources.json' && preg_match('/^\/(swagger|resources)\.json\/(.+)$/', $reg[2], $regbis) && $regbis[2] != 'root')))
 {
-	// Restrict API to some IPs
-	if (! empty($conf->global->API_RESTICT_ON_IP))
-	{
-		$allowedip=explode(' ', $conf->global->API_RESTICT_ON_IP);
-		$ipremote = getUserRemoteIP();
-		if (! in_array($ipremote, $allowedip))
-		{
-			dol_syslog('Remote ip is '.$ipremote.', not into list '.$conf->global->API_RESTICT_ON_IP);
-			print 'API not allowed from the IP '.$ipremote;
-			header('HTTP/1.1 503 API not allowed from your IP '.$ipremote);
-			//print $conf->global->API_RESTICT_ON_IP;
-			exit(0);
-		}
-	}
-
     $module = $reg[1];
     if ($module == 'explorer')  // If we call page to explore details of a service
     {
@@ -268,7 +273,6 @@ if (! empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/swagger.json' &&
 		$api->r->addAPIClass($classname);
 }
 
-// TODO If not found, redirect to explorer
 //var_dump($api->r->apiVersionMap);
 //exit;
 

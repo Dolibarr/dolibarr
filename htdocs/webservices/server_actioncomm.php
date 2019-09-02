@@ -111,6 +111,9 @@ $actioncomm_fields= array(
 	'fk_element' => array('name'=>'fk_element','type'=>'xsd:string'),
 	'elementtype' => array('name'=>'elementtype','type'=>'xsd:string'));
 
+
+$elementtype = 'actioncomm';
+
 //Retreive all extrafield for actioncomm
 // fetch optionals attributes and labels
 $extrafields=new ExtraFields($db);
@@ -119,15 +122,17 @@ $extrafield_array=null;
 if (is_array($extrafields) && count($extrafields)>0) {
 	$extrafield_array = array();
 }
-foreach($extrafields->attribute_label as $key=>$label)
+if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 {
-	$type =$extrafields->attribute_type[$key];
-	if ($type=='date' || $type=='datetime') {$type='xsd:dateTime';}
-	else {$type='xsd:string';}
+	foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+	{
+		$type =$extrafields->attributes[$elementtype]['type'][$key];
+		if ($type=='date' || $type=='datetime') {$type='xsd:dateTime';}
+		else {$type='xsd:string';}
 
-	$extrafield_array['options_'.$key]=array('name'=>'options_'.$key,'type'=>$type);
+		$extrafield_array['options_'.$key]=array('name'=>'options_'.$key,'type'=>$type);
+	}
 }
-
 if (is_array($extrafield_array)) $actioncomm_fields=array_merge($actioncomm_fields, $extrafield_array);
 
 // Define other specific objects
@@ -286,7 +291,7 @@ function getActionComm($authentication, $id)
 			        	'datef'=> dol_print_date($actioncomm->datef, 'dayhourrfc'),
 			        	'datec'=> dol_print_date($actioncomm->datec, 'dayhourrfc'),
 			        	'datem'=> dol_print_date($actioncomm->datem, 'dayhourrfc'),
-			        	'note'=> $actioncomm->note,
+			        	'note'=> $actioncomm->note_private,
 			        	'percentage'=> $actioncomm->percentage,
 			        	'author'=> $actioncomm->authorid,
 			        	'usermod'=> $actioncomm->usermodid,
@@ -301,6 +306,8 @@ function getActionComm($authentication, $id)
 			        	'elementtype'=> $actioncomm->elementtype
             	);
 
+            	$elementtype = 'actioncomm';
+
 	        	// Retreive all extrafield for actioncomm
 	        	// fetch optionals attributes and labels
 	        	$extrafields=new ExtraFields($db);
@@ -308,9 +315,12 @@ function getActionComm($authentication, $id)
 	        	//Get extrafield values
 	        	$actioncomm->fetch_optionals();
 
-	        	foreach($extrafields->attribute_label as $key=>$label)
+	        	if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 	        	{
-	        		$actioncomm_result_fields=array_merge($actioncomm_result_fields, array('options_'.$key => $actioncomm->array_options['options_'.$key]));
+	        		foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+		        	{
+		        		$actioncomm_result_fields=array_merge($actioncomm_result_fields, array('options_'.$key => $actioncomm->array_options['options_'.$key]));
+		        	}
 	        	}
 
                 // Create
@@ -444,14 +454,19 @@ function createActionComm($authentication, $actioncomm)
 		$newobject->fk_element=$actioncomm['fk_element'];
 		$newobject->elementtype=$actioncomm['elementtype'];
 
+		$elementtype = 'actioncomm';
+
 		//Retreive all extrafield for actioncomm
 		// fetch optionals attributes and labels
 		$extrafields=new ExtraFields($db);
 		$extralabels=$extrafields->fetch_name_optionals_label('actioncomm', true);
-		foreach($extrafields->attribute_label as $key=>$label)
+		if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 		{
-			$key='options_'.$key;
-			$newobject->array_options[$key]=$actioncomm[$key];
+			foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+			{
+				$key='options_'.$key;
+				$newobject->array_options[$key]=$actioncomm[$key];
+			}
 		}
 
 		$db->begin();
@@ -538,14 +553,19 @@ function updateActionComm($authentication, $actioncomm)
 			$object->fk_element=$actioncomm['fk_element'];
 			$object->elementtype=$actioncomm['elementtype'];
 
+			$elementtype = 'actioncomm';
+
 			//Retreive all extrafield for actioncomm
 			// fetch optionals attributes and labels
 			$extrafields=new ExtraFields($db);
 			$extralabels=$extrafields->fetch_name_optionals_label('actioncomm', true);
-			foreach($extrafields->attribute_label as $key=>$label)
+			if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 			{
-				$key='options_'.$key;
-				$object->array_options[$key]=$actioncomm[$key];
+				foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+				{
+					$key='options_'.$key;
+					$object->array_options[$key]=$actioncomm[$key];
+				}
 			}
 
 			$db->begin();

@@ -2248,7 +2248,8 @@ $formquestion = array_merge($formquestion, array(
 		print '<tr><td>';
 		print $langs->trans('OutstandingBill');
 		print '</td><td class="right">';
-		print price($soc->get_OutstandingBill()) . ' / ';
+		$arrayoutstandingbills = $soc->getOutstandingBills();
+		print price($arrayoutstandingbills['opened']) . ' / ';
 		print price($soc->outstanding_limit, 0, $langs, 1, - 1, - 1, $conf->currency);
 		print '</td>';
 		print '</tr>';

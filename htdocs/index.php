@@ -336,7 +336,6 @@ if (empty($user->societe_id) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTAT
 
 	            if (!empty($langfile[$key])) $langs->load($langfile[$key]);
 	            $text=$langs->trans($titres[$key]);
-	            //$sep=($conf->dol_use_jmobile?'<br>':' ');
 	            $boxstat.='<a href="'.$links[$key].'" class="boxstatsindicator thumbstat nobold nounderline">';
 	            $boxstat.='<div class="boxstats">';
 	            $boxstat.='<span class="boxstatstext" title="'.dol_escape_htmltag($text).'">'.$text.'</span><br>';
@@ -632,15 +631,15 @@ foreach($valid_dashboardlines as $board)
 
 $openedDashBoardSize = 'info-box-sm'; // use sm by default
 foreach ($dashboardgroup as $dashbordelement){
-    if(is_array($dashbordelement['stats']) && count($dashbordelement['stats'])>2){
+    if (is_array($dashbordelement['stats']) && count($dashbordelement['stats'])>2){
         $openedDashBoardSize = ''; // use default info box size : big
         break;
     }
 }
 
 $totalLateNumber = $totallate;
-$totallatePercentage = !empty($totaltodo) ? round($totallate / $totaltodo * 100, 2) : 0;
-if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) $totallate = $totallatePercentage;
+$totallatePercentage = ((! empty($totaltodo)) ? round($totallate / $totaltodo * 100, 2) : 0);
+if(! empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) $totallate = $totallatePercentage;
 
 $boxwork='';
 $boxwork.='<div class="box">';
@@ -794,7 +793,6 @@ if (!empty($valid_dashboardlines))
 
 		$boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"><div class="boxstats130 boxstatsborder">';
         $boxwork .= '<div class="boxstatscontent">';
-        $sep=($conf->dol_use_jmobile?'<br>':' ');
         $boxwork .= '<span class="boxstatstext" title="'.dol_escape_htmltag($board->label).'">'.$board->img.' '.$board->label.'</span><br>';
         $boxwork .= '<a class="valignmiddle dashboardlineindicator" href="'.$board->url.'"><span class="dashboardlineindicator'.(($board->nbtodo == 0)?' dashboardlineok':'').'">'.$board->nbtodo.'</span></a>';
         if ($board->total > 0 && !empty($conf->global->MAIN_WORKBOARD_SHOW_TOTAL_WO_TAX))

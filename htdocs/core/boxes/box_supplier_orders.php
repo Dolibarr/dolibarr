@@ -56,9 +56,9 @@ class box_supplier_orders extends ModeleBoxes
     {
         global $user;
 
-        $this->db=$db;
+        $this->db = $db;
 
-        $this->hidden=! ($user->rights->fournisseur->commande->lire);
+        $this->hidden = ! ($user->rights->fournisseur->commande->lire);
     }
 
     /**

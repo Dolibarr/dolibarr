@@ -90,13 +90,15 @@ function testSqlAndScriptInject($val, $type)
 	$inj += preg_match('/Set\.constructor/i', $val);	// ECMA script 6
 	if (! defined('NOSTYLECHECK')) $inj += preg_match('/<style/i', $val);
 	$inj += preg_match('/base[\s]+href/si', $val);
-	$inj += preg_match('/<.*onmouse/si', $val);       // onmousexxx can be set on img or any html tag like <img title='...' onmouseover=alert(1)>
-	$inj += preg_match('/onerror\s*=/i', $val);       // onerror can be set on img or any html tag like <img title='...' onerror = alert(1)>
-	$inj += preg_match('/onfocus\s*=/i', $val);       // onfocus can be set on input text html tag like <input type='text' value='...' onfocus = alert(1)>
-	$inj += preg_match('/onload\s*=/i', $val);        // onload can be set on svg tag <svg/onload=alert(1)> or other tag like body <body onload=alert(1)>
-	$inj += preg_match('/onloadstart\s*=/i', $val);   // onload can be set on audio tag <audio onloadstart=alert(1)>
-	$inj += preg_match('/onclick\s*=/i', $val);       // onclick can be set on img text html tag like <img onclick = alert(1)>
-	$inj += preg_match('/onscroll\s*=/i', $val);      // onscroll can be on textarea
+	// List of dom events is on https://www.w3schools.com/jsref/dom_obj_event.asp
+	$inj += preg_match('/onmouse([a-z]*)\s*=/i', $val);       // onmousexxx can be set on img or any html tag like <img title='...' onmouseover=alert(1)>
+	$inj += preg_match('/ondrag([a-z]*)\s*=/i', $val);        //
+	$inj += preg_match('/ontouch([a-z]*)\s*=/i', $val);        //
+	$inj += preg_match('/on(abort|afterprint|beforeprint|beforeunload|blur|canplay|canplaythrough|change|click|contextmenu|copy|cut)\s*=/i', $val);
+	$inj += preg_match('/on(dblclick|drop|durationchange|ended|error|focus|focusin|focusout|hashchange|input|invalid)\s*=/i', $val);
+	$inj += preg_match('/on(keydown|keypress|keyup|load|loadeddata|loadedmetadata|loadstart|offline|online|pagehide|pageshow)\s*=/i', $val);
+	$inj += preg_match('/on(paste|pause|play|playing|progress|ratechange|resize|reset|scroll|search|seeking|select|show|stalled|start|submit|suspend)\s*=/i', $val);
+	$inj += preg_match('/on(timeupdate|toggle|unload|volumechange|waiting)\s*=/i', $val);
 	//$inj += preg_match('/on[A-Z][a-z]+\*=/', $val);   // To lock event handlers onAbort(), ...
 	$inj += preg_match('/&#58;|&#0000058|&#x3A/i', $val);		// refused string ':' encoded (no reason to have it encoded) to lock 'javascript:...'
 	//if ($type == 1)
@@ -469,7 +471,7 @@ if (! defined('NOLOGIN'))
 		$dol_hide_leftmenu=GETPOST('dol_hide_leftmenu', 'int', 3);
 		$dol_optimize_smallscreen=GETPOST('dol_optimize_smallscreen', 'int', 3);
 		$dol_no_mouse_hover=GETPOST('dol_no_mouse_hover', 'int', 3);
-		$dol_use_jmobile=GETPOST('dol_use_jmobile', 'int', 3);
+		$dol_use_jmobile=GETPOST('dol_use_jmobile', 'int', 3);			// 0=default, 1=to say we use app from a webview app, 2=to say we use app from a webview app and keep ajax
 		//dol_syslog("POST key=".join(array_keys($_POST),',').' value='.join($_POST,','));
 
 		// If in demo mode, we check we go to home page through the public/demo/index.php page
@@ -2205,7 +2207,7 @@ if (! function_exists("llxFooter"))
 	 */
 	function llxFooter($comment = '', $zone = 'private', $disabledoutputofmessages = 0)
 	{
-		global $conf, $langs, $user, $object;
+		global $conf, $db, $langs, $user, $object;
 		global $delayedhtmlcontent;
 		global $contextpage, $page, $limit;
 
@@ -2334,65 +2336,62 @@ if (! function_exists("llxFooter"))
 		// Add code for the asynchronous anonymous first ping (for telemetry)
 		if (($_SERVER["PHP_SELF"] == DOL_URL_ROOT.'/index.php') || GETPOST('forceping', 'alpha'))
 		{
+			//print '<!-- instance_unique_id='.$conf->file->instance_unique_id.' MAIN_FIRST_PING_OK_ID='.$conf->global->MAIN_FIRST_PING_OK_ID.' -->';
 			if (empty($conf->global->MAIN_FIRST_PING_OK_DATE)
-			|| (! empty($conf->file->instance_unique_id) && (md5($conf->file->instance_unique_id) != $conf->global->MAIN_FIRST_PING_OK_ID))
+			|| (! empty($conf->file->instance_unique_id) && (md5($conf->file->instance_unique_id) != $conf->global->MAIN_FIRST_PING_OK_ID) && ($conf->global->MAIN_FIRST_PING_OK_ID != 'disabled'))
 			|| GETPOST('forceping', 'alpha'))
 			{
-				print "\n".'<!-- Includes JS for Ping of Dolibarr MAIN_FIRST_PING_OK_DATE = '.$conf->global->MAIN_FIRST_PING_OK_DATE.' MAIN_FIRST_PING_OK_ID = '.$conf->global->MAIN_FIRST_PING_OK_ID.' -->'."\n";
-				print "\n<!-- JS CODE TO ENABLE the anonymous Ontime Ping -->\n";
-				?>
-	    			<script>
-	    			jQuery(document).ready(function (tmp) {
-	    				$.ajax({
-	    					  method: "POST",
-	    					  url: "https://ping.dolibarr.org/",
-	    					  timeout: 500,     // timeout milliseconds
-	    					  cache: false,
-	    					  data: { hash_algo: "md5", hash_unique_id: "<?php echo md5('dolibarr'.$conf->file->instance_unique_id); ?>", action: "dolibarrping", version: "<?php echo (float) DOL_VERSION; ?>", entity: <?php echo (int) $conf->entity; ?> },
-	    					  success: function (data, status, xhr) {   // success callback function (data contains body of response)
-	      					    	console.log("Ping ok");
-	        	    				$.ajax({
-	      	    					  method: "GET",
-	      	    					  url: "<?php echo DOL_URL_ROOT.'/core/ajax/pingresult.php'; ?>",
-	      	    					  timeout: 500,     // timeout milliseconds
-	      	    					  cache: false,
-	      	        				  data: { hash_algo: "md5", hash_unique_id: "<?php echo md5($conf->file->instance_unique_id); ?>", action: "firstpingok" },
-	    					  		});
-	    					  },
-	    					  error: function (data,status,xhr) {   // success callback function
-	        					    console.log("Ping ko: " + data);
-	        	    				$.ajax({
-	        	    					  method: "GET",
-	        	    					  url: "<?php echo DOL_URL_ROOT.'/core/ajax/pingresult.php'; ?>",
-	        	    					  timeout: 500,     // timeout milliseconds
-	        	    					  cache: false,
-	        	        				  data: { hash_algo: "md5", hash_unique_id: "<?php echo md5($conf->file->instance_unique_id); ?>", action: "firstpingko", version: "<?php echo (float) DOL_VERSION; ?>" },
-	      					  		});
-	    					  }
-	    				});
-	    			});
-	    			</script>
-				<?php
+				if (empty($_COOKIE['DOLINSTALLNOPING_'.md5($conf->file->instance_unique_id)]))
+				{
+					print "\n".'<!-- Includes JS for Ping of Dolibarr MAIN_FIRST_PING_OK_DATE = '.$conf->global->MAIN_FIRST_PING_OK_DATE.' MAIN_FIRST_PING_OK_ID = '.$conf->global->MAIN_FIRST_PING_OK_ID.' -->'."\n";
+					print "\n<!-- JS CODE TO ENABLE the anonymous Ontime Ping -->\n";
+					$hash_unique_id = md5('dolibarr'.$conf->file->instance_unique_id);
+					?>
+		    			<script>
+		    			jQuery(document).ready(function (tmp) {
+		    				$.ajax({
+		    					  method: "POST",
+		    					  url: "https://ping.dolibarr.org/",
+		    					  timeout: 500,     // timeout milliseconds
+		    					  cache: false,
+		    					  data: { hash_algo: "md5", hash_unique_id: "<?php echo $hash_unique_id; ?>", action: "dolibarrping", version: "<?php echo (float) DOL_VERSION; ?>", entity: <?php echo (int) $conf->entity; ?> },
+		    					  success: function (data, status, xhr) {   // success callback function (data contains body of response)
+		      					    	console.log("Ping ok");
+		        	    				$.ajax({
+		      	    					  method: "GET",
+		      	    					  url: "<?php echo DOL_URL_ROOT.'/core/ajax/pingresult.php'; ?>",
+		      	    					  timeout: 500,     // timeout milliseconds
+		      	    					  cache: false,
+		      	        				  data: { hash_algo: "md5", hash_unique_id: "<?php echo $hash_unique_id; ?>", action: "firstpingok" },
+		    					  		});
+		    					  },
+		    					  error: function (data,status,xhr) {   // success callback function
+		        					    console.log("Ping ko: " + data);
+		        	    				$.ajax({
+		        	    					  method: "GET",
+		        	    					  url: "<?php echo DOL_URL_ROOT.'/core/ajax/pingresult.php'; ?>",
+		        	    					  timeout: 500,     // timeout milliseconds
+		        	    					  cache: false,
+		        	        				  data: { hash_algo: "md5", hash_unique_id: "<?php echo $hash_unique_id; ?>", action: "firstpingko", version: "<?php echo (float) DOL_VERSION; ?>" },
+		      					  		});
+		    					  }
+		    				});
+		    			});
+		    			</script>
+					<?php
+				}
+				else
+				{
+					$now = dol_now();
+					print "\n<!-- NO JS CODE TO ENABLE the anonymous One time Ping. It was disabled -->\n";
+					include_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+					dolibarr_set_const($db, 'MAIN_FIRST_PING_OK_DATE', dol_print_date($now, 'dayhourlog', 'gmt'));
+					dolibarr_set_const($db, 'MAIN_FIRST_PING_OK_ID', 'disabled');
+				}
 			}
 		}
 
 		print "</body>\n";
 		print "</html>\n";
-
-        ?>
-
-		<!-- Disabled. This creates a lot of regression. A better solution is to add a protection on submitted page to avoid action to be done twice.
-        <script type="text/javascript">
-            //Prevent from multiple form sending
-            $(function() {
-                $('input[type=submit]').click(function(e) {
-                    e.preventDefault();
-                    $(this).prop('disabled', true);
-                    $(this).closest('form').submit();
-                });
-            });
-        </script>
-        -->
-        <?php
     }
 }

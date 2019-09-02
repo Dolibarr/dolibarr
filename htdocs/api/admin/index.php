@@ -80,7 +80,7 @@ if ($action == 'setproductionmode')
 
 if ($action == 'save')
 {
-	dolibarr_set_const($db, 'API_RESTICT_ON_IP', GETPOST('API_RESTICT_ON_IP', 'alpha'));
+	dolibarr_set_const($db, 'API_RESTRICT_ON_IP', GETPOST('API_RESTRICT_ON_IP', 'alpha'));
 }
 
 
@@ -130,8 +130,8 @@ print '<td>&nbsp;</td>';
 print '</tr>';
 
 print '<tr class="oddeven">';
-print '<td>'.$langs->trans("RestrictApiToIps").'</td>';
-print '<td><input type="text" name="API_RESTICT_ON_IP" value="'.dol_escape_htmltag($conf->global->API_RESTICT_ON_IP).'"></td>';
+print '<td>'.$langs->trans("RESTRICT_API_ON_IP").'</td>';
+print '<td><input type="text" name="API_RESTRICT_ON_IP" value="'.dol_escape_htmltag($conf->global->API_RESTRICT_ON_IP).'"></td>';
 print '<td>';
 print '<input type="submit" class="button" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'"></td>';
 print '</td>';

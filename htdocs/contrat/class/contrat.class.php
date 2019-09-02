@@ -96,6 +96,12 @@ class Contrat extends CommonObject
 	 */
 	public $ref_supplier;
 
+    /**
+     * Entity of the contract
+     * @var int
+     */
+    public $entity;
+
 	/**
 	 * Client id linked to the contract
 	 * @var int
@@ -617,13 +623,14 @@ class Contrat extends CommonObject
 	 *    @param	string	$ref			Ref
 	 *    @param	string	$ref_customer	Customer ref
 	 *    @param	string	$ref_supplier	Supplier ref
-	 *    @return   int     				<0 if KO, 0 if not found, Id of contract if OK
+	 *    @return   int     				<0 if KO, 0 if not found or if two records found for same ref, Id of contract if OK
 	 */
 	public function fetch($id, $ref = '', $ref_customer = '', $ref_supplier = '')
 	{
 		$sql = "SELECT rowid, statut, ref, fk_soc, mise_en_service as datemise,";
 		$sql.= " ref_supplier, ref_customer,";
 		$sql.= " ref_ext,";
+        $sql.= " entity,";
 		$sql.= " fk_user_mise_en_service, date_contrat as datecontrat,";
 		$sql.= " fk_user_author, fin_validite, date_cloture,";
 		$sql.= " fk_projet as fk_project,";
@@ -649,57 +656,67 @@ class Contrat extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			$obj = $this->db->fetch_object($resql);
-
-			if ($obj)
+			$num=$this->db->num_rows($resql);
+			if ($num > 1)
 			{
-				$this->id						= $obj->rowid;
-				$this->ref						= (!isset($obj->ref) || !$obj->ref) ? $obj->rowid : $obj->ref;
-				$this->ref_customer				= $obj->ref_customer;
-				$this->ref_supplier				= $obj->ref_supplier;
-				$this->ref_ext					= $obj->ref_ext;
-				$this->statut					= $obj->statut;
-				$this->mise_en_service			= $this->db->jdate($obj->datemise);
-
-				$this->date_contrat				= $this->db->jdate($obj->datecontrat);
-				$this->date_creation			= $this->db->jdate($obj->datecontrat);
-
-				$this->fin_validite				= $this->db->jdate($obj->fin_validite);
-				$this->date_cloture				= $this->db->jdate($obj->date_cloture);
-
-
-				$this->user_author_id			= $obj->fk_user_author;
-
-				$this->commercial_signature_id = $obj->fk_commercial_signature;
-				$this->commercial_suivi_id		= $obj->fk_commercial_suivi;
-
-				$this->note_private				= $obj->note_private;
-				$this->note_public				= $obj->note_public;
-				$this->modelpdf					= $obj->model_pdf;
-
-				$this->fk_projet				= $obj->fk_project; // deprecated
-				$this->fk_project				= $obj->fk_project;
-
-				$this->socid					= $obj->fk_soc;
-				$this->fk_soc					= $obj->fk_soc;
-
-				$this->extraparams = (array) json_decode($obj->extraparams, true);
-
-				$this->db->free($resql);
-
-				// Retreive all extrafields
-				// fetch optionals attributes and labels
-				$this->fetch_optionals();
-
-				// Lines
-				$result=$this->fetch_lines();
-				if ($result < 0)
+				$this->error='Fetch found several records.';
+				dol_syslog($this->error, LOG_ERR);
+				$result = -2;
+			}
+			elseif ($num)   // $num = 1
+			{
+				$obj = $this->db->fetch_object($resql);
+				if ($obj)
 				{
-					$this->error=$this->db->lasterror();
-					return -3;
-				}
+					$this->id						= $obj->rowid;
+					$this->ref						= (!isset($obj->ref) || !$obj->ref) ? $obj->rowid : $obj->ref;
+					$this->ref_customer				= $obj->ref_customer;
+					$this->ref_supplier				= $obj->ref_supplier;
+					$this->ref_ext					= $obj->ref_ext;
+	                $this->entity                   = $obj->entity;
+					$this->statut					= $obj->statut;
+					$this->mise_en_service			= $this->db->jdate($obj->datemise);
 
-				return $this->id;
+					$this->date_contrat				= $this->db->jdate($obj->datecontrat);
+					$this->date_creation			= $this->db->jdate($obj->datecontrat);
+
+					$this->fin_validite				= $this->db->jdate($obj->fin_validite);
+					$this->date_cloture				= $this->db->jdate($obj->date_cloture);
+
+
+					$this->user_author_id			= $obj->fk_user_author;
+
+					$this->commercial_signature_id = $obj->fk_commercial_signature;
+					$this->commercial_suivi_id		= $obj->fk_commercial_suivi;
+
+					$this->note_private				= $obj->note_private;
+					$this->note_public				= $obj->note_public;
+					$this->modelpdf					= $obj->model_pdf;
+
+					$this->fk_projet				= $obj->fk_project; // deprecated
+					$this->fk_project				= $obj->fk_project;
+
+					$this->socid					= $obj->fk_soc;
+					$this->fk_soc					= $obj->fk_soc;
+
+					$this->extraparams = (array) json_decode($obj->extraparams, true);
+
+					$this->db->free($resql);
+
+					// Retreive all extrafields
+					// fetch optionals attributes and labels
+					$this->fetch_optionals();
+
+					// Lines
+					$result=$this->fetch_lines();
+					if ($result < 0)
+					{
+						$this->error=$this->db->lasterror();
+						return -3;
+					}
+
+					return $this->id;
+				}
 			}
 			else
 			{

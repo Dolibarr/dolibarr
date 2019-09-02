@@ -258,11 +258,11 @@ $manifestjsoncontentdefault.= '{
  */
 
 // Protections
-if ($action == 'updatesource' && (GETPOST('refreshsite_x') || GETPOST('refreshsite.x') || GETPOST('refreshpage_x') || GETPOST('refreshpage.x')))
+if (GETPOST('refreshsite') || GETPOST('refreshsite_x') || GETPOST('refreshsite.x') ||  GETPOST('refreshpage') || GETPOST('refreshpage_x') || GETPOST('refreshpage.x'))
 {
-    $action = 'preview';    // To avoid to update another page or another site when we click on button to select another site or page.
+    $action = 'preview';    // To avoid to make an action on another page or another site when we click on button to select another site or page.
 }
-if (GETPOST('refreshsite', 'alpha'))		// If we change the site, we reset the pageid and cancel addsite action.
+if (GETPOST('refreshsite', 'alpha') || GETPOST('refreshsite.x', 'alpha') || GETPOST('refreshsite_x', 'alpha'))		// If we change the site, we reset the pageid and cancel addsite action.
 {
     $pageid=0;
     if ($action == 'addsite') $action = 'preview';
@@ -476,8 +476,10 @@ if ($action == 'addcontainer')
 				// Remove comments
 				$tmp['content'] = removeHtmlComment($tmp['content']);
 
-				preg_match('/<head>(.*)<\/head>/ims', $tmp['content'], $reg);
-				$head = $reg[1];
+				$regs=array();
+
+				preg_match('/<head>(.*)<\/head>/ims', $tmp['content'], $regs);
+				$head = $regs[1];
 
 				$objectpage->type_container = 'page';
 	   			$objectpage->pageurl = $pageurl;
@@ -488,8 +490,10 @@ if ($action == 'addcontainer')
 	   			}
 
 	   			$objectpage->aliasalt = '';
-	   			if (preg_match('/^(\d+)\-/', basename($urltograb), $reg)) $objectpage->aliasalt = $reg[1];
 
+	   			if (preg_match('/^(\d+)\-/', basename($urltograb), $regs)) $objectpage->aliasalt = $regs[1];
+
+	   			$regtmp=array();
 				if (preg_match('/<title>(.*)<\/title>/ims', $head, $regtmp))
 				{
 					$objectpage->title = $regtmp[1];
@@ -548,7 +552,7 @@ if ($action == 'addcontainer')
 				$errorforsubresource = 0;
 				foreach ($regs[0] as $key => $val)
 				{
-					dol_syslog("We will grab the resource found into script tag ".$regs[2][$key]);
+					dol_syslog("We will grab the script resource found into script tag ".$regs[2][$key]);
 
 					$linkwithoutdomain = $regs[2][$key];
 					if (preg_match('/^\//', $regs[2][$key]))
@@ -617,7 +621,7 @@ if ($action == 'addcontainer')
 				$errorforsubresource = 0;
 				foreach ($regs[0] as $key => $val)
 				{
-					dol_syslog("We will grab the resources found into link tag ".$regs[2][$key]);
+					dol_syslog("We will grab the css resources found into link tag ".$regs[2][$key]);
 
 					$linkwithoutdomain = $regs[2][$key];
 					if (preg_match('/^\//', $regs[2][$key]))
@@ -656,12 +660,22 @@ if ($action == 'addcontainer')
 					elseif ($tmpgeturl['http_code'] != '200')
 					{
 						$errorforsubresource++;
-						setEventMessages('Error getting link tag url'.$urltograbbis.': '.$tmpgeturl['http_code'], null, 'errors');
+						setEventMessages('Error getting link tag url '.$urltograbbis.': '.$tmpgeturl['http_code'], null, 'errors');
 						dol_syslog('Error getting '.$urltograbbis.': '.$tmpgeturl['curl_error_msg']);
 						$action='createcontainer';
 					}
 					else
 					{
+						// Clean some comment
+						//$tmpgeturl['content'] = dol_string_is_good_iso($tmpgeturl['content'], 1);
+						//$tmpgeturl['content'] = utf8_encode(utf8_decode($tmpgeturl['content']));
+						//$tmpgeturl['content'] = mb_convert_encoding($tmpgeturl['content'], 'UTF-8', 'UTF-8');
+						//$tmpgeturl['content'] = remove_bs($tmpgeturl['content']);
+						//$tmpgeturl['content'] = str_replace('$screen-md-max', 'auto', $tmpgeturl['content']);
+
+						//var_dump($tmpgeturl['content']);exit;
+						$tmpgeturl['content'] = preg_replace('/\/\*\s+CSS content[a-z\s]*\s+\*\//', '', $tmpgeturl['content']);
+
 						//dol_mkdir(dirname($filetosave));
 
 						//$fp = fopen($filetosave, "w");
@@ -675,7 +689,21 @@ if ($action == 'addcontainer')
 
 						getAllImages($object, $objectpage, $urltograbbis, $tmpgeturl['content'], $action, 1, $grabimages, $grabimagesinto);
 
-						$pagecsscontent.=$tmpgeturl['content']."\n";
+						include_once DOL_DOCUMENT_ROOT.'/core/class/lessc.class.php';
+						$lesscobj = new lessc();
+						try {
+							$contentforlessc = ".bodywebsite {\n".$tmpgeturl['content']."\n}\n";
+							//print '<pre>'.$contentforlessc.'</pre>';
+							$contentforlessc = $lesscobj->compile($contentforlessc);
+							//var_dump($contentforlessc); exit;
+
+							$pagecsscontent.=$contentforlessc."\n";
+							//$pagecsscontent.=$tmpgeturl['content']."\n";
+						} catch (exception $e) {
+							//echo "failed to compile lessc";
+							dol_syslog("Failed to compile the CSS from URL ".$urltograbbis." with lessc: ".$e->getMessage(), LOG_WARNING);
+							$pagecsscontent.=$tmpgeturl['content']."\n";
+						}
 
 						$objectpage->htmlheader = preg_replace('/'.preg_quote($regs[0][$key], '/').'\n*/ims', '', $objectpage->htmlheader);
 					}
@@ -2295,11 +2323,11 @@ if (! GETPOST('hide_websitemenu'))
 					//print '<input type="submit" class="button nobordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditWithEditor")).'" name="editcontent">';
 					if (empty($conf->global->WEBSITE_EDITINLINE))
 					{
-						print '<a class="button nobordertransp nohoverborder"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$websitepage->id.'&action=seteditinline">'.img_picto($langs->trans("EditInLineOff"), 'switch_off', '', false, 0, 0, '', 'nomarginleft').'</a>';
+						print '<a class="button nobordertransp nohoverborder"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$websitepage->id.'&action=seteditinline">'.img_picto($langs->trans("EditInLineOnOff", $langs->transnoentitiesnoconv("Off")), 'switch_off', '', false, 0, 0, '', 'nomarginleft').'</a>';
 					}
 					else
 					{
-						print '<a class="button nobordertransp nohoverborder"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$websitepage->id.'&action=unseteditinline">'.img_picto($langs->trans("EditInLineOn"), 'switch_on', '', false, 0, 0, '', 'nomarginleft').'</a>';
+						print '<a class="button nobordertransp nohoverborder"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$websitepage->id.'&action=unseteditinline">'.img_picto($langs->trans("EditInLineOnOff", $langs->transnoentitiesnoconv("On")), 'switch_on', '', false, 0, 0, '', 'nomarginleft').'</a>';
 					}
 				}
 
@@ -2314,11 +2342,11 @@ if (! GETPOST('hide_websitemenu'))
 				{*/
 					if (empty($conf->global->WEBSITE_SUBCONTAINERSINLINE))
 					{
-						print '<a class="button nobordertransp nohoverborder"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$websitepage->id.'&action=setshowsubcontainers">'.img_picto($langs->trans("ShowSubContainersOff"), 'switch_off', '', false, 0, 0, '', 'nomarginleft').'</a>';
+						print '<a class="button nobordertransp nohoverborder"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$websitepage->id.'&action=setshowsubcontainers">'.img_picto($langs->trans("ShowSubContainersOnOff", $langs->transnoentitiesnoconv("Off")), 'switch_off', '', false, 0, 0, '', 'nomarginleft').'</a>';
 					}
 					else
 					{
-						print '<a class="button nobordertransp nohoverborder"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$websitepage->id.'&action=unsetshowsubcontainers">'.img_picto($langs->trans("ShowSubContainersOn"), 'switch_on', '', false, 0, 0, '', 'nomarginleft').'</a>';
+						print '<a class="button nobordertransp nohoverborder"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$websitepage->id.'&action=unsetshowsubcontainers">'.img_picto($langs->trans("ShowSubContainersOnOff", $langs->transnoentitiesnoconv("On")), 'switch_on', '', false, 0, 0, '', 'nomarginleft').'</a>';
 					}
 				/*}*/
 				print '</div>';
@@ -3329,7 +3357,7 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
 		// Do not enable the contenteditable when page was grabbed, ckeditor is removing span and adding borders,
 		// so editable will be available only from container created from scratch
 		//$out.='<div id="bodywebsite" class="bodywebsite"'.($objectpage->grabbed_from ? ' contenteditable="true"' : '').'>'."\n";
-		$out.='<div id="divbodywebsite" class="bodywebsite">'."\n";
+		$out.='<div id="divbodywebsite" class="bodywebsite bodywebpage-'.$objectpage->ref.'">'."\n";
 
 		$newcontent = $objectpage->content;
 

@@ -29,6 +29,7 @@ MenuMembersUpToDate=Ajan jäsenten
 MenuMembersNotUpToDate=Vanhentunut jäseniä
 MenuMembersResiliated=Terminated members
 MembersWithSubscriptionToReceive=Jäsenet Merkintäoikeuksien vastaanottaa
+MembersWithSubscriptionToReceiveShort=Subscription to receive
 DateSubscription=Tilaus päivämäärän
 DateEndSubscription=Tilaus lopetuspäivämäärää
 EndSubscription=Lopeta tilaus

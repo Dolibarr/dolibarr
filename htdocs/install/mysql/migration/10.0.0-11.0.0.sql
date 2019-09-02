@@ -76,3 +76,18 @@ ALTER TABLE llx_c_price_expression MODIFY COLUMN expression varchar(255) NOT NUL
 UPDATE llx_bank_url set url = REPLACE( url, 'compta/salaries/', 'salaries/');
 
 ALTER TABLE llx_stock_mouvement ADD COLUMN fk_projet INTEGER NOT NULL DEFAULT 0 AFTER model_pdf;
+
+ALTER TABLE llx_oauth_token ADD COLUMN fk_soc integer DEFAULT NULL after token;
+
+ALTER TABLE llx_mailing ADD COLUMN tms timestamp;
+ALTER TABLE llx_mailing_cibles ADD COLUMN tms timestamp;
+
+ALTER TABLE llx_projet ADD COLUMN usage_opportunity integer DEFAULT 0;
+ALTER TABLE llx_projet ADD COLUMN usage_task integer DEFAULT 1;
+ALTER TABLE llx_projet CHANGE COLUMN bill_time usage_bill_time integer DEFAULT 0;		-- rename existing field
+ALTER TABLE llx_projet ADD COLUMN usage_organize_event integer DEFAULT 0;
+
+UPDATE llx_projet set usage_opportunity = 1 WHERE fk_opp_status > 0;
+
+ 
+  

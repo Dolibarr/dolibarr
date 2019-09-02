@@ -412,6 +412,34 @@ if ($id > 0 || ! empty($ref))
 
     print '<table class="border tableforfield" width="100%">';
 
+    // Usage
+    print '<tr><td class="tdtop">';
+    print $langs->trans("Usage");
+    print '</td>';
+    print '<td>';
+    if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
+    {
+    	print '<input type="checkbox" disabled name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha')!=''?' checked="checked"':'') : ($object->usage_opportunity ? ' checked="checked"' : '')).'"> ';
+    	$htmltext = $langs->trans("ProjectFollowOpportunity");
+    	print $form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext);
+    	print '<br>';
+    }
+    if (empty($conf->global->PROJECT_HIDE_TASKS))
+    {
+    	print '<input type="checkbox" disabled name="usage_task"'.(GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha')!=''?' checked="checked"':'') : ($object->usage_task ? ' checked="checked"' : '')).'"> ';
+    	$htmltext = $langs->trans("ProjectFollowTasks");
+    	print $form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext);
+    	print '<br>';
+    }
+    if (! empty($conf->global->PROJECT_BILL_TIME_SPENT))
+    {
+    	print '<input type="checkbox" disabled name="usage_bill_time"'.(GETPOSTISSET('usage_bill_time') ? (GETPOST('usage_bill_time', 'alpha')!=''?' checked="checked"':'') : ($object->usage_bill_time ? ' checked="checked"' : '')).'"> ';
+    	$htmltext = $langs->trans("ProjectBillTimeDescription");
+    	print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
+    	print '<br>';
+    }
+    print '</td></tr>';
+
     // Visibility
     print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
     if ($object->public) print $langs->trans('SharedProject');
@@ -474,7 +502,7 @@ if ($id > 0 || ! empty($ref))
     if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_BILL_TIME_SPENT))
     {
     	print '<tr><td>'.$langs->trans("BillTime").'</td><td>';
-    	print yn($object->bill_time);
+    	print yn($object->usage_bill_time);
     	print '</td></tr>';
     }
 
@@ -521,7 +549,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 
 		dol_fiche_head('');
 
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent">';
 
 		$defaultref='';
 		$obj = empty($conf->global->PROJECT_TASK_ADDON)?'mod_task_simple':$conf->global->PROJECT_TASK_ADDON;
@@ -707,7 +735,7 @@ elseif ($id > 0 || ! empty($ref))
 	$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
 
 	print '<div class="div-table-responsive">';
-	print '<table id="tablelines" class="tagtable nobottomiftotal liste'.($moreforfilter?" listwithfilterbefore":"").'"">';
+	print '<table id="tablelines" class="tagtable nobottomiftotal liste'.($moreforfilter?" listwithfilterbefore":"").'">';
 
 	// Fields title search
 	print '<tr class="liste_titre_filter">';
@@ -751,7 +779,7 @@ elseif ($id > 0 || ! empty($ref))
     // progress resume not searchable
     print '<td class="liste_titre right"></td>';
 
-	if ($object->bill_time)
+	if ($object->usage_bill_time)
 	{
     	print '<td class="liste_titre right">';
     	print '</td>';
@@ -780,7 +808,7 @@ elseif ($id > 0 || ! empty($ref))
 	print_liste_field_titre("ProgressCalculated", $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre("ProgressDeclared", $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre("TaskProgressSummary", $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center ');
-	if ($object->bill_time)
+	if ($object->usage_bill_time)
 	{
 	   print_liste_field_titre("TimeToBill", $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'right ');
 	   print_liste_field_titre("TimeBilled", $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'right ');
@@ -793,13 +821,13 @@ elseif ($id > 0 || ! empty($ref))
 	{
 	    // Show all lines in taskarray (recursive function to go down on tree)
 		$j=0; $level=0;
-		$nboftaskshown=projectLinesa($j, 0, $tasksarray, $level, true, 0, $tasksrole, $object->id, 1, $object->id, $filterprogresscalc, ($object->bill_time?1:0));
+		$nboftaskshown=projectLinesa($j, 0, $tasksarray, $level, true, 0, $tasksrole, $object->id, 1, $object->id, $filterprogresscalc, ($object->usage_bill_time?1:0));
 	}
 	else
 	{
 	    $colspan=10;
-	    if ($object->bill_time) $colspan+=2;
-		print '<tr class="oddeven"><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoTasks").'</td></tr>';
+	    if ($object->usage_bill_time) $colspan+=2;
+		print '<tr class="oddeven nobottom"><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoTasks").'</span></td></tr>';
 	}
 
 	print "</table>";

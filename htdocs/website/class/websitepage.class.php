@@ -528,7 +528,6 @@ class WebsitePage extends CommonObject
 
 		if ($mode == 0)
 		{
-			$prefix='';
 			if ($status == 1) return $langs->trans('Enabled');
 			elseif ($status == 0) return $langs->trans('Disabled');
 		}

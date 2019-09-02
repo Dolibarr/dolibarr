@@ -195,6 +195,7 @@ $colortext=join(',', colorStringToArray($colortext));
 $colortextlink=join(',', colorStringToArray($colortextlink));
 
 $nbtopmenuentries=$menumanager->showmenu('topnb');
+if ($conf->browser->layout == 'phone') $nbtopmenuentries = max($nbtopmenuentries, 10);
 
 print '/*'."\n";
 print 'colorbackbody='.$colorbackbody."\n";
@@ -1478,6 +1479,9 @@ table.noborder tr.liste_titre td {
 }
 .pictowarning {
     vertical-align: text-bottom;
+}
+.pictomodule {
+	width: 14px;
 }
 .fiche .arearef img.pictoedit, .fiche .arearef span.pictoedit,
 .fiche .fichecenter img.pictoedit, .fiche .fichecenter span.pictoedit,
@@ -3491,6 +3495,9 @@ div.dolgraph div.legend, div.dolgraph div.legend div { background-color: rgba(25
 div.dolgraph div.legend table tbody tr { height: auto; }
 td.legendColorBox { padding: 2px 2px 2px 0 !important; }
 td.legendLabel { padding: 2px 2px 2px 0 !important; }
+td.legendLabel {
+    text-align: <?php echo $left; ?>;
+}
 
 label.radioprivate {
     white-space: nowrap;

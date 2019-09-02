@@ -600,6 +600,63 @@ if (empty($reshook))
 				$db->rollback();
 			}
 		}
+		
+		if ($action == 'setkey_account_supplier')
+		{
+			$error = 0;
+
+			$newsup = GETPOST('key_account_supplier', 'alpha');
+
+			$db->begin();
+
+                if (empty($newsup)) {
+                        $sql  = "DELETE FROM ".MAIN_DB_PREFIX."oauth_token WHERE fk_soc = ".$object->id." AND service = '".$service."' AND entity = ".$conf->entity;
+                } else {
+      try {
+      $stripesup = \Stripe\Account::retrieve($db->escape(GETPOST('key_account_supplier', 'alpha')));
+      $tokenstring['stripe_user_id'] = $stripesup->id;
+      $tokenstring['type'] = $stripesup->type;
+			$sql = "UPDATE ".MAIN_DB_PREFIX."oauth_token";
+			$sql.= " SET tokenstring = '".dol_json_encode($tokenstring)."'";
+			$sql.= " WHERE fk_soc = ".$object->id." AND service = '".$service."' AND entity = ".$conf->entity;	// Keep = here for entity. Only 1 record must be modified !
+	  }
+					catch(Exception $e)
+					{
+						$error++;
+						setEventMessages($e->getMessage(), null, 'errors');
+					}
+				}
+
+			$resql = $db->query($sql);
+			$num = $db->num_rows($resql);
+			if (empty($num) && !empty($newsup))
+			{
+      try {
+      $stripesup = \Stripe\Account::retrieve($db->escape(GETPOST('key_account_supplier', 'alpha')));
+      $tokenstring['stripe_user_id'] = $stripesup->id;
+      $tokenstring['type'] = $stripesup->type;
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."oauth_token (service, fk_soc, entity, tokenstring)";
+			$sql .= " VALUES ('".$service."', ".$object->id.", ".$conf->entity.", '".dol_json_encode($tokenstring)."')";
+	  }
+				catch(Exception $e)
+				{
+					$error++;
+					setEventMessages($e->getMessage(), null, 'errors');
+				}
+				$resql = $db->query($sql);
+			}
+
+			if (! $error)
+			{
+				$stripesupplieracc = $newsup;
+				$db->commit();
+			}
+			else
+			{
+				$db->rollback();
+			}
+		}
+
 		if ($action == 'setlocalassourcedefault')	// Set as default when payment mode defined locally (and may be also remotely)
 		{
 			try {
@@ -845,7 +902,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		print $form->editfieldkey("StripeConnectAccount", 'key_account_supplier', $stripesupplieracc, $object, $permissiontowrite, 'string', '', 0, 2, 'socid');
 		print '</td><td>';
 		print $form->editfieldval("StripeConnectAccount", 'key_account_supplier', $stripesupplieracc, $object, $permissiontowrite, 'string', '', null, null, '', 2, '', 'socid');
-		if (! empty($conf->stripe->enabled) && $stripesupplieracc && $action != 'editkey_account')
+		if (! empty($conf->stripe->enabled) && $stripesupplieracc && $action != 'editkey_account_supplier')
 		{
 		    $connect='';
 			
@@ -1259,7 +1316,10 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		{
 			foreach ($balance->available as $cpt)
 			{
-      print '<tr><td>'.$langs->trans("Available").'</td><td>'.price($cpt->amount, 0, '', 1, - 1, - 1, strtoupper($cpt->currency)).' </td><td>'.$langs->trans("Currency".strtoupper($cpt->currency)).'</td></tr>';
+		$arrayzerounitcurrency=array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
+		if (! in_array($cpt->currency, $arrayzerounitcurrency)) $amount = $cpt->amount / 100;
+		else $amount = $cpt->amount;
+      print '<tr><td>'.$langs->trans("Available").'</td><td>'.price(amount, 0, '', 1, - 1, - 1, strtoupper($cpt->currency)).' </td><td>'.$langs->trans("Currency".strtoupper($cpt->currency)).'</td></tr>';
 			}
 		}
     
@@ -1267,7 +1327,10 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		{
 			foreach ($balance->pending as $cpt)
 			{
-      print '<tr><td>'.$langs->trans("Pending").'</td><td>'.price($cpt->amount, 0, '', 1, - 1, - 1, strtoupper($cpt->currency)).' </td><td>'.$langs->trans("Currency".strtoupper($cpt->currency)).'</td></tr>';
+		$arrayzerounitcurrency=array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
+		if (! in_array($cpt->currency, $arrayzerounitcurrency)) $amount = $cpt->amount / 100;
+		else $amount = $cpt->amount;
+      print '<tr><td>'.$langs->trans("Pending").'</td><td>'.price($amount, 0, '', 1, - 1, - 1, strtoupper($cpt->currency)).' </td><td>'.$langs->trans("Currency".strtoupper($cpt->currency)).'</td></tr>';
 			}
     }
     print '</table>';
@@ -1457,7 +1520,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 
 		if (count($rib_list) == 0)
 		{
-			$colspan=8;
+			$colspan=9;
 			if (! empty($conf->prelevement->enabled)) $colspan+=2;
 			print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoBANRecord").'</td></tr>';
 		}

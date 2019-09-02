@@ -29,6 +29,7 @@ MenuMembersUpToDate=Posodobljeno članstvo
 MenuMembersNotUpToDate=Pretečeno članstvo
 MenuMembersResiliated=Terminated members
 MembersWithSubscriptionToReceive=Člani, ki morajo plačati članarino
+MembersWithSubscriptionToReceiveShort=Subscription to receive
 DateSubscription=Datum vpisa
 DateEndSubscription=Datum zadnje članarine
 EndSubscription=Veljavnost članarine

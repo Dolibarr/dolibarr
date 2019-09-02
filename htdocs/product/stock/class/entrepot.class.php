@@ -686,6 +686,8 @@ class Entrepot extends CommonObject
         $label.= '<br><b>' . $langs->trans('Ref') . ':</b> ' . (empty($this->ref)?(empty($this->label)?$this->libelle:$this->label):$this->ref);
         if (! empty($this->lieu))
             $label.= '<br><b>' . $langs->trans('LocationSummary').':</b> '.$this->lieu;
+		if (isset($this->statut))
+            $label.= '<br><b>' . $langs->trans("Status").":</b> ".$this->getLibStatut(5);
 
         $url = DOL_URL_ROOT.'/product/stock/card.php?id='.$this->id;
 

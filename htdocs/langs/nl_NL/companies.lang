@@ -54,6 +54,7 @@ Firstname=Voornaam
 PostOrFunction=Functie
 UserTitle=Titel
 NatureOfThirdParty=Aard van relatie
+NatureOfContact=Nature of Contact
 Address=Adres
 State=Provincie
 StateShort=Provincie

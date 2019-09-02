@@ -1,5 +1,4 @@
 <?php
-
 /**
  * lessphp v0.5.0
  * http://leafo.net/lessphp
@@ -9,7 +8,6 @@
  * Copyright 2013, Leaf Corcoran <leafot@gmail.com>
  * Licensed under MIT or GPLv3, see LICENSE
  */
-
 
 /**
  * The LESS compiler and parser.
@@ -37,11 +35,11 @@
  * The `lessc_formatter` takes a CSS tree, and dumps it to a formatted string,
  * handling things like indentation.
  */
-class lessc {
-	static public $VERSION = "v0.5.0";
+class Lessc {
+	public static $VERSION = "v0.5.0";
 
-	static public $TRUE = array("keyword", "true");
-	static public $FALSE = array("keyword", "false");
+	public static $TRUE = array("keyword", "true");
+	public static $FALSE = array("keyword", "false");
 
 	protected $libFunctions = array();
 	protected $registeredVars = array();
@@ -63,7 +61,7 @@ class lessc {
 	protected $sourceParser = null;
 	protected $sourceLoc = null;
 
-	static protected $nextImportId = 0; // uniquely identify imports
+	protected static $nextImportId = 0; // uniquely identify imports
 
 	// attempts to find the path of an import url, returns null for css files
 	protected function findImport($url) {
@@ -77,6 +75,12 @@ class lessc {
 		return null;
 	}
 
+	/**
+	 * fileExists
+	 *
+	 * @param 	string 	$name	Filename
+	 * @return 	boolean
+	 */
 	protected function fileExists($name) {
 		return is_file($name);
 	}
@@ -1029,6 +1033,7 @@ class lessc {
 					return $this->lib_e($items[0]);
 				}
 				$this->throwError("unrecognised input");
+				return null;
 			case "string":
 				$arg[1] = "";
 				return $arg;
@@ -1046,6 +1051,7 @@ class lessc {
 		$template = $this->compileValue($this->lib_e($string));
 
 		$i = 0;
+		$m = array();
 		if (preg_match_all('/%[dsa]/', $template, $m)) {
 			foreach ($m[0] as $match) {
 				$val = isset($values[$i]) ?
@@ -2223,7 +2229,7 @@ class lessc {
 		return $less->cachedCompile($in, $force);
 	}
 
-	static protected $cssColors = array(
+	protected static $cssColors = array(
 		'aliceblue' => '240,248,255',
 		'antiquewhite' => '250,235,215',
 		'aqua' => '0,255,255',
@@ -2378,9 +2384,9 @@ class lessc {
 // responsible for taking a string of LESS code and converting it into a
 // syntax tree
 class lessc_parser {
-	static protected $nextBlockId = 0; // used to uniquely identify blocks
+	protected static $nextBlockId = 0; // used to uniquely identify blocks
 
-	static protected $precedence = array(
+	protected static $precedence = array(
 		'=<' => 0,
 		'>=' => 0,
 		'=' => 0,
@@ -2394,18 +2400,18 @@ class lessc_parser {
 		'%' => 2,
 	);
 
-	static protected $whitePattern;
-	static protected $commentMulti;
+	protected static $whitePattern;
+	protected static $commentMulti;
 
-	static protected $commentSingle = "//";
-	static protected $commentMultiLeft = "/*";
-	static protected $commentMultiRight = "*/";
+	protected static $commentSingle = "//";
+	protected static $commentMultiLeft = "/*";
+	protected static $commentMultiRight = "*/";
 
 	// regex string to match any of the operators
-	static protected $operatorString;
+	protected static $operatorString;
 
 	// these properties will supress division unless it's inside parenthases
-	static protected $supressDivisionProps =
+	protected static $supressDivisionProps =
 	array('/border-radius$/i', '/^font$/i');
 
 	protected $blockDirectives = array("font-face", "keyframes", "page", "-moz-document", "viewport", "-moz-viewport", "-o-viewport", "-ms-viewport");
@@ -2423,7 +2429,7 @@ class lessc_parser {
 	protected $inParens = false;
 
 	// caches preg escaped literals
-	static protected $literalCache = array();
+	protected static $literalCache = array();
 
 	public function __construct($lessc, $sourceName = null) {
 		$this->eatWhiteDefault = true;
@@ -2448,6 +2454,13 @@ class lessc_parser {
 		}
 	}
 
+	/**
+	 * Parse a string
+	 *
+	 * @param 	string	$buffer		String to parse
+	 * @throws exception
+	 * @return NULL|stdclass
+	 */
 	public function parse($buffer) {
 		$this->count = 0;
 		$this->line = 1;
@@ -2469,13 +2482,17 @@ class lessc_parser {
 			while (false !== $this->parseChunk());
 
 			if ($this->count != strlen($this->buffer))
-				$this->throwError();
+			{
+				$this->throwError('parse error count '.$this->count.' != len buffer '.strlen($this->buffer));
+			}
 
-				// TODO report where the block was opened
-				if ( !property_exists($this->env, 'parent') || !is_null($this->env->parent) )
-					throw new exception('parse error: unclosed block');
+			// TODO report where the block was opened
+			if (!property_exists($this->env, 'parent') || !is_null($this->env->parent))
+			{
+				throw new exception('parse error: unclosed block');
+			}
 
-					return $this->env;
+			return $this->env;
 		}
 
 		/**
