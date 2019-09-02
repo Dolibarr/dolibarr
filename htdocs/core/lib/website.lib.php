@@ -725,37 +725,39 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25)
 
 	if (! $error && (empty($max) || ($found < $max)) && (preg_match('/sitefiles/', $algo)))
 	{
-		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'website';
-		$sql.= " WHERE rowid = ".$website->id;
-		$sql.= " AND (";
-		$searchalgo = '';
-		// TODO
-		$searchalgo.= '...';
+		global $dolibarr_main_data_root;
 
-		$sql.=$searchalgo;
-		$sql.= ")";
-		$sql.= $db->plimit($max);
+		$pathofwebsite=$dolibarr_main_data_root.'/website/'.$website->ref;
+		$filehtmlheader=$pathofwebsite.'/htmlheader.html';
+		$filecss=$pathofwebsite.'/styles.css.php';
+		$filejs=$pathofwebsite.'/javascript.js.php';
+		$filerobot=$pathofwebsite.'/robots.txt';
+		$filehtaccess=$pathofwebsite.'/.htaccess';
+		$filemanifestjson=$pathofwebsite.'/manifest.json.php';
+		$filereadme=$pathofwebsite.'/README.md';
 
-		$resql = $db->query($sql);
-		if ($resql)
+		$filecontent = file_get_contents($filehtmlheader);
+		if ((empty($max) || ($found < $max)) && preg_match('/'.preg_quote($searchstring, '/').'/', $filecontent))
 		{
-			$i = 0;
-			while (($obj = $db->fetch_object($resql)) && ($i < $max || $max == 0))
-			{
-				if ($obj->rowid > 0)
-				{
-					$tmpwebsitepage = new WebsitePage($db);
-					$tmpwebsitepage->fetch($obj->rowid);
-					if ($tmpwebsitepage->id > 0) $arrayresult['list'][]=$tmpwebsitepage;
-				}
-				$i++;
-			}
+			$arrayresult['list'][]=array('type'=>'website_htmlheadercontent');
 		}
-		else
+
+		$filecontent = file_get_contents($filecss);
+		if ((empty($max) || ($found < $max)) && preg_match('/'.preg_quote($searchstring, '/').'/', $filecontent))
 		{
-			$error++;
-			$arrayresult['code']=$db->lasterrno();
-			$arrayresult['message']=$db->lasterror();
+			$arrayresult['list'][]=array('type'=>'website_csscontent');
+		}
+
+		$filecontent = file_get_contents($filejs);
+		if ((empty($max) || ($found < $max)) && preg_match('/'.preg_quote($searchstring, '/').'/', $filecontent))
+		{
+			$arrayresult['list'][]=array('type'=>'website_jscontent');
+		}
+
+		$filerobot = file_get_contents($filerobot);
+		if ((empty($max) || ($found < $max)) && preg_match('/'.preg_quote($searchstring, '/').'/', $filecontent))
+		{
+			$arrayresult['list'][]=array('type'=>'website_robotcontent');
 		}
 
 		$searchdone = 1;
