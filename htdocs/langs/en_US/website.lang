@@ -116,3 +116,4 @@ Dynamiccontent=Sample of a page with dynamic content
 ImportSite=Import site
 EditInLineOnOff=Mode 'Edit inline' is %s
 ShowSubContainersOnOff=Mode to execute 'dynamic content' is %s
+GlobalCSSorJS=Global CSS/JS/Header file of web site

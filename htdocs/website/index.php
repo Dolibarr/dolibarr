@@ -3216,6 +3216,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm')
 	print '<div class="tagtd">';
 	print '<input type="checkbox" name="optioncontent" value="content"'.((! GETPOSTISSET('buttonreplacesitesearch') || GETPOST('optioncontent', 'aZ09'))?' checked':'').'> '.$langs->trans("Content");
 	print '<input type="checkbox" class="marginleftonly" name="optionmeta" value="meta"'.(GETPOST('optionmeta', 'aZ09')?' checked':'').'> '.$langs->trans("Title").' | '.$langs->trans("Description").' | '.$langs->trans("Keywords");
+	print '<input type="checkbox" class="marginleftonly" name="optionsitefiles" value="sitefiles"'.(GETPOST('optionsitefiles', 'aZ09')?' checked':'').'> '.$langs->trans("GlobalCSSorJS");
 	print '</div>';
 	print '</div>';
 
@@ -3239,6 +3240,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm')
 		$algo = '';
 		if (GETPOST('optionmeta')) $algo.='meta';
 		if (GETPOST('optioncontent')) $algo.='content';
+		if (GETPOST('optionsitefiles')) $algo.='sitefiles';
 
 		$listofpages = getPagesFromSearchCriterias('', $algo, GETPOST('searchstring', 'none'), 1000);
 

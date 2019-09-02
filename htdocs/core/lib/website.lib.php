@@ -636,10 +636,11 @@ function getStructuredData($type, $data = array())
 }
 
 /**
- * Return list of containers object that match a criteria
+ * Return list of containers object that match a criteria.
+ * WARNING: This function can be used by websites.
  *
  * @param 	string		$type				Type of container to search into (Example: 'page')
- * @param 	string		$algo				Algorithm used for search (Example: 'meta' is searching into meta information like title and description, 'metacontent')
+ * @param 	string		$algo				Algorithm used for search (Example: 'meta' is searching into meta information like title and description, 'content', 'sitefiles', or any combination, ...)
  * @param	string		$searchstring		Search string
  * @param	int			$max				Max number of answers
  * @return  string							HTML content
@@ -674,20 +675,21 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25)
 	}
 
 	$searchdone = 0;
+	$found = 0;
 
-	if (! $error && in_array($algo, array('meta', 'metacontent', 'content')))
+	if (! $error && (empty($max) || ($found < $max)) && (preg_match('/meta/', $algo) || preg_match('/content/', $algo)))
 	{
 		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'website_page';
 		$sql.= " WHERE fk_website = ".$website->id;
 		if ($type) $sql.= " AND type_container = '".$db->escape($type)."'";
 		$sql.= " AND (";
 		$searchalgo = '';
-		if ($algo == 'meta' || $algo == 'metacontent')
+		if (preg_match('/meta/', $algo))
 		{
 			$searchalgo.= ($searchalgo?' OR ':'')."title LIKE '%".$db->escape($searchstring)."%' OR description LIKE '%".$db->escape($searchstring)."%'";
 			$searchalgo.= ($searchalgo?' OR ':'')."keywords LIKE '".$db->escape($searchstring).",%' OR keywords LIKE '% ".$db->escape($searchstring)."%'";		// TODO Use a better way to scan keywords
 		}
-		if ($algo == 'metacontent' || $algo == 'content')
+		if (preg_match('/content/', $algo))
 		{
 			$searchalgo.= ($searchalgo?' OR ':'')."content LIKE '%".$db->escape($searchstring)."%'";
 		}
@@ -706,15 +708,9 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25)
 					$tmpwebsitepage = new WebsitePage($db);
 					$tmpwebsitepage->fetch($obj->rowid);
 					if ($tmpwebsitepage->id > 0) $arrayresult['list'][]=$tmpwebsitepage;
+					$found++;
 				}
 				$i++;
-			}
-
-			$arrayresult['code']='OK';
-			if (empty($arrayresult['list']))
-			{
-				$arrayresult['code']='KO';
-				$arrayresult['message']=$weblangs->trans("NoRecordFound");
 			}
 		}
 		else
@@ -727,11 +723,61 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25)
 		$searchdone = 1;
 	}
 
-	if (! $searchdone)
+	if (! $error && (empty($max) || ($found < $max)) && (preg_match('/sitefiles/', $algo)))
 	{
-		$error++;
-		$arrayresult['code']='KO';
-		$arrayresult['message']='No supported algorithm found';
+		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'website';
+		$sql.= " WHERE rowid = ".$website->id;
+		$sql.= " AND (";
+		$searchalgo = '';
+		// TODO
+		$searchalgo.= '...';
+
+		$sql.=$searchalgo;
+		$sql.= ")";
+		$sql.= $db->plimit($max);
+
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+			$i = 0;
+			while (($obj = $db->fetch_object($resql)) && ($i < $max || $max == 0))
+			{
+				if ($obj->rowid > 0)
+				{
+					$tmpwebsitepage = new WebsitePage($db);
+					$tmpwebsitepage->fetch($obj->rowid);
+					if ($tmpwebsitepage->id > 0) $arrayresult['list'][]=$tmpwebsitepage;
+				}
+				$i++;
+			}
+		}
+		else
+		{
+			$error++;
+			$arrayresult['code']=$db->lasterrno();
+			$arrayresult['message']=$db->lasterror();
+		}
+
+		$searchdone = 1;
+	}
+
+	if (! $error)
+	{
+		if ($searchdone)
+		{
+			$arrayresult['code']='OK';
+			if (empty($arrayresult['list']))
+			{
+				$arrayresult['code']='KO';
+				$arrayresult['message']=$weblangs->trans("NoRecordFound");
+			}
+		}
+		else
+		{
+			$error++;
+			$arrayresult['code']='KO';
+			$arrayresult['message']='No supported algorithm found';
+		}
 	}
 
 	return $arrayresult;
