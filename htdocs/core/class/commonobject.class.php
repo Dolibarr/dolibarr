@@ -1226,9 +1226,6 @@ abstract class CommonObject
 		// phpcs:enable
 		global $langs;
 
-		if (empty($order)) $order='position';
-		if ($order == 'position') $order.=',code';
-
 		$tab = array();
 		$sql = "SELECT DISTINCT tc.rowid, tc.code, tc.libelle, tc.position, tc.element";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_type_contact as tc";
@@ -1262,11 +1259,11 @@ abstract class CommonObject
 			{
 				$obj = $this->db->fetch_object($resql);
 
-				$libelle_element = $langs->trans('ContactDefault_'.ucfirst($obj->element));
+				$libelle_element = $langs->trans('ContactDefault_'.$obj->element);
 				$transkey="TypeContact_".$this->element."_".$source."_".$obj->code;
 				$libelle_type=($langs->trans($transkey)!=$transkey ? $langs->trans($transkey) : $obj->libelle);
 				if (empty($option)) $tab[$obj->rowid]=$libelle_element.' - '.$libelle_type;
-				else $tab[$obj->code]=$libelle_element.' - '.$libelle_type;
+				else $tab[$obj->rowid]=$libelle_element.' - '.$libelle_type;
 				$i++;
 			}
 			return $tab;
