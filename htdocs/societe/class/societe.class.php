@@ -1159,6 +1159,7 @@ class Societe extends CommonObject
 							if ($result < 0)
 							{
 								$this->error=$lmember->error;
+								$this->errors = array_merge($this->errors, $lmember->errors);
 								dol_syslog(get_class($this)."::update ".$this->error, LOG_ERR);
 								$error++;
 							}
