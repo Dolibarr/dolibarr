@@ -264,7 +264,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 				$paiement = -1*$socialcontribstatic->getSommePaiement();	// Payment already done
 			}
 
-			$parameters = array('obj' => $obj);
+			$parameters = array('obj' => $obj, 'ref' => $ref, 'refcomp' => $refcomp, 'payment' => $paiement);
 			$reshook = $hookmanager->executeHooks('moreFamily', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			if(empty($reshook)){
 				$ref = isset($hookmanager->resArray['ref']) ? $hookmanager->resArray['ref'] : $ref;

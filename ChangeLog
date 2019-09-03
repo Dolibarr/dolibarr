@@ -18,7 +18,7 @@ Following changes may create regressions for some external modules, but were nec
 * The function show_theme() hase been renamed into showSkins()
 * Rename 'module_part' parameter into 'modulepart' into document APIs, for consistency.
 * The deprecated method get_OutstandingBill has been removed. You can use getOutstandingBills() instead.
-
+* The hook "moreFamily" must return payment into var "payment" and no more "paiement".
 
 
 
