@@ -3317,7 +3317,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm')
 					print '<tr>';
 					print '<td>'.$answerrecord['type'].'</td>';
 					print '<td>';
-					$backtopageurl = $_SERVER["PHP_SELF"].'?action=replacesiteconfirm&searchstring='.urlencode($searchkey).'&optioncontent='.GETPOST('optioncontent','az09').'&optionmeta='.GETPOST('optionmeta','az09').'&optionsitefiles='.GETPOST('optionsitefiles','az09');
+					$backtopageurl = $_SERVER["PHP_SELF"].'?action=replacesiteconfirm&searchstring='.urlencode($searchkey).'&optioncontent='.GETPOST('optioncontent', 'az09').'&optionmeta='.GETPOST('optionmeta', 'az09').'&optionsitefiles='.GETPOST('optionsitefiles', 'az09');
 					print '<a href="'.$_SERVER["PHP_SELF"].'?action=editcss&website='.$website->ref.'&backtopage='.urlencode($backtopageurl).'">'.$langs->trans("EditCss").'</a>';
 					print '</td>';
 					print '<td class="tdoverflow100">';
