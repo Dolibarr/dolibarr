@@ -5168,13 +5168,16 @@ class FactureLigne extends CommonInvoiceLine
     public function get_prev_progress($invoiceid, $include_credit_note = true)
 	{
         // phpcs:enable
+		global $invoicecache;
 		if (is_null($this->fk_prev_id) || empty($this->fk_prev_id) || $this->fk_prev_id == "") {
 			return 0;
 		} else {
 		    // If invoice is not a situation invoice, this->fk_prev_id is used for something else
-            $tmpinvoice=new Facture($this->db);
-            $tmpinvoice->fetch($invoiceid);
-            if ($tmpinvoice->type != Facture::TYPE_SITUATION) return 0;
+			if (!isset($invoicecache[$invoiceid])) {
+				$invoicecache[$invoiceid]=new Facture($this->db);
+				$invoicecache[$invoiceid]->fetch($invoiceid);
+			}
+			if ($invoicecache[$invoiceid]->type != Facture::TYPE_SITUATION) return 0;
 
 			$sql = 'SELECT situation_percent FROM ' . MAIN_DB_PREFIX . 'facturedet WHERE rowid=' . $this->fk_prev_id;
 			$resql = $this->db->query($sql);
