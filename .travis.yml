@@ -110,6 +110,7 @@ install:
   rm $TRAVIS_BUILD_DIR/composer.json
   rm $TRAVIS_BUILD_DIR/composer.lock
   composer self-update
+  # To have composer making parallel downloads
   composer global require hirak/prestissimo
   composer -n init
   composer -n config vendor-dir htdocs/includes
