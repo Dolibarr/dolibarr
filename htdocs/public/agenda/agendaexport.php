@@ -100,22 +100,24 @@ $hookmanager->initHooks(array('agendaexport'));
 
 $reshook = $hookmanager->executeHooks('doActions', $filters); // Note that $action and $object may have been modified by some
 if ($reshook < 0){
+	llxHeaderVierge();
 	if(!empty($hookmanager->errors) && is_array($hookmanager->errors)){
 		print '<div class="error">'.implode('<br/>', $hookmanager->errors).'</div>';
 	}else{
 		print '<div class="error">'.$hookmanager->error.'</div>';
 	}
-}
-
-// Check exportkey
-if (empty($_GET["exportkey"]) || $conf->global->MAIN_AGENDA_XCAL_EXPORTKEY != $_GET["exportkey"])
-{
-	$user->getrights();
-
-	llxHeaderVierge();
-	print '<div class="error">Bad value for key.</div>';
 	llxFooterVierge();
-	exit;
+}
+elseif(empty($reshook)) {
+	// Check exportkey
+	if (empty($_GET["exportkey"]) || $conf->global->MAIN_AGENDA_XCAL_EXPORTKEY != $_GET["exportkey"]) {
+		$user->getrights();
+
+		llxHeaderVierge();
+		print '<div class="error">Bad value for key.</div>';
+		llxFooterVierge();
+		exit;
+	}
 }
 
 
