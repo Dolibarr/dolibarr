@@ -1798,6 +1798,10 @@ a.hasSubmenu:after {
 	right: 5px;
 	margin-top: 3px
 }
+	
+.tmenucenter:hover>a.hasSubmenu:after {
+	right:10px;
+}
 
 div.mainmenu {
 	position: relative;
@@ -1831,7 +1835,7 @@ div.mainmenu {
 }
 
 @media screen and (min-width: 565px) {
-	ul>li:hover:not(.submenu0):not(.submenu1):not(.submenu2):not(.submenu3):not(.submenu4):not(.submenu5):not(.submenu6)>.tmenucenter>div.tmenudiv>ul.tmenu {
+	ul>li:hover:not(.submenu)>.tmenucenter>div.tmenudiv>ul.tmenu {
 		visibility: visible;
 		-webkit-transition-delay: .2s;
 		-moz-transition-delay: .2s;
@@ -1839,13 +1843,7 @@ div.mainmenu {
 		-o-transition-delay: .2s;
 		transition-delay: .2s
 	}
-	ul>li.submenu0>.tmenucenter:hover>div.tmenudiv>ul.tmenu,
-	ul>li.submenu1>.tmenucenter:hover>div.tmenudiv>ul.tmenu,
-	ul>li.submenu2>.tmenucenter:hover>div.tmenudiv>ul.tmenu,
-	ul>li.submenu3>.tmenucenter:hover>div.tmenudiv>ul.tmenu,
-	ul>li.submenu4>.tmenucenter:hover>div.tmenudiv>ul.tmenu,
-	ul>li.submenu5>.tmenucenter:hover>div.tmenudiv>ul.tmenu,
-	ul>li.submenu6>.tmenucenter:hover>div.tmenudiv>ul.tmenu {
+	ul>li.submenu>.tmenucenter:hover>div.tmenudiv>ul.tmenu {
 		visibility: visible
 	}
 }
