@@ -30,16 +30,16 @@ require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/security.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/security2.lib.php';
 
-if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER','1');
-if (! defined('NOREQUIREDB'))    define('NOREQUIREDB','1');
-if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
-if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
-if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK','1');
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1');
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1'); // If there is no menu to show
-if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1'); // If we don't need to load the html.form.class.php
-if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
-if (! defined("NOLOGIN"))        define("NOLOGIN",'1');       // If this page is public (can be called outside logged session)
+if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER', '1');
+if (! defined('NOREQUIREDB'))    define('NOREQUIREDB', '1');
+if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
+if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN', '1');
+if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1'); // If there is no menu to show
+if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1'); // If we don't need to load the html.form.class.php
+if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
+if (! defined("NOLOGIN"))        define("NOLOGIN", '1');       // If this page is public (can be called outside logged session)
 
 if (empty($user->id))
 {
@@ -57,7 +57,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class ScriptsTest extends PHPUnit_Framework_TestCase
+class ScriptsTest extends PHPUnit\Framework\TestCase
 {
 	protected $savconf;
 	protected $savuser;
@@ -70,7 +70,7 @@ class ScriptsTest extends PHPUnit_Framework_TestCase
 	 *
 	 * @return SecurityTest
 	 */
-	function __construct()
+	public function __construct()
 	{
 		parent::__construct();
 
@@ -86,13 +86,13 @@ class ScriptsTest extends PHPUnit_Framework_TestCase
 		print "\n";
 	}
 
-	// Static methods
-  	public static function setUpBeforeClass()
+    // Static methods
+    public static function setUpBeforeClass()
     {
-    	global $conf,$user,$langs,$db;
-		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
+        global $conf,$user,$langs,$db;
+        $db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
 
-    	print __METHOD__."\n";
+        print __METHOD__."\n";
     }
 
     // tear down after class
@@ -147,10 +147,10 @@ class ScriptsTest extends PHPUnit_Framework_TestCase
 		$result=exec($script, $output, $returnvar);
 
 		print __METHOD__." result=".$result."\n";
-		print __METHOD__." output=".join("\n",$output)."\n";
+		print __METHOD__." output=".join("\n", $output)."\n";
 		print __METHOD__." returnvar=".$returnvar."\n";
-		$this->assertEquals($result,'Failed to find bank account with ref BANKDUMMY.');
-		$this->assertEquals($returnvar,255);
+		$this->assertEquals($result, 'Failed to find bank account with ref BANKDUMMY.');
+		$this->assertEquals($returnvar, 255);
 
         return $result;
     }
@@ -199,23 +199,23 @@ class ScriptsTest extends PHPUnit_Framework_TestCase
     	$script=dirname(__FILE__).'/../../scripts/contracts/email_expire_services_to_customers.php test thirdparties';
     	$result=exec($script, $output, $returnvar);
     	print __METHOD__." result=".$result."\n";
-    	print __METHOD__." output=".join("\n",$output)."\n";
+    	print __METHOD__." output=".join("\n", $output)."\n";
     	print __METHOD__." returnvar=".$returnvar."\n";
-    	$this->assertEquals($returnvar,0,'email_expire_services_to_customers.php thirdparties');
+    	$this->assertEquals($returnvar, 0, 'email_expire_services_to_customers.php thirdparties');
 
     	$script=dirname(__FILE__).'/../../scripts/contracts/email_expire_services_to_customers.php test contacts -30';
     	$result=exec($script, $output, $returnvar);
     	print __METHOD__." result=".$result."\n";
-    	print __METHOD__." output=".join("\n",$output)."\n";
+    	print __METHOD__." output=".join("\n", $output)."\n";
     	print __METHOD__." returnvar=".$returnvar."\n";
-    	$this->assertEquals($returnvar,0,'email_expire_services_to_customers.php contacts');
+    	$this->assertEquals($returnvar, 0, 'email_expire_services_to_customers.php contacts');
 
     	$script=dirname(__FILE__).'/../../scripts/contracts/email_expire_services_to_representatives.php test -30';
     	$result=exec($script, $output, $returnvar);
     	print __METHOD__." result=".$result."\n";
-    	print __METHOD__." output=".join("\n",$output)."\n";
+    	print __METHOD__." output=".join("\n", $output)."\n";
     	print __METHOD__." returnvar=".$returnvar."\n";
-    	$this->assertEquals($returnvar,0,'email_expire_services_to_representatives.php');
+    	$this->assertEquals($returnvar, 0, 'email_expire_services_to_representatives.php');
 
     	return $result;
     }
@@ -237,23 +237,23 @@ class ScriptsTest extends PHPUnit_Framework_TestCase
     	$script=dirname(__FILE__).'/../../scripts/invoices/email_unpaid_invoices_to_customers.php test thirdparties';
     	$result=exec($script, $output, $returnvar);
     	print __METHOD__." result=".$result."\n";
-    	print __METHOD__." output=".join("\n",$output)."\n";
+    	print __METHOD__." output=".join("\n", $output)."\n";
     	print __METHOD__." returnvar=".$returnvar."\n";
-    	$this->assertEquals($returnvar,0,'email_unpaid_invoices_to_customers.php thirdparties');
+    	$this->assertEquals($returnvar, 0, 'email_unpaid_invoices_to_customers.php thirdparties');
 
     	$script=dirname(__FILE__).'/../../scripts/invoices/email_unpaid_invoices_to_customers.php test contacts -30';
     	$result=exec($script, $output, $returnvar);
     	print __METHOD__." result=".$result."\n";
-    	print __METHOD__." output=".join("\n",$output)."\n";
+    	print __METHOD__." output=".join("\n", $output)."\n";
     	print __METHOD__." returnvar=".$returnvar."\n";
-    	$this->assertEquals($returnvar,0,'email_unpaid_invoices_to_customers.php contacts');
+    	$this->assertEquals($returnvar, 0, 'email_unpaid_invoices_to_customers.php contacts');
 
     	$script=dirname(__FILE__).'/../../scripts/invoices/email_unpaid_invoices_to_representatives.php test thirdparties';
     	$result=exec($script, $output, $returnvar);
     	print __METHOD__." result=".$result."\n";
-    	print __METHOD__." output=".join("\n",$output)."\n";
+    	print __METHOD__." output=".join("\n", $output)."\n";
     	print __METHOD__." returnvar=".$returnvar."\n";
-    	$this->assertEquals($returnvar,0,'email_unpaid_invoices_to_customers.php thirdparties');
+    	$this->assertEquals($returnvar, 0, 'email_unpaid_invoices_to_customers.php thirdparties');
 
     	return $result;
     }

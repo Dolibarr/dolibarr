@@ -2,7 +2,7 @@
 /* Copyright (C) 2000-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,26 +26,41 @@
  */
 
 /**
- *      \class      AntiVir
- *      \brief      Class to scan for virus
+ *      Class to scan for virus
  */
 class AntiVir
 {
-	var $error;
-	var $errors;
-	var $output;
-	var $db;
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+	/**
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array();
+
+	/**
+	 * @var string Used to return message
+	 */
+	public $output;
+
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
 	/**
 	 *  Constructor
 	 *
 	 *  @param      DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		$this->db=$db;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Scan a file with antivirus.
 	 *  This function runs the command defined in setup. This antivirus command must return 0 if OK.
@@ -54,8 +69,9 @@ class AntiVir
 	 *	@param	string	$file		File to scan
 	 *	@return	int					<0 if KO (-98 if error, -99 if virus), 0 if OK
 	 */
-	function dol_avscan_file($file)
+	public function dol_avscan_file($file)
 	{
+        // phpcs:enable
 		global $conf;
 
 		$return = 0;
@@ -77,6 +93,8 @@ class AntiVir
 		dol_syslog("AntiVir::dol_avscan_file Run command=".$fullcommand." with safe_mode ".($safemode?"on":"off"));
 		// Run CLI command. If run of Windows, you can get return with echo %ERRORLEVEL%
 		$lastline=exec($fullcommand, $output, $return_var);
+
+		if (is_null($output)) $output=array();
 
         //print "x".$lastline." - ".join(',',$output)." - ".$return_var."y";exit;
 
@@ -110,7 +128,7 @@ class AntiVir
 		}
 		*/
 
-		dol_syslog("AntiVir::dol_avscan_file Result return_var=".$return_var." output=".join(',',$output));
+		dol_syslog("AntiVir::dol_avscan_file Result return_var=".$return_var." output=".join(',', $output));
 
 		$returncodevirus=1;
 		if ($return_var == $returncodevirus)	// Virus found
@@ -137,7 +155,7 @@ class AntiVir
 	 *	@param	string	$file		File to scan
 	 *	@return	string				Full command line to run
 	 */
-	function getCliCommand($file)
+	public function getCliCommand($file)
 	{
 		global $conf;
 
@@ -150,17 +168,17 @@ class AntiVir
 		$command=$conf->global->MAIN_ANTIVIRUS_COMMAND;
 		$param=$conf->global->MAIN_ANTIVIRUS_PARAM;
 
-		$param=preg_replace('/%maxreclevel/',$maxreclevel,$param);
-		$param=preg_replace('/%maxfiles/',$maxfiles,$param);
-		$param=preg_replace('/%maxratio/',$maxratio,$param);
-		$param=preg_replace('/%bz2archivememlim/',$bz2archivememlim,$param);
-		$param=preg_replace('/%maxfilesize/',$maxfilesize,$param);
-		$param=preg_replace('/%file/',trim($file),$param);
+		$param=preg_replace('/%maxreclevel/', $maxreclevel, $param);
+		$param=preg_replace('/%maxfiles/', $maxfiles, $param);
+		$param=preg_replace('/%maxratio/', $maxratio, $param);
+		$param=preg_replace('/%bz2archivememlim/', $bz2archivememlim, $param);
+		$param=preg_replace('/%maxfilesize/', $maxfilesize, $param);
+		$param=preg_replace('/%file/', trim($file), $param);
 
-		if (! preg_match('/%file/',$conf->global->MAIN_ANTIVIRUS_PARAM))
+		if (! preg_match('/%file/', $conf->global->MAIN_ANTIVIRUS_PARAM))
 			$param=$param." ".escapeshellarg(trim($file));
 
-		if (preg_match("/\s/",$command)) $command=escapeshellarg($command);	// Use quotes on command. Using escapeshellcmd fails.
+		if (preg_match("/\s/", $command)) $command=escapeshellarg($command);	// Use quotes on command. Using escapeshellcmd fails.
 
 		$ret=$command.' '.$param;
 		//$ret=$command.' '.$param.' 2>&1';
@@ -168,6 +186,4 @@ class AntiVir
 
 		return $ret;
 	}
-
 }
-

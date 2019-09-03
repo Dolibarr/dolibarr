@@ -23,16 +23,16 @@
  *       \brief      File that is entry point to call Dolibarr WebServices
  */
 
-if (! defined("NOCSRFCHECK"))    define("NOCSRFCHECK",'1');
+if (! defined("NOCSRFCHECK"))    define("NOCSRFCHECK", '1');
 
-require_once '../master.inc.php';
+require '../master.inc.php';
 require_once NUSOAP_PATH.'/nusoap.php';        // Include SOAP
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ws.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-require_once(DOL_DOCUMENT_ROOT."/categories/class/categorie.class.php");
+require_once DOL_DOCUMENT_ROOT."/categories/class/categorie.class.php";
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 
@@ -46,7 +46,7 @@ if (empty($conf->global->MAIN_MODULE_WEBSERVICES))
 {
     $langs->load("admin");
     dol_syslog("Call Dolibarr webservices interfaces with module webservices disabled");
-    print $langs->trans("WarningModuleNotActive",'WebServices').'.<br><br>';
+    print $langs->trans("WarningModuleNotActive", 'WebServices').'.<br><br>';
     print $langs->trans("ToActivateModule");
     exit;
 }
@@ -56,7 +56,7 @@ $server = new nusoap_server();
 $server->soap_defencoding='UTF-8';
 $server->decode_utf8=false;
 $ns='http://www.dolibarr.org/ns/';
-$server->configureWSDL('WebServicesDolibarrProductOrService',$ns);
+$server->configureWSDL('WebServicesDolibarrProductOrService', $ns);
 $server->wsdl->schemaTargetNamespace=$ns;
 
 
@@ -130,24 +130,31 @@ $productorservice_fields = array(
     'images' => array('name'=>'images','type'=>'tns:ImagesArray')
 );
 
+
+$elementtype = 'product';
+
+
 //Retreive all extrafield for product
 // fetch optionals attributes and labels
 $extrafields=new ExtraFields($db);
-$extralabels=$extrafields->fetch_name_optionals_label('product',true);
+$extralabels=$extrafields->fetch_name_optionals_label('product', true);
 $extrafield_array=null;
 if (is_array($extrafields) && count($extrafields) > 0) {
 	$extrafield_array = array();
 }
-foreach($extrafields->attribute_label as $key=>$label)
+if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 {
-	$type =$extrafields->attribute_type[$key];
-	if ($type=='date' || $type=='datetime') {$type='xsd:dateTime';}
-	else {$type='xsd:string';}
+	foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+	{
+		$type =$extrafields->attributes[$elementtype]['type'][$key];
+		if ($type=='date' || $type=='datetime') {$type='xsd:dateTime';}
+		else {$type='xsd:string';}
 
-	$extrafield_array['options_'.$key]=array('name'=>'options_'.$key,'type'=>$type);
+		$extrafield_array['options_'.$key]=array('name'=>'options_'.$key,'type'=>$type);
+	}
 }
 
-if (is_array($extrafield_array)) $productorservice_fields=array_merge($productorservice_fields,$extrafield_array);
+if (is_array($extrafield_array)) $productorservice_fields=array_merge($productorservice_fields, $extrafield_array);
 
 // Define other specific objects
 $server->wsdl->addComplexType(
@@ -333,7 +340,7 @@ $server->register(
  * @param   string      $lang               Lang to force
  * @return	mixed
  */
-function getProductOrService($authentication,$id='',$ref='',$ref_ext='',$lang='')
+function getProductOrService($authentication, $id = '', $ref = '', $ref_ext = '', $lang = '')
 {
     global $db,$conf,$langs;
 
@@ -348,7 +355,7 @@ function getProductOrService($authentication,$id='',$ref='',$ref_ext='',$lang=''
     $objectresp=array();
     $errorcode='';$errorlabel='';
     $error=0;
-    $fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+    $fuser=check_authentication($authentication, $error, $errorcode, $errorlabel);
     // Check parameters
     if (! $error && (($id && $ref) || ($id && $ref_ext) || ($ref && $ref_ext)))
     {
@@ -364,17 +371,18 @@ function getProductOrService($authentication,$id='',$ref='',$ref_ext='',$lang=''
 
         $fuser->getrights();
 
+        $nbmax = 10;
         if ($fuser->rights->produit->lire || $fuser->rights->service->lire)
         {
             $product=new Product($db);
-            $result=$product->fetch($id,$ref,$ref_ext);
+            $result=$product->fetch($id, $ref, $ref_ext);
 
             if ($result > 0)
             {
             	$product->load_stock();
 
             	$dir = (!empty($conf->product->dir_output)?$conf->product->dir_output:$conf->service->dir_output);
-            	$pdir = get_exdir($product->id,2,0,0,$product,'product') . $product->ref . "/";
+            	$pdir = get_exdir($product->id, 2, 0, 0, $product, 'product') . $product->ref . "/";
             	$dir = $dir . '/'. $pdir;
 
             	if (! empty($product->multilangs[$langs->defaultlang]["label"]))     		$product->label =  $product->multilangs[$langs->defaultlang]["label"];
@@ -387,8 +395,8 @@ function getProductOrService($authentication,$id='',$ref='',$ref_ext='',$lang=''
 	            	'ref_ext' => $product->ref_ext,
 	            	'label' => $product->label,
 	            	'description' => $product->description,
-	            	'date_creation' => dol_print_date($product->date_creation,'dayhourrfc'),
-	            	'date_modification' => dol_print_date($product->date_modification,'dayhourrfc'),
+	            	'date_creation' => dol_print_date($product->date_creation, 'dayhourrfc'),
+	            	'date_modification' => dol_print_date($product->date_modification, 'dayhourrfc'),
 	            	'note' => $product->note,
 	            	'status_tosell' => $product->status,
 	            	'status_tobuy' => $product->status_buy,
@@ -417,19 +425,24 @@ function getProductOrService($authentication,$id='',$ref='',$ref_ext='',$lang=''
 	            	'pmp' => $product->pmp,
 	            	'import_key' => $product->import_key,
 	            	'dir' => $pdir,
-	            	'images' => $product->liste_photos($dir,$nbmax=10)
+            		'images' => $product->liste_photos($dir, $nbmax)
             	);
+
+            	$elementtype = 'product';
 
                 //Retreive all extrafield for thirdsparty
             	// fetch optionals attributes and labels
             	$extrafields=new ExtraFields($db);
-            	$extralabels=$extrafields->fetch_name_optionals_label('product',true);
+            	$extralabels=$extrafields->fetch_name_optionals_label('product', true);
             	//Get extrafield values
             	$product->fetch_optionals();
 
-            	foreach($extrafields->attribute_label as $key=>$label)
+            	if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
             	{
-            		$productorservice_result_fields=array_merge($productorservice_result_fields,array('options_'.$key => $product->array_options['options_'.$key]));
+            		foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+	            	{
+	            		$productorservice_result_fields=array_merge($productorservice_result_fields, array('options_'.$key => $product->array_options['options_'.$key]));
+	            	}
             	}
 
                 // Create
@@ -467,7 +480,7 @@ function getProductOrService($authentication,$id='',$ref='',$ref_ext='',$lang=''
  * @param	Product		$product			Product
  * @return	array							Array result
  */
-function createProductOrService($authentication,$product)
+function createProductOrService($authentication, $product)
 {
     global $db,$conf,$langs;
 
@@ -481,7 +494,7 @@ function createProductOrService($authentication,$product)
     $objectresp=array();
     $errorcode='';$errorlabel='';
     $error=0;
-    $fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+    $fuser=check_authentication($authentication, $error, $errorcode, $errorlabel);
     // Check parameters
     if ($product['price_net'] > 0) $product['price_base_type']='HT';
     if ($product['price'] > 0)     $product['price_base_type']='TTC';
@@ -529,7 +542,7 @@ function createProductOrService($authentication,$product)
         $newobject->seuil_stock_alert=$product['stock_alert'];
 
         $newobject->country_id=$product['country_id'];
-        if ($product['country_code']) $newobject->country_id=getCountry($product['country_code'],3);
+        if ($product['country_code']) $newobject->country_id=getCountry($product['country_code'], 3);
         $newobject->customcode=$product['customcode'];
 
         $newobject->canvas=$product['canvas'];
@@ -549,17 +562,22 @@ function createProductOrService($authentication,$product)
         //var_dump($product['ref_ext']);
         //var_dump($product['lines'][0]['type']);
 
+        $elementtype = 'product';
+
         $extrafields=new ExtraFields($db);
-		$extralabels=$extrafields->fetch_name_optionals_label('product',true);
-		foreach($extrafields->attribute_label as $key=>$label)
+		$extralabels=$extrafields->fetch_name_optionals_label('product', true);
+		if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 		{
-			$key='options_'.$key;
-			$newobject->array_options[$key]=$product[$key];
+			foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+			{
+				$key='options_'.$key;
+				$newobject->array_options[$key]=$product[$key];
+			}
 		}
 
         $db->begin();
 
-        $result=$newobject->create($fuser,0);
+        $result=$newobject->create($fuser, 0);
         if ($result <= 0)
         {
             $error++;
@@ -570,7 +588,7 @@ function createProductOrService($authentication,$product)
         	// Update stock if stock count is provided and differs from database after creation or update
 			if (isset($product['stock_real']) && $product['stock_real'] != '' && ! empty($conf->global->stock->enabled))
 			{
-				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+				include_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 
 				$savstockreal=$newobject->stock_reel;
 				$newobject->load_stock('novirtual,nobatch');		// This overwrite ->stock_reel, surely 0 because we have just created product
@@ -584,11 +602,11 @@ function createProductOrService($authentication,$product)
 					{
 						if (($savstockreal - $getstockreal) > 0)
 						{
-							$result=$newobject->correct_stock($fuser, $warehouse->id, ($savstockreal - $getstockreal), 0, 'Correction from external call (Web Service)', 0, 'WS'.dol_print_date($now,'dayhourlog'));
+							$result=$newobject->correct_stock($fuser, $warehouse->id, ($savstockreal - $getstockreal), 0, 'Correction from external call (Web Service)', 0, 'WS'.dol_print_date($now, 'dayhourlog'));
 						}
 						if (($savstockreal - $getstockreal) > 0)
 						{
-							$result=$newobject->correct_stock($fuser, $warehouse->id, ($savstockreal - $getstockreal), 1, 'Correction from external call (Web Service)', 0, 'WS'.dol_print_date($now,'dayhourlog'));
+							$result=$newobject->correct_stock($fuser, $warehouse->id, ($savstockreal - $getstockreal), 1, 'Correction from external call (Web Service)', 0, 'WS'.dol_print_date($now, 'dayhourlog'));
 						}
 						if ($result <= 0)
 						{
@@ -617,7 +635,6 @@ function createProductOrService($authentication,$product)
             $errorcode='KO';
             $errorlabel=$newobject->error;
         }
-
     }
 
     if ($error)
@@ -636,7 +653,7 @@ function createProductOrService($authentication,$product)
  * @param	Product		$product			Product
  * @return	array							Array result
  */
-function updateProductOrService($authentication,$product)
+function updateProductOrService($authentication, $product)
 {
     global $db,$conf,$langs;
 
@@ -650,7 +667,7 @@ function updateProductOrService($authentication,$product)
     $objectresp=array();
     $errorcode='';$errorlabel='';
     $error=0;
-    $fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+    $fuser=check_authentication($authentication, $error, $errorcode, $errorlabel);
     // Check parameters
     if ($product['price_net'] > 0) $product['price_base_type']='HT';
     if ($product['price'] > 0)     $product['price_base_type']='TTC';
@@ -699,7 +716,7 @@ function updateProductOrService($authentication,$product)
         $newobject->seuil_stock_alert=$product['stock_alert'];
 
         $newobject->country_id=$product['country_id'];
-        if ($product['country_code']) $newobject->country_id=getCountry($product['country_code'],3);
+        if ($product['country_code']) $newobject->country_id=getCountry($product['country_code'], 3);
         $newobject->customcode=$product['customcode'];
 
         $newobject->canvas=$product['canvas'];
@@ -719,17 +736,22 @@ function updateProductOrService($authentication,$product)
         //var_dump($product['ref_ext']);
         //var_dump($product['lines'][0]['type']);
 
+        $elementtype = 'product';
+
 		$extrafields=new ExtraFields($db);
-		$extralabels=$extrafields->fetch_name_optionals_label('product',true);
-		foreach($extrafields->attribute_label as $key=>$label)
+		$extralabels=$extrafields->fetch_name_optionals_label('product', true);
+		if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 		{
-			$key='options_'.$key;
-			$newobject->array_options[$key]=$product[$key];
+			foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+			{
+				$key='options_'.$key;
+				$newobject->array_options[$key]=$product[$key];
+			}
 		}
 
         $db->begin();
 
-        $result=$newobject->update($newobject->id,$fuser);
+        $result=$newobject->update($newobject->id, $fuser);
         if ($result <= 0)
         {
             $error++;
@@ -739,7 +761,7 @@ function updateProductOrService($authentication,$product)
         	// Update stock if stock count is provided and differs from database after creation or update
 			if (isset($product['stock_real']) && $product['stock_real'] != '' && ! empty($conf->global->stock->enabled))
 			{
-				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+				include_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 
 				$savstockreal=$newobject->stock_reel;
 				$newobject->load_stock('novirtual,nobatch');		// This overwrite ->stock_reel
@@ -753,11 +775,11 @@ function updateProductOrService($authentication,$product)
 					{
 						if (($savstockreal - $getstockreal) > 0)
 						{
-							$result=$newobject->correct_stock($fuser, $warehouse->id, ($savstockreal - $getstockreal), 0, 'Correction from external call (Web Service)', 0, 'WS'.dol_print_date($now,'dayhourlog'));
+							$result=$newobject->correct_stock($fuser, $warehouse->id, ($savstockreal - $getstockreal), 0, 'Correction from external call (Web Service)', 0, 'WS'.dol_print_date($now, 'dayhourlog'));
 						}
 						if (($savstockreal - $getstockreal) > 0)
 						{
-							$result=$newobject->correct_stock($fuser, $warehouse->id, ($savstockreal - $getstockreal), 1, 'Correction from external call (Web Service)', 0, 'WS'.dol_print_date($now,'dayhourlog'));
+							$result=$newobject->correct_stock($fuser, $warehouse->id, ($savstockreal - $getstockreal), 1, 'Correction from external call (Web Service)', 0, 'WS'.dol_print_date($now, 'dayhourlog'));
 						}
 						if ($result <= 0)
 						{
@@ -778,7 +800,7 @@ function updateProductOrService($authentication,$product)
         {
             if ($newobject->price_base_type == 'HT')
             {
-                $result=$newobject->updatePrice($newobject->price, $newobject->price_base_type,$fuser);
+                $result=$newobject->updatePrice($newobject->price, $newobject->price_base_type, $fuser);
                 if ($result <= 0)
                 {
                     $error++;
@@ -806,7 +828,6 @@ function updateProductOrService($authentication,$product)
             $errorcode='KO';
             $errorlabel=$newobject->error;
         }
-
     }
 
     if ($error)
@@ -825,7 +846,7 @@ function updateProductOrService($authentication,$product)
  * @param	string		$listofidstring		List of id with comma
  * @return	array							Array result
  */
-function deleteProductOrService($authentication,$listofidstring)
+function deleteProductOrService($authentication, $listofidstring)
 {
     global $db,$conf,$langs;
 
@@ -839,13 +860,13 @@ function deleteProductOrService($authentication,$listofidstring)
     $objectresp=array();
     $errorcode='';$errorlabel='';
     $error=0;
-    $fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+    $fuser=check_authentication($authentication, $error, $errorcode, $errorlabel);
 
 	// User must be defined to user authenticated
     global $user;
     $user=$fuser;
 
-    $listofid=explode(',',trim($listofidstring));
+    $listofid=explode(',', trim($listofidstring));
     $listofiddeleted=array();
 
     // Check parameters
@@ -905,10 +926,10 @@ function deleteProductOrService($authentication,$listofidstring)
         //$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel), 'listofid'=>$listofiddeleted);
         $objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel), 'nbdeleted'=>0);
     }
-    else if (count($listofiddeleted) == 0)
+    elseif (count($listofiddeleted) == 0)
     {
    		//$objectresp=array('result'=>array('result_code'=>'NOT_FOUND', 'result_label'=>'No product or service with id '.join(',',$listofid).' found'), 'listofid'=>$listofiddeleted);
-   		$objectresp=array('result'=>array('result_code'=>'NOT_FOUND', 'result_label'=>'No product or service with id '.join(',',$listofid).' found'), 'nbdeleted'=>0);
+   		$objectresp=array('result'=>array('result_code'=>'NOT_FOUND', 'result_label'=>'No product or service with id '.join(',', $listofid).' found'), 'nbdeleted'=>0);
     }
 
     return $objectresp;
@@ -922,7 +943,7 @@ function deleteProductOrService($authentication,$listofidstring)
  * @param	array		$filterproduct		Filter fields
  * @return	array							Array result
  */
-function getListOfProductsOrServices($authentication,$filterproduct)
+function getListOfProductsOrServices($authentication, $filterproduct)
 {
     global $db,$conf,$langs;
 
@@ -937,7 +958,7 @@ function getListOfProductsOrServices($authentication,$filterproduct)
     $arrayproducts=array();
     $errorcode='';$errorlabel='';
     $error=0;
-    $fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+    $fuser=check_authentication($authentication, $error, $errorcode, $errorlabel);
     // Check parameters
 
     if (! $error)
@@ -999,7 +1020,7 @@ function getListOfProductsOrServices($authentication,$filterproduct)
  * @param	$lang		$lang				Force lang
  * @return	array							Array result
  */
-function getProductsForCategory($authentication,$id,$lang='')
+function getProductsForCategory($authentication, $id, $lang = '')
 {
 	global $db,$conf,$langs;
 
@@ -1014,7 +1035,7 @@ function getProductsForCategory($authentication,$id,$lang='')
 	$errorcode='';$errorlabel='';
 	$error=0;
 
-	$fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+	$fuser=check_authentication($authentication, $error, $errorcode, $errorlabel);
 
 
 	if (! $error && !$id)
@@ -1031,6 +1052,7 @@ function getProductsForCategory($authentication,$id,$lang='')
 
 		$fuser->getrights();
 
+		$nbmax = 10;
 		if ($fuser->rights->produit->lire)
 		{
 			$categorie=new Categorie($db);
@@ -1049,63 +1071,68 @@ function getProductsForCategory($authentication,$id,$lang='')
 				if ($res)
 				{
 					$iProduct = 0;
+					$tmpproduct = new Product($db);
+					$products=array();
 					while ($rec = $db->fetch_array($res))
 					{
-						$obj = new Product($db);
-						$obj->fetch($rec['fk_'.$field]);
-						if($obj->status > 0 )
+						$tmpproduct->fetch($rec['fk_'.$field]);
+						if ($tmpproduct->status > 0)
 						{
 							$dir = (!empty($conf->product->dir_output)?$conf->product->dir_output:$conf->service->dir_output);
-							$pdir = get_exdir($obj->id,2,0,0,$product,'product') . $obj->id ."/photos/";
+							$pdir = get_exdir($tmpproduct->id, 2, 0, 0, $tmpproduct, 'product') . $tmpproduct->id ."/photos/";
 							$dir = $dir . '/'. $pdir;
 
 							$products[] = array(
-						    	'id' => $obj->id,
-					   			'ref' => $obj->ref,
-					   			'ref_ext' => $obj->ref_ext,
-					    		'label' => ! empty($obj->multilangs[$langs->defaultlang]["label"]) ? $obj->multilangs[$langs->defaultlang]["label"] : $obj->label,
-					    		'description' => ! empty($obj->multilangs[$langs->defaultlang]["description"]) ? $obj->multilangs[$langs->defaultlang]["description"] : $obj->description,
-					    		'date_creation' => dol_print_date($obj->date_creation,'dayhourrfc'),
-					    		'date_modification' => dol_print_date($obj->date_modification,'dayhourrfc'),
-					            'note' => ! empty($obj->multilangs[$langs->defaultlang]["note"]) ? $obj->multilangs[$langs->defaultlang]["note"] : $obj->note,
-					            'status_tosell' => $obj->status,
-					            'status_tobuy' => $obj->status_buy,
-		                		'type' => $obj->type,
-						        'barcode' => $obj->barcode,
-						        'barcode_type' => $obj->barcode_type,
-		                		'country_id' => $obj->country_id>0?$obj->country_id:'',
-						        'country_code' => $obj->country_code,
-						        'custom_code' => $obj->customcode,
+						    	'id' => $tmpproduct->id,
+					   			'ref' => $tmpproduct->ref,
+					   			'ref_ext' => $tmpproduct->ref_ext,
+					    		'label' => ! empty($tmpproduct->multilangs[$langs->defaultlang]["label"]) ? $tmpproduct->multilangs[$langs->defaultlang]["label"] : $tmpproduct->label,
+					    		'description' => ! empty($tmpproduct->multilangs[$langs->defaultlang]["description"]) ? $tmpproduct->multilangs[$langs->defaultlang]["description"] : $tmpproduct->description,
+					    		'date_creation' => dol_print_date($tmpproduct->date_creation, 'dayhourrfc'),
+					    		'date_modification' => dol_print_date($tmpproduct->date_modification, 'dayhourrfc'),
+					            'note' => ! empty($tmpproduct->multilangs[$langs->defaultlang]["note"]) ? $tmpproduct->multilangs[$langs->defaultlang]["note"] : $tmpproduct->note,
+					            'status_tosell' => $tmpproduct->status,
+					            'status_tobuy' => $tmpproduct->status_buy,
+		                		'type' => $tmpproduct->type,
+						        'barcode' => $tmpproduct->barcode,
+						        'barcode_type' => $tmpproduct->barcode_type,
+		                		'country_id' => $tmpproduct->country_id>0?$tmpproduct->country_id:'',
+						        'country_code' => $tmpproduct->country_code,
+						        'custom_code' => $tmpproduct->customcode,
 
-						        'price_net' => $obj->price,
-						        'price' => $obj->price_ttc,
-						        'vat_rate' => $obj->tva_tx,
+						        'price_net' => $tmpproduct->price,
+						        'price' => $tmpproduct->price_ttc,
+						        'vat_rate' => $tmpproduct->tva_tx,
 
-								'price_base_type' => $obj->price_base_type,
+								'price_base_type' => $tmpproduct->price_base_type,
 
-						        'stock_real' => $obj->stock_reel,
-		                		'stock_alert' => $obj->seuil_stock_alerte,
-						        'pmp' => $obj->pmp,
-		                		'import_key' => $obj->import_key,
+						        'stock_real' => $tmpproduct->stock_reel,
+		                		'stock_alert' => $tmpproduct->seuil_stock_alerte,
+						        'pmp' => $tmpproduct->pmp,
+		                		'import_key' => $tmpproduct->import_key,
 		                		'dir' => $pdir,
-		                		'images' => $obj->liste_photos($dir,$nbmax=10)
+								'images' => $tmpproduct->liste_photos($dir, $nbmax)
 							);
+
+							$elementtype = 'product';
 
 							//Retreive all extrafield for thirdsparty
 							// fetch optionals attributes and labels
 							$extrafields=new ExtraFields($db);
-							$extralabels=$extrafields->fetch_name_optionals_label('product',true);
+							$extralabels=$extrafields->fetch_name_optionals_label('product', true);
 							//Get extrafield values
-							$obj->fetch_optionals();
+							$tmpproduct->fetch_optionals();
 
-							foreach($extrafields->attribute_label as $key=>$label)
+							if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 							{
-								$products[$iProduct]=array_merge($products[$iProduct],array('options_'.$key => $obj->array_options['options_'.$key]));
+								foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+								{
+									$products[$iProduct]=array_merge($products[$iProduct], array('options_'.$key => $tmpproduct->array_options['options_'.$key]));
+								}
 							}
 
 							$iProduct++;
 						}
-
 					}
 
 					// Retour
@@ -1113,14 +1140,12 @@ function getProductsForCategory($authentication,$id,$lang='')
 					'result'=>array('result_code'=>'OK', 'result_label'=>''),
 					'products'=> $products
 					);
-
 				}
 				else
 				{
 					$errorcode='NORECORDS_FOR_ASSOCIATION'; $errorlabel='No products associated'.$sql;
 					$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
-					dol_syslog("getProductsForCategory:: ".$c->error, LOG_DEBUG);
-
+					dol_syslog("getProductsForCategory:: ".$errorcode, LOG_DEBUG);
 				}
 			}
 			else

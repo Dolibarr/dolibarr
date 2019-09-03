@@ -1,0 +1,65 @@
+# Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+Assets = Varad
+NewAsset = Uus vara
+AccountancyCodeAsset = Raamatupidamise kood (vara)
+AccountancyCodeDepreciationAsset = Raamatupidamise kood (amortisatsioonivara konto)
+AccountancyCodeDepreciationExpense = Raamatupidamise kood (amortisatsioonikulu konto)
+NewAssetType=Uus vara tüüp
+AssetsTypeSetup=Varade tüübi seadistamine
+AssetTypeModified=Varade tüüp on muudetud
+AssetType=Vara tüüp
+AssetsLines=Varad
+DeleteType=Kustuta
+DeleteAnAssetType=Kustuta vara tüüp
+ConfirmDeleteAssetType=Kas soovite kindlasti selle vara tüübi kustutada?
+ShowTypeCard=Kuva tüüp '%s'
+
+# Module label 'ModuleAssetsName'
+ModuleAssetsName = Varad
+# Module description 'ModuleAssetsDesc'
+ModuleAssetsDesc = Varade kirjeldus
+
+#
+# Admin page
+#
+AssetsSetup = Varade seadistamine
+Settings = Seaded
+AssetsSetupPage = Varade seadistamise leht
+ExtraFieldsAssetsType = Täiendavad atribuudid (vara tüüp)
+AssetsType=Vara tüüp
+AssetsTypeId=Varade tüübi ID
+AssetsTypeLabel=Varade tüübi silt
+AssetsTypes=Varade liigid
+
+#
+# Menu
+#
+MenuAssets = Varad
+MenuNewAsset = Uus vara
+MenuTypeAssets = Tüüp varasid
+MenuListAssets = Loend
+MenuNewTypeAssets = Uus
+MenuListTypeAssets = Loend
+
+#
+# Module
+#
+NewAssetType=Uus vara tüüp
+NewAsset=Uus vara

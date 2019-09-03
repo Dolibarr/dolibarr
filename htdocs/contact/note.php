@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2003,2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011      Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012      Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012      Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010           Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013           Florian Henry		 <florian.henry@open-concept.pro>
  *
@@ -29,13 +29,13 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/contact.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 
-$action = GETPOST('action','aZ09');
+$action = GETPOST('action', 'aZ09');
 
 // Load translation files required by the page
 $langs->load("companies");
 
 // Security check
-$id = GETPOST('id','int');
+$id = GETPOST('id', 'int');
 if ($user->societe_id) $id=$user->societe_id;
 $result = restrictedArea($user, 'contact', $id, 'socpeople&societe');
 

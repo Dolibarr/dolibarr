@@ -1,0 +1,10 @@
+---
+linters:
+  phpcs:
+      standard: 'dev/setup/codesniffer/ruleset.xml'
+      extensions: 'php'
+      tab_width: 4
+      fixer: true
+
+fixers:
+    enable: true

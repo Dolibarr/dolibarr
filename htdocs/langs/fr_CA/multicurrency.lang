@@ -2,7 +2,6 @@
 ErrorAddRateFail=Erreur dans le taux ajouté
 ErrorAddCurrencyFail=Erreur dans la monnaie ajoutée
 ErrorDeleteCurrencyFail=Erreur de suppression d'échec
-multicurrency_syncronize_error=Erreur de synchronisation: %s
 multicurrency_appCurrencySource=Source de devises
 CurrenciesUsed_help_to_add=Ajoutez les différentes devises et taux que vous devez utiliser sur <b> propositions</b>, <b> commandes </b>, etc.
 MulticurrencyReceived=Reçu, monnaie d'origine

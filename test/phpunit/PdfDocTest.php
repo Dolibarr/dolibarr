@@ -48,7 +48,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class PdfDocTest extends PHPUnit_Framework_TestCase
+class PdfDocTest extends PHPUnit\Framework\TestCase
 {
 	protected $savconf;
 	protected $savuser;
@@ -61,7 +61,7 @@ class PdfDocTest extends PHPUnit_Framework_TestCase
 	 *
 	 * @return PdfDocTest
 	 */
-	function __construct()
+	public function __construct()
 	{
 		parent::__construct();
 
@@ -77,8 +77,8 @@ class PdfDocTest extends PHPUnit_Framework_TestCase
 		print "\n";
 	}
 
-	// Static methods
-  	public static function setUpBeforeClass()
+    // Static methods
+    public static function setUpBeforeClass()
     {
     	global $conf,$user,$langs,$db;
 		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
@@ -134,7 +134,7 @@ class PdfDocTest extends PHPUnit_Framework_TestCase
 		$db=$this->savdb;
 
 		$localproduct=new Product($this->savdb);
-		$localproduct->fetch(0,'PIDRESS');
+		$localproduct->fetch(0, 'PIDRESS');
 		$product_id=$localproduct->id;
 		if ($product_id <= 0) { print "\n".__METHOD__." A product with ref PIDRESS must exists into database"; die(); }
 
@@ -146,13 +146,13 @@ class PdfDocTest extends PHPUnit_Framework_TestCase
 		$localobject->lines[0]->label='Label 1';
 		$localobject->lines[0]->desc="This is a description with a é accent\n(Country of origin: France)";
 
-    	$result=pdf_getlinedesc($localobject,0,$langs);
+    	$result=pdf_getlinedesc($localobject, 0, $langs);
     	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals($result,"PIDRESS - Label 1<br>This is a description with a &eacute; accent<br>(Country of origin: France)");
+    	$this->assertEquals($result, "PIDRESS - Label 1<br>This is a description with a &eacute; accent<br>(Country of origin: France)");
 
-    	$result=doc_getlinedesc($localobject->lines[0],$langs);
+    	$result=doc_getlinedesc($localobject->lines[0], $langs);
     	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals($result,"PIDRESS - Label 1\nThis is a description with a é accent\n(Country of origin: France)");
+    	$this->assertEquals($result, "PIDRESS - Label 1\nThis is a description with a é accent\n(Country of origin: France)");
     }
 
     /**
@@ -165,10 +165,10 @@ class PdfDocTest extends PHPUnit_Framework_TestCase
         $file=dirname(__FILE__).'/img250x50.jpg';
         $result=pdf_getHeightForLogo($file);
         print __METHOD__." result=".$result."\n";
-    	$this->assertEquals($result,22);
+    	$this->assertEquals($result, 22);
         $file=dirname(__FILE__).'/img250x20.png';
         $result=pdf_getHeightForLogo($file);
         print __METHOD__." result=".$result."\n";
-    	$this->assertEquals($result,10.4);
+    	$this->assertEquals($result, 10.4);
     }
 }

@@ -1,4 +1,4 @@
-// Copyright (C) 2012	Regis Houssin	<regis.houssin@capnetworks.com>
+// Copyright (C) 2012	Regis Houssin	<regis.houssin@inodbox.com>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ $(document).ready(function() {
 				'-moz-border-radius':	 '10px',
 				'border-radius': 		 '10px'
 			},
-			
+
 			// styles applied when using $.growlUI
 			dolEventErrorCSS: {
 				width:  	'350px',
@@ -60,7 +60,7 @@ $(document).ready(function() {
 			}
 
 	};*/
-	
+
 	$.dolEventValid = function(title, message, timeout, onClose) {
 		var $m = $('<div class="dolEventValid"></div>');
 		if (title) $m.append('<h1>'+title+'</h1>');
@@ -73,7 +73,7 @@ $(document).ready(function() {
 			css: $.blockUI.events.dolEventValidCSS
 		});
 	};
-	
+
 	$.dolEventError = function(title, message, timeout, onClose) {
 		var $m = $('<div class="dolEventError"></div>');
 		if (title) $m.append('<h1>'+title+'</h1>');
@@ -87,7 +87,7 @@ $(document).ready(function() {
 		});
 		$('.dolEventError').click($.unblockUI);
 	};
-	
+
 	$.pleaseBePatient = function(message) {
 		$.blockUI({
 			message: message,

@@ -17,7 +17,7 @@
  */
 
 /**
- *  \file       htdocs/core/triggers/interface_50_modStripe_Stripe.class.php
+ *  \file       htdocs/core/triggers/interface_80_modStripe_Stripe.class.php
  *  \ingroup    core
  *  \brief      Fichier
  *  \remarks    Son propre fichier d'actions peut etre cree par recopie de celui-ci:
@@ -35,6 +35,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
  */
 class InterfaceStripe
 {
+    /**
+     * @var DoliDB Database handler.
+     */
     public $db;
 
     /**
@@ -111,13 +114,12 @@ class InterfaceStripe
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
-		// Put here code you want to execute when a Dolibarr business events occurs.
+		// Put here code you want to execute when a Dolibarr business event occurs.
 		// Data and type of action are stored into $object and $action
 		global $langs, $db, $conf;
-		$langs->load("members");
-		$langs->load("users");
-		$langs->load("mails");
-		$langs->load('other');
+
+		// Load translation files required by the page
+        $langs->loadLangs(array("members","other","users","mails"));
 
 		require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 		$stripe = new Stripe($db);
@@ -145,21 +147,85 @@ class InterfaceStripe
 				if ($customer)
 				{
 					$namecleaned = $object->name ? $object->name : null;
-					$vatcleaned = $object->tva_intra ? $object->tva_intra : null;	// We force data to "null" if empty as expected by Stripe
+					$vatcleaned = $object->tva_intra ? $object->tva_intra : null;	// Example of valid numbers are 'FR12345678901' or 'FR12345678902'
+					$desccleaned = $object->name_alias ? $object->name_alias : null;
+					$taxexemptcleaned = $object->tva_assuj ? 'none' : 'exempt';
+					$langcleaned = $object->default_lang ? array(substr($object->default_lang, 0, 2)) : null;
+					/*$taxinfo = array('type'=>'vat');
+					if ($vatcleaned)
+					{
+						$taxinfo["tax_id"] = $vatcleaned;
+					}
+					// We force data to "null" if not defined as expected by Stripe
+					if (empty($vatcleaned)) $taxinfo=null;*/
 
 					// Detect if we change a Stripe info (email, description, vat id)
 					$changerequested = 0;
 					if (! empty($object->email) && $object->email != $customer->email) $changerequested++;
-					if ($namecleaned != $customer->description) $changerequested++;
-					if ($vatcleaned != $customer->business_vat_id) $changerequested++;
+					/* if ($namecleaned != $customer->description) $changerequested++;
+					if (! isset($customer->tax_info['tax_id']) && ! is_null($vatcleaned)) $changerequested++;
+					elseif (isset($customer->tax_info['tax_id']) && is_null($vatcleaned)) $changerequested++;
+					elseif (isset($customer->tax_info['tax_id']) && ! is_null($vatcleaned))
+					{
+						if ($vatcleaned != $customer->tax_info['tax_id']) $changerequested++;
+					} */
+					if ($namecleaned != $customer->name) $changerequested++;
+					if ($desccleaned != $customer->description) $changerequested++;
+					if (($customer->tax_exempt == 'exempt' && ! $object->tva_assuj) || (! $customer->tax_exempt == 'exempt' && empty($object->tva_assuj))) $changerequested++;
+					if (! isset($customer->tax_ids['data']) && ! is_null($vatcleaned)) $changerequested++;
+					elseif (isset($customer->tax_ids['data']))
+					{
+						$taxinfo = reset($customer->tax_ids['data']);
+						if (empty($taxinfo) && ! empty($vatcleaned)) $changerequested++;
+						if (isset($taxinfo->value) && $vatcleaned != $taxinfo->value) $changerequested++;
+					}
 
 					if ($changerequested)
 					{
-						if (! empty($object->email)) $customer->email = $object->email;
+						/*if (! empty($object->email)) $customer->email = $object->email;
 						$customer->description = $namecleaned;
-						$customer->business_vat_id = $vatcleaned;
+						if (empty($taxinfo)) $customer->tax_info = array('type'=>'vat', 'tax_id'=>null);
+						else $customer->tax_info = $taxinfo; */
+						$customer->name = $namecleaned;
+						$customer->description = $desccleaned;
+						$customer->preferred_locales = $langcleaned;
+						$customer->tax_exempt = $taxexemptcleaned;
 
-						$customer->save();
+						try {
+							// Update Tax info on Stripe
+							if (! empty($conf->global->STRIPE_SAVE_TAX_IDS))	// We setup to save Tax info on Stripe side. Warning: This may result in error when saving customer
+							{
+								if (! empty($vatcleaned))
+								{
+									$isineec=isInEEC($object);
+									if ($object->country_code && $isineec)
+									{
+										//$taxids = $customer->allTaxIds($customer->id);
+										$customer->createTaxId($customer->id, array('type'=>'eu_vat', 'value'=>$vatcleaned));
+									}
+								}
+								else
+								{
+									$taxids = $customer->allTaxIds($customer->id);
+									if (is_array($taxids->data))
+									{
+										foreach($taxids->data as $taxidobj)
+										{
+											$customer->deleteTaxId($customer->id, $taxidobj->id);
+										}
+									}
+								}
+							}
+
+							// Update Customer on Stripe
+							$customer->save();
+						}
+						catch(Exception $e)
+						{
+						    //var_dump(\Stripe\Stripe::getApiVersion());
+							$this->errors[] = $e->getMessage();
+							$ok = -1;
+						}
 					}
 				}
 			}
@@ -172,7 +238,13 @@ class InterfaceStripe
 			$customer = $stripe->customerStripe($object, $stripeacc, $servicestatus);
 			if ($customer)
 			{
-				$customer->delete();
+				try {
+					$customer->delete();
+				}
+				catch(Exception $e)
+				{
+					dol_syslog("Failed to delete Stripe customer ".$e->getMessage(), LOG_WARNING);
+				}
 			}
 
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_account";
@@ -184,7 +256,6 @@ class InterfaceStripe
 		if ($action == 'COMPANYPAYMENTMODE_MODIFY' && $object->type == 'card') {
 
 			// For creation of credit card, we do not create in Stripe automatically
-
 		}
 		if ($action == 'COMPANYPAYMENTMODE_MODIFY' && $object->type == 'card') {
 			dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
@@ -209,7 +280,7 @@ class InterfaceStripe
 						if ($card) {
 							$card->metadata=array('dol_id'=>$object->id, 'dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>(empty($_SERVER['REMOTE_ADDR'])?'':$_SERVER['REMOTE_ADDR']));
 							try {
-								$card->save($dataforcard);
+								$card->save();
 							}
 							catch(Exception $e)
 							{

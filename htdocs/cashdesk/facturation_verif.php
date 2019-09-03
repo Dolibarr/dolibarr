@@ -29,10 +29,10 @@ require_once DOL_DOCUMENT_ROOT.'/cashdesk/class/Facturation.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
-$action = GETPOST('action','alpha');
+$action = GETPOST('action', 'alpha');
 
 $obj_facturation = unserialize($_SESSION['serObjFacturation']);
-unset ($_SESSION['serObjFacturation']);
+unset($_SESSION['serObjFacturation']);
 
 
 switch($action)
@@ -49,11 +49,11 @@ switch($action)
 			// Recuperation des donnees en fonction de la source (liste deroulante ou champ texte) ...
 			if ( $_POST['hdnSource'] == 'LISTE' )
 			{
-				$sql.= " AND p.rowid = ".$_POST['selProduit'];
+				$sql.= " AND p.rowid = ".((int) GETPOST('selProduit', 'int'));
 			}
-			else if ( $_POST['hdnSource'] == 'REF' )
+			elseif ( $_POST['hdnSource'] == 'REF' )
 			{
-				$sql.= " AND p.ref = '".$_POST['txtRef']."'";
+				$sql.= " AND p.ref = '".$db->escape(GETPOST('txtRef', 'alpha'))."'";
 			}
 
 			$result = $db->query($sql);
@@ -64,7 +64,7 @@ switch($action)
 				{
 					$ret=array();
 					$tab = $db->fetch_array($result);
-					foreach ( $tab as $key => $value )
+					foreach ($tab as $key => $value)
 					{
 						$ret[$key] = $value;
 					}
@@ -163,7 +163,7 @@ switch($action)
 					{
 						$filtre = $ret['ref'];
 					}
-					else if ( $_POST['hdnSource'] == 'REF' )
+					elseif ( $_POST['hdnSource'] == 'REF' )
 					{
 						$filtre = $_POST['txtRef'];
 					}
@@ -197,7 +197,7 @@ switch($action)
 		break;
 
 	case 'change_thirdparty':	// We have clicked on button "Modify" a thirdparty
-		$newthirdpartyid = GETPOST('CASHDESK_ID_THIRDPARTY','int');
+		$newthirdpartyid = GETPOST('CASHDESK_ID_THIRDPARTY', 'int');
 		if ($newthirdpartyid > 0)
 		{
 		    $_SESSION["CASHDESK_ID_THIRDPARTY"] = $newthirdpartyid;
@@ -216,7 +216,6 @@ switch($action)
 			$obj_facturation->remisePercent($_POST['txtRemise']);
 			$obj_facturation->ajoutArticle();	// This add an entry into $_SESSION['poscart']
 			// We update prixTotalTtc
-
 		}
 
 		$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menutpl=facturation';
@@ -227,7 +226,6 @@ switch($action)
 
 		$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menutpl=facturation';
 		break;
-
 }
 
 // We saved object obj_facturation
@@ -235,4 +233,3 @@ $_SESSION['serObjFacturation'] = serialize($obj_facturation);
 //var_dump($_SESSION['serObjFacturation']);
 header('Location: '.$redirection);
 exit;
-

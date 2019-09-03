@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2014-2018  Alexandre Spangaro   <aspangaro@zendsi.com>
- * Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
+/* Copyright (C) 2014-2018  Alexandre Spangaro   <aspangaro@open-dsi.fr>
+ * Copyright (C) 2015-2018  Frederic France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,40 +25,77 @@
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 
 
-/** \class      PaymentLoan
- *  \brief      Class to manage payments of loans
+/**
+ * Class to manage payments of loans
  */
 class PaymentLoan extends CommonObject
 {
-	public $element='payment_loan';			//!< Id that identify managed objects
-	public $table_element='payment_loan';	//!< Name of table without prefix where object is stored
-
-	var $fk_loan;
-	var $datec='';
-	var $tms='';
-	var $datep='';
-	var $amounts=array();   // Array of amounts
-	var $amount_capital;    // Total amount of payment
-	var $amount_insurance;
-	var $amount_interest;
-	var $fk_typepayment;
-	var $num_payment;
-	var $fk_bank;
-	var $fk_user_creat;
-	var $fk_user_modif;
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element='payment_loan';
 
 	/**
-	 * @deprecated
-	 * @see amount, amounts
+	 * @var string Name of table without prefix where object is stored
 	 */
-	var $total;
+	public $table_element='payment_loan';
+
+    /**
+     * @var int Loan ID
+     */
+    public $fk_loan;
+
+    /**
+     * @var string Create date
+     */
+    public $datec='';
+
+    public $tms='';
+
+    /**
+     * @var string Payment date
+     */
+    public $datep='';
+
+    public $amounts=array();   // Array of amounts
+
+    public $amount_capital;    // Total amount of payment
+
+    public $amount_insurance;
+
+    public $amount_interest;
+
+    /**
+     * @var int Payment type ID
+     */
+    public $fk_typepayment;
+
+    /**
+     * @var int Payment ID
+     */
+    public $num_payment;
+
+    /**
+     * @var int Bank ID
+     */
+    public $fk_bank;
+
+    /**
+     * @var int User ID
+     */
+    public $fk_user_creat;
+
+    /**
+     * @var int user ID
+     */
+    public $fk_user_modif;
 
 	/**
 	 *	Constructor
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		$this->db = $db;
 	}
@@ -70,7 +107,7 @@ class PaymentLoan extends CommonObject
 	 *  @param      User		$user   User making payment
 	 *  @return     int     			<0 if KO, id of payment if OK
 	 */
-	function create($user)
+	public function create($user)
 	{
 		global $conf, $langs;
 
@@ -79,24 +116,24 @@ class PaymentLoan extends CommonObject
 		$now=dol_now();
 
 		// Validate parameters
-		if (! $this->datepaid)
+		if (! $this->datep)
 		{
 			$this->error='ErrorBadValueForParameter';
 			return -1;
 		}
 
 		// Clean parameters
-		if (isset($this->fk_loan)) 			$this->fk_loan = trim($this->fk_loan);
+		if (isset($this->fk_loan)) $this->fk_loan = (int) $this->fk_loan;
 		if (isset($this->amount_capital))	$this->amount_capital = price2num($this->amount_capital?$this->amount_capital:0);
-		if (isset($this->amount_insurance))	$this->amount_insurance = price2num($this->amount_insurance?$this->amount_insurance:0);
+		if (isset($this->amount_insurance)) $this->amount_insurance = price2num($this->amount_insurance?$this->amount_insurance:0);
 		if (isset($this->amount_interest))	$this->amount_interest = price2num($this->amount_interest?$this->amount_interest:0);
-		if (isset($this->fk_typepayment))	$this->fk_typepayment = trim($this->fk_typepayment);
-		if (isset($this->num_payment))		$this->num_payment = trim($this->num_payment);
+		if (isset($this->fk_typepayment)) $this->fk_typepayment = (int) $this->fk_typepayment;
+		if (isset($this->num_payment)) $this->num_payment = (int) $this->num_payment;
 		if (isset($this->note_private))     $this->note_private = trim($this->note_private);
 		if (isset($this->note_public))      $this->note_public = trim($this->note_public);
-		if (isset($this->fk_bank))			$this->fk_bank = trim($this->fk_bank);
-		if (isset($this->fk_user_creat))	$this->fk_user_creat = trim($this->fk_user_creat);
-		if (isset($this->fk_user_modif))	$this->fk_user_modif = trim($this->fk_user_modif);
+		if (isset($this->fk_bank)) $this->fk_bank = (int) $this->fk_bank;
+		if (isset($this->fk_user_creat)) $this->fk_user_creat = (int) $this->fk_user_creat;
+		if (isset($this->fk_user_modif)) $this->fk_user_modif = (int) $this->fk_user_modif;
 
 		$totalamount = $this->amount_capital + $this->amount_insurance + $this->amount_interest;
 		$totalamount = price2num($totalamount);
@@ -112,7 +149,7 @@ class PaymentLoan extends CommonObject
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."payment_loan (fk_loan, datec, datep, amount_capital, amount_insurance, amount_interest,";
 			$sql.= " fk_typepayment, num_payment, note_private, note_public, fk_user_creat, fk_bank)";
 			$sql.= " VALUES (".$this->chid.", '".$this->db->idate($now)."',";
-			$sql.= " '".$this->db->idate($this->datepaid)."',";
+			$sql.= " '".$this->db->idate($this->datep)."',";
 			$sql.= " ".$this->amount_capital.",";
 			$sql.= " ".$this->amount_insurance.",";
 			$sql.= " ".$this->amount_interest.",";
@@ -130,13 +167,11 @@ class PaymentLoan extends CommonObject
 				$this->error=$this->db->lasterror();
 				$error++;
 			}
-
 		}
 
 		if ($totalamount != 0 && ! $error)
 		{
 			$this->amount_capital=$totalamount;
-			$this->total=$totalamount;    // deprecated
 			$this->db->commit();
 			return $this->id;
 		}
@@ -154,7 +189,7 @@ class PaymentLoan extends CommonObject
 	 *  @param	int		$id         Id object
 	 *  @return int         		<0 if KO, >0 if OK
 	 */
-	function fetch($id)
+	public function fetch($id)
 	{
 		global $langs;
 		$sql = "SELECT";
@@ -209,8 +244,8 @@ class PaymentLoan extends CommonObject
 				$this->type_code = $obj->type_code;
 				$this->type_libelle = $obj->type_libelle;
 
-				$this->bank_account   = $obj->fk_account;
-				$this->bank_line      = $obj->fk_bank;
+				$this->bank_account = $obj->fk_account;
+				$this->bank_line = $obj->fk_bank;
 			}
 			$this->db->free($resql);
 
@@ -231,26 +266,25 @@ class PaymentLoan extends CommonObject
 	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
 	 *  @return int         			<0 if KO, >0 if OK
 	 */
-	function update($user=0, $notrigger=0)
+	public function update($user = 0, $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error=0;
 
 		// Clean parameters
-		if (isset($this->fk_loan)) $this->fk_loan=trim($this->fk_loan);
+		if (isset($this->fk_loan)) $this->fk_loan = (int) $this->fk_loan;
 		if (isset($this->amount_capital)) $this->amount_capital=trim($this->amount_capital);
 		if (isset($this->amount_insurance)) $this->amount_insurance=trim($this->amount_insurance);
 		if (isset($this->amount_interest)) $this->amount_interest=trim($this->amount_interest);
-		if (isset($this->fk_typepayment)) $this->fk_typepayment=trim($this->fk_typepayment);
-		if (isset($this->num_payment)) $this->num_payment=trim($this->num_payment);
+		if (isset($this->fk_typepayment)) $this->fk_typepayment = (int) $this->fk_typepayment;
+		if (isset($this->num_payment)) $this->num_payment = (int) $this->num_payment;
 		if (isset($this->note_private)) $this->note=trim($this->note_private);
 		if (isset($this->note_public)) $this->note=trim($this->note_public);
-		if (isset($this->fk_bank)) $this->fk_bank=trim($this->fk_bank);
-		if (isset($this->fk_user_creat)) $this->fk_user_creat=trim($this->fk_user_creat);
-		if (isset($this->fk_user_modif)) $this->fk_user_modif=trim($this->fk_user_modif);
+		if (isset($this->fk_bank)) $this->fk_bank = (int) $this->fk_bank;
+		if (isset($this->fk_user_creat)) $this->fk_user_creat = (int) $this->fk_user_creat;
+		if (isset($this->fk_user_modif)) $this->fk_user_modif = (int) $this->fk_user_modif;
 
 		// Check parameters
-		// Put here code to add control on parameters values
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."payment_loan SET";
@@ -320,7 +354,7 @@ class PaymentLoan extends CommonObject
 	 *  @param  int		$notrigger		0=launch triggers after, 1=disable triggers
 	 *  @return int						<0 if KO, >0 if OK
 	 */
-	function delete($user, $notrigger=0)
+	public function delete($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error=0;
@@ -347,10 +381,10 @@ class PaymentLoan extends CommonObject
 			if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 		}
 
-		if (! $error)
-		{
-			if (! $notrigger)
-			{
+		//if (! $error)
+		//{
+		//	if (! $notrigger)
+		//	{
 				// Uncomment this and change MYOBJECT to your own tag if you
 				// want this action call a trigger.
 
@@ -360,8 +394,8 @@ class PaymentLoan extends CommonObject
 				//$result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
 				//if ($result < 0) { $error++; $this->errors=$interface->errors; }
 				//// End call triggers
-			}
-		}
+		//	}
+		//}
 
 		// Commit or rollback
 		if ($error)
@@ -394,7 +428,7 @@ class PaymentLoan extends CommonObject
 	 *      @param  string	$emetteur_banque    Name of bank
 	 *      @return int                 		<0 if KO, >0 if OK
 	 */
-	function addPaymentToBank($user, $fk_loan, $mode, $label, $accountid, $emetteur_nom, $emetteur_banque)
+	public function addPaymentToBank($user, $fk_loan, $mode, $label, $accountid, $emetteur_nom, $emetteur_banque)
 	{
 		global $conf;
 
@@ -407,12 +441,12 @@ class PaymentLoan extends CommonObject
 			$acc = new Account($this->db);
 			$acc->fetch($accountid);
 
-			$total=$this->total;
+			$total=$this->amount_capital;
 			if ($mode == 'payment_loan') $total=-$total;
 
 			// Insert payment into llx_bank
-			$bank_line_id = $acc->addline(
-				$this->datepaid,
+            $bank_line_id = $acc->addline(
+				$this->datep,
 				$this->paymenttype,  // Payment mode id or code ("CHQ or VIR for example")
 				$label,
 				$total,
@@ -450,7 +484,7 @@ class PaymentLoan extends CommonObject
 				// Add link 'loan' in bank_url between invoice and bank transaction (for each invoice concerned by payment)
 				if ($mode == 'payment_loan')
 				{
-					$result=$acc->add_url_line($bank_line_id, $fk_loan, DOL_URL_ROOT.'/loan/card.php?id=', ($this->label?$this->label:''),'loan');
+					$result=$acc->add_url_line($bank_line_id, $fk_loan, DOL_URL_ROOT.'/loan/card.php?id=', ($this->label?$this->label:''), 'loan');
 					if ($result <= 0) dol_print_error($this->db);
 				}
 			}
@@ -472,20 +506,23 @@ class PaymentLoan extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Update link between loan's payment and the line generate in llx_bank
 	 *
 	 *  @param	int		$id_bank         Id if bank
 	 *  @return	int			             >0 if OK, <=0 if KO
 	 */
-	function update_fk_bank($id_bank)
+	public function update_fk_bank($id_bank)
 	{
+        // phpcs:enable
 		$sql = "UPDATE ".MAIN_DB_PREFIX."payment_loan SET fk_bank = ".$id_bank." WHERE rowid = ".$this->id;
 
 		dol_syslog(get_class($this)."::update_fk_bank", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
+		    $this->fk_bank = $id_bank;
 			return 1;
 		}
 		else
@@ -502,7 +539,7 @@ class PaymentLoan extends CommonObject
 	 * 	@param	int		$maxlen			Max length label
 	 *	@return	string					Chaine with URL
 	 */
-	function getNomUrl($withpicto=0,$maxlen=0)
+	public function getNomUrl($withpicto = 0, $maxlen = 0)
 	{
 		global $langs;
 
@@ -515,9 +552,9 @@ class PaymentLoan extends CommonObject
 			$link = '<a href="'.DOL_URL_ROOT.'/loan/payment/card.php?id='.$this->id.'">';
 			$linkend='</a>';
 
-			if ($withpicto) $result.=($link.img_object($langs->trans("ShowPayment").': '.$this->ref,'payment').$linkend.' ');
+			if ($withpicto) $result.=($link.img_object($langs->trans("ShowPayment").': '.$this->ref, 'payment').$linkend.' ');
 			if ($withpicto && $withpicto != 2) $result.=' ';
-			if ($withpicto != 2) $result.=$link.($maxlen?dol_trunc($this->ref,$maxlen):$this->ref).$linkend;
+			if ($withpicto != 2) $result.=$link.($maxlen?dol_trunc($this->ref, $maxlen):$this->ref).$linkend;
 		}
 
 		return $result;

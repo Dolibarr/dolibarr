@@ -22,7 +22,7 @@
  *       \brief      Page to define emailing targets
  */
 
-if (! defined('NOSTYLECHECK')) define('NOSTYLECHECK','1');
+if (! defined('NOSTYLECHECK')) define('NOSTYLECHECK', '1');
 
 require '../../main.inc.php';
 
@@ -45,10 +45,10 @@ if (! $user->rights->mailing->lire || $user->societe_id > 0)
 	accessforbidden();
 
 // Load variable for pagination
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
-$sortfield = GETPOST('sortfield','alpha');
-$sortorder = GETPOST('sortorder','alpha');
-$page = GETPOST('page','int');
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST('sortfield', 'alpha');
+$sortorder = GETPOST('sortorder', 'alpha');
+$page = GETPOST('page', 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -60,14 +60,14 @@ if (! $sortfield)
 
 $id = GETPOST('id', 'int');
 $rowid = GETPOST('rowid', 'int');
-$action = GETPOST('action','aZ09');
+$action = GETPOST('action', 'aZ09');
 $search_nom = GETPOST("search_nom");
 $search_prenom = GETPOST("search_prenom");
 $search_email = GETPOST("search_email");
 $template_id = GETPOST('template_id', 'int');
 
 // Do we click on purge search criteria ?
-if (GETPOST('button_removefilter_x','alpha')) {
+if (GETPOST('button_removefilter_x', 'alpha')) {
 	$search_nom = '';
 	$search_prenom = '';
 	$search_email = '';
@@ -84,9 +84,12 @@ if (empty($template_id)) {
 	$result = $advTarget->fetch($template_id);
 }
 
-if ($result < 0) {
-	setEventMessage($advTarget->error, 'errors');
-} else {
+if ($result < 0)
+{
+	setEventMessages($advTarget->error, $advTarget->errors, 'errors');
+}
+else
+{
 	if (! empty($advTarget->id)) {
 		$array_query = json_decode($advTarget->filtervalue, true);
 	}
@@ -101,7 +104,7 @@ if ($action == 'loadfilter') {
 	if (! empty($template_id)) {
 		$result = $advTarget->fetch($template_id);
 		if ($result < 0) {
-			setEventMessage($advTarget->error, 'errors');
+			setEventMessages($advTarget->error, $advTarget->errors, 'errors');
 		} else {
 			if (! empty($advTarget->id)) {
 				$array_query = json_decode($advTarget->filtervalue, true);
@@ -118,7 +121,7 @@ if ($action == 'add') {
 
 	// Get extra fields
 
-	foreach ( $_POST as $key => $value ) {
+	foreach ($_POST as $key => $value) {
 		// print '$key='.$key.' $value='.$value.'<BR>';
 		if (preg_match("/^options_.*(?<!_cnct)$/", $key)) {
 			// Special case for start date come with 3 inputs day, month, year
@@ -174,7 +177,7 @@ if ($action == 'add') {
 					'contact_create_st_dt',
 					'contact_create_end_dt'
 			);
-			foreach ( $specials_date_key as $date_key ) {
+			foreach ($specials_date_key as $date_key) {
 				if ($key == $date_key) {
 					$dt = GETPOST($date_key);
 					if (! empty($dt)) {
@@ -202,7 +205,7 @@ if ($action == 'add') {
 	// if ($array_query ['type_of_target'] == 1 || $array_query ['type_of_target'] == 3) {
 	$result = $advTarget->query_thirdparty($array_query);
 	if ($result < 0) {
-		setEventMessage($advTarget->error, 'errors');
+		setEventMessages($advTarget->error, $advTarget->errors, 'errors');
 	}
 	/*} else {
 		$advTarget->thirdparty_lines = array ();
@@ -211,7 +214,7 @@ if ($action == 'add') {
 	if ($user_contact_query && ($array_query['type_of_target'] == 1 || $array_query['type_of_target'] == 2 || $array_query['type_of_target'] == 4)) {
 		$result = $advTarget->query_contact($array_query, 1);
 		if ($result < 0) {
-			setEventMessage($advTarget->error, 'errors');
+			setEventMessages($advTarget->error, $advTarget->errors, 'errors');
 		}
 		// If use contact but no result use artefact to so not use socid into add_to_target
 		if (count($advTarget->contact_lines) == 0) {
@@ -222,7 +225,7 @@ if ($action == 'add') {
 	} else {
 		$advTarget->contact_lines = array ();
 	}
-	
+
 	if ((count($advTarget->thirdparty_lines) > 0) || (count($advTarget->contact_lines) > 0)) {
 		// Add targets into database
 		$obj = new mailing_advthirdparties($db);
@@ -236,15 +239,15 @@ if ($action == 'add') {
 		if (! empty($template_id)) {
 			$query_temlate_id = '&template_id=' . $template_id;
 		}
-		setEventMessages($langs->trans("XTargetsAdded",$result), null, 'mesgs');
+		setEventMessages($langs->trans("XTargetsAdded", $result), null, 'mesgs');
 		header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $id . $query_temlate_id);
 		exit();
 	}
 	if ($result == 0) {
-		setEventMessage($langs->trans("WarningNoEMailsAdded"), 'warnings');
+		setEventMessages($langs->trans("WarningNoEMailsAdded"), null, 'warnings');
 	}
 	if ($result < 0) {
-		setEventMessage($obj->error, 'errors');
+		setEventMessages($obj->error, $obj->errors, 'errors');
 	}
 }
 
@@ -264,7 +267,7 @@ if ($action == 'savefilter' || $action == 'createfilter') {
 	$error = 0;
 
 	if ($action == 'createfilter' && empty($template_name)) {
-		setEventMessage($langs->trans('ErrorFieldRequired', $langs->trans('AdvTgtOrCreateNewFilter')), 'errors');
+		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('AdvTgtOrCreateNewFilter')), null, 'errors');
 		$error ++;
 	}
 
@@ -273,7 +276,7 @@ if ($action == 'savefilter' || $action == 'createfilter') {
 		$array_query = array ();
 
 		// Get extra fields
-		foreach ( $_POST as $key => $value ) {
+		foreach ($_POST as $key => $value) {
 			if (preg_match("/^options_.*(?<!_cnct)$/", $key)) {
 				// Special case for start date come with 3 inputs day, month, year
 				if (preg_match("/st_dt/", $key)) {
@@ -331,7 +334,7 @@ if ($action == 'savefilter' || $action == 'createfilter') {
 						'contact_create_st_dt',
 						'contact_create_end_dt'
 				);
-				foreach ( $specials_date_key as $date_key ) {
+				foreach ($specials_date_key as $date_key) {
 					if ($key == $date_key) {
 						$dt = GETPOST($date_key);
 						if (! empty($dt)) {
@@ -353,13 +356,13 @@ if ($action == 'savefilter' || $action == 'createfilter') {
 			$advTarget->name = $template_name;
 			$result = $advTarget->create($user);
 			if ($result < 0) {
-				setEventMessage($advTarget->error, 'errors');
+				setEventMessages($advTarget->error, $advTarget->errors, 'errors');
 			}
 		} elseif ($action == 'savefilter') {
-			
+
 			$result = $advTarget->update($user);
 			if ($result < 0) {
-				setEventMessage($advTarget->error, 'errors');
+				setEventMessages($advTarget->error, $advTarget->errors, 'errors');
 			}
 		}
 		$template_id = $advTarget->id;
@@ -369,7 +372,7 @@ if ($action == 'savefilter' || $action == 'createfilter') {
 if ($action == 'deletefilter') {
 	$result = $advTarget->delete($user);
 	if ($result < 0) {
-		setEventMessage($advTarget->error, 'errors');
+		setEventMessages($advTarget->error, $advTarget->errors, 'errors');
 	}
 	header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $id);
 	exit();
@@ -462,11 +465,11 @@ if ($object->fetch($id) >= 0) {
 
 	// Show email selectors
 	if ($object->statut == 0 && $user->rights->mailing->creer) {
-		
+
 		include DOL_DOCUMENT_ROOT . '/core/tpl/advtarget.tpl.php';
-		
 	}
 }
 
+// End of page
 llxFooter();
 $db->close();

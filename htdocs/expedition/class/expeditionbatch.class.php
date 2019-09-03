@@ -28,27 +28,30 @@
  */
 class ExpeditionLineBatch extends CommonObject
 {
-	var $element='expeditionlignebatch';			//!< Id that identify managed objects
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element='expeditionlignebatch';
+
 	private static $_table_element='expeditiondet_batch';		//!< Name of table without prefix where object is stored
 
-	var $sellby;
-	var $eatby;
-	var $batch;
-	var $qty;
-	var $dluo_qty; // deprecated, use qty
-	var $entrepot_id;
-	var $fk_origin_stock;
-	var $fk_expeditiondet;
+	public $sellby;
+	public $eatby;
+	public $batch;
+	public $qty;
+	public $dluo_qty; // deprecated, use qty
+	public $entrepot_id;
+	public $fk_origin_stock;
+	public $fk_expeditiondet;
 
     /**
      *  Constructor
      *
      *  @param	DoliDb		$db      Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
-        return 1;
     }
 
 	/**
@@ -57,7 +60,7 @@ class ExpeditionLineBatch extends CommonObject
 	 * @param	int		$id_stockdluo	Rowid in product_batch table
 	 * @return	int      		   	 -1 if KO, 1 if OK
 	 */
-	function fetchFromStock($id_stockdluo)
+	public function fetchFromStock($id_stockdluo)
 	{
 		$sql = "SELECT";
 		$sql.= " pb.batch,";
@@ -101,7 +104,7 @@ class ExpeditionLineBatch extends CommonObject
 	 * @param	int		$id_line_expdet		rowid of expedtiondet record
 	 * @return	int							<0 if KO, Id of record (>0) if OK
 	 */
-	function create($id_line_expdet)
+	public function create($id_line_expdet)
 	{
 		$error = 0;
 
@@ -152,7 +155,7 @@ class ExpeditionLineBatch extends CommonObject
 	 * @param	int		$id_expedition	rowid of shipment
 	 * @return 	int						-1 if KO, 1 if OK
 	 */
-	static function deletefromexp($db,$id_expedition)
+	public static function deletefromexp($db, $id_expedition)
 	{
 		$id_expedition = (int) $id_expedition;
 
@@ -178,7 +181,7 @@ class ExpeditionLineBatch extends CommonObject
 	 * @param	int			$fk_product			If provided, load also detailed information of lot
 	 * @return	int|array						-1 if KO, array of ExpeditionLineBatch if OK
 	 */
-	static function fetchAll($db, $id_line_expdet, $fk_product=0)
+	public static function fetchAll($db, $id_line_expdet, $fk_product = 0)
 	{
 		$sql="SELECT";
 		$sql.= " eb.rowid,";
@@ -234,5 +237,4 @@ class ExpeditionLineBatch extends CommonObject
 			return -1;
 		}
 	}
-
 }

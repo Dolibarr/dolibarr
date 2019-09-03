@@ -30,6 +30,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
  */
 class InterfaceTicketEmail extends DolibarrTriggers
 {
+    /**
+     * @var DoliDB Database handler.
+     */
     public $db;
 
     /**
@@ -106,6 +109,8 @@ class InterfaceTicketEmail extends DolibarrTriggers
     {
 		$ok = 0;
 
+		if (empty($conf->ticket->enabled)) return 0;     // Module not active, we do nothing
+
     	switch ($action) {
     		case 'TICKET_ASSIGNED':
 	            dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
@@ -116,6 +121,8 @@ class InterfaceTicketEmail extends DolibarrTriggers
 	                $res = $userstat->fetch($object->fk_user_assign);
 	                if ($res > 0)
 	                {
+	                    // Send email to notification email
+
 	                	if (empty($conf->global->TICKET_DISABLE_ALL_MAILS))
 	                	{
 	                		// Init to avoid errors
@@ -153,7 +160,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 	                        include_once DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php';
 		                    $mailfile = new CMailFile($subject, $sendto, $from, $message, $filepath, $mimetype, $filename, '', '', 0, -1);
 		                    if ($mailfile->error) {
-	                            setEventMessage($mailfile->error, 'errors');
+	                            setEventMessages($mailfile->error, $mailfile->errors, 'errors');
 		                    } else {
 		                        $result = $mailfile->sendfile();
 		                    }
@@ -182,7 +189,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 
 	            // Send email to notification email
 
-	            if (empty($conf->global->TICKET_DISABLE_ALL_MAILS) && empty($object->context['disableticketemail']))
+	            if (! empty($conf->global->TICKET_NOTIFICATION_EMAIL_TO) && empty($object->context['disableticketemail']))
 	            {
 		            $sendto = $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
 
@@ -222,6 +229,8 @@ class InterfaceTicketEmail extends DolibarrTriggers
 
 		                $message_admin = dol_nl2br($message_admin);
 
+		                $trackid = 'tic'.$object->id;
+
 		                if (!empty($conf->global->TICKET_DISABLE_MAIL_AUTOCOPY_TO)) {
 		                    $old_MAIN_MAIL_AUTOCOPY_TO = $conf->global->MAIN_MAIL_AUTOCOPY_TO;
 		                    $conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
@@ -241,7 +250,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 
 				// Send email to customer
 
-				if (empty($conf->global->TICKET_DISABLE_ALL_MAILS) && empty($object->context['disableticketemail']) && $object->notify_tiers_at_create)
+				if (empty($conf->global->TICKET_DISABLE_CUSTOMER_MAILS) && empty($object->context['disableticketemail']) && $object->notify_tiers_at_create)
 	            {
 		            $sendto = '';
 		            if (empty($user->socid) && empty($user->email)) {
@@ -296,12 +305,14 @@ class InterfaceTicketEmail extends DolibarrTriggers
 
 	                    $message_customer = dol_nl2br($message_customer);
 
+	                    $trackid = 'tic'.$object->id;
+
 	                    if (!empty($conf->global->TICKET_DISABLE_MAIL_AUTOCOPY_TO)) {
 	                        $old_MAIN_MAIL_AUTOCOPY_TO = $conf->global->MAIN_MAIL_AUTOCOPY_TO;
 	                        $conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
 	                    }
 	                    include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-			            $mailfile = new CMailFile($subject, $sendto, $from, $message_customer, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, -1);
+			            $mailfile = new CMailFile($subject, $sendto, $from, $message_customer, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, -1, '', '', $trackid);
 			            if ($mailfile->error) {
 	                        dol_syslog($mailfile->error, LOG_DEBUG);
 			            } else {
@@ -312,6 +323,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 	                    }
 	                }
 	            }
+
                 $ok = 1;
 	            break;
 
@@ -320,10 +332,6 @@ class InterfaceTicketEmail extends DolibarrTriggers
             	break;
 
            	case 'TICKET_MODIFY':
-           		dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
-           		break;
-
-           	case 'TICKET_MARK_READ':
            		dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
            		break;
 

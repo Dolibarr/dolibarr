@@ -24,9 +24,9 @@ function regexEvent(objet,evt,type)
     {
           case 'days':
               var regex= /^[0-9]{1}([.,]{1}[0-9]{1})?$/;
-   
+
               if(regex.test(objet.value) )
-              { 
+              {
                 var tmp=objet.value.replace(',','.');
                 if(tmp<=1.5){
                     var tmpint=parseInt(tmp);
@@ -41,15 +41,20 @@ function regexEvent(objet,evt,type)
               }else{
                  objet.value= '0';
             }
-          break; 
+          break;
           case 'hours':
               var regex= /^[0-9]{1,2}:[0-9]{2}$/;
               var regex2=/^[0-9]{1,2}$/;
+              var regex3= /^[0-9]{1}([.,]{1}[0-9]{1,2})?$/;
               if(!regex.test(objet.value))
-              { 
+              {
                   if(regex2.test(objet.value))
                     objet.value=objet.value+':00';
-                  else
+                  else if(regex3.test(objet.value)) {
+                    var tmp=parseFloat(objet.value.replace(',','.'));
+                    var rnd=Math.trunc(tmp);
+                    objet.value=rnd+':'+ Math.round(60*(tmp-rnd));
+                  } else
                     objet.value='';
               }
               /* alert(jQuery("#"+id).val()); */
@@ -58,25 +63,25 @@ function regexEvent(objet,evt,type)
               //var regex= /^[0-9:]{1}$/;
               //alert(event.charCode);
               var charCode = (evt.which) ? evt.which : event.keyCode;
-              
+
               if(((charCode >= 48) && (charCode <= 57)) || //num
                     (charCode===46) || (charCode===8)||// comma & periode
                     (charCode === 58) || (charCode==44) )// : & all charcode
               {
                   // ((charCode>=96) && (charCode<=105)) || //numpad
             	  return true;
-         
+
               }else
               {
                   return false;
               }
-                
-              break;    
+
+              break;
           default:
               break;
       }
-}    
-  
+}
+
 
 function pad(n) {
     return (n < 10) ? ("0" + n) : n;
@@ -85,12 +90,14 @@ function pad(n) {
 
 
 /* function from http://www.timlabonne.com/2013/07/parsing-a-time-string-with-javascript/ */
+/* timeStr must be a duration with format XX:YY (AM/PM not supported) */
 function parseTime(timeStr, dt)
 {
     if (!dt) {
         dt = new Date();
     }
- 
+
+    //var time = timeStr.match(/(\d+)(?::(\d\d))?\s*(p?)/i);
     var time = timeStr.match(/(\d+)(?::(\d\d))?/i);
     if (!time) {
         return -1;
@@ -111,10 +118,10 @@ function updateTotal(days,mode)
     {
         var total = new Date(0);
         total.setHours(0);
-        total.setMinutes(0);   
+        total.setMinutes(0);
         var nbline = document.getElementById('numberOfLines').value;
         for (var i=-1; i<nbline; i++)
-        { 
+        {
             var id='timespent['+i+']['+days+']';
             var taskTime= new Date(0);
             var element=document.getElementById(id);
@@ -122,7 +129,7 @@ function updateTotal(days,mode)
             {
             	/* alert(element.value);*/
                 if (element.value)
-                {   
+                {
                 	result=parseTime(element.value,taskTime);
                 }
                 else
@@ -136,14 +143,14 @@ function updateTotal(days,mode)
                 }
             }
 
-            var id='timeadded['+i+']['+days+']';   
+            var id='timeadded['+i+']['+days+']';
             var taskTime= new Date(0);
             var element=document.getElementById(id);
             if(element)
             {
             	/* alert(element.value);*/
                 if (element.value)
-                {   
+                {
                 	result=parseTime(element.value,taskTime);
                 }
                 else
@@ -167,7 +174,7 @@ function updateTotal(days,mode)
         		console.log(this.value)
             	alert(element.value);*/
                 if (this.value)
-                {   
+                {
                 	console.log(this.value+':00')
                 	result=parseTime(this.value+':00',taskTime);
                 }
@@ -191,7 +198,7 @@ function updateTotal(days,mode)
         		console.log(this.value)
             	alert(element.value);*/
                 if (this.value)
-                {   
+                {
                 	console.log('00:'+this.value)
                 	result=parseTime('00:'+"00".substring(0, 2 - this.value.length) + this.value,taskTime);
                 }
@@ -206,11 +213,11 @@ function updateTotal(days,mode)
         		console.log(total.getMinutes())
             }
         });
-        
+
         if (total.getHours() || total.getMinutes()) jQuery('.totalDay'+days).addClass("bold");
         else jQuery('.totalDay'+days).removeClass("bold");
     	jQuery('.totalDay'+days).text(pad(total.getHours())+':'+pad(total.getMinutes()));
-    	
+
     	var totalhour = 0;
     	var totalmin = 0;
         for (var i=0; i<7; i++)
@@ -232,14 +239,14 @@ function updateTotal(days,mode)
         var total =0;
         var nbline = document.getElementById('numberOfLines').value;
         for (var i=-1; i<nbline; i++)
-        { 
-            var id='timespent['+i+']['+days+']';   
+        {
+            var id='timespent['+i+']['+days+']';
             var taskTime= new Date(0);
             var element=document.getElementById(id);
             if(element)
             {
                 if (element.value)
-                {   
+                {
                     total+=parseInt(element.value);
 
                    }
@@ -249,13 +256,13 @@ function updateTotal(days,mode)
                 }
             }
 
-            var id='timeadded['+i+']['+days+']';   
+            var id='timeadded['+i+']['+days+']';
             var taskTime= new Date(0);
             var element=document.getElementById(id);
             if(element)
             {
                 if (element.value)
-                {   
+                {
                     total+=parseInt(element.value);
 
                    }
@@ -265,11 +272,9 @@ function updateTotal(days,mode)
                 }
             }
         }
-        
+
         if (total) jQuery('.totalDay'+days).addClass("bold");
         else jQuery('.totalDay'+days).removeClass("bold");
     	jQuery('.totalDay'+days).text(total);
     }
 }
-
-   

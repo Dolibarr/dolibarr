@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2006-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2006-2017 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2006-2017 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,15 +29,14 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ldap.lib.php';
 
-$langs->load("members");
-$langs->load("admin");
-$langs->load("ldap");
+// Load translation files required by the page
+$langs->loadLangs(array("admin","members","ldap"));
 
 $id = GETPOST('rowid', 'int');
-$action = GETPOST('action','alpha');
+$action = GETPOST('action', 'alpha');
 
 // Security check
-$result=restrictedArea($user,'adherent',$id,'adherent_type');
+$result=restrictedArea($user, 'adherent', $id, 'adherent_type');
 
 $object = new AdherentType($db);
 $object->fetch($id);
@@ -51,7 +50,7 @@ $hookmanager->initHooks(array('membertypeldapcard','globalcard'));
 
 
 $parameters=array();
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
@@ -154,27 +153,28 @@ $result=$ldap->connect_bind();
 if ($result > 0)
 {
     $info=$object->_load_ldap_info();
-    $dn=$object->_load_ldap_dn($info,1);
-    $search = "(".$object->_load_ldap_dn($info,2).")";
-    $records = $ldap->getAttribute($dn,$search);
+    $dn=$object->_load_ldap_dn($info, 1);
+    $search = "(".$object->_load_ldap_dn($info, 2).")";
+
+    $records = $ldap->getAttribute($dn, $search);
 
     //print_r($records);
 
-    // Affichage arbre
-    if ((! is_numeric($records) || $records != 0) && (! isset($records['count']) || $records['count'] > 0))
+    // Show tree
+    if (((! is_numeric($records)) || $records != 0) && (! isset($records['count']) || $records['count'] > 0))
     {
         if (! is_array($records))
         {
-            print '<tr '.$bc[false].'><td colspan="2"><font class="error">'.$langs->trans("ErrorFailedToReadLDAP").'</font></td></tr>';
+            print '<tr class="oddeven"><td colspan="2"><font class="error">'.$langs->trans("ErrorFailedToReadLDAP").'</font></td></tr>';
         }
         else
         {
-            $result=show_ldap_content($records,0,$records['count'],true);
+            $result=show_ldap_content($records, 0, $records['count'], true);
         }
     }
     else
     {
-        print '<tr '.$bc[false].'><td colspan="2">'.$langs->trans("LDAPRecordNotFound").' (dn='.$dn.' - search='.$search.')</td></tr>';
+        print '<tr class="oddeven"><td colspan="2">'.$langs->trans("LDAPRecordNotFound").' (dn='.$dn.' - search='.$search.')</td></tr>';
     }
 
     $ldap->unbind();
@@ -187,5 +187,6 @@ else
 
 print '</table>';
 
+// End of page
 llxFooter();
 $db->close();

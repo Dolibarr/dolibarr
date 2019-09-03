@@ -1,6 +1,7 @@
 <?php
 
 /* Copyright (C) 2015   Marcos García   <marcosgdf@gmail.com>
+ * Copyright (C) 2018   Charlene Benke  <charlie@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +38,18 @@ class WorkboardResponse
 	public $label;
 
 	/**
+	 * Short Label of the warning
+	 * @var string
+	 */
+	public $labelShort;
+
+	/**
+	 * infoKey of the warning
+	 * @var string
+	 */
+	public $infoKey = 'todo';
+
+	/**
 	 * URL to list to do items
 	 * @var string
 	 */
@@ -66,4 +79,9 @@ class WorkboardResponse
 	 */
 	public $nbtodolate = 0;
 
+	/**
+	 * total price of items
+	 * @var int
+	 */
+	public $total = 0;
 }

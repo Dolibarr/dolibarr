@@ -44,9 +44,9 @@ function marges_admin_prepare_head()
 	// Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname);   												to remove a tab
-	complete_head_from_modules($conf,$langs,'',$head,$h,'margesadmin');
+	complete_head_from_modules($conf, $langs, '', $head, $h, 'margesadmin');
 
-	complete_head_from_modules($conf,$langs,'',$head,$h,'margesadmin','remove');
+	complete_head_from_modules($conf, $langs, '', $head, $h, 'margesadmin', 'remove');
 
 	return $head;
 }
@@ -88,7 +88,7 @@ function marges_prepare_head()
 	$head[$h][1] = $langs->trans($title);
 	$head[$h][2] = 'agentMargins';
 
-	
+
 	if ($user->rights->margins->creer) {
 		$h++;
 		$head[$h][0] = DOL_URL_ROOT."/margin/checkMargins.php";
@@ -96,8 +96,8 @@ function marges_prepare_head()
 		$head[$h][2] = 'checkMargins';
 	}
 
-	complete_head_from_modules($conf,$langs,null,$head,$h,'margins','remove');
-	complete_head_from_modules($conf,$langs,null,$head,$h,'margins');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'margins', 'remove');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'margins');
 
 	return $head;
 }

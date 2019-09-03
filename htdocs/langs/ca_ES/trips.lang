@@ -21,17 +21,17 @@ ListToApprove=Pendent d'aprovació
 ExpensesArea=Àrea d'informes de despeses
 ClassifyRefunded=Classificar 'Retornat'
 ExpenseReportWaitingForApproval=S'ha generat un nou informe de vendes per aprovació
-ExpenseReportWaitingForApprovalMessage=A new expense report has been submitted and is waiting for approval.<br> - User: %s<br> - Period: %s<br>Click here to validate: %s
+ExpenseReportWaitingForApprovalMessage=S'ha enviat un nou informe de despeses i està pendent d'aprovació. <br> - Usuari: %s <br> - Període: %s <br> Cliqueu aquí per validar: %s
 ExpenseReportWaitingForReApproval=S'ha generat un informe de despeses per a re-aprovació
-ExpenseReportWaitingForReApprovalMessage=An expense report has been submitted and is waiting for re-approval.<br>The %s, you refused to approve the expense report for this reason: %s.<br>A new version has been proposed and waiting for your approval.<br> - User: %s<br> - Period: %s<br>Click here to validate: %s
+ExpenseReportWaitingForReApprovalMessage=S'ha enviat un informe de despeses i està a l'espera de la seva aprovació.<br>%s, es va negar a aprovar l'informe de despeses per aquest motiu: %s.<br>S'ha proposat una nova versió i espera la seva aprovació.<br> - Usuari: %s<br> - Període: %s<br>Cliqueu aquí per validar: %s
 ExpenseReportApproved=S'ha aprovat un informe de despeses
-ExpenseReportApprovedMessage=The expense report %s was approved.<br> - User: %s<br> - Approved by: %s<br>Click here to show the expense report: %s
+ExpenseReportApprovedMessage=S'ha aprovat l'informe de despeses %s. <br> - Usuari: %s <br> - Aprovat per: %s <br> Feu clic aquí per veure l'informe de despeses: %s
 ExpenseReportRefused=S'ha rebutjat un informe de despeses
-ExpenseReportRefusedMessage=The expense report %s was refused.<br> - User: %s<br> - Refused by: %s<br> - Motive for refusal: %s<br>Click here to show the expense report: %s
+ExpenseReportRefusedMessage=El informe de despeses %s s'ha denegat. <br> - Usuari: %s <br> - Rebutjada per: %s <br> - Motiu de denegació: %s <br> Cliqueu aquí per veure l'informe de despeses: %s
 ExpenseReportCanceled=S'ha cancel·lat un informe de despeses
-ExpenseReportCanceledMessage=The expense report %s was canceled.<br> - User: %s<br> - Canceled by: %s<br> - Motive for cancellation: %s<br>Click here to show the expense report: %s
+ExpenseReportCanceledMessage=L'informe de despeses %s s'ha cancel·lat. <br> - Usuari: %s <br> - Cancel·lat per: %s <br> - Motiu de cancel·lació: %s <br> Cliqueu aquí per veure l'informe de despeses: %s
 ExpenseReportPaid=S'ha pagat un informe de despeses
-ExpenseReportPaidMessage=The expense report %s was paid.<br> - User: %s<br> - Paid by: %s<br>Click here to show the expense report: %s
+ExpenseReportPaidMessage=El informe de despeses %s s'ha pagat. <br> - Usuari: %s <br> - Pagat per: %s <br> Feu clic aquí per veure l'informe de despeses: %s
 TripId=Id d'informe de despeses
 AnyOtherInThisListCanValidate=Persona a informar per a validar
 TripSociete=Informació de l'empresa
@@ -73,23 +73,19 @@ EX_PAR_VP=PV d'aparcament
 EX_CAM_VP=PV de manteniment i reparació
 DefaultCategoryCar=Mode de transport per defecte
 DefaultRangeNumber=Número de rang per defecte
-
+UploadANewFileNow=Carrega ara un nou document
 Error_EXPENSEREPORT_ADDON_NotDefined=Error, la regla per a la numeració d'informes de despeses no es va definir a la configuració del mòdul "Informe de despeses"
 ErrorDoubleDeclaration=Has declarat un altre informe de despeses en un altre rang de dates semblant
 AucuneLigne=Encara no hi ha informe de despeses declarat
-
 ModePaiement=Tipus de pagament
-
 VALIDATOR=Usuari responsable de l'aprovació
 VALIDOR=Aprovat per
 AUTHOR=Desat per
 AUTHORPAIEMENT=Pagat per
 REFUSEUR=Denegat per
 CANCEL_USER=Eliminat per
-
 MOTIF_REFUS=Raó
 MOTIF_CANCEL=Raó
-
 DATE_REFUS=Data de denegació
 DATE_SAVE=Data de validació
 DATE_CANCEL=Data de cancelació
@@ -113,7 +109,6 @@ NoTripsToExportCSV=No hi ha informe de despeses per exportar en aquest període
 ExpenseReportPayment=Informe de despeses pagades
 ExpenseReportsToApprove=Informes de despeses per aprovar
 ExpenseReportsToPay=Informes de despeses a pagar
-CloneExpenseReport=Clona el informe de despeses
 ConfirmCloneExpenseReport=Estàs segur de voler clonar aquest informe de despeses ?
 ExpenseReportsIk=Índex d'informes de despesa en quilometratge
 ExpenseReportsRules=Normes d'informe de despeses
@@ -140,7 +135,6 @@ OnExpense=Línia de despesa
 ExpenseReportRuleSave=S'ha desat la regla del informe de despeses
 ExpenseReportRuleErrorOnSave=Error: %s
 RangeNum=Rang %d
-
 ExpenseReportConstraintViolationError=Violació de restricció de ID  [%s]: %s és superior a %s %s
 byEX_DAY=per dia (limitació a %s)
 byEX_MON=per mes (limitació a %s)
@@ -151,7 +145,7 @@ nolimitbyEX_DAY=per dia (sense límits)
 nolimitbyEX_MON=per mes (sense límits)
 nolimitbyEX_YEA=per any (sense límits)
 nolimitbyEX_EXP=per línia (sense límits)
-
 CarCategory=Categoria de cotxe
 ExpenseRangeOffset=Quantitat d'offset: %s
 RangeIk=Rang de quilometratge
+AttachTheNewLineToTheDocument=Adjunta la línia a un document carregat

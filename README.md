@@ -1,6 +1,10 @@
 # DOLIBARR ERP & CRM
 
-![Build status](https://img.shields.io/travis/Dolibarr/dolibarr/8.0.svg) ![Downloads per day](https://img.shields.io/sourceforge/dm/dolibarr.svg)
+![Downloads per day](https://img.shields.io/sourceforge/dw/dolibarr.svg)
+
+|7|8|9|10|develop|
+|----------|----------|----------|----------|----------|
+|![Build status](https://img.shields.io/travis/Dolibarr/dolibarr/7.0.svg)|![Build status](https://img.shields.io/travis/Dolibarr/dolibarr/8.0.svg)|![Build status](https://img.shields.io/travis/Dolibarr/dolibarr/9.0.svg)|![Build status](https://img.shields.io/travis/Dolibarr/dolibarr/10.0.svg)|![Build status](https://img.shields.io/travis/Dolibarr/dolibarr/develop.svg)|
 
 Dolibarr ERP & CRM is a modern software package to manage your organization's activity (contacts, suppliers, invoices, orders, stocks, agenda…).
 
@@ -24,27 +28,6 @@ Other licenses apply for some included dependencies. See [COPYRIGHT](https://git
 
 ## INSTALLING
 
-### Download
-
-Releases can be downloaded from [official website](https://www.dolibarr.org/).
-
-### Install from composer
-
-If you do not already have Composer installed, you may do so by following the instructions at [getcomposer.org](https://getcomposer.org/). On Linux and macOS, you may run the following commands:
-
-```bash
-curl -sS https://getcomposer.org/installer | php
-mv composer.phar /usr/local/bin/composer
-```
-
-On Windows, you can download and run https://getcomposer.org/Composer-Setup.exe
-
-You can then create a new project
-
-```bash
-composer create-project dolibarr/dolibarr erp
-```
-
 ### Simple setup
 
 If you have low technical skills and you're looking to install Dolibarr ERP/CRM in just a few clicks, you can use one of the packaged versions:
@@ -53,16 +36,23 @@ If you have low technical skills and you're looking to install Dolibarr ERP/CRM 
 - DoliDeb for Debian or Ubuntu
 - DoliRpm for Redhat, Fedora, OpenSuse, Mandriva or Mageia
 
+Releases can be downloaded from [official website](https://www.dolibarr.org/).
+
 ### Advanced setup
 
 You can use a Web server and a supported database (MariaDB, MySQL or PostgreSQL) to install the standard version.
 
-- Uncompress the downloaded archive
-- Copy the "dolibarr" directory and all its files inside your web server root or anywhere you'd like and set up your web server to use "*dolibarr/htdocs*" as root for a new web server virtual host (second choice need to be server administrator)
-- Create an empty `htdocs/conf/conf.php` file and set permissions for your web server user (*write* permissions will be removed once install is finished)
+- Uncompress the downloaded .zip archive to copy the "dolibarr/htdocs" directory and all its files inside your web server root or get the files directly from GitHub (recommanded if you known git): 
+
+  git clone https://github.com/dolibarr/dolibarr -b x.y     (where x.y is main version like 3.6, 9.0, ...)
+
+- Set up your web server to use "*dolibarr/htdocs*" as root if your web server does not have an already defined directory to point to. 
+ 
+- Create an empty `htdocs/conf/conf.php` file and set *write* permissions for your web server user (*write* permission will be removed once install is finished)
+
 - From your browser, go to the dolibarr "install/" page
 
-    The URL will depends on choices made in the first step:
+    The URL will depends on how you web setup was setup to point to your dolibarr installation. It may looks like:
 
         http://localhost/dolibarr/htdocs/install/
         
@@ -75,6 +65,11 @@ You can use a Web server and a supported database (MariaDB, MySQL or PostgreSQL)
     	http://yourdolibarrvirtualhost/install/
    
 - Follow the installer instructions
+
+### Saas/Cloud setup
+
+If you don't have time to install it yourself, you can try some commercial 'ready to use' Cloud offers (See https://saas.dolibarr.org). However, this third solution is not free.
+
 
 
 ## UPGRADING
@@ -125,7 +120,6 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 - Donations management
 - Reporting
 - Data export/import
-- Thirdparties and/or products categories
 - Barcodes support
 - Margin calculations
 - LDAP connectivity
@@ -143,17 +137,19 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 - Multi-company by adding of an external module.
 - Very user friendly and easy to use.
 - Highly customizable: enable only the modules you need, add user personalized fields, choose your skin, several menu managers (can be used by internal users as a back-office with a particular menu, or by external users as a front-office with another one)
-- Works with PHP 5.3+ and MariaDB 5.0.3+, MySQL 5.0.3+ or PostgreSQL 8.1.4+ (See requirements on the [Wiki](https://wiki.dolibarr.org/index.php/Prerequisite))
+- Works with PHP 5.5+ and MariaDB 5.0.3+, MySQL 5.0.3+ or PostgreSQL 8.1.4+ (See requirements on the [Wiki](https://wiki.dolibarr.org/index.php/Prerequisite))
 - Compatible with all Cloud solutions that match MySQL, PHP or PostgreSQL prerequisites.
 - APIs.
 - An easy to understand, maintain and develop code (PHP with no heavy framework; trigger and hook architecture)
-- Support for country specific features:
+- Support a lot of country specific features:
     - Spanish Tax RE and ISPF
     - French NPR VAT rate (VAT called "Non Perçue Récupérable" for DOM-TOM)
     - Canadian double taxes (federal/province) and other countries using cumulative VAT
     - Tunisian tax stamp
     - Argentina invoice numbering using A,B,C... 
     - Compatible with [European directives](http://europa.eu/legislation_summaries/taxation/l31057_en.htm) (2006/112/CE ... 2010/45/UE)
+    - Compatible with European GDPR rules
+    - ...
 - PDF or ODT generation for invoice, proposals, orders...
 - …
 

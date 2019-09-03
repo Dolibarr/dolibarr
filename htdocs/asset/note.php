@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2018      Alexandre Spangaro   <aspangaro@zendsi.com>
+ * Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
  */
 
 /**
- *  \file       note.php
+ *  \file       htdocs/asset/note.php
  *  \ingroup    asset
  *  \brief      Card with notes on Asset
  */
@@ -72,19 +72,19 @@ $form = new Form($db);
 
 //$help_url='EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes';
 $help_url='';
-llxHeader('',$langs->trans('Assets'),$help_url);
+llxHeader('', $langs->trans('Assets'), $help_url);
 
 if ($id > 0 || ! empty($ref))
 {
 	$object->fetch_thirdparty();
 
-	$head = AssetsPrepareHead($object);
+	$head = asset_prepare_head($object);
 
 	dol_fiche_head($head, 'note', $langs->trans("Asset"), -1, 'generic');
 
 	// Object card
 	// ------------------------------------------------------------
-	$linkback = '<a href="' .dol_buildpath('/asset/list.php',1) . '?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+	$linkback = '<a href="' .dol_buildpath('/asset/list.php', 1) . '?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
 	$morehtmlref='<div class="refidno">';
 	/*
@@ -144,6 +144,6 @@ if ($id > 0 || ! empty($ref))
 	dol_fiche_end();
 }
 
-
+// End of page
 llxFooter();
 $db->close();

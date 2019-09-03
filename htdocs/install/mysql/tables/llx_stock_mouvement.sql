@@ -33,7 +33,9 @@ create table llx_stock_mouvement
   fk_user_author  integer,							-- Id user making movement
   label           varchar(255),						-- Comment on movement
   inventorycode   varchar(128),						-- Code used to group different movement line into one operation (may be an inventory, a mass picking)
+  fk_project	  integer,
   fk_origin       integer,
   origintype      varchar(32),
-  model_pdf       varchar(255)
+  model_pdf       varchar(255),
+  fk_projet       integer NOT NULL DEFAULT 0
 )ENGINE=innodb;

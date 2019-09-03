@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017		Alexandre Spangaro   <aspangaro@zendsi.com>
+/* Copyright (C) 2017		Alexandre Spangaro   <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 
 /**
  * \file		htdocs/accountancy/class/accountingjournal.class.php
- * \ingroup		Advanced accountancy
+ * \ingroup		Accountancy (Double entries)
  * \brief		File of class to manage accounting journals
  */
 
@@ -26,16 +26,44 @@
  */
 class AccountingJournal extends CommonObject
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='accounting_journal';
+
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='accounting_journal';
+
+	/**
+	 * @var int Field with ID of parent key if this field has a parent
+	 */
 	public $fk_element = '';
-	public $ismultientitymanaged = 0;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+
+	/**
+	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var int
+	 */
+	public $ismultientitymanaged = 0;
+
+	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
 	public $picto = 'generic';
 
-	var $rowid;
+	/**
+	 * @var int ID
+	 */
+	public $rowid;
 
 	public $code;
-	public $label;
+
+	/**
+     * @var string Accounting Journal label
+     */
+    public $label;
+
 	public $nature;		// 1:various operations, 2:sale, 3:purchase, 4:bank, 5:expense-report, 8:inventory, 9: has-new
 	public $active;
 
@@ -46,9 +74,10 @@ class AccountingJournal extends CommonObject
 	 *
 	 * @param DoliDB $db Database handle
 	 */
-	function __construct($db) {
-		$this->db = $db;
-	}
+    public function __construct($db)
+    {
+        $this->db = $db;
+    }
 
 	/**
 	 * Load an object from database
@@ -57,7 +86,7 @@ class AccountingJournal extends CommonObject
 	 * @param 	string 	$journal_code		Journal code
 	 * @return	int							<0 if KO, Id of record if OK and found
 	 */
-	function fetch($rowid = null, $journal_code = null)
+	public function fetch($rowid = null, $journal_code = null)
 	{
 		global $conf;
 
@@ -117,13 +146,14 @@ class AccountingJournal extends CommonObject
 	 *
 	 * @return int <0 if KO, >0 if OK
 	 */
-	function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND') {
+    public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
+    {
 		$sql = "SELECT rowid, code, label, nature, active";
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
 		// Manage filter
 		$sqlwhere = array();
 		if (count($filter) > 0) {
-			foreach ( $filter as $key => $value ) {
+			foreach ($filter as $key => $value) {
 				if ($key == 't.code' || $key == 't.label' || $key == 't.nature') {
 					$sqlwhere[] = $key . '\'' . $this->db->escape($value) . '\'';
 				} elseif ($key == 't.rowid' || $key == 't.active') {
@@ -183,7 +213,7 @@ class AccountingJournal extends CommonObject
 	 * @param	int  	$notooltip		1=Disable tooltip
 	 * @return	string	String with URL
 	 */
-	function getNomUrl($withpicto = 0, $withlabel = 0, $nourl = 0, $moretitle='',$notooltip=0)
+	public function getNomUrl($withpicto = 0, $withlabel = 0, $nourl = 0, $moretitle = '', $notooltip = 0)
 	{
 		global $langs, $conf, $user;
 
@@ -197,7 +227,7 @@ class AccountingJournal extends CommonObject
 		if (! empty($this->code))
 			$label .= '<br><b>'.$langs->trans('Code') . ':</b> ' . $this->code;
 		if (! empty($this->label))
-			$label .= '<br><b>'.$langs->trans('Label') . ':</b> ' . $this->label;
+			$label .= '<br><b>'.$langs->trans('Label') . ':</b> ' . $langs->transnoentities($this->label);
 		if ($moretitle) $label.=' - '.$moretitle;
 
 		$linkclose='';
@@ -224,7 +254,7 @@ class AccountingJournal extends CommonObject
 		}
 
 		$label_link = $this->code;
-		if ($withlabel) $label_link .= ' - ' . $this->label;
+		if ($withlabel) $label_link .= ' - ' . $langs->transnoentities($this->label);
 
 		$result .= $linkstart;
 		if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
@@ -240,11 +270,12 @@ class AccountingJournal extends CommonObject
 	 *  @param	int		$mode		  0=libelle long, 1=libelle court
 	 *  @return	string 				   Label of type
 	 */
-	function getLibType($mode=0)
+	public function getLibType($mode = 0)
 	{
-		return $this->LibType($this->nature,$mode);
+		return $this->LibType($this->nature, $mode);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return type of an accounting journal
 	 *
@@ -252,8 +283,9 @@ class AccountingJournal extends CommonObject
 	 *  @param  int		$mode		  	0=libelle long, 1=libelle court
 	 *  @return string 				   	Label of type
 	 */
-	function LibType($nature,$mode=0)
+	public function LibType($nature, $mode = 0)
 	{
+        // phpcs:enable
 		global $langs;
 
 		$langs->loadLangs(array("accountancy"));
@@ -262,20 +294,20 @@ class AccountingJournal extends CommonObject
 		{
 			$prefix='';
 			if ($nature == 9) return $langs->trans('AccountingJournalType9');
-			if ($nature == 5) return $langs->trans('AccountingJournalType5');
-			if ($nature == 4) return $langs->trans('AccountingJournalType4');
-			if ($nature == 3) return $langs->trans('AccountingJournalType3');
-			if ($nature == 2) return $langs->trans('AccountingJournalType2');
-			if ($nature == 1) return $langs->trans('AccountingJournalType1');
+			elseif ($nature == 5) return $langs->trans('AccountingJournalType5');
+			elseif ($nature == 4) return $langs->trans('AccountingJournalType4');
+			elseif ($nature == 3) return $langs->trans('AccountingJournalType3');
+			elseif ($nature == 2) return $langs->trans('AccountingJournalType2');
+			elseif ($nature == 1) return $langs->trans('AccountingJournalType1');
 		}
-		if ($mode == 1)
+		elseif ($mode == 1)
 		{
 			if ($nature == 9) return $langs->trans('AccountingJournalType9');
-			if ($nature == 5) return $langs->trans('AccountingJournalType5');
-			if ($nature == 4) return $langs->trans('AccountingJournalType4');
-			if ($nature == 3) return $langs->trans('AccountingJournalType3');
-			if ($nature == 2) return $langs->trans('AccountingJournalType2');
-			if ($nature == 1) return $langs->trans('AccountingJournalType1');
+			elseif ($nature == 5) return $langs->trans('AccountingJournalType5');
+			elseif ($nature == 4) return $langs->trans('AccountingJournalType4');
+			elseif ($nature == 3) return $langs->trans('AccountingJournalType3');
+			elseif ($nature == 2) return $langs->trans('AccountingJournalType2');
+			elseif ($nature == 1) return $langs->trans('AccountingJournalType1');
 		}
 	}
 }
