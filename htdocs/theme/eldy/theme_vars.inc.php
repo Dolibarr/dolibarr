@@ -74,7 +74,7 @@ $colortextlink='10, 10, 100';
 $fontsize='0.86em';
 $fontsizesmaller='0.75em';
 $topMenuFontSize='1.2em';
-$toolTipBgColor='rgba(255, 255, 255, 0.96);';
+$toolTipBgColor='rgba(255, 255, 255, 0.96)';
 $toolTipFontColor='#333';
 
 // text color

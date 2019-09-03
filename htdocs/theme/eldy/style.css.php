@@ -228,13 +228,15 @@ print 'dol_screenwidth='.$_SESSION['dol_screenwidth']."\n";
 print 'dol_screenheight='.$_SESSION['dol_screenheight']."\n";
 print 'fontsize='.$fontsize."\n";
 print 'nbtopmenuentries='.$nbtopmenuentries."\n";
-print 'fontsizesmaller='.$fontsizesmaller;
+print 'fontsizesmaller='.$fontsizesmaller."\n";
 print 'topMenuFontSize='.$topMenuFontSize."\n";
 print 'toolTipBgColor='.$toolTipBgColor."\n";
 print 'toolTipFontColor='.$toolTipFontColor."\n";
+print 'conf->global->THEME_AGRESSIVITY_RATIO='.$conf->global->THEME_AGRESSIVITY_RATIO." (must be between -100 and +100)\n";
 print '*/'."\n";
 
 
+// Include the global.inc.php that include the badges, btn, info-box, dropdown, progress...
 require __DIR__ . '/global.inc.php';
 
 
