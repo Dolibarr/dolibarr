@@ -2037,7 +2037,7 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 
             $bugbaseurl = 'https://github.com/Dolibarr/dolibarr/issues/new?labels=Bug';
 			$bugbaseurl.= '&title=';
-			$bugbaseurl.= urlencode("Bug: ");			
+			$bugbaseurl.= urlencode("Bug: ");
             $bugbaseurl.= '&body=';
             $bugbaseurl.= urlencode("# Instructions\n");
             $bugbaseurl.= urlencode("*This is a template to help you report good issues. You may use [Github Markdown](https://help.github.com/articles/getting-started-with-writing-and-formatting-on-github/) syntax to format your issue report.*\n");
