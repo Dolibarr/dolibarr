@@ -196,7 +196,7 @@ if (empty($reshook))
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Supplier")), null, 'errors');
 		}
-		if ($_POST["price"] < 0 || $_POST["price"] == '')
+		if (price2num($_POST["price"]) < 0 || $_POST["price"] == '')
 		{
 			if ($price_expression === '')	// Return error of missing price only if price_expression not set
 			{
@@ -215,12 +215,12 @@ if (empty($reshook))
                 $langs->load("errors");
                 setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Currency")), null, 'errors');
             }
-            if ($_POST["multicurrency_tx"] <= 0 || $_POST["multicurrency_tx"] == '') {
+            if (price2num($_POST["multicurrency_tx"]) <= 0 || $_POST["multicurrency_tx"] == '') {
                 $error++;
                 $langs->load("errors");
                 setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("CurrencyRate")), null, 'errors');
             }
-            if ($_POST["multicurrency_price"] < 0 || $_POST["multicurrency_price"] == '') {
+            if (price2num($_POST["multicurrency_price"]) < 0 || $_POST["multicurrency_price"] == '') {
                 $error++;
                 $langs->load("errors");
                 setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("PriceCurrency")), null, 'errors');

@@ -273,7 +273,9 @@ if ($action == "addline")
 }
 
 if ($action == "freezone") {
-    $invoice->addline($desc, $number, 1, $conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS, 0, 0, 0, 0, '', 0, 0, 0, '', 'TTC', $number, 0, -1, 0, '', 0, 0, null, 0, '', 0, 100, '', null, 0);
+    $customer = new Societe($db);
+    $customer->fetch($invoice->socid);
+    $invoice->addline($desc, $number, 1, get_default_tva($mysoc, $customer), 0, 0, 0, 0, '', 0, 0, 0, '', 'TTC', $number, 0, -1, 0, '', 0, 0, null, 0, '', 0, 100, '', null, 0);
     $invoice->fetch($placeid);
 }
 
