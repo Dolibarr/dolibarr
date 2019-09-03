@@ -426,7 +426,7 @@ class Documents extends DolibarrApi
 	 * @param   string  $ref                Reference of object (This will define subdir automatically and store submited file into it)
 	 * @param   string  $subdir       		Subdirectory (Only if ref not provided)
 	 * @param   string  $filecontent        File content (string with file content. An empty file will be created if this parameter is not provided)
-	 * @param   string  $fileencoding       File encoding (''=no encoding, 'base64'=Base 64) {@example '' or 'base64'}
+	 * @param   string  $fileencoding       File encoding (''=no encoding, 'base64'=Base 64)
 	 * @param   int 	$overwriteifexists  Overwrite file if exists (1 by default)
      * @return  string
 	 *
