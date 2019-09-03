@@ -119,7 +119,7 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 	 *  @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
 	 *  @return	string					Example
 	 */
-	public function getExample($langs, $objsoc=0, $type=-1)
+	public function getExample($langs, $objsoc = 0, $type = -1)
 	{
 	    global $mysoc;
 
@@ -128,9 +128,9 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 
         if (! isset($conf->global->COMPANY_DIGITARIA_REMOVE_SPECIAL)) $thirdpartylabelexample = preg_replace('/([^a-z0-9])/i', '', $mysoc->name);
         $s.="<br>\n";
-        $s.=$this->prefixcustomeraccountancycode.strtoupper(substr($thirdpartylabelexample,0, $this->customeraccountancycodecharacternumber));
+        $s.=$this->prefixcustomeraccountancycode.strtoupper(substr($thirdpartylabelexample, 0, $this->customeraccountancycodecharacternumber));
         $s.="<br>\n";
-        $s.=$this->prefixsupplieraccountancycode.strtoupper(substr($thirdpartylabelexample,0, $this->supplieraccountancycodecharacternumber));
+        $s.=$this->prefixsupplieraccountancycode.strtoupper(substr($thirdpartylabelexample, 0, $this->supplieraccountancycodecharacternumber));
         return $s;
 	}
 
@@ -143,7 +143,7 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 	 *  @param  int		$type			'customer' or 'supplier'
 	 *  @return	int						>=0 if OK, <0 if KO
 	 */
-	public function get_code($db, $societe, $type='')
+	public function get_code($db, $societe, $type = '')
 	{
         // phpcs:enable
         $i = 0;
@@ -229,7 +229,7 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
      *  @param  int		$type			'customer' or 'supplier'
      *  @return	int						>=0 if OK, <0 if KO
      */
-    public function checkIfAccountancyCodeIsAlreadyUsed($db, $code, $type='')
+    public function checkIfAccountancyCodeIsAlreadyUsed($db, $code, $type = '')
     {
         if ($type == 'supplier')
         {
@@ -269,4 +269,3 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
         }
     }
 }
-
