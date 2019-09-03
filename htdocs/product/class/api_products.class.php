@@ -479,7 +479,7 @@ class Products extends DolibarrApi
      * @param  string $barcode          Barcode of element
      * @param  int    $includestockdata Load also information about stock (slower)
      * @return array|mixed                 Data without useless information
-     * 
+     *
      * @url GET {id}/purchase_prices
      *
      * @throws 401
@@ -502,16 +502,16 @@ class Products extends DolibarrApi
         $result = $this->product->fetch($id, $ref, $ref_ext, $barcode);
         if(! $result ) {
             throw new RestException(404, 'Product not found');
-        }         
-        
+        }
+
         if(! DolibarrApi::_checkAccessToResource('product', $this->product->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-        }         
-        
+        }
+
         if ($includestockdata) {
                $this->product->load_stock();
         }
-        
+
         if($result) {
         $this->product = new ProductFournisseur($this->db);
         $this->product->fetch($id, $ref);
