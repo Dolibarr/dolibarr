@@ -1865,11 +1865,11 @@ div.mainmenu {
 }
 
 ul.tmenu ul.tmenu {
-	background-color: rgb(<?php echo join(',', colorStringToArray($conf->global->THEME_ELDY_TOPMENU_BACK1)); ?>);
+	background-color: rgb(<?php echo join(',', colorStringToArray($colorbackhmenu1)); ?>);
 }
 
 
-	
+
 
 
 /* Login */
