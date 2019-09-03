@@ -774,9 +774,19 @@ abstract class CommonDocGenerator
 				//Add value to store price with currency
 				$array_to_fill=array_merge($array_to_fill, array($array_key.'_options_'.$key.'_currency' => $object->array_options['options_'.$key.'_currency']));
 			}
-			elseif($extrafields->attribute_type[$key] == 'select' || $extrafields->attribute_type[$key] == 'checkbox')
+			elseif($extrafields->attribute_type[$key] == 'select')
 			{
 				$object->array_options['options_'.$key] = $extrafields->attribute_param[$key]['options'][$object->array_options['options_'.$key]];
+			}
+			elseif($extrafields->attribute_type[$key] == 'checkbox') {
+				$valArray=explode(',', $object->array_options['options_'.$key]);
+				$output=array();
+				foreach($extrafields->attribute_param[$key]['options'] as $keyopt=>$valopt) {
+					if  (in_array($keyopt, $valArray)) {
+						$output[]=$valopt;
+					}
+				}
+				$object->array_options['options_'.$key] = implode(', ', $output);
 			}
 			elseif($extrafields->attribute_type[$key] == 'date')
 			{
