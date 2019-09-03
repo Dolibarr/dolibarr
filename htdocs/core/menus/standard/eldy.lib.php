@@ -520,7 +520,7 @@ function print_submenu($db,&$tabMenu, $parentMenu)
 		{
 			if ( !$onlyLevel0 OR $sub["level"]==0 )
 			{
-				print_start_menu_entry($parentMenu, " class=submenu".$sub["level"]." ", 1); // li div/div div
+				print_start_menu_entry($parentMenu, " class='submenu submenu".$sub["level"]."' ", 1); // li div/div div
 				$parentMenuArgs = ( strpos($sub["url"],"?") > -1 ? "&": "?" )."mainmenu=".$parentMenu;
 				if ($subMenu[$s]["enabled"])
 				{
