@@ -2500,7 +2500,7 @@ $formquestion = array_merge($formquestion, array(
 					if ($usercansend) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendMail') . '</a></div>';
 					} else
-						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">' . $langs->trans('SendMail') . '</a></div>';
+						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">' . $langs->trans('SendMail') . '</a></div>';
 				}
 
 				// Create an order
@@ -2542,6 +2542,10 @@ $formquestion = array_merge($formquestion, array(
 						{
 							print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=classifybilled&amp;socid=' . $object->socid . '">' . $langs->trans("ClassifyBilled") . '</a></div>';
 						}
+					}
+					else
+					{
+						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">' . $langs->trans("ClassifyBilled") . '</a></div>';
 					}
 				}
 
