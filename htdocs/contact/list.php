@@ -36,6 +36,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "suppliers", "categories"));
@@ -264,6 +265,7 @@ if ($search_priv < 0) $search_priv='';
 
 $form=new Form($db);
 $formother=new FormOther($db);
+$formcompany=new FormCompany($db);
 $contactstatic=new Contact($db);
 
 $title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
@@ -518,7 +520,7 @@ if (! empty($conf->categorie->enabled))
 	}
 	$moreforfilter.='<div class="divsearchfield">';
 	$moreforfilter.=$langs->trans('Roles'). ': ';
-	$moreforfilter.=$form->showRoles("search_roles", $objecttmp, 'edit', $search_roles);
+	$moreforfilter.=$formcompany->showRoles("search_roles", $objecttmp, 'edit', $search_roles);
 	$moreforfilter.='</div>';
 }
 if ($moreforfilter)

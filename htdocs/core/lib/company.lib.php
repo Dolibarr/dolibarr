@@ -859,6 +859,8 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 	global $user,$conf,$extrafields,$hookmanager;
 	global $contextpage;
 
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+	$formcompany = new FormCompany($db);
     $form = new Form($db);
 
     $optioncss = GETPOST('optioncss', 'alpha');
@@ -1017,7 +1019,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
     		if (in_array($key, array('lastname','name'))) print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'">';
     		elseif (in_array($key, array('statut'))) print $form->selectarray('search_status', array('-1'=>'','0'=>$contactstatic->LibStatut(0, 1),'1'=>$contactstatic->LibStatut(1, 1)), $search_status);
     		elseif (in_array($key, array('role'))) {
-			    print $form->showRoles("search_roles", $contactstatic, 'edit', $search_roles);
+			    print $formcompany->showRoles("search_roles", $contactstatic, 'edit', $search_roles);
 		    }
     		print '</td>';
     	}
@@ -1152,7 +1154,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
             if (! empty($arrayfields['sc.role']['checked']))
             {
             	print '<td>';
-	            print $form->showRoles("roles", $contactstatic, 'view');
+	            print $formcompany->showRoles("roles", $contactstatic, 'view');
     	        print '</td>';
             }
 

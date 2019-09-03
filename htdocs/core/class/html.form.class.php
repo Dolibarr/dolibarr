@@ -6485,47 +6485,6 @@ class Form
 	}
 
 	/**
-	 * showContactRoles on view and edit mode
-	 *
-	 * @param string $htmlname Html component name and id
-	 * @param Contact $contact Contact Obejct
-	 * @param string $rendermode view, edit
-	 * @param array $selected $key=>$val $val is selected Roles for input mode
-	 * @return string   String with contacts roles
-	 */
-	public function showRoles($htmlname = '', Contact $contact, $rendermode = 'view', $selected = array())
-	{
-		if ($rendermode === 'view') {
-			$toprint = array();
-			foreach ($contact->roles as $key => $val) {
-				$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #aaa;">' . $val['label'] . '</li>';
-			}
-			return '<div class="select2-container-multi-dolibarr" style="width: 90%;" id="'.$htmlname.'"><ul class="select2-choices-dolibarr">' . implode(' ', $toprint) . '</ul></div>';
-		}
-
-		if ($rendermode === 'edit')
-		{
-			$contactType=$contact->listeTypeContacts('external', '', 1);
-
-			if (count($selected)>0) {
-				$newselected=array();
-				foreach($selected as $key=>$val) {
-					if (is_array($val) && array_key_exists('id', $val) && in_array($val['id'], array_keys($contactType))) {
-						$newselected[]=$val['id'];
-					} else {
-						break;
-					}
-				}
-				if (count($newselected)>0) $selected=$newselected;
-			}
-			return $this->multiselectarray($htmlname, $contactType, $selected);
-		}
-
-		return 'ErrorBadValueForParameterRenderMode';	// Should not happened
-	}
-
-
-	/**
 	 *  Show linked object block.
 	 *
 	 *  @param	CommonObject	$object		      Object we want to show links to

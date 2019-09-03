@@ -1224,9 +1224,10 @@ abstract class CommonObject
 	public function listeTypeContacts($source = 'internal', $option = 0, $activeonly = 0, $code = '', $element = '')
 	{
 		// phpcs:enable
-		global $langs;
+		global $langs, $conf;
 
 		$tab = array();
+
 		$sql = "SELECT DISTINCT tc.rowid, tc.code, tc.libelle, tc.position, tc.element";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_type_contact as tc";
 
@@ -1251,27 +1252,36 @@ abstract class CommonObject
 
 		dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
 		$resql=$this->db->query($sql);
-		if ($resql)
-		{
-			$num=$this->db->num_rows($resql);
-			$i=0;
-			while ($i < $num)
-			{
-				$obj = $this->db->fetch_object($resql);
-
-				$libelle_element = $langs->trans('ContactDefault_'.$obj->element);
-				$transkey="TypeContact_".$this->element."_".$source."_".$obj->code;
-				$libelle_type=($langs->trans($transkey)!=$transkey ? $langs->trans($transkey) : $obj->libelle);
-				if (empty($option)) $tab[$obj->rowid]=$libelle_element.' - '.$libelle_type;
-				else $tab[$obj->rowid]=$libelle_element.' - '.$libelle_type;
-				$i++;
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+			if ($num > 0) {
+				while ($obj = $this->db->fetch_object($resql)) {
+					if (strpos($obj->element, 'project')!==false) {
+						$element='projet';
+					} elseif($obj->element=='contrat') {
+						$element='contract';
+					} elseif(strpos($obj->element, 'supplier')!==false && $obj->element!='supplier_proposal') {
+						$element='fournisseur';
+					} elseif(strpos($obj->element, 'supplier')!==false && $obj->element!='supplier_proposal') {
+						$element='fournisseur';
+					} else {
+						$element=$obj->element;
+					}
+					if ($conf->{$element}->enabled) {
+						$libelle_element = $langs->trans('ContactDefault_' . $obj->element);
+						$transkey = "TypeContact_" . $this->element . "_" . $source . "_" . $obj->code;
+						$libelle_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->libelle);
+						if (empty($option))
+							$tab[$obj->rowid] = $libelle_element . ' - ' . $libelle_type;
+						else $tab[$obj->rowid] = $libelle_element . ' - ' . $libelle_type;
+					}
+				}
 			}
 			return $tab;
 		}
 		else
 		{
 			$this->error=$this->db->lasterror();
-			//dol_print_error($this->db);
 			return null;
 		}
 	}

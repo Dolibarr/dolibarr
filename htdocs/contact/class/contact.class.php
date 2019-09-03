@@ -1526,6 +1526,49 @@ class Contact extends CommonObject
 	}
 
 	/**
+	 * Get Contact roles for a thirdparty
+	 *
+	 * @param string $element element type
+	 * @return array|int
+	 * @throws Exception
+	 */
+	public function getContactRoles($element = '')
+	{
+		$tab=array();
+
+		$sql = "SELECT sc.fk_socpeople as id, sc.fk_c_type_contact";
+		$sql.= " FROM ".MAIN_DB_PREFIX."c_type_contact tc";
+		$sql.= ", ".MAIN_DB_PREFIX."societe_contacts sc";
+		$sql.= " WHERE sc.fk_soc =".$this->socid;
+		$sql.= " AND sc.fk_c_type_contact=tc.rowid";
+		$sql.= " AND tc.element='".$element."'";
+		$sql.= " AND tc.active=1";
+
+		dol_syslog(get_class($this)."::liste_contact", LOG_DEBUG);
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$num=$this->db->num_rows($resql);
+			$i=0;
+			while ($i < $num)
+			{
+				$obj = $this->db->fetch_object($resql);
+				$tab[]=array('fk_socpeople'=>$obj->id, 'type_contact'=>$obj->fk_c_type_contact);
+
+				$i++;
+			}
+
+			return $tab;
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			dol_print_error($this->db);
+			return -1;
+		}
+	}
+
+	/**
 	 * Updates Roles
 	 *
 	 * @return float|int

@@ -1,0 +1,120 @@
+<?php
+/* Copyright (C) 2005-2017	Laurent Destailleur 	<eldy@users.sourceforge.net>
+ * Copyright (C) 2009-2017	Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2011-2014	Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2013		Cedric GROSS			<c.gross@kreiz-it.fr>
+ * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
+ * Copyright (C) 2015		Bahfir Abbes			<bafbes@gmail.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/**
+ *	\file       htdocs/core/triggers/interface_50_modAgenda_ActionsAuto.class.php
+ *  \ingroup    agenda
+ *  \brief      Trigger file for agenda module
+ */
+
+require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
+
+
+/**
+ *  Class of triggered functions for agenda module
+ */
+class InterfaceContactRoles extends DolibarrTriggers
+{
+	public $family = 'agenda';
+	public $description = "Triggers of this module add actions in agenda according to setup made in agenda setup.";
+
+	/**
+	 * Version of the trigger
+	 * @var string
+	 */
+	public $version = self::VERSION_DOLIBARR;
+
+	/**
+	 * @var string Image of the trigger
+	 */
+	public $picto = 'action';
+
+	/**
+	 * Function called when a Dolibarrr business event is done.
+	 * All functions "runTrigger" are triggered if file is inside directory htdocs/core/triggers or htdocs/module/code/triggers (and declared)
+	 *
+	 * Following properties may be set before calling trigger. The may be completed by this trigger to be used for writing the event into database:
+	 *      $object->actiontypecode (translation action code: AC_OTH, ...)
+	 *      $object->actionmsg (note, long text)
+	 *      $object->actionmsg2 (label, short text)
+	 *      $object->sendtoid (id of contact or array of ids)
+	 *      $object->socid (id of thirdparty)
+	 *      $object->fk_project
+	 *      $object->fk_element
+	 *      $object->elementtype
+	 *
+	 * @param string		$action		Event action code
+	 * @param Object		$object     Object
+	 * @param User		    $user       Object user
+	 * @param Translate 	$langs      Object langs
+	 * @param conf		    $conf       Object conf
+	 * @return int         				<0 if KO, 0 if no triggered ran, >0 if OK
+	 */
+	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
+	{
+		// Lors de la création d'un document, récupération des contacts et rôle associés à la société et association avec le document
+		if ($action === 'PROPAL_CREATE' || $action === 'ORDER_CREATE' || $action === 'BILL_CREATE'	|| $action === 'ORDER_SUPPLIER_CREATE' || $action === 'BILL_SUPPLIER_CREATE'
+			|| $action === 'CONTRACT_CREATE' || $action === 'FICHINTER_CREATE' || $action === 'PROJECT_CREATE' || $action === 'TICKET_CREATE' || $action === 'ACTION_CREATE') {
+
+			if(!empty($object->socid) && $object->socid != '-1') {
+				global $db, $langs;
+
+				$contactdefault = new Contact($this->db);
+				$contactdefault->socid=$object->socid;
+				$TContact = $contactdefault->getContactRoles();
+
+				// Le trigger est appelé avant que le core n'ajoute lui-même des contacts (contact propale, clone), il ne faut pas les associer avant sinon bug
+				$TContactAlreadyLinked = array();
+				if ($object->id > 0)
+				{
+					$class = get_class($object);
+					$cloneFrom = new $class($db);
+					$r = $cloneFrom->fetch($object->id);
+
+					if (!empty($cloneFrom->id))	$TContactAlreadyLinked = array_merge($cloneFrom->liste_contact(-1,'external'), $cloneFrom->liste_contact(-1,'internal'));
+				}
+
+				foreach($TContact as $i => $infos) {
+					// Gestion du cas du clone
+					foreach ($TContactAlreadyLinked as $contactData) {
+						if($contactData['id'] == $infos['fk_socpeople'] && $contactData['fk_c_type_contact'] == $infos['type_contact']) unset($TContact[$i]);
+					}
+				}
+
+				$nb = 0;
+				foreach($TContact as $infos) {
+					// Gestion du cas spécifique de la création de propale avec sélection du contact, cela créé un bug si le contact est ajouté par le module contactdefault
+					$res = $object->add_contact($infos['fk_socpeople'], $infos['type_contact']);
+					if($res > 0) $nb++;
+				}
+
+				if($nb > 0) {
+					setEventMessage($langs->trans('ContactAddedAutomatically', $nb));
+				}
+			}
+
+			dol_syslog(
+				"Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
+			);
+		}
+    }
+}

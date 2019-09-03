@@ -1051,7 +1051,7 @@ else
 	        if (!empty($object->socid)) {
 		        print '<tr><td>' . $langs->trans("Role") . '</td>';
 		        print '<td colspan="3">';
-		        print $form->showRoles("roles", $object, 'edit' ,$object->roles);
+		        print $formcompany->showRoles("roles", $object, 'edit' ,$object->roles);
 		        print '</td></tr>';
 	        }
 
@@ -1256,7 +1256,7 @@ else
 	    if (!empty($object->socid)) {
 		    print '<tr><td class="titlefield">' . $langs->trans("Roles") . '</td>';
 		    print '<td colspan="3">';
-		    print $form->showRoles("roles", $object, 'view');
+		    print $formcompany->showRoles("roles", $object, 'view');
 		    print '</td></tr>';
 	    }
 
