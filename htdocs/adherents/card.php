@@ -289,7 +289,7 @@ if (empty($reshook))
 			$object->login       = trim(GETPOST("login", 'alpha'));
 			$object->pass        = trim(GETPOST("pass", 'alpha'));
 
-			$object->societe     = trim(GETPOST("societe", 'alpha'));
+			$object->societe     = trim(GETPOST("societe", 'alpha'));	// deprecated
 			$object->company     = trim(GETPOST("societe", 'alpha'));
 
 			$object->address     = trim(GETPOST("address", 'alpha'));
@@ -468,7 +468,8 @@ if (empty($reshook))
 		$object->firstname   = $firstname;
 		$object->lastname    = $lastname;
 		$object->gender      = $gender;
-		$object->societe     = $societe;
+		$object->societe     = $societe;	// deprecated
+		$object->company     = $societe;
 		$object->address     = $address;
 		$object->zip         = $zip;
 		$object->town        = $town;
@@ -946,7 +947,7 @@ else
 		print "</td>\n";
 
 		// Company
-		print '<tr><td id="tdcompany">'.$langs->trans("Company").'</td><td><input type="text" name="societe" class="minwidth300" maxlength="128" value="'.(GETPOST('societe', 'alpha')?GETPOST('societe', 'alpha'):$object->societe).'"></td></tr>';
+		print '<tr><td id="tdcompany">'.$langs->trans("Company").'</td><td><input type="text" name="societe" class="minwidth300" maxlength="128" value="'.(GETPOST('societe', 'alpha')?GETPOST('societe', 'alpha'):$object->company).'"></td></tr>';
 
 		// Civility
 		print '<tr><td>'.$langs->trans("UserTitle").'</td><td>';
@@ -1066,7 +1067,7 @@ else
 		{
       	    print $object->showOptionals($extrafields, 'edit');
 		}
-			
+
 		print '<tbody>';
 		print "</table>\n";
 		dol_fiche_end();
@@ -1206,7 +1207,7 @@ else
 		print "</td></tr>";
 
 		// Company
-		print '<tr><td id="tdcompany">'.$langs->trans("Company").'</td><td><input type="text" name="societe" class="minwidth300" maxlength="128" value="'.(isset($_POST["societe"])?GETPOST("societe", '', 2):$object->societe).'"></td></tr>';
+		print '<tr><td id="tdcompany">'.$langs->trans("Company").'</td><td><input type="text" name="societe" class="minwidth300" maxlength="128" value="'.(isset($_POST["societe"])?GETPOST("societe", '', 2):$object->company).'"></td></tr>';
 
 		// Civility
 		print '<tr><td>'.$langs->trans("UserTitle").'</td><td>';
@@ -1370,7 +1371,7 @@ else
 		{
       	    print $object->showOptionals($extrafields, 'edit');
 		}
-      
+
 		print '</table>';
 		dol_fiche_end();
 
@@ -1447,13 +1448,13 @@ else
 
 			if ($object->morphy == 'mor')
 			{
-				$companyname=$object->societe;
+				$companyname=$object->company;
 				if (! empty($fullname)) $companyalias=$fullname;
 			}
 			else
 			{
 				$companyname=$fullname;
-				if (! empty($object->societe)) $companyalias=$object->societe;
+				if (! empty($object->company)) $companyalias=$object->company;
 			}
 
 			// Create a form array
@@ -1635,7 +1636,7 @@ else
 		print '</td></tr>';
 
 		// Company
-		print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$object->societe.'</td></tr>';
+		print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$object->company.'</td></tr>';
 
 		// Civility
 		print '<tr><td>'.$langs->trans("UserTitle").'</td><td class="valeur">'.$object->getCivilityLabel().'&nbsp;</td>';

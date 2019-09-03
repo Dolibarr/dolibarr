@@ -624,7 +624,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
     }
 
     $totalLateNumber = $totallate;
-    $totallatePercentage = !empty($totaltodo) ? round($totallate / $totaltodo * 100, 2) : 0;
+    $totallatePercentage = ((!empty($totaltodo)) ? round($totallate / $totaltodo * 100, 2) : 0);
     if (!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) {
         $totallate = $totallatePercentage;
     }

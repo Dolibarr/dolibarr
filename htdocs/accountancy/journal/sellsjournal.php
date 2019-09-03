@@ -311,7 +311,7 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->doc_date = $val["date"];
 					$bookkeeping->date_lim_reglement = $val["datereg"];
 					$bookkeeping->doc_ref = $val["ref"];
-					$bookkeeping->date_create = $now;
+					$bookkeeping->date_creation = $now;
 					$bookkeeping->doc_type = 'customer_invoice';
 					$bookkeeping->fk_doc = $key;
 					$bookkeeping->fk_docdet = 0;	// Useless, can be several lines that are source of this record to add
@@ -368,7 +368,7 @@ if ($action == 'writebookkeeping') {
 						$bookkeeping->doc_date = $val["date"];
 						$bookkeeping->date_lim_reglement = $val["datereg"];
 						$bookkeeping->doc_ref = $val["ref"];
-						$bookkeeping->date_create = $now;
+						$bookkeeping->date_creation = $now;
 						$bookkeeping->doc_type = 'customer_invoice';
 						$bookkeeping->fk_doc = $key;
 						$bookkeeping->fk_docdet = 0;	// Useless, can be several lines that are source of this record to add
@@ -428,7 +428,7 @@ if ($action == 'writebookkeeping') {
 						$bookkeeping->doc_date = $val["date"];
 						$bookkeeping->date_lim_reglement = $val["datereg"];
 						$bookkeeping->doc_ref = $val["ref"];
-						$bookkeeping->date_create = $now;
+						$bookkeeping->date_creation = $now;
 						$bookkeeping->doc_type = 'customer_invoice';
 						$bookkeeping->fk_doc = $key;
 						$bookkeeping->fk_docdet = 0;	// Useless, can be several lines that are source of this record to add

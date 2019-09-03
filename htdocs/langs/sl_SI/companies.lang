@@ -54,6 +54,7 @@ Firstname=Ime
 PostOrFunction=Job position
 UserTitle=Naziv
 NatureOfThirdParty=Nature of Third party
+NatureOfContact=Nature of Contact
 Address=Naslov
 State=Dežela/Provinca
 StateShort=Država

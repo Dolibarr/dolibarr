@@ -54,9 +54,9 @@ class box_bookmarks extends ModeleBoxes
 	{
 	    global $user;
 
-	    $this->db=$db;
+	    $this->db = $db;
 
-	    $this->hidden=! ($user->rights->bookmark->lire);
+	    $this->hidden = ! ($user->rights->bookmark->lire);
 	}
 
 	/**

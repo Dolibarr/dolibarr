@@ -54,6 +54,7 @@ Firstname=Имя
 PostOrFunction=Должность
 UserTitle=Название
 NatureOfThirdParty=Свойство контрагента
+NatureOfContact=Nature of Contact
 Address=Адрес
 State=Штат/Провинция
 StateShort=Штат

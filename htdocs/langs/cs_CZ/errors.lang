@@ -218,6 +218,7 @@ ErrorVariableKeyForContentMustBeSet=Chyba, musí být nastavena konstanta s náz
 ErrorURLMustStartWithHttp=Adresa URL %s musí začínat http: // nebo https: //
 ErrorNewRefIsAlreadyUsed=Chyba, nový odkaz je již použit
 ErrorDeletePaymentLinkedToAClosedInvoiceNotPossible=Error, delete payment linked to a closed invoice is not possible.
+ErrorSearchCriteriaTooSmall=Search criteria too small.
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.
 WarningPasswordSetWithNoAccount=Pro tohoto člena bylo nastaveno heslo. Nebyl však vytvořen žádný uživatelský účet. Toto heslo je uloženo, ale nemůže být použito pro přihlášení k Dolibarr. Může být použito externím modulem / rozhraním, ale pokud nemáte pro člena definováno žádné přihlašovací jméno ani heslo, můžete vypnout možnost "Správa přihlášení pro každého člena" z nastavení modulu člena. Pokud potřebujete spravovat přihlašovací údaje, ale nepotřebujete žádné heslo, můžete toto pole ponechat prázdné, abyste se tomuto varování vyhnuli. Poznámka: E-mail může být také použit jako přihlašovací jméno, pokud je člen připojen k uživateli.

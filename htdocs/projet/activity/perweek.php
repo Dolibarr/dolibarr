@@ -133,7 +133,7 @@ $arrayfields=array();
     'p.fk_opp_status'=>array('label'=>$langs->trans("OpportunityStatusShort"), 'checked'=>0, 'enabled'=>($conf->global->PROJECT_USE_OPPORTUNITIES?1:0), 'position'=>104),
     'p.opp_percent'=>array('label'=>$langs->trans("OpportunityProbabilityShort"), 'checked'=>0, 'enabled'=>($conf->global->PROJECT_USE_OPPORTUNITIES?1:0), 'position'=>105),
     'p.budget_amount'=>array('label'=>$langs->trans("Budget"), 'checked'=>0, 'position'=>110),
-    'p.bill_time'=>array('label'=>$langs->trans("BillTimeShort"), 'checked'=>0, 'position'=>115),
+    'p.usage_bill_time'=>array('label'=>$langs->trans("BillTimeShort"), 'checked'=>0, 'position'=>115),
 );*/
 $arrayfields['t.planned_workload']=array('label'=>'PlannedWorkload', 'checked'=>1, 'enabled'=>1, 'position'=>0);
 $arrayfields['t.progress']=array('label'=>'ProgressDeclared', 'checked'=>1, 'enabled'=>1, 'position'=>0);

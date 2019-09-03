@@ -177,6 +177,7 @@ class Conf
 
 					if ($value && preg_match('/^MAIN_MODULE_/', $key))
 					{
+						$reg=array();
 						// If this is constant for a new tab page activated by a module. It initializes modules_parts['tabs'].
 						if (preg_match('/^MAIN_MODULE_([0-9A-Z_]+)_TABS_/i', $key))
 						{
@@ -673,6 +674,9 @@ class Conf
 
 		if (empty($this->global->MAIN_MODULE_DOLISTORE_API_SRV)) $this->global->MAIN_MODULE_DOLISTORE_API_SRV='https://www.dolistore.com';
 		if (empty($this->global->MAIN_MODULE_DOLISTORE_API_KEY)) $this->global->MAIN_MODULE_DOLISTORE_API_KEY='dolistorecatalogpublickey1234567';
+
+		// If we are in develop mode, we activate the option MAIN_SECURITY_CSRF_WITH_TOKEN to 1 if not already defined.
+		if (! isset($conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN) && $conf->global->MAIN_FEATURES_LEVEL >= 2) $conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN = 1;
 
 		// For backward compatibility
 		if (isset($this->product))   $this->produit=$this->product;

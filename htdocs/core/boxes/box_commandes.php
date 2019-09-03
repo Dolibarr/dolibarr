@@ -58,9 +58,9 @@ class box_commandes extends ModeleBoxes
     {
         global $user;
 
-        $this->db=$db;
+        $this->db = $db;
 
-        $this->hidden=! ($user->rights->commande->lire);
+        $this->hidden = ! ($user->rights->commande->lire);
     }
 
     /**

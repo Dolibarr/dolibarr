@@ -90,13 +90,15 @@ function testSqlAndScriptInject($val, $type)
 	$inj += preg_match('/Set\.constructor/i', $val);	// ECMA script 6
 	if (! defined('NOSTYLECHECK')) $inj += preg_match('/<style/i', $val);
 	$inj += preg_match('/base[\s]+href/si', $val);
-	$inj += preg_match('/<.*onmouse/si', $val);       // onmousexxx can be set on img or any html tag like <img title='...' onmouseover=alert(1)>
-	$inj += preg_match('/onerror\s*=/i', $val);       // onerror can be set on img or any html tag like <img title='...' onerror = alert(1)>
-	$inj += preg_match('/onfocus\s*=/i', $val);       // onfocus can be set on input text html tag like <input type='text' value='...' onfocus = alert(1)>
-	$inj += preg_match('/onload\s*=/i', $val);        // onload can be set on svg tag <svg/onload=alert(1)> or other tag like body <body onload=alert(1)>
-	$inj += preg_match('/onloadstart\s*=/i', $val);   // onload can be set on audio tag <audio onloadstart=alert(1)>
-	$inj += preg_match('/onclick\s*=/i', $val);       // onclick can be set on img text html tag like <img onclick = alert(1)>
-	$inj += preg_match('/onscroll\s*=/i', $val);      // onscroll can be on textarea
+	// List of dom events is on https://www.w3schools.com/jsref/dom_obj_event.asp
+	$inj += preg_match('/onmouse([a-z]*)\s*=/i', $val);       // onmousexxx can be set on img or any html tag like <img title='...' onmouseover=alert(1)>
+	$inj += preg_match('/ondrag([a-z]*)\s*=/i', $val);        //
+	$inj += preg_match('/ontouch([a-z]*)\s*=/i', $val);        //
+	$inj += preg_match('/on(abort|afterprint|beforeprint|beforeunload|blur|canplay|canplaythrough|change|click|contextmenu|copy|cut)\s*=/i', $val);
+	$inj += preg_match('/on(dblclick|drop|durationchange|ended|error|focus|focusin|focusout|hashchange|input|invalid)\s*=/i', $val);
+	$inj += preg_match('/on(keydown|keypress|keyup|load|loadeddata|loadedmetadata|loadstart|offline|online|pagehide|pageshow)\s*=/i', $val);
+	$inj += preg_match('/on(paste|pause|play|playing|progress|ratechange|resize|reset|scroll|search|seeking|select|show|stalled|start|submit|suspend)\s*=/i', $val);
+	$inj += preg_match('/on(timeupdate|toggle|unload|volumechange|waiting)\s*=/i', $val);
 	//$inj += preg_match('/on[A-Z][a-z]+\*=/', $val);   // To lock event handlers onAbort(), ...
 	$inj += preg_match('/&#58;|&#0000058|&#x3A/i', $val);		// refused string ':' encoded (no reason to have it encoded) to lock 'javascript:...'
 	//if ($type == 1)
@@ -491,7 +493,7 @@ if (! defined('NOLOGIN'))
 		}
 
 		// Verification security graphic code
-		if (GETPOST("username", "alpha", 2) && ! empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA))
+		if (GETPOST("username", "alpha", 2) && ! empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA) && ! isset($_SESSION['dol_bypass_antispam']))
 		{
 			$sessionkey = 'dol_antispam_value';
 			$ok=(array_key_exists($sessionkey, $_SESSION) === true && (strtolower($_SESSION[$sessionkey]) == strtolower($_POST['code'])));
@@ -2033,20 +2035,39 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 		{
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-			$bugbaseurl = 'https://github.com/Dolibarr/dolibarr/issues/new';
-			$bugbaseurl.= '?title=';
+            $bugbaseurl = 'https://github.com/Dolibarr/dolibarr/issues/new?labels=Bug';
+			$bugbaseurl.= '&title=';
 			$bugbaseurl.= urlencode("Bug: ");
-			$bugbaseurl.= '&body=';
-			$bugbaseurl.= urlencode("# Bug\n");
-			$bugbaseurl.= urlencode("\n");
-			$bugbaseurl.= urlencode("## Environment\n");
-			$bugbaseurl.= urlencode("- **Version**: " . DOL_VERSION . "\n");
-			$bugbaseurl.= urlencode("- **OS**: " . php_uname('s') . "\n");
-			$bugbaseurl.= urlencode("- **Web server**: " . $_SERVER["SERVER_SOFTWARE"] . "\n");
-			$bugbaseurl.= urlencode("- **PHP**: " . php_sapi_name() . ' ' . phpversion() . "\n");
-			$bugbaseurl.= urlencode("- **Database**: " . $db::LABEL . ' ' . $db->getVersion() . "\n");
-			$bugbaseurl.= urlencode("- **URL**: " . $_SERVER["REQUEST_URI"] . "\n");
-
+            $bugbaseurl.= '&body=';
+            $bugbaseurl.= urlencode("# Instructions\n");
+            $bugbaseurl.= urlencode("*This is a template to help you report good issues. You may use [Github Markdown](https://help.github.com/articles/getting-started-with-writing-and-formatting-on-github/) syntax to format your issue report.*\n");
+            $bugbaseurl.= urlencode("*Please:*\n");
+            $bugbaseurl.= urlencode("- *replace the bracket enclosed texts with meaningful information*\n");
+            $bugbaseurl.= urlencode("- *remove any unused sub-section*\n");
+            $bugbaseurl.= urlencode("\n");
+            $bugbaseurl.= urlencode("\n");
+            $bugbaseurl.= urlencode("# Bug\n");
+            $bugbaseurl.= urlencode("[*Short description*]\n");
+            $bugbaseurl.= urlencode("\n");
+            $bugbaseurl.= urlencode("## Environment\n");
+            $bugbaseurl.= urlencode("- **Version**: " . DOL_VERSION . "\n");
+            $bugbaseurl.= urlencode("- **OS**: " . php_uname('s') . "\n");
+            $bugbaseurl.= urlencode("- **Web server**: " . $_SERVER["SERVER_SOFTWARE"] . "\n");
+            $bugbaseurl.= urlencode("- **PHP**: " . php_sapi_name() . ' ' . phpversion() . "\n");
+            $bugbaseurl.= urlencode("- **Database**: " . $db::LABEL . ' ' . $db->getVersion() . "\n");
+            $bugbaseurl.= urlencode("- **URL(s)**: " . $_SERVER["REQUEST_URI"] . "\n");
+            $bugbaseurl.= urlencode("\n");
+            $bugbaseurl.= urlencode("## Expected and actual behavior\n");
+            $bugbaseurl.= urlencode("[*Verbose description*]\n");
+            $bugbaseurl.= urlencode("\n");
+            $bugbaseurl.= urlencode("## Steps to reproduce the behavior\n");
+            $bugbaseurl.= urlencode("[*Verbose description*]\n");
+            $bugbaseurl.= urlencode("\n");
+            $bugbaseurl.= urlencode("## [Attached files](https://help.github.com/articles/issue-attachments) (Screenshots, screencasts, dolibarr.log, debugging informations…)\n");
+            $bugbaseurl.= urlencode("[*Files*]\n");
+            $bugbaseurl.= urlencode("\n");
+			
+			
 			// Execute hook printBugtrackInfo
 			$parameters=array('bugbaseurl'=>$bugbaseurl);
 			$reshook=$hookmanager->executeHooks('printBugtrackInfo', $parameters);    // Note that $action and $object may have been modified by some hooks

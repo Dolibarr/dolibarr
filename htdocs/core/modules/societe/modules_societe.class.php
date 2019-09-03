@@ -83,18 +83,18 @@ abstract class ModeleThirdPartyCode
         return $langs->trans("NoDescription");
     }
 
-    /**     Renvoi nom module
+    /**     Return name of module
      *
      *		@param	Translate	$langs		Object langs
      *      @return string      			Nom du module
      */
     public function getNom($langs)
     {
-        return $this->nom;
+        return $this->name;
     }
 
 
-    /**     Renvoi un exemple de numerotation
+    /**     Return an example of numbering
      *
      *		@param	Translate	$langs		Object langs
      *      @return string      			Example
@@ -261,8 +261,7 @@ abstract class ModeleThirdPartyCode
 
 
 /**
- *		\class		ModeleAccountancyCode
- *		\brief  	Parent class for third parties accountancy code generators
+ *		Parent class for third parties accountancy code generators
  */
 abstract class ModeleAccountancyCode
 {
@@ -340,7 +339,7 @@ abstract class ModeleAccountancyCode
         $langs->load("admin");
 
         $s='';
-        if ($type == -1) $s.=$langs->trans("Name").': <b>'.$this->nom.'</b><br>';
+        if ($type == -1) $s.=$langs->trans("Name").': <b>'.$this->name.'</b><br>';
         if ($type == -1) $s.=$langs->trans("Version").': <b>'.$this->getVersion().'</b><br>';
         //$s.='<br>';
         //$s.='<u>'.$langs->trans("ThisIsModuleRules").':</u><br>';

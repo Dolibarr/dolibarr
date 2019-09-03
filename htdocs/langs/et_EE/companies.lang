@@ -54,6 +54,7 @@ Firstname=Eesnimi
 PostOrFunction=Job position
 UserTitle=Tiitel
 NatureOfThirdParty=Nature of Third party
+NatureOfContact=Nature of Contact
 Address=Aadress
 State=Osariik/provints
 StateShort=State

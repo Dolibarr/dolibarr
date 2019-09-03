@@ -18,6 +18,7 @@ ValidatorCP=Approbator
 ListeCP=List of leave
 LeaveId=Leave ID
 ReviewedByCP=Will be approved by
+UserID=User ID
 UserForApprovalID=User for approval ID
 UserForApprovalFirstname=First name of approval user
 UserForApprovalLastname=Last name of approval user

@@ -1,5 +1,5 @@
 <?php
-if (! defined('ISLOADEDBYSTEELSHEET'))  die('Must be call by steelsheet'); ?>
+if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 /* <style type="text/css" > */
 
 /*
@@ -113,43 +113,44 @@ a.info-box-text{ text-decoration: none;}
 
 
 
-/* ICONS */
+/* ICONS INFO BOX */
 .info-box-icon {
 	color: #fff !important;
 }
 
 <?php
 include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-if (! isset($conf->global->THEME_AGRESSIVITY_RATIO)) $conf->global->THEME_AGRESSIVITY_RATIO=-75;
+//print '/* conf->global->THEME_AGRESSIVITY_RATIO='.$conf->global->THEME_AGRESSIVITY_RATIO.' */'."\n";
+if (! isset($conf->global->THEME_AGRESSIVITY_RATIO)) $conf->global->THEME_AGRESSIVITY_RATIO=-40;
 if (GETPOSTISSET('THEME_AGRESSIVITY_RATIO')) $conf->global->THEME_AGRESSIVITY_RATIO=GETPOST('THEME_AGRESSIVITY_RATIO', 'int');
 ?>
 .bg-infoxbox-project{
-	background-color: <?php print colorAgressivity('#605ca8', $conf->global->THEME_AGRESSIVITY_RATIO); ?> !important;
+	background-color: <?php print colorAgressivity('#6c6a98', $conf->global->THEME_AGRESSIVITY_RATIO); ?> !important;
 }
 .bg-infoxbox-action{
-	background-color: <?php print colorAgressivity('#d84b80', $conf->global->THEME_AGRESSIVITY_RATIO); ?>  !important;
+	background-color: <?php print colorAgressivity('#b46080', $conf->global->THEME_AGRESSIVITY_RATIO); ?>  !important;
 }
 .bg-infoxbox-propal,
 .bg-infoxbox-facture,
 .bg-infoxbox-commande{
-	background-color: <?php print colorAgressivity('#abb87b', $conf->global->THEME_AGRESSIVITY_RATIO); ?>  !important;
+	background-color: <?php print colorAgressivity('#99a17d', $conf->global->THEME_AGRESSIVITY_RATIO); ?>  !important;
 }
 .bg-infoxbox-supplier_proposal,
 .bg-infoxbox-invoice_supplier,
 .bg-infoxbox-order_supplier{
-	background-color: <?php print colorAgressivity('#40b0cf', $conf->global->THEME_AGRESSIVITY_RATIO); ?>  !important;
+	background-color: <?php print colorAgressivity('#599caf', $conf->global->THEME_AGRESSIVITY_RATIO); ?>  !important;
 }
 .bg-infoxbox-contrat{
-	background-color: <?php print colorAgressivity('#20a68a', $conf->global->THEME_AGRESSIVITY_RATIO); ?>  !important;
+	background-color: <?php print colorAgressivity('#469686', $conf->global->THEME_AGRESSIVITY_RATIO); ?>  !important;
 }
 .bg-infoxbox-bank_account{
-	background-color: <?php print colorAgressivity('#e39c42', $conf->global->THEME_AGRESSIVITY_RATIO); ?>  !important;
+	background-color: <?php print colorAgressivity('#c5903e', $conf->global->THEME_AGRESSIVITY_RATIO); ?>  !important;
 }
 .bg-infoxbox-adherent{
-	background-color: <?php print colorAgressivity('#f39c12', $conf->global->THEME_AGRESSIVITY_RATIO); ?>  !important;
+	background-color: <?php print colorAgressivity('#79633f', $conf->global->THEME_AGRESSIVITY_RATIO); ?>  !important;
 }
 .bg-infoxbox-expensereport{
-	background-color: <?php print colorAgressivity('#755114', $conf->global->THEME_AGRESSIVITY_RATIO); ?>  !important;
+	background-color: <?php print colorAgressivity('#79633f', $conf->global->THEME_AGRESSIVITY_RATIO); ?>  !important;
 }
 .bg-infoxbox-holiday{
 	background-color: <?php print colorAgressivity('#755114', $conf->global->THEME_AGRESSIVITY_RATIO); ?>  !important;

@@ -203,6 +203,7 @@ if ($dirins && $action == 'initmodule' && $modulename)
             }
 
 			$result=dolReplaceInFile($phpfileval['fullname'], $arrayreplacement);
+
 			//var_dump($result);
 			if ($result < 0)
 			{
@@ -212,6 +213,7 @@ if ($dirins && $action == 'initmodule' && $modulename)
 
 		if (!empty($conf->global->MODULEBUILDER_SPECIFIC_README))
 		{
+			setEventMessages($langs->trans("ContentOfREADMECustomized"), null, 'warnings');
 			dol_delete_file($destdir.'/README.md');
 			file_put_contents($destdir.'/README.md', $conf->global->MODULEBUILDER_SPECIFIC_README);
 		}
@@ -1412,7 +1414,7 @@ if ($module == 'initmodule')
 	print '<input type="hidden" name="action" value="initmodule">';
 	print '<input type="hidden" name="module" value="initmodule">';
 
-	print $langs->trans("ModuleBuilderDesc2", 'conf/conf.php', $newdircustom).'<br>';
+	//print '<span class="opacitymedium">'.$langs->trans("ModuleBuilderDesc2", 'conf/conf.php', $newdircustom).'</span><br>';
 	print $langs->trans("EnterNameOfModuleDesc").'<br>';
 	print '<br>';
 
