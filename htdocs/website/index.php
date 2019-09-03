@@ -53,6 +53,9 @@ $pageref=GETPOST('pageref', 'aZ09');
 $action=GETPOST('action', 'aZ09');
 $confirm=GETPOST('confirm', 'alpha');
 $cancel=GETPOST('cancel', 'alpha');
+$contextpage= GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'bomlist';   // To manage different context of search
+$backtopage = GETPOST('backtopage', 'alpha');											// Go back to a dedicated page
+$optioncss  = GETPOST('optioncss', 'aZ');												// Option for the css output (always '' except when 'print')
 
 $type_container=GETPOST('WEBSITE_TYPE_CONTAINER', 'alpha');
 
@@ -270,9 +273,21 @@ if (GETPOST('refreshsite', 'alpha') || GETPOST('refreshsite.x', 'alpha') || GETP
 }
 if (GETPOST('refreshpage', 'alpha') && ! in_array($action, array('updatecss'))) $action='preview';
 
+// Cancel
+if ($cancel)
+{
+	$action = 'preview';
+	if ($backtopage)
+	{
+		header("Location: ".$backtopage);
+		exit;
+	}
+}
 
-$backtopage=$_SERVER["PHP_SELF"].'?file_manager=1&website='.$websitekey.'&pageid='.$pageid.(GETPOST('section_dir', 'alpha')?'&section_dir='.urlencode(GETPOST('section_dir', 'alpha')):'');	// used after a confirm_deletefile into actions_linkedfiles.inc.php
+$savbacktopage = $backtopage;
+$backtopage = $_SERVER["PHP_SELF"].'?file_manager=1&website='.$websitekey.'&pageid='.$pageid.(GETPOST('section_dir', 'alpha')?'&section_dir='.urlencode(GETPOST('section_dir', 'alpha')):'');	// used after a confirm_deletefile into actions_linkedfiles.inc.php
 include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
+$backtopage = $savbacktopage;
 
 if ($action == 'renamefile') $action='file_manager';		// After actions_linkedfiles, if action were renamefile, we set it to 'file_manager'
 
@@ -984,7 +999,8 @@ if ($action == 'delete')
 // Update css
 if ($action == 'updatecss')
 {
-	if (GETPOST('refreshsite', 'alpha') || GETPOST('refreshpage', 'alpha'))		// If we tried to reload another site/page, we stay on editcss mode.
+	// If we tried to reload another site/page, we stay on editcss mode.
+	if (GETPOST('refreshsite') || GETPOST('refreshsite_x') || GETPOST('refreshsite.x') ||  GETPOST('refreshpage') || GETPOST('refreshpage_x') || GETPOST('refreshpage.x'))
 	{
 		$action='editcss';
 	}
@@ -1221,6 +1237,12 @@ if ($action == 'updatecss')
     		}
 
     		$action='preview';
+
+    		if ($backtopage)
+    		{
+    			header("Location: ".$backtopage);
+    			exit;
+    		}
 		}
 	}
 }
@@ -1861,6 +1883,7 @@ llxHeader($moreheadcss.$moreheadjs, $langs->trans("WebsiteSetup"), $help_url, ''
 print "\n";
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" enctype="multipart/form-data">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
 if ($action == 'createsite')
 {
@@ -2024,7 +2047,7 @@ if (! GETPOST('hide_websitemenu'))
 			</script>';
 		*/
 
-		print '<a href="'.$_SERVER["PHP_SEFL"].'?action=replacesite&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("ReplaceWebsiteContent")).'"><span class="fa fa-file-code"><span></a>';
+		print '<a href="'.$_SERVER["PHP_SEFL"].'?action=replacesite&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("ReplaceWebsiteContent")).'"><span class="fa fa-search"><span></a>';
 	}
 
 	print '</div>';
@@ -2081,7 +2104,7 @@ if (! GETPOST('hide_websitemenu'))
 	{
 		if (preg_match('/^create/', $action) && $action != 'file_manager' && $action != 'replacesite' && $action != 'replacesiteconfirm') print '<input type="submit" id="savefile" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
 		if (preg_match('/^edit/', $action) && $action != 'file_manager' && $action != 'replacesite' && $action != 'replacesiteconfirm') print '<input type="submit" id="savefile" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
-		if ($action != 'preview') print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" name="preview">';
+		if ($action != 'preview') print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" name="cancel">';
 	}
 
 	print '</div>';
@@ -2500,7 +2523,8 @@ if ($action == 'editcss')
 	print '<div class="fiche">';
 
 	print '<br>';
-	if (GETPOST('editcss', 'alpha') || GETPOST('refreshpage', 'alpha'))
+
+	if (! GETPOSTISSET('WEBSITE_CSS_INLINE'))
 	{
 		$csscontent = @file_get_contents($filecss);
 		// Clean the php css file to remove php code and get only css part
@@ -2508,11 +2532,11 @@ if ($action == 'editcss')
 	}
 	else
 	{
-		$csscontent = GETPOST('WEBSITE_CSS_INLINE');
+		$csscontent = GETPOST('WEBSITE_CSS_INLINE', 'none');
 	}
 	if (! trim($csscontent)) $csscontent='/* CSS content (all pages) */'."\n"."body.bodywebsite { margin: 0; font-family: 'Open Sans', sans-serif; }\n.bodywebsite h1 { margin-top: 0; margin-bottom: 0; padding: 10px;}";
 
-	if (GETPOST('editcss', 'alpha') || GETPOST('refreshpage', 'alpha'))
+	if (! GETPOSTISSET('WEBSITE_JS_INLINE'))
 	{
 		$jscontent = @file_get_contents($filejs);
 		// Clean the php js file to remove php code and get only js part
@@ -2520,11 +2544,11 @@ if ($action == 'editcss')
 	}
 	else
 	{
-		$jscontent = GETPOST('WEBSITE_JS_INLINE');
+		$jscontent = GETPOST('WEBSITE_JS_INLINE', 'none');
 	}
 	if (! trim($jscontent)) $jscontent='/* JS content (all pages) */'."\n";
 
-	if (GETPOST('editcss', 'alpha') || GETPOST('refreshpage', 'alpha'))
+	if (! GETPOSTISSET('WEBSITE_HTML_HEADER'))
 	{
 		$htmlheadercontent = @file_get_contents($filehtmlheader);
 		// Clean the php htmlheader file to remove php code and get only html part
@@ -2532,7 +2556,7 @@ if ($action == 'editcss')
 	}
 	else
 	{
-		$htmlheadercontent = GETPOST('WEBSITE_HTML_HEADER');
+		$htmlheadercontent = GETPOST('WEBSITE_HTML_HEADER', 'none');
 	}
 	if (! trim($htmlheadercontent))
 	{
@@ -2547,7 +2571,7 @@ if ($action == 'editcss')
 		$htmlheadercontent='<html>'."\n".trim($htmlheadercontent)."\n".'</html>';
 	}
 
-	if (GETPOST('editcss', 'alpha') || GETPOST('refreshpage', 'alpha'))
+	if (! GETPOSTISSET('WEBSITE_ROBOT'))
 	{
 		$robotcontent = @file_get_contents($filerobot);
 		// Clean the php htmlheader file to remove php code and get only html part
@@ -2555,7 +2579,7 @@ if ($action == 'editcss')
 	}
 	else
 	{
-		$robotcontent = GETPOST('WEBSITE_ROBOT');
+		$robotcontent = GETPOST('WEBSITE_ROBOT', 'nothtml');
 	}
 	if (! trim($robotcontent))
 	{
@@ -2565,7 +2589,7 @@ if ($action == 'editcss')
 		$robotcontent.="Disallow: /administrator/\n";
 	}
 
-	if (GETPOST('editcss', 'alpha') || GETPOST('refreshpage', 'alpha'))
+	if (! GETPOSTISSET('WEBSITE_HTACCESS'))
 	{
 		$htaccesscontent = @file_get_contents($filehtaccess);
 		// Clean the php htaccesscontent file to remove php code and get only html part
@@ -2573,7 +2597,7 @@ if ($action == 'editcss')
 	}
 	else
 	{
-		$htaccesscontent = GETPOST('WEBSITE_HTACCESS');
+		$htaccesscontent = GETPOST('WEBSITE_HTACCESS', 'nohtml');
 	}
 	if (! trim($htaccesscontent))
 	{
@@ -2582,7 +2606,7 @@ if ($action == 'editcss')
 	}
 
 
-	if (GETPOST('editcss', 'alpha') || GETPOST('refreshpage', 'alpha'))
+	if (! GETPOSTISSET('WEBSITE_MANIFEST_JSON'))
 	{
 		$manifestjsoncontent = @file_get_contents($filemanifestjson);
 		// Clean the manifestjson file to remove php code and get only html part
@@ -2590,14 +2614,14 @@ if ($action == 'editcss')
 	}
 	else
 	{
-		$manifestjsoncontent = GETPOST('WEBSITE_MANIFEST_JSON');
+		$manifestjsoncontent = GETPOST('WEBSITE_MANIFEST_JSON', 'none');
 	}
 	if (! trim($manifestjsoncontent))
 	{
 		//$manifestjsoncontent.="";
 	}
 
-	if (GETPOST('editcss', 'alpha') || GETPOST('refreshpage', 'alpha'))
+	if (! GETPOSTISSET('WEBSITE_README'))
 	{
 		$readmecontent = @file_get_contents($filereadme);
 		// Clean the readme file to remove php code and get only html part
@@ -2605,7 +2629,7 @@ if ($action == 'editcss')
 	}
 	else
 	{
-		$readmecontent = GETPOST('WEBSITE_README');
+		$readmecontent = GETPOST('WEBSITE_README', 'none');
 	}
 	if (! trim($readmecontent))
 	{
@@ -3196,6 +3220,8 @@ print "</form>\n";
 
 if ($action == 'replacesite' || $action == 'replacesiteconfirm')
 {
+	$searchkey = GETPOST('searchstring', 'none');
+
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="replacesiteconfirm">';
@@ -3216,6 +3242,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm')
 	print '<div class="tagtd">';
 	print '<input type="checkbox" name="optioncontent" value="content"'.((! GETPOSTISSET('buttonreplacesitesearch') || GETPOST('optioncontent', 'aZ09'))?' checked':'').'> '.$langs->trans("Content");
 	print '<input type="checkbox" class="marginleftonly" name="optionmeta" value="meta"'.(GETPOST('optionmeta', 'aZ09')?' checked':'').'> '.$langs->trans("Title").' | '.$langs->trans("Description").' | '.$langs->trans("Keywords");
+	print '<input type="checkbox" class="marginleftonly" name="optionsitefiles" value="sitefiles"'.(GETPOST('optionsitefiles', 'aZ09')?' checked':'').'> '.$langs->trans("GlobalCSSorJS");
 	print '</div>';
 	print '</div>';
 
@@ -3224,7 +3251,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm')
 	print $langs->trans("SearchString");
 	print '</div>';
 	print '<div class="tagtd">';
-	print '<input type="text" name="searchstring" value="'.dol_escape_htmltag(GETPOST('searchstring', 'none')).'">';
+	print '<input type="text" name="searchstring" value="'.dol_escape_htmltag($searchkey).'">';
 	print '</div>';
 	print '</div>';
 
@@ -3239,36 +3266,72 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm')
 		$algo = '';
 		if (GETPOST('optionmeta')) $algo.='meta';
 		if (GETPOST('optioncontent')) $algo.='content';
+		if (GETPOST('optionsitefiles')) $algo.='sitefiles';
 
-		$listofpages = getPagesFromSearchCriterias('', $algo, GETPOST('searchstring', 'none'), 1000);
+		$listofpages = getPagesFromSearchCriterias('', $algo, $searchkey, 1000);
 
 		print '<br>';
 		print '<br>';
 
 		if ($listofpages['code'] == 'OK')
 		{
-			foreach($listofpages['list'] as $websitepagefound)
+			print '<div class="rowsearchresult">';
+
+			if ($action == 'replacesiteconfirm')
 			{
-				print '<div class="rowsearchresult"><a href="'.$_SERVER["PHP_SELF"].'?website='.$website->ref.'&pageid='.$websitepagefound->id.'">'.$websitepagefound->title.'</a> - '.$websitepagefound->description.'</div>';
+				print '<div class="tagtr">';
+				print '<div class="tagtd paddingrightonly">';
+				print $langs->trans("ReplaceString");
+				print '</div>';
+				print '<div class="tagtd">';
+				print '<input type="text" name="replacestring" value="'.dol_escape_htmltag(GETPOST('replacestring', 'none')).'">';
+				print '<input type="submit" disabled class="button" name="buttonreplacesitesearch" value="'.$langs->trans("Replace").'">';
+				print '</div>';
+				print '</div>';
+				print '<br>';
 			}
+
+			print '<div class="div-table-responsive-no-min">';
+			print '<table class="noborder centpercent">';
+			print '<tr class="liste_titre">';
+			print '<th>'.$langs->trans("Type").'</th>';
+			print '<th>'.$langs->trans("Link").'</th>';
+			print '<th>'.$langs->trans("Description").'</th>';
+			print '</tr>';
+
+			foreach($listofpages['list'] as $answerrecord)
+			{
+				if (get_class($answerrecord) == 'WebsitePage')
+				{
+					print '<tr>';
+					print '<td>'.$langs->trans("Container").'</td>';
+					print '<td>';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?website='.$website->ref.'&pageid='.$answerrecord->id.'">'.$answerrecord->title.'</a>';
+					print '</td>';
+					print '<td class="tdoverflow100">'.$answerrecord->description;
+					print '</td>';
+					print '</tr>';
+				}
+				else
+				{
+					print '<tr>';
+					print '<td>'.$answerrecord['type'].'</td>';
+					print '<td>';
+					$backtopageurl = $_SERVER["PHP_SELF"].'?action=replacesiteconfirm&searchstring='.urlencode($searchkey).'&optioncontent='.GETPOST('optioncontent', 'az09').'&optionmeta='.GETPOST('optionmeta', 'az09').'&optionsitefiles='.GETPOST('optionsitefiles', 'az09');
+					print '<a href="'.$_SERVER["PHP_SELF"].'?action=editcss&website='.$website->ref.'&backtopage='.urlencode($backtopageurl).'">'.$langs->trans("EditCss").'</a>';
+					print '</td>';
+					print '<td class="tdoverflow100">';
+					print '</td>';
+					print '</tr>';
+				}
+			}
+			print '</table>';
+			print '</div></div>';
 		}
 		else
 		{
 			print $listofpages['message'];
 		}
-	}
-
-	if ($action == 'replacesiteconfirm')
-	{
-		print '<div class="tagtr">';
-		print '<div class="tagtd paddingrightonly">';
-		print $langs->trans("ReplaceString");
-		print '</div>';
-		print '<div class="tagtd">';
-		print '<input type="text" name="replacestring" value="'.dol_escape_htmltag(GETPOST('replacestring', 'none')).'">';
-		print '<input type="submit" disabled class="button" name="buttonreplacesitesearch" value="'.$langs->trans("Replace").'">';
-		print '</div>';
-		print '</div>';
 	}
 
 	print '</form>';

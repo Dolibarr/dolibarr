@@ -1140,7 +1140,7 @@ class Societe extends CommonObject
 
 						if ($result > 0)
 						{
-							$lmember->societe=$this->name;
+							$lmember->company=$this->name;
 							//$lmember->firstname=$this->firstname?$this->firstname:$lmember->firstname;	// We keep firstname and lastname of member unchanged
 							//$lmember->lastname=$this->lastname?$this->lastname:$lmember->lastname;		// We keep firstname and lastname of member unchanged
 							$lmember->address=$this->address;
@@ -1158,7 +1158,8 @@ class Societe extends CommonObject
 							$result=$lmember->update($user, 0, 1, 1, 1);	// Use nosync to 1 to avoid cyclic updates
 							if ($result < 0)
 							{
-								$this->error=$lmember->error;
+								$this->error = $lmember->error;
+								$this->errors = array_merge($this->errors, $lmember->errors);
 								dol_syslog(get_class($this)."::update ".$this->error, LOG_ERR);
 								$error++;
 							}

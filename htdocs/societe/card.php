@@ -202,9 +202,10 @@ if (empty($reshook))
 				}
 
 				// Update
-				$object->update($object->id, $user, 0, 1, 1, 'merge');
+				$result = $object->update($object->id, $user, 0, 1, 1, 'merge');
 				if ($result < 0)
 				{
+					setEventMessages($object->error, $object->errors, 'errors');
 					$error++;
 				}
 
@@ -669,6 +670,7 @@ if (empty($reshook))
                 //var_dump($object);exit;
 
                 $result = $object->update($socid, $user, 1, $object->oldcopy->codeclient_modifiable(), $object->oldcopy->codefournisseur_modifiable(), 'update', 0);
+
                 if ($result <=  0)
                 {
                     setEventMessages($object->error, $object->errors, 'errors');
