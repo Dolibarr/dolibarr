@@ -825,13 +825,11 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
     $boxwork .= '</table>';   // End table array of working board
     $boxwork .= '</div>';
 
-
     if (!empty($isIntopOpenedDashBoard)) {
         print '<div class="fichecenter">';
         print '<div class="opened-dash-board-wrap"><div class="box-flex-container">' . $openedDashBoard . '</div></div>';
         print '</div>';
     }
-
 }
 
 
