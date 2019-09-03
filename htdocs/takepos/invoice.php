@@ -37,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.form.class.php';
 
-$langs->loadLangs(array("companies","commercial","bills", "cashdesk"));
+$langs->loadLangs(array("companies", "commercial", "bills", "cashdesk", "stocks"));
 
 $id = GETPOST('id', 'int');
 $action = GETPOST('action', 'alpha');
