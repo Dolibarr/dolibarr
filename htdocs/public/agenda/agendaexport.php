@@ -95,6 +95,18 @@ if (empty($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY))
 	exit;
 }
 
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
+$hookmanager->initHooks(array('agendaexport'));
+
+$reshook = $hookmanager->executeHooks('doActions', $filters); // Note that $action and $object may have been modified by some
+if ($reshook < 0){
+	if(!empty($hookmanager->errors) && is_array($hookmanager->errors)){
+		print '<div class="error">'.implode('<br/>', $hookmanager->errors).'</div>';
+	}else{
+		print '<div class="error">'.$hookmanager->error.'</div>';
+	}
+}
+
 // Check exportkey
 if (empty($_GET["exportkey"]) || $conf->global->MAIN_AGENDA_XCAL_EXPORTKEY != $_GET["exportkey"])
 {
@@ -106,8 +118,6 @@ if (empty($_GET["exportkey"]) || $conf->global->MAIN_AGENDA_XCAL_EXPORTKEY != $_
 	exit;
 }
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
-$hookmanager->initHooks(array('agendaexport'));
 
 // Define filename with prefix on filters predica (each predica set must have on cache file)
 $shortfilename='dolibarrcalendar';
