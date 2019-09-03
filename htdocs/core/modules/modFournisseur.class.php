@@ -641,8 +641,6 @@ class modFournisseur extends DolibarrModules
 		$dirodt=DOL_DATA_ROOT.'/doctemplates/supplier_orders';
 		$dest=$dirodt.'/template_supplier_order.odt';
 
-		file_put_contents("test.txt", var_export($dest, true));
-
 		if (file_exists($src) && ! file_exists($dest))
 		{
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
