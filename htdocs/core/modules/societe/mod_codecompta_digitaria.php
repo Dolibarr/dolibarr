@@ -32,13 +32,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/societe/modules_societe.class.php'
 class mod_codecompta_digitaria extends ModeleAccountancyCode
 {
     /**
-     * @var string Nom du modele
-     * @deprecated
-     * @see name
-     */
-	public $nom='Digitaria';
-
-    /**
      * @var string model name
      */
     public $name='Digitaria';
@@ -49,9 +42,12 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
      */
     public $version='dolibarr';        // 'development', 'experimental', 'dolibarr'
 
-    public	$prefixcustomeraccountancycode;
+    public $prefixcustomeraccountancycode;
 
-    public	$prefixsupplieraccountancycode;
+    public $prefixsupplieraccountancycode;
+
+    public $position = 30;
+
 
 	/**
 	 * 	Constructor
@@ -98,13 +94,13 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
         $texte.= $langs->trans("ModuleCompanyCodeSupplier".$this->name, $s1, $s3)."<br>\n";
         $texte.= "<br>\n";
         // Remove special char if COMPANY_DIGITARIA_REMOVE_SPECIAL is set to 1 or not set (default)
-        if (! isset($conf->global->COMPANY_DIGITARIA_REMOVE_SPECIAL) || ! empty($conf->global->$conf->global->COMPANY_DIGITARIA_REMOVE_SPECIAL)) $texte.= $langs->trans('COMPANY_DIGITARIA_REMOVE_SPECIAL').' = '.yn(1)."<br>\n";
+        if (! isset($conf->global->COMPANY_DIGITARIA_REMOVE_SPECIAL) || ! empty($conf->global->$conf->global->COMPANY_DIGITARIA_REMOVE_SPECIAL)) $texte.= $langs->trans('RemoveSpecialChars').' = '.yn(1)."<br>\n";
         // Apply a regex replacement pattern on code if COMPANY_DIGITARIA_CLEAN_REGEX is set. Value must be a regex with parenthesis. The part into parenthesis is kept, the rest removed.
         if (! empty($conf->global->COMPANY_DIGITARIA_CLEAN_REGEX))  $texte.= $langs->trans('COMPANY_DIGITARIA_CLEAN_REGEX').' = '.$conf->global->COMPANY_DIGITARIA_CLEAN_REGEX."<br>\n";
         // Unique index on code if COMPANY_DIGITARIA_UNIQUE_CODE is set to 1 or not set (default)
         if (! isset($conf->global->COMPANY_DIGITARIA_UNIQUE_CODE) || ! empty($conf->global->COMPANY_DIGITARIA_UNIQUE_CODE)) $texte.= $langs->trans('COMPANY_DIGITARIA_UNIQUE_CODE').' = '.yn(1)."<br>\n";
         $texte.= '</td>';
-        $texte.= '<td class="left">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
+        $texte.= '<td class="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
         $texte.= '</tr></table>';
         $texte.= '</form>';
 
