@@ -477,7 +477,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
         foreach($menu->liste as $menkey => $menuval) {
             print_start_menu_entry($menuval['idsel'], $menuval['classname'], $menuval['enabled']);
             print_text_menu_entry($menuval['titre'], $menuval['enabled'], (($menuval['url']!='#' && !preg_match('/^(http:\/\/|https:\/\/)/i', $menuval['url'])) ? DOL_URL_ROOT:'').$menuval['url'], $menuval['id'], $menuval['idsel'], $menuval['classname'], ($menuval['target']?$menuval['target']:$atarget));
-			print_submenu($db,$tabMenu,$menuval['idsel']); // print sub-menus
+			print_submenu($db, $tabMenu, $menuval['idsel']); // print sub-menus
             print_end_menu_entry($menuval['enabled']);
         }
     }
@@ -501,12 +501,12 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
  * @param	string	$parentMenu		parent menu id
  * @return	void
  */
-function print_submenu($db,&$tabMenu, $parentMenu)
+function print_submenu($db, &$tabMenu, $parentMenu)
 {
 	global $user, $conf, $langs ;
 	$menuTmp = new Menu();
-	print_left_eldy_menu($db,[],[],$tabMenu,$menuTmp,1,$parentMenu,1,null);
-	$subMenu = $menuTmp->liste; 
+	print_left_eldy_menu($db, [], [], $tabMenu, $menuTmp, 1, $parentMenu, 1, null);
+	$subMenu = $menuTmp->liste;
 
 	print_start_menu_array();
 	$end_menu_to_close = 0;
@@ -521,13 +521,13 @@ function print_submenu($db,&$tabMenu, $parentMenu)
 			if ( !$onlyLevel0 OR $sub["level"]==0 )
 			{
 				print_start_menu_entry($parentMenu, " class='submenu submenu".$sub["level"]."' ", 1); // li div/div div
-				$parentMenuArgs = ( strpos($sub["url"],"?") > -1 ? "&": "?" )."mainmenu=".$parentMenu;
+				$parentMenuArgs = ( strpos($sub["url"], "?") > -1 ? "&": "?" )."mainmenu=".$parentMenu;
 				if ($subMenu[$s]["enabled"])
 				{
 					print_text_menu_entry($langs->trans($sub["titre"]), 1, DOL_URL_ROOT.$sub["url"].$parentMenuArgs, ""/*$id*/, ""/*$idsel*/, ( ($subMenu[$s+1]["level"]>$sub["level"] AND !$onlyLevel0)?" class='hasSubmenu' ":"")/*$classname*/, $sub["target"]);
 				}else
 				{
-					print_text_menu_entry($langs->trans($sub["titre"]), 1, "#", ""/*$id*/, ""/*$idsel*/, ( ($subMenu[$s+1]["level"]>$sub["level"] AND !$onlyLevel0)?" class='hasSubmenu disabledLink' ": "class='disabledLink'")/*$classname*/, $sub["target"]);          
+					print_text_menu_entry($langs->trans($sub["titre"]), 1, "#", ""/*$id*/, ""/*$idsel*/, ( ($subMenu[$s+1]["level"]>$sub["level"] AND !$onlyLevel0)?" class='hasSubmenu disabledLink' ": "class='disabledLink'")/*$classname*/, $sub["target"]);
 				}
 
 				if (!$onlyLevel0 AND $s<count($subMenu)-1)//not last element
@@ -535,12 +535,12 @@ function print_submenu($db,&$tabMenu, $parentMenu)
 					if ($subMenu[$s+1]["level"] == $sub["level"])
 					{
 						print_end_menu_entry(1);// /div /li
-					}else if ($subMenu[$s+1]["level"]>$sub["level"])
+					}elseif ($subMenu[$s+1]["level"]>$sub["level"])
 					{
 						$end_menu_to_close++;
 						print_start_menu_array(); // div ul
 					}
-					else if ($subMenu[$s+1]["level"]<$sub["level"])
+					elseif ($subMenu[$s+1]["level"]<$sub["level"])
 					{
 						for ($t=0; $t<$sub["level"]-$subMenu[$s+1]["level"]; $t++)
 						{
