@@ -269,7 +269,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 			if(empty($reshook)){
 				$ref = isset($hookmanager->resArray['ref']) ? $hookmanager->resArray['ref'] : $ref;
 				$refcomp = isset($hookmanager->resArray['refcomp']) ? $hookmanager->resArray['refcomp'] : $refcomp;
-				$paiement = isset($hookmanager->resArray['payment']) ? $hookmanager->resArray['payment'] : $paiement;
+				$paiement = isset($hookmanager->resArray['paiement']) ? $hookmanager->resArray['paiement'] : $paiement;
 			}
 
 			$total_ttc = $obj->total_ttc;
