@@ -399,6 +399,7 @@ function New() {
     	$("#poslines").load("invoice.php?action=delete&place="+place, function() {
     		//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
     	});
+		ClearSearch();
 	}
 }
 
