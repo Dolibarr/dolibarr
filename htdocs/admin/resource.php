@@ -127,6 +127,15 @@ print '</td>';
 print '<td></td>';
 print '</tr>';
 
+
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans('EnableResourceUsedInEventCheck').'</td>';
+print '<td>';
+echo ajax_constantonoff('RESOURCE_USED_IN_EVENT_CHECK');
+print '</td>';
+print '<td></td>';
+print '</tr>';
+
 print '</table>';
 
 print '</form>';

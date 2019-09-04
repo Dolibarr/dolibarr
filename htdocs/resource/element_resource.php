@@ -87,6 +87,8 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
+    $error = 0;
+
 	if ($action == 'add_element_resource' && ! $cancel)
 	{
 		$res = 0;
@@ -100,8 +102,68 @@ if (empty($reshook))
 		{
 			$objstat = fetchObjectByElement($element_id, $element, $element_ref);
 			$objstat->element = $element; // For externals module, we need to keep @xx
-			$res = $objstat->add_element_resource($resource_id, $resource_type, $busy, $mandatory);
+
+            // TODO : add this check at update_linked_resource and when modifying event start or end date
+            // check if an event resource is already in use
+            if (!empty($conf->global->RESOURCE_USED_IN_EVENT_CHECK) && $objstat->element=='action' && $resource_type=='dolresource' && intval($busy)==1) {
+                $eventDateStart = $objstat->datep;
+                $eventDateEnd   = $objstat->datef;
+                $isFullDayEvent = intval($objstat->fulldayevent);
+                if (empty($eventDateEnd)) {
+                    if ($isFullDayEvent) {
+                        $eventDateStartArr = dol_getdate($eventDateStart);
+                        $eventDateStart = dol_mktime(0, 0, 0, $eventDateStartArr['mon'], $eventDateStartArr['mday'], $eventDateStartArr['year']);
+                        $eventDateEnd   = dol_mktime(23, 59, 59, $eventDateStartArr['mon'], $eventDateStartArr['mday'], $eventDateStartArr['year']);
+                    }
+                }
+
+                $sql  = "SELECT er.rowid, r.ref as r_ref, ac.id as ac_id, ac.label as ac_label";
+                $sql .= " FROM " . MAIN_DB_PREFIX . "element_resources as er";
+                $sql .= " INNER JOIN " . MAIN_DB_PREFIX . "resource as r ON r.rowid = er.resource_id AND er.resource_type = '" . $db->escape($resource_type) . "'";
+                $sql .= " INNER JOIN " . MAIN_DB_PREFIX . "actioncomm as ac ON ac.id = er.element_id AND er.element_type = '" . $db->escape($objstat->element) . "'";
+                $sql .= " WHERE er.resource_id = " . $resource_id;
+                $sql .= " AND er.busy = 1";
+                $sql .= " AND (";
+
+                // event date start between ac.datep and ac.datep2 (if datep2 is null we consider there is no end)
+                $sql .= " (ac.datep <= '" . $db->idate($eventDateStart) . "' AND (ac.datep2 IS NULL OR ac.datep2 >= '" . $db->idate($eventDateStart) . "'))";
+                // event date end between ac.datep and ac.datep2
+                if (!empty($eventDateEnd)) {
+                    $sql .= " OR (ac.datep <= '" . $db->idate($eventDateEnd) . "' AND (ac.datep2 >= '" . $db->idate($eventDateEnd) . "'))";
+                }
+                // event date start before ac.datep and event date end after ac.datep2
+                $sql .= " OR (";
+                $sql .= "ac.datep >= '" . $db->idate($eventDateStart) . "'";
+                if (!empty($eventDateEnd)) {
+                    $sql .= " AND (ac.datep2 IS NOT NULL AND ac.datep2 <= '" . $db->idate($eventDateEnd) . "')";
+                }
+                $sql .= ")";
+
+                $sql .= ")";
+                $resql = $db->query($sql);
+                if (!$resql) {
+                    $error++;
+                    $objstat->error    = $db->lasterror();
+                    $objstat->errors[] = $objstat->error;
+                } else {
+                    if ($db->num_rows($resql)>0) {
+                        // already in use
+                        $error++;
+                        $objstat->error = $langs->trans('ErrorResourcesAlreadyInUse') . ' : ';
+                        while ($obj = $db->fetch_object($resql)) {
+                            $objstat->error .= '<br /> - ' . $langs->trans('ErrorResourceUseInEvent', $obj->r_ref, $obj->ac_label . ' [' . $obj->ac_id . ']');
+                        }
+                        $objstat->errors[] = $objstat->error;
+                    }
+                    $db->free($resql);
+                }
+            }
+
+            if (!$error) {
+                $res = $objstat->add_element_resource($resource_id, $resource_type, $busy, $mandatory);
+            }
 		}
+
 		if (! $error && $res > 0)
 		{
 			setEventMessages($langs->trans('ResourceLinkedWithSuccess'), null, 'mesgs');
@@ -123,17 +185,71 @@ if (empty($reshook))
 			$object->busy = $busy;
 			$object->mandatory = $mandatory;
 
-			$result = $object->update_element_resource($user);
+            if (!empty($conf->global->RESOURCE_USED_IN_EVENT_CHECK) && $object->element_type=='action' && $object->resource_type=='dolresource' && intval($object->busy)==1) {
+                $eventDateStart = $object->objelement->datep;
+                $eventDateEnd   = $object->objelement->datef;
+                $isFullDayEvent = intval($objstat->fulldayevent);
+                if (empty($eventDateEnd)) {
+                    if ($isFullDayEvent) {
+                        $eventDateStartArr = dol_getdate($eventDateStart);
+                        $eventDateStart = dol_mktime(0, 0, 0, $eventDateStartArr['mon'], $eventDateStartArr['mday'], $eventDateStartArr['year']);
+                        $eventDateEnd   = dol_mktime(23, 59, 59, $eventDateStartArr['mon'], $eventDateStartArr['mday'], $eventDateStartArr['year']);
+                    }
+                }
 
-			if ($result >= 0)
-			{
+                $sql  = "SELECT er.rowid, r.ref as r_ref, ac.id as ac_id, ac.label as ac_label";
+                $sql .= " FROM " . MAIN_DB_PREFIX . "element_resources as er";
+                $sql .= " INNER JOIN " . MAIN_DB_PREFIX . "resource as r ON r.rowid = er.resource_id AND er.resource_type = '" . $db->escape($object->resource_type) . "'";
+                $sql .= " INNER JOIN " . MAIN_DB_PREFIX . "actioncomm as ac ON ac.id = er.element_id AND er.element_type = '" . $db->escape($object->element_type) . "'";
+                $sql .= " WHERE er.resource_id = " . $object->resource_id;
+                $sql .= " AND er.busy = 1";
+                $sql .= " AND (";
+
+                // event date start between ac.datep and ac.datep2 (if datep2 is null we consider there is no end)
+                $sql .= " (ac.datep <= '" . $db->idate($eventDateStart) . "' AND (ac.datep2 IS NULL OR ac.datep2 >= '" . $db->idate($eventDateStart) . "'))";
+                // event date end between ac.datep and ac.datep2
+                if (!empty($eventDateEnd)) {
+                    $sql .= " OR (ac.datep <= '" . $db->idate($eventDateEnd) . "' AND (ac.datep2 IS NULL OR ac.datep2 >= '" . $db->idate($eventDateEnd) . "'))";
+                }
+                // event date start before ac.datep and event date end after ac.datep2
+                $sql .= " OR (";
+                $sql .= "ac.datep >= '" . $db->idate($eventDateStart) . "'";
+                if (!empty($eventDateEnd)) {
+                    $sql .= " AND (ac.datep2 IS NOT NULL AND ac.datep2 <= '" . $db->idate($eventDateEnd) . "')";
+                }
+                $sql .= ")";
+
+                $sql .= ")";
+                $resql = $db->query($sql);
+                if (!$resql) {
+                    $error++;
+                    $object->error    = $db->lasterror();
+                    $object->errors[] = $object->error;
+                } else {
+                    if ($db->num_rows($resql)>0) {
+                        // already in use
+                        $error++;
+                        $object->error = $langs->trans('ErrorResourcesAlreadyInUse') . ' : ';
+                        while ($obj = $db->fetch_object($resql)) {
+                            $object->error .= '<br /> - ' . $langs->trans('ErrorResourceUseInEvent', $obj->r_ref, $obj->ac_label . ' [' . $obj->ac_id . ']');
+                        }
+                        $object->errors[] = $objstat->error;
+                    }
+                    $db->free($resql);
+                }
+            }
+
+            if (!$error) {
+			    $result = $object->update_element_resource($user);
+                if ($result < 0)    $error++;
+            }
+
+			if ($error) {
+                setEventMessages($object->error, $object->errors, 'errors');
+			} else {
 				setEventMessages($langs->trans('RessourceLineSuccessfullyUpdated'), null, 'mesgs');
 				header("Location: ".$_SERVER['PHP_SELF']."?element=".$element."&element_id=".$element_id);
 				exit;
-			}
-			else
-			{
-				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
 	}

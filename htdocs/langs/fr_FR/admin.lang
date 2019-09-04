@@ -1896,6 +1896,7 @@ ResourceSetup=Configuration du module Ressource
 UseSearchToSelectResource=Utilisez un champ avec auto-complétion pour choisir les ressources (plutôt qu'une liste déroulante).
 DisabledResourceLinkUser=Désactiver la fonctionnalité pour lier une ressource aux utilisateurs
 DisabledResourceLinkContact=Désactiver la fonctionnalité pour lier une ressource aux contacts/adresses
+EnableResourceUsedInEventCheck=Activer la fonctionnalité de vérification d'une ressource déjà réservée lors d'un évènement
 ConfirmUnactivation=Confirmer réinitialisation du module
 OnMobileOnly=Sur petit écran (smartphone) uniquement
 DisableProspectCustomerType=Désactiver le type de tiers "Prospect + Client" (le tiers doit donc être un client potentiel ou un client, mais ne peut pas être les deux)
