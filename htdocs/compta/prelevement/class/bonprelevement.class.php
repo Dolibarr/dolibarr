@@ -1092,7 +1092,7 @@ class BonPrelevement extends CommonObject
 					}
 
 					$this->factures = $factures_prev_id;
-					$this->factures_prev = $factures_prev;
+					$this->context['factures_prev'] = $factures_prev;
 
 					// Generation of SEPA file $this->filename
 					$this->generate($format,$executiondate);
