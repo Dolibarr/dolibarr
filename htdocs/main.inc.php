@@ -1775,7 +1775,7 @@ function top_menu_user(User $user, Translate $langs)
     $dropdownBody.= '<br>';
 
     $dropdownBody.= '<br><u>'.$langs->trans("Session").'</u>';
-    $dropdownBody.= '<br><b>'.$langs->trans("IPAddress").'</b>: '.$_SERVER["REMOTE_ADDR"];
+    $dropdownBody.= '<br><b>'.$langs->trans("IPAddress").'</b>: '.dol_escape_htmltag($_SERVER["REMOTE_ADDR"]);
     if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY)) $dropdownBody.= '<br><b>'.$langs->trans("ConnectedOnMultiCompany").':</b> '.$conf->entity.' (user entity '.$user->entity.')';
     $dropdownBody.= '<br><b>'.$langs->trans("AuthenticationMode").':</b> '.$_SESSION["dol_authmode"].(empty($dolibarr_main_demo)?'':' (demo)');
     $dropdownBody.= '<br><b>'.$langs->trans("ConnectedSince").':</b> '.dol_print_date($user->datelastlogin, "dayhour", 'tzuser');
@@ -1784,7 +1784,7 @@ function top_menu_user(User $user, Translate $langs)
     $dropdownBody.= '<br><b>'.$langs->trans("CurrentMenuManager").':</b> '.$menumanager->name;
     $langFlag=picto_from_langcode($langs->getDefaultLang());
     $dropdownBody.= '<br><b>'.$langs->trans("CurrentUserLanguage").':</b> '.($langFlag?$langFlag.' ':'').$langs->getDefaultLang();
-    $dropdownBody.= '<br><b>'.$langs->trans("Browser").':</b> '.$conf->browser->name.($conf->browser->version?' '.$conf->browser->version:'').' ('.$_SERVER['HTTP_USER_AGENT'].')';
+    $dropdownBody.= '<br><b>'.$langs->trans("Browser").':</b> '.$conf->browser->name.($conf->browser->version?' '.$conf->browser->version:'').' ('.dol_escape_htmltag($_SERVER['HTTP_USER_AGENT']).')';
     $dropdownBody.= '<br><b>'.$langs->trans("Layout").':</b> '.$conf->browser->layout;
     $dropdownBody.= '<br><b>'.$langs->trans("Screen").':</b> '.$_SESSION['dol_screenwidth'].' x '.$_SESSION['dol_screenheight'];
     if ($conf->browser->layout == 'phone') $dropdownBody.= '<br><b>'.$langs->trans("Phone").':</b> '.$langs->trans("Yes");
