@@ -103,6 +103,7 @@ WrongSupplierCode=Code fournisseur incorrect
 CustomerCodeModel=Modèle de code client
 SupplierCodeModel=Modèle de code fournisseur
 Gencod=Code-barres
+GencodBuyPrice=Code-barres lié au prix d'achat
 ##### Professional ID #####
 ProfId1Short=Id. prof. 1
 ProfId2Short=Id. prof. 2

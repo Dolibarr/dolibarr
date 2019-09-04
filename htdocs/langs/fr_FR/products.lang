@@ -341,3 +341,4 @@ ErrorDestinationProductNotFound=Produit destination non trouvé
 ErrorProductCombinationNotFound=Variante du produit non trouvé
 ActionAvailableOnVariantProductOnly=Action disponible uniquement sur la variante du produit
 ProductsPricePerCustomer=Prix produit par clients
+GlobalSearchOnExtrafield=Recherche globale : Appliquer la recherche sur les extrafields (Attention : les dates sont au format YYYY-MM-DD)
