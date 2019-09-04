@@ -409,13 +409,15 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
         $count=0;
         dol_delete_dir_recursive($dirout, $count, 1);
 
-        $result=dol_compress_file($filein, $fileout, $format);
+        $errorstring = '';
+
+        $result=dol_compress_file($filein, $fileout, $format, $errorstring);
         print __METHOD__." result=".$result."\n";
-        $this->assertGreaterThanOrEqual(1, $result);
+        $this->assertGreaterThanOrEqual(1, $result, "Pb with dol_compress_file ".$errorstring);
 
         $result=dol_uncompress($fileout, $dirout);
         print __METHOD__." result=".join(',', $result)."\n";
-        $this->assertEquals(0, count($result));
+        $this->assertEquals(0, count($result), "Pb with dol_uncompress_file");
     }
 
     /**
