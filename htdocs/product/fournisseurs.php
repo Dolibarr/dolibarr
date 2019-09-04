@@ -863,7 +863,7 @@ SCRIPT;
 				// fetch optionals attributes and labels
 				$extralabels=$extrafields->fetch_name_optionals_label("product_fournisseur_price");
 				foreach ($extralabels as $extrafield) {
-					print_liste_field_titre($langs->trans($extrafield), $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
+					print_liste_field_titre($extrafield, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
 				}
 
 				if (is_object($hookmanager))
