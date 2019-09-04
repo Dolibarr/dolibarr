@@ -577,7 +577,7 @@ abstract class CommonDocGenerator
 		{
 		      $resarray['line_unit']=$outputlangs->trans($line->getLabelOfUnit('long'));
 		      $resarray['line_unit_short']=$outputlangs->trans($line->getLabelOfUnit('short'));
-		}
+        }
 
 		// Retrieve extrafields
 		$extrafieldkey=$line->element;
@@ -588,6 +588,16 @@ abstract class CommonDocGenerator
 		$line->fetch_optionals();
 
 		$resarray = $this->fill_substitutionarray_with_extrafields($line, $resarray, $extrafields, $array_key, $outputlangs);
+        
+        // Add the product supplier extrafields to the substitutions
+        $resql = $this->db->query("SELECT * FROM " . MAIN_DB_PREFIX . "product_fournisseur_price_extrafields AS ex INNER JOIN " . MAIN_DB_PREFIX . "product_fournisseur_price AS f ON ex.fk_object = f.rowid WHERE f.ref_fourn = " . $line->ref_fourn);
+        if ($this->db->num_rows($resql) > 0) {
+            $resql = $this->db->fetch_object($resql);
+            $extralabels=$extrafields->fetch_name_optionals_label("product_fournisseur_price");
+            foreach ($extralabels as $key => $value) {
+                $resarray['line_product_supplier_'.$key] = $resql->{$key};
+            }
+        }
 
 		// Load product data optional fields to the line -> enables to use "line_options_{extrafield}"
 		if (isset($line->fk_product) && $line->fk_product > 0)
