@@ -55,13 +55,6 @@ $langs->load("holiday");
 
 $childids = $user->getAllChildIds(1);
 
-$cancreate = 0;
-if (! empty($user->rights->holiday->write_all)) $cancreate=1;
-if (! empty($user->rights->holiday->write) && in_array($fuserid, $childids)) $cancreate=1;
-
-$candelete = 0;
-if (! empty($user->rights->holiday->delete)) $candelete=1;
-
 $morefilter = 'AND employee = 1';
 if (! empty($conf->global->HOLIDAY_FOR_NON_SALARIES_TOO)) $morefilter = '';
 
@@ -81,6 +74,14 @@ if ($id > 0)
         accessforbidden();
     }
 }
+
+$cancreate = 0;
+if (! empty($user->rights->holiday->write_all)) $cancreate=1;
+if (! empty($user->rights->holiday->write) && in_array($fuserid, $childids)) $cancreate=1;
+
+$candelete = 0;
+if (! empty($user->rights->holiday->delete)) $candelete=1;
+if ($object->statut == Holiday::STATUS_DRAFT && $user->rights->holiday->create && in_array($object->fk_user, $childids)) $candelete=1;
 
 
 /*
@@ -1435,7 +1436,7 @@ else
                     {
                         print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=backtodraft" class="butAction">'.$langs->trans("SetToDraft").'</a>';
                     }
-                    if ($user->rights->holiday->delete && ($object->statut == Holiday::STATUS_DRAFT || $object->statut == Holiday::STATUS_CANCELED || $object->statut == Holiday::STATUS_REFUSED))	// If draft or canceled or refused
+                    if ($candelete && ($object->statut == Holiday::STATUS_DRAFT || $object->statut == Holiday::STATUS_CANCELED || $object->statut == Holiday::STATUS_REFUSED))	// If draft or canceled or refused
                     {
                     	print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete" class="butActionDelete">'.$langs->trans("DeleteCP").'</a>';
                     }
