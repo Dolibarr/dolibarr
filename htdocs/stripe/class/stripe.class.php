@@ -333,10 +333,8 @@ class Stripe extends CommonObject
 		if (is_object($object))
 		{
 			// Warning. If a payment was tried and failed, a payment intent was created.
-			// But if we change someting on object to pay (amount or other), reusing same payment intent is not allowed.
-			// Recommanded solution is to recreate a new payment intent each time we need one (old one will be automatically closed after a delay),
-			// that's why i comment the part of code to retreive a payment intent with object id (never mind if we cumulate payment intent with old that will not be used)
-			/*
+			// But if we change someting on object to pay (amount or other), update the payment intent for log payment's event on it
+			
 			$sql = "SELECT pi.ext_payment_id, pi.entity, pi.fk_facture, pi.sourcetype, pi.ext_payment_site";
     		$sql.= " FROM " . MAIN_DB_PREFIX . "prelevement_facture_demande as pi";
     		$sql.= " WHERE pi.fk_facture = " . $object->id;
@@ -372,7 +370,7 @@ class Stripe extends CommonObject
     					$this->error = $e->getMessage();
     				}
     			}
-    		}*/
+    		}
 		}
 
 		if (empty($paymentintent))
