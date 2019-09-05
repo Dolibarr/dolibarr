@@ -71,8 +71,8 @@ insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) v
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (143, 'order_supplier','external', 'CUSTOMER',      'Contact fournisseur suivi commande', 1);
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (145, 'order_supplier','external', 'SHIPPING',      'Contact fournisseur livraison commande', 1);
 
-insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (150, 'dolresource','internal', 'USERINCHARGE',     'In charge of resource', 1);
-insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (151, 'dolresource','external', 'THIRDINCHARGE',    'In charge of resource', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (150, 'resource','internal', 'USERINCHARGE',     'In charge of resource', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (151, 'resource','external', 'THIRDINCHARGE',    'In charge of resource', 1);
 
 -- All project code must start with 'PROJECT'
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (160, 'project',  'internal', 'PROJECTLEADER', 'Chef de Projet', 1);

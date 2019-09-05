@@ -2807,7 +2807,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	}
 
 	// Wrapping pour les dons
-	elseif ($modulepart == 'dolresource' && !empty($conf->resource->dir_output))
+	elseif ($modulepart == 'resource' && !empty($conf->resource->dir_output))
 	{
 		if ($fuser->rights->resource->{$read} || preg_match('/^specimen/i', $original_file))
 		{

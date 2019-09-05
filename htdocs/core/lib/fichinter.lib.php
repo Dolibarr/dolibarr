@@ -65,7 +65,7 @@ function fichinter_prepare_head($object)
 	// Tab to link resources
 	if ($conf->resource->enabled)
 	{
-		require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/resource/class/resource.class.php';
  		$nbResource = 0;
 		$objectres=new Dolresource($db);
 		if (is_array($objectres->available_resources))

@@ -2121,10 +2121,10 @@ function getElementProperties($element_type)
         $module='ficheinter';
         $subelement='fichinter';
     }
-    if ($element_type == 'dolresource' || $element_type == 'resource') {
+    if ($element_type == 'resource' || $element_type == 'resource') {
         $classpath = 'resource/class';
         $module='resource';
-        $subelement='dolresource';
+        $subelement='resource';
     }
     if ($element_type == 'propaldet') {
         $classpath = 'comm/propal/class';

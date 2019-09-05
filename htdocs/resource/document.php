@@ -29,7 +29,7 @@
  */
 
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
+require_once DOL_DOCUMENT_ROOT.'/resource/class/resource.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
@@ -131,7 +131,7 @@ if ($object->id)
 
     dol_fiche_end();
 
-    $modulepart = 'dolresource';
+    $modulepart = 'resource';
     $permission = $user->rights->resource->write;
 
     include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';

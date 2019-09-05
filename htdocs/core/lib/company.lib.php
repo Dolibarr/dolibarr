@@ -1277,7 +1277,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
         if (is_object($filterobj) && get_class($filterobj) == 'Societe')  $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
         elseif (is_object($filterobj) && get_class($filterobj) == 'Dolresource') {
             $sql.= " INNER JOIN ".MAIN_DB_PREFIX."element_resources as er";
-            $sql.= " ON er.resource_type = 'dolresource'";
+            $sql.= " ON er.resource_type = 'resource'";
             $sql.= " AND er.element_id = a.id";
             $sql.= " AND er.resource_id = ".$filterobj->id;
         }

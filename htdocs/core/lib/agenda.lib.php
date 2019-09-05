@@ -464,7 +464,7 @@ function actions_prepare_head($object)
     // Tab to link resources
 	if ($conf->resource->enabled)
 	{
-	    include_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
+	    include_once DOL_DOCUMENT_ROOT.'/resource/class/resource.class.php';
 	    $resource=new DolResource($db);
 
 		$head[$h][0] = DOL_URL_ROOT.'/resource/element_resource.php?element=action&element_id='.$object->id;

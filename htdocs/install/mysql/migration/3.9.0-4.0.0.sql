@@ -40,8 +40,8 @@ ALTER TABLE llx_opensurvey_sondage ADD COLUMN status integer DEFAULT 1 after dat
 
 ALTER TABLE llx_expedition ADD COLUMN billed smallint DEFAULT 0;
 
-insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (150, 'dolresource','internal', 'USERINCHARGE',     'In charge of resource', 1);
-insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (151, 'dolresource','external', 'THIRDINCHARGE',    'In charge of resource', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (150, 'resource','internal', 'USERINCHARGE',     'In charge of resource', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (151, 'resource','external', 'THIRDINCHARGE',    'In charge of resource', 1);
 
 DELETE FROM llx_user_param where param = 'MAIN_THEME' and value in ('auguria', 'amarok', 'cameleo');
 
@@ -463,7 +463,7 @@ ALTER TABLE llx_resource ADD COLUMN extraparams			varchar(255);
  
 ALTER TABLE llx_element_resources ADD COLUMN duree real;          -- total duration of using ressource
 
-UPDATE llx_element_resources SET resource_type = 'dolresource' WHERE resource_type = 'resource';
+UPDATE llx_element_resources SET resource_type = 'resource' WHERE resource_type = 'resource';
 
 CREATE TABLE llx_advtargetemailing
 (
