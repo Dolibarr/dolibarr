@@ -89,5 +89,20 @@ ALTER TABLE llx_projet ADD COLUMN usage_organize_event integer DEFAULT 0;
 
 UPDATE llx_projet set usage_opportunity = 1 WHERE fk_opp_status > 0;
 
- 
+
+create table llx_c_hrm_public_holiday
+(
+  id					integer AUTO_INCREMENT PRIMARY KEY,
+  entity				integer	DEFAULT 0 NOT NULL,	-- multi company id, 0 = all
+  fk_country			integer,			
+  code		    		varchar(62),
+  dayrule               varchar(255) DEFAULT 'date', -- 'date', 'xxx', ...
+  day					integer,
+  month					integer,
+  year					integer,					-- 0 for all years
+  active				integer DEFAULT 1,
+  import_key			varchar(14)
+)ENGINE=innodb;
+
+
   
