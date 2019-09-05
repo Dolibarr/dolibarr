@@ -7801,7 +7801,7 @@ abstract class CommonObject
      * @param  string	$type	Type of category ('product', ...)
      * @return int      < 0 si erreur, > 0 si ok
      */
-	function cloneCategories($fromId, $toId, $type='')
+	public function cloneCategories($fromId, $toId, $type='')
 	{
 		$this->db->begin();
 
