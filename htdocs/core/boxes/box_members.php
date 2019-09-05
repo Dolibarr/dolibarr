@@ -65,7 +65,7 @@ class box_members extends ModeleBoxes
 		$listofmodulesforexternal=explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);
 		if (! in_array('adherent', $listofmodulesforexternal) && ! empty($user->societe_id)) $this->enabled=0;	// disabled for external users
 
-		$this->hidden=! ($user->rights->adherent->lire);
+		$this->hidden = ! ($user->rights->adherent->lire);
 	}
 
 	/**

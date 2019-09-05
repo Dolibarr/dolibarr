@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008-2018 	Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2019 	Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,8 +35,12 @@ if (!$user->admin)
 $action = GETPOST('action', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
+
+
 $arrayofparameters=array(
-	'DAV_ALLOW_PUBLIC_DIR'=>array('css'=>'minwidth200', 'enabled'=>1),
+	'DAV_RESTICT_ON_IP'=>array('css'=>'minwidth200', 'enabled'=>1),
+    'DAV_ALLOW_PRIVATE_DIR'=>array('css'=>'minwidth200', 'enabled'=>2),
+    'DAV_ALLOW_PUBLIC_DIR'=>array('css'=>'minwidth200', 'enabled'=>1),
 	'DAV_ALLOW_ECM_DIR'=>array('css'=>'minwidth200', 'enabled'=>$conf->ecm->enabled)
 );
 
@@ -67,7 +71,6 @@ $head=dav_admin_prepare_head();
 
 dol_fiche_head($head, 'webdav', '', -1, 'action');
 
-
 if ($action == 'edit')
 {
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -75,16 +78,23 @@ if ($action == 'edit')
 	print '<input type="hidden" name="action" value="update">';
 
 	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 	foreach($arrayofparameters as $key => $val)
 	{
 		if (isset($val['enabled']) && empty($val['enabled'])) continue;
 
 		print '<tr class="oddeven"><td>';
-		print $form->textwithpicto($langs->trans($key), $langs->trans($key.'Tooltip'));
+		$tooltiphelp = (($langs->trans($key.'Tooltip') != $key.'Tooltip') ? $langs->trans($key.'Tooltip') : '');
+		$label = $langs->trans($key);
+		if ($key == 'DAV_RESTICT_ON_IP') $label = $langs->trans("RESTRICT_ON_IP");
+		print $form->textwithpicto($label, $tooltiphelp);
 		print '</td><td>';
-		if ($key == 'DAV_ALLOW_PUBLIC_DIR' || $key == 'DAV_ALLOW_ECM_DIR')
+		if ($key == 'DAV_ALLOW_PRIVATE_DIR')
+		{
+		    print $langs->trans("AlwaysActive");
+		}
+		elseif ($key == 'DAV_ALLOW_PUBLIC_DIR' || $key == 'DAV_ALLOW_ECM_DIR')
 		{
 			print $form->selectyesno($key, $conf->global->$key, 1);
 		}
@@ -107,14 +117,19 @@ if ($action == 'edit')
 else
 {
 	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 	foreach($arrayofparameters as $key => $val)
 	{
 		print '<tr class="oddeven"><td>';
-		print $form->textwithpicto($langs->trans($key), $langs->trans($key.'Tooltip'));
+		$tooltiphelp = (($langs->trans($key.'Tooltip') != $key.'Tooltip') ? $langs->trans($key.'Tooltip') : '');
+		print $form->textwithpicto($langs->trans($key), $tooltiphelp);
 		print '</td><td>';
-		if ($key == 'DAV_ALLOW_PUBLIC_DIR' || $key == 'DAV_ALLOW_ECM_DIR')
+		if ($key == 'DAV_ALLOW_PRIVATE_DIR')
+		{
+		    print $langs->trans("AlwaysActive");
+		}
+		elseif ($key == 'DAV_ALLOW_PUBLIC_DIR' || $key == 'DAV_ALLOW_ECM_DIR')
 		{
 			print yn($conf->global->$key);
 		}
@@ -144,7 +159,7 @@ print "</form>\n";
 
 clearstatcache();
 
-print $langs->trans("WebDAVSetupDesc")."<br>\n";
+print '<span class="opacitymedium">'.$langs->trans("WebDAVSetupDesc")."</span><br>\n";
 print "<br>";
 
 
@@ -167,6 +182,13 @@ if (! empty($conf->global->DAV_ALLOW_PUBLIC_DIR))
 	$message.='<br>';
 }
 print $message;
+
+print '<br><br><br>';
+
+require_once DOL_DOCUMENT_ROOT.'/includes/sabre/autoload.php';
+$version = Sabre\DAV\Version::VERSION;
+print '<span class="opacitymedium">'.$langs->trans("BaseOnSabeDavVersion").' : '.$version.'</span>';
+
 
 // End of page
 llxFooter();

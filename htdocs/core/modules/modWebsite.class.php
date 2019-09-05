@@ -92,12 +92,18 @@ class modWebsite extends DolibarrModules
 		$r++;
 
 		$this->rights[$r][0] = 10002;
-		$this->rights[$r][1] = 'Create/modify website content';
+		$this->rights[$r][1] = 'Create/modify website content (html and javascript content)';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'write';
 		$r++;
 
 		$this->rights[$r][0] = 10003;
+		$this->rights[$r][1] = 'Create/modify website content (dynamic php code). Dangerous, must be reserved to restricted developers.';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'writephp';
+		$r++;
+
+		$this->rights[$r][0] = 10005;
 		$this->rights[$r][1] = 'Delete website content';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'delete';
@@ -152,7 +158,7 @@ class modWebsite extends DolibarrModules
     	// Remove permissions and default values
     	$this->remove($options);
 
-    	// Copy flags and octicons directoru
+    	// Copy flags and octicons directory
     	$dirarray=array('common/flags', 'common/octicons');
     	foreach($dirarray as $dir)
     	{
@@ -171,6 +177,26 @@ class modWebsite extends DolibarrModules
 	    			return 0;
 	    		}
 	    	}
+    	}
+
+    	// Website templates
+    	$srcroot=DOL_DOCUMENT_ROOT.'/install/doctemplates/websites';
+    	$destroot=DOL_DATA_ROOT.'/doctemplates/websites';
+
+    	dol_mkdir($destroot);
+
+    	$docs=dol_dir_list($srcroot, 'files', 0, 'website_.*(\.zip|\.jpg)$');
+    	foreach($docs as $cursorfile)
+    	{
+	    		$src=$srcroot.'/'.$cursorfile['name'];
+	    		$dest=$destroot.'/'.$cursorfile['name'];
+
+	    		$result=dol_copy($src, $dest, 0, 0);
+	    		if ($result < 0)
+	    		{
+	    			$langs->load("errors");
+	    			$this->error=$langs->trans('ErrorFailToCopyFile', $src, $dest);
+	    		}
     	}
 
     	$sql = array();

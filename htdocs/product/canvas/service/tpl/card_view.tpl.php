@@ -56,7 +56,7 @@ dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref');
 <td><?php echo $object->label; ?></td>
 
 <?php if ($object->photos) { ?>
-<td valign="middle" align="center" width="30%" rowspan="<?php echo $object->nblignes; ?>">
+<td valign="middle" align="center" width="30%" rowspan="<?php echo $object->nblines; ?>">
 <?php echo $object->photos; ?>
 </td>
 <?php } ?>

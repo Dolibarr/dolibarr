@@ -1,0 +1,294 @@
+# en_US lang file for module ticket
+# Copyright (C) 2013  Jean-François FERRY <hello@librethic.io>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+
+Module56000Name=Destek Bildirimleri
+Module56000Desc=Sorun veya istek yönetimi için destek bildirim sistemi
+
+Permission56001=Destek bildirimini gör
+Permission56002=Destek bildirimini değiştir
+Permission56003=Destek bildirimini sil
+Permission56004=Destek bildirimlerini yönet
+Permission56005=See tickets of all third parties (not effective for external users, always be limited to the third party they depend on)
+
+TicketDictType=Destek Bildirimi - Türler
+TicketDictCategory=Destek Bildirimi - Gruplar
+TicketDictSeverity=Destek Bildirimi - Önemler
+TicketTypeShortBUGSOFT=Yazılım arızası
+TicketTypeShortBUGHARD=Donanım arızası
+TicketTypeShortCOM=Ticari soru
+TicketTypeShortINCIDENT=Yardım talebi
+TicketTypeShortPROJET=Proje
+TicketTypeShortOTHER=Diğer
+
+TicketSeverityShortLOW=Düşük
+TicketSeverityShortNORMAL=Normal
+TicketSeverityShortHIGH=Yüksek
+TicketSeverityShortBLOCKING=Kritik/Engelleyici
+
+ErrorBadEmailAddress='%s' alanı hatalı
+MenuTicketMyAssign=Destek bildirimlerim
+MenuTicketMyAssignNonClosed=Açık destek bildirimlerim
+MenuListNonClosed=Açık destek bildirimleri
+
+TypeContact_ticket_internal_CONTRIBUTOR=Katılımcı
+TypeContact_ticket_internal_SUPPORTTEC=Atanan kullanıcı
+TypeContact_ticket_external_SUPPORTCLI=Customer contact / incident tracking
+TypeContact_ticket_external_CONTRIBUTOR=Dış iştirakçi
+
+OriginEmail=E-posta kaynağı
+Notify_TICKET_SENTBYMAIL=Destek bildirimini e-posta ile gönderil
+
+# Status
+NotRead=Okunmayan
+Read=Okundu
+Assigned=Atanan
+InProgress=Devam etmekte
+NeedMoreInformation=Bilgi bekleniyor
+Answered=Cevaplandı
+Waiting=Bekliyor
+Closed=Kapalı
+Deleted=Silindi
+
+# Dict
+Type=Türü
+Category=Analitik kod
+Severity=Önem seviyesi
+
+# Email templates
+MailToSendTicketMessage=Destek bildirim mesajından e-posta göndermek için
+
+#
+# Admin page
+#
+TicketSetup=Destek bildirimi modülü kurulumu
+TicketSettings=Ayarlar
+TicketSetupPage=
+TicketPublicAccess=A public interface requiring no identification is available at the following url
+TicketSetupDictionaries=Destek bildirimi, önem ve analitik kodlarının türleri sözlüklerden yapılandırılabilir
+TicketParamModule=Modül değişken kurulumu
+TicketParamMail=E-posta kurulumu
+TicketEmailNotificationFrom=Notification email from
+TicketEmailNotificationFromHelp=Used into ticket message answer by example
+TicketEmailNotificationTo=Notifications email to
+TicketEmailNotificationToHelp=E-posta bildirimlerini bu adrese gönder.
+TicketNewEmailBodyLabel=Bir destek bildirimi oluşturulduktan sonra metin mesajı gönderildi
+TicketNewEmailBodyHelp=Burada belirtilen metin, ortak arayüzden yeni bir destek bildiriminin oluşturulmasını onaylayan e-postaya eklenecektir. Destek bildiriminin danışmanlığına ilişkin bilgiler otomatik olarak eklenir.
+TicketParamPublicInterface=Genel arayüz kurulumu
+TicketsEmailMustExist=Destek bildirimi oluşturmak için geçerli bir e-posta adresi iste
+TicketsEmailMustExistHelp=In the public interface, the email address should already be filled in the database to create a new ticket.
+PublicInterface=Genel arayüz
+TicketUrlPublicInterfaceLabelAdmin=Genel arayüz için alternatif URL
+TicketUrlPublicInterfaceHelpAdmin=It is possible to define an alias to the web server and thus make available the public interface with another URL (the server must act as a proxy on this new URL)
+TicketPublicInterfaceTextHomeLabelAdmin=Genel arayüzün karşılama metni
+TicketPublicInterfaceTextHome=Bir destek bildirimi oluşturabilir veya daha önce oluşturulan bir destek bildirimini tanımlayıcı takip numarasından görüntüleyebilirsiniz.
+TicketPublicInterfaceTextHomeHelpAdmin=Burada tanımlanan metin genel arayüzün ana sayfasında görünecektir.
+TicketPublicInterfaceTopicLabelAdmin=Arayüz başlığı
+TicketPublicInterfaceTopicHelp=Bu metin, ortak arayüzün başlığı olarak görünecektir.
+TicketPublicInterfaceTextHelpMessageLabelAdmin=Mesaj girişine yardım metni
+TicketPublicInterfaceTextHelpMessageHelpAdmin=Bu metin, kullanıcının mesaj giriş alanının üstünde görünecektir.
+ExtraFieldsTicket=Ekstra nitelikler
+TicketCkEditorEmailNotActivated=HTML editor is not activated. Please put FCKEDITOR_ENABLE_MAIL content to 1 to get it.
+TicketsDisableEmail=Bilet oluşturma veya mesaj kaydı için e-posta gönderme
+TicketsDisableEmailHelp=Varsayılan olarak, yeni destek bildirimleri veya mesajlar oluşturulduğunda e-postalar gönderilir. *tüm* e-posta bildirimlerini devre dışı bırakmak için bu seçeneği etkinleştirin.
+TicketsLogEnableEmail=Günlüğü e-postayla etkinleştir
+TicketsLogEnableEmailHelp=Her değişiklikte, destek bildirimi ile bağlantılı **tüm kişilere** bir e-posta gönderilecektir.
+TicketParams=Parametreler
+TicketsShowModuleLogo=Genel arayüzde modülün logosunu görüntüle
+TicketsShowModuleLogoHelp=Genel arayüz sayfalarında logo modülünü gizlemek için bu seçeneği etkinleştirin
+TicketsShowCompanyLogo=Genel arayüzde şirketin logosunu göster 
+TicketsShowCompanyLogoHelp=Genel arayüz sayfalarında ana şirketin logosunu gizlemek için bu seçeneği etkinleştirin
+TicketsEmailAlsoSendToMainAddress=Ayrıca ana e-posta adresine de bildirim gönder
+TicketsEmailAlsoSendToMainAddressHelp=Enable this option to send an email to "Notification email from" address (see setup below)
+TicketsLimitViewAssignedOnly=Restrict the display to tickets assigned to the current user (not effective for external users, always be limited to the third party they depend on)
+TicketsLimitViewAssignedOnlyHelp=Only tickets assigned to the current user will be visible. Does not apply to a user with tickets management rights.
+TicketsActivatePublicInterface=Genel arayüzü etkinleştir
+TicketsActivatePublicInterfaceHelp=Genel arayüz, ziyaretçilerin destek bildirimi oluşturmasına izin verir.
+TicketsAutoAssignTicket=Destek bildirimini oluşturan kullanıcıyı otomatik olarak atayın
+TicketsAutoAssignTicketHelp=Bir destek bildirimi oluştururken, kullanıcı otomatik olarak destek bildirimine atanabilir.
+TicketNumberingModules=Destek bildirimi numaralandırma modülü
+TicketNotifyTiersAtCreation=Oluşturunca üçüncü tarafa bildir
+TicketGroup=Grup
+TicketsDisableCustomerEmail=Bir destek bildirimi ortak arayüzden oluşturulduğunda e-postaları her zaman devre dışı bırak
+#
+# Index & list page
+#
+TicketsIndex=Destek bildirimi - giriş
+TicketList=Destek bildirimlerinin listesi
+TicketAssignedToMeInfos=Bu sayfa mevcut kullanıcı tarafından oluşturulan veya bu kullanıcıya atanmış destek bildirim listesini görüntüler
+NoTicketsFound=Destek bildirimi bulunamadı
+NoUnreadTicketsFound=Okunmamış destek bildirimi bulunamadı
+TicketViewAllTickets=Tüm destek bildirimlerini görüntüle
+TicketViewNonClosedOnly=Sadece açık destek bildirimlerini görüntüle
+TicketStatByStatus=Duruma göre destek bildirimleri
+
+#
+# Ticket card
+#
+Ticket=Destek Bildirimi
+TicketCard=Destek bildirim kartı
+CreateTicket=Destek bildirimi oluştur
+EditTicket=Destek bildirimini düzenle
+TicketsManagement=Destek Bildirim Yönetimi
+CreatedBy=Oluşturan
+NewTicket=Yeni destek bildirimi
+SubjectAnswerToTicket=Destek bildirimi cevabı
+TicketTypeRequest=İstek türü
+TicketCategory=Analitik kod
+SeeTicket=Destek bildirimini gör
+TicketMarkedAsRead=Destek bildirimi okundu olarak işaretlendi
+TicketReadOn=Okumaya devam et
+TicketCloseOn=Kapanış tarihi
+MarkAsRead=Destek bildirimini okundu olarak işaretle
+TicketHistory=Destek bildirimi geçmişi
+AssignUser=Kullanıcıya ata
+TicketAssigned=Destek bildirimi şimdi atandı
+TicketChangeType=Türü değiştir
+TicketChangeCategory=Analitik kodu değiştir
+TicketChangeSeverity=Önem seviyesini değiştir
+TicketAddMessage=Bir mesaj ekleyin
+AddMessage=Bir mesaj ekle
+MessageSuccessfullyAdded=Destek bildirimi eklendi
+TicketMessageSuccessfullyAdded=Mesaj başarılı şekilde eklendi
+TicketMessagesList=Mesaj listesi
+NoMsgForThisTicket=Bu destek bildirimi için mesaj yok
+Properties=Sınıflandırma
+LatestNewTickets=En yeni %s destek bildirimi (okunmamış)
+TicketSeverity=Önem seviyesi
+ShowTicket=Destek bildirimini gör
+RelatedTickets=İlgili destek bildirimi
+TicketAddIntervention=Müdahale oluştur
+CloseTicket=Destek bildirimini kapat
+CloseATicket=Bir destek bildirimini kapat
+ConfirmCloseAticket=Destek bildirimi kapatmayı onayla
+ConfirmDeleteTicket=Lütfen destek bildirimi silmeyi onaylayın
+TicketDeletedSuccess=Destek bildirimi başarı ile silindi
+TicketMarkedAsClosed=Destek bildirimi kapalı olarak işaretlendi
+TicketDurationAuto=Hesaplanan süre
+TicketDurationAutoInfos=Duration calculated automatically from intervention related
+TicketUpdated=Destek bildirimi güncellendi
+SendMessageByEmail=Mesajı e-posta ile gönder
+TicketNewMessage=Yeni mesaj
+ErrorMailRecipientIsEmptyForSendTicketMessage=Alıcı boş. E-posta gönderilmedi
+TicketGoIntoContactTab=Onları seçmek için lütfen "Kişiler" sekmesine gidin
+TicketMessageMailIntro=Introduction
+TicketMessageMailIntroHelp=This text is added only at the beginning of the email and will not be saved.
+TicketMessageMailIntroLabelAdmin=E-posta gönderirken mesaja giriş
+TicketMessageMailIntroText=Merhaba,<br>Bağlantılı olduğunuz bir destek bildirimine yeni bir yanıt gönderildi. Mesajınız şu şekilde:<br>
+TicketMessageMailIntroHelpAdmin=Bu metin bir destek bildirimine cevap metninden önce eklenecektir.
+TicketMessageMailSignature=İmza
+TicketMessageMailSignatureHelp=Bu metin sadece e-postanın sonuna eklenir ve saklanmayacaktır.
+TicketMessageMailSignatureText=<p>Saygılarımla,</p><p>--</p>
+TicketMessageMailSignatureLabelAdmin=Yanıt e-postasının imzası
+TicketMessageMailSignatureHelpAdmin=Bu metin cevap mesajının sonuna eklenecektir.
+TicketMessageHelp=Destek bildirimi kartı üzerindeki mesaj listesinde sadece bu metin kaydedilecektir.
+TicketMessageSubstitutionReplacedByGenericValues=Substitutions variables are replaced by generic values.
+TimeElapsedSince=Time elapsed since
+TicketTimeToRead=Time elapsed before read
+TicketContacts=Kişilerin destek bildirimleri
+TicketDocumentsLinked=Destek bildirimine bağlı dokümanlar
+ConfirmReOpenTicket=Bu destek bildirimini yeniden açmayı onaylıyor musunuz?
+TicketMessageMailIntroAutoNewPublicMessage=Destek bildirimi üzerinden %s konulu yeni bir mesaj gönderildi:
+TicketAssignedToYou=Destek bildirimi atandı
+TicketAssignedEmailBody=#%s destek bildirimine %s tarafından atandınız
+MarkMessageAsPrivate=Mesajı özel olarak işaretle
+TicketMessagePrivateHelp=Bu mesaj harici kullanıcılara gösterilmeyecektir
+TicketEmailOriginIssuer=Issuer at origin of the tickets
+InitialMessage=İlk Mesaj
+LinkToAContract=Bir sözleşmeye bağlantı
+TicketPleaseSelectAContract=Bir sözleşme seçiniz
+UnableToCreateInterIfNoSocid=Can not create an intervention when no third party is defined
+TicketMailExchanges=Mail exchanges
+TicketInitialMessageModified=İlk mesaj değiştirildi
+TicketMessageSuccesfullyUpdated=Mesaj başarıyla güncellendi
+TicketChangeStatus=Durumu değiştir
+TicketConfirmChangeStatus=Durum değişikliğini onayla: %s?
+TicketLogStatusChanged=Status changed: %s to %s
+TicketNotNotifyTiersAtCreate=Not notify company at create
+Unread=Okunmamış
+
+#
+# Logs
+#
+TicketLogMesgReadBy=%s destek bildirimi %s tarafından okundu
+NoLogForThisTicket=Bu destek bildirimi için henüz kayıt yok
+TicketLogAssignedTo=%s destek bildirimi şuna atandı: %s
+TicketLogPropertyChanged=Ticket %s modified: classification from %s to %s
+TicketLogClosedBy=Destek bildirimi %s, %s tarafından kapatıldı
+TicketLogReopen=Destek bildirimi %s yeniden açıldı
+
+#
+# Public pages
+#
+TicketSystem=Destek bildirimi sistemi
+ShowListTicketWithTrackId=Takip numarasından destek bildirim listesini görüntüle
+ShowTicketWithTrackId=Takip numarasından destek bildirimi görüntüle
+TicketPublicDesc=Bir destek bildirimi oluşturabilir veya daha önce oluşturulmuş olanı kontrol edebilirsiniz.
+YourTicketSuccessfullySaved=Destek bildirimi başarıyla kaydedildi!
+MesgInfosPublicTicketCreatedWithTrackId=%s kimlik numaralı yeni bir destek bildirimi oluşturuldu.
+PleaseRememberThisId=Daha sonra sorma ihtimalimize karşı lütfen takip numarasını saklayın.
+TicketNewEmailSubject=Destek bildirimi oluşturma onayı
+TicketNewEmailSubjectCustomer=Yeni destek bildirimi
+TicketNewEmailBody=Yeni bir destek bildirim kaydınızı onaylamak için bu e-posta otomatik olarak gönderilmiştir.
+TicketNewEmailBodyCustomer=Bu, hesabınızda yeni bir destek bildiriminin oluşturulduğunu onaylamak için otomatik olarak gönderilen bir e-postadır.
+TicketNewEmailBodyInfosTicket=Destek bildiriminin izlenmesi için bilgiler
+TicketNewEmailBodyInfosTrackId=Destek bildirim takip numarası: %s
+TicketNewEmailBodyInfosTrackUrl=You can view the progress of the ticket by clicking the link above.
+TicketNewEmailBodyInfosTrackUrlCustomer=Aşağıdaki bağlantıya tıklayarak destek bildiriminin ilerlemesini belirli bir arayüzde görebilirsiniz
+TicketEmailPleaseDoNotReplyToThisEmail=Lütfen doğrudan bu e-postayı yanıtlamayın! Arayüzde cevap vermek için bağlantıyı kullanın.
+TicketPublicInfoCreateTicket=Bu form yönetim sistemimizde bir destek bildirimi kaydetmenizi sağlar
+TicketPublicPleaseBeAccuratelyDescribe=Lütfen sorunu açıklayıcı bir şekilde tanımlayın. Talebinizi tam olarak saptayabilmemiz için mümkün oldukça tüm bilgiyi girin.
+TicketPublicMsgViewLogIn=Lütfen destek bildirimi takip numarasını girin
+TicketTrackId=Genel Takip Numarası
+OneOfTicketTrackId=Takip numaralarınızdan biri
+ErrorTicketNotFound=%s takip numaralı destek bildirimi bulunamadı!
+Subject=Konu
+ViewTicket=Destek bildirimini görüntüle
+ViewMyTicketList=Destek bildirimi listemi görüntüle
+ErrorEmailMustExistToCreateTicket=Hata: e-posta adresi veritabanımızda bulunamadı
+TicketNewEmailSubjectAdmin=Yeni destek bildirimi oluşturuldu
+TicketNewEmailBodyAdmin=<p>Destek bildirimi #%s kimlik numarası ile oluşturuldu, detaylı bilgi:</p>
+SeeThisTicketIntomanagementInterface=Yönetim arayüzünde destek bildirimini gör
+TicketPublicInterfaceForbidden=Destek bildirimi için genel arayüz etkin değil
+ErrorEmailOrTrackingInvalid=Takip numarası veya e-posta için hatalı değer
+OldUser=Eski kullanıcı
+NewUser=Yeni Kullanıcı
+NumberOfTicketsByMonth=Aylık destek bildirim sayısı
+NbOfTickets=Destek bildirim sayısı
+# notifications
+TicketNotificationEmailSubject=%s destek bildirimi güncellendi
+TicketNotificationEmailBody=%s destek bildiriminin güncellendiği konusunda sizi bilgilendirmek için bu e-posta otomatik olarak gönderilmiştir
+TicketNotificationRecipient=Bildirim alıcısı
+TicketNotificationLogMessage=Günlük mesajı
+TicketNotificationEmailBodyInfosTrackUrlinternal=Destek bildirimini arayüzde görüntüle
+TicketNotificationNumberEmailSent=Bildirim e-postası gönderildi: %s
+
+ActionsOnTicket=Destek bildirimindeki etkinlikler
+
+#
+# Boxes
+#
+BoxLastTicket=En son oluşturulan destek bildirimleri
+BoxLastTicketDescription=Oluşturulan son %s destek bildirimi
+BoxLastTicketContent=
+BoxLastTicketNoRecordedTickets=Okunmamış yeni bir destek bildirimi yok
+BoxLastModifiedTicket=Son değiştirilen destek bildirimleri
+BoxLastModifiedTicketDescription=En son değiştirilen %s destek bildirimi
+BoxLastModifiedTicketContent=
+BoxLastModifiedTicketNoRecordedTickets=Yakın zamanda değiştirilmiş destek bildirimi yok

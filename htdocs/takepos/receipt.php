@@ -19,10 +19,21 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ *	\file       htdocs/takepos/floors.php
+ *	\ingroup    takepos
+ *	\brief      Page to show a receipt.
+ */
+
 require '../main.inc.php';	// Load $user and permissions
 include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 $langs->loadLangs(array("main", "cashdesk"));
+
+$place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0);   // $place is id of table for Ba or Restaurant
+
+$facid=GETPOST('facid', 'int');
+
 
 /*
  * View
@@ -30,13 +41,15 @@ $langs->loadLangs(array("main", "cashdesk"));
 
 top_httphead('text/html');
 
-$facid=GETPOST('facid', 'int');
-$place=GETPOST('place', 'int');
-if ($place>0){
-    $sql="SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS-".$place.")'";
+if ($place > 0)
+{
+    $sql="SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
     $resql = $db->query($sql);
-    $row = $db->fetch_array($resql);
-    $facid=$row[0];
+    $obj = $db->fetch_object($resql);
+    if ($obj)
+    {
+        $facid=$obj->rowid;
+    }
 }
 $object=new Facture($db);
 $object->fetch($facid);
@@ -45,6 +58,17 @@ $object->fetch($facid);
 ?>
 <html>
 <body>
+<style>
+.right {
+    text-align: right;
+}
+.center {
+    text-align: center;
+}
+.left {
+    text-align: left;
+}
+</style>
 <center>
 <font size="4">
 <?php echo '<b>'.$mysoc->name.'</b>';?>

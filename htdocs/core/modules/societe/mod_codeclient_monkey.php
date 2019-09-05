@@ -33,13 +33,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/societe/modules_societe.class.php'
 class mod_codeclient_monkey extends ModeleThirdPartyCode
 {
 	/**
-	 * @var string Nom du modele
-	 * @deprecated
-	 * @see name
-	 */
-	public $nom='Monkey';
-
-	/**
 	 * @var string model name
 	 */
 	public $name='Monkey';
@@ -54,7 +47,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 
 	/**
      * Dolibarr version of the loaded document
-     * @public string
+     * @var string
      */
 	public $version = 'dolibarr';	    	// 'development', 'experimental', 'dolibarr'
 

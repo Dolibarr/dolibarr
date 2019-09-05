@@ -46,7 +46,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class FactureFournisseurTest extends PHPUnit_Framework_TestCase
+class FactureFournisseurTest extends PHPUnit\Framework\TestCase
 {
 	protected $savconf;
 	protected $savuser;
@@ -135,7 +135,7 @@ class FactureFournisseurTest extends PHPUnit_Framework_TestCase
     	$localobject->initAsSpecimen();
     	$result=$localobject->create($user);
 
-    	$this->assertLessThan($result, 0);
+    	$this->assertLessThan($result, 0, $localobject->errorsToString());
     	print __METHOD__." result=".$result."\n";
     	return $result;
     }
@@ -160,7 +160,7 @@ class FactureFournisseurTest extends PHPUnit_Framework_TestCase
 		$localobject=new FactureFournisseur($this->savdb);
     	$result=$localobject->fetch($id);
 
-    	$this->assertLessThan($result, 0);
+    	$this->assertLessThan($result, 0, $localobject->errorsToString());
     	print __METHOD__." id=".$id." result=".$result."\n";
     	return $localobject;
     }
@@ -186,7 +186,7 @@ class FactureFournisseurTest extends PHPUnit_Framework_TestCase
     	$result=$localobject->update($user);
 
     	print __METHOD__." id=".$localobject->id." result=".$result."\n";
-    	$this->assertLessThan($result, 0);
+    	$this->assertLessThan($result, 0, $localobject->errorsToString());
     	return $localobject;
     }
 
@@ -210,7 +210,7 @@ class FactureFournisseurTest extends PHPUnit_Framework_TestCase
     	$result=$localobject->validate($user);
     	print __METHOD__." id=".$localobject->id." result=".$result."\n";
 
-    	$this->assertLessThan($result, 0);
+    	$this->assertLessThan($result, 0, $localobject->errorsToString());
     	return $localobject;
     }
 
@@ -265,7 +265,7 @@ class FactureFournisseurTest extends PHPUnit_Framework_TestCase
 		$result=$localobject->delete($user);
 
 		print __METHOD__." id=".$id." result=".$result."\n";
-    	$this->assertLessThan($result, 0);
+		$this->assertLessThan($result, 0, $localobject->errorsToString());
     	return $result;
     }
 }

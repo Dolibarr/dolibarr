@@ -58,9 +58,9 @@ class box_propales extends ModeleBoxes
     {
         global $user;
 
-        $this->db=$db;
+        $this->db = $db;
 
-        $this->hidden=! ($user->rights->propale->lire);
+        $this->hidden = ! ($user->rights->propale->lire);
     }
 
     /**

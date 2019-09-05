@@ -55,7 +55,7 @@ if (empty($conf->service->enabled))
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class WebservicesProductsTest extends PHPUnit_Framework_TestCase
+class WebservicesProductsTest extends PHPUnit\Framework\TestCase
 {
     protected $savconf;
     protected $savuser;

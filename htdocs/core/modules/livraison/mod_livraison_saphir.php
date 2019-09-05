@@ -33,7 +33,7 @@ class mod_livraison_saphir extends ModeleNumRefDeliveryOrder
 {
 	/**
      * Dolibarr version of the loaded document
-     * @public string
+     * @var string
      */
 	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
 
@@ -45,7 +45,7 @@ class mod_livraison_saphir extends ModeleNumRefDeliveryOrder
 	/**
 	 * @var string Nom du modele
 	 * @deprecated
-	 * @see name
+	 * @see $name
 	 */
 	public $nom='Saphir';
 
@@ -56,7 +56,7 @@ class mod_livraison_saphir extends ModeleNumRefDeliveryOrder
 
 
     /**
-     *  Renvoi la description du modele de numerotation
+     *  Returns the description of the numbering model
      *
      *  @return     string      Texte descripif
      */

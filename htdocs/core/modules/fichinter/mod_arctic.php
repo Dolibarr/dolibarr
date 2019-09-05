@@ -34,7 +34,7 @@ class mod_arctic extends ModeleNumRefFicheinter
 {
     /**
      * Dolibarr version of the loaded document
-     * @public string
+     * @var string
      */
 	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
 
@@ -57,7 +57,7 @@ class mod_arctic extends ModeleNumRefFicheinter
 
 
 	/**
-     *  Renvoi la description du modele de numerotation
+     *  Returns the description of the numbering model
      *
      *  @return     string      Texte descripif
      */

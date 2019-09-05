@@ -1,2 +1,24 @@
 # Dolibarr language file - Source file is en_US - contracts
+ShowContractOfService=Toon servicecontract
 NewContractSubscription=Nieuwe contracten/abonnementen
+ActivateAllOnContract=Activeer alle diensten
+ConfirmDeleteAContract=Weet je zeker dat je dit contract en alle bijbehorende services wilt verwijderen?
+ConfirmValidateContract=Weet je zeker dat je dit contract wilt valideren onder de naam <b>%s</b> ?
+ConfirmActivateAllOnContract=Hiermee worden alle services geopend (nog niet actief). Weet je zeker dat je alle diensten wil openen?
+ConfirmCloseContract=Hiermee worden alle diensten gesloten (actief of niet). Weet je zeker dat je dit contract wilt sluiten?
+ConfirmCloseService=Weet je zeker dat je deze dienst wilt afsluiten met de datum <b>%s</b> ?
+ConfirmActivateService=Weet je zeker dat je deze dienst wilt activeren met de datum <b>%s</b> ?
+LastContracts=Laatste %s-contracten
+LastModifiedServices=Laatste %s gewijzigde diensten
+DateStartPlanned=Geplande startdatum
+DateStartPlannedShort=Geplande startdatum
+DateEndPlanned=Geplande einddatum
+DateEndPlannedShort=Geplande einddatum
+BoardRunningServices=Lopende diensten
+CloseRefusedBecauseOneServiceActive=Contract kan niet worden gesloten omdat er ten minste één open dienst op staat
+ActivateAllContracts=Activeer alle contractregels
+ConfirmDeleteContractLine=Weet je zeker dat je deze contractregel wilt verwijderen?
+ConfirmCloneContract=Weet u zeker als u event <b>%s</b> wilt klonen?
+LowerDateEndPlannedShort=Eerdere geplande einddatum van actieve diensten
+SendContractRef=Contractinformatie __REF__
+OtherContracts=Andere contracten

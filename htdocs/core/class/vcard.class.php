@@ -152,7 +152,7 @@ class vCard
     /**
      *	mise en forme de l'anniversaire
      *
-     *	@param	timestamp	$date		Date
+     *	@param	integer	  $date		Date
      *	@return	void
      */
     public function setBirthday($date)

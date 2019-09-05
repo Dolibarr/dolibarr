@@ -225,7 +225,7 @@ $arrayofmassactions =  array(
     //'presend'=>$langs->trans("SendByMail"),
     //'builddoc'=>$langs->trans("PDFMerge"),
 );
-if ($user->rights->opensurvey->write) $arrayofmassactions['predelete']=$langs->trans("Delete");
+if ($user->rights->opensurvey->write) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
@@ -243,18 +243,7 @@ print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 $newcardbutton='';
-if (! empty($user->rights->opensurvey->write))
-{
-    $newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/opensurvey/wizard/index.php"><span class="valignmiddle text-plus-circle">'.$langs->trans('NewSurvey').'</span>';
-    $newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-    $newcardbutton.= '</a>';
-}
-else
-{
-    $newcardbutton='<a class="butActionNewRefused" href="#"><span class="valignmiddle text-plus-circle">'.$langs->trans('NewSurvey').'</span>';
-    $newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-    $newcardbutton.= '</a>';
-}
+$newcardbutton.= dolGetButtonTitle($langs->trans('NewSurvey'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/opensurvey/wizard/index.php', '', $user->rights->opensurvey->write);
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_generic.png', 0, $newcardbutton, '', $limit);
 

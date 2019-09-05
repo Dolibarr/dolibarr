@@ -1,0 +1,17 @@
+MRPArea=MRP Bereich
+MenuBOM=Stücklisten
+LatestBOMModified=zuletzt geänderte %s Stücklisten
+BillOfMaterials=Stückliste
+BOMsSetup=Stücklisten Modul einrichten
+ListOfBOMs=Stücklisten-Übersicht
+NewBOM=neue Stückliste
+ProductBOMHelp=Produkt, welches mit dieser Stückliste erstellt werden soll
+BOMsNumberingModules=Vorlage für die Stücklistennummerierung
+BOMsModelModule=Dokumentvorlagen für Stücklisten
+FreeLegalTextOnBOMs=Freier Text auf dem Stücklisten-Dokument
+WatermarkOnDraftBOMs=Wasserzeichen auf Stücklisten-Entwürfen
+ConfirmCloneBillOfMaterials=Möchten Sie diese Stückliste wirklich klonen?
+ManufacturingEfficiency=Produktionseffizienz
+ValueOfMeansLoss=Ein Wert von 0,95 bedeutet einen durchschnittlichen Verlust von 5%% während der Produktion.
+DeleteBillOfMaterials=Stückliste löschen
+ConfirmDeleteBillOfMaterials=Möchten Sie diese Stückliste wirklich löschen?

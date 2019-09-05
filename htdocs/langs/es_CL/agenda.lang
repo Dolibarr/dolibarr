@@ -17,11 +17,12 @@ ViewWeek=Vista de la semana
 ViewPerUser=Por usuario
 ViewPerType=Por tipo de vista
 AutoActions=Llenado automático
-AgendaAutoActionDesc=Defina aquí eventos para los que desea que Dolibarr cree automáticamente un evento en la agenda. Si no se marca nada, solo se incluirán las acciones manuales registradas y visibles en la agenda. El seguimiento automático de las acciones comerciales realizadas en objetos (validación, cambio de estado) no se guardará.
-AgendaSetupOtherDesc=Esta página proporciona opciones para permitir la exportación de tus eventos de Dolibarr a un calendario externo (thunderbird, google calendar, ...)
+AgendaAutoActionDesc=Aquí puede definir los eventos que desea que Dolibarr cree automáticamente en Agenda. Si no se marca nada, solo las acciones manuales se incluirán en los registros y se mostrarán en la Agenda. El seguimiento automático de las acciones comerciales realizadas en objetos (validación, cambio de estado) no se guardará.
+AgendaSetupOtherDesc=Esta página ofrece opciones para permitir la exportación de sus eventos Dolibarr a un calendario externo (Thunderbird, Google Calendar, etc.)
 AgendaExtSitesDesc=Esta página permite declarar fuentes externas de calendarios para ver sus eventos en la agenda de Dolibarr.
 ActionsEvents=Eventos por los cuales Dolibarr creará una acción en agenda automáticamente
-EventRemindersByEmailNotEnabled=Los recordatorios de eventos por correo electrónico no se habilitaron en la configuración del módulo Agenda.
+EventRemindersByEmailNotEnabled=Los recordatorios de eventos por correo electrónico no se habilitaron en la configuración del módulo %s.
+COMPANY_DELETEInDolibarr=%s de terceros eliminado
 PropalClosedSignedInDolibarr=Propuesta %s firmada
 PropalClosedRefusedInDolibarr=Propuesta %s rechazada
 PropalValidatedInDolibarr=Propuesta %s validada
@@ -35,6 +36,7 @@ MemberSubscriptionDeletedInDolibarr=Suscripción %s para el miembro %s eliminado
 ShipmentValidatedInDolibarr=Envío %s validado
 ShipmentClassifyClosedInDolibarr=Envío %s clasificado facturado
 ShipmentUnClassifyCloseddInDolibarr=Envío %s clasificado reabierto
+ShipmentBackToDraftInDolibarr=Envío %s volver al estado de borrador
 ShipmentDeletedInDolibarr=Envío %s eliminado
 OrderCreatedInDolibarr=Orden %s creado
 OrderValidatedInDolibarr=Orden %s validada
@@ -44,31 +46,34 @@ OrderBilledInDolibarr=Orden %s clasificado facturado
 OrderApprovedInDolibarr=Orden %s aprobada
 OrderRefusedInDolibarr=Orden %s rechazada
 OrderBackToDraftInDolibarr=Ordene %s vuelva al estado del borrador
-ProposalSentByEMail=Propuesta comercial %s enviada por EMail
-ContractSentByEMail=Contrato %s enviado por EMail
-OrderSentByEMail=Pedido del cliente %s enviado por EMail
+ProposalSentByEMail=Propuesta comercial %s enviada por correo electrónico
+ContractSentByEMail=Contrato %s enviado por correo electrónico
+OrderSentByEMail=Pedido de venta %s enviado por correo electrónico
 InvoiceSentByEMail=Factura del cliente %s enviada por correo electrónico
-SupplierOrderSentByEMail=Pedido del proveedor %s enviado por EMail
-SupplierInvoiceSentByEMail=Factura del proveedor %s enviado por EMail
-ShippingSentByEMail=Envío %s enviado por EMail
+SupplierOrderSentByEMail=Orden de compra %s enviada por correo electrónico
+SupplierInvoiceSentByEMail=Factura del proveedor %s enviada por correo electrónico
+ShippingSentByEMail=Envío %s enviado por correo electrónico
 ShippingValidated=Envío %s validado
 ProposalDeleted=Propuesta eliminada
 OrderDeleted=Orden eliminada
 InvoiceDeleted=Factura borrada
+TICKET_MODIFYInDolibarr=Boleto %s modificado
+TICKET_ASSIGNEDInDolibarr=Boleto %s asignado
+TICKET_CLOSEInDolibarr=Boleto %s cerrado
 DateActionEnd=Fecha final
 AgendaUrlOptions1=También puede agregar los siguientes parámetros para filtrar la salida:
 AgendaUrlOptions3=<b>logina =%s</b> para restringir la salida a acciones propiedad de un usuario<b>%s</b>.
 AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> para restringir la salida a acciones que no son propiedad del usuario <b>%s</b>.
 AgendaUrlOptions4=<b>logint =%s</b> para restringir la salida a acciones asignadas al usuario <b>%s</b> (propietario y otros).
 AgendaUrlOptionsProject=<b> project = __ PROJECT_ID __ </ b> para restringir el resultado a acciones vinculadas al proyecto <b> __ PROJECT_ID __ </ b>.
-AgendaUrlOptionsNotAutoEvent=<b> notactiontype = systemauto </ b> para excluir el evento automático.
+AgendaUrlOptionsNotAutoEvent=<b>notactiontype = systemauto</b> para excluir eventos automáticos.
 AgendaShowBirthdayEvents=Mostrar cumpleaños de contactos
 AgendaHideBirthdayEvents=Ocultar cumpleaños de contactos
 ExportDataset_event1=Lista de eventos de la agenda
 DefaultWorkingDays=Rango predeterminado de días laborables en la semana (Ejemplo: 1-5, 1-6)
 DefaultWorkingHours=Horas de trabajo predeterminadas en el día (Ejemplo: 9-18)
 ExtSites=Importar calendarios externos
-ExtSitesEnableThisTool=Mostrar los calendarios externos (definidos en la configuración global) en la agenda. No afecta los calendarios externos definidos por los usuarios.
+ExtSitesEnableThisTool=Mostrar calendarios externos (definidos en la configuración global) en Agenda. No afecta a los calendarios externos definidos por los usuarios.
 AgendaExtNb=Calendario no. %s
 ExtSiteUrlAgenda=URL para acceder al archivo .ical
 DateActionBegin=Fecha del evento de inicio

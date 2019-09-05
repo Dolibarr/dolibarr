@@ -124,7 +124,7 @@ function show_ldap_test_button($butlabel, $testlabel, $key, $dn, $objectclass)
 	}
 	else
 	{
-		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action='.$testlabel.'">'.$butlabel.'</a>';
+		print '<a class="butAction reposition" href="'.$_SERVER["PHP_SELF"].'?action='.$testlabel.'">'.$butlabel.'</a>';
 	}
 	print '<br><br>';
 }

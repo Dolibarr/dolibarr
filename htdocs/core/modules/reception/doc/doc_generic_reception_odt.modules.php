@@ -43,9 +43,9 @@ class doc_generic_reception_odt extends ModelePdfReception
 
     /**
      * @var array Minimum version of PHP required by module.
-     * e.g.: PHP ≥ 5.4 = array(5, 4)
+     * e.g.: PHP ≥ 5.5 = array(5, 5)
      */
-    public $phpmin = array(5, 4);	// Minimum version of PHP required by module
+	public $phpmin = array(5, 5);
 
     /**
      * @var string Dolibarr version of the loaded document

@@ -14,9 +14,11 @@ WarningModuleNotActive=Le module <b>%s</b> doit être activé
 WarningOnlyPermissionOfActivatedModules=Seules les permissions liées à des modules activés sont montrées ici. Vous pouvez activer d'autres modules sur la page Accueil->Configuration->Modules.
 FormToTestFileUploadForm=Formulaire pour tester l'upload de fichiers (selon la configuration)
 IfModuleEnabled=Note: oui ne fonctionne que si le module <b>%s</b> est activé
-RemoveLock=Supprimez le fichier <b>%s</b> s'il existe pour autoriser l'utilisation de l'outil de mise à jour.
 Module20Name=Propales
 Module30Name=Factures
-DictionaryPaymentConditions=Conditions de paiement
-SuppliersPayment=Paiements fournisseurs
+Module600Name=Notifications on business event
 Target=Objectif
+ListOfNotificationsPerUser=List of automatic notifications per user*
+ListOfNotificationsPerUserOrContact=List of possible automatic notifications (on business event) available per user* or per contact**
+ListOfFixedNotifications=List of automatic fixed notifications
+OperationParamDesc=Define values to use for action, or how to extract values. For example:<br>objproperty1=SET:abc<br>objproperty1=SET:a value with replacement of __objproperty1__<br>objproperty3=SETIFEMPTY:abc<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey.*[^\\s]+(.*)<br>options_myextrafield=EXTRACT:SUBJECT:([^\\s]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a ; char as separator to extract or set several properties.

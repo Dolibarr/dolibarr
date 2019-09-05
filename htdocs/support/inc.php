@@ -217,6 +217,7 @@ function pHeader($soutitre, $next, $action = 'none')
 	print '<head>'."\n";
 	print '<meta http-equiv="content-type" content="text/html; charset='.$conf->file->character_set_client.'">'."\n";
 	print '<meta name="robots" content="index,follow">'."\n";
+	print '<meta name="viewport" content="width=device-width, initial-scale=1.0">'."\n";
 	print '<meta name="keywords" content="help, center, dolibarr, doliwamp">'."\n";
 	print '<meta name="description" content="Dolibarr help center">'."\n";
 	print '<link rel="stylesheet" type="text/css" href="default.css">'."\n";

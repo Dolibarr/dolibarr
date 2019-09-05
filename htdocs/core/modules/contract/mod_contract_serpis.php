@@ -30,7 +30,7 @@ class mod_contract_serpis extends ModelNumRefContracts
 {
 	/**
      * Dolibarr version of the loaded document
-     * @public string
+     * @var string
      */
 	public $version = 'dolibarr';
 
@@ -44,7 +44,7 @@ class mod_contract_serpis extends ModelNumRefContracts
 	/**
 	 * @var string Nom du modele
 	 * @deprecated
-	 * @see name
+	 * @see $name
 	 */
 	public $nom='Serpis';
 

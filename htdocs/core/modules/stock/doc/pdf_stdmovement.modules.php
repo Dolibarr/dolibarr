@@ -59,9 +59,9 @@ class pdf_stdmovement extends ModelePDFMovement
 
 	/**
      * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 5.4 = array(5, 4)
+     * e.g.: PHP ≥ 5.5 = array(5, 5)
      */
-	public $phpmin = array(5, 4);
+	public $phpmin = array(5, 5);
 
 	/**
      * Dolibarr version of the loaded document
@@ -331,7 +331,7 @@ class pdf_stdmovement extends ModelePDFMovement
          * END TODO
          **/
 
-		//$nblignes = count($object->lines);
+		//$nblines = count($object->lines);
 
 		if ($conf->stock->dir_output)
 		{
@@ -481,8 +481,8 @@ class pdf_stdmovement extends ModelePDFMovement
 				{
 					$num = $db->num_rows($resql);
 					$i = 0;
-					$nblignes = $num;
-					for ($i = 0 ; $i < $nblignes ; $i++)
+					$nblines = $num;
+					for ($i = 0 ; $i < $nblines ; $i++)
 					{
 						$objp = $db->fetch_object($resql);
 
@@ -530,7 +530,7 @@ class pdf_stdmovement extends ModelePDFMovement
 							$posyafter=$pdf->GetY();
 							if ($posyafter > ($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot)))	// There is no space left for total+free text
 							{
-								if ($i == ($nblignes-1))	// No more lines, and no space left to show total, so we create a new page
+								if ($i == ($nblines-1))	// No more lines, and no space left to show total, so we create a new page
 								{
 									$pdf->AddPage('', '', true);
 									if (! empty($tplidx)) $pdf->useTemplate($tplidx);
@@ -639,9 +639,9 @@ class pdf_stdmovement extends ModelePDFMovement
 
 						$totalvaluesell+=price2num($pricemin*$objp->value, 'MT');
 
-						$nexY+=3.5;    // Passe espace entre les lignes
+						$nexY+=3.5;    // Add space between lines
 						// Add line
-						if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblignes - 1))
+						if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblines - 1))
 						{
 							$pdf->setPage($pageposafter);
 							$pdf->SetLineStyle(array('dash'=>'1,1','color'=>array(80,80,80)));
@@ -650,7 +650,7 @@ class pdf_stdmovement extends ModelePDFMovement
 							$pdf->SetLineStyle(array('dash'=>0));
 						}
 
-						$nexY+=2;    // Passe espace entre les lignes
+						$nexY+=2;    // Add space between lines
 
 						// Detect if some page were added automatically and output _tableau for past pages
 						while ($pagenb < $pageposafter)
@@ -723,6 +723,7 @@ class pdf_stdmovement extends ModelePDFMovement
 					$substitutionarray=pdf_getSubstitutionArray($outputlangs, null, $object);
 					complete_substitutions_array($substitutionarray, $outputlangs, $object);
 					$notetoshow = make_substitutions($notetoshow, $substitutionarray, $outputlangs);
+					$notetoshow = convertBackOfficeMediasLinksToPublicLinks($notetoshow);
 
 					$tab_top = 88;
 
@@ -808,7 +809,7 @@ class pdf_stdmovement extends ModelePDFMovement
 		}
 	}
 
-
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *   Show table for lines
 	 *
@@ -822,7 +823,7 @@ class pdf_stdmovement extends ModelePDFMovement
 	 *   @param		string		$currency		Currency code
 	 *   @return	void
 	 */
-	private function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '')
+	protected function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '')
 	{
 	    global $conf;
 
@@ -938,6 +939,7 @@ class pdf_stdmovement extends ModelePDFMovement
 		$pdf->SetLineStyle(array('dash'=>0));
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *  Show top header of page.
 	 *
@@ -948,7 +950,7 @@ class pdf_stdmovement extends ModelePDFMovement
 	 *  @param	string		$titlekey		Translation key to show as title of document
 	 *  @return	void
 	 */
-	private function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $titlekey = "")
+	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $titlekey = "")
 	{
 	    global $conf,$langs,$db,$hookmanager;
 
@@ -1167,6 +1169,7 @@ class pdf_stdmovement extends ModelePDFMovement
 	    $pdf->SetTextColor(0, 0, 0);
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *  Show footer of page. Need this->emetteur object
 	 *
@@ -1176,7 +1179,7 @@ class pdf_stdmovement extends ModelePDFMovement
 	 *  @param	int			$hidefreetext		1=Hide free text
 	 *  @return	int								Return height of bottom margin including footer text
 	 */
-	private function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
+	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
 	    global $conf;
 	    $showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;

@@ -73,23 +73,19 @@ EX_PAR_VP=Estacionamiento
 EX_CAM_VP=Mantenimiento y reparaciones
 DefaultCategoryCar=Modo de transporte predeterminado
 DefaultRangeNumber=Número de rango predeterminado
-
+UploadANewFileNow=Subir un nuevo documento ahora
 Error_EXPENSEREPORT_ADDON_NotDefined=Error, no se ha definido regla de numeración del informe de gastos en la configuración del módulo 'Informe de gastos'
 ErrorDoubleDeclaration=Ha declarado otro gasto en un rango similar de fechas.
 AucuneLigne=No hay gastos declarados
-
 ModePaiement=Modo de pago
-
 VALIDATOR=Usuario responsable para aprobación
 VALIDOR=Aprobado por
 AUTHOR=Registrado por
 AUTHORPAIEMENT=Pagado por
 REFUSEUR=Denegado por
 CANCEL_USER=Eliminado por
-
 MOTIF_REFUS=Razón
 MOTIF_CANCEL=Razón
-
 DATE_REFUS=Fecha denegación
 DATE_SAVE=Fecha de validación
 DATE_CANCEL=Fecha cancelación
@@ -113,7 +109,6 @@ NoTripsToExportCSV=Sin gastos a exportar para este periodo.
 ExpenseReportPayment=Informe de pagos de gastos
 ExpenseReportsToApprove=Informe de gastos a aprobar
 ExpenseReportsToPay=Informe de gastos a pagar
-CloneExpenseReport=Copiar informe de gastos
 ConfirmCloneExpenseReport=¿Está seguro de querer eliminar este informe de gastos?
 ExpenseReportsIk=Índice de kilometraje de informes de gastos
 ExpenseReportsRules=Reglas del informe de gastos
@@ -140,7 +135,6 @@ OnExpense=Línea de gastos
 ExpenseReportRuleSave=Se ha guardado la regla de informe de gastos
 ExpenseReportRuleErrorOnSave=Error: %s
 RangeNum=Rango %d
-
 ExpenseReportConstraintViolationError=Id de infracción [%s]: %s es superior a %s %s
 byEX_DAY=por día (limitación a %s)
 byEX_MON=por mes (limitación a %s)
@@ -151,7 +145,7 @@ nolimitbyEX_DAY=por día (sin limitación)
 nolimitbyEX_MON=por mes (sin limitación)
 nolimitbyEX_YEA=por año (sin limitación)
 nolimitbyEX_EXP=por línea (sin limitación)
-
 CarCategory=Categoría del coche
 ExpenseRangeOffset=Importe compensado: %s
 RangeIk=Rango de kilometraje
+AttachTheNewLineToTheDocument=Adjuntar la línea a un documento subido

@@ -66,7 +66,7 @@ if ($action == 'updateMask') {
     // TODO Verifier si module numerotation choisi peut etre active
     // par appel methode canBeActivated
 
-    dolibarr_set_const($db, "TICKETSUP_ADDON", $value, 'chaine', 0, '', $conf->entity);
+    dolibarr_set_const($db, "TICKET_ADDON", $value, 'chaine', 0, '', $conf->entity);
 } elseif ($action == 'setvar') {
     include_once DOL_DOCUMENT_ROOT . "/core/lib/files.lib.php";
 
@@ -181,7 +181,7 @@ $page_name = "TicketSetup";
 llxHeader('', $langs->trans($page_name), $help_url);
 
 // Subheader
-$linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php">' . $langs->trans("BackToModuleList") . '</a>';
+$linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php?restore_lastsearch_values=1">' . $langs->trans("BackToModuleList") . '</a>';
 
 print load_fiche_titre($langs->trans($page_name), $linkback, 'title_setup');
 
@@ -190,7 +190,7 @@ $head = ticketAdminPrepareHead();
 
 dol_fiche_head($head, 'settings', $langs->trans("Module56000Name"), -1, "ticket");
 
-print '<span class="opacitymedium">'.$langs->trans("TicketSetupDictionaries") . '</span> : <a href="' . dol_buildpath('/admin/dict.php', 1) . '" >' . dol_buildpath('/admin/dict.php', 2) . '</a><br>';
+print '<span class="opacitymedium">'.$langs->trans("TicketSetupDictionaries") . '</span> : <a href="'.DOL_URL_ROOT.'/admin/dict.php">'.$langs->trans("ClickHereToGoTo", $langs->transnoentitiesnoconv("DictionarySetup")).'</a><br>';
 
 dol_fiche_end();
 
@@ -256,10 +256,10 @@ foreach ($dirmodels as $reldir) {
                         print '</td>' . "\n";
 
                         print '<td align="center">';
-                        if ($conf->global->TICKETSUP_ADDON == 'mod_' . $classname) {
+                        if ($conf->global->TICKET_ADDON == 'mod_' . $classname) {
                             print img_picto($langs->trans("Activated"), 'switch_on');
                         } else {
-                            print '<a href="' . $_SERVER["PHP_SELF"] . '?action=setmod&amp;value=mod_' . $classname . '" alt="' . $langs->trans("Default") . '">' . img_picto($langs->trans("Disabled"), 'switch_off') . '</a>';
+                            print '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?action=setmod&amp;value=mod_' . $classname . '" alt="' . $langs->trans("Default") . '">' . img_picto($langs->trans("Disabled"), 'switch_off') . '</a>';
                         }
                         print '</td>';
 

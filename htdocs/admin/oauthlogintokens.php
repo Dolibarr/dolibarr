@@ -115,7 +115,7 @@ llxHeader('', $langs->trans("PrintingSetup"));
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans('ConfigOAuth'), $linkback, 'title_setup');
 
-$head=oauthadmin_prepare_head($mode);
+$head = oauthadmin_prepare_head();
 
 dol_fiche_head($head, 'tokengeneration', '', -1, 'technic');
 

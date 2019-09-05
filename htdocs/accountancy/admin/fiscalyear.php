@@ -17,7 +17,7 @@
 
 /**
  *  \file       htdocs/accountancy/admin/fiscalyear.php
- *  \ingroup    Advanced accountancy
+ *  \ingroup    Accountancy (Double entries)
  *  \brief      Setup page to configure fiscal year
  */
 
@@ -111,14 +111,9 @@ if ($result)
 
 	$i = 0;
 
-	if (! empty($user->rights->accounting->fiscalyear))
-	{
-		$addbutton = '<a class="butActionNew" href="fiscalyear_card.php?action=create"><span class="valignmiddle text-plus-circle">' . $langs->trans("NewFiscalYear") .'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
-	}
-	else
-	{
-		$addbutton = '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'"><span class="valignmiddle text-plus-circle">' . $langs->trans("NewFiscalYear") .'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
-	}
+
+    $addbutton.= dolGetButtonTitle($langs->trans('NewFiscalYear'), '', 'fa fa-plus-circle', 'fiscalyear_card.php?action=create', '', $user->rights->accounting->fiscalyear);
+
 
 	$title = $langs->trans('AccountingPeriods');
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $params, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy', 0, $addbutton, '', $limit, 1);
@@ -154,7 +149,7 @@ if ($result)
 			$i++;
 		}
 	} else {
-		print '<tr class="oddeven"><td colspan="5" class="opacitymedium">' . $langs->trans("None") . '</td></tr>';
+		print '<tr class="oddeven"><td colspan="7" class="opacitymedium">' . $langs->trans("None") . '</td></tr>';
 	}
 	print '</table>';
 	print '</div>';

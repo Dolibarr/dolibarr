@@ -40,6 +40,10 @@ if($conf->global->PRODUCT_USE_UNITS)
 	print '<td class="left">'.$langs->trans($this->tpl['unit']).'</td>';
 
 print '<td class="right">'.$this->tpl['remise_percent'].'</td>';
+
+$selected=1;
+if (!empty($selectedLines) && !in_array($this->tpl['id'], $selectedLines)) $selected=0;
+print '<td class="center"><input id="cb'.$this->tpl['id'].'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$this->tpl['id'].'"'.($selected?' checked="checked"':'').'></td>';
 print '</tr>'."\n";
 ?>
 <!-- END PHP TEMPLATE originproductline.tpl.php -->

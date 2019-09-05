@@ -61,7 +61,7 @@ class UserGroup extends CommonObject
 	/**
 	 * @var string
 	 * @deprecated
-	 * @see name
+	 * @see $name
 	 */
 	public $nom;
 
@@ -552,13 +552,13 @@ class UserGroup extends CommonObject
 
 		if ($moduletag && isset($this->_tab_loaded[$moduletag]) && $this->_tab_loaded[$moduletag])
 		{
-			// Le fichier de ce module est deja charge
+			// Rights for this module are already loaded, so we leave
 			return;
 		}
 
 		if (! empty($this->all_permissions_are_loaded))
 		{
-			// Si les permissions ont deja ete chargees, on quitte
+			// We already loaded all rights for this group, so we leave
 			return;
 		}
 
@@ -618,7 +618,7 @@ class UserGroup extends CommonObject
 		}
 		else
 		{
-		    // Si module defini, on le marque comme charge en cache
+			// If module defined, we flag it as loaded into cache
 		    $this->_tab_loaded[$moduletag]=1;
 		}
 
@@ -867,7 +867,6 @@ class UserGroup extends CommonObject
 		if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && $withpicto) $withpicto=0;
 
 		$result=''; $label='';
-		$link=''; $linkstart=''; $linkend='';
 
 		$label.= '<div class="centpercent">';
 		$label.= '<u>' . $langs->trans("Group") . '</u><br>';
@@ -924,7 +923,8 @@ class UserGroup extends CommonObject
 		return $result;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
 	 *
@@ -934,7 +934,7 @@ class UserGroup extends CommonObject
 	 *									2=Return key only (uid=qqq)
 	 *	@return		string				DN
 	 */
-    private function _load_ldap_dn($info, $mode = 0)
+    public function _load_ldap_dn($info, $mode = 0)
 	{
         // phpcs:enable
 		global $conf;
@@ -946,16 +946,17 @@ class UserGroup extends CommonObject
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Initialize the info array (array of LDAP values) that will be used to call LDAP functions
 	 *
 	 *	@return		array		Tableau info des attributs
 	 */
-    private function _load_ldap_info()
+    public function _load_ldap_info()
 	{
         // phpcs:enable
-		global $conf,$langs;
+		global $conf;
 
 		$info=array();
 

@@ -1,23 +1,22 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=PayPal moduloppsett
-PaypalDesc=Denne modulen tilbyr sider for å tillate betaling på <a href="http://www.paypal.com" target="_blank">PayPal</a> av kunder. Dette kan brukes til en gratis betaling eller for et bestemt Dolibarr objekt (faktura, ordre, ...)
-PaypalOrCBDoPayment=Betal med Paypal (Kredittkort eller Paypal)
-PaypalDoPayment=Betal med Paypal
+PaypalDesc=Denne modulen tillater betaling av kunder via <a href="http://www.paypal.com" target="_blank"> PayPal </a>. Dette kan brukes til en ad-hoc-betaling eller for en betaling knyttet til et Dolibarr-objekt (faktura, ordre, ...)
+PaypalOrCBDoPayment=Betal med PayPal (kort eller PayPal)
+PaypalDoPayment=Betal med PayPal
 PAYPAL_API_SANDBOX=Test-/sandkasse-modus
 PAYPAL_API_USER=API brukernavn
 PAYPAL_API_PASSWORD=API passord
 PAYPAL_API_SIGNATURE=API signatur
 PAYPAL_SSLVERSION=Curl SSL-versjon
-PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Tilby &quot;integrert&quot betaling; (Kredittkort + Paypal) eller bare &quot;Paypal&quot; 
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Tilbyr "integrert" betaling (Kredittkort + PayPal) eller bare "PayPal" 
 PaypalModeIntegral=Integrert
 PaypalModeOnlyPaypal=Kun PayPal
-ONLINE_PAYMENT_CSS_URL=Valgfri URL til CSS-stilark på online betalingsside
+ONLINE_PAYMENT_CSS_URL=Valgfri URL til CSS stilark på nettbasert betalingsside
 ThisIsTransactionId=Transaksjons-ID: <b>%s</b>
-PAYPAL_ADD_PAYMENT_URL=Legg til url av Paypal-betaling når du sender et dokument i posten
-YouAreCurrentlyInSandboxMode=Du er for øyeblikket i %s "sandbox" -modus
+PAYPAL_ADD_PAYMENT_URL=Inkluder PayPal-betalingsadressen når du sender et dokument via e-post
 NewOnlinePaymentReceived=Ny online betaling mottatt
 NewOnlinePaymentFailed=Ny online betaling forsøkt, men mislyktes
-ONLINE_PAYMENT_SENDEMAIL=E-post-varsel etter en betaling (vellykket eller ikke)
+ONLINE_PAYMENT_SENDEMAIL=E-postadresse for varsler etter hvert betalingsforsøk (vellykket og mislykket)
 ReturnURLAfterPayment=Retur-URL etter betaling
 ValidationOfOnlinePaymentFailed=Validering av online betaling mislyktes
 PaymentSystemConfirmPaymentPageWasCalledButFailed=Bekreftelsesside for betaling ble kalt etter at betalingssystemet returnerte en feil
@@ -28,7 +27,10 @@ ShortErrorMessage=Kort feilmelding
 ErrorCode=Feilkode
 ErrorSeverityCode=Feilkode alvorlighetsgrad
 OnlinePaymentSystem=Nettbasert betalingssystem
-PaypalLiveEnabled=Paypal Live aktivert (ellers test/sandbox modus)
-PaypalImportPayment=Importer Paypal-betalinger
+PaypalLiveEnabled=PayPal "live" modus aktivert (ellers test/sandbox modus)
+PaypalImportPayment=Importer PayPal-betalinger
 PostActionAfterPayment=Legg inn handlinger etter utbetalinger
 ARollbackWasPerformedOnPostActions=En tilbakerulling ble utført på alle posthandlinger. Du må fylle ut posthandlinger manuelt hvis de er nødvendige.
+ValidationOfPaymentFailed=Validering av betaling har feilet
+CardOwner=Kortholder
+PayPalBalance=Paypal kreditt

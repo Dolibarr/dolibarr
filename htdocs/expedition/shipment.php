@@ -324,7 +324,7 @@ if ($id > 0 || ! empty($ref))
 	    print '<div class="fichehalfleft">';
 	    print '<div class="underbanner clearboth"></div>';
 
-	    print '<table class="border" width="100%">';
+	    print '<table class="border centpercent tableforfield">';
 
 		// Discounts for third party
 	    if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
@@ -529,7 +529,7 @@ if ($id > 0 || ! empty($ref))
 		    print '<td colspan="3">';
 		    if ($action != 'editincoterm')
 		    {
-		        print $form->textwithpicto($object->display_incoterms(), $object->libelle_incoterms, 1);
+		        print $form->textwithpicto($object->display_incoterms(), $object->label_incoterms, 1);
 		    }
 		    else
 		    {
@@ -549,7 +549,7 @@ if ($id > 0 || ! empty($ref))
 		print '<div class="ficheaddleft">';
 		print '<div class="underbanner clearboth"></div>';
 
-		print '<table class="border centpercent">';
+		print '<table class="border centpercent tableforfield">';
 
 		if (!empty($conf->multicurrency->enabled) && ($object->multicurrency_code != $conf->currency))
 		{
@@ -894,7 +894,7 @@ if ($id > 0 || ! empty($ref))
 					print $langs->trans("WarehouseSource");
 					//print '</td>';
 					//print '<td>';
-					print $formproduct->selectWarehouses(! empty($object->warehouse_id)?$object->warehouse_id:-1, 'entrepot_id', '', 1, 0, 0, '', 0, 0, array(), 'minwidth200');
+					print $formproduct->selectWarehouses(! empty($object->warehouse_id)?$object->warehouse_id:'ifone', 'entrepot_id', '', 1, 0, 0, '', 0, 0, array(), 'minwidth200');
 					if (count($formproduct->cache_warehouses) <= 0)
 					{
 						print ' &nbsp; '.$langs->trans("WarehouseSourceNotDefined").' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create">'.$langs->trans("AddOne").'</a>';
