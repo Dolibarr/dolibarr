@@ -683,7 +683,7 @@ function translation_prepare_head()
     $head = array();
 
     $head[$h][0] = DOL_URL_ROOT."/admin/translation.php?mode=overwrite";
-    $head[$h][1] = $langs->trans("TranslationOverwriteKey");
+    $head[$h][1] = $langs->trans("TranslationOverwriteKey").'<span class="fa fa-plus-circle valignmiddle paddingleft"></span>';
     $head[$h][2] = 'overwrite';
     $h++;
 
@@ -1044,9 +1044,9 @@ function unActivateModule($value, $requiredby = 1)
         $result=$objMod->remove();
         if ($result <= 0) $ret=$objMod->error;
     }
-    else
+    else    // We come here when we try to unactivate a module when module does not exists anymore in sources
     {
-        //print $dir.$modFile;
+        //print $dir.$modFile;exit;
     	// TODO Replace this after DolibarrModules is moved as abstract class with a try catch to show module we try to disable has not been found or could not be loaded
         include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
     	$genericMod = new DolibarrModules($db);
@@ -1054,11 +1054,11 @@ function unActivateModule($value, $requiredby = 1)
         $genericMod->rights_class=strtolower(preg_replace('/^mod/i', '', $modName));
         $genericMod->const_name='MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i', '', $modName));
         dol_syslog("modules::unActivateModule Failed to find module file, we use generic function with name " . $modName);
-        $genericMod->_remove(array());
+        $genericMod->remove('');
     }
 
-    // Desactivation des modules qui dependent de lui
-    if (! $ret && $requiredby)
+    // Disable modules that depends on module we disable
+    if (! $ret && $requiredby && is_object($objMod) && is_array($objMod->requiredby))
     {
         $countrb=count($objMod->requiredby);
         for ($i = 0; $i < $countrb; $i++)

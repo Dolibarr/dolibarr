@@ -61,6 +61,18 @@ if ($user->societe_id > 0)	// Protection if external user
 }
 $result = restrictedArea($user, 'holiday', $id, '');
 $id = GETPOST('id', 'int');
+// If we are on the view of a specific user
+if ($id > 0)
+{
+    $canread=0;
+    if ($id == $user->id) $canread=1;
+    if (! empty($user->rights->holiday->read_all)) $canread=1;
+    if (! empty($user->rights->holiday->read) && in_array($id, $childids)) $canread=1;
+    if (! $canread)
+    {
+        accessforbidden();
+    }
+}
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
@@ -319,11 +331,12 @@ if ($id > 0)		// For user tab
 
 	dol_fiche_end();
 
+	// Buttons for actions
+
 	print '<div class="tabsAction">';
 
 	$canedit=(($user->id == $user_id && $user->rights->holiday->write) || ($user->id != $user_id && $user->rights->holiday->write_all));
 
-	// Boutons d'actions
 	if ($canedit)
 	{
 		print '<a href="'.DOL_URL_ROOT.'/holiday/card.php?action=request&fuserid='.$user_id.'" class="butAction">'.$langs->trans("AddCP").'</a>';
@@ -340,10 +353,8 @@ else
 	$newcardbutton='';
 	if ($user->rights->holiday->write)
 	{
-		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/holiday/card.php?action=request"><span class="valignmiddle text-plus-circle">'.$langs->trans('MenuAddCP').'</span>';
-		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-		$newcardbutton.= '</a>';
-	}
+		$newcardbutton.= dolGetButtonTitle($langs->trans('MenuAddCP'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/holiday/card.php?action=request');
+    }
 
 	print_barre_liste($langs->trans("ListeCP"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_hrm.png', 0, $newcardbutton, '', $limit);
 
@@ -462,7 +473,7 @@ $holiday->selectStatutCP($search_statut, 'search_statut');
 print '</td>';
 
 // Actions
-print '<td class="liste_titre right">';
+print '<td class="liste_titre maxwidthsearch">';
 $searchpicto=$form->showFilterAndCheckAddButtons(0);
 print $searchpicto;
 print '</td>';

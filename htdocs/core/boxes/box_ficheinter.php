@@ -57,9 +57,9 @@ class box_ficheinter extends ModeleBoxes
 	{
 	    global $user;
 
-	    $this->db=$db;
+	    $this->db = $db;
 
-	    $this->hidden=! ($user->rights->ficheinter->lire);
+	    $this->hidden = ! ($user->rights->ficheinter->lire);
 	}
 
 	/**

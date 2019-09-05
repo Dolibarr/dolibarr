@@ -79,5 +79,7 @@ function websiteaccountPrepareHead($object)
 	//); // to remove a tab
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'websiteaccount@website');
 
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'websiteaccount@website', 'remove');
+
 	return $head;
 }

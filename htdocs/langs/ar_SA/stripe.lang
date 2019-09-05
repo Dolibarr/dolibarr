@@ -1,30 +1,28 @@
 # Dolibarr language file - Source file is en_US - stripe
 StripeSetup=Stripe module setup
-StripeDesc=Module to offer an online payment page accepting payments with Credit/Debit card via <a href="http://www.stripe.com" target="_blank">Stripe</a>. This can be used to allow your customers to make free payments or for a payment on a particular Dolibarr object (invoice, order, ...)
+StripeDesc=Offer customers a Stripe online payment page for payments with credit/cebit cards via <a href="http://www.stripe.com" target="_blank">Stripe</a>. This can be used to allow your customers to make ad-hoc payments or for payments related to a particular Dolibarr object (invoice, order, ...)
 StripeOrCBDoPayment=Pay with credit card or Stripe
 FollowingUrlAreAvailableToMakePayments=فيما يلي عناوين المواقع المتاحة لعرض هذه الصفحة زبون لتسديد دفعة Dolibarr على الأجسام
 PaymentForm=شكل الدفع
-WelcomeOnPaymentPage=ونحن نرحب على خدمة الدفع عبر الإنترنت
+WelcomeOnPaymentPage=Welcome to our online payment service
 ThisScreenAllowsYouToPay=تتيح لك هذه الشاشة إجراء الدفع الإلكتروني إلى ٪ s.
 ThisIsInformationOnPayment=هذه هي المعلومات عن الدفع للقيام
 ToComplete=لإكمال
 YourEMail=البريد الالكتروني لتأكيد الدفع
-STRIPE_PAYONLINE_SENDEMAIL=البريد الإلكتروني لتحذير بعد دفع (النجاح أو لا)
+STRIPE_PAYONLINE_SENDEMAIL=Email notification after a payment attempt (success or fail)
 Creditor=الدائن
 PaymentCode=دفع رمز
-StripeDoPayment=Pay with Credit or Debit Card (Stripe)
+StripeDoPayment=Pay with Stripe
 YouWillBeRedirectedOnStripe=You will be redirected on secured Stripe page to input you credit card information
 Continue=التالى
 ToOfferALinkForOnlinePayment=عنوان دفع %s
-ToOfferALinkForOnlinePaymentOnOrder=عنوان لتقديم المستندات ٪ الدفع الإلكتروني واجهة المستخدم للأمر
+ToOfferALinkForOnlinePaymentOnOrder=URL to offer a %s online payment user interface for a sales order
 ToOfferALinkForOnlinePaymentOnInvoice=عنوان لتقديم المستندات ٪ الدفع الإلكتروني واجهة المستخدم للفاتورة
 ToOfferALinkForOnlinePaymentOnContractLine=عنوان لتقديم المستندات ٪ الدفع الإلكتروني واجهة المستخدم للحصول على عقد خط
 ToOfferALinkForOnlinePaymentOnFreeAmount=عنوان لتقديم المستندات ٪ الدفع الإلكتروني واجهة المستخدم لمبلغ حرة
 ToOfferALinkForOnlinePaymentOnMemberSubscription=عنوان الموقع لتقديم الدفع عبر الإنترنت %s واجهة المستخدم للاشتراك عضو
 YouCanAddTagOnUrl=You can also add url parameter <b>&tag=يمكنك أيضا إضافة رابط المعلم <b>= & علامة</b> على أي من <i><b>قيمة</b></i> تلك عنوان (مطلوب فقط لدفع الحر) الخاصة بك لإضافة تعليق دفع الوسم.
 SetupStripeToHavePaymentCreatedAutomatically=Setup your Stripe with url <b>%s</b> to have payment created automatically when validated by Stripe.
-YourPaymentHasBeenRecorded=هذه الصفحة يؤكد أنه قد تم تسجيلها دفعتك. شكرا لك.
-YourPaymentHasNotBeenRecorded=يمكنك دفع لم يسجل وتم إلغاء الصفقة. شكرا لك.
 AccountParameter=حساب المعلمات
 UsageParameter=استخدام المعلمات
 InformationToFindParameters=مساعدة للعثور على معلومات حسابك %s
@@ -42,7 +40,7 @@ STRIPE_LIVE_WEBHOOK_KEY=Webhook live key
 ONLINE_PAYMENT_WAREHOUSE=Stock to use for stock decrease when online payment is done<br>(TODO When option to decrease stock is done on an action on invoice and the online payment generate itself the invoice ?)
 StripeLiveEnabled=Stripe live enabled (otherwise test/sandbox mode)
 StripeImportPayment=Import Stripe payments
-ExampleOfTestCreditCard=Example of credit card for test: %s (valid), %s (error CVC), %s (expired), %s (charge fails)
+ExampleOfTestCreditCard=Example of credit card for test: %s => valid, %s => error CVC, %s => expired, %s => charge fails
 StripeGateways=Stripe gateways
 OAUTH_STRIPE_TEST_ID=Stripe Connect Client ID (ca_...)
 OAUTH_STRIPE_LIVE_ID=Stripe Connect Client ID (ca_...)
@@ -63,3 +61,9 @@ ConfirmDeleteCard=Are you sure you want to delete this Credit or Debit card?
 CreateCustomerOnStripe=Create customer on Stripe
 CreateCardOnStripe=Create card on Stripe
 ShowInStripe=Show in Stripe
+StripeUserAccountForActions=User account to use for email notification of some Stripe events (Stripe payouts)
+StripePayoutList=List of Stripe payouts
+ToOfferALinkForTestWebhook=Link to setup Stripe WebHook to call the IPN (test mode)
+ToOfferALinkForLiveWebhook=Link to setup Stripe WebHook to call the IPN (live mode)
+PaymentWillBeRecordedForNextPeriod=Payment will be recorded for the next period.
+ClickHereToTryAgain=<a href="%s">Click here to try again...</a>

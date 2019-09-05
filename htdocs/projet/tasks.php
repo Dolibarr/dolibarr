@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2017 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -95,8 +95,6 @@ $description=GETPOST('description');
 $planned_workloadhour=(GETPOST('planned_workloadhour', 'int')?GETPOST('planned_workloadhour', 'int'):0);
 $planned_workloadmin=(GETPOST('planned_workloadmin', 'int')?GETPOST('planned_workloadmin', 'int'):0);
 $planned_workload=$planned_workloadhour*3600+$planned_workloadmin*60;
-
-$userAccess=0;
 
 $arrayfields=array(
     't.ref'=>array('label'=>$langs->trans("RefTask"), 'checked'=>1, 'position'=>80),
@@ -414,6 +412,34 @@ if ($id > 0 || ! empty($ref))
 
     print '<table class="border tableforfield" width="100%">';
 
+    // Usage
+    print '<tr><td class="tdtop">';
+    print $langs->trans("Usage");
+    print '</td>';
+    print '<td>';
+    if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
+    {
+    	print '<input type="checkbox" disabled name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha')!=''?' checked="checked"':'') : ($object->usage_opportunity ? ' checked="checked"' : '')).'"> ';
+    	$htmltext = $langs->trans("ProjectFollowOpportunity");
+    	print $form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext);
+    	print '<br>';
+    }
+    if (empty($conf->global->PROJECT_HIDE_TASKS))
+    {
+    	print '<input type="checkbox" disabled name="usage_task"'.(GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha')!=''?' checked="checked"':'') : ($object->usage_task ? ' checked="checked"' : '')).'"> ';
+    	$htmltext = $langs->trans("ProjectFollowTasks");
+    	print $form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext);
+    	print '<br>';
+    }
+    if (! empty($conf->global->PROJECT_BILL_TIME_SPENT))
+    {
+    	print '<input type="checkbox" disabled name="usage_bill_time"'.(GETPOSTISSET('usage_bill_time') ? (GETPOST('usage_bill_time', 'alpha')!=''?' checked="checked"':'') : ($object->usage_bill_time ? ' checked="checked"' : '')).'"> ';
+    	$htmltext = $langs->trans("ProjectBillTimeDescription");
+    	print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
+    	print '<br>';
+    }
+    print '</td></tr>';
+
     // Visibility
     print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
     if ($object->public) print $langs->trans('SharedProject');
@@ -476,12 +502,12 @@ if ($id > 0 || ! empty($ref))
     if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_BILL_TIME_SPENT))
     {
     	print '<tr><td>'.$langs->trans("BillTime").'</td><td>';
-    	print yn($object->bill_time);
+    	print yn($object->usage_bill_time);
     	print '</td></tr>';
     }
 
     // Categories
-    if($conf->categorie->enabled) {
+    if ($conf->categorie->enabled) {
         print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td>';
         print $form->showCategories($object->id, 'project', 1);
         print "</td></tr>";
@@ -523,7 +549,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 
 		dol_fiche_head('');
 
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent">';
 
 		$defaultref='';
 		$obj = empty($conf->global->PROJECT_TASK_ADDON)?'mod_task_simple':$conf->global->PROJECT_TASK_ADDON;
@@ -642,23 +668,18 @@ elseif ($id > 0 || ! empty($ref))
 
 	print '<br>';
 
-	// Link to create task
-	if ($user->rights->projet->all->creer || $user->rights->projet->creer)
-	{
-		if ($object->public || $userWrite > 0)
-		{
-			$linktocreatetask = '<a class="butActionNew" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=create'.$param.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id).'"><span class="valignmiddle text-plus-circle">'.$langs->trans('AddTask').'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
-		}
-		else
-		{
-			$linktocreatetask = '<a class="butActionNewRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'"><span class="valignmiddle text-plus-circle">'.$langs->trans('AddTask').'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
-		}
-	}
-	else
-	{
-		$linktocreatetask = '<a class="butActionNewRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'"><span class="valignmiddle text-plus-circle">'.$langs->trans('AddTask').'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
-	}
+// Link to create task
+    $linktocreatetaskParam = array();
+    $linktocreatetaskUserRight = false;
+    if ($user->rights->projet->all->creer || $user->rights->projet->creer) {
+        if ($object->public || $userWrite > 0){
+            $linktocreatetaskUserRight = true;
+        }else{
+            $linktocreatetaskParam['attr']['title'] = $langs->trans("NotOwnerOfProject");
+        }
+    }
 
+    $linktocreatetask = dolGetButtonTitle($langs->trans('AddTask'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id.'&action=create'.$param.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id), '', $linktocreatetaskUserRight, $linktocreatetaskParam);
 
 
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
@@ -672,7 +693,7 @@ elseif ($id > 0 || ! empty($ref))
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 	$title=$langs->trans("ListOfTasks");
-	$linktotasks='<a href="'.DOL_URL_ROOT.'/projet/ganttview.php?id='.$object->id.'&withproject=1">'.$langs->trans("GoToGanttView").'<span class="paddingleft fa fa-calendar-minus-o valignmiddle"></span></a>';
+    $linktotasks = dolGetButtonTitle($langs->trans('GoToGanttView'), '', 'fa fa-calendar-minus-o paddingleft', DOL_URL_ROOT.'/projet/ganttview.php?id='.$object->id.'&withproject=1');
 
 	//print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $linktotasks, $num, $totalnboflines, 'title_generic.png', 0, '', '', 0, 1);
 	print load_fiche_titre($title, $linktotasks.' &nbsp; '.$linktocreatetask, 'title_generic.png');
@@ -714,7 +735,7 @@ elseif ($id > 0 || ! empty($ref))
 	$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
 
 	print '<div class="div-table-responsive">';
-	print '<table id="tablelines" class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'"">';
+	print '<table id="tablelines" class="tagtable nobottomiftotal liste'.($moreforfilter?" listwithfilterbefore":"").'">';
 
 	// Fields title search
 	print '<tr class="liste_titre_filter">';
@@ -751,11 +772,14 @@ elseif ($id > 0 || ! empty($ref))
 	print '<input class="flat" type="text" size="4" name="search_progresscalc" value="'.$search_progresscalc.'">';
 	print '</td>';
 
-	print '<td class="liste_titre right">';
-	print '<input class="flat" type="text" size="4" name="search_progressdeclare" value="'.$search_progressdeclare.'">';
-	print '</td>';
+    print '<td class="liste_titre right">';
+    print '<input class="flat" type="text" size="4" name="search_progressdeclare" value="'.$search_progressdeclare.'">';
+    print '</td>';
 
-	if ($object->bill_time)
+    // progress resume not searchable
+    print '<td class="liste_titre right"></td>';
+
+	if ($object->usage_bill_time)
 	{
     	print '<td class="liste_titre right">';
     	print '</td>';
@@ -767,7 +791,7 @@ elseif ($id > 0 || ! empty($ref))
 	if (! empty($conf->global->PROJECT_SHOW_CONTACTS_IN_LIST)) print '<td></td>';
 
 	// Action column
-	print '<td class="liste_titre right">';
+	print '<td class="liste_titre maxwidthsearch">';
 	$searchpicto=$form->showFilterButtons();
 	print $searchpicto;
 	print '</td>';
@@ -783,7 +807,8 @@ elseif ($id > 0 || ! empty($ref))
 	print_liste_field_titre("TimeSpent", $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre("ProgressCalculated", $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre("ProgressDeclared", $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'right ');
-	if ($object->bill_time)
+	print_liste_field_titre("TaskProgressSummary", $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center ');
+	if ($object->usage_bill_time)
 	{
 	   print_liste_field_titre("TimeToBill", $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'right ');
 	   print_liste_field_titre("TimeBilled", $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'right ');
@@ -796,13 +821,13 @@ elseif ($id > 0 || ! empty($ref))
 	{
 	    // Show all lines in taskarray (recursive function to go down on tree)
 		$j=0; $level=0;
-		$nboftaskshown=projectLinesa($j, 0, $tasksarray, $level, true, 0, $tasksrole, $object->id, 1, $object->id, $filterprogresscalc, ($object->bill_time?1:0));
+		$nboftaskshown=projectLinesa($j, 0, $tasksarray, $level, true, 0, $tasksrole, $object->id, 1, $object->id, $filterprogresscalc, ($object->usage_bill_time?1:0));
 	}
 	else
 	{
 	    $colspan=10;
-	    if ($object->bill_time) $colspan+=2;
-		print '<tr class="oddeven"><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoTasks").'</td></tr>';
+	    if ($object->usage_bill_time) $colspan+=2;
+		print '<tr class="oddeven nobottom"><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoTasks").'</span></td></tr>';
 	}
 
 	print "</table>";

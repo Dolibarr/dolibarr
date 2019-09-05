@@ -55,7 +55,7 @@ class mod_project_universal extends ModeleNumRefProjects
 
 
     /**
-     *  Renvoi la description du modele de numerotation
+     *  Returns the description of the numbering model
      *
      *  @return     string      Texte descripif
      */

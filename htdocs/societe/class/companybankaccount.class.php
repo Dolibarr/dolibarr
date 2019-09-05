@@ -46,7 +46,7 @@ class CompanyBankAccount extends Account
      * @var integer
      */
     public $datec;
-    
+
 	/**
      * Date modification record (tms)
      *
@@ -217,7 +217,7 @@ class CompanyBankAccount extends Account
 		if (empty($id) && empty($socid)) return -1;
 
 		$sql = "SELECT rowid, type, fk_soc, bank, number, code_banque, code_guichet, cle_rib, bic, iban_prefix as iban, domiciliation, proprio,";
-		$sql.= " owner_address, default_rib, label, datec, tms as datem, rum, frstrecur";
+		$sql.= " owner_address, default_rib, label, datec, tms as datem, rum, frstrecur, date_rum";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe_rib";
 		if ($id)    $sql.= " WHERE rowid = ".$id;
 		if ($socid)
@@ -255,6 +255,7 @@ class CompanyBankAccount extends Account
 				$this->datem           = $this->db->jdate($obj->datem);
 				$this->rum             = $obj->rum;
 				$this->frstrecur       = $obj->frstrecur;
+				$this->date_rum        = $this->db->jdate($obj->date_rum);
 			}
 			$this->db->free($resql);
 

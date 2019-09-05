@@ -489,7 +489,7 @@ class RemiseCheque extends CommonObject
 		else
 		{
 			$langs->load("errors");
-			print $langs->trans("Error")." ".$langs->trans("ErrorModuleSetupNotComplete");
+			print $langs->trans("Error")." ".$langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Bank"));
 			return "";
 		}
     }
@@ -527,6 +527,7 @@ class RemiseCheque extends CommonObject
 			$response = new WorkboardResponse();
 			$response->warning_delay=$conf->bank->cheque->warning_delay/60/60/24;
 			$response->label=$langs->trans("BankChecksToReceipt");
+			$response->labelShort=$langs->trans("BankChecksToReceiptShort");
 			$response->url=DOL_URL_ROOT.'/compta/paiement/cheque/index.php?leftmenu=checks&amp;mainmenu=bank';
 			$response->img=img_object('', "payment");
 

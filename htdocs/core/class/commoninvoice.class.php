@@ -196,6 +196,29 @@ abstract class CommonInvoice extends CommonObject
 	}
 
 	/**
+	 *    	Return amount (with tax) of all converted amount for this credit note
+	 *
+	 * 		@param 		int 	$multicurrency 	Return multicurrency_amount instead of amount
+	 *		@return		int						<0 if KO, Sum of credit notes and deposits amount otherwise
+	 */
+	public function getSumFromThisCreditNotesNotUsed($multicurrency = 0)
+	{
+	    require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
+
+	    $discountstatic=new DiscountAbsolute($this->db);
+	    $result=$discountstatic->getSumFromThisCreditNotesNotUsed($this, $multicurrency);
+	    if ($result >= 0)
+	    {
+	        return $result;
+	    }
+	    else
+	    {
+	        $this->error=$discountstatic->error;
+	        return -1;
+	    }
+	}
+
+	/**
 	 *	Renvoie tableau des ids de facture avoir issus de la facture
 	 *
 	 *	@return		array		Tableau d'id de factures avoirs

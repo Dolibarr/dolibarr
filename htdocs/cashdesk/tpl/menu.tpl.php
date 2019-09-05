@@ -78,7 +78,7 @@ print '<li class="menu_choix0">'.$langs->trans("User").': '.$_SESSION['firstname
 print ' <a href="deconnexion.php">'.img_picto($langs->trans('Logout'), 'logout.png').'</a><br>';
 print '<form id="frmThirdparty" class="formulaire1 inline-block" method="post" action="facturation_verif.php?action=change_thirdparty">';
 print $langs->trans("CashDeskThirdParty").': ';
-print $form->select_company($_SESSION["CASHDESK_ID_THIRDPARTY"], 'CASHDESK_ID_THIRDPARTY', 's.client IN (1,3) AND s.status = 1', '', 0, 0, null, 0, 'valignmiddle inline-block');
+print $form->select_company($_SESSION["CASHDESK_ID_THIRDPARTY"], 'CASHDESK_ID_THIRDPARTY', '(s.client IN (1,3) AND s.status = 1)', '', 0, 0, null, 0, 'valignmiddle inline-block');
 print '<input class="button bouton_change_thirdparty inline-block valignmiddle" type="submit" id="bouton_change_thirdparty" value="'.$langs->trans("Modify").'">';
 //print $companyLink;
 print '<br>';

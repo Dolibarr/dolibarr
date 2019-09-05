@@ -31,13 +31,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/societe/modules_societe.class.php'
 class mod_codecompta_panicum extends ModeleAccountancyCode
 {
 	/**
-	 * @var string Nom du modele
-	 * @deprecated
-	 * @see name
-	 */
-	public $nom='Panicum';
-
-	/**
 	 * @var string model name
 	 */
 	public $name='Panicum';
@@ -47,6 +40,8 @@ class mod_codecompta_panicum extends ModeleAccountancyCode
      * @var string
      */
 	public $version = 'dolibarr';        // 'development', 'experimental', 'dolibarr'
+
+	public $position = 10;
 
 
 	/**
@@ -96,8 +91,8 @@ class mod_codecompta_panicum extends ModeleAccountancyCode
 		$this->code='';
 
 		if (is_object($societe)) {
-			if ($type == 'supplier') $this->code = (! empty($societe->code_compta_fournisseur)?$societe->code_compta_fournisseur:'');
-			else $this->code = (! empty($societe->code_compta)?$societe->code_compta:'');
+			if ($type == 'supplier') $this->code = (($societe->code_compta_fournisseur != "")?$societe->code_compta_fournisseur:'');
+			else $this->code = (($societe->code_compta != "")?$societe->code_compta:'');
 		}
 
 		return 0; // return ok

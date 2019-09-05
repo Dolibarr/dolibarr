@@ -58,9 +58,9 @@ class box_services_contracts extends ModeleBoxes
 	{
 	    global $user;
 
-	    $this->db=$db;
+	    $this->db = $db;
 
-	    $this->hidden=! ($user->rights->service->lire && $user->rights->contrat->lire);
+	    $this->hidden = ! ($user->rights->service->lire && $user->rights->contrat->lire);
 	}
 
 	/**
@@ -84,7 +84,7 @@ class box_services_contracts extends ModeleBoxes
 		if ($user->rights->service->lire && $user->rights->contrat->lire)
 		{
 		    $contractstatic=new Contrat($db);
-		    $contratlignestatic=new ContratLigne($db);
+		    $contractlinestatic=new ContratLigne($db);
 		    $thirdpartytmp = new Societe($db);
 		    $productstatic = new Product($db);
 
@@ -116,13 +116,13 @@ class box_services_contracts extends ModeleBoxes
 					$objp = $db->fetch_object($result);
 					$datem=$db->jdate($objp->datem);
 
-					$contratlignestatic->id=$objp->cdid;
-					$contratlignestatic->fk_contrat=$objp->rowid;
-					$contratlignestatic->label=$objp->label;
-					$contratlignestatic->description=$objp->description;
-					$contratlignestatic->type=$objp->type;
-					$contratlignestatic->product_id=$objp->product_id;
-					$contratlignestatic->product_ref=$objp->product_ref;
+					$contractlinestatic->id=$objp->cdid;
+					$contractlinestatic->fk_contrat=$objp->rowid;
+					$contractlinestatic->label=$objp->label;
+					$contractlinestatic->description=$objp->description;
+					$contractlinestatic->type=$objp->type;
+					$contractlinestatic->product_id=$objp->product_id;
+					$contractlinestatic->product_ref=$objp->product_ref;
 
                     $contractstatic->statut=$objp->contract_status;
 					$contractstatic->id=$objp->rowid;
@@ -153,7 +153,7 @@ class box_services_contracts extends ModeleBoxes
 						if ($resultd)
 						{
 							$objtp = $db->fetch_object($resultd);
-							if ($objtp->label != '') $contratlignestatic->label = $objtp->label;
+							if ($objtp->label != '') $contractlinestatic->label = $objtp->label;
 						}
 					}
 
@@ -191,19 +191,19 @@ class box_services_contracts extends ModeleBoxes
 
 
 					$this->info_box_contents[$i][] = array(
-                        'td' => 'class="tdoverflowmax100 maxwidth100onsmartphone"',
+                        'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
                         'text' => $s,
                         'asis' => 1
                     );
 
 					$this->info_box_contents[$i][] = array(
-                        'td' => '',
+                        'td' => 'class="nowraponall"',
                         'text' => $contractstatic->getNomUrl(1),
                         'asis' => 1
                     );
 
 					$this->info_box_contents[$i][] = array(
-                        'td' => 'class="tdoverflowmax100 maxwidth100onsmartphone"',
+                        'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
                         'text' => $thirdpartytmp->getNomUrl(1),
                         'asis' => 1
                     );
@@ -215,7 +215,7 @@ class box_services_contracts extends ModeleBoxes
 
 					$this->info_box_contents[$i][] = array(
                         'td' => 'class="right" width="18"',
-                        'text' => $contratlignestatic->LibStatut($objp->statut, 3)
+                        'text' => $contractlinestatic->LibStatut($objp->statut, 3)
 					);
 
 					$i++;

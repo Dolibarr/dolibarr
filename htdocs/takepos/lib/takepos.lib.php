@@ -52,7 +52,9 @@ function takeposAdminPrepareHead()
 	//$this->tabs = array(
 	//	'entity:-tabname:Title:@takepos:/takepos/mypage.php?id=__ID__'
 	//); // to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'takepos');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'takepos');
+
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'takepos', 'remove');
 
 	return $head;
 }
