@@ -81,8 +81,7 @@ if (! empty($user->rights->holiday->write) && in_array($fuserid, $childids)) $ca
 
 $candelete = 0;
 if (! empty($user->rights->holiday->delete)) $candelete=1;
-if ($object->statut == Holiday::STATUS_DRAFT && $user->rights->holiday->create && in_array($object->fk_user, $childids)) $candelete=1;
-
+if ($object->statut == Holiday::STATUS_DRAFT && $user->rights->holiday->write && in_array($object->fk_user, $childids)) $candelete=1;
 
 /*
  * Actions
