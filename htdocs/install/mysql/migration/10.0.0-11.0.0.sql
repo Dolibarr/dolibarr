@@ -89,8 +89,8 @@ ALTER TABLE llx_projet ADD COLUMN usage_organize_event integer DEFAULT 0;
 
 UPDATE llx_projet set usage_opportunity = 1 WHERE fk_opp_status > 0;
 
-UPDATE llx_c_type_contact set element = 'resource' WHERE element = 'dolresource';
-UPDATE llx_element_resources resource_type = 'resource' WHERE resource_type = 'dolresource';
+UPDATE llx_c_type_contact SET element = 'resource' WHERE element = 'dolresource';
+UPDATE llx_element_resources SET resource_type = 'resource' WHERE resource_type = 'dolresource';
 
  
   
