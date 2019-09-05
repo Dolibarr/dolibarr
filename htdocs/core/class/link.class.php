@@ -355,11 +355,12 @@ class Link extends CommonObject
     /**
      *    Delete a link from database
      *
-     *    @return	int				<0 if KO, 0 if nothing done, >0 if OK
+     *	  @param	User		$user		Object suer
+     *    @return	int						<0 if KO, 0 if nothing done, >0 if OK
      */
-    public function delete()
+    public function delete($user)
     {
-        global $user, $langs, $conf;
+        global $langs, $conf;
 
         dol_syslog(get_class($this)."::delete", LOG_DEBUG);
         $error = 0;
