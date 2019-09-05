@@ -2207,6 +2207,9 @@ img.toolbarbutton {
     height: 30px;
 }
 
+li.expanded > a.fmdirlia.jqft.ecmjqft {
+    font-weight: bold !important;
+}
 
 
 
