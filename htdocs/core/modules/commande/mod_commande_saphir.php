@@ -52,7 +52,7 @@ class mod_commande_saphir extends ModeleNumRefCommandes
 
 
     /**
-     *  Renvoi la description du modele de numerotation
+     *  Returns the description of the numbering model
      *
      *  @return     string      Texte descripif
      */
@@ -137,9 +137,12 @@ class mod_commande_saphir extends ModeleNumRefCommandes
 			return 0;
 		}
 
+		// Get entities
+		$entity = getEntity('ordernumber', 1, $object);
+
 		$date = ($object->date_commande ? $object->date_commande : $object->date);
 
-		$numFinal=get_next_value($db, $mask, 'commande', 'ref', '', $objsoc, $date);
+		$numFinal=get_next_value($db, $mask, 'commande', 'ref', '', $objsoc, $date, 'next', false, null, $entity);
 
 		return  $numFinal;
 	}

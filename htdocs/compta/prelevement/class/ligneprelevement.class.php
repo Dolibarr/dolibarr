@@ -22,7 +22,7 @@
 /**
  *  \file       htdocs/compta/prelevement/class/ligneprelevement.class.php
  *  \ingroup    prelevement
- *  \brief      Fichier de la classe des lignes de prelevements
+ *  \brief      File of class to manage lines of Direct Debit orders
  */
 
 

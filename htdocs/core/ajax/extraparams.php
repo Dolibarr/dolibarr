@@ -17,7 +17,7 @@
 
 /**
  *	\file       /htdocs/core/ajax/extraparams.php
- *	\brief      File to return Ajax response on set extra parameters of elements
+ *	\brief      File to make Ajax action on setting extra parameters of elements
  */
 
 if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Disables token renewal

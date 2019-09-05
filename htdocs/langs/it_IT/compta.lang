@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - compta
-MenuFinancial=Fatturazione | Pagamento
-TaxModuleSetupToModifyRules=Per modificare il modo in cui viene effettuato il calcolo, vai al <a href="%s">modulo di configurazione delle tasse</a>.
-TaxModuleSetupToModifyRulesLT=Vai a  <a href="%s">Impostazioni Azienda per modificare le regole del calcolo
+MenuFinancial=Contabilità
+TaxModuleSetupToModifyRules=Per modificare le regole di calcolo, vai ad <a href="%s">impostazioni Modulo Imposte</a>
+TaxModuleSetupToModifyRulesLT=Per modificare le regole di calcolo, vai ad <a href="%s">impostazioni Azienda</a>\n
 OptionMode=Opzione per la gestione contabile
 OptionModeTrue=Opzione entrate-uscite
 OptionModeVirtual=Opzione crediti-debiti
@@ -80,7 +80,6 @@ AddSocialContribution=Add social/fiscal tax
 ContributionsToPay=Tasse/contributi da pagare
 AccountancyTreasuryArea=Billing and payment area
 NewPayment=Nuovo pagamento
-Payments=Pagamenti
 PaymentCustomerInvoice=Pagamento fattura attiva
 PaymentSupplierInvoice=vendor invoice payment
 PaymentSocialContribution=Pagamento delle imposte sociali/fiscali
@@ -179,7 +178,7 @@ VATReportByRates=Sale tax report by rates
 VATReportByThirdParties=Sale tax report by third parties
 VATReportByCustomers=Sale tax report by customer
 VATReportByCustomersInInputOutputMode=Report per IVA cliente riscossa e pagata
-VATReportByQuartersInInputOutputMode=Report by Sale tax rate of the tax collected and paid
+VATReportByQuartersInInputOutputMode=Resoconto imposte di vendita, sia riscosse che pagate
 LT1ReportByQuarters=Report tax 2 by rate
 LT2ReportByQuarters=Report tax 3 by rate
 LT1ReportByQuartersES=Report by RE rate
@@ -205,7 +204,6 @@ SellsJournal=Storico vendite
 PurchasesJournal=Storico acquisti
 DescSellsJournal=Storico vendite
 DescPurchasesJournal=Storico acquisti
-InvoiceRef=Rif. fattura
 CodeNotDef=Non definito
 WarningDepositsNotIncluded=Down payment invoices are not included in this version with this accountancy module.
 DatePaymentTermCantBeLowerThanObjectDate=La data termine di pagamento non può essere anteriore alla data dell'oggetto

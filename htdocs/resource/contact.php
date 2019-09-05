@@ -137,7 +137,7 @@ if ($id > 0 || ! empty($ref))
 
 	// Object
 
-	print '<table width="100%" class="border">';
+	print '<table class="border tableforfield centpercent">';
 
 	// Resource type
 	print '<tr>';

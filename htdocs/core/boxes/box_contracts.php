@@ -57,9 +57,9 @@ class box_contracts extends ModeleBoxes
     {
         global $user;
 
-        $this->db=$db;
+        $this->db = $db;
 
-        $this->hidden=! ($user->rights->contrat->lire);
+        $this->hidden = ! ($user->rights->contrat->lire);
     }
 
     /**
@@ -151,7 +151,7 @@ class box_contracts extends ModeleBoxes
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'class="nowrap right"',
+                        'td' => 'class="nowraponall right"',
                         'text' => $contractstatic->getLibStatut(7),
                         'asis'=>1,
                     );

@@ -47,7 +47,7 @@ $langs->load("main");
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class BonPrelevementTest extends PHPUnit_Framework_TestCase
+class BonPrelevementTest extends PHPUnit\Framework\TestCase
 {
 	protected $savconf;
 	protected $savuser;

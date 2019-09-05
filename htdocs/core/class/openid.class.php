@@ -299,7 +299,7 @@ class SimpleOpenID
      * @param string 	$url		URL
      * @param string	$method		Method
      * @param string	$params		Params
-     * @return boolean|unknown
+     * @return boolean|void			True if success, False if error
      */
     public function FSOCK_Request($url, $method = "GET", $params = "")
     {

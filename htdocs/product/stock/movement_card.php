@@ -766,7 +766,7 @@ if ($resql)
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
-    // Lignes des champs de filtre
+    // Fields title search
     print '<tr class="liste_titre_filter">';
     if (! empty($arrayfields['m.rowid']['checked']))
     {
@@ -904,7 +904,7 @@ if ($resql)
 	    print '</td>';
 	}
     // Actions
-    print '<td class="liste_titre right">';
+    print '<td class="liste_titre maxwidthsearch">';
     $searchpicto=$form->showFilterAndCheckAddButtons(0);
     print $searchpicto;
     print '</td>';

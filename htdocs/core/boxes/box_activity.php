@@ -57,12 +57,12 @@ class box_activity extends ModeleBoxes
     {
         global $conf, $user;
 
-        $this->db=$db;
+        $this->db = $db;
 
         // FIXME: Pb into some status
-        $this->enabled=($conf->global->MAIN_FEATURES_LEVEL);    // Not enabled by default due to bugs (see previous comments)
+        $this->enabled = ($conf->global->MAIN_FEATURES_LEVEL);    // Not enabled by default due to bugs (see previous comments)
 
-        $this->hidden= ! ((! empty($conf->facture->enabled) && $user->rights->facture->lire)
+        $this->hidden = ! ((! empty($conf->facture->enabled) && $user->rights->facture->lire)
             || (! empty($conf->commande->enabled) && $user->rights->commande->lire)
             || (! empty($conf->propal->enabled) && $user->rights->propale->lire)
             );
@@ -422,7 +422,7 @@ class box_activity extends ModeleBoxes
         			);
         			$totalnb += $data[$j]->nb;
         			$this->info_box_contents[$line][3] = array(
-                        'td' => 'class="right"',
+                        'td' => 'class="nowrap right"',
                         'text' => price($data[$j]->Mnttot, 1, $langs, 0, 0, -1, $conf->currency),
         			);
         			$this->info_box_contents[$line][4] = array(

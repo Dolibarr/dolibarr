@@ -36,7 +36,7 @@ create table llx_user
   pass_encoding     varchar(24),
   pass              varchar(128),
   pass_crypted      varchar(128),
-  pass_temp         varchar(128),				-- temporary password when asked for forget password or 'hashtoallowreset:YYYMMDDHHMMSS' (where date is max date of validaity)
+  pass_temp         varchar(128),				-- temporary password when asked for forget password or 'hashtoallowreset:YYYMMDDHHMMSS' (where date is max date of validity)
   api_key           varchar(128),				-- key to use REST API by this user
   gender            varchar(10),
   civility          varchar(6),
@@ -82,6 +82,8 @@ create table llx_user
   model_pdf         varchar(255) DEFAULT NULL,
   datelastlogin     datetime,
   datepreviouslogin datetime,
+  iplastlogin       varchar(250),
+  ippreviouslogin   varchar(250),
   egroupware_id     integer,
   ldap_sid          varchar(255) DEFAULT NULL,
   openid            varchar(255),

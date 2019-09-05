@@ -185,7 +185,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
     public function write_file($object, $outputlangs = '', $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
         // phpcs:enable
-		global $user,$langs,$conf,$hookmanager,$mysoc,$nblignes;
+		global $user,$langs,$conf,$hookmanager,$mysoc,$nblines;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
@@ -194,7 +194,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 		// Load translation files required by the page
 		$outputlangs->loadLangs(array("main", "orders", "companies", "bills", "dict", "products"));
 
-		$nblignes = count($object->lines);
+		$nblines = count($object->lines);
 
 		$hidetop=0;
 		if(!empty($conf->global->MAIN_PDF_DISABLE_COL_HEAD_TITLE)){
@@ -205,7 +205,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 		$realpatharray=array();
 		if (! empty($conf->global->MAIN_GENERATE_SUPPLIER_ORDER_WITH_PICTURE))
 		{
-			for ($i = 0 ; $i < $nblignes ; $i++)
+			for ($i = 0 ; $i < $nblines ; $i++)
 			{
 				if (empty($object->lines[$i]->fk_product)) continue;
 
@@ -284,7 +284,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 				global $action;
 				$reshook=$hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 
-				$nblignes = count($object->lines);
+				$nblines = count($object->lines);
 
                 $pdf=pdf_getInstance($this->format);
                 $default_font_size = pdf_getPDFFontSize($outputlangs);	// Must be after pdf_getInstance
@@ -376,7 +376,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 				    complete_substitutions_array($substitutionarray, $outputlangs, $object);
 				    $notetoshow = make_substitutions($notetoshow, $substitutionarray, $outputlangs);
 				    $notetoshow = convertBackOfficeMediasLinksToPublicLinks($notetoshow);
-				    
+
 				    $tab_top -= 2;
 
 				    $pdf->startTransaction();
@@ -496,7 +496,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 				// Loop on each lines
 				$pageposbeforeprintlines=$pdf->getPage();
 				$pagenb = $pageposbeforeprintlines;
-				for ($i = 0 ; $i < $nblignes ; $i++)
+				for ($i = 0 ; $i < $nblines ; $i++)
 				{
 					$curY = $nexY;
 					$pdf->SetFont('', '', $default_font_size - 1);   // Into loop to work with multipage
@@ -553,7 +553,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 					        $posyafter=$pdf->GetY();
 					        if ($posyafter > ($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot)))	// There is no space left for total+free text
 					        {
-					            if ($i == ($nblignes-1))	// No more lines, and no space left to show total, so we create a new page
+					            if ($i == ($nblines-1))	// No more lines, and no space left to show total, so we create a new page
 					            {
 					                $pdf->AddPage('', '', true);
 					                if (! empty($tplidx)) $pdf->useTemplate($tplidx);
@@ -689,7 +689,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 					if ($posYAfterImage > $posYAfterDescription) $nexY=$posYAfterImage;
 
 					// Add line
-					if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblignes - 1))
+					if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblines - 1))
 					{
 						$pdf->setPage($pageposafter);
 						$pdf->SetLineStyle(array('dash'=>'1,1', 'color'=>array(80,80,80)));
@@ -698,7 +698,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 						$pdf->SetLineStyle(array('dash'=>0));
 					}
 
-					$nexY+=2;    // Passe espace entre les lignes
+					$nexY+=2;    // Add space between lines
 
 					// Detect if some page were added automatically and output _tableau for past pages
 					while ($pagenb < $pageposafter)
@@ -800,7 +800,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 		}
 	}
 
-
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Show payments table
@@ -811,12 +811,12 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 	 *	@param	Translate	$outputlangs	Object langs for output
 	 *	@return int							<0 if KO, >0 if OK
 	 */
-	private function _tableau_versements(&$pdf, $object, $posy, $outputlangs)
+	protected function _tableau_versements(&$pdf, $object, $posy, $outputlangs)
 	{
         // phpcs:enable
 	}
 
-
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *   Show miscellaneous information (payment mode, payment term, ...)
@@ -827,7 +827,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @return	integer
 	 */
-	private function _tableau_info(&$pdf, $object, $posy, $outputlangs)
+	protected function _tableau_info(&$pdf, $object, $posy, $outputlangs)
 	{
         // phpcs:enable
 	    global $conf;
@@ -882,6 +882,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 		return $posy;
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Show total to pay
@@ -893,7 +894,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 	 *	@param	Translate	$outputlangs	Objet langs
 	 *	@return int							Position pour suite
 	 */
-	private function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
+	protected function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
         // phpcs:enable
 		global $conf,$mysoc;
@@ -1097,6 +1098,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 		return ($tab2_top + ($tab2_hl * $index));
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     /**
 	 *   Show table for lines
 	 *
@@ -1110,7 +1112,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 	 *   @param		string		$currency		Currency code
 	 *   @return	void
 	 */
-	private function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '')
+	protected function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '')
 	{
 		global $conf;
 
@@ -1167,6 +1169,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 		}
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *  Show top header of page.
 	 *
@@ -1176,7 +1179,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @return	void
 	 */
-	private function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
+	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
 		global $langs,$conf,$mysoc;
 
@@ -1412,6 +1415,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 		return $top_shift;
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *   	Show footer of page. Need this->emetteur object
      *
@@ -1421,7 +1425,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 	 *      @param	int			$hidefreetext		1=Hide free text
 	 *      @return	int								Return height of bottom margin including footer text
 	 */
-	private function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
+	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
 		global $conf;
 		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
@@ -1549,22 +1553,6 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 	        ),
 	        'border-left' => true, // add left line separator
 	    );
-
-	    $rank = $rank + 10;
-	    $this->cols['progress'] = array(
-	        'rank' => $rank,
-	        'width' => 19, // in mm
-	        'status' => false,
-	        'title' => array(
-	            'textkey' => 'Progress'
-	        ),
-	        'border-left' => false, // add left line separator
-	    );
-
-	    if($this->situationinvoice)
-	    {
-	        $this->cols['progress']['status'] = true;
-	    }
 
 	    $rank = $rank + 10;
 	    $this->cols['unit'] = array(
@@ -1826,7 +1814,6 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 	    global $hookmanager;
 
 	    $parameters=array(
-	        'object' => $object,
 	        'curY' =>& $curY,
 	        'columnText' => $columnText,
 	        'colKey' => $colKey

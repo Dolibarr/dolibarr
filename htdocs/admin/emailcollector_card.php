@@ -33,8 +33,8 @@ include_once DOL_DOCUMENT_ROOT.'/emailcollector/class/emailcollectorfilter.class
 include_once DOL_DOCUMENT_ROOT.'/emailcollector/class/emailcollectoraction.class.php';
 include_once DOL_DOCUMENT_ROOT.'/emailcollector/lib/emailcollector.lib.php';
 
-if (!$user->admin)
-	accessforbidden();
+if (!$user->admin) accessforbidden();
+if (empty($conf->emailcollector->enabled)) accessforbidden();
 
 // Load traductions files requiredby by page
 $langs->loadLangs(array("admin", "mails", "other"));
@@ -608,9 +608,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		}
 		print '</td>';
 		// Delete
-		print '<td class="right">';
-		print ' <a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editoperation&operationid='.$ruleaction['id'].'">'.img_edit().'</a>';
-		print ' &nbsp; ';
+		print '<td class="right nowraponall">';
+		print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editoperation&operationid='.$ruleaction['id'].'">'.img_edit().'</a>';
 		print ' <a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deleteoperation&operationid='.$ruleaction['id'].'">'.img_delete().'</a>';
 		print '</td>';
 		print '</tr>';

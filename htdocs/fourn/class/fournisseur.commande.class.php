@@ -154,7 +154,7 @@ class CommandeFournisseur extends CommonOrder
 	//Incoterms
     public $fk_incoterms;
     public $location_incoterms;
-    public $libelle_incoterms;  //Used into tooltip
+    public $label_incoterms;  //Used into tooltip
 
     public $extraparams=array();
 
@@ -264,10 +264,10 @@ class CommandeFournisseur extends CommonOrder
         $sql.= " c.note_private, c.note_public, c.model_pdf, c.extraparams, c.billed,";
         $sql.= " c.fk_multicurrency, c.multicurrency_code, c.multicurrency_tx, c.multicurrency_total_ht, c.multicurrency_total_tva, c.multicurrency_total_ttc,";
         $sql.= " cm.libelle as methode_commande,";
-        $sql.= " cr.code as cond_reglement_code, cr.libelle as cond_reglement_libelle,";
+        $sql.= " cr.code as cond_reglement_code, cr.libelle as cond_reglement_libelle, cr.libelle_facture as cond_reglement_libelle_doc,";
         $sql.= " p.code as mode_reglement_code, p.libelle as mode_reglement_libelle";
         $sql.= ', c.fk_incoterms, c.location_incoterms';
-        $sql.= ', i.libelle as libelle_incoterms';
+        $sql.= ', i.libelle as label_incoterms';
         $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_payment_term as cr ON c.fk_cond_reglement = cr.rowid";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as p ON c.fk_mode_reglement = p.id";
@@ -322,7 +322,7 @@ class CommandeFournisseur extends CommonOrder
             $this->cond_reglement_id	= $obj->fk_cond_reglement;
             $this->cond_reglement_code	= $obj->cond_reglement_code;
             $this->cond_reglement		= $obj->cond_reglement_libelle;
-            $this->cond_reglement_doc	= $obj->cond_reglement_libelle;
+            $this->cond_reglement_doc	= $obj->cond_reglement_libelle_doc;
             $this->fk_account           = $obj->fk_account;
             $this->mode_reglement_id	= $obj->fk_mode_reglement;
             $this->mode_reglement_code	= $obj->mode_reglement_code;
@@ -335,7 +335,7 @@ class CommandeFournisseur extends CommonOrder
 			//Incoterms
 			$this->fk_incoterms = $obj->fk_incoterms;
 			$this->location_incoterms = $obj->location_incoterms;
-			$this->libelle_incoterms = $obj->libelle_incoterms;
+			$this->label_incoterms = $obj->label_incoterms;
 
 			// Multicurrency
 			$this->fk_multicurrency 		= $obj->fk_multicurrency;
@@ -551,13 +551,18 @@ class CommandeFournisseur extends CommonOrder
                 // Rename directory if dir was a temporary ref
                 if (preg_match('/^[\(]?PROV/i', $this->ref))
                 {
-                    // We rename directory ($this->ref = ancienne ref, $num = nouvelle ref)
-                    // in order not to lose the attached files
+                	// Now we rename also files into index
+                	$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref)+1).")), filepath = 'fournisseur/commande/".$this->db->escape($this->newref)."'";
+                	$sql.= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'fournisseur/commande/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+                	$resql = $this->db->query($sql);
+                	if (! $resql) { $error++; $this->error = $this->db->lasterror(); }
+
+                	// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
                     $oldref = dol_sanitizeFileName($this->ref);
                     $newref = dol_sanitizeFileName($num);
                     $dirsource = $conf->fournisseur->commande->dir_output.'/'.$oldref;
                     $dirdest = $conf->fournisseur->commande->dir_output.'/'.$newref;
-                    if (file_exists($dirsource))
+                    if (! $error && file_exists($dirsource))
                     {
                         dol_syslog(get_class($this)."::valid rename dir ".$dirsource." into ".$dirdest);
 
@@ -1538,9 +1543,9 @@ class CommandeFournisseur extends CommonOrder
 			$desc=trim($desc);
 
 			// Check parameters
-			if ($qty < 1 && ! $fk_product)
+			if ($qty < 0 && ! $fk_product)
 			{
-				$this->error=$langs->trans("ErrorFieldRequired", $langs->trans("Product"));
+				$this->error=$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Product"));
 				return -1;
 			}
 			if ($type < 0) return -1;
@@ -2639,6 +2644,8 @@ class CommandeFournisseur extends CommonOrder
     {
         global $user,$langs,$conf;
 
+        include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+
         dol_syslog(get_class($this)."::initAsSpecimen");
 
         $now=dol_now();
@@ -2828,6 +2835,7 @@ class CommandeFournisseur extends CommonOrder
 	        $response = new WorkboardResponse();
 	        $response->warning_delay=$conf->commande->fournisseur->warning_delay/60/60/24;
 	        $response->label=$langs->trans("SuppliersOrdersToProcess");
+	        $response->labelShort=$langs->trans("Opened");
 	        $response->url=DOL_URL_ROOT.'/fourn/commande/list.php?statut=1,2,3&mainmenu=commercial&leftmenu=orders_suppliers';
 	        $response->img=img_object('', "order");
 

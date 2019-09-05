@@ -121,6 +121,8 @@ class InterfaceTicketEmail extends DolibarrTriggers
 	                $res = $userstat->fetch($object->fk_user_assign);
 	                if ($res > 0)
 	                {
+	                    // Send email to notification email
+
 	                	if (empty($conf->global->TICKET_DISABLE_ALL_MAILS))
 	                	{
 	                		// Init to avoid errors

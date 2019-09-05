@@ -47,7 +47,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class HolidayTest extends PHPUnit_Framework_TestCase
+class HolidayTest extends PHPUnit\Framework\TestCase
 {
     protected $savconf;
     protected $savuser;
@@ -350,5 +350,19 @@ class HolidayTest extends PHPUnit_Framework_TestCase
 
         $result=$localobjectc->verifDateHolidayCP($user->id, $date_debut, $date_fin, 2);	// start afternoon and end morning
         $this->assertTrue($result, 'result should be true, there is no overlapping');
+    }
+
+    /**
+     * testUpdateBalance
+     *
+     * @return void
+     */
+    public function testUpdateBalance()
+    {
+    	$localobjecta=new Holiday($this->savdb);
+
+    	$localobjecta->updateConfCP('lastUpdate', '20100101120000');
+
+    	$localobjecta->updateBalance();
     }
 }

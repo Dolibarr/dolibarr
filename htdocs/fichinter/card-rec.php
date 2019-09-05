@@ -129,7 +129,7 @@ if ($action == 'add') {
 
 	if (! $error) {
 		$object->id_origin		= $id;
-		$object->titre			= GETPOST('titre', 'alpha');
+		$object->title			= GETPOST('titre', 'alpha');
 		$object->description	= GETPOST('description', 'alpha');
 		$object->socid			= GETPOST('socid', 'alpha');
 		$object->fk_project		= GETPOST('projectid', 'int');
@@ -183,7 +183,7 @@ if ($action == 'add') {
 	$newfichinterid = $newinter->create($user);
 
 	if ($newfichinterid > 0) {
-		// on ajoute les lignes de détail ensuite
+		// Now we add line of details
 		foreach ($object->lines as $ficheinterligne)
 			$newinter->addline($user, $newfichinterid, $ficheinterligne->desc, "", $ficheinterligne->duree, '');
 
@@ -773,7 +773,7 @@ $date_next_execution = (GETPOST('remonth') ? dol_mktime(
 		/*
 		 *  List mode
 		 */
-		$sql = "SELECT f.rowid as fich_rec, s.nom as name, s.rowid as socid, f.rowid as facid, f.titre,";
+		$sql = "SELECT f.rowid as fich_rec, s.nom as name, s.rowid as socid, f.rowid as facid, f.titre as title,";
 		$sql.= " f.duree, f.fk_contrat, f.fk_projet as fk_project, f.frequency, f.nb_gen_done, f.nb_gen_max,";
 		$sql.= " f.date_last_gen, f.date_when, f.datec";
 
@@ -844,7 +844,7 @@ $date_next_execution = (GETPOST('remonth') ? dol_mktime(
 
 					print '<tr class="oddeven">';
 					print '<td><a href="'.$_SERVER['PHP_SELF'].'?id='.$objp->fich_rec.'">';
-					print img_object($langs->trans("ShowIntervention"), "intervention").' '.$objp->titre;
+					print img_object($langs->trans("ShowIntervention"), "intervention").' '.$objp->title;
 					print "</a></td>\n";
 					if ($objp->socid) {
 						$companystatic->id=$objp->socid;

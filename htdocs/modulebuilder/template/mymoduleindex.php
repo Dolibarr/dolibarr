@@ -19,7 +19,7 @@
  */
 
 /**
- *	\file       htdocs/mymodule/template/mymoduleindex.php
+ *	\file       htdocs/modulebuilder/template/mymoduleindex.php
  *	\ingroup    mymodule
  *	\brief      Home page of mymodule top menu
  */

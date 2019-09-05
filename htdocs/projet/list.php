@@ -6,6 +6,7 @@
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015 	   Claudio Aschieri     <c.aschieri@19.coop>
  * Copyright (C) 2018 	   Ferran Marcet	    <fmarcet@2byte.es>
+ * Copyright (C) 2019 	   Juanjo Menent	    <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,10 +73,10 @@ $pagenext = $page + 1;
 
 $search_all=GETPOST('search_all', 'alphanohtml') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml');
 $search_categ=GETPOST("search_categ", 'alpha');
-$search_ref=GETPOST("search_ref");
-$search_label=GETPOST("search_label");
-$search_societe=GETPOST("search_societe");
-$search_year=GETPOST("search_year");
+$search_ref=GETPOST("search_ref", 'alpha');
+$search_label=GETPOST("search_label", 'alpha');
+$search_societe=GETPOST("search_societe", 'alpha');
+$search_year=GETPOST("search_year", 'int');
 $search_status=GETPOST("search_status", 'int');
 $search_opp_status=GETPOST("search_opp_status", 'alpha');
 $search_opp_percent=GETPOST("search_opp_percent", 'alpha');
@@ -128,7 +129,7 @@ $arrayfields=array(
 	'p.fk_opp_status'=>array('label'=>$langs->trans("OpportunityStatusShort"), 'checked'=>1, 'enabled'=>($conf->global->PROJECT_USE_OPPORTUNITIES?1:0), 'position'=>104),
 	'p.opp_percent'=>array('label'=>$langs->trans("OpportunityProbabilityShort"), 'checked'=>1, 'enabled'=>($conf->global->PROJECT_USE_OPPORTUNITIES?1:0), 'position'=>105),
 	'p.budget_amount'=>array('label'=>$langs->trans("Budget"), 'checked'=>0, 'position'=>110),
-	'p.bill_time'=>array('label'=>$langs->trans("BillTimeShort"), 'checked'=>0, 'position'=>115),
+	'p.usage_bill_time'=>array('label'=>$langs->trans("BillTimeShort"), 'checked'=>0, 'position'=>115),
 	'p.datec'=>array('label'=>$langs->trans("DateCreationShort"), 'checked'=>0, 'position'=>500),
 	'p.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
 	'p.fk_statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
@@ -278,7 +279,7 @@ if (count($listofprojectcontacttype) == 0) $listofprojectcontacttype[0]='0';    
 
 $distinct='DISTINCT';   // We add distinct until we are added a protection to be sure a contact of a project and task is only once.
 $sql = "SELECT ".$distinct." p.rowid as id, p.ref, p.title, p.fk_statut, p.fk_opp_status, p.public, p.fk_user_creat";
-$sql.= ", p.datec as date_creation, p.dateo as date_start, p.datee as date_end, p.opp_amount, p.opp_percent, p.tms as date_update, p.budget_amount, p.bill_time";
+$sql.= ", p.datec as date_creation, p.dateo as date_start, p.datee as date_end, p.opp_amount, p.opp_percent, p.tms as date_update, p.budget_amount, p.usage_bill_time";
 $sql.= ", s.rowid as socid, s.nom as name, s.email";
 $sql.= ", cls.code as opp_status_code";
 // We'll need these fields in order to filter by categ
@@ -436,9 +437,9 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 // List of mass actions available
 $arrayofmassactions =  array(
-	'generate_doc'=>$langs->trans("Generate"),
-//    'presend'=>$langs->trans("SendByMail"),
-//    'builddoc'=>$langs->trans("PDFMerge"),
+	'generate_doc'=>$langs->trans("ReGeneratePDF"),
+    //'builddoc'=>$langs->trans("PDFMerge"),
+    //'presend'=>$langs->trans("SendByMail"),
 );
 //if($user->rights->societe->creer) $arrayofmassactions['createbills']=$langs->trans("CreateInvoiceForThisCustomer");
 if ($user->rights->projet->creer) $arrayofmassactions['close']=$langs->trans("Close");
@@ -450,9 +451,7 @@ $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 $newcardbutton='';
 if ($user->rights->projet->creer)
 {
-	$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/projet/card.php?action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans('NewProject').'</span>';
-	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-	$newcardbutton.= '</a>';
+    $newcardbutton.= dolGetButtonTitle($langs->trans('NewProject'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/card.php?action=create');
 }
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
@@ -620,7 +619,7 @@ if (! empty($arrayfields['p.budget_amount']['checked']))
 	print '<input type="text" class="flat" name="search_budget_amount" size="4" value="'.$search_budget_amount.'">';
 	print '</td>';
 }
-if (! empty($arrayfields['p.bill_time']['checked']))
+if (! empty($arrayfields['p.usage_bill_time']['checked']))
 {
 	print '<td class="liste_titre nowrap right">';
 	print '';
@@ -656,7 +655,7 @@ if (! empty($arrayfields['p.fk_statut']['checked']))
 	print '</td>';
 }
 // Action column
-print '<td class="liste_titre right">';
+print '<td class="liste_titre maxwidthsearch">';
 $searchpicto=$form->showFilterButtons();
 print $searchpicto;
 print '</td>';
@@ -675,7 +674,7 @@ if (! empty($arrayfields['p.fk_opp_status']['checked'])) print_liste_field_titre
 if (! empty($arrayfields['p.opp_amount']['checked']))    print_liste_field_titre($arrayfields['p.opp_amount']['label'], $_SERVER["PHP_SELF"], 'p.opp_amount', "", $param, '', $sortfield, $sortorder, 'right ');
 if (! empty($arrayfields['p.opp_percent']['checked']))   print_liste_field_titre($arrayfields['p.opp_percent']['label'], $_SERVER["PHP_SELF"], 'p.opp_percent', "", $param, '', $sortfield, $sortorder, 'right ');
 if (! empty($arrayfields['p.budget_amount']['checked'])) print_liste_field_titre($arrayfields['p.budget_amount']['label'], $_SERVER["PHP_SELF"], 'p.budget_amount', "", $param, '', $sortfield, $sortorder, 'right ');
-if (! empty($arrayfields['p.bill_time']['checked']))     print_liste_field_titre($arrayfields['p.bill_time']['label'], $_SERVER["PHP_SELF"], 'p.bill_time', "", $param, '', $sortfield, $sortorder, 'right ');
+if (! empty($arrayfields['p.usage_bill_time']['checked']))     print_liste_field_titre($arrayfields['p.usage_bill_time']['label'], $_SERVER["PHP_SELF"], 'p.usage_bill_time', "", $param, '', $sortfield, $sortorder, 'right ');
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
@@ -857,12 +856,12 @@ while ($i < min($num, $limit))
 			if (! $i) $totalarray['totalbudgetfield']=$totalarray['nbfield'];
 		}
 		// Bill time
-		if (! empty($arrayfields['p.bill_time']['checked']))
+		if (! empty($arrayfields['p.usage_bill_time']['checked']))
 		{
 			print '<td class="right">';
-			if ($obj->bill_time)
+			if ($obj->usage_bill_time)
 			{
-				print yn($obj->bill_time);
+				print yn($obj->usage_bill_time);
 			}
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;

@@ -1,18 +1,21 @@
 # Dolibarr language file - Source file is en_US - salaries
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Kullanıcı üçüncü tarafları için kullanılan muhasebe hesabı
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=The dedicated accounting account defined on user card will be used for Subledger accouting only. This one will be used for General Ledger and as default value of Subledger accounting if dedicated user accouting account on user is not defined.
-SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Accounting account by default for wage payments
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=The dedicated accounting account defined on user card will be used for Subledger accounting only. This one will be used for General Ledger and as default value of Subledger accounting if dedicated user accounting account on user is not defined.
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Ücret ödemeleri için varsayılan muhasebe hesabı
 Salary=Ücret
 Salaries=Ücretler
 NewSalaryPayment=Yeni ücret ödemesi
+AddSalaryPayment=Maaş ödemesi ekle
 SalaryPayment=Ücret ödemesi
 SalariesPayments=Ücret ödemeleri
 ShowSalaryPayment=Ücret ödemesi göster
 THM=Ortalama saat ücreti
 TJM=Ortalama günlük ücret
 CurrentSalary=Güncel maaş
-THMDescription=Bu değer, eğer proje modülü kullanılıyorsa kullanıcılar tarafından girilen bir projede tüketilen sürenin maliyetinin hesaplanması için kullanılır
-TJMDescription=Bu değer yalnızca bilgi amaçlı olup hiçbir hesaplamada kulanılmaz
+THMDescription=Bu değer, eğer Proje modülü kullanılıyorsa kullanıcılar tarafından girilen bir projede harcanan zamanın maliyetini hesaplamak için kullanılabilir
+TJMDescription=Bu değer şu anda yalnızca bilgi amaçlıdır ve herhangi bir hesaplama için kullanılmaz
 LastSalaries=Son %s maaş ödemeleri
 AllSalaries=Tüm maaş ödemeleri
-SalariesStatistics=Statistiques salaires
+SalariesStatistics=Maaş istatistikleri
+# Export
+SalariesAndPayments=Salaries and payments

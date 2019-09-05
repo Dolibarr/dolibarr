@@ -188,10 +188,12 @@ class Categorie extends CommonObject
 	 * @var string     Color
 	 */
 	public $color;
+
 	/**
-	 * @var ???
+	 * @var int		  Id of thirdparty when CATEGORY_ASSIGNED_TO_A_CUSTOMER is set
 	 */
 	public $socid;
+
 	/**
 	 * @var string	Category type
 	 *

@@ -39,10 +39,12 @@ abstract class Stats
 	 * @param 	int		$endyear		Start year
 	 * @param 	int		$startyear		End year
 	 * @param	int		$cachedelay		Delay we accept for cache file (0=No read, no save of cache, -1=No read but save)
-     *	@param	int		$format			0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
-	 * @return 	array					Array of values
+     * @param	int		$format			0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
+	 * @param   int 	$startmonth		month of the fiscal year start min 1 max 12 ; if 1 = january
+     * @return 	array					Array of values
+
 	 */
-	public function getNbByMonthWithPrevYear($endyear, $startyear, $cachedelay = 0, $format = 0)
+	public function getNbByMonthWithPrevYear($endyear, $startyear, $cachedelay = 0, $format = 0, $startmonth = 1)
 	{
 		global $conf,$user,$langs;
 
@@ -86,6 +88,8 @@ abstract class Stats
 		else
 		{
 			$year=$startyear;
+			$sm = $startmonth - 1;
+			if ($sm != 0) $year = $year - 1;
 			while ($year <= $endyear)
 			{
 				$datay[$year] = $this->getNbByMonth($year, $format);
@@ -96,11 +100,11 @@ abstract class Stats
 
 			for ($i = 0 ; $i < 12 ; $i++)
 			{
-				$data[$i][]=$datay[$endyear][$i][0];
+				$data[$i][]=$datay[$endyear][($i+$sm)%12][0];
 				$year=$startyear;
 				while($year <= $endyear)
 				{
-					$data[$i][]=$datay[$year][$i][1];
+					$data[$i][]=$datay[$year - (1 - ((int) ($i+$sm)/12)) + ($sm == 0 ? 1 : 0)][($i+$sm)%12][1];
 					$year++;
 				}
 			}
@@ -134,9 +138,10 @@ abstract class Stats
 	 * @param	int		$startyear		End year
 	 * @param	int		$cachedelay		Delay we accept for cache file (0=No read, no save of cache, -1=No read but save)
      * @param	int		$format			0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
+	 * @param   int 	$startmonth		month of the fiscal year start min 1 max 12 ; if 1 = january
 	 * @return 	array					Array of values
 	 */
-	public function getAmountByMonthWithPrevYear($endyear, $startyear, $cachedelay = 0, $format = 0)
+	public function getAmountByMonthWithPrevYear($endyear, $startyear, $cachedelay = 0, $format = 0, $startmonth = 1)
 	{
 		global $conf,$user,$langs;
 
@@ -181,6 +186,8 @@ abstract class Stats
         else
 		{
 			$year=$startyear;
+			$sm = $startmonth - 1;
+			if ($sm != 0) $year = $year - 1;
 			while($year <= $endyear)
 			{
 				$datay[$year] = $this->getAmountByMonth($year, $format);
@@ -191,11 +198,11 @@ abstract class Stats
 			// $data = array('xval'=>array(0=>xlabel,1=>yval1,2=>yval2...),...)
 			for ($i = 0 ; $i < 12 ; $i++)
 			{
-				$data[$i][]=$datay[$endyear][$i][0];	// set label
+				$data[$i][]=$datay[$endyear][($i+$sm)%12][0];	// set label
 				$year=$startyear;
 				while($year <= $endyear)
 				{
-					$data[$i][]=$datay[$year][$i][1];	// set yval for x=i
+					$data[$i][]=$datay[$year - (1 - ((int) ($i+$sm)/12)) + ($sm == 0 ? 1 : 0)][($i+$sm)%12][1];	// set yval for x=i
 					$year++;
 				}
 			}
@@ -411,7 +418,8 @@ abstract class Stats
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
-	 *     Renvoie le nombre de proposition par mois pour une annee donnee
+	 *     Renvoie le nombre de documents par mois pour une annee donnee
+	 *     Return number of documents per month for a given year
 	 *
      *     @param   int		$year       Year
      *     @param   string	$sql        SQL
@@ -470,7 +478,8 @@ abstract class Stats
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
-	 *     Renvoie le nombre d'element par mois pour une annee donnee
+	 *     Renvoie le montant totalise par mois pour une annee donnee
+     *     Return the amount per month for a given year
 	 *
 	 *     @param	int		$year       Year
 	 *     @param   string	$sql		SQL
@@ -527,6 +536,7 @@ abstract class Stats
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     /**
      *  Renvoie le montant moyen par mois pour une annee donnee
+     *  Return the amount average par month for a given year
      *
      *  @param  int     $year       Year
      *  @param  string  $sql        SQL

@@ -73,10 +73,10 @@ class Invoices extends DolibarrApi
 		}
 
 		// Get payment details
-		$this->invoice->totalpaye = $this->invoice->getSommePaiement();
+		$this->invoice->totalpaid = $this->invoice->getSommePaiement();
 		$this->invoice->totalcreditnotes = $this->invoice->getSumCreditNotesUsed();
 		$this->invoice->totaldeposits = $this->invoice->getSumDepositsUsed();
-		$this->invoice->resteapayer = price2num($this->invoice->total_ttc - $this->invoice->totalpaye - $this->invoice->totalcreditnotes - $this->invoice->totaldeposits, 'MT');
+		$this->invoice->remaintopay = price2num($this->invoice->total_ttc - $this->invoice->totalpaid - $this->invoice->totalcreditnotes - $this->invoice->totaldeposits, 'MT');
 
 		if (! DolibarrApi::_checkAccessToResource('facture', $this->invoice->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
@@ -98,7 +98,7 @@ class Invoices extends DolibarrApi
      * @param string	$sortorder	      Sort order
      * @param int		$limit		      Limit for list
      * @param int		$page		      Page number
-     * @param string   	$thirdparty_ids	  Thirdparty ids to filter orders of. {@example '1' or '1,2,3'} {@pattern /^[0-9,]*$/i}
+     * @param string   	$thirdparty_ids	  Thirdparty ids to filter orders of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
      * @param string	$status		      Filter by invoice status : draft | unpaid | paid | cancelled
      * @param string    $sqlfilters       Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
      * @return array                      Array of invoice objects
