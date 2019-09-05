@@ -412,6 +412,7 @@ DefaultTaxRate=Default tax rate
 Average=Average
 Sum=Sum
 Delta=Delta
+StatusToPay=To pay
 RemainToPay=Remain to pay
 Module=Module/Application
 Modules=Modules/Applications
