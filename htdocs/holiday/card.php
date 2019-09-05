@@ -122,7 +122,7 @@ if ($action == 'create')
 	    elseif ($starthalfday == 'afternoon') $halfday=-1;
 	    elseif ($endhalfday == 'morning') $halfday=1;
 
-	    $valideur = GETPOST('valideur');
+	    $valideur = GETPOST('valideur', 'int');
 	    $description = trim(GETPOST('description'));
 
     	// If no type
@@ -270,8 +270,8 @@ if ($action == 'update' && ! GETPOSTISSET('savevalidator'))
         // If this is the requestor or has read/write rights
         if ($cancreate)
         {
-            $valideur = $_POST['valideur'];
-            $description = trim($_POST['description']);
+            $valideur = GETPOST('valideur', 'int');
+            $description = trim(GETPOST('description', 'none'));
 
             // If no start date
             if (empty($_POST['date_debut_'])) {
@@ -1297,7 +1297,8 @@ else
                     if (empty($include_users)) print img_warning().' '.$langs->trans("NobodyHasPermissionToValidateHolidays");
                     else
                     {
-                        $s=$form->select_dolusers($object->fk_validator, "valideur", (($action == 'editvalidator') ? 0 : 1), ($user->admin ? '' : array($user->id)), 0, $include_users);
+                    	$arrayofvalidatorstoexclude = (($user->admin || ($user->id != $userRequest->id))? '' : array($user->id));	// Nobody if we are admin or if we are not the user of the leave.
+                    	$s=$form->select_dolusers($object->fk_validator, "valideur", (($action == 'editvalidator') ? 0 : 1), $arrayofvalidatorstoexclude, 0, $include_users);
                     	print $form->textwithpicto($s, $langs->trans("AnyOtherInThisListCanValidate"));
                     }
                     if ($action == 'editvalidator')
