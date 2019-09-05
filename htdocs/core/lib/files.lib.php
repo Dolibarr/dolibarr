@@ -2089,7 +2089,7 @@ function dol_compress_dir($inputdir, $outputfile, $mode = "zip", $excludefiles =
 {
 	$foundhandler=0;
 
-	dol_syslog("Try to zip dir ".$inputdir." into ".$outputdir." mode=".$mode);
+	dol_syslog("Try to zip dir ".$inputdir." into ".$outputfile." mode=".$mode);
 
 	if (! dol_is_dir(dirname($outputfile)) || ! is_writable(dirname($outputfile)))
 	{
