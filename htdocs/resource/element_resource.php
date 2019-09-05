@@ -202,6 +202,7 @@ if (empty($reshook))
                 $sql .= " INNER JOIN " . MAIN_DB_PREFIX . "resource as r ON r.rowid = er.resource_id AND er.resource_type = '" . $db->escape($object->resource_type) . "'";
                 $sql .= " INNER JOIN " . MAIN_DB_PREFIX . "actioncomm as ac ON ac.id = er.element_id AND er.element_type = '" . $db->escape($object->element_type) . "'";
                 $sql .= " WHERE er.resource_id = " . $object->resource_id;
+                $sql .= " AND ac.id != " . $object->element_id;
                 $sql .= " AND er.busy = 1";
                 $sql .= " AND (";
 

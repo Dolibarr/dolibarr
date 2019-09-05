@@ -524,9 +524,10 @@ if ($action == 'update')
                 $sql .= " INNER JOIN " . MAIN_DB_PREFIX . "actioncomm as ac ON ac.id = er.element_id AND er.element_type = '" . $db->escape($object->element) . "'";
                 $sql .= " WHERE ac.id != " . $object->id;
                 $sql .= " AND er.resource_id IN (";
-                $sql .= " SELECT resource_id FROM " . MAIN_DB_PREFIX . "element_resources as er";
-                $sql .= " WHERE er.element_id = " . $object->id;
-                $sql .= " AND er.element_type = '" . $db->escape($object->element) . "'";
+                $sql .= " SELECT resource_id FROM " . MAIN_DB_PREFIX . "element_resources";
+                $sql .= " WHERE element_id = " . $object->id;
+                $sql .= " AND element_type = '" . $db->escape($object->element) . "'";
+                $sql .= " AND busy = 1";
                 $sql .= ")";
                 $sql .= " AND er.busy = 1";
                 $sql .= " AND (";
