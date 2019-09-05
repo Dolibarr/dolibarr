@@ -1008,7 +1008,7 @@ class Contact extends CommonObject
 		// Removed extrafields
         if ((! $error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) {
             // For avoid conflicts if trigger used
-			$result=$this->deleteExtraFields($this);
+			$result=$this->deleteExtraFields();
 			if ($result < 0) $error++;
 		}
 
