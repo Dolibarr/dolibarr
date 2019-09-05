@@ -126,7 +126,7 @@ elseif ($action == 'deletecontact' && $user->rights->reception->creer)
 	}
 }
 /*
-else if ($action == 'setaddress' && $user->rights->reception->creer)
+elseif ($action == 'setaddress' && $user->rights->reception->creer)
 {
 	$object->fetch($id);
 	$result=$object->setDeliveryAddress($_POST['fk_address']);
@@ -257,7 +257,7 @@ if ($id > 0 || ! empty($ref))
 
 	dol_fiche_end();
 
-	// Lignes de contacts
+	// Lines of contacts
 	echo '<br>';
 
 	// Contacts lines (modules that overwrite templates must declare this into descriptor)

@@ -35,7 +35,7 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 class ExportExcel2007new extends ModeleExports
 {
 	/**
-	 * @var int ID
+	 * @var string ID
 	 */
 	public $id;
 
@@ -48,7 +48,7 @@ class ExportExcel2007new extends ModeleExports
 
 	/**
      * Dolibarr version of the loaded document
-     * @public string
+     * @var string
      */
 	public $version = 'dolibarr';
 
@@ -78,7 +78,7 @@ class ExportExcel2007new extends ModeleExports
 		$this->db = $db;
 
 		$this->id='excel2007new';                  // Same value then xxx in file name export_xxx.modules.php
-		$this->label='Excel 2007 by PHPSpreadSheet';             // Label of driver
+		$this->label='Excel 2007';             // Label of driver
 		$this->desc = $langs->trans('Excel2007FormatDesc');
 		$this->extension='xlsx';             // Extension for generated file by this driver
         $this->picto='mime/xls';					// Picto
@@ -303,6 +303,8 @@ class ExportExcel2007new extends ModeleExports
 
 		// Define first row
 		$this->col=0;
+
+		$reg=array();
 
 		foreach($array_selected_sorted as $code => $value)
 		{

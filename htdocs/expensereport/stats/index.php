@@ -91,7 +91,6 @@ $mesg = $px1->isGraphKo();
 if (! $mesg)
 {
 	$px1->SetData($data);
-	$px1->SetPrecisionY(0);
 	$i=$startyear;$legend=array();
 	while ($i <= $endyear)
 	{
@@ -105,7 +104,6 @@ if (! $mesg)
 	$px1->SetYLabel($langs->trans("Number"));
 	$px1->SetShading(3);
 	$px1->SetHorizTickIncrement(1);
-	$px1->SetPrecisionY(0);
 	$px1->mode='depth';
 	$px1->SetTitle($langs->trans("NumberByMonth"));
 
@@ -139,7 +137,6 @@ if (! $mesg)
 	$px2->SetYLabel($langs->trans("Amount"));
 	$px2->SetShading(3);
 	$px2->SetHorizTickIncrement(1);
-	$px2->SetPrecisionY(0);
 	$px2->mode='depth';
 	$px2->SetTitle($langs->trans("AmountTotal"));
 
@@ -181,7 +178,6 @@ if (! $mesg)
     $px3->SetHeight($HEIGHT);
     $px3->SetShading(3);
     $px3->SetHorizTickIncrement(1);
-    $px3->SetPrecisionY(0);
     $px3->mode='depth';
     $px3->SetTitle($langs->trans("AmountAverage"));
 
@@ -221,8 +217,7 @@ print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->tra
 // Company
 /*
 print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
-$filter='';
-print $form->select_company($socid,'socid',$filter,1,1,0,array(),0,'','style="width: 95%"');
+print $form->select_company($socid,'socid','',1,1,0,array(),0,'','style="width: 95%"');
 print '</td></tr>';
 */
 // User
@@ -234,7 +229,7 @@ print '</td></tr>';
 // Status
 print '<tr><td class="left">'.$langs->trans("Status").'</td><td class="left">';
 $liststatus=$tmpexpensereport->statuts;
-print $form->selectarray('object_status', $liststatus, GETPOST('object_status'), -4, 0, 0, '', 1);
+print $form->selectarray('object_status', $liststatus, GETPOST('object_status', 'int'), -4, 0, 0, '', 1);
 print '</td></tr>';
 // Year
 print '<tr><td>'.$langs->trans("Year").'</td><td>';
@@ -242,7 +237,7 @@ if (! in_array($year, $arrayyears)) $arrayyears[$year]=$year;
 arsort($arrayyears);
 print $form->selectarray('year', $arrayyears, $year, 0);
 print '</td></tr>';
-print '<tr><td align="center" colspan="2"><input type="submit" name="submit" class="button" value="'.$langs->trans("Refresh").'"></td></tr>';
+print '<tr><td class="center" colspan="2"><input type="submit" name="submit" class="button" value="'.$langs->trans("Refresh").'"></td></tr>';
 print '</table>';
 print '</form>';
 print '<br><br>';
@@ -250,10 +245,10 @@ print '<br><br>';
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre" height="24">';
-print '<td align="center">'.$langs->trans("Year").'</td>';
-print '<td align="right">'.$langs->trans("Number").'</td>';
-print '<td align="right">'.$langs->trans("AmountTotal").'</td>';
-print '<td align="right">'.$langs->trans("AmountAverage").'</td>';
+print '<td class="center">'.$langs->trans("Year").'</td>';
+print '<td class="right">'.$langs->trans("Number").'</td>';
+print '<td class="right">'.$langs->trans("AmountTotal").'</td>';
+print '<td class="right">'.$langs->trans("AmountAverage").'</td>';
 print '</tr>';
 
 $oldyear=0;
@@ -265,19 +260,19 @@ foreach ($data as $val)
 		$oldyear--;
 
 		print '<tr class="oddeven" height="24">';
-		print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.'">'.$oldyear.'</a></td>';
-		print '<td align="right">0</td>';
-		print '<td align="right">0</td>';
-		print '<td align="right">0</td>';
+		print '<td class="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.'">'.$oldyear.'</a></td>';
+		print '<td class="right">0</td>';
+		print '<td class="right">0</td>';
+		print '<td class="right">0</td>';
 		print '</tr>';
 	}
 
 
 	print '<tr class="oddeven" height="24">';
-	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.'">'.$year.'</a></td>';
-	print '<td align="right">'.$val['nb'].'</td>';
-	print '<td align="right">'.price(price2num($val['total'], 'MT'), 1).'</td>';
-	print '<td align="right">'.price(price2num($val['avg'], 'MT'), 1).'</td>';
+	print '<td class="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.'">'.$year.'</a></td>';
+	print '<td class="right">'.$val['nb'].'</td>';
+	print '<td class="right">'.price(price2num($val['total'], 'MT'), 1).'</td>';
+	print '<td class="right">'.price(price2num($val['avg'], 'MT'), 1).'</td>';
 	print '</tr>';
 	$oldyear=$year;
 }
@@ -289,7 +284,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 // Show graphs
-print '<table class="border" width="100%"><tr class="pair nohover"><td align="center">';
+print '<table class="border" width="100%"><tr class="pair nohover"><td class="center">';
 if ($mesg) { print $mesg; }
 else {
     print $px1->show();

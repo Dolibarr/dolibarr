@@ -57,7 +57,7 @@ if (! $sortfield) $sortfield="name";
 $object = new PaymentVarious($db);
 $object->fetch($id, $ref);
 
-$upload_dir = $conf->banque->dir_output.'/'.dol_sanitizeFileName($object->id);
+$upload_dir = $conf->bank->dir_output.'/'.dol_sanitizeFileName($object->id);
 $modulepart='banque';
 
 
@@ -82,7 +82,7 @@ if ($object->id)
 {
 	$head=various_payment_prepare_head($object);
 
-	dol_fiche_head($head, 'documents', $langs->trans("VariousPayment"), -1, 'payment');
+	dol_fiche_head($head, 'documents', $langs->trans("VariousPayment"), -1, $object->picto);
 
 	$morehtmlref='<div class="refidno">';
 	// Project
@@ -131,7 +131,7 @@ if ($object->id)
 		$totalsize+=$file['size'];
 	}
 
-	print '<table class="border" width="100%">';
+	print '<table class="border tableforfield centpercent">';
 
 	print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
 	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';

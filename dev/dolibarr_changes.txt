@@ -8,6 +8,15 @@ ALL:
 Check "@CHANGE"
 
 
+PrestaShopWebservice:
+---------------------
+Replace
+	$params = array('filter', 'display', 'sort', 'limit', 'id_shop', 'id_group_shop');
+With
+	$params = array('filter', 'display', 'sort', 'limit', 'id_shop', 'id_group_shop', 'date');
+
+
+
 CKEDITOR (4.6.2):
 -----------------
 * In ckeditor/ckeditor/contents.css
@@ -15,6 +24,15 @@ Replace:
 	body { ... margin: 20px;
 With
 	body { ... margin: 5px;
+
+
+
+ESCPOS:
+-------
+Replace
+	private $connector;
+With
+	protected $connector;
 
 
 

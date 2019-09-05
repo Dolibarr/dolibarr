@@ -1,6 +1,11 @@
 # Dolibarr language file - Source file is en_US - admin
 OldVATRates=Old GST rate
 NewVATRates=New GST rate
+Module600Name=Notifications on business event
 DictionaryVAT=GST Rates or Sales Tax Rates
 OptionVatMode=GST due
+ListOfNotificationsPerUser=List of automatic notifications per user*
+ListOfNotificationsPerUserOrContact=List of possible automatic notifications (on business event) available per user* or per contact**
+ListOfFixedNotifications=List of automatic fixed notifications
 LinkColor=Colour of links
+OperationParamDesc=Define values to use for action, or how to extract values. For example:<br>objproperty1=SET:abc<br>objproperty1=SET:a value with replacement of __objproperty1__<br>objproperty3=SETIFEMPTY:abc<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey.*[^\\s]+(.*)<br>options_myextrafield=EXTRACT:SUBJECT:([^\\s]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a ; char as separator to extract or set several properties.

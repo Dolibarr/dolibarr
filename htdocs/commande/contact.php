@@ -107,7 +107,7 @@ elseif ($action == 'deletecontact' && $user->rights->commande->creer)
 	}
 }
 /*
-else if ($action == 'setaddress' && $user->rights->commande->creer)
+elseif ($action == 'setaddress' && $user->rights->commande->creer)
 {
 	$object->fetch($id);
 	$result=$object->setDeliveryAddress($_POST['fk_address']);

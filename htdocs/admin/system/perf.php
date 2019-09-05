@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2013	Laurent Destailleur		<eldy@users.sourceforge.net>
+/* Copyright (C) 2013-2019	Laurent Destailleur		<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,6 +70,30 @@ else
 }
 print '<br>';
 
+// Module log
+print '<br>';
+print '<strong>'.$langs->trans("Syslog").'</strong>: ';
+$test=empty($conf->syslog->enabled);
+if ($test) print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled");
+else
+{
+	print img_picto('', 'warning').' '.$langs->trans("ModuleActivated", $langs->transnoentities("Syslog"));
+	//print ' '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xdebug.php'.'">XDebug admin page</a>';
+}
+print '<br>';
+
+// Module debugbar
+print '<br>';
+print '<strong>'.$langs->trans("DebugBar").'</strong>: ';
+$test=empty($conf->debugbar->enabled);
+if ($test) print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled");
+else
+{
+	print img_picto('', 'warning').' '.$langs->trans("ModuleActivated", $langs->transnoentities("DebugBar"));
+    //print ' '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xdebug.php'.'">XDebug admin page</a>';
+}
+print '<br>';
+
 // Applicative cache
 print '<br>';
 print '<strong>'.$langs->trans("ApplicativeCache").'</strong>: ';
@@ -98,20 +122,20 @@ $test=function_exists('xcache_info');
 if (! $foundcache && $test)
 {
 	$foundcache++;
-	print img_picto('', 'tick.png').' '.$langs->trans("XCacheInstalled");
+	print img_picto('', 'tick.png').' '.$langs->trans("PHPModuleLoaded", "XCache");
 	print ' '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xcache.php'.'">Xcache admin page</a>';
 }
 $test=function_exists('eaccelerator_info');
 if (! $foundcache && $test)
 {
 	$foundcache++;
-	print img_picto('', 'tick.png').' '.$langs->trans("EAcceleratorInstalled");
+	print img_picto('', 'tick.png').' '.$langs->trans("PHPModuleLoaded", "Eaccelerator");
 }
 $test=function_exists('opcache_get_status');
 if (! $foundcache && $test)
 {
 	$foundcache++;
-	print img_picto('', 'tick.png').' '.$langs->trans("ZendOPCacheInstalled");  // Should be by default starting with PHP 5.5
+	print img_picto('', 'tick.png').' '.$langs->trans("PHPModuleLoaded", "ZendOPCache");  // Should be by default starting with PHP 5.5
 	//$tmp=opcache_get_status();
 	//var_dump($tmp);
 }
@@ -130,6 +154,21 @@ if (! $foundcache && $test)
 	}
 }
 if (! $foundcache) print $langs->trans("NoOPCodeCacheFound");
+print '<br>';
+
+// Use of preload bootstrap
+if (ini_get('opcache.preload'))
+{
+	print '<br>';
+	print '<strong>'.$langs->trans("PreloadOPCode").'</strong>: ';
+	print ini_get('opcache.preload');
+}
+else
+{
+	print '<br>';
+	print '<strong>'.$langs->trans("PreloadOPCode").'</strong>: ';
+	print $langs->trans("No");
+}
 print '<br>';
 
 // HTTPCacheStaticResources
@@ -455,16 +494,46 @@ if ($resql)
 	{
 		if (empty($conf->global->PRODUCT_DONOTSEARCH_ANYWHERE))
 		{
-			print img_picto('', 'warning.png').' '.$langs->trans("YouHaveXProductUseSearchOptim", $nb);
+			print img_picto('', 'warning.png').' '.$langs->trans("YouHaveXObjectUseSearchOptim", $nb, $langs->transnoentitiesnoconv("ProductsOrServices"), 'PRODUCT_DONOTSEARCH_ANYWHERE');
 		}
 		else
 		{
-			print img_picto('', 'tick.png').' '.$langs->trans("YouHaveXProductAndSearchOptimOn", $nb);
+			print img_picto('', 'tick.png').' '.$langs->trans("YouHaveXObjectAndSearchOptimOn", $nb, $langs->transnoentitiesnoconv("ProductsOrServices"));
 		}
 	}
 	else
 	{
-		print img_picto('', 'tick.png').' '.$langs->trans("NbOfProductIsLowerThanNoPb", $nb);
+		print img_picto('', 'tick.png').' '.$langs->trans("NbOfObjectIsLowerThanNoPb", $nb, $langs->transnoentitiesnoconv("ProductsOrServices"));
+	}
+	print '<br>';
+	$db->free($resql);
+}
+
+// Thirdparty search
+$tab = array();
+$sql = "SELECT COUNT(*) as nb";
+$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+$resql=$db->query($sql);
+if ($resql)
+{
+	$limitforoptim=10000;
+	$num=$db->num_rows($resql);
+	$obj=$db->fetch_object($resql);
+	$nb=$obj->nb;
+	if ($nb > $limitforoptim)
+	{
+		if (empty($conf->global->COMPANY_DONOTSEARCH_ANYWHERE))
+		{
+			print img_picto('', 'warning.png').' '.$langs->trans("YouHaveXObjectUseSearchOptim", $nb, $langs->transnoentitiesnoconv("ThirdParties"), 'COMPANY_DONOTSEARCH_ANYWHERE');
+		}
+		else
+		{
+			print img_picto('', 'tick.png').' '.$langs->trans("YouHaveXObjectAndSearchOptimOn", $nb, $langs->transnoentitiesnoconv("ThirdParties"));
+		}
+	}
+	else
+	{
+		print img_picto('', 'tick.png').' '.$langs->trans("NbOfObjectIsLowerThanNoPb", $nb, $langs->transnoentitiesnoconv("ThirdParties"));
 	}
 	print '<br>';
 	$db->free($resql);

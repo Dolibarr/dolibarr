@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2013-2018	Jean-François Ferry	<hello+jf@librethic.io>
  * Copyright (C) 2016		Gilles Poirier 		<glgpoirier@gmail.com>
+ * Copyright (C) 2019		Josep Lluís Amador	<joseplluis@lliuretic.cat>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +31,9 @@ require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 if (! empty($conf->projet->enabled)) {
     require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
     require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
+}
+if (! empty($conf->product->enabled) || ! empty($conf->service->enabled)) {
+    require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 }
 
 // Load translation files required by the page
@@ -77,44 +81,71 @@ if ($socid > 0) // Special for thirdparty
  * Actions
  */
 
-if ($action == 'add_element_resource' && ! $cancel)
-{
-	$error++;
-	$res = 0;
-	if (! ($resource_id > 0))
-	{
-		$error++;
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Resource")), null, 'errors');
-		$action='';
-	}
-	else
-	{
-		$objstat = fetchObjectByElement($element_id, $element);
-		$objstat->element = $element; // For externals module, we need to keep @xx
-		$res = $objstat->add_element_resource($resource_id, $resource_type, $busy, $mandatory);
-	}
-	if (! $error && $res > 0)
-	{
-		setEventMessages($langs->trans('ResourceLinkedWithSuccess'), null, 'mesgs');
-		header("Location: ".$_SERVER['PHP_SELF'].'?element='.$element.'&element_id='.$element_id);
-		exit;
-	}
-}
+$parameters = array('resource_id' => $resource_id);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-// Update ressource
-if ($action == 'update_linked_resource' && $user->rights->resource->write && !GETPOST('cancel', 'alpha') )
+if (empty($reshook))
 {
-	$res = $object->fetch_element_resource($lineid);
-	if($res)
+	if ($action == 'add_element_resource' && ! $cancel)
 	{
-		$object->busy = $busy;
-		$object->mandatory = $mandatory;
+		$res = 0;
+		if (! ($resource_id > 0))
+		{
+			$error++;
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Resource")), null, 'errors');
+			$action='';
+		}
+		else
+		{
+			$objstat = fetchObjectByElement($element_id, $element, $element_ref);
+			$objstat->element = $element; // For externals module, we need to keep @xx
+			$res = $objstat->add_element_resource($resource_id, $resource_type, $busy, $mandatory);
+		}
+		if (! $error && $res > 0)
+		{
+			setEventMessages($langs->trans('ResourceLinkedWithSuccess'), null, 'mesgs');
+			header("Location: ".$_SERVER['PHP_SELF'].'?element='.$element.'&element_id='.$objstat->id);
+			exit;
+		}
+		elseif ($objstat)
+		{
+			setEventMessages($objstat->error, $objstat->errors, 'errors');
+		}
+	}
 
-		$result = $object->update_element_resource($user);
+	// Update ressource
+	if ($action == 'update_linked_resource' && $user->rights->resource->write && !GETPOST('cancel', 'alpha') )
+	{
+		$res = $object->fetch_element_resource($lineid);
+		if($res)
+		{
+			$object->busy = $busy;
+			$object->mandatory = $mandatory;
+
+			$result = $object->update_element_resource($user);
+
+			if ($result >= 0)
+			{
+				setEventMessages($langs->trans('RessourceLineSuccessfullyUpdated'), null, 'mesgs');
+				header("Location: ".$_SERVER['PHP_SELF']."?element=".$element."&element_id=".$element_id);
+				exit;
+			}
+			else
+			{
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
+		}
+	}
+
+	// Delete a resource linked to an element
+	if ($action == 'confirm_delete_linked_resource' && $user->rights->resource->delete && $confirm === 'yes')
+	{
+		$result = $object->delete_resource($lineid, $element);
 
 		if ($result >= 0)
 		{
-			setEventMessages($langs->trans('RessourceLineSuccessfullyUpdated'), null, 'mesgs');
+			setEventMessages($langs->trans('RessourceLineSuccessfullyDeleted'), null, 'mesgs');
 			header("Location: ".$_SERVER['PHP_SELF']."?element=".$element."&element_id=".$element_id);
 			exit;
 		}
@@ -124,28 +155,6 @@ if ($action == 'update_linked_resource' && $user->rights->resource->write && !GE
 		}
 	}
 }
-
-// Delete a resource linked to an element
-if ($action == 'confirm_delete_linked_resource' && $user->rights->resource->delete && $confirm === 'yes')
-{
-    $result = $object->delete_resource($lineid, $element);
-
-    if ($result >= 0)
-    {
-        setEventMessages($langs->trans('RessourceLineSuccessfullyDeleted'), null, 'mesgs');
-        header("Location: ".$_SERVER['PHP_SELF']."?element=".$element."&element_id=".$element_id);
-        exit;
-    }
-    else
-    {
-        setEventMessages($object->error, $object->errors, 'errors');
-    }
-}
-
-$parameters=array('resource_id'=>$resource_id);
-$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-
 
 $parameters=array('resource_id'=>$resource_id);
 $reshook=$hookmanager->executeHooks('getElementResources', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
@@ -416,6 +425,31 @@ else
 		}
 	}
 
+	// Specific to product/service module
+	if (($element_id || $element_ref) && ($element == 'product' || $element == 'service'))
+	{
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
+
+        $product = new Product($db);
+        $product->fetch($element_id, $element_ref);
+
+		if (is_object($product))
+		{
+
+			$head = product_prepare_head($product);
+			$titre=$langs->trans("CardProduct".$product->type);
+			$picto=($product->type==Product::TYPE_SERVICE?'service':'product');
+
+			dol_fiche_head($head, 'resources', $titre, -1, $picto);
+
+            $shownav = 1;
+            if ($user->societe_id && ! in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+			dol_banner_tab($product, 'ref', '', $shownav, 'ref', 'ref', '', '&element='.$element);
+
+			dol_fiche_end();
+        }
+	}
+
 
 	// hook for other elements linked
 	$parameters=array('element'=>$element, 'element_id'=>$element_id, 'element_ref'=>$element_ref);
@@ -443,29 +477,46 @@ else
 
 			$linked_resources = $object->getElementResources($element, $element_id, $resource_obj);
 
-
-			// If we have a specific template we use it
-			if(file_exists(dol_buildpath($path.'/core/tpl/resource_'.$element_prop['element'].'_add.tpl.php')))
+			// Output template part (modules that overwrite templates must declare this into descriptor)
+			$defaulttpldir='/core/tpl';
+			$dirtpls=array_merge($conf->modules_parts['tpl'], array($defaulttpldir), array($path.$defaulttpldir));
+			
+			foreach($dirtpls as $module => $reldir)
 			{
-				$res=include dol_buildpath($path.'/core/tpl/resource_'.$element_prop['element'].'_add.tpl.php');
-			}
-			else
-			{
-				$res=include DOL_DOCUMENT_ROOT . '/core/tpl/resource_add.tpl.php';
+				if(file_exists(dol_buildpath($reldir.'/resource_'.$element_prop['element'].'_add.tpl.php')))
+				{
+					$tpl = dol_buildpath($reldir.'/resource_'.$element_prop['element'].'_add.tpl.php');
+				}
+				else
+				{
+					$tpl = DOL_DOCUMENT_ROOT.$reldir.'/resource_add.tpl.php';
+				}
+				if (empty($conf->file->strict_mode)) {
+					$res=@include $tpl;
+				} else {
+					$res=include $tpl; // for debug
+				}
+				if ($res) break;
 			}
 
 			if ($mode != 'add' || $resource_obj != $resource_type)
 			{
-				//print load_fiche_titre($langs->trans(ucfirst($element_prop['element']).'Singular'));
-
-				// If we have a specific template we use it
-				if(file_exists(dol_buildpath($path.'/core/tpl/resource_'.$element_prop['element'].'_view.tpl.php')))
+				foreach($dirtpls as $module => $reldir)
 				{
-					$res=@include dol_buildpath($path.'/core/tpl/resource_'.$element_prop['element'].'_view.tpl.php');
-				}
-				else
-				{
-					$res=include DOL_DOCUMENT_ROOT . '/core/tpl/resource_view.tpl.php';
+					if(file_exists(dol_buildpath($reldir.'/resource_'.$element_prop['element'].'_view.tpl.php')))
+					{
+						$tpl = dol_buildpath($reldir.'/resource_'.$element_prop['element'].'_view.tpl.php');
+					}
+					else
+					{
+						$tpl = DOL_DOCUMENT_ROOT.$reldir.'/resource_view.tpl.php';
+					}
+					if (empty($conf->file->strict_mode)) {
+						$res=@include $tpl;
+					} else {
+						$res=include $tpl; // for debug
+					}
+					if ($res) break;
 				}
 			}
 		}

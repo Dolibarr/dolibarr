@@ -147,12 +147,10 @@ $param="search_statut=".urlencode($search_statut);
 $newcardbutton='';
 if ($canadduser)
 {
-	$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/user/card.php?action=create'.($mode == 'employee' ? '&employee=1': '').'&leftmenu="><span class="valignmiddle">'.$langs->trans('NewUser').'</span>';
-	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-	$newcardbutton.= '</a>';
+    $newcardbutton.= dolGetButtonTitle($langs->trans('NewUser'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/user/card.php?action=create'.($mode == 'employee' ? '&employee=1': '').'&leftmenu=');
 }
 
-$morehtmlright = '<a class="nohover" href="'.DOL_URL_ROOT.'/user/list.php'.(($search_statut != '' && $search_statut >= 0) ?'?search_statut='.$search_statut:'').'">'.$langs->trans("ViewList").'</a>';
+$morehtmlright.= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-list paddingleft', DOL_URL_ROOT.'/user/list.php'.(($search_statut != '' && $search_statut >= 0) ?'?search_statut='.$search_statut:''));
 
 print load_fiche_titre($title, $morehtmlright.' '.$newcardbutton);
 
@@ -174,7 +172,7 @@ print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre right">';
 print $form->selectarray('search_statut', array('-1'=>'','1'=>$langs->trans('Enabled')), $search_statut);
 print '</td>';
-print '<td class="liste_titre right">';
+print '<td class="liste_titre maxwidthsearch">';
 $searchpicto=$form->showFilterAndCheckAddButtons(0);
 print $searchpicto;
 print '</td>';

@@ -457,7 +457,7 @@ if (empty($reshook))
 		// Extrafields
 		$extrafieldsline = new ExtraFields($db);
 		$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-		$array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline, $predef);
+		$array_options = $extrafieldsline->getOptionalsFromPost($object->table_element_line, $predef);
 		// Unset extrafield
 		if (is_array($extralabelsline)) {
 			// Get extra fields
@@ -540,7 +540,7 @@ if (empty($reshook))
 				}
 
 			   	$desc=$prod->description;
-			   	$desc=dol_concatdesc($desc, $product_desc, '', !empty($conf->global->CHANGE_ORDER_CONCAT_DESCRIPTION));
+			   	$desc=dol_concatdesc($desc, $product_desc, '', !empty($conf->global->MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION));
 				$fk_unit = $prod->fk_unit;
 			}
 			else
@@ -737,7 +737,7 @@ if (empty($reshook))
 			// Extrafields
 			$extrafieldsline = new ExtraFields($db);
 			$extralabelsline = $extrafieldsline->fetch_name_optionals_label($objectline->table_element);
-			$array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline, $predef);
+			$array_options = $extrafieldsline->getOptionalsFromPost($object->table_element_line, $predef);
 			$objectline->array_options=$array_options;
 
 			// TODO verifier price_min si fk_product et multiprix
@@ -1072,7 +1072,7 @@ if (empty($reshook))
 		else
 		{
 			if ($object->id > 0) {
-				$result = $object->createFromClone($socid);
+				$result = $object->createFromClone($user, $socid);
 				if ($result > 0) {
 					header("Location: " . $_SERVER['PHP_SELF'] . '?id=' . $result);
 					exit();
@@ -1095,8 +1095,6 @@ llxHeader('', $langs->trans("Contract"), "");
 $form = new Form($db);
 $formfile = new FormFile($db);
 if (! empty($conf->projet->enabled)) $formproject = new FormProjets($db);
-
-$objectlignestatic=new ContratLigne($db);
 
 // Load object modContract
 $module=(! empty($conf->global->CONTRACT_ADDON)?$conf->global->CONTRACT_ADDON:'mod_contract_serpis');
@@ -1212,7 +1210,7 @@ if ($action == 'create')
 	{
 		print '<td>';
 		print $form->select_company('', 'socid', '', 'SelectThirdParty', 1, 0, null, 0, 'minwidth300');
-		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">'.$langs->trans("AddThirdParty").' <span class="fa fa-plus-circle valignmiddle"></span></a>';
+		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddThirdParty").'</span><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
 		print '</td>';
 	}
 	print '</tr>'."\n";
@@ -1254,7 +1252,7 @@ if ($action == 'create')
 
 		print '<tr><td>'.$langs->trans("Project").'</td><td>';
 		$formproject->select_projects(($soc->id>0?$soc->id:-1), $projectid, "projectid", 0, 0, 1, 1);
-		print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid=' . $soc->id . '&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id).'">' . $langs->trans("AddProject") . ' <span class="fa fa-plus-circle valignmiddle"></span></a>';
+		print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid=' . $soc->id . '&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id).'"><span class="valignmiddle text-plus-circle">' . $langs->trans("AddProject") . '</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
 		print "</td></tr>";
 	}
 
@@ -1364,7 +1362,7 @@ else
         } elseif ($action == 'clone') {
             // Clone confirmation
             $formquestion = array(array('type' => 'other','name' => 'socid','label' => $langs->trans("SelectThirdParty"),'value' => $form->select_company(GETPOST('socid', 'int'), 'socid', '(s.client=1 OR s.client=2 OR s.client=3)')));
-            $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('CloneContract'), $langs->trans('ConfirmCloneContract', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
+            $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneContract', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
         }
 
 
@@ -1911,21 +1909,21 @@ else
 				// Si pas encore active
 				if (! $objp->date_debut_reelle) {
 					print $langs->trans("DateStartReal").': ';
-					if ($objp->date_debut_reelle) print dol_print_date($objp->date_debut_reelle, 'day');
+					if ($objp->date_debut_reelle) print dol_print_date($db->jdate($objp->date_debut_reelle), 'day');
 					else print $langs->trans("ContractStatusNotRunning");
 				}
 				// Si active et en cours
 				if ($objp->date_debut_reelle && ! $objp->date_fin_reelle) {
 					print $langs->trans("DateStartReal").': ';
-					print dol_print_date($objp->date_debut_reelle, 'day');
+                    print dol_print_date($db->jdate($objp->date_debut_reelle), 'day');
 				}
 				// Si desactive
 				if ($objp->date_debut_reelle && $objp->date_fin_reelle) {
 					print $langs->trans("DateStartReal").': ';
-					print dol_print_date($objp->date_debut_reelle, 'day');
+                    print dol_print_date($db->jdate($objp->date_debut_reelle), 'day');
 					print ' &nbsp;-&nbsp; ';
 					print $langs->trans("DateEndReal").': ';
-					print dol_print_date($objp->date_fin_reelle, 'day');
+					print dol_print_date($db->jdate($objp->date_fin_reelle), 'day');
 				}
 				if (! empty($objp->comment)) print " &nbsp;-&nbsp; ".$objp->comment;
 				print '</td>';
@@ -2139,22 +2137,22 @@ else
 				{
 					if ($user->rights->contrat->activer)
 					{
-						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=activate">'.$langs->trans("ActivateAllContracts").'</a></div>';
+						print '<div class="inline-block divButAction"><a class="butAction" id="btnactivateall" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=activate">'.$langs->trans("ActivateAllContracts").'</a></div>';
 					}
 					else
 					{
-						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">'.$langs->trans("ActivateAllContracts").'</a></div>';
+						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" id="btnactivateall" href="#">'.$langs->trans("ActivateAllContracts").'</a></div>';
 					}
 				}
 				if ($object->nbofservicesclosed < $nbofservices)
 				{
 					if ($user->rights->contrat->desactiver)
 					{
-						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=close">'.$langs->trans("CloseAllContracts").'</a></div>';
+						print '<div class="inline-block divButAction"><a class="butAction" id="btncloseall" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=close">'.$langs->trans("CloseAllContracts").'</a></div>';
 					}
 					else
 					{
-						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">'.$langs->trans("CloseAllContracts").'</a></div>';
+						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" id="btncloseall" href="#">'.$langs->trans("CloseAllContracts").'</a></div>';
 					}
 
 					//if (! $numactive)
@@ -2211,10 +2209,14 @@ else
 
 			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
+			$MAXEVENT = 10;
+
+			$morehtmlright = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-list-alt', DOL_URL_ROOT.'/contrat/agenda.php?id='.$object->id);
+
 			// List of actions on element
 			include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 			$formactions = new FormActions($db);
-			$somethingshown = $formactions->showactions($object, 'contract', $socid, 1);
+			$somethingshown = $formactions->showactions($object, 'contract', $socid, 1, 'listactions', $MAXEVENT, '', $morehtmlright);
 
 
 			print '</div></div></div>';
@@ -2239,14 +2241,18 @@ $db->close();
 <?php
 if (! empty($conf->margin->enabled) && $action == 'editline')
 {
+		// TODO Why this ? To manage margin on contracts ?
 ?>
-
 <script type="text/javascript">
 $(document).ready(function() {
   var idprod = $("input[name='idprod']").val();
   var fournprice = $("input[name='fournprice']").val();
+  var token = '<?php echo $_SESSION["token"]; ?>';		// For AJAX Call we use old 'token' and not 'newtoken'
   if (idprod > 0) {
-	  $.post('<?php echo DOL_URL_ROOT; ?>/fourn/ajax/getSupplierPrices.php', {'idprod': idprod}, function(data) {
+	  $.post('<?php echo DOL_URL_ROOT; ?>/fourn/ajax/getSupplierPrices.php', {
+		  'idprod': idprod,
+		  'token': token
+		  }, function(data) {
 	    if (data.length > 0) {
 	      var options = '';
 	      var trouve=false;
@@ -2291,6 +2297,5 @@ $(document).ready(function() {
     }
 });
 </script>
-
 <?php
 }

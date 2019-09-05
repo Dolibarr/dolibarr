@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2008-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2008-2009 Regis Houssin        <regis.houssin@inodbox.com>
+/* Copyright (C) 2008-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2008-2009  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,9 +18,9 @@
  */
 
 /**
- *	\file       htdocs/ftp/index.php
- *	\ingroup    ftp
- *	\brief      Main page for FTP section area
+ *  \file       htdocs/ftp/index.php
+ *  \ingroup    ftp
+ *  \brief      Main page for FTP section area
  */
 
 require '../main.inc.php';
@@ -453,13 +454,13 @@ else
 		print '<table width="100%" class="noborder">'."\n";
 
 		print '<tr class="liste_titre">'."\n";
-		print '<td class="liste_titre" align="left">'.$langs->trans("Content").'</td>'."\n";
-		print '<td class="liste_titre" align="center">'.$langs->trans("Size").'</td>'."\n";
-		print '<td class="liste_titre" align="center">'.$langs->trans("Date").'</td>'."\n";
-		print '<td class="liste_titre" align="center">'.$langs->trans("Owner").'</td>'."\n";
-		print '<td class="liste_titre" align="center">'.$langs->trans("Group").'</td>'."\n";
-		print '<td class="liste_titre" align="center">'.$langs->trans("Permissions").'</td>'."\n";
-		print '<td class="liste_titre nowrap" align="right">';
+		print '<td class="liste_titre" class="left">'.$langs->trans("Content").'</td>'."\n";
+		print '<td class="liste_titre" class="center">'.$langs->trans("Size").'</td>'."\n";
+		print '<td class="liste_titre" class="center">'.$langs->trans("Date").'</td>'."\n";
+		print '<td class="liste_titre" class="center">'.$langs->trans("Owner").'</td>'."\n";
+		print '<td class="liste_titre" class="center">'.$langs->trans("Group").'</td>'."\n";
+		print '<td class="liste_titre" class="center">'.$langs->trans("Permissions").'</td>'."\n";
+		print '<td class="liste_titre nowrap right">';
 		if ($conf->use_javascript_ajax) print '<a href="#" id="checkall">'.$langs->trans("All").'</a> / <a href="#" id="checknone">'.$langs->trans("None").'</a> ';
 		print '<a href="'.$_SERVER["PHP_SELF"].'?action=refreshmanual&numero_ftp='.$numero_ftp.($section?'&section='.urlencode($section):'').'">'.img_picto($langs->trans("Refresh"), 'refresh').'</a>&nbsp;';
 		print '</td>'."\n";
@@ -558,28 +559,28 @@ else
 				if ($is_directory) print '</a>';
 				print '</td>';
 				// Size
-				print '<td align="center" class="nowrap">';
+				print '<td class="center nowrap">';
 				if (! $is_directory && ! $is_link) print $vals[4];
 				else print '&nbsp;';
 				print '</td>';
 				// Date
-				print '<td align="center" class="nowrap">';
+				print '<td class="center nowrap">';
 				print $vals[5].' '.$vals[6].' '.$vals[7];
 				print '</td>';
 				// User
-				print '<td align="center" class="nowrap">';
+				print '<td class="center nowrap">';
 				print $vals[2];
 				print '</td>';
 				// Group
-				print '<td align="center" class="nowrap">';
+				print '<td class="center nowrap">';
 				print $vals[3];
 				print '</td>';
 				// Permissions
-				print '<td align="center" class="nowrap">';
+				print '<td class="center nowrap">';
 				print $vals[0];
 				print '</td>';
 				// Action
-				print '<td align="right" width="64" class="nowrap">';
+				print '<td class="right" width="64" class="nowrap">';
 				if ($is_directory)
 				{
 					if ($file != '..') print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete_section&numero_ftp='.$numero_ftp.'&section='.urlencode($section).'&file='.urlencode($file).'">'.img_delete().'</a>';
@@ -628,7 +629,7 @@ else
 		*/
 
 		print '<br>';
-		print '<div id="delconst" align="right">';
+		print '<div id="delconst" class="right">';
 		print '<input type="submit" name="delete" class="button" value="'.$langs->trans("Delete").'">';
 		print '</div>';
 

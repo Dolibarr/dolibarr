@@ -59,7 +59,10 @@ class Product extends CommonObject
      */
     public $fk_element='fk_product';
 
-    protected $childtables=array('supplier_proposaldet', 'propaldet','commandedet','facturedet','contratdet','facture_fourn_det','commande_fournisseurdet');    // To test if we can delete object
+    /**
+     * @var array	List of child tables. To test if we can delete object.
+     */
+    protected $childtables=array('supplier_proposaldet', 'propaldet', 'commandedet', 'facturedet', 'contratdet', 'facture_fourn_det', 'commande_fournisseurdet');
 
     /**
      * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
@@ -269,13 +272,26 @@ class Product extends CommonObject
     public $accountancy_code_buy;
 
     /**
-     * Main barcode
-     * barcode value
+     * Main Barcode value
      *
      * @var string
      */
     public $barcode;
 
+    /**
+     * Main Barcode type ID
+     *
+     * @var int
+     */
+    public $barcode_type;
+    
+    /**
+     * Main Barcode type code
+     *
+     * @var string
+     */
+    public $barcode_type_code;
+    
     /**
      * Additional barcodes (Some products have different barcodes according to the country of origin of manufacture)
      *
@@ -291,7 +307,7 @@ class Product extends CommonObject
 
     public $multilangs=array();
 
-    //! Taille de l'image
+    //! Size of image
     public $imgWidth;
     public $imgHeight;
 
@@ -345,16 +361,7 @@ class Product extends CommonObject
 
 
     public $fields = array(
-        'rowid' => array(
-            'type'=>'integer',
-            'label'=>'TechnicalID',
-            'enabled'=>1,
-            'visible'=>-2,
-            'notnull'=>1,
-            'index'=>1,
-            'position'=>1,
-            'comment'=>'Id',
-        ),
+        'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'index'=>1, 'position'=>1, 'comment'=>'Id'),
         'ref'           =>array('type'=>'varchar(128)', 'label'=>'Ref',              'enabled'=>1, 'visible'=>1,  'notnull'=>1,  'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Reference of object'),
         'entity'        =>array('type'=>'integer',      'label'=>'Entity',           'enabled'=>1, 'visible'=>0,  'default'=>1, 'notnull'=>1,  'index'=>1, 'position'=>20),
         'note_public'   =>array('type'=>'html',            'label'=>'NotePublic',         'enabled'=>1, 'visible'=>0,  'position'=>61),
@@ -2781,11 +2788,10 @@ class Product extends CommonObject
     public function load_stats_facture($socid = 0)
     {
         // phpcs:enable
-        global $conf;
-        global $user;
+        global $db, $conf, $user;
 
         $sql = "SELECT COUNT(DISTINCT f.fk_soc) as nb_customers, COUNT(DISTINCT f.rowid) as nb,";
-        $sql.= " COUNT(fd.rowid) as nb_rows, SUM(fd.qty) as qty";
+        $sql.= " COUNT(fd.rowid) as nb_rows, SUM(".$db->ifsql('f.type != 2', 'fd.qty', 'fd.qty * -1').") as qty";
         $sql.= " FROM ".MAIN_DB_PREFIX."facturedet as fd";
         $sql.= ", ".MAIN_DB_PREFIX."facture as f";
         $sql.= ", ".MAIN_DB_PREFIX."societe as s";
@@ -3248,6 +3254,57 @@ class Product extends CommonObject
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
+     *  Return nb of units or orders in which product is included
+     *
+     * @param  int    $socid               Limit count on a particular third party id
+     * @param  string $mode                'byunit'=number of unit, 'bynumber'=nb of entities
+     * @param  int    $filteronproducttype 0=To filter on product only, 1=To filter on services only
+     * @param  int    $year                Year (0=last 12 month)
+     * @param  string $morefilter          More sql filters
+     * @return array                            <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
+     */
+    public function get_nb_contract($socid, $mode, $filteronproducttype = -1, $year = 0, $morefilter = '')
+    {
+    	// phpcs:enable
+    	global $conf, $user;
+
+    	$sql = "SELECT sum(d.qty), date_format(c.date_contrat, '%Y%m')";
+    	if ($mode == 'bynumber') {
+    		$sql.= ", count(DISTINCT c.rowid)";
+    	}
+    	$sql.= " FROM ".MAIN_DB_PREFIX."contratdet as d, ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."societe as s";
+    	if ($filteronproducttype >= 0) {
+    		$sql.=", ".MAIN_DB_PREFIX."product as p";
+    	}
+    	if (!$user->rights->societe->client->voir && !$socid) {
+    		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+    	}
+    	$sql.= " WHERE c.rowid = d.fk_contrat";
+    	if ($this->id > 0) {
+    		$sql.= " AND d.fk_product =".$this->id;
+    	} else {
+    		$sql.=" AND d.fk_product > 0";
+    	}
+    	if ($filteronproducttype >= 0) {
+    		$sql.= " AND p.rowid = d.fk_product AND p.fk_product_type =".$filteronproducttype;
+    	}
+    	$sql.= " AND c.fk_soc = s.rowid";
+    	$sql.= " AND c.entity IN (".getEntity('contract').")";
+    	if (!$user->rights->societe->client->voir && !$socid) {
+    		$sql.= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
+    	}
+    	if ($socid > 0) {
+    		$sql.= " AND c.fk_soc = ".$socid;
+    	}
+    	$sql.=$morefilter;
+    	$sql.= " GROUP BY date_format(c.date_contrat,'%Y%m')";
+    	$sql.= " ORDER BY date_format(c.date_contrat,'%Y%m') DESC";
+
+    	return $this->_get_stats($sql, $mode, $year);
+    }
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    /**
      *  Link a product/service to a parent product/service
      *
      * @param  int $id_pere Id of parent product/service
@@ -3662,7 +3719,7 @@ class Product extends CommonObject
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Fonction recursive uniquement utilisee par get_arbo_each_prod, recompose l'arborescence des sousproduits
-     *     Define value of this->res
+     *  Define value of this->res
      *
      * @param  array  $prod       Products array
      * @param  string $compl_path Directory path of parents to add before
@@ -3676,7 +3733,7 @@ class Product extends CommonObject
         // phpcs:enable
         global $conf,$langs;
 
-        $product = new Product($this->db);
+        $tmpproduct = null;
         //var_dump($prod);
         foreach($prod as $id_product => $desc_pere)    // $id_product is 0 (first call starting with root top) or an id of a sub_product
         {
@@ -3692,23 +3749,26 @@ class Product extends CommonObject
                 }
 
                 //print "XXX We add id=".$id." - label=".$label." - nb=".$nb." - multiply=".$multiply." fullpath=".$compl_path.$label."\n";
-                $this->fetch($id);        // Load product
-                $this->load_stock('nobatch,novirtual');    // Load stock to get true this->stock_reel
+                if (is_null($tmpproduct)) $tmpproduct = new Product($this->db);		// So we initialize tmpproduct only once for all loop.
+                $tmpproduct->fetch($id);        				 // Load product to get ->ref
+                $tmpproduct->load_stock('nobatch,novirtual');    // Load stock to get true ->stock_reel
+                //$this->fetch($id);        				   // Load product to get ->ref
+                //$this->load_stock('nobatch,novirtual');    // Load stock to get true ->stock_reel
                 $this->res[]= array(
-                 'id'=>$id,                    // Id product
-                 'id_parent'=>$id_parent,
-                 'ref'=>$this->ref,            // Ref product
-                 'nb'=>$nb,                    // Nb of units that compose parent product
-                 'nb_total'=>$nb*$multiply,    // Nb of units for all nb of product
-                 'stock'=>$this->stock_reel,    // Stock
-                 'stock_alert'=>$this->seuil_stock_alerte,    // Stock alert
-                 'label'=>$label,
-                 'fullpath'=>$compl_path.$label,            // Label
-                 'type'=>$type,                // Nb of units that compose parent product
-                 'desiredstock'=>$this->desiredstock,
-                 'level'=>$level,
-                 'incdec'=>$incdec,
-                 'entity'=>$this->entity
+	                'id'=>$id,                    // Id product
+	                'id_parent'=>$id_parent,
+                	'ref'=>$tmpproduct->ref,            // Ref product
+	                'nb'=>$nb,                    // Nb of units that compose parent product
+	                'nb_total'=>$nb*$multiply,    // Nb of units for all nb of product
+                	'stock'=>$tmpproduct->stock_reel,    // Stock
+                	'stock_alert'=>$tmpproduct->seuil_stock_alerte,    // Stock alert
+	                'label'=>$label,
+	                'fullpath'=>$compl_path.$label,            // Label
+	                'type'=>$type,                // Nb of units that compose parent product
+                	'desiredstock'=>$tmpproduct->desiredstock,
+	                'level'=>$level,
+	                'incdec'=>$incdec,
+                	'entity'=>$tmpproduct->entity
                 );
 
                 // Recursive call if there is childs to child
@@ -4007,8 +4067,10 @@ class Product extends CommonObject
         if (! empty($conf->accounting->enabled) && $this->status) {
             include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
             $label.= '<br><b>' . $langs->trans('ProductAccountancySellCode') . ':</b> '. length_accountg($this->accountancy_code_sell);
-            $label.= '<br><b>' . $langs->trans('ProductAccountancySellIntraCode') . ':</b> '. length_accountg($this->accountancy_code_sell_export);
-            $label.= '<br><b>' . $langs->trans('ProductAccountancySellExportCode') . ':</b> '. length_accountg($this->accountancy_code_sell_intra);
+            if(!empty($conf->global->MAIN_FEATURES_LEVEL)) {
+                $label.= '<br><b>' . $langs->trans('ProductAccountancySellIntraCode') . ':</b> '. length_accountg($this->accountancy_code_sell_export);
+                $label.= '<br><b>' . $langs->trans('ProductAccountancySellExportCode') . ':</b> '. length_accountg($this->accountancy_code_sell_intra);
+            }
         }
         if (! empty($conf->accounting->enabled) && $this->status_buy) {
             include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
@@ -4028,14 +4090,11 @@ class Product extends CommonObject
             }
 
             $linkclose.= ' title="'.dol_escape_htmltag($label, 1, 1).'"';
-            $linkclose.= ' class="classfortooltip"';
-
-            /*
-            $hookmanager->initHooks(array('productdao'));
-            $parameters=array('id'=>$this->id);
-            $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-            if ($reshook > 0) $linkclose = $hookmanager->resPrint;
-            */
+            $linkclose.= ' class="nowraponall classfortooltip"';
+        }
+        else
+        {
+        	$linkclose = ' class="nowraponall"';
         }
 
         if ($option == 'supplier' || $option == 'category') {
@@ -4062,10 +4121,13 @@ class Product extends CommonObject
         $linkend='</a>';
 
         $result.=$linkstart;
-        if ($withpicto) {
-            if ($this->type == Product::TYPE_PRODUCT) { $result.=(img_object(($notooltip?'':$label), 'product', ($notooltip?'class="paddingright"':'class="paddingright classfortooltip"'), 0, 0, $notooltip?0:1));
+        if ($withpicto)
+        {
+            if ($this->type == Product::TYPE_PRODUCT) {
+            	$result.=(img_object(($notooltip?'':$label), 'product', ($notooltip?'class="paddingright"':'class="paddingright classfortooltip"'), 0, 0, $notooltip?0:1));
             }
-            if ($this->type == Product::TYPE_SERVICE) { $result.=(img_object(($notooltip?'':$label), 'service', ($notooltip?'class="paddinright"':'class="paddingright classfortooltip"'), 0, 0, $notooltip?0:1));
+            if ($this->type == Product::TYPE_SERVICE) {
+            	$result.=(img_object(($notooltip?'':$label), 'service', ($notooltip?'class="paddinright"':'class="paddingright classfortooltip"'), 0, 0, $notooltip?0:1));
             }
         }
         $result.= $newref;
@@ -4075,8 +4137,10 @@ class Product extends CommonObject
         $hookmanager->initHooks(array('productdao'));
         $parameters=array('id'=>$this->id, 'getnomurl'=>$result);
         $reshook=$hookmanager->executeHooks('getNomUrl', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
-        if ($reshook > 0) { $result = $hookmanager->resPrint;
-        } else { $result .= $hookmanager->resPrint;
+        if ($reshook > 0) {
+        	$result = $hookmanager->resPrint;
+        } else {
+        	$result .= $hookmanager->resPrint;
         }
 
         return $result;
@@ -4152,6 +4216,8 @@ class Product extends CommonObject
         // phpcs:enable
         global $conf, $langs;
 
+        $labelstatut = $labelstatutShort = '';
+
         $langs->load('products');
         if (! empty($conf->productbatch->enabled)) { $langs->load("productbatch");
         }
@@ -4159,75 +4225,65 @@ class Product extends CommonObject
         if ($type == 2) {
             switch ($mode)
             {
-            	case 0:
-                	return ($status == 0 ? $langs->trans('ProductStatusNotOnBatch') : $langs->trans('ProductStatusOnBatch'));
-            	case 1:
-                	return ($status == 0 ? $langs->trans('ProductStatusNotOnBatchShort') : $langs->trans('ProductStatusOnBatchShort'));
-            	case 2:
-                	return $this->LibStatut($status, 3, 2).' '.$this->LibStatut($status, 1, 2);
-            	case 3:
-                	if ($status == 0) {
-                    	return img_picto($langs->trans('ProductStatusNotOnBatch'), 'statut5');
-                	}
-                	return img_picto($langs->trans('ProductStatusOnBatch'), 'statut4');
-            	case 4:
-                	return $this->LibStatut($status, 3, 2).' '.$this->LibStatut($status, 0, 2);
-            	case 5:
-                	return $this->LibStatut($status, 1, 2).' '.$this->LibStatut($status, 3, 2);
-            	default:
-                	return $langs->trans('Unknown');
+                case 0:
+                    $label = ($status == 0 ? $langs->trans('ProductStatusNotOnBatch') : $langs->trans('ProductStatusOnBatch'));
+                    return dolGetStatus($label);
+                case 1:
+                    $label = ($status == 0 ? $langs->trans('ProductStatusNotOnBatchShort') : $langs->trans('ProductStatusOnBatchShort'));
+                    return dolGetStatus($label);
+                case 2:
+                    return $this->LibStatut($status, 3, 2).' '.$this->LibStatut($status, 1, 2);
+                case 3:
+                    return dolGetStatus($langs->trans('ProductStatusNotOnBatch'), '', '', empty($status)?'status5':'status4', 3, 'dot');
+                case 4:
+                    return $this->LibStatut($status, 3, 2).' '.$this->LibStatut($status, 0, 2);
+                case 5:
+                    return $this->LibStatut($status, 1, 2).' '.$this->LibStatut($status, 3, 2);
+                default:
+                    return dolGetStatus($langs->trans('Unknown'));
             }
         }
-        if ($mode == 0) {
-            if ($status == 0) {
-                return ($type==0 ? $langs->trans('ProductStatusNotOnSellShort'):$langs->trans('ProductStatusNotOnBuyShort'));
-            } elseif ($status == 1) {
-                return ($type==0 ? $langs->trans('ProductStatusOnSellShort'):$langs->trans('ProductStatusOnBuyShort'));
+
+        $statuttrans=empty($status)?'status5':'status4';
+
+        if($status == 0){
+            // $type   0=Status "to sell", 1=Status "to buy", 2=Status "to Batch"
+            if($type==0){
+                $labelstatut = $langs->trans('ProductStatusNotOnSellShort');
+                $labelstatutShort = $langs->trans('ProductStatusNotOnSell');
+            }
+            elseif($type == 1){
+                $labelstatut = $langs->trans('ProductStatusNotOnBuyShort');
+                $labelstatutShort = $langs->trans('ProductStatusNotOnBuy');
+            }
+            elseif($type == 2){
+                $labelstatut = $langs->trans('ProductStatusNotOnBatch');
+                $labelstatutShort = $langs->trans('ProductStatusNotOnBatchShort');
             }
         }
-        elseif ($mode == 1) {
-            if ($status == 0) {
-                return ($type==0 ? $langs->trans('ProductStatusNotOnSell'):$langs->trans('ProductStatusNotOnBuy'));
-            } elseif ($status == 1) {
-                return ($type==0 ? $langs->trans('ProductStatusOnSell'):$langs->trans('ProductStatusOnBuy'));
+        elseif($status == 1){
+            // $type   0=Status "to sell", 1=Status "to buy", 2=Status "to Batch"
+            if($type==0){
+                $labelstatut = $langs->trans('ProductStatusOnSellShort');
+                $labelstatutShort = $langs->trans('ProductStatusOnSell');
+            }
+            elseif($type == 1){
+                $labelstatut = $langs->trans('ProductStatusOnBuyShort');
+                $labelstatutShort = $langs->trans('ProductStatusOnBuy');
+            }
+            elseif($type == 2){
+                $labelstatut = $langs->trans('ProductStatusOnBatch');
+                $labelstatutShort = $langs->trans('ProductStatusOnBatchShort');
             }
         }
-        elseif ($mode == 2) {
-            if ($status == 0) {
-                return img_picto($langs->trans('ProductStatusNotOnSell'), 'statut5', 'class="pictostatus"').' '.($type==0 ? $langs->trans('ProductStatusNotOnSellShort'):$langs->trans('ProductStatusNotOnBuyShort'));
-            } elseif ($status == 1) {
-                return img_picto($langs->trans('ProductStatusOnSell'), 'statut4', 'class="pictostatus"').' '.($type==0 ? $langs->trans('ProductStatusOnSellShort'):$langs->trans('ProductStatusOnBuyShort'));
-            }
+
+
+        if($mode>6){
+            return dolGetStatus($langs->trans('Unknown'), '', '', 'status0', 0);
         }
-        elseif ($mode == 3) {
-            if ($status == 0) {
-                return img_picto(($type==0 ? $langs->trans('ProductStatusNotOnSell') : $langs->trans('ProductStatusNotOnBuy')), 'statut5', 'class="pictostatus"');
-            } elseif ($status == 1) {
-                return img_picto(($type==0 ? $langs->trans('ProductStatusOnSell') : $langs->trans('ProductStatusOnBuy')), 'statut4', 'class="pictostatus"');
-            }
+        else{
+            return dolGetStatus($labelstatut, $labelstatutShort, '', $statuttrans, $mode);
         }
-        elseif ($mode == 4) {
-            if ($status == 0) {
-                return img_picto($langs->trans('ProductStatusNotOnSell'), 'statut5', 'class="pictostatus"').' '.($type==0 ? $langs->trans('ProductStatusNotOnSell'):$langs->trans('ProductStatusNotOnBuy'));
-            } elseif ($status == 1) {
-                return img_picto($langs->trans('ProductStatusOnSell'), 'statut4', 'class="pictostatus"').' '.($type==0 ? $langs->trans('ProductStatusOnSell'):$langs->trans('ProductStatusOnBuy'));
-            }
-        }
-        elseif ($mode == 5) {
-            if ($status == 0) {
-                return ($type==0 ? $langs->trans('ProductStatusNotOnSellShort'):$langs->trans('ProductStatusNotOnBuyShort')).' '.img_picto(($type==0 ? $langs->trans('ProductStatusNotOnSell'):$langs->trans('ProductStatusNotOnBuy')), 'statut5', 'class="pictostatus"');
-            } elseif ($status == 1) {
-                return ($type==0 ? $langs->trans('ProductStatusOnSellShort'):$langs->trans('ProductStatusOnBuyShort')).' '.img_picto(($type==0 ? $langs->trans('ProductStatusOnSell'):$langs->trans('ProductStatusOnBuy')), 'statut4', 'class="pictostatus"');
-            }
-        }
-        elseif ($mode == 6) {
-            if ($status == 0) {
-                return ($type==0 ? $langs->trans('ProductStatusNotOnSellShort'):$langs->trans('ProductStatusNotOnBuyShort')).' '.img_picto(($type==0 ? $langs->trans('ProductStatusNotOnSell'):$langs->trans('ProductStatusNotOnBuy')), 'statut5', 'class="pictostatus"');
-            } elseif ($status == 1) {
-                return ($type==0 ? $langs->trans('ProductStatusOnSellShort'):$langs->trans('ProductStatusOnBuyShort')).' '.img_picto(($type==0 ? $langs->trans('ProductStatusOnSell'):$langs->trans('ProductStatusOnBuy')), 'statut4', 'class="pictostatus"');
-            }
-        }
-        return $langs->trans('Unknown');
     }
 
 
@@ -4298,19 +4354,19 @@ class Product extends CommonObject
     /**
      *  Adjust stock in a warehouse for product with batch number
      *
-     * @param  User   $user           user asking change
-     * @param  int    $id_entrepot    id of warehouse
-     * @param  double $nbpiece        nb of units
-     * @param  int    $movement       0 = add, 1 = remove
-     * @param  string $label          Label of stock movement
-     * @param  double $price          Price to use for stock eval
-     * @param  date   $dlc            eat-by date
-     * @param  date   $dluo           sell-by date
-     * @param  string $lot            Lot number
-     * @param  string $inventorycode  Inventory code
-     * @param  string $origin_element Origin element type
-     * @param  int    $origin_id      Origin id of element
-     * @return int                     <0 if KO, >0 if OK
+     * @param  User     $user           user asking change
+     * @param  int      $id_entrepot    id of warehouse
+     * @param  double   $nbpiece        nb of units
+     * @param  int      $movement       0 = add, 1 = remove
+     * @param  string   $label          Label of stock movement
+     * @param  double   $price          Price to use for stock eval
+     * @param  integer  $dlc            eat-by date
+     * @param  integer  $dluo           sell-by date
+     * @param  string   $lot            Lot number
+     * @param  string   $inventorycode  Inventory code
+     * @param  string   $origin_element Origin element type
+     * @param  int      $origin_id      Origin id of element
+     * @return int                      <0 if KO, >0 if OK
      */
     public function correct_stock_batch($user, $id_entrepot, $nbpiece, $movement, $label = '', $price = 0, $dlc = '', $dluo = '', $lot = '', $inventorycode = '', $origin_element = '', $origin_id = null)
     {
@@ -4792,7 +4848,7 @@ class Product extends CommonObject
      *
      * @param  Product $object Object product or service
      * @param  string  $type   Barcode type (ean, isbn, ...)
-     * @return void
+     * @return string
      */
     public function get_barcode($object, $type = '')
     {
@@ -5077,7 +5133,7 @@ class Product extends CommonObject
     /**
      * Returns the rights used for this class
      *
-     * @return stdClass
+     * @return Object
      */
     public function getRights()
     {

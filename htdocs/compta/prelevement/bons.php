@@ -108,9 +108,7 @@ if ($result)
     $newcardbutton='';
     if ($user->rights->prelevement->bons->creer)
     {
-        $newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/compta/prelevement/create.php"><span class="valignmiddle">'.$langs->trans('NewStandingOrder').'</span>';
-        $newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-        $newcardbutton.= '</a>';
+        $newcardbutton.= dolGetButtonTitle($langs->trans('NewStandingOrder'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/prelevement/create.php');
     }
 
     // Lines of title fields
@@ -136,7 +134,7 @@ if ($result)
     print '<td class="liste_titre">&nbsp;</td>';
     print '<td class="liste_titre right"><input type="text" class="flat maxwidth100" name="search_amount" value="'. dol_escape_htmltag($search_amount).'"></td>';
     print '<td class="liste_titre">&nbsp;</td>';
-    print '<td class="liste_titre right">';
+    print '<td class="liste_titre maxwidthsearch">';
     $searchpicto=$form->showFilterButtons();
     print $searchpicto;
     print '</td>';

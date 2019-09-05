@@ -58,13 +58,13 @@ class Paiement extends CommonObject
 
 	/**
 	 * @deprecated
-	 * @see amount, amounts
+	 * @see $amount, $amounts
 	 */
     public $total;
 
 	/**
 	 * @deprecated
-	 * @see amount, amounts
+	 * @see $amount, $amounts
 	 */
 	public $montant;
 
@@ -72,9 +72,8 @@ class Paiement extends CommonObject
 	public $amounts=array();   // Array of amounts
 	public $multicurrency_amounts=array();   // Array of amounts
 	public $author;
-	public $paiementid;	// Type de paiement. Stocke dans fk_paiement
-	// de llx_paiement qui est lie aux types de
-    //paiement de llx_c_paiement
+	public $paiementid;			// Type of payment. Id saved into fields fk_paiement on llx_paiement
+	public $paiementcode;		// Code of payment.
 
     /**
      * @var string type libelle
@@ -89,14 +88,14 @@ class Paiement extends CommonObject
     /**
      * @var string Numero du CHQ, VIR, etc...
      * @deprecated
-     * @see num_payment
+     * @see $num_payment
      */
     public $numero;
 
     /**
      * @var string Numero du CHQ, VIR, etc...
      * @deprecated
-     * @see num_payment
+     * @see $num_payment
      */
     public $num_paiement;
 
@@ -991,16 +990,16 @@ class Paiement extends CommonObject
     }
 
 	/**
-	 *  Retourne la liste des factures sur lesquels porte le paiement
+	 *  Return list of invoices the payment is related to.
 	 *
-	 *  @param	string	$filter         Critere de filtre
-	 *  @return array					Tableau des id de factures
+	 *  @param	string		$filter         Filter
+	 *  @return int|array					<0 if KO or array of invoice id
 	 */
     public function getBillsArray($filter = '')
     {
-		$sql = 'SELECT fk_facture';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf, '.MAIN_DB_PREFIX.'facture as f';
-		$sql.= ' WHERE pf.fk_facture = f.rowid AND fk_paiement = '.$this->id;
+		$sql = 'SELECT pf.fk_facture';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf, '.MAIN_DB_PREFIX.'facture as f';	// We keep link on invoice to allow use of some filters on invoice
+		$sql.= ' WHERE pf.fk_facture = f.rowid AND pf.fk_paiement = '.$this->id;
 		if ($filter) $sql.= ' AND '.$filter;
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -1024,6 +1023,40 @@ class Paiement extends CommonObject
 			dol_syslog(get_class($this).'::getBillsArray Error '.$this->error.' -', LOG_DEBUG);
 			return -1;
 		}
+    }
+
+    /**
+     *  Return list of amounts of payments.
+     *
+     *  @return int|array					Array of amount of payments
+     */
+    public function getAmountsArray()
+    {
+    	$sql = 'SELECT pf.fk_facture, pf.amount';
+    	$sql.= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf';
+    	$sql.= ' WHERE pf.fk_paiement = '.$this->id;
+    	$resql = $this->db->query($sql);
+    	if ($resql)
+    	{
+    		$i=0;
+    		$num=$this->db->num_rows($resql);
+    		$amounts = array();
+
+    		while ($i < $num)
+    		{
+    			$obj = $this->db->fetch_object($resql);
+    			$amounts[$obj->fk_facture]=$obj->amount;
+    			$i++;
+    		}
+
+    		return $amounts;
+    	}
+    	else
+    	{
+    		$this->error=$this->db->error();
+    		dol_syslog(get_class($this).'::getAmountsArray Error '.$this->error.' -', LOG_DEBUG);
+    		return -1;
+    	}
     }
 
 	/**
@@ -1107,7 +1140,7 @@ class Paiement extends CommonObject
 		else
 		{
 			$langs->load("errors");
-			print $langs->trans("Error")." ".$langs->trans("ErrorModuleSetupNotComplete");
+			print $langs->trans("Error")." ".$langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Invoice"));
 			return "";
 		}
 	}
@@ -1180,7 +1213,7 @@ class Paiement extends CommonObject
 		$result='';
         $label = '<u>'.$langs->trans("ShowPayment").'</u><br>';
         $label.= '<strong>'.$langs->trans("Ref").':</strong> '.$this->ref;
-        $label.= '<br><strong>'.$langs->trans("Date").':</strong> '.dol_print_date($this->datepaye ? $this->datepaye : $this->date, 'dayhour');
+        if ($this->datepaye ? $this->datepaye : $this->date) $label.= '<br><strong>'.$langs->trans("Date").':</strong> '.dol_print_date($this->datepaye ? $this->datepaye : $this->date, 'dayhour');
         if ($mode == 'withlistofinvoices')
         {
             $arraybill = $this->getBillsArray();

@@ -94,7 +94,7 @@ class Orders extends DolibarrApi
      * @param string	       $sortorder	        Sort order
      * @param int		       $limit		        Limit for list
      * @param int		       $page		        Page number
-     * @param string   	       $thirdparty_ids	    Thirdparty ids to filter orders of. {@example '1' or '1,2,3'} {@pattern /^[0-9,]*$/i}
+     * @param string   	       $thirdparty_ids	    Thirdparty ids to filter orders of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
      * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
      * @return  array                               Array of order objects
      *
@@ -415,21 +415,16 @@ class Orders extends DolibarrApi
 	 */
     public function postContact($id, $contactid, $type)
     {
-        if(!DolibarrApiAccess::$user->rights->commande->creer) {
-            throw new RestException(401);
-        }
-
-        $result = $this->commande->fetch($id);
-
-		if(!$result) {
-			throw new RestException(404, 'Order not found');
+        if (! DolibarrApiAccess::$user->rights->commande->creer) {
+			throw new RestException(401);
 		}
 
-        if (!in_array($type, array('BILLING', 'SHIPPING', 'CUSTOMER'), true)) {
-            throw new RestException(500, 'Availables types: BILLING, SHIPPING OR CUSTOMER');
+        $result = $this->commande->fetch($id);
+        if (! $result) {
+            throw new RestException(404, 'Order not found');
         }
 
-        if(!DolibarrApi::_checkAccessToResource('order', $this->commande->id)) {
+		if (! DolibarrApi::_checkAccessToResource('commande', $this->commande->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -457,17 +452,16 @@ class Orders extends DolibarrApi
 	 */
     public function deleteContact($id, $rowid)
     {
-        if(!DolibarrApiAccess::$user->rights->commande->creer) {
-            throw new RestException(401);
-        }
-
-        $result = $this->commande->fetch($id);
-
-		if(!$result) {
-			throw new RestException(404, 'Order not found');
+        if (! DolibarrApiAccess::$user->rights->commande->creer) {
+			throw new RestException(401);
 		}
 
-        if(!DolibarrApi::_checkAccessToResource('order', $this->commande->id)) {
+        $result = $this->commande->fetch($id);
+        if (! $result) {
+            throw new RestException(404, 'Order not found');
+        }
+
+		if (! DolibarrApi::_checkAccessToResource('commande', $this->commande->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -770,7 +764,7 @@ class Orders extends DolibarrApi
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
-        $result = $this->commande->set_draft(DolibarrApiAccess::$user, $idwarehouse);
+        $result = $this->commande->setDraft(DolibarrApiAccess::$user, $idwarehouse);
         if ($result == 0) {
             throw new RestException(304, 'Nothing done. May be object is already closed');
         }

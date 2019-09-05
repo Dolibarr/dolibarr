@@ -117,12 +117,12 @@ print '</div>';
 print '</form>';
 
 
-print '<br><br>';
+print '<br><br><br>';
 
-print $langs->trans("UseMenuModuleToolsToAddCronJobs").'<br>';
-if (! empty($conf->global->CRON_WARNING_DELAY_HOURS)) print info_admin($langs->trans("WarningCronDelayed", $conf->global->CRON_WARNING_DELAY_HOURS));
+print $langs->trans("UseMenuModuleToolsToAddCronJobs", dol_buildpath('/cron/list.php?leftmenu=admintools', 1)).'<br>';
+if (! empty($conf->global->CRON_WARNING_DELAY_HOURS)) print info_admin($langs->trans("WarningCronDelayed", $conf->global->CRON_WARNING_DELAY_HOURS)).'<br>';
 
-print '<br><br>';
+print '<br>';
 
 dol_print_cron_urls();
 

@@ -396,7 +396,7 @@ class DoliDBPgsql extends DoliDB
 	 *	@param		string		$name		Name of database (not used for mysql, used for pgsql)
 	 *	@param		integer		$port		Port of database server
 	 *	@return		false|resource			Database access handler
-	 *	@see		close
+	 *	@see		close()
 	 */
     public function connect($host, $login, $passwd, $name, $port = 0)
 	{
@@ -471,7 +471,7 @@ class DoliDBPgsql extends DoliDB
      *  Close database connexion
      *
      *  @return     boolean     True if disconnect successfull, false otherwise
-     *  @see        connect
+     *  @see        connect()
      */
     public function close()
     {
@@ -522,7 +522,11 @@ class DoliDBPgsql extends DoliDB
 			@pg_query($this->db, 'SAVEPOINT mysavepoint');
 		}
 
-		if (! in_array($query, array('BEGIN','COMMIT','ROLLBACK'))) dol_syslog('sql='.$query, LOG_DEBUG);
+		if (! in_array($query, array('BEGIN','COMMIT','ROLLBACK')))
+		{
+			$SYSLOG_SQL_LIMIT = 10000;	// limit log to 10kb per line to limit DOS attacks
+			dol_syslog('sql='.substr($query, 0, $SYSLOG_SQL_LIMIT), LOG_DEBUG);
+		}
 
 		$ret = @pg_query($this->db, $query);
 
@@ -603,9 +607,9 @@ class DoliDBPgsql extends DoliDB
     /**
      *	Return number of lines for result of a SELECT
      *
-     *	@param	resourse	$resultset  Resulset of requests
+     *	@param	resource	$resultset  Resulset of requests
      *	@return int		    			Nb of lines, -1 on error
-     *	@see    affected_rows
+     *	@see    affected_rows()
      */
     public function num_rows($resultset)
 	{
@@ -617,11 +621,11 @@ class DoliDBPgsql extends DoliDB
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Renvoie le nombre de lignes dans le resultat d'une requete INSERT, DELETE ou UPDATE
+	 * Return the number of lines in the result of a request INSERT, DELETE or UPDATE
 	 *
 	 * @param	resource	$resultset  Result set of request
 	 * @return  int		    			Nb of lines
-	 * @see 	num_rows
+	 * @see 	num_rows()
 	 */
     public function affected_rows($resultset)
 	{
@@ -1176,7 +1180,7 @@ class DoliDBPgsql extends DoliDB
 		if ($field_desc['default'] != '')
 		{
 			if ($field_desc['type'] == 'double' || $field_desc['type'] == 'tinyint' || $field_desc['type'] == 'int') $sql.=" DEFAULT ".$this->escape($field_desc['default']);
-        	elseif ($field_desc['type'] == 'text') $sql.=" DEFAULT '".$this->escape($field_desc['default'])."'";							// Default not supported on text fields
+        	elseif ($field_desc['type'] != 'text') $sql.=" DEFAULT '".$this->escape($field_desc['default'])."'";							// Default not supported on text fields
 		}
 
 		dol_syslog($sql, LOG_DEBUG);

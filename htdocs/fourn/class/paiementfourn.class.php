@@ -312,7 +312,7 @@ class PaiementFourn extends Paiement
 
 
 	/**
-	 *	Supprime un paiement ainsi que les lignes qu'il a genere dans comptes
+	 *	Delete a payment and lines generated into accounts
 	 *	Si le paiement porte sur un ecriture compte qui est rapprochee, on refuse
 	 *	Si le paiement porte sur au moins une facture a "payee", on refuse
 	 *
@@ -585,7 +585,7 @@ class PaiementFourn extends Paiement
 
 		$label = '<u>'.$langs->trans("ShowPayment").'</u><br>';
 		$label.= '<strong>'.$langs->trans("Ref").':</strong> '.$text;
-		$label.= '<br><strong>'.$langs->trans("Date").':</strong> '.dol_print_date($this->datepaye ? $this->datepaye : $this->date, 'dayhour');
+		if ($this->datepaye ? $this->datepaye : $this->date) $label.= '<br><strong>'.$langs->trans("Date").':</strong> '.dol_print_date($this->datepaye ? $this->datepaye : $this->date, 'dayhour');
 
 		$linkstart = '<a href="'.DOL_URL_ROOT.'/fourn/paiement/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend = '</a>';
@@ -701,7 +701,7 @@ class PaiementFourn extends Paiement
 		else
 		{
 			$langs->load("errors");
-			print $langs->trans("Error")." ".$langs->trans("ErrorModuleSetupNotComplete");
+			print $langs->trans("Error")." ".$langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Supplier"));
 			return "";
 		}
 	}

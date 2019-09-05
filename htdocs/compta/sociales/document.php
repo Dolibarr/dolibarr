@@ -55,7 +55,7 @@ $result = restrictedArea($user, 'tax', $id, 'chargesociales', 'charges');
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOST("page", 'int');
-if ($page == -1) {
+if (empty($page) || $page == -1) {
     $page = 0;
 }
 $offset = $conf->liste_limit * $page;
@@ -145,7 +145,7 @@ if ($object->id)
     }
 
 
-    print '<table class="border" width="100%">';
+    print '<table class="border tableforfield centpercent">';
 
     print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
     print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize, 1, 1).'</td></tr>';

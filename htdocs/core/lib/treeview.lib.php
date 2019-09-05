@@ -171,7 +171,7 @@ function tree_recur($tab, $pere, $rang, $iddivjstree = 'iddivjstree', $donoreset
 			    print '<strong> &nbsp; ';
 			    print $tab[$x]['title'];
 			    print '&nbsp; (fk_mainmenu='.$tab[$x]['fk_mainmenu'].' fk_leftmenu='.$tab[$x]['fk_leftmenu'].')';
-			    print '</td><td align="right">';
+			    print '</td><td class="right">';
 			    print $tab[$x]['buttons'];
 			    print '</td></tr></table>';
 			}
@@ -207,7 +207,7 @@ function tree_recur($tab, $pere, $rang, $iddivjstree = 'iddivjstree', $donoreset
 			    print $tab[$x]['title'];
 			    print '</a></strong>';
 			    print '&nbsp; (mainmenu='.$tab[$x]['mainmenu'].' leftmenu='.$tab[$x]['leftmenu'].' - fk_mainmenu='.$tab[$x]['fk_mainmenu'].' fk_leftmenu='.$tab[$x]['fk_leftmenu'].')';
-			    print '</td><td align="right">';
+			    print '</td><td class="right">';
 			    print $tab[$x]['buttons'];
 			    print '</td></tr></table>';
 			}

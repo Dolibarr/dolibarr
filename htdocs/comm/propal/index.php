@@ -2,6 +2,7 @@
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +27,11 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT .'/comm/propal/class/propal.class.php';
+
+$hookmanager = new HookManager($db);
+
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('proposalindex'));
 
 // Load translation files required by the page
 $langs->loadLangs(array('propal', 'companies'));
@@ -172,16 +178,18 @@ if (! empty($conf->propal->enabled))
 	$resql=$db->query($sql);
 	if ($resql)
 	{
-		print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre">';
-		print '<td colspan="2">'.$langs->trans("DraftPropals").'</td></tr>';
-		$langs->load("propal");
 		$num = $db->num_rows($resql);
 		if ($num)
 		{
+			print '<div class="div-table-responsive-no-min">';
+			print '<table class="noborder" width="100%">';
+			print '<tr class="liste_titre">';
+			$langs->load("propal");
+			print '<td colspan="2">'.$langs->trans("DraftPropals").' <a href="'.DOL_URL_ROOT.'/comm/propal/list.php?viewstatut=0"><span class="badge">'.$num.'</span></a></td></tr>';
+
 			$i = 0;
-			while ($i < $num)
+			$nbofloop=min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD)?500:$conf->global->MAIN_MAXLIST_OVERLOAD));
+			while ($i < $nbofloop)
 			{
 				$obj = $db->fetch_object($resql);
 				print '<tr class="oddeven">';
@@ -199,9 +207,17 @@ if (! empty($conf->propal->enabled))
 				print '</tr>';
 				$i++;
 			}
+			if ($num > $nbofloop)
+			{
+				print '<tr class="liste_total"><td colspan="2" class="right">'.$langs->trans("XMoreLines", ($num - $nbofloop))."</td></tr>";
+			}
+			elseif ($total>0)
+			{
+				print '<tr class="liste_total"><td class="right">'.$langs->trans("Total").'</td><td class="right">'.price($total)."</td></tr>";
+			}
+			print "</table>";
+			print "</div><br>";
 		}
-		print "</table>";
-		print "</div><br>";
 	}
 }
 
@@ -365,11 +381,11 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 			}
 			if ($num > $nbofloop)
 			{
-				print '<tr class="liste_total"><td colspan="5">'.$langs->trans("XMoreLines", ($num - $nbofloop))."</td></tr>";
+				print '<tr class="liste_total"><td colspan="5" class="right">'.$langs->trans("XMoreLines", ($num - $nbofloop))."</td></tr>";
 			}
 			elseif ($total>0)
 			{
-				print '<tr class="liste_total"><td colspan="3">'.$langs->trans("Total")."</td><td align=\"right\">".price($total)."</td><td>&nbsp;</td></tr>";
+				print '<tr class="liste_total"><td colspan="3" class="right">'.$langs->trans("Total")."</td><td align=\"right\">".price($total)."</td><td>&nbsp;</td></tr>";
 			}
 			print "</table>";
 			print "</div><br>";
@@ -529,6 +545,9 @@ if (! empty($conf->propal->enabled))
 
 //print '</td></tr></table>';
 print '</div></div></div>';
+
+$parameters = array('user' => $user);
+$reshook = $hookmanager->executeHooks('dashboardPropals', $parameters, $object); // Note that $action and $object may have been modified by hook
 
 // End of page
 llxFooter();

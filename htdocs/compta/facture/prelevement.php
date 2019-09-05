@@ -62,42 +62,52 @@ if ($id > 0 || ! empty($ref))
 	}
 }
 
+$hookmanager->initHooks(array('directdebitcard','globalcard'));
+
+
 
 /*
  * Actions
  */
 
-if ($action == "new")
+$parameters = array('socid' => $socid);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+
+if (empty($reshook))
 {
-    if ($object->id > 0)
+    if ($action == "new")
     {
-    	$db->begin();
-
-        $result = $object->demande_prelevement($user, GETPOST('withdraw_request_amount'));
-        if ($result > 0)
+        if ($object->id > 0)
         {
-        	$db->commit();
+            $db->begin();
 
-            setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
+            $result = $object->demande_prelevement($user, GETPOST('withdraw_request_amount'));
+            if ($result > 0)
+            {
+                $db->commit();
+
+                setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
+            }
+            else
+            {
+                $db->rollback();
+                setEventMessages($object->error, $object->errors, 'errors');
+            }
         }
-        else
-		{
-        	$db->rollback();
-        	setEventMessages($object->error, $object->errors, 'errors');
-        }
+        $action='';
     }
-    $action='';
-}
 
-if ($action == "delete")
-{
-    if ($object->id > 0)
+    if ($action == "delete")
     {
-        $result = $object->demande_prelevement_delete($user, GETPOST('did'));
-        if ($result == 0)
+        if ($object->id > 0)
         {
-            header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
-            exit;
+            $result = $object->demande_prelevement_delete($user, GETPOST('did'));
+            if ($result == 0)
+            {
+                header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+                exit;
+            }
         }
     }
 }

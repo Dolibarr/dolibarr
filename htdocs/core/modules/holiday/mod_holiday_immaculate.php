@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2011      Juanjo Menent	    <jmenent@2byte.es>
- * Copyright (C) 2018      Charlene Benke		<charlie@patas-monkey.com>
+/* Copyright (C) 2011-2019		Juanjo Menent	    <jmenent@2byte.es>
+ * Copyright (C) 2018			Charlene Benke		<charlie@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ class mod_holiday_immaculate extends ModelNumRefHolidays
 {
 	/**
      * Dolibarr version of the loaded document
-     * @public string
+     * @var string
      */
 	public $version = 'dolibarr';
 
@@ -72,7 +72,7 @@ class mod_holiday_immaculate extends ModelNumRefHolidays
 		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		$texte.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		$texte.= '<input type="hidden" name="action" value="updateMask">';
-		$texte.= '<input type="hidden" name="maskconstcontract" value="HOLIDAY_IMMACULATE_MASK">';
+		$texte.= '<input type="hidden" name="maskconstholiday" value="HOLIDAY_IMMACULATE_MASK">';
 		$texte.= '<table class="nobordernopadding" width="100%">';
 
 		$tooltip=$langs->trans("GenericMaskCodes", $langs->transnoentities("Holiday"), $langs->transnoentities("Holiday"));
@@ -82,8 +82,8 @@ class mod_holiday_immaculate extends ModelNumRefHolidays
 		$tooltip.=$langs->trans("GenericMaskCodes5");
 
 		$texte.= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskholiday" value="'.$conf->global->HOLIDAY_IMMACULATE_MASK.'">', $tooltip, 1, 1).'</td>';
-		$texte.= '<td align="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
+		$texte.= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskholiday" value="'.$conf->global->HOLIDAY_IMMACULATE_MASK.'">', $tooltip, 1, 1).'</td>';
+		$texte.= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
 		$texte.= '</tr>';
 		$texte.= '</table>';
 		$texte.= '</form>';

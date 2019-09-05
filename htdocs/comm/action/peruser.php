@@ -367,9 +367,7 @@ if ($user->rights->agenda->myactions->create || $user->rights->agenda->allaction
 
 	//$param='month='.$monthshown.'&year='.$year;
 	$hourminsec='100000';
-	$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.sprintf("%04d%02d%02d", $tmpforcreatebutton['year'], $tmpforcreatebutton['mon'], $tmpforcreatebutton['mday']).$hourminsec.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam?'?'.$newparam:'')).'"><span class="valignmiddle">'.$langs->trans("AddAction").'</span>';
-	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-	$newcardbutton.= '</a>';
+    $newcardbutton.= dolGetButtonTitle($langs->trans("AddAction"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.sprintf("%04d%02d%02d", $tmpforcreatebutton['year'], $tmpforcreatebutton['mon'], $tmpforcreatebutton['mday']).$hourminsec.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam?'?'.$newparam:'')));
 }
 
 $link='';
@@ -599,7 +597,7 @@ $cachecontacts=array();
 $cacheusers=array();
 
 // Define theme_datacolor array
-$color_file = DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/graph-color.php";
+$color_file = DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/theme_vars.inc.php";
 if (is_readable($color_file))
 {
     include_once $color_file;
@@ -1188,33 +1186,34 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 			}
 		}
 
-		$ids1='';$ids2='';
-		if (count($cases1[$h]) && array_keys($cases1[$h])) $ids1=join(',', array_keys($cases1[$h]));
-		if (count($cases2[$h]) && array_keys($cases2[$h])) $ids2=join(',', array_keys($cases2[$h]));
+		$ids1='';
+        $ids2='';
+		if (is_array($cases1[$h]) && count($cases1[$h]) && array_keys($cases1[$h])) $ids1=join(',', array_keys($cases1[$h]));
+		if (is_array($cases2[$h]) && count($cases2[$h]) && array_keys($cases2[$h])) $ids2=join(',', array_keys($cases2[$h]));
 
 		if ($h == $begin_h) echo '<td class="'.$style.'_peruserleft cal_peruser'.($var?' cal_impair '.$style.'_impair':'').'">';
 		else echo '<td class="'.$style.' cal_peruser'.($var?' cal_impair '.$style.'_impair':'').'">';
-		if (count($cases1[$h]) == 1)	// only 1 event
+		if (is_array($cases1[$h]) && count($cases1[$h]) == 1)	// only 1 event
 		{
 			$output = array_slice($cases1[$h], 0, 1);
 			$title1=$langs->trans("Ref").' '.$ids1.($title1?' - '.$title1:'');
 			if ($output[0]['string']) $title1.=($title1?' - ':'').$output[0]['string'];
 			if ($output[0]['color']) $color1 = $output[0]['color'];
 		}
-		elseif (count($cases1[$h]) > 1)
+		elseif (is_array($cases1[$h]) && count($cases1[$h]) > 1)
 		{
 			$title1=$langs->trans("Ref").' '.$ids1.($title1?' - '.$title1:'');
 			$color1='222222';
 		}
 
-		if (count($cases2[$h]) == 1)	// only 1 event
+		if (is_array($cases2[$h]) && count($cases2[$h]) == 1)	// only 1 event
 		{
 			$output = array_slice($cases2[$h], 0, 1);
 			$title2=$langs->trans("Ref").' '.$ids2.($title2?' - '.$title2:'');
 			if ($output[0]['string']) $title2.=($title2?' - ':'').$output[0]['string'];
 			if ($output[0]['color']) $color2 = $output[0]['color'];
 		}
-		elseif (count($cases2[$h]) > 1)
+		elseif (is_array($cases2[$h]) && count($cases2[$h]) > 1)
 		{
 			$title2=$langs->trans("Ref").' '.$ids2.($title2?' - '.$title2:'');
 			$color2='222222';

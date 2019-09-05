@@ -118,14 +118,14 @@ function create_script_table($list)
 {
     global $sortby,$langs;
 
-    if (GETPOT('order') == "asc" || GETPOST('order') =="desc") {
-        $order = GETPOST('order');
+    if (GETPOT('order', 'alpha') == "asc" || GETPOST('order', 'alpha') == "desc") {
+        $order = GETPOST('order', 'alpha');
     } else {
         $order = "asc";
     }
 
-    if (GETPOST('order')) {
-        switch (GETPOST('order')) {
+    if (GETPOST('order', 'alpha')) {
+        switch (GETPOST('order', 'alpha')) {
             case "mtime":
             case "size":
             case "reloads":
@@ -173,10 +173,10 @@ function create_script_table($list)
     foreach($list as $script) {
         print '<tr class="oddeven">';
         print '<td>'.dol_trunc($script['file'], 80, 'left').'</td>';
-        print '<td align="center" class="nowrap">'.dol_print_date($script['mtime'], 'dayhour').'</td>';
-        print '<td class="right" class="nowrap">'.number_format($script['size'] / 1024, 2).'KB</td>';
-        print '<td class="right" class="nowrap">'.$script['reloads'].' ('.$script['usecount'].')</td>';
-        print '<td class="right" class="nowrap">'.$script['hits'].'</td>';
+        print '<td class="nowrap center">'.dol_print_date($script['mtime'], 'dayhour').'</td>';
+        print '<td class="nowrap right">'.number_format($script['size'] / 1024, 2).'KB</td>';
+        print '<td class="nowrap right">'.$script['reloads'].' ('.$script['usecount'].')</td>';
+        print '<td class="nowrap right">'.$script['hits'].'</td>';
         print '</tr>';
     }
     print '</table>';
@@ -203,9 +203,9 @@ function create_key_table($list)
     foreach($list as $key) {
         print '<tr class="oddeven">';
         print '<td>'.dol_trunc($key['name'], 80, 'left').'</td>';
-        print '<td align="center" class="nowrap">'.dol_print_date($key['created'], 'dayhour').'</td>';
-        print '<td class="right" class="nowrap">'.number_format($key['size']/1024, 3).'KB</td>';
-        print '<td class="right" class="nowrap">';
+        print '<td class="nowrap center">'.dol_print_date($key['created'], 'dayhour').'</td>';
+        print '<td class="nowrap right">'.number_format($key['size']/1024, 3).'KB</td>';
+        print '<td class="nowrap right">';
         if ($key['ttl'] == -1) {
             print 'expired';
         } elseif ($key['ttl'] == 0) {

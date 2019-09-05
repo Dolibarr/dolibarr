@@ -156,13 +156,16 @@ if (empty($reshook))
 			$object->public          = GETPOST('public', 'alpha');
 			$object->opp_amount      = price2num(GETPOST('opp_amount', 'alpha'));
 			$object->budget_amount   = price2num(GETPOST('budget_amount', 'alpha'));
-			$object->datec           = dol_now();
+			$object->date_c           = dol_now();
 			$object->date_start      = $date_start;
 			$object->date_end        = $date_end;
 			$object->statut          = $status;
 			$object->opp_status      = $opp_status;
 			$object->opp_percent     = $opp_percent;
-			$object->bill_time       = (GETPOST('bill_time', 'alpha')=='on'?1:0);
+			$object->usage_opportunity    = (GETPOST('usage_opportunity', 'alpha')=='on'?1:0);
+			$object->usage_task           = (GETPOST('usage_task', 'alpha')=='on'?1:0);
+			$object->usage_bill_time      = (GETPOST('usage_bill_time', 'alpha')=='on'?1:0);
+			$object->usage_organize_event = (GETPOST('usage_organize_event', 'alpha')=='on'?1:0);
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
@@ -263,7 +266,10 @@ if (empty($reshook))
 			if (isset($_POST['budget_amount'])) $object->budget_amount= price2num(GETPOST('budget_amount', 'alpha'));
 			if (isset($_POST['opp_status']))    $object->opp_status   = $opp_status;
 			if (isset($_POST['opp_percent']))   $object->opp_percent  = $opp_percent;
-			$object->bill_time       = (GETPOST('bill_time', 'alpha')=='on'?1:0);
+			$object->usage_opportunity    = (GETPOST('usage_opportunity', 'alpha')=='on'?1:0);
+			$object->usage_task           = (GETPOST('usage_task', 'alpha')=='on'?1:0);
+			$object->usage_bill_time      = (GETPOST('usage_bill_time', 'alpha')=='on'?1:0);
+			$object->usage_organize_event = (GETPOST('usage_organize_event', 'alpha')=='on'?1:0);
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
@@ -429,7 +435,7 @@ if (empty($reshook))
 		$move_date=GETPOST('move_date')?1:0;
 		$clone_thirdparty=GETPOST('socid', 'int')?GETPOST('socid', 'int'):0;
 
-		$result=$object->createFromClone($object->id, $clone_contacts, $clone_tasks, $clone_project_files, $clone_task_files, $clone_notes, $move_date, 0, $clone_thirdparty);
+		$result=$object->createFromClone($user, $object->id, $clone_contacts, $clone_tasks, $clone_project_files, $clone_task_files, $clone_notes, $move_date, 0, $clone_thirdparty);
 		if ($result <= 0)
 		{
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -450,7 +456,7 @@ if (empty($reshook))
 	// Actions to send emails
 	$trigger_name='PROJECT_SENTBYMAIL';
 	$paramname='id';
-	$autocopy='MAIN_MAIL_AUTOCOPY_ORDER_TO';		// used to know the automatic BCC to add
+	$autocopy='MAIN_MAIL_AUTOCOPY_PROJECT_TO';		// used to know the automatic BCC to add
 	$trackid='proj'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 }
@@ -539,6 +545,39 @@ if ($action == 'create' && $user->rights->projet->creer)
 	// Label
 	print '<tr><td><span class="fieldrequired">'.$langs->trans("Label").'</span></td><td><input size="80" type="text" name="title" value="'.dol_escape_htmltag(GETPOST("title", 'none')).'" autofocus></td></tr>';
 
+	// Usage (opp, task, bill time, ...)
+	print '<tr><td class="tdtop">';
+	print $langs->trans("Usage");
+	print '</td>';
+	print '<td>';
+	if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
+	{
+		print '<input type="checkbox" name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha')!=''?' checked="checked"':'') : ' checked="checked"').'"> ';
+		$htmltext = $langs->trans("ProjectFollowOpportunity");
+		print $form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext);
+		print '<br>';
+	}
+	if (empty($conf->global->PROJECT_HIDE_TASKS))
+	{
+		print '<input type="checkbox" name="usage_task"'.(GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha')!=''?' checked="checked"':'') : ' checked="checked"').'"> ';
+		$htmltext = $langs->trans("ProjectFollowTasks");
+		print $form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext);
+		print '<br>';
+	}
+	if (! empty($conf->global->PROJECT_BILL_TIME_SPENT))
+	{
+		print '<input type="checkbox" name="usage_bill_time"'.(GETPOST('usage_bill_time', 'alpha')!=''?' checked="checked"':'').'"> ';
+		$htmltext = $langs->trans("ProjectBillTimeDescription");
+		print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
+		print '<br>';
+	}
+	/*
+	print '<input type="checkbox" name="usage_organize_event"'.(GETPOST('usage_organize_event', 'alpha')!=''?' checked="checked"':'').'"> ';
+	$htmltext = $langs->trans("OrganizeEvent");
+	print $form->textwithpicto($langs->trans("OrganizeEvent"), $htmltext);*/
+	print '</td>';
+	print '</tr>';
+
 	// Thirdparty
 	if ($conf->societe->enabled)
 	{
@@ -556,7 +595,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 			print $form->textwithtooltip($text.' '.img_help(), $texthelp, 1);
 		}
 		else print $text;
-		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">'.$langs->trans("AddThirdParty").' <span class="fa fa-plus-circle valignmiddle"></span></a>';
+		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddThirdParty").'</span><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
 		print '</td></tr>';
 	}
 
@@ -616,19 +655,8 @@ if ($action == 'create' && $user->rights->projet->creer)
 	// Description
 	print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
 	print '<td>';
-	print '<textarea name="description" wrap="soft" class="centpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST("description", 'none')).'</textarea>';
+	print '<textarea name="description" wrap="soft" class="centpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST("description", 'none'), 0, 1).'</textarea>';
 	print '</td></tr>';
-
-	// Bill time
-	if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_BILL_TIME_SPENT))
-	{
-		print '<tr><td>';
-		$htmltext = $langs->trans("ProjectBillTimeDescription");
-		print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
-		print '</td>';
-		print '<td><input type="checkbox" name="bill_time"'.(GETPOST('bill_time', 'alpha')!=''?' checked="checked"':'').'"></td>';
-		print '</tr>';
-	}
 
 	if ($conf->categorie->enabled) {
 		// Categories
@@ -769,6 +797,7 @@ elseif ($object->id > 0)
 		print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td>';
 		print '<td><input class="quatrevingtpercent" name="title" value="'.dol_escape_htmltag($object->title).'"></td></tr>';
 
+
 		// Status
 		print '<tr><td class="fieldrequired">'.$langs->trans("Status").'</td><td>';
 		print '<select class="flat" name="status">';
@@ -777,6 +806,34 @@ elseif ($object->id > 0)
 			print '<option value="'.$key.'"'.((GETPOSTISSET('status')?GETPOST('status'):$object->statut) == $key ? ' selected="selected"':'').'>'.$langs->trans($val).'</option>';
 		}
 		print '</select>';
+		print '</td></tr>';
+
+		// Usage
+		print '<tr><td class="tdtop">';
+		print $langs->trans("Usage");
+		print '</td>';
+		print '<td>';
+		if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
+		{
+			print '<input type="checkbox" name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha')!=''?' checked="checked"':'') : ($object->usage_opportunity ? ' checked="checked"' : '')).'"> ';
+			$htmltext = $langs->trans("ProjectFollowOpportunity");
+			print $form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext);
+			print '<br>';
+		}
+		if (empty($conf->global->PROJECT_HIDE_TASKS))
+		{
+			print '<input type="checkbox" name="usage_task"'.(GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha')!=''?' checked="checked"':'') : ($object->usage_task ? ' checked="checked"' : '')).'"> ';
+			$htmltext = $langs->trans("ProjectFollowTasks");
+			print $form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext);
+			print '<br>';
+		}
+		if (! empty($conf->global->PROJECT_BILL_TIME_SPENT))
+		{
+			print '<input type="checkbox" name="usage_bill_time"'.(GETPOSTISSET('usage_bill_time') ? (GETPOST('usage_bill_time', 'alpha')!=''?' checked="checked"':'') : ($object->usage_bill_time ? ' checked="checked"' : '')).'"> ';
+			$htmltext = $langs->trans("ProjectBillTimeDescription");
+			print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
+			print '<br>';
+		}
 		print '</td></tr>';
 
 		// Thirdparty
@@ -857,17 +914,6 @@ elseif ($object->id > 0)
 		print '<textarea name="description" wrap="soft" class="centpercent" rows="'.ROWS_3.'">'.$object->description.'</textarea>';
 		print '</td></tr>';
 
-		// Bill time
-		if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_BILL_TIME_SPENT))
-		{
-			print '<tr><td>';
-			$htmltext = $langs->trans("ProjectBillTimeDescription");
-			print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
-			print '</td>';
-			print '<td><input type="checkbox" name="bill_time"'.((GETPOSTISSET('bill_time')?GETPOST('bill_time', 'alpha'):$object->bill_time) ? ' checked="checked"' : '').'"></td>';
-			print '</tr>';
-		}
-
 		// Tags-Categories
 		if ($conf->categorie->enabled)
 		{
@@ -928,13 +974,41 @@ elseif ($object->id > 0)
 
 		print '<table class="border tableforfield" width="100%">';
 
+		// Usage
+		print '<tr><td class="tdtop">';
+		print $langs->trans("Usage");
+		print '</td>';
+		print '<td>';
+		if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
+		{
+			print '<input type="checkbox" disabled name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha')!=''?' checked="checked"':'') : ($object->usage_opportunity ? ' checked="checked"' : '')).'"> ';
+			$htmltext = $langs->trans("ProjectFollowOpportunity");
+			print $form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext);
+			print '<br>';
+		}
+		if (empty($conf->global->PROJECT_HIDE_TASKS))
+		{
+			print '<input type="checkbox" disabled name="usage_task"'.(GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha')!=''?' checked="checked"':'') : ($object->usage_task ? ' checked="checked"' : '')).'"> ';
+			$htmltext = $langs->trans("ProjectFollowTasks");
+			print $form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext);
+			print '<br>';
+		}
+		if (! empty($conf->global->PROJECT_BILL_TIME_SPENT))
+		{
+			print '<input type="checkbox" disabled name="usage_bill_time"'.(GETPOSTISSET('usage_bill_time') ? (GETPOST('usage_bill_time', 'alpha')!=''?' checked="checked"':'') : ($object->usage_bill_time ? ' checked="checked"' : '')).'"> ';
+			$htmltext = $langs->trans("ProjectBillTimeDescription");
+			print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
+			print '<br>';
+		}
+		print '</td></tr>';
+
 		// Visibility
 		print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
 		if ($object->public) print $langs->trans('SharedProject');
 		else print $langs->trans('PrivateProject');
 		print '</td></tr>';
 
-		if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
+		if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES) && ! empty($object->usage_opportunity))
 		{
 			// Opportunity status
 			print '<tr><td>'.$langs->trans("OpportunityStatus").'</td><td>';
@@ -989,17 +1063,6 @@ elseif ($object->id > 0)
 		print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
 		print nl2br($object->description);
 		print '</td></tr>';
-
-		// Bill time
-		if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_BILL_TIME_SPENT))
-		{
-			print '<tr><td>';
-			$htmltext = $langs->trans("ProjectBillTimeDescription");
-			print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
-			print '</td>';
-			print '<td>'.yn($object->bill_time).'</td>';
-			print '</tr>';
-		}
 
 		// Categories
 		if($conf->categorie->enabled) {
@@ -1118,7 +1181,7 @@ elseif ($object->id > 0)
 				print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&amp;action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendMail').'</a></div>';
 			}
 
-		// Modify
+			// Modify
 			if ($object->statut != 2 && $user->rights->projet->creer)
 			{
 				if ($userWrite > 0)
@@ -1295,6 +1358,7 @@ elseif ($object->id > 0)
 	$modelmail='project';
 	$defaulttopic='SendProjectRef';
 	$diroutput = $conf->projet->dir_output;
+	$autocopy='MAIN_MAIL_AUTOCOPY_PROJECT_TO';		// used to know the automatic BCC to add
 	$trackid = 'proj'.$object->id;
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';

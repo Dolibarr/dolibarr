@@ -179,7 +179,7 @@ if (empty($reshook))
         $object->socid			= GETPOST("socid", 'int');
         $object->lastname		= GETPOST("lastname", 'alpha');
         $object->firstname		= GETPOST("firstname", 'alpha');
-        $object->civility_id	= GETPOST("civility_id", 'alpha');
+		$object->civility_id	= GETPOST("civility_id", 'alpha');
         $object->poste			= GETPOST("poste", 'alpha');
         $object->address		= GETPOST("address", 'alpha');
         $object->zip			= GETPOST("zipcode", 'alpha');
@@ -356,7 +356,6 @@ if (empty($reshook))
             $object->zip			= GETPOST("zipcode", 'alpha');
             $object->town			= GETPOST("town", 'alpha');
             $object->state_id   	= GETPOST("state_id", 'int');
-            $object->fk_departement	= GETPOST("state_id", 'int');	// For backward compatibility
             $object->country_id		= GETPOST("country_id", 'int');
 
             $object->email			= GETPOST("email", 'alpha');
@@ -377,21 +376,24 @@ if (empty($reshook))
 			$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
 			if ($ret < 0) $error++;
 
-			$result = $object->update($contactid, $user);
-
-			if ($result > 0) {
-				// Categories association
-				$categories = GETPOST('contcats', 'array');
-				$object->setCategories($categories);
-
-				$object->old_lastname='';
-				$object->old_firstname='';
-				$action = 'view';
-			}
-			else
+			if (! $error)
 			{
-				setEventMessages($object->error, $object->errors, 'errors');
-				$action = 'edit';
+                $result = $object->update($contactid, $user);
+
+    			if ($result > 0) {
+    				// Categories association
+    				$categories = GETPOST('contcats', 'array');
+    				$object->setCategories($categories);
+
+    				$object->old_lastname='';
+    				$object->old_firstname='';
+    				$action = 'view';
+    			}
+    			else
+    			{
+    				setEventMessages($object->error, $object->errors, 'errors');
+    				$action = 'edit';
+    			}
 			}
         }
 
@@ -506,7 +508,7 @@ else
             $linkback='';
             print load_fiche_titre($title, $linkback, 'title_companies.png');
 
-            // Affiche les erreurs
+            // Show errors
             dol_htmloutput_errors(is_numeric($error)?'':$error, $errors);
 
             if ($conf->use_javascript_ajax)
@@ -571,7 +573,7 @@ else
 
             // Civility
             print '<tr><td><label for="civility_id">'.$langs->trans("UserTitle").'</label></td><td colspan="3">';
-            print $formcompany->select_civility(GETPOST("civility_id", 'alpha')?GETPOST("civility_id", 'alpha'):$object->civility_id);
+            print $formcompany->select_civility(GETPOST("civility", 'alpha')?GETPOST("civility", 'alpha'):$object->civility_code);
             print '</td></tr>';
 
             print '<tr><td><label for="title">'.$langs->trans("PostOrFunction").'</label></td>';
@@ -801,8 +803,8 @@ else
 			$objsoc = new Societe($db);
 			$objsoc->fetch($object->socid);
 
-            // Affiche les erreurs
-            dol_htmloutput_errors($error, $errors);
+			// Show errors
+			dol_htmloutput_errors(is_numeric($error)?'':$error, $errors);
 
             if ($conf->use_javascript_ajax)
             {
@@ -870,7 +872,7 @@ else
 
             // Civility
             print '<tr><td><label for="civility_id">'.$langs->trans("UserTitle").'</label></td><td colspan="3">';
-            print $formcompany->select_civility(isset($_POST["civility_id"])?GETPOST("civility_id"):$object->civility_id);
+            print $formcompany->select_civility(isset($_POST["civility"])?GETPOST("civility"):$object->civility_code);
             print '</td></tr>';
 
             print '<tr><td><label for="title">'.$langs->trans("PostOrFunction").'</label></td>';
@@ -1123,11 +1125,10 @@ else
     {
         $objsoc = new Societe($db);
 
-        /*
-         * Fiche en mode visualisation
-         */
+        // View mode
 
-        dol_htmloutput_errors($error, $errors);
+        // Show errors
+        dol_htmloutput_errors(is_numeric($error)?'':$error, $errors);
 
         dol_fiche_head($head, 'card', $title, -1, 'contact');
 

@@ -47,10 +47,33 @@ class Subscription extends CommonObject
      */
     public $picto='payment';
 
-    public $datec;				// Date creation
-    public $datem;				// Date modification
-    public $dateh;				// Subscription start date (date subscription)
-    public $datef;				// Subscription end date
+    /**
+     * Date creation record (datec)
+     *
+     * @var integer
+     */
+    public $datec;
+
+    /**
+     * Date modification record (tms)
+     *
+     * @var integer
+     */
+    public $datem;
+
+    /**
+     * Subscription start date (date subscription)
+     *
+     * @var integer
+     */
+    public $dateh;
+
+    /**
+     * Subscription end date
+     *
+     * @var integer
+     */
+    public $datef;
 
     /**
      * @var int ID
@@ -105,10 +128,11 @@ class Subscription extends CommonObject
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."subscription (fk_adherent, fk_type, datec, dateadh, datef, subscription, note)";
 
-        if ($this->fk_type == null) {
-            require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
-            $member=new Adherent($this->db);
-            $result=$member->fetch($this->fk_adherent);
+        require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+        $member=new Adherent($this->db);
+        $result=$member->fetch($this->fk_adherent);
+
+        if ($this->fk_type == null) {	// If type not defined, we use the type of member
             $type=$member->typeid;
         } else {
             $type=$this->fk_type;
@@ -128,11 +152,13 @@ class Subscription extends CommonObject
         if (! $error)
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . $this->table_element);
+            $this->fk_type = $type;
         }
 
         if (! $error && ! $notrigger)
         {
-            // Call triggers
+        	$this->context = array('member'=>$member);
+        	// Call triggers
             $result=$this->call_trigger('MEMBER_SUBSCRIPTION_CREATE', $user);
             if ($result < 0) { $error++; }
             // End call triggers
@@ -234,7 +260,8 @@ class Subscription extends CommonObject
             $result=$member->update_end_date($user);
 
             if (! $error && ! $notrigger) {
-                // Call triggers
+            	$this->context = array('member'=>$member);
+            	// Call triggers
                 $result=$this->call_trigger('MEMBER_SUBSCRIPTION_MODIFY', $user);
                 if ($result < 0) { $error++; } //Do also here what you must do to rollback action if trigger fail
                 // End call triggers

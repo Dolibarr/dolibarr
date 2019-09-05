@@ -107,7 +107,7 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Modules").'</td>';
 print '<td>'.$langs->trans("Version").'</td>';
-print '<td align="center">'.$langs->trans("IdModule").'</td>';
+print '<td class="center">'.$langs->trans("IdModule").'</td>';
 print '<td>'.$langs->trans("IdPermissions").'</td>';
 print '</tr>';
 $var=false;
@@ -134,7 +134,7 @@ foreach($sortorder as $numero=>$name)
 	// Version
 	print '<td>'.$modules[$numero]->getVersion().'</td>';
 	// Id
-	print '<td align="center">'.$numero.'</td>';
+	print '<td class="center">'.$numero.'</td>';
 	// Permissions
 	if ($modules[$numero]->rights)
 	{

@@ -171,7 +171,7 @@ class Translate
 	 * 	@param	int		$forcelangdir		To force a different lang directory
 	 *  @param  int     $loadfromfileonly   1=Do not load overwritten translation from file or old conf.
 	 *	@return	int							<0 if KO, 0 if already loaded or loading not required, >0 if OK
-	 *  @see loadLangs
+	 *  @see loadLangs()
 	 */
 	public function load($domain, $alt = 0, $stopafterdirection = 0, $forcelangdir = '', $loadfromfileonly = 0)
 	{
@@ -196,6 +196,7 @@ class Translate
 		$modulename = '';
 
 		// Search if a module directory name is provided into lang file name
+		$regs=array();
 		if (preg_match('/^([^@]+)@([^@]+)$/i', $domain, $regs))
 		{
 			$newdomain = $regs[1];
@@ -223,7 +224,7 @@ class Translate
 			return -1;
 		}
 
-		foreach($this->dir as $keydir => $searchdir)
+		foreach($this->dir as $searchdir)
 		{
 			// Directory of translation files
 			$file_lang = $searchdir.($modulename?'/'.$modulename:'')."/langs/".$langofdir."/".$newdomain.".lang";
@@ -466,7 +467,9 @@ class Translate
 		if (! $found && ! empty($conf->global->MAIN_ENABLE_OVERWRITE_TRANSLATION))
 		{
     		// Overwrite translation with database read
-            $sql="SELECT transkey, transvalue FROM ".MAIN_DB_PREFIX."overwrite_trans where lang='".$db->escape($this->defaultlang)."'";
+            $sql ="SELECT transkey, transvalue FROM ".MAIN_DB_PREFIX."overwrite_trans where lang='".$db->escape($this->defaultlang)."' OR lang IS NULL";
+            $sql.=" AND entity IN (0, ".getEntity('overwrite_trans').")";
+            $sql.=$db->order("lang", "DESC");
 		    $resql=$db->query($sql);
 
 		    if ($resql)
@@ -831,12 +834,12 @@ class Translate
      *      same number (this module is not provided by default as it use non GPL source code).
 	 *
 	 *		@param	int		$number		Number to encode in full text
-	 * 		@param	int		$isamount	1=It's an amount, 0=it's just a number
+     *      @param  string	$isamount	''=it's just a number, '1'=It's an amount (default currency), 'currencycode'=It's an amount (foreign currency)
 	 *      @return string				Label translated in UTF8 (but without entities)
 	 * 									10 if setDefaultLang was en_US => ten
 	 * 									123 if setDefaultLang was fr_FR => cent vingt trois
 	 */
-    public function getLabelFromNumber($number, $isamount = 0)
+    public function getLabelFromNumber($number, $isamount = '')
     {
 		global $conf;
 
@@ -877,7 +880,7 @@ class Translate
 	 *      @param	string	$keyforselect	Use another value than the translation key for the where into select
 	 *      @param  int		$filteronentity	Use a filter on entity
 	 *      @return string					Label in UTF8 (but without entities)
-	 *      @see dol_getIdFromCode
+	 *      @see dol_getIdFromCode()
 	 */
     public function getLabelFromKey($db, $key, $tablename, $fieldkey, $fieldlabel, $keyforselect = '', $filteronentity = 0)
     {
@@ -944,7 +947,7 @@ class Translate
 	 *  If mb_convert_encoding is not available, return currency code.
 	 *
 	 *  @param	string	$currency_code		Currency code
-	 *  @param	integer	$forceloadall		1=Force to load all currencies into cache. We know we need to use all of them. By default read and cache only required currency.
+	 *  @param	integer	$forceloadall		1=Force to load all currencies into cache. We know we need to use all of them. By default read and cache only the requested currency.
 	 *  @return	string						Currency symbol encoded into UTF8
 	 */
     public function getCurrencySymbol($currency_code, $forceloadall = 0)

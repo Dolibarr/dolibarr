@@ -7,7 +7,7 @@
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2014 Juanjo Menent               <jmenent@2byte.es>
  * Copyright (C) 2013      Alexandre Spangaro          <aspangaro@open-dsi.fr>
- * Copyright (C) 2015-2019  Frédéric France            <frederic.france@netlogic.fr>
+ * Copyright (C) 2015-2019 Frédéric France             <frederic.france@netlogic.fr>
  * Copyright (C) 2015      Marcos García               <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -110,7 +110,7 @@ if (empty($reshook))
 		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 	}
 
-	// conditions de reglement
+	// terms of the settlement
 	if ($action == 'setconditions' && $user->rights->societe->creer)
 	{
 		$object->fetch($id);
@@ -245,7 +245,7 @@ if ($object->id > 0)
 	print '<div class="fichecenter"><div class="fichehalfleft">';
 
     print '<div class="underbanner clearboth"></div>';
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent tableforfield">';
 
 	// Prospect/Customer
 	print '<tr><td class="titlefield">'.$langs->trans('ProspectCustomer').'</td><td>';
@@ -317,7 +317,7 @@ if ($object->id > 0)
 	print $object->tva_intra;
 	print '</td></tr>';
 
-	// Conditions de reglement par defaut
+	// default terms of the settlement
 	$langs->load('bills');
 	print '<tr><td>';
 	print '<table width="100%" class="nobordernopadding"><tr><td>';
@@ -386,7 +386,7 @@ if ($object->id > 0)
     	print '<tr><td class="nowrap">';
     	print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
     	print $langs->trans("CustomerRelativeDiscountShort");
-    	print '<td><td align="right">';
+    	print '<td><td class="right">';
     	if ($user->rights->societe->creer && !$user->societe_id > 0)
     	{
     		print '<a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$object->id.'">'.img_edit($langs->trans("Modify")).'</a>';
@@ -400,7 +400,7 @@ if ($object->id > 0)
     	print '<table width="100%" class="nobordernopadding">';
     	print '<tr><td class="nowrap">';
     	print $langs->trans("CustomerAbsoluteDiscountShort");
-    	print '<td><td align="right">';
+    	print '<td><td class="right">';
     	if ($user->rights->societe->creer && !$user->societe_id > 0)
     	{
     		print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?socid='.$object->id).'">'.img_edit($langs->trans("Modify")).'</a>';
@@ -534,7 +534,7 @@ if ($object->id > 0)
     	print '<br>';
 
     	print '<div class="underbanner clearboth"></div>';
-    	print '<table class="border" width="100%">';
+    	print '<table class="border centpercent tableforfield">';
 
 	    // Level of prospect
 	    print '<tr><td class="titlefield nowrap">';
@@ -694,7 +694,7 @@ if ($object->id > 0)
             if ($num > 0)
             {
             	print '<div class="div-table-responsive-no-min">';
-            	print '<table class="noborder" width="100%">';
+            	print '<table class="noborder centpercent lastrecordtable">';
 
                 print '<tr class="liste_titre">';
     			print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastPropals", ($num<=$MAXLIST?"":$MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/comm/propal/list.php?socid='.$object->id.'">'.$langs->trans("AllPropals").' <span class="badge">'.$num.'</span></a></td>';
@@ -779,7 +779,7 @@ if ($object->id > 0)
 				$db->free($resql2);
 
 				print '<div class="div-table-responsive-no-min">';
-				print '<table class="noborder" width="100%">';
+				print '<table class="noborder centpercent lastrecordtable">';
 
 				print '<tr class="liste_titre">';
 				print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastCustomerOrders", ($num<=$MAXLIST?"":$MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->id.'">'.$langs->trans("AllOrders").' <span class="badge">'.$num.'</span></a></td>';
@@ -855,7 +855,7 @@ if ($object->id > 0)
         	$num = $db->num_rows($resql);
             if ($num > 0) {
             	print '<div class="div-table-responsive-no-min">';
-            	print '<table class="noborder" width="100%">';
+            	print '<table class="noborder centpercent lastrecordtable">';
 
                 print '<tr class="liste_titre">';
                 print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastSendings", ($num<=$MAXLIST?"":$MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/expedition/list.php?socid='.$object->id.'">'.$langs->trans("AllSendings").' <span class="badge">'.$num.'</span></a></td>';
@@ -919,7 +919,7 @@ if ($object->id > 0)
 			if ($num >0)
 			{
 				print '<div class="div-table-responsive-no-min">';
-				print '<table class="noborder" width="100%">';
+				print '<table class="noborder centpercent lastrecordtable">';
 
 			    print '<tr class="liste_titre">';
 				print '<td colspan="6"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastContracts", ($num<=$MAXLIST?"":$MAXLIST)).'</td>';
@@ -989,7 +989,7 @@ if ($object->id > 0)
 			if ($num > 0)
 			{
 				print '<div class="div-table-responsive-no-min">';
-				print '<table class="noborder" width="100%">';
+				print '<table class="noborder centpercent lastrecordtable">';
 
 			    print '<tr class="liste_titre">';
 				print '<td colspan="3"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastInterventions", ($num<=$MAXLIST?"":$MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/fichinter/list.php?socid='.$object->id.'">'.$langs->trans("AllInterventions").' <span class="badge">'.$num.'</span></td>';
@@ -1062,7 +1062,7 @@ if ($object->id > 0)
 			if ($num > 0)
 			{
 				print '<div class="div-table-responsive-no-min">';
-				print '<table class="noborder" width="100%">';
+				print '<table class="noborder centpercent lastrecordtable">';
 
 				print '<tr class="liste_titre">';
 				print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LatestCustomerTemplateInvoices", ($num<=$MAXLIST?"":$MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$object->id.'">'.$langs->trans("AllCustomerTemplateInvoices").' <span class="badge">'.$num.'</span></a></td>';
@@ -1167,7 +1167,7 @@ if ($object->id > 0)
 			if ($num > 0)
 			{
 				print '<div class="div-table-responsive-no-min">';
-				print '<table class="noborder" width="100%">';
+				print '<table class="noborder centpercent lastrecordtable">';
 
 				print '<tr class="liste_titre">';
 				print '<td colspan="5"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastCustomersBills", ($num<=$MAXLIST?"":$MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$object->id.'">'.$langs->trans("AllBills").' <span class="badge">'.$num.'</span></a></td>';

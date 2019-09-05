@@ -161,7 +161,7 @@ class DoliDBMssql extends DoliDB
 	 *	@param		string	$name		name of database (not used for mysql, used for pgsql)
 	 *	@param		int		$port		Port of database server
 	 *	@return		false|resource|true	Database access handler
-	 *	@see		close
+	 *	@see		close()
 	 */
     public function connect($host, $login, $passwd, $name, $port = 0)
 	{
@@ -216,7 +216,7 @@ class DoliDBMssql extends DoliDB
      *  Close database connexion
      *
      *  @return     bool     True if disconnect successfull, false otherwise
-     *  @see        connect
+     *  @see        connect()
      */
     public function close()
     {
@@ -419,7 +419,11 @@ class DoliDBMssql extends DoliDB
 		}
 		//print "<!--".$query."-->";
 
-		if (! in_array($query, array('BEGIN','COMMIT','ROLLBACK'))) dol_syslog('sql='.$query, LOG_DEBUG);
+		if (! in_array($query, array('BEGIN','COMMIT','ROLLBACK')))
+		{
+			$SYSLOG_SQL_LIMIT = 10000;	// limit log to 10kb per line to limit DOS attacks
+			dol_syslog('sql='.substr($query, 0, $SYSLOG_SQL_LIMIT), LOG_DEBUG);
+		}
 
 		if (! $this->database_name)
 		{
@@ -511,7 +515,7 @@ class DoliDBMssql extends DoliDB
      *
      *	@param	resource	$resultset  Resulset of requests
      *	@return int		    			Nb of lines
-     *	@see    affected_rows
+     *	@see    affected_rows()
 	 */
     public function num_rows($resultset)
 	{
@@ -523,11 +527,11 @@ class DoliDBMssql extends DoliDB
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Renvoie le nombre de lignes dans le resultat d'une requete INSERT, DELETE ou UPDATE
+	 *	Return the number of lines in the result of a request INSERT, DELETE or UPDATE
 	 *
 	 *	@param	resource	$resultset   Curseur de la requete voulue
-	 *	@return int		    Nombre de lignes
-	 *	@see    num_rows
+	 *	@return int		    Number of lines
+	 *	@see    num_rows()
 	 */
     public function affected_rows($resultset)
 	{

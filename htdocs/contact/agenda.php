@@ -227,7 +227,7 @@ else
         print '<div class="underbanner clearboth"></div>';
 
         $object->info($id);
-        print dol_print_object_info($object, 1);
+        dol_print_object_info($object, 1);
 
         print '</div>';
 
@@ -261,9 +261,7 @@ else
     	{
     		if (! empty($user->rights->agenda->myactions->create) || ! empty($user->rights->agenda->allactions->create))
     		{
-    			$newcardbutton.='<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'"><span class="valignmiddle">'.$langs->trans("AddAction").'</span>';
-    			$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-    			$newcardbutton.= '</a>';
+                $newcardbutton.= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out);
     		}
     	}
 

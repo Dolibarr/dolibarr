@@ -50,14 +50,7 @@ print '<br>';
 print '<div class="center">';
 if (count($export->array_export_code))
 {
-	if ($user->rights->export->creer)
-	{
-		print '<a class="butActionNew" href="'.DOL_URL_ROOT.'/exports/export.php?leftmenu=export">'.$langs->trans("NewExport").'<span class="fa fa-plus-circle valignmiddle"></span></a>';
-	}
-	else
-	{
-		print '<a class="butActionNewRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("NewExport").'<span class="fa fa-plus-circle valignmiddle"></span></a>';
-	}
+    print dolGetButtonTitle($langs->trans('NewExport'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/exports/export.php?leftmenu=export', '', $user->rights->export->creer);
 }
 print '</div>';
 print '<br>';
@@ -71,7 +64,7 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td colspan="2">'.$langs->trans("AvailableFormats").'</td>';
 print '<td>'.$langs->trans("LibraryShort").'</td>';
-print '<td align="right">'.$langs->trans("LibraryVersion").'</td>';
+print '<td class="right">'.$langs->trans("LibraryVersion").'</td>';
 print '</tr>';
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/export/modules_export.php';
@@ -91,7 +84,7 @@ foreach($liste as $key => $val)
 	$label=$liste[$key];
 	print '<td>'.$form->textwithpicto($label, $text).'</td>';
 	print '<td>'.$model->getLibLabelForKey($key).'</td>';
-	print '<td class="nowrap" align="right">'.$model->getLibVersionForKey($key).'</td>';
+	print '<td class="nowrap right">'.$model->getLibVersionForKey($key).'</td>';
 	print '</tr>';
 }
 

@@ -749,7 +749,6 @@ class Account extends CommonObject
 		$sql.= ",fk_pays = ".$this->country_id;
 
 		$sql.= " WHERE rowid = ".$this->id;
-		$sql.= " AND entity = ".$conf->entity;
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -1225,6 +1224,7 @@ class Account extends CommonObject
 			$response = new WorkboardResponse();
 			$response->warning_delay=$conf->bank->rappro->warning_delay/60/60/24;
 			$response->label=$langs->trans("TransactionsToConciliate");
+			$response->labelShort = $langs->trans("TransactionsToConciliateShort");
 			$response->url=DOL_URL_ROOT.'/compta/bank/list.php?leftmenu=bank&amp;mainmenu=bank';
 			$response->img=img_object('', "payment");
 
@@ -1276,7 +1276,6 @@ class Account extends CommonObject
 				$this->nb["banklines"]=$obj->nb;
 			}
 			$this->db->free($resql);
-			return 1;
 		}
 		else
 		{
@@ -1546,8 +1545,8 @@ class Account extends CommonObject
 	 * Some countries show less or more bank account properties to the user
 	 *
 	 * @param  int     $includeibanbic         1=Return also key for IBAN and BIC
-	 * @return array
-	 * @see useDetailedBBAN
+	 * @return array                           Array of fields to show
+	 * @see useDetailedBBAN()
 	 */
 	public function getFieldsToShow($includeibanbic = 0)
 	{
@@ -1693,13 +1692,27 @@ class AccountLine extends CommonObject
      */
     public $ref;
 
-	public $datec;
+	/**
+     * Date creation record (datec)
+     *
+     * @var integer
+     */
+    public $datec;
+
+    /**
+     * Date (dateo)
+     *
+     * @var integer
+     */
 	public $dateo;
 
 	/**
-	 * Value date
-	 */
+     * Date value (datev)
+     *
+     * @var integer
+     */
 	public $datev;
+
 	public $amount;
 
     /**
@@ -2263,7 +2276,7 @@ class AccountLine extends CommonObject
 
 		$result='';
 		$label=$langs->trans("ShowTransaction").': '.$this->rowid;
-		$linkstart = '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$this->rowid.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		$linkstart = '<a href="'.DOL_URL_ROOT.'/compta/bank/line.php?rowid='.$this->rowid.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend='</a>';
 
 		$result .= $linkstart;

@@ -1,8 +1,8 @@
 # Dolibarr language file - Source file is en_US - loan
-ModuleBuilderDesc=Cet outil ne doit être utilisé que par des utilisateurs expérimentés ou des développeurs. Il vous fournit des utilitaires pour construire ou éditer votre propre module. <br> La documentation relative au <a href="%s" target="_blank"> développement manuel alternatif est ici </a>.
+ModuleBuilderDesc=Cet outil ne doit être utilisé que par des utilisateurs expérimentés ou des développeurs. Il vous fournit des utilitaires pour construire ou éditer votre propre module. La documentation relative au <a href="%s" target="_blank"> développement manuel est ici </a>.
 EnterNameOfModuleDesc=Saisissez le nom du module/application à créer, sans espaces. Utilisez les majuscules pour identifier les mots (par exemple : MonModule, BoutiqueECommerce,...)
 EnterNameOfObjectDesc=Entrez le nom de l'objet à créer sans espaces. Utilisez les majuscules pour séparer des mots (par exemple: MyObject, Student, Teacher ...). Le fichier de classe CRUD, mais aussi le fichier API, les pages à afficher / ajouter / éditer / supprimer des objets et des fichiers SQL seront générés.
-ModuleBuilderDesc2=Chemin ou les modules sont générés/modifiés (premier répertoire alternatif défini dans %s):<strong>%s</strong>
+ModuleBuilderDesc2=Chemin ou les modules sont générés/modifiés (premier répertoire pour les modules externes défini dans %s):<strong>%s</strong>
 ModuleBuilderDesc3=Modules générés/éditables trouvés : <strong>%s</strong> 
 ModuleBuilderDesc4=Un module est détecté comme 'modifiable' quand le fichier <strong> %s </strong> existe à la racine du répertoire du module
 NewModule=Nouveau module
@@ -10,7 +10,7 @@ NewObject=Nouvel objet
 ModuleKey=Clé du module
 ObjectKey=Clé de l'objet
 ModuleInitialized=Module initialisé
-FilesForObjectInitialized=Fichiers pour les nouvel objet '%s' initialisés
+FilesForObjectInitialized=Fichiers pour le nouvel objet '%s' initialisés
 FilesForObjectUpdated=Les fichiers pour l'objet '%s' ont été mis à jour ( fichiers .sql et .class.php )
 ModuleBuilderDescdescription=Entrez ici toutes les informations générales qui décrivent votre module.
 ModuleBuilderDescspecifications=Vous pouvez entrer ici une description détaillée des spécifications de votre module qui n'est pas déjà structurée dans d'autres onglets. Vous avez donc à portée de main toutes les règles à développer. Ce contenu textuel sera également inclus dans la documentation générée (voir dernier onglet). Vous pouvez utiliser le format Markdown, mais il est recommandé d'utiliser le format Asciidoc (comparaison entre .md et .asciidoc: http://asciidoctor.org/docs/user-manual/#compared-to-markdown).
@@ -21,13 +21,14 @@ ModuleBuilderDesctriggers=Vue des triggers ajoutés par votre module. Pour inclu
 ModuleBuilderDeschooks=Cet onglet est dédié aux points d'accroche.
 ModuleBuilderDescwidgets=Cet onglet est dédié à la gestion/construction de widgets.
 ModuleBuilderDescbuildpackage=Vous pouvez générer ici un fichier de package "prêt à distribuer" (un fichier .zip normalisé) de votre module et un fichier de documentation "prêt à distribuer". Cliquez simplement sur le bouton pour créer le paquet ou le fichier de documentation.
-EnterNameOfModuleToDeleteDesc=Vous pouvez supprimer votre module. ATTENTION: Tous fichiers relatifs a ce module ET toutes bases de donnes seront supprimés!
-EnterNameOfObjectToDeleteDesc=Vous pouvez effacer un objet. ATTENTION : Tous les fichiers reliés à cet objet seront définitivement perdus !
+EnterNameOfModuleToDeleteDesc=Vous pouvez supprimer votre module. ATTENTION: Tous les fichiers relatifs a ce module (générés ou créés manuellement) ET toutes les données et documentation seront supprimés!
+EnterNameOfObjectToDeleteDesc=Vous pouvez effacer un objet. ATTENTION : Tous les fichiers (générés ou créés manuellement) en rapport avec cet objet seront définitivement effacés !
 DangerZone=Zone de danger
-BuildPackage=Générer package/documentation
+BuildPackage=Construire le package
+BuildPackageDesc=Vous pouvez générer un package zip de votre application afin d'être prêt à le distribuer sur n’importe quel Dolibarr. Vous pouvez également le distribuer ou le vendre sur une place de marché, comme <a href="https://www.dolistore.com">DoliStore.com</a> .
 BuildDocumentation=Générez la documentation
 ModuleIsNotActive=Le module n'est pas encore activé. Aller à %s pour l'activer ou cliquer ici :
-ModuleIsLive=Ce module a été activé. Tout changement sur lui pourrait casser une fonctionnalité actuellement activée.
+ModuleIsLive=Ce module a été activé. Tout changement dessus pourrait casser une fonctionnalité actuellement en ligne.
 DescriptionLong=Description longue
 EditorName=Nom de l'éditeur
 EditorUrl=URL de l'éditeur
@@ -40,13 +41,14 @@ PageForAgendaTab=Page PHP pour l'onglet événement
 PageForDocumentTab=Page PHP pour l'onglet document
 PageForNoteTab=Page PHP pour l'onglet note
 PathToModulePackage=Chemin du zip du package du module/application
-PathToModuleDocumentation=Chemin d'accès au fichier de documentation du module
+PathToModuleDocumentation=Chemin d'accès au fichier de documentation du module (%s)
 SpaceOrSpecialCharAreNotAllowed=Les espaces et les caractères spéciaux ne sont pas autorisés.
 FileNotYetGenerated=Fichier non encore généré
-RegenerateClassAndSql=Effacer et générer à nouveau les fichiers de classe et SQL 
+RegenerateClassAndSql=Forcer la mise à jour des fichiers .class et .sql
 RegenerateMissingFiles=Générer les fichiers manquant
-SpecificationFile=Fichier de description des règles métiers
+SpecificationFile=Fichier de documentation
 LanguageFile=Fichier langue
+ObjectProperties=Propriétés de l'objet
 ConfirmDeleteProperty=Voulez-vous vraiment supprimer la propriété <strong> %s </strong> ? Cela modifiera le code de la classe PHP, mais supprimera également la colonne de la définition de la table de l'objet.
 NotNull=Non NULL
 NotNullDesc=1=Définir le champ en base à NOT NULL. -1=Autoriser les valeurs nulles et forcer la valeur à NULL si vide ('' ou 0).
@@ -62,9 +64,11 @@ ReadmeFile=Fichier Readme
 ChangeLog=Fichier ChangeLog
 TestClassFile=Fichier de tests unitaires PHP
 SqlFile=Fichier SQL
-PageForLib=Fichier pour les librairies PHP
+PageForLib=Fichier pour la librairie PHP
+PageForObjLib=Fichier pour la librairie PHP dédiée à l'objet
 SqlFileExtraFields=Fichier SQL pour les attributs complémentaires
 SqlFileKey=Fichier SQL pour les clés et index
+SqlFileKeyExtraFields=Fichier SQL pour les clés d'attributs complémentaires
 AnObjectAlreadyExistWithThisNameAndDiffCase=Un objet existe déjà avec ce nom dans une casse différente
 UseAsciiDocFormat=Vous pouvez utiliser le format Markdown, mais il est recommandé d'utiliser le format Asciidoc (Comparaison entre .md et .asciidoc: http://asciidoctor.org/docs/user-manual/#compared-to-markdown)
 IsAMeasure=Est une mesure
@@ -76,20 +80,22 @@ ListOfMenusEntries=Liste des entrées du menu
 ListOfPermissionsDefined=Liste des permissions
 SeeExamples=Voir des exemples ici
 EnabledDesc=Condition pour que ce champ soit actif (Exemples: 1 ou $conf->global->MYMODULE_MYOPTION)
-VisibleDesc=Le champ est-il visible ? (Exemples: 0 = Jamais visible, 1 = Visible sur les listes et formulaires de création/mise à jour/visualisation, 2 = Visible uniquement sur la liste, 3 = Visible uniquement sur le formulaire de création/mise à jour/affichage. Utiliser une valeur négative signifie que le champ n'est pas affiché par défaut sur la liste mais peut être sélectionné pour l'affichage)
+VisibleDesc=Le champ est-il visible ? (Exemples: 0 = Jamais visible, 1 = Visible sur les listes et formulaires de création/mise à jour/visualisation, 2 = Visible uniquement sur la liste, 3 = Visible uniquement sur le formulaire de création/mise à jour/affichage (pas les listes), 4=Visible sur les liste et formulaire de de mise à jour et affichage uniquement (pas en création). Utiliser une valeur négative signifie que le champ n'est pas affiché par défaut sur la liste mais peut être sélectionné pour l'affichage). Il peut s'agir d'une expression, par exemple : preg_match('/public/', $_SERVER['PHP_SELF'])?0:1
 IsAMeasureDesc=Peut-on cumuler la valeur du champ pour obtenir un total dans les listes ? (Exemples: 1 ou 0)
 SearchAllDesc=Le champ doit-il être utilisé pour effectuer une recherche à partir de l'outil de recherche rapide ? (Exemples: 1 ou 0)
 SpecDefDesc=Entrez ici toute la documentation que vous souhaitez joindre au module et qui n'a pas encore été définis dans d'autres onglets. Vous pouvez utiliser .md ou, mieux, la syntaxe enrichie .asciidoc.
 LanguageDefDesc=Entrez dans ces fichiers, toutes les clés et la traduction pour chaque fichier de langue.
-MenusDefDesc=Définissez ici les menus fournis par votre module (une fois définis, ils sont visibles dans l'éditeur de menu %s)
-PermissionsDefDesc=Définissez ici les nouvelles permissions fournies par votre module (une fois définies, elles sont visibles dans la configuration des permissions %s)
+MenusDefDesc=Définissez ici les menus fournis par votre module
+PermissionsDefDesc=Définissez ici les nouvelles permissions fournies par votre module
+MenusDefDescTooltip=Les menus fournis par votre module / application sont définis dans le tableau <strong>$this->menus</strong> dans le fichier descripteur de module. Vous pouvez modifier manuellement ce fichier ou utiliser l'éditeur intégré. <br><br> Remarque: une fois définis (et les modules réactivés), les menus sont également visibles dans l'éditeur de menus mis à la disposition des utilisateurs administrateurs sur %s.
+PermissionsDefDescTooltip=Les autorisations fournies par votre module / application sont définies dans le tableau <strong>$this->rights</strong> dans le fichier descripteur de module. Vous pouvez modifier manuellement ce fichier ou utiliser l'éditeur intégré. <br><br> Remarque: une fois définies (et le module réactivé), les autorisations sont visibles dans la configuration par défaut des autorisations %s.
 HooksDefDesc=Définissez dans la propriété <b> module_parts ['hooks'] </b>, dans le descripteur de module, le contexte des hooks à gérer (la liste des contextes peut être trouvée par une recherche sur '<b> initHooks (</b>' dans le code du noyau). <br> Editez le fichier hook pour ajouter le code de vos fonctions hookées (les fonctions hookables peuvent être trouvées par une recherche sur '<b> executeHooks </b>' dans le code core).
 TriggerDefDesc=Définissez dans le fichier trigger le code que vous souhaitez exécuter pour chaque événement métier exécuté.
 SeeIDsInUse=Voir les IDs utilisés dans votre installation
 SeeReservedIDsRangeHere=Voir la plage des ID réservés
 ToolkitForDevelopers=Boîte à outils pour développeurs Dolibarr
 TryToUseTheModuleBuilder=Si vous connaissez SQL et PHP, vous pouvez utiliser l'assistant de création de module natif. <br> Activez le module <strong> %s </strong> et utilisez l'assistant en cliquant sur la <span class = "fa fa-bug">. </span> dans le menu en haut à droite. <br> Avertissement: Il s'agit d'une fonctionnalité avancée pour les développeurs. Ne <b> pas </b> expérimenter sur votre site de production!
-SeeTopRightMenu=Voir<span class="fa fa-bug"></span> à droite de votre barre de menu principal
+SeeTopRightMenu=Voir <span class="fa fa-bug"></span> à droite de votre barre de menu principal
 AddLanguageFile=Ajouter le fichier de langue
 YouCanUseTranslationKey=Vous pouvez utiliser ici une clé qui est la clé de traduction trouvée dans le fichier de langue (voir l'onglet "Langues")
 DropTableIfEmpty=(Supprimer la table si vide)
@@ -100,3 +106,14 @@ UseAboutPage=Désactiver la page "à propos de"
 UseDocFolder=Désactiver le dossier de la documentation
 UseSpecificReadme=Utiliser un fichier ReadMe spécifique
 RealPathOfModule=Chemin réel du dossier du module
+ContentCantBeEmpty=Le contenu du fichier ne peut pas être vide
+WidgetDesc=Vous pouvez générer et éditer ici les widgets qui seront intégrés à votre module.
+CLIDesc=Vous pouvez générer ici certains scripts de ligne de commande que vous souhaitez fournir avec votre module.
+CLIFile=Fichier CLI
+NoCLIFile=Aucun fichier CLI
+UseSpecificEditorName = Utiliser un nom d'éditeur spécifique
+UseSpecificEditorURL = Utiliser une URL d'éditeur spécifique
+UseSpecificFamily = Utiliser une famille spécifique
+UseSpecificAuthor = Utiliser un auteur spécifique
+UseSpecificVersion = Utiliser une version initiale spécifique
+ModuleMustBeEnabled=Le module / application doit être activé d'abord

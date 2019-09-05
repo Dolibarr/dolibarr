@@ -361,7 +361,7 @@ if ($action == 'add_export_model')
 	}
 }
 
-// Reload an predefined export model
+// Reload a predefined export model
 if ($step == 2 && $action == 'select_model')
 {
     $_SESSION["export_selected_fields"]=array();
@@ -448,13 +448,13 @@ if ($step == 1 || ! $datatoexport)
     print '<td>'.$langs->trans("ExportableDatas").'</td>';
     print '<td>&nbsp;</td>';
     print '</tr>';
-    $val=true;
-    if (count($objexport->array_export_code))
+
+    if (count($objexport->array_export_module))
     {
-        foreach ($objexport->array_export_code as $key => $value)
+    	$sortedarrayofmodules = dol_sort_array($objexport->array_export_module, 'module_position', 'asc', 0, 0, 1);
+    	foreach ($sortedarrayofmodules as $key => $value)
         {
-            $val=!$val;
-            print '<tr '.$bc[$val].'><td nospan="nospan">';
+            print '<tr class="oddeven"><td nospan="nospan">';
 	        //print img_object($objexport->array_export_module[$key]->getName(),$export->array_export_module[$key]->picto).' ';
             print $objexport->array_export_module[$key]->getName();
             print '</td><td>';
@@ -463,10 +463,10 @@ if ($step == 1 || ! $datatoexport)
             //print $value.'-'.$icon.'-'.$label."<br>";
 			print img_object($objexport->array_export_module[$key]->getName(), $icon).' ';
             print $label;
-            print '</td><td align="right">';
+            print '</td><td class="right">';
             if ($objexport->array_export_perms[$key])
             {
-            	print '<a href="'.DOL_URL_ROOT.'/exports/export.php?step=2&datatoexport='.$objexport->array_export_code[$key].'">'.img_picto($langs->trans("NewExport"), 'filenew').'</a>';
+            	print '<a href="'.DOL_URL_ROOT.'/exports/export.php?step=2&module_position='.$objexport->array_export_module[$key]->module_position.'&datatoexport='.$objexport->array_export_code[$key].'">'.img_picto($langs->trans("NewExport"), 'filenew').'</a>';
             }
             else
             {
@@ -477,7 +477,7 @@ if ($step == 1 || ! $datatoexport)
     }
     else
     {
-        print '<tr><td '.$bc[false].' colspan="3">'.$langs->trans("NoExportableData").'</td></tr>';
+        print '<tr><td class="oddeven" colspan="3">'.$langs->trans("NoExportableData").'</td></tr>';
     }
     print '</table>';
     print '</div>';
@@ -623,7 +623,7 @@ if ($step == 2 && $datatoexport)
         {
             // Selected fields
             print '<td>&nbsp;</td>';
-            print '<td align="center"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.$datatoexport.'&action=unselectfield&field='.$code.'">'.img_left('default', 0, 'style="max-width: 20px"').'</a></td>';
+            print '<td class="center"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.$datatoexport.'&action=unselectfield&field='.$code.'">'.img_left('default', 0, 'style="max-width: 20px"').'</a></td>';
             print '<td>';
             //print $text.'-'.$htmltext."<br>";
             print $form->textwithpicto($text, $htmltext);
@@ -638,7 +638,7 @@ if ($step == 2 && $datatoexport)
 			print $form->textwithpicto($text, $htmltext);
 			//print ' ('.$code.')';
             print '</td>';
-            print '<td align="center"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.$datatoexport.'&action=selectfield&field='.$code.'">'.img_right('default', 0, 'style="max-width: 20px"').'</a></td>';
+            print '<td class="center"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.$datatoexport.'&action=selectfield&field='.$code.'">'.img_right('default', 0, 'style="max-width: 20px"').'</a></td>';
             print '<td>&nbsp;</td>';
         }
 
@@ -751,7 +751,7 @@ if ($step == 3 && $datatoexport)
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Entities").'</td>';
 	//print '<td>'.$langs->trans("ExportableFields").'</td>';
-	//print '<td align="center"></td>';
+	//print '<td class="center"></td>';
 	print '<td>'.$langs->trans("ExportableFields").'</td>';
 	print '<td width="25%">'.$langs->trans("FilteredFieldsValues").'</td>';
 	print '</tr>';
@@ -955,7 +955,7 @@ if ($step == 4 && $datatoexport)
     print '<tr class="liste_titre">';
     print '<td>'.$langs->trans("Entities").'</td>';
     print '<td>'.$langs->trans("ExportedFields").'</td>';
-    print '<td align="right" colspan="2">'.$langs->trans("Position").'</td>';
+    print '<td class="right" colspan="2">'.$langs->trans("Position").'</td>';
     //print '<td>&nbsp;</td>';
     //print '<td>'.$langs->trans("FieldsTitle").'</td>';
     print '</tr>';
@@ -1007,9 +1007,9 @@ if ($step == 4 && $datatoexport)
 		//print ' ('.$code.')';
         print '</td>';
 
-        print '<td align="right" width="100">';
+        print '<td class="right" width="100">';
         print $value.' ';
-        print '</td><td align="center" width="20">';
+        print '</td><td class="center nowraponall" width="40">';
         if ($value < count($array_selected)) print '<a href="'.$_SERVER["PHP_SELF"].'?step='.$step.'&datatoexport='.$datatoexport.'&action=downfield&field='.$code.'">'.img_down().'</a>';
         if ($value > 1) print '<a href="'.$_SERVER["PHP_SELF"].'?step='.$step.'&datatoexport='.$datatoexport.'&action=upfield&field='.$code.'">'.img_up().'</a>';
         print '</td>';
@@ -1060,7 +1060,7 @@ if ($step == 4 && $datatoexport)
 		print '</tr>';
 
 		print '<tr class="oddeven">';
-		print '<td><input name="export_name" size="32" value=""></td><td align="right">';
+		print '<td><input name="export_name" size="32" value=""></td><td class="right">';
         print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
         print '</td></tr>';
 
@@ -1080,7 +1080,7 @@ if ($step == 4 && $datatoexport)
 				$obj = $db->fetch_object($resql);
 				print '<tr class="oddeven"><td>';
 				print $obj->label;
-				print '</td><td align="right">';
+				print '</td><td class="right">';
 				print '<a href="'.$_SERVER["PHP_SELF"].'?step='.$step.'&datatoexport='.$datatoexport.'&action=deleteprof&id='.$obj->rowid.'">';
 				print img_delete();
 				print '</a>';
@@ -1231,7 +1231,7 @@ if ($step == 5 && $datatoexport)
 	    $label=$listeall[$key];
 	    $htmltabloflibs.= $form->textwithpicto($label, $text).'</td>';
 	    $htmltabloflibs.= '<td>'.$objmodelexport->getLibLabelForKey($key).'</td>';
-	    $htmltabloflibs.= '<td align="right">'.$objmodelexport->getLibVersionForKey($key).'</td>';
+	    $htmltabloflibs.= '<td class="right">'.$objmodelexport->getLibVersionForKey($key).'</td>';
 	    $htmltabloflibs.= '</tr>'."\n";
     }
     $htmltabloflibs.= '</table>';

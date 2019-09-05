@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - stripe
 StripeSetup=Configuration module Stripe
-StripeDesc=Ce module offre des pages pour autoriser les paiements sur <a href="http://www.stripe.com" target="_blank">Stripe</a> par les clients. Elles peuvent êtres utilisées pour un paiement libre ou un paiement sur un objet particulier de Dolibarr ( facture, commande, ... )
+StripeDesc=Ce module offre des pages pour autoriser les paiements par carte sur <a href="http://www.stripe.com" target="_blank">Stripe</a> par les clients. Elles peuvent êtres utilisées pour un paiement libre ou un paiement sur un objet particulier de Dolibarr (facture, commande, ... )
 StripeOrCBDoPayment=Payez avec une carte bancaire ou Stripe
 FollowingUrlAreAvailableToMakePayments=Les URL suivantes sont disponibles pour permettre à un client de faire un paiement
 PaymentForm=Formulaire de paiement
@@ -12,7 +12,7 @@ YourEMail=Email de confirmation du paiement
 STRIPE_PAYONLINE_SENDEMAIL=Email à prévenir en cas de paiement (succès ou non)
 Creditor=Bénéficiaire
 PaymentCode=Code de paiement
-StripeDoPayment=Payer par carte bancaire (Stripe)
+StripeDoPayment=Payer avec Stripe
 YouWillBeRedirectedOnStripe=Vous allez être redirigé vers la page sécurisée de Stripe pour insérer les informations de votre carte de crédit
 Continue=Continuer
 ToOfferALinkForOnlinePayment=URL de paiement %s
@@ -40,13 +40,13 @@ STRIPE_LIVE_WEBHOOK_KEY=Clé live des Webhooks
 ONLINE_PAYMENT_WAREHOUSE=Stock à utiliser pour diminuer le stock lorsque le paiement en ligne est effectué <br> (TODO Quand l'option de réduction de stock est effectuée sur une action sur facture et que le paiement en ligne génère lui-même la facture?)
 StripeLiveEnabled=Mode live activé (sinon mode test/bac a sable)
 StripeImportPayment=Importer paiements Stripe
-ExampleOfTestCreditCard=Exemple de carte de crédit pour le test: %s (valide), %s (erreur CVC), %s (expiré), %s (paiement en échec)
+ExampleOfTestCreditCard=Exemple de carte de crédit pour le test: %s => valide, %s => erreur CVC, %s => expiré, %s => paiement en échec
 StripeGateways=Stripe gateways
 OAUTH_STRIPE_TEST_ID=Stripe Connect ID client (ca _...)
 OAUTH_STRIPE_LIVE_ID=Stripe Connect ID client (ca _...)
 BankAccountForBankTransfer=Compte bancaire pour les paiements de fonds
 StripeAccount=Compte Stripe
-StripeChargeList=Liste des paiements Stripe
+StripeChargeList=Liste des encaissements par Stripe
 StripeTransactionList=Liste des transactions Stripe
 StripeCustomerId=Identifiant client Stripe
 StripePaymentModes=Modes de paiement Stripe
@@ -62,3 +62,8 @@ CreateCustomerOnStripe=Créer client sur Stripe
 CreateCardOnStripe=Créer carte sur Stripe
 ShowInStripe=Afficher dans Stripe
 StripeUserAccountForActions=Compte d'utilisateur à utiliser pour certains e-mails de notification d'événements Stripe (Stripe payouts)
+StripePayoutList=Liste des versements par Stripe
+ToOfferALinkForTestWebhook=Lien pour la configuration de Stripe WebHook pour appeler l'IPN (mode test)
+ToOfferALinkForLiveWebhook=Lien pour la configuration de Stripe WebHook pour appeler l'IPN (mode actif)
+PaymentWillBeRecordedForNextPeriod=Le paiement sera enregistré pour la prochaine période.
+ClickHereToTryAgain=<a href="%s">Cliquez ici pour essayer à nouveau...</a>

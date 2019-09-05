@@ -207,7 +207,7 @@ else
 
 print load_fiche_titre($langs->trans("DefaultValues"), $enabledisablehtml, 'title_setup');
 
-print $langs->trans("DefaultValuesDesc")."<br>\n";
+print '<span class="opacitymedium">'.$langs->trans("DefaultValuesDesc")."</span><br>\n";
 print "<br>\n";
 
 if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
@@ -251,6 +251,7 @@ print '<tr class="liste_titre">';
 $texthelp=$langs->trans("PageUrlForDefaultValues");
 if ($mode == 'createform') $texthelp.=$langs->trans("PageUrlForDefaultValuesCreate", 'societe/card.php', 'societe/card.php?abc=val1&def=val2');
 else $texthelp.=$langs->trans("PageUrlForDefaultValuesList", 'societe/list.php', 'societe/list.php?abc=val1&def=val2');
+$texthelp.='<br><br>'.$langs->trans("AlsoDefaultValuesAreEffectiveForActionCreate");
 $texturl=$form->textwithpicto($langs->trans("Url"), $texthelp);
 print_liste_field_titre($texturl, $_SERVER["PHP_SELF"], 'page,param', '', $param, '', $sortfield, $sortorder);
 // Field

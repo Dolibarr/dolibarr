@@ -67,17 +67,17 @@ $actiondone=1;
 
 print '<h3>'.$langs->trans("Repair").'</h3>';
 
-print 'Option standard (0 or \'confirmed\') is '.(GETPOST('standard', 'alpha')?GETPOST('standard', 'alpha'):'0').'<br>'."\n";
-print 'Option restore_thirdparties_logos (0 or \'confirmed\') is '.(GETPOST('restore_thirdparties_logos', 'alpha')?GETPOST('restore_thirdparties_logos', 'alpha'):'0').'<br>'."\n";
-print 'Option clean_linked_elements (0 or \'confirmed\') is '.(GETPOST('clean_linked_elements', 'alpha')?GETPOST('clean_linked_elements', 'alpha'):'0').'<br>'."\n";
-print 'Option clean_menus (0 or \'test\' or \'confirmed\') is '.(GETPOST('clean_menus', 'alpha')?GETPOST('clean_menus', 'alpha'):'0').'<br>'."\n";
-print 'Option clean_orphelin_dir (0 or \'test\' or \'confirmed\') is '.(GETPOST('clean_orphelin_dir', 'alpha')?GETPOST('clean_orphelin_dir', 'alpha'):'0').'<br>'."\n";
-print 'Option clean_product_stock_batch (0 or \'test\' or \'confirmed\') is '.(GETPOST('clean_product_stock_batch', 'alpha')?GETPOST('clean_product_stock_batch', 'alpha'):'0').'<br>'."\n";
-print 'Option set_empty_time_spent_amount (0 or \'test\' or \'confirmed\') is '.(GETPOST('set_empty_time_spent_amount', 'alpha')?GETPOST('set_empty_time_spent_amount', 'alpha'):'0').'<br>'."\n";
-print 'Option rebuild_product_thumbs (0 or \'test\' or \'confirmed\') is '.(GETPOST('rebuild_product_thumbs', 'alpha')?GETPOST('rebuild_product_thumbs', 'alpha'):'0').'<br>'."\n";
-print 'Option force_disable_of_modules_not_found (0 or \'test\' or \'confirmed\') is '.(GETPOST('force_disable_of_modules_not_found', 'alpha')?GETPOST('force_disable_of_modules_not_found', 'alpha'):'0').'<br>'."\n";
-print 'Option clean_perm_table (0 or \'test\' or \'confirmed\') is '.(GETPOST('clean_perm_table', 'alpha')?GETPOST('clean_perm_table', 'alpha'):'0').'<br>'."\n";
-print 'Option force_utf8_on_tables, for mysql/mariadb only (0 or \'test\' or \'confirmed\') is '.(GETPOST('force_utf8_on_tables', 'alpha')?GETPOST('force_utf8_on_tables', 'alpha'):'0').'<br>'."\n";
+print 'Option standard (\'test\' or \'confirmed\') is '.(GETPOST('standard', 'alpha')?GETPOST('standard', 'alpha'):'undefined').'<br>'."\n";
+print 'Option restore_thirdparties_logos (\'test\' or \'confirmed\') is '.(GETPOST('restore_thirdparties_logos', 'alpha')?GETPOST('restore_thirdparties_logos', 'alpha'):'undefined').'<br>'."\n";
+print 'Option clean_linked_elements (\'test\' or \'confirmed\') is '.(GETPOST('clean_linked_elements', 'alpha')?GETPOST('clean_linked_elements', 'alpha'):'undefined').'<br>'."\n";
+print 'Option clean_menus (\'test\' or \'confirmed\') is '.(GETPOST('clean_menus', 'alpha')?GETPOST('clean_menus', 'alpha'):'undefined').'<br>'."\n";
+print 'Option clean_orphelin_dir (\'test\' or \'confirmed\') is '.(GETPOST('clean_orphelin_dir', 'alpha')?GETPOST('clean_orphelin_dir', 'alpha'):'undefined').'<br>'."\n";
+print 'Option clean_product_stock_batch (\'test\' or \'confirmed\') is '.(GETPOST('clean_product_stock_batch', 'alpha')?GETPOST('clean_product_stock_batch', 'alpha'):'undefined').'<br>'."\n";
+print 'Option set_empty_time_spent_amount (\'test\' or \'confirmed\') is '.(GETPOST('set_empty_time_spent_amount', 'alpha')?GETPOST('set_empty_time_spent_amount', 'alpha'):'undefined').'<br>'."\n";
+print 'Option rebuild_product_thumbs (\'test\' or \'confirmed\') is '.(GETPOST('rebuild_product_thumbs', 'alpha')?GETPOST('rebuild_product_thumbs', 'alpha'):'undefined').'<br>'."\n";
+print 'Option force_disable_of_modules_not_found (\'test\' or \'confirmed\') is '.(GETPOST('force_disable_of_modules_not_found', 'alpha')?GETPOST('force_disable_of_modules_not_found', 'alpha'):'undefined').'<br>'."\n";
+print 'Option clean_perm_table (\'test\' or \'confirmed\') is '.(GETPOST('clean_perm_table', 'alpha')?GETPOST('clean_perm_table', 'alpha'):'undefined').'<br>'."\n";
+print 'Option force_utf8_on_tables, for mysql/mariadb only (\'test\' or \'confirmed\') is '.(GETPOST('force_utf8_on_tables', 'alpha')?GETPOST('force_utf8_on_tables', 'alpha'):'undefined').'<br>'."\n";
 print '<br>';
 
 print '<table cellspacing="0" cellpadding="1" border="0" width="100%">';
@@ -113,13 +113,13 @@ $db=getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->
 if ($db->connected)
 {
     print '<tr><td class="nowrap">';
-    print $langs->trans("ServerConnection")." : $dolibarr_main_db_host</td><td align=\"right\">".$langs->trans("OK")."</td></tr>";
+    print $langs->trans("ServerConnection")." : $dolibarr_main_db_host</td><td class=\"right\">".$langs->trans("OK")."</td></tr>";
     dolibarr_install_syslog("repair: " . $langs->transnoentities("ServerConnection") . ": " . $dolibarr_main_db_host . $langs->transnoentities("OK"));
     $ok = 1;
 }
 else
 {
-    print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name)."</td><td align=\"right\">".$langs->transnoentities("Error")."</td></tr>";
+    print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name)."</td><td class=\"right\">".$langs->transnoentities("Error")."</td></tr>";
     dolibarr_install_syslog("repair: " . $langs->transnoentities("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name));
     $ok = 0;
 }
@@ -129,13 +129,13 @@ if ($ok)
     if($db->database_selected)
     {
         print '<tr><td class="nowrap">';
-        print $langs->trans("DatabaseConnection")." : ".$dolibarr_main_db_name."</td><td align=\"right\">".$langs->trans("OK")."</td></tr>";
+        print $langs->trans("DatabaseConnection")." : ".$dolibarr_main_db_name."</td><td class=\"right\">".$langs->trans("OK")."</td></tr>";
         dolibarr_install_syslog("repair: database connection successful: " . $dolibarr_main_db_name);
         $ok=1;
     }
     else
     {
-        print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name)."</td><td align=\"right\">".$langs->trans("Error")."</td></tr>";
+        print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name)."</td><td class=\"right\">".$langs->trans("Error")."</td></tr>";
         dolibarr_install_syslog("repair: " . $langs->transnoentities("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name));
         $ok=0;
     }
@@ -147,9 +147,9 @@ if ($ok)
     $version=$db->getVersion();
     $versionarray=$db->getVersionArray();
     print '<tr><td>'.$langs->trans("ServerVersion").'</td>';
-    print '<td align="right">'.$version.'</td></tr>';
+    print '<td class="right">'.$version.'</td></tr>';
     dolibarr_install_syslog("repair: " . $langs->transnoentities("ServerVersion") . ": " . $version);
-    //print '<td align="right">'.join('.',$versionarray).'</td></tr>';
+    //print '<td class="right">'.join('.',$versionarray).'</td></tr>';
 }
 
 $conf->setValues($db);
@@ -206,7 +206,7 @@ if ($ok && GETPOST('standard', 'alpha'))
     foreach($filelist as $file)
     {
         print '<tr><td class="nowrap">*** ';
-        print $langs->trans("Script").'</td><td align="right">'.$file.'</td></tr>';
+        print $langs->trans("Script").'</td><td class="right">'.$file.'</td></tr>';
 
         $name = substr($file, 0, dol_strlen($file) - 4);
 
@@ -302,14 +302,23 @@ if ($ok && GETPOST('standard', 'alpha'))
 	                );
 	                //var_dump($field_desc);exit;
 
-	                $result=$db->DDLAddField($tableextra, $code, $field_desc, "");
-	                if ($result < 0)
+	                $result = 0;
+	                if (GETPOST('standard', 'alpha') == 'confirmed')
 	                {
-	                    print "KO ".$db->lasterror."<br>\n";
+	                	$result=$db->DDLAddField($tableextra, $code, $field_desc, "");
+
+		                if ($result < 0)
+		                {
+	    	                print "KO ".$db->lasterror."<br>\n";
+	        	        }
+	            	    else
+	                	{
+	                    	print "OK<br>\n";
+		                }
 	                }
 	                else
 	                {
-	                    print "OK<br>\n";
+	                	print ' - Mode test, no column added.';
 	                }
 	            }
 	        }
@@ -324,7 +333,6 @@ if ($ok && GETPOST('standard', 'alpha'))
 }
 
 
-
 // clean_data_ecm_dir: Clean data into ecm_directories table
 if ($ok && GETPOST('standard', 'alpha'))
 {
@@ -332,10 +340,147 @@ if ($ok && GETPOST('standard', 'alpha'))
 }
 
 
+// clean declaration constants
+if ($ok && GETPOST('standard', 'alpha'))
+{
+	print '<tr><td colspan="2"><br>*** Clean module_parts entries of modules not enabled</td></tr>';
+
+	$sql ="SELECT name, entity, value";
+	$sql.=" FROM ".MAIN_DB_PREFIX."const as c";
+	$sql.=" WHERE name LIKE 'MAIN_MODULE_%_TPL' OR name LIKE 'MAIN_MODULE_%_CSS' OR name LIKE 'MAIN_MODULE_%_JS' OR name LIKE 'MAIN_MODULE_%_HOOKS'";
+	$sql.=" OR name LIKE 'MAIN_MODULE_%_TRIGGERS' OR name LIKE 'MAIN_MODULE_%_THEME' OR name LIKE 'MAIN_MODULE_%_SUBSTITUTIONS' OR name LIKE 'MAIN_MODULE_%_MODELS'";
+	$sql.=" OR name LIKE 'MAIN_MODULE_%_MENUS' OR name LIKE 'MAIN_MODULE_%_LOGIN' OR name LIKE 'MAIN_MODULE_%_BARCODE'";
+	$sql.=" ORDER BY name, entity";
+
+	$resql = $db->query($sql);
+	if ($resql)
+	{
+		$num = $db->num_rows($resql);
+
+		if ($num)
+		{
+			$db->begin();
+
+			$i = 0;
+			while ($i < $num)
+			{
+				$obj=$db->fetch_object($resql);
+
+				$reg = array();
+				if (preg_match('/MAIN_MODULE_(.*)_(.*)/i', $obj->name, $reg))
+				{
+					$name=$reg[1];
+					$type=$reg[2];
+
+					$sql2 ="SELECT COUNT(*) as nb";
+					$sql2.=" FROM ".MAIN_DB_PREFIX."const as c";
+					$sql2.=" WHERE name LIKE 'MAIN_MODULE_".$name."'";
+					$sql2.=" AND entity = ".$obj->entity;
+					$resql2 = $db->query($sql2);
+					if ($resql2)
+					{
+						$obj2 = $db->fetch_object($resql2);
+						if ($obj2 && $obj2->nb == 0)
+						{
+							// Module not found, so we canremove entry
+							$sqldelete = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = '".$db->escape($obj->name)."' AND entity = ".$obj->entity;
+
+							if (GETPOST('standard', 'alpha') == 'confirmed')
+							{
+								$db->query($sqldelete);
+
+								print '<tr><td>Widget '.$obj->name.' set in entity '.$obj->entity.' with value '.$obj->value.' -> Module not enabled in entity '.$obj->entity.', we delete record</td></tr>';
+							}
+							else
+							{
+								print '<tr><td>Widget '.$obj->name.' set in entity '.$obj->entity.' with value '.$obj->value.' -> Module not enabled in entity '.$obj->entity.', we should delete record (not done, mode test)</td></tr>';
+							}
+						}
+						else
+						{
+							//print '<tr><td>Constant '.$obj->name.' set in entity '.$obj->entity.' with value '.$obj->value.' -> Module found in entity '.$obj->entity.', we keep record</td></tr>';
+						}
+					}
+				}
+
+				$i++;
+			}
+
+			$db->commit();
+		}
+	}
+}
 
 
-/* From here, actions need a parameter */
+// clean box of not enabled modules
+if ($ok && GETPOST('standard', 'alpha'))
+{
+	print '<tr><td colspan="2"><br>*** Clean definition of boxes of modules not enabled</td></tr>';
 
+	$sql ="SELECT file, entity FROM ".MAIN_DB_PREFIX."boxes_def";
+	$sql.=" WHERE file like '%@%'";
+
+	$resql = $db->query($sql);
+	if ($resql)
+	{
+		$num = $db->num_rows($resql);
+
+		if ($num)
+		{
+			$db->begin();
+
+			$i = 0;
+			while ($i < $num)
+			{
+				$obj=$db->fetch_object($resql);
+
+				$reg = array();
+				if (preg_match('/^(.+)@(.+)$/i', $obj->file, $reg))
+				{
+					$name=$reg[1];
+					$module=$reg[2];
+
+					$sql2 ="SELECT COUNT(*) as nb";
+					$sql2.=" FROM ".MAIN_DB_PREFIX."const as c";
+					$sql2.=" WHERE name = 'MAIN_MODULE_".strtoupper($module)."'";
+					$sql2.=" AND entity = ".$obj->entity;
+					$sql2.=" AND value <> 0";
+					$resql2 = $db->query($sql2);
+					if ($resql2)
+					{
+						$obj2 = $db->fetch_object($resql2);
+						if ($obj2 && $obj2->nb == 0)
+						{
+							// Module not found, so we canremove entry
+							$sqldeletea = "DELETE FROM ".MAIN_DB_PREFIX."boxes WHERE entity = ".$obj->entity." AND box_id IN (SELECT rowid FROM ".MAIN_DB_PREFIX."boxes_def WHERE file = '".$obj->file."' AND entity = ".$obj->entity.")";
+							$sqldeleteb = "DELETE FROM ".MAIN_DB_PREFIX."boxes_def WHERE file = '".$obj->file."' AND entity = ".$obj->entity;
+
+							if (GETPOST('standard', 'alpha') == 'confirmed')
+							{
+								$db->query($sqldeletea);
+								$db->query($sqldeleteb);
+
+								print '<tr><td>Constant '.$obj->file.' set in boxes_def for entity '.$obj->entity.' but MAIN_MODULE_'.strtoupper($module).' not defined in entity '.$obj->entity.', we delete record</td></tr>';
+							}
+							else
+							{
+								print '<tr><td>Constant '.$obj->file.' set in boxes_def for entity '.$obj->entity.' but MAIN_MODULE_'.strtoupper($module).' not defined in entity '.$obj->entity.', we should delete record (not done, mode test)</td></tr>';
+							}
+						}
+						else
+						{
+							//print '<tr><td>Constant '.$obj->name.' set in entity '.$obj->entity.' with value '.$obj->value.' -> Module found in entity '.$obj->entity.', we keep record</td></tr>';
+						}
+					}
+				}
+
+				$i++;
+			}
+
+			$db->commit();
+		}
+	}
+}
 
 
 // restore_thirdparties_logos: Move logos to correct new directory.
@@ -773,7 +918,7 @@ if ($ok && GETPOST('clean_product_stock_batch', 'alpha'))
                             if ($resql2)
                             {
                                 // We update product_stock, so we must field stock into product too.
-                                $sql3='UPDATE llx_product p SET p.stock= (SELECT SUM(ps.reel) FROM llx_product_stock ps WHERE ps.fk_product = p.rowid)';
+                                $sql3='UPDATE '.MAIN_DB_PREFIX.'product p SET p.stock= (SELECT SUM(ps.reel) FROM '.MAIN_DB_PREFIX.'product_stock ps WHERE ps.fk_product = p.rowid)';
                                 $resql3=$db->query($sql3);
                                 if (! $resql3)
                                 {
@@ -903,7 +1048,7 @@ if ($ok && GETPOST('set_empty_time_spent_amount', 'alpha'))
 // force_disable_of_modules_not_found
 if ($ok && GETPOST('force_disable_of_modules_not_found', 'alpha'))
 {
-    print '<tr><td colspan="2"><br>*** Force modules not found to be disabled (only modules adding js, css or hooks can be detected as removed)</td></tr>';
+    print '<tr><td colspan="2"><br>*** Force modules not found physicaly to be disabled (only modules adding js, css or hooks can be detected as removed physicaly)</td></tr>';
 
     $arraylistofkey=array('hooks','js','css');
 
@@ -931,12 +1076,16 @@ if ($ok && GETPOST('force_disable_of_modules_not_found', 'alpha'))
 
 	                $db->begin();
 
+	                $reg = array();
 	                if (preg_match('/MAIN_MODULE_(.*)_'.strtoupper($key).'/i', $constantname, $reg))
 	                {
 	                    $name=strtolower($reg[1]);
 
-	                    if ($name)		// And entry for key $key and module $name was found in database.
+	                    if ($name)		// An entry for key $key and module $name was found in database.
 	                    {
+	                    	$reloffile = '';
+							$result = 'found';
+
 	                    	if ($key == 'hooks') $reloffile=$name.'/class/actions_'.$name.'.class.php';
 	                    	if ($key == 'js')
 	                    	{
@@ -953,13 +1102,17 @@ if ($ok && GETPOST('force_disable_of_modules_not_found', 'alpha'))
 	                    		$reloffile=preg_replace('/^\//', '', $valuearray[0]);
 	                    	}
 
-	                    	//var_dump($key.' - '.$value.' - '.$reloffile);
-	                    	try {
-	                        	$result = dol_buildpath($reloffile, 0, 2);
-	                    	}
-	                    	catch(Exception $e)
+	                    	if ($reloffile)
 	                    	{
-								// No catch yet
+		                    	//var_dump($key.' - '.$value.' - '.$reloffile);
+		                    	try {
+		                        	$result = dol_buildpath($reloffile, 0, 2);
+		                    	}
+		                    	catch(Exception $e)
+		                    	{
+									// No catch yet
+									$result = 'found';	// If error, we force lke if we found to avoid any deletion
+		                    	}
 	                    	}
 
 	                        if (! $result)
@@ -974,9 +1127,9 @@ if ($ok && GETPOST('force_disable_of_modules_not_found', 'alpha'))
 	                                    $error++;
 	                                    dol_print_error($db);
 	                                }
-	                                $sql2 ="DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'MAIN_MODULE_".strtoupper($name)."'";
-	                                $resql2=$db->query($sql2);
-	                                if (! $resql2)
+	                                $sql3 ="DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'MAIN_MODULE_".strtoupper($name)."'";
+	                                $resql3=$db->query($sql3);
+	                                if (! $resql3)
 	                                {
 	                                    $error++;
 	                                    dol_print_error($db);

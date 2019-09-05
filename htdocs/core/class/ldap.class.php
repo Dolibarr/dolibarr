@@ -944,7 +944,7 @@ class Ldap
 		// Only one entry should ever be returned
 		$entry = ldap_first_entry($this->connection, $search);
 
-		if (!$entry)
+		if (! $entry)
 		{
 			$this->ldapErrorCode = -1;
 			$this->ldapErrorText = "Couldn't find entry";
@@ -952,7 +952,7 @@ class Ldap
 		}
 
 		// Get values
-		if (! $values = ldap_get_attributes($this->connection, $entry))
+		if (! ($values = ldap_get_attributes($this->connection, $entry)))
 		{
 			$this->ldapErrorCode = ldap_errno($this->connection);
 			$this->ldapErrorText = ldap_error($this->connection);

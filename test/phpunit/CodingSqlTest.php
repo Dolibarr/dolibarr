@@ -57,7 +57,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class CodingSqlTest extends PHPUnit_Framework_TestCase
+class CodingSqlTest extends PHPUnit\Framework\TestCase
 {
     protected $savconf;
     protected $savuser;
@@ -182,6 +182,10 @@ class CodingSqlTest extends PHPUnit_Framework_TestCase
                 print __METHOD__." Result for checking we don't have 'NUMERIC(' = ".$result."\n";
                 $this->assertTrue($result===false, 'Found NUMERIC( into '.$file.'. Bad.');
 
+                $result=strpos($filecontent, 'integer(');
+                print __METHOD__." Result for checking we don't have 'integer(' = ".$result."\n";
+                $this->assertTrue($result===false, 'Found value in parenthesis after the integer. It must be integer not integer(x) into '.$file.'. Bad.');
+
                 if ($dir == DOL_DOCUMENT_ROOT.'/install/mysql/migration')
                 {
                     // Test for migration files only
@@ -227,21 +231,21 @@ class CodingSqlTest extends PHPUnit_Framework_TestCase
         $langs=$this->savlangs;
         $db=$this->savdb;
 
-        $filesarray = scandir(DOL_DOCUMENT_ROOT.'/../dev/initdata');
+        $filesarray = scandir(DOL_DOCUMENT_ROOT.'/../dev/initdemo');
         foreach($filesarray as $key => $file) {
             if (! preg_match('/\.sql$/', $file))
                 continue;
 
             print 'Check sql file '.$file."\n";
-            $filecontent=file_get_contents(DOL_DOCUMENT_ROOT.'/../dev/initdata/'.$file);
+            $filecontent=file_get_contents(DOL_DOCUMENT_ROOT.'/../dev/initdemo/'.$file);
 
             $result=strpos($filecontent, '@gmail.com');
             print __METHOD__." Result for checking we don't have personal data = ".$result."\n";
-            $this->assertTrue($result===false, 'Found a bad key into file '.$file);
+            $this->assertTrue($result===false, 'Found a bad key @gmail into file '.$file);
 
             $result=strpos($filecontent, 'eldy@');
             print __METHOD__." Result for checking we don't have personal data = ".$result."\n";
-            $this->assertTrue($result===false, 'Found a bad key into file '.$file);
+            $this->assertTrue($result===false, 'Found a bad key eldy@ into file '.$file);
         }
 
         return;

@@ -121,6 +121,30 @@ if (!$rowid)
 	//print $list;
 	foreach ($list->data as $charge)
 	{
+	  if ($charge->refunded=='1'){
+	    	$status = img_picto($langs->trans("refunded"), 'statut6');
+	  } elseif ($charge->paid=='1'){
+        $status = img_picto($langs->trans("".$charge->status.""), 'statut4');
+	  } else {
+	    	$label="Message: ".$charge->failure_message."<br>";
+	    	$label.="Réseau: ".$charge->outcome->network_status."<br>";
+	    	$label.="Statut: ".$langs->trans("".$charge->outcome->seller_message."");
+	    	$status = $form->textwithpicto(img_picto($langs->trans("".$charge->status.""), 'statut8'), $label, 1);
+	  }
+    
+      if ($charge->payment_method_details->type=='card')
+	  {
+		    $type = $langs->trans("card");
+	  } elseif ($charge->source->type=='card'){
+			$type = $langs->trans("card");
+	  } elseif ($charge->payment_method_details->type=='three_d_secure'){
+			$type = $langs->trans("card3DS");
+	  }
+  
+    if (! empty($charge->payment_intent)) {
+    $charge = \Stripe\PaymentIntent::retrieve($charge->payment_intent);
+    }
+
 		// The metadata FULLTAG is defined by the online payment page
 		$FULLTAG=$charge->metadata->FULLTAG;
 
@@ -150,27 +174,30 @@ if (!$rowid)
 
 		print '<tr class="oddeven">';
 
-    if (!empty($stripeacc)) $connect=$stripeacc.'/';
+        if (!empty($stripeacc)) $connect=$stripeacc.'/';
 
 		// Ref
 		$url='https://dashboard.stripe.com/'.$connect.'test/payments/'.$charge->id;
-			if ($servicestatus)
-			{
-				$url='https://dashboard.stripe.com/'.$connect.'payments/'.$charge->id;
-			}
-		print "<td><a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'object_globe')." ".$charge->id."</a></td>\n";
+        if ($servicestatus)
+        {
+        	$url='https://dashboard.stripe.com/'.$connect.'payments/'.$charge->id;
+        }
+		print "<td>";
+        print "<a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'object_globe')." ".$charge->id."</a>";
+		print "</td>\n";
 		// Stripe customer
 		print "<td>";
-
-    if (! empty($conf->stripe->enabled) && !empty($stripeacc)) $connect=$stripeacc.'/';
+        if (! empty($conf->stripe->enabled) && !empty($stripeacc)) $connect=$stripeacc.'/';
 		$url='https://dashboard.stripe.com/'.$connect.'test/customers/'.$charge->customer;
 		if ($servicestatus)
 		{
-    $url='https://dashboard.stripe.com/'.$connect.'customers/'.$charge->customer;
+            $url='https://dashboard.stripe.com/'.$connect.'customers/'.$charge->customer;
 		}
-		print '<a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe'), 'object_globe').' '.$charge->customer.'</a>';
-
-    print "</td>\n";
+		if (! empty($charge->customer))
+		{
+    		print '<a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe'), 'object_globe').' '.$charge->customer.'</a>';
+		}
+        print "</td>\n";
 		// Link
 		print "<td>";
 		if ($societestatic->id > 0)
@@ -202,31 +229,13 @@ if (!$rowid)
 	    print '<td class="center">'.dol_print_date($charge->created, '%d/%m/%Y %H:%M')."</td>\n";
 	    // Type
 	    print '<td>';
-		if ($charge->source->object=='card')
-		{
-		    print $langs->trans("card");
-		}
-		elseif ($charge->source->type=='card'){
-		    print $langs->trans("card");
-		} elseif ($charge->source->type=='three_d_secure'){
-		    print $langs->trans("card3DS");
-		}
+		print $type;
 	    print '</td>';
 	    // Amount
 	    print '<td class="right">'.price(($charge->amount-$charge->amount_refunded)/100, 0, '', 1, - 1, - 1, strtoupper($charge->currency))."</td>";
 	    // Status
 	    print '<td class="right">';
-	    if ($charge->refunded=='1'){
-	    	print img_picto($langs->trans("refunded"), 'statut6');
-	    } elseif ($charge->paid=='1'){
-
-        print img_picto($langs->trans("".$charge->status.""), 'statut4');
-	    } else {
-	    	$label="Message: ".$charge->failure_message."<br>";
-	    	$label.="Réseau: ".$charge->outcome->network_status."<br>";
-	    	$label.="Statut: ".$langs->trans("".$charge->outcome->seller_message."");
-	    	print $form->textwithpicto(img_picto($langs->trans("".$charge->status.""), 'statut8'), $label, 1);
-	    }
+	    print $status;
 	    print "</td>\n";
 
 	    print "</tr>\n";

@@ -25,7 +25,7 @@ trait All
         if (!is_a($obj, 'Stripe\\Collection')) {
             $class = get_class($obj);
             $message = "Expected type \"Stripe\\Collection\", got \"$class\" instead";
-            throw new Error\Api($message);
+            throw new \Stripe\Error\Api($message);
         }
         $obj->setLastResponse($response);
         $obj->setRequestParams($params);

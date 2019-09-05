@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012-2016 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2015-2018 Alexandre Spangaro   <aspangaro@open-dsi.fr>
+ * Copyright (C) 2015-2019 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2016      Josep Lluís Amador   <joseplluis@lliuretic.cat>
  *
@@ -52,7 +52,7 @@ if (! empty($conf->loan->enabled))			require_once DOL_DOCUMENT_ROOT.'/loan/class
 if (! empty($conf->stock->enabled))			require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 if (! empty($conf->tax->enabled))			require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 if (! empty($conf->banque->enabled))		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
-if (! empty($conf->salaries->enabled))		require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/paymentsalary.class.php';
+if (! empty($conf->salaries->enabled))		require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'companies', 'suppliers', 'compta'));
@@ -157,7 +157,35 @@ print '<div class="fichecenter">';
 print '<div class="fichehalfleft">';
 print '<div class="underbanner clearboth"></div>';
 
-print '<table class="border" width="100%">';
+print '<table class="border tableforfield centpercent">';
+
+// Usage
+print '<tr><td class="tdtop">';
+print $langs->trans("Usage");
+print '</td>';
+print '<td>';
+if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
+{
+	print '<input type="checkbox" disabled name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha')!=''?' checked="checked"':'') : ($object->usage_opportunity ? ' checked="checked"' : '')).'"> ';
+	$htmltext = $langs->trans("ProjectFollowOpportunity");
+	print $form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext);
+	print '<br>';
+}
+if (empty($conf->global->PROJECT_HIDE_TASKS))
+{
+	print '<input type="checkbox" disabled name="usage_task"'.(GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha')!=''?' checked="checked"':'') : ($object->usage_task ? ' checked="checked"' : '')).'"> ';
+	$htmltext = $langs->trans("ProjectFollowTasks");
+	print $form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext);
+	print '<br>';
+}
+if (! empty($conf->global->PROJECT_BILL_TIME_SPENT))
+{
+	print '<input type="checkbox" disabled name="usage_bill_time"'.(GETPOSTISSET('usage_bill_time') ? (GETPOST('usage_bill_time', 'alpha')!=''?' checked="checked"':'') : ($object->usage_bill_time ? ' checked="checked"' : '')).'"> ';
+	$htmltext = $langs->trans("ProjectBillTimeDescription");
+	print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
+	print '<br>';
+}
+print '</td></tr>';
 
 // Visibility
 print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
@@ -210,7 +238,7 @@ print '<div class="fichehalfright">';
 print '<div class="ficheaddleft">';
 print '<div class="underbanner clearboth"></div>';
 
-print '<table class="border" width="100%">';
+print '<table class="border tableforfield" width="100%">';
 
 // Description
 print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
@@ -221,7 +249,7 @@ print '</td></tr>';
 if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_BILL_TIME_SPENT))
 {
 	print '<tr><td>'.$langs->trans("BillTime").'</td><td>';
-	print yn($object->bill_time);
+	print yn($object->usage_bill_time);
 	print '</td></tr>';
 }
 
@@ -419,7 +447,7 @@ $listofreferent=array(
     'name'=>"SocialContribution",
     'title'=>"ListSocialContributionAssociatedProject",
     'class'=>'ChargeSociales',
-    'margin'=>'add',
+    'margin'=>'minus',
     'table'=>'chargesociales',
     'datefieldname'=>'date_ech',
     'disableamount'=>0,
@@ -457,7 +485,7 @@ $listofreferent=array(
 	'datefieldname'=>'datev',
 	'margin'=>'minus',
 	'disableamount'=>0,
-	'urlnew'=>DOL_URL_ROOT.'/compta/salaries/card.php?action=create&projectid='.$id,
+	'urlnew'=>DOL_URL_ROOT.'/salaries/card.php?action=create&projectid='.$id,
 	'lang'=>'salaries',
 	'buttonnew'=>'AddSalaryPayment',
 	'testnew'=>$user->rights->salaries->write,
@@ -470,11 +498,11 @@ $listofreferent=array(
 	'datefieldname'=>'datev',
 	'margin'=>'minus',
 	'disableamount'=>0,
-    'urlnew'=>DOL_URL_ROOT.'/compta/bank/various_payment/card.php?action=create&projectid='.$id.'&socid='.$socid,
+    'urlnew'=>DOL_URL_ROOT.'/compta/bank/various_payment/card.php?action=create&projectid='.$id,
     'lang'=>'banks',
     'buttonnew'=>'AddVariousPayment',
     'testnew'=>$user->rights->banque->modifier,
-    'test'=>$conf->banque->enabled && $user->rights->banque->lire),
+    'test'=>$conf->banque->enabled && $user->rights->banque->lire && empty($conf->global->BANK_USE_OLD_VARIOUS_PAYMENT)),
 /* No need for this, available on dedicated tab "Agenda/Events"
 'agenda'=>array(
 	'name'=>"Agenda",
@@ -532,7 +560,8 @@ if (! $showdatefilter)
 {
 	print '<div class="center centpercent">';
     print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$projectid.'" method="post">';
-	print '<input type="hidden" name="tablename" value="'.$tablename.'">';
+    print '<input type="hidden" name="token" value="'.$_SESSION["newtoken"].'">';
+    print '<input type="hidden" name="tablename" value="'.$tablename.'">';
 	print '<input type="hidden" name="action" value="view">';
 	print '<table class="center"><tr>';
 	print '<td>'.$langs->trans("From").' ';
@@ -600,11 +629,24 @@ foreach ($listofreferent as $key => $value)
 				$element->fetch($idofelement);
 				if ($idofelementuser) $elementuser->fetch($idofelementuser);
 
-                // Special cases
+				// Define if record must be used for total or not
+				$qualifiedfortotal=true;
+				if ($key == 'invoice')
+				{
+				    if (! empty($element->close_code) && $element->close_code == 'replaced') $qualifiedfortotal=false;	// Replacement invoice, do not include into total
+				    if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS) && $element->type == Facture::TYPE_DEPOSIT) $qualifiedfortotal=false;	// If hidden option to use deposits as payment (deprecated, not recommended to use this), deposits are not included
+				}
+				if ($key == 'propal')
+				{
+				    if ($element->statut == Propal::STATUS_NOTSIGNED) $qualifiedfortotal=false;	// Refused proposal must not be included in total
+				}
+
 				if ($tablename != 'expensereport_det' && method_exists($element, 'fetch_thirdparty')) $element->fetch_thirdparty();
-				if ($tablename == 'don' || $tablename == 'chargesociales') $total_ht_by_line=$element->amount;
+
+				// Define $total_ht_by_line
+				if ($tablename == 'don' || $tablename == 'chargesociales' || $tablename == 'payment_various' || $tablename == 'payment_salary') $total_ht_by_line=$element->amount;
+				elseif ($tablename == 'fichinter') $total_ht_by_line=$element->getAmount();
 				elseif ($tablename == 'stock_mouvement') $total_ht_by_line=$element->price*abs($element->qty);
-				elseif($tablename == 'fichinter') $total_ht_by_line=$element->getAmount();
 				elseif ($tablename == 'projet_task')
 				{
 					if ($idofelementuser)
@@ -620,20 +662,9 @@ foreach ($listofreferent as $key => $value)
 				}
 				else $total_ht_by_line=$element->total_ht;
 
-				$qualifiedfortotal=true;
-				if ($key == 'invoice')
-				{
-					if (! empty($element->close_code) && $element->close_code == 'replaced') $qualifiedfortotal=false;	// Replacement invoice, do not include into total
-				}
-				if ($key == 'propal')
-				{
-					if ($element->statut == Propal::STATUS_NOTSIGNED) $qualifiedfortotal=false;	// Refused proposal must not be included in total
-				}
-
-				if ($qualifiedfortotal) $total_ht = $total_ht + $total_ht_by_line;
-
-				if ($tablename == 'don' || $tablename == 'chargesociales') $total_ttc_by_line=$element->amount;
-				elseif($tablename == 'fichinter') $total_ttc_by_line=$element->getAmount();
+				// Define $total_ttc_by_line
+				if ($tablename == 'don' || $tablename == 'chargesociales' || $tablename == 'payment_various' || $tablename == 'payment_salary') $total_ttc_by_line=$element->amount;
+				elseif ($tablename == 'fichinter') $total_ttc_by_line=$element->getAmount();
 				elseif ($tablename == 'stock_mouvement') $total_ttc_by_line=$element->price*abs($element->qty);
 				elseif ($tablename == 'projet_task')
 				{
@@ -642,7 +673,22 @@ foreach ($listofreferent as $key => $value)
 				}
 				else $total_ttc_by_line=$element->total_ttc;
 
-				if ($qualifiedfortotal) $total_ttc = $total_ttc + $total_ttc_by_line;
+				// Change sign of $total_ht_by_line and $total_ttc_by_line for some cases
+				if ($tablename == 'payment_various')
+				{
+			        if ($element->sens == 1)
+			        {
+			            $total_ht_by_line = -$total_ht_by_line;
+			            $total_ttc_by_line = -$total_ttc_by_line;
+			        }
+				}
+
+				// Add total if we have to
+				if ($qualifiedfortotal)
+				{
+				    $total_ht = $total_ht + $total_ht_by_line;
+				    $total_ttc = $total_ttc + $total_ttc_by_line;
+				}
 			}
 
 			// Each element with at least one line is output
@@ -653,23 +699,14 @@ foreach ($listofreferent as $key => $value)
 			// Calculate margin
 			if ($qualifiedforfinalprofit)
 			{
-				if ($margin=="add")
-				{
-					$balance_ht+= $total_ht;
-					$balance_ttc+= $total_ttc;
-				}
-				else
-				{
-					$balance_ht-= $total_ht;
-					$balance_ttc-= $total_ttc;
-				}
-
-				// Show $total_ht & $total_ttc -- add a minus when necessary
-				if ($margin!="add")
+			    if ($margin != "add")
 				{
 					$total_ht = -$total_ht;
 					$total_ttc = -$total_ttc;
 				}
+
+				$balance_ht += $total_ht;
+				$balance_ttc += $total_ttc;
 			}
 
 			print '<tr class="oddeven">';
@@ -754,7 +791,8 @@ foreach ($listofreferent as $key => $value)
 				// Define form with the combo list of elements to link
 			    $addform.='<div class="inline-block valignmiddle">';
 			    $addform.='<form action="'.$_SERVER["PHP_SELF"].'?id='.$projectid.'" method="post">';
-				$addform.='<input type="hidden" name="tablename" value="'.$tablename.'">';
+			    $addform.='<input type="hidden" name="token" value="'.$_SESSION["newtoken"].'">';
+			    $addform.='<input type="hidden" name="tablename" value="'.$tablename.'">';
 				$addform.='<input type="hidden" name="action" value="addelement">';
 				$addform.='<input type="hidden" name="datesrfc" value="'.dol_print_date($dates, 'dayhourrfc').'">';
 				$addform.='<input type="hidden" name="dateerfc" value="'.dol_print_date($datee, 'dayhourrfc').'">';
@@ -769,9 +807,9 @@ foreach ($listofreferent as $key => $value)
 		if (empty($conf->global->PROJECT_CREATE_ON_OVERVIEW_DISABLED) && $urlnew)
 		{
 			$addform.='<div class="inline-block valignmiddle">';
-			if ($testnew) $addform.='<a class="buttonxxx" href="'.$urlnew.'">'.($buttonnew?$langs->trans($buttonnew):$langs->trans("Create")).' <span class="fa fa-plus-circle valignmiddle"></span></a>';
+			if ($testnew) $addform.='<a class="buttonxxx" href="'.$urlnew.'"><span class="valignmiddle text-plus-circle">'.($buttonnew?$langs->trans($buttonnew):$langs->trans("Create")).'</span><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
 			elseif (empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED)) {
-				$addform.='<a class="buttonxxx buttonRefused" disabled="disabled" href="#">'.($buttonnew?$langs->trans($buttonnew):$langs->trans("Create")).' <span class="fa fa-plus-circle valignmiddle"></span></a>';
+				$addform.='<a class="buttonxxx buttonRefused" disabled="disabled" href="#"><span class="valignmiddle text-plus-circle">'.($buttonnew?$langs->trans($buttonnew):$langs->trans("Create")).'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
 			}
             $addform.='<div>';
 		}
@@ -851,8 +889,7 @@ foreach ($listofreferent as $key => $value)
 					$expensereport->fetch($element->fk_expensereport);
 				}
 
-				//print 'xxx'.$tablename;
-				//print $classname;
+				//print 'xxx'.$tablename.'yyy'.$classname;
 
 				if ($breakline && $saved_third_id != $element->thirdparty->id)
 				{
@@ -1027,6 +1064,16 @@ foreach ($listofreferent as $key => $value)
 					{
 						$total_ht_by_line=$element->total_ht;
 					}
+
+					// Change sign of $total_ht_by_line and $total_ttc_by_line for some cases
+					if ($tablename == 'payment_various')
+					{
+					    if ($element->sens == 0)
+					    {
+					        $total_ht_by_line = -$total_ht_by_line;
+					    }
+					}
+
 					print '<td class="right">';
 					if ($othermessage) print $othermessage;
 					if (isset($total_ht_by_line))
@@ -1064,6 +1111,16 @@ foreach ($listofreferent as $key => $value)
 					{
 						$total_ttc_by_line=$element->total_ttc;
 					}
+
+					// Change sign of $total_ht_by_line and $total_ttc_by_line for some cases
+					if ($tablename == 'payment_various')
+					{
+					    if ($element->sens == 0)
+					    {
+					        $total_ttc_by_line = -$total_ttc_by_line;
+					    }
+					}
+
 					print '<td class="right">';
 					if ($othermessage) print $othermessage;
 					if (isset($total_ttc_by_line))

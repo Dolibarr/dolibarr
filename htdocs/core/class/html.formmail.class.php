@@ -78,7 +78,7 @@ class FormMail extends Form
 	/**
 	 * @var int
 	 * @deprecated Fill withto with array before calling method.
-	 * @see withto
+	 * @see $withto
 	 */
 	public $withtosocid;
 
@@ -394,6 +394,7 @@ class FormMail extends Form
 			if ($this->param['models'] != 'none')
 			{
 				$result = $this->fetchAllEMailTemplate($this->param["models"], $user, $outputlangs);
+
 				if ($result < 0)
 				{
 					setEventMessages($this->error, $this->errors, 'errors');
@@ -710,7 +711,7 @@ class FormMail extends Form
 				}
 				else
 				{
-					$out.= '<input class="minwidth200" id="sendtocc" name="sendtocc" value="'.((! is_array($this->withtocc) && ! is_numeric($this->withtocc))? (isset($_POST["sendtocc"])?$_POST["sendtocc"]:$this->withtocc) : (isset($_POST["sendtocc"])?$_POST["sendtocc"]:"") ).'" />';
+				    $out.= '<input class="minwidth200" id="sendtocc" name="sendtocc" value="'.(GETPOST("sendtocc", "alpha") ? GETPOST("sendtocc", "alpha") : ((! is_array($this->withtocc) && ! is_numeric($this->withtocc)) ? $this->withtocc : '')).'" />';
 					if (! empty($this->withtocc) && is_array($this->withtocc))
 					{
 						$out.= " ".$langs->trans("and")."/".$langs->trans("or")." ";
@@ -935,7 +936,6 @@ class FormMail extends Form
 					$defaultmessage=preg_replace("/^(<br>)+/", "", $defaultmessage);
 					$defaultmessage=preg_replace("/^\n+/", "", $defaultmessage);
 				}
-
 				$out.= '<tr>';
 				$out.= '<td valign="top">';
 				$out.=$form->textwithpicto($langs->trans('MailText'), $helpforsubstitution, 1, 'help', '', 0, 2, 'substittooltipfrombody');
@@ -1022,7 +1022,7 @@ class FormMail extends Form
 		if (! empty($this->withtocccreadonly)) {
 			$out.= (! is_array($this->withtoccc) && ! is_numeric($this->withtoccc))?$this->withtoccc:"";
 		} else {
-			$out.= '<input class="minwidth200" id="sendtoccc" name="sendtoccc" value="'.((! is_array($this->withtoccc) && ! is_numeric($this->withtoccc))? (isset($_POST["sendtoccc"])?$_POST["sendtoccc"]:$this->withtoccc) : (isset($_POST["sendtoccc"])?$_POST["sendtoccc"]:"") ).'" />';
+		    $out.= '<input class="minwidth200" id="sendtoccc" name="sendtoccc" value="'.(GETPOST("sendtoccc", "alpha") ? GETPOST("sendtoccc", "alpha") : ((! is_array($this->withtoccc) && ! is_numeric($this->withtoccc)) ? $this->withtoccc : '')).'" />';
 			if (! empty($this->withtoccc) && is_array($this->withtoccc)) {
 				$out.= " ".$langs->trans("and")."/".$langs->trans("or")." ";
 				// multiselect array convert html entities into options tags, even if we dont want this, so we encode them a second time
@@ -1037,9 +1037,12 @@ class FormMail extends Form
 
 		$showinfobcc='';
 		if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO) && ! empty($this->param['models']) && $this->param['models'] == 'propal_send') $showinfobcc=$conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO;
-		if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO) && ! empty($this->param['models']) && $this->param['models'] == 'supplier_proposal_send') $showinfobcc=$conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO;
 		if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_ORDER_TO) && ! empty($this->param['models']) && $this->param['models'] == 'order_send') $showinfobcc=$conf->global->MAIN_MAIL_AUTOCOPY_ORDER_TO;
 		if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO) && ! empty($this->param['models']) && $this->param['models'] == 'facture_send') $showinfobcc=$conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO;
+		if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO) && ! empty($this->param['models']) && $this->param['models'] == 'supplier_proposal_send') $showinfobcc=$conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO;
+		if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_ORDER_TO) && ! empty($this->param['models']) && $this->param['models'] == 'order_supplier_send') $showinfobcc=$conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_ORDER_TO;
+		if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO) && ! empty($this->param['models']) && $this->param['models'] == 'invoice_supplier_send') $showinfobcc=$conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO;
+		if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_PROJECT_TO) && ! empty($this->param['models']) && $this->param['models'] == 'project') $showinfobcc=$conf->global->MAIN_MAIL_AUTOCOPY_PROJECT_TO;
 		if ($showinfobcc) $out.=' + '.$showinfobcc;
 		$out.= "</td></tr>\n";
 		return $out;
@@ -1056,12 +1059,12 @@ class FormMail extends Form
 		//if (! $this->errorstomail) $this->errorstomail=$this->frommail;
 		$errorstomail = (! empty($conf->global->MAIN_MAIL_ERRORS_TO) ? $conf->global->MAIN_MAIL_ERRORS_TO : $this->errorstomail);
 		if ($this->witherrorstoreadonly) {
-			$out.= '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td>';
-			$out = '<input type="hidden" id="errorstomail" name="errorstomail" value="'.$errorstomail.'" />';
+			$out= '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td>';
+			$out.= '<input type="hidden" id="errorstomail" name="errorstomail" value="'.$errorstomail.'" />';
 			$out.= $errorstomail;
 			$out.= "</td></tr>\n";
 		} else {
-			$out.= '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td>';
+			$out= '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td>';
 			$out.= '<input size="30" id="errorstomail" name="errorstomail" value="'.$errorstomail.'" />';
 			$out.= "</td></tr>\n";
 		}
@@ -1151,6 +1154,12 @@ class FormMail extends Form
 			return -1;
 		}
 
+		$languagetosearch = (is_object($outputlangs) ? $outputlangs->defaultlang : '');
+		// Define $languagetosearchmain to fall back on main language (for example to get 'es_ES' for 'es_MX')
+		$tmparray = explode('_', $languagetosearch);
+		$languagetosearchmain = $tmparray[0].'_'.strtoupper($tmparray[0]);
+		if ($languagetosearchmain == $languagetosearch) $languagetosearchmain = '';
+
 		$sql = "SELECT rowid, label, topic, joinfiles, content, content_lines, lang";
 		$sql.= " FROM ".MAIN_DB_PREFIX.'c_email_templates';
 		$sql.= " WHERE (type_template='".$db->escape($type_template)."' OR type_template='all')";
@@ -1158,10 +1167,10 @@ class FormMail extends Form
 		$sql.= " AND (private = 0 OR fk_user = ".$user->id.")";				// Get all public or private owned
 		if ($active >= 0) $sql.=" AND active = ".$active;
 		if ($label) $sql.=" AND label ='".$db->escape($label)."'";
-		if (! ($id > 0) && is_object($outputlangs)) $sql.= " AND (lang = '".$db->escape($outputlangs->defaultlang)."' OR lang IS NULL OR lang = '')";
+		if (! ($id > 0) && $languagetosearch) $sql.= " AND (lang = '".$db->escape($languagetosearch)."'".($languagetosearchmain ? " OR lang = '".$db->escape($languagetosearchmain)."'" : "")." OR lang IS NULL OR lang = '')";
 		if ($id > 0)   $sql.= " AND rowid=".$id;
 		if ($id == -1) $sql.= " AND position=0";
-		if (is_object($outputlangs)) $sql.= $db->order("position,lang,label", "ASC,DESC,ASC");		// We want line with lang set first, then with lang null or ''
+		if ($languagetosearch) $sql.= $db->order("position,lang,label", "ASC,DESC,ASC");		// We want line with lang set first, then with lang null or ''
 		else $sql.= $db->order("position,lang,label", "ASC,ASC,ASC");		// If no language provided, we give priority to lang not defined
 		$sql.= $db->plimit(1);
 		//print $sql;
@@ -1317,7 +1326,7 @@ class FormMail extends Form
 	 * @param	CommonObject	$object		   Object to use
 	 * @param   Translate  		$outputlangs   Object lang
 	 * @return	void
-	 * @see getCommonSubstitutionArray
+	 * @see getCommonSubstitutionArray()
 	 */
 	public function setSubstitFromObject($object, $outputlangs)
 	{

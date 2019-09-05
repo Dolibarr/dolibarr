@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2011-2013      Juanjo Menent	    <jmenent@2byte.es>
+/* Copyright (C) 2011-2019      Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2011-2018      Philippe Grand	    <philippe.grand@atoo-net.com>
  * Copyright (C) 2018		    Charlene Benke		<charlie@patas-monkey.com>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018			Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,7 +55,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'updateMask')
 {
-    $maskconst = GETPOST('maskconstholidaty', 'alpha');
+    $maskconst = GETPOST('maskconstholiday', 'alpha');
     $maskvalue =  GETPOST('maskholiday', 'alpha');
     if ($maskconst) $res = dolibarr_set_const($db, $maskconst, $maskvalue, 'chaine', 0, '', $conf->entity);
 
@@ -201,6 +201,7 @@ dol_fiche_head($head, 'holiday', $langs->trans("Holidays"), -1, 'holiday');
 
 print load_fiche_titre($langs->trans("HolidaysNumberingModules"), '', '');
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td width="100">'.$langs->trans("Name").'</td>';
@@ -257,7 +258,7 @@ foreach ($dirmodels as $reldir)
 						}
 						else
 						{
-							print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'">';
+							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'">';
 							print img_picto($langs->trans("Disabled"), 'switch_off');
 							print '</a>';
 						}
@@ -294,8 +295,10 @@ foreach ($dirmodels as $reldir)
 	}
 }
 
-print '</table><br>';
+print '</table>';
+print '</div>';
 
+print '<br>';
 
 
 if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
@@ -331,6 +334,7 @@ else
 }
 
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
@@ -457,6 +461,7 @@ foreach ($dirmodels as $reldir)
 }
 
 print '</table>';
+print '</div>';
 print "<br>";
 
 
@@ -469,6 +474,8 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="set_other">';
 
 print load_fiche_titre($langs->trans("OtherOptions"), '', '');
+
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
@@ -506,6 +513,8 @@ print '<input size="50" class="flat" type="text" name="HOLIDAY_DRAFT_WATERMARK" 
 print '</td></tr>'."\n";
 
 print '</table>';
+print '</div>';
+
 
 print '<div class="center">';
 print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';

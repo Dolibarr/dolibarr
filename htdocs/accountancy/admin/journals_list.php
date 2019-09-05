@@ -18,7 +18,7 @@
 
 /**
  * \file		htdocs/accountancy/admin/journals_list.php
- * \ingroup		Advanced accountancy
+ * \ingroup		Accountancy (Double entries)
  * \brief		Setup page to configure journals
  */
 
@@ -162,7 +162,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha'))
 	{
 		if ($fieldnamekey == 'libelle' || ($fieldnamekey == 'label'))  $fieldnamekey='Label';
 		if ($fieldnamekey == 'code') $fieldnamekey = 'Code';
-		if ($fieldnamekey == 'nature') $fieldnamekey = 'Nature';
+		if ($fieldnamekey == 'nature') $fieldnamekey = 'NatureOfJournal';
 	}
 	// Other checks
 	if (isset($_POST["code"]))
@@ -437,7 +437,7 @@ if ($id)
 				$valuetoshow=$langs->trans("Label");
 			}
             if ($fieldlist[$field]=='nature') {
-                $valuetoshow=$langs->trans("Nature");
+                $valuetoshow=$langs->trans("NatureOfJournal");
             }
 
 			if ($valuetoshow != '') {
@@ -516,24 +516,22 @@ if ($id)
 		}
 
 		// Title line with search boxes
-		print '<tr class="liste_titre_filter liste_titre_add">';
+		/*print '<tr class="liste_titre_filter liste_titre_add">';
 		print '<td class="liste_titre"></td>';
 		print '<td class="liste_titre"></td>';
 		print '<td class="liste_titre"></td>';
 		print '<td class="liste_titre"></td>';
 		print '<td class="liste_titre"></td>';
 		print '<td class="liste_titre"></td>';
-		print '<td class="liste_titre" align="center">';
-		if ($filterfound)
-		{
-			$searchpicto=$form->showFilterAndCheckAddButtons(0);
-			print $searchpicto;
-		}
+		print '<td class="liste_titre center">';
+		$searchpicto=$form->showFilterButtons();
+		print $searchpicto;
 		print '</td>';
 		print '</tr>';
-
+		*/
+		
 		// Title of lines
-		print '<tr class="liste_titre">';
+		print '<tr class="liste_titre liste_titre_add">';
 		foreach ($fieldlist as $field => $value)
 		{
 			// Determine le nom du champ par rapport aux noms possibles
@@ -558,7 +556,7 @@ if ($id)
                 $valuetoshow=$langs->trans("Label");
             }
 			if ($fieldlist[$field]=='nature') {
-                $valuetoshow=$langs->trans("Nature");
+                $valuetoshow=$langs->trans("NatureOfJournal");
             }
 
 			// Affiche nom du champ
@@ -590,7 +588,7 @@ if ($id)
 					// Show fields
 					if (empty($reshook)) fieldListJournal($fieldlist, $obj, $tabname[$id], 'edit');
 
-					print '<td align="center" colspan="4">';
+					print '<td class="center" colspan="4">';
 					print '<input type="hidden" name="page" value="'.$page.'">';
 					print '<input type="hidden" name="rowid" value="'.$rowid.'">';
 					print '<input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
@@ -654,19 +652,19 @@ if ($id)
 					$url.='&';
 
 					// Active
-					print '<td align="center" class="nowrap">';
+					print '<td class="nowrap center">';
 					if ($canbedisabled) print '<a href="'.$url.'action='.$acts[$obj->active].'">'.$actl[$obj->active].'</a>';
 					else print $langs->trans("AlwaysActive");
 					print "</td>";
 
 					// Modify link
-					if ($canbemodified) print '<td align="center"><a class="reposition" href="'.$url.'action=edit">'.img_edit().'</a></td>';
+					if ($canbemodified) print '<td class="center"><a class="reposition" href="'.$url.'action=edit">'.img_edit().'</a></td>';
 					else print '<td>&nbsp;</td>';
 
 					// Delete link
 					if ($iserasable)
 					{
-						print '<td align="center">';
+						print '<td class="center">';
 						if ($user->admin) print '<a href="'.$url.'action=delete">'.img_delete().'</a>';
 						//else print '<a href="#">'.img_delete().'</a>';    // Some dictionary can be edited by other profile than admin
 						print '</td>';

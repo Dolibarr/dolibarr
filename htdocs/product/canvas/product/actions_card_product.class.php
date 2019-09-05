@@ -181,25 +181,25 @@ class ActionsCardProduct
 
 			// Weight
 			$this->tpl['weight'] = $this->object->weight;
-			$this->tpl['weight_units'] = $formproduct->load_measuring_units("weight_units", "weight", $this->object->weight_units);
+			$this->tpl['weight_units'] = $formproduct->selectMeasuringUnits("weight_units", "weight", $this->object->weight_units);
 
 			// Length
 			$this->tpl['length'] = $this->object->length;
-			$this->tpl['length_units'] = $formproduct->load_measuring_units("length_units", "size", $this->object->length_units);
+			$this->tpl['length_units'] = $formproduct->selectMeasuringUnits("length_units", "size", $this->object->length_units);
 
 			// Surface
 			$this->tpl['surface'] = $this->object->surface;
-			$this->tpl['surface_units'] = $formproduct->load_measuring_units("surface_units", "surface", $this->object->surface_units);
+			$this->tpl['surface_units'] = $formproduct->selectMeasuringUnits("surface_units", "surface", $this->object->surface_units);
 
 			// Volume
 			$this->tpl['volume'] = $this->object->volume;
-			$this->tpl['volume_units'] = $formproduct->load_measuring_units("volume_units", "volume", $this->object->volume_units);
+			$this->tpl['volume_units'] = $formproduct->selectMeasuringUnits("volume_units", "volume", $this->object->volume_units);
 		}
 
 		if ($action == 'view')
 		{
     		// Photo
-			$this->tpl['nblignes'] = 4;
+			$this->tpl['nblines'] = 4;
 			if ($this->object->is_photo_available($conf->product->multidir_output[$this->object->entity]))
 			{
 				$this->tpl['photos'] = $this->object->show_photos('product', $conf->product->multidir_output[$this->object->entity], 1, 1, 0, 0, 0, 80);

@@ -128,6 +128,25 @@ function product_prepare_head($object)
         }
     }
 
+    // Tab to link resources
+    if (!empty($conf->resource->enabled))
+    {
+        if ($object->isProduct() && ! empty($conf->global->RESOURCE_ON_PRODUCTS))
+        {
+            $head[$h][0] = DOL_URL_ROOT . '/resource/element_resource.php?element=product&ref=' . $object->ref;
+            $head[$h][1] = $langs->trans("Resources");
+            $head[$h][2] = 'resources';
+            $h++;
+        }
+        if ($object->isService() && ! empty($conf->global->RESOURCE_ON_SERVICES))
+        {
+            $head[$h][0] = DOL_URL_ROOT . '/resource/element_resource.php?element=service&ref=' . $object->ref;
+            $head[$h][1] = $langs->trans("Resources");
+            $head[$h][2] = 'resources';
+            $h++;
+        }
+    }
+
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
@@ -154,7 +173,7 @@ function product_prepare_head($object)
     if (! empty($conf->service->enabled) && ($object->type==Product::TYPE_SERVICE)) $upload_dir = $conf->service->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
     $nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
     if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) {
-        if (! empty($conf->product->enabled) && ($object->type==Product::TYPE_PRODUCT)) $upload_dir = $conf->produit->multidir_output[$object->entity].'/'.get_exdir($object->id, 2, 0, 0, $object, 'product').$object->id.'/photos';
+        if (! empty($conf->product->enabled) && ($object->type==Product::TYPE_PRODUCT)) $upload_dir = $conf->product->multidir_output[$object->entity].'/'.get_exdir($object->id, 2, 0, 0, $object, 'product').$object->id.'/photos';
         if (! empty($conf->service->enabled) && ($object->type==Product::TYPE_SERVICE)) $upload_dir = $conf->service->multidir_output[$object->entity].'/'.get_exdir($object->id, 2, 0, 0, $object, 'product').$object->id.'/photos';
         $nbFiles += count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
     }
@@ -324,10 +343,10 @@ function show_stats_for_company($product, $socid)
 	$nblines = 0;
 
 	print '<tr class="liste_titre">';
-	print '<td align="left" width="25%">'.$langs->trans("Referers").'</td>';
-	print '<td align="right" width="25%">'.$langs->trans("NbOfThirdParties").'</td>';
-	print '<td align="right" width="25%">'.$langs->trans("NbOfObjectReferers").'</td>';
-	print '<td align="right" width="25%">'.$langs->trans("TotalQuantity").'</td>';
+	print '<td class="left" width="25%">'.$langs->trans("Referers").'</td>';
+	print '<td class="right" width="25%">'.$langs->trans("NbOfThirdParties").'</td>';
+	print '<td class="right" width="25%">'.$langs->trans("NbOfObjectReferers").'</td>';
+	print '<td class="right" width="25%">'.$langs->trans("TotalQuantity").'</td>';
 	print '</tr>';
 
 	// Customer proposals
@@ -339,11 +358,11 @@ function show_stats_for_company($product, $socid)
 		$langs->load("propal");
 		print '<tr><td>';
 		print '<a href="propal.php?id='.$product->id.'">'.img_object('', 'propal').' '.$langs->trans("Proposals").'</a>';
-		print '</td><td align="right">';
+		print '</td><td class="right">';
 		print $product->stats_propale['customers'];
-		print '</td><td align="right">';
+		print '</td><td class="right">';
 		print $product->stats_propale['nb'];
-		print '</td><td align="right">';
+		print '</td><td class="right">';
 		print $product->stats_propale['qty'];
 		print '</td>';
 		print '</tr>';
@@ -357,11 +376,11 @@ function show_stats_for_company($product, $socid)
 		$langs->load("propal");
 		print '<tr><td>';
 		print '<a href="supplier_proposal.php?id='.$product->id.'">'.img_object('', 'propal').' '.$langs->trans("SupplierProposals").'</a>';
-		print '</td><td align="right">';
+		print '</td><td class="right">';
 		print $product->stats_proposal_supplier['suppliers'];
-		print '</td><td align="right">';
+		print '</td><td class="right">';
 		print $product->stats_proposal_supplier['nb'];
-		print '</td><td align="right">';
+		print '</td><td class="right">';
 		print $product->stats_proposal_supplier['qty'];
 		print '</td>';
 		print '</tr>';
@@ -375,11 +394,11 @@ function show_stats_for_company($product, $socid)
 		$langs->load("orders");
 		print '<tr><td>';
 		print '<a href="commande.php?id='.$product->id.'">'.img_object('', 'order').' '.$langs->trans("CustomersOrders").'</a>';
-		print '</td><td align="right">';
+		print '</td><td class="right">';
 		print $product->stats_commande['customers'];
-		print '</td><td align="right">';
+		print '</td><td class="right">';
 		print $product->stats_commande['nb'];
-		print '</td><td align="right">';
+		print '</td><td class="right">';
 		print $product->stats_commande['qty'];
 		print '</td>';
 		print '</tr>';
@@ -393,11 +412,11 @@ function show_stats_for_company($product, $socid)
 		$langs->load("orders");
 		print '<tr><td>';
 		print '<a href="commande_fournisseur.php?id='.$product->id.'">'.img_object('', 'order').' '.$langs->trans("SuppliersOrders").'</a>';
-		print '</td><td align="right">';
+		print '</td><td class="right">';
 		print $product->stats_commande_fournisseur['suppliers'];
-		print '</td><td align="right">';
+		print '</td><td class="right">';
 		print $product->stats_commande_fournisseur['nb'];
-		print '</td><td align="right">';
+		print '</td><td class="right">';
 		print $product->stats_commande_fournisseur['qty'];
 		print '</td>';
 		print '</tr>';
@@ -411,11 +430,11 @@ function show_stats_for_company($product, $socid)
 		$langs->load("bills");
 		print '<tr><td>';
 		print '<a href="facture.php?id='.$product->id.'">'.img_object('', 'bill').' '.$langs->trans("CustomersInvoices").'</a>';
-		print '</td><td align="right">';
+		print '</td><td class="right">';
 		print $product->stats_facture['customers'];
-		print '</td><td align="right">';
+		print '</td><td class="right">';
 		print $product->stats_facture['nb'];
-		print '</td><td align="right">';
+		print '</td><td class="right">';
 		print $product->stats_facture['qty'];
 		print '</td>';
 		print '</tr>';
@@ -429,11 +448,11 @@ function show_stats_for_company($product, $socid)
 		$langs->load("bills");
 		print '<tr><td>';
 		print '<a href="facture_fournisseur.php?id='.$product->id.'">'.img_object('', 'bill').' '.$langs->trans("SuppliersInvoices").'</a>';
-		print '</td><td align="right">';
+		print '</td><td class="right">';
 		print $product->stats_facture_fournisseur['suppliers'];
-		print '</td><td align="right">';
+		print '</td><td class="right">';
 		print $product->stats_facture_fournisseur['nb'];
-		print '</td><td align="right">';
+		print '</td><td class="right">';
 		print $product->stats_facture_fournisseur['qty'];
 		print '</td>';
 		print '</tr>';
@@ -448,11 +467,11 @@ function show_stats_for_company($product, $socid)
 		$langs->load("contracts");
 		print '<tr><td>';
 		print '<a href="contrat.php?id='.$product->id.'">'.img_object('', 'contract').' '.$langs->trans("Contracts").'</a>';
-		print '</td><td align="right">';
+		print '</td><td class="right">';
 		print $product->stats_contrat['customers'];
-		print '</td><td align="right">';
+		print '</td><td class="right">';
 		print $product->stats_contrat['nb'];
-		print '</td><td align="right">';
+		print '</td><td class="right">';
 		print $product->stats_contrat['qty'];
 		print '</td>';
 		print '</tr>';
@@ -464,10 +483,10 @@ function show_stats_for_company($product, $socid)
 /**
  *	Return translation label of a unit key
  *
- *	@param	int		$unit                Unit key (-3,0,3,98,99...)
+ *	@param	int		$unit                ID of unit (rowid in llx_c_units table)
  *	@param  string	$measuring_style     Style of unit: weight, volume,...
  *	@return	string	   			         Unit string
- * 	@see	formproduct->load_measuring_units
+ * 	@see	formproduct->selectMeasuringUnits
  */
 function measuring_units_string($unit, $measuring_style = '')
 {
@@ -475,7 +494,7 @@ function measuring_units_string($unit, $measuring_style = '')
 	require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
 	$measuringUnits= new CUnits($db);
 	$result = $measuringUnits->fetchAll('', '', 0, 0, array(
-			't.code' => $unit,
+			't.rowid' => $unit,
 			't.unit_type' => $measuring_style,
 			't.active' => 1
 	));
@@ -496,7 +515,7 @@ function measuring_units_string($unit, $measuring_style = '')
  *
  *	@param	int		$unit            Unit key (-3,-2,-1,0,98,99...)
  *	@return	int	   			         Squared unit key (-6,-4,-2,0,98,99...)
- * 	@see	formproduct->load_measuring_units
+ * 	@see	formproduct->selectMeasuringUnits
  */
 function measuring_units_squared($unit)
 {
@@ -516,7 +535,7 @@ function measuring_units_squared($unit)
  *
  *	@param	int		$unit            Unit key (-3,-2,-1,0,98,99...)
  *	@return	int	   			         Cubed unit key (-9,-6,-3,0,88,89...)
- * 	@see	formproduct->load_measuring_units
+ * 	@see	formproduct->selectMeasuringUnits
  */
 function measuring_units_cubed($unit)
 {

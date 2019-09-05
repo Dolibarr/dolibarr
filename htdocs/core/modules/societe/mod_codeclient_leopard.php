@@ -39,13 +39,6 @@ class mod_codeclient_leopard extends ModeleThirdPartyCode
 	 */
 
 	/**
-	 * @var string Nom du modele
-	 * @deprecated
-	 * @see name
-	 */
-	public $nom='Leopard';
-
-	/**
 	 * @var string model name
 	 */
 	public $name='Leopard';
@@ -60,7 +53,7 @@ class mod_codeclient_leopard extends ModeleThirdPartyCode
 
 	/**
      * Dolibarr version of the loaded document
-     * @public string
+     * @var string
      */
 	public $version = 'dolibarr';    		// 'development', 'experimental', 'dolibarr'
 

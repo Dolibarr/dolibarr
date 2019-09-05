@@ -1,4 +1,10 @@
 # Dolibarr language file - Source file is en_US - admin
+Module600Name=Notifications on business event
 LocalTax1Management=PST Management
 CompanyZip=Postal code
 LDAPFieldZip=Postal code
+ListOfNotificationsPerUser=List of automatic notifications per user*
+ListOfNotificationsPerUserOrContact=List of possible automatic notifications (on business event) available per user* or per contact**
+ListOfFixedNotifications=List of automatic fixed notifications
+FormatZip=Postal code
+OperationParamDesc=Define values to use for action, or how to extract values. For example:<br>objproperty1=SET:abc<br>objproperty1=SET:a value with replacement of __objproperty1__<br>objproperty3=SETIFEMPTY:abc<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey.*[^\\s]+(.*)<br>options_myextrafield=EXTRACT:SUBJECT:([^\\s]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a ; char as separator to extract or set several properties.

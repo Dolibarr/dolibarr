@@ -30,19 +30,25 @@ OverviewOfAmountOfLinesNotBound=Overview of amount of lines not bound to an acco
 OverviewOfAmountOfLinesBound=Overview of amount of lines already bound to an accounting account
 OtherInfo=Other information
 DeleteCptCategory=Remove accounting account from group
-ConfirmDeleteCptCategory=Are you sure you want to remove this accounting account from the accounting account group ?
+ConfirmDeleteCptCategory=Are you sure you want to remove this accounting account from the accounting account group?
 JournalizationInLedgerStatus=Status of journalization
 AlreadyInGeneralLedger=Already journalized in ledgers
 NotYetInGeneralLedger=Not yet journalized in ledgers
 GroupIsEmptyCheckSetup=Group is empty, check setup of the personalized accounting group
 DetailByAccount=Show detail by account
-AccountWithNonZeroValues=Accounts with non zero values
+AccountWithNonZeroValues=Accounts with non-zero values
 ListOfAccounts=List of accounts
+CountriesInEEC=Countries in EEC
+CountriesNotInEEC=Countries not in EEC
+CountriesInEECExceptMe=Countries in EEC except %s
+CountriesExceptMe=All countries except %s
+AccountantFiles=Export accounting documents
 
 MainAccountForCustomersNotDefined=Main accounting account for customers not defined in setup
 MainAccountForSuppliersNotDefined=Main accounting account for vendors not defined in setup
 MainAccountForUsersNotDefined=Main accounting account for users not defined in setup
 MainAccountForVatPaymentNotDefined=Main accounting account for VAT payment not defined in setup
+MainAccountForSubscriptionPaymentNotDefined=Main accounting account for subscription payment not defined in setup
 
 AccountancyArea=Accounting area
 AccountancyAreaDescIntro=Použitie účtovného modulu sa vykonáva v niekoľkých krokoch:
@@ -58,8 +64,9 @@ AccountancyAreaDescVat=KROK %s: Definujte účty účtov pre každú sadzbu DPH.
 AccountancyAreaDescDefault=STEP %s: Define default accounting accounts. For this, use the menu entry %s.
 AccountancyAreaDescExpenseReport=STEP %s: Define default accounting accounts for each type of expense report. For this, use the menu entry %s.
 AccountancyAreaDescSal=KROK %s: Definovanie predvolených účtovných účtov na platbu miezd. Na to použite položku ponuky %s.
-AccountancyAreaDescContrib=KROK %s: Definujte predvolené účtovné účty pre špeciálne výdavky (rôzne dane). Na to použite položku ponuky %s.
+AccountancyAreaDescContrib=STEP %s: Define default accounting accounts for special expenses (miscellaneous taxes). For this, use the menu entry %s.
 AccountancyAreaDescDonation=KROK %s: Definujte predvolené účtovné účty pre darovanie. Na to použite položku ponuky %s.
+AccountancyAreaDescSubscription=STEP %s: Define default accounting accounts for member subscription. For this, use the menu entry %s.
 AccountancyAreaDescMisc=KROK %s: Definujte povinné predvolené účty a predvolené účtovné účty pre rôzne transakcie. Na to použite položku ponuky %s.
 AccountancyAreaDescLoan=STEP %s: Define default accounting accounts for loans. For this, use the menu entry %s.
 AccountancyAreaDescBank=STEP %s: Define accounting accounts and journal code for each bank and financial accounts. For this, use the menu entry %s.
@@ -77,7 +84,8 @@ ChangeAndLoad=Zmeniť a načítať
 Addanaccount=Pridajte účtovníctvo
 AccountAccounting=Účtovný účet
 AccountAccountingShort=Účet
-SubledgerAccount=Subledger Account
+SubledgerAccount=Subledger account
+SubledgerAccountLabel=Subledger account label
 ShowAccountingAccount=Show accounting account
 ShowAccountingJournal=Show accounting journal
 AccountAccountingSuggest=Účtovný účet bol navrhnutý
@@ -88,19 +96,22 @@ MenuTaxAccounts=Tax accounts
 MenuExpenseReportAccounts=Expense report accounts
 MenuLoanAccounts=Loan accounts
 MenuProductsAccounts=Produktové účty
+MenuClosureAccounts=Closure accounts
 ProductsBinding=Produkty účty
-Ventilation=Priradené k účtom
+TransferInAccounting=Transfer in accounting
+RegistrationInAccounting=Registration in accounting
+Binding=Priradené k účtom
 CustomersVentilation=Priradenie zákazníckej faktúry
 SuppliersVentilation=Vendor invoice binding
 ExpenseReportsVentilation=Expense report binding
 CreateMvts=Vytvorte novú transakciu
 UpdateMvts=Úprava transakcie
 ValidTransaction=Validate transaction
-WriteBookKeeping=Zmeniť transakcie v knihe Ledger
+WriteBookKeeping=Register transactions in Ledger
 Bookkeeping=Hlavná kniha
 AccountBalance=Stav účtu
 ObjectsRef=Source object ref
-CAHTF=Celkový dodávateľ nákupu pred zdanením
+CAHTF=Total purchase vendor before tax
 TotalExpenseReport=Total expense report
 InvoiceLines=Riadky faktúry na priradenie
 InvoiceLinesDone=Viazané riadky faktúr
@@ -122,17 +133,18 @@ NotVentilatedinAccount=Nie je viazaný na účet
 XLineSuccessfullyBinded=%s products/services successfully bound to an accounting account
 XLineFailedToBeBinded=%s produkty / služby neboli viazané na žiadny účtovný účet
 
-ACCOUNTING_LIMIT_LIST_VENTILATION=Počet prvkov na viazanie zobrazených na stránke (maximálne odporúčané: 50)
+ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to bind shown by page (maximum recommended: 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Začnite triediť stránku "Väzba urobiť" najnovšími prvkami
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Začnite triediť stránku "Väzba vykonaná" najnovšími prvkami
 
 ACCOUNTING_LENGTH_DESCRIPTION=Zrušte popis produktu a služieb v zoznamoch po znakoch x (Najlepší = 50)
 ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Zrušte opis formulára účtu produktov a služieb v zoznamoch po znakoch x (Najlepší = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Dĺžka všeobecných účtovných účtov (ak nastavíte hodnotu 6 tu, na obrazovke sa zobrazí účet '706' ako '706000')
-ACCOUNTING_LENGTH_AACCOUNT=Dĺžka účtov účtov tretej strany (ak nastavíte hodnotu 6 tu, účet "401" sa zobrazí na obrazovke ako "401000")
-ACCOUNTING_MANAGE_ZERO=Umožňuje spravovať iný počet nuly na konci účtovného účtu. Niektoré krajiny potrebujú (napríklad švajčiarsko). Ak je vypnuté (predvolené), môžete nastaviť dva nasledujúce parametre a požiadať aplikáciu o pridanie virtuálnej nuly.
+ACCOUNTING_LENGTH_AACCOUNT=Length of the third-party accounting accounts (If you set value to 6 here, the account '401' will appear like '401000' on screen)
+ACCOUNTING_MANAGE_ZERO=Allow to manage different number of zeros at the end of an accounting account. Needed by some countries (like Switzerland). If set to off (default), you can set the following two parameters to ask the application to add virtual zeros.
 BANK_DISABLE_DIRECT_INPUT=Zakázať priame zaznamenávanie transakcie na bankový účet
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Enable draft export on journal
+ACCOUNTANCY_COMBO_FOR_AUX=Enable combo list for subsidiary account (may be slow if you have a lot of third parties)
 
 ACCOUNTING_SELL_JOURNAL=Predaj denníka
 ACCOUNTING_PURCHASE_JOURNAL=Zakúpte denník
@@ -141,12 +153,21 @@ ACCOUNTING_EXPENSEREPORT_JOURNAL=Denník výdavkov
 ACCOUNTING_SOCIAL_JOURNAL=Sociálny časopis
 ACCOUNTING_HAS_NEW_JOURNAL=Has new Journal
 
-ACCOUNTING_ACCOUNT_TRANSFER_CASH=Účtovný účet prevodu
+ACCOUNTING_RESULT_PROFIT=Result accounting account (Profit)
+ACCOUNTING_RESULT_LOSS=Result accounting account (Loss)
+ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=Journal of closure
+
+ACCOUNTING_ACCOUNT_TRANSFER_CASH=Accounting account of transitional bank transfer
+TransitionalAccount=Transitional bank transfer account
+
 ACCOUNTING_ACCOUNT_SUSPENSE=Účtovný účet čakania
 DONATION_ACCOUNTINGACCOUNT=Účtovný účet na registráciu darov
+ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Accounting account to register subscriptions
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Účtovný účet štandardne pre zakúpené produkty (používa sa, ak nie je definovaný v produktovom liste)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Účtovný účet štandardne pre predané produkty (použité, ak nie sú definované v produktovom liste)
+ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Accounting account by default for the sold products in EEC (used if not defined in the product sheet)
+ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Accounting account by default for the sold products export out of EEC (used if not defined in the product sheet)
 ACCOUNTING_SERVICE_BUY_ACCOUNT=Účtovný účet predvolene pre zakúpené služby (používa sa, ak nie je definovaný v služobnom liste)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=Účtovný účet predvolene pre predané služby (používa sa, ak nie je definovaný v služobnom liste)
 
@@ -156,7 +177,10 @@ Docref=referencie
 LabelAccount=Značkový účet
 LabelOperation=Label operation
 Sens=sens
+LetteringCode=Lettering code
+Lettering=Lettering
 Codejournal=časopis
+JournalLabel=Journal label
 NumPiece=Číslo kusu
 TransactionNumShort=Num. transakcie
 AccountingCategory=Personalized groups
@@ -170,7 +194,7 @@ NotMatch=Nenastavené
 DeleteMvt=Odstrániť riadky knihy
 DelYear=Rok na zmazanie
 DelJournal=Žurnále na zmazanie
-ConfirmDeleteMvt=Tým sa odstránia všetky riadky knihy za rok a / alebo z určitého časopisu. Vyžaduje sa aspoň jedno kritérium.
+ConfirmDeleteMvt=This will delete all lines of the Ledger for year and/or from a specific journal. At least one criterion is required.
 ConfirmDeleteMvtPartial=This will delete the transaction from the Ledger (all lines related to same transaction will be deleted)
 FinanceJournal=Finančný časopis
 ExpenseReportsJournal=Expense reports journal
@@ -182,38 +206,40 @@ ProductAccountNotDefined=Účet pre produkt nie je definovaný
 FeeAccountNotDefined=Account for fee not defined
 BankAccountNotDefined=Účet pre banku nie je definovaný
 CustomerInvoicePayment=Platba zákazníka faktúry
-ThirdPartyAccount=Third party account
+ThirdPartyAccount=Third-party account
 NewAccountingMvt=Nová transakcia
 NumMvts=Počet transakcií
 ListeMvts=Zoznam pohybov
 ErrorDebitCredit=Debit a kredit nemôžu mať hodnotu súčasne
 AddCompteFromBK=Add accounting accounts to the group
-ReportThirdParty=Uveďte účet tretej strany
-DescThirdPartyReport=Consult here the list of the third party customers and vendors and their accounting accounts
+ReportThirdParty=List third-party account
+DescThirdPartyReport=Consult here the list of third-party customers and vendors and their accounting accounts
 ListAccounts=Zoznam účtovných účtov
-UnknownAccountForThirdparty=Unknown third party account. We will use %s
-UnknownAccountForThirdpartyBlocking=Unknown third party account. Blocking error
-UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Unknown third party account and waiting account not defined. Blocking error
+UnknownAccountForThirdparty=Unknown third-party account. We will use %s
+UnknownAccountForThirdpartyBlocking=Unknown third-party account. Blocking error
+ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Third-party account not defined or third party unknown. We will use %s
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Third-party account not defined or third party unknown. Blocking error.
+UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Unknown third-party account and waiting account not defined. Blocking error
 PaymentsNotLinkedToProduct=Payment not linked to any product / service
 
 Pcgtype=Group of account
 Pcgsubtype=Subgroup of account
-PcgtypeDesc=Group and subgroup of account are used as predefined 'filter' and 'grouping' criterias for some accounting reports. For example, 'INCOME' or 'EXPENSE' are used as groups for accounting accounts of products to build the expense/income report.
+PcgtypeDesc=Group and subgroup of account are used as predefined 'filter' and 'grouping' criteria for some accounting reports. For example, 'INCOME' or 'EXPENSE' are used as groups for accounting accounts of products to build the expense/income report.
 
 TotalVente=Celkový obrat pred zdanením
 TotalMarge=Celkové predajné rozpätie
 
 DescVentilCustomer=Pozrite sa na zoznam zákazníckych faktúr, ktoré sú viazané (alebo nie) na účet účtovania produktu
-DescVentilMore=In most cases, if you use predefined products or services and you set the account number on the product/service card, the application will be able to make all the binding between your invoice lines and the accounting account of your chart of accounts, just in one click with the button <strong>"%s"</strong>. If account was not set on product/service cards or if you still has some lines not bound to any account, you will have to make a manual binding from the menu "<strong>%s</strong>".
+DescVentilMore=In most cases, if you use predefined products or services and you set the account number on the product/service card, the application will be able to make all the binding between your invoice lines and the accounting account of your chart of accounts, just in one click with the button <strong>"%s"</strong>. If account was not set on product/service cards or if you still have some lines not bound to an account, you will have to make a manual binding from the menu "<strong>%s</strong>".
 DescVentilDoneCustomer=Pozrite si zoznam riadkov zákazníkov faktúr a ich účet účtovania produktov
 DescVentilTodoCustomer=Uviazať linky faktúr, ktoré ešte nie sú viazané účtom účtovania produktu
 ChangeAccount=Zmeniť účtovný účet produktu / služby pre vybrané riadky s týmto účtovným účtom:
 Vide=-
 DescVentilSupplier=Consult here the list of vendor invoice lines bound or not yet bound to a product accounting account
-DescVentilDoneSupplier=Consult here the list of the lines of invoices vendors and their accounting account
+DescVentilDoneSupplier=Consult here the list of the lines of vendor invoices and their accounting account
 DescVentilTodoExpenseReport=Bind expense report lines not already bound with a fee accounting account
 DescVentilExpenseReport=Consult here the list of expense report lines bound (or not) to a fee accounting account
-DescVentilExpenseReportMore=If you setup accounting account on type of expense report lines, the application will be able to make all the binding between your expense report lines and the accounting account of your chart of accounts, just in one click with the button <strong>"%s"</strong>. If account was not set on fees dictionary or if you still has some lines not bound to any account, you will have to make a manual binding from the menu "<strong>%s</strong>".
+DescVentilExpenseReportMore=If you setup accounting account on type of expense report lines, the application will be able to make all the binding between your expense report lines and the accounting account of your chart of accounts, just in one click with the button <strong>"%s"</strong>. If account was not set on fees dictionary or if you still have some lines not bound to any account, you will have to make a manual binding from the menu "<strong>%s</strong>".
 DescVentilDoneExpenseReport=Consult here the list of the lines of expenses reports and their fees accounting account
 
 ValidateHistory=Priradzovať automaticky
@@ -221,6 +247,7 @@ AutomaticBindingDone=Automatické priradenie dokončené
 
 ErrorAccountancyCodeIsAlreadyUse=Chyba, nemôžete odstrániť tento účtovný účet, pretože sa používa
 MvtNotCorrectlyBalanced=Movement not correctly balanced. Debit = %s | Credit = %s
+Balancing=Balancing
 FicheVentilation=Viazacia karta
 GeneralLedgerIsWritten=Transakcie sú zapísané v knihe
 GeneralLedgerSomeRecordWasNotRecorded=Some of the transactions could not be journalized. If there is no other error message, this is probably because they were already journalized.
@@ -232,13 +259,13 @@ NotYetAccounted=Not yet accounted in ledger
 
 ## Admin
 ApplyMassCategories=Použiť hromadne kategórie
-AddAccountFromBookKeepingWithNoCategories=Available acccount not yet in a personalized group
+AddAccountFromBookKeepingWithNoCategories=Available account not yet in the personalized group
 CategoryDeleted=Category for the accounting account has been removed
 AccountingJournals=Accounting journals
 AccountingJournal=Accounting journal
 NewAccountingJournal=New accounting journal
 ShowAccoutingJournal=Show accounting journal
-Nature=Príroda
+NatureOfJournal=Nature of Journal
 AccountingJournalType1=Miscellaneous operations
 AccountingJournalType2=Predaje
 AccountingJournalType3=Platby
@@ -248,31 +275,42 @@ AccountingJournalType8=Inventory
 AccountingJournalType9=Has-new
 ErrorAccountingJournalIsAlreadyUse=This journal is already use
 AccountingAccountForSalesTaxAreDefinedInto=Note: Accounting account for Sales tax are defined into menu <b>%s</b> - <b>%s</b>
+NumberOfAccountancyEntries=Number of entries
+NumberOfAccountancyMovements=Number of movements
 
 ## Export
 ExportDraftJournal=Export draft journal
 Modelcsv=Vzor exportu
 Selectmodelcsv=Vyberte model exportu
 Modelcsv_normal=Klasický export
-Modelcsv_CEGID=Exportovať pre CEGID Expert
-Modelcsv_COALA=Exportovať pre Sage Coala
-Modelcsv_bob50=Exportovať pre Sage BOB 50
-Modelcsv_ciel=Exportovať pre Sage Ciel Compta alebo Compta Evolution
-Modelcsv_quadratus=Exportovať pre Quadratus QuadraCompta
-Modelcsv_ebp=Exportovať pre EBP
-Modelcsv_cogilog=Exportovať pre Cogilog
-Modelcsv_agiris=Export towards Agiris
-Modelcsv_configurable=Export Configurable
+Modelcsv_CEGID=Export for CEGID Expert Comptabilité
+Modelcsv_COALA=Export for Sage Coala
+Modelcsv_bob50=Export for Sage BOB 50
+Modelcsv_ciel=Export for Sage Ciel Compta or Compta Evolution
+Modelcsv_quadratus=Export for Quadratus QuadraCompta
+Modelcsv_ebp=Export for EBP
+Modelcsv_cogilog=Export for Cogilog
+Modelcsv_agiris=Export for Agiris
+Modelcsv_LDCompta=Export for LD Compta (v9 & higher) (Test)
+Modelcsv_openconcerto=Export for OpenConcerto (Test)
+Modelcsv_configurable=Export CSV Configurable
+Modelcsv_FEC=Export FEC
+Modelcsv_Sage50_Swiss=Export for Sage 50 Switzerland
 ChartofaccountsId=Chart of accounts Id
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=Načítať účtovníctvo
 InitAccountancyDesc=This page can be used to initialize an accounting account on products and services that does not have accounting account defined for sales and purchases.
 DefaultBindingDesc=Táto stránka môže byť použitá na nastavenie predvoleného účtu, ktorý sa používa na prepojenie transakčných záznamov o platobných platoch, darcovstve, daniach a DPH, ak už nie je stanovený žiadny konkrétny účtovný účet.
+DefaultClosureDesc=This page can be used to set parameters used for accounting closures.
 Options=Možnosti
 OptionModeProductSell=Mód predaja
+OptionModeProductSellIntra=Mode sales exported in EEC
+OptionModeProductSellExport=Mode sales exported in other countries
 OptionModeProductBuy=Mód nákupu
 OptionModeProductSellDesc=Zobraziť všetky produkty s účtovným účtom pre predaj.
+OptionModeProductSellIntraDesc=Show all products with accounting account for sales in EEC.
+OptionModeProductSellExportDesc=Show all products with accounting account for other foreign sales.
 OptionModeProductBuyDesc=Zobraziť všetky produkty s účtovným účtom pre nákupy.
 CleanFixHistory=Remove accounting code from lines that not exists into charts of account
 CleanHistory=Resetovať všetky priradenia pre zvolený rok
@@ -280,6 +318,10 @@ PredefinedGroups=Predefined groups
 WithoutValidAccount=Without valid dedicated account
 WithValidAccount=With valid dedicated account
 ValueNotIntoChartOfAccount=This value of accounting account does not exist into chart of account
+AccountRemovedFromGroup=Account removed from group
+SaleLocal=Local sale
+SaleExport=Export sale
+SaleEEC=Sale in EEC
 
 ## Dictionary
 Range=Rozsah účtovného účtu
@@ -292,15 +334,15 @@ ErrorNoAccountingCategoryForThisCountry=Pre krajinu %s nie je k dispozícii žia
 ErrorInvoiceContainsLinesNotYetBounded=You try to journalize some lines of the invoice <strong>%s</strong>, but some other lines are not yet bounded to accounting account. Journalization of all invoice lines for this invoice are refused.
 ErrorInvoiceContainsLinesNotYetBoundedShort=Some lines on invoice are not bound to accounting account.
 ExportNotSupported=Exportovaný formát nie je podporovaný pre túto stránku
-BookeppingLineAlreayExists=Riadky už existujú v archíve
+BookeppingLineAlreayExists=Lines already existing into bookkeeping
 NoJournalDefined=No journal defined
 Binded=Viazané čiary
 ToBind=Linky na viazanie
-UseMenuToSetBindindManualy=Autodection not possible, use menu <a href="%s">%s</a> to make the binding manually
+UseMenuToSetBindindManualy=Lines not yet bound, use menu <a href="%s">%s</a> to make the binding manually
 
 ## Import
 ImportAccountingEntries=Accounting entries
-
-WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contains transaction modified manualy in the Ledger. If your journalization is up to date, the bookkeeping view is more accurate.
+DateExport=Date export
+WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contains transaction modified manually in the Ledger. If your journalization is up to date, the bookkeeping view is more accurate.
 ExpenseReportJournal=Expense Report Journal
 InventoryJournal=Inventory Journal
