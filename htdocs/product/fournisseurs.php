@@ -151,7 +151,7 @@ if (empty($reshook))
 		}
 	}
 
-	if ($action == 'updateprice')
+	if ($action == 'save_price')
 	{
 		$id_fourn=GETPOST("id_fourn");
 		if (empty($id_fourn)) $id_fourn=GETPOST("search_id_fourn");
@@ -437,7 +437,7 @@ if ($id > 0 || $ref)
 
 
 			// Form to add or update a price
-			if (($action == 'add_price' || $action == 'updateprice' ) && $usercancreate)
+			if (($action == 'add_price' || $action == 'update_price' ) && $usercancreate)
 			{
 				$langs->load("suppliers");
 
@@ -453,7 +453,7 @@ if ($id > 0 || $ref)
 
 				print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="POST">';
 				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-				print '<input type="hidden" name="action" value="updateprice">';
+				print '<input type="hidden" name="action" value="save_price">';
 
 				dol_fiche_head();
 
@@ -763,12 +763,16 @@ SCRIPT;
 				$resql = $db->query("SELECT * FROM " . MAIN_DB_PREFIX . "product_fournisseur_price_extrafields WHERE fk_object = " . $rowid);
 				if ($db->num_rows($resql) != 1) {
 					foreach ($extralabels as $key => $value) {
-						print '<tr><td>' . $langs->trans($value) . '</td><td>' . $extrafields->showInputField($key, '', '', '', '', '', 0, 'product_fournisseur_price') . '</td></tr>';
+						if (! empty($extrafields->attributes["product_fournisseur_price"]['list'][$key]) && ($extrafields->attributes["product_fournisseur_price"]['list'][$key] == 1 || $extrafields->attributes["product_fournisseur_price"]['list'][$key] == 3 || ($action == "update_price" && $extrafields->attributes["product_fournisseur_price"]['list'][$key] == 4))) {
+							print '<tr><td' . ($extrafields->attributes["product_fournisseur_price"]['required'][$key] ? ' class="fieldrequired"' : '') . '>' . $langs->trans($value) . '</td><td>' . $extrafields->showInputField($key, '', '', '', '', '', 0, 'product_fournisseur_price') . '</td></tr>';
+						}
 					}
 				} else {
 					$resql = $db->fetch_object($resql);
 					foreach ($extralabels as $key => $value) {
-						print '<tr><td>' . $langs->trans($value) . '</td><td>' . $extrafields->showInputField($key, $resql->{$key}, '', '', '', '', 0, 'product_fournisseur_price') . '</td></tr>';
+						if (! empty($extrafields->attributes["product_fournisseur_price"]['list'][$key]) && ($extrafields->attributes["product_fournisseur_price"]['list'][$key] == 1 || $extrafields->attributes["product_fournisseur_price"]['list'][$key] == 3 || ($action == "update_price" && $extrafields->attributes["product_fournisseur_price"]['list'][$key] == 4))) {
+							print '<tr><td' . ($extrafields->attributes["product_fournisseur_price"]['required'][$key] ? ' class="fieldrequired"' : '') . '>' . $langs->trans($value) . '</td><td>' . $extrafields->showInputField($key, $resql->{$key}, '', '', '', '', 0, 'product_fournisseur_price') . '</td></tr>';
+						}
 					}
 				}
 
@@ -796,7 +800,7 @@ SCRIPT;
 
 			print "\n<div class=\"tabsAction\">\n";
 
-			if ($action != 'add_price' && $action != 'updateprice')
+			if ($action != 'add_price' && $action != 'update_price')
 			{
 				$parameters=array();
 				$reshook=$hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
@@ -862,8 +866,11 @@ SCRIPT;
 
 				// fetch optionals attributes and labels
 				$extralabels=$extrafields->fetch_name_optionals_label("product_fournisseur_price");
-				foreach ($extralabels as $extrafield) {
-					print_liste_field_titre($extrafield, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
+				foreach ($extralabels as $key => $value) {
+					// Show field if not hidden
+					if (! empty($extrafields->attributes["product_fournisseur_price"]['list'][$key]) && $extrafields->attributes["product_fournisseur_price"]['list'][$key] != 3) {
+						print_liste_field_titre($value, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
+					}
 				}
 
 				if (is_object($hookmanager))
@@ -983,13 +990,17 @@ SCRIPT;
 						// Extrafields
 						$resql = $db->query("SELECT * FROM " . MAIN_DB_PREFIX . "product_fournisseur_price_extrafields WHERE fk_object = " . $productfourn->product_fourn_price_id);
 						if ($db->num_rows($resql) != 1) {
-							foreach ($extralabels as $extrafield) {
-								print "<td></td>";
+							foreach ($extralabels as $key => $value) {
+								if (! empty($extrafields->attributes["product_fournisseur_price"]['list'][$key]) && $extrafields->attributes["product_fournisseur_price"]['list'][$key] != 3) {
+									print "<td></td>";
+								}
 							}
 						} else {
 							$resql = $db->fetch_object($resql);
 							foreach ($extralabels as $key => $value) {
-								print "<td>" . $extrafields->showOutputField($key, $resql->{$key}) . "</td>";
+								if (! empty($extrafields->attributes["product_fournisseur_price"]['list'][$key]) && $extrafields->attributes["product_fournisseur_price"]['list'][$key] != 3) {
+									print '<td align="right">' . $extrafields->showOutputField($key, $resql->{$key}) . "</td>";
+								}
 							}
 						}
 
@@ -1003,7 +1014,7 @@ SCRIPT;
 						print '<td class="center nowraponall">';
 						if ($usercancreate)
 						{
-							print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$productfourn->fourn_id.'&amp;action=add_price&amp;rowid='.$productfourn->product_fourn_price_id.'">'.img_edit()."</a>";
+							print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$productfourn->fourn_id.'&amp;action=update_price&amp;rowid='.$productfourn->product_fourn_price_id.'">'.img_edit()."</a>";
 							print ' &nbsp; ';
 							print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$productfourn->fourn_id.'&amp;action=ask_remove_pf&amp;rowid='.$productfourn->product_fourn_price_id.'">'.img_picto($langs->trans("Remove"), 'delete').'</a>';
 						}
