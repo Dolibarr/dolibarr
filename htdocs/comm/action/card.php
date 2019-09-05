@@ -558,7 +558,7 @@ if ($action == 'update')
                         $error++;
                         $object->error = $langs->trans('ErrorResourcesAlreadyInUse') . ' : ';
                         while ($obj = $db->fetch_object($resql)) {
-                            $object->error .= '<br /> - ' . $langs->trans('ErrorResourceUseInEvent', $obj->r_ref, $obj->ac_label . ' [' . $obj->ac_id . ']');
+                            $object->error .= '<br> - ' . $langs->trans('ErrorResourceUseInEvent', $obj->r_ref, $obj->ac_label . ' [' . $obj->ac_id . ']');
                         }
                         $object->errors[] = $object->error;
                     }
