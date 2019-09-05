@@ -28,6 +28,7 @@ NoTemplateDefined=برای این نوع رایانامه قالبی وجود ن
 AvailableVariables=متغیرهای موجود برای جایگزینی 
 NoTranslation=بدون ترجمه
 Translation=ترجمه
+EmptySearchString=Enter a non empty search string
 NoRecordFound=هیچ ردیفی پیدا نشد
 NoRecordDeleted=هیچ ردیفی حذف نشد
 NotEnoughDataYet=دادۀ کافی وجود ندارد
@@ -445,7 +446,7 @@ ContactsAddressesForCompany=طرف‌های‌تماس/نشانی‌های ای�
 AddressesForCompany=نشانی‌های این شخص‌سوم
 ActionsOnCompany=روی‌دادهای مربوط به این شخص سوم
 ActionsOnContact=روی‌دادهای مربوط به این طرف‌تماس/نشانی
-ActionsOnContract=Events for this contract
+ActionsOnContract=روی‌دادهای مربوط به این قرارداد
 ActionsOnMember=روی‌دادهای مربوط به این عضو
 ActionsOnProduct=روی‌دادهای مربوط به این محصول
 NActionsLate=%s دیرتر
@@ -704,6 +705,7 @@ DateOfSignature=تاریخ امضا
 HidePassword=نمایش دستور با گذرواژۀ پنهان
 UnHidePassword=نمایش دستور و گذرواژۀ واقعی
 Root=ریشه
+RootOfMedias=Root of public medias (/medias)
 Informations=اطلاعات
 Page=صفحه
 Notes=یادداشت‌ها
@@ -760,7 +762,7 @@ LinkToSupplierProposal=پیوند به پیشنهاد فروشنده
 LinkToSupplierInvoice=پیوند به صورت‌حساب فروشنده
 LinkToContract=پیوند به قرارداد
 LinkToIntervention=پیوند به واسطه‌گری
-LinkToTicket=Link to ticket
+LinkToTicket=اتصال به برگۀ پشتیبانی
 CreateDraft=ساخت پیش‌نویس
 SetToDraft=بازگشت به پیش‌نویس
 ClickToEdit=کلیک برای ویرایش
@@ -981,3 +983,10 @@ PaymentInformation=اطلاعات پرداخت
 ValidFrom=معتبر از
 ValidUntil=معتبر تا
 NoRecordedUsers=کاربری نیست
+ToClose=To close
+ToProcess=برای پردازش
+ToApprove=To approve
+GlobalOpenedElemView=Global view
+NoArticlesFoundForTheKeyword=No article found for the keyword '<strong>%s</strong>'
+NoArticlesFoundForTheCategory=No article found for the category
+ToAcceptRefuse=To accept | refuse

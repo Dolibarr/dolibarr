@@ -29,6 +29,7 @@ MenuMembersUpToDate=Upp til dagsetning meðlimi
 MenuMembersNotUpToDate=Út af meðlimum dagsetningu
 MenuMembersResiliated=Terminated members
 MembersWithSubscriptionToReceive=Meðlimir með áskrift að fá
+MembersWithSubscriptionToReceiveShort=Subscription to receive
 DateSubscription=Áskrift dagsetningu
 DateEndSubscription=Áskrift lokadagur
 EndSubscription=End áskrift

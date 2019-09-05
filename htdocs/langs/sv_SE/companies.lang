@@ -54,6 +54,7 @@ Firstname=Förnamn
 PostOrFunction=Befattning
 UserTitle=Titel
 NatureOfThirdParty=Tredjepartens art
+NatureOfContact=Nature of Contact
 Address=Adress
 State=Delstat / provins
 StateShort=stat

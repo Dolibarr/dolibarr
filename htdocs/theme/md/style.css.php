@@ -195,6 +195,7 @@ $colortext=join(',', colorStringToArray($colortext));
 $colortextlink=join(',', colorStringToArray($colortextlink));
 
 $nbtopmenuentries=$menumanager->showmenu('topnb');
+if ($conf->browser->layout == 'phone') $nbtopmenuentries = max($nbtopmenuentries, 10);
 
 print '/*'."\n";
 print 'colorbackbody='.$colorbackbody."\n";

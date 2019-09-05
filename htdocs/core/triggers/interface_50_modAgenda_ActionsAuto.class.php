@@ -892,15 +892,13 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		$actioncomm->type_code   = $object->actiontypecode;		// Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
 		$actioncomm->code        = 'AC_'.$action;
 		$actioncomm->label       = $object->actionmsg2;
-		$actioncomm->note        = $object->actionmsg;          // TODO Replace with ($actioncomm->email_msgid ? $object->email_content : $object->actionmsg)
+		$actioncomm->note_private= $object->actionmsg;          // TODO Replace with ($actioncomm->email_msgid ? $object->email_content : $object->actionmsg)
 		$actioncomm->fk_project  = $projectid;
 		$actioncomm->datep       = $now;
 		$actioncomm->datef       = $now;
 		$actioncomm->durationp   = 0;
 		$actioncomm->punctual    = 1;
 		$actioncomm->percentage  = -1;   // Not applicable
-		$actioncomm->societe     = $societeforaction;
-		$actioncomm->contact     = $contactforaction;
 		$actioncomm->socid       = $societeforaction->id;
 		$actioncomm->contactid   = $contactforaction->id;
 		$actioncomm->authorid    = $user->id;   // User saving action

@@ -607,7 +607,7 @@ class DoliDBPgsql extends DoliDB
     /**
      *	Return number of lines for result of a SELECT
      *
-     *	@param	resourse	$resultset  Resulset of requests
+     *	@param	resource	$resultset  Resulset of requests
      *	@return int		    			Nb of lines, -1 on error
      *	@see    affected_rows()
      */

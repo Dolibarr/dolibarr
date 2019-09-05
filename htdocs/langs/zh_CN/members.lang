@@ -29,6 +29,7 @@ MenuMembersUpToDate=新进人员
 MenuMembersNotUpToDate=过期会员
 MenuMembersResiliated=解雇会员
 MembersWithSubscriptionToReceive=接受订阅会员
+MembersWithSubscriptionToReceiveShort=Subscription to receive
 DateSubscription=认购日期
 DateEndSubscription=认购结束日期
 EndSubscription=最终订阅

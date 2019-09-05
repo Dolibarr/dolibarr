@@ -162,13 +162,13 @@ class FormWebsite
 
 
     /**
-     *  Return a HTML select list of a dictionary
+     *  Return a HTML select list of type of containers
      *
      *  @param  string	$htmlname          	Name of select zone
      *  @param	string	$selected			Selected value
      *  @param  int		$useempty          	1=Add an empty value in list
      *  @param  string  $moreattrib         More attributes on HTML select tag
-     * 	@return	void
+     * 	@return	string						HTML select component with list of type of containers
      */
     public function selectSampleOfContainer($htmlname, $selected = '', $useempty = 0, $moreattrib = '')
     {

@@ -57,9 +57,9 @@ class box_fournisseurs extends ModeleBoxes
     {
         global $user;
 
-        $this->db=$db;
+        $this->db = $db;
 
-        $this->hidden=! ($user->rights->societe->lire && empty($user->socid));
+        $this->hidden = ! ($user->rights->societe->lire && empty($user->socid));
     }
 
     /**

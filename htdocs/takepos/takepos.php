@@ -47,6 +47,8 @@ if ($setterminal>0)
 	$_SESSION["takeposterminal"]=$setterminal;
 }
 
+$_SESSION["urlfrom"]='/takepos/takepos.php';
+
 $langs->loadLangs(array("bills","orders","commercial","cashdesk","receiptprinter"));
 
 $categorie = new Categorie($db);
@@ -156,7 +158,7 @@ if(localStorage.hasKeyboard) {
 function ClearSearch() {
 	console.log("ClearSearch");
 	$("#search").val('');
-	<?php if ($conf->browser->layer == 'classic') { ?>
+	<?php if ($conf->browser->layout == 'classic') { ?>
 	setFocusOnSearchField();
 	<?php } ?>
 }
@@ -356,6 +358,7 @@ function deleteline() {
 	$("#poslines").load("invoice.php?action=deleteline&place="+place+"&idline="+selectedline, function() {
 		//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 	});
+	ClearSearch();
 }
 
 function Customer() {
@@ -405,6 +408,7 @@ function New() {
     	$("#poslines").load("invoice.php?action=delete&place="+place, function() {
     		//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
     	});
+		ClearSearch();
 	}
 }
 

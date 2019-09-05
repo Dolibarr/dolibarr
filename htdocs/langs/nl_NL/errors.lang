@@ -218,6 +218,7 @@ ErrorVariableKeyForContentMustBeSet=Error, the constant with name %s (with text 
 ErrorURLMustStartWithHttp=URL %s must start with http:// or https://
 ErrorNewRefIsAlreadyUsed=Error, the new reference is already used
 ErrorDeletePaymentLinkedToAClosedInvoiceNotPossible=Error, delete payment linked to a closed invoice is not possible.
+ErrorSearchCriteriaTooSmall=Search criteria too small.
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.
 WarningPasswordSetWithNoAccount=Er is een wachtwoord ingesteld voor dit lid. Er is echter geen gebruikersaccount gemaakt. Dus dit wachtwoord is opgeslagen maar kan niet worden gebruikt om in te loggen bij Dolibarr. Het kan worden gebruikt door een externe module / interface, maar als u geen gebruikersnaam of wachtwoord voor een lid hoeft aan te maken, kunt u de optie "Beheer een login voor elk lid" in de module-setup van Member uitschakelen. Als u een login moet beheren maar geen wachtwoord nodig heeft, kunt u dit veld leeg houden om deze waarschuwing te voorkomen. Opmerking: e-mail kan ook worden gebruikt als login als het lid aan een gebruiker is gekoppeld.

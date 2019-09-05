@@ -201,7 +201,7 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping = new BookKeeping($db);
 					$bookkeeping->doc_date = $val["date"];
 					$bookkeeping->doc_ref = $val["ref"];
-					$bookkeeping->date_create = $now;
+					$bookkeeping->date_creation = $now;
 					$bookkeeping->doc_type = 'expense_report';
 					$bookkeeping->fk_doc = $key;
 					$bookkeeping->fk_docdet = $val["fk_expensereportdet"];
@@ -254,7 +254,7 @@ if ($action == 'writebookkeeping') {
 						$bookkeeping = new BookKeeping($db);
 						$bookkeeping->doc_date = $val["date"];
 						$bookkeeping->doc_ref = $val["ref"];
-						$bookkeeping->date_create = $now;
+						$bookkeeping->date_creation = $now;
 						$bookkeeping->doc_type = 'expense_report';
 						$bookkeeping->fk_doc = $key;
 						$bookkeeping->fk_docdet = $val["fk_expensereportdet"];
@@ -311,7 +311,7 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping = new BookKeeping($db);
 					$bookkeeping->doc_date = $val["date"];
 					$bookkeeping->doc_ref = $val["ref"];
-					$bookkeeping->date_create = $now;
+					$bookkeeping->date_creation = $now;
 					$bookkeeping->doc_type = 'expense_report';
 					$bookkeeping->fk_doc = $key;
 					$bookkeeping->fk_docdet = $val["fk_expensereportdet"];
