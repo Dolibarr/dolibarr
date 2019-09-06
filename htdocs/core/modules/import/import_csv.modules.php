@@ -761,7 +761,7 @@ class ImportCsv extends ModeleImports
 										$lastinsertid = $res->rowid;
 										$last_insert_id_array[$tablename] = $lastinsertid;
 									} elseif($resql->num_rows > 1) {
-										$this->errors[$error]['lib']=$langs->trans('MultipleRecordFoundWithTheseFilters', implode($filters, ', '));
+										$this->errors[$error]['lib']=$langs->trans('MultipleRecordFoundWithTheseFilters', implode(', ', $filters));
 										$this->errors[$error]['type']='SQL';
 										$error++;
 									} else {
