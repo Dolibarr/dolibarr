@@ -105,4 +105,7 @@ create table llx_c_hrm_public_holiday
 )ENGINE=innodb;
 
 
-  
+ALTER TABLE llx_supplier_proposaldet ADD COLUMN  date_start	datetime   DEFAULT NULL;
+ALTER TABLE llx_supplier_proposaldet ADD COLUMN  date_end	datetime   DEFAULT NULL;
+
+ 
