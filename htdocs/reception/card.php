@@ -780,9 +780,10 @@ if ($action == 'create')
             }
             print '</a></td>';
             print "</tr>\n";
+
             // Ref client
             print '<tr><td>';
-            if ($origin == 'supplier_order') print $langs->trans('RefSupplierOrder');
+            if ($origin == 'supplier_order') print $langs->trans('SupplierOrder');
             else print $langs->trans('RefSupplier');
             print '</td><td colspan="3">';
             print '<input type="text" name="ref_supplier" value="'.$object->ref_supplier.'" />';
@@ -1398,7 +1399,7 @@ elseif ($id || $ref)
 		if ($typeobject == 'CommandeFournisseur' && $object->$typeobject->id && ! empty($conf->propal->enabled))
 		{
 			print '<tr><td>';
-			print $langs->trans("RefSupplierOrder").'</td>';
+			print $langs->trans("SupplierOrder").'</td>';
 			print '<td colspan="3">';
 			print $objectsrc->getNomUrl(1, 'reception');
 			print "</td>\n";
