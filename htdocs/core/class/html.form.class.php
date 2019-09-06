@@ -5216,7 +5216,7 @@ class Form
 	 *  @param  datetime    $adddateof      Add a link "Date of invoice" using the following date.
 	 *  @return	string|void					Nothing or string if nooutput is 1
      *  @deprecated
-	 *  @see    form_date(), select_month(), select_year(), select_dayofweek()
+	 *  @see    selectDate(), form_date(), select_month(), select_year(), select_dayofweek()
 	 */
     public function select_date($set_time = '', $prefix = 're', $h = 0, $m = 0, $empty = 0, $form_name = "", $d = 1, $addnowlink = 0, $nooutput = 0, $disabled = 0, $fullday = '', $addplusone = '', $adddateof = '')
     {
