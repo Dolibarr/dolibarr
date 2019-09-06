@@ -798,8 +798,6 @@ class BonPrelevement extends CommonObject
 		$month = strftime("%m", $datetimeprev);
 		$year = strftime("%Y", $datetimeprev);
 
-		$puser = new User($this->db, $conf->global->PRELEVEMENT_USER);
-
 		$this->invoice_in_error = array();
 		$this->thirdparty_in_error = array();
 

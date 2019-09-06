@@ -274,9 +274,10 @@ class ExtraFields
 	 *  @param	string	$perms				Permission
 	 *	@param	string	$list				Into list view by default
 	 *  @param  string  $computed           Computed value
+	 *  @param	string	$help				Help on tooltip
 	 *  @return int      	           		<=0 if KO, >0 if OK
 	 */
-	private function create($attrname, $type = 'varchar', $length = 255, $elementtype = 'member', $unique = 0, $required = 0, $default_value = '', $param = '', $perms = '', $list = '0', $computed = '')
+	private function create($attrname, $type = 'varchar', $length = 255, $elementtype = 'member', $unique = 0, $required = 0, $default_value = '', $param = '', $perms = '', $list = '0', $computed = '', $help = '')
 	{
 		if ($elementtype == 'thirdparty') $elementtype='societe';
 		if ($elementtype == 'contact') $elementtype='socpeople';

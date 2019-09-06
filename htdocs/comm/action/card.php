@@ -147,7 +147,7 @@ if ($action == 'classin' && ($user->rights->agenda->allactions->create ||
     (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->rights->agenda->myactions->create)))
 {
     $object->fetch($id);
-    $object->setProject(GETPOST('projectid'));
+    $object->setProject(GETPOST('projectid', 'int'));
 }
 
 // Action clone object
@@ -165,7 +165,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes')
                 reset($object->socpeopleassigned);
                 $object->contactid = key($object->socpeopleassigned);
             }
-			$result = $object->createFromClone($user, GETPOST('fk_userowner'), GETPOST('socid'));
+			$result = $object->createFromClone($user, GETPOST('socid', 'int'));
 			if ($result > 0) {
 				header("Location: " . $_SERVER['PHP_SELF'] . '?id=' . $result);
 				exit();
