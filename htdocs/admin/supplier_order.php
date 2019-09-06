@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("admin", "other", "orders"));
+$langs->loadLangs(array("admin", "other", "orders", "stocks"));
 
 if (!$user->admin)
 accessforbidden();
@@ -561,16 +561,22 @@ print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">'
 print "</td></tr>\n";
 
 // Option to add a quality/validation step, on products, after reception.
-$langs->load("stocks");
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("UseDispatchStatus").'</td>';
 print '<td></td>';
 print '<td class="center">';
-if ($conf->use_javascript_ajax) {
-	print ajax_constantonoff('SUPPLIER_ORDER_USE_DISPATCH_STATUS');
-} else {
-	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-	print $form->selectarray("SUPPLIER_ORDER_USE_DISPATCH_STATUS", $arrval, $conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS);
+if ($conf->reception->enabled)
+{
+	print '<span class="opacitymedium">'.$langs->trans("FeatureNotAvailableWithReceptionModule").'</span>';
+}
+else
+{
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('SUPPLIER_ORDER_USE_DISPATCH_STATUS');
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("SUPPLIER_ORDER_USE_DISPATCH_STATUS", $arrval, $conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS);
+	}
 }
 print "</td>\n</tr>\n";
 
