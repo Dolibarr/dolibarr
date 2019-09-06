@@ -19,7 +19,7 @@
 /**
  * \file    htdocs/datapolicy/class/datapolicycron.class.php
  * \ingroup datapolicy
- * \brief   Example hook overload.
+ * \brief   File for cron task of module DataPolicy
  */
 
 /**
@@ -46,9 +46,13 @@ class DataPolicyCron
      */
 	public function cleanDataForDataPolicy()
     {
-        global $conf, $db, $langs, $user;
+        global $conf, $langs, $user;
 
         $langs->load('datapolicy@datapolicy');
+
+        $error = 0;
+        $errormsg = '';
+        $nbupdated = $nbdeleted = 0;
 
         // FIXME Removed hardcoded values of id
         $arrayofparameters=array(
@@ -458,14 +462,18 @@ class DataPolicyCron
             ),
         );
 
-        foreach ($arrayofparameters as $key => $params) {
-            if ($conf->global->$key != '' && is_numeric($conf->global->$key) && (int) $conf->global->$key > 0) {
+        $this->db->begin();
 
+        foreach ($arrayofparameters as $key => $params)
+        {
+            if ($conf->global->$key != '' && is_numeric($conf->global->$key) && (int) $conf->global->$key > 0)
+            {
                 $sql = sprintf($params['sql'], (int) $conf->entity, (int) $conf->global->$key, (int) $conf->global->$key);
 
                 $resql = $db->query($sql);
 
-                if ($resql && $db->num_rows($resql) > 0) {
+                if ($resql && $db->num_rows($resql) > 0)
+                {
 
                     $num = $db->num_rows($resql);
                     $i = 0;
@@ -473,29 +481,51 @@ class DataPolicyCron
                     require_once $params['file'];
                     $object = new $params['class']($db);
 
-                    while ($i < $num)
+                    while ($i < $num && ! $error)
                     {
                         $obj = $db->fetch_object($resql);
 
                         $object->fetch($obj->rowid);
                         $object->id = $obj->rowid;
 
-                        if ($object->isObjectUsed($obj->rowid) > 0) {
+                        if ($object->isObjectUsed($obj->rowid) > 0)			// If object to clean is used
+                        {
                             foreach ($params['fields_anonym'] as $fields => $val) {
                                 $object->$fields = $val;
                             }
-                            $object->update($obj->rowid, $user);
-                            if ($params['class'] == 'Societe') {
-                                // On supprime les contacts associé
-                                $sql = "DELETE FROM ".MAIN_DB_PREFIX."socpeople WHERE fk_soc = " . $obj->rowid;
-                                $db->query($sql);
+                            $result = $object->update($obj->rowid, $user);
+                            if ($result > 0)
+                            {
+	                            if ($params['class'] == 'Societe') {
+	                                // We delete contacts of thirdparty
+	                                $sql = "DELETE FROM ".MAIN_DB_PREFIX."socpeople WHERE fk_soc = " . $obj->rowid;
+	                                $result = $this->db->query($sql);
+	                                if ($result < 0)
+	                                {
+	                                	$errormsg = $this->db->lasterror();
+	                                	$error++;
+	                                }
+	                            }
                             }
-                        } else {
+                            else
+                            {
+                            	$errormsg = $object->error;
+                            	$error++;
+                            }
+                            $nbupdated++;
+                        } else {											// If object to clean is not used
                             if ($object->element == 'adherent') {
-                                $ret = $object->delete($obj->rowid, $user);
+                            	$result = $object->delete($obj->rowid, $user);
                             } else {
-                                $ret = $object->delete($user);
+                            	$result = $object->delete($user);
                             }
+                            if ($result < 0)
+                            {
+                            	$errormsg = $object->error;
+                            	$error++;
+                            }
+
+                            $nbdeleted++;
                         }
 
                         $i++;
@@ -504,27 +534,17 @@ class DataPolicyCron
             }
         }
 
+        $this->db->commit();
+
+        if (! $error)
+        {
+        	$this->output = $nbupdated.' record updated, '.$nbdeleted.' record deleted';
+        }
+        else
+        {
+        	$this->error = $errormsg;
+        }
+
         return 0;
-    }
-
-
-    /**
-     * sendMailing
-     *
-     * @return boolean
-     */
-    public function sendMailing()
-    {
-        global $conf, $db, $langs, $user;
-
-        $langs->load('datapolicy@datapolicy');
-
-        require_once DOL_DOCUMENT_ROOT . '/datapolicy/class/datapolicy.class.php';
-
-        $contacts = new DataPolicy($db);
-        $contacts->getAllContactNotInformed();
-        $contacts->getAllCompaniesNotInformed();
-        $contacts->getAllAdherentsNotInformed();
-        return true;
     }
 }
