@@ -739,14 +739,13 @@ class BonPrelevement extends CommonObject
 		$sql = "SELECT count(f.rowid) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
 		$sql.= ", ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
-		$sql.= " WHERE f.fk_statut = 1";
+		$sql.= " WHERE f.fk_statut = ".Facture::STATUS_VALIDATED;
 		$sql.= " AND f.entity IN (".getEntity('invoice').")";
 		$sql.= " AND f.rowid = pfd.fk_facture";
-		$sql.= " AND f.paye = 0";
 		$sql.= " AND pfd.traite = 0";
 		$sql.= " AND f.total_ttc > 0";
 
-		dol_syslog(get_class($this)."::SommeAPrelever");
+		dol_syslog(get_class($this)."::NbFactureAPrelever");
 		$resql = $this->db->query($sql);
 
 		if ( $resql )
@@ -759,7 +758,7 @@ class BonPrelevement extends CommonObject
 		}
 		else
 		{
-			$this->error=get_class($this)."::SommeAPrelever Erreur -1 sql=".$this->db->error();
+			$this->error=get_class($this)."::NbFactureAPrelever Erreur -1 sql=".$this->db->error();
 			return -1;
 		}
 	}
