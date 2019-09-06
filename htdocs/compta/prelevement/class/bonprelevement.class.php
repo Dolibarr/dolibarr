@@ -1629,8 +1629,8 @@ class BonPrelevement extends CommonObject
 	public static function buildRumNumber($row_code_client, $row_datec, $row_drum)
 	{
 		global $langs;
-		$pre = $langs->trans('RUM').'-';
-		return $pre.$row_code_client.'-'.$row_drum.'-'.date('U', $row_datec);
+		$pre = substr(dol_string_nospecial(dol_string_unaccent($langs->transnoentitiesnoconv('RUM'))), 0, 3);	// Must always be on 3 char ('RUM' or 'UMR'. This is a protection against bad translation)
+		return $pre.'-'.$row_code_client.'-'.$row_drum.'-'.date('U', $row_datec);
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

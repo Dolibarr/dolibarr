@@ -239,6 +239,23 @@ if ($id > 0 || $ref)
 	dol_fiche_end();
 
 
+	$formconfirm = '';
+
+	// Confirmation to delete
+	if ($action == 'delete')
+	{
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('Delete'), $langs->trans('ConfirmDeleteObject'), 'confirm_delete', '', 0, 1);
+	}
+
+	// Call Hook formConfirm
+	/*$parameters = array();
+	$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	if (empty($reshook)) $formconfirm.=$hookmanager->resPrint;
+	elseif ($reshook > 0) $formconfirm=$hookmanager->resPrint;*/
+
+	// Print form confirm
+	print $formconfirm;
+
 
 	if (empty($object->date_trans) && $user->rights->prelevement->bons->send && $action=='settransmitted')
 	{
@@ -298,7 +315,7 @@ if ($id > 0 || $ref)
 			print "<a class=\"butAction\" href=\"card.php?action=setcredited&id=".$object->id."\">".$langs->trans("ClassCredited")."</a>";
 		}
 
-		print "<a class=\"butActionDelete\" href=\"card.php?action=confirm_delete&id=".$object->id."\">".$langs->trans("Delete")."</a>";
+		print "<a class=\"butActionDelete\" href=\"card.php?action=delete&id=".$object->id."\">".$langs->trans("Delete")."</a>";
 
 		print "</div>";
 	}
