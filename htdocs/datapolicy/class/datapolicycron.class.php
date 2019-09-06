@@ -27,12 +27,24 @@
  */
 class DataPolicyCron
 {
+	/**
+	 *	Constructor
+	 *
+	 *  @param		DoliDB		$db      Database handler
+	 */
+	public function __construct($db)
+	{
+		$this->db = $db;
+	}
+
+
     /**
      * Function exec
+	 * CAN BE A CRON TASK
      *
-     * @return boolean
+	 * @return	int									0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
      */
-    public function exec()
+	public function cleanDataForDataPolicy()
     {
         global $conf, $db, $langs, $user;
 
@@ -479,14 +491,10 @@ class DataPolicyCron
                                 $db->query($sql);
                             }
                         } else {
-                            if (DOL_VERSION < 8) {
+                            if ($object->element == 'adherent') {
                                 $ret = $object->delete($obj->rowid, $user);
                             } else {
-                                if ($object->element == 'adherent') {
-                                    $ret = $object->delete($obj->rowid);
-                                } else {
-                                    $ret = $object->delete();
-                                }
+                                $ret = $object->delete($user);
                             }
                         }
 
@@ -495,7 +503,8 @@ class DataPolicyCron
                 }
             }
         }
-        return true;
+
+        return 0;
     }
 
 
