@@ -356,8 +356,6 @@ if ($id > 0 || $ref)
 		print_liste_field_titre('');
 		print "</tr>\n";
 
-		$var=false;
-
 		$total = 0;
 
 		while ($i < min($num, $conf->liste_limit))
@@ -406,7 +404,10 @@ if ($id > 0 || $ref)
 			print '<td>'.$langs->trans("Total").'</td>';
 			print '<td>&nbsp;</td>';
 			print '<td class="right">';
-			if ($total != $object->amount) print img_warning("AmountOfFileDiffersFromSumOfInvoices");
+			if (empty($offset) && $num <= $limit)	// If we have all record on same page, then the following test/warning can be done
+			{
+				if ($total != $object->amount) print img_warning("TotalAmountOfdirectDebitOrderDiffersFromSumOfLines");
+			}
 			print price($total);
 			print "</td>\n";
 			print '<td>&nbsp;</td>';
