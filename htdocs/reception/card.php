@@ -816,7 +816,7 @@ if ($action == 'create')
             print '<td colspan="3">';
             //print dol_print_date($object->date_livraison,"day");	// date_livraison come from order and will be stored into date_delivery planed.
             $date_delivery = ($date_delivery?$date_delivery:$object->date_livraison); // $date_delivery comes from GETPOST
-            print $form->select_date($date_delivery?$date_delivery:-1, 'date_delivery', 1, 1, 1);
+            print $form->selectDate($date_delivery?$date_delivery:-1, 'date_delivery', 1, 1, 1);
             print "</td>\n";
             print '</tr>';
 
@@ -1164,10 +1164,10 @@ if ($action == 'create')
 							{
 								print '<td><input name="batch'.$indiceAsked.'" value="'.$dispatchLines[$indiceAsked]['lot'].'"></td>';
 								print '<td>';
-								print $form->select_date($dispatchLines[$indiceAsked]['DLC'], 'dlc' . $indiceAsked, '', '', 1, "");
+								print $form->selectDate($dispatchLines[$indiceAsked]['DLC'], 'dlc' . $indiceAsked, '', '', 1, "");
 								print '</td>';
 								print '<td>';
-								print $form->select_date($dispatchLines[$indiceAsked]['DLUO'], 'dluo' . $indiceAsked, '', '', 1, "");
+								print $form->selectDate($dispatchLines[$indiceAsked]['DLUO'], 'dluo' . $indiceAsked, '', '', 1, "");
 								print '</td>';
 							}
 							else {
@@ -1425,7 +1425,7 @@ elseif ($id || $ref)
 			print '<form name="setdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="setdate_livraison">';
-			print $form->select_date($object->date_delivery?$object->date_delivery:-1, 'liv_', 1, 1, '', "setdate_livraison", 1, 0, 1);
+			print $form->selectDate($object->date_delivery?$object->date_delivery:-1, 'liv_', 1, 1, '', "setdate_livraison", 1, 0);
 			print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 		}
@@ -1888,9 +1888,9 @@ elseif ($id || $ref)
 						{
 							print '<td>  <input name="batch'.$line_id.'" id="batch'.$line_id.'" type="text" value="'.$lines[$i]->batch.'"> </br>';
 							print $langs->trans('EatByDate').' : ';
-							print $form->select_date($lines[$i]->eatby, 'dlc' .$line_id, '', '', 1, ""). '</br>';
+							print $form->selectDate($lines[$i]->eatby, 'dlc' .$line_id, '', '', 1, ""). '</br>';
 							print $langs->trans('SellByDate').' : ';
-							print $form->select_date($lines[$i]->sellby, 'dluo' .$line_id, '', '', 1, "");
+							print $form->selectDate($lines[$i]->sellby, 'dluo' .$line_id, '', '', 1, "");
 							print '</td>';
 						}
 						print '</tr>';
