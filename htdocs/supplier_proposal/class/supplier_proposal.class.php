@@ -324,9 +324,6 @@ class SupplierProposal extends CommonObject
             $supplier_proposalligne->rang=-1;
             $supplier_proposalligne->info_bits=2;
 
-            // TODO deprecated
-            $supplier_proposalligne->price=-$remise->amount_ht;
-
             $supplier_proposalligne->total_ht  = -$remise->amount_ht;
             $supplier_proposalligne->total_tva = -$remise->amount_tva;
             $supplier_proposalligne->total_ttc = -$remise->amount_ttc;
@@ -1350,7 +1347,6 @@ class SupplierProposal extends CommonObject
                         $line->subprice         = $objp->subprice;
                         $line->fk_remise_except = $objp->fk_remise_except;
                         $line->remise_percent   = $objp->remise_percent;
-                        $line->price            = $objp->price;		// TODO deprecated
 
                         $line->info_bits        = $objp->info_bits;
                         $line->total_ht         = $objp->total_ht;
@@ -2364,7 +2360,6 @@ class SupplierProposal extends CommonObject
             $line->desc=$langs->trans("Description")." ".$xnbp;
             $line->qty=1;
             $line->subprice=100;
-            $line->price=100;
             $line->tva_tx=19.6;
             $line->localtax1_tx=0;
             $line->localtax2_tx=0;
