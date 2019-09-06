@@ -47,7 +47,8 @@ ALTER TABLE llx_entrepot_extrafields ADD INDEX idx_entrepot_extrafields (fk_obje
 ALTER TABLE llx_facture ADD COLUMN retained_warranty real DEFAULT NULL after situation_final;
 ALTER TABLE llx_facture ADD COLUMN retained_warranty_date_limit	date DEFAULT NULL after retained_warranty;
 ALTER TABLE llx_facture ADD COLUMN retained_warranty_fk_cond_reglement	integer  DEFAULT NULL after retained_warranty_date_limit;
-
+ALTER TABLE llx_facture ADD COLUMN date_cloture datetime DEFAULT NULL after date_valid;
+ALTER TABLE llx_facture ADD COLUMN fk_user_cloture integer DEFAULT NULL after fk_user_valid;
 
 ALTER TABLE llx_c_shipment_mode ADD COLUMN entity integer DEFAULT 1 NOT NULL;
 
