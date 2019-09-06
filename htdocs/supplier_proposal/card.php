@@ -1762,7 +1762,7 @@ if ($action == 'create')
 
 	// Add free products/services form
 	global $forceall, $senderissupplier, $dateSelector, $inputalsopricewithtax;
-	$forceall=1; $dateSelector=1; $inputalsopricewithtax=1;
+	$forceall=1; $dateSelector=0; $inputalsopricewithtax=1;
 	$senderissupplier=2;	// $senderissupplier=2 is same than 1 but disable test on minimum qty.
 	if (! empty($conf->global->SUPPLIER_PROPOSAL_WITH_PREDEFINED_PRICES_ONLY)) $senderissupplier=1;
 
