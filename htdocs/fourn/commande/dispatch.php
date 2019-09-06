@@ -883,8 +883,16 @@ if ($id > 0 || ! empty($ref)) {
 			print '<td></td>';
 			print '<td>' . $langs->trans("Warehouse") . '</td>';
 			print '<td>' . $langs->trans("Comment") . '</td>';
-			if (! empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS) || !empty($conf->reception->enabled))
+
+			// Status
+			if (! empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS) && empty($reception->rowid)) {
 				print '<td class="center" colspan="2">' . $langs->trans("Status") . '</td>';
+			}
+			elseif(!empty($conf->reception->enabled)) {
+				print '<td class="center"></td>';
+			}
+
+			print '<td class="center"></td>';
 
 			print "</tr>\n";
 
@@ -969,17 +977,15 @@ if ($id > 0 || ! empty($ref)) {
 						}
 					}
 					print '</td>';
-				}elseif(!empty($conf->reception->enabled)){
+				} elseif(!empty($conf->reception->enabled)) {
 					print '<td class="right">';
 					if(!empty($reception->id)){
 						print $reception->getLibStatut(5);
 					}
+					print '</td>';
 				}
-					print '</td>';
-					print '<td class="center">';
-					print '</td>';
 
-
+				print '<td class="center"></td>';
 
 				print "</tr>\n";
 
