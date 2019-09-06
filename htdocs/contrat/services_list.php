@@ -705,7 +705,7 @@ while ($i < min($num, $limit))
 	   print '<td class="right">';
 	   if ($obj->cstatut == 0)	// If contract is draft, we say line is also draft
 	   {
-		   print $contractstatic->LibStatut(0, 5, ($obj->date_fin_validite && $db->jdate($obj->date_fin_validite) < $now));
+		   print $contractstatic->LibStatut(0, 5);
 	   }
 	   else
 	   {

@@ -91,3 +91,22 @@ UPDATE llx_projet set usage_opportunity = 1 WHERE fk_opp_status > 0;
 
 ALTER TABLE llx_accounting_account MODIFY COLUMN rowid bigint AUTO_INCREMENT;
   
+
+create table llx_c_hrm_public_holiday
+(
+  id					integer AUTO_INCREMENT PRIMARY KEY,
+  entity				integer	DEFAULT 0 NOT NULL,	-- multi company id, 0 = all
+  fk_country			integer,			
+  code		    		varchar(62),
+  dayrule               varchar(255) DEFAULT 'date', -- 'date', 'xxx', ...
+  day					integer,
+  month					integer,
+  year					integer,					-- 0 for all years
+  active				integer DEFAULT 1,
+  import_key			varchar(14)
+)ENGINE=innodb;
+
+
+ALTER TABLE llx_supplier_proposaldet ADD COLUMN  date_start	datetime   DEFAULT NULL;
+ALTER TABLE llx_supplier_proposaldet ADD COLUMN  date_end	datetime   DEFAULT NULL;
+

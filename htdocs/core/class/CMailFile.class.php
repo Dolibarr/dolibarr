@@ -428,7 +428,7 @@ class CMailFile
 				foreach ($this->images_encoded as $img)
 				{
 					//$img['fullpath'],$img['image_encoded'],$img['name'],$img['content_type'],$img['cid']
-					$attachment = Swift_Image::fromPath($img['fullpath'], $img['content_type']);
+					$attachment = Swift_Image::fromPath($img['fullpath']);
 					// embed image
 					$imgcid = $this->message->embed($attachment);
 					// replace cid by the one created by swiftmail in html message

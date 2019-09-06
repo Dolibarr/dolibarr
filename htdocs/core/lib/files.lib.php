@@ -1023,22 +1023,16 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 			{
 				case UPLOAD_ERR_INI_SIZE:	// 1
 					return 'ErrorFileSizeTooLarge';
-					break;
 				case UPLOAD_ERR_FORM_SIZE:	// 2
 					return 'ErrorFileSizeTooLarge';
-					break;
 				case UPLOAD_ERR_PARTIAL:	// 3
 					return 'ErrorPartialFile';
-					break;
 				case UPLOAD_ERR_NO_TMP_DIR:	//
 					return 'ErrorNoTmpDir';
-					break;
 				case UPLOAD_ERR_CANT_WRITE:
 					return 'ErrorFailedToWriteInDir';
-					break;
 				case UPLOAD_ERR_EXTENSION:
 					return 'ErrorUploadBlockedByAddon';
-					break;
 				default:
 					break;
 			}
@@ -2089,7 +2083,7 @@ function dol_compress_dir($inputdir, $outputfile, $mode = "zip", $excludefiles =
 {
 	$foundhandler=0;
 
-	dol_syslog("Try to zip dir ".$inputdir." into ".$outputdir." mode=".$mode);
+	dol_syslog("Try to zip dir ".$inputdir." into ".$outputfile." mode=".$mode);
 
 	if (! dol_is_dir(dirname($outputfile)) || ! is_writable(dirname($outputfile)))
 	{

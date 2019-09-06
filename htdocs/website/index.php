@@ -705,7 +705,7 @@ if ($action == 'addcontainer')
 						getAllImages($object, $objectpage, $urltograbbis, $tmpgeturl['content'], $action, 1, $grabimages, $grabimagesinto);
 
 						include_once DOL_DOCUMENT_ROOT.'/core/class/lessc.class.php';
-						$lesscobj = new lessc();
+						$lesscobj = new Lessc();
 						try {
 							$contentforlessc = ".bodywebsite {\n".$tmpgeturl['content']."\n}\n";
 							//print '<pre>'.$contentforlessc.'</pre>';
@@ -3080,7 +3080,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	print '<tr><td>';
 	print $langs->trans('DateCreation');
 	print '</td><td>';
-	print $form->select_date($pagedatecreation, 'datecreation', 1, 1, 0, '', 1, 1);
+	print $form->selectDate($pagedatecreation, 'datecreation', 1, 1, 0, '', 1, 1);
 	//print dol_print_date($pagedatecreation, 'dayhour');
 	print '</td></tr>';
 

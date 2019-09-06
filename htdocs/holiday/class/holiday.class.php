@@ -376,7 +376,6 @@ class Holiday extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 
 				$this->id    = $obj->rowid;
-				$this->rowid = $obj->rowid;	// deprecated
 				$this->ref   = ($obj->ref?$obj->ref:$obj->rowid);
 				$this->fk_user = $obj->fk_user;
 				$this->date_create = $this->db->jdate($obj->date_create);

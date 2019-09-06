@@ -87,6 +87,8 @@ class AllTests
         $suite->addTestSuite('DateLibTest');
         require_once dirname(__FILE__).'/UtilsTest.php';
         $suite->addTestSuite('UtilsTest');
+        require_once dirname(__FILE__).'/LesscTest.php';
+        $suite->addTestSuite('LesscTest');
         //require_once dirname(__FILE__).'/DateLibTzFranceTest.php';
         //$suite->addTestSuite('DateLibTzFranceTest');
         require_once dirname(__FILE__).'/MarginsLibTest.php';
