@@ -1544,7 +1544,7 @@ class Contact extends CommonObject
 		$sql.= " AND tc.element='".$element."'";
 		$sql.= " AND tc.active=1";
 
-		dol_syslog(get_class($this)."::liste_contact", LOG_DEBUG);
+		dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{

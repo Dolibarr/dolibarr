@@ -71,16 +71,20 @@ class InterfaceContactRoles extends DolibarrTriggers
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
-		// Lors de la création d'un document, récupération des contacts et rôle associés à la société et association avec le document
+
 		if ($action === 'PROPAL_CREATE' || $action === 'ORDER_CREATE' || $action === 'BILL_CREATE'	|| $action === 'ORDER_SUPPLIER_CREATE' || $action === 'BILL_SUPPLIER_CREATE'
 			|| $action === 'CONTRACT_CREATE' || $action === 'FICHINTER_CREATE' || $action === 'PROJECT_CREATE' || $action === 'TICKET_CREATE' || $action === 'ACTION_CREATE') {
 
-			if(!empty($object->socid) && $object->socid != '-1') {
-				global $db, $langs;
+			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
+			$socid=(property_exists($object, 'socid')?$object->socid:$object->fk_soc);
+
+			if(!empty($socid) && $socid != '-1') {
+				global $db, $langs;
+				var_dump($socid);
 				$contactdefault = new Contact($this->db);
-				$contactdefault->socid=$object->socid;
-				$TContact = $contactdefault->getContactRoles();
+				$contactdefault->socid=$socid;
+				$TContact = $contactdefault->getContactRoles($object->element);
 
 				// Le trigger est appelé avant que le core n'ajoute lui-même des contacts (contact propale, clone), il ne faut pas les associer avant sinon bug
 				$TContactAlreadyLinked = array();
@@ -90,7 +94,7 @@ class InterfaceContactRoles extends DolibarrTriggers
 					$cloneFrom = new $class($db);
 					$r = $cloneFrom->fetch($object->id);
 
-					if (!empty($cloneFrom->id))	$TContactAlreadyLinked = array_merge($cloneFrom->liste_contact(-1,'external'), $cloneFrom->liste_contact(-1,'internal'));
+					if (!empty($cloneFrom->id))	$TContactAlreadyLinked = array_merge($cloneFrom->liste_contact(-1, 'external'), $cloneFrom->liste_contact(-1, 'internal'));
 				}
 
 				foreach($TContact as $i => $infos) {
@@ -111,10 +115,6 @@ class InterfaceContactRoles extends DolibarrTriggers
 					setEventMessage($langs->trans('ContactAddedAutomatically', $nb));
 				}
 			}
-
-			dol_syslog(
-				"Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
-			);
 		}
     }
 }
