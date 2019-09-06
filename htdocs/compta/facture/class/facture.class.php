@@ -2136,6 +2136,8 @@ class Facture extends CommonInvoice
 		if ($this->paye != 1)
 		{
 			$this->db->begin();
+			
+			$now=dol_now();
 
 			dol_syslog(get_class($this)."::set_paid rowid=".$this->id, LOG_DEBUG);
 
@@ -2144,6 +2146,8 @@ class Facture extends CommonInvoice
 			if (! $close_code) $sql.= ', paye=1';
 			if ($close_code) $sql.= ", close_code='".$this->db->escape($close_code)."'";
 			if ($close_note) $sql.= ", close_note='".$this->db->escape($close_note)."'";
+			$sql.= ', fk_user_cloture = '.$user->id;
+			$sql.= ", date_cloture = '".$this->db->idate($now)."'";
 			$sql.= ' WHERE rowid = '.$this->id;
 
 			$resql = $this->db->query($sql);
@@ -2196,6 +2200,8 @@ class Facture extends CommonInvoice
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
 		$sql.= ' SET paye=0, fk_statut='.self::STATUS_VALIDATED.', close_code=null, close_note=null';
+		$sql.= ' date_cloture as datecloture,';
+		$sql.= ' fk_user_author, fk_user_valid, fk_user_cloture';
 		$sql.= ' WHERE rowid = '.$this->id;
 
 		dol_syslog(get_class($this)."::set_unpaid", LOG_DEBUG);
@@ -3521,7 +3527,8 @@ class Facture extends CommonInvoice
     public function info($id)
 	{
 		$sql = 'SELECT c.rowid, datec, date_valid as datev, tms as datem,';
-		$sql.= ' fk_user_author, fk_user_valid';
+		$sql.= ' date_cloture as datecloture,';
+		$sql.= ' fk_user_author, fk_user_valid, fk_user_cloture';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture as c';
 		$sql.= ' WHERE c.rowid = '.$id;
 
@@ -3536,7 +3543,7 @@ class Facture extends CommonInvoice
 				{
 					$cuser = new User($this->db);
 					$cuser->fetch($obj->fk_user_author);
-					$this->user_creation     = $cuser;
+					$this->user_creation  = $cuser;
 				}
 				if ($obj->fk_user_valid)
 				{
@@ -3544,9 +3551,17 @@ class Facture extends CommonInvoice
 					$vuser->fetch($obj->fk_user_valid);
 					$this->user_validation = $vuser;
 				}
+				if ($obj->fk_user_cloture)
+				{
+					$cluser = new User($this->db);
+					$cluser->fetch($obj->fk_user_cloture);
+					$this->user_cloture  = $cluser;
+				}
+				
 				$this->date_creation     = $this->db->jdate($obj->datec);
 				$this->date_modification = $this->db->jdate($obj->datem);
-				$this->date_validation   = $this->db->jdate($obj->datev);	// Should be in log table
+				$this->date_validation   = $this->db->jdate($obj->datev);
+				$this->date_cloture      = $this->db->jdate($obj->datecloture);
 			}
 			$this->db->free($result);
 		}
