@@ -375,7 +375,7 @@ if ($nolinesbefore) {
 	{
 		$coldisplay++;
         ?>
-		<td class="nobottom linecolresupplier"><input id="fourn_ref" name="fourn_ref" class="flat maxwidth75" value="<?php echo (isset($_POST["fourn_ref"])?GETPOST("fourn_ref", 'alpha', 2):''); ?>"></td>
+		<td class="nobottom linecolresupplier"><input id="fourn_ref" name="fourn_ref" class="flat minwidth50 maxwidth150" value="<?php echo (isset($_POST["fourn_ref"])?GETPOST("fourn_ref", 'alpha', 2):''); ?>"></td>
 	<?php } ?>
 
 	<td class="nobottom linecolvat right"><?php
