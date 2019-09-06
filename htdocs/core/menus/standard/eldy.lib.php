@@ -477,7 +477,8 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
         foreach($menu->liste as $menkey => $menuval) {
             print_start_menu_entry($menuval['idsel'], $menuval['classname'], $menuval['enabled']);
             print_text_menu_entry($menuval['titre'], $menuval['enabled'], (($menuval['url']!='#' && !preg_match('/^(http:\/\/|https:\/\/)/i', $menuval['url'])) ? DOL_URL_ROOT:'').$menuval['url'], $menuval['id'], $menuval['idsel'], $menuval['classname'], ($menuval['target']?$menuval['target']:$atarget));
-			print_submenu($db, $tabMenu, $menuval['idsel']); // print sub-menus
+			if (!$conf->dol_no_mouse_hover)
+              print_submenu($db, $tabMenu, $menuval['idsel']); // print sub-menus
             print_end_menu_entry($menuval['enabled']);
         }
     }
