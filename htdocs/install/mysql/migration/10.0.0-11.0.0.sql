@@ -105,3 +105,20 @@ ALTER TABLE llx_societe_contacts ADD UNIQUE INDEX idx_societe_contacts_idx1 (ent
 ALTER TABLE llx_societe_contacts ADD CONSTRAINT fk_societe_contacts_fk_c_type_contact FOREIGN KEY (fk_c_type_contact)  REFERENCES llx_c_type_contact(rowid);
 ALTER TABLE llx_societe_contacts ADD CONSTRAINT fk_societe_contacts_fk_soc FOREIGN KEY (fk_soc)  REFERENCES llx_societe(rowid);
 ALTER TABLE llx_societe_contacts ADD CONSTRAINT fk_societe_contacts_fk_socpeople FOREIGN KEY (fk_socpeople)  REFERENCES llx_socpeople(rowid);
+
+
+create table llx_c_hrm_public_holiday
+(
+  id					integer AUTO_INCREMENT PRIMARY KEY,
+  entity				integer	DEFAULT 0 NOT NULL,	-- multi company id, 0 = all
+  fk_country			integer,
+  code		    		varchar(62),
+  dayrule               varchar(255) DEFAULT 'date', -- 'date', 'xxx', ...
+  day					integer,
+  month					integer,
+  year					integer,					-- 0 for all years
+  active				integer DEFAULT 1,
+  import_key			varchar(14)
+)ENGINE=innodb;
+
+

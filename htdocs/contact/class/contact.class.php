@@ -87,21 +87,6 @@ class Contact extends CommonObject
 	public $zip;
 	public $town;
 
-	/**
-	 * @deprecated
-	 * @see $state_id
-	 */
-	public $fk_departement;
-	/**
-	 * @deprecated
-	 * @see $state_code
-	 */
-	public $departement_code;
-	/**
-	 * @deprecated
-	 * @see $state
-	 */
-	public $departement;
 	public $state_id;	        	// Id of department
 	public $state_code;		    // Code of department
 	public $state;			        // Label of department
@@ -1052,7 +1037,7 @@ class Contact extends CommonObject
 		// Removed extrafields
         if ((! $error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) {
             // For avoid conflicts if trigger used
-			$result=$this->deleteExtraFields($this);
+			$result=$this->deleteExtraFields();
 			if ($result < 0) $error++;
 		}
 

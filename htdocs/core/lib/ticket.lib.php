@@ -59,7 +59,7 @@ function ticketAdminPrepareHead()
     //$this->tabs = array(
     //    'entity:-tabname:Title:@ticket:/ticket/mypage.php?id=__ID__'
     //); // to remove a tab
-    complete_head_from_modules($conf, $langs, $object, $head, $h, 'ticketadmin');
+    complete_head_from_modules($conf, $langs, null, $head, $h, 'ticketadmin');
 
     return $head;
 }
