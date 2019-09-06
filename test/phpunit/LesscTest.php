@@ -159,7 +159,6 @@ class LesscTest extends PHPUnit\Framework\TestCase
         	//print '<pre>'.$contentforlessc.'</pre>';
         	$result = $lesscobj->compile($contentforlessc);
         	//var_dump($contentforlessc); exit;
-
         } catch (exception $e) {
         	//echo "failed to compile lessc";
         	dol_syslog("Failed to compile the CSS with lessc: ".$e->getMessage(), LOG_WARNING);
