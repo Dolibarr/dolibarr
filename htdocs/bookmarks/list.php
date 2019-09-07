@@ -82,12 +82,8 @@ $userstatic=new User($db);
 llxHeader('', $langs->trans("ListOfBookmarks"));
 
 $newcardbutton='';
-if ($user->rights->bookmark->creer)
-{
-	$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/bookmarks/card.php?action=create"><span class="valignmiddle">'.$langs->trans('NewBookmark').'</span>';
-	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-	$newcardbutton.= '</a>';
-}
+$newcardbutton.= dolGetButtonTitle($langs->trans('NewBookmark'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/bookmarks/card.php?action=create', '', !empty($user->rights->bookmark->creer));
+
 
 print_barre_liste($langs->trans("ListOfBookmarks"), $page, $_SERVER['PHP_SELF'], $param, $sortfield, $sortorder, '', -1, '', 'title_generic.png', 0, $newcardbutton);
 

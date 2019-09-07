@@ -91,6 +91,13 @@ input, select {
 	margin-bottom:1px;
 	margin-top:1px;
 }
+input.button.massactionconfirmed {
+    margin: 4px;
+}
+
+input:invalid, select:invalid {
+    border-color: #ea1212;
+}
 
 /* Focus definitions must be after standard definition */
 textarea:focus {
@@ -129,19 +136,36 @@ input.smallpadd {	/* Used for timesheet input */
 input.buttongen {
 	vertical-align: middle;
 }
-input.buttonpayment {
-	min-width: 320px;
+input.buttonpayment, button.buttonpayment, div.buttonpayment {
+	min-width: 290px;
 	margin-bottom: 15px;
 	background-image: none;
 	line-height: 24px;
 	padding: 8px;
 	background: none;
-	padding-left: 38px;
-	text-align: <?php echo $left; ?>;
-	border: 1px solid #ddd;
-	background-color: #eee;
+	text-align: center;
+	border: 0;
+	background-color: #9999bb;
 	white-space: normal;
-	box-shadow: 1px 1px 8px #bbb;
+	box-shadow: 1px 1px 4px #bbb;
+	color: #fff;
+	border-radius: 4px;
+}
+div.buttonpayment input:focus {
+    color: #008;
+}
+.buttonpaymentsmall {
+	font-size: 0.65em;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+div.buttonpayment input {
+    background-color: unset;
+    color: #fff;
+    border-bottom: unset;
+    font-weight: bold;
+    text-transform: uppercase;
+    cursor: pointer;
 }
 input.buttonpaymentcb {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/common/credit_card.png', 1) ?>);
@@ -169,6 +193,10 @@ input.buttonpaymentstripe {
 	background-image: url(<?php echo dol_buildpath($path.'/stripe/img/object_stripe.png', 1) ?>);
 	background-repeat: no-repeat;
 	background-position: 8px 11px;
+}
+a.buttonticket {
+	padding-left: 5px;
+	padding-right: 5px;
 }
 
 /* Used by timesheets */
@@ -255,6 +283,10 @@ input#onlinepaymenturl, input#directdownloadlink {
 	opacity: 0.7;
 }
 
+div#moretabsListaction {
+    z-index: 5;
+}
+
 hr { border: 0; border-top: 1px solid #ccc; }
 .tabBar hr { margin-top: 20px; margin-bottom: 17px; }
 
@@ -263,7 +295,7 @@ hr { border: 0; border-top: 1px solid #ccc; }
 	margin-top: 0;
 	margin-left: 5px;
 	margin-right: 5px;
-    font-family: <?php print $fontlist ?>;
+    	font-family: <?php print $fontlist ?>;
 	display: inline-block;
 	padding: 4px 14px;
 	text-align: center;
@@ -294,7 +326,7 @@ hr { border: 0; border-top: 1px solid #ccc; }
 	-webkit-box-shadow: 0px 0px 1px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 	box-shadow: 0px 0px 1px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 }
-.button:disabled, .buttonDelete:disabled {
+.button:disabled, .buttonDelete:disabled, .button.disabled {
 	opacity: 0.4;
     box-shadow: none;
     -webkit-box-shadow: none;
@@ -306,6 +338,13 @@ hr { border: 0; border-top: 1px solid #ccc; }
 	opacity: 0.4;
     box-shadow: none;
     -webkit-box-shadow: none;
+}
+.button_search, .button_removefilter {
+    border: unset;
+    background-color: unset;
+}
+.button_search:hover, .button_removefilter:hover {
+    cursor: pointer;
 }
 form {
     padding:0px;
@@ -363,6 +402,19 @@ th .button {
 textarea.centpercent {
 	width: 96%;
 }
+.small, small {
+    font-size: 85%;
+}
+
+.h1 .small, .h1 small, .h2 .small, .h2 small, .h3 .small, .h3 small, h1 .small, h1 small, h2 .small, h2 small, h3 .small, h3 small {
+    font-size: 65%;
+}
+.h1 .small, .h1 small, .h2 .small, .h2 small, .h3 .small, .h3 small, .h4 .small, .h4 small, .h5 .small, .h5 small, .h6 .small, .h6 small, h1 .small, h1 small, h2 .small, h2 small, h3 .small, h3 small, h4 .small, h4 small, h5 .small, h5 small, h6 .small, h6 small {
+    font-weight: 400;
+    line-height: 1;
+    color: #777;
+}
+
 .center {
     text-align: center;
     margin: 0px auto;
@@ -375,6 +427,12 @@ textarea.centpercent {
 }
 .justify {
 	text-align: justify;
+}
+.pull-left {
+    float: left!important;
+}
+.pull-right {
+    float: right!important;
 }
 .nowrap {
 	white-space: <?php print ($dol_optimize_smallscreen?'normal':'nowrap'); ?>;
@@ -427,7 +485,33 @@ textarea.centpercent {
 .cursornotallowed {
 	cursor: not-allowed;
 }
+.backgroundblank {
+    background-color: #fff;
+}
+.checkboxattachfilelabel {
+    font-size: 0.85em;
+    opacity: 0.7;
+}
 
+.text-warning{
+    color : <?php print $textWarning ; ?>
+}
+body[class*="colorblind-"] .text-warning{
+    color : <?php print $colorblind_deuteranopes_textWarning ; ?>
+}
+.text-success{
+    color : <?php print $textSuccess ; ?>
+}
+body[class*="colorblind-"] .text-success{
+    color : <?php print $colorblind_deuteranopes_textSuccess ; ?>
+}
+
+.text-danger{
+    color : <?php print $textDanger ; ?>
+}
+
+
+/* Themes for badges */
 <?php include dol_buildpath($path.'/theme/'.$theme.'/badges.inc.php', 0); ?>
 
 .borderrightlight
@@ -504,13 +588,13 @@ select.flat.selectlimit {
 	margin-right: 10px !important;
 }
 .marginleftonly {
-	margin-left: 10px !important;
+	margin-<?php echo $left; ?>: 10px !important;
 }
 .marginleftonlyshort {
-	margin-left: 4px !important;
+	margin-<?php echo $left; ?>: 4px !important;
 }
 .nomarginleft {
-	margin-left: 0px !important;
+	margin-<?php echo $left; ?>: 0px !important;
 }
 .margintoponly {
 	margin-top: 10px !important;
@@ -579,20 +663,20 @@ select.flat.selectlimit {
 .amountpaymentcomplete {
 	color: #008800;
 	font-weight: bold;
-	font-size: 1.4em;
+	font-size: 1.2em;
 }
 .amountremaintopay {
 	color: #880000;
 	font-weight: bold;
-	font-size: 1.4em;
+	font-size: 1.2em;
 }
 .amountremaintopayback {
 	font-weight: bold;
-	font-size: 1.4em;
+	font-size: 1.2em;
 }
 .amountpaymentneutral {
 	font-weight: bold;
-	font-size: 1.4em;
+	font-size: 1.2em;
 }
 .savingdocmask {
 	margin-top: 6px;
@@ -656,7 +740,7 @@ div.fiche {
     justify-content: flex-start;
 }
 .thumbstat {
-    min-width: 150px;
+    min-width: 148px;
 }
 .thumbstat150 {
     min-width: 168px;
@@ -690,7 +774,7 @@ select.selectarrowonleft option {
 .hideobject { display: none; }
 .minwidth50  { min-width: 50px; }
 /* rule for not too small screen only */
-@media only screen and (min-width: <?php echo round($nbtopmenuentries * 45, 0) + 7; ?>px)
+@media only screen and (min-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3) ? round($nbtopmenuentries * 47, 0) + 40 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)
 {
 	.width25  { width: 25px; }
     .width50  { width: 50px; }
@@ -822,7 +906,7 @@ select.selectarrowonleft option {
 	input, input[type=text], input[type=password], select, textarea     {
 		min-width: 20px;
     }
-    input[type=text], input[type=password] {
+    .trinputlogin input[type=text], input[type=password] {
 		max-width: 180px;
 	}
     .vmenu .searchform input {
@@ -863,7 +947,7 @@ select.selectarrowonleft option {
 	}
 
 	div.divphotoref {
-		padding-right: 5px;
+		padding-<?php echo $right; ?>: 5px;
 	    padding-bottom: 5px;
 	}
     img.photoref, div.photoref {
@@ -899,7 +983,7 @@ select.selectarrowonleft option {
 }
 .linkobject { cursor: pointer; }
 
-table.tableforfield tr>td:first-of-type {
+table.tableforfield tr>td:first-of-type, div.tableforfield div.tagtr>div.tagtd:first-of-type {
 	color: #666;
 }
 
@@ -960,7 +1044,7 @@ td.showDragHandle {
 
 .side-nav {
 	display: table-cell;
-	border-right: 1px solid #d0d0d0;
+	border-<?php echo $right; ?>: 1px solid #d0d0d0;
 	box-shadow: 3px 0 6px -2px #eee;
 	background: rgb(<?php echo $colorbackvmenu1; ?>);
 	transition: left 0.5s ease;
@@ -968,10 +1052,6 @@ td.showDragHandle {
 
 .side-nav, .login_block {
 	transition: left 0.5s ease;
-}
-
-body.sidebar-collapse .side-nav, body.sidebar-collapse .login_block {
-	display: none;
 }
 
 div.blockvmenulogo
@@ -1006,8 +1086,24 @@ div.vmenu, td.vmenu {
 }
 */
 
-/* For smartphone (testmenuhider is on) */
-<?php if ($conf->browser->layout == 'phone' && ((GETPOST('testmenuhider', 'int') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))) { ?>
+
+.menuhider { display: none !important; }
+
+/* rule to reduce top menu - 3rd reduction: The menu for user is on left */
+@media only screen and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3) ? round($nbtopmenuentries * 47, 0) + 40 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)	/* reduction 3 */
+{
+body.sidebar-collapse .side-nav {
+	display: none;
+}
+
+body.sidebar-collapse .login_block {
+	display: none;
+}
+
+.menuhider { display: block !important; }
+.dropdown-user-image { display: none; }
+.user-header { height: auto !important; color: rgb(<?php echo $colorbackbody; ?>); }
+
 #id-container {
 	width: 100%;
 }
@@ -1023,10 +1119,10 @@ div.blockvmenulogo
 {
 	border-bottom: 0 !important;
 }
-div.blockvmenusearch {
+/*div.blockvmenusearch {
 	padding-bottom: 12px !important;
 	border-bottom: 1px solid #e0e0e0;
-}
+}*/
 div.blockvmenupair, div.blockvmenuimpair, div.blockvmenubookmarks, div.blockvmenuend {
 	border-top: none !important;
 	border-left: none !important;
@@ -1041,8 +1137,8 @@ div.fiche {
 	margin-<?php print $left; ?>: 9px !important;
 	margin-<?php print $right; ?>: 10px !important;
 }
-<?php } ?>
-
+<?php //} ?>
+}
 
 
 div.fiche {
@@ -1075,17 +1171,19 @@ div.fichetwothirdright {
 	<?php if ($conf->browser->layout != 'phone')   { print "width: 50%;\n"; } ?>
 	<?php if ($conf->browser->layout == 'phone')   { print "padding-bottom: 6px\n"; } ?>
 }
+div.fichetwothirdright div.ficheaddleft {
+    padding-left: 20px;
+}
 div.fichehalfleft {
 	<?php if ($conf->browser->layout != 'phone')   { print "float: ".$left.";\n"; } ?>
-	<?php if ($conf->browser->layout != 'phone')   { print "width: 50%;\n"; } ?>
+	<?php if ($conf->browser->layout != 'phone')   { print "width: calc(50% - 10px);\n"; } ?>
 }
 div.fichehalfright {
 	<?php if ($conf->browser->layout != 'phone')   { print "float: ".$right.";\n"; } ?>
-	<?php if ($conf->browser->layout != 'phone')   { print "width: 50%;\n"; } ?>
+	<?php if ($conf->browser->layout != 'phone')   { print "width: calc(50% - 10px);\n"; } ?>
 }
-div.ficheaddleft {
-	<?php if ($conf->browser->layout != 'phone')   { print "padding-".$left.": 16px;\n"; }
-	else print "margin-top: 10px;\n"; ?>
+div.fichehalfright {
+	<?php if ($conf->browser->layout == 'phone')   { print "margin-top: 10px;\n"; } ?>
 }
 div.firstcolumn div.box {
 	padding-right: 10px;
@@ -1117,6 +1215,9 @@ div.secondcolumn div.box {
     	width: auto;
     	padding-bottom: 6px;
     }
+    div.fichetwothirdright div.ficheaddleft {
+    	padding-left: 0;
+	}
     div.fichehalfleft {
     	float: none;
     	width: auto;
@@ -1125,8 +1226,7 @@ div.secondcolumn div.box {
     	float: none;
     	width: auto;
     }
-    div.ficheaddleft {
-    	<?php print "padding-".$left.": 0px;\n"; ?>
+    div.fichehalfright {
     	margin-top: 10px;
     }
     div.firstcolumn div.box {
@@ -1149,13 +1249,13 @@ div.secondcolumn div.box {
     	width: auto;
     }
 
-    .fichehalfright-lg .ficheaddleft{
+    .fichehalfright-lg .fichehalfright {
     	padding-left:0;
     }
 }
 
 /* For table into table into card */
-div.ficheaddleft tr.liste_titre:first-child td table.nobordernopadding td {
+div.fichehalfright tr.liste_titre:first-child td table.nobordernopadding td {
     padding: 0 0 0 0;
 }
 div.nopadding {
@@ -1188,6 +1288,9 @@ div.nopadding {
 }
 .pictowarning {
     vertical-align: text-bottom;
+}
+.pictomodule {
+	width: 14px;
 }
 .fiche .arearef img.pictoedit, .fiche .arearef span.pictoedit,
 .fiche .fichecenter img.pictoedit, .fiche .fichecenter span.pictoedit,
@@ -1224,7 +1327,7 @@ div.heightref {
 	min-height: 80px;
 }
 div.divphotoref {
-	padding-right: 20px;
+	padding-<?php echo $right; ?>: 20px;
 }
 div.paginationref {
 	padding-bottom: 10px;
@@ -1286,7 +1389,7 @@ img.photorefnoborder {
 }
 .trextrafieldseparator td {
     /* border-bottom: 2px solid rgb(<?php echo $colorbackhmenu1 ?>) !important; */
-    border-bottom: 2px solid rgb(<?php echo $colortopbordertitle1 ?>) !important;
+    border-bottom: 2px dashed rgb(<?php echo $colortopbordertitle1 ?>) !important;
 }
 
 .tdhrthin {
@@ -1312,6 +1415,16 @@ div#tmenu_tooltip {
 <?php } else { ?>
 	padding-<?php echo $right; ?>: <?php echo ($maxwidthloginblock - 10); ?>px;
 <?php } ?>
+
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
+
+
 }
 
 div.topmenuimage {
@@ -1392,8 +1505,7 @@ li.menuhider:hover {
 	background-image: none !important;
 }
 li.tmenusel, li.tmenu:hover {
-    background: rgba(0, 0, 0, 0.1);
-	/* background: rgb(<?php echo $colorbackhmenu1 ?>); */
+    /* background: rgba(0, 0, 0, 0.1); */
 }
 
 li.tmenusel::after, li.tmenu:hover::after{
@@ -1757,6 +1869,9 @@ if (! empty($conf->global->MAIN_LOGIN_BACKGROUND)) {
 .login_table .tdinputlogin input#securitycode {
 	font-size: 1em;
 }
+.login_main_home {
+    word-break: break-word;
+}
 .login_main_message {
 	text-align: center;
 	max-width: 570px;
@@ -1809,14 +1924,15 @@ div.login_block {
 	text-align: <?php print $right; ?>;
 	<?php print $right; ?>: 0;
 	top: <?php print $disableimages?'4px':'0'; ?>;
-	font-weight: bold;
-	<?php echo (empty($disableimages) && $maxwidthloginblock)?'max-width: '.$maxwidthloginblock.'px;':''; ?>
+	line-height: 10px;
+	<?php // echo (empty($disableimages) && $maxwidthloginblock)?'max-width: '.$maxwidthloginblock.'px;':''; ?>
 	<?php if (GETPOST('optioncss', 'aZ09') == 'print') { ?>
 	display: none;
 	<?php } ?>
 }
 div.login_block a {
-	color: #<?php echo $colortextbackvmenu; ?>;
+	color: #<?php echo $colortextbackhmenu; ?>;
+	display: inline-block;
 }
 div.login_block table {
 	display: inline;
@@ -1838,21 +1954,19 @@ div.login a:hover {
 }
 div.login_block_user {
 	display: inline-block;
-	padding-top: 3px;
-	<?php if (empty($conf->global->THEME_TOPMENU_DISABLE_IMAGE)) { ?>
-	min-width: 120px;
-	<?php } ?>
 }
 div.login_block_other {
 	display: inline-block;
 	clear: <?php echo $disableimages?'none':'both'; ?>;
 }
-div.login_block_other { padding-top: 3px; text-align: right; }
+div.login_block_other { padding-top: 0; text-align: right; margin-right: 8px; }
+
 .login_block_elem {
 	float: right;
 	vertical-align: top;
 	padding: 0px 3px 0px 4px !important;
-	height: 16px;
+	line-height: 50px;
+	height: 50px;
 }
 .atoplogin, .atoplogin:hover {
 	color: #<?php echo $colortextbackhmenu; ?> !important;
@@ -1865,6 +1979,7 @@ div.login_block_other { padding-top: 3px; text-align: right; }
 }
 .login_block_getinfo .atoplogin, .login_block_getinfo .atoplogin:hover {
 	color: #333 !important;
+	font-weight: normal !important;
 }
 .alogin, .alogin:hover {
 	font-weight: normal !important;
@@ -1877,6 +1992,9 @@ span.fa.atoplogin, span.fa.atoplogin:hover {
     font-size: 16px;
     text-decoration: none !important;
 }
+.atoplogin #dropdown-icon-down, .atoplogin #dropdown-icon-up {
+    font-size: 0.7em;
+}
 img.login, img.printer, img.entity {
 	/* padding: 0px 0px 0px 4px; */
 	/* margin: 0px 0px 0px 8px; */
@@ -1885,9 +2003,10 @@ img.login, img.printer, img.entity {
 	font-weight: bold;
 }
 .userimg.atoplogin img.userphoto, .userimgatoplogin img.userphoto {		/* size for user photo in login bar */
-	width: 16px;
-    height: 16px;
-    border-radius: 8px;
+	width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-size: contain;
     background-size: contain;
 }
 img.userphoto {			/* size for user photo in lists */
@@ -1957,7 +2076,7 @@ input.vmenusearchselectcombo[type=text] {
 .searchform input { font-size: 16px; }
 
 
-a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active, span.vmenu { white-space: nowrap; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; }	/* bold = 600, 500 is ko with Edge on 1200x960 */
+a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active, span.vmenu, span.vsmenu { white-space: nowrap; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; }	/* bold = 600, 500 is ko with Edge on 1200x960 */
 font.vmenudisabled  { font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; color: #aaa; margin-left: 4px; }												/* bold = 600, 500 is ko with Edge on 1200x960 */
 a.vmenu:link, a.vmenu:visited { color: #<?php echo $colortextbackvmenu; ?>; }
 
@@ -2123,6 +2242,9 @@ img.toolbarbutton {
     height: 30px;
 }
 
+li.expanded > a.fmdirlia.jqft.ecmjqft {
+    font-weight: bold !important;
+}
 
 
 
@@ -2182,6 +2304,10 @@ div.tabBar table.tableforservicepart2:last-child {
 	height: unset;
     padding-top: 0 !important;
 }
+/* Payment Screen : Pointer cursor in the autofill image */
+.AutoFillAmount {
+	cursor:pointer;
+}
 
 div.popuptabset {
 	padding: 6px;
@@ -2189,8 +2315,8 @@ div.popuptabset {
 	border: 1px solid #888;
 }
 div.popuptab {
-	padding-top: 3px;
-	padding-bottom: 3px;
+	padding-top: 5px;
+	padding-bottom: 5px;
 	padding-left: 5px;
 	padding-right: 5px;
 }
@@ -2280,141 +2406,9 @@ span.tabspan {
 }
 
 /* ============================================================================== */
-/* Boutons actions                                                                */
+/* Buttons for actions                                                            */
 /* ============================================================================== */
-
-div.divButAction {
-	margin-bottom: 1.4em;
-}
-div.tabsAction > a.butAction, div.tabsAction > a.butActionRefused {
-	margin-bottom: 1.4em !important;
-}
-div.tabsActionNoBottom > a.butAction, div.tabsActionNoBottom > a.butActionRefused {
-	margin-bottom: 0 !important;
-}
-
-span.butAction, span.butActionDelete {
-	cursor: pointer;
-}
-
-.butAction {
-	background: rgb(225, 231, 225)
-	/* background: rgb(230, 232, 239); */
-}
-.butActionRefused, .butAction, .butAction:link, .butAction:visited, .butAction:hover, .butAction:active, .butActionDelete, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active {
-	text-decoration: none;
-	text-transform: uppercase;
-    font-weight: bold;
-
-	margin: 0em <?php echo ($dol_optimize_smallscreen?'0.6':'0.9'); ?>em !important;
-	padding: 0.6em <?php echo ($dol_optimize_smallscreen?'0.6':'0.7'); ?>em;
-	font-family: <?php print $fontlist ?>;
-    display: inline-block;
-    text-align: center;
-    cursor: pointer;
-    /* color: #fff; */
-    /* background: rgb(<?php echo $colorbackhmenu1 ?>); */
-    color: #444;
-    /* border: 1px solid #aaa; */
-    /* border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25); */
-
-    border-top-right-radius: 0 !important;
-    border-bottom-right-radius: 0 !important;
-    border-top-left-radius: 0 !important;
-    border-bottom-left-radius: 0 !important;
-}
-.butActionNew, .butActionNewRefused, .butActionNew:link, .butActionNew:visited, .butActionNew:hover, .butActionNew:active {
-	text-decoration: none;
-	text-transform: uppercase;
-    font-weight: normal;
-
-	margin: 0em 0.3em 0 0.3em !important;
-	padding: 0.2em <?php echo ($dol_optimize_smallscreen?'0.4':'0.7'); ?>em 0.3em;
-	font-family: <?php print $fontlist ?>;
-    display: inline-block;
-    /* text-align: center; New button are on right of screen */
-    cursor: pointer;
-    /*color: #fff !important;
-    background: rgb(<?php echo $colorbackhmenu1 ?>);
-    border: 1px solid rgb(<?php echo $colorbackhmenu1 ?>);
-    border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25);
-    border-top-right-radius: 0 !important;
-    border-bottom-right-radius: 0 !important;
-    border-top-left-radius: 0 !important;
-    border-bottom-left-radius: 0 !important;*/
-}
-a.butActionNew>span.fa-plus-circle, a.butActionNew>span.fa-plus-circle:hover { padding-left: 6px; font-size: 1.5em; border: none; box-shadow: none; webkit-box-shadow: none; }
-a.butActionNewRefused>span.fa-plus-circle, a.butActionNewRefused>span.fa-plus-circle:hover { padding-left: 6px; font-size: 1.5em; border: none; box-shadow: none; webkit-box-shadow: none; }
-
-.butAction:hover   {
-  -webkit-box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
-  box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
-}
-.butActionNew:hover   {
-  text-decoration: underline;
-  box-shadow: unset !important;
-}
-
-.butActionDelete, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active, .buttonDelete {
-    background: rgb(234, 228, 225);
-    /* border: 1px solid #633; */
-    color: #633;
-}
-
-.butActionDelete:hover {
-  -webkit-box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
-  box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
-}
-
-.butActionRefused {
-	text-decoration: none !important;
-	text-transform: uppercase;
-    font-weight: bold !important;
-
-	white-space: nowrap !important;
-	cursor: not-allowed !important;
-	margin: 0em <?php echo ($dol_optimize_smallscreen?'0.6':'0.9'); ?>em;
-	padding: 0.6em <?php echo ($dol_optimize_smallscreen?'0.6':'0.7'); ?>em;
-    font-family: <?php print $fontlist ?> !important;
-    display: inline-block;
-    text-align: center;
-    cursor: pointer;
-    color: #999 !important;
-    border: 1px solid #ccc;
-    box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-}
-.butActionNewRefused, .butActionNewRefused:link, .butActionNewRefused:visited, .butActionNewRefused:hover, .butActionNewRefused:active {
-	text-decoration: none !important;
-	text-transform: uppercase;
-    font-weight: normal !important;
-
-	white-space: nowrap !important;
-	cursor: not-allowed !important;
-	margin: 0em <?php echo ($dol_optimize_smallscreen?'0.7':'0.9'); ?>em;
-	padding: 0.2em <?php echo ($dol_optimize_smallscreen?'0.4':'0.7'); ?>em;
-    font-family: <?php print $fontlist ?> !important;
-    display: inline-block;
-    /* text-align: center;  New button are on right of screen */
-    cursor: pointer;
-    color: #999 !important;
-    padding-top: 0.2em;
-    box-shadow: none !important;
-    -webkit-box-shadow: none !important;
-}
-
-.butActionTransparent {
-	color: #222 ! important;
-	background-color: transparent ! important;
-}
-
-<?php if (! empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED) && (! $user->admin)) { ?>
-.butActionRefused, .butActionNewRefused {
-	display: none;
-}
-<?php } ?>
-
+<?php include dol_buildpath($path.'/theme/'.$theme.'/btn.inc.php', 0); ?>
 
 
 /* ============================================================================== */
@@ -2467,6 +2461,10 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 	margin: 0px 0px 0px 0px;
 }
 
+table.tableforemailform tr td {
+    padding-top: 3px;
+    padding-bottom: 3px;
+}
 
 table.border, table.bordernooddeven, table.dataTable, .table-border, .table-border-col, .table-key-border-col, .table-val-border-col, div.border {
 	border-collapse: collapse !important;
@@ -2532,9 +2530,9 @@ td.border, div.tagtable div div.border {
 }
 
 
-/*.ficheaddleft table.noborder {
+.fichehalfright table.noborder {
 	margin: 0px 0px 0px 0px;
-}*/
+}
 table.liste, table.noborder, table.formdoc, div.noborder {
 	width: 100%;
 
@@ -2554,12 +2552,17 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 
 	margin: 0px 0px 5px 0px;
 }
-table.liste tr:last-of-type td, table.noborder tr:last-of-type td, table.formdoc tr:last-of-type td, div.noborder tr:last-of-type td {
+#tablelines {
 	border-bottom-width: 1px;
 	border-bottom-color: rgb(<?php echo $colortopbordertitle1 ?>);
 	border-bottom-style: solid;
 }
-div.tabBar div.ficheaddleft table.noborder:last-of-type {
+table.liste tr:last-of-type td, table.noborder:not(#tablelines) tr:last-of-type td, table.formdoc tr:last-of-type td, div.noborder tr:last-of-type td {
+	border-bottom-width: 1px;
+	border-bottom-color: rgb(<?php echo $colortopbordertitle1 ?>);
+	border-bottom-style: solid;
+}
+div.tabBar div.fichehalfright table.noborder:not(.margintable):not(.paymenttable):not(.lastrecordtable):last-of-type {
     border-bottom: 1px solid rgb(<?php echo $colortopbordertitle1 ?>);
 }
 div.tabBar table.border>tbody>tr:last-of-type>td {
@@ -2567,7 +2570,7 @@ div.tabBar table.border>tbody>tr:last-of-type>td {
 	border-bottom-color: rgb(<?php echo $colortopbordertitle1 ?>);
 	border-bottom-style: solid;
 }
-div.tabBar div.ficheaddleft table.noborder {
+div.tabBar div.fichehalfright table.noborder {
     border-bottom: none;
 }
 
@@ -2578,20 +2581,25 @@ table.paddingtopbottomonly tr td {
 .liste_titre_filter {
 	background: rgb(<?php echo $colorbacktitle1; ?>) !important;
 }
+table:not(.listwithfilterbefore) tr.liste_titre_filter:first-of-type td.liste_titre {
+    padding-top: 5px;
+}
+
 tr.liste_titre_filter td.liste_titre {
 	/* border-bottom: 1px solid #ddd; */
 	padding-top: 1px;
 	padding-bottom: 0px;
 }
+tr.liste_titre_filter td.liste_titre:first-of-type {
+/*	height: 36px; */
+}
 .liste_titre_create td, .liste_titre_create th, .liste_titre_create .tagtd
 {
+    border-bottom-width: 0 !important;
     border-top-width: 1px;
     border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
     border-top-style: solid;
 }
-/*.liste_titre_create td.nobottom, tr#trlinefordates td {
-    background-color: rgb(<?php echo $colorbacktitle1; ?>) !important;
-}*/
 tr#trlinefordates td {
     border-bottom: 0px !important;
 }
@@ -2610,7 +2618,7 @@ table.liste th, table.noborder th, table.noborder tr.liste_titre td, table.nobor
 }
 table.liste td, table.noborder td, div.noborder form div, table.tableforservicepart1 td, table.tableforservicepart2 td {
 	padding: 7px 8px 7px 8px;			/* t r b l */
-	line-height: 1.2em;
+	line-height: 22px;
 	height: 22px;
 }
 div.liste_titre_bydiv .divsearchfield {
@@ -2763,9 +2771,9 @@ div.pagination li:last-child span {
   border-bottom-right-radius: 4px;*/
 }
 div.pagination li a:hover,
-div.pagination li:not(.paginationafterarrows) span:hover,
+div.pagination li:not(.paginationafterarrows,.title-button) span:hover,
 div.pagination li a:focus,
-div.pagination li:not(.paginationafterarrows) span:focus {
+div.pagination li:not(.paginationafterarrows,.title-button) span:focus {
   -webkit-box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
   box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
 }
@@ -2813,13 +2821,19 @@ div.pagination li.paginationafterarrows {
 /* Set the color for hover lines */
 .oddeven:hover, .evenodd:hover, .impair:hover, .pair:hover
 {
-<?php if ($colorbacklinepairhover) { ?>
 	background: rgb(<?php echo $colorbacklinepairhover; ?>) !important;		/* Must be background to be stronger than background of odd or even */
-<?php } ?>
+}
+.tredited, .tredited td {
+	background: rgb(<?php echo $colorbacklinepairchecked; ?>) !important;   /* Must be background to be stronger than background of odd or even */
+	border-bottom: 0 !important;
+}
+.treditedlinefordate {
+	background: rgb(<?php echo $colorbacklinepairchecked; ?>) !important;   /* Must be background to be stronger than background of odd or even */
+    border-bottom: 0px;
 }
 <?php if ($colorbacklinepairchecked) { ?>
 .highlight {
-	background: rgb(<?php echo $colorbacklinepairchecked; ?>) !important; /* Must be background to be stronger than background of odd or even */
+	background: rgb(<?php echo $colorbacklinepairchecked; ?>) !important;   /* Must be background to be stronger than background of odd or even */
 }
 <?php } ?>
 
@@ -2884,11 +2898,20 @@ form.pair, form.impair {
 form.tagtr:last-of-type div.tagtd, tr.pair:last-of-type td, tr.impair:last-of-type td {
     border-bottom: 0px !important;
 }
+tr.nobottom td {
+    border-bottom: 0px !important;
+}
+div.tableforcontact form.tagtr:last-of-type div.tagtd {
+    border-bottom: 1px solid #ddd !important;
+}
 tr.pair td .nobordernopadding tr td, tr.impair td .nobordernopadding tr td {
     border-bottom: 0px !important;
 }
 table.nobottomiftotal tr.liste_total td {
 	background-color: #fff;
+	border-bottom: 0px !important;
+}
+table.nobottom, td.nobottom {
 	border-bottom: 0px !important;
 }
 div.liste_titre .tagtd {
@@ -3022,6 +3045,9 @@ table.tableforservicepart1 tr td {
 	border-top: none !important;
 	margin: 0px 0px 0px 0px !important;
 }
+table.noborder.paymenttable {
+    border-bottom: none !important;
+}
 .paymenttable tr td:first-child, .margintable tr td:first-child
 {
 	padding-left: 2px;
@@ -3030,10 +3056,14 @@ table.tableforservicepart1 tr td {
 	height: 22px;
 }
 
-/* Disable shadows */
+/* Disable-Enable shadows */
 .noshadow {
 	-webkit-box-shadow: 0px 0px 0px #DDD !important;
 	box-shadow: 0px 0px 0px #DDD !important;
+}
+.shadow {
+	-webkit-box-shadow: 2px 2px 5px #CCC !important;
+	box-shadow: 2px 2px 5px #CCC !important;
 }
 
 div.tabBar .noborder {
@@ -3051,8 +3081,8 @@ div.tabBar .noborder {
 /* Prepare to remove class pair - impair */
 
 .noborder > tbody > tr:nth-child(even):not(.liste_titre), .liste > tbody > tr:nth-child(even):not(.liste_titre),
-div:not(.fichecenter):not(.fichehalfleft):not(.ficheaddleft) > .border > tbody > tr:nth-of-type(even):not(.liste_titre), .liste > tbody > tr:nth-of-type(even):not(.liste_titre),
-div:not(.fichecenter):not(.fichehalfleft):not(.ficheaddleft) .oddeven.tagtr:nth-of-type(even):not(.liste_titre)
+div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright):not(.ficheaddleft) > .border > tbody > tr:nth-of-type(even):not(.liste_titre), .liste > tbody > tr:nth-of-type(even):not(.liste_titre),
+div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright):not(.ficheaddleft) .oddeven.tagtr:nth-of-type(even):not(.liste_titre)
 {
 	background: linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
 	background: -o-linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
@@ -3063,12 +3093,12 @@ div:not(.fichecenter):not(.fichehalfleft):not(.ficheaddleft) .oddeven.tagtr:nth-
 .noborder > tbody > tr:nth-child(even):not(:last-child) td:not(.liste_titre), .liste > tbody > tr:nth-child(even):not(:last-child) td:not(.liste_titre),
 .noborder .oddeven.tagtr:nth-child(even):not(:last-child) .tagtd:not(.liste_titre)
 {
-	border-bottom: 1px solid #ddd;
+	border-bottom: 1px solid #e0e0e0;
 }
 
 .noborder > tbody > tr:nth-child(odd):not(.liste_titre), .liste > tbody > tr:nth-child(odd):not(.liste_titre),
-div:not(.fichecenter):not(.fichehalfleft):not(.ficheaddleft) > .border > tbody > tr:nth-of-type(odd):not(.liste_titre), .liste > tbody > tr:nth-of-type(odd):not(.liste_titre),
-div:not(.fichecenter):not(.fichehalfleft):not(.ficheaddleft) .oddeven.tagtr:nth-of-type(odd):not(.liste_titre)
+div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright):not(.ficheaddleft) > .border > tbody > tr:nth-of-type(odd):not(.liste_titre), .liste > tbody > tr:nth-of-type(odd):not(.liste_titre),
+div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright):not(.ficheaddleft) .oddeven.tagtr:nth-of-type(odd):not(.liste_titre)
 {
 	background: linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
 	background: -o-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
@@ -3079,7 +3109,7 @@ div:not(.fichecenter):not(.fichehalfleft):not(.ficheaddleft) .oddeven.tagtr:nth-
 .noborder > tbody > tr:nth-child(odd):not(:last-child) td:not(.liste_titre), .liste > tbody > tr:nth-child(odd):not(:last-child) td:not(.liste_titre),
 .noborder .oddeven.tagtr:nth-child(odd):not(:last-child) .tagtd:not(.liste_titre)
 {
-	border-bottom: 1px solid #ddd;
+	border-bottom: 1px solid #e0e0e0;
 }
 
 ul.noborder li:nth-child(even):not(.liste_titre) {
@@ -3094,16 +3124,21 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 .box {
     overflow-x: auto;
     min-height: 40px;
+    padding-right: 0px;
+    padding-left: 0px;
+    /*padding-bottom: 25px;*/
+    padding-bottom: 10px;
 }
-/*.ficheaddleft div.boxstats, .ficheaddright div.boxstats {
+.ficheaddleft div.boxstats, .ficheaddright div.boxstats {
     border: none;
-}*/
+}
 .boxstatsborder {
     /* border: 1px solid #CCC !important; */
 }
 .boxstats, .boxstats130 {
     display: inline-block;
-    margin: 8px;
+    margin-left: 8px;
+    margin-right: 8px;
     margin-top: 5px;
     margin-bottom: 5px;
     text-align: center;
@@ -3120,13 +3155,20 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
     text-overflow: ellipsis;
 }
 .boxstats130 {
-    width: 158px;
-    height: 48px;
-    padding: 3px;
+    width: 100%;
+    height: 59px;
+    /* padding: 3px; */
 }
 .boxstats {
-    padding: 3px;
-    width: 121px;
+    padding-left: 3px;
+    padding-right: 3px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    width: 118px;
+}
+.tabBar .fichehalfright .boxstats {
+    padding-top: 8px;
+    padding-bottom: 4px;
 }
 .boxstatscontent {
 	padding: 3px;
@@ -3150,8 +3192,6 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 {
 	.boxstats, .boxstats130 {
 		margin: 3px;
-	    /*border: 1px solid #ccc;
-    	box-shadow: none; */
     }
     .boxstats130 {
     	text-align: <?php echo $left; ?>
@@ -3159,18 +3199,18 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 	.thumbstat {
 		flex: 1 1 110px;
 		margin-bottom: 8px;
+	    min-width: <?php echo isset($_SESSION['dol_screenwidth'])?min(160, round($_SESSION['dol_screenwidth']/2 - 20)):150; ?>px;	/* on screen < 320, we guaranty to have 2 columns */
 	}
 	.thumbstat150 {
 		flex: 1 1 110px;
 		margin-bottom: 8px;
-		width: 160px;
+	    min-width: <?php echo isset($_SESSION['dol_screenwidth'])?min(160, round($_SESSION['dol_screenwidth']/2 - 20)):160; ?>px;	/* on screen < 320, we guaranty to have 2 columns */
+	    max-width: <?php echo isset($_SESSION['dol_screenwidth'])?min(161, round($_SESSION['dol_screenwidth']/2 - 20)):161; ?>px;	/* on screen < 320, we guaranty to have 2 columns */
+    	/* width: ...px; If I use with, there is trouble on size of flex boxes solved with min + (max that is a little bit higer than min) */
 	}
     .dashboardlineindicator {
         float: left;
     	padding-left: 5px;
-    }
-    .boxstats130 {
-    	width: 148px;
     }
     .boxstats {
         width: 111px;
@@ -3202,6 +3242,8 @@ span.boxstatsindicator {
 	font-size: 130%;
 	font-weight: normal;
 	line-height: 29px;
+	flex-grow: 1;
+
 }
 span.dashboardlineindicator, span.dashboardlineindicatorlate {
 	font-size: 130%;
@@ -3227,7 +3269,8 @@ span.dashboardlineko {
 	float: right;
 	position: relative;
     text-align: right;
-    top: -26px;
+    top: -27px;
+    right: 2px;
     padding: 0px 5px 0px 5px;
     border-radius: .25em;
 
@@ -3244,7 +3287,7 @@ span.dashboardlineko {
 	vertical-align: middle;
 }
 .boxtable {
-    margin-bottom: 8px !important;
+    margin-bottom: 25px !important;
     border-bottom-width: 1px;
 
     border-top: <?php echo $borderwidth ?>px solid rgb(<?php echo $colortopbordertitle1 ?>);
@@ -3271,12 +3314,6 @@ table.noborder.boxtable tr td {
 }
 a.valignmiddle.dashboardlineindicator {
     line-height: 30px;
-}
-
-.box {
-    padding-right: 0px;
-    padding-left: 0px;
-    padding-bottom: 25px;
 }
 
 tr.box_titre {
@@ -3331,7 +3368,7 @@ img.boxhandle, img.boxclose {
  */
 
 .ok      { color: #114466; }
-.warning { color: #887711; }
+.warning { color: #887711 !important; }
 .error   { color: #550000 !important; font-weight: bold; }
 
 div.ok {
@@ -3409,6 +3446,10 @@ a.impayee:hover { font-weight: bold; color: #550000; }
  *  Other
  */
 
+.opened-dash-board-wrap {
+    margin-bottom: 25px;
+}
+
 div.boximport {
     min-height: unset;
 }
@@ -3427,6 +3468,9 @@ div.dolgraph div.legend, div.dolgraph div.legend div { background-color: rgba(25
 div.dolgraph div.legend table tbody tr { height: auto; }
 td.legendColorBox { padding: 2px 2px 2px 0 !important; }
 td.legendLabel { padding: 2px 2px 2px 0 !important; }
+td.legendLabel {
+    text-align: <?php echo $left; ?>;
+}
 
 label.radioprivate {
     white-space: nowrap;
@@ -3496,6 +3540,7 @@ div#card-errors {
 	color: #fa755a;
     text-align: center;
     padding-top: 3px;
+    max-width: 320px;
 }
 
 
@@ -3715,7 +3760,7 @@ div.visible {
     display: block;
 }
 
-div.hidden, td.hidden, img.hidden {
+div.hidden, td.hidden, img.hidden, span.hidden {
     display: none;
 }
 
@@ -3736,6 +3781,12 @@ tr.visible {
     border: 0px;
     background-color: transparent;
     background-image: none;
+}
+.bordertransp {
+    background-color: transparent;
+    background-image: none;
+    border: 1px solid #aaa;
+	font-weight: normal;
 }
 .websitebar {
 	border-bottom: 1px solid #ccc;
@@ -4079,6 +4130,10 @@ A.none, A.none:active, A.none:visited, A.none:hover {
 /* ============================================================================== */
 /*  CKEditor                                                                      */
 /* ============================================================================== */
+
+body.cke_show_borders {
+    margin: 5px !important;
+}
 
 .cke_dialog {
     border: 1px #bbb solid ! important;
@@ -5234,7 +5289,6 @@ div.tabsElem a.tab {
 }
 
 
-
 /* ============================================================================== */
 /*  Public                                                                        */
 /* ============================================================================== */
@@ -5252,6 +5306,25 @@ div.tabsElem a.tab {
 /* ============================================================================== */
 /* Ticket module                                                                  */
 /* ============================================================================== */
+.ticketpublicarea {
+	width: 70%;
+}
+.publicnewticketform {
+	margin-top: 25px !important;
+}
+.ticketlargemargin {
+	padding-left: 50px;
+	padding-right: 50px;
+}
+@media only screen and (max-width: 767px)
+{
+	.ticketlargemargin {
+		padding-left: 5px; padding-right: 5px;
+	}
+	.ticketpublicarea {
+		width: 100%;
+	}
+}
 
 #cd-timeline {
   position: relative;
@@ -5548,6 +5621,11 @@ div.tabsElem a.tab {
         border-right: none;
         border-left: none;
     }
+
+	.box-flex-container {
+	    margin: 0 0 0 -8px !important;
+	}
+
 }
 
 @media only screen and (max-width: 1024px)
@@ -5562,8 +5640,8 @@ div.tabsElem a.tab {
 }
 
 /* nboftopmenuentries = <?php echo $nbtopmenuentries ?>, fontsize=<?php echo is_numeric($fontsize)?$fontsize.'px':$fontsize ?> */
-/* rule to reduce top menu - 1st reduction */
-@media only screen and (max-width: <?php echo round($nbtopmenuentries * 91, 0) + 24; ?>px)	/* reduction 1 */
+/* rule to reduce top menu - 1st reduction: Reduce width of top menu icons */
+@media only screen and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC1) ? round($nbtopmenuentries * 90, 0) + 240 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC1; ?>px)	/* reduction 1 */
 {
 	div.tmenucenter {
 	    width: <?php echo round(52); ?>px;	/* size of viewport */
@@ -5595,8 +5673,8 @@ div.tabsElem a.tab {
 		max-width: 300px;
 	}
 }
-/* rule to reduce top menu - 2nd reduction */
-@media only screen and (max-width: <?php echo round($nbtopmenuentries * 75, 0) + 24; ?>px)	/* reduction 2 */
+/* rule to reduce top menu - 2nd reduction: Reduce width of top menu icons again */
+@media only screen and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2) ? round($nbtopmenuentries * 69, 0) + 40 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2; ?>px)	/* reduction 2 */
 {
 	div.mainmenu {
 		height: 23px;
@@ -5619,8 +5697,8 @@ div.tabsElem a.tab {
     	left: 4px;
 	}
 }
-/* rule to reduce top menu - 3rd reduction */
-@media only screen and (max-width: <?php echo round($nbtopmenuentries * 49, 0) + 12; ?>px)	/* reduction 3 */
+/* rule to reduce top menu - 3rd reduction: The menu for user is on left */
+@media only screen and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3) ? round($nbtopmenuentries * 47, 0) + 40 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)	/* reduction 3 */
 {
 	.side-nav {
 		z-index: 200;
@@ -5654,19 +5732,15 @@ div.tabsElem a.tab {
 		min-width: 0;
 		width: 100%;
 	}
+	div.login_block a {
+        color: unset;
+    }
 	div.login_block {
-		<?php if ($conf->browser->layout == 'phone' && ((GETPOST('testmenuhider', 'int') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))) { ?>
 		/* Style when phone layout or when using the menuhider */
-		padding-top: 20px;
+		padding-top: 10px;
 		padding-left: 20px;
     	padding-right: 20px;
     	padding-bottom: 16px;
-		<?php } else { ?>
-		padding-top: 5px;
-		padding-left: 5px;
-    	padding-right: 5px;
-    	padding-bottom: 5px;
-    	<?php } ?>
 		top: inherit !important;
 		left: 0 !important;
 		text-align: center;
@@ -5677,9 +5751,15 @@ div.tabsElem a.tab {
         height: 50px;
 
     	z-index: 202;
-    	min-width: 190px;
-    	max-width: 190px;
-    	width: 190px;
+    	min-width: 200px;      /* must be width of menu + padding + padding of sidenav */
+    	max-width: 200px;      /* must be width of menu + padding + padding of sidenav */
+    	width: 200px;          /* must be width of menu + padding + padding of sidenav */
+    }
+    .side-nav-vert .user-menu .dropdown-menu {
+        width: 234px !important;
+    }
+    div.login_block_other {
+        margin-right: unset;
     }
 	div.login_block_user, div.login_block_other { clear: both; }
 	.atoplogin, .atoplogin:hover
@@ -5688,6 +5768,7 @@ div.tabsElem a.tab {
 	}
 	.login_block_elem {
 		padding: 0 !important;
+		height: 38px;
 	}
     li.tmenu, li.tmenusel {
         min-width: 32px;
@@ -5718,4 +5799,13 @@ div.tabsElem a.tab {
 		min-width: auto;
 		font-size: 12px;
 	}
+
+	.text-plus-circle {
+	   display: none;
+	}
 }
+
+<?php
+include dol_buildpath($path.'/theme/'.$theme.'/dropdown.inc.php', 0);
+include dol_buildpath($path.'/theme/'.$theme.'/info-box.inc.php', 0);
+include dol_buildpath($path.'/theme/'.$theme.'/progress.inc.php', 0);

@@ -366,7 +366,7 @@ if (! $error && $db->connected && $action == "set")
 
             print "<tr><td>";
             print $langs->trans("ErrorDirDoesNotExists", $main_dir).'<br>';
-            print $langs->trans("ErrorWrongValueForParameter", $langs->trans("WebPagesDirectory")).'<br>';
+            print $langs->trans("ErrorWrongValueForParameter", $langs->transnoentitiesnoconv("WebPagesDirectory")).'<br>';
             print $langs->trans("ErrorGoBackAndCorrectParameters").'<br><br>';
             print '</td><td>';
             print $langs->trans("Error");
@@ -573,6 +573,7 @@ if (! $error && $db->connected && $action == "set")
 
                     // Create user
                     $result=$db->DDLCreateUser($dolibarr_main_db_host, $dolibarr_main_db_user, $dolibarr_main_db_pass, $dolibarr_main_db_name);
+
                     // Create user bis
                     if ($databasefortest == 'mysql')
                     {
@@ -611,7 +612,7 @@ if (! $error && $db->connected && $action == "set")
                             print $langs->trans("UserCreation").' : ';
                             print $dolibarr_main_db_user;
                             print '</td>';
-                            print '<td>'.$langs->trans("Error").': '.$db->errno().' '.$db->error()."</td></tr>";
+                            print '<td>'.$langs->trans("Error").': '.$db->errno().' '.$db->error().($db->error ? '. '.$db->error : '')."</td></tr>";
                         }
                     }
 
@@ -956,7 +957,7 @@ function write_conf_file($conffile)
         fputs($fp, '$dolibarr_nocsrfcheck=\'0\';');
         fputs($fp, "\n");
 
-		fputs($fp, '$dolibarr_main_cookie_cryptkey=\''.$key.'\';');
+		fputs($fp, '$dolibarr_main_instance_unique_id=\''.$key.'\';');
 		fputs($fp, "\n");
 
 		fputs($fp, '$dolibarr_mailing_limit_sendbyweb=\'0\';');

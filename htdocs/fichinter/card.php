@@ -134,7 +134,7 @@ if (empty($reshook))
 				// Because createFromClone modifies the object, we must clone it so that we can restore it later
 				$orig = clone $object;
 
-				$result=$object->createFromClone($socid);
+				$result=$object->createFromClone($user, $socid);
 				if ($result > 0)
 				{
 					header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);
@@ -427,7 +427,7 @@ if (empty($reshook))
 	    }
 	    else
 	    {
-	        $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired", $langs->trans("ThirdParty")).'</div>';
+	    	$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ThirdParty")).'</div>';
 	        $action = 'create';
 	    }
 	}
@@ -679,9 +679,8 @@ if (empty($reshook))
 	}
 
 	/*
-	 * Ordonnancement des lignes
-	*/
-
+	 * Set position of lines
+	 */
 	elseif ($action == 'up' && $user->rights->ficheinter->creer)
 	{
 		$object->line_up($lineid);
@@ -948,7 +947,7 @@ if ($action == 'create')
             $numprojet=$formproject->select_projects($soc->id, $projectid, 'projectid');
             if ($numprojet==0)
             {
-                print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$soc->id.'&action=create">'.$langs->trans("AddProject").' <span class="fa fa-plus-circle valignmiddle"></span></a>';
+                print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$soc->id.'&action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddProject").'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
             }
             print '</td></tr>';
         }
@@ -961,7 +960,7 @@ if ($action == 'create')
 			$numcontrat=$formcontract->select_contract($soc->id, GETPOST('contratid', 'int'), 'contratid', 0, 1);
 			if ($numcontrat==0)
 			{
-				print ' &nbsp; <a href="'.DOL_URL_ROOT.'/contrat/card.php?socid='.$soc->id.'&action=create">'.$langs->trans("AddContract").' <span class="fa fa-plus-circle valignmiddle"></span></a>';
+				print ' &nbsp; <a href="'.DOL_URL_ROOT.'/contrat/card.php?socid='.$soc->id.'&action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddContract").'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
 			}
 			print '</td></tr>';
 		}
@@ -1647,11 +1646,10 @@ elseif ($id > 0 || ! empty($ref))
 				}
 
 		    	// create intervention model
-				if ($object->statut == Fichinter::STATUS_DRAFT && $user->rights->ficheinter->creer && (count($object->lines) > 0)) {
+				if ($conf->global->MAIN_FEATURE_LEVEL >=2 && $object->statut == Fichinter::STATUS_DRAFT && $user->rights->ficheinter->creer && (count($object->lines) > 0)) {
 					print '<div class="inline-block divButAction">';
 					// This feature is not yet implemented
-					//print '<a class="butAction" href="'.DOL_URL_ROOT.'/fichinter/card-rec.php?id='.$object->id.'&action=create">'.$langs->trans("ChangeIntoRepeatableIntervention").'</a>';
-					print '<a class="butAction" title="'.$langs->trans("ChangeIntoRepeatableIntervention").'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">'.$langs->trans("not yet implemented").'</a>';
+					print '<a class="butAction" title="'.$langs->trans("not yet implemented").'" href="'.DOL_URL_ROOT.'/fichinter/card-rec.php?id='.$object->id.'&action=create">'.$langs->trans("ChangeIntoRepeatableIntervention").'</a>';
 					print '</div>';
 				}
 

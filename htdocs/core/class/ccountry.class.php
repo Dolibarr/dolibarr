@@ -47,8 +47,8 @@ class Ccountry // extends CommonObject
 	 */
 	public $errors = array();
 
-	//var $element='ccountry';			//!< Id that identify managed objects
-	//var $table_element='ccountry';	//!< Name of table without prefix where object is stored
+	public $element='ccountry';			//!< Id that identify managed objects
+	public $table_element='c_country';	//!< Name of table without prefix where object is stored
 
     /**
 	 * @var int ID
@@ -65,7 +65,9 @@ class Ccountry // extends CommonObject
 
 	public $active;
 
-
+	public $fields=array(
+		'label' => array('type'=>'varchar(250)', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'position'=>15, 'notnull'=>-1, 'showoncombobox'=>'1')
+	);
 
 
     /**

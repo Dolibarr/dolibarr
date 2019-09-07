@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2001-2007	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2018	Laurent Destailleur		<eldy@users.sourceforge.net>
+/* Copyright (C) 2001-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2019	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2011-2017	Philippe Grand			<philippe.grand@atoo-net.com>
@@ -75,13 +75,27 @@ if ( ($action == 'update' && ! GETPOST("cancel", 'alpha'))
 		activateModulesRequiredByCountry($mysoc->country_code);
 	}
 
-	$db->begin();
+	$tmparray=getState(GETPOST('state_id', 'int'), 'all', $db, $langs, 0);
+	if (! empty($tmparray['id']))
+	{
+		$mysoc->state_id   =$tmparray['id'];
+		$mysoc->state_code =$tmparray['code'];
+		$mysoc->state_label=$tmparray['label'];
 
-	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_NOM", GETPOST("nom", 'nohtml'), 'chaine', 0, '', $conf->entity);
+		$s=$mysoc->state_id.':'.$mysoc->state_code.':'.$mysoc->state_label;
+		dolibarr_set_const($db, "MAIN_INFO_SOCIETE_STATE", $s, 'chaine', 0, '', $conf->entity);
+	}
+	else
+	{
+		dolibarr_del_const($db, "MAIN_INFO_SOCIETE_STATE", $conf->entity);
+	}
+
+    $db->begin();
+
+    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_NOM", GETPOST("nom", 'nohtml'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_ADDRESS", GETPOST("MAIN_INFO_SOCIETE_ADDRESS", 'nohtml'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_TOWN", GETPOST("MAIN_INFO_SOCIETE_TOWN", 'nohtml'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_ZIP", GETPOST("MAIN_INFO_SOCIETE_ZIP", 'alpha'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_STATE", GETPOST("state_id", 'alpha'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_REGION", GETPOST("region_code", 'alpha'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_MONNAIE", GETPOST("currency", 'aZ09'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_TEL", GETPOST("tel", 'alpha'), 'chaine', 0, '', $conf->entity);
@@ -271,7 +285,7 @@ if ($action == 'addthumb')  // Regenerate thumbs
 			$error++;
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorBadImageFormat"), null, 'errors');
-			dol_syslog($langs->transnoentities("ErrorBadImageFormat"), LOG_WARNING);
+			dol_syslog($langs->transnoentities("ErrorBadImageFormat"), LOG_INFO);
 		}
 	}
 	else
@@ -375,7 +389,13 @@ if ($action == 'edit' || $action == 'updateedit')
 
 
 	print '<tr class="oddeven"><td><label for="state_id">'.$langs->trans("State").'</label></td><td class="maxwidthonsmartphone">';
-	$formcompany->select_departement($conf->global->MAIN_INFO_SOCIETE_STATE, $mysoc->country_code, 'state_id');
+	$state_id=0;
+	if (! empty($conf->global->MAIN_INFO_SOCIETE_STATE))
+	{
+		$tmp=explode(':', $conf->global->MAIN_INFO_SOCIETE_STATE);
+		$state_id=$tmp[0];
+	}
+	$formcompany->select_departement($state_id, $mysoc->country_code, 'state_id');
 	print '</td></tr>'."\n";
 
 
@@ -412,9 +432,9 @@ if ($action == 'edit' || $action == 'updateedit')
 	}
 
 	// Logo
-	print '<tr class="oddeven hideonsmartphone"><td><label for="logo">'.$langs->trans("Logo").' (png,jpg)</label></td><td>';
+	print '<tr class="oddeven"><td><label for="logo">'.$langs->trans("Logo").' (png,jpg)</label></td><td>';
 	print '<table width="100%" class="nobordernopadding"><tr class="nocellnopadd"><td valign="middle" class="nocellnopadd">';
-	print '<input type="file" class="flat class=minwidth200" name="logo" id="logo">';
+	print '<input type="file" class="flat class=minwidth200" name="logo" id="logo" accept="image/*">';
 	print '</td><td class="nocellnopadd right" valign="middle">';
 	if (! empty($mysoc->logo_mini)) {
 		print '<a href="'.$_SERVER["PHP_SELF"].'?action=removelogo">'.img_delete($langs->trans("Delete")).'</a>';
@@ -588,9 +608,8 @@ if ($action == 'edit' || $action == 'updateedit')
 	print '<td class="titlefield">'.$langs->trans("FiscalYearInformation").'</td><td>'.$langs->trans("Value").'</td>';
 	print "</tr>\n";
 
-
 	print '<tr class="oddeven"><td><label for="SOCIETE_FISCAL_MONTH_START">'.$langs->trans("FiscalMonthStart").'</label></td><td>';
-	print $formother->select_month($conf->global->SOCIETE_FISCAL_MONTH_START, 'SOCIETE_FISCAL_MONTH_START', 0, 1) . '</td></tr>';
+	print $formother->select_month($conf->global->SOCIETE_FISCAL_MONTH_START, 'SOCIETE_FISCAL_MONTH_START', 0, 1, 'maxwidth100') . '</td></tr>';
 
 	print "</table>";
 
@@ -765,8 +784,12 @@ else
 
 	if (! empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT)) print '<tr class="oddeven"><td>'.$langs->trans("Region-State").'</td><td>';
 	else print '<tr class="oddeven"><td>'.$langs->trans("State").'</td><td>';
-	if (! empty($conf->global->MAIN_INFO_SOCIETE_STATE)) print getState($conf->global->MAIN_INFO_SOCIETE_STATE, $conf->global->MAIN_SHOW_STATE_CODE, 0, $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT);
-	else print '&nbsp;';
+	if (! empty($conf->global->MAIN_INFO_SOCIETE_STATE))
+	{
+		$tmp=explode(':', $conf->global->MAIN_INFO_SOCIETE_STATE);
+		$state_id=$tmp[0];
+		print getState($state_id, $conf->global->MAIN_SHOW_STATE_CODE, 0, $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT);
+	}
 	print '</td></tr>';
 
 
@@ -798,9 +821,9 @@ else
 	print '</td></tr>';
 
 	// Barcode
+
 	if (! empty($conf->barcode->enabled))
 	{
-
 		print '<tr class="oddeven"><td>'.$langs->trans("Gencod").'</td><td>' . $conf->global->MAIN_INFO_SOCIETE_GENCOD . '</td></tr>';
 	}
 
@@ -987,7 +1010,7 @@ else
 				print '</script>';
 				print "\n";
 				$s.='<a href="#" onClick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
-				$s = $form->textwithpicto($s, $langs->trans("VATIntraCheckDesc", $langs->trans("VATIntraCheck")), 1);
+				$s = $form->textwithpicto($s, $langs->trans("VATIntraCheckDesc", $langs->transnoentitiesnoconv("VATIntraCheck")), 1);
 			}
 			else
 			{

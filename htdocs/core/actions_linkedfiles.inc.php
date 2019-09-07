@@ -125,8 +125,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes')
         {
             require_once DOL_DOCUMENT_ROOT . '/core/class/link.class.php';
             $link = new Link($db);
-            $link->id = $linkid;
-            $link->fetch();
+            $link->fetch($linkid);
             $res = $link->delete($user);
 
             $langs->load('link');
@@ -160,8 +159,7 @@ elseif ($action == 'confirm_updateline' && GETPOST('save', 'alpha') && GETPOST('
     require_once DOL_DOCUMENT_ROOT . '/core/class/link.class.php';
     $langs->load('link');
     $link = new Link($db);
-    $link->id = GETPOST('linkid', 'int');
-    $f = $link->fetch();
+    $f = $link->fetch(GETPOST('linkid', 'int'));
     if ($f)
     {
         $link->url = GETPOST('link', 'alpha');
@@ -169,7 +167,7 @@ elseif ($action == 'confirm_updateline' && GETPOST('save', 'alpha') && GETPOST('
         {
             $link->url = 'http://' . $link->url;
         }
-        $link->label = GETPOST('label', 'alpha');
+        $link->label = GETPOST('label', 'alphanohtml');
         $res = $link->update($user);
         if (!$res)
         {
@@ -194,7 +192,7 @@ elseif ($action == 'renamefile' && GETPOST('renamefilesave', 'alpha'))
 	        // Security:
 	        // Disallow file with some extensions. We rename them.
 	        // Because if we put the documents directory into a directory inside web root (very bad), this allows to execute on demand arbitrary code.
-	        if (preg_match('/(\.htm|\.html|\.php|\.pl|\.cgi)$/i', $filenameto) && empty($conf->global->MAIN_DOCUMENT_IS_OUTSIDE_WEBROOT_SO_NOEXE_NOT_REQUIRED))
+	        if (isAFileWithExecutableContent($filenameto) && empty($conf->global->MAIN_DOCUMENT_IS_OUTSIDE_WEBROOT_SO_NOEXE_NOT_REQUIRED))
 	        {
 	            $filenameto.= '.noexe';
 	        }

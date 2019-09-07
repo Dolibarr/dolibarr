@@ -1,0 +1,65 @@
+# Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+Assets = Ativos
+NewAsset = Novo Ativo
+AccountancyCodeAsset = Código de contabilidade (ativo)
+AccountancyCodeDepreciationAsset = Código de contabilidade (conta de depreciação do ativo)
+AccountancyCodeDepreciationExpense = Código de contabilidade (conta de depreciação de despesas)
+NewAssetType=Novo tipo de ativo
+AssetsTypeSetup=Asset type setup
+AssetTypeModified=Asset type modified
+AssetType=Tipo de ativo
+AssetsLines=Ativos
+DeleteType=Eliminar
+DeleteAnAssetType=Delete an asset type
+ConfirmDeleteAssetType=Are you sure you want to delete this asset type?
+ShowTypeCard=Ver tipo '%s'
+
+# Module label 'ModuleAssetsName'
+ModuleAssetsName = Ativos
+# Module description 'ModuleAssetsDesc'
+ModuleAssetsDesc = Descrição dos ativos
+
+#
+# Admin page
+#
+AssetsSetup = Configuração dos ativos
+Settings = Definições
+AssetsSetupPage = Página de configuração dos ativos
+ExtraFieldsAssetsType = Complementary attributes (Asset type)
+AssetsType=Tipo de ativo
+AssetsTypeId=Id. do tipo de ativo
+AssetsTypeLabel=Etiqueta do tipo de ativo
+AssetsTypes=Tipos de ativos
+
+#
+# Menu
+#
+MenuAssets = Ativos
+MenuNewAsset = Novo ativo
+MenuTypeAssets = Tipo de ativos
+MenuListAssets = Lista
+MenuNewTypeAssets = Novo
+MenuListTypeAssets = Lista
+
+#
+# Module
+#
+NewAssetType=Novo tipo de ativo
+NewAsset=Novo Ativo

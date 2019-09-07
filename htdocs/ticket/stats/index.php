@@ -24,6 +24,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/actions_ticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticketstats.class.php';
+require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 
 $WIDTH=DolGraph::getDefaultGraphSizeForStats('width');
@@ -57,7 +58,7 @@ $langs->loadLangs(array('orders', 'companies', 'other', 'tickets'));
  */
 
 $form=new Form($db);
-//$formticket=new FormTicket($db);
+$object=new Ticket($db);
 
 $title=$langs->trans("Statistics");
 $dir=$conf->ticket->dir_temp;
@@ -69,7 +70,7 @@ print load_fiche_titre($title, '', 'title_ticket.png');
 dol_mkdir($dir);
 
 $stats = new TicketStats($db, $socid, ($userid>0?$userid:0));
-if ($object_status != '' && $object_status >= -1) $stats->where .= ' AND c.fk_statut IN ('.$db->escape($object_status).')';
+if ($object_status != '' && $object_status >= -1) $stats->where .= ' AND fk_statut IN ('.$db->escape($object_status).')';
 
 
 // Build graphic number of object
@@ -95,7 +96,6 @@ $mesg = $px1->isGraphKo();
 if (! $mesg)
 {
     $px1->SetData($data);
-    $px1->SetPrecisionY(0);
     $i=$startyear;$legend=array();
     while ($i <= $endyear)
     {
@@ -110,7 +110,6 @@ if (! $mesg)
     $px1->SetYLabel($langs->trans("NbOfTicket"));
     $px1->SetShading(3);
     $px1->SetHorizTickIncrement(1);
-    $px1->SetPrecisionY(0);
     $px1->mode='depth';
     $px1->SetTitle($langs->trans("NumberOfTicketsByMonth"));
 
@@ -152,7 +151,6 @@ if (! $mesg)
     $px2->SetYLabel($langs->trans("AmountOfTickets"));
     $px2->SetShading(3);
     $px2->SetHorizTickIncrement(1);
-    $px2->SetPrecisionY(0);
     $px2->mode='depth';
     $px2->SetTitle($langs->trans("AmountOfTicketsByMonthHT"));
 
@@ -192,7 +190,6 @@ if (! $mesg)
     $px3->SetHeight($HEIGHT);
     $px3->SetShading(3);
     $px3->SetHorizTickIncrement(1);
-    $px3->SetPrecisionY(0);
     $px3->mode='depth';
     $px3->SetTitle($langs->trans("AmountAverage"));
 
@@ -213,7 +210,7 @@ if (! count($arrayyears)) $arrayyears[$nowyear]=$nowyear;
 
 $h=0;
 $head = array();
-$head[$h][0] = DOL_URL_ROOT . '/ticket/stats/index.php?mode='.$mode;
+$head[$h][0] = DOL_URL_ROOT . '/ticket/stats/index.php';
 $head[$h][1] = $langs->trans("ByMonthYear");
 $head[$h][2] = 'byyear';
 $h++;
@@ -230,28 +227,22 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 // Show filter box
 print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-print '<input type="hidden" name="mode" value="'.$mode.'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+
+
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
 // Company
 print '<tr><td class="left">'.$langs->trans("ThirdParty").'</td><td class="left">';
-print $form->select_company($socid, 'socid', $filter, 1, 0, 0, array(), 0, '', 'style="width: 95%"');
+print $form->select_company($socid, 'socid', '', 1, 0, 0, array(), 0, '', 'style="width: 95%"');
 print '</td></tr>';
 // User
 print '<tr><td class="left">'.$langs->trans("CreatedBy").'</td><td class="left">';
 print $form->select_dolusers($userid, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 // Status
 print '<tr><td class="left">'.$langs->trans("Status").'</td><td class="left">';
-$liststatus=array(
-        Ticket::STATUS_NOT_READ=>$langs->trans("StatusNotRead"),
-        Ticket::STATUS_READ=>$langs->trans("StatusRead"),
-        Ticket::STATUS_ASSIGNED=>$langs->trans("StatusAssigned"),
-        Ticket::STATUS_IN_PROGRESS=>$langs->trans("StatusInProgress"),
-        Ticket::STATUS_ANSWERED=>$langs->trans("StatusAnswered"),
-        Ticket::STATUS_CLOSED=>$langs->trans("StatusClosed"),
-        Ticket::STATUS_WAITING=>$langs->trans("StatusWaiting")
-    );
-print $form->selectarray('object_status', $liststatus, GETPOST('object_status'), -4);
+$liststatus = $object->fields['fk_statut']['arrayofkeyval'];
+print $form->selectarray('object_status', $liststatus, GETPOST('object_status', 'int'), -4, 0, 0, '', 1);
 print '</td></tr>';
 // Year
 print '<tr><td class="left">'.$langs->trans("Year").'</td><td class="left">';
@@ -287,7 +278,7 @@ foreach ($data as $val)
 		$oldyear--;
 
 		print '<tr class="oddeven" height="24">';
-		print '<td class="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$oldyear.'</a></td>';
+		print '<td class="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$oldyear.'</a></td>';
 		print '<td class="right">0</td>';
 		print '<td class="right"></td>';
 		//print '<td class="right">0</td>';
@@ -299,7 +290,7 @@ foreach ($data as $val)
 
 
 	print '<tr class="oddeven" height="24">';
-	print '<td class="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$year.'</a></td>';
+	print '<td class="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$year.'</a></td>';
 	print '<td class="right">'.$val['nb'].'</td>';
 	print '<td class="right" style="'.(($val['nb_diff'] >= 0) ? 'color: green;':'color: red;').'">'.round($val['nb_diff']).'</td>';
 	//print '<td class="right">'.price(price2num($val['total'], 'MT'), 1).'</td>';

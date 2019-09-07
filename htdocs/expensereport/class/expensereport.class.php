@@ -314,12 +314,13 @@ class ExpenseReport extends CommonObject
     /**
      *	Load an object from its id and create a new one in database
      *
-     *	@param		int			$fk_user_author		  Id of new user
-     *	@return		int							      New id of clone
+	 *  @param	    User	$user		        User making the clone
+     *	@param		int     $fk_user_author		Id of new user
+     *	@return		int							New id of clone
      */
-    public function createFromClone($fk_user_author)
+    public function createFromClone(User $user, $fk_user_author)
     {
-        global $user,$hookmanager;
+        global $hookmanager;
 
         $error=0;
 
@@ -571,8 +572,8 @@ class ExpenseReport extends CommonObject
 		$this->db->begin();
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."expensereport";
-        $sql.= " SET fk_statut = 6, paid=1";
-        $sql.= " WHERE rowid = ".$id." AND fk_statut = 5";
+        $sql.= " SET fk_statut = ".self::STATUS_CLOSED.", paid=1";
+        $sql.= " WHERE rowid = ".$id." AND fk_statut = ".self::STATUS_APPROVED;
 
         dol_syslog(get_class($this)."::set_paid sql=".$sql, LOG_DEBUG);
         $resql=$this->db->query($sql);
@@ -971,7 +972,7 @@ class ExpenseReport extends CommonObject
         $this->lines=array();
 
         $sql = ' SELECT de.rowid, de.comments, de.qty, de.value_unit, de.date, de.rang,';
-        $sql.= ' de.'.$this->fk_element.', de.fk_c_type_fees, de.fk_c_exp_tax_cat, de.fk_projet as fk_project, de.tva_tx,';
+        $sql.= ' de.'.$this->fk_element.', de.fk_c_type_fees, de.fk_c_exp_tax_cat, de.fk_projet as fk_project, de.tva_tx, de.fk_ecm_files,';
         $sql.= ' de.total_ht, de.total_tva, de.total_ttc,';
         $sql.= ' ctf.code as code_type_fees, ctf.label as libelle_type_fees,';
         $sql.= ' p.ref as ref_projet, p.title as title_projet';
@@ -1010,8 +1011,9 @@ class ExpenseReport extends CommonObject
                 $deplig->fk_expensereport = $objp->fk_expensereport;
                 $deplig->fk_c_type_fees   = $objp->fk_c_type_fees;
                 $deplig->fk_c_exp_tax_cat = $objp->fk_c_exp_tax_cat;
-                $deplig->fk_projet        = $objp->fk_project;
+                $deplig->fk_projet        = $objp->fk_project;  // deprecated
                 $deplig->fk_project       = $objp->fk_project;
+                $deplig->fk_ecm_files     = $objp->fk_ecm_files;
 
                 $deplig->total_ht         = $objp->total_ht;
                 $deplig->total_tva        = $objp->total_tva;
@@ -1130,11 +1132,10 @@ class ExpenseReport extends CommonObject
         $resql=$this->db->query($sql);
         if ($resql)
         {
-			if (!$notrigger)
+			if (! $error && ! $notrigger)
 			{
 				// Call trigger
 				$result=$this->call_trigger('EXPENSE_REPORT_VALIDATE', $fuser);
-
 				if ($result < 0) {
 					$error++;
 				}
@@ -1150,15 +1151,20 @@ class ExpenseReport extends CommonObject
 			    {
 			    	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-			    	// On renomme repertoire ($this->ref = ancienne ref, $num = nouvelle ref)
-					// in order not to lose the attachments
+			    	// Now we rename also files into index
+			    	$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref)+1).")), filepath = 'expensereport/".$this->db->escape($this->newref)."'";
+			    	$sql.= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'expensereport/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+					$resql = $this->db->query($sql);
+					if (! $resql) { $error++; $this->error = $this->db->lasterror(); }
+
+			    	// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 					$oldref = dol_sanitizeFileName($this->ref);
 					$newref = dol_sanitizeFileName($num);
 					$dirsource = $conf->expensereport->dir_output.'/'.$oldref;
 					$dirdest = $conf->expensereport->dir_output.'/'.$newref;
-					if (file_exists($dirsource))
+					if (! $error && file_exists($dirsource))
 					{
-					    dol_syslog(get_class($this)."::valid() rename dir ".$dirsource." into ".$dirdest);
+					    dol_syslog(get_class($this)."::setValidate() rename dir ".$dirsource." into ".$dirdest);
 
 					    if (@rename($dirsource, $dirdest))
 					    {
@@ -1317,7 +1323,7 @@ class ExpenseReport extends CommonObject
      * setDeny
      *
      * @param User      $fuser      User
-     * @param Details   $details    Details
+     * @param string    $details    Details
      * @param int       $notrigger  Disable triggers
      * @return int
      */
@@ -1391,12 +1397,12 @@ class ExpenseReport extends CommonObject
         // phpcs:enable
 		$error = 0;
 
-        if ($this->fk_c_deplacement_statuts != 5)
+		if ($this->paid)
         {
 			$this->db->begin();
 
             $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-            $sql.= " SET fk_statut = 5";
+            $sql.= " SET paid = 0";
             $sql.= ' WHERE rowid = '.$this->id;
 
             dol_syslog(get_class($this)."::set_unpaid sql=".$sql, LOG_DEBUG);
@@ -1687,20 +1693,21 @@ class ExpenseReport extends CommonObject
 	/**
 	 * addline
 	 *
-	 * @param    float       $qty                Qty
-	 * @param    double      $up                 Value init
-	 * @param    int         $fk_c_type_fees     Type payment
-	 * @param    string      $vatrate            Vat rate (Can be '10' or '10 (ABC)')
-	 * @param    string      $date               Date
-	 * @param    string      $comments           Description
-	 * @param    int         $fk_project         Project id
-	 * @param    int         $fk_c_exp_tax_cat   Car category id
-	 * @param    int         $type               Type line
-	 * @return   int                             <0 if KO, >0 if OK
+	 * @param    float       $qty                      Qty
+	 * @param    double      $up                       Value init
+	 * @param    int         $fk_c_type_fees           Type payment
+	 * @param    string      $vatrate                  Vat rate (Can be '10' or '10 (ABC)')
+	 * @param    string      $date                     Date
+	 * @param    string      $comments                 Description
+	 * @param    int         $fk_project               Project id
+	 * @param    int         $fk_c_exp_tax_cat         Car category id
+	 * @param    int         $type                     Type line
+	 * @param    int         $fk_ecm_files             Id of ECM file to link to this expensereport line
+	 * @return   int                                   <0 if KO, >0 if OK
 	 */
-	public function addline($qty = 0, $up = 0, $fk_c_type_fees = 0, $vatrate = 0, $date = '', $comments = '', $fk_project = 0, $fk_c_exp_tax_cat = 0, $type = 0)
+    public function addline($qty = 0, $up = 0, $fk_c_type_fees = 0, $vatrate = 0, $date = '', $comments = '', $fk_project = 0, $fk_c_exp_tax_cat = 0, $type = 0, $fk_ecm_files = 0)
 	{
-		global $conf,$langs,$mysoc;
+		global $conf, $langs, $mysoc;
 
         dol_syslog(get_class($this)."::addline qty=$qty, up=$up, fk_c_type_fees=$fk_c_type_fees, vatrate=$vatrate, date=$date, fk_project=$fk_project, type=$type, comments=$comments", LOG_DEBUG);
 
@@ -1750,7 +1757,10 @@ class ExpenseReport extends CommonObject
 			$this->line->fk_c_type_fees = $fk_c_type_fees;
 			$this->line->fk_c_exp_tax_cat = $fk_c_exp_tax_cat;
 			$this->line->comments = $comments;
-			$this->line->fk_projet = $fk_project;
+			$this->line->fk_projet = $fk_project;    // deprecated
+			$this->line->fk_project = $fk_project;
+
+			$this->line->fk_ecm_files = $fk_ecm_files;
 
 			$this->applyOffset();
 			$this->checkRules($type, $seller);
@@ -1935,7 +1945,7 @@ class ExpenseReport extends CommonObject
 	}
 
     /**
-     * updateline
+     * Update an expense report line
      *
      * @param   int         $rowid                  Line to edit
      * @param   int         $type_fees_id           Type payment
@@ -1946,10 +1956,11 @@ class ExpenseReport extends CommonObject
      * @param   double      $value_unit             Value init
      * @param   int         $date                   Date
      * @param   int         $expensereport_id       Expense report id
-     * @param   int         $fk_c_exp_tax_cat       id of category of car
+     * @param   int         $fk_c_exp_tax_cat       Id of category of car
+	 * @param   int         $fk_ecm_files           Id of ECM file to link to this expensereport line
      * @return  int                                 <0 if KO, >0 if OK
      */
-    public function updateline($rowid, $type_fees_id, $projet_id, $vatrate, $comments, $qty, $value_unit, $date, $expensereport_id, $fk_c_exp_tax_cat = 0)
+    public function updateline($rowid, $type_fees_id, $projet_id, $vatrate, $comments, $qty, $value_unit, $date, $expensereport_id, $fk_c_exp_tax_cat = 0, $fk_ecm_files = 0)
     {
         global $user, $mysoc;
 
@@ -2008,6 +2019,8 @@ class ExpenseReport extends CommonObject
             $this->line->localtax1_type = $localtaxes_type[0];
             $this->line->localtax2_type = $localtaxes_type[2];
 
+            $this->line->fk_ecm_files = $fk_ecm_files;
+
             $this->line->rowid           = $rowid;
             $this->line->id              = $rowid;
 
@@ -2015,21 +2028,26 @@ class ExpenseReport extends CommonObject
             $sql = "SELECT c.code as code_type_fees, c.label as libelle_type_fees";
             $sql.= " FROM ".MAIN_DB_PREFIX."c_type_fees as c";
             $sql.= " WHERE c.id = ".$type_fees_id;
-            $result = $this->db->query($sql);
-            $objp_fees = $this->db->fetch_object($result);
-            $this->line->type_fees_code      = $objp_fees->code_type_fees;
-            $this->line->type_fees_libelle   = $objp_fees->libelle_type_fees;
+            $resql = $this->db->query($sql);
+            if ($resql)
+            {
+                $objp_fees = $this->db->fetch_object($resql);
+                $this->line->type_fees_code      = $objp_fees->code_type_fees;
+                $this->line->type_fees_libelle   = $objp_fees->libelle_type_fees;
+                $this->db->free($resql);
+            }
 
             // Select des informations du projet
             $sql = "SELECT p.ref as ref_projet, p.title as title_projet";
             $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
             $sql.= " WHERE p.rowid = ".$projet_id;
-            $result = $this->db->query($sql);
-            if ($result) {
-            	$objp_projet = $this->db->fetch_object($result);
+            $resql = $this->db->query($sql);
+            if ($resql) {
+            	$objp_projet = $this->db->fetch_object($resql);
+            	$this->line->projet_ref          = $objp_projet->ref_projet;
+            	$this->line->projet_title        = $objp_projet->title_projet;
+            	$this->db->free($resql);
             }
-            $this->line->projet_ref          = $objp_projet->ref_projet;
-            $this->line->projet_title        = $objp_projet->title_projet;
 
 			$this->applyOffset();
 			$this->checkRules();
@@ -2083,10 +2101,10 @@ class ExpenseReport extends CommonObject
     /**
      * periode_existe
      *
-     * @param   User    $fuser          User
-     * @param   Date    $date_debut     Start date
-     * @param   Date    $date_fin       End date
-     * @return  int                     <0 if KO, >0 if OK
+     * @param   User       $fuser          User
+     * @param   integer    $date_debut     Start date
+     * @param   integer    $date_fin       End date
+     * @return  int                        <0 if KO, >0 if OK
      */
     public function periode_existe($fuser, $date_debut, $date_fin)
     {
@@ -2098,16 +2116,16 @@ class ExpenseReport extends CommonObject
         dol_syslog(get_class($this)."::periode_existe sql=".$sql);
         $result = $this->db->query($sql);
         if ($result) {
-            $num_lignes = $this->db->num_rows($result); $i = 0;
+            $num_rows = $this->db->num_rows($result); $i = 0;
 
-            if ($num_lignes>0)
+            if ($num_rows > 0)
             {
                 $date_d_form = $date_debut;
                 $date_f_form = $date_fin;
 
                 $existe = false;
 
-                while ($i < $num_lignes)
+                while ($i < $num_rows)
                 {
                     $objp = $this->db->fetch_object($result);
 
@@ -2161,8 +2179,8 @@ class ExpenseReport extends CommonObject
         $result = $this->db->query($sql);
         if($result)
         {
-            $num_lignes = $this->db->num_rows($result); $i = 0;
-            while ($i < $num_lignes)
+            $num_rows = $this->db->num_rows($result); $i = 0;
+            while ($i < $num_rows)
             {
                 $objp = $this->db->fetch_object($result);
                 array_push($users_validator, $objp->fk_user);
@@ -2315,12 +2333,14 @@ class ExpenseReport extends CommonObject
 	        {
 	           $response->warning_delay=$conf->expensereport->approve->warning_delay/60/60/24;
 	           $response->label=$langs->trans("ExpenseReportsToApprove");
+	           $response->labelShort=$langs->trans("ToApprove");
 	           $response->url=DOL_URL_ROOT.'/expensereport/list.php?mainmenu=hrm&amp;statut=2';
 	        }
 	        else
 	        {
 	            $response->warning_delay=$conf->expensereport->payment->warning_delay/60/60/24;
 	            $response->label=$langs->trans("ExpenseReportsToPay");
+	            $response->labelShort=$langs->trans("StatusToPay");
 	            $response->url=DOL_URL_ROOT.'/expensereport/list.php?mainmenu=hrm&amp;statut=5';
 	        }
 	        $response->img=img_object('', "trip");
@@ -2498,6 +2518,12 @@ class ExpenseReportLine
     public $total_ttc;
 
     /**
+     * @var int ID into llx_ecm_files table to link line to attached file
+     */
+    public $fk_ecm_files;
+
+
+    /**
      * Constructor
      *
      * @param DoliDB    $db     Handlet database
@@ -2516,7 +2542,7 @@ class ExpenseReportLine
     public function fetch($rowid)
     {
         $sql = 'SELECT fde.rowid, fde.fk_expensereport, fde.fk_c_type_fees, fde.fk_c_exp_tax_cat, fde.fk_projet as fk_project, fde.date,';
-        $sql.= ' fde.tva_tx as vatrate, fde.vat_src_code, fde.comments, fde.qty, fde.value_unit, fde.total_ht, fde.total_tva, fde.total_ttc,';
+        $sql.= ' fde.tva_tx as vatrate, fde.vat_src_code, fde.comments, fde.qty, fde.value_unit, fde.total_ht, fde.total_tva, fde.total_ttc, fde.fk_ecm_files,';
         $sql.= ' ctf.code as type_fees_code, ctf.label as type_fees_libelle,';
         $sql.= ' pjt.rowid as projet_id, pjt.title as projet_title, pjt.ref as projet_ref';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'expensereport_det as fde';
@@ -2531,8 +2557,8 @@ class ExpenseReportLine
             $objp = $this->db->fetch_object($result);
 
             $this->rowid = $objp->rowid;
-            $this->id = $obj->rowid;
-            $this->ref = $obj->ref;
+            $this->id = $objp->rowid;
+            $this->ref = $objp->ref;
             $this->fk_expensereport = $objp->fk_expensereport;
             $this->comments = $objp->comments;
             $this->qty = $objp->qty;
@@ -2552,6 +2578,7 @@ class ExpenseReportLine
             $this->total_ht = $objp->total_ht;
             $this->total_tva = $objp->total_tva;
             $this->total_ttc = $objp->total_ttc;
+            $this->fk_ecm_files = $objp->fk_ecm_files;
 
             $this->db->free($result);
         } else {
@@ -2585,7 +2612,7 @@ class ExpenseReportLine
 
         $sql = 'INSERT INTO '.MAIN_DB_PREFIX.'expensereport_det';
         $sql.= ' (fk_expensereport, fk_c_type_fees, fk_projet,';
-        $sql.= ' tva_tx, vat_src_code, comments, qty, value_unit, total_ht, total_tva, total_ttc, date, rule_warning_message, fk_c_exp_tax_cat)';
+        $sql.= ' tva_tx, vat_src_code, comments, qty, value_unit, total_ht, total_tva, total_ttc, date, rule_warning_message, fk_c_exp_tax_cat, fk_ecm_files)';
         $sql.= " VALUES (".$this->db->escape($this->fk_expensereport).",";
         $sql.= " ".$this->db->escape($this->fk_c_type_fees).",";
         $sql.= " ".$this->db->escape($this->fk_project>0?$this->fk_project:($this->fk_projet>0?$this->fk_projet:'null')).",";
@@ -2599,7 +2626,8 @@ class ExpenseReportLine
         $sql.= " ".$this->db->escape($this->total_ttc).",";
         $sql.= "'".$this->db->idate($this->date)."',";
 		$sql.= " '".$this->db->escape($this->rule_warning_message)."',";
-		$sql.= " ".$this->db->escape($this->fk_c_exp_tax_cat);
+		$sql.= " ".$this->db->escape($this->fk_c_exp_tax_cat).",";
+		$sql.= " ".($this->fk_ecm_files > 0 ? $this->fk_ecm_files : 'null');
         $sql.= ")";
 
         $resql=$this->db->query($sql);
@@ -2645,7 +2673,7 @@ class ExpenseReportLine
 	 * @param  ExpenseReportRule $rule		object rule to check
 	 * @param  int				 $fk_user	user author id
 	 * @param  string			 $mode		day|EX_DAY / month|EX_MON / year|EX_YEA to get amount
-	 * @return amount                       Amount
+	 * @return float                        Amount
 	 */
 	public function getExpAmount(ExpenseReportRule $rule, $fk_user, $mode = 'day')
 	{
@@ -2682,7 +2710,7 @@ class ExpenseReportLine
 	}
 
     /**
-     * update
+     * Update line
      *
      * @param   User    $user      User
      * @return  int                <0 if KO, >0 if OK
@@ -2714,7 +2742,8 @@ class ExpenseReportLine
 		$sql.= ",vat_src_code='".$this->db->escape($this->vat_src_code)."'";
         $sql.= ",rule_warning_message='".$this->db->escape($this->rule_warning_message)."'";
 		$sql.= ",fk_c_exp_tax_cat=".$this->db->escape($this->fk_c_exp_tax_cat);
-        if ($this->fk_c_type_fees) $sql.= ",fk_c_type_fees=".$this->db->escape($this->fk_c_type_fees);
+		$sql.= ",fk_ecm_files=".($this->fk_ecm_files > 0 ? $this->fk_ecm_files : 'null');
+		if ($this->fk_c_type_fees) $sql.= ",fk_c_type_fees=".$this->db->escape($this->fk_c_type_fees);
         else $sql.= ",fk_c_type_fees=null";
         if ($this->fk_project > 0) $sql.= ",fk_projet=".$this->db->escape($this->fk_project);
         else $sql.= ",fk_projet=null";

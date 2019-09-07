@@ -11,7 +11,7 @@
  * Copyright (C) 2015		Claudio Aschieri		<c.aschieri@19.coop>
  * Copyright (C) 2016		Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2016		Yasser Carreón			<yacasia@gmail.com>
- * Copyright (C) 2018	   Quentin Vial-Gouteyron    <quentin.vial-gouteyron@atm-consulting.fr>
+ * Copyright (C) 2018	    Quentin Vial-Gouteyron  <quentin.vial-gouteyron@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,7 +56,7 @@ if (! empty($conf->projet->enabled)) {
     require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
-$langs->loadLangs(array("receptions","companies","bills",'deliveries','orders','stocks','other','propal'));
+$langs->loadLangs(array("receptions","companies","bills",'deliveries','orders','stocks','other','propal','sendings'));
 
 if (!empty($conf->incoterm->enabled)) $langs->load('incoterm');
 if (! empty($conf->productbatch->enabled)) $langs->load('productbatch');
@@ -780,9 +780,10 @@ if ($action == 'create')
             }
             print '</a></td>';
             print "</tr>\n";
+
             // Ref client
             print '<tr><td>';
-            if ($origin == 'supplier_order') print $langs->trans('RefSupplierOrder');
+            if ($origin == 'supplier_order') print $langs->trans('SupplierOrder');
             else print $langs->trans('RefSupplier');
             print '</td><td colspan="3">';
             print '<input type="text" name="ref_supplier" value="'.$object->ref_supplier.'" />';
@@ -805,7 +806,7 @@ if ($action == 'create')
                 print '<tr>';
                 print '<td>' . $langs->trans("Project") . '</td><td colspan="2">';
                 $numprojet = $formproject->select_projects($soc->id, $projectid, 'projectid', 0);
-                print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid=' . $soc->id . '&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id).'">' . $langs->trans("AddProject") . ' <span class="fa fa-plus-circle valignmiddle"></span></a>';
+                print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid=' . $soc->id . '&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id).'"><span class="valignmiddle text-plus-circle">' . $langs->trans("AddProject") . '</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
                 print '</td>';
                 print '</tr>';
             }
@@ -815,7 +816,7 @@ if ($action == 'create')
             print '<td colspan="3">';
             //print dol_print_date($object->date_livraison,"day");	// date_livraison come from order and will be stored into date_delivery planed.
             $date_delivery = ($date_delivery?$date_delivery:$object->date_livraison); // $date_delivery comes from GETPOST
-            print $form->select_date($date_delivery?$date_delivery:-1, 'date_delivery', 1, 1, 1);
+            print $form->selectDate($date_delivery?$date_delivery:-1, 'date_delivery', 1, 1, 1);
             print "</td>\n";
             print '</tr>';
 
@@ -890,7 +891,7 @@ if ($action == 'create')
 			if (!empty($conf->incoterm->enabled))
 			{
 				print '<tr>';
-				print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), $object->libelle_incoterms, 1).'</label></td>';
+				print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), $object->label_incoterms, 1).'</label></td>';
 		        print '<td colspan="3" class="maxwidthonsmartphone">';
 		        print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms)?$object->location_incoterms:''));
 				print '</td></tr>';
@@ -1163,10 +1164,10 @@ if ($action == 'create')
 							{
 								print '<td><input name="batch'.$indiceAsked.'" value="'.$dispatchLines[$indiceAsked]['lot'].'"></td>';
 								print '<td>';
-								print $form->select_date($dispatchLines[$indiceAsked]['DLC'], 'dlc' . $indiceAsked, '', '', 1, "");
+								print $form->selectDate($dispatchLines[$indiceAsked]['DLC'], 'dlc' . $indiceAsked, '', '', 1, "");
 								print '</td>';
 								print '<td>';
-								print $form->select_date($dispatchLines[$indiceAsked]['DLUO'], 'dluo' . $indiceAsked, '', '', 1, "");
+								print $form->selectDate($dispatchLines[$indiceAsked]['DLUO'], 'dluo' . $indiceAsked, '', '', 1, "");
 								print '</td>';
 							}
 							else {
@@ -1398,7 +1399,7 @@ elseif ($id || $ref)
 		if ($typeobject == 'CommandeFournisseur' && $object->$typeobject->id && ! empty($conf->propal->enabled))
 		{
 			print '<tr><td>';
-			print $langs->trans("RefSupplierOrder").'</td>';
+			print $langs->trans("SupplierOrder").'</td>';
 			print '<td colspan="3">';
 			print $objectsrc->getNomUrl(1, 'reception');
 			print "</td>\n";
@@ -1424,7 +1425,7 @@ elseif ($id || $ref)
 			print '<form name="setdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="setdate_livraison">';
-			print $form->select_date($object->date_delivery?$object->date_delivery:-1, 'liv_', 1, 1, '', "setdate_livraison", 1, 0, 1);
+			print $form->selectDate($object->date_delivery?$object->date_delivery:-1, 'liv_', 1, 1, '', "setdate_livraison", 1, 0);
 			print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 		}
@@ -1602,7 +1603,7 @@ elseif ($id || $ref)
 	        print '<td colspan="3">';
 			if ($action != 'editincoterm')
 			{
-				print $form->textwithpicto($object->display_incoterms(), $object->libelle_incoterms, 1);
+				print $form->textwithpicto($object->display_incoterms(), $object->label_incoterms, 1);
 			}
 			else
 			{
@@ -1887,9 +1888,9 @@ elseif ($id || $ref)
 						{
 							print '<td>  <input name="batch'.$line_id.'" id="batch'.$line_id.'" type="text" value="'.$lines[$i]->batch.'"> </br>';
 							print $langs->trans('EatByDate').' : ';
-							print $form->select_date($lines[$i]->eatby, 'dlc' .$line_id, '', '', 1, ""). '</br>';
+							print $form->selectDate($lines[$i]->eatby, 'dlc' .$line_id, '', '', 1, ""). '</br>';
 							print $langs->trans('SellByDate').' : ';
-							print $form->select_date($lines[$i]->sellby, 'dluo' .$line_id, '', '', 1, "");
+							print $form->selectDate($lines[$i]->sellby, 'dluo' .$line_id, '', '', 1, "");
 							print '</td>';
 						}
 						print '</tr>';

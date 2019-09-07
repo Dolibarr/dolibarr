@@ -7,7 +7,8 @@
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2014      Cedric GROSS         <c.gross@kreiz-it.fr>
  * Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019	   Ferran Marcet	    <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -146,7 +147,7 @@ if ($action == 'classin' && ($user->rights->agenda->allactions->create ||
     (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->rights->agenda->myactions->create)))
 {
     $object->fetch($id);
-    $object->setProject(GETPOST('projectid'));
+    $object->setProject(GETPOST('projectid', 'int'));
 }
 
 // Action clone object
@@ -164,7 +165,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes')
                 reset($object->socpeopleassigned);
                 $object->contactid = key($object->socpeopleassigned);
             }
-			$result = $object->createFromClone(GETPOST('fk_userowner'), GETPOST('socid'));
+			$result = $object->createFromClone($user, GETPOST('socid', 'int'));
 			if ($result > 0) {
 				header("Location: " . $_SERVER['PHP_SELF'] . '?id=' . $result);
 				exit();
@@ -238,8 +239,8 @@ if ($action == 'add')
 		$object->fulldayevent = (! empty($fulldayevent)?1:0);
 		$object->location = GETPOST("location");
 		$object->label = trim(GETPOST('label'));
-		$object->fk_element = GETPOST("fk_element");
-		$object->elementtype = GETPOST("elementtype");
+		$object->fk_element = GETPOST("fk_element", 'int');
+		$object->elementtype = GETPOST("elementtype", 'alpha');
 		if (! GETPOST('label'))
 		{
 			if (GETPOST('actioncode') == 'AC_RDV' && $contact->getFullName($langs))
@@ -252,7 +253,10 @@ if ($action == 'add')
 				{
 					$object->label = $langs->transnoentitiesnoconv("Action".$object->type_code)."\n";
 				}
-				else $object->label = $cactioncomm->libelle;
+				else {
+					$cactioncomm->fetch($object->type_code);
+					$object->label = $cactioncomm->label;
+				}
 			}
 		}
 		$object->fk_project = isset($_POST["projectid"])?$_POST["projectid"]:0;
@@ -272,7 +276,7 @@ if ($action == 'add')
 		$object->datep = $datep;
 		$object->datef = $datef;
 		$object->percentage = $percentage;
-		$object->duree=((float) (GETPOST('dureehour') * 60) + (float) GETPOST('dureemin')) * 60;
+		$object->duree=(((int) GETPOST('dureehour') * 60) + (int) GETPOST('dureemin')) * 60;
 
 		$transparency=(GETPOST("transparency")=='on'?1:0);
 
@@ -349,7 +353,7 @@ if ($action == 'add')
 	{
 		$db->begin();
 
-		// On cree l'action
+		// Creation of action/event
 		$idaction=$object->create($user);
 
 		if ($idaction > 0)
@@ -690,7 +694,7 @@ if ($action == 'create')
 
 	dol_fiche_head();
 
-	print '<table class="border tableforfield" width="100%">';
+	print '<table class="border centpercent">';
 
 	// Type of event
 	if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
@@ -857,7 +861,7 @@ if ($action == 'create')
 	print '<br><hr><br>';
 
 
-	print '<table class="border tableforfield" width="100%">';
+	print '<table class="border centpercent">';
 
 	if ($conf->societe->enabled)
 	{
@@ -903,7 +907,7 @@ if ($action == 'create')
 
 		$numproject=$formproject->select_projects((! empty($societe->id)?$societe->id:-1), $projectid, 'projectid', 0, 0, 1, 1);
 
-		print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$societe->id.'&action=create">'.$langs->trans("AddProject").' <span class="fa fa-plus-circle valignmiddle"></span></a>';
+		print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$societe->id.'&action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddProject").'</span><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
 		$urloption='?action=create';
 		$url = dol_buildpath('comm/action/card.php', 2).$urloption;
 
@@ -1301,7 +1305,7 @@ if ($id > 0)
 			$numprojet=$formproject->select_projects(($object->socid  > 0 ? $object->socid : -1), $object->fk_project, 'projectid', 0, 0, 1, 0, 0, 0, 0, '', 0);
 			if ($numprojet==0)
 			{
-				print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$object->socid.'&action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit').'">'.$langs->trans("AddProject").' <span class="fa fa-plus-circle valignmiddle"></span></a>';
+				print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$object->socid.'&action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit').'"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddProject").'</span><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
 			}
 			print '</td></tr>';
 		}

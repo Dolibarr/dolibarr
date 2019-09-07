@@ -614,18 +614,9 @@ if ($resql)
 
         // Defined date_start_in_calendar and date_end_in_calendar property
         // They are date start and end of action but modified to not be outside calendar view.
-        if ($event->percentage <= 0)
-        {
-            $event->date_start_in_calendar=$event->datep;
-            if ($event->datef != '' && $event->datef >= $event->datep) $event->date_end_in_calendar=$event->datef;
-            else $event->date_end_in_calendar=$event->datep;
-        }
-        else
-        {
-            $event->date_start_in_calendar=$event->datep;
-            if ($event->datef != '' && $event->datef >= $event->datep) $event->date_end_in_calendar=$event->datef;
-            else $event->date_end_in_calendar=$event->datep;
-        }
+        $event->date_start_in_calendar=$event->datep;
+        if ($event->datef != '' && $event->datef >= $event->datep) $event->date_end_in_calendar=$event->datef;
+        else $event->date_end_in_calendar=$event->datep;
         // Define ponctual property
         if ($event->date_start_in_calendar == $event->date_end_in_calendar)
         {
@@ -1009,6 +1000,11 @@ if (! empty($hookmanager->resArray['eventarray'])) {
     }
 }
 
+// Sort events
+foreach($eventarray as $keyDate => &$dateeventarray)
+{
+	usort($dateeventarray, 'sort_events_by_date');
+}
 
 
 $maxnbofchar=0;
@@ -1700,4 +1696,23 @@ function dol_color_minus($color, $minus, $minusunit = 16)
 	    // Not yet implemented
 	}
 	return $newcolor;
+}
+
+
+/**
+ * Sort events by date
+ *
+ * @param   object  $a      Event A
+ * @param   object  $b      Event B
+ * @return  int             < 0 if event A should be before event B, > 0 otherwise, 0 if they have the exact same time slot
+ */
+function sort_events_by_date($a, $b)
+{
+	if($a->datep != $b->datep)
+	{
+		return $a->datep - $b->datep;
+	}
+
+	// If both events have the same start time, longest first
+	return $b->datef - $a->datef;
 }

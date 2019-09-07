@@ -163,10 +163,11 @@ if (empty($action) || $action == 'editfile' || $action == 'file_manager' || preg
     	// Show the link to "Root"
     	if ($showroot)
     	{
-    		print '<tr><td><div style="padding-left: 5px; padding-right: 5px;"><a href="'.$_SERVER["PHP_SELF"].'?file_manager=1&pageid='.$pageid.'">'.$langs->trans("Root").'</a></div></td></tr>';
+    		print '<tr><td><div style="padding-left: 5px; padding-right: 5px;"><a href="'.$_SERVER["PHP_SELF"].'?file_manager=1&pageid='.$pageid.'">';
+    		if ($module == 'medias') print $langs->trans("RootOfMedias");
+    		else print $langs->trans("Root");
+    		print '</a></div></td></tr>';
     	}
-
-
 
     	print '<tr><td>';
 

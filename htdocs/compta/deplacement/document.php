@@ -100,7 +100,7 @@ if ($object->id)
 	}
 
 
-    print '<table class="border" width="100%">';
+    print '<table class="border tableforfield centpercent">';
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/compta/deplacement/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 

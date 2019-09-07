@@ -196,6 +196,29 @@ abstract class CommonInvoice extends CommonObject
 	}
 
 	/**
+	 *    	Return amount (with tax) of all converted amount for this credit note
+	 *
+	 * 		@param 		int 	$multicurrency 	Return multicurrency_amount instead of amount
+	 *		@return		int						<0 if KO, Sum of credit notes and deposits amount otherwise
+	 */
+	public function getSumFromThisCreditNotesNotUsed($multicurrency = 0)
+	{
+	    require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
+
+	    $discountstatic=new DiscountAbsolute($this->db);
+	    $result=$discountstatic->getSumFromThisCreditNotesNotUsed($this, $multicurrency);
+	    if ($result >= 0)
+	    {
+	        return $result;
+	    }
+	    else
+	    {
+	        $this->error=$discountstatic->error;
+	        return -1;
+	    }
+	}
+
+	/**
 	 *	Renvoie tableau des ids de facture avoir issus de la facture
 	 *
 	 *	@return		array		Tableau d'id de factures avoirs
@@ -598,6 +621,7 @@ abstract class CommonInvoice extends CommonObject
 		// 2 : application de la règle, le N du mois courant ou suivant
 		elseif ($cdr_type == 2 && !empty($cdr_decalage))
 		{
+		    include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 			$datelim = $this->date + ($cdr_nbjour * 3600 * 24);
 
 			$date_piece = dol_mktime(0, 0, 0, date('m', $datelim), date('d', $datelim), date('Y', $datelim)); // Sans les heures minutes et secondes

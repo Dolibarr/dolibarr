@@ -51,12 +51,15 @@ class MenuManager
 
 
 	/**
-	 * Load this->tabMenu
-	 *
-	 * @return	void
+   	 * Load this->tabMenu
+   	 *
+   	 * @param	string	$forcemainmenu		To force mainmenu to load
+   	 * @param	string	$forceleftmenu		To force leftmenu to load
+   	 * @return	void
 	 */
-	public function loadMenu()
+	public function loadMenu($forcemainmenu = '', $forceleftmenu = '')
 	{
+		// Do nothing
 	}
 
 
@@ -90,7 +93,7 @@ class MenuManager
 		{
 			if (empty($noout)) print_start_menu_array_empty();
 
-			$usemenuhider = (GETPOST('testmenuhider', 'int') || ! empty($conf->global->MAIN_TESTMENUHIDER));
+            $usemenuhider = 1;
 
 			// Show/Hide vertical menu
 			if ($mode != 'jmobile' && $mode != 'topnb' && $usemenuhider &&  empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))

@@ -43,7 +43,7 @@ CREATE TABLE llx_expensereport_det
    total_ttc double(24,8) DEFAULT 0 NOT NULL,
    date date NOT NULL,
    info_bits					integer DEFAULT 0,				-- TVA NPR ou non
-   special_code					integer DEFAULT 0,			    -- code pour les lignes speciales
+   special_code					integer DEFAULT 0,			    -- code for special lines
    fk_multicurrency             integer,
    multicurrency_code           varchar(255),
    multicurrency_subprice       double(24,8) DEFAULT 0,
@@ -51,7 +51,7 @@ CREATE TABLE llx_expensereport_det
    multicurrency_total_tva      double(24,8) DEFAULT 0,
    multicurrency_total_ttc      double(24,8) DEFAULT 0,
    fk_facture					integer DEFAULT 0,				-- ID of customer invoice line if expense is rebilled to a customer
-   fk_expensereport_line        integer DEFAULT NULL,			-- ID of ECM file that is source document of expense report 
+   fk_ecm_files        integer DEFAULT NULL,			-- ID of ECM file that is source document of expense report 
    fk_code_ventilation			integer DEFAULT 0,
    rang							integer DEFAULT 0,				-- position of line
    import_key					varchar(14),

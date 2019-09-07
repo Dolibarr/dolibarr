@@ -14,18 +14,19 @@ llxHeader();
 
 ?>
 
-<h1>
+<h2>
 This page is a sample of page using Dolibarr HTML widget methods. It is designed to make test with<br>
 - css (add parameter &amp;theme=newtheme to test another theme or edit css of current theme)<br>
-- jmobile (add parameter <a href="<?php echo $_SERVER["PHP_SELF"].'?dol_use_jmobile=4&dol_optimize_smallscreen=1'; ?>">dol_use_jmobile=4&amp;dol_optimize_smallscreen=1</a> and switch to small screen < 1000 to enable view with jmobile)<br>
-- jmobile (add parameter <a href="<?php echo $_SERVER["PHP_SELF"].'?dol_use_jmobile=1&dol_optimize_smallscreen=1'; ?>">dol_use_jmobile=1&amp;dol_optimize_smallscreen=1</a> and switch to small screen < 570 to enable with emulated jmobile)<br>
-- no javascript / usage for bind people (add parameter <a href="<?php echo $_SERVER["PHP_SELF"].'?nojs=1'; ?>">nojs=1</a> to force disable javascript)<br>
-</h1>
+- jmobile (add parameter <a class="wordbreak" href="<?php echo $_SERVER["PHP_SELF"].'?dol_use_jmobile=1&dol_optimize_smallscreen=1'; ?>">dol_use_jmobile=1&amp;dol_optimize_smallscreen=1</a> and switch to small screen < 570 to enable with emulated jmobile)<br>
+- no javascript / usage for bind people (add parameter <a class="wordbreak" href="<?php echo $_SERVER["PHP_SELF"].'?nojs=1'; ?>">nojs=1</a> to force disable javascript)<br>
+</h2>
 <br>
 
 <!--  Output to test html.form.class.php -->
 <?php
 $form=new Form($db);
+
+print '<div class="div-table-responsive">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
 
 // Test1: form->selectDate using tzuser date
 print "Test 1a: We must have here current date and hour for user (must match hour on browser). Note: Check your are logged so user TZ and DST are known.";
@@ -57,34 +58,34 @@ print '<br><br>'."\n";
 print "Test 4a: a select<br>\n";
 $array=array(1=>'Value 1',2=>'Value 2',3=>'Value 3 ith a very long text. aze eazeae e ae aeae a e a ea ea ea e a e aea e ae aeaeaeaze.');
 $selected=3;
-print $form->selectarray('testselecta', $array, $selected, 1, 0, 0, 'style="min-width: 250px;"', 0, 0, 0, '', '', 1);
+print $form->selectarray('testselecta', $array, $selected, 1, 0, 0, '', 0, 0, 0, '', 'minwidth100', 1);
 print '<br><br>';
 print "Test 4b: a select<br>\n";
 $array=array(1=>'Value 1',2=>'Value 2',3=>'Value 3');
 $selected=3;
-print $form->selectarray('testselectb', $array, $selected, 1, 0, 0, 'style="min-width: 250px;"', 0, 0, 0, '', '', 1);
+print $form->selectarray('testselectb', $array, $selected, 1, 0, 0, '', 0, 0, 0, '', 'minwidth100', 1);
 print '<br><br>'."\n";
-print "Test 4c: Select array with no js forced<br>\n";
+print "Test 4c: Select array with addjscombo not forced<br>\n";
 $array=array(1=>'Value 1',2=>'Value 2',3=>'Value 3');
-print $form->selectarray('selectarray', $array);
+print $form->selectarray('selectarray', $array, $selected, 1, 0, 0, '', 0, 0, 0, '', 'minwidth100', 0);
 
 print '<br><br>'."\n";
 
 print "Test 4d: a select with ajax refresh and with onchange call of url<br>\n";
 $selected=-1;
-print $form->selectArrayAjax('testselectc', DOL_URL_ROOT.'/core/ajax/selectsearchbox.php', $selected, 'style="min-width: 250px;"', '', 0, 1, '', 1);
+print $form->selectArrayAjax('testselectc', DOL_URL_ROOT.'/core/ajax/selectsearchbox.php', $selected, '', '', 0, 1, 'minwidth100', 1);
 
 print '<br><br>'."\n";
 
 // Test5a: form->select_thirdparty
 print "Test 5a: Select thirdparty<br>\n";
-print $form->select_company(0, 'thirdpartytest');
+print $form->select_company(0, 'thirdpartytest', '', '', 0, 0, null, 0, 'minwidth100');
 
 print '<br><br>'."\n";
 
 // Test5b: form->select_product
 print "Test 5b: Select product (using ajax)<br>\n";
-$form->select_produits(0, 'producttest');
+$form->select_produits(0, 'producttest', '', 20, 0, 1, 2, '', 0, null, 0, '1', 0, 'minwidth100');
 
 print '<br><br>'."\n";
 
@@ -92,7 +93,9 @@ print '<br><br>'."\n";
 print "Test 5c: a multiselect<br>\n";
 $array=array(1=>'Value 1',2=>'Value 2',3=>'Value 3');
 $arrayselected=array(1,3);
-print $form->multiselectarray('testmulti', $array, $arrayselected, '', 0, '', 0, 250);
+print $form->multiselectarray('testmulti', $array, $arrayselected, '', 0, 'minwidth100');
+
+print '</div>';
 
 // End of page
 llxFooter();

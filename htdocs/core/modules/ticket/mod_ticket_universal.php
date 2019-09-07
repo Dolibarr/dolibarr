@@ -31,7 +31,7 @@ class mod_ticket_universal extends ModeleNumRefTicket
 {
     /**
      * Dolibarr version of the loaded document
-     * @public string
+     * @var string
      */
     public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
@@ -53,7 +53,7 @@ class mod_ticket_universal extends ModeleNumRefTicket
 	public $name='Universal';
 
     /**
-     *  Renvoi la description du modele de numerotation
+     *  Returns the description of the numbering model
      *
      *  @return string      Texte descripif
      */

@@ -59,9 +59,7 @@ llxHeader('', $title);
 $newcardbutton='';
 if ($user->rights->produit->creer)
 {
-	$newcardbutton='<a href="'.DOL_URL_ROOT.'/variants/create.php" class="butActionNew"><span class="valignmiddle">'.$langs->trans('Create').'</span>';
-	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-	$newcardbutton.= '</a>';
+    $newcardbutton.= dolGetButtonTitle($langs->trans('Create'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/variants/create.php');
 }
 
 print load_fiche_titre($title, $newcardbutton, 'title_products');

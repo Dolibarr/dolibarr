@@ -55,6 +55,7 @@ if ((isset($_GET["modulepart"]) && $_GET["modulepart"] == 'medias'))
 /**
  * Header empty
  *
+ * @ignore
  * @return	void
  */
 function llxHeader()
@@ -63,6 +64,7 @@ function llxHeader()
 /**
  * Footer empty
  *
+ * @ignore
  * @return	void
  */
 function llxFooter()
@@ -169,6 +171,7 @@ $refname=basename(dirname($original_file)."/");
 // Security check
 if (empty($modulepart)) accessforbidden('Bad value for parameter modulepart');
 
+// Check security and set return info with full path of file
 $check_access = dol_check_secure_access_document($modulepart, $original_file, $entity, $refname);
 $accessallowed              = $check_access['accessallowed'];
 $sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];

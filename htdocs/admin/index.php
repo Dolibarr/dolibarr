@@ -37,10 +37,10 @@ $hookmanager->initHooks(array('homesetup'));
  * View
  */
 
+$form = new Form($db);
+
 $wikihelp='EN:First_setup|FR:Premiers_paramétrages|ES:Primeras_configuraciones';
 llxHeader('', $langs->trans("Setup"), $wikihelp);
-
-$form = new Form($db);
 
 
 print load_fiche_titre($langs->trans("SetupArea"), '', 'title_setup.png');
@@ -68,7 +68,7 @@ if (! empty($conf->global->MAIN_MOTD_SETUPPAGE))
     }
 }
 
-print $langs->trans("SetupDescription1").' ';
+print $langs->trans("SetupDescription1");
 print $langs->trans("AreaForAdminOnly").' ';
 print $langs->trans("SetupDescription2", $langs->transnoentities("MenuCompanySetup"), $langs->transnoentities("Modules"))."<br><br>";
 
@@ -100,8 +100,8 @@ print '<br>'.$moreinfo;
 if (count($conf->modules) <= (empty($conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING)?1:$conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING))	// If only user module enabled
 {
 	$langs->load("errors");
-	$warnpicto=img_warning($langs->trans("WarningMandatorySetupNotComplete"), 'style="padding-right: 6px;"');
-	print '<br><div class="warning"><a href="'.DOL_URL_ROOT.'/admin/modules.php?mainmenu=home">'.$warnpicto.$langs->trans("WarningMandatorySetupNotComplete").'</a></div>';
+	$warnpicto=img_warning($langs->trans("WarningEnableYourModulesApplications"), 'style="padding-right: 6px;"');
+	print '<br><div class="warning"><a href="'.DOL_URL_ROOT.'/admin/modules.php?mainmenu=home">'.$warnpicto.$langs->trans("WarningEnableYourModulesApplications").'</a></div>';
 }
 print '<br>';
 print '<br>';
@@ -115,7 +115,7 @@ print $hookmanager->resPrint;
 if (empty($reshook))
 {
 	// Show into other
-	print $langs->trans("SetupDescription5")."<br>";
+    print '<span class="opacitymedium">'.$langs->trans("SetupDescription5")."</span><br>";
 	print "<br>";
 
 	// Show logo

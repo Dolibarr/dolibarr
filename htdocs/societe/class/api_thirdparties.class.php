@@ -124,7 +124,7 @@ class Thirdparties extends DolibarrApi
 		$obj_ret = array();
 
 		// case of external user, we force socids
-		$socids = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : '';
+		$socids = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : '';
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
@@ -1041,7 +1041,7 @@ $reshook = $hookmanager->executeHooks('replaceThirdparty', array(
 
 		$i=0;
 
-		$accounts =[];
+		$accounts = array();
 
 		if ($result)
 		{
@@ -1061,12 +1061,12 @@ $reshook = $hookmanager->executeHooks('replaceThirdparty', array(
 		}
 
 
-		$fields = ['socid', 'default_rib', 'frstrecur', '1000110000001', 'datec', 'datem', 'label', 'bank', 'bic', 'iban', 'id', 'rum'];
+		$fields = array('socid', 'default_rib', 'frstrecur', '1000110000001', 'datec', 'datem', 'label', 'bank', 'bic', 'iban', 'id', 'rum');
 
-		$returnAccounts = [];
+		$returnAccounts = array();
 
 		foreach($accounts as $account){
-			$object= [];
+			$object= array();
 			foreach($account as $key => $value)
 				if(in_array($key, $fields)){
 					$object[$key] = $value;
@@ -1308,7 +1308,7 @@ $reshook = $hookmanager->executeHooks('replaceThirdparty', array(
 
 		$i=0;
 
-		$accounts =[];
+		$accounts = array();
 
 		$num = $db->num_rows($result);
 		while ($i < $num)
@@ -1322,12 +1322,12 @@ $reshook = $hookmanager->executeHooks('replaceThirdparty', array(
 			$i++;
 		}
 
-		$fields = ['id', 'fk_soc', 'key_account', 'site', 'date_creation', 'tms'];
+		$fields = array('id', 'fk_soc', 'key_account', 'site', 'date_creation', 'tms');
 
-		$returnAccounts = [];
+		$returnAccounts = array();
 
 		foreach($accounts as $account){
-			$object= [];
+			$object= array();
 			foreach($account as $key => $value)
 				if(in_array($key, $fields)){
 					$object[$key] = $value;
@@ -1582,9 +1582,9 @@ $reshook = $hookmanager->executeHooks('replaceThirdparty', array(
 	 * @param int $id ID of thirdparty
 	 *
 	 * @return void
-	 * @throws 401 Unauthorized: User does not have permission to delete thirdparties gateways
-	 * @throws 404 Not Found: Specified thirdparty ID does not belongs to an existing thirdparty
-	 * @throws 500 Internal Server Error: Error deleting SocieteAccount entity
+	 * @throws RestException(401) Unauthorized: User does not have permission to delete thirdparties gateways
+	 * @throws RestException(404) Not Found: Specified thirdparty ID does not belongs to an existing thirdparty
+	 * @throws RestException(500) Internal Server Error: Error deleting SocieteAccount entity
 	 *
 	 * @url DELETE {id}/gateways
 	 */

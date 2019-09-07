@@ -259,7 +259,7 @@ class Reception extends CommonObject
 			dol_syslog(get_class($this)."::create", LOG_DEBUG);
 			if ($this->db->query($sql))
 			{
-				// Insertion des lignes
+				// Insert of lines
 				$num=count($this->lines);
 				for ($i = 0; $i < $num; $i++)
 				{
@@ -372,7 +372,7 @@ class Reception extends CommonObject
 		$sql.= ", el.fk_source as origin_id, el.sourcetype as origin";
 		$sql.= ", e.note_private, e.note_public";
         $sql.= ', e.fk_incoterms, e.location_incoterms';
-        $sql.= ', i.libelle as libelle_incoterms';
+        $sql.= ', i.libelle as label_incoterms';
 		$sql.= " FROM ".MAIN_DB_PREFIX."reception as e";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = e.rowid AND el.targettype = '".$this->db->escape($this->element)."'";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON e.fk_incoterms = i.rowid';
@@ -431,7 +431,7 @@ class Reception extends CommonObject
 				//Incoterms
 				$this->fk_incoterms = $obj->fk_incoterms;
 				$this->location_incoterms = $obj->location_incoterms;
-				$this->libelle_incoterms = $obj->libelle_incoterms;
+				$this->label_incoterms = $obj->label_incoterms;
 
 				$this->db->free($result);
 
@@ -444,7 +444,7 @@ class Reception extends CommonObject
 				$this->getUrlTrackingStatus($obj->tracking_number);
 
 				/*
-				 * Thirparty
+				 * Thirdparty
 				 */
 				$result=$this->fetch_thirdparty();
 
@@ -643,13 +643,18 @@ class Reception extends CommonObject
 			// Rename directory if dir was a temporary ref
 			if (preg_match('/^[\(]?PROV/i', $this->ref))
 			{
-				// On renomme repertoire ($this->ref = ancienne ref, $numfa = nouvelle ref)
-				// in order not to lose the attached files
+				// Now we rename also files into index
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref)+1).")), filepath = 'reception/".$this->db->escape($this->newref)."'";
+				$sql.= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'reception/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$resql = $this->db->query($sql);
+				if (! $resql) { $error++; $this->error = $this->db->lasterror(); }
+
+				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 				$oldref = dol_sanitizeFileName($this->ref);
 				$newref = dol_sanitizeFileName($numref);
 				$dirsource = $conf->reception->dir_output.'/'.$oldref;
 				$dirdest = $conf->reception->dir_output.'/'.$newref;
-				if (file_exists($dirsource))
+				if (! $error && file_exists($dirsource))
 				{
 					dol_syslog(get_class($this)."::valid rename dir ".$dirsource." into ".$dirdest);
 
@@ -707,8 +712,8 @@ class Reception extends CommonObject
 	 * @param 	int			$qty				Quantity
 	 * @param	array		$array_options		extrafields array
 	 * @param	string		$comment				Comment for stock movement
-	 * @param	date		$eatby					eat-by date
-	 * @param	date		$sellby					sell-by date
+	 * @param	integer		$eatby					eat-by date
+	 * @param	integer		$sellby					sell-by date
 	 * @param	string		$batch					Lot number
 	 * @return	int							<0 if KO, >0 if OK
 	 */
@@ -1183,7 +1188,9 @@ class Reception extends CommonObject
     public function initAsSpecimen()
     {
 		global $langs;
-		dol_include_once('/fourn/class/fournisseur.commande.dispatch.class.php');
+
+		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.dispatch.class.php';
 		$now=dol_now();
 
 		dol_syslog(get_class($this)."::initAsSpecimen");
@@ -1207,7 +1214,7 @@ class Reception extends CommonObject
 			}
 		}
 
-		$order=new Commande($this->db);
+		$order=new CommandeFournisseur($this->db);
 		$order->initAsSpecimen();
 
 		// Initialise parametres
@@ -1256,7 +1263,7 @@ class Reception extends CommonObject
 	 *	Set the planned delivery date
 	 *
 	 *	@param      User			$user        		Objet utilisateur qui modifie
-	 *	@param      timestamp		$date_livraison     Date de livraison
+	 *	@param      integer 		$date_livraison     Date de livraison
 	 *	@return     int         						<0 if KO, >0 if OK
 	 */
     public function set_date_livraison($user, $date_livraison)
@@ -1763,8 +1770,6 @@ class Reception extends CommonObject
 		}
 	}
 
-
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	 /**
      *	Set draft status
      *
@@ -1797,7 +1802,7 @@ class Reception extends CommonObject
         $sql.= " SET fk_statut = ".self::STATUS_DRAFT;
         $sql.= " WHERE rowid = ".$this->id;
 
-        dol_syslog(get_class($this)."::set_draft", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         if ($this->db->query($sql))
         {
             // If stock increment is done on closing

@@ -90,7 +90,7 @@ if (empty($reshook))
 	        $mesg=join(',', $object->errors);
 	    }
 	}
-	// conditions de reglement
+	// terms of the settlement
 	if ($action == 'setconditions' && $user->rights->societe->creer)
 	{
 		$object->fetch($id);
@@ -225,7 +225,7 @@ if ($object->id > 0)
     print $object->tva_intra;
     print '</td></tr>';
 
-	// Conditions de reglement par defaut
+	// Default terms of the settlement
 	$langs->load('bills');
 	$form = new Form($db);
 	print '<tr><td>';
@@ -469,7 +469,7 @@ if ($object->id > 0)
 
         $num = $db->num_rows($query);
 
-        print '<table class="noborder" width="100%">';
+        print '<table class="noborder centpercent lastrecordtable">';
         print '<tr class="liste_titre'.(($num == 0) ? ' nobottom':'').'">';
         print '<td colspan="3">'.$langs->trans("ProductsAndServices").'</td><td class="right">';
         print '<a class="notasortlink" href="'.DOL_URL_ROOT.'/fourn/product/list.php?fourn_id='.$object->id.'">'.$langs->trans("AllProductReferencesOfSupplier").' <span class="badge">'.$object->nbOfProductRefs().'</span>';
@@ -541,7 +541,7 @@ if ($object->id > 0)
 
 	        if ($num > 0)
 	        {
-	            print '<table class="noborder" width="100%">';
+	            print '<table class="noborder centpercent lastrecordtable">';
 
 	            print '<tr class="liste_titre">';
 	            print '<td colspan="3">';
@@ -644,7 +644,7 @@ if ($object->id > 0)
 
 			if ($num > 0)
 			{
-			    print '<table class="noborder" width="100%">';
+			    print '<table class="noborder centpercent lastrecordtable">';
 
 			    print '<tr class="liste_titre">';
     			print '<td colspan="3">';
@@ -717,7 +717,7 @@ if ($object->id > 0)
 			$num = $db->num_rows($resql);
 			if ($num > 0)
 			{
-			    print '<table class="noborder" width="100%">';
+			    print '<table class="noborder centpercent lastrecordtable">';
 
 			    print '<tr class="liste_titre">';
     			print '<td colspan="4">';

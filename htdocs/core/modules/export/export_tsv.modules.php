@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/export/modules_export.php';
 class ExportTsv extends ModeleExports
 {
     /**
-	 * @var int ID
+	 * @var string ID
 	 */
 	public $id;
 
@@ -45,7 +45,7 @@ class ExportTsv extends ModeleExports
 
     /**
      * Dolibarr version of the loaded document
-     * @public string
+     * @var string
      */
 	public $version = 'dolibarr';
 

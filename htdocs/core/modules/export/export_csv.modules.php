@@ -33,7 +33,7 @@ set_time_limit(0);
 class ExportCsv extends ModeleExports
 {
 	/**
-	 * @var int ID
+	 * @var string ID ex: csv, tsv, excel...
 	 */
 	public $id;
 
@@ -46,7 +46,7 @@ class ExportCsv extends ModeleExports
 
 	/**
      * Dolibarr version of the loaded document
-     * @public string
+     * @var string
      */
 	public $version = 'dolibarr';
 
@@ -261,6 +261,9 @@ class ExportCsv extends ModeleExports
 		}
 
 		$this->col=0;
+
+		$reg=array();
+
 		foreach($array_selected_sorted as $code => $value)
 		{
 			if (strpos($code, ' as ') == 0) $alias=str_replace(array('.','-','(',')'), '_', $code);
