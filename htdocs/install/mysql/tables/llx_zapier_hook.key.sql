@@ -14,9 +14,9 @@
 -- along with this program.  If not, see http://www.gnu.org/licenses/.
 
 
---ALTER TABLE llx_zapierfordolibarr_hook ADD INDEX idx_fieldobject (fieldobject);
+--ALTER TABLE llx_zapier_hook ADD INDEX idx_fieldobject (fieldobject);
 
---ALTER TABLE llx_zapierfordolibarr_hook ADD UNIQUE INDEX uk_zapierfordolibarr_hook_fieldxy(fieldx, fieldy);
+--ALTER TABLE llx_zapier_hook ADD UNIQUE INDEX uk_zapier_hook_fieldxy(fieldx, fieldy);
 
---ALTER TABLE llx_zapierfordolibarr_hook ADD CONSTRAINT llx_zapierfordolibarr_hook_fk_field FOREIGN KEY (fk_field) REFERENCES llx_zapierfordolibarr_myotherobject(rowid);
+--ALTER TABLE llx_zapier_hook ADD CONSTRAINT llx_zapier_hook_fk_field FOREIGN KEY (fk_field) REFERENCES llx_zapier_myotherobject(rowid);
 

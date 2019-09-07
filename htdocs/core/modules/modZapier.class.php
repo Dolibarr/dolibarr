@@ -67,7 +67,7 @@ class modZapier extends DolibarrModules
         // Name of image file used for this module.
         // If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
         // If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
-        $this->picto = 'technic';
+        $this->picto = 'zapier@zapier';
         // Define some features supported by module (triggers, login, substitutions, menus, css, etc...)
         $this->module_parts = array(
             // Set this to 1 if module has its own trigger directory (core/triggers)
@@ -109,7 +109,9 @@ class modZapier extends DolibarrModules
         // Example: this->dirs = array("/zapier/temp","/zapier/subdir");
         $this->dirs = array("/zapier/temp");
         // Config pages. Put here list of php page, stored into zapier/admin directory, to use to setup module.
-        $this->config_page_url = array("setup.php@zapier");
+        $this->config_page_url = array(
+        //    "setup.php@zapier"
+        );
         // Dependencies
         // A condition to hide module
         $this->hidden = false;
@@ -119,7 +121,7 @@ class modZapier extends DolibarrModules
         $this->requiredby = array();
         // List of module class names as string this module is in conflict with. Example: array('modModuleToDisable1', ...)
         $this->conflictwith = array();
-        $this->langfiles = array("zapier@zapier");
+        $this->langfiles = array("zapier");
         // Minimum version of PHP required by module
         //$this->phpmin = array(5, 5);
         // Minimum version of Dolibarr required by module
@@ -148,7 +150,7 @@ class modZapier extends DolibarrModules
             'fr_FR:ParentCompany'=>'Maison mère ou revendeur'
         )*/
         if (! isset($conf->zapier) || ! isset($conf->zapier->enabled)) {
-            $conf->zapier=new stdClass();
+            $conf->zapier = new stdClass();
             $conf->zapier->enabled=0;
         }
         // Array to add new pages in new tabs

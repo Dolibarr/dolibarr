@@ -14,16 +14,16 @@
 -- along with this program.  If not, see http://www.gnu.org/licenses/.
 
 
-CREATE TABLE llx_zapierfordolibarr_hook(
-	rowid integer AUTO_INCREMENT PRIMARY KEY,
-	entity integer DEFAULT 1 NOT NULL,
-	url varchar(255),
-	event varchar(255),
-	module varchar(128),
-	action varchar(128),
-	status integer,
-	date_creation DATETIME NOT NULL,
+CREATE TABLE llx_zapier_hook(
+    rowid integer AUTO_INCREMENT PRIMARY KEY,
+    entity integer DEFAULT 1 NOT NULL,
+    url varchar(255),
+    event varchar(255),
+    module varchar(128),
+    action varchar(128),
+    status integer,
+    date_creation DATETIME NOT NULL,
     fk_user integer NOT NULL,
-	tms TIMESTAMP NOT NULL,
-	import_key varchar(14)
+    tms TIMESTAMP NOT NULL,
+    import_key varchar(14)
 ) ENGINE=innodb;
