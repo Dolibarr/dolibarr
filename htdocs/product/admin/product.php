@@ -675,14 +675,6 @@ if (! empty($conf->fournisseur->enabled))
     print '</tr>';
 }
 
-// Activate price ht edition for predefined product on line add
-print '<tr class="oddeven">';
-print '<td>'.$langs->trans("EditPredifinedPriceHTAbility").'</td>';
-print '<td width="60" align="right">';
-print $form->selectyesno("activate_EditPredifinedPriceHT",$conf->global->EDIT_PREDEF_PRICEHT,1);
-print '</td>';
-print '</tr>';
-
 if (! empty($conf->global->PRODUCT_CANVAS_ABILITY))
 {
 	// Add canvas feature
