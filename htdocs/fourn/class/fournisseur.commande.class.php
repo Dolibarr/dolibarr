@@ -648,7 +648,6 @@ class CommandeFournisseur extends CommonOrder
 	        $this->statuts[5] = 'StatusSupplierOrderReceivedAll';
 	        $this->statuts[6] = 'StatusSupplierOrderCanceled';	// Approved->Canceled
 	        $this->statuts[7] = 'StatusSupplierOrderCanceled';	// Process running->canceled
-	        //$this->statuts[8] = 'StatusSupplierOrderBilled';	// Everything is finished, order received totally and bill received
 	        $this->statuts[9] = 'StatusSupplierOrderRefused';
 
 	        // List of language codes for status
