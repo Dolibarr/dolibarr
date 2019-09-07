@@ -53,8 +53,8 @@ function print_auguria_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout
 
 	if (empty($noout)) print_start_menu_array_auguria();
 
-    $usemenuhider = 1;
     global $usemenuhider;
+    $usemenuhider = 1;
 
 	// Show/Hide vertical menu
 	if ($mode != 'jmobile' && $mode != 'topnb' && $usemenuhider && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
@@ -265,8 +265,8 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 	$mainmenu=($forcemainmenu?$forcemainmenu:$_SESSION["mainmenu"]);
 	$leftmenu=($forceleftmenu?'':(empty($_SESSION["leftmenu"])?'none':$_SESSION["leftmenu"]));
 
-	$usemenuhider = 0;
 	global $usemenuhider;
+	$usemenuhider = 0;
 
 	// Show logo company
 	if (empty($noout) && ! empty($conf->global->MAIN_SHOW_LOGO) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
