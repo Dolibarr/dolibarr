@@ -163,6 +163,23 @@ $domData .= ' data-product_type="'.$line->product_type.'"';
 			print (! empty($line->description) && $line->description!=$line->product_label)?'<br>'.dol_htmlentitiesbr($line->description):'';
 		}
 	}
+		
+	if ($user->rights->fournisseur->lire && $line->fk_fournprice > 0)
+	{
+    require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+		$productfourn = new ProductFournisseur($this->db);
+		$productfourn->fetch_product_fournisseur_price($line->fk_fournprice);
+		echo '<div class="clearboth"></div><span class="opacitymedium">' . $langs->trans('Supplier') . ' : </span>' . $productfourn->getSocNomUrl(1, 'supplier') . ' - <span class="opacitymedium">' . $langs->trans('Ref') . ' : </span>';
+						// Supplier ref
+						if ($user->rights->produit->creer || $user->rights->service->creer) // change required right here
+						{
+							echo $productfourn->getNomUrl();
+						}
+						else
+						{
+							echo $productfourn->ref_supplier;
+						}
+	}
 
 	if (! empty($conf->accounting->enabled) && $line->fk_accounting_account > 0)
 	{
