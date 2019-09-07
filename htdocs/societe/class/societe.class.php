@@ -3539,7 +3539,7 @@ class Societe extends CommonObject
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return	int >0 if ok
 	 */
     public function initAsSpecimen()
 	{
@@ -3586,6 +3586,7 @@ class Societe extends CommonObject
 		$this->idprof4='idprof4';
 		$this->idprof5='idprof5';
 		$this->idprof6='idprof6';
+		return 1;
 	}
 
 	/**
