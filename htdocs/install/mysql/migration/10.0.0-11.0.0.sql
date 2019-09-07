@@ -89,6 +89,8 @@ ALTER TABLE llx_projet ADD COLUMN usage_organize_event integer DEFAULT 0;
 
 UPDATE llx_projet set usage_opportunity = 1 WHERE fk_opp_status > 0;
 
+ALTER TABLE llx_accounting_account MODIFY COLUMN rowid bigint AUTO_INCREMENT;
+  
 
 create table llx_c_hrm_public_holiday
 (
@@ -108,4 +110,3 @@ create table llx_c_hrm_public_holiday
 ALTER TABLE llx_supplier_proposaldet ADD COLUMN  date_start	datetime   DEFAULT NULL;
 ALTER TABLE llx_supplier_proposaldet ADD COLUMN  date_end	datetime   DEFAULT NULL;
 
- 
